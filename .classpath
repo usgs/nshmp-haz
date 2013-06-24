@@ -2,5 +2,20 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/pmpowers/projects/lib-java/commons-lang3-3.1/commons-lang3-3.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/pmpowers/projects/lib-java/commons-lang3-3.1/commons-lang3-3.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/pmpowers/projects/lib-java/google-guava-14.0.1/guava-14.0.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/pmpowers/projects/lib-java/google-guava-14.0.1/guava-14.0.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/pmpowers/projects/lib-java/google-gson-2.2.4/gson-2.2.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/pmpowers/projects/lib-java/google-gson-2.2.4/gson-2.2.4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
