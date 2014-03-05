@@ -91,17 +91,17 @@ final class ChiouYoungs_2014 implements GroundMotionModel {
 			FaultStyle style, double vs30, boolean vsInf, double z1p0) {
 
 		// terms used by both mean and stdDev
-		double lnSAref = calcLnSAref(c, Mw, rJB, rRup, rX, dip, zTop, style);
+		double saRef = calcSAref(c, Mw, rJB, rRup, rX, dip, zTop, style);
 		double soilNonLin = calcSoilNonLin(c, vs30);
 		
-		double mean = calcMean(c, vs30, z1p0, soilNonLin, lnSAref);
-		double stdDev = calcStdDev(c, Mw, vsInf, soilNonLin, lnSAref);
+		double mean = calcMean(c, vs30, z1p0, soilNonLin, saRef);
+		double stdDev = calcStdDev(c, Mw, vsInf, soilNonLin, saRef);
 
 		return DefaultScalarGroundMotion.create(mean, stdDev);
 	}
 
-	// Seismic Source Scaling -- Equation 3.7
-	private static final double calcLnSAref(Coeffs c, double Mw, double rJB,
+	// Seismic Source Scaling -- Equation 11
+	private static final double calcSAref(Coeffs c, double Mw, double rJB,
 			double rRup, double rX, double dip, double zTop, FaultStyle style) {
 		
 		// Magnitude scaling
@@ -118,7 +118,7 @@ final class ChiouYoungs_2014 implements GroundMotionModel {
 		// Scaling with other source variables
 		double coshM = cosh(2 * max(Mw - 4.5, 0));
 		double cosDelta = cos(dip * TO_RAD);
-		// Center zTop on the zTop-M relation in Eqns (2.4) & (2.5)
+		// Center zTop on the zTop-M relation
 		double deltaZtop = zTop - calcMwZtop(style, Mw);
 		double r4 = (c.c7 + c.c7b / coshM) * deltaZtop + 
 				    (C11 + c.c11b / coshM) * cosDelta * cosDelta;
@@ -142,7 +142,7 @@ final class ChiouYoungs_2014 implements GroundMotionModel {
 		//	max(0.0, 1.0 - max(0, rRup - 40.0) / 30.0) *
 		//	min(max(0, Mw - 5.5) / 0.8, 1.0) * cDPP;
 
-		return r1 + r2 + r3 + r4 + r5;
+		return exp(r1 + r2 + r3 + r4 + r5);
 	}
 	
 	private static final double calcSoilNonLin(Coeffs c, double vs30) {
@@ -151,25 +151,25 @@ final class ChiouYoungs_2014 implements GroundMotionModel {
 		return c.phi2 * (exp1 - exp2);
 	}
 
-	// Mean ground motion model -- Equation 3.8
+	// Mean ground motion model -- Equation 12
 	private static final double calcMean(Coeffs c, double vs30, double z1p0,
-			double snl, double lnSAref) {
+			double snl, double saRef) {
 
 		// Soil effect: linear response
 		double sl = c.phi1 * min(log(vs30 / 1130.0), 0.0);
 
 		// Soil effect: nonlinear response (base passed in)
-		snl *= log((exp(lnSAref) + c.phi4) / c.phi4);
+		snl *= log((saRef + c.phi4) / c.phi4);
 
 		// Soil effect: sediment thickness
 		double dZ1 = calcDeltaZ1(z1p0, vs30);
 		double rkdepth = c.phi5 * (1.0 - exp(-dZ1 / PHI6));
 
 		// total model
-		return lnSAref + sl + snl + rkdepth;
+		return log(saRef) + sl + snl + rkdepth;
 	}
 
-	// Center zTop on the zTop-M relation in Eqns (2.4) & (2.5)
+	// Center zTop on the zTop-M relation -- Equations 4, 5
 	private static final double calcMwZtop(FaultStyle style, double Mw) {
 		double mzTop = 0.0;
 		if (style == REVERSE) {
@@ -180,6 +180,7 @@ final class ChiouYoungs_2014 implements GroundMotionModel {
 		return mzTop * mzTop;
 	}
 	
+	// -- Equation 1
 	private static final double calcDeltaZ1(double z1p0, double vs30) {
 		if (Double.isNaN(z1p0)) return 0.0;
 		double vsPow4 = vs30 * vs30 * vs30 * vs30;
@@ -188,12 +189,10 @@ final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	// Aleatory uncertainty model -- Equation 3.9
 	private static final double calcStdDev(Coeffs c, double Mw, boolean vsInf,
-			double snl, double lnSAref) {
-
-		double SAref = exp(lnSAref);
+			double snl, double saRef) {
 
 		// Response Term - linear vs. non-linear
-		double NL0 = snl * SAref / (SAref + c.phi4);
+		double NL0 = snl * saRef / (saRef + c.phi4);
 
 		// Magnitude thresholds
 		double mTest = min(max(Mw, 5.0), 6.5) - 5.0;
