@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/pmpowers/projects/lib-java/commons-lang3-3.1/commons-lang3-3.1.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/pmpowers/projects/lib-java/commons-lang3-3.1/commons-lang3-3.1-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Users/pmpowers/projects/lib-java/google-guava-14.0.1/guava-14.0.1.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Users/pmpowers/projects/lib-java/google-guava-14.0.1/guava-14.0.1-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/Users/pmpowers/projects/lib-java/google-gson-2.2.4/gson-2.2.4.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/Users/pmpowers/projects/lib-java/google-gson-2.2.4/gson-2.2.4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/pmpowers/projects/lib-java/commons-math3-3.2/commons-math3-3.2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/pmpowers/projects/lib-java/commons-math3-3.2/commons-math3-3.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/pmpowers/projects/lib-java/google-guava-16.0/guava-16.0.jar" sourcepath="/Users/pmpowers/projects/lib-java/google-guava-16.0/guava-16.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/pmpowers/projects/lib-java/google-guava-16.0/guava-16.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>

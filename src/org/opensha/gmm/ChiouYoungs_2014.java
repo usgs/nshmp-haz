@@ -32,17 +32,26 @@ import org.opensha.calc.ScalarGroundMotion;
  * 
  * @author Peter Powers
  */
-final class ChiouYoungs_2013 implements GroundMotionModel {
+final class ChiouYoungs_2014 implements GroundMotionModel {
 
-	public static final String NAME = "Chiou \u0026 Youngs (2013)";
+	// TODO review class javadoc and update citation to EQS
+
+	public static final String NAME = "Chiou \u0026 Youngs (2014)";
 
 	public static final CoefficientContainer CC = new CoefficientContainer(
-		"CY13.csv", Coeffs.class);
+		"CY14.csv", Coeffs.class);
 
 	static class Coeffs extends Coefficients {
+		
 		double c1, c1a, c1b, c1c, c1d, c3, c5, c6, c7, c7b, c8b, c9, c9a, c9b,
 				c11b, cn, cM, cHM, cgamma1, cgamma2, cgamma3, phi1, phi2, phi3,
-				phi4, phi5, phi6, tau1, tau2, sigma1, sigma2, sigma3;
+				phi4, phi5, tau1, tau2, sigma1, sigma2, sigma3;
+		
+		// same for all periods; replaced with constant
+		double c2, c4, c4a, c11, cRB, phi6;
+		// unused regional and other coeffs
+		double c8, c8a, sigma2_JP, gamma_JP_IT, gamma_WN, phi1_JP, phi5_JP,
+				phi6_JP;
 	}
 
 	// author declared constants
@@ -53,15 +62,15 @@ final class ChiouYoungs_2013 implements GroundMotionModel {
 	private static final double CRB = 50.0;
 	private static final double CRBsq = CRB * CRB;
 	private static final double C11 = 0.0;
+	private static final double PHI6 = 300.0;
 
 	// implementation constants
 	private static final double A = pow(571, 4);
 	private static final double B = pow(1360, 4) + A;
 
-	// TODO inline constance coeffs with final statics
 	private final Coeffs coeffs;
 
-	public ChiouYoungs_2013(IMT imt) {
+	public ChiouYoungs_2014(IMT imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 
@@ -154,7 +163,7 @@ final class ChiouYoungs_2013 implements GroundMotionModel {
 
 		// Soil effect: sediment thickness
 		double dZ1 = calcDeltaZ1(z1p0, vs30);
-		double rkdepth = c.phi5 * (1.0 - exp(-dZ1 / c.phi6));
+		double rkdepth = c.phi5 * (1.0 - exp(-dZ1 / PHI6));
 
 		// total model
 		return lnSAref + sl + snl + rkdepth;

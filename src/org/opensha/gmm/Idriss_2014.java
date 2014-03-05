@@ -26,31 +26,29 @@ import org.opensha.calc.ScalarGroundMotion;
  * 
  * @author Peter Powers
  */
-final class Idriss_2013 implements GroundMotionModel {
+final class Idriss_2014 implements GroundMotionModel {
 
-	public static final String NAME = "Idriss (2013)";
+	// TODO review class javadoc and update citation to EQS
+	
+	public static final String NAME = "Idriss (2014)";
 	
 	public static final CoefficientContainer CC = new CoefficientContainer(
-		"Idriss13loM.csv", Coeffs.class);
-	static final CoefficientContainer CC_HI = new CoefficientContainer(
-		"Idriss13hiM.csv", Coeffs.class);
+		"Idriss14.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
-		double a1, a2, a3, b1, b2, xi, gamma, phi;
+		double a1_lo, a2_lo, a1_hi, a2_hi, a3, b1_lo, b2_lo, b1_hi, b2_hi, xi,
+				gamma, phi;
 	}
 	
-	private final Coeffs coeffsLo;
-	private final Coeffs coeffsHi;
+	private final Coeffs coeffs;
 
-	Idriss_2013(IMT imt) {
-		coeffsLo = (Coeffs) CC.get(imt);
-		coeffsHi = (Coeffs) CC_HI.get(imt);
+	Idriss_2014(IMT imt) {
+		coeffs = (Coeffs) CC.get(imt);
 	}
 
 	@Override
 	public final ScalarGroundMotion calc(GMM_Input props) {
 		FaultStyle style = rakeToFaultStyle(props.rake);
-		Coeffs coeffs = (props.Mw <= 6.75) ? coeffsLo : coeffsHi;
 		return calc(coeffs, props.Mw, props.rRup, style, props.vs30);
 	}
 	
@@ -70,8 +68,16 @@ final class Idriss_2013 implements GroundMotionModel {
 	// Mean ground motion model - cap of Vs = 1200 m/s
 	private static final double calcMean(Coeffs c, double Mw, double rRup,
 			FaultStyle style, double vs30) {
-		return c.a1 + c.a2 * Mw + c.a3 * (8.5 - Mw) * (8.5 - Mw) -
-			(c.b1 + c.b2 * Mw) * log(rRup + 10.0) +
+		
+		double a1 = c.a1_lo, a2 = c.a2_lo;
+		double b1 = c.b1_lo, b2 = c.b2_lo;
+		if (Mw > 6.75) {
+			a1 = c.a1_hi; a2 = c.a2_hi;
+			b1 = c.b1_hi; b2 = c.b2_hi;
+		}
+
+		return a1 + a2 * Mw + c.a3 * (8.5 - Mw) * (8.5 - Mw) -
+			(b1 + b2 * Mw) * log(rRup + 10.0) +
 			c.xi * log(min(vs30, 1200.0)) + 
 			c.gamma * rRup + (style == REVERSE ? c.phi : 0.0);
 	}
