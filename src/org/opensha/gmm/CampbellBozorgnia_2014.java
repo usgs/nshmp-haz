@@ -138,7 +138,9 @@ final class CampbellBozorgnia_2014 implements GroundMotionModel {
 		
 		// Hanging-Wall term
 		double Fhw = 0.0;
-		if (rX >= 0.0 && Mw > 5.5 && zTop >= 16.66) { // short-circuit
+		// short-circuit: f4 is 0 if rX < 0, Mw <= 5.5, zTop > 16.66
+		// these switches have been removed below
+		if (rX >= 0.0 && Mw > 5.5 && zTop <= 16.66) { // short-circuit
 		
 			// Jennifer Donahue's HW Model plus CB08 distance taper
 			//  -- Equations 9, 10, 11 & 12
@@ -150,26 +152,17 @@ final class CampbellBozorgnia_2014 implements GroundMotionModel {
 			double f2_rX = H4 + c.h5 * (rXr2r1) + c.h6 * rXr2r1 * rXr2r1;
 			
 			// ... rX -- Equation 8
-			double Fhw_rX = 0.0;
-			if (rX >= r1) {
-				Fhw_rX = max(f2_rX, 0.0);
-			} else if (rX >= 0.0) {
-				Fhw_rX = f1_rX;
-			}
+			double Fhw_rX = (rX >= r1) ? max(f2_rX, 0.0) : f1_rX;
 			
 			// ... rRup -- Equation 13
 			double Fhw_rRup = (rRup == 0.0) ? 1.0 : (rRup - rJB) / rRup;
 	
 			// ... magnitude -- Equation 14
-			double Fhw_m = 0.0;
-			if (Mw > 6.5) {
-				Fhw_m = 1.0 + c.a2 * (Mw - 6.5);
-			} else if (Mw > 5.5) {
-				Fhw_m = (Mw - 5.5) * (1 + c.a2 * (Mw - 6.5));
-			}
+			double Fhw_m = 1.0 + c.a2 * (Mw - 6.5);
+			if (Mw > 6.5) Fhw_m *= (Mw - 5.5);
 	
 			// ... depth -- Equation 15
-			double Fhw_z = (zTop > 16.66) ? 0.0 : 1.0 - 0.06 * zTop;
+			double Fhw_z = 1.0 - 0.06 * zTop;
 	
 			// ... dip -- Equation 16
 			double Fhw_d = (90.0 - dip) / 45.0;

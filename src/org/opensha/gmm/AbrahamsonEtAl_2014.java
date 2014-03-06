@@ -134,19 +134,17 @@ final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 		// Hanging Wall Model
 		double f4 = 0.0;
 		// short-circuit: f4 is 0 if rJB >= 30, rX < 0, Mw <= 5.5, zTop > 10
+		// these switches have been removed below
 		if (rJB < 30 && rX >= 0.0 && Mw > 5.5 && zTop <= 10.0) {
 			
 			// ... dip taper -- Equation 11
 			double T1 = (dip > 30.0) ? (90.0 - dip) / 45 : 1.33333333; // 60/45
 			
 			// ... mag taper -- Equation 12
-			double T2 = 0.0;
 			double dM = Mw - 6.5;
-			if (Mw >= 6.5) {
-				T2 = 1 + A2_HW * dM;
-			} else if (Mw > 5.5) {
-				T2 = 1 + A2_HW * dM + (1 - A2_HW) * dM * dM;
-			}
+			double T2 = (Mw >= 6.5) ?
+					1 + A2_HW * dM :
+					1 + A2_HW * dM + (1 - A2_HW) * dM * dM;
 			
 			// ... rX taper -- Equation 13
 			double T3 = 0.0;
@@ -160,26 +158,10 @@ final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 			}
 			
 			// ... zTop taper -- Equation 14
-			double T4 = 0.0;
-			if (zTop <= 10) T4 = 1 - (zTop * zTop) / 100.0;
+			double T4 = 1 - (zTop * zTop) / 100.0;
 			
-			double T5 = 0.0;
-			// if (RY0 >= 0.0) {
-			//	// ... rX, rY0 taper -- Equation 15a
-			//	double rY1 = rX * tan(20 * TO_RAD);
-			//	if (RY0 < rY1) {
-			//		T5 = 1;
-			//	} else if (RY0 - rY1 < 5) {
-			//		T5 = 1 - (RY0 - rY1) / 5;
-			//	}
-			//} else {
-				// ... rX, non-rY0 taper -- Equation 15b
-				if (rJB == 0.0) {
-					T5 = 1;
-				} else if (rJB < 30.0) {
-					T5 = 1 - rJB / 30.0;
-				}
-			//}
+			// ... rX, rY0 taper -- Equation 15b
+			double T5 = (rJB == 0.0) ? 1.0 : 1 - rJB / 30.0;
 			
 			// total -- Equation 10
 			f4 = c.a13 * T1 * T2 * T3 * T4 * T5;
