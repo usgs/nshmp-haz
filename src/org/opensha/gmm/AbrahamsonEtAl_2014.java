@@ -241,7 +241,7 @@ final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 	
 	// -- Equation 9
 	private static final double getV1(IMT imt) {
-		Double T = imt.getPeriod();
+		Double T = imt.period();
 		if (T == null) return 1500.0;
 		if (T >= 3.0) return 800.0;
 		if (T > 0.5) return exp( -0.35 * log(T / 0.5) + log(1500.0));

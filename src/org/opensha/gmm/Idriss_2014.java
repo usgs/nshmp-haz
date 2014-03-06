@@ -85,7 +85,7 @@ final class Idriss_2014 implements GroundMotionModel {
 	// Aleatory uncertainty model
 	private static final double calcStdDev(Coeffs c, double Mw) {
 		double s1 = 0.035;
-		Double T = c.imt.getPeriod();
+		Double T = c.imt.period();
 		s1 *= (T == null || T <= 0.05) ? log(0.05) : (T < 3.0) ? log(T)
 			: log(3d);
 		double s2 = 0.06;

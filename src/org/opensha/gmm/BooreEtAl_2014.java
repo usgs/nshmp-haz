@@ -111,7 +111,7 @@ final class BooreEtAl_2014 implements GroundMotionModel {
 
 		// Basin depth term -- Equations 9, 10 , 11
 		double DZ1 = calcDeltaZ1(z1p0, vs30);
-		double Fdz1 = (c.imt.isSA() && c.imt.getPeriod() >= 0.65) ?
+		double Fdz1 = (c.imt.isSA() && c.imt.period() >= 0.65) ?
 			(DZ1 <= c.f7 / c.f6) ? c.f6 * DZ1 : c.f7
 				: 0.0;
 		
