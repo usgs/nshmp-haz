@@ -59,7 +59,7 @@ final class CampbellBozorgnia_2008 implements GroundMotionModel {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GMM_Source props) {
 		FaultStyle style = rakeToFaultStyle(props.rake);
 		return calc(coeffs, coeffsPGA, props.Mw, props.rJB, props.rRup,
 			props.dip, props.zTop, style, props.vs30, props.z2p5);
@@ -187,7 +187,7 @@ final class CampbellBozorgnia_2008 implements GroundMotionModel {
 	
 	public static void main(String[] args) {
 
-		GMM_Input in = GMM_Input.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
+		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
 		ScalarGroundMotion sgm;
 		
 		System.out.println("PGA");

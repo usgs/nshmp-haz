@@ -68,7 +68,7 @@ abstract class BCHydro_2012 implements GroundMotionModel {
 	}
 
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GMM_Source props) {
 		
 		// pgaRock only required to compute non-linear site response when vs30
 		// is less than period-dependent vlin cutoff
@@ -122,7 +122,7 @@ abstract class BCHydro_2012 implements GroundMotionModel {
 
 	public static void main(String[] args) {
 
-		GMM_Input in = GMM_Input.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0,
+		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0,
 			2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
 		ScalarGroundMotion sgm;
 

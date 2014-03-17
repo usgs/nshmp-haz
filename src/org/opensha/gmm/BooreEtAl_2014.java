@@ -68,7 +68,7 @@ final class BooreEtAl_2014 implements GroundMotionModel {
 	// TODO limit supplied z1p0 to 0-3 km
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GMM_Source props) {
 		FaultStyle style = rakeToFaultStyle(props.rake);
 		return calc(coeffs, coeffsPGA, props.Mw, props.rJB, style, props.vs30,
 			props.z1p0);

@@ -39,7 +39,7 @@ final class GraizerKalkan_2013 implements GroundMotionModel {
 	}
 
 	@Override
-	public ScalarGroundMotion calc(GMM_Input props) {
+	public ScalarGroundMotion calc(GMM_Source props) {
 		FaultStyle style = rakeToFaultStyle(props.rake);
 		return calc(period, props.Mw, props.rRup, style, props.vs30);
 	}
@@ -150,7 +150,7 @@ final class GraizerKalkan_2013 implements GroundMotionModel {
 	
 	public static void main(String[] args) {
 
-		GMM_Input in = GMM_Input.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
+		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
 		ScalarGroundMotion sgm;
 		
 		System.out.println("PGA");

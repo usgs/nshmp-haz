@@ -47,7 +47,7 @@ class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 	}
 
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GMM_Source props) {
 		SiteClass sc = GMM_Utils.ceusSiteClass(props.vs30);
 		double mean = (sc == SOFT_ROCK) ?
 			bcTable.get(props.rRup, converter().convert(props.Mw)) :
@@ -65,7 +65,7 @@ class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
 	public static void main(String[] args) {
 		
-//		GMM_Input in = GMM_Input.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
+//		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
 //		ScalarGroundMotion sgm;
 //		
 //		System.out.println("PGA");

@@ -92,7 +92,7 @@ abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsMag {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GMM_Source props) {
 		
 		// this call will only allow vs30 = 760 | 2000
 		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);
@@ -200,7 +200,7 @@ abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsMag {
 		dome(pp);
 		System.out.println(pp);
 		
-//		GMM_Input in = GMM_Input.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
+//		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
 //		ScalarGroundMotion sgm;
 //		
 //		System.out.println("PGA");
