@@ -1,0 +1,109 @@
+package org.opensha.geo;
+
+import static org.opensha.geo.GeoTools.TO_RAD;
+
+import org.opensha.util.Parsing;
+
+/**
+ * Identifiers for basic geographic directions.
+ * @author Peter Powers
+ */
+public enum Direction {
+
+	/** North */
+	NORTH,
+	/** Northeast */
+	NORTHEAST,
+	/** East */
+	EAST,
+	/** Southeast */
+	SOUTHEAST,
+	/** South */
+	SOUTH,
+	/** Southwest */
+	SOUTHWEST,
+	/** West */
+	WEST,
+	/** Northwest */
+	NORTHWEST;
+
+	@Override
+	public final String toString() {
+		return Parsing.enumLabelWithSpaces(this);
+	}
+
+	/**
+	 * Returns the bearing in degrees (0&deg; &ndash; 360&deg;) associated with
+	 * this {@code Direction} (e.g. NORTHEAST = 45&deg;).
+	 * @return the bearing in degrees
+	 */
+	public final double bearing() {
+		return ordinal() * 45;
+	}
+
+	/**
+	 * Returns the numeric bearing in radians(0 &ndash; 2&pi;) associated with
+	 * this {@code Direction} (e.g. NORTHEAST = &pi;/4).
+	 * @return the bearing in radians
+	 */
+	public final double bearingRad() {
+		return bearing() * TO_RAD;
+	}
+
+	/**
+	 * Returns the {@code Direction} opposite this {@code Direction}
+	 * @return the opposite {@code Direction}
+	 */
+	public final Direction opposite() {
+		return valueOf((ordinal() + 4) % 8);
+	}
+
+	/**
+	 * Returns the {@code Direction} encountered moving clockwise from this
+	 * {@code Direction}.
+	 * @return the next (moving clockwise) {@code Direction}
+	 */
+	public final Direction next() {
+		return valueOf((ordinal() + 1) % 8);
+	}
+
+	/**
+	 * Returns the {@code Direction} encountered moving anti-clockwise from this
+	 * {@code Direction}.
+	 * @return the previous (moving anti-clockwise) {@code Direction}
+	 */
+	public final Direction prev() {
+		return valueOf((ordinal() + 7) % 8);
+	}
+
+	/**
+	 * Returns whether a move in this {@code Direction} will result in a
+	 * positive, negative or no change to the latitude of some geographic
+	 * location.
+	 * @return the sign of a latitude change corresponding to a move in this
+	 *         {@code Direction}
+	 */
+	public final int signLatMove() {
+		return dLat[ordinal()];
+	}
+
+	/**
+	 * Returns whether a move in this {@code Direction} will result in a
+	 * positive, negative or no change to the longitude of some geographic
+	 * location.
+	 * @return the sign of a longitude change corresponding to a move in this
+	 *         {@code Direction}
+	 */
+	public final int signLonMove() {
+		return dLon[ordinal()];
+	}
+
+	private static final int[] dLat = { 1, 1, 0, -1, -1, -1, 0, 1 };
+	private static final int[] dLon = { 0, 1, 1, 1, 0, -1, -1, -1 };
+	private static final Direction[] values = values();
+
+	private final Direction valueOf(int ordinal) {
+		return values[ordinal];
+	}
+
+}
