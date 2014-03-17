@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 import org.opensha.data.DataUtils;
 import org.opensha.util.Logging;
+import org.opensha.util.MathUtils;
 import org.opensha.util.Parsing;
 
 import com.google.common.base.Charsets;
@@ -41,9 +42,14 @@ final class GMM_Tables {
 	private static final Logger log = Logging.create(GMM_Table.class);
 	private static final String LF = LINE_SEPARATOR.value();
 
-	// standardize lookup of r and m, but will need to post process in some cases
-	// e.g. atkinson tables scale gm like 1/r above largest distance; Frankel
-	// clamps to largest distance
+	// Implementation notes:
+	//
+	//		Tables record value in log10(PSA); note conversion to base e when
+	//		static get(double, double, Map) returns.
+	//
+	//		R and M based lookup is standardized, but some models require post
+	//		processing of the returned result; e.g. atkinson tables scale gm
+	//		like 1/r above largest distance; Frankel clamps to largest distance
 
 	private static final String T_DIR = "tables/";
 	
@@ -163,23 +169,6 @@ final class GMM_Tables {
 	static GMM_Table getPezeshk11(IMT imt) {
 		return pezeshk11.get(imt);
 	}
-
-	
-	// TODO clean
-//	public static void main(String[] args) throws IOException {
-//		double m = 5.25;
-//		double r = 109.9;
-//		GMM_Table ft = getFrankel96(IMT.PGA, SiteClass.HARD_ROCK);
-//		double v1 = ft.get(r, m);
-//		System.out.println(v1);
-//		
-////		-2.0032512537589744
-//
-//		GMM_Table gt = getAtkinson06(PGA);
-//		double v2 = gt.get(r, m);
-//		System.out.println(v2);
-//		
-//	}
 	
 	/* Base implementation */
 	static abstract class AbstractGMM_Table implements GMM_Table {
@@ -386,7 +375,7 @@ final class GMM_Tables {
 			fractionalValue(gmRhiMlo, gmRhiMhi, mFrac),
 			rFrac);
 
-		return gm;// * Utils.LOG_BASE_10_TO_E;
+		return gm * MathUtils.LOG_BASE_10_TO_E;
 	}
 	
 	/* IO error handler */
