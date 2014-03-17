@@ -47,7 +47,6 @@ final class BooreEtAl_2014 implements GroundMotionModel {
 		double Dc3CnTr, Dc3ItJp;
 	}
 
-	// implementation constants
 	private static final double A = pow(570.94, 4);
 	private static final double B = pow(1360, 4) + A;
 	private static final double M_REF = 4.5;

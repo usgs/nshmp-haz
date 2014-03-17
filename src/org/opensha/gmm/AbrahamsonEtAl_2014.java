@@ -49,15 +49,12 @@ final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 		double a25, a28, a29, a31, a36, a37, a38, a39, a40, a41, a42;
 	}
 	
-	// author declared constants
 	private static final double A3 = 0.275;
 	private static final double A4 = -0.1;
 	private static final double A5 = -0.41;
 	private static final double M2 = 5.0;
 	private static final double N = 1.5;
 	private static final double C4 = 4.5;
-	
-	// implementation constants
 	private static final double A = pow(610, 4);
 	private static final double B = pow(1360, 4) + A;
 	private static final double VS_RK = 1180.0;

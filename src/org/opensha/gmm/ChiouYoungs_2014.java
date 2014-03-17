@@ -35,6 +35,7 @@ import org.opensha.calc.ScalarGroundMotion;
 final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	// TODO review class javadoc and update citation to EQS
+	// TODO consider removing odd 0.12 and 0.17s periods
 
 	public static final String NAME = "Chiou \u0026 Youngs (2014)";
 
@@ -54,7 +55,6 @@ final class ChiouYoungs_2014 implements GroundMotionModel {
 				phi6_JP;
 	}
 
-	// author declared constants
 	private static final double C2 = 1.06;
 	private static final double C4 = -2.1;
 	private static final double C4A = -0.5;
@@ -63,8 +63,6 @@ final class ChiouYoungs_2014 implements GroundMotionModel {
 	private static final double CRBsq = CRB * CRB;
 	private static final double C11 = 0.0;
 	private static final double PHI6 = 300.0;
-
-	// implementation constants
 	private static final double A = pow(571, 4);
 	private static final double B = pow(1360, 4) + A;
 

@@ -44,18 +44,17 @@ final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
 	static class Coeffs extends Coefficients {
 		
-		double c0, c1, c2, c3, c4, c5, c6, c7, c9, c10, c11, c12, c13, c14,
+		double c0, c1, c2, c3, c4, c5, c6, c7, c9, c10, c11, c14,
 				c15, c16, c17, c18, c19, c20, a2, h1, h2, h3, h5, h6, k1, k2,
 				k3, phi1, phi2, tau1, tau2, rho;
 		
 		// same for all periods; replaced with constant; or unused (c8)
-		double c8, h4, c, n, phi_lnaf;
+		double c8, c12, c13, h4, c, n, phi_lnaf;
 		// unused regional and other coeffs
 		double Dc20_CA, Dc20_JP, Dc20_CH, phiC;
 	}
 	
-	// implementation constants
-	private static final double H4 = 0.0;
+	private static final double H4 = 1.0;
 	private static final double C = 1.88;
 	private static final double N = 1.18;
 	private static final double PHI_LNAF_SQ = 0.09; // 0.3^2
@@ -159,7 +158,7 @@ final class CampbellBozorgnia_2014 implements GroundMotionModel {
 	
 			// ... magnitude -- Equation 14
 			double Fhw_m = 1.0 + c.a2 * (Mw - 6.5);
-			if (Mw > 6.5) Fhw_m *= (Mw - 5.5);
+			if (Mw <= 6.5) Fhw_m *= (Mw - 5.5);
 	
 			// ... depth -- Equation 15
 			double Fhw_z = 1.0 - 0.06 * zTop;
