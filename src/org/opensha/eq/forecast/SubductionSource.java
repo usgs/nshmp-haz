@@ -7,8 +7,6 @@ import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import static org.opensha.eq.fault.Faults.*;
 
-import gov.usgs.earthquake.nshm.util.SourceRegion;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,9 +40,12 @@ public class SubductionSource implements Source {
 
 	private static final MagScalingRelationship SUBmsr;
 	// Geomatrix - used for GR MFDs
+	// TODO what mag scaling relations are used?
+	// are all sub sources fixed dimensions? what do floaters use?
+
 	
 	// TODO move this out of here
-	
+		
 	static {
 		SUBmsr = new GeoMat_MagLenthRelationship();
 	}
@@ -57,7 +58,7 @@ public class SubductionSource implements Source {
 	double rake;
 	
 	SourceType type; // TODO this shouldn't be needed or should be type() in Source interface
-	SourceRegion region; // TODO this MUST go; temporarily in place for
+	//SourceRegion region; // TODO this MUST go; temporarily in place for
 	// compilation of MagScaling selection; NSHMP specific, this source used to
 	// be used for all regions but magScaling should be specified in input
 	// file xml; this is currently a reverse dependency back to org.usgs packages

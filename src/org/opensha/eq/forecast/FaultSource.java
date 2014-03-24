@@ -190,8 +190,13 @@ public class FaultSource implements Source {
 		rupCount = Lists.newArrayList();
 		rupCount.add(0);
 		size = 0;
-		MagScalingRelationship msr = ((type == SourceType.FAULT) &&
-			(region == SourceRegion.CA) && floats) ? CAFmsr : WCLmsr;
+		
+		// TODO need to specify MSR in XML
+//		MagScalingRelationship msr = ((type == SourceType.FAULT) &&
+//			(region == SourceRegion.CA) && floats) ? CAFmsr : WCLmsr;
+		MagScalingRelationship msr = null;
+		
+		
 		FloatingPoissonFaultSource source;
 		for (IncrementalMFD mfd : mfds) {
 			source = new FloatingPoissonFaultSource(
