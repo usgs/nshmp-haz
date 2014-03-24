@@ -4,20 +4,11 @@ import org.opensha.eq.forecast.Distances;
 
 /**
  * Earthquake {@code Rupture} data and receiver site properties used as inputs
- * to ground motion models (GMMs). Not all GMMs will use all properties.
+ * to ground motion models (GMMs). Not all GMMs use all properties.
  * 
  * @author Peter Powers
  */
 public final class GMM_Source {
-
-	// TODO rename GMM_Source
-	// TODO implement builder -- what error checking to do if this is only
-	//				an internal class? 
-	//			- advantage of builder (document) is that it can be reused to
-	//				generate new GMM_Source instances that may have changed
-	//				only slightly (e.g. rake and dip for floaters; site not
-	//				changing etc...)
-	// TODO may need pre-converted (non Mw) mag field for use in CEUS
 
 	// source
 	final double Mw;
@@ -92,9 +83,18 @@ public final class GMM_Source {
 		return new Builder();
 	}
 	
+	// TODO implement builder -- what error checking to do if this is only
+	//				an internal class? 
+	//			- advantage of builder (document) is that it can be reused to
+	//				generate new GMM_Source instances that may have changed
+	//				only slightly (e.g. rake and dip for floaters; site not
+	//				changing etc...)
+
+
 	// TODO rename unchecked builder or provide factory methods to get both checked
 	// and unchecked builders
 	// TODO use Distances object
+	// TODO comments javadocs
 	public static class Builder {
 		
 		double Mw;

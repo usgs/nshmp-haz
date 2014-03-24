@@ -21,7 +21,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * Great Interface Earthquakes in the Cascadia Subduction Zone: Bulletin of the
  * Seismological Society of America, v. 99, p. 1552-1578.</p>
  * 
- * Component: geometric mean of two horizontal components
+ * <p>Component: geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
  */

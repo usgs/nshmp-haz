@@ -18,6 +18,37 @@ import com.google.common.collect.Sets;
 @SuppressWarnings("javadoc")
 public enum GMM {
 	
+	// TODO review sub zTop rules; I believe there are places where zHyp is spoecified by a model but zTop is supplied instead
+	//			Zhao in hazgrid uses zTop for zHyp
+	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too high at large distances
+	// TODO sub GMMs were reweighted ??
+	// TODO do deep GMMs saturate at 7.8 ???
+	// TODO do SUB GMM's float downdip AND along strike, or jsut along strike?
+	// TODO how to deal with CEUS distance cutoffs (@ 500km):
+	//			- could specify applicable distances and weights in gmm.xml
+	//			- could break sources in two, with distance-specific GMMS returning 0 if out of range (seems ugly)
+	// TODO check CEUS clamp consistency; should be PGA = 3g, <=0.5s = 6g, else = 0g (which means no clamp applied)
+	//			- Cb03 was (incorrectly) changed from 3g at 0.5s to 0g instead of 6g ??
+	//			- Somerville has 6g clamp at 2s ???
+	// TODO most CEUS GMM's have 0.4s coeffs that were linearly interpolated for special NRC project; consider removing them??
+	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified anywhere?
+	// TODO revisit hazgrid history to ensure that bugs/fixes from 2008 carried through to 2014 in Fortran
+	// TODO Port GMM grid optimization tables
+	//
+	// TODO Ensure Atkinson sfac/gfac is implemented correctly
+	// TODO amean11 (fortran) has wrong median clamp values and short period ranges
+	// TODO Toro Mb-Mw conversion (has mb specific implementation
+	// TODO finish gmm.xml
+	// TODO is Atkinson Macias ok? finished?
+	// TODO is there a citation for Atkinson distance decay
+	//			mean = mean - 0.3 + 0.15(log(rJB))  (ln or log10 ??)
+	// TODO ensure table lookups are using correct distance metric, some are rRup and some are rJB
+	// TODO check Fortran minimums (this note may have been written just regarding GMM table lookups, Atkinson in particular)
+	//			hazgrid A08' minR=1.8km; P11 minR = 1km; others?
+	//			hazfx all (tables?) have minR = 0.11km
+	// TODO doublecheck that SUB implementations are using the correct distance metric
+	
+	
 	// @formatter:off
 
 	// NGA-West1 NSHMP 2008
