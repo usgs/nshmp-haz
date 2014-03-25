@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/Java 7 JDK"/>
 	<classpathentry kind="lib" path="lib/commons-math3-3.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://commons.apache.org/proper/commons-math/javadocs/api-3.2/"/>
