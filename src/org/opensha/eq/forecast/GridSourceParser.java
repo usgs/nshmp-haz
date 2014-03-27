@@ -104,16 +104,12 @@ class GridSourceParser extends DefaultHandler {
 				double weight = Double.valueOf(atts.getValue("weight"));
 				sourceBuilder = new GridSourceSet.Builder();
 				sourceBuilder.name(name);
-				if (log.isLoggable(INFO)) {
-					log.info("Building: " + name + " weight=" + weight);
-				}
+				if (log.isLoggable(INFO)) log.info("Building: " + name + " weight=" + weight);
 				break;
 				
 			case SOURCE_ATTS:
-				sourceBuilder.depthMap(stringToValueValueWeightMap(atts
-					.getValue("depthMap")));
-				sourceBuilder.mechs(stringToEnumWeightMap(
-					atts.getValue("mechs"), FocalMech.class));
+				sourceBuilder.depthMap(stringToValueValueWeightMap(atts.getValue("depthMap")));
+				sourceBuilder.mechs(stringToEnumWeightMap(atts.getValue("mechs"), FocalMech.class));
 				break;
 				
 			case DEFAULTS:
@@ -153,8 +149,7 @@ class GridSourceParser extends DefaultHandler {
 			
 			case NODE:
 				readingLoc = false;
-				sourceBuilder.location(
-					Location.fromString(locBuilder.toString()), nodeMFD);
+				sourceBuilder.location(Location.fromString(locBuilder.toString()), nodeMFD);
 				break;
 		}
 	}
