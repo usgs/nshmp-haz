@@ -1,6 +1,14 @@
 package org.opensha.geo;
 
-import static org.opensha.geo.GeoTools.*;
+import static java.lang.Math.atan;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static org.opensha.geo.GeoTools.PI_BY_2;
+import static org.opensha.geo.GeoTools.TO_DEG;
+import static org.opensha.geo.GeoTools.TWOPI;
+import static org.opensha.geo.Locations.azimuthRad;
+import static org.opensha.geo.Locations.horzDistance;
+import static org.opensha.geo.Locations.vertDistance;
 
 /**
  * This class encapsulates information describing a vector between two
@@ -42,8 +50,7 @@ public class LocationVector {
 	 * @param vertical component to set in km
 	 * @return a new {@code LocationVector}
 	 */
-	public static LocationVector create(double azimuth, double horizontal,
-			double vertical) {
+	public static LocationVector create(double azimuth, double horizontal, double vertical) {
 		return new LocationVector(azimuth, horizontal, vertical);
 	}
 
@@ -58,10 +65,8 @@ public class LocationVector {
 	 * @param length of vector in km
 	 * @return a new {@code LocationVector}
 	 */
-	public static LocationVector createWithPlunge(double azimuth,
-			double plunge, double length) {
-		return create(azimuth, length * Math.cos(plunge),
-			length * Math.sin(plunge));
+	public static LocationVector createWithPlunge(double azimuth, double plunge, double length) {
+		return create(azimuth, length * cos(plunge), length * sin(plunge));
 	}
 
 	/**
@@ -75,8 +80,7 @@ public class LocationVector {
 	public static LocationVector create(Location p1, Location p2) {
 		// NOTE A 'fast' implementation of this method was tested
 		// but no performance gain was realized P.Powers 3-5-2010
-		return LocationVector.create(Locations.azimuthRad(p1, p2),
-			Locations.horzDistance(p1, p2), Locations.vertDistance(p1, p2));
+		return create(azimuthRad(p1, p2), horzDistance(p1, p2), vertDistance(p1, p2));
 	}
 
 	/**
@@ -123,7 +127,7 @@ public class LocationVector {
 	 * @return the plunge of this vector
 	 */
 	public double plunge() {
-		return Math.atan(vert / horiz);
+		return atan(vert / horiz);
 	}
 
 	/**
@@ -135,7 +139,7 @@ public class LocationVector {
 	 * @return the plunge of this vector
 	 */
 	public double plungeDegrees() {
-		return plunge() * GeoTools.TO_DEG;
+		return plunge() * TO_DEG;
 	}
 
 	/**
