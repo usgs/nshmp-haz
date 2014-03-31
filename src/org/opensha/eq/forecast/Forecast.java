@@ -45,8 +45,8 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>> {
 	//			correctly to 2008
 	//
 	// TODO specify mag-scaling relations in config files for floating rupture sizes
-	//			GR implicitely floats and requires MSR
-	//			CH floating may be specified and would reuire MSR -- note
+	//			GR implicitely floats and requires MagScalingType
+	//			CH floating may be specified and would reuire MagScalingType -- note
 	//			FaultSourceParser.buildSingle() ignores 'floats'
 	//
 	// TODO ALWAYS USE WEIGHTS -- parsers should throw error if missing

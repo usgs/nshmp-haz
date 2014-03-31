@@ -107,7 +107,7 @@ class SubductionSourceParser extends DefaultHandler {
 					sources = new SubductionSourceSet();
 					break;
 	
-				case SUBDUCTION_SOURCE:
+				case SOURCE:
 					String name = readString("name", atts);
 					sourceBuilder = new SubductionSource.Builder();
 					sourceBuilder.name(name);
@@ -167,7 +167,7 @@ class SubductionSourceParser extends DefaultHandler {
 						.fromString(traceBuilder.toString()));
 					break;
 
-				case SUBDUCTION_SOURCE:
+				case SOURCE:
 					sources.add(sourceBuilder.build());
 					break;
 					

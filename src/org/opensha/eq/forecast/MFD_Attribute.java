@@ -25,6 +25,8 @@ public enum MFD_Attribute {
 	FLOATS,
 	WEIGHT,
 	
+	MAG_SCALING,
+	
 	MAGS,
 	RATES;
 	

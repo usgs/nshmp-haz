@@ -112,7 +112,7 @@ class GridSourceParser extends DefaultHandler {
 				sourceBuilder.mechs(stringToEnumWeightMap(atts.getValue("mechs"), FocalMech.class));
 				break;
 				
-			case DEFAULTS:
+			case SETTINGS:
 				mfdDataMap = Maps.newEnumMap(MFD_Type.class);
 				break;
 				
@@ -143,7 +143,7 @@ class GridSourceParser extends DefaultHandler {
 
 		switch (e) {
 
-			case DEFAULTS:
+			case SETTINGS:
 				checkState(mfdDataMap.isEmpty(), "No default MFDs are defined");
 				break;
 			

@@ -112,7 +112,7 @@ class FaultSourceParser extends DefaultHandler {
 					sources = new FaultSourceSet();
 					break;
 	
-				case FAULT_SOURCE:
+				case SOURCE:
 					String name = readString("name", atts);
 					sourceBuilder = new FaultSource.Builder();
 					sourceBuilder.name(name);
@@ -176,7 +176,7 @@ class FaultSourceParser extends DefaultHandler {
 						.toString()));
 					break;
 					
-				case FAULT_SOURCE:
+				case SOURCE:
 					sources.add(sourceBuilder.build());
 					break;
 					

@@ -191,7 +191,7 @@ public class FaultSource implements Source {
 		rupCount.add(0);
 		size = 0;
 		
-		// TODO need to specify MSR in XML
+		// TODO need to specify MagScalingType in XML
 //		MagScalingRelationship msr = ((type == SourceType.FAULT) &&
 //			(region == SourceRegion.CA) && floats) ? CAFmsr : WCLmsr;
 		MagScalingRelationship msr = null;

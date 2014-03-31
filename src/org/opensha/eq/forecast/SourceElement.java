@@ -12,38 +12,31 @@ import com.google.common.base.CaseFormat;
 @SuppressWarnings("javadoc")
 public enum SourceElement {
 
-	FAULT_SOURCE_SET,
-	FAULT_SOURCE,
-	
+	SOURCE,
+	SETTINGS,
+	MAG_FREQ_DIST_REF,
+	MAG_FREQ_DIST,
+
 	MAG_UNCERTAINTY,
 	EPISTEMIC,
 	ALEATORY,
-	
-	MAG_FREQ_DIST,
-	
+
+	FAULT_SOURCE_SET,
 	GEOMETRY,
 	TRACE,
 
-	
 	SUBDUCTION_SOURCE_SET,
-	SUBDUCTION_SOURCE,
-	
 	LOWER_TRACE,
-
 
 	INDEXED_FAULT_SOURCE_SET,
 	INDEXED_FAULT_SECTIONS,
-	FAULT_SECTION,
-	
+	SECTION,
 	
 	GRID_SOURCE_SET,
 	
 	SOURCE_ATTS,
-	
 	NODES,
-	NODE,
-	
-	DEFAULTS;
+	NODE;
 		
 	/**
 	 * Returns an {@code CaseFormat#UPPER_CAMEL} {@code String} representation

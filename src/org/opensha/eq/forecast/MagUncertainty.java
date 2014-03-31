@@ -180,18 +180,21 @@ public class MagUncertainty {
 	 * @return a reference to the newly created {@code Element}
 	 */
 	public Element appendTo(Element node) {
+		if (!hasAleatory && !hasEpistemic) return null;
 		Element e = addElement(MAG_UNCERTAINTY, node);
-		Element eEpistemic = addElement(EPISTEMIC, e);
-		eEpistemic.setAttribute("enable", Boolean.toString(hasEpistemic));
-		eEpistemic.setAttribute("deltas", Arrays.toString(epiDeltas));
-		eEpistemic.setAttribute("weights", Arrays.toString(epiWeights));
-		eEpistemic.setAttribute("cutoff", Double.toString(epiCutoff));
-		Element eAleatory = addElement(ALEATORY, e);
-		eAleatory.setAttribute("enable", Boolean.toString(hasAleatory));
-		eAleatory.setAttribute("sigma", Double.toString(aleaSigma));
-		eAleatory.setAttribute("count", Integer.toString(aleaCount));
-		eAleatory.setAttribute("balance", Boolean.toString(moBalance));
-		eAleatory.setAttribute("cutoff", Double.toString(aleaCutoff));
+		if (hasEpistemic) {
+			Element eEpistemic = addElement(EPISTEMIC, e);
+			eEpistemic.setAttribute("deltas", Arrays.toString(epiDeltas));
+			eEpistemic.setAttribute("weights", Arrays.toString(epiWeights));
+			eEpistemic.setAttribute("cutoff", Double.toString(epiCutoff));
+		}
+		if (hasAleatory) {
+			Element eAleatory = addElement(ALEATORY, e);
+			eAleatory.setAttribute("sigma", Double.toString(aleaSigma));
+			eAleatory.setAttribute("count", Integer.toString(aleaCount));
+			eAleatory.setAttribute("moBalance", Boolean.toString(moBalance));
+			eAleatory.setAttribute("cutoff", Double.toString(aleaCutoff));
+		}
 		return e;
 	}
 	
