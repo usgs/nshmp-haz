@@ -1,5 +1,11 @@
 package org.opensha.eq.fault.surface;
 
+import static org.opensha.geo.Locations.linearDistanceFast;
+import static org.opensha.geo.Locations.location;
+import static org.opensha.geo.LocationVector.createWithPlunge;
+import static java.math.RoundingMode.HALF_UP;
+
+import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,7 +17,9 @@ import org.opensha.geo.LocationList;
 import org.opensha.geo.Locations;
 import org.opensha.geo.LocationVector;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.math.DoubleMath;
 
 /**
  * <b>Title:</b> StirlingGriddedSurface.   <br>
@@ -286,6 +294,126 @@ public class StirlingGriddedSurface extends EvenlyGriddedSurfFromSimpleFaultData
 			 */
 	}
 	
+	// Surely the creation of a gridded surface can be easier...
+	// ... and how on EARTH did we lose track of width which is defined for EVERY fault ?!?!
+	
+	public void create(LocationList trace, double dip, double width, double spacing) {
+		double dipRad = dip * GeoTools.TO_RAD;
+		double dipDirRad = Faults.dipDirectionRad(trace);
+		LocationList resampled = LocationList.resampledFrom(trace, spacing);
+		int nCol = resampled.size();
+		// strike-parallel row count, NOT including trace 
+		int nRow = DoubleMath.roundToInt(width / spacing, HALF_UP);
+		double dRow = width / nRow;
+		setNumRowsAndNumCols(nRow, nCol);
+		
+		int iCol = 0;
+		for (Location loc : resampled) {
+			set(0, iCol, loc);
+			double downDipDist = dRow;
+			for (int iRow=1; iRow <= nRow; iRow++) {
+				LocationVector v = createWithPlunge(dipDirRad, dipRad, downDipDist);
+				set(iRow, iCol, Locations.location(loc, v));
+			}
+			iCol++;
+		}
+	}
+	
+	
+	/**
+	 * This resamples the trace into num subsections of equal length (final
+	 * number of points in trace is num+1). However, note that these subsections
+	 * of are equal length on the original trace, and that the final subsections
+	 * will be less than that if there is curvature in the original between the
+	 * points (e.g., corners getting cut).
+	 * @param trace
+	 * @param num - number of subsections
+	 * @return
+	 */
+	public static LocationList resampleTrace(LocationList trace, int num) {
+		double resampInt = trace.length() / num;
+		// FaultTrace resampTrace = new FaultTrace("resampled "+trace.name());
+		List<Location> resampLocs = Lists.newArrayList();
+		resampLocs.add(trace.first()); // add the first location
+		double remainingLength = resampInt;
+		Location lastLoc = trace.first();
+		int NextLocIndex = 1;
+		while (NextLocIndex < trace.size()) {
+			Location nextLoc = trace.get(NextLocIndex);
+			double length = linearDistanceFast(lastLoc, nextLoc);
+			if (length > remainingLength) {
+				// set the point
+//				LocationVector dir = vector(lastLoc, nextLoc);
+//				dir.setHorzDistance(dir.getHorzDistance() * remainingLength /
+//					length);
+//				dir.setVertDistance(dir.getVertDistance() * remainingLength /
+//					length);
+				LocationVector dirSrc = LocationVector.create(lastLoc, nextLoc);
+				double hDist = dirSrc.horizontal() * remainingLength / length;
+				double vDist = dirSrc.vertical() * remainingLength / length;
+				LocationVector dir = LocationVector.create(dirSrc.azimuth(), hDist, vDist);
+				Location loc = location(lastLoc, dir);
+				resampLocs.add(loc);
+				lastLoc = loc;
+				remainingLength = resampInt;
+				// Next location stays the same
+			} else {
+				lastLoc = nextLoc;
+				NextLocIndex += 1;
+				remainingLength -= length;
+			}
+		}
+
+		// make sure we got the last one (might be missed because of numerical
+		// precision issues?)
+		double dist = linearDistanceFast(
+			trace.last(),
+			resampLocs.get(resampLocs.size() - 1));
+		if (dist > resampInt / 2)
+			resampLocs.add(trace.last());
+
+		/* Debugging Stuff **************** */
+		/*
+		 * // write out each to check System.out.println("RESAMPLED"); for(int
+		 * i=0; i<resampTrace.size(); i++) { Location l =
+		 * resampTrace.getLocationAt(i);
+		 * System.out.println(l.getLatitude()+"\t"+
+		 * l.getLongitude()+"\t"+l.getDepth()); }
+		 * 
+		 * System.out.println("ORIGINAL"); for(int i=0; i<trace.size(); i++) {
+		 * Location l = trace.getLocationAt(i);
+		 * System.out.println(l.getLatitude(
+		 * )+"\t"+l.getLongitude()+"\t"+l.getDepth()); }
+		 * 
+		 * // write out each to check
+		 * System.out.println("target resampInt="+resampInt+"\tnum sect="+num);
+		 * System.out.println("RESAMPLED"); double ave=0, min=Double.MAX_VALUE,
+		 * max=Double.MIN_VALUE; for(int i=1; i<resampTrace.size(); i++) {
+		 * double d =
+		 * Locations.getTotalDistance(resampTrace.getLocationAt(i-1),
+		 * resampTrace.getLocationAt(i)); ave +=d; if(d<min) min=d; if(d>max)
+		 * max=d; } ave /= resampTrace.size()-1;
+		 * System.out.println("ave="+ave+"\tmin="
+		 * +min+"\tmax="+max+"\tnum pts="+resampTrace.size());
+		 * 
+		 * 
+		 * System.out.println("ORIGINAL"); ave=0; min=Double.MAX_VALUE;
+		 * max=Double.MIN_VALUE; for(int i=1; i<trace.size(); i++) { double d =
+		 * Locations.getTotalDistance(trace.getLocationAt(i-1),
+		 * trace.getLocationAt(i)); ave +=d; if(d<min) min=d; if(d>max) max=d; }
+		 * ave /= trace.size()-1;
+		 * System.out.println("ave="+ave+"\tmin="+min+"\tmax="
+		 * +max+"\tnum pts="+trace.size());
+		 * 
+		 * /* End of debugging stuff *******************
+		 */
+
+		// TODO is resampled trace name used? can't it be acquired from a wrapping source?
+//		return FaultTrace.create("resampled " + trace.name(),
+//			LocationList.create(resampLocs));
+		return LocationList.create(resampLocs);
+	}
+
 	
 	/**
 	 * Override the parent with a version with fewer points

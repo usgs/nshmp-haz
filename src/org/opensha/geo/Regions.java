@@ -9,11 +9,13 @@ import java.awt.Shape;
 /**
  * Add comments here
  * 
- * Intersection and Union operations will discard any grid information if GriddedRegions are supplied.
+ * Intersection and Union operations will discard any grid information if
+ * GriddedRegions are supplied.
  * 
- * To build complex gridded regions (e.g. circular or buffered, or via intersections and unions) 
- * create a Region first and use {@link Regions#toGridded(Region, double, double, Location)}.
- *
+ * To build complex gridded regions (e.g. circular or buffered, or via
+ * intersections and unions) create a Region first and use
+ * {@link Regions#toGridded(Region, double, double, Location)}.
+ * 
  * @author Peter Powers
  */
 public class Regions {
@@ -35,8 +37,7 @@ public class Regions {
 	 *         consists of more than a single closed path.
 	 * @throws NullPointerException if the {@code border} is {@code null}
 	 */
-	public static Region create(String name, LocationList border,
-			BorderType type) {
+	public static Region create(String name, LocationList border, BorderType type) {
 		Region r = new Region(name);
 		r.initBordered(border, type);
 		return r;
@@ -144,9 +145,9 @@ public class Regions {
 	}
 
 	/**
-	 * Creates a circular {@code Region}. Internally, the centerpoint and
-	 * radius are used to create a circular region composed of straight line
-	 * segments that span 10&deg; wedges.
+	 * Creates a circular {@code Region}. Internally, the centerpoint and radius
+	 * are used to create a circular region composed of straight line segments
+	 * that span 10&deg; wedges.
 	 * 
 	 * @param name of the {@code Region}; may be {@code null}
 	 * @param center of the circle
@@ -156,8 +157,7 @@ public class Regions {
 	 *         km &lt; {@code radius} &le; 1000 km
 	 * @throws NullPointerException if {@code center} is {@code null}
 	 */
-	public static Region createCircular(String name, Location center,
-			double radius) {
+	public static Region createCircular(String name, Location center, double radius) {
 		Region r = new Region(name);
 		r.initCircular(center, radius);
 		return r;
@@ -280,6 +280,7 @@ public class Regions {
 	 *         longitude and -90&#176; to +90&#176; latitude
 	 */
 	public static Region global() {
+		// @formatter:off
 		LocationList locs = LocationList.create(
 			Location.create(-90, -180),
 			Location.create(-90, 180),

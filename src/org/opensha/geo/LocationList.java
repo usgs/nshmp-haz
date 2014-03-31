@@ -94,8 +94,8 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Creates a new {@code LocationList} with that is an exact copy of the
-	 * supplied {@code LocationList} but with reversed iteration order.
+	 * Creates a new {@code LocationList} that is an exact copy of the supplied
+	 * {@code LocationList} but with reversed iteration order.
 	 * @param locs to populate list with
 	 * @return a new {@code LocationList}
 	 */
@@ -106,6 +106,39 @@ public final class LocationList implements Iterable<Location> {
 		return copy;
 	}
 
+	/**
+	 * Creates a new {@code LocationList} by resampling the supplied list with
+	 * the desired spacing. The actual spacing of the returned list will likely
+	 * differ, as spacing is adjusted up or down to be closest to the desired
+	 * value and maintain uniform divisions. The original vertices are also not
+	 * preserved such that some corners might be adversely clipped if
+	 * {@code spacing} is too large. Buyer beware.
+	 * 
+	 * @param locs to resample
+	 * @param spacing resample interval
+	 * @return a new {@code LocationList}
+	 */
+	public static LocationList resampledFrom(LocationList locs, double spacing) {
+		double length = locs.length(); // lazily created and not cached
+		spacing = length / Math.rint(length / spacing);
+		LocationList.Builder builder = LocationList.builder();
+		Location start = locs.first();
+		builder.add(locs.first());
+		double walker = spacing;
+		for (Location loc : Iterables.skip(locs, 1)) {
+			LocationVector v = LocationVector.create(start, loc);
+			double distance = Locations.horzDistanceFast(start, loc);
+			while (walker < distance) {
+				builder.add(Locations.location(start, v));
+				walker += spacing;
+			}
+			start = loc;
+			walker -= distance;
+		}
+		if (walker < spacing / 2.0) builder.add(locs.last());
+		return builder.build();
+	}
+	
 	/**
 	 * Creates a new {@code LocationList} from the supplied {@code String}. This
 	 * method assumes that {@code s} is formatted in space-delimited xyz tuples,
@@ -165,12 +198,12 @@ public final class LocationList implements Iterable<Location> {
 
 	/**
 	 * Returns the length of this {@code LocationList} in km. Method uses
-	 * {@link Locations#horzDistanceFast(Location, Location)} algorithm. Repeat
+	 * {@link Locations#horzDistanceFast(Location, Location)} algorithm. Method is lazy and repeat
 	 * calls to this method will recalculate the length each time.
-	 * @return the length of a line that connects all {@code Location}s in this
-	 *         list
+	 * @return the length of a line that connects all {@code Location}s in this list
 	 */
 	public double length() {
+		// TODO perhaps this should be sensitive to depth variations
 		if (size() == 1) return 0.0;
 		double sum = 0.0;
 		Location prev = first();
