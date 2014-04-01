@@ -142,7 +142,6 @@ final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 			double T2 = (Mw >= 6.5) ?
 					1 + A2_HW * dM :
 					1 + A2_HW * dM - (1 - A2_HW) * dM * dM;
-			System.out.println(T2);
 			
 			// ... rX taper -- Equation 13
 			double T3 = 0.0;
