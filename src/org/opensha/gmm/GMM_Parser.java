@@ -172,6 +172,7 @@ class GMM_Parser extends DefaultHandler {
 		trans.transform(source, result);
 	}
 	
+	
 	public static void main(String[] args) throws Exception {
 		
 		//writer test
@@ -191,7 +192,7 @@ class GMM_Parser extends DefaultHandler {
 		
 		// TODO should skip symlinks
 		// traverser
-		String model = "tmp/NSHMP08-noRedux/";
+		String model = "forecasts/2008/";
 		File modelDir = new File(model);
 		TreeTraverser<File> traverser = Files.fileTreeTraverser();
 		FluentIterable<File> fIt = traverser

@@ -1,7 +1,7 @@
 package org.opensha.eq.forecast;
 
 import static org.opensha.util.Parsing.*;
-import static org.opensha.eq.forecast.MFD_Attribute.*;
+import static org.opensha.eq.forecast.SourceAttribute.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -281,13 +281,13 @@ class GridSourceParser extends DefaultHandler {
 	 */
 	private static List<IncrementalMFD> buildGR(Attributes atts,
 			MagUncertainty unc) {
-		double a = Parsing.readDouble(MFD_Attribute.A, atts);
-		double b = Parsing.readDouble(MFD_Attribute.B, atts);
-		double mMin = Parsing.readDouble(MFD_Attribute.M_MIN, atts);
-		double mMax = Parsing.readDouble(MFD_Attribute.M_MAX, atts);
-		double dMag = Parsing.readDouble(MFD_Attribute.D_MAG, atts);
-		double weight = Parsing.readDouble(MFD_Attribute.WEIGHT, atts);
-		boolean floats = Parsing.readBoolean(MFD_Attribute.FLOATS, atts);
+		double a = Parsing.readDouble(SourceAttribute.A, atts);
+		double b = Parsing.readDouble(SourceAttribute.B, atts);
+		double mMin = Parsing.readDouble(SourceAttribute.M_MIN, atts);
+		double mMax = Parsing.readDouble(SourceAttribute.M_MAX, atts);
+		double dMag = Parsing.readDouble(SourceAttribute.D_MAG, atts);
+		double weight = Parsing.readDouble(SourceAttribute.WEIGHT, atts);
+		boolean floats = Parsing.readBoolean(SourceAttribute.FLOATS, atts);
 
 		int nMag = MFDs.magCount(mMin, mMax, dMag);
 		checkState(nMag > 0, "GR MFD with no mags");
@@ -340,10 +340,10 @@ class GridSourceParser extends DefaultHandler {
 	 */
 	private static List<IncrementalMFD> buildSingle(Attributes atts,
 			MagUncertainty unc) {
-		double a = Parsing.readDouble(MFD_Attribute.A, atts);
-		double m = Parsing.readDouble(MFD_Attribute.M, atts);
-		double weight = Parsing.readDouble(MFD_Attribute.WEIGHT, atts);
-		boolean floats = Parsing.readBoolean(MFD_Attribute.FLOATS, atts);
+		double a = Parsing.readDouble(SourceAttribute.A, atts);
+		double m = Parsing.readDouble(SourceAttribute.M, atts);
+		double weight = Parsing.readDouble(SourceAttribute.WEIGHT, atts);
+		boolean floats = Parsing.readBoolean(SourceAttribute.FLOATS, atts);
 
 		List<IncrementalMFD> mfds = Lists.newArrayList();
 

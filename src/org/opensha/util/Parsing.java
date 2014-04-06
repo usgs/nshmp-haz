@@ -3,7 +3,6 @@ package org.opensha.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-
 import static org.opensha.data.DataUtils.validateWeights;
 
 import java.io.BufferedInputStream;
@@ -181,11 +180,33 @@ public final class Parsing {
 		return attMap;
 	}
 	
+	public static void addAttribute(Enum<?> id, boolean value, Element parent) {
+		addAttribute(id.toString(), Boolean.toString(value), parent);
+	}
+	
+	public static void addAttribute(Enum<?> id, double value, Element parent) {
+		addAttribute(id.toString(), Double.toString(value), parent);
+	}
+
+	// note strips zeros
+	public static void addAttribute(Enum<?> id, double value, String format, Element parent) {
+		addAttribute(id.toString(), stripZeros(String.format(format, value)), parent);
+	}
+	public static void addAttribute(Enum<?> id, String value, Element parent) {
+		addAttribute(id.toString(), value, parent);
+	}
+	
+	@Deprecated
+	private static void addAttribute(String name, String value, Element parent) {
+		parent.setAttribute(name, value);
+	}
+
 	public static Element addElement(Enum<?> id, Element parent) {
 		return addElement(id.toString(), parent);
 	}
 	
-	public static Element addElement(String name, Element parent) {
+	@Deprecated
+	private static Element addElement(String name, Element parent) {
 		Element e = parent.getOwnerDocument().createElement(name);
 		parent.appendChild(e);
 		return e;

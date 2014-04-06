@@ -3,30 +3,31 @@ package org.opensha.eq.forecast;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
-import com.google.common.base.CaseFormat;
-
 /**
- * Magnitude frequency distribution XML attributes.
+ * Forecast source XML attributes.
  * @author Peter Powers
  */
 @SuppressWarnings("javadoc")
-public enum MFD_Attribute {
+public enum SourceAttribute {
+	NAME,
+	WEIGHT,
 	
+	/* Geometry specific */
+	DIP,
+	WIDTH,
+	RAKE,
+	DEPTH,
+	
+	/* MFD specific */
 	TYPE,
-	
 	A,
 	M,
-	
 	B,
 	M_MIN,
 	M_MAX,
 	D_MAG,
-	
 	FLOATS,
-	WEIGHT,
-	
 	MAG_SCALING,
-	
 	MAGS,
 	RATES;
 	
@@ -48,7 +49,7 @@ public enum MFD_Attribute {
 	 * @throws IllegalArgumentException if supplied String is incorrectly
 	 *         formatted or no matching {@code MFD_Attribute} exists
 	 */
-	public static MFD_Attribute fromString(String s) {
+	public static SourceAttribute fromString(String s) {
 		return valueOf(LOWER_CAMEL.to(UPPER_UNDERSCORE, s));
 	}
 

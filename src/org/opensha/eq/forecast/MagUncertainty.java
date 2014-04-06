@@ -169,7 +169,7 @@ public class MagUncertainty {
 		.append("      M sigma: ").append(aleaSigma).append(LF)
 		.append("      M count: ").append(aleaCount).append(LF)
 		.append("   Mo balance: ").append(moBalance).append(LF)
-		.append("     M cutoff: ").append(aleaCutoff).append(LF).toString();
+		.append("     M cutoff: ").append(aleaCutoff).toString();
 		// @formatter:on
 	}
 	

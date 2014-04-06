@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
-import static org.opensha.eq.forecast.MFD_Attribute.*;
+import static org.opensha.eq.forecast.SourceAttribute.*;
 import static org.opensha.util.Parsing.readBoolean;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readString;

@@ -6,7 +6,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import com.google.common.base.CaseFormat;
 
 /**
- * Forecast source XML tags.
+ * Forecast source XML elements.
  * @author Peter Powers
  */
 @SuppressWarnings("javadoc")
@@ -39,7 +39,7 @@ public enum SourceElement {
 	NODE;
 		
 	/**
-	 * Returns an {@code CaseFormat#UPPER_CAMEL} {@code String} representation
+	 * Returns a {@code CaseFormat#UPPER_CAMEL} {@code String} representation
 	 * of this {@code SourceElement}.
 	 */
 	@Override
