@@ -180,6 +180,11 @@ public final class Parsing {
 		return attMap;
 	}
 	
+
+	public static void addAttribute(Enum<?> id, Enum<?> value, Element parent) {
+		addAttribute(id.toString(), value.name(), parent);
+	}
+
 	public static void addAttribute(Enum<?> id, boolean value, Element parent) {
 		addAttribute(id.toString(), Boolean.toString(value), parent);
 	}
@@ -196,7 +201,6 @@ public final class Parsing {
 		addAttribute(id.toString(), value, parent);
 	}
 	
-	@Deprecated
 	private static void addAttribute(String name, String value, Element parent) {
 		parent.setAttribute(name, value);
 	}
@@ -205,7 +209,6 @@ public final class Parsing {
 		return addElement(id.toString(), parent);
 	}
 	
-	@Deprecated
 	private static Element addElement(String name, Element parent) {
 		Element e = parent.getOwnerDocument().createElement(name);
 		parent.appendChild(e);

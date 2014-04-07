@@ -12,7 +12,11 @@ public enum SourceAttribute {
 	NAME,
 	WEIGHT,
 	
+	DEPTH_MAP,
+	MECH_MAP,
+	
 	/* Geometry specific */
+	STRIKE,
 	DIP,
 	WIDTH,
 	RAKE,

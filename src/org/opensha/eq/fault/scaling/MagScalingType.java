@@ -7,7 +7,8 @@ package org.opensha.eq.fault.scaling;
  */
 public enum MagScalingType {
 
-	NSHMP_CA,
-	WC_94_LENGTH;
+	NSHMP_CA,		// ELssworthB Hanks-&-Bakun hybrid
+	WC_94_LENGTH,	// Wells and Coppersmith '94
+	GEOMAT;			// (Youngs (GeoMatrix) subduction relation TODO reference?
 	
 }
