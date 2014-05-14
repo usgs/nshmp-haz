@@ -374,6 +374,17 @@ public final class DataUtils {
 		return data1;
 	}
 	
+	/*
+	 * Subtracts the values of {@code data2} from {@code data1} and returns a
+	 * reference to {@code data1} without any argument checking.
+	 */
+	static double[] uncheckedSubtract(double[] data1, double[] data2) {
+		for (int i = 0; i < data1.length; i++) {
+			data1[i] -= data2[i];
+		}
+		return data1;
+	}
+	
 	/**
 	 * Subtracts the values of {@code data2} from {@code data1} and returns a
 	 * reference to {@code data1}.
@@ -390,14 +401,51 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Multiplies the values of {@code data2} from {@code data1} and returns a
-	 * reference to {@code data1}.
+	 * Multiplies the values of {@code data1} by those in {@code data2} and
+	 * returns a reference to {@code data1}.
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static double[] multiply(double[] data1, double[] data2) {
 		checkArgument(checkNotNull(data1).length == checkNotNull(data2).length);
+		for (int i = 0; i < data1.length; i++) {
+			data1[i] *= data2[i];
+		}
+		return data1;
+	}
+
+	/*
+	 * Multiplies the values of {@code data1} by those in {@code data2} and
+	 * returns a reference to {@code data1} without any argument checking.
+	 */
+	static double[] uncheckedMultiply(double[] data1, double[] data2) {
+		for (int i = 0; i < data1.length; i++) {
+			data1[i] *= data2[i];
+		}
+		return data1;
+	}
+
+	/**
+	 * Diveds the values of {@code data1} by those in {@code data2} and
+	 * returns a reference to {@code data1}.
+	 * @param data1
+	 * @param data2
+	 * @return a reference to {@code data1}
+	 */
+	public static double[] divide(double[] data1, double[] data2) {
+		checkArgument(checkNotNull(data1).length == checkNotNull(data2).length);
+		for (int i = 0; i < data1.length; i++) {
+			data1[i] *= data2[i];
+		}
+		return data1;
+	}
+
+	/*
+	 * Multiplies the values of {@code data1} by those in {@code data2} and
+	 * returns a reference to {@code data1} without any argument checking.
+	 */
+	static double[] uncheckedDivide(double[] data1, double[] data2) {
 		for (int i = 0; i < data1.length; i++) {
 			data1[i] *= data2[i];
 		}

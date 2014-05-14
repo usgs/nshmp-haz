@@ -50,7 +50,7 @@ public class GeoTools {
 	// TODO we should allow for values up to 360
 	// TODO need to check distance calculations
 	/** Maximum longitude value (180&#176;). */
-	public static final double MAX_LON = 180.0;
+	public static final double MAX_LON = 360.0;
 
 	/**
 	 * Minimum allowed earthquake depth value (-5 km) following the

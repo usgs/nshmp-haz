@@ -18,6 +18,8 @@ import com.google.common.collect.FluentIterable;
  * ellipsoid. It is expressed in terms of latitude, longitude, and depth. As in
  * seismology, the convention adopted in here is for depth to be positive-down,
  * always. All utility methods in this package assume this to be the case.
+ * {@code Location}s may be defined using longitude values in the range:
+ * [-180&#176;, 360&#176;]. {@code Location} instances are immutable.
  * 
  * <p>Note that although static factory methods take arguments in the order:
  * [lat, lon, depth], {@code String} representations of a {@code Location} are
@@ -29,8 +31,6 @@ import com.google.common.collect.FluentIterable;
  * and stored internally in radians. Special {@code get***Rad()} methods are
  * provided to access this native format.</p>
  * 
- * <p>{@code Location} instances are immutable.</p>
- * 
  * @author Peter Powers
  */
 public final class Location implements Comparable<Location> {
@@ -41,10 +41,8 @@ public final class Location implements Comparable<Location> {
 	 */
 	public static final String FORMAT = "%.5f";
 	
-	private static final String TO_STR_FMT =
-			FORMAT + "," + FORMAT + "," + FORMAT;
+	private static final String TO_STR_FMT = FORMAT + "," + FORMAT + "," + FORMAT;
 	
-	// TODO allow -180 to 360 longitude; buyer beware
 	// TODO possibly store degrees and radians; distance calcs are optimized to
 	// radians,
 	// but Region.contains() requires degree values; how often is this used?

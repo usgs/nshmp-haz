@@ -11,17 +11,17 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 public enum SourceAttribute {
 	NAME,
 	WEIGHT,
-	
+
 	DEPTH_MAP,
 	MECH_MAP,
-	
+
 	/* Geometry specific */
 	STRIKE,
 	DIP,
 	WIDTH,
 	RAKE,
 	DEPTH,
-	
+
 	/* MFD specific */
 	TYPE,
 	A,
@@ -34,24 +34,25 @@ public enum SourceAttribute {
 	MAG_SCALING,
 	MAGS,
 	RATES;
-	
+
 	/**
 	 * Returns an {@code CaseFormat#LOWER_CAMEL} {@code String} representation
-	 * of this {@code MFD_Attribute}.
+	 * of this {@code SourceAttribute}.
 	 */
 	@Override
-	public String toString() { 
+	public String toString() {
 		return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
 	}
 
 	/**
-	 * Converts supplied {@code String} to equivalent {@code MFD_Attribute}.
+	 * Converts supplied {@code String} to equivalent {@code SourceAttribute}.
 	 * Method expects a {@code String} with {@code CaseFormat#LOWER_CAMEL}
 	 * @param s {@code String} to convert
-	 * @return the corresponding {@code MFD_Attribute}
+	 * @return the corresponding {@code SourceAttribute}
 	 * @see CaseFormat
-	 * @throws IllegalArgumentException if supplied String is incorrectly
-	 *         formatted or no matching {@code MFD_Attribute} exists
+	 * @throws IllegalArgumentException if supplied {@code String} is
+	 *         incorrectly formatted or no matching {@code SourceAttribute}
+	 *         exists
 	 */
 	public static SourceAttribute fromString(String s) {
 		return valueOf(LOWER_CAMEL.to(UPPER_UNDERSCORE, s));

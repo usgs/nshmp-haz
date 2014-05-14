@@ -36,7 +36,7 @@ public class SubductionSourceSet implements SourceSet<SubductionSource> {
 
 	@Override
 	public SourceType type() {
-		return SourceType.SUBDUCTION;
+		return SourceType.INTERFACE;
 	}
 
 }

@@ -142,7 +142,7 @@ public class HazardCalcManager {
 					break;
 				case AREA:
 					break;
-				case SUBDUCTION:
+				case INTERFACE:
 					break;
 				case CLUSTER:
 					break;
