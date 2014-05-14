@@ -78,6 +78,7 @@ calcResult = MatUtil.calc(gmm, imt, source)
 % conveniently be dumped into a struct.
 spectrumResult = struct(MatUtil.spectrum(gmm, source))
 
+% =========================================================================
 % Notes:
 %
 %   1) This is the dynamic classpath and may be slower when making repeated
