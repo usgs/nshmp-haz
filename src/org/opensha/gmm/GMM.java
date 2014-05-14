@@ -52,34 +52,52 @@ public enum GMM {
 	//			hazfx all (tables?) have minR = 0.11km
 	// TODO doublecheck that SUB implementations are using the correct distance metric
 	// TODO remove main()s form concrete implementations
+	// make select GMMs public for documentation
 	
 	
-	// @formatter:off
-
 	// NGA-West1 NSHMP 2008
-	BA_08(BooreAtkinson_2008.class),
-	CB_08(CampbellBozorgnia_2008.class),
-	CY_08(ChiouYoungs_2008.class),
+	/** @see BooreAtkinson_2008 */
+	BA_08(BooreAtkinson_2008.class, BooreAtkinson_2008.NAME, BooreAtkinson_2008.CC),
+	/** @see CampbellBozorgnia_2008 */
+	CB_08(CampbellBozorgnia_2008.class, CampbellBozorgnia_2008.NAME, CampbellBozorgnia_2008.CC),
+	/** @see ChiouYoungs_2008 */
+	CY_08(ChiouYoungs_2008.class, ChiouYoungs_2008.NAME, ChiouYoungs_2008.CC),
 	
 	// NGA-West2 NSHMP 2014
-	ASK_14(AbrahamsonEtAl_2014.class),
-	BSSA_14(BooreEtAl_2014.class),
-	CB_14(CampbellBozorgnia_2014.class),
-	CY_14(ChiouYoungs_2014.class),
-	IDRISS_14(Idriss_2014.class),
+	/** @see */
+	ASK_14(AbrahamsonEtAl_2014.class, AbrahamsonEtAl_2014.NAME, AbrahamsonEtAl_2014.CC),
+	/** @see */
+	BSSA_14(BooreEtAl_2014.class, BooreEtAl_2014.NAME, BooreEtAl_2014.CC),
+	/** @see */
+	CB_14(CampbellBozorgnia_2014.class, CampbellBozorgnia_2014.NAME, CampbellBozorgnia_2014.CC),
+	/** @see */
+	CY_14(ChiouYoungs_2014.class, ChiouYoungs_2014.NAME, ChiouYoungs_2014.CC),
+	/** @see */
+	IDRISS_14(Idriss_2014.class, Idriss_2014.NAME, Idriss_2014.CC),
 	
 	// Subduction NSHMP 2008 2014
-	AB_03_GLOB_INTER(AtkinsonBoore_2003_GlobalInterface.class),
-	AB_03_GLOB_SLAB(AtkinsonBoore_2003_GlobalSlab.class),
-	AB_03_CASC_INTER(AtkinsonBoore_2003_CascadiaInterface.class),
-	AB_03_CASC_SLAB(AtkinsonBoore_2003_CascadiaSlab.class),
-	AM_09_INTER(AtkinsonMacias_2009.class),
-	BCHYDRO_12_INTER(BCHydro_2012_Interface.class),
-	BCHYDRO_12_SLAB(BCHydro_2012_Slab.class),
-	YOUNGS_97_INTER(YoungsEtAl_1997_Interface.class),
-	YOUNGS_97_SLAB(YoungsEtAl_1997_Slab.class),
-	ZHAO_06_INTER(ZhaoEtAl_2006_Interface.class),
-	ZHAO_06_SLAB(ZhaoEtAl_2006_Slab.class),
+	/** @see AtkinsonBoore_2003 */
+	AB_03_GLOB_INTER(AtkinsonBoore_2003_GlobalInterface.class, AtkinsonBoore_2003_GlobalInterface.NAME, AtkinsonBoore_2003.CC),
+	/** @see AtkinsonBoore_2003 */
+	AB_03_GLOB_SLAB(AtkinsonBoore_2003_GlobalSlab.class, AtkinsonBoore_2003_GlobalSlab.NAME, AtkinsonBoore_2003.CC),
+	/** @see AtkinsonBoore_2003 */
+	AB_03_CASC_INTER(AtkinsonBoore_2003_CascadiaInterface.class, AtkinsonBoore_2003_CascadiaInterface.NAME, AtkinsonBoore_2003.CC),
+	/** @see AtkinsonBoore_2003 */
+	AB_03_CASC_SLAB(AtkinsonBoore_2003_CascadiaSlab.class, AtkinsonBoore_2003_CascadiaSlab.NAME, AtkinsonBoore_2003.CC),
+	/** @see AtkinsonMacias_2009 */
+	AM_09_INTER(AtkinsonMacias_2009.class, AtkinsonMacias_2009.NAME, AtkinsonMacias_2009.CC),
+	/** @see BCHydro_2012 */
+	BCHYDRO_12_INTER(BCHydro_2012_Interface.class, BCHydro_2012_Interface.NAME, BCHydro_2012.CC),
+	/** @see BCHydro_2012 */
+	BCHYDRO_12_SLAB(BCHydro_2012_Slab.class, BCHydro_2012_Slab.NAME, BCHydro_2012.CC),
+	/** @see YoungsEtAl_1997 */
+	YOUNGS_97_INTER(YoungsEtAl_1997_Interface.class, YoungsEtAl_1997_Interface.NAME, YoungsEtAl_1997.CC),
+	/** @see YoungsEtAl_1997 */
+	YOUNGS_97_SLAB(YoungsEtAl_1997_Slab.class, YoungsEtAl_1997_Slab.NAME, YoungsEtAl_1997.CC),
+	/** @see ZhaoEtAl_2006 */
+	ZHAO_06_INTER(ZhaoEtAl_2006_Interface.class, ZhaoEtAl_2006_Interface.NAME, ZhaoEtAl_2006.CC),
+	/** @see ZhaoEtAl_2006 */
+	ZHAO_06_SLAB(ZhaoEtAl_2006_Slab.class, ZhaoEtAl_2006_Slab.NAME, ZhaoEtAl_2006.CC),
 	
 	/*
 	 * Base implementations of the GMM used in the 2008 CEUS model all work with
@@ -91,57 +109,71 @@ public enum GMM {
 	 */
 	
 	// Stable continent (CEUS) NSHMP 2008 2014
-	AB_06_PRIME(AtkinsonBoore_2006p.class),
-	AB_06_140BAR(AtkinsonBoore_2006_140bar.class),
-	AB_06_200BAR(AtkinsonBoore_2006_200bar.class),
-	ATKINSON_08_PRIME(Atkinson_2008p.class),
-	CAMPBELL_03(Campbell_2003.class),
-	FRANKEL_96(FrankelEtAl_1996.class),
-	PEZESHK_11(PezeshkEtAl_2011.class),
-	SILVA_02(SilvaEtAl_2002.class),
-	SOMERVILLE_01(SomervilleEtAl_2001.class),
-	TP_05(TavakoliPezeshk_2005.class),
-	TORO_97_MW(ToroEtAl_1997_Mw.class),
+	/** @see AtkinsonBoore_2006p */
+	AB_06_PRIME(AtkinsonBoore_2006p.class, AtkinsonBoore_2006p.NAME, AtkinsonBoore_2006p.CC),
+	/** @see AtkinsonBoore_2006 */
+	AB_06_140BAR(AtkinsonBoore_2006_140bar.class, AtkinsonBoore_2006_140bar.NAME, AtkinsonBoore_2006.CC),
+	/** @see AtkinsonBoore_2006 */
+	AB_06_200BAR(AtkinsonBoore_2006_200bar.class, AtkinsonBoore_2006_200bar.NAME, AtkinsonBoore_2006.CC),
+	/** @see Atkinson_2008p */
+	ATKINSON_08_PRIME(Atkinson_2008p.class, Atkinson_2008p.NAME, Atkinson_2008p.CC),
+	/** @see Campbell_2003 */
+	CAMPBELL_03(Campbell_2003.class, Campbell_2003.NAME, Campbell_2003.CC),
+	/** @see FrankelEtAl_1996 */
+	FRANKEL_96(FrankelEtAl_1996.class, FrankelEtAl_1996.NAME, FrankelEtAl_1996.CC),
+	/** @see PezeshkEtAl_2011 */
+	PEZESHK_11(PezeshkEtAl_2011.class, PezeshkEtAl_2011.NAME, PezeshkEtAl_2011.CC),
+	/** @see SilvaEtAl_2002 */
+	SILVA_02(SilvaEtAl_2002.class, SilvaEtAl_2002.NAME, SilvaEtAl_2002.CC),
+	/** @see SomervilleEtAl_2001 */
+	SOMERVILLE_01(SomervilleEtAl_2001.class, SomervilleEtAl_2001.NAME, SomervilleEtAl_2001.CC),
+	/** @see TavakoliPezeshk_2005 */
+	TP_05(TavakoliPezeshk_2005.class, TavakoliPezeshk_2005.NAME, TavakoliPezeshk_2005.CC),
+	/** @see ToroEtAl_1997 */
+	TORO_97_MW(ToroEtAl_1997_Mw.class, ToroEtAl_1997_Mw.NAME, ToroEtAl_1997.CC),
 	
 	// mag converting flavors of CEUS, NSHMP 2008
 	//		- Johnston
-	AB_06_140BAR_J(AtkinsonBoore_2006_140bar_J.class),
-	AB_06_200BAR_J(AtkinsonBoore_2006_200bar_J.class),
-	CAMPBELL_03_J(Campbell_2003_J.class),
-	FRANKEL_96_J(FrankelEtAl_1996_J.class),
-	SILVA_02_J(SilvaEtAl_2002_J.class),
-	TP_05_J(TavakoliPezeshk_2005_J.class),
-	//		- Atkinson Boore
-	AB_06_140BAR_AB(AtkinsonBoore_2006_140bar_AB.class),
-	AB_06_200BAR_AB(AtkinsonBoore_2006_200bar_AB.class),
-	CAMPBELL_03_AB(Campbell_2003_AB.class),
-	FRANKEL_96_AB(FrankelEtAl_1996_AB.class),
-	SILVA_02_AB(SilvaEtAl_2002_AB.class),
-	TP_05_AB(TavakoliPezeshk_2005_AB.class),
-	//		- not specified
-	TORO_97_MB(ToroEtAl_1997_Mb.class);
+	/** @see AtkinsonBoore_2006 */
+	AB_06_140BAR_J(AtkinsonBoore_2006_140bar_J.class, AtkinsonBoore_2006_140bar_J.NAME, AtkinsonBoore_2006.CC),
+	/** @see AtkinsonBoore_2006 */
+	AB_06_200BAR_J(AtkinsonBoore_2006_200bar_J.class, AtkinsonBoore_2006_200bar_J.NAME, AtkinsonBoore_2006.CC),
+	/** @see Campbell_2003 */
+	CAMPBELL_03_J(Campbell_2003_J.class, Campbell_2003_J.NAME, Campbell_2003.CC),
+	/** @see FrankelEtAl_1996 */
+	FRANKEL_96_J(FrankelEtAl_1996_J.class, FrankelEtAl_1996_J.NAME, FrankelEtAl_1996.CC),
+	/** @see SilvaEtAl_2002 */
+	SILVA_02_J(SilvaEtAl_2002_J.class, SilvaEtAl_2002_J.NAME, SilvaEtAl_2002.CC),
+	/** @see TavakoliPezeshk_2005 */
+	TP_05_J(TavakoliPezeshk_2005_J.class, TavakoliPezeshk_2005_J.NAME, TavakoliPezeshk_2005.CC),
+	// - Atkinson Boore
+	/** @see AtkinsonBoore_2006 */
+	AB_06_140BAR_AB(AtkinsonBoore_2006_140bar_AB.class, AtkinsonBoore_2006_140bar_AB.NAME, AtkinsonBoore_2006.CC),
+	/** @see AtkinsonBoore_2006 */
+	AB_06_200BAR_AB(AtkinsonBoore_2006_200bar_AB.class, AtkinsonBoore_2006_200bar_AB.NAME, AtkinsonBoore_2006.CC),
+	/** @see Campbell_2003 */
+	CAMPBELL_03_AB(Campbell_2003_AB.class, Campbell_2003_AB.NAME, Campbell_2003.CC),
+	/** @see FrankelEtAl_1996 */
+	FRANKEL_96_AB(FrankelEtAl_1996_AB.class, FrankelEtAl_1996_AB.NAME, FrankelEtAl_1996.CC),
+	/** @see SilvaEtAl_2002 */
+	SILVA_02_AB(SilvaEtAl_2002_AB.class, SilvaEtAl_2002_AB.NAME, SilvaEtAl_2002.CC),
+
+	/** @see TavakoliPezeshk_2005 */
+	TP_05_AB(TavakoliPezeshk_2005_AB.class, TavakoliPezeshk_2005_AB.NAME, TavakoliPezeshk_2005.CC),
+	// - not specified
+	/** @see ToroEtAl_1997 */
+	TORO_97_MB(ToroEtAl_1997_Mb.class, ToroEtAl_1997_Mb.NAME, ToroEtAl_1997.CC);
 	
 	// Other
 	// GK_2013(GraizerKalkan_2013.class);
-
-	// @formatter:on
-	
 	private Class<? extends GroundMotionModel> delegate;
 	private String name;
 	private Set<IMT> imts;
 
-	private GMM(Class<? extends GroundMotionModel> delegate) {
+	private GMM(Class<? extends GroundMotionModel> delegate, String name, CoefficientContainer cc) {
 		this.delegate = delegate;
-
-		// TODO cleanup; implement and test logging
-
-//		System.out.println(this.name());
-		name = (String) readField(delegate, "NAME");	
-//		System.out.println(name);
-		CoefficientContainer cc = (CoefficientContainer) readField(delegate, "CC");
+		this.name = name;
 		imts = cc.imtSet();
-//		System.out.println(imts);
-//		System.out.println();
 
 	}
 	public static void main(String[] args) {
@@ -149,21 +181,22 @@ public enum GMM {
 		System.out.println(Arrays.toString(gmm.getClass().getConstructors()));
 	}
 	
-	private static Object readField(Class<? extends GroundMotionModel> clazz, String id) {
-		try {
-			return clazz.getField(id).get(null);
-		} catch (NoSuchFieldException nsfe) {
-			// TODO init logging
-			System.err.println(errMssg(clazz.getName(), id));
-			nsfe.printStackTrace();
-			System.exit(1);
-		} catch (IllegalAccessException iae) {
-			System.err.println(errMssg(clazz.getName(), id));
-			iae.printStackTrace();
-			System.exit(1);
-		}
-		return null;
-	}
+	// TODO clean
+//	private static Object readField(Class<? extends GroundMotionModel> clazz, String id) {
+//		try {
+//			return clazz.getField(id).get(null);
+//		} catch (NoSuchFieldException nsfe) {
+//			// TODO init logging
+//			System.err.println(errMssg(clazz.getName(), id));
+//			nsfe.printStackTrace();
+//			System.exit(1);
+//		} catch (IllegalAccessException iae) {
+//			System.err.println(errMssg(clazz.getName(), id));
+//			iae.printStackTrace();
+//			System.exit(1);
+//		}
+//		return null;
+//	}
 	
 	private static String errMssg(String clazz, String id) {
 		return "Required '" + id + "' field is hidden in " + clazz;
@@ -174,23 +207,23 @@ public enum GMM {
 		return name;
 	}
 		
-	/**
-	 * Creates a new implementation instance of this ground motion model.
-	 * @param imt intensity measure type of instance
-	 * @return the model implementation
-	 */
-	public GroundMotionModel instance(IMT imt) {
-		try {
-			Constructor<? extends GroundMotionModel> con = delegate
-				.getDeclaredConstructor(IMT.class);
-			GroundMotionModel gmm = con.newInstance(imt);
-			return gmm;
-		} catch (Exception e) {
-			// TODO init logging
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	/**
+//	 * Creates a new implementation instance of this ground motion model.
+//	 * @param imt intensity measure type of instance
+//	 * @return the model implementation
+//	 */
+//	public GroundMotionModel instance(IMT imt) {
+//		try {
+//			Constructor<? extends GroundMotionModel> con = delegate
+//				.getDeclaredConstructor(IMT.class);
+//			GroundMotionModel gmm = con.newInstance(imt);
+//			return gmm;
+//		} catch (Exception e) {
+//			// TODO init logging
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 	
 	/**
 	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
