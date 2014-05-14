@@ -1,0 +1,14 @@
+org.opensha.calc
+org.opensha.calc.tasks
+org.opensha.data
+org.opensha.eq
+org.opensha.eq.fault
+org.opensha.eq.fault.scaling
+org.opensha.eq.fault.scaling.impl
+org.opensha.eq.fault.surface
+org.opensha.eq.forecast
+org.opensha.function
+org.opensha.geo
+org.opensha.gmm
+org.opensha.mfd
+org.opensha.util
