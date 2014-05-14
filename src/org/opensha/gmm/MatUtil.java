@@ -56,12 +56,4 @@ public class MatUtil {
 		return spectrum;
 	}
 	
-	public static GMM testLoad(String id) {
-		return GMM.valueOf(id);
-	}
-	
-	public static void main(String[] args) {
-		testLoad("ASK_14");
-	}
-
 }
