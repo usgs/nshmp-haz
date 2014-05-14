@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.util.Parsing;
 
 import com.google.common.collect.Iterables;
@@ -248,8 +249,6 @@ public final class GMM_Utils {
 		if (vs30 == 2000.0) return HARD_ROCK;
 		throw new IllegalArgumentException("Unsupported CEUS vs30: " + vs30);
 	}
-
-
 
 
 }

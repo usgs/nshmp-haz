@@ -9,7 +9,7 @@ package org.opensha.gmm;
  */
 final class AtkinsonBoore_2003_GlobalSlab extends AtkinsonBoore_2003 {
 	
-	public final static String NAME = AtkinsonBoore_2003.NAME + ": Global Slab";
+	final static String NAME = AtkinsonBoore_2003.NAME + ": Global Slab";
 
 	AtkinsonBoore_2003_GlobalSlab(IMT imt) {
 		super(imt);

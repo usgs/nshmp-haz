@@ -9,7 +9,7 @@ package org.opensha.gmm;
  */
 class AtkinsonBoore_2006_200bar extends AtkinsonBoore_2006 {
 
-	public static final String NAME = AtkinsonBoore_2006.NAME + ": 200 bar";
+	static final String NAME = AtkinsonBoore_2006.NAME + ": 200 bar";
 
 	private static final double STRESS = 200;
 	private static final double SF2;

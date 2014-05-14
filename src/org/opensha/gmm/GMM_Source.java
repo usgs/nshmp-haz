@@ -29,7 +29,7 @@ public final class GMM_Source {
 	final boolean vsInf;
 	final double z2p5; // always in km
 	final double z1p0; // always in meters TODO NO NO NO - this is now always km, CY08 needs updating
-
+	
 	private GMM_Source(double Mw, double rJB, double rRup, double rX,
 		double dip, double width, double zTop, double zHyp, double rake,
 		double vs30, boolean vsInf, double z2p5, double z1p0) {
@@ -78,7 +78,7 @@ public final class GMM_Source {
 		return new GMM_Source(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake,
 			vs30, vsInf, z2p5, z1p0);
 	}
-	
+		
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -189,18 +189,18 @@ public final class GMM_Source {
 	public String toString() {
 		return new StringBuilder(getClass().getSimpleName())
 			.append(" [Mw: ").append(Mw)
-			.append(" rJB: ").append(rJB)
-			.append(" rRup: ").append(rRup)
-			.append(" rX: ").append(rX)
-			.append(" dip:").append(dip)
-			.append(" width: ").append(width)
-			.append(" zTop: ").append(zTop)
-			.append(" zHyp: ").append(zHyp)
-			.append(" rake: ").append(rake)
-			.append(" vs30: ").append(vs30)
-			.append(" vsInf: ").append(vsInf)
-			.append(" z2p5: ").append(z2p5)
-			.append(" z1p0: ").append(z1p0)
+			.append(", rJB: ").append(rJB)
+			.append(", rRup: ").append(rRup)
+			.append(", rX: ").append(rX)
+			.append(", dip:").append(dip)
+			.append(", width: ").append(width)
+			.append(", zTop: ").append(zTop)
+			.append(", zHyp: ").append(zHyp)
+			.append(", rake: ").append(rake)
+			.append(", vs30: ").append(vs30)
+			.append(", vsInf: ").append(vsInf)
+			.append(", z2p5: ").append(z2p5)
+			.append(", z1p0: ").append(z1p0)
 			.append("]")
 			.toString();
 	}

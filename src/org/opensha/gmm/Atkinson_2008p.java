@@ -32,10 +32,10 @@ final class Atkinson_2008p implements GroundMotionModel {
 
 	// TODO convert to functional form
 	
-	public static final String NAME = "Atkinson (2008) Prime";
+	static final String NAME = "Atkinson (2008) Prime";
 	
 	// only includes periods and a-to-bc conversion factors
-	public static final CoefficientContainer CC = new CoefficientContainer(
+	static final CoefficientContainer CC = new CoefficientContainer(
 		"AB08P.csv", Coeffs.class);
 
 	private final GMM_Table table;

@@ -43,7 +43,7 @@ abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	//
 	// S = Slab, I = Interface
 	// G = Global, C = Cascadia/PNW
-	public static final CoefficientContainer CC = new CoefficientContainer(
+	static final CoefficientContainer CC = new CoefficientContainer(
 		"AB03_cascadia_slab.csv", Coeffs.class); // CC_CS
 	static final CoefficientContainer CC_CI = new CoefficientContainer(
 		"AB03_cascadia_interface.csv", Coeffs.class);

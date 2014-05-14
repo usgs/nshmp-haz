@@ -18,7 +18,7 @@ import com.google.common.base.Throwables;
  * CoefficientContainer is unaware of that can be initialized independently. See
  * CampbellBozorgnia_2013 for an example. Implementations must also declare all
  * coefficients that exist in the header line of a *.csv source file  (see
- * {@link CoefficientContainer}) or an {@code NoSuchFieldException} is
+ * {@link CoefficientContainer}) or a {@code NoSuchFieldException} is
  * thrown. Variable names in *.csv files are case-sensitive and subject to
  * the same Java variable naming rules that apply to the fields to which the
  * coefficient values will be mapped.</p>

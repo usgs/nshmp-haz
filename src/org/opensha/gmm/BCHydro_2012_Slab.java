@@ -9,7 +9,7 @@ package org.opensha.gmm;
  */
 final class BCHydro_2012_Slab extends BCHydro_2012 {
 	
-	public static final String NAME = BCHydro_2012.NAME + ": Slab";
+	static final String NAME = BCHydro_2012.NAME + ": Slab";
 
 	BCHydro_2012_Slab(IMT imt) {
 		super(imt);

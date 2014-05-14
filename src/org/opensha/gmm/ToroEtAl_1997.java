@@ -54,7 +54,7 @@ abstract class ToroEtAl_1997 implements GroundMotionModel {
 	static final String NAME = "Toro et al. (1997)";
 	
 	// load both Mw and Mb coefficients
-	public static final CoefficientContainer CC = new CoefficientContainer(
+	static final CoefficientContainer CC = new CoefficientContainer(
 		"Toro97Mw.csv", Coeffs.class);
 	static final CoefficientContainer CC_MB = new CoefficientContainer(
 		"Toro97Mb.csv", Coeffs.class);

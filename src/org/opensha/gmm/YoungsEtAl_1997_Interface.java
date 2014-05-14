@@ -9,7 +9,7 @@ package org.opensha.gmm;
  */
 final class YoungsEtAl_1997_Interface extends YoungsEtAl_1997 {
 	
-	public static final String NAME = YoungsEtAl_1997.NAME + ": Interface";
+	static final String NAME = YoungsEtAl_1997.NAME + ": Interface";
 
 	YoungsEtAl_1997_Interface(IMT imt) {
 		super(imt);

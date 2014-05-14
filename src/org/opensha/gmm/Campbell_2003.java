@@ -42,10 +42,9 @@ class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 	
 	// TODO fix clamp values (not implemented here yet) to match other CEUS gmms
 
-	public static final String NAME = "Campbell (2003)";
+	static final String NAME = "Campbell (2003)";
 	
-	public static final CoefficientContainer CC = new CoefficientContainer(
-		"Campbell03.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("Campbell03.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
 		double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13;

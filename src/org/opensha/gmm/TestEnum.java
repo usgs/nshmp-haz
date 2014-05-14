@@ -6,21 +6,27 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.opensha.gmm.CEUS_Mb.*;
+import org.opensha.gmm.CEUS_Mb.AtkinsonBoore_2006_140bar_AB;
+import org.opensha.gmm.CEUS_Mb.AtkinsonBoore_2006_140bar_J;
+import org.opensha.gmm.CEUS_Mb.AtkinsonBoore_2006_200bar_AB;
+import org.opensha.gmm.CEUS_Mb.AtkinsonBoore_2006_200bar_J;
+import org.opensha.gmm.CEUS_Mb.Campbell_2003_AB;
+import org.opensha.gmm.CEUS_Mb.Campbell_2003_J;
+import org.opensha.gmm.CEUS_Mb.FrankelEtAl_1996_AB;
+import org.opensha.gmm.CEUS_Mb.FrankelEtAl_1996_J;
+import org.opensha.gmm.CEUS_Mb.SilvaEtAl_2002_AB;
+import org.opensha.gmm.CEUS_Mb.SilvaEtAl_2002_J;
+import org.opensha.gmm.CEUS_Mb.TavakoliPezeshk_2005_AB;
+import org.opensha.gmm.CEUS_Mb.TavakoliPezeshk_2005_J;
 
 import com.google.common.collect.Sets;
 
 /**
- * Ground motion model (GMM) identifiers that can supply instances of various
- * ground motion model implementations. Single or corporate authored models are
- * identified as NAME_YR_FLAVOR; multi-author models as INITIALS_YR_FLAVOR.
- * FLAVOR is only used for those models with region specific implementations
- * or other variants.
+ * Add comments here
  *
  * @author Peter Powers
  */
-@SuppressWarnings("javadoc")
-public enum GMM {
+public enum TestEnum {
 	
 	// TODO review sub zTop rules; I believe there are places where zHyp is spoecified by a model but zTop is supplied instead
 	//			Zhao in hazgrid uses zTop for zHyp
@@ -51,7 +57,6 @@ public enum GMM {
 	//			hazgrid A08' minR=1.8km; P11 minR = 1km; others?
 	//			hazfx all (tables?) have minR = 0.11km
 	// TODO doublecheck that SUB implementations are using the correct distance metric
-	// TODO remove main()s form concrete implementations
 	
 	
 	// @formatter:off
@@ -130,11 +135,11 @@ public enum GMM {
 	private String name;
 	private Set<IMT> imts;
 
-	private GMM(Class<? extends GroundMotionModel> delegate) {
+	private TestEnum(Class<? extends GroundMotionModel> delegate) {
 		this.delegate = delegate;
 
 		// TODO cleanup; implement and test logging
-
+		try {
 //		System.out.println(this.name());
 		name = (String) readField(delegate, "NAME");	
 //		System.out.println(name);
@@ -142,7 +147,9 @@ public enum GMM {
 		imts = cc.imtSet();
 //		System.out.println(imts);
 //		System.out.println();
-
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public static void main(String[] args) {
 		GMM gmm = GMM.ASK_14;
@@ -192,46 +199,47 @@ public enum GMM {
 		}
 	}
 	
-	/**
-	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
-	 * supported by this {@code GMM}.
-	 * @return the {@code Set} of supported {@code IMT}s
-	 */
-	public Set<IMT> supportedIMTs() {
-		return imts;
-	}
-
-	/**
-	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
-	 * supported by all of the supplied {@code GMM}s.
-	 * @param gmms models for which to return common {@code IMT} supoort
-	 * @return the {@code Set} of supported {@code IMT}s
-	 */
-	public static Set<IMT> supportedIMTs(Collection<GMM> gmms) {
-		Set<IMT> imts = EnumSet.allOf(IMT.class);
-		for (GMM gmm : gmms) {
-			imts = Sets.intersection(imts, gmm.supportedIMTs());
-		}
-		return EnumSet.copyOf(imts);
-	}
-
-	/**
-	 * Returns the set of spectral acceleration {@code IMT}s that are supported
-	 * by this {@code GMM}.
-	 * @return a {@code Set} of spectral acceleration IMTs
-	 */
-	public Set<IMT> responseSpectrumIMTs() {
-		return Sets.intersection(imts, IMT.saIMTs());
-	}
-
-	/**
-	 * Returns the set of spectral acceleration {@code IMT}s that are common to
-	 * the supplied {@code Collection}.
-	 * @param gmms ground motion models
-	 * @return a {@code Set} of common spectral acceleration {@code IMT}s
-	 */
-	public static Set<IMT> responseSpectrumIMTs(Collection<GMM> gmms) {
-		return Sets.intersection(supportedIMTs(gmms), IMT.saIMTs());
-	}
+//	/**
+//	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
+//	 * supported by this {@code GMM}.
+//	 * @return the {@code Set} of supported {@code IMT}s
+//	 */
+//	public Set<IMT> supportedIMTs() {
+//		return imts;
+//	}
+//
+//	/**
+//	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
+//	 * supported by all of the supplied {@code GMM}s.
+//	 * @param gmms models for which to return common {@code IMT} supoort
+//	 * @return the {@code Set} of supported {@code IMT}s
+//	 */
+//	public static Set<IMT> supportedIMTs(Collection<GMM> gmms) {
+//		Set<IMT> imts = EnumSet.allOf(IMT.class);
+//		for (GMM gmm : gmms) {
+//			imts = Sets.intersection(imts, gmm.supportedIMTs());
+//		}
+//		return EnumSet.copyOf(imts);
+//	}
+//
+//	/**
+//	 * Returns the set of spectral acceleration {@code IMT}s that are supported
+//	 * by this {@code GMM}.
+//	 * @return a {@code Set} of spectral acceleration IMTs
+//	 */
+//	public Set<IMT> responseSpectrumIMTs() {
+//		return Sets.intersection(imts, IMT.saIMTs());
+//	}
+//
+//	/**
+//	 * Returns the set of spectral acceleration {@code IMT}s that are common to
+//	 * the supplied {@code Collection}.
+//	 * @param gmms ground motion models
+//	 * @return a {@code Set} of common spectral acceleration {@code IMT}s
+//	 */
+//	public static Set<IMT> responseSpectrumIMTs(Collection<GMM> gmms) {
+//		return Sets.intersection(supportedIMTs(gmms), IMT.saIMTs());
+//	}
+//
 
 }

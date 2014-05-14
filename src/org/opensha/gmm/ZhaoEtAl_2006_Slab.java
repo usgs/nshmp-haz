@@ -9,7 +9,7 @@ package org.opensha.gmm;
  */
 final class ZhaoEtAl_2006_Slab extends ZhaoEtAl_2006 {
 	
-	public static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
+	static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
 
 	ZhaoEtAl_2006_Slab(IMT imt) {
 		super(imt);

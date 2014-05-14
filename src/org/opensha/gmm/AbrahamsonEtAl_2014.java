@@ -30,9 +30,9 @@ final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
 	// TODO review class javadoc and update citation to EQS
 
-	public static final String NAME = "Abrahamson, Silva \u0026 Kamai (2014)";
+	static final String NAME = "Abrahamson, Silva \u0026 Kamai (2014)";
 	
-	public static final CoefficientContainer CC = new CoefficientContainer(
+	static final CoefficientContainer CC = new CoefficientContainer(
 		"ASK14.csv", Coeffs.class);
 	
 	static final class Coeffs extends Coefficients {

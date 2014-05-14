@@ -25,10 +25,9 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 final class BooreAtkinson_2008 implements GroundMotionModel {
 
-	public static final String NAME = "Boore \u0026 Atkinson (2008)";
+	static final String NAME = "Boore \u0026 Atkinson (2008)";
 
-	public static final CoefficientContainer CC = new CoefficientContainer(
-		"BA08.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("BA08.csv", Coeffs.class);
 
 	static final class Coeffs extends Coefficients {
 		double b_lin, b1, b2, c1, c2, c3, e1, e2, e3, e4, e5, e6, e7, h, mh, s,
@@ -59,8 +58,7 @@ final class BooreAtkinson_2008 implements GroundMotionModel {
 		double f_rv = (style == REVERSE) ? 1.0 : 0.0;
 		double f_nm = (style == NORMAL) ? 1.0 : 0.0;
 		double f_un = (style == UNKNOWN) ? 1.0 : 0.0;
-		return calc(coeffs, coeffsPGA, props.Mw, props.rJB, f_rv, f_nm, f_ss,
-			f_un, props.vs30);
+		return calc(coeffs, coeffsPGA, props.Mw, props.rJB, f_rv, f_nm, f_ss, f_un, props.vs30);
 	}
 
 	FaultStyle rakeToFaultStyle(double rake) {
@@ -77,10 +75,9 @@ final class BooreAtkinson_2008 implements GroundMotionModel {
 			double f_unk, double vs30) {
 
 		double pga4nl = exp(calcPGA4nl(cPGA, Mw, rJB, f_rv, f_nm, f_ss, f_unk));
-		
-		double mean = calcMean(c, Mw, rJB, f_rv, f_nm, f_ss, f_unk, vs30,
-			pga4nl);
-		
+
+		double mean = calcMean(c, Mw, rJB, f_rv, f_nm, f_ss, f_unk, vs30, pga4nl);
+
 		double stdDev = calcStdDev(c, f_unk > 0.0);
 
 		return DefaultScalarGroundMotion.create(mean, stdDev);

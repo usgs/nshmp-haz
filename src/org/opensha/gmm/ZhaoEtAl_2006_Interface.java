@@ -9,7 +9,7 @@ package org.opensha.gmm;
  */
 final class ZhaoEtAl_2006_Interface extends ZhaoEtAl_2006 {
 	
-	public static final String NAME = ZhaoEtAl_2006.NAME + ": Interface";
+	static final String NAME = ZhaoEtAl_2006.NAME + ": Interface";
 
 	ZhaoEtAl_2006_Interface(IMT imt) {
 		super(imt);
