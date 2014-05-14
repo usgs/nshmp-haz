@@ -30,10 +30,9 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 final class ChiouYoungs_2008 implements GroundMotionModel {
 
-	public static final String NAME = "Chiou \u0026 Youngs (2008)";
+	static final String NAME = "Chiou \u0026 Youngs (2008)";
 	
-	public static final CoefficientContainer CC = new CoefficientContainer(
-		"CY08.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("CY08.csv", Coeffs.class);
 
 	static class Coeffs extends Coefficients {
 		double c1, c1a, c1b, c5, c6, c7, c7a, c9, c9a, c10, cg1, cg2, cn, cm,

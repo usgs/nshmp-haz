@@ -9,7 +9,7 @@ package org.opensha.gmm;
  */
 final class BCHydro_2012_Interface extends BCHydro_2012 {
 	
-	public static final String NAME = BCHydro_2012.NAME + ": Interface";
+	static final String NAME = BCHydro_2012.NAME + ": Interface";
 
 	BCHydro_2012_Interface(IMT imt) {
 		super(imt);

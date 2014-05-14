@@ -31,10 +31,9 @@ final class BooreEtAl_2014 implements GroundMotionModel {
 
 	// TODO review class javadoc and update citation to EQS
 
-	public static final String NAME = "Boore, Stewart, Seyhan \u0026 Atkinson (2014)";
+	static final String NAME = "Boore, Stewart, Seyhan \u0026 Atkinson (2014)";
 
-	public static final CoefficientContainer CC = new CoefficientContainer(
-		"BSSA14.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("BSSA14.csv", Coeffs.class);
 
 	static final class Coeffs extends Coefficients {
 

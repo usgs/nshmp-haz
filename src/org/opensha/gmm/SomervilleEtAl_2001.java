@@ -30,10 +30,10 @@ final class SomervilleEtAl_2001 implements GroundMotionModel {
 //	 * 		THIS IS NOT IMPOSED IN HAZFX
 //	 * 		e.g. double dist = Math.sqrt(rjb * rjb + 6.0 * 6.0);
 
-	public static final String NAME = "Somerville et al. (2001)";
+	static final String NAME = "Somerville et al. (2001)";
 	
-	public static final CoefficientContainer CC = new CoefficientContainer(
-		"Somerville01.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("Somerville01.csv",
+		Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
 		double a1, a1h, a2, a3, a4, a5, a6, a7, sig0;

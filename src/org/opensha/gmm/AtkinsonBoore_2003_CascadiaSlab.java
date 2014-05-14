@@ -9,7 +9,7 @@ package org.opensha.gmm;
  */
 final class AtkinsonBoore_2003_CascadiaSlab extends AtkinsonBoore_2003 {
 	
-	public final static String NAME = AtkinsonBoore_2003.NAME +
+	final static String NAME = AtkinsonBoore_2003.NAME +
 		": Cascadia Slab";
 
 	AtkinsonBoore_2003_CascadiaSlab(IMT imt) {

@@ -49,10 +49,9 @@ class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 	
 	// TODO fix clamp values (not implemented here yet) to match other CEUS gmms
 
-	public static final String NAME = "Tavakoli \u0026 Pezeshk (2005)";
+	static final String NAME = "Tavakoli \u0026 Pezeshk (2005)";
 	
-	public static final CoefficientContainer CC = new CoefficientContainer(
-		"TP05.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("TP05.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
 		double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13,

@@ -7,7 +7,7 @@ package org.opensha.gmm;
  */
 final class ToroEtAl_1997_Mw extends ToroEtAl_1997 {
 
-	public 	static final String NAME = ToroEtAl_1997.NAME + ": Mw";
+	static final String NAME = ToroEtAl_1997.NAME + ": Mw";
 
 	ToroEtAl_1997_Mw(IMT imt) {
 		super(imt);

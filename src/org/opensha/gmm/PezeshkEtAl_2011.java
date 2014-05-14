@@ -28,11 +28,10 @@ final class PezeshkEtAl_2011 implements GroundMotionModel {
 
 	// TODO convert to functional form
 	
-	public static final String NAME = "Pezeshk et al. (2011)";
+	static final String NAME = "Pezeshk et al. (2011)";
 	
 	// period a-to-bc conversion factors and sigma coeficients
-	public static final CoefficientContainer CC = new CoefficientContainer(
-		"P11.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("P11.csv", Coeffs.class);
 
 	private final GMM_Table table;
 	

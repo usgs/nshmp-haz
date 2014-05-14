@@ -35,9 +35,9 @@ class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 	// c note very high sigma for longer period SA
 
 
-	public static final String NAME = "Silva et al. (2002)";
+	static final String NAME = "Silva et al. (2002)";
 	
-	public static final CoefficientContainer CC = new CoefficientContainer(
+	static final CoefficientContainer CC = new CoefficientContainer(
 		"Silva02.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {

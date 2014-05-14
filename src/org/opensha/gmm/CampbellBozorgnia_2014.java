@@ -37,10 +37,9 @@ final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
 	// TODO review class javadoc and update citation to EQS
 
-	public static final String NAME = "Campbell \u0026 Bozorgnia (2014)";
+	static final String NAME = "Campbell \u0026 Bozorgnia (2014)";
 
-	public static final CoefficientContainer CC = new CoefficientContainer(
-		"CB14.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("CB14.csv", Coeffs.class);
 
 	static class Coeffs extends Coefficients {
 		

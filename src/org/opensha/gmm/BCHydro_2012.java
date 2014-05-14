@@ -37,7 +37,7 @@ abstract class BCHydro_2012 implements GroundMotionModel {
 
 	static final String NAME = "BC Hydro (2012)";
 
-	public static final CoefficientContainer CC = new CoefficientContainer(
+	static final CoefficientContainer CC = new CoefficientContainer(
 		"BCHydro12.csv", Coeffs.class);
 
 	static class Coeffs extends Coefficients {
