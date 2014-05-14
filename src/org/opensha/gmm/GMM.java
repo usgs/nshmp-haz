@@ -1,7 +1,6 @@
 package org.opensha.gmm;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
@@ -19,7 +18,6 @@ import com.google.common.collect.Sets;
  *
  * @author Peter Powers
  */
-@SuppressWarnings("javadoc")
 public enum GMM {
 	
 	// TODO review sub zTop rules; I believe there are places where zHyp is spoecified by a model but zTop is supplied instead
@@ -176,54 +174,29 @@ public enum GMM {
 		imts = cc.imtSet();
 
 	}
-	public static void main(String[] args) {
-		GMM gmm = GMM.ASK_14;
-		System.out.println(Arrays.toString(gmm.getClass().getConstructors()));
-	}
-	
-	// TODO clean
-//	private static Object readField(Class<? extends GroundMotionModel> clazz, String id) {
-//		try {
-//			return clazz.getField(id).get(null);
-//		} catch (NoSuchFieldException nsfe) {
-//			// TODO init logging
-//			System.err.println(errMssg(clazz.getName(), id));
-//			nsfe.printStackTrace();
-//			System.exit(1);
-//		} catch (IllegalAccessException iae) {
-//			System.err.println(errMssg(clazz.getName(), id));
-//			iae.printStackTrace();
-//			System.exit(1);
-//		}
-//		return null;
-//	}
-	
-	private static String errMssg(String clazz, String id) {
-		return "Required '" + id + "' field is hidden in " + clazz;
-	}
-	
+
 	@Override
 	public String toString() {
 		return name;
 	}
 		
-//	/**
-//	 * Creates a new implementation instance of this ground motion model.
-//	 * @param imt intensity measure type of instance
-//	 * @return the model implementation
-//	 */
-//	public GroundMotionModel instance(IMT imt) {
-//		try {
-//			Constructor<? extends GroundMotionModel> con = delegate
-//				.getDeclaredConstructor(IMT.class);
-//			GroundMotionModel gmm = con.newInstance(imt);
-//			return gmm;
-//		} catch (Exception e) {
-//			// TODO init logging
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
+	/**
+	 * Creates a new implementation instance of this ground motion model.
+	 * @param imt intensity measure type of instance
+	 * @return the model implementation
+	 */
+	public GroundMotionModel instance(IMT imt) {
+		try {
+			Constructor<? extends GroundMotionModel> con = delegate
+				.getDeclaredConstructor(IMT.class);
+			GroundMotionModel gmm = con.newInstance(imt);
+			return gmm;
+		} catch (Exception e) {
+			// TODO init logging
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	/**
 	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)

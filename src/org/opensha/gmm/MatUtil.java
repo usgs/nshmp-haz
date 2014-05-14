@@ -22,8 +22,8 @@ public class MatUtil {
 	 * @param model to use
 	 * @param imt intensity measure type (e.g. {@code PGA}, {@code SA1P00})
 	 * @param source parameterization
-	 * @return the natural log of the median ground motion and its standard
-	 *         deviation
+	 * @return a two-element double[] containing the natural log of the median
+	 *         ground motion and its standard deviation
 	 */
 	public static double[] calc(GMM model, IMT imt, GMM_Source source) {
 		ScalarGroundMotion sgm = model.instance(imt).calc(source);
@@ -54,6 +54,14 @@ public class MatUtil {
 			i++;
 		}
 		return spectrum;
+	}
+	
+	public static GMM testLoad(String id) {
+		return GMM.valueOf(id);
+	}
+	
+	public static void main(String[] args) {
+		testLoad("ASK_14");
 	}
 
 }
