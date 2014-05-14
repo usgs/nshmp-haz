@@ -11,7 +11,10 @@ import com.google.common.collect.Sets;
 
 /**
  * Ground motion model (GMM) identifiers that can supply instances of various
- * ground motion model implementations.
+ * ground motion model implementations. Single or corporate authored models are
+ * identified as NAME_YR_FLAVOR; multi-author models as INITIALS_YR_FLAVOR.
+ * FLAVOR is only used for those models with region specific implementations
+ * or other variants.
  *
  * @author Peter Powers
  */

@@ -18,7 +18,7 @@ public interface XY_Sequence extends Iterable<XY_Point> {
 	 * @throws IndexOutOfBoundsException if the index is out of range (
 	 *         {@code index < 0 || index >= size()})
 	 */
-	public double getX(int index);
+	public double x(int index);
 
 	/**
 	 * Returns the y-value at {@code index}.
@@ -27,7 +27,7 @@ public interface XY_Sequence extends Iterable<XY_Point> {
 	 * @throws IndexOutOfBoundsException if the index is out of range (
 	 *         {@code index < 0 || index >= size()})
 	 */
-	public double getY(int index);
+	public double y(int index);
 	
 	/**
 	 * Sets the y-{@code value} at {@code index}.

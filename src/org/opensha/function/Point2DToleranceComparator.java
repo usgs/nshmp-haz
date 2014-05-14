@@ -1,6 +1,7 @@
 package org.opensha.function;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.awt.geom.Point2D;
 
@@ -79,8 +80,10 @@ public class Point2DToleranceComparator implements Point2DComparator {
      * @exception  InvalidRangeException  Thrown if tolerance is negative
      */
     public void setTolerance( double newTolerance ) {
-    	checkArgument(newTolerance >= 0, "Tolerance must be larger or equal to 0");
-    	checkArgument(tolerance != 0, "Tolerance is now fixed at 0.0 until we decide what to do" +
+    	
+    	// TODO WTF!! this adapted from original where it doesn't make any sense
+    	checkArgument(tolerance >= 0, "Tolerance must be larger or equal to 0");
+    	checkState(tolerance == 0, "Tolerance is now fixed at 0.0 until we decide what to do" +
         			" with it. See trac ticket #341");
         tolerance = newTolerance;
     }

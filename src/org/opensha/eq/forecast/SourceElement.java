@@ -36,7 +36,10 @@ public enum SourceElement {
 	
 	SOURCE_ATTS,
 	NODES,
-	NODE;
+	NODE,
+	
+	CLUSTER_SOURCE_SET,
+	CLUSTER;
 		
 	/**
 	 * Returns a {@code CaseFormat#UPPER_CAMEL} {@code String} representation
@@ -53,8 +56,8 @@ public enum SourceElement {
 	 * @param s {@code String} to convert
 	 * @return the corresponding {@code SourceElement}
 	 * @see CaseFormat
-	 * @throws IllegalArgumentException if supplied String is incorrectly
-	 *         formatted or no matching {@code SourceElement} exists
+	 * @throws IllegalArgumentException if supplied {@code String} is
+	 *         incorrectly formatted or no matching {@code SourceElement} exists
 	 */
 	public static SourceElement fromString(String s) {
 		return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, s));

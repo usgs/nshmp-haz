@@ -122,7 +122,8 @@ public final class Locations {
 	 * latitude.
 	 * 
 	 * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
-	 * #177;180&#176; and fails where the numeric angle exceeds 180&#176;. Use
+	 * #177;180&#176; and fails where the numeric angle exceeds 180&#176;.
+	 * Convert data to the 0-360&#176; interval or use
 	 * {@link #horzDistance(Location, Location)} in such instances.</p>
 	 * 
 	 * @param p1 the first {@code Location} point
@@ -138,7 +139,17 @@ public final class Locations {
 		double lat2 = p2.latRad();
 		double dLat = lat1 - lat2;
 		double dLon = (p1.lonRad() - p2.lonRad()) * cos((lat1 + lat2) * 0.5);
-		return EARTH_RADIUS_MEAN * sqrt((dLat * dLat) + (dLon * dLon));
+		return EARTH_RADIUS_MEAN * sqrt(dLat * dLat + dLon * dLon);
+	}
+	
+	public static void main(String[] args) {
+		Location p1 = Location.create(-40, 175);
+		Location p2 = Location.create(-40, 185);
+		System.out.println(horzDistanceFast(p1, p2));
+		System.out.println(horzDistance(p1, p2));
+		Location p3 = Location.create(-40, -175);
+		System.out.println(horzDistance(p1, p3));
+		
 	}
 
 	/**
@@ -186,6 +197,9 @@ public final class Locations {
 	 * separation distance is not known in advance use
 	 * {@link #linearDistance(Location, Location)} for more reliable
 	 * results.</p>
+	 * 
+	 * <p><b>Note:</b> This method fails for values spanning &#177;180&#176;;
+	 * see {@link #horzDistanceFast(Location, Location)}.</p>
 	 * 
 	 * @param p1 the first {@code Location} point
 	 * @param p2 the second {@code Location} point
@@ -249,7 +263,10 @@ public final class Locations {
 	 * 
 	 * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
 	 * &#177;180&#176; and results for such input values are not guaranteed.
-	 * <br/> <br/> If the line should instead be treated as a segment such that
+	 * Convert data to the 0-360&#176; interval or use
+	 * {@link #distanceToLine(Location, Location, Location)} in such instances.</p>
+	 * 
+	 * <p>If the line should instead be treated as a segment such that
 	 * the result will be a distance to an endpoint if {@code p3} does not
 	 * project onto the segment, use
 	 * {@link #distanceToSegmentFast(Location, Location, Location)} instead.</p>
@@ -279,8 +296,7 @@ public final class Locations {
 		double x3 = (p3.lonRad() - lon1) * lonScale;
 		double y3 = lat3 - lat1;
 
-		return ((x2) * (-y3) - (-x3) * (y2)) / sqrt((x2) * (x2) + (y2) * (y2)) *
-			EARTH_RADIUS_MEAN;
+		return (x3 * y2 - x2 * y3) / Math.sqrt(x2 * x2 + y2 * y2) * EARTH_RADIUS_MEAN;
 	}
 
 	// TODO reenable once rupture surface code migrated
@@ -386,9 +402,8 @@ public final class Locations {
 	 * line points are scaled by the cosine of latitude; it is only appropriate
 	 * for use over short distances (e.g. &lt;200 km).
 	 * 
-	 * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
-	 * &#177;180&#176; and results for such input values are not guaranteed.
-	 * This method always returns a positive result.</p>
+	 * <p><b>Note:</b> This method fails for values spanning &#177;180&#176;;
+	 * see {@link #distanceToLineFast(Location, Location, Location)}.</p>
 	 * 
 	 * <p>If the line should instead be treated as infinite, use
 	 * {@link #distanceToLineFast(Location, Location, Location)} instead.</p>
