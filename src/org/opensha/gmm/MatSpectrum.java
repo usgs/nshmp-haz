@@ -1,11 +1,12 @@
 package org.opensha.gmm;
 
 /**
- * Bare-bones ground motion spectrum data container for use with Matlab.
+ * Ground motion spectrum data container for use with Matlab.
  * 
  * <p><b>Note:</b> This class is not intended for use in production code.</p>
  *
  * @author Peter Powers
+ * @see MatUtil
  */
 public class MatSpectrum {
 	
