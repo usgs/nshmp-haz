@@ -9,11 +9,13 @@
 
 % Set up:
 
-% (Required) Have the nshmp-sha project cloned somewhere local
+% (Required) Have the nshmp-sha project cloned somewhere local. The
+% instructions below that the project has also been compiled such
+% that a 'classes' directory exsists.
 
 % (Required) Have Matlab R2012B or higher
 
-% (Required) Due to numerous outdated Java libraries being included with
+% (Required) Due to the numerous outdated Java libraries included with
 % Matlab, one first needs save a 'javaclasspath.txt' file to the directory
 % specified by the 'prefdir' command, that contains the following two
 % lines (modify the path below for your system):
