@@ -22,7 +22,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.TreeTraverser;
 import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
-import com.sun.org.apache.xpath.internal.axes.WalkerFactory;
 
 /**
  * TODO logging

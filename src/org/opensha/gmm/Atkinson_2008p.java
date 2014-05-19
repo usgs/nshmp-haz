@@ -12,23 +12,28 @@ import org.opensha.calc.ScalarGroundMotion;
  * table lookups instead of functional forms to compute ground motions. This
  * relation is commonly referred to as A08 Prime (A08').
  * 
- * <p>Implementation note: Mean values are clamped per
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p>See: Atkinson, G.M., 2008, Ground-motion prediction equations for eastern
- * North America from a referenced empirical approach—Implications for epistemic
- * uncertainty: Bulletin of the Seismological Society of America, v. 98, no. 3,
- * p. 1304–1318.</p>
+ * <p><b>Reference:</b> Atkinson, G.M., 2008, Ground-motion prediction equations
+ * for eastern North America from a referenced empirical approach—Implications
+ * for epistemic uncertainty: Bulletin of the Seismological Society of America,
+ * v. 98, no. 3, p. 1304–1318.</p>
  * 
- * <p>See: Atkinson, G. M., and Boore, D. M., 2011. Modifications to existing
- * ground-motion prediction equations in light of new data: Bulletin of the
- * Seismological Society of America, v. 101, no. 3, p. 1121–1135.</p>
+ * <p><b>Reference:</b> Atkinson, G. M., and Boore, D. M., 2011. Modifications
+ * to existing ground-motion prediction equations in light of new data: Bulletin
+ * of the Seismological Society of America, v. 101, no. 3, p. 1121–1135.</p>
  * 
- * <p>Component: horizontal (not clear from publication)</p>
+ * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers
+ * @see GMM#ATKINSON_08_PRIME
  */
-final class Atkinson_2008p implements GroundMotionModel {
+public final class Atkinson_2008p implements GroundMotionModel {
 
 	// TODO convert to functional form
 	

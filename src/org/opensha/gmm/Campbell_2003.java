@@ -9,28 +9,31 @@ import static org.opensha.gmm.SiteClass.HARD_ROCK;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the hybrid attenuation relationship for the Central and
- * Eastern US by Campbell (2003). This implementation matches that used in the
- * 2008 USGS NSHMP.
+ * Implementation of the hybrid attenuation relationship for stable continental
+ * regions by Campbell (2003). This implementation matches that used in the
+ * 2008 USGS NSHMP and comes in two additional magnitude converting (mb to Mw)
+ * flavors to support the 2008 central and eastern US model.
  * 
- * <p>Implementation note: Mean values are clamped per
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p>See: Campbell, K.W., 2003, Prediction of strong ground motion using the
- * hybrid empirical method and its use in the devel- opment of ground-motion
- * (attenuation) relations in eastern North America: Bulletin of the
- * Seismological Society of America, v. 93, p. 1012–1033.</p>
+ * <p><b>Reference:</b> Campbell, K.W., 2003, Prediction of strong ground motion
+ * using the hybrid empirical method and its use in the devel- opment of
+ * ground-motion (attenuation) relations in eastern North America: Bulletin of
+ * the Seismological Society of America, v. 93, p. 1012–1033.</p>
  * 
- * TODO Verify that Campbell imposes max(dtor,5); he does require rRup; why is
- * depth constrained as such in hazgrid? As with somerville, no depth is imposed
- * in hazFX - make sure 0.01 as PGA is handled corectly; may require change to
- * period = 0.0
- * 
- * <p>Component: geometric mean of two horizontal components</p>
+ * <p><b>Component:</b> geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
+ * @see GMM#CAMPBELL_03
+ * @see GMM#CAMPBELL_03_AB
+ * @see GMM#CAMPBELL_03_J
  */
-class Campbell_2003 implements GroundMotionModel, ConvertsMag {
+public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 
 	// notes from original implementation and fortran:
 	//
@@ -99,29 +102,6 @@ class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 		// TODO clean
 		// if (magType == LG_PHASE) mag = Utils.mblgToMw(magConvCode, mag);
 		return (Mw < 7.16) ? c.c11 + c.c12 * Mw : c.c13;
-	}
-
-	
-	public static void main(String[] args) {
-
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		CampbellBozorgnia_2008 asPGA = new CampbellBozorgnia_2008(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		CampbellBozorgnia_2008 as5Hz = new CampbellBozorgnia_2008(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		CampbellBozorgnia_2008 as1Hz = new CampbellBozorgnia_2008(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm);
-		
 	}
 
 }

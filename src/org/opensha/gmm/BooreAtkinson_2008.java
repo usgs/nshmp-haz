@@ -12,18 +12,24 @@ import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Implementation of the Boore &amp; Atkinson (2008) next generation attenuation
- * relationship developed as part of NGA West I.
+ * relationship developed as part of <a
+ * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
- * <p>See: Boore, D.M., and Atkinson, G.M., 2008, Ground-motion prediction
- * equations for the average horizontal component of PGA, PGV, and 5%-damped PSA
- * at spectral periods between 0.01s and 10.0s, Earthquake Spectra, Volume 24,
- * Number 1, pp. 99-138.</p>
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
  * 
- * <p>Component: GMRotI50 (geometric mean)</p>
+ * <p><b>Reference:</b> Boore, D.M., and Atkinson, G.M., 2008, Ground-motion
+ * prediction equations for the average horizontal component of PGA, PGV, and
+ * 5%-damped PSA at spectral periods between 0.01s and 10.0s, Earthquake
+ * Spectra, Volume 24, Number 1, pp. 99-138.</p>
+ * 
+ * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
  * 
  * @author Peter Powers
+ * @see GMM#BA_08
  */
-final class BooreAtkinson_2008 implements GroundMotionModel {
+public final class BooreAtkinson_2008 implements GroundMotionModel {
 
 	static final String NAME = "Boore \u0026 Atkinson (2008)";
 
@@ -164,28 +170,6 @@ final class BooreAtkinson_2008 implements GroundMotionModel {
 	private static final double calcStdDev(Coeffs c, boolean unknown) {
 		// independent values for tau and sigma are available in coeffs
 		return unknown ? c.s_tu : c.s_tm;
-	}
-
-	public static void main(String[] args) {
-		
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		BooreAtkinson_2008 bssaPGA = new BooreAtkinson_2008(IMT.PGA);
-		sgm = bssaPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		BooreAtkinson_2008 bssa5Hz = new BooreAtkinson_2008(IMT.SA0P2);
-		sgm = bssa5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		BooreAtkinson_2008 bssa1Hz = new BooreAtkinson_2008(IMT.SA1P0);
-		sgm = bssa1Hz.calc(in);
-		System.out.println(sgm);
-
 	}
 
 }

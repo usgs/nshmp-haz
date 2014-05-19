@@ -7,24 +7,32 @@ import static org.opensha.gmm.MagConverter.NONE;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the hard rock attenuation relationship for the Central and
- * Eastern US by Silva et al. (2002). This implementation matches that used in
- * the 2008 USGS NSHMP.
+ * Implementation of the Silva et al. (2002) ground motion model for stable
+ * continental regions. This implementation matches that used in the 2008 USGS
+ * NSHMP and comes in two additional magnitude converting (mb to Mw) flavors to
+ * support the 2008 central and eastern US model.
  * 
- * <p>Implementation note: Mean values are clamped per
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p>See: Silva, W., Gregor, N., and Darragh, R., 2002, Development of hard
- * rock attenuation relations for central and eastern North America, internal
- * report from Pacific Engineering, November 1, 2002,
+ * <p><b>Reference:</b> Silva, W., Gregor, N., and Darragh, R., 2002,
+ * Development of hard rock attenuation relations for central and eastern North
+ * America, internal report from Pacific Engineering, November 1, 2002,
  * http://www.pacificengineering.org/CEUS/
  * Development%20of%20Regional%20Hard_ABC.pdf</p>
  * 
- * <p>Component: average horizontal (not clear from publication)</p>
+ * <p><b>Component:</b> average horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers
+ * @see GMM#SILVA_02
+ * @see GMM#SILVA_02_AB
+ * @see GMM#SILVA_02_J
  */
-class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
+public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 
 	// notes from original implementation and fortran:
 	//
@@ -37,9 +45,8 @@ class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 
 	static final String NAME = "Silva et al. (2002)";
 	
-	static final CoefficientContainer CC = new CoefficientContainer(
-		"Silva02.csv", Coeffs.class);
-	
+	static final CoefficientContainer CC = new CoefficientContainer("Silva02.csv", Coeffs.class);
+
 	static class Coeffs extends Coefficients {
 		double c1, c1hr, c2, c4, c6, c7, c10, sigma;
 	}
@@ -72,29 +79,6 @@ class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 		double gnd = gnd0 + fac * Math.log(rJB + exp(c.c4));
 
 		return GMM_Utils.ceusMeanClip(c.imt, gnd);
-	}
-
-	
-	public static void main(String[] args) {
-
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		CampbellBozorgnia_2008 asPGA = new CampbellBozorgnia_2008(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		CampbellBozorgnia_2008 as5Hz = new CampbellBozorgnia_2008(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		CampbellBozorgnia_2008 as1Hz = new CampbellBozorgnia_2008(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm);
-		
 	}
 
 }

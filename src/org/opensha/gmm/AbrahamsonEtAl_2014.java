@@ -13,20 +13,23 @@ import org.opensha.data.Interpolate;
 
 /**
  * Implementation of the Abrahamson, Silva &amp; Kamai (2013) next generation
- * attenuation relationship developed as part of NGA West II.
+ * attenuation relationship developed as part of <a
+ * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
- * <p>See: Abrahamson, N.A., Silva, W.J., and Kamai, R., 2013, Update of the
- * AS08 ground-motion prediction equations based on the NGA-West2 data set, PEER
- * Report 2013/04.</p>
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
  * 
- * <p>See: <a href="http://peer.berkeley.edu/ngawest2/final-products/">NGA-West2
- * Final Products</a></p>
+ * <p><b>Reference:</b> Abrahamson, N.A., Silva, W.J., and Kamai, R., 2013,
+ * Update of the AS08 ground-motion prediction equations based on the NGA-West2
+ * data set, PEER Report 2013/04.</p>
  * 
- * <p>Component: RotD50 (average horizontal)</p>
+ * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
  * @author Peter Powers
+ * @see GMM#ASK_14
  */
-final class AbrahamsonEtAl_2014 implements GroundMotionModel {
+public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
 	// TODO review class javadoc and update citation to EQS
 

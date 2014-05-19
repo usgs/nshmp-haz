@@ -19,8 +19,12 @@ package org.opensha.gmm;
  * @see SilvaEtAl_2002
  * @see TavakoliPezeshk_2005
  */
-interface ConvertsMag {
+public interface ConvertsMag {
 
-	MagConverter converter();
+	/**
+	 * Returns a magnitude scale converter.
+	 * @return a magnitude converter
+	 */
+	public MagConverter converter();
 		
 }

@@ -18,17 +18,23 @@ import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Implementation of the Chiou &amp; Youngs (2008) next generation attenuation
- * relationship developed as part of NGA West I.
+ * relationship developed as part of <a
+ * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
- * <p>See: Chiou, B.S.J. and Youngs R.R. (2008), An NGA model for the average
- * horizontal component of peak ground motion and response spectra, Earthquake
- * Spectra, 24(1), 173-215.</p>
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
  * 
- * <p>Component: GMRotI50 (geometric mean)</p>
+ * <p><p>Reference:</p> Chiou, B.S.J. and Youngs R.R. (2008), An NGA model for
+ * the average horizontal component of peak ground motion and response spectra,
+ * Earthquake Spectra, 24(1), 173-215.</p>
+ * 
+ * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
  * 
  * @author Peter Powers
+ * @see GMM#CY_08
  */
-final class ChiouYoungs_2008 implements GroundMotionModel {
+public final class ChiouYoungs_2008 implements GroundMotionModel {
 
 	static final String NAME = "Chiou \u0026 Youngs (2008)";
 	
@@ -153,29 +159,6 @@ final class ChiouYoungs_2008 implements GroundMotionModel {
 
 		// Total model
 		return sqrt(tau * tau * NL0sq + sigmaNL0 * sigmaNL0);
-	}
-
-	
-	public static void main(String[] args) {
-
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		ChiouYoungs_2008 asPGA = new ChiouYoungs_2008(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		ChiouYoungs_2008 as5Hz = new ChiouYoungs_2008(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		ChiouYoungs_2008 as1Hz = new ChiouYoungs_2008(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm);
-
 	}
 
 }

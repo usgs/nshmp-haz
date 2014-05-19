@@ -17,22 +17,25 @@ import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Implementation of the Chiou &amp; Youngs (2013) next generation attenuation
- * relationship developed as part of NGA West II.
+ * relationship developed as part of <a
+ * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
- * <p>Implementation notes: 0.01s SA values used for PGA.</p>
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
  * 
- * <p>See: Chiou, B.S.J. and Youngs, R.R., 2013, Update of the Chiou and Youngs
- * NGA ground motion model for average horizontal component of peak ground
- * motion and response spectra, PEER Report 2013/07.</p>
+ * <p><b>Implementation note:</b> 0.01s SA values used for PGA.</p>
  * 
- * <p>See: <a href="http://peer.berkeley.edu/ngawest2/final-products/">NGA-West2
- * Final Products</a></p>
+ * <p><b>Reference:</b> Chiou, B.S.J. and Youngs, R.R., 2013, Update of the
+ * Chiou and Youngs NGA ground motion model for average horizontal component of
+ * peak ground motion and response spectra, PEER Report 2013/07.</p>
  * 
- * <p>Component: RotD50 (average horizontal)</p>
+ * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
  * @author Peter Powers
+ * @see GMM#CY_14
  */
-final class ChiouYoungs_2014 implements GroundMotionModel {
+public final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	// TODO review class javadoc and update citation to EQS
 	// TODO consider removing odd 0.12 and 0.17s periods

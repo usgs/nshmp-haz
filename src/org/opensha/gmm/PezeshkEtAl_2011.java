@@ -7,24 +7,29 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the ground motion model for the Central and Eastern US by
- * Pezeshk, Zandieh, &amp; Tavakoli (2011). This implementation matches that
+ *  Implementation of the Pezeshk, Zandieh, &amp; Tavakoli (2011) ground motion model for stable
+ * continental regions. This implementation matches that
  * used in the 2014 USGS NSHMP and uses table lookups (median) and functional
  * forms (sigma) to compute ground motions.
  * 
- * <p>Implementation note: Mean values are clamped per
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p>See: Pezeshk, S., Zandieh, A., Tavakoli, B., 2011. Hybrid empirical
+ * <p><b>Reference:</b> Pezeshk, S., Zandieh, A., Tavakoli, B., 2011. Hybrid empirical
  * ground-motion prediction equations for Eastern North America using NGA models
  * and updated seismological parameters: Bulletin of the Seismological Society
  * of America, v. 101, no. 4, p. 1859–1870.</p>
  * 
- * <p>Component: GMRotI50 (geometric mean)</p>
+ * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
  * 
  * @author Peter Powers
+ * @see GMM#PEZESHK_11
  */
-final class PezeshkEtAl_2011 implements GroundMotionModel {
+public final class PezeshkEtAl_2011 implements GroundMotionModel {
 
 	// TODO convert to functional form
 	

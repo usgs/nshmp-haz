@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="nshmp-sha" default="javadoc" basedir=".">
+
+	<description>
+		nshmp-sha is a platform for seismic hazard calculations
+	</description>
+
+	<property name="src.dir" value="src/" />
+	<property name="lib.dir" value="lib/" />
+	<property name="javadoc.dir" value="../nshmp-sha.gh-pages/docs/" />
+	
+	<path id="library.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="javadoc">
+		<delete dir="${javadoc.dir}" failonerror="yes" verbose="no" />
+		<javadoc 
+			classpathref="library.classpath" 
+			destdir="${javadoc.dir}"
+			author="true"
+			version="true" 
+			use="true"
+			windowtitle="nshmp-sha"
+			maxmemory="512m"
+			verbose="false"
+			encoding="UTF-8"
+			docencoding="UTF-8"
+			charset="UTF-8">
+			
+			<fileset dir="${src.dir}" defaultexcludes="yes">
+				<include name="**/*.java" />
+			</fileset>
+						
+			<link href="http://docs.oracle.com/javase/7/docs/api/"/>
+			<link href="http://commons.apache.org/proper/commons-math/apidocs/"/>
+			<link href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/"/>
+			
+		</javadoc>
+	</target>
+
+</project>
+

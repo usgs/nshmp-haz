@@ -12,26 +12,37 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Abstract implementation of the attenuation relationship for the Central and
- * Eastern US by Atkinson &amp; Boore (2006). This implementation matches that
- * used in the 2008 USGS NSHMP. Concrete implementations need to implement
- * {@link #scaleFactor()}.
+ * Abstract implementation of the attenuation relationship for stable continental regions
+ * by Atkinson &amp; Boore (2006). This implementation matches that
+ * used in the 2008 USGS NSHMP. In addition to have two stress-drop scaling
+ * variants, this model also comes in magnitude converting (mb to Mw) flavors to
+ * support the 2008 central and eastern US model.
  * 
- * <p>Implementation note: this uses a reduced set of frequencies that
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation note:</b> this uses a reduced set of frequencies that
  * correspond most closely to defined {@code IMT}s.</p>
  * 
- * <p>Implementation note: Mean values are clamped per
+ * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p>See: Atkinson, G.M., and Boore, D.M., 2006, Earthquake ground- motion
- * prediction equations for eastern North America: Bulletin of the Seismological
- * Society of America, v. 96, p. 2181–2205.</p>
+ * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
+ * ground-motion prediction equations for eastern North America: Bulletin of the
+ * Seismological Society of America, v. 96, p. 2181–2205.</p>
  * 
- * <p>Component: horizontal (not clear from publication)</p>
+ * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers
+ * @see GMM#AB_06_140BAR
+ * @see GMM#AB_06_140BAR_AB
+ * @see GMM#AB_06_140BAR_J
+ * @see GMM#AB_06_200BAR
+ * @see GMM#AB_06_200BAR_AB
+ * @see GMM#AB_06_200BAR_J
  */
-abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsMag {
+public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsMag {
 
 	// This model was developed using data from hard rock sites and simulations.
 	// Coefficients are provided for hard rock and soft rock sites. Use the hard
@@ -52,10 +63,8 @@ abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsMag {
 	
 	static final String NAME = "Atkinson \u0026 Boore (2006)";
 	
-	static final CoefficientContainer CC = new CoefficientContainer(
-		"AB06A.csv", Coeffs.class);
-	static final CoefficientContainer CC_BC = new CoefficientContainer(
-		"AB06BC.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("AB06A.csv", Coeffs.class);
+	static final CoefficientContainer CC_BC = new CoefficientContainer("AB06BC.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
 		double c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, bln, b1, b2, del, m1,
@@ -187,37 +196,5 @@ abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsMag {
 
 		return GMM_Utils.ceusMeanClip(c.imt, gnd);
 	}
-	
-	static void dome(double dd) {
-		System.out.println(dd);
-		dd= 5.0;
-		System.out.println(dd);
-	}
-	
-	public static void main(String[] args) {
-		double pp = 7.0;
-		System.out.println(pp);
-		dome(pp);
-		System.out.println(pp);
 		
-//		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-//		ScalarGroundMotion sgm;
-//		
-//		System.out.println("PGA");
-//		CampbellBozorgnia_2008 asPGA = new CampbellBozorgnia_2008(IMT.PGA);
-//		sgm = asPGA.calc(in);
-//		System.out.println(sgm);
-//
-//		System.out.println("5Hz");
-//		CampbellBozorgnia_2008 as5Hz = new CampbellBozorgnia_2008(IMT.SA0P2);
-//		sgm = as5Hz.calc(in);
-//		System.out.println(sgm);
-//
-//		System.out.println("1Hz");
-//		CampbellBozorgnia_2008 as1Hz = new CampbellBozorgnia_2008(IMT.SA1P0);
-//		sgm = as1Hz.calc(in);
-//		System.out.println(sgm);
-		
-	}
-
 }

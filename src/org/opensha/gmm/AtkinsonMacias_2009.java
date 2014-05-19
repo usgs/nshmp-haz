@@ -11,21 +11,26 @@ import org.opensha.calc.ScalarGroundMotion;
  * &amp; Macias (2009). This implementation matches that used in the 2014 USGS
  * NSHMP.
  * 
- * <p>Implementation notes: <ul><li>This is currently only applicable to vs760;
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation notes:</b> <ul><li>This is currently only applicable to vs760;
  * there is a suggestion in the NSHM fortran that the AB08 non-linear site
  * amplification model should be used; this needs to be revisited and would
  * require implementation of pgaRock (TODO).</li><li>NSHM fortran implementation
  * converts 0.13Hz to 7.7s; this implementation uses 7.5s instead.</li></ul></p>
  * 
- * <p>See: Atkinson, G.M. and Macias, D.M., 2009, Predicted Ground Motions for
+ * <p><b>Reference:</b> Atkinson, G.M. and Macias, D.M., 2009, Predicted Ground Motions for
  * Great Interface Earthquakes in the Cascadia Subduction Zone: Bulletin of the
  * Seismological Society of America, v. 99, p. 1552-1578.</p>
  * 
- * <p>Component: geometric mean of two horizontal components</p>
+ * <p><b>Component:</b> geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
+ * @see GMM#AM_09_INTER
  */
-final class AtkinsonMacias_2009 implements GroundMotionModel {
+public final class AtkinsonMacias_2009 implements GroundMotionModel {
 	
 	static final String NAME = "Atkinson \u0026 Macias (2009): Interface";
 	

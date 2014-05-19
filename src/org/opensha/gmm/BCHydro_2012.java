@@ -13,36 +13,40 @@ import org.opensha.calc.ScalarGroundMotion;
  * Hydro, Canada, by Addo, Abrahamson, &amp; Youngs (2012). This implementation
  * matches that used in the USGS NSHM as supplied by N. Abrahamson.
  * 
- * <p>This implementation supports both slab and interface type events. In the
+ * <p>This model supports both slab and interface type events. In the
  * 2008 NSHMP, the 'interface' form is used with the Cascadia subduction zone
  * models and the 'slab' form is used with gridded 'deep' events in northern
- * California and the Pacific Northwest. Concrete implementations need to
- * implement {@link #isSlab()}.</p>
+ * California and the Pacific Northwest.</p>
  * 
- * <p>Implementation notes: <ol><li>Treats all sites as forearc.<li><li>'zTop'
- * is interpreted as hypocentral depth and is only used for slab events; it is
- * limited to 125 km, consistent with other subduction models.</li><li>The
- * DeltaC1 term is keyed to the 'middle' BC Hydro branch for interface events
- * and fixed at -0.3 for slab events.</li></ol></p>
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
  * 
- * <p>See: Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro), 2012,
- * Probabilistic seismic hazard analysis (PSHA) model—Ground motion
+ * <p><b>Implementation notes:</b> <ol><li>Treats all sites as
+ * forearc.<li><li>'zTop' is interpreted as hypocentral depth and is only used
+ * for slab events; it is limited to 125 km, consistent with other subduction
+ * models.</li><li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for
+ * interface events and fixed at -0.3 for slab events.</li></ol></p>
+ * 
+ * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
+ * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
  * characterization (GMC) model: Report E658, Volume 3, November.</p>
  * 
- * <p>Component: Geometric mean of two horizontal components</p>
+ * <p><b>Component:</b> Geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
+ * @see GMM#BCHYDRO_12_INTER
+ * @see GMM#BCHYDRO_12_SLAB
  */
-abstract class BCHydro_2012 implements GroundMotionModel {
+public abstract class BCHydro_2012 implements GroundMotionModel {
 
 	static final String NAME = "BC Hydro (2012)";
 
-	static final CoefficientContainer CC = new CoefficientContainer(
-		"BCHydro12.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("BCHydro12.csv", Coeffs.class);
 
 	static class Coeffs extends Coefficients {
-		double vlin, b, t1, t2, t6, t7, t8, t10, t11, t12, t13, t14, t15, t16,
-			dC1lo, dC1mid, dC1hi;
+		double vlin, b, t1, t2, t6, t7, t8, t10, t11, t12, t13, t14, t15, t16, dC1lo, dC1mid,
+				dC1hi;
 	}
 
 	// author declared constants

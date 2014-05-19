@@ -8,28 +8,36 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the Frankel et al. (1996) ground motion model for
- * use with the 2008 CEUS NSHMP.
+ * Implementation of the Frankel et al. (1996) ground motion model for stable
+ * continental regions. This implementation matches that used in the 2008 USGS
+ * NSHMP and comes in two additional magnitude converting (mb to Mw) flavors to
+ * support the 2008 central and eastern US model.
  * 
- * <p>Implementation note: Mean values are clamped per
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p>See: Frankel, A., Mueller, C., Barnhard, T., Perkins, D., Leyendecker, E.,
- * Dickman, N., Hanson, S., and Hopper, M., 1996, National Seismic Hazard
- * Maps—Documentation June 1996: U.S. Geological Survey Open-File Report 96–532,
- * 110 p.</p>
+ * <p><b>Reference:</b> Frankel, A., Mueller, C., Barnhard, T., Perkins, D.,
+ * Leyendecker, E., Dickman, N., Hanson, S., and Hopper, M., 1996, National
+ * Seismic Hazard Maps—Documentation June 1996: U.S. Geological Survey Open-File
+ * Report 96–532, 110 p.</p>
  * 
- * <p>Component: not specified</p>
+ * <p><b>Component:</b> not specified</p>
  * 
  * @author Peter Powers
+ * @see GMM#FRANKEL_96
+ * @see GMM#FRANKEL_96_AB
+ * @see GMM#FRANKEL_96_J
  */
-class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
+public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
-	public static final String NAME = "Frankel et al. (1996)";
+	static final String NAME = "Frankel et al. (1996)";
 	
 	// only holds period dependent sigma values
-	public static final CoefficientContainer CC = new CoefficientContainer(
-		"Frankel96.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("Frankel96.csv", Coeffs.class);
 	
 	private final GMM_Table bcTable;
 	private final GMM_Table aTable;
@@ -61,27 +69,6 @@ class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 	@Override
 	public MagConverter converter() {
 		return NONE;
-	}
-
-	public static void main(String[] args) {
-		
-//		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-//		ScalarGroundMotion sgm;
-//		
-//		System.out.println("PGA");
-//		Idriss_2013 asPGA = new Idriss_2013(IMT.PGA);
-//		sgm = asPGA.calc(in);
-//		System.out.println(sgm);
-//
-//		System.out.println("5Hz");
-//		Idriss_2013 as5Hz = new Idriss_2013(IMT.SA0P2);
-//		sgm = as5Hz.calc(in);
-//		System.out.println(sgm);
-//
-//		System.out.println("1Hz");
-//		Idriss_2013 as1Hz = new Idriss_2013(IMT.SA1P0);
-//		sgm = as1Hz.calc(in);
-//		System.out.println(sgm);
 	}
 
 }

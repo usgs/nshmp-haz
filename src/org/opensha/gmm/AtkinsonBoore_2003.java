@@ -10,23 +10,30 @@ import org.opensha.calc.ScalarGroundMotion;
 /**
  * Abstract implementation of the subduction ground motion model by Atkinson
  * &amp; Boore (2003). This implementation matches that used in the 2008 USGS
- * NSHMP. This implementation has global and Cascadia-specific forms and can be
+ * NSHMP. This model has global- and Cascadia-specific forms and can be
  * used for both slab and interface events. In the 2008 NSHMP, the 'interface'
  * form is used with the Cascadia subduction zone models and the 'slab' form is
  * used with gridded 'deep' events in northern California and the Pacific
- * Northwest. Concrete implementations need to implement {@link #isGlobal()} and
- * {@link #isSlab()}.
+ * Northwest.
  * 
- * <p>See: Atkinson, G.M. and Boore, D.M., 2003, Empirical Ground-Motion
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Reference:</b> Atkinson, G.M. and Boore, D.M., 2003, Empirical Ground-Motion
  * Relations for Subduction-Zone Earthquakes and Their Application to Cascadia
  * and Other Regions: Bulletin of the Seismological Society of America, v. 93,
  * p. 1012–1033.</p>
  * 
- * <p>Component: horizontal (not clear from publication)</p>
+ * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers
+ * @see GMM#AB_03_CASC_INTER
+ * @see GMM#AB_03_CASC_SLAB
+ * @see GMM#AB_03_GLOB_INTER
+ * @see GMM#AB_03_GLOB_SLAB
  */
-abstract class AtkinsonBoore_2003 implements GroundMotionModel {
+public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	
 	// TODO from original implementation -- recheck
 	// NOTE RupTopDepthParam is used in a funny way here (see also Youngs/
@@ -83,8 +90,10 @@ abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		return DefaultScalarGroundMotion.create(mean, sigma);
 	}
 	
+	// subclass flag
 	abstract boolean isGlobal();
 	
+	// subclass flag
 	abstract boolean isSlab();
 	
 	// SF2 variable of AB06 needs to be provided by subclasses via

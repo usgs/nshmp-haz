@@ -11,28 +11,33 @@ import org.opensha.calc.ScalarGroundMotion;
  * Abstract implementation of the subduction ground motion model by Zhao et al.
  * (2006). This implementation matches that used in the USGS NSHM.
  * 
- * <p>This implementation supports both slab and interface type events. In the
+ * <p>This model supports both slab and interface type events. In the
  * 2008 NSHMP, the 'interface' form is used with the Cascadia subduction zone
  * models and the 'slab' form is used with gridded 'deep' events in northern
- * California and the Pacific Northwest. Concrete implementations need to
- * implement {@link #isSlab()}.</p>
+ * California and the Pacific Northwest.</p>
  * 
- * <p>Implementation notes: <ol><li>When used for interface events, sigma is
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation notes:</b> <ol><li>When used for interface events, sigma is
  * computed using the generic value of tau, rather than the interface specific
  * value(see inline comments for more information).<li> <li>Hypocentral depths
  * for interface events are fixed at 20km.</li></ol></p>
  * 
- * <p>See: Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T., Takahashi,
+ * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T., Takahashi,
  * T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G., Fukushima, Y., and
  * Fukushima, Y., 2006, Attenuation relations of strong ground motion in Japan
  * using site classification based on predominant period: Bulletin of the
  * Seismological Society of America, v. 96, p. 898–913.</p>
  * 
- * <p>Component: Geometric mean of two horizontal components</p>
+ * <p><b>Component:</b> Geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
+ * @see GMM#ZHAO_06_INTER
+ * @see GMM#ZHAO_06_SLAB
  */
-abstract class ZhaoEtAl_2006 implements GroundMotionModel {
+public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
 	static final String NAME = "Zhao et al. (2006)";
 	

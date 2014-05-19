@@ -4,34 +4,40 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
-
 import static org.opensha.gmm.MagConverter.*;
 
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of mid-continent Toro et al. (1997) attenuation relationship
- * with 2002 updates. This implementation matches that used in the 2008 USGS
- * NSHMP.
+ * Implementation of the Toro et al. (1997) ground motion model for stable
+ * continental regions with 2002 updates. This implementation matches that used in the 2008 USGS
+ * NSHMP and comes in two flavors (mb and Mw) to
+ * support the 2008 central and eastern US model.
  * 
- * <p>Implementation note: Mean values are clamped per
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p>See: Toro, G.R., 2002, Modification of the Toro et al. (1997) attenuation
+ * <p><b>Reference:</b> Toro, G.R., 2002, Modification of the Toro et al. (1997) attenuation
  * relations for large magnitudes and short distances: Risk Engineering, Inc.
  * report, http://www.riskeng.com/PDF/atten_toro_extended.pdf. (TODO this
  * link no longer works)</p>
  * 
- * <p>See: Toro, G.R., Abrahamson, N.A., and Schneider, J.F., 1997, A model of
+ * <p><b>Reference:</b> Toro, G.R., Abrahamson, N.A., and Schneider, J.F., 1997, A model of
  * strong ground motions from earthquakes in central and eastern North
  * America—Best estimates and uncertain- ties: Seismological Research Letters,
  * v. 68, p. 41–57.</p>
  * 
- * <p>Component: not specified</p>
+ * <p><b>Component:</b> not specified</p>
  * 
  * @author Peter Powers
+ * @see GMM#TORO_97_MB
+ * @see GMM#TORO_97_MW
  */
-abstract class ToroEtAl_1997 implements GroundMotionModel {
+public abstract class ToroEtAl_1997 implements GroundMotionModel {
 	
 	// TODO fix clamp values (not implemented here yet) to match other CEUS gmms
 
@@ -54,10 +60,8 @@ abstract class ToroEtAl_1997 implements GroundMotionModel {
 	static final String NAME = "Toro et al. (1997)";
 	
 	// load both Mw and Mb coefficients
-	static final CoefficientContainer CC = new CoefficientContainer(
-		"Toro97Mw.csv", Coeffs.class);
-	static final CoefficientContainer CC_MB = new CoefficientContainer(
-		"Toro97Mb.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("Toro97Mw.csv", Coeffs.class);
+	static final CoefficientContainer CC_MB = new CoefficientContainer("Toro97Mb.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
 		double t1, t1h, t2, t3, t4, t5, t6, th, tsigma;
@@ -124,26 +128,4 @@ abstract class ToroEtAl_1997 implements GroundMotionModel {
 		return GMM_Utils.ceusMeanClip(c.imt, gnd);
 	}
 	
-	public static void main(String[] args) {
-
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		CampbellBozorgnia_2008 asPGA = new CampbellBozorgnia_2008(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		CampbellBozorgnia_2008 as5Hz = new CampbellBozorgnia_2008(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		CampbellBozorgnia_2008 as1Hz = new CampbellBozorgnia_2008(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm);
-		
-	}
-
 }

@@ -9,21 +9,26 @@ import org.opensha.calc.ScalarGroundMotion;
 /**
  * Implementation of the hard rock attenuation relationship for the Central and
  * Eastern US by Somerville et al. (2001). This implementation matches that used
- * in the 2008 USGS NSHMP.
+ * in the 2008 USGS NSHMP and is only used for fault sources and gridded representation of faults (e.g. Charleston).
  * 
- * <p>Implementation note: Mean values are clamped per
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p>See: Somerville, P., Collins, N., Abrahamson, N., Graves, R., and Saikia,
+ * <p><b>Reference:</b> Somerville, P., Collins, N., Abrahamson, N., Graves, R., and Saikia,
  * C., 2001, Ground motion attenuation relations for the Central and Eastern
  * United States — Final report, June 30, 2001: Report to U.S. Geological Survey
  * for award 99HQGR0098, 38 p.</p>
  * 
- * <p>Component: not specified</p>
+ * <p><b>Component:</b> not specified</p>
  * 
  * @author Peter Powers
+ * @see GMM#SOMERVILLE_01
  */
-final class SomervilleEtAl_2001 implements GroundMotionModel {
+public final class SomervilleEtAl_2001 implements GroundMotionModel {
 	
 //	 * TODO check doc that distance is rjb
 //	 * 		verify that Somerville imposes dtor of 6.0:

@@ -18,21 +18,26 @@ import org.opensha.calc.ScalarGroundMotion;
  * period-dependent site amplification function modified from Boore &amp;
  * Atkinson (2008).
  * 
- * <p>This implementation supports both slab and interface type events. In the
- * 2008 NSHMP, the 'interface' form is used with the Cascadia subduction zone
- * models and the 'slab' form is used with gridded 'deep' events in northern
- * California and the Pacific Northwest. Concrete implementations need to
- * implement {@link #isSlab()}.</p>
+ * <p>This model supports both slab and interface type events. In the 2008
+ * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
+ * and the 'slab' form is used with gridded 'deep' events in northern California
+ * and the Pacific Northwest.</p>
  * 
- * <p>See: Youngs, R.R., Chiou, S.-J., Silva, W.J., and Humphrey, J.R., 1997,
- * Strong ground motion attenuation relationships for subduction zone
- * earthquakes: Seismological Research Letters, v. 68, p. 58-73.</p>
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
  * 
- * <p>Component: Geometric mean of two horizontal components</p>
+ * <p><b>Reference:</b> Youngs, R.R., Chiou, S.-J., Silva, W.J., and Humphrey,
+ * J.R., 1997, Strong ground motion attenuation relationships for subduction
+ * zone earthquakes: Seismological Research Letters, v. 68, p. 58-73.</p>
+ * 
+ * <p><b>Component:</b> Geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
+ * @see GMM#YOUNGS_97_INTER
+ * @see GMM#YOUNGS_97_SLAB
  */
-abstract class YoungsEtAl_1997 implements GroundMotionModel {
+public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	
 	// notes from original OpenSHA implementation TODO revisit
 	// NOTE RupTopDepthParam is used in a funny way here (see also Atkinson &

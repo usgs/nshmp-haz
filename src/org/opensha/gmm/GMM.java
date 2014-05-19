@@ -10,12 +10,12 @@ import org.opensha.gmm.CEUS_Mb.*;
 import com.google.common.collect.Sets;
 
 /**
- * Ground motion model (GMM) identifiers that can supply instances of various
- * ground motion model implementations. Single or corporate authored models are
- * identified as NAME_YR_FLAVOR; multi-author models as INITIALS_YR_FLAVOR.
- * FLAVOR is only used for those models with region specific implementations
- * or other variants.
- *
+ * {@link GroundMotionModel} (GMM) identifiers. Use these to generate
+ * {@link IMT}-specific instances via {@link GMM#instance(IMT)}. Single or
+ * corporate authored models are identified as NAME_YR_FLAVOR; multi-author
+ * models as INITIALS_YR_FLAVOR. FLAVOR is only used for those models with
+ * region specific implementations or other variants.
+ * 
  * @author Peter Powers
  */
 public enum GMM {
@@ -52,7 +52,11 @@ public enum GMM {
 	// TODO remove main()s form concrete implementations
 	// make select GMMs public for documentation
 	
-	
+//	 * TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup; why is
+//	 * depth constrained as such in hazgrid? As with somerville, no depth is imposed
+//	 * in hazFX - make sure 0.01 as PGA is handled corectly; may require change to
+//	 * period = 0.0
+
 	// NGA-West1 NSHMP 2008
 	/** @see BooreAtkinson_2008 */
 	BA_08(BooreAtkinson_2008.class, BooreAtkinson_2008.NAME, BooreAtkinson_2008.CC),
@@ -62,15 +66,15 @@ public enum GMM {
 	CY_08(ChiouYoungs_2008.class, ChiouYoungs_2008.NAME, ChiouYoungs_2008.CC),
 	
 	// NGA-West2 NSHMP 2014
-	/** @see */
+	/** @see AbrahamsonEtAl_2014 */
 	ASK_14(AbrahamsonEtAl_2014.class, AbrahamsonEtAl_2014.NAME, AbrahamsonEtAl_2014.CC),
-	/** @see */
+	/** @see BooreEtAl_2014 */
 	BSSA_14(BooreEtAl_2014.class, BooreEtAl_2014.NAME, BooreEtAl_2014.CC),
-	/** @see */
+	/** @see CampbellBozorgnia_2014 */
 	CB_14(CampbellBozorgnia_2014.class, CampbellBozorgnia_2014.NAME, CampbellBozorgnia_2014.CC),
-	/** @see */
+	/** @see ChiouYoungs_2014 */
 	CY_14(ChiouYoungs_2014.class, ChiouYoungs_2014.NAME, ChiouYoungs_2014.CC),
-	/** @see */
+	/** @see Idriss_2014 */
 	IDRISS_14(Idriss_2014.class, Idriss_2014.NAME, Idriss_2014.CC),
 	
 	// Subduction NSHMP 2008 2014

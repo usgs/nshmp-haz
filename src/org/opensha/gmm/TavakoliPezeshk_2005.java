@@ -8,24 +8,34 @@ import static org.opensha.gmm.MagConverter.NONE;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the Central and Eastern US attenuation relationship by
- * Tavakoli &amp; Pezeshk (2005). This implementation matches that used in the
- * 2008 USGS NSHMP. TODO NOTE that frankel terms are used for soft rock.
+ * Implementation of the Tavakoli &amp; Pezeshk (2005) ground motion model for
+ * stable continental regions. This implementation matches that used in the 2008
+ * USGS NSHMP and comes in two additional magnitude converting (mb to Mw)
+ * flavors to support the 2008 central and eastern US model.
  * 
- * <p>Implementation note: Mean values are clamped per
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
+ * 
+ * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p>See: Tavakoli, B., and Pezeshk, S., 2005, Empirical-stochastic ground-motion
- * prediction for eastern North America: Bulletin of the Seismological Society
- * of America, v. 95, p. 2283–2296.</p>
+ * <p><b>Reference:</b> Tavakoli, B., and Pezeshk, S., 2005,
+ * Empirical-stochastic ground-motion prediction for eastern North America:
+ * Bulletin of the Seismological Society of America, v. 95, p. 2283–2296.</p>
  * 
- * <p>Component: not specified (avg horizontal implied)</p>
+ * <p><b>Component:</b> not specified (avg horizontal implied)</p>
  * 
  * @author Peter Powers
+ * @see GMM#TP_05
+ * @see GMM#TP_05_AB
+ * @see GMM#TP_05_J
  */
-class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
+public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 
 
+	// TODO NOTE in docs that frankel terms are used for soft rock.
+	
 //	 * TODO
 //	 * 		- needs to support Rrup
 //	 * 		- vs30 param, or kill in favor of hard/soft rock options
@@ -54,8 +64,7 @@ class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 	static final CoefficientContainer CC = new CoefficientContainer("TP05.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
-		double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13,
-				c14, c15, c16;
+		double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16;
 	}
 	
 	private final Coeffs coeffs;
@@ -123,29 +132,6 @@ class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 		// TODO clean
 		// if (magType == LG_PHASE) mag = Utils.mblgToMw(magConvCode, mag);
         return (Mw < 7.2) ? c.c14 + c.c15 * Mw : c.c16;
-	}
-
-	
-	public static void main(String[] args) {
-
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		CampbellBozorgnia_2008 asPGA = new CampbellBozorgnia_2008(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		CampbellBozorgnia_2008 as5Hz = new CampbellBozorgnia_2008(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		CampbellBozorgnia_2008 as1Hz = new CampbellBozorgnia_2008(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm);
-		
 	}
 
 }

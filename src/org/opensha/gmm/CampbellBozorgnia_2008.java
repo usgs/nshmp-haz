@@ -18,18 +18,24 @@ import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Implementation of the Campbell &amp; Bozorgnia (2008) next generation
- * attenuation relationship developed as part of NGA West I.
+ * attenuation relationship developed as part of <a
+ * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
- * <p>See: NGA Ground Motion Model for the Geometric Mean Horizontal Component
- * of PGA, PGV, PGD and 5% Damped Linear Elastic Response Spectra for Periods
- * Ranging from 0.01 to 10 s, Earthquake Spectra, Volume 24, Number 1, pp.
- * 139-171.</p>
+ * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
+ * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * desired {@link IMT}.</p>
  * 
- * <p>Component: GMRotI50 (geometric mean)</p>
+ * <p><b>Reference:</b> NGA Ground Motion Model for the Geometric Mean
+ * Horizontal Component of PGA, PGV, PGD and 5% Damped Linear Elastic Response
+ * Spectra for Periods Ranging from 0.01 to 10 s, Earthquake Spectra, Volume 24,
+ * Number 1, pp. 139-171.</p>
+ * 
+ * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
  * 
  * @author Peter Powers
+ * @see GMM#CB_08
  */
-final class CampbellBozorgnia_2008 implements GroundMotionModel {
+public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
 	static final String NAME = "Campbell \u0026 Bozorgnia (2008)";
 	
@@ -181,29 +187,6 @@ final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
 		// Total Model
 		return sqrt(tau*tau + sigma*sigma);
-	}
-
-	
-	public static void main(String[] args) {
-
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		CampbellBozorgnia_2008 asPGA = new CampbellBozorgnia_2008(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		CampbellBozorgnia_2008 as5Hz = new CampbellBozorgnia_2008(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		CampbellBozorgnia_2008 as1Hz = new CampbellBozorgnia_2008(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm);
-		
 	}
 
 }
