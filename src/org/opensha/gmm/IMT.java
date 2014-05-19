@@ -135,13 +135,4 @@ public enum IMT {
 		}
 	}
 	
-	public static void main(String[] args) {
-		IMT imt = PGA;
-		System.out.println(imt);
-		IMT currentIMT = imt;
-		System.out.println(currentIMT);
-		imt = SA1P0;
-		System.out.println(currentIMT);
-	}
-
 }

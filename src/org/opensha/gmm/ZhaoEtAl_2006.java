@@ -11,25 +11,25 @@ import org.opensha.calc.ScalarGroundMotion;
  * Abstract implementation of the subduction ground motion model by Zhao et al.
  * (2006). This implementation matches that used in the USGS NSHM.
  * 
- * <p>This model supports both slab and interface type events. In the
- * 2008 NSHMP, the 'interface' form is used with the Cascadia subduction zone
- * models and the 'slab' form is used with gridded 'deep' events in northern
- * California and the Pacific Northwest.</p>
+ * <p>This model supports both slab and interface type events. In the 2008
+ * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
+ * and the 'slab' form is used with gridded 'deep' events in northern California
+ * and the Pacific Northwest.</p>
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
- * <p><b>Implementation notes:</b> <ol><li>When used for interface events, sigma is
- * computed using the generic value of tau, rather than the interface specific
- * value(see inline comments for more information).<li> <li>Hypocentral depths
- * for interface events are fixed at 20km.</li></ol></p>
+ * <p><b>Implementation notes:</b> <ol><li>When used for interface events, sigma
+ * is computed using the generic value of tau, rather than the interface
+ * specific value(see inline comments for more information).<li> <li>Hypocentral
+ * depths for interface events are fixed at 20km.</li></ol></p>
  * 
- * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T., Takahashi,
- * T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G., Fukushima, Y., and
- * Fukushima, Y., 2006, Attenuation relations of strong ground motion in Japan
- * using site classification based on predominant period: Bulletin of the
- * Seismological Society of America, v. 96, p. 898–913.</p>
+ * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T.,
+ * Takahashi, T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G.,
+ * Fukushima, Y., and Fukushima, Y., 2006, Attenuation relations of strong
+ * ground motion in Japan using site classification based on predominant period:
+ * Bulletin of the Seismological Society of America, v. 96, p. 898–913.</p>
  * 
  * <p><b>Component:</b> Geometric mean of two horizontal components</p>
  * 
@@ -44,8 +44,8 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 	static final CoefficientContainer CC = new CoefficientContainer("Zhao06.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
-		double T, a, b, c, d, e, Sr, Si, Ss, Ssl, C1, C2, C3, sigma, tau, tauI,
-				tauS, Ps, Qi, Qs, Wi, Ws;
+		double T, a, b, c, d, e, Sr, Si, Ss, Ssl, C1, C2, C3, sigma, tau, tauI, tauS, Ps, Qi, Qs,
+				Wi, Ws;
 	}
 	
 	// author declared constants
@@ -111,29 +111,6 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 		// table 6. Zhao says "truth" is somewhere in between.
 		return sqrt(c.sigma * c.sigma +
 			(slab ? c.tauS * c.tauS : c.tau * c.tau));
-	}
-
-	
-	public static void main(String[] args) {
-
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		CampbellBozorgnia_2008 asPGA = new CampbellBozorgnia_2008(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		CampbellBozorgnia_2008 as5Hz = new CampbellBozorgnia_2008(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		CampbellBozorgnia_2008 as1Hz = new CampbellBozorgnia_2008(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm);
-		
 	}
 
 }

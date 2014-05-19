@@ -49,7 +49,6 @@ public enum GMM {
 	//			hazgrid A08' minR=1.8km; P11 minR = 1km; others?
 	//			hazfx all (tables?) have minR = 0.11km
 	// TODO doublecheck that SUB implementations are using the correct distance metric
-	// TODO remove main()s form concrete implementations
 	// make select GMMs public for documentation
 	
 //	 * TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup; why is

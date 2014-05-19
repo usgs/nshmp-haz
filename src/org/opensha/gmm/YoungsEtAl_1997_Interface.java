@@ -17,7 +17,4 @@ final class YoungsEtAl_1997_Interface extends YoungsEtAl_1997 {
 
 	@Override final boolean isSlab() { return false; }
 
-	public static void main(String[] args) {
-		System.out.println(YoungsEtAl_1997_Interface.NAME);
-	}
 }

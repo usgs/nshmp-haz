@@ -40,8 +40,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 	static final String NAME = "Atkinson \u0026 Boore (2006): Prime";
 	
 	// only period a-to-bc conversion factors
-	static final CoefficientContainer CC = new CoefficientContainer(
-		"AB06P.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("AB06P.csv", Coeffs.class);
 
 	private final GMM_Table table;
 	
@@ -81,29 +80,6 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 		
 		return DefaultScalarGroundMotion.create(
 			GMM_Utils.ceusMeanClip(coeffs.imt, mean), SIGMA);
-	}
-			
-	
-
-	public static void main(String[] args) {
-				
-//		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-//		ScalarGroundMotion sgm;
-//		
-//		System.out.println("PGA");
-//		Idriss_2013 asPGA = new Idriss_2013(IMT.PGA);
-//		sgm = asPGA.calc(in);
-//		System.out.println(sgm);
-//
-//		System.out.println("5Hz");
-//		Idriss_2013 as5Hz = new Idriss_2013(IMT.SA0P2);
-//		sgm = as5Hz.calc(in);
-//		System.out.println(sgm);
-//
-//		System.out.println("1Hz");
-//		Idriss_2013 as1Hz = new Idriss_2013(IMT.SA1P0);
-//		sgm = as1Hz.calc(in);
-//		System.out.println(sgm);
 	}
 
 }

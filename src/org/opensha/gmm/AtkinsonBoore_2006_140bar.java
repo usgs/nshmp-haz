@@ -3,7 +3,7 @@ package org.opensha.gmm;
 /**
  * Concrete implementation of Atkinson &amp; Boore (2006) for a 140bar stress
  * drop.
- *
+ * 
  * @author Peter Powers
  * @see AtkinsonBoore_2006
  */

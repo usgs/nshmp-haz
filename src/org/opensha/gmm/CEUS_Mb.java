@@ -4,8 +4,8 @@ import static org.opensha.gmm.MagConverter.MB_TO_MW_JOHNSTON;
 import static org.opensha.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
 
 /**
- * Wrapper class for CEUS GMM flavors that do magnitude conversions from m<sub>b</sub> to
- * M<sub>w</sub>. For use with 2008 CEUS grid sources only.
+ * Wrapper class for CEUS GMM flavors that do magnitude conversions from
+ * m<sub>b</sub> to M<sub>w</sub>. For use with 2008 CEUS grid sources only.
  * 
  * @author Peter Powers
  */

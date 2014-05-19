@@ -8,8 +8,8 @@ import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Implementation of the Idriss (2014) next generation attenuation relationship
- *  for active crustal regions developed as part of <a href="http://peer.berkeley.edu/ngawest2">NGA West
- * II</a>.
+ * for active crustal regions developed as part of <a
+ * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
@@ -27,6 +27,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
  * @author Peter Powers
+ * @see GMM#IDRISS_14
  */
 public final class Idriss_2014 implements GroundMotionModel {
 
@@ -34,12 +35,10 @@ public final class Idriss_2014 implements GroundMotionModel {
 	
 	static final String NAME = "Idriss (2014)";
 	
-	static final CoefficientContainer CC = new CoefficientContainer(
-		"Idriss14.csv", Coeffs.class);
+	static final CoefficientContainer CC = new CoefficientContainer("Idriss14.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
-		double a1_lo, a2_lo, a1_hi, a2_hi, a3, b1_lo, b2_lo, b1_hi, b2_hi, xi,
-				gamma, phi;
+		double a1_lo, a2_lo, a1_hi, a2_hi, a3, b1_lo, b2_lo, b1_hi, b2_hi, xi, gamma, phi;
 	}
 	
 	private final Coeffs coeffs;

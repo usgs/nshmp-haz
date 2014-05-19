@@ -89,27 +89,5 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 			SIGMA_FAC * Mw + c.c14;
 		return sigma * BASE_10_TO_E;
 	}
-	
-
-	public static void main(String[] args) {
-				
-//		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-//		ScalarGroundMotion sgm;
-//		
-//		System.out.println("PGA");
-//		Idriss_2013 asPGA = new Idriss_2013(IMT.PGA);
-//		sgm = asPGA.calc(in);
-//		System.out.println(sgm);
-//
-//		System.out.println("5Hz");
-//		Idriss_2013 as5Hz = new Idriss_2013(IMT.SA0P2);
-//		sgm = as5Hz.calc(in);
-//		System.out.println(sgm);
-//
-//		System.out.println("1Hz");
-//		Idriss_2013 as1Hz = new Idriss_2013(IMT.SA1P0);
-//		sgm = as1Hz.calc(in);
-//		System.out.println(sgm);
-	}
 
 }

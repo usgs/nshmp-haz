@@ -10,20 +10,19 @@ import org.opensha.calc.ScalarGroundMotion;
 /**
  * Abstract implementation of the subduction ground motion model by Atkinson
  * &amp; Boore (2003). This implementation matches that used in the 2008 USGS
- * NSHMP. This model has global- and Cascadia-specific forms and can be
- * used for both slab and interface events. In the 2008 NSHMP, the 'interface'
- * form is used with the Cascadia subduction zone models and the 'slab' form is
- * used with gridded 'deep' events in northern California and the Pacific
- * Northwest.
+ * NSHMP. This model has global- and Cascadia-specific forms and can be used for
+ * both slab and interface events. In the 2008 NSHMP, the 'interface' form is
+ * used with the Cascadia subduction zone models and the 'slab' form is used
+ * with gridded 'deep' events in northern California and the Pacific Northwest.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
- * <p><b>Reference:</b> Atkinson, G.M. and Boore, D.M., 2003, Empirical Ground-Motion
- * Relations for Subduction-Zone Earthquakes and Their Application to Cascadia
- * and Other Regions: Bulletin of the Seismological Society of America, v. 93,
- * p. 1012–1033.</p>
+ * <p><b>Reference:</b> Atkinson, G.M. and Boore, D.M., 2003, Empirical
+ * Ground-Motion Relations for Subduction-Zone Earthquakes and Their Application
+ * to Cascadia and Other Regions: Bulletin of the Seismological Society of
+ * America, v. 93, p. 1012–1033.</p>
  * 
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 
@@ -170,28 +169,6 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		}
 
 		return (gnd - gfac) * BASE_10_TO_E;
-	}
-	
-	public static void main(String[] args) {
-		
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		CampbellBozorgnia_2008 asPGA = new CampbellBozorgnia_2008(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		CampbellBozorgnia_2008 as5Hz = new CampbellBozorgnia_2008(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		CampbellBozorgnia_2008 as1Hz = new CampbellBozorgnia_2008(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm);
-		
 	}
 
 }

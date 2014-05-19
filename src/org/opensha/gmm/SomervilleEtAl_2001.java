@@ -9,7 +9,8 @@ import org.opensha.calc.ScalarGroundMotion;
 /**
  * Implementation of the hard rock attenuation relationship for the Central and
  * Eastern US by Somerville et al. (2001). This implementation matches that used
- * in the 2008 USGS NSHMP and is only used for fault sources and gridded representation of faults (e.g. Charleston).
+ * in the 2008 USGS NSHMP and is only used for fault sources and gridded
+ * representation of faults (e.g. Charleston).
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
@@ -18,10 +19,10 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p><b>Reference:</b> Somerville, P., Collins, N., Abrahamson, N., Graves, R., and Saikia,
- * C., 2001, Ground motion attenuation relations for the Central and Eastern
- * United States — Final report, June 30, 2001: Report to U.S. Geological Survey
- * for award 99HQGR0098, 38 p.</p>
+ * <p><b>Reference:</b> Somerville, P., Collins, N., Abrahamson, N., Graves, R.,
+ * and Saikia, C., 2001, Ground motion attenuation relations for the Central and
+ * Eastern United States — Final report, June 30, 2001: Report to U.S.
+ * Geological Survey for award 99HQGR0098, 38 p.</p>
  * 
  * <p><b>Component:</b> not specified</p>
  * 
@@ -81,26 +82,4 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
 		return GMM_Utils.ceusMeanClip(c.imt, gnd);
 	}
 	
-	public static void main(String[] args) {
-
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		CampbellBozorgnia_2008 asPGA = new CampbellBozorgnia_2008(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("5Hz");
-		CampbellBozorgnia_2008 as5Hz = new CampbellBozorgnia_2008(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm);
-
-		System.out.println("1Hz");
-		CampbellBozorgnia_2008 as1Hz = new CampbellBozorgnia_2008(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm);
-		
-	}
-
 }

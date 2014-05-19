@@ -22,13 +22,15 @@ import org.opensha.calc.ScalarGroundMotion;
  * Implementation of the Graizer &amp; Kalkan (2013) GMPE. This model does not
  * support specific periods as most other GMMs do; it can handle any frequency.
  * 
- * <p>Component: geometric mean of two randomly oriented horizontal components</p> 
+ * <p>Component: geometric mean of two randomly oriented horizontal
+ * components</p>
  * 
  * @author Peter Powers
  */
+@Deprecated
 final class GraizerKalkan_2013 implements GroundMotionModel {
 
-	public static final String NAME = "Graizer \u0026 Kalkan (2013)";
+	static final String NAME = "Graizer \u0026 Kalkan (2013)";
 	
 	static final Set<IMT> IMTS = EnumSet.complementOf(EnumSet.of(PGV, PGD));
 	
@@ -146,31 +148,6 @@ final class GraizerKalkan_2013 implements GroundMotionModel {
 
 		// Final Eq.
 		return F1 + F2 + F3 + F4 + F5;
-	}
-	
-	public static void main(String[] args) {
-
-		GMM_Source in = GMM_Source.create(6.80, 0.0, 4.629, 5.963, 27.0, 28.0, 2.1, 8.456, 90.0, 760.0, true, Double.NaN, Double.NaN);
-		ScalarGroundMotion sgm;
-		
-		System.out.println("PGA");
-		GraizerKalkan_2013 asPGA = new GraizerKalkan_2013(IMT.PGA);
-		sgm = asPGA.calc(in);
-		System.out.println(sgm.mean());
-		System.out.println(sgm.stdDev());
-
-		System.out.println("5Hz");
-		GraizerKalkan_2013 as5Hz = new GraizerKalkan_2013(IMT.SA0P2);
-		sgm = as5Hz.calc(in);
-		System.out.println(sgm.mean());
-		System.out.println(sgm.stdDev());
-
-		System.out.println("1Hz");
-		GraizerKalkan_2013 as1Hz = new GraizerKalkan_2013(IMT.SA1P0);
-		sgm = as1Hz.calc(in);
-		System.out.println(sgm.mean());
-		System.out.println(sgm.stdDev());
-
 	}
 
 }
