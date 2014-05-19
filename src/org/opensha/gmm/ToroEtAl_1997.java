@@ -10,9 +10,9 @@ import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Implementation of the Toro et al. (1997) ground motion model for stable
- * continental regions with 2002 updates. This implementation matches that used in the 2008 USGS
- * NSHMP and comes in two flavors (mb and Mw) to
- * support the 2008 central and eastern US model.
+ * continental regions with 2002 updates. This implementation matches that used
+ * in the 2008 USGS NSHMP and comes in two flavors (mb and Mw) to support the
+ * 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
@@ -21,15 +21,15 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p><b>Reference:</b> Toro, G.R., 2002, Modification of the Toro et al. (1997) attenuation
- * relations for large magnitudes and short distances: Risk Engineering, Inc.
- * report, http://www.riskeng.com/PDF/atten_toro_extended.pdf. (TODO this
- * link no longer works)</p>
+ * <p><b>Reference:</b> Toro, G.R., 2002, Modification of the Toro et al. (1997)
+ * attenuation relations for large magnitudes and short distances: Risk
+ * Engineering, Inc. report, http://www.riskeng.com/PDF/atten_toro_extended.pdf.
+ * (TODO this link no longer works)</p>
  * 
- * <p><b>Reference:</b> Toro, G.R., Abrahamson, N.A., and Schneider, J.F., 1997, A model of
- * strong ground motions from earthquakes in central and eastern North
- * America—Best estimates and uncertain- ties: Seismological Research Letters,
- * v. 68, p. 41–57.</p>
+ * <p><b>Reference:</b> Toro, G.R., Abrahamson, N.A., and Schneider, J.F., 1997,
+ * A model of strong ground motions from earthquakes in central and eastern
+ * North America—Best estimates and uncertain- ties: Seismological Research
+ * Letters, v. 68, p. 41–57.</p>
  * 
  * <p><b>Component:</b> not specified</p>
  * 

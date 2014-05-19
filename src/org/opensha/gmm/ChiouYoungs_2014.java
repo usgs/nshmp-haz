@@ -17,7 +17,7 @@ import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Implementation of the Chiou &amp; Youngs (2013) next generation attenuation
- * relationship developed as part of <a
+ * relationship for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is

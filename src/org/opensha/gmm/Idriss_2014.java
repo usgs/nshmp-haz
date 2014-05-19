@@ -7,15 +7,15 @@ import static org.opensha.gmm.FaultStyle.REVERSE;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the Idriss (2013) next generation attenuation relationship
- * developed as part of <a href="http://peer.berkeley.edu/ngawest2">NGA West
+ * Implementation of the Idriss (2014) next generation attenuation relationship
+ *  for active crustal regions developed as part of <a href="http://peer.berkeley.edu/ngawest2">NGA West
  * II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
- * <p><b>Implementation notes:</b> Idriss (2013) recommends a cap of Vs=1200m/s
+ * <p><b>Implementation notes:</b> Idriss (2014) recommends a cap of Vs=1200m/s
  * (implemented) and a distance limit of 150km (not implemented).</p>
  * 
  * <p><b>Implementation notes:</b> 0.01s SA values used for PGA.</p>
@@ -24,17 +24,13 @@ import org.opensha.calc.ScalarGroundMotion;
  * average horizontal values of pseudo-absolute spectral accelerations generated
  * by crustal earthquakes, PEER Report 2013/08.</p>
  * 
- * <p><b>See:</b> <a
- * href="http://peer.berkeley.edu/ngawest2/final-products/">NGA-West2 Final
- * Products</a></p>
- * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
  * @author Peter Powers
  */
 public final class Idriss_2014 implements GroundMotionModel {
 
-	// TODO review class javadoc and update citation to EQS
+	// TODO update with EQS reference when available
 	
 	static final String NAME = "Idriss (2014)";
 	

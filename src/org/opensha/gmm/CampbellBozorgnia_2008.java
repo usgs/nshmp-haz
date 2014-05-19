@@ -18,7 +18,7 @@ import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Implementation of the Campbell &amp; Bozorgnia (2008) next generation
- * attenuation relationship developed as part of <a
+ * attenuation for active crustal regions relationship developed as part of <a
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is

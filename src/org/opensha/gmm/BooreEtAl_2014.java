@@ -13,17 +13,17 @@ import static org.opensha.gmm.IMT.PGA;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the Boore, Stewart, Seyhan, &amp; Atkinson (2013) next
- * generation attenuation relationship developed as part of<a
- * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
+ * Implementation of the Boore, Stewart, Seyhan, &amp; Atkinson (2014) next
+ * generation attenuation relationship for active crustal regions developed as
+ * part of<a href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Reference:</b> Boore, D.M., Stewart, J.P., Seyhan, E., and Atkinson,
- * G.M., 2013, NGA-West2 equations for predicting response spectral
- * accelerations for shallow crustal earthquakes, PEER Report 2013/05.</p>
+ * G.M., 2014, NGA-West 2 equations for predicting PGA, PGV, and 5%-damped PSA
+ * for shallow crustal earthquakes, Earthquake Spectra, in press.</p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
@@ -31,8 +31,6 @@ import org.opensha.calc.ScalarGroundMotion;
  * @see GMM#BSSA_14
  */
 public final class BooreEtAl_2014 implements GroundMotionModel {
-
-	// TODO review class javadoc and update citation to EQS
 
 	static final String NAME = "Boore, Stewart, Seyhan \u0026 Atkinson (2014)";
 

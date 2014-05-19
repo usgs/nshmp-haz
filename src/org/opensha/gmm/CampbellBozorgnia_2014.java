@@ -18,18 +18,18 @@ import java.util.Set;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the Campbell &amp; Bozorgnia (2013) next generation
- * attenuation relationship developed as part of <a
+ * Implementation of the Campbell &amp; Bozorgnia (2014) next generation
+ * attenuation relationship for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
- * <p><b>Reference:</b> Campbell, K.W., and Bozorgnia, Y., 2013, NGA-West2
- * Campbell-Bozorgnia ground motion model for the horizontal components of PGA,
- * PGV, and 5%-damped elastic pseudo-acceleration response spectra for periods
- * ranging from 0.01 to 10 sec, PEER Report 2013/06.</p>
+ * <p><b>Reference:</b> Campbell, K.W., and Bozorgnia, Y., 2014, NGA-West2
+ * ground motion model for the average horizontal components of PGA, PGV, and
+ * 5%-damped linear acceleration response spectra, Earthquake Spectra, in
+ * press.</p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
@@ -37,8 +37,6 @@ import org.opensha.calc.ScalarGroundMotion;
  * @see GMM#CB_14
  */
 public final class CampbellBozorgnia_2014 implements GroundMotionModel {
-
-	// TODO review class javadoc and update citation to EQS
 
 	static final String NAME = "Campbell \u0026 Bozorgnia (2014)";
 
