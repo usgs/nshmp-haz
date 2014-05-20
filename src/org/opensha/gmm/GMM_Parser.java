@@ -140,12 +140,7 @@ class GMM_Parser extends DefaultHandler {
 	public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
 	}
-	
-	static enum GMM_Element {
-		GMM_SET,
-		GMM;
-	}
-	
+		
 	static void write(Map<GMM, Double> gmmWtMap, File out) throws 
 			ParserConfigurationException,
 			TransformerException {
@@ -154,7 +149,7 @@ class GMM_Parser extends DefaultHandler {
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 		Document doc = docBuilder.newDocument();
-		Element root = doc.createElement(GMM_Element.GMM_SET.name());
+		Element root = doc.createElement(GROUND_MOTION_MODEL_SET.name());
 		doc.appendChild(root);
 
 		for (Entry<GMM, Double> entry : gmmWtMap.entrySet()) {
