@@ -16,7 +16,7 @@ import static org.opensha.gmm.FaultStyle.REVERSE;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the Chiou &amp; Youngs (2013) next generation attenuation
+ * Implementation of the Chiou &amp; Youngs (2014) next generation attenuation
  * relationship for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
@@ -26,9 +26,9 @@ import org.opensha.calc.ScalarGroundMotion;
  * 
  * <p><b>Implementation note:</b> 0.01s SA values used for PGA.</p>
  * 
- * <p><b>Reference:</b> Chiou, B.S.J. and Youngs, R.R., 2013, Update of the
- * Chiou and Youngs NGA ground motion model for average horizontal component of
- * peak ground motion and response spectra, PEER Report 2013/07.</p>
+ * <p><b>Reference:</b> Chiou, B.S.J. and Youngs, R.R., 2014, Update of the
+ * Chiou and Youngs NGA model for the average horizontal component of
+ * peak ground motion and response spectra, Earthquake Spectra, in press.</p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
@@ -37,7 +37,6 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 public final class ChiouYoungs_2014 implements GroundMotionModel {
 
-	// TODO review class javadoc and update citation to EQS
 	// TODO consider removing odd 0.12 and 0.17s periods
 
 	static final String NAME = "Chiou \u0026 Youngs (2014)";
@@ -71,7 +70,7 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	private final Coeffs coeffs;
 
-	public ChiouYoungs_2014(IMT imt) {
+	ChiouYoungs_2014(IMT imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 

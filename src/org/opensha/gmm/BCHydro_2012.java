@@ -13,10 +13,10 @@ import org.opensha.calc.ScalarGroundMotion;
  * Hydro, Canada, by Addo, Abrahamson, &amp; Youngs (2012). This implementation
  * matches that used in the USGS NSHM as supplied by N. Abrahamson.
  * 
- * <p>This model supports both slab and interface type events. In the
- * 2008 NSHMP, the 'interface' form is used with the Cascadia subduction zone
- * models and the 'slab' form is used with gridded 'deep' events in northern
- * California and the Pacific Northwest.</p>
+ * <p>This model supports both slab and interface type events. In the 2008
+ * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
+ * and the 'slab' form is used with gridded 'deep' events in northern California
+ * and the Pacific Northwest.</p>
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a

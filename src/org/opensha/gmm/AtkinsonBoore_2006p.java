@@ -20,13 +20,13 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake ground- motion
- * prediction equations for eastern North America: Bulletin of the Seismological
- * Society of America, v. 96, p. 2181–2205.</p>
+ * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
+ * ground- motion prediction equations for eastern North America: Bulletin of
+ * the Seismological Society of America, v. 96, p. 2181–2205.</p>
  * 
- * <p><b>Reference:</b> Atkinson, G. M., and Boore, D. M., 2011. Modifications to existing
- * ground-motion prediction equations in light of new data: Bulletin of the
- * Seismological Society of America, v. 101, no. 3, p. 1121–1135.</p>
+ * <p><b>Reference:</b> Atkinson, G. M., and Boore, D. M., 2011. Modifications
+ * to existing ground-motion prediction equations in light of new data: Bulletin
+ * of the Seismological Society of America, v. 101, no. 3, p. 1121–1135.</p>
  * 
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 

@@ -1,6 +1,7 @@
 package org.opensha.gmm;
 
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import org.opensha.calc.ScalarGroundMotion;
 
@@ -24,8 +25,9 @@ public class MatUtil {
 	 * @param source parameterization
 	 * @return a two-element double[] containing the natural log of the median
 	 *         ground motion and its standard deviation
+	 * @throws ExecutionException if a problem occurs while initializing the model
 	 */
-	public static double[] calc(GMM model, IMT imt, GMM_Source source) {
+	public static double[] calc(GMM model, IMT imt, GMM_Source source) throws ExecutionException {
 		ScalarGroundMotion sgm = model.instance(imt).calc(source);
 		return new double[] { sgm.mean(), sgm.stdDev() };
 	}
@@ -41,8 +43,9 @@ public class MatUtil {
 	 * @param model to use
 	 * @param source parameterization
 	 * @return a {@link MatSpectrum} data container
+	 * @throws ExecutionException if a problem occurs while initializing the model
 	 */
-	public static MatSpectrum spectrum(GMM model, GMM_Source source) {
+	public static MatSpectrum spectrum(GMM model, GMM_Source source) throws ExecutionException {
 		Set<IMT> imts = model.responseSpectrumIMTs();
 		MatSpectrum spectrum = new MatSpectrum(imts.size());
 		int i = 0;

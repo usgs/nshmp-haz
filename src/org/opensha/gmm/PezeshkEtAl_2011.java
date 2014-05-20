@@ -7,10 +7,10 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- *  Implementation of the Pezeshk, Zandieh, &amp; Tavakoli (2011) ground motion model for stable
- * continental regions. This implementation matches that
- * used in the 2014 USGS NSHMP and uses table lookups (median) and functional
- * forms (sigma) to compute ground motions.
+ * Implementation of the Pezeshk, Zandieh, &amp; Tavakoli (2011) ground motion
+ * model for stable continental regions. This implementation matches that used
+ * in the 2014 USGS NSHMP and uses table lookups (median) and functional forms
+ * (sigma) to compute ground motions.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
@@ -19,10 +19,10 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
  * 
- * <p><b>Reference:</b> Pezeshk, S., Zandieh, A., Tavakoli, B., 2011. Hybrid empirical
- * ground-motion prediction equations for Eastern North America using NGA models
- * and updated seismological parameters: Bulletin of the Seismological Society
- * of America, v. 101, no. 4, p. 1859–1870.</p>
+ * <p><b>Reference:</b> Pezeshk, S., Zandieh, A., Tavakoli, B., 2011. Hybrid
+ * empirical ground-motion prediction equations for Eastern North America using
+ * NGA models and updated seismological parameters: Bulletin of the
+ * Seismological Society of America, v. 101, no. 4, p. 1859–1870.</p>
  * 
  * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
  * 
@@ -35,7 +35,7 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 	
 	static final String NAME = "Pezeshk et al. (2011)";
 	
-	// period a-to-bc conversion factors and sigma coeficients
+	// period a-to-bc conversion factors and sigma coefficients
 	static final CoefficientContainer CC = new CoefficientContainer("P11.csv", Coeffs.class);
 
 	private final GMM_Table table;

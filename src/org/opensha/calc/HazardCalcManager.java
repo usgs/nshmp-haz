@@ -190,8 +190,7 @@ public class HazardCalcManager {
 		}
 		
 		// GMM input initializer:
-		CompletionService<List<GMM_Source>> gmSrcCS = 
-				new ExecutorCompletionService<List<GMM_Source>>(ex);
+		CompletionService<List<GMM_Source>> gmSrcCS =  new ExecutorCompletionService<List<GMM_Source>>(ex);
 		int gmSrcCount = 0;
 		for (int i=0; i<qdCount; i++) {
 			FaultSource source = qdCS.take().get();

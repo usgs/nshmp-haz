@@ -4,8 +4,13 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import org.opensha.gmm.CEUS_Mb.*;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import com.google.common.collect.Sets;
 
@@ -167,38 +172,44 @@ public enum GMM {
 	
 	// Other
 	// GK_2013(GraizerKalkan_2013.class);
-	private Class<? extends GroundMotionModel> delegate;
-	private String name;
-	private Set<IMT> imts;
+
+	private final Class<? extends GroundMotionModel> delegate;
+	private final String name;
+	private final Set<IMT> imts;
+	private final LoadingCache<IMT, GroundMotionModel> cache;
 
 	private GMM(Class<? extends GroundMotionModel> delegate, String name, CoefficientContainer cc) {
 		this.delegate = delegate;
 		this.name = name;
 		imts = cc.imtSet();
-
+		cache = CacheBuilder.newBuilder().build(new CacheLoader<IMT, GroundMotionModel>() {
+			@Override
+			public GroundMotionModel load(IMT imt) throws Exception {
+				return createInstance(imt);
+			}
+		});
 	}
 
-	@Override
-	public String toString() {
-		return name;
+	private GroundMotionModel createInstance(IMT imt) throws Exception {
+		Constructor<? extends GroundMotionModel> con = delegate.getDeclaredConstructor(IMT.class);
+		GroundMotionModel gmm = con.newInstance(imt);
+		return gmm;
 	}
 		
 	/**
-	 * Creates a new implementation instance of this ground motion model.
+	 * Retreives an instance of a {@code GroundMotionModel}, either by creating
+	 * a new one, or fetching from a cache.
 	 * @param imt intensity measure type of instance
 	 * @return the model implementation
+	 * @throws ExecutionException if there is an instantiation problem
 	 */
-	public GroundMotionModel instance(IMT imt) {
-		try {
-			Constructor<? extends GroundMotionModel> con = delegate
-				.getDeclaredConstructor(IMT.class);
-			GroundMotionModel gmm = con.newInstance(imt);
-			return gmm;
-		} catch (Exception e) {
-			// TODO init logging
-			e.printStackTrace();
-			return null;
-		}
+	public GroundMotionModel instance(IMT imt) throws ExecutionException {
+		return cache.get(imt);
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 	
 	/**
