@@ -13,6 +13,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,13 +72,13 @@ public class Tests_NGAW2 {
 	}
 
     @Test
-    public void test() {
+    public void test() throws ExecutionException {
     	ScalarGroundMotion sgm = gmm.instance(imt).calc(inputsList.get(idx));
         assertEquals(exMedian, Math.exp(sgm.mean()), TOL);
         assertEquals(exSigma, sgm.stdDev(), TOL);
     }
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ExecutionException {
 		computeGM();
 	}
     
@@ -86,7 +87,7 @@ public class Tests_NGAW2 {
 	private static Set<IMT> imts = EnumSet.of(PGA, SA0P02, SA0P2, SA1P0, SA3P0);
 	
 	/* Use to generate GMM result file */
-	private static void computeGM() throws IOException {
+	private static void computeGM() throws IOException, ExecutionException {
 		List<GMM_Source> inputs = loadInputs(GMM_INPUTS);
 		File out = new File("tmp/GMM-tests/" + GMM_RESULTS);
 		Files.write("", out, Charsets.US_ASCII);

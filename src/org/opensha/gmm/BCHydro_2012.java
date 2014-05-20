@@ -23,7 +23,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation notes:</b> <ol><li>Treats all sites as
- * forearc.<li><li>'zTop' is interpreted as hypocentral depth and is only used
+ * forearc.</li><li>'zTop' is interpreted as hypocentral depth and is only used
  * for slab events; it is limited to 125 km, consistent with other subduction
  * models.</li><li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for
  * interface events and fixed at -0.3 for slab events.</li></ol></p>
