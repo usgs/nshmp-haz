@@ -1,13 +1,10 @@
-package org.opensha.gmm;
+package org.opensha.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.data.DataUtils.validateWeights;
 import static org.opensha.util.Parsing.*;
-
-//import static GMM_El
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +24,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.opensha.gmm.GMM;
+import org.opensha.gmm.GMM_Element;
 import org.opensha.util.Logging;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,8 +48,7 @@ import com.google.common.io.Files;
  */
 class GMM_Parser extends DefaultHandler {
 
-	// TODO init/use logging for exceptions OR do we pass them to Loader for
-	// logging?
+	// TODO init/use logging for exceptions OR do we pass them to Loader for logging?
 	private static final Logger log = Logging.create(GMM_Parser.class);
 	private static final String NAME = "gmm.xml";
 	private final SAXParser sax;
@@ -82,22 +80,22 @@ class GMM_Parser extends DefaultHandler {
 		try {
 			e = GMM_Element.valueOf(qName);
 		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">",
-				locator, iae);
+			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
 		}
 
 		try {
 			switch (e) {
 	
-				case GMM_SET:
-					//TODO look at EnumMap class 
+				case GROUND_MOTION_MODELS:
 					gmmWtMap = new EnumMap<GMM, Double>(GMM.class);
 					break;
 				
-				case GMM:
+				case MODEL_SET:
 					gmmWtMap.put(
 						GMM.valueOf(atts.getValue("id")),
 						readDouble("weight", atts));
+					
+				case MODEL:
 					
 			}
 			
@@ -124,9 +122,9 @@ class GMM_Parser extends DefaultHandler {
 		try {
 			switch (e) {
 	
-				case GMM_SET:
-					validateWeights(gmmWtMap.values());
-					break;
+//				case GMM_SET:
+//					validateWeights(gmmWtMap.values());
+//					break;
 	
 			}
 			
@@ -145,26 +143,26 @@ class GMM_Parser extends DefaultHandler {
 			ParserConfigurationException,
 			TransformerException {
 		
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
-		Document doc = docBuilder.newDocument();
-		Element root = doc.createElement(GROUND_MOTION_MODEL_SET.name());
-		doc.appendChild(root);
-
-		for (Entry<GMM, Double> entry : gmmWtMap.entrySet()) {
-			Element e = addElement(GMM_Element.GMM, root);
-			e.setAttribute("id", entry.getKey().name());
-			e.setAttribute("weight", entry.getValue().toString());
-		}
-
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer trans = transformerFactory.newTransformer();
-		trans.setOutputProperty(OutputKeys.INDENT, "yes");
-		trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(out);
-		trans.transform(source, result);
+//		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+//		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+//
+//		Document doc = docBuilder.newDocument();
+//		Element root = doc.createElement(GROUND_MOTION_MODEL_SET.name());
+//		doc.appendChild(root);
+//
+//		for (Entry<GMM, Double> entry : gmmWtMap.entrySet()) {
+//			Element e = addElement(GMM_Element.GMM, root);
+//			e.setAttribute("id", entry.getKey().name());
+//			e.setAttribute("weight", entry.getValue().toString());
+//		}
+//
+//		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+//		Transformer trans = transformerFactory.newTransformer();
+//		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+//		trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+//		DOMSource source = new DOMSource(doc);
+//		StreamResult result = new StreamResult(out);
+//		trans.transform(source, result);
 	}
 	
 	

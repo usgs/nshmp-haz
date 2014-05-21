@@ -10,36 +10,9 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 @SuppressWarnings("javadoc")
 public enum GMM_Attribute {
 	
-	NAME,
+	ID,
 	WEIGHT,
-	
 	MAX_DISTANCE;
-	
-//	NAME,
-//	WEIGHT,
-//
-//	DEPTH_MAP,
-//	MECH_MAP,
-//
-//	/* Geometry specific */
-//	STRIKE,
-//	DIP,
-//	WIDTH,
-//	RAKE,
-//	DEPTH,
-//
-//	/* MFD specific */
-//	TYPE,
-//	A,
-//	M,
-//	B,
-//	M_MIN,
-//	M_MAX,
-//	D_MAG,
-//	FLOATS,
-//	MAG_SCALING,
-//	MAGS,
-//	RATES;
 
 	/**
 	 * Returns an {@code CaseFormat#LOWER_CAMEL} {@code String} representation
