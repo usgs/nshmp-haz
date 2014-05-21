@@ -11,12 +11,14 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -50,14 +52,18 @@ class GMM_Parser extends DefaultHandler {
 
 	// TODO init/use logging for exceptions OR do we pass them to Loader for logging?
 	private static final Logger log = Logging.create(GMM_Parser.class);
-	private static final String NAME = "gmm.xml";
+	private static final String GMM_FILE_NAME = "gmm.xml";
 	private final SAXParser sax;
-	
 	private Locator locator;
-	
+
+	private int mapCount = 0;
 	private Map<GMM, Double> gmmWtMap;
+	
+	// there may be distance-dependent gmm reweightings
+	// in which case this field will be used
+	private Map<GMM, Double> gmmWtMap2;
 
-
+	
 	private GMM_Parser(SAXParser sax) {
 		this.sax = sax;
 	}
@@ -66,8 +72,9 @@ class GMM_Parser extends DefaultHandler {
 		return new GMM_Parser(checkNotNull(sax));
 	}
 
+	// TODO will want to return GMM_Calculator instances methinks
 	Map<GMM, Double> parse(File f) throws SAXException, IOException {
-		checkArgument(checkNotNull(f).getName().equals(NAME));
+		checkArgument(checkNotNull(f).getName().equals(GMM_FILE_NAME));
 		sax.parse(f, this);
 		return gmmWtMap;
 	}
@@ -78,7 +85,7 @@ class GMM_Parser extends DefaultHandler {
 
 		GMM_Element e = null;
 		try {
-			e = GMM_Element.valueOf(qName);
+			e = GMM_Element.fromString(qName);
 		} catch (IllegalArgumentException iae) {
 			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
 		}
@@ -87,16 +94,21 @@ class GMM_Parser extends DefaultHandler {
 			switch (e) {
 	
 				case GROUND_MOTION_MODELS:
-					gmmWtMap = new EnumMap<GMM, Double>(GMM.class);
 					break;
 				
 				case MODEL_SET:
-					gmmWtMap.put(
-						GMM.valueOf(atts.getValue("id")),
-						readDouble("weight", atts));
+					mapCount++;
+					if (mapCount == 1) {
+						gmmWtMap = Maps.newEnumMap(GMM.class);
+					} else {
+						gmmWtMap2 = Maps.newEnumMap(GMM.class);
+					}
+					break;
 					
 				case MODEL:
-					
+					Map<GMM, Double> currentMap = (mapCount == 1) ? gmmWtMap : gmmWtMap2;
+					currentMap.put(GMM.valueOf(atts.getValue("id")), readDouble("weight", atts));
+
 			}
 			
 		} catch (Exception ex) {
@@ -113,7 +125,7 @@ class GMM_Parser extends DefaultHandler {
 
 		GMM_Element e = null;
 		try {
-			e = GMM_Element.valueOf(qName);
+			e = GMM_Element.fromString(qName);
 		} catch (IllegalArgumentException iae) {
 			throw new SAXParseException("Invalid element <" + qName + ">",
 				locator, iae);
@@ -122,9 +134,9 @@ class GMM_Parser extends DefaultHandler {
 		try {
 			switch (e) {
 	
-//				case GMM_SET:
-//					validateWeights(gmmWtMap.values());
-//					break;
+				case MODEL_SET:
+					validateWeights(gmmWtMap.values());
+					break;
 	
 			}
 			
@@ -139,73 +151,28 @@ class GMM_Parser extends DefaultHandler {
 		this.locator = locator;
 	}
 		
-	static void write(Map<GMM, Double> gmmWtMap, File out) throws 
-			ParserConfigurationException,
-			TransformerException {
-		
-//		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-//		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-//
-//		Document doc = docBuilder.newDocument();
-//		Element root = doc.createElement(GROUND_MOTION_MODEL_SET.name());
-//		doc.appendChild(root);
-//
-//		for (Entry<GMM, Double> entry : gmmWtMap.entrySet()) {
-//			Element e = addElement(GMM_Element.GMM, root);
-//			e.setAttribute("id", entry.getKey().name());
-//			e.setAttribute("weight", entry.getValue().toString());
-//		}
-//
-//		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-//		Transformer trans = transformerFactory.newTransformer();
-//		trans.setOutputProperty(OutputKeys.INDENT, "yes");
-//		trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-//		DOMSource source = new DOMSource(doc);
-//		StreamResult result = new StreamResult(out);
-//		trans.transform(source, result);
-	}
 	
-	
+	// TODO clean
 	public static void main(String[] args) throws Exception {
 		
-		//writer test
-//		String out = "tmp/gmm-config/";
-//		File f = new File(out, NAME);
-//		
-//		EnumMap<GMM, Double> gmmMap = Maps.newEnumMap(GMM.class);
-//		gmmMap.put(GMM.ASK_14, 0.22);
-//		gmmMap.put(GMM.BSSA_14, 0.22);
-//		gmmMap.put(GMM.CB_14, 0.22);
-//		gmmMap.put(GMM.CY_14, 0.22);
-//		gmmMap.put(GMM.IDRISS_14, 0.12);
-//		
-//		write(gmmMap, f);
-		
-		// parser test
-		
-		// TODO should skip symlinks
-		// traverser
-		String model = "forecasts/2008/";
-		File modelDir = new File(model);
-		TreeTraverser<File> traverser = Files.fileTreeTraverser();
-		FluentIterable<File> fIt = traverser
-				.preOrderTraversal(modelDir)
-				.filter(MODEL_FILE_FILTER);
-		for (File f : fIt) {
-			System.out.println(f.getName());
+		String model = "../nshmp-forecast-dev/forecasts/2008/Western US/Fault/gmm.xml";
+		File gmmFile = new File(model);
+
+		SAXParser saxParser = null;
+		try {
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			saxParser = factory.newSAXParser();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Error initializing loader", e);
+			System.exit(1);
 		}
+
+		GMM_Parser parser = GMM_Parser.create(saxParser);
+		Map<GMM, Double> gmmMap = parser.parse(gmmFile);
+		System.out.println(gmmMap);
+		
 		
 		
 	}
-	
-	
-	private static final Predicate<File> MODEL_FILE_FILTER = new Predicate<File>() {
-		@Override
-		public boolean apply(File f) {
-			return
-				!f.isHidden() && 
-				!f.getName().startsWith("~");
-		}
-	};
-	
+		
 }
