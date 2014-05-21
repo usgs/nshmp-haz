@@ -1,4 +1,4 @@
-package org.opensha.calc;
+package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
