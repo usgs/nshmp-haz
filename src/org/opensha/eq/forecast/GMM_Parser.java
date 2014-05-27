@@ -50,9 +50,10 @@ import com.google.common.io.Files;
  */
 class GMM_Parser extends DefaultHandler {
 
+	static final String FILE_NAME = "gmm.xml";
+
 	// TODO init/use logging for exceptions OR do we pass them to Loader for logging?
 	private static final Logger log = Logging.create(GMM_Parser.class);
-	private static final String GMM_FILE_NAME = "gmm.xml";
 	private final SAXParser sax;
 	private Locator locator;
 
@@ -74,7 +75,7 @@ class GMM_Parser extends DefaultHandler {
 
 	// TODO will want to return GMM_Calculator instances methinks
 	Map<GMM, Double> parse(File f) throws SAXException, IOException {
-		checkArgument(checkNotNull(f).getName().equals(GMM_FILE_NAME));
+		checkArgument(checkNotNull(f).getName().equals(FILE_NAME));
 		sax.parse(f, this);
 		return gmmWtMap;
 	}
@@ -107,7 +108,7 @@ class GMM_Parser extends DefaultHandler {
 					
 				case MODEL:
 					Map<GMM, Double> currentMap = (mapCount == 1) ? gmmWtMap : gmmWtMap2;
-					currentMap.put(GMM.valueOf(atts.getValue("id")), readDouble("weight", atts));
+//					currentMap.put(GMM.valueOf(atts.getValue("id")), readDouble("weight", atts));
 
 			}
 			

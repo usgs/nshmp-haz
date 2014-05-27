@@ -8,7 +8,7 @@ package org.opensha.calc;
 public class GMM_CalculatorMulti extends GMM_Calculator {
 
 	private GMM_CalculatorMulti() {
-		
+		super(null, 0.0);
 	}
 	
 }

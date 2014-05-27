@@ -3,13 +3,11 @@ package org.opensha.eq.forecast;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
-
 import static org.opensha.eq.forecast.SourceAttribute.*;
 import static org.opensha.util.Parsing.readBoolean;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readString;
 import static org.opensha.util.Parsing.toMap;
-
 import static java.util.logging.Level.*;
 
 import java.io.File;
@@ -35,6 +33,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /*
  * Non-validating fault source parser; results are undefined for multiple
@@ -66,6 +65,10 @@ class FaultSourceParser extends DefaultHandler {
 	private MagUncertainty unc = null;
 	private Map<String, String> epiAtts = null;
 	private Map<String, String> aleaAtts = null;
+	
+	// Default MFD data
+	private boolean parsingDefaults = false;
+//	private Map<MFD_Type, MFD_Defaults.Data> mfdDefaults;
 
 	// This will build individual sources in a FaultSourceSet
 	private FaultSource.Builder sourceBuilder;
@@ -108,12 +111,20 @@ class FaultSourceParser extends DefaultHandler {
 			switch (e) {
 	
 				case FAULT_SOURCE_SET:
-					// TODO file name and weight not currently processed
-					sources = new FaultSourceSet();
+					sources = new FaultSourceSet(
+						readString(NAME, atts),
+						readDouble(WEIGHT, atts));
 					break;
+					
+				case SETTINGS:
+					break;
+					
+				case MAG_FREQ_DIST_REF:
+					parsingDefaults = true;
+//					mfdDefaults = Maps.newEnumMap(MFD_Type.class);
 	
 				case SOURCE:
-					String name = readString("name", atts);
+					String name = readString(NAME, atts);
 					sourceBuilder = new FaultSource.Builder();
 					sourceBuilder.name(name);
 					if (log.isLoggable(INFO)) log.info("Building: " + name);
@@ -128,13 +139,17 @@ class FaultSourceParser extends DefaultHandler {
 					break;
 	
 				case MAG_FREQ_DIST:
+					if (parsingDefaults) {
+						parseDefault(atts);
+						break;
+					}
 					sourceBuilder.mfds(buildMFD(atts, unc));
 					break;
 	
 				case GEOMETRY:
-					sourceBuilder.dip(readDouble("dip", atts));
-					sourceBuilder.width(readDouble("width", atts));
-					sourceBuilder.rake(readDouble("rake", atts));
+					sourceBuilder.dip(readDouble(DIP, atts));
+					sourceBuilder.width(readDouble(WIDTH, atts));
+					sourceBuilder.rake(readDouble(RAKE, atts));
 					break;
 					
 				case TRACE:
@@ -199,8 +214,29 @@ class FaultSourceParser extends DefaultHandler {
 		this.locator = locator;
 	}
 	
-	private static List<IncrementalMFD> buildMFD(Attributes atts,
-			MagUncertainty unc) {
+	private static void parseDefault(Attributes atts) {
+		MFD_Type type = MFD_Type.valueOf(atts.getValue("type"));
+		switch (type) {
+			case GR:
+//				MFD_Defaults.GutnebergRichter gr = new MFD_Defaults.GutnebergRichter();
+//				gr.a = readDouble(A, atts);
+//				mfdDefaults.
+				break; //return buildGR(atts, unc);
+			case INCR:
+				throw new UnsupportedOperationException(
+					"INCR not yet implemented");
+			case SINGLE:
+				break; //return buildSingle(atts, unc);
+			case GR_TAPER:
+				throw new UnsupportedOperationException(
+					"GR_TAPER not yet implemented");
+			default:
+				throw new IllegalStateException(
+					"Unhandled MFD type: " + type);
+		}
+	}
+	
+	private static List<IncrementalMFD> buildMFD(Attributes atts, MagUncertainty unc) {
 		// TODO handle exceptions
 		MFD_Type type = MFD_Type.valueOf(atts.getValue("type"));
 		switch (type) {
@@ -224,8 +260,7 @@ class FaultSourceParser extends DefaultHandler {
 	 * Builds GR MFDs. Method will throw IllegalStateException if attribute
 	 * values yield an MFD with no magnitude bins.
 	 */
-	private static List<IncrementalMFD> buildGR(Attributes atts,
-			MagUncertainty unc) {
+	private static List<IncrementalMFD> buildGR(Attributes atts, MagUncertainty unc) {
 		double a = readDouble(A, atts);
 		double b = readDouble(B, atts);
 		double mMin = readDouble(M_MIN, atts);
@@ -288,7 +323,7 @@ class FaultSourceParser extends DefaultHandler {
 		double a = readDouble(A, atts);
 		double m = readDouble(M, atts);
 		boolean floats = readBoolean(FLOATS, atts);
-		double weight = readDouble(WEIGHT, atts, 1.0);
+		double weight = readDouble(WEIGHT, atts); // TODO this should be reading default MFD
 
 		List<IncrementalMFD> mfds = Lists.newArrayList();
 
