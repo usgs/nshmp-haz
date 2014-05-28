@@ -16,6 +16,7 @@ public enum SourceElement {
 	SETTINGS,
 	MAG_FREQ_DIST_REF,
 	MAG_FREQ_DIST,
+	SOURCE_PROPERTIES,
 
 	MAG_UNCERTAINTY,
 	EPISTEMIC,
@@ -34,7 +35,6 @@ public enum SourceElement {
 	
 	GRID_SOURCE_SET,
 	
-	SOURCE_ATTS,
 	NODES,
 	NODE,
 	

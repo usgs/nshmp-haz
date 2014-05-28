@@ -107,7 +107,7 @@ class GridSourceParser extends DefaultHandler {
 				if (log.isLoggable(INFO)) log.info("Building: " + name + " weight=" + weight);
 				break;
 				
-			case SOURCE_ATTS:
+			case SOURCE_PROPERTIES:
 				sourceBuilder.depthMap(stringToValueValueWeightMap(atts.getValue("depthMap")));
 				sourceBuilder.mechs(stringToEnumWeightMap(atts.getValue("mechs"), FocalMech.class));
 				break;
