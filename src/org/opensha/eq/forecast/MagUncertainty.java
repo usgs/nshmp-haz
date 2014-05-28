@@ -102,8 +102,7 @@ public class MagUncertainty {
 
 
 	/* Package-private constructor using XML attribute strings */
-	static MagUncertainty create(Map<String, String> epiAtts,
-			Map<String, String> aleaAtts) {
+	static MagUncertainty create(Map<String, String> epiAtts, Map<String, String> aleaAtts) {
 
 		MagUncertainty mu = new MagUncertainty();
 

@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static org.opensha.eq.forecast.SourceAttribute.*;
-import static org.opensha.util.Parsing.readBoolean;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readString;
 import static org.opensha.util.Parsing.toMap;
@@ -33,7 +32,6 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /*
  * Non-validating fault source parser; results are undefined for multiple
@@ -67,8 +65,8 @@ class FaultSourceParser extends DefaultHandler {
 	private Map<String, String> aleaAtts = null;
 	
 	// Default MFD data
-	private boolean parsingDefaults = false;
-//	private Map<MFD_Type, MFD_Defaults.Data> mfdDefaults;
+	private boolean parsingDefaultMFDs = false;
+	private MFD_Helper mfdHelper;
 
 	// This will build individual sources in a FaultSourceSet
 	private FaultSource.Builder sourceBuilder;
@@ -111,23 +109,17 @@ class FaultSourceParser extends DefaultHandler {
 			switch (e) {
 	
 				case FAULT_SOURCE_SET:
-					sources = new FaultSourceSet(
-						readString(NAME, atts),
-						readDouble(WEIGHT, atts));
-					break;
-					
-				case SETTINGS:
+					String name = readString(NAME, atts);
+					double weight = readDouble(WEIGHT, atts);
+					sources = new FaultSourceSet(name, weight);
+					if (log.isLoggable(INFO)) {
+						log.info("Building fault set: " + name + " weight=" + weight);
+					}
 					break;
 					
 				case MAG_FREQ_DIST_REF:
-					parsingDefaults = true;
-//					mfdDefaults = Maps.newEnumMap(MFD_Type.class);
-	
-				case SOURCE:
-					String name = readString(NAME, atts);
-					sourceBuilder = new FaultSource.Builder();
-					sourceBuilder.name(name);
-					if (log.isLoggable(INFO)) log.info("Building: " + name);
+					mfdHelper = MFD_Helper.create();
+					parsingDefaultMFDs = true;
 					break;
 	
 				case EPISTEMIC:
@@ -138,9 +130,18 @@ class FaultSourceParser extends DefaultHandler {
 					aleaAtts = toMap(atts);
 					break;
 	
+				case SOURCE:
+					String srcName = readString(NAME, atts);
+					sourceBuilder = new FaultSource.Builder();
+					sourceBuilder.name(srcName);
+					if (log.isLoggable(INFO)) {
+						log.info("Creating source: " + srcName);
+					}
+					break;
+	
 				case MAG_FREQ_DIST:
-					if (parsingDefaults) {
-						parseDefault(atts);
+					if (parsingDefaultMFDs) {
+						mfdHelper.addDefault(atts);
 						break;
 					}
 					sourceBuilder.mfds(buildMFD(atts, unc));
@@ -176,19 +177,24 @@ class FaultSourceParser extends DefaultHandler {
 			throw new SAXParseException("Invalid element <" + qName + ">",
 				locator, iae);
 		}
-
+		
 		try {
 			switch (e) {
 	
-				case MAG_UNCERTAINTY:
+				case MAG_FREQ_DIST_REF:
+					parsingDefaultMFDs = false;
+					break;
+					
+				case SETTINGS:
+					// may not have mag uncertainty element so create the uncertainty
+					// container upon leaving 'Settings'
 					unc = MagUncertainty.create(epiAtts, aleaAtts);
 					if (log.isLoggable(FINE)) log.fine(unc.toString());
 					break;
 	
 				case TRACE:
 					readingTrace = false;
-					sourceBuilder.trace(LocationList.fromString(traceBuilder
-						.toString()));
+					sourceBuilder.trace(LocationList.fromString(traceBuilder.toString()));
 					break;
 					
 				case SOURCE:
@@ -213,46 +219,20 @@ class FaultSourceParser extends DefaultHandler {
 	public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
 	}
-	
-	private static void parseDefault(Attributes atts) {
-		MFD_Type type = MFD_Type.valueOf(atts.getValue("type"));
+		
+	private List<IncrementalMFD> buildMFD(Attributes atts, MagUncertainty unc) {
+		MFD_Type type = MFD_Type.valueOf(readString(TYPE, atts));
 		switch (type) {
 			case GR:
-//				MFD_Defaults.GutnebergRichter gr = new MFD_Defaults.GutnebergRichter();
-//				gr.a = readDouble(A, atts);
-//				mfdDefaults.
-				break; //return buildGR(atts, unc);
+				return buildGR(mfdHelper.getGR(atts), unc);
 			case INCR:
-				throw new UnsupportedOperationException(
-					"INCR not yet implemented");
+				throw new UnsupportedOperationException("INCR not yet implemented");
 			case SINGLE:
-				break; //return buildSingle(atts, unc);
+				return buildSingle(mfdHelper.getSingle(atts), unc);
 			case GR_TAPER:
-				throw new UnsupportedOperationException(
-					"GR_TAPER not yet implemented");
+				throw new UnsupportedOperationException("GR_TAPER not yet implemented");
 			default:
-				throw new IllegalStateException(
-					"Unhandled MFD type: " + type);
-		}
-	}
-	
-	private static List<IncrementalMFD> buildMFD(Attributes atts, MagUncertainty unc) {
-		// TODO handle exceptions
-		MFD_Type type = MFD_Type.valueOf(atts.getValue("type"));
-		switch (type) {
-			case GR:
-				return buildGR(atts, unc);
-			case INCR:
-				throw new UnsupportedOperationException(
-					"INCR not yet implemented");
-			case SINGLE:
-				return buildSingle(atts, unc);
-			case GR_TAPER:
-				throw new UnsupportedOperationException(
-					"GR_TAPER not yet implemented");
-			default:
-				throw new IllegalStateException(
-					"Unhandled MFD type: " + type);
+				throw new IllegalStateException("Unhandled MFD type: " + type);
 		}
 	}
 
@@ -260,17 +240,11 @@ class FaultSourceParser extends DefaultHandler {
 	 * Builds GR MFDs. Method will throw IllegalStateException if attribute
 	 * values yield an MFD with no magnitude bins.
 	 */
-	private static List<IncrementalMFD> buildGR(Attributes atts, MagUncertainty unc) {
-		double a = readDouble(A, atts);
-		double b = readDouble(B, atts);
-		double mMin = readDouble(M_MIN, atts);
-		double mMax = readDouble(M_MAX, atts);
-		double dMag = readDouble(D_MAG, atts);
-		double weight = readDouble(WEIGHT, atts);
+	private static List<IncrementalMFD> buildGR(MFD_Helper.GR_Data data, MagUncertainty unc) {
 
-		int nMag = MFDs.magCount(mMin, mMax, dMag);
+		int nMag = MFDs.magCount(data.mMin, data.mMax, data.dMag);
 		checkState(nMag > 0, "GR MFD with no mags");
-		double tmr = MFDs.totalMoRate(mMin, nMag, dMag, a, b);
+		double tmr = MFDs.totalMoRate(data.mMin, nMag, data.dMag, data.a, data.b);
 
 		List<IncrementalMFD> mfds = Lists.newArrayList();
 
@@ -279,18 +253,17 @@ class FaultSourceParser extends DefaultHandler {
 		if (unc.hasEpistemic) {
 			for (int i = 0; i < unc.epiCount; i++) {
 				// update mMax and nMag
-				double mMaxEpi = mMax + unc.epiDeltas[i];
-				int nMagEpi =  MFDs.magCount(mMin, mMaxEpi, dMag);
+				double mMaxEpi = data.mMax + unc.epiDeltas[i];
+				int nMagEpi =  MFDs.magCount(data.mMin, mMaxEpi, data.dMag);
 				if (nMagEpi > 0) {
-					double weightEpi = weight * unc.epiWeights[i];
+					double weightEpi = data.weight * unc.epiWeights[i];
 					
 					// epi branches preserve Mo between mMin and dMag(nMag-1),
 					// not mMax to ensure that Mo is 'spent' on earthquakes
 					// represented by the epi GR distribution with adj. mMax.
 					
-					GutenbergRichterMFD mfd = MFDs
-						.newGutenbergRichterMoBalancedMFD(mMin, dMag, nMagEpi,
-							b, tmr * weightEpi);
+					GutenbergRichterMFD mfd = MFDs.newGutenbergRichterMoBalancedMFD(data.mMin,
+						data.dMag, nMagEpi, data.b, tmr * weightEpi);
 					mfds.add(mfd);
 					if (log.isLoggable(FINE)) {
 						log.fine(new StringBuilder()
@@ -304,7 +277,7 @@ class FaultSourceParser extends DefaultHandler {
 			}
 		} else {
 			GutenbergRichterMFD mfd = MFDs.newGutenbergRichterMoBalancedMFD(
-				mMin, dMag, nMag, b, tmr * weight);
+				data.mMin, data.dMag, nMag, data.b, tmr * data.weight);
 			mfds.add(mfd);
 			if (log.isLoggable(FINE)) {
 				log.fine(new StringBuilder().append(mfd.getMetadataString())
@@ -317,30 +290,24 @@ class FaultSourceParser extends DefaultHandler {
 	/*
 	 * Builds single MFDs
 	 */
-	private static List<IncrementalMFD> buildSingle(Attributes atts,
-			MagUncertainty unc) {
-		
-		double a = readDouble(A, atts);
-		double m = readDouble(M, atts);
-		boolean floats = readBoolean(FLOATS, atts);
-		double weight = readDouble(WEIGHT, atts); // TODO this should be reading default MFD
+	private static List<IncrementalMFD> buildSingle(MFD_Helper.SingleData data, MagUncertainty unc) {
 
 		List<IncrementalMFD> mfds = Lists.newArrayList();
 
 		if (log.isLoggable(INFO)) log.info("MFD: SINGLE");
 
 		// total moment rate
-		double tmr = a * Magnitudes.magToMoment(m);
+		double tmr = data.a * Magnitudes.magToMoment(data.m);
 		// total event rate
-		double tcr = a;
+		double tcr = data.a;
 
 		// @formatter:off
 		// loop over epistemic uncertainties
 		if (unc.hasEpistemic) {
 			for (int i = 0; i < unc.epiCount; i++) {
 
-				double epiMag = m + unc.epiDeltas[i];
-				double mfdWeight = weight * unc.epiWeights[i];
+				double epiMag = data.m + unc.epiDeltas[i];
+				double mfdWeight = data.weight * unc.epiWeights[i];
 
 				if (unc.hasAleatory) {
 					GaussianMFD mfd = (unc.moBalance) ? 
@@ -372,15 +339,15 @@ class FaultSourceParser extends DefaultHandler {
 		} else {
 			if (unc.hasAleatory) {
 				GaussianMFD mfd = (unc.moBalance) ? 
-					MFDs.newGaussianMoBalancedMFD(m, unc.aleaSigma, unc.aleaCount, weight * tmr) :
-					MFDs.newGaussianMFD(m, unc.aleaSigma, unc.aleaCount, weight * tcr);
+					MFDs.newGaussianMoBalancedMFD(data.m, unc.aleaSigma, unc.aleaCount, data.weight * tmr) :
+					MFDs.newGaussianMFD(data.m, unc.aleaSigma, unc.aleaCount, data.weight * tcr);
 				mfds.add(mfd);
 				if (log.isLoggable(FINE)) {
 					log.fine(new StringBuilder("Single MFD [-epi +ale]: ")
 						.append(LF).append(mfd.getMetadataString()).toString());
 				}
 			} else {
-				IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(m, weight * a);
+				IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(data.m, data.weight * data.a);
 				mfds.add(mfd);
 				if (log.isLoggable(FINE)) {
 					log.fine(new StringBuilder("Single MFD [-epi -ale]: ")
@@ -392,6 +359,7 @@ class FaultSourceParser extends DefaultHandler {
 		return mfds;
 	}
 	
+	// TODO clean
 //	/*
 //	 * Returns true if (1) multi-mag and mMax-epi < 6.5 or (2) single-mag and
 //	 * mMax-epi-2s < 6.5
