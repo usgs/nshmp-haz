@@ -1,10 +1,13 @@
 package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,41 +21,130 @@ import org.xml.sax.SAXParseException;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.TreeTraverser;
 import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 
 /**
- * TODO logging
- * TODO if multithreaded forecast loading is
- * adopted, new parsers and handlers should be initialized on a per-thread basis
+ * {@code Forecast} loader.
  * 
  * @author Peter Powers
  */
 public class Loader {
+	
+	// NOTE  if multithreaded forecast loading is adopted, this class would
+	// need to be refactored initialize sax parsers on a per-thread basis
 
 	private static final String LF = LINE_SEPARATOR.value();
 
 	private static final Logger log;
 	private static final FaultSourceParser faultParser;
-	// private static final gridParser;
+	private static final GridSourceParser gridParser;
+	private static final SubductionSourceParser subductionParser;
 
 	static {
+		// TODO see Logging; no log file handler yet
 		log = Logging.create(Loader.class);
 		SAXParser saxParser = null;
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			saxParser = factory.newSAXParser();
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Error initializing loader", e);
+			log.log(Level.SEVERE, "Error initializing SAX parser", e);
 			System.exit(1);
 		}
 		faultParser = FaultSourceParser.create(saxParser);
+		gridParser = GridSourceParser.create(saxParser);
+		subductionParser = SubductionSourceParser.create(saxParser);
 	}
 
 
-	public static FaultSourceSet load(String path) {
+	public static Forecast load(String path) throws Exception {
+		
+		// validate forecast directory
+		File forecastDir = null;
+		try {
+			forecastDir = new File(checkNotNull(path, "Path is null"));
+			log.info("Forecast: " + forecastDir.getName());
+			checkArgument(forecastDir.exists(), "Path does not exist: %s", path);
+			checkArgument(forecastDir.isDirectory(), "Path is not a directory: %s", path);
+		} catch (NullPointerException npe) {
+			logConfigException(npe);
+			throw npe;
+		} catch (IllegalArgumentException iae) {
+			logConfigException(iae);
+			throw iae;
+		}
+		
+		// process by type
+		for (File typeDir : listTypeDirs(forecastDir)) {
+ 			log.info("  " + typeDir.getName() + " Sources ...");
+			processTypeDir(typeDir);
+		}
+		
+		return null;
+	}
+	
+	private static void processTypeDir(File typeDir) throws Exception {
+		
+		int sourceCount = 0;
+		for (File sourceFile : listSourceFiles(typeDir)) {
+			log.info("    File: " + sourceFile.getName()); // TODO change to "Parsed: *"
+			// TODO parse
+			sourceCount++;
+		}
+		
+		/*
+		 * gmm.xml file -- this MUST exist if there is at least one source file,
+		 * however it MAY NOT exsist if all source files happen to be in nested
+		 * directories
+		 */
+		File gmmFile = null;
+		if (sourceCount > 0) {
+			gmmFile = new File(typeDir, GMM_Parser.FILE_NAME);
+			checkState(gmmFile.exists(), "Source files present in %s; gmm.xml file required",
+				typeDir);
+			log.info("**   GMM file:" + gmmFile.getName());
+		}
+		
+//		if (!gmmFile.exists() && sourceCount > 0) {
+//			
+//		}
+//		log.info("**     GMM file:" + sourceFile.getName());
+		for (File nestedSourceDir : listNestedSourceDirs(typeDir)) {
+			processNestedSourceDir(nestedSourceDir, gmmFile);
+		}
+		
+		
+	}
+	
+	// gmm file may be null, but that requires one to be present in the parent dir
+	private static void processNestedSourceDir(File sourceDir, File gmmFile) {
+		log.info("**      Source dir:" + sourceDir.getName());
+		int sourceCount = 0;
+		for (File sourceFile : listSourceFiles(sourceDir)) {
+			log.info("**       Source file:" + sourceFile.getName());
+			// TODO parse
+			sourceCount++;
+		}
+		
+		/*
+		 * gmm.xml file -- this MUST exist if there is at least one source file
+		 * and there is no file in the parent source type directory
+		 */
+		File nestedGmmFile = null;
+		if (sourceCount > 0) {
+			nestedGmmFile = new File(sourceDir, GMM_Parser.FILE_NAME);
+			checkState(nestedGmmFile.exists() || gmmFile != null,
+				"Source files present in %s; gmm.xml file required", nestedGmmFile);
+			log.info("**       GMM file:" + gmmFile.getName());
+		}
+		
+	}
+	
+	public static FaultSourceSet processFile(String path) throws Exception {
 		File file = new File(path);
 		try {
 			return faultParser.parse(file);
@@ -79,63 +171,82 @@ public class Loader {
 			sb.append(LF);
 			sb.append("** Exiting **").append(LF);
 			log.severe(sb.toString());
-			System.exit(1);
+			throw spe;
 		} catch (SAXException se) {
 			StringBuilder sb = new StringBuilder(LF);
 			sb.append("** Other SAX parsing error: Exiting **").append(LF);
 			log.log(Level.SEVERE, sb.toString(), se);
-			System.exit(1);
+			throw se;
 		} catch (IOException ioe) {
 			StringBuilder sb = new StringBuilder(LF);
 			sb.append("** IO error: ").append(ioe.getMessage()).append(LF);
 			sb.append("**   File: ").append(file.getPath()).append(LF);
 			sb.append("** Exiting **").append(LF);
 			log.severe(sb.toString());
-			System.exit(1);
+			throw ioe;
 		}
-		return null;
 	}
 
 	// will want to loop through forecast directory structure, possibly
 	// filtering by type or region, handing off each file to appropriate parser
 
 	public static void main(String args[]) {
-
-//		Loader.load("tmp/NSHMP08-noRedux/Western US/Fault/brange.3dip.gr.xml");
-		FaultSourceSet faultSet = Loader.load("tmp/NSHMP08-noRedux/California/Fault/bFault.ch.xml");
-		System.out.println(faultSet.sources.size());
 		
-
-	}
-
-	
-	private static final String FC_PATH = "tmp/NSHMP08-noRedux/California";
-	/*
-	 * This could be a zip file
-	 * Should kill symlinks (j7)
-	 */
-	public static Forecast load(File dir) {
-		checkArgument(dir.isDirectory(), "Supplied file is not a directory");
-		FluentIterable<File> typeDirs = FluentIterable
-			.from(Lists.newArrayList(dir.listFiles()))
-			.filter(Files.isDirectory())
-			.filter(SKIP_FILE_FILTER)
-			.filter(TYPE_FILE_FILTER);
-		
-		for (File typeDir : typeDirs) {
-			SourceType type = SourceType.valueOf(typeDir.getName());
-			System.out.println(type + ":");
-			
-			// typeDirs can have nested folders one level deep
-			
-			// check for gmm.xml - required unless no xml files exist,
-			// subdirs should have own gmm.xml
-			
-			// check for subdirectories
+		// always want to re-trhow initialization exceptions to be able to run tests
+		try {
+			String path = "../nshmp-forecast-dev/forecasts/2008/Western US";
+			Loader.load(path);
+		} catch (Exception e) {
+			System.exit(1);
 		}
-		return null;
+//		Loader.load("tmp/NSHMP08-noRedux/Western US/Fault/brange.3dip.gr.xml");
+//		FaultSourceSet faultSet = Loader.load("../tmp/NSHMP08-noRedux/California/Fault/bFault.ch.xml");
+//		System.out.println(faultSet.sources.size());
+		
+
+	}
+
+	private static void logConfigException(Exception e) {
+		StringBuilder sb = new StringBuilder(LF);
+		sb.append("** Config error: ").append(e.getMessage()).append(LF);
+		sb.append("** Exiting **").append(LF);
+		log.severe(sb.toString());
+	}
+		
+	// @formatter:off
+	
+	/*
+	 * Lists the source type directories skipping hidden directories and those
+	 * that start with a tilde (~).
+	 */
+	private static Iterable<File> listTypeDirs(File dir) {
+		return FluentIterable.from(Lists.newArrayList(dir.listFiles()))
+				.filter(Files.isDirectory())
+				.filter(SKIP_FILE_FILTER)
+				.filter(TYPE_FILE_FILTER);
 	}
 	
+	/*
+	 * Lists source files in a type directory skipping hidden files, those that
+	 * start with a tilde (~), and the gmm.xml file.
+	 */
+	private static Iterable<File> listSourceFiles(File dir) {
+		return FluentIterable.from(Lists.newArrayList(dir.listFiles()))
+				.filter(Files.isFile())
+				.filter(SKIP_FILE_FILTER)
+				.filter(SOURCE_FILE_FILTER);
+	}
+	
+	/*
+	 * Lists any source directories nested in a type directory skipping hidden
+	 * directories and start with a tilde (~).
+	 */
+	private static Iterable<File> listNestedSourceDirs(File dir) {
+		return FluentIterable.from(Lists.newArrayList(dir.listFiles()))
+				.filter(Files.isDirectory())
+				.filter(SKIP_FILE_FILTER);
+	}
+
 	private static final Predicate<File> SKIP_FILE_FILTER = new Predicate<File>() {
 		@Override
 		public boolean apply(File f) {
@@ -143,11 +254,18 @@ public class Loader {
 		}
 	};
 
+	private static final Predicate<File> SOURCE_FILE_FILTER = new Predicate<File>() {
+		@Override
+		public boolean apply(File f) {
+			return f.getName().endsWith(".xml") && !f.getName().equals(GMM_Parser.FILE_NAME);
+		}
+	};
+
 	private static final Predicate<File> TYPE_FILE_FILTER = new Predicate<File>() {
 		@Override
 		public boolean apply(File f) {
 			try {
-				SourceType.valueOf(f.getName());
+				SourceType.fromString(f.getName());
 				return true;
 			} catch (IllegalArgumentException iae) {
 				return false;

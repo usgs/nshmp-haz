@@ -82,8 +82,7 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>> {
 	
 
 	// sourceSet type map
-	private Multimap<SourceType, SourceSet<? extends Source>> srcTypeMap = 
-			ArrayListMultimap.create();
+	Multimap<SourceType, SourceSet<? extends Source>> srcTypeMap = ArrayListMultimap.create();
 	
 //	private Iterable<SourceSet<? extends Source>> sources;
 	
@@ -96,12 +95,12 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>> {
 		
 	}
 	
-	public static Forecast fromSingleSourceSet(String path) {
-		FaultSourceSet fss = Loader.load(path);
-		Forecast f = new Forecast();
-		f.srcTypeMap.put(fss.type(), fss);
-		return f;
-	}
+//	public static Forecast fromSingleSourceSet(String path) {
+//		FaultSourceSet fss = Loader.load(path);
+//		Forecast f = new Forecast();
+//		f.srcTypeMap.put(fss.type(), fss);
+//		return f;
+//	}
 	
 	//	private 
 	public int size() {

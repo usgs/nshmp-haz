@@ -215,69 +215,103 @@ public final class Parsing {
 		return e;
 	}
 	
-	/**
-	 * For use by source XML parsers. Explicitely checks that a case-insensitive value of "true" or
-	 * "false" is supplied (as opposed to simply defaulting to {@code false}.
-	 * @param id
-	 * @param atts
-	 * @return
-	 */
-	public static boolean readBoolean(Enum<?> id, Attributes atts) {
-		String value = checkNotNull(atts.getValue(id.toString()),
-			"Missing attribute '%s'", id.toString());
-		checkArgument(
-			value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false"),
-			"Unparseable attribute " + id.toString() + "=\"" + value + "\"");
-		return Boolean.valueOf(value);
-	}
 
-	/**
-	 * @param id
-	 * @param atts
-	 * @param defaultValue
-	 * @return
-	 */
-	public static double readDouble(Enum<?> id, Attributes atts, double defaultValue) {
-		try {
-			return readDouble(id, atts);
-		} catch (Exception e) {
-			return defaultValue;
-		}
-	}
+//	/**
+//	 * @param id
+//	 * @param atts
+//	 * @param defaultValue
+//	 * @return
+//	 */
+//	@Deprecated
+//	public static double readDouble(Enum<?> id, Attributes atts, double defaultValue) {
+//		try {
+//			return readDouble(id, atts);
+//		} catch (Exception e) {
+//			return defaultValue;
+//		}
+//	}
+	
+	// TODO perhaps package privatize these...
+	// TODO these should be passed up as SAX exceptions
 	
 	/**
-	 * For use by source XML parsers. Doesn't do argument null checking,. TODO
-	 * perhaps package privatize. Thros exceptions that are expected to be
-	 * passed up through SAXParseExceptions
-	 * @param id
-	 * @param atts
-	 * @return
-	 * @throws NullPointerException
-	 * @throws IllegalArgumentException
+	 * For use by source XML parsers. Reads the attribute value associated with
+	 * the attribute name given by {@code id} as a {@code boolean}. Method
+	 * explicitely checks that a case-insensitive value of "true" or "false" is
+	 * supplied (as opposed to simply defaulting to {@code false}.
+	 * @param id the {@code enum} attribute identifier
+	 * @param atts a SAX {@code Attributes} container
+	 * @return the value of the attribute
+	 * @throws NullPointerException if {@code id} or {@code atts} are
+	 *         {@code null}, or no attribute for the specified {@code id} exists
+	 * @throws IllegalArgumentException if the attribute value can not be parsed
+	 *         to a {@code boolean}
 	 */
-	public static double readDouble(Enum<?> id, Attributes atts) {
-		return readDouble(id.toString(), atts);
+	public static boolean readBoolean(Enum<?> id, Attributes atts) {
+		String idStr = checkNotNull(id).toString();
+		String valStr = checkNotNull(atts).getValue(idStr);
+		checkNotNull(valStr, "Missing attribute '%s'", id.toString());
+		checkArgument(valStr.equalsIgnoreCase("true") || valStr.equalsIgnoreCase("false"),
+			"Unparseable attribute " + id.toString() + "=\"" + valStr + "\"");
+		return Boolean.valueOf(valStr);
 	}
 
 	/**
-	 * For use by source XML parsers. Doesn't do argument null checking,. TODO
-	 * perhaps package privatize. Thros exceptions that are expected to be
-	 * passed up through SAXParseExceptions
-	 * @param id
-	 * @param atts
-	 * @return
-	 * @throws NullPointerException
-	 * @throws IllegalArgumentException
+	 * For use by source XML parsers. Reads the attribute value associated with
+	 * the attribute name given by {@code id} as a {@code double}.
+	 * @param id the {@code enum} attribute identifier
+	 * @param atts a SAX {@code Attributes} container
+	 * @return the value of the attribute
+	 * @throws NullPointerException if {@code id} or {@code atts} are
+	 *         {@code null}, or no attribute for the specified {@code id} exists
+	 * @throws IllegalArgumentException if the attribute value can not be parsed
+	 *         to a {@code double}
 	 */
-	public static double readDouble(String id, Attributes atts) {
+	public static double readDouble(Enum<?> id, Attributes atts) {
+		String idStr = checkNotNull(id).toString();
+		String valStr = checkNotNull(atts).getValue(idStr);
 		try {
-			return Double.valueOf(checkNotNull(atts.getValue(id),
-				"Missing attribute '%s'", id));
+			return Double.valueOf(checkNotNull(valStr, "Missing attribute '%s'", id));
 		} catch (NumberFormatException nfe) {
-			throw new IllegalArgumentException("Unparseable attribute " + id +
-				"=\"" + atts.getValue(id) + "\"");
+			throw new IllegalArgumentException("Unparseable attribute " + id + "=\"" +
+				atts.getValue(idStr) + "\"");
 		}
 	}
+
+	/**
+	 * For use by source XML parsers. Reads the attribute value associated with
+	 * the attribute name given by {@code id} as a {@code String}.
+	 * @param id the {@code enum} attribute identifier
+	 * @param atts a SAX {@code Attributes} container
+	 * @return the value of the attribute
+	 * @throws NullPointerException if {@code id} or {@code atts} are
+	 *         {@code null}, or no attribute for the specified {@code id}
+	 *         exsists
+	 */
+	public static String readString(Enum<?> id, Attributes atts) {
+		String idStr = checkNotNull(id).toString();
+		String valStr = checkNotNull(atts).getValue(idStr);
+		return checkNotNull(valStr, "Missing attribute '%s'", id);
+	}
+
+//	/**
+//	 * For use by source XML parsers. Doesn't do argument null checking,. TODO
+//	 * perhaps package privatize. Thros exceptions that are expected to be
+//	 * passed up through SAXParseExceptions
+//	 * @param id
+//	 * @param atts
+//	 * @return
+//	 * @throws NullPointerException
+//	 * @throws IllegalArgumentException
+//	 */
+//	public static double readDouble(String id, Attributes atts) {
+//		try {
+//			return Double.valueOf(checkNotNull(atts.getValue(id), "Missing attribute '%s'", id));
+//		} catch (NumberFormatException nfe) {
+//			throw new IllegalArgumentException("Unparseable attribute " + id + "=\"" +
+//				atts.getValue(id) + "\"");
+//		}
+//	}
 
 	public static List<String> toStringList(String s) {
 		return FluentIterable
@@ -299,10 +333,6 @@ public final class Parsing {
 				.toList();
 	}
 	
-	public static String readString(String id, Attributes atts) {
-		return checkNotNull(atts.getValue(id), "Missing attribute '%s'", id);
-	}
-
 	public static Iterable<String> splitOnSpaces(String s) {
 		return SPLIT_SPACE.split(s);
 	}

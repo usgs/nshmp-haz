@@ -25,7 +25,7 @@ public class Logging {
 	static {
 		try {
 			InputStream is = new FileInputStream(
-				"/Users/pmpowers/projects/git/usgs-sha/lib/logging.properties");
+				"/Users/pmpowers/projects/git/nshmp-sha/lib/logging.properties");
 			LogManager.getLogManager().readConfiguration(is);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();

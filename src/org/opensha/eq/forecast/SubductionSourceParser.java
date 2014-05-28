@@ -108,7 +108,7 @@ class SubductionSourceParser extends DefaultHandler {
 					break;
 	
 				case SOURCE:
-					String name = readString("name", atts);
+					String name = readString(NAME, atts);
 					sourceBuilder = new SubductionSource.Builder();
 					sourceBuilder.name(name);
 					if (log.isLoggable(INFO)) log.info("Building: " + name);
@@ -119,7 +119,7 @@ class SubductionSourceParser extends DefaultHandler {
 					break;
 	
 				case GEOMETRY:
-					sourceBuilder.rake(readDouble("rake", atts));
+					sourceBuilder.rake(readDouble(RAKE, atts));
 					break;
 					
 				case TRACE:
@@ -244,7 +244,7 @@ class SubductionSourceParser extends DefaultHandler {
 		double a = readDouble(A, atts);
 		double m = readDouble(M, atts);
 		boolean floats = readBoolean(FLOATS, atts);
-		double weight = readDouble(WEIGHT, atts, 1.0);
+		double weight = readDouble(WEIGHT, atts);
 
 		if (log.isLoggable(INFO)) log.info("MFD: SINGLE");
 

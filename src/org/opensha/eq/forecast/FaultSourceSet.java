@@ -12,7 +12,17 @@ import com.google.common.collect.Lists;
  */
 public class FaultSourceSet implements SourceSet<FaultSource> {
 
-	List<FaultSource> sources = Lists.newArrayList();
+	private final List<FaultSource> sources = Lists.newArrayList();
+	private final String name;
+	private double weight;
+	
+	FaultSourceSet(String name, double weight) {
+		this.name = name;
+		this.weight = weight;
+		
+		// TODO weight could be used in parser to scale all MFD rates
+		// and not stored here
+	}
 	
 	void add(FaultSource source) {
 		sources.add(source);

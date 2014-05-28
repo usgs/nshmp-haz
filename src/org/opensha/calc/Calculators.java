@@ -7,16 +7,16 @@ package org.opensha.calc;
  */
 public class Calculators {
 
-	public static GroundMotionCalculator newFaultCalculator() {
-		return null;
-	}
-	
-	public static GroundMotionCalculator newGridCalculator(boolean optimize) {
-		return null;
-	}
-	
-	public static GroundMotionCalculator newClusterCalculator() {
-		return null;
-	}
+//	public static GroundMotionCalculator newFaultCalculator() {
+//		return null;
+//	}
+//	
+//	public static GroundMotionCalculator newGridCalculator(boolean optimize) {
+//		return null;
+//	}
+//	
+//	public static GroundMotionCalculator newClusterCalculator() {
+//		return null;
+//	}
 
 }
