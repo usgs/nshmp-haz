@@ -107,7 +107,7 @@ class GridSourceParser extends DefaultHandler {
 				if (parsingDefaultMFDs) mfdHelper.addDefault(atts);
 				break;
 				
-			case SOURCE_ATTS:
+			case SOURCE_PROPERTIES:
 				sourceBuilder.depthMap(stringToValueValueWeightMap(atts.getValue("depthMap")));
 				sourceBuilder.mechs(stringToEnumWeightMap(atts.getValue("mechs"), FocalMech.class));
 				break;
