@@ -76,7 +76,7 @@ import com.google.common.collect.Lists;
  * @version 1.0
  */
 
-
+@Deprecated
 public class FloatingPoissonFaultSource implements Source {
 
 	//name for this classs
@@ -95,10 +95,10 @@ public class FloatingPoissonFaultSource implements Source {
 
 	private double lastDuration = Double.NaN;
 
-	@Override
-	public Location centroid() {
-		throw new UnsupportedOperationException("");
-	}
+//	@Override
+//	public Location centroid() {
+//		throw new UnsupportedOperationException("");
+//	}
 	
 
 	/**
@@ -154,7 +154,7 @@ public class FloatingPoissonFaultSource implements Source {
 			addRupturesToList(magDist, faultSurface, magScalingRel, magScalingSigma, rupAspectRatio, rupOffset, 
 					rake, minMag, 0.0, 1.0, floatTypeFlag, fullFaultRupMagThresh);
 		else {
-			GaussianMFD gDist = new GaussianMFD(-3.0,3.0,25,0.0,1.0,1.0);
+			GaussianMFD gDist = null;  //new GaussianMFD(-3.0,3.0,25,0.0,1.0,1.0);
 			gDist.scaleToCumRate(0, 1.0);  // normalize to make it a probability density
 //			if(D) System.out.println("gDist:\n"+gDist.toString());
 			for(int m=0; m<gDist.getNum(); m++) {
@@ -345,8 +345,8 @@ public class FloatingPoissonFaultSource implements Source {
 		}
 	}
 
-	@Override
-	public AbstractEvenlyGriddedSurface surface() { return faultSurface; }
+//	@Override
+//	public AbstractEvenlyGriddedSurface surface() { return faultSurface; }
 
 	/**
 	 * @return the total num of rutures for all magnitudes
