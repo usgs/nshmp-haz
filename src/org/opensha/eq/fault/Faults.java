@@ -44,16 +44,27 @@ public final class Faults {
 	public static final double MAX_RAKE = 180.0;
 
 	/** Minimum allowed fault depth (0 km; positive down). */
-	public static final double MIN_DEPTH = -180.0;
+	public static final double MIN_DEPTH = 0.0;
 
 	/** Maximum allowed fault depth (500 km; positive down). */
-	public static final double MAX_DEPTH = 180.0;
+	public static final double MAX_DEPTH = 500.0;
+	
+	/** Minimum allowed fault width (>0 km). */
+	public static final double MIN_WIDTH = 0.0;
+
+	/** Maximum allowed fault width (60 km). */
+	public static final double MAX_WIDTH = 60.0;
+
+	/** Maximum allowed subduction fault width (200 km). */
+	public static final double MAX_WIDTH_SUBDUCTION = 200.0;
 
 	// @formatter:off
 	private static final Range<Double> strikeRange = Range.closed(MIN_STRIKE, MAX_STRIKE);
 	private static final Range<Double> dipRange = Range.closed(MIN_DIP, MAX_DIP);
 	private static final Range<Double> rakeRange = Range.closed(MIN_RAKE, MAX_RAKE);
 	private static final Range<Double> depthRange = Range.closed(MIN_DEPTH, MAX_DEPTH);
+	private static final Range<Double> widthRange = Range.openClosed(MIN_WIDTH, MAX_WIDTH);
+	private static final Range<Double> subWidthRange = Range.openClosed(MIN_WIDTH, MAX_WIDTH_SUBDUCTION);
 	// @formatter:on
 
 	/**
@@ -96,7 +107,7 @@ public final class Faults {
 	public static double validateRake(double rake) {
 		return validate(rakeRange, "Rake", rake);
 	}
-	
+
 	/**
 	 * Verifies that a depth value is between {@code MIN_DEPTH} and
 	 * {@code MAX_DEPTH} (inclusive). Method returns the supplied value and can
@@ -111,6 +122,33 @@ public final class Faults {
 		return validate(depthRange, "Depth", depth);
 	}
 
+	/**
+	 * Verifies that a width value is between {@code MIN_WIDTH} (exclusive,
+	 * width must be greater than 0) and {@code MAX_WIDTH} (inclusive). Method
+	 * returns the supplied value and can be used inline.
+	 * 
+	 * @param width to validate
+	 * @return the supplied width
+	 * @throws IllegalArgumentException if {@code width} value is out of range
+	 * @see DataUtils#validate(Range, String, double)
+	 */
+	public static double validateWidth(double width) {
+		return validate(widthRange, "Width", width);
+	}
+
+	/**
+	 * Verifies that a width value is between {@code MIN_WIDTH} (exclusive,
+	 * width must be greater than 0) and {@code MAX_WIDTH_SUBDUCTION}
+	 * (inclusive). Method returns the supplied value and can be used inline.
+	 * 
+	 * @param width to validate
+	 * @return the supplied width
+	 * @throws IllegalArgumentException if {@code width} value is out of range
+	 * @see DataUtils#validate(Range, String, double)
+	 */
+	public static double validateSubductionWidth(double width) {
+		return validate(subWidthRange, "Subduction Width", width);
+	}
 
 //	/**
 //	 * Checks that the rake angle fits within the definition<p> <code>-180 <=
@@ -249,13 +287,12 @@ public final class Faults {
 			if (length > remainingLength) {
 				// set the point
 //				LocationVector dir = vector(lastLoc, nextLoc);
-//				dir.setHorzDistance(dir.getHorzDistance() * remainingLength /
-//					length);
-//				dir.setVertDistance(dir.getVertDistance() * remainingLength /
-//					length);
+//				dir.setHorzDistance(dir.getHorzDistance() * remainingLength / length);
+//				dir.setVertDistance(dir.getVertDistance() * remainingLength / length);
 				LocationVector dirSrc = LocationVector.create(lastLoc, nextLoc);
 				double hDist = dirSrc.horizontal() * remainingLength / length;
 				double vDist = dirSrc.vertical() * remainingLength / length;
+				
 				LocationVector dir = LocationVector.create(dirSrc.azimuth(), hDist, vDist);
 				Location loc = location(lastLoc, dir);
 				resampLocs.add(loc);
@@ -271,11 +308,8 @@ public final class Faults {
 
 		// make sure we got the last one (might be missed because of numerical
 		// precision issues?)
-		double dist = linearDistanceFast(
-			trace.last(),
-			resampLocs.get(resampLocs.size() - 1));
-		if (dist > resampInt / 2)
-			resampLocs.add(trace.last());
+		double dist = linearDistanceFast(trace.last(), resampLocs.get(resampLocs.size() - 1));
+		if (dist > resampInt / 2) resampLocs.add(trace.last());
 
 		/* Debugging Stuff **************** */
 		/*
