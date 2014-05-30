@@ -13,6 +13,10 @@ import org.opensha.eq.Magnitudes;
  * Factory and utility methods for working with magnitude frequency
  * distributions (MFDs).
  * 
+ * TODO note application guidance implied by floats() TODO should Incremental
+ * MFDs really descend from EvenlyDiscretizedFunction; if someone passes in
+ * non-uniformely spaced mag values, there will be problems
+ * 
  * @author Peter Powers
  */
 public class MFDs {
@@ -22,39 +26,53 @@ public class MFDs {
 
 	/**
 	 * Creates a new single magnitude {@code IncrementalMFD}.
+	 * 
 	 * @param mag for MFD
 	 * @param cumRate total cumulative event rate for lone magnitude bin
+	 * @param floats {@code true} if ruptures referencing this mfd should float;
+	 *        {@code false} otherwise
 	 * @return a new {@code IncrementalMFD}
 	 */
-	public static IncrementalMFD newSingleMFD(double mag, double cumRate) {
-		IncrementalMFD mfd = buildIncrementalBaseMFD(mag, mag, 1);
+	public static IncrementalMFD newSingleMFD(double mag, double cumRate, boolean floats) {
+		IncrementalMFD mfd = buildIncrementalBaseMFD(mag, mag, 1, floats);
 		mfd.set(mag, cumRate);
 		return mfd;
 	}
 
 	/**
 	 * Creates a new single magnitude moment-balanced {@code IncrementalMFD}.
+	 * 
 	 * @param mag for MFD
 	 * @param moRate total moment rate of lone magnitude bin
+	 * @param floats {@code true} if ruptures referencing this mfd should float;
+	 *        {@code false} otherwise
 	 * @return a new {@code IncrementalMFD}
 	 */
-	public static IncrementalMFD newSingleMoBalancedMFD(double mag,
-			double moRate) {
+	public static IncrementalMFD newSingleMoBalancedMFD(double mag, double moRate, boolean floats) {
 		double cumRate = moRate / Magnitudes.magToMoment(mag);
-		return newSingleMFD(mag, cumRate);
+		return newSingleMFD(mag, cumRate, floats);
 	}
-	
+
+	/**
+	 * Creates a new {@code IncrementalMFD} with the supplied magnitudes and
+	 * rates. For the MFD returned, {@link IncrementalMFD#floats()} always
+	 * returns {@code true}.
+	 * 
+	 * <p><b>NOTE:</b> This method expects evenly spaced magnitudes; if they are
+	 * not, results are undefined.</p>
+	 * 
+	 * @param mags for MFD
+	 * @param rates for MFD
+	 * @return a new {@code IncrementalMFD}
+	 */
 	public static IncrementalMFD newIncrementalMFD(double[] mags, double[] rates) {
 		checkArgument(checkNotNull(mags).length == checkNotNull(rates).length);
 		checkArgument(mags.length > 1);
 		checkArgument(rates.length > 1);
-		
-		// TODO IncrementalMFD is subclass of EvenlyDiscretizedFunction;
-		// not sure it should be
-		
-		IncrementalMFD mfd = buildIncrementalBaseMFD(mags[0],
-			mags[mags.length - 1], mags.length);
-		for (int i=0; i<mags.length; i++) {
+
+		IncrementalMFD mfd = buildIncrementalBaseMFD(mags[0], mags[mags.length - 1], mags.length,
+			true);
+		for (int i = 0; i < mags.length; i++) {
 			mfd.set(mags[i], rates[i]);
 		}
 		return mfd;
@@ -62,40 +80,43 @@ public class MFDs {
 
 	/**
 	 * Creates a new {@code GaussianMFD} that is doubly-truncated at
-	 * {@code 2*sigma}.
+	 * {@code 2*sigma}. For the MFD returned, {@link IncrementalMFD#floats()}
+	 * always returns {@code false}.
+	 * 
 	 * @param mean magnitude
 	 * @param sigma standard deviation
 	 * @param size number of magnitude bins inclusive of min and max magnitudes
 	 * @param cumRate total cumulative rate
 	 * @return a new {@code GaussianMFD}
 	 */
-	public static GaussianMFD newGaussianMFD(double mean, double sigma,
-			int size, double cumRate) {
+	public static GaussianMFD newGaussianMFD(double mean, double sigma, int size, double cumRate) {
 		GaussianMFD mfd = buildGaussianBaseMFD(mean, sigma, size);
-		mfd.setAllButTotMoRate(mean, sigma, cumRate, DEFAULT_TRUNC_LEVEL,
-			DEFAULT_TRUNC_TYPE);
+		mfd.setAllButTotMoRate(mean, sigma, cumRate, DEFAULT_TRUNC_LEVEL, DEFAULT_TRUNC_TYPE);
 		return mfd;
 	}
 
 	/**
 	 * Creates a new moment-balanced {@code GaussianMFD} that is
-	 * doubly-truncated at {@code 2*sigma}.
+	 * doubly-truncated at {@code 2*sigma}. For the MFD returned,
+	 * {@link IncrementalMFD#floats()} always returns {@code false}.
+	 * 
 	 * @param mean magnitude
 	 * @param sigma standard deviation
 	 * @param size number of magnitude bins inclusive of min and max magnitudes
 	 * @param moRate total moment rate
 	 * @return a new {@code GaussianMFD}
 	 */
-	public static GaussianMFD newGaussianMoBalancedMFD(double mean,
-			double sigma, int size, double moRate) {
+	public static GaussianMFD newGaussianMoBalancedMFD(double mean, double sigma, int size,
+			double moRate) {
 		GaussianMFD mfd = buildGaussianBaseMFD(mean, sigma, size);
-		mfd.setAllButCumRate(mean, sigma, moRate, DEFAULT_TRUNC_LEVEL,
-			DEFAULT_TRUNC_TYPE);
+		mfd.setAllButCumRate(mean, sigma, moRate, DEFAULT_TRUNC_LEVEL, DEFAULT_TRUNC_TYPE);
 		return mfd;
 	}
 
 	/**
-	 * Creates a new {@code GutenbergRichterMFD}.
+	 * Creates a new {@code GutenbergRichterMFD}. For the MFD returned,
+	 * {@link IncrementalMFD#floats()} always returns {@code true}.
+	 * 
 	 * @param min magnitude
 	 * @param delta magnitude
 	 * @param size number of magnitude bins inclusive of min and max magnitudes
@@ -103,16 +124,17 @@ public class MFDs {
 	 * @param cumRate total cumulative rate
 	 * @return a new {@code GutenbergRichterMFD}
 	 */
-	public static GutenbergRichterMFD newGutenbergRichterMFD(
-			double min, double delta, int size, double b, double cumRate) {
-		GutenbergRichterMFD mfd = buildGutenbergRichterBaseMFD(min,
-			delta, size);
+	public static GutenbergRichterMFD newGutenbergRichterMFD(double min, double delta, int size,
+			double b, double cumRate) {
+		GutenbergRichterMFD mfd = buildGutenbergRichterBaseMFD(min, delta, size);
 		mfd.setAllButTotMoRate(min, min + (size - 1) * delta, cumRate, b);
 		return mfd;
 	}
 
 	/**
-	 * Creates a new moment-balanced {@code GutenbergRichterMFD}.
+	 * Creates a new moment-balanced {@code GutenbergRichterMFD}. For the MFD
+	 * returned, {@link IncrementalMFD#floats()} always returns {@code true}.
+	 * 
 	 * @param min magnitude
 	 * @param delta magnitude
 	 * @param size number of magnitude bins inclusive of min and max magnitudes
@@ -120,26 +142,24 @@ public class MFDs {
 	 * @param moRate total moment rate
 	 * @return a new {@code GutenbergRichterMFD}
 	 */
-	public static GutenbergRichterMFD newGutenbergRichterMoBalancedMFD(
-			double min, double delta, int size, double b, double moRate) {
-		GutenbergRichterMFD mfd = buildGutenbergRichterBaseMFD(min,
-			delta, size);
+	public static GutenbergRichterMFD newGutenbergRichterMoBalancedMFD(double min, double delta,
+			int size, double b, double moRate) {
+		GutenbergRichterMFD mfd = buildGutenbergRichterBaseMFD(min, delta, size);
 		mfd.setAllButTotCumRate(min, min + (size - 1) * delta, moRate, b);
 		return mfd;
 	}
 
-	private static IncrementalMFD buildIncrementalBaseMFD(double min,
-			double max, int size) {
-		return new IncrementalMFD(min, max, size);
+	private static IncrementalMFD buildIncrementalBaseMFD(double min, double max, int size,
+			boolean floats) {
+		return new IncrementalMFD(min, max, size, floats);
 	}
 
-	private static GaussianMFD buildGaussianBaseMFD(double mean,
-			double sigma, int size) {
+	private static GaussianMFD buildGaussianBaseMFD(double mean, double sigma, int size) {
 		return new GaussianMFD(mean - 2 * sigma, mean - 2 * sigma, size);
 	}
 
-	private static GutenbergRichterMFD buildGutenbergRichterBaseMFD(
-			double min, double delta, int size) {
+	private static GutenbergRichterMFD buildGutenbergRichterBaseMFD(double min, double delta,
+			int size) {
 		return new GutenbergRichterMFD(min, size, delta);
 	}
 
@@ -155,8 +175,7 @@ public class MFDs {
 	 * @param b value
 	 * @return the total moment rate
 	 */
-	public static double totalMoRate(double mMin, int nMag, double dMag,
-			double a, double b) {
+	public static double totalMoRate(double mMin, int nMag, double dMag, double a, double b) {
 		double moRate = 1e-10; // start with small, non-zero rate
 		double M;
 		for (int i = 0; i < nMag; i++) {
@@ -184,7 +203,7 @@ public class MFDs {
 	 * magnitude. Convenience method for <code>N(M) = a*(10^-bm)</code>.
 	 * 
 	 * TODO is this confusing? the NSHMP stores a-values in different ways [a A]
-	 * where a = log10(A); should users just supply grRate() with 
+	 * where a = log10(A); should users just supply grRate() with
 	 * 
 	 * @param a value (incremental and defined wrt <code>dMag</code> for M0)
 	 * @param b value
@@ -193,17 +212,6 @@ public class MFDs {
 	 */
 	public static double incrRate(double a, double b, double mMin) {
 		return a * Math.pow(10, -b * mMin);
-	}
-	
-	// TODO clean
-	public static void main(String[] args) {
-		double a = 3;
-		double A = Math.pow(10,a);
-		double b = 0.9;
-		double mMin = 5.0;
-		System.out.println(grRate(a, b, mMin));
-		System.out.println(incrRate(A, b, mMin));
-		System.out.println(grRate(Math.log10(A), b, mMin));
 	}
 
 	/**
@@ -220,7 +228,7 @@ public class MFDs {
 	public static int magCount(double mMin, double mMax, double dMag) {
 		return (int) ((mMax - mMin) / dMag + 1.4);
 	}
-	
+
 	/**
 	 * Given an observed annual rate of occurrence of some event (in num/yr),
 	 * method returns the Poisson probability of occurence over the specified
