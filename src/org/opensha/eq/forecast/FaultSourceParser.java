@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static org.opensha.eq.forecast.SourceAttribute.*;
 import static org.opensha.util.Parsing.readDouble;
+import static org.opensha.util.Parsing.readEnum;
 import static org.opensha.util.Parsing.readString;
 import static org.opensha.util.Parsing.toMap;
 import static java.util.logging.Level.*;
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha.eq.Magnitudes;
+import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.GaussianMFD;
 import org.opensha.mfd.GutenbergRichterMFD;
@@ -57,6 +59,8 @@ class FaultSourceParser extends DefaultHandler {
 
 	private Locator locator;
 
+	private String setName;
+	private double setWeight;
 	private FaultSourceSet sources;
 
 	// Data applying to all sources
@@ -109,11 +113,10 @@ class FaultSourceParser extends DefaultHandler {
 			switch (e) {
 	
 				case FAULT_SOURCE_SET:
-					String name = readString(NAME, atts);
-					double weight = readDouble(WEIGHT, atts);
-					sources = new FaultSourceSet(name, weight);
+					setName = readString(NAME, atts);
+					setWeight = readDouble(WEIGHT, atts);
 					if (log.isLoggable(INFO)) {
-						log.info("Building fault set: " + name + " weight=" + weight);
+						log.info("Building fault set: " + setName + " weight=" + setWeight);
 					}
 					break;
 					
@@ -130,6 +133,12 @@ class FaultSourceParser extends DefaultHandler {
 					aleaAtts = toMap(atts);
 					break;
 	
+				case SOURCE_PROPERTIES:
+					MagScalingType scaling = readEnum(MAG_SCALING, atts, MagScalingType.class);
+					// create source set once we have mag scaling relation
+					sources = new FaultSourceSet(setName, setWeight, scaling);
+					break;
+					
 				case SOURCE:
 					String srcName = readString(NAME, atts);
 					sourceBuilder = new FaultSource.Builder();
@@ -221,7 +230,7 @@ class FaultSourceParser extends DefaultHandler {
 	}
 		
 	private List<IncrementalMFD> buildMFD(Attributes atts, MagUncertainty unc) {
-		MFD_Type type = MFD_Type.valueOf(readString(TYPE, atts));
+		MFD_Type type = readEnum(TYPE, atts, MFD_Type.class);
 		switch (type) {
 			case GR:
 				return buildGR(mfdHelper.getGR(atts), unc);
@@ -326,7 +335,7 @@ class FaultSourceParser extends DefaultHandler {
 					// be used elsewhere
 					
 					double moRate = tmr * mfdWeight;
-					IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(epiMag, moRate);
+					IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(epiMag, moRate, data.floats);
 					mfds.add(mfd);
 					if (log.isLoggable(FINE)) {
 						log.fine(new StringBuilder(
@@ -347,7 +356,7 @@ class FaultSourceParser extends DefaultHandler {
 						.append(LF).append(mfd.getMetadataString()).toString());
 				}
 			} else {
-				IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(data.m, data.weight * data.a);
+				IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(data.m, data.weight * data.a, data.floats);
 				mfds.add(mfd);
 				if (log.isLoggable(FINE)) {
 					log.fine(new StringBuilder("Single MFD [-epi -ale]: ")

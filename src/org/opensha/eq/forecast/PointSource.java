@@ -81,20 +81,20 @@ class PointSource implements Source {
 		throw new UnsupportedOperationException("PointSources are dynamic");
 	}
 
-	@Override
-	public RuptureSurface surface() {
-		throw new UnsupportedOperationException("PointSources are dynamic");
-	}
+//	@Override
+//	public RuptureSurface surface() {
+//		throw new UnsupportedOperationException("PointSources are dynamic");
+//	}
 
 	@Override
 	public int size() {
 		return rupCount;
 	}
 
-	@Override
-	public Location centroid() {
-		throw new UnsupportedOperationException("Implement me");
-	}
+//	@Override
+//	public Location centroid() {
+//		throw new UnsupportedOperationException("Implement me");
+//	}
 
 	@Override
 	public double getMinDistance(Location loc) {

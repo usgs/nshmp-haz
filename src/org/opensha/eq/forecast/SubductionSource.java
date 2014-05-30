@@ -75,10 +75,10 @@ public class SubductionSource implements Source {
 	List<FloatingPoissonFaultSource> sources;
 	List<Integer> rupCount; // cumulative index list for iterating ruptures
 
-	@Override
-	public Location centroid() {
-		throw new UnsupportedOperationException("");
-	}
+//	@Override
+//	public Location centroid() {
+//		throw new UnsupportedOperationException("");
+//	}
 	
 
 	// no instantiation, must use builder
@@ -90,8 +90,8 @@ public class SubductionSource implements Source {
 		private String name;
 		private LocationList upperTrace;
 		private LocationList lowerTrace;
-		private Double dip;
-		private Double width;
+//		private Double dip;
+//		private Double width;
 		private Double rake;
 		private List<IncrementalMFD> mfds = Lists.newArrayList();
 		
@@ -121,16 +121,16 @@ public class SubductionSource implements Source {
 			return this;
 		}
 
-		Builder dip(double dip) {
-			this.dip = validateDip(dip);
-			return this;
-		}
-				
-		Builder width(double width) {
-			// TODO appropriate width validation
-			this.width = width;
-			return this; 
-		}
+//		Builder dip(double dip) {
+//			this.dip = validateDip(dip);
+//			return this;
+//		}
+//				
+//		Builder width(double width) {
+//			// TODO appropriate width validation
+//			this.width = width;
+//			return this; 
+//		}
 		
 		Builder rake(double rake) {
 			this.rake = validateRake(rake);
@@ -160,10 +160,10 @@ public class SubductionSource implements Source {
 			ss.upperTrace = upperTrace;
 			checkState(lowerTrace != null, "Source upper trace not set");
 			ss.lowerTrace = lowerTrace;
-			checkState(dip != null, "Source dip not set");
-			ss.dip = dip;
-			checkState(width != null, "Source width not set");
-			ss.width = width;
+//			checkState(dip != null, "Source dip not set");
+//			ss.dip = dip;
+//			checkState(width != null, "Source width not set");
+//			ss.width = width;
 			checkState(rake != null, "Source rake not set");
 			ss.rake = rake;
 			checkState(mfds.size() > 0, "Source has no MFDs");
@@ -196,7 +196,7 @@ public class SubductionSource implements Source {
 			source = new FloatingPoissonFaultSource(
 				mfd, // IncrementalMagFreqDist
 				surface, // EvenlyGriddedSurface
-				SUBmsr, // MagScalingRelationship
+				SUBmsr, // MagScalingRelationship // TODO needs dealing with  - magScaling from sourceSet wrapper
 				0d, // sigma of the mag-scaling relationship
 				1d, // floating rupture aspect ratio (length/width)
 				5d, // floating rupture offset
@@ -212,10 +212,10 @@ public class SubductionSource implements Source {
 		}
 	}
 
-	@Override
-	public EvenlyGriddedSurface surface() {
-		return surface;
-	}
+//	@Override
+//	public EvenlyGriddedSurface surface() {
+//		return surface;
+//	}
 
 	@Override
 	public double getMinDistance(Location loc) {

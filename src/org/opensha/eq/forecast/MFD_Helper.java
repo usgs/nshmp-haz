@@ -6,8 +6,6 @@ import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readString;
 import static org.opensha.util.Parsing.toDoubleArray;
 
-
-import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.mfd.MFD_Type;
 import org.xml.sax.Attributes;
 
@@ -68,7 +66,6 @@ class MFD_Helper {
 		final double a;
 		final double m;
 		final boolean floats;
-		final MagScalingType magScaling;
 		final double weight;
 
 		/*
@@ -79,7 +76,6 @@ class MFD_Helper {
 			a = readDouble(A, atts);
 			m = readDouble(M, atts);
 			floats = readBoolean(FLOATS, atts);
-			magScaling = MagScalingType.valueOf(readString(MAG_SCALING, atts));
 			weight = readDouble(WEIGHT, atts);
 		}
 
@@ -93,7 +89,6 @@ class MFD_Helper {
 			double a = ref.a;
 			double m = ref.m;
 			boolean floats = ref.floats;
-			MagScalingType magScaling = ref.magScaling;
 			double weight = ref.weight;
 
 			for (int i = 0; i < atts.getLength(); i++) {
@@ -107,9 +102,6 @@ class MFD_Helper {
 						break;
 					case FLOATS:
 						floats = readBoolean(FLOATS, atts);
-						break;
-					case MAG_SCALING:
-						magScaling = MagScalingType.valueOf(readString(MAG_SCALING, atts));
 						break;
 					case WEIGHT:
 						weight = readDouble(WEIGHT, atts);
@@ -125,7 +117,6 @@ class MFD_Helper {
 			this.a = a;
 			this.m = m;
 			this.floats = floats;
-			this.magScaling = magScaling;
 			this.weight = weight;
 		}
 	}
@@ -136,7 +127,6 @@ class MFD_Helper {
 		final double dMag;
 		final double mMin;
 		final double mMax;
-		final MagScalingType magScaling;
 		final double weight;
 
 		private GR_Data(Attributes atts) {
@@ -145,7 +135,6 @@ class MFD_Helper {
 			dMag = readDouble(D_MAG, atts);
 			mMax = readDouble(M_MAX, atts);
 			mMin = readDouble(M_MIN, atts);
-			magScaling = MagScalingType.valueOf(readString(MAG_SCALING, atts));
 			weight = readDouble(WEIGHT, atts);
 		}
 
@@ -157,7 +146,6 @@ class MFD_Helper {
 			double dMag = ref.dMag;
 			double mMax = ref.mMax;
 			double mMin = ref.mMin;
-			MagScalingType magScaling = ref.magScaling;
 			double weight = ref.weight;
 
 			for (int i = 0; i < atts.getLength(); i++) {
@@ -178,9 +166,6 @@ class MFD_Helper {
 					case M_MAX:
 						mMax = readDouble(M_MAX, atts);
 						break;
-					case MAG_SCALING:
-						magScaling = MagScalingType.valueOf(readString(MAG_SCALING, atts));
-						break;
 					case WEIGHT:
 						weight = readDouble(WEIGHT, atts);
 						break;
@@ -197,7 +182,6 @@ class MFD_Helper {
 			this.dMag = dMag;
 			this.mMax = mMax;
 			this.mMin = mMin;
-			this.magScaling = magScaling;
 			this.weight = weight;
 		}
 	}
@@ -206,13 +190,11 @@ class MFD_Helper {
 		
 		final double[] mags;
 		final double[] rates;
-		MagScalingType magScaling;
 		final double weight;
 		
 		private IncrData(Attributes atts) {
 			mags = toDoubleArray(readString(MAGS, atts));
 			rates = toDoubleArray(readString(RATES, atts));
-			magScaling = MagScalingType.valueOf(readString(MAG_SCALING, atts));
 			weight = readDouble(WEIGHT, atts);
 		}
 		
@@ -221,7 +203,6 @@ class MFD_Helper {
 			// set defaults locally
 			double[] mags = ref.mags;
 			double[] rates = ref.rates;
-			MagScalingType magScaling = ref.magScaling;
 			double weight = ref.weight;
 			
 			for (int i = 0; i < atts.getLength(); i++) {
@@ -232,9 +213,6 @@ class MFD_Helper {
 						break;
 					case RATES:
 						rates = toDoubleArray(readString(RATES, atts));
-						break;
-					case MAG_SCALING:
-						magScaling = MagScalingType.valueOf(readString(MAG_SCALING, atts));
 						break;
 					case WEIGHT:
 						weight = readDouble(WEIGHT, atts);
@@ -249,7 +227,6 @@ class MFD_Helper {
 			// export final fields
 			this.mags = mags;
 			this.rates = rates;
-			this.magScaling = magScaling;
 			this.weight = weight;
 		}
 

@@ -3,26 +3,21 @@ package org.opensha.eq.forecast;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
-
 import static org.opensha.eq.forecast.SourceAttribute.*;
 import static org.opensha.util.Parsing.readBoolean;
 import static org.opensha.util.Parsing.readDouble;
+import static org.opensha.util.Parsing.readEnum;
 import static org.opensha.util.Parsing.readString;
-import static org.opensha.util.Parsing.toMap;
-
 import static java.util.logging.Level.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha.eq.Magnitudes;
+import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.LocationList;
-import org.opensha.mfd.GaussianMFD;
 import org.opensha.mfd.GutenbergRichterMFD;
 import org.opensha.mfd.IncrementalMFD;
 import org.opensha.mfd.MFD_Type;
@@ -33,8 +28,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.google.common.collect.Lists;
 
 /*
  * Non-validating fault source parser; results are undefined for multiple
@@ -60,6 +53,8 @@ class SubductionSourceParser extends DefaultHandler {
 
 	private Locator locator;
 
+	private String setName;
+	private double setWeight;
 	private SubductionSourceSet sources;
 
 	// This will build individual sources in a SubductionSourceSet
@@ -103,10 +98,19 @@ class SubductionSourceParser extends DefaultHandler {
 			switch (e) {
 	
 				case SUBDUCTION_SOURCE_SET:
-					// TODO file name and weight not currently processed
-					sources = new SubductionSourceSet();
+					setName = readString(NAME, atts);
+					setWeight = readDouble(WEIGHT, atts);
+					if (log.isLoggable(INFO)) {
+						log.info("Building interface set: " + setName + " weight=" + setWeight);
+					}
 					break;
 	
+				case SOURCE_PROPERTIES:
+					MagScalingType scaling = readEnum(MAG_SCALING, atts, MagScalingType.class);
+					// create source set once we have mag scaling relation
+					sources = new SubductionSourceSet(setName, setWeight, scaling);
+					break;
+
 				case SOURCE:
 					String name = readString(NAME, atts);
 					sourceBuilder = new SubductionSource.Builder();
@@ -163,8 +167,7 @@ class SubductionSourceParser extends DefaultHandler {
 					
 				case LOWER_TRACE:
 					readingTrace = false;
-					sourceBuilder.lowerTrace(LocationList
-						.fromString(traceBuilder.toString()));
+					sourceBuilder.lowerTrace(LocationList.fromString(traceBuilder.toString()));
 					break;
 
 				case SOURCE:
@@ -248,7 +251,7 @@ class SubductionSourceParser extends DefaultHandler {
 
 		if (log.isLoggable(INFO)) log.info("MFD: SINGLE");
 
-		IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(m, weight * a);
+		IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(m, weight * a, floats);
 		
 		if (log.isLoggable(FINE)) {
 			log.fine(new StringBuilder().append(mfd.getMetadataString())

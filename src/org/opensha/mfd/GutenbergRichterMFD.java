@@ -8,11 +8,17 @@ import static com.google.common.base.Preconditions.checkArgument;
  * Note that magLower and magUpper must exactly equal one of the descrete x-axis
  * values.</p>
  *
- * @author Nitin Gupta & Vipin Gupta
+ * floats() always returns false.
+ * 
+ * @author Nitin Gupta
+ * @author Vipin Gupta
  */
 public class GutenbergRichterMFD extends IncrementalMFD {
 
   public static String NAME = new String("Gutenberg Richter Dist");
+
+  // TODO there were a billion constructors in here; really should use a builder
+  
 
   //for Debug purposes
   private boolean D = false;
@@ -30,7 +36,7 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    */
 
   public GutenbergRichterMFD(double min, int num, double delta) {
-    super(min, num, delta);
+    super(min, num, delta, false);
     this.magLower = min;
   }
 
@@ -42,10 +48,10 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    * using the min, max and num we calculate the delta
    */
 
-  public GutenbergRichterMFD(double min, double max, int num) {
-    super(min, max, num);
-    
-  }
+//  public GutenbergRichterMFD(double min, double max, int num) {
+//    super(min, max, num);
+//    
+//  }
 
   /**
    * constructor: this is sameas parent class constructor
@@ -55,11 +61,11 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    * using the min, max and num we calculate the delta
    */
 
-  public GutenbergRichterMFD(double bValue, double totCumRate,
-                                     double min, double max, int num) {
-    super(min, max, num);
-    this.setAllButTotMoRate(min, max, totCumRate, bValue);
-  }
+//  public GutenbergRichterMFD(double bValue, double totCumRate,
+//                                     double min, double max, int num) {
+//    super(min, max, num);
+//    this.setAllButTotMoRate(min, max, totCumRate, bValue);
+//  }
 
   /**
    * constructor: this constructor assumes magLower is minX and
@@ -71,12 +77,12 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    * @param bValue : b value for this distribution
    */
 
-  public GutenbergRichterMFD(double min, int num, double delta,
-                                     double totMoRate, double bValue) {
-    super(min, num, delta);
-    // assumes magLower = minX and magUpper = maxX
-    setAllButTotCumRate(minX, maxX, totMoRate, bValue);
-  }
+//  public GutenbergRichterMFD(double min, int num, double delta,
+//                                     double totMoRate, double bValue) {
+//    super(min, num, delta);
+//    // assumes magLower = minX and magUpper = maxX
+//    setAllButTotCumRate(minX, maxX, totMoRate, bValue);
+//  }
 
   /**
    * constructor:
@@ -89,12 +95,12 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    * @param bValue : b value for this distribution
    */
 
-  public GutenbergRichterMFD(double min, int num, double delta,
-                                     double magLower, double magUpper,
-                                     double totMoRate, double bValue) {
-    super(min, num, delta);
-    setAllButTotCumRate(magLower, magUpper, totMoRate, bValue);
-  }
+//  public GutenbergRichterMFD(double min, int num, double delta,
+//                                     double magLower, double magUpper,
+//                                     double totMoRate, double bValue) {
+//    super(min, num, delta);
+//    setAllButTotCumRate(magLower, magUpper, totMoRate, bValue);
+//  }
 
   /**
    * Set all values except Cumulative Rate
@@ -290,13 +296,13 @@ public class GutenbergRichterMFD extends IncrementalMFD {
 
 
   
-	public static void main(String[] args) {
-		  GutenbergRichterMFD grTest = new GutenbergRichterMFD(1d, 1d,0.0,10d,100);
-		  System.out.println(grTest);
-		  System.out.println("bVal="+grTest.compute_bValue(Double.NaN,Double.NaN));
-		  
-
-	}
-
+//	public static void main(String[] args) {
+//		  GutenbergRichterMFD grTest = new GutenbergRichterMFD(1d, 1d,0.0,10d,100);
+//		  System.out.println(grTest);
+//		  System.out.println("bVal="+grTest.compute_bValue(Double.NaN,Double.NaN));
+//		  
+//
+//	}
+//
 
 }

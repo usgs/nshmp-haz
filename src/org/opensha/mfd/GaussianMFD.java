@@ -12,10 +12,11 @@ import java.awt.geom.Point2D;
  * <br/><br/>
  * This MFD does not permit independent setting of values.
  * 
+ * floats() always returns false.
+ * 
  * @author Nitin Gupta (Aug,8,2002)
  * @author Ned Field (Nov, 21, 2002)
  * @author Peter Powers
- * @version $Id: GaussianMFD.java 7833 2011-05-18 18:20:08Z pmpowers $
  */
 public class GaussianMFD extends IncrementalMFD {
 
@@ -23,6 +24,8 @@ public class GaussianMFD extends IncrementalMFD {
   private double mean= Double.NaN;
   private double stdDev= Double.NaN;
 
+  // TODO there were a billion constructors in here; really should use a builder
+  
   /**
    * The # of stdDev (from Mean) where truncation occurs
    */
@@ -45,10 +48,10 @@ public class GaussianMFD extends IncrementalMFD {
    * @param num - number of points in distribution
    * @param delta - discretization interval
    */
-  public GaussianMFD(double min,int num,double delta) {
-    super(min,num,delta);
-
-  }
+//  public GaussianMFD(double min,int num,double delta) {
+//    super(min,num,delta);
+//
+//  }
 
   /**
    * Constructor
@@ -57,7 +60,7 @@ public class GaussianMFD extends IncrementalMFD {
    * @param num - number of points in distribution
    */
   public GaussianMFD(double min,double max,int num) {
-    super(min,max,num);
+    super(min,max,num, false);
   }
 
 
@@ -70,15 +73,15 @@ public class GaussianMFD extends IncrementalMFD {
    * @param stdDev - the standard deviation
    * @param totMoRate - the total moment rate
    */
-  public GaussianMFD(double min,double max,int num,double mean,double stdDev,
-                             double totMoRate) {
-    super(min,max,num);
-    this.mean=mean;
-    this.stdDev=stdDev;
-    this.truncType = 0;
-    calculateRelativeRates();
-    scaleToTotalMomentRate(totMoRate);
-  }
+//  public GaussianMFD(double min,double max,int num,double mean,double stdDev,
+//                             double totMoRate) {
+//    super(min,max,num);
+//    this.mean=mean;
+//    this.stdDev=stdDev;
+//    this.truncType = 0;
+//    calculateRelativeRates();
+//    scaleToTotalMomentRate(totMoRate);
+//  }
 
   /**
    * Constructor: This applies no trucation.
@@ -90,15 +93,15 @@ public class GaussianMFD extends IncrementalMFD {
    * @param totMoRate - the total moment rate
    */
 
-  public GaussianMFD(double min,int num,double delta,double mean,double stdDev,
-                             double totMoRate) {
-    super(min,num,delta);
-    this.mean=mean;
-    this.stdDev=stdDev;
-    this.truncType = 0;
-    calculateRelativeRates();
-    scaleToTotalMomentRate(totMoRate);
-  }
+//  public GaussianMFD(double min,int num,double delta,double mean,double stdDev,
+//                             double totMoRate) {
+//    super(min,num,delta);
+//    this.mean=mean;
+//    this.stdDev=stdDev;
+//    this.truncType = 0;
+//    calculateRelativeRates();
+//    scaleToTotalMomentRate(totMoRate);
+//  }
 
 
   /**
@@ -112,17 +115,17 @@ public class GaussianMFD extends IncrementalMFD {
    * @param truncLevel - in units of stdDev from the mean
    * @param truncType - 0 for none; 1 for upper only; and 2 for upper and lower
    */
-  public GaussianMFD(double min,int num,double delta,double mean,double stdDev,
-                             double totMoRate,double truncLevel,int truncType)
-                              {
-    super(min,num,delta);
-    this.mean=mean;
-    this.stdDev=stdDev;
-    this.truncLevel=truncLevel;
-    this.truncType = truncType;
-    calculateRelativeRates();
-    scaleToTotalMomentRate(totMoRate);
-  }
+//  public GaussianMFD(double min,int num,double delta,double mean,double stdDev,
+//                             double totMoRate,double truncLevel,int truncType)
+//                              {
+//    super(min,num,delta);
+//    this.mean=mean;
+//    this.stdDev=stdDev;
+//    this.truncLevel=truncLevel;
+//    this.truncType = truncType;
+//    calculateRelativeRates();
+//    scaleToTotalMomentRate(totMoRate);
+//  }
 
 
   /**
@@ -136,16 +139,16 @@ public class GaussianMFD extends IncrementalMFD {
    * @param truncLevel - in units of stdDev from the mean
    * @param truncType - 0 for none; 1 for upper only; and 2 for upper and lower
    */
-  public GaussianMFD(double min,double max,int num,double mean,double stdDev,
-                             double totMoRate,double truncLevel,int truncType) {
-    super(min,max,num);
-    this.mean=mean;
-    this.stdDev=stdDev;
-    this.truncLevel=truncLevel;
-    this.truncType = truncType;
-    calculateRelativeRates();
-    scaleToTotalMomentRate(totMoRate);
-  }
+//  public GaussianMFD(double min,double max,int num,double mean,double stdDev,
+//                             double totMoRate,double truncLevel,int truncType) {
+//    super(min,max,num);
+//    this.mean=mean;
+//    this.stdDev=stdDev;
+//    this.truncLevel=truncLevel;
+//    this.truncType = truncType;
+//    calculateRelativeRates();
+//    scaleToTotalMomentRate(totMoRate);
+//  }
 
 
   /**

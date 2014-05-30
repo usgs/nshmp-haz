@@ -15,10 +15,12 @@ import org.opensha.util.Named;
  */
 public interface Source extends Named, Iterable<Rupture> {
 
-	public RuptureSurface surface();
+//	public RuptureSurface surface(); // do we really need access to the surface after creation
 	public int size();
 	public List<Rupture> getRuptureList(); // consider deleting; people can make their own lists
 	public Rupture getRupture(int idx);
 	public double getMinDistance(Location loc); // TODO rename to distanceTo(Loc)
-	public Location centroid(); // ???
+//	public Location centroid(); // ???
+	
+//	public SourceType type(); 
 }

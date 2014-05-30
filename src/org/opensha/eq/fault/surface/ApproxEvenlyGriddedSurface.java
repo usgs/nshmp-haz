@@ -7,19 +7,22 @@ import org.opensha.geo.LocationVector;
 import org.opensha.geo.Locations;
 
 /**
- * This classe represents and approximately evenly gridded surface, where the gridSpacing represents some average value.
+ * A {@code GriddedSurface} defined by an upper and lower trace whose spacing is
+ * scaled to the be as close to a desired target spacing as possible over the
+ * entire surface. The fault traces supplied to this surface <i>must</i> adhere
+ * to the right-hand-rule (dip of surface is to right of direction of travel
+ * along trace).
  * 
- * We could add methods here like: getMinGridSpacing(), getMaxGridSpacing(), etc.
- * @author field
+ * @author Ned Field
+ * @author Peter Powers
  */
 public class ApproxEvenlyGriddedSurface extends AbstractEvenlyGriddedSurfaceWithSubsets {
 
 	private LocationList upperTrace = null;
 	private LocationList lowerTrace = null;
-	private double spacing;
 	
 	// lazily initialized on first call to getAvgDip()
-//	double avgDip = Double.NaN; // TODO kill?
+	private double avgDip; // TODO kill?
 
 
 //	/**
@@ -47,12 +50,14 @@ public class ApproxEvenlyGriddedSurface extends AbstractEvenlyGriddedSurfaceWith
 	// traces adhere to the right hand rule 
 	
 	/**
-	 * This constructor takes an upper and lower fault trace, re-samples these according the the given aveGridSpacing
-	 * to represent the first and last rows of the surface, and then fills in the intermediate rows by evenly sampling
-	 * a straight line between the top and bottom point of each column.  The number of columns is the average length
-	 * the top and bottom trace divided by the aveGridSpacing (plus 1), and the number of rows is the average distance
-	 * between the top and bottom points in each column divided by the aveGridSpacing (plus 1).
-	 * and then
+	 * This constructor takes an upper and lower fault trace, re-samples these
+	 * according the the given aveGridSpacing to represent the first and last
+	 * rows of the surface, and then fills in the intermediate rows by evenly
+	 * sampling a straight line between the top and bottom point of each column.
+	 * The number of columns is the average length the top and bottom trace
+	 * divided by the aveGridSpacing (plus 1), and the number of rows is the
+	 * average distance between the top and bottom points in each column divided
+	 * by the aveGridSpacing (plus 1). and then
 	 * @param upperTrace
 	 * @param lowerTrace
 	 * @param spacing
@@ -94,10 +99,9 @@ public class ApproxEvenlyGriddedSurface extends AbstractEvenlyGriddedSurfaceWith
 
 		// now compute num subsection of trace
 		double aveTraceLength = (upperTrace.length()+lowerTrace.length())/2;
-		int num = (int) Math.round(aveTraceLength/spacing);
+		int num = (int) Math.round(aveTraceLength/getAveGridSpacing());
 		
 //		if(D) System.out.println("gridSpacing="+gridSpacingAlong+", aveTraceLength="+aveTraceLength+", numCol="+num);
-
 		// get resampled traces (note that number of locs in trace will be num+1)
 		LocationList resampUpperTrace = Faults.resampleTrace(upperTrace, num);
 		LocationList resampLowerTrace = Faults.resampleTrace(lowerTrace, num);
@@ -111,7 +115,7 @@ public class ApproxEvenlyGriddedSurface extends AbstractEvenlyGriddedSurfaceWith
 			aveDist += Locations.linearDistanceFast(topLoc, botLoc);
 		}
 		aveDist /= resampUpperTrace.size();
-		int nRows = (int) Math.round(aveDist/spacing)+1;
+		int nRows = (int) Math.round(aveDist/getAveGridSpacing())+1;
 		
 //		if(D) System.out.println("aveDist="+aveDist+", nRows="+nRows);
 
@@ -153,6 +157,12 @@ public class ApproxEvenlyGriddedSurface extends AbstractEvenlyGriddedSurfaceWith
 //
 //		if(D) System.out.println(resampLowerTrace.get(resampLowerTrace.size()-1).toString());
 //		if(D) System.out.println(resampUpperTrace.get(resampLowerTrace.size()-1).toString());
+		
+		// set dip
+		LocationVector vFirst = LocationVector.create(upperTrace.first(), lowerTrace.first());
+		LocationVector vLast = LocationVector.create(upperTrace.first(), lowerTrace.first());
+		avgDip = (vFirst.plungeDegrees() + vLast.plungeDegrees()) / 2;
+		
 
 	}
 	
@@ -323,7 +333,38 @@ public class ApproxEvenlyGriddedSurface extends AbstractEvenlyGriddedSurfaceWith
 
 	@Override
 	public double dip() {
-		throw new UnsupportedOperationException("Implement me!");
+		return avgDip;
+		
+		//TODO clean
+//		LocationVector vFirst = LocationVector.create(upperTrace.first(), lowerTrace.first());
+//		LocationVector vLast = LocationVector.create(upperTrace.first(), lowerTrace.first());
+//		return (vFirst.plungeDegrees() + vLast.plungeDegrees()) / 2;
+//		
+		
+//		LocationVector v = LocationVector.create(upperTrace.first(), lowerTrace.first());
+//		double dipFirst = atan(v.vertical() / v.horizontal());
+//		v = LocationVector.create(upperTrace.last(), lowerTrace.last());
+//		double dipLast = atan(v.vertical() / v.horizontal());
+//		return ((dipFirst + dipLast) / 2) * TO_DEG;
+		
+		
+//		if (!Double.isNaN(avgDip)) return avgDip;
+		// (lazy) average the dips of lines connecting the first 
+		// and last points ofthe upper and lower traces
+//		LocationList ut = upperFaultTrace;
+//		LocationList lt = lowerFaultTrace;
+//		Location pUp = upperTrace.first();
+//		Location pLo = lowerTrace.first();
+//		LocationVector downDipVector = LocationVector.create(pUp, pLo);
+//		double d1 = Math.atan(v.vertical() / v.horizontal());
+//		pUp = upperTrace.last();
+//		pLo = lowerTrace.last();
+//		v = LocationVector.create(pUp, pLo);
+//		double d2 = Math.atan(v.vertical() / v.horizontal());
+//		double avgDip = ((d1 + d2) / 2) * TO_DEG;
+//		return avgDip;
+
+//		throw new UnsupportedOperationException("Implement me!");
 		// TODO compute lazily?
 	}
 

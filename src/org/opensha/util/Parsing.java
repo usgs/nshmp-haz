@@ -95,13 +95,10 @@ public final class Parsing {
 	 *         {@code double} values
 	 * @return a new {@code Map<Enum, Double>} of identifiers and weights
 	 */
-	public static <T extends Enum<T>> Map<T, Double> stringToEnumWeightMap(
-			String s, Class<T> type) {
-		Map<String, String> strMap = MAP_SPLIT
-			.split(trimBrackets(checkNotNull(s)));
+	public static <T extends Enum<T>> Map<T, Double> stringToEnumWeightMap(String s, Class<T> type) {
+		Map<String, String> strMap = MAP_SPLIT.split(trimBrackets(checkNotNull(s)));
 		EnumMap<T, Double> wtMap = Maps.newEnumMap(type);
-		Function<String, T> keyFunc = Enums.valueOfFunction(type);
-		
+		Function<String, T> keyFunc = Enums.stringConverter(type);
 		for (Entry<String, String> entry : strMap.entrySet()) {
 			wtMap.put(keyFunc.apply(entry.getKey().trim()),
 				DoubleValueOfFunction.INSTANCE.apply(entry.getValue()));
@@ -112,25 +109,28 @@ public final class Parsing {
 	
 	/**
 	 * Converts a {@code String} of the form
-	 * {@code [6.5 :: [1.0 : 0.8, 5.0 : 0.2]; 10.0 :: [1.0 : 0.2, 5.0 : 0.8]]} to a
-	 * {@code NavigableMap<Double, Map<Double, Double>}. The returned map and nested maps are
-	 * immutable and should only be accessed via {@code Map.entrySet()} references or using keys
-	 * derived from {@code Map.keySet()} as {@code Double} comparisons are inherently problematic.
+	 * {@code [6.5 :: [1.0 : 0.8, 5.0 : 0.2]; 10.0 :: [1.0 : 0.2, 5.0 : 0.8]]}
+	 * to a {@code NavigableMap<Double, Map<Double, Double>}. The returned map
+	 * and nested maps are immutable and should only be accessed via
+	 * {@code Map.entrySet()} references or using keys derived from
+	 * {@code Map.keySet()} as {@code Double} comparisons are inherently
+	 * problematic.
 	 * 
 	 * @param s {@code String} to parse
 	 * @throws NullPointerException if {@code s} is {@code null}
-	 * @throws IllegalArgumentException if {@code s} is malformed or empty, or if weights do not sum
-	 *         to 1.0, within {@link DataUtils#WEIGHT_TOLERANCE}
-	 * @throws NumberFormatException if {@code s} does not contain parseable {@code double} values
+	 * @throws IllegalArgumentException if {@code s} is malformed or empty, or
+	 *         if weights do not sum to 1.0, within
+	 *         {@link DataUtils#WEIGHT_TOLERANCE}
+	 * @throws NumberFormatException if {@code s} does not contain parseable
+	 *         {@code double} values
 	 * @return a new {@code Map<Double, Double>} of values and their weights
 	 */
 	public static NavigableMap<Double, Map<Double, Double>> stringToValueValueWeightMap(String s) {
 		Map<String, String> strMap = MAP_MAP_SPLIT.split(trimBrackets(checkNotNull(s)));
-		ImmutableSortedMap.Builder<Double, Map<Double, Double>> valMapBuilder = 
-				ImmutableSortedMap.naturalOrder();
+		ImmutableSortedMap.Builder<Double, Map<Double, Double>> valMapBuilder = ImmutableSortedMap
+			.naturalOrder();
 		for (Entry<String, String> entry : strMap.entrySet()) {
-			valMapBuilder.put(
-				DoubleValueOfFunction.INSTANCE.apply(entry.getKey()),
+			valMapBuilder.put(DoubleValueOfFunction.INSTANCE.apply(entry.getKey()),
 				stringToValueWeightMap(entry.getValue()));
 		}
 		return valMapBuilder.build();
@@ -138,24 +138,25 @@ public final class Parsing {
 	
 	/**
 	 * Converts a {@code String} of the form {@code [1.0 : 0.4, 2.0 : 0.6]} to a
-	 * {@code NavigableMap<Double, Double>}. The returned map is immutable and should only be
-	 * accessed via {@code Map.entrySet()} references or using keys derived from
-	 * {@code Map.keySet()} as {@code Double} comparisons are inherently problematic.
+	 * {@code NavigableMap<Double, Double>}. The returned map is immutable and
+	 * should only be accessed via {@code Map.entrySet()} references or using
+	 * keys derived from {@code Map.keySet()} as {@code Double} comparisons are
+	 * inherently problematic.
 	 * 
 	 * @param s {@code String} to parse
 	 * @throws NullPointerException if {@code s} is {@code null}
-	 * @throws IllegalArgumentException if {@code s} is malformed or if weights do not sum to 1.0,
-	 *         within {@link DataUtils#WEIGHT_TOLERANCE}
-	 * @throws NumberFormatException if {@code s} does not contain parseable {@code double} values
+	 * @throws IllegalArgumentException if {@code s} is malformed or if weights
+	 *         do not sum to 1.0, within {@link DataUtils#WEIGHT_TOLERANCE}
+	 * @throws NumberFormatException if {@code s} does not contain parseable
+	 *         {@code double} values
 	 * @return a new {@code Map<Double, Double>} of values and their weights
 	 */
 	public static NavigableMap<Double, Double> stringToValueWeightMap(String s) {
 		Map<String, String> strMap = MAP_SPLIT.split(trimBrackets(checkNotNull(s)));
-		ImmutableSortedMap.Builder<Double, Double> valMapBuilder =
-				ImmutableSortedMap.naturalOrder();
+		ImmutableSortedMap.Builder<Double, Double> valMapBuilder = ImmutableSortedMap
+			.naturalOrder();
 		for (Entry<String, String> entry : strMap.entrySet()) {
-			valMapBuilder.put(
-				DoubleValueOfFunction.INSTANCE.apply(entry.getKey()),
+			valMapBuilder.put(DoubleValueOfFunction.INSTANCE.apply(entry.getKey()),
 				DoubleValueOfFunction.INSTANCE.apply(entry.getValue()));
 		}
 		Map<Double, Double> valMap = valMapBuilder.build();
@@ -294,6 +295,10 @@ public final class Parsing {
 		return checkNotNull(valStr, "Missing attribute '%s'", id);
 	}
 
+	public static <T extends Enum<T>> T readEnum(Enum<?> id, Attributes atts, Class<T> type) {
+		return Enum.valueOf(type, readString(id, atts));
+	}
+	
 //	/**
 //	 * For use by source XML parsers. Doesn't do argument null checking,. TODO
 //	 * perhaps package privatize. Thros exceptions that are expected to be

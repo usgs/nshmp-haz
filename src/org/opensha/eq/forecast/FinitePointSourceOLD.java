@@ -187,11 +187,11 @@ class FinitePointSourceOLD implements Source {
 		// @formatter:on
 	}
 
-	@Override
-	public RuptureSurface surface() {
-		throw new UnsupportedOperationException(
-			"FinitePointSourceOLD surfaces are only created as needed");
-	}
+//	@Override
+//	public RuptureSurface surface() {
+//		throw new UnsupportedOperationException(
+//			"FinitePointSourceOLD surfaces are only created as needed");
+//	}
 
 	@Override
 	public int size() {
@@ -274,10 +274,10 @@ class FinitePointSourceOLD implements Source {
 			: (idx < fwIdxHi) ? true : false;
 	}
 
-	@Override
-	public Location centroid() {
-		throw new UnsupportedOperationException("");
-	}
+//	@Override
+//	public Location centroid() {
+//		throw new UnsupportedOperationException("");
+//	}
 
 	private static class FinitePointSurface implements RuptureSurface {
 

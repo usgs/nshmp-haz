@@ -1,9 +1,17 @@
 package org.opensha.eq.forecast;
 
-import static org.opensha.util.Parsing.*;
-import static org.opensha.eq.forecast.SourceAttribute.*;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.logging.Level.*;
+import static java.util.logging.Level.INFO;
+import static org.opensha.eq.forecast.SourceAttribute.DEPTH_MAP;
+import static org.opensha.eq.forecast.SourceAttribute.MAG_SCALING;
+import static org.opensha.eq.forecast.SourceAttribute.MECH_MAP;
+import static org.opensha.eq.forecast.SourceAttribute.NAME;
+import static org.opensha.eq.forecast.SourceAttribute.WEIGHT;
+import static org.opensha.util.Parsing.readDouble;
+import static org.opensha.util.Parsing.readEnum;
+import static org.opensha.util.Parsing.readString;
+import static org.opensha.util.Parsing.stringToEnumWeightMap;
+import static org.opensha.util.Parsing.stringToValueValueWeightMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +20,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha.eq.fault.FocalMech;
+import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 import org.opensha.mfd.IncrementalMFD;
 import org.opensha.mfd.MFD_Type;
@@ -89,12 +98,13 @@ class GridSourceParser extends DefaultHandler {
 		switch (e) {
 
 			case GRID_SOURCE_SET:
-				String name = readString(NAME, atts);
-				double weight = readDouble(WEIGHT, atts);
+				String srcName = readString(NAME, atts);
+				double srcWeight = readDouble(WEIGHT, atts);
 				sourceBuilder = new GridSourceSet.Builder();
-				sourceBuilder.name(name);
+				sourceBuilder.name(srcName);
+				sourceBuilder.weight(srcWeight);
 				if (log.isLoggable(INFO)) {
-					log.info("Building grid set: " + name + " weight=" + weight);
+					log.info("Building grid set: " + srcName + " weight=" + srcWeight);
 				}
 				break;
 				
@@ -108,8 +118,9 @@ class GridSourceParser extends DefaultHandler {
 				break;
 				
 			case SOURCE_PROPERTIES:
-				sourceBuilder.depthMap(stringToValueValueWeightMap(atts.getValue("depthMap")));
-				sourceBuilder.mechs(stringToEnumWeightMap(atts.getValue("mechs"), FocalMech.class));
+				sourceBuilder.depthMap(stringToValueValueWeightMap(readString(DEPTH_MAP, atts)));
+				sourceBuilder.mechs(stringToEnumWeightMap(readString(MECH_MAP, atts), FocalMech.class));
+				sourceBuilder.magScaling(readEnum(MAG_SCALING, atts, MagScalingType.class));
 				break;
 				
 			case NODE:
@@ -181,7 +192,7 @@ class GridSourceParser extends DefaultHandler {
 				MFD_Helper.SingleData singleDat = mfdHelper.getSingle(atts);
 				// TODO must deal with magScaling and weight
 				// TODO must validate mag and rate array lengths
-				return MFDs.newSingleMFD(singleDat.m, singleDat.a);
+				return MFDs.newSingleMFD(singleDat.m, singleDat.a, singleDat.floats);
 			
 			case GR_TAPER:
 				throw new UnsupportedOperationException("GR_TAPER not yet implemented");

@@ -7,18 +7,22 @@ import org.opensha.eq.Magnitudes;
 
 
 /**
- * <p>Title:IncrementalMFD </p>
- * <p>Description:This class give the rate of earthquakes (number per year) in succesion</p>
- *
- * @author : Nitin Gupta Date:July 26,2002
- * @version 1.0
+ * Base implementation for magnitude-frequency distributions (MFDs) that give the rate of
+ * one or more earthquakes with differing magnitudes per year.
+ * 
+ * 
+ * @author Nitin Gupta
+ * @author Peter Powers
  */
 
 public class IncrementalMFD extends EvenlyDiscretizedFunc {
 
-    protected String defaultInfo;
-    protected String defaultName;
+	// TODO MFDs should be immutable
 
+	 protected String defaultInfo;
+    protected String defaultName;
+    private final boolean floats;
+    
     /**
      * todo constructors
      * @param min
@@ -26,8 +30,9 @@ public class IncrementalMFD extends EvenlyDiscretizedFunc {
      * @param delta
      * using the parameters we call the parent class constructors to initialise the parent class variables
      */
-    public IncrementalMFD (double min,int num,double delta) {
+    public IncrementalMFD (double min,int num,double delta, boolean floats) {
      super(min,num,delta);
+     this.floats = floats;
      setTolerance(delta/1000000);
     }
 
@@ -38,8 +43,9 @@ public class IncrementalMFD extends EvenlyDiscretizedFunc {
      * @param num
      * using the min, max and num we calculate the delta
      */
-    public IncrementalMFD(double min,double max,int num) {
+    public IncrementalMFD(double min,double max,int num, boolean floats) {
       super(min,max,num);
+      this.floats = floats;
       setTolerance(delta/1000000);
    }
 
@@ -354,21 +360,21 @@ public class IncrementalMFD extends EvenlyDiscretizedFunc {
     }
 
 
-    /** Returns a copy of this and all points in this DiscretizedFunction */
-   public IncrementalMFD deepClone() {
-
-       IncrementalMFD f = new IncrementalMFD(
-           minX, num, delta
-       );
-
-       f.tolerance = tolerance;
-       f.setInfo(this.getInfo());
-       f.setName(name());
-       for(int i = 0; i<num; i++)
-           f.set(i, points[i]);
-
-       return f;
-   }
+//    /** Returns a copy of this and all points in this DiscretizedFunction */
+//   public IncrementalMFD deepClone() {
+//
+//       IncrementalMFD f = new IncrementalMFD(
+//           minX, num, delta
+//       );
+//
+//       f.tolerance = tolerance;
+//       f.setInfo(this.getInfo());
+//       f.setName(name());
+//       for(int i = 0; i<num; i++)
+//           f.set(i, points[i]);
+//
+//       return f;
+//   }
    
    /**
     * This returns the maximum magnitude with a non-zero rate
@@ -462,44 +468,51 @@ public class IncrementalMFD extends EvenlyDiscretizedFunc {
    
 	/**
 	 * Sets the rate of all magnitudes above the supplied magnitude to 0.
-	 * @param mag 
-	 * TODO this is awful this assumes you know the (almost) exact magnitude
-	 * (wihtin tolerance) of a mag in the MFD; if you just pick an arbitrary
-	 * value, internally an index of -1 will be returned and all values
-	 * will be set to Zero
+	 * @param mag TODO this is awful this assumes you know the (almost) exact
+	 *        magnitude (wihtin tolerance) of a mag in the MFD; if you just pick
+	 *        an arbitrary value, internally an index of -1 will be returned and
+	 *        all values will be set to Zero
 	 */
 	public void zeroAboveMag(double mag) {
-		for (int i = getXIndex(mag)+1; i < getNum(); i++) {
+		for (int i = getXIndex(mag) + 1; i < getNum(); i++) {
 			set(i, 0);
 		}
 	}
-	
+
 	public void zeroAboveMag2(double mag) {
-		for (int i=0; i < getNum(); i++) {
+		for (int i = 0; i < getNum(); i++) {
 			if (getX(i) > mag) set(i, 0);
 		}
 	}
-	
+
 	/**
 	 * Sets the rate of all magnitudes above the supplied magnitude to 0.
-	 * @param mag 
+	 * @param mag
 	 */
 	public void zeroAtAndAboveMag(double mag) {
 		for (int i = getXIndex(mag); i < getNum(); i++) {
 			set(i, 0);
 		}
-	}   
-   
-   /**
-    * This computes the b-value (the slope of the line of a linear-log plot, meaning
-    * after computing log10 of all y-axis values) between the smallest and largest 
-    * mags with non-zero rates (zeros at the beginning and end of the distribution 
-    * are ignored).
-    * @return
-    */
-   public double compute_bValue() {
-	   return compute_bValue(Double.NaN, Double.NaN);
-   }
+	}
 
+	/**
+	 * This computes the b-value (the slope of the line of a linear-log plot,
+	 * meaning after computing log10 of all y-axis values) between the smallest
+	 * and largest mags with non-zero rates (zeros at the beginning and end of
+	 * the distribution are ignored).
+	 * @return
+	 */
+	public double compute_bValue() {
+		return compute_bValue(Double.NaN, Double.NaN);
+	}
+
+	/**
+	 * Returns whether ruptures generated using this MFD should float. May not
+	 * be applicable to all source types (e.g. grid or point sources).
+	 * @return {@code true} if ruptures should float, {@code false} otherwise
+	 */
+	public boolean floats() {
+		return floats;
+	}
 
 }

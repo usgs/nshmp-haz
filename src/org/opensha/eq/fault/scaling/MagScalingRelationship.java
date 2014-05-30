@@ -29,6 +29,8 @@ import org.opensha.util.Named;
  * deviation of magnitude as a function of some scalar value (or the median and
  * standard deviation of the scalar value as a function of magnitude).  The values
  * can also be a function of rake</b>  <p>
+ * 
+ * TODO can these all be made stateless
  *
  * @author Edward H. Field
  * @version 1.0

@@ -3,6 +3,8 @@ package org.opensha.eq.forecast;
 import java.util.Iterator;
 import java.util.List;
 
+import org.opensha.eq.fault.scaling.MagScalingType;
+
 import com.google.common.collect.Lists;
 
 /**
@@ -14,11 +16,13 @@ public class FaultSourceSet implements SourceSet<FaultSource> {
 
 	private final List<FaultSource> sources = Lists.newArrayList();
 	private final String name;
-	private double weight;
+	private final double weight;
+	private final MagScalingType magScaling;
 	
-	FaultSourceSet(String name, double weight) {
+	FaultSourceSet(String name, double weight, MagScalingType magScaling) {
 		this.name = name;
 		this.weight = weight;
+		this.magScaling = magScaling;
 		
 		// TODO weight could be used in parser to scale all MFD rates
 		// and not stored here
@@ -36,9 +40,7 @@ public class FaultSourceSet implements SourceSet<FaultSource> {
 
 	@Override
 	public String name() {
-		return null;
-		// TODO do nothing
-		
+		return name;
 	}
 
 	//TODO tmp delete

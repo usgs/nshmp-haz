@@ -18,6 +18,7 @@ import java.util.NavigableMap;
 import org.opensha.eq.Magnitudes;
 import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.FocalMech;
+import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.eq.forecast.FaultSource.Builder;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
@@ -179,6 +180,7 @@ public class GridSourceSet implements SourceSet<Source> {
 
 		private String name;
 		private double weight = 1.0;
+		private MagScalingType magScaling;
 		private NavigableMap<Double, Map<Double,Double>> magDepthMap;
 		private Map<FocalMech, Double> mechs;
 
@@ -196,6 +198,11 @@ public class GridSourceSet implements SourceSet<Source> {
 			checkArgument(weight >= 0.0 && weight <= 1.0,
 				"weight [%s] must be between [0 1]", weight);
 			this.weight = weight;
+			return this;
+		}
+		
+		Builder magScaling(MagScalingType magScaling) {
+			this.magScaling = magScaling;
 			return this;
 		}
 		

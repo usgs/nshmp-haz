@@ -143,12 +143,13 @@ public final class Locations {
 	}
 	
 	public static void main(String[] args) {
-		Location p1 = Location.create(-40, 175);
-		Location p2 = Location.create(-40, 185);
-		System.out.println(horzDistanceFast(p1, p2));
-		System.out.println(horzDistance(p1, p2));
-		Location p3 = Location.create(-40, -175);
-		System.out.println(horzDistance(p1, p3));
+		Location p1 = Location.create(40, 163);
+		Location p2 = Location.create(40, 165);
+		Location p3 = Location.create(40, 167);
+		System.out.println(horzDistanceFast(p2, p1));
+		System.out.println(horzDistanceFast(p2, p3));
+		System.out.println(horzDistance(p2, p1));
+		System.out.println(horzDistance(p2, p3));
 		
 	}
 
@@ -514,8 +515,8 @@ public final class Locations {
 	 * @return the end location
 	 */
 	public static Location location(Location p, LocationVector d) {
-		return location(p.latRad(), p.lonRad(), p.depth(), d.azimuthDegrees() *
-			TO_RAD, d.horizontal(), d.vertical());
+		return location(p.latRad(), p.lonRad(), p.depth(), d.azimuth(), d.horizontal(),
+			d.vertical());
 	}
 
 	/*
@@ -533,9 +534,7 @@ public final class Locations {
 
 		double lat2 = Math.asin(sinLat1 * cosD + cosLat1 * sinD * cos(az));
 
-		double lon2 = lon +
-			atan2(sin(az) * sinD * cosLat1, cosD - sinLat1 * sin(lat2));
-
+		double lon2 = lon + atan2(sin(az) * sinD * cosLat1, cosD - sinLat1 * sin(lat2));
 		return Location.create(lat2 * TO_DEG, lon2 * TO_DEG, depth + dV);
 	}
 
