@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.impl.GeoMat_MagLenthRelationship;
-import org.opensha.eq.fault.surface.ApproxEvenlyGriddedSurface;
+import org.opensha.eq.fault.surface.ApproxGriddedSurface;
 import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
@@ -100,7 +100,7 @@ public class SubductionSource extends FaultSource {
 			checkState(lowerTrace != null, "%s lower trace not set", ID);
 			validateState(ID);
 
-			ApproxEvenlyGriddedSurface surface = new ApproxEvenlyGriddedSurface(trace, lowerTrace,
+			ApproxGriddedSurface surface = new ApproxGriddedSurface(trace, lowerTrace,
 				offset);
 
 			return new SubductionSource(name, trace, lowerTrace, dip, width, surface, rake,

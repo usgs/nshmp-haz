@@ -16,7 +16,7 @@ import org.opensha.geo.Locations;
  * @author Ned Field
  * @author Peter Powers
  */
-public class ApproxEvenlyGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
+public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 
 	private LocationList upperTrace = null;
 	private LocationList lowerTrace = null;
@@ -34,7 +34,7 @@ public class ApproxEvenlyGriddedSurface extends AbstractGriddedSurfaceWithSubset
 //	 * @param numCols
 //	 * @param aveGridSpacing
 //	 */
-//	public ApproxEvenlyGriddedSurface(int numRows,int numCols, double aveGridSpacing) {
+//	public ApproxGriddedSurface(int numRows,int numCols, double aveGridSpacing) {
 //		setNumRowsAndNumCols(numRows, numCols);
 //		gridSpacingAlong = aveGridSpacing;
 //		gridSpacingDown = aveGridSpacing;
@@ -64,7 +64,7 @@ public class ApproxEvenlyGriddedSurface extends AbstractGriddedSurfaceWithSubset
 	 * @param lowerTrace
 	 * @param spacing
 	 */
-	public ApproxEvenlyGriddedSurface(LocationList upperTrace, 
+	public ApproxGriddedSurface(LocationList upperTrace, 
 			LocationList lowerTrace, double spacing) {
 
 		gridSpacingAlong = spacing;
@@ -301,7 +301,7 @@ public class ApproxEvenlyGriddedSurface extends AbstractGriddedSurfaceWithSubset
 //		botTrace.addLocation(-22.0599999998, -69.855518799, 50.);
 //		botTrace.addLocation(-21.5010148695, -69.8649200561, 50.);
 //		
-//		ApproxEvenlyGriddedSurface surf = new ApproxEvenlyGriddedSurface(topTrace,botTrace,5);
+//		ApproxGriddedSurface surf = new ApproxGriddedSurface(topTrace,botTrace,5);
 ////		surf.writeXYZ_toFile("dev/scratch/ned/hereItIs.txt");
 //		
 //		System.out.println ("AveGridSpacingAlongStrike="+surf.computeAveGridSpacingAlongStrike());
