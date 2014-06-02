@@ -6,6 +6,8 @@ import static org.opensha.eq.forecast.SourceAttribute.DEPTH_MAP;
 import static org.opensha.eq.forecast.SourceAttribute.MAG_SCALING;
 import static org.opensha.eq.forecast.SourceAttribute.MECH_MAP;
 import static org.opensha.eq.forecast.SourceAttribute.NAME;
+import static org.opensha.eq.forecast.SourceAttribute.STRIKE;
+import static org.opensha.eq.forecast.SourceAttribute.TYPE;
 import static org.opensha.eq.forecast.SourceAttribute.WEIGHT;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readEnum;
@@ -33,10 +35,8 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /*
- * Non-validating grid source parser.
- * 
- * NOTE: SAX parser 'Attributes' are stateful and cannot be stored
- * NOTE: class is not thread safe
+ * Non-validating grid source parser. SAX parser 'Attributes' are stateful and
+ * cannot be stored. This class is not thread safe.
  * 
  * @author Peter Powers
  */
@@ -44,20 +44,14 @@ class GridSourceParser extends DefaultHandler {
 
 	private static final Logger log = Logging.create(GridSourceParser.class);
 	private final SAXParser sax;
-
 	private Locator locator;
 
-	private GridSourceSet sources;
-
-// TODO clean
-	//	// Data applying to all sources
-//	private Map<MFD_Type, MFD_Data> mfdDataMap = null;
+	private double setWeight;
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
 	private MFD_Helper mfdHelper;
 
-	// This will build an entire GridSourceSet
 	private GridSourceSet.Builder sourceBuilder;
 	
 	// Node locations are the only text content in source files
@@ -70,7 +64,6 @@ class GridSourceParser extends DefaultHandler {
 	
 	private GridSourceParser(SAXParser sax) {
 		this.sax = checkNotNull(sax);
-		sources = new GridSourceSet();
 	}
 	
 	static GridSourceParser create(SAXParser sax) {
@@ -79,7 +72,7 @@ class GridSourceParser extends DefaultHandler {
 	
 	GridSourceSet parse(File f) throws SAXException, IOException {
 		sax.parse(f, this);
-		return sources;
+		return sourceBuilder.build();
 	}
 	
 	@Override
@@ -99,12 +92,12 @@ class GridSourceParser extends DefaultHandler {
 
 			case GRID_SOURCE_SET:
 				String srcName = readString(NAME, atts);
-				double srcWeight = readDouble(WEIGHT, atts);
+				setWeight = readDouble(WEIGHT, atts); // need this to scale MFDs
 				sourceBuilder = new GridSourceSet.Builder();
 				sourceBuilder.name(srcName);
-				sourceBuilder.weight(srcWeight);
+				sourceBuilder.weight(setWeight);
 				if (log.isLoggable(INFO)) {
-					log.info("Building grid set: " + srcName + " weight=" + srcWeight);
+					log.info("Building grid set: " + srcName + " weight=" + setWeight);
 				}
 				break;
 				
@@ -121,12 +114,13 @@ class GridSourceParser extends DefaultHandler {
 				sourceBuilder.depthMap(stringToValueValueWeightMap(readString(DEPTH_MAP, atts)));
 				sourceBuilder.mechs(stringToEnumWeightMap(readString(MECH_MAP, atts), FocalMech.class));
 				sourceBuilder.magScaling(readEnum(MAG_SCALING, atts, MagScalingType.class));
+				sourceBuilder.strike(readDouble(STRIKE, atts));
 				break;
 				
 			case NODE:
 				readingLoc = true;
 				locBuilder = new StringBuilder();
-				nodeMFD = processNode(atts);
+				nodeMFD = processNode(atts, setWeight);
 				break;
 		}
 	}
@@ -153,6 +147,7 @@ class GridSourceParser extends DefaultHandler {
 			case NODE:
 				readingLoc = false;
 				sourceBuilder.location(Location.fromString(locBuilder.toString()), nodeMFD);
+				nodeMFD = null;
 				break;
 		}
 	}
@@ -168,10 +163,8 @@ class GridSourceParser extends DefaultHandler {
 		this.locator = locator;
 	}
 	
-	private IncrementalMFD processNode(Attributes atts) {
-		MFD_Type type = MFD_Type.valueOf(atts.getValue("type"));
-		
-		// TODO need to implement MFD weight consideration
+	private IncrementalMFD processNode(Attributes atts, double setWeight) {
+		MFD_Type type = readEnum(TYPE, atts, MFD_Type.class);
 		
 		switch (type) {
 			case GR:
@@ -180,19 +173,18 @@ class GridSourceParser extends DefaultHandler {
 				IncrementalMFD mfdGR = MFDs.newGutenbergRichterMFD(grData.mMin, grData.dMag, nMag,
 					grData.b, 1.0);
 				mfdGR.scaleToIncrRate(grData.mMin, MFDs.incrRate(grData.a, grData.b, grData.mMin));
+				mfdGR.scale(setWeight);
 				return mfdGR;
 
 			case INCR:
 				MFD_Helper.IncrData incrData = mfdHelper.getIncremental(atts);
-
-				// TODO must deal with magScaling and weight
-				return MFDs.newIncrementalMFD(incrData.mags, incrData.rates);
+				IncrementalMFD mfdIncr = MFDs.newIncrementalMFD(incrData.mags, incrData.rates);
+				mfdIncr.scale(setWeight);
+				return mfdIncr;
 				
 			case SINGLE:
 				MFD_Helper.SingleData singleDat = mfdHelper.getSingle(atts);
-				// TODO must deal with magScaling and weight
-				// TODO must validate mag and rate array lengths
-				return MFDs.newSingleMFD(singleDat.m, singleDat.a, singleDat.floats);
+				return MFDs.newSingleMFD(singleDat.m, setWeight * singleDat.a, singleDat.floats);
 			
 			case GR_TAPER:
 				throw new UnsupportedOperationException("GR_TAPER not yet implemented");

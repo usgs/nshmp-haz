@@ -3,32 +3,19 @@ package org.opensha.eq.forecast;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.eq.fault.Faults.validateDip;
-import static org.opensha.eq.fault.Faults.validateRake;
-import static org.opensha.eq.Magnitudes.validateMag;
-import static org.opensha.geo.Direction.NORTH;
-import static org.opensha.geo.Direction.WEST;
+import static org.opensha.eq.fault.Faults.validateStrike;
 
-import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
-import org.opensha.eq.Magnitudes;
-import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagScalingType;
-import org.opensha.eq.forecast.FaultSource.Builder;
 import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
-import org.opensha.geo.Locations;
 import org.opensha.mfd.IncrementalMFD;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
@@ -38,27 +25,57 @@ import com.google.common.primitives.Ints;
  * derived a GR MFD at each grid node.
  * @author Peter Powers
  */
-public class GridSourceSet implements SourceSet<Source> {
+public class GridSourceSet implements SourceSet<PointSource> {
 
-	private String name;
-	private List<Location> locs;
-	private List<IncrementalMFD> mfds;
-	private NavigableMap<Double, Map<Double,Double>> magDepthMap;
+	private final String name;
+	private final double weight;
+	private final List<Location> locs;
+	private final List<IncrementalMFD> mfds;
+	private final MagScalingType magScaling;
+	private final Map<FocalMech, Double> mechMap;
+	private final NavigableMap<Double, Map<Double, Double>> magDepthMap;
 	
-	
-	List<Source> sources = Lists.newArrayList();
+	// NOTE we're holding onto weight for reference, however, MFD
+	// rates will have already been scaled in place. The weight value
+	// may come in handy when trying to put together individual
+	// logic tree branches
 
-	void add(Source source) {
-		sources.add(source);
+	// only available to parsers
+	GridSourceSet(String name, Double weight, List<Location> locs,
+		List<IncrementalMFD> mfds, MagScalingType magScaling, Map<FocalMech, Double> mechMap,
+		NavigableMap<Double, Map<Double, Double>> magDepthMap) {
+
+		this.name = name;
+		this.weight = weight;
+		this.locs = locs;
+		this.mfds = mfds;
+		this.magScaling = magScaling;
+		this.mechMap = mechMap;
+		this.magDepthMap = magDepthMap;
 	}
-
+	
 	@Override
 	public String name() {
 		return name;
 	}
 
 	@Override
-	public Iterator<Source> iterator() {
+	public SourceType type() {
+		return SourceType.GRID;
+	}
+	
+	@Override
+	public int size() {
+		return locs.size();
+	}
+
+	@Override
+	public double weight() {
+		return weight;
+	}
+
+	@Override
+	public Iterator<PointSource> iterator() {
 		return null;
 	}
 	
@@ -66,9 +83,6 @@ public class GridSourceSet implements SourceSet<Source> {
 	// with some cutoff magnitude between the two, no weighting; this should be
 	// migrated to a mag-dependent depth weight map
 
-	// TODO something to think about later: consolidation of differnt grid
-	// regions... all shallo crustal
-	// thoughts on locationIterator
 
 	public Iterator<Source> iteratorForLocation(Location loc, double dist) {
 		// compute min-max lat and lon
@@ -159,10 +173,6 @@ public class GridSourceSet implements SourceSet<Source> {
 	}
 
 	
-//	private static class DistanceFilter 
-	
-//	private static class Predicate
-	
 	// TODO MagDepthMap
 	// 	-- each magnitude cutoff has associated map of depths and weights
 	//	-- mags as keys? could have problems but may be ok if only accessed
@@ -175,14 +185,21 @@ public class GridSourceSet implements SourceSet<Source> {
 	// NSHMP depths: [6.5  :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 : 0.0]]
 		
 	
-	public static class Builder {
-		// use Doubles to ensure initial null state
+	/*
+	 * GridSourceSet builder; build() may only be called once; uses Doubles
+	 * to ensure fields are initially null.
+	 */
+	static class Builder {
+
+		private static final String ID = "GridSourceSet.Builder";
+		private boolean built = false;
 
 		private String name;
-		private double weight = 1.0;
+		private Double weight;
+		private Double strike;
 		private MagScalingType magScaling;
-		private NavigableMap<Double, Map<Double,Double>> magDepthMap;
-		private Map<FocalMech, Double> mechs;
+		private NavigableMap<Double, Map<Double, Double>> magDepthMap;
+		private Map<FocalMech, Double> mechMap;
 
 		private List<Location> locs = Lists.newArrayList();
 		private List<IncrementalMFD> mfds = Lists.newArrayList();
@@ -195,14 +212,20 @@ public class GridSourceSet implements SourceSet<Source> {
 		}
 		
 		Builder weight(double weight) {
-			checkArgument(weight >= 0.0 && weight <= 1.0,
-				"weight [%s] must be between [0 1]", weight);
+			checkArgument(weight >= 0.0 && weight <= 1.0, "weight [%s] must be between [0 1]",
+				weight);
 			this.weight = weight;
 			return this;
 		}
 		
+		Builder strike(double strike) {
+			this.strike = validateStrike(strike);
+			return this;
+		}
+
+		
 		Builder magScaling(MagScalingType magScaling) {
-			this.magScaling = magScaling;
+			this.magScaling = checkNotNull(magScaling, "");
 			return this;
 		}
 		
@@ -214,48 +237,32 @@ public class GridSourceSet implements SourceSet<Source> {
 		}
 				
 		Builder mechs(Map<FocalMech, Double> mechs) {
-			this.mechs = checkNotNull(mechs);
+			this.mechMap = checkNotNull(mechs);
 			return this;
 		}
 
 		Builder location(Location loc, IncrementalMFD mfd) {
-			this.mfds.add(checkNotNull(mfd, "MFD may not be null"));
-			this.locs.add(checkNotNull(loc, "Location may not be null"));
+			this.mfds.add(checkNotNull(mfd, "MFD is null"));
+			this.locs.add(checkNotNull(loc, "Location is null"));
 			return this;
 		}
 		
 		GridSourceSet build() {
-			GridSourceSet gss = new GridSourceSet();
+			checkState(!built, "This %s instance as already been used", ID);
+
+			checkState(name != null, "%s name not set", ID);
+			checkState(weight != null, "%s weight not set", ID);
+			checkState(strike != null, "%s strike not set", ID);
+			checkState(!locs.isEmpty(), "%s has no locations", ID);
+			checkState(!mfds.isEmpty(), "%s has no MFDs", ID);
+			checkState(magScaling != null, "%s has no mag-scaling relation set", ID);
+			checkState(magDepthMap != null, "%s mag-depth-weight map not set", ID);
+			checkState(mechMap != null, "%s focal mech map not set", ID);
 			
-			// check consistency
-			checkState(name != null, "Source name not set");
-			gss.name = name;
-			
-			checkState(magDepthMap != null, "Mag-Depth-Weight map not set");
-			gss.magDepthMap = magDepthMap;
-			
-//			checkState(trace != null, "Source trace not set");
-//			gss.trace = trace;
-//			checkState(dip != null, "Source dip not set");
-//			gss.dip = dip;
-//			checkState(width != null, "Source width not set");
-//			gss.width = width;
-//			checkState(rake != null, "Source rake not set");
-//			gss.rake = rake;
-//			checkState(mfds.size() > 0, "Source has no MFDs");
-//			gss.mfds = ImmutableList.copyOf(mfds);
-//			// TODO individual MFDs should be immutable as well
-			
-			return gss;
+			built = true;
+			return new GridSourceSet(name, weight, locs, mfds, magScaling, mechMap, magDepthMap);
 		}
 		
-	}
-
-
-
-	@Override
-	public SourceType type() {
-		return SourceType.GRID;
 	}
 
 }

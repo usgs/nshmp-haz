@@ -68,8 +68,8 @@ public class IndexedFaultSourceSet {
 		List<IndexedFaultSource> sources;
 		
 		// TODO temp
-		private ExecutorService ex = Executors.newFixedThreadPool(Runtime
-			.getRuntime().availableProcessors());
+		int cores = Runtime.getRuntime().availableProcessors();
+		private ExecutorService ex = Executors.newFixedThreadPool(cores);
 		
 		Location loc;
 		double distance;
@@ -89,19 +89,18 @@ public class IndexedFaultSourceSet {
 		
 		// set bits of sections within distance
 		private void calc(Site site) throws InterruptedException, ExecutionException {
-			// remember: actual BitSet may be longer (see API docs)
+			// NOTE: actual BitSet may be longer (see API docs)
 			sectionBits = new BitSet(sections.size());
-			CompletionService<Distances> dCS = 
-					new ExecutorCompletionService<Distances>(ex);
+			CompletionService<Distances> dCS = new ExecutorCompletionService<Distances>(ex);
 
 			// build bitset of section indices to use and submit distance calcs
-			for (IndexedFaultSurface subsection : Iterables.filter(sections,
-				new SurfaceFilter(loc, distance))) {
+			SurfaceFilter filter = new SurfaceFilter(loc, distance);
+			for (IndexedFaultSurface subsection : Iterables.filter(sections, filter)) {
 				sectionBits.set(subsection.index());
 				// pass subsection to executor
 				dCS.submit(Tasks.newDistanceCalc(subsection, loc));
 			}
-						
+
 			// build receiver Table -- must be done after sectionBits are set
 			// we do not ever copy this to an ImmutableTable because it is never
 			// exposed, however, caution should be exercised so as not to
@@ -166,8 +165,7 @@ public class IndexedFaultSourceSet {
 		}
 	}
 	
-	private final static class SurfaceFilter implements
-			Predicate<RuptureSurface> {
+	private final static class SurfaceFilter implements Predicate<RuptureSurface> {
 		private final Predicate<Location> distFilter;
 		private SurfaceFilter(Location loc, double distance) {
 			distFilter = Locations.distanceFilter(loc, distance);

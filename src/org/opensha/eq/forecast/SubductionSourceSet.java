@@ -1,5 +1,8 @@
 package org.opensha.eq.forecast;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,21 +17,28 @@ import com.google.common.collect.Lists;
  */
 public class SubductionSourceSet implements SourceSet<SubductionSource> {
 
-	List<SubductionSource> sources = Lists.newArrayList();
+	private final List<SubductionSource> sources = Lists.newArrayList();
 	private final String name;
 	private final double weight;
-	private final MagScalingType magScaling;
+	private final MagScalingType msrType;
 
-	SubductionSourceSet(String name, double weight, MagScalingType magScaling) {
-		this.name = name;
+	// NOTE we're holding onto weight for reference, however, MFD
+	// rates will have already been scaled in place. The weight value
+	// may come in handy when trying to put together individual
+	// logic tree branches.
+	//
+	// NOTE msrType is currently not exposed
+	
+	private SubductionSourceSet(String name, double weight, MagScalingType msrType) {
+		checkArgument(weight >= 0.0 && weight <=1.0);
+		this.name = checkNotNull(name);
 		this.weight = weight;
-		this.magScaling = magScaling;
+		this.msrType = msrType;
 	}
 	
 	void add(SubductionSource source) {
 		sources.add(source);
 	}
-	
 	
 	@Override
 	public Iterator<SubductionSource> iterator() {
@@ -37,17 +47,32 @@ public class SubductionSourceSet implements SourceSet<SubductionSource> {
 
 	@Override
 	public String name() {
-		return null;
-		// TODO do nothing
-		
+		return name;
+	}
+	
+	@Override
+	public double weight() {
+		return weight;
 	}
 
-	//TODO tmp delete
-	public int size() { return sources.size(); }
+	@Override
+	public int size() {
+		return sources.size();
+	}
 
 	@Override
 	public SourceType type() {
 		return SourceType.INTERFACE;
+	}
+
+	static class Builder extends FaultSourceSet.Builder {
+
+		static final String mssgID = "SubductionSourceSet.Builder";
+
+		SubductionSourceSet buildSubductionSet() {
+			validateState(ID);
+			return new SubductionSourceSet(name, weight, magScaling);
+		}
 	}
 
 }

@@ -1,7 +1,5 @@
 package org.opensha.eq.forecast;
 
-import java.util.Iterator;
-
 import org.opensha.util.Named;
 
 /**
@@ -15,13 +13,18 @@ import org.opensha.util.Named;
  */
 public interface SourceSet<T extends Source> extends Named, Iterable<T> {
 	
-//	private SourceType type;
-	
 	/**
-	 * @return
+	 * Returns the {@code SourceType} identifier.
+	 * @return the {@code SourceType} identifier
 	 */
 	public SourceType type();
 	
-	// SourceSets should also be grouped by region
-
+	/**
+	 * Returns the number of {@code Source}s in this {@code SourceSet}.
+	 * @return the number of {@code Source}s contained herein
+	 */
+	public int size();
+	// TODO will all Source Set implementations supportthis?
+	
+	public double weight();
 }

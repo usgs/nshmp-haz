@@ -119,12 +119,12 @@ class PointSource implements Source {
 
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
-	 * FinitePointSourceOLD.rupture rate is reduced to zero (a mag-depth weight
-	 * could be set to zero [this is not curently checked] of an MFD rate could
+	 * FinitePointSource.rupture rate is reduced to zero (a mag-depth weight
+	 * could be set to zero [this is not currently checked] of an MFD rate could
 	 * be zero), in the cases where it is, we're doing a little more work than
 	 * necessary below. We could alternatively short-circuit updateRupture()
 	 * this method to return null reference, but would need to condsider
-	 * getRUpture(int) implementation.
+	 * getRupture(int) implementation.
 	 */
 
 	private void updateRupture(Rupture rup, int idx) {
@@ -228,8 +228,7 @@ class PointSource implements Source {
 		@Override
 		public Distances distanceTo(Location loc) {
 			double r = Locations.horzDistanceFast(this.loc, loc);
-			r *= PtSrcDistCorr
-				.getCorrection(r, mag, PtSrcDistCorr.Type.NSHMP08);
+			r *= PtSrcDistCorr.getCorrection(r, mag, PtSrcDistCorr.Type.NSHMP08);
 			return Distances.create(r, r, r);
 		}
 
@@ -246,7 +245,7 @@ class PointSource implements Source {
 		@Override public Location centroid() { return loc; } 
 		
 		private static String exMessage(String field) {
-			return "No '" + field + "' for FinitePointSourceOLD surface";
+			return "No '" + field + "' for FinitePointSource surface";
 		}
 		
 	}

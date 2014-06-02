@@ -44,16 +44,6 @@ public class HazardCalcManager {
 
 	private ExecutorService ex;
 
-	// a HCM should be initialized with a forecast and suite of weighted
-	// GMMs
-	// it can then process one or more locations, returning result sets for
-	// each that can then be passed of to other tools such as curve compilers
-	// or deaggregators
-
-	// -
-	// the idea is to have one HazardCalc and one Forecast (interface) which
-	// can then process locations in sequence, spreading rupture-site pairs onto
-	// other node threads
 
 	// calculations are processed by type fault > cluster? > gridded
 	// within each type 'SourceSets' are processed
@@ -86,21 +76,17 @@ public class HazardCalcManager {
 	// to, say, selectively eliminate certain fault sources)
 	// -- Sources (can have weights; iterable; indexed? could be)
 	// -- Ruptures (can have weights)
+	
+	// source MFDs will all be scaled by local, source set, and any other branching
+	// weights when iterating.
 
-	// How to iterate ERFs and apply filtering
-	// -- Both ERFs and SourceSets should be able to have predicates applied
-	// -- Do we want to supply a SourceFilter object to calc()?
-	// -- What about mag-distance filtering? (done at rupture level)
 
 	public void calc(
 			Forecast forecast,
 			Map<GMM, Double> gmmWtMap,
 			Site site, IMT imt) throws InterruptedException, ExecutionException {
-
-		// using single map (should always be supplied an enumMap) for now, but
-		// gmmMap needs to be updated to:
-		// 		EnumMap<TectonicSetting, EnumMap<GMM, Double>>
-
+		// TODO this wont work
+		
 		// each type of source should do the following, understanding that a
 		// multi-threaded ExecutorService is available:
 
@@ -179,10 +165,9 @@ public class HazardCalcManager {
 		// be to run quick distance filter in a single thread using a
 		// predicate or some such.
 		
-		double dist = 200.0; // this needs to come from calc settings or some such
+		double dist = 200.0; // this needs to come from gmm.xml
 
-		CompletionService<FaultSource> qdCS = 
-				new ExecutorCompletionService<FaultSource>(ex);
+		CompletionService<FaultSource> qdCS = new ExecutorCompletionService<FaultSource>(ex);
 		int qdCount = 0;
 		for (FaultSource source : sources) {
 			qdCS.submit(Tasks.newQuickDistanceFilter(source, site.loc, dist));
@@ -204,8 +189,7 @@ public class HazardCalcManager {
 		// Ground motion calculation:
 		// TODO A SourceSet should map to a unique TectonicSetting so only a 
 		// single map of GMMs is required
-		CompletionService<GroundMotionCalcResult> gmCS = 
-				new ExecutorCompletionService<GroundMotionCalcResult>(ex);
+		CompletionService<GroundMotionCalcResult> gmCS = new ExecutorCompletionService<GroundMotionCalcResult>(ex);
 		int gmCount = 0;
 		for (int i=0; i<gmSrcCount; i++) {
 			List<GMM_Source> inputs = gmSrcCS.take().get();

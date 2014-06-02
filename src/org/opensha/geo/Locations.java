@@ -714,9 +714,9 @@ public final class Locations {
 	// -180 +180 spanning distances
 	
 	/**
-	 * Returns a {@code Predicate<Location>} for {@code Location} filtering. The
-	 * returned filter makes an initial pass using a rectangular
-	 * geographic/Mercator filter.
+	 * Returns a {@code Predicate} for {@code Location} filtering. The returned
+	 * filter makes an initial pass using a rectangular geographic/Mercator
+	 * filter.
 	 * 
 	 * @param loc {@code Location} relative to which other {@code Location}s are
 	 *        filtered.
@@ -730,8 +730,8 @@ public final class Locations {
 	}
 
 	/**
-	 * Returns a {@code Predicate<Location>} for {@code Location} filtering
-	 * using a rectangular geographic/Mercator filter.
+	 * Returns a {@code Predicate} for {@code Location} filtering using a
+	 * rectangular geographic/Mercator filter.
 	 * 
 	 * @param loc {@code Location} relative to which other {@code Location}s are
 	 *        filtered.

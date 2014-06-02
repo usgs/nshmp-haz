@@ -2,7 +2,6 @@ package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static org.opensha.eq.forecast.SourceAttribute.*;
 import static org.opensha.util.Parsing.readBoolean;
 import static org.opensha.util.Parsing.readDouble;
@@ -16,6 +15,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
+import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.GutenbergRichterMFD;
@@ -30,34 +30,23 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /*
- * Non-validating fault source parser; results are undefined for multiple
- * entries for which there should only be singletons (e.g. MagUncertainty)
- * 
- * Overriden handler methods check validity of XML
- * ANy Builder or equivalent used to create FaultSources should do value checking
- * 
- * NOTE: parser 'Attributes' are reused and cannot be stored
- * NOTE: not thread safe
+ * Non-validating subduction source parser. SAX parser 'Attributes' are stateful and
+ * cannot be stored. This class is not thread safe.
  * 
  * @author Peter Powers
- * 
- * TODO still need to check exception throwing/handling for everything above
- * MagUncertainty closing tag.
- * 
  */
 class SubductionSourceParser extends DefaultHandler {
 
 	private static final Logger log = Logging.create(SubductionSourceParser.class);
-	private static final String LF = LINE_SEPARATOR.value();
 	private final SAXParser sax;
 
 	private Locator locator;
 
-	private String setName;
-	private double setWeight;
-	private SubductionSourceSet sources;
+	private SubductionSourceSet.Builder sourceSetBuilder;
+	private SubductionSourceSet sourceSet;
 
-	// This will build individual sources in a SubductionSourceSet
+	private MagScalingRelationship msr;
+
 	private SubductionSource.Builder sourceBuilder;
 	
 	// Traces are the only text content in source files
@@ -75,11 +64,9 @@ class SubductionSourceParser extends DefaultHandler {
 	
 	SubductionSourceSet parse(File f) throws SAXException, IOException {
 		sax.parse(f, this);
-		return sources;
+		checkState(sourceSet.size() > 0, "SubductionSourceSet is empty");
+		return sourceSet;
 	}
-	
-	
-	// TODO wrap all operations in a sSAXParseException so it gets passed up to logger in Loader
 	
 	@Override
 	@SuppressWarnings("incomplete-switch")
@@ -98,24 +85,29 @@ class SubductionSourceParser extends DefaultHandler {
 			switch (e) {
 	
 				case SUBDUCTION_SOURCE_SET:
-					setName = readString(NAME, atts);
-					setWeight = readDouble(WEIGHT, atts);
+					String name = readString(NAME, atts);
+					double weight = readDouble(WEIGHT, atts);
+					sourceSetBuilder = new SubductionSourceSet.Builder();
+					sourceSetBuilder.name(name);
+					sourceSetBuilder.weight(weight);
 					if (log.isLoggable(INFO)) {
-						log.info("Building interface set: " + setName + " weight=" + setWeight);
+						log.info("Building interface set: " + name + " weight=" + weight);
 					}
 					break;
 	
 				case SOURCE_PROPERTIES:
-					MagScalingType scaling = readEnum(MAG_SCALING, atts, MagScalingType.class);
-					// create source set once we have mag scaling relation
-					sources = new SubductionSourceSet(setName, setWeight, scaling);
+					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
+					sourceSetBuilder.magScaling(msrType);
+					msr = msrType.instance();
+					sourceSet = sourceSetBuilder.buildSubductionSet();
 					break;
 
 				case SOURCE:
-					String name = readString(NAME, atts);
+					String srcName = readString(NAME, atts);
 					sourceBuilder = new SubductionSource.Builder();
-					sourceBuilder.name(name);
-					if (log.isLoggable(INFO)) log.info("Building: " + name);
+					sourceBuilder.name(srcName);
+					sourceBuilder.magScaling(msr);
+					if (log.isLoggable(INFO)) log.info("Building: " + srcName);
 					break;
 		
 				case MAG_FREQ_DIST:
@@ -161,8 +153,7 @@ class SubductionSourceParser extends DefaultHandler {
 	
 				case TRACE:
 					readingTrace = false;
-					sourceBuilder.upperTrace(LocationList
-						.fromString(traceBuilder.toString()));
+					sourceBuilder.trace(LocationList.fromString(traceBuilder.toString()));
 					break;
 					
 				case LOWER_TRACE:
@@ -171,7 +162,7 @@ class SubductionSourceParser extends DefaultHandler {
 					break;
 
 				case SOURCE:
-					sources.add(sourceBuilder.build());
+					sourceSet.add(sourceBuilder.buildSubductionSource());
 					break;
 					
 			}

@@ -52,6 +52,7 @@ class PointSourceFinite extends PointSource {
 	// TODO a similar implementation in which the centroids of the finite faults
 	// are coincident with the source location should be considered
 
+	// TODO get from sourceSet
 	static final MagLengthRelationship WC94 = new WC1994_MagLengthRelationship();
 
 	int fwIdxLo, fwIdxHi;
@@ -222,8 +223,7 @@ class PointSourceFinite extends PointSource {
 			// because we're not using table lookup optimizations, we push the
 			// minimum rJB out to 0.5 (half the table bin-width)
 			double rJB = Locations.horzDistanceFast(this.loc, loc);
-			rJB *= PtSrcDistCorr.getCorrection(rJB, mag,
-				PtSrcDistCorr.Type.NSHMP08);
+			rJB *= PtSrcDistCorr.getCorrection(rJB, mag, PtSrcDistCorr.Type.NSHMP08);
 			rJB = max(0.5, rJB);
 			double rX = footwall ? -rJB : rJB + widthH;
 
@@ -246,7 +246,6 @@ class PointSourceFinite extends PointSource {
 
 			return Distances.create(rJB, rRup, rX);
 		}
-
 
 		// @formatter:off
 		@Override public double width() { return widthDD; }

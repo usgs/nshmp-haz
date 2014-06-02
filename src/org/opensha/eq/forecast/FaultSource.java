@@ -31,40 +31,40 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
 /**
- * This class is used to represent all fault sources in the 2008 NSHMP. Each
- * {@code FaultSource} wraps one or more {@code FloatingPoissonFaultSource}s.
- * There is a 1 to 1 mapping of mfds to wrapped sources.
+ * Fault source representation. This class wraps a model of a fault geometry and
+ * a list of magnitude frequency distributions that characterize how the fault
+ * might rupture (e.g. as one, single geometry-filling event, or as multiple
+ * smaller events) during earthquakes. Smaller events are modeled as 'floating'
+ * ruptures; they occur in multiple locations on the fault surface with
+ * appropriately scaled rates.
  * 
- * <p>A fault source can not be created directly; it may only be created by
- * a private parser.</p>
- * 
- * We always want to use rake as it may be specified by a fault; different GMMs
- * use different cutoffs to define fault style.
+ * <p>A fault source can not be created directly; it may only be created by a
+ * private parser.</p>
  * 
  * @author Peter Powers
  */
 public class FaultSource implements Source {
 	
-	private final String name;
-	private final LocationList trace;
-	private final double dip;
-	private final double width;
-	private final double rake;
-	private final List<IncrementalMFD> mfds;
-	private final MagScalingRelationship msr;
-	private final double aspectRatio; // for floating ruptures
-	private final double offset;      // of floating ruptures
-	private final FloatStyle floatStyle;
-		
+	final String name;
+	final LocationList trace;
+	final double dip;
+	final double width;
+	final double rake;
+	final List<IncrementalMFD> mfds;
+	final MagScalingRelationship msr;
+	final double aspectRatio;                 // for floating ruptures
+	final double offset;                      // of floating ruptures
+	final FloatStyle floatStyle;
 
 	private int size = 0;
-	private StirlingGriddedSurface surface;
+	StirlingGriddedSurface surface;
 	private List<List<Rupture>> ruptureLists; // 1:1 with MFDs
-	private List<Integer> rupCount; // cumulative index list for iterating ruptures
+	private List<Integer> rupCount;           // cumulative index list for iterating ruptures
 	
-	private FaultSource(String name, LocationList trace, double dip, double width, double rake,
+	FaultSource(String name, LocationList trace, double dip, double width, double rake,
 		List<IncrementalMFD> mfds, MagScalingRelationship msr, double aspectRatio, double offset,
 		FloatStyle floatStyle) {
+		
 		this.name = name;
 		this.trace = trace;
 		this.dip = dip;
@@ -75,18 +75,30 @@ public class FaultSource implements Source {
 		this.aspectRatio = aspectRatio;
 		this.offset = offset;
 		this.floatStyle = floatStyle;
-		init();
+		
+		initSurface();
+		initRuptures();
 	}
 	
-	void init() {
+	// TODO should we pass in a precreated surface; e.g. create it in the builder; that way
+	// subduction could override. Then the question is: are all the faultSource geometry
+	// fields necessary.
+	
+	// TODO KILL SimpleFaultData
+	
+	// subclasses may override TODO this has to go in favor of creating the surface in builder
+	// then we can finalize surface field
+	void initSurface() {
 		double top = trace.first().depth();
 		double lowerSeis = top + width * Math.sin(dip * GeoTools.TO_RAD);
 		SimpleFaultData sfd = new SimpleFaultData(dip, lowerSeis, top, trace);
 		surface = new StirlingGriddedSurface(sfd, 1.0, 1.0);
+	}
+	
+	private void initRuptures() {
 		ruptureLists = Lists.newArrayList();
 		rupCount = Lists.newArrayList();
 		rupCount.add(0);
-		
 		for (IncrementalMFD mfd : mfds) {
 			List<Rupture> rupList = createRuptureList(mfd);
 			ruptureLists.add(rupList);
@@ -133,15 +145,9 @@ public class FaultSource implements Source {
 		return new Iterator<Rupture>() {
 			int size = size();
 			int caret = 0;
-			@Override public boolean hasNext() {
-				return caret < size;
-			}
-			@Override public Rupture next() {
-				return getRupture(caret++);
-			}
-			@Override public void remove() {
-				throw new UnsupportedOperationException();
-			}
+			@Override public boolean hasNext() { return caret < size; }
+			@Override public Rupture next() { return getRupture(caret++); }
+			@Override public void remove() { throw new UnsupportedOperationException(); }
 		};
 		// @formatter:on
 	}
@@ -153,122 +159,24 @@ public class FaultSource implements Source {
 	
 	@Override
 	public String toString() {
+		// TODO use joiner
 		// @formatter:off
 		return new StringBuilder()
 		.append("==========  Fault Source  ==========")
 		.append(LINE_SEPARATOR.value())
-		.append("   Fault name: ").append(name)
-		.append(LINE_SEPARATOR.value())
-		.append("         rake: ").append(rake)
-		.append(LINE_SEPARATOR.value())
-		.append("         mfds: ").append(mfds.size())
+		.append("  Source name: ").append(name)
 		.append(LINE_SEPARATOR.value())
 		.append("          dip: ").append(dip)
 		.append(LINE_SEPARATOR.value())
 		.append("        width: ").append(width)
 		.append(LINE_SEPARATOR.value())
+		.append("         rake: ").append(rake)
+		.append(LINE_SEPARATOR.value())
+		.append("         mfds: ").append(mfds.size())
+		.append(LINE_SEPARATOR.value())
 		.append("          top: ").append(trace.first().depth())
 		.append(LINE_SEPARATOR.value()).toString();
 		// @formatter:on
-	}
-
-	/*
-	 * FaultSource builder; build() may only be called once; uses Doubles
-	 * to ensure fields are initially null.
-	 */
-	static class Builder {
-		private static final Range<Double> ASPECT_RATIO_RANGE = Range.closed(1.0, 2.0);
-		private static final Range<Double> OFFSET_RANGE = Range.closed(0.1, 20.0);
-		
-		private boolean built = false;
-		
-		// required
-		private String name;
-		private LocationList trace;
-		private Double dip;
-		private Double width;
-		private Double rake;
-		private List<IncrementalMFD> mfds = Lists.newArrayList();
-		private MagScalingRelationship msr;
-		
-		// have defaults
-		private double aspectRatio = 1.0;
-		private double offset = 1.0;
-		private FloatStyle floatStyle = FULL_DOWN_DIP;
-		
-		Builder name(String name) {
-			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
-				"'name' attribute may not be empty or null");
-			this.name = name;
-			return this;
-		}
-
-		Builder trace(LocationList trace) {
-			checkArgument(
-				checkNotNull(trace, "Trace may not be null").size() > 1,
-				"LocationList for a fault trace must have at least 2 points");
-			this.trace = trace;
-			return this;
-		}
-
-		Builder dip(double dip) {
-			this.dip = validateDip(dip);
-			return this;
-		}
-		
-		Builder width(double width) {
-			this.width = validateWidth(width);
-			return this; 
-		}
-		
-		Builder rake(double rake) {
-			this.rake = validateRake(rake);
-			return this;
-		}
-		
-		Builder mfds(List<IncrementalMFD> mfds) {
-			checkNotNull(mfds, "MFD list is null");
-			checkArgument(mfds.size() > 0, "MFD list is empty");
-			this.mfds.addAll(mfds);
-			return this;
-		}
-		
-		Builder magScaling(MagScalingRelationship msr) {
-			this.msr = checkNotNull(msr, "Mag-Scaling Relation is null");
-			return this;
-		}
-		
-		Builder aspectRatio(double aspectRatio) {
-			this.aspectRatio = DataUtils.validate(ASPECT_RATIO_RANGE, "Aspect Ratio", aspectRatio);
-			return this;
-		}
-
-		Builder offset(double offset) {
-			this.offset = DataUtils.validate(OFFSET_RANGE, "Floater Offset", offset);
-			return this;
-		}
-		
-		Builder floatStyle(FloatStyle floatStyle) {
-			this.floatStyle = checkNotNull(floatStyle, "Floater style is null");
-			return this;
-		}
-
-		FaultSource build() {
-			checkState(!built, "This FaultSource.Builder instance as already been used");
-			
-			checkState(name != null, "Source name not set");
-			checkState(trace != null, "Source trace not set");
-			checkState(dip != null, "Source dip not set");
-			checkState(width != null, "Source width not set");
-			checkState(rake != null, "Source rake not set");
-			checkState(mfds.size() > 0, "Source has no MFDs");
-			checkState(msr != null, "Mag-Scaling Relation not set");
-			
-			built = true;
-			return new FaultSource(name, trace, dip, width, rake, ImmutableList.copyOf(mfds), msr,
-				aspectRatio, offset, floatStyle);
-		}
-		
 	}
 
 	private List<Rupture> createRuptureList(IncrementalMFD mfd) {
@@ -332,5 +240,113 @@ public class FaultSource implements Source {
 				msr.getClass());
 		}
 	}
+	
+	
+	/*
+	 * FaultSource builder; build() may only be called once; uses Doubles
+	 * to ensure fields are initially null.
+	 */
+	static class Builder {
+		static final Range<Double> ASPECT_RATIO_RANGE = Range.closed(1.0, 2.0);
+		static final Range<Double> OFFSET_RANGE = Range.closed(0.1, 20.0);
+		
+		static final String ID = "FaultSource.Builder";
+		boolean built = false;
+		
+		// required
+		String name;
+		LocationList trace;
+		Double dip;
+		Double width;
+		Double rake;
+		List<IncrementalMFD> mfds = Lists.newArrayList();
+		MagScalingRelationship msr;
+		
+		// have defaults
+		double aspectRatio = 1.0;
+		double offset = 1.0;
+		FloatStyle floatStyle = FULL_DOWN_DIP;
+		
+		Builder name(String name) {
+			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
+				"%s name may not be empty or null", ID);
+			this.name = name;
+			return this;
+		}
+
+		Builder trace(LocationList trace) {
+			checkArgument(
+				checkNotNull(trace, "Trace may not be null", ID).size() > 1,
+				"Trace must have at least 2 points");
+			this.trace = trace;
+			return this;
+		}
+
+		Builder dip(double dip) {
+			this.dip = validateDip(dip);
+			return this;
+		}
+		
+		Builder width(double width) {
+			this.width = validateWidth(width);
+			return this; 
+		}
+		
+		Builder rake(double rake) {
+			this.rake = validateRake(rake);
+			return this;
+		}
+		
+		Builder mfd(IncrementalMFD mfd) {
+			checkNotNull(mfd, "MFD is null");
+			this.mfds.add(mfd);
+			return this;
+		}
+		
+		Builder mfds(List<IncrementalMFD> mfds) {
+			checkNotNull(mfds, "MFD list is null");
+			checkArgument(mfds.size() > 0, "MFD list is empty");
+			this.mfds.addAll(mfds);
+			return this;
+		}
+		
+		Builder magScaling(MagScalingRelationship msr) {
+			this.msr = checkNotNull(msr, "Mag-Scaling Relation is null");
+			return this;
+		}
+		
+		Builder aspectRatio(double aspectRatio) {
+			this.aspectRatio = DataUtils.validate(ASPECT_RATIO_RANGE, "Aspect Ratio", aspectRatio);
+			return this;
+		}
+
+		Builder offset(double offset) {
+			this.offset = DataUtils.validate(OFFSET_RANGE, "Floater Offset", offset);
+			return this;
+		}
+		
+		Builder floatStyle(FloatStyle floatStyle) {
+			this.floatStyle = checkNotNull(floatStyle, "Floater style is null");
+			return this;
+		}
+
+		void validateState(String mssgID) {
+			checkState(!built, "This %s instance as already been used", mssgID);
+			checkState(name != null, "%s name not set", mssgID);
+			checkState(trace != null, "%s trace not set", mssgID);
+			checkState(dip != null, "%s dip not set", mssgID);
+			checkState(width != null, "%s width not set", mssgID);
+			checkState(rake != null, "%s rake not set", mssgID);
+			checkState(mfds.size() > 0, "%s has no MFDs", mssgID);
+			checkState(msr != null, "%s mag-scaling relation not set", mssgID);
+			built = true;
+		}
+		
+		FaultSource buildFaultSource() {
+			return new FaultSource(name, trace, dip, width, rake, ImmutableList.copyOf(mfds), msr,
+				aspectRatio, offset, floatStyle);
+		}
+	}
+
 
 }

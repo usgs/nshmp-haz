@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha.eq.Magnitudes;
+import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.GaussianMFD;
@@ -36,20 +37,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.google.common.collect.Lists;
 
 /*
- * Non-validating fault source parser; results are undefined for multiple
- * entries for which there should only be singletons (e.g. MagUncertainty)
- * 
- * Overriden handler methods check validity of XML
- * ANy Builder or equivalent used to create FaultSources should do value checking
- * 
- * NOTE: parser 'Attributes' are reused and cannot be stored
- * NOTE: not thread safe
+ * Non-validating fault source parser. SAX parser 'Attributes' are stateful and
+ * cannot be stored. This class is not thread safe.
  * 
  * @author Peter Powers
- * 
- * TODO still need to check exception throwing/handling for everything above
- * MagUncertainty closing tag.
- * 
  */
 class FaultSourceParser extends DefaultHandler {
 
@@ -59,11 +50,12 @@ class FaultSourceParser extends DefaultHandler {
 
 	private Locator locator;
 
-	private String setName;
-	private double setWeight;
-	private FaultSourceSet sources;
+	private FaultSourceSet.Builder sourceSetBuilder;
+	private FaultSourceSet sourceSet;
 
-	// Data applying to all sources
+	private MagScalingRelationship msr;
+	
+	// Data applying to all sourceSet
 	private MagUncertainty unc = null;
 	private Map<String, String> epiAtts = null;
 	private Map<String, String> aleaAtts = null;
@@ -72,7 +64,6 @@ class FaultSourceParser extends DefaultHandler {
 	private boolean parsingDefaultMFDs = false;
 	private MFD_Helper mfdHelper;
 
-	// This will build individual sources in a FaultSourceSet
 	private FaultSource.Builder sourceBuilder;
 	
 	// Traces are the only text content in source files
@@ -90,7 +81,8 @@ class FaultSourceParser extends DefaultHandler {
 	
 	FaultSourceSet parse(File f) throws SAXException, IOException {
 		sax.parse(f, this);
-		return sources;
+		checkState(sourceSet.size() > 0, "FaultSourceSet is empty");
+		return sourceSet;
 	}
 	
 	
@@ -113,10 +105,13 @@ class FaultSourceParser extends DefaultHandler {
 			switch (e) {
 	
 				case FAULT_SOURCE_SET:
-					setName = readString(NAME, atts);
-					setWeight = readDouble(WEIGHT, atts);
+					String name = readString(NAME, atts);
+					double weight = readDouble(WEIGHT, atts);
+					sourceSetBuilder = new FaultSourceSet.Builder();
+					sourceSetBuilder.name(name);
+					sourceSetBuilder.weight(weight);
 					if (log.isLoggable(INFO)) {
-						log.info("Building fault set: " + setName + " weight=" + setWeight);
+						log.info("Building fault set: " + name + " weight=" + weight);
 					}
 					break;
 					
@@ -134,15 +129,17 @@ class FaultSourceParser extends DefaultHandler {
 					break;
 	
 				case SOURCE_PROPERTIES:
-					MagScalingType scaling = readEnum(MAG_SCALING, atts, MagScalingType.class);
-					// create source set once we have mag scaling relation
-					sources = new FaultSourceSet(setName, setWeight, scaling);
+					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
+					sourceSetBuilder.magScaling(msrType);
+					msr = msrType.instance();
+					sourceSet = sourceSetBuilder.buildFaultSet();
 					break;
 					
 				case SOURCE:
 					String srcName = readString(NAME, atts);
 					sourceBuilder = new FaultSource.Builder();
 					sourceBuilder.name(srcName);
+					sourceBuilder.magScaling(msr);
 					if (log.isLoggable(INFO)) {
 						log.info("Creating source: " + srcName);
 					}
@@ -153,7 +150,7 @@ class FaultSourceParser extends DefaultHandler {
 						mfdHelper.addDefault(atts);
 						break;
 					}
-					sourceBuilder.mfds(buildMFD(atts, unc));
+					sourceBuilder.mfds(buildMFD(atts, unc, sourceSet.weight()));
 					break;
 	
 				case GEOMETRY:
@@ -169,8 +166,7 @@ class FaultSourceParser extends DefaultHandler {
 			}
 
 		} catch (Exception ex) {
-			throw new SAXParseException("Error parsing <" + qName + ">",
-				locator, ex);
+			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
 		}
 	}
 
@@ -207,14 +203,13 @@ class FaultSourceParser extends DefaultHandler {
 					break;
 					
 				case SOURCE:
-					sources.add(sourceBuilder.build());
+					sourceSet.add(sourceBuilder.buildFaultSource());
 					break;
 					
 			}
 			
 		} catch (Exception ex) {
-			throw new SAXParseException("Error parsing <" + qName + ">",
-				locator, ex);
+			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
 		}
 	}
 
@@ -229,15 +224,15 @@ class FaultSourceParser extends DefaultHandler {
 		this.locator = locator;
 	}
 		
-	private List<IncrementalMFD> buildMFD(Attributes atts, MagUncertainty unc) {
+	private List<IncrementalMFD> buildMFD(Attributes atts, MagUncertainty unc, double setWeight) {
 		MFD_Type type = readEnum(TYPE, atts, MFD_Type.class);
 		switch (type) {
 			case GR:
-				return buildGR(mfdHelper.getGR(atts), unc);
+				return buildGR(mfdHelper.getGR(atts), unc, setWeight);
 			case INCR:
 				throw new UnsupportedOperationException("INCR not yet implemented");
 			case SINGLE:
-				return buildSingle(mfdHelper.getSingle(atts), unc);
+				return buildSingle(mfdHelper.getSingle(atts), unc, setWeight);
 			case GR_TAPER:
 				throw new UnsupportedOperationException("GR_TAPER not yet implemented");
 			default:
@@ -249,7 +244,8 @@ class FaultSourceParser extends DefaultHandler {
 	 * Builds GR MFDs. Method will throw IllegalStateException if attribute
 	 * values yield an MFD with no magnitude bins.
 	 */
-	private static List<IncrementalMFD> buildGR(MFD_Helper.GR_Data data, MagUncertainty unc) {
+	private static List<IncrementalMFD> buildGR(MFD_Helper.GR_Data data, MagUncertainty unc,
+			double setWeight) {
 
 		int nMag = MFDs.magCount(data.mMin, data.mMax, data.dMag);
 		checkState(nMag > 0, "GR MFD with no mags");
@@ -265,7 +261,7 @@ class FaultSourceParser extends DefaultHandler {
 				double mMaxEpi = data.mMax + unc.epiDeltas[i];
 				int nMagEpi =  MFDs.magCount(data.mMin, mMaxEpi, data.dMag);
 				if (nMagEpi > 0) {
-					double weightEpi = data.weight * unc.epiWeights[i];
+					double weightEpi = setWeight * data.weight * unc.epiWeights[i];
 					
 					// epi branches preserve Mo between mMin and dMag(nMag-1),
 					// not mMax to ensure that Mo is 'spent' on earthquakes
@@ -286,11 +282,10 @@ class FaultSourceParser extends DefaultHandler {
 			}
 		} else {
 			GutenbergRichterMFD mfd = MFDs.newGutenbergRichterMoBalancedMFD(
-				data.mMin, data.dMag, nMag, data.b, tmr * data.weight);
+				data.mMin, data.dMag, nMag, data.b, tmr * data.weight * setWeight);
 			mfds.add(mfd);
 			if (log.isLoggable(FINE)) {
-				log.fine(new StringBuilder().append(mfd.getMetadataString())
-					.toString());
+				log.fine(new StringBuilder().append(mfd.getMetadataString()).toString());
 			}
 		}
 		return mfds;
@@ -299,7 +294,8 @@ class FaultSourceParser extends DefaultHandler {
 	/*
 	 * Builds single MFDs
 	 */
-	private static List<IncrementalMFD> buildSingle(MFD_Helper.SingleData data, MagUncertainty unc) {
+	private static List<IncrementalMFD> buildSingle(MFD_Helper.SingleData data, MagUncertainty unc,
+			double setWeight) {
 
 		List<IncrementalMFD> mfds = Lists.newArrayList();
 
@@ -316,7 +312,7 @@ class FaultSourceParser extends DefaultHandler {
 			for (int i = 0; i < unc.epiCount; i++) {
 
 				double epiMag = data.m + unc.epiDeltas[i];
-				double mfdWeight = data.weight * unc.epiWeights[i];
+				double mfdWeight = setWeight * data.weight * unc.epiWeights[i];
 
 				if (unc.hasAleatory) {
 					GaussianMFD mfd = (unc.moBalance) ? 
@@ -346,17 +342,18 @@ class FaultSourceParser extends DefaultHandler {
 				}
 			}
 		} else {
+			double mfdWeight = setWeight * data.weight;
 			if (unc.hasAleatory) {
 				GaussianMFD mfd = (unc.moBalance) ? 
-					MFDs.newGaussianMoBalancedMFD(data.m, unc.aleaSigma, unc.aleaCount, data.weight * tmr) :
-					MFDs.newGaussianMFD(data.m, unc.aleaSigma, unc.aleaCount, data.weight * tcr);
+					MFDs.newGaussianMoBalancedMFD(data.m, unc.aleaSigma, unc.aleaCount, mfdWeight * tmr) :
+					MFDs.newGaussianMFD(data.m, unc.aleaSigma, unc.aleaCount, mfdWeight * tcr);
 				mfds.add(mfd);
 				if (log.isLoggable(FINE)) {
 					log.fine(new StringBuilder("Single MFD [-epi +ale]: ")
 						.append(LF).append(mfd.getMetadataString()).toString());
 				}
 			} else {
-				IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(data.m, data.weight * data.a, data.floats);
+				IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(data.m, mfdWeight * data.a, data.floats);
 				mfds.add(mfd);
 				if (log.isLoggable(FINE)) {
 					log.fine(new StringBuilder("Single MFD [-epi -ale]: ")

@@ -18,7 +18,7 @@ public interface Source extends Named, Iterable<Rupture> {
 //	public RuptureSurface surface(); // do we really need access to the surface after creation
 	public int size();
 	public List<Rupture> getRuptureList(); // consider deleting; people can make their own lists
-	public Rupture getRupture(int idx);
+	public Rupture getRupture(int idx); // TODO consider removing
 	public double getMinDistance(Location loc); // TODO rename to distanceTo(Loc)
 //	public Location centroid(); // ???
 	
