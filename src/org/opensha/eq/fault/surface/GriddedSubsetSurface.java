@@ -97,7 +97,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
      */
      @Override
     public double dip() {
-        return ( ( AbstractEvenlyGriddedSurfaceWithSubsets ) data ).dip();
+        return ( ( AbstractGriddedSurfaceWithSubsets ) data ).dip();
     }
      
 
@@ -304,7 +304,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 
 	@Override
 	public double depth() {
-		if (this.data instanceof EvenlyGriddedSurfFromSimpleFaultData) {// all depths are the same on the top row
+		if (this.data instanceof GriddedSurfFromSimpleFaultData) {// all depths are the same on the top row
 			return getLocation(0,0).depth();
 		}
 			double depth = 0;

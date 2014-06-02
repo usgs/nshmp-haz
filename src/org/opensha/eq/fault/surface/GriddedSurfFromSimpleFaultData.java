@@ -8,14 +8,13 @@ import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 
 /**
- * <p>Title:  EvenlyGriddedSurfFromSimpleFaultData </p>
+ * <p>Title:  GriddedSurfFromSimpleFaultData </p>
  *
  * <p>Description: This creates and GriddedSurface from SimpleFaultData</p>
  *
  * @author Nitin Gupta
  */
-public abstract class EvenlyGriddedSurfFromSimpleFaultData
-extends AbstractEvenlyGriddedSurfaceWithSubsets{
+public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurfaceWithSubsets {
 
 	protected LocationList faultTrace;
 	protected double upperSeismogenicDepth = Double.NaN;
@@ -25,7 +24,7 @@ extends AbstractEvenlyGriddedSurfaceWithSubsets{
 	/**
 	 * No are constructor needed by subclasses
 	 */
-	protected EvenlyGriddedSurfFromSimpleFaultData() {}
+	protected GriddedSurfFromSimpleFaultData() {}
 
 	/**
 	 * This applies the grid spacing exactly as given, both along strike and down dip, clipping
@@ -34,7 +33,7 @@ extends AbstractEvenlyGriddedSurfaceWithSubsets{
 	 * @param gridSpacing
 	 * @throws FaultException
 	 */
-//	protected EvenlyGriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData, double gridSpacing) {
+//	protected GriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData, double gridSpacing) {
 //
 //		this(simpleFaultData.getFaultTrace(), simpleFaultData.getAveDip(),
 //				simpleFaultData.getUpperSeismogenicDepth(),
@@ -52,7 +51,7 @@ extends AbstractEvenlyGriddedSurfaceWithSubsets{
 	 * @param gridSpacing
 	 * @throws FaultException
 	 */
-	protected EvenlyGriddedSurfFromSimpleFaultData(LocationList faultTrace, double aveDip, double upperSeismogenicDepth,
+	protected GriddedSurfFromSimpleFaultData(LocationList faultTrace, double aveDip, double upperSeismogenicDepth,
 			double lowerSeismogenicDepth, double gridSpacing) {
 		set(faultTrace, aveDip, upperSeismogenicDepth, lowerSeismogenicDepth, gridSpacing, gridSpacing);
 	}
@@ -65,7 +64,7 @@ extends AbstractEvenlyGriddedSurfaceWithSubsets{
 	 * @param maxGridSpacingDown - maximum grid spacing down dip
 	 * @throws FaultException
 	 */
-//	protected EvenlyGriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData,
+//	protected GriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData,
 //			double maxGridSpacingAlong, double maxGridSpacingDown) {
 //
 //		this(simpleFaultData.getFaultTrace(), simpleFaultData.getAveDip(),
@@ -85,7 +84,7 @@ extends AbstractEvenlyGriddedSurfaceWithSubsets{
 	 * @param maxGridSpacingDown - maximum grid spacing down dip
 	 * @throws FaultException
 	 */
-	protected EvenlyGriddedSurfFromSimpleFaultData(LocationList faultTrace, double aveDip,
+	protected GriddedSurfFromSimpleFaultData(LocationList faultTrace, double aveDip,
 			double upperSeismogenicDepth, double lowerSeismogenicDepth, double maxGridSpacingAlong,
 			double maxGridSpacingDown) {
 		

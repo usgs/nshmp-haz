@@ -32,7 +32,7 @@ import com.google.common.math.DoubleMath;
  * @author Ned Field.
  */
 
-public class StirlingGriddedSurface extends EvenlyGriddedSurfFromSimpleFaultData {
+public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 
 	final static boolean D = false;
 	

@@ -9,10 +9,10 @@ import java.util.Iterator;
  * <b>Description:</b> This class extends GriddedSurface to included sampling subset regions.
  *
  */
-public abstract class AbstractEvenlyGriddedSurfaceWithSubsets extends AbstractGriddedSurface  {
+public abstract class AbstractGriddedSurfaceWithSubsets extends AbstractGriddedSurface  {
 	
 	// no argument constructor needed by subclasses
-	public AbstractEvenlyGriddedSurfaceWithSubsets() {}
+	public AbstractGriddedSurfaceWithSubsets() {}
 
 
 	/**
@@ -23,7 +23,7 @@ public abstract class AbstractEvenlyGriddedSurfaceWithSubsets extends AbstractGr
 	 * @param  numCols  Number of grid points along length of fault
 	 * @param  gridSpacing  Grid Spacing
 	 */
-	public AbstractEvenlyGriddedSurfaceWithSubsets( int numRows, int numCols,double gridSpacing ) {
+	public AbstractGriddedSurfaceWithSubsets( int numRows, int numCols,double gridSpacing ) {
 		super(numRows,numCols,gridSpacing );
 	}
 	
@@ -35,7 +35,7 @@ public abstract class AbstractEvenlyGriddedSurfaceWithSubsets extends AbstractGr
 	 * @param  numCols  Number of grid points along length of fault
 	 * @param  gridSpacing  Grid Spacing
 	 */
-	public AbstractEvenlyGriddedSurfaceWithSubsets( int numRows, int numCols,double gridSpacingAlong, double gridSpacingDown) {
+	public AbstractGriddedSurfaceWithSubsets( int numRows, int numCols,double gridSpacingAlong, double gridSpacingDown) {
 		super( numRows, numCols, gridSpacingAlong, gridSpacingDown );
 	}
 

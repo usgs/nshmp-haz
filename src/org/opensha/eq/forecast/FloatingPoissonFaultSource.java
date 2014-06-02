@@ -9,7 +9,7 @@ import org.opensha.eq.fault.scaling.MagAreaRelationship;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.surface.AbstractGriddedSurface;
-import org.opensha.eq.fault.surface.AbstractEvenlyGriddedSurfaceWithSubsets;
+import org.opensha.eq.fault.surface.AbstractGriddedSurfaceWithSubsets;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.BorderType;
 import org.opensha.geo.Location;
@@ -87,7 +87,7 @@ public class FloatingPoissonFaultSource implements Source {
 
 	//	private ArrayList<Location> faultCornerLocations = new ArrayList<Location>();   // used for the getMinDistance(Site) method
 	private double duration;
-	private AbstractEvenlyGriddedSurfaceWithSubsets faultSurface;
+	private AbstractGriddedSurfaceWithSubsets faultSurface;
 
 	// used for the getMinDistance(Site) method
 	private Region sourceRegion;
@@ -119,7 +119,7 @@ public class FloatingPoissonFaultSource implements Source {
 	 * @param fullFaultRupMagThresh - magnitudes greater than or equal to this value will be forced to rupture the entire fault
 	 */
 	public FloatingPoissonFaultSource(IncrementalMFD magDist,
-			AbstractEvenlyGriddedSurfaceWithSubsets faultSurface,
+			AbstractGriddedSurfaceWithSubsets faultSurface,
 			MagScalingRelationship magScalingRel,
 			double magScalingSigma,
 			double rupAspectRatio,
@@ -173,7 +173,7 @@ public class FloatingPoissonFaultSource implements Source {
 	 * This constructor sets floatTypeFlag=1 and fullFaultRupMagThresh = Double.MAX_VALUE.  Otherwise it's the same.
 	 */
 	public FloatingPoissonFaultSource(IncrementalMFD magDist,
-			AbstractEvenlyGriddedSurfaceWithSubsets faultSurface,
+			AbstractGriddedSurfaceWithSubsets faultSurface,
 			MagScalingRelationship magScalingRel,
 			double magScalingSigma,
 			double rupAspectRatio,
@@ -190,7 +190,7 @@ public class FloatingPoissonFaultSource implements Source {
 	 * fullFaultRupMagThresh = Double.MAX_VALUE.  Otherwise it's the same.
 	 */
 	public FloatingPoissonFaultSource(IncrementalMFD magDist,
-			AbstractEvenlyGriddedSurfaceWithSubsets faultSurface,
+			AbstractGriddedSurfaceWithSubsets faultSurface,
 			MagScalingRelationship magScalingRel,
 			double magScalingSigma,
 			double rupAspectRatio,
@@ -246,7 +246,7 @@ public class FloatingPoissonFaultSource implements Source {
 	 * This method makes and adds ruptures to the list
 	 */
 	private void addRupturesToList(IncrementalMFD magDist,
-			AbstractEvenlyGriddedSurfaceWithSubsets faultSurface,
+			AbstractGriddedSurfaceWithSubsets faultSurface,
 			MagScalingRelationship magScalingRel,
 			double magScalingSigma,
 			double rupAspectRatio,
@@ -388,7 +388,7 @@ public class FloatingPoissonFaultSource implements Source {
 	 * 
 	 * @param faultSurface
 	 */
-	private void mkApproxSourceSurface(AbstractEvenlyGriddedSurfaceWithSubsets faultSurface) {
+	private void mkApproxSourceSurface(AbstractGriddedSurfaceWithSubsets faultSurface) {
 
 		if(faultSurface.dip() != 90) {
 			int nRows = faultSurface.getNumRows();

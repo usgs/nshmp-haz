@@ -16,7 +16,7 @@ import org.opensha.geo.Locations;
  * @author Ned Field
  * @author Peter Powers
  */
-public class ApproxEvenlyGriddedSurface extends AbstractEvenlyGriddedSurfaceWithSubsets {
+public class ApproxEvenlyGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 
 	private LocationList upperTrace = null;
 	private LocationList lowerTrace = null;
@@ -24,6 +24,8 @@ public class ApproxEvenlyGriddedSurface extends AbstractEvenlyGriddedSurfaceWith
 	// lazily initialized on first call to getAvgDip()
 	private double avgDip; // TODO kill?
 
+	// TODO I feel like this could simply subclass gridded surface with a differnt init method
+	// for the Container2D data ??
 
 //	/**
 //	 * This constructor creates a blank surface enabling the user to populate 
