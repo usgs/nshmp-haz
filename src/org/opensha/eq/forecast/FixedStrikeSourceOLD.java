@@ -151,11 +151,11 @@ class FixedStrikeSourceOLD implements Source {
 	 * enhanced for-loops and was losing class information when iterating over
 	 * sources and ruptures.
 	 */
-	@Override
-	public List<Rupture> getRuptureList() {
-		throw new UnsupportedOperationException(
-			"A FinitePointSourceOLD does not allow access to the list of all possible ruptures.");
-	}
+//	@Override
+//	public List<Rupture> getRuptureList() {
+//		throw new UnsupportedOperationException(
+//			"A FinitePointSourceOLD does not allow access to the list of all possible ruptures.");
+//	}
 
 	@Override
 	public Iterator<Rupture> iterator() {

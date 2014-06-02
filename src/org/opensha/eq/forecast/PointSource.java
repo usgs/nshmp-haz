@@ -76,10 +76,10 @@ class PointSource implements Source {
 		return "PointSource: " + loc;
 	}
 
-	@Override
-	public List<Rupture> getRuptureList() {
-		throw new UnsupportedOperationException("PointSources are dynamic");
-	}
+//	@Override
+//	public List<Rupture> getRuptureList() {
+//		throw new UnsupportedOperationException("PointSources are dynamic");
+//	}
 
 //	@Override
 //	public RuptureSurface surface() {

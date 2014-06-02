@@ -93,6 +93,7 @@ public class FaultSource implements Source {
 			size += rupList.size();
 			rupCount.add(size);
 		}
+		checkState(size > 0, "FaultSource has no ruptures");
 	}
 
 	@Override
@@ -105,12 +106,8 @@ public class FaultSource implements Source {
 		return size;
 	}
 
-	// for now, ruptures are nested in sources which we iterate over
 	@Override
 	public Rupture getRupture(int idx) {
-		// TODO should never have a source with no ruptures; somewhere earlier
-		// an IAE should have been thrown
-		if (size() == 0) return null;
 		// zero is built in to rupCount array; unless a negative idx is
 		// supplied, if statement below should never be entered on first i
 		for (int i = 0; i < rupCount.size(); i++) {
@@ -121,12 +118,6 @@ public class FaultSource implements Source {
 		return null; // shouldn't get here
 	}
 	
-	@Override
-	public List<Rupture> getRuptureList() {
-		throw new UnsupportedOperationException(
-			"A FaultSource does not allow access to the list of all possible sources.");
-	}
-
 	@Override
 	public Iterator<Rupture> iterator() {
 		// @formatter:off
@@ -259,14 +250,13 @@ public class FaultSource implements Source {
 		
 		Builder name(String name) {
 			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
-				"%s name may not be empty or null", ID);
+				"%s name may not be empty or null");
 			this.name = name;
 			return this;
 		}
 
 		Builder trace(LocationList trace) {
-			checkArgument(
-				checkNotNull(trace, "Trace may not be null", ID).size() > 1,
+			checkArgument(checkNotNull(trace, "Trace may not be null").size() > 1,
 				"Trace must have at least 2 points");
 			this.trace = trace;
 			return this;

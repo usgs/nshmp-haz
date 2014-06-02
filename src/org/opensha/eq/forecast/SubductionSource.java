@@ -90,15 +90,14 @@ public class SubductionSource extends FaultSource {
 		FloatStyle floatStyle = FULL_DOWN_DIP;
 
 		Builder lowerTrace(LocationList trace) {
-			checkArgument(
-				checkNotNull(trace, "Trace may not be null").size() > 1,
+			checkArgument(checkNotNull(trace, "Trace may not be null").size() > 1,
 				"Trace must have at least 2 points");
 			this.lowerTrace = trace;
 			return this;
 		}
 		
 		SubductionSource buildSubductionSource() {
-			checkState(trace != null, "%s trace not set", ID);
+			checkState(lowerTrace != null, "%s lower trace not set", ID);
 			validateState(ID);
 
 			ApproxEvenlyGriddedSurface surface = new ApproxEvenlyGriddedSurface(trace, lowerTrace,
