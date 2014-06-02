@@ -131,7 +131,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
      * @return
      */
     public double getGridSpacingAlongStrike() {
-      return ((AbstractEvenlyGriddedSurface)data).getGridSpacingAlongStrike();
+      return ((AbstractGriddedSurface)data).getGridSpacingAlongStrike();
     }
 
 
@@ -141,7 +141,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
      * @return
      */
     public double getGridSpacingDownDip() {
-      return ((AbstractEvenlyGriddedSurface)data).getGridSpacingDownDip();
+      return ((AbstractGriddedSurface)data).getGridSpacingDownDip();
     }
     
 	/**
@@ -149,7 +149,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 	 * @return
 	 */
 	public Boolean isGridSpacingSame() {
-		return ((AbstractEvenlyGriddedSurface)data).isGridSpacingSame();
+		return ((AbstractGriddedSurface)data).isGridSpacingSame();
 	}
 
  
@@ -173,7 +173,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 
 	@Override
 	public double dipDirection() {
-		return ( ( AbstractEvenlyGriddedSurface) data ).dipDirection();
+		return ( ( AbstractGriddedSurface) data ).dipDirection();
 	}
 
 

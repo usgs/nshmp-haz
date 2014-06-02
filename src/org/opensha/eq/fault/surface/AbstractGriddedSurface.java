@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
  *
  * @author revised by field
  */
-public abstract class AbstractEvenlyGriddedSurface  extends Container2DImpl<Location> implements GriddedSurface {
+public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> implements GriddedSurface {
 
 	protected double gridSpacingAlong;
 	protected double gridSpacingDown;
@@ -37,7 +37,7 @@ public abstract class AbstractEvenlyGriddedSurface  extends Container2DImpl<Loca
 	
 	
 	// no argument constructor needed by subclasses
-	public AbstractEvenlyGriddedSurface() {}
+	public AbstractGriddedSurface() {}
 	
 	
 	/**
@@ -48,7 +48,7 @@ public abstract class AbstractEvenlyGriddedSurface  extends Container2DImpl<Loca
 	 * @param  numCols  Number of grid points along length of fault
 	 * @param  gridSpacing  Grid Spacing
 	 */
-	public AbstractEvenlyGriddedSurface( int numRows, int numCols,double gridSpacing ) {
+	public AbstractGriddedSurface( int numRows, int numCols,double gridSpacing ) {
 		super( numRows, numCols );
 		gridSpacingAlong = gridSpacing;
 		gridSpacingDown = gridSpacing;
@@ -63,7 +63,7 @@ public abstract class AbstractEvenlyGriddedSurface  extends Container2DImpl<Loca
 	 * @param  numCols  Number of grid points along length of fault
 	 * @param  gridSpacing  Grid Spacing
 	 */
-	public AbstractEvenlyGriddedSurface( int numRows, int numCols,double gridSpacingAlong, double gridSpacingDown) {
+	public AbstractGriddedSurface( int numRows, int numCols,double gridSpacingAlong, double gridSpacingDown) {
 		super( numRows, numCols );
 		this.gridSpacingAlong = gridSpacingAlong;
 		this.gridSpacingDown = gridSpacingDown;

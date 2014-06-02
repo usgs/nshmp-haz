@@ -8,7 +8,7 @@ import java.util.List;
 import org.opensha.eq.fault.scaling.MagAreaRelationship;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.eq.fault.surface.AbstractEvenlyGriddedSurface;
+import org.opensha.eq.fault.surface.AbstractGriddedSurface;
 import org.opensha.eq.fault.surface.AbstractEvenlyGriddedSurfaceWithSubsets;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.BorderType;
@@ -346,7 +346,7 @@ public class FloatingPoissonFaultSource implements Source {
 	}
 
 //	@Override
-//	public AbstractEvenlyGriddedSurface surface() { return faultSurface; }
+//	public AbstractGriddedSurface surface() { return faultSurface; }
 
 	/**
 	 * @return the total num of rutures for all magnitudes

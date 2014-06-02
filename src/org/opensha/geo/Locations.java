@@ -313,7 +313,7 @@ public final class Locations {
 	 *         {@code Location}
 	 */
 	// public static double distanceToSurf(Location loc,
-	// AbstractEvenlyGriddedSurface rupSurf) {
+	// AbstractGriddedSurface rupSurf) {
 	// double minDistance = Double.MAX_VALUE;
 	// double horzDist, vertDist, totalDist;
 	// for (Location loc2 : rupSurf) {

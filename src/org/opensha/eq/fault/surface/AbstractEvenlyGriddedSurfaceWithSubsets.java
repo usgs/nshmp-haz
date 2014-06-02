@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * <b>Title:</b> AbstractEvenlyGriddedSurface<p>
+ * <b>Title:</b> AbstractGriddedSurface<p>
  *
  * <b>Description:</b> This class extends GriddedSurface to included sampling subset regions.
  *
  */
-public abstract class AbstractEvenlyGriddedSurfaceWithSubsets extends AbstractEvenlyGriddedSurface  {
+public abstract class AbstractEvenlyGriddedSurfaceWithSubsets extends AbstractGriddedSurface  {
 	
 	// no argument constructor needed by subclasses
 	public AbstractEvenlyGriddedSurfaceWithSubsets() {}
