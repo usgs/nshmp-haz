@@ -70,12 +70,12 @@ public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurf
 	// ***************************************************************
 
 
-	public LocationList getFaultTrace() { return faultTrace; }
-
-	public double getUpperSeismogenicDepth() { return upperSeismogenicDepth; }
-
-	public double getLowerSeismogenicDepth() { return lowerSeismogenicDepth; }
-
+//	public LocationList getFaultTrace() { return faultTrace; }
+//
+//	public double getUpperSeismogenicDepth() { return upperSeismogenicDepth; }
+//
+//	public double getLowerSeismogenicDepth() { return lowerSeismogenicDepth; }
+//
 
 	/**
 	 * This method checks the simple-fault data to make sure it's all OK.
@@ -83,7 +83,7 @@ public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurf
 	 */
 	protected void assertValidData() {
 
-		checkNotNull(faultTrace, "Fault Trace is null");
+//		checkNotNull(faultTrace, "Fault Trace is null");
 //		if( faultTrace == null ) throw new FaultException(C + "Fault Trace is null");
 
 		Faults.validateDip(aveDip);
@@ -115,37 +115,37 @@ public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurf
 		}
 	}
 	
-	@Override
-	public double dip() {
-		return aveDip;
-	}
+//	@Override
+//	public double dip() {
+//		return aveDip;
+//	}
+//
+//	@Override
+//	public double depth() {
+//		return upperSeismogenicDepth;
+//	}
+//
+//	@Override
+//	public double strike() {
+//		return Faults.strike(faultTrace);
+//	}
 
-	@Override
-	public double depth() {
-		return upperSeismogenicDepth;
-	}
-
-	@Override
-	public double strike() {
-		return Faults.strike(faultTrace);
-	}
-
-	@Override
-	public LocationList getUpperEdge() {
-		// check that the location depths in faultTrace are same as
-		// upperSeismogenicDepth
-		double aveTraceDepth = 0;
-		for (Location loc : faultTrace)
-			aveTraceDepth += loc.depth();
-		aveTraceDepth /= faultTrace.size();
-		double diff = Math.abs(aveTraceDepth - upperSeismogenicDepth); // km
-		if (diff < 0.001) return faultTrace;
-		throw new RuntimeException(
-			" method not yet implemented where depths in the " +
-				"trace differ from upperSeismogenicDepth (and projecting will create " +
-				"loops for FrankelGriddedSurface projections; aveTraceDepth=" +
-				aveTraceDepth + "\tupperSeismogenicDepth=" +
-				upperSeismogenicDepth);
-	}
+//	@Override
+//	public LocationList getUpperEdge() {
+//		// check that the location depths in faultTrace are same as
+//		// upperSeismogenicDepth
+//		double aveTraceDepth = 0;
+//		for (Location loc : faultTrace)
+//			aveTraceDepth += loc.depth();
+//		aveTraceDepth /= faultTrace.size();
+//		double diff = Math.abs(aveTraceDepth - upperSeismogenicDepth); // km
+//		if (diff < 0.001) return faultTrace;
+//		throw new RuntimeException(
+//			" method not yet implemented where depths in the " +
+//				"trace differ from upperSeismogenicDepth (and projecting will create " +
+//				"loops for FrankelGriddedSurface projections; aveTraceDepth=" +
+//				aveTraceDepth + "\tupperSeismogenicDepth=" +
+//				upperSeismogenicDepth);
+//	}
 
 }

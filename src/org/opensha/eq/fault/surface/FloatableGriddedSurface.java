@@ -3,6 +3,7 @@ package org.opensha.eq.fault.surface;
 import static org.opensha.geo.Locations.linearDistanceFast;
 import static org.opensha.geo.Locations.location;
 import static org.opensha.geo.LocationVector.createWithPlunge;
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.RoundingMode;
@@ -32,14 +33,14 @@ import com.google.common.math.DoubleMath;
  * @author Ned Field.
  */
 
-public class FloatableGriddedSurface extends GriddedSurfFromSimpleFaultData {
-
-//	final static boolean D = false;
+public class FloatableGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 	
-	private double aveDipDir = Double.NaN;
+	private LocationList faultTrace;
+	private double upperSeismogenicDepth = Double.NaN;
+	private double lowerSeismogenicDepth = Double.NaN;
+	private double aveDip;
 
-//	protected final static double PI_RADIANS = Math.PI / 180;
-//	protected final static String ERR = " is null, unable to process.";
+	private double aveDipDir = Double.NaN;
 
 
 	/**
@@ -49,16 +50,59 @@ public class FloatableGriddedSurface extends GriddedSurfFromSimpleFaultData {
 	public FloatableGriddedSurface(LocationList faultTrace, double aveDip, double upperSeismogenicDepth,
 			double lowerSeismogenicDepth, double strikeSpacing, double dipSpacing) {
 
-		super(faultTrace, aveDip, upperSeismogenicDepth, lowerSeismogenicDepth, strikeSpacing, dipSpacing);
+		double length = faultTrace.length();
+		double gridSpacingAlong = length/Math.ceil(length/strikeSpacing);
+		double downDipWidth = (lowerSeismogenicDepth-upperSeismogenicDepth)/Math.sin(aveDip * GeoTools.TO_RAD);
+		double gridSpacingDown = downDipWidth/Math.ceil(downDipWidth/dipSpacing);
+
+		set(faultTrace, aveDip, upperSeismogenicDepth, lowerSeismogenicDepth, gridSpacingAlong, gridSpacingDown);
+
 		createEvenlyGriddedSurface();
 	}
 
-
-	@Override
-	public double dipDirection() {
-		return aveDipDir;
+	private void set(LocationList faultTrace, double aveDip, double upperSeismogenicDepth,
+			double lowerSeismogenicDepth, double gridSpacingAlong, double gridSpacingDown)	{
+		this.faultTrace =faultTrace;
+		this.aveDip =aveDip;
+		this.upperSeismogenicDepth = upperSeismogenicDepth;
+		this.lowerSeismogenicDepth =lowerSeismogenicDepth;
+		this.gridSpacingAlong = gridSpacingAlong;
+		this.gridSpacingDown = gridSpacingDown;
+		this.sameGridSpacing = true;
+		if(gridSpacingDown != gridSpacingAlong) sameGridSpacing = false;
 	}
 
+
+	private void assertValidState() {
+
+		// TODO revisit; should only need to validate derived values; all value
+		// from constructor should be valid
+		
+//		checkNotNull(faultTrace, "Fault Trace is null");
+//		if( faultTrace == null ) throw new FaultException(C + "Fault Trace is null");
+
+		Faults.validateDip(aveDip);
+		Faults.validateDepth(lowerSeismogenicDepth);
+		Faults.validateDepth(upperSeismogenicDepth);
+		checkArgument(upperSeismogenicDepth < lowerSeismogenicDepth);
+		
+		checkArgument(!Double.isNaN(gridSpacingAlong), "invalid gridSpacing");
+//		if( gridSpacingAlong == Double.NaN ) throw new FaultException(C + "invalid gridSpacing");
+
+		double depth = faultTrace.first().depth();
+		checkArgument(depth <= upperSeismogenicDepth,
+			"depth on faultTrace locations %s must be <= upperSeisDepth %s",
+			depth, upperSeismogenicDepth);
+		//		if(depth > upperSeismogenicDepth)
+//			throw new FaultException(C + "depth on faultTrace locations must be < upperSeisDepth");
+
+		for (Location loc : faultTrace) {
+			if (loc.depth() != depth) {
+				checkArgument(loc.depth() == depth, "All depth on faultTrace locations must be equal");
+//				throw new FaultException(C + ":All depth on faultTrace locations must be equal");
+			}
+		}
+	}
 
 	/**
 	 * Creates the Stirling Gridded Surface from the Simple Fault Data
@@ -68,7 +112,7 @@ public class FloatableGriddedSurface extends GriddedSurfFromSimpleFaultData {
 
 //		if( D ) System.out.println("Starting createEvenlyGriddedSurface");
 
-		assertValidData();
+		assertValidState();
 
 		final int numSegments = faultTrace.size() - 1;
 		final double avDipRadians = aveDip * GeoTools.TO_RAD;
@@ -457,10 +501,49 @@ public class FloatableGriddedSurface extends GriddedSurfFromSimpleFaultData {
 	}
 
 	@Override
+	public double dipDirection() {
+		return aveDipDir;
+	}
+
+	@Override
+	public double dip() {
+		return aveDip;
+	}
+
+	@Override
+	public double depth() {
+		return upperSeismogenicDepth;
+	}
+
+	@Override
+	public double strike() {
+		return Faults.strike(faultTrace);
+	}
+
+
+	@Override
 	public Location centroid() {
 		throw new UnsupportedOperationException("Implement me!");
 		// TODO can this be moved up to abstract???
 	}
 
+	// TODO is this really necessary; compund rupture surface?
+	@Override
+	public LocationList getUpperEdge() {
+		// check that the location depths in faultTrace are same as
+		// upperSeismogenicDepth
+		double aveTraceDepth = 0;
+		for (Location loc : faultTrace)
+			aveTraceDepth += loc.depth();
+		aveTraceDepth /= faultTrace.size();
+		double diff = Math.abs(aveTraceDepth - upperSeismogenicDepth); // km
+		if (diff < 0.001) return faultTrace;
+		throw new RuntimeException(
+			" method not yet implemented where depths in the " +
+				"trace differ from upperSeismogenicDepth (and projecting will create " +
+				"loops for FrankelGriddedSurface projections; aveTraceDepth=" +
+				aveTraceDepth + "\tupperSeismogenicDepth=" +
+				upperSeismogenicDepth);
+	}
 
 }

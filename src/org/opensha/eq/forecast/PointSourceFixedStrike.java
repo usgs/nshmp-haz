@@ -181,6 +181,8 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		Location p1;
 		Location p2;
 		
+		// TODO see RectangularSurface
+		
 		FixedStrikeSurface(Location loc) {
 			super(loc);
 		}
