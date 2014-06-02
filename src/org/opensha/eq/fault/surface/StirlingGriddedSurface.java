@@ -34,81 +34,25 @@ import com.google.common.math.DoubleMath;
 
 public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 
-	final static boolean D = false;
+//	final static boolean D = false;
 	
-	protected double aveDipDir = Double.NaN;
+	private double aveDipDir = Double.NaN;
 
-	protected final static double PI_RADIANS = Math.PI / 180;
-	protected final static String ERR = " is null, unable to process.";
+//	protected final static double PI_RADIANS = Math.PI / 180;
+//	protected final static String ERR = " is null, unable to process.";
 
 
-	/**
-	 * This applies the  grid spacing exactly as given (trimming any remainder from the ends)
-	 * @param simpleFaultData
-	 * @param gridSpacing
-	 * @throws FaultException
-	 */
-//	public StirlingGriddedSurface(SimpleFaultData simpleFaultData, double gridSpacing) {
-//		super(simpleFaultData, gridSpacing);
-//		this.aveDipDir=simpleFaultData.getAveDipDir();
-//		createEvenlyGriddedSurface();
-//	}
-//	
 	/**
 	 * This applies the  grid spacing exactly as given (trimming any remainder from the ends),
 	 * and applies the ave-dip direction as computed from the faultTrace.
 	 */
 	public StirlingGriddedSurface(LocationList faultTrace, double aveDip, double upperSeismogenicDepth,
-			double lowerSeismogenicDepth, double gridSpacing) {
+			double lowerSeismogenicDepth, double strikeSpacing, double dipSpacing) {
 
-		super(faultTrace, aveDip, upperSeismogenicDepth, lowerSeismogenicDepth, gridSpacing);
+		super(faultTrace, aveDip, upperSeismogenicDepth, lowerSeismogenicDepth, strikeSpacing, dipSpacing);
 		createEvenlyGriddedSurface();
 	}
 
-
-	/**
-	 * This will fit the length & DDW of the fault exactly (no trimming) by adjusting the grid spacing
-	 * to just below the grid spacings given
-	 * @param simpleFaultData
-	 * @param maxGridSpacingAlong
-	 * @param maxGridSpacingDown
-	 * @throws FaultException
-	 */
-//	public StirlingGriddedSurface(SimpleFaultData simpleFaultData, double maxGridSpacingAlong, double maxGridSpacingDown) {
-//		super(simpleFaultData, maxGridSpacingAlong, maxGridSpacingDown);
-//		this.aveDipDir=simpleFaultData.getAveDipDir();
-//		createEvenlyGriddedSurface();
-//	}
-
-	/**
-	 * This applies the  grid spacing exactly as given (trimming any remainder from the ends),
-	 * and applies the given ave-dip direction (rather than computing this from the the faultTrace).
-	 */
-	public StirlingGriddedSurface(LocationList faultTrace, double aveDip, double upperSeismogenicDepth,
-			double lowerSeismogenicDepth, double gridSpacing,double aveDipDir ) {
-
-		super(faultTrace, aveDip, upperSeismogenicDepth, lowerSeismogenicDepth, gridSpacing);
-		this.aveDipDir = aveDipDir;
-		createEvenlyGriddedSurface(); 
-	}
-
-
-//	/**
-//	 * Stitch Together the fault sections. It assumes:
-//	 * 1. Sections are in correct order
-//	 * 2. Distance between end points of section in correct order is less than the distance to opposite end of section
-//	 * Upper seismogenic depth, sip aand lower seimogenic depth are area weighted.
-//	 * 
-//	 * @param simpleFaultData
-//	 * @param gridSpacing
-//	 * @throws FaultException
-//	 */
-//	public StirlingGriddedSurface(List<SimpleFaultData> simpleFaultData,
-//			double gridSpacing) throws FaultException {
-//
-//		super(simpleFaultData, gridSpacing);
-//		createEvenlyGriddedSurface();
-//	}
 
 	@Override
 	public double dipDirection() {
@@ -122,12 +66,12 @@ public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 	 */
 	private void createEvenlyGriddedSurface() {
 
-		if( D ) System.out.println("Starting createEvenlyGriddedSurface");
+//		if( D ) System.out.println("Starting createEvenlyGriddedSurface");
 
 		assertValidData();
 
 		final int numSegments = faultTrace.size() - 1;
-		final double avDipRadians = aveDip * PI_RADIANS;
+		final double avDipRadians = aveDip * GeoTools.TO_RAD;
 		final double gridSpacingCosAveDipRadians = gridSpacingDown * Math.cos( avDipRadians );
 		final double gridSpacingSinAveDipRadians = gridSpacingDown * Math.sin( avDipRadians );
 
@@ -148,7 +92,7 @@ public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 				aveDipDirectionRad = aveDipDir * GeoTools.TO_RAD;
 			}
 
-			if(D) System.out.println("\taveDipDirection = " + aveDipDirectionRad * GeoTools.TO_DEG);
+//			if(D) System.out.println("\taveDipDirection = " + aveDipDirectionRad * GeoTools.TO_DEG);
 
 
 			// Iterate over each Location in Fault Trace
@@ -185,14 +129,14 @@ public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 			int cols = 1 + Math.round((float) (segmentCumLenth[numSegments - 1] / gridSpacingAlong));
 
 
-			if(D) System.out.println("numLocs: = " + faultTrace.size());
-			if(D) System.out.println("numSegments: = " + numSegments);
-			if(D) System.out.println("firstLoc: = " + firstLoc);
-			if(D) System.out.println("lastLoc(): = " + lastLoc);
-			if(D) System.out.println("downDipWidth: = " + downDipWidth);
-			if(D) System.out.println("totTraceLength: = " + segmentCumLenth[ numSegments - 1]);
-			if(D) System.out.println("numRows: = " + rows);
-			if(D) System.out.println("numCols: = " + cols);
+//			if(D) System.out.println("numLocs: = " + faultTrace.size());
+//			if(D) System.out.println("numSegments: = " + numSegments);
+//			if(D) System.out.println("firstLoc: = " + firstLoc);
+//			if(D) System.out.println("lastLoc(): = " + lastLoc);
+//			if(D) System.out.println("downDipWidth: = " + downDipWidth);
+//			if(D) System.out.println("totTraceLength: = " + segmentCumLenth[ numSegments - 1]);
+//			if(D) System.out.println("numRows: = " + rows);
+//			if(D) System.out.println("numCols: = " + cols);
 
 
 			// Create GriddedSurface
@@ -207,14 +151,14 @@ public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 
 
 			// Loop over each column - ith_col is ith grid step along the fault trace
-			if( D ) System.out.println("   Iterating over columns up to " + cols );
+//			if( D ) System.out.println("   Iterating over columns up to " + cols );
 			while( ith_col < cols ){
 
-				if( D ) System.out.println("   ith_col = " + ith_col);
+//				if( D ) System.out.println("   ith_col = " + ith_col);
 
 				// calculate distance from column number and grid spacing
 				distanceAlong = ith_col * gridSpacingAlong;
-				if( D ) System.out.println("   distanceAlongFault = " + distanceAlong);
+//				if( D ) System.out.println("   distanceAlongFault = " + distanceAlong);
 
 				// Determine which segment distanceAlong is in
 				segmentNumber = 1;
@@ -224,12 +168,12 @@ public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 				// put back in last segment if grid point has just barely stepped off the end
 				if( segmentNumber == numSegments+1) segmentNumber--;
 
-				if( D ) System.out.println("   segmentNumber " + segmentNumber );
+//				if( D ) System.out.println("   segmentNumber " + segmentNumber );
 
 				// Calculate the distance from the last segment point
 				if ( segmentNumber > 1 ) distance = distanceAlong - segmentCumLenth[ segmentNumber - 2 ];
 				else distance = distanceAlong;
-				if( D ) System.out.println("   distanceFromLastSegPt " + distance );
+//				if( D ) System.out.println("   distanceFromLastSegPt " + distance );
 
 				// Calculate the grid location along fault trace and put into grid
 				location1 = faultTrace.get( segmentNumber - 1 );
@@ -255,13 +199,13 @@ public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 					topLocation = traceLocation;
 
 				set(0, ith_col, Location.copyOf(topLocation));
-				if( D ) System.out.println("   (x,y) topLocation = (0, " + ith_col + ") " + topLocation );
+//				if( D ) System.out.println("   (x,y) topLocation = (0, " + ith_col + ") " + topLocation );
 
 				// Loop over each row - calculating location at depth along the fault trace
 				ith_row = 1;
 				while(ith_row < rows){
 
-					if( D ) System.out.println("   ith_row = " + ith_row);
+//					if( D ) System.out.println("   ith_row = " + ith_row);
 
 					// Calculate location at depth and put into grid
 					hDistance = ith_row * gridSpacingCosAveDipRadians;
@@ -274,14 +218,14 @@ public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 
 					Location depthLocation = Locations.location( topLocation, dir );
 					set(ith_row, ith_col, Location.copyOf(depthLocation));
-					if( D ) System.out.println("    (x,y) depthLocation = (" + ith_row + ", " + ith_col + ") " + depthLocation );
+//					if( D ) System.out.println("    (x,y) depthLocation = (" + ith_row + ", " + ith_col + ") " + depthLocation );
 
 					ith_row++;
 				}
 				ith_col++;
 			}
 
-			if( D ) System.out.println("Ending createEvenlyGriddedSurface");
+//			if( D ) System.out.println("Ending createEvenlyGriddedSurface");
 
 			/*
         // test for fittings surfaces exactly
@@ -425,7 +369,7 @@ public class StirlingGriddedSurface extends GriddedSurfFromSimpleFaultData {
 		List<Location> topLocs = Lists.newArrayList();
 //		LocationList botTrace = new LocationList();
 		List<Location> botLocs = Lists.newArrayList();
-		final double avDipRadians = aveDip * PI_RADIANS;
+		final double avDipRadians = aveDip * GeoTools.TO_RAD;
 		double aveDipDirectionRad;
 		if( Double.isNaN(aveDipDir) ) {
 			aveDipDirectionRad = Faults.dipDirectionRad(faultTrace);

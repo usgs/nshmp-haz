@@ -40,39 +40,39 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 	public AbstractGriddedSurface() {}
 	
 	
-	/**
-	 *  Constructor for the GriddedSurface object; this sets both the grid spacing along
-	 *  and down dip to the value passed in
-	 *
-	 * @param  numRows  Number of grid points along width of fault
-	 * @param  numCols  Number of grid points along length of fault
-	 * @param  gridSpacing  Grid Spacing
-	 */
-	public AbstractGriddedSurface( int numRows, int numCols,double gridSpacing ) {
-		super( numRows, numCols );
-		gridSpacingAlong = gridSpacing;
-		gridSpacingDown = gridSpacing;
-		sameGridSpacing = true;
-	}
-	
-	/**
-	 *  Constructor for the GriddedSurface object; this sets both the grid spacing along
-	 *  and down dip to the value passed in
-	 *
-	 * @param  numRows  Number of grid points along width of fault
-	 * @param  numCols  Number of grid points along length of fault
-	 * @param  gridSpacing  Grid Spacing
-	 */
-	public AbstractGriddedSurface( int numRows, int numCols,double gridSpacingAlong, double gridSpacingDown) {
-		super( numRows, numCols );
-		this.gridSpacingAlong = gridSpacingAlong;
-		this.gridSpacingDown = gridSpacingDown;
-		if(gridSpacingAlong == gridSpacingDown)
-			sameGridSpacing = true;
-		else
-			sameGridSpacing = false;
-	}
-
+//	/**
+//	 *  Constructor for the GriddedSurface object; this sets both the grid spacing along
+//	 *  and down dip to the value passed in
+//	 *
+//	 * @param  numRows  Number of grid points along width of fault
+//	 * @param  numCols  Number of grid points along length of fault
+//	 * @param  gridSpacing  Grid Spacing
+//	 */
+//	public AbstractGriddedSurface( int numRows, int numCols,double gridSpacing ) {
+//		super( numRows, numCols );
+//		gridSpacingAlong = gridSpacing;
+//		gridSpacingDown = gridSpacing;
+//		sameGridSpacing = true;
+//	}
+//	
+//	/**
+//	 *  Constructor for the GriddedSurface object; this sets both the grid spacing along
+//	 *  and down dip to the value passed in
+//	 *
+//	 * @param  numRows  Number of grid points along width of fault
+//	 * @param  numCols  Number of grid points along length of fault
+//	 * @param  gridSpacing  Grid Spacing
+//	 */
+//	public AbstractGriddedSurface( int numRows, int numCols,double gridSpacingAlong, double gridSpacingDown) {
+//		super( numRows, numCols );
+//		this.gridSpacingAlong = gridSpacingAlong;
+//		this.gridSpacingDown = gridSpacingDown;
+//		if(gridSpacingAlong == gridSpacingDown)
+//			sameGridSpacing = true;
+//		else
+//			sameGridSpacing = false;
+//	}
+//
 
 
 	@Override

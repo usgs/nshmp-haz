@@ -21,57 +21,6 @@ public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurf
 	protected double lowerSeismogenicDepth = Double.NaN;
 	protected double aveDip;
 	
-	/**
-	 * No are constructor needed by subclasses
-	 */
-	protected GriddedSurfFromSimpleFaultData() {}
-
-	/**
-	 * This applies the grid spacing exactly as given, both along strike and down dip, clipping
-	 * any remainder
-	 * @param simpleFaultData
-	 * @param gridSpacing
-	 * @throws FaultException
-	 */
-//	protected GriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData, double gridSpacing) {
-//
-//		this(simpleFaultData.getFaultTrace(), simpleFaultData.getAveDip(),
-//				simpleFaultData.getUpperSeismogenicDepth(),
-//				simpleFaultData.getLowerSeismogenicDepth(), gridSpacing);
-//
-//	}
-
-	/**
-	 * This applies the grid spacing exactly as given, both along strike and down dip, clipping
-	 * any remainder
-	 * @param faultTrace
-	 * @param aveDip
-	 * @param upperSeismogenicDepth
-	 * @param lowerSeismogenicDepth
-	 * @param gridSpacing
-	 * @throws FaultException
-	 */
-	protected GriddedSurfFromSimpleFaultData(LocationList faultTrace, double aveDip, double upperSeismogenicDepth,
-			double lowerSeismogenicDepth, double gridSpacing) {
-		set(faultTrace, aveDip, upperSeismogenicDepth, lowerSeismogenicDepth, gridSpacing, gridSpacing);
-	}
-		
-	/**
-	 * This constructor will adjust the grid spacings along strike and down dip to exactly fill the surface
-	 * (not cut off ends), leaving the grid spacings just less then the originals.
-	 * @param simpleFaultData
-	 * @param maxGridSpacingAlong - maximum grid spacing along strike
-	 * @param maxGridSpacingDown - maximum grid spacing down dip
-	 * @throws FaultException
-	 */
-//	protected GriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData,
-//			double maxGridSpacingAlong, double maxGridSpacingDown) {
-//
-//		this(simpleFaultData.getFaultTrace(), simpleFaultData.getAveDip(),
-//				simpleFaultData.getUpperSeismogenicDepth(), simpleFaultData.getLowerSeismogenicDepth(),
-//				maxGridSpacingAlong, maxGridSpacingDown);
-//
-//	}
 
 	/**
 	 * This constructor will adjust the grid spacings along strike and down dip to exactly fill the surface

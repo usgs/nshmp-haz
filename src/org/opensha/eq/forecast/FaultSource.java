@@ -92,7 +92,7 @@ public class FaultSource implements Source {
 		double bottom = top + width * Math.sin(dip * GeoTools.TO_RAD);
 //		SimpleFaultData sfd = new SimpleFaultData(dip, lowerSeis, top, trace);
 		
-		surface = new StirlingGriddedSurface(trace, dip, top, bottom, 1.0);
+		surface = new StirlingGriddedSurface(trace, dip, top, bottom, 1.0, 1.0);
 	}
 	
 	private void initRuptures() {
