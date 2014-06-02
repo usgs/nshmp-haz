@@ -92,6 +92,7 @@ public class FaultSource implements Source {
 			ruptureLists.add(rupList);
 			size += rupList.size();
 			rupCount.add(size);
+			
 		}
 		checkState(size > 0, "FaultSource has no ruptures");
 	}

@@ -97,6 +97,12 @@ public class SubductionSource extends FaultSource {
 		}
 		
 		SubductionSource buildSubductionSource() {
+			
+			// dip and width will be computed lazily by subduction
+			// surface implementation; set to NaN to satisfy builder
+			this.dip = Double.NaN;
+			this.width = Double.NaN;
+			
 			checkState(lowerTrace != null, "%s lower trace not set", ID);
 			validateState(ID);
 

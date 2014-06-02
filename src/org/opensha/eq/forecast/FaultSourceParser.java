@@ -326,9 +326,9 @@ class FaultSourceParser extends DefaultHandler {
 							.append(mfd.getMetadataString()).toString());
 					}
 				} else {
-					// aleatory switch added to handle floating M7.4 CH ruptures
-					// on Wasatch that do not have long aleatory tails, may
-					// be used elsewhere
+					
+					// single MFDs with epi uncertainty are moment balanced at the
+					// central/single magnitude of the distribution
 					
 					double moRate = tmr * mfdWeight;
 					IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(epiMag, moRate, data.floats);
@@ -353,7 +353,7 @@ class FaultSourceParser extends DefaultHandler {
 						.append(LF).append(mfd.getMetadataString()).toString());
 				}
 			} else {
-				IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(data.m, mfdWeight * data.a, data.floats);
+				IncrementalMFD mfd = MFDs.newSingleMFD(data.m, mfdWeight * data.a, data.floats);
 				mfds.add(mfd);
 				if (log.isLoggable(FINE)) {
 					log.fine(new StringBuilder("Single MFD [-epi -ale]: ")

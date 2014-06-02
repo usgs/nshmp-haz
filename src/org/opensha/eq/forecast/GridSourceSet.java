@@ -219,7 +219,8 @@ public class GridSourceSet implements SourceSet<PointSource> {
 		}
 		
 		Builder strike(double strike) {
-			this.strike = validateStrike(strike);
+			// unkown strike allowed for grid sources
+			this.strike = Double.isNaN(strike)? strike : validateStrike(strike);
 			return this;
 		}
 

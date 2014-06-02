@@ -111,7 +111,7 @@ class SubductionSourceParser extends DefaultHandler {
 					break;
 		
 				case MAG_FREQ_DIST:
-					sourceBuilder.mfd(buildMFD(atts));
+					sourceBuilder.mfd(buildMFD(atts, sourceSet.weight()));
 					break;
 	
 				case GEOMETRY:
@@ -184,17 +184,17 @@ class SubductionSourceParser extends DefaultHandler {
 		this.locator = locator;
 	}
 	
-	private static IncrementalMFD buildMFD(Attributes atts) {
+	private static IncrementalMFD buildMFD(Attributes atts, double setWeight) {
 		// TODO revisit, clean, and handle exceptions
 		MFD_Type type = MFD_Type.valueOf(atts.getValue("type"));
 		switch (type) {
 			case GR:
-				return buildGR(atts);
+				return buildGR(atts, setWeight);
 			case INCR:
 				throw new UnsupportedOperationException(
 					"INCR not yet implemented");
 			case SINGLE:
-				return buildSingle(atts);
+				return buildSingle(atts, setWeight);
 			case GR_TAPER:
 				throw new UnsupportedOperationException(
 					"GR_TAPER not yet implemented");
@@ -208,13 +208,13 @@ class SubductionSourceParser extends DefaultHandler {
 	 * Builds GR MFD. Method will throw IllegalStateException if attribute
 	 * values yield an MFD with no magnitude bins.
 	 */
-	private static IncrementalMFD buildGR(Attributes atts) {
+	private static IncrementalMFD buildGR(Attributes atts, double setWeight) {
 		double a = readDouble(A, atts);
 		double b = readDouble(B, atts);
 		double mMin = readDouble(M_MIN, atts);
 		double mMax = readDouble(M_MAX, atts);
 		double dMag = readDouble(D_MAG, atts);
-		double weight = readDouble(WEIGHT, atts);
+		double weight = readDouble(WEIGHT, atts) * setWeight;
 
 		int nMag = MFDs.magCount(mMin, mMax, dMag);
 		checkState(nMag > 0, "GR MFD with no mags");
@@ -226,27 +226,25 @@ class SubductionSourceParser extends DefaultHandler {
 			dMag, nMag, b, tmr * weight);
 
 		if (log.isLoggable(FINE)) {
-			log.fine(new StringBuilder().append(mfd.getMetadataString())
-				.toString());
+			log.fine(new StringBuilder().append(mfd.getMetadataString()).toString());
 		}
 		return mfd;
 	}
 
 	/* Builds single MFD */
-	private static IncrementalMFD buildSingle(Attributes atts) {
+	private static IncrementalMFD buildSingle(Attributes atts, double setWeight) {
 		
 		double a = readDouble(A, atts);
 		double m = readDouble(M, atts);
 		boolean floats = readBoolean(FLOATS, atts);
-		double weight = readDouble(WEIGHT, atts);
+		double weight = readDouble(WEIGHT, atts) * setWeight;
 
 		if (log.isLoggable(INFO)) log.info("MFD: SINGLE");
 
-		IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(m, weight * a, floats);
+		IncrementalMFD mfd = MFDs.newSingleMFD(m, weight * a, floats);
 		
 		if (log.isLoggable(FINE)) {
-			log.fine(new StringBuilder().append(mfd.getMetadataString())
-				.toString());
+			log.fine(new StringBuilder().append(mfd.getMetadataString()).toString());
 		}
 		return mfd;
 	}
