@@ -20,7 +20,7 @@ public class Surfaces {
 	 * @param surf
 	 * @return
 	 */
-	public static String getSurfaceInfo(EvenlyGriddedSurface surf) {
+	public static String getSurfaceInfo(GriddedSurface surf) {
 		Location loc1 = surf.getLocation(0, 0);
 		Location loc2 = surf.getLocation(0,surf.getNumCols() - 1);
 		Location loc3 = surf.getLocation(surf.getNumRows()-1, 0);
@@ -41,7 +41,7 @@ public class Surfaces {
 				(float) loc4.depth() + "\n");
 	}
 	
-	public static double getFractionOfSurfaceInRegion(EvenlyGriddedSurface surface, Region region) {
+	public static double getFractionOfSurfaceInRegion(GriddedSurface surface, Region region) {
 		double numInside=0;
 		for(Location loc: surface) {
 			if(region.contains(loc)) numInside += 1;
@@ -61,7 +61,7 @@ public class Surfaces {
 	 * @param surface2 RuptureSurface 
 	 * @return distance in km
 	 */
-	public static double getMinDistanceBetweenSurfaces(EvenlyGriddedSurface surface1, EvenlyGriddedSurface surface2) {
+	public static double getMinDistanceBetweenSurfaces(GriddedSurface surface1, GriddedSurface surface2) {
 		Iterator<Location> it = surface1.iterator();
 		double min3dDist = Double.POSITIVE_INFINITY;
 		double dist;

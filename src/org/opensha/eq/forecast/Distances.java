@@ -7,7 +7,7 @@ import java.awt.geom.Path2D;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha.eq.fault.surface.EvenlyGriddedSurface;
+import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.BorderType;
 import org.opensha.geo.GeoTools;
@@ -56,7 +56,7 @@ public final class Distances {
 	 * @param loc
 	 * @return
 	 */
-	public static Distances compute(EvenlyGriddedSurface surface, Location loc) {
+	public static Distances compute(GriddedSurface surface, Location loc) {
 		
 		Location loc1 = loc;
 		Location loc2;

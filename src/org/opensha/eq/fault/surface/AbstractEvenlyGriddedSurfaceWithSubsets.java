@@ -6,7 +6,7 @@ import java.util.Iterator;
 /**
  * <b>Title:</b> AbstractEvenlyGriddedSurface<p>
  *
- * <b>Description:</b> This class extends EvenlyGriddedSurface to included sampling subset regions.
+ * <b>Description:</b> This class extends GriddedSurface to included sampling subset regions.
  *
  */
 public abstract class AbstractEvenlyGriddedSurfaceWithSubsets extends AbstractEvenlyGriddedSurface  {

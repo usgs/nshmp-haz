@@ -106,7 +106,7 @@ public class FloatingPoissonFaultSource implements Source {
 	 * by the floatTypeFlag described below. All magnitudes below minMag are given a zero probability,
 	 * and all those greater than or equal to fullFaultRupMagThresh are forced to rupture the entire fault.
 	 * @param magDist - any incremental mag. freq. dist. object
-	 * @param faultSurface - any EvenlyGriddedSurface representation of the fault
+	 * @param faultSurface - any GriddedSurface representation of the fault
 	 * @param magScalingRel - any magAreaRelationship or magLengthRelationthip
 	 * @param magScalingSigma - uncertainty of the length(mag) or area(mag) relationship
 	 * @param rupAspectRatio - ratio of rupture length to rupture width

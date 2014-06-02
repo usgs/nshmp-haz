@@ -23,7 +23,7 @@ import com.google.common.math.DoubleMath;
 
 /**
  * <b>Title:</b> StirlingGriddedSurface.   <br>
- * <b>Description: This creates an EvenlyGriddedSurface
+ * <b>Description: This creates an GriddedSurface
  * representation of the fault using a scheme described by Mark Stirling
  * to Ned Field in 2001, where grid points are projected down dip at
  * an angle perpendicular to the end-points of the faultTrace (or in aveDipDir

@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
- * <b>Title:</b> EvenlyGriddedSurface<p>
+ * <b>Title:</b> GriddedSurface<p>
  * <b>Description:</b>
  *
  * This represents 2D container of Location objects defining a geographical surface.
@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
  *
  * @author revised by field
  */
-public abstract class AbstractEvenlyGriddedSurface  extends Container2DImpl<Location> implements EvenlyGriddedSurface {
+public abstract class AbstractEvenlyGriddedSurface  extends Container2DImpl<Location> implements GriddedSurface {
 
 	protected double gridSpacingAlong;
 	protected double gridSpacingDown;
@@ -41,7 +41,7 @@ public abstract class AbstractEvenlyGriddedSurface  extends Container2DImpl<Loca
 	
 	
 	/**
-	 *  Constructor for the EvenlyGriddedSurface object; this sets both the grid spacing along
+	 *  Constructor for the GriddedSurface object; this sets both the grid spacing along
 	 *  and down dip to the value passed in
 	 *
 	 * @param  numRows  Number of grid points along width of fault
@@ -56,7 +56,7 @@ public abstract class AbstractEvenlyGriddedSurface  extends Container2DImpl<Loca
 	}
 	
 	/**
-	 *  Constructor for the EvenlyGriddedSurface object; this sets both the grid spacing along
+	 *  Constructor for the GriddedSurface object; this sets both the grid spacing along
 	 *  and down dip to the value passed in
 	 *
 	 * @param  numRows  Number of grid points along width of fault

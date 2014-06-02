@@ -4,7 +4,7 @@ import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 
 
-public interface EvenlyGriddedSurface extends Container2D<Location>, RuptureSurface {
+public interface GriddedSurface extends Container2D<Location>, RuptureSurface {
 	
 	/**
 	 * Returns the grid spacing along strike

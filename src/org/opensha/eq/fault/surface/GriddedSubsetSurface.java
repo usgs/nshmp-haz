@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
 /**
  * <b>Title:</b> GriddedSubsetSurface<p>
  *
- * <b>Description:</b> This represents a subset of an EvenlyGriddedSurface
+ * <b>Description:</b> This represents a subset of an GriddedSurface
  * (as a pointer, not duplicated in memory)
  *
  * <b>Note:</b> This class is purely a convinience class that translates indexes so the
@@ -26,13 +26,13 @@ import com.google.common.collect.Lists;
  *
  * @author     Steven W. Rock & revised by Ned Field
  */
-public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implements EvenlyGriddedSurface {
+public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implements GriddedSurface {
 	
 	// for distance measures
 //	Location siteLocForDistCalcs= null; //new Location(Double.NaN,Double.NaN);
 //	Location siteLocForDistXCalc= null; //new Location(Double.NaN,Double.NaN);
 //	double distanceJB, distanceSeis, distanceRup, distanceX;
-	EvenlyGriddedSurface parentSurface;
+	GriddedSurface parentSurface;
 
 
     /**
@@ -46,7 +46,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
      * @exception  ArrayIndexOutOfBoundsException  Thrown if window indexes exceed the
      * main GriddedSurface indexes.
      */
-    public GriddedSubsetSurface( int numRows, int numCols, int startRow, int startCol, EvenlyGriddedSurface data )
+    public GriddedSubsetSurface( int numRows, int numCols, int startRow, int startCol, GriddedSurface data )
              throws ArrayIndexOutOfBoundsException {
         super( numRows, numCols, startRow, startCol, data );
         parentSurface = data;
@@ -324,7 +324,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 	 * This returns the parent surface
 	 * @return
 	 */
-	public EvenlyGriddedSurface getParentSurface() {
+	public GriddedSurface getParentSurface() {
 		return parentSurface;
 	}
 

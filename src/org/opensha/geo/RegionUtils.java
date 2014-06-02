@@ -420,7 +420,7 @@ public class RegionUtils {
 	 * to determine the fraction of a fault surface that is inside of a region.
 	 * 
 	 * @param region the region for which to test
-	 * @param locs any instance of Iterable<Location>, for example, ArrayList<Location> or EvenlyGriddedSurface.
+	 * @param locs any instance of Iterable<Location>, for example, ArrayList<Location> or GriddedSurface.
 	 * @return fraction of locations inside the given region
 	 * @throws NullPointerException if region or locs is null
 	 * @throws IllegalArgumentException if locs is empty

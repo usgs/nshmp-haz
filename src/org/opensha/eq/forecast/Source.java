@@ -2,7 +2,7 @@ package org.opensha.eq.forecast;
 
 import java.util.List;
 
-import org.opensha.eq.fault.surface.EvenlyGriddedSurface;
+import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;

@@ -13,7 +13,7 @@ import java.util.List;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.impl.GeoMat_MagLenthRelationship;
 import org.opensha.eq.fault.surface.ApproxEvenlyGriddedSurface;
-import org.opensha.eq.fault.surface.EvenlyGriddedSurface;
+import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMFD;

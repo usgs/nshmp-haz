@@ -10,7 +10,7 @@ import org.opensha.geo.LocationList;
 /**
  * <p>Title:  EvenlyGriddedSurfFromSimpleFaultData </p>
  *
- * <p>Description: This creates and EvenlyGriddedSurface from SimpleFaultData</p>
+ * <p>Description: This creates and GriddedSurface from SimpleFaultData</p>
  *
  * @author Nitin Gupta
  */
