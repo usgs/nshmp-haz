@@ -55,6 +55,7 @@ public class FaultSource implements Source {
 	final double offset;                      // of floating ruptures
 	final FloatStyle floatStyle;
 
+	
 	private int size = 0;
 	StirlingGriddedSurface surface;
 	private List<List<Rupture>> ruptureLists; // 1:1 with MFDs
@@ -343,6 +344,7 @@ public class FaultSource implements Source {
 		}
 		
 		FaultSource buildFaultSource() {
+			
 			return new FaultSource(name, trace, dip, width, rake, ImmutableList.copyOf(mfds), msr,
 				aspectRatio, offset, floatStyle);
 		}

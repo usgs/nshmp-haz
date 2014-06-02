@@ -136,70 +136,70 @@ public abstract class AbstractGriddedSurfaceWithSubsets extends AbstractGriddedS
 
 
 
-	/**
-	 * Get the subSurfaces on this fault
-	 *
-	 * @param numSubSurfaceCols  Number of grid points according to length
-	 * @param numSubSurfaceRows  Number of grid points according to width
-	 * @param numSubSurfaceOffset Number of grid points for offset
-	 *
-	 */
-	public Iterator<GriddedSubsetSurface> getSubsetSurfacesIterator(int numSubSurfaceCols, int numSubSurfaceRows,
-			int numSubSurfaceOffsetAlong, int numSubSurfaceOffsetDown) {
+//	/**
+//	 * Get the subSurfaces on this fault
+//	 *
+//	 * @param numSubSurfaceCols  Number of grid points according to length
+//	 * @param numSubSurfaceRows  Number of grid points according to width
+//	 * @param numSubSurfaceOffset Number of grid points for offset
+//	 *
+//	 */
+//	public Iterator<GriddedSubsetSurface> getSubsetSurfacesIterator(int numSubSurfaceCols, int numSubSurfaceRows,
+//			int numSubSurfaceOffsetAlong, int numSubSurfaceOffsetDown) {
+//
+//		//vector to store the GriddedSurface
+//		ArrayList<GriddedSubsetSurface> v = new ArrayList<GriddedSubsetSurface>();
+//
+//		// number of subSurfaces along the length of fault
+//		int nSubSurfaceAlong = (int)Math.floor((getNumCols()-numSubSurfaceCols)/numSubSurfaceOffsetAlong +1);
+//
+//		// there is only one subSurface
+//		if(nSubSurfaceAlong <=1) {
+//			nSubSurfaceAlong=1;
+//			numSubSurfaceCols = getNumCols();
+//		}
+//
+//		// number of subSurfaces along fault width
+//		int nSubSurfaceDown =  (int)Math.floor((getNumRows()-numSubSurfaceRows)/numSubSurfaceOffsetDown +1);
+//
+//		// one subSurface along width
+//		if(nSubSurfaceDown <=1) {
+//			nSubSurfaceDown=1;
+//			numSubSurfaceRows = getNumRows();
+//		}
+//
+//		//getting the total number of subsetSurfaces
+//		int totalSubSetSurface = nSubSurfaceAlong * nSubSurfaceDown;
+//		//emptying the vector
+//		v.clear();
+//
+//		//adding each subset surface to the ArrayList
+//		for(int i=0;i<totalSubSetSurface;++i)
+//			v.add(getNthSubsetSurface(numSubSurfaceCols,numSubSurfaceRows,numSubSurfaceOffsetAlong,numSubSurfaceOffsetDown,nSubSurfaceAlong,i));
+//
+//		return v.iterator();
+//	}
+//
 
-		//vector to store the GriddedSurface
-		ArrayList<GriddedSubsetSurface> v = new ArrayList<GriddedSubsetSurface>();
 
-		// number of subSurfaces along the length of fault
-		int nSubSurfaceAlong = (int)Math.floor((getNumCols()-numSubSurfaceCols)/numSubSurfaceOffsetAlong +1);
-
-		// there is only one subSurface
-		if(nSubSurfaceAlong <=1) {
-			nSubSurfaceAlong=1;
-			numSubSurfaceCols = getNumCols();
-		}
-
-		// number of subSurfaces along fault width
-		int nSubSurfaceDown =  (int)Math.floor((getNumRows()-numSubSurfaceRows)/numSubSurfaceOffsetDown +1);
-
-		// one subSurface along width
-		if(nSubSurfaceDown <=1) {
-			nSubSurfaceDown=1;
-			numSubSurfaceRows = getNumRows();
-		}
-
-		//getting the total number of subsetSurfaces
-		int totalSubSetSurface = nSubSurfaceAlong * nSubSurfaceDown;
-		//emptying the vector
-		v.clear();
-
-		//adding each subset surface to the ArrayList
-		for(int i=0;i<totalSubSetSurface;++i)
-			v.add(getNthSubsetSurface(numSubSurfaceCols,numSubSurfaceRows,numSubSurfaceOffsetAlong,numSubSurfaceOffsetDown,nSubSurfaceAlong,i));
-
-		return v.iterator();
-	}
-
-
-
-	/**
-	 * Get the subSurfaces on this fault
-	 *
-	 * @param subSurfaceLength  Sub Surface length in km
-	 * @param subSurfaceWidth   Sub Surface width in km
-	 * @param subSurfaceOffset  Sub Surface offset
-	 * @return           Iterator over all subSurfaces
-	 */
-	public Iterator<GriddedSubsetSurface> getSubsetSurfacesIterator(double subSurfaceLength,
-			double subSurfaceWidth,
-			double subSurfaceOffset) {
-
-		return getSubsetSurfacesIterator((int)Math.rint(subSurfaceLength/gridSpacingAlong+1),
-				(int)Math.rint(subSurfaceWidth/gridSpacingDown+1),
-				(int)Math.rint(subSurfaceOffset/gridSpacingAlong),
-				(int)Math.rint(subSurfaceOffset/gridSpacingDown));
-
-	}
+//	/**
+//	 * Get the subSurfaces on this fault
+//	 *
+//	 * @param subSurfaceLength  Sub Surface length in km
+//	 * @param subSurfaceWidth   Sub Surface width in km
+//	 * @param subSurfaceOffset  Sub Surface offset
+//	 * @return           Iterator over all subSurfaces
+//	 */
+//	public Iterator<GriddedSubsetSurface> getSubsetSurfacesIterator(double subSurfaceLength,
+//			double subSurfaceWidth,
+//			double subSurfaceOffset) {
+//
+//		return getSubsetSurfacesIterator((int)Math.rint(subSurfaceLength/gridSpacingAlong+1),
+//				(int)Math.rint(subSurfaceWidth/gridSpacingDown+1),
+//				(int)Math.rint(subSurfaceOffset/gridSpacingAlong),
+//				(int)Math.rint(subSurfaceOffset/gridSpacingDown));
+//
+//	}
 
 	/**
 	 *
