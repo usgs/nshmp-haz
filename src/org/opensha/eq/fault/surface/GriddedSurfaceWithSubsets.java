@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.math.DoubleMath;
 
 /**
- * <b>Title:</b> FloatableGriddedSurface.   <br>
+ * <b>Title:</b> GriddedSurfaceWithSubsets.   <br>
  * <b>Description: This creates an GriddedSurface
  * representation of the fault using a scheme described by Mark Stirling
  * to Ned Field in 2001, where grid points are projected down dip at
@@ -33,7 +33,7 @@ import com.google.common.math.DoubleMath;
  * @author Ned Field.
  */
 
-public class FloatableGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
+public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets {
 	
 	private LocationList faultTrace;
 	private double upperSeismogenicDepth = Double.NaN;
@@ -47,7 +47,7 @@ public class FloatableGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 	 * This applies the  grid spacing exactly as given (trimming any remainder from the ends),
 	 * and applies the ave-dip direction as computed from the faultTrace.
 	 */
-	public FloatableGriddedSurface(LocationList faultTrace, double aveDip, double upperSeismogenicDepth,
+	public GriddedSurfaceWithSubsets(LocationList faultTrace, double aveDip, double upperSeismogenicDepth,
 			double lowerSeismogenicDepth, double strikeSpacing, double dipSpacing) {
 
 		double length = faultTrace.length();
@@ -464,7 +464,7 @@ public class FloatableGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 		//        faultTrace.addLocation(new Location(36.3547, -120.358, faultTraceDepth));
 		//        faultTrace.addLocation(new Location(36.2671, -120.254, faultTraceDepth));
 		//        faultTrace.addLocation(new Location(36.1499, -120.114, faultTraceDepth));
-		//        FloatableGriddedSurface griddedSurface = new FloatableGriddedSurface(faultTrace, aveDip,
+		//        GriddedSurfaceWithSubsets griddedSurface = new GriddedSurfaceWithSubsets(faultTrace, aveDip,
 		//        		upperSeismogenicDepth, lowerSeismogenicDepth, gridSpacing);
 		//        System.out.println("******Fault Trace*********");
 		//        System.out.println(faultTrace);
@@ -487,7 +487,7 @@ public class FloatableGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
         FaultTrace faultTrace = new FaultTrace("Test");
         faultTrace.add(new Location(20.0, -120, 0));
         faultTrace.add(new Location(20.2, -120, 0));
-        FloatableGriddedSurface griddedSurface = new FloatableGriddedSurface(faultTrace, aveDip,
+        GriddedSurfaceWithSubsets griddedSurface = new GriddedSurfaceWithSubsets(faultTrace, aveDip,
         		upperSeismogenicDepth, lowerSeismogenicDepth, gridSpacing);
         System.out.println("******Fault Trace*********");
         System.out.println(faultTrace);
