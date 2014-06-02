@@ -34,13 +34,13 @@ extends AbstractEvenlyGriddedSurfaceWithSubsets{
 	 * @param gridSpacing
 	 * @throws FaultException
 	 */
-	protected EvenlyGriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData, double gridSpacing) {
-
-		this(simpleFaultData.getFaultTrace(), simpleFaultData.getAveDip(),
-				simpleFaultData.getUpperSeismogenicDepth(),
-				simpleFaultData.getLowerSeismogenicDepth(), gridSpacing);
-
-	}
+//	protected EvenlyGriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData, double gridSpacing) {
+//
+//		this(simpleFaultData.getFaultTrace(), simpleFaultData.getAveDip(),
+//				simpleFaultData.getUpperSeismogenicDepth(),
+//				simpleFaultData.getLowerSeismogenicDepth(), gridSpacing);
+//
+//	}
 
 	/**
 	 * This applies the grid spacing exactly as given, both along strike and down dip, clipping
@@ -65,14 +65,14 @@ extends AbstractEvenlyGriddedSurfaceWithSubsets{
 	 * @param maxGridSpacingDown - maximum grid spacing down dip
 	 * @throws FaultException
 	 */
-	protected EvenlyGriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData,
-			double maxGridSpacingAlong, double maxGridSpacingDown) {
-
-		this(simpleFaultData.getFaultTrace(), simpleFaultData.getAveDip(),
-				simpleFaultData.getUpperSeismogenicDepth(), simpleFaultData.getLowerSeismogenicDepth(),
-				maxGridSpacingAlong, maxGridSpacingDown);
-
-	}
+//	protected EvenlyGriddedSurfFromSimpleFaultData(SimpleFaultData simpleFaultData,
+//			double maxGridSpacingAlong, double maxGridSpacingDown) {
+//
+//		this(simpleFaultData.getFaultTrace(), simpleFaultData.getAveDip(),
+//				simpleFaultData.getUpperSeismogenicDepth(), simpleFaultData.getLowerSeismogenicDepth(),
+//				maxGridSpacingAlong, maxGridSpacingDown);
+//
+//	}
 
 	/**
 	 * This constructor will adjust the grid spacings along strike and down dip to exactly fill the surface

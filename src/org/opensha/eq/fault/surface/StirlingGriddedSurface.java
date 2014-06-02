@@ -48,12 +48,12 @@ public class StirlingGriddedSurface extends EvenlyGriddedSurfFromSimpleFaultData
 	 * @param gridSpacing
 	 * @throws FaultException
 	 */
-	public StirlingGriddedSurface(SimpleFaultData simpleFaultData, double gridSpacing) {
-		super(simpleFaultData, gridSpacing);
-		this.aveDipDir=simpleFaultData.getAveDipDir();
-		createEvenlyGriddedSurface();
-	}
-	
+//	public StirlingGriddedSurface(SimpleFaultData simpleFaultData, double gridSpacing) {
+//		super(simpleFaultData, gridSpacing);
+//		this.aveDipDir=simpleFaultData.getAveDipDir();
+//		createEvenlyGriddedSurface();
+//	}
+//	
 	/**
 	 * This applies the  grid spacing exactly as given (trimming any remainder from the ends),
 	 * and applies the ave-dip direction as computed from the faultTrace.
@@ -74,11 +74,11 @@ public class StirlingGriddedSurface extends EvenlyGriddedSurfFromSimpleFaultData
 	 * @param maxGridSpacingDown
 	 * @throws FaultException
 	 */
-	public StirlingGriddedSurface(SimpleFaultData simpleFaultData, double maxGridSpacingAlong, double maxGridSpacingDown) {
-		super(simpleFaultData, maxGridSpacingAlong, maxGridSpacingDown);
-		this.aveDipDir=simpleFaultData.getAveDipDir();
-		createEvenlyGriddedSurface();
-	}
+//	public StirlingGriddedSurface(SimpleFaultData simpleFaultData, double maxGridSpacingAlong, double maxGridSpacingDown) {
+//		super(simpleFaultData, maxGridSpacingAlong, maxGridSpacingDown);
+//		this.aveDipDir=simpleFaultData.getAveDipDir();
+//		createEvenlyGriddedSurface();
+//	}
 
 	/**
 	 * This applies the  grid spacing exactly as given (trimming any remainder from the ends),

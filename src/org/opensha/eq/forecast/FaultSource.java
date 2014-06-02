@@ -18,7 +18,6 @@ import org.opensha.eq.fault.scaling.MagAreaRelationship;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.surface.RuptureSurface;
-import org.opensha.eq.fault.surface.SimpleFaultData;
 import org.opensha.eq.fault.surface.StirlingGriddedSurface;
 import org.opensha.geo.GeoTools;
 import org.opensha.geo.Location;
@@ -90,9 +89,10 @@ public class FaultSource implements Source {
 	// then we can finalize surface field
 	void initSurface() {
 		double top = trace.first().depth();
-		double lowerSeis = top + width * Math.sin(dip * GeoTools.TO_RAD);
-		SimpleFaultData sfd = new SimpleFaultData(dip, lowerSeis, top, trace);
-		surface = new StirlingGriddedSurface(sfd, 1.0, 1.0);
+		double bottom = top + width * Math.sin(dip * GeoTools.TO_RAD);
+//		SimpleFaultData sfd = new SimpleFaultData(dip, lowerSeis, top, trace);
+		
+		surface = new StirlingGriddedSurface(trace, dip, top, bottom, 1.0);
 	}
 	
 	private void initRuptures() {
