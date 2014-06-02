@@ -17,6 +17,7 @@ import org.opensha.data.DataUtils;
 import org.opensha.eq.fault.scaling.MagAreaRelationship;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
+import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.eq.fault.surface.GriddedSurfaceWithSubsets;
 import org.opensha.geo.GeoTools;
@@ -44,6 +45,9 @@ import com.google.common.collect.Range;
  */
 public class FaultSource implements Source {
 	
+	// TODO revisit to determine which fields
+	// should be obtained from surface
+	
 	final String name;
 	final LocationList trace;
 	final double dip;
@@ -51,24 +55,24 @@ public class FaultSource implements Source {
 	final double rake;
 	final List<IncrementalMFD> mfds;
 	final MagScalingRelationship msr;
-	final double aspectRatio;                 // for floating ruptures
-	final double offset;                      // of floating ruptures
+	final double aspectRatio;  // for floating ruptures
+	final double offset;       // of floating ruptures
 	final FloatStyle floatStyle;
-
+	final GriddedSurface surface;
 	
+	private final List<List<Rupture>> ruptureLists; // 1:1 with MFDs
+	private final List<Integer> rupCount;           // cumulative index list for iterating ruptures
 	private int size = 0;
-	GriddedSurfaceWithSubsets surface;
-	private List<List<Rupture>> ruptureLists; // 1:1 with MFDs
-	private List<Integer> rupCount;           // cumulative index list for iterating ruptures
 	
-	FaultSource(String name, LocationList trace, double dip, double width, double rake,
-		List<IncrementalMFD> mfds, MagScalingRelationship msr, double aspectRatio, double offset,
-		FloatStyle floatStyle) {
+	FaultSource(String name, LocationList trace, double dip, double width,
+		GriddedSurface surface, double rake, List<IncrementalMFD> mfds,
+		MagScalingRelationship msr, double aspectRatio, double offset, FloatStyle floatStyle) {
 		
 		this.name = name;
 		this.trace = trace;
 		this.dip = dip;
 		this.width = width;
+		this.surface = surface;
 		this.rake = rake;
 		this.mfds = mfds;
 		this.msr = msr;
@@ -76,30 +80,13 @@ public class FaultSource implements Source {
 		this.offset = offset;
 		this.floatStyle = floatStyle;
 		
-		initSurface();
-		initRuptures();
-	}
-	
-	// TODO should we pass in a precreated surface; e.g. create it in the builder; that way
-	// subduction could override. Then the question is: are all the faultSource geometry
-	// fields necessary.
-	
-	// TODO KILL SimpleFaultData
-	
-	// subclasses may override TODO this has to go in favor of creating the surface in builder
-	// then we can finalize surface field
-	void initSurface() {
-		double top = trace.first().depth();
-		double bottom = top + width * Math.sin(dip * GeoTools.TO_RAD);
-//		SimpleFaultData sfd = new SimpleFaultData(dip, lowerSeis, top, trace);
-		
-		surface = new GriddedSurfaceWithSubsets(trace, dip, top, bottom, 1.0, 1.0);
-	}
-	
-	private void initRuptures() {
 		ruptureLists = Lists.newArrayList();
 		rupCount = Lists.newArrayList();
 		rupCount.add(0);
+		initRuptures();
+	}
+	
+	private void initRuptures() {
 		for (IncrementalMFD mfd : mfds) {
 			List<Rupture> rupList = createRuptureList(mfd);
 			ruptureLists.add(rupList);
@@ -202,15 +189,17 @@ public class FaultSource implements Source {
 					width = 2 * maxWidth;
 				}
 
+				GriddedSurfaceWithSubsets surf = (GriddedSurfaceWithSubsets) surface;
+				
 				// rupture count
 				double numRup = (floatStyle != CENTERED) ?
-					surface.getNumSubsetSurfaces(length, width, offset) :
-					surface.getNumSubsetSurfacesAlongLength(length, offset);
+					surf.getNumSubsetSurfaces(length, width, offset) :
+					surf.getNumSubsetSurfacesAlongLength(length, offset);
 
 				for (int r = 0; r < numRup; r++) {
 					RuptureSurface floatingSurface = (floatStyle != CENTERED) ?
-						surface.getNthSubsetSurface(length, width, offset, r) :
-						surface.getNthSubsetSurfaceCenteredDownDip(length, width, offset, r);
+						surf.getNthSubsetSurface(length, width, offset, r) :
+						surf.getNthSubsetSurfaceCenteredDownDip(length, width, offset, r);
 					double rupRate = rate / numRup;
 					Rupture rup = Rupture.create(mag, rake, rupRate, floatingSurface);
 					ruptures.add(rup);
@@ -344,9 +333,16 @@ public class FaultSource implements Source {
 		}
 		
 		FaultSource buildFaultSource() {
-			
-			return new FaultSource(name, trace, dip, width, rake, ImmutableList.copyOf(mfds), msr,
-				aspectRatio, offset, floatStyle);
+			validateState(ID);
+
+			// create surface
+			double top = trace.first().depth();
+			double bottom = top + width * Math.sin(dip * GeoTools.TO_RAD);
+			GriddedSurfaceWithSubsets surface = new GriddedSurfaceWithSubsets(trace, dip, top,
+				bottom, offset, offset);
+
+			return new FaultSource(name, trace, dip, width, surface, rake,
+				ImmutableList.copyOf(mfds), msr, aspectRatio, offset, floatStyle);
 		}
 	}
 

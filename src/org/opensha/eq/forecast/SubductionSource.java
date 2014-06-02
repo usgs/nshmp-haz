@@ -38,47 +38,20 @@ import com.google.common.collect.Lists;
 public class SubductionSource extends FaultSource {
 
 	final LocationList lowerTrace;
-	ApproxEvenlyGriddedSurface surface;
 
 	private SubductionSource(String name, LocationList upperTrace, LocationList lowerTrace,
-		double dip, double width, double rake, List<IncrementalMFD> mfds,
+		double dip, double width, GriddedSurface surface, double rake, List<IncrementalMFD> mfds,
 		MagScalingRelationship msr, double aspectRatio, double offset, FloatStyle floatStyle) {
+
+		super(name, upperTrace, dip, width, surface, rake, mfds, msr, aspectRatio, offset,
+			floatStyle);
 		
-		super(name, upperTrace, dip, width, rake, mfds, msr, aspectRatio, offset, floatStyle);
 		this.lowerTrace = lowerTrace;
-		
-		// TODO this is all messed up; Stirling surface in parent is being used
-		// to create ruptures; need to create surface in advance via builder
 	}
-
-	void init() {
-		surface = new ApproxEvenlyGriddedSurface(trace, lowerTrace, 5.0);
-		
-	}
-
 
 	@Override
 	public double getMinDistance(Location loc) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Iterator<Rupture> iterator() {
-		// @formatter:off
-		return new Iterator<Rupture>() {
-			int size = size();
-			int caret = 0;
-			@Override public boolean hasNext() {
-				return caret < size;
-			}
-			@Override public Rupture next() {
-				return getRupture(caret++);
-			}
-			@Override public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
-		// @formatter:on
 	}
 	
 	@Override
@@ -95,8 +68,6 @@ public class SubductionSource extends FaultSource {
 		.append("        width: ").append(width)
 		.append(LINE_SEPARATOR.value())
 		.append("         rake: ").append(rake)
-//		.append(LINE_SEPARATOR.value())
-//		.append("         mags: ").append(nMag)
 		.append(LINE_SEPARATOR.value())
 		.append("         mfds: ").append(mfds.size())
 		.append(LINE_SEPARATOR.value())
@@ -105,15 +76,7 @@ public class SubductionSource extends FaultSource {
 		// @formatter:on
 	}
 
-	/**
-	 * Returns the list of magnitude frequency distributions that this source
-	 * represents
-	 * @return the source MFD's
-	 */
-	public List<IncrementalMFD> getMFDs() {
-		return mfds;
-	}
-
+	
 	static class Builder extends FaultSource.Builder {
 		
 		private static final String ID = "SubductionSource.Builder";
@@ -137,7 +100,11 @@ public class SubductionSource extends FaultSource {
 		SubductionSource buildSubductionSource() {
 			checkState(trace != null, "%s trace not set", ID);
 			validateState(ID);
-			return new SubductionSource(name, trace, lowerTrace, dip, width, rake,
+
+			ApproxEvenlyGriddedSurface surface = new ApproxEvenlyGriddedSurface(trace, lowerTrace,
+				offset);
+
+			return new SubductionSource(name, trace, lowerTrace, dip, width, surface, rake,
 				ImmutableList.copyOf(mfds), msr, aspectRatio, offset, floatStyle);
 		}
 

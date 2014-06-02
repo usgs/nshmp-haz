@@ -42,7 +42,6 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 
 	private double aveDipDir = Double.NaN;
 
-
 	/**
 	 * This applies the  grid spacing exactly as given (trimming any remainder from the ends),
 	 * and applies the ave-dip direction as computed from the faultTrace.
