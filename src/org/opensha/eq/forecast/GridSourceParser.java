@@ -2,7 +2,7 @@ package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.logging.Level.INFO;
-import static org.opensha.eq.forecast.SourceAttribute.DEPTH_MAP;
+import static org.opensha.eq.forecast.SourceAttribute.MAG_DEPTH_MAP;
 import static org.opensha.eq.forecast.SourceAttribute.MAG_SCALING;
 import static org.opensha.eq.forecast.SourceAttribute.FOCAL_MECH_MAP;
 import static org.opensha.eq.forecast.SourceAttribute.NAME;
@@ -111,7 +111,7 @@ class GridSourceParser extends DefaultHandler {
 				break;
 				
 			case SOURCE_PROPERTIES:
-				sourceBuilder.depthMap(stringToValueValueWeightMap(readString(DEPTH_MAP, atts)));
+				sourceBuilder.depthMap(stringToValueValueWeightMap(readString(MAG_DEPTH_MAP, atts)));
 				String mechMap = readString(FOCAL_MECH_MAP, atts);
 				sourceBuilder.mechs(stringToEnumWeightMap(mechMap, FocalMech.class));
 				sourceBuilder.magScaling(readEnum(MAG_SCALING, atts, MagScalingType.class));

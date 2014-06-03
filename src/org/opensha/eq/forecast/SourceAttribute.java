@@ -12,7 +12,7 @@ public enum SourceAttribute {
 	NAME,
 	WEIGHT,
 
-	DEPTH_MAP,
+	MAG_DEPTH_MAP,
 	FOCAL_MECH_MAP,
 
 	/* Geometry specific */

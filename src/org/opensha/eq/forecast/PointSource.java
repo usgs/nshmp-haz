@@ -10,7 +10,6 @@ import static org.opensha.eq.fault.FocalMech.REVERSE;
 import static org.opensha.eq.fault.FocalMech.STRIKE_SLIP;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -172,21 +171,29 @@ class PointSource implements Source {
 		 */
 		int ssCount = (int) ceil(mechWtMap.get(STRIKE_SLIP)) * magDepthCount;
 		int revCount = (int) ceil(mechWtMap.get(REVERSE)) * magDepthCount;
+		int norCount = (int) ceil(mechWtMap.get(NORMAL)) * magDepthCount;
 		ssIdx = ssCount;
 		revIdx = ssCount + revCount;
 
+		rupCount = ssCount + ssCount + norCount;
+		
+		// TODO clean
+		// below wasn't correct; this simple implementation doesn't consider
+		// hanging wall vs footwall representations on the assumption that
+		// in 2008 the gird source hw effect approximations were used for CB and CY
+		
 		/*
 		 * Init focal mech counts: Total focal mech representations required,
 		 * double counting reverse and normal mechs because they will have both
 		 * hanging wall and footwall representations.
 		 */
-		int mechCount = 0;
-		for (FocalMech mech : mechWtMap.keySet()) {
-			double wt = mechWtMap.get(mech);
-			if (wt == 0.0) continue;
-			mechCount += (mech == STRIKE_SLIP) ? 1 : 2;
-		}
-		rupCount = magDepthCount * mechCount;
+//		int mechCount = 0;
+//		for (FocalMech mech : mechWtMap.keySet()) {
+//			double wt = mechWtMap.get(mech);
+//			if (wt == 0.0) continue;
+//			mechCount += (mech == STRIKE_SLIP) ? 1 : 2;
+//		}
+//		rupCount = magDepthCount * mechCount;
 
 	}
 

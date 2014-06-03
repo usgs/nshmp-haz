@@ -6,7 +6,6 @@ import static java.lang.Math.cos;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 import static org.opensha.eq.fault.FocalMech.NORMAL;
 import static org.opensha.eq.fault.FocalMech.REVERSE;
@@ -19,8 +18,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.opensha.eq.fault.FocalMech;
-import org.opensha.eq.fault.scaling.MagLengthRelationship;
-import org.opensha.eq.fault.scaling.impl.WC1994_MagLengthRelationship;
 import org.opensha.eq.fault.surface.PtSrcDistCorr;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
@@ -49,13 +46,6 @@ import org.opensha.mfd.IncrementalMFD;
  */
 class PointSourceFinite extends PointSource {
 
-	// TODO a similar implementation in which the centroids of the finite faults
-	// are coincident with the source location should be considered
-
-	// TODO get from sourceSet
-//	static final MagLengthRelationship WC94 = new WC1994_MagLengthRelationship();
-	
-	
 	int fwIdxLo, fwIdxHi;
 
 	/**
@@ -175,6 +165,7 @@ class PointSourceFinite extends PointSource {
 		fwIdxLo = ssCount + revCount / 2;
 		fwIdxHi = ssCount + revCount + norCount / 2;
 
+		rupCount = ssCount + revCount + norCount;
 	}
 
 	/*
