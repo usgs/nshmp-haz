@@ -13,7 +13,7 @@ public enum SourceAttribute {
 	WEIGHT,
 
 	DEPTH_MAP,
-	MECH_MAP,
+	FOCAL_MECH_MAP,
 
 	/* Geometry specific */
 	STRIKE,

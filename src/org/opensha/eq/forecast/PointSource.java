@@ -76,25 +76,10 @@ class PointSource implements Source {
 		return "PointSource: " + loc;
 	}
 
-//	@Override
-//	public List<Rupture> getRuptureList() {
-//		throw new UnsupportedOperationException("PointSources are dynamic");
-//	}
-
-//	@Override
-//	public RuptureSurface surface() {
-//		throw new UnsupportedOperationException("PointSources are dynamic");
-//	}
-
 	@Override
 	public int size() {
 		return rupCount;
 	}
-
-//	@Override
-//	public Location centroid() {
-//		throw new UnsupportedOperationException("Implement me");
-//	}
 
 	@Override
 	public double getMinDistance(Location loc) {
@@ -119,7 +104,7 @@ class PointSource implements Source {
 
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
-	 * FinitePointSource.rupture rate is reduced to zero (a mag-depth weight
+	 * PointSource.rupture rate is reduced to zero (a mag-depth weight
 	 * could be set to zero [this is not currently checked] of an MFD rate could
 	 * be zero), in the cases where it is, we're doing a little more work than
 	 * necessary below. We could alternatively short-circuit updateRupture()
@@ -157,10 +142,9 @@ class PointSource implements Source {
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
 			{ rupture.surface = new PointSurface(loc); }
-			int size = size();
 			int caret = 0;
 			@Override public boolean hasNext() {
-				if (caret > size) return false;
+				if (caret > rupCount) return false;
 				updateRupture(rupture, caret++);
 				return (rupture.rate > 0.0) ? true : hasNext();
 			}
@@ -190,7 +174,7 @@ class PointSource implements Source {
 		revIdx = ssCount + revCount;
 
 		/*
-		 * Init focal mch counts: Total focal mech representations required,
+		 * Init focal mech counts: Total focal mech representations required,
 		 * double counting reverse and normal mechs because they will have both
 		 * hanging wall and footwall representations.
 		 */
@@ -240,12 +224,12 @@ class PointSource implements Source {
 		@Override public double width() { throw new UnsupportedOperationException(exMessage("width")); }
 		@Override public double area() { throw new UnsupportedOperationException(exMessage("area")); }
 		@Override public double depth() { return zTop; }
-		// TODO should this be the true centroid of the finite surface
+		// TODO should this be the true centroid of the surface
 		// representation or is the grid node location ok?
 		@Override public Location centroid() { return loc; } 
 		
 		private static String exMessage(String field) {
-			return "No '" + field + "' for FinitePointSource surface";
+			return "No '" + field + "' for PointSource surface";
 		}
 		
 	}

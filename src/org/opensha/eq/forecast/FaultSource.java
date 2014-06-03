@@ -1,6 +1,7 @@
 package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
@@ -109,6 +110,7 @@ public class FaultSource implements Source {
 
 	@Override
 	public Rupture getRupture(int idx) {
+		checkElementIndex(idx, rupCount.get(rupCount.size()));
 		// zero is built in to rupCount array; unless a negative idx is
 		// supplied, if statement below should never be entered on first i
 		for (int i = 0; i < rupCount.size(); i++) {
@@ -116,7 +118,8 @@ public class FaultSource implements Source {
 				return ruptureLists.get(i-1).get(idx - rupCount.get(i-1));
 			}
 		}
-		return null; // shouldn't get here
+		//TODO test
+		throw new IllegalStateException("We shouldn't be here... ever.");
 	}
 	
 	@Override

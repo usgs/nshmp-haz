@@ -76,13 +76,26 @@ public class GridSourceSet implements SourceSet<PointSource> {
 
 	@Override
 	public Iterator<PointSource> iterator() {
-		return null;
+		// @formatter:off
+		return new Iterator<PointSource>() {
+			int caret = 0;
+			@Override public boolean hasNext() { return caret < locs.size(); }
+			@Override public PointSource next() { return getSource(caret++); }
+			@Override public void remove() { throw new UnsupportedOperationException(); }
+		};
+		// @formatter:on
 	}
 	
-	// TODO grid sources allow for a single depth to be defined or 2 depths
-	// with some cutoff magnitude between the two, no weighting; this should be
-	// migrated to a mag-dependent depth weight map
-
+	private PointSource getSource(int idx) {
+		// @formatter:off
+//		return (faultCode == FIXED)
+//				? new FixedStrikeSource(locs.get(idx), mfds.get(idx), MLR,
+//					timeSpan.getDuration(), depths, mechWtMap, strike)
+//				: new PointSource13b(locs.get(idx), mfds.get(idx),
+//					timeSpan.getDuration(), depths, mechWtMap);
+		// @formatter:on
+		return null;
+	}
 
 	public Iterator<Source> iteratorForLocation(Location loc, double dist) {
 		// compute min-max lat and lon
@@ -112,39 +125,36 @@ public class GridSourceSet implements SourceSet<PointSource> {
 	// use to find the correct original mfd index
 	
 	/*
-	 * @formatting:off
+	 * @formatter:off
 	 * 
 	 * GridSourceSets store lookup arrays for mfd magnitude indexing, depths,
 	 * and depth weights. These arrays remove the need to do expensive lookups
 	 * in a magDepthMap when iterating grid sources and ruptures. These are
 	 * generally longer than required by grid source implementations as they
 	 * span [mMin maxmMaxMag] of the entire GridSourceSet. Implementations will
-	 * only ever reference those indices up to their individual mMax and
-	 * obviating the need for individual sources to store these arrays, which
-	 * would incur a lot of overhead for large (million+ node) GridSourceSets.
+	 * only ever reference those indices up to their individual mMax, obviating
+	 * the need for individual sources to store these arrays, which would incur
+	 * a lot of overhead for large (million+ node) GridSourceSets.
 	 * 
-	 * Given magDepthMap:
-	 * [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1, 5.0:0.9]]
+	 * Given magDepthMap: [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1, 5.0:0.9]]
 	 * 
-	 * and MFD:
-	 * [5.0 5.5, 6.0, 6.5, 7.0]
+	 * and MFD: [5.0, 5.5, 6.0, 6.5, 7.0]
 	 * 
-	 * The number of mag-depth combinations a grid source would iterate over is
-	 * sum(m = MFD.mag(i) * nDepths(m)) = 3 * 3 + 2 * 2 = 13
+	 * The number of mag-depth combinations a grid source would iterate over is:
+	 *     sum(m = MFD.mag(i) * nDepths(m)) = 3 * 3 + 2 * 2 = 13
 	 * 
 	 * (note: mag cutoffs in magDepthMap are always used as m < cutoff)
 	 * 
-	 * magDepthIndices[] : magnitude index in original MFD
-	 * [  0,   0,   0,   1,   1,   1,   2,   2,   2,   3,   3,   4,   4]
+	 * magDepthIndices[] : magnitude index in original MFD [ 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
 	 * 
-	 * magDepthDepths[] : depth for index
-	 * [1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 5.0, 1.0, 5.0]
+	 * magDepthDepths[] : depth for index [1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 5.0, 1.0, 5.0]
 	 * 
-	 * magDepthWeights[] : depth weight for index
-	 * [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
+	 * magDepthWeights[] : depth weight for index [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
 	 * 
-	 * @formatting:on
+	 * @formatter:on
 	 */
+	
+	
 	int[] magDepthIndices;
 	double[] magDepthDepths;
 	double[] magDepthWeights;
@@ -160,8 +170,9 @@ public class GridSourceSet implements SourceSet<PointSource> {
 		List<Double> depths = Lists.newArrayList();
 		List<Double> weights = Lists.newArrayList();
 		for (int i = 0; i < masterMFD.getNum(); i++) {
-			for (Map.Entry<Double, Double> entry : magDepthMap
-				.higherEntry(masterMFD.getX(i)).getValue().entrySet()) {
+			double mag = masterMFD.getX(i);
+			Map.Entry<Double, Map<Double, Double>> magEntry = magDepthMap.higherEntry(mag);
+			for (Map.Entry<Double, Double> entry : magEntry.getValue().entrySet()) {
 				indices.add(i);
 				depths.add(entry.getKey());
 				weights.add(entry.getValue());
@@ -185,11 +196,10 @@ public class GridSourceSet implements SourceSet<PointSource> {
 	// NSHMP depths: [6.5  :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 : 0.0]]
 		
 	
-	/*
-	 * GridSourceSet builder; build() may only be called once; uses Doubles
-	 * to ensure fields are initially null.
-	 */
 	static class Builder {
+
+		// build() may only be called once
+		// use Double to ensure field is initially
 
 		private static final String ID = "GridSourceSet.Builder";
 		private boolean built = false;

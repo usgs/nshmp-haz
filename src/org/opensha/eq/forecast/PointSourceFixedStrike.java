@@ -46,9 +46,6 @@ import org.opensha.mfd.IncrementalMFD;
  */
 class PointSourceFixedStrike extends PointSourceFinite {
 
-	// TODO a similar implementation in which the centroids of the finite faults
-	// are coincident with the source location should be considered
-
 	/**
 	 * Constructs a new point earthquake source.
 	 * @param loc <code>Location</code> of the point source
