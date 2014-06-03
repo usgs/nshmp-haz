@@ -16,8 +16,12 @@ import org.opensha.geo.Locations;
  *
  * @author Peter Powers
  */
-public class RectangularSurface implements RuptureSurface {
+@Deprecated
+class RectangularSurface implements RuptureSurface {
 
+	// TODO consider removing; unused
+	
+	
 	// TODO because we don't really need a lot of the details required by RuptureSurface,
 	// let's compute these things on every call rather than taking up memory with stored data
 	// most are required once to build disntance calc transforms

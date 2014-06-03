@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.NavigableMap;
 
 import org.opensha.eq.fault.FocalMech;
+import org.opensha.eq.fault.scaling.MagLengthRelationship;
+import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 import org.opensha.mfd.IncrementalMFD;
@@ -34,6 +36,12 @@ public class GridSourceSet implements SourceSet<PointSource> {
 	private final MagScalingType magScaling;
 	private final Map<FocalMech, Double> mechMap;
 	private final NavigableMap<Double, Map<Double, Double>> magDepthMap;
+	private final double strike;
+	
+	final MagLengthRelationship mlr;
+	
+	// TODO tmp
+	PointSourceType ptSrcType = PointSourceType.FIXED_STRIKE;
 	
 	// NOTE we're holding onto weight for reference, however, MFD
 	// rates will have already been scaled in place. The weight value
@@ -43,7 +51,7 @@ public class GridSourceSet implements SourceSet<PointSource> {
 	// only available to parsers
 	GridSourceSet(String name, Double weight, List<Location> locs,
 		List<IncrementalMFD> mfds, MagScalingType magScaling, Map<FocalMech, Double> mechMap,
-		NavigableMap<Double, Map<Double, Double>> magDepthMap) {
+		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike) {
 
 		this.name = name;
 		this.weight = weight;
@@ -52,6 +60,13 @@ public class GridSourceSet implements SourceSet<PointSource> {
 		this.magScaling = magScaling;
 		this.mechMap = mechMap;
 		this.magDepthMap = magDepthMap;
+		this.strike = strike;
+		
+		MagScalingRelationship msr = magScaling.instance();
+		// TODO need to develop standard approach to using mag area relationships
+		checkState(msr instanceof MagLengthRelationship,
+			"Only mag-length relationships are supported at this time");
+		mlr = (MagLengthRelationship) msr;
 	}
 	
 	@Override
@@ -87,13 +102,14 @@ public class GridSourceSet implements SourceSet<PointSource> {
 	}
 	
 	private PointSource getSource(int idx) {
-		// @formatter:off
-//		return (faultCode == FIXED)
-//				? new FixedStrikeSource(locs.get(idx), mfds.get(idx), MLR,
-//					timeSpan.getDuration(), depths, mechWtMap, strike)
-//				: new PointSource13b(locs.get(idx), mfds.get(idx),
-//					timeSpan.getDuration(), depths, mechWtMap);
-		// @formatter:on
+		switch(ptSrcType) {
+			case POINT:
+				return new PointSource(this, locs.get(idx), mfds.get(idx), mechMap);
+			case FINITE:
+				return new PointSourceFinite(this, locs.get(idx), mfds.get(idx), mechMap);
+			case FIXED_STRIKE:
+				return new PointSourceFixedStrike(this, locs.get(idx), mfds.get(idx), mechMap, strike);
+		}
 		return null;
 	}
 
@@ -271,7 +287,8 @@ public class GridSourceSet implements SourceSet<PointSource> {
 			checkState(mechMap != null, "%s focal mech map not set", ID);
 			
 			built = true;
-			return new GridSourceSet(name, weight, locs, mfds, magScaling, mechMap, magDepthMap);
+			return new GridSourceSet(name, weight, locs, mfds, magScaling, mechMap, magDepthMap,
+				strike);
 		}
 		
 	}

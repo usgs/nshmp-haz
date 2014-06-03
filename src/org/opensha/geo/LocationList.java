@@ -396,22 +396,10 @@ public final class LocationList implements Iterable<Location> {
 	 */
 	public double minDistToLine(Location loc) {
 		double min = Double.MAX_VALUE;
-		double dist = 0;
-		for (int i = 1; i < size(); i++) {
-			dist = Math.abs(Locations.distanceToSegmentFast(get(i - 1), get(i),
-				loc));
-			if (dist < min) min = dist;
+		for (int i = 0; i < size() - 1; i++) {
+			min = Math.min(min, distanceToSegmentFast(get(i), get(i + 1), loc));
 		}
-		return min;
-
-		// TODO this is cleaner; and according to docs segment distances are
-		// always positive so no need for Math.abs
-
-		// double min = Double.MAX_VALUE;
-		// for (int i = 0; i < size() - 1; i++) {
-		// min = Math.min(min, distanceToSegmentFast(get(i), get(i + 1), loc));
-		// }
-		// return min;
+		return min;		
 	}
 
 	/**

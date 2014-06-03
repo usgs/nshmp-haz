@@ -53,8 +53,9 @@ class PointSourceFinite extends PointSource {
 	// are coincident with the source location should be considered
 
 	// TODO get from sourceSet
-	static final MagLengthRelationship WC94 = new WC1994_MagLengthRelationship();
-
+//	static final MagLengthRelationship WC94 = new WC1994_MagLengthRelationship();
+	
+	
 	int fwIdxLo, fwIdxHi;
 
 	/**
@@ -86,8 +87,7 @@ class PointSourceFinite extends PointSource {
 	public Rupture getRupture(int idx) {
 		checkPositionIndex(idx, size());
 		Rupture rupture = new Rupture();
-		FiniteSurface surface = new FiniteSurface(loc);
-		rupture.surface = surface;
+		rupture.surface = new FiniteSurface(loc);
 		updateRupture(rupture, idx);
 		return rupture;
 	}
@@ -177,29 +177,13 @@ class PointSourceFinite extends PointSource {
 
 	}
 
-	/**
-	 * Returns the minimum of the aspect ratio width (based on WC94) length and
-	 * the allowable down-dip width.
-	 * 
-	 * @param mag
-	 * @param depth
-	 * @param dipRad (in radians)
-	 * @return
-	 */
-	private double calcWidth(double mag, double depth, double dipRad) {
-		double length = WC94.getMedianLength(mag);
-		double aspectWidth = length / 1.5;
-		double ddWidth = (14.0 - depth) / sin(dipRad);
-		return min(aspectWidth, ddWidth);
-	}
-
-	/**
+	/*
 	 * Returns whether the rupture at index should be on the footwall (i.e. have
 	 * its rX value set negative). Strike-slip mechs are marked as footwall to
 	 * potentially short circuit GMPE calcs. Because the index order is SS-FW
 	 * RV-FW RV-HW NR-FW NR-HW
 	 */
-	private boolean isOnFootwall(int idx) {
+	boolean isOnFootwall(int idx) {
 		return (idx < fwIdxLo) ? true : (idx < revIdx) ? false
 			: (idx < fwIdxHi) ? true : false;
 	}

@@ -2,6 +2,9 @@ package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static java.lang.Math.ceil;
+import static java.lang.Math.min;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 import static org.opensha.eq.fault.FocalMech.NORMAL;
 import static org.opensha.eq.fault.FocalMech.REVERSE;
 import static org.opensha.eq.fault.FocalMech.STRIKE_SLIP;
@@ -96,8 +99,7 @@ class PointSource implements Source {
 	public Rupture getRupture(int idx) {
 		checkPositionIndex(idx, size());
 		Rupture rupture = new Rupture();
-		PointSurface surface = new PointSurface(loc);
-		rupture.surface = surface;
+		rupture.surface = new PointSurface(loc);
 		updateRupture(rupture, idx);
 		return rupture;
 	}
@@ -188,15 +190,32 @@ class PointSource implements Source {
 
 	}
 
-	/**
+	/*
 	 * Returns the focal mechanism of the rupture at the supplied index.
-	 * @param idx of the rupture of interest
-	 * @return the associated focal mechanism
 	 */
 	FocalMech mechForIndex(int idx) {
 		// iteration order is always SS -> REV -> NOR
 		return (idx < ssIdx) ? STRIKE_SLIP : (idx < revIdx) ? REVERSE : NORMAL;
 	}
+	
+	/*
+	 * Returns the minimum of the aspect ratio width and the allowable down-dip
+	 * width. Utility for use by subclasses.
+	 */
+	double calcWidth(double mag, double depth, double dipRad) {
+		double length = parent.mlr.getMedianLength(mag);
+		double aspectWidth = length / 1.5;
+		double ddWidth = (14.0 - depth) / sin(dipRad);
+		return min(aspectWidth, ddWidth);
+	}
+
+	/*
+	 * Same as {@code Math.hypot()} without regard to under/over flow.
+	 */
+	static final double hypot2(double v1, double v2) {
+		return sqrt(v1 * v1 + v2 * v2);
+	}
+
 
 	static class PointSurface implements RuptureSurface {
 

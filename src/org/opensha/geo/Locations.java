@@ -362,7 +362,7 @@ public final class Locations {
 	 * <p>This method, though more accurate over longer
 	 * distances and line lengths, is up to 20x slower than
 	 * {@link #distanceToSegmentFast(Location, Location, Location)}. However,
-	 * this method returns accurate results for values spanning #177;180&#176;.</p>
+	 * this method returns accurate results for values spanning &#177;180&#176;.</p>
 	 * 
 	 * <p> If the line should instead be treated as infinite, use
 	 * {@link #distanceToLine(Location, Location, Location)} instead.</p>
@@ -404,7 +404,7 @@ public final class Locations {
 	 * for use over short distances (e.g. &lt;200 km).
 	 * 
 	 * <p><b>Note:</b> This method fails for values spanning &#177;180&#176;;
-	 * see {@link #distanceToLineFast(Location, Location, Location)}.</p>
+	 * see {@link #distanceToSegment(Location, Location, Location)}.</p>
 	 * 
 	 * <p>If the line should instead be treated as infinite, use
 	 * {@link #distanceToLineFast(Location, Location, Location)} instead.</p>

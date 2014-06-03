@@ -193,6 +193,7 @@ public class DistanceTransform {
 ////		System.out.println("=== " + i + " ===");
 //	}
 
+	@Deprecated
 	private void initSegments(double dip, double width) {
 		for (int i = 0; i < trace.size() - 1; i++) {
 
@@ -315,9 +316,10 @@ public class DistanceTransform {
 		pit.next(); // skip initial PathIterator.SEG_MOVETO
 		while (!pit.isDone()) {
 			pit.currentSegment(c);
-			double distSq = Line2D.ptSegDistSq(xStart, yStart, c[0], c[1],
-				p.getX(), p.getY());
+			double distSq = Line2D.ptSegDistSq(xStart, yStart, c[0], c[1], p.getX(), p.getY());
 			minDistSq = Math.min(minDistSq, distSq);
+			xStart = c[0];
+			yStart = c[1];
 			pit.next();
 		}
 		return Math.sqrt(p.getZ() * p.getZ() + minDistSq);
