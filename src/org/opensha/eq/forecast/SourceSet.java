@@ -1,5 +1,8 @@
 package org.opensha.eq.forecast;
 
+import java.util.Iterator;
+
+import org.opensha.geo.Location;
 import org.opensha.util.Named;
 
 /**
@@ -24,7 +27,10 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T> {
 	 * @return the number of {@code Source}s contained herein
 	 */
 	public int size();
-	// TODO will all Source Set implementations supportthis?
+	// TODO will all Source Set implementations support this?
 	
 	public double weight();
+	
+	public Iterable<T> locationIterable(Location loc);
+	
 }

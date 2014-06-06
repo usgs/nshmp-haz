@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.opensha.calc.Site;
-import org.opensha.calc.tasks.Tasks;
+import org.opensha.calc.tasks.Transforms;
 import org.opensha.data.DataUtils;
 import org.opensha.eq.fault.surface.IndexedFaultSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;
@@ -98,7 +98,7 @@ public class IndexedFaultSourceSet {
 			for (IndexedFaultSurface subsection : Iterables.filter(sections, filter)) {
 				sectionBits.set(subsection.index());
 				// pass subsection to executor
-				dCS.submit(Tasks.newDistanceCalc(subsection, loc));
+				dCS.submit(Transforms.newDistanceCalc(subsection, loc));
 			}
 
 			// build receiver Table -- must be done after sectionBits are set
@@ -129,7 +129,7 @@ public class IndexedFaultSourceSet {
 			for (IndexedFaultSource source : sources) {
 				List<Integer> sectionIDs = srcFilter.apply(source);
 				if (sectionIDs != null) {
-					gmSrcCS.submit(Tasks.newIndexedFaultCalcInitializer(source, site, rTable, sectionIDs));
+					gmSrcCS.submit(Transforms.newIndexedFaultCalcInitializer(source, site, rTable, sectionIDs));
 					gmSrcCount++;
 				}
 			}

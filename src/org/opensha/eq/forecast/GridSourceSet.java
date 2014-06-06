@@ -5,6 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.eq.fault.Faults.validateStrike;
 
+import static org.opensha.data.DataUtils.validateWeight;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class GridSourceSet implements SourceSet<PointSource> {
 	// logic tree branches
 
 	// only available to parsers
-	GridSourceSet(String name, Double weight, List<Location> locs,
+	private GridSourceSet(String name, Double weight, List<Location> locs,
 		List<IncrementalMFD> mfds, MagScalingType magScaling, Map<FocalMech, Double> mechMap,
 		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike) {
 
@@ -89,6 +91,12 @@ public class GridSourceSet implements SourceSet<PointSource> {
 		return weight;
 	}
 
+	@Override
+	public Iterable<PointSource> locationIterable(Location loc) {
+		// TODO
+		return null;
+	}	
+	
 	@Override
 	public Iterator<PointSource> iterator() {
 		// @formatter:off
@@ -178,7 +186,8 @@ public class GridSourceSet implements SourceSet<PointSource> {
 	// TODO need to determine absolute mMax over all nodes on initialization
 	// see builder/parser
 			
-	// TODO create master MFD for index arrays
+	// TODO create master MFD for index arrays; actually don't need an mfd just the 
+	// array of magnitudes to pull the correct depth distributions below
 	private IncrementalMFD masterMFD = null;
 	
 	private void initMagDepthData() {
@@ -215,7 +224,7 @@ public class GridSourceSet implements SourceSet<PointSource> {
 	static class Builder {
 
 		// build() may only be called once
-		// use Double to ensure field is initially
+		// use Double to ensure fields are initially null
 
 		private static final String ID = "GridSourceSet.Builder";
 		private boolean built = false;
@@ -238,9 +247,7 @@ public class GridSourceSet implements SourceSet<PointSource> {
 		}
 		
 		Builder weight(double weight) {
-			checkArgument(weight >= 0.0 && weight <= 1.0, "weight [%s] must be between [0 1]",
-				weight);
-			this.weight = weight;
+			this.weight = validateWeight(weight);
 			return this;
 		}
 		

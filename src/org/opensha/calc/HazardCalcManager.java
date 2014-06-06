@@ -9,7 +9,8 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.opensha.calc.tasks.Tasks;
+import org.opensha.calc.tasks.Task;
+import org.opensha.calc.tasks.Transforms;
 import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.FaultSourceSet;
 import org.opensha.eq.forecast.Forecast;
@@ -35,7 +36,8 @@ import com.google.common.collect.Maps;
  * FaultSurface heirarchies.
  * 
  * 2) Provide multithreaded single site hazard calculations that easily scale to
- * HPC resources for multiple sites; sources separated onto threads, not locations
+ * HPC resources for multiple sites; sources separated onto threads, not
+ * locations
  * 
  * @author Peter Powers
  * @version $Id:$
@@ -43,7 +45,6 @@ import com.google.common.collect.Maps;
 public class HazardCalcManager {
 
 	private ExecutorService ex;
-
 
 	// calculations are processed by type fault > cluster? > gridded
 	// within each type 'SourceSets' are processed
@@ -76,17 +77,15 @@ public class HazardCalcManager {
 	// to, say, selectively eliminate certain fault sources)
 	// -- Sources (can have weights; iterable; indexed? could be)
 	// -- Ruptures (can have weights)
-	
-	// source MFDs will all be scaled by local, source set, and any other branching
+
+	// source MFDs will all be scaled by local, source set, and any other
+	// branching
 	// weights when iterating.
 
-
-	public void calc(
-			Forecast forecast,
-			Map<GMM, Double> gmmWtMap,
-			Site site, IMT imt) throws InterruptedException, ExecutionException {
+	public void calc(Forecast forecast, Map<GMM, Double> gmmWtMap, Site site, IMT imt)
+			throws InterruptedException, ExecutionException {
 		// TODO this wont work
-		
+
 		// each type of source should do the following, understanding that a
 		// multi-threaded ExecutorService is available:
 
@@ -110,13 +109,13 @@ public class HazardCalcManager {
 		// create new map of GMMs and instances -- only hazard curve building
 		// and summation/assembly cares about the weights of each GMM, to get
 		// raw results (mean, std) all we need are instances
-		
+
 		Map<GMM, GroundMotionModel> gmmMap = Maps.newEnumMap(GMM.class);
 		for (GMM gmm : gmmWtMap.keySet()) {
 			gmmMap.put(gmm, gmm.instance(imt));
 		}
-		
-		
+		// TODO single GMM instances are cached and shared
+
 		// List<Source> sources;
 		for (SourceSet<? extends Source> srcSet : forecast) {
 			SourceType type = srcSet.type();
@@ -133,8 +132,7 @@ public class HazardCalcManager {
 				case CLUSTER:
 					break;
 				default:
-					throw new IllegalArgumentException(
-						"SourceType not handled: " + type.name());
+					throw new IllegalArgumentException("SourceType not handled: " + type.name());
 			}
 		}
 
@@ -154,61 +152,81 @@ public class HazardCalcManager {
 		// calculate total curve
 
 	}
+	
+	private GroundMotionCalcResultSet doCalc(SourceSet<Source> sources, Site site) {
 
-	private GroundMotionCalcResultSet doFaultCalc(
-			FaultSourceSet sources, Map<GMM, GroundMotionModel> gmms,
-			Site site) throws InterruptedException, ExecutionException {
+		Iterable<Source> sourceIterator = sources.locationIterable(site.loc);
+		
+		Task<Source, List<GMM_Source>> inputs = new Task<Source, List<GMM_Source>>(
+			sourceIterator, Transforms.sourceInitializerSupplier(site), ex);
+		
+		
+		// TODO break List<GMM_Source> into oseparate tasks?
+		
+//		Task<List<GMM_Source>, GroundMotionCalcResult> gmResults =
+//				new Task<List<GMM_Source>, GroundMotionCalcResult>(
+//						inputs, Transforms.sourceInitializerSupplier(site))
+		
+		
+		
+		return null;
+	}
 
-		// Quick distance filter:
+	private GroundMotionCalcResultSet doFaultCalc(FaultSourceSet sources,
+			Map<GMM, GroundMotionModel> gmms, Site site) throws InterruptedException,
+			ExecutionException {
+
+		// Quick distance filter: TODO this will be done by the locationIterator
+		// distance comes from the GMM model
+
+		// TODO the sourceSets hold their GMM_Manager (name??)
+
 		// Currently set to use an ECS; if ecs.take().get() returns null,
 		// source will be skipped. Don't like returning null; alternative may
 		// be to run quick distance filter in a single thread using a
 		// predicate or some such.
-		
+
 		double dist = 200.0; // this needs to come from gmm.xml
 
+		// deprecate; use locationIterator
 		CompletionService<FaultSource> qdCS = new ExecutorCompletionService<FaultSource>(ex);
 		int qdCount = 0;
 		for (FaultSource source : sources) {
-			qdCS.submit(Tasks.newQuickDistanceFilter(source, site.loc, dist));
+			qdCS.submit(Transforms.newQuickDistanceFilter(source, site.loc, dist));
 			qdCount++;
 		}
-		
+
 		// GMM input initializer:
-		CompletionService<List<GMM_Source>> gmSrcCS =  new ExecutorCompletionService<List<GMM_Source>>(ex);
+		CompletionService<List<GMM_Source>> gmSrcCS = new ExecutorCompletionService<List<GMM_Source>>(ex);
 		int gmSrcCount = 0;
-		for (int i=0; i<qdCount; i++) {
+		for (int i = 0; i < qdCount; i++) {
 			FaultSource source = qdCS.take().get();
 			if (source != null) {
-				gmSrcCS.submit(Tasks.newFaultCalcInitializer(source, site));
+				gmSrcCS.submit(Transforms.newFaultCalcInitializer(source, site));
 				gmSrcCount++;
 			}
 		}
-		
-		
+
 		// Ground motion calculation:
-		// TODO A SourceSet should map to a unique TectonicSetting so only a 
-		// single map of GMMs is required
-		CompletionService<GroundMotionCalcResult> gmCS = new ExecutorCompletionService<GroundMotionCalcResult>(ex);
+		CompletionService<GroundMotionCalcResult> gmCS = new ExecutorCompletionService<GroundMotionCalcResult>(
+			ex);
 		int gmCount = 0;
-		for (int i=0; i<gmSrcCount; i++) {
+		for (int i = 0; i < gmSrcCount; i++) {
 			List<GMM_Source> inputs = gmSrcCS.take().get();
 			for (GMM_Source input : inputs) {
-				gmCS.submit(Tasks.newGroundMotionCalc(gmms, input));
+				gmCS.submit(Transforms.newGroundMotionCalc(gmms, input));
 				gmCount++;
 			}
 		}
-		
+
 		// Final results assembly:
-		GroundMotionCalcResultSet results = GroundMotionCalcResultSet.create(
-			gmms.keySet(), gmCount);
-		for (int i=0; i<gmCount; i++) {
+		GroundMotionCalcResultSet results = GroundMotionCalcResultSet.create(gmms.keySet(), gmCount);
+		for (int i = 0; i < gmCount; i++) {
 			GroundMotionCalcResult result = gmCS.take().get();
 			results.add(result);
 		}
-		
+
 		return results;
 	}
-
 
 }

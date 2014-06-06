@@ -187,11 +187,10 @@ class GridSourceParser extends DefaultHandler {
 				MFD_Helper.SingleData singleDat = mfdHelper.getSingle(atts);
 				return MFDs.newSingleMFD(singleDat.m, setWeight * singleDat.a, singleDat.floats);
 			
-			case GR_TAPER:
-				throw new UnsupportedOperationException("GR_TAPER not yet implemented");
+			default:
+				throw new IllegalStateException(type + " not yet implemented");
 				
 		}
-		return null;
 	}
 		
 }

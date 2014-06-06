@@ -25,6 +25,9 @@ import com.google.common.collect.Table;
  */
 final class IndexedFaultCalcInitializer implements Callable<GMM_Source> {
 
+	// TODO clean
+	
+	// TODO this should take some derivative object IdxdFltSrcData
 	// Does the work of determining which distances to use from the supplied
 	// Table and indices and building various M variants either due to the use
 	// of Aleatory Uncertainty or, conceivably, due to combining logic tree

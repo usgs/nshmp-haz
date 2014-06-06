@@ -12,11 +12,13 @@ import org.opensha.eq.forecast.DistanceType;
 import org.opensha.eq.forecast.Distances;
 import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.IndexedFaultSource;
+import org.opensha.eq.forecast.Source;
 import org.opensha.geo.Location;
 import org.opensha.gmm.GMM;
 import org.opensha.gmm.GMM_Source;
 import org.opensha.gmm.GroundMotionModel;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Table;
 
 /**
@@ -25,7 +27,29 @@ import com.google.common.collect.Table;
  * 
  * @author Peter Powers
  */
-public final class Tasks {
+public final class Transforms {
+
+
+	/**
+	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
+	 * that returns a {@code List<GMM_Source>} of inputs for a ground motion
+	 * model (GMM) calculation.
+	 * @param source
+	 * @param site
+	 * @return a {@code List<GMM_Source>} of GMM inputs
+	 * @see GMM
+	 */
+	
+	
+	public static TransformSupplier<Source, List<GMM_Source>> sourceInitializerSupplier(
+			final Site site) {
+		return new TransformSupplier<Source, List<GMM_Source>>() {
+			@Override
+			public Transform<Source, List<GMM_Source>> get(Source source) {
+				return new SourceInitializer(source, site);
+			}
+		};
+	}
 
 	/**
 	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}

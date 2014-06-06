@@ -42,12 +42,11 @@ class SubductionSourceParser extends DefaultHandler {
 
 	private Locator locator;
 
-	private SubductionSourceSet.Builder sourceSetBuilder;
 	private SubductionSourceSet sourceSet;
+	private SubductionSourceSet.Builder sourceSetBuilder;
+	private SubductionSource.Builder sourceBuilder;
 
 	private MagScalingRelationship msr;
-
-	private SubductionSource.Builder sourceBuilder;
 	
 	// Traces are the only text content in source files
 	private boolean readingTrace = false;
@@ -190,17 +189,10 @@ class SubductionSourceParser extends DefaultHandler {
 		switch (type) {
 			case GR:
 				return buildGR(atts, setWeight);
-			case INCR:
-				throw new UnsupportedOperationException(
-					"INCR not yet implemented");
 			case SINGLE:
 				return buildSingle(atts, setWeight);
-			case GR_TAPER:
-				throw new UnsupportedOperationException(
-					"GR_TAPER not yet implemented");
 			default:
-				throw new IllegalStateException(
-					"Unhandled MFD type: " + type);
+				throw new IllegalStateException(type + " not yet implemented");
 		}
 	}
 

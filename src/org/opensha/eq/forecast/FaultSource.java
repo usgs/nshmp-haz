@@ -8,6 +8,7 @@ import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static org.opensha.eq.fault.Faults.validateDip;
 import static org.opensha.eq.fault.Faults.validateRake;
 import static org.opensha.eq.fault.Faults.validateWidth;
+import static org.opensha.eq.fault.Faults.validateDepth;
 import static org.opensha.eq.forecast.FloatStyle.CENTERED;
 import static org.opensha.eq.forecast.FloatStyle.FULL_DOWN_DIP;
 
@@ -39,8 +40,8 @@ import com.google.common.collect.Range;
  * ruptures; they occur in multiple locations on the fault surface with
  * appropriately scaled rates.
  * 
- * <p>A fault source can not be created directly; it may only be created by a
- * private parser.</p>
+ * <p>A {@code FaultSource} can not be created directly; it may only be created
+ * by a private parser.</p>
  * 
  * @author Peter Powers
  */
@@ -56,15 +57,16 @@ public class FaultSource implements Source {
 	final double rake;
 	final List<IncrementalMFD> mfds;
 	final MagScalingRelationship msr;
-	final double aspectRatio;  // for floating ruptures
-	final double offset;       // of floating ruptures
+	final double aspectRatio; // for floating ruptures
+	final double offset; // of floating ruptures
 	final FloatStyle floatStyle;
 	final GriddedSurface surface;
 	
 	private final List<List<Rupture>> ruptureLists; // 1:1 with MFDs
-	private final List<Integer> rupCount;           // cumulative index list for iterating ruptures
+	private final List<Integer> rupCount; // cumulative index list for iteration
 	private int size = 0;
 	
+	// package privacy for subduction subclass
 	FaultSource(String name, LocationList trace, double dip, double width,
 		GriddedSurface surface, double rake, List<IncrementalMFD> mfds,
 		MagScalingRelationship msr, double aspectRatio, double offset, FloatStyle floatStyle) {
@@ -98,13 +100,12 @@ public class FaultSource implements Source {
 		checkState(size > 0, "FaultSource has no ruptures");
 	}
 
-	@Override
-	public double getMinDistance(Location loc) {
+	
+	@Override public double getMinDistance(Location loc) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public int size() {
+	@Override public int size() {
 		return size;
 	}
 
@@ -122,24 +123,29 @@ public class FaultSource implements Source {
 		throw new IllegalStateException("We shouldn't be here... ever.");
 	}
 	
-	@Override
-	public Iterator<Rupture> iterator() {
-		// @formatter:off
+	@Override public Iterator<Rupture> iterator() {
 		return new Iterator<Rupture>() {
 			int size = size();
 			int caret = 0;
-			@Override public boolean hasNext() { return caret < size; }
-			@Override public Rupture next() { return getRupture(caret++); }
-			@Override public void remove() { throw new UnsupportedOperationException(); }
+
+			@Override public boolean hasNext() {
+				return caret < size;
+			}
+
+			@Override public Rupture next() {
+				return getRupture(caret++);
+			}
+
+			@Override public void remove() {
+				throw new UnsupportedOperationException();
+			}
 		};
-		// @formatter:on
 	}
 	
-	@Override
-	public String name() {
+	@Override public String name() {
 		return name;
 	}
-	
+
 	@Override
 	public String toString() {
 		// TODO use joiner
@@ -221,17 +227,16 @@ public class FaultSource implements Source {
 			double width = Math.sqrt(area / aspectRatio);
 			return area / ((width > maxWidth) ? maxWidth : width);
 		} else {
-			throw new IllegalArgumentException("Unsupported MagScalingRelation: " +
-				msr.getClass());
+			throw new IllegalArgumentException("Unsupported MagScalingRelation: " + msr.getClass());
 		}
 	}
 	
 	
-	/*
-	 * FaultSource builder; build() may only be called once; uses Doubles
-	 * to ensure fields are initially null.
-	 */
 	static class Builder {
+
+		// build() may only be called once
+		// use Doubles to ensure fields are initially null
+
 		static final Range<Double> ASPECT_RATIO_RANGE = Range.closed(1.0, 2.0);
 		static final Range<Double> OFFSET_RANGE = Range.closed(0.1, 20.0);
 		
@@ -243,8 +248,10 @@ public class FaultSource implements Source {
 		LocationList trace;
 		Double dip;
 		Double width;
+		Double depth;
 		Double rake;
-		List<IncrementalMFD> mfds = Lists.newArrayList();
+		ImmutableList.Builder<IncrementalMFD> mfdsBuilder = ImmutableList.builder();
+		List<IncrementalMFD> mfds;
 		MagScalingRelationship msr;
 		
 		// have defaults
@@ -254,7 +261,7 @@ public class FaultSource implements Source {
 		
 		Builder name(String name) {
 			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
-				"%s name may not be empty or null");
+				"Name may not be empty or null");
 			this.name = name;
 			return this;
 		}
@@ -276,21 +283,28 @@ public class FaultSource implements Source {
 			return this; 
 		}
 		
+		Builder depth(double depth) {
+			this.depth = validateDepth(depth);
+			return this; 
+		}
+
 		Builder rake(double rake) {
 			this.rake = validateRake(rake);
 			return this;
 		}
 		
+		// NPE checks in the two methods below will be redone by
+		// ImmutableList.Builder which disallows nulls
+		
 		Builder mfd(IncrementalMFD mfd) {
-			checkNotNull(mfd, "MFD is null");
-			this.mfds.add(mfd);
+			this.mfdsBuilder.add(checkNotNull(mfd, "MFD is null"));
 			return this;
 		}
 		
 		Builder mfds(List<IncrementalMFD> mfds) {
 			checkNotNull(mfds, "MFD list is null");
 			checkArgument(mfds.size() > 0, "MFD list is empty");
-			this.mfds.addAll(mfds);
+			this.mfdsBuilder.addAll(mfds);
 			return this;
 		}
 		
@@ -320,6 +334,7 @@ public class FaultSource implements Source {
 			checkState(trace != null, "%s trace not set", mssgID);
 			checkState(dip != null, "%s dip not set", mssgID);
 			checkState(width != null, "%s width not set", mssgID);
+			checkState(depth != null, "%s depth not set", mssgID);
 			checkState(rake != null, "%s rake not set", mssgID);
 			checkState(mfds.size() > 0, "%s has no MFDs", mssgID);
 			checkState(msr != null, "%s mag-scaling relation not set", mssgID);
@@ -327,12 +342,12 @@ public class FaultSource implements Source {
 		}
 		
 		FaultSource buildFaultSource() {
+			mfds = mfdsBuilder.build();
 			validateState(ID);
 
 			// create surface
-			double top = trace.first().depth();
-			double bottom = top + width * Math.sin(dip * GeoTools.TO_RAD);
-			GriddedSurfaceWithSubsets surface = new GriddedSurfaceWithSubsets(trace, dip, top,
+			double bottom = depth + width * Math.sin(dip * GeoTools.TO_RAD);
+			GriddedSurfaceWithSubsets surface = new GriddedSurfaceWithSubsets(trace, dip, depth,
 				bottom, offset, offset);
 
 			return new FaultSource(name, trace, dip, width, surface, rake,

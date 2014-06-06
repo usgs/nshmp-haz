@@ -19,9 +19,9 @@ import com.google.common.collect.Lists;
  *
  * @author Peter Powers
  */
-public class FaultSourceSet implements SourceSet<FaultSource> {
+public class ClusterSourceSet implements SourceSet<FaultSource> {
 
-	private final List<FaultSource> sources;
+	private final List<FaultSource> sources = Lists.newArrayList();
 	private final String name;
 	private final double weight;
 	private final MagScalingType msrType;
@@ -31,14 +31,17 @@ public class FaultSourceSet implements SourceSet<FaultSource> {
 	// may come in handy when trying to put together individual
 	// logic tree branches.
 	//
-	// NOTE msrType is currently not exposed
+	// NOTE msrType is currently not exposed; TODO nor is it used
 	
-	private FaultSourceSet(String name, double weight, MagScalingType msrType,
-		List<FaultSource> sources) {
-		this.name = name;
+	ClusterSourceSet(String name, double weight, MagScalingType msrType) {
+		checkArgument(weight >= 0.0 && weight <=1.0);
+		this.name = checkNotNull(name);
 		this.weight = weight;
 		this.msrType = msrType;
-		this.sources = sources;
+	}
+	
+	void add(FaultSource source) {
+		sources.add(source);
 	}
 	
 	@Override
@@ -76,7 +79,7 @@ public class FaultSourceSet implements SourceSet<FaultSource> {
 	static class Builder {
 
 		// build() may only be called once
-		// use Doubles to ensure fields are initially null
+		// use Double to ensure fields are initially null
 
 		static final String ID = "FaultSourceSet.Builder";
 		boolean built = false;
@@ -84,7 +87,6 @@ public class FaultSourceSet implements SourceSet<FaultSource> {
 		String name;
 		Double weight;
 		MagScalingType magScaling;
-		List<FaultSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
 			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
@@ -99,12 +101,7 @@ public class FaultSourceSet implements SourceSet<FaultSource> {
 		}
 
 		Builder magScaling(MagScalingType magScaling) {
-			this.magScaling = checkNotNull(magScaling, "MagScalingType is null");
-			return this;
-		}
-		
-		Builder source(FaultSource source) {
-			sources.add(checkNotNull(source, "FaultSource is null"));
+			this.magScaling = checkNotNull(magScaling, "");
 			return this;
 		}
 
@@ -116,9 +113,9 @@ public class FaultSourceSet implements SourceSet<FaultSource> {
 			built = true;
 		}
 
-		FaultSourceSet buildFaultSet() {
+		ClusterSourceSet buildClusterSet() {
 			validateState(ID);
-			return new FaultSourceSet(name, weight, magScaling, sources);
+			return new ClusterSourceSet(name, weight, magScaling);
 		}
 	}
 

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.geo.Location;
 
 import com.google.common.collect.Lists;
 
@@ -30,8 +31,7 @@ public class SubductionSourceSet implements SourceSet<SubductionSource> {
 	// NOTE msrType is currently not exposed
 	
 	private SubductionSourceSet(String name, double weight, MagScalingType msrType) {
-		checkArgument(weight >= 0.0 && weight <=1.0);
-		this.name = checkNotNull(name);
+		this.name = name;
 		this.weight = weight;
 		this.msrType = msrType;
 	}
@@ -39,6 +39,12 @@ public class SubductionSourceSet implements SourceSet<SubductionSource> {
 	void add(SubductionSource source) {
 		sources.add(source);
 	}
+	
+	@Override
+	public Iterable<SubductionSource> locationIterable(Location loc) {
+		// TODO
+		return null;
+	}	
 	
 	@Override
 	public Iterator<SubductionSource> iterator() {

@@ -4,34 +4,29 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
-import static org.opensha.eq.fault.Faults.*;
 import static org.opensha.eq.forecast.FloatStyle.FULL_DOWN_DIP;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.eq.fault.scaling.impl.GeoMat_MagLenthRelationship;
 import org.opensha.eq.fault.surface.ApproxGriddedSurface;
 import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMFD;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
- * Subduction source representation. This class wraps a model of a subduction interface geometry and
- * a list of magnitude frequency distributions that characterize how the fault
- * might rupture (e.g. as one, single geometry-filling event, or as multiple
- * smaller events) during earthquakes. Smaller events are modeled as 'floating'
- * ruptures; they occur in multiple locations on the fault surface with
- * appropriately scaled rates.
+ * Subduction source representation. This class wraps a model of a subduction
+ * interface geometry and a list of magnitude frequency distributions that
+ * characterize how the fault might rupture (e.g. as one, single
+ * geometry-filling event, or as multiple smaller events) during earthquakes.
+ * Smaller events are modeled as 'floating' ruptures; they occur in multiple
+ * locations on the fault surface with appropriately scaled rates.
  * 
- * <p>A subduction source can not be created directly; it may only be created by a
- * private parser.</p>
+ * <p>A {@code SubductionSource} can not be created directly; it may only be
+ * created by a private parser.</p>
  * 
  * @author Peter Powers
  */
@@ -45,17 +40,15 @@ public class SubductionSource extends FaultSource {
 
 		super(name, upperTrace, dip, width, surface, rake, mfds, msr, aspectRatio, offset,
 			floatStyle);
-		
+
 		this.lowerTrace = lowerTrace;
 	}
 
-	@Override
-	public double getMinDistance(Location loc) {
+	@Override public double getMinDistance(Location loc) {
 		throw new UnsupportedOperationException();
 	}
-	
-	@Override
-	public String toString() {
+
+	@Override public String toString() {
 		// TODO use joiner
 		// @formatter:off
 		return new StringBuilder()
@@ -76,12 +69,11 @@ public class SubductionSource extends FaultSource {
 		// @formatter:on
 	}
 
-	
 	static class Builder extends FaultSource.Builder {
-		
+
 		private static final String ID = "SubductionSource.Builder";
-		
-		// reuired
+
+		// required
 		private LocationList lowerTrace;
 
 		// have defaults
@@ -95,19 +87,19 @@ public class SubductionSource extends FaultSource {
 			this.lowerTrace = trace;
 			return this;
 		}
-		
+
 		SubductionSource buildSubductionSource() {
-			
-			// dip and width will be computed lazily by subduction
+
+			// depth, dip and width will be computed lazily by subduction
 			// surface implementation; set to NaN to satisfy builder
+			this.depth = Double.NaN;
 			this.dip = Double.NaN;
 			this.width = Double.NaN;
-			
+
 			checkState(lowerTrace != null, "%s lower trace not set", ID);
 			validateState(ID);
 
-			ApproxGriddedSurface surface = new ApproxGriddedSurface(trace, lowerTrace,
-				offset);
+			ApproxGriddedSurface surface = new ApproxGriddedSurface(trace, lowerTrace, offset);
 
 			return new SubductionSource(name, trace, lowerTrace, dip, width, surface, rake,
 				ImmutableList.copyOf(mfds), msr, aspectRatio, offset, floatStyle);

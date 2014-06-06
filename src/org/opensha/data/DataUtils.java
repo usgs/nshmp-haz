@@ -80,11 +80,9 @@ public final class DataUtils {
 	 * We could probably intern commonly used scale functions.
 	 */
 	
-	// TODO is this really needed as opposed >0d
-	// opne ranges fail if value is poitive infinity, is this correct
-	// I think maybe we want openClosed
-	private static final Range<Double> POS_RANGE = Range.open(0d,
-		Double.POSITIVE_INFINITY);
+	private static final Range<Double> POS_RANGE = Range.open(0d, Double.POSITIVE_INFINITY);
+
+	private static final Range<Double> WEIGHT_RANGE = Range.open(0d, 1d);	
 
 	/**
 	 * Returns the difference between {@code test} and {@code target}, relative
@@ -573,7 +571,7 @@ public final class DataUtils {
 	 * @return a reference to the supplied array
 	 * @throws IllegalArgumentException if {@code data} is empty, contains any
 	 *         {@code Double.NaN} or negative values, or sums to a value outside
-	 *         the range {@code (0..Double.POSITIVE_INFINITY)}
+	 *         the range {@code (0..Double.POSITIVE_INFINITY), exclusive}
 	 */
 	public static double[] asWeights(double... data) {
 		// TODO possible rename to normalize()
@@ -591,7 +589,7 @@ public final class DataUtils {
 	 * @return a reference to the supplied array
 	 * @throws IllegalArgumentException if {@code data} is empty, contains any
 	 *         {@code Double.NaN} or negative values, or sums to a value outside
-	 *         the range {@code (0..Double.POSITIVE_INFINITY)}
+	 *         the range {@code (0..Double.POSITIVE_INFINITY), exclusive}
 	 */
 	public static List<Double> asWeights(List<Double> data) {
 		checkArgument(isPositive(data));
@@ -610,6 +608,17 @@ public final class DataUtils {
 	public static void validateWeights(Collection<Double> weights) {
 		checkArgument(fuzzyEquals(sum(weights), 1.0, WEIGHT_TOLERANCE),
 			"Weights do not sum to 1: %s", weights);
+	}
+	
+	/**
+	 * Confirms that a weight value falls between 0.0 and 1.0, inclusive. Method
+	 * returns the supplied value and can be used inline.
+	 * @param weight to validate
+	 * @return the supplied {@code weight} value
+	 */
+	public static double validateWeight(double weight) {
+		uncheckedValidate(WEIGHT_RANGE, weight, "Weight");
+		return weight;
 	}
 
 	/**
@@ -758,8 +767,7 @@ public final class DataUtils {
 	 * @return the supplied values
 	 * @see Range
 	 */
-	public static double[] validate(Range<Double> range, String label,
-			double... array) {
+	public static double[] validate(Range<Double> range, String label, double... array) {
 		checkNotNull(range);
 		checkNotNull(array);
 		for (int i = 0; i < array.length; i++) {
@@ -775,7 +783,6 @@ public final class DataUtils {
 		checkArgument(range.contains(value), "%s value %s is not in range %s",
 			Strings.nullToEmpty(label), value, range);
 	}
-	
 	
 	/**
 	 * Creates a new array from the values in a source array at the specified

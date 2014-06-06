@@ -50,8 +50,9 @@ class FaultSourceParser extends DefaultHandler {
 
 	private Locator locator;
 
-	private FaultSourceSet.Builder sourceSetBuilder;
 	private FaultSourceSet sourceSet;
+	private FaultSourceSet.Builder sourceSetBuilder;
+	private FaultSource.Builder sourceBuilder;
 
 	private MagScalingRelationship msr;
 	
@@ -63,8 +64,6 @@ class FaultSourceParser extends DefaultHandler {
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
 	private MFD_Helper mfdHelper;
-
-	private FaultSource.Builder sourceBuilder;
 	
 	// Traces are the only text content in source files
 	private boolean readingTrace = false;
@@ -132,7 +131,6 @@ class FaultSourceParser extends DefaultHandler {
 					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
 					sourceSetBuilder.magScaling(msrType);
 					msr = msrType.instance();
-					sourceSet = sourceSetBuilder.buildFaultSet();
 					break;
 					
 				case SOURCE:
@@ -154,9 +152,10 @@ class FaultSourceParser extends DefaultHandler {
 					break;
 	
 				case GEOMETRY:
+					sourceBuilder.depth(readDouble(DEPTH, atts));
 					sourceBuilder.dip(readDouble(DIP, atts));
-					sourceBuilder.width(readDouble(WIDTH, atts));
 					sourceBuilder.rake(readDouble(RAKE, atts));
+					sourceBuilder.width(readDouble(WIDTH, atts));
 					break;
 					
 				case TRACE:
@@ -203,8 +202,11 @@ class FaultSourceParser extends DefaultHandler {
 					break;
 					
 				case SOURCE:
-					sourceSet.add(sourceBuilder.buildFaultSource());
+					sourceSetBuilder.source(sourceBuilder.buildFaultSource());
 					break;
+					
+				case FAULT_SOURCE_SET:
+					sourceSet = sourceSetBuilder.buildFaultSet();
 					
 			}
 			
@@ -229,14 +231,10 @@ class FaultSourceParser extends DefaultHandler {
 		switch (type) {
 			case GR:
 				return buildGR(mfdHelper.getGR(atts), unc, setWeight);
-			case INCR:
-				throw new UnsupportedOperationException("INCR not yet implemented");
 			case SINGLE:
 				return buildSingle(mfdHelper.getSingle(atts), unc, setWeight);
-			case GR_TAPER:
-				throw new UnsupportedOperationException("GR_TAPER not yet implemented");
 			default:
-				throw new IllegalStateException("Unhandled MFD type: " + type);
+				throw new IllegalStateException(type + " not yet implemented");
 		}
 	}
 

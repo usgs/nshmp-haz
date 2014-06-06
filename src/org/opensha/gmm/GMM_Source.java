@@ -51,6 +51,8 @@ public final class GMM_Source {
 		this.z2p5 = z2p5;
 		this.z1p0 = z1p0;
 	}
+	
+//	GMM_Source() {}
 
 	/**
 	 * Create a container with those rupture properties required by ground

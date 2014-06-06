@@ -42,30 +42,42 @@ public final class Faults {
 
 	/** Maximum allowed fault rake (180&#176;). */
 	public static final double MAX_RAKE = 180.0;
-
-	/** Minimum allowed fault depth (0 km; positive down). */
+	
+	/** Minimum allowed fault rupture depth (0 km). */
 	public static final double MIN_DEPTH = 0.0;
 
-	/** Maximum allowed fault depth (500 km; positive down). */
-	public static final double MAX_DEPTH = 500.0;
+	/** Maximum allowed crustal rupture depth (40 km). */
+	public static final double MAX_DEPTH_CRUSTAL = 40.0;
 	
+	/** Maximum allowed subduction interface rupture depth (60 km). */
+	public static final double MAX_DEPTH_SUB_INTERFACE = 60.0;
+
+	/** Minimum allowed subduction slab rupture depth (20 km). */
+	public static final double MIN_DEPTH_SUB_SLAB = 20.0;
+
+	/** Maximum allowed subduction slab rupture depth (700 km). */
+	public static final double MAX_DEPTH_SUB_SLAB = 700.0;
+
 	/** Minimum allowed fault width (>0 km). */
 	public static final double MIN_WIDTH = 0.0;
 
 	/** Maximum allowed fault width (60 km). */
-	public static final double MAX_WIDTH = 60.0;
+	public static final double MAX_WIDTH_CRUSTAL = 60.0;
 
 	/** Maximum allowed subduction fault width (200 km). */
-	public static final double MAX_WIDTH_SUBDUCTION = 200.0;
+	public static final double MAX_WIDTH_SUB_INTERFACE = 200.0;
 
-	// @formatter:off
 	private static final Range<Double> strikeRange = Range.closed(MIN_STRIKE, MAX_STRIKE);
 	private static final Range<Double> dipRange = Range.closed(MIN_DIP, MAX_DIP);
 	private static final Range<Double> rakeRange = Range.closed(MIN_RAKE, MAX_RAKE);
-	private static final Range<Double> depthRange = Range.closed(MIN_DEPTH, MAX_DEPTH);
-	private static final Range<Double> widthRange = Range.openClosed(MIN_WIDTH, MAX_WIDTH);
-	private static final Range<Double> subWidthRange = Range.openClosed(MIN_WIDTH, MAX_WIDTH_SUBDUCTION);
-	// @formatter:on
+	private static final Range<Double> depthRange = Range.closed(MIN_DEPTH, MAX_DEPTH_CRUSTAL);
+	private static final Range<Double> slabDepthRange = Range.closed(MIN_DEPTH_SUB_SLAB,
+		MAX_DEPTH_SUB_SLAB);
+	private static final Range<Double> interfaceDepthRange = Range.closed(MIN_DEPTH,
+		MAX_DEPTH_SUB_INTERFACE);
+	private static final Range<Double> widthRange = Range.openClosed(MIN_WIDTH, MAX_WIDTH_CRUSTAL);
+	private static final Range<Double> interfaceWidthRange = Range.openClosed(MIN_WIDTH,
+		MAX_WIDTH_SUB_INTERFACE);
 
 	/**
 	 * Verifies that a dip value is between {@code MIN_DIP} and {@code MAX_DIP}
@@ -110,8 +122,8 @@ public final class Faults {
 
 	/**
 	 * Verifies that a depth value is between {@code MIN_DEPTH} and
-	 * {@code MAX_DEPTH} (inclusive). Method returns the supplied value and can
-	 * be used inline.
+	 * {@code MAX_DEPTH_CRUSTAL} (inclusive). Method returns the supplied value
+	 * and can be used inline. Depths are positive down.
 	 * 
 	 * @param depth to validate
 	 * @return the supplied depth
@@ -120,6 +132,34 @@ public final class Faults {
 	 */
 	public static double validateDepth(double depth) {
 		return validate(depthRange, "Depth", depth);
+	}
+
+	/**
+	 * Verifies that a depth value is between {@code MIN_DEPTH_SUB_SLAB} and
+	 * {@code MAX_DEPTH_SUB_SLAB} (inclusive). Method returns the supplied value
+	 * and can be used inline. Depths are positive down.
+	 * 
+	 * @param depth to validate
+	 * @return the supplied depth
+	 * @throws IllegalArgumentException if {@code depth} value is out of range
+	 * @see DataUtils#validate(Range, String, double)
+	 */
+	public static double validateSlabDepth(double depth) {
+		return validate(slabDepthRange, "Subduction Slab Depth", depth);
+	}
+
+	/**
+	 * Verifies that a depth value is between {@code MIN_DEPTH_SUB_INTERFACE}
+	 * and {@code MAX_DEPTH_SUB_INTERFACE} (inclusive). Method returns the
+	 * supplied value and can be used inline. Depths are positive down.
+	 * 
+	 * @param depth to validate
+	 * @return the supplied depth
+	 * @throws IllegalArgumentException if {@code depth} value is out of range
+	 * @see DataUtils#validate(Range, String, double)
+	 */
+	public static double validateInterfaceDepth(double depth) {
+		return validate(interfaceDepthRange, "Subduction Interface Depth", depth);
 	}
 
 	/**
@@ -138,7 +178,7 @@ public final class Faults {
 
 	/**
 	 * Verifies that a width value is between {@code MIN_WIDTH} (exclusive,
-	 * width must be greater than 0) and {@code MAX_WIDTH_SUBDUCTION}
+	 * width must be greater than 0) and {@code MAX_WIDTH_SUB_INTERFACE}
 	 * (inclusive). Method returns the supplied value and can be used inline.
 	 * 
 	 * @param width to validate
@@ -146,8 +186,8 @@ public final class Faults {
 	 * @throws IllegalArgumentException if {@code width} value is out of range
 	 * @see DataUtils#validate(Range, String, double)
 	 */
-	public static double validateSubductionWidth(double width) {
-		return validate(subWidthRange, "Subduction Width", width);
+	public static double validateInterfaceWidth(double width) {
+		return validate(interfaceWidthRange, "Subduction Interface Width", width);
 	}
 
 //	/**
