@@ -155,16 +155,16 @@ public class HazardCalcManager {
 	
 	private GroundMotionCalcResultSet doCalc(SourceSet<Source> sources, Site site) {
 
-		Iterable<Source> sourceIterator = sources.locationIterable(site.loc);
+		Iterable<Source> locIter = sources.locationIterable(site.loc);
 		
 		Task<Source, List<GMM_Input>> inputs = new Task<Source, List<GMM_Input>>(
-			sourceIterator, Transforms.sourceInitializerSupplier(site), ex);
+				locIter, Transforms.sourceInitializerSupplier(site), ex);
 		
-//		Task<List<GMM_Input>, GroundMotionCalcResult> gmResults =
-//				new Task<List<GMM_Input>, GroundMotionCalcResult>(
-//						inputs, Transforms.sourceInitializerSupplier(site), ex)
-//		
-//		
+		Task<List<GMM_Input>, GroundMotionCalcResult> gmResults =
+				new Task<List<GMM_Input>, GroundMotionCalcResult>(
+						inputs, Transforms.sourceInitializerSupplier(site), ex)
+		
+		
 		
 		return null;
 	}

@@ -17,9 +17,9 @@ import com.google.common.collect.Lists;
  *
  * @author Peter Powers
  */
-public class SubductionSourceSet implements SourceSet<SubductionSource> {
+public class InterfaceSourceSet implements SourceSet<InterfaceSource> {
 
-	private final List<SubductionSource> sources;
+	private final List<InterfaceSource> sources;
 	private final String name;
 	private final double weight;
 	private final MagScalingType msrType;
@@ -31,8 +31,8 @@ public class SubductionSourceSet implements SourceSet<SubductionSource> {
 	//
 	// NOTE msrType is currently not exposed
 	
-	private SubductionSourceSet(String name, double weight, MagScalingType msrType,
-			List<SubductionSource> sources) {
+	private InterfaceSourceSet(String name, double weight, MagScalingType msrType,
+			List<InterfaceSource> sources) {
 		this.name = name;
 		this.weight = weight;
 		this.msrType = msrType;
@@ -40,13 +40,13 @@ public class SubductionSourceSet implements SourceSet<SubductionSource> {
 	}
 	
 	@Override
-	public Iterable<SubductionSource> locationIterable(Location loc) {
+	public Iterable<InterfaceSource> locationIterable(Location loc) {
 		// TODO
 		return null;
 	}	
 	
 	@Override
-	public Iterator<SubductionSource> iterator() {
+	public Iterator<InterfaceSource> iterator() {
 		return sources.iterator();
 	}
 
@@ -72,20 +72,20 @@ public class SubductionSourceSet implements SourceSet<SubductionSource> {
 
 	static class Builder extends FaultSourceSet.Builder {
 
-		static final String mssgID = "SubductionSourceSet.Builder";
+		static final String mssgID = "InterfaceSourceSet.Builder";
 
 		// type-specific field
-		List<SubductionSource> sources = Lists.newArrayList();
+		List<InterfaceSource> sources = Lists.newArrayList();
 
 		// type-specific method
-		Builder source(SubductionSource source) {
-			sources.add(checkNotNull(source, "SubductionSource is null"));
+		Builder source(InterfaceSource source) {
+			sources.add(checkNotNull(source, "InterfaceSource is null"));
 			return this;
 		}
 
-		SubductionSourceSet buildSubductionSet() {
+		InterfaceSourceSet buildSubductionSet() {
 			validateState(ID);
-			return new SubductionSourceSet(name, weight, magScaling, sources);
+			return new InterfaceSourceSet(name, weight, magScaling, sources);
 		}
 	}
 

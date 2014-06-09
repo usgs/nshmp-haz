@@ -25,16 +25,16 @@ import com.google.common.collect.ImmutableList;
  * Smaller events are modeled as 'floating' ruptures; they occur in multiple
  * locations on the fault surface with appropriately scaled rates.
  * 
- * <p>A {@code SubductionSource} can not be created directly; it may only be
+ * <p>A {@code InterfaceSource} can not be created directly; it may only be
  * created by a private parser.</p>
  * 
  * @author Peter Powers
  */
-public class SubductionSource extends FaultSource {
+public class InterfaceSource extends FaultSource {
 
 	final LocationList lowerTrace;
 
-	private SubductionSource(String name, LocationList upperTrace, LocationList lowerTrace,
+	private InterfaceSource(String name, LocationList upperTrace, LocationList lowerTrace,
 		double dip, double width, GriddedSurface surface, double rake, List<IncrementalMFD> mfds,
 		MagScalingRelationship msr, double aspectRatio, double offset, FloatStyle floatStyle) {
 
@@ -52,7 +52,7 @@ public class SubductionSource extends FaultSource {
 		// TODO use joiner
 		// @formatter:off
 		return new StringBuilder()
-		.append("==========  Subduction Source  ==========")
+		.append("==========  Interface Source  ==========")
 		.append(LINE_SEPARATOR.value())
 		.append("  Source name: ").append(name())
 		.append(LINE_SEPARATOR.value())
@@ -71,7 +71,7 @@ public class SubductionSource extends FaultSource {
 
 	static class Builder extends FaultSource.Builder {
 
-		private static final String ID = "SubductionSource.Builder";
+		private static final String ID = "InterfaceSource.Builder";
 
 		// required
 		private LocationList lowerTrace;
@@ -88,7 +88,7 @@ public class SubductionSource extends FaultSource {
 			return this;
 		}
 
-		SubductionSource buildSubductionSource() {
+		InterfaceSource buildSubductionSource() {
 
 			// depth, dip and width will be computed lazily by subduction
 			// surface implementation; set to NaN to satisfy builder
@@ -103,7 +103,7 @@ public class SubductionSource extends FaultSource {
 
 			ApproxGriddedSurface surface = new ApproxGriddedSurface(trace, lowerTrace, offset);
 
-			return new SubductionSource(name, trace, lowerTrace, dip, width, surface, rake,
+			return new InterfaceSource(name, trace, lowerTrace, dip, width, surface, rake,
 				ImmutableList.copyOf(mfds), msr, aspectRatio, offset, floatStyle);
 		}
 

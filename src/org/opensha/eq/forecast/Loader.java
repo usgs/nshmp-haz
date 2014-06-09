@@ -42,7 +42,8 @@ public class Loader {
 	private static final Logger log;
 	private static final FaultSourceParser faultParser;
 	private static final GridSourceParser gridParser;
-	private static final SubductionSourceParser subductionParser;
+	private static final InterfaceParser subductionParser;
+//	private static final SubductionSlabSourceParser subductionParser;
 
 	static {
 		// TODO see Logging; no log file handler yet
@@ -57,7 +58,7 @@ public class Loader {
 		}
 		faultParser = FaultSourceParser.create(saxParser);
 		gridParser = GridSourceParser.create(saxParser);
-		subductionParser = SubductionSourceParser.create(saxParser);
+		subductionParser = InterfaceParser.create(saxParser);
 	}
 
 

@@ -35,16 +35,16 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @author Peter Powers
  */
-class SubductionSourceParser extends DefaultHandler {
+class InterfaceParser extends DefaultHandler {
 
-	private static final Logger log = Logging.create(SubductionSourceParser.class);
+	private static final Logger log = Logging.create(InterfaceParser.class);
 	private final SAXParser sax;
 
 	private Locator locator;
 
-	private SubductionSourceSet sourceSet;
-	private SubductionSourceSet.Builder sourceSetBuilder;
-	private SubductionSource.Builder sourceBuilder;
+	private InterfaceSourceSet sourceSet;
+	private InterfaceSourceSet.Builder sourceSetBuilder;
+	private InterfaceSource.Builder sourceBuilder;
 
 	private MagScalingRelationship msr;
 	
@@ -53,17 +53,17 @@ class SubductionSourceParser extends DefaultHandler {
 	private StringBuilder traceBuilder = null;
 	
 	
-	private SubductionSourceParser(SAXParser sax) {
+	private InterfaceParser(SAXParser sax) {
 		this.sax = sax;
 	}
 	
-	static SubductionSourceParser create(SAXParser sax) {
-		return new SubductionSourceParser(checkNotNull(sax));
+	static InterfaceParser create(SAXParser sax) {
+		return new InterfaceParser(checkNotNull(sax));
 	}
 	
-	SubductionSourceSet parse(File f) throws SAXException, IOException {
+	InterfaceSourceSet parse(File f) throws SAXException, IOException {
 		sax.parse(f, this);
-		checkState(sourceSet.size() > 0, "SubductionSourceSet is empty");
+		checkState(sourceSet.size() > 0, "InterfaceSourceSet is empty");
 		return sourceSet;
 	}
 	
@@ -86,7 +86,7 @@ class SubductionSourceParser extends DefaultHandler {
 				case SUBDUCTION_SOURCE_SET:
 					String name = readString(NAME, atts);
 					double weight = readDouble(WEIGHT, atts);
-					sourceSetBuilder = new SubductionSourceSet.Builder();
+					sourceSetBuilder = new InterfaceSourceSet.Builder();
 					sourceSetBuilder.name(name);
 					sourceSetBuilder.weight(weight);
 					if (log.isLoggable(INFO)) {
@@ -102,7 +102,7 @@ class SubductionSourceParser extends DefaultHandler {
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
-					sourceBuilder = new SubductionSource.Builder();
+					sourceBuilder = new InterfaceSource.Builder();
 					sourceBuilder.name(srcName);
 					sourceBuilder.magScaling(msr);
 					if (log.isLoggable(INFO)) log.info("Building: " + srcName);
