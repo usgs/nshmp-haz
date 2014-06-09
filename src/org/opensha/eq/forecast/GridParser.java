@@ -40,9 +40,9 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @author Peter Powers
  */
-class GridSourceParser extends DefaultHandler {
+class GridParser extends DefaultHandler {
 
-	private static final Logger log = Logging.create(GridSourceParser.class);
+	private static final Logger log = Logging.create(GridParser.class);
 	private final SAXParser sax;
 	private Locator locator;
 
@@ -61,12 +61,12 @@ class GridSourceParser extends DefaultHandler {
 	// Per-node MFD
 	IncrementalMFD nodeMFD = null;
 	
-	private GridSourceParser(SAXParser sax) {
+	private GridParser(SAXParser sax) {
 		this.sax = checkNotNull(sax);
 	}
 	
-	static GridSourceParser create(SAXParser sax) {
-		return new GridSourceParser(sax);
+	static GridParser create(SAXParser sax) {
+		return new GridParser(sax);
 	}
 	
 	GridSourceSet parse(File f) throws SAXException, IOException {

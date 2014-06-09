@@ -42,9 +42,9 @@ import com.google.common.collect.Lists;
  * 
  * @author Peter Powers
  */
-class FaultSourceParser extends DefaultHandler {
+class FaultParser extends DefaultHandler {
 
-	private static final Logger log = Logging.create(FaultSourceParser.class);
+	private static final Logger log = Logging.create(FaultParser.class);
 	private static final String LF = LINE_SEPARATOR.value();
 	private final SAXParser sax;
 
@@ -70,12 +70,12 @@ class FaultSourceParser extends DefaultHandler {
 	private StringBuilder traceBuilder = null;
 	
 	
-	private FaultSourceParser(SAXParser sax) {
+	private FaultParser(SAXParser sax) {
 		this.sax = sax;
 	}
 	
-	static FaultSourceParser create(SAXParser sax) {
-		return new FaultSourceParser(checkNotNull(sax));
+	static FaultParser create(SAXParser sax) {
+		return new FaultParser(checkNotNull(sax));
 	}
 	
 	FaultSourceSet parse(File f) throws SAXException, IOException {

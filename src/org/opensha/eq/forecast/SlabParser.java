@@ -8,20 +8,20 @@ import javax.xml.parsers.SAXParser;
 import org.xml.sax.SAXException;
 
 /*
- * Placeholder parser; delegates to GridSourceParser.
+ * Placeholder parser; delegates to GridParser.
  * 
  * @author Peter Powers
  */
-class SlabSourceParser {
+class SlabParser {
 
-	private GridSourceParser gridParser;
+	private GridParser gridParser;
 
-	private SlabSourceParser(SAXParser sax) {
-		gridParser = GridSourceParser.create(sax);
+	private SlabParser(SAXParser sax) {
+		gridParser = GridParser.create(sax);
 	}
 
-	static SlabSourceParser create(SAXParser sax) {
-		return new SlabSourceParser(sax);
+	static SlabParser create(SAXParser sax) {
+		return new SlabParser(sax);
 	}
 
 	SlabSourceSet parse(File f) throws SAXException, IOException {

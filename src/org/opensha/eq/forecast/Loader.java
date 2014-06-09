@@ -40,8 +40,8 @@ public class Loader {
 	private static final String LF = LINE_SEPARATOR.value();
 
 	private static final Logger log;
-	private static final FaultSourceParser faultParser;
-	private static final GridSourceParser gridParser;
+	private static final FaultParser faultParser;
+	private static final GridParser gridParser;
 	private static final InterfaceParser subductionParser;
 //	private static final SubductionSlabSourceParser subductionParser;
 
@@ -56,8 +56,8 @@ public class Loader {
 			log.log(Level.SEVERE, "Error initializing SAX parser", e);
 			System.exit(1);
 		}
-		faultParser = FaultSourceParser.create(saxParser);
-		gridParser = GridSourceParser.create(saxParser);
+		faultParser = FaultParser.create(saxParser);
+		gridParser = GridParser.create(saxParser);
 		subductionParser = InterfaceParser.create(saxParser);
 	}
 
