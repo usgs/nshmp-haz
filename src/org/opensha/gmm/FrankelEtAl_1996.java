@@ -55,7 +55,7 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 	}
 
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		SiteClass sc = GMM_Utils.ceusSiteClass(props.vs30);
 		double mean = (sc == SOFT_ROCK) ?
 			bcTable.get(props.rRup, converter().convert(props.Mw)) :

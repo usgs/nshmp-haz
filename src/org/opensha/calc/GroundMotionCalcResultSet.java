@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opensha.gmm.GMM;
-import org.opensha.gmm.GMM_Source;
+import org.opensha.gmm.GMM_Input;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -18,7 +18,7 @@ import com.google.common.collect.Maps;
  */
 public final class GroundMotionCalcResultSet {
 
-	List<GMM_Source> inputs;
+	List<GMM_Input> inputs;
 	Map<GMM, List<Double>> means;
 	Map<GMM, List<Double>> stds;
 	

@@ -64,7 +64,7 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		FaultStyle style = rakeToFaultStyle(props.rake);
 		return calc(coeffs, coeffsPGA, props.Mw, props.rJB, props.rRup,
 			props.dip, props.zTop, style, props.vs30, props.z2p5);

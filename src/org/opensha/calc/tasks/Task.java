@@ -8,7 +8,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorCompletionService;
 
 import org.opensha.eq.forecast.Source;
-import org.opensha.gmm.GMM_Source;
+import org.opensha.gmm.GMM_Input;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;

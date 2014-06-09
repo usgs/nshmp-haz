@@ -41,7 +41,7 @@ final class GraizerKalkan_2013 implements GroundMotionModel {
 	}
 
 	@Override
-	public ScalarGroundMotion calc(GMM_Source props) {
+	public ScalarGroundMotion calc(GMM_Input props) {
 		FaultStyle style = rakeToFaultStyle(props.rake);
 		return calc(period, props.Mw, props.rRup, style, props.vs30);
 	}

@@ -80,7 +80,7 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);
 		
 		

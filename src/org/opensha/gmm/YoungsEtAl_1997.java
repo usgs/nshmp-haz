@@ -87,7 +87,7 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		double mean = calcMean(coeffs, coeffsPGA, coeffsSA, props.Mw,
 			props.rRup, props.zTop, props.vs30, isSlab());
 		double sigma = calcStdDev(coeffs, props.Mw);

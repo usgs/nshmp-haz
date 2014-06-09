@@ -67,7 +67,7 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);
 		return DefaultScalarGroundMotion.create(
 			calcMean(coeffs, converter().convert(props.Mw), props.rRup,

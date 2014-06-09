@@ -38,7 +38,7 @@ public class Tests_NGAW2 {
 	static final String GMM_INPUTS = "NGAW2_inputs.csv";
 	private static final String GMM_RESULTS = "NGAW2_results.csv";
 	private static final double TOL = 0.000001; // results precision = 1e-6
-	private static List<GMM_Source> inputsList;
+	private static List<GMM_Input> inputsList;
 	
 	
 	static {
@@ -88,7 +88,7 @@ public class Tests_NGAW2 {
 	
 	/* Use to generate GMM result file */
 	private static void computeGM() throws IOException, ExecutionException {
-		List<GMM_Source> inputs = loadInputs(GMM_INPUTS);
+		List<GMM_Input> inputs = loadInputs(GMM_INPUTS);
 		File out = new File("tmp/GMM-tests/" + GMM_RESULTS);
 		Files.write("", out, Charsets.US_ASCII);
 		for (GMM gmm : gmms) {
@@ -96,7 +96,7 @@ public class Tests_NGAW2 {
 				GroundMotionModel gmModel = gmm.instance(imt);
 				int modelIdx = 0;
 				String id = gmm.name() + "-" + imt;
-				for (GMM_Source input : inputs) {
+				for (GMM_Input input : inputs) {
 					ScalarGroundMotion sgm = gmModel.calc(input);
 					String result = Parsing.joinOnCommas(
 						Lists.newArrayList(modelIdx++ + "-" + id,
@@ -145,7 +145,7 @@ public class Tests_NGAW2 {
 		}
 	}
 	
-	static List<GMM_Source> loadInputs(String resource) throws IOException {
+	static List<GMM_Input> loadInputs(String resource) throws IOException {
 		URL url = Resources.getResource(Tests_NGAW2.class, D_DIR + resource);
 		return FluentIterable
 				.from(Resources.readLines(url, US_ASCII))
@@ -154,17 +154,17 @@ public class Tests_NGAW2 {
 				.toList();
 	}
 	
-	private enum ArgsToInputFunction implements Function<String, GMM_Source> {
+	private enum ArgsToInputFunction implements Function<String, GMM_Input> {
 		INSTANCE;
 		@Override
-		public GMM_Source apply(String line) {
+		public GMM_Input apply(String line) {
 
 			Iterator<Double> it = FluentIterable
 				.from(Parsing.splitOnCommas(line))
 				.transform(Parsing.doubleValueFunction())
 				.iterator();
 
-			return GMM_Source.builder()
+			return GMM_Input.builder()
 				.mag(it.next())
 				.distances(it.next(), it.next(), it.next())
 				.dip(it.next())

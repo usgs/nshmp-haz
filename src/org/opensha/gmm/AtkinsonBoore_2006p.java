@@ -59,7 +59,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 	}
 
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 
 		double mean = table.get(props.rRup, props.Mw);
 		

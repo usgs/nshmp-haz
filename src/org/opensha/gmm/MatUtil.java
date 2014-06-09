@@ -27,7 +27,7 @@ public class MatUtil {
 	 *         ground motion and its standard deviation
 	 * @throws ExecutionException if a problem occurs while initializing the model
 	 */
-	public static double[] calc(GMM model, IMT imt, GMM_Source source) throws ExecutionException {
+	public static double[] calc(GMM model, IMT imt, GMM_Input source) throws ExecutionException {
 		ScalarGroundMotion sgm = model.instance(imt).calc(source);
 		return new double[] { sgm.mean(), sgm.stdDev() };
 	}
@@ -45,7 +45,7 @@ public class MatUtil {
 	 * @return a {@link MatSpectrum} data container
 	 * @throws ExecutionException if a problem occurs while initializing the model
 	 */
-	public static MatSpectrum spectrum(GMM model, GMM_Source source) throws ExecutionException {
+	public static MatSpectrum spectrum(GMM model, GMM_Input source) throws ExecutionException {
 		Set<IMT> imts = model.responseSpectrumIMTs();
 		MatSpectrum spectrum = new MatSpectrum(imts.size());
 		int i = 0;

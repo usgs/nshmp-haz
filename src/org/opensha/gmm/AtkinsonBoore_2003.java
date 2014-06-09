@@ -82,7 +82,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		double mean = calcMean(coeffs, coeffsPGA, props.Mw, props.rRup,
 			props.zTop, props.vs30, isSlab(), coeffs.imt.frequency());
 		double sigma = coeffs.sig * BASE_10_TO_E;

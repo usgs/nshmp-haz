@@ -65,7 +65,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		double mean = calcMean(coeffs, props.Mw, props.rRup, props.zTop, props.vs30, isSlab());
 		double sigma = calcStdDev(coeffs, isSlab());
 		return DefaultScalarGroundMotion.create(mean, sigma);

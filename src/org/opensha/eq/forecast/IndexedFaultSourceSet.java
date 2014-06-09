@@ -18,7 +18,7 @@ import org.opensha.eq.fault.surface.IndexedFaultSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
-import org.opensha.gmm.GMM_Source;
+import org.opensha.gmm.GMM_Input;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -120,10 +120,10 @@ public class IndexedFaultSourceSet {
 			
 			// TODO ?? make rTable immutable at this point; would require copying
 			
-			CompletionService<GMM_Source> gmSrcCS = 
-					new ExecutorCompletionService<GMM_Source>(ex);
+			CompletionService<GMM_Input> gmSrcCS = 
+					new ExecutorCompletionService<GMM_Input>(ex);
 
-			// assemble GMM_Source data for required sources
+			// assemble GMM_Input data for required sources
 			IndexedSourceFilter srcFilter = new IndexedSourceFilter(sectionBits);
 			int gmSrcCount = 0;
 			for (IndexedFaultSource source : sources) {

@@ -53,7 +53,7 @@ public final class AtkinsonMacias_2009 implements GroundMotionModel {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		double mean = calcMean(coeffs, props.Mw, props.rRup);
 		double sigma = coeffs.sig * BASE_10_TO_E;
 		return DefaultScalarGroundMotion.create(mean, sigma);

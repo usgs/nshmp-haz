@@ -58,7 +58,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 	}
 
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		FaultStyle style = rakeToFaultStyle(props.rake);
 		double f_ss = (style == STRIKE_SLIP) ? 1.0 : 0.0;
 		double f_rv = (style == REVERSE) ? 1.0 : 0.0;

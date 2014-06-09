@@ -20,7 +20,7 @@ import org.opensha.eq.forecast.SourceSet;
 import org.opensha.eq.forecast.SourceType;
 import org.opensha.geo.Location;
 import org.opensha.gmm.GMM;
-import org.opensha.gmm.GMM_Source;
+import org.opensha.gmm.GMM_Input;
 import org.opensha.gmm.GroundMotionModel;
 import org.opensha.gmm.IMT;
 
@@ -93,7 +93,7 @@ public class HazardCalcManager {
 		// -- callable returns Source
 
 		// Step 2: build rupture data container
-		// -- callable returns List<GMM_Source>
+		// -- callable returns List<GMM_Input>
 		// -- floating ruptures
 		// -- multiple mags and MFDs
 		// -- may want to handle special case of indexed faultSourceSet
@@ -157,11 +157,11 @@ public class HazardCalcManager {
 
 		Iterable<Source> sourceIterator = sources.locationIterable(site.loc);
 		
-		Task<Source, List<GMM_Source>> inputs = new Task<Source, List<GMM_Source>>(
+		Task<Source, List<GMM_Input>> inputs = new Task<Source, List<GMM_Input>>(
 			sourceIterator, Transforms.sourceInitializerSupplier(site), ex);
 		
-//		Task<List<GMM_Source>, GroundMotionCalcResult> gmResults =
-//				new Task<List<GMM_Source>, GroundMotionCalcResult>(
+//		Task<List<GMM_Input>, GroundMotionCalcResult> gmResults =
+//				new Task<List<GMM_Input>, GroundMotionCalcResult>(
 //						inputs, Transforms.sourceInitializerSupplier(site), ex)
 //		
 //		
@@ -194,7 +194,7 @@ public class HazardCalcManager {
 		}
 
 		// GMM input initializer:
-		CompletionService<List<GMM_Source>> gmSrcCS = new ExecutorCompletionService<List<GMM_Source>>(ex);
+		CompletionService<List<GMM_Input>> gmSrcCS = new ExecutorCompletionService<List<GMM_Input>>(ex);
 		int gmSrcCount = 0;
 		for (int i = 0; i < qdCount; i++) {
 			FaultSource source = qdCS.take().get();
@@ -209,8 +209,8 @@ public class HazardCalcManager {
 			ex);
 		int gmCount = 0;
 		for (int i = 0; i < gmSrcCount; i++) {
-			List<GMM_Source> inputs = gmSrcCS.take().get();
-			for (GMM_Source input : inputs) {
+			List<GMM_Input> inputs = gmSrcCS.take().get();
+			for (GMM_Input input : inputs) {
 				gmCS.submit(Transforms.newGroundMotionCalc(gmms, input));
 				gmCount++;
 			}

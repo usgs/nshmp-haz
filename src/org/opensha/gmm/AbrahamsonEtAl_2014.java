@@ -73,7 +73,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Source props) {
+	public final ScalarGroundMotion calc(GMM_Input props) {
 		FaultStyle style = rakeToFaultStyle(props.rake);
 		return calc(coeffs, props.Mw, props.rJB, props.rRup, props.rX,
 			props.dip, props.width, props.zTop, style, props.vs30, props.vsInf,

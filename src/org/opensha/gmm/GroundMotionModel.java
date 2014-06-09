@@ -26,12 +26,12 @@ public interface GroundMotionModel {
 	 * @param args a ground motion model input argument container
 	 * @return a scalar ground motion wrapper
 	 */
-	public ScalarGroundMotion calc(GMM_Source args);
+	public ScalarGroundMotion calc(GMM_Input args);
 
 	/*
 	 * Compute the scalar ground motion for the supplied arguments at all
 	 * spectral periods.
 	 */
-	// Map<IMT, ScalarGroundMotion> calcAll(GMM_Source args);
+	// Map<IMT, ScalarGroundMotion> calcAll(GMM_Input args);
 
 }

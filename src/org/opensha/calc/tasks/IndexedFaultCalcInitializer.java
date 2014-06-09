@@ -14,16 +14,16 @@ import org.opensha.eq.forecast.DistanceType;
 import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.IndexedFaultSource;
 import org.opensha.eq.forecast.Rupture;
-import org.opensha.gmm.GMM_Source;
+import org.opensha.gmm.GMM_Input;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 
 /**
- * Compiles source and site data into a {@code List} of {@code GMM_Source}s.
+ * Compiles source and site data into a {@code List} of {@code GMM_Input}s.
  * @author Peter Powers
  */
-final class IndexedFaultCalcInitializer implements Callable<GMM_Source> {
+final class IndexedFaultCalcInitializer implements Callable<GMM_Input> {
 
 	// TODO clean
 	
@@ -49,15 +49,15 @@ final class IndexedFaultCalcInitializer implements Callable<GMM_Source> {
 	
 	
 	@Override
-	public GMM_Source call() throws Exception {
-		// List<GMM_Source> inputs = Lists.newArrayList(); // if aleatory flag
+	public GMM_Input call() throws Exception {
+		// List<GMM_Input> inputs = Lists.newArrayList(); // if aleatory flag
 		// or perhaps we have lists of mag or rake variants
 		
 		int rjbKey = DataUtils.minKey(rTable.row(R_JB), sectionIDs);
 		int rRupKey = DataUtils.minKey(rTable.row(R_RUP), sectionIDs);
 		// rRup key is used for rX
 		
-		GMM_Source.Builder builder = GMM_Source.builder()
+		GMM_Input.Builder builder = GMM_Input.builder()
 				.mag(source.mag())
 				.distances(
 					rTable.get(R_JB, rjbKey),
