@@ -28,22 +28,21 @@ import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 
 /**
- * {@code Forecast} loader.
+ * {@code Forecast} loader. This class is not thread safe.
  * 
  * @author Peter Powers
  */
 public class Loader {
 	
-	// NOTE  if multithreaded forecast loading is adopted, this class would
-	// need to be refactored initialize sax parsers on a per-thread basis
-
 	private static final String LF = LINE_SEPARATOR.value();
 
 	private static final Logger log;
+	
+	private static final ClusterParser clusterParser;
 	private static final FaultParser faultParser;
 	private static final GridParser gridParser;
-	private static final InterfaceParser subductionParser;
-//	private static final SubductionSlabSourceParser subductionParser;
+	private static final InterfaceParser interfaceParser;
+	private static final SlabParser slabParser;
 
 	static {
 		// TODO see Logging; no log file handler yet
@@ -56,9 +55,11 @@ public class Loader {
 			log.log(Level.SEVERE, "Error initializing SAX parser", e);
 			System.exit(1);
 		}
+		clusterParser = ClusterParser.create(saxParser);
 		faultParser = FaultParser.create(saxParser);
 		gridParser = GridParser.create(saxParser);
-		subductionParser = InterfaceParser.create(saxParser);
+		interfaceParser = InterfaceParser.create(saxParser);
+		slabParser = SlabParser.create(saxParser);
 	}
 
 
@@ -213,8 +214,6 @@ public class Loader {
 		sb.append("** Exiting **").append(LF);
 		log.severe(sb.toString());
 	}
-		
-	// @formatter:off
 	
 	/*
 	 * Lists the source type directories skipping hidden directories and those
