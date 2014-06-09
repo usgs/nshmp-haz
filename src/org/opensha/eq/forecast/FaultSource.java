@@ -342,7 +342,9 @@ public class FaultSource implements Source {
 		}
 		
 		FaultSource buildFaultSource() {
+			
 			mfds = mfdsBuilder.build();
+			
 			validateState(ID);
 
 			// create surface

@@ -160,14 +160,11 @@ public class HazardCalcManager {
 		Task<Source, List<GMM_Source>> inputs = new Task<Source, List<GMM_Source>>(
 			sourceIterator, Transforms.sourceInitializerSupplier(site), ex);
 		
-		
-		// TODO break List<GMM_Source> into oseparate tasks?
-		
 //		Task<List<GMM_Source>, GroundMotionCalcResult> gmResults =
 //				new Task<List<GMM_Source>, GroundMotionCalcResult>(
-//						inputs, Transforms.sourceInitializerSupplier(site))
-		
-		
+//						inputs, Transforms.sourceInitializerSupplier(site), ex)
+//		
+//		
 		
 		return null;
 	}

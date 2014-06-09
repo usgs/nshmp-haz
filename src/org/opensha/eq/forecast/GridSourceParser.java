@@ -61,7 +61,6 @@ class GridSourceParser extends DefaultHandler {
 	// Per-node MFD
 	IncrementalMFD nodeMFD = null;
 	
-	
 	private GridSourceParser(SAXParser sax) {
 		this.sax = checkNotNull(sax);
 	}

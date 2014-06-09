@@ -98,7 +98,6 @@ class SubductionSourceParser extends DefaultHandler {
 					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
 					sourceSetBuilder.magScaling(msrType);
 					msr = msrType.instance();
-					sourceSet = sourceSetBuilder.buildSubductionSet();
 					break;
 
 				case SOURCE:
@@ -110,7 +109,7 @@ class SubductionSourceParser extends DefaultHandler {
 					break;
 		
 				case MAG_FREQ_DIST:
-					sourceBuilder.mfd(buildMFD(atts, sourceSet.weight()));
+					sourceBuilder.mfd(buildMFD(atts, sourceSetBuilder.weight));
 					break;
 	
 				case GEOMETRY:
@@ -161,8 +160,11 @@ class SubductionSourceParser extends DefaultHandler {
 					break;
 
 				case SOURCE:
-					sourceSet.add(sourceBuilder.buildSubductionSource());
+					sourceSetBuilder.source(sourceBuilder.buildSubductionSource());
 					break;
+					
+				case SUBDUCTION_SOURCE_SET:
+					sourceSet = sourceSetBuilder.buildSubductionSet();
 					
 			}
 			

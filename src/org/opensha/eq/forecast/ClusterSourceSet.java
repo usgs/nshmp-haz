@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.forecast.FaultSourceSet.Builder;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Strings;
@@ -19,9 +20,9 @@ import com.google.common.collect.Lists;
  *
  * @author Peter Powers
  */
-public class ClusterSourceSet implements SourceSet<FaultSource> {
+public class ClusterSourceSet implements SourceSet<ClusterSource> {
 
-	private final List<FaultSource> sources = Lists.newArrayList();
+	private final List<ClusterSource> sources;
 	private final String name;
 	private final double weight;
 	private final MagScalingType msrType;
@@ -33,25 +34,21 @@ public class ClusterSourceSet implements SourceSet<FaultSource> {
 	//
 	// NOTE msrType is currently not exposed; TODO nor is it used
 	
-	ClusterSourceSet(String name, double weight, MagScalingType msrType) {
-		checkArgument(weight >= 0.0 && weight <=1.0);
+	ClusterSourceSet(String name, double weight, MagScalingType msrType, List<ClusterSource> sources) {
 		this.name = checkNotNull(name);
 		this.weight = weight;
 		this.msrType = msrType;
-	}
-	
-	void add(FaultSource source) {
-		sources.add(source);
+		this.sources = sources;
 	}
 	
 	@Override
-	public Iterable<FaultSource> locationIterable(Location loc) {
+	public Iterable<ClusterSource> locationIterable(Location loc) {
 		// TODO
 		return null;
 	}	
 	
 	@Override
-	public Iterator<FaultSource> iterator() {
+	public Iterator<ClusterSource> iterator() {
 		return sources.iterator();
 	}
 
@@ -81,12 +78,13 @@ public class ClusterSourceSet implements SourceSet<FaultSource> {
 		// build() may only be called once
 		// use Double to ensure fields are initially null
 
-		static final String ID = "FaultSourceSet.Builder";
+		static final String ID = "ClusterSourceSet.Builder";
 		boolean built = false;
 
 		String name;
 		Double weight;
 		MagScalingType magScaling;
+		List<ClusterSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
 			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
@@ -105,6 +103,11 @@ public class ClusterSourceSet implements SourceSet<FaultSource> {
 			return this;
 		}
 
+		Builder source(ClusterSource source) {
+			sources.add(checkNotNull(source, "ClusterSource is null"));
+			return this;
+		}
+
 		void validateState(String mssgID) {
 			checkState(!built, "This %s instance as already been used", mssgID);
 			checkState(name != null, "%s name not set", mssgID);
@@ -115,7 +118,7 @@ public class ClusterSourceSet implements SourceSet<FaultSource> {
 
 		ClusterSourceSet buildClusterSet() {
 			validateState(ID);
-			return new ClusterSourceSet(name, weight, magScaling);
+			return new ClusterSourceSet(name, weight, magScaling, sources);
 		}
 	}
 

@@ -22,34 +22,43 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Table;
 
 /**
- * Factory class for creating the tasks that make up a hazard calculation. All
- * methods return {@code Callable} instances.
+ * Factory class for creating {@code Callable} data transforms.
  * 
  * @author Peter Powers
+ * @see TransformSupplier
+ * @see Transform
  */
 public final class Transforms {
 
-
 	/**
-	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
-	 * that returns a {@code List<GMM_Source>} of inputs for a ground motion
-	 * model (GMM) calculation.
-	 * @param source
-	 * @param site
+	 * Returns a supplier of {@link Source} to {@link GMM_Source} transforms.
+	 * @param site of interest
 	 * @return a {@code List<GMM_Source>} of GMM inputs
 	 * @see GMM
 	 */
-	
-	
 	public static TransformSupplier<Source, List<GMM_Source>> sourceInitializerSupplier(
 			final Site site) {
 		return new TransformSupplier<Source, List<GMM_Source>>() {
-			@Override
-			public Transform<Source, List<GMM_Source>> get(Source source) {
+			@Override public Transform<Source, List<GMM_Source>> get(Source source) {
 				return new SourceInitializer(source, site);
 			}
 		};
 	}
+	
+//	/**
+//	 * Returns a supplier of {@link Source} to {@link GMM_Source} transforms.
+//	 * @param site of interest
+//	 * @return a {@code List<GMM_Source>} of GMM inputs
+//	 * @see GMM
+//	 */
+//	public static TransformSupplier<Source, List<GMM_Source>> sourceInitializerSupplier(
+//			final Site site) {
+//		return new TransformSupplier<Source, List<GMM_Source>>() {
+//			@Override public Transform<Source, List<GMM_Source>> get(Source source) {
+//				return new SourceInitializer(source, site);
+//			}
+//		};
+//	}
 
 	/**
 	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
@@ -60,8 +69,8 @@ public final class Transforms {
 	 * @return a {@code List<GMM_Source>} of GMM inputs
 	 * @see GMM
 	 */
-	public static Callable<List<GMM_Source>> newFaultCalcInitializer(
-			final FaultSource source, final Site site) {
+	public static Callable<List<GMM_Source>> newFaultCalcInitializer(final FaultSource source,
+			final Site site) {
 		return new FaultCalcInitializer(source, site);
 	}
 
@@ -76,21 +85,20 @@ public final class Transforms {
 	 */
 	public static Callable<GMM_Source> newIndexedFaultCalcInitializer(
 			final IndexedFaultSource source, final Site site,
-			final Table<DistanceType, Integer, Double> rTable,
-			final List<Integer> sectionIDs) {
+			final Table<DistanceType, Integer, Double> rTable, final List<Integer> sectionIDs) {
 		return new IndexedFaultCalcInitializer(source, site, rTable, sectionIDs);
 	}
 
 	/**
-	 * Creates a {@code Callable} that returns the distances between the supplied {@code IndexedFaultSurface}
-	 * and {@code Location}.
+	 * Creates a {@code Callable} that returns the distances between the
+	 * supplied {@code IndexedFaultSurface} and {@code Location}.
 	 * 
 	 * @param surface for distance
 	 * @param loc for distance calculation
 	 * @return a {@code Distances} wrapper object
 	 */
-	public static Callable<Distances> newDistanceCalc(
-			final IndexedFaultSurface surface, final Location loc) {
+	public static Callable<Distances> newDistanceCalc(final IndexedFaultSurface surface,
+			final Location loc) {
 		return new DistanceCalc(surface, loc);
 	}
 
@@ -104,8 +112,8 @@ public final class Transforms {
 	 * @return the supplied {@code source} or {@code null} if source is farther
 	 *         than {@code distance} from {@code loc}
 	 */
-	public static Callable<FaultSource> newQuickDistanceFilter(
-			final FaultSource source, final Location loc, final double distance) {
+	public static Callable<FaultSource> newQuickDistanceFilter(final FaultSource source,
+			final Location loc, final double distance) {
 		return new QuickDistanceFilter(source, loc, distance);
 	}
 
@@ -118,8 +126,7 @@ public final class Transforms {
 	 * @return a {@code Map} of {@code ScalarGroundMotion}s
 	 */
 	public static Callable<GroundMotionCalcResult> newGroundMotionCalc(
-			final Map<GMM, GroundMotionModel> gmmInstanceMap,
-			final GMM_Source input) {
+			final Map<GMM, GroundMotionModel> gmmInstanceMap, final GMM_Source input) {
 		return new GroundMotionCalc(gmmInstanceMap, input);
 	}
 

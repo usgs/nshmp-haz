@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.forecast.FaultSourceSet.Builder;
 import org.opensha.geo.Location;
 
 import com.google.common.collect.Lists;
@@ -18,7 +19,7 @@ import com.google.common.collect.Lists;
  */
 public class SubductionSourceSet implements SourceSet<SubductionSource> {
 
-	private final List<SubductionSource> sources = Lists.newArrayList();
+	private final List<SubductionSource> sources;
 	private final String name;
 	private final double weight;
 	private final MagScalingType msrType;
@@ -30,14 +31,12 @@ public class SubductionSourceSet implements SourceSet<SubductionSource> {
 	//
 	// NOTE msrType is currently not exposed
 	
-	private SubductionSourceSet(String name, double weight, MagScalingType msrType) {
+	private SubductionSourceSet(String name, double weight, MagScalingType msrType,
+			List<SubductionSource> sources) {
 		this.name = name;
 		this.weight = weight;
 		this.msrType = msrType;
-	}
-	
-	void add(SubductionSource source) {
-		sources.add(source);
+		this.sources = sources;
 	}
 	
 	@Override
@@ -75,9 +74,18 @@ public class SubductionSourceSet implements SourceSet<SubductionSource> {
 
 		static final String mssgID = "SubductionSourceSet.Builder";
 
+		// type-specific field
+		List<SubductionSource> sources = Lists.newArrayList();
+
+		// type-specific method
+		Builder source(SubductionSource source) {
+			sources.add(checkNotNull(source, "SubductionSource is null"));
+			return this;
+		}
+
 		SubductionSourceSet buildSubductionSet() {
 			validateState(ID);
-			return new SubductionSourceSet(name, weight, magScaling);
+			return new SubductionSourceSet(name, weight, magScaling, sources);
 		}
 	}
 

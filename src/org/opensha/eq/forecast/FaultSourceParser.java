@@ -148,7 +148,7 @@ class FaultSourceParser extends DefaultHandler {
 						mfdHelper.addDefault(atts);
 						break;
 					}
-					sourceBuilder.mfds(buildMFD(atts, unc, sourceSet.weight()));
+					sourceBuilder.mfds(buildMFD(atts, unc, sourceSetBuilder.weight));
 					break;
 	
 				case GEOMETRY:

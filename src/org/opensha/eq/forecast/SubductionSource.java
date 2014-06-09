@@ -96,6 +96,8 @@ public class SubductionSource extends FaultSource {
 			this.dip = Double.NaN;
 			this.width = Double.NaN;
 
+			mfds = mfdsBuilder.build();
+
 			checkState(lowerTrace != null, "%s lower trace not set", ID);
 			validateState(ID);
 

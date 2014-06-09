@@ -55,6 +55,7 @@ class ClusterSourceParser extends DefaultHandler {
 	private ClusterSourceSet.Builder sourceSetBuilder;
 	private ClusterSource.Builder clusterBuilder;
 	private FaultSource.Builder faultBuilder;
+	private double clusterRate;
 
 	// required, but not used, by FaultSources
 	private MagScalingRelationship msr;
@@ -89,8 +90,7 @@ class ClusterSourceParser extends DefaultHandler {
 		try {
 			e = SourceElement.fromString(qName);
 		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">",
-				locator, iae);
+			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
 		}
 
 		try {
@@ -125,8 +125,10 @@ class ClusterSourceParser extends DefaultHandler {
 					double clustWeight = readDouble(WEIGHT, atts);
 					clusterBuilder.name(clustName);
 					clusterBuilder.weight(clustWeight);
+					clusterBuilder.rate(clusterRate);
 					if (log.isLoggable(INFO)) {
-						log.info("Creating cluster: " + clustName + " weight=" + clustWeight);
+						log.info("Creating cluster: " + clustName + " weight=" + clustWeight +
+							" retPer=" + Math.rint(1.0 / clusterRate));
 					}
 					break;
 					
@@ -134,6 +136,7 @@ class ClusterSourceParser extends DefaultHandler {
 					String srcName = readString(NAME, atts);
 					faultBuilder = new FaultSource.Builder();
 					faultBuilder.name(srcName);
+					faultBuilder.magScaling(msr);
 					if (log.isLoggable(INFO)) {
 						log.info("      with fault: " + srcName);
 					}
@@ -141,7 +144,7 @@ class ClusterSourceParser extends DefaultHandler {
 	
 				case MAG_FREQ_DIST:
 					if (parsingDefaultMFDs) {
-						clusterBuilder.rate(readDouble(A, atts));
+						clusterRate = readDouble(A, atts);
 						break;
 					}
 					faultBuilder.mfd(buildMFD(atts));
@@ -194,6 +197,10 @@ class ClusterSourceParser extends DefaultHandler {
 					clusterBuilder.fault(faultBuilder.buildFaultSource());
 					break;
 					
+				case CLUSTER:
+					sourceSetBuilder.source(clusterBuilder.buildClusterSource());
+					break;
+					
 				case CLUSTER_SOURCE_SET:
 					sourceSet = sourceSetBuilder.buildClusterSet();
 					
@@ -219,8 +226,7 @@ class ClusterSourceParser extends DefaultHandler {
 		MFD_Type type = readEnum(TYPE, atts, MFD_Type.class);
 		switch (type) {
 			case SINGLE:
-				return MFDs.newSingleMFD(readDouble(M, atts), readDouble(WEIGHT, atts),
-					readBoolean(FLOATS, atts));
+				return MFDs.newSingleMFD(readDouble(M, atts), readDouble(WEIGHT, atts),	false);
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
 		}

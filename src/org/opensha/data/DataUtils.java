@@ -82,7 +82,7 @@ public final class DataUtils {
 	
 	private static final Range<Double> POS_RANGE = Range.open(0d, Double.POSITIVE_INFINITY);
 
-	private static final Range<Double> WEIGHT_RANGE = Range.open(0d, 1d);	
+	private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0d, 1d);	
 
 	/**
 	 * Returns the difference between {@code test} and {@code target}, relative
@@ -611,7 +611,7 @@ public final class DataUtils {
 	}
 	
 	/**
-	 * Confirms that a weight value falls between 0.0 and 1.0, inclusive. Method
+	 * Confirms that a weight value is {@code 0.0 < weight <= 1.0}. Method
 	 * returns the supplied value and can be used inline.
 	 * @param weight to validate
 	 * @return the supplied {@code weight} value
