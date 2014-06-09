@@ -58,7 +58,7 @@ vsInf =  true; % boolean
 z2p5  =   NaN; % in km; NaN triggers default basin depth model
 z1p0  =   NaN; % in km; NaN triggers default basin depth model
 
-source = GMM_Source.create(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, ...
+source = GMM_Input.create(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, ...
 	rake, vs30, vsInf, z2p5, z1p0);
 
 % Set ground motion model. Ground motion model identifiers may by found in
@@ -92,19 +92,19 @@ spectrumResult = struct(MatUtil.spectrum(gmm, source))
 %      for the time being, however nested packages are separated with dots.
 %      Now that Matlab knows where to look for classes, calls to the
 %      classes themselves must include the full package declaration (e.g.
-%      org.opensha.gmm.GMM_Source). To cut down on verbosity, one may
+%      org.opensha.gmm.GMM_Input). To cut down on verbosity, one may
 %      'import' a specific class for use in a script:
 %
-%         import org.opensha.gmm.GMM_Source
+%         import org.opensha.gmm.GMM_Input
 %
 %      or import all the classes in a package using a wildcard:
 %
 %         import org.opensha.gmm.*
 %
-%      Note that if GMM_Source is not imported above, then the subsequent
+%      Note that if GMM_Input is not imported above, then the subsequent
 %      source declaration would have to modified to:
 %
-%         source = org.opensha.gmm.GMM_Source.create( ...
+%         source = org.opensha.gmm.GMM_Input.create( ...
 % 
 % 
 
