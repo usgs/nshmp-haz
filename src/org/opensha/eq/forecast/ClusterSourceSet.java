@@ -16,62 +16,36 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
- * Add comments here
- *
+ * Wrapper class for groups of related {@code ClusterSource}s.
+ * 
  * @author Peter Powers
+ * @see ClusterSource
  */
-public class ClusterSourceSet implements SourceSet<ClusterSource> {
+public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 	private final List<ClusterSource> sources;
-	private final String name;
-	private final double weight;
-	private final MagScalingType msrType;
-	
-	// NOTE we're holding onto weight for reference, however, MFD
-	// rates will have already been scaled in place. The weight value
-	// may come in handy when trying to put together individual
-	// logic tree branches.
-	//
-	// NOTE msrType is currently not exposed; TODO nor is it used
-	
+
 	ClusterSourceSet(String name, double weight, MagScalingType msrType, List<ClusterSource> sources) {
-		this.name = checkNotNull(name);
-		this.weight = weight;
-		this.msrType = msrType;
+		super(name, weight, msrType);
 		this.sources = sources;
 	}
-	
-	@Override
-	public Iterable<ClusterSource> locationIterable(Location loc) {
+
+	@Override public Iterable<ClusterSource> locationIterable(Location loc) {
 		// TODO
 		return null;
-	}	
-	
-	@Override
-	public Iterator<ClusterSource> iterator() {
+	}
+
+	@Override public Iterator<ClusterSource> iterator() {
 		return sources.iterator();
 	}
 
-	@Override
-	public String name() {
-		return name;
-	}
-	
-	@Override
-	public double weight() {
-		return weight;
-	}
-
-	@Override
-	public int size() {
+	@Override public int size() {
 		return sources.size();
 	}
 
-	@Override
-	public SourceType type() {
+	@Override public SourceType type() {
 		return SourceType.FAULT;
 	}
-
 
 	static class Builder {
 
@@ -92,7 +66,7 @@ public class ClusterSourceSet implements SourceSet<ClusterSource> {
 			this.name = name;
 			return this;
 		}
-		
+
 		Builder weight(double weight) {
 			this.weight = validateWeight(weight);
 			return this;

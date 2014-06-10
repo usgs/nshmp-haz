@@ -15,63 +15,37 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
- * Add comments here
+ * Wrapper class for groups of related {@code FaultSource}s.
  *
  * @author Peter Powers
+ * @see FaultSource
  */
-public class FaultSourceSet implements SourceSet<FaultSource> {
+public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
 	private final List<FaultSource> sources;
-	private final String name;
-	private final double weight;
-	private final MagScalingType msrType;
-	
-	// NOTE we're holding onto weight for reference, however, MFD
-	// rates will have already been scaled in place. The weight value
-	// may come in handy when trying to put together individual
-	// logic tree branches.
-	//
-	// NOTE msrType is currently not exposed
 	
 	private FaultSourceSet(String name, double weight, MagScalingType msrType,
 		List<FaultSource> sources) {
-		this.name = name;
-		this.weight = weight;
-		this.msrType = msrType;
+		super(name, weight, msrType);
 		this.sources = sources;
 	}
 	
-	@Override
-	public Iterable<FaultSource> locationIterable(Location loc) {
+	@Override public Iterable<FaultSource> locationIterable(Location loc) {
 		// TODO
 		return null;
-	}	
-	
-	@Override
-	public Iterator<FaultSource> iterator() {
+	}
+
+	@Override public Iterator<FaultSource> iterator() {
 		return sources.iterator();
 	}
 
-	@Override
-	public String name() {
-		return name;
-	}
-	
-	@Override
-	public double weight() {
-		return weight;
-	}
-
-	@Override
-	public int size() {
+	@Override public int size() {
 		return sources.size();
 	}
 
-	@Override
-	public SourceType type() {
+	@Override public SourceType type() {
 		return SourceType.FAULT;
 	}
-
 
 	static class Builder {
 

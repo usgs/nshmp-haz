@@ -5,7 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.opensha.util.Named;
+
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
@@ -34,7 +37,7 @@ import com.google.common.collect.Sets;
 //public final class Forecast<T extends SourceSet<? extends Source>> implements
 //		Iterable<T> {
 
-public final class Forecast implements Iterable<SourceSet<? extends Source>> {
+public final class Forecast implements Iterable<SourceSet<? extends Source>>, Named {
 
 	// TODO SUB check rake handling
 	// TODO SUB test trace.size == lowerTrace.size
@@ -81,6 +84,7 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>> {
 	// TODO DeltaC1 implementation in BC_Hydro
 	
 
+	
 	// sourceSet type map
 	Multimap<SourceType, SourceSet<? extends Source>> srcTypeMap = ArrayListMultimap.create();
 	
@@ -127,6 +131,23 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>> {
 			iterators.add(srcTypeMap.get(type).iterator());
 		}
 		return Iterators.concat(iterators.iterator());
+	}
+
+	@Override public String name() {
+		return null;
+		// TODO do nothing
+		
+	}
+	
+	public static Builder builder() {
+			return new Builder();
+	}
+	
+	static class Builder {
+		
+		ImmutableSetMultimap.Builder<SourceType, SourceSet> sourceSetMap;
+		
+		private Builder() {}
 	}
 	
 }

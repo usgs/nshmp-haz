@@ -3,9 +3,11 @@ package org.opensha.eq.forecast;
 import java.util.Iterator;
 
 import org.opensha.geo.Location;
+import org.opensha.util.Named;
 
 /**
- * A {@link GridSourceSet} decorator.
+ * Wrapper class for groups of related {@code SlabSource}s. Class decorates a
+ * {@link GridSourceSet}.
  * 
  * @author Peter Powers
  * @see GridSourceSet
@@ -16,6 +18,10 @@ public class SlabSourceSet implements SourceSet<PointSource> {
 
 	SlabSourceSet(GridSourceSet delegate) {
 		this.delegate = delegate;
+	}
+
+	@Override public int compareTo(Named other) {
+		return delegate.compareTo(other);
 	}
 
 	@Override public String name() {

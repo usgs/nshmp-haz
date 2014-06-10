@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.eq.fault.Faults.validateStrike;
-
 import static org.opensha.data.DataUtils.validateWeight;
 
 import java.util.Iterator;
@@ -25,17 +24,15 @@ import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
 /**
- * A set of evenly spaced (point) {@code Source}s with varying magnitudes
- * derived a GR MFD at each grid node.
+ * A wrapper of evenly spaced (point) {@code Source}s with varying magnitudes
+ * derived from a {@link IncrementalMFD} at each grid node.
+ * 
  * @author Peter Powers
  */
-public class GridSourceSet implements SourceSet<PointSource> {
+public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
-	private final String name;
-	private final double weight;
 	private final List<Location> locs;
 	private final List<IncrementalMFD> mfds;
-	private final MagScalingType magScaling;
 	private final Map<FocalMech, Double> mechMap;
 	private final NavigableMap<Double, Map<Double, Double>> magDepthMap;
 	private final double strike;
@@ -52,71 +49,64 @@ public class GridSourceSet implements SourceSet<PointSource> {
 
 	// only available to parsers
 	private GridSourceSet(String name, Double weight, List<Location> locs,
-		List<IncrementalMFD> mfds, MagScalingType magScaling, Map<FocalMech, Double> mechMap,
+		List<IncrementalMFD> mfds, MagScalingType msrType, Map<FocalMech, Double> mechMap,
 		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike) {
 
-		this.name = name;
-		this.weight = weight;
+		super(name, weight, msrType);
+		
 		this.locs = locs;
 		this.mfds = mfds;
-		this.magScaling = magScaling;
 		this.mechMap = mechMap;
 		this.magDepthMap = magDepthMap;
 		this.strike = strike;
 		
-		MagScalingRelationship msr = magScaling.instance();
+		MagScalingRelationship msr = msrType.instance();
 		// TODO need to develop standard approach to using mag area relationships
 		checkState(msr instanceof MagLengthRelationship,
 			"Only mag-length relationships are supported at this time");
 		mlr = (MagLengthRelationship) msr;
 	}
-	
-	@Override
-	public String name() {
-		return name;
-	}
 
-	@Override
-	public SourceType type() {
+	@Override public SourceType type() {
 		return SourceType.GRID;
 	}
-	
-	@Override
-	public int size() {
+
+	@Override public int size() {
 		return locs.size();
 	}
 
-	@Override
-	public double weight() {
-		return weight;
-	}
-
-	@Override
-	public Iterable<PointSource> locationIterable(Location loc) {
+	@Override public Iterable<PointSource> locationIterable(Location loc) {
 		// TODO
 		return null;
-	}	
-	
-	@Override
-	public Iterator<PointSource> iterator() {
-		// @formatter:off
+	}
+
+	@Override public Iterator<PointSource> iterator() {
 		return new Iterator<PointSource>() {
 			int caret = 0;
-			@Override public boolean hasNext() { return caret < locs.size(); }
-			@Override public PointSource next() { return getSource(caret++); }
-			@Override public void remove() { throw new UnsupportedOperationException(); }
+
+			@Override public boolean hasNext() {
+				return caret < locs.size();
+			}
+
+			@Override public PointSource next() {
+				return getSource(caret++);
+			}
+
+			@Override public void remove() {
+				throw new UnsupportedOperationException();
+			}
 		};
-		// @formatter:on
 	}
-	
+
 	private PointSource getSource(int idx) {
-		switch(ptSrcType) {
+		switch (ptSrcType) {
 			case POINT:
 				return new PointSource(this, locs.get(idx), mfds.get(idx), mechMap);
 			case FINITE:
 				return new PointSourceFinite(this, locs.get(idx), mfds.get(idx), mechMap);
 			case FIXED_STRIKE:
-				return new PointSourceFixedStrike(this, locs.get(idx), mfds.get(idx), mechMap, strike);
+				return new PointSourceFixedStrike(this, locs.get(idx), mfds.get(idx), mechMap,
+					strike);
 		}
 		return null;
 	}
