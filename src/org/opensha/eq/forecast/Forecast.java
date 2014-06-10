@@ -139,6 +139,9 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 		
 	}
 	
+	/**
+	 * Returns a new {@link Builder}.
+	 */
 	public static Builder builder() {
 			return new Builder();
 	}
@@ -148,6 +151,10 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 		ImmutableSetMultimap.Builder<SourceType, SourceSet> sourceSetMap;
 		
 		private Builder() {}
+		
+		Builder name(String name) {
+			
+		}
 	}
 	
 }

@@ -11,6 +11,7 @@ import static org.opensha.eq.fault.Faults.validateWidth;
 import static org.opensha.eq.fault.Faults.validateDepth;
 import static org.opensha.eq.forecast.FloatStyle.CENTERED;
 import static org.opensha.eq.forecast.FloatStyle.FULL_DOWN_DIP;
+import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
@@ -260,9 +261,7 @@ public class FaultSource implements Source {
 		FloatStyle floatStyle = FULL_DOWN_DIP;
 		
 		Builder name(String name) {
-			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
-				"Name may not be empty or null");
-			this.name = name;
+			this.name = validateName(name);
 			return this;
 		}
 

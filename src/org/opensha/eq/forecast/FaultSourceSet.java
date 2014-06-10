@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.DataUtils.validateWeight;
+import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
@@ -61,9 +62,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 		List<FaultSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
-			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
-				"Name may not be empty or null");
-			this.name = name;
+			this.name = validateName(name);
 			return this;
 		}
 		

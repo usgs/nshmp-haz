@@ -1,18 +1,16 @@
 package org.opensha.eq.forecast;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.DataUtils.validateWeight;
+import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.eq.fault.scaling.MagScalingType;
-import org.opensha.eq.forecast.FaultSourceSet.Builder;
 import org.opensha.geo.Location;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -61,9 +59,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 		List<ClusterSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
-			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
-				"Name may not be empty or null");
-			this.name = name;
+			this.name = validateName(name);
 			return this;
 		}
 
