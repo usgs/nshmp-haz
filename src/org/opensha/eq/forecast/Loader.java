@@ -138,9 +138,8 @@ public class Loader {
 		}
 		
 		for (Path sourcePath : typePaths) {
-			log.info("    File: " + sourcePath); // TODO change to "Parsed: *"
-//			System.out.println(Files.exists(sourcePath));
-			// TODO parse
+			log.info("    File: " + sourcePath);
+			// TODO change to "Parsed: *" and parse it
 			sourceCount++;
 		}
 		
@@ -154,7 +153,6 @@ public class Loader {
 			gmmFile = typeDir.resolve(GMM_Parser.FILE_NAME); // Paths.get(typeDir.toString(), GMM_Parser.FILE_NAME);
 			
 			
-			System.out.println(Files.exists(gmmFile));
 			checkState(Files.exists(gmmFile), "Sources in %s require gmm.xml", typeDir);
 			log.info("    File: " + gmmFile.getFileName());
 		}
@@ -167,39 +165,6 @@ public class Loader {
 		
 		
 	}
-
-//	private static void processTypeDir(File typeDir) throws Exception {
-//		
-//		int sourceCount = 0;
-//		for (File sourceFile : listSourceFiles(typeDir)) {
-//			log.info("    File: " + sourceFile.getName()); // TODO change to "Parsed: *"
-//			// TODO parse
-//			sourceCount++;
-//		}
-//		
-//		/*
-//		 * gmm.xml file -- this MUST exist if there is at least one source file,
-//		 * however it MAY NOT exsist if all source files happen to be in nested
-//		 * directories
-//		 */
-//		File gmmFile = null;
-//		if (sourceCount > 0) {
-//			gmmFile = new File(typeDir, GMM_Parser.FILE_NAME);
-//			checkState(gmmFile.exists(), "Source files present in %s; gmm.xml file required",
-//				typeDir);
-//			log.info("**   GMM file:" + gmmFile.getName());
-//		}
-//		
-////		if (!gmmFile.exists() && sourceCount > 0) {
-////			
-////		}
-////		log.info("**     GMM file:" + sourceFile.getName());
-//		for (File nestedSourceDir : listNestedSourceDirs(typeDir)) {
-//			processNestedSourceDir(nestedSourceDir, gmmFile);
-//		}
-//		
-//		
-//	}
 	
 	// gmm file may be null, but that requires one to be present in the parent dir
 	private static void processNestedSourceDir(Path sourceDir, Path gmmFile) throws IOException {
@@ -216,12 +181,6 @@ public class Loader {
 			// TODO parse
 			sourceCount++;
 		}
-
-//		for (File sourceFile : listSourceFiles(sourceDir)) {
-//			log.info("**       Source file:" + sourceFile.getName());
-//			// TODO parse
-//			sourceCount++;
-//		}
 		
 		/*
 		 * gmm.xml file -- this MUST exist if there is at least one source file
@@ -280,8 +239,6 @@ public class Loader {
 		}
 	}
 
-	// TODO set forecast name
-	
 	public static void main(String args[]) throws IOException, URISyntaxException {
 		
 //		// always want to re-trhow initialization exceptions to be able to run tests
@@ -304,97 +261,7 @@ public class Loader {
 		load(zipNestPath);
 		
 		
-////		Iterable<Path> 
-//		Map<String, String> zipEnvMap = ImmutableMap.of(
-//			"create", "false",
-//			"encoding", "UTF-8");
-//		
-//		URI zipURI = new URI("jar:file", zipTestPath, null);
-//		System.out.println(zipURI);
-////		
-////		Iterable<Path> typePaths = 
-////		for (Path path : typePaths) {
-////			System.out.println(path);
-////		}
-////		
-//		FileSystem zfs = FileSystems.newFileSystem(zipURI, zipEnvMap);
-//		for (Path dir : zfs.getRootDirectories()) {
-//			System.out.println(dir);
-////			DirectoryStream<Path> fDir = java.nio.file.Files.newDirectoryStream(dir, TypeFilter.INSTANCE);
-////			for (Path f : fDir) {
-////				System.out.println(f);
-////				System.out.println(f.getFileName());
-//////				InputStream in = java.nio.file.Files.newInputStream(f);
-////////				in.
-//////				System.out.println(f.getFileSystem());
-////			}
-//		}
-		
-		
-//		Map<String, String> fileEnvMap = ImmutableMap.of();
-		
-//		File ff = new File(forecastPath);
-		
-//		System.out.println(ff.exists());
-//		URI fileURI = ff.toURI(); // new URI("file", forecastPath, null);
-//		System.out.println(fileURI);
-		
-//		Path path = Paths.get(forecastPath);
-//		
-//		File ff = new File(forecastPath);
-////		URI pp = new URI(forecastPath);
-//		
-////		System.out.println(ff.toURI().getPath());
-////		FileSystem ffs = FileSystems.newFileSystem(ff.toURI(), null);
-//		
-////		for (Path dir : ffs.getRootDirectories()) {
-//			DirectoryStream<Path> fDir = java.nio.file.Files.newDirectoryStream(path, TypeFilter.INSTANCE);
-//			for (Path f : fDir) {
-//				System.out.println(f);
-////				System.out.println(f.getFileSystem());
-//			}
-//		}
-		
-
-		
-//		ZipFileSystemProvider zfsp = new ZipFileSystemProvider();
-//		FileSystem fs = zfsp.getFileSystem(uri);
-		
-		//		System.out.println(uri.getRawPath());
-		
-//		File f = new File("/Users/pmpowers/projects/git/nshmp-forecast-dev/forecasts/2008.zip");
-//		System.out.println(f.toURI());
-		
-//		File f = new File("/Users/pmpowers/projects/git/nshmp-forecast-dev/forecasts/2008");
-//		System.out.println(f.exists());
-//		URI uri = new File("/Users/pmpowers/projects/git/nshmp-forecast-dev/forecasts/2008").toURI();
-////		System.out.println(uri.isOpaque());
-//		System.out.println(uri);
-//		FileSystem fs = FileSystems.getFileSystem(uri);
-//		
-		
-
-//		FileSystem
-//		Loader.load("tmp/NSHMP08-noRedux/Western US/Fault/brange.3dip.gr.xml");
-//		FaultSourceSet faultSet = Loader.load("../tmp/NSHMP08-noRedux/California/Fault/bFault.ch.xml");
-//		System.out.println(faultSet.sources.size());
-		
-
 	}
-	
-//	private static void loadTest(String resource) throws IOException, URISyntaxException {
-//
-//		List<Path> paths = typeDirectories(Paths.get(resource));
-////		System.out.println("Paths size: " + paths.size());
-//		for (Path path : paths) {
-// 			log.info("  " + path.getFileName() + " Sources ...");
-//
-////			System.out.println("Paths: " + path);
-//			processTypeDir(path);
-//		}
-//	}
-//	
-	
 	
 	private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",
 		"encoding", "UTF-8");
@@ -436,27 +303,6 @@ public class Loader {
 		}
 	}
 	
-	
-//	private static Iterable<Path> dirIterable(String dirPath) throws IOException {
-//		return java.nio.file.Files.newDirectoryStream(Paths.get(dirPath)); //, TypeFilter.INSTANCE);
-////		File ff = new File(forecastPath);
-////		URI pp = new URI(forecastPath);
-//		
-////		System.out.println(ff.toURI().getPath());
-////		FileSystem ffs = FileSystems.newFileSystem(ff.toURI(), null);
-//		
-////		for (Path dir : ffs.getRootDirectories()) {
-////			DirectoryStream<Path> fDir = java.nio.file.Files.newDirectoryStream(path, TypeFilter.INSTANCE);
-////			for (Path f : fDir) {
-////				System.out.println(f);
-//////				System.out.println(f.getFileSystem());
-////			}
-////		}
-//
-//	}
-	
-	
-
 	private static void logConfigException(Exception e) {
 		StringBuilder sb = new StringBuilder(LF);
 		sb.append("** Config error: ").append(e.getMessage()).append(LF);
@@ -518,67 +364,6 @@ public class Loader {
 			return Files.isDirectory(path) && !Files.isHidden(path) && !s.startsWith("~");
 		}
 	}	
-
-//	/*
-//	 * Lists the source type directories skipping hidden directories and those
-//	 * that start with a tilde (~).
-//	 */
-//	private static Iterable<File> listTypeDirs(File dir) {
-//		return FluentIterable.from(Lists.newArrayList(dir.listFiles()))
-//				.filter(isDirectory())
-//				.filter(SKIP_FILE_FILTER)
-//				.filter(TYPE_FILE_FILTER);
-//	}
-//	
-//	/*
-//	 * Lists source files in a type directory skipping hidden files, those that
-//	 * start with a tilde (~), and the gmm.xml file.
-//	 */
-//	private static Iterable<File> listSourceFiles(File dir) {
-//		return FluentIterable.from(Lists.newArrayList(dir.listFiles()))
-//				.filter(isFile())
-//				.filter(SKIP_FILE_FILTER)
-//				.filter(SOURCE_FILE_FILTER);
-//	}
-//	
-//	/*
-//	 * Lists any source directories nested in a type directory skipping hidden
-//	 * directories and those that start with a tilde (~).
-//	 */
-//	private static Iterable<File> listNestedSourceDirs(File dir) {
-//		return FluentIterable.from(Lists.newArrayList(dir.listFiles()))
-//				.filter(isDirectory())
-//				.filter(SKIP_FILE_FILTER);
-//	}
-//
-//	
-//	
-//	
-//	private static final Predicate<File> SKIP_FILE_FILTER = new Predicate<File>() {
-//		@Override
-//		public boolean apply(File f) {
-//			return !f.isHidden() && !f.getName().startsWith("~");
-//		}
-//	};
-//
-//	private static final Predicate<File> SOURCE_FILE_FILTER = new Predicate<File>() {
-//		@Override
-//		public boolean apply(File f) {
-//			return f.getName().endsWith(".xml") && !f.getName().equals(GMM_Parser.FILE_NAME);
-//		}
-//	};
-//
-//	private static final Predicate<File> TYPE_FILE_FILTER = new Predicate<File>() {
-//		@Override
-//		public boolean apply(File f) {
-//			try {
-//				SourceType.fromString(f.getName());
-//				return true;
-//			} catch (IllegalArgumentException iae) {
-//				return false;
-//			}
-//		}
-//	};
 
 }
 
