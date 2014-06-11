@@ -43,9 +43,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.TreeTraverser;
 import com.google.common.io.Files;
 
-/**
- * Add comments here
- *
+/*
+ * Non-validating gmm.xml parser. SAX parser 'Attributes' are stateful and
+ * cannot be stored. This class is not thread safe.
+ * 
  * @author Peter Powers
  */
 class GMM_Parser extends DefaultHandler {

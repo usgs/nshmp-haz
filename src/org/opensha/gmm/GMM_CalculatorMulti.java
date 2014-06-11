@@ -1,4 +1,5 @@
-package org.opensha.calc;
+package org.opensha.gmm;
+
 
 /**
  * Add comments here

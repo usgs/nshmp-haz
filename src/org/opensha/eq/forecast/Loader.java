@@ -221,7 +221,6 @@ public class Loader {
 
 	}
 
-	// TODO hook this in once we get to parsing stage
 	private static FaultSourceSet processFile(String path) throws Exception {
 		File file = new File(path);
 		try {

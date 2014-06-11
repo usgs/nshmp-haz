@@ -56,6 +56,7 @@ public enum GMM {
 	// TODO doublecheck that SUB implementations are using the correct distance metric
 	// make select GMMs public for documentation
 	//TODO z1p0 in CY08 - this is now always km, CY08 needs updating (from m)
+	// TODO gmm.xml needs addt'l epistemic unc on ground motion
 	
 //	 * TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup; why is
 //	 * depth constrained as such in hazgrid? As with somerville, no depth is imposed

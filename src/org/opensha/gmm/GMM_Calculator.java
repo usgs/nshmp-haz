@@ -1,9 +1,6 @@
-package org.opensha.calc;
+package org.opensha.gmm;
 
 import java.util.Map;
-
-import org.opensha.gmm.GMM;
-import org.opensha.gmm.GroundMotionModel;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
