@@ -700,16 +700,15 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc{
 	 *
 	 * @return value of each point in the function in String format
 	 */
-	public String getMetadataString(){
+	public String getMetadataString() {
 		StringBuffer b = new StringBuffer();
-		Iterator<Point2D> it2 = this.iterator();
-
-		while(it2.hasNext()){
-
-			Point2D point = (Point2D)it2.next();
-			double x = point.getX();
-			double y = point.getY();
-			b.append((float) x + "\t  " + (float) y + '\n');
+		b.append("     Values:\n");
+		for (Point2D point : this) {
+			b.append("      ");
+			b.append((float) point.getX());
+			b.append("\t  ");
+			b.append((float) point.getY());
+			b.append('\n');
 		}
 		return b.toString();
 	}

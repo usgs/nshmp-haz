@@ -2,6 +2,7 @@ package org.opensha.eq.forecast;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.SAXParser;
 
@@ -24,8 +25,8 @@ class SlabParser {
 		return new SlabParser(sax);
 	}
 
-	SlabSourceSet parse(File f) throws SAXException, IOException {
-		GridSourceSet delegate = gridParser.parse(f);
+	SlabSourceSet parse(InputStream in) throws SAXException, IOException {
+		GridSourceSet delegate = gridParser.parse(in);
 		return new SlabSourceSet(delegate);
 	}
 

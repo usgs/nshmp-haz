@@ -3,7 +3,7 @@ package org.opensha.eq.forecast;
 import java.util.Iterator;
 
 import org.opensha.geo.Location;
-import org.opensha.util.Named;
+import org.opensha.mfd.IncrementalMFD;
 
 /**
  * Wrapper class for groups of related {@code SlabSource}s. Class decorates a
@@ -20,7 +20,7 @@ public class SlabSourceSet implements SourceSet<PointSource> {
 		this.delegate = delegate;
 	}
 
-	@Override public int compareTo(Named other) {
+	@Override public int compareTo(SourceSet<PointSource> other) {
 		return delegate.compareTo(other);
 	}
 
@@ -46,6 +46,10 @@ public class SlabSourceSet implements SourceSet<PointSource> {
 
 	@Override public Iterable<PointSource> locationIterable(Location loc) {
 		return delegate.locationIterable(loc);
+	}
+	
+	IncrementalMFD mfdForLoc(Location loc) {
+		return delegate.mfdForLoc(loc);
 	}
 
 }

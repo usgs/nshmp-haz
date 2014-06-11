@@ -21,6 +21,7 @@ import static org.opensha.util.Parsing.readString;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
@@ -76,8 +77,8 @@ class ClusterParser extends DefaultHandler {
 		return new ClusterParser(checkNotNull(sax));
 	}
 	
-	ClusterSourceSet parse(File f) throws SAXException, IOException {
-		sax.parse(f, this);
+	ClusterSourceSet parse(InputStream in) throws SAXException, IOException {
+		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "ClusterSourceSet is empty");
 		return sourceSet;
 	}

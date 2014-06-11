@@ -62,6 +62,10 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		mlr = (MagLengthRelationship) msr;
 	}
 
+	IncrementalMFD mfdForLoc(Location loc) {
+		return mfds.get(locs.indexOf(loc));
+	}
+	
 	@Override public SourceType type() {
 		return SourceType.GRID;
 	}

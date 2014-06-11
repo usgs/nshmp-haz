@@ -31,7 +31,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 		this.msrType = msrType;
 	}
 
-	@Override public int compareTo(Named other) {
+	@Override public int compareTo(SourceSet other) {
 		return SORTER.compare(this.name(), other.name());
 	}
 

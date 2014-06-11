@@ -11,6 +11,7 @@ import static java.util.logging.Level.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
@@ -61,8 +62,8 @@ class InterfaceParser extends DefaultHandler {
 		return new InterfaceParser(checkNotNull(sax));
 	}
 	
-	InterfaceSourceSet parse(File f) throws SAXException, IOException {
-		sax.parse(f, this);
+	InterfaceSourceSet parse(InputStream in) throws SAXException, IOException {
+		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "InterfaceSourceSet is empty");
 		return sourceSet;
 	}

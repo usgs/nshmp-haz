@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -194,6 +195,10 @@ public final class Parsing {
 		addAttribute(id.toString(), Double.toString(value), parent);
 	}
 
+	public static void addAttribute(Enum<?> id, double[] values, Element parent) {
+		addAttribute(id.toString(), Arrays.toString(values), parent);
+	}
+
 	// note strips zeros
 	public static void addAttribute(Enum<?> id, double value, String format, Element parent) {
 		addAttribute(id.toString(), stripZeros(String.format(format, value)), parent);
@@ -242,7 +247,7 @@ public final class Parsing {
 	 * supplied (as opposed to simply defaulting to {@code false}.
 	 * @param id the {@code enum} attribute identifier
 	 * @param atts a SAX {@code Attributes} container
-	 * @return the value of the attribute
+	 * @return the value of the attribute as a {@code boolean}
 	 * @throws NullPointerException if {@code id} or {@code atts} are
 	 *         {@code null}, or no attribute for the specified {@code id} exists
 	 * @throws IllegalArgumentException if the attribute value can not be parsed
@@ -262,7 +267,7 @@ public final class Parsing {
 	 * the attribute name given by {@code id} as a {@code double}.
 	 * @param id the {@code enum} attribute identifier
 	 * @param atts a SAX {@code Attributes} container
-	 * @return the value of the attribute
+	 * @return the value of the attribute as a {@code double}
 	 * @throws NullPointerException if {@code id} or {@code atts} are
 	 *         {@code null}, or no attribute for the specified {@code id} exists
 	 * @throws IllegalArgumentException if the attribute value can not be parsed
@@ -278,13 +283,35 @@ public final class Parsing {
 				atts.getValue(idStr) + "\"");
 		}
 	}
+	
+	/**
+	 * For use by source XML parsers. Reads the attribute value associated with
+	 * the attribute name given by {@code id} as a {@code double[]}.
+	 * @param id the {@code enum} attribute identifier
+	 * @param atts a SAX {@code Attributes} container
+	 * @return the value of the attribute as a {@code double[]}
+	 * @throws NullPointerException if {@code id} or {@code atts} are
+	 *         {@code null}, or no attribute for the specified {@code id} exists
+	 * @throws IllegalArgumentException if the attribute value can not be parsed
+	 *         to a {@code double}
+	 */
+	public static double[] readDoubleArray(Enum<?> id, Attributes atts) {
+		String idStr = checkNotNull(id).toString();
+		String valStr = checkNotNull(atts).getValue(idStr);
+		try {
+			return toDoubleArray(checkNotNull(valStr, "Missing attribute '%s'", id));
+		} catch (NumberFormatException nfe) {
+			throw new IllegalArgumentException("Unparseable value in " + id + "=\"" +
+					atts.getValue(idStr) + "\"");
+		}
+	}
 
 	/**
 	 * For use by source XML parsers. Reads the attribute value associated with
 	 * the attribute name given by {@code id} as a {@code String}.
 	 * @param id the {@code enum} attribute identifier
 	 * @param atts a SAX {@code Attributes} container
-	 * @return the value of the attribute
+	 * @return the value of the attribute as a {@code String}
 	 * @throws NullPointerException if {@code id} or {@code atts} are
 	 *         {@code null}, or no attribute for the specified {@code id}
 	 *         exsists
@@ -295,6 +322,17 @@ public final class Parsing {
 		return checkNotNull(valStr, "Missing attribute '%s'", id);
 	}
 
+	/**
+	 * For use by source XML parsers. Reads the attribute value associated with
+	 * the attribute name given by {@code id} as an {@code Enum}.
+	 * @param id the {@code enum} attribute identifier
+	 * @param atts a SAX {@code Attributes} container
+	 * @param type {@code class} of {@code enum} to return
+	 * @return the value of the attribute as a {@code String}
+	 * @throws NullPointerException if {@code id} or {@code atts} are
+	 *         {@code null}, or no attribute for the specified {@code id}
+	 *         exsists
+	 */
 	public static <T extends Enum<T>> T readEnum(Enum<?> id, Attributes atts, Class<T> type) {
 		return Enum.valueOf(type, readString(id, atts));
 	}

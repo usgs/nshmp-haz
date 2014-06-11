@@ -33,7 +33,15 @@ public enum SourceAttribute {
 	FLOATS,
 	MAG_SCALING,
 	MAGS,
-	RATES;
+	RATES,
+	
+	/* Mag uncertainty specific */
+	CUTOFF,
+	DELTAS,
+	WEIGHTS,
+	COUNT,
+	MO_BALANCE,
+	SIGMA;
 
 	/**
 	 * Returns an {@code CaseFormat#LOWER_CAMEL} {@code String} representation

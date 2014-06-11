@@ -12,6 +12,7 @@ import static java.util.logging.Level.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -77,8 +78,8 @@ class FaultParser extends DefaultHandler {
 		return new FaultParser(checkNotNull(sax));
 	}
 
-	FaultSourceSet parse(File f) throws SAXException, IOException {
-		sax.parse(f, this);
+	FaultSourceSet parse(InputStream in) throws SAXException, IOException {
+		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "FaultSourceSet is empty");
 		return sourceSet;
 	}
@@ -86,7 +87,8 @@ class FaultParser extends DefaultHandler {
 	// TODO wrap all operations in a sSAXParseException so it gets passed up to
 	// logger in Loader
 
-	@Override @SuppressWarnings("incomplete-switch") public void startElement(String uri,
+	@SuppressWarnings("incomplete-switch")
+	@Override public void startElement(String uri,
 			String localName, String qName, Attributes atts) throws SAXException {
 
 		SourceElement e = null;
@@ -105,8 +107,10 @@ class FaultParser extends DefaultHandler {
 					sourceSetBuilder = new FaultSourceSet.Builder();
 					sourceSetBuilder.name(name);
 					sourceSetBuilder.weight(weight);
-					if (log.isLoggable(INFO)) {
-						log.info("Building fault set: " + name + " weight=" + weight);
+					if (log.isLoggable(FINE)) {
+						log.fine("");
+						log.fine("       Name: " + name);
+						log.fine("     Weight: " + weight);
 					}
 					break;
 
@@ -134,8 +138,8 @@ class FaultParser extends DefaultHandler {
 					sourceBuilder = new FaultSource.Builder();
 					sourceBuilder.name(srcName);
 					sourceBuilder.magScaling(msr);
-					if (log.isLoggable(INFO)) {
-						log.info("Creating source: " + srcName);
+					if (log.isLoggable(FINE)) {
+						log.fine("     Source: " + srcName);
 					}
 					break;
 
@@ -184,8 +188,7 @@ class FaultParser extends DefaultHandler {
 
 				case SETTINGS:
 					// may not have mag uncertainty element so create the
-					// uncertainty
-					// container upon leaving 'Settings'
+					// uncertainty container upon leaving 'Settings'
 					unc = MagUncertainty.create(epiAtts, aleaAtts);
 					if (log.isLoggable(FINE)) log.fine(unc.toString());
 					break;
@@ -242,7 +245,7 @@ class FaultParser extends DefaultHandler {
 
 		List<IncrementalMFD> mfds = Lists.newArrayList();
 
-		if (log.isLoggable(INFO)) log.info("MFD: GR");
+		if (log.isLoggable(FINER)) log.finer("   MFD type: GR");
 
 		if (unc.hasEpistemic) {
 			for (int i = 0; i < unc.epiCount; i++) {
@@ -259,8 +262,8 @@ class FaultParser extends DefaultHandler {
 					GutenbergRichterMFD mfd = MFDs.newGutenbergRichterMoBalancedMFD(data.mMin,
 						data.dMag, nMagEpi, data.b, tmr * weightEpi);
 					mfds.add(mfd);
-					if (log.isLoggable(FINE)) {
-						log.fine(new StringBuilder().append("M-branch ").append(i + 1).append(": ")
+					if (log.isLoggable(FINER)) {
+						log.finer(new StringBuilder().append("M-branch ").append(i + 1).append(": ")
 							.append(LF).append(mfd.getMetadataString()).toString());
 					}
 				} else {
@@ -271,8 +274,8 @@ class FaultParser extends DefaultHandler {
 			GutenbergRichterMFD mfd = MFDs.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag,
 				nMag, data.b, tmr * data.weight * setWeight);
 			mfds.add(mfd);
-			if (log.isLoggable(FINE)) {
-				log.fine(new StringBuilder().append(mfd.getMetadataString()).toString());
+			if (log.isLoggable(FINEST)) {
+				log.finest(new StringBuilder().append(mfd.getMetadataString()).toString());
 			}
 		}
 		return mfds;
@@ -286,7 +289,7 @@ class FaultParser extends DefaultHandler {
 
 		List<IncrementalMFD> mfds = Lists.newArrayList();
 
-		if (log.isLoggable(INFO)) log.info("MFD: SINGLE");
+		if (log.isLoggable(FINER)) log.finer("   MFD type: SINGLE");
 
 		// total moment rate
 		double tmr = data.a * Magnitudes.magToMoment(data.m);
@@ -306,8 +309,8 @@ class FaultParser extends DefaultHandler {
 						MFDs.newGaussianMoBalancedMFD(epiMag, unc.aleaSigma, unc.aleaCount, mfdWeight * tmr) :
 						MFDs.newGaussianMFD(epiMag, unc.aleaSigma, unc.aleaCount, mfdWeight * tcr);
 					mfds.add(mfd);
-					if (log.isLoggable(FINE)) {
-						log.fine(new StringBuilder(
+					if (log.isLoggable(FINEST)) {
+						log.finest(new StringBuilder(
 							"[+epi +ale], M-branch ").append(i + 1)
 							.append(": ").append(LF)
 							.append(mfd.getMetadataString()).toString());
@@ -320,8 +323,8 @@ class FaultParser extends DefaultHandler {
 					double moRate = tmr * mfdWeight;
 					IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(epiMag, moRate, data.floats);
 					mfds.add(mfd);
-					if (log.isLoggable(FINE)) {
-						log.fine(new StringBuilder(
+					if (log.isLoggable(FINEST)) {
+						log.finest(new StringBuilder(
 							"[+epi -ale], M-branch ").append(i + 1)
 							.append(": ").append(LF)
 							.append(mfd.getMetadataString()).toString());
@@ -335,15 +338,15 @@ class FaultParser extends DefaultHandler {
 					MFDs.newGaussianMoBalancedMFD(data.m, unc.aleaSigma, unc.aleaCount, mfdWeight * tmr) :
 					MFDs.newGaussianMFD(data.m, unc.aleaSigma, unc.aleaCount, mfdWeight * tcr);
 				mfds.add(mfd);
-				if (log.isLoggable(FINE)) {
-					log.fine(new StringBuilder("Single MFD [-epi +ale]: ")
+				if (log.isLoggable(FINEST)) {
+					log.finest(new StringBuilder("Single MFD [-epi +ale]: ")
 						.append(LF).append(mfd.getMetadataString()).toString());
 				}
 			} else {
 				IncrementalMFD mfd = MFDs.newSingleMFD(data.m, mfdWeight * data.a, data.floats);
 				mfds.add(mfd);
-				if (log.isLoggable(FINE)) {
-					log.fine(new StringBuilder("Single MFD [-epi -ale]: ")
+				if (log.isLoggable(FINEST)) {
+					log.finest(new StringBuilder("Single MFD [-epi -ale]: ")
 						.append(LF).append(mfd.getMetadataString()).toString());
 				}
 			}

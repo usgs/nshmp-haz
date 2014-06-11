@@ -14,7 +14,7 @@ import org.opensha.util.Named;
  * 
  * @author Peter Powers
  */
-public interface SourceSet<T extends Source> extends Named, Iterable<T>, Comparable<Named> {
+public interface SourceSet<T extends Source> extends Named, Iterable<T>, Comparable<SourceSet<T>> {
 
 	/**
 	 * Returns the {@code SourceType} identifier.

@@ -155,7 +155,7 @@ public class MFDs {
 	}
 
 	private static GaussianMFD buildGaussianBaseMFD(double mean, double sigma, int size) {
-		return new GaussianMFD(mean - 2 * sigma, mean - 2 * sigma, size);
+		return new GaussianMFD(mean - 2 * sigma, mean + 2 * sigma, size);
 	}
 
 	private static GutenbergRichterMFD buildGutenbergRichterBaseMFD(double min, double delta,

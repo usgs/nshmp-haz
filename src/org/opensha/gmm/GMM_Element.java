@@ -15,36 +15,7 @@ public enum GMM_Element {
 	GROUND_MOTION_MODELS,
 	MODEL_SET,
 	MODEL;
-	
-//	SOURCE,
-//	SETTINGS,
-//	MAG_FREQ_DIST_REF,
-//	MAG_FREQ_DIST,
-//
-//	MAG_UNCERTAINTY,
-//	EPISTEMIC,
-//	ALEATORY,
-//
-//	FAULT_SOURCE_SET,
-//	GEOMETRY,
-//	TRACE,
-//
-//	SUBDUCTION_SOURCE_SET,
-//	LOWER_TRACE,
-//
-//	INDEXED_FAULT_SOURCE_SET,
-//	INDEXED_FAULT_SECTIONS,
-//	SECTION,
-//	
-//	GRID_SOURCE_SET,
-//	
-//	SOURCE_ATTS,
-//	NODES,
-//	NODE,
-//	
-//	CLUSTER_SOURCE_SET,
-//	CLUSTER;
-		
+			
 	/**
 	 * Returns a {@code CaseFormat#UPPER_CAMEL} {@code String} representation
 	 * of this {@code GMM_Element}.

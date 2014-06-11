@@ -17,6 +17,7 @@ import static org.opensha.util.Parsing.stringToValueValueWeightMap;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
@@ -69,8 +70,8 @@ class GridParser extends DefaultHandler {
 		return new GridParser(sax);
 	}
 	
-	GridSourceSet parse(File f) throws SAXException, IOException {
-		sax.parse(f, this);
+	GridSourceSet parse(InputStream in) throws SAXException, IOException {
+		sax.parse(in, this);
 		return sourceBuilder.build();
 	}
 	
