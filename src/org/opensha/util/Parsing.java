@@ -471,10 +471,14 @@ public final class Parsing {
 	/**
 	 * Strip trailing zeros of a decimal number that has already been formatted
 	 * as a {@code String}. Method will leave a single zero after a decimal.
+	 * Method will not alter exponential forms, which may have a critical '0' in
+	 * last position.
+	 * 
 	 * @param s {@code String} to clean
 	 * @return the cleaned {@code String}
 	 */
 	public static String stripZeros(String s) {
+		if (s.charAt(1) == '.') return s;
 		s = s.replaceAll("0*$", "");
 		if (s.endsWith(".")) s += "0";
 		return s;
