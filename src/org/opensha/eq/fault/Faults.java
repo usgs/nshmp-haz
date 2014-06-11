@@ -1,5 +1,7 @@
 package org.opensha.eq.fault;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.opensha.data.DataUtils.validate;
 import static org.opensha.geo.GeoTools.PI_BY_2;
 import static org.opensha.geo.GeoTools.TO_RAD;
@@ -190,7 +192,20 @@ public final class Faults {
 		return validate(interfaceWidthRange, "Subduction Interface Width", width);
 	}
 
-//	/**
+	/**
+	 * Ensures that a {@code LocationList} contains at least two points and is
+	 * not {@code null}. Method returns the supplied {@code trace} and can be
+	 * used inline.
+	 * @param trace
+	 * @return the supplied trace
+	 */
+	public static LocationList validateTrace(LocationList trace) {
+		checkArgument(checkNotNull(trace, "Trace may not be null").size() > 1,
+			"Trace must have at least 2 points");
+		return trace;
+	}
+
+	//	/**
 //	 * Checks that the rake angle fits within the definition<p> <code>-180 <=
 //	 * rake <= 180</code><p>
 //	 * @param rake Angle to validate

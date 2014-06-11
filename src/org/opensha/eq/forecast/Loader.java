@@ -212,11 +212,10 @@ public class Loader {
 		 */
 		Path nestedGmmFile = null;
 		if (sourceCount > 0) {
-			nestedGmmFile = Paths.get(sourceDir.toString(), GMM_Parser.FILE_NAME);
+			nestedGmmFile = sourceDir.resolve(GMM_Parser.FILE_NAME);
 			checkState(Files.exists(nestedGmmFile) || gmmFile != null,
 				"Source files present in %s; gmm.xml file required", nestedGmmFile);
 			Path typeDir = sourceDir.getParent().getParent();
-			
 			log.info("    File: " + typeDir.relativize(nestedGmmFile));
 		}
 

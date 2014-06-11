@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
+import static org.opensha.eq.fault.Faults.validateTrace;
 import static org.opensha.eq.forecast.FloatStyle.FULL_DOWN_DIP;
 
 import java.util.List;
@@ -82,9 +83,7 @@ public class InterfaceSource extends FaultSource {
 		FloatStyle floatStyle = FULL_DOWN_DIP;
 
 		Builder lowerTrace(LocationList trace) {
-			checkArgument(checkNotNull(trace, "Trace may not be null").size() > 1,
-				"Trace must have at least 2 points");
-			this.lowerTrace = trace;
+			this.lowerTrace = validateTrace(trace);
 			return this;
 		}
 
