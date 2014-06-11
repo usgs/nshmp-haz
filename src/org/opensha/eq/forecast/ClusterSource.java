@@ -1,22 +1,17 @@
 package org.opensha.eq.forecast;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static org.opensha.data.DataUtils.validateWeight;
+import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha.calc.Site;
-import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.eq.forecast.FaultSource.Builder;
 import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMFD;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -55,7 +50,7 @@ public class ClusterSource implements Source {
 		this.rate = rate;
 		this.faults = faults;
 	}
-	
+
 	/**
 	 * Returns (1 / return-period) of this source in years.
 	 * @return the cluster rate
@@ -156,7 +151,7 @@ public class ClusterSource implements Source {
 	}
 
 	static class Builder {
-		
+
 		// build() may only be called once
 		// use Doubles to ensure fields are initially null
 
@@ -167,30 +162,28 @@ public class ClusterSource implements Source {
 		Double weight;
 		Double rate;
 		List<FaultSource> faults = Lists.newArrayList();
-		
+
 		Builder name(String name) {
-			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
-				"Name may not be empty or null");
-			this.name = name;
+			this.name = validateName(name);
 			return this;
 		}
-		
+
 		Builder weight(double weight) {
 			this.weight = validateWeight(weight);
-			return this; 
+			return this;
 		}
-		
+
 		Builder rate(double rate) {
 			// TODO what sort of value checking should be done for rate (<1 ??)
 			this.rate = rate;
-			return this; 
+			return this;
 		}
-		
+
 		Builder fault(FaultSource fault) {
 			faults.add(checkNotNull(fault, "Fault is null"));
 			return this;
 		}
-		
+
 		void validateState(String mssgID) {
 			checkState(!built, "This %s instance as already been used", mssgID);
 			checkState(name != null, "%s name not set", mssgID);
@@ -205,5 +198,5 @@ public class ClusterSource implements Source {
 			return new ClusterSource(name, weight, rate, faults);
 		}
 	}
-	
+
 }

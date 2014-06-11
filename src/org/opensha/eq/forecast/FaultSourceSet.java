@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.DataUtils.validateWeight;
+import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
@@ -15,63 +16,37 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
- * Add comments here
+ * Wrapper class for groups of related {@code FaultSource}s.
  *
  * @author Peter Powers
+ * @see FaultSource
  */
-public class FaultSourceSet implements SourceSet<FaultSource> {
+public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
 	private final List<FaultSource> sources;
-	private final String name;
-	private final double weight;
-	private final MagScalingType msrType;
-	
-	// NOTE we're holding onto weight for reference, however, MFD
-	// rates will have already been scaled in place. The weight value
-	// may come in handy when trying to put together individual
-	// logic tree branches.
-	//
-	// NOTE msrType is currently not exposed
 	
 	private FaultSourceSet(String name, double weight, MagScalingType msrType,
 		List<FaultSource> sources) {
-		this.name = name;
-		this.weight = weight;
-		this.msrType = msrType;
+		super(name, weight, msrType);
 		this.sources = sources;
 	}
 	
-	@Override
-	public Iterable<FaultSource> locationIterable(Location loc) {
+	@Override public Iterable<FaultSource> locationIterable(Location loc) {
 		// TODO
 		return null;
-	}	
-	
-	@Override
-	public Iterator<FaultSource> iterator() {
+	}
+
+	@Override public Iterator<FaultSource> iterator() {
 		return sources.iterator();
 	}
 
-	@Override
-	public String name() {
-		return name;
-	}
-	
-	@Override
-	public double weight() {
-		return weight;
-	}
-
-	@Override
-	public int size() {
+	@Override public int size() {
 		return sources.size();
 	}
 
-	@Override
-	public SourceType type() {
+	@Override public SourceType type() {
 		return SourceType.FAULT;
 	}
-
 
 	static class Builder {
 
@@ -87,9 +62,7 @@ public class FaultSourceSet implements SourceSet<FaultSource> {
 		List<FaultSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
-			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
-				"Name may not be empty or null");
-			this.name = name;
+			this.name = validateName(name);
 			return this;
 		}
 		

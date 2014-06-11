@@ -14,23 +14,24 @@ import org.opensha.util.Named;
  * 
  * @author Peter Powers
  */
-public interface SourceSet<T extends Source> extends Named, Iterable<T> {
-	
+public interface SourceSet<T extends Source> extends Named, Iterable<T>, Comparable<Named> {
+
 	/**
 	 * Returns the {@code SourceType} identifier.
 	 * @return the {@code SourceType} identifier
 	 */
 	public SourceType type();
-	
+
 	/**
 	 * Returns the number of {@code Source}s in this {@code SourceSet}.
 	 * @return the number of {@code Source}s contained herein
 	 */
 	public int size();
+
 	// TODO will all Source Set implementations support this?
-	
+
 	public double weight();
-	
+
 	public Iterable<T> locationIterable(Location loc);
-	
+
 }

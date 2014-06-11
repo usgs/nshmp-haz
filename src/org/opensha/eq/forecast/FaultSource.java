@@ -9,8 +9,10 @@ import static org.opensha.eq.fault.Faults.validateDip;
 import static org.opensha.eq.fault.Faults.validateRake;
 import static org.opensha.eq.fault.Faults.validateWidth;
 import static org.opensha.eq.fault.Faults.validateDepth;
+import static org.opensha.eq.fault.Faults.validateTrace;
 import static org.opensha.eq.forecast.FloatStyle.CENTERED;
 import static org.opensha.eq.forecast.FloatStyle.FULL_DOWN_DIP;
+import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +29,6 @@ import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMFD;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
@@ -260,16 +261,12 @@ public class FaultSource implements Source {
 		FloatStyle floatStyle = FULL_DOWN_DIP;
 		
 		Builder name(String name) {
-			checkArgument(!Strings.nullToEmpty(name).trim().isEmpty(),
-				"Name may not be empty or null");
-			this.name = name;
+			this.name = validateName(name);
 			return this;
 		}
 
 		Builder trace(LocationList trace) {
-			checkArgument(checkNotNull(trace, "Trace may not be null").size() > 1,
-				"Trace must have at least 2 points");
-			this.trace = trace;
+			this.trace = validateTrace(trace);
 			return this;
 		}
 

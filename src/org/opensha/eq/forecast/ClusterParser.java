@@ -44,9 +44,9 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @author Peter Powers
  */
-class ClusterSourceParser extends DefaultHandler {
+class ClusterParser extends DefaultHandler {
 
-	private static final Logger log = Logging.create(ClusterSourceParser.class);
+	private static final Logger log = Logging.create(ClusterParser.class);
 	private final SAXParser sax;
 
 	private Locator locator;
@@ -68,12 +68,12 @@ class ClusterSourceParser extends DefaultHandler {
 	private StringBuilder traceBuilder = null;
 	
 	
-	private ClusterSourceParser(SAXParser sax) {
+	private ClusterParser(SAXParser sax) {
 		this.sax = sax;
 	}
 	
-	static ClusterSourceParser create(SAXParser sax) {
-		return new ClusterSourceParser(checkNotNull(sax));
+	static ClusterParser create(SAXParser sax) {
+		return new ClusterParser(checkNotNull(sax));
 	}
 	
 	ClusterSourceSet parse(File f) throws SAXException, IOException {
