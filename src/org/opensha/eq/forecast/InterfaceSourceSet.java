@@ -20,9 +20,9 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 
 	private final List<InterfaceSource> sources;
 
-	private InterfaceSourceSet(String name, double weight, MagScalingType msrType,
+	private InterfaceSourceSet(String name, double weight, MagScalingType msrType, GMM_Set gmmSet,
 		List<InterfaceSource> sources) {
-		super(name, weight, msrType);
+		super(name, weight, msrType, gmmSet);
 		this.sources = sources;
 	}
 
@@ -58,7 +58,7 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 
 		InterfaceSourceSet buildSubductionSet() {
 			validateState(ID);
-			return new InterfaceSourceSet(name, weight, magScaling, sources);
+			return new InterfaceSourceSet(name, weight, magScaling, gmmSet, sources);
 		}
 	}
 

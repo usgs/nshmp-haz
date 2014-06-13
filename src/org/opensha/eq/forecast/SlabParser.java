@@ -24,8 +24,8 @@ class SlabParser {
 		return new SlabParser(sax);
 	}
 
-	SlabSourceSet parse(InputStream in) throws SAXException, IOException {
-		GridSourceSet delegate = gridParser.parse(in);
+	SlabSourceSet parse(InputStream in, GMM_Set gmmSet) throws SAXException, IOException {
+		GridSourceSet delegate = gridParser.parse(in, gmmSet);
 		return new SlabSourceSet(delegate);
 	}
 

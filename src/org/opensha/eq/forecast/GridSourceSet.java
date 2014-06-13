@@ -42,11 +42,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	PointSourceType ptSrcType = PointSourceType.FIXED_STRIKE;
 
 	// only available to parsers
-	private GridSourceSet(String name, Double weight, List<Location> locs,
-		List<IncrementalMFD> mfds, MagScalingType msrType, Map<FocalMech, Double> mechMap,
+	private GridSourceSet(String name, Double weight, MagScalingType msrType, GMM_Set gmmSet,
+		List<Location> locs, List<IncrementalMFD> mfds, Map<FocalMech, Double> mechMap,
 		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike) {
 
-		super(name, weight, msrType);
+		super(name, weight, msrType, gmmSet);
 
 		this.locs = locs;
 		this.mfds = mfds;
@@ -225,6 +225,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		Double weight;
 		private Double strike;
 		private MagScalingType magScaling;
+		private GMM_Set gmmSet;
 		private NavigableMap<Double, Map<Double, Double>> magDepthMap;
 		private Map<FocalMech, Double> mechMap;
 
@@ -238,6 +239,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		Builder weight(double weight) {
 			this.weight = validateWeight(weight);
+			return this;
+		}
+
+		Builder gmms(GMM_Set gmmSet) {
+			this.gmmSet = checkNotNull(gmmSet);
 			return this;
 		}
 
@@ -281,10 +287,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(magScaling != null, "%s has no mag-scaling relation set", ID);
 			checkState(magDepthMap != null, "%s mag-depth-weight map not set", ID);
 			checkState(mechMap != null, "%s focal mech map not set", ID);
+			checkState(gmmSet != null, "%s ground motion models not set", ID);
 
 			built = true;
-			return new GridSourceSet(name, weight, locs, mfds, magScaling, mechMap, magDepthMap,
-				strike);
+			return new GridSourceSet(name, weight, magScaling, gmmSet, locs, mfds, mechMap,
+				magDepthMap, strike);
 		}
 
 	}

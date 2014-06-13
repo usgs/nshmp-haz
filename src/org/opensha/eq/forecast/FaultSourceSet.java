@@ -1,6 +1,5 @@
 package org.opensha.eq.forecast;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.DataUtils.validateWeight;
@@ -12,7 +11,6 @@ import java.util.List;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -26,8 +24,8 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 	private final List<FaultSource> sources;
 	
 	private FaultSourceSet(String name, double weight, MagScalingType msrType,
-		List<FaultSource> sources) {
-		super(name, weight, msrType);
+		List<FaultSource> sources, GMM_Set gmmSet) {
+		super(name, weight, msrType, gmmSet);
 		this.sources = sources;
 	}
 	
@@ -59,6 +57,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 		String name;
 		Double weight;
 		MagScalingType magScaling;
+		GMM_Set gmmSet;
 		List<FaultSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
@@ -68,6 +67,11 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 		
 		Builder weight(double weight) {
 			this.weight = validateWeight(weight);
+			return this;
+		}
+
+		Builder gmms(GMM_Set gmmSet) {
+			this.gmmSet = checkNotNull(gmmSet);
 			return this;
 		}
 
@@ -81,17 +85,18 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 			return this;
 		}
 
-		void validateState(String mssgID) {
-			checkState(!built, "This %s instance as already been used", mssgID);
-			checkState(name != null, "%s name not set", mssgID);
-			checkState(weight != null, "%s weight not set", mssgID);
-			checkState(magScaling != null, "%s mag-scaling relation not set", mssgID);
+		void validateState(String id) {
+			checkState(!built, "This %s instance as already been used", id);
+			checkState(name != null, "%s name not set", id);
+			checkState(weight != null, "%s weight not set", id);
+			checkState(magScaling != null, "%s mag-scaling relation not set", id);
+			checkState(gmmSet != null, "%s ground motion models not set", id);
 			built = true;
 		}
 
 		FaultSourceSet buildFaultSet() {
 			validateState(ID);
-			return new FaultSourceSet(name, weight, magScaling, sources);
+			return new FaultSourceSet(name, weight, magScaling, sources, gmmSet);
 		}
 	}
 

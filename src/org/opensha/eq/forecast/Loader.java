@@ -26,7 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.opensha.util.Logging;
+import org.opensha.eq.forecast.Forecast.Builder;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -38,9 +38,6 @@ import com.google.common.collect.Lists;
 /**
  * {@code Forecast} loader. This class takes care of extensive checked exception
  * required when initializing a {@code Forecast}.
- * 
- * <p>The {@link Loader#load(String)} method of this class is not thread
- * safe.</p>
  * 
  * @author Peter Powers
  */
@@ -79,8 +76,12 @@ public class Loader {
 	 * @return a newly created {@code Forecast}
 	 * @throws Exception TODO checked exceptions
 	 */
-	public static Forecast load(String path) throws Exception {
+	public static Forecast load(String path, String name) throws Exception {
 
+		// TODO perhaps we process a config.xml file at the root of
+		// a Forecast to pick up name and other calc configuration data
+		
+		Forecast.Builder builder = Forecast.builder();
 		Path forecastPath = null;
 		List<Path> typePaths = null;
 
@@ -95,15 +96,17 @@ public class Loader {
 			throw e;
 		}
 		
-		log.info("Loading forecast: " + forecastPath.getFileName());
+		log.info("Loading forecast: " + name);
+		log.info("   From resource: " + forecastPath.getFileName());
 		
 		for (Path typePath : typePaths) {
-			String name = cleanZipName(typePath.getFileName().toString());
+			String typeName = cleanZipName(typePath.getFileName().toString());
 			log.info("");
-			log.info("========  " + name + " Sources  ========");
-			processTypeDir(typePath);
+			log.info("========  " + typeName + " Sources  ========");
+			processTypeDir(typePath, builder);
 		}
 
+		log.info("");
 		log.info("Finished loading: " + forecastPath.getFileName());
 
 		return null;
@@ -152,7 +155,7 @@ public class Loader {
 		}
 	}
 
-	private static void processTypeDir(Path typeDir) throws Exception {
+	private static void processTypeDir(Path typeDir, Builder builder) throws Exception {
 
 		SourceType type = SourceType.fromString(cleanZipName(typeDir.getFileName().toString()));
 		
@@ -185,19 +188,20 @@ public class Loader {
 		
 		for (Path sourcePath : typePaths) {
 			log.info("Parsing: " + typeDir.getParent().relativize(sourcePath));
-			SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath);
-			// TODO change to "Parsed: *" and parse it passing in gmmSet
+			SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, gmmSet);
+			builder.sourceSet(sourceSet);
 		}
 
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(typeDir, NestedDirFilter.INSTANCE)) {
 			for (Path nestedSourceDir : ds) {
-				processNestedSourceDir(nestedSourceDir, gmmSet);
+				processNestedDir(nestedSourceDir, type, gmmSet, builder);
 			}
 		}
 
 	}
 
-	private static void processNestedSourceDir(Path sourceDir, GMM_Set gmmSet) throws Exception {
+	private static void processNestedDir(Path sourceDir, SourceType type, GMM_Set gmmSet,
+			Builder builder) throws Exception {
 		
 		/*
 		 * gmm.xml -- this MUST exist if there is at least one source file
@@ -210,6 +214,8 @@ public class Loader {
 			nestedSourcePaths = Lists.newArrayList(ds);
 		}
 
+		Path typeDir = sourceDir.getParent().getParent();
+		
 		GMM_Set nestedGmmSet = null;
 		if (nestedSourcePaths.size() > 0) {
 			Path nestedGmmPath = sourceDir.resolve(GMM_Parser.FILE_NAME);
@@ -220,33 +226,40 @@ public class Loader {
 				logConfigException(ise);
 				throw ise;
 			}
-			nestedGmmSet = Files.exists(nestedGmmPath) ? parseGMM(nestedGmmPath) : gmmSet;
-			Path typeDir = sourceDir.getParent().getParent();
-			log.info("    File: " + typeDir.relativize(nestedGmmPath));
+			
+			if (Files.exists(nestedGmmPath)) {
+				log.info("Parsing: " + typeDir.relativize(nestedGmmPath));
+				nestedGmmSet = parseGMM(nestedGmmPath);
+			} else {
+				log.info("Parsing: (using parent gmm.xml)");
+				nestedGmmSet = gmmSet;
+			}
 		}
 
 		for (Path sourcePath : nestedSourcePaths) {
-			Path typeDir = sourceDir.getParent().getParent();
-			log.info("    File: " + typeDir.relativize(sourcePath));
-			// TODO parse and pass in nestedGmmSet
+			log.info("Parsing: " + typeDir.relativize(sourcePath));
+			SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, nestedGmmSet);
+			builder.sourceSet(sourceSet);
 		}
 
 	}
 
-	private static SourceSet<? extends Source> parseSource(SourceType type, Path path) throws Exception {
+	private static SourceSet<? extends Source> parseSource(SourceType type, Path path,
+			GMM_Set gmmSet) throws Exception {
+		
 		try {
 			InputStream in = Files.newInputStream(path);
 			switch (type) {
 				case FAULT:
-					return FaultParser.create(sax).parse(in);
+					return FaultParser.create(sax).parse(in, gmmSet);
 				case GRID:
-					return GridParser.create(sax).parse(in);
+					return GridParser.create(sax).parse(in, gmmSet);
 				case INTERFACE:
-					return InterfaceParser.create(sax).parse(in);
+					return InterfaceParser.create(sax).parse(in, gmmSet);
 				case SLAB:
-					return SlabParser.create(sax).parse(in);
+					return SlabParser.create(sax).parse(in, gmmSet);
 				case CLUSTER:
-					return ClusterParser.create(sax).parse(in);
+					return ClusterParser.create(sax).parse(in, gmmSet);
 				case INDEXED_FAULT:
 					throw new UnsupportedOperationException(
 						"Indexed fault sources not currently supported");
@@ -304,7 +317,8 @@ public class Loader {
 			log.severe(sb.toString());
 			throw ioe;
 
-		} else if (e instanceof UnsupportedOperationException || e instanceof IllegalStateException) {
+		} else if (e instanceof UnsupportedOperationException ||
+			e instanceof IllegalStateException || e instanceof NullPointerException) {
 			log.log(Level.SEVERE, "** Parsing error: " + e.getMessage() + " **", e);
 			throw e;
 			

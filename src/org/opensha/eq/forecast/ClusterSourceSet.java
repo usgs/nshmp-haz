@@ -23,8 +23,9 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 	private final List<ClusterSource> sources;
 
-	ClusterSourceSet(String name, double weight, MagScalingType msrType, List<ClusterSource> sources) {
-		super(name, weight, msrType);
+	ClusterSourceSet(String name, double weight, MagScalingType msrType,
+		List<ClusterSource> sources, GMM_Set gmmSet) {
+		super(name, weight, msrType, gmmSet);
 		this.sources = sources;
 	}
 
@@ -50,13 +51,14 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 		// build() may only be called once
 		// use Double to ensure fields are initially null
 
-		static final String ID = "ClusterSourceSet.Builder";
-		boolean built = false;
+		private static final String ID = "ClusterSourceSet.Builder";
+		private boolean built = false;
 
-		String name;
-		Double weight;
-		MagScalingType magScaling;
-		List<ClusterSource> sources = Lists.newArrayList();
+		private String name;
+		private Double weight;
+		private MagScalingType magScaling;
+		private GMM_Set gmmSet;
+		private List<ClusterSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
 			this.name = validateName(name);
@@ -65,6 +67,11 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 		Builder weight(double weight) {
 			this.weight = validateWeight(weight);
+			return this;
+		}
+		
+		Builder gmms(GMM_Set gmmSet) {
+			this.gmmSet = checkNotNull(gmmSet);
 			return this;
 		}
 
@@ -78,17 +85,18 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			return this;
 		}
 
-		void validateState(String mssgID) {
-			checkState(!built, "This %s instance as already been used", mssgID);
-			checkState(name != null, "%s name not set", mssgID);
-			checkState(weight != null, "%s weight not set", mssgID);
-			checkState(magScaling != null, "%s mag-scaling relation not set", mssgID);
+		void validateState(String id) {
+			checkState(!built, "This %s instance as already been used", id);
+			checkState(name != null, "%s name not set", id);
+			checkState(weight != null, "%s weight not set", id);
+			checkState(magScaling != null, "%s mag-scaling relation not set", id);
+			checkState(gmmSet != null, "%s ground motion models not set", id);
 			built = true;
 		}
 
 		ClusterSourceSet buildClusterSet() {
 			validateState(ID);
-			return new ClusterSourceSet(name, weight, magScaling, sources);
+			return new ClusterSourceSet(name, weight, magScaling, sources, gmmSet);
 		}
 	}
 

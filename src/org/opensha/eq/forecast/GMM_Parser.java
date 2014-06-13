@@ -38,7 +38,7 @@ class GMM_Parser extends DefaultHandler {
 
 	static final String FILE_NAME = "gmm.xml";
 
-	private static final Logger log = Logger.getLogger(GMM_Parser.class.getName());
+	private final Logger log = Logger.getLogger(GMM_Parser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;
 	

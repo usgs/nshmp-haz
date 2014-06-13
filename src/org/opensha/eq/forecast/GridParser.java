@@ -45,7 +45,7 @@ import org.xml.sax.helpers.DefaultHandler;
 @SuppressWarnings("incomplete-switch")
 class GridParser extends DefaultHandler {
 
-	private static final Logger log = Logger.getLogger(GridParser.class.getName());
+	private final Logger log = Logger.getLogger(GridParser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;
 
@@ -54,6 +54,8 @@ class GridParser extends DefaultHandler {
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
 	private MFD_Helper mfdHelper;
+
+	private GMM_Set gmmSet;
 
 	private GridSourceSet sourceSet;
 	private GridSourceSet.Builder sourceSetBuilder;
@@ -73,8 +75,9 @@ class GridParser extends DefaultHandler {
 		return new GridParser(sax);
 	}
 
-	GridSourceSet parse(InputStream in) throws SAXException, IOException {
+	GridSourceSet parse(InputStream in, GMM_Set gmmSet) throws SAXException, IOException {
 		checkState(!used, "This parser has expired");
+		this.gmmSet = gmmSet;
 		sax.parse(in, this);
 		used = true;
 		return sourceSet;
@@ -99,6 +102,7 @@ class GridParser extends DefaultHandler {
 				sourceSetBuilder = new GridSourceSet.Builder();
 				sourceSetBuilder.name(name);
 				sourceSetBuilder.weight(weight);
+				sourceSetBuilder.gmms(gmmSet);
 				if (log.isLoggable(FINE)) {
 					log.fine("");
 					log.fine("       Name: " + name);

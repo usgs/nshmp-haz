@@ -34,4 +34,5 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
 
 	public Iterable<T> locationIterable(Location loc);
 
+	public GMM_Set groundMotionModels();
 }

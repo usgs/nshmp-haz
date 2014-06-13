@@ -2,7 +2,8 @@ package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.FINEST;
 import static org.opensha.eq.forecast.SourceAttribute.A;
 import static org.opensha.eq.forecast.SourceAttribute.DEPTH;
 import static org.opensha.eq.forecast.SourceAttribute.DIP;
@@ -50,6 +51,8 @@ class ClusterParser extends DefaultHandler {
 
 	private Locator locator;
 
+	private GMM_Set gmmSet;
+
 	private ClusterSourceSet sourceSet;
 	private ClusterSourceSet.Builder sourceSetBuilder;
 	private ClusterSource.Builder clusterBuilder;
@@ -74,8 +77,9 @@ class ClusterParser extends DefaultHandler {
 		return new ClusterParser(checkNotNull(sax));
 	}
 
-	ClusterSourceSet parse(InputStream in) throws SAXException, IOException {
+	ClusterSourceSet parse(InputStream in, GMM_Set gmmSet) throws SAXException, IOException {
 		checkState(!used, "This parser has expired");
+		this.gmmSet = gmmSet;
 		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "ClusterSourceSet is empty");
 		used = true;
@@ -101,8 +105,11 @@ class ClusterParser extends DefaultHandler {
 					sourceSetBuilder = new ClusterSourceSet.Builder();
 					sourceSetBuilder.name(name);
 					sourceSetBuilder.weight(weight);
-					if (log.isLoggable(INFO)) {
-						log.info("Building cluster set: " + name + " weight=" + weight);
+					sourceSetBuilder.gmms(gmmSet);
+					if (log.isLoggable(FINE)) {
+						log.fine("");
+						log.fine("       Name: " + name);
+						log.fine("     Weight: " + weight);
 					}
 					break;
 
@@ -115,6 +122,7 @@ class ClusterParser extends DefaultHandler {
 					// but nested faults can't be built without it
 					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
 					sourceSetBuilder.magScaling(msrType);
+					log.fine("Mag scaling: " + msrType + " (not used)");
 					msr = msrType.instance();
 					break;
 
@@ -125,9 +133,11 @@ class ClusterParser extends DefaultHandler {
 					clusterBuilder.name(clustName);
 					clusterBuilder.weight(clustWeight);
 					clusterBuilder.rate(clusterRate);
-					if (log.isLoggable(INFO)) {
-						log.info("Creating cluster: " + clustName + " weight=" + clustWeight +
-							" retPer=" + Math.rint(1.0 / clusterRate));
+					if (log.isLoggable(FINE)) {
+						log.fine("");
+						log.fine("    Cluster: " + clustName);
+						log.fine("     Weight: " + clustWeight);
+						log.fine("   Ret. per: " + Math.rint(1.0 / clusterRate));
 					}
 					break;
 
@@ -136,9 +146,7 @@ class ClusterParser extends DefaultHandler {
 					faultBuilder = new FaultSource.Builder();
 					faultBuilder.name(srcName);
 					faultBuilder.magScaling(msr);
-					if (log.isLoggable(INFO)) {
-						log.info("      with fault: " + srcName);
-					}
+					log.finer("      Fault: " + srcName);
 					break;
 
 				case MAG_FREQ_DIST:
@@ -198,6 +206,7 @@ class ClusterParser extends DefaultHandler {
 					break;
 
 				case CLUSTER_SOURCE_SET:
+					log.fine("");
 					sourceSet = sourceSetBuilder.buildClusterSet();
 					break;
 
@@ -220,7 +229,10 @@ class ClusterParser extends DefaultHandler {
 		MFD_Type type = readEnum(TYPE, atts, MFD_Type.class);
 		switch (type) {
 			case SINGLE:
-				return MFDs.newSingleMFD(readDouble(M, atts), readDouble(WEIGHT, atts), false);
+				IncrementalMFD mfd = MFDs.newSingleMFD(readDouble(M, atts), readDouble(WEIGHT, atts), false);
+				log.finer("   MFD type: SINGLE");
+				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+				return mfd;
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
 		}

@@ -57,6 +57,8 @@ class FaultParser extends DefaultHandler {
 
 	private Locator locator;
 
+	private GMM_Set gmmSet;
+
 	private FaultSourceSet sourceSet;
 	private FaultSourceSet.Builder sourceSetBuilder;
 	private FaultSource.Builder sourceBuilder;
@@ -84,8 +86,9 @@ class FaultParser extends DefaultHandler {
 		return new FaultParser(checkNotNull(sax));
 	}
 
-	FaultSourceSet parse(InputStream in) throws SAXException, IOException {
+	FaultSourceSet parse(InputStream in, GMM_Set gmmSet) throws SAXException, IOException {
 		checkState(!used, "This parser has expired");
+		this.gmmSet = gmmSet;
 		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "FaultSourceSet is empty");
 		used = true;
@@ -111,6 +114,7 @@ class FaultParser extends DefaultHandler {
 					sourceSetBuilder = new FaultSourceSet.Builder();
 					sourceSetBuilder.name(name);
 					sourceSetBuilder.weight(weight);
+					sourceSetBuilder.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
 						log.fine("");
 						log.fine("       Name: " + name);

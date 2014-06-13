@@ -144,7 +144,7 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 			return this;
 		}
 
-		Builder source(SourceSet<Source> source) {
+		Builder sourceSet(SourceSet<? extends Source> source) {
 			sourceMapBuilder.put(source.type(), source);
 			return this;
 		}

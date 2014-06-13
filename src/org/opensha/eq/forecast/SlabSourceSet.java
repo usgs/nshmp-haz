@@ -47,9 +47,15 @@ public class SlabSourceSet implements SourceSet<PointSource> {
 	@Override public Iterable<PointSource> locationIterable(Location loc) {
 		return delegate.locationIterable(loc);
 	}
+
+	@Override public GMM_Set groundMotionModels() {
+		return delegate.groundMotionModels();
+	}
 	
+	// TODO clean
 	IncrementalMFD mfdForLoc(Location loc) {
 		return delegate.mfdForLoc(loc);
 	}
+
 
 }

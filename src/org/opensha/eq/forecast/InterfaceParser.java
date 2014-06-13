@@ -33,7 +33,6 @@ import org.opensha.mfd.GutenbergRichterMFD;
 import org.opensha.mfd.IncrementalMFD;
 import org.opensha.mfd.MFD_Type;
 import org.opensha.mfd.MFDs;
-import org.opensha.util.Logging;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -49,11 +48,13 @@ import org.xml.sax.helpers.DefaultHandler;
 @SuppressWarnings("incomplete-switch")
 class InterfaceParser extends DefaultHandler {
 
-	private static final Logger log = Logger.getLogger(InterfaceParser.class.getName());
+	private final Logger log = Logger.getLogger(InterfaceParser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;
 
 	private Locator locator;
+
+	private GMM_Set gmmSet;
 
 	private InterfaceSourceSet sourceSet;
 	private InterfaceSourceSet.Builder sourceSetBuilder;
@@ -73,8 +74,9 @@ class InterfaceParser extends DefaultHandler {
 		return new InterfaceParser(checkNotNull(sax));
 	}
 
-	InterfaceSourceSet parse(InputStream in) throws SAXException, IOException {
+	InterfaceSourceSet parse(InputStream in, GMM_Set gmmSet) throws SAXException, IOException {
 		checkState(!used, "This parser has expired");
+		this.gmmSet = gmmSet;
 		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "InterfaceSourceSet is empty");
 		used = true;
@@ -100,6 +102,7 @@ class InterfaceParser extends DefaultHandler {
 					sourceSetBuilder = new InterfaceSourceSet.Builder();
 					sourceSetBuilder.name(name);
 					sourceSetBuilder.weight(weight);
+					sourceSetBuilder.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
 						log.fine("");
 						log.fine("       Name: " + name);
@@ -192,7 +195,7 @@ class InterfaceParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
-	private static IncrementalMFD buildMFD(Attributes atts, double setWeight) {
+	private IncrementalMFD buildMFD(Attributes atts, double setWeight) {
 		// TODO revisit, clean, and handle exceptions
 		MFD_Type type = MFD_Type.valueOf(atts.getValue("type"));
 		switch (type) {
@@ -209,7 +212,7 @@ class InterfaceParser extends DefaultHandler {
 	 * Builds GR MFD. Method will throw IllegalStateException if attribute
 	 * values yield an MFD with no magnitude bins.
 	 */
-	private static IncrementalMFD buildGR(Attributes atts, double setWeight) {
+	private IncrementalMFD buildGR(Attributes atts, double setWeight) {
 		double a = readDouble(A, atts);
 		double b = readDouble(B, atts);
 		double mMin = readDouble(M_MIN, atts);
@@ -229,7 +232,7 @@ class InterfaceParser extends DefaultHandler {
 	}
 
 	/* Builds single MFD */
-	private static IncrementalMFD buildSingle(Attributes atts, double setWeight) {
+	private IncrementalMFD buildSingle(Attributes atts, double setWeight) {
 
 		double a = readDouble(A, atts);
 		double m = readDouble(M, atts);
