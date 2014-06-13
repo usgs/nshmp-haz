@@ -37,6 +37,7 @@ public class Logging {
 	 * @param clazz to create {@code Logger} for
 	 * @return a new {@code Logger}
 	 */
+	@Deprecated
 	public static Logger create(Class<?> clazz) {
 		Logger log = Logger.getLogger(clazz.getName());
 //		log.setUseParentHandlers(true);
@@ -82,6 +83,7 @@ public class Logging {
 				if (record.getThrown() != null) {
 					b.append(record.getThrown());
 				}
+				b.append(LF);
 			}
 			b.append(" ").append(record.getMessage());
 			b.append(LF);

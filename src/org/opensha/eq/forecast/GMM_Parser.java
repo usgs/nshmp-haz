@@ -17,7 +17,6 @@ import javax.xml.parsers.SAXParser;
 
 import org.opensha.gmm.GMM;
 import org.opensha.gmm.GMM_Element;
-import org.opensha.util.Logging;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -34,12 +33,15 @@ import com.google.common.collect.Maps;
  * 
  * @author Peter Powers
  */
+@SuppressWarnings("incomplete-switch")
 class GMM_Parser extends DefaultHandler {
 
 	static final String FILE_NAME = "gmm.xml";
 
-	private static final Logger log = Logging.create(GMM_Parser.class);
+	private static final Logger log = Logger.getLogger(GMM_Parser.class.getName());
 	private final SAXParser sax;
+	private boolean used = false;
+	
 	private Locator locator;
 
 	private int mapCount = 0;
@@ -56,7 +58,9 @@ class GMM_Parser extends DefaultHandler {
 	}
 
 	GMM_Set parse(InputStream in) throws SAXException, IOException {
+		checkState(!used, "This parser has expired");
 		sax.parse(checkNotNull(in), this);
+		used = true;
 		return gmmSet;
 	}
 
@@ -86,10 +90,15 @@ class GMM_Parser extends DefaultHandler {
 					} else {
 						setBuilder.secondaryMaxDistance(readDouble(MAX_DISTANCE, atts));
 					}
+					log.fine("");
+					log.fine("        Set: " + mapCount);
 					break;
 
 				case MODEL:
-					gmmWtMap.put(readEnum(ID, atts, GMM.class), readDouble(WEIGHT, atts));
+					GMM model = readEnum(ID, atts, GMM.class);
+					double weight = readDouble(WEIGHT, atts);
+					gmmWtMap.put(model, weight);
+					log.fine(" Model [wt]: " + model + " [" + weight + "]");
 					break;
 
 			}
@@ -100,8 +109,8 @@ class GMM_Parser extends DefaultHandler {
 
 	}
 
-	@SuppressWarnings("incomplete-switch")
-	@Override public void endElement(String uri, String localName, String qName) throws SAXException {
+	@Override public void endElement(String uri, String localName, String qName)
+			throws SAXException {
 
 		GMM_Element e = null;
 		try {
@@ -119,6 +128,7 @@ class GMM_Parser extends DefaultHandler {
 					} else {
 						setBuilder.secondaryModelMap(gmmWtMap);
 					}
+					log.fine("");
 					break;
 
 				case GROUND_MOTION_MODELS:

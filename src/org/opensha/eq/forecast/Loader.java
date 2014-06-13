@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.nio.file.Files.newDirectoryStream;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,34 +47,25 @@ import com.google.common.collect.Lists;
 public class Loader {
 
 	private static final String LF = LINE_SEPARATOR.value();
-
-	private static final Logger log;
-
-	private static final ClusterParser clusterParser;
-	private static final FaultParser faultParser;
-	private static final GridParser gridParser;
-	private static final InterfaceParser interfaceParser;
-	private static final SlabParser slabParser;
-	private static final GMM_Parser gmmParser;
+	private static Logger log;
+	private static SAXParser sax;
 
 	static {
-		// TODO see Logging; add file handler
-		log = Logging.create(Loader.class);
 
-		SAXParser saxParser = null;
 		try {
-			saxParser = SAXParserFactory.newInstance().newSAXParser();
-		} catch (ParserConfigurationException | SAXException e) {
-			log.log(Level.SEVERE, "** SAX initialization error **", e);
-			Throwables.propagate(e);
+			InputStream is = new FileInputStream(
+				"/Users/pmpowers/projects/git/nshmp-sha/lib/logging.properties");
+			LogManager.getLogManager().readConfiguration(is);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		}
 
-		clusterParser = ClusterParser.create(saxParser);
-		faultParser = FaultParser.create(saxParser);
-		gridParser = GridParser.create(saxParser);
-		interfaceParser = InterfaceParser.create(saxParser);
-		slabParser = SlabParser.create(saxParser);
-		gmmParser = GMM_Parser.create(saxParser);
+		log = Logger.getLogger(Loader.class.getName());
+		try {
+			sax = SAXParserFactory.newInstance().newSAXParser();
+		} catch (ParserConfigurationException | SAXException e) {
+			Throwables.propagate(e);
+		}
 	}
 
 	/**
@@ -106,7 +99,8 @@ public class Loader {
 		
 		for (Path typePath : typePaths) {
 			String name = cleanZipName(typePath.getFileName().toString());
-			log.info("===== " + name + " Sources =====");
+			log.info("");
+			log.info("========  " + name + " Sources  ========");
 			processTypeDir(typePath);
 		}
 
@@ -244,15 +238,15 @@ public class Loader {
 			InputStream in = Files.newInputStream(path);
 			switch (type) {
 				case FAULT:
-					return faultParser.parse(in);
+					return FaultParser.create(sax).parse(in);
 				case GRID:
-					return gridParser.parse(in);
+					return GridParser.create(sax).parse(in);
 				case INTERFACE:
-					return interfaceParser.parse(in);
+					return InterfaceParser.create(sax).parse(in);
 				case SLAB:
-					return slabParser.parse(in);
+					return SlabParser.create(sax).parse(in);
 				case CLUSTER:
-					return clusterParser.parse(in);
+					return ClusterParser.create(sax).parse(in);
 				case INDEXED_FAULT:
 					throw new UnsupportedOperationException(
 						"Indexed fault sources not currently supported");
@@ -269,52 +263,12 @@ public class Loader {
 	private static GMM_Set parseGMM(Path path) throws Exception {
 		try {
 			InputStream in = Files.newInputStream(path);
-			return gmmParser.parse(in);
+			return GMM_Parser.create(sax).parse(in);
 		} catch (Exception e) {
 			handleParseException(e, path);
 			return null;
 		}
 	}
-	
-//	private static SourceSet processFile(SourceType type, Path path) throws Exception {
-//		File file = new File(path);
-//		try {
-//			return faultParser.parse(file);
-//		} catch (Exception e) {
-//			StringBuilder sb = new StringBuilder(LF);
-//			sb.append("** SAX Parser error:").append(LF);
-//			sb.append("**   File: ").append(spe.getSystemId()).append(LF);
-//			sb.append("**   Line: ").append(spe.getLineNumber());
-//			sb.append(" [").append(spe.getColumnNumber());
-//			sb.append("]").append(LF);
-//			sb.append("**   Info: ").append(spe.getMessage());
-//			if (spe.getException() != null) {
-//				String message = spe.getException().getMessage();
-//				if (message != null) {
-//					sb.append(LF).append("           ").append(spe.getException().getMessage());
-//					sb.append(LF).append(Throwables.getStackTraceAsString(spe.getException()));
-//				} else {
-//					sb.append(", ").append(Throwables.getStackTraceAsString(spe.getException()));
-//				}
-//			}
-//			sb.append(LF);
-//			sb.append("** Exiting **").append(LF);
-//			log.severe(sb.toString());
-//			throw spe;
-//		} catch (SAXException se) {
-//			StringBuilder sb = new StringBuilder(LF);
-//			sb.append("** Other SAX parsing error: Exiting **").append(LF);
-//			log.log(Level.SEVERE, sb.toString(), se);
-//			throw se;
-//		} catch (IOException ioe) {
-//			StringBuilder sb = new StringBuilder(LF);
-//			sb.append("** IO error: ").append(ioe.getMessage()).append(LF);
-//			sb.append("**   File: ").append(file.getPath()).append(LF);
-//			sb.append("** Exiting **").append(LF);
-//			log.severe(sb.toString());
-//			throw ioe;
-//		}
-//	}
 
 	private static void handleParseException(Exception e, Path path) throws Exception {
 		if (e instanceof SAXParseException) {
@@ -335,8 +289,6 @@ public class Loader {
 					sb.append(", ").append(Throwables.getStackTraceAsString(spe.getException()));
 				}
 			}
-			sb.append(LF);
-			sb.append("** Exiting **").append(LF);
 			log.severe(sb.toString());
 			throw spe;
 
@@ -352,7 +304,7 @@ public class Loader {
 			log.severe(sb.toString());
 			throw ioe;
 
-		} else if (e instanceof UnsupportedOperationException) {
+		} else if (e instanceof UnsupportedOperationException || e instanceof IllegalStateException) {
 			log.log(Level.SEVERE, "** Parsing error: " + e.getMessage() + " **", e);
 			throw e;
 			

@@ -2,15 +2,21 @@ package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
-import static org.opensha.eq.forecast.SourceAttribute.*;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.FINEST;
+import static org.opensha.eq.forecast.SourceAttribute.DEPTH;
+import static org.opensha.eq.forecast.SourceAttribute.DIP;
+import static org.opensha.eq.forecast.SourceAttribute.MAG_SCALING;
+import static org.opensha.eq.forecast.SourceAttribute.NAME;
+import static org.opensha.eq.forecast.SourceAttribute.RAKE;
+import static org.opensha.eq.forecast.SourceAttribute.TYPE;
+import static org.opensha.eq.forecast.SourceAttribute.WEIGHT;
+import static org.opensha.eq.forecast.SourceAttribute.WIDTH;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readEnum;
 import static org.opensha.util.Parsing.readString;
 import static org.opensha.util.Parsing.toMap;
-import static java.util.logging.Level.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -28,7 +34,6 @@ import org.opensha.mfd.GutenbergRichterMFD;
 import org.opensha.mfd.IncrementalMFD;
 import org.opensha.mfd.MFD_Type;
 import org.opensha.mfd.MFDs;
-import org.opensha.util.Logging;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -43,11 +48,12 @@ import com.google.common.collect.Lists;
  * 
  * @author Peter Powers
  */
+@SuppressWarnings("incomplete-switch")
 class FaultParser extends DefaultHandler {
 
-	private static final Logger log = Logging.create(FaultParser.class);
-	private static final String LF = LINE_SEPARATOR.value();
+	private final Logger log = Logger.getLogger(FaultParser.class.getName());
 	private final SAXParser sax;
+	private boolean used = false;
 
 	private Locator locator;
 
@@ -79,17 +85,15 @@ class FaultParser extends DefaultHandler {
 	}
 
 	FaultSourceSet parse(InputStream in) throws SAXException, IOException {
+		checkState(!used, "This parser has expired");
 		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "FaultSourceSet is empty");
+		used = true;
 		return sourceSet;
 	}
 
-	// TODO wrap all operations in a sSAXParseException so it gets passed up to
-	// logger in Loader
-
-	@SuppressWarnings("incomplete-switch")
-	@Override public void startElement(String uri,
-			String localName, String qName, Attributes atts) throws SAXException {
+	@Override public void startElement(String uri, String localName, String qName, Attributes atts)
+			throws SAXException {
 
 		SourceElement e = null;
 		try {
@@ -131,6 +135,7 @@ class FaultParser extends DefaultHandler {
 					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
 					sourceSetBuilder.magScaling(msrType);
 					msr = msrType.instance();
+					log.fine("Mag scaling: " + msrType);
 					break;
 
 				case SOURCE:
@@ -138,9 +143,7 @@ class FaultParser extends DefaultHandler {
 					sourceBuilder = new FaultSource.Builder();
 					sourceBuilder.name(srcName);
 					sourceBuilder.magScaling(msr);
-					if (log.isLoggable(FINE)) {
-						log.fine("     Source: " + srcName);
-					}
+					log.fine("     Source: " + srcName);
 					break;
 
 				case MAG_FREQ_DIST:
@@ -169,8 +172,8 @@ class FaultParser extends DefaultHandler {
 		}
 	}
 
-	@Override @SuppressWarnings("incomplete-switch") public void endElement(String uri,
-			String localName, String qName) throws SAXException {
+	@Override public void endElement(String uri, String localName, String qName)
+			throws SAXException {
 
 		SourceElement e = null;
 		try {
@@ -200,11 +203,12 @@ class FaultParser extends DefaultHandler {
 
 				case SOURCE:
 					sourceSetBuilder.source(sourceBuilder.buildFaultSource());
+					log.finer(""); // insert blank line for detailed source output
 					break;
 
 				case FAULT_SOURCE_SET:
 					sourceSet = sourceSetBuilder.buildFaultSet();
-
+					break;
 			}
 
 		} catch (Exception ex) {
@@ -236,24 +240,28 @@ class FaultParser extends DefaultHandler {
 	 * Builds GR MFDs. Method will throw IllegalStateException if attribute
 	 * values yield an MFD with no magnitude bins.
 	 */
-	private static List<IncrementalMFD> buildGR(MFD_Helper.GR_Data data, MagUncertainty unc,
+	private List<IncrementalMFD> buildGR(MFD_Helper.GR_Data data, MagUncertainty unc,
 			double setWeight) {
 
 		int nMag = MFDs.magCount(data.mMin, data.mMax, data.dMag);
-		checkState(nMag > 0, "GR MFD with no mags");
+		checkState(nMag > 0, "GR MFD with no mags [%s]", sourceBuilder.name);
+
 		double tmr = MFDs.totalMoRate(data.mMin, nMag, data.dMag, data.a, data.b);
 
 		List<IncrementalMFD> mfds = Lists.newArrayList();
 
-		if (log.isLoggable(FINER)) log.finer("   MFD type: GR");
+		// this was handled previously by GR_Data.hasMagExceptions()
+		// TODO edge cases (Rush Peak in brange.3dip.gr.in) suggest
+		// data.mMin should be used instead of unc.epiCutoff
+		boolean uncertAllowed = unc.hasEpistemic && (data.mMax + unc.epiDeltas[0]) >= unc.epiCutoff;
 
-		if (unc.hasEpistemic) {
+		if (unc.hasEpistemic && uncertAllowed) {
 			for (int i = 0; i < unc.epiCount; i++) {
 				// update mMax and nMag
 				double mMaxEpi = data.mMax + unc.epiDeltas[i];
 				int nMagEpi = MFDs.magCount(data.mMin, mMaxEpi, data.dMag);
 				if (nMagEpi > 0) {
-					double weightEpi = setWeight * data.weight * unc.epiWeights[i];
+					double weightEpi = data.weight * unc.epiWeights[i] * setWeight;
 
 					// epi branches preserve Mo between mMin and dMag(nMag-1),
 					// not mMax to ensure that Mo is 'spent' on earthquakes
@@ -262,21 +270,20 @@ class FaultParser extends DefaultHandler {
 					GutenbergRichterMFD mfd = MFDs.newGutenbergRichterMoBalancedMFD(data.mMin,
 						data.dMag, nMagEpi, data.b, tmr * weightEpi);
 					mfds.add(mfd);
-					if (log.isLoggable(FINER)) {
-						log.finer(new StringBuilder().append("M-branch ").append(i + 1).append(": ")
-							.append(LF).append(mfd.getMetadataString()).toString());
-					}
+					log.finer("   MFD type: GR [+epi -alea] " + epiBranch(i));
+					if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 				} else {
-					log.warning("GR MFD epi branch with no mags");
+					log.warning("GR MFD epi branch with no mags [" + sourceBuilder.name + "]");
+
 				}
 			}
 		} else {
+			double weight = data.weight * setWeight;
 			GutenbergRichterMFD mfd = MFDs.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag,
-				nMag, data.b, tmr * data.weight * setWeight);
+				nMag, data.b, tmr * weight);
 			mfds.add(mfd);
-			if (log.isLoggable(FINEST)) {
-				log.finest(new StringBuilder().append(mfd.getMetadataString()).toString());
-			}
+			log.finer("   MFD type: GR [-epi -alea]");
+			if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 		}
 		return mfds;
 	}
@@ -284,37 +291,37 @@ class FaultParser extends DefaultHandler {
 	/*
 	 * Builds single MFDs
 	 */
-	private static List<IncrementalMFD> buildSingle(MFD_Helper.SingleData data, MagUncertainty unc,
+	private List<IncrementalMFD> buildSingle(MFD_Helper.SingleData data, MagUncertainty unc,
 			double setWeight) {
 
 		List<IncrementalMFD> mfds = Lists.newArrayList();
-
-		if (log.isLoggable(FINER)) log.finer("   MFD type: SINGLE");
 
 		// total moment rate
 		double tmr = data.a * Magnitudes.magToMoment(data.m);
 		// total event rate
 		double tcr = data.a;
 
+		// this was handled previously by GR_Data.hasMagExceptions()
+		// need to catch the single floaters that are less than 6.5
+		// note: unc.epiDeltas[0] may be null
+		double minUncertMag = data.m + (unc.hasEpistemic ? unc.epiDeltas[0] : 0.0);
+		boolean uncertAllowed = !((minUncertMag < unc.epiCutoff) && data.floats);
+
 		// @formatter:off
 		// loop over epistemic uncertainties
-		if (unc.hasEpistemic) {
+		if (unc.hasEpistemic && uncertAllowed) {
 			for (int i = 0; i < unc.epiCount; i++) {
 
 				double epiMag = data.m + unc.epiDeltas[i];
-				double mfdWeight = setWeight * data.weight * unc.epiWeights[i];
+				double mfdWeight = data.weight * unc.epiWeights[i] * setWeight;
 
 				if (unc.hasAleatory) {
 					GaussianMFD mfd = (unc.moBalance) ? 
 						MFDs.newGaussianMoBalancedMFD(epiMag, unc.aleaSigma, unc.aleaCount, mfdWeight * tmr) :
 						MFDs.newGaussianMFD(epiMag, unc.aleaSigma, unc.aleaCount, mfdWeight * tcr);
 					mfds.add(mfd);
-					if (log.isLoggable(FINEST)) {
-						log.finest(new StringBuilder(
-							"[+epi +ale], M-branch ").append(i + 1)
-							.append(": ").append(LF)
-							.append(mfd.getMetadataString()).toString());
-					}
+					log.finer("   MFD type: SINGLE [+epi +alea] " + epiBranch(i));
+					if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 				} else {
 					
 					// single MFDs with epi uncertainty are moment balanced at the
@@ -323,77 +330,32 @@ class FaultParser extends DefaultHandler {
 					double moRate = tmr * mfdWeight;
 					IncrementalMFD mfd = MFDs.newSingleMoBalancedMFD(epiMag, moRate, data.floats);
 					mfds.add(mfd);
-					if (log.isLoggable(FINEST)) {
-						log.finest(new StringBuilder(
-							"[+epi -ale], M-branch ").append(i + 1)
-							.append(": ").append(LF)
-							.append(mfd.getMetadataString()).toString());
-					}
+					log.finer("   MFD type: SINGLE [+epi -alea] " + epiBranch(i));
+					if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 				}
 			}
 		} else {
-			double mfdWeight = setWeight * data.weight;
-			if (unc.hasAleatory) {
+			double mfdWeight = data.weight * setWeight;
+			if (unc.hasAleatory && uncertAllowed) {
 				GaussianMFD mfd = (unc.moBalance) ? 
 					MFDs.newGaussianMoBalancedMFD(data.m, unc.aleaSigma, unc.aleaCount, mfdWeight * tmr) :
 					MFDs.newGaussianMFD(data.m, unc.aleaSigma, unc.aleaCount, mfdWeight * tcr);
 				mfds.add(mfd);
-				if (log.isLoggable(FINEST)) {
-					log.finest(new StringBuilder("Single MFD [-epi +ale]: ")
-						.append(LF).append(mfd.getMetadataString()).toString());
-				}
+				log.finer("   MFD type: SINGLE [-epi +alea]");
+				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 			} else {
 				IncrementalMFD mfd = MFDs.newSingleMFD(data.m, mfdWeight * data.a, data.floats);
 				mfds.add(mfd);
-				if (log.isLoggable(FINEST)) {
-					log.finest(new StringBuilder("Single MFD [-epi -ale]: ")
-						.append(LF).append(mfd.getMetadataString()).toString());
-				}
+				log.finer("   MFD type: SINGLE [-epi -alea]");
+				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 			}
 		}
 		// @formatter:on
 		return mfds;
 	}
-
-	// TODO clean
-	// /*
-	// * Returns true if (1) multi-mag and mMax-epi < 6.5 or (2) single-mag and
-	// * mMax-epi-2s < 6.5
-	// */
-	// boolean hasMagExceptions(Logger log, FaultData fd, MagUncertaintyData md)
-	// {
-	// if (nMag > 1) {
-	// // for multi mag consider only epistemic uncertainty
-	// double mMaxAdj = mMax + md.epiDeltas[0];
-	// if (mMaxAdj < 6.5) {
-	// StringBuilder sb = new StringBuilder()
-	// .append("Multi mag GR mMax [").append(mMax)
-	// .append("] with epistemic unc. [").append(mMaxAdj)
-	// .append("] is \u003C 6.5");
-	// appendFaultDat(sb, fd);
-	// log.warning(sb.toString());
-	// return true;
-	// }
-	// } else if (nMag == 1) {
-	// // for single mag consider epistemic and aleatory uncertainty
-	// double mMaxAdj = md.aleaMinMag(mMax + md.epiDeltas[0]);
-	// if (mMaxAdj < 6.5) {
-	// StringBuilder sb = new StringBuilder()
-	// .append("Single mag GR mMax [").append(mMax)
-	// .append("] with epistemic and aleatory unc. [")
-	// .append(mMaxAdj).append("] is \u003C 6.5");
-	// appendFaultDat(sb, fd);
-	// log.warning(sb.toString());
-	// return true;
-	// }
-	// } else {
-	// // log empty mfd
-	// StringBuilder sb = new StringBuilder()
-	// .append("GR MFD with no mags");
-	// appendFaultDat(sb, fd);
-	// log.warning(sb.toString());
-	// }
-	// return false;
-	// }
+	
+	private static String epiBranch(int i) {
+		return (i == 0) ? "(M-epi)" : (i == 2) ? "(M+epi)" : "(M)";
+	}
 
 }

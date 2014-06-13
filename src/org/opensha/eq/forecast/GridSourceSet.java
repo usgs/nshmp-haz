@@ -222,7 +222,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private boolean built = false;
 
 		private String name;
-		private Double weight;
+		Double weight;
 		private Double strike;
 		private MagScalingType magScaling;
 		private NavigableMap<Double, Map<Double, Double>> magDepthMap;
