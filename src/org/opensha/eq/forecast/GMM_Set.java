@@ -12,6 +12,7 @@ import org.opensha.gmm.GMM;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
+import com.google.common.primitives.Doubles;
 
 /**
  * Wrapper class for GroundMotionModel instances that will be matched against
@@ -19,8 +20,8 @@ import com.google.common.collect.Range;
  * 'Set' in the class name implies the {@code GMM}s in a {@code GMM_Set} will be
  * unique; this is guaranteeed by the internal use of {@code EnumMap}s.
  * 
- * <p>A {@code GMM_Set} can not be created directly; it may only be created
- * by a private parser.</p>
+ * <p>A {@code GMM_Set} can not be created directly; it may only be created by a
+ * private parser.</p>
  * 
  * @author Peter Powers
  */
@@ -31,28 +32,34 @@ class GMM_Set {
 	private final Map<GMM, Double> weightMapHi;
 	private final double maxDistHi;
 
+	private final double[] uncValues;
+	private final double[] uncWeights;
+
 	GMM_Set(Map<GMM, Double> weightMapLo, double maxDistLo, Map<GMM, Double> weightMapHi,
-		double maxDistHi) {
+		double maxDistHi, double[] uncValues, double[] uncWeights) {
 		this.weightMapLo = weightMapLo;
 		this.maxDistLo = maxDistLo;
 		this.weightMapHi = weightMapHi;
 		this.maxDistHi = maxDistHi;
+		this.uncValues = uncValues;
+		this.uncWeights = uncWeights;
 	}
-	
-//	static createInstanceMap(Map<GMM, Double> weightMap) {
-//		Map<GMM, GroundMotionModel> instanceMap = Maps.newEnumMap(GMM.class);
-//		for (GMM gmm : weightMap.keySet()) {
-//			instanceMap.put(gmm, gmm.instance(imt));
-//		}
-//	}
+
+	// TODO clean
+	// static createInstanceMap(Map<GMM, Double> weightMap) {
+	// Map<GMM, GroundMotionModel> instanceMap = Maps.newEnumMap(GMM.class);
+	// for (GMM gmm : weightMap.keySet()) {
+	// instanceMap.put(gmm, gmm.instance(imt));
+	// }
+	// }
 
 	/**
 	 * Returns the maximum distance for which this calculator is applicable
 	 * @return
 	 */
-//	public double maxDistance() {
-//		return maxDistance;
-//	}
+	// public double maxDistance() {
+	// return maxDistance;
+	// }
 
 	static class Builder {
 
@@ -65,7 +72,11 @@ class GMM_Set {
 		private Map<GMM, Double> gmmWtMapHi;
 		private Double maxDistanceLo;
 		private double maxDistanceHi;
-		
+
+		// optional
+		private double[] uncValues;
+		private double[] uncWeights;
+
 		// leave maxDistanceHi as primitive unless validation required
 		// at some later date; GMM_Set throws NPE if Double used
 
@@ -93,19 +104,33 @@ class GMM_Set {
 			return this;
 		}
 
-		void validateState(String mssgID) {
+		Builder uncertainty(double[] values, double[] weights) {
+			checkNotNull(values, "Values is null");
+			checkArgument(values.length == 9 || values.length == 1,
+				"Values must contain 1 or 9 values");
+			checkArgument(checkNotNull(weights, "Weights are null").length == 3,
+				"Weights must contain 3 values");
+			uncValues = values;
+			uncWeights = weights;
+			return this;
+		}
+
+		void validateState(String id) {
 			// at a minimum the '*Lo' fields must be set
-			checkState(!built, "This %s instance as already been used", mssgID);
-			checkState(gmmWtMapLo != null, "%s primary weight map not set", mssgID);
-			checkState(maxDistanceLo != null, "%s primary max distance not set", mssgID);
+			checkState(!built, "This %s instance as already been used", id);
+			checkState(gmmWtMapLo != null, "%s primary weight map not set", id);
+			checkState(maxDistanceLo != null, "%s primary max distance not set", id);
+			if (uncValues != null) checkNotNull(uncWeights, "%s uncertainty weights not set", id);
+			if (uncWeights != null) checkNotNull(uncValues, "%s uncertainty values not set", id);
 			built = true;
 		}
 
 		GMM_Set build() {
-			
+
 			validateState(ID);
 			try {
-				GMM_Set gmmSet = new GMM_Set(gmmWtMapLo, maxDistanceLo, gmmWtMapHi, maxDistanceHi);
+				GMM_Set gmmSet = new GMM_Set(gmmWtMapLo, maxDistanceLo, gmmWtMapHi, maxDistanceHi,
+					uncWeights, uncValues);
 				return gmmSet;
 			} catch (Exception e) {
 				e.printStackTrace();

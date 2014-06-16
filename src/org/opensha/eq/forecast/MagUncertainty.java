@@ -117,7 +117,7 @@ public class MagUncertainty {
 	@Override public String toString() {
 		// @formatter:off
 		return new StringBuilder()
-		.append("   MFD Data:").append(LF)
+		.append("   MFD Data...").append(LF)
 		.append("      Epistemic unc: ").append(hasEpistemic).append(LF)
 		.append("             deltas: ").append(Arrays.toString(epiDeltas)).append(LF)
 		.append("            weights: ").append(Arrays.toString(epiWeights)).append(LF)

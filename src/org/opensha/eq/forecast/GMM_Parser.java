@@ -5,11 +5,15 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.gmm.GMM_Attribute.ID;
 import static org.opensha.gmm.GMM_Attribute.MAX_DISTANCE;
 import static org.opensha.gmm.GMM_Attribute.WEIGHT;
+import static org.opensha.gmm.GMM_Attribute.WEIGHTS;
+import static org.opensha.gmm.GMM_Attribute.VALUES;
 import static org.opensha.util.Parsing.readDouble;
+import static org.opensha.util.Parsing.readDoubleArray;
 import static org.opensha.util.Parsing.readEnum;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -81,6 +85,16 @@ class GMM_Parser extends DefaultHandler {
 					setBuilder = new GMM_Set.Builder();
 					break;
 
+				case UNCERTAINTY:
+					double[] uncValues = readDoubleArray(VALUES, atts);
+					double[] uncWeights = readDoubleArray(WEIGHTS, atts);
+					setBuilder.uncertainty(uncValues, uncWeights);
+					log.fine("");
+					log.fine("Uncertainty...");
+					log.fine("     Values: " + Arrays.toString(uncValues));
+					log.fine("    Weights: " + Arrays.toString(uncWeights));
+					break;
+					
 				case MODEL_SET:
 					mapCount++;
 					checkState(mapCount < 3, "Only two ground motion model sets are allowed");
