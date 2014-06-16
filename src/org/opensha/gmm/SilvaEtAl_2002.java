@@ -17,7 +17,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
  * 
  * <p><b>Reference:</b> Silva, W., Gregor, N., and Darragh, R., 2002,
  * Development of hard rock attenuation relations for central and eastern North
@@ -59,7 +59,7 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 	
 	@Override
 	public final ScalarGroundMotion calc(GmmInput props) {
-		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);
+		SiteClass siteClass = GmmUtils.ceusSiteClass(props.vs30);
 		return DefaultScalarGroundMotion.create(
 			calcMean(coeffs, converter().convert(props.Mw), props.rJB,
 				siteClass),	coeffs.sigma);
@@ -78,7 +78,7 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 		double fac = c.c6 + c.c7 * Mw;
 		double gnd = gnd0 + fac * Math.log(rJB + exp(c.c4));
 
-		return GMM_Utils.ceusMeanClip(c.imt, gnd);
+		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 
 }

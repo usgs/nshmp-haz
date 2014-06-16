@@ -5,7 +5,7 @@ import static java.lang.Math.log;
 import static java.lang.Math.log10;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static org.opensha.gmm.GMM_Utils.BASE_10_TO_E;
+import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.MagConverter.NONE;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
@@ -26,7 +26,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * correspond most closely to defined {@code IMT}s.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
  * 
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
  * ground-motion prediction equations for eastern North America: Bulletin of the
@@ -104,7 +104,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	public final ScalarGroundMotion calc(GmmInput props) {
 		
 		// this call will only allow vs30 = 760 | 2000
-		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);
+		SiteClass siteClass = GmmUtils.ceusSiteClass(props.vs30);
 		Coeffs coeffs = siteClass == SOFT_ROCK ? coeffsBC : coeffsA;
 		Coeffs coeffsPGA = siteClass == SOFT_ROCK ? coeffsBC_PGA : coeffsA_PGA;
 		
@@ -194,7 +194,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
 		gnd *= (c.imt != IMT.PGV) ? BASE_10_TO_E - GFAC : BASE_10_TO_E;
 
-		return GMM_Utils.ceusMeanClip(c.imt, gnd);
+		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 		
 }

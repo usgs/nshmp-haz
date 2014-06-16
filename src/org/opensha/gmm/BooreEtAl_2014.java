@@ -75,7 +75,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 	}
 
 	FaultStyle rakeToFaultStyle(double rake) {
-		return GMM_Utils.rakeToFaultStyle_NSHMP(rake);
+		return GmmUtils.rakeToFaultStyle_NSHMP(rake);
 	}
 
 	private static final ScalarGroundMotion calc(Coeffs c, Coeffs cPGA,

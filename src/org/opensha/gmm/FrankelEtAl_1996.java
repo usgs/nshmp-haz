@@ -1,6 +1,6 @@
 package org.opensha.gmm;
 
-import static org.opensha.gmm.GMM_Utils.BASE_10_TO_E;
+import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.MagConverter.NONE;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
@@ -18,7 +18,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
  * 
  * <p><b>Reference:</b> Frankel, A., Mueller, C., Barnhard, T., Perkins, D.,
  * Leyendecker, E., Dickman, N., Hanson, S., and Hopper, M., 1996, National
@@ -56,12 +56,12 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
 	@Override
 	public final ScalarGroundMotion calc(GmmInput props) {
-		SiteClass sc = GMM_Utils.ceusSiteClass(props.vs30);
+		SiteClass sc = GmmUtils.ceusSiteClass(props.vs30);
 		double mean = (sc == SOFT_ROCK) ?
 			bcTable.get(props.rRup, converter().convert(props.Mw)) :
 			aTable.get(props.rRup, converter().convert(props.Mw));
 		
-		mean = GMM_Utils.ceusMeanClip(coeffs.imt, mean);
+		mean = GmmUtils.ceusMeanClip(coeffs.imt, mean);
 		double std = coeffs.bsigma * BASE_10_TO_E;
 		return DefaultScalarGroundMotion.create(mean, std);
 	}

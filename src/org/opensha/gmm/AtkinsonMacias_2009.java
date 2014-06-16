@@ -1,7 +1,7 @@
 package org.opensha.gmm;
 
 import static java.lang.Math.log10;
-import static org.opensha.gmm.GMM_Utils.BASE_10_TO_E;
+import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.util.MathUtils.hypot;
 
 import org.opensha.calc.ScalarGroundMotion;

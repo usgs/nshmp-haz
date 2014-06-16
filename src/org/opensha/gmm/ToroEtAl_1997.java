@@ -19,7 +19,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
  * 
  * <p><b>Reference:</b> Toro, G.R., 2002, Modification of the Toro et al. (1997)
  * attenuation relations for large magnitudes and short distances: Risk
@@ -81,7 +81,7 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 	
 	@Override
 	public final ScalarGroundMotion calc(GmmInput props) {
-		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);
+		SiteClass siteClass = GmmUtils.ceusSiteClass(props.vs30);
 		
 		
 		return DefaultScalarGroundMotion.create(
@@ -125,7 +125,7 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 		double factor = log(dist / 100.0);
 		if (factor > 0) gnd = gnd - (c.t5 - c.t4) * factor;
 
-		return GMM_Utils.ceusMeanClip(c.imt, gnd);
+		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 	
 }

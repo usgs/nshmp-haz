@@ -2,7 +2,7 @@ package org.opensha.gmm;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
-import static org.opensha.gmm.GMM_Utils.BASE_10_TO_E;
+import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.IMT.PGA;
 
 import org.opensha.calc.ScalarGroundMotion;

@@ -1,6 +1,6 @@
 package org.opensha.gmm;
 
-import static org.opensha.gmm.GMM_Utils.BASE_10_TO_E;
+import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.IMT.PGA;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
@@ -18,7 +18,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
  * 
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
  * ground- motion prediction equations for eastern North America: Bulletin of
@@ -70,7 +70,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 		//
 		// TODO I can't find an explicit reference for this formula; it is
 		// described in Atkinson (2008) p.1306
-		if (GMM_Utils.ceusSiteClass(props.vs30) == SOFT_ROCK) {
+		if (GmmUtils.ceusSiteClass(props.vs30) == SOFT_ROCK) {
 			if (coeffs.imt == PGA) {
 				mean += - 0.3 + 0.15 * Math.log10(props.rJB);
 			} else {
@@ -79,7 +79,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 		}
 		
 		return DefaultScalarGroundMotion.create(
-			GMM_Utils.ceusMeanClip(coeffs.imt, mean), SIGMA);
+			GmmUtils.ceusMeanClip(coeffs.imt, mean), SIGMA);
 	}
 
 }

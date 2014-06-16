@@ -18,7 +18,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
  * 
  * <p><b>Reference:</b> Tavakoli, B., and Pezeshk, S., 2005,
  * Empirical-stochastic ground-motion prediction for eastern North America:
@@ -125,7 +125,7 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 		double f3 = (c.c4 + c.c13 * Mw) * log(R) + (c.c8 + c.c12 * Mw) * R;
 		double gnd = f1 + f2 + f3;
 
-		return GMM_Utils.ceusMeanClip(c.imt, gnd);
+		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 
 	private static final double calcStdDev(Coeffs c, double Mw) {

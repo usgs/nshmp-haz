@@ -3,7 +3,7 @@ package org.opensha.eq.fault.surface;
 import java.util.ArrayList;
 
 import org.opensha.function.EvenlyDiscretizedFunc;
-import org.opensha.gmm.GMM_Utils;
+import org.opensha.gmm.GmmUtils;
 
 /**
  * This implements various point-source distance corrections.
@@ -47,7 +47,7 @@ public class PtSrcDistCorr {
 					if(horzDist==0)
 						corr = 1;
 					else
-						corr = GMM_Utils.getMeanRJB(adjMag, horzDist)/horzDist;
+						corr = GmmUtils.getMeanRJB(adjMag, horzDist)/horzDist;
 					break;
 //				}
 //				else

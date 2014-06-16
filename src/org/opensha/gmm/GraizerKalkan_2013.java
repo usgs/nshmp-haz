@@ -47,7 +47,7 @@ final class GraizerKalkan_2013 implements GroundMotionModel {
 	}
 	
 	FaultStyle rakeToFaultStyle(double rake) {
-		return GMM_Utils.rakeToFaultStyle_NSHMP(rake);
+		return GmmUtils.rakeToFaultStyle_NSHMP(rake);
 	}
 		
 	private static ScalarGroundMotion calc(double period, double Mw,

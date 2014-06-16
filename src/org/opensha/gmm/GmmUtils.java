@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  * Ground motion model (Gmm) utilities.
  * @author Peter Powers
  */
-public final class GMM_Utils {
+public final class GmmUtils {
 
 	/** 
 	 * Base-10 to base-e conversion factor commonly used with ground motion
@@ -83,7 +83,7 @@ public final class GMM_Utils {
 		String magID = "#Mag";
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(
-				GMM_Utils.class.getResourceAsStream(rjbDatPath)));
+				GmmUtils.class.getResourceAsStream(rjbDatPath)));
 			String line;
 			HashMap<Integer, Double> magMap = null;
 			while ((line = br.readLine()) != null) {
@@ -112,7 +112,7 @@ public final class GMM_Utils {
 			double startMag) {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(
-				GMM_Utils.class.getResourceAsStream(path)));
+				GmmUtils.class.getResourceAsStream(path)));
 			String line;
 			Map<Integer, Map<Integer, Double>> periodMap = null;
 			while ((line = br.readLine()) != null) {

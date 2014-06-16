@@ -19,7 +19,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GMM_Utils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
  * 
  * <p><b>Reference:</b> Campbell, K.W., 2003, Prediction of strong ground motion
  * using the hybrid empirical method and its use in the devel- opment of
@@ -68,7 +68,7 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 	
 	@Override
 	public final ScalarGroundMotion calc(GmmInput props) {
-		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);
+		SiteClass siteClass = GmmUtils.ceusSiteClass(props.vs30);
 		return DefaultScalarGroundMotion.create(
 			calcMean(coeffs, converter().convert(props.Mw), props.rRup,
 				siteClass),
@@ -95,7 +95,7 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 		if (rRup > 130.0) fac = fac + c.c8 * (log(rRup) - LOG_130);
 		double gnd = gndm + c.c4 * log(arg) + fac + (c.c9 + c.c10 * Mw) * rRup;
 
-		return GMM_Utils.ceusMeanClip(c.imt, gnd);
+		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 
 	private static final double calcStdDev(Coeffs c, double Mw) {

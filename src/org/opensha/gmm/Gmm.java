@@ -153,7 +153,7 @@ public enum Gmm {
 	 * subclasses to impose a conversion if necessary.
 	 * 
 	 * All CEUS models impose a clamp on median ground motions; see
-	 * GMM_Utils.ceusMeanClip()
+	 * GmmUtils.ceusMeanClip()
 	 */
 
 	// Stable continent (CEUS) NSHMP 2008 2014

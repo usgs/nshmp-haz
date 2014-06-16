@@ -68,7 +68,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 	}
 
 	FaultStyle rakeToFaultStyle(double rake) {
-		return GMM_Utils.rakeToFaultStyle_NSHMP(rake);
+		return GmmUtils.rakeToFaultStyle_NSHMP(rake);
 	}
 
 	// TODO not sure how to test this or make backwards compatible version for
