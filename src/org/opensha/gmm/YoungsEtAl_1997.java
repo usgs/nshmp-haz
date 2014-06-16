@@ -11,7 +11,7 @@ import org.opensha.calc.ScalarGroundMotion;
 /**
  * Abstract implementation of the subduction ground motion model by Youngs et
  * al. (1997). This implementation matches that used in the 2008 USGS NSHMP
- * where it is sometimes identified as the Geomatrix attenuation relationship.
+ * where it is sometimes identified as the Geomatrix ground motion model.
  * This implementation has been modified from its original form to an NGA style
  * (S. Harmsen 7/13/2009) wherein mean ground motion varies continuously with
  * Vs30 (sigma remains the same as original). This is acheived through use of a
@@ -28,7 +28,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Youngs, R.R., Chiou, S.-J., Silva, W.J., and Humphrey,
- * J.R., 1997, Strong ground motion attenuation relationships for subduction
+ * J.R., 1997, Strong ground motion ground motion models for subduction
  * zone earthquakes: Seismological Research Letters, v. 68, p. 58-73.</p>
  * 
  * <p><b>Component:</b> Geometric mean of two horizontal components</p>

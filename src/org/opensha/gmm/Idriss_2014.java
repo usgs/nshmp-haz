@@ -7,7 +7,7 @@ import static org.opensha.gmm.FaultStyle.REVERSE;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the Idriss (2014) next generation attenuation relationship
+ * Implementation of the Idriss (2014) next generation ground motion model
  * for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 

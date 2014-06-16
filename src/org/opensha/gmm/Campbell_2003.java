@@ -9,7 +9,7 @@ import static org.opensha.gmm.SiteClass.HARD_ROCK;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the hybrid attenuation relationship for stable continental
+ * Implementation of the hybrid ground motion model for stable continental
  * regions by Campbell (2003). This implementation matches that used in the 2008
  * USGS NSHMP and comes in two additional magnitude converting (mb to Mw)
  * flavors to support the 2008 central and eastern US model.

@@ -5,7 +5,7 @@ import org.opensha.calc.ScalarGroundMotion;
 /**
  * Interface implemented by all ground motion models (GMMs); these are also
  * commonly referred to as ground motion prediction equations (GMPEs) or
- * attenuation relationships. Direct instantiation of GMMs is discouraged in
+ * ground motion models. Direct instantiation of GMMs is discouraged in
  * concrete implementations in favor of using the corresponding {@link Gmm}
  * {@code enum} identifier and its {@link Gmm#instance(Imt)} method. Concrete
  * implementations are public solely for the purpose of documentation.

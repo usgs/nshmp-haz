@@ -312,7 +312,7 @@ public enum Gmm {
 	 * @return a {@code Set} of spectral acceleration IMTs
 	 */
 	public Set<Imt> responseSpectrumIMTs() {
-		return Sets.intersection(imts, Imt.saIMTs());
+		return Sets.intersection(imts, Imt.saImts());
 	}
 
 	/**
@@ -322,7 +322,7 @@ public enum Gmm {
 	 * @return a {@code Set} of common spectral acceleration {@code Imt}s
 	 */
 	public static Set<Imt> responseSpectrumIMTs(Collection<Gmm> gmms) {
-		return Sets.intersection(supportedIMTs(gmms), Imt.saIMTs());
+		return Sets.intersection(supportedIMTs(gmms), Imt.saImts());
 	}
 
 }

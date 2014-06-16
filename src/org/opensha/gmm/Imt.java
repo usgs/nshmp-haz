@@ -109,7 +109,7 @@ public enum Imt {
 	 * Returns the {@code Set} of spectal acceleration IMTs.
 	 * @return the IMTs that represent spectral accelerations
 	 */
-	public static Set<Imt> saIMTs() {
+	public static Set<Imt> saImts() {
 		return EnumSet.complementOf(EnumSet.of(PGA, PGV, PGD));
 	}
 
@@ -122,7 +122,7 @@ public enum Imt {
 	 * @return an {@code Imt}, or {@code null} if supplied {@code String} is
 	 *         invalid
 	 */
-	public static Imt parseIMT(String s) {
+	public static Imt parseImt(String s) {
 		s = s.trim().toUpperCase();
 		if (s.equals("PGA") || s.equals("PGV") || s.equals("PGD")) {
 			return Imt.valueOf(s);

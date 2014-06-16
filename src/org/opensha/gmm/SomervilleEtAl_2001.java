@@ -7,7 +7,7 @@ import static org.opensha.util.MathUtils.hypot;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Implementation of the hard rock attenuation relationship for the Central and
+ * Implementation of the hard rock ground motion model for the Central and
  * Eastern US by Somerville et al. (2001). This implementation matches that used
  * in the 2008 USGS NSHMP and is only used for fault sources and gridded
  * representation of faults (e.g. Charleston).

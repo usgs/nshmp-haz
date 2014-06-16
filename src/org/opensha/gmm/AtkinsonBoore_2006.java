@@ -12,7 +12,7 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 import org.opensha.calc.ScalarGroundMotion;
 
 /**
- * Abstract implementation of the attenuation relationship for stable
+ * Abstract implementation of the ground motion model for stable
  * continental regions by Atkinson &amp; Boore (2006). This implementation
  * matches that used in the 2008 USGS NSHMP. In addition to have two stress-drop
  * scaling variants, this model also comes in magnitude converting (mb to Mw)
