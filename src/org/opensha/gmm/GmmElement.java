@@ -10,7 +10,7 @@ import com.google.common.base.CaseFormat;
  * @author Peter Powers
  */
 @SuppressWarnings("javadoc")
-public enum GMM_Element {
+public enum GmmElement {
 
 	GROUND_MOTION_MODELS,
 	UNCERTAINTY,
@@ -19,7 +19,7 @@ public enum GMM_Element {
 			
 	/**
 	 * Returns a {@code CaseFormat#UPPER_CAMEL} {@code String} representation
-	 * of this {@code GMM_Element}.
+	 * of this {@code GmmElement}.
 	 */
 	@Override
 	public String toString() { 
@@ -27,15 +27,15 @@ public enum GMM_Element {
 	}
 	
 	/**
-	 * Converts supplied {@code String} to equivalent {@code GMM_Element}.
+	 * Converts supplied {@code String} to equivalent {@code GmmElement}.
 	 * Method expects a {@code String} with {@code CaseFormat#UPPER_CAMEL}
 	 * @param s {@code String} to convert
-	 * @return the corresponding {@code GMM_Element}
+	 * @return the corresponding {@code GmmElement}
 	 * @see CaseFormat
 	 * @throws IllegalArgumentException if supplied {@code String} is
-	 *         incorrectly formatted or no matching {@code GMM_Element} exists
+	 *         incorrectly formatted or no matching {@code GmmElement} exists
 	 */
-	public static GMM_Element fromString(String s) {
+	public static GmmElement fromString(String s) {
 		return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, s));
 	}
 		

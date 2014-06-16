@@ -8,7 +8,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
  * @author Peter Powers
  */
 @SuppressWarnings("javadoc")
-public enum GMM_Attribute {
+public enum GmmAttribute {
 	
 	ID,
 	WEIGHT,
@@ -20,7 +20,7 @@ public enum GMM_Attribute {
 
 	/**
 	 * Returns an {@code CaseFormat#LOWER_CAMEL} {@code String} representation
-	 * of this {@code GMM_Attribute}.
+	 * of this {@code GmmAttribute}.
 	 */
 	@Override
 	public String toString() {
@@ -28,15 +28,15 @@ public enum GMM_Attribute {
 	}
 
 	/**
-	 * Converts supplied {@code String} to equivalent {@code GMM_Attribute}.
+	 * Converts supplied {@code String} to equivalent {@code GmmAttribute}.
 	 * Method expects a {@code String} with {@code CaseFormat#LOWER_CAMEL}
 	 * @param s {@code String} to convert
-	 * @return the corresponding {@code GMM_Attribute}
+	 * @return the corresponding {@code GmmAttribute}
 	 * @see CaseFormat
 	 * @throws IllegalArgumentException if supplied {@code String} is
-	 *         incorrectly formatted or no matching {@code GMM_Attribute} exists
+	 *         incorrectly formatted or no matching {@code GmmAttribute} exists
 	 */
-	public static GMM_Attribute fromString(String s) {
+	public static GmmAttribute fromString(String s) {
 		return valueOf(LOWER_CAMEL.to(UPPER_UNDERSCORE, s));
 	}
 

@@ -2,11 +2,11 @@ package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.gmm.GMM_Attribute.ID;
-import static org.opensha.gmm.GMM_Attribute.MAX_DISTANCE;
-import static org.opensha.gmm.GMM_Attribute.WEIGHT;
-import static org.opensha.gmm.GMM_Attribute.WEIGHTS;
-import static org.opensha.gmm.GMM_Attribute.VALUES;
+import static org.opensha.gmm.GmmAttribute.ID;
+import static org.opensha.gmm.GmmAttribute.MAX_DISTANCE;
+import static org.opensha.gmm.GmmAttribute.WEIGHT;
+import static org.opensha.gmm.GmmAttribute.WEIGHTS;
+import static org.opensha.gmm.GmmAttribute.VALUES;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readDoubleArray;
 import static org.opensha.util.Parsing.readEnum;
@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha.gmm.Gmm;
-import org.opensha.gmm.GMM_Element;
+import org.opensha.gmm.GmmElement;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -71,9 +71,9 @@ class GMM_Parser extends DefaultHandler {
 	@Override public void startElement(String uri, String localName, String qName, Attributes atts)
 			throws SAXException {
 
-		GMM_Element e = null;
+		GmmElement e = null;
 		try {
-			e = GMM_Element.fromString(qName);
+			e = GmmElement.fromString(qName);
 		} catch (IllegalArgumentException iae) {
 			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
 		}
@@ -126,9 +126,9 @@ class GMM_Parser extends DefaultHandler {
 	@Override public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
-		GMM_Element e = null;
+		GmmElement e = null;
 		try {
-			e = GMM_Element.fromString(qName);
+			e = GmmElement.fromString(qName);
 		} catch (IllegalArgumentException iae) {
 			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
 		}
