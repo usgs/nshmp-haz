@@ -3,7 +3,7 @@ package org.opensha.gmm;
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
 import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha.gmm.IMT.PGA;
+import static org.opensha.gmm.Imt.PGA;
 
 import org.opensha.calc.ScalarGroundMotion;
 
@@ -16,8 +16,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * with gridded 'deep' events in northern California and the Pacific Northwest.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Atkinson, G.M. and Boore, D.M., 2003, Empirical
  * Ground-Motion Relations for Subduction-Zone Earthquakes and Their Application
@@ -71,7 +71,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	private final Coeffs coeffs;
 	private final Coeffs coeffsPGA;
 	
-	AtkinsonBoore_2003(IMT imt) {
+	AtkinsonBoore_2003(Imt imt) {
 		if (isSlab()) {
 			coeffs = (Coeffs) (isGlobal() ? CC_GS.get(imt) : CC.get(imt));
 			coeffsPGA = (Coeffs) (isGlobal() ? CC_GS.get(PGA) : CC.get(PGA));

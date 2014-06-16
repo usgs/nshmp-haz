@@ -8,9 +8,9 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static org.opensha.geo.GeoTools.TO_RAD;
 import static org.opensha.gmm.FaultStyle.NORMAL;
-import static org.opensha.gmm.IMT.PGA;
-import static org.opensha.gmm.IMT.SA0P01;
-import static org.opensha.gmm.IMT.SA0P25;
+import static org.opensha.gmm.Imt.PGA;
+import static org.opensha.gmm.Imt.SA0P01;
+import static org.opensha.gmm.Imt.SA0P25;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -23,8 +23,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Campbell, K.W., and Bozorgnia, Y., 2014, NGA-West2
  * ground motion model for the average horizontal components of PGA, PGV, and
@@ -59,11 +59,11 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 	private static final double N = 1.18;
 	private static final double PHI_LNAF_SQ = 0.09; // 0.3^2
 
-	private static final Set<IMT> SHORT_PERIODS = EnumSet.range(SA0P01, SA0P25);
+	private static final Set<Imt> SHORT_PERIODS = EnumSet.range(SA0P01, SA0P25);
 
 	private final Coeffs coeffs, coeffsPGA;
 	
-	CampbellBozorgnia_2014(IMT imt) {
+	CampbellBozorgnia_2014(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		coeffsPGA = (Coeffs) CC.get(PGA);
 	}

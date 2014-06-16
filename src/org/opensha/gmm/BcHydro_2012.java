@@ -4,7 +4,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
-import static org.opensha.gmm.IMT.PGA;
+import static org.opensha.gmm.Imt.PGA;
 
 import org.opensha.calc.ScalarGroundMotion;
 
@@ -19,8 +19,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * and the Pacific Northwest.</p>
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation notes:</b> <ol><li>Treats all sites as
  * forearc.</li><li>'zTop' is interpreted as hypocentral depth and is only used
@@ -66,7 +66,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 	
 	private final Coeffs coeffs, coeffsPGA;
 
-	BcHydro_2012(IMT imt) {
+	BcHydro_2012(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		coeffsPGA = (Coeffs) CC.get(PGA);
 	}

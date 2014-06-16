@@ -19,14 +19,14 @@ import org.opensha.calc.ScalarGroundMotion;
  * flavors to support the 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation note:</b> this uses a reduced set of frequencies that
- * correspond most closely to defined {@code IMT}s.</p>
+ * correspond most closely to defined {@code Imt}s.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
  * 
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
  * ground-motion prediction equations for eastern North America: Bulletin of the
@@ -93,11 +93,11 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	private final Coeffs coeffsBC_PGA;
 	
 
-	AtkinsonBoore_2006(IMT imt) {
+	AtkinsonBoore_2006(Imt imt) {
 		coeffsA = (Coeffs) CC.get(imt);
-		coeffsA_PGA = (Coeffs) CC.get(IMT.PGA);
+		coeffsA_PGA = (Coeffs) CC.get(Imt.PGA);
 		coeffsBC = (Coeffs) CC_BC.get(imt);
-		coeffsBC_PGA = (Coeffs) CC_BC.get(IMT.PGA);
+		coeffsBC_PGA = (Coeffs) CC_BC.get(Imt.PGA);
 	}
 	
 	@Override
@@ -192,7 +192,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 			(c.c6 + c.c7 * Mw) * f2 + (c.c8 + c.c9 * Mw) *
 			f0 + c.c10 * rRup + sf2 + S;
 
-		gnd *= (c.imt != IMT.PGV) ? BASE_10_TO_E - GFAC : BASE_10_TO_E;
+		gnd *= (c.imt != Imt.PGV) ? BASE_10_TO_E - GFAC : BASE_10_TO_E;
 
 		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}

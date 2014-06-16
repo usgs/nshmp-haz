@@ -13,11 +13,11 @@ import org.opensha.calc.ScalarGroundMotion;
  * representation of faults (e.g. Charleston).
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
  * 
  * <p><b>Reference:</b> Somerville, P., Collins, N., Abrahamson, N., Graves, R.,
  * and Saikia, C., 2001, Ground motion attenuation relations for the Central and
@@ -55,7 +55,7 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
 	
 	private final Coeffs coeffs;
 
-	SomervilleEtAl_2001(IMT imt) {
+	SomervilleEtAl_2001(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 	

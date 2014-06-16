@@ -11,7 +11,7 @@ final class BcHydro_2012_Slab extends BcHydro_2012 {
 	
 	static final String NAME = BcHydro_2012.NAME + ": Slab";
 
-	BcHydro_2012_Slab(IMT imt) {
+	BcHydro_2012_Slab(Imt imt) {
 		super(imt);
 	}
 

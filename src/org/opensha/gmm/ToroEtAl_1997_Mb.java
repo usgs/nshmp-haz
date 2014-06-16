@@ -9,7 +9,7 @@ final class ToroEtAl_1997_Mb extends ToroEtAl_1997 {
 
 	static final String NAME = ToroEtAl_1997.NAME + ": mb";
 
-	ToroEtAl_1997_Mb(IMT imt) {
+	ToroEtAl_1997_Mb(Imt imt) {
 		super(imt);
 	}
 	

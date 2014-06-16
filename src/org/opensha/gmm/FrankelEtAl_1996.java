@@ -14,11 +14,11 @@ import org.opensha.calc.ScalarGroundMotion;
  * support the 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
  * 
  * <p><b>Reference:</b> Frankel, A., Mueller, C., Barnhard, T., Perkins, D.,
  * Leyendecker, E., Dickman, N., Hanson, S., and Hopper, M., 1996, National
@@ -48,7 +48,7 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 	
 	private final Coeffs coeffs;
 
-	FrankelEtAl_1996(IMT imt) {
+	FrankelEtAl_1996(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		bcTable = GmmTables.getFrankel96(imt, SOFT_ROCK);
 		aTable = GmmTables.getFrankel96(imt, HARD_ROCK);

@@ -11,7 +11,7 @@ final class ZhaoEtAl_2006_Interface extends ZhaoEtAl_2006 {
 	
 	static final String NAME = ZhaoEtAl_2006.NAME + ": Interface";
 
-	ZhaoEtAl_2006_Interface(IMT imt) {
+	ZhaoEtAl_2006_Interface(Imt imt) {
 		super(imt);
 	}
 

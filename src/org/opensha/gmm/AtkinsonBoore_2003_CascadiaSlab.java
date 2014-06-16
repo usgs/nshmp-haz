@@ -12,7 +12,7 @@ final class AtkinsonBoore_2003_CascadiaSlab extends AtkinsonBoore_2003 {
 	final static String NAME = AtkinsonBoore_2003.NAME +
 		": Cascadia Slab";
 
-	AtkinsonBoore_2003_CascadiaSlab(IMT imt) {
+	AtkinsonBoore_2003_CascadiaSlab(Imt imt) {
 		super(imt);
 	}
 

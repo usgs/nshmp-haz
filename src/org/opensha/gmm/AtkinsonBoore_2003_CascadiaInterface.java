@@ -12,7 +12,7 @@ final class AtkinsonBoore_2003_CascadiaInterface extends AtkinsonBoore_2003 {
 	final static String NAME = AtkinsonBoore_2003.NAME +
 		": Cascadia Interface";
 			
-	AtkinsonBoore_2003_CascadiaInterface(IMT imt) {
+	AtkinsonBoore_2003_CascadiaInterface(Imt imt) {
 		super(imt);
 	}
 

@@ -11,7 +11,7 @@ final class ZhaoEtAl_2006_Slab extends ZhaoEtAl_2006 {
 	
 	static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
 
-	ZhaoEtAl_2006_Slab(IMT imt) {
+	ZhaoEtAl_2006_Slab(Imt imt) {
 		super(imt);
 	}
 

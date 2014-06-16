@@ -12,7 +12,7 @@ import com.google.common.base.Throwables;
  * necessary fields in each Gmm implementation. The static
  * {@code CoefficientContainer} in each Gmm implementation assumes reponsibility
  * for creating and populating {@code Coefficients} instances for every type of
- * IMT supported by a Gmm.
+ * Imt supported by a Gmm.
  * 
  * <p>{@code Coefficients} implementations may declare fields that a
  * CoefficientContainer is unaware of that can be initialized independently. See
@@ -28,7 +28,7 @@ import com.google.common.base.Throwables;
  */
 abstract class Coefficients {
 
-	IMT imt;
+	Imt imt;
 
 	@Override
 	public String toString() {

@@ -8,7 +8,7 @@ import static java.lang.Math.sqrt;
 import static org.opensha.gmm.FaultStyle.NORMAL;
 import static org.opensha.gmm.FaultStyle.REVERSE;
 import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
-import static org.opensha.gmm.IMT.PGA;
+import static org.opensha.gmm.Imt.PGA;
 
 import org.opensha.calc.ScalarGroundMotion;
 
@@ -18,8 +18,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * part of<a href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Boore, D.M., Stewart, J.P., Seyhan, E., and Atkinson,
  * G.M., 2014, NGA-West 2 equations for predicting PGA, PGV, and 5%-damped PSA
@@ -60,7 +60,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
 	private final Coeffs coeffs, coeffsPGA;
 
-	BooreEtAl_2014(IMT imt) {
+	BooreEtAl_2014(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		coeffsPGA = (Coeffs) CC.get(PGA);
 	}

@@ -2,7 +2,7 @@ package org.opensha.gmm;
 
 import static com.google.common.base.Charsets.US_ASCII;
 import static org.opensha.gmm.Gmm.*;
-import static org.opensha.gmm.IMT.*;
+import static org.opensha.gmm.Imt.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -57,11 +57,11 @@ public class Tests_NGAW2 {
 
     private int idx;
     private Gmm gmm;
-    private IMT imt;
+    private Imt imt;
     private double exMedian;
     private double exSigma;
 	
-	public Tests_NGAW2(int idx, Gmm gmm, IMT imt, double exMedian,
+	public Tests_NGAW2(int idx, Gmm gmm, Imt imt, double exMedian,
 		double exSigma) {
 
 		this.idx = idx;
@@ -84,7 +84,7 @@ public class Tests_NGAW2 {
     
 	/* Result generation sets */
 	private static Set<Gmm> gmms = EnumSet.of(ASK_14, BSSA_14, CB_14, CY_14, IDRISS_14);
-	private static Set<IMT> imts = EnumSet.of(PGA, SA0P02, SA0P2, SA1P0, SA3P0);
+	private static Set<Imt> imts = EnumSet.of(PGA, SA0P02, SA0P2, SA1P0, SA3P0);
 	
 	/* Use to generate Gmm result file */
 	private static void computeGM() throws IOException, ExecutionException {
@@ -92,7 +92,7 @@ public class Tests_NGAW2 {
 		File out = new File("tmp/Gmm-tests/" + GMM_RESULTS);
 		Files.write("", out, Charsets.US_ASCII);
 		for (Gmm gmm : gmms) {
-			for (IMT imt : imts) {
+			for (Imt imt : imts) {
 				GroundMotionModel gmModel = gmm.instance(imt);
 				int modelIdx = 0;
 				String id = gmm.name() + "-" + imt;
@@ -138,7 +138,7 @@ public class Tests_NGAW2 {
 			return new Object[] {
 				Integer.valueOf(idIt.next()),	// inputs index
 				Gmm.valueOf(idIt.next()),		// Gmm
-				IMT.valueOf(idIt.next()),		// IMT
+				Imt.valueOf(idIt.next()),		// Imt
 				Double.valueOf(lineIt.next()),	// median
 				Double.valueOf(lineIt.next())	// sigma
 			};

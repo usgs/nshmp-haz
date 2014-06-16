@@ -7,7 +7,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * commonly referred to as ground motion prediction equations (GMPEs) or
  * attenuation relationships. Direct instantiation of GMMs is discouraged in
  * concrete implementations in favor of using the corresponding {@link Gmm}
- * {@code enum} identifier and its {@link Gmm#instance(IMT)} method. Concrete
+ * {@code enum} identifier and its {@link Gmm#instance(Imt)} method. Concrete
  * implementations are public solely for the purpose of documentation.
  * 
  * <p>Models generally have a single concrete implementation. However, for those
@@ -32,6 +32,6 @@ public interface GroundMotionModel {
 	 * Compute the scalar ground motion for the supplied arguments at all
 	 * spectral periods.
 	 */
-	// Map<IMT, ScalarGroundMotion> calcAll(GmmInput args);
+	// Map<Imt, ScalarGroundMotion> calcAll(GmmInput args);
 
 }

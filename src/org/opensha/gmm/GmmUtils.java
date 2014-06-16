@@ -232,9 +232,9 @@ public final class GmmUtils {
 	 * @return the clipped ground motion if required by the supplied
 	 *         <code>period</code>, <code>gnd</code> otherwise
 	 */
-	public static double ceusMeanClip(IMT imt, double gnd) {
+	public static double ceusMeanClip(Imt imt, double gnd) {
 		// ln(1.5) = 0.405; ln(3.0) = 1.099
-		if (imt == IMT.PGA) return Math.min(0.405, gnd);
+		if (imt == Imt.PGA) return Math.min(0.405, gnd);
 		if (imt.period() > 0.02 && imt.period() < 0.5) return Math.min(gnd, 1.099);
 		return gnd;
 	}

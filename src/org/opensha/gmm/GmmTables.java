@@ -1,11 +1,11 @@
 package org.opensha.gmm;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
-import static org.opensha.gmm.IMT.PGA;
-import static org.opensha.gmm.IMT.PGV;
-import static org.opensha.gmm.IMT.SA0P03;
-import static org.opensha.gmm.IMT.SA0P3;
-import static org.opensha.gmm.IMT.SA3P0;
+import static org.opensha.gmm.Imt.PGA;
+import static org.opensha.gmm.Imt.PGV;
+import static org.opensha.gmm.Imt.SA0P03;
+import static org.opensha.gmm.Imt.SA0P3;
+import static org.opensha.gmm.Imt.SA3P0;
 
 import java.io.IOException;
 import java.net.URL;
@@ -78,11 +78,11 @@ final class GmmTables {
 	
 	private static final double[] frankelMagKeys;
 	
-	private static final Map<IMT, GmmTable> frankelHR;
-	private static final Map<IMT, GmmTable> frankelSR;
-	private static final Map<IMT, GmmTable> atkinson06;
-	private static final Map<IMT, GmmTable> atkinson08;
-	private static final Map<IMT, GmmTable> pezeshk11;
+	private static final Map<Imt, GmmTable> frankelHR;
+	private static final Map<Imt, GmmTable> frankelSR;
+	private static final Map<Imt, GmmTable> atkinson06;
+	private static final Map<Imt, GmmTable> atkinson08;
+	private static final Map<Imt, GmmTable> pezeshk11;
 	
 	static {
 		frankRangeM = Range.closed(4.4, 8.2);
@@ -104,12 +104,12 @@ final class GmmTables {
 		pezeshk11 = loadAtkinson(pezeshk11src);
 	}
 	
-	private static Map<IMT, GmmTable> loadFrankel(String[] files) {
-		Map<IMT, GmmTable> map = Maps.newEnumMap(IMT.class);
+	private static Map<Imt, GmmTable> loadFrankel(String[] files) {
+		Map<Imt, GmmTable> map = Maps.newEnumMap(Imt.class);
 		for (String file : files) {
 			
 			try {
-				IMT imt = frankelFilenameToIMT(file);
+				Imt imt = frankelFilenameToIMT(file);
 				URL url = Resources.getResource(GmmTables.class, T_DIR + file);
 				NavigableMap<Double, NavigableMap<Double, Double>> rMap =
 						Resources.readLines(url, Charsets.US_ASCII, new FrankelParser());
@@ -121,13 +121,13 @@ final class GmmTables {
 		return map;
 	}
 	
-	private static Map<IMT, GmmTable> loadAtkinson(String file) {
-		Map<IMT, GmmTable> map = Maps.newEnumMap(IMT.class);
+	private static Map<Imt, GmmTable> loadAtkinson(String file) {
+		Map<Imt, GmmTable> map = Maps.newEnumMap(Imt.class);
 		URL url = Resources.getResource(GmmTables.class, T_DIR + file);
 		try {
-			Map<IMT, NavigableMap<Double, NavigableMap<Double, Double>>> imtMap =
+			Map<Imt, NavigableMap<Double, NavigableMap<Double, Double>>> imtMap =
 				Resources.readLines(url, Charsets.US_ASCII, new AtkinsonParser());
-			for (IMT imt : imtMap.keySet()) {
+			for (Imt imt : imtMap.keySet()) {
 				map.put(imt, new AtkinsonTable(imtMap.get(imt)));
 			}
 		} catch (IOException ioe) {
@@ -138,35 +138,35 @@ final class GmmTables {
 	
 	
 	/**
-	 * Return the ground motion table for the supplied {@code IMT}.
+	 * Return the ground motion table for the supplied {@code Imt}.
 	 * @param imt to fetch table for
 	 */
-	static GmmTable getFrankel96(IMT imt, SiteClass siteClass) {
+	static GmmTable getFrankel96(Imt imt, SiteClass siteClass) {
 		return siteClass == SiteClass.SOFT_ROCK ?
 			frankelSR.get(imt) : frankelHR.get(imt);
 	}
 	
 	/**
-	 * Return the ground motion table for the supplied {@code IMT}.
+	 * Return the ground motion table for the supplied {@code Imt}.
 	 * @param imt to fetch table for
 	 */
-	static GmmTable getAtkinson06(IMT imt) {
+	static GmmTable getAtkinson06(Imt imt) {
 		return atkinson06.get(imt);
 	}
 	
 	/**
-	 * Return the ground motion table for the supplied {@code IMT}.
+	 * Return the ground motion table for the supplied {@code Imt}.
 	 * @param imt to fetch table for
 	 */
-	static GmmTable getAtkinson08(IMT imt) {
+	static GmmTable getAtkinson08(Imt imt) {
 		return atkinson08.get(imt);
 	}
 
 	/**
-	 * Return the ground motion table for the supplied {@code IMT}.
+	 * Return the ground motion table for the supplied {@code Imt}.
 	 * @param imt to fetch table for
 	 */
-	static GmmTable getPezeshk11(IMT imt) {
+	static GmmTable getPezeshk11(Imt imt) {
 		return pezeshk11.get(imt);
 	}
 	
@@ -257,22 +257,22 @@ final class GmmTables {
 	
 	/* Parser for Atkinson style tables */
 	static class AtkinsonParser implements
-			LineProcessor<Map<IMT, NavigableMap<Double, NavigableMap<Double, Double>>>> {
+			LineProcessor<Map<Imt, NavigableMap<Double, NavigableMap<Double, Double>>>> {
 
 		int lineIdx = -1;
-		List<IMT> imts = null;
+		List<Imt> imts = null;
 		double m;
 		
-		Map<IMT, Map<Double, Map<Double, Double>>> imtMap =
-				Maps.newEnumMap(IMT.class);
+		Map<Imt, Map<Double, Map<Double, Double>>> imtMap =
+				Maps.newEnumMap(Imt.class);
 
 		@Override
-		public Map<IMT, NavigableMap<Double, NavigableMap<Double, Double>>> getResult() {
+		public Map<Imt, NavigableMap<Double, NavigableMap<Double, Double>>> getResult() {
 			// convert all to navigable
-			Map<IMT, NavigableMap<Double, NavigableMap<Double, Double>>> mapOut = 
-					Maps.newEnumMap(IMT.class);
+			Map<Imt, NavigableMap<Double, NavigableMap<Double, Double>>> mapOut = 
+					Maps.newEnumMap(Imt.class);
 			
-			for (Map.Entry<IMT, Map<Double, Map<Double, Double>>> imtEntry : imtMap.entrySet()) {
+			for (Map.Entry<Imt, Map<Double, Map<Double, Double>>> imtEntry : imtMap.entrySet()) {
 				
 				ImmutableSortedMap.Builder<Double, NavigableMap<Double, Double>> rMap = 
 						ImmutableSortedMap.naturalOrder();
@@ -292,14 +292,14 @@ final class GmmTables {
 			if (lineIdx < 2) return true;
 			
 			if (lineIdx == 2) {
-				List<IMT> imtList = FluentIterable
+				List<Imt> imtList = FluentIterable
 					.from(Parsing.splitOnSpaces(line))
 					.transform(Parsing.doubleValueFunction())
 					.transform(new FrequencyToIMT())
 					.toList();
 				// remove dupes -- (e.g., 2s PGA columns in P11)
-				imts = Lists.newArrayList(new LinkedHashSet<IMT>(imtList));
-				for (IMT imt : imts) {
+				imts = Lists.newArrayList(new LinkedHashSet<Imt>(imtList));
+				for (Imt imt : imts) {
 					imtMap.put(imt, Maps.<Double, Map<Double, Double>>newHashMap());
 				}
 				return true;
@@ -316,7 +316,7 @@ final class GmmTables {
 			// process table
 			double r = values.get(0);
 			for (int i=0; i<imts.size(); i++) {
-				IMT imt = imts.get(i);
+				Imt imt = imts.get(i);
 				Map<Double, Map<Double, Double>> rMap = imtMap.get(imt);
 				if (rMap == null) {
 					imtMap.put(imt, rMap = Maps.newHashMap());
@@ -338,15 +338,15 @@ final class GmmTables {
 	 * and handled independently. AB06 uses 0.32, 3.2, and 32 which do not
 	 * strictly correspond to 3s, 0.3s, and 0.03s, but we use them anyway.
 	 */
-	static class FrequencyToIMT implements Function<Double, IMT> {
+	static class FrequencyToIMT implements Function<Double, Imt> {
 		@Override
-		public IMT apply(Double f) {
+		public Imt apply(Double f) {
 			if (threesLo.contains(f)) return SA3P0;
 			if (threesMid.contains(f)) return SA0P3;
 			if (threesHi.contains(f)) return SA0P03;
 			if (f == 99.0) return PGA;
 			if (f == 89.0) return PGV;
-			return IMT.fromPeriod(1.0 / f);
+			return Imt.fromPeriod(1.0 / f);
 		}
 	}
 
@@ -419,13 +419,13 @@ final class GmmTables {
 	}
 	
 	/*
-	 * Derives the correct IMT froma filename.
+	 * Derives the correct Imt froma filename.
 	 */
-	private static IMT frankelFilenameToIMT(String s) {
+	private static Imt frankelFilenameToIMT(String s) {
 		if (s.startsWith("pga")) return PGA;
 		StringBuilder sb = new StringBuilder();
 		sb.append(s.charAt(1)).append('.').append(s.charAt(3));
-		return IMT.fromPeriod(Double.valueOf(sb.toString()));
+		return Imt.fromPeriod(Double.valueOf(sb.toString()));
 	}
 
 	

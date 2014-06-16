@@ -11,7 +11,7 @@ final class AtkinsonBoore_2003_GlobalSlab extends AtkinsonBoore_2003 {
 	
 	final static String NAME = AtkinsonBoore_2003.NAME + ": Global Slab";
 
-	AtkinsonBoore_2003_GlobalSlab(IMT imt) {
+	AtkinsonBoore_2003_GlobalSlab(Imt imt) {
 		super(imt);
 	}
 

@@ -12,8 +12,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation notes:</b> Idriss (2014) recommends a cap of Vs=1200m/s
  * (implemented) and a distance limit of 150km (not implemented).</p>
@@ -43,7 +43,7 @@ public final class Idriss_2014 implements GroundMotionModel {
 	
 	private final Coeffs coeffs;
 
-	Idriss_2014(IMT imt) {
+	Idriss_2014(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 

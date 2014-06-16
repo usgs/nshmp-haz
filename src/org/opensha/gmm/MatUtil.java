@@ -15,7 +15,7 @@ public class MatUtil {
 
 	/**
 	 * Compute the median groiund motion and its standard deviation for a
-	 * specified model, intensity measure type (IMT), and source
+	 * specified model, intensity measure type (Imt), and source
 	 * 
 	 * <p>{@code enum} types are identified in matlab as e.g. {@code Gmm$ASK_14}
 	 * .</p>
@@ -27,7 +27,7 @@ public class MatUtil {
 	 *         ground motion and its standard deviation
 	 * @throws ExecutionException if a problem occurs while initializing the model
 	 */
-	public static double[] calc(Gmm model, IMT imt, GmmInput source) throws ExecutionException {
+	public static double[] calc(Gmm model, Imt imt, GmmInput source) throws ExecutionException {
 		ScalarGroundMotion sgm = model.instance(imt).calc(source);
 		return new double[] { sgm.mean(), sgm.stdDev() };
 	}
@@ -46,10 +46,10 @@ public class MatUtil {
 	 * @throws ExecutionException if a problem occurs while initializing the model
 	 */
 	public static MatSpectrum spectrum(Gmm model, GmmInput source) throws ExecutionException {
-		Set<IMT> imts = model.responseSpectrumIMTs();
+		Set<Imt> imts = model.responseSpectrumIMTs();
 		MatSpectrum spectrum = new MatSpectrum(imts.size());
 		int i = 0;
-		for (IMT imt : imts) {
+		for (Imt imt : imts) {
 			ScalarGroundMotion sgm = model.instance(imt).calc(source);
 			spectrum.periods[i] = imt.period();
 			spectrum.means[i] = sgm.mean();

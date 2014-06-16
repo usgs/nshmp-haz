@@ -1,7 +1,7 @@
 package org.opensha.gmm;
 
 import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha.gmm.IMT.PGA;
+import static org.opensha.gmm.Imt.PGA;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
 import org.opensha.calc.ScalarGroundMotion;
@@ -13,11 +13,11 @@ import org.opensha.calc.ScalarGroundMotion;
  * (sigma) to compute ground motions.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
  * 
  * <p><b>Reference:</b> Pezeshk, S., Zandieh, A., Tavakoli, B., 2011. Hybrid
  * empirical ground-motion prediction equations for Eastern North America using
@@ -52,7 +52,7 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 	
 	private final Coeffs coeffs;
 
-	PezeshkEtAl_2011(IMT imt) {
+	PezeshkEtAl_2011(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		table = GmmTables.getPezeshk11(imt);
 	}

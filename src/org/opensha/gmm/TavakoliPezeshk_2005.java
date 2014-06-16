@@ -14,11 +14,11 @@ import org.opensha.calc.ScalarGroundMotion;
  * flavors to support the 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
  * 
  * <p><b>Reference:</b> Tavakoli, B., and Pezeshk, S., 2005,
  * Empirical-stochastic ground-motion prediction for eastern North America:
@@ -69,7 +69,7 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 	
 	private final Coeffs coeffs;
 
-	TavakoliPezeshk_2005(IMT imt) {
+	TavakoliPezeshk_2005(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 	

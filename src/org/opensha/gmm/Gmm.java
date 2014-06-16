@@ -16,7 +16,7 @@ import com.google.common.collect.Sets;
 
 /**
  * {@link GroundMotionModel} (Gmm) identifiers. Use these to generate
- * {@link IMT}-specific instances via {@link Gmm#instance(IMT)}. Single or
+ * {@link Imt}-specific instances via {@link Gmm#instance(Imt)}. Single or
  * corporate authored models are identified as NAME_YR_FLAVOR; multi-author
  * models as INITIALS_YR_FLAVOR. FLAVOR is only used for those models with
  * region specific implementations or other variants.
@@ -248,22 +248,22 @@ public enum Gmm {
 
 	private final Class<? extends GroundMotionModel> delegate;
 	private final String name;
-	private final Set<IMT> imts;
-	private final LoadingCache<IMT, GroundMotionModel> cache;
+	private final Set<Imt> imts;
+	private final LoadingCache<Imt, GroundMotionModel> cache;
 
 	private Gmm(Class<? extends GroundMotionModel> delegate, String name, CoefficientContainer cc) {
 		this.delegate = delegate;
 		this.name = name;
 		imts = cc.imtSet();
-		cache = CacheBuilder.newBuilder().build(new CacheLoader<IMT, GroundMotionModel>() {
-			@Override public GroundMotionModel load(IMT imt) throws Exception {
+		cache = CacheBuilder.newBuilder().build(new CacheLoader<Imt, GroundMotionModel>() {
+			@Override public GroundMotionModel load(Imt imt) throws Exception {
 				return createInstance(imt);
 			}
 		});
 	}
 
-	private GroundMotionModel createInstance(IMT imt) throws Exception {
-		Constructor<? extends GroundMotionModel> con = delegate.getDeclaredConstructor(IMT.class);
+	private GroundMotionModel createInstance(Imt imt) throws Exception {
+		Constructor<? extends GroundMotionModel> con = delegate.getDeclaredConstructor(Imt.class);
 		GroundMotionModel gmm = con.newInstance(imt);
 		return gmm;
 	}
@@ -275,7 +275,7 @@ public enum Gmm {
 	 * @return the model implementation
 	 * @throws ExecutionException if there is an instantiation problem
 	 */
-	public GroundMotionModel instance(IMT imt) throws ExecutionException {
+	public GroundMotionModel instance(Imt imt) throws ExecutionException {
 		return cache.get(imt);
 	}
 
@@ -284,22 +284,22 @@ public enum Gmm {
 	}
 
 	/**
-	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
+	 * Returns the {@code Set} of the intensity measure types ({@code Imt}s)
 	 * supported by this {@code Gmm}.
-	 * @return the {@code Set} of supported {@code IMT}s
+	 * @return the {@code Set} of supported {@code Imt}s
 	 */
-	public Set<IMT> supportedIMTs() {
+	public Set<Imt> supportedIMTs() {
 		return imts;
 	}
 
 	/**
-	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
+	 * Returns the {@code Set} of the intensity measure types ({@code Imt}s)
 	 * supported by all of the supplied {@code Gmm}s.
-	 * @param gmms models for which to return common {@code IMT} supoort
-	 * @return the {@code Set} of supported {@code IMT}s
+	 * @param gmms models for which to return common {@code Imt} supoort
+	 * @return the {@code Set} of supported {@code Imt}s
 	 */
-	public static Set<IMT> supportedIMTs(Collection<Gmm> gmms) {
-		Set<IMT> imts = EnumSet.allOf(IMT.class);
+	public static Set<Imt> supportedIMTs(Collection<Gmm> gmms) {
+		Set<Imt> imts = EnumSet.allOf(Imt.class);
 		for (Gmm gmm : gmms) {
 			imts = Sets.intersection(imts, gmm.supportedIMTs());
 		}
@@ -307,22 +307,22 @@ public enum Gmm {
 	}
 
 	/**
-	 * Returns the set of spectral acceleration {@code IMT}s that are supported
+	 * Returns the set of spectral acceleration {@code Imt}s that are supported
 	 * by this {@code Gmm}.
 	 * @return a {@code Set} of spectral acceleration IMTs
 	 */
-	public Set<IMT> responseSpectrumIMTs() {
-		return Sets.intersection(imts, IMT.saIMTs());
+	public Set<Imt> responseSpectrumIMTs() {
+		return Sets.intersection(imts, Imt.saIMTs());
 	}
 
 	/**
-	 * Returns the set of spectral acceleration {@code IMT}s that are common to
+	 * Returns the set of spectral acceleration {@code Imt}s that are common to
 	 * the supplied {@code Collection}.
 	 * @param gmms ground motion models
-	 * @return a {@code Set} of common spectral acceleration {@code IMT}s
+	 * @return a {@code Set} of common spectral acceleration {@code Imt}s
 	 */
-	public static Set<IMT> responseSpectrumIMTs(Collection<Gmm> gmms) {
-		return Sets.intersection(supportedIMTs(gmms), IMT.saIMTs());
+	public static Set<Imt> responseSpectrumIMTs(Collection<Gmm> gmms) {
+		return Sets.intersection(supportedIMTs(gmms), Imt.saIMTs());
 	}
 
 }

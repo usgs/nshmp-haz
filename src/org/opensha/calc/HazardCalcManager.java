@@ -22,7 +22,7 @@ import org.opensha.geo.Location;
 import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GmmInput;
 import org.opensha.gmm.GroundMotionModel;
-import org.opensha.gmm.IMT;
+import org.opensha.gmm.Imt;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -82,7 +82,7 @@ public class HazardCalcManager {
 	// branching
 	// weights when iterating.
 
-	public void calc(Forecast forecast, Map<Gmm, Double> gmmWtMap, Site site, IMT imt)
+	public void calc(Forecast forecast, Map<Gmm, Double> gmmWtMap, Site site, Imt imt)
 			throws InterruptedException, ExecutionException {
 		// TODO this wont work
 

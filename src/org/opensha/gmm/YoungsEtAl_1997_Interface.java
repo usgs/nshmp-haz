@@ -11,7 +11,7 @@ final class YoungsEtAl_1997_Interface extends YoungsEtAl_1997 {
 	
 	static final String NAME = YoungsEtAl_1997.NAME + ": Interface";
 
-	YoungsEtAl_1997_Interface(IMT imt) {
+	YoungsEtAl_1997_Interface(Imt imt) {
 		super(imt);
 	}
 

@@ -1,7 +1,7 @@
 package org.opensha.gmm;
 
 import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha.gmm.IMT.PGA;
+import static org.opensha.gmm.Imt.PGA;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
 import org.opensha.calc.ScalarGroundMotion;
@@ -14,11 +14,11 @@ import org.opensha.calc.ScalarGroundMotion;
  * relation is commonly referred to as AB06 Prime (AB06').
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
  * 
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
  * ground- motion prediction equations for eastern North America: Bulletin of
@@ -53,7 +53,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 	
 	private final Coeffs coeffs;
 
-	AtkinsonBoore_2006p(IMT imt) {
+	AtkinsonBoore_2006p(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		table = GmmTables.getAtkinson06(imt);
 	}

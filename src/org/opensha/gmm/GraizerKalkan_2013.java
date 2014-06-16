@@ -9,9 +9,9 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static org.opensha.gmm.FaultStyle.REVERSE;
-import static org.opensha.gmm.IMT.PGA;
-import static org.opensha.gmm.IMT.PGD;
-import static org.opensha.gmm.IMT.PGV;
+import static org.opensha.gmm.Imt.PGA;
+import static org.opensha.gmm.Imt.PGD;
+import static org.opensha.gmm.Imt.PGV;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -32,11 +32,11 @@ final class GraizerKalkan_2013 implements GroundMotionModel {
 
 	static final String NAME = "Graizer \u0026 Kalkan (2013)";
 	
-	static final Set<IMT> IMTS = EnumSet.complementOf(EnumSet.of(PGV, PGD));
+	static final Set<Imt> IMTS = EnumSet.complementOf(EnumSet.of(PGV, PGD));
 	
 	private final double period;
 	
-	GraizerKalkan_2013(IMT imt) {
+	GraizerKalkan_2013(Imt imt) {
 		period = imt.equals(PGA) ? 0.01 : imt.period();
 	}
 

@@ -9,7 +9,7 @@ final class ToroEtAl_1997_Mw extends ToroEtAl_1997 {
 
 	static final String NAME = ToroEtAl_1997.NAME + ": Mw";
 
-	ToroEtAl_1997_Mw(IMT imt) {
+	ToroEtAl_1997_Mw(Imt imt) {
 		super(imt);
 	}
 	

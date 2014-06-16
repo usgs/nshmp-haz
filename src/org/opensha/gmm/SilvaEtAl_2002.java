@@ -13,11 +13,11 @@ import org.opensha.calc.ScalarGroundMotion;
  * support the 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
  * 
  * <p><b>Reference:</b> Silva, W., Gregor, N., and Darragh, R., 2002,
  * Development of hard rock attenuation relations for central and eastern North
@@ -53,7 +53,7 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 			
 	private final Coeffs coeffs;
 
-	SilvaEtAl_2002(IMT imt) {
+	SilvaEtAl_2002(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 	

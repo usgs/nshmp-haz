@@ -18,7 +18,7 @@ class AtkinsonBoore_2006_140bar extends AtkinsonBoore_2006 {
 		SF2 = scaleFactorCalc(STRESS);
 	}
 
-	AtkinsonBoore_2006_140bar(IMT imt) {
+	AtkinsonBoore_2006_140bar(Imt imt) {
 		super(imt);
 	}
 	

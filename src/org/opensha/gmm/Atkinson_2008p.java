@@ -1,7 +1,7 @@
 package org.opensha.gmm;
 
 import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha.gmm.IMT.PGA;
+import static org.opensha.gmm.Imt.PGA;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
 import org.opensha.calc.ScalarGroundMotion;
@@ -13,11 +13,11 @@ import org.opensha.calc.ScalarGroundMotion;
  * relation is commonly referred to as A08 Prime (A08').
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(IMT, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
  * 
  * <p><b>Reference:</b> Atkinson, G.M., 2008, Ground-motion prediction equations
  * for eastern North America from a referenced empirical approach—Implications
@@ -53,7 +53,7 @@ public final class Atkinson_2008p implements GroundMotionModel {
 	
 	private final Coeffs coeffs;
 
-	Atkinson_2008p(IMT imt) {
+	Atkinson_2008p(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		table = GmmTables.getAtkinson08(imt);
 	}

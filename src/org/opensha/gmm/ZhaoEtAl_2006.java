@@ -17,8 +17,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * and the Pacific Northwest.</p>
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation notes:</b> <ol><li>When used for interface events, sigma
  * is computed using the generic value of tau, rather than the interface
@@ -60,7 +60,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 	
 	private final Coeffs coeffs;
 
-	ZhaoEtAl_2006(IMT imt) {
+	ZhaoEtAl_2006(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 	

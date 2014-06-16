@@ -12,8 +12,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * NSHMP.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation notes:</b> <ul><li>This is currently only applicable to
  * vs760; there is a suggestion in the NSHM fortran that the AB08 non-linear
@@ -48,7 +48,7 @@ public final class AtkinsonMacias_2009 implements GroundMotionModel {
 	
 	private final Coeffs coeffs;
 	
-	AtkinsonMacias_2009(IMT imt) {
+	AtkinsonMacias_2009(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 	

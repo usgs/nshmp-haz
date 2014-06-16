@@ -22,8 +22,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><p>Reference:</p> Chiou, B.S.J. and Youngs R.R. (2008), An NGA model for
  * the average horizontal component of peak ground motion and response spectra,
@@ -57,7 +57,7 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 	
 	private final Coeffs coeffs;
 	
-	ChiouYoungs_2008(IMT imt) {
+	ChiouYoungs_2008(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 

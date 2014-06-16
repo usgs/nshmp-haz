@@ -4,7 +4,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
-import static org.opensha.gmm.IMT.PGA;
+import static org.opensha.gmm.Imt.PGA;
 
 import org.opensha.calc.ScalarGroundMotion;
 
@@ -24,8 +24,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * and the Pacific Northwest.</p>
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Youngs, R.R., Chiou, S.-J., Silva, W.J., and Humphrey,
  * J.R., 1997, Strong ground motion attenuation relationships for subduction
@@ -80,7 +80,7 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	private final CoeffsSiteAmp coeffsSA;
 	
 
-	YoungsEtAl_1997(IMT imt) {
+	YoungsEtAl_1997(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		coeffsPGA = (Coeffs) CC.get(PGA);
 		coeffsSA = (CoeffsSiteAmp) CC_SA.get(imt);

@@ -6,7 +6,7 @@ import static org.opensha.gmm.FaultStyle.NORMAL;
 import static org.opensha.gmm.FaultStyle.REVERSE;
 import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha.gmm.FaultStyle.UNKNOWN;
-import static org.opensha.gmm.IMT.PGA;
+import static org.opensha.gmm.Imt.PGA;
 
 import org.opensha.calc.ScalarGroundMotion;
 
@@ -16,8 +16,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Boore, D.M., and Atkinson, G.M., 2008, Ground-motion
  * prediction equations for the average horizontal component of PGA, PGV, and
@@ -52,7 +52,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 
 	private final Coeffs coeffs, coeffsPGA;
 
-	BooreAtkinson_2008(IMT imt) {
+	BooreAtkinson_2008(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		coeffsPGA = (Coeffs) CC.get(PGA);
 	}

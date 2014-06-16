@@ -21,8 +21,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Implementation note:</b> 0.01s SA values used for PGA.</p>
  * 
@@ -70,7 +70,7 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	private final Coeffs coeffs;
 
-	ChiouYoungs_2014(IMT imt) {
+	ChiouYoungs_2014(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 

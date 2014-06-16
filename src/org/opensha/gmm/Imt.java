@@ -6,11 +6,11 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Intesity measure type (IMT) identifiers.
+ * Intesity measure type (Imt) identifiers.
  * @author Peter Powers
  */
 @SuppressWarnings("javadoc")
-public enum IMT {
+public enum Imt {
 
 	PGA,
 	PGV,
@@ -50,9 +50,9 @@ public enum IMT {
 	SA10P0;
 
 	/**
-	 * Returns the corresponding period or frequency for this {@code IMT} if it
+	 * Returns the corresponding period or frequency for this {@code Imt} if it
 	 * represents a spectral acceleration.
-	 * @return the period for this {@code IMT} if it represents a spectral
+	 * @return the period for this {@code Imt} if it represents a spectral
 	 *         acceleration, {@code null} otherwise
 	 */
 	public Double period() {
@@ -63,16 +63,16 @@ public enum IMT {
 	}
 
 	/**
-	 * Returns the spectral acceleration {@code IMT} associated with the
+	 * Returns the spectral acceleration {@code Imt} associated with the
 	 * supplied period. Due to potential floating point precision problems, this
 	 * method internally checks values to within a small tolerance.
-	 * @param period for {@code IMT}
-	 * @return an {@code IMT}, or {@code null} if no IMT exsists for the
+	 * @param period for {@code Imt}
+	 * @return an {@code Imt}, or {@code null} if no Imt exsists for the
 	 *         supplied period
 	 */
-	public static IMT fromPeriod(double period) {
+	public static Imt fromPeriod(double period) {
 		// TODO should this throw an IAE instead or return null?
-		for (IMT imt : IMT.values()) {
+		for (Imt imt : Imt.values()) {
 			if (imt.name().startsWith("SA")) {
 				double saPeriod = imt.period();
 				if (fuzzyEquals(saPeriod, period, 0.000001)) return imt;
@@ -82,10 +82,10 @@ public enum IMT {
 	}
 	
 	/**
-	 * Returns the frequency (in Hz) for this {@code IMT}. {@code PGA} returns
+	 * Returns the frequency (in Hz) for this {@code Imt}. {@code PGA} returns
 	 * 100 Hz, spectral periods return their expected value (1 / period), and
 	 * {@code PGV} and {@code PGD} throw exceptions.
-	 * @return thre frequency associated with this {@code IMT}
+	 * @return thre frequency associated with this {@code Imt}
 	 * @throws UnsupportedOperationException if called on {@code PGV} or
 	 *         {@code PGD}
 	 */
@@ -97,7 +97,7 @@ public enum IMT {
 	}
 	
 	/**
-	 * Returns true if this IMT is some flavor of spectral acceleration.
+	 * Returns true if this Imt is some flavor of spectral acceleration.
 	 * @return {@code true} if this is a spectral period, {@code false}
 	 *         otherwise
 	 */
@@ -109,23 +109,23 @@ public enum IMT {
 	 * Returns the {@code Set} of spectal acceleration IMTs.
 	 * @return the IMTs that represent spectral accelerations
 	 */
-	public static Set<IMT> saIMTs() {
+	public static Set<Imt> saIMTs() {
 		return EnumSet.complementOf(EnumSet.of(PGA, PGV, PGD));
 	}
 
 	/**
-	 * Parses the supplied {@code String} into an {@code IMT}; method expects
+	 * Parses the supplied {@code String} into an {@code Imt}; method expects
 	 * labels for specifically named intensity measure types ({@code "PGA"}) and
 	 * double value {@code String}s for spectral periods ({@code "0.2"}). This
 	 * method is <i>not</i> the same as {@link #valueOf(String)}.
 	 * @param s {@code String} to parse
-	 * @return an {@code IMT}, or {@code null} if supplied {@code String} is
+	 * @return an {@code Imt}, or {@code null} if supplied {@code String} is
 	 *         invalid
 	 */
-	public static IMT parseIMT(String s) {
+	public static Imt parseIMT(String s) {
 		s = s.trim().toUpperCase();
 		if (s.equals("PGA") || s.equals("PGV") || s.equals("PGD")) {
-			return IMT.valueOf(s);
+			return Imt.valueOf(s);
 		}
 		try {
 			double period = Double.parseDouble(s);

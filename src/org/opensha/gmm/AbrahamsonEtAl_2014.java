@@ -17,8 +17,8 @@ import org.opensha.data.Interpolate;
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
- * desired {@link IMT}.</p>
+ * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
+ * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Abrahamson, N.A., Silva, W.J., and Kamai, R., 2014,
  * Summary of the ASK14 ground-motion relation for active crustal regions,
@@ -68,7 +68,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 	
 	private final Coeffs coeffs;
 
-	AbrahamsonEtAl_2014(IMT imt) {
+	AbrahamsonEtAl_2014(Imt imt) {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 	
@@ -238,7 +238,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 	}
 	
 	// -- Equation 9
-	private static final double getV1(IMT imt) {
+	private static final double getV1(Imt imt) {
 		Double T = imt.period();
 		if (T == null) return 1500.0;
 		if (T >= 3.0) return 800.0;
