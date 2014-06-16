@@ -42,7 +42,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	PointSourceType ptSrcType = PointSourceType.FIXED_STRIKE;
 
 	// only available to parsers
-	private GridSourceSet(String name, Double weight, MagScalingType msrType, GMM_Set gmmSet,
+	private GridSourceSet(String name, Double weight, MagScalingType msrType, GmmSet gmmSet,
 		List<Location> locs, List<IncrementalMFD> mfds, Map<FocalMech, Double> mechMap,
 		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike) {
 
@@ -225,7 +225,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		Double weight;
 		private Double strike;
 		private MagScalingType magScaling;
-		private GMM_Set gmmSet;
+		private GmmSet gmmSet;
 		private NavigableMap<Double, Map<Double, Double>> magDepthMap;
 		private Map<FocalMech, Double> mechMap;
 
@@ -242,7 +242,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		Builder gmms(GMM_Set gmmSet) {
+		Builder gmms(GmmSet gmmSet) {
 			this.gmmSet = checkNotNull(gmmSet);
 			return this;
 		}

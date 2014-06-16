@@ -24,7 +24,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 	private final List<ClusterSource> sources;
 
 	ClusterSourceSet(String name, double weight, MagScalingType msrType,
-		List<ClusterSource> sources, GMM_Set gmmSet) {
+		List<ClusterSource> sources, GmmSet gmmSet) {
 		super(name, weight, msrType, gmmSet);
 		this.sources = sources;
 	}
@@ -57,7 +57,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 		private String name;
 		private Double weight;
 		private MagScalingType magScaling;
-		private GMM_Set gmmSet;
+		private GmmSet gmmSet;
 		private List<ClusterSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
@@ -70,7 +70,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			return this;
 		}
 		
-		Builder gmms(GMM_Set gmmSet) {
+		Builder gmms(GmmSet gmmSet) {
 			this.gmmSet = checkNotNull(gmmSet);
 			return this;
 		}

@@ -54,7 +54,7 @@ class InterfaceParser extends DefaultHandler {
 
 	private Locator locator;
 
-	private GMM_Set gmmSet;
+	private GmmSet gmmSet;
 
 	private InterfaceSourceSet sourceSet;
 	private InterfaceSourceSet.Builder sourceSetBuilder;
@@ -74,7 +74,7 @@ class InterfaceParser extends DefaultHandler {
 		return new InterfaceParser(checkNotNull(sax));
 	}
 
-	InterfaceSourceSet parse(InputStream in, GMM_Set gmmSet) throws SAXException, IOException {
+	InterfaceSourceSet parse(InputStream in, GmmSet gmmSet) throws SAXException, IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;
 		sax.parse(in, this);

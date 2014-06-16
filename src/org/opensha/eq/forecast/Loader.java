@@ -171,8 +171,8 @@ public class Loader {
 			typePaths = Lists.newArrayList(ds);
 		}
 
-		// Build GMM_Set from gmm.xml if present
-		GMM_Set gmmSet = null;
+		// Build GmmSet from gmm.xml if present
+		GmmSet gmmSet = null;
 		if (typePaths.size() > 0) {
 			Path gmmPath = typeDir.resolve(GMM_Parser.FILE_NAME);
 			try {
@@ -200,7 +200,7 @@ public class Loader {
 
 	}
 
-	private static void processNestedDir(Path sourceDir, SourceType type, GMM_Set gmmSet,
+	private static void processNestedDir(Path sourceDir, SourceType type, GmmSet gmmSet,
 			Builder builder) throws Exception {
 		
 		/*
@@ -216,7 +216,7 @@ public class Loader {
 
 		Path typeDir = sourceDir.getParent().getParent();
 		
-		GMM_Set nestedGmmSet = null;
+		GmmSet nestedGmmSet = null;
 		if (nestedSourcePaths.size() > 0) {
 			Path nestedGmmPath = sourceDir.resolve(GMM_Parser.FILE_NAME);
 			try {
@@ -245,7 +245,7 @@ public class Loader {
 	}
 
 	private static SourceSet<? extends Source> parseSource(SourceType type, Path path,
-			GMM_Set gmmSet) throws Exception {
+			GmmSet gmmSet) throws Exception {
 		
 		try {
 			InputStream in = Files.newInputStream(path);
@@ -273,7 +273,7 @@ public class Loader {
 		}
 	}
 	
-	private static GMM_Set parseGMM(Path path) throws Exception {
+	private static GmmSet parseGMM(Path path) throws Exception {
 		try {
 			InputStream in = Files.newInputStream(path);
 			return GMM_Parser.create(sax).parse(in);

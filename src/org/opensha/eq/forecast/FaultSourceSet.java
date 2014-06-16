@@ -24,7 +24,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 	private final List<FaultSource> sources;
 	
 	private FaultSourceSet(String name, double weight, MagScalingType msrType,
-		List<FaultSource> sources, GMM_Set gmmSet) {
+		List<FaultSource> sources, GmmSet gmmSet) {
 		super(name, weight, msrType, gmmSet);
 		this.sources = sources;
 	}
@@ -57,7 +57,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 		String name;
 		Double weight;
 		MagScalingType magScaling;
-		GMM_Set gmmSet;
+		GmmSet gmmSet;
 		List<FaultSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
@@ -70,7 +70,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 			return this;
 		}
 
-		Builder gmms(GMM_Set gmmSet) {
+		Builder gmms(GmmSet gmmSet) {
 			this.gmmSet = checkNotNull(gmmSet);
 			return this;
 		}

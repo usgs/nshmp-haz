@@ -16,7 +16,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	private final String name;
 	private final double weight;
 	private final MagScalingType msrType;
-	private final GMM_Set gmmSet;
+	private final GmmSet gmmSet;
 	
 	// NOTE msrType is currently not exposed; nor is it used
 
@@ -25,7 +25,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	// may come in handy when trying to put together individual
 	// logic tree branches.
 
-	AbstractSourceSet(String name, double weight, MagScalingType msrType, GMM_Set gmmSet) {
+	AbstractSourceSet(String name, double weight, MagScalingType msrType, GmmSet gmmSet) {
 		this.name = name;
 		this.weight = weight;
 		this.msrType = msrType;
@@ -44,7 +44,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 		return weight;
 	}
 	
-	@Override public GMM_Set groundMotionModels() {
+	@Override public GmmSet groundMotionModels() {
 		return gmmSet;
 	}
 

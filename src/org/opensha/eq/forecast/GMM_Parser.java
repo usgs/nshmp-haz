@@ -49,8 +49,8 @@ class GMM_Parser extends DefaultHandler {
 	private Locator locator;
 
 	private int mapCount = 0;
-	private GMM_Set gmmSet;
-	private GMM_Set.Builder setBuilder;
+	private GmmSet gmmSet;
+	private GmmSet.Builder setBuilder;
 	private Map<Gmm, Double> gmmWtMap;
 
 	private GMM_Parser(SAXParser sax) {
@@ -61,7 +61,7 @@ class GMM_Parser extends DefaultHandler {
 		return new GMM_Parser(checkNotNull(sax));
 	}
 
-	GMM_Set parse(InputStream in) throws SAXException, IOException {
+	GmmSet parse(InputStream in) throws SAXException, IOException {
 		checkState(!used, "This parser has expired");
 		sax.parse(checkNotNull(in), this);
 		used = true;
@@ -82,7 +82,7 @@ class GMM_Parser extends DefaultHandler {
 			switch (e) {
 
 				case GROUND_MOTION_MODELS:
-					setBuilder = new GMM_Set.Builder();
+					setBuilder = new GmmSet.Builder();
 					break;
 
 				case UNCERTAINTY:
