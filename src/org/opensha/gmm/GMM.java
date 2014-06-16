@@ -24,89 +24,129 @@ import com.google.common.collect.Sets;
  * @author Peter Powers
  */
 public enum GMM {
-	
-	// TODO review sub zTop rules; I believe there are places where zHyp is spoecified by a model but zTop is supplied instead
-	//			Zhao in hazgrid uses zTop for zHyp
-	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too high at large distances
+
+	// TODO review sub zTop rules; I believe there are places where zHyp is
+	// spoecified by a model but zTop is supplied instead
+	// Zhao in hazgrid uses zTop for zHyp
+	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
+	// high at large distances
 	// TODO sub GMMs were reweighted ??
 	// TODO do deep GMMs saturate at 7.8 ???
 	// TODO do SUB GMM's float downdip AND along strike, or jsut along strike?
 	// TODO how to deal with CEUS distance cutoffs (@ 500km):
-	//			- could specify applicable distances and weights in gmm.xml
-	//			- could break sources in two, with distance-specific GMMS returning 0 if out of range (seems ugly)
-	// TODO check CEUS clamp consistency; should be PGA = 3g, <=0.5s = 6g, else = 0g (which means no clamp applied)
-	//			- Cb03 was (incorrectly) changed from 3g at 0.5s to 0g instead of 6g ??
-	//			- Somerville has 6g clamp at 2s ???
-	// TODO most CEUS GMM's have 0.4s coeffs that were linearly interpolated for special NRC project; consider removing them??
-	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified anywhere?
-	// TODO revisit hazgrid history to ensure that bugs/fixes from 2008 carried through to 2014 in Fortran
+	// - could specify applicable distances and weights in gmm.xml
+	// - could break sources in two, with distance-specific GMMS returning 0 if
+	// out of range (seems ugly)
+	// TODO check CEUS clamp consistency; should be PGA = 3g, <=0.5s = 6g, else
+	// = 0g (which means no clamp applied)
+	// - Cb03 was (incorrectly) changed from 3g at 0.5s to 0g instead of 6g ??
+	// - Somerville has 6g clamp at 2s ???
+	// TODO most CEUS GMM's have 0.4s coeffs that were linearly interpolated for
+	// special NRC project; consider removing them??
+	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified
+	// anywhere?
+	// TODO revisit hazgrid history to ensure that bugs/fixes from 2008 carried
+	// through to 2014 in Fortran
 	// TODO Port GMM grid optimization tables
 	//
 	// TODO Ensure Atkinson sfac/gfac is implemented correctly
-	// TODO amean11 (fortran) has wrong median clamp values and short period ranges
+	// TODO amean11 (fortran) has wrong median clamp values and short period
+	// ranges
 	// TODO Toro Mb-Mw conversion (has mb specific implementation
 	// TODO finish gmm.xml
 	// TODO is Atkinson Macias ok? finished?
 	// TODO is there a citation for Atkinson distance decay
-	//			mean = mean - 0.3 + 0.15(log(rJB))  (ln or log10 ??)
-	// TODO ensure table lookups are using correct distance metric, some are rRup and some are rJB
-	// TODO check Fortran minimums (this note may have been written just regarding GMM table lookups, Atkinson in particular)
-	//			hazgrid A08' minR=1.8km; P11 minR = 1km; others?
-	//			hazfx all (tables?) have minR = 0.11km
-	// TODO doublecheck that SUB implementations are using the correct distance metric
+	// mean = mean - 0.3 + 0.15(log(rJB)) (ln or log10 ??)
+	// TODO ensure table lookups are using correct distance metric, some are
+	// rRup and some are rJB
+	// TODO check Fortran minimums (this note may have been written just
+	// regarding GMM table lookups, Atkinson in particular)
+	// hazgrid A08' minR=1.8km; P11 minR = 1km; others?
+	// hazfx all (tables?) have minR = 0.11km
+	// TODO doublecheck that SUB implementations are using the correct distance
+	// metric
 	// make select GMMs public for documentation
-	//TODO z1p0 in CY08 - this is now always km, CY08 needs updating (from m)
+	// TODO z1p0 in CY08 - this is now always km, CY08 needs updating (from m)
 	// TODO gmm.xml needs addt'l epistemic unc on ground motion
-	
-//	 * TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup; why is
-//	 * depth constrained as such in hazgrid? As with somerville, no depth is imposed
-//	 * in hazFX - make sure 0.01 as PGA is handled corectly; may require change to
-//	 * period = 0.0
+
+	// * TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup;
+	// why is
+	// * depth constrained as such in hazgrid? As with somerville, no depth is
+	// imposed
+	// * in hazFX - make sure 0.01 as PGA is handled corectly; may require
+	// change to
+	// * period = 0.0
 
 	// NGA-West1 NSHMP 2008
+
 	/** @see BooreAtkinson_2008 */
 	BA_08(BooreAtkinson_2008.class, BooreAtkinson_2008.NAME, BooreAtkinson_2008.CC),
+
 	/** @see CampbellBozorgnia_2008 */
 	CB_08(CampbellBozorgnia_2008.class, CampbellBozorgnia_2008.NAME, CampbellBozorgnia_2008.CC),
+
 	/** @see ChiouYoungs_2008 */
 	CY_08(ChiouYoungs_2008.class, ChiouYoungs_2008.NAME, ChiouYoungs_2008.CC),
+
 	
 	// NGA-West2 NSHMP 2014
+
 	/** @see AbrahamsonEtAl_2014 */
 	ASK_14(AbrahamsonEtAl_2014.class, AbrahamsonEtAl_2014.NAME, AbrahamsonEtAl_2014.CC),
+
 	/** @see BooreEtAl_2014 */
 	BSSA_14(BooreEtAl_2014.class, BooreEtAl_2014.NAME, BooreEtAl_2014.CC),
+
 	/** @see CampbellBozorgnia_2014 */
 	CB_14(CampbellBozorgnia_2014.class, CampbellBozorgnia_2014.NAME, CampbellBozorgnia_2014.CC),
+
 	/** @see ChiouYoungs_2014 */
 	CY_14(ChiouYoungs_2014.class, ChiouYoungs_2014.NAME, ChiouYoungs_2014.CC),
+
 	/** @see Idriss_2014 */
 	IDRISS_14(Idriss_2014.class, Idriss_2014.NAME, Idriss_2014.CC),
+
 	
 	// Subduction NSHMP 2008 2014
+
 	/** @see AtkinsonBoore_2003 */
-	AB_03_GLOB_INTER(AtkinsonBoore_2003_GlobalInterface.class, AtkinsonBoore_2003_GlobalInterface.NAME, AtkinsonBoore_2003.CC),
+	AB_03_GLOB_INTER(AtkinsonBoore_2003_GlobalInterface.class,
+			AtkinsonBoore_2003_GlobalInterface.NAME, AtkinsonBoore_2003.CC),
+
 	/** @see AtkinsonBoore_2003 */
-	AB_03_GLOB_SLAB(AtkinsonBoore_2003_GlobalSlab.class, AtkinsonBoore_2003_GlobalSlab.NAME, AtkinsonBoore_2003.CC),
+	AB_03_GLOB_SLAB(AtkinsonBoore_2003_GlobalSlab.class, AtkinsonBoore_2003_GlobalSlab.NAME,
+			AtkinsonBoore_2003.CC),
+
 	/** @see AtkinsonBoore_2003 */
-	AB_03_CASC_INTER(AtkinsonBoore_2003_CascadiaInterface.class, AtkinsonBoore_2003_CascadiaInterface.NAME, AtkinsonBoore_2003.CC),
+	AB_03_CASC_INTER(AtkinsonBoore_2003_CascadiaInterface.class,
+			AtkinsonBoore_2003_CascadiaInterface.NAME, AtkinsonBoore_2003.CC),
+
 	/** @see AtkinsonBoore_2003 */
-	AB_03_CASC_SLAB(AtkinsonBoore_2003_CascadiaSlab.class, AtkinsonBoore_2003_CascadiaSlab.NAME, AtkinsonBoore_2003.CC),
+	AB_03_CASC_SLAB(AtkinsonBoore_2003_CascadiaSlab.class, AtkinsonBoore_2003_CascadiaSlab.NAME,
+			AtkinsonBoore_2003.CC),
+
 	/** @see AtkinsonMacias_2009 */
 	AM_09_INTER(AtkinsonMacias_2009.class, AtkinsonMacias_2009.NAME, AtkinsonMacias_2009.CC),
+
 	/** @see BCHydro_2012 */
 	BCHYDRO_12_INTER(BCHydro_2012_Interface.class, BCHydro_2012_Interface.NAME, BCHydro_2012.CC),
+
 	/** @see BCHydro_2012 */
 	BCHYDRO_12_SLAB(BCHydro_2012_Slab.class, BCHydro_2012_Slab.NAME, BCHydro_2012.CC),
+
 	/** @see YoungsEtAl_1997 */
-	YOUNGS_97_INTER(YoungsEtAl_1997_Interface.class, YoungsEtAl_1997_Interface.NAME, YoungsEtAl_1997.CC),
+	YOUNGS_97_INTER(YoungsEtAl_1997_Interface.class, YoungsEtAl_1997_Interface.NAME,
+			YoungsEtAl_1997.CC),
+
 	/** @see YoungsEtAl_1997 */
 	YOUNGS_97_SLAB(YoungsEtAl_1997_Slab.class, YoungsEtAl_1997_Slab.NAME, YoungsEtAl_1997.CC),
+
 	/** @see ZhaoEtAl_2006 */
 	ZHAO_06_INTER(ZhaoEtAl_2006_Interface.class, ZhaoEtAl_2006_Interface.NAME, ZhaoEtAl_2006.CC),
+
 	/** @see ZhaoEtAl_2006 */
 	ZHAO_06_SLAB(ZhaoEtAl_2006_Slab.class, ZhaoEtAl_2006_Slab.NAME, ZhaoEtAl_2006.CC),
-	
+
 	/*
 	 * Base implementations of the GMM used in the 2008 CEUS model all work with
 	 * and assume magnitude = Mw. The method converter() is provided to allow
@@ -115,64 +155,95 @@ public enum GMM {
 	 * All CEUS models impose a clamp on median ground motions; see
 	 * GMM_Utils.ceusMeanClip()
 	 */
-	
+
 	// Stable continent (CEUS) NSHMP 2008 2014
+	
 	/** @see AtkinsonBoore_2006p */
 	AB_06_PRIME(AtkinsonBoore_2006p.class, AtkinsonBoore_2006p.NAME, AtkinsonBoore_2006p.CC),
+	
 	/** @see AtkinsonBoore_2006 */
-	AB_06_140BAR(AtkinsonBoore_2006_140bar.class, AtkinsonBoore_2006_140bar.NAME, AtkinsonBoore_2006.CC),
+	AB_06_140BAR(AtkinsonBoore_2006_140bar.class, AtkinsonBoore_2006_140bar.NAME,
+			AtkinsonBoore_2006.CC),
+			
 	/** @see AtkinsonBoore_2006 */
-	AB_06_200BAR(AtkinsonBoore_2006_200bar.class, AtkinsonBoore_2006_200bar.NAME, AtkinsonBoore_2006.CC),
+	AB_06_200BAR(AtkinsonBoore_2006_200bar.class, AtkinsonBoore_2006_200bar.NAME,
+			AtkinsonBoore_2006.CC),
+			
 	/** @see Atkinson_2008p */
 	ATKINSON_08_PRIME(Atkinson_2008p.class, Atkinson_2008p.NAME, Atkinson_2008p.CC),
+
 	/** @see Campbell_2003 */
 	CAMPBELL_03(Campbell_2003.class, Campbell_2003.NAME, Campbell_2003.CC),
+	
 	/** @see FrankelEtAl_1996 */
 	FRANKEL_96(FrankelEtAl_1996.class, FrankelEtAl_1996.NAME, FrankelEtAl_1996.CC),
+	
 	/** @see PezeshkEtAl_2011 */
 	PEZESHK_11(PezeshkEtAl_2011.class, PezeshkEtAl_2011.NAME, PezeshkEtAl_2011.CC),
+	
 	/** @see SilvaEtAl_2002 */
 	SILVA_02(SilvaEtAl_2002.class, SilvaEtAl_2002.NAME, SilvaEtAl_2002.CC),
+	
 	/** @see SomervilleEtAl_2001 */
 	SOMERVILLE_01(SomervilleEtAl_2001.class, SomervilleEtAl_2001.NAME, SomervilleEtAl_2001.CC),
+	
 	/** @see TavakoliPezeshk_2005 */
 	TP_05(TavakoliPezeshk_2005.class, TavakoliPezeshk_2005.NAME, TavakoliPezeshk_2005.CC),
+	
 	/** @see ToroEtAl_1997 */
 	TORO_97_MW(ToroEtAl_1997_Mw.class, ToroEtAl_1997_Mw.NAME, ToroEtAl_1997.CC),
+
 	
-	// mag converting flavors of CEUS, NSHMP 2008
-	//		- Johnston
+	// Johnston mag converting flavors of CEUS, NSHMP 2008
+	
 	/** @see AtkinsonBoore_2006 */
-	AB_06_140BAR_J(AtkinsonBoore_2006_140bar_J.class, AtkinsonBoore_2006_140bar_J.NAME, AtkinsonBoore_2006.CC),
+	AB_06_140BAR_J(AtkinsonBoore_2006_140bar_J.class, AtkinsonBoore_2006_140bar_J.NAME,
+			AtkinsonBoore_2006.CC),
+			
 	/** @see AtkinsonBoore_2006 */
-	AB_06_200BAR_J(AtkinsonBoore_2006_200bar_J.class, AtkinsonBoore_2006_200bar_J.NAME, AtkinsonBoore_2006.CC),
+	AB_06_200BAR_J(AtkinsonBoore_2006_200bar_J.class, AtkinsonBoore_2006_200bar_J.NAME,
+			AtkinsonBoore_2006.CC),
+			
 	/** @see Campbell_2003 */
 	CAMPBELL_03_J(Campbell_2003_J.class, Campbell_2003_J.NAME, Campbell_2003.CC),
+	
 	/** @see FrankelEtAl_1996 */
 	FRANKEL_96_J(FrankelEtAl_1996_J.class, FrankelEtAl_1996_J.NAME, FrankelEtAl_1996.CC),
+	
 	/** @see SilvaEtAl_2002 */
 	SILVA_02_J(SilvaEtAl_2002_J.class, SilvaEtAl_2002_J.NAME, SilvaEtAl_2002.CC),
+	
 	/** @see TavakoliPezeshk_2005 */
 	TP_05_J(TavakoliPezeshk_2005_J.class, TavakoliPezeshk_2005_J.NAME, TavakoliPezeshk_2005.CC),
-	// - Atkinson Boore
+	
+	
+	// Atkinson Boore mag converting flavors of CEUS, NSHMP 2008
+	
 	/** @see AtkinsonBoore_2006 */
-	AB_06_140BAR_AB(AtkinsonBoore_2006_140bar_AB.class, AtkinsonBoore_2006_140bar_AB.NAME, AtkinsonBoore_2006.CC),
+	AB_06_140BAR_AB(AtkinsonBoore_2006_140bar_AB.class, AtkinsonBoore_2006_140bar_AB.NAME,
+			AtkinsonBoore_2006.CC),
+			
 	/** @see AtkinsonBoore_2006 */
-	AB_06_200BAR_AB(AtkinsonBoore_2006_200bar_AB.class, AtkinsonBoore_2006_200bar_AB.NAME, AtkinsonBoore_2006.CC),
+	AB_06_200BAR_AB(AtkinsonBoore_2006_200bar_AB.class, AtkinsonBoore_2006_200bar_AB.NAME,
+			AtkinsonBoore_2006.CC),
+			
 	/** @see Campbell_2003 */
 	CAMPBELL_03_AB(Campbell_2003_AB.class, Campbell_2003_AB.NAME, Campbell_2003.CC),
+	
 	/** @see FrankelEtAl_1996 */
 	FRANKEL_96_AB(FrankelEtAl_1996_AB.class, FrankelEtAl_1996_AB.NAME, FrankelEtAl_1996.CC),
+	
 	/** @see SilvaEtAl_2002 */
 	SILVA_02_AB(SilvaEtAl_2002_AB.class, SilvaEtAl_2002_AB.NAME, SilvaEtAl_2002.CC),
 
 	/** @see TavakoliPezeshk_2005 */
 	TP_05_AB(TavakoliPezeshk_2005_AB.class, TavakoliPezeshk_2005_AB.NAME, TavakoliPezeshk_2005.CC),
+	
 	// - not specified
 	/** @see ToroEtAl_1997 */
 	TORO_97_MB(ToroEtAl_1997_Mb.class, ToroEtAl_1997_Mb.NAME, ToroEtAl_1997.CC);
-	
-	// Other
+
+	// Other TODO clean?
 	// GK_2013(GraizerKalkan_2013.class);
 
 	private final Class<? extends GroundMotionModel> delegate;
@@ -185,8 +256,7 @@ public enum GMM {
 		this.name = name;
 		imts = cc.imtSet();
 		cache = CacheBuilder.newBuilder().build(new CacheLoader<IMT, GroundMotionModel>() {
-			@Override
-			public GroundMotionModel load(IMT imt) throws Exception {
+			@Override public GroundMotionModel load(IMT imt) throws Exception {
 				return createInstance(imt);
 			}
 		});
@@ -197,7 +267,7 @@ public enum GMM {
 		GroundMotionModel gmm = con.newInstance(imt);
 		return gmm;
 	}
-		
+
 	/**
 	 * Retreives an instance of a {@code GroundMotionModel}, either by creating
 	 * a new one, or fetching from a cache.
@@ -208,12 +278,11 @@ public enum GMM {
 	public GroundMotionModel instance(IMT imt) throws ExecutionException {
 		return cache.get(imt);
 	}
-	
-	@Override
-	public String toString() {
+
+	@Override public String toString() {
 		return name;
 	}
-	
+
 	/**
 	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
 	 * supported by this {@code GMM}.
