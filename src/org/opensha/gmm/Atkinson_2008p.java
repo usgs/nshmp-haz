@@ -42,7 +42,7 @@ public final class Atkinson_2008p implements GroundMotionModel {
 	// only includes periods and a-to-bc conversion factors
 	static final CoefficientContainer CC = new CoefficientContainer("AB08P.csv", Coeffs.class);
 
-	private final GMM_Table table;
+	private final GmmTable table;
 	
 	// implementation constants
 	private static final double SIGMA = 0.3 * BASE_10_TO_E;
@@ -55,7 +55,7 @@ public final class Atkinson_2008p implements GroundMotionModel {
 
 	Atkinson_2008p(IMT imt) {
 		coeffs = (Coeffs) CC.get(imt);
-		table = GMM_Tables.getAtkinson08(imt);
+		table = GmmTables.getAtkinson08(imt);
 	}
 
 	@Override

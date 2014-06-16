@@ -36,10 +36,10 @@ import com.google.common.io.Resources;
  * Utility class to load and fetch ground motion model lookup tables.
  * @author Peter Powers
  */
-final class GMM_Tables {
+final class GmmTables {
 	// @formatter:off
 	
-	private static final Logger log = Logging.create(GMM_Table.class);
+	private static final Logger log = Logging.create(GmmTable.class);
 	private static final String LF = LINE_SEPARATOR.value();
 
 	// Implementation notes:
@@ -78,11 +78,11 @@ final class GMM_Tables {
 	
 	private static final double[] frankelMagKeys;
 	
-	private static final Map<IMT, GMM_Table> frankelHR;
-	private static final Map<IMT, GMM_Table> frankelSR;
-	private static final Map<IMT, GMM_Table> atkinson06;
-	private static final Map<IMT, GMM_Table> atkinson08;
-	private static final Map<IMT, GMM_Table> pezeshk11;
+	private static final Map<IMT, GmmTable> frankelHR;
+	private static final Map<IMT, GmmTable> frankelSR;
+	private static final Map<IMT, GmmTable> atkinson06;
+	private static final Map<IMT, GmmTable> atkinson08;
+	private static final Map<IMT, GmmTable> pezeshk11;
 	
 	static {
 		frankRangeM = Range.closed(4.4, 8.2);
@@ -104,13 +104,13 @@ final class GMM_Tables {
 		pezeshk11 = loadAtkinson(pezeshk11src);
 	}
 	
-	private static Map<IMT, GMM_Table> loadFrankel(String[] files) {
-		Map<IMT, GMM_Table> map = Maps.newEnumMap(IMT.class);
+	private static Map<IMT, GmmTable> loadFrankel(String[] files) {
+		Map<IMT, GmmTable> map = Maps.newEnumMap(IMT.class);
 		for (String file : files) {
 			
 			try {
 				IMT imt = frankelFilenameToIMT(file);
-				URL url = Resources.getResource(GMM_Tables.class, T_DIR + file);
+				URL url = Resources.getResource(GmmTables.class, T_DIR + file);
 				NavigableMap<Double, NavigableMap<Double, Double>> rMap =
 						Resources.readLines(url, Charsets.US_ASCII, new FrankelParser());
 				map.put(imt, new FrankelTable(rMap));
@@ -121,9 +121,9 @@ final class GMM_Tables {
 		return map;
 	}
 	
-	private static Map<IMT, GMM_Table> loadAtkinson(String file) {
-		Map<IMT, GMM_Table> map = Maps.newEnumMap(IMT.class);
-		URL url = Resources.getResource(GMM_Tables.class, T_DIR + file);
+	private static Map<IMT, GmmTable> loadAtkinson(String file) {
+		Map<IMT, GmmTable> map = Maps.newEnumMap(IMT.class);
+		URL url = Resources.getResource(GmmTables.class, T_DIR + file);
 		try {
 			Map<IMT, NavigableMap<Double, NavigableMap<Double, Double>>> imtMap =
 				Resources.readLines(url, Charsets.US_ASCII, new AtkinsonParser());
@@ -141,7 +141,7 @@ final class GMM_Tables {
 	 * Return the ground motion table for the supplied {@code IMT}.
 	 * @param imt to fetch table for
 	 */
-	static GMM_Table getFrankel96(IMT imt, SiteClass siteClass) {
+	static GmmTable getFrankel96(IMT imt, SiteClass siteClass) {
 		return siteClass == SiteClass.SOFT_ROCK ?
 			frankelSR.get(imt) : frankelHR.get(imt);
 	}
@@ -150,7 +150,7 @@ final class GMM_Tables {
 	 * Return the ground motion table for the supplied {@code IMT}.
 	 * @param imt to fetch table for
 	 */
-	static GMM_Table getAtkinson06(IMT imt) {
+	static GmmTable getAtkinson06(IMT imt) {
 		return atkinson06.get(imt);
 	}
 	
@@ -158,7 +158,7 @@ final class GMM_Tables {
 	 * Return the ground motion table for the supplied {@code IMT}.
 	 * @param imt to fetch table for
 	 */
-	static GMM_Table getAtkinson08(IMT imt) {
+	static GmmTable getAtkinson08(IMT imt) {
 		return atkinson08.get(imt);
 	}
 
@@ -166,12 +166,12 @@ final class GMM_Tables {
 	 * Return the ground motion table for the supplied {@code IMT}.
 	 * @param imt to fetch table for
 	 */
-	static GMM_Table getPezeshk11(IMT imt) {
+	static GmmTable getPezeshk11(IMT imt) {
 		return pezeshk11.get(imt);
 	}
 	
 	/* Base implementation */
-	static abstract class AbstractGMM_Table implements GMM_Table {
+	static abstract class AbstractGMM_Table implements GmmTable {
 		NavigableMap<Double, NavigableMap<Double, Double>> rmMap;
 		AbstractGMM_Table(NavigableMap<Double, NavigableMap<Double, Double>> rmMap) {
 			this.rmMap = rmMap;
@@ -192,7 +192,7 @@ final class GMM_Tables {
 		public double get(double r, double m) {
 			r = clamp(frankRangeR, Math.log10(r));
 			m = clamp(frankRangeM, m);
-			return GMM_Tables.get(r, m, rmMap);
+			return GmmTables.get(r, m, rmMap);
 		}
 
 	}
@@ -206,7 +206,7 @@ final class GMM_Tables {
 		public double get(double r, double m) {
 			r = clamp(atkinRangeR, Math.log10(r));
 			m = clamp(atkinRangeM, m);
-			return GMM_Tables.get(r, m, rmMap);
+			return GmmTables.get(r, m, rmMap);
 		}
 	}
 	
@@ -219,7 +219,7 @@ final class GMM_Tables {
 		public double get(double r, double m) {
 			r = clamp(pezRangeR, Math.log10(r));
 			m = clamp(pezRangeM, m);
-			return GMM_Tables.get(r, m, rmMap);
+			return GmmTables.get(r, m, rmMap);
 		}
 	}
 
@@ -430,7 +430,7 @@ final class GMM_Tables {
 
 	
 	// TODO clean
-//	static class FrankelTable implements GMM_Table {
+//	static class FrankelTable implements GmmTable {
 //
 //		static final int M_IDX = 19;
 //		static final int D_IDX = 20;
@@ -438,7 +438,7 @@ final class GMM_Tables {
 //		List<List<Double>> gmTable;
 //
 //		FrankelTable(String file) throws IOException {
-//			URL url = Resources.getResource(GMM_Tables.class, T_DIR + file);
+//			URL url = Resources.getResource(GmmTables.class, T_DIR + file);
 //			gmTable = Resources.readLines(url, Charsets.US_ASCII, new TableParser());
 //		}
 //		

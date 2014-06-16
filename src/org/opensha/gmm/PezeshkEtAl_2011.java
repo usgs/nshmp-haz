@@ -38,7 +38,7 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 	// period a-to-bc conversion factors and sigma coefficients
 	static final CoefficientContainer CC = new CoefficientContainer("P11.csv", Coeffs.class);
 
-	private final GMM_Table table;
+	private final GmmTable table;
 	
 	// author constants
 	private static final double SIGMA_FAC = -6.95e-3;
@@ -54,7 +54,7 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 
 	PezeshkEtAl_2011(IMT imt) {
 		coeffs = (Coeffs) CC.get(imt);
-		table = GMM_Tables.getPezeshk11(imt);
+		table = GmmTables.getPezeshk11(imt);
 	}
 
 	@Override

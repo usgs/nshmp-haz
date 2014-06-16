@@ -26,7 +26,7 @@ public class GMM_TableTests {
 	 */
 	@Test
 	public void testGroundMotionTable() {
-		GMM_Table gmt = GMM_Tables.getFrankel96(IMT.PGA, SiteClass.SOFT_ROCK);
+		GmmTable gmt = GmmTables.getFrankel96(IMT.PGA, SiteClass.SOFT_ROCK);
 		double testVal;
 
 		// extrema

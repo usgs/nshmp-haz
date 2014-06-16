@@ -6,7 +6,7 @@ package org.opensha.gmm;
  * 
  * @author Peter Powers
  */
-interface GMM_Table {
+interface GmmTable {
 
 	/**
 	 * Return an interpolated ground motion value from the table. Values outside

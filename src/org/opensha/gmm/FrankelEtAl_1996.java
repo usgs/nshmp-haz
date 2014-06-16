@@ -39,8 +39,8 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 	// only holds period dependent sigma values
 	static final CoefficientContainer CC = new CoefficientContainer("Frankel96.csv", Coeffs.class);
 	
-	private final GMM_Table bcTable;
-	private final GMM_Table aTable;
+	private final GmmTable bcTable;
+	private final GmmTable aTable;
 	
 	static class Coeffs extends Coefficients {
 		double bsigma;
@@ -50,8 +50,8 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
 	FrankelEtAl_1996(IMT imt) {
 		coeffs = (Coeffs) CC.get(imt);
-		bcTable = GMM_Tables.getFrankel96(imt, SOFT_ROCK);
-		aTable = GMM_Tables.getFrankel96(imt, HARD_ROCK);
+		bcTable = GmmTables.getFrankel96(imt, SOFT_ROCK);
+		aTable = GmmTables.getFrankel96(imt, HARD_ROCK);
 	}
 
 	@Override
