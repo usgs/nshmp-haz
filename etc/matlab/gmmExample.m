@@ -1,10 +1,9 @@
 %% nshmp-sha Ground Motion Model explanatory script
 
 % =========================================================================
-% This script describes how to access the ground motion models (GMMs)
-% implemented in the nshmp-sha hazard codes. The models are written in
-% Java and require little more than to be identified to Matlab to function
-% properly.
+% This script describes how to access the ground motion models implemented
+% in the nshmp-sha hazard codes. The models are written in Java and require
+% little more than to be identified to Matlab to function properly.
 % =========================================================================
 
 % Set up:
@@ -13,7 +12,8 @@
 % instructions below that the project has also been compiled such
 % that a 'classes' directory exsists.
 
-% (Required) Have Matlab R2012B or higher
+% (Required) Have Matlab R2013B or higher; nshmp-sha codes target Java 7,
+% prior versions of Matlab use Java 6.
 
 % (Required) Due to the numerous outdated Java libraries included with
 % Matlab, one first needs save a 'javaclasspath.txt' file to the directory
@@ -58,16 +58,16 @@ vsInf =  true; % boolean
 z2p5  =   NaN; % in km; NaN triggers default basin depth model
 z1p0  =   NaN; % in km; NaN triggers default basin depth model
 
-source = GMM_Input.create(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, ...
+source = GmmInput.create(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, ...
 	rake, vs30, vsInf, z2p5, z1p0);
 
 % Set ground motion model. Ground motion model identifiers may by found in
 % the javadocs accompanying the java source.
-gmm = GMM.ASK_14;
+gmm = Gmm.ASK_14;
 
 % Set an intensity measure type. Ground motion modelIntensity measure
 % identifiers may by found in the javadocs accompanying the java source.
-imt = IMT.PGA;
+imt = Imt.PGA;
 
 % Do a calculation. The MatUtil.calc(gmm, imt, source) method returns an
 % array of [ln(median ground motion), sigma]
@@ -92,19 +92,19 @@ spectrumResult = struct(MatUtil.spectrum(gmm, source))
 %      for the time being, however nested packages are separated with dots.
 %      Now that Matlab knows where to look for classes, calls to the
 %      classes themselves must include the full package declaration (e.g.
-%      org.opensha.gmm.GMM_Input). To cut down on verbosity, one may
+%      org.opensha.gmm.GmmInput). To cut down on verbosity, one may
 %      'import' a specific class for use in a script:
 %
-%         import org.opensha.gmm.GMM_Input
+%         import org.opensha.gmm.GmmInput
 %
 %      or import all the classes in a package using a wildcard:
 %
 %         import org.opensha.gmm.*
 %
-%      Note that if GMM_Input is not imported above, then the subsequent
+%      Note that if GmmInput is not imported above, then the subsequent
 %      source declaration would have to modified to:
 %
-%         source = org.opensha.gmm.GMM_Input.create( ...
+%         source = org.opensha.gmm.GmmInput.create( ...
 % 
 % 
 
