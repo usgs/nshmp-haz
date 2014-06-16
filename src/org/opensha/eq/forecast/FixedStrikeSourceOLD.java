@@ -48,6 +48,7 @@ import org.opensha.mfd.IncrementalMfd;
  * @author Peter Powers
  * @version $Id:$
  */
+@Deprecated
 class FixedStrikeSourceOLD implements Source {
 	
 	private static final MagLengthRelationship WC94 = new WC1994_MagLengthRelationship();

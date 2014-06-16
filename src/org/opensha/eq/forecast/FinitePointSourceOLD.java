@@ -53,6 +53,7 @@ import org.opensha.mfd.IncrementalMfd;
  * 
  * @author Peter Powers
  */
+@Deprecated
 class FinitePointSourceOLD implements Source {
 	
 	// TODO a similar implementation in which the centroids of the finite faults
