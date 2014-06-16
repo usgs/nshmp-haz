@@ -3,7 +3,7 @@ package org.opensha.mfd;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * <p>Title: GutenbergRichterMFD.java </p>
+ * <p>Title: GutenbergRichterMfd.java </p>
  * <p>Description: This is a truncated incremental Gutenberg-Richter distribution.
  * Note that magLower and magUpper must exactly equal one of the descrete x-axis
  * values.</p>
@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Nitin Gupta
  * @author Vipin Gupta
  */
-public class GutenbergRichterMFD extends IncrementalMFD {
+public class GutenbergRichterMfd extends IncrementalMfd {
 
   public static String NAME = new String("Gutenberg Richter Dist");
 
@@ -35,7 +35,7 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    * using the parameters we call the parent class constructors to initialise the parent class variables
    */
 
-  public GutenbergRichterMFD(double min, int num, double delta) {
+  public GutenbergRichterMfd(double min, int num, double delta) {
     super(min, num, delta, false);
     this.magLower = min;
   }
@@ -48,7 +48,7 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    * using the min, max and num we calculate the delta
    */
 
-//  public GutenbergRichterMFD(double min, double max, int num) {
+//  public GutenbergRichterMfd(double min, double max, int num) {
 //    super(min, max, num);
 //    
 //  }
@@ -61,7 +61,7 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    * using the min, max and num we calculate the delta
    */
 
-//  public GutenbergRichterMFD(double bValue, double totCumRate,
+//  public GutenbergRichterMfd(double bValue, double totCumRate,
 //                                     double min, double max, int num) {
 //    super(min, max, num);
 //    this.setAllButTotMoRate(min, max, totCumRate, bValue);
@@ -77,7 +77,7 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    * @param bValue : b value for this distribution
    */
 
-//  public GutenbergRichterMFD(double min, int num, double delta,
+//  public GutenbergRichterMfd(double min, int num, double delta,
 //                                     double totMoRate, double bValue) {
 //    super(min, num, delta);
 //    // assumes magLower = minX and magUpper = maxX
@@ -95,7 +95,7 @@ public class GutenbergRichterMFD extends IncrementalMFD {
    * @param bValue : b value for this distribution
    */
 
-//  public GutenbergRichterMFD(double min, int num, double delta,
+//  public GutenbergRichterMfd(double min, int num, double delta,
 //                                     double magLower, double magUpper,
 //                                     double totMoRate, double bValue) {
 //    super(min, num, delta);
@@ -297,7 +297,7 @@ public class GutenbergRichterMFD extends IncrementalMFD {
 
   
 //	public static void main(String[] args) {
-//		  GutenbergRichterMFD grTest = new GutenbergRichterMFD(1d, 1d,0.0,10d,100);
+//		  GutenbergRichterMfd grTest = new GutenbergRichterMfd(1d, 1d,0.0,10d,100);
 //		  System.out.println(grTest);
 //		  System.out.println("bVal="+grTest.compute_bValue(Double.NaN,Double.NaN));
 //		  

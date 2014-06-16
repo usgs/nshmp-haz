@@ -7,7 +7,7 @@ import org.opensha.eq.Magnitudes;
 
 
 /**
- * Base implementation for magnitude-frequency distributions (MFDs) that give the rate of
+ * Base implementation for magnitude-frequency distributions (Mfds) that give the rate of
  * one or more earthquakes with differing magnitudes per year.
  * 
  * 
@@ -15,9 +15,9 @@ import org.opensha.eq.Magnitudes;
  * @author Peter Powers
  */
 
-public class IncrementalMFD extends EvenlyDiscretizedFunc {
+public class IncrementalMfd extends EvenlyDiscretizedFunc {
 
-	// TODO MFDs should be immutable
+	// TODO Mfds should be immutable
 
 	 protected String defaultInfo;
     protected String defaultName;
@@ -30,7 +30,7 @@ public class IncrementalMFD extends EvenlyDiscretizedFunc {
      * @param delta
      * using the parameters we call the parent class constructors to initialise the parent class variables
      */
-    public IncrementalMFD (double min,int num,double delta, boolean floats) {
+    public IncrementalMfd (double min,int num,double delta, boolean floats) {
      super(min,num,delta);
      this.floats = floats;
      setTolerance(delta/1000000);
@@ -43,7 +43,7 @@ public class IncrementalMFD extends EvenlyDiscretizedFunc {
      * @param num
      * using the min, max and num we calculate the delta
      */
-    public IncrementalMFD(double min,double max,int num, boolean floats) {
+    public IncrementalMfd(double min,double max,int num, boolean floats) {
       super(min,max,num);
       this.floats = floats;
       setTolerance(delta/1000000);
@@ -361,9 +361,9 @@ public class IncrementalMFD extends EvenlyDiscretizedFunc {
 
 
 //    /** Returns a copy of this and all points in this DiscretizedFunction */
-//   public IncrementalMFD deepClone() {
+//   public IncrementalMfd deepClone() {
 //
-//       IncrementalMFD f = new IncrementalMFD(
+//       IncrementalMfd f = new IncrementalMfd(
 //           minX, num, delta
 //       );
 //

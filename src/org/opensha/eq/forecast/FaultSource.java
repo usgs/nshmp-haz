@@ -27,7 +27,7 @@ import org.opensha.eq.fault.surface.GriddedSurfaceWithSubsets;
 import org.opensha.geo.GeoTools;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
-import org.opensha.mfd.IncrementalMFD;
+import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -56,20 +56,20 @@ public class FaultSource implements Source {
 	final double dip;
 	final double width;
 	final double rake;
-	final List<IncrementalMFD> mfds;
+	final List<IncrementalMfd> mfds;
 	final MagScalingRelationship msr;
 	final double aspectRatio; // for floating ruptures
 	final double offset; // of floating ruptures
 	final FloatStyle floatStyle;
 	final GriddedSurface surface;
 	
-	private final List<List<Rupture>> ruptureLists; // 1:1 with MFDs
+	private final List<List<Rupture>> ruptureLists; // 1:1 with Mfds
 	private final List<Integer> rupCount; // cumulative index list for iteration
 	private int size = 0;
 	
 	// package privacy for subduction subclass
 	FaultSource(String name, LocationList trace, double dip, double width,
-		GriddedSurface surface, double rake, List<IncrementalMFD> mfds,
+		GriddedSurface surface, double rake, List<IncrementalMfd> mfds,
 		MagScalingRelationship msr, double aspectRatio, double offset, FloatStyle floatStyle) {
 		
 		this.name = name;
@@ -91,7 +91,7 @@ public class FaultSource implements Source {
 	}
 	
 	private void initRuptures() {
-		for (IncrementalMFD mfd : mfds) {
+		for (IncrementalMfd mfd : mfds) {
 			List<Rupture> rupList = createRuptureList(mfd);
 			ruptureLists.add(rupList);
 			size += rupList.size();
@@ -169,7 +169,7 @@ public class FaultSource implements Source {
 		// @formatter:on
 	}
 
-	private List<Rupture> createRuptureList(IncrementalMFD mfd) {
+	private List<Rupture> createRuptureList(IncrementalMfd mfd) {
 		List<Rupture> ruptures = Lists.newArrayList();
 		
 		// @formatter:off
@@ -251,8 +251,8 @@ public class FaultSource implements Source {
 		Double width;
 		Double depth;
 		Double rake;
-		ImmutableList.Builder<IncrementalMFD> mfdsBuilder = ImmutableList.builder();
-		List<IncrementalMFD> mfds;
+		ImmutableList.Builder<IncrementalMfd> mfdsBuilder = ImmutableList.builder();
+		List<IncrementalMfd> mfds;
 		MagScalingRelationship msr;
 		
 		// have defaults
@@ -293,12 +293,12 @@ public class FaultSource implements Source {
 		// NPE checks in the two methods below will be redone by
 		// ImmutableList.Builder which disallows nulls
 		
-		Builder mfd(IncrementalMFD mfd) {
+		Builder mfd(IncrementalMfd mfd) {
 			this.mfdsBuilder.add(checkNotNull(mfd, "MFD is null"));
 			return this;
 		}
 		
-		Builder mfds(List<IncrementalMFD> mfds) {
+		Builder mfds(List<IncrementalMfd> mfds) {
 			checkNotNull(mfds, "MFD list is null");
 			checkArgument(mfds.size() > 0, "MFD list is empty");
 			this.mfdsBuilder.addAll(mfds);
@@ -333,7 +333,7 @@ public class FaultSource implements Source {
 			checkState(width != null, "%s width not set", mssgID);
 			checkState(depth != null, "%s depth not set", mssgID);
 			checkState(rake != null, "%s rake not set", mssgID);
-			checkState(mfds.size() > 0, "%s has no MFDs", mssgID);
+			checkState(mfds.size() > 0, "%s has no Mfds", mssgID);
 			checkState(msr != null, "%s mag-scaling relation not set", mssgID);
 			built = true;
 		}

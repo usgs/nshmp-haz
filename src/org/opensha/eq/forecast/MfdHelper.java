@@ -6,15 +6,15 @@ import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readString;
 import static org.opensha.util.Parsing.toDoubleArray;
 
-import org.opensha.mfd.MFD_Type;
+import org.opensha.mfd.MfdType;
 import org.xml.sax.Attributes;
 
 /*
  * MFD data handler class. Stores default data and creates copies with
  * overridden (non-default) fields. This class ensures that all required
- * attributes for default MFDs are present.
+ * attributes for default Mfds are present.
  */
-class MFD_Helper {
+class MfdHelper {
 
 	// mfd data instances
 	private SingleData singleDefault;
@@ -23,15 +23,15 @@ class MFD_Helper {
 
 	// private TaperedData taperedDefault;
 
-	static MFD_Helper create() {
-		return new MFD_Helper();
+	static MfdHelper create() {
+		return new MfdHelper();
 	}
 
-	private MFD_Helper() {}
+	private MfdHelper() {}
 
 	/* Add a new default MFD */
 	void addDefault(Attributes atts) {
-		MFD_Type type = MFD_Type.valueOf(atts.getValue("type"));
+		MfdType type = MfdType.valueOf(atts.getValue("type"));
 		switch (type) {
 			case GR:
 				grDefault = new GR_Data(atts);

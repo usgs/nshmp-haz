@@ -16,7 +16,7 @@ import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
-import org.opensha.mfd.IncrementalMFD;
+import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
@@ -24,14 +24,14 @@ import com.google.common.primitives.Ints;
 
 /**
  * A wrapper of evenly spaced (point) {@code Source}s with varying magnitudes
- * derived from a {@link IncrementalMFD} at each grid node.
+ * derived from a {@link IncrementalMfd} at each grid node.
  * 
  * @author Peter Powers
  */
 public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	private final List<Location> locs;
-	private final List<IncrementalMFD> mfds;
+	private final List<IncrementalMfd> mfds;
 	private final Map<FocalMech, Double> mechMap;
 	private final NavigableMap<Double, Map<Double, Double>> magDepthMap;
 	private final double strike;
@@ -43,7 +43,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	// only available to parsers
 	private GridSourceSet(String name, Double weight, MagScalingType msrType, GmmSet gmmSet,
-		List<Location> locs, List<IncrementalMFD> mfds, Map<FocalMech, Double> mechMap,
+		List<Location> locs, List<IncrementalMfd> mfds, Map<FocalMech, Double> mechMap,
 		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike) {
 
 		super(name, weight, msrType, gmmSet);
@@ -62,7 +62,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		mlr = (MagLengthRelationship) msr;
 	}
 
-	IncrementalMFD mfdForLoc(Location loc) {
+	IncrementalMfd mfdForLoc(Location loc) {
 		return mfds.get(locs.indexOf(loc));
 	}
 	
@@ -181,7 +181,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	// TODO create master MFD for index arrays; actually don't need an mfd just
 	// the
 	// array of magnitudes to pull the correct depth distributions below
-	private IncrementalMFD masterMFD = null;
+	private IncrementalMfd masterMFD = null;
 
 	private void initMagDepthData() {
 		List<Integer> indices = Lists.newArrayList();
@@ -230,7 +230,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private Map<FocalMech, Double> mechMap;
 
 		private List<Location> locs = Lists.newArrayList();
-		private List<IncrementalMFD> mfds = Lists.newArrayList();
+		private List<IncrementalMfd> mfds = Lists.newArrayList();
 
 		Builder name(String name) {
 			this.name = validateName(name);
@@ -270,7 +270,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		Builder location(Location loc, IncrementalMFD mfd) {
+		Builder location(Location loc, IncrementalMfd mfd) {
 			this.mfds.add(checkNotNull(mfd, "MFD is null"));
 			this.locs.add(checkNotNull(loc, "Location is null"));
 			return this;
@@ -283,7 +283,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(weight != null, "%s weight not set", ID);
 			checkState(strike != null, "%s strike not set", ID);
 			checkState(!locs.isEmpty(), "%s has no locations", ID);
-			checkState(!mfds.isEmpty(), "%s has no MFDs", ID);
+			checkState(!mfds.isEmpty(), "%s has no Mfds", ID);
 			checkState(magScaling != null, "%s has no mag-scaling relation set", ID);
 			checkState(magDepthMap != null, "%s mag-depth-weight map not set", ID);
 			checkState(mechMap != null, "%s focal mech map not set", ID);

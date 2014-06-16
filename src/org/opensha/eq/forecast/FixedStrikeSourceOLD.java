@@ -26,7 +26,7 @@ import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.geo.Locations;
-import org.opensha.mfd.IncrementalMFD;
+import org.opensha.mfd.IncrementalMfd;
 
 /**
  * This is a custom Fixed-Strike Source (Point-Source variant) representation
@@ -54,7 +54,7 @@ class FixedStrikeSourceOLD implements Source {
 
 	private final GridSourceSet parent;
 	private final Location loc;
-	private final IncrementalMFD mfd;
+	private final IncrementalMfd mfd;
 	private final Map<FocalMech, Double> mechWtMap;
 
 	private int mechCount; // mechs with weight 1-3;
@@ -72,7 +72,7 @@ class FixedStrikeSourceOLD implements Source {
 	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
-	FixedStrikeSourceOLD(GridSourceSet parent, Location loc, IncrementalMFD mfd,
+	FixedStrikeSourceOLD(GridSourceSet parent, Location loc, IncrementalMfd mfd,
 		Map<FocalMech, Double> mechWtMap) {
 		this.parent = parent;
 		this.loc = loc;
@@ -373,7 +373,7 @@ class FixedStrikeSourceOLD implements Source {
 //	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 //	 * @param strike of the source
 //	 */
-//	public FixedStrikeSourceOLD(Location loc, IncrementalMFD mfd,
+//	public FixedStrikeSourceOLD(Location loc, IncrementalMfd mfd,
 //		MagLengthRelationship mlr, double duration, double[] depths,
 //		Map<FocalMech, Double> mechWtMap, double strike) {
 //

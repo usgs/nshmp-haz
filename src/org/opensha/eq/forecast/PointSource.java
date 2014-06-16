@@ -18,7 +18,7 @@ import org.opensha.eq.fault.surface.PtSrcDistCorr;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
-import org.opensha.mfd.IncrementalMFD;
+import org.opensha.mfd.IncrementalMfd;
 
 /**
  * Point-source earthquake {@code Source} supplies the simplest possible
@@ -49,7 +49,7 @@ class PointSource implements Source {
 
 	final GridSourceSet parent;
 	final Location loc;
-	final IncrementalMFD mfd;
+	final IncrementalMfd mfd;
 	final Map<FocalMech, Double> mechWtMap;
 
 	int rupCount;
@@ -64,7 +64,7 @@ class PointSource implements Source {
 	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
-	PointSource(GridSourceSet parent, Location loc, IncrementalMFD mfd,
+	PointSource(GridSourceSet parent, Location loc, IncrementalMfd mfd,
 		Map<FocalMech, Double> mechWtMap) {
 		this.parent = parent;
 		this.loc = loc;

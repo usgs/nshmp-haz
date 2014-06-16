@@ -21,7 +21,7 @@ import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.surface.PtSrcDistCorr;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
-import org.opensha.mfd.IncrementalMFD;
+import org.opensha.mfd.IncrementalMfd;
 
 /**
  * Point-source earthquake implementation in which all magnitudes are
@@ -56,7 +56,7 @@ class PointSourceFinite extends PointSource {
 	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
-	PointSourceFinite(GridSourceSet parent, Location loc, IncrementalMFD mfd,
+	PointSourceFinite(GridSourceSet parent, Location loc, IncrementalMfd mfd,
 		Map<FocalMech, Double> mechWtMap) {
 		super(parent, loc, mfd, mechWtMap);
 		init();

@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.geo.Location;
-import org.opensha.mfd.IncrementalMFD;
+import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.collect.Lists;
 
@@ -129,7 +129,7 @@ public class ClusterSource implements Source {
 			sb.append(LINE_SEPARATOR.value());
 			List<Double> mags = Lists.newArrayList();
 			List<Double> wts = Lists.newArrayList();
-			for (IncrementalMFD mfd : fs.mfds) {
+			for (IncrementalMfd mfd : fs.mfds) {
 				mags.add(mfd.getX(0));
 				wts.add(mfd.getY(0) * rate);
 			}

@@ -29,8 +29,8 @@ import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.geo.LocationVector;
 import org.opensha.geo.Locations;
-import org.opensha.mfd.IncrementalMFD;
-import org.opensha.mfd.MFDs;
+import org.opensha.mfd.IncrementalMfd;
+import org.opensha.mfd.Mfds;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.math.DoubleMath;
@@ -66,7 +66,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
 	PointSourceFixedStrike(GridSourceSet parent, Location loc,
-		IncrementalMFD mfd, Map<FocalMech, Double> mechWtMap, double strike) {
+		IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap, double strike) {
 		super(parent, loc, mfd, mechWtMap);
 		this.strike = strike;
 	}
@@ -253,7 +253,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 	}
 	
 	public static void main(String[] args) {
-		IncrementalMFD mfd = MFDs.newGutenbergRichterMFD(5.0, 0.5, 7, 1.0, 1.0);
+		IncrementalMfd mfd = Mfds.newGutenbergRichterMFD(5.0, 0.5, 7, 1.0, 1.0);
 		Location loc = Location.create(34.0, -118.0, 5.0);
 		Map<FocalMech, Double> mechMap = ImmutableMap.of(STRIKE_SLIP, 1.0, NORMAL, 0.0, REVERSE, 0.0);
 		

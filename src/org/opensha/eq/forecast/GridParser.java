@@ -27,9 +27,9 @@ import javax.xml.parsers.SAXParser;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
-import org.opensha.mfd.IncrementalMFD;
-import org.opensha.mfd.MFD_Type;
-import org.opensha.mfd.MFDs;
+import org.opensha.mfd.IncrementalMfd;
+import org.opensha.mfd.MfdType;
+import org.opensha.mfd.Mfds;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -53,7 +53,7 @@ class GridParser extends DefaultHandler {
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
-	private MFD_Helper mfdHelper;
+	private MfdHelper mfdHelper;
 
 	private GmmSet gmmSet;
 
@@ -65,7 +65,7 @@ class GridParser extends DefaultHandler {
 	private StringBuilder locBuilder = null;
 
 	// Per-node MFD
-	IncrementalMFD nodeMFD = null;
+	IncrementalMfd nodeMFD = null;
 
 	private GridParser(SAXParser sax) {
 		this.sax = checkNotNull(sax);
@@ -98,7 +98,7 @@ class GridParser extends DefaultHandler {
 			case GRID_SOURCE_SET:
 				String name = readString(NAME, atts);
 				double weight = readDouble(WEIGHT, atts); // need this to scale
-															// MFDs
+															// Mfds
 				sourceSetBuilder = new GridSourceSet.Builder();
 				sourceSetBuilder.name(name);
 				sourceSetBuilder.weight(weight);
@@ -111,7 +111,7 @@ class GridParser extends DefaultHandler {
 				break;
 
 			case MAG_FREQ_DIST_REF:
-				mfdHelper = MFD_Helper.create();
+				mfdHelper = MfdHelper.create();
 				parsingDefaultMFDs = true;
 				break;
 
@@ -185,28 +185,28 @@ class GridParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
-	private IncrementalMFD processNode(Attributes atts, double setWeight) {
-		MFD_Type type = readEnum(TYPE, atts, MFD_Type.class);
+	private IncrementalMfd processNode(Attributes atts, double setWeight) {
+		MfdType type = readEnum(TYPE, atts, MfdType.class);
 
 		switch (type) {
 			case GR:
-				MFD_Helper.GR_Data grData = mfdHelper.getGR(atts);
-				int nMag = MFDs.magCount(grData.mMin, grData.mMax, grData.dMag);
-				IncrementalMFD mfdGR = MFDs.newGutenbergRichterMFD(grData.mMin, grData.dMag, nMag,
+				MfdHelper.GR_Data grData = mfdHelper.getGR(atts);
+				int nMag = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
+				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag, nMag,
 					grData.b, 1.0);
-				mfdGR.scaleToIncrRate(grData.mMin, MFDs.incrRate(grData.a, grData.b, grData.mMin));
+				mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin));
 				mfdGR.scale(setWeight);
 				return mfdGR;
 
 			case INCR:
-				MFD_Helper.IncrData incrData = mfdHelper.getIncremental(atts);
-				IncrementalMFD mfdIncr = MFDs.newIncrementalMFD(incrData.mags, incrData.rates);
+				MfdHelper.IncrData incrData = mfdHelper.getIncremental(atts);
+				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags, incrData.rates);
 				mfdIncr.scale(setWeight);
 				return mfdIncr;
 
 			case SINGLE:
-				MFD_Helper.SingleData singleDat = mfdHelper.getSingle(atts);
-				return MFDs.newSingleMFD(singleDat.m, setWeight * singleDat.a, singleDat.floats);
+				MfdHelper.SingleData singleDat = mfdHelper.getSingle(atts);
+				return Mfds.newSingleMFD(singleDat.m, setWeight * singleDat.a, singleDat.floats);
 
 			default:
 				throw new IllegalStateException(type + " not yet implemented");

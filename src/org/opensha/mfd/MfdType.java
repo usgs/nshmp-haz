@@ -5,7 +5,7 @@ package org.opensha.mfd;
  *
  * @author Peter Powers
  */
-public enum MFD_Type {
+public enum MfdType {
 
 	SINGLE, GR, GR_TAPER, INCR;
 }

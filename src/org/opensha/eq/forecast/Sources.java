@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.geo.Location;
-import org.opensha.mfd.IncrementalMFD;
+import org.opensha.mfd.IncrementalMfd;
 
 /**
  * Source factory.
@@ -31,14 +31,14 @@ public final class Sources {
 	 * @return a new point earthquake {@code Source}
 	 */
 	public static Source newPointSource(GridSourceSet parent, Location loc,
-			IncrementalMFD mfd, Map<FocalMech, Double> mechWtMap) {
+			IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap) {
 		// TODO other argument checking??
 		return uncheckedPointSource(checkNotNull(parent), checkNotNull(loc),
 			checkNotNull(mfd), checkNotNull(mechWtMap));
 	}
 
 	static Source uncheckedPointSource(GridSourceSet parent, Location loc,
-			IncrementalMFD mfd, Map<FocalMech, Double> mechWtMap) {
+			IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap) {
 		return new FinitePointSourceOLD(parent, loc, mfd, mechWtMap);
 	}
 

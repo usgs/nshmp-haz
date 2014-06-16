@@ -18,7 +18,7 @@ import java.awt.geom.Point2D;
  * @author Ned Field (Nov, 21, 2002)
  * @author Peter Powers
  */
-public class GaussianMFD extends IncrementalMFD {
+public class GaussianMfd extends IncrementalMfd {
 
   public  static String NAME = "Gaussian Dist";
   private double mean= Double.NaN;
@@ -48,7 +48,7 @@ public class GaussianMFD extends IncrementalMFD {
    * @param num - number of points in distribution
    * @param delta - discretization interval
    */
-//  public GaussianMFD(double min,int num,double delta) {
+//  public GaussianMfd(double min,int num,double delta) {
 //    super(min,num,delta);
 //
 //  }
@@ -59,7 +59,7 @@ public class GaussianMFD extends IncrementalMFD {
    * @param max - maximum mag of distribution
    * @param num - number of points in distribution
    */
-  public GaussianMFD(double min,double max,int num) {
+  public GaussianMfd(double min,double max,int num) {
     super(min,max,num, false);
   }
 
@@ -73,7 +73,7 @@ public class GaussianMFD extends IncrementalMFD {
    * @param stdDev - the standard deviation
    * @param totMoRate - the total moment rate
    */
-//  public GaussianMFD(double min,double max,int num,double mean,double stdDev,
+//  public GaussianMfd(double min,double max,int num,double mean,double stdDev,
 //                             double totMoRate) {
 //    super(min,max,num);
 //    this.mean=mean;
@@ -93,7 +93,7 @@ public class GaussianMFD extends IncrementalMFD {
    * @param totMoRate - the total moment rate
    */
 
-//  public GaussianMFD(double min,int num,double delta,double mean,double stdDev,
+//  public GaussianMfd(double min,int num,double delta,double mean,double stdDev,
 //                             double totMoRate) {
 //    super(min,num,delta);
 //    this.mean=mean;
@@ -115,7 +115,7 @@ public class GaussianMFD extends IncrementalMFD {
    * @param truncLevel - in units of stdDev from the mean
    * @param truncType - 0 for none; 1 for upper only; and 2 for upper and lower
    */
-//  public GaussianMFD(double min,int num,double delta,double mean,double stdDev,
+//  public GaussianMfd(double min,int num,double delta,double mean,double stdDev,
 //                             double totMoRate,double truncLevel,int truncType)
 //                              {
 //    super(min,num,delta);
@@ -139,7 +139,7 @@ public class GaussianMFD extends IncrementalMFD {
    * @param truncLevel - in units of stdDev from the mean
    * @param truncType - 0 for none; 1 for upper only; and 2 for upper and lower
    */
-//  public GaussianMFD(double min,double max,int num,double mean,double stdDev,
+//  public GaussianMfd(double min,double max,int num,double mean,double stdDev,
 //                             double totMoRate,double truncLevel,int truncType) {
 //    super(min,max,num);
 //    this.mean=mean;

@@ -14,7 +14,7 @@ import org.opensha.eq.fault.surface.ApproxGriddedSurface;
 import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
-import org.opensha.mfd.IncrementalMFD;
+import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
 
@@ -36,7 +36,7 @@ public class InterfaceSource extends FaultSource {
 	final LocationList lowerTrace;
 
 	private InterfaceSource(String name, LocationList upperTrace, LocationList lowerTrace,
-		double dip, double width, GriddedSurface surface, double rake, List<IncrementalMFD> mfds,
+		double dip, double width, GriddedSurface surface, double rake, List<IncrementalMfd> mfds,
 		MagScalingRelationship msr, double aspectRatio, double offset, FloatStyle floatStyle) {
 
 		super(name, upperTrace, dip, width, surface, rake, mfds, msr, aspectRatio, offset,

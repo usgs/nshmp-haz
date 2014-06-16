@@ -27,9 +27,9 @@ import javax.xml.parsers.SAXParser;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.LocationList;
-import org.opensha.mfd.IncrementalMFD;
-import org.opensha.mfd.MFD_Type;
-import org.opensha.mfd.MFDs;
+import org.opensha.mfd.IncrementalMfd;
+import org.opensha.mfd.MfdType;
+import org.opensha.mfd.Mfds;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -225,11 +225,11 @@ class ClusterParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
-	private IncrementalMFD buildMFD(Attributes atts) {
-		MFD_Type type = readEnum(TYPE, atts, MFD_Type.class);
+	private IncrementalMfd buildMFD(Attributes atts) {
+		MfdType type = readEnum(TYPE, atts, MfdType.class);
 		switch (type) {
 			case SINGLE:
-				IncrementalMFD mfd = MFDs.newSingleMFD(readDouble(M, atts), readDouble(WEIGHT, atts), false);
+				IncrementalMfd mfd = Mfds.newSingleMFD(readDouble(M, atts), readDouble(WEIGHT, atts), false);
 				log.finer("   MFD type: SINGLE");
 				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 				return mfd;

@@ -78,7 +78,7 @@ public class HazardCalcManager {
 	// -- Sources (can have weights; iterable; indexed? could be)
 	// -- Ruptures (can have weights)
 
-	// source MFDs will all be scaled by local, source set, and any other
+	// source Mfds will all be scaled by local, source set, and any other
 	// branching
 	// weights when iterating.
 
@@ -95,7 +95,7 @@ public class HazardCalcManager {
 		// Step 2: build rupture data container
 		// -- callable returns List<GmmInput>
 		// -- floating ruptures
-		// -- multiple mags and MFDs
+		// -- multiple mags and Mfds
 		// -- may want to handle special case of indexed faultSourceSet
 		// however if aleatory uncertainty on mag is turned on then
 		// a list for each would still be appropriate

@@ -29,10 +29,10 @@ import javax.xml.parsers.SAXParser;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.LocationList;
-import org.opensha.mfd.GutenbergRichterMFD;
-import org.opensha.mfd.IncrementalMFD;
-import org.opensha.mfd.MFD_Type;
-import org.opensha.mfd.MFDs;
+import org.opensha.mfd.GutenbergRichterMfd;
+import org.opensha.mfd.IncrementalMfd;
+import org.opensha.mfd.MfdType;
+import org.opensha.mfd.Mfds;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -195,9 +195,9 @@ class InterfaceParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
-	private IncrementalMFD buildMFD(Attributes atts, double setWeight) {
+	private IncrementalMfd buildMFD(Attributes atts, double setWeight) {
 		// TODO revisit, clean, and handle exceptions
-		MFD_Type type = MFD_Type.valueOf(atts.getValue("type"));
+		MfdType type = MfdType.valueOf(atts.getValue("type"));
 		switch (type) {
 			case GR:
 				return buildGR(atts, setWeight);
@@ -212,7 +212,7 @@ class InterfaceParser extends DefaultHandler {
 	 * Builds GR MFD. Method will throw IllegalStateException if attribute
 	 * values yield an MFD with no magnitude bins.
 	 */
-	private IncrementalMFD buildGR(Attributes atts, double setWeight) {
+	private IncrementalMfd buildGR(Attributes atts, double setWeight) {
 		double a = readDouble(A, atts);
 		double b = readDouble(B, atts);
 		double mMin = readDouble(M_MIN, atts);
@@ -220,11 +220,11 @@ class InterfaceParser extends DefaultHandler {
 		double dMag = readDouble(D_MAG, atts);
 		double weight = readDouble(WEIGHT, atts) * setWeight;
 
-		int nMag = MFDs.magCount(mMin, mMax, dMag);
+		int nMag = Mfds.magCount(mMin, mMax, dMag);
 		checkState(nMag > 0, "GR MFD with no mags");
-		double tmr = MFDs.totalMoRate(mMin, nMag, dMag, a, b);
+		double tmr = Mfds.totalMoRate(mMin, nMag, dMag, a, b);
 
-		GutenbergRichterMFD mfd = MFDs.newGutenbergRichterMoBalancedMFD(mMin, dMag, nMag, b, tmr *
+		GutenbergRichterMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(mMin, dMag, nMag, b, tmr *
 			weight);
 		log.finer("   MFD type: GR");
 		if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
@@ -232,14 +232,14 @@ class InterfaceParser extends DefaultHandler {
 	}
 
 	/* Builds single MFD */
-	private IncrementalMFD buildSingle(Attributes atts, double setWeight) {
+	private IncrementalMfd buildSingle(Attributes atts, double setWeight) {
 
 		double a = readDouble(A, atts);
 		double m = readDouble(M, atts);
 		boolean floats = readBoolean(FLOATS, atts);
 		double weight = readDouble(WEIGHT, atts) * setWeight;
 
-		IncrementalMFD mfd = MFDs.newSingleMFD(m, weight * a, floats);
+		IncrementalMfd mfd = Mfds.newSingleMFD(m, weight * a, floats);
 		log.finer("   MFD type: SINGLE");
 		if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 		return mfd;

@@ -3,7 +3,7 @@ package org.opensha.eq.forecast;
 import java.util.Iterator;
 
 import org.opensha.geo.Location;
-import org.opensha.mfd.IncrementalMFD;
+import org.opensha.mfd.IncrementalMfd;
 
 /**
  * Wrapper class for groups of related {@code SlabSource}s. Class decorates a
@@ -53,7 +53,7 @@ public class SlabSourceSet implements SourceSet<PointSource> {
 	}
 	
 	// TODO clean
-	IncrementalMFD mfdForLoc(Location loc) {
+	IncrementalMfd mfdForLoc(Location loc) {
 		return delegate.mfdForLoc(loc);
 	}
 
