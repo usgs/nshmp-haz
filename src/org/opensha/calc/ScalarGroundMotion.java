@@ -1,7 +1,7 @@
 package org.opensha.calc;
 
 /**
- * Ground motion model (GMM) result container.
+ * Ground motion model (Gmm) result container.
  * 
  * @author Peter Powers
  */

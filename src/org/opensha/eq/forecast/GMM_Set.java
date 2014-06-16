@@ -8,7 +8,7 @@ import static org.opensha.data.DataUtils.validateWeights;
 
 import java.util.Map;
 
-import org.opensha.gmm.GMM;
+import org.opensha.gmm.Gmm;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
@@ -17,7 +17,7 @@ import com.google.common.primitives.Doubles;
 /**
  * Wrapper class for GroundMotionModel instances that will be matched against
  * different {@code Source} types in hazard calculations. The use of the word
- * 'Set' in the class name implies the {@code GMM}s in a {@code GMM_Set} will be
+ * 'Set' in the class name implies the {@code Gmm}s in a {@code GMM_Set} will be
  * unique; this is guaranteeed by the internal use of {@code EnumMap}s.
  * 
  * <p>A {@code GMM_Set} can not be created directly; it may only be created by a
@@ -27,15 +27,15 @@ import com.google.common.primitives.Doubles;
  */
 class GMM_Set {
 
-	final Map<GMM, Double> weightMapLo;
+	final Map<Gmm, Double> weightMapLo;
 	final double maxDistLo;
-	private final Map<GMM, Double> weightMapHi;
+	private final Map<Gmm, Double> weightMapHi;
 	private final double maxDistHi;
 
 	private final double[] uncValues;
 	private final double[] uncWeights;
 
-	GMM_Set(Map<GMM, Double> weightMapLo, double maxDistLo, Map<GMM, Double> weightMapHi,
+	GMM_Set(Map<Gmm, Double> weightMapLo, double maxDistLo, Map<Gmm, Double> weightMapHi,
 		double maxDistHi, double[] uncValues, double[] uncWeights) {
 		this.weightMapLo = weightMapLo;
 		this.maxDistLo = maxDistLo;
@@ -46,9 +46,9 @@ class GMM_Set {
 	}
 
 	// TODO clean
-	// static createInstanceMap(Map<GMM, Double> weightMap) {
-	// Map<GMM, GroundMotionModel> instanceMap = Maps.newEnumMap(GMM.class);
-	// for (GMM gmm : weightMap.keySet()) {
+	// static createInstanceMap(Map<Gmm, Double> weightMap) {
+	// Map<Gmm, GroundMotionModel> instanceMap = Maps.newEnumMap(Gmm.class);
+	// for (Gmm gmm : weightMap.keySet()) {
 	// instanceMap.put(gmm, gmm.instance(imt));
 	// }
 	// }
@@ -68,8 +68,8 @@ class GMM_Set {
 
 		private static final Range<Double> MAX_DIST_RANGE = Range.closed(50.0, 1000.0);
 
-		private Map<GMM, Double> gmmWtMapLo;
-		private Map<GMM, Double> gmmWtMapHi;
+		private Map<Gmm, Double> gmmWtMapLo;
+		private Map<Gmm, Double> gmmWtMapHi;
 		private Double maxDistanceLo;
 		private double maxDistanceHi;
 
@@ -80,7 +80,7 @@ class GMM_Set {
 		// leave maxDistanceHi as primitive unless validation required
 		// at some later date; GMM_Set throws NPE if Double used
 
-		Builder primaryModelMap(Map<GMM, Double> gmmWtMap) {
+		Builder primaryModelMap(Map<Gmm, Double> gmmWtMap) {
 			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
 			validateWeights(gmmWtMap.values());
 			gmmWtMapLo = ImmutableMap.copyOf(gmmWtMap);
@@ -92,7 +92,7 @@ class GMM_Set {
 			return this;
 		}
 
-		Builder secondaryModelMap(Map<GMM, Double> gmmWtMap) {
+		Builder secondaryModelMap(Map<Gmm, Double> gmmWtMap) {
 			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
 			validateWeights(gmmWtMap.values());
 			gmmWtMapLo = ImmutableMap.copyOf(gmmWtMap);

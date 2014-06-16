@@ -193,7 +193,7 @@ class PointSourceFinite extends PointSource {
 		@Override
 		public Distances distanceTo(Location loc) {
 			// TODO 0.5 is WUS specific and based on discretization of distances
-			// in grid source GMM lookup tables
+			// in grid source Gmm lookup tables
 
 			// because we're not using table lookup optimizations, we push the
 			// minimum rJB out to 0.5 (half the table bin-width)

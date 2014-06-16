@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha.gmm.GMM;
+import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GMM_Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -33,7 +33,7 @@ import com.google.common.collect.Maps;
  * Non-validating gmm.xml parser. SAX parser 'Attributes' are stateful and
  * cannot be stored. This class is not thread safe.
  * 
- * Support is included for a second GMM map for distance splits.
+ * Support is included for a second Gmm map for distance splits.
  * 
  * @author Peter Powers
  */
@@ -51,7 +51,7 @@ class GMM_Parser extends DefaultHandler {
 	private int mapCount = 0;
 	private GMM_Set gmmSet;
 	private GMM_Set.Builder setBuilder;
-	private Map<GMM, Double> gmmWtMap;
+	private Map<Gmm, Double> gmmWtMap;
 
 	private GMM_Parser(SAXParser sax) {
 		this.sax = sax;
@@ -98,7 +98,7 @@ class GMM_Parser extends DefaultHandler {
 				case MODEL_SET:
 					mapCount++;
 					checkState(mapCount < 3, "Only two ground motion model sets are allowed");
-					gmmWtMap = Maps.newEnumMap(GMM.class);
+					gmmWtMap = Maps.newEnumMap(Gmm.class);
 					if (mapCount == 1) {
 						setBuilder.primaryMaxDistance(readDouble(MAX_DISTANCE, atts));
 					} else {
@@ -109,7 +109,7 @@ class GMM_Parser extends DefaultHandler {
 					break;
 
 				case MODEL:
-					GMM model = readEnum(ID, atts, GMM.class);
+					Gmm model = readEnum(ID, atts, Gmm.class);
 					double weight = readDouble(WEIGHT, atts);
 					gmmWtMap.put(model, weight);
 					log.fine(" Model [wt]: " + model + " [" + weight + "]");

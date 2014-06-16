@@ -17,7 +17,7 @@ import org.opensha.data.Interpolate;
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Reference:</b> Abrahamson, N.A., Silva, W.J., and Kamai, R., 2014,
@@ -27,7 +27,7 @@ import org.opensha.data.Interpolate;
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
  * @author Peter Powers
- * @see GMM#ASK_14
+ * @see Gmm#ASK_14
  */
 public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 

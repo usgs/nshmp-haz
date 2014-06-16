@@ -13,7 +13,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * support the 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
@@ -28,9 +28,9 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> average horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers
- * @see GMM#SILVA_02
- * @see GMM#SILVA_02_AB
- * @see GMM#SILVA_02_J
+ * @see Gmm#SILVA_02
+ * @see Gmm#SILVA_02_AB
+ * @see Gmm#SILVA_02_J
  */
 public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 

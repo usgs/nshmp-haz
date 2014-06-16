@@ -14,7 +14,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * flavors to support the 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
@@ -27,9 +27,9 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> not specified (avg horizontal implied)</p>
  * 
  * @author Peter Powers
- * @see GMM#TP_05
- * @see GMM#TP_05_AB
- * @see GMM#TP_05_J
+ * @see Gmm#TP_05
+ * @see Gmm#TP_05_AB
+ * @see Gmm#TP_05_J
  */
 public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 

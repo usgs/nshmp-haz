@@ -2,7 +2,7 @@ package org.opensha.calc;
 
 import java.util.Map;
 
-import org.opensha.gmm.GMM;
+import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GMM_Input;
 
 /**
@@ -13,16 +13,16 @@ import org.opensha.gmm.GMM_Input;
 public final class GroundMotionCalcResult {
 
 	final GMM_Input input;
-	final Map<GMM, ScalarGroundMotion> gmMap;
+	final Map<Gmm, ScalarGroundMotion> gmMap;
 
 	private GroundMotionCalcResult(GMM_Input input,
-		Map<GMM, ScalarGroundMotion> gmMap) {
+		Map<Gmm, ScalarGroundMotion> gmMap) {
 		this.input = input;
 		this.gmMap = gmMap;
 	}
 
 	public static final GroundMotionCalcResult create(GMM_Input input,
-			Map<GMM, ScalarGroundMotion> gmMap) {
+			Map<Gmm, ScalarGroundMotion> gmMap) {
 		return new GroundMotionCalcResult(input, gmMap);
 	}
 }

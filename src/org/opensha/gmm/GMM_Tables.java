@@ -333,7 +333,7 @@ final class GMM_Tables {
 	}
 	
 	/*
-	 * Converts frequencies from Gail Atkinson style GMM tables to IMTs.
+	 * Converts frequencies from Gail Atkinson style Gmm tables to IMTs.
 	 * Frequencies corresponding to 0.03s, 0.3s, and 3s are variably identified
 	 * and handled independently. AB06 uses 0.32, 3.2, and 32 which do not
 	 * strictly correspond to 3s, 0.3s, and 0.03s, but we use them anyway.
@@ -381,7 +381,7 @@ final class GMM_Tables {
 	/* IO error handler */
 	static void handleIOex(IOException ioe, String file) {
 		StringBuilder sb = new StringBuilder(LF);
-		sb.append("** IO error: ").append("GMM table; ");
+		sb.append("** IO error: ").append("Gmm table; ");
 		sb.append(ioe.getMessage()).append(LF);
 		sb.append("**   File: ").append(file).append(LF);
 		sb.append("** Exiting **").append(LF);

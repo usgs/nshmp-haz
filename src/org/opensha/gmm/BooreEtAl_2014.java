@@ -18,7 +18,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * part of<a href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Reference:</b> Boore, D.M., Stewart, J.P., Seyhan, E., and Atkinson,
@@ -28,7 +28,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
  * @author Peter Powers
- * @see GMM#BSSA_14
+ * @see Gmm#BSSA_14
  */
 public final class BooreEtAl_2014 implements GroundMotionModel {
 

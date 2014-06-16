@@ -23,7 +23,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Reference:</b> Campbell, K.W., and Bozorgnia, Y., 2014, NGA-West2
@@ -34,7 +34,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
  * @author Peter Powers
- * @see GMM#CB_14
+ * @see Gmm#CB_14
  */
 public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 

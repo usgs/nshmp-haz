@@ -24,7 +24,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * and the Pacific Northwest.</p>
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Reference:</b> Youngs, R.R., Chiou, S.-J., Silva, W.J., and Humphrey,
@@ -34,8 +34,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> Geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
- * @see GMM#YOUNGS_97_INTER
- * @see GMM#YOUNGS_97_SLAB
+ * @see Gmm#YOUNGS_97_INTER
+ * @see Gmm#YOUNGS_97_SLAB
  */
 public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	

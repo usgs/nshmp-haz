@@ -7,12 +7,12 @@ import java.lang.reflect.Field;
 import com.google.common.base.Throwables;
 
 /**
- * Base class for ground motion model (GMM) coefficients. Concrete
+ * Base class for ground motion model (Gmm) coefficients. Concrete
  * implementations are created as nested static classes that declare all
- * necessary fields in each GMM implementation. The static
- * {@code CoefficientContainer} in each GMM implementation assumes reponsibility
+ * necessary fields in each Gmm implementation. The static
+ * {@code CoefficientContainer} in each Gmm implementation assumes reponsibility
  * for creating and populating {@code Coefficients} instances for every type of
- * IMT supported by a GMM.
+ * IMT supported by a Gmm.
  * 
  * <p>{@code Coefficients} implementations may declare fields that a
  * CoefficientContainer is unaware of that can be initialized independently. See

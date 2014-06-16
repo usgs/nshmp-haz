@@ -12,7 +12,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * NSHMP.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation notes:</b> <ul><li>This is currently only applicable to
@@ -28,7 +28,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
- * @see GMM#AM_09_INTER
+ * @see Gmm#AM_09_INTER
  */
 public final class AtkinsonMacias_2009 implements GroundMotionModel {
 	

@@ -13,7 +13,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * (sigma) to compute ground motions.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
@@ -27,7 +27,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
  * 
  * @author Peter Powers
- * @see GMM#PEZESHK_11
+ * @see Gmm#PEZESHK_11
  */
 public final class PezeshkEtAl_2011 implements GroundMotionModel {
 

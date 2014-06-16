@@ -15,7 +15,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * flavors to support the 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
@@ -29,9 +29,9 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
- * @see GMM#CAMPBELL_03
- * @see GMM#CAMPBELL_03_AB
- * @see GMM#CAMPBELL_03_J
+ * @see Gmm#CAMPBELL_03
+ * @see Gmm#CAMPBELL_03_AB
+ * @see Gmm#CAMPBELL_03_J
  */
 public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 

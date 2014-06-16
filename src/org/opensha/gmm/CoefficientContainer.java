@@ -26,7 +26,7 @@ import com.google.common.io.Resources;
  * illegal characters (e.g those with units labels in parentheses). </p>
  * 
  * <p>Note that coefficent values are mapped from the supplied *.csv resource to
- * field names. This means that the {@link Coefficients} implementation in a GMM
+ * field names. This means that the {@link Coefficients} implementation in a Gmm
  * may declare additional fields that may be initialized independently. See
  * {@link CampbellBozorgnia_2013} for an example. This also means that
  * {@link Coefficients} implementations must declare all coefficents named in a
@@ -43,10 +43,10 @@ final class CoefficientContainer {
 
 	/**
 	 * Create a new coefficent wrapper from a comma-delimited coefficient
-	 * resource for use by a GMM.
+	 * resource for use by a Gmm.
 	 * 
 	 * @param resource coefficent csv text resource
-	 * @param clazz of the GMM specific {@code Coefficients} implementation
+	 * @param clazz of the Gmm specific {@code Coefficients} implementation
 	 * @throws RuntimeException if an error occurs reading coefficient resource
 	 */
 	CoefficientContainer(String resource, Class<? extends Coefficients> clazz) {

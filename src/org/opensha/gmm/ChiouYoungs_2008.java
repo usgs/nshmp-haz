@@ -22,7 +22,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><p>Reference:</p> Chiou, B.S.J. and Youngs R.R. (2008), An NGA model for
@@ -32,7 +32,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
  * 
  * @author Peter Powers
- * @see GMM#CY_08
+ * @see Gmm#CY_08
  */
 public final class ChiouYoungs_2008 implements GroundMotionModel {
 

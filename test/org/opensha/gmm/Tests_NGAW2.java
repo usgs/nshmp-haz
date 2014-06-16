@@ -1,7 +1,7 @@
 package org.opensha.gmm;
 
 import static com.google.common.base.Charsets.US_ASCII;
-import static org.opensha.gmm.GMM.*;
+import static org.opensha.gmm.Gmm.*;
 import static org.opensha.gmm.IMT.*;
 import static org.junit.Assert.*;
 
@@ -56,12 +56,12 @@ public class Tests_NGAW2 {
     }
 
     private int idx;
-    private GMM gmm;
+    private Gmm gmm;
     private IMT imt;
     private double exMedian;
     private double exSigma;
 	
-	public Tests_NGAW2(int idx, GMM gmm, IMT imt, double exMedian,
+	public Tests_NGAW2(int idx, Gmm gmm, IMT imt, double exMedian,
 		double exSigma) {
 
 		this.idx = idx;
@@ -83,15 +83,15 @@ public class Tests_NGAW2 {
 	}
     
 	/* Result generation sets */
-	private static Set<GMM> gmms = EnumSet.of(ASK_14, BSSA_14, CB_14, CY_14, IDRISS_14);
+	private static Set<Gmm> gmms = EnumSet.of(ASK_14, BSSA_14, CB_14, CY_14, IDRISS_14);
 	private static Set<IMT> imts = EnumSet.of(PGA, SA0P02, SA0P2, SA1P0, SA3P0);
 	
-	/* Use to generate GMM result file */
+	/* Use to generate Gmm result file */
 	private static void computeGM() throws IOException, ExecutionException {
 		List<GMM_Input> inputs = loadInputs(GMM_INPUTS);
-		File out = new File("tmp/GMM-tests/" + GMM_RESULTS);
+		File out = new File("tmp/Gmm-tests/" + GMM_RESULTS);
 		Files.write("", out, Charsets.US_ASCII);
-		for (GMM gmm : gmms) {
+		for (Gmm gmm : gmms) {
 			for (IMT imt : imts) {
 				GroundMotionModel gmModel = gmm.instance(imt);
 				int modelIdx = 0;
@@ -137,7 +137,7 @@ public class Tests_NGAW2 {
 			Iterator<String> idIt = Parsing.splitOnDash(lineIt.next()).iterator();
 			return new Object[] {
 				Integer.valueOf(idIt.next()),	// inputs index
-				GMM.valueOf(idIt.next()),		// GMM
+				Gmm.valueOf(idIt.next()),		// Gmm
 				IMT.valueOf(idIt.next()),		// IMT
 				Double.valueOf(lineIt.next()),	// median
 				Double.valueOf(lineIt.next())	// sigma

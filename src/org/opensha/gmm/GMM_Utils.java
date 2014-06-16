@@ -22,7 +22,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * Ground motion model (GMM) utilities.
+ * Ground motion model (Gmm) utilities.
  * @author Peter Powers
  */
 public final class GMM_Utils {

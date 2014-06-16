@@ -14,7 +14,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * support the 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
@@ -28,9 +28,9 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> not specified</p>
  * 
  * @author Peter Powers
- * @see GMM#FRANKEL_96
- * @see GMM#FRANKEL_96_AB
- * @see GMM#FRANKEL_96_J
+ * @see Gmm#FRANKEL_96
+ * @see Gmm#FRANKEL_96_AB
+ * @see Gmm#FRANKEL_96_J
  */
 public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 

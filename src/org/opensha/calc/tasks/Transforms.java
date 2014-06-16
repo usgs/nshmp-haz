@@ -14,7 +14,7 @@ import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.IndexedFaultSource;
 import org.opensha.eq.forecast.Source;
 import org.opensha.geo.Location;
-import org.opensha.gmm.GMM;
+import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GMM_Input;
 import org.opensha.gmm.GroundMotionModel;
 
@@ -33,8 +33,8 @@ public final class Transforms {
 	/**
 	 * Returns a supplier of {@link Source} to {@link GMM_Input} transforms.
 	 * @param site of interest
-	 * @return a {@code List<GMM_Input>} of GMM inputs
-	 * @see GMM
+	 * @return a {@code List<GMM_Input>} of Gmm inputs
+	 * @see Gmm
 	 */
 	public static TransformSupplier<Source, List<GMM_Input>> sourceInitializerSupplier(
 			final Site site) {
@@ -48,8 +48,8 @@ public final class Transforms {
 //	/**
 //	 * Returns a supplier of {@link Source} to {@link GMM_Input} transforms.
 //	 * @param site of interest
-//	 * @return a {@code List<GMM_Input>} of GMM inputs
-//	 * @see GMM
+//	 * @return a {@code List<GMM_Input>} of Gmm inputs
+//	 * @see Gmm
 //	 */
 //	public static TransformSupplier<Source, List<GMM_Input>> sourceInitializerSupplier(
 //			final Site site) {
@@ -63,11 +63,11 @@ public final class Transforms {
 	/**
 	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
 	 * that returns a {@code List<GMM_Input>} of inputs for a ground motion
-	 * model (GMM) calculation.
+	 * model (Gmm) calculation.
 	 * @param source
 	 * @param site
-	 * @return a {@code List<GMM_Input>} of GMM inputs
-	 * @see GMM
+	 * @return a {@code List<GMM_Input>} of Gmm inputs
+	 * @see Gmm
 	 */
 	public static Callable<List<GMM_Input>> newFaultCalcInitializer(final FaultSource source,
 			final Site site) {
@@ -77,11 +77,11 @@ public final class Transforms {
 	/**
 	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
 	 * that returns a {@code List<GMM_Input>} of inputs for a ground motion
-	 * model (GMM) calculation.
+	 * model (Gmm) calculation.
 	 * @param source
 	 * @param site
-	 * @return a {@code List<GMM_Input>} of GMM inputs
-	 * @see GMM
+	 * @return a {@code List<GMM_Input>} of Gmm inputs
+	 * @see Gmm
 	 */
 	public static Callable<GMM_Input> newIndexedFaultCalcInitializer(
 			final IndexedFaultSource source, final Site site,
@@ -126,7 +126,7 @@ public final class Transforms {
 	 * @return a {@code Map} of {@code ScalarGroundMotion}s
 	 */
 	public static Callable<GroundMotionCalcResult> newGroundMotionCalc(
-			final Map<GMM, GroundMotionModel> gmmInstanceMap, final GMM_Input input) {
+			final Map<Gmm, GroundMotionModel> gmmInstanceMap, final GMM_Input input) {
 		return new GroundMotionCalc(gmmInstanceMap, input);
 	}
 

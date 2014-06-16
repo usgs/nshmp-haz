@@ -14,7 +14,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * relation is commonly referred to as AB06 Prime (AB06').
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
@@ -31,7 +31,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers
- * @see GMM#AB_06_PRIME
+ * @see Gmm#AB_06_PRIME
  */
 public final class AtkinsonBoore_2006p implements GroundMotionModel {
 

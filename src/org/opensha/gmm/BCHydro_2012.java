@@ -19,7 +19,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * and the Pacific Northwest.</p>
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation notes:</b> <ol><li>Treats all sites as
@@ -35,8 +35,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> Geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers
- * @see GMM#BCHYDRO_12_INTER
- * @see GMM#BCHYDRO_12_SLAB
+ * @see Gmm#BCHYDRO_12_INTER
+ * @see Gmm#BCHYDRO_12_SLAB
  */
 public abstract class BCHydro_2012 implements GroundMotionModel {
 

@@ -6,7 +6,7 @@ import org.opensha.eq.fault.surface.RuptureSurface;
 
 /**
  * A {@code Rupture} is a proxy for an actual earthquake and encapsulates all the
- * source information required by a ground motion model (GMM).
+ * source information required by a ground motion model (Gmm).
  *
  * @author Peter Powers
  */

@@ -19,7 +19,7 @@ import org.opensha.eq.forecast.Source;
 import org.opensha.eq.forecast.SourceSet;
 import org.opensha.eq.forecast.SourceType;
 import org.opensha.geo.Location;
-import org.opensha.gmm.GMM;
+import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GMM_Input;
 import org.opensha.gmm.GroundMotionModel;
 import org.opensha.gmm.IMT;
@@ -82,7 +82,7 @@ public class HazardCalcManager {
 	// branching
 	// weights when iterating.
 
-	public void calc(Forecast forecast, Map<GMM, Double> gmmWtMap, Site site, IMT imt)
+	public void calc(Forecast forecast, Map<Gmm, Double> gmmWtMap, Site site, IMT imt)
 			throws InterruptedException, ExecutionException {
 		// TODO this wont work
 
@@ -107,14 +107,14 @@ public class HazardCalcManager {
 		// rupRef? mag rRup rJB
 
 		// create new map of GMMs and instances -- only hazard curve building
-		// and summation/assembly cares about the weights of each GMM, to get
+		// and summation/assembly cares about the weights of each Gmm, to get
 		// raw results (mean, std) all we need are instances
 
-		Map<GMM, GroundMotionModel> gmmMap = Maps.newEnumMap(GMM.class);
-		for (GMM gmm : gmmWtMap.keySet()) {
+		Map<Gmm, GroundMotionModel> gmmMap = Maps.newEnumMap(Gmm.class);
+		for (Gmm gmm : gmmWtMap.keySet()) {
 			gmmMap.put(gmm, gmm.instance(imt));
 		}
-		// TODO single GMM instances are cached and shared
+		// TODO single Gmm instances are cached and shared
 
 		// List<Source> sources;
 		for (SourceSet<? extends Source> srcSet : forecast) {
@@ -170,11 +170,11 @@ public class HazardCalcManager {
 	}
 
 	private GroundMotionCalcResultSet doFaultCalc(FaultSourceSet sources,
-			Map<GMM, GroundMotionModel> gmms, Site site) throws InterruptedException,
+			Map<Gmm, GroundMotionModel> gmms, Site site) throws InterruptedException,
 			ExecutionException {
 
 		// Quick distance filter: TODO this will be done by the locationIterator
-		// distance comes from the GMM model
+		// distance comes from the Gmm model
 
 		// TODO the sourceSets hold their GMM_Manager (name??)
 
@@ -193,7 +193,7 @@ public class HazardCalcManager {
 			qdCount++;
 		}
 
-		// GMM input initializer:
+		// Gmm input initializer:
 		CompletionService<List<GMM_Input>> gmSrcCS = new ExecutorCompletionService<List<GMM_Input>>(ex);
 		int gmSrcCount = 0;
 		for (int i = 0; i < qdCount; i++) {

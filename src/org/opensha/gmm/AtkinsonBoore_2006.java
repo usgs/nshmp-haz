@@ -19,7 +19,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * flavors to support the 2008 central and eastern US model.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> this uses a reduced set of frequencies that
@@ -35,12 +35,12 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers
- * @see GMM#AB_06_140BAR
- * @see GMM#AB_06_140BAR_AB
- * @see GMM#AB_06_140BAR_J
- * @see GMM#AB_06_200BAR
- * @see GMM#AB_06_200BAR_AB
- * @see GMM#AB_06_200BAR_J
+ * @see Gmm#AB_06_140BAR
+ * @see Gmm#AB_06_140BAR_AB
+ * @see Gmm#AB_06_140BAR_J
+ * @see Gmm#AB_06_200BAR
+ * @see Gmm#AB_06_200BAR_AB
+ * @see Gmm#AB_06_200BAR_J
  */
 public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsMag {
 

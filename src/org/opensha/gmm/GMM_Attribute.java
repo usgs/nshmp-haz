@@ -4,7 +4,7 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 /**
- * Ground motion model (GMM) XML attributes.
+ * Ground motion model (Gmm) XML attributes.
  * @author Peter Powers
  */
 @SuppressWarnings("javadoc")

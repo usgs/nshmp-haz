@@ -15,15 +15,15 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
 
 /**
- * {@link GroundMotionModel} (GMM) identifiers. Use these to generate
- * {@link IMT}-specific instances via {@link GMM#instance(IMT)}. Single or
+ * {@link GroundMotionModel} (Gmm) identifiers. Use these to generate
+ * {@link IMT}-specific instances via {@link Gmm#instance(IMT)}. Single or
  * corporate authored models are identified as NAME_YR_FLAVOR; multi-author
  * models as INITIALS_YR_FLAVOR. FLAVOR is only used for those models with
  * region specific implementations or other variants.
  * 
  * @author Peter Powers
  */
-public enum GMM {
+public enum Gmm {
 
 	// TODO review sub zTop rules; I believe there are places where zHyp is
 	// spoecified by a model but zTop is supplied instead
@@ -32,7 +32,7 @@ public enum GMM {
 	// high at large distances
 	// TODO sub GMMs were reweighted ??
 	// TODO do deep GMMs saturate at 7.8 ???
-	// TODO do SUB GMM's float downdip AND along strike, or jsut along strike?
+	// TODO do SUB Gmm's float downdip AND along strike, or jsut along strike?
 	// TODO how to deal with CEUS distance cutoffs (@ 500km):
 	// - could specify applicable distances and weights in gmm.xml
 	// - could break sources in two, with distance-specific GMMS returning 0 if
@@ -41,13 +41,13 @@ public enum GMM {
 	// = 0g (which means no clamp applied)
 	// - Cb03 was (incorrectly) changed from 3g at 0.5s to 0g instead of 6g ??
 	// - Somerville has 6g clamp at 2s ???
-	// TODO most CEUS GMM's have 0.4s coeffs that were linearly interpolated for
+	// TODO most CEUS Gmm's have 0.4s coeffs that were linearly interpolated for
 	// special NRC project; consider removing them??
 	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified
 	// anywhere?
 	// TODO revisit hazgrid history to ensure that bugs/fixes from 2008 carried
 	// through to 2014 in Fortran
-	// TODO Port GMM grid optimization tables
+	// TODO Port Gmm grid optimization tables
 	//
 	// TODO Ensure Atkinson sfac/gfac is implemented correctly
 	// TODO amean11 (fortran) has wrong median clamp values and short period
@@ -60,7 +60,7 @@ public enum GMM {
 	// TODO ensure table lookups are using correct distance metric, some are
 	// rRup and some are rJB
 	// TODO check Fortran minimums (this note may have been written just
-	// regarding GMM table lookups, Atkinson in particular)
+	// regarding Gmm table lookups, Atkinson in particular)
 	// hazgrid A08' minR=1.8km; P11 minR = 1km; others?
 	// hazfx all (tables?) have minR = 0.11km
 	// TODO doublecheck that SUB implementations are using the correct distance
@@ -148,7 +148,7 @@ public enum GMM {
 	ZHAO_06_SLAB(ZhaoEtAl_2006_Slab.class, ZhaoEtAl_2006_Slab.NAME, ZhaoEtAl_2006.CC),
 
 	/*
-	 * Base implementations of the GMM used in the 2008 CEUS model all work with
+	 * Base implementations of the Gmm used in the 2008 CEUS model all work with
 	 * and assume magnitude = Mw. The method converter() is provided to allow
 	 * subclasses to impose a conversion if necessary.
 	 * 
@@ -251,7 +251,7 @@ public enum GMM {
 	private final Set<IMT> imts;
 	private final LoadingCache<IMT, GroundMotionModel> cache;
 
-	private GMM(Class<? extends GroundMotionModel> delegate, String name, CoefficientContainer cc) {
+	private Gmm(Class<? extends GroundMotionModel> delegate, String name, CoefficientContainer cc) {
 		this.delegate = delegate;
 		this.name = name;
 		imts = cc.imtSet();
@@ -285,7 +285,7 @@ public enum GMM {
 
 	/**
 	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
-	 * supported by this {@code GMM}.
+	 * supported by this {@code Gmm}.
 	 * @return the {@code Set} of supported {@code IMT}s
 	 */
 	public Set<IMT> supportedIMTs() {
@@ -294,13 +294,13 @@ public enum GMM {
 
 	/**
 	 * Returns the {@code Set} of the intensity measure types ({@code IMT}s)
-	 * supported by all of the supplied {@code GMM}s.
+	 * supported by all of the supplied {@code Gmm}s.
 	 * @param gmms models for which to return common {@code IMT} supoort
 	 * @return the {@code Set} of supported {@code IMT}s
 	 */
-	public static Set<IMT> supportedIMTs(Collection<GMM> gmms) {
+	public static Set<IMT> supportedIMTs(Collection<Gmm> gmms) {
 		Set<IMT> imts = EnumSet.allOf(IMT.class);
-		for (GMM gmm : gmms) {
+		for (Gmm gmm : gmms) {
 			imts = Sets.intersection(imts, gmm.supportedIMTs());
 		}
 		return EnumSet.copyOf(imts);
@@ -308,7 +308,7 @@ public enum GMM {
 
 	/**
 	 * Returns the set of spectral acceleration {@code IMT}s that are supported
-	 * by this {@code GMM}.
+	 * by this {@code Gmm}.
 	 * @return a {@code Set} of spectral acceleration IMTs
 	 */
 	public Set<IMT> responseSpectrumIMTs() {
@@ -321,7 +321,7 @@ public enum GMM {
 	 * @param gmms ground motion models
 	 * @return a {@code Set} of common spectral acceleration {@code IMT}s
 	 */
-	public static Set<IMT> responseSpectrumIMTs(Collection<GMM> gmms) {
+	public static Set<IMT> responseSpectrumIMTs(Collection<Gmm> gmms) {
 		return Sets.intersection(supportedIMTs(gmms), IMT.saIMTs());
 	}
 

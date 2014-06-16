@@ -13,7 +13,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * representation of faults (e.g. Charleston).
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
@@ -27,7 +27,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> not specified</p>
  * 
  * @author Peter Powers
- * @see GMM#SOMERVILLE_01
+ * @see Gmm#SOMERVILLE_01
  */
 public final class SomervilleEtAl_2001 implements GroundMotionModel {
 	

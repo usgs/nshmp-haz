@@ -13,7 +13,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * relation is commonly referred to as A08 Prime (A08').
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Implementation note:</b> Mean values are clamped per
@@ -31,7 +31,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers
- * @see GMM#ATKINSON_08_PRIME
+ * @see Gmm#ATKINSON_08_PRIME
  */
 public final class Atkinson_2008p implements GroundMotionModel {
 

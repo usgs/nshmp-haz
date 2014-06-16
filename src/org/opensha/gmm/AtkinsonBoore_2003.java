@@ -16,7 +16,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * with gridded 'deep' events in northern California and the Pacific Northwest.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
- * prohibited. Use {@link GMM#instance(IMT)} to retrieve an instance for a
+ * prohibited. Use {@link Gmm#instance(IMT)} to retrieve an instance for a
  * desired {@link IMT}.</p>
  * 
  * <p><b>Reference:</b> Atkinson, G.M. and Boore, D.M., 2003, Empirical
@@ -27,10 +27,10 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers
- * @see GMM#AB_03_CASC_INTER
- * @see GMM#AB_03_CASC_SLAB
- * @see GMM#AB_03_GLOB_INTER
- * @see GMM#AB_03_GLOB_SLAB
+ * @see Gmm#AB_03_CASC_INTER
+ * @see Gmm#AB_03_CASC_SLAB
+ * @see Gmm#AB_03_GLOB_INTER
+ * @see Gmm#AB_03_GLOB_SLAB
  */
 public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	

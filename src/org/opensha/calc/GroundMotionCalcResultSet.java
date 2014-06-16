@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opensha.gmm.GMM;
+import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GMM_Input;
 
 import com.google.common.collect.Lists;
@@ -19,14 +19,14 @@ import com.google.common.collect.Maps;
 public final class GroundMotionCalcResultSet {
 
 	List<GMM_Input> inputs;
-	Map<GMM, List<Double>> means;
-	Map<GMM, List<Double>> stds;
+	Map<Gmm, List<Double>> means;
+	Map<Gmm, List<Double>> stds;
 	
-	private GroundMotionCalcResultSet(Set<GMM> gmms, int size) {
+	private GroundMotionCalcResultSet(Set<Gmm> gmms, int size) {
 		inputs = Lists.newArrayListWithCapacity(size);
-		means = Maps.newEnumMap(GMM.class);
-		stds = Maps.newEnumMap(GMM.class);
-		for (GMM gmm : gmms) {
+		means = Maps.newEnumMap(Gmm.class);
+		stds = Maps.newEnumMap(Gmm.class);
+		for (Gmm gmm : gmms) {
 			List<Double> meanList = Lists.newArrayListWithCapacity(size);
 			means.put(gmm, meanList);
 			List<Double> stdList = Lists.newArrayListWithCapacity(size);
@@ -34,13 +34,13 @@ public final class GroundMotionCalcResultSet {
 		}
 	}
 	
-	static GroundMotionCalcResultSet create(Set<GMM> gmms, int size) {
+	static GroundMotionCalcResultSet create(Set<Gmm> gmms, int size) {
 		return new GroundMotionCalcResultSet(gmms, size);
 	}
 	
 	void add(GroundMotionCalcResult result) {
 		inputs.add(result.input);
-		for (GMM gmm : result.gmMap.keySet()) {
+		for (Gmm gmm : result.gmMap.keySet()) {
 			ScalarGroundMotion sgm = result.gmMap.get(gmm);
 			means.get(gmm).add(sgm.mean());
 			stds.get(gmm).add(sgm.stdDev());
