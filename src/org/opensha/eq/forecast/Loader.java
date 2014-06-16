@@ -174,7 +174,7 @@ public class Loader {
 		// Build GmmSet from gmm.xml if present
 		GmmSet gmmSet = null;
 		if (typePaths.size() > 0) {
-			Path gmmPath = typeDir.resolve(GMM_Parser.FILE_NAME);
+			Path gmmPath = typeDir.resolve(GmmParser.FILE_NAME);
 			try {
 				checkState(Files.exists(gmmPath), "%s sources present. Where is gmm.xml?",
 					typeDir.getFileName());
@@ -218,7 +218,7 @@ public class Loader {
 		
 		GmmSet nestedGmmSet = null;
 		if (nestedSourcePaths.size() > 0) {
-			Path nestedGmmPath = sourceDir.resolve(GMM_Parser.FILE_NAME);
+			Path nestedGmmPath = sourceDir.resolve(GmmParser.FILE_NAME);
 			try {
 				checkState(Files.exists(nestedGmmPath) || gmmSet != null,
 					"%s sources present. Where is gmm.xml?", sourceDir.getFileName());
@@ -276,7 +276,7 @@ public class Loader {
 	private static GmmSet parseGMM(Path path) throws Exception {
 		try {
 			InputStream in = Files.newInputStream(path);
-			return GMM_Parser.create(sax).parse(in);
+			return GmmParser.create(sax).parse(in);
 		} catch (Exception e) {
 			handleParseException(e, path);
 			return null;
@@ -375,7 +375,7 @@ public class Loader {
 		@Override public boolean accept(Path path) throws IOException {
 			String s = path.getFileName().toString();
 			return Files.isRegularFile(path) && !Files.isHidden(path) &&
-				s.toLowerCase().endsWith(".xml") && !s.equals(GMM_Parser.FILE_NAME) &&
+				s.toLowerCase().endsWith(".xml") && !s.equals(GmmParser.FILE_NAME) &&
 				!s.startsWith("~");
 		}
 	}

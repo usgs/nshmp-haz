@@ -38,11 +38,11 @@ import com.google.common.collect.Maps;
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
-class GMM_Parser extends DefaultHandler {
+class GmmParser extends DefaultHandler {
 
 	static final String FILE_NAME = "gmm.xml";
 
-	private final Logger log = Logger.getLogger(GMM_Parser.class.getName());
+	private final Logger log = Logger.getLogger(GmmParser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;
 	
@@ -53,12 +53,12 @@ class GMM_Parser extends DefaultHandler {
 	private GmmSet.Builder setBuilder;
 	private Map<Gmm, Double> gmmWtMap;
 
-	private GMM_Parser(SAXParser sax) {
+	private GmmParser(SAXParser sax) {
 		this.sax = sax;
 	}
 
-	static GMM_Parser create(SAXParser sax) {
-		return new GMM_Parser(checkNotNull(sax));
+	static GmmParser create(SAXParser sax) {
+		return new GmmParser(checkNotNull(sax));
 	}
 
 	GmmSet parse(InputStream in) throws SAXException, IOException {
