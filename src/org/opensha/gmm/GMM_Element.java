@@ -13,6 +13,7 @@ import com.google.common.base.CaseFormat;
 public enum GMM_Element {
 
 	GROUND_MOTION_MODELS,
+	UNCERTAINTY,
 	MODEL_SET,
 	MODEL;
 			

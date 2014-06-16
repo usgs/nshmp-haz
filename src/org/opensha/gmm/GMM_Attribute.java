@@ -12,6 +12,10 @@ public enum GMM_Attribute {
 	
 	ID,
 	WEIGHT,
+	
+	VALUES,
+	WEIGHTS,
+	
 	MAX_DISTANCE;
 
 	/**
