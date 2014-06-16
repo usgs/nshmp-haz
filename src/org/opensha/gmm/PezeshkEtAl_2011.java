@@ -58,7 +58,7 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 	}
 
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GmmInput props) {
 
 		double mean = table.get(props.rRup, props.Mw);
 		

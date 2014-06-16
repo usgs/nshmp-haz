@@ -8,7 +8,7 @@ import org.opensha.eq.forecast.Distances;
  * 
  * @author Peter Powers
  */
-public final class GMM_Input {
+public final class GmmInput {
 
 	// source
 	final double Mw;
@@ -30,7 +30,7 @@ public final class GMM_Input {
 	final double z2p5; // always in km
 	final double z1p0; // always in meters TODO NO NO NO - this is now always km, CY08 needs updating
 	
-	private GMM_Input(double Mw, double rJB, double rRup, double rX,
+	private GmmInput(double Mw, double rJB, double rRup, double rX,
 		double dip, double width, double zTop, double zHyp, double rake,
 		double vs30, boolean vsInf, double z2p5, double z1p0) {
 
@@ -71,11 +71,11 @@ public final class GMM_Input {
 	 * @param z1p0 depth to V<sub>s</sub>=1.0 km/sec (in km)
 	 * @return a rupture property container
 	 */
-	public static GMM_Input create(double Mw, double rJB, double rRup,
+	public static GmmInput create(double Mw, double rJB, double rRup,
 			double rX, double dip, double width, double zTop, double zHyp,
 			double rake, double vs30, boolean vsInf, double z2p5, double z1p0) {
 
-		return new GMM_Input(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake,
+		return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake,
 			vs30, vsInf, z2p5, z1p0);
 	}
 		
@@ -86,7 +86,7 @@ public final class GMM_Input {
 	// TODO implement builder -- what error checking to do if this is only
 	//				an internal class? 
 	//			- advantage of builder (document) is that it can be reused to
-	//				generate new GMM_Input instances that may have changed
+	//				generate new GmmInput instances that may have changed
 	//				only slightly (e.g. rake and dip for floaters; site not
 	//				changing etc...)
 
@@ -178,9 +178,9 @@ public final class GMM_Input {
 			return this;
 		}
 		
-		public GMM_Input build() {
+		public GmmInput build() {
 			// state checking
-			return new GMM_Input(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake,
+			return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake,
 				vs30, vsInf, z2p5, z1p0);
 		}
 	}

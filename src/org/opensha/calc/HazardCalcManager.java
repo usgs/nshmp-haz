@@ -20,7 +20,7 @@ import org.opensha.eq.forecast.SourceSet;
 import org.opensha.eq.forecast.SourceType;
 import org.opensha.geo.Location;
 import org.opensha.gmm.Gmm;
-import org.opensha.gmm.GMM_Input;
+import org.opensha.gmm.GmmInput;
 import org.opensha.gmm.GroundMotionModel;
 import org.opensha.gmm.IMT;
 
@@ -93,7 +93,7 @@ public class HazardCalcManager {
 		// -- callable returns Source
 
 		// Step 2: build rupture data container
-		// -- callable returns List<GMM_Input>
+		// -- callable returns List<GmmInput>
 		// -- floating ruptures
 		// -- multiple mags and MFDs
 		// -- may want to handle special case of indexed faultSourceSet
@@ -157,11 +157,11 @@ public class HazardCalcManager {
 
 		Iterable<Source> locIter = sources.locationIterable(site.loc);
 		
-		Task<Source, List<GMM_Input>> inputs = new Task<Source, List<GMM_Input>>(
+		Task<Source, List<GmmInput>> inputs = new Task<Source, List<GmmInput>>(
 				locIter, Transforms.sourceInitializerSupplier(site), ex);
 		
-//		Task<List<GMM_Input>, GroundMotionCalcResult> gmResults =
-//				new Task<List<GMM_Input>, GroundMotionCalcResult>(
+//		Task<List<GmmInput>, GroundMotionCalcResult> gmResults =
+//				new Task<List<GmmInput>, GroundMotionCalcResult>(
 //						inputs, Transforms.sourceInitializerSupplier(site), ex)
 		
 		
@@ -194,7 +194,7 @@ public class HazardCalcManager {
 		}
 
 		// Gmm input initializer:
-		CompletionService<List<GMM_Input>> gmSrcCS = new ExecutorCompletionService<List<GMM_Input>>(ex);
+		CompletionService<List<GmmInput>> gmSrcCS = new ExecutorCompletionService<List<GmmInput>>(ex);
 		int gmSrcCount = 0;
 		for (int i = 0; i < qdCount; i++) {
 			FaultSource source = qdCS.take().get();
@@ -209,8 +209,8 @@ public class HazardCalcManager {
 			ex);
 		int gmCount = 0;
 		for (int i = 0; i < gmSrcCount; i++) {
-			List<GMM_Input> inputs = gmSrcCS.take().get();
-			for (GMM_Input input : inputs) {
+			List<GmmInput> inputs = gmSrcCS.take().get();
+			for (GmmInput input : inputs) {
 				gmCS.submit(Transforms.newGroundMotionCalc(gmms, input));
 				gmCount++;
 			}

@@ -60,7 +60,7 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GmmInput props) {
 		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);
 		return DefaultScalarGroundMotion.create(
 			calcMean(coeffs, props.Mw, props.rJB, siteClass),

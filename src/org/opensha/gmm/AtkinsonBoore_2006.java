@@ -101,7 +101,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GmmInput props) {
 		
 		// this call will only allow vs30 = 760 | 2000
 		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);

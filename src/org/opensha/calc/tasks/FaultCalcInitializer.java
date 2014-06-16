@@ -11,15 +11,15 @@ import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.eq.forecast.Distances;
 import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.Rupture;
-import org.opensha.gmm.GMM_Input;
+import org.opensha.gmm.GmmInput;
 
 import com.google.common.collect.Lists;
 
 /**
- * Compiles source and site data into a {@code List} of {@code GMM_Input}s.
+ * Compiles source and site data into a {@code List} of {@code GmmInput}s.
  * @author Peter Powers
  */
-final class FaultCalcInitializer implements Callable<List<GMM_Input>> {
+final class FaultCalcInitializer implements Callable<List<GmmInput>> {
 
 	private final FaultSource source;
 	private final Site site;
@@ -33,8 +33,8 @@ final class FaultCalcInitializer implements Callable<List<GMM_Input>> {
 	// Is it possible to return an empty list??
 	
 	@Override
-	public List<GMM_Input> call() throws Exception {
-		List<GMM_Input> inputs = Lists.newArrayList();
+	public List<GmmInput> call() throws Exception {
+		List<GmmInput> inputs = Lists.newArrayList();
 		for (Rupture rup : source) {
 			RuptureSurface surface = rup.surface();
 			Distances distances = surface.distanceTo(site.loc);
@@ -43,7 +43,7 @@ final class FaultCalcInitializer implements Callable<List<GMM_Input>> {
 			double zTop = surface.depth();
 			double zHyp = zTop + sin(dip * TO_RAD) * width / 2.0;
 			
-			GMM_Input input = GMM_Input.create(
+			GmmInput input = GmmInput.create(
 				rup.mag(),
 				distances.rJB,
 				distances.rRup,

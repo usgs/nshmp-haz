@@ -74,7 +74,7 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GmmInput props) {
 		return DefaultScalarGroundMotion.create(
 			calcMean(coeffs, converter().convert(props.Mw), props.rRup, props.vs30),
 			calcStdDev(coeffs, props.Mw));

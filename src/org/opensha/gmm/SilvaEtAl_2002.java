@@ -58,7 +58,7 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GMM_Input props) {
+	public final ScalarGroundMotion calc(GmmInput props) {
 		SiteClass siteClass = GMM_Utils.ceusSiteClass(props.vs30);
 		return DefaultScalarGroundMotion.create(
 			calcMean(coeffs, converter().convert(props.Mw), props.rJB,
