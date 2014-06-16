@@ -5,13 +5,13 @@ package org.opensha.gmm;
  * Youngs (2012) for subduction intraslab events.
  * 
  * @author Peter Powers
- * @see BCHydro_2012
+ * @see BcHydro_2012
  */
-final class BCHydro_2012_Slab extends BCHydro_2012 {
+final class BcHydro_2012_Slab extends BcHydro_2012 {
 	
-	static final String NAME = BCHydro_2012.NAME + ": Slab";
+	static final String NAME = BcHydro_2012.NAME + ": Slab";
 
-	BCHydro_2012_Slab(IMT imt) {
+	BcHydro_2012_Slab(IMT imt) {
 		super(imt);
 	}
 

@@ -12,7 +12,7 @@ package org.opensha.gmm;
  * 
  * @author Peter Powers
  * @see MagConverter
- * @see CEUS_Mb
+ * @see CeusMb
  * @see AtkinsonBoore_2006
  * @see Campbell_2003
  * @see FrankelEtAl_1996

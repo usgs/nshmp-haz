@@ -5,13 +5,13 @@ package org.opensha.gmm;
  * Youngs (2012) for subduction interface events.
  * 
  * @author Peter Powers
- * @see BCHydro_2012
+ * @see BcHydro_2012
  */
-final class BCHydro_2012_Interface extends BCHydro_2012 {
+final class BcHydro_2012_Interface extends BcHydro_2012 {
 	
-	static final String NAME = BCHydro_2012.NAME + ": Interface";
+	static final String NAME = BcHydro_2012.NAME + ": Interface";
 
-	BCHydro_2012_Interface(IMT imt) {
+	BcHydro_2012_Interface(IMT imt) {
 		super(imt);
 	}
 

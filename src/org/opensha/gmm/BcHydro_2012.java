@@ -38,7 +38,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * @see Gmm#BCHYDRO_12_INTER
  * @see Gmm#BCHYDRO_12_SLAB
  */
-public abstract class BCHydro_2012 implements GroundMotionModel {
+public abstract class BcHydro_2012 implements GroundMotionModel {
 
 	static final String NAME = "BC Hydro (2012)";
 
@@ -66,7 +66,7 @@ public abstract class BCHydro_2012 implements GroundMotionModel {
 	
 	private final Coeffs coeffs, coeffsPGA;
 
-	BCHydro_2012(IMT imt) {
+	BcHydro_2012(IMT imt) {
 		coeffs = (Coeffs) CC.get(imt);
 		coeffsPGA = (Coeffs) CC.get(PGA);
 	}

@@ -9,7 +9,7 @@ import static org.opensha.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
  * 
  * @author Peter Powers
  */
-class CEUS_Mb {
+class CeusMb {
 
 	private static final String J_NAME =  ": mb(J)";
 	private static final String AB_NAME =  ": mb(AB)";

@@ -6,7 +6,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import org.opensha.gmm.CEUS_Mb.*;
+import org.opensha.gmm.CeusMb.*;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -128,11 +128,11 @@ public enum Gmm {
 	/** @see AtkinsonMacias_2009 */
 	AM_09_INTER(AtkinsonMacias_2009.class, AtkinsonMacias_2009.NAME, AtkinsonMacias_2009.CC),
 
-	/** @see BCHydro_2012 */
-	BCHYDRO_12_INTER(BCHydro_2012_Interface.class, BCHydro_2012_Interface.NAME, BCHydro_2012.CC),
+	/** @see BcHydro_2012 */
+	BCHYDRO_12_INTER(BcHydro_2012_Interface.class, BcHydro_2012_Interface.NAME, BcHydro_2012.CC),
 
-	/** @see BCHydro_2012 */
-	BCHYDRO_12_SLAB(BCHydro_2012_Slab.class, BCHydro_2012_Slab.NAME, BCHydro_2012.CC),
+	/** @see BcHydro_2012 */
+	BCHYDRO_12_SLAB(BcHydro_2012_Slab.class, BcHydro_2012_Slab.NAME, BcHydro_2012.CC),
 
 	/** @see YoungsEtAl_1997 */
 	YOUNGS_97_INTER(YoungsEtAl_1997_Interface.class, YoungsEtAl_1997_Interface.NAME,
