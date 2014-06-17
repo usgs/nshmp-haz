@@ -25,9 +25,6 @@ import com.google.common.collect.Sets;
  */
 public enum Gmm {
 
-	// TODO review sub zTop rules; I believe there are places where zHyp is
-	// spoecified by a model but zTop is supplied instead
-	// Zhao in hazgrid uses zTop for zHyp
 	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
 	// high at large distances
 	// TODO sub GMMs were reweighted ??

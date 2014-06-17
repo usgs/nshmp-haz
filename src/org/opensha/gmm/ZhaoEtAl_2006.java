@@ -23,7 +23,8 @@ import org.opensha.calc.ScalarGroundMotion;
  * <p><b>Implementation notes:</b> <ol><li>When used for interface events, sigma
  * is computed using the generic value of tau, rather than the interface
  * specific value(see inline comments for more information).<li> <li>Hypocentral
- * depths for interface events are fixed at 20km.</li></ol></p>
+ * depths for interface events are fixed at 20km.</li><li>Hypocentral
+ * depths for slab events are set as the depth to top of rupture.</li></ol></p>
  * 
  * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T.,
  * Takahashi, T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G.,
@@ -76,9 +77,6 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 	private static final double calcMean(Coeffs c, double Mw, double rRup,
 			double zTop, double vs30, boolean slab) {
 		
-		// TODO implementation should be using zHyp instead. However, the
-		// current NSHM uses zTop for gridded/slab sources
-		
 		if (!slab) zTop = DEPTH_I;
 		
 		double site = (vs30 >= 600.0) ? c.C1 : (vs30 >= 300.0) ? c.C2 : c.C3;
@@ -92,7 +90,6 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 		if (slab) {
 			afac = c.Ssl * log(rRup) + c.Ss;
 			xmcor= c.Ps * m2 + c.Qs * m2 * m2 + c.Ws;
-
 		} else {
 			afac = c.Si;
 			xmcor = c.Qi * m2 * m2 + c.Wi;
@@ -109,8 +106,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 		// Frankel email may 22 2007: use sigt from table 5. Not the
 		// reduced-tau sigma associated with mag correction seen in
 		// table 6. Zhao says "truth" is somewhere in between.
-		return sqrt(c.sigma * c.sigma +
-			(slab ? c.tauS * c.tauS : c.tau * c.tau));
+		return sqrt(c.sigma * c.sigma + (slab ? c.tauS * c.tauS : c.tau * c.tau));
 	}
 
 }
