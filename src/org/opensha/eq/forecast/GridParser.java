@@ -10,6 +10,7 @@ import static org.opensha.eq.forecast.SourceAttribute.NAME;
 import static org.opensha.eq.forecast.SourceAttribute.STRIKE;
 import static org.opensha.eq.forecast.SourceAttribute.TYPE;
 import static org.opensha.eq.forecast.SourceAttribute.WEIGHT;
+import static org.opensha.eq.forecast.SourceType.GRID;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readEnum;
 import static org.opensha.util.Parsing.readString;
@@ -24,6 +25,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
+import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
@@ -63,9 +65,12 @@ class GridParser extends DefaultHandler {
 	// Node locations are the only text content in source files
 	private boolean readingLoc = false;
 	private StringBuilder locBuilder = null;
-
+	
 	// Per-node MFD
 	IncrementalMfd nodeMFD = null;
+	
+	// Used to when validating depths in magDepthMap
+	SourceType type = GRID;
 
 	private GridParser(SAXParser sax) {
 		this.sax = checkNotNull(sax);
@@ -102,6 +107,7 @@ class GridParser extends DefaultHandler {
 				sourceSetBuilder = new GridSourceSet.Builder();
 				sourceSetBuilder.name(name);
 				sourceSetBuilder.weight(weight);
+				
 				sourceSetBuilder.gmms(gmmSet);
 				if (log.isLoggable(FINE)) {
 					log.fine("");
@@ -122,7 +128,7 @@ class GridParser extends DefaultHandler {
 			case SOURCE_PROPERTIES:
 				String depthMapStr = readString(MAG_DEPTH_MAP, atts);
 				NavigableMap<Double, Map<Double, Double>> depthMap = stringToValueValueWeightMap(depthMapStr);
-				sourceSetBuilder.depthMap(depthMap);
+				sourceSetBuilder.depthMap(depthMap, type);
 				String mechMapStr = readString(FOCAL_MECH_MAP, atts);
 				Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
 				sourceSetBuilder.mechs(mechMap);
@@ -212,6 +218,6 @@ class GridParser extends DefaultHandler {
 				throw new IllegalStateException(type + " not yet implemented");
 
 		}
-	}
+	}	
 
 }

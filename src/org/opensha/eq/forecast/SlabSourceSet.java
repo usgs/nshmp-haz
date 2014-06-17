@@ -33,7 +33,7 @@ public class SlabSourceSet implements SourceSet<PointSource> {
 	}
 
 	@Override public SourceType type() {
-		return delegate.type();
+		return SourceType.SLAB;
 	}
 
 	@Override public int size() {
@@ -52,10 +52,4 @@ public class SlabSourceSet implements SourceSet<PointSource> {
 		return delegate.groundMotionModels();
 	}
 	
-	// TODO clean
-	IncrementalMfd mfdForLoc(Location loc) {
-		return delegate.mfdForLoc(loc);
-	}
-
-
 }

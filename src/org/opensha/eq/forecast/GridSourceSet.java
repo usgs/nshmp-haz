@@ -1,8 +1,10 @@
 package org.opensha.eq.forecast;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.DataUtils.validateWeight;
+import static org.opensha.eq.Magnitudes.MAX_MAG;
 import static org.opensha.eq.fault.Faults.validateStrike;
 import static org.opensha.util.TextUtils.validateName;
 
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
+import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
@@ -38,7 +41,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	final MagLengthRelationship mlr;
 
-	// TODO tmp
+	// TODO this needs to be able to be set
 	PointSourceType ptSrcType = PointSourceType.FIXED_STRIKE;
 
 	// only available to parsers
@@ -62,10 +65,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		mlr = (MagLengthRelationship) msr;
 	}
 
-	IncrementalMfd mfdForLoc(Location loc) {
-		return mfds.get(locs.indexOf(loc));
-	}
-	
 	@Override public SourceType type() {
 		return SourceType.GRID;
 	}
@@ -132,14 +131,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		return null;
 	}
 
-	// can/should be passed in from GridSourceSet; should be final
-	// length can be larger than magDepthCount
-	// only up to magDepthIndices[magDepthCount] will be used
-	// use to find the correct original mfd index
-
+	// @formatter:off
+	
 	/*
-	 * @formatter:off
-	 * 
 	 * GridSourceSets store lookup arrays for mfd magnitude indexing, depths,
 	 * and depth weights. These arrays remove the need to do expensive lookups
 	 * in a magDepthMap when iterating grid sources and ruptures. These are
@@ -149,8 +143,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * the need for individual sources to store these arrays, which would incur
 	 * a lot of overhead for large (million+ node) GridSourceSets.
 	 * 
-	 * Given magDepthMap: [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1,
-	 * 5.0:0.9]]
+	 * Given magDepthMap: [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1, 5.0:0.9]]
 	 * 
 	 * and MFD: [5.0, 5.5, 6.0, 6.5, 7.0]
 	 * 
@@ -159,18 +152,16 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * 
 	 * (note: mag cutoffs in magDepthMap are always used as m < cutoff)
 	 * 
-	 * magDepthIndices[] : magnitude index in original MFD [ 0, 0, 0, 1, 1, 1,
-	 * 2, 2, 2, 3, 3, 4, 4]
+	 * magDepthIndices[] : magnitude index in original MFD [ 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
 	 * 
-	 * magDepthDepths[] : depth for index [1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0,
-	 * 3.0, 5.0, 1.0, 5.0, 1.0, 5.0]
+	 * magDepthDepths[] : depth for index [1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 5.0, 1.0, 5.0]
 	 * 
-	 * magDepthWeights[] : depth weight for index [0.4, 0.5, 0.1, 0.4, 0.5, 0.1,
-	 * 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
+	 * magDepthWeights[] : depth weight for index [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
 	 * 
-	 * @formatter:on
 	 */
 
+	// @formatter:on
+	
 	int[] magDepthIndices;
 	double[] magDepthDepths;
 	double[] magDepthWeights;
@@ -222,7 +213,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private boolean built = false;
 
 		private String name;
-		Double weight;
+		Double weight; 
 		private Double strike;
 		private MagScalingType magScaling;
 		private GmmSet gmmSet;
@@ -243,7 +234,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		}
 
 		Builder gmms(GmmSet gmmSet) {
-			this.gmmSet = checkNotNull(gmmSet);
+			this.gmmSet = checkNotNull(gmmSet, "Gmm set is null");
 			return this;
 		}
 
@@ -254,14 +245,21 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		}
 
 		Builder magScaling(MagScalingType magScaling) {
-			this.magScaling = checkNotNull(magScaling, "");
+			this.magScaling = checkNotNull(magScaling, "MagScaling is null");
 			return this;
 		}
 
-		Builder depthMap(NavigableMap<Double, Map<Double, Double>> magDepthMap) {
-			// the structure of the map will have been fully validated by parser
-			// TODO at a minimum there must be one mag key that is >= MAX_MAG
-			this.magDepthMap = checkNotNull(magDepthMap);
+		Builder depthMap(NavigableMap<Double, Map<Double, Double>> magDepthMap, SourceType type) {
+			checkNotNull(magDepthMap, "MagDepthMap is null");
+			checkArgument(magDepthMap.size() > 0, "MagDepthMap must have at least one entry");
+			// the structure of the map and its weights will have been fully
+			// validated by parser; still need to check that depths are
+			// appropriate; 'type' indicates how to validate depths across
+			// wrapper classes
+			validateDepths(magDepthMap, type);
+			// there must be at least one mag key that is >= MAX_MAG
+			validateMagCutoffs(magDepthMap);
+			this.magDepthMap = magDepthMap;
 			return this;
 		}
 
@@ -276,20 +274,47 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		GridSourceSet build() {
-			checkState(!built, "This %s instance as already been used", ID);
+		void validateDepths(Map<Double, Map<Double, Double>> magDepthMap, SourceType type) {
+			for (Map<Double, Double> magMap : magDepthMap.values()) {
+				for (double depth : magMap.keySet()) {
+					switch (type) {
+						case GRID:
+							Faults.validateDepth(depth);
+							break;
+						case SLAB:
+							Faults.validateSlabDepth(depth);
+							break;
+						default:
+							throw new IllegalStateException(type + " not a grid source type");
+					}
+				}
+			}
+		}
 
-			checkState(name != null, "%s name not set", ID);
-			checkState(weight != null, "%s weight not set", ID);
-			checkState(strike != null, "%s strike not set", ID);
-			checkState(!locs.isEmpty(), "%s has no locations", ID);
-			checkState(!mfds.isEmpty(), "%s has no Mfds", ID);
-			checkState(magScaling != null, "%s has no mag-scaling relation set", ID);
-			checkState(magDepthMap != null, "%s mag-depth-weight map not set", ID);
-			checkState(mechMap != null, "%s focal mech map not set", ID);
-			checkState(gmmSet != null, "%s ground motion models not set", ID);
+		void validateMagCutoffs(Map<Double, Map<Double, Double>> magDepthMap) {
+			for (double mag : magDepthMap.keySet()) {
+				if (mag >= MAX_MAG) return;
+			}
+			throw new IllegalStateException("MagDepthMap must contain at least one M\u2265" +
+				MAX_MAG);
+		}
 
+		void validateState(String id) {
+			checkState(!built, "This %s instance as already been used", id);
+			checkState(name != null, "%s name not set", id);
+			checkState(weight != null, "%s weight not set", id);
+			checkState(strike != null, "%s strike not set", id);
+			checkState(!locs.isEmpty(), "%s has no locations", id);
+			checkState(!mfds.isEmpty(), "%s has no Mfds", id);
+			checkState(magScaling != null, "%s has no mag-scaling relation set", id);
+			checkState(magDepthMap != null, "%s mag-depth-weight map not set", id);
+			checkState(mechMap != null, "%s focal mech map not set", id);
+			checkState(gmmSet != null, "%s ground motion models not set", id);
 			built = true;
+		}
+
+		GridSourceSet build() {
+			validateState(ID);
 			return new GridSourceSet(name, weight, magScaling, gmmSet, locs, mfds, mechMap,
 				magDepthMap, strike);
 		}

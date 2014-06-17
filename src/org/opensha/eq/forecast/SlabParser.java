@@ -1,5 +1,7 @@
 package org.opensha.eq.forecast;
 
+import static org.opensha.eq.forecast.SourceType.SLAB;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,6 +20,7 @@ class SlabParser {
 
 	private SlabParser(SAXParser sax) {
 		gridParser = GridParser.create(sax);
+		gridParser.type = SLAB;
 	}
 
 	static SlabParser create(SAXParser sax) {

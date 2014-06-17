@@ -229,7 +229,8 @@ class ClusterParser extends DefaultHandler {
 		MfdType type = readEnum(TYPE, atts, MfdType.class);
 		switch (type) {
 			case SINGLE:
-				IncrementalMfd mfd = Mfds.newSingleMFD(readDouble(M, atts), readDouble(WEIGHT, atts), false);
+				IncrementalMfd mfd = Mfds.newSingleMFD(readDouble(M, atts),
+					readDouble(WEIGHT, atts), false);
 				log.finer("   MFD type: SINGLE");
 				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 				return mfd;

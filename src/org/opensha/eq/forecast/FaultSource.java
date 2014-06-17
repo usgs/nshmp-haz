@@ -238,11 +238,11 @@ public class FaultSource implements Source {
 		// build() may only be called once
 		// use Doubles to ensure fields are initially null
 
-		static final Range<Double> ASPECT_RATIO_RANGE = Range.closed(1.0, 2.0);
-		static final Range<Double> OFFSET_RANGE = Range.closed(0.1, 20.0);
+		private static final Range<Double> ASPECT_RATIO_RANGE = Range.closed(1.0, 2.0);
+		private static final Range<Double> OFFSET_RANGE = Range.closed(0.1, 20.0);
 		
-		static final String ID = "FaultSource.Builder";
-		boolean built = false;
+		private static final String ID = "FaultSource.Builder";
+		private boolean built = false;
 		
 		// required
 		String name;
@@ -255,7 +255,7 @@ public class FaultSource implements Source {
 		List<IncrementalMfd> mfds;
 		MagScalingRelationship msr;
 		
-		// have defaults
+		// have defaults - not required
 		double aspectRatio = 1.0;
 		double offset = 1.0;
 		FloatStyle floatStyle = FULL_DOWN_DIP;
@@ -325,16 +325,16 @@ public class FaultSource implements Source {
 			return this;
 		}
 
-		void validateState(String mssgID) {
-			checkState(!built, "This %s instance as already been used", mssgID);
-			checkState(name != null, "%s name not set", mssgID);
-			checkState(trace != null, "%s trace not set", mssgID);
-			checkState(dip != null, "%s dip not set", mssgID);
-			checkState(width != null, "%s width not set", mssgID);
-			checkState(depth != null, "%s depth not set", mssgID);
-			checkState(rake != null, "%s rake not set", mssgID);
-			checkState(mfds.size() > 0, "%s has no Mfds", mssgID);
-			checkState(msr != null, "%s mag-scaling relation not set", mssgID);
+		void validateState(String id) {
+			checkState(!built, "This %s instance as already been used", id);
+			checkState(name != null, "%s name not set", id);
+			checkState(trace != null, "%s trace not set", id);
+			checkState(dip != null, "%s dip not set", id);
+			checkState(width != null, "%s width not set", id);
+			checkState(depth != null, "%s depth not set", id);
+			checkState(rake != null, "%s rake not set", id);
+			checkState(mfds.size() > 0, "%s has no Mfds", id);
+			checkState(msr != null, "%s mag-scaling relation not set", id);
 			built = true;
 		}
 		
