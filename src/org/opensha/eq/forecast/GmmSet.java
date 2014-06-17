@@ -20,6 +20,29 @@ import com.google.common.primitives.Doubles;
  * 'Set' in the class name implies the {@code Gmm}s in a {@code GmmSet} will be
  * unique; this is guaranteeed by the internal use of {@code EnumMap}s.
  * 
+ * <p><b>Additional Epistemic Uncertainty</b></p>
+ * <p>Additional epistemic uncertainty is considered for each NGA according to
+ * the following distance and magnitude matrix:
+ * <pre>
+ *             M<6      6%le;M<7      7&le;M
+ *          =============================
+ *   D<10     0.375  |  0.230  |  0.400v
+ * 10&le;D<30    0.210  |  0.225  |  0.360
+ *   30&le;D     0.245  |  0.230  |  0.310
+ *          =============================
+ * </pre>
+ * For an earthquake rupture at a given distance and magnitude, the
+ * corresponding uncertainty is applied to a particular NGA with the following
+ * weights:
+ * <pre>
+ *     hazard curve           weight
+ * ======================================
+ *      mean + unc            0.185
+ *      mean                  0.630
+ *      mean - unc            0.185
+ * ======================================
+ * </pre>
+ * 
  * <p>A {@code GmmSet} can not be created directly; it may only be created by a
  * private parser.</p>
  * 
@@ -32,17 +55,28 @@ class GmmSet {
 	private final Map<Gmm, Double> weightMapHi;
 	private final double maxDistHi;
 
-	private final double[] uncValues;
-	private final double[] uncWeights;
+	private final boolean epiSingle;
+	private final double epiValue;
+	private final double[][] epiValues;
+	private final double[] epiWeights;
 
 	GmmSet(Map<Gmm, Double> weightMapLo, double maxDistLo, Map<Gmm, Double> weightMapHi,
-		double maxDistHi, double[] uncValues, double[] uncWeights) {
+		double maxDistHi, double[] epiValues, double[] epiWeights) {
 		this.weightMapLo = weightMapLo;
 		this.maxDistLo = maxDistLo;
 		this.weightMapHi = weightMapHi;
 		this.maxDistHi = maxDistHi;
-		this.uncValues = uncValues;
-		this.uncWeights = uncWeights;
+		
+		this.epiWeights = epiWeights;
+		if (epiValues.length == 1) {
+			this.epiValue = epiValues[0];
+			this.epiValues = null;
+			this.epiSingle = true;
+		} else {
+			this.epiValue = Double.NaN;
+			this.epiValues = initEpiValues(epiValues);
+			this.epiSingle = false;
+		}
 	}
 
 	// TODO clean
@@ -61,6 +95,31 @@ class GmmSet {
 	// return maxDistance;
 	// }
 
+	private static double[][] initEpiValues(double[] v) {
+		return new double[][] { { v[0], v[1], v[2] }, { v[3], v[4], v[5] }, { v[6], v[7], v[8] } };
+	}
+	
+	// TODO clean
+//	private static final int EPI_CT = 3;
+//	private static final double[] EPI_SIGN = {-1.0, 0.0, 1,0};
+//	private static final double[] EPI_WT = {0.185, 0.630, 0.185};
+//	private static final double[][] EPI_VAL = {
+//		{0.375, 0.230, 0.400},
+//		{0.210, 0.225, 0.360},
+//		{0.245, 0.230, 0.310}};
+
+	/*
+	 * Returns the epistemic uncertainty for the supplied magnitude (M) and
+	 * distance (D) that
+	 */
+	private double getUncertainty(double M, double D) {
+		if (epiSingle) return epiValue;
+		int mi = (M<6) ? 0 : (M<7) ? 1 : 2;
+		int di = (D<10) ? 0 : (D<30) ? 1 : 2;
+		return epiValues[di][mi];
+	}
+
+	
 	static class Builder {
 
 		static final String ID = "GmmSet.Builder";

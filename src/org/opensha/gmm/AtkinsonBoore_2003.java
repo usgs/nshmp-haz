@@ -49,14 +49,14 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	//
 	// S = Slab, I = Interface
 	// G = Global, C = Cascadia/PNW
-	static final CoefficientContainer CC = new CoefficientContainer(
-		"AB03_cascadia_slab.csv", Coeffs.class); // CC_CS
+	static final CoefficientContainer CC = new CoefficientContainer("AB03_cascadia_slab.csv",
+		Coeffs.class); // CC_CS
 	static final CoefficientContainer CC_CI = new CoefficientContainer(
 		"AB03_cascadia_interface.csv", Coeffs.class);
-	static final CoefficientContainer CC_GS = new CoefficientContainer(
-		"AB03_global_slab.csv", Coeffs.class);
-	static final CoefficientContainer CC_GI = new CoefficientContainer(
-		"AB03_global_interface.csv", Coeffs.class);
+	static final CoefficientContainer CC_GS = new CoefficientContainer("AB03_global_slab.csv",
+		Coeffs.class);
+	static final CoefficientContainer CC_GI = new CoefficientContainer("AB03_global_interface.csv",
+		Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
 		double c1, c2, c3, c4, c5, c6, c7, sig;
@@ -81,14 +81,13 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		}
 	}
 	
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		double mean = calcMean(coeffs, coeffsPGA, props.Mw, props.rRup,
-			props.zTop, props.vs30, isSlab(), coeffs.imt.frequency());
+	@Override public final ScalarGroundMotion calc(GmmInput props) {
+		double mean = calcMean(coeffs, coeffsPGA, props.Mw, props.rRup, props.zTop, props.vs30,
+			isSlab(), coeffs.imt.frequency());
 		double sigma = coeffs.sig * BASE_10_TO_E;
 		return DefaultScalarGroundMotion.create(mean, sigma);
 	}
-	
+
 	// subclass flag
 	abstract boolean isGlobal();
 	

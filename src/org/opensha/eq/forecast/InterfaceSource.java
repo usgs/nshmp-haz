@@ -1,5 +1,7 @@
 package org.opensha.eq.forecast;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static org.opensha.eq.fault.Faults.validateTrace;
@@ -81,7 +83,11 @@ public class InterfaceSource extends FaultSource {
 		FloatStyle floatStyle = FULL_DOWN_DIP;
 
 		Builder lowerTrace(LocationList trace) {
-			this.lowerTrace = validateTrace(trace);
+			checkNotNull(this.trace, "Upper trace must be set first");
+			validateTrace(trace);
+			checkArgument(this.trace.size() == trace.size(),
+				"Upper and lower trace must be the same size");
+			this.lowerTrace = trace;
 			return this;
 		}
 
