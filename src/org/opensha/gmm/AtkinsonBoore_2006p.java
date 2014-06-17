@@ -68,8 +68,8 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 		
 		// TODO I THINK THIS IS MISSING SFAC GFAC CONVERSIONS
 		//
-		// TODO I can't find an explicit reference for this formula; it is
-		// described in Atkinson (2008) p.1306
+		// TODO reference?? I can't find an explicit reference for this formula;
+		// it is described in Atkinson (2008) p.1306
 		if (GmmUtils.ceusSiteClass(props.vs30) == SOFT_ROCK) {
 			if (coeffs.imt == PGA) {
 				mean += - 0.3 + 0.15 * Math.log10(props.rJB);

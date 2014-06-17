@@ -8,16 +8,19 @@ package org.opensha.gmm;
  * @see AtkinsonBoore_2003
  */
 final class AtkinsonBoore_2003_CascadiaInterface extends AtkinsonBoore_2003 {
-	
-	final static String NAME = AtkinsonBoore_2003.NAME +
-		": Cascadia Interface";
-			
+
+	final static String NAME = AtkinsonBoore_2003.NAME + ": Cascadia Interface";
+
 	AtkinsonBoore_2003_CascadiaInterface(Imt imt) {
 		super(imt);
 	}
 
-	@Override final boolean isGlobal() { return false; }
+	@Override final boolean isGlobal() {
+		return false;
+	}
 
-	@Override final boolean isSlab() { return false; }
+	@Override final boolean isSlab() {
+		return false;
+	}
 
 }

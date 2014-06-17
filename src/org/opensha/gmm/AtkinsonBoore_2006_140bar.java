@@ -13,7 +13,7 @@ class AtkinsonBoore_2006_140bar extends AtkinsonBoore_2006 {
 
 	private static final double STRESS = 140;
 	private static final double SF2;
-	
+
 	static {
 		SF2 = scaleFactorCalc(STRESS);
 	}
@@ -21,7 +21,9 @@ class AtkinsonBoore_2006_140bar extends AtkinsonBoore_2006 {
 	AtkinsonBoore_2006_140bar(Imt imt) {
 		super(imt);
 	}
-	
-	@Override double scaleFactor() { return SF2; }
+
+	@Override double scaleFactor() {
+		return SF2;
+	}
 
 }

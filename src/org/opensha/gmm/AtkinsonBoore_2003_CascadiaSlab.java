@@ -8,16 +8,19 @@ package org.opensha.gmm;
  * @see AtkinsonBoore_2003
  */
 final class AtkinsonBoore_2003_CascadiaSlab extends AtkinsonBoore_2003 {
-	
-	final static String NAME = AtkinsonBoore_2003.NAME +
-		": Cascadia Slab";
+
+	final static String NAME = AtkinsonBoore_2003.NAME + ": Cascadia Slab";
 
 	AtkinsonBoore_2003_CascadiaSlab(Imt imt) {
 		super(imt);
 	}
 
-	@Override final boolean isGlobal() { return false; }
+	@Override final boolean isGlobal() {
+		return false;
+	}
 
-	@Override final boolean isSlab() { return true; }
+	@Override final boolean isSlab() {
+		return true;
+	}
 
 }
