@@ -1,15 +1,14 @@
 package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
+import static org.opensha.eq.fault.Faults.validateDepth;
 import static org.opensha.eq.fault.Faults.validateDip;
 import static org.opensha.eq.fault.Faults.validateRake;
-import static org.opensha.eq.fault.Faults.validateWidth;
-import static org.opensha.eq.fault.Faults.validateDepth;
 import static org.opensha.eq.fault.Faults.validateTrace;
+import static org.opensha.eq.fault.Faults.validateWidth;
 import static org.opensha.eq.forecast.FloatStyle.CENTERED;
 import static org.opensha.eq.forecast.FloatStyle.FULL_DOWN_DIP;
 import static org.opensha.util.TextUtils.validateName;
@@ -22,15 +21,14 @@ import org.opensha.eq.fault.scaling.MagAreaRelationship;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.eq.fault.surface.GriddedSurfaceWithSubsets;
+import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.GeoTools;
-import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 
 /**
@@ -64,8 +62,6 @@ public class FaultSource implements Source {
 	final GriddedSurface surface;
 	
 	private final List<List<Rupture>> ruptureLists; // 1:1 with Mfds
-	private final List<Integer> rupCount; // cumulative index list for iteration
-	private int size = 0;
 	
 	// package privacy for subduction subclass
 	FaultSource(String name, LocationList trace, double dip, double width,
@@ -84,69 +80,33 @@ public class FaultSource implements Source {
 		this.offset = offset;
 		this.floatStyle = floatStyle;
 		
-		ruptureLists = Lists.newArrayList();
-		rupCount = Lists.newArrayList();
-		rupCount.add(0);
-		initRuptures();
+		ruptureLists = initRuptureLists();
+		checkState(Iterables.size(Iterables.concat(ruptureLists)) > 0,
+			"FaultSource has no ruptures");
 	}
 	
-	private void initRuptures() {
+	private List<List<Rupture>> initRuptureLists() {
+		ImmutableList.Builder<List<Rupture>> rupListsBuilder = ImmutableList.builder();
 		for (IncrementalMfd mfd : mfds) {
 			List<Rupture> rupList = createRuptureList(mfd);
-			ruptureLists.add(rupList);
-			size += rupList.size();
-			rupCount.add(size);
-			
+			checkState(rupList.size() > 0, "Rupture list is empty");
+			rupListsBuilder.add(rupList);
 		}
-		checkState(size > 0, "FaultSource has no ruptures");
-	}
-
-	
-	@Override public double getMinDistance(Location loc) {
-		throw new UnsupportedOperationException();
+		return rupListsBuilder.build();
 	}
 
 	@Override public int size() {
-		return size;
-	}
-
-	@Override
-	public Rupture getRupture(int idx) {
-		checkElementIndex(idx, rupCount.get(rupCount.size()));
-		// zero is built in to rupCount array; unless a negative idx is
-		// supplied, if statement below should never be entered on first i
-		for (int i = 0; i < rupCount.size(); i++) {
-			if (idx < rupCount.get(i)) {
-				return ruptureLists.get(i-1).get(idx - rupCount.get(i-1));
-			}
-		}
-		//TODO test
-		throw new IllegalStateException("We shouldn't be here... ever.");
-	}
-	
-	@Override public Iterator<Rupture> iterator() {
-		return new Iterator<Rupture>() {
-			int size = size();
-			int caret = 0;
-
-			@Override public boolean hasNext() {
-				return caret < size;
-			}
-
-			@Override public Rupture next() {
-				return getRupture(caret++);
-			}
-
-			@Override public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
-	}
+		return Iterables.size(this);
+	}	
 	
 	@Override public String name() {
 		return name;
 	}
-
+	
+	@Override public Iterator<Rupture> iterator() {
+		return Iterables.concat(ruptureLists).iterator();
+	}
+	
 	@Override
 	public String toString() {
 		// TODO use joiner
@@ -170,7 +130,7 @@ public class FaultSource implements Source {
 	}
 
 	private List<Rupture> createRuptureList(IncrementalMfd mfd) {
-		List<Rupture> ruptures = Lists.newArrayList();
+		ImmutableList.Builder<Rupture> rupListbuilder = ImmutableList.builder();
 		
 		// @formatter:off
 		for (int i = 0; i < mfd.getNum(); ++i) {
@@ -204,15 +164,15 @@ public class FaultSource implements Source {
 						surf.getNthSubsetSurfaceCenteredDownDip(length, width, offset, r);
 					double rupRate = rate / numRup;
 					Rupture rup = Rupture.create(mag, rake, rupRate, floatingSurface);
-					ruptures.add(rup);
+					rupListbuilder.add(rup);
 				}
 			} else {
-				Rupture probEqkRupture = Rupture.create(mag, rate, rake, surface);
-				ruptures.add(probEqkRupture);
+				Rupture rup = Rupture.create(mag, rate, rake, surface);
+				rupListbuilder.add(rup);
 			}
 		}
 		// @formatter:on
-		return ruptures;
+		return rupListbuilder.build();
 	}
 	
 	private static double computeRuptureLength(
@@ -354,5 +314,58 @@ public class FaultSource implements Source {
 		}
 	}
 
+
+	// @formatter:off
+	// TODO hold on to this as we may need indexing, but at present we don't
+	// TODO clean
+	//
+	// class fields:
+	//	private final List<Integer> rupCount; // cumulative index list for iteration
+	//	private int size = 0;
+	//
+	//	private void initRuptures() {
+	//		for (IncrementalMfd mfd : mfds) {
+	//			List<Rupture> rupList = createRuptureList(mfd);
+	//			ruptureLists.add(rupList);
+	//			size += rupList.size();
+	//			rupCount.add(size);
+	//			
+	//		}
+	//		checkState(size > 0, "FaultSource has no ruptures");
+	//	}
+	//
+	// @Override
+	// public Rupture getRupture(int idx) {
+	// checkElementIndex(idx, rupCount.get(rupCount.size()));
+	// 		// zero is built in to rupCount array; unless a negative idx is
+	// 		// supplied, if statement below should never be entered on first i
+	// 		for (int i = 0; i < rupCount.size(); i++) {
+	// 			if (idx < rupCount.get(i)) {
+	// 				return ruptureLists.get(i-1).get(idx - rupCount.get(i-1));
+	// 			}
+	// 		}
+	// 		throw new IllegalStateException("We shouldn't be here... ever.");
+	// 	}
+	//
+	//	@Override public Iterator<Rupture> iterator() {
+	//		return new Iterator<Rupture>() {
+	//			int size = size();
+	//			int caret = 0;
+	//
+	//			@Override public boolean hasNext() {
+	//				return caret < size;
+	//			}
+	//
+	//			@Override public Rupture next() {
+	//				return getRupture(caret++);
+	//			}
+	//
+	//			@Override public void remove() {
+	//				throw new UnsupportedOperationException();
+	//			}
+	//		};
+	//	}
+	//
+	// @formatter:on
 
 }

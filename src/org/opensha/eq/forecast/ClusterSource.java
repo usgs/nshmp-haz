@@ -75,13 +75,13 @@ public class ClusterSource implements Source {
 		return faults;
 	}
 
-	@Override public double getMinDistance(Location loc) {
-		double d = Double.MAX_VALUE;
-		for (FaultSource fs : faults) {
-			d = Math.min(d, fs.getMinDistance(loc));
-		}
-		return d;
-	}
+//	@Override public double getMinDistance(Location loc) {
+//		double d = Double.MAX_VALUE;
+//		for (FaultSource fs : faults) {
+//			d = Math.min(d, fs.getMinDistance(loc));
+//		}
+//		return d;
+//	}
 
 	@Override public int size() {
 		int count = 0;
@@ -91,13 +91,13 @@ public class ClusterSource implements Source {
 		return count;
 	}
 
-	/**
-	 * Overriden to throw an {@code UnsupportedOperationException}. Cluster
-	 * sources are handled differently than other source types.
-	 */
-	@Override public Rupture getRupture(int idx) {
-		throw new UnsupportedOperationException();
-	}
+//	/** TODO clean
+//	 * Overriden to throw an {@code UnsupportedOperationException}. Cluster
+//	 * sources are handled differently than other source types.
+//	 */
+//	@Override public Rupture getRupture(int idx) {
+//		throw new UnsupportedOperationException();
+//	}
 
 	/**
 	 * Overriden to throw an {@code UnsupportedOperationException}. Cluster

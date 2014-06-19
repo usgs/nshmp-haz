@@ -61,11 +61,6 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	// TODO deep sources: dtor matrix keyed to longitude?? is this specified in
 	// config files?
 	// TODO check ORegon branches: Portland nested inside all OR?
-	//
-	// TODO revisit weights ingrid sources; do grid sources allow multiple
-	// defautls? methinks yes.
-	//
-	// TODO DeltaC1 implementation in BC_Hydro
 
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;

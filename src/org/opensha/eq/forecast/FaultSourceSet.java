@@ -3,6 +3,7 @@ package org.opensha.eq.forecast;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.DataUtils.validateWeight;
+import static org.opensha.geo.Locations.horzDistanceFast;
 import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 /**
@@ -29,11 +31,6 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 		this.sources = sources;
 	}
 	
-	@Override public Iterable<FaultSource> locationIterable(Location loc) {
-		// TODO
-		return null;
-	}
-
 	@Override public Iterator<FaultSource> iterator() {
 		return sources.iterator();
 	}
@@ -44,6 +41,26 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
 	@Override public SourceType type() {
 		return SourceType.FAULT;
+	}
+
+	@Override public Predicate<FaultSource> distanceFilter(Location loc, double distance) {
+		return new DistanceFilter(loc, distance);
+	}
+	
+	static class DistanceFilter implements Predicate<FaultSource> {
+
+		final Location loc;
+		final double distance;
+
+		DistanceFilter(Location loc, double distance) {
+			this.loc = loc;
+			this.distance = distance;
+		}
+
+		@Override public boolean apply(FaultSource fs) {
+			return horzDistanceFast(loc, fs.trace.first()) <= distance ||
+				horzDistanceFast(loc, fs.trace.last()) <= distance;
+		}
 	}
 
 	static class Builder {

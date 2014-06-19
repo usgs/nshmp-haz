@@ -189,7 +189,7 @@ public class HazardCalcManager {
 		CompletionService<FaultSource> qdCS = new ExecutorCompletionService<FaultSource>(ex);
 		int qdCount = 0;
 		for (FaultSource source : sources) {
-			qdCS.submit(Transforms.newQuickDistanceFilter(source, site.loc, dist));
+			qdCS.submit(null); //Transforms.newQuickDistanceFilter(source, site.loc, dist));
 			qdCount++;
 		}
 

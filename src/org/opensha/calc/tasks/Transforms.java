@@ -112,10 +112,10 @@ public final class Transforms {
 	 * @return the supplied {@code source} or {@code null} if source is farther
 	 *         than {@code distance} from {@code loc}
 	 */
-	public static Callable<FaultSource> newQuickDistanceFilter(final FaultSource source,
-			final Location loc, final double distance) {
-		return new QuickDistanceFilter(source, loc, distance);
-	}
+//	public static Callable<FaultSource> newQuickDistanceFilter(final FaultSource source,
+//			final Location loc, final double distance) {
+//		return new QuickDistanceFilter(source, loc, distance);
+//	} TODO clean
 
 	/**
 	 * Creates a {@code Callable} that processes {@code GmmInput}s against one

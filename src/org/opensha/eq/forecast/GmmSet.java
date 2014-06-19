@@ -49,11 +49,13 @@ import com.google.common.primitives.Doubles;
  * @author Peter Powers
  */
 class GmmSet {
+	
+	// TODO check privatizing
 
 	final Map<Gmm, Double> weightMapLo;
 	final double maxDistLo;
-	private final Map<Gmm, Double> weightMapHi;
-	private final double maxDistHi;
+	final Map<Gmm, Double> weightMapHi;
+	final double maxDistHi;
 
 	private final boolean epiSingle;
 	private final double epiValue;
@@ -65,7 +67,10 @@ class GmmSet {
 		this.weightMapLo = weightMapLo;
 		this.maxDistLo = maxDistLo;
 		this.weightMapHi = weightMapHi;
-		this.maxDistHi = maxDistHi;
+		this.maxDistHi = (weightMapHi != null) ? maxDistHi : maxDistLo;
+		
+		// although weightMapHi may be null, we want to use maxDistHi
+		// for distance checking in the event that we do
 		
 		this.epiWeights = epiWeights;
 		if (epiValues.length == 1) {

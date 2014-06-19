@@ -21,6 +21,7 @@ import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 import org.opensha.mfd.IncrementalMfd;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
@@ -72,11 +73,33 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	@Override public int size() {
 		return locs.size();
 	}
+	
+	@Override public Predicate<PointSource> distanceFilter(Location loc, double distance) {
+		// compute min-max lat and lon
+		// TODO what happens when distance exceeds allowed lat lon range
 
-	@Override public Iterable<PointSource> locationIterable(Location loc) {
-		// TODO
+		// create radian-based location bounding rect; using Region is overkill
+		// to simply perform contains testing
+
+		// return new Iterator() {
+		// Location swCorner = Location.create(minLatLoc.lat(),
+		// minLonLoc.lon());
+
+		// double maxLat
+
+		// TODO gridSourceSet should have a Region defined
+		// pre-get the Rectangle2D bounds
+		// can do intersects test between source region and location rect
+		// perhaps Forecast gridSrcSet iterator also takes a location
+
+		// return Iterators.filter(iterator, predicate)
+
 		return null;
+		// TODO do nothing
+		
 	}
+
+
 
 	@Override public Iterator<PointSource> iterator() {
 		return new Iterator<PointSource>() {
@@ -106,28 +129,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 				return new PointSourceFixedStrike(this, locs.get(idx), mfds.get(idx), mechMap,
 					strike);
 		}
-		return null;
-	}
-
-	public Iterator<Source> iteratorForLocation(Location loc, double dist) {
-		// compute min-max lat and lon
-		// TODO what happens when distance exceeds allowed lat lon range
-
-		// create radian-based location bounding rect; using Region is overkill
-		// to simply perform contains testing
-
-		// return new Iterator() {
-		// Location swCorner = Location.create(minLatLoc.lat(),
-		// minLonLoc.lon());
-
-		// double maxLat
-
-		// TODO gridSourceSet should have a Region defined
-		// pre-get the Rectangle2D bounds
-		// can do intersects test between source region and location rect
-		// perhaps Forecast gridSrcSet iterator also takes a location
-
-		// return Iterators.filter(iterator, predicate)
 		return null;
 	}
 

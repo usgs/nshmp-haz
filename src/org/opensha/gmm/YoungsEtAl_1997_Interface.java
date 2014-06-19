@@ -8,13 +8,15 @@ package org.opensha.gmm;
  * @see YoungsEtAl_1997
  */
 final class YoungsEtAl_1997_Interface extends YoungsEtAl_1997 {
-	
+
 	static final String NAME = YoungsEtAl_1997.NAME + ": Interface";
 
 	YoungsEtAl_1997_Interface(Imt imt) {
 		super(imt);
 	}
 
-	@Override final boolean isSlab() { return false; }
+	@Override final boolean isSlab() {
+		return false;
+	}
 
 }

@@ -99,15 +99,15 @@ class FinitePointSourceOLD implements Source {
 	 * created on every call. Use Source.iterator() where possible.
 	 */
 
-	@Override
-	public Rupture getRupture(int idx) {
-		checkPositionIndex(idx, size());
-		Rupture rupture = new Rupture();
-		FinitePointSurface surface = new FinitePointSurface(loc);
-		rupture.surface = surface;
-		updateRupture(rupture, idx);
-		return rupture;
-	}
+//	@Override
+//	public Rupture getRupture(int idx) {
+//		checkPositionIndex(idx, size());
+//		Rupture rupture = new Rupture();
+//		FinitePointSurface surface = new FinitePointSurface(loc);
+//		rupture.surface = surface;
+//		updateRupture(rupture, idx);
+//		return rupture;
+//	}
 
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
@@ -199,10 +199,10 @@ class FinitePointSourceOLD implements Source {
 		return rupCount;
 	}
 
-	@Override
-	public double getMinDistance(Location loc) {
-		return Locations.horzDistanceFast(this.loc, loc);
-	}
+//	@Override
+//	public double getMinDistance(Location loc) {
+//		return Locations.horzDistanceFast(this.loc, loc);
+//	}
 
 	private void initSource() {
 

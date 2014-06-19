@@ -11,6 +11,8 @@ import java.util.List;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -29,11 +31,6 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 		this.sources = sources;
 	}
 
-	@Override public Iterable<ClusterSource> locationIterable(Location loc) {
-		// TODO
-		return null;
-	}
-
 	@Override public Iterator<ClusterSource> iterator() {
 		return sources.iterator();
 	}
@@ -44,6 +41,17 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 	@Override public SourceType type() {
 		return SourceType.FAULT;
+	}
+
+	@Override public Predicate<ClusterSource> distanceFilter(final Location loc,
+			final double distance) {
+		return new Predicate<ClusterSource>() {
+			Predicate<FaultSource> fsFilter = new FaultSourceSet.DistanceFilter(loc, distance);
+
+			@Override public boolean apply(ClusterSource cs) {
+				return Iterables.any(cs.faults, fsFilter);
+			}
+		};
 	}
 
 	static class Builder {

@@ -5,6 +5,8 @@ import java.util.Iterator;
 import org.opensha.geo.Location;
 import org.opensha.util.Named;
 
+import com.google.common.base.Predicate;
+
 /**
  * Wrapper class for groups of different {code Source}s. The {@code Source}s are
  * usually of a similar {code SourceType} and this intermediate layer between
@@ -28,11 +30,30 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
 	 */
 	public int size();
 
-	// TODO will all Source Set implementations support this?
-
 	public double weight();
 
+	/**
+	 * Returns an {@code Iterable} over those {@code Source}s that are within
+	 * the cutoff distance of the supplied {@code Location}. The cutoff distance
+	 * is derived from the {@code GroundMotionModel}s internally associated with
+	 * this {@code SourceSet}.
+	 * @param loc {@code Location} of interest
+	 * @return a {@code Location} based {@code Iterable}
+	 */
 	public Iterable<T> locationIterable(Location loc);
 
+	/**
+	 * Returns a {@code Predicate} that evaluates to {@code true} if this source
+	 * is within {@code distance} of the supplied {@code Location}. This
+	 * {@code Predicate} performs a quick distance calculation and may be used
+	 * to determine whether this source should be included in a hazard
+	 * calculation.
+	 * @param loc {@code Location} of interest
+	 * @param distance
+	 * @return
+	 */
+	public Predicate<T> distanceFilter(Location loc, double distance);
+
+	// TODO comment; GmmSet isn't visible
 	public GmmSet groundMotionModels();
 }

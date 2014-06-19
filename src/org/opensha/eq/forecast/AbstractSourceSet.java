@@ -1,7 +1,9 @@
 package org.opensha.eq.forecast;
 
 import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.geo.Location;
 
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
 
 /**
@@ -17,7 +19,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	private final double weight;
 	private final MagScalingType msrType;
 	private final GmmSet gmmSet;
-	
+
 	// NOTE msrType is currently not exposed; nor is it used
 
 	// NOTE we're holding onto weight for reference, however, MFD
@@ -43,9 +45,14 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	@Override public double weight() {
 		return weight;
 	}
-	
+
 	@Override public GmmSet groundMotionModels() {
 		return gmmSet;
 	}
+	
+	@Override public Iterable<T> locationIterable(Location loc) {
+		return FluentIterable.from(this).filter(distanceFilter(loc, gmmSet.maxDistHi));
+	}
+	
 
 }

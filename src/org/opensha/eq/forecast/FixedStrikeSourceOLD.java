@@ -93,15 +93,15 @@ class FixedStrikeSourceOLD implements Source {
 	 * created on every call. Use Source.iterator() where possible.
 	 */
 
-	@Override
-	public Rupture getRupture(int idx) {
-		checkPositionIndex(idx, size());
-		Rupture rupture = new Rupture();
-		FixedStrikeSurface surface = new FixedStrikeSurface(loc);
-		rupture.surface = surface;
-		updateRupture(rupture, idx);
-		return rupture;
-	}
+//	@Override
+//	public Rupture getRupture(int idx) {
+//		checkPositionIndex(idx, size());
+//		Rupture rupture = new Rupture();
+//		FixedStrikeSurface surface = new FixedStrikeSurface(loc);
+//		rupture.surface = surface;
+//		updateRupture(rupture, idx);
+//		return rupture;
+//	}
 
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
@@ -193,11 +193,11 @@ class FixedStrikeSourceOLD implements Source {
 		return magDepthCount * mechCount;
 	}
 
-	@Override
-	public double getMinDistance(Location loc) {
-		return Locations.horzDistanceFast(this.loc, loc);
-	}
-
+//	@Override
+//	public double getMinDistance(Location loc) {
+//		return Locations.horzDistanceFast(this.loc, loc);
+//	}
+//
 	private void initSource() {
 
 		/* Get the total number of mag-depth combinations from parent */

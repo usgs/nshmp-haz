@@ -83,25 +83,21 @@ class PointSource implements Source {
 		return rupCount;
 	}
 
-	@Override
-	public double getMinDistance(Location loc) {
-		return Locations.horzDistanceFast(this.loc, loc);
-	}
-
+	// TODO clean
 	/*
 	 * NOTE: Getting a Rupture by index is deliberately inefficient to ensure
 	 * thread safety. A new immutable Rupture and internal PointSurface are
 	 * created on every call. Use Source.iterator() where possible.
 	 */
 
-	@Override
-	public Rupture getRupture(int idx) {
-		checkPositionIndex(idx, size());
-		Rupture rupture = new Rupture();
-		rupture.surface = new PointSurface(loc);
-		updateRupture(rupture, idx);
-		return rupture;
-	}
+//	@Override
+//	public Rupture getRupture(int idx) {
+//		checkPositionIndex(idx, size());
+//		Rupture rupture = new Rupture();
+//		rupture.surface = new PointSurface(loc);
+//		updateRupture(rupture, idx);
+//		return rupture;
+//	}
 
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a

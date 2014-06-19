@@ -12,7 +12,6 @@ import java.util.List;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.surface.ApproxGriddedSurface;
 import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;
 
@@ -43,10 +42,6 @@ public class InterfaceSource extends FaultSource {
 			floatStyle);
 
 		this.lowerTrace = lowerTrace;
-	}
-
-	@Override public double getMinDistance(Location loc) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override public String toString() {

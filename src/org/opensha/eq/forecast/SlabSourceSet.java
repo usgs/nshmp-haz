@@ -5,6 +5,8 @@ import java.util.Iterator;
 import org.opensha.geo.Location;
 import org.opensha.mfd.IncrementalMfd;
 
+import com.google.common.base.Predicate;
+
 /**
  * Wrapper class for groups of related {@code SlabSource}s. Class decorates a
  * {@link GridSourceSet}.
@@ -50,6 +52,10 @@ public class SlabSourceSet implements SourceSet<PointSource> {
 
 	@Override public GmmSet groundMotionModels() {
 		return delegate.groundMotionModels();
+	}
+
+	@Override public Predicate<PointSource> distanceFilter(Location loc, double distance) {
+		return delegate.distanceFilter(loc, distance);
 	}
 	
 }
