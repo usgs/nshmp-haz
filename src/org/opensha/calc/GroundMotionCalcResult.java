@@ -10,6 +10,7 @@ import org.opensha.gmm.GmmInput;
  * 
  * @author Peter Powers
  */
+@Deprecated
 public final class GroundMotionCalcResult {
 
 	final GmmInput input;

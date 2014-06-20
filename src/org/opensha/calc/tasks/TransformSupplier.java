@@ -1,7 +1,7 @@
 package org.opensha.calc.tasks;
 
 /**
- * A supplier of {@code Transform} instances.
+ * A supplier of {@code AsyncFunction}s.
  *
  * @author Peter Powers
  * @see Transform

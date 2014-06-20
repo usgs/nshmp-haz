@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
  * Compiles source and site data into a {@code List} of {@code GmmInput}s.
  * @author Peter Powers
  */
+@Deprecated
 final class FaultCalcInitializer implements Callable<List<GmmInput>> {
 
 	private final FaultSource source;

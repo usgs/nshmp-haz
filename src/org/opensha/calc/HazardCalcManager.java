@@ -1,8 +1,13 @@
 package org.opensha.calc;
 
+import static com.google.common.util.concurrent.MoreExecutors.listeningDecorator;
+import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.lang.Runtime.getRuntime;
+
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -26,6 +31,11 @@ import org.opensha.gmm.Imt;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Hazard calculation manager.
@@ -121,7 +131,7 @@ public class HazardCalcManager {
 			SourceType type = srcSet.type();
 			switch (type) {
 				case FAULT:
-					doFaultCalc((FaultSourceSet) srcSet, gmmMap, site);
+//					doFaultCalc((FaultSourceSet) srcSet, gmmMap, site);
 					break;
 				case GRID:
 					break;
@@ -152,78 +162,110 @@ public class HazardCalcManager {
 		// calculate total curve
 
 	}
+	private void dev(SourceSet<Source> sources, Site site) {
+		
+		int coreCount = Runtime.getRuntime().availableProcessors();
+		ExecutorService ex = newFixedThreadPool(coreCount);
+		ListeningExecutorService lex = listeningDecorator(ex);
+		
+		// all SourceSets are Iterable<Source> - these iterations occur in the main thread
+		
+		AsyncFunction<Source, List<GmmInput>> sourceToInputs =  Transforms.sourceToInputs(site);
+//		AsyncFunction<List<GmmInput>, GroundMotionCalcResultSet> inputsToGroundMotions = Transforms.
+		
+		for (Source source : sources.locationIterable(site.loc)) {
+			
+			// for the sake of consistency, we wrap Sources in ListenableFutures
+			// so that we're only ever using Futures.transform() and don't need
+			// an instance of a ListeningExecutorService
+			
+			ListenableFuture<Source> sourceFuture = Futures.immediateFuture(source);
+
+//			Callable<List<GmmInput>> input = Transforms.sourceInitializer(source, site);
+//			ListenableFuture<List<GmmInput>> gmmInputs = lex.submit(input);
+			
+//			AsyncFunction<, O>
+			
+//			ListenableFuture<List<GroundMotionCalcResult>> gmResults = Futures.transform(gmmInputs, function, ex);
+			
+		}
+		
+		
+		
+	}
 	
-	private GroundMotionCalcResultSet doCalc(SourceSet<Source> sources, Site site) {
+	
+//	private GroundMotionCalcResultSet doCalc(SourceSet<Source> sources, Site site) {
+//
+//		Iterable<Source> locIter = sources.locationIterable(site.loc);
+//		
+//		Task<Source, List<GmmInput>> inputs = new Task<Source, List<GmmInput>>(
+//				locIter, Transforms.sourceInitializerSupplier(site), ex);
+//		
+////		Task<List<GmmInput>, GroundMotionCalcResult> gmResults =
+////				new Task<List<GmmInput>, GroundMotionCalcResult>(
+////						inputs, Transforms.sourceInitializerSupplier(site), ex)
+//		
+//		
+//		
+//		return null;
+//	}
 
-		Iterable<Source> locIter = sources.locationIterable(site.loc);
-		
-		Task<Source, List<GmmInput>> inputs = new Task<Source, List<GmmInput>>(
-				locIter, Transforms.sourceInitializerSupplier(site), ex);
-		
-//		Task<List<GmmInput>, GroundMotionCalcResult> gmResults =
-//				new Task<List<GmmInput>, GroundMotionCalcResult>(
-//						inputs, Transforms.sourceInitializerSupplier(site), ex)
-		
-		
-		
-		return null;
-	}
-
-	private GroundMotionCalcResultSet doFaultCalc(FaultSourceSet sources,
-			Map<Gmm, GroundMotionModel> gmms, Site site) throws InterruptedException,
-			ExecutionException {
-
-		// Quick distance filter: TODO this will be done by the locationIterator
-		// distance comes from the Gmm model
-
-		// TODO the sourceSets hold their GMM_Manager (name??)
-
-		// Currently set to use an ECS; if ecs.take().get() returns null,
-		// source will be skipped. Don't like returning null; alternative may
-		// be to run quick distance filter in a single thread using a
-		// predicate or some such.
-
-		double dist = 200.0; // this needs to come from gmm.xml
-
-		// deprecate; use locationIterator
-		CompletionService<FaultSource> qdCS = new ExecutorCompletionService<FaultSource>(ex);
-		int qdCount = 0;
-		for (FaultSource source : sources) {
-			qdCS.submit(null); //Transforms.newQuickDistanceFilter(source, site.loc, dist));
-			qdCount++;
-		}
-
-		// Gmm input initializer:
-		CompletionService<List<GmmInput>> gmSrcCS = new ExecutorCompletionService<List<GmmInput>>(ex);
-		int gmSrcCount = 0;
-		for (int i = 0; i < qdCount; i++) {
-			FaultSource source = qdCS.take().get();
-			if (source != null) {
-				gmSrcCS.submit(Transforms.newFaultCalcInitializer(source, site));
-				gmSrcCount++;
-			}
-		}
-
-		// Ground motion calculation:
-		CompletionService<GroundMotionCalcResult> gmCS = new ExecutorCompletionService<GroundMotionCalcResult>(
-			ex);
-		int gmCount = 0;
-		for (int i = 0; i < gmSrcCount; i++) {
-			List<GmmInput> inputs = gmSrcCS.take().get();
-			for (GmmInput input : inputs) {
-				gmCS.submit(Transforms.newGroundMotionCalc(gmms, input));
-				gmCount++;
-			}
-		}
-
-		// Final results assembly:
-		GroundMotionCalcResultSet results = GroundMotionCalcResultSet.create(gmms.keySet(), gmCount);
-		for (int i = 0; i < gmCount; i++) {
-			GroundMotionCalcResult result = gmCS.take().get();
-			results.add(result);
-		}
-
-		return results;
-	}
+//	private GroundMotionCalcResultSet doFaultCalc(FaultSourceSet sources,
+//			Map<Gmm, GroundMotionModel> gmms, Site site) throws InterruptedException,
+//			ExecutionException {
+//
+//		// Quick distance filter: TODO this will be done by the locationIterator
+//		// distance comes from the Gmm model
+//
+//		// TODO the sourceSets hold their GMM_Manager (name??)
+//
+//		// Currently set to use an ECS; if ecs.take().get() returns null,
+//		// source will be skipped. Don't like returning null; alternative may
+//		// be to run quick distance filter in a single thread using a
+//		// predicate or some such.
+//
+//		double dist = 200.0; // this needs to come from gmm.xml
+//
+//		// deprecate; use locationIterator
+//		CompletionService<FaultSource> qdCS = new ExecutorCompletionService<FaultSource>(ex);
+//		int qdCount = 0;
+//		for (FaultSource source : sources) {
+//			qdCS.submit(null); //Transforms.newQuickDistanceFilter(source, site.loc, dist));
+//			qdCount++;
+//		}
+//
+//		// Gmm input initializer:
+//		CompletionService<List<GmmInput>> gmSrcCS = new ExecutorCompletionService<List<GmmInput>>(ex);
+//		int gmSrcCount = 0;
+//		for (int i = 0; i < qdCount; i++) {
+//			FaultSource source = qdCS.take().get();
+//			if (source != null) {
+//				gmSrcCS.submit(Transforms.newFaultCalcInitializer(source, site));
+//				gmSrcCount++;
+//			}
+//		}
+//
+//		// Ground motion calculation:
+//		CompletionService<GroundMotionCalcResult> gmCS = new ExecutorCompletionService<GroundMotionCalcResult>(
+//			ex);
+//		int gmCount = 0;
+//		for (int i = 0; i < gmSrcCount; i++) {
+//			List<GmmInput> inputs = gmSrcCS.take().get();
+//			for (GmmInput input : inputs) {
+//				gmCS.submit(Transforms.newGroundMotionCalc(gmms, input));
+//				gmCount++;
+//			}
+//		}
+//
+//		// Final results assembly:
+//		GroundMotionCalcResultSet results = GroundMotionCalcResultSet.create(gmms.keySet(), gmCount);
+//		for (int i = 0; i < gmCount; i++) {
+//			GroundMotionCalcResult result = gmCS.take().get();
+//			results.add(result);
+//		}
+//
+//		return results;
+//	}
 
 }

@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
  * Passes {@code GmmInput} data to {@code Gmm}s to compute ground motions.
  * @author Peter Powers
  */
+@Deprecated
 final class GroundMotionCalc implements Callable<GroundMotionCalcResult> {
 
 	private final Map<Gmm, GroundMotionModel> gmmInstanceMap;

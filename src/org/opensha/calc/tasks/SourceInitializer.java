@@ -13,25 +13,27 @@ import org.opensha.eq.forecast.Source;
 import org.opensha.gmm.GmmInput;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Compiles source and site data into a {@code List} of {@code GmmInput}s.
  * @author Peter Powers
  */
-final class SourceInitializer extends Transform<Source, List<GmmInput>> {
+@Deprecated
+final class SourceInitializer implements AsyncFunction<Source, List<GmmInput>> {
 
 	private final Site site;
 	
-	SourceInitializer(Source source, Site site) {
-		super(source);
+	SourceInitializer(Site site) {
 		this.site = site;
 	}
 	
 	// TODO this needs additional rJB distance filtering
 	// Is it possible to return an empty list??
 	
-	@Override
-	public List<GmmInput> apply(Source source)  {
+	@Override public ListenableFuture<List<GmmInput>> apply(Source source) throws Exception {
 		List<GmmInput> inputs = Lists.newArrayList();
 		for (Rupture rup : source) {
 			
@@ -58,7 +60,8 @@ final class SourceInitializer extends Transform<Source, List<GmmInput>> {
 				site.z1p0);
 			inputs.add(input);
 		}
-		return inputs;
+		return Futures.immediateFuture(inputs);
 	}
 
 }
+

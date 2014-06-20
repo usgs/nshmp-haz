@@ -1,6 +1,9 @@
 package org.opensha.calc;
 
-import java.util.EnumMap;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,8 +11,8 @@ import java.util.Set;
 import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GmmInput;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Doubles;
 
 /**
  * Add comments here
@@ -18,32 +21,71 @@ import com.google.common.collect.Maps;
  */
 public final class GroundMotionCalcResultSet {
 
+	// TODO package privatize
+	
+	// TODO rename to ScalarGroundMotionSet
+	
+	// TODO the inputList supplied to Builder will be immutable
+	// now that we're taking on large scale calculations, the mean and sigma map lists 
+	// are not immutable (note in jdocs)
+	
 	List<GmmInput> inputs;
 	Map<Gmm, List<Double>> means;
-	Map<Gmm, List<Double>> stds;
+	Map<Gmm, List<Double>> sigmas;
 	
-	private GroundMotionCalcResultSet(Set<Gmm> gmms, int size) {
-		inputs = Lists.newArrayListWithCapacity(size);
-		means = Maps.newEnumMap(Gmm.class);
-		stds = Maps.newEnumMap(Gmm.class);
-		for (Gmm gmm : gmms) {
-			List<Double> meanList = Lists.newArrayListWithCapacity(size);
-			means.put(gmm, meanList);
-			List<Double> stdList = Lists.newArrayListWithCapacity(size);
-			means.put(gmm, stdList);
-		}
+	private GroundMotionCalcResultSet(List<GmmInput> inputs, Map<Gmm, List<Double>> means,
+		Map<Gmm, List<Double>> sigmas) {
+		this.inputs = inputs;
+		this.means = means;
+		this.sigmas = sigmas;
+	}
+
+	static Builder builder(List<GmmInput> inputs, Set<Gmm> gmms) {
+		return new Builder(inputs, gmms);
 	}
 	
-	static GroundMotionCalcResultSet create(Set<Gmm> gmms, int size) {
-		return new GroundMotionCalcResultSet(gmms, size);
-	}
-	
-	void add(GroundMotionCalcResult result) {
-		inputs.add(result.input);
-		for (Gmm gmm : result.gmMap.keySet()) {
-			ScalarGroundMotion sgm = result.gmMap.get(gmm);
-			means.get(gmm).add(sgm.mean());
-			stds.get(gmm).add(sgm.stdDev());
+	static class Builder {
+		
+		private static final String ID = "ScalarGroundMotionSet.Builder";
+		
+		private final List<GmmInput> inputs;
+		private final Map<Gmm, List<Double>> means;
+		private final Map<Gmm, List<Double>> sigmas;
+		
+		boolean built = false;
+		int addCount = 0;
+		
+		private Builder(List<GmmInput> inputs, Set<Gmm> gmms) {
+			checkArgument(checkNotNull(inputs).size() > 0);
+			checkArgument(checkNotNull(gmms).size() > 0);
+			this.inputs = inputs;
+			means = initValueMap(gmms, inputs.size());
+			sigmas = initValueMap(gmms, inputs.size());
 		}
+		
+		Builder add(Gmm gmm, double mean, double sigma) {
+			checkState(addCount < inputs.size(), "This %s instance is already full", ID);
+			means.get(gmm).set(addCount, mean);
+			sigmas.get(gmm).set(addCount, sigma);
+			addCount++;
+			return this;
+		}
+		
+		GroundMotionCalcResultSet build() {
+			checkState(!built, "This %s instance has already been used", ID);
+			checkState(addCount == inputs.size(), "Only %s of %s entries have been added",
+				addCount, inputs.size());
+			built = true;
+			return new GroundMotionCalcResultSet(inputs, means, sigmas);
+		}
+		
+		static Map<Gmm, List<Double>> initValueMap(Set<Gmm> gmms, int size) {
+			Map<Gmm, List<Double>> map = Maps.newEnumMap(Gmm.class);
+			for (Gmm gmm : gmms) {
+				map.put(gmm, Doubles.asList(new double[size]));
+			}
+			return map;
+		}
+		
 	}
 }

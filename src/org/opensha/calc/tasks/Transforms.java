@@ -1,17 +1,24 @@
 package org.opensha.calc.tasks;
 
+import static java.lang.Math.sin;
+import static org.opensha.geo.GeoTools.TO_RAD;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
 import org.opensha.calc.GroundMotionCalcResult;
+import org.opensha.calc.GroundMotionCalcResultSet;
 import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.calc.Site;
 import org.opensha.eq.fault.surface.IndexedFaultSurface;
+import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.eq.forecast.DistanceType;
 import org.opensha.eq.forecast.Distances;
 import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.IndexedFaultSource;
+import org.opensha.eq.forecast.Rupture;
 import org.opensha.eq.forecast.Source;
 import org.opensha.geo.Location;
 import org.opensha.gmm.Gmm;
@@ -19,7 +26,13 @@ import org.opensha.gmm.GmmInput;
 import org.opensha.gmm.GroundMotionModel;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
+import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Factory class for creating {@code Callable} data transforms.
@@ -36,34 +49,57 @@ public final class Transforms {
 	 * @return a {@code List<GmmInput>} of Gmm inputs
 	 * @see Gmm
 	 */
-	public static TransformSupplier<Source, List<GmmInput>> sourceInitializerSupplier(
-			final Site site) {
-		return new TransformSupplier<Source, List<GmmInput>>() {
-			@Override public Transform<Source, List<GmmInput>> get(Source source) {
-				return new SourceInitializer(source, site);
-			}
-		};
+	// public static TransformSupplier<Source, List<GmmInput>>
+	// sourceInitializerSupplier(
+	// final Site site) {
+	// return new TransformSupplier<Source, List<GmmInput>>() {
+	// @Override public Transform<Source, List<GmmInput>> get(Source source) {
+	// return new SourceInitializer(source, site);
+	// }
+	// };
+	// }
+
+	public static AsyncFunction<Source, List<GmmInput>> sourceToInputs(Site site) {
+		return new SourceToInputs(site);
 	}
-	
-//	/**
-//	 * Returns a supplier of {@link Source} to {@link GmmInput} transforms.
-//	 * @param site of interest
-//	 * @return a {@code List<GmmInput>} of Gmm inputs
-//	 * @see Gmm
-//	 */
-//	public static TransformSupplier<Source, List<GmmInput>> sourceInitializerSupplier(
-//			final Site site) {
-//		return new TransformSupplier<Source, List<GmmInput>>() {
-//			@Override public Transform<Source, List<GmmInput>> get(Source source) {
-//				return new SourceInitializer(source, site);
-//			}
-//		};
-//	}
+
+	public static AsyncFunction<List<GmmInput>, List<GroundMotionCalcResult>> gmmInputsToGmmResults(
+			Map<Gmm, GroundMotionModel> gmmInstances) {
+		return null; //new GmmInputsToGmmResults(gmmInstances);
+	}
+
+	// public static Supplier<AsyncFunction<Source, List<GmmInput>>> test(final
+	// Site site) {
+	// return new Supplier<AsyncFunction<Source, List<GmmInput>>>() {
+	// @Override public AsyncFunction<Source, List<GmmInput>> get() {
+	// return null;
+	// // TODO do nothing
+	//
+	// }
+	//
+	// };
+	// }
+
+	// /**
+	// * Returns a supplier of {@link Source} to {@link GmmInput} transforms.
+	// * @param site of interest
+	// * @return a {@code List<GmmInput>} of Gmm inputs
+	// * @see Gmm
+	// */
+	// public static TransformSupplier<Source, List<GmmInput>>
+	// sourceInitializerSupplier(
+	// final Site site) {
+	// return new TransformSupplier<Source, List<GmmInput>>() {
+	// @Override public Transform<Source, List<GmmInput>> get(Source source) {
+	// return new SourceInitializer(source, site);
+	// }
+	// };
+	// }
 
 	/**
 	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
-	 * that returns a {@code List<GmmInput>} of inputs for a ground motion
-	 * model (Gmm) calculation.
+	 * that returns a {@code List<GmmInput>} of inputs for a ground motion model
+	 * (Gmm) calculation.
 	 * @param source
 	 * @param site
 	 * @return a {@code List<GmmInput>} of Gmm inputs
@@ -76,8 +112,8 @@ public final class Transforms {
 
 	/**
 	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
-	 * that returns a {@code List<GmmInput>} of inputs for a ground motion
-	 * model (Gmm) calculation.
+	 * that returns a {@code List<GmmInput>} of inputs for a ground motion model
+	 * (Gmm) calculation.
 	 * @param source
 	 * @param site
 	 * @return a {@code List<GmmInput>} of Gmm inputs
@@ -112,10 +148,11 @@ public final class Transforms {
 	 * @return the supplied {@code source} or {@code null} if source is farther
 	 *         than {@code distance} from {@code loc}
 	 */
-//	public static Callable<FaultSource> newQuickDistanceFilter(final FaultSource source,
-//			final Location loc, final double distance) {
-//		return new QuickDistanceFilter(source, loc, distance);
-//	} TODO clean
+	// public static Callable<FaultSource> newQuickDistanceFilter(final
+	// FaultSource source,
+	// final Location loc, final double distance) {
+	// return new QuickDistanceFilter(source, loc, distance);
+	// } TODO clean
 
 	/**
 	 * Creates a {@code Callable} that processes {@code GmmInput}s against one
@@ -128,6 +165,82 @@ public final class Transforms {
 	public static Callable<GroundMotionCalcResult> newGroundMotionCalc(
 			final Map<Gmm, GroundMotionModel> gmmInstanceMap, final GmmInput input) {
 		return new GroundMotionCalc(gmmInstanceMap, input);
+	}
+
+	private static class SourceToInputs implements AsyncFunction<Source, List<GmmInput>> {
+
+		// TODO this needs additional rJB distance filtering
+		// Is it possible to return an empty list??
+
+		private final Site site;
+
+		SourceToInputs(Site site) {
+			this.site = site;
+		}
+
+		@Override public ListenableFuture<List<GmmInput>> apply(Source source) throws Exception {
+			ImmutableList.Builder<GmmInput> builder = ImmutableList.builder();
+			for (Rupture rup : source) {
+
+				RuptureSurface surface = rup.surface();
+				Distances distances = surface.distanceTo(site.loc);
+				double dip = surface.dip();
+				double width = surface.width();
+				double zTop = surface.depth();
+				double zHyp = zTop + sin(dip * TO_RAD) * width / 2.0;
+
+				// @formatter:off
+				GmmInput input = GmmInput.create(
+					rup.mag(),
+					distances.rJB,
+					distances.rRup,
+					distances.rX,
+					dip,
+					width,
+					zTop,
+					zHyp,
+					rup.rake(),
+					site.vs30,
+					site.vsInferred,
+					site.z2p5,
+					site.z1p0);
+				builder.add(input);
+				// @formatter:on
+			}
+			List<GmmInput> inputs = builder.build();
+			return Futures.immediateFuture(inputs);
+		}
+	}
+
+	private static class InputsToGroundMotions implements
+			AsyncFunction<List<GmmInput>, GroundMotionCalcResultSet> {
+
+		private final Map<Gmm, GroundMotionModel> gmmInstances;
+
+		InputsToGroundMotions(Map<Gmm, GroundMotionModel> gmmInstances) {
+			this.gmmInstances = gmmInstances;
+		}
+
+		@Override public ListenableFuture<GroundMotionCalcResultSet> apply(List<GmmInput> gmmInputs)
+				throws Exception {
+
+//			GroundMotionCalcResultSet.B builder = ImmutableList.builder();
+//			
+//			for (GmmInput gmmInput : gmmInputs) {
+//				
+//				Map<Gmm, ScalarGroundMotion> gmMap = Maps.newEnumMap(Gmm.class);
+//				
+//				for (Entry<Gmm, GroundMotionModel> entry : gmmInstances.entrySet()) {
+//					gmMap.put(entry.getKey(), entry.getValue().calc(gmmInput));
+//				}
+//				
+//				builder.add(GroundMotionCalcResult.create(gmmInput, gmMap));
+//			}
+//			
+//			List<GroundMotionCalcResult> results = builder.build();
+//			return Futures.immediateFuture(results);
+			return null;
+		}
 	}
 
 }
