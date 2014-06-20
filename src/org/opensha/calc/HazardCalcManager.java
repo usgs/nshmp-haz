@@ -14,7 +14,6 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.opensha.calc.tasks.Task;
 import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.FaultSourceSet;
 import org.opensha.eq.forecast.Forecast;

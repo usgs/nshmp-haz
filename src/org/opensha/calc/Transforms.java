@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
-import org.opensha.calc.tasks.Transform;
-import org.opensha.calc.tasks.TransformSupplier;
 import org.opensha.eq.fault.surface.IndexedFaultSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.eq.forecast.DistanceType;
