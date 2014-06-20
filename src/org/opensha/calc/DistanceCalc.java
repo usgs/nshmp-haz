@@ -1,4 +1,4 @@
-package org.opensha.calc.tasks;
+package org.opensha.calc;
 
 import java.util.concurrent.Callable;
 

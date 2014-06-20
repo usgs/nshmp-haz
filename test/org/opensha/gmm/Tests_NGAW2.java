@@ -72,13 +72,13 @@ public class Tests_NGAW2 {
 	}
 
     @Test
-    public void test() throws ExecutionException {
+    public void test() {
     	ScalarGroundMotion sgm = gmm.instance(imt).calc(inputsList.get(idx));
         assertEquals(exMedian, Math.exp(sgm.mean()), TOL);
-        assertEquals(exSigma, sgm.stdDev(), TOL);
+        assertEquals(exSigma, sgm.sigma(), TOL);
     }
 
-	public static void main(String[] args) throws IOException, ExecutionException {
+	public static void main(String[] args) throws IOException {
 		computeGM();
 	}
     
@@ -87,7 +87,7 @@ public class Tests_NGAW2 {
 	private static Set<Imt> imts = EnumSet.of(PGA, SA0P02, SA0P2, SA1P0, SA3P0);
 	
 	/* Use to generate Gmm result file */
-	private static void computeGM() throws IOException, ExecutionException {
+	private static void computeGM() throws IOException {
 		List<GmmInput> inputs = loadInputs(GMM_INPUTS);
 		File out = new File("tmp/Gmm-tests/" + GMM_RESULTS);
 		Files.write("", out, Charsets.US_ASCII);
@@ -101,7 +101,7 @@ public class Tests_NGAW2 {
 					String result = Parsing.joinOnCommas(
 						Lists.newArrayList(modelIdx++ + "-" + id,
 						String.format("%.6f", Math.exp(sgm.mean())),
-						String.format("%.6f", sgm.stdDev()))) +
+						String.format("%.6f", sgm.sigma()))) +
 						StandardSystemProperty.LINE_SEPARATOR.value();
 					Files.append(result, out, Charsets.US_ASCII);
 				}

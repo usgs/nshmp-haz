@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.opensha.calc.Site;
-import org.opensha.calc.tasks.Transforms;
+import org.opensha.calc.Transforms;
 import org.opensha.data.DataUtils;
 import org.opensha.eq.fault.surface.IndexedFaultSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;

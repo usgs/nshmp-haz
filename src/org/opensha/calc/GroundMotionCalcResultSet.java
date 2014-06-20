@@ -52,8 +52,8 @@ public final class GroundMotionCalcResultSet {
 		private final Map<Gmm, List<Double>> means;
 		private final Map<Gmm, List<Double>> sigmas;
 		
-		boolean built = false;
-		int addCount = 0;
+		private boolean built = false;
+		private int addCount = 0;
 		
 		private Builder(List<GmmInput> inputs, Set<Gmm> gmms) {
 			checkArgument(checkNotNull(inputs).size() > 0);
@@ -63,10 +63,10 @@ public final class GroundMotionCalcResultSet {
 			sigmas = initValueMap(gmms, inputs.size());
 		}
 		
-		Builder add(Gmm gmm, double mean, double sigma) {
+		Builder add(Gmm gmm, ScalarGroundMotion sgm) {
 			checkState(addCount < inputs.size(), "This %s instance is already full", ID);
-			means.get(gmm).set(addCount, mean);
-			sigmas.get(gmm).set(addCount, sigma);
+			means.get(gmm).set(addCount, sgm.mean());
+			sigmas.get(gmm).set(addCount, sgm.sigma());
 			addCount++;
 			return this;
 		}

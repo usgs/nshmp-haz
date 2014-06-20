@@ -7,18 +7,26 @@ import static org.opensha.data.DataUtils.validate;
 import static org.opensha.data.DataUtils.validateWeights;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.opensha.gmm.Gmm;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
+import com.google.common.collect.Sets;
 import com.google.common.primitives.Doubles;
 
 /**
+ * 
+ * TODO this documentation sucks
+ * 
  * Wrapper class for GroundMotionModel instances that will be matched against
  * different {@code Source} types in hazard calculations. The use of the word
  * 'Set' in the class name implies the {@code Gmm}s in a {@code GmmSet} will be
  * unique; this is guaranteeed by the internal use of {@code EnumMap}s.
+ * 
+ * We require that the {@code Gmm}s for far distances be a the same as, or a subset
+ * of those for near distances
  * 
  * <p><b>Additional Epistemic Uncertainty</b></p>
  * <p>Additional epistemic uncertainty is considered for each NGA according to
@@ -48,7 +56,7 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  */
-class GmmSet {
+public class GmmSet {
 	
 	// TODO check privatizing
 
@@ -56,6 +64,8 @@ class GmmSet {
 	final double maxDistLo;
 	final Map<Gmm, Double> weightMapHi;
 	final double maxDistHi;
+	
+	private final Set<Gmm> gmms;
 
 	private final boolean epiSingle;
 	private final double epiValue;
@@ -68,6 +78,8 @@ class GmmSet {
 		this.maxDistLo = maxDistLo;
 		this.weightMapHi = weightMapHi;
 		this.maxDistHi = (weightMapHi != null) ? maxDistHi : maxDistLo;
+		
+		gmms = Sets.immutableEnumSet(weightMapLo.keySet());
 		
 		// although weightMapHi may be null, we want to use maxDistHi
 		// for distance checking in the event that we do
@@ -83,14 +95,10 @@ class GmmSet {
 			this.epiSingle = false;
 		}
 	}
-
-	// TODO clean
-	// static createInstanceMap(Map<Gmm, Double> weightMap) {
-	// Map<Gmm, GroundMotionModel> instanceMap = Maps.newEnumMap(Gmm.class);
-	// for (Gmm gmm : weightMap.keySet()) {
-	// instanceMap.put(gmm, gmm.instance(imt));
-	// }
-	// }
+	
+	public Set<Gmm> gmms() {
+		return gmms;
+	}
 
 	/**
 	 * Returns the maximum distance for which this calculator is applicable
@@ -180,12 +188,27 @@ class GmmSet {
 		}
 
 		void validateState(String id) {
+			
 			// at a minimum the '*Lo' fields must be set
 			checkState(!built, "This %s instance as already been used", id);
 			checkState(gmmWtMapLo != null, "%s primary weight map not set", id);
 			checkState(maxDistanceLo != null, "%s primary max distance not set", id);
+			
+			if (gmmWtMapHi != null) {
+				// hi gmms must be same as of subset of lo gmms
+				checkState(gmmWtMapLo.keySet().containsAll(gmmWtMapHi.keySet()),
+					"%s secondary models must be a subset of primary models", id);
+				// maxDistanceHi must also be set and greater than maxDistanceLo
+				checkNotNull(maxDistanceHi,
+					"%s secondary distance must be set for secondary models", id);
+				checkState(maxDistanceHi > maxDistanceLo,
+					"%s secondary distance [%s] \u2264 primary distance [%s]", id, maxDistanceHi,
+					maxDistanceLo);
+			}
+			
 			if (uncValues != null) checkNotNull(uncWeights, "%s uncertainty weights not set", id);
 			if (uncWeights != null) checkNotNull(uncValues, "%s uncertainty values not set", id);
+			
 			built = true;
 		}
 

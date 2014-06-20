@@ -30,7 +30,7 @@ public class DefaultScalarGroundMotion implements ScalarGroundMotion {
 	}
 
 	@Override public double mean() { return mean; }
-	@Override public double stdDev() { return sigma; }
+	@Override public double sigma() { return sigma; }
 
 	@Override
 	public String toString() {

@@ -1,7 +1,6 @@
 package org.opensha.gmm;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import org.opensha.calc.ScalarGroundMotion;
 
@@ -25,11 +24,10 @@ public class MatUtil {
 	 * @param source parameterization
 	 * @return a two-element double[] containing the natural log of the median
 	 *         ground motion and its standard deviation
-	 * @throws ExecutionException if a problem occurs while initializing the model
 	 */
-	public static double[] calc(Gmm model, Imt imt, GmmInput source) throws ExecutionException {
+	public static double[] calc(Gmm model, Imt imt, GmmInput source) {
 		ScalarGroundMotion sgm = model.instance(imt).calc(source);
-		return new double[] { sgm.mean(), sgm.stdDev() };
+		return new double[] { sgm.mean(), sgm.sigma() };
 	}
 
 	/**
@@ -43,9 +41,8 @@ public class MatUtil {
 	 * @param model to use
 	 * @param source parameterization
 	 * @return a {@link MatSpectrum} data container
-	 * @throws ExecutionException if a problem occurs while initializing the model
 	 */
-	public static MatSpectrum spectrum(Gmm model, GmmInput source) throws ExecutionException {
+	public static MatSpectrum spectrum(Gmm model, GmmInput source) {
 		Set<Imt> imts = model.responseSpectrumIMTs();
 		MatSpectrum spectrum = new MatSpectrum(imts.size());
 		int i = 0;
@@ -53,10 +50,10 @@ public class MatUtil {
 			ScalarGroundMotion sgm = model.instance(imt).calc(source);
 			spectrum.periods[i] = imt.period();
 			spectrum.means[i] = sgm.mean();
-			spectrum.sigmas[i] = sgm.stdDev();
+			spectrum.sigmas[i] = sgm.sigma();
 			i++;
 		}
 		return spectrum;
 	}
-	
+
 }

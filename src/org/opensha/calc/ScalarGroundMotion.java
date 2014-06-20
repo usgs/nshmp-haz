@@ -17,6 +17,6 @@ public interface ScalarGroundMotion {
 	 * Returns the standard deviation in natural log units.
 	 * @return the standard deviation
 	 */
-	public double stdDev();
+	public double sigma();
 	
 }

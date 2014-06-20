@@ -1,4 +1,4 @@
-package org.opensha.calc.tasks;
+package org.opensha.calc;
 
 import static java.lang.Math.sin;
 import static org.opensha.geo.GeoTools.TO_RAD;
@@ -8,10 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
-import org.opensha.calc.GroundMotionCalcResult;
-import org.opensha.calc.GroundMotionCalcResultSet;
-import org.opensha.calc.ScalarGroundMotion;
-import org.opensha.calc.Site;
+import org.opensha.calc.tasks.Transform;
+import org.opensha.calc.tasks.TransformSupplier;
 import org.opensha.eq.fault.surface.IndexedFaultSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.eq.forecast.DistanceType;
@@ -63,9 +61,13 @@ public final class Transforms {
 		return new SourceToInputs(site);
 	}
 
-	public static AsyncFunction<List<GmmInput>, List<GroundMotionCalcResult>> gmmInputsToGmmResults(
+	/**
+	 * @param gmmInstances
+	 * @return
+	 */
+	public static AsyncFunction<List<GmmInput>, GroundMotionCalcResultSet> inputsToGroundMotions(
 			Map<Gmm, GroundMotionModel> gmmInstances) {
-		return null; //new GmmInputsToGmmResults(gmmInstances);
+		return new InputsToGroundMotions(gmmInstances);
 	}
 
 	// public static Supplier<AsyncFunction<Source, List<GmmInput>>> test(final
@@ -105,10 +107,11 @@ public final class Transforms {
 	 * @return a {@code List<GmmInput>} of Gmm inputs
 	 * @see Gmm
 	 */
-	public static Callable<List<GmmInput>> newFaultCalcInitializer(final FaultSource source,
-			final Site site) {
-		return new FaultCalcInitializer(source, site);
-	}
+	// public static Callable<List<GmmInput>> newFaultCalcInitializer(final
+	// FaultSource source,
+	// final Site site) {
+	// return new FaultCalcInitializer(source, site);
+	// }
 
 	/**
 	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
@@ -162,10 +165,10 @@ public final class Transforms {
 	 * @param input to the models
 	 * @return a {@code Map} of {@code ScalarGroundMotion}s
 	 */
-	public static Callable<GroundMotionCalcResult> newGroundMotionCalc(
-			final Map<Gmm, GroundMotionModel> gmmInstanceMap, final GmmInput input) {
-		return new GroundMotionCalc(gmmInstanceMap, input);
-	}
+	// public static Callable<GroundMotionCalcResult> newGroundMotionCalc(
+	// final Map<Gmm, GroundMotionModel> gmmInstanceMap, final GmmInput input) {
+	// return new GroundMotionCalc(gmmInstanceMap, input);
+	// }
 
 	private static class SourceToInputs implements AsyncFunction<Source, List<GmmInput>> {
 
@@ -224,22 +227,16 @@ public final class Transforms {
 		@Override public ListenableFuture<GroundMotionCalcResultSet> apply(List<GmmInput> gmmInputs)
 				throws Exception {
 
-//			GroundMotionCalcResultSet.B builder = ImmutableList.builder();
-//			
-//			for (GmmInput gmmInput : gmmInputs) {
-//				
-//				Map<Gmm, ScalarGroundMotion> gmMap = Maps.newEnumMap(Gmm.class);
-//				
-//				for (Entry<Gmm, GroundMotionModel> entry : gmmInstances.entrySet()) {
-//					gmMap.put(entry.getKey(), entry.getValue().calc(gmmInput));
-//				}
-//				
-//				builder.add(GroundMotionCalcResult.create(gmmInput, gmMap));
-//			}
-//			
-//			List<GroundMotionCalcResult> results = builder.build();
-//			return Futures.immediateFuture(results);
-			return null;
+			GroundMotionCalcResultSet.Builder gmBuilder = GroundMotionCalcResultSet.builder(
+				gmmInputs, gmmInstances.keySet());
+
+			for (GmmInput gmmInput : gmmInputs) {
+				for (Entry<Gmm, GroundMotionModel> entry : gmmInstances.entrySet()) {
+					gmBuilder.add(entry.getKey(), entry.getValue().calc(gmmInput));
+				}
+			}
+			GroundMotionCalcResultSet results = gmBuilder.build();
+			return Futures.immediateFuture(results);
 		}
 	}
 

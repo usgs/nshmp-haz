@@ -1,4 +1,4 @@
-package org.opensha.calc.tasks;
+package org.opensha.calc;
 
 import static java.lang.Math.sin;
 import static org.opensha.geo.GeoTools.TO_RAD;
@@ -7,7 +7,6 @@ import static org.opensha.eq.forecast.DistanceType.*;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.opensha.calc.Site;
 import org.opensha.data.DataUtils;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.eq.forecast.DistanceType;

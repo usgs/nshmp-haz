@@ -86,7 +86,7 @@ public class HazardCalcResultSet implements Iterable<ScalarGroundMotion> {
 		@Override
 		public double mean() { return results.means.get(idx); }
 		@Override
-		public double stdDev() { return results.stds.get(idx); }
+		public double sigma() { return results.stds.get(idx); }
 	}
 	
 }

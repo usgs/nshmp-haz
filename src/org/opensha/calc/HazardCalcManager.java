@@ -15,7 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.opensha.calc.tasks.Task;
-import org.opensha.calc.tasks.Transforms;
 import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.FaultSourceSet;
 import org.opensha.eq.forecast.Forecast;
@@ -162,16 +161,24 @@ public class HazardCalcManager {
 		// calculate total curve
 
 	}
-	private void dev(SourceSet<Source> sources, Site site) {
+	
+	// TODO epiphany!!! Although it will be a little more work, if we have a multi-distance
+	// GmmSet model, we will do all calculations; the far gmms are currently required to be a subset of the near
+	// gmms. Even without this requirement, we would compute ground motions for the master set of gmms.
+	// Only when recombining scalar ground motions into hazard curves will we chose those values
+	// required at different distances as we will have the associated GmmInputs handy
+	
+	private void dev(SourceSet<Source> sources, Site site, Imt imt) {
 		
 		int coreCount = Runtime.getRuntime().availableProcessors();
 		ExecutorService ex = newFixedThreadPool(coreCount);
-		ListeningExecutorService lex = listeningDecorator(ex);
+		
+		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sources.groundMotionModels().gmms(), imt);
 		
 		// all SourceSets are Iterable<Source> - these iterations occur in the main thread
 		
 		AsyncFunction<Source, List<GmmInput>> sourceToInputs =  Transforms.sourceToInputs(site);
-//		AsyncFunction<List<GmmInput>, GroundMotionCalcResultSet> inputsToGroundMotions = Transforms.
+		AsyncFunction<List<GmmInput>, GroundMotionCalcResultSet> inputsToGroundMotions = Transforms.inputsToGroundMotions(gmmInstances);
 		
 		for (Source source : sources.locationIterable(site.loc)) {
 			
