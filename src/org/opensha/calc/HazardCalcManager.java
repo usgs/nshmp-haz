@@ -177,7 +177,7 @@ public class HazardCalcManager {
 		// all SourceSets are Iterable<Source> - these iterations occur in the main thread
 		
 		AsyncFunction<Source, List<GmmInput>> sourceToInputs =  Transforms.sourceToInputs(site);
-		AsyncFunction<List<GmmInput>, GroundMotionCalcResultSet> inputsToGroundMotions = Transforms.inputsToGroundMotions(gmmInstances);
+		AsyncFunction<List<GmmInput>, GroundMotionSet> inputsToGroundMotions = Transforms.inputsToGroundMotions(gmmInstances);
 		
 		for (Source source : sources.locationIterable(site.loc)) {
 			
@@ -201,7 +201,7 @@ public class HazardCalcManager {
 	}
 	
 	
-//	private GroundMotionCalcResultSet doCalc(SourceSet<Source> sources, Site site) {
+//	private GroundMotionSet doCalc(SourceSet<Source> sources, Site site) {
 //
 //		Iterable<Source> locIter = sources.locationIterable(site.loc);
 //		
@@ -217,7 +217,7 @@ public class HazardCalcManager {
 //		return null;
 //	}
 
-//	private GroundMotionCalcResultSet doFaultCalc(FaultSourceSet sources,
+//	private GroundMotionSet doFaultCalc(FaultSourceSet sources,
 //			Map<Gmm, GroundMotionModel> gmms, Site site) throws InterruptedException,
 //			ExecutionException {
 //
@@ -265,7 +265,7 @@ public class HazardCalcManager {
 //		}
 //
 //		// Final results assembly:
-//		GroundMotionCalcResultSet results = GroundMotionCalcResultSet.create(gmms.keySet(), gmCount);
+//		GroundMotionSet results = GroundMotionSet.create(gmms.keySet(), gmCount);
 //		for (int i = 0; i < gmCount; i++) {
 //			GroundMotionCalcResult result = gmCS.take().get();
 //			results.add(result);

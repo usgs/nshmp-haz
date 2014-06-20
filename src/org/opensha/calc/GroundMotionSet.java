@@ -19,11 +19,11 @@ import com.google.common.primitives.Doubles;
  *
  * @author Peter Powers
  */
-public final class GroundMotionCalcResultSet {
+public final class GroundMotionSet {
 
 	// TODO package privatize
 	
-	// TODO rename to ScalarGroundMotionSet
+	// TODO rename to GroundMotionSet
 	
 	// TODO the inputList supplied to Builder will be immutable
 	// now that we're taking on large scale calculations, the mean and sigma map lists 
@@ -33,7 +33,7 @@ public final class GroundMotionCalcResultSet {
 	Map<Gmm, List<Double>> means;
 	Map<Gmm, List<Double>> sigmas;
 	
-	private GroundMotionCalcResultSet(List<GmmInput> inputs, Map<Gmm, List<Double>> means,
+	private GroundMotionSet(List<GmmInput> inputs, Map<Gmm, List<Double>> means,
 		Map<Gmm, List<Double>> sigmas) {
 		this.inputs = inputs;
 		this.means = means;
@@ -71,12 +71,12 @@ public final class GroundMotionCalcResultSet {
 			return this;
 		}
 		
-		GroundMotionCalcResultSet build() {
+		GroundMotionSet build() {
 			checkState(!built, "This %s instance has already been used", ID);
 			checkState(addCount == inputs.size(), "Only %s of %s entries have been added",
 				addCount, inputs.size());
 			built = true;
-			return new GroundMotionCalcResultSet(inputs, means, sigmas);
+			return new GroundMotionSet(inputs, means, sigmas);
 		}
 		
 		static Map<Gmm, List<Double>> initValueMap(Set<Gmm> gmms, int size) {

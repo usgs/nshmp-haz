@@ -63,7 +63,7 @@ public final class Transforms {
 	 * @param gmmInstances
 	 * @return
 	 */
-	public static AsyncFunction<List<GmmInput>, GroundMotionCalcResultSet> inputsToGroundMotions(
+	public static AsyncFunction<List<GmmInput>, GroundMotionSet> inputsToGroundMotions(
 			Map<Gmm, GroundMotionModel> gmmInstances) {
 		return new InputsToGroundMotions(gmmInstances);
 	}
@@ -214,7 +214,7 @@ public final class Transforms {
 	}
 
 	private static class InputsToGroundMotions implements
-			AsyncFunction<List<GmmInput>, GroundMotionCalcResultSet> {
+			AsyncFunction<List<GmmInput>, GroundMotionSet> {
 
 		private final Map<Gmm, GroundMotionModel> gmmInstances;
 
@@ -222,10 +222,10 @@ public final class Transforms {
 			this.gmmInstances = gmmInstances;
 		}
 
-		@Override public ListenableFuture<GroundMotionCalcResultSet> apply(List<GmmInput> gmmInputs)
+		@Override public ListenableFuture<GroundMotionSet> apply(List<GmmInput> gmmInputs)
 				throws Exception {
 
-			GroundMotionCalcResultSet.Builder gmBuilder = GroundMotionCalcResultSet.builder(
+			GroundMotionSet.Builder gmBuilder = GroundMotionSet.builder(
 				gmmInputs, gmmInstances.keySet());
 
 			for (GmmInput gmmInput : gmmInputs) {
@@ -233,7 +233,7 @@ public final class Transforms {
 					gmBuilder.add(entry.getKey(), entry.getValue().calc(gmmInput));
 				}
 			}
-			GroundMotionCalcResultSet results = gmBuilder.build();
+			GroundMotionSet results = gmBuilder.build();
 			return Futures.immediateFuture(results);
 		}
 	}
