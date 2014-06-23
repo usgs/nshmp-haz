@@ -49,6 +49,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 	
 	static class DistanceFilter implements Predicate<FaultSource> {
 
+		private static final String ID = "FaultSourceSet.DistanceFilter";
 		final Location loc;
 		final double distance;
 
@@ -60,6 +61,10 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 		@Override public boolean apply(FaultSource fs) {
 			return horzDistanceFast(loc, fs.trace.first()) <= distance ||
 				horzDistanceFast(loc, fs.trace.last()) <= distance;
+		}
+		
+		@Override public String toString() {
+			return ID + " [location: " + loc + ", distance: " + distance + "]";
 		}
 	}
 

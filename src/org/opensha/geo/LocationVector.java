@@ -1,9 +1,9 @@
 package org.opensha.geo;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import static org.opensha.geo.GeoTools.PI_BY_2;
 import static org.opensha.geo.GeoTools.TO_DEG;
 import static org.opensha.geo.GeoTools.TWOPI;
 import static org.opensha.geo.Locations.azimuthRad;
@@ -90,14 +90,14 @@ public class LocationVector {
 	 * <p><b>NOTE</b>: create(p1, p2) is not equivalent to create
 	 * reverseOf(create(p2, p1)). Although the horizontal and vertical
 	 * components will likley be the same but the azimuths will potentially be
-	 * quite different depending on the separation between {@code p1} and
+
 	 * {@code p2}.
 	 * 
 	 * @param v {@code LocationVector} to copy and flip
 	 * @return the flipped copy
 	 */
 	public static LocationVector reverseOf(LocationVector v) {
-		return create((v.azimuth + PI_BY_2) % TWOPI, v.horiz, -v.vert);
+		return create((v.azimuth + PI) % TWOPI, v.horiz, -v.vert);
 	}
 
 	/**

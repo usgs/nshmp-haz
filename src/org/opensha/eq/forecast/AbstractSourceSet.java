@@ -1,9 +1,13 @@
 package org.opensha.eq.forecast;
 
+import java.util.Map;
+
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
 /**
@@ -41,6 +45,14 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	@Override public String name() {
 		return name;
 	}
+	
+	@Override public String toString() {
+		Map<String, String> data = Maps.newLinkedHashMap();
+		data.put("Name", name);
+		data.put("Size", Integer.toString(size()));
+		data.put("Weight", Double.toString(weight));
+		return data.toString();
+	}
 
 	@Override public double weight() {
 		return weight;
@@ -51,7 +63,9 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	}
 	
 	@Override public Iterable<T> locationIterable(Location loc) {
-		return FluentIterable.from(this).filter(distanceFilter(loc, gmmSet.maxDistHi));
+		Predicate<T> filter = distanceFilter(loc, gmmSet.maxDistHi);
+		System.out.println(filter);
+		return FluentIterable.from(this).filter(filter);
 	}
 	
 

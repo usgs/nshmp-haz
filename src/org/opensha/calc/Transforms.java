@@ -31,11 +31,9 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Factory class for creating {@code Callable} data transforms.
+ * Factory class for creating asynchronous data transforms.
  * 
  * @author Peter Powers
- * @see TransformSupplier
- * @see Transform
  */
 public final class Transforms {
 
@@ -184,6 +182,7 @@ public final class Transforms {
 			for (Rupture rup : source) {
 
 				RuptureSurface surface = rup.surface();
+				
 				Distances distances = surface.distanceTo(site.loc);
 				double dip = surface.dip();
 				double width = surface.width();
@@ -225,12 +224,13 @@ public final class Transforms {
 		@Override public ListenableFuture<GroundMotionSet> apply(List<GmmInput> gmmInputs)
 				throws Exception {
 
-			GroundMotionSet.Builder gmBuilder = GroundMotionSet.builder(
-				gmmInputs, gmmInstances.keySet());
+			GroundMotionSet.Builder gmBuilder = GroundMotionSet.builder(gmmInputs,
+				gmmInstances.keySet());
 
-			for (GmmInput gmmInput : gmmInputs) {
-				for (Entry<Gmm, GroundMotionModel> entry : gmmInstances.entrySet()) {
-					gmBuilder.add(entry.getKey(), entry.getValue().calc(gmmInput));
+			for (Entry<Gmm, GroundMotionModel> entry : gmmInstances.entrySet()) {
+				int inputIndex = 0;
+				for (GmmInput gmmInput : gmmInputs) {
+					gmBuilder.add(entry.getKey(), entry.getValue().calc(gmmInput), inputIndex++);
 				}
 			}
 			GroundMotionSet results = gmBuilder.build();

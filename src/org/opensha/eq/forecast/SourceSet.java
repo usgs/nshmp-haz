@@ -55,5 +55,6 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
 	public Predicate<T> distanceFilter(Location loc, double distance);
 
 	// TODO comment; GmmSet isn't visible
+	// this isn;t the best; need to see how we're going to use when computing hazard
 	public GmmSet groundMotionModels();
 }

@@ -5,6 +5,7 @@ package org.opensha.calc;
  *
  * @author Peter Powers
  */
+@Deprecated
 public class Calculators {
 
 //	public static GroundMotionCalculator newFaultCalculator() {

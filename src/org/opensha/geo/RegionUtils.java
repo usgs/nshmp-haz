@@ -105,7 +105,7 @@ public class RegionUtils {
 		// that is not in project space (e.g. desktop, Decs and Settings);
 		
 		
-		String outDirName = "sha_kml/";
+		String outDirName = "tmp/sha_kml/";
 		File outDir = new File(outDirName);
 		outDir.mkdirs();
 		String tmpFile = outDirName + kmlFileName;
@@ -131,6 +131,7 @@ public class RegionUtils {
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 		Document doc = docBuilder.newDocument();
 		Element root = doc.createElementNS("http://www.opengis.net/kml/2.2", "kml");
+		doc.appendChild(root);
 
 		Element e_doc = addElement("Document", root);
 		Element e_doc_name = addElement("name", e_doc);
@@ -154,7 +155,7 @@ public class RegionUtils {
 		// that is not in project space (e.g. desktop, Decs and Settings);
 		
 		
-		String outDirName = "sha_kml/";
+		String outDirName = "tmp/sha_kml/";
 		File outDir = new File(outDirName);
 		outDir.mkdirs();
 		String tmpFile = outDirName + kmlFileName;
@@ -466,8 +467,16 @@ public class RegionUtils {
 //		
 //	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		
+//		LocationList ll = LocationList.create(
+//			Location.create(35,-125),
+//			Location.create(38,-117),
+//			Location.create(37,-109),
+//			Location.create(41,-95));
+//		
+//		locListToKML(ll, "Sausage", Color.ORANGE);
+
 //		// visual verification tests for GeographiRegionTest
 //		Region gr;
 //		
@@ -528,19 +537,16 @@ public class RegionUtils {
 //				Color.ORANGE);
 		
 // SAUSAGE
-//		LocationList ll = new LocationList();
-//		ll.addLocation(new Location(35,-125));
-//		ll.addLocation(new Location(38,-117));
-//		ll.addLocation(new Location(37,-109));
-//		ll.addLocation(new Location(41,-95));
-//		
-//		GriddedRegion sausage = 
-//			new GriddedRegion(ll,100,0.5,null);
-//		KML.regionToKML(
-//				sausage,
-//				"Sausage",
-//				Color.ORANGE);
-//
+		LocationList ll = LocationList.create(
+			Location.create(35,-125),
+			Location.create(38,-117),
+			Location.create(37,-109),
+			Location.create(41,-95));
+		
+		Region sausage = Regions.createBuffered("Test Buffer", ll, 100.0);
+//		regionToKML(sausage, "Sausage", Color.ORANGE);
+		locListToKML(ll, "Sausage", Color.ORANGE);
+
 //		GriddedRegion sausageAnchor = 
 //			new GriddedRegion(ll,100,0.5,new Location(0,0));
 //		KML.regionToKML(

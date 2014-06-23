@@ -3,7 +3,6 @@ package org.opensha.eq.forecast;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static org.opensha.eq.fault.Faults.validateDepth;
 import static org.opensha.eq.fault.Faults.validateDip;
 import static org.opensha.eq.fault.Faults.validateRake;
@@ -15,6 +14,7 @@ import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.opensha.data.DataUtils;
 import org.opensha.eq.fault.scaling.MagAreaRelationship;
@@ -28,6 +28,7 @@ import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 
@@ -109,24 +110,15 @@ public class FaultSource implements Source {
 	
 	@Override
 	public String toString() {
-		// TODO use joiner
-		// @formatter:off
-		return new StringBuilder()
-		.append("==========  Fault Source  ==========")
-		.append(LINE_SEPARATOR.value())
-		.append("  Source name: ").append(name)
-		.append(LINE_SEPARATOR.value())
-		.append("          dip: ").append(dip)
-		.append(LINE_SEPARATOR.value())
-		.append("        width: ").append(width)
-		.append(LINE_SEPARATOR.value())
-		.append("         rake: ").append(rake)
-		.append(LINE_SEPARATOR.value())
-		.append("         mfds: ").append(mfds.size())
-		.append(LINE_SEPARATOR.value())
-		.append("          top: ").append(trace.first().depth())
-		.append(LINE_SEPARATOR.value()).toString();
-		// @formatter:on
+		Map<Object, Object> data = ImmutableMap.builder()
+			.put("name", name)
+			.put("dip", dip)
+			.put("width", width)
+			.put("rake", rake)
+			.put("mfds", mfds.size())
+			.put("top", trace.first().depth())
+			.build();
+		return getClass().getSimpleName() + " " + data;
 	}
 
 	private List<Rupture> createRuptureList(IncrementalMfd mfd) {

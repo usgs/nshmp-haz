@@ -452,7 +452,7 @@ public final class Parsing {
 //	}
 
 	/**
-	 * Capitalizes supplied {@code String} converting the {@code char} to
+	 * Capitalizes supplied {@code String} converting the first {@code char} to
 	 * uppercase and all subsequent {@code char}s to lowercase.
 	 * @param s {@code String} to convert
 	 * @return the capitalized {@code String}
@@ -632,7 +632,7 @@ public final class Parsing {
 	/*
 	 * Adds brackets to the supplied string.
 	 */
-	private static String addBrackets(String s) {
+	static String addBrackets(String s) {
 		return '[' + s + ']';
 	}
 	

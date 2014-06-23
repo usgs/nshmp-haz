@@ -97,6 +97,7 @@ public class Loader {
 		}
 		
 		log.info("Loading forecast: " + name);
+		builder.name(name);
 		log.info("   From resource: " + forecastPath.getFileName());
 		
 		for (Path typePath : typePaths) {
@@ -107,9 +108,11 @@ public class Loader {
 		}
 
 		log.info("");
+		log.info("Building forecast...");
+		Forecast forecast = builder.build();
 		log.info("Finished loading: " + forecastPath.getFileName());
 
-		return null;
+		return forecast;
 	}
 	
 	private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",

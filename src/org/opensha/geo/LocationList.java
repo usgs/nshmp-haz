@@ -306,7 +306,7 @@ public final class LocationList implements Iterable<Location> {
 		}
 
 		/**
-		 * Adds the supplied {@code Location} to the built LocationList.
+		 * Adds the supplied {@code Location}.
 		 * @param loc to add
 		 * @return a reference to this {@code Builder}
 		 */
@@ -343,6 +343,16 @@ public final class LocationList implements Iterable<Location> {
 		 */
 		public Builder add(double lat, double lon, double depth) {
 			locs.add(Location.create(lat, lon, depth));
+			return this;
+		}
+		
+		/**
+		 * Adds the supplied {@code LocationList}.
+		 * @param locs to add
+		 * @return a reference to this {@code Builder}
+		 */
+		public Builder add(LocationList locs) {
+			this.locs.addAll(checkNotNull(locs).locs);
 			return this;
 		}
 

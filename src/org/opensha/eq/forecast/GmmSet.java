@@ -25,31 +25,18 @@ import com.google.common.primitives.Doubles;
  * 'Set' in the class name implies the {@code Gmm}s in a {@code GmmSet} will be
  * unique; this is guaranteeed by the internal use of {@code EnumMap}s.
  * 
- * We require that the {@code Gmm}s for far distances be a the same as, or a subset
- * of those for near distances
+ * We require that the {@code Gmm}s for far distances be a the same as, or a
+ * subset of those for near distances
  * 
- * <p><b>Additional Epistemic Uncertainty</b></p>
- * <p>Additional epistemic uncertainty is considered for each NGA according to
- * the following distance and magnitude matrix:
- * <pre>
- *             M<6      6%le;M<7      7&le;M
- *          =============================
- *   D<10     0.375  |  0.230  |  0.400v
- * 10&le;D<30    0.210  |  0.225  |  0.360
- *   30&le;D     0.245  |  0.230  |  0.310
- *          =============================
- * </pre>
- * For an earthquake rupture at a given distance and magnitude, the
- * corresponding uncertainty is applied to a particular NGA with the following
- * weights:
- * <pre>
- *     hazard curve           weight
- * ======================================
- *      mean + unc            0.185
- *      mean                  0.630
- *      mean - unc            0.185
- * ======================================
- * </pre>
+ * <p><b>Additional Epistemic Uncertainty</b></p> <p>Additional epistemic
+ * uncertainty is considered for each NGA according to the following distance
+ * and magnitude matrix: <pre> M<6 6%le;M<7 7&le;M =============================
+ * D<10 0.375 | 0.230 | 0.400v 10&le;D<30 0.210 | 0.225 | 0.360 30&le;D 0.245 |
+ * 0.230 | 0.310 ============================= </pre> For an earthquake rupture
+ * at a given distance and magnitude, the corresponding uncertainty is applied
+ * to a particular NGA with the following weights: <pre> hazard curve weight
+ * ====================================== mean + unc 0.185 mean 0.630 mean - unc
+ * 0.185 ====================================== </pre>
  * 
  * <p>A {@code GmmSet} can not be created directly; it may only be created by a
  * private parser.</p>
@@ -57,14 +44,14 @@ import com.google.common.primitives.Doubles;
  * @author Peter Powers
  */
 public class GmmSet {
-	
+
 	// TODO check privatizing
 
 	final Map<Gmm, Double> weightMapLo;
 	final double maxDistLo;
 	final Map<Gmm, Double> weightMapHi;
 	final double maxDistHi;
-	
+
 	private final Set<Gmm> gmms;
 
 	private final boolean epiSingle;
@@ -78,12 +65,12 @@ public class GmmSet {
 		this.maxDistLo = maxDistLo;
 		this.weightMapHi = weightMapHi;
 		this.maxDistHi = (weightMapHi != null) ? maxDistHi : maxDistLo;
-		
+
 		gmms = Sets.immutableEnumSet(weightMapLo.keySet());
-		
+
 		// although weightMapHi may be null, we want to use maxDistHi
 		// for distance checking in the event that we do
-		
+
 		this.epiWeights = epiWeights;
 		if (epiValues.length == 1) {
 			this.epiValue = epiValues[0];
@@ -95,7 +82,7 @@ public class GmmSet {
 			this.epiSingle = false;
 		}
 	}
-	
+
 	public Set<Gmm> gmms() {
 		return gmms;
 	}
@@ -111,15 +98,15 @@ public class GmmSet {
 	private static double[][] initEpiValues(double[] v) {
 		return new double[][] { { v[0], v[1], v[2] }, { v[3], v[4], v[5] }, { v[6], v[7], v[8] } };
 	}
-	
+
 	// TODO clean
-//	private static final int EPI_CT = 3;
-//	private static final double[] EPI_SIGN = {-1.0, 0.0, 1,0};
-//	private static final double[] EPI_WT = {0.185, 0.630, 0.185};
-//	private static final double[][] EPI_VAL = {
-//		{0.375, 0.230, 0.400},
-//		{0.210, 0.225, 0.360},
-//		{0.245, 0.230, 0.310}};
+	// private static final int EPI_CT = 3;
+	// private static final double[] EPI_SIGN = {-1.0, 0.0, 1,0};
+	// private static final double[] EPI_WT = {0.185, 0.630, 0.185};
+	// private static final double[][] EPI_VAL = {
+	// {0.375, 0.230, 0.400},
+	// {0.210, 0.225, 0.360},
+	// {0.245, 0.230, 0.310}};
 
 	/*
 	 * Returns the epistemic uncertainty for the supplied magnitude (M) and
@@ -127,12 +114,11 @@ public class GmmSet {
 	 */
 	private double getUncertainty(double M, double D) {
 		if (epiSingle) return epiValue;
-		int mi = (M<6) ? 0 : (M<7) ? 1 : 2;
-		int di = (D<10) ? 0 : (D<30) ? 1 : 2;
+		int mi = (M < 6) ? 0 : (M < 7) ? 1 : 2;
+		int di = (D < 10) ? 0 : (D < 30) ? 1 : 2;
 		return epiValues[di][mi];
 	}
 
-	
 	static class Builder {
 
 		static final String ID = "GmmSet.Builder";
@@ -188,12 +174,12 @@ public class GmmSet {
 		}
 
 		void validateState(String id) {
-			
+
 			// at a minimum the '*Lo' fields must be set
 			checkState(!built, "This %s instance as already been used", id);
 			checkState(gmmWtMapLo != null, "%s primary weight map not set", id);
 			checkState(maxDistanceLo != null, "%s primary max distance not set", id);
-			
+
 			if (gmmWtMapHi != null) {
 				// hi gmms must be same as of subset of lo gmms
 				checkState(gmmWtMapLo.keySet().containsAll(gmmWtMapHi.keySet()),
@@ -205,10 +191,10 @@ public class GmmSet {
 					"%s secondary distance [%s] \u2264 primary distance [%s]", id, maxDistanceHi,
 					maxDistanceLo);
 			}
-			
+
 			if (uncValues != null) checkNotNull(uncWeights, "%s uncertainty weights not set", id);
 			if (uncWeights != null) checkNotNull(uncValues, "%s uncertainty values not set", id);
-			
+
 			built = true;
 		}
 
@@ -217,7 +203,7 @@ public class GmmSet {
 			validateState(ID);
 			try {
 				GmmSet gmmSet = new GmmSet(gmmWtMapLo, maxDistanceLo, gmmWtMapHi, maxDistanceHi,
-					uncWeights, uncValues);
+					uncValues, uncWeights);
 				return gmmSet;
 			} catch (Exception e) {
 				e.printStackTrace();

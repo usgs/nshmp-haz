@@ -1,12 +1,15 @@
 package org.opensha.eq.forecast;
 
+import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.geo.Locations.*;
 
+import java.awt.Color;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.util.Iterator;
 import java.util.List;
 
+import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.BorderType;
@@ -16,6 +19,7 @@ import org.opensha.geo.LocationList;
 import org.opensha.geo.LocationVector;
 import org.opensha.geo.Locations;
 import org.opensha.geo.Region;
+import org.opensha.geo.RegionUtils;
 import org.opensha.geo.Regions;
 
 import com.google.common.collect.Lists;
@@ -161,59 +165,110 @@ public final class Distances {
 	 */
 	private static double getDistanceX(LocationList trace, Location siteLoc) {
 
-		double distanceX;
+		// Point sources used to get processed through this method.
+		// Theoretically we shouldn't get here now because any trace
+		// will have already been validated to have 2 or more points.
+		// Conceivably the points could be closer together than the
+		// spacing of a gridded surface and I'm not sure what the
+		// consequence of that would be, but we should make sure that
+		// dosn't happen.
+		// TODO check gridded surface building
+		checkState(trace.size() > 1, "Trace is too short");
+		
+		
+		// TODO clean
+//		double distanceX;
 		
 		// set to zero if it's a point source
-		if(trace.size() == 1) {
-			distanceX = 0;
-		}
-		else {
+//		if(trace.size() == 1) {
+//			//distanceX = 0;
+//			
+//		} else {
+			
+			// @formatter:off
+			
+			/*
+			 *    P4                        P1
+			 *    |                          |
+			 *    |          dip dir         |
+			 *    |             |            |
+			 *    P3------************------P2
+			 *            <- strike --
+			 */
+			
+			double strike = Faults.strikeRad(trace);
+			double dipDir = Faults.dipDirectionRad(strike);
+			
+			LocationVector toP3 = LocationVector.create(strike, 1000.0, 0.0);
+			LocationVector toP2 = LocationVector.reverseOf(toP3);
+			LocationVector toP14 = LocationVector.create(dipDir, 1000.0, 0.0);
+			
+			Location p3 = Locations.location(trace.last(), toP3);
+			Location p4 = Locations.location(p3, toP14);
+			Location p2 = Locations.location(trace.first(), toP2);
+			Location p1 = Locations.location(p2, toP14);
+			
+			LocationList region = LocationList.builder()
+					.add(p1)
+					.add(p2)
+					.add(trace)
+					.add(p3)
+					.add(p4)
+					.build();
+			
+			LocationList extendedTrace = LocationList.builder()
+					.add(p2)
+					.add(trace)
+					.add(p3)
+					.build();
+			// @formatter:on
+			
 			// We should probably set something here here too if it's vertical strike-slip
 			// (to avoid unnecessary calculations)
 
-				// get points projected off the ends
-				Location firstTraceLoc = trace.first(); 	// first trace point
-				Location lastTraceLoc = trace.last(); 	// last trace point
-
-				// get point projected from first trace point in opposite direction of the ave trace
-				LocationVector dirBase = LocationVector.create(lastTraceLoc, firstTraceLoc); 		
-//				dir.setHorzDistance(1000); // project to 1000 km
-//				dir.setVertDistance(0d);
-				LocationVector dirUtil = LocationVector.create(dirBase.azimuth(), 1000.0, 0.0);
-				Location projectedLoc1 = Locations.location(firstTraceLoc, dirUtil);
-
-
-				// get point projected from last trace point in ave trace direction
-				dirUtil = LocationVector.reverseOf(dirUtil);
-//				dir.setAzimuth(dir.getAzimuth()+180);  // flip to ave trace dir
-				Location projectedLoc2 = Locations.location(lastTraceLoc, dirUtil);
-				// point down dip by adding 90 degrees to the azimuth
-				double rot90 = (dirUtil.azimuthDegrees() + 90.0) * GeoTools.TO_RAD;
-				dirUtil = LocationVector.create(rot90, dirUtil.horizontal(), 0.0);
-//				dir.setAzimuth(dir.getAzimuth()+90);  // now point down dip
-
-				// get points projected in the down dip directions at the ends of the new trace
-				Location projectedLoc3 = Locations.location(projectedLoc1, dirUtil);
-
-				Location projectedLoc4 = Locations.location(projectedLoc2, dirUtil);
-
-//				LocationList locsForExtendedTrace = new LocationList();
-				List<Location> locsForExtendedTrace = Lists.newArrayList();
-//				LocationList locsForRegion = new LocationList();
-				List<Location> locsForRegion = Lists.newArrayList();
-
-				locsForExtendedTrace.add(projectedLoc1);
-				locsForRegion.add(projectedLoc1);
-				for(int c=0; c<trace.size(); c++) {
-					locsForExtendedTrace.add(trace.get(c));
-					locsForRegion.add(trace.get(c));     	
-				}
-				locsForExtendedTrace.add(projectedLoc2);
-				locsForRegion.add(projectedLoc2);
-
-				// finish the region
-				locsForRegion.add(projectedLoc4);
-				locsForRegion.add(projectedLoc3);
+//				// get points projected off the ends
+//				Location firstTraceLoc = trace.first(); 	// first trace point
+//				Location lastTraceLoc = trace.last(); 	// last trace point
+//
+//				// get point projected from first trace point in opposite direction of the ave trace
+//				LocationVector dirBase = LocationVector.create(lastTraceLoc, firstTraceLoc); 		
+////				dir.setHorzDistance(1000); // project to 1000 km
+////				dir.setVertDistance(0d);
+//				LocationVector dirUtil = LocationVector.create(dirBase.azimuth(), 1000.0, 0.0);
+//				Location projectedLoc1 = Locations.location(firstTraceLoc, dirUtil);
+//
+//
+//				// get point projected from last trace point in ave trace direction
+//				dirUtil = LocationVector.reverseOf(dirUtil);
+////				dir.setAzimuth(dir.getAzimuth()+180);  // flip to ave trace dir
+//				Location projectedLoc2 = Locations.location(lastTraceLoc, dirUtil);
+//				// point down dip by adding 90 degrees to the azimuth
+//				double rot90 = (dirUtil.azimuthDegrees() + 90.0) * GeoTools.TO_RAD;
+//				dirUtil = LocationVector.create(rot90, dirUtil.horizontal(), 0.0);
+////				dir.setAzimuth(dir.getAzimuth()+90);  // now point down dip
+//
+//				// get points projected in the down dip directions at the ends of the new trace
+//				Location projectedLoc3 = Locations.location(projectedLoc1, dirUtil);
+//
+//				Location projectedLoc4 = Locations.location(projectedLoc2, dirUtil);
+//
+////				LocationList locsForExtendedTrace = new LocationList();
+//				List<Location> locsForExtendedTrace = Lists.newArrayList();
+////				LocationList locsForRegion = new LocationList();
+//				List<Location> locsForRegion = Lists.newArrayList();
+//
+//				locsForExtendedTrace.add(projectedLoc1);
+//				locsForRegion.add(projectedLoc1);
+//				for(int c=0; c<trace.size(); c++) {
+//					locsForExtendedTrace.add(trace.get(c));
+//					locsForRegion.add(trace.get(c));     	
+//				}
+//				locsForExtendedTrace.add(projectedLoc2);
+//				locsForRegion.add(projectedLoc2);
+//
+//				// finish the region
+//				locsForRegion.add(projectedLoc4);
+//				locsForRegion.add(projectedLoc3);
 
 //				// write these out if in debug mode
 //				if(D) {
@@ -229,35 +284,53 @@ public final class Distances {
 //					}
 //				}
 
+//				try {
+//					System.out.println("==== trace  ====");
+//					System.out.println(trace);
+//					RegionUtils.locListToKML(extendedTrace, "distX_trace", Color.ORANGE);
+//					System.out.println("==== region ====");
+//					System.out.println(region);
+//					RegionUtils.locListToKML(LocationList.create(region), "distX_region", Color.RED);
+//					System.exit(0);
+//				} catch (Exception e2) {
+//					e2.printStackTrace();
+//				}
+
 				Region polygon=null;
 				try {
 					polygon = Regions.create("", 
-						LocationList.create(locsForRegion), 
+						LocationList.create(region), 
 						BorderType.MERCATOR_LINEAR);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					System.out.println("==== trace  ====");
 					System.out.println(trace);
-//					RegionUtils.locListToKML(trace, "distX_trace", Color.ORANGE);
+					//RegionUtils.locListToKML(extendedTrace, "distX_trace", Color.ORANGE);
 					System.out.println("==== region ====");
-					System.out.println(locsForRegion);
-//					RegionUtils.locListToKML(locsForRegion, "distX_region", Color.RED);
+					System.out.println(region);
+					//RegionUtils.locListToKML(LocationList.create(region), "distX_region", Color.RED);
 					System.exit(0);
 				}
 				boolean isInside = polygon.contains(siteLoc);
 
-				double distToExtendedTrace = LocationList.create(locsForExtendedTrace).minDistToLine(siteLoc);
+				double distToExtendedTrace = LocationList.create(extendedTrace).minDistToLine(siteLoc);
 
-				if(isInside || distToExtendedTrace == 0.0) // zero values are always on the hanging wall
-					distanceX = distToExtendedTrace;
-				else 
-					distanceX = -distToExtendedTrace;
-		}
+				if(isInside || distToExtendedTrace == 0.0) { // zero values are always on the hanging wall
+					return distToExtendedTrace;
+				}
+//				else 
+				return -distToExtendedTrace;
+//		}
 		
-		return distanceX;
+//		return distanceX;
 	}
 
+	// this was an experiment gone wrong; it doesn't work because there
+	// are wedges of areas where points are equidistant to two segments
+	// and it is difficult to determine if one is off the endpoints of
+	// a segment. See Kevins distance X tests in Quad Surface and possible
+	// azimuth based solution in my notes. p powers
 	private static double calcDistanceX(LocationList trace, Location loc) {
 		if (trace.size() == 1) return 0.0;
 

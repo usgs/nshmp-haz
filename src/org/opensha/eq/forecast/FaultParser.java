@@ -112,9 +112,7 @@ class FaultParser extends DefaultHandler {
 					String name = readString(NAME, atts);
 					double weight = readDouble(WEIGHT, atts);
 					sourceSetBuilder = new FaultSourceSet.Builder();
-					sourceSetBuilder.name(name);
-					sourceSetBuilder.weight(weight);
-					sourceSetBuilder.gmms(gmmSet);
+					sourceSetBuilder.name(name).weight(weight).gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
 						log.fine("");
 						log.fine("       Name: " + name);
@@ -144,9 +142,9 @@ class FaultParser extends DefaultHandler {
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
-					sourceBuilder = new FaultSource.Builder();
-					sourceBuilder.name(srcName);
-					sourceBuilder.magScaling(msr);
+					sourceBuilder = new FaultSource.Builder()
+						.name(srcName)
+						.magScaling(msr);
 					log.fine("     Source: " + srcName);
 					break;
 
@@ -159,10 +157,10 @@ class FaultParser extends DefaultHandler {
 					break;
 
 				case GEOMETRY:
-					sourceBuilder.depth(readDouble(DEPTH, atts));
-					sourceBuilder.dip(readDouble(DIP, atts));
-					sourceBuilder.rake(readDouble(RAKE, atts));
-					sourceBuilder.width(readDouble(WIDTH, atts));
+					sourceBuilder.depth(readDouble(DEPTH, atts))
+						.dip(readDouble(DIP, atts))
+						.rake(readDouble(RAKE, atts))
+						.width(readDouble(WIDTH, atts));
 					break;
 
 				case TRACE:

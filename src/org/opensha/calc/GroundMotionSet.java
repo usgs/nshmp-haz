@@ -15,24 +15,21 @@ import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
 
 /**
- * Add comments here
- *
+ * Container class for scalar ground motions associated individual
+ * {@code Source}s.
+ * 
  * @author Peter Powers
  */
-public final class GroundMotionSet {
+final class GroundMotionSet {
 
-	// TODO package privatize
-	
-	// TODO rename to GroundMotionSet
-	
-	// TODO the inputList supplied to Builder will be immutable
-	// now that we're taking on large scale calculations, the mean and sigma map lists 
-	// are not immutable (note in jdocs)
-	
+	// NOTE the inputList supplied to Builder will be immutable
+	// but the mean and sigma list maps are not; builder backs
+	// means and sigmas with double[]
+
 	List<GmmInput> inputs;
 	Map<Gmm, List<Double>> means;
 	Map<Gmm, List<Double>> sigmas;
-	
+
 	private GroundMotionSet(List<GmmInput> inputs, Map<Gmm, List<Double>> means,
 		Map<Gmm, List<Double>> sigmas) {
 		this.inputs = inputs;
@@ -43,42 +40,43 @@ public final class GroundMotionSet {
 	static Builder builder(List<GmmInput> inputs, Set<Gmm> gmms) {
 		return new Builder(inputs, gmms);
 	}
-	
+
 	static class Builder {
-		
+
 		private static final String ID = "ScalarGroundMotionSet.Builder";
-		
+
 		private final List<GmmInput> inputs;
 		private final Map<Gmm, List<Double>> means;
 		private final Map<Gmm, List<Double>> sigmas;
-		
+
 		private boolean built = false;
+		private final int size;
 		private int addCount = 0;
-		
+
 		private Builder(List<GmmInput> inputs, Set<Gmm> gmms) {
 			checkArgument(checkNotNull(inputs).size() > 0);
 			checkArgument(checkNotNull(gmms).size() > 0);
 			this.inputs = inputs;
 			means = initValueMap(gmms, inputs.size());
 			sigmas = initValueMap(gmms, inputs.size());
+			size = gmms.size() * inputs.size();
 		}
-		
-		Builder add(Gmm gmm, ScalarGroundMotion sgm) {
-			checkState(addCount < inputs.size(), "This %s instance is already full", ID);
-			means.get(gmm).set(addCount, sgm.mean());
-			sigmas.get(gmm).set(addCount, sgm.sigma());
+
+		Builder add(Gmm gmm, ScalarGroundMotion sgm, int index) {
+			checkState(addCount < size, "This %s instance is already full", ID);
+			means.get(gmm).set(index, sgm.mean());
+			sigmas.get(gmm).set(index, sgm.sigma());
 			addCount++;
 			return this;
 		}
-		
+
 		GroundMotionSet build() {
 			checkState(!built, "This %s instance has already been used", ID);
-			checkState(addCount == inputs.size(), "Only %s of %s entries have been added",
-				addCount, inputs.size());
+			checkState(addCount == size, "Only %s of %s entries have been added", addCount, size);
 			built = true;
 			return new GroundMotionSet(inputs, means, sigmas);
 		}
-		
+
 		static Map<Gmm, List<Double>> initValueMap(Set<Gmm> gmms, int size) {
 			Map<Gmm, List<Double>> map = Maps.newEnumMap(Gmm.class);
 			for (Gmm gmm : gmms) {
@@ -86,6 +84,6 @@ public final class GroundMotionSet {
 			}
 			return map;
 		}
-		
+
 	}
 }

@@ -10,6 +10,7 @@ import org.opensha.geo.Location;
  * Computes the different distances to a source.
  * @author Peter Powers
  */
+@Deprecated
 final class DistanceCalc implements Callable<Distances> {
 
 	private final IndexedFaultSurface surface;

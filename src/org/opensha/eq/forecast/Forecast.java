@@ -2,6 +2,7 @@ package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.util.TextUtils.validateName;
+import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import java.util.Iterator;
 
@@ -65,6 +66,7 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
 
+	// TODO does this need to be a SetMultimap
 	private Forecast(String name, SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
 		this.name = name;
 		this.sourceSetMap = sourceSetMap;
@@ -95,6 +97,10 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 
 	@Override public String name() {
 		return name;
+	}
+	
+	@Override public String toString() {
+		return "Forecast: " + name + LINE_SEPARATOR.value() + sourceSetMap.toString();
 	}
 
 	/**
@@ -136,8 +142,8 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 		}
 
 		Forecast build() {
-			validateState(ID);
 			sourceSetMap = sourceMapBuilder.build();
+			validateState(ID);
 			return new Forecast(name, sourceSetMap);
 		}
 	}

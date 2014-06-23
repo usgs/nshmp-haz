@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
  * @author Peter Powers
  * @version $Id:$
  */
+@Deprecated
 public final class DistanceFilters {
 
 	// no instantiation

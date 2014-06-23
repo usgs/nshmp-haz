@@ -90,7 +90,7 @@ public class HazardCalcManager {
 	// branching
 	// weights when iterating.
 
-	public void calc(Forecast forecast, Map<Gmm, Double> gmmWtMap, Site site, Imt imt)
+	public void calc(Forecast forecast, Site site, Imt imt)
 			throws InterruptedException, ExecutionException {
 		// TODO this wont work
 
@@ -118,10 +118,10 @@ public class HazardCalcManager {
 		// and summation/assembly cares about the weights of each Gmm, to get
 		// raw results (mean, std) all we need are instances
 
-		Map<Gmm, GroundMotionModel> gmmMap = Maps.newEnumMap(Gmm.class);
-		for (Gmm gmm : gmmWtMap.keySet()) {
-			gmmMap.put(gmm, gmm.instance(imt));
-		}
+//		Map<Gmm, GroundMotionModel> gmmMap = Maps.newEnumMap(Gmm.class);
+//		for (Gmm gmm : gmmWtMap.keySet()) {
+//			gmmMap.put(gmm, gmm.instance(imt));
+//		}
 		// TODO single Gmm instances are cached and shared
 
 		// List<Source> sources;
@@ -167,36 +167,52 @@ public class HazardCalcManager {
 	// Only when recombining scalar ground motions into hazard curves will we chose those values
 	// required at different distances as we will have the associated GmmInputs handy
 	
-	private void dev(SourceSet<Source> sources, Site site, Imt imt) {
+	public void dev(SourceSet<? extends Source> sourceSet, Site site, Imt imt) {
 		
 		int coreCount = Runtime.getRuntime().availableProcessors();
 		ExecutorService ex = newFixedThreadPool(coreCount);
 		
-		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sources.groundMotionModels().gmms(), imt);
+		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sourceSet.groundMotionModels().gmms(), imt);
 		
 		// all SourceSets are Iterable<Source> - these iterations occur in the main thread
-		
+				
 		AsyncFunction<Source, List<GmmInput>> sourceToInputs =  Transforms.sourceToInputs(site);
 		AsyncFunction<List<GmmInput>, GroundMotionSet> inputsToGroundMotions = Transforms.inputsToGroundMotions(gmmInstances);
+
+		List<ListenableFuture<GroundMotionSet>> futuresList = Lists.newArrayList();
 		
-		for (Source source : sources.locationIterable(site.loc)) {
+		for (Source source : sourceSet.locationIterable(site.loc)) {
 			
 			// for the sake of consistency, we wrap Sources in ListenableFutures
 			// so that we're only ever using Futures.transform() and don't need
 			// an instance of a ListeningExecutorService
 			
-			ListenableFuture<Source> sourceFuture = Futures.immediateFuture(source);
+			ListenableFuture<Source> srcFuture = Futures.immediateFuture(source);
 
-//			Callable<List<GmmInput>> input = Transforms.sourceInitializer(source, site);
-//			ListenableFuture<List<GmmInput>> gmmInputs = lex.submit(input);
+			ListenableFuture<List<GmmInput>> gmmInputs = Futures.transform(srcFuture,
+				sourceToInputs, ex);
 			
-//			AsyncFunction<, O>
+			ListenableFuture<GroundMotionSet> gmResults = Futures.transform(gmmInputs,
+				inputsToGroundMotions, ex);
 			
-//			ListenableFuture<List<GroundMotionCalcResult>> gmResults = Futures.transform(gmmInputs, function, ex);
-			
+			futuresList.add(gmResults);
 		}
 		
+		ListenableFuture<List<GroundMotionSet>> gmResultsTmp = Futures.allAsList(futuresList);
 		
+		try {
+			List<GroundMotionSet> gmResultsList = gmResultsTmp.get();
+			System.out.println(gmResultsList.size());
+//			GroundMotionSet gms = gmResultsList.get(0);
+//			System.out.println(gms.means.size());
+//			System.out.println(gms.means);
+//			System.out.println(gms.sigmas.size());
+//			System.out.println(gms.sigmas);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// so now for each source we should have 
 		
 	}
 	
