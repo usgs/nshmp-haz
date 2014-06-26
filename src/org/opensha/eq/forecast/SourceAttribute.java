@@ -11,6 +11,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 public enum SourceAttribute {
 	NAME,
 	WEIGHT,
+	INDEX,
 
 	MAG_DEPTH_MAP,
 	FOCAL_MECH_MAP,
@@ -18,9 +19,12 @@ public enum SourceAttribute {
 	/* Geometry specific */
 	STRIKE,
 	DIP,
+	DIP_DIR,
 	WIDTH,
 	RAKE,
 	DEPTH,
+	LOWER_DEPTH,
+	ASEIS,
 
 	/* MFD specific */
 	TYPE,
