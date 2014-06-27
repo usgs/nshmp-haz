@@ -25,6 +25,7 @@ public enum SourceAttribute {
 	DEPTH,
 	LOWER_DEPTH,
 	ASEIS,
+	INDICES,
 
 	/* MFD specific */
 	TYPE,
