@@ -1,6 +1,5 @@
 package org.opensha.eq.forecast;
 
-import static com.google.common.base.Preconditions.checkPositionIndex;
 import static java.lang.Math.ceil;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
@@ -73,16 +72,15 @@ class PointSource implements Source {
 		init();
 	}
 
-	@Override
-	public String name() {
+	@Override public String name() {
 		return "PointSource: " + loc;
 	}
 
-	@Override
-	public int size() {
+	@Override public int size() {
 		return rupCount;
 	}
 
+	// TODO update docs on thread safety... sources are safe, ruptures are not
 	// TODO clean
 	/*
 	 * NOTE: Getting a Rupture by index is deliberately inefficient to ensure
@@ -90,20 +88,20 @@ class PointSource implements Source {
 	 * created on every call. Use Source.iterator() where possible.
 	 */
 
-//	@Override
-//	public Rupture getRupture(int idx) {
-//		checkPositionIndex(idx, size());
-//		Rupture rupture = new Rupture();
-//		rupture.surface = new PointSurface(loc);
-//		updateRupture(rupture, idx);
-//		return rupture;
-//	}
+	// @Override
+	// public Rupture getRupture(int idx) {
+	// checkPositionIndex(idx, size());
+	// Rupture rupture = new Rupture();
+	// rupture.surface = new PointSurface(loc);
+	// updateRupture(rupture, idx);
+	// return rupture;
+	// }
 
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
-	 * PointSource.rupture rate is reduced to zero (a mag-depth weight
-	 * could be set to zero [this is not currently checked] of an MFD rate could
-	 * be zero), in the cases where it is, we're doing a little more work than
+	 * PointSource.rupture rate is reduced to zero (a mag-depth weight could be
+	 * set to zero [this is not currently checked] of an MFD rate could be
+	 * zero), in the cases where it is, we're doing a little more work than
 	 * necessary below. We could alternatively short-circuit updateRupture()
 	 * this method to return null reference, but would need to condsider
 	 * getRupture(int) implementation.
@@ -133,8 +131,7 @@ class PointSource implements Source {
 
 	}
 
-	@Override
-	public Iterator<Rupture> iterator() {
+	@Override public Iterator<Rupture> iterator() {
 		// @formatter:off
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
@@ -172,24 +169,25 @@ class PointSource implements Source {
 		revIdx = ssCount + revCount;
 
 		rupCount = ssCount + ssCount + norCount;
-		
+
 		// TODO clean
 		// below wasn't correct; this simple implementation doesn't consider
 		// hanging wall vs footwall representations on the assumption that
-		// in 2008 the gird source hw effect approximations were used for CB and CY
-		
+		// in 2008 the gird source hw effect approximations were used for CB and
+		// CY
+
 		/*
 		 * Init focal mech counts: Total focal mech representations required,
 		 * double counting reverse and normal mechs because they will have both
 		 * hanging wall and footwall representations.
 		 */
-//		int mechCount = 0;
-//		for (FocalMech mech : mechWtMap.keySet()) {
-//			double wt = mechWtMap.get(mech);
-//			if (wt == 0.0) continue;
-//			mechCount += (mech == STRIKE_SLIP) ? 1 : 2;
-//		}
-//		rupCount = magDepthCount * mechCount;
+		// int mechCount = 0;
+		// for (FocalMech mech : mechWtMap.keySet()) {
+		// double wt = mechWtMap.get(mech);
+		// if (wt == 0.0) continue;
+		// mechCount += (mech == STRIKE_SLIP) ? 1 : 2;
+		// }
+		// rupCount = magDepthCount * mechCount;
 
 	}
 
@@ -200,7 +198,7 @@ class PointSource implements Source {
 		// iteration order is always SS -> REV -> NOR
 		return (idx < ssIdx) ? STRIKE_SLIP : (idx < revIdx) ? REVERSE : NORMAL;
 	}
-	
+
 	/*
 	 * Returns the minimum of the aspect ratio width and the allowable down-dip
 	 * width. Utility for use by subclasses.
@@ -219,7 +217,6 @@ class PointSource implements Source {
 		return sqrt(v1 * v1 + v2 * v2);
 	}
 
-
 	static class PointSurface implements RuptureSurface {
 
 		Location loc;
@@ -231,8 +228,7 @@ class PointSource implements Source {
 			this.loc = loc;
 		}
 
-		@Override
-		public Distances distanceTo(Location loc) {
+		@Override public Distances distanceTo(Location loc) {
 			double r = Locations.horzDistanceFast(this.loc, loc);
 			r *= PtSrcDistCorr.getCorrection(r, mag, PtSrcDistCorr.Type.NSHMP08);
 			return Distances.create(r, r, r);

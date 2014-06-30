@@ -20,15 +20,17 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  */
-final class GroundMotionSet {
+public final class GroundMotionSet {
 
+	//TODO make package private
+	
 	// NOTE the inputList supplied to Builder will be immutable
 	// but the mean and sigma list maps are not; builder backs
 	// means and sigmas with double[]
 
-	List<GmmInput> inputs;
-	Map<Gmm, List<Double>> means;
-	Map<Gmm, List<Double>> sigmas;
+	final List<GmmInput> inputs;
+	final Map<Gmm, List<Double>> means;
+	final Map<Gmm, List<Double>> sigmas;
 
 	private GroundMotionSet(List<GmmInput> inputs, Map<Gmm, List<Double>> means,
 		Map<Gmm, List<Double>> sigmas) {

@@ -27,10 +27,11 @@ import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
 /**
- * A wrapper of evenly spaced (point) {@code Source}s with varying magnitudes
- * derived from a {@link IncrementalMfd} at each grid node.
+ * A wrapper class for related, evenly-spaced {@link PointSource}s with varying
+ * magnitudes derived from a {@link IncrementalMfd} at each grid node.
  * 
  * @author Peter Powers
+ * @see PointSource and subclasses
  */
 public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
@@ -73,7 +74,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	@Override public int size() {
 		return locs.size();
 	}
-	
+
 	@Override public Predicate<PointSource> distanceFilter(Location loc, double distance) {
 		// compute min-max lat and lon
 		// TODO what happens when distance exceeds allowed lat lon range
@@ -96,10 +97,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		return null;
 		// TODO do nothing
-		
+
 	}
-
-
 
 	@Override public Iterator<PointSource> iterator() {
 		return new Iterator<PointSource>() {
@@ -162,7 +161,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 */
 
 	// @formatter:on
-	
+
 	int[] magDepthIndices;
 	double[] magDepthDepths;
 	double[] magDepthWeights;
@@ -214,7 +213,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private boolean built = false;
 
 		private String name;
-		Double weight; 
+		Double weight;
 		private Double strike;
 		private MagScalingType magScaling;
 		private GmmSet gmmSet;

@@ -14,6 +14,10 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.opensha.data.ArrayXY_Sequence;
+import org.opensha.data.XY_Sequence;
+import org.opensha.eq.forecast.ClusterSource;
+import org.opensha.eq.forecast.ClusterSourceSet;
 import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.FaultSourceSet;
 import org.opensha.eq.forecast.Forecast;
@@ -52,77 +56,24 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public class HazardCalcManager {
 
-	private ExecutorService ex;
-
-	// calculations are processed by type fault > cluster? > gridded
-	// within each type 'SourceSets' are processed
-	//
-	// e.g.
-
-	private HazardCalcManager() {
-		// init thread mgr
+	private static ExecutorService ex;
+	
+	static {
 		int numProc = Runtime.getRuntime().availableProcessors();
 		ex = Executors.newFixedThreadPool(numProc);
 	}
 
+	private HazardCalcManager() {
+	}
+
 	public static HazardCalcManager create() {
 		HazardCalcManager hc = new HazardCalcManager();
-		// hc.erfList = erfList;
-		// hc.site = site;
-		// hc.period = period;
-		// hc.epiUncert = epiUncert;
 		return hc;
 	}
 
-	// ERF (iterable, indexed? no indexing is messy)
-	// -- SourceSets (collections of faults or grid sources; maybe these
-	// should only be independent groups at initialization; however,
-	// we will probably want to be able to disable certain sources
-	// by type, regions, etc...[using Predicates]; this could (should?)
-	// be done at the source level; however, filtering at SourceSet
-	// level would possible be more efficient... e.g. wholesale
-	// elimination of grid sources; would still have to drill down
-	// to, say, selectively eliminate certain fault sources)
-	// -- Sources (can have weights; iterable; indexed? could be)
-	// -- Ruptures (can have weights)
-
-	// source Mfds will all be scaled by local, source set, and any other
-	// branching
-	// weights when iterating.
 
 	public void calc(Forecast forecast, Site site, Imt imt)
 			throws InterruptedException, ExecutionException {
-		// TODO this wont work
-
-		// each type of source should do the following, understanding that a
-		// multi-threaded ExecutorService is available:
-
-		// Step 1: filter sources > quick max distance
-		// -- callable returns Source
-
-		// Step 2: build rupture data container
-		// -- callable returns List<GmmInput>
-		// -- floating ruptures
-		// -- multiple mags and Mfds
-		// -- may want to handle special case of indexed faultSourceSet
-		// however if aleatory uncertainty on mag is turned on then
-		// a list for each would still be appropriate
-
-		// Step 3: compute ground motions
-
-		// Step 4: process ground motions into hazard
-
-		// rupRef? mag rRup rJB
-
-		// create new map of GMMs and instances -- only hazard curve building
-		// and summation/assembly cares about the weights of each Gmm, to get
-		// raw results (mean, std) all we need are instances
-
-//		Map<Gmm, GroundMotionModel> gmmMap = Maps.newEnumMap(Gmm.class);
-//		for (Gmm gmm : gmmWtMap.keySet()) {
-//			gmmMap.put(gmm, gmm.instance(imt));
-//		}
-		// TODO single Gmm instances are cached and shared
 
 		// List<Source> sources;
 		for (SourceSet<? extends Source> srcSet : forecast) {
@@ -167,18 +118,23 @@ public class HazardCalcManager {
 	// Only when recombining scalar ground motions into hazard curves will we chose those values
 	// required at different distances as we will have the associated GmmInputs handy
 	
-	public void dev(SourceSet<? extends Source> sourceSet, Site site, Imt imt) {
+	/*
+	 * Processes a SourceSet to a List of GroundMotionSets, wrapped in a
+	 * ListenableFuture.
+	 */
+	public ListenableFuture<List<GroundMotionSet>> toGroundMotions(SourceSet<? extends Source> sourceSet,
+			Site site, Imt imt) {
 		
-		int coreCount = Runtime.getRuntime().availableProcessors();
-		ExecutorService ex = newFixedThreadPool(coreCount);
+		// get ground motion models
+		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sourceSet.groundMotionModels()
+			.gmms(), imt);
 		
-		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sourceSet.groundMotionModels().gmms(), imt);
+		// set up reusable transforms
+		AsyncFunction<Source, List<GmmInput>> sourceToInputs = Transforms.sourceToInputs(site);
+		AsyncFunction<List<GmmInput>, GroundMotionSet> inputsToGroundMotions = Transforms
+			.inputsToGroundMotions(gmmInstances);
 		
-		// all SourceSets are Iterable<Source> - these iterations occur in the main thread
-				
-		AsyncFunction<Source, List<GmmInput>> sourceToInputs =  Transforms.sourceToInputs(site);
-		AsyncFunction<List<GmmInput>, GroundMotionSet> inputsToGroundMotions = Transforms.inputsToGroundMotions(gmmInstances);
-
+		// ground motion set aggregator
 		List<ListenableFuture<GroundMotionSet>> futuresList = Lists.newArrayList();
 		
 		for (Source source : sourceSet.locationIterable(site.loc)) {
@@ -186,108 +142,144 @@ public class HazardCalcManager {
 			// for the sake of consistency, we wrap Sources in ListenableFutures
 			// so that we're only ever using Futures.transform() and don't need
 			// an instance of a ListeningExecutorService
-			
 			ListenableFuture<Source> srcFuture = Futures.immediateFuture(source);
 
+			// transform source to inputs
 			ListenableFuture<List<GmmInput>> gmmInputs = Futures.transform(srcFuture,
 				sourceToInputs, ex);
 			
+			// transform inputs to ground motions
 			ListenableFuture<GroundMotionSet> gmResults = Futures.transform(gmmInputs,
 				inputsToGroundMotions, ex);
 			
 			futuresList.add(gmResults);
 		}
 		
-		ListenableFuture<List<GroundMotionSet>> gmResultsTmp = Futures.allAsList(futuresList);
+		return Futures.allAsList(futuresList);
+	}
+	
+	/*
+	 * Processes a ClusterSourceSet to a List of GroundMotionSet Lists, wrapped
+	 * in a ListenableFuture.
+	 */
+	public ListenableFuture<List<List<GroundMotionSet>>> toClusterGroundMotions(
+			ClusterSourceSet sourceSet, Site site, Imt imt) {
 		
-		try {
-			List<GroundMotionSet> gmResultsList = gmResultsTmp.get();
-			System.out.println(gmResultsList.size());
-//			GroundMotionSet gms = gmResultsList.get(0);
-//			System.out.println(gms.means.size());
-//			System.out.println(gms.means);
-//			System.out.println(gms.sigmas.size());
-//			System.out.println(gms.sigmas);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+		List<ListenableFuture<List<GroundMotionSet>>> clusterMotions = Lists.newArrayList();
+		
+		for (ClusterSource cluster : sourceSet) {
+			FaultSourceSet faults = cluster.faults();
+			clusterMotions.add(toGroundMotions(faults, site, imt));
 		}
-		// so now for each source we should have 
+		
+		return Futures.allAsList(clusterMotions);
+	}
+	
+	public void toHazardCurve(ListenableFuture<List<GroundMotionSet>> asyncGroundMotions) {
+		
+		
+	}
+	
+	public void toClusterCurve(ListenableFuture<List<List<GroundMotionSet>>> asyncGroundMotions, XY_Sequence model) throws Exception {
+				
+		// List (outer) --> clusters (geometry variants)
+		//   List (inner) --> faults (sections)
+		//     GroundMotionSet --> magnitude variants
+		List<List<GroundMotionSet>> clusters = asyncGroundMotions.get();
+		
+		for (List<GroundMotionSet> cluster : clusters) {
+			for (GroundMotionSet fault : cluster) {
+				
+				// compute PE curve 
+			}
+		}
+		
+	}
+	
+	// TODO hmmm... we don't seem to have rupture rate data
+	
+	private static Map<Gmm, ArrayXY_Sequence> clusterFaultPE(GroundMotionSet gmSet, ArrayXY_Sequence model) {
+		
+		Map<Gmm, ArrayXY_Sequence> peMap = Maps.newEnumMap(Gmm.class);
+		
+		for (Gmm gmm : gmSet.means.keySet()) {
+			List<Double> means = gmSet.means.get(gmm);
+			List<Double> sigmas = gmSet.sigmas.get(gmm);
+//			ArrayXY_Sequence 
+//			for (int i = 0; i < gmSet.inputs.size(); i++) {
+//				ArrayXY_Sequence imls = ArrayXY_Sequence.copyOf(model);
+//				Utils.setExceedProbabilities(imls, means.get(i), sigmas.get(i), false, 0.0);
+//				imls.sc
+//			}
+			// TODO FIX and FINISH
+		}	
+		return null;
 		
 	}
 	
 	
-//	private GroundMotionSet doCalc(SourceSet<Source> sources, Site site) {
+	// reference clusterCalc from NSHMP2008
+	
+//	private static DiscretizedFunc clusterCalc(
+//			DiscretizedFunc f, 
+//			Site s,
+//			ScalarIMR imr, 
+//			ClusterERF erf) {
+//		
+//		double maxDistance = erf.getMaxDistance();
+//		Utils.zeroFunc(f); //zero for aggregating results
+//		DiscretizedFunc peFunc = f.deepClone();
+//		
+//		for (ClusterSource cs : erf.getSources()) { // geom variants
+//			
+//			// apply distance cutoff to source
+//			double dist = cs.getMinDistance(s);
+//			if (dist > maxDistance) {
+//				continue;
+//			}
+//			// assemble list of PE curves for each cluster segment
+//			List<DiscretizedFunc> fltFuncList = Lists.newArrayList();
 //
-//		Iterable<Source> locIter = sources.locationIterable(site.loc);
-//		
-//		Task<Source, List<GmmInput>> inputs = new Task<Source, List<GmmInput>>(
-//				locIter, Transforms.sourceInitializerSupplier(site), ex);
-//		
-////		Task<List<GmmInput>, GroundMotionCalcResult> gmResults =
-////				new Task<List<GmmInput>, GroundMotionCalcResult>(
-////						inputs, Transforms.sourceInitializerSupplier(site), ex)
-//		
-//		
-//		
-//		return null;
+//			for (FaultSource fs : cs.getFaultSources()) { // segments
+//				DiscretizedFunc fltFunc = peFunc.deepClone();
+//				Utils.zeroFunc(fltFunc);
+//				// agregate weighted PE curves for mags on each segment
+//				for (int i=0; i < fs.getNumRuptures(); i++) { // mag variants
+//					imr.setEqkRupture(fs.getRupture(i));
+//					imr.getExceedProbabilities(peFunc);
+//					double weight = fs.getMFDs().get(i).getY(0) * cs.getRate();
+//					peFunc.scale(weight);
+//					Utils.addFunc(fltFunc, peFunc);
+//				} // end mag
+//				fltFuncList.add(fltFunc);
+//			} // end segments
+//			
+//			// compute joint PE, scale by geom weight, scale by rate (1/RP),
+//			// and add to final result
+//			DiscretizedFunc fOut = calcClusterExceedProb(fltFuncList);
+//			double rateAndWeight = cs.getWeight() / cs.getRate();
+//			fOut.scale(rateAndWeight);
+//			Utils.addFunc(f, fOut);
+//		} // end geom
+//		return f;
 //	}
 
-//	private GroundMotionSet doFaultCalc(FaultSourceSet sources,
-//			Map<Gmm, GroundMotionModel> gmms, Site site) throws InterruptedException,
-//			ExecutionException {
-//
-//		// Quick distance filter: TODO this will be done by the locationIterator
-//		// distance comes from the Gmm model
-//
-//		// TODO the sourceSets hold their GMM_Manager (name??)
-//
-//		// Currently set to use an ECS; if ecs.take().get() returns null,
-//		// source will be skipped. Don't like returning null; alternative may
-//		// be to run quick distance filter in a single thread using a
-//		// predicate or some such.
-//
-//		double dist = 200.0; // this needs to come from gmm.xml
-//
-//		// deprecate; use locationIterator
-//		CompletionService<FaultSource> qdCS = new ExecutorCompletionService<FaultSource>(ex);
-//		int qdCount = 0;
-//		for (FaultSource source : sources) {
-//			qdCS.submit(null); //Transforms.newQuickDistanceFilter(source, site.loc, dist));
-//			qdCount++;
+//		ListenableFuture<List<GroundMotionSet>> gmResultsTmp = Futures.allAsList(futuresList);
+		
+//		try {
+//			List<GroundMotionSet> gmResultsList = gmResultsTmp.get();
+//			System.out.println(gmResultsList.size());
+////			GroundMotionSet gms = gmResultsList.get(0);
+////			System.out.println(gms.means.size());
+////			System.out.println(gms.means);
+////			System.out.println(gms.sigmas.size());
+////			System.out.println(gms.sigmas);
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
 //		}
-//
-//		// Gmm input initializer:
-//		CompletionService<List<GmmInput>> gmSrcCS = new ExecutorCompletionService<List<GmmInput>>(ex);
-//		int gmSrcCount = 0;
-//		for (int i = 0; i < qdCount; i++) {
-//			FaultSource source = qdCS.take().get();
-//			if (source != null) {
-//				gmSrcCS.submit(Transforms.newFaultCalcInitializer(source, site));
-//				gmSrcCount++;
-//			}
-//		}
-//
-//		// Ground motion calculation:
-//		CompletionService<GroundMotionCalcResult> gmCS = new ExecutorCompletionService<GroundMotionCalcResult>(
-//			ex);
-//		int gmCount = 0;
-//		for (int i = 0; i < gmSrcCount; i++) {
-//			List<GmmInput> inputs = gmSrcCS.take().get();
-//			for (GmmInput input : inputs) {
-//				gmCS.submit(Transforms.newGroundMotionCalc(gmms, input));
-//				gmCount++;
-//			}
-//		}
-//
-//		// Final results assembly:
-//		GroundMotionSet results = GroundMotionSet.create(gmms.keySet(), gmCount);
-//		for (int i = 0; i < gmCount; i++) {
-//			GroundMotionCalcResult result = gmCS.take().get();
-//			results.add(result);
-//		}
-//
-//		return results;
+//		// so now for each source we should have 
+//		
 //	}
 
 }

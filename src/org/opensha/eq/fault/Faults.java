@@ -69,16 +69,16 @@ public final class Faults {
 	/** Maximum allowed subduction fault width (200 km). */
 	public static final double MAX_WIDTH_SUB_INTERFACE = 200.0;
 
-	private static final Range<Double> strikeRange = Range.closed(MIN_STRIKE, MAX_STRIKE);
-	private static final Range<Double> dipRange = Range.closed(MIN_DIP, MAX_DIP);
-	private static final Range<Double> rakeRange = Range.closed(MIN_RAKE, MAX_RAKE);
-	private static final Range<Double> depthRange = Range.closed(MIN_DEPTH, MAX_DEPTH_CRUSTAL);
-	private static final Range<Double> slabDepthRange = Range.closed(MIN_DEPTH_SUB_SLAB,
+	private static final Range<Double> STRIKE_RANGE = Range.closed(MIN_STRIKE, MAX_STRIKE);
+	private static final Range<Double> DIP_RANGE = Range.closed(MIN_DIP, MAX_DIP);
+	private static final Range<Double> RAKE_RANGE = Range.closed(MIN_RAKE, MAX_RAKE);
+	private static final Range<Double> DEPTH_RANGE = Range.closed(MIN_DEPTH, MAX_DEPTH_CRUSTAL);
+	private static final Range<Double> SLAB_DEPTH_RANGE = Range.closed(MIN_DEPTH_SUB_SLAB,
 		MAX_DEPTH_SUB_SLAB);
-	private static final Range<Double> interfaceDepthRange = Range.closed(MIN_DEPTH,
+	private static final Range<Double> INTERFACE_DEPTH_RANGE = Range.closed(MIN_DEPTH,
 		MAX_DEPTH_SUB_INTERFACE);
-	private static final Range<Double> widthRange = Range.openClosed(MIN_WIDTH, MAX_WIDTH_CRUSTAL);
-	private static final Range<Double> interfaceWidthRange = Range.openClosed(MIN_WIDTH,
+	private static final Range<Double> WIDTH_RANGE = Range.openClosed(MIN_WIDTH, MAX_WIDTH_CRUSTAL);
+	private static final Range<Double> INTERFACE_WIDTH_RANGE = Range.openClosed(MIN_WIDTH,
 		MAX_WIDTH_SUB_INTERFACE);
 
 	/**
@@ -91,7 +91,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateDip(double dip) {
-		return validate(dipRange, "Dip", dip);
+		return validate(DIP_RANGE, "Dip", dip);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateStrike(double strike) {
-		return validate(strikeRange, "Strike", strike);
+		return validate(STRIKE_RANGE, "Strike", strike);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateRake(double rake) {
-		return validate(rakeRange, "Rake", rake);
+		return validate(RAKE_RANGE, "Rake", rake);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateDepth(double depth) {
-		return validate(depthRange, "Depth", depth);
+		return validate(DEPTH_RANGE, "Depth", depth);
 	}
 
 	/**
@@ -147,7 +147,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateSlabDepth(double depth) {
-		return validate(slabDepthRange, "Subduction Slab Depth", depth);
+		return validate(SLAB_DEPTH_RANGE, "Subduction Slab Depth", depth);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateInterfaceDepth(double depth) {
-		return validate(interfaceDepthRange, "Subduction Interface Depth", depth);
+		return validate(INTERFACE_DEPTH_RANGE, "Subduction Interface Depth", depth);
 	}
 
 	/**
@@ -175,7 +175,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateWidth(double width) {
-		return validate(widthRange, "Width", width);
+		return validate(WIDTH_RANGE, "Width", width);
 	}
 
 	/**
@@ -189,7 +189,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateInterfaceWidth(double width) {
-		return validate(interfaceWidthRange, "Subduction Interface Width", width);
+		return validate(INTERFACE_WIDTH_RANGE, "Subduction Interface Width", width);
 	}
 
 	/**

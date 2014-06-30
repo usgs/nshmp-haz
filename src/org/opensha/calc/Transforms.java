@@ -13,7 +13,6 @@ import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.eq.forecast.DistanceType;
 import org.opensha.eq.forecast.Distances;
 import org.opensha.eq.forecast.FaultSource;
-import org.opensha.eq.forecast.IndexedFaultSource;
 import org.opensha.eq.forecast.Rupture;
 import org.opensha.eq.forecast.Source;
 import org.opensha.geo.Location;
@@ -118,11 +117,11 @@ public final class Transforms {
 	 * @return a {@code List<GmmInput>} of Gmm inputs
 	 * @see Gmm
 	 */
-	public static Callable<GmmInput> newIndexedFaultCalcInitializer(
-			final IndexedFaultSource source, final Site site,
-			final Table<DistanceType, Integer, Double> rTable, final List<Integer> sectionIDs) {
-		return new IndexedFaultCalcInitializer(source, site, rTable, sectionIDs);
-	}
+//	public static Callable<GmmInput> newIndexedFaultCalcInitializer(
+//			final IndexedFaultSource source, final Site site,
+//			final Table<DistanceType, Integer, Double> rTable, final List<Integer> sectionIDs) {
+//		return new IndexedFaultCalcInitializer(source, site, rTable, sectionIDs);
+//	}
 
 	/**
 	 * Creates a {@code Callable} that returns the distances between the

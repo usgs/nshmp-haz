@@ -36,8 +36,8 @@ public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 //	 */
 //	public ApproxGriddedSurface(int numRows,int numCols, double aveGridSpacing) {
 //		setNumRowsAndNumCols(numRows, numCols);
-//		gridSpacingAlong = aveGridSpacing;
-//		gridSpacingDown = aveGridSpacing;
+//		strikeSpacing = aveGridSpacing;
+//		dipSpacing = aveGridSpacing;
 //		sameGridSpacing = true;
 //	}
 
@@ -67,9 +67,9 @@ public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 	public ApproxGriddedSurface(LocationList upperTrace, 
 			LocationList lowerTrace, double spacing) {
 
-		gridSpacingAlong = spacing;
-		gridSpacingDown = spacing;
-		sameGridSpacing = true;
+		strikeSpacing = spacing;
+		dipSpacing = spacing;
+//		sameGridSpacing = true;
 		this.upperTrace = upperTrace;
 		this.lowerTrace = lowerTrace;
 
@@ -103,7 +103,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 		double aveTraceLength = (upperTrace.length()+lowerTrace.length())/2;
 		int num = (int) Math.round(aveTraceLength/getAveGridSpacing());
 		
-//		if(D) System.out.println("gridSpacing="+gridSpacingAlong+", aveTraceLength="+aveTraceLength+", numCol="+num);
+//		if(D) System.out.println("gridSpacing="+strikeSpacing+", aveTraceLength="+aveTraceLength+", numCol="+num);
 		// get resampled traces (note that number of locs in trace will be num+1)
 		LocationList resampUpperTrace = Faults.resampleTrace(upperTrace, num);
 		LocationList resampLowerTrace = Faults.resampleTrace(lowerTrace, num);

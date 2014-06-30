@@ -26,9 +26,9 @@ import com.google.common.collect.Lists;
  */
 public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> implements GriddedSurface {
 
-	protected double gridSpacingAlong;
-	protected double gridSpacingDown;
-	protected Boolean sameGridSpacing;
+	protected double strikeSpacing;
+	protected double dipSpacing;
+//	protected Boolean sameGridSpacing;
 	
 	// for distance measures
 //	Location siteLocForDistCalcs = null; //Location.create(Double.NaN,Double.NaN);
@@ -50,8 +50,8 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 //	 */
 //	public AbstractGriddedSurface( int numRows, int numCols,double gridSpacing ) {
 //		super( numRows, numCols );
-//		gridSpacingAlong = gridSpacing;
-//		gridSpacingDown = gridSpacing;
+//		strikeSpacing = gridSpacing;
+//		dipSpacing = gridSpacing;
 //		sameGridSpacing = true;
 //	}
 //	
@@ -63,11 +63,11 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 //	 * @param  numCols  Number of grid points along length of fault
 //	 * @param  gridSpacing  Grid Spacing
 //	 */
-//	public AbstractGriddedSurface( int numRows, int numCols,double gridSpacingAlong, double gridSpacingDown) {
+//	public AbstractGriddedSurface( int numRows, int numCols,double strikeSpacing, double dipSpacing) {
 //		super( numRows, numCols );
-//		this.gridSpacingAlong = gridSpacingAlong;
-//		this.gridSpacingDown = gridSpacingDown;
-//		if(gridSpacingAlong == gridSpacingDown)
+//		this.gridSpacingAlong = strikeSpacing;
+//		this.gridSpacingDown = dipSpacing;
+//		if(strikeSpacing == dipSpacing)
 //			sameGridSpacing = true;
 //		else
 //			sameGridSpacing = false;
@@ -91,7 +91,7 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 	 * @return
 	 */
 	public double getGridSpacingAlongStrike() {
-		return this.gridSpacingAlong;
+		return this.strikeSpacing;
 	}
 
 	/**
@@ -99,17 +99,17 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 	 * @return
 	 */
 	public double getGridSpacingDownDip() {
-		return this.gridSpacingDown;
+		return this.dipSpacing;
 	}
 	
-	/**
-	 * tells whether along-strike and down-dip grid spacings are the same
-	 * @return
-	 */
-	public Boolean isGridSpacingSame() {
-		return this.sameGridSpacing;
-	}
-	
+//	/**
+//	 * tells whether along-strike and down-dip grid spacings are the same
+//	 * @return
+//	 */
+//	public Boolean isGridSpacingSame() {
+//		return this.sameGridSpacing;
+//	}
+//	
 	@Override
 	@Deprecated
 	public LocationList getEvenlyDiscritizedPerimeter() {
@@ -279,7 +279,7 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 	
 	@Override
 	public double getAveGridSpacing() {
-		return (gridSpacingAlong+gridSpacingDown)/2;
+		return (strikeSpacing+dipSpacing)/2;
 	}
 	
 	@Override

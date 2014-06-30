@@ -33,6 +33,19 @@ public enum MagScalingType {
 		public MagScalingRelationship instance() {
 			return new GeoMat_MagLenthRelationship();
 		}
+	},
+	
+	/**
+	 * Type indicator for use with sources where a magnitude scaling realtion is
+	 * not required in as much as it is built into predefined source geometry
+	 * and magnitude data. Calling instance() throws an
+	 * {@link UnsupportedOperationException}.
+	 */
+	BUILT_IN {
+		@Override
+		public MagScalingRelationship instance() {
+			throw new UnsupportedOperationException();
+		}
 	};
 
 	/**

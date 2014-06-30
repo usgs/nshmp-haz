@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 /**
  * A custom XY_Sequence whose y-values must decrease monotonically. This check
- * is made upon creation with new data but may not be enforced as y-values are
+ * is made upon creation with new data but is not be enforced as y-values are
  * updated/mutated.
  * 
  * @author Peter Powers

@@ -54,7 +54,7 @@ public class GmmSet {
 
 	private final Set<Gmm> gmms;
 
-	private final boolean epiSingle;
+	private final UncertType uncertainty;
 	private final double epiValue;
 	private final double[][] epiValues;
 	private final double[] epiWeights;
@@ -70,16 +70,20 @@ public class GmmSet {
 
 		// although weightMapHi may be null, we want to use maxDistHi
 		// for distance checking in the event that we do
-
+		
+		uncertainty = (epiValues == null) ? UncertType.NONE : (epiValues.length == 1)
+			? UncertType.SINGLE : UncertType.MULTI;
+				
 		this.epiWeights = epiWeights;
-		if (epiValues.length == 1) {
+		if (uncertainty == UncertType.NONE) {
+			this.epiValue = Double.NaN;
+			this.epiValues = null;			
+		} else if (uncertainty == UncertType.SINGLE) {
 			this.epiValue = epiValues[0];
 			this.epiValues = null;
-			this.epiSingle = true;
 		} else {
 			this.epiValue = Double.NaN;
 			this.epiValues = initEpiValues(epiValues);
-			this.epiSingle = false;
 		}
 	}
 
@@ -113,10 +117,20 @@ public class GmmSet {
 	 * distance (D) that
 	 */
 	private double getUncertainty(double M, double D) {
-		if (epiSingle) return epiValue;
-		int mi = (M < 6) ? 0 : (M < 7) ? 1 : 2;
-		int di = (D < 10) ? 0 : (D < 30) ? 1 : 2;
-		return epiValues[di][mi];
+		switch (uncertainty) {
+			case MULTI:
+				int mi = (M < 6) ? 0 : (M < 7) ? 1 : 2;
+				int di = (D < 10) ? 0 : (D < 30) ? 1 : 2;
+				return epiValues[di][mi];
+			case SINGLE:
+				return epiValue;
+			default:
+				return 0.0;
+		}
+	}
+	
+	static enum UncertType {
+		NONE, SINGLE, MULTI;
 	}
 
 	static class Builder {

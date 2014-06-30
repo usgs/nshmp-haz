@@ -28,11 +28,6 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 		this.sources = sources;
 	}
 
-	@Override public Iterable<InterfaceSource> locationIterable(Location loc) {
-		// TODO
-		return null;
-	}
-
 	@Override public Iterator<InterfaceSource> iterator() {
 		return sources.iterator();
 	}
@@ -49,11 +44,11 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 			final double distance) {
 		return new Predicate<InterfaceSource>() {
 
-			@Override public boolean apply(InterfaceSource is) {
-				return horzDistanceFast(loc, is.trace.first()) <= distance ||
-					horzDistanceFast(loc, is.trace.last()) <= distance ||
-					horzDistanceFast(loc, is.lowerTrace.first()) <= distance ||
-					horzDistanceFast(loc, is.lowerTrace.last()) <= distance;
+			@Override public boolean apply(InterfaceSource source) {
+				return horzDistanceFast(loc, source.trace.first()) <= distance ||
+					horzDistanceFast(loc, source.trace.last()) <= distance ||
+					horzDistanceFast(loc, source.lowerTrace.first()) <= distance ||
+					horzDistanceFast(loc, source.lowerTrace.last()) <= distance;
 			}
 
 		};

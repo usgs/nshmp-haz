@@ -6,8 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.opensha.data.DataUtils.*;
 
 import java.util.Arrays;
-
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 /**
  * Array based implementation of an {@code XY_Sequence}.
@@ -30,16 +29,15 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 
 	private final double[] xs;
 	private final double[] ys;
-	
+
 	private final int xHash;
-	
+
 	/*
 	 * Only for use by static factory methods. Create a new sequence from an
 	 * existing one; copies the fields of {@code seq} to {@code this}.
 	 */
 	ArrayXY_Sequence(ArrayXY_Sequence seq) {
-		checkNotNull(seq, "Sequence to copy is null");
-		xs = seq.xs;
+		xs = checkNotNull(seq).xs;
 		ys = Arrays.copyOf(seq.ys, seq.ys.length);
 		xHash = seq.xHash;
 	}
@@ -58,7 +56,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 		this.ys = Arrays.copyOf(ys, ys.length);
 		xHash = Arrays.hashCode(xs);
 	}
-	
+
 	/**
 	 * Create a new sequence from the supplied value arrays.
 	 * 
@@ -74,9 +72,9 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	public static ArrayXY_Sequence create(double[] xs, double[] ys) {
 		return new ArrayXY_Sequence(xs, ys);
 	}
-		
+
 	/**
-	 * Copy the supplied sequence to a new sequence.
+	 * Returns a copy of the supplied sequence.
 	 * 
 	 * @param sequence to copy
 	 * @return a copy of the supplied {@code sequence}
@@ -84,151 +82,99 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 *         {@code null}
 	 */
 	public static ArrayXY_Sequence copyOf(ArrayXY_Sequence sequence) {
-		checkNotNull(sequence, "Sequence to copy is null");
 		return new ArrayXY_Sequence(sequence);
 	}
-	
-	@Override
-	public double x(int index) {
+
+	@Override public double x(int index) {
 		checkElementIndex(index, xs.length);
 		return xUnchecked(index);
 	}
-	
-	@Override
-	double xUnchecked(int index) {
+
+	@Override double xUnchecked(int index) {
 		return xs[index];
 	}
 
-	@Override
-	public double y(int index) {
+	@Override public double y(int index) {
 		checkElementIndex(index, ys.length);
 		return yUnchecked(index);
 	}
 
-	@Override
-	double yUnchecked(int index) {
+	@Override double yUnchecked(int index) {
 		return ys[index];
 	}
 
-	@Override
-	public void set(int index, double value) {
+	@Override public void set(int index, double value) {
 		checkElementIndex(index, xs.length);
 		ys[index] = value;
 	}
-	
-	@Override
-	public int size() {
+
+	@Override public int size() {
 		return xs.length;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
+	@Override public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof ArrayXY_Sequence)) return false;
 		return hashCode() == obj.hashCode();
 	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(xHash, Arrays.hashCode(ys));
+
+	@Override public int hashCode() {
+		return Objects.hash(xHash, Arrays.hashCode(ys));
 	}
-	
-	public ArrayXY_Sequence add(double value) {
-		DataUtils.add(value, xs);
+
+	/**
+	 * Add a {@code term} to the y-values of this sequence in place.
+	 * 
+	 * @param term to add
+	 * @return {@code this} sequence, for use inline
+	 */
+	public ArrayXY_Sequence add(double term) {
+		DataUtils.uncheckedAdd(term, ys);
 		return this;
 	}
-	
+
 	/**
-	 * Adds the supplied sequence to {@code this} sequence in place and returns
-	 * {@code this}.
-	 * @param sequence to add to {@code this}
-	 * @return {@code this} sequence
-	 * @throws NullPointerException if {@code sequence} is {@code null}
-	 * @throws IllegalArgumentException if the x-values of the supplied sequence
-	 *         are not the same as those of {@code this}
+	 * Add the y-values of a sequence to the y-values of {@code this} sequence
+	 * in place.
+	 * 
+	 * @param sequence to add
+	 * @return {@code this} sequence, for use inline
+	 * @throws IllegalArgumentException if
+	 *         {@code sequence.xValues() != this.xValues()}
 	 */
 	public ArrayXY_Sequence add(ArrayXY_Sequence sequence) {
-		checkArgument(checkNotNull(sequence).xHash == xHash);
-		DataUtils.uncheckedAdd(ys, sequence.ys);
+		DataUtils.uncheckedAdd(ys, validateSequence(sequence).ys);
 		return this;
 	}
-
-//	/**
-//	 * Subtracts the supplied sequence from {@code this} sequence in place and returns
-//	 * {@code this}.
-//	 * @param sequence to subtract from {@code this}
-//	 * @return {@code this} sequence
-//	 * @throws NullPointerException if {@code sequence} is {@code null}
-//	 * @throws IllegalArgumentException if the x-values of the supplied sequence
-//	 *         are not the same as those of {@code this}
-//	 */
-//	public ArrayXY_Sequence subtract(ArrayXY_Sequence sequence) {
-//		checkArgument(checkNotNull(sequence).xHash == xHash);
-//		DataUtils.uncheckedSubtract(ys, sequence.ys);
-//		return this;
-//	}
 
 	/**
-	 * Multiplies {@code this} sequence in place by the one supplied and returns
-	 * {@code this}.
-	 * @param sequence to multiply {@code this} by
-	 * @return {@code this} sequence
-	 * @throws NullPointerException if {@code sequence} is {@code null}
-	 * @throws IllegalArgumentException if the x-values of the supplied sequence
-	 *         are not the same as those of {@code this}
+	 * Multiply ({@code scale}) the y-values of this sequence in place.
+	 * 
+	 * @param scale factor
+	 * @return {@code this} sequence, for use inline
 	 */
-	public ArrayXY_Sequence multiply(ArrayXY_Sequence sequence) {
-		checkArgument(checkNotNull(sequence).xHash == xHash);
-		DataUtils.uncheckedMultiply(ys, sequence.ys);
+	public ArrayXY_Sequence multiply(double scale) {
+		DataUtils.uncheckedMultiply(scale, ys);
 		return this;
 	}
 
-//	/**
-//	 * Divides {@code this} sequence in place by the one supplied and returns
-//	 * {@code this}.
-//	 * @param sequence to divide {@code this} by
-//	 * @return {@code this} sequence
-//	 * @throws NullPointerException if {@code sequence} is {@code null}
-//	 * @throws IllegalArgumentException if the x-values of the supplied sequence
-//	 *         are not the same as those of {@code this}
-//	 */
-//	public ArrayXY_Sequence divide(ArrayXY_Sequence sequence) {
-//		checkArgument(checkNotNull(sequence).xHash == xHash);
-//		DataUtils.uncheckedDivide(ys, sequence.ys);
-//		return this;
-//	}
-	
-//	public Array
-//	public ArrayXY_Sequence scale(double scale) {
-//		
-//	}
-	
-	
+	/**
+	 * Multiply the y-values of {@code this} sequence by the y-values of another
+	 * sequence in place.
+	 * 
+	 * @param sequence to multiply {@code this} sequence by
+	 * @return {@code this} sequence, for use inline
+	 * @throws IllegalArgumentException if
+	 *         {@code sequence.xValues() != this.xValues()}
+	 */
+	public ArrayXY_Sequence multiply(ArrayXY_Sequence sequence) {
+		DataUtils.uncheckedMultiply(ys, validateSequence(sequence).ys);
+		return this;
+	}
 
-//	@Override
-//	public void scale(double value) {
-//		// TODO do nothing
-//
-//	}
-//
-//	@Override
-//	public boolean equals(Object obj) {
-//		return super.equals(obj);
-//		// TODO do nothing
-//		
-//	}
-	
-//	@Override
-//	public boolean equals(DefaultSequence sequence) {
-//		return false;
-//	}
-//	private static class DefaultPoint implements XY_Point {
-//		private DefaultSequence xy;
-//		private int idx;
-//		private DefaultPoint(DefaultSequence xy) { this.xy = xy; }
-//		@Override public double x() { return xy.xs[idx]; }
-//		@Override public double y() { return xy.ys[idx]; }
-//	}
-	
+	private ArrayXY_Sequence validateSequence(ArrayXY_Sequence sequence) {
+		checkArgument(checkNotNull(sequence).xHash == xHash);
+		return sequence;
+	}
 
 }

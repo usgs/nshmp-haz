@@ -2,11 +2,12 @@ package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.logging.Level.FINE;
 import static org.opensha.gmm.GmmAttribute.ID;
 import static org.opensha.gmm.GmmAttribute.MAX_DISTANCE;
+import static org.opensha.gmm.GmmAttribute.VALUES;
 import static org.opensha.gmm.GmmAttribute.WEIGHT;
 import static org.opensha.gmm.GmmAttribute.WEIGHTS;
-import static org.opensha.gmm.GmmAttribute.VALUES;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readDoubleArray;
 import static org.opensha.util.Parsing.readEnum;
@@ -27,6 +28,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /*
@@ -112,7 +114,10 @@ class GmmParser extends DefaultHandler {
 					Gmm model = readEnum(ID, atts, Gmm.class);
 					double weight = readDouble(WEIGHT, atts);
 					gmmWtMap.put(model, weight);
-					log.fine(" Model [wt]: " + model + " [" + weight + "]");
+					if (log.isLoggable(FINE)) {
+						log.fine(" Model [wt]: " + Strings.padEnd(model.toString(), 44, ' ') +
+							" [" + weight + "]");
+					}
 					break;
 
 			}

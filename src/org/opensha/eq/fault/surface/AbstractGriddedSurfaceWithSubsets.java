@@ -78,10 +78,10 @@ public abstract class AbstractGriddedSurfaceWithSubsets extends AbstractGriddedS
 			double subSurfaceWidth,
 			double subSurfaceOffset,
 			int n) {
-		return getNthSubsetSurface((int)Math.rint(subSurfaceLength/gridSpacingAlong+1),
-				(int)Math.rint(subSurfaceWidth/gridSpacingDown+1),
-				(int)Math.rint(subSurfaceOffset/gridSpacingAlong), 
-				(int)Math.rint(subSurfaceOffset/gridSpacingDown), n);
+		return getNthSubsetSurface((int)Math.rint(subSurfaceLength/strikeSpacing+1),
+				(int)Math.rint(subSurfaceWidth/dipSpacing+1),
+				(int)Math.rint(subSurfaceOffset/strikeSpacing), 
+				(int)Math.rint(subSurfaceOffset/dipSpacing), n);
 	}
 
 
@@ -100,7 +100,7 @@ public abstract class AbstractGriddedSurfaceWithSubsets extends AbstractGriddedS
 			double subSurfaceOffset,
 			int n) {
 
-		int numSubSurfaceCols =  (int)Math.rint(subSurfaceLength/gridSpacingAlong+1);
+		int numSubSurfaceCols =  (int)Math.rint(subSurfaceLength/strikeSpacing+1);
 		int startCol = -1;
 
 		// make sure it doesn't extend beyond the end
@@ -109,10 +109,10 @@ public abstract class AbstractGriddedSurfaceWithSubsets extends AbstractGriddedS
 			startCol=0;
 		}
 		else {
-			startCol = n * (int)Math.rint(subSurfaceOffset/gridSpacingAlong);
+			startCol = n * (int)Math.rint(subSurfaceOffset/strikeSpacing);
 		}
 
-		int numSubSurfaceRows = (int)Math.rint(subSurfaceWidth/gridSpacingDown+1);
+		int numSubSurfaceRows = (int)Math.rint(subSurfaceWidth/dipSpacing+1);
 		int startRow=-1;
 
 		// make sure it doesn't extend beyone the end
@@ -194,10 +194,10 @@ public abstract class AbstractGriddedSurfaceWithSubsets extends AbstractGriddedS
 //			double subSurfaceWidth,
 //			double subSurfaceOffset) {
 //
-//		return getSubsetSurfacesIterator((int)Math.rint(subSurfaceLength/gridSpacingAlong+1),
-//				(int)Math.rint(subSurfaceWidth/gridSpacingDown+1),
-//				(int)Math.rint(subSurfaceOffset/gridSpacingAlong),
-//				(int)Math.rint(subSurfaceOffset/gridSpacingDown));
+//		return getSubsetSurfacesIterator((int)Math.rint(subSurfaceLength/strikeSpacing+1),
+//				(int)Math.rint(subSurfaceWidth/dipSpacing+1),
+//				(int)Math.rint(subSurfaceOffset/strikeSpacing),
+//				(int)Math.rint(subSurfaceOffset/dipSpacing));
 //
 //	}
 
@@ -210,10 +210,10 @@ public abstract class AbstractGriddedSurfaceWithSubsets extends AbstractGriddedS
 	 */
 	public int getNumSubsetSurfaces(double subSurfaceLength,double subSurfaceWidth,double subSurfaceOffset){
 
-		int lengthCols =  (int)Math.rint(subSurfaceLength/gridSpacingAlong+1);
-		int widthCols =    (int)Math.rint(subSurfaceWidth/gridSpacingDown+1);
-		int offsetColsAlong =   (int)Math.rint(subSurfaceOffset/gridSpacingAlong);
-		int offsetColsDown =   (int)Math.rint(subSurfaceOffset/gridSpacingDown);
+		int lengthCols =  (int)Math.rint(subSurfaceLength/strikeSpacing+1);
+		int widthCols =    (int)Math.rint(subSurfaceWidth/dipSpacing+1);
+		int offsetColsAlong =   (int)Math.rint(subSurfaceOffset/strikeSpacing);
+		int offsetColsDown =   (int)Math.rint(subSurfaceOffset/dipSpacing);
 
 		// number of subSurfaces along the length of fault
 		int nSubSurfaceAlong = (int)Math.floor((getNumCols()-lengthCols)/offsetColsAlong +1);
@@ -243,8 +243,8 @@ public abstract class AbstractGriddedSurfaceWithSubsets extends AbstractGriddedS
 	 * @return total number of subSurface along the fault
 	 */
 	public int getNumSubsetSurfacesAlongLength(double subSurfaceLength,double subSurfaceOffset){
-		int lengthCols =  (int)Math.rint(subSurfaceLength/gridSpacingAlong+1);
-		int offsetCols =   (int)Math.rint(subSurfaceOffset/gridSpacingAlong);
+		int lengthCols =  (int)Math.rint(subSurfaceLength/strikeSpacing+1);
+		int offsetCols =   (int)Math.rint(subSurfaceOffset/strikeSpacing);
 
 		// number of subSurfaces along the length of fault
 		int nSubSurfaceAlong = (int)Math.floor((getNumCols()-lengthCols)/offsetCols +1);
