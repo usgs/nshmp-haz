@@ -53,7 +53,7 @@ abstract class AbstractXY_Sequence implements XY_Sequence {
 			return new Iterator<Double>() {
 				private int caret = 0;
 				@Override public boolean hasNext() { 
-					return caret < AbstractXY_Sequence.this.size();
+					return caret < size();
 				}
 				@Override public Double next() { 
 					return x(caret++);
@@ -72,7 +72,7 @@ abstract class AbstractXY_Sequence implements XY_Sequence {
 			return new Iterator<Double>() {
 				private int caret = 0;
 				@Override public boolean hasNext() { 
-					return caret < AbstractXY_Sequence.this.size();
+					return caret < size();
 				}
 				@Override public Double next() { 
 					return y(caret++);

@@ -40,6 +40,13 @@ import org.xml.sax.helpers.DefaultHandler;
  * Non-validating cluster source parser. SAX parser 'Attributes' are stateful
  * and cannot be stored. This class is not thread safe.
  * 
+ * NOTE: Cluster sources only support SINGLE magnitude frequency distributions
+ * and do not support epistemic or aleatory uncertainty on magnitude. These
+ * restrictions could be lifted in the future.
+ * 
+ * NOTE: A ClusterSource wraps a FaultSourceSet that is delegates to for
+ * various methods.
+ * 
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -54,12 +61,14 @@ class ClusterParser extends DefaultHandler {
 	private GmmSet gmmSet;
 
 	private ClusterSourceSet sourceSet;
-	private ClusterSourceSet.Builder sourceSetBuilder;
+	private ClusterSourceSet.Builder clusterSetBuilder;
 	private ClusterSource.Builder clusterBuilder;
+	private FaultSourceSet.Builder faultSetBuilder;
 	private FaultSource.Builder faultBuilder;
 	private double clusterRate;
 
 	// required, but not used, by FaultSources
+	private MagScalingType msrType;
 	private MagScalingRelationship msr;
 
 	// Default MFD data
@@ -102,10 +111,9 @@ class ClusterParser extends DefaultHandler {
 				case CLUSTER_SOURCE_SET:
 					String name = readString(NAME, atts);
 					double weight = readDouble(WEIGHT, atts);
-					sourceSetBuilder = new ClusterSourceSet.Builder();
-					sourceSetBuilder.name(name);
-					sourceSetBuilder.weight(weight);
-					sourceSetBuilder.gmms(gmmSet);
+					clusterSetBuilder = new ClusterSourceSet.Builder()
+						.name(name)
+						.weight(weight);
 					if (log.isLoggable(FINE)) {
 						log.fine("");
 						log.fine("       Name: " + name);
@@ -117,22 +125,31 @@ class ClusterParser extends DefaultHandler {
 					parsingDefaultMFDs = true;
 					break;
 
+				case MAG_UNCERTAINTY:
+					// we could just ignore <MagUncertainty> bu favor explicitely
+					// NOT supporting it for now.
+					throw new IllegalStateException(
+						"Cluster sources do no support magnitude uncertainty");
+					
 				case SOURCE_PROPERTIES:
-					// this isn't really needed for cluster sources as yet,
+					// this isn't really needed for cluster sources,
 					// but nested faults can't be built without it
-					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
-					sourceSetBuilder.magScaling(msrType);
+					msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
+					clusterSetBuilder.magScaling(msrType);
 					log.fine("Mag scaling: " + msrType + " (not used)");
 					msr = msrType.instance();
 					break;
 
 				case CLUSTER:
-					clusterBuilder = new ClusterSource.Builder();
 					String clustName = readString(NAME, atts);
 					double clustWeight = readDouble(WEIGHT, atts);
-					clusterBuilder.name(clustName);
-					clusterBuilder.weight(clustWeight);
-					clusterBuilder.rate(clusterRate);
+					clusterBuilder = new ClusterSource.Builder()
+						.rate(clusterRate);
+					faultSetBuilder = new FaultSourceSet.Builder()
+						.name(clustName)
+						.weight(clustWeight)
+						.gmms(gmmSet)
+						.magScaling(msrType);
 					if (log.isLoggable(FINE)) {
 						log.fine("");
 						log.fine("    Cluster: " + clustName);
@@ -143,14 +160,16 @@ class ClusterParser extends DefaultHandler {
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
-					faultBuilder = new FaultSource.Builder();
-					faultBuilder.name(srcName);
-					faultBuilder.magScaling(msr);
+					faultBuilder = new FaultSource.Builder()
+						.name(srcName)
+						.magScaling(msr);
 					log.finer("      Fault: " + srcName);
 					break;
 
 				case MAG_FREQ_DIST:
 					if (parsingDefaultMFDs) {
+						checkState(readEnum(TYPE, atts, MfdType.class) == MfdType.SINGLE,
+							"Only SINGLE MFDs are supported by cluster sources");
 						clusterRate = readDouble(A, atts);
 						break;
 					}
@@ -158,10 +177,10 @@ class ClusterParser extends DefaultHandler {
 					break;
 
 				case GEOMETRY:
-					faultBuilder.depth(readDouble(DEPTH, atts));
-					faultBuilder.dip(readDouble(DIP, atts));
-					faultBuilder.width(readDouble(WIDTH, atts));
-					faultBuilder.rake(readDouble(RAKE, atts));
+					faultBuilder.depth(readDouble(DEPTH, atts))
+						.dip(readDouble(DIP, atts))
+						.width(readDouble(WIDTH, atts))
+						.rake(readDouble(RAKE, atts));
 					break;
 
 				case TRACE:
@@ -198,16 +217,17 @@ class ClusterParser extends DefaultHandler {
 					break;
 
 				case SOURCE:
-					clusterBuilder.fault(faultBuilder.buildFaultSource());
+					faultSetBuilder.source(faultBuilder.buildFaultSource());
 					break;
 
 				case CLUSTER:
-					sourceSetBuilder.source(clusterBuilder.buildClusterSource());
+					clusterBuilder.faults(faultSetBuilder.buildFaultSet());
+					clusterSetBuilder.source(clusterBuilder.buildClusterSource());
 					break;
 
 				case CLUSTER_SOURCE_SET:
 					log.fine("");
-					sourceSet = sourceSetBuilder.buildClusterSet();
+					sourceSet = clusterSetBuilder.buildClusterSet();
 					break;
 
 			}

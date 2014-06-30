@@ -43,9 +43,9 @@ public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurf
 		double gridSpacingDown = downDipWidth/Math.ceil(downDipWidth/maxGridSpacingDown);
 /*		
 		System.out.println(faultTrace.getName()+"\n\t"+
-				maxGridSpacingAlong+"\t"+(float)gridSpacingAlong+"\t"+(float)gridSpacingDown+"\t"+
-				(float)(faultTrace.getTraceLength()/gridSpacingAlong)+"\t"+
-				(float)(downDipWidth/gridSpacingDown));
+				maxGridSpacingAlong+"\t"+(float)strikeSpacing+"\t"+(float)dipSpacing+"\t"+
+				(float)(faultTrace.getTraceLength()/strikeSpacing)+"\t"+
+				(float)(downDipWidth/dipSpacing));
 */				
 
 		set(faultTrace, aveDip, upperSeismogenicDepth, lowerSeismogenicDepth, gridSpacingAlong, gridSpacingDown);
@@ -58,10 +58,10 @@ public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurf
 		this.aveDip =aveDip;
 		this.upperSeismogenicDepth = upperSeismogenicDepth;
 		this.lowerSeismogenicDepth =lowerSeismogenicDepth;
-		this.gridSpacingAlong = gridSpacingAlong;
-		this.gridSpacingDown = gridSpacingDown;
-		this.sameGridSpacing = true;
-		if(gridSpacingDown != gridSpacingAlong) sameGridSpacing = false;
+		this.strikeSpacing = gridSpacingAlong;
+		this.dipSpacing = gridSpacingDown;
+//		this.sameGridSpacing = true;
+//		if(gridSpacingDown != gridSpacingAlong) sameGridSpacing = false;
 	}
 
 
@@ -91,8 +91,8 @@ public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurf
 		Faults.validateDepth(upperSeismogenicDepth);
 		checkArgument(upperSeismogenicDepth < lowerSeismogenicDepth);
 		
-		checkArgument(!Double.isNaN(gridSpacingAlong), "invalid gridSpacing");
-//		if( gridSpacingAlong == Double.NaN ) throw new FaultException(C + "invalid gridSpacing");
+		checkArgument(!Double.isNaN(strikeSpacing), "invalid gridSpacing");
+//		if( strikeSpacing == Double.NaN ) throw new FaultException(C + "invalid gridSpacing");
 
 		double depth = faultTrace.first().depth();
 		checkArgument(depth <= upperSeismogenicDepth,

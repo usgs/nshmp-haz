@@ -144,13 +144,13 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
       return ((AbstractGriddedSurface)data).getGridSpacingDownDip();
     }
     
-	/**
-	 * this tells whether along-strike and down-dip grid spacings are the same
-	 * @return
-	 */
-	public Boolean isGridSpacingSame() {
-		return ((AbstractGriddedSurface)data).isGridSpacingSame();
-	}
+//	/**
+//	 * this tells whether along-strike and down-dip grid spacings are the same
+//	 * @return
+//	 */
+//	public Boolean isGridSpacingSame() {
+//		return ((AbstractGriddedSurface)data).isGridSpacingSame();
+//	}
 
  
 	@Override

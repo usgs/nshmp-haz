@@ -16,7 +16,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * Wrapper class for groups of related {@code ClusterSource}s.
+ * Wrapper class for related {@link ClusterSource}s. 
  * 
  * @author Peter Powers
  * @see ClusterSource
@@ -25,9 +25,8 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 	private final List<ClusterSource> sources;
 
-	ClusterSourceSet(String name, double weight, MagScalingType msrType,
-		List<ClusterSource> sources, GmmSet gmmSet) {
-		super(name, weight, msrType, gmmSet);
+	ClusterSourceSet(String name, double weight, MagScalingType msr, List<ClusterSource> sources) {
+		super(name, weight, msr, null);
 		this.sources = sources;
 	}
 
@@ -53,6 +52,16 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			}
 		};
 	}
+	
+	/**
+	 * Overriden to throw an {@code UnsupportedOperationException}.
+	 * Ground motion model references are stored in {@code FaultSourceSet}s
+	 * nested in each {@code ClusterSource}.
+	 */
+	@Override public GmmSet groundMotionModels() {
+		throw new UnsupportedOperationException();
+	}
+
 
 	static class Builder {
 
@@ -78,10 +87,11 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			return this;
 		}
 		
-		Builder gmms(GmmSet gmmSet) {
-			this.gmmSet = checkNotNull(gmmSet);
-			return this;
-		}
+		// TODO clean
+//		Builder gmms(GmmSet gmmSet) {
+//			this.gmmSet = checkNotNull(gmmSet);
+//			return this;
+//		}
 
 		Builder magScaling(MagScalingType magScaling) {
 			this.magScaling = checkNotNull(magScaling, "");
@@ -98,13 +108,13 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			checkState(name != null, "%s name not set", id);
 			checkState(weight != null, "%s weight not set", id);
 			checkState(magScaling != null, "%s mag-scaling relation not set", id);
-			checkState(gmmSet != null, "%s ground motion models not set", id);
+//			checkState(gmmSet != null, "%s ground motion models not set", id);
 			built = true;
 		}
 
 		ClusterSourceSet buildClusterSet() {
 			validateState(ID);
-			return new ClusterSourceSet(name, weight, magScaling, sources, gmmSet);
+			return new ClusterSourceSet(name, weight, magScaling, sources);
 		}
 	}
 

@@ -16,7 +16,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 /**
- * Wrapper class for groups of related {@code FaultSource}s.
+ * Wrapper class for related {@link FaultSource}s.
  *
  * @author Peter Powers
  * @see FaultSource
@@ -58,9 +58,9 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 			this.distance = distance;
 		}
 
-		@Override public boolean apply(FaultSource fs) {
-			return horzDistanceFast(loc, fs.trace.first()) <= distance ||
-				horzDistanceFast(loc, fs.trace.last()) <= distance;
+		@Override public boolean apply(FaultSource source) {
+			return horzDistanceFast(loc, source.trace.first()) <= distance ||
+				horzDistanceFast(loc, source.trace.last()) <= distance;
 		}
 		
 		@Override public String toString() {

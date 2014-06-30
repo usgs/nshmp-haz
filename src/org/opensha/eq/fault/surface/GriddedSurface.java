@@ -18,11 +18,11 @@ public interface GriddedSurface extends Container2D<Location>, RuptureSurface {
 	 */
 	public double getGridSpacingDownDip();
 	
-	/**
-	 * tells whether along-strike and down-dip grid spacings are the same
-	 * @return
-	 */
-	public Boolean isGridSpacingSame();
+//	/**
+//	 * tells whether along-strike and down-dip grid spacings are the same
+//	 * @return
+//	 */
+//	public Boolean isGridSpacingSame();
 	
 	/**
 	 * gets the location from the 2D container

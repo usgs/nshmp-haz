@@ -129,6 +129,7 @@ public class FaultSource implements Source {
 			double mag = mfd.getX(i);
 			double rate = mfd.getY(i);
 
+			// TODO do we really want to do this??
 			if (rate < 1e-14) continue; // shortcut low rates
 
 			if (mfd.floats()) {
@@ -297,9 +298,13 @@ public class FaultSource implements Source {
 			validateState(ID);
 
 			// create surface
-			double bottom = depth + width * Math.sin(dip * GeoTools.TO_RAD);
-			GriddedSurfaceWithSubsets surface = new GriddedSurfaceWithSubsets(trace, dip, depth,
-				bottom, offset, offset);
+			GriddedSurfaceWithSubsets surface = GriddedSurfaceWithSubsets.builder()
+					.trace(trace)
+					.depth(depth)
+					.dip(dip)
+					.width(width)
+					.spacing(offset)
+					.build();
 
 			return new FaultSource(name, trace, dip, width, surface, rake,
 				ImmutableList.copyOf(mfds), msr, aspectRatio, offset, floatStyle);

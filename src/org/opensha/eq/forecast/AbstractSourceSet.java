@@ -25,6 +25,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	private final GmmSet gmmSet;
 
 	// NOTE msrType is currently not exposed; nor is it used
+	// TODO consider removing
 
 	// NOTE we're holding onto weight for reference, however, MFD
 	// rates will have already been scaled in place. The weight value
@@ -64,7 +65,6 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	
 	@Override public Iterable<T> locationIterable(Location loc) {
 		Predicate<T> filter = distanceFilter(loc, gmmSet.maxDistHi);
-		System.out.println(filter);
 		return FluentIterable.from(this).filter(filter);
 	}
 	

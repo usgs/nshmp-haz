@@ -746,7 +746,7 @@ public final class Parsing {
 		
 //		int[] ints = {1, 2, 3, 4, 10, 19, 18, 17, 16};
 		int[] ints = {
-			620, 619, 618, 617, 616, 615, 614, 613, 612, 612, 611, 610, 609, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 598, 597, 596, 595, 594,
+			620, 619, 618, 617, 616, 615, 614, 613, 612, 611, 610, 609, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 598, 597, 596, 595, 594,
 			635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 623, 622,
 			1832, 1833, 1834, 1835, 1836, 1837, 1838, 1839, 1840, 1841, 1842, 1843, 1844, 1845, 1846, 1847, 1848, 1849, 1850, 1851,
 			1944, 1945, 1946, 1947, 1948, 1949, 1950, 1951, 1952, 1953};
@@ -754,7 +754,10 @@ public final class Parsing {
 		String rangeString = intListToRangeString(intList);
 		System.out.println(rangeString);
 
-		System.out.println(rangeStringToIntList(rangeString));
+		List<Integer> out = rangeStringToIntList(rangeString);
+		System.out.println(out);
+		System.out.println(intList.equals(out));
+		
 
 //		String megaMapStr = "[6.5 :: [1.0 : 0.8, 5.0 : 0.2]; 10.0 :: [1.0 : 0.2, 5.0 : 0.8]]";
 //		String megaMapStr = "[]";

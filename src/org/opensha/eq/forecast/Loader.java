@@ -264,8 +264,10 @@ public class Loader {
 				case CLUSTER:
 					return ClusterParser.create(sax).parse(in, gmmSet);
 				case INDEXED_FAULT:
-					throw new UnsupportedOperationException(
-						"Indexed fault sources not currently supported");
+					// TODO need path to sections
+					Path sectionsPath = null;
+					return IndexedFaultParser.create(sax).parse(Files.newInputStream(sectionsPath),
+						in, gmmSet);
 				case AREA:
 					throw new UnsupportedOperationException("Area sources not currently supported");
 			}

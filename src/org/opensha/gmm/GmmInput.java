@@ -6,9 +6,14 @@ import org.opensha.eq.forecast.Distances;
  * Earthquake {@code Rupture} data and receiver site properties used as inputs
  * to ground motion models (GMMs). Not all GMMs use all properties.
  * 
+ * <p>This calss also carries a rate value, which is never used by GroundMotionModels.</p>
+ * 
  * @author Peter Powers
  */
 public final class GmmInput {
+	
+	// TODO determine how best to expose rate wrt deterministic calcualtions
+	double rate; // TODO currently empty; needs to be final
 
 	// source
 	final double Mw;
