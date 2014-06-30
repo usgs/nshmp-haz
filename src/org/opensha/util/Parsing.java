@@ -203,6 +203,7 @@ public final class Parsing {
 	public static void addAttribute(Enum<?> id, double value, String format, Element parent) {
 		addAttribute(id.toString(), stripZeros(String.format(format, value)), parent);
 	}
+	
 	public static void addAttribute(Enum<?> id, String value, Element parent) {
 		addAttribute(id.toString(), value, parent);
 	}
@@ -502,9 +503,9 @@ public final class Parsing {
 	 * @throws NumberFormatException if {@code s} cannot be parsed to a
 	 *         {@code double}
 	 */
-	public static String reformat(String s, String format) {
-		return stripZeros(String.format(format, Double.valueOf(s)));
-	}
+//	public static String reformat(String s, String format) {
+//		return stripZeros(String.format(format, Double.valueOf(s)));
+//	}
 	
 	/**
 	 * Strip trailing zeros of a decimal number that has already been formatted
