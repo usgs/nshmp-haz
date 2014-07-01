@@ -118,12 +118,9 @@ class IndexedFaultParser extends DefaultHandler {
 						.weight(weight)
 						.gmms(gmmSet)
 						.sections(sections);
-					if (log.isLoggable(FINE)) {
-						log.fine("");
-						log.fine("       Name: " + name);
-						log.fine("     Weight: " + weight);
-						log.fine("   Sections: " + sections.size());
-					}
+					log.info("     Weight: " + weight);
+					log.info("   Sections: " + sections.size());
+					log.info("");
 					break;
 
 				case MAG_FREQ_DIST_REF:

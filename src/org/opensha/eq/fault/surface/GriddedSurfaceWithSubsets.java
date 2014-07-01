@@ -214,6 +214,7 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 			checkState(trace != null, "%s trace not set", id);
 			checkState(dipRad != null, "%s dip not set", id);
 			checkState(depth != null, "%s depth not set", id);
+			
 			checkState((width != null) ^ (lowerDepth != null), "%s width or lowerDepth not set", id);
 			if (lowerDepth != null && lowerDepth <= depth) {
 				throw new IllegalStateException("Lower depth is above upper depth");
@@ -224,6 +225,7 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 		public GriddedSurfaceWithSubsets build() {
 			validateState(ID);
 			if (dipDirRad == null) dipDirRad = Faults.dipDirectionRad(trace);
+			if (width == null) width = (lowerDepth - depth) / Math.sin(dipRad);
 			return new GriddedSurfaceWithSubsets(trace, dipRad, dipDirRad, depth, width,
 				strikeSpacing, dipSpacing);
 		}
@@ -592,52 +594,52 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 	 * Maine method to test this class (found a bug using it)
 	 * @param args
 	 */
-	public static void main(String args[]) {
-
-		double test = 4 % 4.1;
-		System.out.println(test);
-		// double dip = 15;
-		// double depth = 9.1;
-		// double lowerDepth =15.2;
-		// double gridSpacing=1.0;
-		// FaultTrace trace = new FaultTrace("Great Valley 13");
-		// // TO SEE THE POTENTIAL BUG IN THIS CLASS, CHANGE VALUE OF
-		// "faultTraceDepth" to 0
-		// double faultTraceDepth = 0;
-		// trace.addLocation(new Location(36.3547, -120.358, faultTraceDepth));
-		// trace.addLocation(new Location(36.2671, -120.254, faultTraceDepth));
-		// trace.addLocation(new Location(36.1499, -120.114, faultTraceDepth));
-		// GriddedSurfaceWithSubsets griddedSurface = new
-		// GriddedSurfaceWithSubsets(trace, dip,
-		// depth, lowerDepth, gridSpacing);
-		// System.out.println("******Fault Trace*********");
-		// System.out.println(trace);
-		// Iterator it = griddedSurface.getLocationsIterator();
-		// System.out.println("*******Evenly Gridded Surface************");
-		// while(it.hasNext()){
-		// Location loc = (Location)it.next();
-		// System.out.println(loc.getLatitude()+","+loc.getLongitude()+","+loc.getDepth());
-		// }
-
-		// for N-S strike and E dip, this setup showed that prior to fixing
-		// Locations.getLocation() the grid of the fault actually
-		// starts to the left of the trace, rather than to the right.
-
-		/*
-		 * double dip = 30; double depth = 5; double lowerDepth = 15; double
-		 * gridSpacing=5; FaultTrace trace = new FaultTrace("Test");
-		 * trace.add(new Location(20.0, -120, 0)); trace.add(new Location(20.2,
-		 * -120, 0)); GriddedSurfaceWithSubsets griddedSurface = new
-		 * GriddedSurfaceWithSubsets(trace, dip, depth, lowerDepth,
-		 * gridSpacing); System.out.println("******Fault Trace*********");
-		 * System.out.println(trace); Iterator<Location> it =
-		 * griddedSurface.getLocationsIterator();
-		 * System.out.println("*******Evenly Gridded Surface************");
-		 * while(it.hasNext()){ Location loc = (Location)it.next();
-		 * System.out.println
-		 * (loc.getLatitude()+","+loc.getLongitude()+","+loc.getDepth()); }
-		 */
-	}
+//	public static void main(String args[]) {
+//
+//		double test = 4 % 4.1;
+//		System.out.println(test);
+//		// double dip = 15;
+//		// double depth = 9.1;
+//		// double lowerDepth =15.2;
+//		// double gridSpacing=1.0;
+//		// FaultTrace trace = new FaultTrace("Great Valley 13");
+//		// // TO SEE THE POTENTIAL BUG IN THIS CLASS, CHANGE VALUE OF
+//		// "faultTraceDepth" to 0
+//		// double faultTraceDepth = 0;
+//		// trace.addLocation(new Location(36.3547, -120.358, faultTraceDepth));
+//		// trace.addLocation(new Location(36.2671, -120.254, faultTraceDepth));
+//		// trace.addLocation(new Location(36.1499, -120.114, faultTraceDepth));
+//		// GriddedSurfaceWithSubsets griddedSurface = new
+//		// GriddedSurfaceWithSubsets(trace, dip,
+//		// depth, lowerDepth, gridSpacing);
+//		// System.out.println("******Fault Trace*********");
+//		// System.out.println(trace);
+//		// Iterator it = griddedSurface.getLocationsIterator();
+//		// System.out.println("*******Evenly Gridded Surface************");
+//		// while(it.hasNext()){
+//		// Location loc = (Location)it.next();
+//		// System.out.println(loc.getLatitude()+","+loc.getLongitude()+","+loc.getDepth());
+//		// }
+//
+//		// for N-S strike and E dip, this setup showed that prior to fixing
+//		// Locations.getLocation() the grid of the fault actually
+//		// starts to the left of the trace, rather than to the right.
+//
+//		/*
+//		 * double dip = 30; double depth = 5; double lowerDepth = 15; double
+//		 * gridSpacing=5; FaultTrace trace = new FaultTrace("Test");
+//		 * trace.add(new Location(20.0, -120, 0)); trace.add(new Location(20.2,
+//		 * -120, 0)); GriddedSurfaceWithSubsets griddedSurface = new
+//		 * GriddedSurfaceWithSubsets(trace, dip, depth, lowerDepth,
+//		 * gridSpacing); System.out.println("******Fault Trace*********");
+//		 * System.out.println(trace); Iterator<Location> it =
+//		 * griddedSurface.getLocationsIterator();
+//		 * System.out.println("*******Evenly Gridded Surface************");
+//		 * while(it.hasNext()){ Location loc = (Location)it.next();
+//		 * System.out.println
+//		 * (loc.getLatitude()+","+loc.getLongitude()+","+loc.getDepth()); }
+//		 */
+//	}
 
 	@Override public double dipDirection() {
 		return dipDirRad * TO_DEG;

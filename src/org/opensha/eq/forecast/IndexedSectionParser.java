@@ -87,14 +87,15 @@ class IndexedSectionParser extends DefaultHandler {
 				case INDEXED_FAULT_SECTIONS:
 					sections = Lists.newArrayList();
 					String setName = readString(NAME, atts);
-					log.fine("Section set: " + setName);
+					log.info("");
+					log.info("Section set: " + setName);
 					break;
 
 				case SECTION:
 					surfaceBuilder = GriddedSurfaceWithSubsets.builder();
 					String sectionName = readString(NAME, atts);
 					String sectionIndex = readString(INDEX, atts);
-					log.fine("    Section: [" + sectionIndex + "] " + sectionName);
+					log.finer("    Section: [" + sectionIndex + "] " + sectionName);
 					break;
 
 				case GEOMETRY:
