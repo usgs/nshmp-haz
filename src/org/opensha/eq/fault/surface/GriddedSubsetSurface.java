@@ -90,7 +90,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 
 
     /**
-     *  Proxy method that returns the aveDip of the main GriddedSurface. <P>
+     *  Proxy method that returns the rupDip of the main GriddedSurface. <P>
      *
      *  This should actually be recomputed if the main surface is a
      *  SimpleListricGriddedSurface.
