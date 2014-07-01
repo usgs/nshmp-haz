@@ -5,6 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.nio.file.Files.newDirectoryStream;
+import static java.util.logging.Level.SEVERE;
+import static org.opensha.eq.forecast.IndexedFaultParser.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,7 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -29,6 +30,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.opensha.eq.forecast.Forecast.Builder;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import sun.swing.SwingUtilities2.Section;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
@@ -80,7 +83,7 @@ public class Loader {
 
 		// TODO perhaps we process a config.xml file at the root of
 		// a Forecast to pick up name and other calc configuration data
-		
+
 		Forecast.Builder builder = Forecast.builder();
 		Path forecastPath = null;
 		List<Path> typePaths = null;
@@ -95,11 +98,11 @@ public class Loader {
 			logConfigException(e);
 			throw e;
 		}
-		
+
 		log.info("Loading forecast: " + name);
 		builder.name(name);
 		log.info("   From resource: " + forecastPath.getFileName());
-		
+
 		for (Path typePath : typePaths) {
 			String typeName = cleanZipName(typePath.getFileName().toString());
 			log.info("");
@@ -114,14 +117,14 @@ public class Loader {
 
 		return forecast;
 	}
-	
+
 	private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",
 		"encoding", "UTF-8");
 
 	private static final String ZIP_SCHEME = "jar:file";
 
 	private static List<Path> typeDirectories(Path path) throws Exception {
-		
+
 		// methods in here potentially throw a myriad of checked and
 		// unchecked exceptions
 
@@ -161,11 +164,11 @@ public class Loader {
 	private static void processTypeDir(Path typeDir, Builder builder) throws Exception {
 
 		SourceType type = SourceType.fromString(cleanZipName(typeDir.getFileName().toString()));
-		
+
 		/*
 		 * gmm.xml file -- this MUST exist if there is at least one source file,
 		 * however it MAY NOT exsist if all source files happen to be in nested
-		 * directories
+		 * directories along with their own gmm.xml files
 		 */
 
 		// Collect type paths
@@ -174,10 +177,12 @@ public class Loader {
 			typePaths = Lists.newArrayList(ds);
 		}
 
-		// Build GmmSet from gmm.xml if present
+		// Build GmmSet from gmm.xml
 		GmmSet gmmSet = null;
+		Path gmmPath = typeDir.resolve(GmmParser.FILE_NAME);
+
+		// if source files exist, gmm.xml must also exist
 		if (typePaths.size() > 0) {
-			Path gmmPath = typeDir.resolve(GmmParser.FILE_NAME);
 			try {
 				checkState(Files.exists(gmmPath), "%s sources present. Where is gmm.xml?",
 					typeDir.getFileName());
@@ -185,10 +190,14 @@ public class Loader {
 				logConfigException(ise);
 				throw ise;
 			}
+		}
+		// having checked directory state, load gmms if present
+		// we may have gmm.xml but no source files
+		if (Files.exists(gmmPath)) {
 			log.info("Parsing: " + typeDir.getParent().relativize(gmmPath));
 			gmmSet = parseGMM(gmmPath);
 		}
-		
+
 		for (Path sourcePath : typePaths) {
 			log.info("Parsing: " + typeDir.getParent().relativize(sourcePath));
 			SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, gmmSet);
@@ -205,12 +214,12 @@ public class Loader {
 
 	private static void processNestedDir(Path sourceDir, SourceType type, GmmSet gmmSet,
 			Builder builder) throws Exception {
-		
+
 		/*
-		 * gmm.xml -- this MUST exist if there is at least one source file
-		 * and there is no gmm.xml file in the parent source type directory
+		 * gmm.xml -- this MUST exist if there is at least one source file and
+		 * there is no gmm.xml file in the parent source type directory
 		 */
-		
+
 		// Collect nested paths
 		List<Path> nestedSourcePaths = null;
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(sourceDir, SourceFilter.INSTANCE)) {
@@ -218,7 +227,7 @@ public class Loader {
 		}
 
 		Path typeDir = sourceDir.getParent().getParent();
-		
+
 		GmmSet nestedGmmSet = null;
 		if (nestedSourcePaths.size() > 0) {
 			Path nestedGmmPath = sourceDir.resolve(GmmParser.FILE_NAME);
@@ -229,7 +238,7 @@ public class Loader {
 				logConfigException(ise);
 				throw ise;
 			}
-			
+
 			if (Files.exists(nestedGmmPath)) {
 				log.info("Parsing: " + typeDir.relativize(nestedGmmPath));
 				nestedGmmSet = parseGMM(nestedGmmPath);
@@ -247,9 +256,9 @@ public class Loader {
 
 	}
 
-	private static SourceSet<? extends Source> parseSource(SourceType type, Path path,
-			GmmSet gmmSet) throws Exception {
-		
+	private static SourceSet<? extends Source> parseSource(SourceType type, Path path, GmmSet gmmSet)
+			throws Exception {
+
 		try {
 			InputStream in = Files.newInputStream(path);
 			switch (type) {
@@ -264,20 +273,22 @@ public class Loader {
 				case CLUSTER:
 					return ClusterParser.create(sax).parse(in, gmmSet);
 				case INDEXED_FAULT:
-					// TODO need path to sections
-					Path sectionsPath = null;
+					// some random xml file will have ben read depending on
+					// filesystem; e.g. grid_sources.xml; set correct paths
+					Path sectionsPath = path.getParent().resolve(SECTIONS_FILENAME);
+					Path rupturesPath = path.getParent().resolve(RUPTURES_FILENAME);
 					return IndexedFaultParser.create(sax).parse(Files.newInputStream(sectionsPath),
-						in, gmmSet);
+						Files.newInputStream(rupturesPath), gmmSet);
 				case AREA:
 					throw new UnsupportedOperationException("Area sources not currently supported");
 			}
-			return null; 
+			return null;
 		} catch (Exception e) {
 			handleParseException(e, path);
 			return null;
 		}
 	}
-	
+
 	private static GmmSet parseGMM(Path path) throws Exception {
 		try {
 			InputStream in = Files.newInputStream(path);
@@ -311,28 +322,28 @@ public class Loader {
 			throw spe;
 
 		} else if (e instanceof SAXException) {
-			log.log(Level.SEVERE, "** Other SAX parsing error **", e);
+			log.log(SEVERE, "** Other SAX parsing error **", e);
 			throw e;
 
 		} else if (e instanceof IOException) {
 			IOException ioe = (IOException) e;
 			StringBuilder sb = new StringBuilder(LF);
 			sb.append("** IO error: ").append(ioe.getMessage()).append(LF);
-			sb.append("**   Path: ").append(path).append(LF);
+			sb.append("**     Path: ").append(path).append(LF);
 			log.severe(sb.toString());
 			throw ioe;
 
 		} else if (e instanceof UnsupportedOperationException ||
 			e instanceof IllegalStateException || e instanceof NullPointerException) {
-			log.log(Level.SEVERE, "** Parsing error: " + e.getMessage() + " **", e);
+			log.log(SEVERE, "** Parsing error: " + e.getMessage() + " **", e);
 			throw e;
-			
+
 		} else {
-			log.log(Level.SEVERE, "** Unknown parsing error **", e);
+			log.log(SEVERE, "** Unknown parsing error **", e);
 			throw e;
 		}
 	}
-	
+
 	private static void logConfigException(Exception e) {
 		StringBuilder sb = new StringBuilder(LF);
 		sb.append("** Config error: ").append(e.getMessage());
@@ -343,7 +354,7 @@ public class Loader {
 	private static String cleanZipName(String name) {
 		return name.endsWith("/") ? name.substring(0, name.length() - 1) : name;
 	}
-	
+
 	/*
 	 * Only lists those directories matching a SourceType.
 	 */

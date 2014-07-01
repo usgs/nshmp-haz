@@ -42,6 +42,10 @@ import org.xml.sax.helpers.DefaultHandler;
 @SuppressWarnings("incomplete-switch")
 class IndexedFaultParser extends DefaultHandler {
 
+	static final String GRIDSOURCE_FILENAME = "grid_sources.xml";
+	static final String RUPTURES_FILENAME = "fault_ruptures.xml";
+	static final String SECTIONS_FILENAME = "fault_sections.xml";
+
 	private final Logger log = Logger.getLogger(IndexedFaultParser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;

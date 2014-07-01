@@ -81,11 +81,13 @@ public class Logging {
 					.append(record.getSourceMethodName())
 					.append("()");
 				if (record.getThrown() != null) {
+					b.append(" ==> ");
 					b.append(record.getThrown());
 				}
-				b.append(LF);
+				b.append(LF).append(record.getMessage());
+			} else {
+				b.append(" ").append(record.getMessage());
 			}
-			b.append(" ").append(record.getMessage());
 			b.append(LF);
 			return b.toString();
 			// @formatter:on
