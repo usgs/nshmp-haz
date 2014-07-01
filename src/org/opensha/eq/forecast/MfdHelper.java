@@ -219,6 +219,8 @@ class MfdHelper {
 						break;
 					case TYPE:
 						break; // ignore
+					case FOCAL_MECH_MAP:
+						break; // UCERF3 grid sources; ignore
 					default:
 						throw new IllegalStateException("Invalid attribute for SINGLE MFD: " + att);
 				}

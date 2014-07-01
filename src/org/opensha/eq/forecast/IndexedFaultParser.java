@@ -2,7 +2,6 @@ package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static java.util.logging.Level.FINE;
 import static org.opensha.eq.forecast.SourceAttribute.A;
 import static org.opensha.eq.forecast.SourceAttribute.DEPTH;
 import static org.opensha.eq.forecast.SourceAttribute.DIP;
@@ -118,9 +117,9 @@ class IndexedFaultParser extends DefaultHandler {
 						.weight(weight)
 						.gmms(gmmSet)
 						.sections(sections);
-					log.info("     Weight: " + weight);
 					log.info("   Sections: " + sections.size());
-					log.info("");
+					log.info("Rupture set: "  + name + "/" + RUPTURES_FILENAME);
+					log.info(" Set Weight: " + weight);
 					break;
 
 				case MAG_FREQ_DIST_REF:
@@ -177,7 +176,7 @@ class IndexedFaultParser extends DefaultHandler {
 
 				case INDEXED_FAULT_SOURCE_SET:
 					sourceSet = sourceSetBuilder.build();
-					log.fine("   Ruptures: " + sourceSet.size());
+					log.info("   Ruptures: " + sourceSet.size());
 					break;
 			}
 

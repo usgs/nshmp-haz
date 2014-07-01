@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
@@ -66,8 +65,9 @@ class GridParser extends DefaultHandler {
 	private boolean readingLoc = false;
 	private StringBuilder locBuilder = null;
 	
-	// Per-node MFD
+	// Per-node MFD and mechMap
 	IncrementalMfd nodeMFD = null;
+	Map<FocalMech, Double> nodeMechMap = null;
 	
 	// Used to when validating depths in magDepthMap
 	SourceType type = GRID;
@@ -150,6 +150,12 @@ class GridParser extends DefaultHandler {
 				readingLoc = true;
 				locBuilder = new StringBuilder();
 				nodeMFD = processNode(atts, sourceSetBuilder.weight);
+				try {
+					String nodeMechMapStr = readString(FOCAL_MECH_MAP, atts);
+					nodeMechMap = stringToEnumWeightMap(nodeMechMapStr, FocalMech.class);
+				} catch (NullPointerException npe) {
+					nodeMechMap = null;
+				}
 				break;
 		}
 	}
@@ -172,8 +178,14 @@ class GridParser extends DefaultHandler {
 
 			case NODE:
 				readingLoc = false;
-				sourceSetBuilder.location(Location.fromString(locBuilder.toString()), nodeMFD);
+				Location loc = Location.fromString(locBuilder.toString());
+				if (nodeMechMap != null) {
+					sourceSetBuilder.location(loc, nodeMFD, nodeMechMap);
+				} else {
+					sourceSetBuilder.location(loc, nodeMFD);
+				}
 				nodeMFD = null;
+				nodeMechMap = null;
 				break;
 				
 			case GRID_SOURCE_SET:

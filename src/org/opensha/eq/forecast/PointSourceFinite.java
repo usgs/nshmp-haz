@@ -92,6 +92,7 @@ class PointSourceFinite extends PointSource {
 	 * this method to return null reference, but would need to condsider
 	 * getRUpture(int) implementation.
 	 */
+	
 
 	private void updateRupture(Rupture rup, int idx) {
 

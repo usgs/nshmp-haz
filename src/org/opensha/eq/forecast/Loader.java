@@ -248,12 +248,16 @@ public class Loader {
 			}
 		}
 
-		for (Path sourcePath : nestedSourcePaths) {
-			log.info("Parsing: " + typeDir.relativize(sourcePath));
-			SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, nestedGmmSet);
-			builder.sourceSet(sourceSet);
+		if (type == SourceType.INDEXED_FAULT) {
+			log.info("Parsing: " + typeDir.relativize(sourceDir));
+			parseIndexedSource(sourceDir, gmmSet, builder);
+		} else {
+			for (Path sourcePath : nestedSourcePaths) {
+				log.info("Parsing: " + typeDir.relativize(sourcePath));
+				SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, nestedGmmSet);
+				builder.sourceSet(sourceSet);
+			}
 		}
-
 	}
 
 	private static SourceSet<? extends Source> parseSource(SourceType type, Path path, GmmSet gmmSet)
@@ -273,20 +277,37 @@ public class Loader {
 				case CLUSTER:
 					return ClusterParser.create(sax).parse(in, gmmSet);
 				case INDEXED_FAULT:
-					// some random xml file will have ben read depending on
-					// filesystem; e.g. grid_sources.xml; set correct paths
-					Path sectionsPath = path.getParent().resolve(SECTIONS_FILENAME);
-					Path rupturesPath = path.getParent().resolve(RUPTURES_FILENAME);
-					return IndexedFaultParser.create(sax).parse(Files.newInputStream(sectionsPath),
-						Files.newInputStream(rupturesPath), gmmSet);
+					throw new UnsupportedOperationException(
+						"Indexed sources are not processed with this method");
 				case AREA:
 					throw new UnsupportedOperationException("Area sources not currently supported");
+				default:
+					throw new IllegalStateException("Unkown source type");
 			}
-			return null;
 		} catch (Exception e) {
 			handleParseException(e, path);
 			return null;
 		}
+	}
+	
+	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder)
+			throws IOException, SAXException {
+
+		Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
+		InputStream sectionsIn = Files.newInputStream(sectionsPath);
+		Path rupturesPath = dir.resolve(RUPTURES_FILENAME);
+		InputStream rupturesIn = Files.newInputStream(rupturesPath);
+
+		IndexedFaultParser faultParser = IndexedFaultParser.create(sax);
+		builder.sourceSet(faultParser.parse(sectionsIn, rupturesIn, gmmSet));
+
+		Path gridSourcePath = dir.resolve(GRIDSOURCE_FILENAME);
+		InputStream gridIn = Files.newInputStream(gridSourcePath);
+		GridSourceSet gridSet = GridParser.create(sax).parse(gridIn, gmmSet);
+		builder.sourceSet(gridSet);
+		log.info("   Grid set: "  + dir.getFileName() + "/" + RUPTURES_FILENAME);
+		log.info("    Sources: " + gridSet.size());
+
 	}
 
 	private static GmmSet parseGMM(Path path) throws Exception {

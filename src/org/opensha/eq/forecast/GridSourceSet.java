@@ -8,6 +8,7 @@ import static org.opensha.eq.Magnitudes.MAX_MAG;
 import static org.opensha.eq.fault.Faults.validateStrike;
 import static org.opensha.util.TextUtils.validateName;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,15 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	private final List<Location> locs;
 	private final List<IncrementalMfd> mfds;
-	private final Map<FocalMech, Double> mechMap;
+	private final List<Map<FocalMech, Double>> mechMaps;
 	private final NavigableMap<Double, Map<Double, Double>> magDepthMap;
 	private final double strike;
+
+	/*
+	 * Most grid sources have the same focal mech map everywhere; in these
+	 * cases, mechMaps will have been created using Collections.nCopies() with
+	 * minimal overhead.
+	 */
 
 	final MagLengthRelationship mlr;
 
@@ -48,14 +55,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	// only available to parsers
 	private GridSourceSet(String name, Double weight, MagScalingType msrType, GmmSet gmmSet,
-		List<Location> locs, List<IncrementalMfd> mfds, Map<FocalMech, Double> mechMap,
+		List<Location> locs, List<IncrementalMfd> mfds, List<Map<FocalMech, Double>> mechMaps,
 		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike) {
 
 		super(name, weight, msrType, gmmSet);
-
 		this.locs = locs;
 		this.mfds = mfds;
-		this.mechMap = mechMap;
+		this.mechMaps = mechMaps;
 		this.magDepthMap = magDepthMap;
 		this.strike = strike;
 
@@ -121,12 +127,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	private PointSource getSource(int idx) {
 		switch (ptSrcType) {
 			case POINT:
-				return new PointSource(this, locs.get(idx), mfds.get(idx), mechMap);
+				return new PointSource(this, locs.get(idx), mfds.get(idx), mechMaps.get(idx));
 			case FINITE:
-				return new PointSourceFinite(this, locs.get(idx), mfds.get(idx), mechMap);
+				return new PointSourceFinite(this, locs.get(idx), mfds.get(idx), mechMaps.get(idx));
 			case FIXED_STRIKE:
-				return new PointSourceFixedStrike(this, locs.get(idx), mfds.get(idx), mechMap,
-					strike);
+				return new PointSourceFixedStrike(this, locs.get(idx), mfds.get(idx),
+					mechMaps.get(idx), strike);
 		}
 		return null;
 	}
@@ -204,6 +210,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	// NSHMP depths: [6.5 :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 :
 	// 0.0]]
 
+	// Builder accomodates overriding a default mechMap to support UC3
+	// grid sources; may add others later TODO document
+
 	static class Builder {
 
 		// build() may only be called once
@@ -222,6 +231,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		private List<Location> locs = Lists.newArrayList();
 		private List<IncrementalMfd> mfds = Lists.newArrayList();
+		private List<Map<FocalMech, Double>> mechMaps = Lists.newArrayList();
 
 		Builder name(String name) {
 			this.name = validateName(name);
@@ -263,14 +273,27 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		Builder mechs(Map<FocalMech, Double> mechs) {
-			this.mechMap = checkNotNull(mechs);
+		Builder mechs(Map<FocalMech, Double> mechMap) {
+			// weights will have already been checked
+			checkArgument(!checkNotNull(mechMap).isEmpty());
+			checkArgument(mechMap.size() == 3);
+			this.mechMap = mechMap;
 			return this;
 		}
 
 		Builder location(Location loc, IncrementalMfd mfd) {
 			this.mfds.add(checkNotNull(mfd, "MFD is null"));
 			this.locs.add(checkNotNull(loc, "Location is null"));
+
+			return this;
+		}
+
+		Builder location(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechMap) {
+			this.mfds.add(checkNotNull(mfd, "MFD is null"));
+			this.locs.add(checkNotNull(loc, "Location is null"));
+			checkArgument(!checkNotNull(mechMap).isEmpty());
+			checkArgument(mechMap.size() == 3);
+			this.mechMaps.add(mechMap);
 			return this;
 		}
 
@@ -310,12 +333,28 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(magDepthMap != null, "%s mag-depth-weight map not set", id);
 			checkState(mechMap != null, "%s focal mech map not set", id);
 			checkState(gmmSet != null, "%s ground motion models not set", id);
+			
+			/*
+			 * Validate size of mechMaps; size could get out of sync if mixed
+			 * calls to location(...) were made; one can imagine a future use
+			 * case where a default is required with an override in a few
+			 * locations; for now, if custom mechMaps are required, there must
+			 * be one for each node. If no custom maps supplied populate mechMaps
+			 * with nCopies (singleton list with multiple elements)
+			 */
+			if (!mechMaps.isEmpty()) {
+				checkState(mechMaps.size() == locs.size(),
+					"%s only %s of %s focal mech maps were added", id, mechMaps.size(), locs.size());
+			} else {
+				mechMaps = Collections.nCopies(locs.size(), mechMap);
+			}
+
 			built = true;
 		}
 
 		GridSourceSet build() {
 			validateState(ID);
-			return new GridSourceSet(name, weight, magScaling, gmmSet, locs, mfds, mechMap,
+			return new GridSourceSet(name, weight, magScaling, gmmSet, locs, mfds, mechMaps,
 				magDepthMap, strike);
 		}
 

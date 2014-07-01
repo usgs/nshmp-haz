@@ -11,6 +11,7 @@ import static org.opensha.eq.forecast.SourceAttribute.LOWER_DEPTH;
 import static org.opensha.eq.forecast.SourceAttribute.NAME;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readString;
+import static org.opensha.eq.forecast.IndexedFaultParser.SECTIONS_FILENAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,7 +89,7 @@ class IndexedSectionParser extends DefaultHandler {
 					sections = Lists.newArrayList();
 					String setName = readString(NAME, atts);
 					log.info("");
-					log.info("Section set: " + setName);
+					log.info("Section set: " + setName + "/" + SECTIONS_FILENAME);
 					break;
 
 				case SECTION:
