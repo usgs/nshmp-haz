@@ -663,19 +663,22 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 	}
 
 	// TODO is this really necessary; compund rupture surface?
-	@Override public LocationList getUpperEdge() {
-		// check that the location depths in trace are same as
-		// depth
-		double aveTraceDepth = 0;
-		for (Location loc : trace)
-			aveTraceDepth += loc.depth();
-		aveTraceDepth /= trace.size();
-		double diff = Math.abs(aveTraceDepth - depth); // km
-		if (diff < 0.001) return trace;
-		throw new RuntimeException(" method not yet implemented where depths in the " +
-			"trace differ from depth (and projecting will create " +
-			"loops for FrankelGriddedSurface projections; aveTraceDepth=" + aveTraceDepth +
-			"\tupperSeismogenicDepth=" + depth);
-	}
+	// this is clutter and hides AbstractGriddedSurface.getUpperEdge()
+	// that does what we want it to do when building a compound surface from
+	// section surfaces that we know will have uniform zTop
+//	@Override public LocationList getUpperEdge() {
+//		// check that the location depths in trace are same as
+//		// depth
+//		double aveTraceDepth = 0;
+//		for (Location loc : trace)
+//			aveTraceDepth += loc.depth();
+//		aveTraceDepth /= trace.size();
+//		double diff = Math.abs(aveTraceDepth - depth); // km
+//		if (diff < 0.001) return trace;
+//		throw new RuntimeException(" method not yet implemented where depths in the " +
+//			"trace differ from depth (and projecting will create " +
+//			"loops for FrankelGriddedSurface projections; aveTraceDepth=" + aveTraceDepth +
+//			"\tupperSeismogenicDepth=" + depth);
+//	}
 
 }
