@@ -46,7 +46,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * Most grid sources have the same focal mech map everywhere; in these
 	 * cases, mechMaps will have been created using Collections.nCopies() with
 	 * minimal overhead.
-	 */
+	 */ 
 
 	final MagLengthRelationship mlr;
 

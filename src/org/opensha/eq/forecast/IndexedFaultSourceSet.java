@@ -328,7 +328,7 @@ public class IndexedFaultSourceSet extends
 		// build() may only be called once
 		// use Doubles to ensure fields are initially null
 
-		// UCERF3: FM31 = 253,706 FM32 = 305,709
+		// Unfiltered UCERF3: FM31 = 253,706 FM32 = 305,709
 		static final int RUP_SET_SIZE = 306000;
 
 		static final String ID = "IndexedFaultSourceSet.Builder";
