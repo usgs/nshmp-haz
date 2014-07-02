@@ -1,12 +1,15 @@
 package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.opensha.data.DataUtils.validateWeight;
 import static org.opensha.geo.Locations.horzDistanceFast;
+import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.forecast.FaultSourceSet.Builder;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -64,6 +67,26 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 		// type-specific method
 		Builder source(InterfaceSource source) {
 			sources.add(checkNotNull(source, "InterfaceSource is null"));
+			return this;
+		}
+		
+		@Override Builder name(String name) {
+			super.name(name);
+			return this;
+		}
+		
+		@Override Builder weight(double weight) {
+			super.weight(weight);
+			return this;
+		}
+
+		@Override Builder gmms(GmmSet gmmSet) {
+			super.gmms(gmmSet);
+			return this;
+		}
+
+		@Override Builder magScaling(MagScalingType magScaling) {
+			super.magScaling(magScaling);
 			return this;
 		}
 

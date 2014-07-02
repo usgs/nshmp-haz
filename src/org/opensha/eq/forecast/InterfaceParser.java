@@ -94,15 +94,16 @@ class InterfaceParser extends DefaultHandler {
 		}
 
 		try {
+			// @formatter:off
 			switch (e) {
 
 				case SUBDUCTION_SOURCE_SET:
 					String name = readString(NAME, atts);
 					double weight = readDouble(WEIGHT, atts);
-					sourceSetBuilder = new InterfaceSourceSet.Builder();
-					sourceSetBuilder.name(name);
-					sourceSetBuilder.weight(weight);
-					sourceSetBuilder.gmms(gmmSet);
+					sourceSetBuilder = new InterfaceSourceSet.Builder()
+						.name(name)
+						.weight(weight)
+						.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
 						log.fine("");
 						log.fine("       Name: " + name);
@@ -126,7 +127,7 @@ class InterfaceParser extends DefaultHandler {
 					break;
 
 				case MAG_FREQ_DIST:
-					sourceBuilder.mfd(buildMFD(atts, sourceSetBuilder.weight));
+					sourceBuilder.mfd(buildMFD(atts));
 					break;
 
 				case GEOMETRY:
@@ -195,14 +196,14 @@ class InterfaceParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
-	private IncrementalMfd buildMFD(Attributes atts, double setWeight) {
+	private IncrementalMfd buildMFD(Attributes atts) {
 		// TODO revisit, clean, and handle exceptions
 		MfdType type = MfdType.valueOf(atts.getValue("type"));
 		switch (type) {
 			case GR:
-				return buildGR(atts, setWeight);
+				return buildGR(atts);
 			case SINGLE:
-				return buildSingle(atts, setWeight);
+				return buildSingle(atts);
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
 		}
@@ -212,13 +213,13 @@ class InterfaceParser extends DefaultHandler {
 	 * Builds GR MFD. Method will throw IllegalStateException if attribute
 	 * values yield an MFD with no magnitude bins.
 	 */
-	private IncrementalMfd buildGR(Attributes atts, double setWeight) {
+	private IncrementalMfd buildGR(Attributes atts) {
 		double a = readDouble(A, atts);
 		double b = readDouble(B, atts);
 		double mMin = readDouble(M_MIN, atts);
 		double mMax = readDouble(M_MAX, atts);
 		double dMag = readDouble(D_MAG, atts);
-		double weight = readDouble(WEIGHT, atts) * setWeight;
+		double weight = readDouble(WEIGHT, atts);
 
 		int nMag = Mfds.magCount(mMin, mMax, dMag);
 		checkState(nMag > 0, "GR MFD with no mags");
@@ -232,12 +233,12 @@ class InterfaceParser extends DefaultHandler {
 	}
 
 	/* Builds single MFD */
-	private IncrementalMfd buildSingle(Attributes atts, double setWeight) {
+	private IncrementalMfd buildSingle(Attributes atts) {
 
 		double a = readDouble(A, atts);
 		double m = readDouble(M, atts);
 		boolean floats = readBoolean(FLOATS, atts);
-		double weight = readDouble(WEIGHT, atts) * setWeight;
+		double weight = readDouble(WEIGHT, atts);
 
 		IncrementalMfd mfd = Mfds.newSingleMFD(m, weight * a, floats);
 		log.finer("   MFD type: SINGLE");

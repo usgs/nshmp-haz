@@ -97,16 +97,15 @@ class GridParser extends DefaultHandler {
 		} catch (IllegalArgumentException iae) {
 			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
 		}
-
+		// @formatter:off
 		switch (e) {
 
 			case GRID_SOURCE_SET:
 				String name = readString(NAME, atts);
-				double weight = readDouble(WEIGHT, atts); // need this to scale
-															// Mfds
-				sourceSetBuilder = new GridSourceSet.Builder();
-				sourceSetBuilder.name(name);
-				sourceSetBuilder.weight(weight);
+				double weight = readDouble(WEIGHT, atts);
+				sourceSetBuilder = new GridSourceSet.Builder()
+					.name(name)
+					.weight(weight);
 				
 				sourceSetBuilder.gmms(gmmSet);
 				if (log.isLoggable(FINE)) {
@@ -128,12 +127,13 @@ class GridParser extends DefaultHandler {
 			case SOURCE_PROPERTIES:
 				String depthMapStr = readString(MAG_DEPTH_MAP, atts);
 				NavigableMap<Double, Map<Double, Double>> depthMap = stringToValueValueWeightMap(depthMapStr);
-				sourceSetBuilder.depthMap(depthMap, type);
 				String mechMapStr = readString(FOCAL_MECH_MAP, atts);
 				Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
-				sourceSetBuilder.mechs(mechMap);
 				MagScalingType magScaling = readEnum(MAG_SCALING, atts, MagScalingType.class);
-				sourceSetBuilder.magScaling(magScaling);
+				sourceSetBuilder
+					.depthMap(depthMap, type)
+					.mechs(mechMap)
+					.magScaling(magScaling);
 				double strike = readDouble(STRIKE, atts);
 				sourceSetBuilder.strike(strike);
 				if (log.isLoggable(FINE)) {
@@ -149,7 +149,7 @@ class GridParser extends DefaultHandler {
 			case NODE:
 				readingLoc = true;
 				locBuilder = new StringBuilder();
-				nodeMFD = processNode(atts, sourceSetBuilder.weight);
+				nodeMFD = processNode(atts);
 				try {
 					String nodeMechMapStr = readString(FOCAL_MECH_MAP, atts);
 					nodeMechMap = stringToEnumWeightMap(nodeMechMapStr, FocalMech.class);
@@ -158,6 +158,7 @@ class GridParser extends DefaultHandler {
 				}
 				break;
 		}
+		// @formatter:on
 	}
 
 	@Override public void endElement(String uri, String localName, String qName)
@@ -203,7 +204,7 @@ class GridParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
-	private IncrementalMfd processNode(Attributes atts, double setWeight) {
+	private IncrementalMfd processNode(Attributes atts) {
 		MfdType type = readEnum(TYPE, atts, MfdType.class);
 
 		switch (type) {
@@ -213,18 +214,16 @@ class GridParser extends DefaultHandler {
 				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag, nMag,
 					grData.b, 1.0);
 				mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin));
-				mfdGR.scale(setWeight);
 				return mfdGR;
 
 			case INCR:
 				MfdHelper.IncrData incrData = mfdHelper.getIncremental(atts);
 				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags, incrData.rates);
-				mfdIncr.scale(setWeight);
 				return mfdIncr;
 
 			case SINGLE:
 				MfdHelper.SingleData singleDat = mfdHelper.getSingle(atts);
-				return Mfds.newSingleMFD(singleDat.m, setWeight * singleDat.a, singleDat.floats);
+				return Mfds.newSingleMFD(singleDat.m, singleDat.a, singleDat.floats);
 
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
