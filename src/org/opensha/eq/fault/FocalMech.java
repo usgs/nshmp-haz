@@ -8,6 +8,8 @@ import org.opensha.util.Parsing;
  */
 public enum FocalMech {
 
+	// TODO can this be reconciled with FaultStyle
+	
 	/** A strike-slip focal mechanism. */
 	STRIKE_SLIP(90.0, 0.0),
 
