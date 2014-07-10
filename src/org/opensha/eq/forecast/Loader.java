@@ -305,7 +305,7 @@ public class Loader {
 		InputStream gridIn = Files.newInputStream(gridSourcePath);
 		GridSourceSet gridSet = GridParser.create(sax).parse(gridIn, gmmSet);
 		builder.sourceSet(gridSet);
-		log.info("   Grid set: "  + dir.getFileName() + "/" + RUPTURES_FILENAME);
+		log.info("   Grid set: "  + dir.getFileName() + "/" + GRIDSOURCE_FILENAME);
 		log.info("    Sources: " + gridSet.size());
 
 	}

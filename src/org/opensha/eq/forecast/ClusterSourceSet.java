@@ -16,7 +16,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * Wrapper class for related {@link ClusterSource}s. 
+ * Wrapper class for related {@link ClusterSource}s.
  * 
  * @author Peter Powers
  * @see ClusterSource
@@ -45,23 +45,28 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 	@Override public Predicate<ClusterSource> distanceFilter(final Location loc,
 			final double distance) {
 		return new Predicate<ClusterSource>() {
-			Predicate<FaultSource> fsFilter = new FaultSourceSet.DistanceFilter(loc, distance);
+			
+			private final Predicate<FaultSource> filter = new FaultSourceSet.DistanceFilter(loc,
+				distance);
 
 			@Override public boolean apply(ClusterSource cs) {
-				return Iterables.any(cs.faults, fsFilter);
+				return Iterables.any(cs.faults, filter);
+			}
+
+			@Override public String toString() {
+				return "ClusterSourceSet.DistanceFilter [ " + filter.toString() + " ]";
 			}
 		};
 	}
-	
+
 	/**
-	 * Overriden to throw an {@code UnsupportedOperationException}.
-	 * Ground motion model references are stored in {@code FaultSourceSet}s
-	 * nested in each {@code ClusterSource}.
+	 * Overriden to throw an {@code UnsupportedOperationException}. Ground
+	 * motion model references are stored in {@code FaultSourceSet}s nested in
+	 * each {@code ClusterSource}.
 	 */
 	@Override public GmmSet groundMotionModels() {
 		throw new UnsupportedOperationException();
 	}
-
 
 	static class Builder {
 
@@ -86,12 +91,12 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			this.weight = validateWeight(weight);
 			return this;
 		}
-		
+
 		// TODO clean
-//		Builder gmms(GmmSet gmmSet) {
-//			this.gmmSet = checkNotNull(gmmSet);
-//			return this;
-//		}
+		// Builder gmms(GmmSet gmmSet) {
+		// this.gmmSet = checkNotNull(gmmSet);
+		// return this;
+		// }
 
 		Builder magScaling(MagScalingType magScaling) {
 			this.magScaling = checkNotNull(magScaling, "");
@@ -108,7 +113,8 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			checkState(name != null, "%s name not set", id);
 			checkState(weight != null, "%s weight not set", id);
 			checkState(magScaling != null, "%s mag-scaling relation not set", id);
-//			checkState(gmmSet != null, "%s ground motion models not set", id);
+			// checkState(gmmSet != null, "%s ground motion models not set",
+			// id);
 			built = true;
 		}
 

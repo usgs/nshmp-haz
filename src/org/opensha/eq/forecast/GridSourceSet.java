@@ -20,6 +20,7 @@ import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
+import org.opensha.geo.Locations;
 import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.base.Predicate;
@@ -38,6 +39,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	private final List<Location> locs;
 	private final List<IncrementalMfd> mfds;
+	 final List<Double> magMaster;
 	private final List<Map<FocalMech, Double>> mechMaps;
 	private final NavigableMap<Double, Map<Double, Double>> magDepthMap;
 	private final double strike;
@@ -46,7 +48,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * Most grid sources have the same focal mech map everywhere; in these
 	 * cases, mechMaps will have been created using Collections.nCopies() with
 	 * minimal overhead.
-	 */ 
+	 */
 
 	final MagLengthRelationship mlr;
 
@@ -56,7 +58,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	// only available to parsers
 	private GridSourceSet(String name, Double weight, MagScalingType msrType, GmmSet gmmSet,
 		List<Location> locs, List<IncrementalMfd> mfds, List<Map<FocalMech, Double>> mechMaps,
-		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike) {
+		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike, List<Double> magMaster) {
 
 		super(name, weight, msrType, gmmSet);
 		this.locs = locs;
@@ -64,6 +66,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		this.mechMaps = mechMaps;
 		this.magDepthMap = magDepthMap;
 		this.strike = strike;
+		this.magMaster = magMaster;
+		initMagDepthData();
 
 		MagScalingRelationship msr = msrType.instance();
 		// TODO need to develop standard approach to using mag area
@@ -71,6 +75,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		checkState(msr instanceof MagLengthRelationship,
 			"Only mag-length relationships are supported at this time");
 		mlr = (MagLengthRelationship) msr;
+
 	}
 
 	@Override public SourceType type() {
@@ -81,29 +86,19 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		return locs.size();
 	}
 
-	@Override public Predicate<PointSource> distanceFilter(Location loc, double distance) {
-		// compute min-max lat and lon
-		// TODO what happens when distance exceeds allowed lat lon range
+	@Override public Predicate<PointSource> distanceFilter(final Location loc, final double distance) {
+		return new Predicate<PointSource>() {
+			private final Predicate<Location> filter = Locations.distanceAndRectangleFilter(loc,
+				distance);
 
-		// create radian-based location bounding rect; using Region is overkill
-		// to simply perform contains testing
-
-		// return new Iterator() {
-		// Location swCorner = Location.create(minLatLoc.lat(),
-		// minLonLoc.lon());
-
-		// double maxLat
-
-		// TODO gridSourceSet should have a Region defined
-		// pre-get the Rectangle2D bounds
-		// can do intersects test between source region and location rect
-		// perhaps Forecast gridSrcSet iterator also takes a location
-
-		// return Iterators.filter(iterator, predicate)
-
-		return null;
-		// TODO do nothing
-
+			@Override public boolean apply(PointSource source) {
+				return filter.apply(source.loc);
+			}
+			
+			@Override public String toString() {
+				return "GridSourceSet.DistanceFilter[ " + filter.toString() + " ]";
+			}
+		};
 	}
 
 	@Override public Iterator<PointSource> iterator() {
@@ -168,25 +163,18 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	// @formatter:on
 
+	// available to point source implementations
 	int[] magDepthIndices;
 	double[] magDepthDepths;
 	double[] magDepthWeights;
-
-	// TODO need to determine absolute mMax over all nodes on initialization
-	// see builder/parser
-
-	// TODO create master MFD for index arrays; actually don't need an mfd just
-	// the
-	// array of magnitudes to pull the correct depth distributions below
-	private IncrementalMfd masterMFD = null;
 
 	private void initMagDepthData() {
 		List<Integer> indices = Lists.newArrayList();
 		List<Double> depths = Lists.newArrayList();
 		List<Double> weights = Lists.newArrayList();
-		for (int i = 0; i < masterMFD.getNum(); i++) {
-			double mag = masterMFD.getX(i);
-			Map.Entry<Double, Map<Double, Double>> magEntry = magDepthMap.higherEntry(mag);
+		for (int i = 0; i < magMaster.size(); i++) {
+			Map.Entry<Double, Map<Double, Double>> magEntry = magDepthMap.higherEntry(magMaster
+				.get(i));
 			for (Map.Entry<Double, Double> entry : magEntry.getValue().entrySet()) {
 				indices.add(i);
 				depths.add(entry.getKey());
@@ -232,6 +220,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private List<Location> locs = Lists.newArrayList();
 		private List<IncrementalMfd> mfds = Lists.newArrayList();
 		private List<Map<FocalMech, Double>> mechMaps = Lists.newArrayList();
+		private List<Double> magMaster;
 
 		Builder name(String name) {
 			this.name = validateName(name);
@@ -281,10 +270,18 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
+		Builder magMaster(List<Double> magMaster) {
+			/*
+			 * TODO mfds should validate against magMaster
+			 */
+			checkArgument(checkNotNull(magMaster).size() > 0);
+			this.magMaster = magMaster;
+			return this;
+		}
+
 		Builder location(Location loc, IncrementalMfd mfd) {
 			this.mfds.add(checkNotNull(mfd, "MFD is null"));
 			this.locs.add(checkNotNull(loc, "Location is null"));
-
 			return this;
 		}
 
@@ -333,14 +330,15 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(magDepthMap != null, "%s mag-depth-weight map not set", id);
 			checkState(mechMap != null, "%s focal mech map not set", id);
 			checkState(gmmSet != null, "%s ground motion models not set", id);
-			
+			checkState(magMaster != null, "%s master magnitude list not set", id);
+
 			/*
 			 * Validate size of mechMaps; size could get out of sync if mixed
 			 * calls to location(...) were made; one can imagine a future use
 			 * case where a default is required with an override in a few
 			 * locations; for now, if custom mechMaps are required, there must
-			 * be one for each node. If no custom maps supplied populate mechMaps
-			 * with nCopies (singleton list with multiple elements)
+			 * be one for each node. If no custom maps supplied populate
+			 * mechMaps with nCopies (singleton list with multiple elements)
 			 */
 			if (!mechMaps.isEmpty()) {
 				checkState(mechMaps.size() == locs.size(),
@@ -355,7 +353,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		GridSourceSet build() {
 			validateState(ID);
 			return new GridSourceSet(name, weight, magScaling, gmmSet, locs, mfds, mechMaps,
-				magDepthMap, strike);
+				magDepthMap, strike, magMaster);
 		}
 
 	}

@@ -25,17 +25,22 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
+import org.opensha.data.DataUtils;
+import org.opensha.eq.Magnitudes;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 import org.opensha.mfd.IncrementalMfd;
 import org.opensha.mfd.MfdType;
 import org.opensha.mfd.Mfds;
+import org.opensha.util.TextUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.google.common.primitives.Doubles;
 
 /*
  * Non-validating grid source parser. SAX parser 'Attributes' are stateful and
@@ -60,6 +65,11 @@ class GridParser extends DefaultHandler {
 
 	private GridSourceSet sourceSet;
 	private GridSourceSet.Builder sourceSetBuilder;
+	
+	// master magnitude list data
+	private double minMag = Magnitudes.MAX_MAG;
+	private double maxMag = Magnitudes.MIN_MAG;
+	private double deltaMag;
 
 	// Node locations are the only text content in source files
 	private boolean readingLoc = false;
@@ -121,7 +131,9 @@ class GridParser extends DefaultHandler {
 				break;
 
 			case MAG_FREQ_DIST:
-				if (parsingDefaultMFDs) mfdHelper.addDefault(atts);
+				if (parsingDefaultMFDs) {
+					deltaMag = mfdHelper.addDefault(atts);
+				}
 				break;
 
 			case SOURCE_PROPERTIES:
@@ -150,6 +162,8 @@ class GridParser extends DefaultHandler {
 				readingLoc = true;
 				locBuilder = new StringBuilder();
 				nodeMFD = processNode(atts);
+				minMag = Math.min(minMag, nodeMFD.getMinX());
+				maxMag = Math.max(maxMag, nodeMFD.getMaxX());
 				try {
 					String nodeMechMapStr = readString(FOCAL_MECH_MAP, atts);
 					nodeMechMap = stringToEnumWeightMap(nodeMechMapStr, FocalMech.class);
@@ -190,6 +204,14 @@ class GridParser extends DefaultHandler {
 				break;
 				
 			case GRID_SOURCE_SET:
+				/*
+				 * TODO there are too many assumptions built into this;
+				 * whose to say ones bin spacing should be only be in the 
+				 * hundredths? 
+				 */
+				double cleanDelta = Double.valueOf(String.format("%.2f", deltaMag));
+				double[] mags = DataUtils.buildCleanSequence(minMag, maxMag, cleanDelta, true, 2);
+				sourceSetBuilder.magMaster(Doubles.asList(mags));
 				sourceSet = sourceSetBuilder.build();
 				break;
 				

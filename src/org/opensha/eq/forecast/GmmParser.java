@@ -101,13 +101,16 @@ class GmmParser extends DefaultHandler {
 					mapCount++;
 					checkState(mapCount < 3, "Only two ground motion model sets are allowed");
 					gmmWtMap = Maps.newEnumMap(Gmm.class);
+					double rMax = Double.NaN;
 					if (mapCount == 1) {
-						setBuilder.primaryMaxDistance(readDouble(MAX_DISTANCE, atts));
+						rMax = readDouble(MAX_DISTANCE, atts);
+						setBuilder.primaryMaxDistance(rMax);
 					} else {
-						setBuilder.secondaryMaxDistance(readDouble(MAX_DISTANCE, atts));
+						rMax = readDouble(MAX_DISTANCE, atts);
+						setBuilder.secondaryMaxDistance(rMax);
 					}
 					log.fine("");
-					log.fine("        Set: " + mapCount);
+					log.fine("        Set: " + mapCount + "[rMax = " + rMax + "]");
 					break;
 
 				case MODEL:

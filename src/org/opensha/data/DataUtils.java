@@ -944,6 +944,14 @@ public final class DataUtils {
 		return Doubles.toArray(seq);
 	}
 
+	/**
+	 * A crude utility to clean double values to a specified scale/precision
+	 * using {@code String.format(%.'scale'f)}.
+	 * 
+	 * @param data to operate on
+	 * @param scale decimal precision
+	 * @return a cleaned array
+	 */
 	public static double[] clean(double[] data, int scale) {
 		return transform(new Clean(scale), data);
 	}

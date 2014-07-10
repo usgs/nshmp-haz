@@ -7,6 +7,8 @@ import org.opensha.util.Parsing;
  * @author Peter Powers
  */
 public enum FaultStyle {
+	
+	// TODO can this be reconciled with FocalMech
 
 	/** Strike-slip fault identifier. */
 	STRIKE_SLIP,
@@ -16,6 +18,9 @@ public enum FaultStyle {
 	
 	/** Reverse fault identifier. */
 	REVERSE,
+	
+	/** Reverse-oblique identifier. */
+	REVERSE_OBLIQUE,
 	
 	/** Unknown fault style identifier. */
 	UNKNOWN;

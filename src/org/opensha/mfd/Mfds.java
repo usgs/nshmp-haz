@@ -168,10 +168,10 @@ public class Mfds {
 	 * info and the Gutenberg-Richter a- and b-values. <b>Note:</b> the a- and
 	 * b-values assume an incremental distribution.
 	 * 
-	 * @param mMin minimum magnitude (after adding <code>dMag</code>/2)
+	 * @param mMin minimum magnitude (after adding {@code dMag/2})
 	 * @param nMag number of magnitudes
 	 * @param dMag magnitude bin width
-	 * @param a value (incremental and defined wrt <code>dMag</code> for M0)
+	 * @param a value (incremental and defined wrt {@code dMag} for M0)
 	 * @param b value
 	 * @return the total moment rate
 	 */
@@ -192,7 +192,7 @@ public class Mfds {
 	 * @param a value (log10 rate of M=0 events)
 	 * @param b value
 	 * @param M magnitude of interest
-	 * @return the rate of magnitude <code>M</code> events
+	 * @return the rate of magnitude {@code M} events
 	 */
 	public static double grRate(double a, double b, double M) {
 		return pow(10, a - b * M);
@@ -200,12 +200,12 @@ public class Mfds {
 
 	/**
 	 * Computes the Gutenberg-Richter incremental rate at the supplied
-	 * magnitude. Convenience method for <code>N(M) = a*(10^-bm)</code>.
+	 * magnitude. Convenience method for {@code N(M) = a*(10^-bm)}.
 	 * 
 	 * TODO is this confusing? the NSHMP stores a-values in different ways [a A]
 	 * where a = log10(A); should users just supply grRate() with
 	 * 
-	 * @param a value (incremental and defined wrt <code>dMag</code> for M0)
+	 * @param a value (incremental and defined wrt {@code dMag} for M0)
 	 * @param b value
 	 * @param mMin minimum magnitude of distribution
 	 * @return the rate at the supplied magnitude
@@ -236,7 +236,7 @@ public class Mfds {
 	 * @param rate (annual) of occurence of some event
 	 * @param time period of interest
 	 * @return the Poisson probability of occurrence in the specified
-	 *         <code>time</code>
+	 *         {@code time}
 	 */
 	public static double rateToProb(double rate, double time) {
 		return 1 - exp(-rate * time);

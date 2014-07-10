@@ -239,10 +239,25 @@ public enum Gmm {
 
 	// - not specified
 	/** @see ToroEtAl_1997 */
-	TORO_97_MB(ToroEtAl_1997_Mb.class, ToroEtAl_1997_Mb.NAME, ToroEtAl_1997.CC);
+	TORO_97_MB(ToroEtAl_1997_Mb.class, ToroEtAl_1997_Mb.NAME, ToroEtAl_1997.CC),
 
-	// Other TODO clean?
+	// Other
+
+	/** @see McVerryEtAl_2000 */
+	MCVERRY_00_CRUSTAL(McVerryEtAl_2000_Crustal.class, McVerryEtAl_2000_Crustal.NAME, McVerryEtAl_2000.CC),
+
+	/** @see McVerryEtAl_2000 */
+	MCVERRY_00_INTERFACE(McVerryEtAl_2000_Interface.class, McVerryEtAl_2000_Interface.NAME, McVerryEtAl_2000.CC),
+	
+	/** @see McVerryEtAl_2000 */
+	MCVERRY_00_SLAB(McVerryEtAl_2000_Slab.class, McVerryEtAl_2000_Slab.NAME, McVerryEtAl_2000.CC),
+	
+	/** @see McVerryEtAl_2000 */
+	MCVERRY_00_VOLCANIC(McVerryEtAl_2000_Volcanic.class, McVerryEtAl_2000_Volcanic.NAME, McVerryEtAl_2000.CC);
+
+	// TODO clean?
 	// GK_2013(GraizerKalkan_2013.class);
+	
 
 	// TODO all the methods of this class need argument checking and unit tests
 

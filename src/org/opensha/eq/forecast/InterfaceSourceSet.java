@@ -11,6 +11,7 @@ import java.util.List;
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.eq.forecast.FaultSourceSet.Builder;
 import org.opensha.geo.Location;
+import org.opensha.geo.Locations;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -45,15 +46,19 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 
 	@Override public Predicate<InterfaceSource> distanceFilter(final Location loc,
 			final double distance) {
+
 		return new Predicate<InterfaceSource>() {
+			private Predicate<Location> filter = Locations.distanceFilter(loc, distance);
 
 			@Override public boolean apply(InterfaceSource source) {
-				return horzDistanceFast(loc, source.trace.first()) <= distance ||
-					horzDistanceFast(loc, source.trace.last()) <= distance ||
-					horzDistanceFast(loc, source.lowerTrace.first()) <= distance ||
-					horzDistanceFast(loc, source.lowerTrace.last()) <= distance;
+				return filter.apply(source.trace.first()) || filter.apply(source.trace.last()) ||
+					filter.apply(source.lowerTrace.first()) ||
+					filter.apply(source.lowerTrace.last());
 			}
 
+			@Override public String toString() {
+				return "InterfaceSourceSet.DistanceFilter[ " + filter.toString() + " ]";
+			}
 		};
 	}
 
@@ -69,12 +74,12 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 			sources.add(checkNotNull(source, "InterfaceSource is null"));
 			return this;
 		}
-		
+
 		@Override Builder name(String name) {
 			super.name(name);
 			return this;
 		}
-		
+
 		@Override Builder weight(double weight) {
 			super.weight(weight);
 			return this;

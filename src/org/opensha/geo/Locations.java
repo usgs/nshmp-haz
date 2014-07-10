@@ -6,14 +6,13 @@ import static java.lang.Math.atan2;
 import static java.lang.Math.acos;
 import static java.lang.Math.asin;
 import static java.lang.Math.cos;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static org.opensha.geo.Direction.NORTH;
 import static org.opensha.geo.Direction.WEST;
-import static org.opensha.geo.GeoTools.TWOPI;
-import static org.opensha.geo.GeoTools.TO_DEG;
-import static org.opensha.geo.GeoTools.TO_RAD;
-import static org.opensha.geo.GeoTools.EARTH_RADIUS_MEAN;
+import static org.opensha.geo.GeoTools.*;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
@@ -92,8 +91,7 @@ public final class Locations {
 		double sinDlatBy2 = sin((lat2 - lat1) / 2.0);
 		double sinDlonBy2 = sin((p2.lonRad() - p1.lonRad()) / 2.0);
 		// half length of chord connecting points
-		double c = (sinDlatBy2 * sinDlatBy2) +
-			(cos(lat1) * cos(lat2) * sinDlonBy2 * sinDlonBy2);
+		double c = (sinDlatBy2 * sinDlatBy2) + (cos(lat1) * cos(lat2) * sinDlonBy2 * sinDlonBy2);
 		return 2.0 * atan2(sqrt(c), sqrt(1 - c));
 	}
 
@@ -141,16 +139,19 @@ public final class Locations {
 		double dLon = (p1.lonRad() - p2.lonRad()) * cos((lat1 + lat2) * 0.5);
 		return EARTH_RADIUS_MEAN * sqrt(dLat * dLat + dLon * dLon);
 	}
-	
+
 	public static void main(String[] args) {
-		Location p1 = Location.create(40, 163);
-		Location p2 = Location.create(40, 165);
-		Location p3 = Location.create(40, 167);
-		System.out.println(horzDistanceFast(p2, p1));
-		System.out.println(horzDistanceFast(p2, p3));
-		System.out.println(horzDistance(p2, p1));
-		System.out.println(horzDistance(p2, p3));
-		
+		// Location p1 = Location.create(40, 163);
+		// Location p2 = Location.create(40, 165);
+		// Location p3 = Location.create(40, 167);
+		// System.out.println(horzDistanceFast(p2, p1));
+		// System.out.println(horzDistanceFast(p2, p3));
+		// System.out.println(horzDistance(p2, p1));
+		// System.out.println(horzDistance(p2, p3));
+
+		Location loc = Location.create(80, 45);
+		Location newLoc = location(loc, NORTH.bearingRad(), 200);
+		System.out.println(newLoc);
 	}
 
 	/**
@@ -265,11 +266,12 @@ public final class Locations {
 	 * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
 	 * &#177;180&#176; and results for such input values are not guaranteed.
 	 * Convert data to the 0-360&#176; interval or use
-	 * {@link #distanceToLine(Location, Location, Location)} in such instances.</p>
+	 * {@link #distanceToLine(Location, Location, Location)} in such
+	 * instances.</p>
 	 * 
-	 * <p>If the line should instead be treated as a segment such that
-	 * the result will be a distance to an endpoint if {@code p3} does not
-	 * project onto the segment, use
+	 * <p>If the line should instead be treated as a segment such that the
+	 * result will be a distance to an endpoint if {@code p3} does not project
+	 * onto the segment, use
 	 * {@link #distanceToSegmentFast(Location, Location, Location)} instead.</p>
 	 * 
 	 * @param p1 the first {@code Location} point on the line
@@ -280,8 +282,7 @@ public final class Locations {
 	 * @see #distanceToLine(Location, Location, Location)
 	 * @see #distanceToSegmentFast(Location, Location, Location)
 	 */
-	public static double distanceToLineFast(Location p1, Location p2,
-			Location p3) {
+	public static double distanceToLineFast(Location p1, Location p2, Location p3) {
 
 		double lat1 = p1.latRad();
 		double lat2 = p2.latRad();
@@ -297,7 +298,7 @@ public final class Locations {
 		double x3 = (p3.lonRad() - lon1) * lonScale;
 		double y3 = lat3 - lat1;
 
-		return (x3 * y2 - x2 * y3) / Math.sqrt(x2 * x2 + y2 * y2) * EARTH_RADIUS_MEAN;
+		return (x3 * y2 - x2 * y3) / sqrt(x2 * x2 + y2 * y2) * EARTH_RADIUS_MEAN;
 	}
 
 	// TODO reenable once rupture surface code migrated
@@ -359,10 +360,11 @@ public final class Locations {
 	 * Aviation Formulary</a> for source. This method always returns a positive
 	 * result.
 	 * 
-	 * <p>This method, though more accurate over longer
-	 * distances and line lengths, is up to 20x slower than
+	 * <p>This method, though more accurate over longer distances and line
+	 * lengths, is up to 20x slower than
 	 * {@link #distanceToSegmentFast(Location, Location, Location)}. However,
-	 * this method returns accurate results for values spanning &#177;180&#176;.</p>
+	 * this method returns accurate results for values spanning
+	 * &#177;180&#176;.</p>
 	 * 
 	 * <p> If the line should instead be treated as infinite, use
 	 * {@link #distanceToLine(Location, Location, Location)} instead.</p>
@@ -417,8 +419,7 @@ public final class Locations {
 	 * @see #distanceToSegment(Location, Location, Location)
 	 * @see #distanceToLineFast(Location, Location, Location)
 	 */
-	public static double distanceToSegmentFast(Location p1, Location p2,
-			Location p3) {
+	public static double distanceToSegmentFast(Location p1, Location p2, Location p3) {
 
 		double lat1 = p1.latRad();
 		double lat2 = p2.latRad();
@@ -466,8 +467,8 @@ public final class Locations {
 		// for starting points other than the poles:
 		double dLon = p2.lonRad() - p1.lonRad();
 		double cosLat2 = cos(lat2);
-		double azRad = atan2(sin(dLon) * cosLat2, cos(lat1) * sin(lat2) -
-			sin(lat1) * cosLat2 * cos(dLon));
+		double azRad = atan2(sin(dLon) * cosLat2, cos(lat1) * sin(lat2) - sin(lat1) * cosLat2 *
+			cos(dLon));
 
 		return (azRad + TWOPI) % TWOPI;
 	}
@@ -523,8 +524,8 @@ public final class Locations {
 	 * Internal helper; assumes lat, lon, and azimuth in radians, and depth and
 	 * dist in km
 	 */
-	private static Location location(double lat, double lon, double depth,
-			double az, double dH, double dV) {
+	private static Location location(double lat, double lon, double depth, double az, double dH,
+			double dV) {
 
 		double sinLat1 = sin(lat);
 		double cosLat1 = cos(lat);
@@ -532,7 +533,7 @@ public final class Locations {
 		double sinD = sin(ad);
 		double cosD = cos(ad);
 
-		double lat2 = Math.asin(sinLat1 * cosD + cosLat1 * sinD * cos(az));
+		double lat2 = asin(sinLat1 * cosD + cosLat1 * sinD * cos(az));
 
 		double lon2 = lon + atan2(sin(az) * sinD * cosLat1, cosD - sinLat1 * sin(lat2));
 		return Location.create(lat2 * TO_DEG, lon2 * TO_DEG, depth + dV);
@@ -586,31 +587,6 @@ public final class Locations {
 	 */
 	public static boolean isPole(Location p) {
 		return cos(p.latRad()) < TOLERANCE;
-	}
-
-	/**
-	 * Returns a geographic (Mercator) {@link Rectangle2D} with coordinates in
-	 * radians that is centered on {@code loc} and has a width and height of
-	 * {@code 2 * distance}. The returned rectangle is intended for use in quick
-	 * contains operations using a {@code Location}s native (radian-based)
-	 * storage of latitude and longitude.
-	 * 
-	 * <p><b>Note:</b> Due to convergence of meridians, the returned rectangle
-	 * will contains most, but not all, of a circle centered at {@code loc}.
-	 * 
-	 * @param loc on which to center the rectangle
-	 * @param distance to extend rectangle in
-	 * @return a {@link Rectangle2D} in geographic radian coordinates
-	 * @see Location#latRad()
-	 * @see Location#lonRad()
-	 */
-	public static Rectangle2D rectangle(Location loc, double distance) {
-		Location maxLatLoc = location(loc, NORTH.bearingRad(), distance);
-		Location minLonLoc = location(loc, WEST.bearingRad(), distance);
-		double wRad = 2 * (loc.lonRad() - minLonLoc.lonRad());
-		double hRad = 2 * (maxLatLoc.latRad() - loc.latRad());
-		return new Rectangle2D.Double(minLonLoc.lonRad(), maxLatLoc.latRad(),
-			wRad, hRad);
 	}
 
 	/**
@@ -709,70 +685,126 @@ public final class Locations {
 		}
 		return max;
 	}
-	
-	// TODO these need to be made fail-safe for pole spanning distances and
-	// -180 +180 spanning distances
-	
+
 	/**
-	 * Returns a {@code Predicate} for {@code Location} filtering. The returned
-	 * filter makes an initial pass using a rectangular geographic/Mercator
-	 * filter.
+	 * Return a radial distance {@code Location} filter.
 	 * 
-	 * @param loc {@code Location} relative to which other {@code Location}s are
-	 *        filtered.
+	 * @param origin of filter
 	 * @param distance beyond which the filter will return {@code false}
-	 * @return a new {@code Location} filter
-	 * @see #rectangleFilter(Location, double)
 	 */
-	public static Predicate<Location> distanceFilter(Location loc,
-			double distance) {
-		return new DistanceFilter(loc, distance);
+	public static Predicate<Location> distanceFilter(Location origin, double distance) {
+		return new DistanceFilter(origin, distance);
 	}
 
 	/**
-	 * Returns a {@code Predicate} for {@code Location} filtering using a
-	 * rectangular geographic/Mercator filter.
+	 * Return a radial distance {@code Location} filter that preprocesses
+	 * {@code Location}s through a {@link #rectangleFilter(Location, double)}.
 	 * 
-	 * @param loc {@code Location} relative to which other {@code Location}s are
-	 *        filtered.
+	 * @param origin of filter
 	 * @param distance beyond which the filter will return {@code false}
-	 * @return a new {@code Location} filter
-	 * @see #rectangle(Location, double)
+	 * @see #rectangleFilter(Location, double)
 	 */
-	public static Predicate<Location> rectangleFilter(Location loc,
-			double distance) {
-		return new RectangleFilter(loc, distance);
+	public static Predicate<Location> distanceAndRectangleFilter(Location origin, double distance) {
+		return new RectangleAndDistanceFilter(origin, distance);
+	}
+
+	/**
+	 * Return a rectangular {@code Location} filter. The filter is definied in
+	 * geographic (lat,lon) space and is constrained to {@link GeoTools#MIN_LAT}
+	 * , {@link GeoTools#MAX_LAT}, {@link GeoTools#MIN_LON}, and
+	 * {@link GeoTools#MAX_LON}. The filter has dimensions of
+	 * {@code 2 * distance} for both height and width, and is centered on the
+	 * supplied {@code Location}. This filter is for use as a fast, first-pass
+	 * filter before more computationally intensive distance filtering.
+	 * 
+	 * @param origin (center) of filter
+	 * @param distance half-width and half-height of rectangle outside of which
+	 *        the filter will return {@code false}
+	 * @see GeoTools
+	 */
+	public static Predicate<Location> rectangleFilter(Location origin, double distance) {
+		return new RectangleFilter(origin, distance);
 	}
 
 	private static class RectangleFilter implements Predicate<Location> {
-		private final Rectangle2D locRect;
+		private final Rectangle2D rect;
 
-		private RectangleFilter(Location p1, double distance) {
-			locRect = rectangle(p1, distance);
+		private RectangleFilter(Location origin, double distance) {
+			rect = rectangle(origin, distance);
 		}
 
-		@Override
-		public boolean apply(Location p2) {
-			return locRect.contains(p2.lonRad(), p2.latRad());
+		@Override public boolean apply(Location loc) {
+			return rect.contains(loc.lonRad(), loc.latRad());
+		}
+
+		@Override public String toString() {
+			return "Locations.RectangleFilter";
+		}
+
+	}
+
+	private static class DistanceFilter implements Predicate<Location> {
+		private final Location origin;
+		private final double distance;
+
+		private DistanceFilter(Location origin, double distance) {
+			this.origin = origin;
+			this.distance = distance;
+		}
+
+		@Override public boolean apply(Location loc) {
+			return horzDistanceFast(origin, loc) <= distance;
+		}
+
+		@Override public String toString() {
+			return "Locations.DistanceFilter " + filterInfo();
+		}
+
+		String filterInfo() {
+			return "[origin: " + origin + ", distance: " + distance + "]";
 		}
 	}
-	
-	private static class DistanceFilter implements Predicate<Location> {
-		private final Location p1;
-		private final double distance;
-		private final Predicate<Location> rectFilter;
 
-		private DistanceFilter(Location p1, double distance) {
-			this.p1 = p1;
-			this.distance = distance;
-			rectFilter = new RectangleFilter(p1, distance);
+	private static class RectangleAndDistanceFilter implements Predicate<Location> {
+		private final RectangleFilter rectFilter;
+		private final DistanceFilter distFilter;
+
+		private RectangleAndDistanceFilter(Location origin, double distance) {
+			rectFilter = new RectangleFilter(origin, distance);
+			distFilter = new DistanceFilter(origin, distance);
 		}
 
-		@Override
-		public boolean apply(Location p2) {
-			return rectFilter.apply(p2) ? horzDistanceFast(p1, p2) <= distance
-				: false;
+		@Override public boolean apply(Location loc) {
+			return rectFilter.apply(loc) && distFilter.apply(loc);
 		}
-	}	
+
+		@Override public String toString() {
+			return "Locations.RectangleAndDistanceFilter " + distFilter.filterInfo();
+		}
+	}
+
+	/*
+	 * Create a geographic (Mercator) {@link Rectangle2D} with coordinates in
+	 * radians that is centered on {@code loc} and has a width and height of
+	 * {@code 2 * distance}. The returned rectangle is intended for use in quick
+	 * contains operations using a {@code Location}s native (radian-based)
+	 * storage of latitude and longitude. It is also constrained to minimum and
+	 * maximum longitudes and latitudes {@see GeoTools}.
+	 */
+	private static Rectangle2D rectangle(Location loc, double distance) {
+
+		// work in degrees because Locations.location() utils
+		// greacefully overshoot poles and lat-lon value constraints
+		double latDelta = distance * degreesLatPerKm(loc);
+		double lonDelta = distance * degreesLonPerKm(loc);
+
+		// bounds in radians
+		double minLat = max(loc.lat() - latDelta, MIN_LAT) * TO_RAD;
+		double maxLat = min(loc.lat() + latDelta, MAX_LAT) * TO_RAD;
+		double minLon = max(loc.lon() - lonDelta, MIN_LON) * TO_RAD;
+		double maxLon = min(loc.lon() + lonDelta, MAX_LON) * TO_RAD;
+
+		return new Rectangle2D.Double(minLon, minLat, maxLon - minLon, maxLat - minLat);
+	}
 
 }

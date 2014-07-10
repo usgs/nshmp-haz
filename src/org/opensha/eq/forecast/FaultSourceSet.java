@@ -3,7 +3,6 @@ package org.opensha.eq.forecast;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.DataUtils.validateWeight;
-import static org.opensha.geo.Locations.horzDistanceFast;
 import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
@@ -11,26 +10,27 @@ import java.util.List;
 
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
+import org.opensha.geo.Locations;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 /**
  * Wrapper class for related {@link FaultSource}s.
- *
+ * 
  * @author Peter Powers
  * @see FaultSource
  */
 public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
 	private final List<FaultSource> sources;
-	
+
 	private FaultSourceSet(String name, double weight, MagScalingType msrType,
 		List<FaultSource> sources, GmmSet gmmSet) {
 		super(name, weight, msrType, gmmSet);
 		this.sources = sources;
 	}
-	
+
 	@Override public Iterator<FaultSource> iterator() {
 		return sources.iterator();
 	}
@@ -43,28 +43,28 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 		return SourceType.FAULT;
 	}
 
-	@Override public Predicate<FaultSource> distanceFilter(Location loc, double distance) {
+	@Override public Predicate<FaultSource> distanceFilter(final Location loc, final double distance) {
 		return new DistanceFilter(loc, distance);
 	}
-	
-	static class DistanceFilter implements Predicate<FaultSource> {
 
-		private static final String ID = "FaultSourceSet.DistanceFilter";
-		final Location loc;
-		final double distance;
+	// TODO play around with performance of rectangle filtering or not
+	// if distance is large (e.g.) the majority of sources will always
+	// pass rect test.
+	
+	/* Not inlined for use by cluster sources */
+	static class DistanceFilter implements Predicate<FaultSource> {
+		private final Predicate<Location> filter;
 
 		DistanceFilter(Location loc, double distance) {
-			this.loc = loc;
-			this.distance = distance;
+			filter = Locations.distanceFilter(loc, distance);
 		}
 
 		@Override public boolean apply(FaultSource source) {
-			return horzDistanceFast(loc, source.trace.first()) <= distance ||
-				horzDistanceFast(loc, source.trace.last()) <= distance;
+			return filter.apply(source.trace.first()) || filter.apply(source.trace.last());
 		}
-		
+
 		@Override public String toString() {
-			return ID + " [location: " + loc + ", distance: " + distance + "]";
+			return "FaultSourceSet.DistanceFilter[ " + filter.toString() + " ]";
 		}
 	}
 
@@ -86,7 +86,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 			this.name = validateName(name);
 			return this;
 		}
-		
+
 		Builder weight(double weight) {
 			this.weight = validateWeight(weight);
 			return this;
@@ -101,7 +101,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 			this.magScaling = checkNotNull(magScaling, "MagScalingType is null");
 			return this;
 		}
-		
+
 		Builder source(FaultSource source) {
 			sources.add(checkNotNull(source, "FaultSource is null"));
 			return this;

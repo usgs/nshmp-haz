@@ -29,19 +29,22 @@ class MfdHelper {
 
 	private MfdHelper() {}
 
-	/* Add a new default MFD */
-	void addDefault(Attributes atts) {
+	/* 
+	 * Add a new default MFD and return its spacing. Single MFD
+	 * returns NaN
+	 */
+	double addDefault(Attributes atts) {
 		MfdType type = MfdType.valueOf(atts.getValue("type"));
 		switch (type) {
 			case GR:
 				grDefault = new GR_Data(atts);
-				break;
+				return grDefault.dMag;
 			case INCR:
 				incrDefault = new IncrData(atts);
-				break;
+				return incrDefault.mags[1] - incrDefault.mags[0];
 			case SINGLE:
 				singleDefault = new SingleData(atts);
-				break;
+				return Double.NaN;
 			case GR_TAPER:
 				throw new UnsupportedOperationException("GR_TAPER not yet implemented");
 			default:
@@ -199,6 +202,10 @@ class MfdHelper {
 		}
 		
 		private IncrData(Attributes atts, IncrData ref) {
+			
+			// TODO array sizes aren't checked downstream
+			// add checks below; also, the values in ref
+			// arrays are mutable
 			
 			// set defaults locally
 			double[] mags = ref.mags;

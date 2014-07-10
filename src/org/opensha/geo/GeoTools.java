@@ -16,6 +16,8 @@ import com.google.common.collect.Range;
  */
 public class GeoTools {
 
+	// TODO clean javadocs
+	
 	/**
 	 * The Authalic mean radius (A<subscript>r</subscript>) of the earth
 	 * [6371.0072 km] (see <a
@@ -47,8 +49,8 @@ public class GeoTools {
 	/** Minimum longitude value (-180&#176;). */
 	public static final double MIN_LON = -180.0;
 
-	// TODO we should allow for values up to 360
-	// TODO need to check distance calculations
+	// TODO test if and which distance calcs can handle
+	// thi shigher MAX_LON
 	/** Maximum longitude value (180&#176;). */
 	public static final double MAX_LON = 360.0;
 
@@ -66,11 +68,9 @@ public class GeoTools {
 	 */
 	public static final double MAX_DEPTH = 700.0;
 
-	// @formatter:off
 	private static final Range<Double> latRange = Range.closed(MIN_LAT, MAX_LAT);
 	private static final Range<Double> lonRange = Range.closed(MIN_LON, MAX_LON);
 	private static final Range<Double> depthRange = Range.closed(MIN_DEPTH, MAX_DEPTH);
-	// @formatter:on
 
 	/** Conversion multiplier for degrees to radians */
 	public static final double TO_RAD = Math.toRadians(1.0);
@@ -206,8 +206,7 @@ public class GeoTools {
 	 * @see #radiusAtLocation(Location)
 	 */
 	public static double degreesLatPerKm(Location p) {
-		checkNotNull(p, "Supplied location is null");
-		return TO_DEG / radiusAtLocation(p);
+		return TO_DEG / radiusAtLocation(checkNotNull(p));
 	}
 
 	/**
@@ -223,8 +222,7 @@ public class GeoTools {
 	 *         <code>Location</code>
 	 */
 	public static double degreesLonPerKm(Location p) {
-		checkNotNull(p, "Supplied location is null");
-		return TO_DEG / (EARTH_RADIUS_EQUATORIAL * Math.cos(p.latRad()));
+		return TO_DEG / (EARTH_RADIUS_EQUATORIAL * Math.cos(checkNotNull(p).latRad()));
 	}
 
 	/**
@@ -237,7 +235,7 @@ public class GeoTools {
 	}
 
 	/**
-	 * Converts arcminutes to decimal degrees.
+	 * Convert arcminutes to decimal degrees.
 	 * @param minutes value to convert
 	 * @return the equivalent number of decimal degrees
 	 */
@@ -246,11 +244,10 @@ public class GeoTools {
 	}
 
 	/**
-	 * Converts 'degree : decimal minutes' to decimal degrees.
+	 * Convert {@code degrees} and decimal {@code minutes} to decimal degrees.
 	 * 
-	 * @param degrees part to convert
-	 * @param minutes part to convert (decimal minutes)
-	 * @return converted value
+	 * @param degrees
+	 * @param minutes
 	 */
 	public static double toDecimalDegrees(double degrees, double minutes) {
 		return (degrees < 0) ? (degrees - minutesToDeg(minutes))

@@ -72,12 +72,10 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 		coeffs = (Coeffs) CC.get(imt);
 	}
 	
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
+	@Override public final ScalarGroundMotion calc(GmmInput props) {
 		FaultStyle style = rakeToFaultStyle(props.rake);
-		return calc(coeffs, props.Mw, props.rJB, props.rRup, props.rX,
-			props.dip, props.width, props.zTop, style, props.vs30, props.vsInf,
-			props.z1p0);
+		return calc(coeffs, props.Mw, props.rJB, props.rRup, props.rX, props.dip, props.width,
+			props.zTop, style, props.vs30, props.vsInf, props.z1p0);
 	}
 	
 	FaultStyle rakeToFaultStyle(double rake) {
