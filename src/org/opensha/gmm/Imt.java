@@ -65,11 +65,18 @@ public enum Imt {
 		String valStr = name().substring(2).replace("P", ".");
 		return Double.parseDouble(valStr);
 	}
-	
-	/* 
-	 * @see Gmm#reponseSpectrumPeriods(Colleciton<Gmm>)
+
+	/**
+	 * Returns the {@code List} of periods for the supplied {@code Imt}s. The
+	 * result will be sorted according to the iteration order of the supplied
+	 * {@code Collection}. Any non spectral acceleration {@code Imt}s will have
+	 * null values in the returned {@code List}.
+	 * 
+	 * @param imts to list periods for
+	 * @return a {@code List} of spectral periods
+	 * @see #saImts()
 	 */
-	static List<Double> periods(Collection<Imt> imts) {
+	public static List<Double> periods(Collection<Imt> imts) {
 		List<Double> periodList = Lists.newArrayListWithCapacity(imts.size());
 		for (Imt imt : imts) {
 			periodList.add(imt.period());
@@ -95,7 +102,7 @@ public enum Imt {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the frequency (in Hz) for this {@code Imt}. {@code PGA} returns
 	 * 100 Hz, spectral periods return their expected value (1 / period), and
@@ -107,10 +114,9 @@ public enum Imt {
 	public double frequency() {
 		if (this == PGA) return 100;
 		if (this.isSA()) return 1.0 / period();
-		throw new UnsupportedOperationException(
-			"frequncy() not supported for PGD and PGV");
+		throw new UnsupportedOperationException("frequncy() not supported for PGD and PGV");
 	}
-	
+
 	/**
 	 * Returns true if this Imt is some flavor of spectral acceleration.
 	 * @return {@code true} if this is a spectral period, {@code false}
@@ -119,7 +125,7 @@ public enum Imt {
 	public boolean isSA() {
 		return ordinal() > 2;
 	}
-	
+
 	/**
 	 * Returns the {@code Set} of spectal acceleration IMTs.
 	 * @return the IMTs that represent spectral accelerations
@@ -149,5 +155,5 @@ public enum Imt {
 			return null;
 		}
 	}
-	
+
 }

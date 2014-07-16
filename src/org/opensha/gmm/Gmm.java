@@ -358,15 +358,4 @@ public enum Gmm {
 		return Sets.intersection(supportedIMTs(gmms), Imt.saImts());
 	}
 
-	/**
-	 * Returns list of spectral acceleration periods that are common to
-	 * the supplied {@code Gmm}s.
-	 * 
-	 * @param gmms ground motion models
-	 * @return a {@code List} of common spectral periods
-	 */
-	public static List<Double> responseSpectrumPeriods(Collection<Gmm> gmms) {
-		return Imt.periods(Sets.intersection(supportedIMTs(gmms), Imt.saImts()));
-	}
-
 }
