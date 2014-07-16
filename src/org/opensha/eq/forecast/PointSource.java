@@ -10,7 +10,6 @@ import static org.opensha.eq.fault.FocalMech.STRIKE_SLIP;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.surface.PtSrcDistCorr;
@@ -26,16 +25,16 @@ import org.opensha.mfd.IncrementalMfd;
  * corresponding to different {@link FocalMech} types, but all distance metrics
  * will be equivalent (rJB = rRup = rX).
  * 
- * <p><b>NOTE:</b> This source type should not be used in in conjunction with
- * ground motion models (GMMs) that consider hanging wall effects or require
- * more detailed distance metrics that are consistent with a {@code Rupture}'s
- * {@code FocalMech}, dip, and rake.</p>
+ * <p><b>NOTE:</b> This source type should <i>not</i> be used in in conjunction
+ * with ground motion models (GMMs) that consider hanging wall effects or
+ * require more detailed distance metrics that are consistent with a
+ * {@code Rupture}'s {@code FocalMech}, dip, and rake.</p>
  * 
  * <p><b>NOTE</b>:The {@link PointSource#getRupture(int)} method is thread safe,
  * however, it is inefficient in that it creates a new {@link Rupture} on every
  * call. Use of {@link Source#iterator()} is preferred, but {@code Rupture}
- * instances returned by the iterator should <i>not</i> be retained and an
- * iterator instance should <i>only</i> ever be used by a single thread.</p>
+ * instances returned by the iterator should not be retained and an iterator
+ * instance should only ever be used by a single thread.</p>
  * 
  * <p><b>NOTE</b>: {@code Source.size()} returns the absolute number of
  * {@code Rupture}s that can be created given the supplied source input
@@ -52,7 +51,7 @@ class PointSource implements Source {
 	final Map<FocalMech, Double> mechWtMap;
 
 	int rupCount;
-	int magDepthCount;
+	int magDepthSize;
 	int ssIdx, revIdx;
 
 	/**
@@ -109,13 +108,13 @@ class PointSource implements Source {
 
 	private void updateRupture(Rupture rup, int idx) {
 
-		int magDepthIdx = idx % magDepthCount;
-		int magIdx = parent.magDepthIndices[magDepthIdx];
+		int magDepthIdx = idx % magDepthSize;
+		int magIdx = parent.magDepthIndices.get(magDepthIdx);
 		double mag = mfd.getX(magIdx);
 		double rate = mfd.getY(magIdx);
 
-		double zTop = parent.magDepthDepths[magDepthIdx];
-		double zTopWt = parent.magDepthWeights[magDepthIdx];
+		double zTop = parent.magDepthDepths.get(magDepthIdx);
+		double zTopWt = parent.magDepthWeights.get(magDepthIdx);
 
 		FocalMech mech = mechForIndex(idx);
 		double mechWt = mechWtMap.get(mech);
@@ -132,39 +131,42 @@ class PointSource implements Source {
 	}
 
 	@Override public Iterator<Rupture> iterator() {
-		// @formatter:off
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
-			{ rupture.surface = new PointSurface(loc); }
+			{
+				rupture.surface = new PointSurface(loc);
+			}
+			int size = size();
 			int caret = 0;
+
 			@Override public boolean hasNext() {
-				if (caret > rupCount) return false;
+				if (caret >= size) return false;
 				updateRupture(rupture, caret++);
 				return (rupture.rate > 0.0) ? true : hasNext();
 			}
+
 			@Override public Rupture next() {
-				if (!hasNext()) throw new NoSuchElementException();
 				return rupture;
 			}
+
 			@Override public void remove() {
 				throw new UnsupportedOperationException();
 			}
 		};
-		// @formatter:on
 	}
 
-	private void init() {
+	void init() {
 
-		/* Get the total number of mag-depth combinations from parent */
-		magDepthCount = parent.magDepthIndices.length;
+		/* Get the number of mag-depth iterations required to get to mMax */
+		magDepthSize = parent.magDepthIndices.indexOf(mfd.getNum());
 
 		/*
 		 * Init rupture indexing: SS RV NR. Each category will have ruptures for
 		 * every mag in 'mfd' and depth in parent 'magDepthMap'.
 		 */
-		int ssCount = (int) ceil(mechWtMap.get(STRIKE_SLIP)) * magDepthCount;
-		int revCount = (int) ceil(mechWtMap.get(REVERSE)) * magDepthCount;
-		int norCount = (int) ceil(mechWtMap.get(NORMAL)) * magDepthCount;
+		int ssCount = (int) ceil(mechWtMap.get(STRIKE_SLIP)) * magDepthSize;
+		int revCount = (int) ceil(mechWtMap.get(REVERSE)) * magDepthSize;
+		int norCount = (int) ceil(mechWtMap.get(NORMAL)) * magDepthSize;
 		ssIdx = ssCount;
 		revIdx = ssCount + revCount;
 

@@ -4,6 +4,7 @@ import static com.google.common.util.concurrent.MoreExecutors.listeningDecorator
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.lang.Runtime.getRuntime;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -57,30 +58,28 @@ import com.google.common.util.concurrent.MoreExecutors;
 public class HazardCalcManager {
 
 	private static ExecutorService ex;
-	
+
 	static {
 		int numProc = Runtime.getRuntime().availableProcessors();
 		ex = Executors.newFixedThreadPool(numProc);
 	}
 
-	private HazardCalcManager() {
-	}
+	private HazardCalcManager() {}
 
 	public static HazardCalcManager create() {
 		HazardCalcManager hc = new HazardCalcManager();
 		return hc;
 	}
 
-
-	public void calc(Forecast forecast, Site site, Imt imt)
-			throws InterruptedException, ExecutionException {
+	public void calc(Forecast forecast, Site site, Imt imt) throws InterruptedException,
+			ExecutionException {
 
 		// List<Source> sources;
 		for (SourceSet<? extends Source> srcSet : forecast) {
 			SourceType type = srcSet.type();
 			switch (type) {
 				case FAULT:
-//					doFaultCalc((FaultSourceSet) srcSet, gmmMap, site);
+					// doFaultCalc((FaultSourceSet) srcSet, gmmMap, site);
 					break;
 				case GRID:
 					break;
@@ -111,34 +110,39 @@ public class HazardCalcManager {
 		// calculate total curve
 
 	}
-	
-	// TODO epiphany!!! Although it will be a little more work, if we have a multi-distance
-	// GmmSet model, we will do all calculations; the far gmms are currently required to be a subset of the near
-	// gmms. Even without this requirement, we would compute ground motions for the master set of gmms.
-	// Only when recombining scalar ground motions into hazard curves will we chose those values
-	// required at different distances as we will have the associated GmmInputs handy
-	
+
+	// TODO epiphany!!! Although it will be a little more work, if we have a
+	// multi-distance
+	// GmmSet model, we will do all calculations; the far gmms are currently
+	// required to be a subset of the near
+	// gmms. Even without this requirement, we would compute ground motions for
+	// the master set of gmms.
+	// Only when recombining scalar ground motions into hazard curves will we
+	// chose those values
+	// required at different distances as we will have the associated GmmInputs
+	// handy
+
 	/*
 	 * Processes a SourceSet to a List of GroundMotionSets, wrapped in a
 	 * ListenableFuture.
 	 */
-	public ListenableFuture<List<GroundMotionSet>> toGroundMotions(SourceSet<? extends Source> sourceSet,
-			Site site, Imt imt) {
-		
+	public List<ListenableFuture<GroundMotionSet>> toGroundMotions(SourceSet<? extends Source> sourceSet, Site site,
+			Imt imt) throws ExecutionException, InterruptedException {
+
 		// get ground motion models
 		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sourceSet.groundMotionModels()
 			.gmms(), imt);
-		
+
 		// set up reusable transforms
 		AsyncFunction<Source, List<GmmInput>> sourceToInputs = Transforms.sourceToInputs(site);
 		AsyncFunction<List<GmmInput>, GroundMotionSet> inputsToGroundMotions = Transforms
 			.inputsToGroundMotions(gmmInstances);
-		
+
 		// ground motion set aggregator
 		List<ListenableFuture<GroundMotionSet>> futuresList = Lists.newArrayList();
-		
+
 		for (Source source : sourceSet.locationIterable(site.loc)) {
-			
+
 			// for the sake of consistency, we wrap Sources in ListenableFutures
 			// so that we're only ever using Futures.transform() and don't need
 			// an instance of a ListeningExecutorService
@@ -147,16 +151,19 @@ public class HazardCalcManager {
 			// transform source to inputs
 			ListenableFuture<List<GmmInput>> gmmInputs = Futures.transform(srcFuture,
 				sourceToInputs, ex);
-			
+
 			// transform inputs to ground motions
 			ListenableFuture<GroundMotionSet> gmResults = Futures.transform(gmmInputs,
 				inputsToGroundMotions, ex);
-			
+
 			futuresList.add(gmResults);
 		}
-		
-		return Futures.allAsList(futuresList);
+
+		return futuresList; //Futures.allAsList(futuresList);
 	}
+
+	
+	
 	
 	/*
 	 * Processes a ClusterSourceSet to a List of GroundMotionSet Lists, wrapped
@@ -164,122 +171,142 @@ public class HazardCalcManager {
 	 */
 	public ListenableFuture<List<List<GroundMotionSet>>> toClusterGroundMotions(
 			ClusterSourceSet sourceSet, Site site, Imt imt) {
-		
+
 		List<ListenableFuture<List<GroundMotionSet>>> clusterMotions = Lists.newArrayList();
-		
+
 		for (ClusterSource cluster : sourceSet) {
 			FaultSourceSet faults = cluster.faults();
-			clusterMotions.add(toGroundMotions(faults, site, imt));
+//			clusterMotions.add(toGroundMotions(faults, site, imt));
 		}
-		
+
 		return Futures.allAsList(clusterMotions);
 	}
+
 	
-	public void toHazardCurve(ListenableFuture<List<GroundMotionSet>> asyncGroundMotions) {
-		
-		
+	
+	
+	public List<ListenableFuture<Map<Gmm, ArrayXY_Sequence>>> toMeanHazardCurve(
+			List<ListenableFuture<GroundMotionSet>> groundMotionList) throws ExecutionException, InterruptedException {
+
+		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
+
+		AsyncFunction<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> groundMotionsToCurves = Transforms
+			.groundMotionsToCurves(modelCurve);
+
+		List<ListenableFuture<Map<Gmm, ArrayXY_Sequence>>> futuresList = Lists.newArrayList();
+
+		for (ListenableFuture<GroundMotionSet> gmSet : groundMotionList) {
+			futuresList.add(Futures.transform(gmSet, groundMotionsToCurves, ex));
+		}
+
+		return futuresList; //Futures.allAsList(futuresList);
 	}
-	
-	public void toClusterCurve(ListenableFuture<List<List<GroundMotionSet>>> asyncGroundMotions, XY_Sequence model) throws Exception {
-				
+
+	public void toClusterCurve(ListenableFuture<List<List<GroundMotionSet>>> asyncGroundMotions,
+			XY_Sequence model) throws Exception {
+
 		// List (outer) --> clusters (geometry variants)
-		//   List (inner) --> faults (sections)
-		//     GroundMotionSet --> magnitude variants
+		// List (inner) --> faults (sections)
+		// GroundMotionSet --> magnitude variants
 		List<List<GroundMotionSet>> clusters = asyncGroundMotions.get();
-		
+
 		for (List<GroundMotionSet> cluster : clusters) {
 			for (GroundMotionSet fault : cluster) {
-				
-				// compute PE curve 
+
+				// compute PE curve
 			}
 		}
-		
+
 	}
-	
+
+	// TODO where/how to apply CEUS clamps
+
 	// TODO hmmm... we don't seem to have rupture rate data
-	
-	private static Map<Gmm, ArrayXY_Sequence> clusterFaultPE(GroundMotionSet gmSet, ArrayXY_Sequence model) {
-		
+
+	private static Map<Gmm, ArrayXY_Sequence> clusterFaultPE(GroundMotionSet gmSet,
+			ArrayXY_Sequence model) {
+
 		Map<Gmm, ArrayXY_Sequence> peMap = Maps.newEnumMap(Gmm.class);
-		
+
 		for (Gmm gmm : gmSet.means.keySet()) {
 			List<Double> means = gmSet.means.get(gmm);
 			List<Double> sigmas = gmSet.sigmas.get(gmm);
-//			ArrayXY_Sequence 
-//			for (int i = 0; i < gmSet.inputs.size(); i++) {
-//				ArrayXY_Sequence imls = ArrayXY_Sequence.copyOf(model);
-//				Utils.setExceedProbabilities(imls, means.get(i), sigmas.get(i), false, 0.0);
-//				imls.sc
-//			}
+			// ArrayXY_Sequence
+			// for (int i = 0; i < gmSet.inputs.size(); i++) {
+			// ArrayXY_Sequence imls = ArrayXY_Sequence.copyOf(model);
+			// Utils.setExceedProbabilities(imls, means.get(i), sigmas.get(i),
+			// false, 0.0);
+			// imls.sc
+			// }
 			// TODO FIX and FINISH
-		}	
+		}
 		return null;
-		
-	}
-	
-	
-	// reference clusterCalc from NSHMP2008
-	
-//	private static DiscretizedFunc clusterCalc(
-//			DiscretizedFunc f, 
-//			Site s,
-//			ScalarIMR imr, 
-//			ClusterERF erf) {
-//		
-//		double maxDistance = erf.getMaxDistance();
-//		Utils.zeroFunc(f); //zero for aggregating results
-//		DiscretizedFunc peFunc = f.deepClone();
-//		
-//		for (ClusterSource cs : erf.getSources()) { // geom variants
-//			
-//			// apply distance cutoff to source
-//			double dist = cs.getMinDistance(s);
-//			if (dist > maxDistance) {
-//				continue;
-//			}
-//			// assemble list of PE curves for each cluster segment
-//			List<DiscretizedFunc> fltFuncList = Lists.newArrayList();
-//
-//			for (FaultSource fs : cs.getFaultSources()) { // segments
-//				DiscretizedFunc fltFunc = peFunc.deepClone();
-//				Utils.zeroFunc(fltFunc);
-//				// agregate weighted PE curves for mags on each segment
-//				for (int i=0; i < fs.getNumRuptures(); i++) { // mag variants
-//					imr.setEqkRupture(fs.getRupture(i));
-//					imr.getExceedProbabilities(peFunc);
-//					double weight = fs.getMFDs().get(i).getY(0) * cs.getRate();
-//					peFunc.scale(weight);
-//					Utils.addFunc(fltFunc, peFunc);
-//				} // end mag
-//				fltFuncList.add(fltFunc);
-//			} // end segments
-//			
-//			// compute joint PE, scale by geom weight, scale by rate (1/RP),
-//			// and add to final result
-//			DiscretizedFunc fOut = calcClusterExceedProb(fltFuncList);
-//			double rateAndWeight = cs.getWeight() / cs.getRate();
-//			fOut.scale(rateAndWeight);
-//			Utils.addFunc(f, fOut);
-//		} // end geom
-//		return f;
-//	}
 
-//		ListenableFuture<List<GroundMotionSet>> gmResultsTmp = Futures.allAsList(futuresList);
-		
-//		try {
-//			List<GroundMotionSet> gmResultsList = gmResultsTmp.get();
-//			System.out.println(gmResultsList.size());
-////			GroundMotionSet gms = gmResultsList.get(0);
-////			System.out.println(gms.means.size());
-////			System.out.println(gms.means);
-////			System.out.println(gms.sigmas.size());
-////			System.out.println(gms.sigmas);
-//			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		// so now for each source we should have 
-//		
-//	}
+	}
+
+	// reference clusterCalc from NSHMP2008
+
+	// private static DiscretizedFunc clusterCalc(
+	// DiscretizedFunc f,
+	// Site s,
+	// ScalarIMR imr,
+	// ClusterERF erf) {
+	//
+	// double maxDistance = erf.getMaxDistance();
+	// Utils.zeroFunc(f); //zero for aggregating results
+	// DiscretizedFunc peFunc = f.deepClone();
+	//
+	// for (ClusterSource cs : erf.getSources()) { // geom variants
+	//
+	// // apply distance cutoff to source
+	// double dist = cs.getMinDistance(s);
+	// if (dist > maxDistance) {
+	// continue;
+	// }
+	// // assemble list of PE curves for each cluster segment
+	// List<DiscretizedFunc> fltFuncList = Lists.newArrayList();
+	//
+	// for (FaultSource fs : cs.getFaultSources()) { // segments
+	// DiscretizedFunc fltFunc = peFunc.deepClone();
+	// Utils.zeroFunc(fltFunc);
+	// // agregate weighted PE curves for mags on each segment
+	// for (int i=0; i < fs.getNumRuptures(); i++) { // mag variants
+	// imr.setEqkRupture(fs.getRupture(i));
+	// imr.getExceedProbabilities(peFunc);
+	// double weight = fs.getMFDs().get(i).getY(0) * cs.getRate();
+	// peFunc.scale(weight);
+	// Utils.addFunc(fltFunc, peFunc);
+	// } // end mag
+	// fltFuncList.add(fltFunc);
+	// } // end segments
+	//
+	// // compute joint PE, scale by geom weight, scale by rate (1/RP),
+	// // and add to final result
+	// DiscretizedFunc fOut = calcClusterExceedProb(fltFuncList);
+	// double rateAndWeight = cs.getWeight() / cs.getRate();
+	// fOut.scale(rateAndWeight);
+	// Utils.addFunc(f, fOut);
+	// } // end geom
+	// return f;
+	// }
+
+	// ListenableFuture<List<GroundMotionSet>> gmResultsTmp =
+	// Futures.allAsList(futuresList);
+
+	// try {
+	// List<GroundMotionSet> gmResultsList = gmResultsTmp.get();
+	// System.out.println(gmResultsList.size());
+	// // GroundMotionSet gms = gmResultsList.get(0);
+	// // System.out.println(gms.means.size());
+	// // System.out.println(gms.means);
+	// // System.out.println(gms.sigmas.size());
+	// // System.out.println(gms.sigmas);
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// // so now for each source we should have
+	//
+	// }
 
 }

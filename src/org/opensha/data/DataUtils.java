@@ -18,12 +18,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.math3.stat.StatUtils;
 import org.opensha.function.DefaultXY_DataSet;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSortedSet.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.collect.Table;
@@ -66,8 +69,8 @@ public final class DataUtils {
 	 * Function approach to be only marginally slower, but much more processor
 	 * intensive suggesting there would be a performance penalty in
 	 * multi-threaded applications.
-	 */	
-	
+	 */
+
 	private DataUtils() {}
 
 	/**
@@ -82,7 +85,7 @@ public final class DataUtils {
 		validateDataArray(data);
 		return uncheckedAdd(term, data);
 	}
-	
+
 	static double[] uncheckedAdd(double term, double[] data) {
 		for (int i = 0; i < data.length; i++) {
 			data[i] += term;
@@ -190,7 +193,7 @@ public final class DataUtils {
 		validateDataArray(data);
 		return uncheckedMultiply(scale, data);
 	}
-	
+
 	static double[] uncheckedMultiply(double scale, double... data) {
 		for (int i = 0; i < data.length; i++) {
 			data[i] *= scale;
@@ -737,7 +740,7 @@ public final class DataUtils {
 			Collection<? extends Number> data2) {
 		checkArgument(checkNotNull(data1).size() == checkNotNull(data2).size());
 	}
-	
+
 	private static void validateIndices(Collection<Integer> indices, int size) {
 		validateDataCollection(indices);
 		for (int index : indices) {
@@ -855,6 +858,30 @@ public final class DataUtils {
 	// private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0d,
 	// 1d);
 
+	// /**
+	// * Return the index of the first array element that is equal than
+	// * {@code value}.
+	// *
+	// * @param data to examine
+	// * @param value to search for
+	// * @throws IllegalArgumentException all elements of {@code data} are less
+	// than {@code value}. Exception is thrown lazily
+	// * when iteration completes without any {@code data} element exceeding
+	// {@code value}.
+	// */
+	// public static int firstGreaterThanIndex(int[] data, double value) {
+	// checkNotNull(data);
+	// for (int i = 0; i < data.length; i++) {
+	// int cf = DoubleMath.fuzzyCompare(data[i], value, 1e-8);
+	// if (cf > 0) return i;
+	// }
+	// String mssg =
+	// String.format("Value [%s] is larger than maximum array value [%s].",
+	// value,
+	// Doubles.max(data));
+	// throw new IllegalArgumentException(mssg);
+	// }
+
 	/**
 	 * Creates a sequence of evenly spaced values starting at {@code min} and
 	 * ending at {@code max}. If {@code (max - min) / step} is not equivalent to
@@ -942,6 +969,37 @@ public final class DataUtils {
 		// do not add max if current max is equal to max wihthin tolerance
 		if (!DoubleMath.fuzzyEquals(seq.get(seq.size() - 1), max, SEQ_MAX_VAL_TOL)) seq.add(max);
 		return Doubles.toArray(seq);
+	}
+
+	/**
+	 * Combine the supplied {@code sequences}. The y-values returned are the set
+	 * of all supplied y-values. The x-values returned are the sum of the
+	 * supplied x-values. When summing, x-values for points outside the original
+	 * domain of a sequence are set to 0, while those inside the original domain
+	 * are sampled via linear interpolation.
+	 * 
+	 * @param sequences to combine
+	 * @return a combined sequence
+	 */
+	public static XY_Sequence combine(Iterable<XY_Sequence> sequences) {
+		
+		// create master x-value sequence
+		Builder<Double> builder = ImmutableSortedSet.naturalOrder();
+		for (XY_Sequence sequence : sequences) {
+			builder.addAll(sequence.xValues());
+		}
+		double[] xMaster = Doubles.toArray(builder.build());
+		
+		// resample and combine sequences
+		ArrayXY_Sequence combined = ArrayXY_Sequence.create(xMaster, null);
+		for (XY_Sequence sequence : sequences) {
+			// TODO need to disable extrapolation in Interpolation
+			if (true) throw new UnsupportedOperationException();
+			ArrayXY_Sequence resampled = ArrayXY_Sequence.resampleTo(sequence, xMaster);
+			combined.add(resampled);
+		}
+		
+		return combined;
 	}
 
 	/**
@@ -1154,7 +1212,7 @@ public final class DataUtils {
 		}
 		return Ints.asList(indices);
 	}
-	
+
 	/**
 	 * Return a {@code BitSet} with {@code capacity} and with all bits at
 	 * {@code indices} 'set'.

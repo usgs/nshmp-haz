@@ -28,9 +28,9 @@ public final class GroundMotionSet {
 	// but the mean and sigma list maps are not; builder backs
 	// means and sigmas with double[]
 
-	final List<GmmInput> inputs;
-	final Map<Gmm, List<Double>> means;
-	final Map<Gmm, List<Double>> sigmas;
+	public final List<GmmInput> inputs;
+	public final Map<Gmm, List<Double>> means;
+	public final Map<Gmm, List<Double>> sigmas;
 
 	private GroundMotionSet(List<GmmInput> inputs, Map<Gmm, List<Double>> means,
 		Map<Gmm, List<Double>> sigmas) {

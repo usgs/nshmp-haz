@@ -13,7 +13,7 @@ import org.opensha.eq.forecast.Distances;
 public final class GmmInput {
 	
 	// TODO determine how best to expose rate wrt deterministic calcualtions
-	double rate; // TODO currently empty; needs to be final
+	public double rate; // TODO currently empty; needs to be final
 
 	// source
 	final double Mw;

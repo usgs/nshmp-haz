@@ -4,6 +4,8 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Utility class to perform linear interpolations. Methods are also provided to
@@ -26,6 +28,14 @@ import java.util.Arrays;
  */
 public final class Interpolate {
 
+	// TODO refactor all methods to take extrapolate flag
+	
+	// TODO support Lists??
+	
+	// TODO high priority
+	
+	// TODO unchecked versions?
+	
 	private Interpolate() {}
 
 	/**
@@ -82,6 +92,11 @@ public final class Interpolate {
 		int i = dataIndex(xs, x);
 		return findY(xs[i], ys[i], xs[i + 1], ys[i + 1], x);
 	}
+	
+	public static double findY(List<Double> xs, List<Double> ys, double x) {
+		int i = dataIndex(xs, x);
+		return findY(xs.get(i), ys.get(i), xs.get(i + 1), ys.get(i + 1), x);
+	}
 
 	/**
 	 * Returns the log interpolated or extrapolated y-value using the
@@ -131,6 +146,16 @@ public final class Interpolate {
 		}
 		return y;
 	}
+	
+	public static double[] findY(List<Double> xs, List<Double> ys, double[] x) {
+		double[] y = new double[x.length];
+		int i = 0;
+		for (double xVal : x) {
+			y[i++] = findY(xs, ys, xVal);
+		}
+		return y;
+	}
+
 
 	/**
 	 * Returns the log interpolated or extrapolated y-values using the
@@ -168,12 +193,31 @@ public final class Interpolate {
 		return y;
 	}
 
+	// TODO clean
+	
 	private static int dataIndex(double[] data, double value) {
 		int i = Arrays.binarySearch(data, value);
+		return binarySearchResultToIndex(i, data.length);
+//		// adjust index for low value (-1) and in-sequence insertion pt
+//		i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;
+//		// adjust hi index to next to last index
+//		return (i >= data.length - 1) ? --i : i;
+	}
+
+	private static int dataIndex(List<Double> data, double value) {
+		int i = Collections.binarySearch(data, value);
+		return binarySearchResultToIndex(i, data.size());
+//		// adjust index for low value (-1) and in-sequence insertion pt
+//		i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;
+//		// adjust hi index to next to last index
+//		return (i >= data.size() - 1) ? --i : i;
+	}
+	
+	private static int binarySearchResultToIndex(int i, int size) {
 		// adjust index for low value (-1) and in-sequence insertion pt
 		i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;
 		// adjust hi index to next to last index
-		return (i >= data.length - 1) ? --i : i;
+		return (i >= size - 1) ? --i : i;
 	}
 
 }

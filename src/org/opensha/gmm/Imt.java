@@ -2,8 +2,12 @@ package org.opensha.gmm;
 
 import static com.google.common.math.DoubleMath.fuzzyEquals;
 
+import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 /**
  * Intesity measure type (Imt) identifiers.
@@ -61,6 +65,17 @@ public enum Imt {
 		String valStr = name().substring(2).replace("P", ".");
 		return Double.parseDouble(valStr);
 	}
+	
+	/* 
+	 * @see Gmm#reponseSpectrumPeriods(Colleciton<Gmm>)
+	 */
+	static List<Double> periods(Collection<Imt> imts) {
+		List<Double> periodList = Lists.newArrayListWithCapacity(imts.size());
+		for (Imt imt : imts) {
+			periodList.add(imt.period());
+		}
+		return periodList;
+	}
 
 	/**
 	 * Returns the spectral acceleration {@code Imt} associated with the
@@ -85,7 +100,7 @@ public enum Imt {
 	 * Returns the frequency (in Hz) for this {@code Imt}. {@code PGA} returns
 	 * 100 Hz, spectral periods return their expected value (1 / period), and
 	 * {@code PGV} and {@code PGD} throw exceptions.
-	 * @return thre frequency associated with this {@code Imt}
+	 * @return the frequency associated with this {@code Imt}
 	 * @throws UnsupportedOperationException if called on {@code PGV} or
 	 *         {@code PGD}
 	 */

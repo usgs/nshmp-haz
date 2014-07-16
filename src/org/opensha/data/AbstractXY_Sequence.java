@@ -3,6 +3,7 @@ package org.opensha.data;
 import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.RandomAccess;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.StandardSystemProperty;
@@ -46,7 +47,7 @@ abstract class AbstractXY_Sequence implements XY_Sequence {
 		}
 	}
 	
-	private class X_List extends AbstractList<Double> {
+	private class X_List extends AbstractList<Double> implements RandomAccess {
 		@Override public Double get(int index) { return x(index); }
 		@Override public int size() { return AbstractXY_Sequence.this.size(); }
 		@Override public Iterator<Double> iterator() {
@@ -65,7 +66,7 @@ abstract class AbstractXY_Sequence implements XY_Sequence {
 		}
 	}
 
-	private class Y_List extends AbstractList<Double> {
+	private class Y_List extends AbstractList<Double> implements RandomAccess {
 		@Override public Double get(int index) { return y(index); }
 		@Override public int size() { return AbstractXY_Sequence.this.size(); }
 		@Override public Iterator<Double> iterator() {

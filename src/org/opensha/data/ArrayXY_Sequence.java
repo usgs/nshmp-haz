@@ -8,6 +8,8 @@ import static org.opensha.data.DataUtils.*;
 import java.util.Arrays;
 import java.util.Objects;
 
+import com.google.common.primitives.Doubles;
+
 /**
  * Array based implementation of an {@code XY_Sequence}.
  * 
@@ -74,7 +76,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	}
 
 	/**
-	 * Returns a copy of the supplied sequence.
+	 * Create a copy of the supplied {@code sequence}.
 	 * 
 	 * @param sequence to copy
 	 * @return a copy of the supplied {@code sequence}
@@ -83,6 +85,29 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 */
 	public static ArrayXY_Sequence copyOf(ArrayXY_Sequence sequence) {
 		return new ArrayXY_Sequence(sequence);
+	}
+
+	/**
+	 * Create a resampled version of the supplied {@code sequence}. Method
+	 * resamples via linear interpolation and does not extrapolate beyond the
+	 * domain of the source {@code sequence}; y-values with x-values outside the
+	 * domain of the source sequence are set to 0.
+	 * 
+	 * @param sequence to resample
+	 * @param xs resample values
+	 * @return a resampled sequence
+	 */
+	public static ArrayXY_Sequence resampleTo(XY_Sequence sequence, double[] xs) {
+		checkNotNull(sequence);
+		checkArgument(checkNotNull(xs).length > 0);
+		// TODO Interpolate should handle Lists as well as arrays; the lists
+		// returned by AbstractXY_Sequence are immutable
+		// TODO this could be optimized to work directly with
+		// ArrayXY_Sequence.xs and .ys, but its probably not necessary given the above
+		double[] yResample = Interpolate.findY(sequence.xValues(), sequence.yValues(), xs);
+		// TODO disable extrapolation
+		if (true) throw new UnsupportedOperationException();
+		return ArrayXY_Sequence.create(xs, yResample);
 	}
 
 	@Override public double x(int index) {
