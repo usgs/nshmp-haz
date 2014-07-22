@@ -95,6 +95,10 @@ public final class GmmInput {
 			z2p5, z1p0);
 	}
 	
+	public double rate() {
+		return rate;
+	}
+	
 	/**
 	 * Return a {@code GmmInput} builder that requires all fields to be
 	 * explicitely set. This builder is stateful and may be reused (by a single

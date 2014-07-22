@@ -225,7 +225,7 @@ public final class Transforms {
 				for (int i = 0; i < means.size(); i++) {
 					Utils.setExceedProbabilities(utilCurve, means.get(i), sigmas.get(i), false,
 						Double.NaN);
-					utilCurve.multiply(gmSet.inputs.get(i).rate);
+					utilCurve.multiply(gmSet.inputs.get(i).rate());
 					gmmCurve.add(utilCurve);
 				}
 			}
