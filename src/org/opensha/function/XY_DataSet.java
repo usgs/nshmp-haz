@@ -12,13 +12,13 @@ import org.opensha.util.Named;
  * {@link Point2D}s.
  * 
  * <p><i>Note:</i> Use of the word 'Set' in this class does not imply adherence
- * to the {@link Set} interface. An {@code XY_DataSet} may contain multiple
+ * to the {@link Set} interface. An {@code XY_DataGroup} may contain multiple
  * identical points, although subclasses are free to provide alternate behavior.
  * </p>
  * 
  * @author Kevin Milner
  * @author Peter Powers
- * @version $Id: XY_DataSet.java 10181 2013-06-04 20:41:07Z kmilner $
+ * @version $Id: XY_DataGroup.java 10181 2013-06-04 20:41:07Z kmilner $
  */
 public interface XY_DataSet extends Named, Iterable<Point2D> {
 

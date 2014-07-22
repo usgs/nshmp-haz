@@ -1249,7 +1249,7 @@ public final class DataUtils {
 	 * @param data to be binned
 	 * @param origin for binning
 	 * @param size of each bin
-	 * @return an {@code XY_DataSet} of the binned distribution or {@code null}
+	 * @return an {@code XY_DataGroup} of the binned distribution or {@code null}
 	 *         if the binned distribution is empty
 	 * @throws NullPointerException if the supplied {@code data} is {@code null}
 	 * @throws IllegalArgumentException if supplied {@code data} is empty, the

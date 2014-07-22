@@ -60,8 +60,11 @@ public final class Parsing {
 	private static final Splitter SPLIT_DASH = Splitter.on('-').omitEmptyStrings().trimResults();
 	
 	private static final Joiner.MapJoiner MAP_JOIN = Joiner.on(',').withKeyValueSeparator(":");
-	private static final Splitter.MapSplitter MAP_SPLIT= Splitter.on(',').trimResults().withKeyValueSeparator(":");
-	private static final Splitter.MapSplitter MAP_MAP_SPLIT= Splitter.on(';').trimResults().withKeyValueSeparator("::");
+	private static final Splitter.MapSplitter MAP_SPLIT = Splitter.on(',').trimResults().withKeyValueSeparator(":");
+	private static final Splitter.MapSplitter MAP_MAP_SPLIT = Splitter.on(';').trimResults().withKeyValueSeparator("::");
+	
+	private static final Splitter.MapSplitter QUERY_SPLITTER = Splitter.on('&').trimResults().withKeyValueSeparator('=');
+	private static final Joiner.MapJoiner QUERY_JOINER = Joiner.on('&').withKeyValueSeparator("=");
 	// @formatter:on
 	
 	/**
@@ -635,6 +638,25 @@ public final class Parsing {
 	 */
 	static String addBrackets(String s) {
 		return '[' + s + ']';
+	}
+	
+	
+	// TODO are thesequery methods actually necessary
+	/**
+	 * Convert a {@code Map} to a {@code URL} name-value pair query {@code String}.
+	 * @param parameterMap to process
+	 */
+	public static String mapToQuery(final Map<String, String> parameterMap) {
+		return "?" + QUERY_JOINER.join(parameterMap);
+	}
+	
+	/**
+	 * Convert a {@code URL} name-value pair query {@code String} to a {@code Map}. 
+	 * @param query to process
+	 */
+	public static Map<String, String> queryToMap(String query) {
+		if (query.startsWith("?")) query = query.substring(1);
+		return QUERY_SPLITTER.split(query);
 	}
 	
 	/**
