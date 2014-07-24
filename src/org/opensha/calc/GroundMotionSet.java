@@ -3,6 +3,7 @@ package org.opensha.calc;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import java.util.List;
 import java.util.Map;
@@ -26,20 +27,37 @@ public final class GroundMotionSet {
 	
 	// NOTE the inputList supplied to Builder will be immutable
 	// but the mean and sigma list maps are not; builder backs
-	// means and sigmas with double[]
+	// mean and sigma lists with double[].
 
-	public final List<GmmInput> inputs;
+	public final GmmInputList inputs;
 	public final Map<Gmm, List<Double>> means;
 	public final Map<Gmm, List<Double>> sigmas;
 
-	private GroundMotionSet(List<GmmInput> inputs, Map<Gmm, List<Double>> means,
+	private GroundMotionSet(GmmInputList inputs, Map<Gmm, List<Double>> means,
 		Map<Gmm, List<Double>> sigmas) {
 		this.inputs = inputs;
 		this.means = means;
 		this.sigmas = sigmas;
 	}
+	
+	@Override public String toString() {
+		StringBuilder sb = new StringBuilder(getClass().getSimpleName());
+		sb.append(" [").append(inputs.parent.name()).append("]");
+		sb.append(": ").append(LINE_SEPARATOR.value());
+		for (int i=0; i<inputs.size(); i++) {
+			sb.append(inputs.get(i));
+			sb.append(" ");
+			for (Gmm gmm : means.keySet()) {
+				sb.append(gmm.name()).append(" ");
+				sb.append(String.format("%.3f", means.get(gmm).get(i))).append(" ");
+				sb.append(String.format("%.3f", sigmas.get(gmm).get(i))).append(" ");
+			}
+			sb.append(LINE_SEPARATOR.value());
+		}
+		return sb.toString();
+	}
 
-	static Builder builder(List<GmmInput> inputs, Set<Gmm> gmms) {
+	static Builder builder(GmmInputList inputs, Set<Gmm> gmms) {
 		return new Builder(inputs, gmms);
 	}
 
@@ -47,7 +65,7 @@ public final class GroundMotionSet {
 
 		private static final String ID = "ScalarGroundMotionSet.Builder";
 
-		private final List<GmmInput> inputs;
+		private final GmmInputList inputs;
 		private final Map<Gmm, List<Double>> means;
 		private final Map<Gmm, List<Double>> sigmas;
 
@@ -55,7 +73,7 @@ public final class GroundMotionSet {
 		private final int size;
 		private int addCount = 0;
 
-		private Builder(List<GmmInput> inputs, Set<Gmm> gmms) {
+		private Builder(GmmInputList inputs, Set<Gmm> gmms) {
 			checkArgument(checkNotNull(inputs).size() > 0);
 			checkArgument(checkNotNull(gmms).size() > 0);
 			this.inputs = inputs;

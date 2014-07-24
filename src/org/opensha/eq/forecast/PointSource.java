@@ -30,16 +30,13 @@ import org.opensha.mfd.IncrementalMfd;
  * require more detailed distance metrics that are consistent with a
  * {@code Rupture}'s {@code FocalMech}, dip, and rake.</p>
  * 
- * <p><b>NOTE</b>:The {@link PointSource#getRupture(int)} method is thread safe,
- * however, it is inefficient in that it creates a new {@link Rupture} on every
- * call. Use of {@link Source#iterator()} is preferred, but {@code Rupture}
- * instances returned by the iterator should not be retained and an iterator
- * instance should only ever be used by a single thread.</p>
+ * <p><b>NOTE</b>: {@code PointSource}s are thread safe, however the
+ * {@code Rupture}s returned by {@link Source#iterator()} are not.</p>
  * 
  * <p><b>NOTE</b>: {@code Source.size()} returns the absolute number of
  * {@code Rupture}s that can be created given the supplied source input
  * arguments; the iterator, however, <i>may</i> return fewer {@code Rupture}s as
- * some may have zero rates or zero weights.</p>
+ * some may have zero rates.</p>
  * 
  * @author Peter Powers
  */
@@ -158,7 +155,7 @@ class PointSource implements Source {
 	void init() {
 
 		/* Get the number of mag-depth iterations required to get to mMax */
-		magDepthSize = parent.magDepthIndices.indexOf(mfd.getNum());
+		magDepthSize = parent.magDepthIndices.lastIndexOf(mfd.getNum() - 1);
 
 		/*
 		 * Init rupture indexing: SS RV NR. Each category will have ruptures for
@@ -170,27 +167,7 @@ class PointSource implements Source {
 		ssIdx = ssCount;
 		revIdx = ssCount + revCount;
 
-		rupCount = ssCount + ssCount + norCount;
-
-		// TODO clean
-		// below wasn't correct; this simple implementation doesn't consider
-		// hanging wall vs footwall representations on the assumption that
-		// in 2008 the gird source hw effect approximations were used for CB and
-		// CY
-
-		/*
-		 * Init focal mech counts: Total focal mech representations required,
-		 * double counting reverse and normal mechs because they will have both
-		 * hanging wall and footwall representations.
-		 */
-		// int mechCount = 0;
-		// for (FocalMech mech : mechWtMap.keySet()) {
-		// double wt = mechWtMap.get(mech);
-		// if (wt == 0.0) continue;
-		// mechCount += (mech == STRIKE_SLIP) ? 1 : 2;
-		// }
-		// rupCount = magDepthCount * mechCount;
-
+		rupCount = ssCount + revCount + norCount;
 	}
 
 	/*
@@ -201,22 +178,29 @@ class PointSource implements Source {
 		return (idx < ssIdx) ? STRIKE_SLIP : (idx < revIdx) ? REVERSE : NORMAL;
 	}
 
+	private static final double MAX_DEPTH = 14.0;
+	private static final double GENERIC_WIDTH = 8.0;
+
 	/*
-	 * Returns the minimum of the aspect ratio width and the allowable down-dip
-	 * width. Utility for use by subclasses.
+	 * TODO: revisit. This is very clunky. Point sources are used by crustal and slab
+	 * sources. The default implementation here had assumed a maximum crustal eq
+	 * depth of 14km, which is really only appropriate for active continental
+	 * crust such as that in California. This yielded negative widths and
+	 * unreasonable zHyp values when zTop > 14. That said, most Gmm's used for
+	 * slab or stable continental crust ignore width and zHyp so there probably
+	 * wouldn't be a problem.
+	 * 
+	 * As a stopgap, any supplied depth > 14km will return a width of 8km, a
+	 * reasonable value for an earthquake nested in subducting oceanic crust.
+	 * Otherwise, method returns the minimum of the aspect ratio width and the
+	 * allowable down-dip width. Utility for use by subclasses.
 	 */
 	double calcWidth(double mag, double depth, double dipRad) {
+		if (depth > MAX_DEPTH) return GENERIC_WIDTH;
 		double length = parent.mlr.getMedianLength(mag);
 		double aspectWidth = length / 1.5;
 		double ddWidth = (14.0 - depth) / sin(dipRad);
 		return min(aspectWidth, ddWidth);
-	}
-
-	/*
-	 * Same as {@code Math.hypot()} without regard to under/over flow.
-	 */
-	static final double hypot2(double v1, double v2) {
-		return sqrt(v1 * v1 + v2 * v2);
 	}
 
 	static class PointSurface implements RuptureSurface {

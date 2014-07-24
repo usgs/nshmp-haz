@@ -7,6 +7,7 @@ import static org.opensha.data.DataUtils.validateWeight;
 import static org.opensha.eq.Magnitudes.MAX_MAG;
 import static org.opensha.eq.fault.Faults.validateStrike;
 import static org.opensha.util.TextUtils.validateName;
+import static org.opensha.eq.forecast.PointSourceType.*;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -53,7 +54,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	final MagLengthRelationship mlr;
 
 	// TODO this needs to be able to be set
-	PointSourceType ptSrcType = PointSourceType.FINITE;
+	// TODO cases where general pointSource is used??
+	PointSourceType ptSrcType;
 
 	// only available to parsers
 	private GridSourceSet(String name, Double weight, MagScalingType msrType, GmmSet gmmSet,
@@ -76,6 +78,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			"Only mag-length relationships are supported at this time");
 		mlr = (MagLengthRelationship) msr;
 
+		ptSrcType = Double.isNaN(strike) ? FINITE : FIXED_STRIKE;
 	}
 
 	@Override public SourceType type() {
@@ -211,7 +214,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private boolean built = false;
 
 		private String name;
-		Double weight;
+		private Double weight;
 		private Double strike;
 		private MagScalingType magScaling;
 		private GmmSet gmmSet;

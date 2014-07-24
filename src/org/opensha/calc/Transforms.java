@@ -19,6 +19,7 @@ import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GmmInput;
 import org.opensha.gmm.GroundMotionModel;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AsyncFunction;
@@ -38,7 +39,7 @@ public final class Transforms {
 	 * 
 	 * @param site of interest
 	 */
-	public static AsyncFunction<Source, List<GmmInput>> sourceToInputs(Site site) {
+	public static AsyncFunction<Source, GmmInputList> sourceToInputs(Site site) {
 		return new SourceToInputs(site);
 	}
 
@@ -48,7 +49,7 @@ public final class Transforms {
 	 * 
 	 * @param models ground motion model instances to use
 	 */
-	public static AsyncFunction<List<GmmInput>, GroundMotionSet> inputsToGroundMotions(
+	public static AsyncFunction<GmmInputList, GroundMotionSet> inputsToGroundMotions(
 			Map<Gmm, GroundMotionModel> models) {
 		return new InputsToGroundMotions(models);
 	}
@@ -123,7 +124,7 @@ public final class Transforms {
 	// return new GroundMotionCalc(gmmInstanceMap, input);
 	// }
 
-	private static class SourceToInputs implements AsyncFunction<Source, List<GmmInput>> {
+	private static class SourceToInputs implements AsyncFunction<Source, GmmInputList> {
 
 		// TODO this needs additional rJB distance filtering
 		// Is it possible to return an empty list??
@@ -134,8 +135,8 @@ public final class Transforms {
 			this.site = site;
 		}
 
-		@Override public ListenableFuture<List<GmmInput>> apply(Source source) throws Exception {
-			ImmutableList.Builder<GmmInput> builder = ImmutableList.builder();
+		@Override public ListenableFuture<GmmInputList> apply(Source source) throws Exception {
+			GmmInputList inputs = new GmmInputList(source);
 			for (Rupture rup : source) {
 
 				RuptureSurface surface = rup.surface();
@@ -161,16 +162,15 @@ public final class Transforms {
 					site.vsInferred,
 					site.z2p5,
 					site.z1p0);
-				builder.add(input);
+				inputs.add(input);
 				// @formatter:on
 			}
-			List<GmmInput> inputs = builder.build();
 			return Futures.immediateFuture(inputs);
 		}
 	}
 
 	private static class InputsToGroundMotions implements
-			AsyncFunction<List<GmmInput>, GroundMotionSet> {
+			AsyncFunction<GmmInputList, GroundMotionSet> {
 
 		private final Map<Gmm, GroundMotionModel> gmmInstances;
 
@@ -178,7 +178,7 @@ public final class Transforms {
 			this.gmmInstances = gmmInstances;
 		}
 
-		@Override public ListenableFuture<GroundMotionSet> apply(List<GmmInput> gmmInputs)
+		@Override public ListenableFuture<GroundMotionSet> apply(GmmInputList gmmInputs)
 				throws Exception {
 
 			GroundMotionSet.Builder gmBuilder = GroundMotionSet.builder(gmmInputs,
@@ -232,5 +232,6 @@ public final class Transforms {
 			return Futures.immediateFuture(curveMap);
 		}
 	}
+	
 
 }

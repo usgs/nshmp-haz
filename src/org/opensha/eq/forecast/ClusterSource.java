@@ -19,7 +19,7 @@ import com.google.common.collect.Lists;
  * calculator and {@link ClusterSource#iterator()} therefore throws an
  * {@code UnsupportedOperationException}.
  * 
- * <p>A {@code ClusterSource} can not be created directly; it may only be
+ * <p>A {@code ClusterSource} cannot be created directly; it may only be
  * created by a private parser.</p>
  * 
  * @author Peter Powers

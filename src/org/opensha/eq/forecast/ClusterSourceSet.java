@@ -39,7 +39,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 	}
 
 	@Override public SourceType type() {
-		return SourceType.FAULT;
+		return SourceType.CLUSTER;
 	}
 
 	@Override public Predicate<ClusterSource> distanceFilter(final Location loc,

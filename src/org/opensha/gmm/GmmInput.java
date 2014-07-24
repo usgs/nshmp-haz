@@ -309,21 +309,25 @@ public final class GmmInput {
 		}
 	}
 
+	/**
+	 * Some values [mag, rJB, rRup, rX, zHyp] may be truncated to 2 or 3 decimal
+	 * places for output.
+	 */
 	@Override public String toString() {
 		return getClass().getSimpleName() + " " + createKeyValueMap();
 	}
 	
-	private Map<Object, Object> createKeyValueMap() {
-		Map<Object, Object> keyValueMap = Maps.newHashMap();
+	private Map<GmmField, Object> createKeyValueMap() {
+		Map<GmmField, Object> keyValueMap = Maps.newEnumMap(GmmField.class);
 		keyValueMap.put(RATE, rate);
-		keyValueMap.put(MAG, Mw);
-		keyValueMap.put(RJB, rJB);
-		keyValueMap.put(RRUP, rRup);
-		keyValueMap.put(RX, rX);
+		keyValueMap.put(MAG, String.format("%.2f", Mw));
+		keyValueMap.put(RJB, String.format("%.3f", rJB));
+		keyValueMap.put(RRUP, String.format("%.3f", rRup));
+		keyValueMap.put(RX, String.format("%.3f", rX));
 		keyValueMap.put(DIP, dip);
-		keyValueMap.put(WIDTH, width);
+		keyValueMap.put(WIDTH, String.format("%.3f", width));
 		keyValueMap.put(ZTOP, zTop);
-		keyValueMap.put(ZHYP, zHyp);
+		keyValueMap.put(ZHYP, String.format("%.3f", zHyp));
 		keyValueMap.put(RAKE, rake);
 		keyValueMap.put(VS30, vs30);
 		keyValueMap.put(VSINF, vsInf);

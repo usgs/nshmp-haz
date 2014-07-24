@@ -64,22 +64,6 @@ class PointSourceFinite extends PointSource {
 		return "PointSourceFinite: " + loc;
 	}
 
-	// TODO clean
-	/*
-	 * NOTE: Getting a Rupture by index is deliberately inefficient to ensure
-	 * thread safety. A new immutable Rupture and internal FiniteSurface are
-	 * created on every call. Use Source.iterator() where possible.
-	 */
-
-	// @Override
-	// public Rupture getRupture(int idx) {
-	// checkPositionIndex(idx, size());
-	// Rupture rupture = new Rupture();
-	// rupture.surface = new FiniteSurface(loc);
-	// updateRupture(rupture, idx);
-	// return rupture;
-	// }
-
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
 	 * FinitePointSourceOLD.rupture rate is reduced to zero (a mag-depth weight
@@ -119,7 +103,6 @@ class PointSourceFinite extends PointSource {
 		fpSurf.zTop = zTop;
 		fpSurf.zBot = zTop + widthDD * sin(dipRad);
 		fpSurf.footwall = isOnFootwall(idx);
-
 	}
 
 	@Override public Iterator<Rupture> iterator() {
@@ -147,18 +130,10 @@ class PointSourceFinite extends PointSource {
 		};
 	}
 
-	// try { //TODO clean
-	// updateRupture(rupture, caret++);
-	// } catch (IndexOutOfBoundsException iobe) {
-	// String message = "\n" + Arrays.toString(parent.magDepthIndices) +
-	// "\n" + mfd + "\n" + loc + "\n" + caret +"\n" + size;
-	// throw new RuntimeException(message, iobe);
-	// }
-
 	@Override void init() {
 
 		/* Get the number of mag-depth iterations required to get to mMax */
-		magDepthSize = parent.magDepthIndices.indexOf(mfd.getNum());
+		magDepthSize = parent.magDepthIndices.lastIndexOf(mfd.getNum() - 1);
 
 		/*
 		 * Init rupture indexing: SS-FW RV-FW RV-HW NR-FW NR-HW. Each category
@@ -172,7 +147,7 @@ class PointSourceFinite extends PointSource {
 		revIdx = ssCount + revCount;
 		fwIdxLo = ssCount + revCount / 2;
 		fwIdxHi = ssCount + revCount + norCount / 2;
-
+		
 		rupCount = ssCount + revCount + norCount;
 	}
 

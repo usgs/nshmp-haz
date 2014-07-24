@@ -74,23 +74,14 @@ public class HazardCalcManager {
 	public void calc(Forecast forecast, Site site, Imt imt) throws InterruptedException,
 			ExecutionException {
 
-		// List<Source> sources;
 		for (SourceSet<? extends Source> srcSet : forecast) {
 			SourceType type = srcSet.type();
 			switch (type) {
-				case FAULT:
-					// doFaultCalc((FaultSourceSet) srcSet, gmmMap, site);
-					break;
-				case GRID:
-					break;
-				case AREA:
-					break;
-				case INTERFACE:
-					break;
 				case CLUSTER:
+					System.out.println("Skipping cluster: " + srcSet.name());
 					break;
 				default:
-					throw new IllegalArgumentException("SourceType not handled: " + type.name());
+					
 			}
 		}
 
@@ -124,32 +115,34 @@ public class HazardCalcManager {
 
 	/*
 	 * Processes a SourceSet to a List of GroundMotionSets, wrapped in a
-	 * ListenableFuture.
+	 * ListenableFuture. Handles the intermediate step of converting sources to
+	 * GmmInput. The inputs are preserved in the returned GroudnMotionSets.
 	 */
-	public List<ListenableFuture<GroundMotionSet>> toGroundMotions(SourceSet<? extends Source> sourceSet, Site site,
-			Imt imt) throws ExecutionException, InterruptedException {
+	public List<ListenableFuture<GroundMotionSet>> toGroundMotions(
+			SourceSet<? extends Source> sourceSet, Site site, Imt imt) throws ExecutionException,
+			InterruptedException {
 
 		// get ground motion models
 		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sourceSet.groundMotionModels()
 			.gmms(), imt);
 
 		// set up reusable transforms
-		AsyncFunction<Source, List<GmmInput>> sourceToInputs = Transforms.sourceToInputs(site);
-		AsyncFunction<List<GmmInput>, GroundMotionSet> inputsToGroundMotions = Transforms
+		AsyncFunction<Source, GmmInputList> sourceToInputs = Transforms.sourceToInputs(site);
+		AsyncFunction<GmmInputList, GroundMotionSet> inputsToGroundMotions = Transforms
 			.inputsToGroundMotions(gmmInstances);
 
 		// ground motion set aggregator
 		List<ListenableFuture<GroundMotionSet>> futuresList = Lists.newArrayList();
 
 		for (Source source : sourceSet.locationIterable(site.loc)) {
-
+			
 			// for the sake of consistency, we wrap Sources in ListenableFutures
 			// so that we're only ever using Futures.transform() and don't need
 			// an instance of a ListeningExecutorService
 			ListenableFuture<Source> srcFuture = Futures.immediateFuture(source);
 
 			// transform source to inputs
-			ListenableFuture<List<GmmInput>> gmmInputs = Futures.transform(srcFuture,
+			ListenableFuture<GmmInputList> gmmInputs = Futures.transform(srcFuture,
 				sourceToInputs, ex);
 
 			// transform inputs to ground motions
@@ -159,34 +152,12 @@ public class HazardCalcManager {
 			futuresList.add(gmResults);
 		}
 
-		return futuresList; //Futures.allAsList(futuresList);
+		return futuresList;
 	}
 
-	
-	
-	
-	/*
-	 * Processes a ClusterSourceSet to a List of GroundMotionSet Lists, wrapped
-	 * in a ListenableFuture.
-	 */
-	public ListenableFuture<List<List<GroundMotionSet>>> toClusterGroundMotions(
-			ClusterSourceSet sourceSet, Site site, Imt imt) {
-
-		List<ListenableFuture<List<GroundMotionSet>>> clusterMotions = Lists.newArrayList();
-
-		for (ClusterSource cluster : sourceSet) {
-			FaultSourceSet faults = cluster.faults();
-//			clusterMotions.add(toGroundMotions(faults, site, imt));
-		}
-
-		return Futures.allAsList(clusterMotions);
-	}
-
-	
-	
-	
 	public List<ListenableFuture<Map<Gmm, ArrayXY_Sequence>>> toMeanHazardCurve(
-			List<ListenableFuture<GroundMotionSet>> groundMotionList) throws ExecutionException, InterruptedException {
+			List<ListenableFuture<GroundMotionSet>> groundMotionList) throws ExecutionException,
+			InterruptedException {
 
 		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
 
@@ -199,7 +170,24 @@ public class HazardCalcManager {
 			futuresList.add(Futures.transform(gmSet, groundMotionsToCurves, ex));
 		}
 
-		return futuresList; //Futures.allAsList(futuresList);
+		return futuresList; // Futures.allAsList(futuresList);
+	}
+
+	/*
+	 * Processes a ClusterSourceSet to a List of GroundMotionSet Lists, wrapped
+	 * in a ListenableFuture.
+	 */
+	public ListenableFuture<List<List<GroundMotionSet>>> toClusterGroundMotions(
+			ClusterSourceSet sourceSet, Site site, Imt imt) {
+
+		List<ListenableFuture<List<GroundMotionSet>>> clusterMotions = Lists.newArrayList();
+
+		for (ClusterSource cluster : sourceSet) {
+			FaultSourceSet faults = cluster.faults();
+			// clusterMotions.add(toGroundMotions(faults, site, imt));
+		}
+
+		return Futures.allAsList(clusterMotions);
 	}
 
 	public void toClusterCurve(ListenableFuture<List<List<GroundMotionSet>>> asyncGroundMotions,

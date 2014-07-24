@@ -5,10 +5,9 @@ import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
-import static org.opensha.eq.fault.FocalMech.NORMAL;
-import static org.opensha.eq.fault.FocalMech.REVERSE;
 import static org.opensha.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha.geo.GeoTools.TO_RAD;
+import static org.opensha.util.MathUtils.hypot;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -19,9 +18,7 @@ import org.opensha.geo.Location;
 import org.opensha.geo.LocationVector;
 import org.opensha.geo.Locations;
 import org.opensha.mfd.IncrementalMfd;
-import org.opensha.mfd.Mfds;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.math.DoubleMath;
 
 /**
@@ -131,11 +128,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		Location p1 = Locations.location(locWithDepth, v1);
 		Location p2 = Locations.location(locWithDepth, v2);
 
-		// we don't know what the footwall is relative to loc, all that
-		// matters is that the two representations be mirror images of
-		// each other; isOnFootwall is ignored in surface implementation
-
-		if (isOnFootwall(idx)) {
+		if (fsSurf.footwall) {
 			fsSurf.p1 = p1;
 			fsSurf.p2 = p2;
 			if (mech == STRIKE_SLIP) {
@@ -151,6 +144,8 @@ class PointSourceFixedStrike extends PointSourceFinite {
 			fsSurf.p1 = p2;
 			fsSurf.p2 = p1;
 			if (mech == STRIKE_SLIP) {
+				// TODO We shouldn't ever get here as footwall should be true
+				// for all STRIKE_SLIP
 				fsSurf.p3 = Location.create(p1.lat(), p1.lon(), zBot);
 				fsSurf.p4 = Location.create(p2.lat(), p2.lon(), zBot);
 			} else {
@@ -200,6 +195,20 @@ class PointSourceFixedStrike extends PointSourceFinite {
 			super(loc);
 		}
 
+		/*
+		 * NOTE the footwall flag in parent can not be used here. In parent,
+		 * there's not strict relation between the site location and the
+		 * geometry of the fault, we just need to have two pseudo representations
+		 * for dipping faults.
+		 * 
+		 * Here, dipping faults will have two real representations (defined by
+		 * corner Locations) and one will be on the footwall and one won't. When
+		 * initializing the surface (above), the footwall flag is used to create
+		 * the two mirror image surfaces, but which one is actually the footwall
+		 * representation relative to the site location is unkown until distance
+		 * calculations are started.
+		 */
+		
 		@Override public Distances distanceTo(Location loc) {
 			// NOTE no NSHMP style distance corrections here
 
@@ -207,7 +216,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 			double rSeg = Locations.distanceToSegmentFast(p1, p2, loc);
 
 			// simple footwall case
-			if (rX <= 0.0) return Distances.create(rSeg, hypot2(rSeg, zTop), rX);
+			if (rX <= 0.0 || dip == 90.0) return Distances.create(rSeg, hypot(rSeg, zTop), rX);
 
 			// otherwise, we're on the hanging wall...
 
@@ -215,9 +224,9 @@ class PointSourceFixedStrike extends PointSourceFinite {
 			double dipRad = dip * TO_RAD;
 			double rCutTop = tan(dipRad) * zTop;
 			double rCutBot = tan(dipRad) * zBot + widthH;
-			double rRup = (rX > rCutBot) ? hypot2(rX - widthH, zBot) : (rX < rCutTop) ? hypot2(rX,
-				zTop) : (rX - rCutTop) / sin(dipRad);
-
+			double rRup = (rX > rCutBot) ? hypot(rX - widthH, zBot) : (rX < rCutTop) ? hypot(rX,
+				zTop) : hypot(rCutTop, zTop) + (rX - rCutTop) * sin(dipRad);
+			
 			// test if we're normal to trace or past its endpoints
 			boolean offEnd = DoubleMath.fuzzyCompare(rSeg, rX, 0.00001) > 0;
 
@@ -225,9 +234,9 @@ class PointSourceFixedStrike extends PointSourceFinite {
 				// distance from surface projection of ends/caps of fault
 				double rJB = min(Locations.distanceToSegmentFast(p1, p4, loc),
 					Locations.distanceToSegmentFast(p2, p3, loc));
-				double rY = sqrt(rSeg * rSeg + rX * rX);
+				double rY = sqrt(rSeg * rSeg - rX * rX);
 				// rRup is the hypoteneuse of rRup (above) and rY
-				return Distances.create(rJB, hypot2(rRup, rY), rX);
+				return Distances.create(rJB, hypot(rRup, rY), rX);
 			}
 
 			double rJB = (rX > widthH) ? rX - widthH : 0.0;
@@ -239,11 +248,4 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		
 	}
 	
-	public static void main(String[] args) {
-		IncrementalMfd mfd = Mfds.newGutenbergRichterMFD(5.0, 0.5, 7, 1.0, 1.0);
-		Location loc = Location.create(34.0, -118.0, 5.0);
-		Map<FocalMech, Double> mechMap = ImmutableMap.of(STRIKE_SLIP, 1.0, NORMAL, 0.0, REVERSE, 0.0);
-		
-		
-	}
 }
