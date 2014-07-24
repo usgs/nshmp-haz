@@ -195,6 +195,10 @@ public final class Parsing {
 		addAttribute(id.toString(), Double.toString(value), parent);
 	}
 
+	public static void addAttribute(Enum<?> id, int value, Element parent) {
+		addAttribute(id.toString(), Integer.toString(value), parent);
+	}
+
 	public static void addAttribute(Enum<?> id, double[] values, Element parent) {
 		addAttribute(id.toString(), Arrays.toString(values), parent);
 	}
