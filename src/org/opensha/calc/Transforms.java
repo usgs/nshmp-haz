@@ -8,11 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
+import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.eq.fault.surface.IndexedFaultSurface;
 import org.opensha.eq.fault.surface.RuptureSurface;
-import org.opensha.eq.forecast.DistanceType;
 import org.opensha.eq.forecast.Distances;
-import org.opensha.eq.forecast.FaultSource;
 import org.opensha.eq.forecast.Rupture;
 import org.opensha.eq.forecast.Source;
 import org.opensha.geo.Location;
@@ -20,11 +19,9 @@ import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GmmInput;
 import org.opensha.gmm.GroundMotionModel;
 
-import com.google.common.base.Supplier;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -37,61 +34,37 @@ import com.google.common.util.concurrent.ListenableFuture;
 public final class Transforms {
 
 	/**
-	 * Returns a supplier of {@link Source} to {@link GmmInput} transforms.
+	 * Create a site-specific asynchronous function to transform sources to
+	 * ground motion model inputs.
+	 * 
 	 * @param site of interest
-	 * @return a {@code List<GmmInput>} of Gmm inputs
-	 * @see Gmm
 	 */
-	// public static TransformSupplier<Source, List<GmmInput>>
-	// sourceInitializerSupplier(
-	// final Site site) {
-	// return new TransformSupplier<Source, List<GmmInput>>() {
-	// @Override public Transform<Source, List<GmmInput>> get(Source source) {
-	// return new SourceInitializer(source, site);
-	// }
-	// };
-	// }
-
-	public static AsyncFunction<Source, List<GmmInput>> sourceToInputs(Site site) {
+	public static AsyncFunction<Source, GmmInputList> sourceToInputs(Site site) {
 		return new SourceToInputs(site);
 	}
 
 	/**
-	 * @param gmmInstances
-	 * @return
+	 * Create an asynchronous function to transform ground motion model inputs
+	 * to fround motions.
+	 * 
+	 * @param models ground motion model instances to use
 	 */
-	public static AsyncFunction<List<GmmInput>, GroundMotionSet> inputsToGroundMotions(
-			Map<Gmm, GroundMotionModel> gmmInstances) {
-		return new InputsToGroundMotions(gmmInstances);
+	public static AsyncFunction<GmmInputList, GroundMotionSet> inputsToGroundMotions(
+			Map<Gmm, GroundMotionModel> models) {
+		return new InputsToGroundMotions(models);
 	}
 
-	// public static Supplier<AsyncFunction<Source, List<GmmInput>>> test(final
-	// Site site) {
-	// return new Supplier<AsyncFunction<Source, List<GmmInput>>>() {
-	// @Override public AsyncFunction<Source, List<GmmInput>> get() {
-	// return null;
-	// // TODO do nothing
-	//
-	// }
-	//
-	// };
-	// }
+	/**
+	 * Create an asynchronous function to convert ground motions to hazard
+	 * curves.
+	 * 
+	 * @param model curve
+	 */
+	public static AsyncFunction<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> groundMotionsToCurves(
+			ArrayXY_Sequence model) {
+		return new GroundMotionsToHazardCurves(model);
+	}
 
-	// /**
-	// * Returns a supplier of {@link Source} to {@link GmmInput} transforms.
-	// * @param site of interest
-	// * @return a {@code List<GmmInput>} of Gmm inputs
-	// * @see Gmm
-	// */
-	// public static TransformSupplier<Source, List<GmmInput>>
-	// sourceInitializerSupplier(
-	// final Site site) {
-	// return new TransformSupplier<Source, List<GmmInput>>() {
-	// @Override public Transform<Source, List<GmmInput>> get(Source source) {
-	// return new SourceInitializer(source, site);
-	// }
-	// };
-	// }
 
 	/**
 	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
@@ -102,26 +75,12 @@ public final class Transforms {
 	 * @return a {@code List<GmmInput>} of Gmm inputs
 	 * @see Gmm
 	 */
-	// public static Callable<List<GmmInput>> newFaultCalcInitializer(final
-	// FaultSource source,
-	// final Site site) {
-	// return new FaultCalcInitializer(source, site);
+	// public static Callable<GmmInput> newIndexedFaultCalcInitializer(
+	// final IndexedFaultSource source, final Site site,
+	// final Table<DistanceType, Integer, Double> rTable, final List<Integer>
+	// sectionIDs) {
+	// return new IndexedFaultCalcInitializer(source, site, rTable, sectionIDs);
 	// }
-
-	/**
-	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
-	 * that returns a {@code List<GmmInput>} of inputs for a ground motion model
-	 * (Gmm) calculation.
-	 * @param source
-	 * @param site
-	 * @return a {@code List<GmmInput>} of Gmm inputs
-	 * @see Gmm
-	 */
-//	public static Callable<GmmInput> newIndexedFaultCalcInitializer(
-//			final IndexedFaultSource source, final Site site,
-//			final Table<DistanceType, Integer, Double> rTable, final List<Integer> sectionIDs) {
-//		return new IndexedFaultCalcInitializer(source, site, rTable, sectionIDs);
-//	}
 
 	/**
 	 * Creates a {@code Callable} that returns the distances between the
@@ -165,7 +124,7 @@ public final class Transforms {
 	// return new GroundMotionCalc(gmmInstanceMap, input);
 	// }
 
-	private static class SourceToInputs implements AsyncFunction<Source, List<GmmInput>> {
+	private static class SourceToInputs implements AsyncFunction<Source, GmmInputList> {
 
 		// TODO this needs additional rJB distance filtering
 		// Is it possible to return an empty list??
@@ -176,12 +135,12 @@ public final class Transforms {
 			this.site = site;
 		}
 
-		@Override public ListenableFuture<List<GmmInput>> apply(Source source) throws Exception {
-			ImmutableList.Builder<GmmInput> builder = ImmutableList.builder();
+		@Override public ListenableFuture<GmmInputList> apply(Source source) throws Exception {
+			GmmInputList inputs = new GmmInputList(source);
 			for (Rupture rup : source) {
 
 				RuptureSurface surface = rup.surface();
-				
+
 				Distances distances = surface.distanceTo(site.loc);
 				double dip = surface.dip();
 				double width = surface.width();
@@ -203,16 +162,15 @@ public final class Transforms {
 					site.vsInferred,
 					site.z2p5,
 					site.z1p0);
-				builder.add(input);
+				inputs.add(input);
 				// @formatter:on
 			}
-			List<GmmInput> inputs = builder.build();
 			return Futures.immediateFuture(inputs);
 		}
 	}
 
 	private static class InputsToGroundMotions implements
-			AsyncFunction<List<GmmInput>, GroundMotionSet> {
+			AsyncFunction<GmmInputList, GroundMotionSet> {
 
 		private final Map<Gmm, GroundMotionModel> gmmInstances;
 
@@ -220,7 +178,7 @@ public final class Transforms {
 			this.gmmInstances = gmmInstances;
 		}
 
-		@Override public ListenableFuture<GroundMotionSet> apply(List<GmmInput> gmmInputs)
+		@Override public ListenableFuture<GroundMotionSet> apply(GmmInputList gmmInputs)
 				throws Exception {
 
 			GroundMotionSet.Builder gmBuilder = GroundMotionSet.builder(gmmInputs,
@@ -236,5 +194,44 @@ public final class Transforms {
 			return Futures.immediateFuture(results);
 		}
 	}
+
+	/*
+	 * Convert a GroundMotionSet to a map of hazard curves, one per gmm.
+	 */
+	private static class GroundMotionsToHazardCurves implements
+			AsyncFunction<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> {
+
+		private final ArrayXY_Sequence model;
+
+		GroundMotionsToHazardCurves(ArrayXY_Sequence model) {
+			this.model = model;
+		}
+
+		@Override public ListenableFuture<Map<Gmm, ArrayXY_Sequence>> apply(GroundMotionSet gmSet)
+				throws Exception {
+
+			Map<Gmm, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Gmm.class);
+
+			for (Gmm gmm : gmSet.means.keySet()) {
+
+				ArrayXY_Sequence gmmCurve = ArrayXY_Sequence.copyOf(model);
+				curveMap.put(gmm, gmmCurve);
+
+				ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(model);
+
+				List<Double> means = gmSet.means.get(gmm);
+				List<Double> sigmas = gmSet.sigmas.get(gmm);
+
+				for (int i = 0; i < means.size(); i++) {
+					Utils.setExceedProbabilities(utilCurve, means.get(i), sigmas.get(i), false,
+						Double.NaN);
+					utilCurve.multiply(gmSet.inputs.get(i).rate());
+					gmmCurve.add(utilCurve);
+				}
+			}
+			return Futures.immediateFuture(curveMap);
+		}
+	}
+	
 
 }

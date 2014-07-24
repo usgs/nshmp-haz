@@ -3,6 +3,7 @@ package org.opensha.eq.forecast;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.FINER;
 import static org.opensha.eq.forecast.SourceAttribute.FOCAL_MECH_MAP;
 import static org.opensha.eq.forecast.SourceAttribute.MAG_DEPTH_MAP;
 import static org.opensha.eq.forecast.SourceAttribute.MAG_SCALING;
@@ -19,6 +20,7 @@ import static org.opensha.util.Parsing.stringToValueValueWeightMap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.logging.Logger;
@@ -65,7 +67,7 @@ class GridParser extends DefaultHandler {
 
 	private GridSourceSet sourceSet;
 	private GridSourceSet.Builder sourceSetBuilder;
-	
+
 	// master magnitude list data
 	private double minMag = Magnitudes.MAX_MAG;
 	private double maxMag = Magnitudes.MIN_MAG;
@@ -74,11 +76,11 @@ class GridParser extends DefaultHandler {
 	// Node locations are the only text content in source files
 	private boolean readingLoc = false;
 	private StringBuilder locBuilder = null;
-	
+
 	// Per-node MFD and mechMap
 	IncrementalMfd nodeMFD = null;
 	Map<FocalMech, Double> nodeMechMap = null;
-	
+
 	// Used to when validating depths in magDepthMap
 	SourceType type = GRID;
 
@@ -153,7 +155,6 @@ class GridParser extends DefaultHandler {
 					log.fine("Focal mechs: " + mechMap);
 					log.fine("Mag scaling: " + magScaling);
 					log.fine("     Strike: " + strike);
-					log.fine("");
 				}
 
 				break;
@@ -202,19 +203,28 @@ class GridParser extends DefaultHandler {
 				nodeMFD = null;
 				nodeMechMap = null;
 				break;
-				
+
 			case GRID_SOURCE_SET:
 				/*
-				 * TODO there are too many assumptions built into this;
-				 * whose to say ones bin spacing should be only be in the 
-				 * hundredths? 
+				 * TODO there are too many assumptions built into this; whose to
+				 * say ones bin spacing should be only be in the hundredths?
 				 */
 				double cleanDelta = Double.valueOf(String.format("%.2f", deltaMag));
 				double[] mags = DataUtils.buildCleanSequence(minMag, maxMag, cleanDelta, true, 2);
 				sourceSetBuilder.magMaster(Doubles.asList(mags));
 				sourceSet = sourceSetBuilder.build();
+
+				if (log.isLoggable(FINE)) {
+					log.fine("       Size: " + sourceSet.size());
+					log.finer("  Mag count: " + sourceSet.magMaster.size());
+					log.finer(" Mag master: " + sourceSet.magMaster);
+					log.finer("  MFD index: " + sourceSet.magDepthIndices);
+					log.finer("     Depths: " + sourceSet.magDepthDepths);
+					log.finer("    Weights: " + sourceSet.magDepthWeights);
+					log.fine("");
+				}
 				break;
-				
+
 		}
 	}
 
@@ -251,6 +261,6 @@ class GridParser extends DefaultHandler {
 				throw new IllegalStateException(type + " not yet implemented");
 
 		}
-	}	
+	}
 
 }

@@ -110,7 +110,7 @@ class GmmParser extends DefaultHandler {
 						setBuilder.secondaryMaxDistance(rMax);
 					}
 					log.fine("");
-					log.fine("        Set: " + mapCount + "[rMax = " + rMax + "]");
+					log.fine("        Set: " + mapCount + " [rMax = " + rMax + "]");
 					break;
 
 				case MODEL:

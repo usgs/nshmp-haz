@@ -7,6 +7,7 @@ import static org.opensha.data.DataUtils.validateWeight;
 import static org.opensha.eq.Magnitudes.MAX_MAG;
 import static org.opensha.eq.fault.Faults.validateStrike;
 import static org.opensha.util.TextUtils.validateName;
+import static org.opensha.eq.forecast.PointSourceType.*;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -39,10 +40,10 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	private final List<Location> locs;
 	private final List<IncrementalMfd> mfds;
-	 final List<Double> magMaster;
 	private final List<Map<FocalMech, Double>> mechMaps;
 	private final NavigableMap<Double, Map<Double, Double>> magDepthMap;
 	private final double strike;
+	final List<Double> magMaster;
 
 	/*
 	 * Most grid sources have the same focal mech map everywhere; in these
@@ -53,7 +54,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	final MagLengthRelationship mlr;
 
 	// TODO this needs to be able to be set
-	PointSourceType ptSrcType = PointSourceType.FIXED_STRIKE;
+	// TODO cases where general pointSource is used??
+	PointSourceType ptSrcType;
 
 	// only available to parsers
 	private GridSourceSet(String name, Double weight, MagScalingType msrType, GmmSet gmmSet,
@@ -76,6 +78,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			"Only mag-length relationships are supported at this time");
 		mlr = (MagLengthRelationship) msr;
 
+		ptSrcType = Double.isNaN(strike) ? FINITE : FIXED_STRIKE;
 	}
 
 	@Override public SourceType type() {
@@ -139,10 +142,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * and depth weights. These arrays remove the need to do expensive lookups
 	 * in a magDepthMap when iterating grid sources and ruptures. These are
 	 * generally longer than required by grid source implementations as they
-	 * span [mMin maxmMaxMag] of the entire GridSourceSet. Implementations will
+	 * span [mMin mMax] of the entire GridSourceSet. Implementations will
 	 * only ever reference those indices up to their individual mMax, obviating
-	 * the need for individual sources to store these arrays, which would incur
-	 * a lot of overhead for large (million+ node) GridSourceSets.
+	 * the need for individual sources to store these arrays.
 	 * 
 	 * Given magDepthMap: [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1, 5.0:0.9]]
 	 * 
@@ -163,10 +165,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	// @formatter:on
 
+	// TODO to ImmutableLists backed by arrays
+	
 	// available to point source implementations
-	int[] magDepthIndices;
-	double[] magDepthDepths;
-	double[] magDepthWeights;
+	List<Integer> magDepthIndices;
+	List<Double> magDepthDepths;
+	List<Double> magDepthWeights;
 
 	private void initMagDepthData() {
 		List<Integer> indices = Lists.newArrayList();
@@ -181,9 +185,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 				weights.add(entry.getValue());
 			}
 		}
-		magDepthIndices = Ints.toArray(indices);
-		magDepthDepths = Doubles.toArray(depths);
-		magDepthWeights = Doubles.toArray(weights);
+		magDepthIndices = Ints.asList(Ints.toArray(indices));
+		magDepthDepths = Doubles.asList(Doubles.toArray(depths));
+		magDepthWeights = Doubles.asList(Doubles.toArray(weights));
 	}
 
 	// TODO MagDepthMap
@@ -210,7 +214,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private boolean built = false;
 
 		private String name;
-		Double weight;
+		private Double weight;
 		private Double strike;
 		private MagScalingType magScaling;
 		private GmmSet gmmSet;
@@ -273,6 +277,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		Builder magMaster(List<Double> magMaster) {
 			/*
 			 * TODO mfds should validate against magMaster
+			 * or create mag master locally, but that is hard
 			 */
 			checkArgument(checkNotNull(magMaster).size() > 0);
 			this.magMaster = magMaster;

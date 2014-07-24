@@ -116,12 +116,12 @@ class FixedStrikeSourceOLD implements Source {
 	private void updateRupture(Rupture rup, int idx) {
 
 		int magDepthIdx = idx % magDepthCount;
-		int magIdx = parent.magDepthIndices[magDepthIdx];
+		int magIdx = parent.magDepthIndices.get(magDepthIdx);
 		double mag = mfd.getX(magIdx);
 		double rate = mfd.getY(magIdx);
 
-		double zTop = parent.magDepthDepths[magDepthIdx];
-		double zTopWt = parent.magDepthWeights[magDepthIdx];
+		double zTop = parent.magDepthDepths.get(magDepthIdx);
+		double zTopWt = parent.magDepthWeights.get(magDepthIdx);
 
 		FocalMech mech = mechForIndex(idx);
 		double mechWt = mechWtMap.get(mech);
@@ -201,7 +201,7 @@ class FixedStrikeSourceOLD implements Source {
 	private void initSource() {
 
 		/* Get the total number of mag-depth combinations from parent */
-		magDepthCount = parent.magDepthIndices.length;
+//		magDepthCount = parent.magDepthIndices.length;
 
 		/*
 		 * Init rupture indexing: SS-FW RV-FW RV-HW NR-FW NR-HW. Each category

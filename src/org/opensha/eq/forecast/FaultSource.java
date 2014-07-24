@@ -40,7 +40,7 @@ import com.google.common.collect.Range;
  * ruptures; they occur in multiple locations on the fault surface with
  * appropriately scaled rates.
  * 
- * <p>A {@code FaultSource} can not be created directly; it may only be created
+ * <p>A {@code FaultSource} cannot be created directly; it may only be created
  * by a private parser.</p>
  * 
  * @author Peter Powers

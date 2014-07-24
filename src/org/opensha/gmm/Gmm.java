@@ -3,6 +3,7 @@ package org.opensha.gmm;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -348,7 +349,8 @@ public enum Gmm {
 
 	/**
 	 * Returns the set of spectral acceleration {@code Imt}s that are common to
-	 * the supplied {@code Collection}.
+	 * the supplied {@code Gmm}s.
+	 * 
 	 * @param gmms ground motion models
 	 * @return a {@code Set} of common spectral acceleration {@code Imt}s
 	 */

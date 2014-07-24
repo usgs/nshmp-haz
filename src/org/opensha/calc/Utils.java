@@ -34,9 +34,6 @@ public class Utils {
 	 */
 	public static XY_Sequence setExceedProbabilities(XY_Sequence imls,
 			double mean, double sigma, boolean clamp, double clampVal) {
-		// double sigma = getStdDev();
-		// double gnd = getMean();
-		// System.out.print(mean + " " + sigma);
 
 		double clip = mean + 3 * sigma;
 		if (clamp) {
@@ -109,9 +106,13 @@ public class Utils {
 
 	// @formatter:off
 	
-	/** These intensity measure levels expand the standard ranges of values used at different periods
-	 * in past NSHMs to a common set that can be used across all periods with slightly higher discretization than before. It is derived from 
-	 * ln(-8.8):ln(2.0) with a 0.4 step include the highest ground motions (~7.5 g) and lower values */
+	/**
+	 * These intensity measure levels expand the standard ranges of values used
+	 * at different periods in past NSHMs to a common set that can be used
+	 * across all periods with slightly higher discretization than before. It is
+	 * derived from ln(-8.8):ln(2.0) with a 0.4 step include the highest ground
+	 * motions (~7.5 g) and lower values
+	 */
 	public static final double[] NSHM_IMLS = {
 		0.0002, 0.0005,
 		0.001, 0.002, 0.00316, 0.00422, 0.00562, 0.0075,

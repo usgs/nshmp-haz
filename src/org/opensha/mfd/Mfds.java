@@ -7,7 +7,15 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static org.opensha.eq.Magnitudes.magToMoment;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.opensha.data.ArrayXY_Sequence;
+import org.opensha.data.DataUtils;
+import org.opensha.data.XY_Sequence;
 import org.opensha.eq.Magnitudes;
+
+import com.google.common.primitives.Doubles;
 
 /**
  * Factory and utility methods for working with magnitude frequency
@@ -253,5 +261,34 @@ public class Mfds {
 	public static double probToRate(double P, double time) {
 		return -log(1 - P) / time;
 	}
+	
+	/**
+	 * Convert an {@code IncrementalMfd} to an {@code ArrayXY_Sequence}.
+	 * 
+	 * @param mfd to convert
+	 * @return a sequence populated with the values of the supplied
+	 *         {@code IncrementalMfd}.
+	 */
+	public static ArrayXY_Sequence toSequence(IncrementalMfd mfd) {
+		return ArrayXY_Sequence.create(Doubles.toArray(mfd.xValues()),
+			Doubles.toArray(mfd.yValues()));
+	}
+
+	/**
+	 * Combine all {@code mfds} into a single sequence.
+	 * @param mfds
+	 * @return
+	 */
+	@Deprecated
+	public static XY_Sequence combine(IncrementalMfd... mfds) {
+		// TODO slated for removal once MFDs descend from XY_Sequence
+		checkArgument(checkNotNull(mfds).length > 0);
+		List<XY_Sequence> sequences = new ArrayList<>();
+		for (IncrementalMfd mfd : mfds) {
+			sequences.add(toSequence(mfd));
+		}
+		return DataUtils.combine(sequences);
+	}
+	
 
 }

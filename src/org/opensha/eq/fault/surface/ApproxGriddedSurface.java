@@ -21,8 +21,9 @@ public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 	private LocationList upperTrace = null;
 	private LocationList lowerTrace = null;
 	
-	// lazily initialized on first call to getAvgDip()
-	private double avgDip; // TODO kill?
+	private double avgDip;
+	private double avgDepth; 
+	
 
 	// TODO I feel like this could simply subclass gridded surface with a differnt init method
 	// for the Container2D data ??
@@ -165,7 +166,8 @@ public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 		LocationVector vLast = LocationVector.create(upperTrace.first(), lowerTrace.first());
 		avgDip = (vFirst.plungeDegrees() + vLast.plungeDegrees()) / 2;
 		
-
+		avgDepth = upperTrace.averageDepth();
+		
 	}
 	
 	
@@ -380,8 +382,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 
 	@Override
 	public double depth() {
-		throw new UnsupportedOperationException("Implement me!");
-		// TODO ???
+		return avgDepth;
 	}
 
 

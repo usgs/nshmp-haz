@@ -14,7 +14,7 @@
 			<attribute name="javadoc_location" value="http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/guava-16.0.1.jar">
+	<classpathentry kind="lib" path="/Users/pmpowers/projects/git/nshmp-sha/lib/guava-17.0.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/"/>
 		</attributes>

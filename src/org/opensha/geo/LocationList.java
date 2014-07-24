@@ -193,6 +193,7 @@ public final class LocationList implements Iterable<Location> {
 	 * @return a {@code List} view of this {@code LocationList}
 	 */
 	public List<Location> asList() {
+		// TODO is this really needed
 		return ImmutableList.copyOf(locs);
 	}
 
@@ -212,6 +213,17 @@ public final class LocationList implements Iterable<Location> {
 			prev = loc;
 		}
 		return sum;
+	}
+	
+	/**
+	 * Lazily returns the average depth of the {@code Location}s in this list.
+	 */
+	public double averageDepth() {
+		double depth = 0.0;
+		for (Location loc : this) {
+			depth += loc.depth();
+		}
+		return depth / size();
 	}
 
 	// TODO are these really necessary

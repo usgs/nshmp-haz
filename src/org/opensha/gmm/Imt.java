@@ -2,14 +2,18 @@ package org.opensha.gmm;
 
 import static com.google.common.math.DoubleMath.fuzzyEquals;
 
+import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 /**
  * Intesity measure type (Imt) identifiers.
  * @author Peter Powers
  */
-@SuppressWarnings("javadoc")
+// @SuppressWarnings("javadoc")
 public enum Imt {
 
 	PGA,
@@ -63,6 +67,24 @@ public enum Imt {
 	}
 
 	/**
+	 * Returns the {@code List} of periods for the supplied {@code Imt}s. The
+	 * result will be sorted according to the iteration order of the supplied
+	 * {@code Collection}. Any non spectral acceleration {@code Imt}s will have null
+	 * values in the returned {@code List}.
+	 * 
+	 * @param imts to list periods for
+	 * @return a {@code List} of spectral periods
+	 * @see #saImts()
+	 */
+	public static List<Double> periods(Collection<Imt> imts) {
+		List<Double> periodList = Lists.newArrayListWithCapacity(imts.size());
+		for (Imt imt : imts) {
+			periodList.add(imt.period());
+		}
+		return periodList;
+	}
+
+	/**
 	 * Returns the spectral acceleration {@code Imt} associated with the
 	 * supplied period. Due to potential floating point precision problems, this
 	 * method internally checks values to within a small tolerance.
@@ -80,22 +102,21 @@ public enum Imt {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the frequency (in Hz) for this {@code Imt}. {@code PGA} returns
 	 * 100 Hz, spectral periods return their expected value (1 / period), and
 	 * {@code PGV} and {@code PGD} throw exceptions.
-	 * @return thre frequency associated with this {@code Imt}
+	 * @return the frequency associated with this {@code Imt}
 	 * @throws UnsupportedOperationException if called on {@code PGV} or
 	 *         {@code PGD}
 	 */
 	public double frequency() {
 		if (this == PGA) return 100;
 		if (this.isSA()) return 1.0 / period();
-		throw new UnsupportedOperationException(
-			"frequncy() not supported for PGD and PGV");
+		throw new UnsupportedOperationException("frequncy() not supported for PGD and PGV");
 	}
-	
+
 	/**
 	 * Returns true if this Imt is some flavor of spectral acceleration.
 	 * @return {@code true} if this is a spectral period, {@code false}
@@ -104,7 +125,7 @@ public enum Imt {
 	public boolean isSA() {
 		return ordinal() > 2;
 	}
-	
+
 	/**
 	 * Returns the {@code Set} of spectal acceleration IMTs.
 	 * @return the IMTs that represent spectral accelerations
@@ -134,5 +155,5 @@ public enum Imt {
 			return null;
 		}
 	}
-	
+
 }

@@ -1,6 +1,5 @@
 package org.opensha.eq.forecast;
 
-import static com.google.common.base.Preconditions.checkPositionIndex;
 import static java.lang.Math.ceil;
 import static java.lang.Math.cos;
 import static java.lang.Math.max;
@@ -15,7 +14,6 @@ import static org.opensha.util.MathUtils.hypot;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.surface.PtSrcDistCorr;
@@ -62,26 +60,9 @@ class PointSourceFinite extends PointSource {
 		init();
 	}
 
-	@Override
-	public String name() {
+	@Override public String name() {
 		return "PointSourceFinite: " + loc;
 	}
-
-	// TODO clean
-	/*
-	 * NOTE: Getting a Rupture by index is deliberately inefficient to ensure
-	 * thread safety. A new immutable Rupture and internal FiniteSurface are
-	 * created on every call. Use Source.iterator() where possible.
-	 */
-
-//	@Override
-//	public Rupture getRupture(int idx) {
-//		checkPositionIndex(idx, size());
-//		Rupture rupture = new Rupture();
-//		rupture.surface = new FiniteSurface(loc);
-//		updateRupture(rupture, idx);
-//		return rupture;
-//	}
 
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
@@ -92,17 +73,16 @@ class PointSourceFinite extends PointSource {
 	 * this method to return null reference, but would need to condsider
 	 * getRUpture(int) implementation.
 	 */
-	
 
 	private void updateRupture(Rupture rup, int idx) {
 
-		int magDepthIdx = idx % magDepthCount;
-		int magIdx = parent.magDepthIndices[magDepthIdx];
+		int magDepthIdx = idx % magDepthSize;
+		int magIdx = parent.magDepthIndices.get(magDepthIdx);
 		double mag = mfd.getX(magIdx);
 		double rate = mfd.getY(magIdx);
 
-		double zTop = parent.magDepthDepths[magDepthIdx];
-		double zTopWt = parent.magDepthWeights[magDepthIdx];
+		double zTop = parent.magDepthDepths.get(magDepthIdx);
+		double zTopWt = parent.magDepthWeights.get(magDepthIdx);
 
 		FocalMech mech = mechForIndex(idx);
 		double mechWt = mechWtMap.get(mech);
@@ -123,50 +103,51 @@ class PointSourceFinite extends PointSource {
 		fpSurf.zTop = zTop;
 		fpSurf.zBot = zTop + widthDD * sin(dipRad);
 		fpSurf.footwall = isOnFootwall(idx);
-
 	}
 
-	@Override
-	public Iterator<Rupture> iterator() {
-		// @formatter:off
+	@Override public Iterator<Rupture> iterator() {
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
-			{ rupture.surface = new FiniteSurface(loc); }
+			{
+				rupture.surface = new FiniteSurface(loc);
+			}
 			int size = size();
 			int caret = 0;
+
 			@Override public boolean hasNext() {
-				if (caret > size) return false;
+				if (caret >= size) return false;
 				updateRupture(rupture, caret++);
 				return (rupture.rate > 0.0) ? true : hasNext();
 			}
+
 			@Override public Rupture next() {
-				if (!hasNext()) throw new NoSuchElementException();
 				return rupture;
 			}
+
 			@Override public void remove() {
 				throw new UnsupportedOperationException();
 			}
 		};
-		// @formatter:on
 	}
 
-	private void init() {
+	@Override void init() {
+
+		/* Get the number of mag-depth iterations required to get to mMax */
+		magDepthSize = parent.magDepthIndices.lastIndexOf(mfd.getNum() - 1);
 
 		/*
-		 * Need to override indexing set by parent.
-		 * 
 		 * Init rupture indexing: SS-FW RV-FW RV-HW NR-FW NR-HW. Each category
 		 * will have ruptures for every mag in 'mfd' and depth in parent
 		 * 'magDepthMap'.
 		 */
-		int ssCount = (int) ceil(mechWtMap.get(STRIKE_SLIP)) * magDepthCount;
-		int revCount = (int) ceil(mechWtMap.get(REVERSE)) * magDepthCount * 2;
-		int norCount = (int) ceil(mechWtMap.get(NORMAL)) * magDepthCount * 2;
+		int ssCount = (int) ceil(mechWtMap.get(STRIKE_SLIP)) * magDepthSize;
+		int revCount = (int) ceil(mechWtMap.get(REVERSE)) * magDepthSize * 2;
+		int norCount = (int) ceil(mechWtMap.get(NORMAL)) * magDepthSize * 2;
 		ssIdx = ssCount;
 		revIdx = ssCount + revCount;
 		fwIdxLo = ssCount + revCount / 2;
 		fwIdxHi = ssCount + revCount + norCount / 2;
-
+		
 		rupCount = ssCount + revCount + norCount;
 	}
 
@@ -177,8 +158,7 @@ class PointSourceFinite extends PointSource {
 	 * RV-FW RV-HW NR-FW NR-HW
 	 */
 	boolean isOnFootwall(int idx) {
-		return (idx < fwIdxLo) ? true : (idx < revIdx) ? false
-			: (idx < fwIdxHi) ? true : false;
+		return (idx < fwIdxLo) ? true : (idx < revIdx) ? false : (idx < fwIdxHi) ? true : false;
 	}
 
 	static class FiniteSurface extends PointSurface {
@@ -192,8 +172,7 @@ class PointSourceFinite extends PointSource {
 			super(loc);
 		}
 
-		@Override
-		public Distances distanceTo(Location loc) {
+		@Override public Distances distanceTo(Location loc) {
 			// TODO 0.5 is WUS specific and based on discretization of distances
 			// in grid source Gmm lookup tables
 
@@ -209,8 +188,7 @@ class PointSourceFinite extends PointSource {
 			double dipRad = dip * TO_RAD;
 			double rCut = zBot * tan(dipRad);
 
-			if (rJB > rCut)
-				return Distances.create(rJB, hypot(rJB, zBot), rX);
+			if (rJB > rCut) return Distances.create(rJB, hypot(rJB, zBot), rX);
 
 			// rRup when rJB is 0 -- we take the minimum the site-to-top-edge
 			// and site-to-normal of rupture for the site being directly over
