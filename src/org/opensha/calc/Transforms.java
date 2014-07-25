@@ -39,7 +39,7 @@ public final class Transforms {
 	 * 
 	 * @param site of interest
 	 */
-	public static AsyncFunction<Source, GmmInputList> sourceToInputs(Site site) {
+	public static Function<Source, GmmInputList> sourceToInputs(Site site) {
 		return new SourceToInputs(site);
 	}
 
@@ -49,7 +49,7 @@ public final class Transforms {
 	 * 
 	 * @param models ground motion model instances to use
 	 */
-	public static AsyncFunction<GmmInputList, GroundMotionSet> inputsToGroundMotions(
+	public static Function<GmmInputList, GroundMotionSet> inputsToGroundMotions(
 			Map<Gmm, GroundMotionModel> models) {
 		return new InputsToGroundMotions(models);
 	}
@@ -60,11 +60,10 @@ public final class Transforms {
 	 * 
 	 * @param model curve
 	 */
-	public static AsyncFunction<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> groundMotionsToCurves(
+	public static Function<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> groundMotionsToCurves(
 			ArrayXY_Sequence model) {
 		return new GroundMotionsToHazardCurves(model);
 	}
-
 
 	/**
 	 * Creates a {@code Callable} from a {@code FaultSource} and {@code Site}
@@ -124,7 +123,7 @@ public final class Transforms {
 	// return new GroundMotionCalc(gmmInstanceMap, input);
 	// }
 
-	private static class SourceToInputs implements AsyncFunction<Source, GmmInputList> {
+	private static class SourceToInputs implements Function<Source, GmmInputList> {
 
 		// TODO this needs additional rJB distance filtering
 		// Is it possible to return an empty list??
@@ -135,7 +134,7 @@ public final class Transforms {
 			this.site = site;
 		}
 
-		@Override public ListenableFuture<GmmInputList> apply(Source source) throws Exception {
+		@Override public GmmInputList apply(Source source) {
 			GmmInputList inputs = new GmmInputList(source);
 			for (Rupture rup : source) {
 
@@ -165,12 +164,11 @@ public final class Transforms {
 				inputs.add(input);
 				// @formatter:on
 			}
-			return Futures.immediateFuture(inputs);
+			return inputs;
 		}
 	}
 
-	private static class InputsToGroundMotions implements
-			AsyncFunction<GmmInputList, GroundMotionSet> {
+	private static class InputsToGroundMotions implements Function<GmmInputList, GroundMotionSet> {
 
 		private final Map<Gmm, GroundMotionModel> gmmInstances;
 
@@ -178,8 +176,7 @@ public final class Transforms {
 			this.gmmInstances = gmmInstances;
 		}
 
-		@Override public ListenableFuture<GroundMotionSet> apply(GmmInputList gmmInputs)
-				throws Exception {
+		@Override public GroundMotionSet apply(GmmInputList gmmInputs) {
 
 			GroundMotionSet.Builder gmBuilder = GroundMotionSet.builder(gmmInputs,
 				gmmInstances.keySet());
@@ -191,7 +188,7 @@ public final class Transforms {
 				}
 			}
 			GroundMotionSet results = gmBuilder.build();
-			return Futures.immediateFuture(results);
+			return results;
 		}
 	}
 
@@ -199,7 +196,7 @@ public final class Transforms {
 	 * Convert a GroundMotionSet to a map of hazard curves, one per gmm.
 	 */
 	private static class GroundMotionsToHazardCurves implements
-			AsyncFunction<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> {
+			Function<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> {
 
 		private final ArrayXY_Sequence model;
 
@@ -207,8 +204,7 @@ public final class Transforms {
 			this.model = model;
 		}
 
-		@Override public ListenableFuture<Map<Gmm, ArrayXY_Sequence>> apply(GroundMotionSet gmSet)
-				throws Exception {
+		@Override public Map<Gmm, ArrayXY_Sequence> apply(GroundMotionSet gmSet) {
 
 			Map<Gmm, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Gmm.class);
 
@@ -229,9 +225,8 @@ public final class Transforms {
 					gmmCurve.add(utilCurve);
 				}
 			}
-			return Futures.immediateFuture(curveMap);
+			return curveMap;
 		}
 	}
-	
 
 }
