@@ -1,30 +1,41 @@
 package org.opensha.gmm;
 
+import static com.google.common.base.Preconditions.checkState;
+import static java.lang.Double.NaN;
+import static org.opensha.gmm.GmmInput.GmmField.DIP;
+import static org.opensha.gmm.GmmInput.GmmField.MAG;
+import static org.opensha.gmm.GmmInput.GmmField.RAKE;
+import static org.opensha.gmm.GmmInput.GmmField.RJB;
+import static org.opensha.gmm.GmmInput.GmmField.RRUP;
+import static org.opensha.gmm.GmmInput.GmmField.RX;
+import static org.opensha.gmm.GmmInput.GmmField.VS30;
+import static org.opensha.gmm.GmmInput.GmmField.VSINF;
+import static org.opensha.gmm.GmmInput.GmmField.WIDTH;
+import static org.opensha.gmm.GmmInput.GmmField.Z1P0;
+import static org.opensha.gmm.GmmInput.GmmField.Z2P5;
+import static org.opensha.gmm.GmmInput.GmmField.ZHYP;
+import static org.opensha.gmm.GmmInput.GmmField.ZTOP;
+
 import java.util.BitSet;
 import java.util.Map;
 
+import org.opensha.calc.Site;
 import org.opensha.eq.forecast.Distances;
+import org.opensha.eq.forecast.Rupture;
 
 import com.google.common.collect.Maps;
 
-import static com.google.common.base.Preconditions.checkState;
-import static java.lang.Double.NaN;
-
-import static org.opensha.gmm.GmmInput.GmmField.*;
-
 /**
- * Earthquake {@code Rupture} data and receiver site properties used as inputs
- * to ground motion models (GMMs). Not all GMMs use all properties.
- * 
- * <p>This class also carries a rate value, which is ignored by
- * GroundMotionModels.</p>
+ * Earthquake {@link Rupture} and receiver {@link Site} property container used
+ * as input to {@link GroundMotionModel}s (GMMs). Not all GMMs use all
+ * properties.
  * 
  * @author Peter Powers
+ * @see GroundMotionModel#calc(GmmInput)
  */
-public final class GmmInput {
+public class GmmInput {
 
 	// source
-	final double rate;
 	final double Mw;
 
 	final double rJB;
@@ -45,11 +56,30 @@ public final class GmmInput {
 	final double z1p0; // always in meters TODO NO NO NO - this is now always
 						// km, CY08 needs updating
 
-	private GmmInput(double rate, double Mw, double rJB, double rRup, double rX, double dip,
-		double width, double zTop, double zHyp, double rake, double vs30, boolean vsInf,
-		double z2p5, double z1p0) {
+	/**
+	 * Create a deterministic rupture and site property container with all
+	 * properties common to the supported set of ground motion models (GMMs).
+	 * 
+	 * <p>It is generally preferred to use a {@link Builder} to assemble the
+	 * components of a {@code GmmInput}.</p>
+	 * 
+	 * @param Mw moment magnitude of rupture
+	 * @param rJB Joyner-Boore distance to rupture (in km)
+	 * @param rRup 3D distance to rupture plane (in km)
+	 * @param rX distance X (in km)
+	 * @param dip of rupture (in degrees)
+	 * @param width down-dip rupture width (in km)
+	 * @param zTop depth to the top of the rupture (in km)
+	 * @param zHyp hypocentral depth (in km)
+	 * @param rake of rupture
+	 * @param vs30 average shear wave velocity in top 30 m (in m/sec)
+	 * @param vsInf whether vs30 is an inferred or measured value
+	 * @param z2p5 depth to V<sub>s</sub>=2.5 km/sec (in km)
+	 * @param z1p0 depth to V<sub>s</sub>=1.0 km/sec (in km)
+	 */
+	protected GmmInput(double Mw, double rJB, double rRup, double rX, double dip, double width,
+		double zTop, double zHyp, double rake, double vs30, boolean vsInf, double z2p5, double z1p0) {
 
-		this.rate = rate;
 		this.Mw = Mw;
 
 		this.rJB = rJB;
@@ -67,38 +97,16 @@ public final class GmmInput {
 		this.z2p5 = z2p5;
 		this.z1p0 = z1p0;
 	}
-
-	/**
-	 * Create a deterministic container with those rupture properties required
-	 * by all supported ground motion models (GMMs).
-	 * 
-	 * @param Mw moment magnitude of rupture
-	 * @param rJB Joyner-Boore distance to rupture (in km)
-	 * @param rRup 3D distance to rupture plane (in km)
-	 * @param rX distance X (in km)
-	 * @param dip of rupture (in degrees)
-	 * @param width down-dip rupture width (in km)
-	 * @param zTop depth to the top of the rupture (in km)
-	 * @param zHyp hypocentral depth (in km)
-	 * @param rake of rupture
-	 * @param vs30 average shear wave velocity in top 30 m (in m/sec)
-	 * @param vsInf whether vs30 is an inferred or measured value
-	 * @param z2p5 depth to V<sub>s</sub>=2.5 km/sec (in km)
-	 * @param z1p0 depth to V<sub>s</sub>=1.0 km/sec (in km)
-	 * @return a rupture property container
-	 */
-	public static GmmInput create(double Mw, double rJB, double rRup, double rX, double dip,
+	
+	// for tests
+	static GmmInput create(double Mw, double rJB, double rRup, double rX, double dip,
 			double width, double zTop, double zHyp, double rake, double vs30, boolean vsInf,
 			double z2p5, double z1p0) {
 
-		return new GmmInput(0.0, Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf,
+		return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf,
 			z2p5, z1p0);
 	}
-	
-	public double rate() {
-		return rate;
-	}
-	
+
 	/**
 	 * Return a {@code GmmInput} builder that requires all fields to be
 	 * explicitely set. This builder is stateful and may be reused (by a single
@@ -116,33 +124,38 @@ public final class GmmInput {
 
 		static final int SIZE = GmmField.values().length;
 		boolean built = false;
-		// monitors set fields
-		BitSet flags = new BitSet(SIZE);
-		// monitors sets between build() calls
-		BitSet reset = new BitSet(SIZE);
-		
-		double rate;
-		double Mw;
+		BitSet flags = new BitSet(SIZE); // monitors set fields
+		BitSet reset = new BitSet(SIZE); // monitors sets between build() calls
 
-		double rJB;
-		double rRup;
-		double rX;
+		private double Mw;
 
-		double dip;
-		double width;
-		double zTop;
-		double zHyp;
+		private double rJB;
+		private double rRup;
+		private double rX;
 
-		double rake;
+		private double dip;
+		private double width;
+		private double zTop;
+		private double zHyp;
+
+		private double rake;
 
 		// site
-		double vs30;
-		boolean vsInf;
-		double z2p5;
-		double z1p0;
+		private double vs30;
+		private boolean vsInf;
+		private double z2p5;
+		private double z1p0;
 
 		private Builder() {}
-		
+
+		/**
+		 * Return a {@code Builder} with the following presets: <ul><li>Mw:
+		 * 6.5</li><li>rJB: 10.0 (km)</li><li>rRup: 10.3 (km)</li><li>rX: 10.0
+		 * (km)</li> <li>dip: 90˚</li><li>width: 14.0 (km)</li><li>zTop: 0.5
+		 * (km)</li><li>zHyp: 7.5 (km)</li> <li>rake: 0˚</li><li>vs30: 760
+		 * (m/s)</li><li>vsInf: true</li><li>z2p5: NaN</li><li>z1p0:
+		 * NaN</li></ul>
+		 */
 		public Builder withDefaults() {
 			Mw = 6.5;
 			rJB = 10.0;
@@ -160,7 +173,7 @@ public final class GmmInput {
 			flags.set(0, SIZE);
 			return this;
 		}
-		
+
 		/* returns the double value of interest for inlining */
 		private final double validateAndFlag(GmmField field, double value) {
 			int index = field.ordinal();
@@ -169,7 +182,7 @@ public final class GmmInput {
 			reset.set(index);
 			return value;
 		}
-		
+
 		/* returns the boolean value of interest for inlining */
 		private final boolean validateAndFlag(GmmField field, boolean value) {
 			int index = field.ordinal();
@@ -177,11 +190,6 @@ public final class GmmInput {
 			flags.set(index);
 			reset.set(index);
 			return value;
-		}
-		
-		public Builder rate(double rate) {
-			this.rate = validateAndFlag(RATE, rate);
-			return this;
 		}
 
 		public Builder mag(double Mw) {
@@ -198,7 +206,7 @@ public final class GmmInput {
 			this.rRup = validateAndFlag(RRUP, rRup);
 			return this;
 		}
-		
+
 		public Builder rx(double rX) {
 			this.rX = validateAndFlag(RX, rX);
 			return this;
@@ -217,7 +225,7 @@ public final class GmmInput {
 			this.rX = validateAndFlag(RX, distances.rX);
 			return this;
 		}
-		
+
 		public Builder dip(double dip) {
 			this.dip = validateAndFlag(DIP, dip);
 			return this;
@@ -272,20 +280,19 @@ public final class GmmInput {
 		public GmmInput build() {
 			checkState(flags.cardinality() == SIZE, "Not all fields set");
 			reset.clear();
-			return new GmmInput(rate, Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf,
-				z2p5, z1p0);
+			return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf, z2p5,
+				z1p0);
 		}
 	}
 
 	/**
 	 * {@code GmmInput} field identifiers. This is used internally to manage
-	 * builder flags and provides access to the case-sensitive keys (via toString())
-	 * used when building http queries
+	 * builder flags and provides access to the case-sensitive keys (via
+	 * toString()) used when building http queries
 	 * 
 	 */
 	@SuppressWarnings("javadoc")
 	public enum GmmField {
-		RATE,
 		MAG,
 		RJB,
 		RRUP,
@@ -299,11 +306,11 @@ public final class GmmInput {
 		VSINF,
 		Z2P5,
 		Z1P0;
-		
+
 		@Override public String toString() {
 			return this.name().toLowerCase();
 		}
-		
+
 		public static GmmField fromString(String s) {
 			return valueOf(s.toUpperCase());
 		}
@@ -314,12 +321,11 @@ public final class GmmInput {
 	 * places for output.
 	 */
 	@Override public String toString() {
-		return getClass().getSimpleName() + " " + createKeyValueMap();
+		return createKeyValueMap().toString();
 	}
-	
+
 	private Map<GmmField, Object> createKeyValueMap() {
 		Map<GmmField, Object> keyValueMap = Maps.newEnumMap(GmmField.class);
-		keyValueMap.put(RATE, rate);
 		keyValueMap.put(MAG, String.format("%.2f", Mw));
 		keyValueMap.put(RJB, String.format("%.3f", rJB));
 		keyValueMap.put(RRUP, String.format("%.3f", rRup));

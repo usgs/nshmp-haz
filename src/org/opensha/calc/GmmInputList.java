@@ -7,10 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opensha.eq.forecast.Source;
-import org.opensha.gmm.GmmInput;
 
 /**
- * Lightweight {@code List} wrapper of {@code GmmInput}s that contains a
+ * Lightweight {@code List} wrapper of {@code TemporalGmmInput}s that contains a
  * reference to the parent source from which the inputs were derived. This
  * allows for downstream access to parent source properties. The {@code List}
  * may only be added to; all other optional operations of {@code AbstractList}
@@ -18,21 +17,23 @@ import org.opensha.gmm.GmmInput;
  * 
  * @author Peter Powers
  */
-class GmmInputList extends AbstractList<GmmInput> {
+class GmmInputList extends AbstractList<TemporalGmmInput> {
 
+	// TODO we may only ultimately need the name
+	
 	Source parent;
-	List<GmmInput> delegate;
+	List<TemporalGmmInput> delegate;
 	
 	GmmInputList(Source parent) {
 		this.parent = checkNotNull(parent);
 		delegate = new ArrayList<>();
 	}
 
-	@Override public boolean add(GmmInput input) {
+	@Override public boolean add(TemporalGmmInput input) {
 		return delegate.add(input);
 	}
 	
-	@Override public GmmInput get(int index) {
+	@Override public TemporalGmmInput get(int index) {
 		return delegate.get(index);
 	}
 	

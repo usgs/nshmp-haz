@@ -89,10 +89,10 @@ public final class Transforms {
 	 * @param loc for distance calculation
 	 * @return a {@code Distances} wrapper object
 	 */
-	public static Callable<Distances> newDistanceCalc(final IndexedFaultSurface surface,
-			final Location loc) {
-		return new DistanceCalc(surface, loc);
-	}
+//	public static Callable<Distances> newDistanceCalc(final IndexedFaultSurface surface,
+//			final Location loc) {
+//		return new DistanceCalc(surface, loc);
+//	}
 
 	/**
 	 * Creates a {@code Callable} that returns the supplied {@code FaultSource}
@@ -147,7 +147,8 @@ public final class Transforms {
 				double zHyp = zTop + sin(dip * TO_RAD) * width / 2.0;
 
 				// @formatter:off
-				GmmInput input = GmmInput.create(
+				TemporalGmmInput input = new TemporalGmmInput(
+					rup.rate(),
 					rup.mag(),
 					distances.rJB,
 					distances.rRup,
@@ -221,7 +222,7 @@ public final class Transforms {
 				for (int i = 0; i < means.size(); i++) {
 					Utils.setExceedProbabilities(utilCurve, means.get(i), sigmas.get(i), false,
 						Double.NaN);
-					utilCurve.multiply(gmSet.inputs.get(i).rate());
+					utilCurve.multiply(gmSet.inputs.get(i).rate);
 					gmmCurve.add(utilCurve);
 				}
 			}
