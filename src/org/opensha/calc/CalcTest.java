@@ -30,7 +30,7 @@ public class CalcTest {
 
 	private static String testModel = "/Users/pmpowers/projects/git/nshmp-forecast-dev/forecasts/Test";
 //	private static String testModel = "/Users/pmpowers/projects/git/nshmp-forecast-dev/forecasts/2008/Western US";
-
+//
 	/**
 	 * @param args
 	 */
