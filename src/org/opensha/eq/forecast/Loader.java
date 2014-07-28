@@ -53,8 +53,7 @@ public class Loader {
 	static {
 
 		try {
-			InputStream is = new FileInputStream(
-				"/Users/pmpowers/projects/git/nshmp-sha/lib/logging.properties");
+			InputStream is = new FileInputStream("lib/logging.properties");
 			LogManager.getLogManager().readConfiguration(is);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
