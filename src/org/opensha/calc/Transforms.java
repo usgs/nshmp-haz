@@ -274,5 +274,48 @@ public final class Transforms {
 			return curveMap;
 		}
 	}
+	
+//	private static class ClusterGroundMotionsToHazardCurves implements Function<List<GroundMotionSet>, Map<Gmm, ArrayXY_Sequence>> {
+//		
+//		private final ArrayXY_Sequence model;
+//
+//		ClusterGroundMotionsToHazardCurves(ArrayXY_Sequence model) {
+//			this.model = model;
+//		}
+//		
+//		@Override public Map<Gmm, ArrayXY_Sequence> apply(List<GroundMotionSet> gmSet) {
+//			
+//		}
+//	}
+//	
+//	private static class ClusterGroundMotionsToExceedanceCurves implements Function<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> {
+//		
+//		private final ArrayXY_Sequence model;
+//
+//		ClusterGroundMotionsToHazardCurves(ArrayXY_Sequence model) {
+//			this.model = model;
+//		}
+//		
+//		@Override public Map<Gmm, ArrayXY_Sequence> apply(GroundMotionSet gmSet) {
+//			
+//			Map<Gmm, ArrayXY_Sequence> peMap = Maps.newEnumMap(Gmm.class);
+//			
+//			for (Gmm gmm : gmSet.means.keySet()) {
+//				List<Double> means = gmSet.means.get(gmm);
+//				List<Double> sigmas = gmSet.sigmas.get(gmm);
+//				 
+//				ArrayXY_Sequence
+//				 for (int i = 0; i < gmSet.inputs.size(); i++) {
+//				 ArrayXY_Sequence imls = ArrayXY_Sequence.copyOf(model);
+//				 Utils.setExceedProbabilities(imls, means.get(i), sigmas.get(i),
+//				 false, 0.0);
+//				 imls.sc
+//				 }
+//				// TODO FIX and FINISH
+//			}
+//			return null;
+//		}
+//
+//	}
 
 }
