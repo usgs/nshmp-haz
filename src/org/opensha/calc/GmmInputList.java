@@ -13,7 +13,7 @@ import org.opensha.eq.forecast.Source;
  * reference to the parent source from which the inputs were derived. This
  * allows for downstream access to parent source properties. The {@code List}
  * may only be added to; all other optional operations of {@code AbstractList}
- * throw an UnsupportedOperationException.
+ * throw an {@code UnsupportedOperationException}.
  * 
  * @author Peter Powers
  */
