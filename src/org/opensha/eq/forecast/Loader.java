@@ -31,8 +31,6 @@ import org.opensha.eq.forecast.Forecast.Builder;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import sun.swing.SwingUtilities2.Section;
-
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
