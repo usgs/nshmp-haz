@@ -448,6 +448,10 @@ public final class DataUtils {
 	public static double[] flip(double... data) {
 		return multiply(-1, data);
 	}
+	
+	static double[] uncheckedFlip(double... data) {
+		return uncheckedMultiply(-1, data);
+	}
 
 	/**
 	 * Flip the sign of every element of {@code data} in place.
@@ -458,7 +462,7 @@ public final class DataUtils {
 	public static List<Double> flip(List<Double> data) {
 		return multiply(-1, data);
 	}
-
+	
 	/**
 	 * Sum of the elements of {@code data} without checking for over/underflow.
 	 * Method returns {@code Double.NaN} if {@code data} contains

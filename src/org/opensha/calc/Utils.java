@@ -1,8 +1,10 @@
 package org.opensha.calc;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.math3.special.Erf;
+import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.data.DataUtils;
 import org.opensha.data.XY_Point;
 import org.opensha.data.XY_Sequence;
@@ -102,6 +104,21 @@ public class Utils {
 	// probabilities above 1 or below 0 ??
 	private static double probBoundsCheck(double P) {
 		return (P < 0) ? 0 : (P > 1) ? 1 : P;
+	}
+
+	/*
+	 * Computes joint probability of exceedence given the occurrence of a
+	 * cluster of events: [1 - [(1-PE1) * (1-PE2) * ...]]. The probability of
+	 * exceedance of each individual event is given in the supplied curves.
+	 * WARNING: Method modifies curves in place and returns result in the first
+	 * supplied curve.s
+	 */
+	public static ArrayXY_Sequence calcClusterExceedProb(List<ArrayXY_Sequence> curves) {
+		ArrayXY_Sequence combined = ArrayXY_Sequence.copyOf(curves.get(0)).complement();
+		for (int i=1; i < curves.size(); i++) {
+			combined.multiply(curves.get(i).complement());
+		}
+		return combined.complement();
 	}
 
 	// @formatter:off

@@ -76,9 +76,9 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	private static final double GFAC = 6.8875526; // ln (980)
 //	private static final double SFAC = 2.302585; // ln(10)
 	private static final double TFAC = -0.5108256; // ln(0.6)
-	private static final double vref = 760;
-	private static final double v1 = 180;
-	private static final double v2 = 300;
+	private static final double vref = 760.0;
+	private static final double v1 = 180.0;
+	private static final double v2 = 300.0;
 	private static final double fac70 = 1.8450980; // log10(70)
 	private static final double fac140 = 2.1461280; // log10(140)
 	private static final double facv1 = -0.5108256; // ln(v1/v2)
@@ -192,7 +192,8 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 			(c.c6 + c.c7 * Mw) * f2 + (c.c8 + c.c9 * Mw) *
 			f0 + c.c10 * rRup + sf2 + S;
 
-		gnd *= (c.imt != Imt.PGV) ? BASE_10_TO_E - GFAC : BASE_10_TO_E;
+		gnd *= BASE_10_TO_E;
+		if (c.imt != Imt.PGV) gnd -= GFAC;
 
 		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}

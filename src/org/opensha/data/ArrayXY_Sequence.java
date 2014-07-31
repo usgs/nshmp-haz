@@ -3,12 +3,13 @@ package org.opensha.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha.data.DataUtils.*;
+import static org.opensha.data.DataUtils.isMonotonic;
+import static org.opensha.data.DataUtils.uncheckedAdd;
+import static org.opensha.data.DataUtils.uncheckedFlip;
+import static org.opensha.data.DataUtils.uncheckedMultiply;
 
 import java.util.Arrays;
 import java.util.Objects;
-
-import com.google.common.primitives.Doubles;
 
 /**
  * Array based implementation of an {@code XY_Sequence}.
@@ -103,7 +104,8 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 		// TODO Interpolate should handle Lists as well as arrays; the lists
 		// returned by AbstractXY_Sequence are immutable
 		// TODO this could be optimized to work directly with
-		// ArrayXY_Sequence.xs and .ys, but its probably not necessary given the above
+		// ArrayXY_Sequence.xs and .ys, but its probably not necessary given the
+		// above
 		double[] yResample = Interpolate.findY(sequence.xValues(), sequence.yValues(), xs);
 		// TODO disable extrapolation
 		if (true) throw new UnsupportedOperationException();
@@ -154,7 +156,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 * @return {@code this} sequence, for use inline
 	 */
 	public ArrayXY_Sequence add(double term) {
-		DataUtils.uncheckedAdd(term, ys);
+		uncheckedAdd(term, ys);
 		return this;
 	}
 
@@ -168,7 +170,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 *         {@code sequence.xValues() != this.xValues()}
 	 */
 	public ArrayXY_Sequence add(ArrayXY_Sequence sequence) {
-		DataUtils.uncheckedAdd(ys, validateSequence(sequence).ys);
+		uncheckedAdd(ys, validateSequence(sequence).ys);
 		return this;
 	}
 
@@ -179,7 +181,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 * @return {@code this} sequence, for use inline
 	 */
 	public ArrayXY_Sequence multiply(double scale) {
-		DataUtils.uncheckedMultiply(scale, ys);
+		uncheckedMultiply(scale, ys);
 		return this;
 	}
 
@@ -193,7 +195,29 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 *         {@code sequence.xValues() != this.xValues()}
 	 */
 	public ArrayXY_Sequence multiply(ArrayXY_Sequence sequence) {
-		DataUtils.uncheckedMultiply(ys, validateSequence(sequence).ys);
+		uncheckedMultiply(ys, validateSequence(sequence).ys);
+		return this;
+	}
+
+	/**
+	 * Sets the y-values of {@code this} sequence to their complement in place [
+	 * {@code 1 - y}]. Assumes this is a probability function limited to the
+	 * domain [0 1].
+	 * 
+	 * @return {@code this} sequence, for use inline
+	 */
+	public ArrayXY_Sequence complement() {
+		uncheckedAdd(1, uncheckedFlip(ys));
+		return this;
+	}
+	
+	/**
+	 * Sets all y-value to 0.
+	 * 
+	 * @return {@code this} sequence, for use inline
+	 */
+	public ArrayXY_Sequence clear() {
+		Arrays.fill(ys, 0.0);
 		return this;
 	}
 

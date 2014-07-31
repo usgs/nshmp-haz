@@ -5,6 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
+import java.util.Collection;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +14,10 @@ import java.util.Set;
 import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GmmInput;
 
+import com.google.common.base.Supplier;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
 import com.google.common.primitives.Doubles;
 
 /**
@@ -30,11 +35,11 @@ public final class GroundMotionSet {
 	// mean and sigma lists with double[].
 
 	public final GmmInputList inputs;
-	public final Map<Gmm, List<Double>> means;
-	public final Map<Gmm, List<Double>> sigmas;
+	public final ListMultimap<Gmm, Double> means;
+	public final ListMultimap<Gmm, Double> sigmas;
 
-	private GroundMotionSet(GmmInputList inputs, Map<Gmm, List<Double>> means,
-		Map<Gmm, List<Double>> sigmas) {
+	private GroundMotionSet(GmmInputList inputs, ListMultimap<Gmm, Double> means,
+			ListMultimap<Gmm, Double> sigmas) {
 		this.inputs = inputs;
 		this.means = means;
 		this.sigmas = sigmas;
@@ -66,8 +71,10 @@ public final class GroundMotionSet {
 		private static final String ID = "ScalarGroundMotionSet.Builder";
 
 		private final GmmInputList inputs;
-		private final Map<Gmm, List<Double>> means;
-		private final Map<Gmm, List<Double>> sigmas;
+//		private final Map<Gmm, List<Double>> means;
+//		private final Map<Gmm, List<Double>> sigmas;
+		private final ListMultimap<Gmm, Double> means;
+		private final ListMultimap<Gmm, Double> sigmas;
 
 		private boolean built = false;
 		private final int size;
@@ -97,12 +104,22 @@ public final class GroundMotionSet {
 			return new GroundMotionSet(inputs, means, sigmas);
 		}
 
-		static Map<Gmm, List<Double>> initValueMap(Set<Gmm> gmms, int size) {
-			Map<Gmm, List<Double>> map = Maps.newEnumMap(Gmm.class);
-			for (Gmm gmm : gmms) {
-				map.put(gmm, Doubles.asList(new double[size]));
-			}
-			return map;
+//		static Map<Gmm, List<Double>> initValueMap(Set<Gmm> gmms, int size) {
+//			Map<Gmm, List<Double>> map = Maps.newEnumMap(Gmm.class);
+//			for (Gmm gmm : gmms) {
+//				map.put(gmm, Doubles.asList(new double[size]));
+//			}
+//			return map;
+//		}
+		
+		static ListMultimap<Gmm, Double> initValueMap(Set<Gmm> gmms,final int size) {
+			Map<Gmm, Collection<Double>> map = Maps.newEnumMap(Gmm.class);
+			Supplier<List<Double>> factory = new Supplier<List<Double>>() {
+				@Override public List<Double> get() {
+					return Doubles.asList(new double[size]);
+				}
+			};
+			return Multimaps.newListMultimap(map , factory);
 		}
 
 	}
