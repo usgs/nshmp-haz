@@ -22,34 +22,41 @@ import com.google.common.primitives.Doubles;
 
 /**
  * Container class for scalar ground motions associated individual
- * {@code Source}s.
+ * {@code Source}s in a {@code SourceSet}.
  * 
  * @author Peter Powers
  */
 public final class GroundMotionSet {
 
-	//TODO make package private
-	
-	// NOTE the inputList supplied to Builder will be immutable
-	// but the mean and sigma list maps are not; builder backs
-	// mean and sigma lists with double[].
+	// TODO make package private
+
+	/*
+	 * NOTE the inputList supplied to Builder will be immutable but the mean and
+	 * sigma list maps are not; builder backs mean and sigma lists with
+	 * double[].
+	 * 
+	 * Can't use Multimaps.newListMultimap(map, factory) backed with
+	 * Doubles.asList(double[]) because list must be empty to start with.
+	 * 
+	 * http://code.google.com/p/guava-libraries/issues/detail?id=1827
+	 */
 
 	public final GmmInputList inputs;
-	public final ListMultimap<Gmm, Double> means;
-	public final ListMultimap<Gmm, Double> sigmas;
+	public final Map<Gmm, List<Double>> means;
+	public final Map<Gmm, List<Double>> sigmas;
 
-	private GroundMotionSet(GmmInputList inputs, ListMultimap<Gmm, Double> means,
-			ListMultimap<Gmm, Double> sigmas) {
+	private GroundMotionSet(GmmInputList inputs, Map<Gmm, List<Double>> means,
+		Map<Gmm, List<Double>> sigmas) {
 		this.inputs = inputs;
 		this.means = means;
 		this.sigmas = sigmas;
 	}
-	
+
 	@Override public String toString() {
 		StringBuilder sb = new StringBuilder(getClass().getSimpleName());
 		sb.append(" [").append(inputs.parent.name()).append("]");
 		sb.append(": ").append(LINE_SEPARATOR.value());
-		for (int i=0; i<inputs.size(); i++) {
+		for (int i = 0; i < inputs.size(); i++) {
 			sb.append(inputs.get(i));
 			sb.append(" ");
 			for (Gmm gmm : means.keySet()) {
@@ -68,17 +75,14 @@ public final class GroundMotionSet {
 
 	static class Builder {
 
-		private static final String ID = "ScalarGroundMotionSet.Builder";
-
-		private final GmmInputList inputs;
-//		private final Map<Gmm, List<Double>> means;
-//		private final Map<Gmm, List<Double>> sigmas;
-		private final ListMultimap<Gmm, Double> means;
-		private final ListMultimap<Gmm, Double> sigmas;
-
+		private static final String ID = "GroundMotionSet.Builder";
 		private boolean built = false;
 		private final int size;
 		private int addCount = 0;
+
+		private final GmmInputList inputs;
+		private final Map<Gmm, List<Double>> means;
+		private final Map<Gmm, List<Double>> sigmas;
 
 		private Builder(GmmInputList inputs, Set<Gmm> gmms) {
 			checkArgument(checkNotNull(inputs).size() > 0);
@@ -101,25 +105,17 @@ public final class GroundMotionSet {
 			checkState(!built, "This %s instance has already been used", ID);
 			checkState(addCount == size, "Only %s of %s entries have been added", addCount, size);
 			built = true;
+			System.out.println("means: " + means);
+			System.out.println("sigmas:" + sigmas);
 			return new GroundMotionSet(inputs, means, sigmas);
 		}
 
-//		static Map<Gmm, List<Double>> initValueMap(Set<Gmm> gmms, int size) {
-//			Map<Gmm, List<Double>> map = Maps.newEnumMap(Gmm.class);
-//			for (Gmm gmm : gmms) {
-//				map.put(gmm, Doubles.asList(new double[size]));
-//			}
-//			return map;
-//		}
-		
-		static ListMultimap<Gmm, Double> initValueMap(Set<Gmm> gmms,final int size) {
-			Map<Gmm, Collection<Double>> map = Maps.newEnumMap(Gmm.class);
-			Supplier<List<Double>> factory = new Supplier<List<Double>>() {
-				@Override public List<Double> get() {
-					return Doubles.asList(new double[size]);
-				}
-			};
-			return Multimaps.newListMultimap(map , factory);
+		static Map<Gmm, List<Double>> initValueMap(Set<Gmm> gmms, int size) {
+			Map<Gmm, List<Double>> map = Maps.newEnumMap(Gmm.class);
+			for (Gmm gmm : gmms) {
+				map.put(gmm, Doubles.asList(new double[size]));
+			}
+			return map;
 		}
 
 	}

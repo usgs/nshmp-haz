@@ -1,5 +1,8 @@
 package org.opensha.calc;
 
+import static com.google.common.util.concurrent.Futures.*;
+import static org.opensha.calc.Transforms.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +13,7 @@ import java.util.concurrent.Executors;
 import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.eq.forecast.ClusterSourceSet;
 import org.opensha.eq.forecast.Forecast;
+import org.opensha.eq.forecast.GmmSet;
 import org.opensha.eq.forecast.Source;
 import org.opensha.eq.forecast.SourceSet;
 import org.opensha.eq.forecast.SourceType;
@@ -69,6 +73,8 @@ public class HazardCalcManager {
 		}
 	}
 
+	// @formatter: off
+	
 	// TODO epiphany!!! Although it will be a little more work, if we have a
 	// multi-distance
 	// GmmSet model, we will do all calculations; the far gmms are currently
@@ -84,6 +90,47 @@ public class HazardCalcManager {
 	// fine-grainedness
 
 	/*
+	 * Convert a SourceSet to a List of GmmInputLists, one for each source
+	 * within range.
+	 */
+	AsyncList<GmmInputList> toInputs(SourceSet<? extends Source> sources, Site site) {
+		Function<Source, GmmInputList> function = sourceToInputs(site);
+		AsyncList<GmmInputList> result = new AsyncList<>();
+		for (Source source : sources.locationIterable(site.loc)) {
+			result.add(transform(immediateFuture(source), function, EX));
+		}
+		return result;
+	}
+
+	/*
+	 * Convert a List of GmmInputLists to a List of GroundMotionSets.
+	 */
+	AsyncList<GroundMotionSet> toGroundMotions(AsyncList<GmmInputList> inputLists, GmmSet gmmSet,
+			Imt imt) {
+		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(gmmSet.gmms(), imt);
+		Function<GmmInputList, GroundMotionSet> function = inputsToGroundMotions(gmmInstances);
+		AsyncList<GroundMotionSet> result = new AsyncList<>();
+		for (ListenableFuture<GmmInputList> inputs : inputLists) {
+			result.add(transform(inputs, function, EX));
+		}
+		return result;
+	}
+	
+	/*
+	 * Convert a List of GroundMotionSets to a List of hazard curve maps, with
+	 * one curve per GroundMotionModel.
+	 */
+	AsyncList<Map<Gmm, ArrayXY_Sequence>> toHazardCurves(AsyncList<GroundMotionSet> groundMotions,
+			ArrayXY_Sequence model) {
+		Function<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> function = groundMotionsToCurves(model);
+		AsyncList<Map<Gmm, ArrayXY_Sequence>> result = new AsyncList<>();
+		for (ListenableFuture<GroundMotionSet> gmSet : groundMotions) {
+			result.add(transform(gmSet, function, EX));
+		}
+		return result;
+	}
+	
+	/*
 	 * Process a SourceSet splitting out all tasks as Futures.
 	 */
 	List<ListenableFuture<GroundMotionSet>> toGroundMotions1(SourceSet<? extends Source> sources,
@@ -95,24 +142,21 @@ public class HazardCalcManager {
 
 		// set up reusable transforms
 		Function<Source, GmmInputList> sourceToInputs = Transforms.sourceToInputs(site);
-		Function<GmmInputList, GroundMotionSet> inputsToGroundMotions = Transforms
-			.inputsToGroundMotions(gmmInstances);
+		Function<GmmInputList, GroundMotionSet> inputsToGroundMotions = Transforms.inputsToGroundMotions(gmmInstances);
 
 		// ground motion set aggregator
 		List<ListenableFuture<GroundMotionSet>> gmsFutures = Lists.newArrayList();
-
+				
 		for (Source source : sources.locationIterable(site.loc)) {
 
 			// wrap Source in ListenableFuture for Futures.transform()
 			ListenableFuture<Source> srcFuture = Futures.immediateFuture(source);
 
 			// transform source to inputs
-			ListenableFuture<GmmInputList> gmmInputs = Futures.transform(srcFuture, sourceToInputs,
-				EX);
+			ListenableFuture<GmmInputList> gmmInputs = Futures.transform(srcFuture, sourceToInputs, EX);
 
 			// transform inputs to ground motions
-			ListenableFuture<GroundMotionSet> gmResults = Futures.transform(gmmInputs,
-				inputsToGroundMotions, EX);
+			ListenableFuture<GroundMotionSet> gmResults = Futures.transform(gmmInputs, inputsToGroundMotions, EX);
 
 			gmsFutures.add(gmResults);
 		}
@@ -128,11 +172,11 @@ public class HazardCalcManager {
 			Site site, Imt imt) {
 
 		// get ground motion models
-		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sources.groundMotionModels()
-			.gmms(), imt);
+		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sources.groundMotionModels().gmms(), imt);
 
 		Function<Source, GroundMotionSet> transform = Functions.compose(
-			Transforms.inputsToGroundMotions(gmmInstances), Transforms.sourceToInputs(site));
+			Transforms.inputsToGroundMotions(gmmInstances),
+			Transforms.sourceToInputs(site));
 
 		// ground motion set aggregator
 		List<ListenableFuture<GroundMotionSet>> gmsFutures = Lists.newArrayList();
@@ -150,13 +194,11 @@ public class HazardCalcManager {
 	List<GroundMotionSet> toGroundMotions3(SourceSet<? extends Source> sources, Site site, Imt imt) {
 
 		// get ground motion models
-		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sources.groundMotionModels()
-			.gmms(), imt);
+		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sources.groundMotionModels().gmms(), imt);
 
 		// set up reusable transforms
 		Function<Source, GmmInputList> sourceToInputs = Transforms.sourceToInputs(site);
-		Function<GmmInputList, GroundMotionSet> inputsToGroundMotions = Transforms
-			.inputsToGroundMotions(gmmInstances);
+		Function<GmmInputList, GroundMotionSet> inputsToGroundMotions = Transforms.inputsToGroundMotions(gmmInstances);
 
 		List<GroundMotionSet> gmsList = new ArrayList<>();
 
@@ -193,8 +235,8 @@ public class HazardCalcManager {
 
 		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
 
-		Function<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> groundMotionsToCurves = Transforms
-			.groundMotionsToCurves(modelCurve);
+		Function<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> groundMotionsToCurves =
+				Transforms.groundMotionsToCurves(modelCurve);
 
 		List<ListenableFuture<Map<Gmm, ArrayXY_Sequence>>> curveFutures = Lists.newArrayList();
 
@@ -204,8 +246,45 @@ public class HazardCalcManager {
 
 		return curveFutures;
 	}
-	
-	
+
+//	HazardCurveSet toHazardCurves2(List<ListenableFuture<GroundMotionSet>> groundMotionList) {
+//
+//		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
+//
+//		Function<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> groundMotionsToCurves = Transforms.groundMotionsToCurves(modelCurve);
+//
+//		
+//		List<ListenableFuture<Map<Gmm, ArrayXY_Sequence>>> curveFutures = Lists.newArrayList();
+//
+//		for (ListenableFuture<GroundMotionSet> gmSet : groundMotionList) {
+//			curveFutures.add(Futures.transform(gmSet, groundMotionsToCurves, EX));
+//		}
+//
+//		
+//		return curveFutures;
+//	}
+//	
+//	ListenableFuture<HazardCurveSet> toHazardCurves3(List<ListenableFuture<GroundMotionSet>> groundMotionList) {
+//
+////		return Futures.transform
+//		Function
+//				
+//		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
+//
+//		Function<GroundMotionSet, Map<Gmm, ArrayXY_Sequence>> groundMotionsToCurves = Transforms.groundMotionsToCurves(modelCurve);
+//
+//		
+//		List<ListenableFuture<Map<Gmm, ArrayXY_Sequence>>> curveFutures = Lists.newArrayList();
+//
+//		for (ListenableFuture<GroundMotionSet> gmSet : groundMotionList) {
+//			curveFutures.add(Futures.transform(gmSet, groundMotionsToCurves, EX));
+//		}
+//
+//		
+//		return curveFutures;
+//	}
+
+
 
 	/*
 	 * Process a ClusterSourceSet to a List of GroundMotionSet Lists, wrapped in
@@ -225,7 +304,7 @@ public class HazardCalcManager {
 	public ListenableFuture<Map<Gmm, ArrayXY_Sequence>> toClusterCurve(
 			List<GroundMotionSet> groundMotions, ArrayXY_Sequence model) throws Exception {
 
-		// List (inner) --> faults (sections)
+		// List --> faults (sections)
 		// GroundMotionSet --> magnitude variants
 
 		return Futures.transform(Futures.immediateFuture(groundMotions),

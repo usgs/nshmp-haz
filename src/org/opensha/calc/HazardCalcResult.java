@@ -1,5 +1,10 @@
 package org.opensha.calc;
 
+import java.util.List;
+
+import org.opensha.eq.forecast.Source;
+import org.opensha.eq.forecast.SourceSet;
+
 /**
  * Add comments here test 
  *
@@ -7,4 +12,7 @@ package org.opensha.calc;
  */
 public class HazardCalcResult {
 
+//	final List<SourceSet<Source>> sourceSets;
+//	final List<HazardCurveSet> curves;
+	
 }

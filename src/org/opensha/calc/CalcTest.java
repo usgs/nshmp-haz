@@ -1,8 +1,10 @@
 package org.opensha.calc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -18,8 +20,13 @@ import org.opensha.geo.Location;
 import org.opensha.gmm.Gmm;
 import org.opensha.gmm.Imt;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Stopwatch;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
+import com.google.common.primitives.Doubles;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -32,6 +39,8 @@ public class CalcTest {
 
 	private static String testModel = "../nshmp-forecast-dev/forecasts/Test";
 
+	// @formatter: off
+	
 	// private static String testModel =
 	// "../nshmp-forecast-dev/forecasts/2008/Western US";
 	//
@@ -53,6 +62,7 @@ public class CalcTest {
 		// e.printStackTrace();
 		// }
 		System.exit(0);
+
 	}
 
 	public static Forecast testLoad() {
@@ -68,6 +78,8 @@ public class CalcTest {
 		}
 	}
 
+	// TODO how are empty results being handled ??
+	
 	public static void testCalc(Forecast forecast) {
 
 		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
@@ -79,25 +91,27 @@ public class CalcTest {
 			// hcm.calc(forecast, s, imt);
 			Stopwatch sw = Stopwatch.createStarted();
 
-			List<GroundMotionSet> collector = new ArrayList<>();
-			for (SourceSet<? extends Source> sources : forecast) {
-				if (sources.type() == SourceType.CLUSTER) {
-					ClusterSourceSet clusters = (ClusterSourceSet) sources;
+			// List<GroundMotionSet> collector = new ArrayList<>();
+			for (SourceSet<? extends Source> sourceSet : forecast) {
+				if (sourceSet.type() == SourceType.CLUSTER) {
+					ClusterSourceSet clusters = (ClusterSourceSet) sourceSet;
 
 					// List (outer) --> clusters (geometry variants)
 					// List (inner) --> faults (sections)
 					// GroundMotionSet --> magnitude variants
 
-					List<List<GroundMotionSet>> gmsLists = hcm.toClusterGroundMotions(clusters, s,
-						imt).get();
+					List<List<GroundMotionSet>> gmsLists = hcm.toClusterGroundMotions(clusters, s, imt).get();
+					
 					for (List<GroundMotionSet> gmsList : gmsLists) {
-						collector.addAll(gmsList);
-						for (GroundMotionSet gms : gmsList) {
-							System.out.println(clusters.name() + ": " + gms);
-						}
+						// collector.addAll(gmsList);
+						// for (GroundMotionSet gms : gmsList) {
+						// System.out.println(clusters.name() + ": " + gms);
+						// }
 
 						Map<Gmm, ArrayXY_Sequence> curves = hcm.toClusterCurve(gmsList, modelCurve)
 							.get();
+						// System.out.println(curves);
+
 						for (Entry<Gmm, ArrayXY_Sequence> entry : curves.entrySet()) {
 							System.out.println(entry.getKey().name());
 							System.out.println(entry.getValue());
@@ -110,14 +124,22 @@ public class CalcTest {
 					// List<GroundMotionSet> gmsList =
 					// hcm.toGroundMotions4(sources, s, imt).get();
 					// collector.addAll(gmsList);
+//					hcm.toGroundMotions(hcm.toInputs(sourceSet, s));
 
-					List<ListenableFuture<GroundMotionSet>> gmsFuturesList = hcm.toGroundMotions1(
-						sources, s, imt);
+					List<ListenableFuture<GroundMotionSet>> gmsFuturesList = hcm.toGroundMotions1(sourceSet, s, imt);
 
-					List<ListenableFuture<Map<Gmm, ArrayXY_Sequence>>> curvesFutures = hcm
-						.toHazardCurves(gmsFuturesList);
+					List<ListenableFuture<Map<Gmm, ArrayXY_Sequence>>> curvesFutures = hcm.toHazardCurves(gmsFuturesList);
+
+					List<Map<Gmm, ArrayXY_Sequence>> curveSetList = Futures.allAsList(curvesFutures).get();
+
 					
-					
+					for (Map<Gmm, ArrayXY_Sequence> curveSet : curveSetList) {
+
+						for (Entry<Gmm, ArrayXY_Sequence> entry : curveSet.entrySet()) {
+							System.out.println(entry.getKey().name());
+							System.out.println(entry.getValue());
+						}
+					}
 
 					// List<GroundMotionSet> gmsList =
 					// Futures.allAsList(r1).get();
