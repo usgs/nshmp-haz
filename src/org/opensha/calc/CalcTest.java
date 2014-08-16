@@ -66,24 +66,11 @@ public class CalcTest {
 	 */
 	public static void main(String[] args) {
 		Forecast forecast = testLoad();
-		Site site = Site.create(Location.create(34.05, -118.25));
-		Imt imt = Imt.PGA;
 
-		HazardResult result = testCalc(forecast, site, imt);
-		System.out.println(result.sourceSetMap);
-		System.out.println(result);
-
-		// oakland
-		site = Site.create(Location.create(37.8044, -122.2708));
-		result = testCalc(forecast, site, imt);
-		
-		// sacramento
-		site = Site.create(Location.create(38.5556, -121.4689));
-		result = testCalc(forecast, site, imt);
-
-		// back to la
-		site = Site.create(Location.create(34.05, -118.25));
-		result = testCalc(forecast, site, imt);
+		runSites(forecast, Imt.PGA);
+		runSites(forecast, Imt.SA0P2);
+		runSites(forecast, Imt.SA1P0);
+		runSites(forecast, Imt.SA2P0);
 		
 		// try {
 		// Calculators hcm = Calculators.create();
@@ -97,6 +84,29 @@ public class CalcTest {
 		// }
 		 
 		System.exit(0);
+
+	}
+	
+	static void runSites(Forecast forecast, Imt imt) {
+		Site site = Site.create(Location.create(34.05, -118.25));
+
+		HazardResult result = testCalc(forecast, site, imt);
+		System.out.println(result);
+
+		// oakland
+		site = Site.create(Location.create(37.8044, -122.2708));
+		result = testCalc(forecast, site, imt);
+		System.out.println(result);
+		
+		// sacramento
+		site = Site.create(Location.create(38.5556, -121.4689));
+		result = testCalc(forecast, site, imt);
+		System.out.println(result);
+
+		// back to la
+		site = Site.create(Location.create(34.05, -118.25));
+		result = testCalc(forecast, site, imt);
+		System.out.println(result);
 
 	}
 
