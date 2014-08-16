@@ -23,6 +23,7 @@ import com.google.common.primitives.Doubles;
  * @author Peter Powers
  * @version $Id:$
  */
+@Deprecated
 public class HazardCalcResultSet implements Iterable<ScalarGroundMotion> {
 
 	private List<Double> means;

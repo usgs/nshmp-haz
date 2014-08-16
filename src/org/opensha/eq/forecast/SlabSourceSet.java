@@ -29,6 +29,10 @@ public class SlabSourceSet implements SourceSet<PointSource> {
 		return delegate.name();
 	}
 
+	@Override public String toString() {
+		return delegate.toString();
+	}
+
 	@Override public Iterator<PointSource> iterator() {
 		return delegate.iterator();
 	}

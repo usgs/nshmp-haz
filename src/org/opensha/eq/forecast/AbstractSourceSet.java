@@ -1,11 +1,13 @@
 package org.opensha.eq.forecast;
 
+import static com.google.common.base.Strings.padEnd;
 import java.util.Map;
 
 import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
@@ -48,11 +50,11 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	}
 	
 	@Override public String toString() {
-		Map<String, String> data = Maps.newLinkedHashMap();
-		data.put("Name", name);
-		data.put("Size", Integer.toString(size()));
-		data.put("Weight", Double.toString(weight));
-		return data.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append(" Name: ").append(padEnd(name, 24, ' '));
+		sb.append("Size: ").append(padEnd(Integer.toString(size()), 8, ' '));
+		sb.append("Weight: ").append(padEnd(Double.toString(weight), 12, ' '));
+		return sb.toString();
 	}
 
 	@Override public double weight() {

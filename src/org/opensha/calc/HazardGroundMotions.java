@@ -5,19 +5,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
-import java.util.Collection;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.opensha.gmm.Gmm;
-import org.opensha.gmm.GmmInput;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
 import com.google.common.primitives.Doubles;
 
 /**
@@ -26,7 +20,7 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  */
-public final class GroundMotionSet {
+final class HazardGroundMotions {
 
 	// TODO make package private
 
@@ -41,11 +35,11 @@ public final class GroundMotionSet {
 	 * http://code.google.com/p/guava-libraries/issues/detail?id=1827
 	 */
 
-	public final GmmInputList inputs;
-	public final Map<Gmm, List<Double>> means;
-	public final Map<Gmm, List<Double>> sigmas;
+	final HazardInputs inputs;
+	final Map<Gmm, List<Double>> means;
+	final Map<Gmm, List<Double>> sigmas;
 
-	private GroundMotionSet(GmmInputList inputs, Map<Gmm, List<Double>> means,
+	private HazardGroundMotions(HazardInputs inputs, Map<Gmm, List<Double>> means,
 		Map<Gmm, List<Double>> sigmas) {
 		this.inputs = inputs;
 		this.means = means;
@@ -69,22 +63,22 @@ public final class GroundMotionSet {
 		return sb.toString();
 	}
 
-	static Builder builder(GmmInputList inputs, Set<Gmm> gmms) {
+	static Builder builder(HazardInputs inputs, Set<Gmm> gmms) {
 		return new Builder(inputs, gmms);
 	}
 
 	static class Builder {
 
-		private static final String ID = "GroundMotionSet.Builder";
+		private static final String ID = "HazardGroundMotions.Builder";
 		private boolean built = false;
 		private final int size;
 		private int addCount = 0;
 
-		private final GmmInputList inputs;
+		private final HazardInputs inputs;
 		private final Map<Gmm, List<Double>> means;
 		private final Map<Gmm, List<Double>> sigmas;
 
-		private Builder(GmmInputList inputs, Set<Gmm> gmms) {
+		private Builder(HazardInputs inputs, Set<Gmm> gmms) {
 			checkArgument(checkNotNull(inputs).size() > 0);
 			checkArgument(checkNotNull(gmms).size() > 0);
 			this.inputs = inputs;
@@ -101,13 +95,11 @@ public final class GroundMotionSet {
 			return this;
 		}
 
-		GroundMotionSet build() {
+		HazardGroundMotions build() {
 			checkState(!built, "This %s instance has already been used", ID);
 			checkState(addCount == size, "Only %s of %s entries have been added", addCount, size);
 			built = true;
-			System.out.println("means: " + means);
-			System.out.println("sigmas:" + sigmas);
-			return new GroundMotionSet(inputs, means, sigmas);
+			return new HazardGroundMotions(inputs, means, sigmas);
 		}
 
 		static Map<Gmm, List<Double>> initValueMap(Set<Gmm> gmms, int size) {

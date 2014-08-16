@@ -11,27 +11,35 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.opensha.data.ArrayXY_Sequence;
+import org.opensha.eq.forecast.Source;
+import org.opensha.eq.forecast.SourceSet;
 import org.opensha.gmm.Gmm;
 
 /**
  * Container class for hazard curves derived from a {@code SourceSet}. Class
- * stores the {@code GroundMotionSet}s associated with each {@code Source} and
- * the compiled curves for each {@code GroundMotionModel} that was used.
+ * stores the {@code HazardGroundMotions}s associated with each {@code Source}
+ * used in a hazard calculation and the combined curves for each
+ * {@code GroundMotionModel} used. The {@code Builder} for this class is used to
+ * aggregate the HazardCurves associated with each {@code Source} in a
+ * {@code SourceSet}.
  * 
  * @author Peter Powers
  */
 public class HazardCurveSet {
 
-	final List<GroundMotionSet> groundMotions;
-	final Map<Gmm, ArrayXY_Sequence> curves;
-	
-	private HazardCurveSet(List<GroundMotionSet> groundMotions, Map<Gmm, ArrayXY_Sequence> curves) {
-		this.groundMotions = groundMotions;
-		this.curves = curves;
+	final SourceSet<? extends Source> sourceSet;
+	final List<HazardGroundMotions> groundMotionsList;
+	final Map<Gmm, ArrayXY_Sequence> gmmCurveMap;
+
+	private HazardCurveSet(SourceSet<? extends Source> sourceSet,
+		List<HazardGroundMotions> groundMotionsList, Map<Gmm, ArrayXY_Sequence> gmmCurveMap) {
+		this.sourceSet = sourceSet;
+		this.groundMotionsList = groundMotionsList;
+		this.gmmCurveMap = gmmCurveMap;
 	}
 
-	static Builder builder(ArrayXY_Sequence model, Set<Gmm> gmms) {
-		return new Builder(model, gmms);
+	static Builder builder(SourceSet<? extends Source> sourceSet, ArrayXY_Sequence modelCurve) {
+		return new Builder(sourceSet, modelCurve);
 	}
 
 	static class Builder {
@@ -39,28 +47,30 @@ public class HazardCurveSet {
 		private static final String ID = "HazardCurveSet.Builder";
 		private boolean built = false;
 
-		private final List<GroundMotionSet> groundMotions;
-		private final Map<Gmm, ArrayXY_Sequence> curves;
+		private final SourceSet<? extends Source> sourceSet;
+		private final List<HazardGroundMotions> groundMotionsList;
+		private final Map<Gmm, ArrayXY_Sequence> gmmCurveMap;
 
-		private Builder(ArrayXY_Sequence model, Set<Gmm> gmms) {
-			groundMotions = new ArrayList<>();
-			curves = new EnumMap<>(Gmm.class);
-			for (Gmm gmm : gmms) {
-				curves.put(gmm, ArrayXY_Sequence.copyOf(model).clear());
+		private Builder(SourceSet<? extends Source> sourceSet, ArrayXY_Sequence model) {
+			this.sourceSet = sourceSet;
+			groundMotionsList = new ArrayList<>();
+			gmmCurveMap = new EnumMap<>(Gmm.class);
+			for (Gmm gmm : sourceSet.groundMotionModels().gmms()) {
+				gmmCurveMap.put(gmm, ArrayXY_Sequence.copyOf(model).clear());
 			}
 		}
 
-		Builder add(GroundMotionSet gms, Map<Gmm, ArrayXY_Sequence> curveMap) {
-			groundMotions.add(checkNotNull(gms));
-			for (Entry<Gmm, ArrayXY_Sequence> entry : curveMap.entrySet()) {
-				curves.get(entry.getKey()).add(entry.getValue());
+		Builder addCurves(HazardCurves hazardCurves) {
+			groundMotionsList.add(hazardCurves.groundMotions);
+			for (Entry<Gmm, ArrayXY_Sequence> entry : hazardCurves.curveMap.entrySet()) {
+				gmmCurveMap.get(entry.getKey()).add(entry.getValue());
 			}
 			return this;
 		}
 
 		HazardCurveSet build() {
 			checkState(!built, "This %s instance has already been used", ID);
-			return new HazardCurveSet(groundMotions, curves);
+			return new HazardCurveSet(sourceSet, groundMotionsList, gmmCurveMap);
 		}
 
 	}

@@ -17,14 +17,14 @@ import org.opensha.eq.forecast.Source;
  * 
  * @author Peter Powers
  */
-class GmmInputList extends AbstractList<TemporalGmmInput> {
+class HazardInputs extends AbstractList<TemporalGmmInput> {
 
 	// TODO we may only ultimately need the name
 	
 	Source parent;
 	List<TemporalGmmInput> delegate;
 	
-	GmmInputList(Source parent) {
+	HazardInputs(Source parent) {
 		this.parent = checkNotNull(parent);
 		delegate = new ArrayList<>();
 	}
