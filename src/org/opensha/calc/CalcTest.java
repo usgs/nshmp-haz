@@ -53,8 +53,8 @@ public class CalcTest {
 	// handy
 
 
-	private static String testModel = "../nshmp-forecast-dev/forecasts/Test";
-//	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Western US";
+//	private static String testModel = "../nshmp-forecast-dev/forecasts/Test";
+	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Western US";
 
 	// @formatter: off
 	
@@ -66,9 +66,25 @@ public class CalcTest {
 	 */
 	public static void main(String[] args) {
 		Forecast forecast = testLoad();
-		HazardResult result = testCalc(forecast);
+		Site site = Site.create(Location.create(34.05, -118.25));
+		Imt imt = Imt.PGA;
+
+		HazardResult result = testCalc(forecast, site, imt);
 		System.out.println(result.sourceSetMap);
 		System.out.println(result);
+
+		// oakland
+		site = Site.create(Location.create(37.8044, -122.2708));
+		result = testCalc(forecast, site, imt);
+		
+		// sacramento
+		site = Site.create(Location.create(38.5556, -121.4689));
+		result = testCalc(forecast, site, imt);
+
+		// back to la
+		site = Site.create(Location.create(34.05, -118.25));
+		result = testCalc(forecast, site, imt);
+		
 		// try {
 		// Calculators hcm = Calculators.create();
 		// String path = "tmp/NSHMP08-noRedux/California/Fault/bFault.gr.xml";
@@ -99,13 +115,11 @@ public class CalcTest {
 
 	// TODO how are empty results being handled ??
 	
-	public static HazardResult testCalc(Forecast forecast) {
+	public static HazardResult testCalc(Forecast forecast, Site site, Imt imt) {
 
 		ArrayXY_Sequence model = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
 
 		try {
-			Site site = Site.create(Location.create(34.05, -118.25));
-			Imt imt = Imt.PGA;
 			// hcm.calc(forecast, s, imt);
 			Stopwatch sw = Stopwatch.createStarted();
 			
