@@ -117,32 +117,34 @@ public class CalcTest {
 
 				if (sourceSet.type() == SourceType.CLUSTER) {
 
-					ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
-
-					// List (outer) --> clusters (geometry variants)
-					// List (inner) --> faults (sections)
-					// HazardGroundMotions --> magnitude variants
-
-					ListenableFuture<List<List<HazardGroundMotions>>> groundMotions = toClusterGroundMotions(clusterSourceSet, site, imt);
-					
-					List<List<HazardGroundMotions>> gmsLists = toClusterGroundMotions(clusterSourceSet, site, imt).get();
-					
-					for (List<HazardGroundMotions> groundMotionList : gmsLists) {
-						// collector.addAll(gmsList);
-						// for (HazardGroundMotions gms : gmsList) {
-						// System.out.println(clusters.name() + ": " + gms);
-						// }
-
-						Map<Gmm, ArrayXY_Sequence> curves = toClusterCurve(groundMotionList, model).get();
-						// System.out.println(curves);
-
-						for (Entry<Gmm, ArrayXY_Sequence> entry : curves.entrySet()) {
-							System.out.println(entry.getKey().name());
-							System.out.println(entry.getValue());
-						}
-
-					}
-					System.out.println(gmsLists.size());
+//					ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
+//
+//					// List (outer) --> clusters (geometry variants)
+//					// List (inner) --> faults (sections)
+//					// HazardGroundMotions --> magnitude variants
+//
+//					ListenableFuture<List<List<HazardGroundMotions>>> groundMotions = toClusterGroundMotions(clusterSourceSet, site, imt);
+//					
+//					List<List<HazardGroundMotions>> gmsLists = toClusterGroundMotions(clusterSourceSet, site, imt).get();
+//					
+//					for (List<HazardGroundMotions> groundMotionList : gmsLists) {
+//						// collector.addAll(gmsList);
+//						// for (HazardGroundMotions gms : gmsList) {
+//						// System.out.println(clusters.name() + ": " + gms);
+//						// }
+//
+//						Map<Gmm, ArrayXY_Sequence> curves = toClusterCurve(groundMotionList, model).get();
+//						// System.out.println(curves);
+//
+//						for (Entry<Gmm, ArrayXY_Sequence> entry : curves.entrySet()) {
+//							System.out.println(entry.getKey().name());
+//							System.out.println(entry.getValue());
+//						}
+//
+//					}
+//					
+//					// each cluster 
+//					System.out.println(gmsLists.size());
 				} else {
 
 					AsyncList<HazardInputs> inputs = toInputs(sourceSet, site);
