@@ -56,9 +56,9 @@ public class Deaggregator implements Callable<DeaggResult> {
 	 * from list of gm means and std devs, and a target IML.
 	 * @return
 	 */
-	public static Deaggregator create(HazardCalcResultSet data) {
-		return null;
-	}
+//	public static Deaggregator create(HazardCalcResultSet data) {
+//		return null;
+//	}
 
 
 	@Override
