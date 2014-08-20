@@ -68,10 +68,8 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 		throw new UnsupportedOperationException();
 	}
 
+	/* Single use builder */
 	static class Builder {
-
-		// build() may only be called once
-		// use Double to ensure fields are initially null
 
 		private static final String ID = "ClusterSourceSet.Builder";
 		private boolean built = false;
@@ -79,7 +77,6 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 		private String name;
 		private Double weight;
 		private MagScalingType magScaling;
-		private GmmSet gmmSet;
 		private List<ClusterSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
@@ -91,12 +88,6 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			this.weight = validateWeight(weight);
 			return this;
 		}
-
-		// TODO clean
-		// Builder gmms(GmmSet gmmSet) {
-		// this.gmmSet = checkNotNull(gmmSet);
-		// return this;
-		// }
 
 		Builder magScaling(MagScalingType magScaling) {
 			this.magScaling = checkNotNull(magScaling, "");
@@ -113,8 +104,6 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			checkState(name != null, "%s name not set", id);
 			checkState(weight != null, "%s weight not set", id);
 			checkState(magScaling != null, "%s mag-scaling relation not set", id);
-			// checkState(gmmSet != null, "%s ground motion models not set",
-			// id);
 			built = true;
 		}
 

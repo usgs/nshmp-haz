@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
  * be overriden at some point and should always be checked prior to calculation
  * regardless of any uncertainty values present.
  */
-public class MagUncertainty {
+class MagUncertainty {
 
 	boolean hasEpistemic;
 	int epiCount;
@@ -55,7 +55,7 @@ public class MagUncertainty {
 	 *        applies, below which it is disabled
 	 * @return a magnitude uncertainty container
 	 */
-	public static MagUncertainty create(double[] epiDeltas, double[] epiWeights, double epiCutoff,
+	static MagUncertainty create(double[] epiDeltas, double[] epiWeights, double epiCutoff,
 			double aleaSigma, int aleaCount, boolean moBalance, double aleaCutoff) {
 
 		MagUncertainty mu = new MagUncertainty();
@@ -136,7 +136,7 @@ public class MagUncertainty {
 	 * @param node to append to
 	 * @return a reference to the newly created {@code Element}
 	 */
-	public Element appendTo(Element node) {
+	Element appendTo(Element node) {
 		if (!hasAleatory && !hasEpistemic) return null;
 		Element e = addElement(MAG_UNCERTAINTY, node);
 		if (hasEpistemic) {

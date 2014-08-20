@@ -6,28 +6,34 @@ import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import java.util.Iterator;
 
+import org.opensha.gmm.GroundMotionModel;
 import org.opensha.util.Named;
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
 /**
- * A {@code Forecast} is the top-level wrapper for earthquake source definitions
- * used in probabilisitic seismic hazard analyses and calculations (PSHAs). A
- * {@code Forecast} contains of a number of {@code SourceSet}s that define
- * logical groupings of sources by {@code SourceType}.
- * 
- * TODO (below) maybe not
- * <p>Iteration of {@code SourceSet}s occurs in the order that
- * {@code SourceType}s are declared in their {@code enum} class and then by the
- * order they were added to this {@code Forecast}</p>
+ * An earthquake hazard {@code Forecast} is the top-level wrapper for earthquake
+ * {@link Source} definitions and attendant {@link GroundMotionModel}s used in
+ * probabilisitic seismic hazard analyses (PSHAs) and related calculations. A
+ * {@code Forecast} contains of a number of {@link SourceSet}s that define
+ * logical groupings of sources by {@link SourceType}. Each {@code SourceSet}
+ * carries with it references to the {@code GroundMotionModel}s and associated
+ * weights to be used when evaluating hazard.
  * 
  * @author Peter Powers
+ * @see Source
  * @see SourceSet
  * @see SourceType
  */
 public final class Forecast implements Iterable<SourceSet<? extends Source>>, Named {
 
+	// TODO INDEXED_FAULT to SYSTEM
+	
+	// TODO how to set PointSourceType, see GridSourceSet
+	// TODO cases where general pointSource is used??
+
+	// TODO expose FloatStyle
 	// TODO SUB check rake handling
 
 	// TODO SUB merge | multiply weight and rate
@@ -44,18 +50,18 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	// TODO depth varying deep source; zones --> parse
 	// TODO do deep GMMs saturate/apped at 7.8 ?? I believe all are but need to
 	// ensure
-	
+
 	// TODO perhaps add notes on CEUS fixed strike sources having vertical
 	// faults with no mechanism (strike-slip implied)
 	// rJB, rRup, rX all based on line regardeless of dip
-	
+
 	// TODO are any M=6.0 finite source representation cutoffs being used in
 	// 2014 fortran
-	
+
 	// TODO need to implement masking of CA shear sources in XML; only keep
 	// those that are outside
 	// CA boundary
-	
+
 	// TODO check if AtkinsonMacias using BooreAtkin siteAmp to get non-rock
 	// site response
 
@@ -66,14 +72,35 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
 
-	// TODO does this need to be a SetMultimap
 	private Forecast(String name, SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
 		this.name = name;
 		this.sourceSetMap = sourceSetMap;
 	}
 
 	/**
-	 * Returns the number of {@code SourceSet}s in this {@code Forecast}.
+	 * Load a {@code Forecast} from a directory or Zip file specified by the
+	 * supplied {@code path}.
+	 * 
+	 * <p>For more information on a Forecast directory and file structure, see
+	 * the <a
+	 * href="https://github.com/usgs/nshmp-haz/wiki/Earthquake-Source-Models"
+	 * >nshmp-haz wiki</a>.</p>
+	 * 
+	 * <p><b>Notes:</b> Forecast loading is not thread safe. This method can
+	 * potentially throw a wide variety of exceptions, all of which will be
+	 * logged in detail but propogated as a plain checked {@code Exception}.</p>
+	 * 
+	 * @param path to {@code Forecast} directory or Zip file
+	 * @param name for the {@code Forecast}
+	 * @return a newly instantiated {@code Forecast}
+	 * @throws Exception if an error occurs
+	 */
+	public static Forecast load(String path, String name) throws Exception {
+		return Loader.load(path, name);
+	}
+
+	/**
+	 * The number of {@code SourceSet}s in this {@code Forecast}.
 	 */
 	public int size() {
 		return sourceSetMap.size();
@@ -81,24 +108,12 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 
 	@Override public Iterator<SourceSet<? extends Source>> iterator() {
 		return sourceSetMap.values().iterator();
-
-		// TODO clean
-		// TODO check if above delegate sorts on keys as well
-		// probably doesn't really matter
-		// Set<SourceType> types = Sets.newEnumSet(sourceSetMap.keySet(),
-		// SourceType.class);
-		// List<Iterator<SourceSet<? extends Source>>> iterators =
-		// Lists.newArrayList();
-		// for (SourceType type : types) {
-		// iterators.add(sourceSetMap.get(type).iterator());
-		// }
-		// return Iterators.concat(iterators.iterator());
 	}
 
 	@Override public String name() {
 		return name;
 	}
-	
+
 	@Override public String toString() {
 		return "Forecast: " + name + LINE_SEPARATOR.value() + sourceSetMap.toString();
 	}
@@ -106,7 +121,7 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	/**
 	 * Returns a new {@link Builder}.
 	 */
-	public static Builder builder() {
+	static Builder builder() {
 		return new Builder();
 	}
 
@@ -115,6 +130,7 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 		static final String ID = "Forecast.Builder";
 		boolean built = false;
 
+		// ImmutableSetMultimap.Builder preserves value addition order
 		private ImmutableSetMultimap.Builder<SourceType, SourceSet<? extends Source>> sourceMapBuilder;
 		private SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
 		private String name;

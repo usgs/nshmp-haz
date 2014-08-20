@@ -28,10 +28,4 @@ public enum TectonicSetting {
 		return Parsing.enumLabelWithSpaces(this);
 	}
 	
-	// TODO delete
-	public static void main(String[] args) {
-		for (TectonicSetting ts : TectonicSetting.values()) {
-			System.out.println(ts);
-		}
-	}
 }

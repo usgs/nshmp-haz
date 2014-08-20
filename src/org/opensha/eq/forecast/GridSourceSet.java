@@ -34,7 +34,6 @@ import com.google.common.primitives.Ints;
  * magnitudes derived from a {@link IncrementalMfd} at each grid node.
  * 
  * @author Peter Powers
- * @see PointSource and subclasses
  */
 public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
@@ -53,8 +52,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	final MagLengthRelationship mlr;
 
-	// TODO this needs to be able to be set
-	// TODO cases where general pointSource is used??
 	PointSourceType ptSrcType;
 
 	// only available to parsers
@@ -205,6 +202,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	// Builder accomodates overriding a default mechMap to support UC3
 	// grid sources; may add others later TODO document
 
+	/* Single use builder. */
 	static class Builder {
 
 		// build() may only be called once

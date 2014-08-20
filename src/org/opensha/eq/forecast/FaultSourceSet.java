@@ -68,10 +68,8 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 		}
 	}
 
+	/* Single use builder. */
 	static class Builder {
-
-		// build() may only be called once
-		// use Doubles to ensure fields are initially null
 
 		static final String ID = "FaultSourceSet.Builder";
 		boolean built = false;

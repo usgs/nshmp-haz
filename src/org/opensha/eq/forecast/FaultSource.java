@@ -23,7 +23,6 @@ import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.eq.fault.surface.GriddedSurfaceWithSubsets;
 import org.opensha.eq.fault.surface.RuptureSurface;
-import org.opensha.geo.GeoTools;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;
 
@@ -46,10 +45,10 @@ import com.google.common.collect.Range;
  * @author Peter Powers
  */
 public class FaultSource implements Source {
-	
+
 	// TODO revisit to determine which fields
 	// should be obtained from surface
-	
+
 	final String name;
 	final LocationList trace;
 	final double dip;
@@ -61,14 +60,14 @@ public class FaultSource implements Source {
 	final double offset; // of floating ruptures
 	final FloatStyle floatStyle;
 	final GriddedSurface surface;
-	
+
 	private final List<List<Rupture>> ruptureLists; // 1:1 with Mfds
-	
+
 	// package privacy for subduction subclass
-	FaultSource(String name, LocationList trace, double dip, double width,
-		GriddedSurface surface, double rake, List<IncrementalMfd> mfds,
-		MagScalingRelationship msr, double aspectRatio, double offset, FloatStyle floatStyle) {
-		
+	FaultSource(String name, LocationList trace, double dip, double width, GriddedSurface surface,
+		double rake, List<IncrementalMfd> mfds, MagScalingRelationship msr, double aspectRatio,
+		double offset, FloatStyle floatStyle) {
+
 		this.name = name;
 		this.trace = trace;
 		this.dip = dip;
@@ -80,12 +79,12 @@ public class FaultSource implements Source {
 		this.aspectRatio = aspectRatio;
 		this.offset = offset;
 		this.floatStyle = floatStyle;
-		
+
 		ruptureLists = initRuptureLists();
 		checkState(Iterables.size(Iterables.concat(ruptureLists)) > 0,
 			"FaultSource has no ruptures");
 	}
-	
+
 	private List<List<Rupture>> initRuptureLists() {
 		ImmutableList.Builder<List<Rupture>> rupListsBuilder = ImmutableList.builder();
 		for (IncrementalMfd mfd : mfds) {
@@ -98,32 +97,33 @@ public class FaultSource implements Source {
 
 	@Override public int size() {
 		return Iterables.size(this);
-	}	
-	
+	}
+
 	@Override public String name() {
 		return name;
 	}
-	
+
 	@Override public Iterator<Rupture> iterator() {
 		return Iterables.concat(ruptureLists).iterator();
 	}
-	
-	@Override
-	public String toString() {
+
+	@Override public String toString() {
+		// @formatter:off
 		Map<Object, Object> data = ImmutableMap.builder()
-			.put("name", name)
-			.put("dip", dip)
-			.put("width", width)
-			.put("rake", rake)
-			.put("mfds", mfds.size())
-			.put("top", trace.first().depth())
-			.build();
+				.put("name", name)
+				.put("dip", dip)
+				.put("width", width)
+				.put("rake", rake)
+				.put("mfds", mfds.size())
+				.put("top", trace.first().depth())
+				.build();
 		return getClass().getSimpleName() + " " + data;
+		// @formatter:on
 	}
 
 	private List<Rupture> createRuptureList(IncrementalMfd mfd) {
 		ImmutableList.Builder<Rupture> rupListbuilder = ImmutableList.builder();
-		
+
 		// @formatter:off
 		for (int i = 0; i < mfd.getNum(); ++i) {
 			double mag = mfd.getX(i);
@@ -167,13 +167,10 @@ public class FaultSource implements Source {
 		// @formatter:on
 		return rupListbuilder.build();
 	}
-	
-	private static double computeRuptureLength(
-			MagScalingRelationship msr,
-			double mag,
-			double maxWidth,
-			double aspectRatio) {
-		
+
+	private static double computeRuptureLength(MagScalingRelationship msr, double mag,
+			double maxWidth, double aspectRatio) {
+
 		if (msr instanceof MagLengthRelationship) {
 			return msr.getMedianScale(mag);
 		} else if (msr instanceof MagAreaRelationship) {
@@ -184,19 +181,16 @@ public class FaultSource implements Source {
 			throw new IllegalArgumentException("Unsupported MagScalingRelation: " + msr.getClass());
 		}
 	}
-	
-	
-	static class Builder {
 
-		// build() may only be called once
-		// use Doubles to ensure fields are initially null
+	/* Single use builder */
+	static class Builder {
 
 		private static final Range<Double> ASPECT_RATIO_RANGE = Range.closed(1.0, 2.0);
 		private static final Range<Double> OFFSET_RANGE = Range.closed(0.1, 20.0);
-		
+
 		private static final String ID = "FaultSource.Builder";
 		private boolean built = false;
-		
+
 		// required
 		String name;
 		LocationList trace;
@@ -207,12 +201,12 @@ public class FaultSource implements Source {
 		ImmutableList.Builder<IncrementalMfd> mfdsBuilder = ImmutableList.builder();
 		List<IncrementalMfd> mfds;
 		MagScalingRelationship msr;
-		
+
 		// have defaults - not required
 		double aspectRatio = 1.0;
 		double offset = 1.0;
 		FloatStyle floatStyle = FULL_DOWN_DIP;
-		
+
 		Builder name(String name) {
 			this.name = validateName(name);
 			return this;
@@ -227,42 +221,42 @@ public class FaultSource implements Source {
 			this.dip = validateDip(dip);
 			return this;
 		}
-		
+
 		Builder width(double width) {
 			this.width = validateWidth(width);
-			return this; 
+			return this;
 		}
-		
+
 		Builder depth(double depth) {
 			this.depth = validateDepth(depth);
-			return this; 
+			return this;
 		}
 
 		Builder rake(double rake) {
 			this.rake = validateRake(rake);
 			return this;
 		}
-		
+
 		// NPE checks in the two methods below will be redone by
 		// ImmutableList.Builder which disallows nulls
-		
+
 		Builder mfd(IncrementalMfd mfd) {
 			this.mfdsBuilder.add(checkNotNull(mfd, "MFD is null"));
 			return this;
 		}
-		
+
 		Builder mfds(List<IncrementalMfd> mfds) {
 			checkNotNull(mfds, "MFD list is null");
 			checkArgument(mfds.size() > 0, "MFD list is empty");
 			this.mfdsBuilder.addAll(mfds);
 			return this;
 		}
-		
+
 		Builder magScaling(MagScalingRelationship msr) {
 			this.msr = checkNotNull(msr, "Mag-Scaling Relation is null");
 			return this;
 		}
-		
+
 		Builder aspectRatio(double aspectRatio) {
 			this.aspectRatio = DataUtils.validate(ASPECT_RATIO_RANGE, "Aspect Ratio", aspectRatio);
 			return this;
@@ -272,7 +266,7 @@ public class FaultSource implements Source {
 			this.offset = DataUtils.validate(OFFSET_RANGE, "Floater Offset", offset);
 			return this;
 		}
-		
+
 		Builder floatStyle(FloatStyle floatStyle) {
 			this.floatStyle = checkNotNull(floatStyle, "Floater style is null");
 			return this;
@@ -290,79 +284,19 @@ public class FaultSource implements Source {
 			checkState(msr != null, "%s mag-scaling relation not set", id);
 			built = true;
 		}
-		
+
 		FaultSource buildFaultSource() {
-			
+
 			mfds = mfdsBuilder.build();
-			
+
 			validateState(ID);
 
 			// create surface
-			GriddedSurfaceWithSubsets surface = GriddedSurfaceWithSubsets.builder()
-					.trace(trace)
-					.depth(depth)
-					.dip(dip)
-					.width(width)
-					.spacing(offset)
-					.build();
+			GriddedSurfaceWithSubsets surface = GriddedSurfaceWithSubsets.builder().trace(trace)
+				.depth(depth).dip(dip).width(width).spacing(offset).build();
 
 			return new FaultSource(name, trace, dip, width, surface, rake,
 				ImmutableList.copyOf(mfds), msr, aspectRatio, offset, floatStyle);
 		}
 	}
-
-
-	// @formatter:off
-	// TODO hold on to this as we may need indexing, but at present we don't
-	// TODO clean
-	//
-	// class fields:
-	//	private final List<Integer> rupCount; // cumulative index list for iteration
-	//	private int size = 0;
-	//
-	//	private void initRuptures() {
-	//		for (IncrementalMfd mfd : mfds) {
-	//			List<Rupture> rupList = createRuptureList(mfd);
-	//			ruptureLists.add(rupList);
-	//			size += rupList.size();
-	//			rupCount.add(size);
-	//			
-	//		}
-	//		checkState(size > 0, "FaultSource has no ruptures");
-	//	}
-	//
-	// @Override
-	// public Rupture getRupture(int idx) {
-	// checkElementIndex(idx, rupCount.get(rupCount.size()));
-	// 		// zero is built in to rupCount array; unless a negative idx is
-	// 		// supplied, if statement below should never be entered on first i
-	// 		for (int i = 0; i < rupCount.size(); i++) {
-	// 			if (idx < rupCount.get(i)) {
-	// 				return ruptureLists.get(i-1).get(idx - rupCount.get(i-1));
-	// 			}
-	// 		}
-	// 		throw new IllegalStateException("We shouldn't be here... ever.");
-	// 	}
-	//
-	//	@Override public Iterator<Rupture> iterator() {
-	//		return new Iterator<Rupture>() {
-	//			int size = size();
-	//			int caret = 0;
-	//
-	//			@Override public boolean hasNext() {
-	//				return caret < size;
-	//			}
-	//
-	//			@Override public Rupture next() {
-	//				return getRupture(caret++);
-	//			}
-	//
-	//			@Override public void remove() {
-	//				throw new UnsupportedOperationException();
-	//			}
-	//		};
-	//	}
-	//
-	// @formatter:on
-
 }

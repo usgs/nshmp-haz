@@ -37,12 +37,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * {@code Forecast} loader. This class takes care of extensive checked exception
- * required when initializing a {@code Forecast}.
+ * {@code Forecast} loader. This class takes care of extensive checked
+ * exceptions required when initializing a {@code Forecast}.
  * 
  * @author Peter Powers
  */
-public class Loader {
+class Loader {
 
 	private static final String LF = LINE_SEPARATOR.value();
 	private static Logger log;
@@ -76,7 +76,7 @@ public class Loader {
 	 * @return a newly created {@code Forecast}
 	 * @throws Exception TODO checked exceptions
 	 */
-	public static Forecast load(String path, String name) throws Exception {
+	static Forecast load(String path, String name) throws Exception {
 
 		// TODO perhaps we process a config.xml file at the root of
 		// a Forecast to pick up name and other calc configuration data
@@ -286,7 +286,7 @@ public class Loader {
 			return null;
 		}
 	}
-	
+
 	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder)
 			throws IOException, SAXException {
 
@@ -302,7 +302,7 @@ public class Loader {
 		InputStream gridIn = Files.newInputStream(gridSourcePath);
 		GridSourceSet gridSet = GridParser.create(sax).parse(gridIn, gmmSet);
 		builder.sourceSet(gridSet);
-		log.info("   Grid set: "  + dir.getFileName() + "/" + GRIDSOURCE_FILENAME);
+		log.info("   Grid set: " + dir.getFileName() + "/" + GRIDSOURCE_FILENAME);
 		log.info("    Sources: " + gridSet.size());
 
 	}

@@ -5,11 +5,11 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import org.opensha.mfd.IncrementalMfd;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Cluster source representation. This class wraps a {@code FaultSourceSet} of
@@ -19,29 +19,27 @@ import com.google.common.collect.Lists;
  * calculator and {@link ClusterSource#iterator()} therefore throws an
  * {@code UnsupportedOperationException}.
  * 
- * <p>A {@code ClusterSource} cannot be created directly; it may only be
- * created by a private parser.</p>
+ * <p>Unlike other {@code Source}s whose weights are carried with their
+ * associated {@link IncrementalMfd}, {@code ClusterSource}s carry a separate
+ * {@link #weight()} value.</p>
+ * 
+ * <p>A {@code ClusterSource} cannot be created directly; it may only be created
+ * by a private parser.</p>
  * 
  * @author Peter Powers
  */
 public class ClusterSource implements Source {
 
-	// NOTE several methods delegate to internal FaultSourceSet
-	
-//	private final String name;
-//	final double weight;
 	final double rate; // from the default mfd xml
 	final FaultSourceSet faults;
 
 	ClusterSource(double rate, FaultSourceSet faults) {
-//		this.name = name;
-//		this.weight = weight;
 		this.rate = rate;
 		this.faults = faults;
 	}
 
 	/**
-	 * Returns (1 / return-period) of this source in years.
+	 * {@code (1 / return period)} of this source in years.
 	 * @return the cluster rate
 	 */
 	public double rate() {
@@ -49,18 +47,15 @@ public class ClusterSource implements Source {
 	}
 
 	/**
-	 * Returns the weight that should be applied to this source.
-	 * @return the source weight
+	 * The weight applicable to this {@code ClusterSource}.
 	 */
 	public double weight() {
-		// TODO not sure this is necessary
 		return faults.weight();
 	}
 
 	/**
-	 * Returns the {@code FaultSourceSet} of all {@code FaultSource}s that
-	 * participate in this cluster.
-	 * @return a list of all {@code FaultSource}s
+	 * The {@code FaultSourceSet} of all {@code FaultSource}s that participate
+	 * in this cluster.
 	 */
 	public FaultSourceSet faults() {
 		return faults;
@@ -68,12 +63,6 @@ public class ClusterSource implements Source {
 
 	@Override public int size() {
 		return faults.size();
-		// TODO clean
-//		int count = 0;
-//		for (FaultSource fs : faults) {
-//			count += fs.size();
-//		}
-//		return count;
 	}
 
 	/**
@@ -89,66 +78,34 @@ public class ClusterSource implements Source {
 	}
 
 	@Override public String toString() {
-		// TODO use Joiner
 		// @formatter:off
-		StringBuilder sb = new StringBuilder();
-		sb.append("=========  Cluster Source  =========");
-		sb.append(LINE_SEPARATOR.value());
-		sb.append(" Cluster name: ").append(name());
-		sb.append(LINE_SEPARATOR.value());
-		sb.append("  ret. period: ").append(rate).append(" yrs");
-		sb.append(LINE_SEPARATOR.value());
-		sb.append("       weight: ").append(weight());
-		sb.append(LINE_SEPARATOR.value());
+		Map<Object, Object> data = ImmutableMap.builder()
+				.put("name", name())
+				.put("rate", rate())
+				.put("weight", weight())
+				.build();
+		StringBuilder sb = new StringBuilder()
+				.append(getClass().getSimpleName())
+				.append(" ")
+				.append(data)
+				.append(LINE_SEPARATOR.value());
 		for (FaultSource fs : faults) {
-			sb.append(LINE_SEPARATOR.value());
-			sb.append("        Fault: ").append(fs.name());
-			sb.append(LINE_SEPARATOR.value());
-			List<Double> mags = Lists.newArrayList();
-			List<Double> wts = Lists.newArrayList();
-			for (IncrementalMfd mfd : fs.mfds) {
-				mags.add(mfd.getX(0));
-				wts.add(mfd.getY(0) * rate);
-			}
-			sb.append("         mags: ").append(mags);
-			sb.append(LINE_SEPARATOR.value());
-			sb.append("      weights: ").append(wts);
-			sb.append(LINE_SEPARATOR.value());
-			sb.append("          dip: ").append(fs.dip);
-			sb.append(LINE_SEPARATOR.value());
-			sb.append("        width: ").append(fs.width);
-			sb.append(LINE_SEPARATOR.value());
-			sb.append("         rake: ").append(fs.rake);
-			sb.append(LINE_SEPARATOR.value());
-			sb.append("          top: ").append(fs.trace.first().depth());
-			sb.append(LINE_SEPARATOR.value());
+			sb.append("  ")
+			.append(fs.toString())
+			.append(LINE_SEPARATOR.value());
 		}
-		// @formatter:on
 		return sb.toString();
+		// @formatter:on
 	}
 
+	/* Single use builder */
 	static class Builder {
-
-		// build() may only be called once
-		// use Doubles to ensure fields are initially null
 
 		static final String ID = "ClusterSource.Builder";
 		boolean built = false;
 
-//		String name;
-//		Double weight;
 		Double rate;
 		FaultSourceSet faults;
-
-//		Builder name(String name) {
-//			this.name = validateName(name);
-//			return this;
-//		}
-//
-//		Builder weight(double weight) {
-//			this.weight = validateWeight(weight);
-//			return this;
-//		}
 
 		Builder rate(double rate) {
 			// TODO what sort of value checking should be done for rate (<1 ??)
@@ -165,8 +122,6 @@ public class ClusterSource implements Source {
 
 		void validateState(String mssgID) {
 			checkState(!built, "This %s instance as already been used", mssgID);
-//			checkState(name != null, "%s name not set", mssgID);
-//			checkState(weight != null, "%s weight not set", mssgID);
 			checkState(rate != null, "%s rate not set", mssgID);
 			checkState(faults != null, "%s has no fault sources", mssgID);
 			built = true;

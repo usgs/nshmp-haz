@@ -3,7 +3,6 @@ package org.opensha.eq.forecast;
 import static java.lang.Math.ceil;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
 import static org.opensha.eq.fault.FocalMech.NORMAL;
 import static org.opensha.eq.fault.FocalMech.REVERSE;
 import static org.opensha.eq.fault.FocalMech.STRIKE_SLIP;
@@ -33,7 +32,7 @@ import org.opensha.mfd.IncrementalMfd;
  * <p><b>NOTE</b>: {@code PointSource}s are thread safe, however the
  * {@code Rupture}s returned by {@link Source#iterator()} are not.</p>
  * 
- * <p><b>NOTE</b>: {@code Source.size()} returns the absolute number of
+ * <p><b>NOTE</b>: {@link #size()} returns the absolute number of
  * {@code Rupture}s that can be created given the supplied source input
  * arguments; the iterator, however, <i>may</i> return fewer {@code Rupture}s as
  * some may have zero rates.</p>
@@ -76,31 +75,9 @@ class PointSource implements Source {
 		return rupCount;
 	}
 
-	// TODO update docs on thread safety... sources are safe, ruptures are not
-	// TODO clean
 	/*
-	 * NOTE: Getting a Rupture by index is deliberately inefficient to ensure
-	 * thread safety. A new immutable Rupture and internal PointSurface are
-	 * created on every call. Use Source.iterator() where possible.
-	 */
-
-	// @Override
-	// public Rupture getRupture(int idx) {
-	// checkPositionIndex(idx, size());
-	// Rupture rupture = new Rupture();
-	// rupture.surface = new PointSurface(loc);
-	// updateRupture(rupture, idx);
-	// return rupture;
-	// }
-
-	/*
-	 * NOTE/TODO: Although there should not be many instances where a
-	 * PointSource.rupture rate is reduced to zero (a mag-depth weight could be
-	 * set to zero [this is not currently checked] of an MFD rate could be
-	 * zero), in the cases where it is, we're doing a little more work than
-	 * necessary below. We could alternatively short-circuit updateRupture()
-	 * this method to return null reference, but would need to condsider
-	 * getRupture(int) implementation.
+	 * NOTE/TODO: Should not be many instances where a PointSource.rupture rate
+	 * is reduced to zero; not checked below such that rupture is skipped
 	 */
 
 	private void updateRupture(Rupture rup, int idx) {
@@ -182,13 +159,13 @@ class PointSource implements Source {
 	private static final double GENERIC_WIDTH = 8.0;
 
 	/*
-	 * TODO: revisit. This is very clunky. Point sources are used by crustal and slab
-	 * sources. The default implementation here had assumed a maximum crustal eq
-	 * depth of 14km, which is really only appropriate for active continental
-	 * crust such as that in California. This yielded negative widths and
-	 * unreasonable zHyp values when zTop > 14. That said, most Gmm's used for
-	 * slab or stable continental crust ignore width and zHyp so there probably
-	 * wouldn't be a problem.
+	 * TODO: revisit. This is very clunky. Point sources are used by crustal and
+	 * slab sources. The default implementation here had assumed a maximum
+	 * crustal eq depth of 14km, which is really only appropriate for active
+	 * continental crust such as that in California. This yielded negative
+	 * widths and unreasonable zHyp values when zTop > 14. That said, most Gmm's
+	 * used for slab or stable continental crust ignore width and zHyp so there
+	 * probably wouldn't be a problem.
 	 * 
 	 * As a stopgap, any supplied depth > 14km will return a width of 8km, a
 	 * reasonable value for an earthquake nested in subducting oceanic crust.

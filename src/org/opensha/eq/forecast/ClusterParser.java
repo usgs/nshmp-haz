@@ -44,7 +44,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * and do not support epistemic or aleatory uncertainty on magnitude. These
  * restrictions could be lifted in the future.
  * 
- * NOTE: A ClusterSource wraps a FaultSourceSet that is delegates to for
+ * NOTE: A ClusterSource wraps a FaultSourceSet that it delegates to for
  * various methods.
  * 
  * @author Peter Powers

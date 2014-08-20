@@ -319,9 +319,10 @@ public class IndexedFaultSourceSet extends
 //	}
 
 	/*
-	 * Quirky behavior: Note that sections() must be called before any calls to
-	 * indices(). All indices and data fields should be repeatedly called in
-	 * order to ensure correctly ordered fields when iterating ruptures.
+	 * Single use builder. Quirky behavior: Note that sections() must be called
+	 * before any calls to indices(). All indices and data fields should be
+	 * repeatedly called in order to ensure correctly ordered fields when
+	 * iterating ruptures.
 	 */
 	static class Builder {
 

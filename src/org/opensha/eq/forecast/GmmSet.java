@@ -10,33 +10,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opensha.gmm.Gmm;
+import org.opensha.gmm.GroundMotionModel;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Doubles;
 
 /**
- * 
- * TODO this documentation sucks
- * 
- * Wrapper class for GroundMotionModel instances that will be matched against
- * different {@code Source} types in hazard calculations. The use of the word
- * 'Set' in the class name implies the {@code Gmm}s in a {@code GmmSet} will be
- * unique; this is guaranteeed by the internal use of {@code EnumMap}s.
- * 
- * We require that the {@code Gmm}s for far distances be a the same as, or a
- * subset of those for near distances
- * 
- * <p><b>Additional Epistemic Uncertainty</b></p> <p>Additional epistemic
- * uncertainty is considered for each NGA according to the following distance
- * and magnitude matrix: <pre> M<6 6%le;M<7 7&le;M =============================
- * D<10 0.375 | 0.230 | 0.400v 10&le;D<30 0.210 | 0.225 | 0.360 30&le;D 0.245 |
- * 0.230 | 0.310 ============================= </pre> For an earthquake rupture
- * at a given distance and magnitude, the corresponding uncertainty is applied
- * to a particular NGA with the following weights: <pre> hazard curve weight
- * ====================================== mean + unc 0.185 mean 0.630 mean - unc
- * 0.185 ====================================== </pre>
+ * Wrapper class for {@link GroundMotionModel}s associated with a
+ * {@link SourceSet}. In addition to carrying {@code Map}s of
+ * {@code GroundMotionModel}s and their associated weights, this class
+ * encapsulates any additional epistemic uncertainty that should be applied to
+ * the ground motions computed from these models, as well as model weight
+ * variants associated with different distance scales.
  * 
  * <p>A {@code GmmSet} can not be created directly; it may only be created by a
  * private parser.</p>
@@ -45,7 +31,8 @@ import com.google.common.primitives.Doubles;
  */
 public class GmmSet {
 
-	// TODO check privatizing
+	// TODO can this be privatized; requires changing signature of
+	// Source.groudMotionModels
 
 	final Map<Gmm, Double> weightMapLo;
 	final double maxDistLo;
@@ -70,14 +57,14 @@ public class GmmSet {
 
 		// although weightMapHi may be null, we want to use maxDistHi
 		// for distance checking in the event that we do
-		
+
 		uncertainty = (epiValues == null) ? UncertType.NONE : (epiValues.length == 1)
 			? UncertType.SINGLE : UncertType.MULTI;
-				
+
 		this.epiWeights = epiWeights;
 		if (uncertainty == UncertType.NONE) {
 			this.epiValue = Double.NaN;
-			this.epiValues = null;			
+			this.epiValues = null;
 		} else if (uncertainty == UncertType.SINGLE) {
 			this.epiValue = epiValues[0];
 			this.epiValues = null;
@@ -87,30 +74,16 @@ public class GmmSet {
 		}
 	}
 
+	/**
+	 * The {@code Set} of {@link GroundMotionModel} identifiers.
+	 */
 	public Set<Gmm> gmms() {
 		return gmms;
 	}
 
-	/**
-	 * Returns the maximum distance for which this calculator is applicable
-	 * @return
-	 */
-	// public double maxDistance() {
-	// return maxDistance;
-	// }
-
 	private static double[][] initEpiValues(double[] v) {
 		return new double[][] { { v[0], v[1], v[2] }, { v[3], v[4], v[5] }, { v[6], v[7], v[8] } };
 	}
-
-	// TODO clean
-	// private static final int EPI_CT = 3;
-	// private static final double[] EPI_SIGN = {-1.0, 0.0, 1,0};
-	// private static final double[] EPI_WT = {0.185, 0.630, 0.185};
-	// private static final double[][] EPI_VAL = {
-	// {0.375, 0.230, 0.400},
-	// {0.210, 0.225, 0.360},
-	// {0.245, 0.230, 0.310}};
 
 	/*
 	 * Returns the epistemic uncertainty for the supplied magnitude (M) and
@@ -128,11 +101,14 @@ public class GmmSet {
 				return 0.0;
 		}
 	}
-	
+
 	static enum UncertType {
-		NONE, SINGLE, MULTI;
+		NONE,
+		SINGLE,
+		MULTI;
 	}
 
+	/* Single use builder */
 	static class Builder {
 
 		static final String ID = "GmmSet.Builder";

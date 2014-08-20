@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.eq.forecast.ClusterSourceSet;
 import org.opensha.eq.forecast.Forecast;
-import org.opensha.eq.forecast.Loader;
 import org.opensha.eq.forecast.Source;
 import org.opensha.eq.forecast.SourceSet;
 import org.opensha.eq.forecast.SourceType;
@@ -53,8 +52,8 @@ public class CalcTest {
 	// handy
 
 
-//	private static String testModel = "../nshmp-forecast-dev/forecasts/Test";
-	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Western US";
+	private static String testModel = "../nshmp-forecast-dev/forecasts/Test";
+//	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Western US";
 
 	// @formatter: off
 	
@@ -67,10 +66,10 @@ public class CalcTest {
 	public static void main(String[] args) {
 		Forecast forecast = testLoad();
 
-		runSites(forecast, Imt.PGA);
+//		runSites(forecast, Imt.PGA);
 		runSites(forecast, Imt.SA0P2);
-		runSites(forecast, Imt.SA1P0);
-		runSites(forecast, Imt.SA2P0);
+//		runSites(forecast, Imt.SA1P0);
+//		runSites(forecast, Imt.SA2P0);
 		
 		// try {
 		// Calculators hcm = Calculators.create();
@@ -112,7 +111,7 @@ public class CalcTest {
 
 	public static Forecast testLoad() {
 		try {
-			return Loader.load(testModel, "Forecast load test");
+			return Forecast.load(testModel, "Forecast load test");
 		} catch (Exception e) {
 			System.err.println("** Exiting **");
 			System.err.println();

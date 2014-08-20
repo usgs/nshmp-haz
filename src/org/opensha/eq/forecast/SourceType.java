@@ -6,7 +6,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import com.google.common.base.CaseFormat;
 
 /**
- * Identifier for different earthquake source types.
+ * Identifier for different earthquake {@link Source} types.
  * @author Peter Powers
  */
 public enum SourceType {

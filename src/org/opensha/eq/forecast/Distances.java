@@ -1,33 +1,26 @@
 package org.opensha.eq.forecast;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.geo.Locations.*;
+import static org.opensha.geo.Locations.distanceToLineFast;
+import static org.opensha.geo.Locations.distanceToSegmentFast;
+import static org.opensha.geo.Locations.horzDistanceFast;
 
-import java.awt.Color;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.util.Iterator;
-import java.util.List;
 
 import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.BorderType;
-import org.opensha.geo.GeoTools;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.geo.LocationVector;
 import org.opensha.geo.Locations;
 import org.opensha.geo.Region;
-import org.opensha.geo.RegionUtils;
 import org.opensha.geo.Regions;
 
-import com.google.common.collect.Lists;
-
-
 /**
- * Add comments here
- * TODO can this be package private; it should be if r fields are exposed.
+ * Distance value wrapper. 
  * 
  * @author Peter Powers
  */
@@ -43,19 +36,16 @@ public final class Distances {
 		this.rX = rX;
 	}
 
-	public static Distances create(int index, double rJB, double rRup, double rX) {
+	static Distances create(int index, double rJB, double rRup, double rX) {
 		return new Distances(index, rJB, rRup, rX);
 	}
 	
-	public static Distances create(double rJB, double rRup, double rX) {
+	static Distances create(double rJB, double rRup, double rX) {
 		return new Distances(-1, rJB, rRup, rX);
 	}
 	
-	
-	
 	/**
-	 * This computes distRup, distJB, & distSeis, which are available in the returned
-	 * array in elements 0, 1, and 2 respectively.
+	 * Compute distance metrics: rJB, rRup, and rX.
 	 * @param surface
 	 * @param loc
 	 * @return
