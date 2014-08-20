@@ -1,10 +1,11 @@
 package org.opensha.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha.geo.GeoTools.*;
-
 import static org.opensha.geo.GeoTools.TO_DEG;
 import static org.opensha.geo.GeoTools.TO_RAD;
+import static org.opensha.geo.GeoTools.validateDepth;
+import static org.opensha.geo.GeoTools.validateLat;
+import static org.opensha.geo.GeoTools.validateLon;
 
 import java.util.Iterator;
 
@@ -43,12 +44,6 @@ public final class Location implements Comparable<Location> {
 	
 	private static final String TO_STR_FMT = FORMAT + "," + FORMAT + "," + FORMAT;
 	
-	// TODO possibly store degrees and radians; distance calcs are optimized to
-	// radians,
-	// but Region.contains() requires degree values; how often is this used?
-	// grid source
-	// iterators do no not use region
-
 	private final double lat;
 	private final double lon;
 	private final double depth;

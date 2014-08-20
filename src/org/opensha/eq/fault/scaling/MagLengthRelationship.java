@@ -22,9 +22,7 @@ package org.opensha.eq.fault.scaling;
 
 
 /**
- * <b>Title:</b>MagLengthRelationship<br>
- *
- * <b>Description:</b>  This is an abstract class that gives the median and standard
+ * This is an abstract class that gives the median and standard
  * deviation of magnitude as a function of length (km) or visa versa.  The
  * values can also be a function of rake.  Note that the standard deviation for length
  * as a function of mag is given for natural-log(length) not length.  <p>

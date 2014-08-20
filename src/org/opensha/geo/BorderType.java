@@ -35,7 +35,6 @@ package org.opensha.geo;
  * <br/>
  * 
  * @author Peter Powers
- * @version $Id: BorderType.java 6594 2010-04-15 15:13:06Z pmpowers $
  * @see Region
  * @see Location
  */

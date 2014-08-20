@@ -20,10 +20,6 @@
 package org.opensha.eq.fault.scaling;
 
 /**
- * <b>Title:</b>MagAreaRelDepthDep<br>
- *
- * <b>Description:</b>  This .  <p>
- *
  * @author Edward H. Field
  * @version 1.0
  */

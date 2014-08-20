@@ -3,8 +3,7 @@ package org.opensha.geo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-
-import static org.opensha.geo.Locations.*;
+import static org.opensha.geo.Locations.distanceToSegmentFast;
 
 import java.awt.geom.Path2D;
 import java.util.Iterator;
@@ -18,23 +17,20 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * An ordered collection of {@code Location}s.
+ * An ordered collection of {@link Location}s.
  * 
  * <p>A {@code LocationList} must contain at least 1 {@code Location}.
  * {@code LocationList} instances are immutable and calls to {@code remove()}
  * when iterating will throw an {@code UnsupportedOperationException}. Consider
  * using a {@link LocationList.Builder} if list is being compiled from numerous
- * {@code Locaiton}s that are not already known.</p>
+ * {@code Location}s that are not known in advance.</p>
  * 
  * @author Peter Powers
  */
 public final class LocationList implements Iterable<Location> {
 
 	// TODO should LocationLists really provide the facility to be used as keys
-	// TODO revisit hashCode and equals
-	// equals should implement some tolerance
 	// TODO remove reliance on AWT classes; remove Path method elsewhere?
-	// TODO use Lists.partition or Iterables.partition to break up
 	// TODO track down awkward uses of create() and replace with Builder
 
 	private static final String LF = System.getProperty("line.separator");
@@ -226,8 +222,6 @@ public final class LocationList implements Iterable<Location> {
 		return depth / size();
 	}
 
-	// TODO are these really necessary
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
@@ -242,15 +236,7 @@ public final class LocationList implements Iterable<Location> {
 
 	@Override
 	public int hashCode() {
-		int v = 0;
-		boolean add = true;
-		for (Location loc : this) {
-			// make each smaller to avoid possible overrun of int
-			int locCode = loc.hashCode() / 1000;
-			v = (add) ? v + locCode : v - locCode;
-			add = !add;
-		}
-		return v;
+		return locs.hashCode();
 	}
 
 	@Override

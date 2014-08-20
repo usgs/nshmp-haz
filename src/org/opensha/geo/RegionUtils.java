@@ -44,18 +44,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 /**
- * Add comments here
- *
+ * Region export utilities.
  * 
  * @author Peter Powers
- * @version $Id: RegionUtils.java 8975 2012-05-18 16:22:48Z pmpowers $
- * 
  */
 public class RegionUtils {
-
+	
+	// TODO clean and cull
+	
 	private static final String NL = System.getProperty("line.separator");
 	
-	public enum Style {
+	enum Style {
 		BORDER,
 		BORDER_VERTEX,
 		GRID_NODE;

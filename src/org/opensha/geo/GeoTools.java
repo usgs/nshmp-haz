@@ -1,23 +1,20 @@
 package org.opensha.geo;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Math.PI;
 import static org.opensha.data.DataUtils.validate;
 
-import static java.lang.Math.PI;
-import static com.google.common.base.Preconditions.*;
 import org.opensha.data.DataUtils;
 
 import com.google.common.collect.Range;
 
 /**
- * This class provides static references to constants and conversions useful for
- * geographic calculations, as well as a variety of utility methods.
+ * Constants and utility methods related to geographic calculations.
  * 
  * @author Peter Powers
  */
 public class GeoTools {
 
-	// TODO clean javadocs
-	
 	/**
 	 * The Authalic mean radius (A<subscript>r</subscript>) of the earth
 	 * [6371.0072 km] (see <a
@@ -50,7 +47,7 @@ public class GeoTools {
 	public static final double MIN_LON = -180.0;
 
 	// TODO test if and which distance calcs can handle
-	// thi shigher MAX_LON
+	// this higher MAX_LON
 	/** Maximum longitude value (180&#176;). */
 	public static final double MAX_LON = 360.0;
 
