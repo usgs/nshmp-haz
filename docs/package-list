@@ -1,5 +1,4 @@
 org.opensha.calc
-org.opensha.calc.tasks
 org.opensha.data
 org.opensha.eq
 org.opensha.eq.fault
@@ -11,4 +10,5 @@ org.opensha.function
 org.opensha.geo
 org.opensha.gmm
 org.opensha.mfd
+org.opensha.programs
 org.opensha.util
