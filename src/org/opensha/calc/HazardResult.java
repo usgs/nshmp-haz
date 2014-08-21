@@ -17,7 +17,7 @@ import com.google.common.collect.SetMultimap;
  *
  * @author Peter Powers
  */
-class HazardResult {
+public class HazardResult {
 	
 	// TODO final
 	// TODO each HazCurveSet needs reference to original SourceSet
