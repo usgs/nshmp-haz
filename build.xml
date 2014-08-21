@@ -7,7 +7,7 @@
 
 	<property name="src.dir" value="src/" />
 	<property name="lib.dir" value="lib/" />
-	<property name="javadoc.dir" value="../nshmp-sha.gh-pages/docs/" />
+	<property name="javadoc.dir" value="../nshmp-haz.gh-pages/docs" />
 	
 	<path id="library.classpath">
 		<fileset dir="${lib.dir}">

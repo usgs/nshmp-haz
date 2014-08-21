@@ -28,6 +28,8 @@ import com.google.common.collect.SetMultimap;
  */
 public final class Forecast implements Iterable<SourceSet<? extends Source>>, Named {
 
+	// TODO deal with javadoc warnings in build.xml
+	
 	// TODO INDEXED_FAULT to SYSTEM
 	
 	// TODO how to set PointSourceType, see GridSourceSet

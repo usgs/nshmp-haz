@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
  * @version $Id:$
  */
 @Deprecated
-public final class DistanceFilters {
+final class DistanceFilters {
 
 	// no instantiation
 	private DistanceFilters() {}

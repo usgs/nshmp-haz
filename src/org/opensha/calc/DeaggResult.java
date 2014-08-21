@@ -9,7 +9,8 @@ import java.util.List;
  * @author Peter Powers
  * @version $Id:$
  */
-public class DeaggResult {
+@Deprecated
+class DeaggResult {
 
 	private List<Double> magnitudes;
 	private List<Double> distances;

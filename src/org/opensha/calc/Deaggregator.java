@@ -38,7 +38,8 @@ import java.util.concurrent.Callable;
  * @author Peter Powers
  * @version $Id:$
  */
-public class Deaggregator implements Callable<DeaggResult> {
+@Deprecated
+class Deaggregator implements Callable<DeaggResult> {
 
 	/**
 	 * @param args

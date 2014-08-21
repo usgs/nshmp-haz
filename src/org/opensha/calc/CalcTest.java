@@ -35,7 +35,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Peter Powers
  */
-public class CalcTest {
+class CalcTest {
 
 
 	// TODO where/how to apply CEUS clamps
