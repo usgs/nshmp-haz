@@ -14,10 +14,8 @@ import java.util.Objects;
 /**
  * Array based implementation of an {@code XY_Sequence}.
  * 
- * <p><em>Notes on usage:</em>
- * 
  * <p>This class provides methods for combining and modifying array-based
- * sequences (e.g. {@link #add(ArrayXY_Sequence)} TODO more links ). These are
+ * sequences (e.g. {@link #add(ArrayXY_Sequence)}). These are
  * very efficient implementations that should be used in favor of standard
  * iterators where possible.</p>
  * 
@@ -26,7 +24,6 @@ import java.util.Objects;
  * constructor as it short circuits time-consuming argument validation.</p>
  * 
  * @author Peter Powers
- * @version $Id:$
  */
 public class ArrayXY_Sequence extends AbstractXY_Sequence {
 
@@ -99,13 +96,9 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 * @return a resampled sequence
 	 */
 	public static ArrayXY_Sequence resampleTo(XY_Sequence sequence, double[] xs) {
+		// NOTE TODO this will support mfd combining
 		checkNotNull(sequence);
 		checkArgument(checkNotNull(xs).length > 0);
-		// TODO Interpolate should handle Lists as well as arrays; the lists
-		// returned by AbstractXY_Sequence are immutable
-		// TODO this could be optimized to work directly with
-		// ArrayXY_Sequence.xs and .ys, but its probably not necessary given the
-		// above
 		double[] yResample = Interpolate.findY(sequence.xValues(), sequence.yValues(), xs);
 		// TODO disable extrapolation
 		if (true) throw new UnsupportedOperationException();

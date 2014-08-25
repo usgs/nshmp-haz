@@ -1,5 +1,6 @@
 /bin
 /classes
+/dist
 /docs
 /tmp
 Scratch*.java

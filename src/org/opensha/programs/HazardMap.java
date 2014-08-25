@@ -107,10 +107,10 @@ public class HazardMap {
 	// java -cp nshmp-haz.jar HazardMap /path/to/Forecast.zip/or/directory PGA /path/to/loc.dat 
 	
 	// all supported Imts
-	// java -cp nshmp-haz.jar ResponseSpectra /path/to/Forecast.zip/or/directory -117.5 34.5
+	// java -cp nshmp-haz.jar HazardSpectra /path/to/Forecast.zip/or/directory -117.5 34.5
 	
 	// other
-	// java -cp nshmp-haz.jar DetermResponseSpectra args[]
+	// java -cp nshmp-haz.jar DeterministicSpectra args[] :: ASK_14,CB_14
 	
 	
 	

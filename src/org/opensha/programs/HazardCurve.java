@@ -17,7 +17,19 @@ import org.opensha.gmm.Imt;
  */
 public class HazardCurve {
 
-	// hazCurve: year/model/lon/lat/
+	// TODO hold on to this for other services
+	// Iterator<String> args =
+	// Parsing.splitOnSlash(request.getQueryString()).iterator();
+	// Iterable<Gmm> gmms =
+	// Iterables.transform(Parsing.splitOnCommas(args.next()),
+	// Enums.stringConverter(Gmm.class));
+	// Iterable
+
+	
+
+	// hazCurve: year/model/imt/lon/lat/
+	
+	
 	public static Result calc(Forecast forecast, Imt imt, Site site) {
 		return null;
 	}

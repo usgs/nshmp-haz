@@ -7,37 +7,78 @@
 
 	<property name="src.dir" value="src/" />
 	<property name="lib.dir" value="lib/" />
-	<property name="javadoc.dir" value="../nshmp-haz.gh-pages/docs" />
-	
+	<property name="classes.dir" value="classes/" />
+	<property name="dist.dir" value="dist/" />
+	<property name="javadoc.dir" value="../nshmp-haz.gh-pages/" />
+
 	<path id="library.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
 
+	
+	<target name="build" depends="compile" >
+		<jar destfile="${dist.dir}nshmp-haz.jar">
+			<fileset dir="${classes.dir}" />
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
+		</jar>
+	</target>
+
+	
+	<target name="compile">
+
+		<!-- Clean the classes/ directory -->
+		<delete dir="${classes.dir}" />
+		<mkdir dir="${classes.dir}" />
+
+		<!-- Compile to classes/  -->
+		<javac srcdir="${src.dir}"
+		       destdir="${classes.dir}"
+		       classpathref="library.classpath"
+		       nowarn="true"
+		       source="1.7"
+		       target="1.7"
+		       encoding="UTF-8" />
+
+		<!-- Copy any non-Java resources -->
+		<copy todir="${classes.dir}" includeEmptyDirs="false">
+			<fileset dir="${src.dir}" excludes="**/*.java" />
+		</copy>
+
+	</target>
+
+
 	<target name="javadoc">
-		<delete dir="${javadoc.dir}" failonerror="yes" verbose="no" />
-		<javadoc 
-			classpathref="library.classpath" 
-			destdir="${javadoc.dir}"
-			author="true"
-			version="true" 
-			use="true"
-			windowtitle="nshmp-sha"
-			maxmemory="512m"
-			verbose="false"
-			encoding="UTF-8"
-			docencoding="UTF-8"
-			charset="UTF-8">
-			
+
+		<!-- Clean the docs directory; preserve .git data -->
+		<delete includeEmptyDirs="true" failonerror="yes" verbose="no">
+			<fileset dir="${javadoc.dir}" includes="**/*" defaultexcludes="no">
+				<include name="**/*" />
+				<exclude name=".git" />
+			</fileset>
+		</delete>
+
+		<javadoc classpathref="library.classpath"
+		         destdir="${javadoc.dir}"
+		         author="true"
+		         version="true"
+		         use="true"
+		         windowtitle="nshmp-haz"
+		         maxmemory="512m"
+		         verbose="false"
+		         encoding="UTF-8"
+		         docencoding="UTF-8"
+		         charset="UTF-8">
+
 			<fileset dir="${src.dir}" defaultexcludes="yes">
 				<include name="**/*.java" />
 			</fileset>
-						
-			<link href="http://docs.oracle.com/javase/7/docs/api/"/>
-			<link href="http://commons.apache.org/proper/commons-math/apidocs/"/>
-			<link href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/"/>
-			
+
+			<link href="http://docs.oracle.com/javase/7/docs/api/" />
+			<link href="http://commons.apache.org/proper/commons-math/apidocs/" />
+			<link href="http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/" />
+
 		</javadoc>
 	</target>
 

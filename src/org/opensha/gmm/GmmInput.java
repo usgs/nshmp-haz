@@ -197,17 +197,17 @@ public class GmmInput {
 			return this;
 		}
 
-		public Builder rjb(double rJB) {
+		public Builder rJB(double rJB) {
 			this.rJB = validateAndFlag(RJB, rJB);
 			return this;
 		}
 
-		public Builder rrup(double rRup) {
+		public Builder rRup(double rRup) {
 			this.rRup = validateAndFlag(RRUP, rRup);
 			return this;
 		}
 
-		public Builder rx(double rX) {
+		public Builder rX(double rX) {
 			this.rX = validateAndFlag(RX, rX);
 			return this;
 		}

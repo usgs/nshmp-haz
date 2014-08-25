@@ -7,7 +7,6 @@ import java.util.List;
  * sequence x-values should be immutable.
  * 
  * @author Peter Powers
- * @version $Id:$
  */
 public interface XY_Sequence extends Iterable<XY_Point> {
 

@@ -61,19 +61,6 @@ public final class Locations {
 	private Locations() {}
 
 	/**
-	 * {@code Enum} used indicate sidedness of points with respect to a line.
-	 */
-	public enum Side {
-		// TODO needed??
-		/** Indicates a point is on the right side of a line. */
-		RIGHT,
-		/** Indicates a point is on the left side of a line. */
-		LEFT,
-		/** Indicates a point is on the a line. */
-		ON;
-	}
-
-	/**
 	 * Calculates the angle between two {@code Location}s using the <a
 	 * href="http://en.wikipedia.org/wiki/Haversine_formula" target="_blank">
 	 * Haversine</a> formula. This method properly handles values spanning
