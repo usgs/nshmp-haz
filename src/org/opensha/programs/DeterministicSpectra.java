@@ -214,10 +214,14 @@ public class DeterministicSpectra {
 
 	// @formatter:on
 
-	private static final String USAGE = "DeterministicSpectra Usage: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra Gmm mag rJB rRup rX dip width zTop zHyp rake vs30 vsInf z2p5 z1p0" +
+	private static final String USAGE = "DeterministicSpectra usage:" +
 		LINE_SEPARATOR.value() +
-		"DeterministicSpectra Example: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra ASK_14 6.5 10.0 10.3 10.0 90.0 14.0 0.5 7.5 0.0 760.0 true NaN NaN" +
 		LINE_SEPARATOR.value() +
-		"For details on class use see: http://usgs.github.io/nshmp-haz/docs/org/opensha/programs/DeterministicSpectra.html";
+		"command: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra Gmm mag rJB rRup rX dip width zTop zHyp rake vs30 vsInf z2p5 z1p0" +
+		LINE_SEPARATOR.value() +
+		"example: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra ASK_14 6.5 10.0 10.3 10.0 90.0 14.0 0.5 7.5 0.0 760.0 true NaN NaN" +
+		LINE_SEPARATOR.value() +
+		LINE_SEPARATOR.value() +
+		"  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha/programs/DeterministicSpectra.html";
 
 }

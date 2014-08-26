@@ -28,6 +28,11 @@ import com.google.common.collect.SetMultimap;
  */
 public final class Forecast implements Iterable<SourceSet<? extends Source>>, Named {
 
+	// TODO refactor to HazardModel
+	// TODO refactor package to model
+	
+	// TODO get rid of unicode encoding; everything is UTF-8
+	
 	// TODO deal with javadoc warnings in build.xml
 	
 	// TODO INDEXED_FAULT to SYSTEM
