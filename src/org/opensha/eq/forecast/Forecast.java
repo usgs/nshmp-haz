@@ -34,6 +34,7 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	// TODO get rid of unicode encoding; everything is UTF-8
 	
 	// TODO deal with javadoc warnings in build.xml
+	// TODO add package-info.java
 	
 	// TODO INDEXED_FAULT to SYSTEM
 	

@@ -1,6 +1,7 @@
 package org.opensha.calc;
 
 import static org.opensha.calc.Calculators.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,8 +53,9 @@ class CalcTest {
 	// handy
 
 
-	private static String testModel = "../nshmp-forecast-dev/forecasts/Test";
+//	private static String testModel = "../nshmp-forecast-dev/forecasts/Test";
 //	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Western US";
+	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Central & Eastern US";
 
 	// @formatter: off
 	
@@ -87,25 +89,26 @@ class CalcTest {
 	}
 	
 	static void runSites(Forecast forecast, Imt imt) {
+		
+		// la
 		Site site = Site.create(Location.create(34.05, -118.25));
-
 		HazardResult result = testCalc(forecast, site, imt);
 		System.out.println(result);
 
-		// oakland
-		site = Site.create(Location.create(37.8044, -122.2708));
-		result = testCalc(forecast, site, imt);
-		System.out.println(result);
-		
-		// sacramento
-		site = Site.create(Location.create(38.5556, -121.4689));
-		result = testCalc(forecast, site, imt);
-		System.out.println(result);
-
-		// back to la
-		site = Site.create(Location.create(34.05, -118.25));
-		result = testCalc(forecast, site, imt);
-		System.out.println(result);
+//		// oakland
+//		site = Site.create(Location.create(37.8044, -122.2708));
+//		result = testCalc(forecast, site, imt);
+//		System.out.println(result);
+//		
+//		// sacramento
+//		site = Site.create(Location.create(38.5556, -121.4689));
+//		result = testCalc(forecast, site, imt);
+//		System.out.println(result);
+//
+//		// back to la
+//		site = Site.create(Location.create(34.05, -118.25));
+//		result = testCalc(forecast, site, imt);
+//		System.out.println(result);
 
 	}
 
@@ -139,7 +142,7 @@ class CalcTest {
 			for (SourceSet<? extends Source> sourceSet : forecast) {
 
 				if (sourceSet.type() == SourceType.CLUSTER) {
-
+					throw new UnsupportedOperationException("No Clusters!");
 //					ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
 //
 //					// List (outer) --> clusters (geometry variants)
