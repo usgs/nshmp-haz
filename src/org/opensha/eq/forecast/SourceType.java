@@ -11,26 +11,26 @@ import com.google.common.base.CaseFormat;
  */
 public enum SourceType {
 
+	/** Area source type. */
+	AREA,
+
+	/** Cluster source type. */
+	CLUSTER,
+
 	/** Finite fault source type. */
 	FAULT, 
 	
-	/** Indexed fault source type. */
-	INDEXED_FAULT,
-	
+	/** Gridded (background) seismicity source type. */
+	GRID,
+
 	/** Subduction interface source type. */
 	INTERFACE,
 
 	/** Subduction intraslab source type. */
 	SLAB,
 
-	/** Gridded (background) seismicity source type. */
-	GRID,
-
-	/** Area source type. */
-	AREA,
-
-	/** Cluster source type. */
-	CLUSTER;
+	/** Indexed fault source type. */
+	SYSTEM;
 	
 	/**
 	 * Returns a {@code CaseFormat#UPPER_CAMEL} {@code String} representation

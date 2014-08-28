@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.nio.file.Files.newDirectoryStream;
 import static java.util.logging.Level.SEVERE;
-import static org.opensha.eq.forecast.IndexedFaultParser.*;
+import static org.opensha.eq.forecast.SystemFaultParser.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -245,7 +245,7 @@ class Loader {
 			}
 		}
 
-		if (type == SourceType.INDEXED_FAULT) {
+		if (type == SourceType.SYSTEM) {
 			log.info("Parsing: " + typeDir.relativize(sourceDir));
 			parseIndexedSource(sourceDir, gmmSet, builder);
 		} else {
@@ -263,6 +263,10 @@ class Loader {
 		try {
 			InputStream in = Files.newInputStream(path);
 			switch (type) {
+				case AREA:
+					throw new UnsupportedOperationException("Area sources not currently supported");
+				case CLUSTER:
+					return ClusterParser.create(sax).parse(in, gmmSet);
 				case FAULT:
 					return FaultParser.create(sax).parse(in, gmmSet);
 				case GRID:
@@ -271,13 +275,9 @@ class Loader {
 					return InterfaceParser.create(sax).parse(in, gmmSet);
 				case SLAB:
 					return SlabParser.create(sax).parse(in, gmmSet);
-				case CLUSTER:
-					return ClusterParser.create(sax).parse(in, gmmSet);
-				case INDEXED_FAULT:
+				case SYSTEM:
 					throw new UnsupportedOperationException(
 						"Indexed sources are not processed with this method");
-				case AREA:
-					throw new UnsupportedOperationException("Area sources not currently supported");
 				default:
 					throw new IllegalStateException("Unkown source type");
 			}
@@ -295,7 +295,7 @@ class Loader {
 		Path rupturesPath = dir.resolve(RUPTURES_FILENAME);
 		InputStream rupturesIn = Files.newInputStream(rupturesPath);
 
-		IndexedFaultParser faultParser = IndexedFaultParser.create(sax);
+		SystemFaultParser faultParser = SystemFaultParser.create(sax);
 		builder.sourceSet(faultParser.parse(sectionsIn, rupturesIn, gmmSet));
 
 		Path gridSourcePath = dir.resolve(GRIDSOURCE_FILENAME);

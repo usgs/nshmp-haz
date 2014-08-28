@@ -31,8 +31,8 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  */
-public class IndexedFaultSourceSet extends
-		AbstractSourceSet<IndexedFaultSourceSet.IndexedFaultSource> {
+public class SystemSourceSet extends
+		AbstractSourceSet<SystemSourceSet.IndexedFaultSource> {
 
 	// rupture data
 	private final List<GriddedSurface> sections;
@@ -65,7 +65,7 @@ public class IndexedFaultSourceSet extends
 	 * exporter will use compoundSurface code and export values with ruptures
 	 */
 
-	private IndexedFaultSourceSet(String name, double weight, GmmSet gmmSet,
+	private SystemSourceSet(String name, double weight, GmmSet gmmSet,
 		List<GriddedSurface> sections, List<BitSet> bitsets, List<Double> mags, List<Double> rates,
 		List<Double> depths, List<Double> dips, List<Double> widths, List<Double> rakes) {
 
@@ -82,7 +82,7 @@ public class IndexedFaultSourceSet extends
 	}
 
 	@Override public SourceType type() {
-		return SourceType.INDEXED_FAULT;
+		return SourceType.SYSTEM;
 	}
 
 	@Override public int size() {
@@ -113,7 +113,7 @@ public class IndexedFaultSourceSet extends
 
 	private class DistanceFilter implements Predicate<IndexedFaultSource> {
 
-		private static final String ID = "IndexedFaultSourceSet.DistanceFilter";
+		private static final String ID = "SystemSourceSet.DistanceFilter";
 		private final Location loc;
 		private final double distance;
 		private final BitSet sectionBitsForLoc;
@@ -332,7 +332,7 @@ public class IndexedFaultSourceSet extends
 		// Unfiltered UCERF3: FM31 = 253,706 FM32 = 305,709
 		static final int RUP_SET_SIZE = 306000;
 
-		static final String ID = "IndexedFaultSourceSet.Builder";
+		static final String ID = "SystemSourceSet.Builder";
 		boolean built = false;
 
 		private String name;
@@ -438,11 +438,11 @@ public class IndexedFaultSourceSet extends
 		// TODO consider wrapping Doubles.asList() Lists in
 		// ForwardingList that overrides set(int, double)
 
-		IndexedFaultSourceSet build() {
+		SystemSourceSet build() {
 			validateState(ID);
 
 			// @formatter:off
-			return new IndexedFaultSourceSet(
+			return new SystemSourceSet(
 				name, weight, gmmSet,
 				ImmutableList.copyOf(sections),
 				ImmutableList.copyOf(bitsets),

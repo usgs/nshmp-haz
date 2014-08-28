@@ -39,13 +39,13 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
-class IndexedFaultParser extends DefaultHandler {
+class SystemFaultParser extends DefaultHandler {
 
 	static final String GRIDSOURCE_FILENAME = "grid_sources.xml";
 	static final String RUPTURES_FILENAME = "fault_ruptures.xml";
 	static final String SECTIONS_FILENAME = "fault_sections.xml";
 
-	private final Logger log = Logger.getLogger(IndexedFaultParser.class.getName());
+	private final Logger log = Logger.getLogger(SystemFaultParser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;
 
@@ -54,11 +54,11 @@ class IndexedFaultParser extends DefaultHandler {
 	private GmmSet gmmSet;
 
 	private List<GriddedSurface> sections; // TODO can these RuptureSurface??
-	private IndexedFaultSourceSet sourceSet;
-	private IndexedFaultSourceSet.Builder sourceSetBuilder;
+	private SystemSourceSet sourceSet;
+	private SystemSourceSet.Builder sourceSetBuilder;
 
 	// instead of building IncrementalMFD's this parser just holds onto
-	// mag and rate to directly populate IndexedFaultSourceSet
+	// mag and rate to directly populate SystemSourceSet
 	private double sourceMag;
 	private double sourceRate;
 
@@ -70,27 +70,27 @@ class IndexedFaultParser extends DefaultHandler {
 	private boolean readingTrace = false;
 	private StringBuilder traceBuilder = null;
 
-	private IndexedFaultParser(SAXParser sax) {
+	private SystemFaultParser(SAXParser sax) {
 		this.sax = sax;
 	}
 
-	static IndexedFaultParser create(SAXParser sax) {
-		return new IndexedFaultParser(checkNotNull(sax));
+	static SystemFaultParser create(SAXParser sax) {
+		return new SystemFaultParser(checkNotNull(sax));
 	}
 
-	IndexedFaultSourceSet parse(InputStream sectionsIn, InputStream rupturesIn, GmmSet gmmSet)
+	SystemSourceSet parse(InputStream sectionsIn, InputStream rupturesIn, GmmSet gmmSet)
 			throws SAXException, IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;
 		sections = parseSections(sectionsIn);
 		sax.parse(rupturesIn, this);
-		checkState(sourceSet.size() > 0, "IndexedFaultSourceSet is empty");
+		checkState(sourceSet.size() > 0, "SystemSourceSet is empty");
 		used = true;
 		return sourceSet;
 	}
 
 	private List<GriddedSurface> parseSections(InputStream in) throws SAXException, IOException {
-		IndexedSectionParser parser = IndexedSectionParser.create(sax);
+		SystemSectionParser parser = SystemSectionParser.create(sax);
 		return parser.parse(in);
 	}
 
@@ -111,7 +111,7 @@ class IndexedFaultParser extends DefaultHandler {
 				case INDEXED_FAULT_SOURCE_SET:
 					String name = readString(NAME, atts);
 					double weight = readDouble(WEIGHT, atts);
-					sourceSetBuilder = new IndexedFaultSourceSet.Builder();
+					sourceSetBuilder = new SystemSourceSet.Builder();
 					sourceSetBuilder
 						.name(name)
 						.weight(weight)

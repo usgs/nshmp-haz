@@ -28,6 +28,8 @@ import com.google.common.collect.SetMultimap;
  */
 public final class Forecast implements Iterable<SourceSet<? extends Source>>, Named {
 
+	// TODO nshmp-forecast-dev to nshmp-model-dev
+	
 	// TODO refactor to HazardModel
 	// TODO refactor package to model
 	
@@ -36,15 +38,13 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	// TODO deal with javadoc warnings in build.xml
 	// TODO add package-info.java
 	
-	// TODO INDEXED_FAULT to SYSTEM
+	// TODO SYSTEM to SYSTEM
 	
 	// TODO how to set PointSourceType, see GridSourceSet
 	// TODO cases where general pointSource is used??
 
 	// TODO expose FloatStyle
 	// TODO SUB check rake handling
-
-	// TODO SUB merge | multiply weight and rate
 
 	// TODO SUB different MSRs are specified in 2014 configs (geomatrix alone
 	// no longer used); check that this has carried through

@@ -11,7 +11,7 @@ import static org.opensha.eq.forecast.SourceAttribute.LOWER_DEPTH;
 import static org.opensha.eq.forecast.SourceAttribute.NAME;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readString;
-import static org.opensha.eq.forecast.IndexedFaultParser.SECTIONS_FILENAME;
+import static org.opensha.eq.forecast.SystemFaultParser.SECTIONS_FILENAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,14 +35,14 @@ import com.google.common.collect.Lists;
  * Non-validating indexed fault section parser. SAX parser 'Attributes' are
  * stateful and cannot be stored. This class is not thread safe. The List
  * returned by parse() is mutable as it will be made immutable when ultimately
- * passed to IndexedFaultSourceSet.Builder
+ * passed to SystemSourceSet.Builder
  * 
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
-class IndexedSectionParser extends DefaultHandler {
+class SystemSectionParser extends DefaultHandler {
 
-	private final Logger log = Logger.getLogger(IndexedFaultParser.class.getName());
+	private final Logger log = Logger.getLogger(SystemFaultParser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;
 
@@ -55,12 +55,12 @@ class IndexedSectionParser extends DefaultHandler {
 	private boolean readingTrace = false;
 	private StringBuilder traceBuilder = null;
 
-	private IndexedSectionParser(SAXParser sax) {
+	private SystemSectionParser(SAXParser sax) {
 		this.sax = sax;
 	}
 
-	static IndexedSectionParser create(SAXParser sax) {
-		return new IndexedSectionParser(checkNotNull(sax));
+	static SystemSectionParser create(SAXParser sax) {
+		return new SystemSectionParser(checkNotNull(sax));
 	}
 
 	// TODO can we just return RuptureSurface? are grid details necessary downstream?
