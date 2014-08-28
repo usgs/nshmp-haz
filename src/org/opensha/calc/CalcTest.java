@@ -53,25 +53,25 @@ class CalcTest {
 	// handy
 
 
-//	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Western US test";
-//	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Western US";
-	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Central & Eastern US";
+//	private static String testModel = "../nshmp-model-dev/models/2008/Western US test";
+//	private static String testModel = "../nshmp-model-dev/models/2008/Western US";
+	private static String testModel = "../nshmp-model-dev/models/2008/Central & Eastern US";
 
 	// @formatter: off
 	
 	// private static String testModel =
-	// "../nshmp-forecast-dev/forecasts/2008/Western US";
+	// "../nshmp-model-dev/models/2008/Western US";
 	//
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		HazardModel forecast = testLoad();
+		HazardModel model = testLoad();
 
-//		runSites(forecast, Imt.PGA);
-		runSites(forecast, Imt.SA0P2);
-//		runSites(forecast, Imt.SA1P0);
-//		runSites(forecast, Imt.SA2P0);
+//		runSites(model, Imt.PGA);
+		runSites(model, Imt.SA0P2);
+//		runSites(model, Imt.SA1P0);
+//		runSites(model, Imt.SA2P0);
 		
 		// try {
 		// Calculators hcm = Calculators.create();
@@ -88,31 +88,31 @@ class CalcTest {
 
 	}
 	
-	static void runSites(HazardModel forecast, Imt imt) {
+	static void runSites(HazardModel model, Imt imt) {
 
 		Site site = Site.create(NehrpTestCity.MEMPHIS.location());
 //		Site site = Site.create(Location.create(34.05, -118.25));
-		HazardResult result = testCalc(forecast, site, imt);
+		HazardResult result = testCalc(model, site, imt);
 		System.out.println(result);
 
 		// memphis again
 		site = site = Site.create(NehrpTestCity.MEMPHIS.location());
-		result = testCalc(forecast, site, imt);
+		result = testCalc(model, site, imt);
 		System.out.println(result);
 
 //		// oakland
 //		site = Site.create(Location.create(37.8044, -122.2708));
-//		result = testCalc(forecast, site, imt);
+//		result = testCalc(model, site, imt);
 //		System.out.println(result);
 //		
 //		// sacramento
 //		site = Site.create(Location.create(38.5556, -121.4689));
-//		result = testCalc(forecast, site, imt);
+//		result = testCalc(model, site, imt);
 //		System.out.println(result);
 //
 //		// back to la
 //		site = Site.create(Location.create(34.05, -118.25));
-//		result = testCalc(forecast, site, imt);
+//		result = testCalc(model, site, imt);
 //		System.out.println(result);
 
 	}
@@ -132,19 +132,19 @@ class CalcTest {
 
 	// TODO how are empty results being handled ??
 	
-	public static HazardResult testCalc(HazardModel forecast, Site site, Imt imt) {
+	public static HazardResult testCalc(HazardModel model, Site site, Imt imt) {
 
-		ArrayXY_Sequence model = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
+		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
 
 		try {
-			// hcm.calc(forecast, s, imt);
+			// hcm.calc(model, s, imt);
 			Stopwatch sw = Stopwatch.createStarted();
 			
 			// TODO need to check which SourceSets return no results
 
-			AsyncList<HazardCurveSet> curveSetCollector = AsyncList.createWithCapacity(forecast.size());
+			AsyncList<HazardCurveSet> curveSetCollector = AsyncList.createWithCapacity(model.size());
 			
-			for (SourceSet<? extends Source> sourceSet : forecast) {
+			for (SourceSet<? extends Source> sourceSet : model) {
 
 				if (sourceSet.type() == SourceType.CLUSTER) {
 					
@@ -155,9 +155,9 @@ class CalcTest {
 
 					AsyncList<List<HazardGroundMotions>> groundMotions = toClusterGroundMotions(inputs, clusterSourceSet, imt);
 					
-					AsyncList<ClusterHazardCurves> hazardCurves = toClusterHazardCurves(groundMotions, model);
+					AsyncList<ClusterHazardCurves> hazardCurves = toClusterHazardCurves(groundMotions, modelCurve);
 					
-					ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves, clusterSourceSet, model);
+					ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves, clusterSourceSet, modelCurve);
 					
 					curveSetCollector.add(curveSet);
 					
@@ -168,9 +168,9 @@ class CalcTest {
 					
 					AsyncList<HazardGroundMotions> groundMotions = toGroundMotions(inputs, sourceSet, imt);
 					
-					AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, model);
+					AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, modelCurve);
 					
-					ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves, sourceSet, model);
+					ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves, sourceSet, modelCurve);
 					
 					curveSetCollector.add(curveSet);
 					

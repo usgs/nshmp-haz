@@ -34,14 +34,14 @@ public class HazardCurve {
 	// curves for the model specified,
 	// for more detailed results at a site consider using ...
 
-	public static Result calc(HazardModel forecast, Imt imt, Site site) {
+	public static Result calc(HazardModel model, Imt imt, Site site) {
 		return null;
 	}
 
-	public static Result calc(HazardModel forecast, Imt imt, List<Site> sites) {
+	public static Result calc(HazardModel model, Imt imt, List<Site> sites) {
 		
 		for (Site site : sites) {
-			calc(forecast, imt, site);
+			calc(model, imt, site);
 		}
 		return null;
 	}

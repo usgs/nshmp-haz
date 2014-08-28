@@ -27,17 +27,10 @@ import com.google.common.collect.SetMultimap;
  * @see SourceType
  */
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
-
-	// TODO nshmp-forecast-dev to nshmp-model-dev
-	
-	// TODO refactor package to model
-	
+		
 	// TODO deal with javadoc warnings in build.xml
 	// TODO add package-info.java
 	
-	// TODO how to set PointSourceType, see GridSourceSet
-	// TODO cases where general pointSource is used??
-
 	// TODO expose FloatStyle
 	// TODO SUB check rake handling
 

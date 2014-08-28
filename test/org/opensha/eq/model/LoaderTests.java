@@ -28,7 +28,7 @@ public class LoaderTests {
 	// exceptions to be thrown as eariler checks have usually validated
 	// any supplied String/Path
 	
-	// Problems with supplied forecast....
+	// Problems with supplied model....
 	
 	@Test
 	public void testNullPath() throws Exception {
@@ -59,7 +59,7 @@ public class LoaderTests {
 	}
 	
 	@Test
-	public void testEmptyForecast() throws Exception {
+	public void testEmptyModel() throws Exception {
 		exception.expect(IllegalStateException.class);
 		URL emptyURL = Resources.getResource(LoaderTests.class, BAD_FOLDER);
 		Loader.load(emptyURL.getPath(), FCAST_NAME);
@@ -72,6 +72,6 @@ public class LoaderTests {
 		
 	}
 	
-	// Problems with forecast structure
+	// Problems with model structure
 
 }

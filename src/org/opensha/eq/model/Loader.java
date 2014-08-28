@@ -68,11 +68,11 @@ class Loader {
 	/**
 	 * Load a {@code HazardModel}. Supplied path should be an absolute path to a
 	 * directory containing sub-directories by {@code SourceType}s, or the
-	 * absolute path to a zipped forecast.
+	 * absolute path to a zipped model.
 	 * 
 	 * <p>This method is not thread safe.</p>
 	 * 
-	 * @param path to forecast directory or Zip file (absolute)
+	 * @param path to model directory or Zip file (absolute)
 	 * @return a newly created {@code HazardModel}
 	 * @throws Exception TODO checked exceptions
 	 */
@@ -82,23 +82,23 @@ class Loader {
 		// a HazardModel to pick up name and other calc configuration data
 
 		HazardModel.Builder builder = HazardModel.builder();
-		Path forecastPath = null;
+		Path modelPath = null;
 		List<Path> typePaths = null;
 
 		try {
 			checkNotNull(path, "Path is null");
-			forecastPath = Paths.get(path);
-			checkArgument(Files.exists(forecastPath), "Path does not exist: %s", path);
+			modelPath = Paths.get(path);
+			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
 			typePaths = typeDirectories(Paths.get(path));
-			checkState(typePaths.size() > 0, "Empty forecast: %s", forecastPath.getFileName());
+			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
 		} catch (Exception e) {
 			logConfigException(e);
 			throw e;
 		}
 
-		log.info("Loading forecast: " + name);
+		log.info("Loading model: " + name);
 		builder.name(name);
-		log.info("   From resource: " + forecastPath.getFileName());
+		log.info("   From resource: " + modelPath.getFileName());
 
 		for (Path typePath : typePaths) {
 			String typeName = cleanZipName(typePath.getFileName().toString());
@@ -108,11 +108,11 @@ class Loader {
 		}
 
 		log.info("");
-		log.info("Building forecast...");
-		HazardModel forecast = builder.build();
-		log.info("Finished loading: " + forecastPath.getFileName());
+		log.info("Building model...");
+		HazardModel model = builder.build();
+		log.info("Finished loading: " + modelPath.getFileName());
 
-		return forecast;
+		return model;
 	}
 
 	private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",
@@ -134,10 +134,10 @@ class Loader {
 			List<Path> paths = typeDirectoryList(zipRoot);
 			if (paths.size() > 0) return paths;
 
-			// We expect that some forecasts will be nested one level down
+			// We expect that some models will be nested one level down
 			// in zip files; there should only ever be one nested directory
 			// so take a look in that, otherwise we'll throw an exception
-			// updtream for having an empty forecast.
+			// updtream for having an empty model.
 			Path nestedDir = firstPath(zipRoot);
 			checkArgument(Files.isDirectory(nestedDir), "No nested directory in zip: %s", nestedDir);
 			return typeDirectoryList(nestedDir);

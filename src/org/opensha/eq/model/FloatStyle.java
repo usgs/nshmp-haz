@@ -8,7 +8,7 @@ package org.opensha.eq.model;
 public enum FloatStyle {
 
 	// TODO need NSHMP mag dependent floater
-	// TODO this identifier needs to be exposed somewhere in forecast xml
+	// TODO this identifier needs to be exposed somewhere in model xml
 	// probably SourceProperties
 
 	/** Along-strike and using full down-dip width. */

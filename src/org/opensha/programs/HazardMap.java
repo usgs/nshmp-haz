@@ -48,24 +48,24 @@ public class HazardMap {
 
 	// also note in docs that mean curve for model is being returned
 
-	public static Result create(HazardModel forecast, Imt imt, Path locPath) {
+	public static Result create(HazardModel model, Imt imt, Path locPath) {
 
 		return null;
 	}
 
-	public static Result create(HazardModel forecast, Imt imt, Location p1, Location p2) {
-		GriddedRegion mapRegion = Regions.createRectangularGridded(forecast.name() + " Map", p1,
+	public static Result create(HazardModel model, Imt imt, Location p1, Location p2) {
+		GriddedRegion mapRegion = Regions.createRectangularGridded(model.name() + " Map", p1,
 			p2, SPACING, SPACING, GriddedRegion.ANCHOR_0_0);
 
 		return null;
 	}
 
-	static Result create(HazardModel forecast, Imt imt, Iterable<Site> sites) {
+	static Result create(HazardModel model, Imt imt, Iterable<Site> sites) {
 		Builder<Site> siteBuilder = ImmutableList.builder();
 		Builder<ArrayXY_Sequence> curveBuilder = ImmutableList.builder();
 		for (Site site : sites) {
 			siteBuilder.add(site);
-			curveBuilder.add(HazardCurve.calc(forecast, imt, site).curve);
+			curveBuilder.add(HazardCurve.calc(model, imt, site).curve);
 		}
 		return new Result(siteBuilder.build(), curveBuilder.build());
 	}
@@ -132,7 +132,7 @@ public class HazardMap {
 		System.out.println(USAGE);
 		// checkArgument(args.length == 7 || args.length == 4, USAGE);
 		// try {
-		// HazardModel forecast = HazardModel.load(args[0], args[0]);
+		// HazardModel model = HazardModel.load(args[0], args[0]);
 		// Imt imt = Imt.parseImt(args[1]);
 		// Path locsPath = null;
 		// Location loc1 = null;
@@ -142,14 +142,14 @@ public class HazardMap {
 		// if (args.length == 3) {
 		// locsPath = Paths.get(args[2]);
 		// outPath = Paths.get(args[3]);
-		// map = create(forecast, imt, locsPath);
+		// map = create(model, imt, locsPath);
 		// } else {
 		// loc1 = Location.create(Double.valueOf(args[3]),
 		// Double.valueOf(args[2]));
 		// loc2 = Location.create(Double.valueOf(args[5]),
 		// Double.valueOf(args[4]));
 		// outPath = Paths.get(args[6]);
-		// map = create(forecast, imt, loc1, loc2);
+		// map = create(model, imt, loc1, loc2);
 		// }
 		// map.export(outPath);
 		// return;
