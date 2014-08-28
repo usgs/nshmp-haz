@@ -8,13 +8,13 @@ import java.util.List;
 import org.opensha.calc.HazardResult;
 import org.opensha.calc.Site;
 import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.forecast.Forecast;
+import org.opensha.eq.forecast.HazardModel;
 import org.opensha.geo.Location;
 import org.opensha.gmm.Imt;
 
 /**
  * Entry point for computing a hazard curve at a {@link Site} from a
- * {@link Forecast}.
+ * {@link HazardModel}.
  * 
  * @author Peter Powers
  */
@@ -34,11 +34,11 @@ public class HazardCurve {
 	// curves for the model specified,
 	// for more detailed results at a site consider using ...
 
-	public static Result calc(Forecast forecast, Imt imt, Site site) {
+	public static Result calc(HazardModel forecast, Imt imt, Site site) {
 		return null;
 	}
 
-	public static Result calc(Forecast forecast, Imt imt, List<Site> sites) {
+	public static Result calc(HazardModel forecast, Imt imt, List<Site> sites) {
 		
 		for (Site site : sites) {
 			calc(forecast, imt, site);

@@ -14,7 +14,7 @@ import java.util.List;
 import org.opensha.calc.HazardResult;
 import org.opensha.calc.Site;
 import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.forecast.Forecast;
+import org.opensha.eq.forecast.HazardModel;
 import org.opensha.geo.GriddedRegion;
 import org.opensha.geo.Location;
 import org.opensha.geo.Regions;
@@ -33,7 +33,7 @@ import com.google.common.primitives.Doubles;
 
 /**
  * Entry point for computing a hazard map at a {@link Site} from a
- * {@link Forecast}.
+ * {@link HazardModel}.
  * 
  * @author Peter Powers
  */
@@ -48,19 +48,19 @@ public class HazardMap {
 
 	// also note in docs that mean curve for model is being returned
 
-	public static Result create(Forecast forecast, Imt imt, Path locPath) {
+	public static Result create(HazardModel forecast, Imt imt, Path locPath) {
 
 		return null;
 	}
 
-	public static Result create(Forecast forecast, Imt imt, Location p1, Location p2) {
+	public static Result create(HazardModel forecast, Imt imt, Location p1, Location p2) {
 		GriddedRegion mapRegion = Regions.createRectangularGridded(forecast.name() + " Map", p1,
 			p2, SPACING, SPACING, GriddedRegion.ANCHOR_0_0);
 
 		return null;
 	}
 
-	static Result create(Forecast forecast, Imt imt, Iterable<Site> sites) {
+	static Result create(HazardModel forecast, Imt imt, Iterable<Site> sites) {
 		Builder<Site> siteBuilder = ImmutableList.builder();
 		Builder<ArrayXY_Sequence> curveBuilder = ImmutableList.builder();
 		for (Site site : sites) {
@@ -109,13 +109,13 @@ public class HazardMap {
 
 	// output dir
 
-	// java -cp nshmp-haz.jar HazardMap /path/to/Forecast.zip/or/directory PGA
+	// java -cp nshmp-haz.jar HazardMap /path/to/HazardModel.zip/or/directory PGA
 	// -120.0 33.0 -115.0 36.0
-	// java -cp nshmp-haz.jar HazardMap /path/to/Forecast.zip/or/directory PGA
+	// java -cp nshmp-haz.jar HazardMap /path/to/HazardModel.zip/or/directory PGA
 	// /path/to/loc.dat
 
 	// all supported Imts
-	// java -cp nshmp-haz.jar HazardSpectra /path/to/Forecast.zip/or/directory
+	// java -cp nshmp-haz.jar HazardSpectra /path/to/HazardModel.zip/or/directory
 	// -117.5 34.5
 
 	// other
@@ -132,7 +132,7 @@ public class HazardMap {
 		System.out.println(USAGE);
 		// checkArgument(args.length == 7 || args.length == 4, USAGE);
 		// try {
-		// Forecast forecast = Forecast.load(args[0], args[0]);
+		// HazardModel forecast = HazardModel.load(args[0], args[0]);
 		// Imt imt = Imt.parseImt(args[1]);
 		// Path locsPath = null;
 		// Location loc1 = null;

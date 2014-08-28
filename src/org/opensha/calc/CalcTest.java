@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.eq.forecast.ClusterSourceSet;
-import org.opensha.eq.forecast.Forecast;
+import org.opensha.eq.forecast.HazardModel;
 import org.opensha.eq.forecast.Source;
 import org.opensha.eq.forecast.SourceSet;
 import org.opensha.eq.forecast.SourceType;
@@ -66,7 +66,7 @@ class CalcTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Forecast forecast = testLoad();
+		HazardModel forecast = testLoad();
 
 //		runSites(forecast, Imt.PGA);
 		runSites(forecast, Imt.SA0P2);
@@ -76,7 +76,7 @@ class CalcTest {
 		// try {
 		// Calculators hcm = Calculators.create();
 		// String path = "tmp/NSHMP08-noRedux/California/Fault/bFault.gr.xml";
-		// Forecast f = Forecast.fromSingleSourceSet(path);
+		// HazardModel f = HazardModel.fromSingleSourceSet(path);
 		// Site s = Site.create(Location.create(34.05, -118.25));
 		// Imt imt = Imt.PGA;
 		// hcm.calc(f, gmmMapWUS(), s, imt);
@@ -88,7 +88,7 @@ class CalcTest {
 
 	}
 	
-	static void runSites(Forecast forecast, Imt imt) {
+	static void runSites(HazardModel forecast, Imt imt) {
 
 		Site site = Site.create(NehrpTestCity.MEMPHIS.location());
 //		Site site = Site.create(Location.create(34.05, -118.25));
@@ -117,9 +117,9 @@ class CalcTest {
 
 	}
 
-	public static Forecast testLoad() {
+	public static HazardModel testLoad() {
 		try {
-			return Forecast.load(testModel, "Forecast load test");
+			return HazardModel.load(testModel, "HazardModel load test");
 		} catch (Exception e) {
 			System.err.println("** Exiting **");
 			System.err.println();
@@ -132,7 +132,7 @@ class CalcTest {
 
 	// TODO how are empty results being handled ??
 	
-	public static HazardResult testCalc(Forecast forecast, Site site, Imt imt) {
+	public static HazardResult testCalc(HazardModel forecast, Site site, Imt imt) {
 
 		ArrayXY_Sequence model = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
 

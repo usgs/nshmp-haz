@@ -13,10 +13,10 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
 /**
- * An earthquake hazard {@code Forecast} is the top-level wrapper for earthquake
+ * An earthquake hazard {@code HazardModel} is the top-level wrapper for earthquake
  * {@link Source} definitions and attendant {@link GroundMotionModel}s used in
  * probabilisitic seismic hazard analyses (PSHAs) and related calculations. A
- * {@code Forecast} contains of a number of {@link SourceSet}s that define
+ * {@code HazardModel} contains of a number of {@link SourceSet}s that define
  * logical groupings of sources by {@link SourceType}. Each {@code SourceSet}
  * carries with it references to the {@code GroundMotionModel}s and associated
  * weights to be used when evaluating hazard.
@@ -26,14 +26,11 @@ import com.google.common.collect.SetMultimap;
  * @see SourceSet
  * @see SourceType
  */
-public final class Forecast implements Iterable<SourceSet<? extends Source>>, Named {
+public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
 
 	// TODO nshmp-forecast-dev to nshmp-model-dev
 	
-	// TODO refactor to HazardModel
 	// TODO refactor package to model
-	
-	// TODO get rid of unicode encoding; everything is UTF-8
 	
 	// TODO deal with javadoc warnings in build.xml
 	// TODO add package-info.java
@@ -78,35 +75,35 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
 
-	private Forecast(String name, SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
+	private HazardModel(String name, SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
 		this.name = name;
 		this.sourceSetMap = sourceSetMap;
 	}
 
 	/**
-	 * Load a {@code Forecast} from a directory or Zip file specified by the
+	 * Load a {@code HazardModel} from a directory or Zip file specified by the
 	 * supplied {@code path}.
 	 * 
-	 * <p>For more information on a Forecast directory and file structure, see
+	 * <p>For more information on a HazardModel directory and file structure, see
 	 * the <a
 	 * href="https://github.com/usgs/nshmp-haz/wiki/Earthquake-Source-Models"
 	 * >nshmp-haz wiki</a>.</p>
 	 * 
-	 * <p><b>Notes:</b> Forecast loading is not thread safe. This method can
+	 * <p><b>Notes:</b> HazardModel loading is not thread safe. This method can
 	 * potentially throw a wide variety of exceptions, all of which will be
 	 * logged in detail but propogated as a plain checked {@code Exception}.</p>
 	 * 
-	 * @param path to {@code Forecast} directory or Zip file
-	 * @param name for the {@code Forecast}
-	 * @return a newly instantiated {@code Forecast}
+	 * @param path to {@code HazardModel} directory or Zip file
+	 * @param name for the {@code HazardModel}
+	 * @return a newly instantiated {@code HazardModel}
 	 * @throws Exception if an error occurs
 	 */
-	public static Forecast load(String path, String name) throws Exception {
+	public static HazardModel load(String path, String name) throws Exception {
 		return Loader.load(path, name);
 	}
 
 	/**
-	 * The number of {@code SourceSet}s in this {@code Forecast}.
+	 * The number of {@code SourceSet}s in this {@code HazardModel}.
 	 */
 	public int size() {
 		return sourceSetMap.size();
@@ -121,7 +118,7 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	}
 
 	@Override public String toString() {
-		return "Forecast: " + name + LINE_SEPARATOR.value() + sourceSetMap.toString();
+		return "HazardModel: " + name + LINE_SEPARATOR.value() + sourceSetMap.toString();
 	}
 
 	/**
@@ -133,7 +130,7 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 
 	static class Builder {
 
-		static final String ID = "Forecast.Builder";
+		static final String ID = "HazardModel.Builder";
 		boolean built = false;
 
 		// ImmutableSetMultimap.Builder preserves value addition order
@@ -163,10 +160,10 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 
 		}
 
-		Forecast build() {
+		HazardModel build() {
 			sourceSetMap = sourceMapBuilder.build();
 			validateState(ID);
-			return new Forecast(name, sourceSetMap);
+			return new HazardModel(name, sourceSetMap);
 		}
 	}
 

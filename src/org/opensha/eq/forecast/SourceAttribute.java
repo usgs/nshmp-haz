@@ -4,7 +4,7 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
 /**
- * Forecast source XML attributes.
+ * HazardModel source XML attributes.
  * @author Peter Powers
  */
 @SuppressWarnings("javadoc")

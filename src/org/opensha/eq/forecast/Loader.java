@@ -27,7 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.opensha.eq.forecast.Forecast.Builder;
+import org.opensha.eq.forecast.HazardModel.Builder;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -37,8 +37,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * {@code Forecast} loader. This class takes care of extensive checked
- * exceptions required when initializing a {@code Forecast}.
+ * {@code HazardModel} loader. This class takes care of extensive checked
+ * exceptions required when initializing a {@code HazardModel}.
  * 
  * @author Peter Powers
  */
@@ -66,22 +66,22 @@ class Loader {
 	}
 
 	/**
-	 * Load a {@code Forecast}. Supplied path should be an absolute path to a
+	 * Load a {@code HazardModel}. Supplied path should be an absolute path to a
 	 * directory containing sub-directories by {@code SourceType}s, or the
 	 * absolute path to a zipped forecast.
 	 * 
 	 * <p>This method is not thread safe.</p>
 	 * 
 	 * @param path to forecast directory or Zip file (absolute)
-	 * @return a newly created {@code Forecast}
+	 * @return a newly created {@code HazardModel}
 	 * @throws Exception TODO checked exceptions
 	 */
-	static Forecast load(String path, String name) throws Exception {
+	static HazardModel load(String path, String name) throws Exception {
 
 		// TODO perhaps we process a config.xml file at the root of
-		// a Forecast to pick up name and other calc configuration data
+		// a HazardModel to pick up name and other calc configuration data
 
-		Forecast.Builder builder = Forecast.builder();
+		HazardModel.Builder builder = HazardModel.builder();
 		Path forecastPath = null;
 		List<Path> typePaths = null;
 
@@ -109,7 +109,7 @@ class Loader {
 
 		log.info("");
 		log.info("Building forecast...");
-		Forecast forecast = builder.build();
+		HazardModel forecast = builder.build();
 		log.info("Finished loading: " + forecastPath.getFileName());
 
 		return forecast;

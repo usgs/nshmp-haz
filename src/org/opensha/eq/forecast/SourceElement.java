@@ -6,7 +6,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import com.google.common.base.CaseFormat;
 
 /**
- * Forecast source XML elements.
+ * HazardModel source XML elements.
  * @author Peter Powers
  */
 @SuppressWarnings("javadoc")

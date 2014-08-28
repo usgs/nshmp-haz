@@ -12,7 +12,7 @@ import com.google.common.io.Resources;
 @SuppressWarnings("javadoc")
 public class LoaderTests {
 
-	private static final String FCAST_NAME = "Forecast Tests";
+	private static final String FCAST_NAME = "HazardModel Tests";
 	
 	private static final String BAD_PATH = "badPath";
 	private static final String BAD_FOLDER = "data";
