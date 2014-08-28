@@ -55,7 +55,7 @@ public class MagUncertainty {
 	 *        applies, below which it is disabled
 	 * @return a magnitude uncertainty container
 	 */
-	static MagUncertainty create(double[] epiDeltas, double[] epiWeights, double epiCutoff,
+	public static MagUncertainty create(double[] epiDeltas, double[] epiWeights, double epiCutoff,
 			double aleaSigma, int aleaCount, boolean moBalance, double aleaCutoff) {
 
 		MagUncertainty mu = new MagUncertainty();
