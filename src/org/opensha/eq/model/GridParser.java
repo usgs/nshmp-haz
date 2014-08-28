@@ -242,17 +242,20 @@ class GridParser extends DefaultHandler {
 				int nMag = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
 				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag, nMag,
 					grData.b, 1.0);
-				mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin));
+				mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
+					grData.weight);
 				return mfdGR;
 
 			case INCR:
 				MfdHelper.IncrData incrData = mfdHelper.getIncremental(atts);
-				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags, incrData.rates);
+				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
+					DataUtils.multiply(incrData.weight, incrData.rates));
 				return mfdIncr;
 
 			case SINGLE:
 				MfdHelper.SingleData singleDat = mfdHelper.getSingle(atts);
-				return Mfds.newSingleMFD(singleDat.m, singleDat.a, singleDat.floats);
+				return Mfds.newSingleMFD(singleDat.m, singleDat.a * singleDat.weight,
+					singleDat.floats);
 
 			default:
 				throw new IllegalStateException(type + " not yet implemented");

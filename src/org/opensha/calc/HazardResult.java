@@ -38,6 +38,12 @@ public final class HazardResult {
 					? curveSet.clusterGroundMotionsList.size() : curveSet.groundMotionsList.size();
 				sb.append("Used: ").append(used);
 				sb.append(LF);
+				
+				if (curveSet.sourceSet.type() == CLUSTER) {
+					
+				} else {
+					sb.append(curveSet.gmmCurveMap);
+				}
 			}
 		}
 		return sb.toString();

@@ -54,8 +54,8 @@ class CalcTest {
 
 
 //	private static String testModel = "../nshmp-model-dev/models/2008/Western US test";
-//	private static String testModel = "../nshmp-model-dev/models/2008/Western US";
-	private static String testModel = "../nshmp-model-dev/models/2008/Central & Eastern US";
+	private static String testModel = "../nshmp-model-dev/models/2008/Western US";
+//	private static String testModel = "../nshmp-model-dev/models/2008/Central & Eastern US";
 
 	// @formatter: off
 	
@@ -90,14 +90,9 @@ class CalcTest {
 	
 	static void runSites(HazardModel model, Imt imt) {
 
-		Site site = Site.create(NehrpTestCity.MEMPHIS.location());
-//		Site site = Site.create(Location.create(34.05, -118.25));
+//		Site site = Site.create(NehrpTestCity.MEMPHIS.location());
+		Site site = Site.create(Location.create(34.05, -118.25));
 		HazardResult result = testCalc(model, site, imt);
-		System.out.println(result);
-
-		// memphis again
-		site = site = Site.create(NehrpTestCity.MEMPHIS.location());
-		result = testCalc(model, site, imt);
 		System.out.println(result);
 
 //		// oakland
@@ -151,7 +146,7 @@ class CalcTest {
 					ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
 
 					AsyncList<List<HazardInputs>> inputs = toClusterInputs(clusterSourceSet, site);
-//					if (inputs.isEmpty()) continue; // all sources out of range TODO uncomment
+					if (inputs.isEmpty()) continue; // all sources out of range TODO uncomment
 
 					AsyncList<List<HazardGroundMotions>> groundMotions = toClusterGroundMotions(inputs, clusterSourceSet, imt);
 					
@@ -164,7 +159,7 @@ class CalcTest {
 				} else {
 
 					AsyncList<HazardInputs> inputs = toInputs(sourceSet, site);
-//					if (inputs.isEmpty()) continue; // all sources out of range TODO uncomment
+					if (inputs.isEmpty()) continue; // all sources out of range TODO uncomment
 					
 					AsyncList<HazardGroundMotions> groundMotions = toGroundMotions(inputs, sourceSet, imt);
 					
