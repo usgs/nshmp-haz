@@ -61,30 +61,14 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		return "PointSourceFixedStrike: " + loc;
 	}
 
-	// TODO clean
-	/*
-	 * NOTE: Getting a Rupture by index is deliberately inefficient to ensure
-	 * thread safety. A new immutable Rupture and internal FinitePointSurface
-	 * are created on every call. Use Source.iterator() where possible.
-	 */
-
-	// @Override
-	// public Rupture getRupture(int idx) {
-	// checkPositionIndex(idx, size());
-	// Rupture rupture = new Rupture();
-	// rupture.surface = new FixedStrikeSurface(loc);
-	// updateRupture(rupture, idx);
-	// return rupture;
-	// }
-
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
-	 * FinitePointSourceOLD.rupture rate is reduced to zero (a mag-depth weight
-	 * could be set to zero [this is not curently checked] of an MFD rate could
-	 * be zero), in the cases where it is, we're doing a little more work than
-	 * necessary below. We could alternatively short-circuit updateRupture()
-	 * this method to return null reference, but would need to condsider
-	 * getRUpture(int) implementation.
+	 * PointSourceFixedStrike rupture rate is reduced to zero (a mag-depth
+	 * weight could be set to zero [this is not curently checked] of an MFD rate
+	 * could be zero), in the cases where it is, we're doing a little more work
+	 * than necessary below. We could alternatively short-circuit
+	 * updateRupture() this method to return null reference, but would need to
+	 * condsider getRUpture(int) implementation.
 	 */
 
 	private void updateRupture(Rupture rup, int idx) {
@@ -198,8 +182,8 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		/*
 		 * NOTE the footwall flag in parent can not be used here. In parent,
 		 * there's not strict relation between the site location and the
-		 * geometry of the fault, we just need to have two pseudo representations
-		 * for dipping faults.
+		 * geometry of the fault, we just need to have two pseudo
+		 * representations for dipping faults.
 		 * 
 		 * Here, dipping faults will have two real representations (defined by
 		 * corner Locations) and one will be on the footwall and one won't. When
@@ -208,7 +192,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		 * representation relative to the site location is unkown until distance
 		 * calculations are started.
 		 */
-		
+
 		@Override public Distances distanceTo(Location loc) {
 			// NOTE no NSHMP style distance corrections here
 
@@ -226,7 +210,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 			double rCutBot = tan(dipRad) * zBot + widthH;
 			double rRup = (rX > rCutBot) ? hypot(rX - widthH, zBot) : (rX < rCutTop) ? hypot(rX,
 				zTop) : hypot(rCutTop, zTop) + (rX - rCutTop) * sin(dipRad);
-			
+
 			// test if we're normal to trace or past its endpoints
 			boolean offEnd = DoubleMath.fuzzyCompare(rSeg, rX, 0.00001) > 0;
 

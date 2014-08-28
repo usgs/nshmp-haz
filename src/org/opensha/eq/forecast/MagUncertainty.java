@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
  * be overriden at some point and should always be checked prior to calculation
  * regardless of any uncertainty values present.
  */
-class MagUncertainty {
+public class MagUncertainty {
 
 	boolean hasEpistemic;
 	int epiCount;

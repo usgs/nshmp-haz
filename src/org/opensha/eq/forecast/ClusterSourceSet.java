@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.forecast.FaultSourceSet.Builder;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -25,8 +26,9 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 	private final List<ClusterSource> sources;
 
-	ClusterSourceSet(String name, double weight, MagScalingType msr, List<ClusterSource> sources) {
-		super(name, weight, msr, null);
+	ClusterSourceSet(String name, double weight, MagScalingType msr, List<ClusterSource> sources,
+		GmmSet gmmSet) {
+		super(name, weight, msr, gmmSet);
 		this.sources = sources;
 	}
 
@@ -45,7 +47,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 	@Override public Predicate<ClusterSource> distanceFilter(final Location loc,
 			final double distance) {
 		return new Predicate<ClusterSource>() {
-			
+
 			private final Predicate<FaultSource> filter = new FaultSourceSet.DistanceFilter(loc,
 				distance);
 
@@ -59,15 +61,6 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 		};
 	}
 
-	/**
-	 * Overriden to throw an {@code UnsupportedOperationException}. Ground
-	 * motion model references are stored in {@code FaultSourceSet}s nested in
-	 * each {@code ClusterSource}.
-	 */
-	@Override public GmmSet groundMotionModels() {
-		throw new UnsupportedOperationException();
-	}
-
 	/* Single use builder */
 	static class Builder {
 
@@ -77,6 +70,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 		private String name;
 		private Double weight;
 		private MagScalingType magScaling;
+		private GmmSet gmmSet;
 		private List<ClusterSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
@@ -86,6 +80,11 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 		Builder weight(double weight) {
 			this.weight = validateWeight(weight);
+			return this;
+		}
+
+		Builder gmms(GmmSet gmmSet) {
+			this.gmmSet = checkNotNull(gmmSet);
 			return this;
 		}
 
@@ -104,12 +103,13 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			checkState(name != null, "%s name not set", id);
 			checkState(weight != null, "%s weight not set", id);
 			checkState(magScaling != null, "%s mag-scaling relation not set", id);
+			checkState(gmmSet != null, "%s ground motion models not set", id);
 			built = true;
 		}
 
 		ClusterSourceSet buildClusterSet() {
 			validateState(ID);
-			return new ClusterSourceSet(name, weight, magScaling, sources);
+			return new ClusterSourceSet(name, weight, magScaling, sources, gmmSet);
 		}
 	}
 

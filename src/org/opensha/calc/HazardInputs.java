@@ -19,8 +19,6 @@ import org.opensha.eq.forecast.Source;
  */
 class HazardInputs extends AbstractList<TemporalGmmInput> {
 
-	// TODO we may only ultimately need the name
-	
 	Source parent;
 	List<TemporalGmmInput> delegate;
 	

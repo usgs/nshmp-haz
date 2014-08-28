@@ -52,6 +52,7 @@ class HazardCurves {
 			checkState(!built, "This %s instance has already been used", ID);
 			// TODO check that all gmms have been set? it'll be difficult to track whether
 			// all curves for all inputs have been added
+			built = true;
 			return new HazardCurves(groundMotions, curveMap);
 		}
 

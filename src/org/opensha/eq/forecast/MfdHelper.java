@@ -44,7 +44,7 @@ class MfdHelper {
 				return incrDefault.mags[1] - incrDefault.mags[0];
 			case SINGLE:
 				singleDefault = new SingleData(atts);
-				return Double.NaN;
+				return 0.0;
 			case GR_TAPER:
 				throw new UnsupportedOperationException("GR_TAPER not yet implemented");
 			default:

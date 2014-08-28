@@ -131,8 +131,11 @@ class PointSource implements Source {
 
 	void init() {
 
-		/* Get the number of mag-depth iterations required to get to mMax */
-		magDepthSize = parent.magDepthIndices.lastIndexOf(mfd.getNum() - 1);
+		/*
+		 * Get the number of mag-depth iterations required to get to mMax. See
+		 * explanation in GridSourceSet for how magDepthIndices is set up
+		 */
+		magDepthSize = parent.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
 
 		/*
 		 * Init rupture indexing: SS RV NR. Each category will have ruptures for

@@ -53,7 +53,7 @@ class CalcTest {
 	// handy
 
 
-//	private static String testModel = "../nshmp-forecast-dev/forecasts/Test";
+//	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Western US test";
 //	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Western US";
 	private static String testModel = "../nshmp-forecast-dev/forecasts/2008/Central & Eastern US";
 
@@ -89,10 +89,15 @@ class CalcTest {
 	}
 	
 	static void runSites(Forecast forecast, Imt imt) {
-		
-		// la
-		Site site = Site.create(Location.create(34.05, -118.25));
+
+		Site site = Site.create(NehrpTestCity.MEMPHIS.location());
+//		Site site = Site.create(Location.create(34.05, -118.25));
 		HazardResult result = testCalc(forecast, site, imt);
+		System.out.println(result);
+
+		// memphis again
+		site = site = Site.create(NehrpTestCity.MEMPHIS.location());
+		result = testCalc(forecast, site, imt);
 		System.out.println(result);
 
 //		// oakland
@@ -142,39 +147,24 @@ class CalcTest {
 			for (SourceSet<? extends Source> sourceSet : forecast) {
 
 				if (sourceSet.type() == SourceType.CLUSTER) {
-					throw new UnsupportedOperationException("No Clusters!");
-//					ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
-//
-//					// List (outer) --> clusters (geometry variants)
-//					// List (inner) --> faults (sections)
-//					// HazardGroundMotions --> magnitude variants
-//
-//					ListenableFuture<List<List<HazardGroundMotions>>> groundMotions = toClusterGroundMotions(clusterSourceSet, site, imt);
-//					
-//					List<List<HazardGroundMotions>> gmsLists = toClusterGroundMotions(clusterSourceSet, site, imt).get();
-//					
-//					for (List<HazardGroundMotions> groundMotionList : gmsLists) {
-//						// collector.addAll(gmsList);
-//						// for (HazardGroundMotions gms : gmsList) {
-//						// System.out.println(clusters.name() + ": " + gms);
-//						// }
-//
-//						Map<Gmm, ArrayXY_Sequence> curves = toClusterCurve(groundMotionList, model).get();
-//						// System.out.println(curves);
-//
-//						for (Entry<Gmm, ArrayXY_Sequence> entry : curves.entrySet()) {
-//							System.out.println(entry.getKey().name());
-//							System.out.println(entry.getValue());
-//						}
-//
-//					}
-//					
-//					// each cluster 
-//					System.out.println(gmsLists.size());
+					
+					ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
+
+					AsyncList<List<HazardInputs>> inputs = toClusterInputs(clusterSourceSet, site);
+//					if (inputs.isEmpty()) continue; // all sources out of range TODO uncomment
+
+					AsyncList<List<HazardGroundMotions>> groundMotions = toClusterGroundMotions(inputs, clusterSourceSet, imt);
+					
+					AsyncList<ClusterHazardCurves> hazardCurves = toClusterHazardCurves(groundMotions, model);
+					
+					ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves, clusterSourceSet, model);
+					
+					curveSetCollector.add(curveSet);
+					
 				} else {
 
 					AsyncList<HazardInputs> inputs = toInputs(sourceSet, site);
-//					if (inputs.isEmpty()) continue; // all sources out of range
+//					if (inputs.isEmpty()) continue; // all sources out of range TODO uncomment
 					
 					AsyncList<HazardGroundMotions> groundMotions = toGroundMotions(inputs, sourceSet, imt);
 					
@@ -184,33 +174,10 @@ class CalcTest {
 					
 					curveSetCollector.add(curveSet);
 					
-					// List<HazardGroundMotions> gmsList =
-					// hcm.toGroundMotions4(sources, s, imt).get();
-					// collector.addAll(gmsList);
-//					hcm.toGroundMotions(hcm.toInputs(sourceSet, s));
-					
-//					List<ListenableFuture<HazardGroundMotions>> gmsFuturesList = hcm.toGroundMotions1(sourceSet, s, imt);
-
-//					List<ListenableFuture<Map<Gmm, ArrayXY_Sequence>>> curvesFutures = hcm.toHazardCurves(gmsFuturesList);
-//
-//					List<Map<Gmm, ArrayXY_Sequence>> curveSetList = Futures.allAsList(curvesFutures).get();
-//
-//					
-//					for (Map<Gmm, ArrayXY_Sequence> curveSet : curveSetList) {
-//
-//						for (Entry<Gmm, ArrayXY_Sequence> entry : curveSet.entrySet()) {
-//							System.out.println(entry.getKey().name());
-//							System.out.println(entry.getValue());
-//						}
-//					}
-
-					// List<HazardGroundMotions> gmsList =
-					// Futures.allAsList(r1).get();
-					// for (HazardGroundMotions gms : gmsList) {
-					// System.out.println(gms);
 				}
 				
 			}
+
 			ListenableFuture<HazardResult> futureResult = toHazardResult(curveSetCollector);
 			System.out.println(sw.elapsed(TimeUnit.MILLISECONDS));
 

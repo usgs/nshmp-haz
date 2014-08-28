@@ -113,7 +113,8 @@ class ClusterParser extends DefaultHandler {
 					double weight = readDouble(WEIGHT, atts);
 					clusterSetBuilder = new ClusterSourceSet.Builder()
 						.name(name)
-						.weight(weight);
+						.weight(weight)
+						.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
 						log.fine("");
 						log.fine("       Name: " + name);

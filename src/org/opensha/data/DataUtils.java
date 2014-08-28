@@ -934,7 +934,8 @@ public final class DataUtils {
 	/**
 	 * Creates a sequence of evenly spaced values starting at {@code min} and
 	 * ending at {@code max}. If {@code (max - min) / step} is not integer
-	 * valued, the last step in the sequence will be {@code &lt;step}.
+	 * valued, the last step in the sequence will be {@code &lt;step}. If
+	 * {@code min == max}, then an array containing a single value is returned.
 	 * @param min sequence value
 	 * @param max sequence value
 	 * @param step sequence spacing
@@ -950,6 +951,7 @@ public final class DataUtils {
 		// then capacity [c] will end up 0 because (int) NaN = 0, or outside the
 		// range 1:10000
 		checkArgument(min <= max, "min-max reversed");
+		if (min == max) return new double[] { min };
 		int c = (int) ((max - min) / step);
 		checkArgument(c > 0 && c < MAX_SEQ_LEN, "sequence size");
 		if (ascending) return buildSequence(min, max, step, c + 2);

@@ -66,7 +66,7 @@ class PointSourceFinite extends PointSource {
 
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
-	 * FinitePointSourceOLD.rupture rate is reduced to zero (a mag-depth weight
+	 * PointSourceFinite rupture rate is reduced to zero (a mag-depth weight
 	 * could be set to zero [this is not curently checked] of an MFD rate could
 	 * be zero), in the cases where it is, we're doing a little more work than
 	 * necessary below. We could alternatively short-circuit updateRupture()
@@ -132,8 +132,11 @@ class PointSourceFinite extends PointSource {
 
 	@Override void init() {
 
-		/* Get the number of mag-depth iterations required to get to mMax */
-		magDepthSize = parent.magDepthIndices.lastIndexOf(mfd.getNum() - 1);
+		/*
+		 * Get the number of mag-depth iterations required to get to mMax. See
+		 * explanation in GridSourceSet for how magDepthIndices is set up
+		 */
+		magDepthSize = parent.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
 
 		/*
 		 * Init rupture indexing: SS-FW RV-FW RV-HW NR-FW NR-HW. Each category

@@ -43,7 +43,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 
 	@Override public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(" Name: ").append(padEnd(name, 24, ' '));
+		sb.append(" Name: ").append(padEnd(name, 27, ' '));
 		sb.append("Size: ").append(padEnd(Integer.toString(size()), 8, ' '));
 		sb.append("Weight: ").append(padEnd(Double.toString(weight), 12, ' '));
 		return sb.toString();

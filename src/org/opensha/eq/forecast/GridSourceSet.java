@@ -40,7 +40,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	private final List<Location> locs;
 	private final List<IncrementalMfd> mfds;
 	private final List<Map<FocalMech, Double>> mechMaps;
-	private final NavigableMap<Double, Map<Double, Double>> magDepthMap;
+	 final NavigableMap<Double, Map<Double, Double>> magDepthMap;
 	private final double strike;
 	final List<Double> magMaster;
 
@@ -162,8 +162,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	// @formatter:on
 
-	// TODO to ImmutableLists backed by arrays
-	
 	// available to point source implementations
 	List<Integer> magDepthIndices;
 	List<Double> magDepthDepths;
