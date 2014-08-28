@@ -32,7 +32,7 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 public final class BooreEtAl_2014 implements GroundMotionModel {
 
-	static final String NAME = "Boore, Stewart, Seyhan \u0026 Atkinson (2014)";
+	static final String NAME = "Boore, Stewart, Seyhan & Atkinson (2014)";
 
 	static final CoefficientContainer CC = new CoefficientContainer("BSSA14.csv", Coeffs.class);
 

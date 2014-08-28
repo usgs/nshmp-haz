@@ -31,7 +31,7 @@ import org.opensha.data.Interpolate;
  */
 public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
-	static final String NAME = "Abrahamson, Silva \u0026 Kamai (2014)";
+	static final String NAME = "Abrahamson, Silva & Kamai (2014)";
 	
 	static final CoefficientContainer CC = new CoefficientContainer(
 		"ASK14.csv", Coeffs.class);

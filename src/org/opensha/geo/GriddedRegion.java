@@ -468,7 +468,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 
 	/* Sets the gid node spacing. */
 	private void setSpacing(double lat, double lon) {
-		String mssg = "spacing [%s] must be 0\u00B0 \u003E S \u2265 5\u00B0";
+		String mssg = "[%s] must be 0° > spacing ≥ 5°";
 		checkArgument(SPACING_RANGE.contains(lat), "Latitude" + mssg, lat);
 		checkArgument(SPACING_RANGE.contains(lon), "Latitude" + mssg, lon);
 		latSpacing = lat;

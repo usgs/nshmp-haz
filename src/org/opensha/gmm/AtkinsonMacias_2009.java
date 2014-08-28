@@ -32,7 +32,7 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 public final class AtkinsonMacias_2009 implements GroundMotionModel {
 	
-	static final String NAME = "Atkinson \u0026 Macias (2009): Interface";
+	static final String NAME = "Atkinson & Macias (2009): Interface";
 	
 	static final CoefficientContainer CC = new CoefficientContainer("AM09.csv", Coeffs.class);
 	

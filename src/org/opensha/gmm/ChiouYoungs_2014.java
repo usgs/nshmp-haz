@@ -39,7 +39,7 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	// TODO consider removing odd 0.12 and 0.17s periods
 
-	static final String NAME = "Chiou \u0026 Youngs (2014)";
+	static final String NAME = "Chiou & Youngs (2014)";
 
 	static final CoefficientContainer CC = new CoefficientContainer(
 		"CY14.csv", Coeffs.class);

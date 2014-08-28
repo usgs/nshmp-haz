@@ -37,7 +37,7 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
-	static final String NAME = "Campbell \u0026 Bozorgnia (2008)";
+	static final String NAME = "Campbell & Bozorgnia (2008)";
 	
 	static final CoefficientContainer CC = new CoefficientContainer("CB08.csv", Coeffs.class);
 	

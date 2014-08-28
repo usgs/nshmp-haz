@@ -74,7 +74,7 @@ public class Logging {
 			b.append(Strings.padStart(l.toString(), 7, ' '));
 			if (l == Level.SEVERE || l == Level.WARNING) {
 				String cName = record.getSourceClassName();
-				b.append(" \u0040 ")
+				b.append(" @ ")
 					.append(cName.substring(cName.lastIndexOf(".") + 1))
 					.append(".")
 					.append(record.getSourceMethodName())

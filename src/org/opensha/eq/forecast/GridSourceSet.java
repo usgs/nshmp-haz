@@ -316,8 +316,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			for (double mag : magDepthMap.keySet()) {
 				if (mag >= MAX_MAG) return;
 			}
-			throw new IllegalStateException("MagDepthMap must contain at least one M\u2265" +
-				MAX_MAG);
+			throw new IllegalStateException("MagDepthMap must contain at least one M ≥ " + MAX_MAG);
 		}
 
 		void validateState(String id) {

@@ -178,7 +178,7 @@ public class GmmSet {
 				checkNotNull(maxDistanceHi,
 					"%s secondary distance must be set for secondary models", id);
 				checkState(maxDistanceHi > maxDistanceLo,
-					"%s secondary distance [%s] \u2264 primary distance [%s]", id, maxDistanceHi,
+					"%s secondary distance [%s] ≤ primary distance [%s]", id, maxDistanceHi,
 					maxDistanceLo);
 			}
 

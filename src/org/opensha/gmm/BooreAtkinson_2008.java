@@ -31,7 +31,7 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 public final class BooreAtkinson_2008 implements GroundMotionModel {
 
-	static final String NAME = "Boore \u0026 Atkinson (2008)";
+	static final String NAME = "Boore & Atkinson (2008)";
 
 	static final CoefficientContainer CC = new CoefficientContainer("BA08.csv", Coeffs.class);
 

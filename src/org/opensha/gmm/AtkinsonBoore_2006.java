@@ -61,7 +61,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	//
 	// rounded .3968 to 0.4 s for one element of abper. SH june 30 2008
 	
-	static final String NAME = "Atkinson \u0026 Boore (2006)";
+	static final String NAME = "Atkinson & Boore (2006)";
 	
 	static final CoefficientContainer CC = new CoefficientContainer("AB06A.csv", Coeffs.class);
 	static final CoefficientContainer CC_BC = new CoefficientContainer("AB06BC.csv", Coeffs.class);

@@ -38,8 +38,6 @@ public final class Forecast implements Iterable<SourceSet<? extends Source>>, Na
 	// TODO deal with javadoc warnings in build.xml
 	// TODO add package-info.java
 	
-	// TODO SYSTEM to SYSTEM
-	
 	// TODO how to set PointSourceType, see GridSourceSet
 	// TODO cases where general pointSource is used??
 

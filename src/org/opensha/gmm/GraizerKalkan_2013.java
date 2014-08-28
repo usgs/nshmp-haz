@@ -30,7 +30,7 @@ import org.opensha.calc.ScalarGroundMotion;
 @Deprecated
 final class GraizerKalkan_2013 implements GroundMotionModel {
 
-	static final String NAME = "Graizer \u0026 Kalkan (2013)";
+	static final String NAME = "Graizer & Kalkan (2013)";
 	
 	static final Set<Imt> IMTS = EnumSet.complementOf(EnumSet.of(PGV, PGD));
 	

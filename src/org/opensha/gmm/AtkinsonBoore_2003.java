@@ -41,7 +41,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	// imposed in the 2008 NSHMP Cascadia subduction interface model. Any other
 	// sources should update this value independently.
 	
-	static final String NAME = "Atkinson \u0026 Boore (2003)";
+	static final String NAME = "Atkinson & Boore (2003)";
 
 	// This relation supports a number of options and requires PGA reference
 	// vlaues. Although implementation specific coeffs could be loaded by

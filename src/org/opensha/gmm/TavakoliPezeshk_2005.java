@@ -59,7 +59,7 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 	
 	// TODO fix clamp values (not implemented here yet) to match other CEUS gmms
 
-	static final String NAME = "Tavakoli \u0026 Pezeshk (2005)";
+	static final String NAME = "Tavakoli & Pezeshk (2005)";
 	
 	static final CoefficientContainer CC = new CoefficientContainer("TP05.csv", Coeffs.class);
 	

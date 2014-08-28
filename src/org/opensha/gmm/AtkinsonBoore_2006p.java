@@ -37,7 +37,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 
 	// TODO convert to functional form
 	
-	static final String NAME = "Atkinson \u0026 Boore (2006): Prime";
+	static final String NAME = "Atkinson & Boore (2006): Prime";
 	
 	// only period a-to-bc conversion factors
 	static final CoefficientContainer CC = new CoefficientContainer("AB06P.csv", Coeffs.class);
