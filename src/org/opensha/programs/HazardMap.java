@@ -14,7 +14,7 @@ import java.util.List;
 import org.opensha.calc.HazardResult;
 import org.opensha.calc.Site;
 import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.forecast.HazardModel;
+import org.opensha.eq.model.HazardModel;
 import org.opensha.geo.GriddedRegion;
 import org.opensha.geo.Location;
 import org.opensha.geo.Regions;

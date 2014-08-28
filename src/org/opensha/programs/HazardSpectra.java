@@ -1,7 +1,7 @@
 package org.opensha.programs;
 
 import org.opensha.calc.Site;
-import org.opensha.eq.forecast.HazardModel;
+import org.opensha.eq.model.HazardModel;
 
 /**
  * Entry point for computing hazard response spectra at a {@link Site} from a

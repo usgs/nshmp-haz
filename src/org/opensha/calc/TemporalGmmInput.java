@@ -1,6 +1,6 @@
 package org.opensha.calc;
 
-import org.opensha.eq.forecast.Rupture;
+import org.opensha.eq.model.Rupture;
 import org.opensha.gmm.GmmInput;
 import org.opensha.gmm.GroundMotionModel;
 

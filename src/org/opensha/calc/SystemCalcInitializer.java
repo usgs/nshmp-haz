@@ -8,9 +8,9 @@ import java.util.concurrent.Callable;
 
 import org.opensha.data.DataUtils;
 import org.opensha.eq.fault.surface.RuptureSurface;
-import org.opensha.eq.forecast.FaultSource;
-import org.opensha.eq.forecast.SystemSourceSet.IndexedFaultSource;
-import org.opensha.eq.forecast.Rupture;
+import org.opensha.eq.model.FaultSource;
+import org.opensha.eq.model.Rupture;
+import org.opensha.eq.model.SystemSourceSet.IndexedFaultSource;
 import org.opensha.gmm.GmmInput;
 
 import com.google.common.collect.Lists;

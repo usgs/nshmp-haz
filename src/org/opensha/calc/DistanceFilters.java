@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.EnumMap;
 
-import org.opensha.eq.forecast.Rupture;
+import org.opensha.eq.model.Rupture;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Function;

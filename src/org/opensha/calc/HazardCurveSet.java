@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.forecast.Source;
-import org.opensha.eq.forecast.SourceSet;
-import org.opensha.eq.forecast.SourceType;
+import org.opensha.eq.model.Source;
+import org.opensha.eq.model.SourceSet;
+import org.opensha.eq.model.SourceType;
 import org.opensha.gmm.Gmm;
 
 /**

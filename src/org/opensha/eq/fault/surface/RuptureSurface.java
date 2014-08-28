@@ -1,6 +1,6 @@
 package org.opensha.eq.fault.surface;
 
-import org.opensha.eq.forecast.Distances;
+import org.opensha.eq.model.Distances;
 import org.opensha.geo.Location;
 
 /**

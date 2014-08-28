@@ -20,8 +20,8 @@ import java.util.BitSet;
 import java.util.Map;
 
 import org.opensha.calc.Site;
-import org.opensha.eq.forecast.Distances;
-import org.opensha.eq.forecast.Rupture;
+import org.opensha.eq.model.Distances;
+import org.opensha.eq.model.Rupture;
 
 import com.google.common.collect.Maps;
 

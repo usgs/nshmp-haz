@@ -2,11 +2,10 @@ package org.opensha.eq.fault.surface;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import static org.opensha.geo.GeoTools.TO_RAD;
 
 import org.opensha.eq.fault.Faults;
-import org.opensha.eq.forecast.Distances;
+import org.opensha.eq.model.Distances;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationVector;
 import org.opensha.geo.Locations;

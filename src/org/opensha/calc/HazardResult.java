@@ -1,9 +1,9 @@
 package org.opensha.calc;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.eq.forecast.SourceType.CLUSTER;
+import static org.opensha.eq.model.SourceType.CLUSTER;
 
-import org.opensha.eq.forecast.SourceType;
+import org.opensha.eq.model.SourceType;
 
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableSetMultimap;

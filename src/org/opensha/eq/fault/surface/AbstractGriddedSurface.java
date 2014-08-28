@@ -3,7 +3,7 @@ package org.opensha.eq.fault.surface;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.opensha.eq.forecast.Distances;
+import org.opensha.eq.model.Distances;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.geo.Region;

@@ -12,11 +12,11 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.forecast.ClusterSourceSet;
-import org.opensha.eq.forecast.HazardModel;
-import org.opensha.eq.forecast.Source;
-import org.opensha.eq.forecast.SourceSet;
-import org.opensha.eq.forecast.SourceType;
+import org.opensha.eq.model.ClusterSourceSet;
+import org.opensha.eq.model.HazardModel;
+import org.opensha.eq.model.Source;
+import org.opensha.eq.model.SourceSet;
+import org.opensha.eq.model.SourceType;
 import org.opensha.geo.Location;
 import org.opensha.gmm.Gmm;
 import org.opensha.gmm.Imt;

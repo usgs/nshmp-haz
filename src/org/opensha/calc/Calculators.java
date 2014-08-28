@@ -4,11 +4,6 @@ import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 import static org.opensha.calc.AsyncList.createWithCapacity;
-import static org.opensha.calc.Transforms.curveConsolidator;
-import static org.opensha.calc.Transforms.curveSetConsolidator;
-import static org.opensha.calc.Transforms.groundMotionsToCurves;
-import static org.opensha.calc.Transforms.inputsToGroundMotions;
-import static org.opensha.calc.Transforms.sourceToInputs;
 import static org.opensha.calc.Transforms.*;
 
 import java.util.List;
@@ -17,10 +12,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.forecast.ClusterSource;
-import org.opensha.eq.forecast.ClusterSourceSet;
-import org.opensha.eq.forecast.Source;
-import org.opensha.eq.forecast.SourceSet;
+import org.opensha.eq.model.ClusterSource;
+import org.opensha.eq.model.ClusterSourceSet;
+import org.opensha.eq.model.Source;
+import org.opensha.eq.model.SourceSet;
 import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GroundMotionModel;
 import org.opensha.gmm.Imt;
