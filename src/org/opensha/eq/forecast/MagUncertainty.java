@@ -136,7 +136,7 @@ public class MagUncertainty {
 	 * @param node to append to
 	 * @return a reference to the newly created {@code Element}
 	 */
-	Element appendTo(Element node) {
+	public Element appendTo(Element node) {
 		if (!hasAleatory && !hasEpistemic) return null;
 		Element e = addElement(MAG_UNCERTAINTY, node);
 		if (hasEpistemic) {
