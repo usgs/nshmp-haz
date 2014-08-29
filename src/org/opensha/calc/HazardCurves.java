@@ -16,7 +16,7 @@ import org.opensha.gmm.Gmm;
  * 
  * @author Peter Powers
  */
-class HazardCurves {
+final class HazardCurves {
 
 	final HazardGroundMotions groundMotions;
 	final Map<Gmm, ArrayXY_Sequence> curveMap;

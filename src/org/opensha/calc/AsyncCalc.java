@@ -39,11 +39,11 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see Transforms
  * @see AsyncList
  */
-final class Calculators {
+final class AsyncCalc {
 
 	// TODO perhaps rename to AsyncCalc
 
-	private Calculators() {}
+	private AsyncCalc() {}
 
 	private static final ExecutorService EX;
 

@@ -3,7 +3,7 @@ package org.opensha.calc;
 import org.opensha.geo.Location;
 
 /**
- * Basic site data container. Calculators have direct access to fields.
+ * Basic site data container. AsyncCalc have direct access to fields.
  * @author Peter Powers
  */
 public class Site {

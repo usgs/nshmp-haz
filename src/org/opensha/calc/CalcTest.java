@@ -1,6 +1,6 @@
 package org.opensha.calc;
 
-import static org.opensha.calc.Calculators.*;
+import static org.opensha.calc.AsyncCalc.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,7 +74,7 @@ class CalcTest {
 //		runSites(model, Imt.SA2P0);
 		
 		// try {
-		// Calculators hcm = Calculators.create();
+		// AsyncCalc hcm = AsyncCalc.create();
 		// String path = "tmp/NSHMP08-noRedux/California/Fault/bFault.gr.xml";
 		// HazardModel f = HazardModel.fromSingleSourceSet(path);
 		// Site s = Site.create(Location.create(34.05, -118.25));
