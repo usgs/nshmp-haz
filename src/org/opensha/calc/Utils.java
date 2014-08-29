@@ -16,6 +16,8 @@ import org.opensha.data.XY_Sequence;
  */
 public class Utils {
 
+	// TODO this needs work
+	
 	/** Precomputed square-root of 2. */
 	public static final double SQRT_2 = Math.sqrt(2);
 

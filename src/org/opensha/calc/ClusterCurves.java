@@ -3,7 +3,6 @@ package org.opensha.calc;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 
 import org.opensha.data.ArrayXY_Sequence;
@@ -17,31 +16,31 @@ import org.opensha.gmm.Gmm;
  * 
  * @author Peter Powers
  */
-class ClusterHazardCurves {
+final class ClusterCurves {
 
-	final List<HazardGroundMotions> groundMotionsList;
+	final ClusterGroundMotions clusterGroundMotions;
 	final Map<Gmm, ArrayXY_Sequence> curveMap;
 
-	private ClusterHazardCurves(List<HazardGroundMotions> groundMotionsList,
+	private ClusterCurves(ClusterGroundMotions clusterGroundMotions,
 		Map<Gmm, ArrayXY_Sequence> curveMap) {
-		this.groundMotionsList = groundMotionsList;
+		this.clusterGroundMotions = clusterGroundMotions;
 		this.curveMap = curveMap;
 	}
 
-	static Builder builder(List<HazardGroundMotions> groundMotionsList) {
-		return new Builder(groundMotionsList);
+	static Builder builder(ClusterGroundMotions clusterGroundMotions) {
+		return new Builder(clusterGroundMotions);
 	}
 
 	static class Builder {
 
-		private static final String ID = "HazardCurves.Builder";
+		private static final String ID = "ClusterCurves.Builder";
 		private boolean built = false;
 
-		private final List<HazardGroundMotions> groundMotionsList;
+		private final ClusterGroundMotions clusterGroundMotions;
 		private final Map<Gmm, ArrayXY_Sequence> curveMap;
 
-		private Builder(List<HazardGroundMotions> groundMotionsList) {
-			this.groundMotionsList = groundMotionsList;
+		private Builder(ClusterGroundMotions clusterGroundMotions) {
+			this.clusterGroundMotions = clusterGroundMotions;
 			curveMap = new EnumMap<>(Gmm.class);
 		}
 
@@ -50,13 +49,12 @@ class ClusterHazardCurves {
 			return this;
 		}
 
-		ClusterHazardCurves build() {
+		ClusterCurves build() {
 			checkState(!built, "This %s instance has already been used", ID);
 			// TODO check that all gmms have been set? it'll be difficult to
-			// track whether
-			// all curves for all inputs have been added
+			// track whether all curves for all inputs have been added
 			built = true;
-			return new ClusterHazardCurves(groundMotionsList, curveMap);
+			return new ClusterCurves(clusterGroundMotions, curveMap);
 		}
 
 	}

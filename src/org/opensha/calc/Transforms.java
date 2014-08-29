@@ -5,12 +5,11 @@ import static java.lang.Math.sin;
 import static org.opensha.calc.Utils.setExceedProbabilities;
 import static org.opensha.geo.GeoTools.TO_RAD;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.opensha.calc.ClusterHazardCurves.Builder;
+import org.opensha.calc.ClusterCurves.Builder;
 import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.eq.model.ClusterSource;
@@ -80,7 +79,7 @@ final class Transforms {
 	 * Return a site-specific Function that transforms a ClusterSource to a List
 	 * of HazardInputs, one for each Source in the cluster.
 	 */
-	static Function<ClusterSource, List<HazardInputs>> clusterSourceToInputs(Site site) {
+	static Function<ClusterSource, ClusterInputs> clusterSourceToInputs(Site site) {
 		return new ClusterSourceToInputs(site);
 	}
 
@@ -88,25 +87,25 @@ final class Transforms {
 	 * Return a Function that transforms a List of HazardInputs for the Sources
 	 * in a ClusterSource to a List of HazardGroundMotions.
 	 */
-	static Function<List<HazardInputs>, List<HazardGroundMotions>> clusterInputsToGroundMotions(
+	static Function<ClusterInputs, ClusterGroundMotions> clusterInputsToGroundMotions(
 			Map<Gmm, GroundMotionModel> models) {
 		return new ClusterInputsToGroundMotions(models);
 	}
 
 	/**
 	 * Return a Function that transforms a List of HazardGroundMotions to a
-	 * ClusterHazardCurves.
+	 * ClusterCurves.
 	 */
-	static Function<List<HazardGroundMotions>, ClusterHazardCurves> clusterGroundMotionsToCurves(
+	static Function<ClusterGroundMotions, ClusterCurves> clusterGroundMotionsToCurves(
 			ArrayXY_Sequence model) {
 		return new ClusterGroundMotionsToCurves(model);
 	}
 
 	/**
-	 * Return a Function that reduces a List of ClusterHazardCurves to a
+	 * Return a Function that reduces a List of ClusterCurves to a
 	 * HazardCurveSet.
 	 */
-	static Function<List<ClusterHazardCurves>, HazardCurveSet> clusterCurveConsolidator(
+	static Function<List<ClusterCurves>, HazardCurveSet> clusterCurveConsolidator(
 			ClusterSourceSet clusterSourceSet, ArrayXY_Sequence model) {
 		return new ClusterCurveConsolidator(clusterSourceSet, model);
 	}
@@ -120,7 +119,7 @@ final class Transforms {
 		}
 
 		@Override public HazardInputs apply(Source source) {
-			HazardInputs inputs = new HazardInputs(source);
+			HazardInputs hazardInputs = new HazardInputs(source);
 			for (Rupture rup : source) {
 				
 				RuptureSurface surface = rup.surface();
@@ -147,10 +146,10 @@ final class Transforms {
 					site.vsInferred,
 					site.z2p5,
 					site.z1p0);
-				inputs.add(input);
+				hazardInputs.add(input);
 				// @formatter:on
 			}
-			return inputs;
+			return hazardInputs;
 		}
 	}
 
@@ -163,14 +162,14 @@ final class Transforms {
 			this.gmmInstances = gmmInstances;
 		}
 
-		@Override public HazardGroundMotions apply(HazardInputs inputs) {
+		@Override public HazardGroundMotions apply(HazardInputs hazardInputs) {
 			
-			HazardGroundMotions.Builder gmBuilder = HazardGroundMotions.builder(inputs,
+			HazardGroundMotions.Builder gmBuilder = HazardGroundMotions.builder(hazardInputs,
 				gmmInstances.keySet());
 
 			for (Entry<Gmm, GroundMotionModel> entry : gmmInstances.entrySet()) {
 				int inputIndex = 0;
-				for (GmmInput gmmInput : inputs) {
+				for (GmmInput gmmInput : hazardInputs) {
 					gmBuilder.add(entry.getKey(), entry.getValue().calc(gmmInput), inputIndex++);
 				}
 			}
@@ -253,7 +252,7 @@ final class Transforms {
 	}
 
 	private static class ClusterSourceToInputs implements
-			Function<ClusterSource, List<HazardInputs>> {
+			Function<ClusterSource, ClusterInputs> {
 
 		private final SourceToInputs transform;
 
@@ -261,17 +260,17 @@ final class Transforms {
 			transform = new SourceToInputs(site);
 		}
 
-		@Override public List<HazardInputs> apply(ClusterSource clusterSource) {
-			List<HazardInputs> inputsList = new ArrayList<>();
+		@Override public ClusterInputs apply(ClusterSource clusterSource) {
+			ClusterInputs clusterInputs = new ClusterInputs(clusterSource);
 			for (FaultSource faultSource : clusterSource.faults()) {
-				inputsList.add(transform.apply(faultSource));
+				clusterInputs.add(transform.apply(faultSource));
 			}
-			return inputsList;
+			return clusterInputs;
 		}
 	}
 
 	private static class ClusterInputsToGroundMotions implements
-			Function<List<HazardInputs>, List<HazardGroundMotions>> {
+			Function<ClusterInputs, ClusterGroundMotions> {
 
 		private final InputsToGroundMotions transform;
 
@@ -279,12 +278,12 @@ final class Transforms {
 			transform = new InputsToGroundMotions(gmmInstances);
 		}
 
-		@Override public List<HazardGroundMotions> apply(List<HazardInputs> inputsList) {
-			List<HazardGroundMotions> groundMotionsList = new ArrayList<>();
-			for (HazardInputs inputs : inputsList) {
-				groundMotionsList.add(transform.apply(inputs));
+		@Override public ClusterGroundMotions apply(ClusterInputs clusterInputs) {
+			ClusterGroundMotions clusterGroundMotions = new ClusterGroundMotions();
+			for (HazardInputs hazardInputs : clusterInputs) {
+				clusterGroundMotions.add(transform.apply(hazardInputs));
 			}
-			return groundMotionsList;
+			return clusterGroundMotions;
 		}
 	}
 
@@ -295,7 +294,7 @@ final class Transforms {
 	 * the TmeporalGmmInput.rate field, which is kinda KLUDGY, but works.
 	 */
 	private static class ClusterGroundMotionsToCurves implements
-			Function<List<HazardGroundMotions>, ClusterHazardCurves> {
+			Function<ClusterGroundMotions, ClusterCurves> {
 
 		private final ArrayXY_Sequence model;
 
@@ -306,31 +305,30 @@ final class Transforms {
 		// TODO we're not doing any checking to see if Gmm keys are identical;
 		// internally, we know they should be, so perhaps it's not necessary
 		// verify this; is this referring to the builders used baing able to
-		// accept
-		// multiple, overriding calls to addCurve ??
+		// accept multiple, overriding calls to addCurve ??
 
-		@Override public ClusterHazardCurves apply(List<HazardGroundMotions> groundMotionsList) {
+		@Override public ClusterCurves apply(ClusterGroundMotions clusterGroundMotions) {
 
 			// aggregator of curves for each fault in a cluster
 			ListMultimap<Gmm, ArrayXY_Sequence> faultCurves = MultimapBuilder.enumKeys(Gmm.class)
-				.arrayListValues(groundMotionsList.size()).build();
+				.arrayListValues(clusterGroundMotions.size()).build();
 			ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(model);
 
-			for (HazardGroundMotions groundMotions : groundMotionsList) {
-				for (Gmm gmm : groundMotions.means.keySet()) {
+			for (HazardGroundMotions hazardGroundMotions : clusterGroundMotions) {
+				for (Gmm gmm : hazardGroundMotions.means.keySet()) {
 					ArrayXY_Sequence magVarCurve = ArrayXY_Sequence.copyOf(model);
-					List<Double> means = groundMotions.means.get(gmm);
-					List<Double> sigmas = groundMotions.sigmas.get(gmm);
-					for (int i = 0; i < groundMotions.inputs.size(); i++) {
+					List<Double> means = hazardGroundMotions.means.get(gmm);
+					List<Double> sigmas = hazardGroundMotions.sigmas.get(gmm);
+					for (int i = 0; i < hazardGroundMotions.inputs.size(); i++) {
 						setExceedProbabilities(utilCurve, means.get(i), sigmas.get(i), false, 0.0);
-						utilCurve.multiply(groundMotions.inputs.get(i).rate);
+						utilCurve.multiply(hazardGroundMotions.inputs.get(i).rate);
 						magVarCurve.add(utilCurve);
 					}
 					faultCurves.put(gmm, magVarCurve);
 				}
 			}
 
-			Builder builder = ClusterHazardCurves.builder(groundMotionsList);
+			Builder builder = ClusterCurves.builder(clusterGroundMotions);
 			for (Gmm gmm : faultCurves.keySet()) {
 				builder.addCurve(gmm, Utils.calcClusterExceedProb(faultCurves.get(gmm)));
 			}
@@ -339,7 +337,7 @@ final class Transforms {
 	}
 
 	private static class ClusterCurveConsolidator implements
-			Function<List<ClusterHazardCurves>, HazardCurveSet> {
+			Function<List<ClusterCurves>, HazardCurveSet> {
 
 		private final ArrayXY_Sequence model;
 		private final ClusterSourceSet clusterSourceSet;
@@ -349,12 +347,12 @@ final class Transforms {
 			this.model = model;
 		}
 
-		@Override public HazardCurveSet apply(List<ClusterHazardCurves> curvesList) {
+		@Override public HazardCurveSet apply(List<ClusterCurves> curvesList) {
 
 			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet
 				.builder(clusterSourceSet, model);
 
-			for (ClusterHazardCurves curves : curvesList) {
+			for (ClusterCurves curves : curvesList) {
 				curveSetBuilder.addCurves(curves);
 			}
 			return curveSetBuilder.build();

@@ -19,8 +19,8 @@ import com.google.common.collect.ImmutableMap;
  * calculator and {@link ClusterSource#iterator()} therefore throws an
  * {@code UnsupportedOperationException}.
  * 
- * <p>Unlike other {@code Source}s whose weights are carried with their
- * associated {@link IncrementalMfd}, {@code ClusterSource}s carry a separate
+ * <p>Unlike other {@code Source}s whose weights are carried exclusively with their
+ * associated {@link IncrementalMfd}, {@code ClusterSource}s carry an additional
  * {@link #weight()} value.</p>
  * 
  * <p>A {@code ClusterSource} cannot be created directly; it may only be created

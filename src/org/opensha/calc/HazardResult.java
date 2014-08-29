@@ -18,7 +18,7 @@ public final class HazardResult {
 
 	final SetMultimap<SourceType, HazardCurveSet> sourceSetMap;
 
-	HazardResult(SetMultimap<SourceType, HazardCurveSet> sourceSetMap) {
+	private HazardResult(SetMultimap<SourceType, HazardCurveSet> sourceSetMap) {
 		this.sourceSetMap = sourceSetMap;
 	}
 
@@ -35,11 +35,23 @@ public final class HazardResult {
 			for (HazardCurveSet curveSet : sourceSetMap.get(type)) {
 				sb.append("  ").append(curveSet.sourceSet);
 				int used = (curveSet.sourceSet.type() == CLUSTER)
-					? curveSet.clusterGroundMotionsList.size() : curveSet.groundMotionsList.size();
+					? curveSet.clusterGroundMotionsList.size() : curveSet.hazardGroundMotionsList.size();
 				sb.append("Used: ").append(used);
 				sb.append(LF);
 				
 				if (curveSet.sourceSet.type() == CLUSTER) {
+//					List<ClusterGroundMotions> cgmsList = curveSet.clusterGroundMotionsList;
+//					for (ClusterGroundMotions cgms : cgmsList) {
+//						sb.append( "|--" + LF);
+//						for (HazardGroundMotions hgms : cgms) {
+//							sb.append("  |--" + LF);
+//							for (TemporalGmmInput input : hgms.inputs) {
+//								sb.append("    |--" + input + LF);
+//							}
+//						}
+//						sb.append(LF);
+//					}
+					sb.append(curveSet.clusterGroundMotionsList);
 					
 				} else {
 					sb.append(curveSet.gmmCurveMap);

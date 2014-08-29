@@ -17,10 +17,10 @@ import org.opensha.eq.model.Source;
  * 
  * @author Peter Powers
  */
-class HazardInputs extends AbstractList<TemporalGmmInput> {
+final class HazardInputs extends AbstractList<TemporalGmmInput> {
 
-	Source parent;
-	List<TemporalGmmInput> delegate;
+	final Source parent;
+	final List<TemporalGmmInput> delegate;
 	
 	HazardInputs(Source parent) {
 		this.parent = checkNotNull(parent);

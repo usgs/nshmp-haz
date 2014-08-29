@@ -4,16 +4,13 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-//import org.opensha.commons.data.Site;
-//import org.opensha.commons.geo.Location;
-//import org.opensha.commons.geo.LocationUtils;
-//import org.opensha.sha.imr.param.SiteParams.DepthTo1pt0kmPerSecParam;
-//import org.opensha.sha.imr.param.SiteParams.DepthTo2pt5kmPerSecParam;
-//import org.opensha.sha.imr.param.SiteParams.Vs30_Param;
-//import org.opensha.sha.imr.param.SiteParams.Vs30_TypeParam;
-
-
-
+// import org.opensha.commons.data.Site;
+// import org.opensha.commons.geo.Location;
+// import org.opensha.commons.geo.LocationUtils;
+// import org.opensha.sha.imr.param.SiteParams.DepthTo1pt0kmPerSecParam;
+// import org.opensha.sha.imr.param.SiteParams.DepthTo2pt5kmPerSecParam;
+// import org.opensha.sha.imr.param.SiteParams.Vs30_Param;
+// import org.opensha.sha.imr.param.SiteParams.Vs30_TypeParam;
 
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
@@ -29,7 +26,6 @@ import com.google.common.collect.Maps;
  * Recommended Seismic Provisions</a>
  * 
  * @author Peter Powers
- * @version $Id:$
  */
 @SuppressWarnings("all")
 public enum NehrpTestCity {
@@ -91,18 +87,19 @@ public enum NehrpTestCity {
 	public Location location() {
 		return loc;
 	}
-	
-//	/**
-//	 * Returns the location of the city shifted to the nearest 0.1 lat lon
-//	 * unit.
-//	 * @return the shifted location
-//	 */
-//	public Location shiftedLocation() {
-//		// Precision rounds negatives down
-//		double lat = Precision.round(loc.getLatitude(), 1);
-//		double lon = Precision.round(loc.getLongitude(), 1);
-//		return new Location(lat, lon, loc.getDepth());
-//	}
+
+	// TODO clean if truly not needed
+	// /**
+	// * Returns the location of the city shifted to the nearest 0.1 lat lon
+	// * unit.
+	// * @return the shifted location
+	// */
+	// public Location shiftedLocation() {
+	// // Precision rounds negatives down
+	// double lat = Precision.round(loc.getLatitude(), 1);
+	// double lon = Precision.round(loc.getLongitude(), 1);
+	// return new Location(lat, lon, loc.getDepth());
+	// }
 
 	/**
 	 * Returns all California cities.
@@ -111,19 +108,19 @@ public enum NehrpTestCity {
 	public static Set<NehrpTestCity> getCA() {
 		return EnumSet.range(LOS_ANGELES, SANTA_ROSA);
 	}
-	
+
 	/**
 	 * Returns all California cities.
 	 * @return a {@code Set} of California cities
 	 */
 	public static Set<NehrpTestCity> getShortListCA() {
-		return EnumSet.of(LOS_ANGELES, RIVERSIDE, SAN_DIEGO, SANTA_BARBARA,
-			OAKLAND, SACRAMENTO, SAN_FRANCISCO, SAN_JOSE);
+		return EnumSet.of(LOS_ANGELES, RIVERSIDE, SAN_DIEGO, SANTA_BARBARA, OAKLAND, SACRAMENTO,
+			SAN_FRANCISCO, SAN_JOSE);
 	}
-	
+
 	/**
-	 * Returns the city associated with the supplied location or {@code null}
-	 * if no city is coincident with the location.
+	 * Returns the city associated with the supplied location or {@code null} if
+	 * no city is coincident with the location.
 	 * @param loc location to search for
 	 * @return the city at location
 	 * @see LocationUtils#areSimilar(Location, Location);
@@ -134,7 +131,7 @@ public enum NehrpTestCity {
 		}
 		return null;
 	}
-	
+
 	public static Map<String, Location> asMap() {
 		Map<String, Location> cityMap = Maps.newHashMap();
 		for (NehrpTestCity city : NehrpTestCity.values()) {
@@ -142,11 +139,9 @@ public enum NehrpTestCity {
 		}
 		return ImmutableMap.copyOf(cityMap);
 	}
-	
-	@Override
-	public String toString() {
+
+	@Override public String toString() {
 		return Parsing.enumLabelWithSpaces(this);
 	}
-
 
 }

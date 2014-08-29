@@ -15,9 +15,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Peter Powers
  */
-class AsyncList<T> extends AbstractList<ListenableFuture<T>> {
+final class AsyncList<T> extends AbstractList<ListenableFuture<T>> {
 
-	private List<ListenableFuture<T>> delegate;
+	private final List<ListenableFuture<T>> delegate;
 
 	private AsyncList(int initialCapacity) {
 		delegate = new ArrayList<>(initialCapacity);

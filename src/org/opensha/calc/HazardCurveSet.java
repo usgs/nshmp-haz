@@ -32,20 +32,19 @@ import org.opensha.gmm.Gmm;
  * 
  * @author Peter Powers
  */
-public class HazardCurveSet {
+final class HazardCurveSet {
 
 	final SourceSet<? extends Source> sourceSet;
-	final List<HazardGroundMotions> groundMotionsList;
-	final List<List<HazardGroundMotions>> clusterGroundMotionsList;
+	final List<HazardGroundMotions> hazardGroundMotionsList;
+	final List<ClusterGroundMotions> clusterGroundMotionsList;
 	final Map<Gmm, ArrayXY_Sequence> gmmCurveMap;
 
 	private HazardCurveSet(SourceSet<? extends Source> sourceSet,
-		List<HazardGroundMotions> groundMotionsList,
-		List<List<HazardGroundMotions>> clusterGroundMotionsList,
-		Map<Gmm, ArrayXY_Sequence> gmmCurveMap) {
+		List<HazardGroundMotions> hazardGroundMotionsList,
+		List<ClusterGroundMotions> clusterGroundMotionsList, Map<Gmm, ArrayXY_Sequence> gmmCurveMap) {
 
 		this.sourceSet = sourceSet;
-		this.groundMotionsList = groundMotionsList;
+		this.hazardGroundMotionsList = hazardGroundMotionsList;
 		this.clusterGroundMotionsList = clusterGroundMotionsList;
 		this.gmmCurveMap = gmmCurveMap;
 	}
@@ -60,17 +59,17 @@ public class HazardCurveSet {
 		private boolean built = false;
 
 		private final SourceSet<? extends Source> sourceSet;
-		private final List<HazardGroundMotions> groundMotionsList;
-		private final List<List<HazardGroundMotions>> clusterGroundMotionsList;
+		private final List<HazardGroundMotions> hazardGroundMotionsList;
+		private final List<ClusterGroundMotions> clusterGroundMotionsList;
 		private final Map<Gmm, ArrayXY_Sequence> gmmCurveMap;
 
 		private Builder(SourceSet<? extends Source> sourceSet, ArrayXY_Sequence model) {
 			this.sourceSet = sourceSet;
 			if (sourceSet.type() == SourceType.CLUSTER) {
-				groundMotionsList = null;
 				clusterGroundMotionsList = new ArrayList<>();
+				hazardGroundMotionsList = null;
 			} else {
-				groundMotionsList = new ArrayList<>();
+				hazardGroundMotionsList = new ArrayList<>();
 				clusterGroundMotionsList = null;
 			}
 			gmmCurveMap = new EnumMap<>(Gmm.class);
@@ -80,19 +79,19 @@ public class HazardCurveSet {
 		}
 
 		Builder addCurves(HazardCurves hazardCurves) {
-			checkNotNull(groundMotionsList, "%s was intialized with a ClusterSourceSet", ID);
-			groundMotionsList.add(hazardCurves.groundMotions);
+			checkNotNull(hazardGroundMotionsList, "%s was intialized with a ClusterSourceSet", ID);
+			hazardGroundMotionsList.add(hazardCurves.groundMotions);
 			for (Entry<Gmm, ArrayXY_Sequence> entry : hazardCurves.curveMap.entrySet()) {
 				gmmCurveMap.get(entry.getKey()).add(entry.getValue());
 			}
 			return this;
 		}
 
-		Builder addCurves(ClusterHazardCurves clusterHazardCurves) {
+		Builder addCurves(ClusterCurves clusterCurves) {
 			checkNotNull(clusterGroundMotionsList, "%s was not intialized with a ClusterSourceSet",
 				ID);
-			clusterGroundMotionsList.add(clusterHazardCurves.groundMotionsList);
-			for (Entry<Gmm, ArrayXY_Sequence> entry : clusterHazardCurves.curveMap.entrySet()) {
+			clusterGroundMotionsList.add(clusterCurves.clusterGroundMotions);
+			for (Entry<Gmm, ArrayXY_Sequence> entry : clusterCurves.curveMap.entrySet()) {
 				gmmCurveMap.get(entry.getKey()).add(entry.getValue());
 			}
 			return this;
@@ -101,7 +100,7 @@ public class HazardCurveSet {
 		HazardCurveSet build() {
 			checkState(!built, "This %s instance has already been used", ID);
 			built = true;
-			return new HazardCurveSet(sourceSet, groundMotionsList, clusterGroundMotionsList,
+			return new HazardCurveSet(sourceSet, hazardGroundMotionsList, clusterGroundMotionsList,
 				gmmCurveMap);
 		}
 

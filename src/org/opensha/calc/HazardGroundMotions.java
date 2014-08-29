@@ -22,15 +22,14 @@ import com.google.common.primitives.Doubles;
  */
 final class HazardGroundMotions {
 
-	// TODO make package private
-
 	/*
 	 * NOTE the inputList supplied to Builder will be immutable but the mean and
 	 * sigma list maps are not; builder backs mean and sigma lists with
 	 * double[].
 	 * 
 	 * Can't use Multimaps.newListMultimap(map, factory) backed with
-	 * Doubles.asList(double[]) because list must be empty to start with.
+	 * Doubles.asList(double[]) because list must be empty to start with
+	 * and growable.
 	 * 
 	 * http://code.google.com/p/guava-libraries/issues/detail?id=1827
 	 */
