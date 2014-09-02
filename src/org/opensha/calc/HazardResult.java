@@ -1,8 +1,10 @@
 package org.opensha.calc;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.opensha.data.ArrayXY_Sequence.copyOf;
 import static org.opensha.eq.model.SourceType.CLUSTER;
 
+import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.eq.model.SourceType;
 
 import com.google.common.base.StandardSystemProperty;
@@ -17,13 +19,16 @@ import com.google.common.collect.SetMultimap;
 public final class HazardResult {
 
 	final SetMultimap<SourceType, HazardCurveSet> sourceSetMap;
+	final ArrayXY_Sequence totalCurve;
 
-	private HazardResult(SetMultimap<SourceType, HazardCurveSet> sourceSetMap) {
+	private HazardResult(SetMultimap<SourceType, HazardCurveSet> sourceSetMap,
+		ArrayXY_Sequence totalCurve) {
 		this.sourceSetMap = sourceSetMap;
+		this.totalCurve = totalCurve;
 	}
 
-	static Builder builder() {
-		return new Builder();
+	static Builder builder(ArrayXY_Sequence modelCurve) {
+		return new Builder(modelCurve);
 	}
 
 	@Override public String toString() {
@@ -35,26 +40,28 @@ public final class HazardResult {
 			for (HazardCurveSet curveSet : sourceSetMap.get(type)) {
 				sb.append("  ").append(curveSet.sourceSet);
 				int used = (curveSet.sourceSet.type() == CLUSTER)
-					? curveSet.clusterGroundMotionsList.size() : curveSet.hazardGroundMotionsList.size();
+					? curveSet.clusterGroundMotionsList.size() : curveSet.hazardGroundMotionsList
+						.size();
 				sb.append("Used: ").append(used);
 				sb.append(LF);
-				
+
 				if (curveSet.sourceSet.type() == CLUSTER) {
-//					List<ClusterGroundMotions> cgmsList = curveSet.clusterGroundMotionsList;
-//					for (ClusterGroundMotions cgms : cgmsList) {
-//						sb.append( "|--" + LF);
-//						for (HazardGroundMotions hgms : cgms) {
-//							sb.append("  |--" + LF);
-//							for (TemporalGmmInput input : hgms.inputs) {
-//								sb.append("    |--" + input + LF);
-//							}
-//						}
-//						sb.append(LF);
-//					}
-//					sb.append(curveSet.clusterGroundMotionsList);
-					
+					// List<ClusterGroundMotions> cgmsList =
+					// curveSet.clusterGroundMotionsList;
+					// for (ClusterGroundMotions cgms : cgmsList) {
+					// sb.append( "|--" + LF);
+					// for (HazardGroundMotions hgms : cgms) {
+					// sb.append("  |--" + LF);
+					// for (TemporalGmmInput input : hgms.inputs) {
+					// sb.append("    |--" + input + LF);
+					// }
+					// }
+					// sb.append(LF);
+					// }
+					// sb.append(curveSet.clusterGroundMotionsList);
+
 				} else {
-//					sb.append(curveSet.gmmCurveMap);
+//					 sb.append(curveSet.hazardGroundMotionsList);
 				}
 			}
 		}
@@ -67,19 +74,22 @@ public final class HazardResult {
 		private boolean built = false;
 
 		private ImmutableSetMultimap.Builder<SourceType, HazardCurveSet> resultMapBuilder;
+		private ArrayXY_Sequence totalCurve;
 
-		private Builder() {
+		private Builder(ArrayXY_Sequence modelCurve) {
+			totalCurve = copyOf(modelCurve).clear();
 			resultMapBuilder = ImmutableSetMultimap.builder();
 		}
 
 		Builder addCurveSet(HazardCurveSet curveSet) {
 			resultMapBuilder.put(curveSet.sourceSet.type(), curveSet);
+			totalCurve.add(curveSet.totalCurve);
 			return this;
 		}
 
 		HazardResult build() {
 			checkState(!built, "This %s instance has already been used", ID);
-			return new HazardResult(resultMapBuilder.build());
+			return new HazardResult(resultMapBuilder.build(), totalCurve);
 		}
 
 	}

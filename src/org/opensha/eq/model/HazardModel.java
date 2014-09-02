@@ -28,6 +28,13 @@ import com.google.common.collect.SetMultimap;
  */
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
 		
+	// TODO need to revisit the application of uncertainty when minM < 6.5
+	// e.g. 809a Pine Valley graben in orwa.c.in
+	
+	// TODO not sure why I changed surface implementations to project down dip from
+	// zero to zTop, but it was wrong. currently sesmogenic depth is ignored, but
+	// may need this for system sources; should zTop be encoded into trace depths?
+	
 	// TODO finalize builder args
 	
 	// TODO deal with javadoc warnings in build.xml

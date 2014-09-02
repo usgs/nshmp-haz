@@ -54,7 +54,8 @@ class CalcTest {
 
 
 //	private static String testModel = "../nshmp-model-dev/models/2008/Western US test";
-	private static String testModel = "../nshmp-model-dev/models/2008/Western US";
+	private static String testModel = "../nshmp-model-dev/models/2008/Western US.zip";
+//	private static String testModel = "/Users/pmpowers/projects/git/nshmp-model-dev/models/2008/Western US.zip";
 //	private static String testModel = "../nshmp-model-dev/models/2008/Central & Eastern US";
 
 	// @formatter: off
@@ -91,24 +92,26 @@ class CalcTest {
 	static void runSites(HazardModel model, Imt imt) {
 
 //		Site site = Site.create(NehrpTestCity.MEMPHIS.location());
-		Site site = Site.create(Location.create(34.05, -118.25));
+		Site site = Site.create(NehrpTestCity.LOS_ANGELES.location());
 		HazardResult result = testCalc(model, site, imt);
 		System.out.println(result);
-
-		// oakland
-		site = Site.create(Location.create(37.8044, -122.2708));
-		result = testCalc(model, site, imt);
-		System.out.println(result);
+		System.out.println(result.totalCurve);
 		
-		// sacramento
-		site = Site.create(Location.create(38.5556, -121.4689));
-		result = testCalc(model, site, imt);
-		System.out.println(result);
 
-		// back to la
-		site = Site.create(Location.create(34.05, -118.25));
-		result = testCalc(model, site, imt);
-		System.out.println(result);
+//		// oakland
+//		site = Site.create(Location.create(37.8044, -122.2708));
+//		result = testCalc(model, site, imt);
+//		System.out.println(result);
+//		
+//		// sacramento
+//		site = Site.create(Location.create(38.5556, -121.4689));
+//		result = testCalc(model, site, imt);
+//		System.out.println(result);
+//
+//		// back to la
+//		site = Site.create(Location.create(34.05, -118.25));
+//		result = testCalc(model, site, imt);
+//		System.out.println(result);
 
 	}
 
@@ -129,7 +132,7 @@ class CalcTest {
 	
 	public static HazardResult testCalc(HazardModel model, Site site, Imt imt) {
 
-		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_IMLS, null);
+		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_0P2_IMLS, null);
 
 		try {
 			// hcm.calc(model, s, imt);
@@ -173,7 +176,7 @@ class CalcTest {
 				
 			}
 
-			ListenableFuture<HazardResult> futureResult = toHazardResult(curveSetCollector);
+			ListenableFuture<HazardResult> futureResult = toHazardResult(curveSetCollector, modelCurve);
 			System.out.println(sw.elapsed(TimeUnit.MILLISECONDS));
 
 			HazardResult result = futureResult.get();

@@ -41,8 +41,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 final class AsyncCalc {
 
-	// TODO perhaps rename to AsyncCalc
-
 	private AsyncCalc() {}
 
 	private static final ExecutorService EX;
@@ -85,8 +83,8 @@ final class AsyncCalc {
 	 * HazardCurves.
 	 */
 	static AsyncList<HazardCurves> toHazardCurves(AsyncList<HazardGroundMotions> groundMotionsList,
-			ArrayXY_Sequence model) {
-		Function<HazardGroundMotions, HazardCurves> function = groundMotionsToCurves(model);
+			ArrayXY_Sequence modelCurve) {
+		Function<HazardGroundMotions, HazardCurves> function = groundMotionsToCurves(modelCurve);
 		AsyncList<HazardCurves> result = createWithCapacity(groundMotionsList.size());
 		for (ListenableFuture<HazardGroundMotions> groundMotions : groundMotionsList) {
 			result.add(transform(groundMotions, function, EX));
@@ -98,16 +96,18 @@ final class AsyncCalc {
 	 * Reduce a List of future HazardCurves to a future HazardCurveSet.
 	 */
 	static ListenableFuture<HazardCurveSet> toHazardCurveSet(AsyncList<HazardCurves> curves,
-			SourceSet<? extends Source> sourceSet, ArrayXY_Sequence model) {
-		Function<List<HazardCurves>, HazardCurveSet> function = curveConsolidator(sourceSet, model);
+			SourceSet<? extends Source> sourceSet, ArrayXY_Sequence modelCurve) {
+		Function<List<HazardCurves>, HazardCurveSet> function = curveConsolidator(sourceSet,
+			modelCurve);
 		return transform(allAsList(curves), function, EX);
 	}
 
 	/**
 	 * Reduce a List of future HazardCurveSets into a future HazardResult.
 	 */
-	static ListenableFuture<HazardResult> toHazardResult(AsyncList<HazardCurveSet> curveSets) {
-		Function<List<HazardCurveSet>, HazardResult> function = curveSetConsolidator();
+	static ListenableFuture<HazardResult> toHazardResult(AsyncList<HazardCurveSet> curveSets,
+			ArrayXY_Sequence modelCurve) {
+		Function<List<HazardCurveSet>, HazardResult> function = curveSetConsolidator(modelCurve);
 		return transform(allAsList(curveSets), function, EX);
 	}
 
@@ -176,213 +176,5 @@ final class AsyncCalc {
 			clusterSourceSet, model);
 		return transform(allAsList(curvesList), function, EX);
 	}
-
-	// // TODO clean
-	// // static ListenableFuture<Map<Gmm, ArrayXY_Sequence>>
-	// // toClusterHazardCurves(
-	// // List<HazardGroundMotions> groundMotions, ArrayXY_Sequence model) {
-	// //
-	// // // List --> faults (sections)
-	// // // HazardGroundMotions --> magnitude variants
-	// //
-	// // return Futures.transform(Futures.immediateFuture(groundMotions),
-	// // Transforms.clusterGroundMotionsToCurves(model), EX);
-	// // }
-	//
-	// /*
-	// * Process a ClusterSourceSet to a List of HazardGroundMotions Lists,
-	// * wrapped in a ListenableFuture.
-	// */
-	// static ListenableFuture<List<List<HazardGroundMotions>>>
-	// toClusterGroundMotions2(
-	// ClusterSourceSet sourceSet, Site site, Imt imt) {
-	//
-	// // List (outer) --> clusters (geometry variants)
-	// // List (inner) --> faults (sections)
-	// // HazardGroundMotions --> magnitude variants
-	//
-	// return transform(immediateFuture(sourceSet),
-	// clustersToGroundMotions(site, imt), EX);
-	// }
-	//
-	// // static AsyncList<List<HazardGroundMotions>> toClusterGroundMotions2(
-	// // ClusterSourceSet sourceSet, Site site, Imt imt) {
-	// //
-	// // // List (outer) --> clusters (geometry variants)
-	// // // List (inner) --> faults (sections)
-	// // // HazardGroundMotions --> magnitude variants
-	// //
-	// // return transform(immediateFuture(sourceSet),
-	// // clustersToGroundMotions(site, imt), EX);
-	// // }
-	//
-	// static ListenableFuture<Map<Gmm, ArrayXY_Sequence>> toClusterCurve(
-	// List<HazardGroundMotions> groundMotions, ArrayXY_Sequence model) {
-	//
-	// // List --> faults (sections)
-	// // HazardGroundMotions --> magnitude variants
-	//
-	// return Futures.transform(Futures.immediateFuture(groundMotions),
-	// Transforms.clusterGroundMotionsToCurves(model), EX);
-	// }
-	//
-	// static ListenableFuture<Map<Gmm, ArrayXY_Sequence>> toClusterCurve2(
-	// List<HazardGroundMotions> groundMotions, ArrayXY_Sequence model) {
-	//
-	// // List --> faults (sections)
-	// // HazardGroundMotions --> magnitude variants
-	//
-	// return Futures.transform(Futures.immediateFuture(groundMotions),
-	// Transforms.clusterGroundMotionsToCurves(model), EX);
-	// }
-	//
-	// // TODO clean
-	// /*
-	// * Process a SourceSet splitting out all tasks as Futures.
-	// */
-	// // @Deprecated List<ListenableFuture<HazardGroundMotions>>
-	// toGroundMotions1(
-	// // SourceSet<? extends Source> sources, Site site, Imt imt) {
-	// //
-	// // // get ground motion models
-	// // Map<Gmm, GroundMotionModel> gmmInstances =
-	// // Gmm.instances(sources.groundMotionModels()
-	// // .gmms(), imt);
-	// //
-	// // // set up reusable transforms
-	// // Function<Source, HazardInputs> sourceToInputs =
-	// // Transforms.sourceToInputs(site);
-	// // Function<HazardInputs, HazardGroundMotions> inputsToGroundMotions =
-	// // Transforms
-	// // .inputsToGroundMotions(gmmInstances);
-	// //
-	// // // ground motion set aggregator
-	// // List<ListenableFuture<HazardGroundMotions>> gmsFutures =
-	// // Lists.newArrayList();
-	// //
-	// // for (Source source : sources.locationIterable(site.loc)) {
-	// //
-	// // // wrap Source in ListenableFuture for Futures.transform()
-	// // ListenableFuture<Source> srcFuture = Futures.immediateFuture(source);
-	// //
-	// // // transform source to inputs
-	// // ListenableFuture<HazardInputs> gmmInputs =
-	// Futures.transform(srcFuture,
-	// // sourceToInputs,
-	// // EX);
-	// //
-	// // // transform inputs to ground motions
-	// // ListenableFuture<HazardGroundMotions> gmResults =
-	// // Futures.transform(gmmInputs,
-	// // inputsToGroundMotions, EX);
-	// //
-	// // gmsFutures.add(gmResults);
-	// // }
-	// //
-	// // return gmsFutures;
-	// // }
-	// //
-	// // /*
-	// // * Process a SourceSet reducing the Source --> GmmInput -->
-	// GroundMotion
-	// // to
-	// // * a single transform.
-	// // */
-	// // @Deprecated List<ListenableFuture<HazardGroundMotions>>
-	// toGroundMotions2(
-	// // SourceSet<? extends Source> sources, Site site, Imt imt) {
-	// //
-	// // // get ground motion models
-	// // Map<Gmm, GroundMotionModel> gmmInstances =
-	// // Gmm.instances(sources.groundMotionModels()
-	// // .gmms(), imt);
-	// //
-	// // Function<Source, HazardGroundMotions> transform = Functions.compose(
-	// // Transforms.inputsToGroundMotions(gmmInstances),
-	// // Transforms.sourceToInputs(site));
-	// //
-	// // // ground motion set aggregator
-	// // List<ListenableFuture<HazardGroundMotions>> gmsFutures =
-	// // Lists.newArrayList();
-	// //
-	// // for (Source source : sources.locationIterable(site.loc)) {
-	// // gmsFutures.add(Futures.transform(Futures.immediateFuture(source),
-	// // transform, EX));
-	// // }
-	// //
-	// // return gmsFutures;
-	// // }
-	// //
-	// // /*
-	// // * Process a SourceSet on a single thread.
-	// // */
-	// // @Deprecated List<HazardGroundMotions> toGroundMotions3(SourceSet<?
-	// // extends Source> sources,
-	// // Site site, Imt imt) {
-	// //
-	// // // get ground motion models
-	// // Map<Gmm, GroundMotionModel> gmmInstances =
-	// // Gmm.instances(sources.groundMotionModels()
-	// // .gmms(), imt);
-	// //
-	// // // set up reusable transforms
-	// // Function<Source, HazardInputs> sourceToInputs =
-	// // Transforms.sourceToInputs(site);
-	// // Function<HazardInputs, HazardGroundMotions> inputsToGroundMotions =
-	// // Transforms
-	// // .inputsToGroundMotions(gmmInstances);
-	// //
-	// // List<HazardGroundMotions> gmsList = new ArrayList<>();
-	// //
-	// // for (Source source : sources.locationIterable(site.loc)) {
-	// //
-	// // // alt:
-	// // // HazardInputs gmmInputs = sourceToInputs.apply(source);
-	// // // HazardGroundMotions gmResults =
-	// // // inputsToGroundMotions.apply(gmmInputs);
-	// // // gmSetList.add(gmResults);
-	// //
-	// //
-	// gmsList.add(inputsToGroundMotions.apply(sourceToInputs.apply(source)));
-	// //
-	// // }
-	// // return gmsList;
-	// // }
-	// //
-	// // /*
-	// // * Process a SourceSet on its own thread.
-	// // */
-	// // @Deprecated ListenableFuture<List<HazardGroundMotions>>
-	// toGroundMotions4(
-	// // SourceSet<? extends Source> sources, Site site, Imt imt) {
-	// //
-	// // return Futures.transform(Futures.immediateFuture(sources),
-	// // Transforms.sourcesToGroundMotions(site, imt), EX);
-	// // }
-	// //
-	// // /*
-	// // * Compute a hazard curve for a List of GroundMotionSets associated
-	// with a
-	// // * SourceSet
-	// // */
-	// // @Deprecated List<ListenableFuture<HazardCurves>> toHazardCurves(
-	// // List<ListenableFuture<HazardGroundMotions>> groundMotionList) {
-	// //
-	// // ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_IMLS,
-	// // null);
-	// //
-	// // Function<HazardGroundMotions, HazardCurves> groundMotionsToCurves =
-	// // Transforms
-	// // .groundMotionsToCurves(modelCurve);
-	// //
-	// // List<ListenableFuture<HazardCurves>> curveFutures =
-	// Lists.newArrayList();
-	// //
-	// // for (ListenableFuture<HazardGroundMotions> gmSet : groundMotionList) {
-	// // curveFutures.add(Futures.transform(gmSet, groundMotionsToCurves, EX));
-	// // }
-	// //
-	// // return curveFutures;
-	// // }
 
 }

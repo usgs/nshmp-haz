@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
  * Intesity measure type (Imt) identifiers.
  * @author Peter Powers
  */
-// @SuppressWarnings("javadoc")
+@SuppressWarnings("javadoc")
 public enum Imt {
 
 	PGA,

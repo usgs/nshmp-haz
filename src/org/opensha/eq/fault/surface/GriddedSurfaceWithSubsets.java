@@ -365,19 +365,24 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 			Location traceLocation = Locations.location(location1, dir);
 
 			// get location at the top of the fault surface
-			Location topLocation;
-			if (traceLocation.depth() < depth) {
-				// vDistance = traceLocation.getDepth() - depth;
-				vDistance = depth - traceLocation.depth();
-				hDistance = vDistance / Math.tan(dipRad);
-				// dir = new LocationVector(vDistance, hDistance,
-				// aveDipDirection, 0);
-				// dir = new LocationVector(aveDipDirection, hDistance,
-				// vDistance);
-				dir = LocationVector.create(dipDirRad, hDistance, vDistance);
-				topLocation = Locations.location(traceLocation, dir);
-			} else
-				topLocation = traceLocation;
+//			Location topLocation;
+//			if (traceLocation.depth() < depth) {
+//				// vDistance = traceLocation.getDepth() - depth;
+//				vDistance = depth - traceLocation.depth();
+//				hDistance = vDistance / Math.tan(dipRad);
+//				// dir = new LocationVector(vDistance, hDistance,
+//				// aveDipDirection, 0);
+//				// dir = new LocationVector(aveDipDirection, hDistance,
+//				// vDistance);
+//				dir = LocationVector.create(dipDirRad, hDistance, vDistance);
+//				topLocation = Locations.location(traceLocation, dir);
+//			} else
+//				topLocation = traceLocation;
+
+			// TODO above was improperly edited; buried traces were incorrectly
+			// being projected doewn dip; upperSeisDepth was refactored
+			// out but perhaps will have to be reintroduced
+			Location topLocation = Location.create(traceLocation.lat(), traceLocation.lon(), depth);
 
 			set(0, ith_col, Location.copyOf(topLocation));
 			// if( D ) System.out.println("   (x,y) topLocation = (0, " +
@@ -566,18 +571,23 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 		double lowerDepth = depth + width * Math.sin(dipRad);
 
 		for (Location traceLoc : trace) {
-			double vDistance = depth - traceLoc.depth();
-			double hDistance = vDistance / Math.tan(dipRad);
-			// LocationVector dir = new LocationVector(aveDipDirection,
-			// hDistance, vDistance);
-			LocationVector dir = LocationVector.create(dipDirRad, hDistance, vDistance);
-			Location topLoc = Locations.location(traceLoc, dir);
-			topLocs.add(topLoc);
+			
+//			// TODO ignoring seismogenic depth for now
+//			double vDistance = upperSeisDepth - traceLoc.depth();
+//			double hDistance = vDistance / Math.tan(dipRad);
+//			
+//			// LocationVector dir = new LocationVector(aveDipDirection, hDistance, vDistance);
+//			LocationVector dir = LocationVector.create(dipDirRad, hDistance, vDistance);
+//			Location topLoc = Locations.location(traceLoc, dir);
+//			topLocs.add(topLoc);
 
-			vDistance = lowerDepth - traceLoc.depth();
-			hDistance = vDistance / Math.tan(dipRad);
+			Location topLoc = Location.create(traceLoc.lat(), traceLoc.lon(), depth);
+			topLocs.add(topLoc);
+			
+			double vDistance = lowerDepth - depth; //traceLoc.depth();
+			double hDistance = vDistance / Math.tan(dipRad);
 			// dir = new LocationVector(aveDipDirection, hDistance, vDistance);
-			dir = LocationVector.create(dipDirRad, hDistance, vDistance);
+			LocationVector dir = LocationVector.create(dipDirRad, hDistance, vDistance);
 			Location botLoc = Locations.location(traceLoc, dir);
 			botLocs.add(botLoc);
 		}

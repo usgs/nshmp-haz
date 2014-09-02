@@ -125,6 +125,8 @@ public class Utils {
 
 	// @formatter:off
 	
+	public static final double[] NSHM_PGA_IMLS = { 0.0050, 0.0070, 0.0098, 0.0137, 0.0192, 0.0269, 0.0376, 0.0527, 0.0738, 0.103, 0.145, 0.203, 0.284, 0.397, 0.556, 0.778, 1.09, 1.52, 2.13 };
+	public static final double[] NSHM_0P2_IMLS = { 0.0050, 0.0075, 0.0113, 0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19, 3.28, 4.92, 7.38 };
 	/**
 	 * These intensity measure levels expand the standard ranges of values used
 	 * at different periods in past NSHMs to a common set that can be used

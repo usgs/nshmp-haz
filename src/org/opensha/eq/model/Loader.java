@@ -87,9 +87,9 @@ class Loader {
 
 		try {
 			checkNotNull(path, "Path is null");
-			modelPath = Paths.get(path);
+			modelPath = Paths.get(path).toRealPath();
 			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
-			typePaths = typeDirectories(Paths.get(path));
+			typePaths = typeDirectories(modelPath);
 			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
 		} catch (Exception e) {
 			logConfigException(e);
@@ -129,6 +129,7 @@ class Loader {
 
 		if (isZip) {
 			URI zipURI = new URI(ZIP_SCHEME, path.toString(), null);
+			System.out.println(zipURI);
 			FileSystem zfs = FileSystems.newFileSystem(zipURI, ZIP_ENV_MAP);
 			Path zipRoot = Iterables.get(zfs.getRootDirectories(), 0);
 			List<Path> paths = typeDirectoryList(zipRoot);
