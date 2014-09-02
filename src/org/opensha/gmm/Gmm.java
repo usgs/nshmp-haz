@@ -297,7 +297,7 @@ public enum Gmm {
 
 	/**
 	 * Retrieves multiple {@code GroundMotionModel} instances, either by
-	 * creating a new ones, or fetching them from a cache.
+	 * creating new ones, or fetching them from a cache.
 	 * @param gmms to retieve
 	 * @param imt
 	 * @return a {@code Map} of {@code GroundMotionModel} instances

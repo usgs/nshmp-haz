@@ -27,4 +27,5 @@ final class TemporalGmmInput extends GmmInput {
 		return getClass().getSimpleName() + " [rate=" + String.format("%.4g", rate) + " " +
 			super.toString() + "]";
 	}
+	
 }

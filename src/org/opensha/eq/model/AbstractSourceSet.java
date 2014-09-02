@@ -58,7 +58,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	}
 
 	@Override public Iterable<T> locationIterable(Location loc) {
-		Predicate<T> filter = distanceFilter(loc, gmmSet.maxDistHi);
+		Predicate<T> filter = distanceFilter(loc, gmmSet.maxDistance());
 		return FluentIterable.from(this).filter(filter);
 	}
 

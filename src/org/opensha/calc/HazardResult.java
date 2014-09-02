@@ -51,10 +51,10 @@ public final class HazardResult {
 //						}
 //						sb.append(LF);
 //					}
-					sb.append(curveSet.clusterGroundMotionsList);
+//					sb.append(curveSet.clusterGroundMotionsList);
 					
 				} else {
-					sb.append(curveSet.gmmCurveMap);
+//					sb.append(curveSet.gmmCurveMap);
 				}
 			}
 		}

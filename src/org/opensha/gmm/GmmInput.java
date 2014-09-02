@@ -35,26 +35,38 @@ import com.google.common.collect.Maps;
  */
 public class GmmInput {
 
-	// source
-	final double Mw;
+	/** Moment magnitude. */
+	public final double Mw;
 
-	final double rJB;
-	final double rRup;
-	final double rX;
+	/** Joyner-Boore distance (distance to surface projection of rupture). */
+	public final double rJB;
+	/** Rupture distance (distance to rupture plane). */
+	public final double rRup;
+	/** Distance X (shortest distance to extended strike of rupture). */
+	public final double rX;
 
-	final double dip;
-	final double width;
-	final double zTop;
-	final double zHyp;
+	/** Rupture dip. */
+	public final double dip;
+	/** Rupture width. */
+	public final double width;
+	/** Depth to top of rupture. */
+	public final double zTop;
+	/** Depth to rupture hypocenter. */
+	public final double zHyp;
+	/** Rupture rake. */
+	public final double rake;
 
-	final double rake;
+	/** Vs30 at site. */
+	public final double vs30;
+	/** Whether vs30 is inferred or measured. */
+	public final boolean vsInf;
+	/** Depth to 2.5 km/s (in km). */
+	public final double z2p5; // always in km
+	/** Depth to 1.0 km/s (in km). */
+	public final double z1p0; // always in meters TODO NO NO NO - this is now
+								// always
 
-	// site
-	final double vs30;
-	final boolean vsInf;
-	final double z2p5; // always in km
-	final double z1p0; // always in meters TODO NO NO NO - this is now always
-						// km, CY08 needs updating
+	// km, CY08 needs updating
 
 	/**
 	 * Create a deterministic rupture and site property container with all
@@ -97,14 +109,14 @@ public class GmmInput {
 		this.z2p5 = z2p5;
 		this.z1p0 = z1p0;
 	}
-	
-	// for tests
-	static GmmInput create(double Mw, double rJB, double rRup, double rX, double dip,
-			double width, double zTop, double zHyp, double rake, double vs30, boolean vsInf,
-			double z2p5, double z1p0) {
 
-		return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf,
-			z2p5, z1p0);
+	// for tests
+	static GmmInput create(double Mw, double rJB, double rRup, double rX, double dip, double width,
+			double zTop, double zHyp, double rake, double vs30, boolean vsInf, double z2p5,
+			double z1p0) {
+
+		return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf, z2p5,
+			z1p0);
 	}
 
 	/**

@@ -28,6 +28,8 @@ import com.google.common.collect.SetMultimap;
  */
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
 		
+	// TODO finalize builder args
+	
 	// TODO deal with javadoc warnings in build.xml
 	// TODO add package-info.java
 	

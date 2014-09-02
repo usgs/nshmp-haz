@@ -121,7 +121,7 @@ final class Transforms {
 		@Override public HazardInputs apply(Source source) {
 			HazardInputs hazardInputs = new HazardInputs(source);
 			for (Rupture rup : source) {
-				
+
 				RuptureSurface surface = rup.surface();
 
 				Distances distances = surface.distanceTo(site.loc);
@@ -163,7 +163,7 @@ final class Transforms {
 		}
 
 		@Override public HazardGroundMotions apply(HazardInputs hazardInputs) {
-			
+
 			HazardGroundMotions.Builder gmBuilder = HazardGroundMotions.builder(hazardInputs,
 				gmmInstances.keySet());
 
@@ -251,8 +251,7 @@ final class Transforms {
 		}
 	}
 
-	private static class ClusterSourceToInputs implements
-			Function<ClusterSource, ClusterInputs> {
+	private static class ClusterSourceToInputs implements Function<ClusterSource, ClusterInputs> {
 
 		private final SourceToInputs transform;
 
@@ -279,7 +278,8 @@ final class Transforms {
 		}
 
 		@Override public ClusterGroundMotions apply(ClusterInputs clusterInputs) {
-			ClusterGroundMotions clusterGroundMotions = new ClusterGroundMotions();
+			ClusterGroundMotions clusterGroundMotions = new ClusterGroundMotions(
+				clusterInputs.parent);
 			for (HazardInputs hazardInputs : clusterInputs) {
 				clusterGroundMotions.add(transform.apply(hazardInputs));
 			}
@@ -329,8 +329,10 @@ final class Transforms {
 			}
 
 			Builder builder = ClusterCurves.builder(clusterGroundMotions);
+			double rate = clusterGroundMotions.parent.rate();
 			for (Gmm gmm : faultCurves.keySet()) {
-				builder.addCurve(gmm, Utils.calcClusterExceedProb(faultCurves.get(gmm)));
+				ArrayXY_Sequence clusterCurve = Utils.calcClusterExceedProb(faultCurves.get(gmm));
+				builder.addCurve(gmm, clusterCurve.multiply(rate));
 			}
 			return builder.build();
 		}

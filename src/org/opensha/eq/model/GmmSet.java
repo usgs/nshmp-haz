@@ -29,15 +29,13 @@ import com.google.common.collect.Sets;
  * 
  * @author Peter Powers
  */
-public class GmmSet {
+public final class GmmSet {
 
-	// TODO can this be privatized; requires changing signature of
-	// Source.groudMotionModels
-
-	final Map<Gmm, Double> weightMapLo;
-	final double maxDistLo;
-	final Map<Gmm, Double> weightMapHi;
-	final double maxDistHi;
+	private final Map<Gmm, Double> weightMapLo;
+	private final double maxDistLo;
+	private final Map<Gmm, Double> weightMapHi; // may be null
+	private final double maxDistHi; // used by distance filters
+	private final boolean singular;
 
 	private final Set<Gmm> gmms;
 
@@ -52,11 +50,9 @@ public class GmmSet {
 		this.maxDistLo = maxDistLo;
 		this.weightMapHi = weightMapHi;
 		this.maxDistHi = (weightMapHi != null) ? maxDistHi : maxDistLo;
+		this.singular = weightMapHi == null;
 
 		gmms = Sets.immutableEnumSet(weightMapLo.keySet());
-
-		// although weightMapHi may be null, we want to use maxDistHi
-		// for distance checking in the event that we do
 
 		uncertainty = (epiValues == null) ? UncertType.NONE : (epiValues.length == 1)
 			? UncertType.SINGLE : UncertType.MULTI;
@@ -79,6 +75,28 @@ public class GmmSet {
 	 */
 	public Set<Gmm> gmms() {
 		return gmms;
+	}
+
+	/**
+	 * The {@code Map} of {@link GroundMotionModel} identifiers and associated
+	 * weights to use at a given {@code distance} from a {@code Site}.
+	 * @param distance
+	 */
+	public Map<Gmm, Double> gmmWeightMap(double distance) {
+		/*
+		 * Note that below (maxDistance) is used by all distance filters, so
+		 * here, as long as distance isn't < maxDistLo, weightMapHi will be
+		 * used.
+		 */
+		return singular ? weightMapLo : distance <= maxDistLo ? weightMapLo : weightMapHi;
+	}
+
+	/**
+	 * The maximum distance for which the contained {@link GroundMotionModel}s
+	 * are applicable.
+	 */
+	public double maxDistance() {
+		return maxDistHi;
 	}
 
 	private static double[][] initEpiValues(double[] v) {
@@ -143,7 +161,7 @@ public class GmmSet {
 		Builder secondaryModelMap(Map<Gmm, Double> gmmWtMap) {
 			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
 			validateWeights(gmmWtMap.values());
-			gmmWtMapLo = ImmutableMap.copyOf(gmmWtMap);
+			gmmWtMapHi = ImmutableMap.copyOf(gmmWtMap);
 			return this;
 		}
 
@@ -171,7 +189,7 @@ public class GmmSet {
 			checkState(maxDistanceLo != null, "%s primary max distance not set", id);
 
 			if (gmmWtMapHi != null) {
-				// hi gmms must be same as of subset of lo gmms
+				// hi gmms must be same as or subset of lo gmms
 				checkState(gmmWtMapLo.keySet().containsAll(gmmWtMapHi.keySet()),
 					"%s secondary models must be a subset of primary models", id);
 				// maxDistanceHi must also be set and greater than maxDistanceLo

@@ -10,8 +10,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Convenience {@code List} implementation for {@code List}s of
- * {@code ListenableFuture}s. An {@code AsyncList} does not permit {@code null}
- * elements.
+ * {@code ListenableFuture}s of some type {@code <T>}. An {@code AsyncList} does
+ * not permit {@code null} elements.
  * 
  * @author Peter Powers
  */
