@@ -65,7 +65,6 @@ public final class Parsing {
 	
 	private static final Splitter.MapSplitter QUERY_SPLITTER = Splitter.on('&').trimResults().withKeyValueSeparator('=');
 	private static final Joiner.MapJoiner QUERY_JOINER = Joiner.on('&').withKeyValueSeparator("=");
-	// @formatter:on
 	
 	/**
 	 * Converts a {@code Map<Enum, Double>} to a {@code String} with the form
@@ -383,11 +382,7 @@ public final class Parsing {
 				.transform(doubleValueFunction())
 				.toList();
 	}
-	
-	public static Iterable<String> splitOnSpaces(String s) {
-		return SPLIT_SPACE.split(s);
-	}
-	
+		
 	public static String joinOnSpaces(Iterable<String> parts) {
 		return JOIN_SPACE.join(parts);
 	}
@@ -400,18 +395,54 @@ public final class Parsing {
 		return JOIN_COMMA.join(parts);
 	}
 
+	/**
+	 * Split a {@code String} into parts on commas (',').
+	 * @param s {@code String} to split
+	 */
 	public static Iterable<String> splitOnCommas(String s) {
 		return SPLIT_COMMA.split(s);
 	}
 	
+	/**
+	 * Split a {@code String} into a {@code List<Double>} on commas (',').
+	 * @param s {@code String} to split
+	 */
+	public static List<Double> splitOnCommasToDoubleList(String s) {
+		return FluentIterable
+				.from(splitOnCommas(s))
+				.transform(doubleValueFunction())
+				.toList();
+	}
+
+	/**
+	 * Split a {@code String} into parts on whitespace.
+	 * @param s {@code String} to split
+	 * @see CharMatcher#WHITESPACE
+	 */
+	public static Iterable<String> splitOnSpaces(String s) {
+		return SPLIT_SPACE.split(s);
+	}
+
+	/**
+	 * Split a {@code String} into parts on underscores ('_').
+	 * @param s {@code String} to split
+	 */
 	public static Iterable<String> splitOnUnderscore(String s) {
 		return SPLIT_UNDERSCORE.split(s);
 	}
 	
+	/**
+	 * Split a {@code String} into parts on forward slashes ('/').
+	 * @param s {@code String} to split
+	 */
 	public static Iterable<String> splitOnSlash(String s) {
 		return SPLIT_SLASH.split(s);
 	}
 
+	/**
+	 * Split a {@code String} into parts on dashes ('-').
+	 * @param s {@code String} to split
+	 */
 	public static Iterable<String> splitOnDash(String s) {
 		return SPLIT_DASH.split(s);
 	}
