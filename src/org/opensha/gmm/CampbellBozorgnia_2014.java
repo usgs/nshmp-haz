@@ -15,8 +15,6 @@ import static org.opensha.gmm.Imt.SA0P25;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Campbell &amp; Bozorgnia (2014) next generation
  * ground motion model for active crustal regions developed as part of <a

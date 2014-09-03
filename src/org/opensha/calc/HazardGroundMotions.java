@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opensha.gmm.Gmm;
+import org.opensha.gmm.ScalarGroundMotion;
 
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;

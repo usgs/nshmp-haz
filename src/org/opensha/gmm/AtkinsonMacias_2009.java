@@ -4,8 +4,6 @@ import static java.lang.Math.log10;
 import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.util.MathUtils.hypot;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the subduction interface ground motion model by Atkinson
  * &amp; Macias (2009). This implementation matches that used in the 2014 USGS

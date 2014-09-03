@@ -4,8 +4,6 @@ import static java.lang.Math.exp;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
 import static org.opensha.gmm.MagConverter.NONE;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Silva et al. (2002) ground motion model for stable
  * continental regions. This implementation matches that used in the 2008 USGS

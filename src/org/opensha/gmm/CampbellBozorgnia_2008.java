@@ -14,8 +14,6 @@ import static org.opensha.gmm.Imt.SA0P25;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Campbell &amp; Bozorgnia (2008) next generation
  * attenuation for active crustal regions relationship developed as part of <a

@@ -9,8 +9,6 @@ import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.MagConverter.NONE;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Abstract implementation of the ground motion model for stable
  * continental regions by Atkinson &amp; Boore (2006). This implementation

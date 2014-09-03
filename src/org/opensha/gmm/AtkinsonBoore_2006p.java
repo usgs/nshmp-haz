@@ -4,8 +4,6 @@ import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.Imt.PGA;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Modified form of the relationship for the Central and Eastern US by Atkinson
  * &amp; Boore (2006). This implementation matches that used in the 2014 USGS

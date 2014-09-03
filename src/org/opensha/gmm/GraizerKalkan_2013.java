@@ -16,8 +16,6 @@ import static org.opensha.gmm.Imt.PGV;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Graizer &amp; Kalkan (2013) GMPE. This model does not
  * support specific periods as most other GMMs do; it can handle any frequency.

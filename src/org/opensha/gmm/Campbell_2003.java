@@ -6,8 +6,6 @@ import static java.lang.Math.sqrt;
 import static org.opensha.gmm.MagConverter.NONE;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the hybrid ground motion model for stable continental
  * regions by Campbell (2003). This implementation matches that used in the 2008

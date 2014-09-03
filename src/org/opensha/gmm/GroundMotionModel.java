@@ -1,6 +1,5 @@
 package org.opensha.gmm;
 
-import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Interface implemented by all ground motion models (GMMs); these are also

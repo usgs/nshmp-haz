@@ -10,8 +10,6 @@ import static org.opensha.gmm.FaultStyle.REVERSE;
 import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha.gmm.Imt.PGA;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Boore, Stewart, Seyhan, &amp; Atkinson (2014) next
  * generation ground motion model for active crustal regions developed as

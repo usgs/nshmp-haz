@@ -1,4 +1,4 @@
-package org.opensha.calc;
+package org.opensha.gmm;
 
 /**
  * Ground motion model (Gmm) result container.

@@ -5,8 +5,6 @@ import static org.opensha.gmm.MagConverter.NONE;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Frankel et al. (1996) ground motion model for stable
  * continental regions. This implementation matches that used in the 2008 USGS

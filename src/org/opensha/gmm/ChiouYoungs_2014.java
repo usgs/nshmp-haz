@@ -13,8 +13,6 @@ import static org.opensha.geo.GeoTools.TO_RAD;
 import static org.opensha.gmm.FaultStyle.NORMAL;
 import static org.opensha.gmm.FaultStyle.REVERSE;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Chiou &amp; Youngs (2014) next generation attenuation
  * relationship for active crustal regions developed as part of <a

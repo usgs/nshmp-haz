@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.util.Parsing;
 
 import com.google.common.base.Charsets;

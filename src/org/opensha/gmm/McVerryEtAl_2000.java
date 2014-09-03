@@ -14,7 +14,6 @@ import static org.opensha.gmm.FaultStyle.REVERSE_OBLIQUE;
 import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha.gmm.Imt.PGA;
 
-import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.eq.TectonicSetting;
 
 /**

@@ -6,8 +6,6 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static org.opensha.gmm.Imt.PGA;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Abstract implementation of the subduction ground motion model created for BC
  * Hydro, Canada, by Addo, Abrahamson, &amp; Youngs (2012). This implementation

@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GmmInput;
 import org.opensha.gmm.GroundMotionModel;
 import org.opensha.gmm.Imt;
 import org.opensha.gmm.MatSpectrum;
+import org.opensha.gmm.ScalarGroundMotion;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;

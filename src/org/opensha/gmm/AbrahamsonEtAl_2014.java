@@ -8,7 +8,6 @@ import static java.lang.Math.sqrt;
 import static org.opensha.geo.GeoTools.TO_RAD;
 import static org.opensha.gmm.FaultStyle.NORMAL;
 
-import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.data.Interpolate;
 
 /**

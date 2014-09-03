@@ -5,8 +5,6 @@ import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Abstract implementation of the subduction ground motion model by Zhao et al.
  * (2006). This implementation matches that used in the USGS NSHM.

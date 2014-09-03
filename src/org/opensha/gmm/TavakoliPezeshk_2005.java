@@ -5,8 +5,6 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static org.opensha.gmm.MagConverter.NONE;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Tavakoli &amp; Pezeshk (2005) ground motion model for
  * stable continental regions. This implementation matches that used in the 2008

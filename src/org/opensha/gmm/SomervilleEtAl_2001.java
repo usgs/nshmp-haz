@@ -4,8 +4,6 @@ import static java.lang.Math.log;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
 import static org.opensha.util.MathUtils.hypot;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the hard rock ground motion model for the Central and
  * Eastern US by Somerville et al. (2001). This implementation matches that used

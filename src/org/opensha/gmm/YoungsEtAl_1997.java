@@ -6,8 +6,6 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static org.opensha.gmm.Imt.PGA;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Abstract implementation of the subduction ground motion model by Youngs et
  * al. (1997). This implementation matches that used in the 2008 USGS NSHMP
