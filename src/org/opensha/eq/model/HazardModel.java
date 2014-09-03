@@ -35,11 +35,6 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// zero to zTop, but it was wrong. currently sesmogenic depth is ignored, but
 	// may need this for system sources; should zTop be encoded into trace depths?
 	
-	// TODO finalize builder args
-	
-	// TODO deal with javadoc warnings in build.xml
-	// TODO add package-info.java
-	
 	// TODO expose FloatStyle
 	// TODO SUB check rake handling
 

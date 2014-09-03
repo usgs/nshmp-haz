@@ -691,7 +691,7 @@ public final class Parsing {
 	 * Convert a {@code Map} to a {@code URL} name-value pair query {@code String}.
 	 * @param parameterMap to process
 	 */
-	public static String mapToQuery(final Map<String, String> parameterMap) {
+	public static String mapToQuery(Map<String, String> parameterMap) {
 		return "?" + QUERY_JOINER.join(parameterMap);
 	}
 	

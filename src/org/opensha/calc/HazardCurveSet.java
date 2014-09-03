@@ -101,7 +101,7 @@ final class HazardCurveSet {
 //			return this;
 //		}
 
-		Builder addCurves(final HazardCurves hazardCurves) {
+		Builder addCurves(HazardCurves hazardCurves) {
 			checkNotNull(hazardGroundMotionsList, "%s was intialized with a ClusterSourceSet", ID);
 			hazardGroundMotionsList.add(hazardCurves.groundMotions);
 			double distance = hazardCurves.groundMotions.inputs.minDistance;
@@ -115,7 +115,7 @@ final class HazardCurveSet {
 			return this;
 		}
 
-		Builder addCurves(final ClusterCurves clusterCurves) {
+		Builder addCurves(ClusterCurves clusterCurves) {
 			checkNotNull(clusterGroundMotionsList, "%s was not intialized with a ClusterSourceSet",
 				ID);
 			clusterGroundMotionsList.add(clusterCurves.clusterGroundMotions);

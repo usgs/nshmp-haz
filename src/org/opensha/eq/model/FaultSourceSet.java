@@ -43,7 +43,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 		return SourceType.FAULT;
 	}
 
-	@Override public Predicate<FaultSource> distanceFilter(final Location loc, final double distance) {
+	@Override public Predicate<FaultSource> distanceFilter(Location loc, double distance) {
 		return new DistanceFilter(loc, distance);
 	}
 

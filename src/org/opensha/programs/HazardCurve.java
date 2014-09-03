@@ -80,8 +80,8 @@ public class HazardCurve {
 	 * path to a model zip file or directory, {@link Imt} is the intensity
 	 * measure type identifier, and lon, lat, and vs30 are numbers.</p>
 	 * 
-	 * <p>Computing multiple curves requires 3 {@code args}:
-	 * {@code model.file Imt site.file}, where {@code model.file} is the path to
+	 * <p>Computing multiple curves requires 4 {@code args}:
+	 * {@code model.file Imt site.file, out.file}, where {@code model.file} is the path to
 	 * a model zip file or directory, {@link Imt} is the intensity measure type
 	 * identifier, and site.file is a file containing comma-delimited
 	 * lon,lat[,vs30] values; lines starting with '#' are ignored.</p>
@@ -89,7 +89,7 @@ public class HazardCurve {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if (args.length < 3 || args.length > 5) {
+		if (args.length < 4 || args.length > 5) {
 			System.err.println(USAGE);
 			System.exit(1);
 		}
@@ -117,16 +117,20 @@ public class HazardCurve {
 		double lon = Double.valueOf(args[2]);
 		double lat = Double.valueOf(args[3]);
 		double vs30 = (args.length > 4) ? Double.valueOf(args[4]) : DEFAULT_VS_30;
+		
 		Location loc = Location.create(lat, lon);
 		Site site = Site.create(loc, vs30);
 
 	}
 
-	private static void runMulti(String[] args) {
+	private static void runMulti(String[] args) throws IOException {
 		Path modelPath = Paths.get(args[0]);
 		Imt imt = Imt.valueOf(args[1]);
 		Path sitesPath = Paths.get(args[2]);
-
+		Path outPath = Paths.get(args[3]);
+		
+		List<Site> sites = readSitesFile(sitesPath);
+		
 	}
 	
 	private static List<Site> readSitesFile(Path path) throws IOException {

@@ -93,7 +93,7 @@ class CalcTest {
 
 //		Site site = Site.create(NehrpTestCity.MEMPHIS.location());
 		Site site = Site.create(NehrpTestCity.LOS_ANGELES.location());
-		HazardResult result = testCalc(model, site, imt);
+		HazardResult result = testCalc(model, imt, site);
 		System.out.println(result);
 		System.out.println(result.totalCurve);
 		
@@ -128,9 +128,7 @@ class CalcTest {
 		}
 	}
 
-	// TODO how are empty results being handled ??
-	
-	public static HazardResult testCalc(HazardModel model, Site site, Imt imt) {
+	public static HazardResult testCalc(HazardModel model, Imt imt, Site site) {
 
 		ArrayXY_Sequence modelCurve = ArrayXY_Sequence.create(Utils.NSHM_0P2_IMLS, null);
 
