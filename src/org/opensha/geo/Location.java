@@ -20,7 +20,7 @@ import com.google.common.collect.FluentIterable;
  * seismology, the convention adopted in here is for depth to be positive-down,
  * always. All utility methods in this package assume this to be the case.
  * {@code Location}s may be defined using longitude values in the range:
- * [-180&#176;, 360&#176;]. {@code Location} instances are immutable.
+ * [-180°, 360°]. {@code Location} instances are immutable.
  * 
  * <p>Note that although static factory methods take arguments in the order:
  * [lat, lon, depth], {@code String} representations of a {@code Location} are

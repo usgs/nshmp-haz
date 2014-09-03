@@ -3,6 +3,8 @@ package org.opensha.eq.model;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 
+import com.google.common.base.CaseFormat;
+
 /**
  * HazardModel source XML attributes.
  * @author Peter Powers
@@ -51,6 +53,7 @@ public enum SourceAttribute {
 	/**
 	 * Returns an {@code CaseFormat#LOWER_CAMEL} {@code String} representation
 	 * of this {@code SourceAttribute}.
+	 * @see CaseFormat
 	 */
 	@Override
 	public String toString() {

@@ -1,7 +1,7 @@
 package org.opensha.gmm;
 
 /**
- * Concrete implementation of Atkinson &amp; Boore (2003) for global subduction
+ * Concrete implementation of Atkinson & Boore (2003) for global subduction
  * intraslab events.
  * 
  * @author Peter Powers

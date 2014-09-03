@@ -58,9 +58,9 @@ import com.google.common.collect.Range;
  * ensure grid nodes fall on specific lat-lon values. This location can be
  * anywhere in- or outside the region to be gridded. If the region contains the
  * anchor location, the anchor will coincide with a grid node. For example,
- * given a grid spacing of 1&deg; and an anchor {@code Location} of 22.1&deg;N
- * -134.7&deg;W, grid nodes within any region will fall at whole valued
- * latitudes + 0.1&deg; and longitudes - 0.7&deg;.</p>
+ * given a grid spacing of 1° and an anchor {@code Location} of 22.1°N
+ * -134.7°W, grid nodes within any region will fall at whole valued
+ * latitudes + 0.1° and longitudes - 0.7°.</p>
  * 
  * <p><a name="note"></a> <b><Note:</b> Due to rounding errors and the use of an
  * {@link Area} internally to define a {@code Region}'s border,
@@ -83,7 +83,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	// TODO remove method argument reliznce on AWT classes; may not be possible
 	// (or difficult) due to UC3 FaultPolyMgr implementation
 
-	/** Convenience reference for an anchor at (0&#176;, 0&#176;). */
+	/** Convenience reference for an anchor at (0°, 0°). */
 	public final static Location ANCHOR_0_0 = Location.create(0, 0);
 
 	private static final Range<Double> SPACING_RANGE = Range.openClosed(0d, 5d);

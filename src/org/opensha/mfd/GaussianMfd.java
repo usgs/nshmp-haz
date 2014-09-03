@@ -225,7 +225,6 @@ public class GaussianMfd extends IncrementalMfd {
 
   /**
    * get the mean for this distribution
-   * @return
    */
   public double getMean() {
     return this.mean;
@@ -234,7 +233,6 @@ public class GaussianMfd extends IncrementalMfd {
 
   /**
    * get the stdDev for this distribution
-   * @return
    */
   public double getStdDev() {
     return this.stdDev;
@@ -242,7 +240,6 @@ public class GaussianMfd extends IncrementalMfd {
 
   /**
    * get the truncLevel which specifies the # of stdDev(from Mean) where the dist. cuts to zero.
-   * @return
    */
   public double getTruncLevel() {
     return this.truncLevel;
@@ -251,7 +248,6 @@ public class GaussianMfd extends IncrementalMfd {
 
   /**
    * get the truncType which specifies whether it is no truncation  or 1 sided or 2 sided truncation
-   * @return
    */
   public int getTruncType() {
    return this.truncType;
@@ -259,7 +255,6 @@ public class GaussianMfd extends IncrementalMfd {
 
   /**
    * returns the name of the class
-   * @return
    */
   public String getDefaultName() {
     return NAME;
@@ -268,7 +263,6 @@ public class GaussianMfd extends IncrementalMfd {
 
   /**
    * return the info stored in the class in form of a String
-   * @return
    */
   public String getDefaultInfo() {
 

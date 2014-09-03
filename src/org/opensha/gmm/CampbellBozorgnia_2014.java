@@ -16,7 +16,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Implementation of the Campbell &amp; Bozorgnia (2014) next generation
+ * Implementation of the Campbell & Bozorgnia (2014) next generation
  * ground motion model for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 

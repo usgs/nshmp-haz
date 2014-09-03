@@ -4,9 +4,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.opensha.data.DataUtils.validate;
 import static org.opensha.geo.GeoTools.PI_BY_2;
-import static org.opensha.geo.GeoTools.TO_RAD;
 import static org.opensha.geo.GeoTools.TWOPI;
-import static org.opensha.geo.Locations.*;
+import static org.opensha.geo.Locations.azimuth;
+import static org.opensha.geo.Locations.azimuthRad;
+import static org.opensha.geo.Locations.horzDistance;
+import static org.opensha.geo.Locations.linearDistanceFast;
+import static org.opensha.geo.Locations.location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +17,8 @@ import java.util.List;
 import org.opensha.data.DataUtils;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
-import org.opensha.geo.Locations;
 import org.opensha.geo.LocationVector;
+import org.opensha.geo.Locations;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -27,30 +30,30 @@ import com.google.common.collect.Range;
  */
 public final class Faults {
 
-	/** Minimum allowed fault strike (0&#176;). */
+	/** Minimum allowed fault strike (0°). */
 	public static final double MIN_STRIKE = 0.0;
 
-	/** Maximum allowed fault strike (90&#176;). */
+	/** Maximum allowed fault strike (90°). */
 	public static final double MAX_STRIKE = 360.0;
 
-	/** Minimum allowed fault dip (0&#176;). */
+	/** Minimum allowed fault dip (0°). */
 	public static final double MIN_DIP = 0.0;
 
-	/** Maximum allowed fault dip (90&#176;). */
+	/** Maximum allowed fault dip (90°). */
 	public static final double MAX_DIP = 90.0;
 
-	/** Minimum allowed fault rake (-180&#176;). */
+	/** Minimum allowed fault rake (-180°). */
 	public static final double MIN_RAKE = -180.0;
 
-	/** Maximum allowed fault rake (180&#176;). */
+	/** Maximum allowed fault rake (180°). */
 	public static final double MAX_RAKE = 180.0;
-	
+
 	/** Minimum allowed fault rupture depth (0 km). */
 	public static final double MIN_DEPTH = 0.0;
 
 	/** Maximum allowed crustal rupture depth (40 km). */
 	public static final double MAX_DEPTH_CRUSTAL = 40.0;
-	
+
 	/** Maximum allowed subduction interface rupture depth (60 km). */
 	public static final double MAX_DEPTH_SUB_INTERFACE = 60.0;
 
@@ -205,35 +208,35 @@ public final class Faults {
 		return trace;
 	}
 
-	//	/**
-//	 * Checks that the rake angle fits within the definition<p> <code>-180 <=
-//	 * rake <= 180</code><p>
-//	 * @param rake Angle to validate
-//	 * @throws InvalidRangeException Thrown if not valid angle
-//	 */
-//	public static void assertValidRake(double rake)
-//			throws InvalidRangeException {
-//
-//		if (rake < -180)
-//			throw new InvalidRangeException(S3 +
-//				"Rake angle cannot be less than -180");
-//		if (rake > 180)
-//			throw new InvalidRangeException(S3 +
-//				"Rake angle cannot be greater than 180");
-//	}
-//
-//	/**
-//	 * Returns the given angle in the range <code>-180 <= rake <= 180</code>
-//	 * 
-//	 * @param angle
-//	 */
-//	public static double getInRakeRange(double angle) {
-//		while (angle > 180)
-//			angle -= 360;
-//		while (angle < -180)
-//			angle += 180;
-//		return angle;
-//	}
+	// /**
+	// * Checks that the rake angle fits within the definition<p> <code>-180 <=
+	// * rake <= 180</code><p>
+	// * @param rake Angle to validate
+	// * @throws InvalidRangeException Thrown if not valid angle
+	// */
+	// public static void assertValidRake(double rake)
+	// throws InvalidRangeException {
+	//
+	// if (rake < -180)
+	// throw new InvalidRangeException(S3 +
+	// "Rake angle cannot be less than -180");
+	// if (rake > 180)
+	// throw new InvalidRangeException(S3 +
+	// "Rake angle cannot be greater than 180");
+	// }
+	//
+	// /**
+	// * Returns the given angle in the range <code>-180 <= rake <= 180</code>
+	// *
+	// * @param angle
+	// */
+	// public static double getInRakeRange(double angle) {
+	// while (angle > 180)
+	// angle -= 360;
+	// while (angle < -180)
+	// angle += 180;
+	// return angle;
+	// }
 
 	/**
 	 * This subdivides the given fault trace into sub-traces that have the
@@ -243,8 +246,8 @@ public final class Faults {
 	 * @param maxSubSectionLen Maximum length of each subsection
 	 * @return a {@code List} of subsection traces
 	 */
-	public static List<LocationList> getEqualLengthSubsectionTraces(
-		LocationList faultTrace, double maxSubSectionLen) {
+	public static List<LocationList> getEqualLengthSubsectionTraces(LocationList faultTrace,
+			double maxSubSectionLen) {
 		return getEqualLengthSubsectionTraces(faultTrace, maxSubSectionLen, 1);
 	}
 
@@ -257,8 +260,8 @@ public final class Faults {
 	 * @param minSubSections minimum number of sub sections to generate
 	 * @return a {@code List} of subsection traces
 	 */
-	public static List<LocationList> getEqualLengthSubsectionTraces(
-		LocationList faultTrace, double maxSubSectionLen, int minSubSections) {
+	public static List<LocationList> getEqualLengthSubsectionTraces(LocationList faultTrace,
+			double maxSubSectionLen, int minSubSections) {
 
 		int numSubSections;
 		List<LocationList> subSectionTraceList;
@@ -295,23 +298,26 @@ public final class Faults {
 					subSectionLocs.add(prevLoc);
 					++index;
 				} else {
-//					LocationVector direction = vector(prevLoc, nextLoc);
-//					direction.setHorzDistance(subSecLength -
-//						(distance - distLocs));
+					// LocationVector direction = vector(prevLoc, nextLoc);
+					// direction.setHorzDistance(subSecLength -
+					// (distance - distLocs));
 					LocationVector dirSrc = LocationVector.create(prevLoc, nextLoc);
 					double hDist = subSecLength - (distance - distLocs);
-					LocationVector direction = LocationVector.create(dirSrc.azimuth(), hDist, dirSrc.vertical());
+					LocationVector direction = LocationVector.create(dirSrc.azimuth(), hDist,
+						dirSrc.vertical());
 					prevLoc = location(prevLoc, direction);
 					subSectionLocs.add(prevLoc);
 					--index;
 					break;
 				}
 			}
-			// TODO is name used in subTraces? Can we name traces after returning list
-//			String subsectionName = faultTrace.name() + " " +
-//				(subSectionTraceList.size() + 1);
-//			LocationList subSectionTrace = LocationList.create(subsectionName,
-//				LocationList.create(subSectionLocs));
+			// TODO is name used in subTraces? Can we name traces after
+			// returning list
+			// String subsectionName = faultTrace.name() + " " +
+			// (subSectionTraceList.size() + 1);
+			// LocationList subSectionTrace =
+			// LocationList.create(subsectionName,
+			// LocationList.create(subSectionLocs));
 			LocationList subSectionTrace = LocationList.create(subSectionLocs);
 			subSectionTraceList.add(subSectionTrace);
 		}
@@ -326,7 +332,6 @@ public final class Faults {
 	 * points (e.g., corners getting cut).
 	 * @param trace
 	 * @param num - number of subsections
-	 * @return
 	 */
 	public static LocationList resampleTrace(LocationList trace, int num) {
 		double resampInt = trace.length() / num;
@@ -341,13 +346,15 @@ public final class Faults {
 			double length = linearDistanceFast(lastLoc, nextLoc);
 			if (length > remainingLength) {
 				// set the point
-//				LocationVector dir = vector(lastLoc, nextLoc);
-//				dir.setHorzDistance(dir.getHorzDistance() * remainingLength / length);
-//				dir.setVertDistance(dir.getVertDistance() * remainingLength / length);
+				// LocationVector dir = vector(lastLoc, nextLoc);
+				// dir.setHorzDistance(dir.getHorzDistance() * remainingLength /
+				// length);
+				// dir.setVertDistance(dir.getVertDistance() * remainingLength /
+				// length);
 				LocationVector dirSrc = LocationVector.create(lastLoc, nextLoc);
 				double hDist = dirSrc.horizontal() * remainingLength / length;
 				double vDist = dirSrc.vertical() * remainingLength / length;
-				
+
 				LocationVector dir = LocationVector.create(dirSrc.azimuth(), hDist, vDist);
 				Location loc = location(lastLoc, dir);
 				resampLocs.add(loc);
@@ -383,8 +390,7 @@ public final class Faults {
 		 * System.out.println("target resampInt="+resampInt+"\tnum sect="+num);
 		 * System.out.println("RESAMPLED"); double ave=0, min=Double.MAX_VALUE,
 		 * max=Double.MIN_VALUE; for(int i=1; i<resampTrace.size(); i++) {
-		 * double d =
-		 * Locations.getTotalDistance(resampTrace.getLocationAt(i-1),
+		 * double d = Locations.getTotalDistance(resampTrace.getLocationAt(i-1),
 		 * resampTrace.getLocationAt(i)); ave +=d; if(d<min) min=d; if(d>max)
 		 * max=d; } ave /= resampTrace.size()-1;
 		 * System.out.println("ave="+ave+"\tmin="
@@ -402,9 +408,10 @@ public final class Faults {
 		 * /* End of debugging stuff *******************
 		 */
 
-		// TODO is resampled trace name used? can't it be acquired from a wrapping source?
-//		return FaultTrace.create("resampled " + trace.name(),
-//			LocationList.create(resampLocs));
+		// TODO is resampled trace name used? can't it be acquired from a
+		// wrapping source?
+		// return FaultTrace.create("resampled " + trace.name(),
+		// LocationList.create(resampLocs));
 		return LocationList.create(resampLocs);
 	}
 
@@ -412,40 +419,41 @@ public final class Faults {
 	 * This is a quick plot of the traces
 	 * @param traces
 	 */
-//	public static void plotTraces(ArrayList<FaultTrace> traces) {
-//		throw new RuntimeException(
-//			"This doesn't work because our functions will reorder x-axis values"
-//				+ "to monotonically increase (and remove duplicates - someone should fix this)");
-//		/*
-//		 * ArrayList funcs = new ArrayList(); for(int t=0; t<traces.size();t++)
-//		 * { FaultTrace trace = traces.get(t); ArbitrarilyDiscretizedFunc
-//		 * traceFunc = new ArbitrarilyDiscretizedFunc(); for(int
-//		 * i=0;i<trace.size();i++) { Location loc= trace.getLocationAt(i);
-//		 * traceFunc.set(loc.getLongitude(), loc.getLatitude()); }
-//		 * traceFunc.setName(trace.getName()); funcs.add(traceFunc); }
-//		 * GraphWindow graph = new GraphWindow(funcs, "");
-//		 * ArrayList<PlotCurveCharacterstics> plotChars = new
-//		 * ArrayList<PlotCurveCharacterstics>(); /* plotChars.add(new
-//		 * PlotCurveCharacterstics
-//		 * (PlotColorAndLineTypeSelectorControlPanel.FILLED_CIRCLES,
-//		 * Color.BLACK, 4)); plotChars.add(new
-//		 * PlotCurveCharacterstics(PlotColorAndLineTypeSelectorControlPanel
-//		 * .SOLID_LINE, Color.BLUE, 2)); plotChars.add(new
-//		 * PlotCurveCharacterstics
-//		 * (PlotColorAndLineTypeSelectorControlPanel.SOLID_LINE, Color.BLUE,
-//		 * 1)); plotChars.add(new
-//		 * PlotCurveCharacterstics(PlotColorAndLineTypeSelectorControlPanel
-//		 * .SOLID_LINE, Color.BLUE, 1)); graph.setPlottingFeatures(plotChars);
-//		 * graph.setX_AxisLabel("Longitude"); graph.setY_AxisLabel("Latitude");
-//		 * graph.setTickLabelFontSize(12);
-//		 * graph.setAxisAndTickLabelFontSize(14); /* // to save files if(dirName
-//		 * != null) { String filename = ROOT_PATH+dirName+"/slipRates"; try {
-//		 * graph.saveAsPDF(filename+".pdf"); graph.saveAsPNG(filename+".png"); }
-//		 * catch (IOException e) { // TODO Auto-generated catch block
-//		 * e.printStackTrace(); } }
-//		 */
-//
-//	}
+	// public static void plotTraces(ArrayList<FaultTrace> traces) {
+	// throw new RuntimeException(
+	// "This doesn't work because our functions will reorder x-axis values"
+	// +
+	// "to monotonically increase (and remove duplicates - someone should fix this)");
+	// /*
+	// * ArrayList funcs = new ArrayList(); for(int t=0; t<traces.size();t++)
+	// * { FaultTrace trace = traces.get(t); ArbitrarilyDiscretizedFunc
+	// * traceFunc = new ArbitrarilyDiscretizedFunc(); for(int
+	// * i=0;i<trace.size();i++) { Location loc= trace.getLocationAt(i);
+	// * traceFunc.set(loc.getLongitude(), loc.getLatitude()); }
+	// * traceFunc.setName(trace.getName()); funcs.add(traceFunc); }
+	// * GraphWindow graph = new GraphWindow(funcs, "");
+	// * ArrayList<PlotCurveCharacterstics> plotChars = new
+	// * ArrayList<PlotCurveCharacterstics>(); /* plotChars.add(new
+	// * PlotCurveCharacterstics
+	// * (PlotColorAndLineTypeSelectorControlPanel.FILLED_CIRCLES,
+	// * Color.BLACK, 4)); plotChars.add(new
+	// * PlotCurveCharacterstics(PlotColorAndLineTypeSelectorControlPanel
+	// * .SOLID_LINE, Color.BLUE, 2)); plotChars.add(new
+	// * PlotCurveCharacterstics
+	// * (PlotColorAndLineTypeSelectorControlPanel.SOLID_LINE, Color.BLUE,
+	// * 1)); plotChars.add(new
+	// * PlotCurveCharacterstics(PlotColorAndLineTypeSelectorControlPanel
+	// * .SOLID_LINE, Color.BLUE, 1)); graph.setPlottingFeatures(plotChars);
+	// * graph.setX_AxisLabel("Longitude"); graph.setY_AxisLabel("Latitude");
+	// * graph.setTickLabelFontSize(12);
+	// * graph.setAxisAndTickLabelFontSize(14); /* // to save files if(dirName
+	// * != null) { String filename = ROOT_PATH+dirName+"/slipRates"; try {
+	// * graph.saveAsPDF(filename+".pdf"); graph.saveAsPNG(filename+".png"); }
+	// * catch (IOException e) { // TODO Auto-generated catch block
+	// * e.printStackTrace(); } }
+	// */
+	//
+	// }
 
 	/**
 	 * Returns an average of the given angles scaled by the distances between
@@ -454,20 +462,16 @@ public final class Faults {
 	 * 
 	 * @param locs locations for distance scaling
 	 * @param angles angles in degrees corresponding to each pair of locations
-	 * @return
 	 */
-	public static double getLengthBasedAngleAverage(LocationList locs,
-			List<Double> angles) {
-		Preconditions.checkArgument(locs.size() >= 2,
-			"must have at least 2 locations!");
+	public static double getLengthBasedAngleAverage(LocationList locs, List<Double> angles) {
+		Preconditions.checkArgument(locs.size() >= 2, "must have at least 2 locations!");
 		Preconditions.checkArgument(angles.size() == locs.size() - 1,
 			"must have exactly one fewer angles than location");
 
 		ArrayList<Double> lengths = new ArrayList<Double>();
 
 		for (int i = 1; i < locs.size(); i++)
-			lengths.add(linearDistanceFast(locs.get(i),
-				locs.get(i - 1)));
+			lengths.add(linearDistanceFast(locs.get(i), locs.get(i - 1)));
 
 		return getScaledAngleAverage(lengths, angles);
 	}
@@ -480,12 +484,9 @@ public final class Faults {
 	 * @param scalars scalar weights for each angle (does not need to be
 	 *        normalized)
 	 * @param angles angles in degrees corresponding to each pair of locations
-	 * @return
 	 */
-	public static double getScaledAngleAverage(List<Double> scalars,
-			List<Double> angles) {
-		Preconditions.checkArgument(scalars.size() >= 1,
-			"must have at least 1 lengths!");
+	public static double getScaledAngleAverage(List<Double> scalars, List<Double> angles) {
+		Preconditions.checkArgument(scalars.size() >= 1, "must have at least 1 lengths!");
 		Preconditions.checkArgument(angles.size() == scalars.size(),
 			"must have exactly the same amount of lengths as angles");
 
@@ -539,7 +540,6 @@ public final class Faults {
 	 * degrees.
 	 * 
 	 * @param angles
-	 * @return
 	 */
 	public static double getAngleAverage(List<Double> angles) {
 		ArrayList<Double> scalars = new ArrayList<Double>();
@@ -549,52 +549,77 @@ public final class Faults {
 	}
 
 	/**
-	 * Returns the strike of the supplied line/trace defined by connecting the
+	 * Compute the strike in degrees of the supplied line, or trace, by connecting the
 	 * first and last points in {@code locs}. Method forwards to
-	 * {@link Locations#azimuth(Location, Location)}. This approach has been
-	 * shown to be as accurate as length-weighted angle averaging and is
-	 * significantly faster; see <a
+	 * {@link Locations#azimuth(Location, Location)}.
+	 * 
+	 * <p>This approach has been shown to be as accurate as length-weighted
+	 * angle averaging and is significantly faster; see <a
 	 * href="https://opensha.org/trac/wiki/StrikeDirectionMethods"
-	 * >StrikeDirectionMethods</a> for more information.
+	 * >StrikeDirectionMethods</a> for more information.</p>
 	 * 
 	 * @param locs line for which to compute strike
-	 * @return strike direction in the range 0&deg; and 360&deg;)
+	 * @return strike direction in the range [0°, 360°)
+	 * @see #strikeRad(LocationList)
 	 */
 	public static double strike(LocationList locs) {
 		return strike(locs.first(), locs.last());
 	}
-	
+
+	/**
+	 * Compute the strike in degrees of the line connecting {@code p1} to {@code p2}.
+	 * @param p1 starting {@code Location}
+	 * @param p2 ending {@code Location}
+	 * @return strike direction in the range [0°, 360°)
+	 * @see #strikeRad(Location, Location)
+	 */
 	public static double strike(Location p1, Location p2) {
 		return azimuth(p1, p2);
 	}
 
+	/**
+	 * Compute the strike in radians of the supplied line, or trace, by connecting the
+	 * first and last points in {@code locs}. Method forwards to
+	 * {@link Locations#azimuth(Location, Location)}.
+	 * 
+	 * <p>This approach has been shown to be as accurate as length-weighted
+	 * angle averaging and is significantly faster; see <a
+	 * href="https://opensha.org/trac/wiki/StrikeDirectionMethods"
+	 * >StrikeDirectionMethods</a> for more information.</p>
+	 * 
+	 * @param locs line for which to compute strike
+	 * @return strike direction in the range [0, 2π)
+	 * @see #strike(LocationList)
+	 */
 	public static double strikeRad(LocationList locs) {
 		return strikeRad(locs.first(), locs.last());
 	}
 
+	/**
+	 * Compute the strike in degrees of the line connecting {@code p1} to {@code p2}.
+	 * @param p1 starting {@code Location}
+	 * @param p2 ending {@code Location}
+	 * @return strike direction in the range [0, 2π)
+	 * @see #strike(Location, Location)
+	 */
 	public static double strikeRad(Location p1, Location p2) {
 		return azimuthRad(p1, p2);
 	}
 
 	/*
-	 * This returns the average strike (weight average by length).
-	 * public double getAveStrike() {
-	 * 	ArrayList<Double> azimuths = new ArrayList<Double>();
-	 * 	for (int i = 1; i < size(); i++) {
-	 * 		azimuths.add(Locations.azimuth(get(i - 1), get(i)));
-	 * 	}
-	 * 	return Faults.getLengthBasedAngleAverage(this, azimuths);
+	 * This returns the average strike (weight average by length). public double
+	 * getAveStrike() { ArrayList<Double> azimuths = new ArrayList<Double>();
+	 * for (int i = 1; i < size(); i++) { azimuths.add(Locations.azimuth(get(i -
+	 * 1), get(i))); } return Faults.getLengthBasedAngleAverage(this, azimuths);
 	 * }
 	 */
 
-
 	/**
-	 * Returns the dip direction for the supplied line/trace assuming the right-hand rule 
-	 * (strike + 90&deg;).
+	 * Returns the dip direction for the supplied line/trace assuming the
+	 * right-hand rule (strike + 90°).
 	 * 
 	 * @param locs line for which to compute dip direction
-	 * @return dip direction in the range 0&deg; and 360&deg;)
-	 * @see getStrikeDirection
+	 * @return dip direction in the range 0° and 360°)
 	 */
 	public static double dipDirection(LocationList locs) {
 		return dipDirection(strike(locs));
@@ -607,7 +632,7 @@ public final class Faults {
 	public static double dipDirection(Location p1, Location p2) {
 		return dipDirection(strike(p1, p2));
 	}
-	
+
 	public static double dipDirectionRad(Location p1, Location p2) {
 		return dipDirectionRad(strikeRad(p1, p2));
 	}
@@ -615,19 +640,11 @@ public final class Faults {
 	public static double dipDirection(double strike) {
 		return (strike + 90.0) % 360.0;
 	}
-	
+
 	public static double dipDirectionRad(double strikeRad) {
 		return (strikeRad + PI_BY_2) % TWOPI;
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
 	/* <b>x</b>-axis unit normal vector [1,0,0] */
 	private static final double[] VX_UNIT_NORMAL = { 1.0, 0.0, 0.0 };
 	/* <b>y</b>-axis unit normal vector [0,1,0] */
@@ -637,23 +654,21 @@ public final class Faults {
 
 	/**
 	 * Calculates a slip vector from strike, dip, and rake information provided.
-	 * @param strike
-	 * @param dip
-	 * @param rake
+	 * @param strikeDipRake array
 	 * @return double[x,y,z] array for slip vector.
 	 */
 	public static double[] getSlipVector(double[] strikeDipRake) {
 		// start with y-axis unit normal on a horizontal plane
 		double[] startVector = VY_UNIT_NORMAL;
 		// rotate rake amount about z-axis (negative axial rotation)
-		double[] rakeRotVector = vectorMatrixMultiply(
-			zAxisRotMatrix(-strikeDipRake[2]), startVector);
+		double[] rakeRotVector = vectorMatrixMultiply(zAxisRotMatrix(-strikeDipRake[2]),
+			startVector);
 		// rotate dip amount about y-axis (negative axial rotation)
-		double[] dipRotVector = vectorMatrixMultiply(
-			yAxisRotMatrix(-strikeDipRake[1]), rakeRotVector);
+		double[] dipRotVector = vectorMatrixMultiply(yAxisRotMatrix(-strikeDipRake[1]),
+			rakeRotVector);
 		// rotate strike amount about z-axis (positive axial rotation)
-		double[] strikeRotVector = vectorMatrixMultiply(
-			zAxisRotMatrix(strikeDipRake[0]), dipRotVector);
+		double[] strikeRotVector = vectorMatrixMultiply(zAxisRotMatrix(strikeDipRake[0]),
+			dipRotVector);
 		return strikeRotVector;
 	}
 
@@ -665,12 +680,11 @@ public final class Faults {
 	 * 
 	 * @param vector double[x,y,z] to be modified.
 	 */
-	private static double[] vectorMatrixMultiply(double[][] matrix,
-			double[] vector) {
+	private static double[] vectorMatrixMultiply(double[][] matrix, double[] vector) {
 		double[] rotatedVector = new double[3];
 		for (int i = 0; i < 3; i++) {
-			rotatedVector[i] = vector[0] * matrix[i][0] + vector[1] *
-				matrix[i][1] + vector[2] * matrix[i][2];
+			rotatedVector[i] = vector[0] * matrix[i][0] + vector[1] * matrix[i][1] + vector[2] *
+				matrix[i][2];
 		}
 		return rotatedVector;
 	}

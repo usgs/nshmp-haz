@@ -1,7 +1,7 @@
 package org.opensha.gmm;
 
 /**
- * Concrete implementation of Atkinson &amp; Boore (2003) for Cascadia
+ * Concrete implementation of Atkinson & Boore (2003) for Cascadia
  * subduction interface events.
  * 
  * @author Peter Powers

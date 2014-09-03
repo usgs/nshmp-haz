@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import org.apache.commons.math3.stat.StatUtils;
 import org.opensha.function.DefaultXY_DataSet;
@@ -48,8 +47,7 @@ import com.google.common.primitives.Ints;
  * that transform data in place will only take {@code List<Double>}s.</p>
  * 
  * <p>For other useful {@code Double} utilities, see the Google Guava
- * {@link Doubles} class (e.g. {@link Doubles#min(double...)} and
- * {@link Doubles#min(double...)})</p>
+ * {@link Doubles} class.</p>
  * 
  * @author Peter Powers
  * @see Doubles
@@ -448,7 +446,7 @@ public final class DataUtils {
 	public static double[] flip(double... data) {
 		return multiply(-1, data);
 	}
-	
+
 	static double[] uncheckedFlip(double... data) {
 		return uncheckedMultiply(-1, data);
 	}
@@ -462,7 +460,7 @@ public final class DataUtils {
 	public static List<Double> flip(List<Double> data) {
 		return multiply(-1, data);
 	}
-	
+
 	/**
 	 * Sum of the elements of {@code data} without checking for over/underflow.
 	 * Method returns {@code Double.NaN} if {@code data} contains
@@ -571,7 +569,7 @@ public final class DataUtils {
 	 * Determine whether {@code data} are all positive.
 	 * 
 	 * @param data to evaluate
-	 * @return {@code true} if all values are &ge;0; {@code false} otherwise
+	 * @return {@code true} if all values are ≥0; {@code false} otherwise
 	 */
 	public static boolean arePositive(double... data) {
 		validateDataArray(data);
@@ -586,7 +584,7 @@ public final class DataUtils {
 	 * Determine whether {@code data} are all positive.
 	 * 
 	 * @param data to evaluate
-	 * @return {@code true} if all values are &ge;0
+	 * @return {@code true} if all values are ≥0
 	 */
 	public static boolean arePositive(Collection<Double> data) {
 		validateDataCollection(data);
@@ -657,7 +655,7 @@ public final class DataUtils {
 	 * 
 	 * @param data to difference
 	 * @return the differences between adjacent values
-	 * @throws IllegalArgumentException if {@code data.legth &lt; 2}
+	 * @throws IllegalArgumentException if {@code data.legth < 2}
 	 */
 	public static double[] diff(double... data) {
 		validateDataArray(data);
@@ -801,7 +799,7 @@ public final class DataUtils {
 	private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0d, 1d);
 
 	/**
-	 * Confirm that a weight value is {@code 0.0 &lt; weight &le; 1.0}. Method
+	 * Confirm that a weight value is {@code 0.0 < weight ≤ 1.0}. Method
 	 * returns the supplied value and can be used inline.
 	 * 
 	 * @param weight to validate
@@ -889,7 +887,7 @@ public final class DataUtils {
 	/**
 	 * Creates a sequence of evenly spaced values starting at {@code min} and
 	 * ending at {@code max}. If {@code (max - min) / step} is not equivalent to
-	 * an integer, the last step in the sequence will be {@code &lt;step}.
+	 * an integer, the last step in the sequence will be {@code <step}.
 	 * Unlike {@link #buildSequence(double, double, double, boolean)}, this
 	 * method returns a sequence where any 'odd' values due to rounding errors
 	 * have been removed, at least within the range of the specified
@@ -934,7 +932,7 @@ public final class DataUtils {
 	/**
 	 * Creates a sequence of evenly spaced values starting at {@code min} and
 	 * ending at {@code max}. If {@code (max - min) / step} is not integer
-	 * valued, the last step in the sequence will be {@code &lt;step}. If
+	 * valued, the last step in the sequence will be {@code <step}. If
 	 * {@code min == max}, then an array containing a single value is returned.
 	 * @param min sequence value
 	 * @param max sequence value
@@ -988,14 +986,14 @@ public final class DataUtils {
 	 * @return a combined sequence
 	 */
 	public static XY_Sequence combine(Iterable<XY_Sequence> sequences) {
-		
+
 		// create master x-value sequence
 		Builder<Double> builder = ImmutableSortedSet.naturalOrder();
 		for (XY_Sequence sequence : sequences) {
 			builder.addAll(sequence.xValues());
 		}
 		double[] xMaster = Doubles.toArray(builder.build());
-		
+
 		// resample and combine sequences
 		ArrayXY_Sequence combined = ArrayXY_Sequence.create(xMaster, null);
 		for (XY_Sequence sequence : sequences) {
@@ -1004,7 +1002,7 @@ public final class DataUtils {
 			ArrayXY_Sequence resampled = ArrayXY_Sequence.resampleTo(sequence, xMaster);
 			combined.add(resampled);
 		}
-		
+
 		return combined;
 	}
 
@@ -1239,7 +1237,7 @@ public final class DataUtils {
 	/**
 	 * Nearest neighbor binning algorithm after Silverman, B. W. (1986),
 	 * <em>Density Estimation for Statistics and Data Analysis</em>, Chapman
-	 * &amp; Hall, New York. This method is a density estimator that uses
+	 * & Hall, New York. This method is a density estimator that uses
 	 * variable width binning with a fixed sample size per bin that better
 	 * reflects the distribution of the underlying data. It is particularly
 	 * useful when workgin with power-law distributed data. Bin widths are
@@ -1255,11 +1253,11 @@ public final class DataUtils {
 	 * @param data to be binned
 	 * @param origin for binning
 	 * @param size of each bin
-	 * @return an {@code XY_DataGroup} of the binned distribution or {@code null}
-	 *         if the binned distribution is empty
+	 * @return an {@code XY_DataGroup} of the binned distribution or
+	 *         {@code null} if the binned distribution is empty
 	 * @throws NullPointerException if the supplied {@code data} is {@code null}
 	 * @throws IllegalArgumentException if supplied {@code data} is empty, the
-	 *         bin {@code size} is &lt;1, or the {@code origin} is greater than
+	 *         bin {@code size} is <1, or the {@code origin} is greater than
 	 *         all {@code data} values
 	 */
 	@Deprecated public static DefaultXY_DataSet nearestNeighborHist(double[] data, double origin,

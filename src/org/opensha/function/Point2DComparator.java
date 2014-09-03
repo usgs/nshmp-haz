@@ -11,7 +11,6 @@ import java.util.Comparator;
  *  within tolerance of each other, they are equal<p>
  *
  * @author     Steven W. Rock
- * @created    February 20, 2002
  * @version    1.0
  */
 

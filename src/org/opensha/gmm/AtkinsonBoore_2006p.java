@@ -6,7 +6,7 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
 /**
  * Modified form of the relationship for the Central and Eastern US by Atkinson
- * &amp; Boore (2006). This implementation matches that used in the 2014 USGS
+ * & Boore (2006). This implementation matches that used in the 2014 USGS
  * NSHMP, incorporates a new, magnitude-dependent stress parameter, and uses
  * table lookups instead of functional forms to compute ground motions. This
  * relation is commonly referred to as AB06 Prime (AB06').

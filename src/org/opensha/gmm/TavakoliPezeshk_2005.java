@@ -6,7 +6,7 @@ import static java.lang.Math.sqrt;
 import static org.opensha.gmm.MagConverter.NONE;
 
 /**
- * Implementation of the Tavakoli &amp; Pezeshk (2005) ground motion model for
+ * Implementation of the Tavakoli & Pezeshk (2005) ground motion model for
  * stable continental regions. This implementation matches that used in the 2008
  * USGS NSHMP and comes in two additional magnitude converting (mb to Mw)
  * flavors to support the 2008 central and eastern US model.

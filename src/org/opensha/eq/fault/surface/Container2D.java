@@ -120,7 +120,6 @@ public interface Container2D<T> extends Named, Iterable<T> {
      *
      * @param  row     The x coordinate of the cell.
      * @param  column  The y coordinate of the cell.
-     * @return
      */
     public T get( int row, int column );
 

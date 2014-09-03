@@ -5,7 +5,7 @@ import static org.opensha.gmm.Imt.PGA;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
 /**
- * Implementation of the Pezeshk, Zandieh, &amp; Tavakoli (2011) ground motion
+ * Implementation of the Pezeshk, Zandieh, & Tavakoli (2011) ground motion
  * model for stable continental regions. This implementation matches that used
  * in the 2014 USGS NSHMP and uses table lookups (median) and functional forms
  * (sigma) to compute ground motions.

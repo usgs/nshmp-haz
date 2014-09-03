@@ -25,7 +25,7 @@ public enum MagConverter {
 	},
 
 	/**
-	 * m<sub>b</sub> to M<sub>w</sub> conversion of Atkinson &amp; Boore (1995).
+	 * m<sub>b</sub> to M<sub>w</sub> conversion of Atkinson & Boore (1995).
 	 * 
 	 * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 1995, Ground motion
 	 * relations for eastern North America: Bulletin of the Seismological

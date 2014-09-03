@@ -88,7 +88,6 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 
 	/**
 	 * Returns the grid spacing along strike
-	 * @return
 	 */
 	public double getGridSpacingAlongStrike() {
 		return this.strikeSpacing;
@@ -96,7 +95,6 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 
 	/**
 	 * returns the grid spacing down dip
-	 * @return
 	 */
 	public double getGridSpacingDownDip() {
 		return this.dipSpacing;
@@ -129,7 +127,6 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 	 * gets the location from the 2D container
 	 * @param row
 	 * @param column
-	 * @return
 	 */
 	public Location getLocation(int row, int column) {
 		return get(row, column);
@@ -138,7 +135,6 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 	/**
 	 * Gets a specified row as a fault trace
 	 * @param row
-	 * @return
 	 */
 	public LocationList getRowAsTrace(int row) {
 		List<Location> locs = Lists.newArrayList();

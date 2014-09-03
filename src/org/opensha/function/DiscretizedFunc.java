@@ -55,8 +55,6 @@ import java.awt.geom.Point2D;
  * Y-AXIS VALUES. This may be useful to add in the future.<p>
  *
  * @author Steven W. Rock
- * @see DataPoint2D
- * @version 1.0
  */
 
 public interface DiscretizedFunc extends XY_DataSet {

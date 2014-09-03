@@ -1,7 +1,7 @@
 package org.opensha.gmm;
 
 /**
- * Concrete implementation of the BC Hydro model by Addo, Abrahamson, &amp;
+ * Concrete implementation of the BC Hydro model by Addo, Abrahamson, &
  * Youngs (2012) for subduction intraslab events.
  * 
  * @author Peter Powers

@@ -18,7 +18,6 @@ public class Surfaces {
 	/**
 	 * This returns brief info about this surface
 	 * @param surf
-	 * @return
 	 */
 	public static String getSurfaceInfo(GriddedSurface surf) {
 		Location loc1 = surf.getLocation(0, 0);

@@ -396,7 +396,7 @@ public final class LocationList implements Iterable<Location> {
 	 * {@code Location} to the line defined by connecting the points in this
 	 * {@code LocationList}. This method uses
 	 * {@link Locations#distanceToSegmentFast(Location, Location, Location)} and
-	 * is inappropriate for for use at large separations (e.g. &gt;200 km).
+	 * is inappropriate for for use at large separations (e.g. >200 km).
 	 * 
 	 * @param loc {@code Location} of interest
 	 * @return the shortest distance to the line defined by this

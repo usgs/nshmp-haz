@@ -277,7 +277,6 @@ public class Mfds {
 	/**
 	 * Combine all {@code mfds} into a single sequence.
 	 * @param mfds
-	 * @return
 	 */
 	@Deprecated
 	public static XY_Sequence combine(IncrementalMfd... mfds) {

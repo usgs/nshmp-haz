@@ -17,7 +17,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Implementation of the Graizer &amp; Kalkan (2013) GMPE. This model does not
+ * Implementation of the Graizer & Kalkan (2013) GMPE. This model does not
  * support specific periods as most other GMMs do; it can handle any frequency.
  * 
  * <p>Component: geometric mean of two randomly oriented horizontal

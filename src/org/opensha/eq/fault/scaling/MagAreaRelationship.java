@@ -61,7 +61,6 @@ public abstract class MagAreaRelationship extends MagScalingRelationship {
 	/**
 	 * Gives the standard deviation for the magnitude as a function of area (for
 	 * the previously set or default rake)
-	 * @param area in km-squared
 	 * @return standard deviation
 	 */
 	public abstract double getMagStdDev();
@@ -69,7 +68,6 @@ public abstract class MagAreaRelationship extends MagScalingRelationship {
 	/**
 	 * Gives the standard deviation for the magnitude as a function of area &
 	 * rake
-	 * @param area in km-squared
 	 * @param rake in degrees
 	 * @return standard deviation
 	 */
@@ -100,8 +98,6 @@ public abstract class MagAreaRelationship extends MagScalingRelationship {
 	/**
 	 * Computes the standard deviation of log(area) (base-10) from magnitude
 	 * (for the previously set or default rake)
-	 * @param mag - moment magnitude
-	 * @param rake in degrees
 	 * @return standard deviation
 	 */
 	public abstract double getAreaStdDev();
@@ -109,7 +105,6 @@ public abstract class MagAreaRelationship extends MagScalingRelationship {
 	/**
 	 * Computes the standard deviation of log(area) (base-10) from magnitude &
 	 * rake
-	 * @param mag - moment magnitude
 	 * @param rake in degrees
 	 * @return standard deviation
 	 */

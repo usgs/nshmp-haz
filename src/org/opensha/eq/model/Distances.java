@@ -48,7 +48,6 @@ public final class Distances {
 	 * Compute distance metrics: rJB, rRup, and rX.
 	 * @param surface
 	 * @param loc
-	 * @return
 	 */
 	public static Distances compute(GriddedSurface surface, Location loc) {
 		
@@ -151,7 +150,6 @@ public final class Distances {
 	 * TODO I cannot believe there is not a cleaner implementation
 	 * @param surface
 	 * @param siteLoc
-	 * @return
 	 */
 	private static double getDistanceX(LocationList trace, Location siteLoc) {
 

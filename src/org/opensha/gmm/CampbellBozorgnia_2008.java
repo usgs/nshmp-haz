@@ -15,7 +15,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Implementation of the Campbell &amp; Bozorgnia (2008) next generation
+ * Implementation of the Campbell & Bozorgnia (2008) next generation
  * attenuation for active crustal regions relationship developed as part of <a
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 

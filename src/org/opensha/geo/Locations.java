@@ -64,7 +64,7 @@ public final class Locations {
 	 * Calculates the angle between two {@code Location}s using the <a
 	 * href="http://en.wikipedia.org/wiki/Haversine_formula" target="_blank">
 	 * Haversine</a> formula. This method properly handles values spanning
-	 * &#177;180&#176;. See <a
+	 * ±180°. See <a
 	 * href="http://williams.best.vwh.net/avform.htm#Dist"> Aviation
 	 * Formulary</a> for source. Result is returned in radians.
 	 * 
@@ -107,8 +107,8 @@ public final class Locations {
 	 * latitude.
 	 * 
 	 * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
-	 * #177;180&#176; and fails where the numeric angle exceeds 180&#176;.
-	 * Convert data to the 0-360&#176; interval or use
+	 * #177;180° and fails where the numeric angle exceeds 180°.
+	 * Convert data to the 0-360° interval or use
 	 * {@link #horzDistance(Location, Location)} in such instances.</p>
 	 * 
 	 * @param p1 the first {@code Location} point
@@ -182,12 +182,12 @@ public final class Locations {
 	 * orthogonal.
 	 * 
 	 * <p><b>Note:</b> This method is very imprecise at large separations and
-	 * should not be used for points &gt;200km apart. If an estimate of
+	 * should not be used for points >200km apart. If an estimate of
 	 * separation distance is not known in advance use
 	 * {@link #linearDistance(Location, Location)} for more reliable
 	 * results.</p>
 	 * 
-	 * <p><b>Note:</b> This method fails for values spanning &#177;180&#176;;
+	 * <p><b>Note:</b> This method fails for values spanning ±180°;
 	 * see {@link #horzDistanceFast(Location, Location)}.</p>
 	 * 
 	 * @param p1 the first {@code Location} point
@@ -216,7 +216,7 @@ public final class Locations {
 	 * <p>This method, though more accurate over longer distances and line
 	 * lengths, is up to 20x slower than
 	 * {@link #distanceToLineFast(Location, Location, Location)}. However, this
-	 * method returns accurate results for values spanning #177;180&#176;.</p>
+	 * method returns accurate results for values spanning #177;180°.</p>
 	 * 
 	 * <p>If the line should instead be treated as a segment such that the
 	 * result will be a distance to an endpoint if {@code p3} does not project
@@ -247,12 +247,12 @@ public final class Locations {
 	 * of each {@code Location} is ignored. This is a fast, geometric, cartesion
 	 * (flat-earth approximation) solution in which longitude of the line points
 	 * are scaled by the cosine of latitude; it is only appropriate for use over
-	 * short distances (e.g. &lt;200 km). The sign of the result indicates which
+	 * short distances (e.g. <200 km). The sign of the result indicates which
 	 * side of the supplied line {@code p3} is on (right:[+] left:[-]).
 	 * 
 	 * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
-	 * &#177;180&#176; and results for such input values are not guaranteed.
-	 * Convert data to the 0-360&#176; interval or use
+	 * ±180° and results for such input values are not guaranteed.
+	 * Convert data to the 0-360° interval or use
 	 * {@link #distanceToLine(Location, Location, Location)} in such
 	 * instances.</p>
 	 * 
@@ -351,7 +351,7 @@ public final class Locations {
 	 * lengths, is up to 20x slower than
 	 * {@link #distanceToSegmentFast(Location, Location, Location)}. However,
 	 * this method returns accurate results for values spanning
-	 * &#177;180&#176;.</p>
+	 * ±180°.</p>
 	 * 
 	 * <p> If the line should instead be treated as infinite, use
 	 * {@link #distanceToLine(Location, Location, Location)} instead.</p>
@@ -390,9 +390,9 @@ public final class Locations {
 	 * component of each {@code Location} is ignored. This is a fast, geometric,
 	 * cartesion (flat-earth approximation) solution in which longitude of the
 	 * line points are scaled by the cosine of latitude; it is only appropriate
-	 * for use over short distances (e.g. &lt;200 km).
+	 * for use over short distances (e.g. <200 km).
 	 * 
-	 * <p><b>Note:</b> This method fails for values spanning &#177;180&#176;;
+	 * <p><b>Note:</b> This method fails for values spanning ±180°;
 	 * see {@link #distanceToSegment(Location, Location, Location)}.</p>
 	 * 
 	 * <p>If the line should instead be treated as infinite, use
@@ -430,7 +430,7 @@ public final class Locations {
 	 * {@code Location} to another. See <a
 	 * href="http://williams.best.vwh.net/avform.htm#Crs"> Aviation
 	 * Formulary</a> for source. For back azimuth, reverse the {@code Location}
-	 * arguments. Result is returned in radians over the interval 0 to 2&pi;.
+	 * arguments. Result is returned in radians over the interval [0, 2π).
 	 * 
 	 * <p><b>Note:</b> It is more efficient to use this method for computation
 	 * because {@code Location}s store lat and lon in radians internally. Use
@@ -466,7 +466,7 @@ public final class Locations {
 	 * href="http://williams.best.vwh.net/avform.htm#Crs"> Aviation
 	 * Formulary</a> for source. For back azimuth, reverse the {@code Location}
 	 * arguments. Result is returned in decimal degrees over the interval
-	 * 0&#176; to 360&#176;.
+	 * 0° to 360°.
 	 * 
 	 * @param p1 the first {@code Location} point
 	 * @param p2 the second {@code Location} point
@@ -529,7 +529,7 @@ public final class Locations {
 	/**
 	 * Returns the angle (in decimal degrees) of a line between the first and
 	 * second location relative to horizontal. This method is intended for use
-	 * at relatively short separations ( e.g. &lteq; 200km) as it degrades at
+	 * at relatively short separations ( e.g. ≤200km) as it degrades at
 	 * large distances where curvature is not considered. Note that positive
 	 * angles are down, negative angles are up.
 	 * @param p1 the first {@code Location} point

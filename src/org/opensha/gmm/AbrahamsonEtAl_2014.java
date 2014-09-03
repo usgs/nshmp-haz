@@ -11,7 +11,7 @@ import static org.opensha.gmm.FaultStyle.NORMAL;
 import org.opensha.data.Interpolate;
 
 /**
- * Implementation of the Abrahamson, Silva &amp; Kamai (2014) next generation
+ * Implementation of the Abrahamson, Silva & Kamai (2014) next generation
  * ground motion model for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 

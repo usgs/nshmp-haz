@@ -56,14 +56,12 @@ public abstract class MagLengthRelationship extends MagScalingRelationship {
     /**
      * Gives the standard deviation for the magnitude as a function of length
      *  (for the previously set or default rake)
-     * @param length in km
      * @return standard deviation
      */
     public abstract double getMagStdDev();
 
     /**
      * Gives the standard deviation for the magnitude as a function of length & rake
-     * @param length in km
      * @param rake in degrees
      * @return standard deviation
      */
@@ -94,15 +92,12 @@ public abstract class MagLengthRelationship extends MagScalingRelationship {
     /**
      * Computes the standard deviation of log(length) (base-10) from magnitude
      *  (for the previously set or default rake)
-     * @param mag - moment magnitude
-     * @param rake in degrees
      * @return standard deviation
      */
     public abstract double getLengthStdDev();
 
     /**
      * Computes the standard deviation of log(length) (base-10) from magnitude & rake
-     * @param mag - moment magnitude
      * @param rake in degrees
      * @return standard deviation
      */

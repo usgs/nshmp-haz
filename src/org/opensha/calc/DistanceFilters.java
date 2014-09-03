@@ -190,7 +190,7 @@ final class DistanceFilters {
 	/*
 	 * Utility method to create a cutoff map. Cutoff distances should correspond
 	 * to the ascending values of {@code MagCutoff} (i.e. {@code cutoffs[0]}
-	 * should be the cutoff for M&lt;5 [{@code M5}] events).
+	 * should be the cutoff for M<5 [{@code M5}] events).
 	 * 
 	 * @param cutoffs
 	 * 

@@ -62,10 +62,10 @@ import com.google.common.primitives.Doubles;
  * border of such an interior area will return {@code false}, subject to the
  * rules of insidedness.</p>
  * 
- * <p><b>Note:</b> The current implementation does not support regions
- * that are intended to span &#177;180&deg;. Any such regions will wrap the long
- * way around the earth and results are undefined. Regions that encircle either
- * pole are not supported either.</p>
+ * <p><b>Note:</b> The current implementation does not support regions that are
+ * intended to span ±180°. Any such regions will wrap the long way around the
+ * earth and results are undefined. Regions that encircle either pole are not
+ * supported either.</p>
  * 
  * <p><b>Note:</b> Due to rounding errors and the use of an {@link Area}
  * internally to define a {@code Region}'s border,
@@ -81,9 +81,9 @@ import com.google.common.primitives.Doubles;
 public class Region implements Named {
 
 	// TODO allow Regions spanning the Int'l date line via Locations that
-	//      can be in the range -180 to 360
+	// can be in the range -180 to 360
 	// TODO is this equalsRegion() really necessary as public
-	
+
 	// although border vertices can be accessed by path-iterating over
 	// area, an immutable list is stored for convenience
 	private LocationList border;
@@ -106,7 +106,7 @@ public class Region implements Named {
 	Region(String name) {
 		this.name = !Strings.isNullOrEmpty(name) ? name : "Unnamed Region";
 	}
-	
+
 	/**
 	 * Returns whether the given {@code Location} is inside this {@code Region}.
 	 * The determination follows the rules of insidedness defined in the
@@ -114,11 +114,11 @@ public class Region implements Named {
 	 * 
 	 * <p><b>Note:</b> By using an {@link Area} internally to manage this
 	 * {@code Region}'s geometry, there are instances where rounding errors may
-	 * cause this method to yield unexpected results. For
-	 * instance, although a {@code Region}'s southernmost point might be
-	 * initially defined as 40.0&#176;, the internal {@code Area} may return
-	 * 40.0000000000001 on a call to {@code getMinLat()} and calls to
-	 * {@code contains(new Location(40,*))} will return false.</p>
+	 * cause this method to yield unexpected results. For instance, although a
+	 * {@code Region}'s southernmost point might be initially defined as 40.0°,
+	 * the internal {@code Area} may return 40.0000000000001 on a call to
+	 * {@code getMinLat()} and calls to {@code contains(new Location(40,*))}
+	 * will return false.</p>
 	 * 
 	 * @param loc the {@code Location} to test
 	 * @return {@code true} if the {@code Location} is inside the Region,
@@ -175,8 +175,7 @@ public class Region implements Named {
 	 */
 	public void addInterior(Region region) {
 		validate(region); // test for non-singularity or null
-		checkArgument(contains(region),
-			"Region must completely contain supplied interior Region");
+		checkArgument(contains(region), "Region must completely contain supplied interior Region");
 
 		LocationList newInterior = region.border;
 		// ensure no overlap with existing interiors
@@ -206,8 +205,7 @@ public class Region implements Named {
 	 *         if no interiors are defined
 	 */
 	public List<LocationList> interiors() {
-		return (interiors != null) ? Collections.unmodifiableList(interiors)
-			: null;
+		return (interiors != null) ? Collections.unmodifiableList(interiors) : null;
 	}
 
 	/**
@@ -287,8 +285,7 @@ public class Region implements Named {
 		return area.equals(r.area);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
+	@Override public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof Region)) return false;
 		Region r = (Region) obj;
@@ -296,8 +293,7 @@ public class Region implements Named {
 		return equalsRegion(r);
 	}
 
-	@Override
-	public int hashCode() {
+	@Override public int hashCode() {
 		return border.hashCode() ^ name.hashCode();
 	}
 
@@ -337,8 +333,8 @@ public class Region implements Named {
 	 * Returns the minimum horizonatal distance (in km) between the border of
 	 * this {@code Region} and the {@code Location} specified. If the given
 	 * {@code Location} is inside the {@code Region}, the method returns 0. The
-	 * distance algorithm used only works well at short distances (e.g. &lteq;
-	 * 250 km).
+	 * distance algorithm used only works well at short distances (e.g. ≤250
+	 * km).
 	 * 
 	 * @param loc the Location to compute a distance to
 	 * @return the minimum distance between this {@code Region} and a point
@@ -352,8 +348,8 @@ public class Region implements Named {
 		double min = border.minDistToLine(loc);
 		// check the segment defined by the last and first points
 		// take abs because value may be negative; i.e. value to left of line
-		double temp = Math.abs(Locations.distanceToSegmentFast(
-			border.get(border.size() - 1), border.get(0), loc));
+		double temp = Math.abs(Locations.distanceToSegmentFast(border.get(border.size() - 1),
+			border.get(0), loc));
 		return Math.min(temp, min);
 	}
 
@@ -361,11 +357,10 @@ public class Region implements Named {
 		return name;
 	}
 
-	@Override
-	public String toString() {
-		String str = "Region\n" + "\tMinLat: " + this.getMinLat() + "\n" +
-			"\tMinLon: " + this.getMinLon() + "\n" + "\tMaxLat: " +
-			this.getMaxLat() + "\n" + "\tMaxLon: " + this.getMaxLon();
+	@Override public String toString() {
+		String str = "Region\n" + "\tMinLat: " + this.getMinLat() + "\n" + "\tMinLon: " +
+			this.getMinLon() + "\n" + "\tMaxLat: " + this.getMaxLat() + "\n" + "\tMaxLon: " +
+			this.getMaxLon();
 		return str;
 	}
 
@@ -386,7 +381,7 @@ public class Region implements Named {
 		rIntersect.border = borderFromArea(newArea, true);
 		return rIntersect;
 	}
-	
+
 	/*
 	 * Region union.
 	 */
@@ -404,7 +399,7 @@ public class Region implements Named {
 		rUnion.border = borderFromArea(newArea, true);
 		return rUnion;
 	}
-	
+
 	/*
 	 * Initializes a region via copy.
 	 */
@@ -423,8 +418,7 @@ public class Region implements Named {
 	 */
 	void initBordered(LocationList border, BorderType type) {
 		checkNotNull(border, "Supplied border is null");
-		checkArgument(border.size() >= 3,
-			"Supplied border must have at least 3 vertices");
+		checkArgument(border.size() >= 3, "Supplied border must have at least 3 vertices");
 		if (type == null) type = MERCATOR_LINEAR;
 
 		// first remove last point in list if it is the same as
@@ -447,8 +441,7 @@ public class Region implements Named {
 				while (distance > GC_SEGMENT) {
 					// find new Location, GC_SEGMENT km away from start
 					double azRad = Locations.azimuthRad(start, end);
-					Location segLoc = Locations.location(start, azRad,
-						GC_SEGMENT);
+					Location segLoc = Locations.location(start, azRad, GC_SEGMENT);
 					gcBorder.add(segLoc);
 					start = segLoc;
 					distance = Locations.horzDistance(start, end);
@@ -463,38 +456,36 @@ public class Region implements Named {
 	}
 
 	/*
-	 * Initialize a rectangular region from two opposing corners expanding
-	 * north and east border slightly to satisfy constains operations
+	 * Initialize a rectangular region from two opposing corners expanding north
+	 * and east border slightly to satisfy constains operations
 	 */
 	void initRectangular(Location loc1, Location loc2) {
-		
+
 		checkNotNull(loc1, "Supplied location (1) is null");
 		checkNotNull(loc1, "Supplied location (2) is null");
-		
+
 		double lat1 = loc1.lat();
 		double lat2 = loc2.lat();
 		double lon1 = loc1.lon();
 		double lon2 = loc2.lon();
-		
+
 		checkArgument(lat1 != lat2, "Input lats cannot be the same");
 		checkArgument(lon1 != lon2, "Input lons cannot be the same");
 
-		double minLat = Math.min(lat1,lat2);
-		double minLon = Math.min(lon1,lon2);
-		double maxLat = Math.max(lat1,lat2);
-		double maxLon = Math.max(lon1,lon2);
+		double minLat = Math.min(lat1, lat2);
+		double minLon = Math.min(lon1, lon2);
+		double maxLat = Math.max(lat1, lat2);
+		double maxLon = Math.max(lon1, lon2);
 		double offset = Locations.TOLERANCE;
-		
-		// ternaries prevent exceedance of max lat-lon values 
-		maxLat += (maxLat <= 90.0-offset) ? offset : 0.0;
-		maxLon += (maxLon <= 180.0-offset) ? offset : 0.0;
-		minLat -= (minLat >= -90.0+offset) ? offset : 0.0;
-		minLon -= (minLon >= -180.0+offset) ? offset : 0.0;
-		
-		LocationList locs = LocationList.create(
-			Location.create(minLat, minLon),
-			Location.create(minLat, maxLon),
-			Location.create(maxLat, maxLon),
+
+		// ternaries prevent exceedance of max lat-lon values
+		maxLat += (maxLat <= 90.0 - offset) ? offset : 0.0;
+		maxLon += (maxLon <= 180.0 - offset) ? offset : 0.0;
+		minLat -= (minLat >= -90.0 + offset) ? offset : 0.0;
+		minLon -= (minLon >= -180.0 + offset) ? offset : 0.0;
+
+		LocationList locs = LocationList.create(Location.create(minLat, minLon),
+			Location.create(minLat, maxLon), Location.create(maxLat, maxLon),
 			Location.create(maxLat, minLon));
 
 		initBordered(locs, MERCATOR_LINEAR);
@@ -507,8 +498,8 @@ public class Region implements Named {
 	 */
 	void initCircular(Location center, double radius) {
 		checkNotNull(center, "Supplied center Location is null");
-		checkArgument((radius > 0 && radius <= 1000),
-			"Radius [%s] is out of [0 1000] km range", radius);
+		checkArgument((radius > 0 && radius <= 1000), "Radius [%s] is out of [0 1000] km range",
+			radius);
 		border = locationCircle(center, radius);
 		area = areaFromBorder(border);
 	}
@@ -520,8 +511,8 @@ public class Region implements Named {
 	 */
 	void initBuffered(LocationList line, double buffer) {
 		checkNotNull(line, "Supplied LocationList is null");
-		checkArgument((buffer > 0 && buffer <= 500),
-			"Buffer [%s] is out of [0 500] km range", buffer);
+		checkArgument((buffer > 0 && buffer <= 500), "Buffer [%s] is out of [0 500] km range",
+			buffer);
 
 		// init an Area with first point
 		Area area = areaFromBorder(locationCircle(line.first(), buffer));
@@ -546,8 +537,7 @@ public class Region implements Named {
 		// final checks on area generated, this is redundant for some
 		// constructors that perform other checks on inputs
 		checkArgument(!area.isEmpty(), "Internally computed Area is empty");
-		checkArgument(area.isSingular(),
-			"Internally computed Area is not a single closed path");
+		checkArgument(area.isSingular(), "Internally computed Area is not a single closed path");
 
 		return area;
 	}
@@ -591,8 +581,7 @@ public class Region implements Named {
 	 * Utility method returns a LocationList that approximates the circle
 	 * represented by the center location and radius provided.
 	 */
-	private static LocationList locationCircle(Location center,
-			double radius) {
+	private static LocationList locationCircle(Location center, double radius) {
 		List<Location> locs = Lists.newArrayList();
 		for (double angle = 0; angle < 360; angle += WEDGE_WIDTH) {
 			locs.add(Locations.location(center, angle * TO_RAD, radius));
@@ -605,8 +594,7 @@ public class Region implements Named {
 	 * as the line between p1 and p2 and extends on either side of that line
 	 * some 'distance'.
 	 */
-	private static LocationList locationBox(Location p1, Location p2,
-			double distance) {
+	private static LocationList locationBox(Location p1, Location p2, double distance) {
 
 		// get the azimuth and back-azimuth between the points
 		double az12 = Locations.azimuthRad(p1, p2);
@@ -614,7 +602,7 @@ public class Region implements Named {
 
 		// add the four corners
 		LocationList ll = LocationList.create(
-			// corner 1 is azimuth p1 to p2 - 90 from p1
+		// corner 1 is azimuth p1 to p2 - 90 from p1
 			Locations.location(p1, az12 - PI_BY_2, distance),
 			// corner 2 is azimuth p1 to p2 + 90 from p1
 			Locations.location(p1, az12 + PI_BY_2, distance),
@@ -624,21 +612,18 @@ public class Region implements Named {
 			Locations.location(p2, az21 + PI_BY_2, distance));
 		return ll;
 	}
-	
+
 	/* Validator for geometry operations */
 	private static void validate(Region r) {
 		checkNotNull(r, "Supplied Region is null");
 		checkArgument(r.area.isSingular(), "Region must be singular");
 	}
 
-
-	
-//	public static void main(String[] args) {
-//		// Region r = new CaliforniaRegions.RELM_TESTING();
-//		Region r = Region.createRectangular("Test Region",
-//			Location.create(20, 20), Location.create(21, 21));
-//		System.out.println(r.extent());
-//	}
-
+	// public static void main(String[] args) {
+	// // Region r = new CaliforniaRegions.RELM_TESTING();
+	// Region r = Region.createRectangular("Test Region",
+	// Location.create(20, 20), Location.create(21, 21));
+	// System.out.println(r.extent());
+	// }
 
 }

@@ -8,7 +8,7 @@ import static org.opensha.gmm.Imt.PGA;
 
 /**
  * Abstract implementation of the subduction ground motion model created for BC
- * Hydro, Canada, by Addo, Abrahamson, &amp; Youngs (2012). This implementation
+ * Hydro, Canada, by Addo, Abrahamson, & Youngs (2012). This implementation
  * matches that used in the USGS NSHM as supplied by N. Abrahamson.
  * 
  * <p>This model supports both slab and interface type events. In the 2008

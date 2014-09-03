@@ -53,7 +53,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    /**
     * This function finds IncrRate for the given magnitude
     * @param mag
-    * @return
     */
     public double getIncrRate(double mag) {
          int xIndex = getXIndex(mag);
@@ -64,7 +63,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
     /**
      * This function finds the IncrRate at the given index
      * @param index
-     * @return
      */
     public double getIncrRate(int index) {
         return getY(index);
@@ -75,7 +73,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
        * This function finds the cumulative Rate at a specified magnitude (the rate greater than
      * and equal to that mag)
        * @param mag
-       * @return
        */
     public double getCumRate(double mag) {
         return getCumRate(getXIndex(mag));
@@ -86,7 +83,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
      * This function finds the cumulative Rate at a specified index  (the rate greater than
      * and equal to that index)
      * @param index
-     * @return
      */
 
     public double getCumRate(int index) {
@@ -101,7 +97,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
     /**
      * This function finds the moment Rate at a specified magnitude
      * @param mag
-     * @return
      */
 
     public double getMomentRate(double mag) {
@@ -112,7 +107,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
     /**
      * This function finds the moment Rate at a specified index
      * @param index
-     * @return
      */
 
     public double getMomentRate(int index) {
@@ -123,7 +117,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
 
     /**
      * This function return the sum of all the moment rates as a double variable
-     * @return
      */
 
     public double getTotalMomentRate() {
@@ -136,9 +129,7 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
 
     /**
      * This function returns the sum of all the incremental rate as the double varibale
-     * @return
      */
-
     public double getTotalIncrRate() {
       double sum=0.0;
       for(int i=0;i<num;++i)
@@ -165,9 +156,7 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
      /**
       * This returns the object of the class EvenlyDiscretizedFunc which contains all the points
       * with Cum Rate Distribution (the rate greater than and equal to each magnitude)
-      * @return
       */
-
     public EvenlyDiscretizedFunc getCumRateDist() {
       EvenlyDiscretizedFunc cumRateDist = new EvenlyDiscretizedFunc(minX,num,delta);
       double sum=0.0;
@@ -185,10 +174,7 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
      * with Cum Rate Distribution (the rate greater than and equal to each magnitude).
      * It differs from getCumRateDist() in the X Values because the values are offset
      * by delta/2 in the CumDist returned by this method.
-     * 
-     * @return
      */
-
    public EvenlyDiscretizedFunc getCumRateDistWithOffset() {
      EvenlyDiscretizedFunc cumRateDist = new EvenlyDiscretizedFunc(minX-delta/2,num,delta);
      double sum=0.0;
@@ -201,13 +187,10 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
      return cumRateDist;
    }
 
-
     /**
      * This returns the object of the class EvenlyDiscretizedFunc which contains all the points
      * with Moment Rate Distribution
-     * @return
      */
-
     public EvenlyDiscretizedFunc getMomentRateDist() {
         EvenlyDiscretizedFunc momentRateDist = new EvenlyDiscretizedFunc(minX,num,delta);
         for(int i=num-1;i>=0;--i) {
@@ -218,12 +201,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
         return momentRateDist;
     }
 
-
-
     /**
      * This returns the object of the class EvenlyDiscretizedFunc which contains cumulative
      * Moment Rate (the total moment rate for all points greater than and equal to each mag)
-     * @return
      */
     public EvenlyDiscretizedFunc getCumMomentRateDist() {
         EvenlyDiscretizedFunc momentRateDist = new EvenlyDiscretizedFunc(minX,num,delta);
@@ -378,7 +358,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    
    /**
     * This returns the maximum magnitude with a non-zero rate
-    * @return
     */
    public double getMinMagWithNonZeroRate() {
 	   for(int i=0; i<num; i++) {
@@ -389,7 +368,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    
    /**
     * This returns the maximum magnitude with a non-zero rate
-    * @return
     */
    public double getMaxMagWithNonZeroRate() {
 	   for(int i=num-1; i>=0; i--) {
@@ -406,7 +384,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
     * min_bValMag (or max_bValMag).
     * @param min_bValMag
     * @param max_bValMag
-    * @return
     */
    public double compute_bValue(double min_bValMag, double max_bValMag) {
 	   int firstIndex, lastIndex;
@@ -500,7 +477,6 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
 	 * meaning after computing log10 of all y-axis values) between the smallest
 	 * and largest mags with non-zero rates (zeros at the beginning and end of
 	 * the distribution are ignored).
-	 * @return
 	 */
 	public double compute_bValue() {
 		return compute_bValue(Double.NaN, Double.NaN);

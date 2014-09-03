@@ -134,7 +134,6 @@ public class Container2DImpl<T> implements Container2D<T> {
 	 *
 	 * @param  row     The x coordinate of the cell.
 	 * @param  column  The y coordinate of the cell.
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public T get( int row, int column ) {
@@ -215,7 +214,6 @@ public class Container2DImpl<T> implements Container2D<T> {
 	 *  Checks that the specified row and column are valid indices into the 2D
 	 *  array. Internal helper function used only by this class.
 	 *
-	 * @param  preffix                             Debugging string
 	 * @param  row                                 check row value less that max row index
 	 * @param  column                              check col value less that max col index
 	 * @exception  ArrayIndexOutOfBoundsException  Thrown if row or column < 0 or > max row or max col.

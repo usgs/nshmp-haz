@@ -13,7 +13,7 @@ import static org.opensha.gmm.Imt.PGA;
  * This implementation has been modified from its original form to an NGA style
  * (S. Harmsen 7/13/2009) wherein mean ground motion varies continuously with
  * Vs30 (sigma remains the same as original). This is acheived through use of a
- * period-dependent site amplification function modified from Boore &amp;
+ * period-dependent site amplification function modified from Boore &
  * Atkinson (2008).
  * 
  * <p>This model supports both slab and interface type events. In the 2008

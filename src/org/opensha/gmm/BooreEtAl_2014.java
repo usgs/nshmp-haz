@@ -11,7 +11,7 @@ import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha.gmm.Imt.PGA;
 
 /**
- * Implementation of the Boore, Stewart, Seyhan, &amp; Atkinson (2014) next
+ * Implementation of the Boore, Stewart, Seyhan, & Atkinson (2014) next
  * generation ground motion model for active crustal regions developed as
  * part of<a href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 

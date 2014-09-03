@@ -469,7 +469,6 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 	 * points (e.g., corners getting cut).
 	 * @param trace
 	 * @param num - number of subsections
-	 * @return
 	 */
 	public static LocationList resampleTrace(LocationList trace, int num) {
 		double resampInt = trace.length() / num;
@@ -600,10 +599,10 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 		return LocationList.create(perimiter);
 	}
 
-	/**
-	 * Maine method to test this class (found a bug using it)
-	 * @param args
-	 */
+//	/**
+//	 * Maine method to test this class (found a bug using it)
+//	 * @param args
+//	 */
 //	public static void main(String args[]) {
 //
 //		double test = 4 % 4.1;

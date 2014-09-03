@@ -15,7 +15,6 @@ package org.opensha.eq.fault.surface;
  *  referenced within the ContainerSubset2D.<p>
  *
  * @author     Steven W. Rock
- * @created    February 25, 2002
  * @version    1.0
  */
 

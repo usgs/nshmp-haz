@@ -37,18 +37,18 @@ public class GeoTools {
 	 */
 	public static final double EARTH_RADIUS_POLAR = 6356.7523;
 
-	/** Minimum latitude value (-90&#176;). */
+	/** Minimum latitude value (-90°). */
 	public static final double MIN_LAT = -90.0;
 
-	/** Maximum latitude value (90&#176;). */
+	/** Maximum latitude value (90°). */
 	public static final double MAX_LAT = 90.0;
 
-	/** Minimum longitude value (-180&#176;). */
+	/** Minimum longitude value (-180°). */
 	public static final double MIN_LON = -180.0;
 
 	// TODO test if and which distance calcs can handle
 	// this higher MAX_LON
-	/** Maximum longitude value (180&#176;). */
+	/** Maximum longitude value (180°). */
 	public static final double MAX_LON = 360.0;
 
 	/**

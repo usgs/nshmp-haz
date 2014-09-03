@@ -7,7 +7,7 @@ import static org.opensha.gmm.Imt.PGA;
 
 /**
  * Abstract implementation of the subduction ground motion model by Atkinson
- * &amp; Boore (2003). This implementation matches that used in the 2008 USGS
+ * & Boore (2003). This implementation matches that used in the 2008 USGS
  * NSHMP. This model has global- and Cascadia-specific forms and can be used for
  * both slab and interface events. In the 2008 NSHMP, the 'interface' form is
  * used with the Cascadia subduction zone models and the 'slab' form is used

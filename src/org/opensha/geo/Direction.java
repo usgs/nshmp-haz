@@ -33,8 +33,8 @@ enum Direction {
 	}
 
 	/**
-	 * Returns the bearing in degrees (0&deg; &ndash; 360&deg;) associated with
-	 * this {@code Direction} (e.g. NORTHEAST = 45&deg;).
+	 * Returns the bearing in degrees [0°, 360°) associated with
+	 * this {@code Direction} (e.g. {@code NORTHEAST} = 45°).
 	 * @return the bearing in degrees
 	 */
 	double bearing() {
@@ -42,8 +42,8 @@ enum Direction {
 	}
 
 	/**
-	 * Returns the numeric bearing in radians(0 &ndash; 2&pi;) associated with
-	 * this {@code Direction} (e.g. NORTHEAST = &pi;/4).
+	 * Returns the numeric bearing in radians [0, 2π) associated with
+	 * this {@code Direction} (e.g. {@code NORTHEAST} = π/4).
 	 * @return the bearing in radians
 	 */
 	double bearingRad() {

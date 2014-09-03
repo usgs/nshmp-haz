@@ -123,7 +123,7 @@ public enum NehrpTestCity {
 	 * no city is coincident with the location.
 	 * @param loc location to search for
 	 * @return the city at location
-	 * @see LocationUtils#areSimilar(Location, Location);
+	 * @see Locations#areSimilar(Location, Location)
 	 */
 	public static NehrpTestCity forLocation(Location loc) {
 		for (NehrpTestCity city : NehrpTestCity.values()) {

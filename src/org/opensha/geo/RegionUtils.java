@@ -35,6 +35,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.eq.model.SourceElement;
 //import org.opensha.sha.faultSurface.AbstractEvenlyGriddedSurface;
 import org.w3c.dom.Document;
@@ -416,7 +417,7 @@ public class RegionUtils {
 	
 	/**
 	 * The returns the fraction of points in the given collection of locations that is inside
-	 * the given region. This will commonly be used with the {@link AbstractGriddedSurface} class
+	 * the given region. This will commonly be used with the {@link GriddedSurface}s
 	 * to determine the fraction of a fault surface that is inside of a region.
 	 * 
 	 * @param region the region for which to test

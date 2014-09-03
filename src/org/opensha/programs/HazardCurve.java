@@ -33,6 +33,8 @@ import com.google.common.base.Charsets;
  * @see MultiResult
  */
 public class HazardCurve {
+	
+	private static final double DEFAULT_VS_30 = 760.0;
 
 	/**
 	 * Calculate a hazard curve at a {@link Site}.
@@ -114,7 +116,7 @@ public class HazardCurve {
 		Imt imt = Imt.valueOf(args[1]);
 		double lon = Double.valueOf(args[2]);
 		double lat = Double.valueOf(args[3]);
-		double vs30 = (args.length > 4) ? Double.valueOf(args[4]) : 760.0;
+		double vs30 = (args.length > 4) ? Double.valueOf(args[4]) : DEFAULT_VS_30;
 		Location loc = Location.create(lat, lon);
 		Site site = Site.create(loc, vs30);
 
@@ -131,9 +133,12 @@ public class HazardCurve {
 		List<String> lines = Files.readAllLines(path, US_ASCII);
 		List<Site> sites = new ArrayList<>();
 		for (String line : lines) {
-//			List<Double> values = Fluent Parsing.spl
+			List<Double> values = Parsing.splitOnCommasToDoubleList(line);
+			Location loc = Location.create(values.get(1), values.get(0));
+			double vs30 = (values.size() == 3) ? values.get(2) : DEFAULT_VS_30;
+			sites.add(Site.create(loc, vs30));
 		}
-		return null;
+		return sites;
 	}
 
 	private static final String USAGE = "HazardCurve usage:" +

@@ -15,7 +15,7 @@ import static org.opensha.gmm.FaultStyle.NORMAL;
 import static org.opensha.gmm.FaultStyle.REVERSE;
 
 /**
- * Implementation of the Chiou &amp; Youngs (2008) next generation attenuation
+ * Implementation of the Chiou & Youngs (2008) next generation attenuation
  * relationship for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 

@@ -18,19 +18,19 @@ import org.opensha.geo.Location;
 public interface RuptureSurface {
 	
 	/**
-	 * The average strike of this surface in degrees [0&deg; 360&deg;].
+	 * The average strike of this surface in degrees [0°, 360°).
 	 * @return the strike of this surface
 	 */
 	public double strike();
 
 	/**
-	 * The average dip of this surface in degrees [0&deg; 90&deg;].
+	 * The average dip of this surface in degrees [0°, 90°].
 	 * @return the dip of this surface
 	 */
 	public double dip();
 	
 	/**
-	 * The average dip direction of this surface in degrees [0&deg; 360&deg;].
+	 * The average dip direction of this surface in degrees [0°, 360°).
 	 * @return the dip direction of this surface
 	 */
 	public double dipDirection();
@@ -72,43 +72,6 @@ public interface RuptureSurface {
 	 * @return a distance metric wrapper object
 	 * @see Distances
 	 */
-	public Distances distanceTo(Location loc);
-	
-	
-//	/**
-//	 * This returns rupture distance (kms to closest point on the 
-//	 * rupture surface), assuming the location has zero depth (for numerical 
-//	 * expediency).
-//	 * @return 
-//	 */
-//	public double getDistanceRup(Location siteLoc);
-//
-//	/**
-//	 * This returns distance JB (shortest horz distance in km to surface projection 
-//	 * of rupture), assuming the location has zero depth (for numerical 
-//	 * expediency).
-//	 * @return
-//	 */
-//	public double getDistanceJB(Location siteLoc);
-//
-//	/**
-//	 * This returns "distance seis" (shortest distance in km to point on rupture 
-//	 * deeper than 3 km), assuming the location has zero depth (for numerical 
-//	 * expediency).
-//	 * @return
-//	 */
-//	public double getDistanceSeis(Location siteLoc);
-//
-//	/**
-//	 * This returns distance X (the shortest distance in km to the rupture 
-//	 * upper edge extended to infinity), where values >= 0 are on the hanging wall
-//	 * and values < 0 are on the foot wall.  The location is assumed to be at zero
-//	 * depth (for numerical expediency).
-//	 * @return
-//	 */
-//	public double getDistanceX(Location siteLoc);
-//				
-	
-	
+	public Distances distanceTo(Location loc);	
 	
 }

@@ -371,7 +371,7 @@ public final class Parsing {
 	
 	/**
 	 * Converts a whitespace-delimited {@code String} to a
-	 * {@code List&lt;Double&gt;}.
+	 * {@code List<Double>}.
 	 * @param s 
 	 * @return a {@code List} of {@code Double}s
 	 * @throws NumberFormatException if any parts of {@code s} are unparseable
@@ -403,6 +403,16 @@ public final class Parsing {
 		return SPLIT_COMMA.split(s);
 	}
 	
+	/**
+	 * Split a {@code String} into a {@code List<String>} on commas (',').
+	 * @param s {@code String} to split
+	 */
+	public static List<String> splitOnCommasToList(String s) {
+		return FluentIterable
+				.from(splitOnCommas(s))
+				.toList();
+	}
+
 	/**
 	 * Split a {@code String} into a {@code List<Double>} on commas (',').
 	 * @param s {@code String} to split
@@ -505,7 +515,7 @@ public final class Parsing {
 	 * Converts a bracketed and comma-delimited {@code String} of 
 	 * {@code Number}s (e.g. [1.0, 2.0, 3.0] to a {@code double[]}. This is the
 	 * reverse of {@code Arrays.toString(double[])} and 
-	 * {@code List&lt;Double&gt;>.toString()}
+	 * {@code List<Double>>.toString()}
 	 * @param s {@code String} to convert
 	 * @return a {@code double} array
 	 */
@@ -519,7 +529,7 @@ public final class Parsing {
 	/**
 	 * Converts a {@code Collection} of {@code Double}s to a {@code String} of
 	 * the same format returned by {@code Arrays.toString(double[])} and
-	 * {@code List&lt;Double&gt;>.toString()}, but will format the values
+	 * {@code List<Double>>.toString()}, but will format the values
 	 * using the supplied {@code format} {@code String}. The supplied 
 	 * {@code format} should match that expected by
 	 * {@code String.format(String, Object...)}
@@ -718,7 +728,6 @@ public final class Parsing {
 	 * Strips a trailing comment that starts with the supplied character.
 	 * @param line
 	 * @param c
-	 * @return
 	 */
 	public static String stripComment(String line, char c) {
 		int idx = line.indexOf(c);

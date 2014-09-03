@@ -127,8 +127,6 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 
     /**
      * returns the grid spacing along strike
-     *
-     * @return
      */
     public double getGridSpacingAlongStrike() {
       return ((AbstractGriddedSurface)data).getGridSpacingAlongStrike();
@@ -137,8 +135,6 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 
     /**
      * returns the grid spacing down dip
-     *
-     * @return
      */
     public double getGridSpacingDownDip() {
       return ((AbstractGriddedSurface)data).getGridSpacingDownDip();
@@ -322,7 +318,6 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 
 	/**
 	 * This returns the parent surface
-	 * @return
 	 */
 	public GriddedSurface getParentSurface() {
 		return parentSurface;
