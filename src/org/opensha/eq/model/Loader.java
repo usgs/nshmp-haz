@@ -16,6 +16,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -116,8 +117,12 @@ class Loader {
 
 		if (isZip) {
 			URI zipURI = new URI(ZIP_SCHEME, path.toString(), null);
-			FileSystem zfs = FileSystems.getFileSystem(zipURI);
-			if (zfs == null) zfs = FileSystems.newFileSystem(zipURI, ZIP_ENV_MAP);
+			FileSystem zfs = null;
+			try {
+				zfs = FileSystems.getFileSystem(zipURI);
+			} catch (FileSystemNotFoundException fsnfe) {
+				zfs = FileSystems.newFileSystem(zipURI, ZIP_ENV_MAP);
+			}
 			Path zipRoot = Iterables.get(zfs.getRootDirectories(), 0);
 			List<Path> paths = typeDirectoryList(zipRoot);
 			if (paths.size() > 0) return paths;
