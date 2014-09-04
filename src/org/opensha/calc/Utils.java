@@ -126,7 +126,15 @@ public class Utils {
 	// @formatter:off
 	
 	public static final double[] NSHM_PGA_IMLS = { 0.0050, 0.0070, 0.0098, 0.0137, 0.0192, 0.0269, 0.0376, 0.0527, 0.0738, 0.103, 0.145, 0.203, 0.284, 0.397, 0.556, 0.778, 1.09, 1.52, 2.13 };
-	public static final double[] NSHM_0P2_IMLS = { 0.0050, 0.0075, 0.0113, 0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19, 3.28, 4.92, 7.38 };
+	
+	/* slightly modified version of 5Hz curve, size = 20 */
+	public static final double[] NSHM_IMLS = {
+		0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19, 3.28, 4.92, 7.38 };
+	
+	public static ArrayXY_Sequence nshmpCurve() {
+		return ArrayXY_Sequence.create(NSHM_IMLS, null);
+	}
+	
 	/**
 	 * These intensity measure levels expand the standard ranges of values used
 	 * at different periods in past NSHMs to a common set that can be used
@@ -134,12 +142,12 @@ public class Utils {
 	 * derived from ln(-8.8):ln(2.0) with a 0.4 step include the highest ground
 	 * motions (~7.5 g) and lower values
 	 */
-	public static final double[] NSHM_IMLS = {
-		0.0002, 0.0005,
-		0.001, 0.002, 0.00316, 0.00422, 0.00562, 0.0075,
-		0.01, 0.0133, 0.0178, 0.0237, 0.0316, 0.0422, 0.0562, 0.075,
-		0.1, 0.133, 0.178, 0.237, 0.316, 0.422, 0.562, 0.75,
-		1.0, 1.33, 1.78, 2.37, 3.16, 5.01, 7.94};
+//	public static final double[] NSHM_IMLS = {
+//		0.0002, 0.0005,
+//		0.001, 0.002, 0.00316, 0.00422, 0.00562, 0.0075,
+//		0.01, 0.0133, 0.0178, 0.0237, 0.0316, 0.0422, 0.0562, 0.075,
+//		0.1, 0.133, 0.178, 0.237, 0.316, 0.422, 0.562, 0.75,
+//		1.0, 1.33, 1.78, 2.37, 3.16, 5.01, 7.94};
 
 	
 	/**

@@ -39,7 +39,7 @@ import com.google.common.io.Resources;
 final class GmmTables {
 	// @formatter:off
 	
-	private static final Logger log = Logging.create(GmmTable.class);
+	private static final Logger log = Logger.getLogger(GmmTable.class.getName());
 	private static final String LF = LINE_SEPARATOR.value();
 
 	// Implementation notes:

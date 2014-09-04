@@ -27,10 +27,6 @@ public final class HazardResult {
 		this.totalCurve = totalCurve;
 	}
 
-	static Builder builder(ArrayXY_Sequence modelCurve) {
-		return new Builder(modelCurve);
-	}
-
 	@Override public String toString() {
 		String LF = StandardSystemProperty.LINE_SEPARATOR.value();
 		StringBuilder sb = new StringBuilder("HazardResult:");
@@ -66,6 +62,17 @@ public final class HazardResult {
 			}
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * The total mean hazard curve.
+	 */
+	public ArrayXY_Sequence curve() {
+		return totalCurve;
+	}
+	
+	static Builder builder(ArrayXY_Sequence modelCurve) {
+		return new Builder(modelCurve);
 	}
 
 	static class Builder {

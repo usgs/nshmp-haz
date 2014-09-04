@@ -2,6 +2,7 @@ package org.opensha.eq.model;
 
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Paths;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class LoaderTests {
 	@Test
 	public void testBadPath() throws Exception {
 		exception.expect(IllegalArgumentException.class);
-		Loader.load(BAD_PATH, FCAST_NAME);
+		Loader.load(Paths.get(BAD_PATH), FCAST_NAME);
 	}
 	
 	@Test
@@ -47,7 +48,7 @@ public class LoaderTests {
 		exception.expect(IllegalArgumentException.class);
 		URL badURL = Resources.getResource(LoaderTests.class, BAD_URI);
 		String badURI = URLDecoder.decode(badURL.getPath(), "UTF-8");
-		Loader.load(badURI, FCAST_NAME);
+		Loader.load(Paths.get(badURI), FCAST_NAME);
 	}
 	
 	@Test
@@ -55,20 +56,20 @@ public class LoaderTests {
 		exception.expect(IllegalArgumentException.class);
 		URL badURL = Resources.getResource(LoaderTests.class, EMPTY_ZIP);
 		String badURI = URLDecoder.decode(badURL.getPath(), "UTF-8");
-		Loader.load(badURI, FCAST_NAME);
+		Loader.load(Paths.get(badURI), FCAST_NAME);
 	}
 	
 	@Test
 	public void testEmptyModel() throws Exception {
 		exception.expect(IllegalStateException.class);
 		URL emptyURL = Resources.getResource(LoaderTests.class, BAD_FOLDER);
-		Loader.load(emptyURL.getPath(), FCAST_NAME);
+		Loader.load(Paths.get(emptyURL.getPath()), FCAST_NAME);
 	}
 
 	
 	public static void main(String[] args) throws Exception {
 		URL emptyURL = Resources.getResource(LoaderTests.class, BAD_FOLDER);
-		Loader.load(emptyURL.getPath(), FCAST_NAME);
+		Loader.load(Paths.get(emptyURL.getPath()), FCAST_NAME);
 		
 	}
 	

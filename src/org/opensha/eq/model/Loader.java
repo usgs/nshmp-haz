@@ -6,21 +6,21 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.nio.file.Files.newDirectoryStream;
 import static java.util.logging.Level.SEVERE;
-import static org.opensha.eq.model.SystemFaultParser.*;
+import static org.opensha.eq.model.SystemFaultParser.GRIDSOURCE_FILENAME;
+import static org.opensha.eq.model.SystemFaultParser.RUPTURES_FILENAME;
+import static org.opensha.eq.model.SystemFaultParser.SECTIONS_FILENAME;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,7 +38,8 @@ import com.google.common.collect.Lists;
 
 /**
  * {@code HazardModel} loader. This class takes care of extensive checked
- * exceptions required when initializing a {@code HazardModel}.
+ * exceptions required when initializing a {@code HazardModel} and will exit the
+ * JVM in most cases.
  * 
  * @author Peter Powers
  */
@@ -49,14 +50,6 @@ class Loader {
 	private static SAXParser sax;
 
 	static {
-
-		try {
-			InputStream is = new FileInputStream("lib/logging.properties");
-			LogManager.getLogManager().readConfiguration(is);
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-
 		log = Logger.getLogger(Loader.class.getName());
 		try {
 			sax = SAXParserFactory.newInstance().newSAXParser();
@@ -70,16 +63,13 @@ class Loader {
 	 * directory containing sub-directories by {@code SourceType}s, or the
 	 * absolute path to a zipped model.
 	 * 
-	 * <p>This method is not thread safe.</p>
+	 * <p>This method is not thread safe. Any exceptions thrown whil loading
+	 * will be logged and the JVM will exit.</p>
 	 * 
 	 * @param path to model directory or Zip file (absolute)
 	 * @return a newly created {@code HazardModel}
-	 * @throws Exception TODO checked exceptions
 	 */
-	static HazardModel load(String path, String name) throws Exception {
-
-		// TODO perhaps we process a config.xml file at the root of
-		// a HazardModel to pick up name and other calc configuration data
+	static HazardModel load(Path path, String name) {
 
 		HazardModel.Builder builder = HazardModel.builder();
 		Path modelPath = null;
@@ -87,24 +77,24 @@ class Loader {
 
 		try {
 			checkNotNull(path, "Path is null");
-			modelPath = Paths.get(path).toRealPath();
+			modelPath = path.toRealPath();
 			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
 			typePaths = typeDirectories(modelPath);
 			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
-		} catch (Exception e) {
-			logConfigException(e);
-			throw e;
-		}
 
-		log.info("Loading model: " + name);
-		builder.name(name);
-		log.info("   From resource: " + modelPath.getFileName());
+			log.info("Loading model: " + name);
+			builder.name(name);
+			log.info("   From resource: " + modelPath.getFileName());
 
-		for (Path typePath : typePaths) {
-			String typeName = cleanZipName(typePath.getFileName().toString());
-			log.info("");
-			log.info("========  " + typeName + " Sources  ========");
-			processTypeDir(typePath, builder);
+			for (Path typePath : typePaths) {
+				String typeName = cleanZipName(typePath.getFileName().toString());
+				log.info("");
+				log.info("========  " + typeName + " Sources  ========");
+				processTypeDir(typePath, builder);
+			}
+
+		} catch (IOException | URISyntaxException e) {
+			handleConfigException(e);
 		}
 
 		log.info("");
@@ -120,10 +110,7 @@ class Loader {
 
 	private static final String ZIP_SCHEME = "jar:file";
 
-	private static List<Path> typeDirectories(Path path) throws Exception {
-
-		// methods in here potentially throw a myriad of checked and
-		// unchecked exceptions
+	private static List<Path> typeDirectories(Path path) throws URISyntaxException, IOException {
 
 		boolean isZip = path.getFileName().toString().toLowerCase().endsWith(".zip");
 
@@ -159,7 +146,7 @@ class Loader {
 		}
 	}
 
-	private static void processTypeDir(Path typeDir, Builder builder) throws Exception {
+	private static void processTypeDir(Path typeDir, Builder builder) throws IOException {
 
 		SourceType type = SourceType.fromString(cleanZipName(typeDir.getFileName().toString()));
 
@@ -185,7 +172,7 @@ class Loader {
 				checkState(Files.exists(gmmPath), "%s sources present. Where is gmm.xml?",
 					typeDir.getFileName());
 			} catch (IllegalStateException ise) {
-				logConfigException(ise);
+				handleConfigException(ise);
 				throw ise;
 			}
 		}
@@ -211,7 +198,7 @@ class Loader {
 	}
 
 	private static void processNestedDir(Path sourceDir, SourceType type, GmmSet gmmSet,
-			Builder builder) throws Exception {
+			Builder builder) throws IOException {
 
 		/*
 		 * gmm.xml -- this MUST exist if there is at least one source file and
@@ -233,7 +220,7 @@ class Loader {
 				checkState(Files.exists(nestedGmmPath) || gmmSet != null,
 					"%s sources present. Where is gmm.xml?", sourceDir.getFileName());
 			} catch (IllegalStateException ise) {
-				logConfigException(ise);
+				handleConfigException(ise);
 				throw ise;
 			}
 
@@ -258,9 +245,7 @@ class Loader {
 		}
 	}
 
-	private static SourceSet<? extends Source> parseSource(SourceType type, Path path, GmmSet gmmSet)
-			throws Exception {
-
+	private static SourceSet<? extends Source> parseSource(SourceType type, Path path, GmmSet gmmSet) {
 		try {
 			InputStream in = Files.newInputStream(path);
 			switch (type) {
@@ -278,7 +263,7 @@ class Loader {
 					return SlabParser.create(sax).parse(in, gmmSet);
 				case SYSTEM:
 					throw new UnsupportedOperationException(
-						"Indexed sources are not processed with this method");
+						"Fault system sources are not processed with this method");
 				default:
 					throw new IllegalStateException("Unkown source type");
 			}
@@ -288,27 +273,28 @@ class Loader {
 		}
 	}
 
-	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder)
-			throws IOException, SAXException {
+	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder) {
+		try {
+			Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
+			InputStream sectionsIn = Files.newInputStream(sectionsPath);
+			Path rupturesPath = dir.resolve(RUPTURES_FILENAME);
+			InputStream rupturesIn = Files.newInputStream(rupturesPath);
 
-		Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
-		InputStream sectionsIn = Files.newInputStream(sectionsPath);
-		Path rupturesPath = dir.resolve(RUPTURES_FILENAME);
-		InputStream rupturesIn = Files.newInputStream(rupturesPath);
+			SystemFaultParser faultParser = SystemFaultParser.create(sax);
+			builder.sourceSet(faultParser.parse(sectionsIn, rupturesIn, gmmSet));
 
-		SystemFaultParser faultParser = SystemFaultParser.create(sax);
-		builder.sourceSet(faultParser.parse(sectionsIn, rupturesIn, gmmSet));
-
-		Path gridSourcePath = dir.resolve(GRIDSOURCE_FILENAME);
-		InputStream gridIn = Files.newInputStream(gridSourcePath);
-		GridSourceSet gridSet = GridParser.create(sax).parse(gridIn, gmmSet);
-		builder.sourceSet(gridSet);
-		log.info("   Grid set: " + dir.getFileName() + "/" + GRIDSOURCE_FILENAME);
-		log.info("    Sources: " + gridSet.size());
-
+			Path gridSourcePath = dir.resolve(GRIDSOURCE_FILENAME);
+			InputStream gridIn = Files.newInputStream(gridSourcePath);
+			GridSourceSet gridSet = GridParser.create(sax).parse(gridIn, gmmSet);
+			builder.sourceSet(gridSet);
+			log.info("   Grid set: " + dir.getFileName() + "/" + GRIDSOURCE_FILENAME);
+			log.info("    Sources: " + gridSet.size());
+		} catch (Exception e) {
+			handleParseException(e, dir);
+		}
 	}
 
-	private static GmmSet parseGMM(Path path) throws Exception {
+	private static GmmSet parseGMM(Path path) {
 		try {
 			InputStream in = Files.newInputStream(path);
 			return GmmParser.create(sax).parse(in);
@@ -318,55 +304,51 @@ class Loader {
 		}
 	}
 
-	private static void handleParseException(Exception e, Path path) throws Exception {
+	/* This method will exit runtime environment */
+	private static void handleConfigException(Exception e) {
+		StringBuilder sb = new StringBuilder(LF);
+		sb.append("** Config error: ").append(e.getMessage());
+		log.log(SEVERE, sb.toString(), e);
+		System.exit(1);
+	}
+
+	/* This method will exit runtime environment */
+	private static void handleParseException(Exception e, Path path) {
 		if (e instanceof SAXParseException) {
 			SAXParseException spe = (SAXParseException) e;
 			StringBuilder sb = new StringBuilder(LF);
-			sb.append("** SAX Parser error:").append(LF);
-			sb.append("**   Path: ").append(spe.getSystemId()).append(LF);
+			sb.append("** SAX parser error:").append(LF);
+			sb.append("**   Path: ").append(path).append(LF);
 			sb.append("**   Line: ").append(spe.getLineNumber());
-			sb.append(" [").append(spe.getColumnNumber());
-			sb.append("]").append(LF);
-			sb.append("**   Info: ").append(spe.getMessage());
-			if (spe.getException() != null) {
-				String message = spe.getException().getMessage();
-				if (message != null) {
-					sb.append(LF).append("           ").append(spe.getException().getMessage());
-					sb.append(LF).append(Throwables.getStackTraceAsString(spe.getException()));
-				} else {
-					sb.append(", ").append(Throwables.getStackTraceAsString(spe.getException()));
-				}
-			}
-			log.severe(sb.toString());
-			throw spe;
-
+			sb.append(" [").append(spe.getColumnNumber()).append("]").append(LF);
+			sb.append("**   Info: ").append(spe.getMessage()).append(LF);
+			sb.append("** Exiting **").append(LF).append(LF);
+			log.log(SEVERE, sb.toString(), spe);
 		} else if (e instanceof SAXException) {
-			log.log(SEVERE, "** Other SAX parsing error **", e);
-			throw e;
-
+			StringBuilder sb = new StringBuilder(LF);
+			sb.append("** Other SAX parsing error **");
+			sb.append("** Exiting **").append(LF).append(LF);
+			log.log(SEVERE, sb.toString(), e);
 		} else if (e instanceof IOException) {
 			IOException ioe = (IOException) e;
 			StringBuilder sb = new StringBuilder(LF);
 			sb.append("** IO error: ").append(ioe.getMessage()).append(LF);
 			sb.append("**     Path: ").append(path).append(LF);
-			log.severe(sb.toString());
-			throw ioe;
-
+			sb.append("** Exiting **").append(LF).append(LF);
+			log.log(SEVERE, sb.toString(), ioe);
 		} else if (e instanceof UnsupportedOperationException ||
 			e instanceof IllegalStateException || e instanceof NullPointerException) {
-			log.log(SEVERE, "** Parsing error: " + e.getMessage() + " **", e);
-			throw e;
-
+			StringBuilder sb = new StringBuilder(LF);
+			sb.append("** Parsing error: ").append(e.getMessage()).append(LF);
+			sb.append("** Exiting **").append(LF).append(LF);
+			log.log(SEVERE, sb.toString(), e);
 		} else {
-			log.log(SEVERE, "** Unknown parsing error **", e);
-			throw e;
+			StringBuilder sb = new StringBuilder(LF);
+			sb.append("** Unknown parsing error: ").append(e.getMessage()).append(LF);
+			sb.append("** Exiting **").append(LF).append(LF);
+			log.log(SEVERE, sb.toString(), e);
 		}
-	}
-
-	private static void logConfigException(Exception e) {
-		StringBuilder sb = new StringBuilder(LF);
-		sb.append("** Config error: ").append(e.getMessage());
-		log.severe(sb.toString());
+		System.exit(1);
 	}
 
 	/* Prune trailing slash if such exists. */

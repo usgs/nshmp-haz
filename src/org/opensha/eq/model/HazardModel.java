@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.util.TextUtils.validateName;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
+import java.nio.file.Path;
 import java.util.Iterator;
 
 import org.opensha.gmm.GroundMotionModel;
@@ -13,13 +14,13 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
 /**
- * An earthquake hazard {@code HazardModel} is the top-level wrapper for earthquake
- * {@link Source} definitions and attendant {@link GroundMotionModel}s used in
- * probabilisitic seismic hazard analyses (PSHAs) and related calculations. A
- * {@code HazardModel} contains of a number of {@link SourceSet}s that define
- * logical groupings of sources by {@link SourceType}. Each {@code SourceSet}
- * carries with it references to the {@code GroundMotionModel}s and associated
- * weights to be used when evaluating hazard.
+ * An earthquake hazard {@code HazardModel} is the top-level wrapper for
+ * earthquake {@link Source} definitions and attendant {@link GroundMotionModel}
+ * s used in probabilisitic seismic hazard analyses (PSHAs) and related
+ * calculations. A {@code HazardModel} contains of a number of {@link SourceSet}
+ * s that define logical groupings of sources by {@link SourceType}. Each
+ * {@code SourceSet} carries with it references to the {@code GroundMotionModel}
+ * s and associated weights to be used when evaluating hazard.
  * 
  * @author Peter Powers
  * @see Source
@@ -27,14 +28,19 @@ import com.google.common.collect.SetMultimap;
  * @see SourceType
  */
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
-		
+
+	// TODO where/how to apply CEUS clamps
+
 	// TODO need to revisit the application of uncertainty when minM < 6.5
 	// e.g. 809a Pine Valley graben in orwa.c.in
-	
-	// TODO not sure why I changed surface implementations to project down dip from
-	// zero to zTop, but it was wrong. currently sesmogenic depth is ignored, but
-	// may need this for system sources; should zTop be encoded into trace depths?
-	
+
+	// TODO not sure why I changed surface implementations to project down dip
+	// from
+	// zero to zTop, but it was wrong. currently sesmogenic depth is ignored,
+	// but
+	// may need this for system sources; should zTop be encoded into trace
+	// depths?
+
 	// TODO expose FloatStyle
 	// TODO SUB check rake handling
 
@@ -69,10 +75,25 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// config files?
 	// TODO check ORegon branches: Portland nested inside all OR?
 
+	// TODO epiphany!!! Although it will be a little more work, if we have a
+	// multi-distance
+	// GmmSet model, we will do all calculations; the far gmms are currently
+	// required to be a subset of the near
+	// gmms. Even without this requirement, we would compute ground motions for
+	// the master set of gmms.
+	// Only when recombining scalar ground motions into hazard curves will we
+	// chose those values
+	// required at different distances as we will have the associated GmmInputs
+	// handy
+
+	// TODO perhaps we process a config.xml file at the root of
+	// a HazardModel to pick up name and other calc configuration data
+
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
 
-	private HazardModel(String name, SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
+	private HazardModel(String name,
+		SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
 		this.name = name;
 		this.sourceSetMap = sourceSetMap;
 	}
@@ -81,21 +102,21 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	 * Load a {@code HazardModel} from a directory or Zip file specified by the
 	 * supplied {@code path}.
 	 * 
-	 * <p>For more information on a HazardModel directory and file structure, see
-	 * the <a
+	 * <p>For more information on a HazardModel directory and file structure,
+	 * see the <a
 	 * href="https://github.com/usgs/nshmp-haz/wiki/Earthquake-Source-Models"
 	 * >nshmp-haz wiki</a>.</p>
 	 * 
-	 * <p><b>Notes:</b> HazardModel loading is not thread safe. This method can
-	 * potentially throw a wide variety of exceptions, all of which will be
-	 * logged in detail but propogated as a plain checked {@code Exception}.</p>
+	 * <p><b>Notes:</b> HazardModel loading is not thread safe. Also, there are
+	 * a wide variety of exceptions that may be encountered when loading a
+	 * model. In most cases, the exception will be logged and the JVM will
+	 * exit.</p>
 	 * 
 	 * @param path to {@code HazardModel} directory or Zip file
 	 * @param name for the {@code HazardModel}
 	 * @return a newly instantiated {@code HazardModel}
-	 * @throws Exception if an error occurs
 	 */
-	public static HazardModel load(String path, String name) throws Exception {
+	public static HazardModel load(Path path, String name) {
 		return Loader.load(path, name);
 	}
 

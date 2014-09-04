@@ -383,6 +383,7 @@ public final class Parsing {
 				.toList();
 	}
 		
+	// TODO Joiners should take Object <?>
 	public static String joinOnSpaces(Iterable<String> parts) {
 		return JOIN_SPACE.join(parts);
 	}
@@ -391,7 +392,11 @@ public final class Parsing {
 		return JOIN_DASH.join(parts);
 	}
 
-	public static String joinOnCommas(Iterable<String> parts) {
+	/**
+	 * Join the {@code String} representation of {@code parts} in a single comma-delimited {@code String}.
+	 * @param parts to join
+	 */
+	public static String joinOnCommas(Iterable<?> parts) {
 		return JOIN_COMMA.join(parts);
 	}
 
@@ -808,15 +813,11 @@ public final class Parsing {
 		}
 	}
 	// @formatter:on
-	
+
 	public static void main(String[] args) {
-		
-//		int[] ints = {1, 2, 3, 4, 10, 19, 18, 17, 16};
-		int[] ints = {
-			620, 619, 618, 617, 616, 615, 614, 613, 612, 611, 610, 609, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 598, 597, 596, 595, 594,
-			635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 623, 622,
-			1832, 1833, 1834, 1835, 1836, 1837, 1838, 1839, 1840, 1841, 1842, 1843, 1844, 1845, 1846, 1847, 1848, 1849, 1850, 1851,
-			1944, 1945, 1946, 1947, 1948, 1949, 1950, 1951, 1952, 1953};
+
+		// int[] ints = {1, 2, 3, 4, 10, 19, 18, 17, 16};
+		int[] ints = { 620, 619, 618, 617, 616, 615, 614, 613, 612, 611, 610, 609, 608, 607, 606, 605, 604, 603, 602, 601, 600, 599, 598, 597, 596, 595, 594, 635, 634, 633, 632, 631, 630, 629, 628, 627, 626, 625, 624, 623, 622, 1832, 1833, 1834, 1835, 1836, 1837, 1838, 1839, 1840, 1841, 1842, 1843, 1844, 1845, 1846, 1847, 1848, 1849, 1850, 1851, 1944, 1945, 1946, 1947, 1948, 1949, 1950, 1951, 1952, 1953 };
 		List<Integer> intList = Ints.asList(ints);
 		String rangeString = intListToRangeString(intList);
 		System.out.println(rangeString);
@@ -824,23 +825,24 @@ public final class Parsing {
 		List<Integer> out = rangeStringToIntList(rangeString);
 		System.out.println(out);
 		System.out.println(intList.equals(out));
-		
 
-//		String megaMapStr = "[6.5 :: [1.0 : 0.8, 5.0 : 0.2]; 10.0 :: [1.0 : 0.2, 5.0 : 0.8]]";
-//		String megaMapStr = "[]";
-//		Map<Double, Map<Double, Double>> megaMap = stringToValueValueWeightMap(megaMapStr);
-//		System.out.println(megaMap);
-		
-//		String enumWtStr = "[STRIKE_SLIP:0.5,NORMAL:0.0,  REVERSE : 0.5]";
-//		System.out.println(stringToEnumWeightMap(enumWtStr, FocalMech.class));
-//		double[] dd = new double[] {1.2, 3.4, 5.6, Double.NaN};
-//		System.out.println(Arrays.toString(dd));
-//		System.out.println(Doubles.asList(dd));
-//		String dds = Doubles.asList(dd).toString();
-//		System.out.println(Arrays.toString(toDoubleArray(dds)));
+		// String megaMapStr =
+		// "[6.5 :: [1.0 : 0.8, 5.0 : 0.2]; 10.0 :: [1.0 : 0.2, 5.0 : 0.8]]";
+		// String megaMapStr = "[]";
+		// Map<Double, Map<Double, Double>> megaMap =
+		// stringToValueValueWeightMap(megaMapStr);
+		// System.out.println(megaMap);
+
+		// String enumWtStr = "[STRIKE_SLIP:0.5,NORMAL:0.0,  REVERSE : 0.5]";
+		// System.out.println(stringToEnumWeightMap(enumWtStr,
+		// FocalMech.class));
+		// double[] dd = new double[] {1.2, 3.4, 5.6, Double.NaN};
+		// System.out.println(Arrays.toString(dd));
+		// System.out.println(Doubles.asList(dd));
+		// String dds = Doubles.asList(dd).toString();
+		// System.out.println(Arrays.toString(toDoubleArray(dds)));
 	}
-	
-	
+
 	/**
 	 * Reads a binary {@code byte} stream that consists of a list (array) of
 	 * double values. Method closes the supplied {@code InputStream} before
@@ -850,10 +852,9 @@ public final class Parsing {
 	 * @return a {@code List<Double>}
 	 * @throws IOException if there is a problem reading the supplied stream
 	 */
-	public static List<Double> readBinaryDoubleList(InputStream in,
-			int byteCount) throws IOException {
-		checkArgument(byteCount % 8 == 0,
-			"byte count incompatible with doubles");
+	public static List<Double> readBinaryDoubleList(InputStream in, int byteCount)
+			throws IOException {
+		checkArgument(byteCount % 8 == 0, "byte count incompatible with doubles");
 		checkArgument(byteCount > 0, "byte count too small");
 		if (!(checkNotNull(in) instanceof BufferedInputStream)) {
 			in = new BufferedInputStream(in);
@@ -876,8 +877,7 @@ public final class Parsing {
 	 * @return a {@code List} of {@code List<Integer>}s
 	 * @throws IOException if there is a problem reading the supplied stream
 	 */
-	public static List<List<Integer>> readBinaryIntLists(InputStream in)
-			throws IOException {
+	public static List<List<Integer>> readBinaryIntLists(InputStream in) throws IOException {
 		if (!(checkNotNull(in) instanceof BufferedInputStream)) {
 			in = new BufferedInputStream(in);
 		}
@@ -895,9 +895,9 @@ public final class Parsing {
 		in.close();
 		return list;
 	}
-	
-	public static List<BitSet> readBinaryIntBitSets(InputStream in,
-			int bitSetSize) throws IOException {
+
+	public static List<BitSet> readBinaryIntBitSets(InputStream in, int bitSetSize)
+			throws IOException {
 		if (!(checkNotNull(in) instanceof BufferedInputStream)) {
 			in = new BufferedInputStream(in);
 		}
@@ -917,5 +917,4 @@ public final class Parsing {
 		return list;
 	}
 
-	
 }
