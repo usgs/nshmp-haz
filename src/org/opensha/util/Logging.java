@@ -32,6 +32,15 @@ public class Logging {
 			ioe.printStackTrace();
 		}
 	}
+	
+	public static void init(InputStream is) {
+		try {
+			LogManager.getLogManager().readConfiguration(is);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+	}
+	
 
 	/**
 	 * Custom console formatter.

@@ -17,15 +17,15 @@
 		</fileset>
 	</path>
 
-	
-	<target name="build" depends="compile" >
+
+	<target name="build" depends="compile">
 		<jar destfile="${dist.dir}nshmp-haz.jar">
 			<fileset dir="${classes.dir}" />
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
 		</jar>
 	</target>
 
-	
+
 	<target name="compile">
 
 		<!-- Clean the classes/ directory -->
@@ -53,12 +53,9 @@
 
 	<target name="javadoc">
 
-		<!-- Clean the docs directory; preserve .git data -->
+		<!-- Clean the docs directory; .git data preserved by defaultexcludes -->
 		<delete includeEmptyDirs="true" failonerror="yes" verbose="no">
-			<fileset dir="${javadoc.dir}" includes="**/*" defaultexcludes="no">
-				<include name="**/*" />
-				<exclude name=".git" />
-			</fileset>
+			<fileset dir="${javadoc.dir}" />
 		</delete>
 
 		<javadoc classpathref="library.classpath"
