@@ -127,7 +127,6 @@ class InterfaceParser extends DefaultHandler {
 					break;
 
 				case MAG_FREQ_DIST:
-					System.out.println(sourceBuilder);
 					sourceBuilder.mfd(buildMFD(atts));
 					break;
 

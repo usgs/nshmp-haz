@@ -116,16 +116,18 @@ class Loader {
 
 		if (isZip) {
 			URI zipURI = new URI(ZIP_SCHEME, path.toString(), null);
-			System.out.println(zipURI);
-			FileSystem zfs = FileSystems.newFileSystem(zipURI, ZIP_ENV_MAP);
+			FileSystem zfs = FileSystems.getFileSystem(zipURI);
+			if (zfs == null) zfs = FileSystems.newFileSystem(zipURI, ZIP_ENV_MAP);
 			Path zipRoot = Iterables.get(zfs.getRootDirectories(), 0);
 			List<Path> paths = typeDirectoryList(zipRoot);
 			if (paths.size() > 0) return paths;
-
+			
 			// We expect that some models will be nested one level down
 			// in zip files; there should only ever be one nested directory
 			// so take a look in that, otherwise we'll throw an exception
-			// updtream for having an empty model.
+			// upstream for having an empty model. TODO this is too complex;
+			// users should build a model in a direcoty and then zip it,
+			// model is then ALWAYS nested one level deep
 			Path nestedDir = firstPath(zipRoot);
 			checkArgument(Files.isDirectory(nestedDir), "No nested directory in zip: %s", nestedDir);
 			return typeDirectoryList(nestedDir);
