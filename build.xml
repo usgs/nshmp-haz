@@ -45,6 +45,7 @@
 		<!-- Copy any non-Java resources -->
 		<copy todir="${classes.dir}" includeEmptyDirs="false">
 			<fileset dir="${src.dir}" excludes="**/*.java" />
+			<fileset dir="${lib.dir}" excludes="**/*.jar" />
 		</copy>
 
 	</target>
@@ -66,6 +67,7 @@
 		         version="true"
 		         use="true"
 		         windowtitle="nshmp-haz"
+		         doctitle="nshmp-haz"
 		         maxmemory="512m"
 		         verbose="false"
 		         encoding="UTF-8"
