@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.opensha.calc.Calcs;
@@ -26,6 +27,7 @@ import org.opensha.util.Logging;
 import org.opensha.util.Parsing;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 /**
@@ -58,17 +60,22 @@ public class HazardCurve {
 	 * @param imt intensity measure type
 	 * @param site of interest
 	 */
-	public static Result calc(HazardModel model, Imt imt, Site site) {
-		return null;
-	}
-
-	public static MultiResult calc(HazardModel model, Imt imt, List<Site> sites) {
-
-		for (Site site : sites) {
-			calc(model, imt, site);
+	public static HazardResult calc(HazardModel model, Imt imt, Site site) {
+		try {
+			return Calcs.hazardCurve(model, imt, site, modelCurve);
+		} catch (ExecutionException | InterruptedException e) {
+			Throwables.propagate(e);
+			return null;
 		}
-		return null;
 	}
+
+//	public static MultiResult calc(HazardModel model, Imt imt, List<Site> sites) {
+//
+//		for (Site site : sites) {
+//			calc(model, imt, site);
+//		}
+//		return null;
+//	}
 
 	/**
 	 * Multiple hazard curve wrapper.
