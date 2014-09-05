@@ -118,6 +118,11 @@ class Loader {
 		if (isZip) {
 			URI zipURI = new URI(ZIP_SCHEME, path.toString(), null);
 			FileSystem zfs = null;
+			
+			// TODO if a servlet reloads in the same JVM then the filesystem
+			// already exists and an exception is thrown; not sure how this
+			// behaves when using an unexploded WAR, but it probably fails;
+			// it probably also fails for a directory model in a WAR
 			try {
 				zfs = FileSystems.getFileSystem(zipURI);
 			} catch (FileSystemNotFoundException fsnfe) {
