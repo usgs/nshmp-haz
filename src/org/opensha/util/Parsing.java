@@ -47,6 +47,9 @@ import com.google.common.primitives.Ints;
  */
 public final class Parsing {
 
+	// TODO create delimiter enum and remove specific named splitters
+	// joiners, e.g. splitOnComma should be splitToList(s, delimiter)
+	
 	// @formatter:off
 	private static final Joiner JOIN_SPACE = Joiner.on(' ').skipNulls();
 	private static final Joiner JOIN_DASH = Joiner.on('-').skipNulls();
@@ -452,6 +455,17 @@ public final class Parsing {
 	 */
 	public static Iterable<String> splitOnSlash(String s) {
 		return SPLIT_SLASH.split(s);
+	}
+
+	/**
+	 * Split a {@code String} into a {@code List<String>} on forward
+	 * slashes ('/').
+	 * @param s {@code String} to split
+	 */
+	public static List<String> splitOnSlashesToList(String s) {
+		return FluentIterable
+				.from(splitOnSlash(s))
+				.toList();
 	}
 
 	/**
