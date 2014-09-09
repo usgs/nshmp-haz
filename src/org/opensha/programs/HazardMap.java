@@ -20,6 +20,7 @@ import org.opensha.geo.Location;
 import org.opensha.geo.Regions;
 import org.opensha.gmm.Imt;
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -190,7 +191,7 @@ public class HazardMap {
 		// @formatter:off
 		@Override public Site apply(String locDat) {
 			List<Double> parts =  FluentIterable
-					.from(Parsing.splitOnCommas(locDat))
+					.from(Parsing.split(locDat, Delimiter.COMMA))
 					.transform(Doubles.stringConverter())
 					.toList();
 			Location loc = Location.create(parts.get(1), parts.get(0));

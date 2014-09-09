@@ -20,6 +20,7 @@ import org.opensha.data.DataUtils;
 import org.opensha.util.Logging;
 import org.opensha.util.MathUtils;
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -31,6 +32,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.Resources;
+import com.google.common.primitives.Doubles;
 
 /**
  * Utility class to load and fetch ground motion model lookup tables.
@@ -245,7 +247,7 @@ final class GmmTables {
 				firstLine = false;
 				return true;
 			}
-			List<Double> values = Parsing.toDoubleList(line);
+			List<Double> values = Parsing.splitToDoubleList(line, Delimiter.SPACE);
 			ImmutableSortedMap.Builder<Double, Double> mMap = ImmutableSortedMap.naturalOrder();
 			for (int i = 0; i < frankelMagKeys.length; i++) {
 				mMap.put(frankelMagKeys[i], values.get(i + 1));
@@ -293,8 +295,8 @@ final class GmmTables {
 			
 			if (lineIdx == 2) {
 				List<Imt> imtList = FluentIterable
-					.from(Parsing.splitOnSpaces(line))
-					.transform(Parsing.doubleValueFunction())
+					.from(Parsing.split(line, Delimiter.SPACE))
+					.transform(Doubles.stringConverter())
 					.transform(new FrequencyToIMT())
 					.toList();
 				// remove dupes -- (e.g., 2s PGA columns in P11)
@@ -305,7 +307,7 @@ final class GmmTables {
 				return true;
 			}
 			
-			List<Double> values = Parsing.toDoubleList(line);
+			List<Double> values = Parsing.splitToDoubleList(line, Delimiter.SPACE);
 			if (values.size() == 1) {
 				m = values.get(0); // set magnitude
 				return true;

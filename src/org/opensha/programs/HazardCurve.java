@@ -25,6 +25,7 @@ import org.opensha.geo.Location;
 import org.opensha.gmm.Imt;
 import org.opensha.util.Logging;
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
@@ -51,7 +52,7 @@ public class HazardCurve {
 	private static final String HEADER2;
 
 	static {
-		HEADER2 = "lon,lat," + Parsing.joinOnCommas(modelCurve.xValues());
+		HEADER2 = "lon,lat," + Parsing.join(modelCurve.xValues(), Delimiter.COMMA);
 	}
 
 	/**
@@ -165,7 +166,7 @@ public class HazardCurve {
 			HazardResult result = Calcs.hazardCurve(model, imt, site, modelCurve);
 			sw.stop();
 			log.info("HazardCurve: complete (" + sw.elapsed(MILLISECONDS) + "ms)");
-			System.out.println(Parsing.joinOnCommas(result.curve().yValues()));
+			System.out.println(Parsing.join(result.curve().yValues(), Delimiter.COMMA));
 			System.exit(0);
 		} catch (Exception e) {
 			StringBuilder sb = new StringBuilder(LF);
@@ -225,7 +226,7 @@ public class HazardCurve {
 			StringBuilder sb = new StringBuilder();
 			Location loc = sites.get(i).loc;
 			sb.append(loc.lon()).append(',').append(loc.lat()).append(',');
-			sb.append(Parsing.joinOnCommas(results.get(i).curve().yValues()));
+			sb.append(Parsing.join(results.get(i).curve().yValues(), Delimiter.COMMA));
 			lines.add(sb.toString());
 		}
 		Files.write(out, lines, US_ASCII);
@@ -236,7 +237,7 @@ public class HazardCurve {
 		List<Site> sites = new ArrayList<>();
 		for (String line : lines) {
 			if (line.startsWith("#")) continue;
-			List<Double> values = Parsing.splitOnCommasToDoubleList(line);
+			List<Double> values = Parsing.splitToDoubleList(line, Delimiter.COMMA);
 			Location loc = Location.create(values.get(1), values.get(0));
 			double vs30 = (values.size() == 3) ? values.get(2) : DEFAULT_VS_30;
 			sites.add(Site.create(loc, vs30));

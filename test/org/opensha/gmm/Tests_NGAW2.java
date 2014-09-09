@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -28,6 +29,7 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import com.google.common.primitives.Doubles;
 
 @SuppressWarnings("javadoc")
 @RunWith(Parameterized.class)
@@ -97,10 +99,10 @@ public class Tests_NGAW2 {
 				String id = gmm.name() + "-" + imt;
 				for (GmmInput input : inputs) {
 					ScalarGroundMotion sgm = gmModel.calc(input);
-					String result = Parsing.joinOnCommas(
+					String result = Parsing.join(
 						Lists.newArrayList(modelIdx++ + "-" + id,
 						String.format("%.6f", Math.exp(sgm.mean())),
-						String.format("%.6f", sgm.sigma()))) +
+						String.format("%.6f", sgm.sigma())), Delimiter.COMMA) +
 						StandardSystemProperty.LINE_SEPARATOR.value();
 					Files.append(result, out, Charsets.US_ASCII);
 				}
@@ -132,8 +134,8 @@ public class Tests_NGAW2 {
 		INSTANCE;
 		@Override
 		public Object[] apply(String line) {
-			Iterator<String> lineIt = Parsing.splitOnCommas(line).iterator();
-			Iterator<String> idIt = Parsing.splitOnDash(lineIt.next()).iterator();
+			Iterator<String> lineIt = Parsing.split(line, Delimiter.COMMA).iterator();
+			Iterator<String> idIt = Parsing.split(lineIt.next(), Delimiter.DASH).iterator();
 			return new Object[] {
 				Integer.valueOf(idIt.next()),	// inputs index
 				Gmm.valueOf(idIt.next()),		// Gmm
@@ -159,8 +161,8 @@ public class Tests_NGAW2 {
 		public GmmInput apply(String line) {
 
 			Iterator<Double> it = FluentIterable
-				.from(Parsing.splitOnCommas(line))
-				.transform(Parsing.doubleValueFunction())
+				.from(Parsing.split(line, Delimiter.COMMA))
+				.transform(Doubles.stringConverter())
 				.iterator();
 
 			return GmmInput.builder()

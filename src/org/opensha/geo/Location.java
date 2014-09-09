@@ -10,9 +10,11 @@ import static org.opensha.geo.GeoTools.validateLon;
 import java.util.Iterator;
 
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
+import com.google.common.primitives.Doubles;
 
 /**
  * A {@code Location} represents a point with reference to the earth's
@@ -221,8 +223,8 @@ public final class Location implements Comparable<Location> {
 		@Override
 		public Location apply(String s) {
 			Iterator<Double> it = FluentIterable
-				.from(Parsing.splitOnCommas(checkNotNull(s)))
-				.transform(Parsing.doubleValueFunction()).iterator();
+				.from(Parsing.split(checkNotNull(s), Delimiter.COMMA))
+				.transform(Doubles.stringConverter()).iterator();
 			// lon is first arg in KML but second in Location constructor
 			double lon = it.next();
 			return create(it.next(), lon, it.next());

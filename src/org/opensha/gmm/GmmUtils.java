@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -96,7 +97,7 @@ public final class GmmUtils {
 				}
 				if (line.startsWith("#")) continue;
 				
-				List<String> dVal = Lists.newArrayList(Parsing.splitOnSpaces(line));
+				List<String> dVal = Lists.newArrayList(Parsing.split(line, Delimiter.SPACE));
 				if (dVal.size() == 0) continue;
 				int distKey = new Double(dVal.get(0)).intValue();
 				magMap.put(distKey, Double.parseDouble(dVal.get(1)));
@@ -117,14 +118,14 @@ public final class GmmUtils {
 			while ((line = br.readLine()) != null) {
 				if (line.startsWith("C")) {
 					// period map
-					Iterable<String> parts = Parsing.splitOnSpaces(line);
+					Iterable<String> parts = Parsing.split(line, Delimiter.SPACE);
 					double per = Double.parseDouble(Iterables.get(parts, 4));
 					int perKey = (int) (per * 1000);
 					periodMap = new HashMap<Integer, Map<Integer, Double>>();
 					map.put(perKey, periodMap);
 					continue;
 				}
-				List<String> values = Lists.newArrayList(Parsing.splitOnSpaces(line));
+				List<String> values = Lists.newArrayList(Parsing.split(line, Delimiter.SPACE));
 				if (values.size() == 0) continue;
 				int distKey = Integer.parseInt(values.get(0));
 				int magIdx = Integer.parseInt(values.get(1));

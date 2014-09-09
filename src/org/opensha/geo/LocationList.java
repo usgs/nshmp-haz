@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
@@ -144,7 +145,7 @@ public final class LocationList implements Iterable<Location> {
 	 */
 	public static LocationList fromString(String s) {
 		return create(Iterables.transform(
-			Parsing.splitOnSpaces(checkNotNull(s)),
+			Parsing.split(checkNotNull(s), Delimiter.SPACE),
 			Location.fromStringFunction()));
 	}
 
