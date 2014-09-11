@@ -29,7 +29,7 @@ public enum SourceType {
 	/** Subduction intraslab source type. */
 	SLAB,
 
-	/** Indexed fault source type. */
+	/** Fault system source type. */
 	SYSTEM;
 	
 	/**

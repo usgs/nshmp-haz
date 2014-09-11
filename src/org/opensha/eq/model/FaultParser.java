@@ -123,7 +123,7 @@ class FaultParser extends DefaultHandler {
 					}
 					break;
 
-				case MAG_FREQ_DIST_REF:
+				case DEFAULT_MFDS:
 					mfdHelper = MfdHelper.create();
 					parsingDefaultMFDs = true;
 					break;
@@ -151,7 +151,7 @@ class FaultParser extends DefaultHandler {
 					log.fine("     Source: " + srcName);
 					break;
 
-				case MAG_FREQ_DIST:
+				case INCREMENTAL_MFD:
 					if (parsingDefaultMFDs) {
 						mfdHelper.addDefault(atts);
 						break;
@@ -190,7 +190,7 @@ class FaultParser extends DefaultHandler {
 		try {
 			switch (e) {
 
-				case MAG_FREQ_DIST_REF:
+				case DEFAULT_MFDS:
 					parsingDefaultMFDs = false;
 					break;
 

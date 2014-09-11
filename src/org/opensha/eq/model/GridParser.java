@@ -124,12 +124,12 @@ class GridParser extends DefaultHandler {
 				}
 				break;
 
-			case MAG_FREQ_DIST_REF:
+			case DEFAULT_MFDS:
 				mfdHelper = MfdHelper.create();
 				parsingDefaultMFDs = true;
 				break;
 
-			case MAG_FREQ_DIST:
+			case INCREMENTAL_MFD:
 				if (parsingDefaultMFDs) {
 					deltaMag = mfdHelper.addDefault(atts);
 				}
@@ -185,7 +185,7 @@ class GridParser extends DefaultHandler {
 
 		switch (e) {
 
-			case MAG_FREQ_DIST_REF:
+			case DEFAULT_MFDS:
 				parsingDefaultMFDs = false;
 				break;
 

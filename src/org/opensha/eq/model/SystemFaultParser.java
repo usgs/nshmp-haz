@@ -108,7 +108,7 @@ class SystemFaultParser extends DefaultHandler {
 			//@formatter:off
 			switch (e) {
 
-				case INDEXED_FAULT_SOURCE_SET:
+				case SYSTEM_SOURCE_SET:
 					String name = readString(NAME, atts);
 					double weight = readDouble(WEIGHT, atts);
 					sourceSetBuilder = new SystemSourceSet.Builder();
@@ -122,12 +122,12 @@ class SystemFaultParser extends DefaultHandler {
 					log.info(" Set Weight: " + weight);
 					break;
 
-				case MAG_FREQ_DIST_REF:
+				case DEFAULT_MFDS:
 					mfdHelper = MfdHelper.create();
 					parsingDefaultMFDs = true;
 					break;
 
-				case MAG_FREQ_DIST:
+				case INCREMENTAL_MFD:
 					if (parsingDefaultMFDs) {
 						mfdHelper.addDefault(atts);
 						break;
@@ -170,11 +170,11 @@ class SystemFaultParser extends DefaultHandler {
 		try {
 			switch (e) {
 
-				case MAG_FREQ_DIST_REF:
+				case DEFAULT_MFDS:
 					parsingDefaultMFDs = false;
 					break;
 
-				case INDEXED_FAULT_SOURCE_SET:
+				case SYSTEM_SOURCE_SET:
 					sourceSet = sourceSetBuilder.build();
 					log.info("   Ruptures: " + sourceSet.size());
 					break;

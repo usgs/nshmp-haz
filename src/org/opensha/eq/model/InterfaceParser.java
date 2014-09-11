@@ -126,7 +126,7 @@ class InterfaceParser extends DefaultHandler {
 					log.fine("     Source: " + srcName);
 					break;
 
-				case MAG_FREQ_DIST:
+				case INCREMENTAL_MFD:
 					sourceBuilder.mfd(buildMFD(atts));
 					break;
 

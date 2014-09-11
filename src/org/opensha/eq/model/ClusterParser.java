@@ -122,7 +122,7 @@ class ClusterParser extends DefaultHandler {
 					}
 					break;
 
-				case MAG_FREQ_DIST_REF:
+				case DEFAULT_MFDS:
 					parsingDefaultMFDs = true;
 					break;
 
@@ -167,7 +167,7 @@ class ClusterParser extends DefaultHandler {
 					log.finer("      Fault: " + srcName);
 					break;
 
-				case MAG_FREQ_DIST:
+				case INCREMENTAL_MFD:
 					if (parsingDefaultMFDs) {
 						checkState(readEnum(TYPE, atts, MfdType.class) == MfdType.SINGLE,
 							"Only SINGLE MFDs are supported by cluster sources");
@@ -208,7 +208,7 @@ class ClusterParser extends DefaultHandler {
 		try {
 			switch (e) {
 
-				case MAG_FREQ_DIST_REF:
+				case DEFAULT_MFDS:
 					parsingDefaultMFDs = false;
 					break;
 

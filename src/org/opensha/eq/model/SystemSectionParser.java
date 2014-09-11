@@ -85,7 +85,7 @@ class SystemSectionParser extends DefaultHandler {
 		try {
 			switch (e) {
 
-				case INDEXED_FAULT_SECTIONS:
+				case SYSTEM_FAULT_SECTIONS:
 					sections = Lists.newArrayList();
 					String setName = readString(NAME, atts);
 					log.info("");
