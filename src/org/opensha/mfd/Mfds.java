@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
-import static org.opensha.eq.Magnitudes.magToMoment;
+import static org.opensha.eq.Magnitudes.magToMoment_N_m;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,7 @@ public class Mfds {
 	 * @return a new {@code IncrementalMfd}
 	 */
 	public static IncrementalMfd newSingleMoBalancedMFD(double mag, double moRate, boolean floats) {
-		double cumRate = moRate / Magnitudes.magToMoment(mag);
+		double cumRate = moRate / magToMoment_N_m(mag);
 		return newSingleMFD(mag, cumRate, floats);
 	}
 
@@ -188,7 +188,7 @@ public class Mfds {
 		double M;
 		for (int i = 0; i < nMag; i++) {
 			M = mMin + i * dMag;
-			moRate += grRate(a, b, M) * magToMoment(M);
+			moRate += grRate(a, b, M) * magToMoment_N_m(M);
 		}
 		return moRate;
 	}

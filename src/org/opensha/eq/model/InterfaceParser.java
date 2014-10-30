@@ -6,6 +6,8 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
 import static org.opensha.eq.model.SourceAttribute.A;
 import static org.opensha.eq.model.SourceAttribute.B;
+import static org.opensha.eq.model.SourceAttribute.DEPTH;
+import static org.opensha.eq.model.SourceAttribute.DIP;
 import static org.opensha.eq.model.SourceAttribute.D_MAG;
 import static org.opensha.eq.model.SourceAttribute.FLOATS;
 import static org.opensha.eq.model.SourceAttribute.M;
@@ -15,6 +17,7 @@ import static org.opensha.eq.model.SourceAttribute.M_MIN;
 import static org.opensha.eq.model.SourceAttribute.NAME;
 import static org.opensha.eq.model.SourceAttribute.RAKE;
 import static org.opensha.eq.model.SourceAttribute.WEIGHT;
+import static org.opensha.eq.model.SourceAttribute.WIDTH;
 import static org.opensha.util.Parsing.readBoolean;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readEnum;
@@ -61,6 +64,10 @@ class InterfaceParser extends DefaultHandler {
 	private InterfaceSource.Builder sourceBuilder;
 
 	private MagScalingRelationship msr;
+
+	// Default MFD data
+	private boolean parsingDefaultMFDs = false;
+	private MfdHelper mfdHelper;
 
 	// Traces are the only text content in source files
 	private boolean readingTrace = false;
@@ -111,6 +118,11 @@ class InterfaceParser extends DefaultHandler {
 					}
 					break;
 
+				case DEFAULT_MFDS:
+					mfdHelper = MfdHelper.create();
+					parsingDefaultMFDs = true;
+					break;
+
 				case SOURCE_PROPERTIES:
 					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
 					sourceSetBuilder.magScaling(msrType);
@@ -127,11 +139,32 @@ class InterfaceParser extends DefaultHandler {
 					break;
 
 				case INCREMENTAL_MFD:
+					if (parsingDefaultMFDs) {
+						mfdHelper.addDefault(atts);
+						break;
+					}
 					sourceBuilder.mfd(buildMFD(atts));
 					break;
 
 				case GEOMETRY:
 					sourceBuilder.rake(readDouble(RAKE, atts));
+					
+					/*
+					 * At present, an InterfaceSource geometry may be defined
+					 * with an upper trace, dip, depth and width, or and upper
+					 * and lower trace. Rake is always required (above), but the
+					 * three scalar parameters (dip, depth, and width) must be
+					 * conditionally read. The InterfaceSource.Builder will
+					 * check if either construction technique has been
+					 * satisfied.
+					 */
+					try {
+						sourceBuilder.depth(readDouble(DEPTH, atts))
+							.dip(readDouble(DIP, atts))
+							.width(readDouble(WIDTH, atts));
+					} catch (NullPointerException npe) {
+						// keep moving, these atts are not necessarily required
+					}
 					break;
 
 				case TRACE:
@@ -144,7 +177,7 @@ class InterfaceParser extends DefaultHandler {
 					traceBuilder = new StringBuilder();
 					break;
 			}
-
+			// @formatter:on
 		} catch (Exception ex) {
 			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
 		}
@@ -163,6 +196,10 @@ class InterfaceParser extends DefaultHandler {
 		try {
 			switch (e) {
 
+				case DEFAULT_MFDS:
+					parsingDefaultMFDs = false;
+					break;
+
 				case TRACE:
 					readingTrace = false;
 					sourceBuilder.trace(LocationList.fromString(traceBuilder.toString()));
@@ -175,7 +212,8 @@ class InterfaceParser extends DefaultHandler {
 
 				case SOURCE:
 					sourceSetBuilder.source(sourceBuilder.buildSubductionSource());
-					log.finer(""); // insert blank line for detailed source output
+					log.finer(""); // insert blank line for detailed source
+									// output
 					break;
 
 				case SUBDUCTION_SOURCE_SET:
@@ -201,9 +239,9 @@ class InterfaceParser extends DefaultHandler {
 		MfdType type = MfdType.valueOf(atts.getValue("type"));
 		switch (type) {
 			case GR:
-				return buildGR(atts);
+				return buildGR(mfdHelper.getGR(atts));
 			case SINGLE:
-				return buildSingle(atts);
+				return buildSingle(mfdHelper.getSingle(atts));
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
 		}
@@ -213,34 +251,22 @@ class InterfaceParser extends DefaultHandler {
 	 * Builds GR MFD. Method will throw IllegalStateException if attribute
 	 * values yield an MFD with no magnitude bins.
 	 */
-	private IncrementalMfd buildGR(Attributes atts) {
-		double a = readDouble(A, atts);
-		double b = readDouble(B, atts);
-		double mMin = readDouble(M_MIN, atts);
-		double mMax = readDouble(M_MAX, atts);
-		double dMag = readDouble(D_MAG, atts);
-		double weight = readDouble(WEIGHT, atts);
+	private IncrementalMfd buildGR(MfdHelper.GR_Data data) {
 
-		int nMag = Mfds.magCount(mMin, mMax, dMag);
+		int nMag = Mfds.magCount(data.mMin, data.mMax, data.dMag);
 		checkState(nMag > 0, "GR MFD with no mags");
-		double tmr = Mfds.totalMoRate(mMin, nMag, dMag, a, b);
+		double tmr = Mfds.totalMoRate(data.mMin, nMag, data.dMag, data.a, data.b);
 
-		GutenbergRichterMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(mMin, dMag, nMag, b, tmr *
-			weight);
+		GutenbergRichterMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
+			data.b, tmr * data.weight);
 		log.finer("   MFD type: GR");
 		if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 		return mfd;
 	}
 
 	/* Builds single MFD */
-	private IncrementalMfd buildSingle(Attributes atts) {
-
-		double a = readDouble(A, atts);
-		double m = readDouble(M, atts);
-		boolean floats = readBoolean(FLOATS, atts);
-		double weight = readDouble(WEIGHT, atts);
-
-		IncrementalMfd mfd = Mfds.newSingleMFD(m, weight * a, floats);
+	private IncrementalMfd buildSingle(MfdHelper.SingleData data) {
+		IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.a, data.floats);
 		log.finer("   MFD type: SINGLE");
 		if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 		return mfd;

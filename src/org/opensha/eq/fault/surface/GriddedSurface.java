@@ -60,7 +60,7 @@ public interface GriddedSurface extends Container2D<Location>, RuptureSurface {
 	 * This returns a list of locations that are evenly spread along the upper
 	 * edge of the surface. Further details are specified by the implementing
 	 * class. These locations should be ordered along the fault following the
-	 * Aki and Richards convention.
+	 * Aki and Richards convention. TODO move to Container2D topRow()
 	 */
 	public LocationList getEvenlyDiscritizedUpperEdge();
 
@@ -68,7 +68,7 @@ public interface GriddedSurface extends Container2D<Location>, RuptureSurface {
 	 * This returns a list of locations that are evenly spread along the lower
 	 * edge of the surface. Further details are specified by the implementing
 	 * class. These locations should be ordered along the fault following the
-	 * Aki and Richards convention.
+	 * Aki and Richards convention. TODO move to Container2D bottomRow()
 	 */
 	public LocationList getEvenlyDiscritizedLowerEdge();
 

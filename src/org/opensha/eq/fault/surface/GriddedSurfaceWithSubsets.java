@@ -8,7 +8,7 @@ import static org.opensha.eq.fault.Faults.validateDepth;
 import static org.opensha.eq.fault.Faults.validateDip;
 import static org.opensha.eq.fault.Faults.validateStrike;
 import static org.opensha.eq.fault.Faults.validateTrace;
-import static org.opensha.eq.fault.Faults.validateWidth;
+import static org.opensha.eq.fault.Faults.validateInterfaceWidth;
 import static org.opensha.geo.LocationVector.createWithPlunge;
 import static org.opensha.geo.Locations.linearDistanceFast;
 import static org.opensha.geo.Locations.location;
@@ -193,7 +193,9 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 
 		public Builder width(double width) {
 			checkState(lowerDepth == null, "Either width or lower depth may be set, but not both");
-			this.width = validateWidth(width);
+			// we don't know what the surface may be used to represent
+			// so we validate against the largest (interface) values
+			this.width = validateInterfaceWidth(width);
 			return this;
 		}
 

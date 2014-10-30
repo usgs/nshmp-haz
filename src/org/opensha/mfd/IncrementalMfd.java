@@ -100,7 +100,7 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
      */
 
     public double getMomentRate(double mag) {
-      return getIncrRate(mag) * Magnitudes.magToMoment(mag);
+      return getIncrRate(mag) * Magnitudes.magToMoment_N_m(mag);
     }
 
 
@@ -110,7 +110,7 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
      */
 
     public double getMomentRate(int index) {
-      return getIncrRate(index) * Magnitudes.magToMoment(getX(index));
+      return getIncrRate(index) * Magnitudes.magToMoment_N_m(getX(index));
     }
 
 

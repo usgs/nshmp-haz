@@ -208,7 +208,7 @@ class FaultParser extends DefaultHandler {
 
 				case SOURCE:
 					sourceSetBuilder.source(sourceBuilder.buildFaultSource());
-					log.finer(""); // insert blank line for detailed source output
+					log.finer(""); // insert blank line for detailed output
 					break;
 
 				case FAULT_SOURCE_SET:
@@ -299,7 +299,7 @@ class FaultParser extends DefaultHandler {
 		List<IncrementalMfd> mfds = Lists.newArrayList();
 
 		// total moment rate
-		double tmr = data.a * Magnitudes.magToMoment(data.m);
+		double tmr = data.a * Magnitudes.magToMoment_N_m(data.m);
 		// total event rate
 		double tcr = data.a;
 
@@ -354,7 +354,7 @@ class FaultParser extends DefaultHandler {
 		// @formatter:on
 		return mfds;
 	}
-	
+
 	private static String epiBranch(int i) {
 		return (i == 0) ? "(M-epi)" : (i == 2) ? "(M+epi)" : "(M)";
 	}

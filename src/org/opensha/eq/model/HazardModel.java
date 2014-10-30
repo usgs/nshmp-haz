@@ -29,17 +29,25 @@ import com.google.common.collect.SetMultimap;
  */
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
 
+	// TODO see InterfaceSource todo; Container2D needs getTopRow and getBottomRow
+	
 	// TODO where/how to apply CEUS clamps
 
 	// TODO need to revisit the application of uncertainty when minM < 6.5
 	// e.g. 809a Pine Valley graben in orwa.c.in
 
+	// TODO Is current approach in SYstemSourceSet for precomputing distances
+	// correct? Double check that the individual sections are scaled by aseis
+	// not after once built into ruptures.
+	
 	// TODO not sure why I changed surface implementations to project down dip
 	// from
 	// zero to zTop, but it was wrong. currently sesmogenic depth is ignored,
 	// but
 	// may need this for system sources; should zTop be encoded into trace
 	// depths?
+	
+	// TODO document object relationships via transforms in calc package
 
 	// TODO expose FloatStyle
 	// TODO SUB check rake handling
@@ -88,7 +96,10 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 
 	// TODO perhaps we process a config.xml file at the root of
 	// a HazardModel to pick up name and other calc configuration data
+	
+	// TODO are slabSource depths validated?
 
+	
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
 

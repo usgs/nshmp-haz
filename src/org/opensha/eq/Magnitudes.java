@@ -10,6 +10,7 @@ import com.google.common.collect.Range;
 
 /**
  * Earthquake magnitude utilities.
+ * 
  * @author Peter Powers
  */
 public final class Magnitudes {
@@ -26,11 +27,10 @@ public final class Magnitudes {
 	 */
 	public static final double MAX_MAG = 9.7;
 
-	/** Shear modulus. μ = 3 * 10<sup>10</sup> dyne/cm<sup>2</sup>.*/
+	/** Shear modulus. μ = 3 * 10<sup>10</sup> dyne/cm<sup>2</sup>. */
 	public static final double MU = 3e10;
-	
-	private static final Range<Double> magRange = Range
-		.closed(MIN_MAG, MAX_MAG);
+
+	private static final Range<Double> magRange = Range.closed(MIN_MAG, MAX_MAG);
 
 	/**
 	 * Verifies that a magnitude value is between {@code MIN_MAG} and
@@ -48,34 +48,62 @@ public final class Magnitudes {
 
 	/**
 	 * Convert moment magnitude, <em>M</em><sub>W</sub>, to seismic moment,
-	 * <em>M</em><sub>0</sub>.
+	 * <em>M</em><sub>0</sub>, following the equation of Hanks and Kanamori
+	 * (1997).
+	 * 
 	 * @param magnitude to convert
-	 * @return the equivalent seismic moment in Newton-meters
+	 * @return the equivalent seismic moment in N·m
 	 */
-	public static double magToMoment(double magnitude) {
+	public static double magToMoment_N_m(double magnitude) {
 		return pow(10, 1.5 * magnitude + 9.05);
 	}
 
 	/**
 	 * Convert seismic moment, <em>M</em><sub>0</sub>, to moment magnitude,
-	 * <em>M</em><sub>w</sub>.
-	 * @param moment to convert (in Newton-meters)
+	 * <em>M</em><sub>w</sub>, following the equation of Hanks and Kanamori
+	 * (1997).
+	 * 
+	 * @param moment to convert (in N·m)
 	 * @return the equivalent moment magnitude
 	 */
-	public static double momentToMag(double moment) {
+	public static double momentToMag_N_m(double moment) {
 		return (log10(moment) - 9.05) / 1.5;
 	}
-	
-	// TODO finish this, check conversion for slip in m instead of mm/yr for rate
-//	/**
-//	 * @param area in km<sup>2</sup>
-//	 * @param slip 
-//	 * @return
-//	 */
-//	public static double moment(double area, double slip) {
-//		return area *
-//	}
-//	public static double recurrence(double Mw, double area, double slip)
 
-	
+	/**
+	 * Convert moment magnitude, <em>M</em><sub>W</sub>, to seismic moment,
+	 * <em>M</em><sub>0</sub>, following the equation of Hanks and Kanamori
+	 * (1997).
+	 * 
+	 * @param magnitude to convert
+	 * @return the equivalent seismic moment in dyn·cm.
+	 */
+	public static double magToMoment_dyn_cm(double magnitude) {
+		return pow(10, 1.5 * magnitude + 16.05);
+	}
+
+	/**
+	 * Convert seismic moment, <em>M</em><sub>0</sub>, to moment magnitude,
+	 * <em>M</em><sub>w</sub>, following the equation of Hanks and Kanamori
+	 * (1997).
+	 * 
+	 * @param moment to convert (in dyn·cm)
+	 * @return the equivalent moment magnitude
+	 */
+	public static double momentToMag_dyn_cm(double moment) {
+		return (log10(moment) - 16.05) / 1.5;
+	}
+
+	// TODO finish this, check conversion for slip in m instead of mm/yr for
+	// rate
+	// /**
+	// * @param area in km<sup>2</sup>
+	// * @param slip
+	// * @return
+	// */
+	// public static double moment(double area, double slip) {
+	// return area *
+	// }
+	// public static double recurrence(double Mw, double area, double slip)
+
 }
