@@ -27,11 +27,13 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  */
-public class Mfds {
+public final class Mfds {
 
 	private static final int DEFAULT_TRUNC_TYPE = 2;
 	private static final int DEFAULT_TRUNC_LEVEL = 2;
 
+	private Mfds() {}
+	
 	/**
 	 * Creates a new single magnitude {@code IncrementalMfd}.
 	 * 
@@ -155,6 +157,65 @@ public class Mfds {
 		GutenbergRichterMfd mfd = buildGutenbergRichterBaseMFD(min, delta, size);
 		mfd.setAllButTotCumRate(min, min + (size - 1) * delta, moRate, b);
 		return mfd;
+	}
+	
+	/*
+	 * A Tapered GR distribution is difficult to make as a child of GR because
+	 * to fully initialize a GR requires multiple steps (e.g. scaleTo...)
+	 * Could do it independently; would require calculateRelativeRates. We'll
+	 * just create a factory method for now until MFD TODO Builders are impl.
+	 */
+	
+	public static IncrementalMfd newTaperedGutenbergRichterMFD(double min, double delta, int size,
+			double a, double b, double corner, double weight) {
+		GutenbergRichterMfd mfd = newGutenbergRichterMFD(min, delta, size, b, 1.0);
+		double incrRate = incrRate(a, b, min) * weight;
+		mfd.scaleToIncrRate(min, incrRate);
+		taper(mfd, corner);
+		return mfd;
+	}
+	
+	/*
+	 * This maintains consistency with NSHM, but really should be Magnitudes.MAX_MAG (9.7)
+	 */
+	private static final double TAPERED_LARGE_MAG = 9.05;
+	
+	private static void taper(GutenbergRichterMfd mfd, double mCorner) {
+		
+		double minMo = magToMoment_N_m(mfd.getMagLower());
+		double cornerMo = magToMoment_N_m(mCorner);
+		double largeMo = magToMoment_N_m(TAPERED_LARGE_MAG);
+		double beta = mfd.get_bValue() / 1.5;
+		double binHalfWidth = mfd.getDelta() / 2.0;
+
+		for (int i=0; i<mfd.getNum(); i++) {
+			double mag = mfd.getX(i);
+			double magMoLo = magToMoment_N_m(mag - binHalfWidth);
+			double magMoHi = magToMoment_N_m(mag + binHalfWidth);
+			
+			double magBinCountTapered = magBinCount(minMo, magMoLo, magMoHi, beta, cornerMo);
+			double magBinCount = magBinCount(minMo, magMoLo, magMoHi, beta, largeMo);
+			double scale = magBinCountTapered / magBinCount;
+			
+			mfd.set(i, mfd.getY(i) * scale);
+		}
+	}
+	
+	/*
+	 * Convenience method for computing the number of events in a tapered GR
+	 * magnitude bin.
+	 */
+	private static double magBinCount(double minMo, double magMoLo, double magMoHi,
+			double cornerMo, double beta) {
+		return pareto(minMo, magMoLo, beta, cornerMo) - pareto(minMo, magMoHi, beta, cornerMo);
+	}
+	
+	/*
+	 * Complementary Pareto distribution: cumulative number of events with
+	 * seismic moment greater than magMo with an exponential taper
+	 */
+	private static double pareto(double minMo, double magMo, double cornerMo, double beta) {
+		return pow(minMo / magMo, beta) * exp((minMo - magMo) / cornerMo);
 	}
 
 	private static IncrementalMfd buildIncrementalBaseMFD(double min, double max, int size,

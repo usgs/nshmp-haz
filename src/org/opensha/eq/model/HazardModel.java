@@ -29,6 +29,9 @@ import com.google.common.collect.SetMultimap;
  */
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
 
+	// TODO recheck 'float'-ing rupture tracking; e.g. GR MFD is set to false; that
+	// can't be right; and what about magScaling to go with float?
+	
 	// TODO see InterfaceSource todo; Container2D needs getTopRow and getBottomRow
 	
 	// TODO where/how to apply CEUS clamps

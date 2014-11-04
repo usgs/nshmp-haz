@@ -7,7 +7,7 @@ import org.opensha.eq.Magnitudes;
 
 
 /**
- * Base implementation for magnitude-frequency distributions (Mfds) that give the rate of
+ * Base implementation for magnitude-frequency distributions (MFDs) that give the rate of
  * one or more earthquakes with differing magnitudes per year.
  * 
  * 
