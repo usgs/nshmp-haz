@@ -285,6 +285,70 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 		return c;
 	}
 
+	static final class Crustal extends McVerryEtAl_2000 {
+		final static String NAME = McVerryEtAl_2000.NAME + ": Crustal";
+
+		Crustal(Imt imt) {
+			super(imt);
+		}
+
+		@Override boolean isGeomean() {
+			return false;
+		}
+
+		@Override TectonicSetting tectonicSetting() {
+			return TectonicSetting.ACTIVE_SHALLOW_CRUST;
+		}
+	}
+
+	static final class Volcanic extends McVerryEtAl_2000 {
+		final static String NAME = McVerryEtAl_2000.NAME + ": Volcanic";
+
+		Volcanic(Imt imt) {
+			super(imt);
+		}
+
+		@Override boolean isGeomean() {
+			return false;
+		}
+
+		@Override TectonicSetting tectonicSetting() {
+			return TectonicSetting.VOLCANIC;
+		}
+	}
+	
+	static final class Interface extends McVerryEtAl_2000 {
+		final static String NAME = McVerryEtAl_2000.NAME + ": Interface";
+
+		Interface(Imt imt) {
+			super(imt);
+		}
+
+		@Override boolean isGeomean() {
+			return false;
+		}
+
+		@Override TectonicSetting tectonicSetting() {
+			return TectonicSetting.SUBDUCTION_INTERFACE;
+		}
+	}
+
+	static final class Slab extends McVerryEtAl_2000 {
+		final static String NAME = McVerryEtAl_2000.NAME + ": Slab";
+
+		Slab(Imt imt) {
+			super(imt);
+		}
+
+		@Override boolean isGeomean() {
+			return false;
+		}
+
+		@Override TectonicSetting tectonicSetting() {
+			return TectonicSetting.SUBDUCTION_INTRASLAB;
+		}
+	}
+
 	// TODO clean and/or implement
 	// public void setEqkRupture(EqkRupture eqkRupture) throws
 	// InvalidRangeException {

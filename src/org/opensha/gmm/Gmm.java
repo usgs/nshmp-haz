@@ -3,10 +3,8 @@ package org.opensha.gmm;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import org.opensha.gmm.CeusMb.*;
 
@@ -111,42 +109,42 @@ public enum Gmm {
 	// Subduction NSHMP 2008 2014
 
 	/** @see AtkinsonBoore_2003 */
-	AB_03_GLOB_INTER(AtkinsonBoore_2003_GlobalInterface.class,
-			AtkinsonBoore_2003_GlobalInterface.NAME, AtkinsonBoore_2003.CC),
+	AB_03_GLOB_INTER(AtkinsonBoore_2003.GlobalInterface.class,
+			AtkinsonBoore_2003.GlobalInterface.NAME, AtkinsonBoore_2003.CC_GI),
 
 	/** @see AtkinsonBoore_2003 */
-	AB_03_GLOB_SLAB(AtkinsonBoore_2003_GlobalSlab.class, AtkinsonBoore_2003_GlobalSlab.NAME,
-			AtkinsonBoore_2003.CC),
+	AB_03_GLOB_SLAB(AtkinsonBoore_2003.GlobalSlab.class, AtkinsonBoore_2003.GlobalSlab.NAME,
+			AtkinsonBoore_2003.CC_GS),
 
 	/** @see AtkinsonBoore_2003 */
-	AB_03_CASC_INTER(AtkinsonBoore_2003_CascadiaInterface.class,
-			AtkinsonBoore_2003_CascadiaInterface.NAME, AtkinsonBoore_2003.CC),
+	AB_03_CASC_INTER(AtkinsonBoore_2003.CascadiaInterface.class,
+			AtkinsonBoore_2003.CascadiaInterface.NAME, AtkinsonBoore_2003.CC_CI),
 
 	/** @see AtkinsonBoore_2003 */
-	AB_03_CASC_SLAB(AtkinsonBoore_2003_CascadiaSlab.class, AtkinsonBoore_2003_CascadiaSlab.NAME,
-			AtkinsonBoore_2003.CC),
+	AB_03_CASC_SLAB(AtkinsonBoore_2003.CascadiaSlab.class, AtkinsonBoore_2003.CascadiaSlab.NAME,
+			AtkinsonBoore_2003.CC_CS),
 
 	/** @see AtkinsonMacias_2009 */
 	AM_09_INTER(AtkinsonMacias_2009.class, AtkinsonMacias_2009.NAME, AtkinsonMacias_2009.CC),
 
 	/** @see BcHydro_2012 */
-	BCHYDRO_12_INTER(BcHydro_2012_Interface.class, BcHydro_2012_Interface.NAME, BcHydro_2012.CC),
+	BCHYDRO_12_INTER(BcHydro_2012.Interface.class, BcHydro_2012.Interface.NAME, BcHydro_2012.CC),
 
 	/** @see BcHydro_2012 */
-	BCHYDRO_12_SLAB(BcHydro_2012_Slab.class, BcHydro_2012_Slab.NAME, BcHydro_2012.CC),
+	BCHYDRO_12_SLAB(BcHydro_2012.Slab.class, BcHydro_2012.Slab.NAME, BcHydro_2012.CC),
 
 	/** @see YoungsEtAl_1997 */
-	YOUNGS_97_INTER(YoungsEtAl_1997_Interface.class, YoungsEtAl_1997_Interface.NAME,
+	YOUNGS_97_INTER(YoungsEtAl_1997.Interface.class, YoungsEtAl_1997.Interface.NAME,
 			YoungsEtAl_1997.CC),
 
 	/** @see YoungsEtAl_1997 */
-	YOUNGS_97_SLAB(YoungsEtAl_1997_Slab.class, YoungsEtAl_1997_Slab.NAME, YoungsEtAl_1997.CC),
+	YOUNGS_97_SLAB(YoungsEtAl_1997.Slab.class, YoungsEtAl_1997.Slab.NAME, YoungsEtAl_1997.CC),
 
 	/** @see ZhaoEtAl_2006 */
-	ZHAO_06_INTER(ZhaoEtAl_2006_Interface.class, ZhaoEtAl_2006_Interface.NAME, ZhaoEtAl_2006.CC),
+	ZHAO_06_INTER(ZhaoEtAl_2006.Interface.class, ZhaoEtAl_2006.Interface.NAME, ZhaoEtAl_2006.CC),
 
 	/** @see ZhaoEtAl_2006 */
-	ZHAO_06_SLAB(ZhaoEtAl_2006_Slab.class, ZhaoEtAl_2006_Slab.NAME, ZhaoEtAl_2006.CC),
+	ZHAO_06_SLAB(ZhaoEtAl_2006.Slab.class, ZhaoEtAl_2006.Slab.NAME, ZhaoEtAl_2006.CC),
 
 	/*
 	 * Base implementations of the Gmm used in the 2008 CEUS model all work with
@@ -163,12 +161,12 @@ public enum Gmm {
 	AB_06_PRIME(AtkinsonBoore_2006p.class, AtkinsonBoore_2006p.NAME, AtkinsonBoore_2006p.CC),
 
 	/** @see AtkinsonBoore_2006 */
-	AB_06_140BAR(AtkinsonBoore_2006_140bar.class, AtkinsonBoore_2006_140bar.NAME,
-			AtkinsonBoore_2006.CC),
+	AB_06_140BAR(AtkinsonBoore_2006.StressDrop_140bar.class, AtkinsonBoore_2006.StressDrop_140bar.NAME,
+			AtkinsonBoore_2006.CC_A),
 
 	/** @see AtkinsonBoore_2006 */
-	AB_06_200BAR(AtkinsonBoore_2006_200bar.class, AtkinsonBoore_2006_200bar.NAME,
-			AtkinsonBoore_2006.CC),
+	AB_06_200BAR(AtkinsonBoore_2006.StressDrop_200bar.class, AtkinsonBoore_2006.StressDrop_200bar.NAME,
+			AtkinsonBoore_2006.CC_A),
 
 	/** @see Atkinson_2008p */
 	ATKINSON_08_PRIME(Atkinson_2008p.class, Atkinson_2008p.NAME, Atkinson_2008p.CC),
@@ -192,17 +190,17 @@ public enum Gmm {
 	TP_05(TavakoliPezeshk_2005.class, TavakoliPezeshk_2005.NAME, TavakoliPezeshk_2005.CC),
 
 	/** @see ToroEtAl_1997 */
-	TORO_97_MW(ToroEtAl_1997_Mw.class, ToroEtAl_1997_Mw.NAME, ToroEtAl_1997.CC),
+	TORO_97_MW(ToroEtAl_1997.Mw.class, ToroEtAl_1997.Mw.NAME, ToroEtAl_1997.CC),
 
 	// Johnston mag converting flavors of CEUS, NSHMP 2008
 
 	/** @see AtkinsonBoore_2006 */
 	AB_06_140BAR_J(AtkinsonBoore_2006_140bar_J.class, AtkinsonBoore_2006_140bar_J.NAME,
-			AtkinsonBoore_2006.CC),
+			AtkinsonBoore_2006.CC_A),
 
 	/** @see AtkinsonBoore_2006 */
 	AB_06_200BAR_J(AtkinsonBoore_2006_200bar_J.class, AtkinsonBoore_2006_200bar_J.NAME,
-			AtkinsonBoore_2006.CC),
+			AtkinsonBoore_2006.CC_A),
 
 	/** @see Campbell_2003 */
 	CAMPBELL_03_J(Campbell_2003_J.class, Campbell_2003_J.NAME, Campbell_2003.CC),
@@ -220,11 +218,11 @@ public enum Gmm {
 
 	/** @see AtkinsonBoore_2006 */
 	AB_06_140BAR_AB(AtkinsonBoore_2006_140bar_AB.class, AtkinsonBoore_2006_140bar_AB.NAME,
-			AtkinsonBoore_2006.CC),
+			AtkinsonBoore_2006.CC_A),
 
 	/** @see AtkinsonBoore_2006 */
 	AB_06_200BAR_AB(AtkinsonBoore_2006_200bar_AB.class, AtkinsonBoore_2006_200bar_AB.NAME,
-			AtkinsonBoore_2006.CC),
+			AtkinsonBoore_2006.CC_A),
 
 	/** @see Campbell_2003 */
 	CAMPBELL_03_AB(Campbell_2003_AB.class, Campbell_2003_AB.NAME, Campbell_2003.CC),
@@ -240,21 +238,24 @@ public enum Gmm {
 
 	// - not specified
 	/** @see ToroEtAl_1997 */
-	TORO_97_MB(ToroEtAl_1997_Mb.class, ToroEtAl_1997_Mb.NAME, ToroEtAl_1997.CC),
+	TORO_97_MB(ToroEtAl_1997.Mb.class, ToroEtAl_1997.Mb.NAME, ToroEtAl_1997.CC),
 
 	// Other
 
+	/** @see SadighEtAl_1997 */
+	SADIGH_97(SadighEtAl_1997.class, SadighEtAl_1997.NAME, SadighEtAl_1997.CC_BC_HI),
+	
 	/** @see McVerryEtAl_2000 */
-	MCVERRY_00_CRUSTAL(McVerryEtAl_2000_Crustal.class, McVerryEtAl_2000_Crustal.NAME, McVerryEtAl_2000.CC),
+	MCVERRY_00_CRUSTAL(McVerryEtAl_2000.Crustal.class, McVerryEtAl_2000.Crustal.NAME, McVerryEtAl_2000.CC),
 
 	/** @see McVerryEtAl_2000 */
-	MCVERRY_00_INTERFACE(McVerryEtAl_2000_Interface.class, McVerryEtAl_2000_Interface.NAME, McVerryEtAl_2000.CC),
+	MCVERRY_00_INTERFACE(McVerryEtAl_2000.Interface.class, McVerryEtAl_2000.Interface.NAME, McVerryEtAl_2000.CC),
 	
 	/** @see McVerryEtAl_2000 */
-	MCVERRY_00_SLAB(McVerryEtAl_2000_Slab.class, McVerryEtAl_2000_Slab.NAME, McVerryEtAl_2000.CC),
+	MCVERRY_00_SLAB(McVerryEtAl_2000.Slab.class, McVerryEtAl_2000.Slab.NAME, McVerryEtAl_2000.CC),
 	
 	/** @see McVerryEtAl_2000 */
-	MCVERRY_00_VOLCANIC(McVerryEtAl_2000_Volcanic.class, McVerryEtAl_2000_Volcanic.NAME, McVerryEtAl_2000.CC);
+	MCVERRY_00_VOLCANIC(McVerryEtAl_2000.Volcanic.class, McVerryEtAl_2000.Volcanic.NAME, McVerryEtAl_2000.CC);
 
 	// TODO clean?
 	// GK_2013(GraizerKalkan_2013.class);

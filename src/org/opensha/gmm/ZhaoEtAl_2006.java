@@ -107,4 +107,28 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 		return sqrt(c.sigma * c.sigma + (slab ? c.tauS * c.tauS : c.tau * c.tau));
 	}
 
+	static final class Interface extends ZhaoEtAl_2006 {
+		static final String NAME = ZhaoEtAl_2006.NAME + ": Interface";
+
+		Interface(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isSlab() {
+			return false;
+		}
+	}
+
+	static final class Slab extends ZhaoEtAl_2006 {
+		static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
+
+		Slab(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isSlab() {
+			return true;
+		}
+	}
+
 }

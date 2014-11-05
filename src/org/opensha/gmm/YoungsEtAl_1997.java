@@ -243,4 +243,28 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 		return site - siter;
 	}
 
+	static final class Interface extends YoungsEtAl_1997 {
+		static final String NAME = YoungsEtAl_1997.NAME + ": Interface";
+
+		Interface(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isSlab() {
+			return false;
+		}
+	}
+	
+	static final class Slab extends YoungsEtAl_1997 {
+		static final String NAME = YoungsEtAl_1997.NAME + ": Slab";
+
+		Slab(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isSlab() {
+			return true;
+		}
+	}
+
 }

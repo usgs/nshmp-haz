@@ -56,12 +56,12 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 	private static final double C4 = 10.0;
 	private static final double C = 1.88;
 	private static final double N = 1.18;
-	
+
 	// implementation constants
 	private static final double VSS_MAX = 1000.0;
 	private static final double SIGMA = 0.74;
 	private static final double DC1_SLAB = -0.3;
-	
+
 	private final Coeffs coeffs, coeffsPGA;
 
 	BcHydro_2012(Imt imt) {
@@ -69,57 +69,76 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 		coeffsPGA = (Coeffs) CC.get(PGA);
 	}
 
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		
+	@Override public final ScalarGroundMotion calc(GmmInput props) {
+
 		// pgaRock only required to compute non-linear site response when vs30
 		// is less than period-dependent vlin cutoff
-		double pgaRock = (props.vs30 < coeffs.vlin) ? calcMean(coeffsPGA,
-			props.Mw, props.rRup, props.zTop, props.vs30, isSlab(), 0.0) : 0.0;
-		
-		double mean = calcMean(coeffs, props.Mw, props.rRup, props.zTop,
-			props.vs30, isSlab(), pgaRock);
-		
+		double pgaRock = (props.vs30 < coeffs.vlin) ? calcMean(coeffsPGA, props.Mw, props.rRup,
+			props.zTop, props.vs30, isSlab(), 0.0) : 0.0;
+
+		double mean = calcMean(coeffs, props.Mw, props.rRup, props.zTop, props.vs30, isSlab(),
+			pgaRock);
+
 		return DefaultScalarGroundMotion.create(mean, SIGMA);
 	}
 
 	abstract boolean isSlab();
-	
-	private static final double calcMean(Coeffs c, double Mw, double rRup,
-			double zTop, double vs30, boolean slab, double pgaRock) {
+
+	private static final double calcMean(Coeffs c, double Mw, double rRup, double zTop,
+			double vs30, boolean slab, double pgaRock) {
 
 		// zTop = hypoDepth and is capped at 125km, only used when slab = true
 		if (slab) zTop = min(zTop, 125.0);
-		
+
 		// DELC fixed at 0.0;
 		double mCut = C1 + (slab ? DC1_SLAB : c.dC1mid);
 		double t13m = c.t13 * (10 - Mw) * (10 - Mw);
 		double fMag = (Mw <= mCut ? T4 : T5) * (Mw - mCut) + t13m;
-		
+
 		// no depth term for interface events
-		double fDepth = slab ? c.t11 * (zTop-60.) : 0.0;
-				
+		double fDepth = slab ? c.t11 * (zTop - 60.) : 0.0;
+
 		double vsS = min(vs30, VSS_MAX);
 
 		double fSite = c.t12 * log(vsS / c.vlin);
 		if (vs30 < c.vlin) { // whether or not we use pgaRock
-			fSite += -c.b * log(pgaRock + C) + c.b *
-				log(pgaRock + C * pow((vsS / c.vlin), N));
+			fSite += -c.b * log(pgaRock + C) + c.b * log(pgaRock + C * pow((vsS / c.vlin), N));
 		} else {
 			// for pgaRock loop, vs=1000 > vlinPGA=865
 			fSite += c.b * N * log(vsS / c.vlin);
 		}
-		
+
 		return c.t1 +
-				// c.t4 * delC1 ommitted b/c delC1=0
-				(c.t2 + (slab ? c.t14 : 0.0) + T3 * (Mw - 7.8)) * 
-					log(rRup + C4 * exp((Mw - 6.0) * T9)) +
-				c.t6 * rRup +
-				(slab ? c.t10 : 0.0) +
-				fMag +
-				fDepth +
-				// fterm + no fterm for forearc sites
-				fSite;
+			// c.t4 * delC1 ommitted b/c delC1=0
+			(c.t2 + (slab ? c.t14 : 0.0) + T3 * (Mw - 7.8)) *
+			log(rRup + C4 * exp((Mw - 6.0) * T9)) + c.t6 * rRup + (slab ? c.t10 : 0.0) + fMag +
+			fDepth +
+			// fterm + no fterm for forearc sites
+			fSite;
+	}
+
+	static final class Interface extends BcHydro_2012 {
+		static final String NAME = BcHydro_2012.NAME + ": Interface";
+
+		Interface(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isSlab() {
+			return false;
+		}
+	}
+
+	static final class Slab extends BcHydro_2012 {
+		static final String NAME = BcHydro_2012.NAME + ": Slab";
+
+		Slab(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isSlab() {
+			return true;
+		}
 	}
 
 }

@@ -126,4 +126,28 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 	
+	static final class Mb extends ToroEtAl_1997 {
+		static final String NAME = ToroEtAl_1997.NAME + ": mb";
+
+		Mb(Imt imt) {
+			super(imt);
+		}
+		
+		@Override boolean isMw() {
+			return false;
+		}
+	}
+
+	static final class Mw extends ToroEtAl_1997 {
+		static final String NAME = ToroEtAl_1997.NAME + ": Mw";
+
+		Mw(Imt imt) {
+			super(imt);
+		}
+		
+		@Override boolean isMw() {
+			return true;
+		}
+	}
+
 }

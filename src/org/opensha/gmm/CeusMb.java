@@ -16,28 +16,28 @@ class CeusMb {
 
 	// @formatter:off
 	
-	static final class AtkinsonBoore_2006_140bar_J extends AtkinsonBoore_2006_140bar {
-		static final String NAME = AtkinsonBoore_2006_140bar.NAME + J_NAME;
+	static final class AtkinsonBoore_2006_140bar_J extends AtkinsonBoore_2006.StressDrop_140bar {
+		static final String NAME = AtkinsonBoore_2006.StressDrop_140bar.NAME + J_NAME;
 		AtkinsonBoore_2006_140bar_J(Imt imt) { super(imt); }
 		@Override public MagConverter converter() { return MB_TO_MW_JOHNSTON; }
 	}
 	
-	static final class AtkinsonBoore_2006_140bar_AB extends AtkinsonBoore_2006_140bar {
-		static final String NAME = AtkinsonBoore_2006_140bar.NAME + AB_NAME;
+	static final class AtkinsonBoore_2006_140bar_AB extends AtkinsonBoore_2006.StressDrop_140bar {
+		static final String NAME = AtkinsonBoore_2006.StressDrop_140bar.NAME + AB_NAME;
 		AtkinsonBoore_2006_140bar_AB(Imt imt) { super(imt); }
 		@Override public MagConverter converter() { return MB_TO_MW_ATKIN_BOORE; }
 	}
 
 	
 	
-	static final class AtkinsonBoore_2006_200bar_J extends AtkinsonBoore_2006_200bar {
-		static final String NAME = AtkinsonBoore_2006_200bar.NAME + J_NAME;
+	static final class AtkinsonBoore_2006_200bar_J extends AtkinsonBoore_2006.StressDrop_200bar {
+		static final String NAME = AtkinsonBoore_2006.StressDrop_200bar.NAME + J_NAME;
 		AtkinsonBoore_2006_200bar_J(Imt imt) { super(imt); }
 		@Override public MagConverter converter() { return MB_TO_MW_JOHNSTON; }
 	}
 	
-	static final class AtkinsonBoore_2006_200bar_AB extends AtkinsonBoore_2006_200bar {
-		static final String NAME = AtkinsonBoore_2006_200bar.NAME + AB_NAME;
+	static final class AtkinsonBoore_2006_200bar_AB extends AtkinsonBoore_2006.StressDrop_200bar {
+		static final String NAME = AtkinsonBoore_2006.StressDrop_200bar.NAME + AB_NAME;
 		AtkinsonBoore_2006_200bar_AB(Imt imt) { super(imt); }
 		@Override public MagConverter converter() { return MB_TO_MW_ATKIN_BOORE; }
 	}
