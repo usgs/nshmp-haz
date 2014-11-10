@@ -14,6 +14,8 @@ import java.util.Map;
 
 import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.FocalMech;
+import org.opensha.eq.fault.scaling.MagLengthRelationship;
+import org.opensha.eq.model.PointSource.DepthModel;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationVector;
 import org.opensha.geo.Locations;
@@ -51,9 +53,9 @@ class PointSourceFixedStrike extends PointSourceFinite {
 	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
-	PointSourceFixedStrike(GridSourceSet parent, Location loc, IncrementalMfd mfd,
-		Map<FocalMech, Double> mechWtMap, double strike) {
-		super(parent, loc, mfd, mechWtMap);
+	PointSourceFixedStrike(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
+		MagLengthRelationship mlr, DepthModel depthModel, double strike) {
+		super(loc, mfd, mechWtMap, mlr, depthModel);
 		this.strike = strike;
 	}
 
@@ -74,12 +76,12 @@ class PointSourceFixedStrike extends PointSourceFinite {
 	private void updateRupture(Rupture rup, int idx) {
 
 		int magDepthIdx = idx % magDepthSize;
-		int magIdx = parent.magDepthIndices.get(magDepthIdx);
+		int magIdx = depthModel.magDepthIndices.get(magDepthIdx);
 		double mag = mfd.getX(magIdx);
 		double rate = mfd.getY(magIdx);
 
-		double zTop = parent.magDepthDepths.get(magDepthIdx);
-		double zTopWt = parent.magDepthWeights.get(magDepthIdx);
+		double zTop = depthModel.magDepthDepths.get(magDepthIdx);
+		double zTopWt = depthModel.magDepthWeights.get(magDepthIdx);
 
 		FocalMech mech = mechForIndex(idx);
 		double mechWt = mechWtMap.get(mech);
@@ -104,9 +106,9 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		fsSurf.zBot = zBot;
 		fsSurf.footwall = isOnFootwall(idx);
 
-		double distToPoint = parent.mlr.getMedianLength(mag) / 2;
+		double distToEndpoint = mlr.getMedianLength(mag) / 2;
 		Location locWithDepth = Location.create(loc.lat(), loc.lon(), zTop);
-		LocationVector v1 = LocationVector.create(strikeRad, distToPoint, 0.0);
+		LocationVector v1 = LocationVector.create(strikeRad, distToEndpoint, 0.0);
 		LocationVector v2 = LocationVector.reverseOf(v1);
 
 		Location p1 = Locations.location(locWithDepth, v1);

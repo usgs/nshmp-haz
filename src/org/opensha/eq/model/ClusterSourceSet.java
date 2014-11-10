@@ -17,7 +17,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * Wrapper class for related {@link ClusterSource}s.
+ * Container class for related {@link ClusterSource}s.
  * 
  * @author Peter Powers
  * @see ClusterSource

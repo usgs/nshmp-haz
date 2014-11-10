@@ -23,6 +23,20 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
     protected String defaultName;
     private final boolean floats;
     
+    // TODO this copy of constructor works, but is difficult; there are
+    // both methods and protected access to numerous fields in numerous parents.
+    // We should be able to duplicate the class by copying x and y values with
+    // other fields being returned lazily a la XY_Series
+    // 
+    public static IncrementalMfd copyOf(IncrementalMfd mfd) {
+    	IncrementalMfd copy = new IncrementalMfd(mfd.minX, mfd.num, mfd.delta, mfd.floats);
+    	for (int i=0; i<mfd.getNum(); i++) {
+    		copy.set(i, mfd.getY(i));
+    	}
+    	return copy;
+    }
+    
+    
     /**
      * todo constructors
      * @param min

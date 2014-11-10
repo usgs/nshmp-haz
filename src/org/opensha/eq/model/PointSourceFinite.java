@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.opensha.eq.fault.FocalMech;
+import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.surface.PtSrcDistCorr;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
@@ -54,9 +55,9 @@ class PointSourceFinite extends PointSource {
 	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
-	PointSourceFinite(GridSourceSet parent, Location loc, IncrementalMfd mfd,
-		Map<FocalMech, Double> mechWtMap) {
-		super(parent, loc, mfd, mechWtMap);
+	PointSourceFinite(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
+		MagLengthRelationship mlr, DepthModel depthModel) {
+		super(loc, mfd, mechWtMap, mlr, depthModel);
 		init();
 	}
 
@@ -77,12 +78,12 @@ class PointSourceFinite extends PointSource {
 	private void updateRupture(Rupture rup, int idx) {
 
 		int magDepthIdx = idx % magDepthSize;
-		int magIdx = parent.magDepthIndices.get(magDepthIdx);
+		int magIdx = depthModel.magDepthIndices.get(magDepthIdx);
 		double mag = mfd.getX(magIdx);
 		double rate = mfd.getY(magIdx);
 
-		double zTop = parent.magDepthDepths.get(magDepthIdx);
-		double zTopWt = parent.magDepthWeights.get(magDepthIdx);
+		double zTop = depthModel.magDepthDepths.get(magDepthIdx);
+		double zTopWt = depthModel.magDepthWeights.get(magDepthIdx);
 
 		FocalMech mech = mechForIndex(idx);
 		double mechWt = mechWtMap.get(mech);
@@ -136,7 +137,7 @@ class PointSourceFinite extends PointSource {
 		 * Get the number of mag-depth iterations required to get to mMax. See
 		 * explanation in GridSourceSet for how magDepthIndices is set up
 		 */
-		magDepthSize = parent.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
+		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
 
 		/*
 		 * Init rupture indexing: SS-FW RV-FW RV-HW NR-FW NR-HW. Each category
@@ -150,7 +151,7 @@ class PointSourceFinite extends PointSource {
 		revIdx = ssCount + revCount;
 		fwIdxLo = ssCount + revCount / 2;
 		fwIdxHi = ssCount + revCount + norCount / 2;
-		
+
 		rupCount = ssCount + revCount + norCount;
 	}
 

@@ -31,27 +31,30 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
 	public double weight();
 
 	/**
-	 * Returns an {@code Iterable} over those {@code Source}s that are within
+	 * Return an {@code Iterable} over those {@code Source}s that are within
 	 * the cutoff distance of the supplied {@code Location}. The cutoff distance
 	 * is derived from the {@code GroundMotionModel}s associated with this
 	 * {@code SourceSet}.
+	 * 
 	 * @param loc {@code Location} of interest
 	 */
 	public Iterable<T> locationIterable(Location loc);
 
 	/**
-	 * Returns a {@link Predicate} that evaluates to {@code true} if this source
+	 * Return a {@link Predicate} that evaluates to {@code true} if this source
 	 * is within {@code distance} of the supplied {@link Location}. This
 	 * {@code Predicate} performs a quick distance calculation and is used to
 	 * determine whether this source should be included in a hazard calculation.
+	 * 
 	 * @param loc {@code Location} of interest
 	 * @param distance limit
 	 */
 	public Predicate<T> distanceFilter(Location loc, double distance);
 
 	/**
-	 * Returns the {@link GroundMotionModel}s associated with this {@code SourceSet} as
-	 * a {@link GmmSet}.
+	 * Return the {@link GroundMotionModel}s associated with this
+	 * {@code SourceSet} as a {@link GmmSet}.
+	 * 
 	 * @see GmmSet
 	 */
 	public GmmSet groundMotionModels();

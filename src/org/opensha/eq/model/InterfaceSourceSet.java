@@ -13,7 +13,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 /**
- * Wrapper class for groups of related {@link InterfaceSource}s.
+ * Container class for groups of related {@link InterfaceSource}s.
  * 
  * @author Peter Powers
  * @see InterfaceSource

@@ -7,7 +7,7 @@ import org.opensha.geo.Location;
 import com.google.common.base.Predicate;
 
 /**
- * Wrapper class for related, evenly-spaced subduction slab sources. Class
+ * Container class for related, evenly-spaced subduction slab sources. Class
  * decorates a {@link GridSourceSet}.
  * 
  * @author Peter Powers

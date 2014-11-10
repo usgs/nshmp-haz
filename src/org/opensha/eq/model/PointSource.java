@@ -8,14 +8,21 @@ import static org.opensha.eq.fault.FocalMech.REVERSE;
 import static org.opensha.eq.fault.FocalMech.STRIKE_SLIP;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 
 import org.opensha.eq.fault.FocalMech;
+import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.surface.PtSrcDistCorr;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
 import org.opensha.mfd.IncrementalMfd;
+
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Ints;
 
 /**
  * Point-source earthquake {@code Source} supplies the simplest possible
@@ -41,10 +48,11 @@ import org.opensha.mfd.IncrementalMfd;
  */
 class PointSource implements Source {
 
-	final GridSourceSet parent;
 	final Location loc;
 	final IncrementalMfd mfd;
 	final Map<FocalMech, Double> mechWtMap;
+	final MagLengthRelationship mlr;
+	final DepthModel depthModel;
 
 	int rupCount;
 	int magDepthSize;
@@ -58,12 +66,14 @@ class PointSource implements Source {
 	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
-	PointSource(GridSourceSet parent, Location loc, IncrementalMfd mfd,
-		Map<FocalMech, Double> mechWtMap) {
-		this.parent = parent;
+	PointSource(Location loc, IncrementalMfd mfd,
+		Map<FocalMech, Double> mechWtMap, MagLengthRelationship mlr, DepthModel depthModel) {
+		
 		this.loc = loc;
 		this.mfd = mfd;
 		this.mechWtMap = mechWtMap;
+		this.mlr = mlr;
+		this.depthModel = depthModel;
 		init();
 	}
 
@@ -83,12 +93,12 @@ class PointSource implements Source {
 	private void updateRupture(Rupture rup, int idx) {
 
 		int magDepthIdx = idx % magDepthSize;
-		int magIdx = parent.magDepthIndices.get(magDepthIdx);
+		int magIdx = depthModel.magDepthIndices.get(magDepthIdx);
 		double mag = mfd.getX(magIdx);
 		double rate = mfd.getY(magIdx);
 
-		double zTop = parent.magDepthDepths.get(magDepthIdx);
-		double zTopWt = parent.magDepthWeights.get(magDepthIdx);
+		double zTop = depthModel.magDepthDepths.get(magDepthIdx);
+		double zTopWt = depthModel.magDepthWeights.get(magDepthIdx);
 
 		FocalMech mech = mechForIndex(idx);
 		double mechWt = mechWtMap.get(mech);
@@ -135,7 +145,7 @@ class PointSource implements Source {
 		 * Get the number of mag-depth iterations required to get to mMax. See
 		 * explanation in GridSourceSet for how magDepthIndices is set up
 		 */
-		magDepthSize = parent.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
+		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
 
 		/*
 		 * Init rupture indexing: SS RV NR. Each category will have ruptures for
@@ -177,7 +187,7 @@ class PointSource implements Source {
 	 */
 	double calcWidth(double mag, double depth, double dipRad) {
 		if (depth > MAX_DEPTH) return GENERIC_WIDTH;
-		double length = parent.mlr.getMedianLength(mag);
+		double length = mlr.getMedianLength(mag);
 		double aspectWidth = length / 1.5;
 		double ddWidth = (14.0 - depth) / sin(dipRad);
 		return min(aspectWidth, ddWidth);
@@ -218,4 +228,76 @@ class PointSource implements Source {
 		
 	}
 	
+	/*
+	 * A depth model stores lookup arrays for mfd magnitude indexing, depths,
+	 * and depth weights. These arrays remove the need to do expensive lookups
+	 * in a magDepthMap when iterating grid sources and ruptures. A model may
+	 * be longer (have more magnitudes) than required by grid or area point
+	 * source implementations as it usually spans the [mMin mMax] of some master
+	 * MFD. Implementations will only ever reference those indices up to their
+	 * individual mMax so there should only be one per GridSourceSet or
+	 * AreaSource.
+	 * 
+	 * Given magDepthMap: [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1, 5.0:0.9]]
+	 * 
+	 * and an MFD with mags: [5.0, 5.5, 6.0, 6.5, 7.0]
+	 * 
+	 * The number of mag-depth combinations a point source would iterate over is:
+	 * sum(m = MFD.mag(i) * nDepths(m)) = 3 * 3 + 2 * 2 = 13
+	 * 
+	 * (note: mag cutoffs in magDepthMap are always used as m < cutoff)
+	 * 
+	 * magDepthIndices[] : magnitude index in original MFD [ 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
+	 * 
+	 * magDepthDepths[] : depth for index [1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 5.0, 1.0, 5.0]
+	 * 
+	 * magDepthWeights[] : depth weight for index [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
+	 * 
+	 */
+	static final class DepthModel {
+		
+		/*
+		 * Examples:
+		 * single depth: [10.0 :: [depth : 1.0 ]]
+		 * NSHMP depths: [6.5 :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 : 0.0]]
+		 */
+
+		// @formatter:on
+
+		final List<Double> magMaster;
+
+		final List<Integer> magDepthIndices;
+		final List<Double> magDepthDepths;
+		final List<Double> magDepthWeights;
+
+		static DepthModel create(List<Double> magMaster,
+				NavigableMap<Double, Map<Double, Double>> magDepthMap) {
+			return new DepthModel(magMaster, magDepthMap);
+		}
+
+		private DepthModel(List<Double> magMaster,
+			NavigableMap<Double, Map<Double, Double>> magDepthMap) {
+
+			this.magMaster = magMaster;
+
+			List<Integer> indices = Lists.newArrayList();
+			List<Double> depths = Lists.newArrayList();
+			List<Double> weights = Lists.newArrayList();
+
+			for (int i = 0; i < magMaster.size(); i++) {
+				Map.Entry<Double, Map<Double, Double>> magEntry = magDepthMap.higherEntry(magMaster
+					.get(i));
+				for (Map.Entry<Double, Double> entry : magEntry.getValue().entrySet()) {
+					indices.add(i);
+					depths.add(entry.getKey());
+					weights.add(entry.getValue());
+				}
+			}
+
+			magDepthIndices = Ints.asList(Ints.toArray(indices));
+			magDepthDepths = Doubles.asList(Doubles.toArray(depths));
+			magDepthWeights = Doubles.asList(Doubles.toArray(weights));
+		}
+	}
+
 }

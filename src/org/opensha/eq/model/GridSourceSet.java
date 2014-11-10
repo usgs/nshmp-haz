@@ -6,8 +6,9 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.DataUtils.validateWeight;
 import static org.opensha.eq.Magnitudes.MAX_MAG;
 import static org.opensha.eq.fault.Faults.validateStrike;
+import static org.opensha.eq.model.PointSourceType.FINITE;
+import static org.opensha.eq.model.PointSourceType.FIXED_STRIKE;
 import static org.opensha.util.TextUtils.validateName;
-import static org.opensha.eq.model.PointSourceType.*;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -20,18 +21,18 @@ import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.model.PointSource.DepthModel;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
 import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import com.google.common.primitives.Doubles;
-import com.google.common.primitives.Ints;
 
 /**
- * A wrapper class for related, evenly-spaced {@link PointSource}s with varying
- * magnitudes derived from a {@link IncrementalMfd} at each grid node.
+ * A container class for related, evenly-spaced {@link PointSource}s with
+ * varying magnitudes and/or rates derived from an {@link IncrementalMfd} at
+ * each grid node.
  * 
  * @author Peter Powers
  */
@@ -39,10 +40,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	private final List<Location> locs;
 	private final List<IncrementalMfd> mfds;
+	private final MagLengthRelationship mlr;
 	private final List<Map<FocalMech, Double>> mechMaps;
-	 final NavigableMap<Double, Map<Double, Double>> magDepthMap;
+	final DepthModel depthModel; // package exposure for parser logging
 	private final double strike;
-	final List<Double> magMaster;
+	private final PointSourceType ptSrcType;
 
 	/*
 	 * Most grid sources have the same focal mech map everywhere; in these
@@ -50,23 +52,16 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * minimal overhead.
 	 */
 
-	final MagLengthRelationship mlr;
-
-	PointSourceType ptSrcType;
-
-	// only available to parsers
 	private GridSourceSet(String name, Double weight, MagScalingType msrType, GmmSet gmmSet,
 		List<Location> locs, List<IncrementalMfd> mfds, List<Map<FocalMech, Double>> mechMaps,
-		NavigableMap<Double, Map<Double, Double>> magDepthMap, double strike, List<Double> magMaster) {
+		DepthModel depthModel, double strike) {
 
 		super(name, weight, msrType, gmmSet);
 		this.locs = locs;
 		this.mfds = mfds;
 		this.mechMaps = mechMaps;
-		this.magDepthMap = magDepthMap;
+		this.depthModel = depthModel;
 		this.strike = strike;
-		this.magMaster = magMaster;
-		initMagDepthData();
 
 		MagScalingRelationship msr = msrType.instance();
 		// TODO need to develop standard approach to using mag area
@@ -87,18 +82,24 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	}
 
 	@Override public Predicate<PointSource> distanceFilter(final Location loc, final double distance) {
-		return new Predicate<PointSource>() {
-			private final Predicate<Location> filter = Locations.distanceAndRectangleFilter(loc,
-				distance);
+		return new DistanceFilter(loc, distance);
+	}
 
-			@Override public boolean apply(PointSource source) {
-				return filter.apply(source.loc);
-			}
-			
-			@Override public String toString() {
-				return "GridSourceSet.DistanceFilter[ " + filter.toString() + " ]";
-			}
-		};
+	/* Not inlined for use by area sources */
+	static class DistanceFilter implements Predicate<PointSource> {
+		private final Predicate<Location> filter;
+
+		DistanceFilter(Location loc, double distance) {
+			filter = Locations.distanceAndRectangleFilter(loc, distance);
+		}
+
+		@Override public boolean apply(PointSource source) {
+			return filter.apply(source.loc);
+		}
+
+		@Override public String toString() {
+			return "GridSourceSet.DistanceFilter[ " + filter.toString() + " ]";
+		}
 	}
 
 	@Override public Iterator<PointSource> iterator() {
@@ -122,89 +123,24 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	private PointSource getSource(int idx) {
 		switch (ptSrcType) {
 			case POINT:
-				return new PointSource(this, locs.get(idx), mfds.get(idx), mechMaps.get(idx));
+				return new PointSource(locs.get(idx), mfds.get(idx), mechMaps.get(idx), mlr,
+					depthModel);
 			case FINITE:
-				return new PointSourceFinite(this, locs.get(idx), mfds.get(idx), mechMaps.get(idx));
+				return new PointSourceFinite(locs.get(idx), mfds.get(idx), mechMaps.get(idx), mlr,
+					depthModel);
 			case FIXED_STRIKE:
-				return new PointSourceFixedStrike(this, locs.get(idx), mfds.get(idx),
-					mechMaps.get(idx), strike);
+				return new PointSourceFixedStrike(locs.get(idx), mfds.get(idx), mechMaps.get(idx),
+					mlr, depthModel, strike);
+			default:
+				throw new IllegalStateException("Unhandled point source type");
 		}
-		return null;
 	}
-
-	// @formatter:off
-	
-	/*
-	 * GridSourceSets store lookup arrays for mfd magnitude indexing, depths,
-	 * and depth weights. These arrays remove the need to do expensive lookups
-	 * in a magDepthMap when iterating grid sources and ruptures. These are
-	 * generally longer than required by grid source implementations as they
-	 * span [mMin mMax] of the entire GridSourceSet. Implementations will
-	 * only ever reference those indices up to their individual mMax, obviating
-	 * the need for individual sources to store these arrays.
-	 * 
-	 * Given magDepthMap: [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1, 5.0:0.9]]
-	 * 
-	 * and MFD: [5.0, 5.5, 6.0, 6.5, 7.0]
-	 * 
-	 * The number of mag-depth combinations a grid source would iterate over is:
-	 * sum(m = MFD.mag(i) * nDepths(m)) = 3 * 3 + 2 * 2 = 13
-	 * 
-	 * (note: mag cutoffs in magDepthMap are always used as m < cutoff)
-	 * 
-	 * magDepthIndices[] : magnitude index in original MFD [ 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
-	 * 
-	 * magDepthDepths[] : depth for index [1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 5.0, 1.0, 5.0]
-	 * 
-	 * magDepthWeights[] : depth weight for index [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
-	 * 
-	 */
-
-	// @formatter:on
-
-	// available to point source implementations
-	List<Integer> magDepthIndices;
-	List<Double> magDepthDepths;
-	List<Double> magDepthWeights;
-
-	private void initMagDepthData() {
-		List<Integer> indices = Lists.newArrayList();
-		List<Double> depths = Lists.newArrayList();
-		List<Double> weights = Lists.newArrayList();
-		for (int i = 0; i < magMaster.size(); i++) {
-			Map.Entry<Double, Map<Double, Double>> magEntry = magDepthMap.higherEntry(magMaster
-				.get(i));
-			for (Map.Entry<Double, Double> entry : magEntry.getValue().entrySet()) {
-				indices.add(i);
-				depths.add(entry.getKey());
-				weights.add(entry.getValue());
-			}
-		}
-		magDepthIndices = Ints.asList(Ints.toArray(indices));
-		magDepthDepths = Doubles.asList(Doubles.toArray(depths));
-		magDepthWeights = Doubles.asList(Doubles.toArray(weights));
-	}
-
-	// TODO MagDepthMap
-	// -- each magnitude cutoff has associated map of depths and weights
-	// -- mags as keys? could have problems but may be ok if only accessed
-	// when using keySet or entrySet
-	// Map<Double, Map<Double, Double>> <-- Map<magCutoff, Map<depth, weight>
-	// -- depth maps sorted
-	//
-
-	// single depth: [10.0 :: [depth : 1.0 ]]
-	// NSHMP depths: [6.5 :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 :
-	// 0.0]]
 
 	// Builder accomodates overriding a default mechMap to support UC3
 	// grid sources; may add others later TODO document
 
 	/* Single use builder. */
 	static class Builder {
-
-		// build() may only be called once
-		// use Double to ensure fields are initially null
 
 		private static final String ID = "GridSourceSet.Builder";
 		private boolean built = false;
@@ -238,7 +174,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		}
 
 		Builder strike(double strike) {
-			// unkown strike allowed for grid sources
+			// unknown strike allowed for grid sources
 			this.strike = Double.isNaN(strike) ? strike : validateStrike(strike);
 			return this;
 		}
@@ -272,8 +208,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		Builder magMaster(List<Double> magMaster) {
 			/*
-			 * TODO mfds should validate against magMaster
-			 * or create mag master locally, but that is hard
+			 * TODO mfds should validate against magMaster or create mag master
+			 * locally, but that is hard
 			 */
 			checkArgument(checkNotNull(magMaster).size() > 0);
 			this.magMaster = magMaster;
@@ -295,7 +231,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		void validateDepths(Map<Double, Map<Double, Double>> magDepthMap, SourceType type) {
+		static void validateDepths(Map<Double, Map<Double, Double>> magDepthMap, SourceType type) {
 			for (Map<Double, Double> magMap : magDepthMap.values()) {
 				for (double depth : magMap.keySet()) {
 					switch (type) {
@@ -312,7 +248,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			}
 		}
 
-		void validateMagCutoffs(Map<Double, Map<Double, Double>> magDepthMap) {
+		static void validateMagCutoffs(Map<Double, Map<Double, Double>> magDepthMap) {
 			for (double mag : magDepthMap.keySet()) {
 				if (mag >= MAX_MAG) return;
 			}
@@ -352,8 +288,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		GridSourceSet build() {
 			validateState(ID);
+			DepthModel depthModel = DepthModel.create(magMaster, magDepthMap);
 			return new GridSourceSet(name, weight, magScaling, gmmSet, locs, mfds, mechMaps,
-				magDepthMap, strike, magMaster);
+				depthModel, strike);
 		}
 
 	}

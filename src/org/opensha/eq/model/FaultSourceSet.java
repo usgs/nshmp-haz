@@ -16,7 +16,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 /**
- * Wrapper class for related {@link FaultSource}s.
+ * Container class for related {@link FaultSource}s.
  * 
  * @author Peter Powers
  * @see FaultSource

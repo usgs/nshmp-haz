@@ -280,7 +280,7 @@ public class FaultSource implements Source {
 			checkState(width != null, "%s width not set", id);
 			checkState(depth != null, "%s depth not set", id);
 			checkState(rake != null, "%s rake not set", id);
-			checkState(mfds.size() > 0, "%s has no Mfds", id);
+			checkState(mfds.size() > 0, "%s has no MFDs", id);
 			checkState(msr != null, "%s mag-scaling relation not set", id);
 			built = true;
 		}

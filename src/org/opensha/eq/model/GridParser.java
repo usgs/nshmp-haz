@@ -213,11 +213,11 @@ class GridParser extends DefaultHandler {
 
 				if (log.isLoggable(FINE)) {
 					log.fine("       Size: " + sourceSet.size());
-					log.finer("  Mag count: " + sourceSet.magMaster.size());
-					log.finer(" Mag master: " + sourceSet.magMaster);
-					log.finer("  MFD index: " + sourceSet.magDepthIndices);
-					log.finer("     Depths: " + sourceSet.magDepthDepths);
-					log.finer("    Weights: " + sourceSet.magDepthWeights);
+					log.finer("  Mag count: " + sourceSet.depthModel.magMaster.size());
+					log.finer(" Mag master: " + sourceSet.depthModel.magMaster);
+					log.finer("  MFD index: " + sourceSet.depthModel.magDepthIndices);
+					log.finer("     Depths: " + sourceSet.depthModel.magDepthDepths);
+					log.finer("    Weights: " + sourceSet.depthModel.magDepthWeights);
 					log.fine("");
 				}
 				break;
