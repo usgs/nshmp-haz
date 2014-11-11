@@ -34,9 +34,11 @@ public enum SourceElement {
 	SECTION,
 	
 	GRID_SOURCE_SET,
-	
 	NODES,
 	NODE,
+	
+	AREA_SOURCE_SET,
+	BORDER,
 	
 	CLUSTER_SOURCE_SET,
 	CLUSTER;
