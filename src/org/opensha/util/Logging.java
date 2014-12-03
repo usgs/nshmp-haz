@@ -1,6 +1,7 @@
 package org.opensha.util;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
+import static java.util.logging.Level.SEVERE;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,6 +10,9 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+
+import org.opensha.eq.fault.surface.RuptureScaling;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -31,6 +35,21 @@ public class Logging {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Log a resource loading error and exit.
+	 * 
+	 * @param clazz for which resource is required
+	 * @param e the exception that was thrown
+	 */
+	public static void handleResourceError(Class<?> clazz, Exception e) {
+		Logger log = Logger.getLogger(clazz.getName());
+		StringBuilder sb = new StringBuilder(LF);
+		sb.append("** Error loading resource: ").append(e.getMessage()).append(LF);
+		sb.append("** Exiting **").append(LF).append(LF);
+		log.log(SEVERE, sb.toString(), e);
+		System.exit(1);
 	}
 	
 	/**
