@@ -696,7 +696,7 @@ public final class Parsing {
 	 * @param position the position to read
 	 */
 	public static int readInt(String s, int position) {
-		return Integer.valueOf(splitToList(s, Delimiter.SPACE).get(position));
+		return Integer.valueOf(Iterables.get(split(s, Delimiter.SPACE), position));
 	}
 
 	/**
@@ -707,7 +707,7 @@ public final class Parsing {
 	 * @param position the position to read
 	 */
 	public static double readDouble(String s, int position) {
-		return Double.valueOf(splitToList(s, Delimiter.SPACE).get(position));
+		return Double.valueOf(Iterables.get(split(s, Delimiter.SPACE), position));
 	}
 
 	/**
@@ -821,8 +821,7 @@ public final class Parsing {
 	 * @param bitSetSize
 	 * @throws IOException
 	 */
-	@Deprecated
-	public static List<BitSet> readBinaryIntBitSets(InputStream in, int bitSetSize)
+	@Deprecated public static List<BitSet> readBinaryIntBitSets(InputStream in, int bitSetSize)
 			throws IOException {
 		if (!(checkNotNull(in) instanceof BufferedInputStream)) {
 			in = new BufferedInputStream(in);

@@ -101,6 +101,8 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// a HazardModel to pick up name and other calc configuration data
 	
 	// TODO are slabSource depths validated?
+	
+	// TODO change Charsets to StandardCharsets and replace US_ASCII with UTF-8
 
 	
 	private final String name;
