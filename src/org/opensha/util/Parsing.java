@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.NavigableMap;
 
 import org.opensha.data.DataUtils;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
@@ -273,6 +274,19 @@ public final class Parsing {
 		Element e = parent.getOwnerDocument().createElement(name);
 		parent.appendChild(e);
 		return e;
+	}
+	
+	/**
+	 * Add a child {@link Comment} to a parent and return a reference to the
+	 * comment.
+	 * 
+	 * @param comment to add
+	 * @param parent {@code Element} for comment
+	 */
+	public static Comment addComment(String comment, Element parent) {
+		Comment c = parent.getOwnerDocument().createComment(comment);
+		parent.appendChild(c);
+		return c;
 	}
 
 	/**
@@ -643,7 +657,7 @@ public final class Parsing {
 	 * @param s the string to clean
 	 */
 	public static String stripZeros(String s) {
-		if (s.charAt(1) == '.') return s;
+		if (s.charAt(1) == '.' && s.contains("e-")) return s;
 		s = s.replaceAll("0*$", "");
 		if (s.endsWith(".")) s += "0";
 		return s;

@@ -37,6 +37,7 @@ public enum SourceAttribute {
 	M_MIN,
 	M_MAX,
 	D_MAG,
+	C_MAG,
 	FLOATS,
 	MAG_SCALING,
 	MAGS,
