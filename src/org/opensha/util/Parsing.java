@@ -445,6 +445,9 @@ public final class Parsing {
 
 		/** Dash ('-') delimiter. */
 		DASH('-'),
+		
+		/** Period ('.') delimiter. */
+		PERIOD('.'),
 
 		/** Forward-slash ('/') delimiter. */
 		SLASH('/'),

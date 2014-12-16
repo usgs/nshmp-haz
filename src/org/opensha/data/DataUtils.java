@@ -906,7 +906,7 @@ public final class DataUtils {
 	public static double[] buildCleanSequence(double min, double max, double step,
 			boolean ascending, int scale) {
 		double[] seq = buildSequence(min, max, step, ascending);
-		return clean(seq, scale);
+		return clean(scale, seq);
 	}
 
 	/**
@@ -1014,13 +1014,12 @@ public final class DataUtils {
 	 * @param scale decimal precision
 	 * @return a cleaned array
 	 */
-	public static double[] clean(double[] data, int scale) {
+	public static double[] clean(int scale, double... data) {
 		return transform(new Clean(scale), data);
 	}
 
 	// @formatter:off
 	// TODO group the four below (and others) in a single MathFunction enum??
-	
 	private static class Clean implements Function<Double, Double> {
 		private final String format;
 		private Clean(int scale) { format = "%." + scale + "f";}
