@@ -200,5 +200,11 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 			return new HazardModel(name, sourceSetMap);
 		}
 	}
+	
+	public enum Config {
+		GRIDDED_SURFACE_UNIT,
+		AREA_SOURCE_SCALING,
+		FLOATING_RUPTURE_MODEL;
+	}
 
 }

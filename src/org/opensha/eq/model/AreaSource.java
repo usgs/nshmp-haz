@@ -211,13 +211,13 @@ public class AreaSource implements Source {
 		UNIFORM_0P05(0, new double[] { 0.05 }),
 		UNIFORM_0P1(0, new double[] { 0.1 }),
 		UNIFORM_0P5(0, new double[] { 0.5 }),
-		SCALED_SM(2, new double[] { 0.02, 0.05, 0.1, 0.2, 0.5 }) {
+		SCALED_SMALL(2, new double[] { 0.02, 0.05, 0.1, 0.2, 0.5 }) {
 			@Override int indexForDistance(double d) {
 				return d < 20.0 ? 0 : d < 50.0 ? 1 : d < 100.0 ? 2 : d < 200.0 ? 3 : d < 400.0 ? 4
 					: 5;
 			}
 		},
-		SCALED_LG(0, new double[] { 0.1, 0.2, 0.5 }) {
+		SCALED_LARGE(0, new double[] { 0.1, 0.2, 0.5 }) {
 			@Override int indexForDistance(double d) {
 				return d < 100.0 ? 0 : d < 200.0 ? 1 : d < 400.0 ? 2 : 3;
 			}

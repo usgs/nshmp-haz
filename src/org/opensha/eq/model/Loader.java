@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,6 +37,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.io.Closeables;
 
 /**
  * {@code HazardModel} loader. This class takes care of extensive checked
@@ -80,9 +82,13 @@ class Loader {
 			checkNotNull(path, "Path is null");
 			modelPath = path.toRealPath();
 			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
-			typePaths = typeDirectories(modelPath);
+			Path typeDirPath = typeDirectory(modelPath);
+			
+			log.info("Loading config...");
+			loadConfig(typeDirPath);
+			
+			typePaths = typeDirectoryList(typeDirPath);
 			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
-
 			log.info("Loading model: " + name);
 			builder.name(name);
 			log.info("   From resource: " + modelPath.getFileName());
@@ -105,13 +111,32 @@ class Loader {
 
 		return model;
 	}
+	
+	private static final String CONFIG_PROPS = "config.properties";
+	
+	private static void loadConfig(Path typeDirPath) throws IOException {
+		// load defaults
+		InputStream is = Loader.class.getResourceAsStream("/resources/" + CONFIG_PROPS);
+		Properties props = new Properties();
+		props.load(is);
+		props.list(System.out);
+		Closeables.closeQuietly(is);
+		
+		// override with local
+		Path propsPath = typeDirPath.resolve(CONFIG_PROPS);
+		is = Files.newInputStream(propsPath);
+		props.load(is);
+		props.list(System.out);
+		Closeables.closeQuietly(is);
+	}
+	
 
 	private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",
 		"encoding", "UTF-8");
 
 	private static final String ZIP_SCHEME = "jar:file";
 
-	private static List<Path> typeDirectories(Path path) throws URISyntaxException, IOException {
+	private static Path typeDirectory(Path path) throws URISyntaxException, IOException {
 
 		boolean isZip = path.getFileName().toString().toLowerCase().endsWith(".zip");
 
@@ -129,21 +154,24 @@ class Loader {
 				zfs = FileSystems.newFileSystem(zipURI, ZIP_ENV_MAP);
 			}
 			Path zipRoot = Iterables.get(zfs.getRootDirectories(), 0);
-			List<Path> paths = typeDirectoryList(zipRoot);
-			if (paths.size() > 0) return paths;
 			
-			// We expect that some models will be nested one level down
-			// in zip files; there should only ever be one nested directory
-			// so take a look in that, otherwise we'll throw an exception
-			// upstream for having an empty model. TODO this is too complex;
-			// users should build a model in a direcoty and then zip it,
-			// model is then ALWAYS nested one level deep
-			Path nestedDir = firstPath(zipRoot);
-			checkArgument(Files.isDirectory(nestedDir), "No nested directory in zip: %s", nestedDir);
-			return typeDirectoryList(nestedDir);
+			// The expectation is that zipped models will have been created
+			// from a single model directory containing type directories,
+			// which will therefore be nested two levels deep in the zip file;
+			// in contrast to non-zip models where type directories will
+			// be one level deep.
+			
+			Path nestedTypeDir = firstPath(zipRoot);
+			checkArgument(Files.isDirectory(nestedTypeDir), "No nested directory in zip: %s", nestedTypeDir);
+			return nestedTypeDir;
+
+			// TODO clean
+			// List<Path> paths = typeDirectoryList(zipRoot);
+			// if (paths.size() > 0) return zipRoot;
+			// return typeDirectoryList(nestedDir);
 		}
 
-		return typeDirectoryList(path);
+		return path;
 	}
 
 	private static List<Path> typeDirectoryList(Path path) throws IOException {
@@ -367,6 +395,8 @@ class Loader {
 	private static String cleanZipName(String name) {
 		return name.endsWith("/") ? name.substring(0, name.length() - 1) : name;
 	}
+	
+//	private static 
 
 	/*
 	 * Only lists those directories matching a SourceType.

@@ -12,8 +12,6 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import org.opensha.eq.fault.surface.RuptureScaling;
-
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
@@ -31,6 +29,8 @@ public class Logging {
 	public static void init() {
 		try {
 			InputStream is = new FileInputStream("lib/logging.properties");
+//			InputStream is = Logging.class.getResourceAsStream("/lib/logging.properties");
+			
 			LogManager.getLogManager().readConfiguration(is);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();

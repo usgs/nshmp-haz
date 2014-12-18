@@ -29,7 +29,7 @@ public enum RuptureFloating {
 	 *  	create list of ruptures
 	 *  
 	 */
-	OFF, STRIKE_ONLY, NSHM_FAULT;
+	OFF, STRIKE_ONLY, NSHM;
 //	OFF {
 //		@Override List<Rupture> asRuptureList(GriddedSurfaceWithSubsets floatableSurface, IncrementalMfd mfd) {
 //			Builder<Rupture> rupListbuilder = ImmutableList.builder();

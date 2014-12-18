@@ -7,6 +7,7 @@ import static java.lang.Math.log10;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.round;
+import static java.lang.Math.sqrt;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public enum RuptureScaling {
 	 * distances for magnitudes in the closed range [6.0..8.6] and distances in
 	 * the closed range [0..1000]</p>
 	 * 
-	 * @see RuptureFloating#NSHM_FAULT
+	 * @see RuptureFloating#NSHM
 	 */
 	NSHM_FAULT_WC94_LENGTH {
 		@Override Dimensions dimensions(double mag, double maxWidth) {
@@ -93,7 +94,7 @@ public enum RuptureScaling {
 		}
 
 		@Override double pointSourceDistance(double mag, double distance) {
-			return correctedRjb(mag, distance, RJB_DAT_WC94L);
+			return correctedRjb(mag, distance, RJB_DAT_WC94LENGTH);
 		}
 	},
 
@@ -110,7 +111,7 @@ public enum RuptureScaling {
 		}
 
 		@Override double pointSourceDistance(double mag, double distance) {
-			return correctedRjb(mag, distance, RJB_DAT_GEOMAT);
+			return correctedRjb(mag, distance, RJB_DAT_GEOMATRIX);
 		}
 	},
 
@@ -131,11 +132,32 @@ public enum RuptureScaling {
 			double width = pow(10, (0.5 * mag - 2.15));
 			return (width < maxWidth) ? 
 				new Dimensions(width * 2.0, width) :
-				new Dimensions(pow(10, (mag - 4.0)) / width, maxWidth);
+				new Dimensions(pow(10, (mag - 4.0)) / maxWidth, maxWidth);
 		}
 
 		@Override double pointSourceDistance(double mag, double distance) {
 			throw new UnsupportedOperationException();
+		}
+	},
+
+	/**
+	 * Scaling used for 2014 CEUS derived from Somerville et al. (2001). In the
+	 * 2014 NSHM, this relation is only used for point source distance
+	 * corrections. The {@code dimensions()} implementation follows that of the
+	 * CEUS-SSC, maintaining an aspect ratio of 1 until the maximum width is
+	 * attained and then increasing length as necessary.
+	 */
+	SOMERVILLE {
+		@Override Dimensions dimensions(double mag, double maxWidth) {
+			double area = pow(10, mag - 4.366);
+			double width = sqrt(area);
+			return (width < maxWidth) ?
+				new Dimensions(width, width) :
+				new Dimensions(area / maxWidth, maxWidth);
+		}
+
+		@Override double pointSourceDistance(double mag, double distance) {
+			return correctedRjb(mag, distance, RJB_DAT_SOMERVILLE);
 		}
 	},
 	// @formatter:on
@@ -167,8 +189,9 @@ public enum RuptureScaling {
 	private static final String COMMENT_ID = "#";
 	private static final int RJB_M_SIZE = 26;
 	private static final int RJB_R_SIZE = 1001;
-	private static final double[][] RJB_DAT_WC94L = readRjb("etc/rjb_wc94len.dat");
-	private static final double[][] RJB_DAT_GEOMAT = readRjb("etc/rjb_geomet.dat");
+	private static final double[][] RJB_DAT_WC94LENGTH = readRjb("etc/rjb_wc94length.dat");
+	private static final double[][] RJB_DAT_GEOMATRIX = readRjb("etc/rjb_geomatrix.dat");
+	private static final double[][] RJB_DAT_SOMERVILLE = readRjb("etc/rjb_somerville.dat");
 
 	/* package visibility for testing */
 	static double[][] readRjb(String resource) {
