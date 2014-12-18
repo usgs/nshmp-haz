@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static org.opensha.eq.model.SourceAttribute.FOCAL_MECH_MAP;
 import static org.opensha.eq.model.SourceAttribute.MAG_DEPTH_MAP;
-import static org.opensha.eq.model.SourceAttribute.MAG_SCALING;
+import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha.eq.model.SourceAttribute.NAME;
 import static org.opensha.eq.model.SourceAttribute.STRIKE;
 import static org.opensha.eq.model.SourceAttribute.TYPE;
@@ -140,7 +140,7 @@ class GridParser extends DefaultHandler {
 				NavigableMap<Double, Map<Double, Double>> depthMap = stringToValueValueWeightMap(depthMapStr);
 				String mechMapStr = readString(FOCAL_MECH_MAP, atts);
 				Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
-				MagScalingType magScaling = readEnum(MAG_SCALING, atts, MagScalingType.class);
+				MagScalingType magScaling = readEnum(RUPTURE_SCALING, atts, MagScalingType.class);
 				sourceSetBuilder
 					.depthMap(depthMap, type)
 					.mechs(mechMap)

@@ -8,7 +8,7 @@ import static org.opensha.eq.model.SourceAttribute.A;
 import static org.opensha.eq.model.SourceAttribute.DEPTH;
 import static org.opensha.eq.model.SourceAttribute.DIP;
 import static org.opensha.eq.model.SourceAttribute.M;
-import static org.opensha.eq.model.SourceAttribute.MAG_SCALING;
+import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha.eq.model.SourceAttribute.NAME;
 import static org.opensha.eq.model.SourceAttribute.RAKE;
 import static org.opensha.eq.model.SourceAttribute.TYPE;
@@ -135,7 +135,7 @@ class ClusterParser extends DefaultHandler {
 				case SOURCE_PROPERTIES:
 					// this isn't really needed for cluster sources,
 					// but nested faults can't be built without it
-					msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
+					msrType = readEnum(RUPTURE_SCALING, atts, MagScalingType.class);
 					clusterSetBuilder.magScaling(msrType);
 					log.fine("Mag scaling: " + msrType + " (not used)");
 					msr = msrType.instance();

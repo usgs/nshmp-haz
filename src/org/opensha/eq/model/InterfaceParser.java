@@ -11,7 +11,7 @@ import static org.opensha.eq.model.SourceAttribute.DIP;
 import static org.opensha.eq.model.SourceAttribute.D_MAG;
 import static org.opensha.eq.model.SourceAttribute.FLOATS;
 import static org.opensha.eq.model.SourceAttribute.M;
-import static org.opensha.eq.model.SourceAttribute.MAG_SCALING;
+import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha.eq.model.SourceAttribute.M_MAX;
 import static org.opensha.eq.model.SourceAttribute.M_MIN;
 import static org.opensha.eq.model.SourceAttribute.NAME;
@@ -124,7 +124,7 @@ class InterfaceParser extends DefaultHandler {
 					break;
 
 				case SOURCE_PROPERTIES:
-					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
+					MagScalingType msrType = readEnum(RUPTURE_SCALING, atts, MagScalingType.class);
 					sourceSetBuilder.magScaling(msrType);
 					msr = msrType.instance();
 					log.fine("Mag scaling: " + msrType);

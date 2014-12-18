@@ -6,7 +6,7 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
 import static org.opensha.eq.model.SourceAttribute.DEPTH;
 import static org.opensha.eq.model.SourceAttribute.DIP;
-import static org.opensha.eq.model.SourceAttribute.MAG_SCALING;
+import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha.eq.model.SourceAttribute.NAME;
 import static org.opensha.eq.model.SourceAttribute.RAKE;
 import static org.opensha.eq.model.SourceAttribute.TYPE;
@@ -137,7 +137,7 @@ class FaultParser extends DefaultHandler {
 					break;
 
 				case SOURCE_PROPERTIES:
-					MagScalingType msrType = readEnum(MAG_SCALING, atts, MagScalingType.class);
+					MagScalingType msrType = readEnum(RUPTURE_SCALING, atts, MagScalingType.class);
 					sourceSetBuilder.magScaling(msrType);
 					msr = msrType.instance();
 					log.fine("Mag scaling: " + msrType);

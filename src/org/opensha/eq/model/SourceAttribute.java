@@ -39,7 +39,7 @@ public enum SourceAttribute {
 	D_MAG,
 	C_MAG,
 	FLOATS,
-	MAG_SCALING,
+	RUPTURE_SCALING,
 	MAGS,
 	RATES,
 	
