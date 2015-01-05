@@ -8,6 +8,15 @@ import org.opensha.geo.Location;
  */
 public class Site {
 	
+	public static final double MIN_VS30 = 150.0;
+	public static final double MAX_VS30 = 2000.0;
+	
+	public static final double MIN_Z2P5 = 0.0;
+	public static final double MAX_Z2P5 = 5.0;
+
+	public static final double MIN_Z1P0 = 0.0;
+	public static final double MAX_Z1P0 = 2.0;
+
 	public final Location loc;
 	public final double vs30;
 	public final boolean vsInferred;
