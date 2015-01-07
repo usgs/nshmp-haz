@@ -65,7 +65,8 @@ public final class GmmUtils {
 	private static Map<Integer, Map<Integer, Map<Integer, Double>>> cyhw_map;
 
 	private static String datPath = "etc/";
-	private static String rjbDatPath = datPath + "rjbmean.dat";
+//	private static String rjbDatPath = datPath + "rjbmean.dat"; // relocated
+	private static String rjbDatPath = "/org/opensha/eq/fault/surface/etc/rjb_wc94length.dat";
 	private static String cbhwDatPath = datPath + "avghw_cb.dat";
 	private static String cyhwDatPath = datPath + "avghw_cy.dat";
 
@@ -161,7 +162,7 @@ public final class GmmUtils {
 		int distKey = (int) Math.floor(D);
 		return (D <= 1000) ? rjb_map.get(magKey).get(distKey) : D;
 	}
-
+	
 	/**
 	 * Returns the average hanging-wall factor appropriate for
 	 * {@link CampbellBozorgnia_2008} for a dipping point source at the supplied
