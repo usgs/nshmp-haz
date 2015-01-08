@@ -14,6 +14,8 @@ import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.surface.ApproxGriddedSurface;
 import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.eq.fault.surface.GriddedSurfaceWithSubsets;
+import org.opensha.eq.fault.surface.RuptureFloating;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;
 
@@ -38,10 +40,10 @@ public class InterfaceSource extends FaultSource {
 
 	private InterfaceSource(String name, LocationList upperTrace, LocationList lowerTrace,
 		double dip, double width, GriddedSurface surface, double rake, List<IncrementalMfd> mfds,
-		MagScalingRelationship msr, double aspectRatio, double offset, FloatStyle floatStyle) {
+		double spacing, RuptureScaling rupScaling, RuptureFloating rupFloating) {
+		
 
-		super(name, upperTrace, dip, width, surface, rake, mfds, msr, aspectRatio, offset,
-			floatStyle);
+		super(name, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling, rupFloating);
 
 		this.lowerTrace = (lowerTrace == null) ? surface.getEvenlyDiscritizedLowerEdge()
 			: lowerTrace;
@@ -88,11 +90,6 @@ public class InterfaceSource extends FaultSource {
 		// required
 		private LocationList lowerTrace;
 
-		// have defaults
-		double aspectRatio = 1.0;
-		double offset = 5.0;
-		FloatStyle floatStyle = FULL_DOWN_DIP;
-
 		@Override
 		Builder depth(double depth) {
 			this.depth = validateInterfaceDepth(depth);
@@ -135,7 +132,7 @@ public class InterfaceSource extends FaultSource {
 				this.dip = Double.NaN;
 				this.width = Double.NaN;
 				validateState(ID);
-				surface = new ApproxGriddedSurface(trace, lowerTrace, offset);
+				surface = new ApproxGriddedSurface(trace, lowerTrace, spacing);
 
 			} else {
 
@@ -146,13 +143,13 @@ public class InterfaceSource extends FaultSource {
 					.depth(depth)
 					.dip(dip)
 					.width(width)
-					.spacing(offset)
+					.spacing(spacing)
 					.build();
 
 			}
 
 			return new InterfaceSource(name, trace, lowerTrace, dip, width, surface, rake,
-				ImmutableList.copyOf(mfds), msr, aspectRatio, offset, floatStyle);
+				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating);
 		}
 
 	}

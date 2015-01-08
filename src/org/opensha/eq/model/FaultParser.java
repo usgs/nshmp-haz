@@ -26,8 +26,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha.eq.Magnitudes;
-import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.GaussianMfd;
 import org.opensha.mfd.GutenbergRichterMfd;
@@ -63,7 +62,7 @@ class FaultParser extends DefaultHandler {
 	private FaultSourceSet.Builder sourceSetBuilder;
 	private FaultSource.Builder sourceBuilder;
 
-	private MagScalingRelationship msr;
+	private RuptureScaling rupScaling;
 
 	// Data applying to all sourceSet
 	private MagUncertainty unc = null;
@@ -137,17 +136,15 @@ class FaultParser extends DefaultHandler {
 					break;
 
 				case SOURCE_PROPERTIES:
-					MagScalingType msrType = readEnum(RUPTURE_SCALING, atts, MagScalingType.class);
-					sourceSetBuilder.magScaling(msrType);
-					msr = msrType.instance();
-					log.fine("Mag scaling: " + msrType);
+					rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
+					log.fine("Rup scaling: " + rupScaling);
 					break;
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
 					sourceBuilder = new FaultSource.Builder()
 						.name(srcName)
-						.magScaling(msr);
+						.rupScaling(rupScaling);
 					log.fine("     Source: " + srcName);
 					break;
 

@@ -28,7 +28,7 @@ import javax.xml.parsers.SAXParser;
 import org.opensha.data.DataUtils;
 import org.opensha.eq.Magnitudes;
 import org.opensha.eq.fault.FocalMech;
-import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.Location;
 import org.opensha.mfd.IncrementalMfd;
 import org.opensha.mfd.MfdType;
@@ -140,17 +140,17 @@ class GridParser extends DefaultHandler {
 				NavigableMap<Double, Map<Double, Double>> depthMap = stringToValueValueWeightMap(depthMapStr);
 				String mechMapStr = readString(FOCAL_MECH_MAP, atts);
 				Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
-				MagScalingType magScaling = readEnum(RUPTURE_SCALING, atts, MagScalingType.class);
+				RuptureScaling rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
 				sourceSetBuilder
 					.depthMap(depthMap, type)
 					.mechs(mechMap)
-					.magScaling(magScaling);
+					.rupScaling(rupScaling);
 				double strike = readDouble(STRIKE, atts);
 				sourceSetBuilder.strike(strike);
 				if (log.isLoggable(FINE)) {
 					log.fine("     Depths: " + depthMap);
 					log.fine("Focal mechs: " + mechMap);
-					log.fine("Mag scaling: " + magScaling);
+					log.fine("Rup scaling: " + rupScaling);
 					log.fine("     Strike: " + strike);
 				}
 

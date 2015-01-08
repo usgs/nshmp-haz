@@ -8,7 +8,6 @@ import static org.opensha.util.TextUtils.validateName;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -23,9 +22,8 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 
 	final private List<AreaSource> sources;
 
-	private AreaSourceSet(String name, double weight, MagScalingType msrType,
-		List<AreaSource> sources, GmmSet gmmSet) {
-		super(name, weight, msrType, gmmSet);
+	private AreaSourceSet(String name, double weight, List<AreaSource> sources, GmmSet gmmSet) {
+		super(name, weight, gmmSet);
 		this.sources = sources;
 	}
 
@@ -57,7 +55,6 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 
 		String name;
 		Double weight;
-		MagScalingType magScaling;
 		GmmSet gmmSet;
 		List<AreaSource> sources = Lists.newArrayList();
 
@@ -76,11 +73,6 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 			return this;
 		}
 
-		Builder magScaling(MagScalingType magScaling) {
-			this.magScaling = checkNotNull(magScaling, "MagScalingType is null");
-			return this;
-		}
-
 		Builder source(AreaSource source) {
 			sources.add(checkNotNull(source, "AreaSource is null"));
 			return this;
@@ -90,14 +82,13 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 			checkState(!built, "This %s instance as already been used", id);
 			checkState(name != null, "%s name not set", id);
 			checkState(weight != null, "%s weight not set", id);
-			checkState(magScaling != null, "%s mag-scaling relation not set", id);
 			checkState(gmmSet != null, "%s ground motion models not set", id);
 			built = true;
 		}
 
 		AreaSourceSet build() {
 			validateState(ID);
-			return new AreaSourceSet(name, weight, magScaling, sources, gmmSet);
+			return new AreaSourceSet(name, weight, sources, gmmSet);
 		}
 	}
 

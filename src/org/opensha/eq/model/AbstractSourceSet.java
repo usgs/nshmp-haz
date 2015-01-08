@@ -2,7 +2,6 @@ package org.opensha.eq.model;
 
 import static com.google.common.base.Strings.padEnd;
 
-import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -20,16 +19,14 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 
 	private final String name;
 	private final double weight;
-	private final MagScalingType msrType; // TODO consider removing; not used
 	private final GmmSet gmmSet;
 
 	// NOTE we're holding onto weight for reference, however, MFD
 	// rates will have already been scaled in place. TODO is this true?
 
-	AbstractSourceSet(String name, double weight, MagScalingType msrType, GmmSet gmmSet) {
+	AbstractSourceSet(String name, double weight, GmmSet gmmSet) {
 		this.name = name;
 		this.weight = weight;
-		this.msrType = msrType;
 		this.gmmSet = gmmSet;
 	}
 

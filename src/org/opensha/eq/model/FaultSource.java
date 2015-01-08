@@ -22,6 +22,8 @@ import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.eq.fault.surface.GriddedSurfaceWithSubsets;
+import org.opensha.eq.fault.surface.RuptureFloating;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;
@@ -46,27 +48,23 @@ import com.google.common.collect.Range;
  */
 public class FaultSource implements Source {
 
-	// TODO revisit to determine which fields
-	// should be obtained from surface
-
 	final String name;
 	final LocationList trace;
 	final double dip;
 	final double width;
 	final double rake;
 	final List<IncrementalMfd> mfds;
-	final MagScalingRelationship msr;
-	final double aspectRatio; // for floating ruptures
-	final double offset; // of floating ruptures
-	final FloatStyle floatStyle;
+	final double spacing;
+	final RuptureScaling rupScaling;
+	final RuptureFloating rupFloating;
 	final GriddedSurface surface;
 
 	private final List<List<Rupture>> ruptureLists; // 1:1 with Mfds
 
 	// package privacy for subduction subclass
 	FaultSource(String name, LocationList trace, double dip, double width, GriddedSurface surface,
-		double rake, List<IncrementalMfd> mfds, MagScalingRelationship msr, double aspectRatio,
-		double offset, FloatStyle floatStyle) {
+		double rake, List<IncrementalMfd> mfds, double spacing, RuptureScaling rupScaling,
+		RuptureFloating rupFloating) {
 
 		this.name = name;
 		this.trace = trace;
@@ -75,10 +73,9 @@ public class FaultSource implements Source {
 		this.surface = surface;
 		this.rake = rake;
 		this.mfds = mfds;
-		this.msr = msr;
-		this.aspectRatio = aspectRatio;
-		this.offset = offset;
-		this.floatStyle = floatStyle;
+		this.spacing = spacing;
+		this.rupScaling = rupScaling;
+		this.rupFloating = rupFloating;
 
 		ruptureLists = initRuptureLists();
 		checkState(Iterables.size(Iterables.concat(ruptureLists)) > 0,
@@ -134,6 +131,7 @@ public class FaultSource implements Source {
 
 			if (mfd.floats()) {
 
+				// get global floating model
 				// rupture dimensions
 				double maxWidth = surface.width();
 				double length = computeRuptureLength(msr, mag, maxWidth, aspectRatio);
@@ -185,11 +183,10 @@ public class FaultSource implements Source {
 	/* Single use builder */
 	static class Builder {
 
-		private static final Range<Double> ASPECT_RATIO_RANGE = Range.closed(1.0, 2.0);
-		private static final Range<Double> OFFSET_RANGE = Range.closed(0.1, 20.0);
-
 		private static final String ID = "FaultSource.Builder";
 		private boolean built = false;
+
+		private static final Range<Double> SURFACE_GRID_SPACING_RANGE = Range.closed(0.1, 20.0);
 
 		// required
 		String name;
@@ -200,12 +197,9 @@ public class FaultSource implements Source {
 		Double rake;
 		ImmutableList.Builder<IncrementalMfd> mfdsBuilder = ImmutableList.builder();
 		List<IncrementalMfd> mfds;
-		MagScalingRelationship msr;
-
-		// have defaults - not required
-		double aspectRatio = 1.0;
-		double offset = 1.0;
-		FloatStyle floatStyle = FULL_DOWN_DIP;
+		Double spacing;
+		RuptureScaling rupScaling;
+		RuptureFloating rupFloating;
 
 		Builder name(String name) {
 			this.name = validateName(name);
@@ -252,23 +246,19 @@ public class FaultSource implements Source {
 			return this;
 		}
 
-		Builder magScaling(MagScalingRelationship msr) {
-			this.msr = checkNotNull(msr, "Mag-Scaling Relation is null");
+		Builder surfaceSpacing(double spacing) {
+			this.spacing = DataUtils
+				.validate(SURFACE_GRID_SPACING_RANGE, "Floater Offset", spacing);
 			return this;
 		}
 
-		Builder aspectRatio(double aspectRatio) {
-			this.aspectRatio = DataUtils.validate(ASPECT_RATIO_RANGE, "Aspect Ratio", aspectRatio);
+		Builder rupScaling(RuptureScaling rupScaling) {
+			this.rupScaling = checkNotNull(rupScaling, "Rup-Scaling Relation is null");
 			return this;
 		}
 
-		Builder offset(double offset) {
-			this.offset = DataUtils.validate(OFFSET_RANGE, "Floater Offset", offset);
-			return this;
-		}
-
-		Builder floatStyle(FloatStyle floatStyle) {
-			this.floatStyle = checkNotNull(floatStyle, "Floater style is null");
+		Builder rupFloating(RuptureFloating rupFloating) {
+			this.rupFloating = checkNotNull(rupFloating, "Rup-Floating Model is null");
 			return this;
 		}
 
@@ -281,7 +271,9 @@ public class FaultSource implements Source {
 			checkState(depth != null, "%s depth not set", id);
 			checkState(rake != null, "%s rake not set", id);
 			checkState(mfds.size() > 0, "%s has no MFDs", id);
-			checkState(msr != null, "%s mag-scaling relation not set", id);
+			checkState(spacing != null, "%s surface grid spacing not set", id);
+			checkState(rupScaling != null, "%s rupture-scaling relation not set", id);
+			checkState(rupFloating != null, "%s rupture-floating model not set", id);
 			built = true;
 		}
 
@@ -293,10 +285,11 @@ public class FaultSource implements Source {
 
 			// create surface
 			GriddedSurfaceWithSubsets surface = GriddedSurfaceWithSubsets.builder().trace(trace)
-				.depth(depth).dip(dip).width(width).spacing(offset).build();
+				.depth(depth).dip(dip).width(width).spacing(spacing).build();
 
 			return new FaultSource(name, trace, dip, width, surface, rake,
-				ImmutableList.copyOf(mfds), msr, aspectRatio, offset, floatStyle);
+				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating);
 		}
 	}
+
 }

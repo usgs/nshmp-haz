@@ -1,8 +1,12 @@
 package org.opensha.eq.fault.surface;
 
+import static org.opensha.eq.model.FloatStyle.CENTERED;
+import static org.opensha.eq.model.FloatStyle.FULL_DOWN_DIP;
+
 import java.util.List;
 
 import org.opensha.eq.model.Rupture;
+import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -49,6 +53,104 @@ public enum RuptureFloating {
 //		}
 //	};
 	
-//	abstract List<Rupture> asRuptureList(GriddedSurfaceWithSubsets floatableSurface);
+	abstract List<Rupture> createRuptureList(GriddedSurfaceWithSubsets floatableSurface, IncrementalMfd mfd);
+
+	
+	private List<Rupture> createRuptureList(IncrementalMfd mfd) {
+		ImmutableList.Builder<Rupture> rupListbuilder = ImmutableList.builder();
+
+		// @formatter:off
+		for (int i = 0; i < mfd.getNum(); ++i) {
+			double mag = mfd.getX(i);
+			double rate = mfd.getY(i);
+
+			// TODO do we really want to do this??
+			if (rate < 1e-14) continue; // shortcut low rates
+
+			if (mfd.floats()) {
+
+				// get global floating model
+				// rupture dimensions
+				double maxWidth = surface.width();
+				double length = computeRuptureLength(msr, mag, maxWidth, aspectRatio);
+				double width = Math.min(length / aspectRatio, maxWidth);
+
+				// 2x width ensures full down-dip rupture
+				if (floatStyle == FULL_DOWN_DIP) {
+					width = 2 * maxWidth;
+				}
+
+				GriddedSurfaceWithSubsets surf = (GriddedSurfaceWithSubsets) surface;
+				
+				// rupture count
+				double numRup = (floatStyle != CENTERED) ?
+					surf.getNumSubsetSurfaces(length, width, offset) :
+					surf.getNumSubsetSurfacesAlongLength(length, offset);
+
+				for (int r = 0; r < numRup; r++) {
+					RuptureSurface floatingSurface = (floatStyle != CENTERED) ?
+						surf.getNthSubsetSurface(length, width, offset, r) :
+						surf.getNthSubsetSurfaceCenteredDownDip(length, width, offset, r);
+					double rupRate = rate / numRup;
+					Rupture rup = Rupture.create(mag, rake, rupRate, floatingSurface);
+					rupListbuilder.add(rup);
+				}
+			} else {
+				Rupture rup = Rupture.create(mag, rate, rake, surface);
+				rupListbuilder.add(rup);
+			}
+		}
+		// @formatter:on
+		return rupListbuilder.build();
+	}
+	
+	private List<Rupture> createRuptureList(IncrementalMfd mfd) {
+		ImmutableList.Builder<Rupture> rupListbuilder = ImmutableList.builder();
+
+		// @formatter:off
+		for (int i = 0; i < mfd.getNum(); ++i) {
+			double mag = mfd.getX(i);
+			double rate = mfd.getY(i);
+
+			// TODO do we really want to do this??
+			if (rate < 1e-14) continue; // shortcut low rates
+
+			if (mfd.floats()) {
+
+				// get global floating model
+				// rupture dimensions
+				double maxWidth = surface.width();
+				double length = computeRuptureLength(msr, mag, maxWidth, aspectRatio);
+				double width = Math.min(length / aspectRatio, maxWidth);
+
+				// 2x width ensures full down-dip rupture
+				if (floatStyle == FULL_DOWN_DIP) {
+					width = 2 * maxWidth;
+				}
+
+				GriddedSurfaceWithSubsets surf = (GriddedSurfaceWithSubsets) surface;
+				
+				// rupture count
+				double numRup = (floatStyle != CENTERED) ?
+					surf.getNumSubsetSurfaces(length, width, offset) :
+					surf.getNumSubsetSurfacesAlongLength(length, offset);
+
+				for (int r = 0; r < numRup; r++) {
+					RuptureSurface floatingSurface = (floatStyle != CENTERED) ?
+						surf.getNthSubsetSurface(length, width, offset, r) :
+						surf.getNthSubsetSurfaceCenteredDownDip(length, width, offset, r);
+					double rupRate = rate / numRup;
+					Rupture rup = Rupture.create(mag, rake, rupRate, floatingSurface);
+					rupListbuilder.add(rup);
+				}
+			} else {
+				Rupture rup = Rupture.create(mag, rate, rake, surface);
+				rupListbuilder.add(rup);
+			}
+		}
+		// @formatter:on
+		return rupListbuilder.build();
+	}
+
 
 }

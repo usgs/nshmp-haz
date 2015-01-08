@@ -115,16 +115,9 @@ class Loader {
 	private static final String CONFIG_PROPS = "config.properties";
 	
 	private static void loadConfig(Path typeDirPath) throws IOException {
-		// load defaults
-		InputStream is = Loader.class.getResourceAsStream("/resources/" + CONFIG_PROPS);
 		Properties props = new Properties();
-		props.load(is);
-		props.list(System.out);
-		Closeables.closeQuietly(is);
-		
-		// override with local
 		Path propsPath = typeDirPath.resolve(CONFIG_PROPS);
-		is = Files.newInputStream(propsPath);
+		InputStream is = Files.newInputStream(propsPath);
 		props.load(is);
 		props.list(System.out);
 		Closeables.closeQuietly(is);

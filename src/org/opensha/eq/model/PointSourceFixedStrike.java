@@ -15,6 +15,8 @@ import java.util.Map;
 import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
+import org.opensha.eq.fault.surface.RuptureScaling;
+import org.opensha.eq.fault.surface.RuptureScaling.Dimensions;
 import org.opensha.eq.model.PointSource.DepthModel;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationVector;
@@ -54,8 +56,8 @@ class PointSourceFixedStrike extends PointSourceFinite {
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
 	PointSourceFixedStrike(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
-		MagLengthRelationship mlr, DepthModel depthModel, double strike) {
-		super(loc, mfd, mechWtMap, mlr, depthModel);
+		RuptureScaling rupScaling, DepthModel depthModel, double strike) {
+		super(loc, mfd, mechWtMap, rupScaling, depthModel);
 		this.strike = strike;
 	}
 
@@ -89,7 +91,9 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		double dipRad = mech.dip() * TO_RAD;
 		double strikeRad = strike * TO_RAD;
 
-		double widthDD = calcWidth(mag, zTop, dipRad);
+		double maxWidthDD = (depthModel.maxDepth - zTop) / sin(dipRad);
+		Dimensions dimensions = rupScaling.dimensions(mag, maxWidthDD);
+		double widthDD = dimensions.width;
 		double widthH = widthDD * cos(dipRad);
 		double zBot = zTop + widthDD * sin(dipRad);
 
@@ -106,7 +110,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		fsSurf.zBot = zBot;
 		fsSurf.footwall = isOnFootwall(idx);
 
-		double distToEndpoint = mlr.getMedianLength(mag) / 2;
+		double distToEndpoint = dimensions.length / 2;
 		Location locWithDepth = Location.create(loc.lat(), loc.lon(), zTop);
 		LocationVector v1 = LocationVector.create(strikeRad, distToEndpoint, 0.0);
 		LocationVector v2 = LocationVector.reverseOf(v1);
@@ -147,7 +151,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
 			{
-				rupture.surface = new FixedStrikeSurface(loc);
+				rupture.surface = new FixedStrikeSurface(loc, rupScaling);
 			}
 			int size = size();
 			int caret = 0;
@@ -177,8 +181,8 @@ class PointSourceFixedStrike extends PointSourceFinite {
 
 		// ignores 'widthDD' and 'mag' fields in parent
 
-		FixedStrikeSurface(Location loc) {
-			super(loc);
+		FixedStrikeSurface(Location loc, RuptureScaling rupScaling) {
+			super(loc, rupScaling);
 		}
 
 		/*
@@ -191,7 +195,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		 * corner Locations) and one will be on the footwall and one won't. When
 		 * initializing the surface (above), the footwall flag is used to create
 		 * the two mirror image surfaces, but which one is actually the footwall
-		 * representation relative to the site location is unkown until distance
+		 * representation relative to the site location is unknown until distance
 		 * calculations are started.
 		 */
 

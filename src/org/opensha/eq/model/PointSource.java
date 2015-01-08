@@ -1,11 +1,10 @@
 package org.opensha.eq.model;
 
 import static java.lang.Math.ceil;
-import static java.lang.Math.min;
-import static java.lang.Math.sin;
 import static org.opensha.eq.fault.FocalMech.NORMAL;
 import static org.opensha.eq.fault.FocalMech.REVERSE;
 import static org.opensha.eq.fault.FocalMech.STRIKE_SLIP;
+import static org.opensha.util.MathUtils.hypot;
 
 import java.util.Iterator;
 import java.util.List;
@@ -13,8 +12,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 
 import org.opensha.eq.fault.FocalMech;
-import org.opensha.eq.fault.scaling.MagLengthRelationship;
-import org.opensha.eq.fault.surface.PtSrcDistCorr;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
@@ -29,12 +27,15 @@ import com.google.common.primitives.Ints;
  * representation of point-source {@code Rupture}s. When iterating, a
  * {@code PointSource} will supply {@code Rupture}s that provide dips and rakes
  * corresponding to different {@link FocalMech} types, but all distance metrics
- * will be equivalent (rJB = rRup = rX).
+ * are based on the site to point source location distance. This distance may
+ * be corrected depending on choice of {@link RuptureScaling} model.
  * 
  * <p><b>NOTE:</b> This source type should <i>not</i> be used in in conjunction
  * with ground motion models (GMMs) that consider hanging wall effects or
  * require more detailed distance metrics that are consistent with a
- * {@code Rupture}'s {@code FocalMech}, dip, and rake.</p>
+ * {@code Rupture}'s {@code FocalMech}, dip, and rake. Current implementation
+ * throws an {code UnsupportedOperationException} when such metrics are
+ * queried.</p>
  * 
  * <p><b>NOTE</b>: {@code PointSource}s are thread safe, however the
  * {@code Rupture}s returned by {@link Source#iterator()} are not.</p>
@@ -51,7 +52,7 @@ class PointSource implements Source {
 	final Location loc;
 	final IncrementalMfd mfd;
 	final Map<FocalMech, Double> mechWtMap;
-	final MagLengthRelationship mlr;
+	final RuptureScaling rupScaling;
 	final DepthModel depthModel;
 
 	int rupCount;
@@ -62,17 +63,18 @@ class PointSource implements Source {
 	 * Constructs a new point earthquake source.
 	 * @param loc <code>Location</code> of the point source
 	 * @param mfd magnitude frequency distribution of the source
-	 * @param magDepthMap specifies magnitude cutoffs and associated weights for
-	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
+	 * @param rupScaling rupture scaling model
+	 * @param depthModel specifies magnitude cutoffs and associated weights for
+	 *        different depth-to-top-of-ruptures
 	 */
-	PointSource(Location loc, IncrementalMfd mfd,
-		Map<FocalMech, Double> mechWtMap, MagLengthRelationship mlr, DepthModel depthModel) {
-		
+	PointSource(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
+		RuptureScaling rupScaling, DepthModel depthModel) {
+
 		this.loc = loc;
 		this.mfd = mfd;
 		this.mechWtMap = mechWtMap;
-		this.mlr = mlr;
+		this.rupScaling = rupScaling;
 		this.depthModel = depthModel;
 		init();
 	}
@@ -118,7 +120,7 @@ class PointSource implements Source {
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
 			{
-				rupture.surface = new PointSurface(loc);
+				rupture.surface = new PointSurface(loc, rupScaling);
 			}
 			int size = size();
 			int caret = 0;
@@ -168,46 +170,24 @@ class PointSource implements Source {
 		return (idx < ssIdx) ? STRIKE_SLIP : (idx < revIdx) ? REVERSE : NORMAL;
 	}
 
-	private static final double MAX_DEPTH = 14.0;
-	private static final double GENERIC_WIDTH = 8.0;
-
-	/*
-	 * TODO: revisit. This is very clunky. Point sources are used by crustal and
-	 * slab sources. The default implementation here had assumed a maximum
-	 * crustal eq depth of 14km, which is really only appropriate for active
-	 * continental crust such as that in California. This yielded negative
-	 * widths and unreasonable zHyp values when zTop > 14. That said, most Gmm's
-	 * used for slab or stable continental crust ignore width and zHyp so there
-	 * probably wouldn't be a problem.
-	 * 
-	 * As a stopgap, any supplied depth > 14km will return a width of 8km, a
-	 * reasonable value for an earthquake nested in subducting oceanic crust.
-	 * Otherwise, method returns the minimum of the aspect ratio width and the
-	 * allowable down-dip width. Utility for use by subclasses.
-	 */
-	double calcWidth(double mag, double depth, double dipRad) {
-		if (depth > MAX_DEPTH) return GENERIC_WIDTH;
-		double length = mlr.getMedianLength(mag);
-		double aspectWidth = length / 1.5;
-		double ddWidth = (14.0 - depth) / sin(dipRad);
-		return min(aspectWidth, ddWidth);
-	}
-
 	static class PointSurface implements RuptureSurface {
 
-		Location loc;
+		final Location loc;
+		final RuptureScaling rupScaling;
 		double mag;
 		double dip;
 		double zTop;
 
-		PointSurface(Location loc) {
+		PointSurface(Location loc, RuptureScaling rupScaling) {
 			this.loc = loc;
+			this.rupScaling = rupScaling;
 		}
 
 		@Override public Distances distanceTo(Location loc) {
-			double r = Locations.horzDistanceFast(this.loc, loc);
-			r *= PtSrcDistCorr.getCorrection(r, mag, PtSrcDistCorr.Type.NSHMP08);
-			return Distances.create(r, r, r);
+			double rJB = Locations.horzDistanceFast(this.loc, loc);
+			rJB = rupScaling.pointSourceDistance(mag, rJB);
+			double rRup = hypot(rJB, zTop);
+			return Distances.create(rJB, rRup, rJB);
 		}
 
 		// @formatter:off
@@ -253,6 +233,11 @@ class PointSource implements Source {
 	 * 
 	 * magDepthWeights[] : depth weight for index [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
 	 * 
+	 * A depth model also encapsulates a maximum depth value that is usually
+	 * source type dependent and may be used when computing determin the maximum
+	 * width of a point source.
+	 * 
+	 * All DepthModel validation is currently performed in GridSourceSet.Builder.
 	 */
 	static final class DepthModel {
 		
@@ -263,6 +248,7 @@ class PointSource implements Source {
 		 */
 
 		// @formatter:on
+		final double maxDepth;
 
 		final List<Double> magMaster;
 
@@ -271,14 +257,15 @@ class PointSource implements Source {
 		final List<Double> magDepthWeights;
 
 		static DepthModel create(List<Double> magMaster,
-				NavigableMap<Double, Map<Double, Double>> magDepthMap) {
-			return new DepthModel(magMaster, magDepthMap);
+				NavigableMap<Double, Map<Double, Double>> magDepthMap, double maxDepth) {
+			return new DepthModel(magMaster, magDepthMap, maxDepth);
 		}
 
 		private DepthModel(List<Double> magMaster,
-			NavigableMap<Double, Map<Double, Double>> magDepthMap) {
+			NavigableMap<Double, Map<Double, Double>> magDepthMap, double maxDepth) {
 
 			this.magMaster = magMaster;
+			this.maxDepth = maxDepth;
 
 			List<Integer> indices = Lists.newArrayList();
 			List<Double> depths = Lists.newArrayList();

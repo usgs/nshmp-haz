@@ -8,7 +8,6 @@ import static org.opensha.util.TextUtils.validateName;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
 
@@ -25,9 +24,8 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
 	private final List<FaultSource> sources;
 
-	private FaultSourceSet(String name, double weight, MagScalingType msrType,
-		List<FaultSource> sources, GmmSet gmmSet) {
-		super(name, weight, msrType, gmmSet);
+	private FaultSourceSet(String name, double weight, List<FaultSource> sources, GmmSet gmmSet) {
+		super(name, weight, gmmSet);
 		this.sources = sources;
 	}
 
@@ -50,7 +48,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 	// TODO play around with performance of rectangle filtering or not
 	// if distance is large (e.g.) the majority of sources will always
 	// pass rect test.
-	
+
 	/* Not inlined for use by cluster sources */
 	static class DistanceFilter implements Predicate<FaultSource> {
 		private final Predicate<Location> filter;
@@ -76,7 +74,6 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
 		String name;
 		Double weight;
-		MagScalingType magScaling;
 		GmmSet gmmSet;
 		List<FaultSource> sources = Lists.newArrayList();
 
@@ -95,11 +92,6 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 			return this;
 		}
 
-		Builder magScaling(MagScalingType magScaling) {
-			this.magScaling = checkNotNull(magScaling, "MagScalingType is null");
-			return this;
-		}
-
 		Builder source(FaultSource source) {
 			sources.add(checkNotNull(source, "FaultSource is null"));
 			return this;
@@ -109,14 +101,13 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 			checkState(!built, "This %s instance as already been used", id);
 			checkState(name != null, "%s name not set", id);
 			checkState(weight != null, "%s weight not set", id);
-			checkState(magScaling != null, "%s mag-scaling relation not set", id);
 			checkState(gmmSet != null, "%s ground motion models not set", id);
 			built = true;
 		}
 
 		FaultSourceSet buildFaultSet() {
 			validateState(ID);
-			return new FaultSourceSet(name, weight, magScaling, sources, gmmSet);
+			return new FaultSourceSet(name, weight, sources, gmmSet);
 		}
 	}
 

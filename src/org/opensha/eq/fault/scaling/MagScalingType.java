@@ -9,6 +9,7 @@ import org.opensha.eq.fault.scaling.impl.WC1994_MagLengthRelationship;
  * 
  * @author Peter Powers
  */
+@Deprecated
 public enum MagScalingType {
 
 	/** EllsworthB – Hanks & Bakun hybrid used in UCERF2 and the 2008 NSHMP. */
