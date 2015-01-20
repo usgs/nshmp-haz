@@ -18,9 +18,7 @@ import java.util.NavigableMap;
 
 import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.FocalMech;
-import org.opensha.eq.fault.scaling.MagLengthRelationship;
-import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.eq.model.PointSource.DepthModel;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
@@ -40,9 +38,10 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	private final List<Location> locs;
 	private final List<IncrementalMfd> mfds;
-	private final MagLengthRelationship mlr;
+	private final RuptureScaling rupScaling;
 	private final List<Map<FocalMech, Double>> mechMaps;
 	final DepthModel depthModel; // package exposure for parser logging
+	private final double maxDepth;
 	private final double strike;
 	private final PointSourceType ptSrcType;
 
@@ -52,23 +51,18 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * minimal overhead.
 	 */
 
-	private GridSourceSet(String name, Double weight, MagScalingType msrType, GmmSet gmmSet,
-		List<Location> locs, List<IncrementalMfd> mfds, List<Map<FocalMech, Double>> mechMaps,
-		DepthModel depthModel, double strike) {
+	private GridSourceSet(String name, Double weight, GmmSet gmmSet, List<Location> locs,
+		List<IncrementalMfd> mfds, List<Map<FocalMech, Double>> mechMaps, DepthModel depthModel,
+		double maxDepth, double strike, RuptureScaling rupScaling) {
 
-		super(name, weight, msrType, gmmSet);
+		super(name, weight, gmmSet);
 		this.locs = locs;
 		this.mfds = mfds;
 		this.mechMaps = mechMaps;
 		this.depthModel = depthModel;
+		this.maxDepth = maxDepth;
 		this.strike = strike;
-
-		MagScalingRelationship msr = msrType.instance();
-		// TODO need to develop standard approach to using mag area
-		// relationships
-		checkState(msr instanceof MagLengthRelationship,
-			"Only mag-length relationships are supported at this time");
-		mlr = (MagLengthRelationship) msr;
+		this.rupScaling = rupScaling;
 
 		ptSrcType = Double.isNaN(strike) ? FINITE : FIXED_STRIKE;
 	}
@@ -123,14 +117,14 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	private PointSource getSource(int idx) {
 		switch (ptSrcType) {
 			case POINT:
-				return new PointSource(locs.get(idx), mfds.get(idx), mechMaps.get(idx), mlr,
+				return new PointSource(locs.get(idx), mfds.get(idx), mechMaps.get(idx), rupScaling,
 					depthModel);
 			case FINITE:
-				return new PointSourceFinite(locs.get(idx), mfds.get(idx), mechMaps.get(idx), mlr,
-					depthModel);
+				return new PointSourceFinite(locs.get(idx), mfds.get(idx), mechMaps.get(idx),
+					rupScaling, depthModel);
 			case FIXED_STRIKE:
 				return new PointSourceFixedStrike(locs.get(idx), mfds.get(idx), mechMaps.get(idx),
-					mlr, depthModel, strike);
+					rupScaling, depthModel, strike);
 			default:
 				throw new IllegalStateException("Unhandled point source type");
 		}
@@ -148,9 +142,10 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private String name;
 		private Double weight;
 		private Double strike;
-		private MagScalingType magScaling;
+		private RuptureScaling rupScaling;
 		private GmmSet gmmSet;
 		private NavigableMap<Double, Map<Double, Double>> magDepthMap;
+		private Double maxDepth;
 		private Map<FocalMech, Double> mechMap;
 
 		private List<Location> locs = Lists.newArrayList();
@@ -179,8 +174,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		Builder magScaling(MagScalingType magScaling) {
-			this.magScaling = checkNotNull(magScaling, "MagScaling is null");
+		Builder rupScaling(RuptureScaling rupScaling) {
+			this.rupScaling = checkNotNull(rupScaling, "RupScaling is null");
 			return this;
 		}
 
@@ -191,10 +186,16 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			// validated by parser; still need to check that depths are
 			// appropriate; 'type' indicates how to validate depths across
 			// wrapper classes
-			validateDepths(magDepthMap, type);
+			validateDepthMap(magDepthMap, type);
 			// there must be at least one mag key that is >= MAX_MAG
 			validateMagCutoffs(magDepthMap);
 			this.magDepthMap = magDepthMap;
+			return this;
+		}
+
+		Builder maxDepth(Double maxDepth, SourceType type) {
+			this.maxDepth = checkNotNull(maxDepth, "Maximum depth is null");
+			validateDepth(maxDepth, type);
 			return this;
 		}
 
@@ -231,19 +232,33 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		static void validateDepths(Map<Double, Map<Double, Double>> magDepthMap, SourceType type) {
+		static void validateDepthMap(Map<Double, Map<Double, Double>> magDepthMap, SourceType type) {
 			for (Map<Double, Double> magMap : magDepthMap.values()) {
 				for (double depth : magMap.keySet()) {
-					switch (type) {
-						case GRID:
-							Faults.validateDepth(depth);
-							break;
-						case SLAB:
-							Faults.validateSlabDepth(depth);
-							break;
-						default:
-							throw new IllegalStateException(type + " not a grid source type");
-					}
+					validateDepth(depth, type);
+				}
+			}
+		}
+
+		static void validateDepth(double depth, SourceType type) {
+			switch (type) {
+				case GRID:
+					Faults.validateDepth(depth);
+					break;
+				case SLAB:
+					Faults.validateSlabDepth(depth);
+					break;
+				default:
+					throw new IllegalStateException(type + " not a grid or related source type");
+			}
+		}
+
+		static void validateMaxAndMapDepths(Map<Double, Map<Double, Double>> magDepthMap,
+				double maxDepth, String id) {
+			for (Map<Double, Double> magMap : magDepthMap.values()) {
+				for (double depth : magMap.keySet()) {
+					checkState(depth <= maxDepth, "%s mag-depth-weight map depth %s > %s", id,
+						depth, maxDepth);
 				}
 			}
 		}
@@ -262,8 +277,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(strike != null, "%s strike not set", id);
 			checkState(!locs.isEmpty(), "%s has no locations", id);
 			checkState(!mfds.isEmpty(), "%s has no Mfds", id);
-			checkState(magScaling != null, "%s has no mag-scaling relation set", id);
+			checkState(rupScaling != null, "%s has no rupture-scaling relation set", id);
 			checkState(magDepthMap != null, "%s mag-depth-weight map not set", id);
+			checkState(maxDepth != null, "%s maximum depth not set", id);
 			checkState(mechMap != null, "%s focal mech map not set", id);
 			checkState(gmmSet != null, "%s ground motion models not set", id);
 			checkState(magMaster != null, "%s master magnitude list not set", id);
@@ -283,14 +299,22 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 				mechMaps = Collections.nCopies(locs.size(), mechMap);
 			}
 
+			/*
+			 * Validate depths. depths will already have been checked for
+			 * consistency with allowable depths for different source types.
+			 * Must also ensure that all depths (zTop) in the magDepthMap are <=
+			 * maxDepth.
+			 */
+			validateMaxAndMapDepths(magDepthMap, maxDepth, id);
+
 			built = true;
 		}
 
 		GridSourceSet build() {
 			validateState(ID);
-			DepthModel depthModel = DepthModel.create(magMaster, magDepthMap);
-			return new GridSourceSet(name, weight, magScaling, gmmSet, locs, mfds, mechMaps,
-				depthModel, strike);
+			DepthModel depthModel = DepthModel.create(magMaster, magDepthMap, maxDepth);
+			return new GridSourceSet(name, weight, gmmSet, locs, mfds, mechMaps, depthModel,
+				maxDepth, strike, rupScaling);
 		}
 
 	}

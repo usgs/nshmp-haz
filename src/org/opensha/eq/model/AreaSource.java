@@ -23,7 +23,8 @@ import java.util.NavigableMap;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.fault.surface.RuptureScaling;
+import org.opensha.eq.model.GridSourceSet.Builder;
 import org.opensha.eq.model.PointSource.DepthModel;
 import org.opensha.geo.GriddedRegion;
 import org.opensha.geo.Location;
@@ -63,9 +64,9 @@ public class AreaSource implements Source {
 	private final GridScaling gridScaling;
 	private final List<GriddedRegion> sourceGrids;
 	private final Map<FocalMech, Double> mechMap;
-	private final MagLengthRelationship mlr;
 	private final DepthModel depthModel;
 	private final double strike;
+	private final RuptureScaling rupScaling;
 	private final PointSourceType ptSrcType;
 
 	// TODO need singleton source grid for border representation
@@ -74,8 +75,8 @@ public class AreaSource implements Source {
 	// area
 
 	AreaSource(String name, IncrementalMfd mfd, GridScaling gridScaling,
-		List<GriddedRegion> sourceGrids, Map<FocalMech, Double> mechMap, MagScalingType mst,
-		DepthModel depthModel, double strike) {
+		List<GriddedRegion> sourceGrids, Map<FocalMech, Double> mechMap,
+		DepthModel depthModel, double strike, RuptureScaling rupScaling) {
 		this.name = name;
 		this.mfd = mfd;
 		this.gridScaling = gridScaling;
@@ -83,13 +84,7 @@ public class AreaSource implements Source {
 		this.mechMap = mechMap;
 		this.depthModel = depthModel;
 		this.strike = strike;
-
-		MagScalingRelationship msr = mst.instance();
-		// TODO need to develop standard approach to using mag area
-		// relationships
-		checkState(msr instanceof MagLengthRelationship,
-			"Only mag-length relationships are supported at this time");
-		mlr = (MagLengthRelationship) msr;
+		this.rupScaling = rupScaling;
 
 		ptSrcType = Double.isNaN(strike) ? FINITE : FIXED_STRIKE;
 	}
@@ -181,11 +176,11 @@ public class AreaSource implements Source {
 	private PointSource createSource(Location loc, IncrementalMfd mfd) {
 		switch (ptSrcType) {
 			case POINT:
-				return new PointSource(loc, mfd, mechMap, mlr, depthModel);
+				return new PointSource(loc, mfd, mechMap, rupScaling, depthModel);
 			case FINITE:
-				return new PointSourceFinite(loc, mfd, mechMap, mlr, depthModel);
+				return new PointSourceFinite(loc, mfd, mechMap, rupScaling, depthModel);
 			case FIXED_STRIKE:
-				return new PointSourceFixedStrike(loc, mfd, mechMap, mlr, depthModel, strike);
+				return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel, strike);
 			default:
 				throw new IllegalStateException("Unhandled point source type");
 		}
@@ -248,9 +243,10 @@ public class AreaSource implements Source {
 		private IncrementalMfd mfd;
 		private Double strike;
 		private GridScaling gridScaling;
-		private MagScalingType magScaling;
+		private RuptureScaling rupScaling;
 		private Map<FocalMech, Double> mechMap;
 		private NavigableMap<Double, Map<Double, Double>> magDepthMap;
+		private Double maxDepth;
 
 		Builder name(String name) {
 			this.name = validateName(name);
@@ -278,8 +274,8 @@ public class AreaSource implements Source {
 			return this;
 		}
 
-		Builder magScaling(MagScalingType magScaling) {
-			this.magScaling = checkNotNull(magScaling, "Mag-Scaling is null");
+		Builder magScaling(RuptureScaling rupScaling) {
+			this.rupScaling = checkNotNull(rupScaling, "Rupture-Scaling is null");
 			return this;
 		}
 
@@ -298,10 +294,16 @@ public class AreaSource implements Source {
 			// validated by parser; still need to check that depths are
 			// appropriate; 'type' indicates how to validate depths across
 			// wrapper classes
-			GridSourceSet.Builder.validateDepths(magDepthMap, type);
+			GridSourceSet.Builder.validateDepthMap(magDepthMap, type);
 			// there must be at least one mag key that is >= MAX_MAG
 			GridSourceSet.Builder.validateMagCutoffs(magDepthMap);
 			this.magDepthMap = magDepthMap;
+			return this;
+		}
+
+		Builder maxDepth(Double maxDepth, SourceType type) {
+			this.maxDepth = checkNotNull(maxDepth, "Maximum depth is null");
+			GridSourceSet.Builder.validateDepth(maxDepth, type);
 			return this;
 		}
 
@@ -312,18 +314,28 @@ public class AreaSource implements Source {
 			checkState(mfd != null, "%s MFD not set", id);
 			checkState(strike != null, "%s strike not set", id);
 			checkState(gridScaling != null, "%s grid scaling not set", id);
-			checkState(magScaling != null, "%s mag-scaling relation not set", id);
+			checkState(rupScaling != null, "%s rupture-scaling relation not set", id);
 			checkState(mechMap != null, "%s focal mech map not set", id);
 			checkState(magDepthMap != null, "%s mag-depth-weight map not set", id);
+			checkState(maxDepth != null, "%s maximum depth not set", id);
+
+			/*
+			 * Validate depths. depths will already have been checked for
+			 * consistency with allowable depths for different source types.
+			 * Must also ensure that all depths (zTop) in the magDepthMap are <=
+			 * maxDepth.
+			 */
+			GridSourceSet.Builder.validateMaxAndMapDepths(magDepthMap, maxDepth, id);
+
 			built = true;
 		}
 
 		AreaSource build() {
 			validateState(ID);
 			List<GriddedRegion> sourceGrids = buildSourceGrids(border, gridScaling);
-			DepthModel depthModel = DepthModel.create(mfd.xValues(), magDepthMap);
-			return new AreaSource(name, mfd, gridScaling, sourceGrids, mechMap, magScaling,
-				depthModel, strike);
+			DepthModel depthModel = DepthModel.create(mfd.xValues(), magDepthMap, maxDepth);
+			return new AreaSource(name, mfd, gridScaling, sourceGrids, mechMap,
+				depthModel, strike, rupScaling);
 		}
 
 		private static List<GriddedRegion> buildSourceGrids(LocationList border, GridScaling scaling) {

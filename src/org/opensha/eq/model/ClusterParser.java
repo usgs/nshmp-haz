@@ -24,8 +24,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;
 import org.opensha.mfd.MfdType;
@@ -68,8 +67,7 @@ class ClusterParser extends DefaultHandler {
 	private double clusterRate;
 
 	// required, but not used, by FaultSources
-	private MagScalingType msrType;
-	private MagScalingRelationship msr;
+	private RuptureScaling rupScaling;
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
@@ -135,10 +133,8 @@ class ClusterParser extends DefaultHandler {
 				case SOURCE_PROPERTIES:
 					// this isn't really needed for cluster sources,
 					// but nested faults can't be built without it
-					msrType = readEnum(RUPTURE_SCALING, atts, MagScalingType.class);
-					clusterSetBuilder.magScaling(msrType);
-					log.fine("Mag scaling: " + msrType + " (not used)");
-					msr = msrType.instance();
+					rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
+					log.fine("Rup scaling: " + rupScaling + " (not used)");
 					break;
 
 				case CLUSTER:
@@ -149,8 +145,7 @@ class ClusterParser extends DefaultHandler {
 					faultSetBuilder = new FaultSourceSet.Builder()
 						.name(clustName)
 						.weight(clustWeight)
-						.gmms(gmmSet)
-						.magScaling(msrType);
+						.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
 						log.fine("");
 						log.fine("    Cluster: " + clustName);
@@ -163,7 +158,7 @@ class ClusterParser extends DefaultHandler {
 					String srcName = readString(NAME, atts);
 					faultBuilder = new FaultSource.Builder()
 						.name(srcName)
-						.magScaling(msr);
+						.rupScaling(rupScaling);
 					log.finer("      Fault: " + srcName);
 					break;
 

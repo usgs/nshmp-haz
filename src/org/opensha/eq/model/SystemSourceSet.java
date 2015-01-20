@@ -17,8 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensha.data.DataUtils;
-import org.opensha.eq.fault.scaling.MagScalingType;
 import org.opensha.eq.fault.surface.GriddedSurface;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -69,7 +69,7 @@ public class SystemSourceSet extends
 		List<GriddedSurface> sections, List<BitSet> bitsets, List<Double> mags, List<Double> rates,
 		List<Double> depths, List<Double> dips, List<Double> widths, List<Double> rakes) {
 
-		super(name, weight, MagScalingType.BUILT_IN, gmmSet);
+		super(name, weight, gmmSet);
 
 		this.sections = sections;
 		this.bitsets = bitsets;

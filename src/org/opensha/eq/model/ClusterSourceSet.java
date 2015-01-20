@@ -8,8 +8,6 @@ import static org.opensha.util.TextUtils.validateName;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha.eq.fault.scaling.MagScalingType;
-import org.opensha.eq.model.FaultSourceSet.Builder;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -26,9 +24,8 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 	private final List<ClusterSource> sources;
 
-	ClusterSourceSet(String name, double weight, MagScalingType msr, List<ClusterSource> sources,
-		GmmSet gmmSet) {
-		super(name, weight, msr, gmmSet);
+	ClusterSourceSet(String name, double weight, List<ClusterSource> sources, GmmSet gmmSet) {
+		super(name, weight, gmmSet);
 		this.sources = sources;
 	}
 
@@ -69,7 +66,6 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 		private String name;
 		private Double weight;
-		private MagScalingType magScaling;
 		private GmmSet gmmSet;
 		private List<ClusterSource> sources = Lists.newArrayList();
 
@@ -88,11 +84,6 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			return this;
 		}
 
-		Builder magScaling(MagScalingType magScaling) {
-			this.magScaling = checkNotNull(magScaling, "");
-			return this;
-		}
-
 		Builder source(ClusterSource source) {
 			sources.add(checkNotNull(source, "ClusterSource is null"));
 			return this;
@@ -102,14 +93,13 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 			checkState(!built, "This %s instance as already been used", id);
 			checkState(name != null, "%s name not set", id);
 			checkState(weight != null, "%s weight not set", id);
-			checkState(magScaling != null, "%s mag-scaling relation not set", id);
 			checkState(gmmSet != null, "%s ground motion models not set", id);
 			built = true;
 		}
 
 		ClusterSourceSet buildClusterSet() {
 			validateState(ID);
-			return new ClusterSourceSet(name, weight, magScaling, sources, gmmSet);
+			return new ClusterSourceSet(name, weight, sources, gmmSet);
 		}
 	}
 

@@ -1,12 +1,16 @@
 package org.opensha.eq.model;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.util.TextUtils.validateName;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import java.nio.file.Path;
 import java.util.Iterator;
+import java.util.Properties;
 
+import org.opensha.eq.fault.surface.RuptureFloating;
+import org.opensha.eq.model.AreaSource.GridScaling;
 import org.opensha.gmm.GroundMotionModel;
 import org.opensha.util.Named;
 
@@ -30,12 +34,10 @@ import com.google.common.collect.SetMultimap;
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
 
 	// TODO change vs30 to Integer?
-	
-	// TODO recheck 'float'-ing rupture tracking; e.g. GR MFD is set to false; that
-	// can't be right; and what about magScaling to go with float?
-	
-	// TODO see InterfaceSource todo; Container2D needs getTopRow and getBottomRow
-	
+
+	// TODO see InterfaceSource todo; Container2D needs getTopRow and
+	// getBottomRow
+
 	// TODO where/how to apply CEUS clamps
 
 	// TODO need to revisit the application of uncertainty when minM < 6.5
@@ -44,14 +46,14 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// TODO Is current approach in SYstemSourceSet for precomputing distances
 	// correct? Double check that the individual sections are scaled by aseis
 	// not after once built into ruptures.
-	
+
 	// TODO not sure why I changed surface implementations to project down dip
 	// from
 	// zero to zTop, but it was wrong. currently sesmogenic depth is ignored,
 	// but
 	// may need this for system sources; should zTop be encoded into trace
 	// depths?
-	
+
 	// TODO document object relationships via transforms in calc package
 
 	// TODO expose FloatStyle
@@ -101,18 +103,19 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 
 	// TODO perhaps we process a config.xml file at the root of
 	// a HazardModel to pick up name and other calc configuration data
-	
+
 	// TODO are slabSource depths validated?
-	
+
 	// TODO change Charsets to StandardCharsets and replace US_ASCII with UTF-8
 
-	
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
+	private final Config config;
 
-	private HazardModel(String name,
+	private HazardModel(String name, Config config,
 		SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
 		this.name = name;
+		this.config = config;
 		this.sourceSetMap = sourceSetMap;
 	}
 
@@ -172,10 +175,16 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 		// ImmutableSetMultimap.Builder preserves value addition order
 		private ImmutableSetMultimap.Builder<SourceType, SourceSet<? extends Source>> sourceMapBuilder;
 		private SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
+		private Config config;
 		private String name;
 
 		private Builder() {
 			sourceMapBuilder = ImmutableSetMultimap.builder();
+		}
+
+		Builder config(Properties props) {
+			config = new HazardModel.Config(props);
+			return this;
 		}
 
 		Builder name(String name) {
@@ -192,21 +201,31 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 			checkState(!built, "This %s instance as already been used", mssgID);
 			checkState(name != null, "%s name not set", mssgID);
 			checkState(sourceSetMap.size() > 0, "%s has no source sets", mssgID);
+			checkState(config != null, "%s config not set", mssgID);
 			built = true;
-
 		}
 
 		HazardModel build() {
 			sourceSetMap = sourceMapBuilder.build();
 			validateState(ID);
-			return new HazardModel(name, sourceSetMap);
+			return new HazardModel(name, config, sourceSetMap);
 		}
 	}
-	
-	public enum Config {
-		GRIDDED_SURFACE_UNIT,
-		AREA_SOURCE_SCALING,
-		FLOATING_RUPTURE_MODEL;
+
+	final static class Config {
+
+		public final double GRIDDED_SURFACE_UNIT;
+		public final AreaSource.GridScaling AREA_SOURCE_SCALING;
+		public final RuptureFloating RUPTURE_FLOATING_MODEL;
+
+		private Config(Properties props) {
+			checkState(!checkNotNull(props).isEmpty(), "Properties table is null or empty");
+			GRIDDED_SURFACE_UNIT = Double.valueOf(props.getProperty("GRIDDED_SURFACE_UNIT"));
+			AREA_SOURCE_SCALING = GridScaling.valueOf(props.getProperty("AREA_SOURCE_SCALING"));
+			RUPTURE_FLOATING_MODEL = RuptureFloating.valueOf(props
+				.getProperty("RUPTURE_FLOATING_MODEL"));
+		}
+
 	}
 
 }

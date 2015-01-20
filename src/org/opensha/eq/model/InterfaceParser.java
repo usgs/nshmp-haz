@@ -4,21 +4,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
-import static org.opensha.eq.model.SourceAttribute.A;
-import static org.opensha.eq.model.SourceAttribute.B;
 import static org.opensha.eq.model.SourceAttribute.DEPTH;
 import static org.opensha.eq.model.SourceAttribute.DIP;
-import static org.opensha.eq.model.SourceAttribute.D_MAG;
-import static org.opensha.eq.model.SourceAttribute.FLOATS;
-import static org.opensha.eq.model.SourceAttribute.M;
-import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
-import static org.opensha.eq.model.SourceAttribute.M_MAX;
-import static org.opensha.eq.model.SourceAttribute.M_MIN;
 import static org.opensha.eq.model.SourceAttribute.NAME;
 import static org.opensha.eq.model.SourceAttribute.RAKE;
+import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha.eq.model.SourceAttribute.WIDTH;
-import static org.opensha.util.Parsing.readBoolean;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readEnum;
 import static org.opensha.util.Parsing.readString;
@@ -29,8 +21,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.eq.fault.scaling.MagScalingType;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.GutenbergRichterMfd;
 import org.opensha.mfd.IncrementalMfd;
@@ -63,7 +54,7 @@ class InterfaceParser extends DefaultHandler {
 	private InterfaceSourceSet.Builder sourceSetBuilder;
 	private InterfaceSource.Builder sourceBuilder;
 
-	private MagScalingRelationship msr;
+	private RuptureScaling rupScaling;
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
@@ -124,17 +115,15 @@ class InterfaceParser extends DefaultHandler {
 					break;
 
 				case SOURCE_PROPERTIES:
-					MagScalingType msrType = readEnum(RUPTURE_SCALING, atts, MagScalingType.class);
-					sourceSetBuilder.magScaling(msrType);
-					msr = msrType.instance();
-					log.fine("Mag scaling: " + msrType);
+					rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
+					log.fine("Rup scaling: " + rupScaling);
 					break;
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
 					sourceBuilder = new InterfaceSource.Builder();
 					sourceBuilder.name(srcName);
-					sourceBuilder.magScaling(msr);
+					sourceBuilder.rupScaling(rupScaling);
 					log.fine("     Source: " + srcName);
 					break;
 

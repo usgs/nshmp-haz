@@ -46,19 +46,19 @@ public enum RuptureScaling {
 	 * {@code maxWidth} is also a function of magnitude but is prescribed by a
 	 * RuptureFloating model.
 	 * 
-	 * <p>{@code #pointSourceDistance(double, double)} returns corrected
-	 * distances for magnitudes in the closed range [6.0..8.6] and distances in
-	 * the closed range [0..1000]</p>
+	 * <p>The {@code pointSourceDistance(double, double)} implementation returns
+	 * corrected distances for magnitudes in the closed range [6.0..8.6] and
+	 * distances in the closed range [0..1000]</p>
 	 * 
 	 * @see RuptureFloating#NSHM
 	 */
 	NSHM_FAULT_WC94_LENGTH {
-		@Override Dimensions dimensions(double mag, double maxWidth) {
+		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			double length = lengthWc94(mag);
 			return new Dimensions(length, min(maxWidth, length));
 		}
 
-		@Override double pointSourceDistance(double mag, double distance) {
+		@Override public double pointSourceDistance(double mag, double distance) {
 			throw new UnsupportedOperationException();
 		}
 	},
@@ -71,12 +71,12 @@ public enum RuptureScaling {
 	 * below M≈6.9 and Ellsworth-B (WGCEP, 2002) above.
 	 */
 	NSHM_FAULT_CA_ELLB_WC94_AREA {
-		@Override Dimensions dimensions(double mag, double maxWidth) {
+		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			double length = lengthCa08(mag, maxWidth);
 			return new Dimensions(length, min(maxWidth, length));
 		}
 
-		@Override double pointSourceDistance(double mag, double distance) {
+		@Override public double pointSourceDistance(double mag, double distance) {
 			throw new UnsupportedOperationException();
 		}
 	},
@@ -88,12 +88,12 @@ public enum RuptureScaling {
 	 */
 	NSHM_POINT_WC94_LENGTH {
 		/* Steve Harmsen likened 1.5 to the Golden Ratio, 1.618... */
-		@Override Dimensions dimensions(double mag, double maxWidth) {
+		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			double length = lengthWc94(mag);
 			return new Dimensions(length, min(maxWidth, length / 1.5));
 		}
 
-		@Override double pointSourceDistance(double mag, double distance) {
+		@Override public double pointSourceDistance(double mag, double distance) {
 			return correctedRjb(mag, distance, RJB_DAT_WC94LENGTH);
 		}
 	},
@@ -106,11 +106,11 @@ public enum RuptureScaling {
 	 */
 	NSHM_SUB_GEOMAT_LENGTH {
 
-		@Override Dimensions dimensions(double mag, double maxWidth) {
+		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			return new Dimensions(pow(10.0, (mag - 4.94) / 1.39), maxWidth);
 		}
 
-		@Override double pointSourceDistance(double mag, double distance) {
+		@Override public double pointSourceDistance(double mag, double distance) {
 			return correctedRjb(mag, distance, RJB_DAT_GEOMATRIX);
 		}
 	},
@@ -128,14 +128,14 @@ public enum RuptureScaling {
 	 * </ul>
 	 */
 	PEER {
-		@Override Dimensions dimensions(double mag, double maxWidth) {
+		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			double width = pow(10, (0.5 * mag - 2.15));
 			return (width < maxWidth) ? 
 				new Dimensions(width * 2.0, width) :
 				new Dimensions(pow(10, (mag - 4.0)) / maxWidth, maxWidth);
 		}
 
-		@Override double pointSourceDistance(double mag, double distance) {
+		@Override public double pointSourceDistance(double mag, double distance) {
 			throw new UnsupportedOperationException();
 		}
 	},
@@ -147,8 +147,8 @@ public enum RuptureScaling {
 	 * CEUS-SSC, maintaining an aspect ratio of 1 until the maximum width is
 	 * attained and then increasing length as necessary.
 	 */
-	SOMERVILLE {
-		@Override Dimensions dimensions(double mag, double maxWidth) {
+	NSHM_SOMERVILLE {
+		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			double area = pow(10, mag - 4.366);
 			double width = sqrt(area);
 			return (width < maxWidth) ?
@@ -156,7 +156,7 @@ public enum RuptureScaling {
 				new Dimensions(area / maxWidth, maxWidth);
 		}
 
-		@Override double pointSourceDistance(double mag, double distance) {
+		@Override public double pointSourceDistance(double mag, double distance) {
 			return correctedRjb(mag, distance, RJB_DAT_SOMERVILLE);
 		}
 	},
@@ -164,15 +164,18 @@ public enum RuptureScaling {
 
 	/**
 	 * Placeholder for no rupture scaling model. This may be used when rupture
-	 * geometry is fully specified but an identifier is required.
+	 * geometry is fully specified but an identifier is required, or to imply no
+	 * point source distance corrections should be applied. This {code
+	 * #pointSourceDistance()} implementation simply returns the distance
+	 * supplied.
 	 */
 	NONE {
-		@Override Dimensions dimensions(double mag, double maxWidth) {
+		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override double pointSourceDistance(double mag, double distance) {
-			throw new UnsupportedOperationException();
+		@Override public double pointSourceDistance(double mag, double distance) {
+			return distance;
 		}
 	};
 
@@ -183,7 +186,7 @@ public enum RuptureScaling {
 	 * @param mag of a rupture
 	 * @param distance to the centroid of a point source
 	 */
-	abstract double pointSourceDistance(double mag, double distance);
+	public abstract double pointSourceDistance(double mag, double distance);
 
 	private static final String MAG_ID = "#Mag";
 	private static final String COMMENT_ID = "#";
@@ -242,7 +245,7 @@ public enum RuptureScaling {
 	 * @param mag scaling basis magnitude
 	 * @param maxWidth
 	 */
-	abstract Dimensions dimensions(double mag, double maxWidth);
+	public abstract Dimensions dimensions(double mag, double maxWidth);
 
 	private static double lengthWc94(double mag) {
 		return pow(10.0, -3.22 + 0.69 * mag);
@@ -259,10 +262,11 @@ public enum RuptureScaling {
 		return area / width;
 	}
 
-	final static class Dimensions {
+	@SuppressWarnings("javadoc")
+	public final static class Dimensions {
 
-		final double length;
-		final double width;
+		public final double length;
+		public final double width;
 
 		private Dimensions(double length, double width) {
 			this.length = length;

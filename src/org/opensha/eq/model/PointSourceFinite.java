@@ -18,6 +18,7 @@ import java.util.Map;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.surface.PtSrcDistCorr;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
 import org.opensha.mfd.IncrementalMfd;
@@ -51,13 +52,14 @@ class PointSourceFinite extends PointSource {
 	 * Constructs a new point earthquake source.
 	 * @param loc <code>Location</code> of the point source
 	 * @param mfd magnitude frequency distribution of the source
-	 * @param magDepthMap specifies magnitude cutoffs and associated weights for
-	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
+	 * @param rupScaling rupture scaling model
+	 * @param depthModel specifies magnitude cutoffs and associated weights for
+	 *        different depth-to-top-of-ruptures
 	 */
 	PointSourceFinite(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
-		MagLengthRelationship mlr, DepthModel depthModel) {
-		super(loc, mfd, mechWtMap, mlr, depthModel);
+		RuptureScaling rupScaling, DepthModel depthModel) {
+		super(loc, mfd, mechWtMap, rupScaling, depthModel);
 		init();
 	}
 
@@ -68,11 +70,10 @@ class PointSourceFinite extends PointSource {
 	/*
 	 * NOTE/TODO: Although there should not be many instances where a
 	 * PointSourceFinite rupture rate is reduced to zero (a mag-depth weight
-	 * could be set to zero [this is not curently checked] of an MFD rate could
-	 * be zero), in the cases where it is, we're doing a little more work than
-	 * necessary below. We could alternatively short-circuit updateRupture()
-	 * this method to return null reference, but would need to condsider
-	 * getRUpture(int) implementation.
+	 * [this is not curently checked] of an MFD rate could be zero), in the
+	 * cases where it is, we're doing a little more work than necessary below.
+	 * We could alternatively short-circuit updateRupture() this method to
+	 * return null reference but don't like returning null.
 	 */
 
 	private void updateRupture(Rupture rup, int idx) {
@@ -90,7 +91,8 @@ class PointSourceFinite extends PointSource {
 		if (mech != STRIKE_SLIP) mechWt *= 0.5;
 		double dipRad = mech.dip() * TO_RAD;
 
-		double widthDD = calcWidth(mag, zTop, dipRad);
+		double maxWidthDD = (depthModel.maxDepth - zTop) / sin(dipRad);
+		double widthDD = rupScaling.dimensions(mag, maxWidthDD).width;
 
 		rup.mag = mag;
 		rup.rake = mech.rake();
@@ -110,7 +112,7 @@ class PointSourceFinite extends PointSource {
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
 			{
-				rupture.surface = new FiniteSurface(loc);
+				rupture.surface = new FiniteSurface(loc, rupScaling);
 			}
 			int size = size();
 			int caret = 0;
@@ -172,8 +174,8 @@ class PointSourceFinite extends PointSource {
 		double widthDD; // down-dip width
 		boolean footwall;
 
-		FiniteSurface(Location loc) {
-			super(loc);
+		FiniteSurface(Location loc, RuptureScaling rupScaling) {
+			super(loc, rupScaling);
 		}
 
 		@Override public Distances distanceTo(Location loc) {
@@ -183,8 +185,8 @@ class PointSourceFinite extends PointSource {
 			// because we're not using table lookup optimizations, we push the
 			// minimum rJB out to 0.5 (half the table bin-width)
 			double rJB = Locations.horzDistanceFast(this.loc, loc);
-			rJB *= PtSrcDistCorr.getCorrection(rJB, mag, PtSrcDistCorr.Type.NSHMP08);
-			rJB = max(0.5, rJB);
+			rJB = rupScaling.pointSourceDistance(mag, rJB);
+			rJB = max(0.5, rJB); // TODO this should go away
 			double rX = footwall ? -rJB : rJB + widthH;
 
 			if (footwall) return Distances.create(rJB, hypot(rJB, zTop), rX);
