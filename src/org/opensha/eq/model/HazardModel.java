@@ -29,6 +29,8 @@ import com.google.common.collect.SetMultimap;
  */
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
 
+	// TODO change vs30 to Integer?
+	
 	// TODO recheck 'float'-ing rupture tracking; e.g. GR MFD is set to false; that
 	// can't be right; and what about magScaling to go with float?
 	
