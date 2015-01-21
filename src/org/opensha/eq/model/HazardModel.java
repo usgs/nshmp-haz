@@ -33,6 +33,20 @@ import com.google.common.collect.SetMultimap;
  */
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
 
+	// TODO need to test low rate shortcut in FaultSource
+	// if (rate < 1e-14) continue; // shortcut low rates
+	
+	// TODO need to handle cal_fl(oater): no down dip
+	
+	// TODO I think current FaultSystemSource conversions incorrectly include
+	// depths with fault section traces. Traces are always at surface.
+	
+	// TODO having removed low rate (1e-14) cutoff filter from rupture floater
+	// builder in FaultSource, we should probably go back and check sources across
+	// the model for such low rates. It was never clear if the cutoff was actually
+	// necessary or contributing to unecessary excess work being done. Low rates
+	// should really be filtered out when creating MFDs
+	
 	// TODO recheck 'float'-ing rupture tracking; e.g. GR MFD is set to false;
 	// that
 	// can't be right; and what about magScaling to go with float?

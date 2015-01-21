@@ -26,8 +26,8 @@ import com.google.common.collect.Lists;
  */
 public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> implements GriddedSurface {
 
-	protected double strikeSpacing;
-	protected double dipSpacing;
+	double strikeSpacing;
+	double dipSpacing;
 //	protected Boolean sameGridSpacing;
 	
 	// for distance measures

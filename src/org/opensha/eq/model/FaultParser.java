@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha.eq.Magnitudes;
-import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.GaussianMfd;
 import org.opensha.mfd.GutenbergRichterMfd;

@@ -14,7 +14,8 @@ import org.opensha.geo.LocationList;
  *
  * @author Nitin Gupta
  */
-public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurfaceWithSubsets {
+@Deprecated
+public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurface {
 
 	protected LocationList faultTrace;
 	protected double upperSeismogenicDepth = Double.NaN;

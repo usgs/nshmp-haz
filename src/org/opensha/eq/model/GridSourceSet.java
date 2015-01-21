@@ -18,7 +18,6 @@ import java.util.NavigableMap;
 
 import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.FocalMech;
-import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.eq.model.PointSource.DepthModel;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;

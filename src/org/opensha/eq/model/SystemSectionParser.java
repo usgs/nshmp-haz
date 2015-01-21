@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.eq.fault.surface.GriddedSurfaceWithSubsets;
+import org.opensha.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha.geo.LocationList;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -49,7 +49,7 @@ class SystemSectionParser extends DefaultHandler {
 	private Locator locator;
 
 	private List<GriddedSurface> sections;
-	private GriddedSurfaceWithSubsets.Builder surfaceBuilder;
+	private DefaultGriddedSurface.Builder surfaceBuilder;
 
 	// Traces are the only text content in source files
 	private boolean readingTrace = false;
@@ -93,7 +93,7 @@ class SystemSectionParser extends DefaultHandler {
 					break;
 
 				case SECTION:
-					surfaceBuilder = GriddedSurfaceWithSubsets.builder();
+					surfaceBuilder = DefaultGriddedSurface.builder();
 					String sectionName = readString(NAME, atts);
 					String sectionIndex = readString(INDEX, atts);
 					log.finer("    Section: [" + sectionIndex + "] " + sectionName);

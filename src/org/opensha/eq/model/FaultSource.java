@@ -21,9 +21,8 @@ import org.opensha.eq.fault.scaling.MagAreaRelationship;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.eq.fault.surface.GriddedSurfaceWithSubsets;
+import org.opensha.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha.eq.fault.surface.RuptureFloating;
-import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;
@@ -129,34 +128,21 @@ public class FaultSource implements Source {
 			// TODO do we really want to do this??
 			if (rate < 1e-14) continue; // shortcut low rates
 
+			
+			// TODO we want to get the 'floats' attribute out of MFDs
+			// the only reason it is there is to allow SINGLE to flip-flop
+			// it should just be a SourceProperty
 			if (mfd.floats()) {
 
-				// get global floating model
-				// rupture dimensions
-				double maxWidth = surface.width();
-				double length = computeRuptureLength(msr, mag, maxWidth, aspectRatio);
-				double width = Math.min(length / aspectRatio, maxWidth);
-
-				// 2x width ensures full down-dip rupture
-				if (floatStyle == FULL_DOWN_DIP) {
-					width = 2 * maxWidth;
-				}
-
-				GriddedSurfaceWithSubsets surf = (GriddedSurfaceWithSubsets) surface;
+				DefaultGriddedSurface surf = (DefaultGriddedSurface) surface;
+				List<GriddedSurface> floaters = rupFloating.createFloaters(surf, rupScaling, mag);
 				
-				// rupture count
-				double numRup = (floatStyle != CENTERED) ?
-					surf.getNumSubsetSurfaces(length, width, offset) :
-					surf.getNumSubsetSurfacesAlongLength(length, offset);
+				 double rupRate = rate / floaters.size();
+				 for (GriddedSurface floater : floaters) {
+					 Rupture rup = Rupture.create(mag, rake, rupRate, floater);
+					 rupListbuilder.add(rup);
+				 }
 
-				for (int r = 0; r < numRup; r++) {
-					RuptureSurface floatingSurface = (floatStyle != CENTERED) ?
-						surf.getNthSubsetSurface(length, width, offset, r) :
-						surf.getNthSubsetSurfaceCenteredDownDip(length, width, offset, r);
-					double rupRate = rate / numRup;
-					Rupture rup = Rupture.create(mag, rake, rupRate, floatingSurface);
-					rupListbuilder.add(rup);
-				}
 			} else {
 				Rupture rup = Rupture.create(mag, rate, rake, surface);
 				rupListbuilder.add(rup);
@@ -284,7 +270,7 @@ public class FaultSource implements Source {
 			validateState(ID);
 
 			// create surface
-			GriddedSurfaceWithSubsets surface = GriddedSurfaceWithSubsets.builder().trace(trace)
+			DefaultGriddedSurface surface = DefaultGriddedSurface.builder().trace(trace)
 				.depth(depth).dip(dip).width(width).spacing(spacing).build();
 
 			return new FaultSource(name, trace, dip, width, surface, rake,

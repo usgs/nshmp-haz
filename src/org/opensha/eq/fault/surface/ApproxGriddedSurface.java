@@ -16,7 +16,7 @@ import org.opensha.geo.Locations;
  * @author Ned Field
  * @author Peter Powers
  */
-public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
+public class ApproxGriddedSurface extends AbstractGriddedSurface {
 
 	private LocationList upperTrace = null;
 	private LocationList lowerTrace = null;

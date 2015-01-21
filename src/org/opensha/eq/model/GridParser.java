@@ -28,7 +28,6 @@ import javax.xml.parsers.SAXParser;
 import org.opensha.data.DataUtils;
 import org.opensha.eq.Magnitudes;
 import org.opensha.eq.fault.FocalMech;
-import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.Location;
 import org.opensha.mfd.IncrementalMfd;
 import org.opensha.mfd.MfdType;

@@ -45,7 +45,7 @@ public class Rupture {
 	 * @param surface of the rupture
 	 * @return a new {@code Rupture}
 	 */
-	static Rupture create(double mag, double rate, double rake, RuptureSurface surface) {
+	public static Rupture create(double mag, double rate, double rake, RuptureSurface surface) {
 		return new Rupture(mag, rate, rake, surface, null);
 	}
 
