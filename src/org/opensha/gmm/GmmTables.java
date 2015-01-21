@@ -9,6 +9,7 @@ import static org.opensha.gmm.Imt.SA3P0;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,12 +18,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.opensha.data.DataUtils;
-import org.opensha.util.Logging;
 import org.opensha.util.MathUtils;
 import org.opensha.util.Parsing;
 import org.opensha.util.Parsing.Delimiter;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
@@ -114,7 +113,7 @@ final class GmmTables {
 				Imt imt = frankelFilenameToIMT(file);
 				URL url = Resources.getResource(GmmTables.class, T_DIR + file);
 				NavigableMap<Double, NavigableMap<Double, Double>> rMap =
-						Resources.readLines(url, Charsets.US_ASCII, new FrankelParser());
+						Resources.readLines(url, StandardCharsets.UTF_8, new FrankelParser());
 				map.put(imt, new FrankelTable(rMap));
 			} catch (IOException  ioe) {
 				handleIOex(ioe, file);
@@ -128,7 +127,7 @@ final class GmmTables {
 		URL url = Resources.getResource(GmmTables.class, T_DIR + file);
 		try {
 			Map<Imt, NavigableMap<Double, NavigableMap<Double, Double>>> imtMap =
-				Resources.readLines(url, Charsets.US_ASCII, new AtkinsonParser());
+				Resources.readLines(url, StandardCharsets.UTF_8, new AtkinsonParser());
 			for (Imt imt : imtMap.keySet()) {
 				map.put(imt, new AtkinsonTable(imtMap.get(imt)));
 			}

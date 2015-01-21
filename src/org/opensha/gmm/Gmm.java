@@ -29,7 +29,10 @@ public enum Gmm {
 	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
 	// high at large distances
 
-	// TODO do deep GMMs saturate at 7.8 ???
+	// TODO do deep GMMs saturate at 7.8 ??? doublecheck
+
+	// TODO check if AtkinsonMacias using BooreAtkin siteAmp to get non-rock
+	// site response
 
 	// TODO how to deal with CEUS distance cutoffs (@ 500km):
 	// - could specify applicable distances and weights in gmm.xml

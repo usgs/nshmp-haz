@@ -1,6 +1,6 @@
 package org.opensha.gmm;
 
-import static com.google.common.base.Charsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
@@ -105,7 +105,7 @@ final class CoefficientContainer {
 
 	private Table<Imt, String, Double> load(String resource) throws IOException {
 		URL url = Resources.getResource(Coefficients.class, C_DIR + resource);
-		List<String> lines = Resources.readLines(url, US_ASCII);
+		List<String> lines = Resources.readLines(url, UTF_8);
 		// build coeff name list
 		Iterable<String> nameList = Parsing.split(lines.get(0), Delimiter.COMMA);
 		Iterable<String> names = Iterables.skip(nameList, 1);

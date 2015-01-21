@@ -33,98 +33,43 @@ import com.google.common.collect.SetMultimap;
  */
 public final class HazardModel implements Iterable<SourceSet<? extends Source>>, Named {
 
-	// TODO change vs30 to Integer?
-
-	// TODO need to test low rate shortcut in FaultSource
-	// if (rate < 1e-14) continue; // shortcut low rates
-	
-	// TODO need to handle cal_fl(oater): no down dip
+	// high priority
+	// TODO grid sources; map against all matching defaultMfd types
+	// TODO need to handle cal_fl(oater): no down dip;
+	// TODO clean up floater specification; props or source model
+	// TODO where/how to apply CEUS clamps
 	
 	// TODO I think current FaultSystemSource conversions incorrectly include
 	// depths with fault section traces. Traces are always at surface.
-	
-	// TODO having removed low rate (1e-14) cutoff filter from rupture floater
-	// builder in FaultSource, we should probably go back and check sources across
-	// the model for such low rates. It was never clear if the cutoff was actually
-	// necessary or contributing to unecessary excess work being done. Low rates
-	// should really be filtered out when creating MFDs
-	
-	// TODO recheck 'float'-ing rupture tracking; e.g. GR MFD is set to false;
-	// that
-	// can't be right; and what about magScaling to go with float?
-
-	// TODO see InterfaceSource todo; Container2D needs getTopRow and
-	// getBottomRow
-
-	// TODO where/how to apply CEUS clamps
-
-	// TODO need to revisit the application of uncertainty when minM < 6.5
-	// e.g. 809a Pine Valley graben in orwa.c.in
 
 	// TODO Is current approach in SYstemSourceSet for precomputing distances
 	// correct? Double check that the individual sections are scaled by aseis
 	// not after once built into ruptures.
 
 	// TODO not sure why I changed surface implementations to project down dip
-	// from
-	// zero to zTop, but it was wrong. currently sesmogenic depth is ignored,
-	// but
-	// may need this for system sources; should zTop be encoded into trace
-	// depths?
-
-	// TODO document object relationships via transforms in calc package
-
-	// TODO expose FloatStyle
-	// TODO SUB check rake handling
-
-	// TODO SUB different MSRs are specified in 2014 configs (geomatrix alone
-	// no longer used); check that this has carried through
-	// correctly to 2008
+		// from zero to zTop, but it was wrong. currently sesmogenic depth is ignored,
+		// but may need this for system sources; should zTop be encoded into trace
+		// depths?
 
 	// TODO UCERF3 xml (indexedFaultSource) needs to have aftershock correction
 	// either imposed in file (better) of be imlemented in Parser
 	// or Loader (worse)
-	//
-	// TODO CEUS mMax zoning
-	// TODO depth varying deep source; zones --> parse
-	// TODO do deep GMMs saturate/apped at 7.8 ?? I believe all are but need to
-	// ensure
-
-	// TODO perhaps add notes on CEUS fixed strike sources having vertical
-	// faults with no mechanism (strike-slip implied)
-	// rJB, rRup, rX all based on line regardeless of dip
 
 	// TODO are any M=6.0 finite source representation cutoffs being used in
 	// 2014 fortran
 
-	// TODO need to implement masking of CA shear sources in XML; only keep
-	// those that are outside
-	// CA boundary
+	// TODO implement CEUS gmm distance reweighting in calc
+	// always compute all curves, just combine based on distance weights;
+	// I think this is being done in HazardCurveSet.Builder already
 
-	// TODO check if AtkinsonMacias using BooreAtkin siteAmp to get non-rock
-	// site response
+	
+	// low priority
+	// TODO change vs30 to Integer?
+	// TODO test low rate shortcut in FaultSource
+	// "if (rate < 1e-14) continue; // shortcut low rates"
+	// TODO need to revisit the application of uncertainty when minM < 6.5
+	// e.g. 809a Pine Valley graben in orwa.c.in
 
-	// TODO deep sources: dtor matrix keyed to longitude?? is this specified in
-	// config files?
-	// TODO check ORegon branches: Portland nested inside all OR?
-
-	// TODO epiphany!!! Although it will be a little more work, if we have a
-	// multi-distance
-	// GmmSet model, we will do all calculations; the far gmms are currently
-	// required to be a subset of the near
-	// gmms. Even without this requirement, we would compute ground motions for
-	// the master set of gmms.
-	// Only when recombining scalar ground motions into hazard curves will we
-	// chose those values
-	// required at different distances as we will have the associated GmmInputs
-	// handy
-
-	// TODO perhaps we process a config.xml file at the root of
-	// a HazardModel to pick up name and other calc configuration data
-
-	// TODO are slabSource depths validated?
-
-	// TODO change Charsets to StandardCharsets and replace US_ASCII with UTF-8
 
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
