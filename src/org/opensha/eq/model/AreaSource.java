@@ -23,6 +23,7 @@ import java.util.NavigableMap;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.eq.model.GridSourceSet.Builder;
 import org.opensha.eq.model.PointSource.DepthModel;
 import org.opensha.geo.GriddedRegion;
