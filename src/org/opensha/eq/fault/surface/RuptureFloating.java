@@ -1,156 +1,137 @@
 package org.opensha.eq.fault.surface;
 
+import static java.lang.Math.*;
 import static org.opensha.eq.model.FloatStyle.CENTERED;
 import static org.opensha.eq.model.FloatStyle.FULL_DOWN_DIP;
+import static org.opensha.eq.fault.surface.Surfaces.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.opensha.eq.model.Rupture;
+import org.opensha.eq.model.RuptureScaling;
+import org.opensha.eq.model.RuptureScaling.Dimensions;
 import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
- * Rupture floating model identifiers. Each can convert a {@link GriddedSurfaceWithSubsets}
- * to an immutable list of {@link Rupture}s.
+ * Gridded surface floating model identifiers. Each provides the means to create
+ * a List of {@link GriddedSubsetSurface}s from a RuptureScaling
+ * {@link DefaultGriddedSurface} to an immutable list of {@link Rupture}s.
  *
  * @author Peter Powers
  */
 public enum RuptureFloating {
 
-	/*
-	 * NSHM fortran: if zTop is >1 km, no downdip floaters; how to do this? also
-	 * need to handle cal_fl(oater): no down dip
-	 * 
-	 * Include downdip rupture scenarios only if original
-	 *  top of fault is at or near Earth surface. Deep blind thrusts dont need this.
-	 *  
-	 *  Is there any way to have these enums do anything?
-	 *  Should be able to take a GriddedSurfaceWithSubsets and 
-	 *  loop mfd
-	 *  	get magnitude and scaling model dependent dimensions
-	 *  	create list of ruptures
-	 *  
+	/** Do not float. */
+	OFF {
+		@Override public List<GriddedSurface> createFloaters(DefaultGriddedSurface surface,
+				RuptureScaling scaling, double mag) {
+			List<GriddedSurface> floaters = new ArrayList<>();
+			floaters.add(surface);
+			return floaters;
+		}
+	},
+
+	/** Float both down-dip and along-strike. */
+	ON {
+		@Override public List<GriddedSurface> createFloaters(DefaultGriddedSurface surface,
+				RuptureScaling scaling, double mag) {
+			return createSurfaces(surface, scaling, mag, false);
+		}
+	},
+
+	/** Float along-strike only; floaters extend to full down-dip-width. */
+	STRIKE_ONLY {
+		@Override public List<GriddedSurface> createFloaters(DefaultGriddedSurface surface,
+				RuptureScaling scaling, double mag) {
+			return createSurfaces(surface, scaling, mag, true);
+		}
+	},
+
+	/**
+	 * NSHM floating model. This is an approximation to the NSHM fortran analytical
+	 * floating rupture model where specific magnitude dependent rupture top depths
+	 * are used.
 	 */
-	OFF, STRIKE_ONLY, NSHM;
-//	OFF {
-//		@Override List<Rupture> asRuptureList(GriddedSurfaceWithSubsets floatableSurface, IncrementalMfd mfd) {
-//			Builder<Rupture> rupListbuilder = ImmutableList.builder();
-//			rupListbuilder.add(Rupture.create(mag, rate, rake, surface));
-//			return null;
-//			// TODO do nothing
-//			
-//		}
-//	},
-//	STRIKE_ONLY, // full down dip width
-//	NSHM_FAULT {
-//		// M<6.5 6 4 2 1, M≤6.75 4 2 1, M≤7.0 2 1 else 1
-//		@Override List<Rupture> asRuptureList(GriddedSurfaceWithSubsets floatableSurface) {
-//			return null;
-//			// TODO do nothing
-//			
-//		}
-//	};
-	
-	abstract List<Rupture> createRuptureList(GriddedSurfaceWithSubsets floatableSurface, IncrementalMfd mfd);
-
-	
-	private List<Rupture> createRuptureList(IncrementalMfd mfd) {
-		ImmutableList.Builder<Rupture> rupListbuilder = ImmutableList.builder();
-
-		// @formatter:off
-		for (int i = 0; i < mfd.getNum(); ++i) {
-			double mag = mfd.getX(i);
-			double rate = mfd.getY(i);
-
-			// TODO do we really want to do this??
-			if (rate < 1e-14) continue; // shortcut low rates
-
-			if (mfd.floats()) {
-
-				// get global floating model
-				// rupture dimensions
-				double maxWidth = surface.width();
-				double length = computeRuptureLength(msr, mag, maxWidth, aspectRatio);
-				double width = Math.min(length / aspectRatio, maxWidth);
-
-				// 2x width ensures full down-dip rupture
-				if (floatStyle == FULL_DOWN_DIP) {
-					width = 2 * maxWidth;
-				}
-
-				GriddedSurfaceWithSubsets surf = (GriddedSurfaceWithSubsets) surface;
-				
-				// rupture count
-				double numRup = (floatStyle != CENTERED) ?
-					surf.getNumSubsetSurfaces(length, width, offset) :
-					surf.getNumSubsetSurfacesAlongLength(length, offset);
-
-				for (int r = 0; r < numRup; r++) {
-					RuptureSurface floatingSurface = (floatStyle != CENTERED) ?
-						surf.getNthSubsetSurface(length, width, offset, r) :
-						surf.getNthSubsetSurfaceCenteredDownDip(length, width, offset, r);
-					double rupRate = rate / numRup;
-					Rupture rup = Rupture.create(mag, rake, rupRate, floatingSurface);
-					rupListbuilder.add(rup);
-				}
-			} else {
-				Rupture rup = Rupture.create(mag, rate, rake, surface);
-				rupListbuilder.add(rup);
-			}
+	NSHM {
+		@Override public List<GriddedSurface> createFloaters(DefaultGriddedSurface surface,
+				RuptureScaling scaling, double mag) {
+			return floatListNshm(surface, scaling, mag);
 		}
-		// @formatter:on
-		return rupListbuilder.build();
-	}
-	
-	private List<Rupture> createRuptureList(IncrementalMfd mfd) {
-		ImmutableList.Builder<Rupture> rupListbuilder = ImmutableList.builder();
+	};
 
-		// @formatter:off
-		for (int i = 0; i < mfd.getNum(); ++i) {
-			double mag = mfd.getX(i);
-			double rate = mfd.getY(i);
+	// TODO this should return RuptureSurface, perhaps; do we need grid-specific
+	// info after this point?
+	public abstract List<GriddedSurface> createFloaters(DefaultGriddedSurface surface,
+			RuptureScaling scaling, double mag);
 
-			// TODO do we really want to do this??
-			if (rate < 1e-14) continue; // shortcut low rates
+	private static List<GriddedSurface> createSurfaces(DefaultGriddedSurface surface,
+			RuptureScaling scaling, double mag, boolean fullDownDip) {
 
-			if (mfd.floats()) {
+		// rupture dimensions
+		double maxWidth = surface.width();
+		Dimensions d = scaling.dimensions(mag, maxWidth);
 
-				// get global floating model
-				// rupture dimensions
-				double maxWidth = surface.width();
-				double length = computeRuptureLength(msr, mag, maxWidth, aspectRatio);
-				double width = Math.min(length / aspectRatio, maxWidth);
+		double width = fullDownDip ? maxWidth : d.width;
+		return createFloatingSurfaceList(surface, d.length, width);
 
-				// 2x width ensures full down-dip rupture
-				if (floatStyle == FULL_DOWN_DIP) {
-					width = 2 * maxWidth;
-				}
-
-				GriddedSurfaceWithSubsets surf = (GriddedSurfaceWithSubsets) surface;
-				
-				// rupture count
-				double numRup = (floatStyle != CENTERED) ?
-					surf.getNumSubsetSurfaces(length, width, offset) :
-					surf.getNumSubsetSurfacesAlongLength(length, offset);
-
-				for (int r = 0; r < numRup; r++) {
-					RuptureSurface floatingSurface = (floatStyle != CENTERED) ?
-						surf.getNthSubsetSurface(length, width, offset, r) :
-						surf.getNthSubsetSurfaceCenteredDownDip(length, width, offset, r);
-					double rupRate = rate / numRup;
-					Rupture rup = Rupture.create(mag, rake, rupRate, floatingSurface);
-					rupListbuilder.add(rup);
-				}
-			} else {
-				Rupture rup = Rupture.create(mag, rate, rake, surface);
-				rupListbuilder.add(rup);
-			}
-		}
-		// @formatter:on
-		return rupListbuilder.build();
 	}
 
+	private static List<GriddedSurface> floatListNshm(DefaultGriddedSurface parent,
+			RuptureScaling scaling, double mag) {
+
+		// zTop > 1, no down-dip variants
+		// M>7 [zTop]
+		// M>6.75 [zTop, +2]
+		// M>6.5 [zTop, +2, +4]
+		// else [zTop, +2, +4, +6]
+
+		double zTop = parent.depth();
+		// @formatter:off
+		int downDipCount = 
+				(zTop > 1.0) ? 1 :
+				(mag > 7.0) ? 1 :
+				(mag > 6.75) ? 2 :
+				(mag > 6.5) ? 3 : 4;
+		// @formatter:on
+		List<Double> zTopWidths = new ArrayList<>();
+
+		for (int i = 0; i < downDipCount; i++) {
+			double zWidthDelta = 2.0 / sin(parent.dipRad());
+			zTopWidths.add(0.0 + i * zWidthDelta);
+		}
+
+		List<GriddedSurface> floaterList = new ArrayList<>();
+
+		// compute row start index and rowCount for each depth
+		for (double zTopWidth : zTopWidths) {
+
+			Dimensions d = scaling.dimensions(mag, parent.width() - zTopWidth);
+
+			// row start and
+			int startRow = (int) Math.rint(zTopWidth / parent.dipSpacing);
+			int floaterRowSize = (int) Math.rint(d.width / parent.dipSpacing + 1);
+
+			// along-strike size & count
+			int floaterColSize = (int) Math.rint(d.length / parent.strikeSpacing + 1);
+			int alongCount = parent.getNumCols() - floaterColSize + 1;
+			if (alongCount <= 1) {
+				alongCount = 1;
+				floaterColSize = parent.getNumCols();
+			}
+
+			for (int startCol = 0; startCol < alongCount; startCol++) {
+				GriddedSubsetSurface gss = new GriddedSubsetSurface(floaterRowSize, floaterColSize,
+					startRow, startCol, parent);
+				floaterList.add(gss);
+			}
+		}
+		return floaterList;
+	}
 
 }

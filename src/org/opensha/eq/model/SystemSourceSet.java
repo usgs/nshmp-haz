@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.opensha.data.DataUtils;
 import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Predicate;

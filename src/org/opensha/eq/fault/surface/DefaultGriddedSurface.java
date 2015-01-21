@@ -30,7 +30,7 @@ import com.google.common.collect.Range;
 import com.google.common.math.DoubleMath;
 
 /**
- * <b>Title:</b> GriddedSurfaceWithSubsets. <br> <b>Description: This creates an
+ * <b>Title:</b> DefaultGriddedSurface. <br> <b>Description: This creates an
  * GriddedSurface representation of the fault using a scheme described by Mark
  * Stirling to Ned Field in 2001, where grid points are projected down dip at an
  * angle perpendicular to the end-points of the trace (or in dipDir if provided
@@ -42,7 +42,7 @@ import com.google.common.math.DoubleMath;
  *         assertValidState
  */
 
-public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets {
+public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
 	private final LocationList trace;
 	private final double depth;
@@ -55,7 +55,7 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 	// be normal to Faults.strike(trace), but may not be; in any event,
 	// we do not want to recompute it internally.
 
-	private GriddedSurfaceWithSubsets(LocationList trace, double dipRad, double dipDirRad,
+	private DefaultGriddedSurface(LocationList trace, double dipRad, double dipDirRad,
 		double depth, double width, double strikeSpacing, double dipSpacing) {
 
 		this.trace = trace;
@@ -130,7 +130,7 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 	// }
 
 	/**
-	 * Returns a new {@code GriddedSurfaceWithSubsets.Builder}.
+	 * Returns a new {@code DefaultGriddedSurface.Builder}.
 	 */
 	public static Builder builder() {
 		return new Builder();
@@ -144,7 +144,7 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 
 		private static final Range<Double> SPACING_RANGE = Range.closed(0.1, 20.0);
 
-		private static final String ID = "GriddedSurfaceWithSubsets.Builder";
+		private static final String ID = "DefaultGriddedSurface.Builder";
 		private boolean built = false;
 
 		// required
@@ -224,11 +224,11 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 			built = true;
 		}
 
-		public GriddedSurfaceWithSubsets build() {
+		public DefaultGriddedSurface build() {
 			validateState(ID);
 			if (dipDirRad == null) dipDirRad = Faults.dipDirectionRad(trace);
 			if (width == null) width = (lowerDepth - depth) / Math.sin(dipRad);
-			return new GriddedSurfaceWithSubsets(trace, dipRad, dipDirRad, depth, width,
+			return new DefaultGriddedSurface(trace, dipRad, dipDirRad, depth, width,
 				strikeSpacing, dipSpacing);
 		}
 
@@ -620,8 +620,8 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 //		// trace.addLocation(new Location(36.3547, -120.358, faultTraceDepth));
 //		// trace.addLocation(new Location(36.2671, -120.254, faultTraceDepth));
 //		// trace.addLocation(new Location(36.1499, -120.114, faultTraceDepth));
-//		// GriddedSurfaceWithSubsets griddedSurface = new
-//		// GriddedSurfaceWithSubsets(trace, dip,
+//		// DefaultGriddedSurface griddedSurface = new
+//		// DefaultGriddedSurface(trace, dip,
 //		// depth, lowerDepth, gridSpacing);
 //		// System.out.println("******Fault Trace*********");
 //		// System.out.println(trace);
@@ -640,8 +640,8 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 //		 * double dip = 30; double depth = 5; double lowerDepth = 15; double
 //		 * gridSpacing=5; FaultTrace trace = new FaultTrace("Test");
 //		 * trace.add(new Location(20.0, -120, 0)); trace.add(new Location(20.2,
-//		 * -120, 0)); GriddedSurfaceWithSubsets griddedSurface = new
-//		 * GriddedSurfaceWithSubsets(trace, dip, depth, lowerDepth,
+//		 * -120, 0)); DefaultGriddedSurface griddedSurface = new
+//		 * DefaultGriddedSurface(trace, dip, depth, lowerDepth,
 //		 * gridSpacing); System.out.println("******Fault Trace*********");
 //		 * System.out.println(trace); Iterator<Location> it =
 //		 * griddedSurface.getLocationsIterator();
@@ -658,6 +658,10 @@ public class GriddedSurfaceWithSubsets extends AbstractGriddedSurfaceWithSubsets
 
 	@Override public double dip() {
 		return dipRad * TO_DEG;
+	}
+	
+	public double dipRad() {
+		return dipRad;
 	}
 
 	@Override public double depth() {

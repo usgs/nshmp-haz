@@ -18,7 +18,6 @@ import java.util.Map;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.surface.PtSrcDistCorr;
-import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
 import org.opensha.mfd.IncrementalMfd;
