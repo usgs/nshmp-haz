@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 
 import org.opensha.eq.fault.FocalMech;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;

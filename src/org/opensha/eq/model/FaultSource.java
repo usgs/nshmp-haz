@@ -23,6 +23,7 @@ import org.opensha.eq.fault.scaling.MagScalingRelationship;
 import org.opensha.eq.fault.surface.GriddedSurface;
 import org.opensha.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha.eq.fault.surface.RuptureFloating;
+import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.eq.fault.surface.RuptureSurface;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;

@@ -1,4 +1,4 @@
-package org.opensha.eq.model;
+package org.opensha.eq.fault.surface;
 
 import static com.google.common.io.Resources.getResource;
 import static com.google.common.io.Resources.readLines;

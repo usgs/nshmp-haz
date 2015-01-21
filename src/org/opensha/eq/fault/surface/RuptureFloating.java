@@ -8,9 +8,8 @@ import static org.opensha.eq.fault.surface.Surfaces.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opensha.eq.fault.surface.RuptureScaling.Dimensions;
 import org.opensha.eq.model.Rupture;
-import org.opensha.eq.model.RuptureScaling;
-import org.opensha.eq.model.RuptureScaling.Dimensions;
 import org.opensha.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
