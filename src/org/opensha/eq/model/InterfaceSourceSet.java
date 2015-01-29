@@ -71,6 +71,7 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 			return this;
 		}
 
+		// overridden to support method chaining
 		@Override Builder name(String name) {
 			super.name(name);
 			return this;

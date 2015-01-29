@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static org.opensha.eq.model.SourceAttribute.FOCAL_MECH_MAP;
 import static org.opensha.eq.model.SourceAttribute.MAG_DEPTH_MAP;
+import static org.opensha.eq.model.SourceAttribute.MAX_DEPTH;
 import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha.eq.model.SourceAttribute.NAME;
 import static org.opensha.eq.model.SourceAttribute.STRIKE;
@@ -122,10 +123,10 @@ class GridParser extends DefaultHandler {
 					log.fine("       Name: " + name);
 					log.fine("     Weight: " + weight);
 				}
+				mfdHelper = MfdHelper.create();
 				break;
 
 			case DEFAULT_MFDS:
-				mfdHelper = MfdHelper.create();
 				parsingDefaultMFDs = true;
 				break;
 
@@ -138,11 +139,13 @@ class GridParser extends DefaultHandler {
 			case SOURCE_PROPERTIES:
 				String depthMapStr = readString(MAG_DEPTH_MAP, atts);
 				NavigableMap<Double, Map<Double, Double>> depthMap = stringToValueValueWeightMap(depthMapStr);
+				double maxDepth = readDouble(MAX_DEPTH, atts);
 				String mechMapStr = readString(FOCAL_MECH_MAP, atts);
 				Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
 				RuptureScaling rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
 				sourceSetBuilder
 					.depthMap(depthMap, type)
+					.maxDepth(maxDepth, type)
 					.mechs(mechMap)
 					.rupScaling(rupScaling);
 				double strike = readDouble(STRIKE, atts);

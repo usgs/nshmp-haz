@@ -129,21 +129,17 @@ public class FaultSource implements Source {
 			// TODO do we really want to do this??
 			if (rate < 1e-14) continue; // shortcut low rates
 
-			
 			// TODO we want to get the 'floats' attribute out of MFDs
 			// the only reason it is there is to allow SINGLE to flip-flop
 			// it should just be a SourceProperty
 			if (mfd.floats()) {
 
 				DefaultGriddedSurface surf = (DefaultGriddedSurface) surface;
-				List<GriddedSurface> floaters = rupFloating.createFloaters(surf, rupScaling, mag);
 				
-				 double rupRate = rate / floaters.size();
-				 for (GriddedSurface floater : floaters) {
-					 Rupture rup = Rupture.create(mag, rake, rupRate, floater);
-					 rupListbuilder.add(rup);
-				 }
-
+				List<Rupture> floaters = rupFloating.createFloatingRuptures(surf, rupScaling, mag,
+					rate, rake, false);
+				rupListbuilder.addAll(floaters);
+				
 			} else {
 				Rupture rup = Rupture.create(mag, rate, rake, surface);
 				rupListbuilder.add(rup);
@@ -151,20 +147,6 @@ public class FaultSource implements Source {
 		}
 		// @formatter:on
 		return rupListbuilder.build();
-	}
-
-	private static double computeRuptureLength(MagScalingRelationship msr, double mag,
-			double maxWidth, double aspectRatio) {
-
-		if (msr instanceof MagLengthRelationship) {
-			return msr.getMedianScale(mag);
-		} else if (msr instanceof MagAreaRelationship) {
-			double area = msr.getMedianScale(mag);
-			double width = Math.sqrt(area / aspectRatio);
-			return area / ((width > maxWidth) ? maxWidth : width);
-		} else {
-			throw new IllegalArgumentException("Unsupported MagScalingRelation: " + msr.getClass());
-		}
 	}
 
 	/* Single use builder */
@@ -239,12 +221,12 @@ public class FaultSource implements Source {
 			return this;
 		}
 
-		Builder rupScaling(RuptureScaling rupScaling) {
+		Builder ruptureScaling(RuptureScaling rupScaling) {
 			this.rupScaling = checkNotNull(rupScaling, "Rup-Scaling Relation is null");
 			return this;
 		}
 
-		Builder rupFloating(RuptureFloating rupFloating) {
+		Builder ruptureFloating(RuptureFloating rupFloating) {
 			this.rupFloating = checkNotNull(rupFloating, "Rup-Floating Model is null");
 			return this;
 		}

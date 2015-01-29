@@ -37,6 +37,16 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// TODO grid sources; map against all matching defaultMfd types
 	// TODO need to handle cal_fl(oater): no down dip;
 	// TODO clean up floater specification; props or source model
+	// float attribute is only permitted for SINGLE mfds because NSHM
+	// prescribed that some characteristic ruptures float; really should just
+	// let a mag-scaling relation determine whether a rupture fills or floats
+	//    -- I think we just need to do a sensitivity study wherein, the
+	// attribute is removed and we pass every characteristic rupture through
+	// its magScaling relation to determine if more than 1 rupture is needed
+	//    -- alternatively, we just extract those faults with SINGLE mfds that
+	// float out to their own file such theat their source properties are
+	// consistent
+	
 	// TODO where/how to apply CEUS clamps
 	
 	// TODO I think current FaultSystemSource conversions incorrectly include
@@ -177,16 +187,17 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 
 	final static class Config {
 
-		public final double GRIDDED_SURFACE_UNIT;
+		//public final double GRIDDED_SURFACE_UNIT;
 		public final AreaSource.GridScaling AREA_SOURCE_SCALING;
-		public final RuptureFloating RUPTURE_FLOATING_MODEL;
+		//public final RuptureFloating RUPTURE_FLOATING_MODEL;
 
 		private Config(Properties props) {
 			checkState(!checkNotNull(props).isEmpty(), "Properties table is null or empty");
-			GRIDDED_SURFACE_UNIT = Double.valueOf(props.getProperty("GRIDDED_SURFACE_UNIT"));
+			// moved to SourceProps element
+			// GRIDDED_SURFACE_UNIT = Double.valueOf(props.getProperty("GRIDDED_SURFACE_UNIT"));
 			AREA_SOURCE_SCALING = GridScaling.valueOf(props.getProperty("AREA_SOURCE_SCALING"));
-			RUPTURE_FLOATING_MODEL = RuptureFloating.valueOf(props
-				.getProperty("RUPTURE_FLOATING_MODEL"));
+			// moved to SourceProps element
+			// RUPTURE_FLOATING_MODEL = RuptureFloating.valueOf(props.getProperty("RUPTURE_FLOATING_MODEL"));
 		}
 
 	}

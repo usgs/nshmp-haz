@@ -158,7 +158,7 @@ class ClusterParser extends DefaultHandler {
 					String srcName = readString(NAME, atts);
 					faultBuilder = new FaultSource.Builder()
 						.name(srcName)
-						.rupScaling(rupScaling);
+						.ruptureScaling(rupScaling);
 					log.finer("      Fault: " + srcName);
 					break;
 

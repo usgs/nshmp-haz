@@ -36,7 +36,7 @@ public abstract class AbstractDiscretizedFunc extends AbstractXY_DataSet impleme
 	/** Class name used for debbuging */
 	protected final static String C = "DiscretizedFunc";
 	/** if true print out debugging statements */
-	protected final static boolean D = true;
+	protected final static boolean D = false;
 
 
 	/**

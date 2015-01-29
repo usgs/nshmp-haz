@@ -19,6 +19,7 @@ import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.scaling.MagLengthRelationship;
 import org.opensha.eq.fault.surface.PtSrcDistCorr;
 import org.opensha.eq.fault.surface.RuptureScaling;
+import org.opensha.geo.GeoTools;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
 import org.opensha.mfd.IncrementalMfd;
@@ -100,7 +101,7 @@ class PointSourceFinite extends PointSource {
 
 		FiniteSurface fpSurf = (FiniteSurface) rup.surface;
 		fpSurf.mag = mag; // KLUDGY needed for distance correction
-		fpSurf.dip = mech.dip();
+		fpSurf.dipRad = dipRad;
 		fpSurf.widthDD = widthDD;
 		fpSurf.widthH = widthDD * cos(dipRad);
 		fpSurf.zTop = zTop;
@@ -191,7 +192,6 @@ class PointSourceFinite extends PointSource {
 
 			if (footwall) return Distances.create(rJB, hypot(rJB, zTop), rX);
 
-			double dipRad = dip * TO_RAD;
 			double rCut = zBot * tan(dipRad);
 
 			if (rJB > rCut) return Distances.create(rJB, hypot(rJB, zBot), rX);

@@ -6,7 +6,9 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
 import static org.opensha.eq.model.SourceAttribute.DEPTH;
 import static org.opensha.eq.model.SourceAttribute.DIP;
+import static org.opensha.eq.model.SourceAttribute.RUPTURE_FLOATING;
 import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
+import static org.opensha.eq.model.SourceAttribute.SURFACE_SPACING;
 import static org.opensha.eq.model.SourceAttribute.NAME;
 import static org.opensha.eq.model.SourceAttribute.RAKE;
 import static org.opensha.eq.model.SourceAttribute.TYPE;
@@ -26,6 +28,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha.eq.Magnitudes;
+import org.opensha.eq.fault.surface.RuptureFloating;
 import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.GaussianMfd;
@@ -63,7 +66,9 @@ class FaultParser extends DefaultHandler {
 	private FaultSource.Builder sourceBuilder;
 
 	private RuptureScaling rupScaling;
-
+	private RuptureFloating rupFloating;
+	private double spacing;
+	
 	// Data applying to all sourceSet
 	private MagUncertainty unc = null;
 	private Map<String, String> epiAtts = null;
@@ -120,10 +125,10 @@ class FaultParser extends DefaultHandler {
 						log.fine("       Name: " + name);
 						log.fine("     Weight: " + weight);
 					}
+					mfdHelper = MfdHelper.create();
 					break;
 
 				case DEFAULT_MFDS:
-					mfdHelper = MfdHelper.create();
 					parsingDefaultMFDs = true;
 					break;
 
@@ -138,13 +143,19 @@ class FaultParser extends DefaultHandler {
 				case SOURCE_PROPERTIES:
 					rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
 					log.fine("Rup scaling: " + rupScaling);
+					rupFloating = readEnum(RUPTURE_FLOATING, atts, RuptureFloating.class);
+					log.fine("   floating: " + rupFloating);
+					spacing = readDouble(SURFACE_SPACING, atts);
+					log.fine("    spacing: " + spacing);
 					break;
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
 					sourceBuilder = new FaultSource.Builder()
 						.name(srcName)
-						.rupScaling(rupScaling);
+						.ruptureScaling(rupScaling)
+						.ruptureFloating(rupFloating)
+						.surfaceSpacing(spacing);
 					log.fine("     Source: " + srcName);
 					break;
 

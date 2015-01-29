@@ -14,6 +14,7 @@ import java.util.NavigableMap;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.eq.fault.surface.RuptureSurface;
+import org.opensha.geo.GeoTools;
 import org.opensha.geo.Location;
 import org.opensha.geo.Locations;
 import org.opensha.mfd.IncrementalMfd;
@@ -27,8 +28,8 @@ import com.google.common.primitives.Ints;
  * representation of point-source {@code Rupture}s. When iterating, a
  * {@code PointSource} will supply {@code Rupture}s that provide dips and rakes
  * corresponding to different {@link FocalMech} types, but all distance metrics
- * are based on the site to point source location distance. This distance may
- * be corrected depending on choice of {@link RuptureScaling} model.
+ * are based on the site to point source location distance. This distance may be
+ * corrected depending on choice of {@link RuptureScaling} model.
  * 
  * <p><b>NOTE:</b> This source type should <i>not</i> be used in in conjunction
  * with ground motion models (GMMs) that consider hanging wall effects or
@@ -111,7 +112,7 @@ class PointSource implements Source {
 
 		PointSurface pSurf = (PointSurface) rup.surface;
 		pSurf.mag = mag; // KLUDGY needed for distance correction
-		pSurf.dip = mech.dip();
+		pSurf.dipRad = mech.dip() * GeoTools.TO_RAD;
 		pSurf.zTop = zTop;
 
 	}
@@ -175,7 +176,7 @@ class PointSource implements Source {
 		final Location loc;
 		final RuptureScaling rupScaling;
 		double mag;
-		double dip;
+		double dipRad;
 		double zTop;
 
 		PointSurface(Location loc, RuptureScaling rupScaling) {
@@ -192,7 +193,8 @@ class PointSource implements Source {
 
 		// @formatter:off
 		@Override public double strike() { throw new UnsupportedOperationException(exMessage("strike")); }
-		@Override public double dip() { return dip; }
+		@Override public double dip() { return dipRad * GeoTools.TO_DEG; }
+		@Override public double dipRad() { return dipRad; }
 		@Override public double dipDirection() { throw new UnsupportedOperationException(exMessage("dipDirection")); }
 		@Override public double length() { throw new UnsupportedOperationException(exMessage("length")); }
 		@Override public double width() { throw new UnsupportedOperationException(exMessage("width")); }
@@ -201,53 +203,75 @@ class PointSource implements Source {
 		// TODO should this be the true centroid of the surface
 		// representation or is the grid node location ok?
 		@Override public Location centroid() { return loc; } 
-		
+		// @formatter:on
+
 		private static String exMessage(String field) {
 			return "No '" + field + "' for PointSource surface";
 		}
-		
+
 	}
-	
+
 	/*
 	 * A depth model stores lookup arrays for mfd magnitude indexing, depths,
 	 * and depth weights. These arrays remove the need to do expensive lookups
-	 * in a magDepthMap when iterating grid sources and ruptures. A model may
-	 * be longer (have more magnitudes) than required by grid or area point
-	 * source implementations as it usually spans the [mMin mMax] of some master
-	 * MFD. Implementations will only ever reference those indices up to their
+	 * in a magDepthMap when iterating grid sources and ruptures. A model may be
+	 * longer (have more magnitudes) than required by grid or area point source
+	 * implementations as it usually spans the [mMin mMax] of some master MFD.
+	 * Implementations will only ever reference those indices up to their
 	 * individual mMax so there should only be one per GridSourceSet or
 	 * AreaSource.
 	 * 
-	 * Given magDepthMap: [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1, 5.0:0.9]]
+	 * Given magDepthMap:
 	 * 
-	 * and an MFD with mags: [5.0, 5.5, 6.0, 6.5, 7.0]
+	 * [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1, 5.0:0.9]]
 	 * 
-	 * The number of mag-depth combinations a point source would iterate over is:
-	 * sum(m = MFD.mag(i) * nDepths(m)) = 3 * 3 + 2 * 2 = 13
+	 * and an MFD with mags:
+	 * 
+	 * [5.0, 5.5, 6.0, 6.5, 7.0]
+	 * 
+	 * The number of mag-depth combinations a point source would iterate over
+	 * is: sum(m = MFD.mag(i) * nDepths(m)) = 3 * 3 + 2 * 2 = 13
 	 * 
 	 * (note: mag cutoffs in magDepthMap are always used as m < cutoff)
 	 * 
-	 * magDepthIndices[] : magnitude index in original MFD [ 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
+	 * magDepthIndices[] : magnitude index in original MFD
 	 * 
-	 * magDepthDepths[] : depth for index [1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 5.0, 1.0, 5.0]
+	 * [ 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
 	 * 
-	 * magDepthWeights[] : depth weight for index [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
+	 * magDepthDepths[] : depth for index
+	 * 
+	 * [1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 5.0, 1.0, 5.0]
+	 * 
+	 * magDepthWeights[] : depth weight for index
+	 * 
+	 * [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
 	 * 
 	 * A depth model also encapsulates a maximum depth value that is usually
 	 * source type dependent and may be used when computing determin the maximum
 	 * width of a point source.
 	 * 
-	 * All DepthModel validation is currently performed in GridSourceSet.Builder.
+	 * All DepthModel validation is currently performed in
+	 * GridSourceSet.Builder.
 	 */
 	static final class DepthModel {
-		
+
 		/*
 		 * Examples:
-		 * single depth: [10.0 :: [depth : 1.0 ]]
-		 * NSHMP depths: [6.5 :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 : 0.0]]
+		 * 
+		 * single depth:
+		 * 
+		 * [10.0 :: [depth : 1.0 ]]
+		 * 
+		 * NSHMP depths:
+		 * 
+		 * [6.5 :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 : 0.0]]
 		 */
 
-		// @formatter:on
+		/*
+		 * maxDepth constrains the width of finite point sources. In many cases
+		 * (e.g. CEUS) is is not used as sources are simoply modeled as lines;
+		 * the gmm's do not require a full finit-source parameterization.
+		 */
 		final double maxDepth;
 
 		final List<Double> magMaster;

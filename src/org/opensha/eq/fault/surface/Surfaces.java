@@ -76,44 +76,5 @@ public class Surfaces {
 		return min3dDist;
 	}
 
-	/**
-	 * Create a List of floating surfaces.
-	 * 
-	 * @param parent
-	 * @param floatLength
-	 * @param floatWidth
-	 * @return
-	 */
-	public static List<GriddedSurface> createFloatingSurfaceList(
-			AbstractGriddedSurface parent, double floatLength, double floatWidth) {
-
-		List<GriddedSurface> floaterList = new ArrayList<>();
-
-		// along-strike size & count
-		int floaterColSize = (int) Math.rint(floatLength / parent.strikeSpacing + 1);
-		int alongCount = parent.getNumCols() - floaterColSize + 1;
-		if (alongCount <= 1) {
-			alongCount = 1;
-			floaterColSize = parent.getNumCols();
-		}
-
-		// down-dip size & count
-		int floaterRowSize = (int) Math.rint(floatWidth / parent.dipSpacing + 1);
-		int downCount = parent.getNumRows() - floaterRowSize + 1;
-		if (downCount <= 1) {
-			downCount = 1;
-			floaterRowSize = parent.getNumRows();
-		}
-
-		for (int startCol = 0; startCol < alongCount; startCol++) {
-			for (int startRow = 0; startRow < downCount; startRow++) {
-				GriddedSubsetSurface gss = new GriddedSubsetSurface(floaterRowSize, floaterColSize,
-					startRow, startCol, parent);
-				floaterList.add(gss);
-			}
-		}
-
-		return floaterList;
-	}
 
 }

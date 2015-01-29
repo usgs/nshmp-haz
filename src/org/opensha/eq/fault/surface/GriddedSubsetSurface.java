@@ -97,9 +97,13 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
      */
      @Override
     public double dip() {
-        return ( ( AbstractGriddedSurfaceWithSubsets ) data ).dip();
+        return ((AbstractGriddedSurface) data ).dip();
     }
      
+     @Override
+    public double dipRad() {
+        return ((AbstractGriddedSurface) data ).dipRad();
+    }
 
     /** Debug string to represent a tab. Used by toString().  */
     final static char TAB = '\t';

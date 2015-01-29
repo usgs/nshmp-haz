@@ -12,9 +12,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.opensha.eq.fault.scaling.MagScalingRelationship;
+import org.opensha.mfd.IncrementalMfd;
+import org.opensha.mfd.Mfds;
 import org.opensha.util.Logging;
 import org.opensha.util.Parsing;
 
@@ -30,18 +35,18 @@ import org.opensha.util.Parsing;
  * distances that can be used to approximate average distances from a site to a
  * point source of unknown strike.</p>
  * 
+ * <p>Models may also provide a range of {@link Dimensions} for a given
+ * magnitude if {@link #dimensionsDistribution(double, double)} is requested.
+ * This method considers any uncertainty associated with a model and returns a
+ * ±2σ distribution of {@code Dimensions} discretized at 11 points.</p>
+ * 
  * @author Peter Powers
  */
 public enum RuptureScaling {
 
-	/*
-	 * TODO when using these relations ensure that maximum length caps are
-	 * imposed if computed length exceeds physical fault size
-	 */
-
 	/**
 	 * Scaling used for most NSHM finite faults. Returns a magnitude-dependent
-	 * length (Wells &amp; Coppersmith, 1994) and {@code min(length, maxWidth)},
+	 * length (Wells & Coppersmith, 1994) and {@code min(length, maxWidth)},
 	 * thereby maintaining a minimum aspect ratio of 1.0. In practice,
 	 * {@code maxWidth} is also a function of magnitude but is prescribed by a
 	 * RuptureFloating model.
@@ -58,6 +63,10 @@ public enum RuptureScaling {
 			return new Dimensions(length, min(maxWidth, length));
 		}
 
+		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+			throw new UnsupportedOperationException();
+		}
+
 		@Override public double pointSourceDistance(double mag, double distance) {
 			throw new UnsupportedOperationException();
 		}
@@ -67,13 +76,17 @@ public enum RuptureScaling {
 	 * Scaling used for NSHM finite faults in California in 2008 (UCERF2). This
 	 * relation Returns a magnitude-dependent length and
 	 * {@code min(length, maxWidth)}, thereby maintaining a minimum aspect ratio
-	 * of 1.0. It is a hybrid relation that uses Wells &amp; Coppersmith (1994)
+	 * of 1.0. It is a hybrid relation that uses Wells & Coppersmith (1994)
 	 * below M≈6.9 and Ellsworth-B (WGCEP, 2002) above.
 	 */
 	NSHM_FAULT_CA_ELLB_WC94_AREA {
 		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			double length = lengthCa08(mag, maxWidth);
 			return new Dimensions(length, min(maxWidth, length));
+		}
+
+		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override public double pointSourceDistance(double mag, double distance) {
@@ -83,7 +96,7 @@ public enum RuptureScaling {
 
 	/**
 	 * Scaling used for NSHM point sources. Maintains aspect ratio of 1.5 up to
-	 * maximum width and then maintains length (Wells &amp; Coppersmith, 1994)
+	 * maximum width and then maintains length (Wells & Coppersmith, 1994)
 	 * at the expense of aspect ratio.
 	 */
 	NSHM_POINT_WC94_LENGTH {
@@ -91,6 +104,10 @@ public enum RuptureScaling {
 		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			double length = lengthWc94(mag);
 			return new Dimensions(length, min(maxWidth, length / 1.5));
+		}
+
+		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override public double pointSourceDistance(double mag, double distance) {
@@ -110,6 +127,10 @@ public enum RuptureScaling {
 			return new Dimensions(pow(10.0, (mag - 4.94) / 1.39), maxWidth);
 		}
 
+		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+			throw new UnsupportedOperationException();
+		}
+
 		@Override public double pointSourceDistance(double mag, double distance) {
 			return correctedRjb(mag, distance, RJB_DAT_GEOMATRIX);
 		}
@@ -119,7 +140,7 @@ public enum RuptureScaling {
 	/**
 	 * Peer PSHA test scaling. Maintains aspect ratio of 2.0 up to maximum
 	 * width, then increases length. Conservation of area at the expense
-	 * of aspect ratio.
+	 * of aspect ratio. The uncertainty in area for this model is 0.25.
 	 * 
 	 * <ul>
 	 * 	<li>Log (A) = M – 4</li>
@@ -128,15 +149,35 @@ public enum RuptureScaling {
 	 * </ul>
 	 */
 	PEER {
+		private final IncrementalMfd normal2s = Mfds.newGaussianMFD(0.0, 0.25, 11, 1.0);
+
 		@Override public Dimensions dimensions(double mag, double maxWidth) {
+			
 			double width = pow(10, (0.5 * mag - 2.15));
 			return (width < maxWidth) ? 
 				new Dimensions(width * 2.0, width) :
 				new Dimensions(pow(10, (mag - 4.0)) / maxWidth, maxWidth);
 		}
 
+		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+			double area = pow(10, (mag - 4.0));
+			Map<Dimensions, Double> dimensionsMap = new LinkedHashMap<>();
+			for (int i=0; i<normal2s.getNum(); i++) {
+				double scaledArea = area * pow(10, normal2s.getX(i));
+				dimensionsMap.put(dimCalc(scaledArea, maxWidth), normal2s.getY(i));
+			}
+			return dimensionsMap;
+		}
+
 		@Override public double pointSourceDistance(double mag, double distance) {
 			throw new UnsupportedOperationException();
+		}
+		
+		private Dimensions dimCalc(double area, double maxWidth) {
+			double width = sqrt(area / 2.0);
+			return (width < maxWidth) ? 
+				new Dimensions(width * 2.0, width) :
+				new Dimensions(area / maxWidth, maxWidth);
 		}
 	},
 
@@ -156,6 +197,10 @@ public enum RuptureScaling {
 				new Dimensions(area / maxWidth, maxWidth);
 		}
 
+		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+			throw new UnsupportedOperationException();
+		}
+
 		@Override public double pointSourceDistance(double mag, double distance) {
 			return correctedRjb(mag, distance, RJB_DAT_SOMERVILLE);
 		}
@@ -171,6 +216,10 @@ public enum RuptureScaling {
 	 */
 	NONE {
 		@Override public Dimensions dimensions(double mag, double maxWidth) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -243,9 +292,18 @@ public enum RuptureScaling {
 	 * rupture.
 	 * 
 	 * @param mag scaling basis magnitude
-	 * @param maxWidth
+	 * @param maxWidth of parent source
 	 */
 	public abstract Dimensions dimensions(double mag, double maxWidth);
+
+	/**
+	 * Return a ±2σ distribution of {@code Dimensions} and associated
+	 * weights. The distribution is discretized at 11 points.
+	 * 
+	 * @param mag scaling basis magnitude
+	 * @param maxWidth of parent source
+	 */
+	public abstract Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth);
 
 	private static double lengthWc94(double mag) {
 		return pow(10.0, -3.22 + 0.69 * mag);

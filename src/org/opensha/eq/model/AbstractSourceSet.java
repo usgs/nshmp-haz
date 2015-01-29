@@ -15,8 +15,6 @@ import com.google.common.collect.Ordering;
  */
 abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 
-	private static final Ordering<String> SORTER = Ordering.natural();
-
 	private final String name;
 	private final double weight;
 	private final GmmSet gmmSet;
@@ -31,7 +29,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	}
 
 	@Override public int compareTo(SourceSet<T> other) {
-		return SORTER.compare(this.name(), other.name());
+		return Ordering.natural().compare(this.name(), other.name());
 	}
 
 	@Override public String name() {

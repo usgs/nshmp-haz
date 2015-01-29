@@ -660,7 +660,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 		return dipRad * TO_DEG;
 	}
 	
-	public double dipRad() {
+	@Override public double dipRad() {
 		return dipRad;
 	}
 

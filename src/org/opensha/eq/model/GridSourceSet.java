@@ -41,7 +41,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	private final RuptureScaling rupScaling;
 	private final List<Map<FocalMech, Double>> mechMaps;
 	final DepthModel depthModel; // package exposure for parser logging
-	private final double maxDepth;
 	private final double strike;
 	private final PointSourceType ptSrcType;
 
@@ -53,14 +52,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	private GridSourceSet(String name, Double weight, GmmSet gmmSet, List<Location> locs,
 		List<IncrementalMfd> mfds, List<Map<FocalMech, Double>> mechMaps, DepthModel depthModel,
-		double maxDepth, double strike, RuptureScaling rupScaling) {
+		double strike, RuptureScaling rupScaling) {
 
 		super(name, weight, gmmSet);
 		this.locs = locs;
 		this.mfds = mfds;
 		this.mechMaps = mechMaps;
 		this.depthModel = depthModel;
-		this.maxDepth = maxDepth;
 		this.strike = strike;
 		this.rupScaling = rupScaling;
 
@@ -302,7 +300,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			/*
 			 * Validate depths. depths will already have been checked for
 			 * consistency with allowable depths for different source types.
-			 * Must also ensure that all depths (zTop) in the magDepthMap are <=
+			 * Must also ensure that all depths (zTop) in the magDepthMap are <
 			 * maxDepth.
 			 */
 			validateMaxAndMapDepths(magDepthMap, maxDepth, id);
@@ -314,7 +312,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			validateState(ID);
 			DepthModel depthModel = DepthModel.create(magMaster, magDepthMap, maxDepth);
 			return new GridSourceSet(name, weight, gmmSet, locs, mfds, mechMaps, depthModel,
-				maxDepth, strike, rupScaling);
+				strike, rupScaling);
 		}
 
 	}

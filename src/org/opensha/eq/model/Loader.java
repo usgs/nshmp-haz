@@ -85,7 +85,9 @@ class Loader {
 			Path typeDirPath = typeDirectory(modelPath);
 			
 			log.info("Loading config...");
-			loadConfig(typeDirPath);
+			Properties props = loadConfig(typeDirPath);
+			log.info(props.toString());
+			builder.config(props);
 			
 			typePaths = typeDirectoryList(typeDirPath);
 			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
@@ -114,13 +116,13 @@ class Loader {
 	
 	private static final String CONFIG_PROPS = "config.properties";
 	
-	private static void loadConfig(Path typeDirPath) throws IOException {
+	private static Properties loadConfig(Path typeDirPath) throws IOException {
 		Properties props = new Properties();
 		Path propsPath = typeDirPath.resolve(CONFIG_PROPS);
 		InputStream is = Files.newInputStream(propsPath);
 		props.load(is);
-		props.list(System.out);
 		Closeables.closeQuietly(is);
+		return props;
 	}
 	
 

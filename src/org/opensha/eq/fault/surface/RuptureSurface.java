@@ -19,49 +19,47 @@ public interface RuptureSurface {
 	
 	/**
 	 * The average strike of this surface in degrees [0°, 360°).
-	 * @return the strike of this surface
 	 */
 	public double strike();
 
 	/**
 	 * The average dip of this surface in degrees [0°, 90°].
-	 * @return the dip of this surface
 	 */
 	public double dip();
 	
+	
+	/**
+	 * The average dip of this surface in radians [0, π/2].
+	 */
+	public double dipRad();
+
 	/**
 	 * The average dip direction of this surface in degrees [0°, 360°).
-	 * @return the dip direction of this surface
 	 */
 	public double dipDirection();
 
 	/**
 	 * The average length of the upper edge or trace of this surface in km.
-	 * @return the length of this surface
 	 */
 	public double length();
 
 	/**
 	 * The average down-dip width of this surface in km.
-	 * @return the down-dip width of this surface
 	 */
 	public double width();
 
 	/**
 	 * The surface area of this surface in km<sup>2</sup>.
-	 * @return the area of this surface
 	 */
 	public double area();
 	
 	/**
 	 * The average depth to the top of this surface in km (always positive)
-	 * @return the depth to the top of this surface
 	 */
 	public double depth();
 	
 	/**
 	 * The centroid of this surface.
-	 * @return the centroid of this surface
 	 */
 	public Location centroid();
 	

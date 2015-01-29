@@ -8,7 +8,9 @@ import static org.opensha.eq.model.SourceAttribute.DEPTH;
 import static org.opensha.eq.model.SourceAttribute.DIP;
 import static org.opensha.eq.model.SourceAttribute.NAME;
 import static org.opensha.eq.model.SourceAttribute.RAKE;
+import static org.opensha.eq.model.SourceAttribute.RUPTURE_FLOATING;
 import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
+import static org.opensha.eq.model.SourceAttribute.SURFACE_SPACING;
 import static org.opensha.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha.eq.model.SourceAttribute.WIDTH;
 import static org.opensha.util.Parsing.readDouble;
@@ -21,6 +23,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
+import org.opensha.eq.fault.surface.RuptureFloating;
 import org.opensha.eq.fault.surface.RuptureScaling;
 import org.opensha.geo.LocationList;
 import org.opensha.mfd.GutenbergRichterMfd;
@@ -35,7 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /*
  * Non-validating subduction source parser. SAX parser 'Attributes' are stateful
- * and cannot be stored. This class is not thread safe.
+ * and cannot be stored. This class is not thread safe. 
  * 
  * @author Peter Powers
  */
@@ -55,10 +58,12 @@ class InterfaceParser extends DefaultHandler {
 	private InterfaceSource.Builder sourceBuilder;
 
 	private RuptureScaling rupScaling;
+	private RuptureFloating rupFloating;
+	private double spacing;
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
-	private MfdHelper mfdHelper;
+	private MfdHelper mfdHelper; 
 
 	// Traces are the only text content in source files
 	private boolean readingTrace = false;
@@ -107,23 +112,29 @@ class InterfaceParser extends DefaultHandler {
 						log.fine("       Name: " + name);
 						log.fine("     Weight: " + weight);
 					}
+					mfdHelper = MfdHelper.create();
 					break;
 
 				case DEFAULT_MFDS:
-					mfdHelper = MfdHelper.create();
 					parsingDefaultMFDs = true;
 					break;
 
 				case SOURCE_PROPERTIES:
 					rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
 					log.fine("Rup scaling: " + rupScaling);
+					rupFloating = readEnum(RUPTURE_FLOATING, atts, RuptureFloating.class);
+					log.fine("   floating: " + rupFloating);
+					spacing = readDouble(SURFACE_SPACING, atts);
+					log.fine("    spacing: " + spacing);
 					break;
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
 					sourceBuilder = new InterfaceSource.Builder();
 					sourceBuilder.name(srcName);
-					sourceBuilder.rupScaling(rupScaling);
+					sourceBuilder.ruptureScaling(rupScaling);
+					sourceBuilder.ruptureFloating(rupFloating);
+					sourceBuilder.surfaceSpacing(spacing);
 					log.fine("     Source: " + srcName);
 					break;
 

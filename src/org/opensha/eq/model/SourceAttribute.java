@@ -15,9 +15,6 @@ public enum SourceAttribute {
 	WEIGHT,
 	INDEX,
 
-	MAG_DEPTH_MAP,
-	FOCAL_MECH_MAP,
-
 	/* Geometry specific */
 	STRIKE,
 	DIP,
@@ -39,7 +36,6 @@ public enum SourceAttribute {
 	D_MAG,
 	C_MAG,
 	FLOATS,
-	RUPTURE_SCALING,
 	MAGS,
 	RATES,
 	
@@ -49,7 +45,16 @@ public enum SourceAttribute {
 	WEIGHTS,
 	COUNT,
 	MO_BALANCE,
-	SIGMA;
+	SIGMA,
+	
+	/* Source model specific */
+	MAG_DEPTH_MAP,
+	MAX_DEPTH,
+	FOCAL_MECH_MAP,
+	RUPTURE_SCALING,
+	RUPTURE_FLOATING,
+	SURFACE_SPACING;
+	
 
 	/**
 	 * Returns an {@code CaseFormat#LOWER_CAMEL} {@code String} representation

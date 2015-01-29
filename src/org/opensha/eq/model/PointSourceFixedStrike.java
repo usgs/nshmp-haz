@@ -103,7 +103,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 
 		FixedStrikeSurface fsSurf = (FixedStrikeSurface) rup.surface;
 		fsSurf.mag = mag; // KLUDGY needed for distance correction
-		fsSurf.dip = mech.dip();
+		fsSurf.dipRad = dipRad;
 		fsSurf.widthDD = widthDD;
 		fsSurf.widthH = widthH;
 		fsSurf.zTop = zTop;
@@ -206,12 +206,12 @@ class PointSourceFixedStrike extends PointSourceFinite {
 			double rSeg = Locations.distanceToSegmentFast(p1, p2, loc);
 
 			// simple footwall case
-			if (rX <= 0.0 || dip == 90.0) return Distances.create(rSeg, hypot(rSeg, zTop), rX);
+			boolean isVertical = (dipRad == 90.0 * TO_RAD);
+			if (rX <= 0.0 || isVertical) return Distances.create(rSeg, hypot(rSeg, zTop), rX);
 
 			// otherwise, we're on the hanging wall...
 
 			// compute rRup as though we're between endpoints
-			double dipRad = dip * TO_RAD;
 			double rCutTop = tan(dipRad) * zTop;
 			double rCutBot = tan(dipRad) * zBot + widthH;
 			double rRup = (rX > rCutBot) ? hypot(rX - widthH, zBot) : (rX < rCutTop) ? hypot(rX,
