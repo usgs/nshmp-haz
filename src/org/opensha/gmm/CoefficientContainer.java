@@ -66,12 +66,11 @@ final class CoefficientContainer {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * Sets the coefficient fields for the supplied {@code Imt}.
 	 */
-	private void set(Coefficients c, Imt imt) throws IllegalAccessException,
-			NoSuchFieldException {
+	private void set(Coefficients c, Imt imt) throws IllegalAccessException, NoSuchFieldException {
 		for (String name : table.columnKeySet()) {
 			double value = table.get(imt, name);
 			c.getClass().getDeclaredField(name).set(c, value);
@@ -93,7 +92,7 @@ final class CoefficientContainer {
 	double get(Imt imt, String name) {
 		return table.get(imt, name);
 	}
-	
+
 	/**
 	 * Returns an {@code EnumSet} if the intensity measure types (IMTs) for
 	 * which coefficients are supplied.
@@ -117,13 +116,11 @@ final class CoefficientContainer {
 			Imt imt = Imt.parseImt(imtStr);
 			checkNotNull(imt, "Unparseable Imt: " + imtStr);
 			Iterable<String> valStrs = Iterables.skip(entries, 1);
-			Iterable<Double> values = Iterables.transform(valStrs, 
-				Doubles.stringConverter());
+			Iterable<Double> values = Iterables.transform(valStrs, Doubles.stringConverter());
 			valueMap.put(imt, Iterables.toArray(values, Double.class));
 		}
 		// create and load table
-		Table<Imt, String, Double> table = ArrayTable.create(valueMap.keySet(),
-			names);
+		Table<Imt, String, Double> table = ArrayTable.create(valueMap.keySet(), names);
 		for (Imt imt : valueMap.keySet()) {
 			Double[] values = valueMap.get(imt);
 			int i = 0;
@@ -133,5 +130,5 @@ final class CoefficientContainer {
 		}
 		return table;
 	}
-	
+
 }

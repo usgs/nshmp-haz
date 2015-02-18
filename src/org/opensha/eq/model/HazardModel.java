@@ -185,6 +185,10 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 		}
 	}
 
+	// TODO separate config from model??
+	// or have different components for different calc types
+	//    e.g. HazardModel.Config.Deagg
+	// shouldn't be static class -- Config is model specific
 	final static class Config {
 
 		//public final double GRIDDED_SURFACE_UNIT;

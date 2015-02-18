@@ -91,16 +91,6 @@ final class HazardCurveSet {
 			}
 		}
 
-		// TODO clean
-//		Builder addCurves(HazardCurves hazardCurves) {
-//			checkNotNull(hazardGroundMotionsList, "%s was intialized with a ClusterSourceSet", ID);
-//			hazardGroundMotionsList.add(hazardCurves.groundMotions);
-//			for (Entry<Gmm, ArrayXY_Sequence> entry : hazardCurves.curveMap.entrySet()) {
-//				gmmCurveMap.get(entry.getKey()).add(entry.getValue());
-//			}
-//			return this;
-//		}
-
 		Builder addCurves(HazardCurves hazardCurves) {
 			checkNotNull(hazardGroundMotionsList, "%s was intialized with a ClusterSourceSet", ID);
 			hazardGroundMotionsList.add(hazardCurves.groundMotions);
@@ -142,7 +132,7 @@ final class HazardCurveSet {
 
 		/*
 		 * Create the final wieghted (Gmm) combined curve. The Gmm curves were
-		 * scaled by their weights in an earlier step.
+		 * scaled by their weights in an earlier step (TODO not sure this is true).
 		 */
 		private void computeFinal() {
 			ArrayXY_Sequence totalCurve = ArrayXY_Sequence.copyOf(modelCurve).clear();

@@ -2,8 +2,9 @@ package org.opensha.calc;
 
 import static java.lang.Double.NaN;
 import static java.lang.Math.sin;
-import static org.opensha.calc.Utils.setExceedProbabilities;
+import static org.opensha.calc.Utils.setProbExceed;
 import static org.opensha.geo.GeoTools.TO_RAD;
+import static org.opensha.calc.GaussTruncation.ONE_SIDED;
 
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,8 @@ final class Transforms {
 	/**
 	 * Return a Function that transforms HazardGroundMotions to HazardCurves.
 	 */
-	static Function<HazardGroundMotions, HazardCurves> groundMotionsToCurves(ArrayXY_Sequence modelCurve) {
+	static Function<HazardGroundMotions, HazardCurves> groundMotionsToCurves(
+			ArrayXY_Sequence modelCurve) {
 		return new GroundMotionsToCurves(modelCurve);
 	}
 
@@ -71,7 +73,8 @@ final class Transforms {
 	 * Return a Function that reduces a List of HazardCurveSets to a
 	 * HazardResult.
 	 */
-	static Function<List<HazardCurveSet>, HazardResult> curveSetConsolidator(ArrayXY_Sequence modelCurve) {
+	static Function<List<HazardCurveSet>, HazardResult> curveSetConsolidator(
+			ArrayXY_Sequence modelCurve) {
 		return new CurveSetConsolidator(modelCurve);
 	}
 
@@ -204,7 +207,9 @@ final class Transforms {
 				List<Double> sigmas = groundMotions.sigmas.get(gmm);
 
 				for (int i = 0; i < means.size(); i++) {
-					setExceedProbabilities(utilCurve, means.get(i), sigmas.get(i), false, NaN);
+					// TODO the model curve is passed in in linear space but for
+					// lognormal we need x-values to be ln(x)
+					setProbExceed(means.get(i), sigmas.get(i), utilCurve, ONE_SIDED, 3.0);
 					utilCurve.multiply(groundMotions.inputs.get(i).rate);
 					gmmCurve.add(utilCurve);
 				}
@@ -239,7 +244,7 @@ final class Transforms {
 			Function<List<HazardCurveSet>, HazardResult> {
 
 		private final ArrayXY_Sequence modelCurve;
-		
+
 		CurveSetConsolidator(ArrayXY_Sequence modelCurve) {
 			this.modelCurve = modelCurve;
 		}
@@ -324,7 +329,8 @@ final class Transforms {
 					List<Double> means = hazardGroundMotions.means.get(gmm);
 					List<Double> sigmas = hazardGroundMotions.sigmas.get(gmm);
 					for (int i = 0; i < hazardGroundMotions.inputs.size(); i++) {
-						setExceedProbabilities(utilCurve, means.get(i), sigmas.get(i), false, 0.0);
+						// TODO needs ln(x-values)
+						setProbExceed(means.get(i), sigmas.get(i), utilCurve, ONE_SIDED, 3.0);
 						utilCurve.multiply(hazardGroundMotions.inputs.get(i).rate);
 						magVarCurve.add(utilCurve);
 					}
@@ -355,8 +361,8 @@ final class Transforms {
 
 		@Override public HazardCurveSet apply(List<ClusterCurves> curvesList) {
 
-			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet
-				.builder(clusterSourceSet, modelCurve);
+			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet.builder(clusterSourceSet,
+				modelCurve);
 
 			for (ClusterCurves curves : curvesList) {
 				curveSetBuilder.addCurves(curves);

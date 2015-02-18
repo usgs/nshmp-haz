@@ -35,11 +35,13 @@ public final class HazardResult {
 			sb.append(type).append("SourceSet:").append(LF);
 			for (HazardCurveSet curveSet : sourceSetMap.get(type)) {
 				sb.append("  ").append(curveSet.sourceSet);
-				int used = (curveSet.sourceSet.type() == CLUSTER)
-					? curveSet.clusterGroundMotionsList.size() : curveSet.hazardGroundMotionsList
-						.size();
+				// @formatter:off
+				int used = (curveSet.sourceSet.type() == CLUSTER) ?
+					curveSet.clusterGroundMotionsList.size() :
+					curveSet.hazardGroundMotionsList.size();
 				sb.append("Used: ").append(used);
 				sb.append(LF);
+				// @formatter:on
 
 				if (curveSet.sourceSet.type() == CLUSTER) {
 					// List<ClusterGroundMotions> cgmsList =

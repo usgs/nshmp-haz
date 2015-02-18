@@ -799,8 +799,8 @@ public final class DataUtils {
 	private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0d, 1d);
 
 	/**
-	 * Confirm that a weight value is {@code 0.0 < weight ≤ 1.0}. Method
-	 * returns the supplied value and can be used inline.
+	 * Confirm that a weight value is {@code 0.0 < weight ≤ 1.0}. Method returns
+	 * the supplied value and can be used inline.
 	 * 
 	 * @param weight to validate
 	 * @return the supplied {@code weight} value
@@ -826,6 +826,22 @@ public final class DataUtils {
 	public static void validateWeights(Collection<Double> weights) {
 		checkArgument(fuzzyEquals(sum(weights), 1.0, WEIGHT_TOLERANCE),
 			"Weights do not sum to 1: %s", weights);
+	}
+
+	/**
+	 * Confirm that for a specified range {@code [min, max]} that
+	 * {@code max > min}, {@code Δ > 0.0}, & {@code Δ < max - min}. Use this
+	 * prior to creating a set of values discretized in {@code Δ}. Returns
+	 * {@code Δ} for use inline.
+	 * @param min value
+	 * @param max value
+	 * @param Δ discretization delta
+	 */
+	public static double validateDelta(double min, double max, double Δ) {
+		checkArgument(max > min, "min [%s] > max [%s]", min, max);
+		checkArgument(Δ > 0.0, "Invalid Δ [%s]", Δ);
+		checkArgument(Δ <= max - min, "Δ [%s] > max - min [%s]", max - min);
+		return Δ;
 	}
 
 	/*
@@ -887,11 +903,11 @@ public final class DataUtils {
 	/**
 	 * Creates a sequence of evenly spaced values starting at {@code min} and
 	 * ending at {@code max}. If {@code (max - min) / step} is not equivalent to
-	 * an integer, the last step in the sequence will be {@code <step}.
-	 * Unlike {@link #buildSequence(double, double, double, boolean)}, this
-	 * method returns a sequence where any 'odd' values due to rounding errors
-	 * have been removed, at least within the range of the specified
-	 * {@code scale} (precision or number of decimal places).
+	 * an integer, the last step in the sequence will be {@code <step}. Unlike
+	 * {@link #buildSequence(double, double, double, boolean)}, this method
+	 * returns a sequence where any 'odd' values due to rounding errors have
+	 * been removed, at least within the range of the specified {@code scale}
+	 * (precision or number of decimal places).
 	 * @param min sequence value
 	 * @param max sequence value
 	 * @param step sequence spacing
@@ -1018,18 +1034,17 @@ public final class DataUtils {
 		return transform(new Clean(scale), data);
 	}
 
-	// @formatter:off
-	// TODO group the four below (and others) in a single MathFunction enum??
 	private static class Clean implements Function<Double, Double> {
 		private final String format;
-		private Clean(int scale) { format = "%." + scale + "f";}
+
+		private Clean(int scale) {
+			format = "%." + scale + "f";
+		}
+
 		@Override public Double apply(Double d) {
 			return Double.parseDouble(String.format(format, d));
 		}
 	}
-
-		
-	// @formatter:on
 
 	// TODO clean
 	// /**
@@ -1235,19 +1250,19 @@ public final class DataUtils {
 
 	/**
 	 * Nearest neighbor binning algorithm after Silverman, B. W. (1986),
-	 * <em>Density Estimation for Statistics and Data Analysis</em>, Chapman
-	 * & Hall, New York. This method is a density estimator that uses
-	 * variable width binning with a fixed sample size per bin that better
-	 * reflects the distribution of the underlying data. It is particularly
-	 * useful when workgin with power-law distributed data. Bin widths are
-	 * computed as the difference between the last values in adjacent bins. In
-	 * the case of the 1st bin, the supplied origin is taken as the "last value"
-	 * of the previous bin. Bin positions are set from the median value in each
-	 * bin. Note that the supplied {@code data} is not modified; this method
-	 * uses a copy internally. In most cases, data will be fairly continuous in
-	 * X, however, for small {@code size}s it's possible to have bins of
-	 * identical values such that corresponding bin value is Infinity. Such
-	 * values are not included in the resultant data set.
+	 * <em>Density Estimation for Statistics and Data Analysis</em>, Chapman &
+	 * Hall, New York. This method is a density estimator that uses variable
+	 * width binning with a fixed sample size per bin that better reflects the
+	 * distribution of the underlying data. It is particularly useful when
+	 * workgin with power-law distributed data. Bin widths are computed as the
+	 * difference between the last values in adjacent bins. In the case of the
+	 * 1st bin, the supplied origin is taken as the "last value" of the previous
+	 * bin. Bin positions are set from the median value in each bin. Note that
+	 * the supplied {@code data} is not modified; this method uses a copy
+	 * internally. In most cases, data will be fairly continuous in X, however,
+	 * for small {@code size}s it's possible to have bins of identical values
+	 * such that corresponding bin value is Infinity. Such values are not
+	 * included in the resultant data set.
 	 * 
 	 * @param data to be binned
 	 * @param origin for binning
@@ -1256,8 +1271,8 @@ public final class DataUtils {
 	 *         {@code null} if the binned distribution is empty
 	 * @throws NullPointerException if the supplied {@code data} is {@code null}
 	 * @throws IllegalArgumentException if supplied {@code data} is empty, the
-	 *         bin {@code size} is <1, or the {@code origin} is greater than
-	 *         all {@code data} values
+	 *         bin {@code size} is <1, or the {@code origin} is greater than all
+	 *         {@code data} values
 	 */
 	@Deprecated public static DefaultXY_DataSet nearestNeighborHist(double[] data, double origin,
 			int size) {
