@@ -38,6 +38,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * String, file, and XML parsing utilities.
@@ -45,6 +47,8 @@ import com.google.common.primitives.Ints;
  * @author Peter Powers
  */
 public final class Parsing {
+
+	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	private static final Joiner.MapJoiner MAP_JOIN = Joiner.on(',').withKeyValueSeparator(":");
 	private static final Splitter.MapSplitter MAP_SPLIT = Splitter.on(',').trimResults()

@@ -38,6 +38,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * {@code HazardModel} loader. This class takes care of extensive checked
@@ -47,6 +49,8 @@ import com.google.common.io.Closeables;
  * @author Peter Powers
  */
 class Loader {
+
+	static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	private static final String LF = LINE_SEPARATOR.value();
 	private static Logger log;
@@ -85,9 +89,9 @@ class Loader {
 			Path typeDirPath = typeDirectory(modelPath);
 			
 			log.info("Loading config...");
-			Properties props = loadConfig(typeDirPath);
-			log.info(props.toString());
-			builder.config(props);
+			Config config = Config.load(typeDirPath);
+			log.info(config.toString());
+			builder.config(config);
 			
 			typePaths = typeDirectoryList(typeDirPath);
 			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
@@ -116,14 +120,14 @@ class Loader {
 	
 	private static final String CONFIG_PROPS = "config.properties";
 	
-	private static Properties loadConfig(Path typeDirPath) throws IOException {
-		Properties props = new Properties();
-		Path propsPath = typeDirPath.resolve(CONFIG_PROPS);
-		InputStream is = Files.newInputStream(propsPath);
-		props.load(is);
-		Closeables.closeQuietly(is);
-		return props;
-	}
+//	private static Properties loadConfig(Path typeDirPath) throws IOException {
+//		Properties props = new Properties();
+//		Path propsPath = typeDirPath.resolve(CONFIG_PROPS);
+//		InputStream is = Files.newInputStream(propsPath);
+//		props.load(is);
+//		Closeables.closeQuietly(is);
+//		return props;
+//	}
 	
 
 	private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",

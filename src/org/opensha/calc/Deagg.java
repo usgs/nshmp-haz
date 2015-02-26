@@ -26,11 +26,10 @@ import com.google.common.collect.Range;
  */
 class Deagg {
 
-//	private final DataModel model;
-//	private final double[][][] data;
-//	private final double mBar, rBar, εBar;
+	// private final DataModel model;
+	// private final double[][][] data;
+	// private final double mBar, rBar, εBar;
 
-	
 	/*
 	 * Many deagg bins have no data so we will usually be returning a sparse
 	 * matrix
@@ -57,7 +56,6 @@ class Deagg {
 	private static int computeIndex(double min, double binWidth, double value) {
 		return (int) Math.floor((value - min) / binWidth);
 	}
-	
 
 	/* Wrapper class for a Rupture and it's contribution to hazard. */
 	static class Contribution implements Comparable<Contribution> {
@@ -79,77 +77,73 @@ class Deagg {
 		private DataModel model;
 		private HazardResult hazard;
 		private double iml;
-		
+
 		// TODO pass in executor??
-		
+
 		Builder withModel(DataModel model) {
 			this.model = checkNotNull(model);
 			return this;
 		}
-		
+
 		Builder forHazard(HazardResult hazard) {
 			this.hazard = checkNotNull(hazard);
 			return this;
 		}
-		
 
-//		// TODO need PoE enum
-//		Builder targetExceedance(double exceedance) {
-//			// TODO convert to iml
-//		}
-//		
-//		Builder targetRate(double rate) {
-//			// TODO convert to iml
-//		}
-//		
-//		Builder targetIml(double iml) {
-//			// TODO validate iml against curve range
-////			this
-//		}
-		
+		// // TODO need PoE enum
+		// Builder targetExceedance(double exceedance) {
+		// // TODO convert to iml
+		// }
+		//
+		// Builder targetRate(double rate) {
+		// // TODO convert to iml
+		// }
+		//
+		// Builder targetIml(double iml) {
+		// // TODO validate iml against curve range
+		// // this
+		// }
+
 		Deagg build() {
 			// run deaggregation
 			// build final statistics
 			return null;
 		}
-		
+
 		private void process() {
 			for (SourceType type : hazard.sourceSetMap.keySet()) {
 				Set<HazardCurveSet> hazardCurveSets = hazard.sourceSetMap.get(type);
-				switch(type) {
+				switch (type) {
 					case FAULT:
 						processFaultSources(hazardCurveSets);
 				}
 			}
 		}
-		
+
 		/*
-		 * There are a variety of things that we can keep track of here.
-		 *   - the gross contribution of each source set
-		 *   - the gross contribution of each Gmm (could be further subdivision of above)
-		 *   - 
+		 * There are a variety of things that we can keep track of here. - the
+		 * gross contribution of each source set - the gross contribution of
+		 * each Gmm (could be further subdivision of above) -
 		 */
 		private void processFaultSources(Set<HazardCurveSet> curveSets) {
 			for (HazardCurveSet curveSet : curveSets) {
 				for (HazardGroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
 					for (Gmm gmm : groundMotions.means.keySet()) {
-						
-						
+
 					}
 				}
 			}
 		}
 
 	}
-	
+
 	/*
 	 * TODO move to transforms
 	 * 
-	 * Transforms HazardGroundMotions to a rate for a target Iml. This is the same as
-	 * computing a hazard curve with a single point.
+	 * Transforms HazardGroundMotions to a rate for a target Iml. This is the
+	 * same as computing a hazard curve with a single point.
 	 */
-	private static class GroundMotionsToRate implements
-			Function<HazardGroundMotions, Double> {
+	private static class GroundMotionsToRate implements Function<HazardGroundMotions, Double> {
 
 		private final double targetIml;
 
@@ -159,41 +153,31 @@ class Deagg {
 
 		@Override public Double apply(HazardGroundMotions groundMotions) {
 
-//			HazardCurves.Builder curveBuilder = HazardCurves.builder(groundMotions);
-//			ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
-//
-//			double sourceRate = 0.0;
-//			for (Gmm gmm : groundMotions.means.keySet()) {
-//				
-////				ArrayXY_Sequence gmmCurve = ArrayXY_Sequence.copyOf(modelCurve);
-//
-//				List<Double> means = groundMotions.means.get(gmm);
-//				List<Double> sigmas = groundMotions.sigmas.get(gmm);
-//
-//				for (int i = 0; i < means.size(); i++) {
-//					setExceedProbabilities(utilCurve, means.get(i), sigmas.get(i), false, NaN);
-//					utilCurve.multiply(groundMotions.inputs.get(i).rate);
-//					gmmCurve.add(utilCurve);
-//				}
-//				curveBuilder.addCurve(gmm, gmmCurve);
-//			}
-//			return curveBuilder.build();
+			// HazardCurves.Builder curveBuilder =
+			// HazardCurves.builder(groundMotions);
+			// ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
+			//
+			// double sourceRate = 0.0;
+			// for (Gmm gmm : groundMotions.means.keySet()) {
+			//
+			// // ArrayXY_Sequence gmmCurve =
+			// ArrayXY_Sequence.copyOf(modelCurve);
+			//
+			// List<Double> means = groundMotions.means.get(gmm);
+			// List<Double> sigmas = groundMotions.sigmas.get(gmm);
+			//
+			// for (int i = 0; i < means.size(); i++) {
+			// setExceedProbabilities(utilCurve, means.get(i), sigmas.get(i),
+			// false, NaN);
+			// utilCurve.multiply(groundMotions.inputs.get(i).rate);
+			// gmmCurve.add(utilCurve);
+			// }
+			// curveBuilder.addCurve(gmm, gmmCurve);
+			// }
+			// return curveBuilder.build();
 			return null;
 		}
 	}
-
-
-	private static final String mMinId = "DEAGG_M_MIN";
-	private static final String mMaxId = "DEAGG_M_MAX";
-	private static final String ΔmId = "DEAGG_M_DELTA";
-
-	private static final String rMinId = "DEAGG_R_MIN";
-	private static final String rMaxId = "DEAGG_R_MAX";
-	private static final String ΔrId = "DEAGG_R_DELTA";
-
-	private static final String εMinId = "DEAGG_E_MIN";
-	private static final String εMaxId = "DEAGG_E_MAX";
-	private static final String ΔεId = "DEAGG_E_DELTA";
 
 	private static final Range<Double> rRange = Range.closed(0.0, 1000.0);
 	private static final Range<Double> εRange = Range.closed(-3.0, 3.0);
@@ -258,24 +242,12 @@ class Deagg {
 
 		/**
 		 * Create a deaggregation data model from the supplied
-		 * {@code Properties}.
-		 * @param props to process
+		 * {@code Config}.
+		 * @param c {@code Config} to process
 		 */
-		public static DataModel fromConfig(Properties props) {
-
-			double mMin = Double.valueOf(props.getProperty(mMinId));
-			double mMax = Double.valueOf(props.getProperty(mMaxId));
-			double Δm = Double.valueOf(props.getProperty(ΔmId));
-
-			double rMin = Double.valueOf(props.getProperty(rMinId));
-			double rMax = Double.valueOf(props.getProperty(rMaxId));
-			double Δr = Double.valueOf(props.getProperty(ΔrId));
-
-			double εMin = Double.valueOf(props.getProperty(εMinId));
-			double εMax = Double.valueOf(props.getProperty(εMaxId));
-			double Δε = Double.valueOf(props.getProperty(ΔεId));
-
-			return create(mMin, mMax, Δm, rMin, rMax, Δr, εMin, εMax, Δε);
+		public static DataModel fromConfig(Config c) {
+			return create(c.deagg_mMin, c.deagg_mMax, c.deagg_Δm, c.deagg_rMin, c.deagg_rMax,
+				c.deagg_Δr, c.deagg_εMin, c.deagg_εMax, c.deagg_Δε);
 		}
 
 		private static class Builder {

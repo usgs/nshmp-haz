@@ -3,12 +3,19 @@ package org.opensha.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.util.TextUtils.validateName;
-import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
+import static org.opensha.util.TextUtils.NEWLINE;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.opensha.calc.GaussTruncation;
 import org.opensha.eq.fault.surface.RuptureFloating;
 import org.opensha.eq.model.AreaSource.GridScaling;
 import org.opensha.gmm.GroundMotionModel;
@@ -16,6 +23,9 @@ import org.opensha.util.Named;
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 
 /**
  * An earthquake hazard {@code HazardModel} is the top-level wrapper for
@@ -40,15 +50,15 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// float attribute is only permitted for SINGLE mfds because NSHM
 	// prescribed that some characteristic ruptures float; really should just
 	// let a mag-scaling relation determine whether a rupture fills or floats
-	//    -- I think we just need to do a sensitivity study wherein, the
+	// -- I think we just need to do a sensitivity study wherein, the
 	// attribute is removed and we pass every characteristic rupture through
 	// its magScaling relation to determine if more than 1 rupture is needed
-	//    -- alternatively, we just extract those faults with SINGLE mfds that
+	// -- alternatively, we just extract those faults with SINGLE mfds that
 	// float out to their own file such theat their source properties are
 	// consistent
-	
+
 	// TODO where/how to apply CEUS clamps
-	
+
 	// TODO I think current FaultSystemSource conversions incorrectly include
 	// depths with fault section traces. Traces are always at surface.
 
@@ -57,9 +67,10 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// not after once built into ruptures.
 
 	// TODO not sure why I changed surface implementations to project down dip
-		// from zero to zTop, but it was wrong. currently sesmogenic depth is ignored,
-		// but may need this for system sources; should zTop be encoded into trace
-		// depths?
+	// from zero to zTop, but it was wrong. currently sesmogenic depth is
+	// ignored,
+	// but may need this for system sources; should zTop be encoded into trace
+	// depths?
 
 	// TODO UCERF3 xml (indexedFaultSource) needs to have aftershock correction
 	// either imposed in file (better) of be imlemented in Parser
@@ -72,14 +83,12 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// always compute all curves, just combine based on distance weights;
 	// I think this is being done in HazardCurveSet.Builder already
 
-	
 	// low priority
 	// TODO change vs30 to Integer?
 	// TODO test low rate shortcut in FaultSource
 	// "if (rate < 1e-14) continue; // shortcut low rates"
 	// TODO need to revisit the application of uncertainty when minM < 6.5
 	// e.g. 809a Pine Valley graben in orwa.c.in
-
 
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
@@ -130,7 +139,7 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	}
 
 	@Override public String toString() {
-		return "HazardModel: " + name + LINE_SEPARATOR.value() + sourceSetMap.toString();
+		return "HazardModel: " + name + NEWLINE + sourceSetMap.toString();
 	}
 
 	/**
@@ -155,8 +164,8 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 			sourceMapBuilder = ImmutableSetMultimap.builder();
 		}
 
-		Builder config(Properties props) {
-			config = new HazardModel.Config(props);
+		Builder config(Config config) {
+			this.config = checkNotNull(config);
 			return this;
 		}
 
@@ -183,27 +192,6 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 			validateState(ID);
 			return new HazardModel(name, config, sourceSetMap);
 		}
-	}
-
-	// TODO separate config from model??
-	// or have different components for different calc types
-	//    e.g. HazardModel.Config.Deagg
-	// shouldn't be static class -- Config is model specific
-	final static class Config {
-
-		//public final double GRIDDED_SURFACE_UNIT;
-		public final AreaSource.GridScaling AREA_SOURCE_SCALING;
-		//public final RuptureFloating RUPTURE_FLOATING_MODEL;
-
-		private Config(Properties props) {
-			checkState(!checkNotNull(props).isEmpty(), "Properties table is null or empty");
-			// moved to SourceProps element
-			// GRIDDED_SURFACE_UNIT = Double.valueOf(props.getProperty("GRIDDED_SURFACE_UNIT"));
-			AREA_SOURCE_SCALING = GridScaling.valueOf(props.getProperty("AREA_SOURCE_SCALING"));
-			// moved to SourceProps element
-			// RUPTURE_FLOATING_MODEL = RuptureFloating.valueOf(props.getProperty("RUPTURE_FLOATING_MODEL"));
-		}
-
 	}
 
 }

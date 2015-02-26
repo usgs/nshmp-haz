@@ -5,6 +5,7 @@ package org.opensha.eq.model;
  * 
  * @author Peter Powers
  */
+@Deprecated
 public enum FloatStyle {
 
 	// TODO need NSHMP mag dependent floater

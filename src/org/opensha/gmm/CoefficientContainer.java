@@ -74,8 +74,8 @@ final class CoefficientContainer {
 		for (String name : table.columnKeySet()) {
 			double value = table.get(imt, name);
 			c.getClass().getDeclaredField(name).set(c, value);
-			c.imt = imt;
 		}
+		c.imt = imt;
 	}
 
 	Coefficients get(Imt imt) {
