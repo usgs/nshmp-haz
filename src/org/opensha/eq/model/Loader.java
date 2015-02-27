@@ -20,9 +20,11 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,7 +53,7 @@ import com.google.gson.GsonBuilder;
 class Loader {
 
 	static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
+	
 	private static final String LF = LINE_SEPARATOR.value();
 	private static Logger log;
 	private static SAXParser sax;
@@ -88,7 +90,6 @@ class Loader {
 			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
 			Path typeDirPath = typeDirectory(modelPath);
 			
-			log.info("Loading config...");
 			Config config = Config.load(typeDirPath);
 			log.info(config.toString());
 			builder.config(config);
@@ -97,7 +98,7 @@ class Loader {
 			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
 			log.info("Loading model: " + name);
 			builder.name(name);
-			log.info("   From resource: " + modelPath.getFileName());
+			log.info("From resource: " + modelPath.getFileName());
 
 			for (Path typePath : typePaths) {
 				String typeName = cleanZipName(typePath.getFileName().toString());
@@ -117,17 +118,6 @@ class Loader {
 
 		return model;
 	}
-	
-	private static final String CONFIG_PROPS = "config.properties";
-	
-//	private static Properties loadConfig(Path typeDirPath) throws IOException {
-//		Properties props = new Properties();
-//		Path propsPath = typeDirPath.resolve(CONFIG_PROPS);
-//		InputStream is = Files.newInputStream(propsPath);
-//		props.load(is);
-//		Closeables.closeQuietly(is);
-//		return props;
-//	}
 	
 
 	private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",
@@ -267,7 +257,7 @@ class Loader {
 				log.info("Parsing: " + typeDir.relativize(nestedGmmPath));
 				nestedGmmSet = parseGMM(nestedGmmPath);
 			} else {
-				log.info("Parsing: (using parent gmm.xml)");
+				log.info("Parsing: " + typeDir.relativize(sourceDir) + " (no gmm.xml: using parent )");
 				nestedGmmSet = gmmSet;
 			}
 		}

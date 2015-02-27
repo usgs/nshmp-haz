@@ -9,7 +9,6 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.opensha.calc.GaussTruncation;
 import org.opensha.eq.fault.surface.RuptureFloating;
 import org.opensha.eq.model.AreaSource.GridScaling;
 
@@ -23,11 +22,17 @@ import com.google.gson.GsonBuilder;
  */
 final class Config {
 	
+	private static final String FILENAME = "config.json";
+
 	public final double surface_gridUnit;
 	public final RuptureFloating surface_floatingModel;
 
 	public final AreaSource.GridScaling source_areaScaling;
 
+	/*
+	 * TODO this should be used to specify point source model
+	 */
+	
 	private Config() {
 
 		/*
@@ -43,17 +48,18 @@ final class Config {
 
 	@Override public String toString() {
 		// @formatter:off
-		return new StringBuilder("Model configuration:").append(NEWLINE)
-			.append("       surface_gridUnit: ").append(surface_gridUnit).append(NEWLINE)
-			.append("  surface_floatingModel: ").append(surface_floatingModel).append(NEWLINE)
-			.append("     source_areaScaling: ").append(source_areaScaling).append(NEWLINE)
+		return new StringBuilder("Model config...").append(NEWLINE)
+			.append("         surface_gridUnit: ").append(surface_gridUnit).append(NEWLINE)
+			.append("    surface_floatingModel: ").append(surface_floatingModel).append(NEWLINE)
+			.append("       source_areaScaling: ").append(source_areaScaling).append(NEWLINE)
 			.toString();
 		// @formatter:on
 	}
 
 	static Config load(Path path) throws IOException {
+		Path configFile = path.resolve(FILENAME);
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		Reader reader = Files.newBufferedReader(path, UTF_8);
+		Reader reader = Files.newBufferedReader(configFile, UTF_8);
 		Config config = gson.fromJson(reader, Config.class);
 		reader.close();
 		return config;

@@ -30,7 +30,6 @@ public class Logging {
 		try {
 			InputStream is = new FileInputStream("lib/logging.properties");
 //			InputStream is = Logging.class.getResourceAsStream("/lib/logging.properties");
-			
 			LogManager.getLogManager().readConfiguration(is);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
