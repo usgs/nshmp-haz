@@ -20,8 +20,7 @@ class MfdHelper {
 	private SingleData singleDefault;
 	private GR_Data grDefault;
 	private IncrData incrDefault;
-
-	// private TaperedData taperedDefault;
+	private TaperData taperDefault;
 
 	static MfdHelper create() {
 		return new MfdHelper();
@@ -46,7 +45,8 @@ class MfdHelper {
 				singleDefault = new SingleData(atts);
 				return 0.0;
 			case GR_TAPER:
-				throw new UnsupportedOperationException("GR_TAPER not yet implemented");
+				taperDefault = new TaperData(atts);
+				return taperDefault.dMag;
 			default:
 				throw new IllegalArgumentException("Unknown MFD type: " + type);
 		}
@@ -62,6 +62,10 @@ class MfdHelper {
 	
 	IncrData getIncremental(Attributes atts) {
 		return (incrDefault == null) ? new IncrData(atts) : new IncrData(atts, incrDefault);
+	}
+
+	TaperData getTapered(Attributes atts) {
+		return (taperDefault == null) ? new TaperData(atts) : new TaperData(atts, taperDefault);
 	}
 
 	static class SingleData {
@@ -175,7 +179,7 @@ class MfdHelper {
 					case TYPE:
 						break; // ignore
 					default:
-						throw new IllegalStateException("Invalid attribute for SINGLE MFD: " + att);
+						throw new IllegalStateException("Invalid attribute for GR MFD: " + att);
 				}
 			}
 
@@ -189,6 +193,78 @@ class MfdHelper {
 		}
 	}
 	
+	static class TaperData {
+		final double a;
+		final double b;
+		final double cMag;
+		final double dMag;
+		final double mMin;
+		final double mMax;
+		final double weight;
+
+		private TaperData(Attributes atts) {
+			a = readDouble(A, atts);
+			b = readDouble(B, atts);
+			cMag = readDouble(C_MAG, atts);
+			dMag = readDouble(D_MAG, atts);
+			mMax = readDouble(M_MAX, atts);
+			mMin = readDouble(M_MIN, atts);
+			weight = readDouble(WEIGHT, atts);
+		}
+
+		private TaperData(Attributes atts, TaperData ref) {
+
+			// set defaults locally
+			double a = ref.a;
+			double b = ref.b;
+			double cMag = ref.cMag;
+			double dMag = ref.dMag;
+			double mMax = ref.mMax;
+			double mMin = ref.mMin;
+			double weight = ref.weight;
+
+			for (int i = 0; i < atts.getLength(); i++) {
+				SourceAttribute att = SourceAttribute.fromString(atts.getQName(i));
+				switch (att) {
+					case A:
+						a = readDouble(A, atts);
+						break;
+					case B:
+						b = readDouble(B, atts);
+						break;
+					case C_MAG:
+						dMag = readDouble(D_MAG, atts);
+						break;
+					case D_MAG:
+						dMag = readDouble(D_MAG, atts);
+						break;
+					case M_MIN:
+						mMin = readDouble(M_MIN, atts);
+						break;
+					case M_MAX:
+						mMax = readDouble(M_MAX, atts);
+						break;
+					case WEIGHT:
+						weight = readDouble(WEIGHT, atts);
+						break;
+					case TYPE:
+						break; // ignore
+					default:
+						throw new IllegalStateException("Invalid attribute for SINGLE MFD: " + att);
+				}
+			}
+
+			// export final fields
+			this.a = a;
+			this.b = b;
+			this.cMag = cMag;
+			this.dMag = dMag;
+			this.mMax = mMax;
+			this.mMin = mMin;
+			this.weight = weight;
+		}
+	}
+
 	static class IncrData {
 		
 		final double[] mags;
@@ -227,9 +303,9 @@ class MfdHelper {
 					case TYPE:
 						break; // ignore
 					case FOCAL_MECH_MAP:
-						break; // UCERF3 grid sources; ignore
+						break; // SYSTEM (UCERF3) grid sources; ignore
 					default:
-						throw new IllegalStateException("Invalid attribute for SINGLE MFD: " + att);
+						throw new IllegalStateException("Invalid attribute for INCR MFD: " + att);
 				}
 			}
 			

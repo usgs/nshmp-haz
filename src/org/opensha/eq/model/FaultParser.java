@@ -62,14 +62,14 @@ class FaultParser extends DefaultHandler {
 	private Locator locator;
 
 	private GmmSet gmmSet;
+	
+	private Config config;
 
 	private FaultSourceSet sourceSet;
 	private FaultSourceSet.Builder sourceSetBuilder;
 	private FaultSource.Builder sourceBuilder;
 
 	private RuptureScaling rupScaling;
-	private RuptureFloating rupFloating;
-	private double spacing;
 	
 	// Data applying to all sourceSet
 	private MagUncertainty unc = null;
@@ -91,10 +91,12 @@ class FaultParser extends DefaultHandler {
 	static FaultParser create(SAXParser sax) {
 		return new FaultParser(checkNotNull(sax));
 	}
-
-	FaultSourceSet parse(InputStream in, GmmSet gmmSet) throws SAXException, IOException {
+	
+	FaultSourceSet parse(InputStream in, GmmSet gmmSet, Config config) throws SAXException,
+			IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;
+		this.config = config;
 		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "FaultSourceSet is empty");
 		used = true;
@@ -145,10 +147,6 @@ class FaultParser extends DefaultHandler {
 				case SOURCE_PROPERTIES:
 					rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
 					log.fine("Rup scaling: " + rupScaling);
-					rupFloating = readEnum(RUPTURE_FLOATING, atts, RuptureFloating.class);
-					log.fine("   floating: " + rupFloating);
-					spacing = readDouble(SURFACE_SPACING, atts);
-					log.fine("    spacing: " + spacing);
 					break;
 
 				case SOURCE:
@@ -156,8 +154,8 @@ class FaultParser extends DefaultHandler {
 					sourceBuilder = new FaultSource.Builder()
 						.name(srcName)
 						.ruptureScaling(rupScaling)
-						.ruptureFloating(rupFloating)
-						.surfaceSpacing(spacing);
+						.ruptureFloating(config.ruptureFloating)
+						.surfaceSpacing(config.surfaceSpacing);
 					log.fine("     Source: " + srcName);
 					break;
 

@@ -175,19 +175,24 @@ public final class Mfds {
 		return mfd;
 	}
 	
-	/*
-	 * This maintains consistency with NSHM, but really should be Magnitudes.MAX_MAG (9.7)
-	 */
 	private static final double TAPERED_LARGE_MAG = 9.05;
+	private static final double SMALL_MO_MAG = 4.0;
 	
+	/*
+	 * This Tapered-GR implementation maintains consistency with NSHM but should
+	 * probably be revisited because scaling varies with choice of
+	 * TAPERED_LARGE_MAG and SMALL_MO_MAG, below. Although variation is not
+	 * great, it would probably be better to derive SMALL_MO_MAG from the
+	 * supllied MFD and use Magnitudes.MAX_MAG for TAPERED_LARGE_MAG instead.
+	 */
 	private static void taper(GutenbergRichterMfd mfd, double mCorner) {
 		
-		double minMo = magToMoment_N_m(mfd.getMagLower());
+		double minMo = magToMoment_N_m(SMALL_MO_MAG);
 		double cornerMo = magToMoment_N_m(mCorner);
 		double largeMo = magToMoment_N_m(TAPERED_LARGE_MAG);
 		double beta = mfd.get_bValue() / 1.5;
 		double binHalfWidth = mfd.getDelta() / 2.0;
-
+		
 		for (int i=0; i<mfd.getNum(); i++) {
 			double mag = mfd.getX(i);
 			double magMoLo = magToMoment_N_m(mag - binHalfWidth);
@@ -196,7 +201,6 @@ public final class Mfds {
 			double magBinCountTapered = magBinCount(minMo, magMoLo, magMoHi, beta, cornerMo);
 			double magBinCount = magBinCount(minMo, magMoLo, magMoHi, beta, largeMo);
 			double scale = magBinCountTapered / magBinCount;
-			
 			mfd.set(i, mfd.getY(i) * scale);
 		}
 	}
@@ -205,8 +209,8 @@ public final class Mfds {
 	 * Convenience method for computing the number of events in a tapered GR
 	 * magnitude bin.
 	 */
-	private static double magBinCount(double minMo, double magMoLo, double magMoHi,
-			double cornerMo, double beta) {
+	private static double magBinCount(double minMo, double magMoLo, double magMoHi, double beta,
+			double cornerMo) {
 		return pareto(minMo, magMoLo, beta, cornerMo) - pareto(minMo, magMoHi, beta, cornerMo);
 	}
 	
@@ -214,7 +218,7 @@ public final class Mfds {
 	 * Complementary Pareto distribution: cumulative number of events with
 	 * seismic moment greater than magMo with an exponential taper
 	 */
-	private static double pareto(double minMo, double magMo, double cornerMo, double beta) {
+	private static double pareto(double minMo, double magMo, double beta, double cornerMo) {
 		return pow(minMo / magMo, beta) * exp((minMo - magMo) / cornerMo);
 	}
 

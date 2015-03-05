@@ -8,7 +8,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,8 +18,8 @@ import com.google.gson.GsonBuilder;
  */
 final class Config {
 
-	public final GaussTruncation hazard_truncType;
-	public final double hazard_truncLevel;
+	public final GaussTruncation truncationType;
+	public final double truncationLevel;
 	public final IntensityMeasureLimit maxIntensityModel;
 
 	public final double deagg_rMin;
@@ -42,8 +41,8 @@ final class Config {
 		 * deserialize field initialized final primitives and Strings.
 		 */
 
-		hazard_truncType = GaussTruncation.ONE_SIDED;
-		hazard_truncLevel = 3.0;
+		truncationType = GaussTruncation.ONE_SIDED;
+		truncationLevel = 3.0;
 		maxIntensityModel = IntensityMeasureLimit.OFF;
 
 		deagg_rMin = 0.0;
@@ -64,8 +63,8 @@ final class Config {
 		// @formatter:off
 		return new StringBuilder("Calculation config:").append(NEWLINE)
 			.append("  Hazard curve truncation: [ ")
-			.append("type=").append(hazard_truncType).append(", ")
-			.append("level=").append(hazard_truncLevel).append(" ]")
+			.append("type=").append(truncationType).append(", ")
+			.append("level=").append(truncationLevel).append(" ]")
 			.append(NEWLINE)
 			.append("          Deaggregation R: [ ")
 			.append("min=").append(deagg_rMin).append(", ")

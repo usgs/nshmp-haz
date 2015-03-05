@@ -62,6 +62,8 @@ class GridParser extends DefaultHandler {
 	private MfdHelper mfdHelper;
 
 	private GmmSet gmmSet;
+	
+	private Config config;
 
 	private GridSourceSet sourceSet;
 	private GridSourceSet.Builder sourceSetBuilder;
@@ -90,9 +92,11 @@ class GridParser extends DefaultHandler {
 		return new GridParser(sax);
 	}
 
-	GridSourceSet parse(InputStream in, GmmSet gmmSet) throws SAXException, IOException {
+	GridSourceSet parse(InputStream in, GmmSet gmmSet, Config config) throws SAXException,
+			IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;
+		this.config = config;
 		sax.parse(in, this);
 		used = true;
 		return sourceSet;
@@ -149,14 +153,21 @@ class GridParser extends DefaultHandler {
 					.mechs(mechMap)
 					.rupScaling(rupScaling);
 				double strike = readDouble(STRIKE, atts);
+				// first validate strike by setting it in builder
 				sourceSetBuilder.strike(strike);
+				// then possibly override type if strike is set
+				PointSourceType type = config.pointSourceType;
+				if (!Double.isNaN(strike)) type = PointSourceType.FIXED_STRIKE;
+				sourceSetBuilder.sourceType(type);
 				if (log.isLoggable(FINE)) {
 					log.fine("     Depths: " + depthMap);
 					log.fine("Focal mechs: " + mechMap);
 					log.fine("Rup scaling: " + rupScaling);
 					log.fine("     Strike: " + strike);
+					String typeOverride = (type != config.pointSourceType) ? " (" + 
+							config.pointSourceType + " overridden)" : "";
+					log.fine("Source type: " + type + typeOverride);
 				}
-
 				break;
 
 			case NODE:
@@ -242,9 +253,9 @@ class GridParser extends DefaultHandler {
 		switch (type) {
 			case GR:
 				MfdHelper.GR_Data grData = mfdHelper.getGR(atts);
-				int nMag = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
-				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag, nMag,
-					grData.b, 1.0);
+				int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
+				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
+					nMagGR, grData.b, 1.0);
 				mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
 					grData.weight);
 				return mfdGR;
@@ -256,14 +267,21 @@ class GridParser extends DefaultHandler {
 				return mfdIncr;
 
 			case SINGLE:
-				MfdHelper.SingleData singleDat = mfdHelper.getSingle(atts);
-				return Mfds.newSingleMFD(singleDat.m, singleDat.a * singleDat.weight,
-					singleDat.floats);
+				MfdHelper.SingleData singleData = mfdHelper.getSingle(atts);
+				return Mfds.newSingleMFD(singleData.m, singleData.a * singleData.weight,
+					singleData.floats);
 
+			case GR_TAPER:
+				MfdHelper.TaperData taperData = mfdHelper.getTapered(atts);
+				int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
+				IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
+					taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
+					taperData.weight);
+				return mfdTaper;
+				
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
 
 		}
 	}
-
 }

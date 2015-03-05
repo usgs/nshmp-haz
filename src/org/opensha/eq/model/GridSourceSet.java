@@ -6,7 +6,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.DataUtils.validateWeight;
 import static org.opensha.eq.Magnitudes.MAX_MAG;
 import static org.opensha.eq.fault.Faults.validateStrike;
-import static org.opensha.eq.model.PointSourceType.FINITE;
 import static org.opensha.eq.model.PointSourceType.FIXED_STRIKE;
 import static org.opensha.util.TextUtils.validateName;
 
@@ -42,7 +41,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	private final List<Map<FocalMech, Double>> mechMaps;
 	final DepthModel depthModel; // package exposure for parser logging
 	private final double strike;
-	private final PointSourceType ptSrcType;
+	private final PointSourceType sourceType;
 
 	/*
 	 * Most grid sources have the same focal mech map everywhere; in these
@@ -52,7 +51,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	private GridSourceSet(String name, Double weight, GmmSet gmmSet, List<Location> locs,
 		List<IncrementalMfd> mfds, List<Map<FocalMech, Double>> mechMaps, DepthModel depthModel,
-		double strike, RuptureScaling rupScaling) {
+		double strike, RuptureScaling rupScaling, PointSourceType sourceType) {
 
 		super(name, weight, gmmSet);
 		this.locs = locs;
@@ -61,8 +60,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		this.depthModel = depthModel;
 		this.strike = strike;
 		this.rupScaling = rupScaling;
-
-		ptSrcType = Double.isNaN(strike) ? FINITE : FIXED_STRIKE;
+		this.sourceType = sourceType;
 	}
 
 	@Override public SourceType type() {
@@ -113,7 +111,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	}
 
 	private PointSource getSource(int idx) {
-		switch (ptSrcType) {
+		switch (sourceType) {
 			case POINT:
 				return new PointSource(locs.get(idx), mfds.get(idx), mechMaps.get(idx), rupScaling,
 					depthModel);
@@ -140,6 +138,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private String name;
 		private Double weight;
 		private Double strike;
+		private PointSourceType sourceType;
 		private RuptureScaling rupScaling;
 		private GmmSet gmmSet;
 		private NavigableMap<Double, Map<Double, Double>> magDepthMap;
@@ -169,6 +168,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		Builder strike(double strike) {
 			// unknown strike allowed for grid sources
 			this.strike = Double.isNaN(strike) ? strike : validateStrike(strike);
+			return this;
+		}
+
+		Builder sourceType(PointSourceType sourceType) {
+			this.sourceType = checkNotNull(sourceType);
 			return this;
 		}
 
@@ -273,6 +277,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(name != null, "%s name not set", id);
 			checkState(weight != null, "%s weight not set", id);
 			checkState(strike != null, "%s strike not set", id);
+			checkState(sourceType != null, "%s source type not set", id);
 			checkState(!locs.isEmpty(), "%s has no locations", id);
 			checkState(!mfds.isEmpty(), "%s has no Mfds", id);
 			checkState(rupScaling != null, "%s has no rupture-scaling relation set", id);
@@ -305,6 +310,18 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			 */
 			validateMaxAndMapDepths(magDepthMap, maxDepth, id);
 
+			/*
+			 * Validate type agreement. If strike != NaN, type must be
+			 * FIXED_STRIKE.
+			 */
+			if (!Double.isNaN(strike)) {
+				checkState(sourceType == FIXED_STRIKE,
+					"Source type must be FIXED_STRIKE for strike [%s]", strike);
+			} else {
+				checkState(sourceType != FIXED_STRIKE,
+					"Source type FIXED_STRIKE invalid for strive [%s]", strike);
+			}
+
 			built = true;
 		}
 
@@ -312,7 +329,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			validateState(ID);
 			DepthModel depthModel = DepthModel.create(magMaster, magDepthMap, maxDepth);
 			return new GridSourceSet(name, weight, gmmSet, locs, mfds, mechMaps, depthModel,
-				strike, rupScaling);
+				strike, rupScaling, sourceType);
 		}
 
 	}

@@ -20,11 +20,8 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,7 +36,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -57,7 +53,7 @@ class Loader {
 	private static final String LF = LINE_SEPARATOR.value();
 	private static Logger log;
 	private static SAXParser sax;
-
+	
 	static {
 		log = Logger.getLogger(Loader.class.getName());
 		try {
@@ -90,9 +86,10 @@ class Loader {
 			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
 			Path typeDirPath = typeDirectory(modelPath);
 			
-			Config config = Config.load(typeDirPath);
-			log.info(config.toString());
-			builder.config(config);
+			Config baseConfig = Config.load(typeDirPath);
+			log.info(baseConfig.toString());
+			log.info("");
+			builder.config(baseConfig);
 			
 			typePaths = typeDirectoryList(typeDirPath);
 			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
@@ -104,7 +101,7 @@ class Loader {
 				String typeName = cleanZipName(typePath.getFileName().toString());
 				log.info("");
 				log.info("========  " + typeName + " Sources  ========");
-				processTypeDir(typePath, builder);
+				processTypeDir(typePath, builder, baseConfig);
 			}
 
 		} catch (IOException | URISyntaxException e) {
@@ -153,13 +150,7 @@ class Loader {
 			Path nestedTypeDir = firstPath(zipRoot);
 			checkArgument(Files.isDirectory(nestedTypeDir), "No nested directory in zip: %s", nestedTypeDir);
 			return nestedTypeDir;
-
-			// TODO clean
-			// List<Path> paths = typeDirectoryList(zipRoot);
-			// if (paths.size() > 0) return zipRoot;
-			// return typeDirectoryList(nestedDir);
 		}
-
 		return path;
 	}
 
@@ -175,9 +166,10 @@ class Loader {
 		}
 	}
 
-	private static void processTypeDir(Path typeDir, Builder builder) throws IOException {
+	private static void processTypeDir(Path typeDir, Builder builder, Config baseConfig) throws IOException {
 
-		SourceType type = SourceType.fromString(cleanZipName(typeDir.getFileName().toString()));
+		String typeName = cleanZipName(typeDir.getFileName().toString());
+		SourceType type = SourceType.fromString(typeName);
 
 		/*
 		 * gmm.xml file -- this MUST exist if there is at least one source file,
@@ -189,6 +181,14 @@ class Loader {
 		List<Path> typePaths = null;
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(typeDir, SourceFilter.INSTANCE)) {
 			typePaths = Lists.newArrayList(ds);
+		}
+
+		// load alternate config if such exists
+		Config config = baseConfig;
+		Path configPath = typeDir.resolve(Config.FILE_NAME);
+		if (Files.exists(configPath)) {
+			config = Config.load(typeDir);
+			log.info("(Override) " + config.toString());
 		}
 
 		// Build GmmSet from gmm.xml
@@ -205,29 +205,35 @@ class Loader {
 				throw ise;
 			}
 		}
+		
 		// having checked directory state, load gmms if present
 		// we may have gmm.xml but no source files
 		if (Files.exists(gmmPath)) {
 			log.info("Parsing: " + typeDir.getParent().relativize(gmmPath));
 			gmmSet = parseGMM(gmmPath);
 		}
-
+		
 		for (Path sourcePath : typePaths) {
 			log.info("Parsing: " + typeDir.getParent().relativize(sourcePath));
-			SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, gmmSet);
+			SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, gmmSet, config);
 			builder.sourceSet(sourceSet);
 		}
 
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(typeDir, NestedDirFilter.INSTANCE)) {
+			boolean firstDir = true;
 			for (Path nestedSourceDir : ds) {
-				processNestedDir(nestedSourceDir, type, gmmSet, builder);
+				if (firstDir) {
+					log.info("");
+					log.info("========  Nested " + typeName + " Sources  ========");
+					firstDir = false;
+				}
+				processNestedDir(nestedSourceDir, type, gmmSet, builder, config);
 			}
 		}
-
 	}
 
 	private static void processNestedDir(Path sourceDir, SourceType type, GmmSet gmmSet,
-			Builder builder) throws IOException {
+			Builder builder, Config parentConfig) throws IOException {
 
 		/*
 		 * gmm.xml -- this MUST exist if there is at least one source file and
@@ -243,7 +249,17 @@ class Loader {
 		Path typeDir = sourceDir.getParent().getParent();
 
 		GmmSet nestedGmmSet = null;
+		Config nestedConfig = parentConfig;
 		if (nestedSourcePaths.size() > 0) {
+			
+			// config
+			Path nestedConfigPath = sourceDir.resolve(Config.FILE_NAME);
+			if (Files.exists(nestedConfigPath)) {
+				nestedConfig = Config.load(sourceDir);
+				log.info("(Override) " + nestedConfig.toString());
+			}
+
+			// gmm
 			Path nestedGmmPath = sourceDir.resolve(GmmParser.FILE_NAME);
 			try {
 				checkState(Files.exists(nestedGmmPath) || gmmSet != null,
@@ -257,39 +273,42 @@ class Loader {
 				log.info("Parsing: " + typeDir.relativize(nestedGmmPath));
 				nestedGmmSet = parseGMM(nestedGmmPath);
 			} else {
-				log.info("Parsing: " + typeDir.relativize(sourceDir) + " (no gmm.xml: using parent )");
+				log.info("(using parent gmm.xml)");
 				nestedGmmSet = gmmSet;
 			}
+			
 		}
 
 		if (type == SourceType.SYSTEM) {
 			log.info("Parsing: " + typeDir.relativize(sourceDir));
-			parseIndexedSource(sourceDir, gmmSet, builder);
+			parseIndexedSource(sourceDir, nestedGmmSet, builder, nestedConfig);
 		} else {
 			for (Path sourcePath : nestedSourcePaths) {
 				log.info("Parsing: " + typeDir.relativize(sourcePath));
-				SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, nestedGmmSet);
+				SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, nestedGmmSet,
+					nestedConfig);
 				builder.sourceSet(sourceSet);
 			}
 		}
 	}
 
-	private static SourceSet<? extends Source> parseSource(SourceType type, Path path, GmmSet gmmSet) {
+	private static SourceSet<? extends Source> parseSource(SourceType type, Path path,
+			GmmSet gmmSet, Config config) {
 		try {
 			InputStream in = Files.newInputStream(path);
 			switch (type) {
 				case AREA:
 					throw new UnsupportedOperationException("Area sources not currently supported");
 				case CLUSTER:
-					return ClusterParser.create(sax).parse(in, gmmSet);
+					return ClusterParser.create(sax).parse(in, gmmSet, config);
 				case FAULT:
-					return FaultParser.create(sax).parse(in, gmmSet);
+					return FaultParser.create(sax).parse(in, gmmSet, config);
 				case GRID:
-					return GridParser.create(sax).parse(in, gmmSet);
+					return GridParser.create(sax).parse(in, gmmSet, config);
 				case INTERFACE:
-					return InterfaceParser.create(sax).parse(in, gmmSet);
+					return InterfaceParser.create(sax).parse(in, gmmSet, config);
 				case SLAB:
-					return SlabParser.create(sax).parse(in, gmmSet);
+					return SlabParser.create(sax).parse(in, gmmSet, config);
 				case SYSTEM:
 					throw new UnsupportedOperationException(
 						"Fault system sources are not processed with this method");
@@ -302,7 +321,7 @@ class Loader {
 		}
 	}
 
-	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder) {
+	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder, Config config) {
 		try {
 			Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
 			InputStream sectionsIn = Files.newInputStream(sectionsPath);
@@ -314,7 +333,7 @@ class Loader {
 
 			Path gridSourcePath = dir.resolve(GRIDSOURCE_FILENAME);
 			InputStream gridIn = Files.newInputStream(gridSourcePath);
-			GridSourceSet gridSet = GridParser.create(sax).parse(gridIn, gmmSet);
+			GridSourceSet gridSet = GridParser.create(sax).parse(gridIn, gmmSet, config);
 			builder.sourceSet(gridSet);
 			log.info("   Grid set: " + dir.getFileName() + "/" + GRIDSOURCE_FILENAME);
 			log.info("    Sources: " + gridSet.size());

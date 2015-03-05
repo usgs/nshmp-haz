@@ -52,14 +52,14 @@ class InterfaceParser extends DefaultHandler {
 	private Locator locator;
 
 	private GmmSet gmmSet;
+	
+	private Config config;
 
 	private InterfaceSourceSet sourceSet;
 	private InterfaceSourceSet.Builder sourceSetBuilder;
 	private InterfaceSource.Builder sourceBuilder;
 
 	private RuptureScaling rupScaling;
-	private RuptureFloating rupFloating;
-	private double spacing;
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
@@ -77,9 +77,11 @@ class InterfaceParser extends DefaultHandler {
 		return new InterfaceParser(checkNotNull(sax));
 	}
 
-	InterfaceSourceSet parse(InputStream in, GmmSet gmmSet) throws SAXException, IOException {
+	InterfaceSourceSet parse(InputStream in, GmmSet gmmSet, Config config) throws SAXException,
+			IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;
+		this.config = config;
 		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "InterfaceSourceSet is empty");
 		used = true;
@@ -122,10 +124,6 @@ class InterfaceParser extends DefaultHandler {
 				case SOURCE_PROPERTIES:
 					rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
 					log.fine("Rup scaling: " + rupScaling);
-					rupFloating = readEnum(RUPTURE_FLOATING, atts, RuptureFloating.class);
-					log.fine("   floating: " + rupFloating);
-					spacing = readDouble(SURFACE_SPACING, atts);
-					log.fine("    spacing: " + spacing);
 					break;
 
 				case SOURCE:
@@ -133,8 +131,8 @@ class InterfaceParser extends DefaultHandler {
 					sourceBuilder = new InterfaceSource.Builder();
 					sourceBuilder.name(srcName);
 					sourceBuilder.ruptureScaling(rupScaling);
-					sourceBuilder.ruptureFloating(rupFloating);
-					sourceBuilder.surfaceSpacing(spacing);
+					sourceBuilder.ruptureFloating(config.ruptureFloating);
+					sourceBuilder.surfaceSpacing(config.surfaceSpacing);
 					log.fine("     Source: " + srcName);
 					break;
 

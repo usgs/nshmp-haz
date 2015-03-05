@@ -22,17 +22,14 @@ import com.google.gson.GsonBuilder;
  */
 final class Config {
 	
-	private static final String FILENAME = "config.json";
+	static final String FILE_NAME = "config.json";
 
-	public final double surface_gridUnit;
-	public final RuptureFloating surface_floatingModel;
+	public final double surfaceSpacing;
+	public final RuptureFloating ruptureFloating;
 
-	public final AreaSource.GridScaling source_areaScaling;
+	public final PointSourceType pointSourceType;
+	public final AreaSource.GridScaling areaGridScaling;
 
-	/*
-	 * TODO this should be used to specify point source model
-	 */
-	
 	private Config() {
 
 		/*
@@ -40,24 +37,25 @@ final class Config {
 		 * deserialize field initialized final primitives and Strings.
 		 */
 		
-		surface_gridUnit = 1.0;
-		surface_floatingModel = RuptureFloating.STRIKE_ONLY;
+		surfaceSpacing = 1.0;
+		ruptureFloating = RuptureFloating.STRIKE_ONLY;
 		
-		source_areaScaling = GridScaling.SCALED_SMALL;
+		pointSourceType = PointSourceType.FINITE;
+		areaGridScaling = GridScaling.SCALED_SMALL;
 	}
 
 	@Override public String toString() {
 		// @formatter:off
-		return new StringBuilder("Model config...").append(NEWLINE)
-			.append("         surface_gridUnit: ").append(surface_gridUnit).append(NEWLINE)
-			.append("    surface_floatingModel: ").append(surface_floatingModel).append(NEWLINE)
-			.append("       source_areaScaling: ").append(source_areaScaling).append(NEWLINE)
-			.toString();
+		return new StringBuilder("Source config:").append(NEWLINE)
+			.append("       surfaceSpacing: ").append(surfaceSpacing).append(NEWLINE)
+			.append("      ruptureFloating: ").append(ruptureFloating).append(NEWLINE)
+			.append("      pointSourceType: ").append(pointSourceType).append(NEWLINE)
+			.append("      areaGridScaling: ").append(areaGridScaling).toString();
 		// @formatter:on
 	}
 
 	static Config load(Path path) throws IOException {
-		Path configFile = path.resolve(FILENAME);
+		Path configFile = path.resolve(FILE_NAME);
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		Reader reader = Files.newBufferedReader(configFile, UTF_8);
 		Config config = gson.fromJson(reader, Config.class);

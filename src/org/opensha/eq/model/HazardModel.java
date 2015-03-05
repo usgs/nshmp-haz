@@ -93,6 +93,9 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
 	private final Config config;
+	
+	// TODO do we really need config here; calc config properties will likely be accessed from the 
+	// source set or source level; should probably push config to SourceSets, possibly overriding default
 
 	private HazardModel(String name, Config config,
 		SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {

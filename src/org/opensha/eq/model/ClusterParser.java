@@ -59,6 +59,8 @@ class ClusterParser extends DefaultHandler {
 
 	private GmmSet gmmSet;
 
+	private Config config;
+
 	private ClusterSourceSet sourceSet;
 	private ClusterSourceSet.Builder clusterSetBuilder;
 	private ClusterSource.Builder clusterBuilder;
@@ -84,9 +86,11 @@ class ClusterParser extends DefaultHandler {
 		return new ClusterParser(checkNotNull(sax));
 	}
 
-	ClusterSourceSet parse(InputStream in, GmmSet gmmSet) throws SAXException, IOException {
+	ClusterSourceSet parse(InputStream in, GmmSet gmmSet, Config config) throws SAXException,
+			IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;
+		this.config = config;
 		sax.parse(in, this);
 		checkState(sourceSet.size() > 0, "ClusterSourceSet is empty");
 		used = true;
@@ -158,7 +162,9 @@ class ClusterParser extends DefaultHandler {
 					String srcName = readString(NAME, atts);
 					faultBuilder = new FaultSource.Builder()
 						.name(srcName)
-						.ruptureScaling(rupScaling);
+						.ruptureScaling(rupScaling)
+						.ruptureFloating(config.ruptureFloating)
+						.surfaceSpacing(config.surfaceSpacing);
 					log.finer("      Fault: " + srcName);
 					break;
 
