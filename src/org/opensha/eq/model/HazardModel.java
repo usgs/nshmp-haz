@@ -45,7 +45,7 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 
 	// high priority
 	// TODO grid sources; map against all matching defaultMfd types
-	// TODO need to handle cal_fl(oater): no down dip;
+
 	// TODO clean up floater specification; props or source model
 	// float attribute is only permitted for SINGLE mfds because NSHM
 	// prescribed that some characteristic ruptures float; really should just
@@ -59,18 +59,9 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 
 	// TODO where/how to apply CEUS clamps
 
-	// TODO I think current FaultSystemSource conversions incorrectly include
-	// depths with fault section traces. Traces are always at surface.
-
 	// TODO Is current approach in SYstemSourceSet for precomputing distances
 	// correct? Double check that the individual sections are scaled by aseis
 	// not after once built into ruptures.
-
-	// TODO not sure why I changed surface implementations to project down dip
-	// from zero to zTop, but it was wrong. currently sesmogenic depth is
-	// ignored,
-	// but may need this for system sources; should zTop be encoded into trace
-	// depths?
 
 	// TODO UCERF3 xml (indexedFaultSource) needs to have aftershock correction
 	// either imposed in file (better) of be imlemented in Parser
@@ -78,10 +69,6 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 
 	// TODO are any M=6.0 finite source representation cutoffs being used in
 	// 2014 fortran
-
-	// TODO implement CEUS gmm distance reweighting in calc
-	// always compute all curves, just combine based on distance weights;
-	// I think this is being done in HazardCurveSet.Builder already
 
 	// low priority
 	// TODO change vs30 to Integer?

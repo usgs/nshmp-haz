@@ -448,6 +448,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 		int nCol = resampled.size();
 		// strike-parallel row count, NOT including trace
 		int nRow = DoubleMath.roundToInt(width / spacing, HALF_UP);
+		// TODO should this be +1 ??
 		double dRow = width / nRow;
 		setNumRowsAndNumCols(nRow, nCol);
 

@@ -345,8 +345,7 @@ public class AreaSource implements Source {
 				GriddedRegion grid = Regions.createGridded(name, border, MERCATOR_LINEAR,
 					resolution, resolution, ANCHOR_0_0);
 				// TODO revisit; small areas and coarse grids will likely cause
-				// problems and
-				// we'll need to substitute single node grids
+				// problems and we'll need to substitute single node grids
 				checkState(grid.size() > 0, "Grid is empty");
 				gridBuilder.add(grid);
 			}
