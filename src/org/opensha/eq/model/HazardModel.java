@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.opensha.calc.GaussTruncation;
+import org.opensha.calc.SigmaModel;
 import org.opensha.eq.fault.surface.RuptureFloating;
 import org.opensha.eq.model.AreaSource.GridScaling;
 import org.opensha.gmm.GroundMotionModel;

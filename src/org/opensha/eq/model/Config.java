@@ -26,7 +26,7 @@ final class Config {
 
 	public final double surfaceSpacing;
 	public final RuptureFloating ruptureFloating;
-
+	public final boolean ruptureVariability;
 	public final PointSourceType pointSourceType;
 	public final AreaSource.GridScaling areaGridScaling;
 
@@ -39,6 +39,7 @@ final class Config {
 		
 		surfaceSpacing = 1.0;
 		ruptureFloating = RuptureFloating.STRIKE_ONLY;
+		ruptureVariability = false;
 		
 		pointSourceType = PointSourceType.FINITE;
 		areaGridScaling = GridScaling.SCALED_SMALL;
@@ -49,6 +50,7 @@ final class Config {
 		return new StringBuilder("Source config:").append(NEWLINE)
 			.append("       surfaceSpacing: ").append(surfaceSpacing).append(NEWLINE)
 			.append("      ruptureFloating: ").append(ruptureFloating).append(NEWLINE)
+			.append("   ruptureVariability: ").append(ruptureVariability).append(NEWLINE)
 			.append("      pointSourceType: ").append(pointSourceType).append(NEWLINE)
 			.append("      areaGridScaling: ").append(areaGridScaling).toString();
 		// @formatter:on

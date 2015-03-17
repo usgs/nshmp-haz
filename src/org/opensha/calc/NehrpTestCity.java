@@ -28,7 +28,7 @@ import com.google.common.collect.Maps;
  * @author Peter Powers
  */
 @SuppressWarnings("all")
-public enum NehrpTestCity {
+public enum NehrpTestCity implements NamedLocation {
 
 	// SoCal
 	LOS_ANGELES(34.05, -118.25),
@@ -80,11 +80,7 @@ public enum NehrpTestCity {
 		loc = Location.create(lat, lon);
 	}
 
-	/**
-	 * Returns the geographic <code>Location</code> of the city.
-	 * @return the <code>Location</code> of the city
-	 */
-	public Location location() {
+	@Override public Location location() {
 		return loc;
 	}
 

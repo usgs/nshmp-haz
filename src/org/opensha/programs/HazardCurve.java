@@ -152,7 +152,7 @@ public class HazardCurve {
 		double vs30 = (args.length > 4) ? Double.valueOf(args[4]) : DEFAULT_VS_30;
 
 		Location loc = Location.create(lat, lon);
-		Site site = Site.create(loc, vs30);
+		Site site = Site.builder().location(loc).vs30(vs30).build();
 
 		try {
 			log.info("");
@@ -224,7 +224,7 @@ public class HazardCurve {
 		List<String> lines = Lists.newArrayList(HEADER1, HEADER2);
 		for (int i = 0; i < sites.size(); i++) {
 			StringBuilder sb = new StringBuilder();
-			Location loc = sites.get(i).loc;
+			Location loc = sites.get(i).location;
 			sb.append(loc.lon()).append(',').append(loc.lat()).append(',');
 			sb.append(Parsing.join(results.get(i).curve().yValues(), Delimiter.COMMA));
 			lines.add(sb.toString());
@@ -240,7 +240,7 @@ public class HazardCurve {
 			List<Double> values = Parsing.splitToDoubleList(line, Delimiter.COMMA);
 			Location loc = Location.create(values.get(1), values.get(0));
 			double vs30 = (values.size() == 3) ? values.get(2) : DEFAULT_VS_30;
-			sites.add(Site.create(loc, vs30));
+			sites.add(Site.builder().location(loc).vs30(vs30).build());
 		}
 		return sites;
 	}

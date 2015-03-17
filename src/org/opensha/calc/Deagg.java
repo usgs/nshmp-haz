@@ -246,8 +246,8 @@ class Deagg {
 		 * @param c {@code Config} to process
 		 */
 		public static DataModel fromConfig(Config c) {
-			return create(c.deagg_mMin, c.deagg_mMax, c.deagg_Δm, c.deagg_rMin, c.deagg_rMax,
-				c.deagg_Δr, c.deagg_εMin, c.deagg_εMax, c.deagg_Δε);
+			return create(c.deagg.mMin, c.deagg.mMax, c.deagg.Δm, c.deagg.rMin, c.deagg.rMax,
+				c.deagg.Δr, c.deagg.εMin, c.deagg.εMax, c.deagg.Δε);
 		}
 
 		private static class Builder {

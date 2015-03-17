@@ -97,7 +97,7 @@ public class HazardMap {
 			lines.add(joiner.join(header));
 			for (int i = 0; i < sites.size(); i++) {
 				Site s = sites.get(i);
-				List<Double> line = Lists.newArrayList(s.loc.lon(), s.loc.lat());
+				List<Double> line = Lists.newArrayList(s.location.lon(), s.location.lat());
 				line.addAll(curves.get(i).yValues());
 			}
 			Files.write(path, lines, Charset.forName("UTF-8"));
@@ -183,7 +183,7 @@ public class HazardMap {
 	
 	static class LocationToSite implements Function<Location, Site> {
 		@Override public Site apply(Location loc) {
-			return Site.create(loc);
+			return Site.builder().location(loc).build();
 		}
 	}
 
@@ -196,7 +196,7 @@ public class HazardMap {
 					.toList();
 			Location loc = Location.create(parts.get(1), parts.get(0));
 			double vs30 = (parts.size() > 2) ? parts.get(2) : 760.0;
-			return Site.create(loc, vs30);
+			return Site.builder().location(loc).vs30(vs30).build();
 		}
 		// @formatter:on
 	}

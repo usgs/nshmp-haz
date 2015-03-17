@@ -2,8 +2,8 @@ package org.opensha.calc;
 
 import static java.lang.Math.min;
 import static org.apache.commons.math3.special.Erf.erf;
-import static org.opensha.calc.GaussTruncation.ONE_SIDED;
-import static org.opensha.calc.GaussTruncation.TWO_SIDED;
+import static org.opensha.calc.SigmaModel.TRUNCATION_UPPER_ONLY;
+import static org.opensha.calc.SigmaModel.TRUNCATION_LOWER_UPPER;
 
 import java.util.List;
 
@@ -33,15 +33,15 @@ public class Utils {
 	 * @param truncLevel in number of standard deviations
 	 */
 	public static double calcProbExceed(double μ, double σ, double value,
-			GaussTruncation truncType, double truncLevel) {
+			SigmaModel truncType, double truncLevel) {
 
 		double clip = μ + truncLevel * σ;
 		double pHi = gaussProbExceed(μ, σ, clip);
 
 		switch (truncType) {
-			case ONE_SIDED:
+			case TRUNCATION_UPPER_ONLY:
 				return gaussProbExceed(μ, σ, value, pHi, 1.0);
-			case TWO_SIDED:
+			case TRUNCATION_LOWER_UPPER:
 				return gaussProbExceed(μ, σ, value, pHi, 1.0 - pHi);
 			default: // NONE case
 				return gaussProbExceed(μ, σ, value, 0.0, 1.0);
@@ -64,15 +64,15 @@ public class Utils {
 	 * @param clamp maximum allowable value
 	 */
 	@Deprecated public static double calcClampedProbExceed(double μ, double σ, double value,
-			GaussTruncation truncType, double truncLevel, double clamp) {
+			SigmaModel truncType, double truncLevel, double clamp) {
 
 		double clipHi = min(μ + truncLevel * σ, clamp);
 		double pHi = gaussProbExceed(μ, σ, clipHi);
 
 		switch (truncType) {
-			case ONE_SIDED:
+			case TRUNCATION_UPPER_ONLY:
 				return gaussProbExceed(μ, σ, value, pHi, 1.0);
-			case TWO_SIDED:
+			case TRUNCATION_LOWER_UPPER:
 				double pLo = gaussProbExceed(μ, σ, μ - truncLevel * σ);
 				return gaussProbExceed(μ, σ, value, pHi, pLo);
 			default: // NONE case
@@ -95,15 +95,15 @@ public class Utils {
 	 * @return a reference to the supplied sequence
 	 */
 	public static XY_Sequence setProbExceed(double μ, double σ, XY_Sequence values,
-			GaussTruncation truncType, double truncLevel) {
+			SigmaModel truncType, double truncLevel) {
 
 		double clip = μ + truncLevel * σ;
 		double pHi = gaussProbExceed(μ, σ, clip);
 
 		switch (truncType) {
-			case ONE_SIDED:
+			case TRUNCATION_UPPER_ONLY:
 				return gaussProbExceed(μ, σ, values, pHi, 1.0);
-			case TWO_SIDED:
+			case TRUNCATION_LOWER_UPPER:
 				return gaussProbExceed(μ, σ, values, pHi, 1.0 - pHi);
 			default: // NONE case
 				return gaussProbExceed(μ, σ, values, 0.0, 1.0);
@@ -127,15 +127,15 @@ public class Utils {
 	 * @return a reference to the supplied sequence
 	 */
 	@Deprecated public static XY_Sequence setClampedProbExceed(double μ, double σ,
-			XY_Sequence values, GaussTruncation truncType, double truncLevel, double clamp) {
+			XY_Sequence values, SigmaModel truncType, double truncLevel, double clamp) {
 
 		double clipHi = min(μ + truncLevel * σ, clamp);
 		double pHi = gaussProbExceed(μ, σ, clipHi);
 
 		switch (truncType) {
-			case ONE_SIDED:
+			case TRUNCATION_UPPER_ONLY:
 				return gaussProbExceed(μ, σ, values, pHi, 1.0);
-			case TWO_SIDED:
+			case TRUNCATION_LOWER_UPPER:
 				double pLo = gaussProbExceed(μ, σ, μ - truncLevel * σ);
 				return gaussProbExceed(μ, σ, values, pHi, pLo);
 			default: // NONE case
@@ -143,15 +143,11 @@ public class Utils {
 		}
 	}
 
-	/**
+	/*
 	 * Compute the probability of exceeding the supplied target value in a
 	 * Gaussian distribution assuming no truncation.
-	 * 
-	 * @param μ mean
-	 * @param σ standard deviation
-	 * @param value to exceed
 	 */
-	public static double gaussProbExceed(double μ, double σ, double value) {
+	private static double gaussProbExceed(double μ, double σ, double value) {
 		return (erf((μ - value) / (σ * SQRT_2)) + 1.0) * 0.5;
 	}
 
@@ -246,8 +242,8 @@ public class Utils {
 		double std = 0.5;
 		double value = 2.3;
 		
-		System.out.println(calcProbExceed(mean, std, value, ONE_SIDED, 3.0));
-		System.out.println(calcProbExceed(mean, std, value, TWO_SIDED, 3.0));
+		System.out.println(calcProbExceed(mean, std, value, TRUNCATION_UPPER_ONLY, 3.0));
+		System.out.println(calcProbExceed(mean, std, value, TRUNCATION_LOWER_UPPER, 3.0));
 		
 //		System.out.println(gaussProbExceed(mean, std, value));
 //		System.out.println(gaussProbExceed2(mean, std, value));

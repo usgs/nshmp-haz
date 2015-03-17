@@ -4,7 +4,7 @@ import static java.lang.Double.NaN;
 import static java.lang.Math.sin;
 import static org.opensha.calc.Utils.setProbExceed;
 import static org.opensha.geo.GeoTools.TO_RAD;
-import static org.opensha.calc.GaussTruncation.ONE_SIDED;
+import static org.opensha.calc.SigmaModel.TRUNCATION_UPPER_ONLY;
 
 import java.util.List;
 import java.util.Map;
@@ -127,7 +127,7 @@ final class Transforms {
 
 				RuptureSurface surface = rup.surface();
 
-				Distances distances = surface.distanceTo(site.loc);
+				Distances distances = surface.distanceTo(site.location);
 				double dip = surface.dip();
 				double width = surface.width();
 				double zTop = surface.depth();
@@ -209,7 +209,7 @@ final class Transforms {
 				for (int i = 0; i < means.size(); i++) {
 					// TODO the model curve is passed in in linear space but for
 					// lognormal we need x-values to be ln(x)
-					setProbExceed(means.get(i), sigmas.get(i), utilCurve, ONE_SIDED, 3.0);
+					setProbExceed(means.get(i), sigmas.get(i), utilCurve, TRUNCATION_UPPER_ONLY, 3.0);
 					utilCurve.multiply(groundMotions.inputs.get(i).rate);
 					gmmCurve.add(utilCurve);
 				}
@@ -330,7 +330,7 @@ final class Transforms {
 					List<Double> sigmas = hazardGroundMotions.sigmas.get(gmm);
 					for (int i = 0; i < hazardGroundMotions.inputs.size(); i++) {
 						// TODO needs ln(x-values)
-						setProbExceed(means.get(i), sigmas.get(i), utilCurve, ONE_SIDED, 3.0);
+						setProbExceed(means.get(i), sigmas.get(i), utilCurve, TRUNCATION_UPPER_ONLY, 3.0);
 						utilCurve.multiply(hazardGroundMotions.inputs.get(i).rate);
 						magVarCurve.add(utilCurve);
 					}

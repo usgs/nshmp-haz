@@ -98,4 +98,5 @@ abstract class AbstractXY_Sequence implements XY_Sequence {
 				.append(Joiner.on(LF).join(this))
 				.toString();
 	}
+		
 }

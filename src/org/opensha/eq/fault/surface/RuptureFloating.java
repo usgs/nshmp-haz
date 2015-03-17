@@ -67,7 +67,7 @@ public enum RuptureFloating {
 				for (Entry<Dimensions, Double> entry : dimensionsMap.entrySet()) {
 					Dimensions d = entry.getKey();
 					List<GriddedSurface> surfaces = createFloatingSurfaces(surface, d.length,
-						d.length);
+						d.width);
 					double scaledRate = rate * entry.getValue();
 					floaters.addAll(createFloaters(surfaces, mag, scaledRate, rake));
 				}

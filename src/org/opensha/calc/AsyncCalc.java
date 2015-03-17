@@ -56,7 +56,7 @@ final class AsyncCalc {
 	static AsyncList<HazardInputs> toInputs(SourceSet<? extends Source> sourceSet, Site site) {
 		Function<Source, HazardInputs> function = sourceToInputs(site);
 		AsyncList<HazardInputs> result = AsyncList.create();
-		for (Source source : sourceSet.locationIterable(site.loc)) {
+		for (Source source : sourceSet.locationIterable(site.location)) {
 			result.add(transform(immediateFuture(source), function, EX));
 		}
 		return result;
@@ -117,7 +117,7 @@ final class AsyncCalc {
 	static AsyncList<ClusterInputs> toClusterInputs(ClusterSourceSet sourceSet, Site site) {
 		Function<ClusterSource, ClusterInputs> function = clusterSourceToInputs(site);
 		AsyncList<ClusterInputs> result = AsyncList.create();
-		for (ClusterSource source : sourceSet.locationIterable(site.loc)) {
+		for (ClusterSource source : sourceSet.locationIterable(site.location)) {
 			result.add(transform(immediateFuture(source), function, EX));
 		}
 		return result;

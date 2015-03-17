@@ -9,7 +9,10 @@ import static org.opensha.data.DataUtils.uncheckedFlip;
 import static org.opensha.data.DataUtils.uncheckedMultiply;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
+
+import com.google.common.primitives.Doubles;
 
 /**
  * Array based implementation of an {@code XY_Sequence}.
@@ -72,6 +75,22 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	public static ArrayXY_Sequence create(double[] xs, double[] ys) {
 		return new ArrayXY_Sequence(xs, ys);
 	}
+	
+	/**
+	 * Create a new sequence from the supplied value {@code Collection}s.
+	 * 
+	 * @param xs x-values to initialize sequence with
+	 * @param ys y-values to initialize sequence with; may be {@code null}
+	 * @return an array based sequence
+	 * @throws NullPointerException if {@code xs} are {@code null}
+	 * @throws IllegalArgumentException if {@code xs} and {@code ys} are not the
+	 *         same size
+	 * @throws IllegalArgumentException if {@code xs} does not increase
+	 *         monotonically or contains repeated values
+	 */
+	public static ArrayXY_Sequence create(Collection<Double> xs, Collection<Double> ys) {
+		return create(Doubles.toArray(checkNotNull(xs)), Doubles.toArray(checkNotNull(ys)));
+	}
 
 	/**
 	 * Create a copy of the supplied {@code sequence}.
@@ -83,6 +102,21 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 */
 	public static ArrayXY_Sequence copyOf(ArrayXY_Sequence sequence) {
 		return new ArrayXY_Sequence(sequence);
+	}
+	
+	/**
+	 * Create a copy of the supplied {@code sequence}.
+	 * 
+	 * @param sequence to copy
+	 * @return a copy of the supplied {@code sequence}
+	 * @throws NullPointerException if the supplied {@code sequence} is
+	 *         {@code null}
+	 */
+	public static ArrayXY_Sequence copyOf(XY_Sequence sequence) {
+		if (sequence instanceof ArrayXY_Sequence) {
+			return copyOf((ArrayXY_Sequence) sequence);
+		}
+		return create(sequence.xValues(), sequence.yValues());
 	}
 
 	/**

@@ -61,15 +61,9 @@ public class GmmInput {
 	/** Whether vs30 is inferred or measured. */
 	public final boolean vsInf;
 	/** Depth to 2.5 km/s (in km). */
-	public final double z2p5; // always in km
+	public final double z2p5;
 	/** Depth to 1.0 km/s (in km). */
-	public final double z1p0; // always in meters TODO NO NO NO - this is now
-								// always
-
-	
-	
-
-	// km, CY08 needs updating
+	public final double z1p0; // km, TODO CY08 needs updating
 
 	/**
 	 * Create a deterministic rupture and site property container with all
