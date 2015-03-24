@@ -11,11 +11,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.opensha.calc.Calcs;
+import org.opensha.calc.Config;
 import org.opensha.calc.HazardResult;
 import org.opensha.calc.Site;
 import org.opensha.calc.Utils;
@@ -30,6 +33,7 @@ import org.opensha.util.Parsing.Delimiter;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Entry point for computing a hazard curve at a {@link Site} from a
@@ -69,7 +73,27 @@ public class HazardCurve {
 			return null;
 		}
 	}
+	
+//	public static Map<Site, HazardResult> calc(HazardModel model, Config config) {
+//		Map<Site, HazardResult> resultMap = new HashMap<>();
+//		
+//		
+//	}
+	
+	
 
+	// TODO rename to HazardCurves (already have this object as data container)
+	//   or HazardCalc or just Hazard and handle single and map based calculations
+	
+	// TODO always output to current directory?
+	
+	// TODO HazardCurve implementations/arguments:
+	//  - model (look for config.json in model root - config must have site data)
+	//  - model config.json (config must have site data)
+	//  - model config.json sites.csv (sites.csv will override sites in config, if any)
+	//
+	//  - model Imt lon lat [[[vs30] vsInf] z1p0 z2p5]
+	
 //	public static MultiResult calc(HazardModel model, Imt imt, List<Site> sites) {
 //
 //		for (Site site : sites) {
@@ -78,6 +102,8 @@ public class HazardCurve {
 //		return null;
 //	}
 
+	
+	// I guess these should be used to reduce one or more HazardResults down to just curves
 	/**
 	 * Multiple hazard curve wrapper.
 	 */
@@ -244,27 +270,27 @@ public class HazardCurve {
 		}
 		return sites;
 	}
-
-	private static final String USAGE = "HazardCurve usage:" +
-		LINE_SEPARATOR.value() +
-		LINE_SEPARATOR.value() +
-		"command: java -cp nshmp-haz.jar org.opensha.programs.HazardCurve model.file Imt lon lat [vs30]" +
-		LINE_SEPARATOR.value() +
-		"example: java -cp nshmp-haz.jar org.opensha.programs.HazardCurve path/to/model.zip PGA -117.5 34.5 760.0" +
-		LINE_SEPARATOR.value() +
-		"  - or -" +
-		LINE_SEPARATOR.value() +
-		"command: java -cp nshmp-haz.jar org.opensha.programs.HazardCurve model.file Imt site.file out.file" +
-		LINE_SEPARATOR.value() +
-		"example: java -cp nshmp-haz.jar org.opensha.programs.HazardCurve path/to/model.zip PGA sites.csv curves.csv" +
-		LINE_SEPARATOR.value() +
-		LINE_SEPARATOR.value() +
-		"  - model.file is the path to a model zip file or directory." +
-		LINE_SEPARATOR.value() +
-		"  - sites.file is a file containing comma-delimited lon,lat[,vs30] values; lines starting with '#' are ignored." +
-		LINE_SEPARATOR.value() +
-		"  - if no vs30 is specified 760.0 m/s is used." +
-		LINE_SEPARATOR.value() +
-		"  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha/programs/HazardCurve.html";
-
+	
+	// @formatter:off
+	private static final String USAGE = new StringBuilder("HazardCurve usage:")
+		.append(LF).append(LF)
+		.append("command: java -cp nshmp-haz.jar org.opensha.programs.HazardCurve model.file Imt lon lat [vs30]")
+		.append(LF)
+		.append("example: java -cp nshmp-haz.jar org.opensha.programs.HazardCurve path/to/model.zip PGA -117.5 34.5 760.0")
+		.append(LF)
+		.append("  - or -")
+		.append(LF)
+		.append("command: java -cp nshmp-haz.jar org.opensha.programs.HazardCurve model.file Imt site.file out.file")
+		.append(LF)
+		.append("example: java -cp nshmp-haz.jar org.opensha.programs.HazardCurve path/to/model.zip PGA sites.csv curves.csv")
+		.append(LF)
+		.append(LF)
+		.append("  - model.file is the path to a model zip file or directory.")
+		.append(LF)
+		.append("  - sites.file is a file containing comma-delimited lon,lat[,vs30] values; lines starting with '#' are ignored.")
+		.append(LF)
+		.append("  - if no vs30 is specified 760.0 m/s is used.")
+		.append(LF)
+		.append("  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha/programs/HazardCurve.html")
+		.toString();
 }

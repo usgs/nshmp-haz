@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
+import org.opensha.data.DataUtils;
 import org.opensha.eq.Magnitudes;
 import org.opensha.eq.fault.surface.RuptureFloating;
 import org.opensha.eq.fault.surface.RuptureScaling;
@@ -62,7 +63,7 @@ class FaultParser extends DefaultHandler {
 	private Locator locator;
 
 	private GmmSet gmmSet;
-	
+
 	private Config config;
 
 	private FaultSourceSet sourceSet;
@@ -70,7 +71,7 @@ class FaultParser extends DefaultHandler {
 	private FaultSource.Builder sourceBuilder;
 
 	private RuptureScaling rupScaling;
-	
+
 	// Data applying to all sourceSet
 	private MagUncertainty unc = null;
 	private Map<String, String> epiAtts = null;
@@ -91,7 +92,7 @@ class FaultParser extends DefaultHandler {
 	static FaultParser create(SAXParser sax) {
 		return new FaultParser(checkNotNull(sax));
 	}
-	
+
 	FaultSourceSet parse(InputStream in, GmmSet gmmSet, Config config) throws SAXException,
 			IOException {
 		checkState(!used, "This parser has expired");
@@ -244,9 +245,22 @@ class FaultParser extends DefaultHandler {
 				return buildGR(mfdHelper.getGR(atts), unc);
 			case SINGLE:
 				return buildSingle(mfdHelper.getSingle(atts), unc);
+			case INCR:
+				return buildIncremental(mfdHelper.getIncremental(atts));
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
 		}
+	}
+
+	/*
+	 * Builds INCR Mfds. NOTE This ignores uncertainty models.
+	 */
+	private List<IncrementalMfd> buildIncremental(MfdHelper.IncrData data) {
+		List<IncrementalMfd> mfds = Lists.newArrayList();
+		IncrementalMfd mfd = Mfds.newIncrementalMFD(data.mags,
+			DataUtils.multiply(data.weight, data.rates));
+		mfds.add(mfd);
+		return mfds;
 	}
 
 	/*

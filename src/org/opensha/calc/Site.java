@@ -1,15 +1,19 @@
 package org.opensha.calc;
 
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.opensha.data.DataUtils.validate;
 
 import java.lang.reflect.Type;
+import java.util.Map.Entry;
 
 import org.opensha.geo.Location;
 import org.opensha.gmm.GroundMotionModel;
 import org.opensha.util.Named;
 
 import com.google.common.collect.Range;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -28,9 +32,12 @@ import com.google.gson.JsonSerializer;
 public class Site implements Named {
 
 	/** Minimum allowed Vs30 value (150 m/sec). */
-	public static final double MIN_VS30 = 150.0;
+	public static final double MIN_VS_30 = 150.0;
 	/** Maximum allowed Vs30 value (2000 m/sec). */
-	public static final double MAX_VS30 = 2000.0;
+	public static final double MAX_VS_30 = 2000.0;
+	/** Default Vs30 value (760 m/sec). */
+	public static final double DEFAULT_VS_30 = 760.0;
+	
 
 	/** Minimum allowed depth to a shear wave velocity of 2.5 km/sec (0.0 km). */
 	public static final double MIN_Z2P5 = 0.0;
@@ -41,20 +48,30 @@ public class Site implements Named {
 	public static final double MIN_Z1P0 = 0.0;
 	/** Minimum allowed depth to a shear wave velocity of 1.0 km/sec (2.0 km). */
 	public static final double MAX_Z1P0 = 2.0;
+	
 
-	private static final Range<Double> VS30_RANGE = Range.closed(MIN_VS30, MAX_VS30);
+	private static final Range<Double> VS30_RANGE = Range.closed(MIN_VS_30, MAX_VS_30);
 	private static final Range<Double> Z2P5_RANGE = Range.closed(MIN_Z2P5, MAX_Z2P5);
 	private static final Range<Double> Z1P0_RANGE = Range.closed(MIN_Z1P0, MAX_Z1P0);
 
-	// field names - mostly used from JSON serialization
-	private static final String NAME = "name";
-	private static final String LOC = "location";
-	private static final String VS_30 = "vs30";
-	private static final String VS_INF = "vsInferred";
-	private static final String Z1P0 = "z1p0";
-	private static final String Z2P5 = "z2p5";
-	private static final String LAT = "lat";
-	private static final String LON = "lon";
+	enum Key {
+		NAME,
+		LOCATION,
+		LAT,
+		LON,
+		VS30,
+		VS_INF,
+		Z1P0,
+		Z2P5;
+
+		@Override public String toString() {
+			return UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
+		}
+
+		static Key fromString(String s) {
+			return valueOf(LOWER_CAMEL.to(UPPER_UNDERSCORE, s));
+		}
+	}
 
 	/** The site name. */
 	public final String name;
@@ -133,7 +150,7 @@ public class Site implements Named {
 
 		private String name = "Unnamed Site";
 		private Location location = NehrpTestCity.SALT_LAKE_CITY.location();
-		private double vs30 = 760.0;
+		private double vs30 = DEFAULT_VS_30;
 		private boolean vsInferred = true;
 		private double z1p0 = Double.NaN;
 		private double z2p5 = Double.NaN;
@@ -165,7 +182,7 @@ public class Site implements Named {
 
 		/** The average shear-wave velocity down to 30 meters depth. */
 		public Builder vs30(double vs30) {
-			this.vs30 = validate(VS30_RANGE, VS_30, vs30);
+			this.vs30 = validate(VS30_RANGE, Key.VS30.toString(), vs30);
 			return this;
 		}
 
@@ -179,16 +196,40 @@ public class Site implements Named {
 
 		/** Depth to the shear-wave velocity horizon of 1.0 km/sec, in km. */
 		public Builder z1p0(double z1p0) {
-			this.z1p0 = validate(Z1P0_RANGE, Z1P0, z1p0);
+			this.z1p0 = validate(Z1P0_RANGE, Key.Z1P0.toString(), z1p0);
 			return this;
 		}
 
 		/** Depth to the shear-wave velocity horizon of 2.5 km/sec, in km. */
 		public Builder z2p5(double z2p5) {
-			this.z2p5 = validate(Z2P5_RANGE, Z2P5, z2p5);
+			this.z2p5 = validate(Z2P5_RANGE, Key.Z2P5.toString(), z2p5);
 			return this;
 		}
-
+		
+		/* Available for other package parsers */
+		Builder set(Key key, JsonElement json) {
+			switch(key) {
+				
+				case NAME:
+					return name(json.getAsString());
+				case LOCATION:
+					JsonArray coords = json.getAsJsonArray();
+					double lon = coords.get(0).getAsDouble();
+					double lat = coords.get(1).getAsDouble();
+					return location(lat, lon);
+				case VS30:
+					return vs30(json.getAsDouble());
+				case VS_INF:
+					return vsInferred(json.getAsBoolean());
+				case Z1P0:
+					return z1p0(json.getAsDouble());
+				case Z2P5:
+					return z2p5(json.getAsDouble());
+				default:
+					throw new IllegalStateException("Unsupported site property key: " + key);
+			}
+		}
+		
 		/**
 		 * Build the {@code Site}.
 		 */
@@ -214,22 +255,15 @@ public class Site implements Named {
 				JsonDeserializationContext context) throws JsonParseException {
 
 			JsonObject jObj = json.getAsJsonObject();
-			Builder siteBuilder = Site.builder();
+			Builder builder = Site.builder();
 
-			if (jObj.has(NAME)) siteBuilder.name(jObj.get(NAME).getAsString());
-			if (jObj.has(LOC)) {
-				JsonObject locObj = jObj.getAsJsonObject(LOC);
-				siteBuilder.location(Location.create(locObj.get(LAT).getAsDouble(), locObj.get(LON)
-					.getAsDouble()));
+			for (Entry<String, JsonElement> entry : jObj.entrySet()) {
+				Key key = Key.fromString(entry.getKey());
+				builder.set(key, entry.getValue());
 			}
-			if (jObj.has(VS_30)) siteBuilder.vs30(jObj.get(VS_30).getAsDouble());
-			if (jObj.has(VS_INF)) siteBuilder.vsInferred(jObj.get(VS_INF).getAsBoolean());
-			if (jObj.has(Z1P0)) siteBuilder.z1p0(jObj.get(Z1P0).getAsDouble());
-			if (jObj.has(Z2P5)) siteBuilder.z2p5(jObj.get(Z2P5).getAsDouble());
-
-			return siteBuilder.build();
+			
+			return builder.build();
 		}
-
 	}
 
 	static class Serializer implements JsonSerializer<Site> {
@@ -238,21 +272,16 @@ public class Site implements Named {
 				JsonSerializationContext context) {
 
 			JsonObject jObj = new JsonObject();
-			jObj.addProperty(NAME, site.name);
-
-			JsonObject locObj = new JsonObject();
-			locObj.addProperty(LAT, site.location.lat());
-			locObj.addProperty(LON, site.location.lon());
-			jObj.add(LOC, locObj);
-
-			jObj.addProperty(VS_30, site.vs30);
-			jObj.addProperty(VS_INF, site.vsInferred);
-			if (!Double.isNaN(site.z1p0)) jObj.addProperty(Z1P0, site.z1p0);
-			if (!Double.isNaN(site.z2p5)) jObj.addProperty(Z2P5, site.z2p5);
+			jObj.addProperty(Key.NAME.toString(), site.name);
+			double[] coords = new double[] {site.location.lon(), site.location.lat()};
+			jObj.add(Key.LOCATION.toString(), context.serialize(coords));
+			jObj.addProperty(Key.VS30.toString(), site.vs30);
+			jObj.addProperty(Key.VS_INF.toString(), site.vsInferred);
+			if (!Double.isNaN(site.z1p0)) jObj.addProperty(Key.Z1P0.toString(), site.z1p0);
+			if (!Double.isNaN(site.z2p5)) jObj.addProperty(Key.Z2P5.toString(), site.z2p5);
 
 			return jObj;
 		}
-
 	}
 
 }

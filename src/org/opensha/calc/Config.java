@@ -10,9 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.opensha.gmm.Imt;
 
@@ -26,25 +28,26 @@ import com.google.gson.GsonBuilder;
  * Calculation configuration.
  * @author Peter Powers
  */
-final class Config {
+public final class Config {
 
 	public final SigmaModel sigmaModel;
 	public final double truncationLevel;
 
+	public final Set<Imt> imts;
+	
 	public final double[] defaultImls;
 	public final Map<Imt, double[]> customImls;
 
 	public final Deagg deagg;
 
-	public final List<Site> sites;
+	public final SiteSet sites;
 
-	// @formatter:off
 	private static final Gson GSON = new GsonBuilder()
-			.setPrettyPrinting()
-			.registerTypeAdapter(Site.class, new Site.Deserializer())
-			.registerTypeAdapter(Site.class, new Site.Serializer())
-			.create();
-	// @formatter:on
+		.setPrettyPrinting()
+		.registerTypeAdapter(Site.class, new Site.Deserializer())
+		.registerTypeAdapter(Site.class, new Site.Serializer())
+		.registerTypeAdapter(SiteSet.class, new SiteSet.Deserializer())
+		.create();
 
 	private Config() {
 
@@ -56,17 +59,17 @@ final class Config {
 		sigmaModel = SigmaModel.TRUNCATION_UPPER_ONLY;
 		truncationLevel = 3.0;
 
+		imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
+		
 		/* Slightly modified version of NSHM 5Hz curve, size = 20 */
 		defaultImls = new double[] { 0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19, 3.28, 4.92, 7.38 };
 		customImls = Maps.newHashMap();
 
 		deagg = new Deagg();
-		sites = Lists.newArrayList(Site.builder().build());
-
+		sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
 	}
 
 	@Override public String toString() {
-		// @formatter:off
 		String customImlStr = "";
 		if (!customImls.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
@@ -74,15 +77,17 @@ final class Config {
 				String imtStr = "(IMT override) " + entry.getKey() + ": ";
 				sb.append(Strings.padStart(imtStr, 24, ' '))
 					.append(Arrays.toString(entry.getValue()))
-					.append(NEWLINE);				
+					.append(NEWLINE);
 			}
 			customImlStr = sb.toString();
 		}
-				
+
 		StringBuilder sb = new StringBuilder("Calculation config:").append(NEWLINE)
 			.append("       Sigma model: ")
 			.append("type=").append(sigmaModel).append(", ")
 			.append("level=").append(truncationLevel)
+			.append(NEWLINE)
+			.append("              IMTs: ").append(imts)
 			.append(NEWLINE)
 			.append("      Default IMLs: ")
 			.append(Arrays.toString(defaultImls))
@@ -103,8 +108,7 @@ final class Config {
 			.append("max=").append(deagg.εMax).append(", ")
 			.append("Δ=").append(deagg.Δε)
 			.append(NEWLINE);
-		// @formatter:on
-		
+
 		for (Site site : sites) {
 			sb.append("              ").append(site.toString()).append(NEWLINE);
 		}
@@ -131,13 +135,16 @@ final class Config {
 
 	// TODO clean
 	public static void main(String[] args) throws IOException {
-//		Path path = Paths.get("tmp", "config", "config_calc2.json");
-//		exportDefaults(path);
+//		 Path path = Paths.get("..","nshmp-model-dev", "tmp", "config_calc3.json");
+		// exportDefaults(path);
 
-//		 Path path = Paths.get("tmp", "config", "config_nshm_imls.json");
-		 Path path = Paths.get("..","nshmp-model-dev", "models", "PEER", "Set2-Case2a1", "config.json");
-		 Config c = load(path);
-		 System.out.println(c);
+		// Path path = Paths.get("tmp", "config", "config_nshm_imls.json");
+		// Path path = Paths.get("..","nshmp-model-dev", "models", "PEER",
+		// "Set2-Case2a1", "config.json");
+		Path path = Paths.get("..", "nshmp-model-dev", "models", "PEER", "Set1-Case1",
+			"config.json");
+		Config c = load(path);
+		System.out.println(c);
 	}
 
 	public static class Deagg {
