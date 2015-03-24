@@ -59,7 +59,7 @@ class ClusterParser extends DefaultHandler {
 
 	private GmmSet gmmSet;
 
-	private Config config;
+	private ModelConfig config;
 
 	private ClusterSourceSet sourceSet;
 	private ClusterSourceSet.Builder clusterSetBuilder;
@@ -86,7 +86,7 @@ class ClusterParser extends DefaultHandler {
 		return new ClusterParser(checkNotNull(sax));
 	}
 
-	ClusterSourceSet parse(InputStream in, GmmSet gmmSet, Config config) throws SAXException,
+	ClusterSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
 			IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;

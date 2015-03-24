@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.opensha.calc.Calcs;
-import org.opensha.calc.Config;
+import org.opensha.calc.CalcConfig;
 import org.opensha.calc.HazardResult;
 import org.opensha.calc.Site;
 import org.opensha.calc.Utils;
@@ -74,7 +74,7 @@ public class HazardCurve {
 		}
 	}
 	
-//	public static Map<Site, HazardResult> calc(HazardModel model, Config config) {
+//	public static Map<Site, HazardResult> calc(HazardModel model, CalcConfig config) {
 //		Map<Site, HazardResult> resultMap = new HashMap<>();
 //		
 //		

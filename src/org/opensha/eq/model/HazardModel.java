@@ -79,12 +79,12 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
-	private final Config config;
+	private final ModelConfig config;
 	
 	// TODO do we really need config here; calc config properties will likely be accessed from the 
 	// source set or source level; should probably push config to SourceSets, possibly overriding default
 
-	private HazardModel(String name, Config config,
+	private HazardModel(String name, ModelConfig config,
 		SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
 		this.name = name;
 		this.config = config;
@@ -147,14 +147,14 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 		// ImmutableSetMultimap.Builder preserves value addition order
 		private ImmutableSetMultimap.Builder<SourceType, SourceSet<? extends Source>> sourceMapBuilder;
 		private SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
-		private Config config;
+		private ModelConfig config;
 		private String name;
 
 		private Builder() {
 			sourceMapBuilder = ImmutableSetMultimap.builder();
 		}
 
-		Builder config(Config config) {
+		Builder config(ModelConfig config) {
 			this.config = checkNotNull(config);
 			return this;
 		}

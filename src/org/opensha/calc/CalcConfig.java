@@ -28,7 +28,7 @@ import com.google.gson.GsonBuilder;
  * Calculation configuration.
  * @author Peter Powers
  */
-public final class Config {
+public final class CalcConfig {
 
 	public final SigmaModel sigmaModel;
 	public final double truncationLevel;
@@ -49,7 +49,7 @@ public final class Config {
 		.registerTypeAdapter(SiteSet.class, new SiteSet.Deserializer())
 		.create();
 
-	private Config() {
+	private CalcConfig() {
 
 		/*
 		 * Default values. These are initialized here because gson will not
@@ -120,16 +120,16 @@ public final class Config {
 		return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
 	}
 
-	static Config load(Path path) throws IOException {
+	static CalcConfig load(Path path) throws IOException {
 		Reader reader = Files.newBufferedReader(path, UTF_8);
-		Config config = GSON.fromJson(reader, Config.class);
+		CalcConfig config = GSON.fromJson(reader, CalcConfig.class);
 		reader.close();
 		return config;
 	}
 
 	static void exportDefaults(Path path) throws IOException {
 		Writer writer = Files.newBufferedWriter(path, UTF_8);
-		GSON.toJson(new Config(), writer);
+		GSON.toJson(new CalcConfig(), writer);
 		writer.close();
 	}
 
@@ -143,7 +143,7 @@ public final class Config {
 		// "Set2-Case2a1", "config.json");
 		Path path = Paths.get("..", "nshmp-model-dev", "models", "PEER", "Set1-Case1",
 			"config.json");
-		Config c = load(path);
+		CalcConfig c = load(path);
 		System.out.println(c);
 	}
 

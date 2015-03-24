@@ -64,7 +64,7 @@ class FaultParser extends DefaultHandler {
 
 	private GmmSet gmmSet;
 
-	private Config config;
+	private ModelConfig config;
 
 	private FaultSourceSet sourceSet;
 	private FaultSourceSet.Builder sourceSetBuilder;
@@ -93,7 +93,7 @@ class FaultParser extends DefaultHandler {
 		return new FaultParser(checkNotNull(sax));
 	}
 
-	FaultSourceSet parse(InputStream in, GmmSet gmmSet, Config config) throws SAXException,
+	FaultSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
 			IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;

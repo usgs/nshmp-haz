@@ -53,7 +53,7 @@ class InterfaceParser extends DefaultHandler {
 
 	private GmmSet gmmSet;
 	
-	private Config config;
+	private ModelConfig config;
 
 	private InterfaceSourceSet sourceSet;
 	private InterfaceSourceSet.Builder sourceSetBuilder;
@@ -77,7 +77,7 @@ class InterfaceParser extends DefaultHandler {
 		return new InterfaceParser(checkNotNull(sax));
 	}
 
-	InterfaceSourceSet parse(InputStream in, GmmSet gmmSet, Config config) throws SAXException,
+	InterfaceSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
 			IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;

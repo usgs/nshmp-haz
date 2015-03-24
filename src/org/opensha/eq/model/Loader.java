@@ -86,7 +86,7 @@ class Loader {
 			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
 			Path typeDirPath = typeDirectory(modelPath);
 			
-			Config baseConfig = Config.load(typeDirPath);
+			ModelConfig baseConfig = ModelConfig.load(typeDirPath);
 			log.info(baseConfig.toString());
 			log.info("");
 			builder.config(baseConfig);
@@ -166,7 +166,7 @@ class Loader {
 		}
 	}
 
-	private static void processTypeDir(Path typeDir, Builder builder, Config baseConfig) throws IOException {
+	private static void processTypeDir(Path typeDir, Builder builder, ModelConfig baseConfig) throws IOException {
 
 		String typeName = cleanZipName(typeDir.getFileName().toString());
 		SourceType type = SourceType.fromString(typeName);
@@ -184,10 +184,10 @@ class Loader {
 		}
 
 		// load alternate config if such exists
-		Config config = baseConfig;
-		Path configPath = typeDir.resolve(Config.FILE_NAME);
+		ModelConfig config = baseConfig;
+		Path configPath = typeDir.resolve(ModelConfig.FILE_NAME);
 		if (Files.exists(configPath)) {
-			config = Config.load(typeDir);
+			config = ModelConfig.load(typeDir);
 			log.info("(Override) " + config.toString());
 		}
 
@@ -233,7 +233,7 @@ class Loader {
 	}
 
 	private static void processNestedDir(Path sourceDir, SourceType type, GmmSet gmmSet,
-			Builder builder, Config parentConfig) throws IOException {
+			Builder builder, ModelConfig parentConfig) throws IOException {
 
 		/*
 		 * gmm.xml -- this MUST exist if there is at least one source file and
@@ -249,13 +249,13 @@ class Loader {
 		Path typeDir = sourceDir.getParent().getParent();
 
 		GmmSet nestedGmmSet = null;
-		Config nestedConfig = parentConfig;
+		ModelConfig nestedConfig = parentConfig;
 		if (nestedSourcePaths.size() > 0) {
 			
 			// config
-			Path nestedConfigPath = sourceDir.resolve(Config.FILE_NAME);
+			Path nestedConfigPath = sourceDir.resolve(ModelConfig.FILE_NAME);
 			if (Files.exists(nestedConfigPath)) {
-				nestedConfig = Config.load(sourceDir);
+				nestedConfig = ModelConfig.load(sourceDir);
 				log.info("(Override) " + nestedConfig.toString());
 			}
 
@@ -293,7 +293,7 @@ class Loader {
 	}
 
 	private static SourceSet<? extends Source> parseSource(SourceType type, Path path,
-			GmmSet gmmSet, Config config) {
+			GmmSet gmmSet, ModelConfig config) {
 		try {
 			InputStream in = Files.newInputStream(path);
 			switch (type) {
@@ -321,7 +321,7 @@ class Loader {
 		}
 	}
 
-	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder, Config config) {
+	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder, ModelConfig config) {
 		try {
 			Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
 			InputStream sectionsIn = Files.newInputStream(sectionsPath);
@@ -355,7 +355,7 @@ class Loader {
 	/* This method will exit runtime environment */
 	private static void handleConfigException(Exception e) {
 		StringBuilder sb = new StringBuilder(LF);
-		sb.append("** Config error: ").append(e.getMessage());
+		sb.append("** ModelConfig error: ").append(e.getMessage());
 		log.log(SEVERE, sb.toString(), e);
 		System.exit(1);
 	}

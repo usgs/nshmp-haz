@@ -63,7 +63,7 @@ class GridParser extends DefaultHandler {
 
 	private GmmSet gmmSet;
 	
-	private Config config;
+	private ModelConfig config;
 
 	private GridSourceSet sourceSet;
 	private GridSourceSet.Builder sourceSetBuilder;
@@ -92,7 +92,7 @@ class GridParser extends DefaultHandler {
 		return new GridParser(sax);
 	}
 
-	GridSourceSet parse(InputStream in, GmmSet gmmSet, Config config) throws SAXException,
+	GridSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
 			IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;

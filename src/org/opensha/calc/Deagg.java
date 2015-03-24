@@ -242,10 +242,10 @@ class Deagg {
 
 		/**
 		 * Create a deaggregation data model from the supplied
-		 * {@code Config}.
-		 * @param c {@code Config} to process
+		 * {@code CalcConfig}.
+		 * @param c {@code CalcConfig} to process
 		 */
-		public static DataModel fromConfig(Config c) {
+		public static DataModel fromConfig(CalcConfig c) {
 			return create(c.deagg.mMin, c.deagg.mMax, c.deagg.Δm, c.deagg.rMin, c.deagg.rMax,
 				c.deagg.Δr, c.deagg.εMin, c.deagg.εMax, c.deagg.Δε);
 		}

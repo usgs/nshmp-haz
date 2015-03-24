@@ -20,7 +20,7 @@ import com.google.gson.GsonBuilder;
  *
  * @author Peter Powers
  */
-final class Config {
+final class ModelConfig {
 	
 	static final String FILE_NAME = "config.json";
 
@@ -30,7 +30,7 @@ final class Config {
 	public final PointSourceType pointSourceType;
 	public final AreaSource.GridScaling areaGridScaling;
 
-	private Config() {
+	private ModelConfig() {
 
 		/*
 		 * Default values. These are initialized here because gson will not
@@ -56,11 +56,11 @@ final class Config {
 		// @formatter:on
 	}
 
-	static Config load(Path path) throws IOException {
+	static ModelConfig load(Path path) throws IOException {
 		Path configFile = path.resolve(FILE_NAME);
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		Reader reader = Files.newBufferedReader(configFile, UTF_8);
-		Config config = gson.fromJson(reader, Config.class);
+		ModelConfig config = gson.fromJson(reader, ModelConfig.class);
 		reader.close();
 		return config;
 	}
@@ -68,7 +68,7 @@ final class Config {
 	static void exportDefaults(Path path) throws IOException {
 		Writer writer = Files.newBufferedWriter(path, UTF_8);
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		gson.toJson(new Config(), writer);
+		gson.toJson(new ModelConfig(), writer);
 		writer.close();
 	}
 
