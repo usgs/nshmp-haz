@@ -108,7 +108,7 @@ public class HazardCurve {
 		return resultTable.build();
 	}
 	
-	private static HazardResult calc(HazardModel model, CalcConfig config, Site site) {
+	public static HazardResult calc(HazardModel model, CalcConfig config, Site site) {
 		
 		Logger log = Logger.getLogger(HazardCurve.class.getName());
 
