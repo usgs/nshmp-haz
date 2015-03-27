@@ -14,7 +14,6 @@ import static org.opensha.gmm.FaultStyle.REVERSE_OBLIQUE;
 import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha.gmm.Imt.PGA;
 
-import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.eq.TectonicSetting;
 
 /**
@@ -27,9 +26,9 @@ import org.opensha.eq.TectonicSetting;
  * stratification and site-specific response period. This implementation uses
  * the following New Zealend site class to Vs30 values for convenience and
  * consistency with the majority of other ground motion models:<ul><li>Class A:
- * 1500 &lt; Vs30</li><li>Class B: 360 &lt; Vs30 &le; 1500</li><li>Class C: 250
- * &lt; Vs30 &le; 360</li><li>Class D: 150 &lt; Vs30 &le; 250</li><li>Class E:
- * s30 &le; 150 (not supported)</li></ul></li></ul></p>
+ * 1500 < Vs30</li><li>Class B: 360 < Vs30 ≤ 1500</li><li>Class C: 250
+ * < Vs30 ≤ 360</li><li>Class D: 150 < Vs30 ≤ 250</li><li>Class E:
+ * s30 ≤ 150 (not supported)</li></ul></li></ul></p>
  * 
  * <p><b>Model applicability:</b> This needs work (TODO). Prior implementations
  * restricted distance to 400km, foacl depths to 100km, and Magnitudes between
@@ -284,6 +283,70 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 			c.tau = 0.2598;
 		}
 		return c;
+	}
+
+	static final class Crustal extends McVerryEtAl_2000 {
+		final static String NAME = McVerryEtAl_2000.NAME + ": Crustal";
+
+		Crustal(Imt imt) {
+			super(imt);
+		}
+
+		@Override boolean isGeomean() {
+			return false;
+		}
+
+		@Override TectonicSetting tectonicSetting() {
+			return TectonicSetting.ACTIVE_SHALLOW_CRUST;
+		}
+	}
+
+	static final class Volcanic extends McVerryEtAl_2000 {
+		final static String NAME = McVerryEtAl_2000.NAME + ": Volcanic";
+
+		Volcanic(Imt imt) {
+			super(imt);
+		}
+
+		@Override boolean isGeomean() {
+			return false;
+		}
+
+		@Override TectonicSetting tectonicSetting() {
+			return TectonicSetting.VOLCANIC;
+		}
+	}
+	
+	static final class Interface extends McVerryEtAl_2000 {
+		final static String NAME = McVerryEtAl_2000.NAME + ": Interface";
+
+		Interface(Imt imt) {
+			super(imt);
+		}
+
+		@Override boolean isGeomean() {
+			return false;
+		}
+
+		@Override TectonicSetting tectonicSetting() {
+			return TectonicSetting.SUBDUCTION_INTERFACE;
+		}
+	}
+
+	static final class Slab extends McVerryEtAl_2000 {
+		final static String NAME = McVerryEtAl_2000.NAME + ": Slab";
+
+		Slab(Imt imt) {
+			super(imt);
+		}
+
+		@Override boolean isGeomean() {
+			return false;
+		}
+
+		@Override TectonicSetting tectonicSetting() {
+			return TectonicSetting.SUBDUCTION_INTRASLAB;
+		}
 	}
 
 	// TODO clean and/or implement

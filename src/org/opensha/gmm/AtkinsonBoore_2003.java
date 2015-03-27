@@ -5,15 +5,13 @@ import static java.lang.Math.pow;
 import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.Imt.PGA;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
- * Abstract implementation of the subduction ground motion model by Atkinson
- * &amp; Boore (2003). This implementation matches that used in the 2008 USGS
- * NSHMP. This model has global- and Cascadia-specific forms and can be used for
- * both slab and interface events. In the 2008 NSHMP, the 'interface' form is
- * used with the Cascadia subduction zone models and the 'slab' form is used
- * with gridded 'deep' events in northern California and the Pacific Northwest.
+ * Abstract implementation of the subduction ground motion model by Atkinson &
+ * Boore (2003). This implementation matches that used in the 2008 USGS NSHMP.
+ * This model has global- and Cascadia-specific forms and can be used for both
+ * slab and interface events. In the 2008 NSHMP, the 'interface' form is used
+ * with the Cascadia subduction zone models and the 'slab' form is used with
+ * gridded 'deep' events in northern California and the Pacific Northwest.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -33,54 +31,54 @@ import org.opensha.calc.ScalarGroundMotion;
  * @see Gmm#AB_03_GLOB_SLAB
  */
 public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
-	
+
 	// TODO from original implementation -- recheck
 	// NOTE RupTopDepthParam is used in a funny way here (see also Youngs/
 	// Geomatrix). Currently it is not adjusted when updating an earthquake
 	// rupture, but must be set manually. It defaults to 20km (the value
 	// imposed in the 2008 NSHMP Cascadia subduction interface model. Any other
 	// sources should update this value independently.
-	
-	static final String NAME = "Atkinson \u0026 Boore (2003)";
+
+	static final String NAME = "Atkinson & Boore (2003)";
 
 	// This relation supports a number of options and requires PGA reference
-	// vlaues. Although implementation specific coeffs could be loaded by
-	// subclasses, their overhead is so small that they're loaded here. 
+	// values. Although implementation specific coeffs could be loaded by
+	// subclasses, their overhead is so small that they're loaded here.
 	//
 	// S = Slab, I = Interface
 	// G = Global, C = Cascadia/PNW
-	static final CoefficientContainer CC = new CoefficientContainer("AB03_cascadia_slab.csv",
-		Coeffs.class); // CC_CS
-	static final CoefficientContainer CC_CI = new CoefficientContainer(
-		"AB03_cascadia_interface.csv", Coeffs.class);
-	static final CoefficientContainer CC_GS = new CoefficientContainer("AB03_global_slab.csv",
-		Coeffs.class);
-	static final CoefficientContainer CC_GI = new CoefficientContainer("AB03_global_interface.csv",
-		Coeffs.class);
-	
+	static final CoefficientContainer CC_CS, CC_CI, CC_GS, CC_GI;
+
+	static {
+		CC_CS = new CoefficientContainer("AB03_cascadia_slab.csv", Coeffs.class);
+		CC_CI = new CoefficientContainer("AB03_cascadia_interface.csv", Coeffs.class);
+		CC_GS = new CoefficientContainer("AB03_global_slab.csv", Coeffs.class);
+		CC_GI = new CoefficientContainer("AB03_global_interface.csv", Coeffs.class);
+	}
+
 	static class Coeffs extends Coefficients {
 		double c1, c2, c3, c4, c5, c6, c7, sig;
 	}
-	
+
 	// author declared constants
 	private static final double gfac = 2.9912261; // log10(980)
 
 	// implementation constants
 	// none
-	
+
 	private final Coeffs coeffs;
 	private final Coeffs coeffsPGA;
-	
+
 	AtkinsonBoore_2003(Imt imt) {
 		if (isSlab()) {
-			coeffs = (Coeffs) (isGlobal() ? CC_GS.get(imt) : CC.get(imt));
-			coeffsPGA = (Coeffs) (isGlobal() ? CC_GS.get(PGA) : CC.get(PGA));
+			coeffs = (Coeffs) (isGlobal() ? CC_GS.get(imt) : CC_CS.get(imt));
+			coeffsPGA = (Coeffs) (isGlobal() ? CC_GS.get(PGA) : CC_CS.get(PGA));
 		} else {
 			coeffs = (Coeffs) (isGlobal() ? CC_GI.get(imt) : CC_CI.get(imt));
 			coeffsPGA = (Coeffs) (isGlobal() ? CC_GI.get(PGA) : CC_CI.get(PGA));
 		}
 	}
-	
+
 	@Override public final ScalarGroundMotion calc(GmmInput props) {
 		double mean = calcMean(coeffs, coeffsPGA, props.Mw, props.rRup, props.zTop, props.vs30,
 			isSlab(), coeffs.imt.frequency());
@@ -90,13 +88,13 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
 	// subclass flag
 	abstract boolean isGlobal();
-	
+
 	// subclass flag
 	abstract boolean isSlab();
-	
+
 	// SF2 variable of AB06 needs to be provided by subclasses via
-	private static final double calcMean(Coeffs c, Coeffs cPGA, double Mw,
-			double rRup, double zTop, double vs30, boolean slab, double freq) {
+	private static final double calcMean(Coeffs c, Coeffs cPGA, double Mw, double rRup,
+			double zTop, double vs30, boolean slab, double freq) {
 
 		// "saturation effect" p. 1709 AB 2003
 		Mw = Math.min(Mw, slab ? 8.0 : 8.5);
@@ -114,11 +112,10 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		// the 20km value is NSHMP specific.
 		// if (!slab) depth = 20;
 		// TODO revisit above
-		
+
 		double dist2 = Math.sqrt(rRup * rRup + delta * delta);
 		double gnd = gndm + c.c3 * zTop + c.c4 * dist2 - g * log10(dist2);
-		double rpga = cPGA.c1 + cPGA.c2 * Mw + cPGA.c3 * zTop + cPGA.c4 * dist2 - g *
-			log10(dist2);
+		double rpga = cPGA.c1 + cPGA.c2 * Mw + cPGA.c3 * zTop + cPGA.c4 * dist2 - g * log10(dist2);
 		rpga = pow(10, rpga);
 
 		double sl;
@@ -168,6 +165,70 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		}
 
 		return (gnd - gfac) * BASE_10_TO_E;
+	}
+
+	static final class CascadiaInterface extends AtkinsonBoore_2003 {
+		static final String NAME = AtkinsonBoore_2003.NAME + ": Cascadia Interface";
+
+		CascadiaInterface(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isGlobal() {
+			return false;
+		}
+
+		@Override final boolean isSlab() {
+			return false;
+		}
+	}
+
+	static final class CascadiaSlab extends AtkinsonBoore_2003 {
+		static final String NAME = AtkinsonBoore_2003.NAME + ": Cascadia Slab";
+
+		CascadiaSlab(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isGlobal() {
+			return false;
+		}
+
+		@Override final boolean isSlab() {
+			return true;
+		}
+	}
+
+	static final class GlobalInterface extends AtkinsonBoore_2003 {
+		static final String NAME = AtkinsonBoore_2003.NAME + ": Global Interface";
+
+		GlobalInterface(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isGlobal() {
+			return true;
+		}
+
+		@Override final boolean isSlab() {
+			return false;
+		}
+	}
+
+	static final class GlobalSlab extends AtkinsonBoore_2003 {
+		static final String NAME = AtkinsonBoore_2003.NAME + ": Global Slab";
+
+		GlobalSlab(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isGlobal() {
+			return true;
+		}
+
+		@Override final boolean isSlab() {
+			return true;
+		}
 	}
 
 }

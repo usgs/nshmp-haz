@@ -76,7 +76,6 @@ public class WC1994_MagAreaRelationship extends MagAreaRelationship {
      * Gives the standard deviation for the magnitude as a function of area
      *  (for the previously set or default rake). Note that thier "All" case is applied
      * if rake=Double.NaN
-     * @param area in km
      * @return standard deviation
      */
     public double getMagStdDev(){
@@ -121,8 +120,6 @@ public class WC1994_MagAreaRelationship extends MagAreaRelationship {
     /**
      * Computes the standard deviation of log(area) (base-10) from magnitude
      *  (for the previously set or default rake)
-     * @param mag - moment magnitude
-     * @param rake in degrees
      * @return standard deviation
      */
     public double getAreaStdDev() {

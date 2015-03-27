@@ -264,7 +264,6 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
 	/**
 	 * Returns an iterator over all datapoints in the list. Results returned
 	 * in sorted order. Returns null if no points present.
-	 * @return
 	 */
 	public Iterator<Point2D> getPointsIterator(){
 		return points.iterator();
@@ -282,8 +281,8 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
 	 * Since there may be multiple y values with the same value, this
 	 * function just matches the first found.
 	 *
-	 * @param y(value for which interpolated first x value has to be found
-	 * @return x(this  is the interpolated x based on the given y value)
+	 * @param y value for which interpolated first x value has to be found
+	 * @return x the interpolated x based on the given y value
 	 */
 
 	public double getFirstInterpolatedX(double y){
@@ -386,8 +385,8 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
 	 * x values with the closest x values, then calculates an
 	 * interpolated y value for this x value, fitted to the curve.
 	 *
-	 * @param x(value for which interpolated first y value has to be found
-	 * @return y(this  is the interpolated x based on the given x value)
+	 * @param x value for which interpolated first y value has to be found
+	 * @return y the interpolated x based on the given x value
 	 */
 	public double getInterpolatedY(double x){
 		// finds the size of the point array
@@ -576,7 +575,6 @@ if(debug) {
 	 * instance, but would maintain a reference to the original points. <p>
 	 *
 	 * Since this is a clone, you can modify it without changing the original.
-	 * @return
 	 */
 	public ArbitrarilyDiscretizedFunc deepClone(){
 
@@ -619,7 +617,6 @@ if(debug) {
 	/**
 	 * Standard java function, usually used for debugging, prints out
 	 * the state of the list, such as number of points, the value of each point, etc.
-	 * @return
 	 */
 	public String toString(){
 		StringBuffer b = new StringBuffer();
@@ -653,7 +650,6 @@ if(debug) {
 	/**
 	 * Almost the same as toString() but used
 	 * specifically in a debugging context. Formatted slightly different
-	 * @return
 	 */
 	public String toDebugString(){
 

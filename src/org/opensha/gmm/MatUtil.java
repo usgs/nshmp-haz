@@ -2,8 +2,6 @@ package org.opensha.gmm;
 
 import java.util.Set;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Static utiltiy methods targeted at Matlab users wishing to compute scalar
  * ground motions.

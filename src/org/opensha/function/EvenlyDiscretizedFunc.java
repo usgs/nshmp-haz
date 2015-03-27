@@ -338,8 +338,8 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc{
 	 * Since there may be multiple y values with the same value, this
 	 * function just matches the first found.
 	 *
-	 * @param y(value for which interpolated first x value has to be found
-	 * @return x(this  is the interpolated x based on the given y value)
+	 * @param y value for which interpolated first x value has to be found
+	 * @return x the interpolated x based on the given y value)
 	 */
 
 	public double getFirstInterpolatedX(double y){
@@ -435,9 +435,8 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc{
 
 	/**
 	 * This function interpolates the y-axis value corresponding to the given value of x
-	 * @param x(value for which interpolated first y value has to be found
-	 * @return y(this  is the interpolated y based on the given x value)
-	 * @author Morgan and Kevin
+	 * @param x value for which interpolated first y value has to be found
+	 * @return y the interpolated y based on the given x value)
 	 */
 	public double getInterpolatedY(double x){
 		//if passed parameter(x value) is not within range then throw exception
@@ -627,7 +626,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc{
 
 	/**
 	 * It finds out whether the X values are within tolerance of an integer value
-	 * @param tol tolerance value to consider  rounding errors
+	 * @param tolerance value to consider  rounding errors
 	 *
 	 * @return true if all X values are within the tolerance of an integer value
 	 * else returns false
@@ -676,7 +675,6 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc{
 	/**
 	 * Standard java function, usually used for debugging, prints out
 	 * the state of the list, such as number of points, the value of each point, etc.
-	 * @return
 	 */
 	public String toString(){
 		// @formatter:off

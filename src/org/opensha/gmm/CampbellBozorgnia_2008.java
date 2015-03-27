@@ -14,10 +14,8 @@ import static org.opensha.gmm.Imt.SA0P25;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
- * Implementation of the Campbell &amp; Bozorgnia (2008) next generation
+ * Implementation of the Campbell & Bozorgnia (2008) next generation
  * attenuation for active crustal regions relationship developed as part of <a
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
@@ -37,7 +35,7 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
-	static final String NAME = "Campbell \u0026 Bozorgnia (2008)";
+	static final String NAME = "Campbell & Bozorgnia (2008)";
 	
 	static final CoefficientContainer CC = new CoefficientContainer("CB08.csv", Coeffs.class);
 	

@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.EnumMap;
 
-import org.opensha.eq.forecast.Rupture;
+import org.opensha.eq.model.Rupture;
 import org.opensha.geo.Location;
 
 import com.google.common.base.Function;
@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
  * @version $Id:$
  */
 @Deprecated
-public final class DistanceFilters {
+final class DistanceFilters {
 
 	// no instantiation
 	private DistanceFilters() {}
@@ -190,7 +190,7 @@ public final class DistanceFilters {
 	/*
 	 * Utility method to create a cutoff map. Cutoff distances should correspond
 	 * to the ascending values of {@code MagCutoff} (i.e. {@code cutoffs[0]}
-	 * should be the cutoff for M&lt;5 [{@code M5}] events).
+	 * should be the cutoff for M<5 [{@code M5}] events).
 	 * 
 	 * @param cutoffs
 	 * 

@@ -10,9 +10,16 @@ import com.google.common.collect.Range;
 
 /**
  * Earthquake magnitude utilities.
+ * 
  * @author Peter Powers
  */
 public final class Magnitudes {
+
+	// TODO rename MagnitudesAndMoments ?
+	// Earthquakes?
+	// EqProperties?
+
+	// TODO should just use SI units m (N derived SI unit)
 
 	/**
 	 * Minimum allowed earthquake magnitude (-2.0). This numeric value is used
@@ -26,14 +33,18 @@ public final class Magnitudes {
 	 */
 	public static final double MAX_MAG = 9.7;
 
-	/** Shear modulus. μ = 3 * 10<sup>10</sup> dyne/cm<sup>2</sup>.*/
+	/** Shear modulus. μ = 3 * 10<sup>10</sup> N/m<sup>2</sup>. */
 	public static final double MU = 3e10;
+
+	// above is same as 3e11 dyn/cm^2
+
+	private static final Range<Double> magRange = Range.closed(MIN_MAG, MAX_MAG);
 	
-	private static final Range<Double> magRange = Range
-		.closed(MIN_MAG, MAX_MAG);
+	// equivalent for dyn·cm conversion is 16.05
+	private static final double SCALE_N_M = 9.05;
 
 	/**
-	 * Verifies that a magnitude value is between {@code MIN_MAG} and
+	 * Verify that a magnitude value is between {@code MIN_MAG} and
 	 * {@code MAX_MAG} (inclusive). Method returns the supplied value and can be
 	 * used inline.
 	 * 
@@ -46,36 +57,67 @@ public final class Magnitudes {
 		return validate(magRange, "Magnitude", mag);
 	}
 
+	// TODO refactor N_m out of signature
 	/**
 	 * Convert moment magnitude, <em>M</em><sub>W</sub>, to seismic moment,
-	 * <em>M</em><sub>0</sub>.
+	 * <em>M</em><sub>0</sub>, following the equation of Hanks and Kanamori
+	 * (1997).
+	 * 
 	 * @param magnitude to convert
-	 * @return the equivalent seismic moment in Newton-meters
+	 * @return the equivalent seismic moment in N·m
 	 */
-	public static double magToMoment(double magnitude) {
-		return pow(10, 1.5 * magnitude + 9.05);
+	public static double magToMoment_N_m(double magnitude) {
+		return pow(10, 1.5 * magnitude + SCALE_N_M);
 	}
 
 	/**
 	 * Convert seismic moment, <em>M</em><sub>0</sub>, to moment magnitude,
-	 * <em>M</em><sub>w</sub>.
-	 * @param moment to convert (in Newton-meters)
+	 * <em>M</em><sub>w</sub>, following the equation of Hanks and Kanamori
+	 * (1997).
+	 * 
+	 * @param moment to convert (in N·m)
 	 * @return the equivalent moment magnitude
 	 */
-	public static double momentToMag(double moment) {
-		return (log10(moment) - 9.05) / 1.5;
+	public static double momentToMag_N_m(double moment) {
+		return (log10(moment) - SCALE_N_M) / 1.5;
 	}
-	
-	// TODO finish this, check conversion for slip in m instead of mm/yr for rate
-//	/**
-//	 * @param area in km<sup>2</sup>
-//	 * @param slip 
-//	 * @return
-//	 */
-//	public static double moment(double area, double slip) {
-//		return area *
-//	}
-//	public static double recurrence(double Mw, double area, double slip)
 
-	
+	/**
+	 * Calculate (in SI units) the seismic moment of a fault area and average
+	 * slip, assuming a shear modulus of {@link #MU}. If slip <em>rate</em> is
+	 * supplied, moment <em>rate</em> is returned.
+	 * 
+	 * @param area in m<sup>2</sup>
+	 * @param slip in m
+	 * @return moment in N·m
+	 */
+	public static double moment(double area, double slip) {
+		return MU * area * slip;
+	}
+
+	/**
+	 * Calculate (in SI units) the average slip across a fault area with the
+	 * supplied moment, assuming a shear modulus of {@link #MU}. If moment
+	 * <em>rate</em> is supplied, slip <em>rate</em> is returned.
+	 * 
+	 * @param area in m<sup>2</sup>
+	 * @param moment in N·m
+	 * @return slip in m
+	 */
+	public static double slip(double area, double moment) {
+		return moment / (area * MU);
+	}
+
+	// TODO finish this, check conversion for slip in m instead of mm/yr for
+	// rate
+	// /**
+	// * @param area in km<sup>2</sup>
+	// * @param slip
+	// * @return
+	// */
+	// public static double moment(double area, double slip) {
+	// return area *
+	// }
+	// public static double recurrence(double Mw, double area, double slip)
+
 }

@@ -2,26 +2,26 @@ package org.opensha.gmm;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Double.NaN;
-import static org.opensha.gmm.GmmInput.GmmField.DIP;
-import static org.opensha.gmm.GmmInput.GmmField.MAG;
-import static org.opensha.gmm.GmmInput.GmmField.RAKE;
-import static org.opensha.gmm.GmmInput.GmmField.RJB;
-import static org.opensha.gmm.GmmInput.GmmField.RRUP;
-import static org.opensha.gmm.GmmInput.GmmField.RX;
-import static org.opensha.gmm.GmmInput.GmmField.VS30;
-import static org.opensha.gmm.GmmInput.GmmField.VSINF;
-import static org.opensha.gmm.GmmInput.GmmField.WIDTH;
-import static org.opensha.gmm.GmmInput.GmmField.Z1P0;
-import static org.opensha.gmm.GmmInput.GmmField.Z2P5;
-import static org.opensha.gmm.GmmInput.GmmField.ZHYP;
-import static org.opensha.gmm.GmmInput.GmmField.ZTOP;
+import static org.opensha.gmm.GmmInput.Field.DIP;
+import static org.opensha.gmm.GmmInput.Field.MAG;
+import static org.opensha.gmm.GmmInput.Field.RAKE;
+import static org.opensha.gmm.GmmInput.Field.RJB;
+import static org.opensha.gmm.GmmInput.Field.RRUP;
+import static org.opensha.gmm.GmmInput.Field.RX;
+import static org.opensha.gmm.GmmInput.Field.VS30;
+import static org.opensha.gmm.GmmInput.Field.VSINF;
+import static org.opensha.gmm.GmmInput.Field.WIDTH;
+import static org.opensha.gmm.GmmInput.Field.Z1P0;
+import static org.opensha.gmm.GmmInput.Field.Z2P5;
+import static org.opensha.gmm.GmmInput.Field.ZHYP;
+import static org.opensha.gmm.GmmInput.Field.ZTOP;
 
 import java.util.BitSet;
 import java.util.Map;
 
 import org.opensha.calc.Site;
-import org.opensha.eq.forecast.Distances;
-import org.opensha.eq.forecast.Rupture;
+import org.opensha.eq.model.Distances;
+import org.opensha.eq.model.Rupture;
 
 import com.google.common.collect.Maps;
 
@@ -35,26 +35,35 @@ import com.google.common.collect.Maps;
  */
 public class GmmInput {
 
-	// source
-	final double Mw;
+	/** Moment magnitude. */
+	public final double Mw;
 
-	final double rJB;
-	final double rRup;
-	final double rX;
+	/** Joyner-Boore distance (distance to surface projection of rupture). */
+	public final double rJB;
+	/** Rupture distance (distance to rupture plane). */
+	public final double rRup;
+	/** Distance X (shortest distance to extended strike of rupture). */
+	public final double rX;
 
-	final double dip;
-	final double width;
-	final double zTop;
-	final double zHyp;
+	/** Rupture dip. */
+	public final double dip;
+	/** Rupture width. */
+	public final double width;
+	/** Depth to top of rupture. */
+	public final double zTop;
+	/** Depth to rupture hypocenter. */
+	public final double zHyp;
+	/** Rupture rake. */
+	public final double rake;
 
-	final double rake;
-
-	// site
-	final double vs30;
-	final boolean vsInf;
-	final double z2p5; // always in km
-	final double z1p0; // always in meters TODO NO NO NO - this is now always
-						// km, CY08 needs updating
+	/** Vs30 at site. */
+	public final double vs30;
+	/** Whether vs30 is inferred or measured. */
+	public final boolean vsInf;
+	/** Depth to 2.5 km/s (in km). */
+	public final double z2p5;
+	/** Depth to 1.0 km/s (in km). */
+	public final double z1p0; // km, TODO CY08 needs updating
 
 	/**
 	 * Create a deterministic rupture and site property container with all
@@ -97,14 +106,14 @@ public class GmmInput {
 		this.z2p5 = z2p5;
 		this.z1p0 = z1p0;
 	}
-	
-	// for tests
-	static GmmInput create(double Mw, double rJB, double rRup, double rX, double dip,
-			double width, double zTop, double zHyp, double rake, double vs30, boolean vsInf,
-			double z2p5, double z1p0) {
 
-		return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf,
-			z2p5, z1p0);
+	// for tests
+	static GmmInput create(double Mw, double rJB, double rRup, double rX, double dip, double width,
+			double zTop, double zHyp, double rake, double vs30, boolean vsInf, double z2p5,
+			double z1p0) {
+
+		return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf, z2p5,
+			z1p0);
 	}
 
 	/**
@@ -122,7 +131,7 @@ public class GmmInput {
 	@SuppressWarnings("javadoc")
 	public static class Builder {
 
-		static final int SIZE = GmmField.values().length;
+		static final int SIZE = Field.values().length;
 		boolean built = false;
 		BitSet flags = new BitSet(SIZE); // monitors set fields
 		BitSet reset = new BitSet(SIZE); // monitors sets between build() calls
@@ -149,33 +158,35 @@ public class GmmInput {
 		private Builder() {}
 
 		/**
-		 * Return a {@code Builder} with the following presets: <ul><li>Mw:
-		 * 6.5</li><li>rJB: 10.0 (km)</li><li>rRup: 10.3 (km)</li><li>rX: 10.0
-		 * (km)</li> <li>dip: 90˚</li><li>width: 14.0 (km)</li><li>zTop: 0.5
-		 * (km)</li><li>zHyp: 7.5 (km)</li> <li>rake: 0˚</li><li>vs30: 760
-		 * (m/s)</li><li>vsInf: true</li><li>z2p5: NaN</li><li>z1p0:
-		 * NaN</li></ul>
+		 * Return a preloaded {@code Builder}. Builder has the following
+		 * presets: <ul><li>Mw: 6.5</li><li>rJB: 10.0 (km)</li><li>rRup: 10.3
+		 * (km)</li><li>rX: 10.0 (km)</li> <li>dip: 90˚</li><li>width: 14.0
+		 * (km)</li><li>zTop: 0.5 (km)</li><li>zHyp: 7.5 (km)</li> <li>rake:
+		 * 0˚</li><li>vs30: 760 (m/s)</li><li>vsInf: true</li><li>z2p5:
+		 * NaN</li><li>z1p0: NaN</li></ul>
+		 * 
+		 * TODO just point to dcouemnted static final fields
 		 */
 		public Builder withDefaults() {
-			Mw = 6.5;
-			rJB = 10.0;
-			rRup = 10.3;
-			rX = 10.0;
-			dip = 90.0;
-			width = 14.0;
-			zTop = 0.5;
-			zHyp = 7.5;
-			rake = 0.0;
-			vs30 = 760.0;
-			vsInf = true;
-			z2p5 = NaN;
-			z1p0 = NaN;
+			Mw = MAG.defaultValue;
+			rJB = RJB.defaultValue;
+			rRup = RRUP.defaultValue;
+			rX = RX.defaultValue;
+			dip = DIP.defaultValue;
+			width = WIDTH.defaultValue;
+			zTop = ZTOP.defaultValue;
+			zHyp = ZHYP.defaultValue;
+			rake = RAKE.defaultValue;
+			vs30 = VS30.defaultValue;
+			vsInf = VSINF.defaultValue > 0.0;
+			z2p5 = Z2P5.defaultValue;
+			z1p0 = Z1P0.defaultValue;
 			flags.set(0, SIZE);
 			return this;
 		}
 
 		/* returns the double value of interest for inlining */
-		private final double validateAndFlag(GmmField field, double value) {
+		private final double validateAndFlag(Field field, double value) {
 			int index = field.ordinal();
 			checkState(!built && !reset.get(index));
 			flags.set(index);
@@ -184,7 +195,7 @@ public class GmmInput {
 		}
 
 		/* returns the boolean value of interest for inlining */
-		private final boolean validateAndFlag(GmmField field, boolean value) {
+		private final boolean validateAndFlag(Field field, boolean value) {
 			int index = field.ordinal();
 			checkState(!built && !reset.get(index));
 			flags.set(index);
@@ -197,17 +208,17 @@ public class GmmInput {
 			return this;
 		}
 
-		public Builder rjb(double rJB) {
+		public Builder rJB(double rJB) {
 			this.rJB = validateAndFlag(RJB, rJB);
 			return this;
 		}
 
-		public Builder rrup(double rRup) {
+		public Builder rRup(double rRup) {
 			this.rRup = validateAndFlag(RRUP, rRup);
 			return this;
 		}
 
-		public Builder rx(double rX) {
+		public Builder rX(double rX) {
 			this.rX = validateAndFlag(RX, rX);
 			return this;
 		}
@@ -285,33 +296,103 @@ public class GmmInput {
 		}
 	}
 
+	private static final String DISTANCE_UNIT = "km";
+	private static final String ANGLE_UNIT = "°";
+
 	/**
 	 * {@code GmmInput} field identifiers. This is used internally to manage
 	 * builder flags and provides access to the case-sensitive keys (via
 	 * toString()) used when building http queries
 	 * 
+	 * Lets use negative positive for vsInf for now
 	 */
 	@SuppressWarnings("javadoc")
-	public enum GmmField {
-		MAG,
-		RJB,
-		RRUP,
-		RX,
-		DIP,
-		WIDTH,
-		ZTOP,
-		ZHYP,
-		RAKE,
-		VS30,
-		VSINF,
-		Z2P5,
-		Z1P0;
+	public enum Field {
+		
+		// @formatter:off
+		
+		MAG("Magnitude",
+			"The moment magnitude of an earthquake",
+			null,
+			6.5),
+		
+		RJB("Joyner-Boore Distance",
+			"The shortest distance from a site to the surface projection of a rupture, in kilometers",
+			DISTANCE_UNIT, 
+			10.0),
+			
+		RRUP("Rupture Distance",
+			"The shortest distance from a site to a rupture, in kilometers",
+			DISTANCE_UNIT, 
+			10.3),
+			
+		RX("Distance X",
+			"The shortest distance from a site to the extended trace a fault, in kilometers",
+			DISTANCE_UNIT,
+			10.0),
+			
+		DIP("Dip",
+			"The dip of a rupture surface, in degrees",
+			ANGLE_UNIT,
+			90.0),
+			
+		WIDTH("Width",
+			"The width of a rupture surface, in kilometers",
+			DISTANCE_UNIT,
+			14.0),
+			
+		ZTOP("Depth",
+			"The depth to the top of a rupture surface, in kilometers and positive-down",
+			DISTANCE_UNIT,
+			0.5),
+			
+		ZHYP("Hypocentral Depth",
+			"The depth to the hypocenter on a rupture surface, in kilometers and positive-down",
+			DISTANCE_UNIT,
+			7.5),
+			
+		RAKE("Rake",
+			"The rake (or sense of slip) of a rupture surface, in degrees",
+			ANGLE_UNIT,
+			0.0),
+			
+		VS30("Vs30",
+			"The average shear-wave velocity down to 30 meters, in kilometers per second",
+			"km/s",
+			760.0),
+			
+		VSINF("Vs30 Inferred",
+			"Whether Vs30 was measured or inferred",
+			null,
+			1.0),
+		Z2P5("Depth to Vs=2.5 km/s",
+			"Depth to a shear-wave velocity of 2.5 kilometers per second, in kilometers",
+			DISTANCE_UNIT,
+			NaN),
+			
+		Z1P0("Depth to Vs=1.0 km/s",
+			"Depth to a shear-wave velocity of 1.0 kilometers per second, in kilometers",
+			DISTANCE_UNIT,
+			NaN);
+		
+		public final String label;
+		public final String info;
+		public final String unit;
+		public final double defaultValue;
+		
+		private Field(String label, String info, String unit, double defaultValue) {
+			this.label = label;
+			this.info = info;
+			this.unit = unit;
+			this.defaultValue = defaultValue;
+		}
+
 
 		@Override public String toString() {
 			return this.name().toLowerCase();
 		}
 
-		public static GmmField fromString(String s) {
+		public static Field fromString(String s) {
 			return valueOf(s.toUpperCase());
 		}
 	}
@@ -324,8 +405,8 @@ public class GmmInput {
 		return createKeyValueMap().toString();
 	}
 
-	private Map<GmmField, Object> createKeyValueMap() {
-		Map<GmmField, Object> keyValueMap = Maps.newEnumMap(GmmField.class);
+	private Map<Field, Object> createKeyValueMap() {
+		Map<Field, Object> keyValueMap = Maps.newEnumMap(Field.class);
 		keyValueMap.put(MAG, String.format("%.2f", Mw));
 		keyValueMap.put(RJB, String.format("%.3f", rJB));
 		keyValueMap.put(RRUP, String.format("%.3f", rRup));
@@ -341,5 +422,5 @@ public class GmmInput {
 		keyValueMap.put(Z1P0, z1p0);
 		return keyValueMap;
 	}
-
+		
 }

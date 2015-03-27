@@ -6,8 +6,6 @@ import static java.lang.Math.sqrt;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
 import static org.opensha.gmm.MagConverter.*;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Toro et al. (1997) ground motion model for stable
  * continental regions with 2002 updates. This implementation matches that used
@@ -128,4 +126,28 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 	
+	static final class Mb extends ToroEtAl_1997 {
+		static final String NAME = ToroEtAl_1997.NAME + ": mb";
+
+		Mb(Imt imt) {
+			super(imt);
+		}
+		
+		@Override boolean isMw() {
+			return false;
+		}
+	}
+
+	static final class Mw extends ToroEtAl_1997 {
+		static final String NAME = ToroEtAl_1997.NAME + ": Mw";
+
+		Mw(Imt imt) {
+			super(imt);
+		}
+		
+		@Override boolean isMw() {
+			return true;
+		}
+	}
+
 }

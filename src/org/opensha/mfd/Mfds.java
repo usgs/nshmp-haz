@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
-import static org.opensha.eq.Magnitudes.magToMoment;
+import static org.opensha.eq.Magnitudes.magToMoment_N_m;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ import org.opensha.data.DataUtils;
 import org.opensha.data.XY_Sequence;
 import org.opensha.eq.Magnitudes;
 
+import com.google.common.base.Converter;
 import com.google.common.primitives.Doubles;
 
 /**
@@ -27,10 +28,12 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  */
-public class Mfds {
+public final class Mfds {
 
 	private static final int DEFAULT_TRUNC_TYPE = 2;
 	private static final int DEFAULT_TRUNC_LEVEL = 2;
+
+	private Mfds() {}
 
 	/**
 	 * Creates a new single magnitude {@code IncrementalMfd}.
@@ -57,7 +60,7 @@ public class Mfds {
 	 * @return a new {@code IncrementalMfd}
 	 */
 	public static IncrementalMfd newSingleMoBalancedMFD(double mag, double moRate, boolean floats) {
-		double cumRate = moRate / Magnitudes.magToMoment(mag);
+		double cumRate = moRate / magToMoment_N_m(mag);
 		return newSingleMFD(mag, cumRate, floats);
 	}
 
@@ -157,6 +160,69 @@ public class Mfds {
 		return mfd;
 	}
 
+	/*
+	 * A Tapered GR distribution is difficult to make as a child of GR because
+	 * to fully initialize a GR requires multiple steps (e.g. scaleTo...) Could
+	 * do it independently; would require calculateRelativeRates. We'll just
+	 * create a factory method for now until MFD TODO Builders are impl.
+	 */
+
+	public static IncrementalMfd newTaperedGutenbergRichterMFD(double min, double delta, int size,
+			double a, double b, double corner, double weight) {
+		GutenbergRichterMfd mfd = newGutenbergRichterMFD(min, delta, size, b, 1.0);
+		double incrRate = incrRate(a, b, min) * weight;
+		mfd.scaleToIncrRate(min, incrRate);
+		taper(mfd, corner);
+		return mfd;
+	}
+
+	private static final double TAPERED_LARGE_MAG = 9.05;
+	private static final double SMALL_MO_MAG = 4.0;
+
+	/*
+	 * This Tapered-GR implementation maintains consistency with NSHM but should
+	 * probably be revisited because scaling varies with choice of
+	 * TAPERED_LARGE_MAG and SMALL_MO_MAG, below. Although variation is not
+	 * great, it would probably be better to derive SMALL_MO_MAG from the
+	 * supllied MFD and use Magnitudes.MAX_MAG for TAPERED_LARGE_MAG instead.
+	 */
+	private static void taper(GutenbergRichterMfd mfd, double mCorner) {
+
+		double minMo = magToMoment_N_m(SMALL_MO_MAG);
+		double cornerMo = magToMoment_N_m(mCorner);
+		double largeMo = magToMoment_N_m(TAPERED_LARGE_MAG);
+		double beta = mfd.get_bValue() / 1.5;
+		double binHalfWidth = mfd.getDelta() / 2.0;
+
+		for (int i = 0; i < mfd.getNum(); i++) {
+			double mag = mfd.getX(i);
+			double magMoLo = magToMoment_N_m(mag - binHalfWidth);
+			double magMoHi = magToMoment_N_m(mag + binHalfWidth);
+
+			double magBinCountTapered = magBinCount(minMo, magMoLo, magMoHi, beta, cornerMo);
+			double magBinCount = magBinCount(minMo, magMoLo, magMoHi, beta, largeMo);
+			double scale = magBinCountTapered / magBinCount;
+			mfd.set(i, mfd.getY(i) * scale);
+		}
+	}
+
+	/*
+	 * Convenience method for computing the number of events in a tapered GR
+	 * magnitude bin.
+	 */
+	private static double magBinCount(double minMo, double magMoLo, double magMoHi, double beta,
+			double cornerMo) {
+		return pareto(minMo, magMoLo, beta, cornerMo) - pareto(minMo, magMoHi, beta, cornerMo);
+	}
+
+	/*
+	 * Complementary Pareto distribution: cumulative number of events with
+	 * seismic moment greater than magMo with an exponential taper
+	 */
+	private static double pareto(double minMo, double magMo, double beta, double cornerMo) {
+		return pow(minMo / magMo, beta) * exp((minMo - magMo) / cornerMo);
+	}
+
 	private static IncrementalMfd buildIncrementalBaseMFD(double min, double max, int size,
 			boolean floats) {
 		return new IncrementalMfd(min, max, size, floats);
@@ -188,7 +254,7 @@ public class Mfds {
 		double M;
 		for (int i = 0; i < nMag; i++) {
 			M = mMin + i * dMag;
-			moRate += grRate(a, b, M) * magToMoment(M);
+			moRate += grRate(a, b, M) * magToMoment_N_m(M);
 		}
 		return moRate;
 	}
@@ -261,7 +327,23 @@ public class Mfds {
 	public static double probToRate(double P, double time) {
 		return -log(1 - P) / time;
 	}
-	
+
+	public static Converter<Double, Double> annRateToPoissProbConverter() {
+		return AnnualRateToPoissonProbConverter.INSTANCE;
+	}
+
+	private static final class AnnualRateToPoissonProbConverter extends Converter<Double, Double> {
+		static final AnnualRateToPoissonProbConverter INSTANCE = new AnnualRateToPoissonProbConverter();
+
+		@Override protected Double doForward(Double rate) {
+			return rateToProb(rate, 1.0);
+		}
+
+		@Override protected Double doBackward(Double prob) {
+			return probToRate(prob, 1.0);
+		}
+	}
+
 	/**
 	 * Convert an {@code IncrementalMfd} to an {@code ArrayXY_Sequence}.
 	 * 
@@ -277,10 +359,8 @@ public class Mfds {
 	/**
 	 * Combine all {@code mfds} into a single sequence.
 	 * @param mfds
-	 * @return
 	 */
-	@Deprecated
-	public static XY_Sequence combine(IncrementalMfd... mfds) {
+	@Deprecated public static XY_Sequence combine(IncrementalMfd... mfds) {
 		// TODO slated for removal once MFDs descend from XY_Sequence
 		checkArgument(checkNotNull(mfds).length > 0);
 		List<XY_Sequence> sequences = new ArrayList<>();
@@ -289,6 +369,5 @@ public class Mfds {
 		}
 		return DataUtils.combine(sequences);
 	}
-	
 
 }

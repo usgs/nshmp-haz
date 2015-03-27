@@ -10,10 +10,11 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 
 /**
- * Intesity measure type (Imt) identifiers.
+ * Intesity measure type (Imt) identifiers. {@code SA0P1} stands for spectal
+ * acceleration of 0.1 seconds.
  * @author Peter Powers
  */
-// @SuppressWarnings("javadoc")
+@SuppressWarnings("javadoc")
 public enum Imt {
 
 	PGA,
@@ -69,8 +70,8 @@ public enum Imt {
 	/**
 	 * Returns the {@code List} of periods for the supplied {@code Imt}s. The
 	 * result will be sorted according to the iteration order of the supplied
-	 * {@code Collection}. Any non spectral acceleration {@code Imt}s will have null
-	 * values in the returned {@code List}.
+	 * {@code Collection}. Any non spectral acceleration {@code Imt}s will have
+	 * null values in the returned {@code List}.
 	 * 
 	 * @param imts to list periods for
 	 * @return a {@code List} of spectral periods

@@ -4,8 +4,6 @@ import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static org.opensha.gmm.FaultStyle.REVERSE;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Implementation of the Idriss (2014) next generation ground motion model
  * for active crustal regions developed as part of <a

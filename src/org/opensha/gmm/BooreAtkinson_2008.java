@@ -8,10 +8,8 @@ import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha.gmm.FaultStyle.UNKNOWN;
 import static org.opensha.gmm.Imt.PGA;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
- * Implementation of the Boore &amp; Atkinson (2008) next generation attenuation
+ * Implementation of the Boore & Atkinson (2008) next generation attenuation
  * relationship for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
@@ -31,7 +29,7 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 public final class BooreAtkinson_2008 implements GroundMotionModel {
 
-	static final String NAME = "Boore \u0026 Atkinson (2008)";
+	static final String NAME = "Boore & Atkinson (2008)";
 
 	static final CoefficientContainer CC = new CoefficientContainer("BA08.csv", Coeffs.class);
 

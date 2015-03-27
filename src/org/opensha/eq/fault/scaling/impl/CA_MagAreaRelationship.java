@@ -20,11 +20,17 @@ package org.opensha.eq.fault.scaling.impl;
 
 import org.opensha.eq.fault.scaling.MagAreaRelationship;
 
-/*
- * This is an implementation of the bizarre NSHMP EllB/WC94 Mag-Area relation.
- * See hazFXnga7c.f line ~1773
+/**
+ * NSHMP EllB/WC94 mag-area relation.
+ *
+ * @author Peter Powers
  */
 public class CA_MagAreaRelationship extends MagAreaRelationship {
+
+	/*
+	 * This is an implementation of the bizarre NSHMP EllB/WC94 Mag-Area relation.
+	 * See hazFXnga7c.f line ~1773
+	 */
 
 	private final static String NAME = "NSHMP CA Mag-Area Relation";
 

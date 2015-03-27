@@ -10,10 +10,8 @@ import static org.opensha.gmm.FaultStyle.REVERSE;
 import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha.gmm.Imt.PGA;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
- * Implementation of the Boore, Stewart, Seyhan, &amp; Atkinson (2014) next
+ * Implementation of the Boore, Stewart, Seyhan, & Atkinson (2014) next
  * generation ground motion model for active crustal regions developed as
  * part of<a href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
@@ -32,7 +30,7 @@ import org.opensha.calc.ScalarGroundMotion;
  */
 public final class BooreEtAl_2014 implements GroundMotionModel {
 
-	static final String NAME = "Boore, Stewart, Seyhan \u0026 Atkinson (2014)";
+	static final String NAME = "Boore, Stewart, Seyhan & Atkinson (2014)";
 
 	static final CoefficientContainer CC = new CoefficientContainer("BSSA14.csv", Coeffs.class);
 

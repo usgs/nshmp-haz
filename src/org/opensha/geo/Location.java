@@ -1,17 +1,20 @@
 package org.opensha.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha.geo.GeoTools.*;
-
 import static org.opensha.geo.GeoTools.TO_DEG;
 import static org.opensha.geo.GeoTools.TO_RAD;
+import static org.opensha.geo.GeoTools.validateDepth;
+import static org.opensha.geo.GeoTools.validateLat;
+import static org.opensha.geo.GeoTools.validateLon;
 
 import java.util.Iterator;
 
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
+import com.google.common.primitives.Doubles;
 
 /**
  * A {@code Location} represents a point with reference to the earth's
@@ -19,7 +22,7 @@ import com.google.common.collect.FluentIterable;
  * seismology, the convention adopted in here is for depth to be positive-down,
  * always. All utility methods in this package assume this to be the case.
  * {@code Location}s may be defined using longitude values in the range:
- * [-180&#176;, 360&#176;]. {@code Location} instances are immutable.
+ * [-180°, 360°]. {@code Location} instances are immutable.
  * 
  * <p>Note that although static factory methods take arguments in the order:
  * [lat, lon, depth], {@code String} representations of a {@code Location} are
@@ -43,12 +46,6 @@ public final class Location implements Comparable<Location> {
 	
 	private static final String TO_STR_FMT = FORMAT + "," + FORMAT + "," + FORMAT;
 	
-	// TODO possibly store degrees and radians; distance calcs are optimized to
-	// radians,
-	// but Region.contains() requires degree values; how often is this used?
-	// grid source
-	// iterators do no not use region
-
 	private final double lat;
 	private final double lon;
 	private final double depth;
@@ -226,8 +223,8 @@ public final class Location implements Comparable<Location> {
 		@Override
 		public Location apply(String s) {
 			Iterator<Double> it = FluentIterable
-				.from(Parsing.splitOnCommas(checkNotNull(s)))
-				.transform(Parsing.doubleValueFunction()).iterator();
+				.from(Parsing.split(checkNotNull(s), Delimiter.COMMA))
+				.transform(Doubles.stringConverter()).iterator();
 			// lon is first arg in KML but second in Location constructor
 			double lon = it.next();
 			return create(it.next(), lon, it.next());

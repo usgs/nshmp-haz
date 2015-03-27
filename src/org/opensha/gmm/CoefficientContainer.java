@@ -1,6 +1,6 @@
 package org.opensha.gmm;
 
-import static com.google.common.base.Charsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.google.common.io.Resources;
+import com.google.common.primitives.Doubles;
 
 /**
  * Class loads and manages {@code GroundMotionModel} coefficients.
@@ -64,17 +66,16 @@ final class CoefficientContainer {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * Sets the coefficient fields for the supplied {@code Imt}.
 	 */
-	private void set(Coefficients c, Imt imt) throws IllegalAccessException,
-			NoSuchFieldException {
+	private void set(Coefficients c, Imt imt) throws IllegalAccessException, NoSuchFieldException {
 		for (String name : table.columnKeySet()) {
 			double value = table.get(imt, name);
 			c.getClass().getDeclaredField(name).set(c, value);
-			c.imt = imt;
 		}
+		c.imt = imt;
 	}
 
 	Coefficients get(Imt imt) {
@@ -91,7 +92,7 @@ final class CoefficientContainer {
 	double get(Imt imt, String name) {
 		return table.get(imt, name);
 	}
-	
+
 	/**
 	 * Returns an {@code EnumSet} if the intensity measure types (IMTs) for
 	 * which coefficients are supplied.
@@ -103,25 +104,23 @@ final class CoefficientContainer {
 
 	private Table<Imt, String, Double> load(String resource) throws IOException {
 		URL url = Resources.getResource(Coefficients.class, C_DIR + resource);
-		List<String> lines = Resources.readLines(url, US_ASCII);
+		List<String> lines = Resources.readLines(url, UTF_8);
 		// build coeff name list
-		Iterable<String> nameList = Parsing.splitOnCommas(lines.get(0));
+		Iterable<String> nameList = Parsing.split(lines.get(0), Delimiter.COMMA);
 		Iterable<String> names = Iterables.skip(nameList, 1);
 		// build Imt-value map
 		Map<Imt, Double[]> valueMap = Maps.newHashMap();
 		for (String line : Iterables.skip(lines, 1)) {
-			Iterable<String> entries = Parsing.splitOnCommas(line);
+			Iterable<String> entries = Parsing.split(line, Delimiter.COMMA);
 			String imtStr = Iterables.get(entries, 0);
 			Imt imt = Imt.parseImt(imtStr);
 			checkNotNull(imt, "Unparseable Imt: " + imtStr);
 			Iterable<String> valStrs = Iterables.skip(entries, 1);
-			Iterable<Double> values = Iterables.transform(valStrs, 
-				Parsing.doubleValueFunction());
+			Iterable<Double> values = Iterables.transform(valStrs, Doubles.stringConverter());
 			valueMap.put(imt, Iterables.toArray(values, Double.class));
 		}
 		// create and load table
-		Table<Imt, String, Double> table = ArrayTable.create(valueMap.keySet(),
-			names);
+		Table<Imt, String, Double> table = ArrayTable.create(valueMap.keySet(), names);
 		for (Imt imt : valueMap.keySet()) {
 			Double[] values = valueMap.get(imt);
 			int i = 0;
@@ -131,5 +130,5 @@ final class CoefficientContainer {
 		}
 		return table;
 	}
-	
+
 }

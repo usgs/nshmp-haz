@@ -73,7 +73,6 @@ public interface XY_DataSet extends Named, Iterable<Point2D> {
 	 * Get the Y value for the point with closest X
 	 * 
 	 * @param x
-	 * @return
 	 */
 	public double getClosestY(double x);
 
@@ -81,7 +80,6 @@ public interface XY_DataSet extends Named, Iterable<Point2D> {
 	 * Get the X value for the point with closest Y
 	 * 
 	 * @param y
-	 * @return
 	 */
 	public double getClosestX(double y);
 
@@ -133,7 +131,6 @@ public interface XY_DataSet extends Named, Iterable<Point2D> {
 	/**
 	 * Returns an iterator over all x-values in the list. Results returned
 	 * in sorted order.
-	 * @return
 	 */
 	public Iterator<Double> getXValuesIterator();
 
@@ -141,7 +138,6 @@ public interface XY_DataSet extends Named, Iterable<Point2D> {
 	/**
 	 * Returns an iterator over all y-values in the list. Results returned
 	 * in sorted order along the x-axis.
-	 * @return
 	 */
 	public Iterator<Double> getYValuesIterator();
 

@@ -17,7 +17,6 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  * @author Kevin Milner
- * @version $Id: DefaultXY_DataSet.java 9729 2012-11-07 21:33:01Z kmilner $
  */
 public class DefaultXY_DataSet extends AbstractXY_DataSet {
 	
@@ -175,7 +174,6 @@ public class DefaultXY_DataSet extends AbstractXY_DataSet {
 	/**
 	 * Standard java function, usually used for debugging, prints out
 	 * the state of the list, such as number of points, the value of each point, etc.
-	 * @return
 	 */
 	public String toString(){
 		StringBuffer b = new StringBuffer();

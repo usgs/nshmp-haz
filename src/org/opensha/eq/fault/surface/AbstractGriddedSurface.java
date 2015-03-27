@@ -3,7 +3,7 @@ package org.opensha.eq.fault.surface;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.opensha.eq.forecast.Distances;
+import org.opensha.eq.model.Distances;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.geo.Region;
@@ -26,8 +26,8 @@ import com.google.common.collect.Lists;
  */
 public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> implements GriddedSurface {
 
-	protected double strikeSpacing;
-	protected double dipSpacing;
+	double strikeSpacing;
+	double dipSpacing;
 //	protected Boolean sameGridSpacing;
 	
 	// for distance measures
@@ -88,7 +88,6 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 
 	/**
 	 * Returns the grid spacing along strike
-	 * @return
 	 */
 	public double getGridSpacingAlongStrike() {
 		return this.strikeSpacing;
@@ -96,7 +95,6 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 
 	/**
 	 * returns the grid spacing down dip
-	 * @return
 	 */
 	public double getGridSpacingDownDip() {
 		return this.dipSpacing;
@@ -129,7 +127,6 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 	 * gets the location from the 2D container
 	 * @param row
 	 * @param column
-	 * @return
 	 */
 	public Location getLocation(int row, int column) {
 		return get(row, column);
@@ -138,7 +135,6 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 	/**
 	 * Gets a specified row as a fault trace
 	 * @param row
-	 * @return
 	 */
 	public LocationList getRowAsTrace(int row) {
 		List<Location> locs = Lists.newArrayList();

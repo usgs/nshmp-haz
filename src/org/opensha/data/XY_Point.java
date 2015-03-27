@@ -4,7 +4,6 @@ package org.opensha.data;
  * XY value container.
  * 
  * @author Peter Powers
- * @version $Id:$
  */
 public interface XY_Point {
 

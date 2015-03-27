@@ -50,7 +50,6 @@ public class PEER_testsMagAreaRelationship extends MagAreaRelationship {
 
     /**
      * Gives the standard deviation for the magnitude as a function of area
-     * @param area in km-squared
      * @return this returns NaN because I'm not sure the
      */
     public double getMagStdDev() {
@@ -68,8 +67,6 @@ public class PEER_testsMagAreaRelationship extends MagAreaRelationship {
 
     /**
      * Computes the standard deviation of log(area) (base-10) from magnitude
-     * @param mag - moment magnitude
-     * @param rake in degrees
      * @return standard deviation
      */
     public double getAreaStdDev() {

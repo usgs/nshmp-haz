@@ -1,6 +1,7 @@
 package org.opensha.eq.fault.surface;
 
 import org.opensha.eq.fault.Faults;
+import org.opensha.geo.GeoTools;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.geo.LocationVector;
@@ -16,12 +17,12 @@ import org.opensha.geo.Locations;
  * @author Ned Field
  * @author Peter Powers
  */
-public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
+public class ApproxGriddedSurface extends AbstractGriddedSurface {
 
 	private LocationList upperTrace = null;
 	private LocationList lowerTrace = null;
 	
-	private double avgDip;
+	private double avgDipRad;
 	private double avgDepth; 
 	
 
@@ -163,8 +164,9 @@ public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 		
 		// set dip
 		LocationVector vFirst = LocationVector.create(upperTrace.first(), lowerTrace.first());
-		LocationVector vLast = LocationVector.create(upperTrace.first(), lowerTrace.first());
-		avgDip = (vFirst.plungeDegrees() + vLast.plungeDegrees()) / 2;
+		LocationVector vLast = LocationVector.create(upperTrace.last(), lowerTrace.last());
+		double avgDip = (vFirst.plungeDegrees() + vLast.plungeDegrees()) / 2;
+		avgDipRad = avgDip * GeoTools.TO_RAD;
 		
 		avgDepth = upperTrace.averageDepth();
 		
@@ -334,10 +336,9 @@ public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 		return Faults.strike(upperTrace);
 	}
 
-
 	@Override
 	public double dip() {
-		return avgDip;
+		return avgDipRad * GeoTools.TO_DEG;
 		
 		//TODO clean
 //		LocationVector vFirst = LocationVector.create(upperTrace.first(), lowerTrace.first());
@@ -370,6 +371,11 @@ public class ApproxGriddedSurface extends AbstractGriddedSurfaceWithSubsets {
 
 //		throw new UnsupportedOperationException("Implement me!");
 		// TODO compute lazily?
+	}
+	
+	@Override
+	public double dipRad() {
+		return avgDipRad;
 	}
 
 

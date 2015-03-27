@@ -23,14 +23,12 @@ import org.opensha.eq.fault.Faults;
 import org.opensha.util.Named;
 
 /**
- * <b>Title:</b>MagScalingRelationship<br>
- *
- * <b>Description:  This is an abstract class that gives the median and standard
+ * This is an abstract class that gives the median and standard
  * deviation of magnitude as a function of some scalar value (or the median and
  * standard deviation of the scalar value as a function of magnitude).  The values
  * can also be a function of rake</b>  <p>
  * 
- * TODO can these all be made stateless
+ * TODO can these all be made stateless??
  *
  * @author Edward H. Field
  * @version 1.0

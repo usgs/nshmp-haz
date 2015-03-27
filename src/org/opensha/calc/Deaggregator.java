@@ -3,7 +3,7 @@ package org.opensha.calc;
 import java.util.concurrent.Callable;
 
 /**
- * Deaggregation.... hmmm... what to do.....
+ * Deagg.... hmmm... what to do.....
  * 
  * Basic deagg:
  * 		epsilon 
@@ -38,7 +38,7 @@ import java.util.concurrent.Callable;
  * @author Peter Powers
  * @version $Id:$
  */
-public class Deaggregator implements Callable<DeaggResult> {
+class Deaggregator {
 
 	/**
 	 * @param args
@@ -56,16 +56,20 @@ public class Deaggregator implements Callable<DeaggResult> {
 	 * from list of gm means and std devs, and a target IML.
 	 * @return
 	 */
-	public static Deaggregator create(HazardCalcResultSet data) {
-		return null;
-	}
+//	public static Deaggregator create(HazardCalcResultSet data) {
+//		return null;
+//	}
 
 
-	@Override
-	public DeaggResult call() throws Exception {
-		return null;
-		// TODO do nothing
-		
-	}
+//	@Override
+//	public Deagg call() throws Exception {
+//		return null;
+//		// TODO do nothing
+//		
+//	}
+	
+//	static Deagg deaggregate(HazardResult hazdata) {
+//		
+//	}
 
 }

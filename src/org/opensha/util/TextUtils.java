@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Map;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Strings;
 
 /**
@@ -14,6 +15,8 @@ import com.google.common.base.Strings;
  */
 public class TextUtils {
 
+	public static final String NEWLINE = StandardSystemProperty.LINE_SEPARATOR.value();
+	
 	private static final Joiner.MapJoiner MAP_JOIN = Joiner.on(", ").withKeyValueSeparator(": ");
 
 	private String toString(Map<?, ?> map) {

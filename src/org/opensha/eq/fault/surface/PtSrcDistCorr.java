@@ -10,6 +10,7 @@ import org.opensha.gmm.GmmUtils;
  * @author field
  *
  */
+@Deprecated
 public class PtSrcDistCorr {
 	
 	public enum Type {

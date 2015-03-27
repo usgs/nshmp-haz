@@ -9,15 +9,17 @@ import static org.opensha.data.DataUtils.uncheckedFlip;
 import static org.opensha.data.DataUtils.uncheckedMultiply;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
+
+import com.google.common.base.Function;
+import com.google.common.primitives.Doubles;
 
 /**
  * Array based implementation of an {@code XY_Sequence}.
  * 
- * <p><em>Notes on usage:</em>
- * 
  * <p>This class provides methods for combining and modifying array-based
- * sequences (e.g. {@link #add(ArrayXY_Sequence)} TODO more links ). These are
+ * sequences (e.g. {@link #add(ArrayXY_Sequence)}). These are
  * very efficient implementations that should be used in favor of standard
  * iterators where possible.</p>
  * 
@@ -26,7 +28,6 @@ import java.util.Objects;
  * constructor as it short circuits time-consuming argument validation.</p>
  * 
  * @author Peter Powers
- * @version $Id:$
  */
 public class ArrayXY_Sequence extends AbstractXY_Sequence {
 
@@ -75,6 +76,22 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	public static ArrayXY_Sequence create(double[] xs, double[] ys) {
 		return new ArrayXY_Sequence(xs, ys);
 	}
+	
+	/**
+	 * Create a new sequence from the supplied value {@code Collection}s.
+	 * 
+	 * @param xs x-values to initialize sequence with
+	 * @param ys y-values to initialize sequence with; may be {@code null}
+	 * @return an array based sequence
+	 * @throws NullPointerException if {@code xs} are {@code null}
+	 * @throws IllegalArgumentException if {@code xs} and {@code ys} are not the
+	 *         same size
+	 * @throws IllegalArgumentException if {@code xs} does not increase
+	 *         monotonically or contains repeated values
+	 */
+	public static ArrayXY_Sequence create(Collection<Double> xs, Collection<Double> ys) {
+		return create(Doubles.toArray(checkNotNull(xs)), Doubles.toArray(checkNotNull(ys)));
+	}
 
 	/**
 	 * Create a copy of the supplied {@code sequence}.
@@ -86,6 +103,21 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 */
 	public static ArrayXY_Sequence copyOf(ArrayXY_Sequence sequence) {
 		return new ArrayXY_Sequence(sequence);
+	}
+	
+	/**
+	 * Create a copy of the supplied {@code sequence}.
+	 * 
+	 * @param sequence to copy
+	 * @return a copy of the supplied {@code sequence}
+	 * @throws NullPointerException if the supplied {@code sequence} is
+	 *         {@code null}
+	 */
+	public static ArrayXY_Sequence copyOf(XY_Sequence sequence) {
+		if (sequence instanceof ArrayXY_Sequence) {
+			return copyOf((ArrayXY_Sequence) sequence);
+		}
+		return create(sequence.xValues(), sequence.yValues());
 	}
 
 	/**
@@ -99,13 +131,9 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	 * @return a resampled sequence
 	 */
 	public static ArrayXY_Sequence resampleTo(XY_Sequence sequence, double[] xs) {
+		// NOTE TODO this will support mfd combining
 		checkNotNull(sequence);
 		checkArgument(checkNotNull(xs).length > 0);
-		// TODO Interpolate should handle Lists as well as arrays; the lists
-		// returned by AbstractXY_Sequence are immutable
-		// TODO this could be optimized to work directly with
-		// ArrayXY_Sequence.xs and .ys, but its probably not necessary given the
-		// above
 		double[] yResample = Interpolate.findY(sequence.xValues(), sequence.yValues(), xs);
 		// TODO disable extrapolation
 		if (true) throw new UnsupportedOperationException();
@@ -212,12 +240,23 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	}
 	
 	/**
-	 * Sets all y-value to 0.
+	 * Sets all y-values to 0.
 	 * 
 	 * @return {@code this} sequence, for use inline
 	 */
 	public ArrayXY_Sequence clear() {
 		Arrays.fill(ys, 0.0);
+		return this;
+	}
+	
+	/**
+	 * Transforms all y-values in place using the supplied {@link Function}.
+	 * 
+	 * @param function for transform
+	 * @return {@code this} sequence, for use inline
+	 */
+	public ArrayXY_Sequence transform(Function<Double, Double> function) {
+		DataUtils.uncheckedTransform(function, ys);
 		return this;
 	}
 

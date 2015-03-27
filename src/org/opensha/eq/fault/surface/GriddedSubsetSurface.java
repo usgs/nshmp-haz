@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.opensha.eq.forecast.Distances;
+import org.opensha.eq.model.Distances;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.geo.Locations;
@@ -97,9 +97,13 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
      */
      @Override
     public double dip() {
-        return ( ( AbstractGriddedSurfaceWithSubsets ) data ).dip();
+        return ((AbstractGriddedSurface) data ).dip();
     }
      
+     @Override
+    public double dipRad() {
+        return ((AbstractGriddedSurface) data ).dipRad();
+    }
 
     /** Debug string to represent a tab. Used by toString().  */
     final static char TAB = '\t';
@@ -127,8 +131,6 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 
     /**
      * returns the grid spacing along strike
-     *
-     * @return
      */
     public double getGridSpacingAlongStrike() {
       return ((AbstractGriddedSurface)data).getGridSpacingAlongStrike();
@@ -137,8 +139,6 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 
     /**
      * returns the grid spacing down dip
-     *
-     * @return
      */
     public double getGridSpacingDownDip() {
       return ((AbstractGriddedSurface)data).getGridSpacingDownDip();
@@ -322,7 +322,6 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location>  implement
 
 	/**
 	 * This returns the parent surface
-	 * @return
 	 */
 	public GriddedSurface getParentSurface() {
 		return parentSurface;

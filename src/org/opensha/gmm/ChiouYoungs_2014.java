@@ -13,10 +13,8 @@ import static org.opensha.geo.GeoTools.TO_RAD;
 import static org.opensha.gmm.FaultStyle.NORMAL;
 import static org.opensha.gmm.FaultStyle.REVERSE;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
- * Implementation of the Chiou &amp; Youngs (2014) next generation attenuation
+ * Implementation of the Chiou & Youngs (2014) next generation attenuation
  * relationship for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
@@ -39,7 +37,7 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	// TODO consider removing odd 0.12 and 0.17s periods
 
-	static final String NAME = "Chiou \u0026 Youngs (2014)";
+	static final String NAME = "Chiou & Youngs (2014)";
 
 	static final CoefficientContainer CC = new CoefficientContainer(
 		"CY14.csv", Coeffs.class);

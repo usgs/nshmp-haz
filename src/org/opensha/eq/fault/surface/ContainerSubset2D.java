@@ -38,7 +38,6 @@ import java.util.NoSuchElementException;
  * any Container2DAPI.<p>
  *
  * @author     Steven W. Rock
- * @created    February 25, 2002
  * @version    1.0
  */
 
@@ -214,7 +213,7 @@ public class ContainerSubset2D<T> implements Container2D<T> {
 	 *  Used to update the starting cal index in the Window2D. If invalid
 	 *  data, the window is rolled back to the old one.
 	 *
-	 * @param  startRow                            The new startCal value in Window2D
+	 * @param  startCol                            The new startCal value in Window2D
 	 * @exception  ArrayIndexOutOfBoundsException  Thrown if this start cal is an invalid index in the main container, i.e. too large or negative.
 	 */
 	public void setStartCol( int startCol ) throws ArrayIndexOutOfBoundsException {
@@ -369,7 +368,7 @@ public class ContainerSubset2D<T> implements Container2D<T> {
 	 *  Iterate over all row values in one column of the surface. Note this only
 	 *  returns the row values in this subset window, not the full container.
 	 *
-	 * @param  row                                 Column to get all row points from
+	 * @param  column                                 Column to get all row points from
 	 * @return                                     The rowIterator value
 	 * @exception  ArrayIndexOutOfBoundsException  If the y-coord index value are invalid for the container2D
 	 */

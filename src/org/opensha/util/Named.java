@@ -7,7 +7,6 @@ package org.opensha.util;
  * never return {@code null} or an empty {@code String}.
  * 
  * @author Peter Powers
- * @version $Id:$
  */
 public interface Named {
 

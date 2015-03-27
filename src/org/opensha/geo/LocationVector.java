@@ -17,7 +17,7 @@ import static org.opensha.geo.Locations.vertDistance;
  * that a {@code LocationVector} from point A to point B is not the complement
  * of that from point B to A. Although the horizontal and vertical components
  * will be the same, the azimuth will likely change by some value other than
- * 180&#176;.
+ * 180°.
  * 
  * <p><b>NOTE:</b> Although a {@code LocationVector} will function in any
  * reference frame, the convention in seismology and that adopted in OpenSHA is
@@ -121,7 +121,7 @@ public class LocationVector {
 	/**
 	 * Returns the angle (in radians) between this vector and a horizontal
 	 * plane. This method is intended for use at relatively short separations
-	 * (e.g. &lteq;200km) as it degrades at large distances where curvature is
+	 * (e.g. ≤200km) as it degrades at large distances where curvature is
 	 * not considered. Note that positive angles are down, negative angles are
 	 * up.
 	 * @return the plunge of this vector
@@ -133,7 +133,7 @@ public class LocationVector {
 	/**
 	 * Returns the angle (in decimal degrees) between this vector and a
 	 * horizontal plane. This method is intended for use at relatively short
-	 * separations (e.g. &lteq;200km) as it degrades at large distances where
+	 * separations (e.g. ≤200km) as it degrades at large distances where
 	 * curvature is not considered. Note that positive angles are down, negative
 	 * angles are up.
 	 * @return the plunge of this vector

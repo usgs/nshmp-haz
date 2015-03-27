@@ -1,12 +1,10 @@
 package org.opensha.gmm;
 
-import org.opensha.calc.ScalarGroundMotion;
 
 /**
  * Default wrapper for ground motion prediction equation (GMPE) results.
  * 
  * @author Peter Powers
- * @version $Id:$
  */
 public class DefaultScalarGroundMotion implements ScalarGroundMotion {
 

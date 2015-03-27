@@ -5,16 +5,15 @@ import static org.opensha.geo.BorderType.MERCATOR_LINEAR;
 
 import java.awt.Shape;
 
-
 /**
- * Add comments here
+ * Static utility methods pertaining to geographic regions.
  * 
- * Intersection and Union operations will discard any grid information if
- * GriddedRegions are supplied.
+ * <p>Note that intersection and union operations will discard any grid
+ * information if {@code GriddedRegion}s are supplied as arguments.</p>
  * 
- * To build complex gridded regions (e.g. circular or buffered, or via
+ * <p>To build complex gridded regions (e.g. circular or buffered, or via
  * intersections and unions) create a Region first and use
- * {@link Regions#toGridded(Region, double, double, Location)}.
+ * {@link Regions#toGridded(Region, double, double, Location)}.</p>
  * 
  * @author Peter Powers
  */
@@ -42,7 +41,7 @@ public class Regions {
 		r.initBordered(border, type);
 		return r;
 	}
-	
+
 	/**
 	 * Creates a {@code GriddedRegion} from a list of border locations. The
 	 * border type specifies whether lat-lon values are treated as points in an
@@ -63,12 +62,11 @@ public class Regions {
 	 * @throws IllegalArgumentException if the {@code border} does not have at
 	 *         least 3 points, defines a {@code Region} that is empty, or
 	 *         consists of more than a single closed path; or {@code spacing} is
-	 *         outside the range 0&deg; &lt; {@code spacing} &le; 5&deg;
+	 *         outside the range 0° < {@code spacing} ≤ 5°
 	 * @throws NullPointerException if the {@code border} is {@code null}
 	 */
-	public static GriddedRegion createGridded(String name, LocationList border,
-			BorderType type, double latSpacing, double lonSpacing,
-			Location anchor) {
+	public static GriddedRegion createGridded(String name, LocationList border, BorderType type,
+			double latSpacing, double lonSpacing, Location anchor) {
 		GriddedRegion gr = new GriddedRegion(name);
 		gr.initBordered(border, type);
 		gr.initGrid(latSpacing, lonSpacing, anchor);
@@ -98,13 +96,12 @@ public class Regions {
 	 * @throws NullPointerException if either {@code Location} argument is
 	 *         {@code null}
 	 */
-	public static Region createRectangular(String name, Location loc1,
-			Location loc2) {
+	public static Region createRectangular(String name, Location loc1, Location loc2) {
 		Region r = new Region(name);
 		r.initRectangular(loc1, loc2);
 		return r;
 	}
-	
+
 	/**
 	 * Creates a {@code GriddedRegion} from a pair of {@code Location }s. When
 	 * viewed in a Mercator projection, the {@code Region} will be a rectangle.
@@ -131,13 +128,12 @@ public class Regions {
 	 * @return a new rectangular (broadly-defined) {@code GriddedRegion}
 	 * @throws IllegalArgumentException if the latitude or longitude values in
 	 *         the {@code Location}s provided are the same or {@code spacing} is
-	 *         outside the range 0&deg; &lt; {@code spacing} &le; 5&deg;
+	 *         outside the range 0° < {@code spacing} ≤ 5°
 	 * @throws NullPointerException if either {@code Location} argument is
 	 *         {@code null}
 	 */
-	public static GriddedRegion createRectangularGridded(String name,
-			Location loc1, Location loc2, double latSpacing, double lonSpacing,
-			Location anchor) {
+	public static GriddedRegion createRectangularGridded(String name, Location loc1, Location loc2,
+			double latSpacing, double lonSpacing, Location anchor) {
 		GriddedRegion gr = new GriddedRegion(name);
 		gr.initRectangular(loc1, loc2);
 		gr.initGrid(latSpacing, lonSpacing, anchor);
@@ -147,14 +143,14 @@ public class Regions {
 	/**
 	 * Creates a circular {@code Region}. Internally, the centerpoint and radius
 	 * are used to create a circular region composed of straight line segments
-	 * that span 10&deg; wedges.
+	 * that span 10° wedges.
 	 * 
 	 * @param name of the {@code Region}; may be {@code null}
 	 * @param center of the circle
 	 * @param radius of the circle
 	 * @return a new circular {@code Region}
 	 * @throws IllegalArgumentException if {@code radius} is outside the range 0
-	 *         km &lt; {@code radius} &le; 1000 km
+	 *         km < {@code radius} ≤ 1000 km
 	 * @throws NullPointerException if {@code center} is {@code null}
 	 */
 	public static Region createCircular(String name, Location center, double radius) {
@@ -172,10 +168,9 @@ public class Regions {
 	 * @return a new buffered {@code Region} around a line
 	 * @throws NullPointerException if {@code line} is {@code null}
 	 * @throws IllegalArgumentException if {@code buffer} is outside the range 0
-	 *         km &lt; {@code buffer} &le; 500 km
+	 *         km < {@code buffer} ≤ 500 km
 	 */
-	public static Region createBuffered(String name, LocationList line,
-			double buffer) {
+	public static Region createBuffered(String name, LocationList line, double buffer) {
 		Region r = new Region(name);
 		r.initBuffered(line, buffer);
 		return r;
@@ -210,12 +205,12 @@ public class Regions {
 		gr.initCopy(region);
 		return gr;
 	}
-	
+
 	/**
 	 * Creates a {@code GriddedRegion} with the same shape as the supplied
-	 * {@code Region}. If the supplied {@code anchor Location} is
-	 * {@code null}, it is automatically set to the Location defined by the
-	 * minimum latitude and longitude of the region's border.
+	 * {@code Region}. If the supplied {@code anchor Location} is {@code null},
+	 * it is automatically set to the Location defined by the minimum latitude
+	 * and longitude of the region's border.
 	 * 
 	 * @param region to use as basis for new {@code GriddedRegion}
 	 * @param latSpacing of grid nodes
@@ -223,15 +218,15 @@ public class Regions {
 	 * @param anchor {@code Location} for grid; may be {@code null}
 	 * @return a new {@code GriddedRegion}
 	 * @throws IllegalArgumentException if {@code spacing} is outside the range
-	 *         0&deg; &lt; {@code spacing} &le; 5&deg;
+	 *         0° < {@code spacing} ≤ 5°
 	 * @throws NullPointerException if the supplied {@code Region} is
 	 *         {@code null}
 	 */
-	public static GriddedRegion toGridded(Region region, double latSpacing,
-			double lonSpacing, Location anchor) {
+	public static GriddedRegion toGridded(Region region, double latSpacing, double lonSpacing,
+			Location anchor) {
 		checkNotNull(region, "Supplied Region is null");
 		GriddedRegion gr = new GriddedRegion(region.name());
-		// TODO if supplied region is in fact  GR, check that still going to
+		// TODO if supplied region is in fact GR, check that still going to
 		// Region.initCopy()
 		gr.initCopy(region);
 		gr.initGrid(latSpacing, lonSpacing, anchor);
@@ -273,11 +268,11 @@ public class Regions {
 	public static Region unionOf(String name, Region r1, Region r2) {
 		return Region.union(name, r1, r2);
 	}
-	
+
 	/**
 	 * Convenience method to return a {@code Region} spanning the entire globe.
-	 * @return a {@code Region} extending from -180&#176; to +180&#176;
-	 *         longitude and -90&#176; to +90&#176; latitude
+	 * @return a {@code Region} extending from -180° to +180°
+	 *         longitude and -90° to +90° latitude
 	 */
 	public static Region global() {
 		// @formatter:off

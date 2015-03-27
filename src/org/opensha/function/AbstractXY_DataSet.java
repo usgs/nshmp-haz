@@ -86,7 +86,7 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
 	
 	/**
 	 * It finds out whether the X values are within tolerance of an integer value
-	 * @param tol tolerance value to consider  rounding errors
+	 * @param tolerance value to consider  rounding errors
 	 *
 	 * @return true if all X values are within the tolerance of an integer value
 	 * else returns false
@@ -105,7 +105,6 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
 	/**
 	 * Returns an iterator over all x-values in the list. Results returned
 	 * in sorted order. Returns null if no points present.
-	 * @return
 	 */
 	public Iterator<Double> getXValuesIterator(){
 		return new Iterator<Double>() {
@@ -132,7 +131,6 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
 	/**
 	 * Returns an iterator over all y-values in the list. Results returned
 	 * in sorted order along the x-axis. Returns null if no points present.
-	 * @return
 	 */
 	public Iterator<Double> getYValuesIterator(){
 		return new Iterator<Double>() {

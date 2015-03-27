@@ -4,11 +4,9 @@ import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.Imt.PGA;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Modified form of the relationship for the Central and Eastern US by Atkinson
- * &amp; Boore (2006). This implementation matches that used in the 2014 USGS
+ * & Boore (2006). This implementation matches that used in the 2014 USGS
  * NSHMP, incorporates a new, magnitude-dependent stress parameter, and uses
  * table lookups instead of functional forms to compute ground motions. This
  * relation is commonly referred to as AB06 Prime (AB06').
@@ -37,7 +35,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 
 	// TODO convert to functional form
 	
-	static final String NAME = "Atkinson \u0026 Boore (2006): Prime";
+	static final String NAME = "Atkinson & Boore (2006): Prime";
 	
 	// only period a-to-bc conversion factors
 	static final CoefficientContainer CC = new CoefficientContainer("AB06P.csv", Coeffs.class);

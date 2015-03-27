@@ -18,7 +18,8 @@
 
 package org.opensha.geo;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.awt.Shape;
 import java.awt.geom.Area;
@@ -34,59 +35,57 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
 /**
- * A {@code GriddedRegion} is a {@code Region} that has been
- * discretized in latitude and longitude. Each node in a gridded region
- * represents a small area that is some number of degrees in width and height
- * and is identified by a unique {@link Location} at the geographic (lat-lon)
- * center of the node. <img style="padding: 30px 40px; float: right;"
- * src="{@docRoot} /img/gridded_regions_border.jpg"/> In the adjacent figure,
- * the heavy black line marks the border of the {@code Region} . The light
- * gray dots mark the {@code Location}s of nodes outside the region, and
- * black dots those inside the region. The dashed grey line marks the border,
- * inside which, a {@code Location} will be associated with a grid node.
- * See {@link GriddedRegion#indexForLocation(Location)} for more details on
- * rules governing whether a grid node is inside a region and whether a
+ * A {@code GriddedRegion} is a {@link Region} that has been discretized in
+ * latitude and longitude. Each node in a gridded region represents a small area
+ * that is some number of degrees in width and height and is identified by a
+ * unique {@link Location} at the geographic (lat-lon) center of the node. <img
+ * style="padding: 30px 40px; float: right;" src="{@docRoot}
+ * /img/gridded_regions_border.jpg"/> In the adjacent figure, the heavy black
+ * line marks the border of the {@code Region} . The light gray dots mark the
+ * {@code Location}s of nodes outside the region, and black dots those inside
+ * the region. The dashed grey line marks the border, inside which, a
+ * {@code Location} will be associated with a grid node. See
+ * {@link GriddedRegion#indexForLocation(Location)} for more details on rules
+ * governing whether a grid node is inside a region and whether a
  * {@code Location} will be associated with a grid node.
  * 
- * <p>The {@code Location}s of the grid nodes are indexed internally in order
- * of increasing longitude then latitude starting with the node at the lowest
- * latitude and longitude in the region. {@code GriddedRegion}s are
- * iterable as a shorthand for {@code getNodeList().iterator()}. </p>
+ * <p>The {@code Location}s of the grid nodes are indexed internally in order of
+ * increasing longitude then latitude starting with the node at the lowest
+ * latitude and longitude in the region. {@code GriddedRegion}s are iterable as
+ * a shorthand for {@code getNodeList().iterator()}. </p>
  * 
  * <p>Internally, {@code GriddedRegion}s use an anchor {@code Location} to
- * ensure grid nodes fall on specific lat-lon values. This location can be anywhere in-
- * or outside the region to be gridded. If the region contains the anchor
- * location, the anchor will coincide with a grid node. For example, given a
- * grid spacing of 1&deg; and an anchor {@code Location} of 22.1&deg;N
- * -134.7&deg;W, grid nodes within any region will fall at whole valued
- * latitudes + 0.1&deg; and longitudes - 0.7&deg;.</p>
+ * ensure grid nodes fall on specific lat-lon values. This location can be
+ * anywhere in- or outside the region to be gridded. If the region contains the
+ * anchor location, the anchor will coincide with a grid node. For example,
+ * given a grid spacing of 1° and an anchor {@code Location} of 22.1°N
+ * -134.7°W, grid nodes within any region will fall at whole valued
+ * latitudes + 0.1° and longitudes - 0.7°.</p>
  * 
- * <p><a name="note"></a> <b><Note:</b> Due to rounding errors and the use of
- * an {@link Area} internally to define a {@code Region}'s border,
+ * <p><a name="note"></a> <b><Note:</b> Due to rounding errors and the use of an
+ * {@link Area} internally to define a {@code Region}'s border,
  * {@link Region#contains(Location)} may not always return the expected result
  * near a border. See {@link Region#contains(Location)} for further details. For
  * a {@code GriddedRegion}, this results in values returned by calls
  * {@link #minGridLat()} etc. for which there may not be any grid nodes. To
- * guarantee node coverage for a {@code GriddedRegion}, say for eventual
- * map output, 'best-practice' dictates expanding a region slightly.</p>
+ * guarantee node coverage for a {@code GriddedRegion}, say for eventual map
+ * output, 'best-practice' dictates expanding a region slightly.</p>
  * 
  * @author Nitin Gupta
  * @author Vipin Gupta
  * @author Peter Powers
- * @version $Id: GriddedRegion.java 9729 2012-11-07 21:33:01Z kmilner $
  * @see Region
  */
-
 public class GriddedRegion extends Region implements Iterable<Location> {
 
 	// TODO centralize location based rounding to 5 or 8 decimal places
 	// TODO build array to DataUtils with precision setting
 	// TODO remove method argument reliznce on AWT classes; may not be possible
-	//		(or difficult) due to UC3 FaultPolyMgr implementation
-	
-	/** Convenience reference for an anchor at (0&#176;, 0&#176;). */
+	// (or difficult) due to UC3 FaultPolyMgr implementation
+
+	/** Convenience reference for an anchor at (0°, 0°). */
 	public final static Location ANCHOR_0_0 = Location.create(0, 0);
-	
+
 	private static final Range<Double> SPACING_RANGE = Range.openClosed(0d, 5d);
 
 	// grid range data
@@ -116,8 +115,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 
 	/* for internal package use only */
 	GriddedRegion(String name) {
-		super(!Strings.isNullOrEmpty(name) ? name + " Gridded"
-			: "Unnamed Gridded Region");
+		super(!Strings.isNullOrEmpty(name) ? name + " Gridded" : "Unnamed Gridded Region");
 	}
 
 	/**
@@ -147,16 +145,15 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	/**
 	 * Returns whether this region contains any grid nodes. If a regions
 	 * dimensions are smaller than the grid spacing, it may be empty.
-	 * @return {@code true} if region has no grid nodes; {@code false}
-	 *         otherwise
+	 * @return {@code true} if region has no grid nodes; {@code false} otherwise
 	 */
 	public boolean isEmpty() {
 		return nodeCount == 0;
 	}
 
 	/**
-	 * Returns the index of the node at the supplied {@code Direction} from
-	 * the node at the supplied index.
+	 * Returns the index of the node at the supplied {@code Direction} from the
+	 * node at the supplied index.
 	 * @param idx to move from
 	 * @param dir to move
 	 * @return index at {@code Direction} or -1 if no node exists
@@ -165,23 +162,21 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	public int move(int idx, Direction dir) {
 		Location start = locationForIndex(idx);
 		checkNotNull(start, "Invalid start index");
-		Location end = Location.create(
-			start.lat() + latSpacing * dir.signLatMove(),
-			start.lon() + lonSpacing * dir.signLonMove());
+		Location end = Location.create(start.lat() + latSpacing * dir.signLatMove(), start.lon() +
+			lonSpacing * dir.signLonMove());
 		return indexForLocation(end);
 	}
-	
+
 	/**
-	 * Compares this {@code GriddedRegion} to another and returns
-	 * {@code true} if they are the same with respect to aerial extent
-	 * (both exterior and interior borders), grid node spacing, and location.
-	 * This method ignores the names of the {@code GriddedRegion}s. Use
+	 * Compares this {@code GriddedRegion} to another and returns {@code true}
+	 * if they are the same with respect to aerial extent (both exterior and
+	 * interior borders), grid node spacing, and location. This method ignores
+	 * the names of the {@code GriddedRegion}s. Use
 	 * {@code GriddedRegion.equals(Object)} to include name comparison.
 	 * 
 	 * @param gr the {@code Regions} to compare
-	 * @return {@code true} if this {@code Region} has the same
-	 *         geometry as the supplied {@code Region}, {@code false}
-	 *         otherwise
+	 * @return {@code true} if this {@code Region} has the same geometry as the
+	 *         supplied {@code Region}, {@code false} otherwise
 	 * @see GriddedRegion#equals(Object)
 	 */
 	public boolean equalsRegion(GriddedRegion gr) {
@@ -192,8 +187,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		return true;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
+	@Override public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof GriddedRegion)) return false;
 		GriddedRegion gr = (GriddedRegion) obj;
@@ -201,33 +195,28 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		return equalsRegion(gr);
 	}
 
-	@Override
-	public int hashCode() {
-		return super.hashCode() ^ anchor.hashCode() ^
-			Double.valueOf(latSpacing).hashCode() ^
+	@Override public int hashCode() {
+		return super.hashCode() ^ anchor.hashCode() ^ Double.valueOf(latSpacing).hashCode() ^
 			Double.valueOf(lonSpacing).hashCode();
 	}
 
-
 	/**
-	 * Overridden to throw an {@code UnsupportedOperationException} when
-	 * called. The border of a {@code GriddedRegion} may only be set on
-	 * initialization. To create a {@code GriddedRegion} that has interiors
-	 * (donut-holes), first create a {@code Region} with the required
-	 * border and interiors using {@link Region#addInterior(Region)} and then
-	 * use it to initialize a {@code GriddedRegion}.
+	 * Overridden to throw an {@code UnsupportedOperationException} when called.
+	 * The border of a {@code GriddedRegion} may only be set on initialization.
+	 * To create a {@code GriddedRegion} that has interiors (donut-holes), first
+	 * create a {@code Region} with the required border and interiors using
+	 * {@link Region#addInterior(Region)} and then use it to initialize a
+	 * {@code GriddedRegion}.
 	 * 
 	 * @throws UnsupportedOperationException
 	 * @see Region#addInterior(Region)
 	 */
-	@Override
-	public void addInterior(Region region) {
+	@Override public void addInterior(Region region) {
 		throw new UnsupportedOperationException(
 			"A GriddedRegion may not have an interior Region set");
 	}
 
-	@Override
-	public Iterator<Location> iterator() {
+	@Override public Iterator<Location> iterator() {
 		return nodes.iterator();
 	}
 
@@ -246,8 +235,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	 * all nodes, iterate over the region.
 	 * 
 	 * @param index of location to retrieve
-	 * @return the {@code Location} or {@code null} if index is out of
-	 *         range
+	 * @return the {@code Location} or {@code null} if index is out of range
 	 */
 	public Location locationForIndex(int index) {
 		try {
@@ -295,9 +283,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		while (rowStartIdx <= lastRowStartIdx) {
 			rowStarts.add(rowStartIdx);
 			Location currLoc = locationForIndex(rowStartIdx);
-			Location nextLoc = Location.create(
-				currLoc.lat() + latSpacing,
-				currLoc.lon());
+			Location nextLoc = Location.create(currLoc.lat() + latSpacing, currLoc.lon());
 			rowStartIdx = indexForLocation(nextLoc);
 		}
 
@@ -343,70 +329,33 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 
 	/**
 	 * Returns the index of the grid node associated with a given
-	 * {@code Location} or -1 if the associated grid node is ouside this
-	 * gridded region. For a {@code Location} to be associated with a node,
-	 * it must fall within the square region on which the node is centered. Note
-	 * that this allows for some {@code Location}s that are outside the
-	 * region border to still be associated with a node. Conversely, a
+	 * {@code Location} or -1 if the associated grid node is ouside this gridded
+	 * region. For a {@code Location} to be associated with a node, it must fall
+	 * within the square region on which the node is centered. Note that this
+	 * allows for some {@code Location}s that are outside the region border to
+	 * still be associated with a node. Conversely, a
 	 * {@link Region#contains(Location)} may return {@code true} while this
 	 * method returns -1. Users interested in node association should always use
 	 * this method alone and test for -1 return value.
 	 * {@link Region#contains(Location)} should <i>NOT</i> be used a as a test
-	 * prior to calling this method. <br/>
-	 * <br/>
-	 * The figure and table below indicate the results produced by calling
-	 * {@code contains()} or {@code indexForLocation()}. The arrows in
-	 * the figure point towards the interior of the {@code Region}. The
-	 * dots mark the centered {@code Location} of each grid node and the
-	 * numbers indicate the index value of each. Remember that both methods test
-	 * for insidedness according to the rules defined in the {@link Shape}
-	 * interface. <br/>
-	 * <img style="padding: 20px; display: block; margin-left:auto;
+	 * prior to calling this method. <br/> <br/> The figure and table below
+	 * indicate the results produced by calling {@code contains()} or
+	 * {@code indexForLocation()}. The arrows in the figure point towards the
+	 * interior of the {@code Region}. The dots mark the centered
+	 * {@code Location} of each grid node and the numbers indicate the index
+	 * value of each. Remember that both methods test for insidedness according
+	 * to the rules defined in the {@link Shape} interface. <br/> <img
+	 * style="padding: 20px; display: block; margin-left:auto;
 	 * margin-right:auto;" src="{@docRoot} /img/node_association.jpg"/> <br/>
-	 * <table id="table-a">
-	 * <thead>
-	 * <tr>
-	 * <th>Location</th>
-	 * <th>{@code contains(Location)}</th>
-	 * <th>{@code indexForLocation(Location)}</th>
-	 * </tr>
-	 * <thead> <tbody>
-	 * <tr>
-	 * <td><b>A</b></td>
-	 * <td>{@code true}</td>
-	 * <td>-1</td>
-	 * </tr>
-	 * <tr>
-	 * <td><b>B</b></td>
-	 * <td>{@code false}</td>
-	 * <td>3</td>
-	 * </tr>
-	 * <tr>
-	 * <td><b>C</b></td>
-	 * <td>{@code false}</td>
-	 * <td>3</td>
-	 * </tr>
-	 * <tr>
-	 * <td><b>D</b></td>
-	 * <td>{@code false}</td>
-	 * <td>-1</td>
-	 * </tr>
-	 * <tr>
-	 * <td><b>E</b></td>
-	 * <td>{@code true}</td>
-	 * <td>3</td>
-	 * </tr>
-	 * <tr>
-	 * <td><b>F</b></td>
-	 * <td>{@code true}</td>
-	 * <td>3</td>
-	 * </tr>
-	 * <tr>
-	 * <td><b>G</b></td>
-	 * <td>{@code true}</td>
-	 * <td>4</td>
-	 * </tr>
-	 * </tbody>
+	 * <table id="table-a"> <thead> <tr> <th>Location</th> <th>
+	 * {@code contains(Location)}</th> <th>{@code indexForLocation(Location)}
+	 * </th> </tr> <thead> <tbody> <tr> <td><b>A</b></td> <td>{@code true}</td>
+	 * <td>-1</td> </tr> <tr> <td><b>B</b></td> <td>{@code false}</td>
+	 * <td>3</td> </tr> <tr> <td><b>C</b></td> <td>{@code false}</td> <td>3</td>
+	 * </tr> <tr> <td><b>D</b></td> <td>{@code false}</td> <td>-1</td> </tr>
+	 * <tr> <td><b>E</b></td> <td>{@code true}</td> <td>3</td> </tr> <tr>
+	 * <td><b>F</b></td> <td>{@code true}</td> <td>3</td> </tr> <tr>
+	 * <td><b>G</b></td> <td>{@code true}</td> <td>4</td> </tr> </tbody>
 	 * </table>
 	 * 
 	 * @param loc the {@code Location} to match to a grid node index
@@ -519,7 +468,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 
 	/* Sets the gid node spacing. */
 	private void setSpacing(double lat, double lon) {
-		String mssg = "spacing [%s] must be 0\u00B0 \u003E S \u2265 5\u00B0";
+		String mssg = "[%s] must be 0° > spacing ≥ 5°";
 		checkArgument(SPACING_RANGE.contains(lat), "Latitude" + mssg, lat);
 		checkArgument(SPACING_RANGE.contains(lon), "Latitude" + mssg, lon);
 		latSpacing = lat;
@@ -534,16 +483,13 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	 */
 	private void setAnchor(Location anchor) {
 		if (anchor == null) anchor = Location.create(getMinLat(), getMinLon());
-		double lat = computeAnchor(getMinLat(), anchor.lat(),
-			latSpacing);
-		double lon = computeAnchor(getMinLon(), anchor.lon(),
-			lonSpacing);
+		double lat = computeAnchor(getMinLat(), anchor.lat(), latSpacing);
+		double lon = computeAnchor(getMinLon(), anchor.lon(), lonSpacing);
 		this.anchor = Location.create(lat, lon);
 	}
 
 	/* Computes adjusted anchor values. */
-	private static double computeAnchor(double min, double anchor,
-			double spacing) {
+	private static double computeAnchor(double min, double anchor, double spacing) {
 		double delta = anchor - min;
 		double num_div = Math.floor(delta / spacing);
 		double offset = delta - num_div * spacing;
@@ -619,8 +565,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	}
 
 	/* Node edge and center array builder. */
-	private static double[] buildArray(double startVal, int count,
-			double step) {
+	private static double[] buildArray(double startVal, int count, double step) {
 
 		double[] values = new double[count];
 		double val = startVal;

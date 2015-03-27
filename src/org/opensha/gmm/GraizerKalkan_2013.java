@@ -16,10 +16,8 @@ import static org.opensha.gmm.Imt.PGV;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
- * Implementation of the Graizer &amp; Kalkan (2013) GMPE. This model does not
+ * Implementation of the Graizer & Kalkan (2013) GMPE. This model does not
  * support specific periods as most other GMMs do; it can handle any frequency.
  * 
  * <p>Component: geometric mean of two randomly oriented horizontal
@@ -30,7 +28,7 @@ import org.opensha.calc.ScalarGroundMotion;
 @Deprecated
 final class GraizerKalkan_2013 implements GroundMotionModel {
 
-	static final String NAME = "Graizer \u0026 Kalkan (2013)";
+	static final String NAME = "Graizer & Kalkan (2013)";
 	
 	static final Set<Imt> IMTS = EnumSet.complementOf(EnumSet.of(PGV, PGD));
 	

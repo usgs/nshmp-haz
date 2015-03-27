@@ -8,11 +8,10 @@ import static java.lang.Math.sqrt;
 import static org.opensha.geo.GeoTools.TO_RAD;
 import static org.opensha.gmm.FaultStyle.NORMAL;
 
-import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.data.Interpolate;
 
 /**
- * Implementation of the Abrahamson, Silva &amp; Kamai (2014) next generation
+ * Implementation of the Abrahamson, Silva & Kamai (2014) next generation
  * ground motion model for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
  * 
@@ -31,7 +30,7 @@ import org.opensha.data.Interpolate;
  */
 public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
-	static final String NAME = "Abrahamson, Silva \u0026 Kamai (2014)";
+	static final String NAME = "Abrahamson, Silva & Kamai (2014)";
 	
 	static final CoefficientContainer CC = new CoefficientContainer(
 		"ASK14.csv", Coeffs.class);

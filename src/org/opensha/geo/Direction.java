@@ -8,7 +8,7 @@ import org.opensha.util.Parsing;
  * Identifiers for basic geographic directions.
  * @author Peter Powers
  */
-public enum Direction {
+enum Direction {
 
 	/** North */
 	NORTH,
@@ -33,20 +33,20 @@ public enum Direction {
 	}
 
 	/**
-	 * Returns the bearing in degrees (0&deg; &ndash; 360&deg;) associated with
-	 * this {@code Direction} (e.g. NORTHEAST = 45&deg;).
+	 * Returns the bearing in degrees [0°, 360°) associated with
+	 * this {@code Direction} (e.g. {@code NORTHEAST} = 45°).
 	 * @return the bearing in degrees
 	 */
-	public final double bearing() {
+	double bearing() {
 		return ordinal() * 45;
 	}
 
 	/**
-	 * Returns the numeric bearing in radians(0 &ndash; 2&pi;) associated with
-	 * this {@code Direction} (e.g. NORTHEAST = &pi;/4).
+	 * Returns the numeric bearing in radians [0, 2π) associated with
+	 * this {@code Direction} (e.g. {@code NORTHEAST} = π/4).
 	 * @return the bearing in radians
 	 */
-	public final double bearingRad() {
+	double bearingRad() {
 		return bearing() * TO_RAD;
 	}
 
@@ -54,7 +54,7 @@ public enum Direction {
 	 * Returns the {@code Direction} opposite this {@code Direction}
 	 * @return the opposite {@code Direction}
 	 */
-	public final Direction opposite() {
+	Direction opposite() {
 		return valueOf((ordinal() + 4) % 8);
 	}
 
@@ -63,7 +63,7 @@ public enum Direction {
 	 * {@code Direction}.
 	 * @return the next (moving clockwise) {@code Direction}
 	 */
-	public final Direction next() {
+	Direction next() {
 		return valueOf((ordinal() + 1) % 8);
 	}
 
@@ -72,7 +72,7 @@ public enum Direction {
 	 * {@code Direction}.
 	 * @return the previous (moving anti-clockwise) {@code Direction}
 	 */
-	public final Direction prev() {
+	Direction prev() {
 		return valueOf((ordinal() + 7) % 8);
 	}
 
@@ -83,7 +83,7 @@ public enum Direction {
 	 * @return the sign of a latitude change corresponding to a move in this
 	 *         {@code Direction}
 	 */
-	public final int signLatMove() {
+	int signLatMove() {
 		return dLat[ordinal()];
 	}
 
@@ -94,7 +94,7 @@ public enum Direction {
 	 * @return the sign of a longitude change corresponding to a move in this
 	 *         {@code Direction}
 	 */
-	public final int signLonMove() {
+	int signLonMove() {
 		return dLon[ordinal()];
 	}
 

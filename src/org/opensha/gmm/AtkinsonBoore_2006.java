@@ -9,11 +9,9 @@ import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.MagConverter.NONE;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Abstract implementation of the ground motion model for stable
- * continental regions by Atkinson &amp; Boore (2006). This implementation
+ * continental regions by Atkinson & Boore (2006). This implementation
  * matches that used in the 2008 USGS NSHMP. In addition to have two stress-drop
  * scaling variants, this model also comes in magnitude converting (mb to Mw)
  * flavors to support the 2008 central and eastern US model.
@@ -61,9 +59,9 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	//
 	// rounded .3968 to 0.4 s for one element of abper. SH june 30 2008
 	
-	static final String NAME = "Atkinson \u0026 Boore (2006)";
+	static final String NAME = "Atkinson & Boore (2006)";
 	
-	static final CoefficientContainer CC = new CoefficientContainer("AB06A.csv", Coeffs.class);
+	static final CoefficientContainer CC_A = new CoefficientContainer("AB06A.csv", Coeffs.class);
 	static final CoefficientContainer CC_BC = new CoefficientContainer("AB06BC.csv", Coeffs.class);
 	
 	static class Coeffs extends Coefficients {
@@ -94,8 +92,8 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	
 
 	AtkinsonBoore_2006(Imt imt) {
-		coeffsA = (Coeffs) CC.get(imt);
-		coeffsA_PGA = (Coeffs) CC.get(Imt.PGA);
+		coeffsA = (Coeffs) CC_A.get(imt);
+		coeffsA_PGA = (Coeffs) CC_A.get(Imt.PGA);
 		coeffsBC = (Coeffs) CC_BC.get(imt);
 		coeffsBC_PGA = (Coeffs) CC_BC.get(Imt.PGA);
 	}
@@ -197,5 +195,48 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
 		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
+	
+	// these are subclassed for mag conversion variants and therefore not final
+
+	static class StressDrop_140bar extends AtkinsonBoore_2006 {
+		static final String NAME = AtkinsonBoore_2006.NAME + ": 140 bar";
+
+		private static final double STRESS = 140.0;
+		private static final double SF2;
+
+		static {
+			SF2 = scaleFactorCalc(STRESS);
+		}
+
+		StressDrop_140bar(Imt imt) {
+			super(imt);
+		}
+
+		@Override double scaleFactor() {
+			return SF2;
+		}
+
+	}
+	
+	static class StressDrop_200bar extends AtkinsonBoore_2006 {
+		static final String NAME = AtkinsonBoore_2006.NAME + ": 200 bar";
+
+		private static final double STRESS = 200;
+		private static final double SF2;
+
+		static {
+			SF2 = scaleFactorCalc(STRESS);
+		}
+
+		StressDrop_200bar(Imt imt) {
+			super(imt);
+		}
+
+		@Override double scaleFactor() {
+			return SF2;
+		}
+	}
+
+
 		
 }

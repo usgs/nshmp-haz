@@ -14,7 +14,8 @@ import org.opensha.geo.LocationList;
  *
  * @author Nitin Gupta
  */
-public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurfaceWithSubsets {
+@Deprecated
+public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurface {
 
 	protected LocationList faultTrace;
 	protected double upperSeismogenicDepth = Double.NaN;
@@ -26,7 +27,7 @@ public abstract class GriddedSurfFromSimpleFaultData extends AbstractGriddedSurf
 	 * This constructor will adjust the grid spacings along strike and down dip to exactly fill the surface
 	 * (not cut off ends), leaving the grid spacings just less then the originals.
 	 * @param faultTrace
-	 * @param rupDip
+	 * @param aveDip
 	 * @param upperSeismogenicDepth
 	 * @param lowerSeismogenicDepth
 	 * @param maxGridSpacingAlong - maximum grid spacing along strike

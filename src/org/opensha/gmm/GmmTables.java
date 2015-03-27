@@ -9,6 +9,7 @@ import static org.opensha.gmm.Imt.SA3P0;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +18,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.opensha.data.DataUtils;
-import org.opensha.util.Logging;
 import org.opensha.util.MathUtils;
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
@@ -31,6 +31,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.Resources;
+import com.google.common.primitives.Doubles;
 
 /**
  * Utility class to load and fetch ground motion model lookup tables.
@@ -39,7 +40,7 @@ import com.google.common.io.Resources;
 final class GmmTables {
 	// @formatter:off
 	
-	private static final Logger log = Logging.create(GmmTable.class);
+	private static final Logger log = Logger.getLogger(GmmTable.class.getName());
 	private static final String LF = LINE_SEPARATOR.value();
 
 	// Implementation notes:
@@ -112,7 +113,7 @@ final class GmmTables {
 				Imt imt = frankelFilenameToIMT(file);
 				URL url = Resources.getResource(GmmTables.class, T_DIR + file);
 				NavigableMap<Double, NavigableMap<Double, Double>> rMap =
-						Resources.readLines(url, Charsets.US_ASCII, new FrankelParser());
+						Resources.readLines(url, StandardCharsets.UTF_8, new FrankelParser());
 				map.put(imt, new FrankelTable(rMap));
 			} catch (IOException  ioe) {
 				handleIOex(ioe, file);
@@ -126,7 +127,7 @@ final class GmmTables {
 		URL url = Resources.getResource(GmmTables.class, T_DIR + file);
 		try {
 			Map<Imt, NavigableMap<Double, NavigableMap<Double, Double>>> imtMap =
-				Resources.readLines(url, Charsets.US_ASCII, new AtkinsonParser());
+				Resources.readLines(url, StandardCharsets.UTF_8, new AtkinsonParser());
 			for (Imt imt : imtMap.keySet()) {
 				map.put(imt, new AtkinsonTable(imtMap.get(imt)));
 			}
@@ -245,7 +246,7 @@ final class GmmTables {
 				firstLine = false;
 				return true;
 			}
-			List<Double> values = Parsing.toDoubleList(line);
+			List<Double> values = Parsing.splitToDoubleList(line, Delimiter.SPACE);
 			ImmutableSortedMap.Builder<Double, Double> mMap = ImmutableSortedMap.naturalOrder();
 			for (int i = 0; i < frankelMagKeys.length; i++) {
 				mMap.put(frankelMagKeys[i], values.get(i + 1));
@@ -293,8 +294,8 @@ final class GmmTables {
 			
 			if (lineIdx == 2) {
 				List<Imt> imtList = FluentIterable
-					.from(Parsing.splitOnSpaces(line))
-					.transform(Parsing.doubleValueFunction())
+					.from(Parsing.split(line, Delimiter.SPACE))
+					.transform(Doubles.stringConverter())
 					.transform(new FrequencyToIMT())
 					.toList();
 				// remove dupes -- (e.g., 2s PGA columns in P11)
@@ -305,7 +306,7 @@ final class GmmTables {
 				return true;
 			}
 			
-			List<Double> values = Parsing.toDoubleList(line);
+			List<Double> values = Parsing.splitToDoubleList(line, Delimiter.SPACE);
 			if (values.size() == 1) {
 				m = values.get(0); // set magnitude
 				return true;

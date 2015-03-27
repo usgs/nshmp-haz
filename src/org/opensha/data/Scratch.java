@@ -1,5 +1,8 @@
 package org.opensha.data;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -14,7 +17,7 @@ import com.google.common.primitives.Doubles;
  *
  * @author Peter Powers
  */
-public class Scratch {
+class Scratch {
 	static double[] xs = new double[] { 0.0010, 0.0013, 0.0018, 0.0024, 0.0033, 0.0044, 0.0059, 0.0080 };
 	static double[] ys = new double[] { 1.0, 0.95, 0.85, 0.65, 0.35, 0.15, 0.05, 0.0 };
 

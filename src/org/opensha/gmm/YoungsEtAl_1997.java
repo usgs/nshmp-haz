@@ -6,8 +6,6 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static org.opensha.gmm.Imt.PGA;
 
-import org.opensha.calc.ScalarGroundMotion;
-
 /**
  * Abstract implementation of the subduction ground motion model by Youngs et
  * al. (1997). This implementation matches that used in the 2008 USGS NSHMP
@@ -15,7 +13,7 @@ import org.opensha.calc.ScalarGroundMotion;
  * This implementation has been modified from its original form to an NGA style
  * (S. Harmsen 7/13/2009) wherein mean ground motion varies continuously with
  * Vs30 (sigma remains the same as original). This is acheived through use of a
- * period-dependent site amplification function modified from Boore &amp;
+ * period-dependent site amplification function modified from Boore &
  * Atkinson (2008).
  * 
  * <p>This model supports both slab and interface type events. In the 2008
@@ -243,6 +241,30 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 			siter = siter + bnlr * pgafac;
 		}
 		return site - siter;
+	}
+
+	static final class Interface extends YoungsEtAl_1997 {
+		static final String NAME = YoungsEtAl_1997.NAME + ": Interface";
+
+		Interface(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isSlab() {
+			return false;
+		}
+	}
+	
+	static final class Slab extends YoungsEtAl_1997 {
+		static final String NAME = YoungsEtAl_1997.NAME + ": Slab";
+
+		Slab(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isSlab() {
+			return true;
+		}
 	}
 
 }

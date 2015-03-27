@@ -85,7 +85,6 @@ public class WC1994_MagLengthRelationship extends MagLengthRelationship {
      * Gives the standard deviation for the magnitude as a function of length
      *  (for the previously set or default rake). Note that thier "All" case is applied
      * if rake=Double.NaN
-     * @param length in km
      * @return standard deviation
      */
     public double getMagStdDev(){
@@ -132,8 +131,6 @@ public class WC1994_MagLengthRelationship extends MagLengthRelationship {
     /**
      * Computes the standard deviation of log(length) (base-10) from magnitude
      *  (for the previously set or default rake)
-     * @param mag - moment magnitude
-     * @param rake in degrees
      * @return standard deviation
      */
     public double getLengthStdDev() {

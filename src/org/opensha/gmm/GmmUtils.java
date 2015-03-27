@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -38,7 +38,7 @@ public final class GmmUtils {
 	
 	/**
 	 * Returns the NSHMP interpretation of fault type based on rake; divisions
-	 * are on 45&deg; diagonals.
+	 * are on 45° diagonals.
 	 * 
 	 * <p><b>Note:</b> This is inconsistent with next generation attenuation
 	 * relationship (NGAW1 and NGAW2) recommendations.</p>
@@ -65,7 +65,8 @@ public final class GmmUtils {
 	private static Map<Integer, Map<Integer, Map<Integer, Double>>> cyhw_map;
 
 	private static String datPath = "etc/";
-	private static String rjbDatPath = datPath + "rjbmean.dat";
+//	private static String rjbDatPath = datPath + "rjbmean.dat"; // relocated
+	private static String rjbDatPath = "/org/opensha/eq/fault/surface/etc/rjb_wc94length.dat";
 	private static String cbhwDatPath = datPath + "avghw_cb.dat";
 	private static String cyhwDatPath = datPath + "avghw_cy.dat";
 
@@ -97,7 +98,7 @@ public final class GmmUtils {
 				}
 				if (line.startsWith("#")) continue;
 				
-				List<String> dVal = Lists.newArrayList(Parsing.splitOnSpaces(line));
+				List<String> dVal = Lists.newArrayList(Parsing.split(line, Delimiter.SPACE));
 				if (dVal.size() == 0) continue;
 				int distKey = new Double(dVal.get(0)).intValue();
 				magMap.put(distKey, Double.parseDouble(dVal.get(1)));
@@ -118,14 +119,14 @@ public final class GmmUtils {
 			while ((line = br.readLine()) != null) {
 				if (line.startsWith("C")) {
 					// period map
-					Iterable<String> parts = Parsing.splitOnSpaces(line);
+					Iterable<String> parts = Parsing.split(line, Delimiter.SPACE);
 					double per = Double.parseDouble(Iterables.get(parts, 4));
 					int perKey = (int) (per * 1000);
 					periodMap = new HashMap<Integer, Map<Integer, Double>>();
 					map.put(perKey, periodMap);
 					continue;
 				}
-				List<String> values = Lists.newArrayList(Parsing.splitOnSpaces(line));
+				List<String> values = Lists.newArrayList(Parsing.split(line, Delimiter.SPACE));
 				if (values.size() == 0) continue;
 				int distKey = Integer.parseInt(values.get(0));
 				int magIdx = Integer.parseInt(values.get(1));
@@ -147,7 +148,7 @@ public final class GmmUtils {
 	 * Returns a corrected distance value corresponding to the supplied JB
 	 * distance and magnitude. Magnitude is expected to be a 0.05 centered value
 	 * between 6 and 7.6 (e.g [6.05, 6.15, ... 7.55]). Distance values should be
-	 * &lt;1000km. If <code>D</code> &ge; 1000km, method returns D.
+	 * <1000km. If <code>D</code> ≥ 1000km, method returns D.
 	 * 
 	 * @param M magnitude
 	 * @param D distance
@@ -161,13 +162,13 @@ public final class GmmUtils {
 		int distKey = (int) Math.floor(D);
 		return (D <= 1000) ? rjb_map.get(magKey).get(distKey) : D;
 	}
-
+	
 	/**
 	 * Returns the average hanging-wall factor appropriate for
 	 * {@link CampbellBozorgnia_2008} for a dipping point source at the supplied
 	 * distance and magnitude and period of interest. Magnitude is expected to
 	 * be a 0.05 centered value between 6 and 7.5 (e.g [6.05, 6.15, ... 7.45]).
-	 * Distance values should be &le;200km. If distance value is &gt200km,
+	 * Distance values should be ≤200km. If distance value is &gt200km,
 	 * method returns 0. Valid periods are those prescribed by
 	 * {@link CampbellBozorgnia_2008}.
 	 * 
@@ -192,7 +193,7 @@ public final class GmmUtils {
 	 * distance and magnitude and period of interest. Magnitude is expected to
 	 * be a 0.05 centered value between 5 and 7.5 (e.g [5.05, 6.15, ... 7.45]).
 	 * If there is no match for the supplied magnitude, method returns 0.
-	 * Distance values should be &le;200km. If distance value is &gt200km,
+	 * Distance values should be ≤200km. If distance value is &gt200km,
 	 * method returns 0. Valid periods are those prescribed by
 	 * {@link ChiouYoungs_2008} (<em>Note:</em>PGV is currently missing).
 	 * 
@@ -224,7 +225,7 @@ public final class GmmUtils {
 	/**
 	 * Period dependent ground motion clipping. For PGA (<code>period</code> =
 	 * 0.0s), method returns <code>Math.min(ln(1.5g), gnd)</code>; for
-	 * <code>0.02s &lt; period &lt; 0.5s</code>, method returns
+	 * <code>0.02s < period < 0.5s</code>, method returns
 	 * <code>Math.min(ln(3.0g), gnd)</code>. This is used to clip the upper tail
 	 * of the exceedance curve.
 	 * @param imt of interest

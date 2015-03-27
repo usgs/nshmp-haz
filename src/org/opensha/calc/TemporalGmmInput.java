@@ -1,6 +1,6 @@
 package org.opensha.calc;
 
-import org.opensha.eq.forecast.Rupture;
+import org.opensha.eq.model.Rupture;
 import org.opensha.gmm.GmmInput;
 import org.opensha.gmm.GroundMotionModel;
 
@@ -27,4 +27,5 @@ final class TemporalGmmInput extends GmmInput {
 		return getClass().getSimpleName() + " [rate=" + String.format("%.4g", rate) + " " +
 			super.toString() + "]";
 	}
+	
 }

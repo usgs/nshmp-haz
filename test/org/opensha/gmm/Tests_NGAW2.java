@@ -1,6 +1,5 @@
 package org.opensha.gmm;
 
-import static com.google.common.base.Charsets.US_ASCII;
 import static org.opensha.gmm.Gmm.*;
 import static org.opensha.gmm.Imt.*;
 import static org.junit.Assert.*;
@@ -8,6 +7,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -19,16 +19,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.opensha.calc.ScalarGroundMotion;
 import org.opensha.util.Parsing;
+import org.opensha.util.Parsing.Delimiter;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import com.google.common.primitives.Doubles;
 
 @SuppressWarnings("javadoc")
 @RunWith(Parameterized.class)
@@ -90,7 +90,7 @@ public class Tests_NGAW2 {
 	private static void computeGM() throws IOException {
 		List<GmmInput> inputs = loadInputs(GMM_INPUTS);
 		File out = new File("tmp/Gmm-tests/" + GMM_RESULTS);
-		Files.write("", out, Charsets.US_ASCII);
+		Files.write("", out, StandardCharsets.UTF_8);
 		for (Gmm gmm : gmms) {
 			for (Imt imt : imts) {
 				GroundMotionModel gmModel = gmm.instance(imt);
@@ -98,12 +98,12 @@ public class Tests_NGAW2 {
 				String id = gmm.name() + "-" + imt;
 				for (GmmInput input : inputs) {
 					ScalarGroundMotion sgm = gmModel.calc(input);
-					String result = Parsing.joinOnCommas(
+					String result = Parsing.join(
 						Lists.newArrayList(modelIdx++ + "-" + id,
 						String.format("%.6f", Math.exp(sgm.mean())),
-						String.format("%.6f", sgm.sigma()))) +
+						String.format("%.6f", sgm.sigma())), Delimiter.COMMA) +
 						StandardSystemProperty.LINE_SEPARATOR.value();
-					Files.append(result, out, Charsets.US_ASCII);
+					Files.append(result, out, StandardCharsets.UTF_8);
 				}
 			}
 		}
@@ -124,7 +124,7 @@ public class Tests_NGAW2 {
 	private static List<Object[]> loadResults(String resource) throws IOException {
 		URL url = Resources.getResource(Tests_NGAW2.class, D_DIR + resource);
 		return FluentIterable
-				.from(Resources.readLines(url, US_ASCII))
+				.from(Resources.readLines(url, StandardCharsets.UTF_8))
 				.transform(ResultsToObjectsFunction.INSTANCE)
 				.toList();
 	}
@@ -133,8 +133,8 @@ public class Tests_NGAW2 {
 		INSTANCE;
 		@Override
 		public Object[] apply(String line) {
-			Iterator<String> lineIt = Parsing.splitOnCommas(line).iterator();
-			Iterator<String> idIt = Parsing.splitOnDash(lineIt.next()).iterator();
+			Iterator<String> lineIt = Parsing.split(line, Delimiter.COMMA).iterator();
+			Iterator<String> idIt = Parsing.split(lineIt.next(), Delimiter.DASH).iterator();
 			return new Object[] {
 				Integer.valueOf(idIt.next()),	// inputs index
 				Gmm.valueOf(idIt.next()),		// Gmm
@@ -148,7 +148,7 @@ public class Tests_NGAW2 {
 	static List<GmmInput> loadInputs(String resource) throws IOException {
 		URL url = Resources.getResource(Tests_NGAW2.class, D_DIR + resource);
 		return FluentIterable
-				.from(Resources.readLines(url, US_ASCII))
+				.from(Resources.readLines(url, StandardCharsets.UTF_8))
 				.skip(1)
 				.transform(ArgsToInputFunction.INSTANCE)
 				.toList();
@@ -160,8 +160,8 @@ public class Tests_NGAW2 {
 		public GmmInput apply(String line) {
 
 			Iterator<Double> it = FluentIterable
-				.from(Parsing.splitOnCommas(line))
-				.transform(Parsing.doubleValueFunction())
+				.from(Parsing.split(line, Delimiter.COMMA))
+				.transform(Doubles.stringConverter())
 				.iterator();
 
 			return GmmInput.builder()
