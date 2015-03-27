@@ -57,6 +57,7 @@ public class FaultSource implements Source {
 	final double spacing;
 	final RuptureScaling rupScaling;
 	final RuptureFloating rupFloating;
+	final boolean rupVariability;
 	final GriddedSurface surface;
 
 	private final List<List<Rupture>> ruptureLists; // 1:1 with Mfds
@@ -64,7 +65,7 @@ public class FaultSource implements Source {
 	// package privacy for subduction subclass
 	FaultSource(String name, LocationList trace, double dip, double width, GriddedSurface surface,
 		double rake, List<IncrementalMfd> mfds, double spacing, RuptureScaling rupScaling,
-		RuptureFloating rupFloating) {
+		RuptureFloating rupFloating, boolean rupVariability) {
 
 		this.name = name;
 		this.trace = trace;
@@ -76,6 +77,7 @@ public class FaultSource implements Source {
 		this.spacing = spacing;
 		this.rupScaling = rupScaling;
 		this.rupFloating = rupFloating;
+		this.rupVariability = rupVariability;
 
 		ruptureLists = initRuptureLists();
 		checkState(Iterables.size(Iterables.concat(ruptureLists)) > 0,
@@ -137,7 +139,7 @@ public class FaultSource implements Source {
 				DefaultGriddedSurface surf = (DefaultGriddedSurface) surface;
 				
 				List<Rupture> floaters = rupFloating.createFloatingRuptures(surf, rupScaling, mag,
-					rate, rake, false);
+					rate, rake, rupVariability);
 				rupListbuilder.addAll(floaters);
 				
 			} else {
@@ -155,7 +157,7 @@ public class FaultSource implements Source {
 		private static final String ID = "FaultSource.Builder";
 		private boolean built = false;
 
-		private static final Range<Double> SURFACE_GRID_SPACING_RANGE = Range.closed(0.1, 20.0);
+		private static final Range<Double> SURFACE_GRID_SPACING_RANGE = Range.closed(0.01, 20.0);
 
 		// required
 		String name;
@@ -169,6 +171,7 @@ public class FaultSource implements Source {
 		Double spacing;
 		RuptureScaling rupScaling;
 		RuptureFloating rupFloating;
+		Boolean rupVariability;
 
 		Builder name(String name) {
 			this.name = validateName(name);
@@ -231,6 +234,11 @@ public class FaultSource implements Source {
 			return this;
 		}
 
+		Builder ruptureVariability(boolean rupVariability) {
+			this.rupVariability = rupVariability;
+			return this;
+		}
+
 		void validateState(String id) {
 			checkState(!built, "This %s instance as already been used", id);
 			checkState(name != null, "%s name not set", id);
@@ -243,6 +251,7 @@ public class FaultSource implements Source {
 			checkState(spacing != null, "%s surface grid spacing not set", id);
 			checkState(rupScaling != null, "%s rupture-scaling relation not set", id);
 			checkState(rupFloating != null, "%s rupture-floating model not set", id);
+			checkState(rupVariability != null, "%s rupture-area variability flag not set", id);
 			built = true;
 		}
 
@@ -257,7 +266,7 @@ public class FaultSource implements Source {
 				.depth(depth).dip(dip).width(width).spacing(spacing).build();
 
 			return new FaultSource(name, trace, dip, width, surface, rake,
-				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating);
+				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating, rupVariability);
 		}
 	}
 

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
+import com.google.common.base.Function;
 import com.google.common.primitives.Doubles;
 
 /**
@@ -239,12 +240,23 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	}
 	
 	/**
-	 * Sets all y-value to 0.
+	 * Sets all y-values to 0.
 	 * 
 	 * @return {@code this} sequence, for use inline
 	 */
 	public ArrayXY_Sequence clear() {
 		Arrays.fill(ys, 0.0);
+		return this;
+	}
+	
+	/**
+	 * Transforms all y-values in place using the supplied {@link Function}.
+	 * 
+	 * @param function for transform
+	 * @return {@code this} sequence, for use inline
+	 */
+	public ArrayXY_Sequence transform(Function<Double, Double> function) {
+		DataUtils.uncheckedTransform(function, ys);
 		return this;
 	}
 

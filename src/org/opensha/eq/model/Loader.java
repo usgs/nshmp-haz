@@ -28,6 +28,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.opensha.calc.CalcConfig;
 import org.opensha.eq.model.HazardModel.Builder;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -86,10 +87,12 @@ class Loader {
 			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
 			Path typeDirPath = typeDirectory(modelPath);
 			
-			ModelConfig baseConfig = ModelConfig.load(typeDirPath);
-			log.info(baseConfig.toString());
+			ModelConfig modelConfig = ModelConfig.load(typeDirPath);
+			log.info(modelConfig.toString());
 			log.info("");
-			builder.config(baseConfig);
+			
+			CalcConfig calcConfig = CalcConfig.load(typeDirPath);
+			builder.config(calcConfig);
 			
 			typePaths = typeDirectoryList(typeDirPath);
 			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
@@ -101,7 +104,7 @@ class Loader {
 				String typeName = cleanZipName(typePath.getFileName().toString());
 				log.info("");
 				log.info("========  " + typeName + " Sources  ========");
-				processTypeDir(typePath, builder, baseConfig);
+				processTypeDir(typePath, builder, modelConfig);
 			}
 
 		} catch (IOException | URISyntaxException e) {
@@ -166,7 +169,7 @@ class Loader {
 		}
 	}
 
-	private static void processTypeDir(Path typeDir, Builder builder, ModelConfig baseConfig) throws IOException {
+	private static void processTypeDir(Path typeDir, Builder builder, ModelConfig modelConfig) throws IOException {
 
 		String typeName = cleanZipName(typeDir.getFileName().toString());
 		SourceType type = SourceType.fromString(typeName);
@@ -184,7 +187,7 @@ class Loader {
 		}
 
 		// load alternate config if such exists
-		ModelConfig config = baseConfig;
+		ModelConfig config = modelConfig;
 		Path configPath = typeDir.resolve(ModelConfig.FILE_NAME);
 		if (Files.exists(configPath)) {
 			config = ModelConfig.load(typeDir);
@@ -355,7 +358,7 @@ class Loader {
 	/* This method will exit runtime environment */
 	private static void handleConfigException(Exception e) {
 		StringBuilder sb = new StringBuilder(LF);
-		sb.append("** ModelConfig error: ").append(e.getMessage());
+		sb.append("** Configuration error: ").append(e.getMessage());
 		log.log(SEVERE, sb.toString(), e);
 		System.exit(1);
 	}

@@ -7,6 +7,10 @@ import java.util.Map;
 
 import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.gmm.Gmm;
+import org.opensha.gmm.Imt;
+
+import com.google.common.collect.ArrayTable;
+import com.google.common.collect.Table;
 
 /**
  * Container class for the combined hazard curves derived from the individual
@@ -19,10 +23,10 @@ import org.opensha.gmm.Gmm;
 final class ClusterCurves {
 
 	final ClusterGroundMotions clusterGroundMotions;
-	final Map<Gmm, ArrayXY_Sequence> curveMap;
+	final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
 
 	private ClusterCurves(ClusterGroundMotions clusterGroundMotions,
-		Map<Gmm, ArrayXY_Sequence> curveMap) {
+			Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap) {
 		this.clusterGroundMotions = clusterGroundMotions;
 		this.curveMap = curveMap;
 	}
@@ -37,15 +41,21 @@ final class ClusterCurves {
 		private boolean built = false;
 
 		private final ClusterGroundMotions clusterGroundMotions;
-		private final Map<Gmm, ArrayXY_Sequence> curveMap;
+		private final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
 
 		private Builder(ClusterGroundMotions clusterGroundMotions) {
 			this.clusterGroundMotions = clusterGroundMotions;
-			curveMap = new EnumMap<>(Gmm.class);
+			// look at first HazardGM to determine curve table dimensions
+			HazardGroundMotions model = clusterGroundMotions.get(0);
+			curveMap = new EnumMap<>(Imt.class);
+			for (Imt imt : model.means.keySet()) {
+				Map<Gmm, ArrayXY_Sequence> gmmMap = new EnumMap<>(Gmm.class);
+				curveMap.put(imt, gmmMap);
+			}
 		}
 
-		Builder addCurve(Gmm gmm, ArrayXY_Sequence curve) {
-			curveMap.put(gmm, curve);
+		Builder addCurve(Imt imt, Gmm gmm, ArrayXY_Sequence curve) {
+			curveMap.get(imt).put(gmm, curve);
 			return this;
 		}
 

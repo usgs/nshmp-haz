@@ -15,6 +15,7 @@ import org.opensha.data.DataUtils;
 import org.opensha.data.XY_Sequence;
 import org.opensha.eq.Magnitudes;
 
+import com.google.common.base.Converter;
 import com.google.common.primitives.Doubles;
 
 /**
@@ -33,7 +34,7 @@ public final class Mfds {
 	private static final int DEFAULT_TRUNC_LEVEL = 2;
 
 	private Mfds() {}
-	
+
 	/**
 	 * Creates a new single magnitude {@code IncrementalMfd}.
 	 * 
@@ -158,14 +159,14 @@ public final class Mfds {
 		mfd.setAllButTotCumRate(min, min + (size - 1) * delta, moRate, b);
 		return mfd;
 	}
-	
+
 	/*
 	 * A Tapered GR distribution is difficult to make as a child of GR because
-	 * to fully initialize a GR requires multiple steps (e.g. scaleTo...)
-	 * Could do it independently; would require calculateRelativeRates. We'll
-	 * just create a factory method for now until MFD TODO Builders are impl.
+	 * to fully initialize a GR requires multiple steps (e.g. scaleTo...) Could
+	 * do it independently; would require calculateRelativeRates. We'll just
+	 * create a factory method for now until MFD TODO Builders are impl.
 	 */
-	
+
 	public static IncrementalMfd newTaperedGutenbergRichterMFD(double min, double delta, int size,
 			double a, double b, double corner, double weight) {
 		GutenbergRichterMfd mfd = newGutenbergRichterMFD(min, delta, size, b, 1.0);
@@ -174,10 +175,10 @@ public final class Mfds {
 		taper(mfd, corner);
 		return mfd;
 	}
-	
+
 	private static final double TAPERED_LARGE_MAG = 9.05;
 	private static final double SMALL_MO_MAG = 4.0;
-	
+
 	/*
 	 * This Tapered-GR implementation maintains consistency with NSHM but should
 	 * probably be revisited because scaling varies with choice of
@@ -186,25 +187,25 @@ public final class Mfds {
 	 * supllied MFD and use Magnitudes.MAX_MAG for TAPERED_LARGE_MAG instead.
 	 */
 	private static void taper(GutenbergRichterMfd mfd, double mCorner) {
-		
+
 		double minMo = magToMoment_N_m(SMALL_MO_MAG);
 		double cornerMo = magToMoment_N_m(mCorner);
 		double largeMo = magToMoment_N_m(TAPERED_LARGE_MAG);
 		double beta = mfd.get_bValue() / 1.5;
 		double binHalfWidth = mfd.getDelta() / 2.0;
-		
-		for (int i=0; i<mfd.getNum(); i++) {
+
+		for (int i = 0; i < mfd.getNum(); i++) {
 			double mag = mfd.getX(i);
 			double magMoLo = magToMoment_N_m(mag - binHalfWidth);
 			double magMoHi = magToMoment_N_m(mag + binHalfWidth);
-			
+
 			double magBinCountTapered = magBinCount(minMo, magMoLo, magMoHi, beta, cornerMo);
 			double magBinCount = magBinCount(minMo, magMoLo, magMoHi, beta, largeMo);
 			double scale = magBinCountTapered / magBinCount;
 			mfd.set(i, mfd.getY(i) * scale);
 		}
 	}
-	
+
 	/*
 	 * Convenience method for computing the number of events in a tapered GR
 	 * magnitude bin.
@@ -213,7 +214,7 @@ public final class Mfds {
 			double cornerMo) {
 		return pareto(minMo, magMoLo, beta, cornerMo) - pareto(minMo, magMoHi, beta, cornerMo);
 	}
-	
+
 	/*
 	 * Complementary Pareto distribution: cumulative number of events with
 	 * seismic moment greater than magMo with an exponential taper
@@ -326,7 +327,23 @@ public final class Mfds {
 	public static double probToRate(double P, double time) {
 		return -log(1 - P) / time;
 	}
-	
+
+	public static Converter<Double, Double> annRateToPoissProbConverter() {
+		return AnnualRateToPoissonProbConverter.INSTANCE;
+	}
+
+	private static final class AnnualRateToPoissonProbConverter extends Converter<Double, Double> {
+		static final AnnualRateToPoissonProbConverter INSTANCE = new AnnualRateToPoissonProbConverter();
+
+		@Override protected Double doForward(Double rate) {
+			return rateToProb(rate, 1.0);
+		}
+
+		@Override protected Double doBackward(Double prob) {
+			return probToRate(prob, 1.0);
+		}
+	}
+
 	/**
 	 * Convert an {@code IncrementalMfd} to an {@code ArrayXY_Sequence}.
 	 * 
@@ -343,8 +360,7 @@ public final class Mfds {
 	 * Combine all {@code mfds} into a single sequence.
 	 * @param mfds
 	 */
-	@Deprecated
-	public static XY_Sequence combine(IncrementalMfd... mfds) {
+	@Deprecated public static XY_Sequence combine(IncrementalMfd... mfds) {
 		// TODO slated for removal once MFDs descend from XY_Sequence
 		checkArgument(checkNotNull(mfds).length > 0);
 		List<XY_Sequence> sequences = new ArrayList<>();
@@ -353,6 +369,5 @@ public final class Mfds {
 		}
 		return DataUtils.combine(sequences);
 	}
-	
 
 }

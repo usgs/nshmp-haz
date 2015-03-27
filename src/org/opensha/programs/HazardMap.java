@@ -66,7 +66,7 @@ public class HazardMap {
 		Builder<ArrayXY_Sequence> curveBuilder = ImmutableList.builder();
 		for (Site site : sites) {
 			siteBuilder.add(site);
-			curveBuilder.add(HazardCurve.calc(model, imt, site).curve());
+//			curveBuilder.add(HazardCurve.calc(model, imt, site).curve());
 		}
 		return new Result(siteBuilder.build(), curveBuilder.build());
 	}

@@ -32,6 +32,7 @@ public class Utils {
 	 * @param truncType none, one-sided, or two-sided truncation
 	 * @param truncLevel in number of standard deviations
 	 */
+	@Deprecated
 	public static double calcProbExceed(double μ, double σ, double value,
 			SigmaModel truncType, double truncLevel) {
 
@@ -94,6 +95,7 @@ public class Utils {
 	 * @param truncLevel in number of standard deviations
 	 * @return a reference to the supplied sequence
 	 */
+	@Deprecated
 	public static XY_Sequence setProbExceed(double μ, double σ, XY_Sequence values,
 			SigmaModel truncType, double truncLevel) {
 

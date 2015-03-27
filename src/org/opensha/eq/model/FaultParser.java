@@ -156,6 +156,7 @@ class FaultParser extends DefaultHandler {
 						.name(srcName)
 						.ruptureScaling(rupScaling)
 						.ruptureFloating(config.ruptureFloating)
+						.ruptureVariability(config.ruptureVariability)
 						.surfaceSpacing(config.surfaceSpacing);
 					log.fine("     Source: " + srcName);
 					break;

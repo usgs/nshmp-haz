@@ -16,6 +16,7 @@ import static org.opensha.calc.Transforms.sourceToInputs;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,6 +30,7 @@ import org.opensha.gmm.GroundMotionModel;
 import org.opensha.gmm.Imt;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Table;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -67,9 +69,9 @@ final class AsyncCalc {
 	 * HazardGroundMotions.
 	 */
 	static AsyncList<HazardGroundMotions> toGroundMotions(AsyncList<HazardInputs> inputsList,
-			SourceSet<? extends Source> sourceSet, Imt imt) {
-		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sourceSet.groundMotionModels()
-			.gmms(), imt);
+			SourceSet<? extends Source> sourceSet, Set<Imt> imts) {
+		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
+		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, imts);
 		Function<HazardInputs, HazardGroundMotions> function = inputsToGroundMotions(gmmInstances);
 		AsyncList<HazardGroundMotions> result = createWithCapacity(inputsList.size());
 		for (ListenableFuture<HazardInputs> hazardInputs : inputsList) {
@@ -83,8 +85,9 @@ final class AsyncCalc {
 	 * HazardCurves.
 	 */
 	static AsyncList<HazardCurves> toHazardCurves(AsyncList<HazardGroundMotions> groundMotionsList,
-			ArrayXY_Sequence modelCurve) {
-		Function<HazardGroundMotions, HazardCurves> function = groundMotionsToCurves(modelCurve);
+			Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel, double truncLevel) {
+		Function<HazardGroundMotions, HazardCurves> function = groundMotionsToCurves(modelCurves,
+			sigmaModel, truncLevel);
 		AsyncList<HazardCurves> result = createWithCapacity(groundMotionsList.size());
 		for (ListenableFuture<HazardGroundMotions> groundMotions : groundMotionsList) {
 			result.add(transform(groundMotions, function, EX));
@@ -96,9 +99,9 @@ final class AsyncCalc {
 	 * Reduce a List of future HazardCurves to a future HazardCurveSet.
 	 */
 	static ListenableFuture<HazardCurveSet> toHazardCurveSet(AsyncList<HazardCurves> curves,
-			SourceSet<? extends Source> sourceSet, ArrayXY_Sequence modelCurve) {
+			SourceSet<? extends Source> sourceSet, Map<Imt, ArrayXY_Sequence> modelCurves) {
 		Function<List<HazardCurves>, HazardCurveSet> function = curveConsolidator(sourceSet,
-			modelCurve);
+			modelCurves);
 		return transform(allAsList(curves), function, EX);
 	}
 
@@ -106,21 +109,9 @@ final class AsyncCalc {
 	 * Reduce a List of future HazardCurveSets into a future HazardResult.
 	 */
 	static ListenableFuture<HazardResult> toHazardResult(AsyncList<HazardCurveSet> curveSets,
-			ArrayXY_Sequence modelCurve) {
-		Function<List<HazardCurveSet>, HazardResult> function = curveSetConsolidator(modelCurve);
+			Map<Imt, ArrayXY_Sequence> modelCurves) {
+		Function<List<HazardCurveSet>, HazardResult> function = curveSetConsolidator(modelCurves);
 		return transform(allAsList(curveSets), function, EX);
-	}
-
-	/**
-	 * Convert a ClusterSourceSet to a List of future HazardInputs Lists.
-	 */
-	static AsyncList<ClusterInputs> toClusterInputs(ClusterSourceSet sourceSet, Site site) {
-		Function<ClusterSource, ClusterInputs> function = clusterSourceToInputs(site);
-		AsyncList<ClusterInputs> result = AsyncList.create();
-		for (ClusterSource source : sourceSet.locationIterable(site.location)) {
-			result.add(transform(immediateFuture(source), function, EX));
-		}
-		return result;
 	}
 
 	/*
@@ -138,13 +129,25 @@ final class AsyncCalc {
 	 */
 
 	/**
+	 * Convert a ClusterSourceSet to a List of future HazardInputs Lists.
+	 */
+	static AsyncList<ClusterInputs> toClusterInputs(ClusterSourceSet sourceSet, Site site) {
+		Function<ClusterSource, ClusterInputs> function = clusterSourceToInputs(site);
+		AsyncList<ClusterInputs> result = AsyncList.create();
+		for (ClusterSource source : sourceSet.locationIterable(site.location)) {
+			result.add(transform(immediateFuture(source), function, EX));
+		}
+		return result;
+	}
+
+	/**
 	 * Convert a List of future HazardInputs Lists to a List of future
 	 * HazardGroundMotions Lists.
 	 */
 	static AsyncList<ClusterGroundMotions> toClusterGroundMotions(
-			AsyncList<ClusterInputs> inputsList, ClusterSourceSet sourceSet, Imt imt) {
-		Map<Gmm, GroundMotionModel> gmmInstances = Gmm.instances(sourceSet.groundMotionModels()
-			.gmms(), imt);
+			AsyncList<ClusterInputs> inputsList, ClusterSourceSet sourceSet, Set<Imt> imts) {
+		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
+		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, imts);
 		Function<ClusterInputs, ClusterGroundMotions> function = clusterInputsToGroundMotions(gmmInstances);
 		AsyncList<ClusterGroundMotions> result = createWithCapacity(inputsList.size());
 		for (ListenableFuture<ClusterInputs> inputs : inputsList) {
@@ -158,8 +161,10 @@ final class AsyncCalc {
 	 * ClusterCurves.
 	 */
 	static AsyncList<ClusterCurves> toClusterCurves(
-			AsyncList<ClusterGroundMotions> clusterGroundMotions, ArrayXY_Sequence model) {
-		Function<ClusterGroundMotions, ClusterCurves> function = clusterGroundMotionsToCurves(model);
+			AsyncList<ClusterGroundMotions> clusterGroundMotions,
+			Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel, double truncLevel) {
+		Function<ClusterGroundMotions, ClusterCurves> function = clusterGroundMotionsToCurves(
+			modelCurves, sigmaModel, truncLevel);
 		AsyncList<ClusterCurves> result = createWithCapacity(clusterGroundMotions.size());
 		for (ListenableFuture<ClusterGroundMotions> groundMotions : clusterGroundMotions) {
 			result.add(transform(groundMotions, function, EX));
@@ -171,9 +176,9 @@ final class AsyncCalc {
 	 * Reduce a List of future ClusterCurves to a future HazardCurveSet.
 	 */
 	static ListenableFuture<HazardCurveSet> toHazardCurveSet(AsyncList<ClusterCurves> curvesList,
-			ClusterSourceSet clusterSourceSet, ArrayXY_Sequence model) {
+			ClusterSourceSet clusterSourceSet, Map<Imt, ArrayXY_Sequence> modelCurves) {
 		Function<List<ClusterCurves>, HazardCurveSet> function = clusterCurveConsolidator(
-			clusterSourceSet, model);
+			clusterSourceSet, modelCurves);
 		return transform(allAsList(curvesList), function, EX);
 	}
 

@@ -40,17 +40,18 @@ public class InterfaceSource extends FaultSource {
 
 	private InterfaceSource(String name, LocationList upperTrace, LocationList lowerTrace,
 		double dip, double width, GriddedSurface surface, double rake, List<IncrementalMfd> mfds,
-		double spacing, RuptureScaling rupScaling, RuptureFloating rupFloating) {
-		
+		double spacing, RuptureScaling rupScaling, RuptureFloating rupFloating,
+		boolean rupVariability) {
 
-		super(name, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling, rupFloating);
+		super(name, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling, rupFloating,
+			rupVariability);
 
 		this.lowerTrace = (lowerTrace == null) ? surface.getEvenlyDiscritizedLowerEdge()
 			: lowerTrace;
-		
+
 		// TODO lowerTrace may be null and this is bad bad; lowerTrace
 		// is referenced in InterfaceSourceSet distanceFilter and
-		// we should populate this even if the original source only 
+		// we should populate this even if the original source only
 		// specified an upper trace. This highlights another shortcoming
 		// of Container2D and GriddedSurface: why is there no getRow(int)
 		// of getBottomRow() given that there is a getUpperEdge(),
@@ -58,7 +59,7 @@ public class InterfaceSource extends FaultSource {
 		// due to seismogenic depth constraints. For now, we are ignoring
 		// lower trace in distance filter, but given large width of interface
 		// sources TODO clean up Container2D methods
-		
+
 	}
 
 	@Override public String toString() {
@@ -90,14 +91,12 @@ public class InterfaceSource extends FaultSource {
 		// required
 		private LocationList lowerTrace;
 
-		@Override
-		Builder depth(double depth) {
+		@Override Builder depth(double depth) {
 			this.depth = validateInterfaceDepth(depth);
 			return this;
 		}
-		
-		@Override
-		Builder width(double width) {
+
+		@Override Builder width(double width) {
 			this.width = validateInterfaceWidth(width);
 			return this;
 		}
@@ -149,7 +148,7 @@ public class InterfaceSource extends FaultSource {
 			}
 
 			return new InterfaceSource(name, trace, lowerTrace, dip, width, surface, rake,
-				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating);
+				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating, rupVariability);
 		}
 
 	}

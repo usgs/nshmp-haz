@@ -120,7 +120,7 @@ public enum SigmaModel {
 	 * 'clamps' on ground motions that have historically been applied in the
 	 * CEUS NSHM due to sometimes unreasonably high ground motions implied by
 	 * {@code μ + 3σ}. Model imposes one-sided (upper) truncation at
-	 * {@code μ + 3σ} if clamp is not exceeded.
+	 * {@code μ + nσ} if clamp is not exceeded.
 	 */
 	NSHM_CEUS_MAX_INTENSITY {
 		@Override double exceedance(double μ, double σ, double n, Imt imt, double value) {

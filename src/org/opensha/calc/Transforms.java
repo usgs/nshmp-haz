@@ -23,10 +23,13 @@ import org.opensha.eq.model.SourceSet;
 import org.opensha.gmm.Gmm;
 import org.opensha.gmm.GmmInput;
 import org.opensha.gmm.GroundMotionModel;
+import org.opensha.gmm.Imt;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 
 /**
  * Factory class for creating data transforms.
@@ -48,7 +51,7 @@ final class Transforms {
 	 * Return a Function that transforms HazardInputs to HazardGroundMotions.
 	 */
 	static Function<HazardInputs, HazardGroundMotions> inputsToGroundMotions(
-			Map<Gmm, GroundMotionModel> models) {
+			Table<Gmm, Imt, GroundMotionModel> models) {
 		return new InputsToGroundMotions(models);
 	}
 
@@ -56,8 +59,8 @@ final class Transforms {
 	 * Return a Function that transforms HazardGroundMotions to HazardCurves.
 	 */
 	static Function<HazardGroundMotions, HazardCurves> groundMotionsToCurves(
-			ArrayXY_Sequence modelCurve) {
-		return new GroundMotionsToCurves(modelCurve);
+			Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel, double truncLevel) {
+		return new GroundMotionsToCurves(modelCurves, sigmaModel, truncLevel);
 	}
 
 	/**
@@ -65,8 +68,8 @@ final class Transforms {
 	 * HazardCurveSet.
 	 */
 	static Function<List<HazardCurves>, HazardCurveSet> curveConsolidator(
-			SourceSet<? extends Source> sourceSet, ArrayXY_Sequence modelCurve) {
-		return new CurveConsolidator(sourceSet, modelCurve);
+			SourceSet<? extends Source> sourceSet, Map<Imt, ArrayXY_Sequence> modelCurves) {
+		return new CurveConsolidator(sourceSet, modelCurves);
 	}
 
 	/**
@@ -74,8 +77,8 @@ final class Transforms {
 	 * HazardResult.
 	 */
 	static Function<List<HazardCurveSet>, HazardResult> curveSetConsolidator(
-			ArrayXY_Sequence modelCurve) {
-		return new CurveSetConsolidator(modelCurve);
+			Map<Imt, ArrayXY_Sequence> modelCurves) {
+		return new CurveSetConsolidator(modelCurves);
 	}
 
 	/**
@@ -91,7 +94,7 @@ final class Transforms {
 	 * in a ClusterSource to a List of HazardGroundMotions.
 	 */
 	static Function<ClusterInputs, ClusterGroundMotions> clusterInputsToGroundMotions(
-			Map<Gmm, GroundMotionModel> models) {
+			Table<Gmm, Imt, GroundMotionModel> models) {
 		return new ClusterInputsToGroundMotions(models);
 	}
 
@@ -100,8 +103,8 @@ final class Transforms {
 	 * ClusterCurves.
 	 */
 	static Function<ClusterGroundMotions, ClusterCurves> clusterGroundMotionsToCurves(
-			ArrayXY_Sequence modelCurve) {
-		return new ClusterGroundMotionsToCurves(modelCurve);
+			Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel, double truncLevel) {
+		return new ClusterGroundMotionsToCurves(modelCurves, sigmaModel, truncLevel);
 	}
 
 	/**
@@ -109,8 +112,8 @@ final class Transforms {
 	 * HazardCurveSet.
 	 */
 	static Function<List<ClusterCurves>, HazardCurveSet> clusterCurveConsolidator(
-			ClusterSourceSet clusterSourceSet, ArrayXY_Sequence modelCurve) {
-		return new ClusterCurveConsolidator(clusterSourceSet, modelCurve);
+			ClusterSourceSet clusterSourceSet, Map<Imt, ArrayXY_Sequence> modelCurves) {
+		return new ClusterCurveConsolidator(clusterSourceSet, modelCurves);
 	}
 
 	private static class SourceToInputs implements Function<Source, HazardInputs> {
@@ -159,61 +162,80 @@ final class Transforms {
 	private static class InputsToGroundMotions implements
 			Function<HazardInputs, HazardGroundMotions> {
 
-		private final Map<Gmm, GroundMotionModel> gmmInstances;
+		private final Table<Gmm, Imt, GroundMotionModel> gmmInstances;
 
-		InputsToGroundMotions(Map<Gmm, GroundMotionModel> gmmInstances) {
+		InputsToGroundMotions(Table<Gmm, Imt, GroundMotionModel> gmmInstances) {
 			this.gmmInstances = gmmInstances;
 		}
 
 		@Override public HazardGroundMotions apply(HazardInputs hazardInputs) {
 
-			HazardGroundMotions.Builder gmBuilder = HazardGroundMotions.builder(hazardInputs,
-				gmmInstances.keySet());
+			HazardGroundMotions.Builder builder = HazardGroundMotions.builder(hazardInputs,
+				gmmInstances.rowKeySet(), gmmInstances.columnKeySet());
 
-			for (Entry<Gmm, GroundMotionModel> entry : gmmInstances.entrySet()) {
+			for (Cell<Gmm, Imt, GroundMotionModel> cell : gmmInstances.cellSet()) {
+				Gmm rowKey = cell.getRowKey();
+				Imt colKey = cell.getColumnKey();
+				GroundMotionModel gmm = cell.getValue();
 				int inputIndex = 0;
 				for (GmmInput gmmInput : hazardInputs) {
-					gmBuilder.add(entry.getKey(), entry.getValue().calc(gmmInput), inputIndex++);
+					builder.add(rowKey, colKey, gmm.calc(gmmInput), inputIndex++);
 				}
 			}
-			HazardGroundMotions results = gmBuilder.build();
-			return results;
+			return builder.build();
 		}
 	}
 
-	/*
-	 * Transforms HazardGroundMotions to HazardCurves that contains one curve
-	 * per gmm.
-	 */
 	private static class GroundMotionsToCurves implements
 			Function<HazardGroundMotions, HazardCurves> {
 
-		private final ArrayXY_Sequence modelCurve;
+		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final SigmaModel sigmaModel;
+		private final double truncLevel;
 
-		GroundMotionsToCurves(ArrayXY_Sequence modelCurve) {
-			this.modelCurve = modelCurve;
+		GroundMotionsToCurves(Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel,
+			double truncLevel) {
+			this.modelCurves = modelCurves;
+			this.sigmaModel = sigmaModel;
+			this.truncLevel = truncLevel;
 		}
 
 		@Override public HazardCurves apply(HazardGroundMotions groundMotions) {
 
 			HazardCurves.Builder curveBuilder = HazardCurves.builder(groundMotions);
-			ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
 
-			for (Gmm gmm : groundMotions.means.keySet()) {
+			for (Entry<Imt, ArrayXY_Sequence> entry : modelCurves.entrySet()) {
 
-				ArrayXY_Sequence gmmCurve = ArrayXY_Sequence.copyOf(modelCurve);
+				ArrayXY_Sequence modelCurve = entry.getValue();
+				Imt imt = entry.getKey();
 
-				List<Double> means = groundMotions.means.get(gmm);
-				List<Double> sigmas = groundMotions.sigmas.get(gmm);
+				ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
 
-				for (int i = 0; i < means.size(); i++) {
-					// TODO the model curve is passed in in linear space but for
-					// lognormal we need x-values to be ln(x)
-					setProbExceed(means.get(i), sigmas.get(i), utilCurve, TRUNCATION_UPPER_ONLY, 3.0);
-					utilCurve.multiply(groundMotions.inputs.get(i).rate);
-					gmmCurve.add(utilCurve);
+				Map<Gmm, List<Double>> gmmMeans = groundMotions.means.get(imt);
+				Map<Gmm, List<Double>> gmmSigmas = groundMotions.sigmas.get(imt);
+
+				for (Gmm gmm : gmmMeans.keySet()) {
+
+					ArrayXY_Sequence gmmCurve = ArrayXY_Sequence.copyOf(modelCurve);
+
+					List<Double> means = gmmMeans.get(gmm);
+					List<Double> sigmas = gmmSigmas.get(gmm);
+
+					for (int i = 0; i < means.size(); i++) {
+						// TODO the model curve is passed in in linear space but
+						// for
+						// lognormal we need x-values to be ln(x)
+						sigmaModel.exceedance(means.get(i), sigmas.get(i), truncLevel, imt,
+							utilCurve);
+
+						// TODO clean
+						// setProbExceed(means.get(i), sigmas.get(i), utilCurve,
+						// TRUNCATION_UPPER_ONLY, 3.0);
+						utilCurve.multiply(groundMotions.inputs.get(i).rate);
+						gmmCurve.add(utilCurve);
+					}
+					curveBuilder.addCurve(imt, gmm, gmmCurve);
 				}
-				curveBuilder.addCurve(gmm, gmmCurve);
 			}
 			return curveBuilder.build();
 		}
@@ -221,17 +243,18 @@ final class Transforms {
 
 	private static class CurveConsolidator implements Function<List<HazardCurves>, HazardCurveSet> {
 
-		private final ArrayXY_Sequence modelCurve;
+		private final Map<Imt, ArrayXY_Sequence> modelCurves;
 		private final SourceSet<? extends Source> sourceSet;
 
-		CurveConsolidator(SourceSet<? extends Source> sourceSet, ArrayXY_Sequence modelCurve) {
+		CurveConsolidator(SourceSet<? extends Source> sourceSet,
+			Map<Imt, ArrayXY_Sequence> modelCurves) {
 			this.sourceSet = sourceSet;
-			this.modelCurve = modelCurve;
+			this.modelCurves = modelCurves;
 		}
 
 		@Override public HazardCurveSet apply(List<HazardCurves> curvesList) {
 
-			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet.builder(sourceSet, modelCurve);
+			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet.builder(sourceSet, modelCurves);
 
 			for (HazardCurves curves : curvesList) {
 				curveSetBuilder.addCurves(curves);
@@ -243,15 +266,15 @@ final class Transforms {
 	private static class CurveSetConsolidator implements
 			Function<List<HazardCurveSet>, HazardResult> {
 
-		private final ArrayXY_Sequence modelCurve;
+		private final Map<Imt, ArrayXY_Sequence> modelCurves;
 
-		CurveSetConsolidator(ArrayXY_Sequence modelCurve) {
-			this.modelCurve = modelCurve;
+		CurveSetConsolidator(Map<Imt, ArrayXY_Sequence> modelCurves) {
+			this.modelCurves = modelCurves;
 		}
 
 		@Override public HazardResult apply(List<HazardCurveSet> curveSetList) {
 
-			HazardResult.Builder resultBuilder = HazardResult.builder(modelCurve);
+			HazardResult.Builder resultBuilder = HazardResult.builder(modelCurves);
 
 			for (HazardCurveSet curves : curveSetList) {
 				resultBuilder.addCurveSet(curves);
@@ -282,7 +305,7 @@ final class Transforms {
 
 		private final InputsToGroundMotions transform;
 
-		ClusterInputsToGroundMotions(Map<Gmm, GroundMotionModel> gmmInstances) {
+		ClusterInputsToGroundMotions(Table<Gmm, Imt, GroundMotionModel> gmmInstances) {
 			transform = new InputsToGroundMotions(gmmInstances);
 		}
 
@@ -305,45 +328,65 @@ final class Transforms {
 	private static class ClusterGroundMotionsToCurves implements
 			Function<ClusterGroundMotions, ClusterCurves> {
 
-		private final ArrayXY_Sequence modelCurve;
+		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final SigmaModel sigmaModel;
+		private final double truncLevel;
 
-		ClusterGroundMotionsToCurves(ArrayXY_Sequence modelCurve) {
-			this.modelCurve = modelCurve;
+		ClusterGroundMotionsToCurves(Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel,
+			double truncLevel) {
+			
+			this.modelCurves = modelCurves;
+			this.sigmaModel = sigmaModel;
+			this.truncLevel = truncLevel;
 		}
-
-		// TODO we're not doing any checking to see if Gmm keys are identical;
-		// internally, we know they should be, so perhaps it's not necessary
-		// verify this; is this referring to the builders used baing able to
-		// accept multiple, overriding calls to addCurve ??
 
 		@Override public ClusterCurves apply(ClusterGroundMotions clusterGroundMotions) {
 
-			// aggregator of curves for each fault in a cluster
-			ListMultimap<Gmm, ArrayXY_Sequence> faultCurves = MultimapBuilder.enumKeys(Gmm.class)
-				.arrayListValues(clusterGroundMotions.size()).build();
-			ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
+			Builder builder = ClusterCurves.builder(clusterGroundMotions);
 
-			for (HazardGroundMotions hazardGroundMotions : clusterGroundMotions) {
-				for (Gmm gmm : hazardGroundMotions.means.keySet()) {
-					ArrayXY_Sequence magVarCurve = ArrayXY_Sequence.copyOf(modelCurve);
-					List<Double> means = hazardGroundMotions.means.get(gmm);
-					List<Double> sigmas = hazardGroundMotions.sigmas.get(gmm);
-					for (int i = 0; i < hazardGroundMotions.inputs.size(); i++) {
-						// TODO needs ln(x-values)
-						setProbExceed(means.get(i), sigmas.get(i), utilCurve, TRUNCATION_UPPER_ONLY, 3.0);
-						utilCurve.multiply(hazardGroundMotions.inputs.get(i).rate);
-						magVarCurve.add(utilCurve);
+			for (Entry<Imt, ArrayXY_Sequence> entry : modelCurves.entrySet()) {
+
+				ArrayXY_Sequence modelCurve = entry.getValue();
+				Imt imt = entry.getKey();
+
+				// aggregator of curves for each fault in a cluster
+				ListMultimap<Gmm, ArrayXY_Sequence> faultCurves = MultimapBuilder
+					.enumKeys(Gmm.class)
+					.arrayListValues(clusterGroundMotions.size())
+					.build();
+				ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
+
+				for (HazardGroundMotions hazardGroundMotions : clusterGroundMotions) {
+
+					Map<Gmm, List<Double>> gmmMeans = hazardGroundMotions.means.get(imt);
+					Map<Gmm, List<Double>> gmmSigmas = hazardGroundMotions.sigmas.get(imt);
+
+					for (Gmm gmm : gmmMeans.keySet()) {
+						ArrayXY_Sequence magVarCurve = ArrayXY_Sequence.copyOf(modelCurve);
+						List<Double> means = gmmMeans.get(gmm);
+						List<Double> sigmas = gmmSigmas.get(gmm);
+						for (int i = 0; i < hazardGroundMotions.inputs.size(); i++) {
+							sigmaModel.exceedance(means.get(i), sigmas.get(i), truncLevel, imt,
+								utilCurve);
+
+							// TODO needs ln(x-values)
+//							setProbExceed(means.get(i), sigmas.get(i), utilCurve,
+//								TRUNCATION_UPPER_ONLY, 3.0);
+							utilCurve.multiply(hazardGroundMotions.inputs.get(i).rate);
+							magVarCurve.add(utilCurve);
+						}
+						faultCurves.put(gmm, magVarCurve);
 					}
-					faultCurves.put(gmm, magVarCurve);
+				}
+
+				double rate = clusterGroundMotions.parent.rate();
+				for (Gmm gmm : faultCurves.keySet()) {
+					ArrayXY_Sequence clusterCurve = Utils.calcClusterExceedProb(faultCurves
+						.get(gmm));
+					builder.addCurve(imt, gmm, clusterCurve.multiply(rate));
 				}
 			}
 
-			Builder builder = ClusterCurves.builder(clusterGroundMotions);
-			double rate = clusterGroundMotions.parent.rate();
-			for (Gmm gmm : faultCurves.keySet()) {
-				ArrayXY_Sequence clusterCurve = Utils.calcClusterExceedProb(faultCurves.get(gmm));
-				builder.addCurve(gmm, clusterCurve.multiply(rate));
-			}
 			return builder.build();
 		}
 	}
@@ -351,18 +394,19 @@ final class Transforms {
 	private static class ClusterCurveConsolidator implements
 			Function<List<ClusterCurves>, HazardCurveSet> {
 
-		private final ArrayXY_Sequence modelCurve;
+		private final Map<Imt, ArrayXY_Sequence> modelCurves;
 		private final ClusterSourceSet clusterSourceSet;
 
-		ClusterCurveConsolidator(ClusterSourceSet clusterSourceSet, ArrayXY_Sequence modelCurve) {
+		ClusterCurveConsolidator(ClusterSourceSet clusterSourceSet,
+			Map<Imt, ArrayXY_Sequence> modelCurves) {
 			this.clusterSourceSet = clusterSourceSet;
-			this.modelCurve = modelCurve;
+			this.modelCurves = modelCurves;
 		}
 
 		@Override public HazardCurveSet apply(List<ClusterCurves> curvesList) {
 
 			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet.builder(clusterSourceSet,
-				modelCurve);
+				modelCurves);
 
 			for (ClusterCurves curves : curvesList) {
 				curveSetBuilder.addCurves(curves);

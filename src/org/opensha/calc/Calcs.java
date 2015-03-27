@@ -9,6 +9,7 @@ import static org.opensha.calc.AsyncCalc.toHazardCurves;
 import static org.opensha.calc.AsyncCalc.toHazardResult;
 import static org.opensha.calc.AsyncCalc.toInputs;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.opensha.data.ArrayXY_Sequence;
@@ -28,20 +29,24 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class Calcs {
 
+	// TODO (below) situations where multiple Imts are being processed, we
+	// should short
+	// circuit toInputs() as this step is independent of Imt
+
 	/**
 	 * Compute a hazard curve.
 	 * 
 	 * @param model to use
-	 * @param imt intensity measure type
+	 * @param config
 	 * @param site of interest
-	 * @param imls sequence of intensity measure levels (x-values) to populate
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public static HazardResult hazardCurve(HazardModel model, Imt imt, Site site,
-			ArrayXY_Sequence imls) throws InterruptedException, ExecutionException {
+	public static HazardResult hazardCurve(HazardModel model, CalcConfig config, Site site)
+			throws InterruptedException, ExecutionException {
 
 		AsyncList<HazardCurveSet> curveSetCollector = AsyncList.createWithCapacity(model.size());
+		Map<Imt, ArrayXY_Sequence> modelCurves = config.logModelCurves();
 
 		for (SourceSet<? extends Source> sourceSet : model) {
 
@@ -53,12 +58,13 @@ public class Calcs {
 				if (inputs.isEmpty()) continue; // all sources out of range
 
 				AsyncList<ClusterGroundMotions> groundMotions = toClusterGroundMotions(inputs,
-					clusterSourceSet, imt);
+					clusterSourceSet, config.imts);
 
-				AsyncList<ClusterCurves> clusterCurves = toClusterCurves(groundMotions, imls);
+				AsyncList<ClusterCurves> clusterCurves = toClusterCurves(groundMotions,
+					modelCurves, config.sigmaModel, config.truncationLevel);
 
 				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(clusterCurves,
-					clusterSourceSet, imls);
+					clusterSourceSet, modelCurves);
 
 				curveSetCollector.add(curveSet);
 
@@ -68,25 +74,26 @@ public class Calcs {
 				if (inputs.isEmpty()) continue; // all sources out of range
 
 				AsyncList<HazardGroundMotions> groundMotions = toGroundMotions(inputs, sourceSet,
-					imt);
+					config.imts);
 
-				AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, imls);
+				AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, modelCurves,
+					config.sigmaModel, config.truncationLevel);
 
 				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves,
-					sourceSet, imls);
+					sourceSet, modelCurves);
 
 				curveSetCollector.add(curveSet);
 
 			}
 		}
-
-		ListenableFuture<HazardResult> futureResult = toHazardResult(curveSetCollector, imls);
-
+		
+		ListenableFuture<HazardResult> futureResult = toHazardResult(curveSetCollector, modelCurves);
+		
 		return futureResult.get();
 
-//		System.out.println(sw.stop().elapsed(TimeUnit.MILLISECONDS));
-//
-//		return result;
+		// System.out.println(sw.stop().elapsed(TimeUnit.MILLISECONDS));
+		//
+		// return result;
 
 		// TODO move timers
 		// } catch (Exception e) {

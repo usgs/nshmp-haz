@@ -4,8 +4,13 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha.data.ArrayXY_Sequence.copyOf;
 import static org.opensha.eq.model.SourceType.CLUSTER;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.eq.model.SourceType;
+import org.opensha.gmm.Imt;
 
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -19,12 +24,12 @@ import com.google.common.collect.SetMultimap;
 public final class HazardResult {
 
 	final SetMultimap<SourceType, HazardCurveSet> sourceSetMap;
-	final ArrayXY_Sequence totalCurve;
+	final Map<Imt, ArrayXY_Sequence> totalCurves;
 
 	private HazardResult(SetMultimap<SourceType, HazardCurveSet> sourceSetMap,
-		ArrayXY_Sequence totalCurve) {
+		Map<Imt, ArrayXY_Sequence> totalCurves) {
 		this.sourceSetMap = sourceSetMap;
-		this.totalCurve = totalCurve;
+		this.totalCurves = totalCurves;
 	}
 
 	@Override public String toString() {
@@ -59,7 +64,7 @@ public final class HazardResult {
 					// sb.append(curveSet.clusterGroundMotionsList);
 
 				} else {
-//					 sb.append(curveSet.hazardGroundMotionsList);
+					// sb.append(curveSet.hazardGroundMotionsList);
 				}
 			}
 		}
@@ -69,12 +74,12 @@ public final class HazardResult {
 	/**
 	 * The total mean hazard curve.
 	 */
-	public ArrayXY_Sequence curve() {
-		return totalCurve;
+	public Map<Imt, ArrayXY_Sequence> curves() {
+		return totalCurves;
 	}
-	
-	static Builder builder(ArrayXY_Sequence modelCurve) {
-		return new Builder(modelCurve);
+
+	static Builder builder(Map<Imt, ArrayXY_Sequence> modelCurves) {
+		return new Builder(modelCurves);
 	}
 
 	static class Builder {
@@ -83,22 +88,27 @@ public final class HazardResult {
 		private boolean built = false;
 
 		private ImmutableSetMultimap.Builder<SourceType, HazardCurveSet> resultMapBuilder;
-		private ArrayXY_Sequence totalCurve;
+		private Map<Imt, ArrayXY_Sequence> totalCurves;
 
-		private Builder(ArrayXY_Sequence modelCurve) {
-			totalCurve = copyOf(modelCurve).clear();
+		private Builder(Map<Imt, ArrayXY_Sequence> modelCurves) {
+			totalCurves = new EnumMap<>(Imt.class);
+			for (Entry<Imt, ArrayXY_Sequence> entry : modelCurves.entrySet()) {
+				totalCurves.put(entry.getKey(), copyOf(entry.getValue()).clear());
+			}
 			resultMapBuilder = ImmutableSetMultimap.builder();
 		}
 
 		Builder addCurveSet(HazardCurveSet curveSet) {
 			resultMapBuilder.put(curveSet.sourceSet.type(), curveSet);
-			totalCurve.add(curveSet.totalCurve);
+			for (Entry<Imt, ArrayXY_Sequence> entry : curveSet.totalCurves.entrySet()) {
+				totalCurves.get(entry.getKey()).add(entry.getValue());
+			}
 			return this;
 		}
 
 		HazardResult build() {
 			checkState(!built, "This %s instance has already been used", ID);
-			return new HazardResult(resultMapBuilder.build(), totalCurve);
+			return new HazardResult(resultMapBuilder.build(), totalCurves);
 		}
 
 	}

@@ -9,12 +9,14 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.eq.model.Source;
 import org.opensha.eq.model.SourceSet;
 import org.opensha.eq.model.SourceType;
 import org.opensha.gmm.Gmm;
+import org.opensha.gmm.Imt;
 
 /**
  * Container class for hazard curves derived from a {@code SourceSet}. Class
@@ -43,23 +45,24 @@ final class HazardCurveSet {
 	final SourceSet<? extends Source> sourceSet;
 	final List<HazardGroundMotions> hazardGroundMotionsList;
 	final List<ClusterGroundMotions> clusterGroundMotionsList;
-	final Map<Gmm, ArrayXY_Sequence> gmmCurveMap;
-	final ArrayXY_Sequence totalCurve;
+	final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
+	final Map<Imt, ArrayXY_Sequence> totalCurves;
 
 	private HazardCurveSet(SourceSet<? extends Source> sourceSet,
 		List<HazardGroundMotions> hazardGroundMotionsList,
 		List<ClusterGroundMotions> clusterGroundMotionsList,
-		Map<Gmm, ArrayXY_Sequence> gmmCurveMap, ArrayXY_Sequence totalCurve) {
+		Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap, Map<Imt, ArrayXY_Sequence> totalCurves) {
 
 		this.sourceSet = sourceSet;
 		this.hazardGroundMotionsList = hazardGroundMotionsList;
 		this.clusterGroundMotionsList = clusterGroundMotionsList;
-		this.gmmCurveMap = gmmCurveMap;
-		this.totalCurve = totalCurve;
+		this.curveMap = curveMap;
+		this.totalCurves = totalCurves;
 	}
 
-	static Builder builder(SourceSet<? extends Source> sourceSet, ArrayXY_Sequence modelCurve) {
-		return new Builder(sourceSet, modelCurve);
+	static Builder builder(SourceSet<? extends Source> sourceSet,
+			Map<Imt, ArrayXY_Sequence> modelCurves) {
+		return new Builder(sourceSet, modelCurves);
 	}
 
 	static class Builder {
@@ -67,17 +70,19 @@ final class HazardCurveSet {
 		private static final String ID = "HazardCurveSet.Builder";
 		private boolean built = false;
 
-		private final ArrayXY_Sequence modelCurve;
+		private final Map<Imt, ArrayXY_Sequence> modelCurves;
 
 		private final SourceSet<? extends Source> sourceSet;
 		private final List<HazardGroundMotions> hazardGroundMotionsList;
 		private final List<ClusterGroundMotions> clusterGroundMotionsList;
-		private final Map<Gmm, ArrayXY_Sequence> gmmCurveMap;
-		private ArrayXY_Sequence totalCurve;
+		private final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
+		private final Map<Imt, ArrayXY_Sequence> totalCurves;
 
-		private Builder(SourceSet<? extends Source> sourceSet, ArrayXY_Sequence modelCurve) {
+		private Builder(SourceSet<? extends Source> sourceSet,
+			Map<Imt, ArrayXY_Sequence> modelCurves) {
+
 			this.sourceSet = sourceSet;
-			this.modelCurve = modelCurve;
+			this.modelCurves = modelCurves;
 			if (sourceSet.type() == SourceType.CLUSTER) {
 				clusterGroundMotionsList = new ArrayList<>();
 				hazardGroundMotionsList = null;
@@ -85,10 +90,18 @@ final class HazardCurveSet {
 				hazardGroundMotionsList = new ArrayList<>();
 				clusterGroundMotionsList = null;
 			}
-			gmmCurveMap = new EnumMap<>(Gmm.class);
-			for (Gmm gmm : sourceSet.groundMotionModels().gmms()) {
-				gmmCurveMap.put(gmm, ArrayXY_Sequence.copyOf(modelCurve).clear());
+			Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
+			Set<Imt> imts = modelCurves.keySet();
+			curveMap = new EnumMap<>(Imt.class);
+			for (Imt imt : imts) {
+				Map<Gmm, ArrayXY_Sequence> gmmMap = new EnumMap<>(Gmm.class);
+				curveMap.put(imt, gmmMap);
+				for (Gmm gmm : gmms) {
+					ArrayXY_Sequence emptyCurve = copyOf(modelCurves.get(imt)).clear();
+					gmmMap.put(gmm, emptyCurve);
+				}
 			}
+			totalCurves = new EnumMap<>(Imt.class);
 		}
 
 		Builder addCurves(HazardCurves hazardCurves) {
@@ -96,11 +109,13 @@ final class HazardCurveSet {
 			hazardGroundMotionsList.add(hazardCurves.groundMotions);
 			double distance = hazardCurves.groundMotions.inputs.minDistance;
 			Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
-			for (Entry<Gmm, Double> entry : gmmWeightMap.entrySet()) {
-				// copy so as to not mutate incoming curves
-				ArrayXY_Sequence copy = copyOf(hazardCurves.curveMap.get(entry.getKey()));
-				copy.multiply(entry.getValue());
-				gmmCurveMap.get(entry.getKey()).add(copy);
+			for (Entry<Imt, Map<Gmm, ArrayXY_Sequence>> imtEntry : hazardCurves.curveMap.entrySet()) {
+				Map<Gmm, ArrayXY_Sequence> builderCurveMap = curveMap.get(imtEntry.getKey());
+				for (Entry<Gmm, ArrayXY_Sequence> gmmEntry : imtEntry.getValue().entrySet()) {
+					Gmm gmm = gmmEntry.getKey();
+					double gmmWeight = gmmWeightMap.get(gmm);
+					builderCurveMap.get(gmm).add(copyOf(gmmEntry.getValue()).multiply(gmmWeight));
+				}
 			}
 			return this;
 		}
@@ -109,15 +124,17 @@ final class HazardCurveSet {
 			checkNotNull(clusterGroundMotionsList, "%s was not intialized with a ClusterSourceSet",
 				ID);
 			clusterGroundMotionsList.add(clusterCurves.clusterGroundMotions);
-			double weight = clusterCurves.clusterGroundMotions.parent.weight();
+			double clusterWeight = clusterCurves.clusterGroundMotions.parent.weight();
 			double distance = clusterCurves.clusterGroundMotions.minDistance;
 			Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
-			for (Entry<Gmm, Double> entry : gmmWeightMap.entrySet()) {
-				// copy so as to not mutate incoming curves
-				ArrayXY_Sequence copy = copyOf(clusterCurves.curveMap.get(entry.getKey()));
-				// scale by cluster and gmm wieght
-				copy.multiply(weight).multiply(entry.getValue());
-				gmmCurveMap.get(entry.getKey()).add(copy);
+			for (Entry<Imt, Map<Gmm, ArrayXY_Sequence>> imtEntry : clusterCurves.curveMap
+				.entrySet()) {
+				Map<Gmm, ArrayXY_Sequence> builderCurveMap = curveMap.get(imtEntry.getKey());
+				for (Entry<Gmm, ArrayXY_Sequence> gmmEntry : imtEntry.getValue().entrySet()) {
+					Gmm gmm = gmmEntry.getKey();
+					double totalWeight = gmmWeightMap.get(gmm) * clusterWeight;
+					builderCurveMap.get(gmm).add(copyOf(gmmEntry.getValue()).multiply(totalWeight));
+				}
 			}
 			return this;
 		}
@@ -127,20 +144,24 @@ final class HazardCurveSet {
 			built = true;
 			computeFinal();
 			return new HazardCurveSet(sourceSet, hazardGroundMotionsList, clusterGroundMotionsList,
-				gmmCurveMap, totalCurve);
+				curveMap, totalCurves);
 		}
 
 		/*
 		 * Create the final wieghted (Gmm) combined curve. The Gmm curves were
-		 * scaled by their weights in an earlier step (TODO not sure this is true).
+		 * scaled by their weights while building (above).
 		 */
 		private void computeFinal() {
-			ArrayXY_Sequence totalCurve = ArrayXY_Sequence.copyOf(modelCurve).clear();
 			double sourceSetWeight = sourceSet.weight();
-			for (ArrayXY_Sequence curve : gmmCurveMap.values()) {
-				totalCurve.add(copyOf(curve).multiply(sourceSetWeight));
+			for (Entry<Imt, Map<Gmm, ArrayXY_Sequence>> entry : curveMap.entrySet()) {
+				Imt imt = entry.getKey();
+				ArrayXY_Sequence totalCurve = copyOf(modelCurves.get(imt)).clear();
+				for (ArrayXY_Sequence curve : entry.getValue().values()) {
+					totalCurve.add(curve);
+				}
+				totalCurve.multiply(sourceSetWeight);
+				totalCurves.put(imt, totalCurve);
 			}
-			this.totalCurve = totalCurve;
 		}
 	}
 

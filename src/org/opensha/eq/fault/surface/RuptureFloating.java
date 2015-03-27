@@ -71,11 +71,13 @@ public enum RuptureFloating {
 					double scaledRate = rate * entry.getValue();
 					floaters.addAll(createFloaters(surfaces, mag, scaledRate, rake));
 				}
+				System.out.println(floaters.size());
+
 				return floaters;
 			}
-
 			Dimensions d = scaling.dimensions(mag, maxWidth);
 			List<GriddedSurface> surfaces = createFloatingSurfaces(surface, d.length, d.width);
+			System.out.println(surfaces.size());
 			return createFloaters(surfaces, mag, rate, rake);
 		}
 	},

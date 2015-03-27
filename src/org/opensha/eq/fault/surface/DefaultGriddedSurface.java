@@ -142,7 +142,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 		// build() may only be called once
 		// use Doubles to ensure fields are initially null
 
-		private static final Range<Double> SPACING_RANGE = Range.closed(0.1, 20.0);
+		private static final Range<Double> SPACING_RANGE = Range.closed(0.01, 20.0);
 
 		private static final String ID = "DefaultGriddedSurface.Builder";
 		private boolean built = false;

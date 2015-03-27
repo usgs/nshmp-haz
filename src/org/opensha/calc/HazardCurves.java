@@ -7,22 +7,24 @@ import java.util.Map;
 
 import org.opensha.data.ArrayXY_Sequence;
 import org.opensha.gmm.Gmm;
+import org.opensha.gmm.Imt;
 
 /**
  * Container class for the combined hazard curves derived from the
  * {@code Rupture}s in an individual {@code Source}, one for each
- * {@code GroundMotionModel} used. The curves will have been scaled by the
- * associated Mfd or rupture weights, but not by {@code GroundMotionModel}
- * weights.
+ * {@code GroundMotionModel} and {@code Imt} of interest. The curves will have
+ * been scaled by the associated Mfd or rupture weights, but not by
+ * {@code GroundMotionModel} weights.
  * 
  * @author Peter Powers
  */
 final class HazardCurves {
 
 	final HazardGroundMotions groundMotions;
-	final Map<Gmm, ArrayXY_Sequence> curveMap;
+	final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
 
-	private HazardCurves(HazardGroundMotions groundMotions, Map<Gmm, ArrayXY_Sequence> curveMap) {
+	private HazardCurves(HazardGroundMotions groundMotions,
+		Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap) {
 		this.groundMotions = groundMotions;
 		this.curveMap = curveMap;
 	}
@@ -37,15 +39,19 @@ final class HazardCurves {
 		private boolean built = false;
 
 		private final HazardGroundMotions groundMotions;
-		private final Map<Gmm, ArrayXY_Sequence> curveMap;
+		private final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
 
 		private Builder(HazardGroundMotions groundMotions) {
 			this.groundMotions = groundMotions;
-			curveMap = new EnumMap<>(Gmm.class);
+			curveMap = new EnumMap<>(Imt.class);
+			for (Imt imt : groundMotions.means.keySet()) {
+				Map<Gmm, ArrayXY_Sequence> gmmMap = new EnumMap<>(Gmm.class);
+				curveMap.put(imt, gmmMap);
+			}
 		}
 
-		Builder addCurve(Gmm gmm, ArrayXY_Sequence curve) {
-			curveMap.put(gmm, curve);
+		Builder addCurve(Imt imt, Gmm gmm, ArrayXY_Sequence curve) {
+			curveMap.get(imt).put(gmm, curve);
 			return this;
 		}
 

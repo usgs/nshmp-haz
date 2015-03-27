@@ -115,7 +115,7 @@ class Deagg {
 				Set<HazardCurveSet> hazardCurveSets = hazard.sourceSetMap.get(type);
 				switch (type) {
 					case FAULT:
-						processFaultSources(hazardCurveSets);
+//						processFaultSources(hazardCurveSets);
 				}
 			}
 		}
@@ -125,15 +125,15 @@ class Deagg {
 		 * gross contribution of each source set - the gross contribution of
 		 * each Gmm (could be further subdivision of above) -
 		 */
-		private void processFaultSources(Set<HazardCurveSet> curveSets) {
-			for (HazardCurveSet curveSet : curveSets) {
-				for (HazardGroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
-					for (Gmm gmm : groundMotions.means.keySet()) {
-
-					}
-				}
-			}
-		}
+//		private void processFaultSources(Set<HazardCurveSet> curveSets) {
+//			for (HazardCurveSet curveSet : curveSets) {
+//				for (HazardGroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
+//					for (Gmm gmm : groundMotions.means.keySet()) {
+//
+//					}
+//				}
+//			}
+//		}
 
 	}
 

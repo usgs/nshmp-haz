@@ -24,12 +24,12 @@ public class Logging {
 	private static final String LF = LINE_SEPARATOR.value();
 
 	/**
-	 * Initialize logging from {@code lib/logging.properties}.
+	 * Initialize logging from {@code logging.properties}.
 	 */
 	public static void init() {
 		try {
-			InputStream is = new FileInputStream("lib/logging.properties");
-//			InputStream is = Logging.class.getResourceAsStream("/lib/logging.properties");
+			InputStream is = Logging.class.getResourceAsStream("/logging.properties");
+			if (is == null) is = new FileInputStream("lib/logging.properties");
 			LogManager.getLogManager().readConfiguration(is);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();

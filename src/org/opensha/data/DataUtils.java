@@ -506,6 +506,10 @@ public final class DataUtils {
 	public static double[] transform(Function<Double, Double> function, double... data) {
 		checkNotNull(function);
 		validateDataArray(data);
+		return uncheckedTransform(function, data);
+	}
+	
+	static double[] uncheckedTransform(Function<Double, Double> function, double... data) {
 		for (int i = 0; i < data.length; i++) {
 			data[i] = function.apply(data[i]);
 		}

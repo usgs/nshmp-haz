@@ -49,7 +49,6 @@ import com.google.gson.annotations.Expose;
  */
 public final class SiteSet implements Iterable<Site> {
 
-	@Expose(deserialize = false)
 	final private GriddedRegion region;
 	final private Builder builder;
 	final private List<Site> sites;

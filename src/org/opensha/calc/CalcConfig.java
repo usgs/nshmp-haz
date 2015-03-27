@@ -16,9 +16,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.opensha.data.ArrayXY_Sequence;
+import org.opensha.data.DataUtils;
+import org.opensha.gmm.GroundMotionModel;
 import org.opensha.gmm.Imt;
 
 import com.google.common.base.Strings;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -30,6 +34,8 @@ import com.google.gson.GsonBuilder;
  */
 public final class CalcConfig {
 
+	static final String FILE_NAME = "config.json";
+
 	public final SigmaModel sigmaModel;
 	public final double truncationLevel;
 
@@ -37,7 +43,7 @@ public final class CalcConfig {
 	
 	public final double[] defaultImls;
 	public final Map<Imt, double[]> customImls;
-
+	
 	public final Deagg deagg;
 
 	public final SiteSet sites;
@@ -55,6 +61,9 @@ public final class CalcConfig {
 		 * Default values. These are initialized here because gson will not
 		 * deserialize field initialized final primitives and Strings.
 		 */
+		
+		// TODO consider adding TypeAdapter for enums that will throw an
+		// exception if invalid enum value is supplied in config.json
 
 		sigmaModel = SigmaModel.TRUNCATION_UPPER_ONLY;
 		truncationLevel = 3.0;
@@ -83,45 +92,73 @@ public final class CalcConfig {
 		}
 
 		StringBuilder sb = new StringBuilder("Calculation config:").append(NEWLINE)
-			.append("       Sigma model: ")
+			.append("          Sigma model: ")
 			.append("type=").append(sigmaModel).append(", ")
-			.append("level=").append(truncationLevel)
+			.append("truncLevel=").append(truncationLevel)
 			.append(NEWLINE)
-			.append("              IMTs: ").append(imts)
+			.append("                 IMTs: ").append(imts)
 			.append(NEWLINE)
-			.append("      Default IMLs: ")
+			.append("         Default IMLs: ")
 			.append(Arrays.toString(defaultImls))
 			.append(NEWLINE)
 			.append(customImlStr)
-			.append("   Deaggregation R: ")
+			.append("      Deaggregation R: ")
 			.append("min=").append(deagg.rMin).append(", ")
 			.append("max=").append(deagg.rMax).append(", ")
 			.append("Δ=").append(deagg.Δr)
 			.append(NEWLINE)
-			.append("   Deaggregation M: ")
+			.append("      Deaggregation M: ")
 			.append("min=").append(deagg.mMin).append(", ")
 			.append("max=").append(deagg.mMax).append(", ")
 			.append("Δ=").append(deagg.Δm)
 			.append(NEWLINE)
-			.append("   Deaggregation ε: ")
+			.append("      Deaggregation ε: ")
 			.append("min=").append(deagg.εMin).append(", ")
 			.append("max=").append(deagg.εMax).append(", ")
 			.append("Δ=").append(deagg.Δε)
 			.append(NEWLINE);
 
 		for (Site site : sites) {
-			sb.append("              ").append(site.toString()).append(NEWLINE);
+			sb.append("                 ").append(site.toString()).append(NEWLINE);
 		}
 
 		return sb.toString();
 	}
 
-	double[] imlsForImt(Imt imt) {
+	public double[] imlsForImt(Imt imt) {
 		return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
 	}
+	
+	/**
+	 * Returns models of the intensity measure levels for each {@code Imt} adressed
+	 * by this calculation. Note that the x-values in each sequence are in natural
+	 * log space.
+	 */
+	public Map<Imt, ArrayXY_Sequence> logModelCurves() {
+		Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
+		for (Imt imt : imts) {
+			double[] imls = imlsForImt(imt);
+			imls = Arrays.copyOf(imls, imls.length);
+			DataUtils.ln(imls);
+			curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
+		}
+		return curveMap;
+	}
+	
+	public Map<Imt, ArrayXY_Sequence> modelCurves() {
+		Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
+		for (Imt imt : imts) {
+			double[] imls = imlsForImt(imt);
+			imls = Arrays.copyOf(imls, imls.length);
+			curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
+		}
+		return curveMap;
+	}
 
-	static CalcConfig load(Path path) throws IOException {
-		Reader reader = Files.newBufferedReader(path, UTF_8);
+
+	public static CalcConfig load(Path path) throws IOException {
+		Path configPath = path.resolve(FILE_NAME);
+		Reader reader = Files.newBufferedReader(configPath, UTF_8);
 		CalcConfig config = GSON.fromJson(reader, CalcConfig.class);
 		reader.close();
 		return config;

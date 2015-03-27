@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.opensha.calc.CalcConfig;
 import org.opensha.calc.SigmaModel;
 import org.opensha.eq.fault.surface.RuptureFloating;
 import org.opensha.eq.model.AreaSource.GridScaling;
@@ -79,12 +80,12 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
-	private final ModelConfig config;
+	private final CalcConfig config;
 	
 	// TODO do we really need config here; calc config properties will likely be accessed from the 
 	// source set or source level; should probably push config to SourceSets, possibly overriding default
 
-	private HazardModel(String name, ModelConfig config,
+	private HazardModel(String name, CalcConfig config,
 		SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
 		this.name = name;
 		this.config = config;
@@ -127,6 +128,10 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	@Override public String name() {
 		return name;
 	}
+	
+	public CalcConfig config() {
+		return config;
+	}
 
 	@Override public String toString() {
 		return "HazardModel: " + name + NEWLINE + sourceSetMap.toString();
@@ -147,14 +152,14 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 		// ImmutableSetMultimap.Builder preserves value addition order
 		private ImmutableSetMultimap.Builder<SourceType, SourceSet<? extends Source>> sourceMapBuilder;
 		private SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
-		private ModelConfig config;
+		private CalcConfig config;
 		private String name;
 
 		private Builder() {
 			sourceMapBuilder = ImmutableSetMultimap.builder();
 		}
 
-		Builder config(ModelConfig config) {
+		Builder config(CalcConfig config) {
 			this.config = checkNotNull(config);
 			return this;
 		}

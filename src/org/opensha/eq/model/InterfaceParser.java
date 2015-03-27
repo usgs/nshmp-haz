@@ -132,6 +132,7 @@ class InterfaceParser extends DefaultHandler {
 					sourceBuilder.name(srcName);
 					sourceBuilder.ruptureScaling(rupScaling);
 					sourceBuilder.ruptureFloating(config.ruptureFloating);
+					sourceBuilder.ruptureVariability(config.ruptureVariability);
 					sourceBuilder.surfaceSpacing(config.surfaceSpacing);
 					log.fine("     Source: " + srcName);
 					break;

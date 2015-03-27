@@ -11,8 +11,10 @@ import org.opensha.gmm.CeusMb.*;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
@@ -164,11 +166,13 @@ public enum Gmm {
 	AB_06_PRIME(AtkinsonBoore_2006p.class, AtkinsonBoore_2006p.NAME, AtkinsonBoore_2006p.CC),
 
 	/** @see AtkinsonBoore_2006 */
-	AB_06_140BAR(AtkinsonBoore_2006.StressDrop_140bar.class, AtkinsonBoore_2006.StressDrop_140bar.NAME,
+	AB_06_140BAR(AtkinsonBoore_2006.StressDrop_140bar.class,
+			AtkinsonBoore_2006.StressDrop_140bar.NAME,
 			AtkinsonBoore_2006.CC_A),
 
 	/** @see AtkinsonBoore_2006 */
-	AB_06_200BAR(AtkinsonBoore_2006.StressDrop_200bar.class, AtkinsonBoore_2006.StressDrop_200bar.NAME,
+	AB_06_200BAR(AtkinsonBoore_2006.StressDrop_200bar.class,
+			AtkinsonBoore_2006.StressDrop_200bar.NAME,
 			AtkinsonBoore_2006.CC_A),
 
 	/** @see Atkinson_2008p */
@@ -247,22 +251,24 @@ public enum Gmm {
 
 	/** @see SadighEtAl_1997 */
 	SADIGH_97(SadighEtAl_1997.class, SadighEtAl_1997.NAME, SadighEtAl_1997.CC_BC_HI),
-	
-	/** @see McVerryEtAl_2000 */
-	MCVERRY_00_CRUSTAL(McVerryEtAl_2000.Crustal.class, McVerryEtAl_2000.Crustal.NAME, McVerryEtAl_2000.CC),
 
 	/** @see McVerryEtAl_2000 */
-	MCVERRY_00_INTERFACE(McVerryEtAl_2000.Interface.class, McVerryEtAl_2000.Interface.NAME, McVerryEtAl_2000.CC),
-	
+	MCVERRY_00_CRUSTAL(McVerryEtAl_2000.Crustal.class, McVerryEtAl_2000.Crustal.NAME,
+			McVerryEtAl_2000.CC),
+
+	/** @see McVerryEtAl_2000 */
+	MCVERRY_00_INTERFACE(McVerryEtAl_2000.Interface.class, McVerryEtAl_2000.Interface.NAME,
+			McVerryEtAl_2000.CC),
+
 	/** @see McVerryEtAl_2000 */
 	MCVERRY_00_SLAB(McVerryEtAl_2000.Slab.class, McVerryEtAl_2000.Slab.NAME, McVerryEtAl_2000.CC),
-	
+
 	/** @see McVerryEtAl_2000 */
-	MCVERRY_00_VOLCANIC(McVerryEtAl_2000.Volcanic.class, McVerryEtAl_2000.Volcanic.NAME, McVerryEtAl_2000.CC);
+	MCVERRY_00_VOLCANIC(McVerryEtAl_2000.Volcanic.class, McVerryEtAl_2000.Volcanic.NAME,
+			McVerryEtAl_2000.CC);
 
 	// TODO clean?
 	// GK_2013(GraizerKalkan_2013.class);
-	
 
 	// TODO all the methods of this class need argument checking and unit tests
 
@@ -302,7 +308,7 @@ public enum Gmm {
 	/**
 	 * Retrieves multiple {@code GroundMotionModel} instances, either by
 	 * creating new ones, or fetching them from a cache.
-	 * @param gmms to retieve
+	 * @param gmms to retrieve
 	 * @param imt
 	 * @return a {@code Map} of {@code GroundMotionModel} instances
 	 * @throws UncheckedExecutionException if there is an instantiation problem
@@ -311,6 +317,27 @@ public enum Gmm {
 		Map<Gmm, GroundMotionModel> instances = Maps.newEnumMap(Gmm.class);
 		for (Gmm gmm : gmms) {
 			instances.put(gmm, gmm.instance(imt));
+		}
+		return instances;
+	}
+
+	// TODO deprecate/delete above??
+	
+	/**
+	 * Retrieves a {@code Table} of {@code GroundMotionModel} instances for a
+	 * range of {@code Imt}s, either by creating new ones, or fetching them from
+	 * a cache.
+	 * @param gmms to retrieve
+	 * @param imts
+	 * @return a {@code Table} of {@code GroundMotionModel} instances
+	 * @throws UncheckedExecutionException if there is an instantiation problem
+	 */
+	public static Table<Gmm, Imt, GroundMotionModel> instances(Set<Gmm> gmms, Set<Imt> imts) {
+		Table<Gmm, Imt, GroundMotionModel> instances = ArrayTable.create(gmms, imts);
+		for (Gmm gmm : gmms) {
+			for (Imt imt : imts) {
+				instances.put(gmm, imt, gmm.instance(imt));
+			}
 		}
 		return instances;
 	}
