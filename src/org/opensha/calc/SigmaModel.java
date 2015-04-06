@@ -61,7 +61,7 @@ public enum SigmaModel {
 	},
 
 	/**
-	 * Upper truncation only at {@code μ + σ * truncLevel}.
+	 * Upper truncation only at {@code μ + σ * n}.
 	 * 
 	 * <p>Model ignores {@code imt}.</p>
 	 */
@@ -76,7 +76,7 @@ public enum SigmaModel {
 	},
 
 	/**
-	 * Upper and lower truncation at {@code μ ± σ * truncLevel}.
+	 * Upper and lower truncation at {@code μ ± σ * n}.
 	 * 
 	 * <p>Model ignores {@code imt}.</p>
 	 */

@@ -28,8 +28,9 @@ public class Logging {
 	 */
 	public static void init() {
 		try {
-			InputStream is = Logging.class.getResourceAsStream("/logging.properties");
-			if (is == null) is = new FileInputStream("lib/logging.properties");
+//			InputStream is = Logging.class.getResourceAsStream("/logging.properties");
+//			if (is == null) is = new FileInputStream("lib/logging.properties");
+			InputStream is = new FileInputStream("lib/logging.properties");
 			LogManager.getLogManager().readConfiguration(is);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();

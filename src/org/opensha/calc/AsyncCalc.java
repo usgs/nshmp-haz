@@ -52,7 +52,7 @@ final class AsyncCalc {
 			ExecutorService ex) {
 		Function<Source, HazardInputs> function = sourceToInputs(site);
 		AsyncList<HazardInputs> result = AsyncList.create();
-		for (Source source : sourceSet.locationIterable(site.location)) {
+		for (Source source : sourceSet.iterableForlocation(site.location)) {
 			result.add(transform(immediateFuture(source), function, ex));
 		}
 		return result;
@@ -131,7 +131,7 @@ final class AsyncCalc {
 			ExecutorService ex) {
 		Function<ClusterSource, ClusterInputs> function = clusterSourceToInputs(site);
 		AsyncList<ClusterInputs> result = AsyncList.create();
-		for (ClusterSource source : sourceSet.locationIterable(site.location)) {
+		for (ClusterSource source : sourceSet.iterableForlocation(site.location)) {
 			result.add(transform(immediateFuture(source), function, ex));
 		}
 		return result;

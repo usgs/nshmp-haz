@@ -3,6 +3,8 @@ package org.opensha.calc;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
@@ -12,6 +14,7 @@ import org.opensha.eq.Magnitudes;
 import org.opensha.eq.model.Rupture;
 import org.opensha.eq.model.SourceType;
 import org.opensha.gmm.Gmm;
+import org.opensha.gmm.Imt;
 
 import com.google.common.base.Function;
 import com.google.common.collect.MinMaxPriorityQueue;
@@ -26,9 +29,9 @@ import com.google.common.collect.Range;
  */
 class Deagg {
 
-	// private final DataModel model;
-	// private final double[][][] data;
-	// private final double mBar, rBar, εBar;
+//	 private final DataModel model;
+//	 private final double[][][] data;
+//	 private final double mBar, rBar, εBar;
 
 	/*
 	 * Many deagg bins have no data so we will usually be returning a sparse
@@ -53,9 +56,6 @@ class Deagg {
 		// System.out.println(dd);
 	}
 
-	private static int computeIndex(double min, double binWidth, double value) {
-		return (int) Math.floor((value - min) / binWidth);
-	}
 
 	/* Wrapper class for a Rupture and it's contribution to hazard. */
 	static class Contribution implements Comparable<Contribution> {
@@ -77,6 +77,20 @@ class Deagg {
 		private DataModel model;
 		private HazardResult hazard;
 		private double iml;
+		
+		private double[][][] data; // [M][R][e]
+		
+		private double mBar, rBar, εBar; // these are total
+		private double totalRate; // TODO compare to orignal PoE
+		private double totalRateWithinRange;
+		
+		// track mBar and rBar for each M R bin, for positioning?
+		private double[][] mPos; //??
+		private double[][] rPos; //??
+		
+		// should we use a general Deagg.Result container to store total results and
+		// then use a Map<Gmm, Result> for gmm specific values
+
 
 		// TODO pass in executor??
 
@@ -111,6 +125,8 @@ class Deagg {
 		}
 
 		private void process() {
+			
+			
 			for (SourceType type : hazard.sourceSetMap.keySet()) {
 				Set<HazardCurveSet> hazardCurveSets = hazard.sourceSetMap.get(type);
 				switch (type) {
@@ -134,7 +150,74 @@ class Deagg {
 //				}
 //			}
 //		}
+		
+		// do we want to farm SourceSets out onto different threads?
+		
+		// TODO get us from CalcConfig
+		private static final SigmaModel SIGMA = SigmaModel.TRUNCATION_UPPER_ONLY;
+		private static final double trunc = 3.0;
+		
+		
+		
+		private void processFaultSource(HazardCurveSet curveSet, Imt imt, double iml) {
+			for (HazardGroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
+				
+				int inputCount = groundMotions.inputs.size();
+				
+				Map<Gmm, List<Double>> gmmMeans = groundMotions.means.get(imt);
+				Map<Gmm, List<Double>> gmmSigmas = groundMotions.sigmas.get(imt);
 
+				double sourceRateAtIml = 0.0;
+				
+				
+				
+				for (Gmm gmm : gmmMeans.keySet()) {
+					List<Double> means = gmmMeans.get(gmm);
+					List<Double> sigmas = gmmSigmas.get(gmm);
+					
+					
+					for (int i=0; i<inputCount; i++) {
+						TemporalGmmInput input = groundMotions.inputs.get(i);
+						double μ = means.get(i);
+						double σ = sigmas.get(i);
+						
+						double ε = epsilon(μ, σ, iml);
+						double rateAtIml = SIGMA.exceedance(μ, σ, trunc, imt, iml);
+						
+						
+						
+					}
+					
+				}
+			}
+		}
+		
+		private void addRupture(double m, double r, double ε, double rate) {
+			
+			mBar += m * rate;
+			rBar += r * rate;
+			εBar += ε * rate;
+			totalRate += rate;
+			
+//			int im = index(model.mMin, model.Δm, )
+//			int ir = 
+		}
+		
+//		private void processSource()
+		
+		// HazardGroundMotions inputs list is same length and order as means and sigmas
+
+	}
+	
+	
+	private static int index(double min, double binWidth, double value) {
+		return (int) Math.floor((value - min) / binWidth);
+	}
+
+	
+	// should all be in log space
+	private static double epsilon(double μ, double σ, double iml) {
+		return (iml - μ) / σ;
 	}
 
 	/*
@@ -211,6 +294,10 @@ class Deagg {
 			rSize = size(rMin, rMax, Δr);
 			εSize = size(εMin, εMax, Δε);
 		}
+		
+//		public int mIndex(double m) {
+//			return 
+//		}
 
 		/**
 		 * Create a deaggregation data model. Deaggregation data bins are
