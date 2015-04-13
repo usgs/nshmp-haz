@@ -63,7 +63,7 @@ public enum Imt {
 			case PGD:
 				return "Peak ground displacement";
 			default:
-				return period() + "second spectral acceleration";
+				return period() + " sec spectral acceleration";
 		}
 	}
 	
