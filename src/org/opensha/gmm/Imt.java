@@ -54,6 +54,19 @@ public enum Imt {
 	SA7P5,
 	SA10P0;
 
+	@Override public String toString() {
+		switch(this) {
+			case PGA:
+				return "Peak ground acceleration";
+			case PGV:
+				return "Peak ground velocity";
+			case PGD:
+				return "Peak ground displacement";
+			default:
+				return period() + "second spectral acceleration";
+		}
+	}
+	
 	/**
 	 * Returns the corresponding period or frequency for this {@code Imt} if it
 	 * represents a spectral acceleration.
