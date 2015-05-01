@@ -13,51 +13,51 @@ import com.google.common.base.Predicate;
  * @author Peter Powers
  * @see GridSourceSet
  */
-public class SlabSourceSet implements SourceSet<PointSource> {
+public final class SlabSourceSet implements SourceSet<PointSource> {
 
-	private GridSourceSet delegate;
+	private final GridSourceSet delegate;
 
 	SlabSourceSet(GridSourceSet delegate) {
 		this.delegate = delegate;
 	}
 
-	@Override public int compareTo(SourceSet<PointSource> other) {
+	@Override public final int compareTo(SourceSet<PointSource> other) {
 		return delegate.compareTo(other);
 	}
 
-	@Override public String name() {
+	@Override public final String name() {
 		return delegate.name();
 	}
 
-	@Override public String toString() {
+	@Override public final String toString() {
 		return delegate.toString();
 	}
 
-	@Override public Iterator<PointSource> iterator() {
+	@Override public final Iterator<PointSource> iterator() {
 		return delegate.iterator();
 	}
 
-	@Override public SourceType type() {
+	@Override public final SourceType type() {
 		return SourceType.SLAB;
 	}
 
-	@Override public int size() {
+	@Override public final int size() {
 		return delegate.size();
 	}
 
-	@Override public double weight() {
+	@Override public final double weight() {
 		return delegate.weight();
 	}
 
-	@Override public Iterable<PointSource> iterableForlocation(Location loc) {
+	@Override public final Iterable<PointSource> iterableForlocation(Location loc) {
 		return delegate.iterableForlocation(loc);
 	}
 
-	@Override public GmmSet groundMotionModels() {
+	@Override public final GmmSet groundMotionModels() {
 		return delegate.groundMotionModels();
 	}
 
-	@Override public Predicate<PointSource> distanceFilter(Location loc, double distance) {
+	@Override public final Predicate<PointSource> distanceFilter(Location loc, double distance) {
 		return delegate.distanceFilter(loc, distance);
 	}
 

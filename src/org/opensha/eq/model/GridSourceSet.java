@@ -76,7 +76,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	}
 
 	/* Not inlined for use by area sources */
-	static class DistanceFilter implements Predicate<PointSource> {
+	static final class DistanceFilter implements Predicate<PointSource> {
 		private final Predicate<Location> filter;
 
 		DistanceFilter(Location loc, double distance) {
@@ -176,7 +176,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		Builder rupScaling(RuptureScaling rupScaling) {
+		Builder ruptureScaling(RuptureScaling rupScaling) {
 			this.rupScaling = checkNotNull(rupScaling, "RupScaling is null");
 			return this;
 		}

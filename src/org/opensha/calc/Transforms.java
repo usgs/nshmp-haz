@@ -4,7 +4,7 @@ import static java.lang.Double.NaN;
 import static java.lang.Math.sin;
 import static org.opensha.calc.Utils.setProbExceed;
 import static org.opensha.geo.GeoTools.TO_RAD;
-import static org.opensha.calc.SigmaModel.TRUNCATION_UPPER_ONLY;
+import static org.opensha.calc.ExceedanceModel.TRUNCATION_UPPER_ONLY;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ final class Transforms {
 	 * Return a Function that transforms HazardGroundMotions to HazardCurves.
 	 */
 	static Function<HazardGroundMotions, HazardCurves> groundMotionsToCurves(
-			Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel, double truncLevel) {
+			Map<Imt, ArrayXY_Sequence> modelCurves, ExceedanceModel sigmaModel, double truncLevel) {
 		return new GroundMotionsToCurves(modelCurves, sigmaModel, truncLevel);
 	}
 
@@ -103,7 +103,7 @@ final class Transforms {
 	 * ClusterCurves.
 	 */
 	static Function<ClusterGroundMotions, ClusterCurves> clusterGroundMotionsToCurves(
-			Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel, double truncLevel) {
+			Map<Imt, ArrayXY_Sequence> modelCurves, ExceedanceModel sigmaModel, double truncLevel) {
 		return new ClusterGroundMotionsToCurves(modelCurves, sigmaModel, truncLevel);
 	}
 
@@ -190,10 +190,10 @@ final class Transforms {
 			Function<HazardGroundMotions, HazardCurves> {
 
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
-		private final SigmaModel sigmaModel;
+		private final ExceedanceModel sigmaModel;
 		private final double truncLevel;
 
-		GroundMotionsToCurves(Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel,
+		GroundMotionsToCurves(Map<Imt, ArrayXY_Sequence> modelCurves, ExceedanceModel sigmaModel,
 			double truncLevel) {
 			this.modelCurves = modelCurves;
 			this.sigmaModel = sigmaModel;
@@ -329,10 +329,10 @@ final class Transforms {
 			Function<ClusterGroundMotions, ClusterCurves> {
 
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
-		private final SigmaModel sigmaModel;
+		private final ExceedanceModel sigmaModel;
 		private final double truncLevel;
 
-		ClusterGroundMotionsToCurves(Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel,
+		ClusterGroundMotionsToCurves(Map<Imt, ArrayXY_Sequence> modelCurves, ExceedanceModel sigmaModel,
 			double truncLevel) {
 			
 			this.modelCurves = modelCurves;

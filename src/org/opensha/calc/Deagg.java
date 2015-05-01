@@ -154,7 +154,7 @@ class Deagg {
 		// do we want to farm SourceSets out onto different threads?
 		
 		// TODO get us from CalcConfig
-		private static final SigmaModel SIGMA = SigmaModel.TRUNCATION_UPPER_ONLY;
+		private static final ExceedanceModel SIGMA = ExceedanceModel.TRUNCATION_UPPER_ONLY;
 		private static final double trunc = 3.0;
 		
 		

@@ -6,12 +6,12 @@ import static java.util.logging.Level.FINE;
 import static org.opensha.eq.model.SourceAttribute.FOCAL_MECH_MAP;
 import static org.opensha.eq.model.SourceAttribute.MAG_DEPTH_MAP;
 import static org.opensha.eq.model.SourceAttribute.MAX_DEPTH;
-import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha.eq.model.SourceAttribute.NAME;
+import static org.opensha.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha.eq.model.SourceAttribute.STRIKE;
 import static org.opensha.eq.model.SourceAttribute.TYPE;
 import static org.opensha.eq.model.SourceAttribute.WEIGHT;
-import static org.opensha.eq.model.SourceType.GRID;
+import static org.opensha.eq.model.SourceType.AREA;
 import static org.opensha.util.Parsing.readDouble;
 import static org.opensha.util.Parsing.readEnum;
 import static org.opensha.util.Parsing.readString;
@@ -27,10 +27,9 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha.data.DataUtils;
-import org.opensha.eq.Magnitudes;
 import org.opensha.eq.fault.FocalMech;
 import org.opensha.eq.fault.surface.RuptureScaling;
-import org.opensha.geo.Location;
+import org.opensha.geo.LocationList;
 import org.opensha.mfd.IncrementalMfd;
 import org.opensha.mfd.MfdType;
 import org.opensha.mfd.Mfds;
@@ -40,18 +39,16 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.google.common.primitives.Doubles;
-
 /*
- * Non-validating grid source parser. SAX parser 'Attributes' are stateful and
+ * Non-validating area source parser. SAX parser 'Attributes' are stateful and
  * cannot be stored. This class is not thread safe.
  * 
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
-class GridParser extends DefaultHandler {
+class AreaParser extends DefaultHandler {
 
-	private final Logger log = Logger.getLogger(GridParser.class.getName());
+	private final Logger log = Logger.getLogger(AreaParser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;
 
@@ -65,36 +62,26 @@ class GridParser extends DefaultHandler {
 
 	private ModelConfig config;
 
-	private GridSourceSet sourceSet;
-	private GridSourceSet.Builder sourceSetBuilder;
-
-	// master magnitude list data
-	private double minMag = Magnitudes.MAX_MAG;
-	private double maxMag = Magnitudes.MIN_MAG;
-	private double deltaMag;
+	private AreaSourceSet sourceSet;
+	private AreaSourceSet.Builder sourceSetBuilder;
+	private AreaSource.Builder sourceBuilder;
 
 	// Node locations are the only text content in source files
-	private boolean readingLoc = false;
-	private StringBuilder locBuilder = null;
+	private boolean readingBorder = false;
+	private StringBuilder borderBuilder = null;
 
-	// TODO why are these fields being initialized to null; necessary?
+	// Used to when validating depths in magDepthMap
+	SourceType type = AREA;
 
-	// Per-node MFD and mechMap
-	private IncrementalMfd nodeMFD = null;
-	private Map<FocalMech, Double> nodeMechMap = null;
-
-	// Exposed for use when validating depths in subclasses
-	SourceType type = GRID;
-
-	private GridParser(SAXParser sax) {
+	private AreaParser(SAXParser sax) {
 		this.sax = checkNotNull(sax);
 	}
 
-	static GridParser create(SAXParser sax) {
-		return new GridParser(sax);
+	static AreaParser create(SAXParser sax) {
+		return new AreaParser(sax);
 	}
 
-	GridSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
+	AreaSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
 			IOException {
 		checkState(!used, "This parser has expired");
 		this.gmmSet = gmmSet;
@@ -116,10 +103,10 @@ class GridParser extends DefaultHandler {
 		// @formatter:off
 		switch (e) {
 
-			case GRID_SOURCE_SET:
+			case AREA_SOURCE_SET:
 				String name = readString(NAME, atts);
 				double weight = readDouble(WEIGHT, atts);
-				sourceSetBuilder = new GridSourceSet.Builder()
+				sourceSetBuilder = new AreaSourceSet.Builder()
 					.name(name)
 					.weight(weight);
 				
@@ -136,31 +123,36 @@ class GridParser extends DefaultHandler {
 				parsingDefaultMFDs = true;
 				break;
 
-			case INCREMENTAL_MFD:
-				if (parsingDefaultMFDs) {
-					deltaMag = mfdHelper.addDefault(atts);
-				}
+			case SOURCE:
+				String srcName = readString(NAME, atts);
+				sourceBuilder = new AreaSource.Builder()
+					.name(srcName);
+				log.fine("     Source: " + srcName);
 				break;
 
 			case SOURCE_PROPERTIES:
+				// identical to shared source properties in grid sources
+				// but with one element for each area source
 				String depthMapStr = readString(MAG_DEPTH_MAP, atts);
 				NavigableMap<Double, Map<Double, Double>> depthMap = stringToValueValueWeightMap(depthMapStr);
 				double maxDepth = readDouble(MAX_DEPTH, atts);
 				String mechMapStr = readString(FOCAL_MECH_MAP, atts);
 				Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
 				RuptureScaling rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
-				sourceSetBuilder
+				double strike = readDouble(STRIKE, atts);
+				
+				sourceBuilder
 					.depthMap(depthMap, type)
 					.maxDepth(maxDepth, type)
 					.mechs(mechMap)
 					.ruptureScaling(rupScaling);
-				double strike = readDouble(STRIKE, atts);
+				
 				// first validate strike by setting it in builder
-				sourceSetBuilder.strike(strike);
+				sourceBuilder.strike(strike);
 				// then possibly override type if strike is set
 				PointSourceType type = config.pointSourceType;
 				if (!Double.isNaN(strike)) type = PointSourceType.FIXED_STRIKE;
-				sourceSetBuilder.sourceType(type);
+				sourceBuilder.sourceType(type);
 				if (log.isLoggable(FINE)) {
 					log.fine("     Depths: " + depthMap);
 					log.fine("  Max depth: " + maxDepth);
@@ -173,19 +165,20 @@ class GridParser extends DefaultHandler {
 				}
 				break;
 
-			case NODE:
-				readingLoc = true;
-				locBuilder = new StringBuilder();
-				nodeMFD = processNode(atts);
-				minMag = Math.min(minMag, nodeMFD.getMinX());
-				maxMag = Math.max(maxMag, nodeMFD.getMaxX());
-				try {
-					String nodeMechMapStr = readString(FOCAL_MECH_MAP, atts);
-					nodeMechMap = stringToEnumWeightMap(nodeMechMapStr, FocalMech.class);
-				} catch (NullPointerException npe) {
-					nodeMechMap = null;
+
+			case INCREMENTAL_MFD:
+				if (parsingDefaultMFDs) {
+					mfdHelper.addDefault(atts);
+					break;
 				}
+				sourceBuilder.mfd(buildMfd(atts));
 				break;
+
+			case BORDER:
+				readingBorder = true;
+				borderBuilder = new StringBuilder();
+				break;
+			
 		}
 		// @formatter:on
 	}
@@ -206,38 +199,22 @@ class GridParser extends DefaultHandler {
 				parsingDefaultMFDs = false;
 				break;
 
-			case NODE:
-				readingLoc = false;
-				Location loc = Location.fromString(locBuilder.toString());
-				if (nodeMechMap != null) {
-					sourceSetBuilder.location(loc, nodeMFD, nodeMechMap);
-				} else {
-					sourceSetBuilder.location(loc, nodeMFD);
-				}
-				nodeMFD = null;
-				nodeMechMap = null;
+			case BORDER:
+				readingBorder = false;
+				sourceBuilder.border(LocationList.fromString(borderBuilder.toString()));
 				break;
 
-			case GRID_SOURCE_SET:
-				/*
-				 * TODO there are too many assumptions built into this; whose to
-				 * say ones bin spacing should be only be in the hundredths?
-				 * 
-				 * We should read precision of supplied mMin and mMax and delta
-				 * and use largest for formatting
-				 */
-				double cleanDelta = Double.valueOf(String.format("%.2f", deltaMag));
-				double[] mags = DataUtils.buildCleanSequence(minMag, maxMag, cleanDelta, true, 2);
-				sourceSetBuilder.magMaster(Doubles.asList(mags));
-				sourceSet = sourceSetBuilder.build();
+			case SOURCE:
+				AreaSource source = sourceBuilder.build();
+				sourceSetBuilder.source(source);
 
 				if (log.isLoggable(FINE)) {
-					log.fine("       Size: " + sourceSet.size());
-					log.finer("  Mag count: " + sourceSet.depthModel.magMaster.size());
-					log.finer(" Mag master: " + sourceSet.depthModel.magMaster);
-					log.finer("  MFD index: " + sourceSet.depthModel.magDepthIndices);
-					log.finer("     Depths: " + sourceSet.depthModel.magDepthDepths);
-					log.finer("    Weights: " + sourceSet.depthModel.magDepthWeights);
+					log.fine("       Size: " + source.size());
+					log.finer("  Mag count: " + source.depthModel.magMaster.size());
+					log.finer(" Mag master: " + source.depthModel.magMaster);
+					log.finer("  MFD index: " + source.depthModel.magDepthIndices);
+					log.finer("     Depths: " + source.depthModel.magDepthDepths);
+					log.finer("    Weights: " + source.depthModel.magDepthWeights);
 					log.fine("");
 				}
 				break;
@@ -246,14 +223,14 @@ class GridParser extends DefaultHandler {
 	}
 
 	@Override public void characters(char ch[], int start, int length) throws SAXException {
-		if (readingLoc) locBuilder.append(ch, start, length);
+		if (readingBorder) borderBuilder.append(ch, start, length);
 	}
 
 	@Override public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
 	}
 
-	private IncrementalMfd processNode(Attributes atts) {
+	private IncrementalMfd buildMfd(Attributes atts) {
 		MfdType type = readEnum(TYPE, atts, MfdType.class);
 
 		switch (type) {

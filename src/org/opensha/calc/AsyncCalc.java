@@ -79,7 +79,7 @@ final class AsyncCalc {
 	 * HazardCurves.
 	 */
 	static AsyncList<HazardCurves> toHazardCurves(AsyncList<HazardGroundMotions> groundMotionsList,
-			Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel, double truncLevel,
+			Map<Imt, ArrayXY_Sequence> modelCurves, ExceedanceModel sigmaModel, double truncLevel,
 			ExecutorService ex) {
 		Function<HazardGroundMotions, HazardCurves> function = groundMotionsToCurves(modelCurves,
 			sigmaModel, truncLevel);
@@ -160,7 +160,7 @@ final class AsyncCalc {
 	 */
 	static AsyncList<ClusterCurves> toClusterCurves(
 			AsyncList<ClusterGroundMotions> clusterGroundMotions,
-			Map<Imt, ArrayXY_Sequence> modelCurves, SigmaModel sigmaModel, double truncLevel,
+			Map<Imt, ArrayXY_Sequence> modelCurves, ExceedanceModel sigmaModel, double truncLevel,
 			ExecutorService ex) {
 		Function<ClusterGroundMotions, ClusterCurves> function = clusterGroundMotionsToCurves(
 			modelCurves, sigmaModel, truncLevel);

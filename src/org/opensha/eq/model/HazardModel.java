@@ -2,31 +2,18 @@ package org.opensha.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.util.TextUtils.validateName;
 import static org.opensha.util.TextUtils.NEWLINE;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.opensha.util.TextUtils.validateName;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
-import java.util.Properties;
 
 import org.opensha.calc.CalcConfig;
-import org.opensha.calc.SigmaModel;
-import org.opensha.eq.fault.surface.RuptureFloating;
-import org.opensha.eq.model.AreaSource.GridScaling;
 import org.opensha.gmm.GroundMotionModel;
 import org.opensha.util.Named;
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
 
 /**
  * An earthquake hazard {@code HazardModel} is the top-level wrapper for

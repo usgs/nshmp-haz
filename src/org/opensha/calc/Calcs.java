@@ -66,7 +66,7 @@ public class Calcs {
 					clusterSourceSet, config.imts, EX);
 
 				AsyncList<ClusterCurves> clusterCurves = toClusterCurves(groundMotions,
-					modelCurves, config.sigmaModel, config.truncationLevel, EX);
+					modelCurves, config.exceedanceModel, config.truncationLevel, EX);
 
 				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(clusterCurves,
 					clusterSourceSet, modelCurves, EX);
@@ -82,7 +82,7 @@ public class Calcs {
 					config.imts, EX);
 
 				AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, modelCurves,
-					config.sigmaModel, config.truncationLevel, EX);
+					config.exceedanceModel, config.truncationLevel, EX);
 
 				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves,
 					sourceSet, modelCurves, EX);

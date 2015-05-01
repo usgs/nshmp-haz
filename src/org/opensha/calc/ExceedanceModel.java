@@ -23,7 +23,7 @@ import org.opensha.gmm.Imt;
  * 
  * @author Peter Powers
  */
-public enum SigmaModel {
+public enum ExceedanceModel {
 
 	/**
 	 * No uncertainty. Any {@code σ} supplied to methods is ignored yielding a

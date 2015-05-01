@@ -64,10 +64,10 @@ public class AreaSource implements Source {
 	private final GridScaling gridScaling;
 	private final List<GriddedRegion> sourceGrids;
 	private final Map<FocalMech, Double> mechMap;
-	private final DepthModel depthModel;
+	final DepthModel depthModel; // package exposure for parser logging
 	private final double strike;
 	private final RuptureScaling rupScaling;
-	private final PointSourceType ptSrcType;
+	private final PointSourceType sourceType;
 
 	// TODO need singleton source grid for border representation
 	// which side of an area a site is on is important; either point grids
@@ -76,7 +76,8 @@ public class AreaSource implements Source {
 
 	AreaSource(String name, IncrementalMfd mfd, GridScaling gridScaling,
 		List<GriddedRegion> sourceGrids, Map<FocalMech, Double> mechMap,
-		DepthModel depthModel, double strike, RuptureScaling rupScaling) {
+		DepthModel depthModel, double strike, RuptureScaling rupScaling,
+		PointSourceType sourceType) {
 		this.name = name;
 		this.mfd = mfd;
 		this.gridScaling = gridScaling;
@@ -85,8 +86,7 @@ public class AreaSource implements Source {
 		this.depthModel = depthModel;
 		this.strike = strike;
 		this.rupScaling = rupScaling;
-
-		ptSrcType = Double.isNaN(strike) ? FINITE : FIXED_STRIKE;
+		this.sourceType = sourceType;
 	}
 
 	@Override public String name() {
@@ -105,7 +105,7 @@ public class AreaSource implements Source {
 		// what type of point sources ar ebeing used?
 		// create example point source and get rupCount??
 
-		int mechCount = mechCount(mechMap, ptSrcType);
+		int mechCount = mechCount(mechMap, sourceType);
 		int magCount = mfd.getNum(); // TODO this assumes no zero rate bins
 		int sourceCount = sourceGrids.get(gridScaling.defaultIndex).size();
 
@@ -123,7 +123,7 @@ public class AreaSource implements Source {
 				return ssCount + revCount * 2 + norCount * 2;
 		}
 	}
-	
+
 	/**
 	 * Return the border of this {@code AreaSource}.
 	 */
@@ -174,7 +174,7 @@ public class AreaSource implements Source {
 	}
 
 	private PointSource createSource(Location loc, IncrementalMfd mfd) {
-		switch (ptSrcType) {
+		switch (sourceType) {
 			case POINT:
 				return new PointSource(loc, mfd, mechMap, rupScaling, depthModel);
 			case FINITE:
@@ -247,6 +247,7 @@ public class AreaSource implements Source {
 		private Map<FocalMech, Double> mechMap;
 		private NavigableMap<Double, Map<Double, Double>> magDepthMap;
 		private Double maxDepth;
+		private PointSourceType sourceType;
 
 		Builder name(String name) {
 			this.name = validateName(name);
@@ -274,7 +275,7 @@ public class AreaSource implements Source {
 			return this;
 		}
 
-		Builder magScaling(RuptureScaling rupScaling) {
+		Builder ruptureScaling(RuptureScaling rupScaling) {
 			this.rupScaling = checkNotNull(rupScaling, "Rupture-Scaling is null");
 			return this;
 		}
@@ -307,12 +308,18 @@ public class AreaSource implements Source {
 			return this;
 		}
 
+		Builder sourceType(PointSourceType sourceType) {
+			this.sourceType = checkNotNull(sourceType);
+			return this;
+		}
+
 		private void validateState(String id) {
 			checkState(!built, "This %s instance as already been used", id);
 			checkState(name != null, "%s name not set", id);
 			checkState(border != null, "%s border not set", id);
 			checkState(mfd != null, "%s MFD not set", id);
 			checkState(strike != null, "%s strike not set", id);
+			checkState(sourceType != null, "%s source type not set", id);
 			checkState(gridScaling != null, "%s grid scaling not set", id);
 			checkState(rupScaling != null, "%s rupture-scaling relation not set", id);
 			checkState(mechMap != null, "%s focal mech map not set", id);
@@ -335,7 +342,7 @@ public class AreaSource implements Source {
 			List<GriddedRegion> sourceGrids = buildSourceGrids(border, gridScaling);
 			DepthModel depthModel = DepthModel.create(mfd.xValues(), magDepthMap, maxDepth);
 			return new AreaSource(name, mfd, gridScaling, sourceGrids, mechMap,
-				depthModel, strike, rupScaling);
+				depthModel, strike, rupScaling, sourceType);
 		}
 
 		private static List<GriddedRegion> buildSourceGrids(LocationList border, GridScaling scaling) {

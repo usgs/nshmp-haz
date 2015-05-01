@@ -36,7 +36,7 @@ public final class CalcConfig {
 
 	static final String FILE_NAME = "config.json";
 
-	public final SigmaModel sigmaModel;
+	public final ExceedanceModel exceedanceModel;
 	public final double truncationLevel;
 
 	public final Set<Imt> imts;
@@ -65,7 +65,7 @@ public final class CalcConfig {
 		// TODO consider adding TypeAdapter for enums that will throw an
 		// exception if invalid enum value is supplied in config.json
 
-		sigmaModel = SigmaModel.TRUNCATION_UPPER_ONLY;
+		exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
 		truncationLevel = 3.0;
 
 		imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
@@ -92,8 +92,8 @@ public final class CalcConfig {
 		}
 
 		StringBuilder sb = new StringBuilder("Calculation config:").append(NEWLINE)
-			.append("          Sigma model: ")
-			.append("type=").append(sigmaModel).append(", ")
+			.append("     Exceedance model: ")
+			.append("type=").append(exceedanceModel).append(", ")
 			.append("truncLevel=").append(truncationLevel)
 			.append(NEWLINE)
 			.append("                 IMTs: ").append(imts)

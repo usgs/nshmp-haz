@@ -2,8 +2,8 @@ package org.opensha.calc;
 
 import static java.lang.Math.min;
 import static org.apache.commons.math3.special.Erf.erf;
-import static org.opensha.calc.SigmaModel.TRUNCATION_UPPER_ONLY;
-import static org.opensha.calc.SigmaModel.TRUNCATION_LOWER_UPPER;
+import static org.opensha.calc.ExceedanceModel.TRUNCATION_UPPER_ONLY;
+import static org.opensha.calc.ExceedanceModel.TRUNCATION_LOWER_UPPER;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class Utils {
 	 */
 	@Deprecated
 	public static double calcProbExceed(double μ, double σ, double value,
-			SigmaModel truncType, double truncLevel) {
+			ExceedanceModel truncType, double truncLevel) {
 
 		double clip = μ + truncLevel * σ;
 		double pHi = gaussProbExceed(μ, σ, clip);
@@ -65,7 +65,7 @@ public class Utils {
 	 * @param clamp maximum allowable value
 	 */
 	@Deprecated public static double calcClampedProbExceed(double μ, double σ, double value,
-			SigmaModel truncType, double truncLevel, double clamp) {
+			ExceedanceModel truncType, double truncLevel, double clamp) {
 
 		double clipHi = min(μ + truncLevel * σ, clamp);
 		double pHi = gaussProbExceed(μ, σ, clipHi);
@@ -97,7 +97,7 @@ public class Utils {
 	 */
 	@Deprecated
 	public static XY_Sequence setProbExceed(double μ, double σ, XY_Sequence values,
-			SigmaModel truncType, double truncLevel) {
+			ExceedanceModel truncType, double truncLevel) {
 
 		double clip = μ + truncLevel * σ;
 		double pHi = gaussProbExceed(μ, σ, clip);
@@ -129,7 +129,7 @@ public class Utils {
 	 * @return a reference to the supplied sequence
 	 */
 	@Deprecated public static XY_Sequence setClampedProbExceed(double μ, double σ,
-			XY_Sequence values, SigmaModel truncType, double truncLevel, double clamp) {
+			XY_Sequence values, ExceedanceModel truncType, double truncLevel, double clamp) {
 
 		double clipHi = min(μ + truncLevel * σ, clamp);
 		double pHi = gaussProbExceed(μ, σ, clipHi);

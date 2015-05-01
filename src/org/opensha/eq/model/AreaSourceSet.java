@@ -7,6 +7,8 @@ import static org.opensha.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 
 import org.opensha.geo.Location;
 
@@ -50,8 +52,8 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 	/* Single use builder. */
 	static class Builder {
 
-		static final String ID = "AreaSourceSet.Builder";
-		boolean built = false;
+		private static final String ID = "AreaSourceSet.Builder";
+		private boolean built = false;
 
 		String name;
 		Double weight;
