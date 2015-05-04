@@ -34,7 +34,7 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 	static final String NAME = "Pezeshk et al. (2011)";
 	
 	// period a-to-bc conversion factors and sigma coefficients
-	static final CoefficientContainer CC = new CoefficientContainer("P11.csv", Coeffs.class);
+	static final CoefficientsNew CC = new CoefficientsNew("P11.csv", Coeffs.class);
 
 	private final GmmTable table;
 	
@@ -44,7 +44,7 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 	// implementation constants
 	// none
 
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		double c12, c13, c14, bcfac;
 	}
 	

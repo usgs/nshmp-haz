@@ -33,9 +33,9 @@ public final class Idriss_2014 implements GroundMotionModel {
 	
 	static final String NAME = "Idriss (2014)";
 	
-	static final CoefficientContainer CC = new CoefficientContainer("Idriss14.csv", Coeffs.class);
+	static final CoefficientsNew CC = new CoefficientsNew("Idriss14.csv", Coeffs.class);
 	
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		double a1_lo, a2_lo, a1_hi, a2_hi, a3, b1_lo, b2_lo, b1_hi, b2_hi, xi, gamma, phi;
 	}
 	

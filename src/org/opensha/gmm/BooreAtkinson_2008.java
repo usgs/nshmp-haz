@@ -8,6 +8,8 @@ import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha.gmm.FaultStyle.UNKNOWN;
 import static org.opensha.gmm.Imt.PGA;
 
+import java.util.Map;
+
 /**
  * Implementation of the Boore & Atkinson (2008) next generation attenuation
  * relationship for active crustal regions developed as part of <a
@@ -31,13 +33,8 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 
 	static final String NAME = "Boore & Atkinson (2008)";
 
-	static final CoefficientContainer CC = new CoefficientContainer("BA08.csv", Coeffs.class);
+	static final CoefficientsNew COEFFS = new CoefficientsNew("BA08.csv");
 
-	static final class Coeffs extends Coefficients {
-		double b_lin, b1, b2, c1, c2, c3, e1, e2, e3, e4, e5, e6, e7, h, mh, s,
-				t_u, s_tu, t_m, s_tm;
-	}
-	
 	// author defined constants
 	private static final double PGAlo = 0.06;
 	private static final double A2 = 0.09;
@@ -48,57 +45,78 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 	private static final double Mref = 4.5;
 	private static final double Rref = 1;
 
-	private final Coeffs coeffs, coeffsPGA;
+	static final class Coeffs {
+		double b_lin, b1, b2, c1, c2, c3, e1, e2, e3, e4, e5, e6, e7, h, mh, s,
+				t_u, s_tu, t_m, s_tm;
 
-	BooreAtkinson_2008(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
-		coeffsPGA = (Coeffs) CC.get(PGA);
+		Coeffs(Map<String, Double> coeffs) {
+			b_lin = coeffs.get("b_lin");
+			b1 = coeffs.get("b1");
+			b2 = coeffs.get("b2");
+			c1 = coeffs.get("c1");
+			c2 = coeffs.get("c2");
+			c3 = coeffs.get("c3");
+			e1 = coeffs.get("e1");
+			e2 = coeffs.get("e2");
+			e3 = coeffs.get("e3");
+			e4 = coeffs.get("e4");
+			e5 = coeffs.get("e5");
+			e6 = coeffs.get("e6");
+			e7 = coeffs.get("e7");
+			h = coeffs.get("h");
+			mh = coeffs.get("mh");
+			s = coeffs.get("s");
+			t_u = coeffs.get("t_u");
+			s_tu = coeffs.get("s_tu");
+			t_m = coeffs.get("t_m");
+			s_tm = coeffs.get("s_tm");
+		}
 	}
 
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		FaultStyle style = rakeToFaultStyle(props.rake);
-		double f_ss = (style == STRIKE_SLIP) ? 1.0 : 0.0;
-		double f_rv = (style == REVERSE) ? 1.0 : 0.0;
-		double f_nm = (style == NORMAL) ? 1.0 : 0.0;
-		double f_un = (style == UNKNOWN) ? 1.0 : 0.0;
-		return calc(coeffs, coeffsPGA, props.Mw, props.rJB, f_rv, f_nm, f_ss, f_un, props.vs30);
+	private final Coeffs coeffs;
+	private final Coeffs coeffsPGA;
+
+	BooreAtkinson_2008(final Imt imt) {
+		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffsPGA = new Coeffs(COEFFS.get(PGA));
 	}
 
-	FaultStyle rakeToFaultStyle(double rake) {
-		return GmmUtils.rakeToFaultStyle_NSHMP(rake);
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		return calc(coeffs, coeffsPGA, in);
 	}
 
 	// TODO not sure how to test this or make backwards compatible version for
-	// comparisons. In 2008, the NSHMP mistakenly would supply fractional weights
+	// comparisons. In 2008, the NSHMP mistakenly would supply fractional
+	// weights
 	// to the different fault styles whereas the 4 different fault styles
 	// should be booleans and only ever have one of their values set to 1.
-	
-	private static final ScalarGroundMotion calc(Coeffs c, Coeffs cPGA,
-			double Mw, double rJB, double f_rv, double f_nm, double f_ss,
-			double f_unk, double vs30) {
 
-		double pga4nl = exp(calcPGA4nl(cPGA, Mw, rJB, f_rv, f_nm, f_ss, f_unk));
+	private static final ScalarGroundMotion calc(final Coeffs c, final Coeffs cPGA,
+			final GmmInput in) {
 
-		double mean = calcMean(c, Mw, rJB, f_rv, f_nm, f_ss, f_unk, vs30, pga4nl);
+		FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
 
-		double stdDev = calcStdDev(c, f_unk > 0.0);
+		double pga4nl = exp(calcPGA4nl(cPGA, in.Mw, in.rJB, style));
+
+		double mean = calcMean(c, style, pga4nl, in);
+
+		double stdDev = calcStdDev(c, style);
 
 		return DefaultScalarGroundMotion.create(mean, stdDev);
 	}
 
 	// Mean ground motion model
-	private static final double calcMean(Coeffs c, double mag, double rjb,
-			double f_rv, double f_nm, double f_ss, double f_unk, double vs30,
-			double pga4nl) {
+	private static final double calcMean(final Coeffs c, final FaultStyle style,
+			final double pga4nl, final GmmInput in) {
 
 		// Source/Event Term
-		double Fm = calcSourceTerm(c, mag, f_rv, f_nm, f_ss, f_unk);
+		double Fm = calcSourceTerm(c, in.Mw, style);
 
 		// Path Term
-		double Fd = calcPathTerm(c, mag, rjb);
+		double Fd = calcPathTerm(c, in.Mw, in.rJB);
 
 		// Site Response Term -- Linear
+		double vs30 = in.vs30;
 		double Fs = c.b_lin * log(vs30 / Vref);
 
 		// Site Response Term -- Nonlinear
@@ -130,17 +148,17 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 
 		// Total site
 		Fs += Fnl;
-		
+
 		// Total Model
 		return Fm + Fd + Fs;
 	}
 
 	// Median PGA for ref rock (Vs30=760m/s); always called with PGA coeffs
-	private static final double calcPGA4nl(Coeffs c, double Mw, double rJB,
-			double f_rv, double f_nm, double f_ss, double f_unk) {
+	private static final double calcPGA4nl(final Coeffs c, final double Mw, final double rJB,
+			final FaultStyle style) {
 
 		// Source/Event Term
-		double Fm = calcSourceTerm(c, Mw, f_rv, f_nm, f_ss, f_unk);
+		double Fm = calcSourceTerm(c, Mw, style);
 
 		// Path Term
 		double Fd = calcPathTerm(c, Mw, rJB);
@@ -149,25 +167,26 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 	}
 
 	// Source/Event Term
-	private static final double calcSourceTerm(Coeffs c, double Mw, double f_rv,
-			double f_nm, double f_ss, double f_unk) {
-		double Fm = c.e1 * f_unk + c.e2 * f_ss + c.e3 * f_nm + c.e4 * f_rv;
+	private static final double calcSourceTerm(final Coeffs c, final double Mw,
+			final FaultStyle style) {
+		double Fm = (style == STRIKE_SLIP) ? c.e2 : (style == NORMAL) ? c.e3 :
+			(style == REVERSE) ? c.e4 : c.e1; // else unkown
 		double MwMh = Mw - c.mh;
 		Fm += (Mw <= c.mh) ? c.e5 * MwMh + c.e6 * MwMh * MwMh : c.e7 * MwMh;
 		return Fm;
 	}
 
 	// Path Term
-	private static final double calcPathTerm(Coeffs c, double Mw, double rJB) {
+	private static final double calcPathTerm(final Coeffs c, final double Mw, final double rJB) {
 		double r = Math.sqrt(rJB * rJB + c.h * c.h);
 		return (c.c1 + c.c2 * (Mw - Mref)) * log(r / Rref) + c.c3 *
 			(r - Rref);
 	}
 
 	// Aleatory uncertainty model
-	private static final double calcStdDev(Coeffs c, boolean unknown) {
+	private static final double calcStdDev(final Coeffs c, final FaultStyle style) {
 		// independent values for tau and sigma are available in coeffs
-		return unknown ? c.s_tu : c.s_tm;
+		return style == UNKNOWN ? c.s_tu : c.s_tm;
 	}
 
 }

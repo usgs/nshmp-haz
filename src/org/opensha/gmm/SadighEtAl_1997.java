@@ -41,16 +41,16 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 
 	static final String NAME = "Sadigh et al. (1997)";
 
-	static final CoefficientContainer CC_BC_LO, CC_BC_HI, CC_D_LO, CC_D_HI;
+	static final CoefficientsNew CC_BC_LO, CC_BC_HI, CC_D_LO, CC_D_HI;
 
 	static {
-		CC_BC_LO = new CoefficientContainer("Sadigh97_BClo.csv", Coeffs.class);
-		CC_BC_HI = new CoefficientContainer("Sadigh97_BChi.csv", Coeffs.class);
-		CC_D_LO = new CoefficientContainer("Sadigh97_Dlo.csv", Coeffs.class);
-		CC_D_HI = new CoefficientContainer("Sadigh97_Dhi.csv", Coeffs.class);
+		CC_BC_LO = new CoefficientsNew("Sadigh97_BClo.csv", Coeffs.class);
+		CC_BC_HI = new CoefficientsNew("Sadigh97_BChi.csv", Coeffs.class);
+		CC_D_LO = new CoefficientsNew("Sadigh97_Dlo.csv", Coeffs.class);
+		CC_D_HI = new CoefficientsNew("Sadigh97_Dhi.csv", Coeffs.class);
 	}
 
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		double c1r, c1ss, c2, c3, c4, c5, c6r, c6ss, c7, sig0, cM, sigMax;
 	}
 

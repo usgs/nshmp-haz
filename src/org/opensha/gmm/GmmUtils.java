@@ -233,7 +233,7 @@ public final class GmmUtils {
 	 * @return the clipped ground motion if required by the supplied
 	 *         <code>period</code>, <code>gnd</code> otherwise
 	 */
-	public static double ceusMeanClip(Imt imt, double gnd) {
+	public static double ceusMeanClip(final Imt imt, final double gnd) {
 		// ln(1.5) = 0.405; ln(3.0) = 1.099
 		if (imt == Imt.PGA) return Math.min(0.405, gnd);
 		if (imt.period() > 0.02 && imt.period() < 0.5) return Math.min(gnd, 1.099);
@@ -245,7 +245,7 @@ public final class GmmUtils {
 	 * @param vs30 
 	 * @return the site class corresponding to the supplied vs30
 	 */
-	public static SiteClass ceusSiteClass(double vs30) {
+	public static SiteClass ceusSiteClass(final double vs30) {
 		if (vs30 == 760.0) return SOFT_ROCK;
 		if (vs30 == 2000.0) return HARD_ROCK;
 		throw new IllegalArgumentException("Unsupported CEUS vs30: " + vs30);

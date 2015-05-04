@@ -47,15 +47,15 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 
 	static final String NAME = "Youngs et al. (1997)";
 	
-	static final CoefficientContainer CC = new CoefficientContainer("Youngs97.csv", Coeffs.class);
-	static final CoefficientContainer CC_SA = new CoefficientContainer("ABsiteAmp.csv",
+	static final CoefficientsNew CC = new CoefficientsNew("Youngs97.csv", Coeffs.class);
+	static final CoefficientsNew CC_SA = new CoefficientsNew("ABsiteAmp.csv",
 		CoeffsSiteAmp.class);
 	
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		double gc1, gc1s, gc2, gc2s, gc3, gc3s, gc4, gc5;
 	}
 
-	static class CoeffsSiteAmp extends Coefficients {
+	static class CoeffsSiteAmp extends CoefficientsOld {
 		double blin, b1, b2;
 	}
 

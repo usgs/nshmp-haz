@@ -32,34 +32,29 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
  * @see Gmm#AB_06_PRIME
  */
 public final class AtkinsonBoore_2006p implements GroundMotionModel {
-
-	// TODO convert to functional form
 	
 	static final String NAME = "Atkinson & Boore (2006): Prime";
 	
 	// only period a-to-bc conversion factors
-	static final CoefficientContainer CC = new CoefficientContainer("AB06P.csv", Coeffs.class);
+	static final CoefficientsNew COEFFS = new CoefficientsNew("AB06P.csv");
 
-	private final GmmTable table;
-	
 	// implementation constants
 	private static final double SIGMA = 0.3 * BASE_10_TO_E;
 	
-	static class Coeffs extends Coefficients {
-		double bcfac;
-	}
+	private final double bcfac;
+	private final Imt imt;
+	private final GmmTable table;
 	
-	private final Coeffs coeffs;
-
-	AtkinsonBoore_2006p(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
+	AtkinsonBoore_2006p(final Imt imt) {
+		this.imt = imt;
+		bcfac = COEFFS.get(imt, "bcfac");
 		table = GmmTables.getAtkinson06(imt);
 	}
 
 	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
+	public final ScalarGroundMotion calc(final GmmInput in) {
 
-		double mean = table.get(props.rRup, props.Mw);
+		double mean = table.get(in.rRup, in.Mw);
 		
 		// TODO Steve Harmsen has also included SA0P02 along with PGA but
 		// comments in fortran from Gail say bcfac scales with distance for PGA
@@ -68,16 +63,16 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 		//
 		// TODO reference?? I can't find an explicit reference for this formula;
 		// it is described in Atkinson (2008) p.1306
-		if (GmmUtils.ceusSiteClass(props.vs30) == SOFT_ROCK) {
-			if (coeffs.imt == PGA) {
-				mean += - 0.3 + 0.15 * Math.log10(props.rJB);
+		if (GmmUtils.ceusSiteClass(in.vs30) == SOFT_ROCK) {
+			if (imt == PGA) {
+				mean += - 0.3 + 0.15 * Math.log10(in.rJB);
 			} else {
-				mean += coeffs.bcfac;
+				mean += bcfac;
 			}
 		}
 		
 		return DefaultScalarGroundMotion.create(
-			GmmUtils.ceusMeanClip(coeffs.imt, mean), SIGMA);
+			GmmUtils.ceusMeanClip(imt, mean), SIGMA);
 	}
 
 }

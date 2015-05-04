@@ -6,6 +6,8 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static org.opensha.gmm.Imt.PGA;
 
+import java.util.Map;
+
 /**
  * Abstract implementation of the subduction ground motion model created for BC
  * Hydro, Canada, by Addo, Abrahamson, & Youngs (2012). This implementation
@@ -40,12 +42,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
 	static final String NAME = "BC Hydro (2012)";
 
-	static final CoefficientContainer CC = new CoefficientContainer("BCHydro12.csv", Coeffs.class);
-
-	static class Coeffs extends Coefficients {
-		double vlin, b, t1, t2, t6, t7, t8, t10, t11, t12, t13, t14, t15, t16, dC1lo, dC1mid,
-				dC1hi;
-	}
+	static final CoefficientsNew COEFFS = new CoefficientsNew("BCHydro12.csv");
 
 	// author declared constants
 	private static final double C1 = 7.8;
@@ -62,31 +59,56 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 	private static final double SIGMA = 0.74;
 	private static final double DC1_SLAB = -0.3;
 
-	private final Coeffs coeffs, coeffsPGA;
+	private static final class Coeffs {
 
-	BcHydro_2012(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
-		coeffsPGA = (Coeffs) CC.get(PGA);
+		final double vlin, b, t1, t2, t6, t10, t11, t12, t13, t14, dC1mid;
+
+		// not currently used
+		// final double t7, t8, t15, t16, dC1lo, dC1hi;
+
+		Coeffs(Map<String, Double> coeffs) {
+			vlin = coeffs.get("vlin");
+			b = coeffs.get("b");
+			t1 = coeffs.get("t1");
+			t2 = coeffs.get("t2");
+			t6 = coeffs.get("t6");
+			t10 = coeffs.get("t10");
+			t11 = coeffs.get("t11");
+			t12 = coeffs.get("t12");
+			t13 = coeffs.get("t13");
+			t14 = coeffs.get("t14");
+			dC1mid = coeffs.get("dC1mid");
+		}
 	}
 
-	@Override public final ScalarGroundMotion calc(GmmInput props) {
+	private final Coeffs coeffs;
+	private final Coeffs coeffsPGA;
+
+	BcHydro_2012(final Imt imt) {
+		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffsPGA = new Coeffs(COEFFS.get(PGA));
+	}
+
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
 
 		// pgaRock only required to compute non-linear site response when vs30
 		// is less than period-dependent vlin cutoff
-		double pgaRock = (props.vs30 < coeffs.vlin) ? calcMean(coeffsPGA, props.Mw, props.rRup,
-			props.zTop, props.vs30, isSlab(), 0.0) : 0.0;
+		double pgaRock = (in.vs30 < coeffs.vlin) ? calcMean(coeffsPGA, isSlab(), 0.0, in) : 0.0;
 
-		double mean = calcMean(coeffs, props.Mw, props.rRup, props.zTop, props.vs30, isSlab(),
-			pgaRock);
+		double mean = calcMean(coeffs, isSlab(), pgaRock, in);
 
 		return DefaultScalarGroundMotion.create(mean, SIGMA);
 	}
 
 	abstract boolean isSlab();
 
-	private static final double calcMean(Coeffs c, double Mw, double rRup, double zTop,
-			double vs30, boolean slab, double pgaRock) {
+	private static final double calcMean(final Coeffs c, final boolean slab, final double pgaRock,
+			final GmmInput in) {
 
+		double Mw = in.Mw;
+		double rRup = in.rRup;
+		double zTop = in.zTop;
+		
 		// zTop = hypoDepth and is capped at 125km, only used when slab = true
 		if (slab) zTop = min(zTop, 125.0);
 
@@ -98,10 +120,10 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 		// no depth term for interface events
 		double fDepth = slab ? c.t11 * (zTop - 60.) : 0.0;
 
-		double vsS = min(vs30, VSS_MAX);
+		double vsS = min(in.vs30, VSS_MAX);
 
 		double fSite = c.t12 * log(vsS / c.vlin);
-		if (vs30 < c.vlin) { // whether or not we use pgaRock
+		if (in.vs30 < c.vlin) { // whether or not we use pgaRock
 			fSite += -c.b * log(pgaRock + C) + c.b * log(pgaRock + C * pow((vsS / c.vlin), N));
 		} else {
 			// for pgaRock loop, vs=1000 > vlinPGA=865

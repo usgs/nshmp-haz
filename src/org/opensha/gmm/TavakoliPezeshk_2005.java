@@ -59,9 +59,9 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 
 	static final String NAME = "Tavakoli & Pezeshk (2005)";
 	
-	static final CoefficientContainer CC = new CoefficientContainer("TP05.csv", Coeffs.class);
+	static final CoefficientsNew CC = new CoefficientsNew("TP05.csv", Coeffs.class);
 	
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16;
 	}
 	

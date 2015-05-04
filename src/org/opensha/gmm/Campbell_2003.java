@@ -6,6 +6,8 @@ import static java.lang.Math.sqrt;
 import static org.opensha.gmm.MagConverter.NONE;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
 
+import java.util.Map;
+
 /**
  * Implementation of the hybrid ground motion model for stable continental
  * regions by Campbell (2003). This implementation matches that used in the 2008
@@ -40,50 +42,66 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 	// c5(c7) c6(c8) c7(c9) c8(c10) c9(c5) c10(c6)
 	//
 	// c clamp for 2s set to 0 as per Ken Campbell's email of Aug 18 2008.
-	
+
 	// TODO fix clamp values (not implemented here yet) to match other CEUS gmms
 
 	static final String NAME = "Campbell (2003)";
-	
-	static final CoefficientContainer CC = new CoefficientContainer("Campbell03.csv", Coeffs.class);
-	
-	static class Coeffs extends Coefficients {
-		double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13;
-	}
-		
+
+	static final CoefficientsNew COEFFS = new CoefficientsNew("Campbell03.csv");
+
 	// author declared constants
 	private static final double LOG_70 = 4.2484952;
 	private static final double LOG_130 = 4.8675345;
 
-	// implementation constants
-	// none
-	
+	private static final class Coeffs {
+
+		final double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13;
+
+		Coeffs(Map<String, Double> coeffs) {
+			c1 = coeffs.get("c1");
+			c1h = coeffs.get("c1h");
+			c2 = coeffs.get("c2");
+			c3 = coeffs.get("c3");
+			c4 = coeffs.get("c4");
+			c5 = coeffs.get("c5");
+			c6 = coeffs.get("c6");
+			c7 = coeffs.get("c7");
+			c8 = coeffs.get("c8");
+			c9 = coeffs.get("c9");
+			c10 = coeffs.get("c10");
+			c11 = coeffs.get("c11");
+			c12 = coeffs.get("c12");
+			c13 = coeffs.get("c13");
+		}
+	}
+
 	private final Coeffs coeffs;
+	private final Imt imt;
 
-	Campbell_2003(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
-	}
-	
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		SiteClass siteClass = GmmUtils.ceusSiteClass(props.vs30);
-		return DefaultScalarGroundMotion.create(
-			calcMean(coeffs, converter().convert(props.Mw), props.rRup,
-				siteClass),
-			calcStdDev(coeffs, props.Mw));
+	Campbell_2003(final Imt imt) {
+		this.imt = imt;
+		coeffs = new Coeffs(COEFFS.get(imt));
 	}
 
-	@Override
-	public MagConverter converter() {
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+
+		double Mw = converter().convert(in.Mw);
+		SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
+
+		double mean = calcMean(coeffs, Mw, in.rRup, siteClass);
+		double std = calcStdDev(coeffs, Mw);
+
+		return DefaultScalarGroundMotion.create(mean, std);
+	}
+
+	@Override public MagConverter converter() {
 		return NONE;
 	}
 
-	private static final double calcMean(Coeffs c, double Mw, double rRup,
-			SiteClass siteClass) {
-		
+	private final double calcMean(final Coeffs c, final double Mw, final double rRup,
+			final SiteClass siteClass) {
+
 		double gnd0 = siteClass == HARD_ROCK ? c.c1h : c.c1;
-		// TODO clean (check other CEUS migrations)
-		// if (magType == LG_PHASE) mag = Utils.mblgToMw(magConvCode, mag);
 		double gndm = gnd0 + c.c2 * Mw + c.c3 * (8.5 - Mw) * (8.5 - Mw);
 		double cfac = pow((c.c5 * Math.exp(c.c6 * Mw)), 2);
 
@@ -93,12 +111,10 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 		if (rRup > 130.0) fac = fac + c.c8 * (log(rRup) - LOG_130);
 		double gnd = gndm + c.c4 * log(arg) + fac + (c.c9 + c.c10 * Mw) * rRup;
 
-		return GmmUtils.ceusMeanClip(c.imt, gnd);
+		return GmmUtils.ceusMeanClip(imt, gnd);
 	}
 
-	private static final double calcStdDev(Coeffs c, double Mw) {
-		// TODO clean
-		// if (magType == LG_PHASE) mag = Utils.mblgToMw(magConvCode, mag);
+	private final double calcStdDev(final Coeffs c, final double Mw) {
 		return (Mw < 7.16) ? c.c11 + c.c12 * Mw : c.c13;
 	}
 

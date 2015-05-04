@@ -5,6 +5,8 @@ import static java.lang.Math.pow;
 import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.Imt.PGA;
 
+import java.util.Map;
+
 /**
  * Abstract implementation of the subduction ground motion model by Atkinson &
  * Boore (2003). This implementation matches that used in the 2008 USGS NSHMP.
@@ -41,47 +43,56 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
 	static final String NAME = "Atkinson & Boore (2003)";
 
-	// This relation supports a number of options and requires PGA reference
-	// values. Although implementation specific coeffs could be loaded by
-	// subclasses, their overhead is so small that they're loaded here.
-	//
-	// S = Slab, I = Interface
-	// G = Global, C = Cascadia/PNW
-	static final CoefficientContainer CC_CS, CC_CI, CC_GS, CC_GI;
+	static final CoefficientsNew CASC_SLAB, CASC_INTERFACE, GLOBAL_SLAB,
+			GLOBAL_INTERFACE;
 
 	static {
-		CC_CS = new CoefficientContainer("AB03_cascadia_slab.csv", Coeffs.class);
-		CC_CI = new CoefficientContainer("AB03_cascadia_interface.csv", Coeffs.class);
-		CC_GS = new CoefficientContainer("AB03_global_slab.csv", Coeffs.class);
-		CC_GI = new CoefficientContainer("AB03_global_interface.csv", Coeffs.class);
-	}
-
-	static class Coeffs extends Coefficients {
-		double c1, c2, c3, c4, c5, c6, c7, sig;
+		CASC_SLAB = new CoefficientsNew("AB03_cascadia_slab.csv");
+		CASC_INTERFACE = new CoefficientsNew("AB03_cascadia_interface.csv");
+		GLOBAL_SLAB = new CoefficientsNew("AB03_global_slab.csv");
+		GLOBAL_INTERFACE = new CoefficientsNew("AB03_global_interface.csv");
 	}
 
 	// author declared constants
 	private static final double gfac = 2.9912261; // log10(980)
 
-	// implementation constants
-	// none
+	private static final class Coeffs {
 
-	private final Coeffs coeffs;
-	private final Coeffs coeffsPGA;
+		final double c1, c2, c3, c4, c5, c6, c7, sig;
 
-	AtkinsonBoore_2003(Imt imt) {
-		if (isSlab()) {
-			coeffs = (Coeffs) (isGlobal() ? CC_GS.get(imt) : CC_CS.get(imt));
-			coeffsPGA = (Coeffs) (isGlobal() ? CC_GS.get(PGA) : CC_CS.get(PGA));
-		} else {
-			coeffs = (Coeffs) (isGlobal() ? CC_GI.get(imt) : CC_CI.get(imt));
-			coeffsPGA = (Coeffs) (isGlobal() ? CC_GI.get(PGA) : CC_CI.get(PGA));
+		Coeffs(Map<String, Double> coeffs) {
+			c1 = coeffs.get("c1");
+			c2 = coeffs.get("c2");
+			c3 = coeffs.get("c3");
+			c4 = coeffs.get("c4");
+			c5 = coeffs.get("c5");
+			c6 = coeffs.get("c6");
+			c7 = coeffs.get("c7");
+			sig = coeffs.get("sig");
 		}
 	}
 
-	@Override public final ScalarGroundMotion calc(GmmInput props) {
-		double mean = calcMean(coeffs, coeffsPGA, props.Mw, props.rRup, props.zTop, props.vs30,
-			isSlab(), coeffs.imt.frequency());
+	private final Coeffs coeffs;
+	private final Coeffs coeffsPGA;
+	private final Imt imt;
+
+	AtkinsonBoore_2003(final Imt imt) {
+		this.imt = imt;
+		coeffs = initCoeffs(imt, isSlab(), isGlobal());
+		coeffsPGA = initCoeffs(PGA, isSlab(), isGlobal());
+	}
+
+	private static Coeffs initCoeffs(final Imt imt, final boolean slab, final boolean global) {
+		Map<String, Double> coeffs =
+			slab && global ? GLOBAL_SLAB.get(imt) :
+				slab ? CASC_SLAB.get(imt) :
+					global ? GLOBAL_INTERFACE.get(imt) :
+						CASC_INTERFACE.get(imt);
+		return new Coeffs(coeffs);
+	}
+
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		double mean = calcMean(coeffs, coeffsPGA, imt, isSlab(), in);
 		double sigma = coeffs.sig * BASE_10_TO_E;
 		return DefaultScalarGroundMotion.create(mean, sigma);
 	}
@@ -93,11 +104,11 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	abstract boolean isSlab();
 
 	// SF2 variable of AB06 needs to be provided by subclasses via
-	private static final double calcMean(Coeffs c, Coeffs cPGA, double Mw, double rRup,
-			double zTop, double vs30, boolean slab, double freq) {
+	private static final double calcMean(final Coeffs c, final Coeffs cPGA, final Imt imt,
+			final boolean slab, final GmmInput in) {
 
 		// "saturation effect" p. 1709 AB 2003
-		Mw = Math.min(Mw, slab ? 8.0 : 8.5);
+		double Mw = Math.min(in.Mw, slab ? 8.0 : 8.5);
 
 		double delta = 0.00724 * pow(10, 0.507 * Mw);
 		double g = pow(10, slab ? (0.301 - 0.01 * Mw) : (1.2 - 0.18 * Mw));
@@ -113,11 +124,13 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		// if (!slab) depth = 20;
 		// TODO revisit above
 
-		double dist2 = Math.sqrt(rRup * rRup + delta * delta);
-		double gnd = gndm + c.c3 * zTop + c.c4 * dist2 - g * log10(dist2);
-		double rpga = cPGA.c1 + cPGA.c2 * Mw + cPGA.c3 * zTop + cPGA.c4 * dist2 - g * log10(dist2);
+		double dist2 = Math.sqrt(in.rRup * in.rRup + delta * delta);
+		double gnd = gndm + c.c3 * in.zTop + c.c4 * dist2 - g * log10(dist2);
+		double rpga = cPGA.c1 + cPGA.c2 * Mw + cPGA.c3 * in.zTop + cPGA.c4 * dist2 - g *
+			log10(dist2);
 		rpga = pow(10, rpga);
 
+		double freq = imt.frequency();
 		double sl;
 		if ((rpga <= 100.0) || (freq <= 1.0)) {
 			sl = 1.0;
@@ -132,6 +145,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 			sl = 0.0;
 		}
 
+		double vs30 = in.vs30;
 		if (slab) {
 			if (vs30 > 780.0) { // B-rock
 				// do nothing gnd = gnd;

@@ -277,10 +277,10 @@ public enum Gmm {
 	private final Set<Imt> imts;
 	private final LoadingCache<Imt, GroundMotionModel> cache;
 
-	private Gmm(Class<? extends GroundMotionModel> delegate, String name, CoefficientContainer cc) {
+	private Gmm(Class<? extends GroundMotionModel> delegate, String name, CoefficientsNew coeffs) {
 		this.delegate = delegate;
 		this.name = name;
-		imts = cc.imtSet();
+		imts = coeffs.imts();
 		cache = CacheBuilder.newBuilder().build(new CacheLoader<Imt, GroundMotionModel>() {
 			@Override public GroundMotionModel load(Imt imt) throws Exception {
 				return createInstance(imt);

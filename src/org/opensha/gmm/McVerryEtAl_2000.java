@@ -65,12 +65,12 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 	static final String NAME = "McVerry et al. (2000)";
 
 	// geomean and max-horizontal coefficients
-	static final CoefficientContainer CC = new CoefficientContainer("McVerry00_gm.csv",
+	static final CoefficientsNew CC = new CoefficientsNew("McVerry00_gm.csv",
 		Coeffs.class);
-	static final CoefficientContainer CC_MH = new CoefficientContainer("McVerry00_mh.csv",
+	static final CoefficientsNew CC_MH = new CoefficientsNew("McVerry00_mh.csv",
 		Coeffs.class);
 
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		// 'as' and 'y' suffixes indicate attribution to
 		// Abrahamson & Silva or Youngs et al.
 		double c1, c3as, c5, c8, c10as, c11, c13y, c15, c17, c20, c24, c29, c30as, c33as, c43, c46,

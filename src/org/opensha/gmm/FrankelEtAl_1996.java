@@ -35,12 +35,12 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 	static final String NAME = "Frankel et al. (1996)";
 	
 	// only holds period dependent sigma values
-	static final CoefficientContainer CC = new CoefficientContainer("Frankel96.csv", Coeffs.class);
+	static final CoefficientsNew CC = new CoefficientsNew("Frankel96.csv", Coeffs.class);
 	
 	private final GmmTable bcTable;
 	private final GmmTable aTable;
 	
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		double bsigma;
 	}
 	

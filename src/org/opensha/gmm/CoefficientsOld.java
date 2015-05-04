@@ -10,23 +10,24 @@ import com.google.common.base.Throwables;
  * Base class for ground motion model (Gmm) coefficients. Concrete
  * implementations are created as nested static classes that declare all
  * necessary fields in each Gmm implementation. The static
- * {@code CoefficientContainer} in each Gmm implementation assumes reponsibility
- * for creating and populating {@code Coefficients} instances for every type of
+ * {@code CoefficientsNew} in each Gmm implementation assumes reponsibility
+ * for creating and populating {@code CoefficientsOld} instances for every type of
  * Imt supported by a Gmm.
  * 
- * <p>{@code Coefficients} implementations may declare fields that a
- * CoefficientContainer is unaware of that can be initialized independently. See
+ * <p>{@code CoefficientsOld} implementations may declare fields that a
+ * CoefficientsNew is unaware of that can be initialized independently. See
  * CampbellBozorgnia_2013 for an example. Implementations must also declare all
  * coefficients that exist in the header line of a *.csv source file  (see
- * {@link CoefficientContainer}) or a {@code NoSuchFieldException} is
+ * {@link CoefficientsNew}) or a {@code NoSuchFieldException} is
  * thrown. Variable names in *.csv files are case-sensitive and subject to
  * the same Java variable naming rules that apply to the fields to which the
  * coefficient values will be mapped.</p>
  * 
  * @author Peter Powers
- * @see CoefficientContainer
+ * @see CoefficientsNew
  */
-abstract class Coefficients {
+@Deprecated
+abstract class CoefficientsOld {
 
 	Imt imt;
 

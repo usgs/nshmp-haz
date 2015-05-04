@@ -40,9 +40,9 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
 	static final String NAME = "Zhao et al. (2006)";
 
-	static final CoefficientContainer CC = new CoefficientContainer("Zhao06.csv", Coeffs.class);
+	static final CoefficientsNew CC = new CoefficientsNew("Zhao06.csv", Coeffs.class);
 
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		double T, a, b, c, d, e, Sr, Si, Ss, Ssl, C1, C2, C3, sigma, tau, tauI, tauS, Ps, Qi, Qs,
 				Wi, Ws;
 	}

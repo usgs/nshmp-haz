@@ -12,11 +12,12 @@ import static org.opensha.gmm.Imt.SA0P01;
 import static org.opensha.gmm.Imt.SA0P25;
 
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * Implementation of the Campbell & Bozorgnia (2008) next generation
- * attenuation for active crustal regions relationship developed as part of <a
+ * Implementation of the Campbell & Bozorgnia (2008) next generation attenuation
+ * for active crustal regions relationship developed as part of <a
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
@@ -36,71 +37,95 @@ import java.util.Set;
 public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
 	static final String NAME = "Campbell & Bozorgnia (2008)";
-	
-	static final CoefficientContainer CC = new CoefficientContainer("CB08.csv", Coeffs.class);
-	
-	static class Coeffs extends Coefficients {
-		double c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, k1, k2,
-				k3, s_lny, t_lny, s_c, rho;
-	}
-	
+
+	static final CoefficientsNew COEFFS = new CoefficientsNew("CB08.csv");
+
 	private static final Set<Imt> SHORT_PERIODS = EnumSet.range(SA0P01, SA0P25);
 
 	// author declared constants
 	private static final double S_lnAF = 0.3;
 	private static final double N = 1.18;
 	private static final double C = 1.88;
-	
+
 	// implementation constants
 	private static final double S_lnAFsq = S_lnAF * S_lnAF;
 
-	private final Coeffs coeffs, coeffsPGA;
+	private static final class Coeffs {
 
-	CampbellBozorgnia_2008(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
-		coeffsPGA = (Coeffs) CC.get(PGA);
+		double c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, k1, k2, k3, s_lny, t_lny, ρ;
+
+		// unused
+		// double s_c;
+
+		Coeffs(Map<String, Double> coeffs) {
+			c0 = coeffs.get("c0");
+			c1 = coeffs.get("c1");
+			c2 = coeffs.get("c2");
+			c3 = coeffs.get("c3");
+			c4 = coeffs.get("c4");
+			c5 = coeffs.get("c5");
+			c6 = coeffs.get("c6");
+			c7 = coeffs.get("c7");
+			c8 = coeffs.get("c8");
+			c9 = coeffs.get("c9");
+			c10 = coeffs.get("c10");
+			c11 = coeffs.get("c11");
+			c12 = coeffs.get("c12");
+			k1 = coeffs.get("k1");
+			k2 = coeffs.get("k2");
+			k3 = coeffs.get("k3");
+			s_lny = coeffs.get("s_lny");
+			t_lny = coeffs.get("t_lny");
+			ρ = coeffs.get("ρ");
+		}
 	}
-	
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		FaultStyle style = rakeToFaultStyle(props.rake);
-		return calc(coeffs, coeffsPGA, props.Mw, props.rJB, props.rRup,
-			props.dip, props.zTop, style, props.vs30, props.z2p5);
+
+	private final Coeffs coeffs;
+	private final Coeffs coeffsPGA;
+	private final Imt imt;
+
+	CampbellBozorgnia_2008(final Imt imt) {
+		this.imt = imt;
+		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffsPGA = new Coeffs(COEFFS.get(PGA));
 	}
 
-	FaultStyle rakeToFaultStyle(double rake) {
-		return GmmUtils.rakeToFaultStyle_NSHMP(rake);
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		return calc(coeffs, coeffsPGA, imt, in);
 	}
 
-	private static final ScalarGroundMotion calc(Coeffs c, Coeffs cPGA,
-			double Mw, double rJB, double rRup, double dip, double zTop,
-			FaultStyle style, double vs30, double z2p5) {
+	private static final ScalarGroundMotion calc(final Coeffs c, final Coeffs cPGA, final Imt imt,
+			final GmmInput in) {
 
-		double pgaRock = (vs30 < c.k1) ? exp(calcMean(cPGA, Mw, rJB,
-			rRup, dip, zTop, style, 1100.0, z2p5, 0.0)) : 0.0;
+		FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
+		double vs30 = in.vs30;
 
-		double mean = calcMean(c, Mw, rJB, rRup, dip, zTop, style, vs30, z2p5,
-			pgaRock);
-		
+		double pgaRock = (vs30 < c.k1) ? exp(calcMean(cPGA, style, 1100.0, 0.0, in)) : 0.0;
+
+		double mean = calcMean(c, style, vs30, pgaRock, in);
+
 		// prevent SA<PGA for short periods
-		if (SHORT_PERIODS.contains(c.imt)) {
-			double pgaMean = calcMean(cPGA, Mw, rJB, rRup, dip, zTop,
-				style, vs30, z2p5, pgaRock);
+		if (SHORT_PERIODS.contains(imt)) {
+			double pgaMean = calcMean(cPGA, style, vs30, pgaRock, in);
 			mean = max(mean, pgaMean);
 		}
 		double stdDev = calcStdDev(c, cPGA, vs30, pgaRock);
 
 		return DefaultScalarGroundMotion.create(mean, stdDev);
 	}
-	
-	// Mean ground motion model
-	private static final double calcMean(Coeffs c, double Mw, double rJB,
-			double rRup, double dip, double zTop, FaultStyle style,
-			double vs30, double z2p5, double pga_rock) {
-		
-		// @formatter:off
+
+	// Mean ground motion model -- we use supplied vs30 rather than one from
+	// input to impose 1100 when computing rock reference
+	private static final double calcMean(final Coeffs c, final FaultStyle style, final double vs30,
+			final double pga_rock, final GmmInput in) {
+
+		double Mw = in.Mw;
+		double rJB = in.rJB;
+		double rRup = in.rRup;
+		double zTop = in.zTop;
+
 		double fmag, fdis, fflt, fhng, fsite, fsed;
-				
+
 		// Magnitude Term
 		fmag = c.c0 + c.c1 * Mw;
 		if (Mw > 5.5) fmag += c.c2 * (Mw - 5.5);
@@ -110,8 +135,8 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 		fdis = (c.c4 + c.c5 * Mw) * log(sqrt(rRup * rRup + c.c6 * c.c6));
 
 		// Fault-style Term
-		fflt = (style == REVERSE) ? c.c7 *  ((zTop < 1.0) ? zTop : 1.0) : 
-			   (style == NORMAL) ? c.c8 : 0.0;
+		fflt = (style == REVERSE) ? c.c7 * ((zTop < 1.0) ? zTop : 1.0) :
+			(style == NORMAL) ? c.c8 : 0.0;
 
 		// Hanging-wall Term
 		double fhngr, fhngm, fhngz, fhngd;
@@ -135,21 +160,23 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 		// .....rupture depth
 		fhngz = (zTop >= 20.0) ? 0.0 : (20.0 - zTop) / 20.0;
 		// .....rupture dip
-		fhngd = (dip <= 70.0) ? 1.0 : (90.0 - dip) / 20.0;
+		fhngd = (in.dip <= 70.0) ? 1.0 : (90.0 - in.dip) / 20.0;
 		// .....total
 		fhng = c.c9 * fhngr * fhngm * fhngz * fhngd;
 
 		// Site Term - linear and non-linear
 		double vsk1 = vs30 / c.k1;
 		if (vs30 < c.k1) {
-			fsite = c.c10 * log(vsk1) + c.k2 * (log(pga_rock + C * pow(vsk1, N)) - log(pga_rock + C));
+			fsite = c.c10 * log(vsk1) + c.k2 *
+				(log(pga_rock + C * pow(vsk1, N)) - log(pga_rock + C));
 		} else if (vs30 < 1100.0) {
 			fsite = (c.c10 + c.k2 * N) * Math.log(vsk1);
 		} else {
 			fsite = (c.c10 + c.k2 * N) * Math.log(1100.0 / c.k1);
 		}
-		
+
 		// update z2p5 if not supplied
+		double z2p5 = in.z2p5;
 		if (Double.isNaN(z2p5)) z2p5 = (vs30 <= 2500) ? 2.0 : 0.0;
 		// Shallow Sediment and Basin Term
 		if (z2p5 < 1.0) {
@@ -159,15 +186,14 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 		} else {
 			fsed = c.c12 * c.k3 * exp(-0.75) * (1.0 - exp(-0.25 * (z2p5 - 3.0)));
 		}
-		
+
 		// Total Model
 		return fmag + fdis + fflt + fhng + fsite + fsed;
-		// @formatter:on
 	}
 
 	// Aleatory uncertainty model
-	private static final double calcStdDev(Coeffs c, Coeffs cPGA, double vs30,
-			double pgaRock) {
+	private static final double calcStdDev(final Coeffs c, final Coeffs cPGA, final double vs30,
+			final double pgaRock) {
 
 		// Inter-event Term
 		double tau = c.t_lny;
@@ -180,11 +206,11 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 			double alpha = c.k2 * pgaRock *
 				((1.0 / (pgaRock + C * pow(vs30 / c.k1, N))) - 1 / (pgaRock + C));
 			sigma = sqrt(s_lnYb * s_lnYb + S_lnAF * S_lnAF + alpha * alpha *
-				s_lnAb * s_lnAb + 2.0 * alpha * c.rho * s_lnYb * s_lnAb);
+				s_lnAb * s_lnAb + 2.0 * alpha * c.ρ * s_lnYb * s_lnAb);
 		}
 
 		// Total Model
-		return sqrt(tau*tau + sigma*sigma);
+		return sqrt(tau * tau + sigma * sigma);
 	}
 
 }

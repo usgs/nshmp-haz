@@ -39,10 +39,10 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	static final String NAME = "Chiou & Youngs (2014)";
 
-	static final CoefficientContainer CC = new CoefficientContainer(
+	static final CoefficientsNew CC = new CoefficientsNew(
 		"CY14.csv", Coeffs.class);
 
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		
 		double c1, c1a, c1b, c1c, c1d, c3, c5, c6, c7, c7b, c8b, c9, c9a, c9b,
 				c11b, cn, cM, cHM, cgamma1, cgamma2, cgamma3, phi1, phi2, phi3,

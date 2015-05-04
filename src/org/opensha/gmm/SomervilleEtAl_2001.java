@@ -36,10 +36,10 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
 
 	static final String NAME = "Somerville et al. (2001)";
 	
-	static final CoefficientContainer CC = new CoefficientContainer("Somerville01.csv",
+	static final CoefficientsNew CC = new CoefficientsNew("Somerville01.csv",
 		Coeffs.class);
 	
-	static class Coeffs extends Coefficients {
+	static class Coeffs extends CoefficientsOld {
 		double a1, a1h, a2, a3, a4, a5, a6, a7, sig0;
 	}
 	
