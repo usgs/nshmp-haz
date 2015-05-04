@@ -23,7 +23,10 @@ import org.opensha.data.Interpolate;
  * 
  * <p><b>Reference:</b> Abrahamson, N.A., Silva, W.J., and Kamai, R., 2014,
  * Summary of the ASK14 ground-motion relation for active crustal regions,
- * Earthquake Spectra, in press.</p>
+ * Earthquake Spectra, v. 30, n. 3, p. 1025-1055.</p>
+ * 
+ * <p><b>doi:</b> <a href="doi: http://dx.doi.org/10.1193/070913EQS198M">
+ * http://dx.doi.org/10.1193/070913EQS198M</a></p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
@@ -49,14 +52,14 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 	private static final double H1 = 0.25;
 	private static final double H2 = 1.5;
 	private static final double H3 = -0.75;
-	// private static final double RY0 = -1.0;
 	private static final double PHI_AMP_SQ = 0.16;
+
+	// private static final double RY0 = -1.0;
 
 	private static final class Coeffs {
 
-		final double a1, a2, a6, a8, a10, a12, a13, a15,
-				a17, a43, a44, a45, a46, b, c, s1e, s2e, s3, s4, s1m, s2m,
-				M1, Vlin;
+		final double a1, a2, a6, a8, a10, a12, a13, a15, a17, a43, a44, a45, a46, b, c, s1e, s2e,
+				s3, s4, s1m, s2m, M1, Vlin;
 
 		// same for all periods; replaced with constant
 		// final double a3, a4, a5, c4, n;
@@ -257,10 +260,10 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 		double phiSq = phiBsq * dAmp_p1 * dAmp_p1 + PHI_AMP_SQ;
 
 		// tau squared, with non-linear effects -- Equation 29
-		double tau = tauB * dAmp_p1;
+		double τ = tauB * dAmp_p1;
 
 		// total std dev
-		double stdDev = sqrt(phiSq + tau * tau);
+		double stdDev = sqrt(phiSq + τ * τ);
 
 		return DefaultScalarGroundMotion.create(mean, stdDev);
 

@@ -68,10 +68,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	static final CoefficientsNew COEFFS_A = new CoefficientsNew("AB06A.csv");
 	static final CoefficientsNew COEFFS_BC = new CoefficientsNew("AB06BC.csv");
 
-	// author declared constants
-	// private static final double STRESSFAC = 0.5146; // ln(200/140)/ln(2)
 	private static final double GFAC = 6.8875526; // ln (980)
-	// private static final double SFAC = 2.302585; // ln(10)
 	private static final double TFAC = -0.5108256; // ln(0.6)
 	private static final double vref = 760.0;
 	private static final double v1 = 180.0;
@@ -80,9 +77,9 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	private static final double fac140 = 2.1461280; // log10(140)
 	private static final double facv1 = -0.5108256; // ln(v1/v2)
 	private static final double facv2 = -0.9295360; // ln(v2/vref)
-
-	// implementation constants
 	private static final double SIGMA = 0.3 * BASE_10_TO_E;
+	// private static final double STRESSFAC = 0.5146; // ln(200/140)/ln(2)
+	// private static final double SFAC = 2.302585; // ln(10)
 
 	private static final class Coeffs {
 

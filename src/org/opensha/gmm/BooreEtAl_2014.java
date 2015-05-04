@@ -23,7 +23,11 @@ import java.util.Map;
  * 
  * <p><b>Reference:</b> Boore, D.M., Stewart, J.P., Seyhan, E., and Atkinson,
  * G.M., 2014, NGA-West 2 equations for predicting PGA, PGV, and 5%-damped PSA
- * for shallow crustal earthquakes, Earthquake Spectra, in press.</p>
+ * for shallow crustal earthquakes, Earthquake Spectra, v. 30, n. 3, p.
+ * 1057-1085.</p>
+ * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070113EQS184M">
+ * http://dx.doi.org/10.1193/070113EQS184M</a></p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 

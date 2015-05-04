@@ -4,6 +4,8 @@ import static java.lang.Math.log;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
 import static org.opensha.util.MathUtils.hypot;
 
+import java.util.Map;
+
 /**
  * Implementation of the hard rock ground motion model for the Central and
  * Eastern US by Somerville et al. (2001). This implementation matches that used
@@ -36,38 +38,47 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
 
 	static final String NAME = "Somerville et al. (2001)";
 	
-	static final CoefficientsNew CC = new CoefficientsNew("Somerville01.csv",
-		Coeffs.class);
+	static final CoefficientsNew COEFFS = new CoefficientsNew("Somerville01.csv");
 	
-	static class Coeffs extends CoefficientsOld {
-		double a1, a1h, a2, a3, a4, a5, a6, a7, sig0;
-	}
-	
-	// author declared constants
-	// none
-
-	// implementation constants
 	private static final double Z_MIN = 6.0;
 	private static final double R_CUT = 50.0; // km
 	private static final double R1 = hypot(R_CUT, Z_MIN);
 	
+	static class Coeffs {
+		
+		double a1, a1h, a2, a3, a4, a5, a6, a7, σ0;
+		
+		Coeffs(Map<String, Double> coeffs) {
+			a1 = coeffs.get("a1");
+			a1h = coeffs.get("a1h");
+			a2 = coeffs.get("a2");
+			a3 = coeffs.get("a3");
+			a4 = coeffs.get("a4");
+			a5 = coeffs.get("a5");
+			a6 = coeffs.get("a6");
+			a7 = coeffs.get("a7");
+			σ0 = coeffs.get("sig0");
+		}
+	}
+	
 	private final Coeffs coeffs;
+	private final Imt imt;
 
-	SomervilleEtAl_2001(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
+	SomervilleEtAl_2001(final Imt imt) {
+		this.imt = imt;
+		coeffs = new Coeffs(COEFFS.get(imt));
 	}
 	
 	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		SiteClass siteClass = GmmUtils.ceusSiteClass(props.vs30);
-		return DefaultScalarGroundMotion.create(
-			calcMean(coeffs, props.Mw, props.rJB, siteClass),
-			coeffs.sig0);
+	public final ScalarGroundMotion calc(final GmmInput in) {
+		double μ = calcMean(coeffs, imt, in.Mw, in.rJB, in.vs30);
+		return DefaultScalarGroundMotion.create(μ, coeffs.σ0);
 	}
 
-	private static final double calcMean(Coeffs c, double Mw, double rJB,
-			SiteClass siteClass) {
+	private static final double calcMean(final Coeffs c, final Imt imt, final double Mw,
+			final double rJB, final double vs30) {
 		
+		SiteClass siteClass = GmmUtils.ceusSiteClass(vs30);
 		double gnd = (siteClass == HARD_ROCK) ? c.a1h : c.a1;
 		gnd += c.a2 * (Mw - 6.4) + c.a7 * (8.5 - Mw) * (8.5 - Mw);
 
@@ -77,7 +88,7 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
 		gnd += c.a3 * log(R) + c.a4 * (Mw - 6.4) * log(R) + c.a5 * rJB;
 		if (rJB >= R_CUT) gnd += c.a6 * (log(R) - log(R1));
 
-		return GmmUtils.ceusMeanClip(c.imt, gnd);
+		return GmmUtils.ceusMeanClip(imt, gnd);
 	}
 	
 }

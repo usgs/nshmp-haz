@@ -53,7 +53,6 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		GLOBAL_INTERFACE = new CoefficientsNew("AB03_global_interface.csv");
 	}
 
-	// author declared constants
 	private static final double gfac = 2.9912261; // log10(980)
 
 	private static final class Coeffs {

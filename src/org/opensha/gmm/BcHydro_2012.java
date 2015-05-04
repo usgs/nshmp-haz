@@ -44,7 +44,6 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
 	static final CoefficientsNew COEFFS = new CoefficientsNew("BCHydro12.csv");
 
-	// author declared constants
 	private static final double C1 = 7.8;
 	private static final double T3 = 0.1;
 	private static final double T4 = 0.9;
@@ -53,8 +52,6 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 	private static final double C4 = 10.0;
 	private static final double C = 1.88;
 	private static final double N = 1.18;
-
-	// implementation constants
 	private static final double VSS_MAX = 1000.0;
 	private static final double SIGMA = 0.74;
 	private static final double DC1_SLAB = -0.3;

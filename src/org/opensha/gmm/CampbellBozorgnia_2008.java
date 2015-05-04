@@ -42,12 +42,9 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
 	private static final Set<Imt> SHORT_PERIODS = EnumSet.range(SA0P01, SA0P25);
 
-	// author declared constants
 	private static final double S_lnAF = 0.3;
 	private static final double N = 1.18;
 	private static final double C = 1.88;
-
-	// implementation constants
 	private static final double S_lnAFsq = S_lnAF * S_lnAF;
 
 	private static final class Coeffs {
@@ -76,7 +73,7 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 			k3 = coeffs.get("k3");
 			s_lny = coeffs.get("s_lny");
 			t_lny = coeffs.get("t_lny");
-			ρ = coeffs.get("ρ");
+			ρ = coeffs.get("rho");
 		}
 	}
 

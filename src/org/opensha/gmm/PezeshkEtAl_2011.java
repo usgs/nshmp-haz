@@ -4,6 +4,8 @@ import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha.gmm.Imt.PGA;
 import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 
+import java.util.Map;
+
 /**
  * Implementation of the Pezeshk, Zandieh, & Tavakoli (2011) ground motion
  * model for stable continental regions. This implementation matches that used
@@ -29,36 +31,38 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
  */
 public final class PezeshkEtAl_2011 implements GroundMotionModel {
 
-	// TODO convert to functional form
-	
 	static final String NAME = "Pezeshk et al. (2011)";
 	
-	// period a-to-bc conversion factors and sigma coefficients
-	static final CoefficientsNew CC = new CoefficientsNew("P11.csv", Coeffs.class);
+	static final CoefficientsNew COEFFS = new CoefficientsNew("P11.csv");
 
-	private final GmmTable table;
-	
-	// author constants
 	private static final double SIGMA_FAC = -6.95e-3;
-	
-	// implementation constants
-	// none
 
-	static class Coeffs extends CoefficientsOld {
+	private static final class Coeffs {
+		
 		double c12, c13, c14, bcfac;
+		
+		Coeffs(Map<String, Double> coeffs) {
+			c12 = coeffs.get("c12");
+			c13 = coeffs.get("c13");
+			c14 = coeffs.get("c14");
+			bcfac = coeffs.get("bcfac");
+		}
 	}
 	
 	private final Coeffs coeffs;
-
-	PezeshkEtAl_2011(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
+	private final Imt imt;
+	private final GmmTable table;
+	
+	PezeshkEtAl_2011(final Imt imt) {
+		this.imt = imt;
+		coeffs = new Coeffs(COEFFS.get(imt));
 		table = GmmTables.getPezeshk11(imt);
 	}
 
 	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
+	public final ScalarGroundMotion calc(final GmmInput in) {
 
-		double mean = table.get(props.rRup, props.Mw);
+		double μ = table.get(in.rRup, in.Mw);
 		
 		// TODO Steve Harmsen has also included SA0P02 along with PGA but
 		// comments in fortran from Gail say bcfac scales with distance for PGA
@@ -67,25 +71,25 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 		//
 		// TODO I can't find an explicit reference for this formula; it is
 		// described in Atkinson (2008) p.1306
-		if (GmmUtils.ceusSiteClass(props.vs30) == SOFT_ROCK) {
-			if (coeffs.imt == PGA) {
-				mean += - 0.3 + 0.15 * Math.log10(props.rJB);
+		if (GmmUtils.ceusSiteClass(in.vs30) == SOFT_ROCK) {
+			if (imt == PGA) {
+				μ += - 0.3 + 0.15 * Math.log10(in.rJB);
 			} else {
-				mean += coeffs.bcfac;
+				μ += coeffs.bcfac;
 			}
 		}
 		
-		mean = GmmUtils.ceusMeanClip(coeffs.imt, mean);
-		double sigma = calcStdDev(coeffs, props.Mw);
+		μ = GmmUtils.ceusMeanClip(imt, μ);
+		double σ = calcStdDev(coeffs, in.Mw);
 		
-		return DefaultScalarGroundMotion.create(mean, sigma);
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 	
-	private static double calcStdDev(Coeffs c, double Mw) {
-		double sigma = (Mw <= 7.0) ?
+	private static double calcStdDev(final Coeffs c, final double Mw) {
+		double σ = (Mw <= 7.0) ?
 			c.c12 * Mw + c.c13 :
 			SIGMA_FAC * Mw + c.c14;
-		return sigma * BASE_10_TO_E;
+		return σ * BASE_10_TO_E;
 	}
 
 }

@@ -14,6 +14,8 @@ import static org.opensha.geo.GeoTools.TO_RAD;
 import static org.opensha.gmm.FaultStyle.NORMAL;
 import static org.opensha.gmm.FaultStyle.REVERSE;
 
+import java.util.Map;
+
 /**
  * Implementation of the Chiou & Youngs (2008) next generation attenuation
  * relationship for active crustal regions developed as part of <a
@@ -35,16 +37,9 @@ import static org.opensha.gmm.FaultStyle.REVERSE;
 public final class ChiouYoungs_2008 implements GroundMotionModel {
 
 	static final String NAME = "Chiou & Youngs (2008)";
-	
-	static final CoefficientsNew CC = new CoefficientsNew("CY08.csv", Coeffs.class);
 
-	static class Coeffs extends CoefficientsOld {
-		double c1, c1a, c1b, c5, c6, c7, c7a, c9, c9a, c10, cg1, cg2, cn, cm,
-				phi1, phi2, phi3, phi4, phi5, phi6, phi7, phi8, tau1, tau2,
-				sig1, sig2, sig3, sig4;
-	}
+	static final CoefficientsNew COEFFS = new CoefficientsNew("CY08.csv");
 
-	// author declared constants
 	private static final double C2 = 1.06;
 	private static final double C3 = 3.45;
 	private static final double C4 = -2.1;
@@ -52,111 +47,146 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 	private static final double CRB = 50;
 	private static final double CHM = 3;
 	private static final double CG3 = 4;
-	
-	private final Coeffs coeffs;
-	
-	ChiouYoungs_2008(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
+
+	private static final class Coeffs {
+
+		final double c1, c1a, c1b, c5, c6, c7, c9, c9a, cg1, cg2, cn, cm, φ1, φ2, φ3, φ4, φ5, φ6,
+				φ7, φ8, τ1, τ2, σ1, σ2, σ3;
+
+		// unused
+		// final double c7a, c10, sig4
+
+		Coeffs(Map<String, Double> coeffs) {
+			c1 = coeffs.get("c1");
+			c1a = coeffs.get("c1a");
+			c1b = coeffs.get("c1b");
+			c5 = coeffs.get("c5");
+			c6 = coeffs.get("c6");
+			c7 = coeffs.get("c7");
+			c9 = coeffs.get("c9");
+			c9a = coeffs.get("c9a");
+			cg1 = coeffs.get("cg1");
+			cg2 = coeffs.get("cg2");
+			cn = coeffs.get("cn");
+			cm = coeffs.get("cm");
+			φ1 = coeffs.get("phi1");
+			φ2 = coeffs.get("phi2");
+			φ3 = coeffs.get("phi3");
+			φ4 = coeffs.get("phi4");
+			φ5 = coeffs.get("phi5");
+			φ6 = coeffs.get("phi6");
+			φ7 = coeffs.get("phi7");
+			φ8 = coeffs.get("phi8");
+			τ1 = coeffs.get("tau1");
+			τ2 = coeffs.get("tau2");
+			σ1 = coeffs.get("sigma1");
+			σ2 = coeffs.get("sigma2");
+			σ3 = coeffs.get("sigma3");
+		}
 	}
 
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		FaultStyle style = rakeToFaultStyle(props.rake);
-		return calc(coeffs, props.Mw, props.rJB, props.rRup, props.rX,
-			props.dip, props.zTop, style, props.vs30, props.vsInf,
-			props.z1p0);
+	private final Coeffs coeffs;
+
+	ChiouYoungs_2008(final Imt imt) {
+		coeffs = new Coeffs(COEFFS.get(imt));
 	}
-	
-	FaultStyle rakeToFaultStyle(double rake) {
-		return GmmUtils.rakeToFaultStyle_NSHMP(rake);
+
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		return calc(coeffs, in);
 	}
-	
-	private static final ScalarGroundMotion calc(Coeffs c, double Mw,
-			double rJB, double rRup, double rX, double dip, double zTop,
-			FaultStyle style, double vs30, boolean vsInf, double z1p0) {
+
+	private static final ScalarGroundMotion calc(final Coeffs c, final GmmInput in) {
 
 		// terms used by both mean and stdDev
-		double lnYref = calcLnYref(c, Mw, rJB, rRup, rX, dip, zTop, style);
-		double soilNonLin = calcSoilNonLin(c, vs30);
+		double lnYref = calcLnYref(c, in);
+		double soilNonLin = calcSoilNonLin(c, in.vs30);
 
-		double mean = calcMean(c, vs30, z1p0, soilNonLin, lnYref);
-		double stdDev = calcStdDev(c, Mw, vsInf, soilNonLin, lnYref);
+		double mean = calcMean(c, in.vs30, in.z1p0, soilNonLin, lnYref);
+		double stdDev = calcStdDev(c, in.Mw, in.vsInf, soilNonLin, lnYref);
 
 		return DefaultScalarGroundMotion.create(mean, stdDev);
 	}
-	
+
 	// Seismic Source Scaling - aftershock term removed
-	private static final double calcLnYref(Coeffs c, double Mw, double rJB,
-			double rRup, double rX, double dip, double zTop, FaultStyle style) {
-		
-		double cosDelta = cos(dip * TO_RAD);
+	private static final double calcLnYref(final Coeffs c, final GmmInput in) {
+
+		double Mw = in.Mw;
+		double rJB = in.rJB;
+		double rRup = in.rRup;
+		double zTop = in.zTop;
+
+		FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
+
+		double cosDelta = cos(in.dip * TO_RAD);
 		double rAlt = sqrt(rJB * rJB + zTop * zTop);
-		double hw = (rX < 0.0) ? 0.0 : 1.0;
-		
-		// @formatter:off
-		double f_term = (style == REVERSE) ? c.c1a : 
-						(style == NORMAL) ? c.c1b : 0.0;
-		return c.c1 + (f_term + c.c7 * (zTop - 4.0)) +  // mainshock term [* (1 - AS)]
-			// [(c.c10 + c.c7a * (zTop - 4.0)) * AS +]  aftershock term
+		double hw = (in.rX < 0.0) ? 0.0 : 1.0;
+
+		double f_term = (style == REVERSE) ? c.c1a :
+			(style == NORMAL) ? c.c1b : 0.0;
+
+		return c.c1 + (f_term + c.c7 * (zTop - 4.0)) +
+			// mainshock term [* (1 - AS)]
+			// [(c.c10 + c.c7a * (zTop - 4.0)) * AS +] aftershock term
 			C2 * (Mw - 6.0) + ((C2 - C3) / c.cn) * log(1.0 + exp(c.cn * (c.cm - Mw))) +
 			C4 * log(rRup + c.c5 * cosh(c.c6 * max(Mw - CHM, 0))) +
 			(C4A - C4) * 0.5 * log(rRup * rRup + CRB * CRB) +
 			(c.cg1 + c.cg2 / cosh(max(Mw - CG3, 0.0))) * rRup +
-			c.c9 * hw * tanh(rX * cosDelta * cosDelta / c.c9a) *
+			c.c9 * hw * tanh(in.rX * cosDelta * cosDelta / c.c9a) *
 			(1 - rAlt / (rRup + 0.001));
-		// @formatter:on
 	}
 
 	// Mean ground motion model
-	private static final double calcMean(Coeffs c, double vs30, double z1p0,
-			double snl, double lnYref) {
+	private static final double calcMean(final Coeffs c, final double vs30, final double z1p0,
+			final double snl, final double lnYref) {
 
 		// basin depth
 		double zBasin = Double.isNaN(z1p0) ? calcBasinZ(vs30) : z1p0;
 
 		// @formatter:off
-		return lnYref + c.phi1 * min(log(vs30 / 1130.0), 0) +
-			snl * log((exp(lnYref) + c.phi4) / c.phi4) +
-			c.phi5 * (1.0 - 1.0 / cosh(c.phi6 * max(0.0, zBasin - c.phi7))) +
-			c.phi8 / cosh(0.15 * max(0.0, zBasin - 15.0));
+		return lnYref + c.φ1 * min(log(vs30 / 1130.0), 0) +
+			snl * log((exp(lnYref) + c.φ4) / c.φ4) +
+			c.φ5 * (1.0 - 1.0 / cosh(c.φ6 * max(0.0, zBasin - c.φ7))) +
+			c.φ8 / cosh(0.15 * max(0.0, zBasin - 15.0));
 		// @formatter:on
 	}
-	
-	private static final double calcSoilNonLin(Coeffs c, double vs30) {
-		double exp1 = exp(c.phi3 * (min(vs30, 1130.0) - 360.0));
-		double exp2 = exp(c.phi3 * (1130.0 - 360.0));
-		return c.phi2 * (exp1 - exp2);
+
+	private static final double calcSoilNonLin(final Coeffs c, final double vs30) {
+		double exp1 = exp(c.φ3 * (min(vs30, 1130.0) - 360.0));
+		double exp2 = exp(c.φ3 * (1130.0 - 360.0));
+		return c.φ2 * (exp1 - exp2);
 	}
 
 	// NSHMP treatment, if vs=760+/-20 -> 40, otherwise compute
-	private static final double calcBasinZ(double vs30) {
+	private static final double calcBasinZ(final double vs30) {
 		if (abs(vs30 - 760.0) < 20.0) return 40.0;
 		return exp(28.5 - 3.82 * log(pow(vs30, 8.0) + pow(378.7, 8.0)) / 8.0);
 	}
 
 	// Aleatory uncertainty model
-	private static final double calcStdDev(Coeffs c, double Mw,
-			boolean vsInf, double snl, double lnYref) {
+	private static final double calcStdDev(final Coeffs c, final double Mw, final boolean vsInf,
+			final double snl, final double lnYref) {
 
 		double Yref = exp(lnYref);
 
 		// Response Term - linear vs. non-linear
-		double NL0 = snl * Yref / (Yref + c.phi4);
-		
+		double NL0 = snl * Yref / (Yref + c.φ4);
+
 		// Magnitude thresholds
 		double mTest = min(max(Mw, 5.0), 7.0) - 5.0;
 
 		// Inter-event Term
-		double tau = c.tau1 + (c.tau2 - c.tau1) / 2.0 * mTest;
+		double τ = c.τ1 + (c.τ2 - c.τ1) / 2.0 * mTest;
 
 		// Intra-event term (aftershock removed)
-		double sigmaNL0 = c.sig1 + (c.sig2 - c.sig1) / 2.0 * mTest; // [+ c.sig4]
-		double vsTerm = vsInf ? c.sig3 : 0.7;
+		double σNL0 = c.σ1 + (c.σ2 - c.σ1) / 2.0 * mTest;
+		// [+ c.sig4]
+
+		double vsTerm = vsInf ? c.σ3 : 0.7;
 		double NL0sq = (1 + NL0) * (1 + NL0);
-		sigmaNL0 *= sqrt(vsTerm + NL0sq);
+		σNL0 *= sqrt(vsTerm + NL0sq);
 
 		// Total model
-		return sqrt(tau * tau * NL0sq + sigmaNL0 * sigmaNL0);
+		return sqrt(τ * τ * NL0sq + σNL0 * σNL0);
 	}
 
 }

@@ -36,7 +36,6 @@ public final class AtkinsonMacias_2009 implements GroundMotionModel {
 	
 	static final CoefficientsNew COEFFS = new CoefficientsNew("AM09.csv");
 	
-	// author declared constants
 	private static final double GFAC = 6.8875526;
 
 	private static final class Coeffs {

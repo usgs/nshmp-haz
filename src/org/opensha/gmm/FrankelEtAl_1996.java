@@ -33,39 +33,34 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
 public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
 	static final String NAME = "Frankel et al. (1996)";
-	
-	// only holds period dependent sigma values
-	static final CoefficientsNew CC = new CoefficientsNew("Frankel96.csv", Coeffs.class);
-	
+
+	static final CoefficientsNew COEFFS = new CoefficientsNew("Frankel96.csv");
+
+	private final double bsigma;
+	private final Imt imt;
 	private final GmmTable bcTable;
 	private final GmmTable aTable;
-	
-	static class Coeffs extends CoefficientsOld {
-		double bsigma;
-	}
-	
-	private final Coeffs coeffs;
 
 	FrankelEtAl_1996(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
+		this.imt = imt;
+		bsigma = COEFFS.get(imt, "bsigma");
 		bcTable = GmmTables.getFrankel96(imt, SOFT_ROCK);
 		aTable = GmmTables.getFrankel96(imt, HARD_ROCK);
 	}
 
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		SiteClass sc = GmmUtils.ceusSiteClass(props.vs30);
-		double mean = (sc == SOFT_ROCK) ?
-			bcTable.get(props.rRup, converter().convert(props.Mw)) :
-			aTable.get(props.rRup, converter().convert(props.Mw));
-		
-		mean = GmmUtils.ceusMeanClip(coeffs.imt, mean);
-		double std = coeffs.bsigma * BASE_10_TO_E;
+	@Override public final ScalarGroundMotion calc(GmmInput in) {
+		SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
+		double Mw = converter().convert(in.Mw);
+		double mean = (siteClass == SOFT_ROCK) ?
+			bcTable.get(in.rRup, Mw) :
+			aTable.get(in.rRup, Mw);
+
+		mean = GmmUtils.ceusMeanClip(imt, mean);
+		double std = bsigma * BASE_10_TO_E;
 		return DefaultScalarGroundMotion.create(mean, std);
 	}
-			
-	@Override
-	public MagConverter converter() {
+
+	@Override public MagConverter converter() {
 		return NONE;
 	}
 

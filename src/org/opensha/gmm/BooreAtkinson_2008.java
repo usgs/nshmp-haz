@@ -35,7 +35,6 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 
 	static final CoefficientsNew COEFFS = new CoefficientsNew("BA08.csv");
 
-	// author defined constants
 	private static final double PGAlo = 0.06;
 	private static final double A2 = 0.09;
 	private static final double A1 = 0.03;

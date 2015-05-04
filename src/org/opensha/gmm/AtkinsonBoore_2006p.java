@@ -35,10 +35,8 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 	
 	static final String NAME = "Atkinson & Boore (2006): Prime";
 	
-	// only period a-to-bc conversion factors
 	static final CoefficientsNew COEFFS = new CoefficientsNew("AB06P.csv");
 
-	// implementation constants
 	private static final double SIGMA = 0.3 * BASE_10_TO_E;
 	
 	private final double bcfac;

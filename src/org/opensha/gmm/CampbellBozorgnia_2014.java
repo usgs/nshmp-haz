@@ -27,8 +27,11 @@ import java.util.Set;
  * 
  * <p><b>Reference:</b> Campbell, K.W., and Bozorgnia, Y., 2014, NGA-West2
  * ground motion model for the average horizontal components of PGA, PGV, and
- * 5%-damped linear acceleration response spectra, Earthquake Spectra, in
- * press.</p>
+ * 5%-damped linear acceleration response spectra, Earthquake Spectra, v. 30, n.
+ * 3, p. 1087-1115.</p>
+ * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/062913EQS175M">
+ * http://dx.doi.org/10.1193/062913EQS175M</a></p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 
@@ -50,9 +53,8 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
 	private static final class Coeffs {
 
-		double c0, c1, c2, c3, c4, c5, c6, c7, c9, c10, c11, c14,
-				c16, c17, c18, c19, c20, a2, h1, h2, h3, h5, h6, k1, k2,
-				k3, phi1, phi2, tau1, tau2, rho;
+		double c0, c1, c2, c3, c4, c5, c6, c7, c9, c10, c11, c14, c16, c17, c18, c19, c20, a2, h1,
+				h2, h3, h5, h6, k1, k2, k3, φ1, φ2, τ1, τ2, ρ;
 
 		// same for all periods; replaced with constant; or unused (c8)
 		// double c8, c12, c13, h4, c, n, phi_lnaf;
@@ -87,11 +89,11 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 			k1 = coeffs.get("k1");
 			k2 = coeffs.get("k2");
 			k3 = coeffs.get("k3");
-			phi1 = coeffs.get("phi1");
-			phi2 = coeffs.get("phi2");
-			tau1 = coeffs.get("tau1");
-			tau2 = coeffs.get("tau2");
-			rho = coeffs.get("rho");
+			φ1 = coeffs.get("phi1");
+			φ2 = coeffs.get("phi2");
+			τ1 = coeffs.get("tau1");
+			τ2 = coeffs.get("tau2");
+			ρ = coeffs.get("rho");
 		}
 	}
 
@@ -252,26 +254,26 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 		// Magnitude dependence -- Equations 29 & 30
 		double tau_lnYB, tau_lnPGAB, phi_lnY, phi_lnPGAB;
 		if (Mw <= 4.5) {
-			tau_lnYB = c.tau1;
-			phi_lnY = c.phi1;
-			tau_lnPGAB = cPGA.tau1;
-			phi_lnPGAB = cPGA.phi1;
+			tau_lnYB = c.τ1;
+			phi_lnY = c.φ1;
+			tau_lnPGAB = cPGA.τ1;
+			phi_lnPGAB = cPGA.φ1;
 		} else if (Mw < 5.5) {
-			tau_lnYB = stdMagDep(c.tau1, c.tau2, Mw);
-			phi_lnY = stdMagDep(c.phi1, c.phi2, Mw);
-			tau_lnPGAB = stdMagDep(cPGA.tau1, cPGA.tau2, Mw);
-			phi_lnPGAB = stdMagDep(cPGA.phi1, cPGA.phi2, Mw);
+			tau_lnYB = stdMagDep(c.τ1, c.τ2, Mw);
+			phi_lnY = stdMagDep(c.φ1, c.φ2, Mw);
+			tau_lnPGAB = stdMagDep(cPGA.τ1, cPGA.τ2, Mw);
+			phi_lnPGAB = stdMagDep(cPGA.φ1, cPGA.φ2, Mw);
 		} else {
-			tau_lnYB = c.tau2;
-			phi_lnY = c.phi2;
-			tau_lnPGAB = cPGA.tau2;
-			phi_lnPGAB = cPGA.phi2;
+			tau_lnYB = c.τ2;
+			phi_lnY = c.φ2;
+			tau_lnPGAB = cPGA.τ2;
+			phi_lnPGAB = cPGA.φ2;
 		}
 
 		// intra-event std dev -- Equation 27
 		double alphaTau = alpha * tau_lnPGAB;
 		double tauSq = tau_lnYB * tau_lnYB + alphaTau * alphaTau +
-			2.0 * alpha * c.rho * tau_lnYB * tau_lnPGAB;
+			2.0 * alpha * c.ρ * tau_lnYB * tau_lnPGAB;
 
 		// inter-event std dev -- Equation 28
 		double phi_lnYB = sqrt(phi_lnY * phi_lnY - PHI_LNAF_SQ);
@@ -280,7 +282,7 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
 		// phi_lnaf terms in eqn. 30 cancel when expanded leaving phi_lnY only
 		double phiSq = phi_lnY * phi_lnY + aPhi_lnPGAB * aPhi_lnPGAB +
-			2.0 * c.rho * phi_lnYB * aPhi_lnPGAB;
+			2.0 * c.ρ * phi_lnYB * aPhi_lnPGAB;
 
 		// total model -- Equation 32
 		return sqrt(phiSq + tauSq);

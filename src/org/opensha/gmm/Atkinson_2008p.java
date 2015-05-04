@@ -37,7 +37,6 @@ public final class Atkinson_2008p implements GroundMotionModel {
 
 	static final CoefficientsNew COEFFS = new CoefficientsNew("AB08P.csv");
 
-	// implementation constants
 	private static final double SIGMA = 0.3 * BASE_10_TO_E;
 
 	private final double bcfac;

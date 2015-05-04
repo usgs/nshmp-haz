@@ -6,6 +6,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static org.opensha.gmm.FaultStyle.REVERSE;
 
+import java.util.Map;
+
 /**
  * Implementation of the ground motion model for shallow crustal earthquakes by
  * Sadigh et al. (1997). This implementation supports soil and rock sites, the
@@ -32,64 +34,80 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 	/*
 	 * The Sadigh model provides different functional forms for soil and rock
 	 * site classes, has numerous magnitude and style-of-faulting coefficient
-	 * variants. This implementation nests style-of-faulting specific coefficents
-	 * in the coeff tables and keeps four uniform tables for the two site
-	 * classes supported with a low and high magnitude flavor of each. This
+	 * variants. This implementation nests style-of-faulting specific
+	 * coefficents in the coeff tables and keeps four uniform tables for the two
+	 * site classes supported with a low and high magnitude flavor of each. This
 	 * yields some redundancy in the coefficent tables but reduces the need for
 	 * conditional expressions.
 	 */
 
 	static final String NAME = "Sadigh et al. (1997)";
 
-	static final CoefficientsNew CC_BC_LO, CC_BC_HI, CC_D_LO, CC_D_HI;
+	static final CoefficientsNew COEFFS_BC_LO, COEFFS_BC_HI, COEFFS_D_LO, COEFFS_D_HI;
 
 	static {
-		CC_BC_LO = new CoefficientsNew("Sadigh97_BClo.csv", Coeffs.class);
-		CC_BC_HI = new CoefficientsNew("Sadigh97_BChi.csv", Coeffs.class);
-		CC_D_LO = new CoefficientsNew("Sadigh97_Dlo.csv", Coeffs.class);
-		CC_D_HI = new CoefficientsNew("Sadigh97_Dhi.csv", Coeffs.class);
+		COEFFS_BC_LO = new CoefficientsNew("Sadigh97_BClo.csv");
+		COEFFS_BC_HI = new CoefficientsNew("Sadigh97_BChi.csv");
+		COEFFS_D_LO = new CoefficientsNew("Sadigh97_Dlo.csv");
+		COEFFS_D_HI = new CoefficientsNew("Sadigh97_Dhi.csv");
 	}
 
-	static class Coeffs extends CoefficientsOld {
-		double c1r, c1ss, c2, c3, c4, c5, c6r, c6ss, c7, sig0, cM, sigMax;
+	private static final double VS30_CUT = 750.0;
+
+	private static final class Coeffs {
+		
+		double c1r, c1ss, c2, c3, c4, c5, c6r, c6ss, c7, σ0, cM, σMax;
+
+		Coeffs(Map<String, Double> coeffs) {
+			c1r = coeffs.get("c1r");
+			c1ss = coeffs.get("c1ss");
+			c2 = coeffs.get("c2");
+			c3 = coeffs.get("c3");
+			c4 = coeffs.get("c4");
+			c5 = coeffs.get("c5");
+			c6r = coeffs.get("c6r");
+			c6ss = coeffs.get("c6ss");
+			c7 = coeffs.get("c7");
+			σ0 = coeffs.get("σ0");
+			cM = coeffs.get("cM");
+			σMax = coeffs.get("σMax");
+		}
 	}
 
-	// author declared constants
-	// none
+	private final Coeffs coeffs_bc_lo;
+	private final Coeffs coeffs_bc_hi;
+	private final Coeffs coeffs_d_lo;
+	private final Coeffs coeffs_d_hi;
 
-	// implementation constants
-	private final double VS30_CUT = 750.0;
-
-	private final Coeffs coeffs_bc_lo, coeffs_bc_hi, coeffs_d_lo, coeffs_d_hi;
-
-	SadighEtAl_1997(Imt imt) {
-		coeffs_bc_lo = (Coeffs) CC_BC_LO.get(imt);
-		coeffs_bc_hi = (Coeffs) CC_BC_LO.get(imt);
-		coeffs_d_lo = (Coeffs) CC_D_LO.get(imt);
-		coeffs_d_hi = (Coeffs) CC_D_LO.get(imt);
+	SadighEtAl_1997(final Imt imt) {
+		coeffs_bc_lo = new Coeffs(COEFFS_BC_LO.get(imt));
+		coeffs_bc_hi = new Coeffs(COEFFS_BC_LO.get(imt));
+		coeffs_d_lo = new Coeffs(COEFFS_D_LO.get(imt));
+		coeffs_d_hi = new Coeffs(COEFFS_D_LO.get(imt));
 	}
 
-	@Override public final ScalarGroundMotion calc(GmmInput props) {
-		FaultStyle faultStyle = GmmUtils.rakeToFaultStyle_NSHMP(props.rake);
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		FaultStyle faultStyle = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
 
-		double mean, sigma;
+		double μ, σ;
 
-		if (props.vs30 > VS30_CUT) {
+		if (in.vs30 > VS30_CUT) {
 			// rock
-			Coeffs c = props.Mw <= 6.5 ? coeffs_bc_lo : coeffs_bc_hi;
-			mean = calcRockMean(c, props.Mw, props.rRup, faultStyle);
-			sigma = calcStdDev(c, props.Mw);
+			Coeffs c = in.Mw <= 6.5 ? coeffs_bc_lo : coeffs_bc_hi;
+			μ = calcRockMean(c, in.Mw, in.rRup, faultStyle);
+			σ = calcStdDev(c, in.Mw);
 		} else {
 			// soil
-			Coeffs c = props.Mw <= 6.5 ? coeffs_d_lo : coeffs_d_hi;
-			mean = calcSoilMean(c, props.Mw, props.rRup, faultStyle);
-			sigma = calcStdDev(c, props.Mw);
+			Coeffs c = in.Mw <= 6.5 ? coeffs_d_lo : coeffs_d_hi;
+			μ = calcSoilMean(c, in.Mw, in.rRup, faultStyle);
+			σ = calcStdDev(c, in.Mw);
 		}
 
-		return DefaultScalarGroundMotion.create(mean, sigma);
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
-	private double calcRockMean(Coeffs c, double Mw, double rRup, FaultStyle style) {
+	private static final double calcRockMean(final Coeffs c, final double Mw, final double rRup,
+			final FaultStyle style) {
 		// modified to saturate above Mw=8.5
 
 		// rock site coeffs are not dependent on style-of-faulting
@@ -102,7 +120,8 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 		return (style == REVERSE) ? lnY + 0.18232 : lnY;
 	}
 
-	private double calcSoilMean(Coeffs c, double Mw, double rRup, FaultStyle style) {
+	private static final double calcSoilMean(final Coeffs c, final double Mw, final double rRup,
+			final FaultStyle style) {
 		// modified to saturate above Mw=8.5
 
 		double c1 = (style == REVERSE) ? c.c1r : c.c1ss;
@@ -112,11 +131,11 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 			pow(max(8.5 - Mw, 0.0), 2.5);
 	}
 
-	private double calcStdDev(Coeffs c, double Mw) {
+	private static final double calcStdDev(final Coeffs c, final double Mw) {
 		// mMax_bc = 7.21, mMax_d = 7.0, coeff tables were populated
 		// with maxSigma for soil sites, maxSigma for rock were
 		// included in publication
-		return max(c.sig0 + c.cM * Mw, c.sigMax);
+		return max(c.σ0 + c.cM * Mw, c.σMax);
 	}
 
 }

@@ -49,7 +49,6 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 
 	static final CoefficientsNew COEFFS = new CoefficientsNew("Campbell03.csv");
 
-	// author declared constants
 	private static final double LOG_70 = 4.2484952;
 	private static final double LOG_130 = 4.8675345;
 
