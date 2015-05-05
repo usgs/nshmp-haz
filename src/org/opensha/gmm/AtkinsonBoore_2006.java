@@ -65,8 +65,8 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
 	static final String NAME = "Atkinson & Boore (2006)";
 
-	static final CoefficientsNew COEFFS_A = new CoefficientsNew("AB06A.csv");
-	static final CoefficientsNew COEFFS_BC = new CoefficientsNew("AB06BC.csv");
+	static final CoefficientContainer COEFFS_A = new CoefficientContainer("AB06A.csv");
+	static final CoefficientContainer COEFFS_BC = new CoefficientContainer("AB06BC.csv");
 
 	private static final double GFAC = 6.8875526; // ln (980)
 	private static final double TFAC = -0.5108256; // ln(0.6)
@@ -81,12 +81,15 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	// private static final double STRESSFAC = 0.5146; // ln(200/140)/ln(2)
 	// private static final double SFAC = 2.302585; // ln(10)
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
+		final Imt imt;
 		final double c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, bln, b1, b2, del, m1,
 				mh;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			c1 = coeffs.get("c1");
 			c2 = coeffs.get("c2");
 			c3 = coeffs.get("c3");
@@ -106,30 +109,27 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 		}
 	}
 
-	private final Coeffs coeffsA;
-	private final Coeffs coeffsA_PGA;
-	private final Coeffs coeffsBC;
-	private final Coeffs coeffsBC_PGA;
-	private final Imt imt;
+	private final Coefficients coeffsA;
+	private final Coefficients coeffsA_PGA;
+	private final Coefficients coeffsBC;
+	private final Coefficients coeffsBC_PGA;
 
 	AtkinsonBoore_2006(final Imt imt) {
-		this.imt = imt;
-		coeffsA = new Coeffs(COEFFS_A.get(imt));
-		coeffsA_PGA = new Coeffs(COEFFS_A.get(PGA));
-		coeffsBC = new Coeffs(COEFFS_BC.get(imt));
-		coeffsBC_PGA = new Coeffs(COEFFS_BC.get(PGA));
+		coeffsA = new Coefficients(imt, COEFFS_A);
+		coeffsA_PGA = new Coefficients(PGA, COEFFS_A);
+		coeffsBC = new Coefficients(imt, COEFFS_BC);
+		coeffsBC_PGA = new Coefficients(PGA, COEFFS_BC);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
 
 		// this call will only allow vs30 = 760 | 2000
 		SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
-		Coeffs coeffs = siteClass == SOFT_ROCK ? coeffsBC : coeffsA;
-		Coeffs coeffsPGA = siteClass == SOFT_ROCK ? coeffsBC_PGA : coeffsA_PGA;
+		Coefficients coeffs = siteClass == SOFT_ROCK ? coeffsBC : coeffsA;
+		Coefficients coeffsPGA = siteClass == SOFT_ROCK ? coeffsBC_PGA : coeffsA_PGA;
 
-		return DefaultScalarGroundMotion.create(
-			calcMean(coeffs, coeffsPGA, imt, converter(), scaleFactor(), in),
-			SIGMA);
+		double μ = calcMean(coeffs, coeffsPGA, converter(), scaleFactor(), in);
+		return DefaultScalarGroundMotion.create(μ, SIGMA);
 	}
 
 	@Override public MagConverter converter() {
@@ -150,7 +150,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	}
 
 	// SF2 variable of AB06 needs to be provided by subclasses via
-	private static final double calcMean(final Coeffs c, final Coeffs cPGA, final Imt imt,
+	private static final double calcMean(final Coefficients c, final Coefficients cPGA,
 			final MagConverter converter, final double stressScale, final GmmInput in) {
 
 		double Mw = converter.convert(in.Mw);
@@ -215,9 +215,9 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 			f0 + c.c10 * rRup + sf2 + S;
 
 		gnd *= BASE_10_TO_E;
-		if (imt != Imt.PGV) gnd -= GFAC;
+		if (c.imt != Imt.PGV) gnd -= GFAC;
 
-		return GmmUtils.ceusMeanClip(imt, gnd);
+		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 
 	// these are subclassed for mag conversion variants and therefore not final

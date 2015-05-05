@@ -5,6 +5,8 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static org.opensha.gmm.MagConverter.NONE;
 
+import java.util.Map;
+
 /**
  * Implementation of the Tavakoli & Pezeshk (2005) ground motion model for
  * stable continental regions. This implementation matches that used in the 2008
@@ -31,14 +33,13 @@ import static org.opensha.gmm.MagConverter.NONE;
  */
 public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 
-
 	// TODO NOTE in docs that frankel terms are used for soft rock.
-	
-//	 * TODO
-//	 * 		- needs to support Rrup
-//	 * 		- vs30 param, or kill in favor of hard/soft rock options
-//	 * 		  as other ceus att rels
-//	 * 		- rem: 2km gridded dtor min was removed
+
+	// * TODO
+	// * - needs to support Rrup
+	// * - vs30 param, or kill in favor of hard/soft rock options
+	// * as other ceus att rels
+	// * - rem: 2km gridded dtor min was removed
 
 	// notes from original implementation and fortran:
 	//
@@ -52,44 +53,67 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 	// corrected c1(0.3s) to 0.0293 from K Campbell email Oct 13 2009.
 	// c1 checked for pga, 1hz and 5hz apr 17 2007. c1(0.4s) added June 30
 	//
-	// c for c15, corrected value for the 0.5-s or 2 Hz motion, from email Pezeshk dec 7 2007
+	// c for c15, corrected value for the 0.5-s or 2 Hz motion, from email
+	// Pezeshk dec 7 2007
 
-	
 	// TODO fix clamp values (not implemented here yet) to match other CEUS gmms
 
 	static final String NAME = "Tavakoli & Pezeshk (2005)";
-	
-	static final CoefficientsNew CC = new CoefficientsNew("TP05.csv", Coeffs.class);
-	
-	static class Coeffs extends CoefficientsOld {
-		double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16;
-	}
-	
-	private final Coeffs coeffs;
 
-	TavakoliPezeshk_2005(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
-	}
-	
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		return DefaultScalarGroundMotion.create(
-			calcMean(coeffs, converter().convert(props.Mw), props.rRup, props.vs30),
-			calcStdDev(coeffs, props.Mw));
+	static final CoefficientContainer COEFFS = new CoefficientContainer("TP05.csv");
+
+	private static final class Coefficients {
+
+		final Imt imt;
+		final double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16;
+
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
+			c1 = coeffs.get("c1");
+			c1h = coeffs.get("c1h");
+			c2 = coeffs.get("c2");
+			c3 = coeffs.get("c3");
+			c4 = coeffs.get("c4");
+			c5 = coeffs.get("c5");
+			c6 = coeffs.get("c6");
+			c7 = coeffs.get("c7");
+			c8 = coeffs.get("c8");
+			c9 = coeffs.get("c9");
+			c10 = coeffs.get("c10");
+			c11 = coeffs.get("c11");
+			c12 = coeffs.get("c12");
+			c13 = coeffs.get("c13");
+			c14 = coeffs.get("c14");
+			c15 = coeffs.get("c15");
+			c16 = coeffs.get("c16");
+		}
 	}
 
-	@Override
-	public MagConverter converter() {
+	private final Coefficients coeffs;
+
+	TavakoliPezeshk_2005(final Imt imt) {
+		coeffs = new Coefficients(imt, COEFFS);
+	}
+
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		double Mw = converter().convert(in.Mw);
+		double μ = calcMean(coeffs, Mw, in.rRup, in.vs30);
+		double σ = calcStdDev(coeffs, Mw);
+		return DefaultScalarGroundMotion.create(μ, σ);
+	}
+
+	@Override public MagConverter converter() {
 		return NONE;
 	}
 
-	private static final double calcMean(Coeffs c, double Mw, double rRup,
-			double vs30) {
-		
+	private static final double calcMean(final Coefficients c, final double Mw, final double rRup,
+			final double vs30) {
+
 		// TODO clean
-		
-		//boolean sp = period < 0.5 && period > 0.02;
-//		double c5sq = c.c5 * c.c5;
+
+		// boolean sp = period < 0.5 && period > 0.02;
+		// double c5sq = c.c5 * c.c5;
 
 		// c R: For near-surface dtor a singularity is possible. Limit at 2 km
 		// minimum.
@@ -100,8 +124,8 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 		// double H1sq=H1*H1;
 		// above is now handled by reading rRup (and dtor for gridded)
 
-//		if (magType == LG_PHASE) mag = Utils.mblgToMw(magConvCode, mag);
-		//vs30 = 760;
+		// if (magType == LG_PHASE) mag = Utils.mblgToMw(magConvCode, mag);
+		// vs30 = 760;
 		double f1;
 		if (vs30 >= 1500.0) {
 			f1 = c.c1h + c.c2 * Mw + c.c3 * pow((8.5 - Mw), 2.5);
@@ -111,12 +135,12 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 			f1 = c.c1 + c.c2 * Mw + c.c3 * pow((8.5 - Mw), 2.5);
 		}
 		double cor = Math.exp(c.c6 * Mw + c.c7 * pow((8.5 - Mw), 2.5));
-		
-//		System.out.println("cor: " + cor);
-//		double corsq = cor * cor;
+
+		// System.out.println("cor: " + cor);
+		// double corsq = cor * cor;
 
 		double f2 = c.c9 * log(rRup + 4.5);
-//		System.out.println("c9: " + c9 + " rRup: " + rRup);
+		// System.out.println("c9: " + c9 + " rRup: " + rRup);
 		if (rRup > 70.0) f2 = f2 + c.c10 * log(rRup / 70.0);
 		if (rRup > 130.0) f2 = f2 + c.c11 * log(rRup / 130.0);
 		double R = sqrt(rRup * rRup + c.c5 * c.c5 * cor * cor);
@@ -126,10 +150,8 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 
-	private static final double calcStdDev(Coeffs c, double Mw) {
-		// TODO clean
-		// if (magType == LG_PHASE) mag = Utils.mblgToMw(magConvCode, mag);
-        return (Mw < 7.2) ? c.c14 + c.c15 * Mw : c.c16;
+	private static final double calcStdDev(final Coefficients c, final double Mw) {
+		return (Mw < 7.2) ? c.c14 + c.c15 * Mw : c.c16;
 	}
 
 }

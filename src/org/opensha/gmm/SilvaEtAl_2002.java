@@ -46,13 +46,16 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 
 	static final String NAME = "Silva et al. (2002)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("Silva02.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("Silva02.csv");
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
-		double c1, c1hr, c2, c4, c6, c7, c10, σ;
+		final Imt imt;
+		final double c1, c1hr, c2, c4, c6, c7, c10, σ;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			c1 = coeffs.get("c1");
 			c1hr = coeffs.get("c1hr");
 			c2 = coeffs.get("c2");
@@ -64,17 +67,15 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Imt imt;
+	private final Coefficients coeffs;
 
 	SilvaEtAl_2002(final Imt imt) {
-		this.imt = imt;
-		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffs = new Coefficients(imt, COEFFS);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput props) {
 		SiteClass siteClass = GmmUtils.ceusSiteClass(props.vs30);
-		double μ = calcMean(coeffs, imt, converter().convert(props.Mw), props.rJB, siteClass);
+		double μ = calcMean(coeffs, converter().convert(props.Mw), props.rJB, siteClass);
 		return DefaultScalarGroundMotion.create(μ, coeffs.σ);
 	}
 
@@ -82,15 +83,15 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 		return NONE;
 	}
 
-	private static final double calcMean(final Coeffs c, final Imt imt, final double Mw,
-			final double rJB, final SiteClass siteClass) {
+	private static final double calcMean(final Coefficients c, final double Mw, final double rJB,
+			final SiteClass siteClass) {
 
 		double c1 = (siteClass == HARD_ROCK) ? c.c1hr : c.c1;
 		double gnd0 = c1 + c.c2 * Mw + c.c10 * (Mw - 6.0) * (Mw - 6.0);
 		double fac = c.c6 + c.c7 * Mw;
 		double gnd = gnd0 + fac * Math.log(rJB + exp(c.c4));
 
-		return GmmUtils.ceusMeanClip(imt, gnd);
+		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 
 }

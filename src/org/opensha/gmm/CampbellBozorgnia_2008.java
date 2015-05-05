@@ -38,7 +38,7 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
 	static final String NAME = "Campbell & Bozorgnia (2008)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("CB08.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("CB08.csv");
 
 	private static final Set<Imt> SHORT_PERIODS = EnumSet.range(SA0P01, SA0P25);
 
@@ -47,14 +47,18 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 	private static final double C = 1.88;
 	private static final double S_lnAFsq = S_lnAF * S_lnAF;
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
-		double c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, k1, k2, k3, s_lny, t_lny, ρ;
+		final Imt imt;
+		final double c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, k1, k2, k3, s_lny,
+				t_lny, ρ;
 
 		// unused
 		// double s_c;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			c0 = coeffs.get("c0");
 			c1 = coeffs.get("c1");
 			c2 = coeffs.get("c2");
@@ -77,44 +81,41 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Coeffs coeffsPGA;
-	private final Imt imt;
+	private final Coefficients coeffs;
+	private final Coefficients coeffsPGA;
 
 	CampbellBozorgnia_2008(final Imt imt) {
-		this.imt = imt;
-		coeffs = new Coeffs(COEFFS.get(imt));
-		coeffsPGA = new Coeffs(COEFFS.get(PGA));
+		coeffs = new Coefficients(imt, COEFFS);
+		coeffsPGA = new Coefficients(PGA, COEFFS);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		return calc(coeffs, coeffsPGA, imt, in);
+		return calc(coeffs, coeffsPGA, in);
 	}
 
-	private static final ScalarGroundMotion calc(final Coeffs c, final Coeffs cPGA, final Imt imt,
+	private static final ScalarGroundMotion calc(final Coefficients c, final Coefficients cPGA,
 			final GmmInput in) {
 
 		FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
 		double vs30 = in.vs30;
-
 		double pgaRock = (vs30 < c.k1) ? exp(calcMean(cPGA, style, 1100.0, 0.0, in)) : 0.0;
 
-		double mean = calcMean(c, style, vs30, pgaRock, in);
+		double μ = calcMean(c, style, vs30, pgaRock, in);
 
 		// prevent SA<PGA for short periods
-		if (SHORT_PERIODS.contains(imt)) {
+		if (SHORT_PERIODS.contains(c.imt)) {
 			double pgaMean = calcMean(cPGA, style, vs30, pgaRock, in);
-			mean = max(mean, pgaMean);
+			μ = max(μ, pgaMean);
 		}
-		double stdDev = calcStdDev(c, cPGA, vs30, pgaRock);
+		double σ = calcStdDev(c, cPGA, vs30, pgaRock);
 
-		return DefaultScalarGroundMotion.create(mean, stdDev);
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	// Mean ground motion model -- we use supplied vs30 rather than one from
 	// input to impose 1100 when computing rock reference
-	private static final double calcMean(final Coeffs c, final FaultStyle style, final double vs30,
-			final double pga_rock, final GmmInput in) {
+	private static final double calcMean(final Coefficients c, final FaultStyle style,
+			final double vs30, final double pga_rock, final GmmInput in) {
 
 		double Mw = in.Mw;
 		double rJB = in.rJB;
@@ -189,7 +190,8 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 	}
 
 	// Aleatory uncertainty model
-	private static final double calcStdDev(final Coeffs c, final Coeffs cPGA, final double vs30,
+	private static final double calcStdDev(final Coefficients c, final Coefficients cPGA,
+			final double vs30,
 			final double pgaRock) {
 
 		// Inter-event Term

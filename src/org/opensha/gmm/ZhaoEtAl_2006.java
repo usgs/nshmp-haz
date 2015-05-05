@@ -5,6 +5,8 @@ import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
 
+import java.util.Map;
+
 /**
  * Abstract implementation of the subduction ground motion model by Zhao et al.
  * (2006). This implementation matches that used in the USGS NSHM.
@@ -40,39 +42,66 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
 	static final String NAME = "Zhao et al. (2006)";
 
-	static final CoefficientsNew CC = new CoefficientsNew("Zhao06.csv", Coeffs.class);
+	static final CoefficientContainer COEFFS = new CoefficientContainer("Zhao06.csv");
 
-	static class Coeffs extends CoefficientsOld {
-		double T, a, b, c, d, e, Sr, Si, Ss, Ssl, C1, C2, C3, sigma, tau, tauI, tauS, Ps, Qi, Qs,
-				Wi, Ws;
-	}
-
-	// author declared constants
 	private static final double DEPTH_I = 20.0;
 	private static final double HC = 15.0;
 	private static final double MC_S = 6.3;
 	private static final double MC_I = 6.5;
 	private static final double GCOR = 6.88806;
-
-	// implementation constants
 	private static final double MAX_DEPTH = 125.0;
 
-	private final Coeffs coeffs;
+	private static final class Coefficients {
 
-	ZhaoEtAl_2006(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
+		final double a, b, c, d, e, Si, Ss, Ssl, C1, C2, C3, σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
+
+		// unused
+		// final double Sr, tauI;
+
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			Map<String, Double> coeffs = cc.get(imt);
+			a = coeffs.get("a");
+			b = coeffs.get("b");
+			c = coeffs.get("c");
+			d = coeffs.get("d");
+			e = coeffs.get("e");
+			Si = coeffs.get("Si");
+			Ss = coeffs.get("Ss");
+			Ssl = coeffs.get("Ssl");
+			C1 = coeffs.get("C1");
+			C2 = coeffs.get("C2");
+			C3 = coeffs.get("C3");
+			σ = coeffs.get("sigma");
+			τ = coeffs.get("tau");
+			τS = coeffs.get("tauS");
+			Ps = coeffs.get("Ps");
+			Qi = coeffs.get("Qi");
+			Qs = coeffs.get("Qs");
+			Wi = coeffs.get("Wi");
+			Ws = coeffs.get("Ws");
+		}
 	}
 
-	@Override public final ScalarGroundMotion calc(GmmInput props) {
-		double mean = calcMean(coeffs, props.Mw, props.rRup, props.zTop, props.vs30, isSlab());
-		double sigma = calcStdDev(coeffs, isSlab());
-		return DefaultScalarGroundMotion.create(mean, sigma);
+	private final Coefficients coeffs;
+
+	ZhaoEtAl_2006(final Imt imt) {
+		coeffs = new Coefficients(imt, COEFFS);
+	}
+
+	@Override public final ScalarGroundMotion calc(GmmInput in) {
+		double μ = calcMean(coeffs, isSlab(), in);
+		double σ = calcStdDev(coeffs, isSlab());
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	abstract boolean isSlab();
 
-	private static final double calcMean(Coeffs c, double Mw, double rRup, double zTop,
-			double vs30, boolean slab) {
+	private static final double calcMean(final Coefficients c, final boolean slab, final GmmInput in) {
+
+		double Mw = in.Mw;
+		double rRup = in.rRup;
+		double zTop = in.zTop;
+		double vs30 = in.vs30;
 
 		if (!slab) zTop = DEPTH_I;
 
@@ -99,11 +128,11 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
 	}
 
-	private static final double calcStdDev(Coeffs c, boolean slab) {
+	private static final double calcStdDev(final Coefficients c, final boolean slab) {
 		// Frankel email may 22 2007: use sigt from table 5. Not the
 		// reduced-tau sigma associated with mag correction seen in
 		// table 6. Zhao says "truth" is somewhere in between.
-		return sqrt(c.sigma * c.sigma + (slab ? c.tauS * c.tauS : c.tau * c.tau));
+		return sqrt(c.σ * c.σ + (slab ? c.τS * c.τS : c.τ * c.τ));
 	}
 
 	static final class Interface extends ZhaoEtAl_2006 {

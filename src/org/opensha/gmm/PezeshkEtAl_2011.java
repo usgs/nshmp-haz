@@ -33,15 +33,18 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 
 	static final String NAME = "Pezeshk et al. (2011)";
 	
-	static final CoefficientsNew COEFFS = new CoefficientsNew("P11.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("P11.csv");
 
 	private static final double SIGMA_FAC = -6.95e-3;
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 		
-		double c12, c13, c14, bcfac;
+		final Imt imt;
+		final double c12, c13, c14, bcfac;
 		
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			c12 = coeffs.get("c12");
 			c13 = coeffs.get("c13");
 			c14 = coeffs.get("c14");
@@ -49,13 +52,11 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 		}
 	}
 	
-	private final Coeffs coeffs;
-	private final Imt imt;
+	private final Coefficients coeffs;
 	private final GmmTable table;
 	
 	PezeshkEtAl_2011(final Imt imt) {
-		this.imt = imt;
-		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffs = new Coefficients(imt, COEFFS);
 		table = GmmTables.getPezeshk11(imt);
 	}
 
@@ -72,23 +73,21 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 		// TODO I can't find an explicit reference for this formula; it is
 		// described in Atkinson (2008) p.1306
 		if (GmmUtils.ceusSiteClass(in.vs30) == SOFT_ROCK) {
-			if (imt == PGA) {
+			if (coeffs.imt == PGA) {
 				μ += - 0.3 + 0.15 * Math.log10(in.rJB);
 			} else {
 				μ += coeffs.bcfac;
 			}
 		}
 		
-		μ = GmmUtils.ceusMeanClip(imt, μ);
+		μ = GmmUtils.ceusMeanClip(coeffs.imt, μ);
 		double σ = calcStdDev(coeffs, in.Mw);
 		
 		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 	
-	private static double calcStdDev(final Coeffs c, final double Mw) {
-		double σ = (Mw <= 7.0) ?
-			c.c12 * Mw + c.c13 :
-			SIGMA_FAC * Mw + c.c14;
+	private static double calcStdDev(final Coefficients c, final double Mw) {
+		double σ = (Mw <= 7.0) ? c.c12 * Mw + c.c13 : SIGMA_FAC * Mw + c.c14;
 		return σ * BASE_10_TO_E;
 	}
 

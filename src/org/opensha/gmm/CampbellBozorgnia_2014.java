@@ -42,7 +42,7 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
 	static final String NAME = "Campbell & Bozorgnia (2014)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("CB14.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("CB14.csv");
 
 	private static final double H4 = 1.0;
 	private static final double C = 1.88;
@@ -51,10 +51,11 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
 	private static final Set<Imt> SHORT_PERIODS = EnumSet.range(SA0P01, SA0P25);
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
-		double c0, c1, c2, c3, c4, c5, c6, c7, c9, c10, c11, c14, c16, c17, c18, c19, c20, a2, h1,
-				h2, h3, h5, h6, k1, k2, k3, φ1, φ2, τ1, τ2, ρ;
+		final Imt imt;
+		final double c0, c1, c2, c3, c4, c5, c6, c7, c9, c10, c11, c14, c16, c17, c18, c19, c20,
+				a2, h1, h2, h3, h5, h6, k1, k2, k3, φ1, φ2, τ1, τ2, ρ;
 
 		// same for all periods; replaced with constant; or unused (c8)
 		// double c8, c12, c13, h4, c, n, phi_lnaf;
@@ -62,7 +63,9 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 		// unused regional and other coeffs
 		// double c15, Dc20_CA, Dc20_JP, Dc20_CH, phiC;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			c0 = coeffs.get("c0");
 			c1 = coeffs.get("c1");
 			c2 = coeffs.get("c2");
@@ -97,21 +100,20 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Coeffs coeffsPGA;
-	private final Imt imt;
+	private final Coefficients coeffs;
+	private final Coefficients coeffsPGA;
 
 	CampbellBozorgnia_2014(final Imt imt) {
-		this.imt = imt;
-		coeffs = new Coeffs(COEFFS.get(imt));
-		coeffsPGA = new Coeffs(COEFFS.get(PGA));
+		coeffs = new Coefficients(imt, COEFFS);
+		coeffsPGA = new Coefficients(PGA, COEFFS);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		return calc(coeffs, coeffsPGA, imt, in);
+		return calc(coeffs, coeffsPGA, in);
 	}
 
-	private static final ScalarGroundMotion calc(Coeffs c, Coeffs cPGA, Imt imt, GmmInput in) {
+	private static final ScalarGroundMotion calc(final Coefficients c, final Coefficients cPGA,
+			final GmmInput in) {
 
 		FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
 		double vs30 = in.vs30;
@@ -120,23 +122,23 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 		// calc pga rock reference value using CA vs30 z2p5 value: 0.398
 		double pgaRock = (vs30 < c.k1) ? exp(calcMean(cPGA, style, 1100.0, 0.398, 0.0, in)) : 0.0;
 
-		double mean = calcMean(c, style, vs30, z2p5, pgaRock, in);
+		double μ = calcMean(c, style, vs30, z2p5, pgaRock, in);
 
 		// prevent SA<PGA for short periods
-		if (SHORT_PERIODS.contains(imt)) {
+		if (SHORT_PERIODS.contains(c.imt)) {
 			double pgaMean = calcMean(cPGA, style, vs30, z2p5, pgaRock, in);
-			mean = max(mean, pgaMean);
+			μ = max(μ, pgaMean);
 		}
 
-		double stdDev = calcStdDev(c, cPGA, in.Mw, in.vs30, pgaRock);
+		double σ = calcStdDev(c, cPGA, in.Mw, in.vs30, pgaRock);
 
-		return DefaultScalarGroundMotion.create(mean, stdDev);
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	// Mean ground motion model -- we use supplied vs30 and z2p5 rather than
 	// values from input to impose 1100 and 0.398 when computing rock reference
-	private static final double calcMean(final Coeffs c, final FaultStyle style, final double vs30,
-			final double z2p5, final double pgaRock, final GmmInput in) {
+	private static final double calcMean(final Coefficients c, final FaultStyle style,
+			final double vs30, final double z2p5, final double pgaRock, final GmmInput in) {
 
 		double Mw = in.Mw;
 		double rRup = in.rRup;
@@ -243,8 +245,8 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 	}
 
 	// Aleatory uncertainty model
-	private static final double calcStdDev(final Coeffs c, final Coeffs cPGA, final double Mw,
-			final double vs30, final double pgaRock) {
+	private static final double calcStdDev(final Coefficients c, final Coefficients cPGA,
+			final double Mw, final double vs30, final double pgaRock) {
 
 		// -- Equation 31
 		double vsk1 = vs30 / c.k1;

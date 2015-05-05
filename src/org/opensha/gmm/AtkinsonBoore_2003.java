@@ -43,23 +43,26 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
 	static final String NAME = "Atkinson & Boore (2003)";
 
-	static final CoefficientsNew CASC_SLAB, CASC_INTERFACE, GLOBAL_SLAB,
-			GLOBAL_INTERFACE;
+	static final CoefficientContainer COEFFS_CASC_SLAB, COEFFS_CASC_INTERFACE, COEFFS_GLOBAL_SLAB,
+			COEFFS_GLOBAL_INTERFACE;
 
 	static {
-		CASC_SLAB = new CoefficientsNew("AB03_cascadia_slab.csv");
-		CASC_INTERFACE = new CoefficientsNew("AB03_cascadia_interface.csv");
-		GLOBAL_SLAB = new CoefficientsNew("AB03_global_slab.csv");
-		GLOBAL_INTERFACE = new CoefficientsNew("AB03_global_interface.csv");
+		COEFFS_CASC_SLAB = new CoefficientContainer("AB03_cascadia_slab.csv");
+		COEFFS_CASC_INTERFACE = new CoefficientContainer("AB03_cascadia_interface.csv");
+		COEFFS_GLOBAL_SLAB = new CoefficientContainer("AB03_global_slab.csv");
+		COEFFS_GLOBAL_INTERFACE = new CoefficientContainer("AB03_global_interface.csv");
 	}
 
 	private static final double gfac = 2.9912261; // log10(980)
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
+		final Imt imt;
 		final double c1, c2, c3, c4, c5, c6, c7, sig;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			c1 = coeffs.get("c1");
 			c2 = coeffs.get("c2");
 			c3 = coeffs.get("c3");
@@ -71,29 +74,24 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Coeffs coeffsPGA;
-	private final Imt imt;
+	private final Coefficients coeffs;
+	private final Coefficients coeffsPGA;
 
 	AtkinsonBoore_2003(final Imt imt) {
-		this.imt = imt;
 		coeffs = initCoeffs(imt, isSlab(), isGlobal());
 		coeffsPGA = initCoeffs(PGA, isSlab(), isGlobal());
 	}
 
-	private static Coeffs initCoeffs(final Imt imt, final boolean slab, final boolean global) {
-		Map<String, Double> coeffs =
-			slab && global ? GLOBAL_SLAB.get(imt) :
-				slab ? CASC_SLAB.get(imt) :
-					global ? GLOBAL_INTERFACE.get(imt) :
-						CASC_INTERFACE.get(imt);
-		return new Coeffs(coeffs);
+	private static Coefficients initCoeffs(final Imt imt, final boolean slab, final boolean global) {
+		CoefficientContainer coeffs = slab && global ? COEFFS_GLOBAL_SLAB : slab ? COEFFS_CASC_SLAB
+			: global ? COEFFS_GLOBAL_INTERFACE : COEFFS_CASC_INTERFACE;
+		return new Coefficients(imt, coeffs);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		double mean = calcMean(coeffs, coeffsPGA, imt, isSlab(), in);
-		double sigma = coeffs.sig * BASE_10_TO_E;
-		return DefaultScalarGroundMotion.create(mean, sigma);
+		double μ = calcMean(coeffs, coeffsPGA, isSlab(), in);
+		double σ = coeffs.sig * BASE_10_TO_E;
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	// subclass flag
@@ -103,7 +101,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	abstract boolean isSlab();
 
 	// SF2 variable of AB06 needs to be provided by subclasses via
-	private static final double calcMean(final Coeffs c, final Coeffs cPGA, final Imt imt,
+	private static final double calcMean(final Coefficients c, final Coefficients cPGA,
 			final boolean slab, final GmmInput in) {
 
 		// "saturation effect" p. 1709 AB 2003
@@ -129,7 +127,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 			log10(dist2);
 		rpga = pow(10, rpga);
 
-		double freq = imt.frequency();
+		double freq = c.imt.frequency();
 		double sl;
 		if ((rpga <= 100.0) || (freq <= 1.0)) {
 			sl = 1.0;

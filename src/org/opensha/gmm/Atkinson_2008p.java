@@ -35,7 +35,7 @@ public final class Atkinson_2008p implements GroundMotionModel {
 
 	static final String NAME = "Atkinson (2008) Prime";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("AB08P.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("AB08P.csv");
 
 	private static final double SIGMA = 0.3 * BASE_10_TO_E;
 
@@ -51,7 +51,7 @@ public final class Atkinson_2008p implements GroundMotionModel {
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
 
-		double mean = table.get(in.rJB, in.Mw);
+		double μ = table.get(in.rJB, in.Mw);
 
 		// TODO Steve Harmsen has also included SA0P02 along with PGA but
 		// comments in fortran from Gail say bcfac scales with distance for PGA
@@ -62,13 +62,13 @@ public final class Atkinson_2008p implements GroundMotionModel {
 		// described in Atkinson (2008) p.1306
 		if (GmmUtils.ceusSiteClass(in.vs30) == SOFT_ROCK) {
 			if (imt == PGA) {
-				mean += -0.3 + 0.15 * Math.log10(in.rJB);
+				μ += -0.3 + 0.15 * Math.log10(in.rJB);
 			} else {
-				mean += bcfac;
+				μ += bcfac;
 			}
 		}
 
-		return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, mean), SIGMA);
+		return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ), SIGMA);
 	}
 
 }

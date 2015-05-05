@@ -37,7 +37,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
 	static final String NAME = "Abrahamson, Silva & Kamai (2014)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("ASK14.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("ASK14.csv");
 
 	private static final double A3 = 0.275;
 	private static final double A4 = -0.1;
@@ -56,8 +56,9 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
 	// private static final double RY0 = -1.0;
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
+		final Imt imt;
 		final double a1, a2, a6, a8, a10, a12, a13, a15, a17, a43, a44, a45, a46, b, c, s1e, s2e,
 				s3, s4, s1m, s2m, M1, Vlin;
 
@@ -70,7 +71,9 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 		// Japan model
 		// final double a25, a28, a29, a31, a36, a37, a38, a39, a40, a41, a42;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			a1 = coeffs.get("a1");
 			a2 = coeffs.get("a2");
 			a6 = coeffs.get("a6");
@@ -97,19 +100,17 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Imt imt;
+	private final Coefficients coeffs;
 
 	AbrahamsonEtAl_2014(final Imt imt) {
-		this.imt = imt;
-		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffs = new Coefficients(imt, COEFFS);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		return calc(coeffs, imt, in);
+		return calc(coeffs, in);
 	}
 
-	private static final ScalarGroundMotion calc(final Coeffs c, final Imt imt, final GmmInput in) {
+	private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in) {
 
 		// ferquently used method locals
 		double Mw = in.Mw;
@@ -212,7 +213,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
 		// Site Response Model
 		double f5 = 0.0;
-		double v1 = getV1(imt); // -- Equation 9
+		double v1 = getV1(c.imt); // -- Equation 9
 		double vs30s = (vs30 < v1) ? vs30 : v1; // -- Equation 8
 
 		// Site term -- Equation 7
@@ -234,7 +235,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 		}
 
 		// total model (no aftershock f11) -- Equation 1
-		double mean = f1 + f78 + f5 + f4 + f6 + f10;
+		double μ = f1 + f78 + f5 + f4 + f6 + f10;
 
 		// ****** Aleatory uncertainty model ******
 
@@ -263,9 +264,9 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 		double τ = tauB * dAmp_p1;
 
 		// total std dev
-		double stdDev = sqrt(phiSq + τ * τ);
+		double σ = sqrt(phiSq + τ * τ);
 
-		return DefaultScalarGroundMotion.create(mean, stdDev);
+		return DefaultScalarGroundMotion.create(μ, σ);
 
 	}
 
@@ -282,7 +283,8 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 	private static final double[] VS_BINS = { 150d, 250d, 400d, 700d, 1000d };
 
 	// Soil depth model adapted from CY13 form -- Equation 17
-	private static final double calcSoilTerm(final Coeffs c, final double vs30, final double z1p0) {
+	private static final double calcSoilTerm(final Coefficients c, final double vs30,
+			final double z1p0) {
 		// short circuit; default z1 will be the same as z1ref
 		if (Double.isNaN(z1p0)) return 0.0;
 		// -- Equation 18

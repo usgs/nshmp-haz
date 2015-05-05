@@ -31,7 +31,7 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  */
-final class CoefficientsNew {
+final class CoefficientContainer {
 
 	private static final String C_DIR = "coeffs/";
 	private Table<Imt, String, Double> table;
@@ -42,7 +42,7 @@ final class CoefficientsNew {
 	 * 
 	 * @param resource coefficent csv text resource
 	 */
-	CoefficientsNew(String resource) {
+	CoefficientContainer(String resource) {
 		try {
 			table = ImmutableTable.copyOf(load(resource));
 		} catch (Exception e) {
@@ -82,7 +82,7 @@ final class CoefficientsNew {
 	}
 
 	private static Table<Imt, String, Double> load(String resource) throws IOException {
-		URL url = Resources.getResource(CoefficientsNew.class, C_DIR + resource);
+		URL url = Resources.getResource(CoefficientContainer.class, C_DIR + resource);
 		List<String> lines = Resources.readLines(url, UTF_8);
 		// build coeff name list
 		Iterable<String> nameList = Parsing.split(lines.get(0), Delimiter.COMMA);

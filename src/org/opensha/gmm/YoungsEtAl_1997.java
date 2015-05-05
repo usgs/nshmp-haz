@@ -6,15 +6,17 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static org.opensha.gmm.Imt.PGA;
 
+import java.util.Map;
+
 /**
  * Abstract implementation of the subduction ground motion model by Youngs et
  * al. (1997). This implementation matches that used in the 2008 USGS NSHMP
- * where it is sometimes identified as the Geomatrix ground motion model.
- * This implementation has been modified from its original form to an NGA style
- * (S. Harmsen 7/13/2009) wherein mean ground motion varies continuously with
- * Vs30 (sigma remains the same as original). This is acheived through use of a
- * period-dependent site amplification function modified from Boore &
- * Atkinson (2008).
+ * where it is sometimes identified as the Geomatrix ground motion model. This
+ * implementation has been modified from its original form to an NGA style (S.
+ * Harmsen 7/13/2009) wherein mean ground motion varies continuously with Vs30
+ * (sigma remains the same as original). This is acheived through use of a
+ * period-dependent site amplification function modified from Boore & Atkinson
+ * (2008).
  * 
  * <p>This model supports both slab and interface type events. In the 2008
  * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
@@ -26,8 +28,8 @@ import static org.opensha.gmm.Imt.PGA;
  * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Youngs, R.R., Chiou, S.-J., Silva, W.J., and Humphrey,
- * J.R., 1997, Strong ground motion ground motion models for subduction
- * zone earthquakes: Seismological Research Letters, v. 68, p. 58-73.</p>
+ * J.R., 1997, Strong ground motion ground motion models for subduction zone
+ * earthquakes: Seismological Research Letters, v. 68, p. 58-73.</p>
  * 
  * <p><b>Component:</b> Geometric mean of two horizontal components</p>
  * 
@@ -36,7 +38,7 @@ import static org.opensha.gmm.Imt.PGA;
  * @see Gmm#YOUNGS_97_SLAB
  */
 public abstract class YoungsEtAl_1997 implements GroundMotionModel {
-	
+
 	// notes from original OpenSHA implementation TODO revisit
 	// NOTE RupTopDepthParam is used in a funny way here (see also Atkinson &
 	// Boore sub). Currently it is not adjusted when updating an earthquake
@@ -44,22 +46,11 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	// imposed in the 2008 NSHMP Cascadia subduction interface model. Any other
 	// sources should update this value independently.
 
-
 	static final String NAME = "Youngs et al. (1997)";
-	
-	static final CoefficientsNew CC = new CoefficientsNew("Youngs97.csv", Coeffs.class);
-	static final CoefficientsNew CC_SA = new CoefficientsNew("ABsiteAmp.csv",
-		CoeffsSiteAmp.class);
-	
-	static class Coeffs extends CoefficientsOld {
-		double gc1, gc1s, gc2, gc2s, gc3, gc3s, gc4, gc5;
-	}
 
-	static class CoeffsSiteAmp extends CoefficientsOld {
-		double blin, b1, b2;
-	}
+	static final CoefficientContainer COEFFS = new CoefficientContainer("Youngs97.csv");
+	static final CoefficientContainer COEFFS_SA = new CoefficientContainer("ABsiteAmp.csv");
 
-	// author declared constants
 	private static final double[] VGEO = { 760.0, 300.0, 475.0 };
 	private static final double GC0 = 0.2418;
 	private static final double GCS0 = -0.6687;
@@ -71,37 +62,66 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	private static final double GMS = 1.438;
 	private static final double GEP = 0.554;
 
-	// implementation constants
-	// none
-	
-	private final Coeffs coeffs, coeffsPGA;
-	private final CoeffsSiteAmp coeffsSA;
-	
+	private static final class Coefficients {
 
-	YoungsEtAl_1997(Imt imt) {
-		coeffs = (Coeffs) CC.get(imt);
-		coeffsPGA = (Coeffs) CC.get(PGA);
-		coeffsSA = (CoeffsSiteAmp) CC_SA.get(imt);
+		final double gc1, gc1s, gc2, gc2s, gc3, gc3s, gc4, gc5;
+
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			Map<String, Double> coeffs = cc.get(imt);
+			gc1 = coeffs.get("gc1");
+			gc1s = coeffs.get("gc1s");
+			gc2 = coeffs.get("gc2");
+			gc2s = coeffs.get("gc2s");
+			gc3 = coeffs.get("gc3");
+			gc3s = coeffs.get("gc3s");
+			gc4 = coeffs.get("gc4");
+			gc5 = coeffs.get("gc5");
+		}
 	}
-	
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		double mean = calcMean(coeffs, coeffsPGA, coeffsSA, props.Mw,
-			props.rRup, props.zTop, props.vs30, isSlab());
-		double sigma = calcStdDev(coeffs, props.Mw);
-		return DefaultScalarGroundMotion.create(mean, sigma);
+
+	private static final class SiteAmpCoefficients {
+
+		final double blin, b1, b2;
+
+		SiteAmpCoefficients(Imt imt, CoefficientContainer cc) {
+			Map<String, Double> coeffs = cc.get(imt);
+			blin = coeffs.get("blin");
+			b1 = coeffs.get("b1");
+			b2 = coeffs.get("b2");
+		}
+	}
+
+	private final Coefficients coeffs;
+	private final Coefficients coeffsPGA;
+	private final SiteAmpCoefficients coeffsSA;
+
+	YoungsEtAl_1997(final Imt imt) {
+		coeffs = new Coefficients(imt, COEFFS);
+		coeffsPGA = new Coefficients(PGA, COEFFS);
+		coeffsSA = new SiteAmpCoefficients(imt, COEFFS_SA);
+	}
+
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		double μ = calcMean(coeffs, coeffsPGA, coeffsSA, isSlab(), in);
+		double σ = calcStdDev(coeffs, in.Mw);
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	abstract boolean isSlab();
 
-	private static final double calcMean(Coeffs c, Coeffs cPGA, CoeffsSiteAmp cSA,
-			double Mw, double rRup, double zTop, double vs30, boolean slab) {
-		
+	private static final double calcMean(final Coefficients c, final Coefficients cPGA,
+			final SiteAmpCoefficients cSA, final boolean slab, final GmmInput in) {
+
+		double Mw = in.Mw;
+		double rRup = in.rRup;
+		double zTop = in.zTop;
+		double vs30 = in.vs30;
+
 		double slabVal = slab ? 1 : 0;
-		
+
 		// NSHMP hazgridXnga caps slab events at M=8 after AB03 sub
 		if (slab) Mw = Math.min(8.0, Mw);
-		
+
 		// reference PGA; determine nonlinear response using this value
 		double gnd0p = GC0 + CI * slabVal;
 		double gnd0, gz, g1, g2, g3, g4, ge, gm;
@@ -144,12 +164,11 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 
 	}
 
-	private static final double calcStdDev(Coeffs c, double Mw) {
+	private static final double calcStdDev(final Coefficients c, final double Mw) {
 		// same sigma for soil and rock; sigma capped at M=8 per Youngs et al.
 		return c.gc4 + c.gc5 * min(8.0, Mw);
 	}
 
-	
 	// 12/12/2011 pp converted v1 and v2 to scalars
 	private static final double V1 = 180.0;
 	private static final double V2 = 300.0;
@@ -166,21 +185,25 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	// ln(pga_low/0.1) where pga_low = 0.06
 	private static final double PLFAC = -0.510825624;
 
-
 	/*
 	 * Utility method returns a site response value that is a continuous
 	 * function of <code>vs30</code>: log(AMP at vs30)-log(AMP at vs30r). Value
 	 * at <code>vs30 == vs30r</code> is unity. This function was adapted from
 	 * hazSUBXngatest.f and is valid for 23 periods.
+	 * 
 	 * @param pganl reference pga
+	 * 
 	 * @param vs30 at a site of interest
+	 * 
 	 * @param vs30r reference vs30, usually one value for soil and another for
-	 *        rock
+	 * rock
+	 * 
 	 * @param per period index
+	 * 
 	 * @return the site response correction
 	 */
-	private static double baSiteAmp(CoeffsSiteAmp c, double pganl, double vs30,
-			double vs30r) {
+	private static double baSiteAmp(final SiteAmpCoefficients c, final double pganl,
+			final double vs30, final double vs30r) {
 
 		double dy, dyr, site, siter = 0.0;
 
@@ -254,7 +277,7 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 			return false;
 		}
 	}
-	
+
 	static final class Slab extends YoungsEtAl_1997 {
 		static final String NAME = YoungsEtAl_1997.NAME + ": Slab";
 

@@ -34,16 +34,16 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
 	static final String NAME = "Frankel et al. (1996)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("Frankel96.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("Frankel96.csv");
 
-	private final double bsigma;
+	private final double bσ;
 	private final Imt imt;
 	private final GmmTable bcTable;
 	private final GmmTable aTable;
 
 	FrankelEtAl_1996(Imt imt) {
 		this.imt = imt;
-		bsigma = COEFFS.get(imt, "bsigma");
+		bσ = COEFFS.get(imt, "bsigma");
 		bcTable = GmmTables.getFrankel96(imt, SOFT_ROCK);
 		aTable = GmmTables.getFrankel96(imt, HARD_ROCK);
 	}
@@ -51,13 +51,13 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 	@Override public final ScalarGroundMotion calc(GmmInput in) {
 		SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
 		double Mw = converter().convert(in.Mw);
-		double mean = (siteClass == SOFT_ROCK) ?
+		double μ = (siteClass == SOFT_ROCK) ?
 			bcTable.get(in.rRup, Mw) :
 			aTable.get(in.rRup, Mw);
 
-		mean = GmmUtils.ceusMeanClip(imt, mean);
-		double std = bsigma * BASE_10_TO_E;
-		return DefaultScalarGroundMotion.create(mean, std);
+		μ = GmmUtils.ceusMeanClip(imt, μ);
+		double σ = bσ * BASE_10_TO_E;
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	@Override public MagConverter converter() {

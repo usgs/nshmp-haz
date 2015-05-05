@@ -38,7 +38,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
 	static final String NAME = "Boore, Stewart, Seyhan & Atkinson (2014)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("BSSA14.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("BSSA14.csv");
 
 	private static final double A = pow(570.94, 4);
 	private static final double B = pow(1360, 4) + A;
@@ -51,8 +51,9 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 	private static final double V1 = 225;
 	private static final double V2 = 300;
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
+		final Imt imt;
 		final double e0, e1, e2, e3, e4, e5, e6, Mh, c1, c2, c3, h, c, Vc, f4, f5,
 				f6, f7, r1, r2, Δφ_r, Δφ_v, φ1, φ2, τ1, τ2;
 
@@ -62,7 +63,9 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 		// unused regional coeffs
 		// double Dc3CnTr, Dc3ItJp;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			e0 = coeffs.get("e0");
 			e1 = coeffs.get("e1");
 			e2 = coeffs.get("e2");
@@ -92,36 +95,34 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Coeffs coeffsPGA;
-	private final Imt imt;
+	private final Coefficients coeffs;
+	private final Coefficients coeffsPGA;
 
 	BooreEtAl_2014(final Imt imt) {
-		this.imt = imt;
-		coeffs = new Coeffs(COEFFS.get(imt));
-		coeffsPGA = new Coeffs(COEFFS.get(PGA));
+		coeffs = new Coefficients(imt, COEFFS);
+		coeffsPGA = new Coefficients(PGA, COEFFS);
 	}
 
 	// TODO limit supplied z1p0 to 0-3 km
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		return calc(coeffs, coeffsPGA, imt, in);
+		return calc(coeffs, coeffsPGA, in);
 	}
 
-	private static final ScalarGroundMotion calc(final Coeffs c, final Coeffs cPGA, final Imt imt,
+	private static final ScalarGroundMotion calc(final Coefficients c, final Coefficients cPGA,
 			final GmmInput in) {
 
 		FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
-
 		double pgaRock = calcPGArock(cPGA, in.Mw, in.rJB, style);
-		double mean = calcMean(c, imt, style, pgaRock, in);
-		double stdDev = calcStdDev(c, in);
 
-		return DefaultScalarGroundMotion.create(mean, stdDev);
+		double μ = calcMean(c, style, pgaRock, in);
+		double σ = calcStdDev(c, in);
+
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	// Mean ground motion model
-	private static final double calcMean(final Coeffs c, final Imt imt, final FaultStyle style,
+	private static final double calcMean(final Coefficients c, final FaultStyle style,
 			final double pgaRock, final GmmInput in) {
 
 		double Mw = in.Mw;
@@ -145,7 +146,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
 		// Basin depth term -- Equations 9, 10 , 11
 		double DZ1 = calcDeltaZ1(in.z1p0, vs30);
-		double Fdz1 = (imt.isSA() && imt.period() >= 0.65) ?
+		double Fdz1 = (c.imt.isSA() && c.imt.period() >= 0.65) ?
 			(DZ1 <= c.f7 / c.f6) ? c.f6 * DZ1 : c.f7 : 0.0;
 
 		// Total site term -- Equation 5
@@ -156,7 +157,8 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 	}
 
 	// Median PGA for ref rock (Vs30=760m/s); always called with PGA coeffs
-	private static final double calcPGArock(final Coeffs c, final double Mw, final double rJB,
+	private static final double calcPGArock(final Coefficients c, final double Mw,
+			final double rJB,
 			final FaultStyle style) {
 
 		// Source/Event Term -- Equation 2
@@ -174,7 +176,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 	}
 
 	// Source/Event Term -- Equation 2
-	private static final double calcSourceTerm(final Coeffs c, final double Mw,
+	private static final double calcSourceTerm(final Coefficients c, final double Mw,
 			final FaultStyle style) {
 		double Fe = (style == STRIKE_SLIP) ? c.e1 : (style == REVERSE) ? c.e3 :
 			(style == NORMAL) ? c.e2 : c.e0; // else UNKNOWN
@@ -184,7 +186,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 	}
 
 	// Path Term, base model -- Equation 3
-	private static final double calcPathTerm(final Coeffs c, final double Mw, final double R) {
+	private static final double calcPathTerm(final Coefficients c, final double Mw, final double R) {
 		return (c.c1 + c.c2 * (Mw - M_REF)) * log(R / R_REF) +
 			(c.c3 + DC3_CA_TW) * (R - R_REF);
 	}
@@ -198,7 +200,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 	}
 
 	// Aleatory uncertainty model
-	private static final double calcStdDev(final Coeffs c, final GmmInput in) {
+	private static final double calcStdDev(final Coefficients c, final GmmInput in) {
 
 		double Mw = in.Mw;
 		double rJB = in.rJB;

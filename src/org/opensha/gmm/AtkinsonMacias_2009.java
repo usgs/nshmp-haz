@@ -7,9 +7,8 @@ import static org.opensha.util.MathUtils.hypot;
 import java.util.Map;
 
 /**
- * Implementation of the subduction interface ground motion model by Atkinson
- * & Macias (2009). This implementation matches that used in the 2014 USGS
- * NSHMP.
+ * Implementation of the subduction interface ground motion model by Atkinson &
+ * Macias (2009). This implementation matches that used in the 2014 USGS NSHMP.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -31,18 +30,19 @@ import java.util.Map;
  * @see Gmm#AM_09_INTER
  */
 public final class AtkinsonMacias_2009 implements GroundMotionModel {
-	
+
 	static final String NAME = "Atkinson & Macias (2009): Interface";
-	
-	static final CoefficientsNew COEFFS = new CoefficientsNew("AM09.csv");
-	
+
+	static final CoefficientContainer COEFFS = new CoefficientContainer("AM09.csv");
+
 	private static final double GFAC = 6.8875526;
 
-	private static final class Coeffs {
-		
+	private static final class Coefficients {
+
 		final double c0, c1, c2, c3, c4, sig;
-		
-		Coeffs(Map<String, Double> coeffs) {
+
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			Map<String, Double> coeffs = cc.get(imt);
 			c0 = coeffs.get("c0");
 			c1 = coeffs.get("c1");
 			c2 = coeffs.get("c2");
@@ -51,25 +51,24 @@ public final class AtkinsonMacias_2009 implements GroundMotionModel {
 			sig = coeffs.get("sig");
 		}
 	}
-	
-	private final Coeffs coeffs;
+
+	private final Coefficients coeffs;
 
 	AtkinsonMacias_2009(final Imt imt) {
-		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffs = new Coefficients(imt, COEFFS);
 	}
-	
-	@Override
-	public final ScalarGroundMotion calc(final GmmInput in) {
-		double mean = calcMean(coeffs, in);
-		double sigma = coeffs.sig * BASE_10_TO_E;
-		return DefaultScalarGroundMotion.create(mean, sigma);
+
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		double μ = calcMean(coeffs, in);
+		double σ = coeffs.sig * BASE_10_TO_E;
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
-		
+
 	// SF2 variable of AB06 needs to be provided by subclasses via
-	private static final double calcMean(final Coeffs c, final GmmInput in) {
+	private static final double calcMean(final Coefficients c, final GmmInput in) {
 
 		double Mw = in.Mw;
-		
+
 		double h = (Mw * Mw) - (3.1 * Mw) - 14.55;
 		double dM = Mw - 8.0;
 		double gnd = c.c0 + (c.c3 * dM) + (c.c4 * dM * dM);

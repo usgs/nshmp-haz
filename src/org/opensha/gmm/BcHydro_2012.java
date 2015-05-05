@@ -42,7 +42,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
 	static final String NAME = "BC Hydro (2012)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("BCHydro12.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("BCHydro12.csv");
 
 	private static final double C1 = 7.8;
 	private static final double T3 = 0.1;
@@ -56,14 +56,15 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 	private static final double SIGMA = 0.74;
 	private static final double DC1_SLAB = -0.3;
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
 		final double vlin, b, t1, t2, t6, t10, t11, t12, t13, t14, dC1mid;
 
 		// not currently used
 		// final double t7, t8, t15, t16, dC1lo, dC1hi;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			Map<String, Double> coeffs = cc.get(imt);
 			vlin = coeffs.get("vlin");
 			b = coeffs.get("b");
 			t1 = coeffs.get("t1");
@@ -78,12 +79,12 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Coeffs coeffsPGA;
+	private final Coefficients coeffs;
+	private final Coefficients coeffsPGA;
 
 	BcHydro_2012(final Imt imt) {
-		coeffs = new Coeffs(COEFFS.get(imt));
-		coeffsPGA = new Coeffs(COEFFS.get(PGA));
+		coeffs = new Coefficients(imt, COEFFS);
+		coeffsPGA = new Coefficients(PGA, COEFFS);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
@@ -92,20 +93,20 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 		// is less than period-dependent vlin cutoff
 		double pgaRock = (in.vs30 < coeffs.vlin) ? calcMean(coeffsPGA, isSlab(), 0.0, in) : 0.0;
 
-		double mean = calcMean(coeffs, isSlab(), pgaRock, in);
+		double μ = calcMean(coeffs, isSlab(), pgaRock, in);
 
-		return DefaultScalarGroundMotion.create(mean, SIGMA);
+		return DefaultScalarGroundMotion.create(μ, SIGMA);
 	}
 
 	abstract boolean isSlab();
 
-	private static final double calcMean(final Coeffs c, final boolean slab, final double pgaRock,
-			final GmmInput in) {
+	private static final double calcMean(final Coefficients c, final boolean slab,
+			final double pgaRock, final GmmInput in) {
 
 		double Mw = in.Mw;
 		double rRup = in.rRup;
 		double zTop = in.zTop;
-		
+
 		// zTop = hypoDepth and is capped at 125km, only used when slab = true
 		if (slab) zTop = min(zTop, 125.0);
 

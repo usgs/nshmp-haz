@@ -3,8 +3,11 @@ package org.opensha.gmm;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
+import static org.opensha.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
+import static org.opensha.gmm.MagConverter.MB_TO_MW_JOHNSTON;
 import static org.opensha.gmm.SiteClass.HARD_ROCK;
-import static org.opensha.gmm.MagConverter.*;
+
+import java.util.Map;
 
 /**
  * Implementation of the Toro et al. (1997) ground motion model for stable
@@ -36,7 +39,7 @@ import static org.opensha.gmm.MagConverter.*;
  * @see Gmm#TORO_97_MW
  */
 public abstract class ToroEtAl_1997 implements GroundMotionModel {
-	
+
 	// TODO fix clamp values (not implemented here yet) to match other CEUS gmms
 
 	// notes from fortran source:
@@ -56,42 +59,50 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 	// in our rendering)
 
 	static final String NAME = "Toro et al. (1997)";
-	
-	// load both Mw and Mb coefficients
-	static final CoefficientsNew CC = new CoefficientsNew("Toro97Mw.csv", Coeffs.class);
-	static final CoefficientsNew CC_MB = new CoefficientsNew("Toro97Mb.csv", Coeffs.class);
-	
-	static class Coeffs extends CoefficientsOld {
-		double t1, t1h, t2, t3, t4, t5, t6, th, tsigma;
-	}
-	
-	// author declared constants
-	// none
 
-	// implementation constants
-	// none
-	
-	private final Coeffs coeffs;
+	static final CoefficientContainer COEFFS_MW = new CoefficientContainer("Toro97Mw.csv");
+	static final CoefficientContainer COEFFS_MB = new CoefficientContainer("Toro97Mb.csv");
 
-	ToroEtAl_1997(Imt imt) {
-		coeffs = (Coeffs) (isMw() ? CC.get(imt) : CC_MB.get(imt));
+	private static final class Coefficients {
+
+		final Imt imt;
+		final double t1, t1h, t2, t3, t4, t5, t6, th, tσ;
+
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
+			t1 = coeffs.get("t1");
+			t1h = coeffs.get("t1h");
+			t2 = coeffs.get("t2");
+			t3 = coeffs.get("t3");
+			t4 = coeffs.get("t4");
+			t5 = coeffs.get("t5");
+			t6 = coeffs.get("t6");
+			th = coeffs.get("th");
+			tσ = coeffs.get("tsigma");
+		}
 	}
-	
-	@Override
-	public final ScalarGroundMotion calc(GmmInput props) {
-		SiteClass siteClass = GmmUtils.ceusSiteClass(props.vs30);
-		
-		
-		return DefaultScalarGroundMotion.create(
-			calcMean(coeffs, props.Mw, props.rJB, siteClass, isMw()),
-			coeffs.tsigma);
+
+	private final Coefficients coeffs;
+
+	ToroEtAl_1997(final Imt imt) {
+		coeffs = new Coefficients(imt, isMw() ? COEFFS_MW : COEFFS_MB);
+	}
+
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		double μ = calcMean(coeffs, isMw(), in);
+		return DefaultScalarGroundMotion.create(μ, coeffs.tσ);
 	}
 
 	abstract boolean isMw();
-	
-	private static final double calcMean(Coeffs c, double mag, double rJB,
-			SiteClass siteClass, boolean isMw) {
-		
+
+	private static final double calcMean(final Coefficients c, final boolean isMw, final GmmInput in) {
+
+		double mag = in.Mw;
+		double rJB = in.rJB;
+
+		SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
+
 		double thsq = c.th * c.th;
 
 		// magnitude correction: with Toro model, you change the coefficients
@@ -102,13 +113,13 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 		// to Mw for the correction.
 
 		double mCorr;
-		
+
 		if (isMw) {
 			mCorr = Math.exp(-1.25 + 0.227 * mag);
 		} else {
 			double magJ = MB_TO_MW_JOHNSTON.convert(mag);
 			double cor1 = exp(-1.25 + 0.227 * magJ);
-			double magAB = MB_TO_MW_ATKIN_BOORE.convert( mag);
+			double magAB = MB_TO_MW_ATKIN_BOORE.convert(mag);
 			double cor2 = exp(-1.25 + 0.227 * magAB);
 			mCorr = sqrt(cor1 * cor2); // geo mean
 		}
@@ -125,14 +136,14 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 
 		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
-	
+
 	static final class Mb extends ToroEtAl_1997 {
 		static final String NAME = ToroEtAl_1997.NAME + ": mb";
 
 		Mb(Imt imt) {
 			super(imt);
 		}
-		
+
 		@Override boolean isMw() {
 			return false;
 		}
@@ -144,7 +155,7 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 		Mw(Imt imt) {
 			super(imt);
 		}
-		
+
 		@Override boolean isMw() {
 			return true;
 		}

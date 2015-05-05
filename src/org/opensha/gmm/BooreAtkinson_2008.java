@@ -33,7 +33,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 
 	static final String NAME = "Boore & Atkinson (2008)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("BA08.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("BA08.csv");
 
 	private static final double PGAlo = 0.06;
 	private static final double A2 = 0.09;
@@ -44,11 +44,13 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 	private static final double Mref = 4.5;
 	private static final double Rref = 1;
 
-	static final class Coeffs {
-		double b_lin, b1, b2, c1, c2, c3, e1, e2, e3, e4, e5, e6, e7, h, mh, s,
-				t_u, s_tu, t_m, s_tm;
+	static final class Coefficients {
 
-		Coeffs(Map<String, Double> coeffs) {
+		final double b_lin, b1, b2, c1, c2, c3, e1, e2, e3, e4, e5, e6, e7, h, mh, s, t_u, s_tu,
+				t_m, s_tm;
+
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			Map<String, Double> coeffs = cc.get(imt);
 			b_lin = coeffs.get("b_lin");
 			b1 = coeffs.get("b1");
 			b2 = coeffs.get("b2");
@@ -72,12 +74,12 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Coeffs coeffsPGA;
+	private final Coefficients coeffs;
+	private final Coefficients coeffsPGA;
 
 	BooreAtkinson_2008(final Imt imt) {
-		coeffs = new Coeffs(COEFFS.get(imt));
-		coeffsPGA = new Coeffs(COEFFS.get(PGA));
+		coeffs = new Coefficients(imt, COEFFS);
+		coeffsPGA = new Coefficients(PGA, COEFFS);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
@@ -90,22 +92,20 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 	// to the different fault styles whereas the 4 different fault styles
 	// should be booleans and only ever have one of their values set to 1.
 
-	private static final ScalarGroundMotion calc(final Coeffs c, final Coeffs cPGA,
+	private static final ScalarGroundMotion calc(final Coefficients c, final Coefficients cPGA,
 			final GmmInput in) {
 
 		FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
-
 		double pga4nl = exp(calcPGA4nl(cPGA, in.Mw, in.rJB, style));
 
-		double mean = calcMean(c, style, pga4nl, in);
+		double μ = calcMean(c, style, pga4nl, in);
+		double σ = calcStdDev(c, style);
 
-		double stdDev = calcStdDev(c, style);
-
-		return DefaultScalarGroundMotion.create(mean, stdDev);
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	// Mean ground motion model
-	private static final double calcMean(final Coeffs c, final FaultStyle style,
+	private static final double calcMean(final Coefficients c, final FaultStyle style,
 			final double pga4nl, final GmmInput in) {
 
 		// Source/Event Term
@@ -153,7 +153,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 	}
 
 	// Median PGA for ref rock (Vs30=760m/s); always called with PGA coeffs
-	private static final double calcPGA4nl(final Coeffs c, final double Mw, final double rJB,
+	private static final double calcPGA4nl(final Coefficients c, final double Mw, final double rJB,
 			final FaultStyle style) {
 
 		// Source/Event Term
@@ -166,7 +166,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 	}
 
 	// Source/Event Term
-	private static final double calcSourceTerm(final Coeffs c, final double Mw,
+	private static final double calcSourceTerm(final Coefficients c, final double Mw,
 			final FaultStyle style) {
 		double Fm = (style == STRIKE_SLIP) ? c.e2 : (style == NORMAL) ? c.e3 :
 			(style == REVERSE) ? c.e4 : c.e1; // else unkown
@@ -176,14 +176,14 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 	}
 
 	// Path Term
-	private static final double calcPathTerm(final Coeffs c, final double Mw, final double rJB) {
+	private static final double calcPathTerm(final Coefficients c, final double Mw, final double rJB) {
 		double r = Math.sqrt(rJB * rJB + c.h * c.h);
 		return (c.c1 + c.c2 * (Mw - Mref)) * log(r / Rref) + c.c3 *
 			(r - Rref);
 	}
 
 	// Aleatory uncertainty model
-	private static final double calcStdDev(final Coeffs c, final FaultStyle style) {
+	private static final double calcStdDev(final Coefficients c, final FaultStyle style) {
 		// independent values for tau and sigma are available in coeffs
 		return style == UNKNOWN ? c.s_tu : c.s_tm;
 	}

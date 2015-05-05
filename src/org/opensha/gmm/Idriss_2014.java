@@ -36,13 +36,16 @@ public final class Idriss_2014 implements GroundMotionModel {
 
 	static final String NAME = "Idriss (2014)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("Idriss14.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("Idriss14.csv");
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
-		double a1_lo, a2_lo, a1_hi, a2_hi, a3, b1_lo, b2_lo, b1_hi, b2_hi, ξ, γ, φ;
+		final Imt imt;
+		final double a1_lo, a2_lo, a1_hi, a2_hi, a3, b1_lo, b2_lo, b1_hi, b2_hi, ξ, γ, φ;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			a1_lo = coeffs.get("a1_lo");
 			a2_lo = coeffs.get("a2_lo");
 			a1_hi = coeffs.get("a1_hi");
@@ -58,28 +61,26 @@ public final class Idriss_2014 implements GroundMotionModel {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Imt imt;
+	private final Coefficients coeffs;
 
 	Idriss_2014(Imt imt) {
-		this.imt = imt;
-		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffs = new Coefficients(imt, COEFFS);
 	}
 
 	@Override public final ScalarGroundMotion calc(GmmInput in) {
-		return calc(coeffs, imt, in);
+		return calc(coeffs, in);
 	}
 
-	private static final ScalarGroundMotion calc(final Coeffs c, final Imt imt, final GmmInput in) {
+	private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in) {
 
-		double mean = calcMean(c, in);
-		double stdDev = calcStdDev(c, imt, in.Mw);
+		double μ = calcMean(c, in);
+		double σ = calcStdDev(c, in.Mw);
 
-		return DefaultScalarGroundMotion.create(mean, stdDev);
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	// Mean ground motion model - cap of Vs = 1200 m/s
-	private static final double calcMean(final Coeffs c, final GmmInput in) {
+	private static final double calcMean(final Coefficients c, final GmmInput in) {
 
 		double Mw = in.Mw;
 		double rRup = in.rRup;
@@ -100,9 +101,9 @@ public final class Idriss_2014 implements GroundMotionModel {
 	}
 
 	// Aleatory uncertainty model
-	private static final double calcStdDev(final Coeffs c, final Imt imt, final double Mw) {
+	private static final double calcStdDev(final Coefficients c, final double Mw) {
 		double s1 = 0.035;
-		Double T = imt.period();
+		Double T = c.imt.period();
 		s1 *= (T == null || T <= 0.05) ? log(0.05) : (T < 3.0) ? log(T) : log(3d);
 		double s2 = 0.06;
 		s2 *= (Mw <= 5.0) ? 5.0 : (Mw < 7.5) ? Mw : 7.5;

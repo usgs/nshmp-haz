@@ -67,8 +67,8 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 	static final String NAME = "McVerry et al. (2000)";
 
 	// geomean and max-horizontal coefficients
-	static final CoefficientsNew COEFFS = new CoefficientsNew("McVerry00_gm.csv");
-	static final CoefficientsNew COEFFS_MH = new CoefficientsNew("McVerry00_mh.csv");
+	static final CoefficientContainer COEFFS_GM = new CoefficientContainer("McVerry00_gm.csv");
+	static final CoefficientContainer COEFFS_MH = new CoefficientContainer("McVerry00_mh.csv");
 
 	private static final double C4AS = -0.144;
 	private static final double C6AS = 0.17;
@@ -77,15 +77,18 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 	private static final double C19Y = 0.554;
 	private static final double C32 = -0.2;
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
 		// 'as' and 'y' suffixes indicate attribution to
 		// Abrahamson & Silva or Youngs et al.
 
-		double c1, c3as, c5, c8, c10as, c11, c13y, c15, c17, c20, c24, c29, c30as, c33as, c43, c46,
-				σ6, σSlope, τ;
+		final Imt imt;
+		final double c1, c3as, c5, c8, c10as, c11, c13y, c15, c17, c20, c24, c29, c30as, c33as,
+				c43, c46, σ6, σSlope, τ;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			c1 = coeffs.get("c1");
 			c3as = coeffs.get("c3as");
 			c5 = coeffs.get("c5");
@@ -106,8 +109,10 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 			σSlope = coeffs.get("sigSlope");
 			τ = coeffs.get("tau");
 		}
-		
-		Coeffs(boolean geomean) {
+
+		// pga'
+		Coefficients(boolean geomean) {
+			imt = PGA;
 			if (geomean) {
 				c1 = 0.07713;
 				c3as = 0.0;
@@ -153,20 +158,18 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Coeffs coeffsPGA;
-	private final Coeffs coeffsPGAprime;
-	private final Imt imt;
+	private final Coefficients coeffs;
+	private final Coefficients coeffsPGA;
+	private final Coefficients coeffsPGAprime;
 
 	McVerryEtAl_2000(Imt imt) {
-		this.imt = imt;
-		coeffs = new Coeffs(isGeomean() ? COEFFS.get(imt) : COEFFS_MH.get(imt));
-		coeffsPGA = new Coeffs(isGeomean() ? COEFFS.get(PGA) : COEFFS_MH.get(PGA));
-		coeffsPGAprime = new Coeffs(isGeomean());
+		coeffs = new Coefficients(imt, isGeomean() ? COEFFS_GM : COEFFS_MH);
+		coeffsPGA = new Coefficients(PGA, isGeomean() ? COEFFS_GM : COEFFS_MH);
+		coeffsPGAprime = new Coefficients(isGeomean());
 	}
 
 	@Override public final ScalarGroundMotion calc(GmmInput in) {
-		double μ = calcMean(coeffs, coeffsPGA, coeffsPGAprime, imt, tectonicSetting(), in);
+		double μ = calcMean(coeffs, coeffsPGA, coeffsPGAprime, tectonicSetting(), in);
 		double σ = calcStdDev(coeffs, in.Mw);
 		return DefaultScalarGroundMotion.create(μ, σ);
 	}
@@ -177,19 +180,20 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 	/* as opposed to subduction */
 	abstract TectonicSetting tectonicSetting();
 
-	private static double calcMean(final Coeffs c, final Coeffs cPGA, final Coeffs cPGAp, Imt imt,
-			final TectonicSetting tect, final GmmInput in) {
+	private static double calcMean(final Coefficients c, final Coefficients cPGA,
+			final Coefficients cPGAp, final TectonicSetting tect, final GmmInput in) {
 
 		double pgaMean = calcMeanBase(cPGA, tect, in);
 
-		if (imt == PGA) return pgaMean;
+		if (c.imt == PGA) return pgaMean;
 
 		double pga_prime = exp(calcMeanBase(cPGAp, tect, in));
 		double sa_prime = exp(calcMeanBase(c, tect, in));
 		return log(sa_prime * exp(pgaMean) / pga_prime);
 	}
 
-	private static double calcMeanBase(final Coeffs c, final TectonicSetting tect, final GmmInput in) {
+	private static double calcMeanBase(final Coefficients c, final TectonicSetting tect,
+			final GmmInput in) {
 
 		double lnSA_AB = (tect == ACTIVE_SHALLOW_CRUST || tect == VOLCANIC) ?
 			calcCrustal(c, tect, in) :
@@ -200,7 +204,8 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 		return lnSA_AB + lnSA_CD;
 	}
 
-	private static double calcCrustal(final Coeffs c, final TectonicSetting tect, final GmmInput in) {
+	private static double calcCrustal(final Coefficients c, final TectonicSetting tect,
+			final GmmInput in) {
 
 		double Mw = in.Mw;
 		double rRup = in.rRup;
@@ -219,7 +224,7 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 			c.c46 * rVol + faultTerm;
 	}
 
-	private static double calcSubduction(final Coeffs c, final TectonicSetting tect,
+	private static double calcSubduction(final Coefficients c, final TectonicSetting tect,
 			final GmmInput in) {
 
 		double Mw = in.Mw;
@@ -240,14 +245,14 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 		// alwyas be 0.0 here; only interface (or not) matters.
 	}
 
-	private static double calcSiteTerm(final Coeffs c, final double vs30, final double lnSA_AB) {
+	private static double calcSiteTerm(final Coefficients c, final double vs30, final double lnSA_AB) {
 		SiteClass siteClass = SiteClass.fromVs30(vs30);
 		checkState(siteClass != SiteClass.E);
 		return (siteClass == SiteClass.C) ? c.c29 :
 			(siteClass == SiteClass.D) ? c.c30as * log(exp(lnSA_AB) + 0.03) + c.c43 : 0.0;
 	}
 
-	private double calcStdDev(final Coeffs c, final double Mw) {
+	private double calcStdDev(final Coefficients c, final double Mw) {
 		double sigma = c.σ6 +
 			((Mw >= 7.0) ? c.σSlope : (Mw <= 5.0) ? -c.σSlope : c.σSlope * (Mw - 6.0));
 		return sqrt(sigma * sigma + c.τ * c.τ);

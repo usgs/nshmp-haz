@@ -43,22 +43,23 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 
 	static final String NAME = "Sadigh et al. (1997)";
 
-	static final CoefficientsNew COEFFS_BC_LO, COEFFS_BC_HI, COEFFS_D_LO, COEFFS_D_HI;
+	static final CoefficientContainer COEFFS_BC_LO, COEFFS_BC_HI, COEFFS_D_LO, COEFFS_D_HI;
 
 	static {
-		COEFFS_BC_LO = new CoefficientsNew("Sadigh97_BClo.csv");
-		COEFFS_BC_HI = new CoefficientsNew("Sadigh97_BChi.csv");
-		COEFFS_D_LO = new CoefficientsNew("Sadigh97_Dlo.csv");
-		COEFFS_D_HI = new CoefficientsNew("Sadigh97_Dhi.csv");
+		COEFFS_BC_LO = new CoefficientContainer("Sadigh97_BClo.csv");
+		COEFFS_BC_HI = new CoefficientContainer("Sadigh97_BChi.csv");
+		COEFFS_D_LO = new CoefficientContainer("Sadigh97_Dlo.csv");
+		COEFFS_D_HI = new CoefficientContainer("Sadigh97_Dhi.csv");
 	}
 
 	private static final double VS30_CUT = 750.0;
 
-	private static final class Coeffs {
-		
-		double c1r, c1ss, c2, c3, c4, c5, c6r, c6ss, c7, σ0, cM, σMax;
+	private static final class Coefficients {
 
-		Coeffs(Map<String, Double> coeffs) {
+		final double c1r, c1ss, c2, c3, c4, c5, c6r, c6ss, c7, σ0, cM, σMax;
+
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			Map<String, Double> coeffs = cc.get(imt);
 			c1r = coeffs.get("c1r");
 			c1ss = coeffs.get("c1ss");
 			c2 = coeffs.get("c2");
@@ -68,22 +69,22 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 			c6r = coeffs.get("c6r");
 			c6ss = coeffs.get("c6ss");
 			c7 = coeffs.get("c7");
-			σ0 = coeffs.get("σ0");
+			σ0 = coeffs.get("sig0");
 			cM = coeffs.get("cM");
-			σMax = coeffs.get("σMax");
+			σMax = coeffs.get("sigMax");
 		}
 	}
 
-	private final Coeffs coeffs_bc_lo;
-	private final Coeffs coeffs_bc_hi;
-	private final Coeffs coeffs_d_lo;
-	private final Coeffs coeffs_d_hi;
+	private final Coefficients coeffs_bc_lo;
+	private final Coefficients coeffs_bc_hi;
+	private final Coefficients coeffs_d_lo;
+	private final Coefficients coeffs_d_hi;
 
 	SadighEtAl_1997(final Imt imt) {
-		coeffs_bc_lo = new Coeffs(COEFFS_BC_LO.get(imt));
-		coeffs_bc_hi = new Coeffs(COEFFS_BC_LO.get(imt));
-		coeffs_d_lo = new Coeffs(COEFFS_D_LO.get(imt));
-		coeffs_d_hi = new Coeffs(COEFFS_D_LO.get(imt));
+		coeffs_bc_lo = new Coefficients(imt, COEFFS_BC_LO);
+		coeffs_bc_hi = new Coefficients(imt, COEFFS_BC_LO);
+		coeffs_d_lo = new Coefficients(imt, COEFFS_D_LO);
+		coeffs_d_hi = new Coefficients(imt, COEFFS_D_LO);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
@@ -93,12 +94,12 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 
 		if (in.vs30 > VS30_CUT) {
 			// rock
-			Coeffs c = in.Mw <= 6.5 ? coeffs_bc_lo : coeffs_bc_hi;
+			Coefficients c = in.Mw <= 6.5 ? coeffs_bc_lo : coeffs_bc_hi;
 			μ = calcRockMean(c, in.Mw, in.rRup, faultStyle);
 			σ = calcStdDev(c, in.Mw);
 		} else {
 			// soil
-			Coeffs c = in.Mw <= 6.5 ? coeffs_d_lo : coeffs_d_hi;
+			Coefficients c = in.Mw <= 6.5 ? coeffs_d_lo : coeffs_d_hi;
 			μ = calcSoilMean(c, in.Mw, in.rRup, faultStyle);
 			σ = calcStdDev(c, in.Mw);
 		}
@@ -106,8 +107,8 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
-	private static final double calcRockMean(final Coeffs c, final double Mw, final double rRup,
-			final FaultStyle style) {
+	private static final double calcRockMean(final Coefficients c, final double Mw,
+			final double rRup, final FaultStyle style) {
 		// modified to saturate above Mw=8.5
 
 		// rock site coeffs are not dependent on style-of-faulting
@@ -120,8 +121,8 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 		return (style == REVERSE) ? lnY + 0.18232 : lnY;
 	}
 
-	private static final double calcSoilMean(final Coeffs c, final double Mw, final double rRup,
-			final FaultStyle style) {
+	private static final double calcSoilMean(final Coefficients c, final double Mw,
+			final double rRup, final FaultStyle style) {
 		// modified to saturate above Mw=8.5
 
 		double c1 = (style == REVERSE) ? c.c1r : c.c1ss;
@@ -131,7 +132,7 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 			pow(max(8.5 - Mw, 0.0), 2.5);
 	}
 
-	private static final double calcStdDev(final Coeffs c, final double Mw) {
+	private static final double calcStdDev(final Coefficients c, final double Mw) {
 		// mMax_bc = 7.21, mMax_d = 7.0, coeff tables were populated
 		// with maxSigma for soil sites, maxSigma for rock were
 		// included in publication

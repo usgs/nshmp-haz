@@ -38,7 +38,7 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 
 	static final String NAME = "Chiou & Youngs (2008)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("CY08.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("CY08.csv");
 
 	private static final double C2 = 1.06;
 	private static final double C3 = 3.45;
@@ -48,7 +48,7 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 	private static final double CHM = 3;
 	private static final double CG3 = 4;
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
 		final double c1, c1a, c1b, c5, c6, c7, c9, c9a, cg1, cg2, cn, cm, φ1, φ2, φ3, φ4, φ5, φ6,
 				φ7, φ8, τ1, τ2, σ1, σ2, σ3;
@@ -56,7 +56,8 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 		// unused
 		// final double c7a, c10, sig4
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			Map<String, Double> coeffs = cc.get(imt);
 			c1 = coeffs.get("c1");
 			c1a = coeffs.get("c1a");
 			c1b = coeffs.get("c1b");
@@ -79,36 +80,36 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 			φ8 = coeffs.get("phi8");
 			τ1 = coeffs.get("tau1");
 			τ2 = coeffs.get("tau2");
-			σ1 = coeffs.get("sigma1");
-			σ2 = coeffs.get("sigma2");
-			σ3 = coeffs.get("sigma3");
+			σ1 = coeffs.get("sig1");
+			σ2 = coeffs.get("sig2");
+			σ3 = coeffs.get("sig3");
 		}
 	}
 
-	private final Coeffs coeffs;
+	private final Coefficients coeffs;
 
 	ChiouYoungs_2008(final Imt imt) {
-		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffs = new Coefficients(imt, COEFFS);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
 		return calc(coeffs, in);
 	}
 
-	private static final ScalarGroundMotion calc(final Coeffs c, final GmmInput in) {
+	private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in) {
 
 		// terms used by both mean and stdDev
 		double lnYref = calcLnYref(c, in);
 		double soilNonLin = calcSoilNonLin(c, in.vs30);
 
-		double mean = calcMean(c, in.vs30, in.z1p0, soilNonLin, lnYref);
-		double stdDev = calcStdDev(c, in.Mw, in.vsInf, soilNonLin, lnYref);
+		double μ = calcMean(c, in.vs30, in.z1p0, soilNonLin, lnYref);
+		double σ = calcStdDev(c, in.Mw, in.vsInf, soilNonLin, lnYref);
 
-		return DefaultScalarGroundMotion.create(mean, stdDev);
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	// Seismic Source Scaling - aftershock term removed
-	private static final double calcLnYref(final Coeffs c, final GmmInput in) {
+	private static final double calcLnYref(final Coefficients c, final GmmInput in) {
 
 		double Mw = in.Mw;
 		double rJB = in.rJB;
@@ -136,8 +137,8 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 	}
 
 	// Mean ground motion model
-	private static final double calcMean(final Coeffs c, final double vs30, final double z1p0,
-			final double snl, final double lnYref) {
+	private static final double calcMean(final Coefficients c, final double vs30,
+			final double z1p0, final double snl, final double lnYref) {
 
 		// basin depth
 		double zBasin = Double.isNaN(z1p0) ? calcBasinZ(vs30) : z1p0;
@@ -150,7 +151,7 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 		// @formatter:on
 	}
 
-	private static final double calcSoilNonLin(final Coeffs c, final double vs30) {
+	private static final double calcSoilNonLin(final Coefficients c, final double vs30) {
 		double exp1 = exp(c.φ3 * (min(vs30, 1130.0) - 360.0));
 		double exp2 = exp(c.φ3 * (1130.0 - 360.0));
 		return c.φ2 * (exp1 - exp2);
@@ -163,8 +164,8 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 	}
 
 	// Aleatory uncertainty model
-	private static final double calcStdDev(final Coeffs c, final double Mw, final boolean vsInf,
-			final double snl, final double lnYref) {
+	private static final double calcStdDev(final Coefficients c, final double Mw,
+			final boolean vsInf, final double snl, final double lnYref) {
 
 		double Yref = exp(lnYref);
 

@@ -47,16 +47,19 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 
 	static final String NAME = "Campbell (2003)";
 
-	static final CoefficientsNew COEFFS = new CoefficientsNew("Campbell03.csv");
+	static final CoefficientContainer COEFFS = new CoefficientContainer("Campbell03.csv");
 
 	private static final double LOG_70 = 4.2484952;
 	private static final double LOG_130 = 4.8675345;
 
-	private static final class Coeffs {
+	private static final class Coefficients {
 
+		final Imt imt;
 		final double c1, c1h, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13;
 
-		Coeffs(Map<String, Double> coeffs) {
+		Coefficients(Imt imt, CoefficientContainer cc) {
+			this.imt = imt;
+			Map<String, Double> coeffs = cc.get(imt);
 			c1 = coeffs.get("c1");
 			c1h = coeffs.get("c1h");
 			c2 = coeffs.get("c2");
@@ -74,12 +77,10 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 		}
 	}
 
-	private final Coeffs coeffs;
-	private final Imt imt;
+	private final Coefficients coeffs;
 
 	Campbell_2003(final Imt imt) {
-		this.imt = imt;
-		coeffs = new Coeffs(COEFFS.get(imt));
+		coeffs = new Coefficients(imt, COEFFS);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
@@ -87,17 +88,17 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 		double Mw = converter().convert(in.Mw);
 		SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
 
-		double mean = calcMean(coeffs, Mw, in.rRup, siteClass);
-		double std = calcStdDev(coeffs, Mw);
+		double μ = calcMean(coeffs, Mw, in.rRup, siteClass);
+		double σ = calcStdDev(coeffs, Mw);
 
-		return DefaultScalarGroundMotion.create(mean, std);
+		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
 	@Override public MagConverter converter() {
 		return NONE;
 	}
 
-	private final double calcMean(final Coeffs c, final double Mw, final double rRup,
+	private final double calcMean(final Coefficients c, final double Mw, final double rRup,
 			final SiteClass siteClass) {
 
 		double gnd0 = siteClass == HARD_ROCK ? c.c1h : c.c1;
@@ -110,10 +111,10 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 		if (rRup > 130.0) fac = fac + c.c8 * (log(rRup) - LOG_130);
 		double gnd = gndm + c.c4 * log(arg) + fac + (c.c9 + c.c10 * Mw) * rRup;
 
-		return GmmUtils.ceusMeanClip(imt, gnd);
+		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
 
-	private final double calcStdDev(final Coeffs c, final double Mw) {
+	private final double calcStdDev(final Coefficients c, final double Mw) {
 		return (Mw < 7.16) ? c.c11 + c.c12 * Mw : c.c13;
 	}
 
