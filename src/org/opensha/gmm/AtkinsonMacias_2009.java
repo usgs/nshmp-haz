@@ -20,9 +20,12 @@ import java.util.Map;
  * require implementation of pgaRock (TODO).</li><li>NSHM fortran implementation
  * converts 0.13Hz to 7.7s; this implementation uses 7.5s instead.</li></ul></p>
  * 
- * <p><b>Reference:</b> Atkinson, G.M. and Macias, D.M., 2009, Predicted Ground
- * Motions for Great Interface Earthquakes in the Cascadia Subduction Zone:
+ * <p><b>Reference:</b> Atkinson, G.M. and Macias, D.M., 2009, Predicted ground
+ * motions for great interface earthquakes in the Cascadia subduction zone:
  * Bulletin of the Seismological Society of America, v. 99, p. 1552-1578.</p>
+ * 
+ * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120080147">
+ * 10.1785/0120080147</a></p>
  * 
  * <p><b>Component:</b> geometric mean of two horizontal components</p>
  * 

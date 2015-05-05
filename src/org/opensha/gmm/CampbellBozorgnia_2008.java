@@ -26,8 +26,11 @@ import java.util.Set;
  * 
  * <p><b>Reference:</b> NGA Ground Motion Model for the Geometric Mean
  * Horizontal Component of PGA, PGV, PGD and 5% Damped Linear Elastic Response
- * Spectra for Periods Ranging from 0.01 to 10 s, Earthquake Spectra, Volume 24,
- * Number 1, pp. 139-171.</p>
+ * Spectra for Periods Ranging from 0.01 to 10 s: Earthquake Spectra, v. 24,
+ * n. 1, pp. 139-171.</p>
+ * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/1.2857546">
+ * 10.1193/1.2857546</a></p>
  * 
  * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
  * 

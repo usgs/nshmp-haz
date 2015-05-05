@@ -32,6 +32,9 @@ import java.util.Map;
  * ground motion in Japan using site classification based on predominant period:
  * Bulletin of the Seismological Society of America, v. 96, p. 898–913.</p>
  * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050122">
+ * 10.1785/0120050122</a></p>
+ * 
  * <p><b>Component:</b> Geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers

@@ -27,7 +27,7 @@ import java.util.Map;
  * 1057-1085.</p>
  * 
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070113EQS184M">
- * http://dx.doi.org/10.1193/070113EQS184M</a></p>
+ * 10.1193/070113EQS184M</a></p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 

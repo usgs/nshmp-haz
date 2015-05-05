@@ -24,6 +24,9 @@ import java.util.Map;
  * Empirical-stochastic ground-motion prediction for eastern North America:
  * Bulletin of the Seismological Society of America, v. 95, p. 2283–2296.</p>
  * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050030">
+ * 10.1785/0120050030</a></p>
+ * 
  * <p><b>Component:</b> not specified (avg horizontal implied)</p>
  * 
  * @author Peter Powers

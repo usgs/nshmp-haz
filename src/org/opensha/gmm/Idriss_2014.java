@@ -25,7 +25,7 @@ import java.util.Map;
  * earthquakes, Earthquake Spectra, v. 30, n. 3, p. 1155-1177.
  * 
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070613EQS195M">
- * http://dx.doi.org/10.1193/070613EQS195M</a></p>
+ * 10.1193/070613EQS195M</a></p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 

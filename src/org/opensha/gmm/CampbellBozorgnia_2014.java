@@ -27,11 +27,11 @@ import java.util.Set;
  * 
  * <p><b>Reference:</b> Campbell, K.W., and Bozorgnia, Y., 2014, NGA-West2
  * ground motion model for the average horizontal components of PGA, PGV, and
- * 5%-damped linear acceleration response spectra, Earthquake Spectra, v. 30, n.
+ * 5%-damped linear acceleration response spectra: Earthquake Spectra, v. 30, n.
  * 3, p. 1087-1115.</p>
  * 
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/062913EQS175M">
- * http://dx.doi.org/10.1193/062913EQS175M</a></p>
+ * 10.1193/062913EQS175M</a></p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 

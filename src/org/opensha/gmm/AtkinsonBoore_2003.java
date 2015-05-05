@@ -20,9 +20,12 @@ import java.util.Map;
  * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Atkinson, G.M. and Boore, D.M., 2003, Empirical
- * Ground-Motion Relations for Subduction-Zone Earthquakes and Their Application
- * to Cascadia and Other Regions: Bulletin of the Seismological Society of
- * America, v. 93, p. 1012–1033.</p>
+ * ground-motion relations for subduction-zone earthquakes and their application
+ * to Cascadia and other regions: Bulletin of the Seismological Society of
+ * America, v. 93, p. 1703-1729.</p>
+ * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020156">
+ * 10.1785/0120020156</a></p>
  * 
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 

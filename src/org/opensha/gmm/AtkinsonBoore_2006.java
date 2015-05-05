@@ -33,6 +33,9 @@ import java.util.Map;
  * ground-motion prediction equations for eastern North America: Bulletin of the
  * Seismological Society of America, v. 96, p. 2181–2205.</p>
  * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050245">
+ * 10.1785/0120050245</a></p>
+ * 
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 
  * @author Peter Powers

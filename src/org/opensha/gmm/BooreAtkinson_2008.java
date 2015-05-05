@@ -21,8 +21,11 @@ import java.util.Map;
  * 
  * <p><b>Reference:</b> Boore, D.M., and Atkinson, G.M., 2008, Ground-motion
  * prediction equations for the average horizontal component of PGA, PGV, and
- * 5%-damped PSA at spectral periods between 0.01s and 10.0s, Earthquake
- * Spectra, Volume 24, Number 1, pp. 99-138.</p>
+ * 5%-damped PSA at spectral periods between 0.01s and 10.0s: Earthquake
+ * Spectra, v. 24, n. 1, pp. 99-138.</p>
+ * 
+ * <p><b>doi:</b><a href="http://dx.doi.org/10.1193/1.2830434">
+ * http://dx.doi.org/10.1193/1.2830434</a></p>
  * 
  * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
  * 

@@ -22,11 +22,11 @@ import org.opensha.data.Interpolate;
  * desired {@link Imt}.</p>
  * 
  * <p><b>Reference:</b> Abrahamson, N.A., Silva, W.J., and Kamai, R., 2014,
- * Summary of the ASK14 ground-motion relation for active crustal regions,
+ * Summary of the ASK14 ground-motion relation for active crustal regions:
  * Earthquake Spectra, v. 30, n. 3, p. 1025-1055.</p>
  * 
- * <p><b>doi:</b> <a href="doi: http://dx.doi.org/10.1193/070913EQS198M">
- * http://dx.doi.org/10.1193/070913EQS198M</a></p>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070913EQS198M">
+ * 10.1193/070913EQS198M</a></p>
  * 
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
  * 

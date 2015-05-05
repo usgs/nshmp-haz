@@ -21,9 +21,10 @@ import java.util.Map;
  * 
  * <p><b>Reference:</b> Silva, W., Gregor, N., and Darragh, R., 2002,
  * Development of hard rock attenuation relations for central and eastern North
- * America, internal report from Pacific Engineering, November 1, 2002,
- * http://www.pacificengineering.org/CEUS/
- * Development%20of%20Regional%20Hard_ABC.pdf</p>
+ * America, internal report from Pacific Engineering, November 1, 2002, <a href=
+ * "http://www.pacificengineering.org/CEUS/Development%20of%20Regional%20Hard_ABC.pdf"
+ * >http://www.pacificengineering.org/CEUS/Development of Regional
+ * Hard_ABC.pdf</a></p>
  * 
  * <p><b>Component:</b> average horizontal (not clear from publication)</p>
  * 
@@ -73,9 +74,9 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 		coeffs = new Coefficients(imt, COEFFS);
 	}
 
-	@Override public final ScalarGroundMotion calc(final GmmInput props) {
-		SiteClass siteClass = GmmUtils.ceusSiteClass(props.vs30);
-		double μ = calcMean(coeffs, converter().convert(props.Mw), props.rJB, siteClass);
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
+		double μ = calcMean(coeffs, converter().convert(in.Mw), in.rJB, siteClass);
 		return DefaultScalarGroundMotion.create(μ, coeffs.σ);
 	}
 

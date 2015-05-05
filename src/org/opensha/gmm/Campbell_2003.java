@@ -26,6 +26,9 @@ import java.util.Map;
  * ground-motion (attenuation) relations in eastern North America: Bulletin of
  * the Seismological Society of America, v. 93, p. 1012–1033.</p>
  * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020002">
+ * 10.1785/0120020002</a></p>
+ * 
  * <p><b>Component:</b> geometric mean of two horizontal components</p>
  * 
  * @author Peter Powers

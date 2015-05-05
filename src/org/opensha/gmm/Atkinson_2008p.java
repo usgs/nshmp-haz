@@ -20,11 +20,17 @@ import static org.opensha.gmm.SiteClass.SOFT_ROCK;
  * <p><b>Reference:</b> Atkinson, G.M., 2008, Ground-motion prediction equations
  * for eastern North America from a referenced empirical approach—Implications
  * for epistemic uncertainty: Bulletin of the Seismological Society of America,
- * v. 98, no. 3, p. 1304–1318.</p>
+ * v. 98, n. 3, p. 1304–1318.</p>
  * 
- * <p><b>Reference:</b> Atkinson, G. M., and Boore, D. M., 2011. Modifications
- * to existing ground-motion prediction equations in light of new data: Bulletin
- * of the Seismological Society of America, v. 101, no. 3, p. 1121–1135.</p>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120070199">
+ * 10.1785/0120070199</a></p>
+ * 
+ * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2011, Modifications to
+ * existing ground-motion prediction equations in light of new data: Bulletin of
+ * the Seismological Society of America, v. 101, n. 3, p. 1121–1135.</p>
+ * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120100270">
+ * 10.1785/0120100270</a></p>
  * 
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
  * 

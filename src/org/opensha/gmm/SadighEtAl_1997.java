@@ -19,8 +19,11 @@ import java.util.Map;
  * 
  * <p><b>Reference:</b> Sadigh, K., Chang, C.-Y. , Egan, J.A., Makdisi, F., and
  * Youngs, R.R., 1997, Attenuation relationships for shallow crustal earthquakes
- * based on California strong motion data, Seismological Research Letters,
- * 68(1), 180-189.</p>
+ * based on California strong motion data: Seismological Research Letters,
+ * v. 6, n. 1, p. 180-189.</p>
+ * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.180">
+ * 10.1785/gssrl.68.1.180</a></p>
  * 
  * <p><b>Component:</b> geometric mean of two horizontal components</p>
  * 

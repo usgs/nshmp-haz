@@ -51,10 +51,7 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 	@Override public final ScalarGroundMotion calc(GmmInput in) {
 		SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
 		double Mw = converter().convert(in.Mw);
-		double μ = (siteClass == SOFT_ROCK) ?
-			bcTable.get(in.rRup, Mw) :
-			aTable.get(in.rRup, Mw);
-
+		double μ = (siteClass == SOFT_ROCK) ? bcTable.get(in.rRup, Mw) : aTable.get(in.rRup, Mw);
 		μ = GmmUtils.ceusMeanClip(imt, μ);
 		double σ = bσ * BASE_10_TO_E;
 		return DefaultScalarGroundMotion.create(μ, σ);

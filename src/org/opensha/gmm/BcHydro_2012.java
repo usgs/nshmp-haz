@@ -30,7 +30,7 @@ import java.util.Map;
  * 
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
- * characterization (GMC) model: Report E658, Volume 3, November.</p>
+ * characterization (GMC) model: Report E658, v. 3, November.</p>
  * 
  * <p><b>Component:</b> Geometric mean of two horizontal components</p>
  * 
