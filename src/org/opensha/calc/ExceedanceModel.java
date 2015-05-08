@@ -5,7 +5,7 @@ import static java.lang.Math.min;
 import static org.apache.commons.math3.special.Erf.erf;
 import static org.opensha.gmm.Imt.PGA;
 import static org.opensha.gmm.Imt.PGV;
-import static org.opensha.gmm.Imt.SA0P075;
+import static org.opensha.gmm.Imt.SA0P75;
 
 import org.opensha.data.XY_Point;
 import org.opensha.data.XY_Sequence;
@@ -140,7 +140,7 @@ public enum ExceedanceModel {
 			 * TODO few CEUS Gmms support PGV; only Atkinson 06p and 08p.
 			 * Revisit as it may just be more appropriate to throw a UOE.
 			 */
-			if (imt.isSA()) return imt.ordinal() < SA0P075.ordinal() ? 6.0 : Double.MAX_VALUE;
+			if (imt.isSA()) return imt.ordinal() < SA0P75.ordinal() ? 6.0 : Double.MAX_VALUE;
 			if (imt == PGA) return 3.0;
 			if (imt == PGV) return 400.0;
 			throw new UnsupportedOperationException();

@@ -28,6 +28,8 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
  */
 public enum Gmm {
 
+	// TODO 2014 CEUS clamps (see recent emails with harmsen)
+	
 	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
 	// high at large distances
 
@@ -36,24 +38,10 @@ public enum Gmm {
 	// TODO check if AtkinsonMacias using BooreAtkin siteAmp to get non-rock
 	// site response
 
-	// TODO how to deal with CEUS distance cutoffs (@ 500km):
-	// - could specify applicable distances and weights in gmm.xml
-	// - could break sources in two, with distance-specific GMMS returning 0 if
-	// out of range (seems ugly)
-
-	// TODO check CEUS clamp consistency; should be PGA = 3g, <=0.5s = 6g, else
-	// = 0g (which means no clamp applied)
-	// - Cb03 was (incorrectly) changed from 3g at 0.5s to 0g instead of 6g ??
-	// - Somerville has 6g clamp at 2s ???
-
 	// TODO most CEUS Gmm's have 0.4s coeffs that were linearly interpolated for
 	// special NRC project; consider removing them??
 
-	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified
-	// anywhere?
-
-	// TODO revisit hazgrid history to ensure that bugs/fixes from 2008 carried
-	// through to 2014 in Fortran
+	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified anywhere?
 
 	// TODO Port Gmm grid optimization tables
 
@@ -75,13 +63,10 @@ public enum Gmm {
 
 	// TODO z1p0 in CY08 - this is now always km, CY08 needs updating (from m)
 
-	// * TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup;
-	// why is
-	// * depth constrained as such in hazgrid? As with somerville, no depth is
-	// imposed
-	// * in hazFX - make sure 0.01 as PGA is handled corectly; may require
-	// change to
-	// * period = 0.0
+	// TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup;
+	// why is depth constrained as such in hazgrid? As with somerville, no depth is
+	// imposed in hazFX - make sure 0.01 as PGA is handled corectly; may require
+	// change to period = 0.0
 
 	// NGA-West1 NSHMP 2008
 

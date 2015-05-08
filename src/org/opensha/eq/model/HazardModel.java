@@ -34,19 +34,6 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// high priority
 	// TODO grid sources; map against all matching defaultMfd types
 
-	// TODO clean up floater specification; props or source model
-	// float attribute is only permitted for SINGLE mfds because NSHM
-	// prescribed that some characteristic ruptures float; really should just
-	// let a mag-scaling relation determine whether a rupture fills or floats
-	// -- I think we just need to do a sensitivity study wherein, the
-	// attribute is removed and we pass every characteristic rupture through
-	// its magScaling relation to determine if more than 1 rupture is needed
-	// -- alternatively, we just extract those faults with SINGLE mfds that
-	// float out to their own file such theat their source properties are
-	// consistent
-
-	// TODO where/how to apply CEUS clamps
-
 	// TODO Is current approach in SYstemSourceSet for precomputing distances
 	// correct? Double check that the individual sections are scaled by aseis
 	// not after once built into ruptures.
@@ -59,7 +46,6 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// 2014 fortran
 
 	// low priority
-	// TODO change vs30 to Integer?
 	// TODO test low rate shortcut in FaultSource
 	// "if (rate < 1e-14) continue; // shortcut low rates"
 	// TODO need to revisit the application of uncertainty when minM < 6.5
