@@ -11,7 +11,7 @@ import static org.opensha.eq.model.SourceAttribute.DIP_DIR;
 import static org.opensha.eq.model.SourceAttribute.INDEX;
 import static org.opensha.eq.model.SourceAttribute.LOWER_DEPTH;
 import static org.opensha.eq.model.SourceAttribute.NAME;
-import static org.opensha.eq.model.SystemFaultParser.SECTIONS_FILENAME;
+import static org.opensha.eq.model.SystemParser.SECTIONS_FILENAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +42,7 @@ import com.google.common.collect.Lists;
 @SuppressWarnings("incomplete-switch")
 class SystemSectionParser extends DefaultHandler {
 
-	private final Logger log = Logger.getLogger(SystemFaultParser.class.getName());
+	private final Logger log = Logger.getLogger(SystemParser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;
 

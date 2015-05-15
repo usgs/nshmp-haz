@@ -24,24 +24,25 @@ import org.opensha.geo.Regions;
  * 
  * @author Peter Powers
  */
-public final class Distances {
+public final class Distance {
 
-	public final int index;
+	@SuppressWarnings("javadoc")
+	public enum Type {
+		R_JB,
+		R_RUP,
+		R_X;
+	}
+	
 	public final double rJB, rRup, rX;
 	
-	private Distances(int index, double rJB, double rRup, double rX) {
-		this.index = index;
+	private Distance(double rJB, double rRup, double rX) {
 		this.rJB = rJB;
 		this.rRup = rRup;
 		this.rX = rX;
 	}
 
-	static Distances create(int index, double rJB, double rRup, double rX) {
-		return new Distances(index, rJB, rRup, rX);
-	}
-	
-	static Distances create(double rJB, double rRup, double rX) {
-		return new Distances(-1, rJB, rRup, rX);
+	static Distance create(double rJB, double rRup, double rX) {
+		return new Distance(rJB, rRup, rX);
 	}
 	
 	/**
@@ -49,7 +50,7 @@ public final class Distances {
 	 * @param surface
 	 * @param loc
 	 */
-	public static Distances compute(GriddedSurface surface, Location loc) {
+	public static Distance compute(GriddedSurface surface, Location loc) {
 		
 		Location loc1 = loc;
 		Location loc2;
@@ -140,7 +141,7 @@ public final class Distances {
 		
 		double rX = getDistanceX(surface.getEvenlyDiscritizedUpperEdge(), loc);
 		
-		return Distances.create(distJB, distRup, rX);
+		return Distance.create(distJB, distRup, rX);
 
 	}
 	

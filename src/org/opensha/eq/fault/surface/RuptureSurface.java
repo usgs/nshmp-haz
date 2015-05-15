@@ -1,6 +1,6 @@
 package org.opensha.eq.fault.surface;
 
-import org.opensha.eq.model.Distances;
+import org.opensha.eq.model.Distance;
 import org.opensha.geo.Location;
 
 /**
@@ -68,8 +68,8 @@ public interface RuptureSurface {
 	 * (GMMs): rJB, rRup, and rX.
 	 * @param loc {@code Location} to compute distances to
 	 * @return a distance metric wrapper object
-	 * @see Distances
+	 * @see Distance
 	 */
-	public Distances distanceTo(Location loc);	
+	public Distance distanceTo(Location loc);	
 	
 }

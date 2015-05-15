@@ -6,36 +6,35 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensha.eq.model.Source;
+import org.opensha.eq.model.SystemSourceSet;
 
 /**
  * Lightweight {@code List} wrapper of {@code HazardInput}s that contains a
- * reference to the parent {@code Source} from which the inputs were derived.
- * This allows for downstream access to parent source properties. The
+ * reference to the parent {@code SystemSourceSet} from which the inputs were
+ * derived. This allows for downstream access to parent source properties. The
  * {@code List} may only be added to; all other optional operations of
  * {@code AbstractList} throw an {@code UnsupportedOperationException}.
  * 
+ * <p>Presently, a {@code SystemSourceSet} consists of sources fo rwhich there
+ * is only a single rupture. Note that this could change in the future if some
+ * magnitude variability were imposed on each source.</p>
+ * 
  * @author Peter Powers
  */
-final class HazardInputs extends AbstractList<HazardInput> {
-
-	final Source parent;
-	final List<HazardInput> delegate;
-	double minDistance = Double.MAX_VALUE;
+public final class SystemInputs extends AbstractList<HazardInput> {
+// TODO package privacy
+	// TODO how to get back to parent to mine info; index?
+	// TODO need index reference
 	
-	/*
-	 * minDistance is used to track the closest distance of any Rupture
-	 * in a Source. This is used when multiple gmmSets for different
-	 * distances are defined.
-	 */
+	final SystemSourceSet parent;
+	final List<HazardInput> delegate;
 
-	HazardInputs(Source parent) {
+	public SystemInputs(SystemSourceSet parent) {
 		this.parent = checkNotNull(parent);
 		delegate = new ArrayList<>();
 	}
 
 	@Override public boolean add(HazardInput input) {
-		minDistance = Math.min(minDistance, input.rJB);
 		return delegate.add(input);
 	}
 

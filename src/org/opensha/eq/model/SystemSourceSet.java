@@ -3,37 +3,57 @@ package org.opensha.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.lang.Math.min;
 import static org.opensha.data.DataUtils.validateWeight;
 import static org.opensha.eq.Magnitudes.validateMag;
 import static org.opensha.eq.fault.Faults.validateDepth;
 import static org.opensha.eq.fault.Faults.validateDip;
 import static org.opensha.eq.fault.Faults.validateRake;
 import static org.opensha.eq.fault.Faults.validateWidth;
+import static org.opensha.eq.model.Distance.Type.R_JB;
+import static org.opensha.eq.model.Distance.Type.R_RUP;
+import static org.opensha.eq.model.Distance.Type.R_X;
 import static org.opensha.geo.Locations.horzDistanceFast;
 import static org.opensha.util.TextUtils.validateName;
 
 import java.util.BitSet;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
+import org.opensha.calc.HazardInput;
+import org.opensha.calc.Site;
+import org.opensha.calc.SystemInputs;
 import org.opensha.data.DataUtils;
+import org.opensha.eq.fault.Faults;
 import org.opensha.eq.fault.surface.GriddedSurface;
+import org.opensha.eq.model.Distance.Type;
 import org.opensha.geo.Location;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ArrayTable;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Table;
 import com.google.common.primitives.Doubles;
 
 /**
- * Wrapper class for related {@link IndexedFaultSource}s
+ * Wrapper class for related {@link SystemSource}s.
  * 
  * @author Peter Powers
  */
-public class SystemSourceSet extends
-		AbstractSourceSet<SystemSourceSet.IndexedFaultSource> {
+public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSource> {
 
-	// rupture data
 	private final List<GriddedSurface> sections;
 	private final List<BitSet> bitsets;
 	private final List<Double> mags;
@@ -43,26 +63,7 @@ public class SystemSourceSet extends
 	private final List<Double> widths;
 	private final List<Double> rakes;
 
-	/*
-	 * NOTE: We skip the notion of a Rupture for now. Aleatory uncertainty on
-	 * magnitude isn't required, but if it is, we'll alter this implementation
-	 * to (somewhere) return List<GmmInput> per source rather than one GmmInput.
-	 */
-
-	/*
-	 * NOTE: Issues for consideration.
-	 * 
-	 * For now, the attributes of UC3 indexed fault ruptures are derived from
-	 * the binary solution files (area, width, dip, rake). However, for all UC3
-	 * calculations to date, width and dip were derived from the values computed
-	 * when CompoundSurfaces were initialized; in theory, the values are the
-	 * same, but we're waiting for confirmation from Kevin on this. It would be
-	 * preferable to not import all the fault section averaging code at present,
-	 * although there may be a need for this later.
-	 * 
-	 * Nevermind (delete above); we don't have rupture dips or widths --
-	 * exporter will use compoundSurface code and export values with ruptures
-	 */
+	// NOTE the above Double lists are compact but mutable: Doubles.asList(...)
 
 	private SystemSourceSet(String name, double weight, GmmSet gmmSet,
 		List<GriddedSurface> sections, List<BitSet> bitsets, List<Double> mags, List<Double> rates,
@@ -88,16 +89,16 @@ public class SystemSourceSet extends
 		return bitsets.size();
 	}
 
-	@Override public Iterator<IndexedFaultSource> iterator() {
-		return new Iterator<IndexedFaultSource>() {
+	@Override public Iterator<SystemSource> iterator() {
+		return new Iterator<SystemSource>() {
 			int caret = 0;
 
 			@Override public boolean hasNext() {
 				return caret < size();
 			}
 
-			@Override public IndexedFaultSource next() {
-				return new IndexedFaultSource(caret++);
+			@Override public SystemSource next() {
+				return new SystemSource(caret++);
 			}
 
 			@Override public void remove() {
@@ -106,47 +107,25 @@ public class SystemSourceSet extends
 		};
 	}
 
-	@Override public Predicate<IndexedFaultSource> distanceFilter(Location loc, double distance) {
-		return new DistanceFilter(loc, distance);
+	@Override public Predicate<SystemSource> distanceFilter(Location loc, double distance) {
+		BitSet siteBitset = bitsetForLocation(loc, distance);
+		return new BitsetFilter(siteBitset);
 	}
 
-	private class DistanceFilter implements Predicate<IndexedFaultSource> {
-
-		private static final String ID = "SystemSourceSet.DistanceFilter";
-		private final Location loc;
-		private final double distance;
-		private final BitSet sectionBitsForLoc;
-
-		DistanceFilter(Location loc, double distance) {
-			this.loc = loc;
-			this.distance = distance;
-			sectionBitsForLoc = createSectionBitset();
-		}
-
-		private BitSet createSectionBitset() {
-			BitSet bits = new BitSet(sections.size());
-			int count = 0;
-			for (GriddedSurface surface : sections) {
-				bits.set(count++, horzDistanceFast(loc, surface.centroid()) <= distance);
-			}
-			return bits;
-		}
-
-		@Override public boolean apply(IndexedFaultSource source) {
-			return sectionBitsForLoc.intersects(bitsets.get(source.index));
-		}
-
-		@Override public String toString() {
-			return ID + " [location: " + loc + ", distance: " + distance + "]";
-		}
-	}
-
-	// TODO package privacy??
-	public class IndexedFaultSource implements Source {
+	/**
+	 * A single source in a fault system. These sources do not currently support
+	 * rupture iteration.
+	 * 
+	 * <p>We skip the notion of a {@code Rupture} for now. Aleatory uncertainty
+	 * on magnitude isn't required, but if it is, we'll alter this
+	 * implementation to return List<GmmInput> per source rather than one
+	 * GmmInput.</p>
+	 */
+	public final class SystemSource implements Source {
 
 		private final int index;
 
-		IndexedFaultSource(int index) {
+		private SystemSource(final int index) {
 			this.index = index;
 		}
 
@@ -155,167 +134,29 @@ public class SystemSourceSet extends
 		}
 
 		@Override public String name() {
-			return "Unnamed indexed fault source";
+			// TODO How to create name? SourceSet will need parent section names
+			return "Unnamed fault system source";
 		}
 
 		@Override public Iterator<Rupture> iterator() {
+			/*
+			 * Rupture iterator not currently supported but may be in future if
+			 * aleatory uncertainty is added to or required on source
+			 * magnitudes. Currently system source:rupture is 1:1.
+			 */
 			throw new UnsupportedOperationException();
 		}
 
+		// @formatter:off
+		private final BitSet bitset()    { return bitsets.get(index); }
+		private final double magnitude() { return mags.get(index); }
+		private final double rate()      { return rates.get(index); }
+		private final double depth()     { return depths.get(index); }
+		private final double dip()       { return dips.get(index); }
+		private final double width()     { return widths.get(index); }
+		private final double rake()      { return rakes.get(index); }
+		// @formatter:on
 	}
-
-	// TODO clean
-	// Duh - missed intersects method (above)that doesn't require copying
-	// bitsets
-	/*
-	 * Does the work of ANDing bitsets of sections in IndexedFaultSources with
-	 * the bitsets corresponding to a pool of IndexedFaultSections to determine
-	 * if the supplied source should be used or not.
-	 */
-	// private final static class IndexedSourceFilter implements
-	// Function<IndexedFaultSource, List<Integer>> {
-	// private final BitSet includeBits;
-	// private final BitSet resultBits;
-	// private IndexedSourceFilter(BitSet includeBits) {
-	// this.includeBits = includeBits;
-	// resultBits = new BitSet(includeBits.size());
-	// }
-	// @Override
-	// public final List<Integer> apply(IndexedFaultSource source) {
-	// // before each apply, clear and reset resultBits
-	// resultBits.clear();
-	// resultBits.or(includeBits);
-	// resultBits.and(source.bits); //TODO uncomment and FIX; NEED bitset
-	// reference
-	// if (resultBits.isEmpty()) return null;
-	// return
-	// }
-	// }
-
-	// private final static class SurfaceFilter implements
-	// Predicate<RuptureSurface> {
-	// private final Predicate<Location> distFilter;
-	// private SurfaceFilter(Location loc, double distance) {
-	// distFilter = Locations.distanceFilter(loc, distance);
-	// }
-	// @Override
-	// public final boolean apply(RuptureSurface surface) {
-	// return distFilter.apply(surface.centroid());
-	// }
-	// }
-	//
-
-	// immutable ordered list of FaultSubsectionData
-	// final List<RuptureSurface> sections;
-	// List<IndexedFaultSource> sources;
-
-	// initial implementation:
-
-	// for a given Location, determine which fault sections it contains
-	// not sure the fastest way to do this:
-	// 1) distance filter subsection centroids
-	// 2) filter/list sources that intersect valid sections (BitSet OR )
-	// 3) required sections (BitSet OR all subsect BitSets)
-	// 4) build distance data for required sections
-	// (this has potential optimizations... we really only need rJB and
-	// rRup for those sections that are closest to Site. To match UC3
-	// we need to calculate Rx using all subSects, but it would probably
-	// be better to area-weight average the closest sections)
-
-	// Distance calculation notes
-	// We calculate rRup and rJB for all viable (<distance) sections as most
-	// will probably be used by at least 1 source. Although one could argue
-	// that only rRup or rJb be calculated first, there are geometries for which
-	// min(rRup) != min(rJB); e.g. location on hanging wall of dipping fault
-	// that abuts a vertical fault... vertical might yield min(rRup) but
-	// min(rJB) would be 0 (over dipping fault).
-	//
-	// For rX, we just use the closest rRup; calculate rXs after doing rJB and
-	// rRup.
-
-	// for calcMgr
-	//
-	//
-
-//	static class IndexedFaultSourceCalc {
-//
-//		List<IndexedFaultSource> sources;
-//
-//		// TODO temp
-//		int cores = Runtime.getRuntime().availableProcessors();
-//		private ExecutorService ex = Executors.newFixedThreadPool(cores);
-//
-//		Location loc;
-//		double distance;
-//		List<IndexedFaultSurface> sections; // TODO immutable, stored outside
-//											// calcualtor
-//
-//		// required sections
-//
-//		BitSet sectionBits;
-//
-//		// distance Table<DistanceType, SectionIndex, Value>
-//		private Table<DistanceType, Integer, Double> rTable;
-//
-//		public IndexedFaultSourceCalc(Location loc, double distance) {
-//			this.loc = loc;
-//			this.distance = distance;
-//		}
-//
-//		// set bits of sections within distance
-//		private void calc(Site site) throws InterruptedException, ExecutionException {
-//			// NOTE: actual BitSet may be longer (see API docs)
-//			sectionBits = new BitSet(sections.size());
-//			CompletionService<Distances> dCS = new ExecutorCompletionService<Distances>(ex);
-//
-//			// build bitset of section indices to use and submit distance calcs
-//			SurfaceFilter filter = new SurfaceFilter(loc, distance);
-//			for (IndexedFaultSurface subsection : Iterables.filter(sections, filter)) {
-//				sectionBits.set(subsection.index());
-//				// pass subsection to executor
-//				dCS.submit(Transforms.newDistanceCalc(subsection, loc));
-//			}
-//
-//			// build receiver Table -- must be done after sectionBits are set
-//			// we do not ever copy this to an ImmutableTable because it is never
-//			// exposed, however, caution should be exercised so as not to
-//			// modify it inadvertantly
-//			rTable = ArrayTable.create(EnumSet.allOf(DistanceType.class),
-//				DataUtils.bitsToIndices(sectionBits));
-//
-//			// use cardinality of bitset do collect distance calc results
-//			int sectCount = sectionBits.cardinality();
-//			for (int i = 0; i < sectCount; i++) {
-//				Distances dist = dCS.take().get();
-//				rTable.put(R_JB, dist.index, dist.rJB);
-//				rTable.put(R_RUP, dist.index, dist.rRup);
-//				rTable.put(R_X, dist.index, dist.rX);
-//			}
-//
-//			// TODO ?? make rTable immutable at this point; would require
-//			// copying
-//
-//			CompletionService<GmmInput> gmSrcCS = new ExecutorCompletionService<GmmInput>(ex);
-//
-//			// assemble GmmInput data for required sources
-//			IndexedSourceFilter srcFilter = new IndexedSourceFilter(sectionBits);
-//			int gmSrcCount = 0;
-//			for (IndexedFaultSource source : sources) {
-//				List<Integer> sectionIDs = srcFilter.apply(source);
-//				if (sectionIDs != null) {
-//					// TODO uncomment and fix
-//					// gmSrcCS.submit(Transforms.newIndexedFaultCalcInitializer(source,
-//					// site, rTable, sectionIDs));
-//					gmSrcCount++;
-//				}
-//			}
-//
-//			// rest of calc should be same as for fault now that we have a CS
-//			// from which we can take() GMM_Sources
-//
-//		}
-//
-//	}
 
 	/*
 	 * Single use builder. Quirky behavior: Note that sections() must be called
@@ -324,9 +165,6 @@ public class SystemSourceSet extends
 	 * iterating ruptures.
 	 */
 	static class Builder {
-
-		// build() may only be called once
-		// use Doubles to ensure fields are initially null
 
 		// Unfiltered UCERF3: FM31 = 253,706 FM32 = 305,709
 		static final int RUP_SET_SIZE = 306000;
@@ -440,7 +278,6 @@ public class SystemSourceSet extends
 		SystemSourceSet build() {
 			validateState(ID);
 
-			// @formatter:off
 			return new SystemSourceSet(
 				name, weight, gmmSet,
 				ImmutableList.copyOf(sections),
@@ -451,9 +288,325 @@ public class SystemSourceSet extends
 				Doubles.asList(Doubles.toArray(dips)),
 				Doubles.asList(Doubles.toArray(widths)),
 				Doubles.asList(Doubles.toArray(rakes)));
-			// @formatter:off
+
+		}
+	}
+
+	/*
+	 * System source calculation pipeline.
+	 * 
+	 * Rather than expose highly mutable bitsets and attendant logic that is
+	 * used to generate HazardInputs from SystemSourceSets, we opt to locate
+	 * this transform FUnction and related classes here.
+	 * 
+	 * System sources (e.g. UCERF3 ruptures) are composed of multiple small
+	 * (~7km long x ~15km wide) adjacent fault sections in a large and dense
+	 * fault network. Each source is defined by the indices of the participating
+	 * fault sections, magnitude, average width, average rake, and average dip,
+	 * among other parameters.
+	 * 
+	 * In order to filter ruptures and calculate distance parameters when doing
+	 * a hazard calculation, one can treat each source as a finite fault. This
+	 * ultimately requires careful handling of site-to-source calculations when
+	 * trying to reduce redundant calculations because many sources share the
+	 * same fault sections and sources will be handled one-at-a-time, in
+	 * sequence.
+	 * 
+	 * Alternatively, one can approach the problem from an indexing standpoint,
+	 * precomuting that data which will be required, and then mining it on a
+	 * per-source basis, as follows:
+	 * 
+	 * 1) For each source, create a BitSet with size = nSections. Set the bits
+	 * for each section that the source uses. [sourceBitSet]
+	 * 
+	 * 2) Create another BitSet with size = nSections. Set the bits for each
+	 * section within the distance cutoff for a Site. Do this quickly using only
+	 * the centroid of each fault section. [siteBitSet]
+	 * 
+	 * 3) Create and populate a Table<Metric, SectionIndex, Value> of distance
+	 * metrics for each section in the siteBitSet.
+	 * 
+	 * 4) For each sourceBitSet, 'siteBitSet.intersects(sourceBitSet)' returns
+	 * whether the source is close enough to the site to be considered.
+	 * 
+	 * 5) For each considered source, 'sourceBitSet AND siteBitSet' yields a
+	 * BitSet that only includes set bits with indices in the distance metric
+	 * table.
+	 * 
+	 * 6) For the relevant fault sections in each source, find the minimum
+	 * distance metrics in the table (the rX value used is keyed to the minimum
+	 * rRup).
+	 * 
+	 * 7) Build GmmInputs and proceed with hazard calculation.
+	 * 
+	 * Note on the above. Although one could argue that only rRup or rJb be
+	 * calculated first, there are geometries for which min(rRup) != min(rJB);
+	 * e.g. location on hanging wall of dipping fault that abuts a vertical
+	 * fault... vertical might yield min(rRup) but min(rJB) would be 0 (over
+	 * dipping fault).
+	 * 
+	 * Deaggregation considerations. TODO
+	 */
+
+	public static final class ToInputsMT implements Function<SystemSourceSet, SystemInputs> {
+
+		private final Site site;
+		private final ExecutorService executor;
+
+		public ToInputsMT(final Site site, final ExecutorService executor) {
+			this.site = site;
+			this.executor = executor;
 		}
 
+		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
+
+			try {
+
+				// create Site BitSet
+				double maxDistance = sourceSet.groundMotionModels().maxDistance();
+				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
+
+				// create and submit distance calculations
+				CompletionService<Distance> dCS = new ExecutorCompletionService<Distance>(executor);
+				Function<GriddedSurface, Distance> rTransform = new DistanceCalc(site.location);
+				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
+				// need to track section indices
+				Map<Future<Distance>, Integer> taskIndexMap = new HashMap<>();
+				for (int i : siteIndices) {
+					GriddedSurface surface = sourceSet.sections.get(i);
+					Callable<Distance> rCalc = new DistanceCalcTask(rTransform, surface);
+					taskIndexMap.put(dCS.submit(rCalc), i);
+				}
+
+				// fill distance table
+				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
+					siteIndices,
+					EnumSet.allOf(Distance.Type.class));
+				for (int i = 0; i < siteIndices.size(); i++) {
+					Future<Distance> result = dCS.take();
+					int index = taskIndexMap.get(result);
+					Distance r = result.get();
+					Map<Distance.Type, Double> rRow = rTable.row(index);
+					rRow.put(R_JB, r.rJB);
+					rRow.put(R_RUP, r.rRup);
+					rRow.put(R_X, r.rX);
+				}
+
+				// create and submit inputs
+				CompletionService<HazardInput> iCS = new ExecutorCompletionService<HazardInput>(
+					executor);
+				Function<SystemSource, HazardInput> iTransform = new InputGenerator(rTable,
+					siteBitset, site);
+				SystemInputs inputs = new SystemInputs(sourceSet);
+				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
+				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
+				int count = 0;
+				for (SystemSource source : sources) {
+					Callable<HazardInput> inputGenTask = new InputGeneratorTask(iTransform, source);
+					iCS.submit(inputGenTask);
+					count++;
+					HazardInput input = inputGenTask.call();
+					inputs.add(input);
+				}
+
+				// retrieve and compile inputs
+				for (int i = 0; i < count; i++) {
+					HazardInput input = iCS.take().get();
+					inputs.add(input);
+				}
+
+				return inputs;
+
+			} catch (Exception e) {
+				Throwables.propagate(e);
+				return null;
+			}
+		}
 	}
-	
+
+	public static final class ToInputs implements Function<SystemSourceSet, SystemInputs> {
+
+		private final Site site;
+
+		public ToInputs(final Site site) {
+			this.site = site;
+		}
+
+		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
+
+			try {
+				// create Site BitSet
+				double maxDistance = sourceSet.groundMotionModels().maxDistance();
+				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
+
+				// create and fill distance table
+				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
+				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
+					siteIndices,
+					EnumSet.allOf(Distance.Type.class));
+				Function<GriddedSurface, Distance> rTransform = new DistanceCalc(site.location);
+				for (int i : siteIndices) {
+					GriddedSurface surface = sourceSet.sections.get(i);
+					Callable<Distance> rCalc = new DistanceCalcTask(rTransform, surface);
+					Distance r = rCalc.call();
+					Map<Distance.Type, Double> rRow = rTable.row(i);
+					rRow.put(R_JB, r.rJB);
+					rRow.put(R_RUP, r.rRup);
+					rRow.put(R_X, r.rX);
+				}
+
+				// create inputs
+				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(rTable,
+					siteBitset, site);
+				SystemInputs inputs = new SystemInputs(sourceSet);
+				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
+				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
+				for (SystemSource source : sources) {
+					Callable<HazardInput> inputGenTask = new InputGeneratorTask(
+						inputGenerator,
+						source);
+					HazardInput input = inputGenTask.call();
+					inputs.add(input);
+				}
+
+				return inputs;
+
+			} catch (Exception e) {
+				Throwables.propagate(e);
+				return null;
+			}
+		}
+	}
+
+	private static final class DistanceCalc implements Function<GriddedSurface, Distance> {
+
+		private final Location loc;
+
+		DistanceCalc(final Location loc) {
+			this.loc = loc;
+		}
+
+		@Override public Distance apply(final GriddedSurface surface) {
+			return surface.distanceTo(loc);
+		}
+	}
+
+	private static class DistanceCalcTask implements Callable<Distance> {
+
+		private final Function<GriddedSurface, Distance> calc;
+		private final GriddedSurface surface;
+
+		DistanceCalcTask(final Function<GriddedSurface, Distance> calc, final GriddedSurface surface) {
+			this.calc = calc;
+			this.surface = surface;
+		}
+
+		@Override public Distance call() {
+			return calc.apply(surface);
+		}
+	}
+
+	private static class BitsetFilter implements Predicate<SystemSource> {
+
+		private static final String ID = "BitsetFilter";
+		private final BitSet bitset;
+
+		BitsetFilter(BitSet bitset) {
+			this.bitset = bitset;
+		}
+
+		@Override public boolean apply(SystemSource source) {
+			return bitset.intersects(source.bitset());
+		}
+
+		@Override public String toString() {
+			return ID + " " + bitset;
+		}
+	}
+
+	private static final class InputGenerator implements Function<SystemSource, HazardInput> {
+
+		private final Table<Integer, Distance.Type, Double> rTable;
+		private final BitSet siteBitset;
+		private final Site site;
+
+		InputGenerator(
+			final Table<Integer, Distance.Type, Double> rTable,
+			final BitSet siteBitset,
+			final Site site) {
+
+			this.rTable = rTable;
+			this.siteBitset = siteBitset;
+			this.site = site;
+		}
+
+		@Override public HazardInput apply(SystemSource source) {
+
+			// create index list of relevant sections
+			BitSet sectionBitset = (BitSet) source.bitset().clone();
+			sectionBitset.and(siteBitset);
+			List<Integer> sectionIndices = DataUtils.bitsToIndices(sectionBitset);
+
+			// find r minima
+			double rJB = Double.MAX_VALUE;
+			double rRup = Double.MAX_VALUE;
+			int rRupIndex = -1;
+			for (int sectionIndex : sectionIndices) {
+				Map<Type, Double> rRow = rTable.row(sectionIndex);
+				rJB = min(rJB, rRow.get(R_JB));
+				double rRupNew = rRow.get(R_RUP);
+				if (rRupNew < rRup) {
+					rRup = rRupNew;
+					rRupIndex = sectionIndex;
+				}
+			}
+			double rX = rTable.get(rRupIndex, R_X);
+
+			double dip = source.dip();
+			double width = source.width();
+			double zTop = source.depth();
+			double zHyp = Faults.hypocentralDepth(dip, width, zTop);
+
+			return new HazardInput(
+				source.rate(),
+				source.magnitude(),
+				rJB,
+				rRup,
+				rX,
+				dip,
+				width,
+				zTop,
+				zHyp,
+				source.rake(),
+				site.vs30,
+				site.vsInferred,
+				site.z2p5,
+				site.z1p0);
+		}
+	}
+
+	private static final class InputGeneratorTask implements Callable<HazardInput> {
+
+		private final Function<SystemSource, HazardInput> calc;
+		private final SystemSource source;
+
+		InputGeneratorTask(final Function<SystemSource, HazardInput> calc, final SystemSource source) {
+			this.calc = calc;
+			this.source = source;
+		}
+
+		@Override public HazardInput call() {
+			return calc.apply(source);
+		}
+	}
+
+	private final BitSet bitsetForLocation(final Location loc, final double r) {
+		BitSet bits = new BitSet(sections.size());
+		int count = 0;
+		for (GriddedSurface surface : sections) {
+			bits.set(count++, horzDistanceFast(loc, surface.centroid()) <= r);
+		}
+		return bits;
+	}
+
 }

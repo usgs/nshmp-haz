@@ -199,7 +199,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		 * calculations are started.
 		 */
 
-		@Override public Distances distanceTo(Location loc) {
+		@Override public Distance distanceTo(Location loc) {
 			// NOTE no NSHMP style distance corrections here
 
 			double rX = Locations.distanceToLineFast(p1, p2, loc);
@@ -207,7 +207,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 
 			// simple footwall case
 			boolean isVertical = (dipRad == 90.0 * TO_RAD);
-			if (rX <= 0.0 || isVertical) return Distances.create(rSeg, hypot(rSeg, zTop), rX);
+			if (rX <= 0.0 || isVertical) return Distance.create(rSeg, hypot(rSeg, zTop), rX);
 
 			// otherwise, we're on the hanging wall...
 
@@ -226,11 +226,11 @@ class PointSourceFixedStrike extends PointSourceFinite {
 					Locations.distanceToSegmentFast(p2, p3, loc));
 				double rY = sqrt(rSeg * rSeg - rX * rX);
 				// rRup is the hypoteneuse of rRup (above) and rY
-				return Distances.create(rJB, hypot(rRup, rY), rX);
+				return Distance.create(rJB, hypot(rRup, rY), rX);
 			}
 
 			double rJB = (rX > widthH) ? rX - widthH : 0.0;
-			return Distances.create(rJB, rRup, rX);
+			return Distance.create(rJB, rRup, rX);
 		}
 
 		// @formatter:off

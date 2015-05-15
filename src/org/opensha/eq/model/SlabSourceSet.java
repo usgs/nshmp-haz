@@ -49,8 +49,8 @@ public final class SlabSourceSet implements SourceSet<PointSource> {
 		return delegate.weight();
 	}
 
-	@Override public final Iterable<PointSource> iterableForlocation(Location loc) {
-		return delegate.iterableForlocation(loc);
+	@Override public final Iterable<PointSource> iterableForLocation(Location loc) {
+		return delegate.iterableForLocation(loc);
 	}
 
 	@Override public final GmmSet groundMotionModels() {

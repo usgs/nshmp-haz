@@ -20,7 +20,7 @@ import java.util.BitSet;
 import java.util.Map;
 
 import org.opensha.calc.Site;
-import org.opensha.eq.model.Distances;
+import org.opensha.eq.model.Distance;
 import org.opensha.eq.model.Rupture;
 
 import com.google.common.collect.Maps;
@@ -230,7 +230,7 @@ public class GmmInput {
 			return this;
 		}
 
-		public Builder distances(Distances distances) {
+		public Builder distances(Distance distances) {
 			this.rJB = validateAndFlag(RJB, distances.rJB);
 			this.rRup = validateAndFlag(RRUP, distances.rRup);
 			this.rX = validateAndFlag(RX, distances.rX);

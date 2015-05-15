@@ -12,6 +12,7 @@ import org.opensha.calc.CalcConfig;
 import org.opensha.gmm.GroundMotionModel;
 import org.opensha.util.Named;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
@@ -107,7 +108,15 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	}
 
 	@Override public String toString() {
-		return "HazardModel: " + name + NEWLINE + sourceSetMap.toString();
+		StringBuilder sb = new StringBuilder("HazardModel: ");
+		sb.append(name).append(NEWLINE);
+		for (SourceSet<? extends Source> sourceSet : this) {
+			String typeStr = "  " + sourceSet.type() + " Source Set";
+			sb.append(Strings.padEnd(typeStr, 24, ' '));
+			sb.append(sourceSet);
+			sb.append(NEWLINE);
+		}
+		return sb.toString();
 	}
 
 	/**

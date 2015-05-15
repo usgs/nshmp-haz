@@ -38,7 +38,7 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
 	 * 
 	 * @param loc {@code Location} of interest
 	 */
-	public Iterable<T> iterableForlocation(Location loc);
+	public Iterable<T> iterableForLocation(Location loc);
 
 	/**
 	 * Return a {@link Predicate} that evaluates to {@code true} if this source

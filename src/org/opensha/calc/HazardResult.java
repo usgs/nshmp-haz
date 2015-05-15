@@ -55,7 +55,7 @@ public final class HazardResult {
 					// sb.append( "|--" + LF);
 					// for (HazardGroundMotions hgms : cgms) {
 					// sb.append("  |--" + LF);
-					// for (TemporalGmmInput input : hgms.inputs) {
+					// for (HazardInput input : hgms.inputs) {
 					// sb.append("    |--" + input + LF);
 					// }
 					// }

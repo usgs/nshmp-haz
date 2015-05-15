@@ -50,6 +50,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	private final double dipRad;
 	private final double dipDirRad;
 	private final double width;
+	private final Location centroid;
 
 	// surface is initialized with a dip direction in radians; this may
 	// be normal to Faults.strike(trace), but may not be; in any event,
@@ -79,6 +80,8 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 		// if(dipSpacing != gridSpacingAlong) sameGridSpacing = false;
 
 		createEvenlyGriddedSurface();
+		
+		centroid = Locations.centroid(this);
 	}
 
 	// private void set(LocationList faultTrace, double dip, double depth,
@@ -441,6 +444,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	// TODO this is missing use of zTop
 	// TODO revisit this needs to be compared against current
 	// createEvenlyGriddedSurface()
+	@Deprecated // until proven useful or better
 	public void create(LocationList trace, double dip, double width, double spacing) {
 		double dipRad = dip * TO_RAD;
 		double dipDirRad = Faults.dipDirectionRad(trace);
@@ -674,8 +678,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	}
 
 	@Override public Location centroid() {
-		throw new UnsupportedOperationException("Implement me!");
-		// TODO can this be moved up to abstract???
+		return centroid;
 	}
 
 	// TODO is this really necessary; compund rupture surface?

@@ -179,8 +179,7 @@ public final class Location implements Comparable<Location> {
 	}
 
 	// TODO update this with lib hash methods
-	@Override
-	public int hashCode() {
+	@Override public int hashCode() {
 		// edit did same fix as for equals, now uses getters
 		long latHash = Double.doubleToLongBits(lat());
 		long lonHash = Double.doubleToLongBits(lon() + 1000);

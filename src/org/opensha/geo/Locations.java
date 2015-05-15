@@ -674,6 +674,29 @@ public final class Locations {
 	}
 
 	/**
+	 * Computes a centroid for a group of {@code Location}s as the average of
+	 * latitude, longitude, and depth;
+	 *  
+	 * @param locs locations to process
+	 */
+	public static Location centroid(Iterable<Location> locs) {
+		double latRad = 0.0;
+		double lonRad = 0.0;
+		double depth = 0.0;
+		int size = 0;
+		for (Location loc : locs) {
+			latRad += loc.latRad();
+			lonRad += loc.lonRad();
+			depth += loc.depth();
+			size++;
+		}
+		latRad /= size;
+		lonRad /= size;
+		depth /= size;
+		return Location.create(latRad * TO_DEG, lonRad * TO_DEG, depth); 
+	}
+	
+	/**
 	 * Return a radial distance {@code Location} filter.
 	 * 
 	 * @param origin of filter

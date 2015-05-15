@@ -184,11 +184,11 @@ class PointSource implements Source {
 			this.rupScaling = rupScaling;
 		}
 
-		@Override public Distances distanceTo(Location loc) {
+		@Override public Distance distanceTo(Location loc) {
 			double rJB = Locations.horzDistanceFast(this.loc, loc);
 			rJB = rupScaling.pointSourceDistance(mag, rJB);
 			double rRup = hypot(rJB, zTop);
-			return Distances.create(rJB, rRup, rJB);
+			return Distance.create(rJB, rRup, rJB);
 		}
 
 		// @formatter:off

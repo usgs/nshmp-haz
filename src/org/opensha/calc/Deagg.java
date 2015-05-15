@@ -177,7 +177,7 @@ class Deagg {
 					
 					
 					for (int i=0; i<inputCount; i++) {
-						TemporalGmmInput input = groundMotions.inputs.get(i);
+						HazardInput input = groundMotions.inputs.get(i);
 						double μ = means.get(i);
 						double σ = sigmas.get(i);
 						

@@ -39,13 +39,13 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
-class SystemFaultParser extends DefaultHandler {
+class SystemParser extends DefaultHandler {
 
 	static final String GRIDSOURCE_FILENAME = "grid_sources.xml";
 	static final String RUPTURES_FILENAME = "fault_ruptures.xml";
 	static final String SECTIONS_FILENAME = "fault_sections.xml";
 
-	private final Logger log = Logger.getLogger(SystemFaultParser.class.getName());
+	private final Logger log = Logger.getLogger(SystemParser.class.getName());
 	private final SAXParser sax;
 	private boolean used = false;
 
@@ -70,12 +70,12 @@ class SystemFaultParser extends DefaultHandler {
 	private boolean readingTrace = false;
 	private StringBuilder traceBuilder = null;
 
-	private SystemFaultParser(SAXParser sax) {
+	private SystemParser(SAXParser sax) {
 		this.sax = sax;
 	}
 
-	static SystemFaultParser create(SAXParser sax) {
-		return new SystemFaultParser(checkNotNull(sax));
+	static SystemParser create(SAXParser sax) {
+		return new SystemParser(checkNotNull(sax));
 	}
 
 	SystemSourceSet parse(InputStream sectionsIn, InputStream rupturesIn, GmmSet gmmSet)

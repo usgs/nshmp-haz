@@ -2,8 +2,10 @@ package org.opensha.eq.fault;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Math.sin;
 import static org.opensha.data.DataUtils.validate;
 import static org.opensha.geo.GeoTools.PI_BY_2;
+import static org.opensha.geo.GeoTools.TO_RAD;
 import static org.opensha.geo.GeoTools.TWOPI;
 import static org.opensha.geo.Locations.azimuth;
 import static org.opensha.geo.Locations.azimuthRad;
@@ -549,8 +551,21 @@ public final class Faults {
 	}
 
 	/**
-	 * Compute the strike in degrees of the supplied line, or trace, by connecting the
-	 * first and last points in {@code locs}. Method forwards to
+	 * Generic model for hypocentral depth returns a value that is halfway
+	 * between the top and bottom of a fault, parameterized by its dip, width,
+	 * and depth. This method performs no input validation.
+	 * 
+	 * @param dip of the fault plane
+	 * @param width of the fault plane
+	 * @param zTop depth to the fault plane
+	 */
+	public static double hypocentralDepth(double dip, double width, double zTop) {
+		return zTop + sin(dip * TO_RAD) * width / 2.0;
+	}
+
+	/**
+	 * Compute the strike in degrees of the supplied line, or trace, by
+	 * connecting the first and last points in {@code locs}. Method forwards to
 	 * {@link Locations#azimuth(Location, Location)}.
 	 * 
 	 * <p>This approach has been shown to be as accurate as length-weighted
@@ -567,7 +582,8 @@ public final class Faults {
 	}
 
 	/**
-	 * Compute the strike in degrees of the line connecting {@code p1} to {@code p2}.
+	 * Compute the strike in degrees of the line connecting {@code p1} to
+	 * {@code p2}.
 	 * @param p1 starting {@code Location}
 	 * @param p2 ending {@code Location}
 	 * @return strike direction in the range [0°, 360°)
@@ -578,8 +594,8 @@ public final class Faults {
 	}
 
 	/**
-	 * Compute the strike in radians of the supplied line, or trace, by connecting the
-	 * first and last points in {@code locs}. Method forwards to
+	 * Compute the strike in radians of the supplied line, or trace, by
+	 * connecting the first and last points in {@code locs}. Method forwards to
 	 * {@link Locations#azimuth(Location, Location)}.
 	 * 
 	 * <p>This approach has been shown to be as accurate as length-weighted
@@ -596,7 +612,8 @@ public final class Faults {
 	}
 
 	/**
-	 * Compute the strike in degrees of the line connecting {@code p1} to {@code p2}.
+	 * Compute the strike in degrees of the line connecting {@code p1} to
+	 * {@code p2}.
 	 * @param p1 starting {@code Location}
 	 * @param p2 ending {@code Location}
 	 * @return strike direction in the range [0, 2π)

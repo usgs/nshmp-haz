@@ -179,7 +179,7 @@ class PointSourceFinite extends PointSource {
 			super(loc, rupScaling);
 		}
 
-		@Override public Distances distanceTo(Location loc) {
+		@Override public Distance distanceTo(Location loc) {
 			// TODO 0.5 is WUS specific and based on discretization of distances
 			// in grid source Gmm lookup tables
 
@@ -190,11 +190,11 @@ class PointSourceFinite extends PointSource {
 			rJB = max(0.5, rJB); // TODO this should go away
 			double rX = footwall ? -rJB : rJB + widthH;
 
-			if (footwall) return Distances.create(rJB, hypot(rJB, zTop), rX);
+			if (footwall) return Distance.create(rJB, hypot(rJB, zTop), rX);
 
 			double rCut = zBot * tan(dipRad);
 
-			if (rJB > rCut) return Distances.create(rJB, hypot(rJB, zBot), rX);
+			if (rJB > rCut) return Distance.create(rJB, hypot(rJB, zBot), rX);
 
 			// rRup when rJB is 0 -- we take the minimum the site-to-top-edge
 			// and site-to-normal of rupture for the site being directly over
@@ -205,7 +205,7 @@ class PointSourceFinite extends PointSource {
 			// scale linearly with rJB distance
 			double rRup = (rRupC - rRup0) * rJB / rCut + rRup0;
 
-			return Distances.create(rJB, rRup, rX);
+			return Distance.create(rJB, rRup, rX);
 		}
 
 		// @formatter:off

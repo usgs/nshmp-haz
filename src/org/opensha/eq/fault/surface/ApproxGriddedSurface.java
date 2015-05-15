@@ -25,7 +25,11 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
 	private double avgDipRad;
 	private double avgDepth; 
 	
+	private Location centroid;
+	
 
+	// TODO terrible class name
+	
 	// TODO I feel like this could simply subclass gridded surface with a differnt init method
 	// for the Container2D data ??
 
@@ -170,6 +174,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
 		
 		avgDepth = upperTrace.averageDepth();
 		
+		centroid = Locations.centroid(this);
 	}
 	
 	
@@ -394,8 +399,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
 
 	@Override
 	public Location centroid() {
-		throw new UnsupportedOperationException("Implement me!");
-		// TODO can this be moved up to abstract???
+		return centroid;
 	}
 
 

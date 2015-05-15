@@ -6,9 +6,9 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.nio.file.Files.newDirectoryStream;
 import static java.util.logging.Level.SEVERE;
-import static org.opensha.eq.model.SystemFaultParser.GRIDSOURCE_FILENAME;
-import static org.opensha.eq.model.SystemFaultParser.RUPTURES_FILENAME;
-import static org.opensha.eq.model.SystemFaultParser.SECTIONS_FILENAME;
+import static org.opensha.eq.model.SystemParser.GRIDSOURCE_FILENAME;
+import static org.opensha.eq.model.SystemParser.RUPTURES_FILENAME;
+import static org.opensha.eq.model.SystemParser.SECTIONS_FILENAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -331,7 +331,7 @@ class Loader {
 			Path rupturesPath = dir.resolve(RUPTURES_FILENAME);
 			InputStream rupturesIn = Files.newInputStream(rupturesPath);
 
-			SystemFaultParser faultParser = SystemFaultParser.create(sax);
+			SystemParser faultParser = SystemParser.create(sax);
 			builder.sourceSet(faultParser.parse(sectionsIn, rupturesIn, gmmSet));
 
 			Path gridSourcePath = dir.resolve(GRIDSOURCE_FILENAME);

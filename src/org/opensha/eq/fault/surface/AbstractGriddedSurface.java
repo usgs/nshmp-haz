@@ -3,7 +3,7 @@ package org.opensha.eq.fault.surface;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.opensha.eq.model.Distances;
+import org.opensha.eq.model.Distance;
 import org.opensha.geo.Location;
 import org.opensha.geo.LocationList;
 import org.opensha.geo.Region;
@@ -145,8 +145,8 @@ public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> 
 	}
 		
 	@Override
-	public Distances distanceTo(Location loc) {
-		return Distances.compute(this, loc);
+	public Distance distanceTo(Location loc) {
+		return Distance.compute(this, loc);
 	}
 
 
