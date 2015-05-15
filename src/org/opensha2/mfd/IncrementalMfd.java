@@ -1,9 +1,9 @@
-package org.opensha.mfd;
+package org.opensha2.mfd;
 
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.opensha.function.EvenlyDiscretizedFunc;
-import org.opensha.eq.Magnitudes;
+import org.opensha2.function.EvenlyDiscretizedFunc;
+import org.opensha2.eq.Magnitudes;
 
 
 /**

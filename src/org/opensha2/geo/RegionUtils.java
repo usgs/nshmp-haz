@@ -17,7 +17,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package org.opensha.geo;
+package org.opensha2.geo;
 
 
 import java.awt.Color;
@@ -35,9 +35,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.eq.model.SourceElement;
-//import org.opensha.sha.faultSurface.AbstractEvenlyGriddedSurface;
+import org.opensha2.eq.fault.surface.GriddedSurface;
+import org.opensha2.eq.model.SourceElement;
+//import org.opensha2.sha.faultSurface.AbstractEvenlyGriddedSurface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -1,11 +1,11 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
-import static org.opensha.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
-import static org.opensha.gmm.MagConverter.MB_TO_MW_JOHNSTON;
-import static org.opensha.gmm.SiteClass.HARD_ROCK;
+import static org.opensha2.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
+import static org.opensha2.gmm.MagConverter.MB_TO_MW_JOHNSTON;
+import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 
 import java.util.Map;
 

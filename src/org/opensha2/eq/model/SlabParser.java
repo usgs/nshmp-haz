@@ -1,6 +1,6 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
-import static org.opensha.eq.model.SourceType.SLAB;
+import static org.opensha2.eq.model.SourceType.SLAB;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,11 +1,11 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
-import org.opensha.eq.fault.Faults;
-import org.opensha.geo.GeoTools;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
-import org.opensha.geo.LocationVector;
-import org.opensha.geo.Locations;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.geo.GeoTools;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
+import org.opensha2.geo.LocationVector;
+import org.opensha2.geo.Locations;
 
 /**
  * A {@code GriddedSurface} defined by an upper and lower trace whose spacing is

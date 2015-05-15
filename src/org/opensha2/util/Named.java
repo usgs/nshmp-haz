@@ -1,4 +1,4 @@
-package org.opensha.util;
+package org.opensha2.util;
 
 /**
  * Interface indicating an object has a name, usually prettified for display and

@@ -1,15 +1,15 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static org.apache.commons.math3.special.Erf.erf;
-import static org.opensha.gmm.Imt.PGA;
-import static org.opensha.gmm.Imt.PGV;
-import static org.opensha.gmm.Imt.SA0P75;
+import static org.opensha2.gmm.Imt.PGA;
+import static org.opensha2.gmm.Imt.PGV;
+import static org.opensha2.gmm.Imt.SA0P75;
 
-import org.opensha.data.XY_Point;
-import org.opensha.data.XY_Sequence;
-import org.opensha.gmm.Imt;
+import org.opensha2.data.XY_Point;
+import org.opensha2.data.XY_Sequence;
+import org.opensha2.gmm.Imt;
 
 /**
  * Uncertainty models govern how the values of a complementary cumulative normal

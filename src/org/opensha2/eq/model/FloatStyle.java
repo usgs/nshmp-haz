@@ -1,4 +1,4 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 /**
  * Ways in which {@code Rupture}s may float on a fault surface.

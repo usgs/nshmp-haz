@@ -1,4 +1,4 @@
-package org.opensha.function;
+package org.opensha2.function;
 
 import static com.google.common.base.Preconditions.*;
 

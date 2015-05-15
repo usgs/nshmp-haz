@@ -1,9 +1,9 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
-import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha.gmm.MagConverter.NONE;
-import static org.opensha.gmm.SiteClass.HARD_ROCK;
-import static org.opensha.gmm.SiteClass.SOFT_ROCK;
+import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
+import static org.opensha2.gmm.MagConverter.NONE;
+import static org.opensha2.gmm.SiteClass.HARD_ROCK;
+import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
 
 /**
  * Implementation of the Frankel et al. (1996) ground motion model for stable

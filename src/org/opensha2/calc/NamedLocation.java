@@ -1,7 +1,7 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
-import org.opensha.geo.Location;
-import org.opensha.util.Named;
+import org.opensha2.geo.Location;
+import org.opensha2.util.Named;
 
 /**
  * Marker interface for {@code enum}s of {@link Location}s. This interface is

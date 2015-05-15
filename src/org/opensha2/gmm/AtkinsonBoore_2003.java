@@ -1,9 +1,9 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
-import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha.gmm.Imt.PGA;
+import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
+import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;
 

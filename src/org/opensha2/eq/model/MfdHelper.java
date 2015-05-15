@@ -1,12 +1,12 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
-import static org.opensha.eq.model.SourceAttribute.*;
-import static org.opensha.util.Parsing.readBoolean;
-import static org.opensha.util.Parsing.readDouble;
-import static org.opensha.util.Parsing.readString;
-import static org.opensha.util.Parsing.toDoubleArray;
+import static org.opensha2.eq.model.SourceAttribute.*;
+import static org.opensha2.util.Parsing.readBoolean;
+import static org.opensha2.util.Parsing.readDouble;
+import static org.opensha2.util.Parsing.readString;
+import static org.opensha2.util.Parsing.toDoubleArray;
 
-import org.opensha.mfd.MfdType;
+import org.opensha2.mfd.MfdType;
 import org.xml.sax.Attributes;
 
 /*

@@ -16,11 +16,11 @@
  * the License.
  ******************************************************************************/
 
-package org.opensha.geo;
+package org.opensha2.geo;
 
-import static org.opensha.geo.GeoTools.PI_BY_2;
-import static org.opensha.geo.GeoTools.TO_RAD;
-import static org.opensha.geo.BorderType.*;
+import static org.opensha2.geo.GeoTools.PI_BY_2;
+import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.BorderType.*;
 import static com.google.common.base.Preconditions.*;
 
 import java.awt.Shape;
@@ -31,8 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.opensha.data.DataUtils;
-import org.opensha.util.Named;
+import org.opensha2.data.DataUtils;
+import org.opensha2.util.Named;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;

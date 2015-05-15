@@ -1,9 +1,9 @@
-package org.opensha.programs;
+package org.opensha2.programs;
 
-import org.opensha.calc.HazardResult;
-import org.opensha.calc.Site;
-import org.opensha.eq.model.HazardModel;
-import org.opensha.gmm.Imt;
+import org.opensha2.calc.HazardResult;
+import org.opensha2.calc.Site;
+import org.opensha2.eq.model.HazardModel;
+import org.opensha2.gmm.Imt;
 
 /**
  * Add comments here

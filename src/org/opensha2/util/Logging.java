@@ -1,4 +1,4 @@
-package org.opensha.util;
+package org.opensha2.util;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.util.logging.Level.SEVERE;

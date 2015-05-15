@@ -1,12 +1,12 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha.geo.Location;
-import org.opensha.geo.Locations;
-import org.opensha.geo.Region;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.Locations;
+import org.opensha2.geo.Region;
 
 import com.google.common.collect.ImmutableList;
 

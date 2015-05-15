@@ -1,8 +1,8 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static java.lang.Math.log10;
-import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha.util.MathUtils.hypot;
+import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
+import static org.opensha2.util.MathUtils.hypot;
 
 import java.util.Map;
 

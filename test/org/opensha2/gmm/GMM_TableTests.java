@@ -1,7 +1,7 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static org.junit.Assert.assertEquals;
-import static org.opensha.util.MathUtils.LOG_BASE_10_TO_E;
+import static org.opensha2.util.MathUtils.LOG_BASE_10_TO_E;
 
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -1,13 +1,13 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Math.log;
-import static org.opensha.gmm.FaultStyle.NORMAL;
-import static org.opensha.gmm.FaultStyle.REVERSE;
-import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
-import static org.opensha.gmm.FaultStyle.UNKNOWN;
-import static org.opensha.gmm.SiteClass.HARD_ROCK;
-import static org.opensha.gmm.SiteClass.SOFT_ROCK;
+import static org.opensha2.gmm.FaultStyle.NORMAL;
+import static org.opensha2.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
+import static org.opensha2.gmm.FaultStyle.UNKNOWN;
+import static org.opensha2.gmm.SiteClass.HARD_ROCK;
+import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opensha.util.Parsing;
-import org.opensha.util.Parsing.Delimiter;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -66,7 +66,7 @@ public final class GmmUtils {
 
 	private static String datPath = "etc/";
 //	private static String rjbDatPath = datPath + "rjbmean.dat"; // relocated
-	private static String rjbDatPath = "/org/opensha/eq/fault/surface/etc/rjb_wc94length.dat";
+	private static String rjbDatPath = "/org/opensha2/eq/fault/surface/etc/rjb_wc94length.dat";
 	private static String cbhwDatPath = datPath + "avghw_cb.dat";
 	private static String cyhwDatPath = datPath + "avghw_cy.dat";
 

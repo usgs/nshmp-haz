@@ -1,20 +1,20 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.min;
-import static org.opensha.data.DataUtils.validateWeight;
-import static org.opensha.eq.Magnitudes.validateMag;
-import static org.opensha.eq.fault.Faults.validateDepth;
-import static org.opensha.eq.fault.Faults.validateDip;
-import static org.opensha.eq.fault.Faults.validateRake;
-import static org.opensha.eq.fault.Faults.validateWidth;
-import static org.opensha.eq.model.Distance.Type.R_JB;
-import static org.opensha.eq.model.Distance.Type.R_RUP;
-import static org.opensha.eq.model.Distance.Type.R_X;
-import static org.opensha.geo.Locations.horzDistanceFast;
-import static org.opensha.util.TextUtils.validateName;
+import static org.opensha2.data.DataUtils.validateWeight;
+import static org.opensha2.eq.Magnitudes.validateMag;
+import static org.opensha2.eq.fault.Faults.validateDepth;
+import static org.opensha2.eq.fault.Faults.validateDip;
+import static org.opensha2.eq.fault.Faults.validateRake;
+import static org.opensha2.eq.fault.Faults.validateWidth;
+import static org.opensha2.eq.model.Distance.Type.R_JB;
+import static org.opensha2.eq.model.Distance.Type.R_RUP;
+import static org.opensha2.eq.model.Distance.Type.R_X;
+import static org.opensha2.geo.Locations.horzDistanceFast;
+import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.BitSet;
 import java.util.EnumSet;
@@ -28,14 +28,14 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import org.opensha.calc.HazardInput;
-import org.opensha.calc.Site;
-import org.opensha.calc.SystemInputs;
-import org.opensha.data.DataUtils;
-import org.opensha.eq.fault.Faults;
-import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.eq.model.Distance.Type;
-import org.opensha.geo.Location;
+import org.opensha2.calc.HazardInput;
+import org.opensha2.calc.Site;
+import org.opensha2.calc.SystemInputs;
+import org.opensha2.data.DataUtils;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.eq.fault.surface.GriddedSurface;
+import org.opensha2.eq.model.Distance.Type;
+import org.opensha2.geo.Location;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

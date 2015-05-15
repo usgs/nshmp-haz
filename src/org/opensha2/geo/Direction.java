@@ -1,8 +1,8 @@
-package org.opensha.geo;
+package org.opensha2.geo;
 
-import static org.opensha.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.GeoTools.TO_RAD;
 
-import org.opensha.util.Parsing;
+import org.opensha2.util.Parsing;
 
 /**
  * Identifiers for basic geographic directions.

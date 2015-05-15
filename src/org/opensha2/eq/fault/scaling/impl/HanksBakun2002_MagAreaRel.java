@@ -17,9 +17,9 @@
  * limitations under the License.
  ******************************************************************************/
 
-package org.opensha.eq.fault.scaling.impl;
+package org.opensha2.eq.fault.scaling.impl;
 
-import org.opensha.eq.fault.scaling.MagAreaRelationship;
+import org.opensha2.eq.fault.scaling.MagAreaRelationship;
 
 /**
  * <b>Title:</b>HanksBakun2002_MagAreaRel<br>

@@ -1,12 +1,12 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha.geo.Location;
-import org.opensha.geo.Locations;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.Locations;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;

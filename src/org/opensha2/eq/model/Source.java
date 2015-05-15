@@ -1,7 +1,7 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
-import org.opensha.mfd.IncrementalMfd;
-import org.opensha.util.Named;
+import org.opensha2.mfd.IncrementalMfd;
+import org.opensha2.util.Named;
 
 /**
  * An earthquake {@code Source}; usually some physical or pseudo-representation

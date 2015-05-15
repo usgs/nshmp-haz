@@ -1,12 +1,12 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
-import static org.opensha.gmm.FaultStyle.NORMAL;
-import static org.opensha.gmm.FaultStyle.REVERSE;
-import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
-import static org.opensha.gmm.FaultStyle.UNKNOWN;
-import static org.opensha.gmm.Imt.PGA;
+import static org.opensha2.gmm.FaultStyle.NORMAL;
+import static org.opensha2.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
+import static org.opensha2.gmm.FaultStyle.UNKNOWN;
+import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;
 

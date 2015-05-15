@@ -1,19 +1,19 @@
-package org.opensha.mfd;
+package org.opensha2.mfd;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
-import static org.opensha.eq.Magnitudes.magToMoment_N_m;
+import static org.opensha2.eq.Magnitudes.magToMoment_N_m;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.data.DataUtils;
-import org.opensha.data.XY_Sequence;
-import org.opensha.eq.Magnitudes;
+import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.DataUtils;
+import org.opensha2.data.XY_Sequence;
+import org.opensha2.eq.Magnitudes;
 
 import com.google.common.base.Converter;
 import com.google.common.primitives.Doubles;

@@ -1,4 +1,4 @@
-package org.opensha.data;
+package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.math3.stat.StatUtils;
-import org.opensha.function.DefaultXY_DataSet;
+import org.opensha2.function.DefaultXY_DataSet;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;

@@ -1,6 +1,6 @@
-package org.opensha.eq.fault.scaling;
+package org.opensha2.eq.fault.scaling;
 
-import org.opensha.function.ArbitrarilyDiscretizedFunc;
+import org.opensha2.function.ArbitrarilyDiscretizedFunc;
 
 /**
  * <b>Title:</b>MagAreaRelationship<br>

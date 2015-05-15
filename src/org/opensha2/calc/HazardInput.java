@@ -1,8 +1,8 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
-import org.opensha.eq.model.Rupture;
-import org.opensha.gmm.GmmInput;
-import org.opensha.gmm.GroundMotionModel;
+import org.opensha2.eq.model.Rupture;
+import org.opensha2.gmm.GmmInput;
+import org.opensha2.gmm.GroundMotionModel;
 
 /**
  * A {@link GroundMotionModel} input that carries {@link Rupture} rate

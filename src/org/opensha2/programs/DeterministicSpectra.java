@@ -1,4 +1,4 @@
-package org.opensha.programs;
+package org.opensha2.programs;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opensha.gmm.Gmm;
-import org.opensha.gmm.GmmInput;
-import org.opensha.gmm.GroundMotionModel;
-import org.opensha.gmm.Imt;
-import org.opensha.gmm.MatSpectrum;
-import org.opensha.gmm.ScalarGroundMotion;
+import org.opensha2.gmm.Gmm;
+import org.opensha2.gmm.GmmInput;
+import org.opensha2.gmm.GroundMotionModel;
+import org.opensha2.gmm.Imt;
+import org.opensha2.gmm.MatSpectrum;
+import org.opensha2.gmm.ScalarGroundMotion;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -222,6 +222,6 @@ public class DeterministicSpectra {
 		"example: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra ASK_14 6.5 10.0 10.3 10.0 90.0 14.0 0.5 7.5 0.0 760.0 true NaN NaN" +
 		LINE_SEPARATOR.value() +
 		LINE_SEPARATOR.value() +
-		"  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha/programs/DeterministicSpectra.html";
+		"  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha2/programs/DeterministicSpectra.html";
 
 }

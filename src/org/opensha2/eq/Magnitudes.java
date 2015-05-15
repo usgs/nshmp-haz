@@ -1,10 +1,10 @@
-package org.opensha.eq;
+package org.opensha2.eq;
 
-import static org.opensha.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.validate;
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
 
-import org.opensha.data.DataUtils;
+import org.opensha2.data.DataUtils;
 
 import com.google.common.collect.Range;
 

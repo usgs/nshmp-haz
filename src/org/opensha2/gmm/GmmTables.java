@@ -1,11 +1,11 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
-import static org.opensha.gmm.Imt.PGA;
-import static org.opensha.gmm.Imt.PGV;
-import static org.opensha.gmm.Imt.SA0P03;
-import static org.opensha.gmm.Imt.SA0P3;
-import static org.opensha.gmm.Imt.SA3P0;
+import static org.opensha2.gmm.Imt.PGA;
+import static org.opensha2.gmm.Imt.PGV;
+import static org.opensha2.gmm.Imt.SA0P03;
+import static org.opensha2.gmm.Imt.SA0P3;
+import static org.opensha2.gmm.Imt.SA3P0;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,10 +17,10 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.opensha.data.DataUtils;
-import org.opensha.util.MathUtils;
-import org.opensha.util.Parsing;
-import org.opensha.util.Parsing.Delimiter;
+import org.opensha2.data.DataUtils;
+import org.opensha2.util.MathUtils;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;

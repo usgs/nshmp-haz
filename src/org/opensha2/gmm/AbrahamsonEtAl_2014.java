@@ -1,16 +1,16 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import static org.opensha.geo.GeoTools.TO_RAD;
-import static org.opensha.gmm.FaultStyle.NORMAL;
+import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.gmm.FaultStyle.NORMAL;
 
 import java.util.Map;
 
-import org.opensha.data.Interpolate;
+import org.opensha2.data.Interpolate;
 
 /**
  * Implementation of the Abrahamson, Silva & Kamai (2014) next generation ground

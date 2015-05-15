@@ -1,4 +1,4 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -7,7 +7,7 @@ import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.opensha.mfd.IncrementalMfd;
+import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableMap;
 

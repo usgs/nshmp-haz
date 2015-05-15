@@ -1,16 +1,16 @@
-package org.opensha.geo;
+package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha.geo.GeoTools.TO_DEG;
-import static org.opensha.geo.GeoTools.TO_RAD;
-import static org.opensha.geo.GeoTools.validateDepth;
-import static org.opensha.geo.GeoTools.validateLat;
-import static org.opensha.geo.GeoTools.validateLon;
+import static org.opensha2.geo.GeoTools.TO_DEG;
+import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.GeoTools.validateDepth;
+import static org.opensha2.geo.GeoTools.validateLat;
+import static org.opensha2.geo.GeoTools.validateLon;
 
 import java.util.Iterator;
 
-import org.opensha.util.Parsing;
-import org.opensha.util.Parsing.Delimiter;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;

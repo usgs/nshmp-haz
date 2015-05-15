@@ -1,8 +1,8 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.data.ArrayXY_Sequence.copyOf;
+import static org.opensha2.data.ArrayXY_Sequence.copyOf;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.model.Source;
-import org.opensha.eq.model.SourceSet;
-import org.opensha.eq.model.SourceType;
-import org.opensha.gmm.Gmm;
-import org.opensha.gmm.Imt;
+import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.eq.model.Source;
+import org.opensha2.eq.model.SourceSet;
+import org.opensha2.eq.model.SourceType;
+import org.opensha2.gmm.Gmm;
+import org.opensha2.gmm.Imt;
 
 /**
  * Container class for hazard curves derived from a {@code SourceSet}. Class

@@ -1,4 +1,4 @@
-package org.opensha.data;
+package org.opensha2.data;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -6,8 +6,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import org.opensha.function.ArbitrarilyDiscretizedFunc;
-import org.opensha.util.Parsing;
+import org.opensha2.function.ArbitrarilyDiscretizedFunc;
+import org.opensha2.util.Parsing;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.primitives.Doubles;

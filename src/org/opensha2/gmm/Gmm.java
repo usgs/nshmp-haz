@@ -1,4 +1,4 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -6,7 +6,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.opensha.gmm.CeusMb.*;
+import org.opensha2.gmm.CeusMb.*;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

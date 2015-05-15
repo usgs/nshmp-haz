@@ -1,6 +1,6 @@
-package org.opensha.eq.fault;
+package org.opensha2.eq.fault;
 
-import org.opensha.util.Parsing;
+import org.opensha2.util.Parsing;
 
 /**
  * Generalized identifier for different focal mechanism types.

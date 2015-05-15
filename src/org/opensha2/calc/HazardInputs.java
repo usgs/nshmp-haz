@@ -1,4 +1,4 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -6,7 +6,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensha.eq.model.Source;
+import org.opensha2.eq.model.Source;
 
 /**
  * Lightweight {@code List} wrapper of {@code HazardInput}s that contains a

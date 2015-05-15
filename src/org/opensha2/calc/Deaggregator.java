@@ -1,4 +1,4 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import java.util.concurrent.Callable;
 

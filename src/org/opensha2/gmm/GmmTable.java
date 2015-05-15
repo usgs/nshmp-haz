@@ -1,4 +1,4 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 /**
  * Interface implemented by table based ground motion models (GMMs) to retrieve

@@ -1,4 +1,4 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha.gmm.Gmm;
-import org.opensha.gmm.Imt;
-import org.opensha.gmm.ScalarGroundMotion;
+import org.opensha2.gmm.Gmm;
+import org.opensha2.gmm.Imt;
+import org.opensha2.gmm.ScalarGroundMotion;
 
 import com.google.common.primitives.Doubles;
 

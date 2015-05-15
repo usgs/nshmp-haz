@@ -1,26 +1,26 @@
-package org.opensha.eq.fault;
+package org.opensha2.eq.fault;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.sin;
-import static org.opensha.data.DataUtils.validate;
-import static org.opensha.geo.GeoTools.PI_BY_2;
-import static org.opensha.geo.GeoTools.TO_RAD;
-import static org.opensha.geo.GeoTools.TWOPI;
-import static org.opensha.geo.Locations.azimuth;
-import static org.opensha.geo.Locations.azimuthRad;
-import static org.opensha.geo.Locations.horzDistance;
-import static org.opensha.geo.Locations.linearDistanceFast;
-import static org.opensha.geo.Locations.location;
+import static org.opensha2.data.DataUtils.validate;
+import static org.opensha2.geo.GeoTools.PI_BY_2;
+import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.GeoTools.TWOPI;
+import static org.opensha2.geo.Locations.azimuth;
+import static org.opensha2.geo.Locations.azimuthRad;
+import static org.opensha2.geo.Locations.horzDistance;
+import static org.opensha2.geo.Locations.linearDistanceFast;
+import static org.opensha2.geo.Locations.location;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensha.data.DataUtils;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
-import org.opensha.geo.LocationVector;
-import org.opensha.geo.Locations;
+import org.opensha2.data.DataUtils;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
+import org.opensha2.geo.LocationVector;
+import org.opensha2.geo.Locations;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;

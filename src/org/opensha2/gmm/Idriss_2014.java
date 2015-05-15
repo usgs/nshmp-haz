@@ -1,8 +1,8 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static java.lang.Math.log;
 import static java.lang.Math.min;
-import static org.opensha.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.FaultStyle.REVERSE;
 
 import java.util.Map;
 

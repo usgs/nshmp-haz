@@ -1,27 +1,27 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
-import static org.opensha.eq.fault.FocalMech.STRIKE_SLIP;
-import static org.opensha.geo.GeoTools.TO_RAD;
-import static org.opensha.util.MathUtils.hypot;
+import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
+import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.util.MathUtils.hypot;
 
 import java.util.Iterator;
 import java.util.Map;
 
-import org.opensha.eq.fault.Faults;
-import org.opensha.eq.fault.FocalMech;
-import org.opensha.eq.fault.scaling.MagLengthRelationship;
-import org.opensha.eq.fault.surface.RuptureScaling;
-import org.opensha.eq.fault.surface.RuptureScaling.Dimensions;
-import org.opensha.eq.model.PointSource.DepthModel;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationVector;
-import org.opensha.geo.Locations;
-import org.opensha.mfd.IncrementalMfd;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.eq.fault.FocalMech;
+import org.opensha2.eq.fault.scaling.MagLengthRelationship;
+import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.eq.fault.surface.RuptureScaling.Dimensions;
+import org.opensha2.eq.model.PointSource.DepthModel;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationVector;
+import org.opensha2.geo.Locations;
+import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.math.DoubleMath;
 

@@ -17,7 +17,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package org.opensha.geo;
+package org.opensha2.geo;
 
 
 /**

@@ -1,16 +1,16 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.validate;
 
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
 
-import org.opensha.geo.Location;
-import org.opensha.gmm.GroundMotionModel;
-import org.opensha.util.Named;
+import org.opensha2.geo.Location;
+import org.opensha2.gmm.GroundMotionModel;
+import org.opensha2.util.Named;
 
 import com.google.common.collect.Range;
 import com.google.gson.JsonArray;

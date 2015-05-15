@@ -1,4 +1,4 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import java.net.URL;
 import java.net.URLDecoder;
@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.opensha.eq.model.Loader;
+import org.opensha2.eq.model.Loader;
 
 import com.google.common.io.Resources;
 

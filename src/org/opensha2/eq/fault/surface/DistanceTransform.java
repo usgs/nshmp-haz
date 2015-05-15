@@ -1,6 +1,6 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
-import static org.opensha.geo.GeoTools.*;
+import static org.opensha2.geo.GeoTools.*;
 import static org.apache.commons.math3.geometry.euclidean.threed.RotationOrder.*;
 import static java.lang.Math.*;
 
@@ -13,11 +13,11 @@ import java.util.List;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.opensha.eq.fault.Faults;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
-import org.opensha.geo.Locations;
-import org.opensha.geo.LocationVector;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
+import org.opensha2.geo.Locations;
+import org.opensha2.geo.LocationVector;
 
 /**
  * Wrapper class to simplify calculating the distance to a fault trace. Class

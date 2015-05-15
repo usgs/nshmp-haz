@@ -1,4 +1,4 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 /**
  * Point source implementation identifier.

@@ -1,8 +1,8 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import java.util.Iterator;
 
-import org.opensha.geo.Location;
+import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
 

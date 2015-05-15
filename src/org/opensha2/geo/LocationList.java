@@ -1,16 +1,16 @@
-package org.opensha.geo;
+package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.geo.Locations.distanceToSegmentFast;
+import static org.opensha2.geo.Locations.distanceToSegmentFast;
 
 import java.awt.geom.Path2D;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha.util.Parsing;
-import org.opensha.util.Parsing.Delimiter;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;

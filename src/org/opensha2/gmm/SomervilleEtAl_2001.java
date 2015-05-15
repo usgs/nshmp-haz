@@ -1,8 +1,8 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static java.lang.Math.log;
-import static org.opensha.gmm.SiteClass.HARD_ROCK;
-import static org.opensha.util.MathUtils.hypot;
+import static org.opensha2.gmm.SiteClass.HARD_ROCK;
+import static org.opensha2.util.MathUtils.hypot;
 
 import java.util.Map;
 

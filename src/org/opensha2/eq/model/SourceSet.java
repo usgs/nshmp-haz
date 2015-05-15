@@ -1,8 +1,8 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
-import org.opensha.geo.Location;
-import org.opensha.gmm.GroundMotionModel;
-import org.opensha.util.Named;
+import org.opensha2.geo.Location;
+import org.opensha2.gmm.GroundMotionModel;
+import org.opensha2.util.Named;
 
 import com.google.common.base.Predicate;
 

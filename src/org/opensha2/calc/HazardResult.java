@@ -1,16 +1,16 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.data.ArrayXY_Sequence.copyOf;
-import static org.opensha.eq.model.SourceType.CLUSTER;
+import static org.opensha2.data.ArrayXY_Sequence.copyOf;
+import static org.opensha2.eq.model.SourceType.CLUSTER;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.model.SourceType;
-import org.opensha.gmm.Imt;
+import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.eq.model.SourceType;
+import org.opensha2.gmm.Imt;
 
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableSetMultimap;

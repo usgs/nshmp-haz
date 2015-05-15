@@ -1,10 +1,10 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import java.util.Map;
 
-import org.opensha.geo.Location;
-import org.opensha.eq.fault.Faults;
-import org.opensha.eq.fault.surface.RuptureSurface;
+import org.opensha2.geo.Location;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.eq.fault.surface.RuptureSurface;
 
 import com.google.common.collect.ImmutableMap;
 

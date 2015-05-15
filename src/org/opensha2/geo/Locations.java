@@ -1,4 +1,4 @@
-package org.opensha.geo;
+package org.opensha2.geo;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -10,9 +10,9 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
-import static org.opensha.geo.Direction.NORTH;
-import static org.opensha.geo.Direction.WEST;
-import static org.opensha.geo.GeoTools.*;
+import static org.opensha2.geo.Direction.NORTH;
+import static org.opensha2.geo.Direction.WEST;
+import static org.opensha2.geo.GeoTools.*;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;

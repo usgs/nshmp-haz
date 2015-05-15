@@ -1,16 +1,16 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.data.DataUtils.validate;
-import static org.opensha.data.DataUtils.validateWeights;
+import static org.opensha2.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.validateWeights;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.opensha.gmm.Gmm;
-import org.opensha.gmm.GroundMotionModel;
+import org.opensha2.gmm.Gmm;
+import org.opensha2.gmm.GroundMotionModel;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;

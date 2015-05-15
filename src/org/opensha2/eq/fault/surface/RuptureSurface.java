@@ -1,7 +1,7 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
-import org.opensha.eq.model.Distance;
-import org.opensha.geo.Location;
+import org.opensha2.eq.model.Distance;
+import org.opensha2.geo.Location;
 
 /**
  * This interface defines a rupture surfaces. This does not specify how a rupture 

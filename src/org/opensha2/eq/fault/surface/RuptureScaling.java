@@ -1,4 +1,4 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
 import static com.google.common.io.Resources.getResource;
 import static com.google.common.io.Resources.readLines;
@@ -17,11 +17,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.mfd.IncrementalMfd;
-import org.opensha.mfd.Mfds;
-import org.opensha.util.Logging;
-import org.opensha.util.Parsing;
+import org.opensha2.eq.fault.scaling.MagScalingRelationship;
+import org.opensha2.mfd.IncrementalMfd;
+import org.opensha2.mfd.Mfds;
+import org.opensha2.util.Logging;
+import org.opensha2.util.Parsing;
 
 /**
  * Identifiers for different rupture dimension scaling models. Most are rooted

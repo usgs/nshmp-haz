@@ -1,4 +1,4 @@
-package org.opensha.data;
+package org.opensha2.data;
 
 import static java.lang.Math.exp;
 import static java.lang.Math.log;

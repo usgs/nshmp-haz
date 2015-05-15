@@ -1,4 +1,4 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 /**
  * Implemented by ground motion models (GMMs) that perform a magnitude

@@ -1,9 +1,9 @@
-package org.opensha.util;
+package org.opensha2.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.data.DataUtils.validateWeights;
+import static org.opensha2.data.DataUtils.validateWeights;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 
-import org.opensha.data.DataUtils;
+import org.opensha2.data.DataUtils;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;

@@ -1,4 +1,4 @@
-package org.opensha.util;
+package org.opensha2.util;
 
 import static java.lang.Math.sqrt;
 

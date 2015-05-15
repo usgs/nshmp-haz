@@ -1,13 +1,13 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.gmm.Gmm;
-import org.opensha.gmm.Imt;
+import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.gmm.Gmm;
+import org.opensha2.gmm.Imt;
 
 /**
  * Container class for the combined hazard curves derived from the

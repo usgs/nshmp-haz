@@ -1,21 +1,21 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.eq.model.SourceAttribute.A;
-import static org.opensha.eq.model.SourceAttribute.DEPTH;
-import static org.opensha.eq.model.SourceAttribute.DIP;
-import static org.opensha.eq.model.SourceAttribute.INDICES;
-import static org.opensha.eq.model.SourceAttribute.M;
-import static org.opensha.eq.model.SourceAttribute.NAME;
-import static org.opensha.eq.model.SourceAttribute.RAKE;
-import static org.opensha.eq.model.SourceAttribute.TYPE;
-import static org.opensha.eq.model.SourceAttribute.WEIGHT;
-import static org.opensha.eq.model.SourceAttribute.WIDTH;
-import static org.opensha.util.Parsing.rangeStringToIntList;
-import static org.opensha.util.Parsing.readDouble;
-import static org.opensha.util.Parsing.readEnum;
-import static org.opensha.util.Parsing.readString;
+import static org.opensha2.eq.model.SourceAttribute.A;
+import static org.opensha2.eq.model.SourceAttribute.DEPTH;
+import static org.opensha2.eq.model.SourceAttribute.DIP;
+import static org.opensha2.eq.model.SourceAttribute.INDICES;
+import static org.opensha2.eq.model.SourceAttribute.M;
+import static org.opensha2.eq.model.SourceAttribute.NAME;
+import static org.opensha2.eq.model.SourceAttribute.RAKE;
+import static org.opensha2.eq.model.SourceAttribute.TYPE;
+import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
+import static org.opensha2.eq.model.SourceAttribute.WIDTH;
+import static org.opensha2.util.Parsing.rangeStringToIntList;
+import static org.opensha2.util.Parsing.readDouble;
+import static org.opensha2.util.Parsing.readEnum;
+import static org.opensha2.util.Parsing.readString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,8 +24,8 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.mfd.MfdType;
+import org.opensha2.eq.fault.surface.GriddedSurface;
+import org.opensha2.mfd.MfdType;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;

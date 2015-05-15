@@ -1,8 +1,8 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
-import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha.gmm.Imt.PGA;
-import static org.opensha.gmm.SiteClass.SOFT_ROCK;
+import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
+import static org.opensha2.gmm.Imt.PGA;
+import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
 
 /**
  * Modified form of the relationship for the Central and Eastern US by Atkinson

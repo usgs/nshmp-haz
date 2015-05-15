@@ -1,22 +1,22 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
-import static org.opensha.eq.TectonicSetting.ACTIVE_SHALLOW_CRUST;
-import static org.opensha.eq.TectonicSetting.SUBDUCTION_INTERFACE;
-import static org.opensha.eq.TectonicSetting.VOLCANIC;
-import static org.opensha.gmm.FaultStyle.NORMAL;
-import static org.opensha.gmm.FaultStyle.REVERSE;
-import static org.opensha.gmm.FaultStyle.REVERSE_OBLIQUE;
-import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
-import static org.opensha.gmm.Imt.PGA;
+import static org.opensha2.eq.TectonicSetting.ACTIVE_SHALLOW_CRUST;
+import static org.opensha2.eq.TectonicSetting.SUBDUCTION_INTERFACE;
+import static org.opensha2.eq.TectonicSetting.VOLCANIC;
+import static org.opensha2.gmm.FaultStyle.NORMAL;
+import static org.opensha2.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.FaultStyle.REVERSE_OBLIQUE;
+import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
+import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;
 
-import org.opensha.eq.TectonicSetting;
+import org.opensha2.eq.TectonicSetting;
 
 /**
  * Abstract implementation of the ground motion model by McVerry et al. (2000).

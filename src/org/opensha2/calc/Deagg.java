@@ -1,4 +1,4 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -9,12 +9,12 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 
-import org.opensha.data.DataUtils;
-import org.opensha.eq.Magnitudes;
-import org.opensha.eq.model.Rupture;
-import org.opensha.eq.model.SourceType;
-import org.opensha.gmm.Gmm;
-import org.opensha.gmm.Imt;
+import org.opensha2.data.DataUtils;
+import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.model.Rupture;
+import org.opensha2.eq.model.SourceType;
+import org.opensha2.gmm.Gmm;
+import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Function;
 import com.google.common.collect.MinMaxPriorityQueue;

@@ -1,7 +1,7 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
-import static org.opensha.gmm.Gmm.*;
-import static org.opensha.gmm.Imt.*;
+import static org.opensha2.gmm.Gmm.*;
+import static org.opensha2.gmm.Imt.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -19,8 +19,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.opensha.util.Parsing;
-import org.opensha.util.Parsing.Delimiter;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.base.StandardSystemProperty;

@@ -1,4 +1,4 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 /**
  * Ground motion spectrum data container for use with Matlab.

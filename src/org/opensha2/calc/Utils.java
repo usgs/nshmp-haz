@@ -1,15 +1,15 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static java.lang.Math.min;
 import static org.apache.commons.math3.special.Erf.erf;
-import static org.opensha.calc.ExceedanceModel.TRUNCATION_UPPER_ONLY;
-import static org.opensha.calc.ExceedanceModel.TRUNCATION_LOWER_UPPER;
+import static org.opensha2.calc.ExceedanceModel.TRUNCATION_UPPER_ONLY;
+import static org.opensha2.calc.ExceedanceModel.TRUNCATION_LOWER_UPPER;
 
 import java.util.List;
 
-import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.data.XY_Point;
-import org.opensha.data.XY_Sequence;
+import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XY_Point;
+import org.opensha2.data.XY_Sequence;
 
 /**
  * Note that these are all linear space calculations; any hazard values should

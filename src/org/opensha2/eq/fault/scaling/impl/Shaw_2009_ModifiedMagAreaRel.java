@@ -17,11 +17,11 @@
  * limitations under the License.
  ******************************************************************************/
 
-package org.opensha.eq.fault.scaling.impl;
+package org.opensha2.eq.fault.scaling.impl;
 
-import org.opensha.eq.fault.scaling.MagAreaRelDepthDep;
-import org.opensha.eq.fault.scaling.MagAreaRelationship;
-import org.opensha.function.ArbitrarilyDiscretizedFunc;
+import org.opensha2.eq.fault.scaling.MagAreaRelDepthDep;
+import org.opensha2.eq.fault.scaling.MagAreaRelationship;
+import org.opensha2.function.ArbitrarilyDiscretizedFunc;
 
 
 /**

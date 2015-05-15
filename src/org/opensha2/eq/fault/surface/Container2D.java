@@ -17,11 +17,11 @@
  * limitations under the License.
  ******************************************************************************/
 
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
 import java.util.ListIterator;
 
-import org.opensha.util.Named;
+import org.opensha2.util.Named;
 
 /**
  *  <b>Title:</b> Container2DAPI<p>

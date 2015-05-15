@@ -1,13 +1,13 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.data.DataUtils.validateWeight;
-import static org.opensha.eq.Magnitudes.MAX_MAG;
-import static org.opensha.eq.fault.Faults.validateStrike;
-import static org.opensha.eq.model.PointSourceType.FIXED_STRIKE;
-import static org.opensha.util.TextUtils.validateName;
+import static org.opensha2.data.DataUtils.validateWeight;
+import static org.opensha2.eq.Magnitudes.MAX_MAG;
+import static org.opensha2.eq.fault.Faults.validateStrike;
+import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
+import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
-import org.opensha.eq.fault.Faults;
-import org.opensha.eq.fault.FocalMech;
-import org.opensha.eq.fault.surface.RuptureScaling;
-import org.opensha.eq.model.PointSource.DepthModel;
-import org.opensha.geo.Location;
-import org.opensha.geo.Locations;
-import org.opensha.mfd.IncrementalMfd;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.eq.fault.FocalMech;
+import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.eq.model.PointSource.DepthModel;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.Locations;
+import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;

@@ -1,4 +1,4 @@
-package org.opensha.data;
+package org.opensha2.data;
 
 import java.util.List;
 

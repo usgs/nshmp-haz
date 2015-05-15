@@ -1,18 +1,18 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.ceil;
-import static org.opensha.eq.fault.Faults.validateStrike;
-import static org.opensha.eq.fault.FocalMech.NORMAL;
-import static org.opensha.eq.fault.FocalMech.REVERSE;
-import static org.opensha.eq.fault.FocalMech.STRIKE_SLIP;
-import static org.opensha.eq.model.PointSourceType.FINITE;
-import static org.opensha.eq.model.PointSourceType.FIXED_STRIKE;
-import static org.opensha.geo.BorderType.MERCATOR_LINEAR;
-import static org.opensha.geo.GriddedRegion.ANCHOR_0_0;
-import static org.opensha.util.TextUtils.validateName;
+import static org.opensha2.eq.fault.Faults.validateStrike;
+import static org.opensha2.eq.fault.FocalMech.NORMAL;
+import static org.opensha2.eq.fault.FocalMech.REVERSE;
+import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
+import static org.opensha2.eq.model.PointSourceType.FINITE;
+import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
+import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
+import static org.opensha2.geo.GriddedRegion.ANCHOR_0_0;
+import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,17 +20,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
-import org.opensha.eq.fault.FocalMech;
-import org.opensha.eq.fault.scaling.MagLengthRelationship;
-import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.eq.fault.surface.RuptureScaling;
-import org.opensha.eq.model.GridSourceSet.Builder;
-import org.opensha.eq.model.PointSource.DepthModel;
-import org.opensha.geo.GriddedRegion;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
-import org.opensha.geo.Regions;
-import org.opensha.mfd.IncrementalMfd;
+import org.opensha2.eq.fault.FocalMech;
+import org.opensha2.eq.fault.scaling.MagLengthRelationship;
+import org.opensha2.eq.fault.scaling.MagScalingRelationship;
+import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.eq.model.GridSourceSet.Builder;
+import org.opensha2.eq.model.PointSource.DepthModel;
+import org.opensha2.geo.GriddedRegion;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
+import org.opensha2.geo.Regions;
+import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;

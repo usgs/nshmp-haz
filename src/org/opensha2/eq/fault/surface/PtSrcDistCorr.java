@@ -1,9 +1,9 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
 import java.util.ArrayList;
 
-import org.opensha.function.EvenlyDiscretizedFunc;
-import org.opensha.gmm.GmmUtils;
+import org.opensha2.function.EvenlyDiscretizedFunc;
+import org.opensha2.gmm.GmmUtils;
 
 /**
  * This implements various point-source distance corrections.

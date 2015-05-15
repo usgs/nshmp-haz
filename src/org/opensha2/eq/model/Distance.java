@@ -1,23 +1,23 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.geo.Locations.distanceToLineFast;
-import static org.opensha.geo.Locations.distanceToSegmentFast;
-import static org.opensha.geo.Locations.horzDistanceFast;
+import static org.opensha2.geo.Locations.distanceToLineFast;
+import static org.opensha2.geo.Locations.distanceToSegmentFast;
+import static org.opensha2.geo.Locations.horzDistanceFast;
 
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.util.Iterator;
 
-import org.opensha.eq.fault.Faults;
-import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.geo.BorderType;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
-import org.opensha.geo.LocationVector;
-import org.opensha.geo.Locations;
-import org.opensha.geo.Region;
-import org.opensha.geo.Regions;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.eq.fault.surface.GriddedSurface;
+import org.opensha2.geo.BorderType;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
+import org.opensha2.geo.LocationVector;
+import org.opensha2.geo.Locations;
+import org.opensha2.geo.Region;
+import org.opensha2.geo.Regions;
 
 /**
  * Distance value wrapper. 

@@ -1,29 +1,29 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.math.RoundingMode.HALF_UP;
-import static org.opensha.data.DataUtils.validate;
-import static org.opensha.eq.fault.Faults.validateDepth;
-import static org.opensha.eq.fault.Faults.validateDip;
-import static org.opensha.eq.fault.Faults.validateStrike;
-import static org.opensha.eq.fault.Faults.validateTrace;
-import static org.opensha.eq.fault.Faults.validateInterfaceWidth;
-import static org.opensha.geo.LocationVector.createWithPlunge;
-import static org.opensha.geo.Locations.linearDistanceFast;
-import static org.opensha.geo.Locations.location;
+import static org.opensha2.data.DataUtils.validate;
+import static org.opensha2.eq.fault.Faults.validateDepth;
+import static org.opensha2.eq.fault.Faults.validateDip;
+import static org.opensha2.eq.fault.Faults.validateStrike;
+import static org.opensha2.eq.fault.Faults.validateTrace;
+import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
+import static org.opensha2.geo.LocationVector.createWithPlunge;
+import static org.opensha2.geo.Locations.linearDistanceFast;
+import static org.opensha2.geo.Locations.location;
 
-import static org.opensha.geo.GeoTools.*;
+import static org.opensha2.geo.GeoTools.*;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha.eq.fault.Faults;
-import org.opensha.geo.GeoTools;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
-import org.opensha.geo.LocationVector;
-import org.opensha.geo.Locations;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.geo.GeoTools;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
+import org.opensha2.geo.LocationVector;
+import org.opensha2.geo.Locations;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;

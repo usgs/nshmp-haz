@@ -1,17 +1,17 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
-import static org.opensha.eq.model.SourceAttribute.*;
-import static org.opensha.eq.model.SourceElement.ALEATORY;
-import static org.opensha.eq.model.SourceElement.EPISTEMIC;
-import static org.opensha.eq.model.SourceElement.MAG_UNCERTAINTY;
-import static org.opensha.util.Parsing.*;
+import static org.opensha2.eq.model.SourceAttribute.*;
+import static org.opensha2.eq.model.SourceElement.ALEATORY;
+import static org.opensha2.eq.model.SourceElement.EPISTEMIC;
+import static org.opensha2.eq.model.SourceElement.MAG_UNCERTAINTY;
+import static org.opensha2.util.Parsing.*;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import org.opensha.eq.Magnitudes;
+import org.opensha2.eq.Magnitudes;
 import org.w3c.dom.Element;
 
 /**

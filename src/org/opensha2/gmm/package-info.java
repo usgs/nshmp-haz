@@ -9,4 +9,4 @@
  * implementations are {@code abstract}, and there are a variety of model
  * flavors that are available via the {@link org.opensha.gmm.Gmm} enum.
  */
-package org.opensha.gmm;
+package org.opensha2.gmm;

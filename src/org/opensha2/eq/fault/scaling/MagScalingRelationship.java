@@ -17,10 +17,10 @@
  * limitations under the License.
  ******************************************************************************/
 
-package org.opensha.eq.fault.scaling;
+package org.opensha2.eq.fault.scaling;
 
-import org.opensha.eq.fault.Faults;
-import org.opensha.util.Named;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.util.Named;
 
 /**
  * This is an abstract class that gives the median and standard

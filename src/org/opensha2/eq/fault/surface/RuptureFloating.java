@@ -1,10 +1,10 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Math.*;
-import static org.opensha.eq.model.FloatStyle.CENTERED;
-import static org.opensha.eq.model.FloatStyle.FULL_DOWN_DIP;
-import static org.opensha.eq.fault.surface.Surfaces.*;
+import static org.opensha2.eq.model.FloatStyle.CENTERED;
+import static org.opensha2.eq.model.FloatStyle.FULL_DOWN_DIP;
+import static org.opensha2.eq.fault.surface.Surfaces.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,14 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.opensha.data.DataUtils;
-import org.opensha.data.Interpolate;
-import org.opensha.eq.fault.surface.RuptureScaling.Dimensions;
-import org.opensha.eq.model.Rupture;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
-import org.opensha.mfd.IncrementalMfd;
-import org.opensha.mfd.Mfds;
+import org.opensha2.data.DataUtils;
+import org.opensha2.data.Interpolate;
+import org.opensha2.eq.fault.surface.RuptureScaling.Dimensions;
+import org.opensha2.eq.model.Rupture;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
+import org.opensha2.mfd.IncrementalMfd;
+import org.opensha2.mfd.Mfds;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;

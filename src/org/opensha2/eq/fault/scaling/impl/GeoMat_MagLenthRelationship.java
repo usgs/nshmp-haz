@@ -1,6 +1,6 @@
-package org.opensha.eq.fault.scaling.impl;
+package org.opensha2.eq.fault.scaling.impl;
 
-import org.opensha.eq.fault.scaling.MagLengthRelationship;
+import org.opensha2.eq.fault.scaling.MagLengthRelationship;
 
 /*
  * This is an implementation of the GeoMatrix mag length scaling relation

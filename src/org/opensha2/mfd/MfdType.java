@@ -1,4 +1,4 @@
-package org.opensha.mfd;
+package org.opensha2.mfd;
 
 /**
  * Add comments here

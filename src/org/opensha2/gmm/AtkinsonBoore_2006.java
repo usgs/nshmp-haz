@@ -1,14 +1,14 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Math.log;
 import static java.lang.Math.log10;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static org.opensha.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha.gmm.Imt.PGA;
-import static org.opensha.gmm.MagConverter.NONE;
-import static org.opensha.gmm.SiteClass.SOFT_ROCK;
+import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
+import static org.opensha2.gmm.Imt.PGA;
+import static org.opensha2.gmm.MagConverter.NONE;
+import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
 
 import java.util.Map;
 

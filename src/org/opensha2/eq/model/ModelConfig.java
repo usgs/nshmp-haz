@@ -1,7 +1,7 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.opensha.util.TextUtils.NEWLINE;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -9,8 +9,8 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.opensha.eq.fault.surface.RuptureFloating;
-import org.opensha.eq.model.AreaSource.GridScaling;
+import org.opensha2.eq.fault.surface.RuptureFloating;
+import org.opensha2.eq.model.AreaSource.GridScaling;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

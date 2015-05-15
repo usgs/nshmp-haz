@@ -1,12 +1,12 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.EnumMap;
 
-import org.opensha.eq.model.Rupture;
-import org.opensha.geo.Location;
+import org.opensha2.eq.model.Rupture;
+import org.opensha2.geo.Location;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;

@@ -1,16 +1,16 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
-import static org.opensha.gmm.GmmAttribute.ID;
-import static org.opensha.gmm.GmmAttribute.MAX_DISTANCE;
-import static org.opensha.gmm.GmmAttribute.VALUES;
-import static org.opensha.gmm.GmmAttribute.WEIGHT;
-import static org.opensha.gmm.GmmAttribute.WEIGHTS;
-import static org.opensha.util.Parsing.readDouble;
-import static org.opensha.util.Parsing.readDoubleArray;
-import static org.opensha.util.Parsing.readEnum;
+import static org.opensha2.gmm.GmmAttribute.ID;
+import static org.opensha2.gmm.GmmAttribute.MAX_DISTANCE;
+import static org.opensha2.gmm.GmmAttribute.VALUES;
+import static org.opensha2.gmm.GmmAttribute.WEIGHT;
+import static org.opensha2.gmm.GmmAttribute.WEIGHTS;
+import static org.opensha2.util.Parsing.readDouble;
+import static org.opensha2.util.Parsing.readDoubleArray;
+import static org.opensha2.util.Parsing.readEnum;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +20,8 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha.gmm.Gmm;
-import org.opensha.gmm.GmmElement;
+import org.opensha2.gmm.Gmm;
+import org.opensha2.gmm.GmmElement;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;

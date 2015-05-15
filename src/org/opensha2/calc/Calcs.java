@@ -1,26 +1,26 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
-import static org.opensha.calc.AsyncCalc.toClusterCurves;
-import static org.opensha.calc.AsyncCalc.toClusterGroundMotions;
-import static org.opensha.calc.AsyncCalc.toClusterInputs;
-import static org.opensha.calc.AsyncCalc.toGroundMotions;
-import static org.opensha.calc.AsyncCalc.toHazardCurveSet;
-import static org.opensha.calc.AsyncCalc.toHazardCurves;
-import static org.opensha.calc.AsyncCalc.toHazardResult;
-import static org.opensha.calc.AsyncCalc.toInputs;
+import static org.opensha2.calc.AsyncCalc.toClusterCurves;
+import static org.opensha2.calc.AsyncCalc.toClusterGroundMotions;
+import static org.opensha2.calc.AsyncCalc.toClusterInputs;
+import static org.opensha2.calc.AsyncCalc.toGroundMotions;
+import static org.opensha2.calc.AsyncCalc.toHazardCurveSet;
+import static org.opensha2.calc.AsyncCalc.toHazardCurves;
+import static org.opensha2.calc.AsyncCalc.toHazardResult;
+import static org.opensha2.calc.AsyncCalc.toInputs;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.model.ClusterSourceSet;
-import org.opensha.eq.model.HazardModel;
-import org.opensha.eq.model.Source;
-import org.opensha.eq.model.SourceSet;
-import org.opensha.eq.model.SourceType;
-import org.opensha.gmm.Imt;
+import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.eq.model.ClusterSourceSet;
+import org.opensha2.eq.model.HazardModel;
+import org.opensha2.eq.model.Source;
+import org.opensha2.eq.model.SourceSet;
+import org.opensha2.eq.model.SourceType;
+import org.opensha2.gmm.Imt;
 
 import com.google.common.util.concurrent.ListenableFuture;
 

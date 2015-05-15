@@ -1,4 +1,4 @@
-package org.opensha.programs;
+package org.opensha2.programs;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.nio.charset.StandardCharsets.US_ASCII;
@@ -19,20 +19,20 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
-import org.opensha.calc.Calcs;
-import org.opensha.calc.CalcConfig;
-import org.opensha.calc.HazardResult;
-import org.opensha.calc.Site;
-import org.opensha.calc.Utils;
-import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.data.XY_Sequence;
-import org.opensha.eq.model.HazardModel;
-import org.opensha.geo.Location;
-import org.opensha.gmm.Imt;
-import org.opensha.mfd.Mfds;
-import org.opensha.util.Logging;
-import org.opensha.util.Parsing;
-import org.opensha.util.Parsing.Delimiter;
+import org.opensha2.calc.Calcs;
+import org.opensha2.calc.CalcConfig;
+import org.opensha2.calc.HazardResult;
+import org.opensha2.calc.Site;
+import org.opensha2.calc.Utils;
+import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XY_Sequence;
+import org.opensha2.eq.model.HazardModel;
+import org.opensha2.geo.Location;
+import org.opensha2.gmm.Imt;
+import org.opensha2.mfd.Mfds;
+import org.opensha2.util.Logging;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Converter;
 import com.google.common.base.Stopwatch;
@@ -380,6 +380,6 @@ public class HazardCurve {
 		.append(LF)
 		.append("  - if no vs30 is specified 760.0 m/s is used.")
 		.append(LF)
-		.append("  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha/programs/HazardCurve.html")
+		.append("  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha2/programs/HazardCurve.html")
 		.toString();
 }

@@ -1,6 +1,6 @@
-package org.opensha.eq;
+package org.opensha2.eq;
 
-import org.opensha.util.Parsing;
+import org.opensha2.util.Parsing;
 
 /**
  * Tectonic setting identifier.

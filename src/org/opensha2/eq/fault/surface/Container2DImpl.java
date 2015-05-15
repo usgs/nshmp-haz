@@ -1,4 +1,4 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
 import static com.google.common.base.Preconditions.*;
 

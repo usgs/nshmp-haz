@@ -1,7 +1,7 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
-import static org.opensha.gmm.MagConverter.MB_TO_MW_JOHNSTON;
-import static org.opensha.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
+import static org.opensha2.gmm.MagConverter.MB_TO_MW_JOHNSTON;
+import static org.opensha2.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
 
 /**
  * Wrapper class for CEUS Gmm flavors that do magnitude conversions from

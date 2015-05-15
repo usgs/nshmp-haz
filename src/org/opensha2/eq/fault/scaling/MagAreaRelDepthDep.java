@@ -17,7 +17,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package org.opensha.eq.fault.scaling;
+package org.opensha2.eq.fault.scaling;
 
 /**
  * @author Edward H. Field

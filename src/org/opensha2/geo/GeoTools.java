@@ -1,10 +1,10 @@
-package org.opensha.geo;
+package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.PI;
-import static org.opensha.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.validate;
 
-import org.opensha.data.DataUtils;
+import org.opensha2.data.DataUtils;
 
 import com.google.common.collect.Range;
 

@@ -1,15 +1,15 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha.calc.Site.Key.LAT;
-import static org.opensha.calc.Site.Key.LON;
-import static org.opensha.calc.Site.Key.NAME;
-import static org.opensha.calc.Site.Key.VS30;
-import static org.opensha.calc.Site.Key.VS_INF;
-import static org.opensha.calc.Site.Key.Z1P0;
-import static org.opensha.calc.Site.Key.Z2P5;
-import static org.opensha.geo.BorderType.MERCATOR_LINEAR;
+import static org.opensha2.calc.Site.Key.LAT;
+import static org.opensha2.calc.Site.Key.LON;
+import static org.opensha2.calc.Site.Key.NAME;
+import static org.opensha2.calc.Site.Key.VS30;
+import static org.opensha2.calc.Site.Key.VS_INF;
+import static org.opensha2.calc.Site.Key.Z1P0;
+import static org.opensha2.calc.Site.Key.Z2P5;
+import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -22,14 +22,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.opensha.calc.Site.Builder;
-import org.opensha.calc.Site.Key;
-import org.opensha.geo.GriddedRegion;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
-import org.opensha.geo.Regions;
-import org.opensha.util.Parsing;
-import org.opensha.util.Parsing.Delimiter;
+import org.opensha2.calc.Site.Builder;
+import org.opensha2.calc.Site.Key;
+import org.opensha2.geo.GriddedRegion;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
+import org.opensha2.geo.Regions;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonArray;

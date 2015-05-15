@@ -1,11 +1,11 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.opensha.eq.fault.Faults;
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
 
 /**
  * <p>Title:  GriddedSurfFromSimpleFaultData </p>

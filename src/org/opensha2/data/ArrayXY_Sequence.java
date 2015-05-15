@@ -1,12 +1,12 @@
-package org.opensha.data;
+package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha.data.DataUtils.isMonotonic;
-import static org.opensha.data.DataUtils.uncheckedAdd;
-import static org.opensha.data.DataUtils.uncheckedFlip;
-import static org.opensha.data.DataUtils.uncheckedMultiply;
+import static org.opensha2.data.DataUtils.isMonotonic;
+import static org.opensha2.data.DataUtils.uncheckedAdd;
+import static org.opensha2.data.DataUtils.uncheckedFlip;
+import static org.opensha2.data.DataUtils.uncheckedMultiply;
 
 import java.util.Arrays;
 import java.util.Collection;

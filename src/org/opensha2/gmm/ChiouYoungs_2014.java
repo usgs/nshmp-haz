@@ -1,4 +1,4 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.cosh;
@@ -9,9 +9,9 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tanh;
-import static org.opensha.geo.GeoTools.TO_RAD;
-import static org.opensha.gmm.FaultStyle.NORMAL;
-import static org.opensha.gmm.FaultStyle.REVERSE;
+import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.gmm.FaultStyle.NORMAL;
+import static org.opensha2.gmm.FaultStyle.REVERSE;
 
 import java.util.Map;
 

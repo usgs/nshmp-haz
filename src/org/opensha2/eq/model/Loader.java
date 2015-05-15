@@ -1,4 +1,4 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -6,9 +6,9 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.nio.file.Files.newDirectoryStream;
 import static java.util.logging.Level.SEVERE;
-import static org.opensha.eq.model.SystemParser.GRIDSOURCE_FILENAME;
-import static org.opensha.eq.model.SystemParser.RUPTURES_FILENAME;
-import static org.opensha.eq.model.SystemParser.SECTIONS_FILENAME;
+import static org.opensha2.eq.model.SystemParser.GRIDSOURCE_FILENAME;
+import static org.opensha2.eq.model.SystemParser.RUPTURES_FILENAME;
+import static org.opensha2.eq.model.SystemParser.SECTIONS_FILENAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,8 +28,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.opensha.calc.CalcConfig;
-import org.opensha.eq.model.HazardModel.Builder;
+import org.opensha2.calc.CalcConfig;
+import org.opensha2.eq.model.HazardModel.Builder;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 

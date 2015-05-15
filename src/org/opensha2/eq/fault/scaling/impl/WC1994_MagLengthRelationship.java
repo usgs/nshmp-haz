@@ -17,10 +17,10 @@
  * limitations under the License.
  ******************************************************************************/
 
-package org.opensha.eq.fault.scaling.impl;
+package org.opensha2.eq.fault.scaling.impl;
 
-import org.opensha.eq.fault.Faults;
-import org.opensha.eq.fault.scaling.MagLengthRelationship;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.eq.fault.scaling.MagLengthRelationship;
 
 /**
  * <b>Title:</b>WC1994_MagLengthRelationship<br>

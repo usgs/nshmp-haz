@@ -1,27 +1,27 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Double.NaN;
-import static org.opensha.gmm.GmmInput.Field.DIP;
-import static org.opensha.gmm.GmmInput.Field.MAG;
-import static org.opensha.gmm.GmmInput.Field.RAKE;
-import static org.opensha.gmm.GmmInput.Field.RJB;
-import static org.opensha.gmm.GmmInput.Field.RRUP;
-import static org.opensha.gmm.GmmInput.Field.RX;
-import static org.opensha.gmm.GmmInput.Field.VS30;
-import static org.opensha.gmm.GmmInput.Field.VSINF;
-import static org.opensha.gmm.GmmInput.Field.WIDTH;
-import static org.opensha.gmm.GmmInput.Field.Z1P0;
-import static org.opensha.gmm.GmmInput.Field.Z2P5;
-import static org.opensha.gmm.GmmInput.Field.ZHYP;
-import static org.opensha.gmm.GmmInput.Field.ZTOP;
+import static org.opensha2.gmm.GmmInput.Field.DIP;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.RJB;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.RX;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.VSINF;
+import static org.opensha2.gmm.GmmInput.Field.WIDTH;
+import static org.opensha2.gmm.GmmInput.Field.Z1P0;
+import static org.opensha2.gmm.GmmInput.Field.Z2P5;
+import static org.opensha2.gmm.GmmInput.Field.ZHYP;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import java.util.BitSet;
 import java.util.Map;
 
-import org.opensha.calc.Site;
-import org.opensha.eq.model.Distance;
-import org.opensha.eq.model.Rupture;
+import org.opensha2.calc.Site;
+import org.opensha2.eq.model.Distance;
+import org.opensha2.eq.model.Rupture;
 
 import com.google.common.collect.Maps;
 

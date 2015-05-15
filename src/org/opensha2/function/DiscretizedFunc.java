@@ -17,7 +17,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package org.opensha.function;
+package org.opensha2.function;
 
 import java.awt.geom.Point2D;
 

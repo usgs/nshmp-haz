@@ -1,4 +1,4 @@
-package org.opensha.programs;
+package org.opensha2.programs;
 
 import static com.google.common.base.StandardSystemProperty.*;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -11,16 +11,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensha.calc.HazardResult;
-import org.opensha.calc.Site;
-import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.eq.model.HazardModel;
-import org.opensha.geo.GriddedRegion;
-import org.opensha.geo.Location;
-import org.opensha.geo.Regions;
-import org.opensha.gmm.Imt;
-import org.opensha.util.Parsing;
-import org.opensha.util.Parsing.Delimiter;
+import org.opensha2.calc.HazardResult;
+import org.opensha2.calc.Site;
+import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.eq.model.HazardModel;
+import org.opensha2.geo.GriddedRegion;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.Regions;
+import org.opensha2.gmm.Imt;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -179,7 +179,7 @@ public class HazardMap {
 		LINE_SEPARATOR.value() +
 		"  - To vary vs30 by location, use org.opensha.programs.HazardCurve." +
 		LINE_SEPARATOR.value() +
-		"  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha/programs/HazardMap.html";
+		"  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha2/programs/HazardMap.html";
 	
 	static class LocationToSite implements Function<Location, Site> {
 		@Override public Site apply(Location loc) {

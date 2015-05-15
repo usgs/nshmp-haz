@@ -1,14 +1,14 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import static org.opensha.gmm.FaultStyle.NORMAL;
-import static org.opensha.gmm.FaultStyle.REVERSE;
-import static org.opensha.gmm.FaultStyle.STRIKE_SLIP;
-import static org.opensha.gmm.Imt.PGA;
+import static org.opensha2.gmm.FaultStyle.NORMAL;
+import static org.opensha2.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
+import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;
 

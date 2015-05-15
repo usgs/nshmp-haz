@@ -1,7 +1,7 @@
-package org.opensha.eq.fault.surface;
+package org.opensha2.eq.fault.surface;
 
-import org.opensha.geo.Location;
-import org.opensha.geo.LocationList;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
 
 
 public interface GriddedSurface extends Container2D<Location>, RuptureSurface {

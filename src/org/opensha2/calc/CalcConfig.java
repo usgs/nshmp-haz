@@ -1,7 +1,7 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.opensha.util.TextUtils.NEWLINE;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha.data.ArrayXY_Sequence;
-import org.opensha.data.DataUtils;
-import org.opensha.gmm.GroundMotionModel;
-import org.opensha.gmm.Imt;
+import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.DataUtils;
+import org.opensha2.gmm.GroundMotionModel;
+import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Strings;
 import com.google.common.cache.LoadingCache;

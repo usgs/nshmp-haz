@@ -1,4 +1,4 @@
-package org.opensha.util;
+package org.opensha2.util;
 
 /**
  * Add comments here

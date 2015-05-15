@@ -1,23 +1,23 @@
-package org.opensha.eq.model;
+package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
-import static org.opensha.eq.fault.Faults.validateInterfaceDepth;
-import static org.opensha.eq.fault.Faults.validateTrace;
-import static org.opensha.eq.fault.Faults.validateInterfaceWidth;
-import static org.opensha.eq.model.FloatStyle.FULL_DOWN_DIP;
+import static org.opensha2.eq.fault.Faults.validateInterfaceDepth;
+import static org.opensha2.eq.fault.Faults.validateTrace;
+import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
+import static org.opensha2.eq.model.FloatStyle.FULL_DOWN_DIP;
 
 import java.util.List;
 
-import org.opensha.eq.fault.scaling.MagScalingRelationship;
-import org.opensha.eq.fault.surface.ApproxGriddedSurface;
-import org.opensha.eq.fault.surface.GriddedSurface;
-import org.opensha.eq.fault.surface.DefaultGriddedSurface;
-import org.opensha.eq.fault.surface.RuptureFloating;
-import org.opensha.eq.fault.surface.RuptureScaling;
-import org.opensha.geo.LocationList;
-import org.opensha.mfd.IncrementalMfd;
+import org.opensha2.eq.fault.scaling.MagScalingRelationship;
+import org.opensha2.eq.fault.surface.ApproxGriddedSurface;
+import org.opensha2.eq.fault.surface.GriddedSurface;
+import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
+import org.opensha2.eq.fault.surface.RuptureFloating;
+import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.geo.LocationList;
+import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
 

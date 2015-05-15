@@ -1,4 +1,4 @@
-package org.opensha.gmm;
+package org.opensha2.gmm;
 
 import static com.google.common.math.DoubleMath.fuzzyEquals;
 

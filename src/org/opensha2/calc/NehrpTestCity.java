@@ -1,20 +1,20 @@
-package org.opensha.calc;
+package org.opensha2.calc;
 
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-// import org.opensha.commons.data.Site;
-// import org.opensha.commons.geo.Location;
-// import org.opensha.commons.geo.LocationUtils;
-// import org.opensha.sha.imr.param.SiteParams.DepthTo1pt0kmPerSecParam;
-// import org.opensha.sha.imr.param.SiteParams.DepthTo2pt5kmPerSecParam;
-// import org.opensha.sha.imr.param.SiteParams.Vs30_Param;
-// import org.opensha.sha.imr.param.SiteParams.Vs30_TypeParam;
+// import org.opensha2.commons.data.Site;
+// import org.opensha2.commons.geo.Location;
+// import org.opensha2.commons.geo.LocationUtils;
+// import org.opensha2.sha.imr.param.SiteParams.DepthTo1pt0kmPerSecParam;
+// import org.opensha2.sha.imr.param.SiteParams.DepthTo2pt5kmPerSecParam;
+// import org.opensha2.sha.imr.param.SiteParams.Vs30_Param;
+// import org.opensha2.sha.imr.param.SiteParams.Vs30_TypeParam;
 
-import org.opensha.geo.Location;
-import org.opensha.geo.Locations;
-import org.opensha.util.Parsing;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.Locations;
+import org.opensha2.util.Parsing;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;

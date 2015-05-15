@@ -1,4 +1,4 @@
 /**
  * Hazard calculation classes and utilties.
  */
-package org.opensha.calc;
+package org.opensha2.calc;

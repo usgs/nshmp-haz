@@ -1,4 +1,4 @@
 /**
  * Classes and utilities for working with geographic data.
  */
-package org.opensha.geo;
+package org.opensha2.geo;

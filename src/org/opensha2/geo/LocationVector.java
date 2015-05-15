@@ -1,14 +1,14 @@
-package org.opensha.geo;
+package org.opensha2.geo;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import static org.opensha.geo.GeoTools.TO_DEG;
-import static org.opensha.geo.GeoTools.TWOPI;
-import static org.opensha.geo.Locations.azimuthRad;
-import static org.opensha.geo.Locations.horzDistance;
-import static org.opensha.geo.Locations.vertDistance;
+import static org.opensha2.geo.GeoTools.TO_DEG;
+import static org.opensha2.geo.GeoTools.TWOPI;
+import static org.opensha2.geo.Locations.azimuthRad;
+import static org.opensha2.geo.Locations.horzDistance;
+import static org.opensha2.geo.Locations.vertDistance;
 
 /**
  * This class encapsulates information describing a vector between two
