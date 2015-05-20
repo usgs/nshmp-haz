@@ -11,7 +11,10 @@ import java.util.Set;
 
 import org.opensha2.data.DataUtils;
 import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.Rupture;
+import org.opensha2.eq.model.Source;
+import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
@@ -29,13 +32,24 @@ import com.google.common.collect.Range;
  */
 class Deagg {
 
-//	 private final DataModel model;
-//	 private final double[][][] data;
-//	 private final double mBar, rBar, εBar;
+	// private final DataModel model;
+	// private final double[][][] data;
+	// private final double mBar, rBar, εBar;
 
 	/*
 	 * Many deagg bins have no data so we will usually be returning a sparse
 	 * matrix
+	 * 
+	 * TODO track and report ranked source set contributions TODO track and
+	 * report ranked sources; may have source with same name in different
+	 * sourceSets
+	 */
+
+	/*
+	 * Doing single threaded for now THis class may be suitable for using Java 8
+	 * DoubleAdder/Accumulators
+	 * 
+	 * Ignoring Gmm deagg
 	 */
 
 	// do we want to track the relative location in each distance bin:
@@ -45,22 +59,10 @@ class Deagg {
 	private Queue<Contribution> contribQueue = MinMaxPriorityQueue.orderedBy(Ordering.natural())
 		.maximumSize(20).create();
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-
-		// TreeMap<Double, String> test = Maps.newTreeMap();
-
-		// int dd = Data.Builder.size(5.0, 5.2, 0.1);
-		// System.out.println(dd);
-	}
-
-
 	/* Wrapper class for a Rupture and it's contribution to hazard. */
 	static class Contribution implements Comparable<Contribution> {
 
-		final Rupture rupture = null;
+		final Source rupture = null;
 		final Double value = null;
 
 		@Override public int compareTo(Contribution o) {
@@ -72,29 +74,48 @@ class Deagg {
 		return new Builder();
 	}
 
-	static class Builder {
+	/**
+	 * Deaggregation data container. This class is used to store deaggregation
+	 * results of individual SourceSets. Data objects may be recombined via
+	 * add().
+	 */
+	static class Data {
+		
+		private double[][][] data; // [M][R][ε]
 
-		private DataModel model;
-		private HazardResult hazard;
-		private double iml;
-		
-		private double[][][] data; // [M][R][e]
-		
 		private double mBar, rBar, εBar; // these are total
 		private double totalRate; // TODO compare to orignal PoE
 		private double totalRateWithinRange;
-		
-		// track mBar and rBar for each M R bin, for positioning?
-		private double[][] mPos; //??
-		private double[][] rPos; //??
-		
-		// should we use a general Deagg.Result container to store total results and
-		// then use a Map<Gmm, Result> for gmm specific values
 
+		// wieghted m and r position data
+		private double[][] mValues;
+		private double[][] rValues;
+		private double[][] mrWeights;
 
-		// TODO pass in executor??
+		private void add(Data data) {
+			
+		}
 
-		Builder withModel(DataModel model) {
+	}
+	
+	static class Builder {
+
+		private Model model;
+		private HazardResult hazard;
+		private double targetIml;
+
+		private double[][][] data; // [M][R][ε]
+
+		private double mBar, rBar, εBar; // these are total
+		private double totalRate; // TODO compare to orignal PoE
+		private double totalRateWithinRange;
+
+		// wieghted m and r position data
+		private double[][] mValues;
+		private double[][] rValues;
+		private double[][] mrWeights;
+
+		Builder withModel(Model model) {
 			this.model = checkNotNull(model);
 			return this;
 		}
@@ -125,141 +146,99 @@ class Deagg {
 		}
 
 		private void process() {
-			
-			
+
+			// TODO need IML for target rate or PoE
+
+			// data is buried in maps by Imt, need Imt
+
 			for (SourceType type : hazard.sourceSetMap.keySet()) {
 				Set<HazardCurveSet> hazardCurveSets = hazard.sourceSetMap.get(type);
 				switch (type) {
 					case FAULT:
-//						processFaultSources(hazardCurveSets);
+						// processFaultSources(hazardCurveSets);
 				}
 			}
 		}
 
-		/*
-		 * There are a variety of things that we can keep track of here. - the
-		 * gross contribution of each source set - the gross contribution of
-		 * each Gmm (could be further subdivision of above) -
-		 */
-//		private void processFaultSources(Set<HazardCurveSet> curveSets) {
-//			for (HazardCurveSet curveSet : curveSets) {
-//				for (HazardGroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
-//					for (Gmm gmm : groundMotions.means.keySet()) {
-//
-//					}
-//				}
-//			}
-//		}
-		
-		// do we want to farm SourceSets out onto different threads?
-		
 		// TODO get us from CalcConfig
 		private static final ExceedanceModel SIGMA = ExceedanceModel.TRUNCATION_UPPER_ONLY;
 		private static final double trunc = 3.0;
-		
-		
-		
-		private void processFaultSource(HazardCurveSet curveSet, Imt imt, double iml) {
-			for (HazardGroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
-				
-				int inputCount = groundMotions.inputs.size();
-				
-				Map<Gmm, List<Double>> gmmMeans = groundMotions.means.get(imt);
-				Map<Gmm, List<Double>> gmmSigmas = groundMotions.sigmas.get(imt);
 
-				double sourceRateAtIml = 0.0;
-				
-				
-				
-				for (Gmm gmm : gmmMeans.keySet()) {
-					List<Double> means = gmmMeans.get(gmm);
-					List<Double> sigmas = gmmSigmas.get(gmm);
-					
-					
-					for (int i=0; i<inputCount; i++) {
-						HazardInput input = groundMotions.inputs.get(i);
-						double μ = means.get(i);
-						double σ = sigmas.get(i);
-						
-						double ε = epsilon(μ, σ, iml);
-						double rateAtIml = SIGMA.exceedance(μ, σ, trunc, imt, iml);
-						
-						
-						
-					}
-					
+		private void processFaultSourceSet(HazardCurveSet curveSet, Imt imt, double iml) {
+
+			double sourceSetWeight = curveSet.sourceSet.weight();
+			GmmSet gmmSet = curveSet.sourceSet.groundMotionModels();
+
+			for (HazardGroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
+				processFaultSource(groundMotions, sourceSetWeight, gmmSet, imt, iml);
+			}
+		}
+
+		private void processFaultSource(
+				HazardGroundMotions groundMotions,
+				double sourceSetWeight,
+				GmmSet gmmSet,
+				Imt imt,
+				double iml) {
+
+			HazardInputs inputs = groundMotions.inputs;
+			String sourceName = inputs.parent.name();
+			double sourceRate = 0.0;
+			int inputCount = inputs.size();
+
+			for (Gmm gmm : groundMotions.means.get(imt).keySet()) {
+				List<Double> μList = groundMotions.means.get(imt).get(gmm);
+				List<Double> σList = groundMotions.sigmas.get(imt).get(gmm);
+
+				double distance = groundMotions.inputs.minDistance;
+				double gmmWeight = gmmSet.gmmWeightMap(distance).get(gmm);
+
+				for (int i = 0; i < inputCount; i++) {
+					HazardInput in = groundMotions.inputs.get(i);
+
+					double μ = μList.get(i);
+					double σ = σList.get(i);
+					double ε = epsilon(μ, σ, iml);
+
+					double probAtIml = SIGMA.exceedance(μ, σ, trunc, imt, iml);
+					double rate = probAtIml * in.rate * sourceSetWeight * gmmWeight;
+					sourceRate += rate;
+					addRupture(in.Mw, in.rRup, ε, rate);
 				}
 			}
 		}
-		
+
 		private void addRupture(double m, double r, double ε, double rate) {
-			
-			mBar += m * rate;
-			rBar += r * rate;
-			εBar += ε * rate;
+
+			double mr = m * rate;
+			double rr = r * rate;
+			double εr = ε * rate;
+
+			int im = index(model.mMin, model.Δm, m);
+			int ir = index(model.rMin, model.Δr, r);
+			int iε = index(model.εMin, model.Δε, ε);
+
+			mBar += mr;
+			rBar += rr;
+			εBar += εr;
 			totalRate += rate;
-			
-//			int im = index(model.mMin, model.Δm, )
-//			int ir = 
+
+			data[im][ir][iε] += rate;
+
+			mValues[im][ir] += mr;
+			rValues[im][ir] += rr;
+			mrWeights[im][ir] += rate;
 		}
-		
-//		private void processSource()
-		
-		// HazardGroundMotions inputs list is same length and order as means and sigmas
 
 	}
-	
-	
+
 	private static int index(double min, double binWidth, double value) {
 		return (int) Math.floor((value - min) / binWidth);
 	}
 
-	
 	// should all be in log space
 	private static double epsilon(double μ, double σ, double iml) {
 		return (iml - μ) / σ;
-	}
-
-	/*
-	 * TODO move to transforms
-	 * 
-	 * Transforms HazardGroundMotions to a rate for a target Iml. This is the
-	 * same as computing a hazard curve with a single point.
-	 */
-	private static class GroundMotionsToRate implements Function<HazardGroundMotions, Double> {
-
-		private final double targetIml;
-
-		GroundMotionsToRate(double targetIml) {
-			this.targetIml = targetIml;
-		}
-
-		@Override public Double apply(HazardGroundMotions groundMotions) {
-
-			// HazardCurves.Builder curveBuilder =
-			// HazardCurves.builder(groundMotions);
-			// ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
-			//
-			// double sourceRate = 0.0;
-			// for (Gmm gmm : groundMotions.means.keySet()) {
-			//
-			// // ArrayXY_Sequence gmmCurve =
-			// ArrayXY_Sequence.copyOf(modelCurve);
-			//
-			// List<Double> means = groundMotions.means.get(gmm);
-			// List<Double> sigmas = groundMotions.sigmas.get(gmm);
-			//
-			// for (int i = 0; i < means.size(); i++) {
-			// setExceedProbabilities(utilCurve, means.get(i), sigmas.get(i),
-			// false, NaN);
-			// utilCurve.multiply(groundMotions.inputs.get(i).rate);
-			// gmmCurve.add(utilCurve);
-			// }
-			// curveBuilder.addCurve(gmm, gmmCurve);
-			// }
-			// return curveBuilder.build();
-			return null;
-		}
 	}
 
 	private static final Range<Double> rRange = Range.closed(0.0, 1000.0);
@@ -269,7 +248,7 @@ class Deagg {
 		return (int) Math.rint((max - min) / Δ);
 	}
 
-	public static class DataModel {
+	public static class Model {
 
 		private final double mMin, mMax, Δm;
 		private final double rMin, rMax, Δr;
@@ -277,8 +256,8 @@ class Deagg {
 
 		private final int mSize, rSize, εSize;
 
-		private DataModel(double mMin, double mMax, double Δm, double rMin, double rMax, double Δr,
-			double εMin, double εMax, double Δε) {
+		private Model(double mMin, double mMax, double Δm, double rMin, double rMax, double Δr,
+				double εMin, double εMax, double Δε) {
 
 			this.mMin = mMin;
 			this.mMax = mMax;
@@ -294,10 +273,6 @@ class Deagg {
 			rSize = size(rMin, rMax, Δr);
 			εSize = size(εMin, εMax, Δε);
 		}
-		
-//		public int mIndex(double m) {
-//			return 
-//		}
 
 		/**
 		 * Create a deaggregation data model. Deaggregation data bins are
@@ -315,16 +290,14 @@ class Deagg {
 		 * @param εMax
 		 * @param Δε
 		 */
-		public static DataModel create(double mMin, double mMax, double Δm, double rMin,
+		public static Model create(double mMin, double mMax, double Δm, double rMin,
 				double rMax, double Δr, double εMin, double εMax, double Δε) {
 
-			// @formatter:off
 			return new Builder()
 				.magnitudeDiscretization(mMin, mMax, Δm)
 				.distanceDiscretization(rMin, rMax, Δr)
 				.epsilonDiscretization(εMin, εMax, Δε)
 				.build();
-			// @formatter:on
 		}
 
 		/**
@@ -332,7 +305,7 @@ class Deagg {
 		 * {@code CalcConfig}.
 		 * @param c {@code CalcConfig} to process
 		 */
-		public static DataModel fromConfig(CalcConfig c) {
+		public static Model fromConfig(CalcConfig c) {
 			return create(c.deagg.mMin, c.deagg.mMax, c.deagg.Δm, c.deagg.rMin, c.deagg.rMax,
 				c.deagg.Δr, c.deagg.εMin, c.deagg.εMax, c.deagg.Δε);
 		}
@@ -367,9 +340,9 @@ class Deagg {
 				return this;
 			}
 
-			private DataModel build() {
+			private Model build() {
 				validateState(ID);
-				return new DataModel(mMin, mMax, Δm, rMin, rMax, Δr, εMin, εMax, Δε);
+				return new Model(mMin, mMax, Δm, rMin, rMax, Δr, εMin, εMax, Δε);
 			}
 
 			private void validateState(String id) {

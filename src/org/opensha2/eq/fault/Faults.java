@@ -28,71 +28,62 @@ import com.google.common.collect.Range;
 
 /**
  * Fault utilities.
+ * 
  * @author Peter Powers
  */
 public final class Faults {
 
-	/** Minimum allowed fault strike (0°). */
-	public static final double MIN_STRIKE = 0.0;
-
-	/** Maximum allowed fault strike (90°). */
-	public static final double MAX_STRIKE = 360.0;
-
-	/** Minimum allowed fault dip (0°). */
-	public static final double MIN_DIP = 0.0;
-
-	/** Maximum allowed fault dip (90°). */
-	public static final double MAX_DIP = 90.0;
-
-	/** Minimum allowed fault rake (-180°). */
-	public static final double MIN_RAKE = -180.0;
-
-	/** Maximum allowed fault rake (180°). */
-	public static final double MAX_RAKE = 180.0;
-
-	/** Minimum allowed fault rupture depth (0 km). */
-	public static final double MIN_DEPTH = 0.0;
-
-	/** Maximum allowed crustal rupture depth (40 km). */
-	public static final double MAX_DEPTH_CRUSTAL = 40.0;
-
-	/** Maximum allowed subduction interface rupture depth (60 km). */
-	public static final double MAX_DEPTH_SUB_INTERFACE = 60.0;
-
-	/** Minimum allowed subduction slab rupture depth (20 km). */
-	public static final double MIN_DEPTH_SUB_SLAB = 20.0;
-
-	/** Maximum allowed subduction slab rupture depth (700 km). */
-	public static final double MAX_DEPTH_SUB_SLAB = 700.0;
-
-	/** Minimum allowed fault width (>0 km). */
-	public static final double MIN_WIDTH = 0.0;
-
-	/** Maximum allowed fault width (60 km). */
-	public static final double MAX_WIDTH_CRUSTAL = 60.0;
-
-	/** Maximum allowed subduction fault width (200 km). */
-	public static final double MAX_WIDTH_SUB_INTERFACE = 200.0;
-
-	private static final Range<Double> STRIKE_RANGE = Range.closed(MIN_STRIKE, MAX_STRIKE);
-	private static final Range<Double> DIP_RANGE = Range.closed(MIN_DIP, MAX_DIP);
-	private static final Range<Double> RAKE_RANGE = Range.closed(MIN_RAKE, MAX_RAKE);
-	private static final Range<Double> DEPTH_RANGE = Range.closed(MIN_DEPTH, MAX_DEPTH_CRUSTAL);
-	private static final Range<Double> SLAB_DEPTH_RANGE = Range.closed(MIN_DEPTH_SUB_SLAB,
-		MAX_DEPTH_SUB_SLAB);
-	private static final Range<Double> INTERFACE_DEPTH_RANGE = Range.closed(MIN_DEPTH,
-		MAX_DEPTH_SUB_INTERFACE);
-	private static final Range<Double> WIDTH_RANGE = Range.openClosed(MIN_WIDTH, MAX_WIDTH_CRUSTAL);
-	private static final Range<Double> INTERFACE_WIDTH_RANGE = Range.openClosed(MIN_WIDTH,
-		MAX_WIDTH_SUB_INTERFACE);
+	/**
+	 * The {@link Range} of valid fault strikes: [0 ‥ 360]°, inclusive.
+	 */
+	public static final Range<Double> STRIKE_RANGE = Range.closed(0.0, 360.0);
 
 	/**
-	 * Verifies that a dip value is between {@code MIN_DIP} and {@code MAX_DIP}
-	 * (inclusive). Method returns the supplied value and can be used inline.
+	 * The {@link Range} of valid fault dips: [0 ‥ 90]°, inclusive.
+	 */
+	public static final Range<Double> DIP_RANGE = Range.closed(0.0, 90.0);
+
+	/**
+	 * The {@link Range} of valid fault rakes: [180 ‥ 180]°, inclusive.
+	 */
+	public static final Range<Double> RAKE_RANGE = Range.closed(-180.0, 180.0);
+
+	/**
+	 * The {@link Range} of valid crustal rupture depths: [0 ‥ 40] km,
+	 * inclusive.
+	 */
+	public static final Range<Double> CRUSTAL_DEPTH_RANGE = Range.closed(0.0, 40.0);
+
+	/**
+	 * The {@link Range} of valid crustal rupture widths: (0 ‥ 60] km,
+	 * exclusive, inclusive.
+	 */
+	public static final Range<Double> CRUSTAL_WIDTH_RANGE = Range.openClosed(0.0, 60.0);
+
+	/**
+	 * The {@link Range} of valid intraslab rupture depths: [20 ‥ 700] km,
+	 * inclusive.
+	 */
+	public static final Range<Double> SLAB_DEPTH_RANGE = Range.closed(20.0, 700.0);
+
+	/**
+	 * The {@link Range} of valid interface rupture depths: [0 ‥ 60] km,
+	 * inclusive.
+	 */
+	public static final Range<Double> INTERFACE_DEPTH_RANGE = Range.closed(0.0, 60.0);
+
+	/**
+	 * The {@link Range} of valid interface rupture widths: (0 ‥ 200] km,
+	 * exclusive, inclusive.
+	 */
+	public static final Range<Double> INTERFACE_WIDTH_RANGE = Range.openClosed(0.0, 200.0);
+
+	/**
+	 * Verifies that {@code dip} is within {@link #DIP_RANGE}.
 	 * 
 	 * @param dip to validate
-	 * @return the supplied dip
-	 * @throws IllegalArgumentException if {@code dip} value is out of range
+	 * @return the supplied dip for use inline
+	 * @throws IllegalArgumentException if {@code dip} is out of range
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateDip(double dip) {
@@ -100,13 +91,11 @@ public final class Faults {
 	}
 
 	/**
-	 * Verifies that a strike value is between {@code MIN_STRIKE} and
-	 * {@code MAX_STRIKE} (inclusive). Method returns the supplied value and can
-	 * be used inline.
+	 * Verifies that {@code strike} is within {@link #STRIKE_RANGE}.
 	 * 
 	 * @param strike to validate
-	 * @return the supplied strike
-	 * @throws IllegalArgumentException if {@code strike} value is out of range
+	 * @return the supplied strike for use inline
+	 * @throws IllegalArgumentException if {@code strike} is out of range
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateStrike(double strike) {
@@ -114,13 +103,11 @@ public final class Faults {
 	}
 
 	/**
-	 * Verifies that a strike value is between {@code MIN_RAKE} and
-	 * {@code MAX_RAKE} (inclusive). Method returns the supplied value and can
-	 * be used inline.
+	 * Verifies that {@code rake} is within {@link #RAKE_RANGE}.
 	 * 
 	 * @param rake to validate
-	 * @return the supplied rake
-	 * @throws IllegalArgumentException if {@code rake} value is out of range
+	 * @return the supplied rake for use inline
+	 * @throws IllegalArgumentException if {@code rake} is out of range
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateRake(double rake) {
@@ -128,27 +115,23 @@ public final class Faults {
 	}
 
 	/**
-	 * Verifies that a depth value is between {@code MIN_DEPTH} and
-	 * {@code MAX_DEPTH_CRUSTAL} (inclusive). Method returns the supplied value
-	 * and can be used inline. Depths are positive down.
+	 * Verifies that {@code depth} is within {@link #CRUSTAL_DEPTH_RANGE}.
 	 * 
-	 * @param depth to validate
-	 * @return the supplied depth
-	 * @throws IllegalArgumentException if {@code depth} value is out of range
+	 * @param depth to validate (positive down)
+	 * @return the supplied depth for use inline
+	 * @throws IllegalArgumentException if {@code depth} is out of range
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateDepth(double depth) {
-		return validate(DEPTH_RANGE, "Depth", depth);
+		return validate(CRUSTAL_DEPTH_RANGE, "Depth", depth);
 	}
 
 	/**
-	 * Verifies that a depth value is between {@code MIN_DEPTH_SUB_SLAB} and
-	 * {@code MAX_DEPTH_SUB_SLAB} (inclusive). Method returns the supplied value
-	 * and can be used inline. Depths are positive down.
+	 * Verifies that {@code depth} value is within {@link #SLAB_DEPTH_RANGE}.
 	 * 
-	 * @param depth to validate
-	 * @return the supplied depth
-	 * @throws IllegalArgumentException if {@code depth} value is out of range
+	 * @param depth to validate (positive down)
+	 * @return the supplied depth for use inline
+	 * @throws IllegalArgumentException if {@code depth} is out of range
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateSlabDepth(double depth) {
@@ -156,13 +139,11 @@ public final class Faults {
 	}
 
 	/**
-	 * Verifies that a depth value is between {@code MIN_DEPTH_SUB_INTERFACE}
-	 * and {@code MAX_DEPTH_SUB_INTERFACE} (inclusive). Method returns the
-	 * supplied value and can be used inline. Depths are positive down.
+	 * Verifies that {@code depth} is within {@link #INTERFACE_DEPTH_RANGE}.
 	 * 
-	 * @param depth to validate
-	 * @return the supplied depth
-	 * @throws IllegalArgumentException if {@code depth} value is out of range
+	 * @param depth to validate (positive down)
+	 * @return the supplied depth for use inline
+	 * @throws IllegalArgumentException if {@code depth} is out of range
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateInterfaceDepth(double depth) {
@@ -170,27 +151,23 @@ public final class Faults {
 	}
 
 	/**
-	 * Verifies that a width value is between {@code MIN_WIDTH} (exclusive,
-	 * width must be greater than 0) and {@code MAX_WIDTH} (inclusive). Method
-	 * returns the supplied value and can be used inline.
+	 * Verifies that {@code width} is within {@link #CRUSTAL_WIDTH_RANGE}.
 	 * 
 	 * @param width to validate
-	 * @return the supplied width
-	 * @throws IllegalArgumentException if {@code width} value is out of range
+	 * @return the supplied width for use inline
+	 * @throws IllegalArgumentException if {@code width} is out of range
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateWidth(double width) {
-		return validate(WIDTH_RANGE, "Width", width);
+		return validate(CRUSTAL_WIDTH_RANGE, "Width", width);
 	}
 
 	/**
-	 * Verifies that a width value is between {@code MIN_WIDTH} (exclusive,
-	 * width must be greater than 0) and {@code MAX_WIDTH_SUB_INTERFACE}
-	 * (inclusive). Method returns the supplied value and can be used inline.
+	 * Verifies that {@code width} is within {@link #INTERFACE_WIDTH_RANGE}.
 	 * 
 	 * @param width to validate
-	 * @return the supplied width
-	 * @throws IllegalArgumentException if {@code width} value is out of range
+	 * @return the supplied width for use inline
+	 * @throws IllegalArgumentException if {@code width} is out of range
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateInterfaceWidth(double width) {
@@ -199,10 +176,10 @@ public final class Faults {
 
 	/**
 	 * Ensures that a {@code LocationList} contains at least two points and is
-	 * not {@code null}. Method returns the supplied {@code trace} and can be
-	 * used inline.
+	 * not {@code null}.
+	 * 
 	 * @param trace
-	 * @return the supplied trace
+	 * @return the supplied trace for use inline
 	 */
 	public static LocationList validateTrace(LocationList trace) {
 		checkArgument(checkNotNull(trace, "Trace may not be null").size() > 1,

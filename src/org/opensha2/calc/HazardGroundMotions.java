@@ -41,8 +41,8 @@ final class HazardGroundMotions {
 	final Map<Imt, Map<Gmm, List<Double>>> means;
 	final Map<Imt, Map<Gmm, List<Double>>> sigmas;
 
-	private HazardGroundMotions(HazardInputs inputs, Map<Imt, Map<Gmm, List<Double>>>  means,
-			Map<Imt, Map<Gmm, List<Double>>> sigmas) {
+	private HazardGroundMotions(HazardInputs inputs, Map<Imt, Map<Gmm, List<Double>>> means,
+		Map<Imt, Map<Gmm, List<Double>>> sigmas) {
 		this.inputs = inputs;
 		this.means = means;
 		this.sigmas = sigmas;
@@ -110,7 +110,8 @@ final class HazardGroundMotions {
 			return new HazardGroundMotions(inputs, means, sigmas);
 		}
 
-		static Map<Imt, Map<Gmm, List<Double>>> initValueTable(Set<Gmm> gmms, Set<Imt> imts, int size) {
+		static Map<Imt, Map<Gmm, List<Double>>> initValueTable(Set<Gmm> gmms, Set<Imt> imts,
+				int size) {
 			Map<Imt, Map<Gmm, List<Double>>> imtMap = new EnumMap<>(Imt.class);
 			for (Imt imt : imts) {
 				Map<Gmm, List<Double>> gmmMap = new EnumMap<>(Gmm.class);

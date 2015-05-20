@@ -49,6 +49,7 @@ public final class HazardResult {
 				// @formatter:on
 
 				if (curveSet.sourceSet.type() == CLUSTER) {
+					// TODO ??
 					// List<ClusterGroundMotions> cgmsList =
 					// curveSet.clusterGroundMotionsList;
 					// for (ClusterGroundMotions cgms : cgmsList) {
@@ -107,6 +108,7 @@ public final class HazardResult {
 		}
 
 		HazardResult build() {
+			// TODO totalCurves currently mutable; use ImmutableEnumMap instead??
 			checkState(!built, "This %s instance has already been used", ID);
 			return new HazardResult(resultMapBuilder.build(), totalCurves);
 		}
