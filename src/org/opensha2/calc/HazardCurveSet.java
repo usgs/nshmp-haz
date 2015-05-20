@@ -48,10 +48,12 @@ final class HazardCurveSet {
 	final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
 	final Map<Imt, ArrayXY_Sequence> totalCurves;
 
-	private HazardCurveSet(SourceSet<? extends Source> sourceSet,
-		List<HazardGroundMotions> hazardGroundMotionsList,
-		List<ClusterGroundMotions> clusterGroundMotionsList,
-		Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap, Map<Imt, ArrayXY_Sequence> totalCurves) {
+	private HazardCurveSet(
+			SourceSet<? extends Source> sourceSet,
+			List<HazardGroundMotions> hazardGroundMotionsList,
+			List<ClusterGroundMotions> clusterGroundMotionsList,
+			Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap,
+			Map<Imt, ArrayXY_Sequence> totalCurves) {
 
 		this.sourceSet = sourceSet;
 		this.hazardGroundMotionsList = hazardGroundMotionsList;
@@ -79,7 +81,7 @@ final class HazardCurveSet {
 		private final Map<Imt, ArrayXY_Sequence> totalCurves;
 
 		private Builder(SourceSet<? extends Source> sourceSet,
-			Map<Imt, ArrayXY_Sequence> modelCurves) {
+				Map<Imt, ArrayXY_Sequence> modelCurves) {
 
 			this.sourceSet = sourceSet;
 			this.modelCurves = modelCurves;

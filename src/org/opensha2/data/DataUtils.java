@@ -40,7 +40,10 @@ import com.google.common.primitives.Ints;
  * universally throw a {@code NullPointerException} or
  * {@code IllegalArguementException} when supplied with a {@code null} or empty
  * data set. Those methods that combine multiple data sets throw an
- * {@code IllegalArguementException} if the data sets are not the same size.</p>
+ * {@code IllegalArguementException} if the data sets are not the same size.
+ * Also, no checking for finiteness (e.g. see {@link Doubles#isFinite(double)}
+ * is performed on supplied data, methods do not check for over/underflow, and
+ * logarithm operations do not check for negative values. Buyer beware.</p>
  * 
  * <p>Methods that return a result or information about a supplied data set will
  * typically take a {@code Collection<Double>} as an argument, whereas methods
@@ -53,11 +56,6 @@ import com.google.common.primitives.Ints;
  * @see Doubles
  */
 public final class DataUtils {
-
-	// TODO check for finiteness?
-	// e.g. in add, multiply etc... check value, but not in array?
-
-	// TODO check log functions for negative values?
 
 	/*
 	 * NOTE: Transform Functions vs Pure Iteration
@@ -135,6 +133,38 @@ public final class DataUtils {
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
+	public static double[][] add(double[][] data1, double[][] data2) {
+		validateDataArrays(data1, data2);
+		for (int i = 0; i < data1.length; i++) {
+			add(data1[i], data2[i]);
+		}
+		return data1;
+	}
+
+	/**
+	 * Add the values of {@code data2} to {@code data1} in place without
+	 * checking for over/underflow.
+	 * 
+	 * @param data1
+	 * @param data2
+	 * @return a reference to {@code data1}
+	 */
+	public static double[][][] add(double[][][] data1, double[][][] data2) {
+		validateDataArrays(data1, data2);
+		for (int i = 0; i < data1.length; i++) {
+			add(data1[i], data2[i]);
+		}
+		return data1;
+	}
+
+	/**
+	 * Add the values of {@code data2} to {@code data1} in place without
+	 * checking for over/underflow.
+	 * 
+	 * @param data1
+	 * @param data2
+	 * @return a reference to {@code data1}
+	 */
 	public static List<Double> add(List<Double> data1, List<Double> data2) {
 		validateDataCollections(data1, data2);
 		for (int i = 0; i < data1.size(); i++) {
@@ -145,7 +175,8 @@ public final class DataUtils {
 
 	/**
 	 * Subtract the values of {@code data2} from {@code data1} in place without
-	 * checking for over/underflow.
+	 * checking for over/underflow. To subtract a term from every value of a
+	 * dataset, use {@link #add(double, double...)} with a negative addend.
 	 * 
 	 * @param data1
 	 * @param data2
@@ -165,7 +196,8 @@ public final class DataUtils {
 
 	/**
 	 * Subtract the values of {@code data2} from {@code data1} in place without
-	 * checking for over/underflow.
+	 * checking for over/underflow. To subtract a term from every value of a
+	 * dataset, use {@link #add(double, List)} with a negative addend.
 	 * 
 	 * @param data1
 	 * @param data2
@@ -253,7 +285,9 @@ public final class DataUtils {
 
 	/**
 	 * Divide the elements of {@code data1} by the elements of {@code data2} in
-	 * place without checking for over/underflow.
+	 * place without checking for over/underflow. To divide every value of a
+	 * dataset by some term, use {@link #multiply(double, double...)} with
+	 * 1/divisor.
 	 * 
 	 * @param data1
 	 * @param data2
@@ -273,7 +307,8 @@ public final class DataUtils {
 
 	/**
 	 * Divide the elements of {@code data1} by the elements of {@code data2} in
-	 * place without checking for over/underflow.
+	 * place without checking for over/underflow. To divide every value of a
+	 * dataset by some term, use {@link #multiply(double, List)} with 1/divisor.
 	 * 
 	 * @param data1
 	 * @param data2
@@ -508,7 +543,7 @@ public final class DataUtils {
 		validateDataArray(data);
 		return uncheckedTransform(function, data);
 	}
-	
+
 	static double[] uncheckedTransform(Function<Double, Double> function, double... data) {
 		for (int i = 0; i < data.length; i++) {
 			data[i] = function.apply(data[i]);
@@ -739,6 +774,16 @@ public final class DataUtils {
 	}
 
 	private static void validateDataArrays(double[] data1, double[] data2) {
+		checkArgument(checkNotNull(data1).length == checkNotNull(data2).length);
+	}
+
+	private static void validateDataArrays(double[][] data1, double[][] data2) {
+		/* Only checks outer array; operations check inners. */
+		checkArgument(checkNotNull(data1).length == checkNotNull(data2).length);
+	}
+
+	private static void validateDataArrays(double[][][] data1, double[][][] data2) {
+		/* Only checks outer array; operations check inners. */
 		checkArgument(checkNotNull(data1).length == checkNotNull(data2).length);
 	}
 

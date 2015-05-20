@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.CeusMb.*;
 
 import com.google.common.cache.CacheBuilder;
@@ -19,17 +20,17 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * {@link GroundMotionModel} (Gmm) identifiers. Use these to generate
- * {@link Imt}-specific instances via {@link Gmm#instance(Imt)}. Single or
- * corporate authored models are identified as NAME_YR_FLAVOR; multi-author
- * models as INITIALS_YR_FLAVOR. FLAVOR is only used for those models with
- * region specific implementations or other variants.
+ * {@link Imt}-specific instances via {@link Gmm#instance(Imt)} and related
+ * methods. Single or corporate authored models are identified as
+ * NAME_YR_FLAVOR; multi-author models as INITIALS_YR_FLAVOR. FLAVOR is only
+ * used for those models with region specific implementations or other variants.
  * 
  * @author Peter Powers
  */
 public enum Gmm {
 
 	// TODO 2014 CEUS clamps (see recent emails with harmsen)
-	
+
 	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
 	// high at large distances
 
@@ -41,7 +42,8 @@ public enum Gmm {
 	// TODO most CEUS Gmm's have 0.4s coeffs that were linearly interpolated for
 	// special NRC project; consider removing them??
 
-	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified anywhere?
+	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified
+	// anywhere?
 
 	// TODO Port Gmm grid optimization tables
 
@@ -64,7 +66,8 @@ public enum Gmm {
 	// TODO z1p0 in CY08 - this is now always km, CY08 needs updating (from m)
 
 	// TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup;
-	// why is depth constrained as such in hazgrid? As with somerville, no depth is
+	// why is depth constrained as such in hazgrid? As with somerville, no depth
+	// is
 	// imposed in hazFX - make sure 0.01 as PGA is handled corectly; may require
 	// change to period = 0.0
 
@@ -264,7 +267,8 @@ public enum Gmm {
 	private final Set<Imt> imts;
 	private final LoadingCache<Imt, GroundMotionModel> cache;
 
-	private Gmm(Class<? extends GroundMotionModel> delegate, String name, CoefficientContainer coeffs) {
+	private Gmm(Class<? extends GroundMotionModel> delegate, String name,
+			CoefficientContainer coeffs) {
 		this.delegate = delegate;
 		this.name = name;
 		imts = coeffs.imts();
@@ -282,8 +286,9 @@ public enum Gmm {
 	}
 
 	/**
-	 * Retreives an instance of a {@code GroundMotionModel}, either by creating
-	 * a new one, or fetching from a cache.
+	 * Retreive an instance of a {@code GroundMotionModel}, either by creating a
+	 * new one, or fetching from a cache.
+	 * 
 	 * @param imt intensity measure type of instance
 	 * @return the model implementation
 	 * @throws UncheckedExecutionException if there is an instantiation problem
@@ -293,8 +298,9 @@ public enum Gmm {
 	}
 
 	/**
-	 * Retrieves multiple {@code GroundMotionModel} instances, either by
-	 * creating new ones, or fetching them from a cache.
+	 * Retrieve multiple {@code GroundMotionModel} instances, either by creating
+	 * new ones, or fetching them from a cache.
+	 * 
 	 * @param gmms to retrieve
 	 * @param imt
 	 * @return a {@code Map} of {@code GroundMotionModel} instances
@@ -311,9 +317,10 @@ public enum Gmm {
 	// TODO deprecate/delete above??
 
 	/**
-	 * Retrieves a {@code Table} of {@code GroundMotionModel} instances for a
+	 * Retrieve a {@code Table} of {@code GroundMotionModel} instances for a
 	 * range of {@code Imt}s, either by creating new ones, or fetching them from
 	 * a cache.
+	 * 
 	 * @param gmms to retrieve
 	 * @param imts
 	 * @return a {@code Table} of {@code GroundMotionModel} instances
@@ -334,8 +341,9 @@ public enum Gmm {
 	}
 
 	/**
-	 * Returns the {@code Set} of the intensity measure types ({@code Imt}s)
+	 * Return the {@code Set} of the intensity measure types ({@code Imt}s)
 	 * supported by this {@code Gmm}.
+	 * 
 	 * @return the {@code Set} of supported {@code Imt}s
 	 */
 	public Set<Imt> supportedIMTs() {
@@ -343,8 +351,9 @@ public enum Gmm {
 	}
 
 	/**
-	 * Returns the {@code Set} of the intensity measure types ({@code Imt}s)
+	 * Return the {@code Set} of the intensity measure types ({@code Imt}s)
 	 * supported by all of the supplied {@code Gmm}s.
+	 * 
 	 * @param gmms models for which to return common {@code Imt} supoort
 	 * @return the {@code Set} of supported {@code Imt}s
 	 */
@@ -357,8 +366,9 @@ public enum Gmm {
 	}
 
 	/**
-	 * Returns the set of spectral acceleration {@code Imt}s that are supported
+	 * Return the set of spectral acceleration {@code Imt}s that are supported
 	 * by this {@code Gmm}.
+	 * 
 	 * @return a {@code Set} of spectral acceleration IMTs
 	 */
 	public Set<Imt> responseSpectrumIMTs() {
@@ -366,7 +376,7 @@ public enum Gmm {
 	}
 
 	/**
-	 * Returns the set of spectral acceleration {@code Imt}s that are common to
+	 * Return the set of spectral acceleration {@code Imt}s that are common to
 	 * the supplied {@code Gmm}s.
 	 * 
 	 * @param gmms ground motion models
@@ -374,6 +384,14 @@ public enum Gmm {
 	 */
 	public static Set<Imt> responseSpectrumIMTs(Collection<Gmm> gmms) {
 		return Sets.intersection(supportedIMTs(gmms), Imt.saImts());
+	}
+
+	/**
+	 * Return
+	 * @return
+	 */
+	public Constraints inputConstraints() {
+		return new GmmInput.DefaultConstraints();
 	}
 
 }

@@ -20,10 +20,13 @@ import java.util.BitSet;
 import java.util.Map;
 
 import org.opensha2.calc.Site;
+import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.model.Distance;
 import org.opensha2.eq.model.Rupture;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
 
 /**
  * Earthquake {@link Rupture} and receiver {@link Site} property container used
@@ -87,7 +90,8 @@ public class GmmInput {
 	 * @param z1p0 depth to V<sub>s</sub>=1.0 km/sec (in km)
 	 */
 	protected GmmInput(double Mw, double rJB, double rRup, double rX, double dip, double width,
-		double zTop, double zHyp, double rake, double vs30, boolean vsInf, double z2p5, double z1p0) {
+			double zTop, double zHyp, double rake, double vs30, boolean vsInf, double z2p5,
+			double z1p0) {
 
 		this.Mw = Mw;
 
@@ -308,85 +312,96 @@ public class GmmInput {
 	 */
 	@SuppressWarnings("javadoc")
 	public enum Field {
-		
-		// @formatter:off
-		
-		MAG("Magnitude",
-			"The moment magnitude of an earthquake",
-			null,
-			6.5),
-		
-		RJB("Joyner-Boore Distance",
-			"The shortest distance from a site to the surface projection of a rupture, in kilometers",
-			DISTANCE_UNIT, 
-			10.0),
-			
-		RRUP("Rupture Distance",
-			"The shortest distance from a site to a rupture, in kilometers",
-			DISTANCE_UNIT, 
-			10.3),
-			
-		RX("Distance X",
-			"The shortest distance from a site to the extended trace a fault, in kilometers",
-			DISTANCE_UNIT,
-			10.0),
-			
-		DIP("Dip",
-			"The dip of a rupture surface, in degrees",
-			ANGLE_UNIT,
-			90.0),
-			
-		WIDTH("Width",
-			"The width of a rupture surface, in kilometers",
-			DISTANCE_UNIT,
-			14.0),
-			
-		ZTOP("Depth",
-			"The depth to the top of a rupture surface, in kilometers and positive-down",
-			DISTANCE_UNIT,
-			0.5),
-			
-		ZHYP("Hypocentral Depth",
-			"The depth to the hypocenter on a rupture surface, in kilometers and positive-down",
-			DISTANCE_UNIT,
-			7.5),
-			
-		RAKE("Rake",
-			"The rake (or sense of slip) of a rupture surface, in degrees",
-			ANGLE_UNIT,
-			0.0),
-			
-		VS30("Vs30",
-			"The average shear-wave velocity down to 30 meters, in kilometers per second",
-			"km/s",
-			760.0),
-			
-		VSINF("Vs30 Inferred",
-			"Whether Vs30 was measured or inferred",
-			null,
-			1.0),
-		Z2P5("Depth to Vs=2.5 km/s",
-			"Depth to a shear-wave velocity of 2.5 kilometers per second, in kilometers",
-			DISTANCE_UNIT,
-			NaN),
-			
-		Z1P0("Depth to Vs=1.0 km/s",
-			"Depth to a shear-wave velocity of 1.0 kilometers per second, in kilometers",
-			DISTANCE_UNIT,
-			NaN);
-		
+
+		MAG(
+				"Magnitude",
+				"The moment magnitude of an earthquake",
+				null,
+				6.5),
+
+		RJB(
+				"Joyner-Boore Distance",
+				"The shortest distance from a site to the surface projection of a rupture, in kilometers",
+				DISTANCE_UNIT,
+				10.0),
+
+		RRUP(
+				"Rupture Distance",
+				"The shortest distance from a site to a rupture, in kilometers",
+				DISTANCE_UNIT,
+				10.3),
+
+		RX(
+				"Distance X",
+				"The shortest distance from a site to the extended trace a fault, in kilometers",
+				DISTANCE_UNIT,
+				10.0),
+
+		DIP(
+				"Dip",
+				"The dip of a rupture surface, in degrees",
+				ANGLE_UNIT,
+				90.0),
+
+		WIDTH(
+				"Width",
+				"The width of a rupture surface, in kilometers",
+				DISTANCE_UNIT,
+				14.0),
+
+		ZTOP(
+				"Depth",
+				"The depth to the top of a rupture surface, in kilometers and positive-down",
+				DISTANCE_UNIT,
+				0.5),
+
+		ZHYP(
+				"Hypocentral Depth",
+				"The depth to the hypocenter on a rupture surface, in kilometers and positive-down",
+				DISTANCE_UNIT,
+				7.5),
+
+		RAKE(
+				"Rake",
+				"The rake (or sense of slip) of a rupture surface, in degrees",
+				ANGLE_UNIT,
+				0.0),
+
+		VS30(
+				"Vs30",
+				"The average shear-wave velocity down to 30 meters, in kilometers per second",
+				"km/s",
+				760.0),
+
+		VSINF(
+				"Vs30 Inferred",
+				"Whether Vs30 was measured or inferred",
+				null,
+				1.0),
+
+		Z2P5(
+				"Depth to Vs=2.5 km/s",
+				"Depth to a shear-wave velocity of 2.5 kilometers per second, in kilometers",
+				DISTANCE_UNIT,
+				NaN),
+
+		Z1P0(
+				"Depth to Vs=1.0 km/s",
+				"Depth to a shear-wave velocity of 1.0 kilometers per second, in kilometers",
+				DISTANCE_UNIT,
+				NaN);
+
 		public final String label;
 		public final String info;
 		public final String unit;
 		public final double defaultValue;
-		
+
 		private Field(String label, String info, String unit, double defaultValue) {
 			this.label = label;
 			this.info = info;
 			this.unit = unit;
 			this.defaultValue = defaultValue;
 		}
-
 
 		@Override public String toString() {
 			return this.name().toLowerCase();
@@ -422,5 +437,108 @@ public class GmmInput {
 		keyValueMap.put(Z1P0, z1p0);
 		return keyValueMap;
 	}
-		
+
+	/**
+	 * The constraints associated with each {@code GmmInput} field. All methods
+	 * return an {@link Optional} whose {@link Optional#isPresent()} method will
+	 * indicate whether a field is used by a {@code GroundMotionModel}, or not.
+	 */
+	@SuppressWarnings("javadoc")
+	public static interface Constraints {
+		// @formatter:off
+		Optional<Range<Double>> mag();
+		Optional<Range<Double>> rJB();
+		Optional<Range<Double>> rRup();
+		Optional<Range<Double>> rX();
+		Optional<Range<Double>> dip();
+		Optional<Range<Double>> width();
+		Optional<Range<Double>> zTop();
+		Optional<Range<Double>> zHyp();
+		Optional<Range<Double>> rake();
+		Optional<Range<Double>> vs30();
+		Optional<Boolean> vsInf();
+		Optional<Range<Double>> z1p0();
+		Optional<Range<Double>> v2p5();
+	}
+
+	/*
+	 * Convenience Constraints implementation with common default values.
+	 */
+	static class DefaultConstraints implements Constraints {
+		// @formatter:off
+		@Override public Optional<Range<Double>> mag() {
+			return Optional.of(Range.closed(5.0, 8.0));
+		}
+
+		@Override public Optional<Range<Double>> rJB() {
+			return Optional.of(Range.closed(0.0, 1000.0));
+		}
+
+		@Override public Optional<Range<Double>> rRup() {
+			return Optional.of(Range.closed(0.0, 1000.0));
+		}
+
+		@Override public Optional<Range<Double>> rX() {
+			return Optional.of(Range.closed(0.0, 1000.0));
+		}
+
+		@Override public Optional<Range<Double>> dip() {
+			return Optional.of(Faults.DIP_RANGE);
+		}
+
+		@Override public Optional<Range<Double>> width() {
+			return Optional.of(Faults.CRUSTAL_WIDTH_RANGE);
+		}
+
+		@Override public Optional<Range<Double>> zTop() {
+			return Optional.of(Range.closed(0.0, 20.0));
+		}
+
+		@Override public Optional<Range<Double>> zHyp() {
+			return Optional.of(Range.closed(0.0, 20.0));
+		}
+
+		@Override public Optional<Range<Double>> rake() {
+			return Optional.of(Faults.RAKE_RANGE);
+		}
+
+		@Override public Optional<Range<Double>> vs30() {
+			return Optional.of(Range.closed(150.0, 1500.0));
+		}
+
+		@Override public Optional<Boolean> vsInf() {
+			return Optional.of(true);
+		}
+
+		@Override public Optional<Range<Double>> z1p0() {
+			return Optional.of(Range.closed(0.0, 5.0));
+		}
+
+		@Override public Optional<Range<Double>> v2p5() {
+			return Optional.of(Range.closed(0.0, 10.0));
+		}
+
+	}
+
+	/*
+	 * Convenience Constraints implementation with all methods returning
+	 * Optional.absent().
+	 */
+	static class AllAbsentConstraints implements Constraints {
+		// @formatter:off
+		@Override public Optional<Range<Double>> mag() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> rJB() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> rRup() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> rX() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> dip() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> width() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> zTop() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> zHyp() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> rake() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> vs30() { return Optional.absent(); }
+		@Override public Optional<Boolean> vsInf() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> z1p0() { return Optional.absent(); }
+		@Override public Optional<Range<Double>> v2p5() { return Optional.absent(); }
+	}
+
 }
