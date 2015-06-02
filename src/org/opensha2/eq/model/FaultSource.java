@@ -161,6 +161,7 @@ public class FaultSource implements Source {
 
 		// required
 		String name;
+		Integer id;
 		LocationList trace;
 		Double dip;
 		Double width;
@@ -175,6 +176,11 @@ public class FaultSource implements Source {
 
 		Builder name(String name) {
 			this.name = validateName(name);
+			return this;
+		}
+		
+		Builder id(int id) {
+			this.id = id;
 			return this;
 		}
 
@@ -239,19 +245,20 @@ public class FaultSource implements Source {
 			return this;
 		}
 
-		void validateState(String id) {
-			checkState(!built, "This %s instance as already been used", id);
-			checkState(name != null, "%s name not set", id);
-			checkState(trace != null, "%s trace not set", id);
-			checkState(dip != null, "%s dip not set", id);
-			checkState(width != null, "%s width not set", id);
-			checkState(depth != null, "%s depth not set", id);
-			checkState(rake != null, "%s rake not set", id);
-			checkState(mfds.size() > 0, "%s has no MFDs", id);
-			checkState(spacing != null, "%s surface grid spacing not set", id);
-			checkState(rupScaling != null, "%s rupture-scaling relation not set", id);
-			checkState(rupFloating != null, "%s rupture-floating model not set", id);
-			checkState(rupVariability != null, "%s rupture-area variability flag not set", id);
+		void validateState(String buildId) {
+			checkState(!built, "This %s instance as already been used", buildId);
+			checkState(name != null, "%s name not set", buildId);
+			checkState(id != null, "%s id not set", buildId);
+			checkState(trace != null, "%s trace not set", buildId);
+			checkState(dip != null, "%s dip not set", buildId);
+			checkState(width != null, "%s width not set", buildId);
+			checkState(depth != null, "%s depth not set", buildId);
+			checkState(rake != null, "%s rake not set", buildId);
+			checkState(mfds.size() > 0, "%s has no MFDs", buildId);
+			checkState(spacing != null, "%s surface grid spacing not set", buildId);
+			checkState(rupScaling != null, "%s rupture-scaling relation not set", buildId);
+			checkState(rupFloating != null, "%s rupture-floating model not set", buildId);
+			checkState(rupVariability != null, "%s rupture-area variability flag not set", buildId);
 			built = true;
 		}
 

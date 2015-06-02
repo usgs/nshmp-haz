@@ -3,6 +3,7 @@ package org.opensha2.calc;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -81,19 +82,28 @@ class Deagg {
 	 */
 	static class Data {
 		
-		private double[][][] data; // [M][R][ε]
+		private double[][][] mrεMatrix; // [M][R][ε]
 
 		private double mBar, rBar, εBar; // these are total
 		private double totalRate; // TODO compare to orignal PoE
-		private double totalRateWithinRange;
 
 		// wieghted m and r position data
-		private double[][] mValues;
-		private double[][] rValues;
-		private double[][] mrWeights;
+		private double[][] mPosValues;
+		private double[][] rPosValues;
+		private double[][] mrPosWeights;
+		
+		private Map<SourceSet<Source>, Collection<Source>> topContributors;
 
 		private void add(Data data) {
-			
+			DataUtils.add(this.mrεMatrix, data.mrεMatrix);
+			this.mBar += data.mBar;
+			this.rBar += data.rBar;
+			this.εBar += data.εBar;
+			this.totalRate += totalRate;
+			DataUtils.add(this.mPosValues, data.mPosValues);
+			DataUtils.add(this.rPosValues, data.rPosValues);
+			DataUtils.add(this.mrPosWeights, data.mrPosWeights);
+			topContributors.putAll(data.topContributors);
 		}
 
 	}

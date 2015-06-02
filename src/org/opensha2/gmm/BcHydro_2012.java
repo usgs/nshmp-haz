@@ -58,7 +58,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
 	private static final class Coefficients {
 
-		final double vlin, b, t1, t2, t6, t10, t11, t12, t13, t14, dC1mid;
+		final double vlin, b, θ1, θ2, θ6, θ10, θ11, θ12, θ13, θ14, ΔC1mid;
 
 		// not currently used
 		// final double t7, t8, t15, t16, dC1lo, dC1hi;
@@ -67,15 +67,15 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 			Map<String, Double> coeffs = cc.get(imt);
 			vlin = coeffs.get("vlin");
 			b = coeffs.get("b");
-			t1 = coeffs.get("t1");
-			t2 = coeffs.get("t2");
-			t6 = coeffs.get("t6");
-			t10 = coeffs.get("t10");
-			t11 = coeffs.get("t11");
-			t12 = coeffs.get("t12");
-			t13 = coeffs.get("t13");
-			t14 = coeffs.get("t14");
-			dC1mid = coeffs.get("dC1mid");
+			θ1 = coeffs.get("t1");
+			θ2 = coeffs.get("t2");
+			θ6 = coeffs.get("t6");
+			θ10 = coeffs.get("t10");
+			θ11 = coeffs.get("t11");
+			θ12 = coeffs.get("t12");
+			θ13 = coeffs.get("t13");
+			θ14 = coeffs.get("t14");
+			ΔC1mid = coeffs.get("dC1mid");
 		}
 	}
 
@@ -89,12 +89,12 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
 
-		// pgaRock only required to compute non-linear site response when vs30
-		// is less than period-dependent vlin cutoff
-		double pgaRock = (in.vs30 < coeffs.vlin) ? calcMean(coeffsPGA, isSlab(), 0.0, in) : 0.0;
-
+		// pgaRock only required to compute non-linear site response
+		// when vs30 is less than period-dependent vlin cutoff
+		double pgaRock = (in.vs30 < coeffs.vlin) ?
+			exp(calcMean(coeffsPGA, isSlab(), 0.0, in)) :
+			0.0;
 		double μ = calcMean(coeffs, isSlab(), pgaRock, in);
-
 		return DefaultScalarGroundMotion.create(μ, SIGMA);
 	}
 
@@ -111,16 +111,16 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 		if (slab) zTop = min(zTop, 125.0);
 
 		// DELC fixed at 0.0;
-		double mCut = C1 + (slab ? DC1_SLAB : c.dC1mid);
-		double t13m = c.t13 * (10 - Mw) * (10 - Mw);
+		double mCut = C1 + (slab ? DC1_SLAB : c.ΔC1mid);
+		double t13m = c.θ13 * (10 - Mw) * (10 - Mw);
 		double fMag = (Mw <= mCut ? T4 : T5) * (Mw - mCut) + t13m;
 
 		// no depth term for interface events
-		double fDepth = slab ? c.t11 * (zTop - 60.) : 0.0;
+		double fDepth = slab ? c.θ11 * (zTop - 60.) : 0.0;
 
 		double vsS = min(in.vs30, VSS_MAX);
 
-		double fSite = c.t12 * log(vsS / c.vlin);
+		double fSite = c.θ12 * log(vsS / c.vlin);
 		if (in.vs30 < c.vlin) { // whether or not we use pgaRock
 			fSite += -c.b * log(pgaRock + C) + c.b * log(pgaRock + C * pow((vsS / c.vlin), N));
 		} else {
@@ -128,10 +128,10 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 			fSite += c.b * N * log(vsS / c.vlin);
 		}
 
-		return c.t1 +
+		return c.θ1 +
 			// c.t4 * delC1 ommitted b/c delC1=0
-			(c.t2 + (slab ? c.t14 : 0.0) + T3 * (Mw - 7.8)) *
-			log(rRup + C4 * exp((Mw - 6.0) * T9)) + c.t6 * rRup + (slab ? c.t10 : 0.0) + fMag +
+			(c.θ2 + (slab ? c.θ14 : 0.0) + T3 * (Mw - 7.8)) *
+			log(rRup + C4 * exp((Mw - 6.0) * T9)) + c.θ6 * rRup + (slab ? c.θ10 : 0.0) + fMag +
 			fDepth +
 			// fterm + no fterm for forearc sites
 			fSite;

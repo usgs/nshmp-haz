@@ -42,17 +42,9 @@ import java.util.Map;
  */
 public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 
-	// notes from original OpenSHA implementation TODO revisit
-	// NOTE RupTopDepthParam is used in a funny way here (see also Atkinson &
-	// Boore sub). Currently it is not adjusted when updating an earthquake
-	// rupture, but must be set manually. It defaults to 20km (the value
-	// imposed in the 2008 NSHMP Cascadia subduction interface model. Any other
-	// sources should update this value independently.
-
 	static final String NAME = "Youngs et al. (1997)";
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Youngs97.csv");
-	static final CoefficientContainer COEFFS_SA = new CoefficientContainer("ABsiteAmp.csv");
 
 	private static final double[] VGEO = { 760.0, 300.0, 475.0 };
 	private static final double GC0 = 0.2418;
@@ -82,30 +74,18 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 		}
 	}
 
-	private static final class SiteAmpCoefficients {
-
-		final double blin, b1, b2;
-
-		SiteAmpCoefficients(Imt imt, CoefficientContainer cc) {
-			Map<String, Double> coeffs = cc.get(imt);
-			blin = coeffs.get("blin");
-			b1 = coeffs.get("b1");
-			b2 = coeffs.get("b2");
-		}
-	}
-
 	private final Coefficients coeffs;
 	private final Coefficients coeffsPGA;
-	private final SiteAmpCoefficients coeffsSA;
+	private final BooreAtkinsonSiteAmp siteAmp;
 
 	YoungsEtAl_1997(final Imt imt) {
 		coeffs = new Coefficients(imt, COEFFS);
 		coeffsPGA = new Coefficients(PGA, COEFFS);
-		coeffsSA = new SiteAmpCoefficients(imt, COEFFS_SA);
+		siteAmp = new BooreAtkinsonSiteAmp(imt);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		double μ = calcMean(coeffs, coeffsPGA, coeffsSA, isSlab(), in);
+		double μ = calcMean(coeffs, coeffsPGA, siteAmp, isSlab(), in);
 		double σ = calcStdDev(coeffs, in.Mw);
 		return DefaultScalarGroundMotion.create(μ, σ);
 	}
@@ -113,7 +93,7 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	abstract boolean isSlab();
 
 	private static final double calcMean(final Coefficients c, final Coefficients cPGA,
-			final SiteAmpCoefficients cSA, final boolean slab, final GmmInput in) {
+			final BooreAtkinsonSiteAmp siteAmp, final boolean slab, final GmmInput in) {
 
 		double Mw = in.Mw;
 		double rRup = in.rRup;
@@ -161,7 +141,7 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 			double argp = exp(GEP * Mw);
 			double gndp = gndmp + cPGA.gc3 * log(rRup + 1.7818 * argp);
 			double pganl = exp(gndp);
-			gnd = gnd + baSiteAmp(cSA, pganl, vs30, VGEO[ir]);
+			gnd = gnd + siteAmp.calc(pganl, vs30, VGEO[ir]);
 		}
 		return gnd;
 
@@ -170,103 +150,6 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	private static final double calcStdDev(final Coefficients c, final double Mw) {
 		// same sigma for soil and rock; sigma capped at M=8 per Youngs et al.
 		return c.gc4 + c.gc5 * min(8.0, Mw);
-	}
-
-	// 12/12/2011 pp converted v1 and v2 to scalars
-	private static final double V1 = 180.0;
-	private static final double V2 = 300.0;
-
-	private static final double A1 = 0.030;
-	private static final double A2 = 0.090;
-	private static final double A2FAC = 0.405465108;
-
-	private static final double VREF = 760.0;
-	private static final double DX = 1.098612289; // ln(a2/a1)
-	private static final double DXSQ = 1.206948961;
-	private static final double DXCUBE = 1.325968960;
-
-	// ln(pga_low/0.1) where pga_low = 0.06
-	private static final double PLFAC = -0.510825624;
-
-	/*
-	 * Utility method returns a site response value that is a continuous
-	 * function of <code>vs30</code>: log(AMP at vs30)-log(AMP at vs30r). Value
-	 * at <code>vs30 == vs30r</code> is unity. This function was adapted from
-	 * hazSUBXngatest.f and is valid for 23 periods.
-	 * 
-	 * @param pganl reference pga
-	 * 
-	 * @param vs30 at a site of interest
-	 * 
-	 * @param vs30r reference vs30, usually one value for soil and another for
-	 * rock
-	 * 
-	 * @param per period index
-	 * 
-	 * @return the site response correction
-	 */
-	private static double baSiteAmp(final SiteAmpCoefficients c, final double pganl,
-			final double vs30, final double vs30r) {
-
-		double dy, dyr, site, siter = 0.0;
-
-		double bnl, bnlr;
-		// some site term precalcs that are not M or d dependent
-		if (V1 < vs30 && vs30 <= V2) {
-			bnl = (c.b1 - c.b2) * log(vs30 / V2) / log(V1 / V2) + c.b2;
-		} else if (V2 < vs30 && vs30 <= VREF) {
-			bnl = c.b2 * log(vs30 / VREF) / log(V2 / VREF);
-		} else if (vs30 <= V1) {
-			bnl = c.b1;
-		} else {
-			bnl = 0.0;
-		}
-
-		if (V1 < vs30r && vs30r <= V2) {
-			// repeat site term precalcs that are not M or d dependent @ ref.
-			// vs.
-			bnlr = (c.b1 - c.b2) * log(vs30r / V2) /
-				log(V1 / V2) + c.b2;
-		} else if (V2 < vs30r && vs30r <= VREF) {
-			bnlr = c.b2 * log(vs30r / VREF) / log(V2 / VREF);
-		} else if (vs30r <= V1) {
-			bnlr = c.b1;
-		} else {
-			bnlr = 0.0;
-		}
-
-		dy = bnl * A2FAC; // ADF added line
-		dyr = bnlr * A2FAC;
-		site = c.blin * log(vs30 / VREF);
-		siter = c.blin * log(vs30r / VREF);
-
-		// Second part, nonlinear siteamp reductions below.
-		if (pganl <= A1) {
-			site = site + bnl * PLFAC;
-			siter = siter + bnlr * PLFAC;
-		} else if (pganl <= A2) {
-			// extra lines smooth a kink in siteamp, pp 9-11 of boore sept
-			// report. c and d from p 10 of boore sept report. Smoothing
-			// introduces extra calcs in the range a1 < pganl < a2. Otherwise
-			// nonlin term same as in june-july. Many of these terms are fixed
-			// and are defined in data or parameter statements. Of course, if a1
-			// and a2 change from their sept 06 values the parameters will also
-			// have to be redefined. (a1,a2) represents a siteamp smoothing
-			// range (units g)
-			double cc = (3. * dy - bnl * DX) / DXSQ;
-			double dd = (bnl * DX - 2. * dy) / DXCUBE;
-			double pgafac = log(pganl / A1);
-			double psq = pgafac * pgafac;
-			site = site + bnl * PLFAC + (cc + dd * pgafac) * psq;
-			cc = (3. * dyr - bnlr * DX) / DXSQ;
-			dd = (bnlr * DX - 2. * dyr) / DXCUBE;
-			siter = siter + bnlr * PLFAC + (cc + dd * pgafac) * psq;
-		} else {
-			double pgafac = log(pganl / 0.1);
-			site = site + bnl * pgafac;
-			siter = siter + bnlr * pgafac;
-		}
-		return site - siter;
 	}
 
 	static final class Interface extends YoungsEtAl_1997 {

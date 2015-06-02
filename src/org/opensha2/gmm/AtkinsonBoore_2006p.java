@@ -1,8 +1,6 @@
 package org.opensha2.gmm;
-
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha2.gmm.Imt.PGA;
-import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
+import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
 
 /**
  * Modified form of the relationship for the Central and Eastern US by Atkinson
@@ -56,26 +54,20 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-
-		double μ = table.get(in.rRup, in.Mw);
-
-		// TODO Steve Harmsen has also included SA0P02 along with PGA but
-		// comments in fortran from Gail say bcfac scales with distance for PGA
-
-		// TODO I THINK THIS IS MISSING SFAC GFAC CONVERSIONS
-		//
-		// TODO reference?? I can't find an explicit reference for this formula;
-		// it is described in Atkinson (2008) p.1306
-		if (GmmUtils.ceusSiteClass(in.vs30) == SOFT_ROCK) {
-			if (imt == PGA) {
-				μ += -0.3 + 0.15 * Math.log10(in.rJB);
-			} else {
-				μ += bcfac;
-			}
-		}
-
-		return DefaultScalarGroundMotion.create(
-			GmmUtils.ceusMeanClip(imt, μ), SIGMA);
+		double r = Math.max(in.rRup, 1.8);
+		double μ = atkinsonTableValue(table, imt, in.Mw, r, in.vs30, bcfac);
+		return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ), SIGMA);
+	}
+	
+	public static void main(String[] args) {
+		AtkinsonBoore_2006p gmm = new AtkinsonBoore_2006p(Imt.PGA);
+		double m = atkinsonTableValue(gmm.table, Imt.PGA, 3.5, 4.0, 760.0, gmm.bcfac);
+		System.out.println(m);
+		System.out.println(Math.exp(m));
+		double clipped = GmmUtils.ceusMeanClip(Imt.PGA, m);
+		System.out.println(clipped);
+		System.out.println(Math.exp(clipped));
+		
 	}
 
 }

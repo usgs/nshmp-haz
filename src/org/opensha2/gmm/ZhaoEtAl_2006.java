@@ -22,9 +22,10 @@ import java.util.Map;
  * 
  * <p><b>Implementation notes:</b> <ol><li>When used for interface events, sigma
  * is computed using the generic value of tau, rather than the interface
- * specific value(see inline comments for more information).<li> <li>Hypocentral
+ * specific value (see inline comments for more information).<li><li>Hypocentral
  * depths for interface events are fixed at 20km.</li><li>Hypocentral depths for
- * slab events are set as the depth to top of rupture.</li></ol></p>
+ * slab events are set to {@code min(zTop, 125)}; minimum rupture distance
+ * (rRup) is 1.0 km.</li></ol></p>
  * 
  * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T.,
  * Takahashi, T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G.,
@@ -47,12 +48,12 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Zhao06.csv");
 
-	private static final double DEPTH_I = 20.0;
 	private static final double HC = 15.0;
 	private static final double MC_S = 6.3;
 	private static final double MC_I = 6.5;
 	private static final double GCOR = 6.88806;
-	private static final double MAX_DEPTH = 125.0;
+	private static final double MAX_SLAB_DEPTH = 125.0;
+	private static final double INTERFACE_DEPTH = 20.0;
 
 	private static final class Coefficients {
 
@@ -102,15 +103,13 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 	private static final double calcMean(final Coefficients c, final boolean slab, final GmmInput in) {
 
 		double Mw = in.Mw;
-		double rRup = in.rRup;
-		double zTop = in.zTop;
+		double rRup = Math.max(in.rRup, 1.0); // avoid ln(0) below
+		double zTop = slab ? min(in.zTop, MAX_SLAB_DEPTH) : INTERFACE_DEPTH;
 		double vs30 = in.vs30;
-
-		if (!slab) zTop = DEPTH_I;
 
 		double site = (vs30 >= 600.0) ? c.C1 : (vs30 >= 300.0) ? c.C2 : c.C3;
 
-		double hfac = (zTop < HC) ? 0.0 : min(zTop, MAX_DEPTH) - HC;
+		double hfac = (zTop < HC) ? 0.0 : -HC;
 
 		double m2 = Mw - (slab ? MC_S : MC_I);
 

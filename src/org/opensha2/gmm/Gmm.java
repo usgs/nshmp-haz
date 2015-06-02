@@ -1,5 +1,8 @@
 package org.opensha2.gmm;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -29,8 +32,6 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
  */
 public enum Gmm {
 
-	// TODO 2014 CEUS clamps (see recent emails with harmsen)
-
 	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
 	// high at large distances
 
@@ -39,29 +40,12 @@ public enum Gmm {
 	// TODO check if AtkinsonMacias using BooreAtkin siteAmp to get non-rock
 	// site response
 
-	// TODO most CEUS Gmm's have 0.4s coeffs that were linearly interpolated for
-	// special NRC project; consider removing them??
-
 	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified
 	// anywhere?
 
 	// TODO Port Gmm grid optimization tables
 
-	// TODO Ensure Atkinson sfac/gfac is implemented correctly
-	// TODO amean11 (fortran) has wrong median clamp values and short period
-	// ranges
-
 	// TODO is Atkinson Macias ok? finished?
-	// TODO is there a citation for Atkinson distance decay
-	// mean = mean - 0.3 + 0.15(log(rJB)) (ln or log10 ??)
-
-	// TODO ensure table lookups are using correct distance metric, some are
-	// rRup and some are rJB
-
-	// TODO check Fortran minimums (this note may have been written just
-	// regarding Gmm table lookups, Atkinson in particular)
-	// hazgrid A08' minR=1.8km; P11 minR = 1km; others?
-	// hazfx all (tables?) have minR = 0.11km
 
 	// TODO z1p0 in CY08 - this is now always km, CY08 needs updating (from m)
 
@@ -70,6 +54,8 @@ public enum Gmm {
 	// is
 	// imposed in hazFX - make sure 0.01 as PGA is handled corectly; may require
 	// change to period = 0.0
+
+	// TODO AbstractGmm ?? would store Imt
 
 	// NGA-West1 NSHMP 2008
 
@@ -110,6 +96,11 @@ public enum Gmm {
 			AtkinsonBoore_2003.COEFFS_GLOBAL_SLAB),
 
 	/** @see AtkinsonBoore_2003 */
+	AB_03_GLOB_SLAB_SAT_M7P8(AtkinsonBoore_2003.GlobalSlabLowMagSaturation.class,
+			AtkinsonBoore_2003.GlobalSlabLowMagSaturation.NAME,
+			AtkinsonBoore_2003.COEFFS_GLOBAL_SLAB),
+
+	/** @see AtkinsonBoore_2003 */
 	AB_03_CASC_INTER(AtkinsonBoore_2003.CascadiaInterface.class,
 			AtkinsonBoore_2003.CascadiaInterface.NAME, AtkinsonBoore_2003.COEFFS_CASC_INTERFACE),
 
@@ -117,6 +108,11 @@ public enum Gmm {
 	AB_03_CASC_SLAB(AtkinsonBoore_2003.CascadiaSlab.class, AtkinsonBoore_2003.CascadiaSlab.NAME,
 			AtkinsonBoore_2003.COEFFS_CASC_SLAB),
 
+	/** @see AtkinsonBoore_2003 */
+	AB_03_CASC_SLAB_SAT_M7P8(AtkinsonBoore_2003.CascadiaSlabLowMagSaturation.class,
+			AtkinsonBoore_2003.CascadiaSlabLowMagSaturation.NAME,
+			AtkinsonBoore_2003.COEFFS_CASC_SLAB),
+			
 	/** @see AtkinsonMacias_2009 */
 	AM_09_INTER(AtkinsonMacias_2009.class, AtkinsonMacias_2009.NAME, AtkinsonMacias_2009.COEFFS),
 
@@ -280,6 +276,8 @@ public enum Gmm {
 	}
 
 	private GroundMotionModel createInstance(Imt imt) throws Exception {
+		checkArgument(this.imts.contains(checkNotNull(imt)),
+			"Gmm: %s does not support Imt: %s", this.name(), imt.name());
 		Constructor<? extends GroundMotionModel> con = delegate.getDeclaredConstructor(Imt.class);
 		GroundMotionModel gmm = con.newInstance(imt);
 		return gmm;
@@ -290,7 +288,6 @@ public enum Gmm {
 	 * new one, or fetching from a cache.
 	 * 
 	 * @param imt intensity measure type of instance
-	 * @return the model implementation
 	 * @throws UncheckedExecutionException if there is an instantiation problem
 	 */
 	public GroundMotionModel instance(Imt imt) {
@@ -303,7 +300,6 @@ public enum Gmm {
 	 * 
 	 * @param gmms to retrieve
 	 * @param imt
-	 * @return a {@code Map} of {@code GroundMotionModel} instances
 	 * @throws UncheckedExecutionException if there is an instantiation problem
 	 */
 	public static Map<Gmm, GroundMotionModel> instances(Set<Gmm> gmms, Imt imt) {
@@ -323,7 +319,6 @@ public enum Gmm {
 	 * 
 	 * @param gmms to retrieve
 	 * @param imts
-	 * @return a {@code Table} of {@code GroundMotionModel} instances
 	 * @throws UncheckedExecutionException if there is an instantiation problem
 	 */
 	public static Table<Gmm, Imt, GroundMotionModel> instances(Set<Gmm> gmms, Set<Imt> imts) {
@@ -343,8 +338,6 @@ public enum Gmm {
 	/**
 	 * Return the {@code Set} of the intensity measure types ({@code Imt}s)
 	 * supported by this {@code Gmm}.
-	 * 
-	 * @return the {@code Set} of supported {@code Imt}s
 	 */
 	public Set<Imt> supportedIMTs() {
 		return imts;
@@ -354,8 +347,7 @@ public enum Gmm {
 	 * Return the {@code Set} of the intensity measure types ({@code Imt}s)
 	 * supported by all of the supplied {@code Gmm}s.
 	 * 
-	 * @param gmms models for which to return common {@code Imt} supoort
-	 * @return the {@code Set} of supported {@code Imt}s
+	 * @param gmms models for which to return common {@code Imt} support
 	 */
 	public static Set<Imt> supportedIMTs(Collection<Gmm> gmms) {
 		Set<Imt> imts = EnumSet.allOf(Imt.class);
@@ -368,27 +360,23 @@ public enum Gmm {
 	/**
 	 * Return the set of spectral acceleration {@code Imt}s that are supported
 	 * by this {@code Gmm}.
-	 * 
-	 * @return a {@code Set} of spectral acceleration IMTs
 	 */
 	public Set<Imt> responseSpectrumIMTs() {
 		return Sets.intersection(imts, Imt.saImts());
 	}
 
 	/**
-	 * Return the set of spectral acceleration {@code Imt}s that are common to
-	 * the supplied {@code Gmm}s.
+	 * Return the set of spectral acceleration (SA) {@code Imt}s that are common
+	 * to the supplied {@code Gmm}s.
 	 * 
-	 * @param gmms ground motion models
-	 * @return a {@code Set} of common spectral acceleration {@code Imt}s
+	 * @param gmms models for which to return common SA {@code Imt} support
 	 */
 	public static Set<Imt> responseSpectrumIMTs(Collection<Gmm> gmms) {
 		return Sets.intersection(supportedIMTs(gmms), Imt.saImts());
 	}
 
 	/**
-	 * Return
-	 * @return
+	 * Return the input constraints for this {@code Gmm}.
 	 */
 	public Constraints inputConstraints() {
 		return new GmmInput.DefaultConstraints();

@@ -1,16 +1,15 @@
 package org.opensha2.gmm;
 
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha2.gmm.Imt.PGA;
-import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
+import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
 
 import java.util.Map;
 
 /**
- * Implementation of the Pezeshk, Zandieh, & Tavakoli (2011) ground motion
- * model for stable continental regions. This implementation matches that used
- * in the 2014 USGS NSHMP and uses table lookups (median) and functional forms
- * (sigma) to compute ground motions.
+ * Implementation of the Pezeshk, Zandieh, & Tavakoli (2011) ground motion model
+ * for stable continental regions. This implementation matches that used in the
+ * 2014 USGS NSHMP and uses table lookups (median) and functional forms (sigma)
+ * to compute ground motions.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -35,16 +34,16 @@ import java.util.Map;
 public final class PezeshkEtAl_2011 implements GroundMotionModel {
 
 	static final String NAME = "Pezeshk et al. (2011)";
-	
+
 	static final CoefficientContainer COEFFS = new CoefficientContainer("P11.csv");
 
 	private static final double SIGMA_FAC = -6.95e-3;
 
 	private static final class Coefficients {
-		
+
 		final Imt imt;
 		final double c12, c13, c14, bcfac;
-		
+
 		Coefficients(Imt imt, CoefficientContainer cc) {
 			this.imt = imt;
 			Map<String, Double> coeffs = cc.get(imt);
@@ -54,41 +53,22 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 			bcfac = coeffs.get("bcfac");
 		}
 	}
-	
+
 	private final Coefficients coeffs;
 	private final GmmTable table;
-	
+
 	PezeshkEtAl_2011(final Imt imt) {
 		coeffs = new Coefficients(imt, COEFFS);
 		table = GmmTables.getPezeshk11(imt);
 	}
 
-	@Override
-	public final ScalarGroundMotion calc(final GmmInput in) {
-
-		double μ = table.get(in.rRup, in.Mw);
-		
-		// TODO Steve Harmsen has also included SA0P02 along with PGA but
-		// comments in fortran from Gail say bcfac scales with distance for PGA
-		//
-		// This scaling is also applied to P11 in 2014 NSHMP codes
-		//
-		// TODO I can't find an explicit reference for this formula; it is
-		// described in Atkinson (2008) p.1306
-		if (GmmUtils.ceusSiteClass(in.vs30) == SOFT_ROCK) {
-			if (coeffs.imt == PGA) {
-				μ += - 0.3 + 0.15 * Math.log10(in.rJB);
-			} else {
-				μ += coeffs.bcfac;
-			}
-		}
-		
-		μ = GmmUtils.ceusMeanClip(coeffs.imt, μ);
+	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+		double r = Math.max(in.rRup, 1.0);
+		double μ = atkinsonTableValue(table, coeffs.imt, in.Mw, r, in.vs30, coeffs.bcfac);
 		double σ = calcStdDev(coeffs, in.Mw);
-		
-		return DefaultScalarGroundMotion.create(μ, σ);
+		return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(coeffs.imt, μ), σ);
 	}
-	
+
 	private static double calcStdDev(final Coefficients c, final double Mw) {
 		double σ = (Mw <= 7.0) ? c.c12 * Mw + c.c13 : SIGMA_FAC * Mw + c.c14;
 		return σ * BASE_10_TO_E;
