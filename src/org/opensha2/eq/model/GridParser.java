@@ -4,15 +4,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static org.opensha2.eq.model.SourceAttribute.FOCAL_MECH_MAP;
+import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.MAG_DEPTH_MAP;
 import static org.opensha2.eq.model.SourceAttribute.MAX_DEPTH;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
+import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha2.eq.model.SourceAttribute.STRIKE;
 import static org.opensha2.eq.model.SourceAttribute.TYPE;
 import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceType.GRID;
 import static org.opensha2.util.Parsing.readDouble;
+import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readEnum;
 import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.stringToEnumWeightMap;
@@ -118,9 +120,12 @@ class GridParser extends DefaultHandler {
 
 			case GRID_SOURCE_SET:
 				String name = readString(NAME, atts);
+				int id = readInt(ID, atts);
 				double weight = readDouble(WEIGHT, atts);
-				sourceSetBuilder = new GridSourceSet.Builder()
+				sourceSetBuilder = new GridSourceSet.Builder();
+				sourceSetBuilder
 					.name(name)
+					.id(id)
 					.weight(weight);
 				
 				sourceSetBuilder.gmms(gmmSet);

@@ -49,6 +49,7 @@ import com.google.common.collect.Range;
 public class FaultSource implements Source {
 
 	final String name;
+	final int id;
 	final LocationList trace;
 	final double dip;
 	final double width;
@@ -63,11 +64,22 @@ public class FaultSource implements Source {
 	private final List<List<Rupture>> ruptureLists; // 1:1 with Mfds
 
 	// package privacy for subduction subclass
-	FaultSource(String name, LocationList trace, double dip, double width, GriddedSurface surface,
-		double rake, List<IncrementalMfd> mfds, double spacing, RuptureScaling rupScaling,
-		RuptureFloating rupFloating, boolean rupVariability) {
+	FaultSource(
+			String name,
+			int id,
+			LocationList trace,
+			double dip,
+			double width,
+			GriddedSurface surface,
+			double rake,
+			List<IncrementalMfd> mfds,
+			double spacing,
+			RuptureScaling rupScaling,
+			RuptureFloating rupFloating,
+			boolean rupVariability) {
 
 		this.name = name;
+		this.id = id;
 		this.trace = trace;
 		this.dip = dip;
 		this.width = width;
@@ -178,7 +190,7 @@ public class FaultSource implements Source {
 			this.name = validateName(name);
 			return this;
 		}
-		
+
 		Builder id(int id) {
 			this.id = id;
 			return this;
@@ -272,7 +284,7 @@ public class FaultSource implements Source {
 			DefaultGriddedSurface surface = DefaultGriddedSurface.builder().trace(trace)
 				.depth(depth).dip(dip).width(width).spacing(spacing).build();
 
-			return new FaultSource(name, trace, dip, width, surface, rake,
+			return new FaultSource(name, id, trace, dip, width, surface, rake,
 				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating, rupVariability);
 		}
 	}

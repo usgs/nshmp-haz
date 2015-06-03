@@ -112,7 +112,7 @@ public enum Gmm {
 	AB_03_CASC_SLAB_SAT_M7P8(AtkinsonBoore_2003.CascadiaSlabLowMagSaturation.class,
 			AtkinsonBoore_2003.CascadiaSlabLowMagSaturation.NAME,
 			AtkinsonBoore_2003.COEFFS_CASC_SLAB),
-			
+
 	/** @see AtkinsonMacias_2009 */
 	AM_09_INTER(AtkinsonMacias_2009.class, AtkinsonMacias_2009.NAME, AtkinsonMacias_2009.COEFFS),
 
@@ -291,6 +291,8 @@ public enum Gmm {
 	 * @throws UncheckedExecutionException if there is an instantiation problem
 	 */
 	public GroundMotionModel instance(Imt imt) {
+		// TODO we should probably use get() and implement better exception
+		// handling
 		return cache.getUnchecked(imt);
 	}
 

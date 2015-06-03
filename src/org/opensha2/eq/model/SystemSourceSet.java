@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.min;
-import static org.opensha2.data.DataUtils.validateWeight;
 import static org.opensha2.eq.Magnitudes.validateMag;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
@@ -14,7 +13,6 @@ import static org.opensha2.eq.model.Distance.Type.R_JB;
 import static org.opensha2.eq.model.Distance.Type.R_RUP;
 import static org.opensha2.eq.model.Distance.Type.R_X;
 import static org.opensha2.geo.Locations.horzDistanceFast;
-import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.BitSet;
 import java.util.EnumSet;
@@ -65,11 +63,11 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 
 	// NOTE the above Double lists are compact but mutable: Doubles.asList(...)
 
-	private SystemSourceSet(String name, double weight, GmmSet gmmSet,
+	private SystemSourceSet(String name, int id, double weight, GmmSet gmmSet,
 		List<GriddedSurface> sections, List<BitSet> bitsets, List<Double> mags, List<Double> rates,
 		List<Double> depths, List<Double> dips, List<Double> widths, List<Double> rakes) {
 
-		super(name, weight, gmmSet);
+		super(name, id, weight, gmmSet);
 
 		this.sections = sections;
 		this.bitsets = bitsets;
@@ -164,17 +162,12 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 	 * repeatedly called in order to ensure correctly ordered fields when
 	 * iterating ruptures.
 	 */
-	static class Builder {
+	static class Builder extends AbstractSourceSet.Builder {
 
 		// Unfiltered UCERF3: FM31 = 253,706 FM32 = 305,709
 		static final int RUP_SET_SIZE = 306000;
 
 		static final String ID = "SystemSourceSet.Builder";
-		boolean built = false;
-
-		private String name;
-		private Double weight;
-		private GmmSet gmmSet;
 
 		private List<GriddedSurface> sections;
 		private final List<BitSet> bitsets = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
@@ -184,21 +177,6 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 		private final List<Double> dips = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
 		private final List<Double> widths = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
 		private final List<Double> rakes = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
-
-		Builder name(String name) {
-			this.name = validateName(name);
-			return this;
-		}
-
-		Builder weight(double weight) {
-			this.weight = validateWeight(weight);
-			return this;
-		}
-
-		Builder gmms(GmmSet gmmSet) {
-			this.gmmSet = checkNotNull(gmmSet);
-			return this;
-		}
 
 		Builder sections(List<GriddedSurface> sections) {
 			checkNotNull(sections, "Section surface list is null");
@@ -249,37 +227,33 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 			return this;
 		}
 
-		void validateState(String id) {
-			checkState(!built, "This %s instance as already been used", id);
-			checkState(name != null, "%s name not set", id);
-			checkState(weight != null, "%s weight not set", id);
-			checkState(gmmSet != null, "%s ground motion models not set", id);
+		@Override void validateState(String buildId) {
+			super.validateState(buildId);
 
-			checkState(sections.size() > 0, "%s no sections added", id);
-			checkState(bitsets.size() > 0, "%s no index lists added", id);
+			checkState(sections.size() > 0, "%s no sections added", buildId);
+			checkState(bitsets.size() > 0, "%s no index lists added", buildId);
 
 			int target = bitsets.size();
-			checkSize(mags.size(), target, id, "magnitudes");
-			checkSize(rates.size(), target, id, "rates");
-			checkSize(depths.size(), target, id, "depths");
-			checkSize(dips.size(), target, id, "dips");
-			checkSize(widths.size(), target, id, "widths");
-			checkSize(rakes.size(), target, id, "rakes");
-			built = true;
+			checkSize(mags.size(), target, buildId, "magnitudes");
+			checkSize(rates.size(), target, buildId, "rates");
+			checkSize(depths.size(), target, buildId, "depths");
+			checkSize(dips.size(), target, buildId, "dips");
+			checkSize(widths.size(), target, buildId, "widths");
+			checkSize(rakes.size(), target, buildId, "rakes");
 		}
 
 		private static void checkSize(int size, int target, String classId, String dataId) {
 			checkState(size == target, "%s too few %s [%s of %s]", classId, dataId, size, target);
 		}
 
-		// TODO consider wrapping Doubles.asList() Lists in
-		// ForwardingList that overrides set(int, double)
-
 		SystemSourceSet build() {
 			validateState(ID);
 
 			return new SystemSourceSet(
-				name, weight, gmmSet,
+				name,
+				id,
+				weight,
+				gmmSet,
 				ImmutableList.copyOf(sections),
 				ImmutableList.copyOf(bitsets),
 				Doubles.asList(Doubles.toArray(mags)),

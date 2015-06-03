@@ -95,7 +95,7 @@ public class HazardCurve {
 //		log.info(config.toString());
 
 		Builder<Site, HazardResult> resultTable = ImmutableMap.builder();
-		for (Site site : config.sites) {
+		for (Site site : config.sites()) {
 			System.out.println(site.name);
 			HazardResult result = calc(model, config, site);
 			resultTable.put(site, result);

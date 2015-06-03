@@ -28,6 +28,10 @@ public final class SlabSourceSet implements SourceSet<PointSource> {
 	@Override public final String name() {
 		return delegate.name();
 	}
+	
+	@Override public int id() {
+		return delegate.id();
+	}
 
 	@Override public final String toString() {
 		return delegate.toString();

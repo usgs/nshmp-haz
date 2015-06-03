@@ -16,6 +16,11 @@ import com.google.common.base.Predicate;
 public interface SourceSet<T extends Source> extends Named, Iterable<T>, Comparable<SourceSet<T>> {
 
 	/**
+	 * A unique integer id.
+	 */
+	public int id();
+	
+	/**
 	 * The {@code SourceType} identifier.
 	 */
 	public SourceType type();

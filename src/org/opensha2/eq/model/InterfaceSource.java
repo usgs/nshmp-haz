@@ -38,12 +38,23 @@ public class InterfaceSource extends FaultSource {
 
 	final LocationList lowerTrace;
 
-	private InterfaceSource(String name, LocationList upperTrace, LocationList lowerTrace,
-		double dip, double width, GriddedSurface surface, double rake, List<IncrementalMfd> mfds,
-		double spacing, RuptureScaling rupScaling, RuptureFloating rupFloating,
-		boolean rupVariability) {
+	private InterfaceSource(
+			String name,
+			int id,
+			LocationList upperTrace,
+			LocationList lowerTrace,
+			double dip,
+			double width,
+			GriddedSurface surface,
+			double rake,
+			List<IncrementalMfd> mfds,
+			double spacing,
+			RuptureScaling rupScaling,
+			RuptureFloating rupFloating,
+			boolean rupVariability) {
 
-		super(name, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling, rupFloating,
+		super(name, id, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling,
+			rupFloating,
 			rupVariability);
 
 		this.lowerTrace = (lowerTrace == null) ? surface.getEvenlyDiscritizedLowerEdge()
@@ -147,7 +158,7 @@ public class InterfaceSource extends FaultSource {
 
 			}
 
-			return new InterfaceSource(name, trace, lowerTrace, dip, width, surface, rake,
+			return new InterfaceSource(name, id, trace, lowerTrace, dip, width, surface, rake,
 				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating, rupVariability);
 		}
 

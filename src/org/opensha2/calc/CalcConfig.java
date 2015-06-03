@@ -8,23 +8,21 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.data.DataUtils;
-import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Strings;
-import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -36,17 +34,13 @@ public final class CalcConfig {
 
 	static final String FILE_NAME = "config.json";
 
-	public final ExceedanceModel exceedanceModel;
-	public final double truncationLevel;
-
-	public final Set<Imt> imts;
-	
-	public final double[] defaultImls;
-	public final Map<Imt, double[]> customImls;
-	
-	public final Deagg deagg;
-
-	public final SiteSet sites;
+	final ExceedanceModel exceedanceModel;
+	final double truncationLevel;
+	final Set<Imt> imts;
+	final double[] defaultImls;
+	final Map<Imt, double[]> customImls;
+	final Deagg deagg;
+	final SiteSet sites;
 
 	private static final Gson GSON = new GsonBuilder()
 		.setPrettyPrinting()
@@ -55,27 +49,76 @@ public final class CalcConfig {
 		.registerTypeAdapter(SiteSet.class, new SiteSet.Deserializer())
 		.create();
 
+	// defaults
 	private CalcConfig() {
 
 		/*
 		 * Default values. These are initialized here because gson will not
 		 * deserialize field initialized final primitives and Strings.
 		 */
-		
-		// TODO consider adding TypeAdapter for enums that will throw an
-		// exception if invalid enum value is supplied in config.json
+
+		/*
+		 * TODO consider adding TypeAdapter for enums that will throw an
+		 * exception if invalid enum value is supplied in config.json
+		 * 
+		 * TODO consider strengthening immutability, however, methods provide
+		 * immutable views of those fields required outside package
+		 */
 
 		exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
 		truncationLevel = 3.0;
-
-		imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
-		
-		/* Slightly modified version of NSHM 5Hz curve, size = 20 */
+		imts = Sets.immutableEnumSet(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
+		// Slightly modified version of NSHM 5Hz curve, size = 20
 		defaultImls = new double[] { 0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19, 3.28, 4.92, 7.38 };
 		customImls = Maps.newHashMap();
-
 		deagg = new Deagg();
 		sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
+	}
+
+	// copy with imt override
+	private CalcConfig(CalcConfig config, Set<Imt> imts) {
+		this.exceedanceModel = config.exceedanceModel;
+		this.truncationLevel = config.truncationLevel;
+		this.imts = ImmutableSet.copyOf(imts);
+		this.defaultImls = config.defaultImls;
+		this.customImls = config.customImls;
+		this.deagg = config.deagg;
+		this.sites = config.sites;
+	}
+
+	/**
+	 * Load a calculation configuration from the resource at the specified
+	 * {@code path}.
+	 *
+	 * @param path to configuration file or resource
+	 * @throws IOException if problem encountered loading config
+	 */
+	public static CalcConfig load(Path path) throws IOException {
+		Path configPath = path.resolve(FILE_NAME);
+		Reader reader = Files.newBufferedReader(configPath, UTF_8);
+		CalcConfig config = GSON.fromJson(reader, CalcConfig.class);
+		reader.close();
+		return config;
+	}
+
+	/**
+	 * Create a copy of an existing calculation coinfiguration.
+	 * 
+	 * @param config to copy
+	 */
+	public static CalcConfig copyOf(CalcConfig config) {
+		return copyWithImts(config, config.imts);
+	}
+
+	/**
+	 * Create a copy of an existing calculation coinfiguration but with updated
+	 * {@link Imt}s.
+	 * 
+	 * @param config to copy
+	 * @param imts to use in calculations
+	 */
+	public static CalcConfig copyWithImts(CalcConfig config, Set<Imt> imts) {
+		return new CalcConfig(config, imts);
 	}
 
 	@Override public String toString() {
@@ -119,20 +162,21 @@ public final class CalcConfig {
 			.append(NEWLINE);
 
 		for (Site site : sites) {
-			sb.append("                 ").append(site.toString()).append(NEWLINE);
+			sb.append("                 ");
+			sb.append(site.toString());
+			sb.append(NEWLINE);
 		}
 
 		return sb.toString();
 	}
 
-	public double[] imlsForImt(Imt imt) {
-		return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
-	}
-	
 	/**
-	 * Returns models of the intensity measure levels for each {@code Imt} adressed
-	 * by this calculation. Note that the x-values in each sequence are in natural
-	 * log space.
+	 * Returns models of the intensity measure levels for each {@code Imt}
+	 * adressed by this calculation. The x-values in each sequence are in
+	 * natural log space. The {@code Map} returned by this method is an
+	 * immutable {@code EnumMap}.
+	 * 
+	 * @see Maps#immutableEnumMap(Map)
 	 */
 	public Map<Imt, ArrayXY_Sequence> logModelCurves() {
 		Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
@@ -142,9 +186,16 @@ public final class CalcConfig {
 			DataUtils.ln(imls);
 			curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
 		}
-		return curveMap;
+		return Maps.immutableEnumMap(curveMap);
 	}
-	
+
+	/**
+	 * Returns models of the intensity measure levels for each {@code Imt}
+	 * adressed by this calculation. The {@code Map} returned by this method is
+	 * an immutable {@code EnumMap}.
+	 * 
+	 * @see Maps#immutableEnumMap(Map)
+	 */
 	public Map<Imt, ArrayXY_Sequence> modelCurves() {
 		Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
 		for (Imt imt : imts) {
@@ -152,16 +203,21 @@ public final class CalcConfig {
 			imls = Arrays.copyOf(imls, imls.length);
 			curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
 		}
-		return curveMap;
+		return Maps.immutableEnumMap(curveMap);
 	}
 
+	private double[] imlsForImt(Imt imt) {
+		return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
+	}
 
-	public static CalcConfig load(Path path) throws IOException {
-		Path configPath = path.resolve(FILE_NAME);
-		Reader reader = Files.newBufferedReader(configPath, UTF_8);
-		CalcConfig config = GSON.fromJson(reader, CalcConfig.class);
-		reader.close();
-		return config;
+	/**
+	 * Returns an unmodifiable iterator over the {@code Site}s specified by this
+	 * configuration.
+	 * 
+	 * @see Iterables#unmodifiableIterable(Iterable)
+	 */
+	public Iterable<Site> sites() {
+		return Iterables.unmodifiableIterable(sites);
 	}
 
 	static void exportDefaults(Path path) throws IOException {
@@ -170,21 +226,9 @@ public final class CalcConfig {
 		writer.close();
 	}
 
-	// TODO clean
-	public static void main(String[] args) throws IOException {
-//		 Path path = Paths.get("..","nshmp-model-dev", "tmp", "config_calc3.json");
-		// exportDefaults(path);
+	// TODO comment and finalize
 
-		// Path path = Paths.get("tmp", "config", "config_nshm_imls.json");
-		// Path path = Paths.get("..","nshmp-model-dev", "models", "PEER",
-		// "Set2-Case2a1", "config.json");
-		Path path = Paths.get("..", "nshmp-model-dev", "models", "PEER", "Set1-Case1",
-			"config.json");
-		CalcConfig c = load(path);
-		System.out.println(c);
-	}
-
-	public static class Deagg {
+	public static final class Deagg {
 
 		public final double rMin;
 		public final double rMax;

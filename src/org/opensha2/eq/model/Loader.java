@@ -426,7 +426,7 @@ class Loader {
 	}
 
 	/*
-	 * Skips pesky __MACOSX resource fork files that creep into zip files.
+	 * Skips __MACOSX resource fork files that creep into zip files.
 	 * Others?
 	 */
 	private static enum ZipSkipFilter implements DirectoryStream.Filter<Path> {

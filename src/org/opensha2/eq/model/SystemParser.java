@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.eq.model.SourceAttribute.A;
 import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
+import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.INDICES;
 import static org.opensha2.eq.model.SourceAttribute.M;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
@@ -15,6 +16,7 @@ import static org.opensha2.eq.model.SourceAttribute.WIDTH;
 import static org.opensha2.util.Parsing.rangeStringToIntList;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readEnum;
+import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
 
 import java.io.IOException;
@@ -110,13 +112,15 @@ class SystemParser extends DefaultHandler {
 
 				case SYSTEM_SOURCE_SET:
 					String name = readString(NAME, atts);
+					int id = readInt(ID, atts);
 					double weight = readDouble(WEIGHT, atts);
 					sourceSetBuilder = new SystemSourceSet.Builder();
 					sourceSetBuilder
 						.name(name)
+						.id(id)
 						.weight(weight)
-						.gmms(gmmSet)
-						.sections(sections);
+						.gmms(gmmSet);
+					sourceSetBuilder.sections(sections);
 					log.info("   Sections: " + sections.size());
 					log.info("Rupture set: "  + name + "/" + RUPTURES_FILENAME);
 					log.info(" Set Weight: " + weight);

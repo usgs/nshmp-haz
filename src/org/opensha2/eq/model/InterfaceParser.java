@@ -6,6 +6,7 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
 import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
+import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
 import static org.opensha2.eq.model.SourceAttribute.RAKE;
 import static org.opensha2.eq.model.SourceAttribute.RUPTURE_FLOATING;
@@ -15,6 +16,7 @@ import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceAttribute.WIDTH;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readEnum;
+import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
 
 import java.io.IOException;
@@ -104,9 +106,12 @@ class InterfaceParser extends DefaultHandler {
 
 				case SUBDUCTION_SOURCE_SET:
 					String name = readString(NAME, atts);
+					int id = readInt(ID, atts);
 					double weight = readDouble(WEIGHT, atts);
-					sourceSetBuilder = new InterfaceSourceSet.Builder()
+					sourceSetBuilder = new InterfaceSourceSet.Builder();
+					sourceSetBuilder
 						.name(name)
+						.id(id)
 						.weight(weight)
 						.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
@@ -128,8 +133,10 @@ class InterfaceParser extends DefaultHandler {
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
+					int srcId = readInt(ID, atts);
 					sourceBuilder = new InterfaceSource.Builder();
 					sourceBuilder.name(srcName);
+					sourceBuilder.id(srcId);
 					sourceBuilder.ruptureScaling(rupScaling);
 					sourceBuilder.ruptureFloating(config.ruptureFloating);
 					sourceBuilder.ruptureVariability(config.ruptureVariability);

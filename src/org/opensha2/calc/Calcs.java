@@ -47,7 +47,10 @@ public class Calcs {
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public static HazardResult hazardCurve(HazardModel model, CalcConfig config, Site site)
+	public static HazardResult hazardCurve(
+			HazardModel model,
+			CalcConfig config,
+			Site site)
 			throws InterruptedException, ExecutionException {
 
 		AsyncList<HazardCurveSet> curveSetCollector = AsyncList.createWithCapacity(model.size());

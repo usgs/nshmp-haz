@@ -112,14 +112,16 @@ class FaultParser extends DefaultHandler {
 		}
 
 		try {
-			// @formatter:off
 			switch (e) {
 
 				case FAULT_SOURCE_SET:
 					String name = readString(NAME, atts);
 					double weight = readDouble(WEIGHT, atts);
-					sourceSetBuilder = new FaultSourceSet.Builder()
+					int id = readInt(ID, atts);
+					sourceSetBuilder = new FaultSourceSet.Builder();
+					sourceSetBuilder
 						.name(name)
+						.id(id)
 						.weight(weight)
 						.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
@@ -158,7 +160,7 @@ class FaultParser extends DefaultHandler {
 						.ruptureVariability(config.ruptureVariability)
 						.surfaceSpacing(config.surfaceSpacing);
 					log.fine("     Source: " + srcName + " [" + srcId + "]");
-					if (srcId<0) log.warning("  Invalid Id [" + srcId + ", " + srcName + "]");
+					if (srcId < 0) log.warning("  Invalid Id [" + srcId + ", " + srcName + "]");
 					break;
 
 				case INCREMENTAL_MFD:

@@ -7,6 +7,7 @@ import static java.util.logging.Level.FINEST;
 import static org.opensha2.eq.model.SourceAttribute.A;
 import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
+import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.M;
 import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
@@ -16,6 +17,7 @@ import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceAttribute.WIDTH;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readEnum;
+import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
 
 import java.io.IOException;
@@ -43,8 +45,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * and do not support epistemic or aleatory uncertainty on magnitude. These
  * restrictions could be lifted in the future.
  * 
- * NOTE: A ClusterSource wraps a FaultSourceSet that it delegates to for
- * various methods.
+ * NOTE: A ClusterSource wraps a FaultSourceSet that it delegates to for various
+ * methods.
  * 
  * @author Peter Powers
  */
@@ -112,9 +114,12 @@ class ClusterParser extends DefaultHandler {
 
 				case CLUSTER_SOURCE_SET:
 					String name = readString(NAME, atts);
+					int id = readInt(ID, atts);
 					double weight = readDouble(WEIGHT, atts);
-					clusterSetBuilder = new ClusterSourceSet.Builder()
+					clusterSetBuilder = new ClusterSourceSet.Builder();
+					clusterSetBuilder
 						.name(name)
+						.id(id)
 						.weight(weight)
 						.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
@@ -129,11 +134,12 @@ class ClusterParser extends DefaultHandler {
 					break;
 
 				case MAG_UNCERTAINTY:
-					// we could just ignore <MagUncertainty> bu favor explicitely
+					// we could just ignore <MagUncertainty> bu favor
+					// explicitely
 					// NOT supporting it for now.
 					throw new IllegalStateException(
 						"Cluster sources do no support magnitude uncertainty");
-					
+
 				case SOURCE_PROPERTIES:
 					// this isn't really needed for cluster sources,
 					// but nested faults can't be built without it
@@ -144,10 +150,14 @@ class ClusterParser extends DefaultHandler {
 				case CLUSTER:
 					String clustName = readString(NAME, atts);
 					double clustWeight = readDouble(WEIGHT, atts);
-					clusterBuilder = new ClusterSource.Builder()
-						.rate(clusterRate);
-					faultSetBuilder = new FaultSourceSet.Builder()
+					int clustId = readInt(ID, atts);
+					clusterBuilder = new ClusterSource.Builder();
+					clusterBuilder.rate(clusterRate);
+					
+					faultSetBuilder = new FaultSourceSet.Builder();
+					faultSetBuilder
 						.name(clustName)
+						.id(clustId)
 						.weight(clustWeight)
 						.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
@@ -160,10 +170,13 @@ class ClusterParser extends DefaultHandler {
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
+					int srcId = readInt(ID, atts);
 					faultBuilder = new FaultSource.Builder()
 						.name(srcName)
+						.id(srcId)
 						.ruptureScaling(rupScaling)
 						.ruptureFloating(config.ruptureFloating)
+						.ruptureVariability(config.ruptureVariability)
 						.surfaceSpacing(config.surfaceSpacing);
 					log.finer("      Fault: " + srcName);
 					break;
