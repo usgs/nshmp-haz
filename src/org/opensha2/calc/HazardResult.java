@@ -7,13 +7,17 @@ import static org.opensha2.eq.model.SourceType.CLUSTER;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.StandardSystemProperty;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 
 /**
@@ -27,7 +31,7 @@ public final class HazardResult {
 	final Map<Imt, ArrayXY_Sequence> totalCurves;
 
 	private HazardResult(SetMultimap<SourceType, HazardCurveSet> sourceSetMap,
-		Map<Imt, ArrayXY_Sequence> totalCurves) {
+			Map<Imt, ArrayXY_Sequence> totalCurves) {
 		this.sourceSetMap = sourceSetMap;
 		this.totalCurves = totalCurves;
 	}
@@ -108,10 +112,40 @@ public final class HazardResult {
 		}
 
 		HazardResult build() {
-			// TODO totalCurves currently mutable; use ImmutableEnumMap instead??
+			// TODO totalCurves currently mutable; use ImmutableEnumMap
+			// instead??
 			checkState(!built, "This %s instance has already been used", ID);
 			return new HazardResult(resultMapBuilder.build(), totalCurves);
 		}
 
+	}
+
+	// TODO relocate
+	public static Map<Imt, Map<SourceType, ArrayXY_Sequence>> totalsByType(HazardResult result) {
+
+		ImmutableMap.Builder<Imt, Map<SourceType, ArrayXY_Sequence>> imtMapBuilder =
+			ImmutableMap.builder();
+
+		Map<Imt, ArrayXY_Sequence> curves = result.curves();
+		Set<Imt> imts = curves.keySet();
+
+		for (Imt imt : imts) {
+
+			ArrayXY_Sequence modelCurve = copyOf(curves.get(imt)).clear();
+			Map<SourceType, ArrayXY_Sequence> typeCurves = new EnumMap<>(SourceType.class);
+
+			Multimap<SourceType, HazardCurveSet> curveSets = result.sourceSetMap;
+			for (SourceType type : curveSets.keySet()) {
+				ArrayXY_Sequence typeCurve = copyOf(modelCurve);
+				for (HazardCurveSet curveSet : curveSets.get(type)) {
+					ArrayXY_Sequence curve = curveSet.totalCurves.get(imt);
+					typeCurve.add(curve);
+				}
+				typeCurves.put(type, typeCurve);
+			}
+			imtMapBuilder.put(imt, Maps.immutableEnumMap(typeCurves));
+		}
+
+		return imtMapBuilder.build();
 	}
 }
