@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<GroundMotionModels>
-  <Uncertainty values="[0.375, 0.23, 0.4, 0.21, 0.225, 0.36, 0.245, 0.23, 0.31]" weights="[0.185, 0.63, 0.185]"/>
-  <ModelSet maxDistance="200.0">
-    <Model id="BA_08" weight="0.3333"/>
-    <Model id="CB_08" weight="0.3333"/>
-    <Model id="CY_08" weight="0.3334"/>
-  </ModelSet>
-</GroundMotionModels>
