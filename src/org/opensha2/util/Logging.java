@@ -79,10 +79,9 @@ public class Logging {
 					.append(".")
 					.append(record.getSourceMethodName())
 					.append("()");
-				b.append(LF);
 				b.append(record.getMessage());
 				if (record.getThrown() != null) {
-					b.append("Error trace:").append(LF);
+					b.append(LF).append(LF);
 					b.append(Throwables.getStackTraceAsString(record.getThrown()));
 				}
 			} else {

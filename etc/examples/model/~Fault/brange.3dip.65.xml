@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FaultSourceSet id="-1" name="brange.3dip.65" weight="1.0">
+  <!-- Original source file: brange.3dip.65.in -->
+  <Settings>
+    <DefaultMfds>
+      <IncrementalMfd a="0.0" floats="false" m="6.5" type="SINGLE" weight="1.0"/>
+    </DefaultMfds>
+    <MagUncertainty>
+      <Epistemic cutoff="6.5" deltas="[-0.2, 0.0, 0.2]" weights="[0.2, 0.6, 0.2]"/>
+      <Aleatory count="11" cutoff="6.5" moBalance="true" sigma="0.12"/>
+    </MagUncertainty>
+    <SourceProperties ruptureScaling="NSHM_FAULT_WC94_LENGTH"/>
+  </Settings>
+  <Source id="233" name="La Canada del Amagre 50">
+    <IncrementalMfd a="2.4412719e-05" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-106.24248,36.02291,0.00000
+-106.23044,36.06927,0.00000
+-106.23304,36.10529,0.00000
+-106.21148,36.17007,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="242" name="Sawyer Canyon 50">
+    <IncrementalMfd a="8.2423250e-05" m="6.15" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-106.25397,35.90828,0.00000
+-106.25371,35.93334,0.00000
+-106.26556,35.94709,0.00000
+-106.28111,35.97871,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="250" name="East Paradise 50">
+    <IncrementalMfd a="2.3289194e-05" m="6.38" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-106.67687,35.26388,0.00000
+-106.68279,35.21187,0.00000
+-106.68733,35.14561,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="2" name="Dutchman Draw 50">
+    <IncrementalMfd a="0.00015530067" m="6.49" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-113.34785,37.00045,0.00000
+-113.36457,36.98706,0.00000
+-113.42809,36.95167,0.00000
+-113.46699,36.93990,0.00000
+-113.50040,36.91888,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="455" name="Acala 50">
+    <IncrementalMfd a="0.00032741902" m="6.09" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-105.93792,31.41128,0.00000
+-105.88779,31.35999,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="456" name="Arroyo Diablo 50">
+    <IncrementalMfd a="3.0296116e-05" m="6.41" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-105.71952,31.30608,0.00000
+-105.69463,31.28524,0.00000
+-105.63705,31.20214,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="367" name="Sweetwater 50">
+    <IncrementalMfd a="9.6351424e-05" m="6.38" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-112.27401,45.03998,0.00000
+-112.40697,45.11104,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="368" name="Red Rock Hills 50">
+    <IncrementalMfd a="0.00048975803" m="6.27" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-112.79184,44.94780,0.00000
+-112.75114,44.90810,0.00000
+-112.70541,44.87369,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="375" name="Georgia Gulch 50">
+    <IncrementalMfd a="7.1398010e-05" m="6.42" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-112.26736,45.62600,0.00000
+-112.25424,45.58350,0.00000
+-112.26035,45.56096,0.00000
+-112.24751,45.53778,0.00000
+-112.23933,45.50023,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="379" name="Thompson Valley 50">
+    <IncrementalMfd a="0.00024480256" m="6.22" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-114.97745,47.76651,0.00000
+-114.94772,47.68278,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="380" name="Jocko 50">
+    <IncrementalMfd a="0.00017153856" m="6.47" type="SINGLE" weight="0.6"/>
+    <Geometry depth="0.0" dip="50.0" rake="-90.0" width="19.58112">
+      <Trace>
+-113.97359,47.14806,0.00000
+-113.98302,47.12532,0.00000
+-114.04546,47.05615,0.00000
+-114.05363,47.01833,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="455" name="Acala 40">
+    <IncrementalMfd a="0.00046502563" m="6.09" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-105.93792,31.41128,0.00000
+-105.88779,31.35999,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="456" name="Arroyo Diablo 40">
+    <IncrementalMfd a="4.3028874e-05" m="6.41" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-105.71952,31.30608,0.00000
+-105.69463,31.28524,0.00000
+-105.63705,31.20214,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="233" name="La Canada del Amagre 40">
+    <IncrementalMfd a="3.4672815e-05" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-106.24248,36.02291,0.00000
+-106.23044,36.06927,0.00000
+-106.23304,36.10529,0.00000
+-106.21148,36.17007,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="242" name="Sawyer Canyon 40">
+    <IncrementalMfd a="0.00011706383" m="6.15" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-106.25397,35.90828,0.00000
+-106.25371,35.93334,0.00000
+-106.26556,35.94709,0.00000
+-106.28111,35.97871,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="250" name="East Paradise 40">
+    <IncrementalMfd a="3.3077103e-05" m="6.38" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-106.67687,35.26388,0.00000
+-106.68279,35.21187,0.00000
+-106.68733,35.14561,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="367" name="Sweetwater 40">
+    <IncrementalMfd a="0.00013684569" m="6.38" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-112.27401,45.03998,0.00000
+-112.40697,45.11104,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="368" name="Red Rock Hills 40">
+    <IncrementalMfd a="0.0006955919" m="6.27" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-112.79184,44.94780,0.00000
+-112.75114,44.90810,0.00000
+-112.70541,44.87369,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="375" name="Georgia Gulch 40">
+    <IncrementalMfd a="0.00010140494" m="6.42" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-112.26736,45.62600,0.00000
+-112.25424,45.58350,0.00000
+-112.26035,45.56096,0.00000
+-112.24751,45.53778,0.00000
+-112.23933,45.50023,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="379" name="Thompson Valley 40">
+    <IncrementalMfd a="0.0003476874" m="6.22" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-114.97745,47.76651,0.00000
+-114.94772,47.68278,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="380" name="Jocko 40">
+    <IncrementalMfd a="0.00024363224" m="6.47" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-113.97359,47.14806,0.00000
+-113.98302,47.12532,0.00000
+-114.04546,47.05615,0.00000
+-114.05363,47.01833,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="2" name="Dutchman Draw 40">
+    <IncrementalMfd a="0.00022056996" m="6.49" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="40.0" rake="-90.0" width="23.33587">
+      <Trace>
+-113.34785,37.00045,0.00000
+-113.36457,36.98706,0.00000
+-113.42809,36.95167,0.00000
+-113.46699,36.93990,0.00000
+-113.50040,36.91888,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="367" name="Sweetwater 60">
+    <IncrementalMfd a="7.5388440e-05" m="6.38" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-112.27401,45.03998,0.00000
+-112.40697,45.11104,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="368" name="Red Rock Hills 60">
+    <IncrementalMfd a="0.0003832023" m="6.27" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-112.79184,44.94780,0.00000
+-112.75114,44.90810,0.00000
+-112.70541,44.87369,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="375" name="Georgia Gulch 60">
+    <IncrementalMfd a="5.5864085e-05" m="6.42" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-112.26736,45.62600,0.00000
+-112.25424,45.58350,0.00000
+-112.26035,45.56096,0.00000
+-112.24751,45.53778,0.00000
+-112.23933,45.50023,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="379" name="Thompson Valley 60">
+    <IncrementalMfd a="0.00019154136" m="6.22" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-114.97745,47.76651,0.00000
+-114.94772,47.68278,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="380" name="Jocko 60">
+    <IncrementalMfd a="0.00013421726" m="6.47" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-113.97359,47.14806,0.00000
+-113.98302,47.12532,0.00000
+-114.04546,47.05615,0.00000
+-114.05363,47.01833,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="2" name="Dutchman Draw 60">
+    <IncrementalMfd a="0.0001215122" m="6.49" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-113.34785,37.00045,0.00000
+-113.36457,36.98706,0.00000
+-113.42809,36.95167,0.00000
+-113.46699,36.93990,0.00000
+-113.50040,36.91888,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="233" name="La Canada del Amagre 60">
+    <IncrementalMfd a="1.9101290e-05" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-106.24248,36.02291,0.00000
+-106.23044,36.06927,0.00000
+-106.23304,36.10529,0.00000
+-106.21148,36.17007,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="242" name="Sawyer Canyon 60">
+    <IncrementalMfd a="6.4490590e-05" m="6.15" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-106.25397,35.90828,0.00000
+-106.25371,35.93334,0.00000
+-106.26556,35.94709,0.00000
+-106.28111,35.97871,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="250" name="East Paradise 60">
+    <IncrementalMfd a="1.8222210e-05" m="6.38" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-106.67687,35.26388,0.00000
+-106.68279,35.21187,0.00000
+-106.68733,35.14561,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="455" name="Acala 60">
+    <IncrementalMfd a="0.00025618312" m="6.09" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-105.93792,31.41128,0.00000
+-105.88779,31.35999,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="456" name="Arroyo Diablo 60">
+    <IncrementalMfd a="2.3704648e-05" m="6.41" type="SINGLE" weight="0.2"/>
+    <Geometry depth="0.0" dip="60.0" rake="-90.0" width="17.320515">
+      <Trace>
+-105.71952,31.30608,0.00000
+-105.69463,31.28524,0.00000
+-105.63705,31.20214,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+</FaultSourceSet>

@@ -18,22 +18,22 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
 	/**
 	 * A unique integer id.
 	 */
-	public int id();
+	int id();
 	
 	/**
 	 * The {@code SourceType} identifier.
 	 */
-	public SourceType type();
+	SourceType type();
 
 	/**
 	 * The number of {@code Source}s in this {@code SourceSet}.
 	 */
-	public int size();
+	int size();
 
 	/**
 	 * The weight applicable to this {@code SourceSet}.
 	 */
-	public double weight();
+	double weight();
 
 	/**
 	 * Return an {@code Iterable} over those {@code Source}s that are within
@@ -43,7 +43,7 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
 	 * 
 	 * @param loc {@code Location} of interest
 	 */
-	public Iterable<T> iterableForLocation(Location loc);
+	Iterable<T> iterableForLocation(Location loc);
 
 	/**
 	 * Return a {@link Predicate} that evaluates to {@code true} if this source
@@ -54,7 +54,7 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
 	 * @param loc {@code Location} of interest
 	 * @param distance limit
 	 */
-	public Predicate<T> distanceFilter(Location loc, double distance);
+	Predicate<T> distanceFilter(Location loc, double distance);
 
 	/**
 	 * Return the {@link GroundMotionModel}s associated with this
@@ -62,5 +62,5 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
 	 * 
 	 * @see GmmSet
 	 */
-	public GmmSet groundMotionModels();
+	GmmSet groundMotionModels();
 }

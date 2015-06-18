@@ -518,6 +518,20 @@ public final class Parsing {
 	}
 
 	/**
+	 * Return a {@code String} representation of an {@code Iterable<Enum>} where
+	 * {@code Enum.name()} is used instead of {@code Enum.toString()}.
+	 * 
+	 * @param iterable to process
+	 * @param enumClass
+	 */
+	public static <E extends Enum<E>> String enumsToString(Iterable<E> iterable, Class<E> enumClass) {
+		return addBrackets(FluentIterable
+			.from(iterable)
+			.transform(Enums.stringConverter(enumClass).reverse())
+			.join(Delimiter.COMMA.joiner()));
+	}
+
+	/**
 	 * Convert an {@code Enum.name()} to a space-delimited presentation-friendly
 	 * string.
 	 * 

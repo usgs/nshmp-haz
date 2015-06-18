@@ -33,6 +33,7 @@ import org.opensha2.eq.model.HazardModel.Builder;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -50,18 +51,12 @@ import com.google.gson.GsonBuilder;
 class Loader {
 
 	static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	
+
 	private static final String LF = LINE_SEPARATOR.value();
 	private static Logger log;
-	private static SAXParser sax;
-	
+
 	static {
 		log = Logger.getLogger(Loader.class.getName());
-		try {
-			sax = SAXParserFactory.newInstance().newSAXParser();
-		} catch (ParserConfigurationException | SAXException e) {
-			Throwables.propagate(e);
-		}
 	}
 
 	/**
@@ -75,36 +70,43 @@ class Loader {
 	 * @param path to model directory or Zip file (absolute)
 	 * @return a newly created {@code HazardModel}
 	 */
-	static HazardModel load(Path path, String name) {
+	static HazardModel load(Path path) {
+
+		SAXParser sax = null;
+		try {
+			sax = SAXParserFactory.newInstance().newSAXParser();
+		} catch (ParserConfigurationException | SAXException e) {
+			Throwables.propagate(e);
+		}
 
 		HazardModel.Builder builder = HazardModel.builder();
-		Path modelPath = null;
+		Path modelPath = checkNotNull(path, "Path is null");
 		List<Path> typePaths = null;
 
 		try {
-			checkNotNull(path, "Path is null");
-			modelPath = path.toRealPath();
+			
 			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
 			Path typeDirPath = typeDirectory(modelPath);
-			
-			ModelConfig modelConfig = ModelConfig.load(typeDirPath);
+
+			ModelConfig modelConfig = ModelConfig.builder(typeDirPath).build();
 			log.info(modelConfig.toString());
-			log.info("");
-			
-			CalcConfig calcConfig = CalcConfig.load(typeDirPath);
+
+			CalcConfig calcConfig = CalcConfig.builder()
+					.withDefaults()
+					.extend(CalcConfig.builder(typeDirPath))
+					.build();
 			builder.config(calcConfig);
-			
+
 			typePaths = typeDirectoryList(typeDirPath);
 			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
-			log.info("Loading model: " + name);
-			builder.name(name);
-			log.info("From resource: " + modelPath.getFileName());
+			builder.name(modelConfig.name);
 
 			for (Path typePath : typePaths) {
 				String typeName = cleanZipName(typePath.getFileName().toString());
 				log.info("");
-				log.info("========  " + typeName + " Sources  ========");
-				processTypeDir(typePath, builder, modelConfig);
+				log.info("=======  " + typeName + " Sources  =======");
+				processTypeDir(typePath, builder, modelConfig, sax);
+				log.info("==========================" + Strings.repeat("=", typeName.length()));
 			}
 
 		} catch (IOException | URISyntaxException e) {
@@ -112,13 +114,10 @@ class Loader {
 		}
 
 		log.info("");
-		log.info("Building model...");
 		HazardModel model = builder.build();
-		log.info("Finished loading: " + modelPath.getFileName());
 
 		return model;
 	}
-	
 
 	private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",
 		"encoding", "UTF-8");
@@ -132,7 +131,7 @@ class Loader {
 		if (isZip) {
 			URI zipURI = new URI(ZIP_SCHEME, path.toString(), null);
 			FileSystem zfs = null;
-			
+
 			// TODO if a servlet reloads in the same JVM then the filesystem
 			// already exists and an exception is thrown; not sure how this
 			// behaves when using an unexploded WAR, but it probably fails;
@@ -143,15 +142,16 @@ class Loader {
 				zfs = FileSystems.newFileSystem(zipURI, ZIP_ENV_MAP);
 			}
 			Path zipRoot = Iterables.get(zfs.getRootDirectories(), 0);
-			
+
 			// The expectation is that zipped models will have been created
 			// from a single model directory containing type directories,
 			// which will therefore be nested two levels deep in the zip file;
 			// in contrast to non-zip models where type directories will
 			// be one level deep.
-			
+
 			Path nestedTypeDir = firstPath(zipRoot);
-			checkArgument(Files.isDirectory(nestedTypeDir), "No nested directory in zip: %s", nestedTypeDir);
+			checkArgument(Files.isDirectory(nestedTypeDir), "No nested directory in zip: %s",
+				nestedTypeDir);
 			return nestedTypeDir;
 		}
 		return path;
@@ -169,7 +169,8 @@ class Loader {
 		}
 	}
 
-	private static void processTypeDir(Path typeDir, Builder builder, ModelConfig modelConfig) throws IOException {
+	private static void processTypeDir(Path typeDir, Builder builder, ModelConfig modelConfig,
+			SAXParser sax) throws IOException {
 
 		String typeName = cleanZipName(typeDir.getFileName().toString());
 		SourceType type = SourceType.fromString(typeName);
@@ -190,8 +191,11 @@ class Loader {
 		ModelConfig config = modelConfig;
 		Path configPath = typeDir.resolve(ModelConfig.FILE_NAME);
 		if (Files.exists(configPath)) {
-			config = ModelConfig.load(typeDir);
-			log.info("(Override) " + config.toString());
+			config = ModelConfig.builder()
+				.copy(modelConfig)
+				.extend(ModelConfig.builder(configPath))
+				.build();
+			log.info("(override) " + config.toString());
 		}
 
 		// Build GmmSet from gmm.xml
@@ -208,17 +212,18 @@ class Loader {
 				throw ise;
 			}
 		}
-		
+
 		// having checked directory state, load gmms if present
 		// we may have gmm.xml but no source files
 		if (Files.exists(gmmPath)) {
 			log.info("Parsing: " + typeDir.getParent().relativize(gmmPath));
-			gmmSet = parseGMM(gmmPath);
+			gmmSet = parseGMM(gmmPath, sax);
 		}
-		
+
 		for (Path sourcePath : typePaths) {
 			log.info("Parsing: " + typeDir.getParent().relativize(sourcePath));
-			SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, gmmSet, config);
+			SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, gmmSet, config,
+				sax);
 			builder.sourceSet(sourceSet);
 		}
 
@@ -230,13 +235,13 @@ class Loader {
 					log.info("========  Nested " + typeName + " Sources  ========");
 					firstDir = false;
 				}
-				processNestedDir(nestedSourceDir, type, gmmSet, builder, config);
+				processNestedDir(nestedSourceDir, type, gmmSet, builder, config, sax);
 			}
 		}
 	}
 
 	private static void processNestedDir(Path sourceDir, SourceType type, GmmSet gmmSet,
-			Builder builder, ModelConfig parentConfig) throws IOException {
+			Builder builder, ModelConfig parentConfig, SAXParser sax) throws IOException {
 
 		/*
 		 * gmm.xml -- this MUST exist if there is at least one source file and
@@ -254,12 +259,15 @@ class Loader {
 		GmmSet nestedGmmSet = null;
 		ModelConfig nestedConfig = parentConfig;
 		if (nestedSourcePaths.size() > 0) {
-			
+
 			// config
 			Path nestedConfigPath = sourceDir.resolve(ModelConfig.FILE_NAME);
 			if (Files.exists(nestedConfigPath)) {
-				nestedConfig = ModelConfig.load(sourceDir);
-				log.info("(Override) " + nestedConfig.toString());
+				nestedConfig = ModelConfig.builder()
+					.copy(parentConfig)
+					.extend(ModelConfig.builder(nestedConfigPath))
+					.build();
+				log.info("(override) " + nestedConfig.toString());
 			}
 
 			// gmm
@@ -274,29 +282,29 @@ class Loader {
 
 			if (Files.exists(nestedGmmPath)) {
 				log.info("Parsing: " + typeDir.relativize(nestedGmmPath));
-				nestedGmmSet = parseGMM(nestedGmmPath);
+				nestedGmmSet = parseGMM(nestedGmmPath, sax);
 			} else {
 				log.info("(using parent gmm.xml)");
 				nestedGmmSet = gmmSet;
 			}
-			
+
 		}
 
 		if (type == SourceType.SYSTEM) {
 			log.info("Parsing: " + typeDir.relativize(sourceDir));
-			parseIndexedSource(sourceDir, nestedGmmSet, builder, nestedConfig);
+			parseIndexedSource(sourceDir, nestedGmmSet, builder, nestedConfig, sax);
 		} else {
 			for (Path sourcePath : nestedSourcePaths) {
 				log.info("Parsing: " + typeDir.relativize(sourcePath));
 				SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, nestedGmmSet,
-					nestedConfig);
+					nestedConfig, sax);
 				builder.sourceSet(sourceSet);
 			}
 		}
 	}
 
 	private static SourceSet<? extends Source> parseSource(SourceType type, Path path,
-			GmmSet gmmSet, ModelConfig config) {
+			GmmSet gmmSet, ModelConfig config, SAXParser sax) {
 		try {
 			InputStream in = Files.newInputStream(path);
 			switch (type) {
@@ -324,7 +332,8 @@ class Loader {
 		}
 	}
 
-	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder, ModelConfig config) {
+	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder,
+			ModelConfig config, SAXParser sax) {
 		try {
 			Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
 			InputStream sectionsIn = Files.newInputStream(sectionsPath);
@@ -345,7 +354,7 @@ class Loader {
 		}
 	}
 
-	private static GmmSet parseGMM(Path path) {
+	private static GmmSet parseGMM(Path path, SAXParser sax) {
 		try {
 			InputStream in = Files.newInputStream(path);
 			return GmmParser.create(sax).parse(in);
@@ -406,8 +415,8 @@ class Loader {
 	private static String cleanZipName(String name) {
 		return name.endsWith("/") ? name.substring(0, name.length() - 1) : name;
 	}
-	
-//	private static 
+
+	// private static
 
 	/*
 	 * Only lists those directories matching a SourceType.
@@ -426,8 +435,7 @@ class Loader {
 	}
 
 	/*
-	 * Skips __MACOSX resource fork files that creep into zip files.
-	 * Others?
+	 * Skips __MACOSX resource fork files that creep into zip files. Others?
 	 */
 	private static enum ZipSkipFilter implements DirectoryStream.Filter<Path> {
 		INSTANCE;

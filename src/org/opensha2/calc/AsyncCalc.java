@@ -4,13 +4,21 @@ import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 import static org.opensha2.calc.AsyncList.createWithCapacity;
-import static org.opensha2.calc.Transforms.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
+import org.opensha2.calc.Transforms.ClusterCurveConsolidator;
+import org.opensha2.calc.Transforms.ClusterGroundMotionsToCurves;
+import org.opensha2.calc.Transforms.ClusterInputsToGroundMotions;
+import org.opensha2.calc.Transforms.ClusterSourceToInputs;
+import org.opensha2.calc.Transforms.CurveConsolidator;
+import org.opensha2.calc.Transforms.CurveSetConsolidator;
+import org.opensha2.calc.Transforms.GroundMotionsToCurves;
+import org.opensha2.calc.Transforms.InputsToGroundMotions;
+import org.opensha2.calc.Transforms.SourceToInputs;
 import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.ClusterSourceSet;
@@ -42,7 +50,7 @@ final class AsyncCalc {
 	static final AsyncList<HazardInputs> toInputs(
 			final SourceSet<? extends Source> sourceSet,
 			final Site site,
-			final ExecutorService ex) {
+			final Executor ex) {
 
 		Function<Source, HazardInputs> function = new SourceToInputs(site);
 		AsyncList<HazardInputs> result = AsyncList.create();
@@ -60,7 +68,7 @@ final class AsyncCalc {
 			final AsyncList<HazardInputs> inputsList,
 			final SourceSet<? extends Source> sourceSet,
 			final Set<Imt> imts,
-			final ExecutorService ex) {
+			final Executor ex) {
 
 		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
 		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, imts);
@@ -82,7 +90,7 @@ final class AsyncCalc {
 			final Map<Imt, ArrayXY_Sequence> modelCurves,
 			final ExceedanceModel sigmaModel,
 			final double truncLevel,
-			final ExecutorService ex) {
+			final Executor ex) {
 
 		Function<HazardGroundMotions, HazardCurves> function = new GroundMotionsToCurves(
 			modelCurves,
@@ -101,7 +109,7 @@ final class AsyncCalc {
 			final AsyncList<HazardCurves> curves,
 			final SourceSet<? extends Source> sourceSet,
 			final Map<Imt, ArrayXY_Sequence> modelCurves,
-			final ExecutorService ex) {
+			final Executor ex) {
 
 		Function<List<HazardCurves>, HazardCurveSet> function = new CurveConsolidator(sourceSet,
 			modelCurves);
@@ -114,10 +122,11 @@ final class AsyncCalc {
 	static final ListenableFuture<HazardResult> toHazardResult(
 			final AsyncList<HazardCurveSet> curveSets,
 			final Map<Imt, ArrayXY_Sequence> modelCurves,
-			final ExecutorService ex) {
+			final Site site,
+			final Executor ex) {
 
 		Function<List<HazardCurveSet>, HazardResult> function = new CurveSetConsolidator(
-			modelCurves);
+			modelCurves, site);
 		return transform(allAsList(curveSets), function, ex);
 	}
 
@@ -141,7 +150,7 @@ final class AsyncCalc {
 	static final AsyncList<ClusterInputs> toClusterInputs(
 			final ClusterSourceSet sourceSet,
 			final Site site,
-			final ExecutorService ex) {
+			final Executor ex) {
 
 		Function<ClusterSource, ClusterInputs> function = new ClusterSourceToInputs(site);
 		AsyncList<ClusterInputs> result = AsyncList.create();
@@ -159,7 +168,7 @@ final class AsyncCalc {
 			final AsyncList<ClusterInputs> inputsList,
 			final ClusterSourceSet sourceSet,
 			final Set<Imt> imts,
-			final ExecutorService ex) {
+			final Executor ex) {
 
 		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
 		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, imts);
@@ -181,7 +190,7 @@ final class AsyncCalc {
 			final Map<Imt, ArrayXY_Sequence> modelCurves,
 			final ExceedanceModel sigmaModel,
 			final double truncLevel,
-			final ExecutorService ex) {
+			final Executor ex) {
 
 		Function<ClusterGroundMotions, ClusterCurves> function = new ClusterGroundMotionsToCurves(
 			modelCurves, sigmaModel, truncLevel);
@@ -199,7 +208,7 @@ final class AsyncCalc {
 			final AsyncList<ClusterCurves> curvesList,
 			final ClusterSourceSet clusterSourceSet,
 			final Map<Imt, ArrayXY_Sequence> modelCurves,
-			final ExecutorService ex) {
+			final Executor ex) {
 
 		Function<List<ClusterCurves>, HazardCurveSet> function = new ClusterCurveConsolidator(
 			clusterSourceSet, modelCurves);

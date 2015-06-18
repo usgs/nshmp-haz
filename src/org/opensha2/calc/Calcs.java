@@ -11,6 +11,7 @@ import static org.opensha2.calc.AsyncCalc.toInputs;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,6 +23,7 @@ import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Imt;
 
+import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -31,26 +33,21 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class Calcs {
 
-	private static final ExecutorService EX;
-
-	static {
-		int numProc = Runtime.getRuntime().availableProcessors();
-		EX = Executors.newFixedThreadPool(numProc);
-	}
-
 	/**
-	 * Compute a hazard curve.
+	 * Compute a hazard curve using the supplied {@link Executor}.
 	 * 
 	 * @param model to use
 	 * @param config
 	 * @param site of interest
+	 * @param executor optional Executor to use in calculation
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
 	public static HazardResult hazardCurve(
 			HazardModel model,
 			CalcConfig config,
-			Site site)
+			Site site,
+			Executor executor)
 			throws InterruptedException, ExecutionException {
 
 		AsyncList<HazardCurveSet> curveSetCollector = AsyncList.createWithCapacity(model.size());
@@ -62,33 +59,33 @@ public class Calcs {
 
 				ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
 
-				AsyncList<ClusterInputs> inputs = toClusterInputs(clusterSourceSet, site, EX);
+				AsyncList<ClusterInputs> inputs = toClusterInputs(clusterSourceSet, site, executor);
 				if (inputs.isEmpty()) continue; // all sources out of range
 
 				AsyncList<ClusterGroundMotions> groundMotions = toClusterGroundMotions(inputs,
-					clusterSourceSet, config.imts, EX);
+					clusterSourceSet, config.imts, executor);
 
 				AsyncList<ClusterCurves> clusterCurves = toClusterCurves(groundMotions,
-					modelCurves, config.exceedanceModel, config.truncationLevel, EX);
+					modelCurves, config.exceedanceModel, config.truncationLevel, executor);
 
 				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(clusterCurves,
-					clusterSourceSet, modelCurves, EX);
+					clusterSourceSet, modelCurves, executor);
 
 				curveSetCollector.add(curveSet);
 
 			} else {
 
-				AsyncList<HazardInputs> inputs = toInputs(sourceSet, site, EX);
+				AsyncList<HazardInputs> inputs = toInputs(sourceSet, site, executor);
 				if (inputs.isEmpty()) continue; // all sources out of range
 
 				AsyncList<HazardGroundMotions> groundMotions = toGroundMotions(inputs, sourceSet,
-					config.imts, EX);
+					config.imts, executor);
 
 				AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, modelCurves,
-					config.exceedanceModel, config.truncationLevel, EX);
+					config.exceedanceModel, config.truncationLevel, executor);
 
 				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves,
-					sourceSet, modelCurves, EX);
+					sourceSet, modelCurves, executor);
 
 				curveSetCollector.add(curveSet);
 
@@ -96,14 +93,10 @@ public class Calcs {
 		}
 
 		ListenableFuture<HazardResult> futureResult = toHazardResult(curveSetCollector,
-			modelCurves, EX);
-
+			modelCurves, site, executor);
+		
 		return futureResult.get();
 
-	}
-
-	public static void shutdown() {
-		EX.shutdown();
 	}
 
 }

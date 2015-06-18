@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<GroundMotionModels>
+  <ModelSet maxDistance="1000.0">
+    <Model id="AB_03_GLOB_INTER" weight="0.25"/>
+    <Model id="YOUNGS_97_INTER" weight="0.25"/>
+    <Model id="ZHAO_06_INTER" weight="0.5"/>
+  </ModelSet>
+</GroundMotionModels>

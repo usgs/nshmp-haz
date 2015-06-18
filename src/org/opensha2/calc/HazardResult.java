@@ -1,5 +1,6 @@
 package org.opensha2.calc;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.ArrayXY_Sequence.copyOf;
 import static org.opensha2.eq.model.SourceType.CLUSTER;
@@ -7,33 +8,35 @@ import static org.opensha2.eq.model.SourceType.CLUSTER;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.StandardSystemProperty;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 
 /**
- * The result of a hazard calculation.
+ * The result of a hazard calculation. This container class is public for
+ * reference by external packages but is not directly modifiable, nor it's field
+ * accessible. The {@link Results} class provides HazardResult exporting and
+ * processing utilities.
  * 
  * @author Peter Powers
+ * @see Results
  */
 public final class HazardResult {
 
 	final SetMultimap<SourceType, HazardCurveSet> sourceSetMap;
 	final Map<Imt, ArrayXY_Sequence> totalCurves;
+	final Site site;
 
 	private HazardResult(SetMultimap<SourceType, HazardCurveSet> sourceSetMap,
-			Map<Imt, ArrayXY_Sequence> totalCurves) {
+			Map<Imt, ArrayXY_Sequence> totalCurves, Site site) {
 		this.sourceSetMap = sourceSetMap;
 		this.totalCurves = totalCurves;
+		this.site = site;
 	}
 
 	@Override public String toString() {
@@ -44,13 +47,11 @@ public final class HazardResult {
 			sb.append(type).append("SourceSet:").append(LF);
 			for (HazardCurveSet curveSet : sourceSetMap.get(type)) {
 				sb.append("  ").append(curveSet.sourceSet);
-				// @formatter:off
 				int used = (curveSet.sourceSet.type() == CLUSTER) ?
 					curveSet.clusterGroundMotionsList.size() :
 					curveSet.hazardGroundMotionsList.size();
 				sb.append("Used: ").append(used);
 				sb.append(LF);
-				// @formatter:on
 
 				if (curveSet.sourceSet.type() == CLUSTER) {
 					// TODO ??
@@ -83,8 +84,8 @@ public final class HazardResult {
 		return totalCurves;
 	}
 
-	static Builder builder(Map<Imt, ArrayXY_Sequence> modelCurves) {
-		return new Builder(modelCurves);
+	static Builder builder(Map<Imt, ArrayXY_Sequence> modelCurves, Site site) {
+		return new Builder(modelCurves, site);
 	}
 
 	static class Builder {
@@ -92,15 +93,24 @@ public final class HazardResult {
 		private static final String ID = "HazardResult.Builder";
 		private boolean built = false;
 
+		private Site site;
 		private ImmutableSetMultimap.Builder<SourceType, HazardCurveSet> resultMapBuilder;
 		private Map<Imt, ArrayXY_Sequence> totalCurves;
 
-		private Builder(Map<Imt, ArrayXY_Sequence> modelCurves) {
+		private Builder(Map<Imt, ArrayXY_Sequence> modelCurves, Site site) {
+			this.site = checkNotNull(site);
+			checkNotNull(modelCurves);
 			totalCurves = new EnumMap<>(Imt.class);
 			for (Entry<Imt, ArrayXY_Sequence> entry : modelCurves.entrySet()) {
 				totalCurves.put(entry.getKey(), copyOf(entry.getValue()).clear());
 			}
 			resultMapBuilder = ImmutableSetMultimap.builder();
+		}
+
+		Builder site(Site site) {
+			checkState(this.site == null, "%s site already set", ID);
+			checkNotNull(site);
+			return this;
 		}
 
 		Builder addCurveSet(HazardCurveSet curveSet) {
@@ -115,37 +125,9 @@ public final class HazardResult {
 			// TODO totalCurves currently mutable; use ImmutableEnumMap
 			// instead??
 			checkState(!built, "This %s instance has already been used", ID);
-			return new HazardResult(resultMapBuilder.build(), totalCurves);
+			return new HazardResult(resultMapBuilder.build(), totalCurves, site);
 		}
 
 	}
 
-	// TODO relocate
-	public static Map<Imt, Map<SourceType, ArrayXY_Sequence>> totalsByType(HazardResult result) {
-
-		ImmutableMap.Builder<Imt, Map<SourceType, ArrayXY_Sequence>> imtMapBuilder =
-			ImmutableMap.builder();
-
-		Map<Imt, ArrayXY_Sequence> curves = result.curves();
-		Set<Imt> imts = curves.keySet();
-
-		for (Imt imt : imts) {
-
-			ArrayXY_Sequence modelCurve = copyOf(curves.get(imt)).clear();
-			Map<SourceType, ArrayXY_Sequence> typeCurves = new EnumMap<>(SourceType.class);
-
-			Multimap<SourceType, HazardCurveSet> curveSets = result.sourceSetMap;
-			for (SourceType type : curveSets.keySet()) {
-				ArrayXY_Sequence typeCurve = copyOf(modelCurve);
-				for (HazardCurveSet curveSet : curveSets.get(type)) {
-					ArrayXY_Sequence curve = curveSet.totalCurves.get(imt);
-					typeCurve.add(curve);
-				}
-				typeCurves.put(type, typeCurve);
-			}
-			imtMapBuilder.put(imt, Maps.immutableEnumMap(typeCurves));
-		}
-
-		return imtMapBuilder.build();
-	}
 }

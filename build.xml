@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="nshmp-haz" default="javadoc" basedir=".">
+<project name="nshmp-haz" default="build" basedir=".">
 
 	<description>
-		nshmp-sha is a platform for seismic hazard calculations
+		nshmp-haz is a platform for conducting seismic hazard calculations
 	</description>
 
 	<property name="src.dir" value="src/" />
 	<property name="lib.dir" value="lib/" />
 	<property name="classes.dir" value="classes/" />
 	<property name="dist.dir" value="dist/" />
-	<property name="javadoc.dir" value="../nshmp-haz.gh-pages/" />
+	<property name="javadoc.dir" value="../nshmp-haz.gh-pages/javadoc" />
 
 	<path id="library.classpath">
 		<fileset dir="${lib.dir}">
@@ -21,7 +21,10 @@
 	<target name="build" depends="compile">
 		<jar destfile="${dist.dir}nshmp-haz.jar">
 			<fileset dir="${classes.dir}" />
-			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
+			<zipgroupfileset dir="${lib.dir}">
+				<include name="*.jar" />
+				<exclude name="ant-*" />
+			</zipgroupfileset>
 		</jar>
 	</target>
 
@@ -37,6 +40,7 @@
 		       destdir="${classes.dir}"
 		       classpathref="library.classpath"
 		       nowarn="true"
+			   fork="true"
 		       source="1.7"
 		       target="1.7"
 		       encoding="UTF-8"

@@ -81,11 +81,10 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	 * exit.</p>
 	 * 
 	 * @param path to {@code HazardModel} directory or Zip file
-	 * @param name for the {@code HazardModel}
 	 * @return a newly instantiated {@code HazardModel}
 	 */
-	public static HazardModel load(Path path, String name) {
-		return Loader.load(path, name);
+	public static HazardModel load(Path path) {
+		return Loader.load(path);
 	}
 
 	/**
@@ -103,6 +102,10 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 		return name;
 	}
 	
+	
+	/**
+	 * Return the default calculation configuration. This may be overridden.
+	 */
 	public CalcConfig config() {
 		return config;
 	}

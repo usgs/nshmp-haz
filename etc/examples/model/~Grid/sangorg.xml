@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<GridSourceSet id="-1" name="sangorg.in" weight="1.0">
+  <Settings>
+    <DefaultMfds>
+      <IncrementalMfd a="0.0" b="0.8" dMag="0.1" mMax="7.55" mMin="6.55" type="GR" weight="1.0"/>
+    </DefaultMfds>
+    <SourceProperties focalMechMap="[STRIKE_SLIP:1.0,NORMAL:0.0,REVERSE:0.0]" magDepthMap="[6.5::[5.0:1.0]; 10.0::[1.0:1.0]]" maxDepth="14.0" ruptureScaling="NSHM_POINT_WC94_LENGTH" strike="293.0"/>
+  </Settings>
+  <Nodes>
+    <Node a="8.3200302" type="GR">-116.3,33.8,0.0</Node>
+    <Node a="8.3102951" type="GR">-116.6,33.9,0.0</Node>
+    <Node a="8.3102951" type="GR">-116.5,33.9,0.0</Node>
+    <Node a="8.3102951" type="GR">-116.4,33.9,0.0</Node>
+    <Node a="8.3005381" type="GR">-117.0,34.0,0.0</Node>
+    <Node a="8.3005381" type="GR">-116.9,34.0,0.0</Node>
+    <Node a="8.3005381" type="GR">-116.8,34.0,0.0</Node>
+    <Node a="8.3005381" type="GR">-116.7,34.0,0.0</Node>
+    <Node a="8.3005381" type="GR">-116.6,34.0,0.0</Node>
+    <Node a="8.2907534" type="GR">-117.1,34.1,0.0</Node>
+    <Node a="8.2907534" type="GR">-117.0,34.1,0.0</Node>
+  </Nodes>
+</GridSourceSet>

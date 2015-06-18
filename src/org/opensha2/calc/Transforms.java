@@ -204,14 +204,16 @@ final class Transforms {
 	static final class CurveSetConsolidator implements Function<List<HazardCurveSet>, HazardResult> {
 
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final Site site;
 
-		CurveSetConsolidator(final Map<Imt, ArrayXY_Sequence> modelCurves) {
+		CurveSetConsolidator(final Map<Imt, ArrayXY_Sequence> modelCurves, final Site site) {
 			this.modelCurves = modelCurves;
+			this.site = site;
 		}
 
 		@Override public HazardResult apply(final List<HazardCurveSet> curveSetList) {
 
-			HazardResult.Builder resultBuilder = HazardResult.builder(modelCurves);
+			HazardResult.Builder resultBuilder = HazardResult.builder(modelCurves, site);
 
 			for (HazardCurveSet curves : curveSetList) {
 				resultBuilder.addCurveSet(curves);

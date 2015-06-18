@@ -2,6 +2,7 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Strings.repeat;
 import static org.opensha2.calc.Site.Key.LAT;
 import static org.opensha2.calc.Site.Key.LON;
 import static org.opensha2.calc.Site.Key.NAME;
@@ -10,6 +11,7 @@ import static org.opensha2.calc.Site.Key.VS_INF;
 import static org.opensha2.calc.Site.Key.Z1P0;
 import static org.opensha2.calc.Site.Key.Z2P5;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
+import static org.opensha2.util.TextUtils.ALIGN_COL;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -30,7 +32,9 @@ import org.opensha2.geo.LocationList;
 import org.opensha2.geo.Regions;
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
+import org.opensha2.util.TextUtils;
 
+import com.google.common.collect.Iterables;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -38,7 +42,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.annotations.Expose;
 
 /**
  * A {@code SiteSet} is an Iterable over a group of {@code Site}s. The supplied
@@ -47,7 +50,7 @@ import com.google.gson.annotations.Expose;
  *
  * @author Peter Powers
  */
-public final class SiteSet implements Iterable<Site> {
+final class SiteSet implements Iterable<Site> {
 
 	final private GriddedRegion region;
 	final private Builder builder;
@@ -63,6 +66,10 @@ public final class SiteSet implements Iterable<Site> {
 		this.region = checkNotNull(region);
 		this.builder = checkNotNull(builder);
 		this.sites = null;
+	}
+
+	int size() {
+		return (region == null) ? sites.size() : region.size();
 	}
 
 	@Override public Iterator<Site> iterator() {
@@ -91,19 +98,49 @@ public final class SiteSet implements Iterable<Site> {
 		}
 	}
 
-	static SiteSet loadCsvSites(Path csvPath) throws IOException {
-		checkNotNull(csvPath);
+	private static final int TO_STRING_LIMIT = 5;
+
+	@Override public String toString() {
+		StringBuilder sb = new StringBuilder()
+			.append((region == null) ? "List" : "Region")
+			.append(" [size=").append(size()).append("]");
+		if (region == null) {
+			for (Site site : Iterables.limit(sites, TO_STRING_LIMIT)) {
+				sb.append(TextUtils.NEWLINE)
+					.append(repeat(" ", ALIGN_COL - 4))
+					.append(site);
+			}
+			if (sites.size() > TO_STRING_LIMIT) {
+				int delta = sites.size() - TO_STRING_LIMIT;
+				sb.append(TextUtils.NEWLINE)
+					.append(repeat(" ", ALIGN_COL + 2))
+					.append("... and ").append(delta).append(" more ...");
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Creates a {@code SiteSet} from the comma-delimted site file designated by
+	 * {@code path}.
+	 * 
+	 * @param path to comma-delimited site data file
+	 * @throws IOException if problem encountered
+	 */
+	static SiteSet fromCsv(Path path) throws IOException {
+		checkNotNull(path);
 
 		List<Site> siteList = new ArrayList<>();
 		Builder builder = Site.builder();
 
-		List<String> lines = Files.readAllLines(csvPath, StandardCharsets.UTF_8);
+		List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
 		boolean firstline = true;
 		List<Key> keyList = new ArrayList<>();
 		for (String line : lines) {
 
 			// skip comments
 			if (line.startsWith("#")) continue;
+			if (line.trim().isEmpty()) continue;
 
 			List<String> values = Parsing.splitToList(line, Delimiter.COMMA);
 
@@ -117,6 +154,7 @@ public final class SiteSet implements Iterable<Site> {
 				}
 				checkState(keyList.contains(LAT), "Site latitudes must be defined");
 				checkState(keyList.contains(LON), "Site longitudes must be defined");
+				firstline = false;
 				continue;
 			}
 
@@ -172,7 +210,7 @@ public final class SiteSet implements Iterable<Site> {
 
 			// check if we have a site list
 			if (json.isJsonArray()) {
-				Type type = new TypeToken<List<Site>>(){}.getType();
+				Type type = new TypeToken<List<Site>>() {}.getType();
 				List<Site> sites = context.deserialize(json, type);
 				return new SiteSet(sites);
 			}
