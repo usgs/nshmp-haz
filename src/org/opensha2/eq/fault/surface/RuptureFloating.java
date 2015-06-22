@@ -1,13 +1,8 @@
 package org.opensha2.eq.fault.surface;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.lang.Math.*;
-import static org.opensha2.eq.model.FloatStyle.CENTERED;
-import static org.opensha2.eq.model.FloatStyle.FULL_DOWN_DIP;
-import static org.opensha2.eq.fault.surface.Surfaces.*;
+import static java.lang.Math.sin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,13 +14,7 @@ import org.opensha2.eq.fault.surface.RuptureScaling.Dimensions;
 import org.opensha2.eq.model.Rupture;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
-import org.opensha2.mfd.IncrementalMfd;
-import org.opensha2.mfd.Mfds;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
 /**

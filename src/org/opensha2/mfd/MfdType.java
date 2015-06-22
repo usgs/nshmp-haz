@@ -4,6 +4,7 @@ package org.opensha2.mfd;
  * Magnitude-frequency distribution (MFD) type identifier.
  *
  * @author Peter Powers
+ * @see Mfds
  */
 public enum MfdType {
 
