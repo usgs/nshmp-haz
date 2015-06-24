@@ -63,7 +63,7 @@ public class Calcs {
 				if (inputs.isEmpty()) continue; // all sources out of range
 
 				AsyncList<ClusterGroundMotions> groundMotions = toClusterGroundMotions(inputs,
-					clusterSourceSet, config.imts, executor);
+					clusterSourceSet, config.imts(), executor);
 
 				AsyncList<ClusterCurves> clusterCurves = toClusterCurves(groundMotions,
 					modelCurves, config.exceedanceModel, config.truncationLevel, executor);
@@ -79,7 +79,7 @@ public class Calcs {
 				if (inputs.isEmpty()) continue; // all sources out of range
 
 				AsyncList<HazardGroundMotions> groundMotions = toGroundMotions(inputs, sourceSet,
-					config.imts, executor);
+					config.imts(), executor);
 
 				AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, modelCurves,
 					config.exceedanceModel, config.truncationLevel, executor);

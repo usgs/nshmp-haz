@@ -15,6 +15,7 @@ import static org.opensha2.util.TextUtils.ALIGN_COL;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,7 +56,7 @@ final class SiteSet implements Iterable<Site> {
 	final private GriddedRegion region;
 	final private Builder builder;
 	final private List<Site> sites;
-
+	
 	SiteSet(List<Site> sites) {
 		this.sites = checkNotNull(sites);
 		this.region = null;
@@ -70,6 +71,12 @@ final class SiteSet implements Iterable<Site> {
 
 	int size() {
 		return (region == null) ? sites.size() : region.size();
+	}
+
+	private static int computeLocationPrecision(GriddedRegion region) {
+		return Math.max(
+			new BigDecimal(region.latSpacing()).scale(),
+			new BigDecimal(region.lonSpacing()).scale());
 	}
 
 	@Override public Iterator<Site> iterator() {

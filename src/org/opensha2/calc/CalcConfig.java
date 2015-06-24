@@ -4,10 +4,7 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Strings.padStart;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.opensha2.util.TextUtils.ALIGN_COL;
-import static org.opensha2.util.TextUtils.NEWLINE;
 import static org.opensha2.util.TextUtils.format;
 
 import java.io.IOException;
@@ -15,6 +12,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -37,19 +35,19 @@ import com.google.gson.GsonBuilder;
  */
 public final class CalcConfig {
 
-	// TODO revisit privatization
-	
+	// TODO revisit privatization, comments, and immutability
+
 	static final String FILE_NAME = "config.json";
 
 	final Path resource;
-	
+
 	final ExceedanceModel exceedanceModel;
 	final double truncationLevel;
-	final Set<Imt> imts;
-	final double[] defaultImls;
-	final Map<Imt, double[]> customImls;
-	final Deagg deagg;
-	final SiteSet sites;
+	private final Set<Imt> imts;
+	private final double[] defaultImls;
+	private final Map<Imt, double[]> customImls;
+	private final DeaggData deagg;
+	private final SiteSet sites;
 
 	private static final Gson GSON = new GsonBuilder()
 		.registerTypeAdapter(Site.class, new Site.Deserializer())
@@ -63,7 +61,7 @@ public final class CalcConfig {
 			Set<Imt> imts,
 			double[] defaultImls,
 			Map<Imt, double[]> customImls,
-			Deagg deagg,
+			DeaggData deagg,
 			SiteSet sites) {
 
 		this.resource = resource;
@@ -172,7 +170,15 @@ public final class CalcConfig {
 	}
 
 	/**
-	 * Returns an unmodifiable iterator over the {@code Site}s specified by this
+	 * Return the {@code Set} of {@code Imt}s for which calculations will be
+	 * performed.
+	 */
+	public Set<Imt> imts() {
+		return imts;
+	}
+	
+	/**
+	 * Return an unmodifiable iterator over the {@code Site}s specified by this
 	 * configuration.
 	 * 
 	 * @see Iterables#unmodifiableIterable(Iterable)
@@ -180,8 +186,15 @@ public final class CalcConfig {
 	public Iterable<Site> sites() {
 		return Iterables.unmodifiableIterable(sites);
 	}
+	
+	/**
+	 * Return the deaggregation data model spcified by this configuration.
+	 */
+	public DeaggData deagg() {
+		return deagg;
+	}
 
-	public static final class Deagg {
+	public static final class DeaggData {
 
 		public final double rMin;
 		public final double rMax;
@@ -195,7 +208,7 @@ public final class CalcConfig {
 		public final double εMax;
 		public final double Δε;
 
-		Deagg() {
+		DeaggData() {
 			rMin = 0.0;
 			rMax = 100.0;
 			Δr = 10.0;
@@ -247,7 +260,7 @@ public final class CalcConfig {
 		Set<Imt> imts;
 		double[] defaultImls;
 		Map<Imt, double[]> customImls;
-		Deagg deagg;
+		DeaggData deagg;
 		SiteSet sites;
 
 		public Builder copy(CalcConfig config) {
@@ -266,13 +279,13 @@ public final class CalcConfig {
 		public Builder withDefaults() {
 			this.exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
 			this.truncationLevel = 3.0;
-			this.imts = Sets.immutableEnumSet(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
+			this.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
 			// Slightly modified version of NSHM 5Hz curve, size = 20
 			this.defaultImls = new double[] { 0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253,
 				0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46,
 				2.19, 3.28, 4.92, 7.38 };
 			this.customImls = Maps.newHashMap();
-			this.deagg = new Deagg();
+			this.deagg = new DeaggData();
 			this.sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
 			return this;
 		}
@@ -311,8 +324,9 @@ public final class CalcConfig {
 
 		public CalcConfig build() {
 			validateState(ID);
+			Set<Imt> finalImts = Sets.immutableEnumSet(imts);
 			return new CalcConfig(
-				resource, exceedanceModel, truncationLevel, imts,
+				resource, exceedanceModel, truncationLevel, finalImts,
 				defaultImls, customImls, deagg, sites);
 		}
 	}

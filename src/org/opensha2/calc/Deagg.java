@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 
+import org.opensha2.calc.CalcConfig.DeaggData;
 import org.opensha2.data.DataUtils;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.model.GmmSet;
@@ -316,8 +317,8 @@ class Deagg {
 		 * @param c {@code CalcConfig} to process
 		 */
 		public static Model fromConfig(CalcConfig c) {
-			return create(c.deagg.mMin, c.deagg.mMax, c.deagg.Δm, c.deagg.rMin, c.deagg.rMax,
-				c.deagg.Δr, c.deagg.εMin, c.deagg.εMax, c.deagg.Δε);
+			DeaggData d = c.deagg();
+			return create(d.mMin, d.mMax, d.Δm, d.rMin, d.rMax, d.Δr, d.εMin, d.εMax, d.Δε);
 		}
 
 		private static class Builder {

@@ -1,4 +1,6 @@
 Examples
 
-Output files are created in the directory from which a program is run.
+Output files are always placed in a 'results' directory within the directory from which a program was run.
+
+Navigate to 
 

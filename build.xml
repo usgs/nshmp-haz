@@ -44,7 +44,9 @@
 		       source="1.7"
 		       target="1.7"
 		       encoding="UTF-8"
-		       debug="true" />
+		       debug="true"
+		       includeantruntime="false"
+		       createMissingPackageInfoClass="false" />
 
 		<!-- Copy any non-Java resources -->
 		<copy todir="${classes.dir}" includeEmptyDirs="false">

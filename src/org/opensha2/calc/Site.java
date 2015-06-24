@@ -82,7 +82,7 @@ public class Site implements Named {
 	/**
 	 * The location.
 	 * 
-	 * <p>Default: lat=40.75, lon=-111.90 (Salt Lake City, UT)</p>
+	 * <p>Default: lat=34.05, lon=-118.25 (Los Angeles, CA)</p>
 	 */
 	public final Location location;
 
@@ -163,7 +163,7 @@ public class Site implements Named {
 	public static class Builder {
 
 		private String name = NO_NAME;
-		private Location location = NehrpTestCity.SALT_LAKE_CITY.location();
+		private Location location = NehrpTestCity.LOS_ANGELES.location();
 		private double vs30 = DEFAULT_VS_30;
 		private boolean vsInferred = true;
 		private double z1p0 = Double.NaN;

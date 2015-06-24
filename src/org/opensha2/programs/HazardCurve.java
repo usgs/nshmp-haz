@@ -7,6 +7,7 @@ import static org.opensha2.util.TextUtils.NEWLINE;
 import static org.opensha2.util.TextUtils.format;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,6 +72,9 @@ public class HazardCurve {
 	 * @param args
 	 * @see <a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running">
 	 *      nshmp-haz wiki</a>
+	 * @see <a
+	 *      href="https://github.com/usgs/nshmp-haz/tree/master/etc/examples">
+	 *      example calculations</a>
 	 */
 	public static void main(String[] args) {
 		String status = run(args);
@@ -157,8 +161,9 @@ public class HazardCurve {
 
 		List<HazardResult> results = new ArrayList<>();
 		boolean firstBatch = true;
-		Path dir = Paths.get(StandardSystemProperty.USER_DIR.value());
-
+		Path dir = Paths.get(StandardSystemProperty.USER_DIR.value(), "results");
+		Files.createDirectories(dir);
+		
 		for (Site site : sites) {
 			HazardResult result = calc(model, config, site, executor);
 			results.add(result);
@@ -167,7 +172,8 @@ public class HazardCurve {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
 				Results.writeResults(dir, results, opts);
-				log.info("   " + count + "  batch: " + batchWatch + "  total: " + totalWatch);
+				log.info("       batch: " + (count + 1) + "  " + batchWatch + "  total: " +
+					totalWatch);
 				results.clear();
 				batchWatch.reset();
 			}
