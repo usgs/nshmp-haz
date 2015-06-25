@@ -4,16 +4,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static org.opensha2.eq.fault.Faults.validateInterfaceDepth;
-import static org.opensha2.eq.fault.Faults.validateTrace;
 import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
-import static org.opensha2.eq.model.FloatStyle.FULL_DOWN_DIP;
+import static org.opensha2.eq.fault.Faults.validateTrace;
 
 import java.util.List;
 
-import org.opensha2.eq.fault.scaling.MagScalingRelationship;
 import org.opensha2.eq.fault.surface.ApproxGriddedSurface;
-import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
+import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.geo.LocationList;
@@ -155,7 +153,6 @@ public class InterfaceSource extends FaultSource {
 					.width(width)
 					.spacing(spacing)
 					.build();
-
 			}
 
 			return new InterfaceSource(name, id, trace, lowerTrace, dip, width, surface, rake,

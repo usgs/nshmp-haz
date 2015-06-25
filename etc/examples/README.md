@@ -5,7 +5,7 @@ The simplest way to run the HazardCurve program via the command-line is to suppl
 ```
 java -cp ../../dist/nshmp-haz.jar org.opensha2.programs.HazardCurve model
 ```
-By way of example, the [configuration file](https://github.com/usgs/nshmp-haz/blob/master/etc/examples/model/config.json) in the model above omits any site data and a default Los Angeles site is used. Remember that calculation [configuration parameters](https://github.com/usgs/nshmp-haz/wiki/Configuration) need not be supplied. The result of this calculation should be available as a single file containing one hazard curve for PGA in a newly created 'results' directory.
+By way of example, the [configuration file](https://github.com/usgs/nshmp-haz/blob/master/etc/examples/model/config.json) in the model above omits any site data and a default Los Angeles site is used. Remember that [calculation configuration](https://github.com/usgs/nshmp-haz/wiki/Configuration) parameters need not be supplied. The result of this calculation should be available as a single file containing one hazard curve for PGA in a newly created 'results' directory.
 
 One can override calculation configuration parameters by supplying an alternate configuration file. For example:
 ```

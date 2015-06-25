@@ -324,9 +324,9 @@ class FaultParser extends DefaultHandler {
 		List<IncrementalMfd> mfds = Lists.newArrayList();
 
 		// total moment rate
-		double tmr = data.a * Magnitudes.magToMoment_N_m(data.m);
+		double tmr = data.rate * Magnitudes.magToMoment_N_m(data.m);
 		// total event rate
-		double tcr = data.a;
+		double tcr = data.rate;
 
 		// this was handled previously by GR_Data.hasMagExceptions()
 		// need to catch the single floaters that are less than 6.5
@@ -370,7 +370,7 @@ class FaultParser extends DefaultHandler {
 				log.finer("   MFD type: SINGLE [-epi +alea]");
 				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 			} else {
-				IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.a, data.floats);
+				IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
 				mfds.add(mfd);
 				log.finer("   MFD type: SINGLE [-epi -alea]");
 				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());

@@ -38,6 +38,7 @@ public enum SourceAttribute {
 	C_MAG,
 	FLOATS,
 	MAGS,
+	RATE,
 	RATES,
 	
 	/* Mag uncertainty specific */

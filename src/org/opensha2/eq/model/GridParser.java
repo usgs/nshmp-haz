@@ -279,7 +279,7 @@ class GridParser extends DefaultHandler {
 
 			case SINGLE:
 				MfdHelper.SingleData singleData = mfdHelper.getSingle(atts);
-				return Mfds.newSingleMFD(singleData.m, singleData.a * singleData.weight,
+				return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
 					singleData.floats);
 
 			case GR_TAPER:

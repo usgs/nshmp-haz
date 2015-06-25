@@ -1,9 +1,9 @@
 package org.opensha2.gmm;
 
 import static org.opensha2.gmm.Gmm.AB_03_CASC_SLAB;
-import static org.opensha2.gmm.Gmm.AB_03_CASC_SLAB_SAT_M7P8;
+import static org.opensha2.gmm.Gmm.AB_03_CASC_SLAB_LOW_SAT;
 import static org.opensha2.gmm.Gmm.AB_03_GLOB_SLAB;
-import static org.opensha2.gmm.Gmm.AB_03_GLOB_SLAB_SAT_M7P8;
+import static org.opensha2.gmm.Gmm.AB_03_GLOB_SLAB_LOW_SAT;
 import static org.opensha2.gmm.Gmm.BCHYDRO_12_SLAB;
 import static org.opensha2.gmm.Gmm.YOUNGS_97_SLAB;
 import static org.opensha2.gmm.Gmm.ZHAO_06_SLAB;
@@ -49,9 +49,9 @@ public class SubSlab extends GmmTest {
 	/* Result generation sets */
 	private static Set<Gmm> gmms = EnumSet.of(
 		AB_03_GLOB_SLAB,
-		AB_03_GLOB_SLAB_SAT_M7P8,
+		AB_03_GLOB_SLAB_LOW_SAT,
 		AB_03_CASC_SLAB,
-		AB_03_CASC_SLAB_SAT_M7P8,
+		AB_03_CASC_SLAB_LOW_SAT,
 		BCHYDRO_12_SLAB,
 		BCHYDRO_12_SLAB,
 		YOUNGS_97_SLAB,

@@ -96,7 +96,7 @@ public enum Gmm {
 			AtkinsonBoore_2003.COEFFS_GLOBAL_SLAB),
 
 	/** @see AtkinsonBoore_2003 */
-	AB_03_GLOB_SLAB_SAT_M7P8(AtkinsonBoore_2003.GlobalSlabLowMagSaturation.class,
+	AB_03_GLOB_SLAB_LOW_SAT(AtkinsonBoore_2003.GlobalSlabLowMagSaturation.class,
 			AtkinsonBoore_2003.GlobalSlabLowMagSaturation.NAME,
 			AtkinsonBoore_2003.COEFFS_GLOBAL_SLAB),
 
@@ -109,7 +109,7 @@ public enum Gmm {
 			AtkinsonBoore_2003.COEFFS_CASC_SLAB),
 
 	/** @see AtkinsonBoore_2003 */
-	AB_03_CASC_SLAB_SAT_M7P8(AtkinsonBoore_2003.CascadiaSlabLowMagSaturation.class,
+	AB_03_CASC_SLAB_LOW_SAT(AtkinsonBoore_2003.CascadiaSlabLowMagSaturation.class,
 			AtkinsonBoore_2003.CascadiaSlabLowMagSaturation.NAME,
 			AtkinsonBoore_2003.COEFFS_CASC_SLAB),
 

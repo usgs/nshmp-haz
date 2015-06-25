@@ -17,8 +17,8 @@ import java.util.Map;
  * gridded 'deep' events in northern California and the Pacific Northwest. In
  * the 2014 NSHM, 'slab' implementations with Mw saturation at 7.8 were added.
  * 
- * <p><b>Note:</b> NSHM fortran implementations implement strict hypocentral depths
- * that are hardcoded into these implementations as well. FOr interface
+ * <p><b>Note:</b> NSHM fortran implementations implement strict hypocentral
+ * depths that are hardcoded into these implementations as well. FOr interface
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -82,7 +82,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	AtkinsonBoore_2003(final Imt imt) {
 		coeffs = initCoeffs(imt, isSlab(), isGlobal());
 		coeffsPGA = initCoeffs(PGA, isSlab(), isGlobal());
-		mMax = saturationMagnitude(isSlab(), lowSaturationMw());
+		mMax = saturationMw();
 	}
 
 	private static Coefficients initCoeffs(final Imt imt, final boolean slab, final boolean global) {
@@ -102,9 +102,16 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
 	// implementation flag
 	abstract boolean isSlab();
-	
-	// implementationFlag
-	abstract boolean lowSaturationMw();
+
+	// implementation value
+	// - interface events saturate at 8.5
+	// - slab events saturate at 8.0 in the 2008 NSHM
+	// - slab event saturation was reduced to 7.8 for 2014 NSHM
+	abstract double saturationMw();
+
+	private static final double SAT_MW_INTERFACE = 8.5;
+	private static final double SAT_MW_SLAB_2008 = 8.0;
+	private static final double SAT_MW_SLAB_2014 = 7.8;
 	
 	private static double saturationMagnitude(boolean slab, boolean lowSat) {
 		return !slab ? 8.5 : lowSat ? 7.8 : 8.0;
@@ -116,7 +123,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
 		// "saturation effect" p. 1709 AB 2003
 		double Mw = Math.min(in.Mw, mMax);
-		
+
 		// TODO what is the reasoning behind the following?
 		// does zHyp yield unreliable results?
 
@@ -193,9 +200,9 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
 		return gnd * BASE_10_TO_E - LN_G_CM_TO_M;
 	}
-	
+
 	static final class CascadiaInterface extends AtkinsonBoore_2003 {
-		static final String NAME = createName(false, false, false);
+		static final String NAME = createName(false, false, SAT_MW_INTERFACE);
 
 		CascadiaInterface(Imt imt) {
 			super(imt);
@@ -209,13 +216,13 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 			return false;
 		}
 
-		@Override boolean lowSaturationMw() {
-			return false;
+		@Override double saturationMw() {
+			return SAT_MW_INTERFACE;
 		}
 	}
 
 	static final class CascadiaSlab extends AtkinsonBoore_2003 {
-		static final String NAME = createName(false, true, false);
+		static final String NAME = createName(false, true, SAT_MW_SLAB_2008);
 
 		CascadiaSlab(Imt imt) {
 			super(imt);
@@ -228,14 +235,14 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		@Override final boolean isSlab() {
 			return true;
 		}
-		
-		@Override boolean lowSaturationMw() {
-			return false;
+
+		@Override double saturationMw() {
+			return SAT_MW_SLAB_2008;
 		}
 	}
 
 	static final class CascadiaSlabLowMagSaturation extends AtkinsonBoore_2003 {
-		static final String NAME = createName(false, true, true);
+		static final String NAME = createName(false, true, SAT_MW_SLAB_2014);
 
 		CascadiaSlabLowMagSaturation(Imt imt) {
 			super(imt);
@@ -248,14 +255,14 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		@Override final boolean isSlab() {
 			return true;
 		}
-		
-		@Override boolean lowSaturationMw() {
-			return true;
+
+		@Override double saturationMw() {
+			return SAT_MW_SLAB_2014;
 		}
 	}
 
 	static final class GlobalInterface extends AtkinsonBoore_2003 {
-		static final String NAME = createName(true, false, false);
+		static final String NAME = createName(true, false, SAT_MW_INTERFACE);
 
 		GlobalInterface(Imt imt) {
 			super(imt);
@@ -268,14 +275,14 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		@Override final boolean isSlab() {
 			return false;
 		}
-		
-		@Override boolean lowSaturationMw() {
-			return false;
+
+		@Override double saturationMw() {
+			return SAT_MW_INTERFACE;
 		}
 	}
 
 	static final class GlobalSlab extends AtkinsonBoore_2003 {
-		static final String NAME = createName(true, true, false);
+		static final String NAME = createName(true, true, SAT_MW_SLAB_2008);
 
 		GlobalSlab(Imt imt) {
 			super(imt);
@@ -288,14 +295,14 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		@Override final boolean isSlab() {
 			return true;
 		}
-		
-		@Override boolean lowSaturationMw() {
-			return false;
+
+		@Override double saturationMw() {
+			return SAT_MW_SLAB_2008;
 		}
 	}
 
 	static final class GlobalSlabLowMagSaturation extends AtkinsonBoore_2003 {
-		static final String NAME = createName(true, true, true);
+		static final String NAME = createName(true, true, SAT_MW_SLAB_2014);
 
 		GlobalSlabLowMagSaturation(Imt imt) {
 			super(imt);
@@ -308,20 +315,17 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		@Override final boolean isSlab() {
 			return true;
 		}
-		
-		@Override boolean lowSaturationMw() {
-			return true;
+
+		@Override double saturationMw() {
+			return SAT_MW_SLAB_2014;
 		}
 	}
-	
-	static String createName(boolean global, boolean slab, boolean lowSat) {
+
+	static String createName(boolean global, boolean slab, double satMw) {
 		StringBuilder sb = new StringBuilder(AtkinsonBoore_2003.NAME);
-		sb.append(" : ");
-		sb.append(global ? "Global" : "Cascadia");
-		sb.append(" : ");
-		sb.append(slab ? "Slab" : "Interface");
-		sb.append(" : SatMw=");
-		sb.append(saturationMagnitude(slab, lowSat));
+		sb.append(" : ").append(global ? "Global" : "Cascadia");
+		sb.append(" : ").append(slab ? "Slab" : "Interface");
+		sb.append(" : SatMw=").append(satMw);
 		return sb.toString();
 	}
 

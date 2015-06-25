@@ -4,14 +4,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
-import static org.opensha2.eq.model.SourceAttribute.A;
 import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
 import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.M;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
 import static org.opensha2.eq.model.SourceAttribute.RAKE;
+import static org.opensha2.eq.model.SourceAttribute.RATE;
+import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha2.eq.model.SourceAttribute.TYPE;
 import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceAttribute.WIDTH;
@@ -185,7 +185,7 @@ class ClusterParser extends DefaultHandler {
 					if (parsingDefaultMFDs) {
 						checkState(readEnum(TYPE, atts, MfdType.class) == MfdType.SINGLE,
 							"Only SINGLE MFDs are supported by cluster sources");
-						clusterRate = readDouble(A, atts);
+						clusterRate = readDouble(RATE, atts);
 						break;
 					}
 					faultBuilder.mfd(buildMFD(atts));

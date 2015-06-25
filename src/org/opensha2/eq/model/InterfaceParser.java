@@ -272,7 +272,7 @@ class InterfaceParser extends DefaultHandler {
 
 	/* Builds single MFD */
 	private IncrementalMfd buildSingle(MfdHelper.SingleData data) {
-		IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.a, data.floats);
+		IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
 		log.finer("   MFD type: SINGLE");
 		if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 		return mfd;
