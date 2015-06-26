@@ -77,6 +77,7 @@ public class HazardCurve {
 	 *      example calculations</a>
 	 */
 	public static void main(String[] args) {
+		// delegate to run which has a return value for testing
 		String status = run(args);
 		if (status != null) {
 			System.err.print(status);
@@ -138,6 +139,7 @@ public class HazardCurve {
 				.toString();
 		}
 	}
+	
 
 	private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
 	private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
@@ -155,8 +157,8 @@ public class HazardCurve {
 		Optional<Executor> executor = Optional.<Executor> of(execSvc);
 
 		log.info("Hazard Curve: calculating ...");
-		Stopwatch batchWatch = Stopwatch.createUnstarted();
-		Stopwatch totalWatch = Stopwatch.createUnstarted();
+		Stopwatch batchWatch = Stopwatch.createStarted();
+		Stopwatch totalWatch = Stopwatch.createStarted();
 		int count = 0;
 
 		List<HazardResult> results = new ArrayList<>();
@@ -209,8 +211,6 @@ public class HazardCurve {
 			CalcConfig config,
 			Site site,
 			Optional<Executor> executor) {
-
-		// TODO does this even need to be public?
 
 		Executor ex = executor.or(createExecutor());
 

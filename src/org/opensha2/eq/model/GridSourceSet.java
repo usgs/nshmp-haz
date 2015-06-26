@@ -3,11 +3,9 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validateWeight;
 import static org.opensha2.eq.Magnitudes.MAX_MAG;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
-import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.Collections;
 import java.util.Iterator;
