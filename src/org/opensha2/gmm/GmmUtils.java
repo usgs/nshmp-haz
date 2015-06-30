@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 
@@ -261,8 +262,9 @@ public final class GmmUtils {
 
 	/**
 	 * Scales μ with distance at high frequencies and soft rock site conditions.
+	 * TODO move this to be with Tables
 	 */
-	static double atkinsonTableValue(final GmmTable table, final Imt imt,
+	static double atkinsonTableValue(final GroundMotionTable table, final Imt imt,
 			final double m, final double r, final double vs30, final double bcfac) {
 
 		double μ = table.get(r, m);

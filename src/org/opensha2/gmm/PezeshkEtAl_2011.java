@@ -5,6 +5,8 @@ import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
 
 import java.util.Map;
 
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+
 /**
  * Implementation of the Pezeshk, Zandieh, & Tavakoli (2011) ground motion model
  * for stable continental regions. This implementation matches that used in the
@@ -55,11 +57,11 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 	}
 
 	private final Coefficients coeffs;
-	private final GmmTable table;
+	private final GroundMotionTable table;
 
 	PezeshkEtAl_2011(final Imt imt) {
 		coeffs = new Coefficients(imt, COEFFS);
-		table = GmmTables.getPezeshk11(imt);
+		table = GroundMotionTables.getPezeshk11(imt);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {

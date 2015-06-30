@@ -450,7 +450,9 @@ public final class Parsing {
 	 * @param delimiter the {@link Delimiter} to split on
 	 */
 	public static List<Double> splitToDoubleList(CharSequence sequence, Delimiter delimiter) {
-		return FluentIterable.from(split(sequence, delimiter)).transform(Doubles.stringConverter())
+		return FluentIterable
+			.from(split(sequence, delimiter))
+			.transform(Doubles.stringConverter())
 			.toList();
 	}
 

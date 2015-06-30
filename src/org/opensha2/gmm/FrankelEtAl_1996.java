@@ -5,6 +5,8 @@ import static org.opensha2.gmm.MagConverter.NONE;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
 
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+
 /**
  * Implementation of the Frankel et al. (1996) ground motion model for stable
  * continental regions. This implementation matches that used in the 2008 USGS
@@ -38,14 +40,14 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
 	private final double bσ;
 	private final Imt imt;
-	private final GmmTable bcTable;
-	private final GmmTable aTable;
+	private final GroundMotionTable bcTable;
+	private final GroundMotionTable aTable;
 
 	FrankelEtAl_1996(Imt imt) {
 		this.imt = imt;
 		bσ = COEFFS.get(imt, "bsigma");
-		bcTable = GmmTables.getFrankel96(imt, SOFT_ROCK);
-		aTable = GmmTables.getFrankel96(imt, HARD_ROCK);
+		bcTable = GroundMotionTables.getFrankel96(imt, SOFT_ROCK);
+		aTable = GroundMotionTables.getFrankel96(imt, HARD_ROCK);
 	}
 
 	@Override public final ScalarGroundMotion calc(GmmInput in) {

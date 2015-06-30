@@ -4,14 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 
 @SuppressWarnings("javadoc")
-public class GMM_TableTests {
+public class GroundMotionTableTests {
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass public static void setUpBeforeClass() throws Exception {}
 
 	private static final double TABLE_TOL = 0.00000000001;
 
@@ -23,7 +20,7 @@ public class GMM_TableTests {
 	 * original values are base-10 so we convert back
 	 */
 	@Test public void testGroundMotionTable() {
-		GmmTable gmt = GmmTables.getFrankel96(Imt.PGA, SiteClass.SOFT_ROCK);
+		GroundMotionTable gmt = GroundMotionTables.getFrankel96(Imt.PGA, SiteClass.SOFT_ROCK);
 		double testVal;
 
 		// extrema

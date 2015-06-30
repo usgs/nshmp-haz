@@ -195,6 +195,12 @@ public final class Interpolate {
 
 	// TODO clean
 	
+	// TODO its highly likely that given the average (small) size of things
+	// like hazard curves, simply walking up an array or list is faster than
+	// binary searching.
+	
+	// TODO move to DataUtils as some 'unchecked' flavor
+	
 	private static int dataIndex(double[] data, double value) {
 		int i = Arrays.binarySearch(data, value);
 		return binarySearchResultToIndex(i, data.length);

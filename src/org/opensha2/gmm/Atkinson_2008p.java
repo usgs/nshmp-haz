@@ -3,6 +3,8 @@ package org.opensha2.gmm;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
 
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+
 /**
  * Modified form of the relationship for the Central and Eastern US by Atkinson
  * (2008). This implementation matches that used in the 2014 USGS NSHMP and uses
@@ -46,12 +48,12 @@ public final class Atkinson_2008p implements GroundMotionModel {
 
 	private final double bcfac;
 	private final Imt imt;
-	private final GmmTable table;
+	private final GroundMotionTable table;
 
 	Atkinson_2008p(final Imt imt) {
 		this.imt = imt;
 		bcfac = COEFFS.get(imt, "bcfac");
-		table = GmmTables.getAtkinson08(imt);
+		table = GroundMotionTables.getAtkinson08(imt);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
