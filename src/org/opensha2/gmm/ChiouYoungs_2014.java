@@ -61,8 +61,13 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	private static final class Coefficients {
 
-		final double c1, c1a, c1b, c1c, c1d, c3, c5, c6, c7, c7b, c9, c9a, c9b, c11b, cn, cM, cHM,
-				γ1, γ2, γ3, φ1, φ2, φ3, φ4, φ5, τ1, τ2, σ1, σ2, σ3;
+		final double
+				c1, c1a, c1b, c1c, c1d, c3, c5, c6, c7, c7b, c9, c9a, c9b, c11b,
+				cn, cM, cHM,
+				γ1, γ2, γ3,
+				φ1, φ2, φ3, φ4, φ5,
+				τ1, τ2,
+				σ1, σ2, σ3;
 
 		// same for all periods; replaced with constant
 		// double c2, c4, c4a, c11, cRB, phi6;

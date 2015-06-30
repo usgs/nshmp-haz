@@ -80,10 +80,9 @@ class BooreAtkinsonSiteAmp {
 		}
 
 		if (V1 < vs30r && vs30r <= V2) {
-			// repeat site term precalcs that are not M or d dependent @ ref.
-			// vs.
-			bnlr = (c.b1 - c.b2) * log(vs30r / V2) /
-				log(V1 / V2) + c.b2;
+			// repeat site term precalcs that are not M or d dependent
+			//  @ reference vs
+			bnlr = (c.b1 - c.b2) * log(vs30r / V2) / log(V1 / V2) + c.b2;
 		} else if (V2 < vs30r && vs30r <= VREF) {
 			bnlr = c.b2 * log(vs30r / VREF) / log(V2 / VREF);
 		} else if (vs30r <= V1) {

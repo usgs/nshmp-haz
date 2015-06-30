@@ -35,8 +35,6 @@ public enum Gmm {
 	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
 	// high at large distances
 
-	// TODO do deep GMMs saturate at 7.8 ??? doublecheck
-
 	// TODO check if AtkinsonMacias using BooreAtkin siteAmp to get non-rock
 	// site response
 
@@ -44,8 +42,6 @@ public enum Gmm {
 	// anywhere?
 
 	// TODO Port Gmm grid optimization tables
-
-	// TODO is Atkinson Macias ok? finished?
 
 	// TODO z1p0 in CY08 - this is now always km, CY08 needs updating (from m)
 

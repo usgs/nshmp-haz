@@ -59,8 +59,11 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 	private static final class Coefficients {
 
 		final Imt imt;
-		final double a1, a2, a6, a8, a10, a12, a13, a15, a17, a43, a44, a45, a46, b, c, s1e, s2e,
-				s3, s4, s1m, s2m, M1, Vlin;
+		final double
+				a1, a2, a6, a8, a10, a12, a13, a15, a17, a43, a44, a45, a46,
+				b, c,
+				s1e, s2e, s3, s4, s1m, s2m,
+				M1, Vlin;
 
 		// same for all periods; replaced with constant
 		// final double a3, a4, a5, c4, n;

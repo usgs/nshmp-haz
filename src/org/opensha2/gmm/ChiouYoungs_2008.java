@@ -53,8 +53,11 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 
 	private static final class Coefficients {
 
-		final double c1, c1a, c1b, c5, c6, c7, c9, c9a, cg1, cg2, cn, cm, φ1, φ2, φ3, φ4, φ5, φ6,
-				φ7, φ8, τ1, τ2, σ1, σ2, σ3;
+		final double
+				c1, c1a, c1b, c5, c6, c7, c9, c9a,
+				cg1, cg2, cn, cm,
+				φ1, φ2, φ3, φ4, φ5, φ6, φ7, φ8,
+				τ1, τ2, σ1, σ2, σ3;
 
 		// unused
 		// final double c7a, c10, sig4
@@ -143,15 +146,13 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 	private static final double calcMean(final Coefficients c, final double vs30,
 			final double z1p0, final double snl, final double lnYref) {
 
-		// basin depth
-		double zBasin = Double.isNaN(z1p0) ? calcBasinZ(vs30) : z1p0;
+		// basin depth (in meters; z1p0 supplied in km)
+		double zBasin = Double.isNaN(z1p0) ? calcBasinZ(vs30) : z1p0 * 1000.0;
 
-		// @formatter:off
 		return lnYref + c.φ1 * min(log(vs30 / 1130.0), 0) +
 			snl * log((exp(lnYref) + c.φ4) / c.φ4) +
 			c.φ5 * (1.0 - 1.0 / cosh(c.φ6 * max(0.0, zBasin - c.φ7))) +
 			c.φ8 / cosh(0.15 * max(0.0, zBasin - 15.0));
-		// @formatter:on
 	}
 
 	private static final double calcSoilNonLin(final Coefficients c, final double vs30) {

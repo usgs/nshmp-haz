@@ -54,8 +54,14 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 	private static final class Coefficients {
 
 		final Imt imt;
-		final double c0, c1, c2, c3, c4, c5, c6, c7, c9, c10, c11, c14, c16, c17, c18, c19, c20,
-				a2, h1, h2, h3, h5, h6, k1, k2, k3, φ1, φ2, τ1, τ2, ρ;
+		final double
+				c0, c1, c2, c3, c4, c5, c6, c7, c9, c10, c11, c14, c16, c17, c18, c19, c20,
+				a2,
+				h1, h2, h3, h5, h6,
+				k1, k2, k3,
+				φ1, φ2,
+				τ1, τ2,
+				ρ;
 
 		// same for all periods; replaced with constant; or unused (c8)
 		// double c8, c12, c13, h4, c, n, phi_lnaf;
