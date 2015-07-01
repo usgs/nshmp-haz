@@ -63,10 +63,10 @@ public class GmmInput {
 	public final double vs30;
 	/** Whether vs30 is inferred or measured. */
 	public final boolean vsInf;
+	/** Depth to 1.0 km/s (in km). */
+	public final double z1p0;
 	/** Depth to 2.5 km/s (in km). */
 	public final double z2p5;
-	/** Depth to 1.0 km/s (in km). */
-	public final double z1p0; // km, TODO CY08 needs updating
 
 	/**
 	 * Create a deterministic rupture and site property container with all
@@ -86,12 +86,13 @@ public class GmmInput {
 	 * @param rake of rupture
 	 * @param vs30 average shear wave velocity in top 30 m (in m/sec)
 	 * @param vsInf whether vs30 is an inferred or measured value
-	 * @param z2p5 depth to V<sub>s</sub>=2.5 km/sec (in km)
 	 * @param z1p0 depth to V<sub>s</sub>=1.0 km/sec (in km)
+	 * @param z2p5 depth to V<sub>s</sub>=2.5 km/sec (in km)
 	 */
-	protected GmmInput(double Mw, double rJB, double rRup, double rX, double dip, double width,
-			double zTop, double zHyp, double rake, double vs30, boolean vsInf, double z2p5,
-			double z1p0) {
+	protected GmmInput(
+			double Mw, double rJB, double rRup, double rX,
+			double dip, double width, double zTop, double zHyp, double rake,
+			double vs30, boolean vsInf, double z1p0, double z2p5) {
 
 		this.Mw = Mw;
 
@@ -107,17 +108,20 @@ public class GmmInput {
 
 		this.vs30 = vs30;
 		this.vsInf = vsInf;
-		this.z2p5 = z2p5;
 		this.z1p0 = z1p0;
+		this.z2p5 = z2p5;
 	}
 
 	// for tests
-	static GmmInput create(double Mw, double rJB, double rRup, double rX, double dip, double width,
-			double zTop, double zHyp, double rake, double vs30, boolean vsInf, double z2p5,
-			double z1p0) {
+	static GmmInput create(
+			double Mw, double rJB, double rRup, double rX,
+			double dip, double width, double zTop, double zHyp, double rake,
+			double vs30, boolean vsInf, double z2p5, double z1p0) {
 
-		return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf, z2p5,
-			z1p0);
+		return new GmmInput(
+			Mw, rJB, rRup, rX,
+			dip, width, zTop, zHyp, rake,
+			vs30, vsInf, z1p0, z2p5);
 	}
 
 	/**
@@ -156,8 +160,8 @@ public class GmmInput {
 		// site
 		private double vs30;
 		private boolean vsInf;
-		private double z2p5;
 		private double z1p0;
+		private double z2p5;
 
 		private Builder() {}
 
@@ -183,8 +187,8 @@ public class GmmInput {
 			rake = RAKE.defaultValue;
 			vs30 = VS30.defaultValue;
 			vsInf = VSINF.defaultValue > 0.0;
-			z2p5 = Z2P5.defaultValue;
 			z1p0 = Z1P0.defaultValue;
+			z2p5 = Z2P5.defaultValue;
 			flags.set(0, SIZE);
 			return this;
 		}
@@ -282,21 +286,23 @@ public class GmmInput {
 			return this;
 		}
 
-		public Builder z2p5(double z2p5) {
-			this.z2p5 = validateAndFlag(Z2P5, z2p5);
+		public Builder z1p0(double z1p0) {
+			this.z1p0 = validateAndFlag(Z1P0, z1p0);
 			return this;
 		}
 
-		public Builder z1p0(double z1p0) {
-			this.z1p0 = validateAndFlag(Z1P0, z1p0);
+		public Builder z2p5(double z2p5) {
+			this.z2p5 = validateAndFlag(Z2P5, z2p5);
 			return this;
 		}
 
 		public GmmInput build() {
 			checkState(flags.cardinality() == SIZE, "Not all fields set");
 			reset.clear();
-			return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf, z2p5,
-				z1p0);
+			return new GmmInput(
+				Mw, rJB, rRup, rX,
+				dip, width, zTop, zHyp, rake,
+				vs30, vsInf, z1p0, z2p5);
 		}
 	}
 
@@ -379,15 +385,15 @@ public class GmmInput {
 				null,
 				1.0),
 
-		Z2P5(
-				"Depth to Vs=2.5 km/s",
-				"Depth to a shear-wave velocity of 2.5 kilometers per second, in kilometers",
-				DISTANCE_UNIT,
-				NaN),
-
 		Z1P0(
 				"Depth to Vs=1.0 km/s",
 				"Depth to a shear-wave velocity of 1.0 kilometers per second, in kilometers",
+				DISTANCE_UNIT,
+				NaN),
+
+		Z2P5(
+				"Depth to Vs=2.5 km/s",
+				"Depth to a shear-wave velocity of 2.5 kilometers per second, in kilometers",
 				DISTANCE_UNIT,
 				NaN);
 
@@ -433,8 +439,8 @@ public class GmmInput {
 		keyValueMap.put(RAKE, rake);
 		keyValueMap.put(VS30, vs30);
 		keyValueMap.put(VSINF, vsInf);
-		keyValueMap.put(Z2P5, z2p5);
 		keyValueMap.put(Z1P0, z1p0);
+		keyValueMap.put(Z2P5, z2p5);
 		return keyValueMap;
 	}
 

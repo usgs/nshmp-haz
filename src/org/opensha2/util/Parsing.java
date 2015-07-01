@@ -601,12 +601,12 @@ public final class Parsing {
 	}
 
 	/**
-	 * Convert an ordered list of non-repeating {@code Integer}s to a compact
-	 * string form. For example,
+	 * Convert an ordered list of non-repeating {@code Integer}s to a more
+	 * compact string form. For example,
 	 * {@code List<Integer>.toString() = "[1, 2, 3, 4, 10, 19, 18, 17, 16]"}
-	 * would instead be written as {@code "[[1:4],10,[19:16]]"}.
+	 * would instead be written as {@code "1:4,10,19:16"}.
 	 * 
-	 * @param values the values to convert
+	 * @param values to convert
 	 * @throws IllegalArgumentException if {@code values} is empty or if
 	 *         {@code values} contains adjacent repeating values
 	 * @see #rangeStringToIntList(String)
@@ -621,22 +621,31 @@ public final class Parsing {
 		boolean dir = true;
 
 		for (int i = 1; i < values.size(); i++) {
-			int current = values.get(i);
-			checkArgument(current != end, "repeating value %s in %s", current, values);
-			boolean currentDir = current > end;
+			int next = values.get(i);
+			checkArgument(next != end, "repeating value %s in %s", next, values);
+			boolean currentDir = next > end;
 			boolean terminateRange =
 				// step > 1
-				(Math.abs(current - end) != 1) ||
+				(Math.abs(next - end) != 1) ||
 					// direction change
 					(buildingRange && currentDir != dir) ||
 					// end of list
 					(i == values.size() - 1);
-
+			
 			if (terminateRange) {
-				ranges.add((i == values.size() - 1) ? new int[] { start, current }
-					: new int[] { start, end });
-				start = current;
-				end = current;
+				if (i == values.size() - 1) {
+					// singleton trailing value
+					if (Math.abs(next - end) == 1 && currentDir == dir) {
+						ranges.add(new int[] { start, next });
+					} else {
+						ranges.add(new int[] { start, end });
+						ranges.add(new int[] { next, next});
+					}
+				} else {
+					ranges.add(new int[] { start, end });
+				}
+				start = next;
+				end = next;
 				buildingRange = false;
 				continue;
 			}
@@ -644,11 +653,14 @@ public final class Parsing {
 			// starting or continuing new range
 			buildingRange = true;
 			dir = currentDir;
-			end = current;
+			end = next;
 		}
+		return join(Iterables.transform(ranges, IntArrayToString.INSTANCE), Delimiter.COMMA);
+	}
 
-		return addBrackets(join(Iterables.transform(ranges, IntArrayToString.INSTANCE),
-			Delimiter.COMMA));
+	public static void main(String[] args) {
+		System.out.println(intListToRangeString(Ints
+			.asList(new int[] { 1, 2, 3, 10, 41, 42, 44 })));
 	}
 
 	/**
@@ -668,12 +680,11 @@ public final class Parsing {
 	}
 
 	// internal use only - no argument checking
-	// writes 2-element int[]s as '[a:b]' or just 'a' if a==b
+	// writes 2-element int[]s as 'a:b' or just 'a' if a==b
 	private enum IntArrayToString implements Function<int[], String> {
 		INSTANCE;
 		@Override public String apply(int[] ints) {
-			return (ints[0] == ints[1]) ? Integer.toString(ints[0]) : addBrackets(ints[0] + ":" +
-				ints[1]);
+			return (ints[0] == ints[1]) ? Integer.toString(ints[0]) : ints[0] + ":" + ints[1];
 		}
 	}
 
@@ -681,9 +692,9 @@ public final class Parsing {
 	private enum StringToIntArray implements Function<String, int[]> {
 		INSTANCE;
 		@Override public int[] apply(String s) {
-			if (s.startsWith("[")) {
+			if (s.contains(":")) {
 				Iterator<Integer> rangeIt = Iterators.transform(
-					split(trimEnds(s), Delimiter.COLON).iterator(), Ints.stringConverter());
+					split(s, Delimiter.COLON).iterator(), Ints.stringConverter());
 				return DataUtils.indices(rangeIt.next(), rangeIt.next());
 			}
 			return new int[] { Integer.valueOf(s) };

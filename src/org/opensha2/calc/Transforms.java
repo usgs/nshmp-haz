@@ -86,8 +86,8 @@ final class Transforms {
 					rup.rake(),
 					site.vs30,
 					site.vsInferred,
-					site.z2p5,
-					site.z1p0);
+					site.z1p0,
+					site.z2p5);
 				hazardInputs.add(input);
 			}
 			return hazardInputs;

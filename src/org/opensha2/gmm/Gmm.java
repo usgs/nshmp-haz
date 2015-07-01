@@ -35,15 +35,10 @@ public enum Gmm {
 	// TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
 	// high at large distances
 
-	// TODO check if AtkinsonMacias using BooreAtkin siteAmp to get non-rock
-	// site response
-
 	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified
 	// anywhere?
 
 	// TODO Port Gmm grid optimization tables
-
-	// TODO z1p0 in CY08 - this is now always km, CY08 needs updating (from m)
 
 	// TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup;
 	// why is depth constrained as such in hazgrid? As with somerville, no depth
@@ -51,8 +46,7 @@ public enum Gmm {
 	// imposed in hazFX - make sure 0.01 as PGA is handled corectly; may require
 	// change to period = 0.0
 
-	// TODO AbstractGmm ?? would store Imt
-
+	
 	// NGA-West1 NSHMP 2008
 
 	/** @see BooreAtkinson_2008 */
@@ -248,11 +242,6 @@ public enum Gmm {
 	/** @see McVerryEtAl_2000 */
 	MCVERRY_00_VOLCANIC(McVerryEtAl_2000.Volcanic.class, McVerryEtAl_2000.Volcanic.NAME,
 			McVerryEtAl_2000.COEFFS_GM);
-
-	// TODO clean?
-	// GK_2013(GraizerKalkan_2013.class);
-
-	// TODO all the methods of this class need argument checking and unit tests
 
 	private final Class<? extends GroundMotionModel> delegate;
 	private final String name;

@@ -203,6 +203,14 @@ final class GroundMotionTables {
 
 	}
 
+	/*
+	 * NOTE No data validation is performed in this package private class. It's
+	 * conceivable someone would supply an inapproprate distance. Negative
+	 * distances yield an NaN result, r=0 will give the lowest value in a table;
+	 * log10(0) = -Infinity (for whatever reason) which clamps to the low end of
+	 * a table.
+	 */
+
 	/* Base table implementation */
 	private static class ClampingTable implements GroundMotionTable {
 
@@ -394,7 +402,7 @@ final class GroundMotionTables {
 			for (int i = 1; i < imts.size(); i++) {
 				Imt imt = imts.get(i);
 				List<List<Double>> data = dataMap.get(imt);
-				data.get(rIndex).add(values.get(i));
+				data.get(rIndex).add(values.get(i + 1));
 			}
 
 			return true;

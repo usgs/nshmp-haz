@@ -554,8 +554,8 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 				source.rake(),
 				site.vs30,
 				site.vsInferred,
-				site.z2p5,
-				site.z1p0);
+				site.z1p0,
+				site.z2p5);
 		}
 	}
 

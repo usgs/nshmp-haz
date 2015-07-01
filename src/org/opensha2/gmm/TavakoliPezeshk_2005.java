@@ -100,7 +100,14 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		double Mw = converter().convert(in.Mw);
+
+		/*
+		 * Although unlikely that this model would be used with M>8.5 events,
+		 * magnitude conversions of M=8 yield M>8.5 and NaN for ground motion.
+		 * We therefore cap the (possibly) converted Mw.
+		 */
+
+		double Mw = Math.min(converter().convert(in.Mw), 8.5);
 		double μ = calcMean(coeffs, Mw, in.rRup, in.vs30);
 		double σ = calcStdDev(coeffs, Mw);
 		return DefaultScalarGroundMotion.create(μ, σ);

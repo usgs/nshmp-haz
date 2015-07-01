@@ -124,8 +124,8 @@ public class GmmTest {
 				.zHyp(it.next())
 				.rake(it.next())
 				.vs30(it.next(), it.next() > 0.0)
-				.z2p5(it.next())
 				.z1p0(it.next())
+				.z2p5(it.next())
 				.build();
 		}
 	}
