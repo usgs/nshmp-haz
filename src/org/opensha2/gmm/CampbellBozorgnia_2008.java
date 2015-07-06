@@ -7,6 +7,14 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.GmmInput.Field.DIP;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.RJB;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.Z2P5;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.SA0P01;
 import static org.opensha2.gmm.Imt.SA0P25;
@@ -14,6 +22,11 @@ import static org.opensha2.gmm.Imt.SA0P25;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Campbell & Bozorgnia (2008) next generation attenuation
@@ -40,6 +53,19 @@ import java.util.Set;
 public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
 	static final String NAME = "Campbell & Bozorgnia (2008)";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		// TODO there are rake dependent M restrictions
+		.set(MAG, Range.closed(4.0, 8.5))
+		.set(RJB, Range.closed(0.0, 300.0))
+		.set(RRUP, Range.closed(0.0, 300.0))
+		// TODO actually is 15-90
+		.set(DIP, Faults.DIP_RANGE)
+		.set(ZTOP, Range.closed(0.0, 15.0))
+		.set(RAKE, Faults.RAKE_RANGE)
+		.set(VS30, Range.closedOpen(150.0, 1500.0))
+		.set(Z2P5, Range.closed(0.0, 10.0))
+		.build();
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("CB08.csv");
 

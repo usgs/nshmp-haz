@@ -3,10 +3,17 @@ package org.opensha2.gmm;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.MagConverter.NONE;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 
 import java.util.Map;
+
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the hybrid ground motion model for stable continental
@@ -49,6 +56,12 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 	// TODO fix clamp values (not implemented here yet) to match other CEUS gmms
 
 	static final String NAME = "Campbell (2003)";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(4.0, 8.0))
+		.set(RRUP, Range.closed(0.0, 1000.0))
+		.set(VS30, Range.closed(760.0, 2000.0))
+		.build();
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Campbell03.csv");
 

@@ -6,9 +6,23 @@ import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha2.gmm.FaultStyle.UNKNOWN;
+import static org.opensha2.gmm.GmmInput.Field.DIP;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.RJB;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.VSINF;
+import static org.opensha2.gmm.GmmInput.Field.WIDTH;
+import static org.opensha2.gmm.GmmInput.Field.Z1P0;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;
+
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Boore & Atkinson (2008) next generation attenuation
@@ -36,8 +50,17 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 
 	static final String NAME = "Boore & Atkinson (2008)";
 
-	static final CoefficientContainer COEFFS = new CoefficientContainer("BA08.csv");
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+			.set(MAG, Range.closed(5.0, 8.0))
+			.set(RJB, Range.closed(0.0, 200.0))
+			.set(DIP,Faults.DIP_RANGE)
+			.set(WIDTH,Faults.CRUSTAL_WIDTH_RANGE)
+			.set(RAKE, Faults.RAKE_RANGE)
+			.set(VS30, Range.closedOpen(180.0, 1300.0))
+			.build();
 
+	static final CoefficientContainer COEFFS = new CoefficientContainer("BA08.csv");
+	
 	private static final double PGAlo = 0.06;
 	private static final double A2 = 0.09;
 	private static final double A1 = 0.03;
@@ -83,7 +106,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 
 	private final Coefficients coeffs;
 	private final Coefficients coeffsPGA;
-
+	
 	BooreAtkinson_2008(final Imt imt) {
 		coeffs = new Coefficients(imt, COEFFS);
 		coeffsPGA = new Coefficients(PGA, COEFFS);
@@ -194,5 +217,5 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 		// independent values for tau and sigma are available in coeffs
 		return style == UNKNOWN ? c.s_tu : c.s_tm;
 	}
-
+	
 }

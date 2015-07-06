@@ -2,11 +2,20 @@ package org.opensha2.gmm;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.LN_G_CM_TO_M;
 import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;
+
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Abstract implementation of the subduction ground motion model by Atkinson &
@@ -37,16 +46,27 @@ import java.util.Map;
  * @author Peter Powers
  * @see Gmm#AB_03_CASC_INTER
  * @see Gmm#AB_03_CASC_SLAB
- * @see Gmm#AB_03_CASC_SLAB_SAT_M7P8
+ * @see Gmm#AB_03_CASC_SLAB_LOW_SAT
  * @see Gmm#AB_03_GLOB_INTER
  * @see Gmm#AB_03_GLOB_SLAB
- * @see Gmm#AB_03_GLOB_SLAB_SAT_M7P8
+ * @see Gmm#AB_03_GLOB_SLAB_LOW_SAT
  */
 public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
 	static final String NAME = "Atkinson & Boore (2003)";
 
-	static final CoefficientContainer COEFFS_CASC_SLAB, COEFFS_CASC_INTERFACE, COEFFS_GLOBAL_SLAB,
+	// TODO will probably want to have constraints per-implementation
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(5.0, 9.5))
+		.set(RRUP, Range.closed(0.0, 1000.0))
+		.set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+		.set(VS30, Range.closed(150.0, 1500.0))
+		.build();
+
+	static final CoefficientContainer
+			COEFFS_CASC_SLAB,
+			COEFFS_CASC_INTERFACE,
+			COEFFS_GLOBAL_SLAB,
 			COEFFS_GLOBAL_INTERFACE;
 
 	static {
@@ -112,10 +132,6 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	private static final double SAT_MW_INTERFACE = 8.5;
 	private static final double SAT_MW_SLAB_2008 = 8.0;
 	private static final double SAT_MW_SLAB_2014 = 7.8;
-	
-	private static double saturationMagnitude(boolean slab, boolean lowSat) {
-		return !slab ? 8.5 : lowSat ? 7.8 : 8.0;
-	}
 
 	// SF2 variable of AB06 needs to be provided by subclasses via
 	private static final double calcMean(final Coefficients c, final Coefficients cPGA,

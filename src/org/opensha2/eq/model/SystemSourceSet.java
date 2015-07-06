@@ -64,8 +64,9 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 	// NOTE the above Double lists are compact but mutable: Doubles.asList(...)
 
 	private SystemSourceSet(String name, int id, double weight, GmmSet gmmSet,
-		List<GriddedSurface> sections, List<BitSet> bitsets, List<Double> mags, List<Double> rates,
-		List<Double> depths, List<Double> dips, List<Double> widths, List<Double> rakes) {
+			List<GriddedSurface> sections, List<BitSet> bitsets, List<Double> mags,
+			List<Double> rates,
+			List<Double> depths, List<Double> dips, List<Double> widths, List<Double> rakes) {
 
 		super(name, id, weight, gmmSet);
 
@@ -271,7 +272,7 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 	 * 
 	 * Rather than expose highly mutable bitsets and attendant logic that is
 	 * used to generate HazardInputs from SystemSourceSets, we opt to locate
-	 * this transform FUnction and related classes here.
+	 * transform Functions and related classes here.
 	 * 
 	 * System sources (e.g. UCERF3 ruptures) are composed of multiple small
 	 * (~7km long x ~15km wide) adjacent fault sections in a large and dense
@@ -322,6 +323,18 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 	 * Deaggregation considerations. TODO
 	 */
 
+	/*
+	 * Thoughts on multithreading: on systems with few cores, performance is worse
+	 * using the multi-threaded (ExecutorService based) implementation below.
+	 * In most NSHMP casesmany other calculations also need to take place so it
+	 * may be just as well to create system inputs on a single thread. Moreover,
+	 * multiple system models would thne be run in parallel anyway as each
+	 * SystemSourceSet would be farmed out to it's own thread.
+	 * 
+	 * TODO revisit this in context of performance tuning
+	 */
+	
+	@Deprecated
 	public static final class ToInputsMT implements Function<SystemSourceSet, SystemInputs> {
 
 		private final Site site;
@@ -398,11 +411,12 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 		}
 	}
 
-	public static final class ToInputs implements Function<SystemSourceSet, SystemInputs> {
+	@Deprecated
+	public static final class ToInputsOld implements Function<SystemSourceSet, SystemInputs> {
 
 		private final Site site;
 
-		public ToInputs(final Site site) {
+		public ToInputsOld(final Site site) {
 			this.site = site;
 		}
 
@@ -430,8 +444,8 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 				}
 
 				// create inputs
-				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(rTable,
-					siteBitset, site);
+				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
+					rTable, siteBitset, site);
 				SystemInputs inputs = new SystemInputs(sourceSet);
 				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
 				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
@@ -451,6 +465,61 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 			}
 		}
 	}
+	
+	/*
+	 * TODO This is a more compact form of the original ToInputs that was structured to
+	 * be more easily repurposed as a multithreaded implementation. i.e. using Callables
+	 * etc... Turns out it's more likely a single threaded approach will be more performant
+	 * anticipating that multipl system models will be run in parallel
+	 *
+	 */
+	public static final class ToInputs implements Function<SystemSourceSet, SystemInputs> {
+
+		private final Site site;
+
+		public ToInputs(final Site site) {
+			this.site = site;
+		}
+
+		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
+
+			try {
+				// create Site BitSet
+				double maxDistance = sourceSet.groundMotionModels().maxDistance();
+				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
+
+				// create and fill distance table
+				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
+				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
+					siteIndices,
+					EnumSet.allOf(Distance.Type.class));
+				for (int i : siteIndices) {
+					Distance r = sourceSet.sections.get(i).distanceTo(site.location);
+					Map<Distance.Type, Double> rRow = rTable.row(i);
+					rRow.put(R_JB, r.rJB);
+					rRow.put(R_RUP, r.rRup);
+					rRow.put(R_X, r.rX);
+				}
+
+				// create inputs
+				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
+					rTable, siteBitset, site);
+				SystemInputs inputs = new SystemInputs(sourceSet);
+				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
+				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
+				for (SystemSource source : sources) {
+					inputs.add(inputGenerator.apply(source));
+				}
+
+				return inputs;
+
+			} catch (Exception e) {
+				Throwables.propagate(e);
+				return null;
+			}
+		}
+	}
+
 
 	private static final class DistanceCalc implements Function<GriddedSurface, Distance> {
 
@@ -465,6 +534,7 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 		}
 	}
 
+	@Deprecated
 	private static class DistanceCalcTask implements Callable<Distance> {
 
 		private final Function<GriddedSurface, Distance> calc;
@@ -505,9 +575,9 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 		private final Site site;
 
 		InputGenerator(
-			final Table<Integer, Distance.Type, Double> rTable,
-			final BitSet siteBitset,
-			final Site site) {
+				final Table<Integer, Distance.Type, Double> rTable,
+				final BitSet siteBitset,
+				final Site site) {
 
 			this.rTable = rTable;
 			this.siteBitset = siteBitset;
@@ -559,6 +629,7 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 		}
 	}
 
+	@Deprecated
 	private static final class InputGeneratorTask implements Callable<HazardInput> {
 
 		private final Function<SystemSource, HazardInput> calc;

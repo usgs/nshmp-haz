@@ -1,12 +1,19 @@
 package org.opensha2.gmm;
 
 import static java.lang.Math.log10;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.LN_G_CM_TO_M;
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.util.MathUtils.hypot;
 
 import java.util.Map;
+
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the subduction interface ground motion model by Atkinson &
@@ -36,6 +43,12 @@ import java.util.Map;
 public final class AtkinsonMacias_2009 implements GroundMotionModel {
 
 	static final String NAME = "Atkinson & Macias (2009): Interface";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(5.0, 9.5))
+		.set(RRUP, Range.closed(0.0, 1000.0))
+		.set(VS30, Range.closed(150.0, 1500.0))
+		.build();
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("AM09.csv");
 

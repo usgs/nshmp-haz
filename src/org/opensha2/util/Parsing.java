@@ -658,11 +658,6 @@ public final class Parsing {
 		return join(Iterables.transform(ranges, IntArrayToString.INSTANCE), Delimiter.COMMA);
 	}
 
-	public static void main(String[] args) {
-		System.out.println(intListToRangeString(Ints
-			.asList(new int[] { 1, 2, 3, 10, 41, 42, 44 })));
-	}
-
 	/**
 	 * Complement of {@link #intListToRangeString} converts a string of the form
 	 * {@code "[[1:4],10,[19:16]]"} to an ordered {@code List<Integer>} (e.g.
@@ -674,7 +669,7 @@ public final class Parsing {
 	 * @see #intListToRangeString
 	 */
 	public static List<Integer> rangeStringToIntList(String s) {
-		Iterable<int[]> values = Iterables.transform(split(trimEnds(s), Delimiter.COMMA),
+		Iterable<int[]> values = Iterables.transform(split(s, Delimiter.COMMA),
 			StringToIntArray.INSTANCE);
 		return Ints.asList(Ints.concat(Iterables.toArray(values, int[].class)));
 	}

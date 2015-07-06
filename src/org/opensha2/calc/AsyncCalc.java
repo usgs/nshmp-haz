@@ -24,6 +24,7 @@ import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.ClusterSourceSet;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
+import org.opensha2.eq.model.SystemSourceSet;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
@@ -125,13 +126,36 @@ final class AsyncCalc {
 			final Site site,
 			final Executor ex) {
 
-		Function<List<HazardCurveSet>, HazardResult> function = new CurveSetConsolidator(
-			modelCurves, site);
-		return transform(allAsList(curveSets), function, ex);
+		return transform(
+			allAsList(curveSets),
+			new CurveSetConsolidator(modelCurves, site),
+			ex);
 	}
 
 	/*
-	 * Cluster sources below...
+	 * System sources ...
+	 * 
+	 * SystemSourceSets contain many single sources which are handled
+	 * collectively for efficiency. See SystemSourceSet for more details.
+	 */
+	
+	/**
+	 * Convert a SystemSourceSet to a future SystemInputs.
+	 */
+	static final ListenableFuture<SystemInputs> toSystemInputs(
+			final SystemSourceSet sourceSet,
+			final Site site,
+			final Executor ex) {
+
+		return transform(
+			immediateFuture(sourceSet),
+			new SystemSourceSet.ToInputs(site),
+			ex);
+	}
+
+
+	/*
+	 * Cluster sources ...
 	 * 
 	 * ClusterSourceSets contain ClusterSources, each of which references a
 	 * FaultSourceSet containing one or more fault representations for the

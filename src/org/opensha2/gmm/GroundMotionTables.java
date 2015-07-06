@@ -40,12 +40,12 @@ import com.google.common.primitives.Doubles;
  * The currently implemented tables store ground motion in log10 values;
  * additionaly, Atkinson flavored tables store ground motion in cm/s^2.
  * 
- * NGA-East csv files may be linear R.
- * 
  * @author Peter Powers
  */
 final class GroundMotionTables {
 
+	// TODO NGA-East csv files may be linear R.
+	
 	static GroundMotionTable getFrankel96(Imt imt, SiteClass siteClass) {
 		return siteClass == SiteClass.SOFT_ROCK ?
 			frankelSoftRock.get(imt) :

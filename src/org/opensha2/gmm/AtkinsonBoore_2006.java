@@ -5,12 +5,19 @@ import static java.lang.Math.log;
 import static java.lang.Math.log10;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.MagConverter.NONE;
 import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
 
 import java.util.Map;
+
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Abstract implementation of the ground motion model for stable continental
@@ -68,6 +75,12 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
 	static final String NAME = "Atkinson & Boore (2006)";
 
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(4.0, 8.0))
+		.set(RRUP, Range.closed(0.0, 1000.0))
+		.set(VS30, Range.closed(760.0, 2000.0))
+		.build();
+
 	static final CoefficientContainer COEFFS_A = new CoefficientContainer("AB06A.csv");
 	static final CoefficientContainer COEFFS_BC = new CoefficientContainer("AB06BC.csv");
 
@@ -81,14 +94,18 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 	private static final double facv1 = -0.5108256; // ln(v1/v2)
 	private static final double facv2 = -0.9295360; // ln(v2/vref)
 	private static final double SIGMA = 0.3 * BASE_10_TO_E;
+
 	// private static final double STRESSFAC = 0.5146; // ln(200/140)/ln(2)
 	// private static final double SFAC = 2.302585; // ln(10)
 
 	private static final class Coefficients {
 
 		final Imt imt;
-		final double c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, bln, b1, b2, del, m1,
-				mh;
+		final double
+				c1, c2, c3, c4, c5, c6, c7, c8, c9, c10,
+				bln, b1, b2,
+				del,
+				m1, mh;
 
 		Coefficients(Imt imt, CoefficientContainer cc) {
 			this.imt = imt;

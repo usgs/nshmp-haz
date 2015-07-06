@@ -1,8 +1,15 @@
 package org.opensha2.gmm;
+
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
 
+import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+
+import com.google.common.collect.Range;
 
 /**
  * Modified form of the relationship for the Central and Eastern US by Atkinson
@@ -19,15 +26,15 @@ import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
  * 
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
- * ground-motion prediction equations for eastern North America: Bulletin of
- * the Seismological Society of America, v. 96, p. 2181–2205.</p>
+ * ground-motion prediction equations for eastern North America: Bulletin of the
+ * Seismological Society of America, v. 96, p. 2181–2205.</p>
  * 
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050245">
  * 10.1785/0120050245</a></p>
  * 
- * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2011, Modifications
- * to existing ground-motion prediction equations in light of new data: Bulletin
- * of the Seismological Society of America, v. 101, n. 3, p. 1121–1135.</p>
+ * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2011, Modifications to
+ * existing ground-motion prediction equations in light of new data: Bulletin of
+ * the Seismological Society of America, v. 101, n. 3, p. 1121–1135.</p>
  * 
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120100270">
  * 10.1785/0120100270</a></p>
@@ -40,6 +47,12 @@ import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 public final class AtkinsonBoore_2006p implements GroundMotionModel {
 
 	static final String NAME = "Atkinson & Boore (2006): Prime";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(4.0, 8.0))
+		.set(RRUP, Range.closed(0.0, 1000.0))
+		.set(VS30, Range.closed(760.0, 2000.0))
+		.build();
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("AB06P.csv");
 
@@ -60,7 +73,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 		double μ = atkinsonTableValue(table, imt, in.Mw, r, in.vs30, bcfac);
 		return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ), SIGMA);
 	}
-	
+
 	// TODO clean
 	public static void main(String[] args) {
 		AtkinsonBoore_2006p gmm = new AtkinsonBoore_2006p(Imt.PGA);
@@ -70,7 +83,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
 		double clipped = GmmUtils.ceusMeanClip(Imt.PGA, m);
 		System.out.println(clipped);
 		System.out.println(Math.exp(clipped));
-		
+
 	}
 
 }

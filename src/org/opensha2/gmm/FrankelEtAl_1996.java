@@ -1,11 +1,17 @@
 package org.opensha2.gmm;
 
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.MagConverter.NONE;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
 
+import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Frankel et al. (1996) ground motion model for stable
@@ -35,6 +41,12 @@ import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
 	static final String NAME = "Frankel et al. (1996)";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(4.0, 8.0))
+		.set(RRUP, Range.closed(0.0, 1000.0))
+		.set(VS30, Range.closed(760.0, 2000.0))
+		.build();
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Frankel96.csv");
 

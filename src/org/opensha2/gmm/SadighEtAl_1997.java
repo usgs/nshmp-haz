@@ -5,8 +5,17 @@ import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 
 import java.util.Map;
+
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the ground motion model for shallow crustal earthquakes by
@@ -19,8 +28,8 @@ import java.util.Map;
  * 
  * <p><b>Reference:</b> Sadigh, K., Chang, C.-Y. , Egan, J.A., Makdisi, F., and
  * Youngs, R.R., 1997, Attenuation relationships for shallow crustal earthquakes
- * based on California strong motion data: Seismological Research Letters,
- * v. 6, n. 1, p. 180-189.</p>
+ * based on California strong motion data: Seismological Research Letters, v. 6,
+ * n. 1, p. 180-189.</p>
  * 
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.180">
  * 10.1785/gssrl.68.1.180</a></p>
@@ -32,7 +41,6 @@ import java.util.Map;
 public class SadighEtAl_1997 implements GroundMotionModel {
 
 	// TODO this needs better site type identification by vs30 value
-	// TODO model is only applicable to 100km
 
 	/*
 	 * The Sadigh model provides different functional forms for soil and rock
@@ -45,6 +53,13 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 	 */
 
 	static final String NAME = "Sadigh et al. (1997)";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(5.0, 8.0))
+		.set(RRUP, Range.closed(0.0, 100.0))
+		.set(RAKE, Faults.RAKE_RANGE)
+		.set(VS30, Range.closed(250.0, 760.0))
+		.build();
 
 	static final CoefficientContainer COEFFS_BC_LO, COEFFS_BC_HI, COEFFS_D_LO, COEFFS_D_HI;
 

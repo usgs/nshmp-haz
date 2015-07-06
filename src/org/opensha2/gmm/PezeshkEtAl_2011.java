@@ -1,11 +1,17 @@
 package org.opensha2.gmm;
 
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
 
 import java.util.Map;
 
+import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Pezeshk, Zandieh, & Tavakoli (2011) ground motion model
@@ -37,6 +43,12 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
 
 	static final String NAME = "Pezeshk et al. (2011)";
 
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+			.set(MAG, Range.closed(4.0, 8.0))
+			.set(RRUP, Range.closed(0.0, 1000.0))
+			.set(VS30, Range.closed(760.0, 2000.0))
+			.build();
+	
 	static final CoefficientContainer COEFFS = new CoefficientContainer("P11.csv");
 
 	private static final double SIGMA_FAC = -6.95e-3;

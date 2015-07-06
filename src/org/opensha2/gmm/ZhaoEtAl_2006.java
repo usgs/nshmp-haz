@@ -4,8 +4,17 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import java.util.Map;
+
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Abstract implementation of the subduction ground motion model by Zhao et al.
@@ -46,6 +55,14 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
 	static final String NAME = "Zhao et al. (2006)";
 
+	// TODO will probably want to have constraints per-implementation
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+			.set(MAG, Range.closed(5.0, 9.5))
+			.set(RRUP, Range.closed(0.0, 1000.0))
+			.set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+			.set(VS30, Range.closed(150.0, 1000.0))
+			.build();
+	
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Zhao06.csv");
 
 	private static final double HC = 15.0;

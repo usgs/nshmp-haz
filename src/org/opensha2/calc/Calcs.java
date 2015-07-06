@@ -1,5 +1,6 @@
 package org.opensha2.calc;
 
+import static org.opensha2.eq.model.SourceType.*;
 import static org.opensha2.calc.AsyncCalc.toClusterCurves;
 import static org.opensha2.calc.AsyncCalc.toClusterGroundMotions;
 import static org.opensha2.calc.AsyncCalc.toClusterInputs;
@@ -8,6 +9,7 @@ import static org.opensha2.calc.AsyncCalc.toHazardCurveSet;
 import static org.opensha2.calc.AsyncCalc.toHazardCurves;
 import static org.opensha2.calc.AsyncCalc.toHazardResult;
 import static org.opensha2.calc.AsyncCalc.toInputs;
+import static org.opensha2.calc.AsyncCalc.toSystemInputs;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -21,6 +23,7 @@ import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
+import org.opensha2.eq.model.SystemSourceSet;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Optional;
@@ -33,6 +36,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class Calcs {
 
+	
+	// TODO if config specifies using grid tables, we need to reroute grid calcs
+	// where to build/store lookup table/object for each GmmSet
+	
 	/**
 	 * Compute a hazard curve using the supplied {@link Executor}.
 	 * 
@@ -55,7 +62,7 @@ public class Calcs {
 
 		for (SourceSet<? extends Source> sourceSet : model) {
 
-			if (sourceSet.type() == SourceType.CLUSTER) {
+			if (sourceSet.type() == CLUSTER) {
 
 				ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
 
@@ -72,7 +79,15 @@ public class Calcs {
 					clusterSourceSet, modelCurves, executor);
 
 				curveSetCollector.add(curveSet);
+				
+			} else if (sourceSet.type() == SYSTEM) {
 
+				SystemSourceSet systemSourceSet = (SystemSourceSet) sourceSet;
+				
+				ListenableFuture<SystemInputs> inputs = toSystemInputs(systemSourceSet, site, executor);
+				
+				
+				
 			} else {
 
 				AsyncList<HazardInputs> inputs = toInputs(sourceSet, site, executor);

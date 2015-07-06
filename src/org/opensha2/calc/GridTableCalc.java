@@ -6,6 +6,7 @@ package org.opensha2.calc;
  *
  * @author Peter Powers
  */
+@Deprecated
 class GridTableCalc {
 	
 	/*

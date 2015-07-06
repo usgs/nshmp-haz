@@ -292,7 +292,7 @@ class Loader {
 
 		if (type == SourceType.SYSTEM) {
 			log.info("Parsing: " + typeDir.relativize(sourceDir));
-			parseIndexedSource(sourceDir, nestedGmmSet, builder, nestedConfig, sax);
+			parseSystemSource(sourceDir, nestedGmmSet, builder, nestedConfig, sax);
 		} else {
 			for (Path sourcePath : nestedSourcePaths) {
 				log.info("Parsing: " + typeDir.relativize(sourcePath));
@@ -332,7 +332,7 @@ class Loader {
 		}
 	}
 
-	private static void parseIndexedSource(Path dir, GmmSet gmmSet, Builder builder,
+	private static void parseSystemSource(Path dir, GmmSet gmmSet, Builder builder,
 			ModelConfig config, SAXParser sax) {
 		try {
 			Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
@@ -415,8 +415,6 @@ class Loader {
 	private static String cleanZipName(String name) {
 		return name.endsWith("/") ? name.substring(0, name.length() - 1) : name;
 	}
-
-	// private static
 
 	/*
 	 * Only lists those directories matching a SourceType.

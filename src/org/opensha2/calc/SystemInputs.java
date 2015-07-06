@@ -22,7 +22,7 @@ import org.opensha2.eq.model.SystemSourceSet;
  * @author Peter Powers
  */
 public final class SystemInputs extends AbstractList<HazardInput> {
-// TODO package privacy
+	// TODO package privacy
 	// TODO how to get back to parent to mine info; index?
 	// TODO need index reference
 	

@@ -1,9 +1,15 @@
 package org.opensha2.gmm;
 
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RJB;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
 
+import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+
+import com.google.common.collect.Range;
 
 /**
  * Modified form of the relationship for the Central and Eastern US by Atkinson
@@ -41,6 +47,12 @@ import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 public final class Atkinson_2008p implements GroundMotionModel {
 
 	static final String NAME = "Atkinson (2008) Prime";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(4.0, 8.0))
+		.set(RJB, Range.closed(0.0, 1000.0))
+		.set(VS30, Range.closed(760.0, 2000.0))
+		.build();
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("AB08P.csv");
 

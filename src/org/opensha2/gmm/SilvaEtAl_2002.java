@@ -1,10 +1,15 @@
 package org.opensha2.gmm;
 
+import static org.opensha2.gmm.GmmInput.Field.*;
 import static java.lang.Math.exp;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 import static org.opensha2.gmm.MagConverter.NONE;
 
 import java.util.Map;
+
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Silva et al. (2002) ground motion model for stable
@@ -35,6 +40,7 @@ import java.util.Map;
  */
 public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 
+	// TODO clean
 	// notes from original implementation and fortran:
 	//
 	// c1 from c1hr using A->BC factors, 1.74 for 0.1s, 1.72 for 0.3s, 1.58 for
@@ -46,6 +52,12 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 	// c note very high sigma for longer period SA
 
 	static final String NAME = "Silva et al. (2002)";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(4.0, 8.0))
+		.set(RJB, Range.closed(0.0, 1000.0))
+		.set(VS30, Range.closed(760.0, 2000.0))
+		.build();
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Silva02.csv");
 
