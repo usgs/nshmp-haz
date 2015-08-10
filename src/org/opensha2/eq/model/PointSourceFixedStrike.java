@@ -45,6 +45,7 @@ import com.google.common.math.DoubleMath;
  */
 class PointSourceFixedStrike extends PointSourceFinite {
 
+	// TODO store this natively in radians
 	private final double strike;
 
 	/**
