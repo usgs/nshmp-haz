@@ -30,6 +30,8 @@ import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Function;
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Table;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -48,13 +50,13 @@ final class AsyncCalc {
 	/**
 	 * Convert a SourceSet to a List of future HazardInputs.
 	 */
-	static final AsyncList<HazardInputs> toInputs(
+	static final AsyncList<InputList> toInputs(
 			final SourceSet<? extends Source> sourceSet,
 			final Site site,
 			final Executor ex) {
 
-		Function<Source, HazardInputs> function = new SourceToInputs(site);
-		AsyncList<HazardInputs> result = AsyncList.create();
+		Function<Source, InputList> function = new SourceToInputs(site);
+		AsyncList<InputList> result = AsyncList.create();
 		for (Source source : sourceSet.iterableForLocation(site.location)) {
 			result.add(transform(immediateFuture(source), function, ex));
 		}
@@ -65,18 +67,17 @@ final class AsyncCalc {
 	 * Convert a List of future HazardInputs to a List of future
 	 * HazardGroundMotions.
 	 */
-	static final AsyncList<HazardGroundMotions> toGroundMotions(
-			final AsyncList<HazardInputs> inputsList,
+	static final AsyncList<GroundMotions> toGroundMotions(
+			final AsyncList<InputList> inputsList,
 			final SourceSet<? extends Source> sourceSet,
 			final Set<Imt> imts,
 			final Executor ex) {
 
 		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
 		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, imts);
-		Function<HazardInputs, HazardGroundMotions> function = new InputsToGroundMotions(
-			gmmInstances);
-		AsyncList<HazardGroundMotions> result = createWithCapacity(inputsList.size());
-		for (ListenableFuture<HazardInputs> hazardInputs : inputsList) {
+		Function<InputList, GroundMotions> function = new InputsToGroundMotions(gmmInstances);
+		AsyncList<GroundMotions> result = createWithCapacity(inputsList.size());
+		for (ListenableFuture<InputList> hazardInputs : inputsList) {
 			result.add(transform(hazardInputs, function, ex));
 		}
 		return result;
@@ -87,17 +88,18 @@ final class AsyncCalc {
 	 * HazardCurves.
 	 */
 	static final AsyncList<HazardCurves> toHazardCurves(
-			final AsyncList<HazardGroundMotions> groundMotionsList,
+			final AsyncList<GroundMotions> groundMotionsList,
 			final Map<Imt, ArrayXY_Sequence> modelCurves,
-			final ExceedanceModel sigmaModel,
-			final double truncLevel,
+			final ExceedanceModel exceedanceModel,
+			final double truncationLevel,
 			final Executor ex) {
 
-		Function<HazardGroundMotions, HazardCurves> function = new GroundMotionsToCurves(
+		Function<GroundMotions, HazardCurves> function = new GroundMotionsToCurves(
 			modelCurves,
-			sigmaModel, truncLevel);
+			exceedanceModel,
+			truncationLevel);
 		AsyncList<HazardCurves> result = createWithCapacity(groundMotionsList.size());
-		for (ListenableFuture<HazardGroundMotions> groundMotions : groundMotionsList) {
+		for (ListenableFuture<GroundMotions> groundMotions : groundMotionsList) {
 			result.add(transform(groundMotions, function, ex));
 		}
 		return result;
@@ -118,6 +120,21 @@ final class AsyncCalc {
 	}
 
 	/**
+	 * Reduce a future HazardCurves to a future HazardCurveSet.
+	 */
+	 static final ListenableFuture<HazardCurveSet> toHazardCurveSet(
+			final ListenableFuture<HazardCurves> curves,
+			final SystemSourceSet sourceSet,
+			final Map<Imt, ArrayXY_Sequence> modelCurves,
+			final Executor ex) {
+
+		Function<List<HazardCurves>, HazardCurveSet> function = new CurveConsolidator(
+			sourceSet,
+			modelCurves);
+		return transform(allAsList(curves), function, ex);
+	}
+
+	/**
 	 * Reduce a List of future HazardCurveSets into a future HazardResult.
 	 */
 	static final ListenableFuture<HazardResult> toHazardResult(
@@ -132,17 +149,52 @@ final class AsyncCalc {
 			ex);
 	}
 
+	
+	// single thread system calc
+	static final HazardCurveSet systemToCurves(
+			final SystemSourceSet sourceSet,
+			final Site site,
+			final CalcConfig config) {
+		
+		Stopwatch sw = Stopwatch.createStarted();
+		
+		Function<SystemSourceSet, InputList> inputFn = new SystemSourceSet.ToInputs(site);
+		InputList inputs = inputFn.apply(sourceSet);
+		System.out.println("Inputs: " + inputs.size() + "  " + sw);
+		
+		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
+		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, config.imts());
+		Function<InputList, GroundMotions> gmFn = new InputsToGroundMotions(gmmInstances);
+		GroundMotions groundMotions = gmFn.apply(inputs);
+		System.out.println("GroundMotions: " + sw);
+		
+		Map<Imt, ArrayXY_Sequence> modelCurves = config.logModelCurves();
+		Function<GroundMotions, HazardCurves> curveFn = new GroundMotionsToCurves(
+			modelCurves, config.exceedanceModel, config.truncationLevel);
+		HazardCurves hazardCurves = curveFn.apply(groundMotions);
+		System.out.println("HazardCurves: " + sw);
+		
+		Function<List<HazardCurves>, HazardCurveSet> consolidateFn = new CurveConsolidator(
+			sourceSet, modelCurves);
+		HazardCurveSet curveSet = consolidateFn.apply(ImmutableList.of(hazardCurves));
+		System.out.println("CurveSet: " + sw);
+		
+		return curveSet;
+	}
+	
 	/*
 	 * System sources ...
 	 * 
 	 * SystemSourceSets contain many single sources which are handled
-	 * collectively for efficiency. See SystemSourceSet for more details.
+	 * collectively. See SystemSourceSet for more details. These methods are
+	 * largely the same as their asyncList counterparts above, except that they
+	 * only operate on a single large list, rather than lists of lists.
 	 */
-	
+
 	/**
 	 * Convert a SystemSourceSet to a future SystemInputs.
 	 */
-	static final ListenableFuture<SystemInputs> toSystemInputs(
+	static final ListenableFuture<InputList> toSystemInputs(
 			final SystemSourceSet sourceSet,
 			final Site site,
 			final Executor ex) {
@@ -153,6 +205,39 @@ final class AsyncCalc {
 			ex);
 	}
 
+	/**
+	 * Convert a future List of SystemInputs to a future List of
+	 * SystemGroundMotions.
+	 */
+	static final ListenableFuture<GroundMotions> toSystemGroundMotions(
+			final ListenableFuture<InputList> inputs,
+			final SystemSourceSet sourceSet,
+			final Set<Imt> imts,
+			final Executor ex) {
+
+		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
+		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, imts);
+		Function<InputList, GroundMotions> function = new InputsToGroundMotions(gmmInstances);
+		return transform(inputs, function, ex);
+	}
+
+	/**
+	 * Convert a future List SystemGroundMotions to a future List SystemCurves.
+	 */
+	static final ListenableFuture<HazardCurves> toSystemCurves(
+			final ListenableFuture<GroundMotions> groundMotions,
+			final Map<Imt, ArrayXY_Sequence> modelCurves,
+			final ExceedanceModel exceedanceModel,
+			final double truncationLevel,
+			final Executor ex) {
+
+		Function<GroundMotions, HazardCurves> function = new GroundMotionsToCurves(
+			modelCurves,
+			exceedanceModel,
+			truncationLevel);
+
+		return transform(groundMotions, function, ex);
+	}
 
 	/*
 	 * Cluster sources ...

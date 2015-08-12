@@ -27,8 +27,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.opensha2.calc.HazardInput;
+import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
-import org.opensha2.calc.SystemInputs;
+import org.opensha2.calc.SystemInputList;
 import org.opensha2.data.DataUtils;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
@@ -334,137 +335,139 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 	 * TODO revisit this in context of performance tuning
 	 */
 	
-	@Deprecated
-	public static final class ToInputsMT implements Function<SystemSourceSet, SystemInputs> {
+	// TODO clean
+//	@Deprecated
+//	public static final class ToInputsMT implements Function<SystemSourceSet, SystemInputs> {
+//
+//		private final Site site;
+//		private final ExecutorService executor;
+//
+//		public ToInputsMT(final Site site, final ExecutorService executor) {
+//			this.site = site;
+//			this.executor = executor;
+//		}
+//
+//		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
+//
+//			try {
+//
+//				// create Site BitSet
+//				double maxDistance = sourceSet.groundMotionModels().maxDistance();
+//				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
+//
+//				// create and submit distance calculations
+//				CompletionService<Distance> dCS = new ExecutorCompletionService<Distance>(executor);
+//				Function<GriddedSurface, Distance> rTransform = new DistanceCalc(site.location);
+//				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
+//				// need to track section indices
+//				Map<Future<Distance>, Integer> taskIndexMap = new HashMap<>();
+//				for (int i : siteIndices) {
+//					GriddedSurface surface = sourceSet.sections.get(i);
+//					Callable<Distance> rCalc = new DistanceCalcTask(rTransform, surface);
+//					taskIndexMap.put(dCS.submit(rCalc), i);
+//				}
+//
+//				// fill distance table
+//				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
+//					siteIndices,
+//					EnumSet.allOf(Distance.Type.class));
+//				for (int i = 0; i < siteIndices.size(); i++) {
+//					Future<Distance> result = dCS.take();
+//					int index = taskIndexMap.get(result);
+//					Distance r = result.get();
+//					Map<Distance.Type, Double> rRow = rTable.row(index);
+//					rRow.put(R_JB, r.rJB);
+//					rRow.put(R_RUP, r.rRup);
+//					rRow.put(R_X, r.rX);
+//				}
+//
+//				// create and submit inputs
+//				CompletionService<HazardInput> iCS = new ExecutorCompletionService<HazardInput>(
+//					executor);
+//				Function<SystemSource, HazardInput> iTransform = new InputGenerator(rTable,
+//					siteBitset, site);
+//				SystemInputs inputs = new SystemInputs(sourceSet);
+//				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
+//				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
+//				int count = 0;
+//				for (SystemSource source : sources) {
+//					Callable<HazardInput> inputGenTask = new InputGeneratorTask(iTransform, source);
+//					iCS.submit(inputGenTask);
+//					count++;
+//					HazardInput input = inputGenTask.call();
+//					inputs.add(input);
+//				}
+//
+//				// retrieve and compile inputs
+//				for (int i = 0; i < count; i++) {
+//					HazardInput input = iCS.take().get();
+//					inputs.add(input);
+//				}
+//
+//				return inputs;
+//
+//			} catch (Exception e) {
+//				Throwables.propagate(e);
+//				return null;
+//			}
+//		}
+//	}
 
-		private final Site site;
-		private final ExecutorService executor;
-
-		public ToInputsMT(final Site site, final ExecutorService executor) {
-			this.site = site;
-			this.executor = executor;
-		}
-
-		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
-
-			try {
-
-				// create Site BitSet
-				double maxDistance = sourceSet.groundMotionModels().maxDistance();
-				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
-
-				// create and submit distance calculations
-				CompletionService<Distance> dCS = new ExecutorCompletionService<Distance>(executor);
-				Function<GriddedSurface, Distance> rTransform = new DistanceCalc(site.location);
-				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
-				// need to track section indices
-				Map<Future<Distance>, Integer> taskIndexMap = new HashMap<>();
-				for (int i : siteIndices) {
-					GriddedSurface surface = sourceSet.sections.get(i);
-					Callable<Distance> rCalc = new DistanceCalcTask(rTransform, surface);
-					taskIndexMap.put(dCS.submit(rCalc), i);
-				}
-
-				// fill distance table
-				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
-					siteIndices,
-					EnumSet.allOf(Distance.Type.class));
-				for (int i = 0; i < siteIndices.size(); i++) {
-					Future<Distance> result = dCS.take();
-					int index = taskIndexMap.get(result);
-					Distance r = result.get();
-					Map<Distance.Type, Double> rRow = rTable.row(index);
-					rRow.put(R_JB, r.rJB);
-					rRow.put(R_RUP, r.rRup);
-					rRow.put(R_X, r.rX);
-				}
-
-				// create and submit inputs
-				CompletionService<HazardInput> iCS = new ExecutorCompletionService<HazardInput>(
-					executor);
-				Function<SystemSource, HazardInput> iTransform = new InputGenerator(rTable,
-					siteBitset, site);
-				SystemInputs inputs = new SystemInputs(sourceSet);
-				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
-				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
-				int count = 0;
-				for (SystemSource source : sources) {
-					Callable<HazardInput> inputGenTask = new InputGeneratorTask(iTransform, source);
-					iCS.submit(inputGenTask);
-					count++;
-					HazardInput input = inputGenTask.call();
-					inputs.add(input);
-				}
-
-				// retrieve and compile inputs
-				for (int i = 0; i < count; i++) {
-					HazardInput input = iCS.take().get();
-					inputs.add(input);
-				}
-
-				return inputs;
-
-			} catch (Exception e) {
-				Throwables.propagate(e);
-				return null;
-			}
-		}
-	}
-
-	@Deprecated
-	public static final class ToInputsOld implements Function<SystemSourceSet, SystemInputs> {
-
-		private final Site site;
-
-		public ToInputsOld(final Site site) {
-			this.site = site;
-		}
-
-		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
-
-			try {
-				// create Site BitSet
-				double maxDistance = sourceSet.groundMotionModels().maxDistance();
-				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
-
-				// create and fill distance table
-				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
-				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
-					siteIndices,
-					EnumSet.allOf(Distance.Type.class));
-				Function<GriddedSurface, Distance> rTransform = new DistanceCalc(site.location);
-				for (int i : siteIndices) {
-					GriddedSurface surface = sourceSet.sections.get(i);
-					Callable<Distance> rCalc = new DistanceCalcTask(rTransform, surface);
-					Distance r = rCalc.call();
-					Map<Distance.Type, Double> rRow = rTable.row(i);
-					rRow.put(R_JB, r.rJB);
-					rRow.put(R_RUP, r.rRup);
-					rRow.put(R_X, r.rX);
-				}
-
-				// create inputs
-				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
-					rTable, siteBitset, site);
-				SystemInputs inputs = new SystemInputs(sourceSet);
-				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
-				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
-				for (SystemSource source : sources) {
-					Callable<HazardInput> inputGenTask = new InputGeneratorTask(
-						inputGenerator,
-						source);
-					HazardInput input = inputGenTask.call();
-					inputs.add(input);
-				}
-
-				return inputs;
-
-			} catch (Exception e) {
-				Throwables.propagate(e);
-				return null;
-			}
-		}
-	}
+	// TODO clean
+//	@Deprecated
+//	public static final class ToInputsOld implements Function<SystemSourceSet, SystemInputs> {
+//
+//		private final Site site;
+//
+//		public ToInputsOld(final Site site) {
+//			this.site = site;
+//		}
+//
+//		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
+//
+//			try {
+//				// create Site BitSet
+//				double maxDistance = sourceSet.groundMotionModels().maxDistance();
+//				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
+//
+//				// create and fill distance table
+//				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
+//				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
+//					siteIndices,
+//					EnumSet.allOf(Distance.Type.class));
+//				Function<GriddedSurface, Distance> rTransform = new DistanceCalc(site.location);
+//				for (int i : siteIndices) {
+//					GriddedSurface surface = sourceSet.sections.get(i);
+//					Callable<Distance> rCalc = new DistanceCalcTask(rTransform, surface);
+//					Distance r = rCalc.call();
+//					Map<Distance.Type, Double> rRow = rTable.row(i);
+//					rRow.put(R_JB, r.rJB);
+//					rRow.put(R_RUP, r.rRup);
+//					rRow.put(R_X, r.rX);
+//				}
+//
+//				// create inputs
+//				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
+//					rTable, siteBitset, site);
+//				SystemInputs inputs = new SystemInputs(sourceSet);
+//				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
+//				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
+//				for (SystemSource source : sources) {
+//					Callable<HazardInput> inputGenTask = new InputGeneratorTask(
+//						inputGenerator,
+//						source);
+//					HazardInput input = inputGenTask.call();
+//					inputs.add(input);
+//				}
+//
+//				return inputs;
+//
+//			} catch (Exception e) {
+//				Throwables.propagate(e);
+//				return null;
+//			}
+//		}
+//	}
 	
 	/*
 	 * TODO This is a more compact form of the original ToInputs that was structured to
@@ -473,7 +476,7 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 	 * anticipating that multipl system models will be run in parallel
 	 *
 	 */
-	public static final class ToInputs implements Function<SystemSourceSet, SystemInputs> {
+	public static final class ToInputs implements Function<SystemSourceSet, InputList> {
 
 		private final Site site;
 
@@ -481,7 +484,7 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 			this.site = site;
 		}
 
-		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
+		@Override public InputList apply(final SystemSourceSet sourceSet) {
 
 			try {
 				// create Site BitSet
@@ -504,7 +507,7 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 				// create inputs
 				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
 					rTable, siteBitset, site);
-				SystemInputs inputs = new SystemInputs(sourceSet);
+				SystemInputList inputs = new SystemInputList(sourceSet);
 				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
 				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
 				for (SystemSource source : sources) {
@@ -534,21 +537,21 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 		}
 	}
 
-	@Deprecated
-	private static class DistanceCalcTask implements Callable<Distance> {
-
-		private final Function<GriddedSurface, Distance> calc;
-		private final GriddedSurface surface;
-
-		DistanceCalcTask(final Function<GriddedSurface, Distance> calc, final GriddedSurface surface) {
-			this.calc = calc;
-			this.surface = surface;
-		}
-
-		@Override public Distance call() {
-			return calc.apply(surface);
-		}
-	}
+//	@Deprecated
+//	private static class DistanceCalcTask implements Callable<Distance> {
+//
+//		private final Function<GriddedSurface, Distance> calc;
+//		private final GriddedSurface surface;
+//
+//		DistanceCalcTask(final Function<GriddedSurface, Distance> calc, final GriddedSurface surface) {
+//			this.calc = calc;
+//			this.surface = surface;
+//		}
+//
+//		@Override public Distance call() {
+//			return calc.apply(surface);
+//		}
+//	}
 
 	private static class BitsetFilter implements Predicate<SystemSource> {
 
@@ -629,21 +632,21 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 		}
 	}
 
-	@Deprecated
-	private static final class InputGeneratorTask implements Callable<HazardInput> {
-
-		private final Function<SystemSource, HazardInput> calc;
-		private final SystemSource source;
-
-		InputGeneratorTask(final Function<SystemSource, HazardInput> calc, final SystemSource source) {
-			this.calc = calc;
-			this.source = source;
-		}
-
-		@Override public HazardInput call() {
-			return calc.apply(source);
-		}
-	}
+//	@Deprecated
+//	private static final class InputGeneratorTask implements Callable<HazardInput> {
+//
+//		private final Function<SystemSource, HazardInput> calc;
+//		private final SystemSource source;
+//
+//		InputGeneratorTask(final Function<SystemSource, HazardInput> calc, final SystemSource source) {
+//			this.calc = calc;
+//			this.source = source;
+//		}
+//
+//		@Override public HazardInput call() {
+//			return calc.apply(source);
+//		}
+//	}
 
 	private final BitSet bitsetForLocation(final Location loc, final double r) {
 		BitSet bits = new BitSet(sections.size());

@@ -43,14 +43,14 @@ import org.opensha2.gmm.Imt;
 final class HazardCurveSet {
 
 	final SourceSet<? extends Source> sourceSet;
-	final List<HazardGroundMotions> hazardGroundMotionsList;
+	final List<GroundMotions> hazardGroundMotionsList;
 	final List<ClusterGroundMotions> clusterGroundMotionsList;
 	final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
 	final Map<Imt, ArrayXY_Sequence> totalCurves;
 
 	private HazardCurveSet(
 			SourceSet<? extends Source> sourceSet,
-			List<HazardGroundMotions> hazardGroundMotionsList,
+			List<GroundMotions> hazardGroundMotionsList,
 			List<ClusterGroundMotions> clusterGroundMotionsList,
 			Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap,
 			Map<Imt, ArrayXY_Sequence> totalCurves) {
@@ -75,7 +75,7 @@ final class HazardCurveSet {
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
 
 		private final SourceSet<? extends Source> sourceSet;
-		private final List<HazardGroundMotions> hazardGroundMotionsList;
+		private final List<GroundMotions> hazardGroundMotionsList;
 		private final List<ClusterGroundMotions> clusterGroundMotionsList;
 		private final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
 		private final Map<Imt, ArrayXY_Sequence> totalCurves;

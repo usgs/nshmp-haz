@@ -20,16 +20,16 @@ import org.opensha2.gmm.Imt;
  */
 final class HazardCurves {
 
-	final HazardGroundMotions groundMotions;
+	final GroundMotions groundMotions;
 	final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
 
-	private HazardCurves(HazardGroundMotions groundMotions,
+	private HazardCurves(GroundMotions groundMotions,
 		Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap) {
 		this.groundMotions = groundMotions;
 		this.curveMap = curveMap;
 	}
 
-	static Builder builder(HazardGroundMotions groundMotions) {
+	static Builder builder(GroundMotions groundMotions) {
 		return new Builder(groundMotions);
 	}
 
@@ -38,10 +38,10 @@ final class HazardCurves {
 		private static final String ID = "HazardCurves.Builder";
 		private boolean built = false;
 
-		private final HazardGroundMotions groundMotions;
+		private final GroundMotions groundMotions;
 		private final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
 
-		private Builder(HazardGroundMotions groundMotions) {
+		private Builder(GroundMotions groundMotions) {
 			this.groundMotions = groundMotions;
 			curveMap = new EnumMap<>(Imt.class);
 			for (Imt imt : groundMotions.means.keySet()) {

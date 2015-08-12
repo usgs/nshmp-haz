@@ -180,19 +180,19 @@ class Deagg {
 			double sourceSetWeight = curveSet.sourceSet.weight();
 			GmmSet gmmSet = curveSet.sourceSet.groundMotionModels();
 
-			for (HazardGroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
+			for (GroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
 				processFaultSource(groundMotions, sourceSetWeight, gmmSet, imt, iml);
 			}
 		}
 
 		private void processFaultSource(
-				HazardGroundMotions groundMotions,
+				GroundMotions groundMotions,
 				double sourceSetWeight,
 				GmmSet gmmSet,
 				Imt imt,
 				double iml) {
 
-			HazardInputs inputs = groundMotions.inputs;
+			SourceInputList inputs = (SourceInputList) groundMotions.inputs;
 			String sourceName = inputs.parent.name();
 			double sourceRate = 0.0;
 			int inputCount = inputs.size();
