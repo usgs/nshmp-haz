@@ -37,7 +37,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class Calcs {
 
 	// TODO if config specifies using grid tables, we need to reroute grid calcs
-	// where to build/store lookup table/object for each GmmSet
+	// where to build/store lookup table/object for each unique GmmSet
 
 	/**
 	 * Compute a hazard curve using the supplied {@link Executor}.
@@ -61,8 +61,6 @@ public class Calcs {
 
 		for (SourceSet<? extends Source> sourceSet : model) {
 			
-//			ListenableFuture<HazardCurveSet> curveSet = null;
-
 			if (sourceSet.type() == CLUSTER) {
 
 				ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
@@ -87,21 +85,21 @@ public class Calcs {
 				// should a systemSourceSet have a boundary defined for
 				// quick comprehensive out of range detection?
 
-//				ListenableFuture<InputList> inputs = toSystemInputs(systemSourceSet, site,
-//					executor);
-//
-//				ListenableFuture<GroundMotions> groundMotions = toSystemGroundMotions(inputs,
-//					systemSourceSet, config.imts(), executor);
-//
-//				ListenableFuture<HazardCurves> systemCurves = toSystemCurves(groundMotions,
-//					modelCurves, config.exceedanceModel, config.truncationLevel, executor);
-//				
-//				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(systemCurves, systemSourceSet, modelCurves, executor);
-//				
-//				curveSetCollector.add(curveSet);
+				ListenableFuture<InputList> inputs = toSystemInputs(systemSourceSet, site,
+					executor);
+
+				ListenableFuture<GroundMotions> groundMotions = toSystemGroundMotions(inputs,
+					systemSourceSet, config.imts(), executor);
+
+				ListenableFuture<HazardCurves> systemCurves = toSystemCurves(groundMotions,
+					modelCurves, config.exceedanceModel, config.truncationLevel, executor);
 				
-				HazardCurveSet curveSet = AsyncCalc.systemToCurves(systemSourceSet, site, config);
-				curveSetCollector.add(Futures.immediateFuture(curveSet));
+				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(systemCurves, systemSourceSet, modelCurves, executor);
+				
+				curveSetCollector.add(curveSet);
+				
+//				HazardCurveSet curveSet = AsyncCalc.systemToCurves(systemSourceSet, site, config);
+//				curveSetCollector.add(Futures.immediateFuture(curveSet));
 				
 			} else {
 

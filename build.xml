@@ -23,7 +23,6 @@
 			<fileset dir="${classes.dir}" />
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="*.jar" />
-				<exclude name="ant-*" />
 			</zipgroupfileset>
 		</jar>
 	</target>

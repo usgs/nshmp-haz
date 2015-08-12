@@ -19,10 +19,5 @@ limitations under the License.
 Runtime libs:
 
  - guava-18.0.jar          (https://github.com/google/guava)
-                           (https://code.google.com/p/guava-libraries)
  - gson-2.3.jar            (https://code.google.com/p/google-gson)
  
- Build libs:
- 
- - ant-1.9.5.jar           (https://ant.apache.org)
- - ant-lancher-1.9.5       (https://ant.apache.org)

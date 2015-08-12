@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.ArrayXY_Sequence.copyOf;
 import static org.opensha2.eq.model.SourceType.CLUSTER;
+import static org.opensha2.eq.model.SourceType.SYSTEM;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -47,9 +48,10 @@ public final class HazardResult {
 			sb.append(type).append("SourceSet:").append(LF);
 			for (HazardCurveSet curveSet : sourceSetMap.get(type)) {
 				sb.append("  ").append(curveSet.sourceSet);
-				int used = (curveSet.sourceSet.type() == CLUSTER) ?
-					curveSet.clusterGroundMotionsList.size() :
-					curveSet.hazardGroundMotionsList.size();
+				int used = (type == CLUSTER) ? curveSet.clusterGroundMotionsList.size() :
+					(type == SYSTEM) ? curveSet.hazardGroundMotionsList.get(0).inputs.size() :
+						curveSet.hazardGroundMotionsList.size();
+
 				sb.append("Used: ").append(used);
 				sb.append(LF);
 
