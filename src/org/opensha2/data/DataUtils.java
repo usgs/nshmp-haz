@@ -1449,15 +1449,4 @@ public final class DataUtils {
 	//
 	// }
 	
-	/**
-	 * Round a double to a specified number of decimal places. Internally this
-	 * method uses the scaling and rounding capabilities of {@link BigDecimal}.
-	 * 
-	 * @param value to round
-	 * @param scale the number of decimal places in the result
-	 */
-	public static double round(double value, int scale) {
-		return BigDecimal.valueOf(value).setScale(scale, ROUND_HALF_UP).doubleValue();
-	}
-
 }
