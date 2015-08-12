@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FaultSourceSet id="-1" name="bFault.ch" weight="0.6667">
+  <!-- This model is an example and for review purposes only -->
+  <!-- Original source file: bFault.ch.in -->
+  <Settings>
+    <DefaultMfds>
+      <IncrementalMfd floats="false" m="6.5" rate="0.0" type="SINGLE" weight="1.0"/>
+    </DefaultMfds>
+    <MagUncertainty>
+      <Aleatory count="11" cutoff="6.5" moBalance="true" sigma="0.12"/>
+    </MagUncertainty>
+    <SourceProperties ruptureScaling="NSHM_FAULT_CA_ELLB_WC94_AREA"/>
+  </Settings>
+  <Source id="-1" name="Puente Hills">
+    <IncrementalMfd m="7.1" rate="0.00031514" type="SINGLE" weight="0.25"/>
+    <IncrementalMfd m="7.0" rate="0.00044515" type="SINGLE" weight="0.25"/>
+    <Geometry depth="5.0" dip="25.0" rake="90.0" width="19.0">
+      <Trace>
+-117.86728,33.92685,0.00000
+-118.04324,33.93151,0.00000
+-118.14349,33.95408,0.00000
+-118.29761,34.05861,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="206" name="Puente Hills (LA)">
+    <IncrementalMfd m="7.0" rate="0.00033134" type="SINGLE" weight="0.25"/>
+    <IncrementalMfd m="6.8" rate="0.0006611" type="SINGLE" weight="0.25"/>
+    <Geometry depth="2.1" dip="27.0" rake="90.0" width="28.0">
+      <Trace>
+-118.12595,33.96896,0.00000
+-118.20062,33.95792,0.00000
+-118.33495,34.03264,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="207" name="Puente Hills (Santa Fe Springs)">
+    <IncrementalMfd m="6.7" rate="0.00043238" type="SINGLE" weight="0.25"/>
+    <IncrementalMfd m="6.4" rate="0.0012186" type="SINGLE" weight="0.25"/>
+    <Geometry depth="2.8" dip="29.0" rake="90.0" width="25.0">
+      <Trace>
+-118.01782,33.93106,0.00000
+-118.07898,33.91569,0.00000
+-118.13831,33.90710,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+  <Source id="205" name="Puente Hills (Coyote Hills)">
+    <IncrementalMfd m="6.9" rate="0.00035168" type="SINGLE" weight="0.25"/>
+    <IncrementalMfd m="6.6" rate="0.00099116" type="SINGLE" weight="0.25"/>
+    <Geometry depth="2.8" dip="26.0" rake="90.0" width="27.0">
+      <Trace>
+-117.86731,33.89773,0.00000
+-117.92065,33.87146,0.00000
+-117.96642,33.87407,0.00000
+-118.04352,33.89280,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+</FaultSourceSet>
