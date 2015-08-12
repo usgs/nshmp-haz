@@ -5,7 +5,9 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.opensha2.data.DataUtils.validate;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
 import java.util.Map.Entry;
 
 import org.opensha2.geo.Location;
@@ -37,7 +39,6 @@ public class Site implements Named {
 	public static final double MAX_VS_30 = 2000.0;
 	/** Default Vs30 value (760 m/sec). */
 	public static final double DEFAULT_VS_30 = 760.0;
-	
 
 	/** Minimum allowed depth to a shear wave velocity of 2.5 km/sec (0.0 km). */
 	public static final double MIN_Z2P5 = 0.0;
@@ -48,7 +49,9 @@ public class Site implements Named {
 	public static final double MIN_Z1P0 = 0.0;
 	/** Minimum allowed depth to a shear wave velocity of 1.0 km/sec (2.0 km). */
 	public static final double MAX_Z1P0 = 2.0;
-	
+
+	/** The name used for {@code Site}s with no supplied name. */
+	public static final String NO_NAME = "Unnamed Site";
 
 	private static final Range<Double> VS30_RANGE = Range.closed(MIN_VS_30, MAX_VS_30);
 	private static final Range<Double> Z2P5_RANGE = Range.closed(MIN_Z2P5, MAX_Z2P5);
@@ -79,7 +82,7 @@ public class Site implements Named {
 	/**
 	 * The location.
 	 * 
-	 * <p>Default: lat=40.75, lon=-111.90 (Salt Lake City, UT)</p>
+	 * <p>Default: lat=34.05, lon=-118.25 (Los Angeles, CA)</p>
 	 */
 	public final Location location;
 
@@ -114,7 +117,7 @@ public class Site implements Named {
 	public final double z2p5;
 
 	private Site(String name, Location location, double vs30, boolean vsInferred, double z1p0,
-		double z2p5) {
+			double z2p5) {
 
 		this.name = name;
 		this.location = location;
@@ -134,6 +137,17 @@ public class Site implements Named {
 	}
 
 	/**
+	 * Creates an {@code Iterable<Site>} from the comma-delimted site file
+	 * designated by {@code path}.
+	 * 
+	 * @param path to comma-delimited site data file
+	 * @throws IOException if a problem is encountered
+	 */
+	public static Iterable<Site> fromCsv(Path path) throws IOException {
+		return SiteSet.fromCsv(path);
+	}
+
+	/**
 	 * Return a fresh {@link Builder}.
 	 */
 	public static Builder builder() {
@@ -148,8 +162,8 @@ public class Site implements Named {
 	 */
 	public static class Builder {
 
-		private String name = "Unnamed Site";
-		private Location location = NehrpTestCity.SALT_LAKE_CITY.location();
+		private String name = NO_NAME;
+		private Location location = NehrpTestCity.LOS_ANGELES.location();
 		private double vs30 = DEFAULT_VS_30;
 		private boolean vsInferred = true;
 		private double z1p0 = Double.NaN;
@@ -205,11 +219,11 @@ public class Site implements Named {
 			this.z2p5 = validate(Z2P5_RANGE, Key.Z2P5.toString(), z2p5);
 			return this;
 		}
-		
+
 		/* Available for other package parsers */
 		Builder set(Key key, JsonElement json) {
-			switch(key) {
-				
+			switch (key) {
+
 				case NAME:
 					return name(json.getAsString());
 				case LOCATION:
@@ -229,7 +243,7 @@ public class Site implements Named {
 					throw new IllegalStateException("Unsupported site property key: " + key);
 			}
 		}
-		
+
 		/**
 		 * Build the {@code Site}.
 		 */
@@ -261,7 +275,7 @@ public class Site implements Named {
 				Key key = Key.fromString(entry.getKey());
 				builder.set(key, entry.getValue());
 			}
-			
+
 			return builder.build();
 		}
 	}
@@ -273,7 +287,7 @@ public class Site implements Named {
 
 			JsonObject jObj = new JsonObject();
 			jObj.addProperty(Key.NAME.toString(), site.name);
-			double[] coords = new double[] {site.location.lon(), site.location.lat()};
+			double[] coords = new double[] { site.location.lon(), site.location.lat() };
 			jObj.add(Key.LOCATION.toString(), context.serialize(coords));
 			jObj.addProperty(Key.VS30.toString(), site.vs30);
 			jObj.addProperty(Key.VS_INF.toString(), site.vsInferred);

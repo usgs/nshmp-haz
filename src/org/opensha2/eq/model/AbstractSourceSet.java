@@ -1,7 +1,12 @@
 package org.opensha2.eq.model;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padEnd;
+import static org.opensha2.data.DataUtils.validateWeight;
+import static org.opensha2.util.TextUtils.validateName;
 
+import org.opensha2.eq.model.FaultSourceSet.Builder;
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -16,14 +21,16 @@ import com.google.common.collect.Ordering;
 abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 
 	private final String name;
+	private final int id;
 	private final double weight;
 	private final GmmSet gmmSet;
 
 	// NOTE we're holding onto weight for reference, however, MFD
 	// rates will have already been scaled in place. TODO is this true?
 
-	AbstractSourceSet(String name, double weight, GmmSet gmmSet) {
+	AbstractSourceSet(String name, int id, double weight, GmmSet gmmSet) {
 		this.name = name;
+		this.id = id;
 		this.weight = weight;
 		this.gmmSet = gmmSet;
 	}
@@ -38,10 +45,15 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 
 	@Override public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(" Name: ").append(padEnd(name, 27, ' '));
+		sb.append(" Id: ").append(padEnd(Integer.toString(id), 8, ' '));
+		sb.append("Name: ").append(padEnd(name, 32, ' '));
 		sb.append("Size: ").append(padEnd(Integer.toString(size()), 8, ' '));
 		sb.append("Weight: ").append(padEnd(Double.toString(weight), 12, ' '));
 		return sb.toString();
+	}
+	
+	@Override public int id() {
+		return id;
 	}
 
 	@Override public double weight() {
@@ -55,6 +67,46 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	@Override public Iterable<T> iterableForLocation(Location loc) {
 		Predicate<T> filter = distanceFilter(loc, gmmSet.maxDistance());
 		return FluentIterable.from(this).filter(filter);
+	}
+	
+	static abstract class Builder {
+		
+		boolean built = false;
+
+		String name;
+		Integer id;
+		Double weight;
+		GmmSet gmmSet;
+
+		Builder name(String name) {
+			this.name = validateName(name);
+			return this;
+		}
+
+		Builder id(int id) {
+			this.id = id;
+			return this;
+		}
+
+		Builder weight(double weight) {
+			this.weight = validateWeight(weight);
+			return this;
+		}
+
+		Builder gmms(GmmSet gmmSet) {
+			this.gmmSet = checkNotNull(gmmSet);
+			return this;
+		}
+
+		void validateState(String buildId) {
+			checkState(!built, "This %s instance has already been used", buildId);
+			built = true;
+			checkState(name != null, "%s name not set", buildId);
+			checkState(id != null, "%s id not set", buildId);
+			checkState(weight != null, "%s weight not set", buildId);
+			checkState(gmmSet != null, "%s ground motion models not set", buildId);
+		}
+
 	}
 
 }

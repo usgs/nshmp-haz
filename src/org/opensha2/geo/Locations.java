@@ -10,6 +10,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
+import static com.google.common.math.DoubleMath.fuzzyEquals;
 import static org.opensha2.geo.Direction.NORTH;
 import static org.opensha2.geo.Direction.WEST;
 import static org.opensha2.geo.GeoTools.*;
@@ -18,9 +19,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
-import org.apache.commons.math3.util.Precision;
-
 import com.google.common.base.Predicate;
+import com.google.common.math.DoubleMath;
 
 /**
  * Static utility methods to operate on geographic {@code Location} data.
@@ -64,9 +64,8 @@ public final class Locations {
 	 * Calculates the angle between two {@code Location}s using the <a
 	 * href="http://en.wikipedia.org/wiki/Haversine_formula" target="_blank">
 	 * Haversine</a> formula. This method properly handles values spanning
-	 * ±180°. See <a
-	 * href="http://williams.best.vwh.net/avform.htm#Dist"> Aviation
-	 * Formulary</a> for source. Result is returned in radians.
+	 * ±180°. See <a href="http://williams.best.vwh.net/avform.htm#Dist">
+	 * Aviation Formulary</a> for source. Result is returned in radians.
 	 * 
 	 * @param p1 the first {@code Location} point
 	 * @param p2 the second {@code Location} point
@@ -107,9 +106,9 @@ public final class Locations {
 	 * latitude.
 	 * 
 	 * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
-	 * #177;180° and fails where the numeric angle exceeds 180°.
-	 * Convert data to the 0-360° interval or use
-	 * {@link #horzDistance(Location, Location)} in such instances.</p>
+	 * #177;180° and fails where the numeric angle exceeds 180°. Convert data to
+	 * the 0-360° interval or use {@link #horzDistance(Location, Location)} in
+	 * such instances.</p>
 	 * 
 	 * @param p1 the first {@code Location} point
 	 * @param p2 the second {@code Location} point
@@ -136,9 +135,9 @@ public final class Locations {
 		// System.out.println(horzDistance(p2, p1));
 		// System.out.println(horzDistance(p2, p3));
 
-		Location loc = Location.create(80, 45);
-		Location newLoc = location(loc, NORTH.bearingRad(), 200);
-		System.out.println(newLoc);
+		// Location loc = Location.create(80, 45);
+		// Location newLoc = location(loc, NORTH.bearingRad(), 200);
+		// System.out.println(newLoc);
 	}
 
 	/**
@@ -182,13 +181,13 @@ public final class Locations {
 	 * orthogonal.
 	 * 
 	 * <p><b>Note:</b> This method is very imprecise at large separations and
-	 * should not be used for points >200km apart. If an estimate of
-	 * separation distance is not known in advance use
+	 * should not be used for points >200km apart. If an estimate of separation
+	 * distance is not known in advance use
 	 * {@link #linearDistance(Location, Location)} for more reliable
 	 * results.</p>
 	 * 
-	 * <p><b>Note:</b> This method fails for values spanning ±180°;
-	 * see {@link #horzDistanceFast(Location, Location)}.</p>
+	 * <p><b>Note:</b> This method fails for values spanning ±180°; see
+	 * {@link #horzDistanceFast(Location, Location)}.</p>
 	 * 
 	 * @param p1 the first {@code Location} point
 	 * @param p2 the second {@code Location} point
@@ -250,9 +249,9 @@ public final class Locations {
 	 * short distances (e.g. <200 km). The sign of the result indicates which
 	 * side of the supplied line {@code p3} is on (right:[+] left:[-]).
 	 * 
-	 * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
-	 * ±180° and results for such input values are not guaranteed.
-	 * Convert data to the 0-360° interval or use
+	 * <p><b>Note:</b> This method does <i>NOT</i> support values spanning ±180°
+	 * and results for such input values are not guaranteed. Convert data to the
+	 * 0-360° interval or use
 	 * {@link #distanceToLine(Location, Location, Location)} in such
 	 * instances.</p>
 	 * 
@@ -350,8 +349,7 @@ public final class Locations {
 	 * <p>This method, though more accurate over longer distances and line
 	 * lengths, is up to 20x slower than
 	 * {@link #distanceToSegmentFast(Location, Location, Location)}. However,
-	 * this method returns accurate results for values spanning
-	 * ±180°.</p>
+	 * this method returns accurate results for values spanning ±180°.</p>
 	 * 
 	 * <p> If the line should instead be treated as infinite, use
 	 * {@link #distanceToLine(Location, Location, Location)} instead.</p>
@@ -392,8 +390,8 @@ public final class Locations {
 	 * line points are scaled by the cosine of latitude; it is only appropriate
 	 * for use over short distances (e.g. <200 km).
 	 * 
-	 * <p><b>Note:</b> This method fails for values spanning ±180°;
-	 * see {@link #distanceToSegment(Location, Location, Location)}.</p>
+	 * <p><b>Note:</b> This method fails for values spanning ±180°; see
+	 * {@link #distanceToSegment(Location, Location, Location)}.</p>
 	 * 
 	 * <p>If the line should instead be treated as infinite, use
 	 * {@link #distanceToLineFast(Location, Location, Location)} instead.</p>
@@ -465,8 +463,8 @@ public final class Locations {
 	 * {@link Location} to another in degrees. See <a
 	 * href="http://williams.best.vwh.net/avform.htm#Crs"> Aviation
 	 * Formulary</a> for source. For back azimuth, reverse the {@code Location}
-	 * arguments. Result is returned in decimal degrees over the interval
-	 * 0° to 360°.
+	 * arguments. Result is returned in decimal degrees over the interval 0° to
+	 * 360°.
 	 * 
 	 * @param p1 the first {@code Location} point
 	 * @param p2 the second {@code Location} point
@@ -529,9 +527,9 @@ public final class Locations {
 	/**
 	 * Returns the angle (in decimal degrees) of a line between the first and
 	 * second location relative to horizontal. This method is intended for use
-	 * at relatively short separations ( e.g. ≤200km) as it degrades at
-	 * large distances where curvature is not considered. Note that positive
-	 * angles are down, negative angles are up.
+	 * at relatively short separations ( e.g. ≤200km) as it degrades at large
+	 * distances where curvature is not considered. Note that positive angles
+	 * are down, negative angles are up.
 	 * @param p1 the first {@code Location} point
 	 * @param p2 the second {@code Location} point
 	 * @return the plunge of this vector
@@ -587,16 +585,9 @@ public final class Locations {
 	 *         {@code false} otherwise.
 	 */
 	public static boolean areSimilar(Location p1, Location p2) {
-		if (!Precision.equals(p1.latRad(), p2.latRad(), TOLERANCE)) {
-			return false;
-		}
-		if (!Precision.equals(p1.lonRad(), p2.lonRad(), TOLERANCE)) {
-			return false;
-		}
-		if (!Precision.equals(p1.depth(), p2.depth(), TOLERANCE)) {
-			return false;
-		}
-		return true;
+		return fuzzyEquals(p1.latRad(), p2.latRad(), TOLERANCE) &&
+			fuzzyEquals(p1.lonRad(), p2.lonRad(), TOLERANCE) &&
+			fuzzyEquals(p1.depth(), p2.depth(), TOLERANCE);
 	}
 
 	// TODO these seem heavy
@@ -676,7 +667,7 @@ public final class Locations {
 	/**
 	 * Computes a centroid for a group of {@code Location}s as the average of
 	 * latitude, longitude, and depth;
-	 *  
+	 * 
 	 * @param locs locations to process
 	 */
 	public static Location centroid(Iterable<Location> locs) {
@@ -693,9 +684,9 @@ public final class Locations {
 		latRad /= size;
 		lonRad /= size;
 		depth /= size;
-		return Location.create(latRad * TO_DEG, lonRad * TO_DEG, depth); 
+		return Location.create(latRad * TO_DEG, lonRad * TO_DEG, depth);
 	}
-	
+
 	/**
 	 * Return a radial distance {@code Location} filter.
 	 * 

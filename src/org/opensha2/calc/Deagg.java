@@ -3,12 +3,14 @@ package org.opensha2.calc;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 
+import org.opensha2.calc.CalcConfig.DeaggData;
 import org.opensha2.data.DataUtils;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.model.GmmSet;
@@ -81,19 +83,28 @@ class Deagg {
 	 */
 	static class Data {
 		
-		private double[][][] data; // [M][R][ε]
+		private double[][][] mrεMatrix; // [M][R][ε]
 
 		private double mBar, rBar, εBar; // these are total
 		private double totalRate; // TODO compare to orignal PoE
-		private double totalRateWithinRange;
 
 		// wieghted m and r position data
-		private double[][] mValues;
-		private double[][] rValues;
-		private double[][] mrWeights;
+		private double[][] mPosValues;
+		private double[][] rPosValues;
+		private double[][] mrPosWeights;
+		
+		private Map<SourceSet<Source>, Collection<Source>> topContributors;
 
 		private void add(Data data) {
-			
+			DataUtils.add(this.mrεMatrix, data.mrεMatrix);
+			this.mBar += data.mBar;
+			this.rBar += data.rBar;
+			this.εBar += data.εBar;
+			this.totalRate += totalRate;
+			DataUtils.add(this.mPosValues, data.mPosValues);
+			DataUtils.add(this.rPosValues, data.rPosValues);
+			DataUtils.add(this.mrPosWeights, data.mrPosWeights);
+			topContributors.putAll(data.topContributors);
 		}
 
 	}
@@ -169,19 +180,19 @@ class Deagg {
 			double sourceSetWeight = curveSet.sourceSet.weight();
 			GmmSet gmmSet = curveSet.sourceSet.groundMotionModels();
 
-			for (HazardGroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
+			for (GroundMotions groundMotions : curveSet.hazardGroundMotionsList) {
 				processFaultSource(groundMotions, sourceSetWeight, gmmSet, imt, iml);
 			}
 		}
 
 		private void processFaultSource(
-				HazardGroundMotions groundMotions,
+				GroundMotions groundMotions,
 				double sourceSetWeight,
 				GmmSet gmmSet,
 				Imt imt,
 				double iml) {
 
-			HazardInputs inputs = groundMotions.inputs;
+			SourceInputList inputs = (SourceInputList) groundMotions.inputs;
 			String sourceName = inputs.parent.name();
 			double sourceRate = 0.0;
 			int inputCount = inputs.size();
@@ -306,8 +317,8 @@ class Deagg {
 		 * @param c {@code CalcConfig} to process
 		 */
 		public static Model fromConfig(CalcConfig c) {
-			return create(c.deagg.mMin, c.deagg.mMax, c.deagg.Δm, c.deagg.rMin, c.deagg.rMax,
-				c.deagg.Δr, c.deagg.εMin, c.deagg.εMax, c.deagg.Δε);
+			DeaggData d = c.deagg();
+			return create(d.mMin, d.mMax, d.Δm, d.rMin, d.rMax, d.Δr, d.εMin, d.εMax, d.Δε);
 		}
 
 		private static class Builder {

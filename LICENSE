@@ -1,13 +1,23 @@
-Unless otherwise noted, the software and content on this site is
-in the public domain because it contains materials developed by
-the United States Geological Survey, an agency of the United States
-Department of Interior. For more information, see the official USGS
-copyright policy at:
+Unless otherwise noted, this software is in the public domain because it
+contains materials that originally came from the United States Geological
+Survey, an agency of the United States Department of Interior. For more
+information, see the official USGS copyright policy at:
 
 http://www.usgs.gov/visual-id/credit_usgs.html#copyright
 
 This software and content is distributed on an "AS IS" BASIS, WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. Any
-dependent libraries included here are distributed under open source
-(or open source-like) licenses/agreements. Appropriate license agreements
-are included with each library.
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+Dependent libraries found in the "lib" directory are distributed under the
+Apache License, Version 2.0. You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Runtime libs:
+
+ - guava-18.0.jar          (https://github.com/google/guava)
+ - gson-2.3.jar            (https://code.google.com/p/google-gson)
+ 

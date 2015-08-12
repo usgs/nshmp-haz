@@ -18,12 +18,12 @@ import org.opensha2.gmm.ScalarGroundMotion;
 import com.google.common.primitives.Doubles;
 
 /**
- * Container class for scalar ground motions associated individual
+ * Container class for scalar ground motions associated with individual
  * {@code Source}s in a {@code SourceSet}.
  * 
  * @author Peter Powers
  */
-final class HazardGroundMotions {
+final class GroundMotions {
 
 	/*
 	 * NOTE the inputList supplied to Builder will be immutable but the mean and
@@ -37,12 +37,12 @@ final class HazardGroundMotions {
 	 * http://code.google.com/p/guava-libraries/issues/detail?id=1827
 	 */
 
-	final HazardInputs inputs;
+	final InputList inputs;
 	final Map<Imt, Map<Gmm, List<Double>>> means;
 	final Map<Imt, Map<Gmm, List<Double>>> sigmas;
 
-	private HazardGroundMotions(HazardInputs inputs, Map<Imt, Map<Gmm, List<Double>>> means,
-		Map<Imt, Map<Gmm, List<Double>>> sigmas) {
+	private GroundMotions(InputList inputs, Map<Imt, Map<Gmm, List<Double>>> means,
+			Map<Imt, Map<Gmm, List<Double>>> sigmas) {
 		this.inputs = inputs;
 		this.means = means;
 		this.sigmas = sigmas;
@@ -50,7 +50,7 @@ final class HazardGroundMotions {
 
 	@Override public String toString() {
 		StringBuilder sb = new StringBuilder(getClass().getSimpleName());
-		sb.append(" [").append(inputs.parent.name()).append("]");
+		sb.append(" [").append(inputs.parentName()).append("]");
 		sb.append(": ").append(LINE_SEPARATOR.value());
 		for (int i = 0; i < inputs.size(); i++) {
 			sb.append(inputs.get(i));
@@ -71,7 +71,7 @@ final class HazardGroundMotions {
 		return sb.toString();
 	}
 
-	static Builder builder(HazardInputs inputs, Set<Gmm> gmms, Set<Imt> imts) {
+	static Builder builder(InputList inputs, Set<Gmm> gmms, Set<Imt> imts) {
 		return new Builder(inputs, gmms, imts);
 	}
 
@@ -82,11 +82,11 @@ final class HazardGroundMotions {
 		private final int size;
 		private int addCount = 0;
 
-		private final HazardInputs inputs;
+		private final InputList inputs;
 		private final Map<Imt, Map<Gmm, List<Double>>> means;
 		private final Map<Imt, Map<Gmm, List<Double>>> sigmas;
 
-		private Builder(HazardInputs inputs, Set<Gmm> gmms, Set<Imt> imts) {
+		private Builder(InputList inputs, Set<Gmm> gmms, Set<Imt> imts) {
 			checkArgument(checkNotNull(inputs).size() > 0);
 			checkArgument(checkNotNull(gmms).size() > 0);
 			this.inputs = inputs;
@@ -103,11 +103,11 @@ final class HazardGroundMotions {
 			return this;
 		}
 
-		HazardGroundMotions build() {
+		GroundMotions build() {
 			checkState(!built, "This %s instance has already been used", ID);
 			checkState(addCount == size, "Only %s of %s entries have been added", addCount, size);
 			built = true;
-			return new HazardGroundMotions(inputs, means, sigmas);
+			return new GroundMotions(inputs, means, sigmas);
 		}
 
 		static Map<Imt, Map<Gmm, List<Double>>> initValueTable(Set<Gmm> gmms, Set<Imt> imts,

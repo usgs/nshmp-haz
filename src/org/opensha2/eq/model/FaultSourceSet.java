@@ -2,8 +2,6 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validateWeight;
-import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
@@ -24,8 +22,14 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
 	private final List<FaultSource> sources;
 
-	private FaultSourceSet(String name, double weight, List<FaultSource> sources, GmmSet gmmSet) {
-		super(name, weight, gmmSet);
+	private FaultSourceSet(
+			String name,
+			int id,
+			double weight,
+			List<FaultSource> sources,
+			GmmSet gmmSet) {
+
+		super(name, id, weight, gmmSet);
 		this.sources = sources;
 	}
 
@@ -67,47 +71,27 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 	}
 
 	/* Single use builder. */
-	static class Builder {
+	static class Builder extends AbstractSourceSet.Builder {
 
 		static final String ID = "FaultSourceSet.Builder";
-		boolean built = false;
 
-		String name;
-		Double weight;
-		GmmSet gmmSet;
-		List<FaultSource> sources = Lists.newArrayList();
-
-		Builder name(String name) {
-			this.name = validateName(name);
-			return this;
-		}
-
-		Builder weight(double weight) {
-			this.weight = validateWeight(weight);
-			return this;
-		}
-
-		Builder gmms(GmmSet gmmSet) {
-			this.gmmSet = checkNotNull(gmmSet);
-			return this;
-		}
+		final List<FaultSource> sources = Lists.newArrayList();
 
 		Builder source(FaultSource source) {
 			sources.add(checkNotNull(source, "FaultSource is null"));
 			return this;
 		}
 
-		void validateState(String id) {
-			checkState(!built, "This %s instance as already been used", id);
-			checkState(name != null, "%s name not set", id);
-			checkState(weight != null, "%s weight not set", id);
-			checkState(gmmSet != null, "%s ground motion models not set", id);
-			built = true;
+		@Override void validateState(String buildId) {
+			super.validateState(buildId);
 		}
 
 		FaultSourceSet buildFaultSet() {
 			validateState(ID);
-			return new FaultSourceSet(name, weight, sources, gmmSet);
+			// this is here because calls up from interface
+			// will fail in this.validateState()
+			checkState(sources.size() > 0, "%s source list is empty", ID);
+			return new FaultSourceSet(name, id, weight, sources, gmmSet);
 		}
 	}
 

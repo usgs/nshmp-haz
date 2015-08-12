@@ -107,14 +107,14 @@ public enum Imt {
 	 *         supplied period
 	 */
 	public static Imt fromPeriod(double period) {
-		// TODO should this throw an IAE instead or return null?
 		for (Imt imt : Imt.values()) {
 			if (imt.name().startsWith("SA")) {
 				double saPeriod = imt.period();
+				
 				if (fuzzyEquals(saPeriod, period, 0.000001)) return imt;
 			}
 		}
-		return null;
+		throw new IllegalArgumentException("No corresponding Imt for period:" + period);
 	}
 
 	/**

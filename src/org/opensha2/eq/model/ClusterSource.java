@@ -7,6 +7,7 @@ import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.opensha2.eq.model.FaultSource.Builder;
 import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableMap;
@@ -76,7 +77,7 @@ public class ClusterSource implements Source {
 	@Override public String name() {
 		return faults.name();
 	}
-
+	
 	@Override public String toString() {
 		// @formatter:off
 		Map<Object, Object> data = ImmutableMap.builder()
@@ -120,10 +121,10 @@ public class ClusterSource implements Source {
 			return this;
 		}
 
-		void validateState(String mssgID) {
-			checkState(!built, "This %s instance as already been used", mssgID);
-			checkState(rate != null, "%s rate not set", mssgID);
-			checkState(faults != null, "%s has no fault sources", mssgID);
+		void validateState(String source) {
+			checkState(!built, "This %s instance as already been used", source);
+			checkState(rate != null, "%s rate not set", source);
+			checkState(faults != null, "%s has no fault sources", source);
 			built = true;
 		}
 

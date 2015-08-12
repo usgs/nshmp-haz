@@ -12,11 +12,20 @@ import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.REVERSE_OBLIQUE;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.ZHYP;
 import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;
 
 import org.opensha2.eq.TectonicSetting;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Abstract implementation of the ground motion model by McVerry et al. (2000).
@@ -65,6 +74,17 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 	// NOTE: updated NZ_SourceID to collapse SR RS keys
 
 	static final String NAME = "McVerry et al. (2000)";
+
+	// TODO will probably want to have constraints per-implementation
+	// (e.g. zHyp only used by subduction)
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(4.0, 8.0))
+		.set(RRUP, Range.closed(0.0, 200.0))
+		.set(ZHYP, Range.closed(0.0, 20.0))
+		.set(RAKE, Faults.RAKE_RANGE)
+		.set(VS30, Range.closed(150.0, 1500.0))
+		.build();
 
 	// geomean and max-horizontal coefficients
 	static final CoefficientContainer COEFFS_GM = new CoefficientContainer("McVerry00_gm.csv");

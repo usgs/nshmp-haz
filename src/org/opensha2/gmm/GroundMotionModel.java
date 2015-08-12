@@ -25,6 +25,6 @@ public interface GroundMotionModel {
 	 * @param args a ground motion model input argument container
 	 * @return a scalar ground motion wrapper
 	 */
-	public ScalarGroundMotion calc(GmmInput args);
+	ScalarGroundMotion calc(GmmInput args);
 
 }

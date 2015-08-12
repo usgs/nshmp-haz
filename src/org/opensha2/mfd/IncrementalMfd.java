@@ -1,7 +1,6 @@
 package org.opensha2.mfd;
 
 
-import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.opensha2.function.EvenlyDiscretizedFunc;
 import org.opensha2.eq.Magnitudes;
 
@@ -399,30 +398,31 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
     * @param min_bValMag
     * @param max_bValMag
     */
-   public double compute_bValue(double min_bValMag, double max_bValMag) {
-	   int firstIndex, lastIndex;
-
-	   if(Double.isNaN(min_bValMag))
-		   firstIndex = getClosestXIndex(getMinMagWithNonZeroRate());
-	   else
-		   firstIndex = getClosestXIndex(min_bValMag);
-
-	   if(Double.isNaN(max_bValMag))
-		   lastIndex = getClosestXIndex(getMaxMagWithNonZeroRate());
-	   else
-		   lastIndex = getClosestXIndex(max_bValMag);
-
-	   SimpleRegression regression = new SimpleRegression();
-	   for(int i=firstIndex; i<=lastIndex; i++) {
-		   if(getY(i)>0.0)	// avoid taking log of zero
-			   regression.addData(getX(i), Math.log10(getY(i)));
-	   }
-	   
-//	   if(getX(lastIndex)-getX(firstIndex) <1.0)
-//		   return Double.NaN;
-
-	   return regression.getSlope();
-   }
+   // TODO commented out; not used here; requires commons-math for Regression
+//   public double compute_bValue(double min_bValMag, double max_bValMag) {
+//	   int firstIndex, lastIndex;
+//
+//	   if(Double.isNaN(min_bValMag))
+//		   firstIndex = getClosestXIndex(getMinMagWithNonZeroRate());
+//	   else
+//		   firstIndex = getClosestXIndex(min_bValMag);
+//
+//	   if(Double.isNaN(max_bValMag))
+//		   lastIndex = getClosestXIndex(getMaxMagWithNonZeroRate());
+//	   else
+//		   lastIndex = getClosestXIndex(max_bValMag);
+//
+//	   SimpleRegression regression = new SimpleRegression();
+//	   for(int i=firstIndex; i<=lastIndex; i++) {
+//		   if(getY(i)>0.0)	// avoid taking log of zero
+//			   regression.addData(getX(i), Math.log10(getY(i)));
+//	   }
+//	   
+////	   if(getX(lastIndex)-getX(firstIndex) <1.0)
+////		   return Double.NaN;
+//
+//	   return regression.getSlope();
+//   }
    
    /**
     * This sets all y-axis values above the given total moment rate to zero.
@@ -492,9 +492,10 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
 	 * and largest mags with non-zero rates (zeros at the beginning and end of
 	 * the distribution are ignored).
 	 */
-	public double compute_bValue() {
-		return compute_bValue(Double.NaN, Double.NaN);
-	}
+	// NOTE commented out; not used
+//	public double compute_bValue() {
+//		return compute_bValue(Double.NaN, Double.NaN);
+//	}
 
 	/**
 	 * Returns whether ruptures generated using this MFD should float. May not

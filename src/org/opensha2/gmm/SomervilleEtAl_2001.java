@@ -1,10 +1,17 @@
 package org.opensha2.gmm;
 
 import static java.lang.Math.log;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RJB;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 import static org.opensha2.util.MathUtils.hypot;
 
 import java.util.Map;
+
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the hard rock ground motion model for the Central and
@@ -38,6 +45,12 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
 
 	static final String NAME = "Somerville et al. (2001)";
 
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+			.set(MAG, Range.closed(4.0, 8.0))
+			.set(RJB, Range.closed(0.0, 1000.0))
+			.set(VS30, Range.closed(760.0, 2000.0))
+			.build();
+	
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Somerville01.csv");
 
 	private static final double Z_MIN = 6.0;

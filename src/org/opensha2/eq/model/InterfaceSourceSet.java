@@ -1,6 +1,7 @@
 package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Iterator;
 import java.util.List;
@@ -21,9 +22,9 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 
 	private final List<InterfaceSource> sources;
 
-	private InterfaceSourceSet(String name, double weight, GmmSet gmmSet,
+	private InterfaceSourceSet(String name, int id, double weight, GmmSet gmmSet,
 		List<InterfaceSource> sources) {
-		super(name, weight, gmmSet);
+		super(name, id, weight, gmmSet);
 		this.sources = sources;
 	}
 
@@ -62,34 +63,17 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 
 		static final String ID = "InterfaceSourceSet.Builder";
 
-		// type-specific field
-		List<InterfaceSource> sources = Lists.newArrayList();
+		final List<InterfaceSource> sources = Lists.newArrayList();
 
-		// type-specific method
 		Builder source(InterfaceSource source) {
 			sources.add(checkNotNull(source, "InterfaceSource is null"));
 			return this;
 		}
 
-		// overridden to support method chaining
-		@Override Builder name(String name) {
-			super.name(name);
-			return this;
-		}
-
-		@Override Builder weight(double weight) {
-			super.weight(weight);
-			return this;
-		}
-
-		@Override Builder gmms(GmmSet gmmSet) {
-			super.gmms(gmmSet);
-			return this;
-		}
-
 		InterfaceSourceSet buildSubductionSet() {
 			validateState(ID);
-			return new InterfaceSourceSet(name, weight, gmmSet, sources);
+			checkState(sources.size() > 0, "%s source list is empty", id);
+			return new InterfaceSourceSet(name, id, weight, gmmSet, sources);
 		}
 	}
 

@@ -1,6 +1,6 @@
-nshmp-sha
+nshmp-haz
 =========
 
-USGS National Seismic Hazard Mapping Program Codes
+USGS National Seismic Hazard Model Program Codes
 
-How to [get started](https://github.com/pmpowers-usgs/nshmp-sha/wiki/Getting-Started) and other relevant information may be found in the [wiki](https://github.com/pmpowers-usgs/nshmp-sha/wiki/).
+Information relevant to obtaining, building, and running the code may be found in the [wiki](https://github.com/usgs/nshmp-sha/wiki/).

@@ -2,18 +2,32 @@ package org.opensha2.gmm;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
+import static org.opensha2.gmm.GmmUtils.LN_G_CM_TO_M;
 import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;
 
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
+
 /**
  * Abstract implementation of the subduction ground motion model by Atkinson &
- * Boore (2003). This implementation matches that used in the 2008 USGS NSHMP.
+ * Boore (2003). This implementation matches that used in the 2008 USGS NSHM.
  * This model has global- and Cascadia-specific forms and can be used for both
- * slab and interface events. In the 2008 NSHMP, the 'interface' form is used
+ * slab and interface events. In the 2008 NSHM, the 'interface' form is used
  * with the Cascadia subduction zone models and the 'slab' form is used with
- * gridded 'deep' events in northern California and the Pacific Northwest.
+ * gridded 'deep' events in northern California and the Pacific Northwest. In
+ * the 2014 NSHM, 'slab' implementations with Mw saturation at 7.8 were added.
+ * 
+ * <p><b>Note:</b> NSHM fortran implementations implement strict hypocentral
+ * depths that are hardcoded into these implementations as well. FOr interface
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -32,21 +46,27 @@ import java.util.Map;
  * @author Peter Powers
  * @see Gmm#AB_03_CASC_INTER
  * @see Gmm#AB_03_CASC_SLAB
+ * @see Gmm#AB_03_CASC_SLAB_LOW_SAT
  * @see Gmm#AB_03_GLOB_INTER
  * @see Gmm#AB_03_GLOB_SLAB
+ * @see Gmm#AB_03_GLOB_SLAB_LOW_SAT
  */
 public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
-	// TODO from original implementation -- recheck
-	// NOTE RupTopDepthParam is used in a funny way here (see also Youngs/
-	// Geomatrix). Currently it is not adjusted when updating an earthquake
-	// rupture, but must be set manually. It defaults to 20km (the value
-	// imposed in the 2008 NSHMP Cascadia subduction interface model. Any other
-	// sources should update this value independently.
-
 	static final String NAME = "Atkinson & Boore (2003)";
 
-	static final CoefficientContainer COEFFS_CASC_SLAB, COEFFS_CASC_INTERFACE, COEFFS_GLOBAL_SLAB,
+	// TODO will probably want to have constraints per-implementation
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(5.0, 9.5))
+		.set(RRUP, Range.closed(0.0, 1000.0))
+		.set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+		.set(VS30, Range.closed(150.0, 1500.0))
+		.build();
+
+	static final CoefficientContainer
+			COEFFS_CASC_SLAB,
+			COEFFS_CASC_INTERFACE,
+			COEFFS_GLOBAL_SLAB,
 			COEFFS_GLOBAL_INTERFACE;
 
 	static {
@@ -55,8 +75,6 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		COEFFS_GLOBAL_SLAB = new CoefficientContainer("AB03_global_slab.csv");
 		COEFFS_GLOBAL_INTERFACE = new CoefficientContainer("AB03_global_interface.csv");
 	}
-
-	private static final double gfac = 2.9912261; // log10(980)
 
 	private static final class Coefficients {
 
@@ -79,10 +97,12 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
 	private final Coefficients coeffs;
 	private final Coefficients coeffsPGA;
+	private final double mMax;
 
 	AtkinsonBoore_2003(final Imt imt) {
 		coeffs = initCoeffs(imt, isSlab(), isGlobal());
 		coeffsPGA = initCoeffs(PGA, isSlab(), isGlobal());
+		mMax = saturationMw();
 	}
 
 	private static Coefficients initCoeffs(final Imt imt, final boolean slab, final boolean global) {
@@ -92,23 +112,39 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		double μ = calcMean(coeffs, coeffsPGA, isSlab(), in);
+		double μ = calcMean(coeffs, coeffsPGA, isSlab(), mMax, in);
 		double σ = coeffs.sig * BASE_10_TO_E;
 		return DefaultScalarGroundMotion.create(μ, σ);
 	}
 
-	// subclass flag
+	// implementation flag
 	abstract boolean isGlobal();
 
-	// subclass flag
+	// implementation flag
 	abstract boolean isSlab();
+
+	// implementation value
+	// - interface events saturate at 8.5
+	// - slab events saturate at 8.0 in the 2008 NSHM
+	// - slab event saturation was reduced to 7.8 for 2014 NSHM
+	abstract double saturationMw();
+
+	private static final double SAT_MW_INTERFACE = 8.5;
+	private static final double SAT_MW_SLAB_2008 = 8.0;
+	private static final double SAT_MW_SLAB_2014 = 7.8;
 
 	// SF2 variable of AB06 needs to be provided by subclasses via
 	private static final double calcMean(final Coefficients c, final Coefficients cPGA,
-			final boolean slab, final GmmInput in) {
+			final boolean slab, final double mMax, final GmmInput in) {
 
 		// "saturation effect" p. 1709 AB 2003
-		double Mw = Math.min(in.Mw, slab ? 8.0 : 8.5);
+		double Mw = Math.min(in.Mw, mMax);
+
+		// TODO what is the reasoning behind the following?
+		// does zHyp yield unreliable results?
+
+		// depth: fixed @ 20km for interface; max 100km for slab
+		double depth = slab ? Math.min(in.zTop, 100.0) : 20.0;
 
 		double delta = 0.00724 * pow(10, 0.507 * Mw);
 		double g = pow(10, slab ? (0.301 - 0.01 * Mw) : (1.2 - 0.18 * Mw));
@@ -125,8 +161,8 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		// TODO revisit above
 
 		double dist2 = Math.sqrt(in.rRup * in.rRup + delta * delta);
-		double gnd = gndm + c.c3 * in.zTop + c.c4 * dist2 - g * log10(dist2);
-		double rpga = cPGA.c1 + cPGA.c2 * Mw + cPGA.c3 * in.zTop + cPGA.c4 * dist2 - g *
+		double gnd = gndm + c.c3 * depth + c.c4 * dist2 - g * log10(dist2);
+		double rpga = cPGA.c1 + cPGA.c2 * Mw + cPGA.c3 * depth + cPGA.c4 * dist2 - g *
 			log10(dist2);
 		rpga = pow(10, rpga);
 
@@ -178,11 +214,11 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 			}
 		}
 
-		return (gnd - gfac) * BASE_10_TO_E;
+		return gnd * BASE_10_TO_E - LN_G_CM_TO_M;
 	}
 
 	static final class CascadiaInterface extends AtkinsonBoore_2003 {
-		static final String NAME = AtkinsonBoore_2003.NAME + ": Cascadia Interface";
+		static final String NAME = createName(false, false, SAT_MW_INTERFACE);
 
 		CascadiaInterface(Imt imt) {
 			super(imt);
@@ -195,10 +231,14 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		@Override final boolean isSlab() {
 			return false;
 		}
+
+		@Override double saturationMw() {
+			return SAT_MW_INTERFACE;
+		}
 	}
 
 	static final class CascadiaSlab extends AtkinsonBoore_2003 {
-		static final String NAME = AtkinsonBoore_2003.NAME + ": Cascadia Slab";
+		static final String NAME = createName(false, true, SAT_MW_SLAB_2008);
 
 		CascadiaSlab(Imt imt) {
 			super(imt);
@@ -211,10 +251,34 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		@Override final boolean isSlab() {
 			return true;
 		}
+
+		@Override double saturationMw() {
+			return SAT_MW_SLAB_2008;
+		}
+	}
+
+	static final class CascadiaSlabLowMagSaturation extends AtkinsonBoore_2003 {
+		static final String NAME = createName(false, true, SAT_MW_SLAB_2014);
+
+		CascadiaSlabLowMagSaturation(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isGlobal() {
+			return false;
+		}
+
+		@Override final boolean isSlab() {
+			return true;
+		}
+
+		@Override double saturationMw() {
+			return SAT_MW_SLAB_2014;
+		}
 	}
 
 	static final class GlobalInterface extends AtkinsonBoore_2003 {
-		static final String NAME = AtkinsonBoore_2003.NAME + ": Global Interface";
+		static final String NAME = createName(true, false, SAT_MW_INTERFACE);
 
 		GlobalInterface(Imt imt) {
 			super(imt);
@@ -227,10 +291,14 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		@Override final boolean isSlab() {
 			return false;
 		}
+
+		@Override double saturationMw() {
+			return SAT_MW_INTERFACE;
+		}
 	}
 
 	static final class GlobalSlab extends AtkinsonBoore_2003 {
-		static final String NAME = AtkinsonBoore_2003.NAME + ": Global Slab";
+		static final String NAME = createName(true, true, SAT_MW_SLAB_2008);
 
 		GlobalSlab(Imt imt) {
 			super(imt);
@@ -243,6 +311,38 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 		@Override final boolean isSlab() {
 			return true;
 		}
+
+		@Override double saturationMw() {
+			return SAT_MW_SLAB_2008;
+		}
+	}
+
+	static final class GlobalSlabLowMagSaturation extends AtkinsonBoore_2003 {
+		static final String NAME = createName(true, true, SAT_MW_SLAB_2014);
+
+		GlobalSlabLowMagSaturation(Imt imt) {
+			super(imt);
+		}
+
+		@Override final boolean isGlobal() {
+			return true;
+		}
+
+		@Override final boolean isSlab() {
+			return true;
+		}
+
+		@Override double saturationMw() {
+			return SAT_MW_SLAB_2014;
+		}
+	}
+
+	static String createName(boolean global, boolean slab, double satMw) {
+		StringBuilder sb = new StringBuilder(AtkinsonBoore_2003.NAME);
+		sb.append(" : ").append(global ? "Global" : "Cascadia");
+		sb.append(" : ").append(slab ? "Slab" : "Interface");
+		sb.append(" : SatMw=").append(satMw);
+		return sb.toString();
 	}
 
 }

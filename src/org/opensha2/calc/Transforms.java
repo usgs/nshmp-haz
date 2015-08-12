@@ -52,7 +52,7 @@ import com.google.common.collect.Table.Cell;
  */
 final class Transforms {
 
-	static final class SourceToInputs implements Function<Source, HazardInputs> {
+	static final class SourceToInputs implements Function<Source, InputList> {
 
 		private final Site site;
 
@@ -60,9 +60,9 @@ final class Transforms {
 			this.site = site;
 		}
 
-		@Override public HazardInputs apply(final Source source) {
+		@Override public SourceInputList apply(final Source source) {
 
-			HazardInputs hazardInputs = new HazardInputs(source);
+			SourceInputList hazardInputs = new SourceInputList(source);
 			for (Rupture rup : source) {
 
 				RuptureSurface surface = rup.surface();
@@ -86,15 +86,15 @@ final class Transforms {
 					rup.rake(),
 					site.vs30,
 					site.vsInferred,
-					site.z2p5,
-					site.z1p0);
+					site.z1p0,
+					site.z2p5);
 				hazardInputs.add(input);
 			}
 			return hazardInputs;
 		}
 	}
 
-	static final class InputsToGroundMotions implements Function<HazardInputs, HazardGroundMotions> {
+	static final class InputsToGroundMotions implements Function<InputList, GroundMotions> {
 
 		private final Table<Gmm, Imt, GroundMotionModel> gmmInstances;
 
@@ -102,9 +102,9 @@ final class Transforms {
 			this.gmmInstances = gmmInstances;
 		}
 
-		@Override public HazardGroundMotions apply(final HazardInputs hazardInputs) {
+		@Override public GroundMotions apply(final InputList inputs) {
 
-			HazardGroundMotions.Builder builder = HazardGroundMotions.builder(hazardInputs,
+			GroundMotions.Builder builder = GroundMotions.builder(inputs,
 				gmmInstances.rowKeySet(), gmmInstances.columnKeySet());
 
 			for (Cell<Gmm, Imt, GroundMotionModel> cell : gmmInstances.cellSet()) {
@@ -112,7 +112,7 @@ final class Transforms {
 				Imt colKey = cell.getColumnKey();
 				GroundMotionModel gmm = cell.getValue();
 				int inputIndex = 0;
-				for (GmmInput gmmInput : hazardInputs) {
+				for (GmmInput gmmInput : inputs) {
 					builder.add(rowKey, colKey, gmm.calc(gmmInput), inputIndex++);
 				}
 			}
@@ -120,23 +120,23 @@ final class Transforms {
 		}
 	}
 
-	static final class GroundMotionsToCurves implements Function<HazardGroundMotions, HazardCurves> {
+	static final class GroundMotionsToCurves implements Function<GroundMotions, HazardCurves> {
 
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
-		private final ExceedanceModel sigmaModel;
-		private final double truncLevel;
+		private final ExceedanceModel exceedanceModel;
+		private final double truncationLevel;
 
 		GroundMotionsToCurves(
-			final Map<Imt, ArrayXY_Sequence> modelCurves,
-			final ExceedanceModel sigmaModel,
-			final double truncLevel) {
+				final Map<Imt, ArrayXY_Sequence> modelCurves,
+				final ExceedanceModel exceedanceModel,
+				final double truncationLevel) {
 
 			this.modelCurves = modelCurves;
-			this.sigmaModel = sigmaModel;
-			this.truncLevel = truncLevel;
+			this.exceedanceModel = exceedanceModel;
+			this.truncationLevel = truncationLevel;
 		}
 
-		@Override public HazardCurves apply(final HazardGroundMotions groundMotions) {
+		@Override public HazardCurves apply(final GroundMotions groundMotions) {
 
 			HazardCurves.Builder curveBuilder = HazardCurves.builder(groundMotions);
 
@@ -161,8 +161,8 @@ final class Transforms {
 						// TODO the model curve is passed in in linear space but
 						// for
 						// lognormal we need x-values to be ln(x)
-						sigmaModel.exceedance(means.get(i), sigmas.get(i), truncLevel, imt,
-							utilCurve);
+						exceedanceModel.exceedance(means.get(i), sigmas.get(i), truncationLevel,
+							imt, utilCurve);
 
 						// TODO clean
 						// setProbExceed(means.get(i), sigmas.get(i), utilCurve,
@@ -183,8 +183,8 @@ final class Transforms {
 		private final SourceSet<? extends Source> sourceSet;
 
 		CurveConsolidator(
-			final SourceSet<? extends Source> sourceSet,
-			final Map<Imt, ArrayXY_Sequence> modelCurves) {
+				final SourceSet<? extends Source> sourceSet,
+				final Map<Imt, ArrayXY_Sequence> modelCurves) {
 
 			this.sourceSet = sourceSet;
 			this.modelCurves = modelCurves;
@@ -204,14 +204,16 @@ final class Transforms {
 	static final class CurveSetConsolidator implements Function<List<HazardCurveSet>, HazardResult> {
 
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final Site site;
 
-		CurveSetConsolidator(final Map<Imt, ArrayXY_Sequence> modelCurves) {
+		CurveSetConsolidator(final Map<Imt, ArrayXY_Sequence> modelCurves, final Site site) {
 			this.modelCurves = modelCurves;
+			this.site = site;
 		}
 
 		@Override public HazardResult apply(final List<HazardCurveSet> curveSetList) {
 
-			HazardResult.Builder resultBuilder = HazardResult.builder(modelCurves);
+			HazardResult.Builder resultBuilder = HazardResult.builder(modelCurves, site);
 
 			for (HazardCurveSet curves : curveSetList) {
 				resultBuilder.addCurveSet(curves);
@@ -249,7 +251,7 @@ final class Transforms {
 		@Override public ClusterGroundMotions apply(final ClusterInputs clusterInputs) {
 			ClusterGroundMotions clusterGroundMotions = new ClusterGroundMotions(
 				clusterInputs.parent);
-			for (HazardInputs hazardInputs : clusterInputs) {
+			for (SourceInputList hazardInputs : clusterInputs) {
 				clusterGroundMotions.add(transform.apply(hazardInputs));
 			}
 			return clusterGroundMotions;
@@ -270,9 +272,9 @@ final class Transforms {
 		private final double truncLevel;
 
 		ClusterGroundMotionsToCurves(
-			final Map<Imt, ArrayXY_Sequence> modelCurves,
-			final ExceedanceModel sigmaModel,
-			final double truncLevel) {
+				final Map<Imt, ArrayXY_Sequence> modelCurves,
+				final ExceedanceModel sigmaModel,
+				final double truncLevel) {
 
 			this.modelCurves = modelCurves;
 			this.sigmaModel = sigmaModel;
@@ -295,7 +297,7 @@ final class Transforms {
 					.build();
 				ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
 
-				for (HazardGroundMotions hazardGroundMotions : clusterGroundMotions) {
+				for (GroundMotions hazardGroundMotions : clusterGroundMotions) {
 
 					Map<Gmm, List<Double>> gmmMeans = hazardGroundMotions.means.get(imt);
 					Map<Gmm, List<Double>> gmmSigmas = hazardGroundMotions.sigmas.get(imt);
@@ -338,8 +340,8 @@ final class Transforms {
 		private final ClusterSourceSet clusterSourceSet;
 
 		ClusterCurveConsolidator(
-			final ClusterSourceSet clusterSourceSet,
-			final Map<Imt, ArrayXY_Sequence> modelCurves) {
+				final ClusterSourceSet clusterSourceSet,
+				final Map<Imt, ArrayXY_Sequence> modelCurves) {
 
 			this.clusterSourceSet = clusterSourceSet;
 			this.modelCurves = modelCurves;

@@ -7,10 +7,10 @@ import static com.google.common.math.DoubleMath.fuzzyEquals;
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.isNaN;
+import static java.math.BigDecimal.ROUND_HALF_UP;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.math.BigDecimal;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,9 +18,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import org.apache.commons.math3.stat.StatUtils;
-import org.opensha2.function.DefaultXY_DataSet;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -1323,41 +1320,43 @@ public final class DataUtils {
 	 *         bin {@code size} is <1, or the {@code origin} is greater than all
 	 *         {@code data} values
 	 */
-	@Deprecated public static DefaultXY_DataSet nearestNeighborHist(double[] data, double origin,
-			int size) {
-		checkNotNull(data, "Supplied data is null");
-		checkArgument(data.length > 0, "Supplied data is empty");
-		checkArgument(size > 0, "Bin size can't be less than 1");
-		double[] localData = Arrays.copyOf(data, data.length);
-		Arrays.sort(localData);
-		int startIdx = Arrays.binarySearch(localData, origin);
-		checkArgument(startIdx < localData.length, "Origin is greater than all data values");
-		startIdx = (startIdx > 0) ? startIdx : -startIdx - 1;
-		// for multipe identical values, binary search may not return
-		// the lowest index so walk down
-		while (startIdx > 0 && origin == localData[startIdx - 1])
-			startIdx--;
-		// trim data
-		localData = Arrays.copyOfRange(localData, startIdx, localData.length);
-		int binCount = (int) Math.floor(localData.length / size);
-		// bail on an empty distribution
-		if (binCount == 0) return null;
-		List<Double> x = new ArrayList<Double>();
-		List<Double> y = new ArrayList<Double>();
-		double binLo, binHi, binDelta;
-		for (int i = 0; i < binCount; i++) {
-			int datIdx = i * size;
-			binLo = (i == 0) ? origin : localData[datIdx - 1];
-			binHi = localData[datIdx + size - 1];
-			binDelta = binHi - binLo;
-			// bail on intervals of identical values
-			if (binDelta == 0) continue;
-			y.add(size / (binHi - binLo));
-			x.add(StatUtils.percentile(localData, datIdx, size, 50.0));
-		}
-		// bail on empty distribution
-		return (x.isEmpty()) ? null : new DefaultXY_DataSet(x, y);
-	}
+	// NOTE commented out because unused; is probably useful and should be archived
+	// dependency on commons-math StatUtils.percentile
+//	@Deprecated public static DefaultXY_DataSet nearestNeighborHist(double[] data, double origin,
+//			int size) {
+//		checkNotNull(data, "Supplied data is null");
+//		checkArgument(data.length > 0, "Supplied data is empty");
+//		checkArgument(size > 0, "Bin size can't be less than 1");
+//		double[] localData = Arrays.copyOf(data, data.length);
+//		Arrays.sort(localData);
+//		int startIdx = Arrays.binarySearch(localData, origin);
+//		checkArgument(startIdx < localData.length, "Origin is greater than all data values");
+//		startIdx = (startIdx > 0) ? startIdx : -startIdx - 1;
+//		// for multipe identical values, binary search may not return
+//		// the lowest index so walk down
+//		while (startIdx > 0 && origin == localData[startIdx - 1])
+//			startIdx--;
+//		// trim data
+//		localData = Arrays.copyOfRange(localData, startIdx, localData.length);
+//		int binCount = (int) Math.floor(localData.length / size);
+//		// bail on an empty distribution
+//		if (binCount == 0) return null;
+//		List<Double> x = new ArrayList<Double>();
+//		List<Double> y = new ArrayList<Double>();
+//		double binLo, binHi, binDelta;
+//		for (int i = 0; i < binCount; i++) {
+//			int datIdx = i * size;
+//			binLo = (i == 0) ? origin : localData[datIdx - 1];
+//			binHi = localData[datIdx + size - 1];
+//			binDelta = binHi - binLo;
+//			// bail on intervals of identical values
+//			if (binDelta == 0) continue;
+//			y.add(size / (binHi - binLo));
+//			x.add(StatUtils.percentile(localData, datIdx, size, 50.0));
+//		}
+//		// bail on empty distribution
+//		return (x.isEmpty()) ? null : new DefaultXY_DataSet(x, y);
+//	}
 
 	/**
 	 * Creates a new array from the values in a source array at the specified
@@ -1449,5 +1448,5 @@ public final class DataUtils {
 	// System.out.println(sw.elapsed(TimeUnit.SECONDS));
 	//
 	// }
-
+	
 }

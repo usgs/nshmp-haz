@@ -15,6 +15,6 @@ public interface Source extends Named, Iterable<Rupture> {
 	/**
 	 * The number of {@link Rupture}s this {@code Source} represents.
 	 */
-	public int size();
+	int size();
 
 }

@@ -1,30 +1,31 @@
 package org.opensha2.calc;
 
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.util.TextUtils.format;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.data.DataUtils;
-import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
+import org.opensha2.util.Parsing;
 
-import com.google.common.base.Strings;
-import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -34,48 +35,64 @@ import com.google.gson.GsonBuilder;
  */
 public final class CalcConfig {
 
+	// TODO revisit privatization, comments, and immutability
+
 	static final String FILE_NAME = "config.json";
 
-	public final ExceedanceModel exceedanceModel;
-	public final double truncationLevel;
+	final Path resource;
 
-	public final Set<Imt> imts;
-	
-	public final double[] defaultImls;
-	public final Map<Imt, double[]> customImls;
-	
-	public final Deagg deagg;
-
-	public final SiteSet sites;
+	final ExceedanceModel exceedanceModel;
+	final double truncationLevel;
+	private final Set<Imt> imts;
+	private final double[] defaultImls;
+	private final Map<Imt, double[]> customImls;
+	private final DeaggData deagg;
+	private final SiteSet sites;
 
 	private static final Gson GSON = new GsonBuilder()
-		.setPrettyPrinting()
 		.registerTypeAdapter(Site.class, new Site.Deserializer())
-		.registerTypeAdapter(Site.class, new Site.Serializer())
 		.registerTypeAdapter(SiteSet.class, new SiteSet.Deserializer())
 		.create();
 
-	private CalcConfig() {
+	private CalcConfig(
+			Path resource,
+			ExceedanceModel exceedanceModel,
+			double truncationLevel,
+			Set<Imt> imts,
+			double[] defaultImls,
+			Map<Imt, double[]> customImls,
+			DeaggData deagg,
+			SiteSet sites) {
 
-		/*
-		 * Default values. These are initialized here because gson will not
-		 * deserialize field initialized final primitives and Strings.
-		 */
-		
-		// TODO consider adding TypeAdapter for enums that will throw an
-		// exception if invalid enum value is supplied in config.json
+		this.resource = resource;
+		this.exceedanceModel = exceedanceModel;
+		this.truncationLevel = truncationLevel;
+		this.imts = imts;
+		this.defaultImls = defaultImls;
+		this.customImls = customImls;
+		this.deagg = deagg;
+		this.sites = sites;
+	}
 
-		exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
-		truncationLevel = 3.0;
+	private enum Key {
+		RESOURCE,
+		EXCEEDANCE_MODEL,
+		TRUNCATION_LEVEL,
+		IMTS,
+		DEFAULT_IMLS,
+		CUSTOM_IMLS,
+		DEAGG,
+		SITES;
 
-		imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
-		
-		/* Slightly modified version of NSHM 5Hz curve, size = 20 */
-		defaultImls = new double[] { 0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19, 3.28, 4.92, 7.38 };
-		customImls = Maps.newHashMap();
+		private String label;
 
-		deagg = new Deagg();
-		sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
+		private Key() {
+			this.label = UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
+		}
+
+		@Override public String toString() {
+			return label;
+		}
 	}
 
 	@Override public String toString() {
@@ -83,56 +100,42 @@ public final class CalcConfig {
 		if (!customImls.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
 			for (Entry<Imt, double[]> entry : customImls.entrySet()) {
-				String imtStr = "(IMT override) " + entry.getKey() + ": ";
-				sb.append(Strings.padStart(imtStr, 24, ' '))
-					.append(Arrays.toString(entry.getValue()))
-					.append(NEWLINE);
+				String imtStr = "(override) " + entry.getKey().name();
+				sb.append(format(imtStr)).append(Arrays.toString(entry.getValue()));
 			}
 			customImlStr = sb.toString();
 		}
 
-		StringBuilder sb = new StringBuilder("Calculation config:").append(NEWLINE)
-			.append("     Exceedance model: ")
-			.append("type=").append(exceedanceModel).append(", ")
-			.append("truncLevel=").append(truncationLevel)
-			.append(NEWLINE)
-			.append("                 IMTs: ").append(imts)
-			.append(NEWLINE)
-			.append("         Default IMLs: ")
-			.append(Arrays.toString(defaultImls))
-			.append(NEWLINE)
+		return new StringBuilder("Calc config:")
+			.append(format(Key.RESOURCE)).append(resource)
+			.append(format(Key.EXCEEDANCE_MODEL)).append(exceedanceModel)
+			.append(format(Key.TRUNCATION_LEVEL)).append(truncationLevel)
+			.append(format(Key.IMTS)).append(Parsing.enumsToString(imts, Imt.class))
+			.append(format(Key.DEFAULT_IMLS)).append(Arrays.toString(defaultImls))
 			.append(customImlStr)
-			.append("      Deaggregation R: ")
+			.append(format("Deaggregation R"))
 			.append("min=").append(deagg.rMin).append(", ")
 			.append("max=").append(deagg.rMax).append(", ")
 			.append("Δ=").append(deagg.Δr)
-			.append(NEWLINE)
-			.append("      Deaggregation M: ")
+			.append(format("Deaggregation M"))
 			.append("min=").append(deagg.mMin).append(", ")
 			.append("max=").append(deagg.mMax).append(", ")
 			.append("Δ=").append(deagg.Δm)
-			.append(NEWLINE)
-			.append("      Deaggregation ε: ")
+			.append(format("Deaggregation ε"))
 			.append("min=").append(deagg.εMin).append(", ")
 			.append("max=").append(deagg.εMax).append(", ")
 			.append("Δ=").append(deagg.Δε)
-			.append(NEWLINE);
-
-		for (Site site : sites) {
-			sb.append("                 ").append(site.toString()).append(NEWLINE);
-		}
-
-		return sb.toString();
+			.append(format(Key.SITES)).append(sites)
+			.toString();
 	}
 
-	public double[] imlsForImt(Imt imt) {
-		return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
-	}
-	
 	/**
-	 * Returns models of the intensity measure levels for each {@code Imt} adressed
-	 * by this calculation. Note that the x-values in each sequence are in natural
-	 * log space.
+	 * Returns models of the intensity measure levels for each {@code Imt}
+	 * adressed by this calculation. The x-values in each sequence are in
+	 * natural log space. The {@code Map} returned by this method is an
+	 * immutable {@code EnumMap}.
+	 * 
+	 * @see Maps#immutableEnumMap(Map)
 	 */
 	public Map<Imt, ArrayXY_Sequence> logModelCurves() {
 		Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
@@ -142,9 +145,16 @@ public final class CalcConfig {
 			DataUtils.ln(imls);
 			curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
 		}
-		return curveMap;
+		return Maps.immutableEnumMap(curveMap);
 	}
-	
+
+	/**
+	 * Returns models of the intensity measure levels for each {@code Imt}
+	 * adressed by this calculation. The {@code Map} returned by this method is
+	 * an immutable {@code EnumMap}.
+	 * 
+	 * @see Maps#immutableEnumMap(Map)
+	 */
 	public Map<Imt, ArrayXY_Sequence> modelCurves() {
 		Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
 		for (Imt imt : imts) {
@@ -152,39 +162,39 @@ public final class CalcConfig {
 			imls = Arrays.copyOf(imls, imls.length);
 			curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
 		}
-		return curveMap;
+		return Maps.immutableEnumMap(curveMap);
 	}
 
-
-	public static CalcConfig load(Path path) throws IOException {
-		Path configPath = path.resolve(FILE_NAME);
-		Reader reader = Files.newBufferedReader(configPath, UTF_8);
-		CalcConfig config = GSON.fromJson(reader, CalcConfig.class);
-		reader.close();
-		return config;
+	private double[] imlsForImt(Imt imt) {
+		return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
 	}
 
-	static void exportDefaults(Path path) throws IOException {
-		Writer writer = Files.newBufferedWriter(path, UTF_8);
-		GSON.toJson(new CalcConfig(), writer);
-		writer.close();
+	/**
+	 * Return the {@code Set} of {@code Imt}s for which calculations will be
+	 * performed.
+	 */
+	public Set<Imt> imts() {
+		return imts;
+	}
+	
+	/**
+	 * Return an unmodifiable iterator over the {@code Site}s specified by this
+	 * configuration.
+	 * 
+	 * @see Iterables#unmodifiableIterable(Iterable)
+	 */
+	public Iterable<Site> sites() {
+		return Iterables.unmodifiableIterable(sites);
+	}
+	
+	/**
+	 * Return the deaggregation data model spcified by this configuration.
+	 */
+	public DeaggData deagg() {
+		return deagg;
 	}
 
-	// TODO clean
-	public static void main(String[] args) throws IOException {
-//		 Path path = Paths.get("..","nshmp-model-dev", "tmp", "config_calc3.json");
-		// exportDefaults(path);
-
-		// Path path = Paths.get("tmp", "config", "config_nshm_imls.json");
-		// Path path = Paths.get("..","nshmp-model-dev", "models", "PEER",
-		// "Set2-Case2a1", "config.json");
-		Path path = Paths.get("..", "nshmp-model-dev", "models", "PEER", "Set1-Case1",
-			"config.json");
-		CalcConfig c = load(path);
-		System.out.println(c);
-	}
-
-	public static class Deagg {
+	public static final class DeaggData {
 
 		public final double rMin;
 		public final double rMax;
@@ -198,7 +208,7 @@ public final class CalcConfig {
 		public final double εMax;
 		public final double Δε;
 
-		Deagg() {
+		DeaggData() {
 			rMin = 0.0;
 			rMax = 100.0;
 			Δr = 10.0;
@@ -212,6 +222,113 @@ public final class CalcConfig {
 			Δε = 0.5;
 		}
 
+	}
+
+	/**
+	 * Create a new calculation configuration builder from the resource at the
+	 * specified {@code path}.
+	 * 
+	 * @param path to configuration file or resource
+	 * @throws IOException
+	 */
+	public static Builder builder(Path path) throws IOException {
+		checkNotNull(path);
+		// TODO test with zip files
+		Path configPath = Files.isDirectory(path) ? path.resolve(FILE_NAME) : path;
+		Reader reader = Files.newBufferedReader(configPath, UTF_8);
+		Builder configBuilder = GSON.fromJson(reader, Builder.class);
+		configBuilder.resource = configPath;
+		reader.close();
+		return configBuilder;
+	}
+
+	/**
+	 * Create a new empty calculation configuration builder.
+	 */
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	public static final class Builder {
+
+		private static final String ID = "CalcConfig.Builder";
+		private boolean built = false;
+
+		Path resource;
+		ExceedanceModel exceedanceModel;
+		Double truncationLevel;
+		Set<Imt> imts;
+		double[] defaultImls;
+		Map<Imt, double[]> customImls;
+		DeaggData deagg;
+		SiteSet sites;
+
+		public Builder copy(CalcConfig config) {
+			checkNotNull(config);
+			this.resource = config.resource;
+			this.exceedanceModel = config.exceedanceModel;
+			this.truncationLevel = config.truncationLevel;
+			this.imts = config.imts;
+			this.defaultImls = config.defaultImls;
+			this.customImls = config.customImls;
+			this.deagg = config.deagg;
+			this.sites = config.sites;
+			return this;
+		}
+
+		public Builder withDefaults() {
+			this.exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
+			this.truncationLevel = 3.0;
+			this.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
+			// Slightly modified version of NSHM 5Hz curve, size = 20
+			this.defaultImls = new double[] { 0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253,
+				0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46,
+				2.19, 3.28, 4.92, 7.38 };
+			this.customImls = Maps.newHashMap();
+			this.deagg = new DeaggData();
+			this.sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
+			return this;
+		}
+
+		public Builder extend(final Builder that) {
+			checkNotNull(that);
+			if (that.resource != null) this.resource = that.resource;
+			if (that.exceedanceModel != null) this.exceedanceModel = that.exceedanceModel;
+			if (that.truncationLevel != null) this.truncationLevel = that.truncationLevel;
+			if (that.imts != null) this.imts = that.imts;
+			if (that.defaultImls != null) this.defaultImls = that.defaultImls;
+			if (that.customImls != null) this.customImls = that.customImls;
+			if (that.deagg != null) this.deagg = that.deagg;
+			if (that.sites != null) this.sites = that.sites;
+			return this;
+		}
+
+		public Builder imts(Set<Imt> imts) {
+			this.imts = checkNotNull(imts);
+			return this;
+		}
+
+		private static final String MSSG = "%s %s not set";
+
+		private void validateState(String buildId) {
+			checkState(!built, "This %s instance as already been used", buildId);
+			checkNotNull(exceedanceModel, MSSG, buildId, Key.EXCEEDANCE_MODEL);
+			checkNotNull(truncationLevel, MSSG, buildId, Key.TRUNCATION_LEVEL);
+			checkNotNull(imts, MSSG, buildId, Key.IMTS);
+			checkNotNull(defaultImls, MSSG, buildId, Key.DEFAULT_IMLS);
+			checkNotNull(customImls, MSSG, buildId, Key.CUSTOM_IMLS);
+			checkNotNull(deagg, MSSG, buildId, Key.DEAGG);
+			checkNotNull(sites, MSSG, buildId, Key.SITES);
+			built = true;
+		}
+
+		public CalcConfig build() {
+			validateState(ID);
+			Set<Imt> finalImts = Sets.immutableEnumSet(imts);
+			return new CalcConfig(
+				resource, exceedanceModel, truncationLevel, finalImts,
+				defaultImls, customImls, deagg, sites);
+		}
 	}
 
 }

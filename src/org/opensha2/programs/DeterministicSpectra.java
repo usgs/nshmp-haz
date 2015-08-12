@@ -173,7 +173,7 @@ public class DeterministicSpectra {
 	 *   ... ASK_14 6.5 10.0 10.3 10.0 90.0 14.0 0.5 7.5 0.0 760.0 true NaN NaN
 	 * </pre>
 	 * @param args
-	 *        {@code [Gmm  mag rJB  rRup rX dip width zTop zHyp rake vs30 vsInf z2p5 z1p0]}
+	 *        {@code [Gmm  mag rJB  rRup rX dip width zTop zHyp rake vs30 vsInf z1p0 z2p5]}
 	 */
 	public static void main(String[] args) {
 		String result = calcMain(args);
@@ -199,8 +199,8 @@ public class DeterministicSpectra {
 				.rake(Double.valueOf(args[9]))
 				.vs30(Double.valueOf(args[10]))
 				.vsInf(Boolean.valueOf(args[11]))
-				.z2p5(Double.valueOf(args[12]))
-				.z1p0(Double.valueOf(args[13]))
+				.z1p0(Double.valueOf(args[12]))
+				.z2p5(Double.valueOf(args[13]))
 				.build();
 		Result result = spectrum(gmm, input);
 		StringBuilder sb = new StringBuilder();
@@ -217,7 +217,7 @@ public class DeterministicSpectra {
 	private static final String USAGE = "DeterministicSpectra usage:" +
 		LINE_SEPARATOR.value() +
 		LINE_SEPARATOR.value() +
-		"command: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra Gmm mag rJB rRup rX dip width zTop zHyp rake vs30 vsInf z2p5 z1p0" +
+		"command: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra Gmm mag rJB rRup rX dip width zTop zHyp rake vs30 vsInf z1p0 z2p5" +
 		LINE_SEPARATOR.value() +
 		"example: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra ASK_14 6.5 10.0 10.3 10.0 90.0 14.0 0.5 7.5 0.0 760.0 true NaN NaN" +
 		LINE_SEPARATOR.value() +

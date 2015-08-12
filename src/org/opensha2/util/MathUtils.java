@@ -1,6 +1,9 @@
 package org.opensha2.util;
 
 import static java.lang.Math.sqrt;
+import static java.math.BigDecimal.ROUND_HALF_UP;
+
+import java.math.BigDecimal;
 
 /**
  * Miscellaneous utils that should be more appropriately located (TODO)
@@ -13,13 +16,6 @@ public final class MathUtils {
 	// no instantiation
 	private MathUtils() {}
 	
-	/** Multiplicative conversion from log (base-10) to natural log (base-e). */
-	public static final double LOG_BASE_10_TO_E = 1.0 / 0.434294;
-	// TODO this should really be more precise 1.0/Math.log10(Math.E)
-
-	/** Precomputed square-root of 2. */
-	public static final double SQRT_2 = Math.sqrt(2);
-
 	/**
 	 * Same as {@link Math#hypot(double, double)} without regard to under/over flow.
 	 * @param v1 first value
@@ -29,6 +25,17 @@ public final class MathUtils {
 	 */
 	public static double hypot(double v1, double v2) {
 		return sqrt(v1 * v1 + v2 * v2);
+	}
+
+	/**
+	 * Round a double to a specified number of decimal places. Internally this
+	 * method uses the scaling and rounding capabilities of {@link BigDecimal}.
+	 * 
+	 * @param value to round
+	 * @param scale the number of decimal places in the result
+	 */
+	public static double round(double value, int scale) {
+		return BigDecimal.valueOf(value).setScale(scale, ROUND_HALF_UP).doubleValue();
 	}
 
 }

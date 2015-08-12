@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
+import org.opensha2.eq.model.FaultSourceSet.Builder;
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -24,8 +25,14 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 
 	final private List<AreaSource> sources;
 
-	private AreaSourceSet(String name, double weight, List<AreaSource> sources, GmmSet gmmSet) {
-		super(name, weight, gmmSet);
+	private AreaSourceSet(
+			String name,
+			int id,
+			double weight,
+			List<AreaSource> sources,
+			GmmSet gmmSet) {
+		
+		super(name, id, weight, gmmSet);
 		this.sources = sources;
 	}
 
@@ -56,12 +63,18 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 		private boolean built = false;
 
 		String name;
+		Integer id;
 		Double weight;
 		GmmSet gmmSet;
 		List<AreaSource> sources = Lists.newArrayList();
 
 		Builder name(String name) {
 			this.name = validateName(name);
+			return this;
+		}
+
+		Builder id(int id) {
+			this.id = id;
 			return this;
 		}
 
@@ -90,7 +103,7 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 
 		AreaSourceSet build() {
 			validateState(ID);
-			return new AreaSourceSet(name, weight, sources, gmmSet);
+			return new AreaSourceSet(name, id, weight, sources, gmmSet);
 		}
 	}
 

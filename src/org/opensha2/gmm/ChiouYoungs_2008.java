@@ -13,8 +13,19 @@ import static java.lang.Math.tanh;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.GmmInput.Field.DIP;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.Z1P0;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import java.util.Map;
+
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Chiou & Youngs (2008) next generation attenuation
@@ -41,6 +52,17 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 
 	static final String NAME = "Chiou & Youngs (2008)";
 
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+			.set(MAG, Range.closed(4.0, 8.5))
+			.setDistances(200.0)
+			.set(DIP, Faults.DIP_RANGE)
+			.set(ZTOP, Range.closed(0.0, 15.0))
+			.set(RAKE, Faults.RAKE_RANGE)
+			.set(VS30, Range.closedOpen(150.0, 1500.0))
+			// TODO borrowed from ASK14
+			.set(Z1P0, Range.closed(0.0, 3.0))
+			.build();
+
 	static final CoefficientContainer COEFFS = new CoefficientContainer("CY08.csv");
 
 	private static final double C2 = 1.06;
@@ -53,8 +75,11 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 
 	private static final class Coefficients {
 
-		final double c1, c1a, c1b, c5, c6, c7, c9, c9a, cg1, cg2, cn, cm, φ1, φ2, φ3, φ4, φ5, φ6,
-				φ7, φ8, τ1, τ2, σ1, σ2, σ3;
+		final double
+				c1, c1a, c1b, c5, c6, c7, c9, c9a,
+				cg1, cg2, cn, cm,
+				φ1, φ2, φ3, φ4, φ5, φ6, φ7, φ8,
+				τ1, τ2, σ1, σ2, σ3;
 
 		// unused
 		// final double c7a, c10, sig4
@@ -143,15 +168,13 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 	private static final double calcMean(final Coefficients c, final double vs30,
 			final double z1p0, final double snl, final double lnYref) {
 
-		// basin depth
-		double zBasin = Double.isNaN(z1p0) ? calcBasinZ(vs30) : z1p0;
+		// basin depth (in meters; z1p0 supplied in km)
+		double zBasin = Double.isNaN(z1p0) ? calcBasinZ(vs30) : z1p0 * 1000.0;
 
-		// @formatter:off
 		return lnYref + c.φ1 * min(log(vs30 / 1130.0), 0) +
 			snl * log((exp(lnYref) + c.φ4) / c.φ4) +
 			c.φ5 * (1.0 - 1.0 / cosh(c.φ6 * max(0.0, zBasin - c.φ7))) +
 			c.φ8 / cosh(0.15 * max(0.0, zBasin - 15.0));
-		// @formatter:on
 	}
 
 	private static final double calcSoilNonLin(final Coefficients c, final double vs30) {

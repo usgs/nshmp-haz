@@ -28,15 +28,19 @@ public class Logging {
 	 */
 	public static void init() {
 		try {
-//			InputStream is = Logging.class.getResourceAsStream("/logging.properties");
-//			if (is == null) is = new FileInputStream("lib/logging.properties");
-			InputStream is = new FileInputStream("lib/logging.properties");
+			/*
+			 * When running from a jar, logging.properties will have been moved
+			 * to the root of the source directory, otherwise it can be found in
+			 * lib.
+			 */
+			InputStream is = Logging.class.getResourceAsStream("/logging.properties");
+			if (is == null) is = new FileInputStream("lib/logging.properties");
 			LogManager.getLogManager().readConfiguration(is);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Log a resource loading error and exit.
 	 * 
@@ -51,15 +55,14 @@ public class Logging {
 		log.log(SEVERE, sb.toString(), e);
 		System.exit(1);
 	}
-	
+
 	/**
 	 * Custom console formatter.
 	 * @author Peter Powers
 	 */
 	public final static class ConsoleFormatter extends Formatter {
 
-		@Override
-		public String format(LogRecord record) {
+		@Override public String format(LogRecord record) {
 			// @formatter:off
 			StringBuilder b = new StringBuilder();
 			Level l = record.getLevel();
@@ -79,10 +82,9 @@ public class Logging {
 					.append(".")
 					.append(record.getSourceMethodName())
 					.append("()");
-				b.append(LF);
 				b.append(record.getMessage());
 				if (record.getThrown() != null) {
-					b.append("Error trace:").append(LF);
+					b.append(LF).append(LF);
 					b.append(Throwables.getStackTraceAsString(record.getThrown()));
 				}
 			} else {
@@ -92,7 +94,7 @@ public class Logging {
 			return b.toString();
 			// @formatter:on
 		}
-		
+
 	}
 
 }

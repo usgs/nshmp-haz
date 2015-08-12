@@ -3,8 +3,19 @@ package org.opensha2.gmm;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.GmmInput.Field.DIP;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.Z1P0;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import java.util.Map;
+
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Idriss (2014) next generation ground motion model for
@@ -35,6 +46,17 @@ import java.util.Map;
 public final class Idriss_2014 implements GroundMotionModel {
 
 	static final String NAME = "Idriss (2014)";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+			.set(MAG, Range.closed(5.0, 8.5))
+			.setDistances(150.0)
+			.set(DIP, Faults.DIP_RANGE)
+			.set(ZTOP, Range.closed(0.0, 20.0))
+			.set(RAKE, Faults.RAKE_RANGE)
+			.set(VS30, Range.closedOpen(450.0, 1500.0))
+			// TODO borrowed from ASK14
+			.set(Z1P0, Range.closed(0.0, 3.0))
+			.build();
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Idriss14.csv");
 

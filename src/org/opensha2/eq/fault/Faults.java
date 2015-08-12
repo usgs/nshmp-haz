@@ -48,6 +48,9 @@ public final class Faults {
 	 */
 	public static final Range<Double> RAKE_RANGE = Range.closed(-180.0, 180.0);
 
+	// TODO adjust Faults.CRUSTAL_DEPTH_RANGE CB14 restricts to 20 km
+	// and the PEER database is pretty comprehensive
+	
 	/**
 	 * The {@link Range} of valid crustal rupture depths: [0 ‥ 40] km,
 	 * inclusive.

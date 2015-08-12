@@ -7,10 +7,17 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.*;
 
 import java.util.Map;
 
 import org.opensha2.data.Interpolate;
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Abrahamson, Silva & Kamai (2014) next generation ground
@@ -37,6 +44,18 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
 	static final String NAME = "Abrahamson, Silva & Kamai (2014)";
 
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+			.set(MAG, Range.closed(3.0, 8.5))
+			.setDistances(300.0)
+			.set(DIP,Faults.DIP_RANGE)
+			.set(WIDTH,Faults.CRUSTAL_WIDTH_RANGE)
+			.set(ZTOP,Faults.CRUSTAL_DEPTH_RANGE)
+			.set(RAKE, Faults.RAKE_RANGE)
+			.set(VS30, Range.closedOpen(180.0, 1000.0))
+			.set(VSINF)
+			.set(Z1P0, Range.closed(0.0, 3.0))
+			.build();
+
 	static final CoefficientContainer COEFFS = new CoefficientContainer("ASK14.csv");
 
 	private static final double A3 = 0.275;
@@ -59,8 +78,11 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 	private static final class Coefficients {
 
 		final Imt imt;
-		final double a1, a2, a6, a8, a10, a12, a13, a15, a17, a43, a44, a45, a46, b, c, s1e, s2e,
-				s3, s4, s1m, s2m, M1, Vlin;
+		final double
+				a1, a2, a6, a8, a10, a12, a13, a15, a17, a43, a44, a45, a46,
+				b, c,
+				s1e, s2e, s3, s4, s1m, s2m,
+				M1, Vlin;
 
 		// same for all periods; replaced with constant
 		// final double a3, a4, a5, c4, n;

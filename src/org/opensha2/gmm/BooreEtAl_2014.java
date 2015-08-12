@@ -8,9 +8,23 @@ import static java.lang.Math.sqrt;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
+import static org.opensha2.gmm.GmmInput.Field.DIP;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.RJB;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.VSINF;
+import static org.opensha2.gmm.GmmInput.Field.WIDTH;
+import static org.opensha2.gmm.GmmInput.Field.Z1P0;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;
+
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Boore, Stewart, Seyhan, & Atkinson (2014) next
@@ -37,6 +51,15 @@ import java.util.Map;
 public final class BooreEtAl_2014 implements GroundMotionModel {
 
 	static final String NAME = "Boore, Stewart, Seyhan & Atkinson (2014)";
+
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		// TODO normal faults technically only applicable to M7
+		.set(MAG, Range.closed(3.0, 8.5))
+		.set(RJB, Range.closed(0.0, 400.0))
+		.set(RAKE, Faults.RAKE_RANGE)
+		.set(VS30, Range.closedOpen(150.0, 1500.0))
+		.set(Z1P0, Range.closed(0.0, 3.0))
+		.build();
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("BSSA14.csv");
 
@@ -158,8 +181,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
 	// Median PGA for ref rock (Vs30=760m/s); always called with PGA coeffs
 	private static final double calcPGArock(final Coefficients c, final double Mw,
-			final double rJB,
-			final FaultStyle style) {
+			final double rJB, final FaultStyle style) {
 
 		// Source/Event Term -- Equation 2
 		double FePGA = calcSourceTerm(c, Mw, style);

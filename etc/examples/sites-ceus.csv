@@ -1,0 +1,19 @@
+#
+# Comma-delimited site file example.
+#
+# Header row must identify columns. At a minimum, lon and lat
+# must be defined. Columns can be in any order and any missing
+# fields will be populated with default values. 
+#
+# [name,] lon, lat [, vs30] [, vsInf] [, z1p0] [, z2p5]
+#
+# Defaults:
+#     name: Unnamed Site
+#     vs30: 760.0
+#    vsInf: true
+#     z1p0: NaN (GMM will use default basin depth model)
+#     z2p5: NaN (GMM will use default basin depth model)
+#
+name, lon, lat
+Memphis, -90.05, 35.15
+New York, -74.00, 40.75

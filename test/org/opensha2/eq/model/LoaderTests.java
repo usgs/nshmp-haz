@@ -13,8 +13,6 @@ import com.google.common.io.Resources;
 
 @SuppressWarnings("javadoc")
 public class LoaderTests {
-
-	private static final String FCAST_NAME = "HazardModel Tests";
 	
 	private static final String BAD_PATH = "badPath";
 	private static final String BAD_FOLDER = "data";
@@ -34,13 +32,13 @@ public class LoaderTests {
 	@Test
 	public void testNullPath() throws Exception {
 		exception.expect(NullPointerException.class);
-		Loader.load(null, FCAST_NAME);
+		Loader.load(null);
 	}
 	
 	@Test
 	public void testBadPath() throws Exception {
 		exception.expect(IllegalArgumentException.class);
-		Loader.load(Paths.get(BAD_PATH), FCAST_NAME);
+		Loader.load(Paths.get(BAD_PATH));
 	}
 	
 	@Test
@@ -48,7 +46,7 @@ public class LoaderTests {
 		exception.expect(IllegalArgumentException.class);
 		URL badURL = Resources.getResource(LoaderTests.class, BAD_URI);
 		String badURI = URLDecoder.decode(badURL.getPath(), "UTF-8");
-		Loader.load(Paths.get(badURI), FCAST_NAME);
+		Loader.load(Paths.get(badURI));
 	}
 	
 	@Test
@@ -56,20 +54,20 @@ public class LoaderTests {
 		exception.expect(IllegalArgumentException.class);
 		URL badURL = Resources.getResource(LoaderTests.class, EMPTY_ZIP);
 		String badURI = URLDecoder.decode(badURL.getPath(), "UTF-8");
-		Loader.load(Paths.get(badURI), FCAST_NAME);
+		Loader.load(Paths.get(badURI));
 	}
 	
 	@Test
 	public void testEmptyModel() throws Exception {
 		exception.expect(IllegalStateException.class);
 		URL emptyURL = Resources.getResource(LoaderTests.class, BAD_FOLDER);
-		Loader.load(Paths.get(emptyURL.getPath()), FCAST_NAME);
+		Loader.load(Paths.get(emptyURL.getPath()));
 	}
 
 	
 	public static void main(String[] args) throws Exception {
 		URL emptyURL = Resources.getResource(LoaderTests.class, BAD_FOLDER);
-		Loader.load(Paths.get(emptyURL.getPath()), FCAST_NAME);
+		Loader.load(Paths.get(emptyURL.getPath()));
 		
 	}
 	

@@ -8,6 +8,7 @@ import static org.opensha2.util.TextUtils.validateName;
 import java.util.Iterator;
 import java.util.List;
 
+import org.opensha2.eq.model.FaultSourceSet.Builder;
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -24,8 +25,14 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
 	private final List<ClusterSource> sources;
 
-	ClusterSourceSet(String name, double weight, List<ClusterSource> sources, GmmSet gmmSet) {
-		super(name, weight, gmmSet);
+	ClusterSourceSet(
+			String name,
+			int id,
+			double weight,
+			List<ClusterSource> sources,
+			GmmSet gmmSet) {
+
+		super(name, id, weight, gmmSet);
 		this.sources = sources;
 	}
 
@@ -59,47 +66,25 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 	}
 
 	/* Single use builder */
-	static class Builder {
+	static class Builder extends AbstractSourceSet.Builder {
 
 		private static final String ID = "ClusterSourceSet.Builder";
-		private boolean built = false;
 
-		private String name;
-		private Double weight;
-		private GmmSet gmmSet;
-		private List<ClusterSource> sources = Lists.newArrayList();
-
-		Builder name(String name) {
-			this.name = validateName(name);
-			return this;
-		}
-
-		Builder weight(double weight) {
-			this.weight = validateWeight(weight);
-			return this;
-		}
-
-		Builder gmms(GmmSet gmmSet) {
-			this.gmmSet = checkNotNull(gmmSet);
-			return this;
-		}
+		private final List<ClusterSource> sources = Lists.newArrayList();
 
 		Builder source(ClusterSource source) {
 			sources.add(checkNotNull(source, "ClusterSource is null"));
 			return this;
 		}
 
-		void validateState(String id) {
-			checkState(!built, "This %s instance as already been used", id);
-			checkState(name != null, "%s name not set", id);
-			checkState(weight != null, "%s weight not set", id);
-			checkState(gmmSet != null, "%s ground motion models not set", id);
-			built = true;
+		@Override void validateState(String buildId) {
+			super.validateState(buildId);
+			checkState(sources.size() > 0, "%s source list is empty", buildId);
 		}
 
 		ClusterSourceSet buildClusterSet() {
 			validateState(ID);
-			return new ClusterSourceSet(name, weight, sources, gmmSet);
+			return new ClusterSourceSet(name, id, weight, sources, gmmSet);
 		}
 	}
 

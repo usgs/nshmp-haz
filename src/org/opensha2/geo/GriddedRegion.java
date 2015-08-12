@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.math3.util.Precision;
+import org.opensha2.util.MathUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -496,7 +496,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		double newAnchor = min + offset;
 		newAnchor = (newAnchor < min) ? newAnchor + spacing : newAnchor;
 		// round to cleaner values: e.g. 1.0 vs. 0.999999999997
-		return Precision.round(newAnchor, 8);
+		return MathUtils.round(newAnchor, 8);
 	}
 
 	/* Initilize the grid index, node edge, and Location arrays */
@@ -571,7 +571,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		double val = startVal;
 		for (int i = 0; i < count; i++) {
 			// round to cleaner values: e.g. 1.0 vs. 0.999999999997
-			values[i] = Precision.round(val, 8);
+			values[i] = MathUtils.round(val, 8);
 			val += step;
 		}
 		return values;

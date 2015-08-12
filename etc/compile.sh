@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO not sure this is needed in light of ant based jar builder
+
 # Run this script from the root of a project
 
 # Assuming Java (is available (javac specifically), this script will

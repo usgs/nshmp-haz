@@ -1,13 +1,8 @@
 package org.opensha2.eq.fault.surface;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.lang.Math.*;
-import static org.opensha2.eq.model.FloatStyle.CENTERED;
-import static org.opensha2.eq.model.FloatStyle.FULL_DOWN_DIP;
-import static org.opensha2.eq.fault.surface.Surfaces.*;
+import static java.lang.Math.sin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,26 +14,17 @@ import org.opensha2.eq.fault.surface.RuptureScaling.Dimensions;
 import org.opensha2.eq.model.Rupture;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
-import org.opensha2.mfd.IncrementalMfd;
-import org.opensha2.mfd.Mfds;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
 /**
- * Gridded surface floating model identifiers. Each provides the means to create
- * a List of {@link GriddedSubsetSurface}s from a RuptureScaling
- * {@link DefaultGriddedSurface} to an immutable list of {@link Rupture}s.
+ * Rupture floating models for gridded surfaces. Each provides the means to
+ * create an immutable {@code List} of {@link Rupture}s from a
+ * {@link GriddedSurface}, magnitude, rate, rake, and uncertainty flag.
  * 
  * <p>NOTE: Only {@code ON} currently recognizes and applies rupture area
  * uncertainty.</p>
  * 
- * <p>TODO: This should also handle down dip variations in hypocenter wieght;
- * the so-called PEER triangular distribution.
- *
  * @author Peter Powers
  */
 public enum RuptureFloating {
@@ -121,7 +107,7 @@ public enum RuptureFloating {
 				d.length, d.width);
 
 			return null;
-			// TODO
+			// TODO complete implementation
 
 		}
 
@@ -146,8 +132,7 @@ public enum RuptureFloating {
 		return floaters;
 	}
 
-	// TODO this should return RuptureSurface, perhaps; do we need grid-specific
-	// info after this point?
+	// TODO why is this taking DefaultGriddedSurface instead of GriddedSurface
 	/**
 	 * Create a {@code List} of floating ruptures
 	 * @param surface (gridded) from which floaters are derived
@@ -168,13 +153,9 @@ public enum RuptureFloating {
 		// else [zTop, +2, +4, +6]
 
 		double zTop = parent.depth();
-		// @formatter:off
-		int downDipCount = 
-				(zTop > 1.0) ? 1 :
-				(mag > 7.0) ? 1 :
-				(mag > 6.75) ? 2 :
+		int downDipCount = (zTop > 1.0 || mag > 7.0) ? 1 :
+			(mag > 6.75) ? 2 :
 				(mag > 6.5) ? 3 : 4;
-		// @formatter:on
 		List<Double> zTopWidths = new ArrayList<>();
 
 		for (int i = 0; i < downDipCount; i++) {
@@ -327,29 +308,30 @@ public enum RuptureFloating {
 
 	// TODO clean
 	public static void main(String[] args) {
-//		double zTop = 0.0;
-//		double zBot = 30.0;
-//		double[] depths = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28 };
-//		double[] weights = generateTriangularWeights(zTop, zBot, depths);
-//		System.out.println(Arrays.toString(weights));
-//		System.out.println(DataUtils.sum(weights));
-		
+		// double zTop = 0.0;
+		// double zBot = 30.0;
+		// double[] depths = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26,
+		// 28 };
+		// double[] weights = generateTriangularWeights(zTop, zBot, depths);
+		// System.out.println(Arrays.toString(weights));
+		// System.out.println(DataUtils.sum(weights));
+
 		DefaultGriddedSurface surf = DefaultGriddedSurface.builder()
-				.trace(LocationList.create(
-					Location.create(33.0, -118.0),
-					Location.create(33.5, -118.0)))
-				.depth(0.0)
-				.width(30.0)
-				.dip(90.0)
-				.build();
-		
+			.trace(LocationList.create(
+				Location.create(33.0, -118.0),
+				Location.create(33.5, -118.0)))
+			.depth(0.0)
+			.width(30.0)
+			.dip(90.0)
+			.build();
+
 		Dimensions d = RuptureScaling.PEER.dimensions(7.0, 30.0);
 		System.out.println(d);
-		
+
 		Map<GriddedSurface, Double> map = createWeightedFloatingSurfaces(surf, d.length, d.width);
 		System.out.println(DataUtils.sum(map.values()));
 		System.out.println(map.size());
-		
+
 	}
 
 }

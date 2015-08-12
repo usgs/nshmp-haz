@@ -1,5 +1,6 @@
 package org.opensha2.gmm;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Double.NaN;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
@@ -15,16 +16,21 @@ import static org.opensha2.gmm.GmmInput.Field.Z1P0;
 import static org.opensha2.gmm.GmmInput.Field.Z2P5;
 import static org.opensha2.gmm.GmmInput.Field.ZHYP;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.BitSet;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.opensha2.calc.Site;
-import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.model.Distance;
 import org.opensha2.eq.model.Rupture;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 
@@ -63,10 +69,10 @@ public class GmmInput {
 	public final double vs30;
 	/** Whether vs30 is inferred or measured. */
 	public final boolean vsInf;
+	/** Depth to 1.0 km/s (in km). */
+	public final double z1p0;
 	/** Depth to 2.5 km/s (in km). */
 	public final double z2p5;
-	/** Depth to 1.0 km/s (in km). */
-	public final double z1p0; // km, TODO CY08 needs updating
 
 	/**
 	 * Create a deterministic rupture and site property container with all
@@ -86,12 +92,13 @@ public class GmmInput {
 	 * @param rake of rupture
 	 * @param vs30 average shear wave velocity in top 30 m (in m/sec)
 	 * @param vsInf whether vs30 is an inferred or measured value
-	 * @param z2p5 depth to V<sub>s</sub>=2.5 km/sec (in km)
 	 * @param z1p0 depth to V<sub>s</sub>=1.0 km/sec (in km)
+	 * @param z2p5 depth to V<sub>s</sub>=2.5 km/sec (in km)
 	 */
-	protected GmmInput(double Mw, double rJB, double rRup, double rX, double dip, double width,
-			double zTop, double zHyp, double rake, double vs30, boolean vsInf, double z2p5,
-			double z1p0) {
+	protected GmmInput(
+			double Mw, double rJB, double rRup, double rX,
+			double dip, double width, double zTop, double zHyp, double rake,
+			double vs30, boolean vsInf, double z1p0, double z2p5) {
 
 		this.Mw = Mw;
 
@@ -107,17 +114,20 @@ public class GmmInput {
 
 		this.vs30 = vs30;
 		this.vsInf = vsInf;
-		this.z2p5 = z2p5;
 		this.z1p0 = z1p0;
+		this.z2p5 = z2p5;
 	}
 
-	// for tests
-	static GmmInput create(double Mw, double rJB, double rRup, double rX, double dip, double width,
-			double zTop, double zHyp, double rake, double vs30, boolean vsInf, double z2p5,
-			double z1p0) {
+	// for testing only
+	static GmmInput create(
+			double Mw, double rJB, double rRup, double rX,
+			double dip, double width, double zTop, double zHyp, double rake,
+			double vs30, boolean vsInf, double z2p5, double z1p0) {
 
-		return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf, z2p5,
-			z1p0);
+		return new GmmInput(
+			Mw, rJB, rRup, rX,
+			dip, width, zTop, zHyp, rake,
+			vs30, vsInf, z1p0, z2p5);
 	}
 
 	/**
@@ -156,8 +166,8 @@ public class GmmInput {
 		// site
 		private double vs30;
 		private boolean vsInf;
-		private double z2p5;
 		private double z1p0;
+		private double z2p5;
 
 		private Builder() {}
 
@@ -168,8 +178,6 @@ public class GmmInput {
 		 * (km)</li><li>zTop: 0.5 (km)</li><li>zHyp: 7.5 (km)</li> <li>rake:
 		 * 0˚</li><li>vs30: 760 (m/s)</li><li>vsInf: true</li><li>z2p5:
 		 * NaN</li><li>z1p0: NaN</li></ul>
-		 * 
-		 * TODO just point to dcouemnted static final fields
 		 */
 		public Builder withDefaults() {
 			Mw = MAG.defaultValue;
@@ -183,8 +191,8 @@ public class GmmInput {
 			rake = RAKE.defaultValue;
 			vs30 = VS30.defaultValue;
 			vsInf = VSINF.defaultValue > 0.0;
-			z2p5 = Z2P5.defaultValue;
 			z1p0 = Z1P0.defaultValue;
+			z2p5 = Z2P5.defaultValue;
 			flags.set(0, SIZE);
 			return this;
 		}
@@ -282,21 +290,23 @@ public class GmmInput {
 			return this;
 		}
 
-		public Builder z2p5(double z2p5) {
-			this.z2p5 = validateAndFlag(Z2P5, z2p5);
+		public Builder z1p0(double z1p0) {
+			this.z1p0 = validateAndFlag(Z1P0, z1p0);
 			return this;
 		}
 
-		public Builder z1p0(double z1p0) {
-			this.z1p0 = validateAndFlag(Z1P0, z1p0);
+		public Builder z2p5(double z2p5) {
+			this.z2p5 = validateAndFlag(Z2P5, z2p5);
 			return this;
 		}
 
 		public GmmInput build() {
 			checkState(flags.cardinality() == SIZE, "Not all fields set");
 			reset.clear();
-			return new GmmInput(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf, z2p5,
-				z1p0);
+			return new GmmInput(
+				Mw, rJB, rRup, rX,
+				dip, width, zTop, zHyp, rake,
+				vs30, vsInf, z1p0, z2p5);
 		}
 	}
 
@@ -304,7 +314,7 @@ public class GmmInput {
 	private static final String ANGLE_UNIT = "°";
 
 	/**
-	 * {@code GmmInput} field identifiers. This is used internally to manage
+	 * {@code GmmInput} field identifiers. These are used internally to manage
 	 * builder flags and provides access to the case-sensitive keys (via
 	 * toString()) used when building http queries
 	 * 
@@ -379,15 +389,15 @@ public class GmmInput {
 				null,
 				1.0),
 
-		Z2P5(
-				"Depth to Vs=2.5 km/s",
-				"Depth to a shear-wave velocity of 2.5 kilometers per second, in kilometers",
-				DISTANCE_UNIT,
-				NaN),
-
 		Z1P0(
 				"Depth to Vs=1.0 km/s",
 				"Depth to a shear-wave velocity of 1.0 kilometers per second, in kilometers",
+				DISTANCE_UNIT,
+				NaN),
+
+		Z2P5(
+				"Depth to Vs=2.5 km/s",
+				"Depth to a shear-wave velocity of 2.5 kilometers per second, in kilometers",
 				DISTANCE_UNIT,
 				NaN);
 
@@ -433,9 +443,17 @@ public class GmmInput {
 		keyValueMap.put(RAKE, rake);
 		keyValueMap.put(VS30, vs30);
 		keyValueMap.put(VSINF, vsInf);
-		keyValueMap.put(Z2P5, z2p5);
 		keyValueMap.put(Z1P0, z1p0);
+		keyValueMap.put(Z2P5, z2p5);
 		return keyValueMap;
+	}
+
+	/**
+	 * Return a builder of {@code GmmInput} constraints. This builder sets all
+	 * fields to {@code Optional.absent()} by default.
+	 */
+	static Constraints.Builder constraintsBuilder() {
+		return new Constraints.Builder();
 	}
 
 	/**
@@ -444,101 +462,231 @@ public class GmmInput {
 	 * indicate whether a field is used by a {@code GroundMotionModel}, or not.
 	 */
 	@SuppressWarnings("javadoc")
-	public static interface Constraints {
-		// @formatter:off
-		Optional<Range<Double>> mag();
-		Optional<Range<Double>> rJB();
-		Optional<Range<Double>> rRup();
-		Optional<Range<Double>> rX();
-		Optional<Range<Double>> dip();
-		Optional<Range<Double>> width();
-		Optional<Range<Double>> zTop();
-		Optional<Range<Double>> zHyp();
-		Optional<Range<Double>> rake();
-		Optional<Range<Double>> vs30();
-		Optional<Boolean> vsInf();
-		Optional<Range<Double>> z1p0();
-		Optional<Range<Double>> v2p5();
-	}
+	public static class Constraints {
 
-	/*
-	 * Convenience Constraints implementation with common default values.
-	 */
-	static class DefaultConstraints implements Constraints {
-		// @formatter:off
-		@Override public Optional<Range<Double>> mag() {
-			return Optional.of(Range.closed(5.0, 8.0));
+		// TODO would moving to RangeSet be a satisfactory way
+		// to handle discrete value sets (using Range.singleton)
+
+		public final Optional<Range<Double>> mag;
+		public final Optional<Range<Double>> rJB;
+		public final Optional<Range<Double>> rRup;
+		public final Optional<Range<Double>> rX;
+		public final Optional<Range<Double>> dip;
+		public final Optional<Range<Double>> width;
+		public final Optional<Range<Double>> zTop;
+		public final Optional<Range<Double>> zHyp;
+		public final Optional<Range<Double>> rake;
+		public final Optional<Range<Double>> vs30;
+		public final Optional<Range<Boolean>> vsInf;
+		public final Optional<Range<Double>> z1p0;
+		public final Optional<Range<Double>> z2p5;
+
+		// for internal use only
+		private Map<Field, Optional<?>> constraintMap;
+
+		private Constraints(
+				Optional<Range<Double>> mag,
+				Optional<Range<Double>> rJB,
+				Optional<Range<Double>> rRup,
+				Optional<Range<Double>> rX,
+				Optional<Range<Double>> dip,
+				Optional<Range<Double>> width,
+				Optional<Range<Double>> zTop,
+				Optional<Range<Double>> zHyp,
+				Optional<Range<Double>> rake,
+				Optional<Range<Double>> vs30,
+				Optional<Range<Boolean>> vsInf,
+				Optional<Range<Double>> z1p0,
+				Optional<Range<Double>> z2p5) {
+
+			constraintMap = new EnumMap<>(Field.class);
+
+			this.mag = mag;
+			constraintMap.put(MAG, mag);
+
+			this.rJB = rJB;
+			constraintMap.put(RJB, rJB);
+
+			this.rRup = rRup;
+			constraintMap.put(RRUP, rRup);
+
+			this.rX = rX;
+			constraintMap.put(RX, rX);
+
+			this.dip = dip;
+			constraintMap.put(DIP, dip);
+
+			this.width = width;
+			constraintMap.put(WIDTH, width);
+
+			this.zTop = zTop;
+			constraintMap.put(ZTOP, zTop);
+
+			this.zHyp = zHyp;
+			constraintMap.put(ZHYP, zHyp);
+
+			this.rake = rake;
+			constraintMap.put(RAKE, rake);
+
+			this.vs30 = vs30;
+			constraintMap.put(VS30, vs30);
+
+			this.vsInf = vsInf;
+			constraintMap.put(VSINF, vsInf);
+
+			this.z1p0 = z1p0;
+			constraintMap.put(Z1P0, z1p0);
+
+			this.z2p5 = z2p5;
+			constraintMap.put(Z2P5, z2p5);
+
 		}
 
-		@Override public Optional<Range<Double>> rJB() {
-			return Optional.of(Range.closed(0.0, 1000.0));
+		@Override public String toString() {
+			StringBuilder sb = new StringBuilder("Constraints: ").append(NEWLINE);
+			sb.append(HEADER).append(NEWLINE);
+			sb.append(string());
+			return sb.toString();
 		}
 
-		@Override public Optional<Range<Double>> rRup() {
-			return Optional.of(Range.closed(0.0, 1000.0));
+		/**
+		 * Creates a structured {@code String} representation of the
+		 * {@code Constraints} associated with the supplied set of {@code Gmm}s.
+		 */
+		static String toString(Set<Gmm> gmms) {
+			StringBuilder sb = new StringBuilder("Constraints table:");
+			sb.append(NEWLINE);
+			sb.append(Strings.padEnd("GMM", CONSTRAINT_TABLE_COL1_WIDTH, ' '));
+			sb.append(HEADER).append(NEWLINE);
+			for (Gmm gmm : gmms) {
+				sb.append(Strings.padEnd(gmm.name(), CONSTRAINT_TABLE_COL1_WIDTH, ' '));
+				sb.append(gmm.constraints().string());
+				sb.append(NEWLINE);
+			}
+			return sb.toString();
 		}
 
-		@Override public Optional<Range<Double>> rX() {
-			return Optional.of(Range.closed(0.0, 1000.0));
+		private static final int CONSTRAINT_STR_COL_WIDTH = 16;
+		private static final int CONSTRAINT_TABLE_COL1_WIDTH = 28;
+		private static final String HEADER;
+
+		static {
+			StringBuilder sb = new StringBuilder();
+			for (Field field : Field.values()) {
+				sb.append(Strings.padEnd(field.name(), CONSTRAINT_STR_COL_WIDTH, ' '));
+			}
+			HEADER = sb.toString();
 		}
 
-		@Override public Optional<Range<Double>> dip() {
-			return Optional.of(Faults.DIP_RANGE);
+		private StringBuffer string() {
+			StringBuffer sb = new StringBuffer();
+			for (Entry<Field, Optional<?>> entry : constraintMap.entrySet()) {
+				Optional<?> opt = entry.getValue();
+				String optStr = Strings.padEnd(
+					opt.isPresent() ? opt.get().toString() : "", CONSTRAINT_STR_COL_WIDTH, ' ');
+				sb.append(optStr);
+			}
+			return sb;
 		}
 
-		@Override public Optional<Range<Double>> width() {
-			return Optional.of(Faults.CRUSTAL_WIDTH_RANGE);
+		static class Builder {
+
+			private Optional<Range<Double>> mag = Optional.absent();
+			private Optional<Range<Double>> rJB = Optional.absent();
+			private Optional<Range<Double>> rRup = Optional.absent();
+			private Optional<Range<Double>> rX = Optional.absent();
+			private Optional<Range<Double>> dip = Optional.absent();
+			private Optional<Range<Double>> width = Optional.absent();
+			private Optional<Range<Double>> zTop = Optional.absent();
+			private Optional<Range<Double>> zHyp = Optional.absent();
+			private Optional<Range<Double>> rake = Optional.absent();
+			private Optional<Range<Double>> vs30 = Optional.absent();
+			private Optional<Range<Boolean>> vsInf = Optional.absent();
+			private Optional<Range<Double>> z1p0 = Optional.absent();
+			private Optional<Range<Double>> z2p5 = Optional.absent();
+
+			/**
+			 * Set {@code Range<Double>} constraint.
+			 */
+			Builder set(Field id, Range<Double> constraint) {
+				checkArgument(EnumSet.complementOf(EnumSet.of(Field.VSINF)).contains(id));
+				switch (id) {
+					case MAG:
+						mag = Optional.of(constraint);
+						break;
+					case RJB:
+						rJB = Optional.of(constraint);
+						break;
+					case RRUP:
+						rRup = Optional.of(constraint);
+						break;
+					case RX:
+						rX = Optional.of(constraint);
+						break;
+					case ZTOP:
+						zTop = Optional.of(constraint);
+						break;
+					case ZHYP:
+						zHyp = Optional.of(constraint);
+						break;
+					case DIP:
+						dip = Optional.of(constraint);
+						break;
+					case WIDTH:
+						width = Optional.of(constraint);
+						break;
+					case RAKE:
+						rake = Optional.of(constraint);
+						break;
+					case VS30:
+						vs30 = Optional.of(constraint);
+						break;
+					case Z1P0:
+						z1p0 = Optional.of(constraint);
+						break;
+					case Z2P5:
+						z2p5 = Optional.of(constraint);
+						break;
+					default:
+						throw new IllegalArgumentException(
+							"GmmInput.Constraints.Builder " +
+								"Unsupported field: " + id.name());
+				}
+				return this;
+			}
+
+			/**
+			 * Sets a {@code Boolean} constraint.
+			 */
+			Builder set(Field id) {
+				checkArgument(EnumSet.of(Field.VSINF).contains(id));
+				vsInf = Optional.of(Range.closed(false, true));
+				return this;
+			}
+
+			/**
+			 * Set all distance metrics [rJB, rRup, rX] to the range [0, r].
+			 */
+			Builder setDistances(double r) {
+				rJB = Optional.of(Range.closed(0.0, r));
+				rRup = Optional.of(Range.closed(0.0, r));
+				rX = Optional.of(Range.closed(0.0, r));
+				return this;
+			}
+
+			/**
+			 * Create the {@code Constraints}.
+			 */
+			Constraints build() {
+				return new Constraints(
+					mag,
+					rJB, rRup, rX,
+					dip, width, zTop, zHyp, rake,
+					vs30, vsInf,
+					z1p0, z2p5);
+			}
 		}
 
-		@Override public Optional<Range<Double>> zTop() {
-			return Optional.of(Range.closed(0.0, 20.0));
-		}
-
-		@Override public Optional<Range<Double>> zHyp() {
-			return Optional.of(Range.closed(0.0, 20.0));
-		}
-
-		@Override public Optional<Range<Double>> rake() {
-			return Optional.of(Faults.RAKE_RANGE);
-		}
-
-		@Override public Optional<Range<Double>> vs30() {
-			return Optional.of(Range.closed(150.0, 1500.0));
-		}
-
-		@Override public Optional<Boolean> vsInf() {
-			return Optional.of(true);
-		}
-
-		@Override public Optional<Range<Double>> z1p0() {
-			return Optional.of(Range.closed(0.0, 5.0));
-		}
-
-		@Override public Optional<Range<Double>> v2p5() {
-			return Optional.of(Range.closed(0.0, 10.0));
-		}
-
-	}
-
-	/*
-	 * Convenience Constraints implementation with all methods returning
-	 * Optional.absent().
-	 */
-	static class AllAbsentConstraints implements Constraints {
-		// @formatter:off
-		@Override public Optional<Range<Double>> mag() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> rJB() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> rRup() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> rX() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> dip() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> width() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> zTop() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> zHyp() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> rake() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> vs30() { return Optional.absent(); }
-		@Override public Optional<Boolean> vsInf() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> z1p0() { return Optional.absent(); }
-		@Override public Optional<Range<Double>> v2p5() { return Optional.absent(); }
 	}
 
 }

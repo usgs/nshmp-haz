@@ -1,9 +1,17 @@
 package org.opensha2.gmm;
 
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RRUP;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.MagConverter.NONE;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
+
+import org.opensha2.gmm.GmmInput.Constraints;
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Frankel et al. (1996) ground motion model for stable
@@ -34,25 +42,31 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
 	static final String NAME = "Frankel et al. (1996)";
 
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(4.0, 8.0))
+		.set(RRUP, Range.closed(0.0, 1000.0))
+		.set(VS30, Range.closed(760.0, 2000.0))
+		.build();
+
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Frankel96.csv");
 
 	private final double bσ;
 	private final Imt imt;
-	private final GmmTable bcTable;
-	private final GmmTable aTable;
+	private final GroundMotionTable bcTable;
+	private final GroundMotionTable aTable;
 
 	FrankelEtAl_1996(Imt imt) {
 		this.imt = imt;
 		bσ = COEFFS.get(imt, "bsigma");
-		bcTable = GmmTables.getFrankel96(imt, SOFT_ROCK);
-		aTable = GmmTables.getFrankel96(imt, HARD_ROCK);
+		bcTable = GroundMotionTables.getFrankel96(imt, SOFT_ROCK);
+		aTable = GroundMotionTables.getFrankel96(imt, HARD_ROCK);
 	}
 
 	@Override public final ScalarGroundMotion calc(GmmInput in) {
 		SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
 		double Mw = converter().convert(in.Mw);
 		double μ = (siteClass == SOFT_ROCK) ? bcTable.get(in.rRup, Mw) : aTable.get(in.rRup, Mw);
-		μ = GmmUtils.ceusMeanClip(imt, μ);
+		μ = GmmUtils.ceusMeanClip(imt, μ * BASE_10_TO_E);
 		double σ = bσ * BASE_10_TO_E;
 		return DefaultScalarGroundMotion.create(μ, σ);
 	}

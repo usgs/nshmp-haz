@@ -84,30 +84,16 @@ public enum NehrpTestCity implements NamedLocation {
 		return loc;
 	}
 
-	// TODO clean if truly not needed
-	// /**
-	// * Returns the location of the city shifted to the nearest 0.1 lat lon
-	// * unit.
-	// * @return the shifted location
-	// */
-	// public Location shiftedLocation() {
-	// // Precision rounds negatives down
-	// double lat = Precision.round(loc.getLatitude(), 1);
-	// double lon = Precision.round(loc.getLongitude(), 1);
-	// return new Location(lat, lon, loc.getDepth());
-	// }
-
 	/**
 	 * Returns all California cities.
-	 * @return a {@code Set} of California cities
 	 */
 	public static Set<NehrpTestCity> getCA() {
 		return EnumSet.range(LOS_ANGELES, SANTA_ROSA);
 	}
 
 	/**
-	 * Returns all California cities.
-	 * @return a {@code Set} of California cities
+	 * Returns a reduced set of California cities. Specifically:
+	 * {@code LOS_ANGELES, RIVERSIDE, SAN_DIEGO, SANTA_BARBARA, OAKLAND, SACRAMENTO, SAN_FRANCISCO, SAN_JOSE}
 	 */
 	public static Set<NehrpTestCity> getShortListCA() {
 		return EnumSet.of(LOS_ANGELES, RIVERSIDE, SAN_DIEGO, SANTA_BARBARA, OAKLAND, SACRAMENTO,
@@ -117,18 +103,22 @@ public enum NehrpTestCity implements NamedLocation {
 	/**
 	 * Returns the city associated with the supplied location or {@code null} if
 	 * no city is coincident with the location.
+	 * 
 	 * @param loc location to search for
-	 * @return the city at location
 	 * @see Locations#areSimilar(Location, Location)
 	 */
+	@Deprecated
 	public static NehrpTestCity forLocation(Location loc) {
+		// TODO is this really needed? It's not used anywhere
 		for (NehrpTestCity city : NehrpTestCity.values()) {
 			if (Locations.areSimilar(city.loc, loc)) return city;
 		}
 		return null;
 	}
 
+	@Deprecated
 	public static Map<String, Location> asMap() {
+		// TODO this isn't used either; is it needed?
 		Map<String, Location> cityMap = Maps.newHashMap();
 		for (NehrpTestCity city : NehrpTestCity.values()) {
 			cityMap.put(city.name(), city.location());

@@ -1,7 +1,6 @@
 package org.opensha2.calc;
 
 import static java.lang.Math.min;
-import static org.apache.commons.math3.special.Erf.erf;
 import static org.opensha2.calc.ExceedanceModel.TRUNCATION_UPPER_ONLY;
 import static org.opensha2.calc.ExceedanceModel.TRUNCATION_LOWER_UPPER;
 
@@ -17,8 +16,16 @@ import org.opensha2.data.XY_Sequence;
  *
  * @author Peter Powers
  */
+@Deprecated
 public class Utils {
 
+	/*
+	 * TODO delete
+	 * 
+	 * Slated for deletion; utility methods in this calss have been
+	 * refactored to ExceedanceModel;
+	 */
+	
 	/** Precomputed square-root of 2. */
 	public static final double SQRT_2 = Math.sqrt(2);
 
@@ -150,7 +157,9 @@ public class Utils {
 	 * Gaussian distribution assuming no truncation.
 	 */
 	private static double gaussProbExceed(double μ, double σ, double value) {
-		return (erf((μ - value) / (σ * SQRT_2)) + 1.0) * 0.5;
+		throw new UnsupportedOperationException();
+		// common-math dependency removed
+		//return (erf((μ - value) / (σ * SQRT_2)) + 1.0) * 0.5;
 	}
 
 	/*
@@ -244,8 +253,8 @@ public class Utils {
 		double std = 0.5;
 		double value = 2.3;
 		
-		System.out.println(calcProbExceed(mean, std, value, TRUNCATION_UPPER_ONLY, 3.0));
-		System.out.println(calcProbExceed(mean, std, value, TRUNCATION_LOWER_UPPER, 3.0));
+//		System.out.println(calcProbExceed(mean, std, value, TRUNCATION_UPPER_ONLY, 3.0));
+//		System.out.println(calcProbExceed(mean, std, value, TRUNCATION_LOWER_UPPER, 3.0));
 		
 //		System.out.println(gaussProbExceed(mean, std, value));
 //		System.out.println(gaussProbExceed2(mean, std, value));

@@ -14,6 +14,6 @@ public interface Named {
 	 * Returns an object's display name.
 	 * @return the name
 	 */
-	public String name();
+	String name();
 
 }

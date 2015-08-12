@@ -3,4 +3,8 @@
 /dist
 /docs
 /tmp
+/results
 Scratch*.java
+/src/META-INF
+/etc/examples/model
+/etc/examples/results

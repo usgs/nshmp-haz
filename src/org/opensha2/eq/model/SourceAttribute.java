@@ -12,6 +12,7 @@ import com.google.common.base.CaseFormat;
 @SuppressWarnings("javadoc")
 public enum SourceAttribute {
 	NAME,
+	ID,
 	WEIGHT,
 	INDEX,
 
@@ -37,6 +38,7 @@ public enum SourceAttribute {
 	C_MAG,
 	FLOATS,
 	MAGS,
+	RATE,
 	RATES,
 	
 	/* Mag uncertainty specific */

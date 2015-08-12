@@ -1,6 +1,17 @@
 package org.opensha2.eq.model;
 
-import static org.opensha2.eq.model.SourceAttribute.*;
+import static org.opensha2.eq.model.SourceAttribute.A;
+import static org.opensha2.eq.model.SourceAttribute.B;
+import static org.opensha2.eq.model.SourceAttribute.C_MAG;
+import static org.opensha2.eq.model.SourceAttribute.D_MAG;
+import static org.opensha2.eq.model.SourceAttribute.FLOATS;
+import static org.opensha2.eq.model.SourceAttribute.M;
+import static org.opensha2.eq.model.SourceAttribute.MAGS;
+import static org.opensha2.eq.model.SourceAttribute.M_MAX;
+import static org.opensha2.eq.model.SourceAttribute.M_MIN;
+import static org.opensha2.eq.model.SourceAttribute.RATE;
+import static org.opensha2.eq.model.SourceAttribute.RATES;
+import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.util.Parsing.readBoolean;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readString;
@@ -70,7 +81,7 @@ class MfdHelper {
 
 	static class SingleData {
 
-		final double a;
+		final double rate;
 		final double m;
 		final boolean floats;
 		final double weight;
@@ -80,7 +91,7 @@ class MfdHelper {
 		 * for extra and unknown attributes.
 		 */
 		private SingleData(Attributes atts) {
-			a = readDouble(A, atts);
+			rate = readDouble(RATE, atts);
 			m = readDouble(M, atts);
 			floats = readBoolean(FLOATS, atts);
 			weight = readDouble(WEIGHT, atts);
@@ -93,7 +104,7 @@ class MfdHelper {
 		private SingleData(Attributes atts, SingleData ref) {
 
 			// set defaults locally
-			double a = ref.a;
+			double rate = ref.rate;
 			double m = ref.m;
 			boolean floats = ref.floats;
 			double weight = ref.weight;
@@ -101,8 +112,8 @@ class MfdHelper {
 			for (int i = 0; i < atts.getLength(); i++) {
 				SourceAttribute att = SourceAttribute.fromString(atts.getQName(i));
 				switch (att) {
-					case A:
-						a = readDouble(A, atts);
+					case RATE:
+						rate = readDouble(RATE, atts);
 						break;
 					case M:
 						m = readDouble(M, atts);
@@ -121,7 +132,7 @@ class MfdHelper {
 			}
 
 			// export final fields
-			this.a = a;
+			this.rate = rate;
 			this.m = m;
 			this.floats = floats;
 			this.weight = weight;

@@ -1,8 +1,15 @@
 package org.opensha2.gmm;
 
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RJB;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
-import static org.opensha2.gmm.Imt.PGA;
-import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
+import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
+
+import org.opensha2.gmm.GmmInput.Constraints;
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+
+import com.google.common.collect.Range;
 
 /**
  * Modified form of the relationship for the Central and Eastern US by Atkinson
@@ -41,39 +48,29 @@ public final class Atkinson_2008p implements GroundMotionModel {
 
 	static final String NAME = "Atkinson (2008) Prime";
 
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(4.0, 8.0))
+		.set(RJB, Range.closed(0.0, 1000.0))
+		.set(VS30, Range.closed(760.0, 2000.0))
+		.build();
+
 	static final CoefficientContainer COEFFS = new CoefficientContainer("AB08P.csv");
 
 	private static final double SIGMA = 0.3 * BASE_10_TO_E;
 
 	private final double bcfac;
 	private final Imt imt;
-	private final GmmTable table;
+	private final GroundMotionTable table;
 
 	Atkinson_2008p(final Imt imt) {
 		this.imt = imt;
 		bcfac = COEFFS.get(imt, "bcfac");
-		table = GmmTables.getAtkinson08(imt);
+		table = GroundMotionTables.getAtkinson08(imt);
 	}
 
 	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-
-		double μ = table.get(in.rJB, in.Mw);
-
-		// TODO Steve Harmsen has also included SA0P02 along with PGA but
-		// comments in fortran from Gail say bcfac scales with distance for PGA
-		//
-		// TODO I THINK THIS IS MISSING SFAC GFAC CONVERSIONS
-
-		// TODO I can't find an explicit reference for this formula; it is
-		// described in Atkinson (2008) p.1306
-		if (GmmUtils.ceusSiteClass(in.vs30) == SOFT_ROCK) {
-			if (imt == PGA) {
-				μ += -0.3 + 0.15 * Math.log10(in.rJB);
-			} else {
-				μ += bcfac;
-			}
-		}
-
+		double r = Math.max(in.rJB, 0.11);
+		double μ = atkinsonTableValue(table, imt, in.Mw, r, in.vs30, bcfac);
 		return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ), SIGMA);
 	}
 

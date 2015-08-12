@@ -16,10 +16,10 @@ import org.opensha2.eq.model.ClusterSource;
  * 
  * @author Peter Powers
  */
-final class ClusterGroundMotions extends AbstractList<HazardGroundMotions> {
+final class ClusterGroundMotions extends AbstractList<GroundMotions> {
 
 	final ClusterSource parent;
-	final List<HazardGroundMotions> delegate;
+	final List<GroundMotions> delegate;
 	double minDistance = Double.MAX_VALUE;
 
 	ClusterGroundMotions(ClusterSource parent) {
@@ -27,12 +27,12 @@ final class ClusterGroundMotions extends AbstractList<HazardGroundMotions> {
 		delegate = new ArrayList<>();
 	}
 
-	@Override public boolean add(HazardGroundMotions groundMotions) {
+	@Override public boolean add(GroundMotions groundMotions) {
 		minDistance = Math.min(minDistance, groundMotions.inputs.minDistance);
 		return delegate.add(groundMotions);
 	}
 
-	@Override public HazardGroundMotions get(int index) {
+	@Override public GroundMotions get(int index) {
 		return delegate.get(index);
 	}
 

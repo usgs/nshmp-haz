@@ -12,8 +12,19 @@ import static java.lang.Math.tanh;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
+import static org.opensha2.gmm.GmmInput.Field.DIP;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.Z1P0;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import java.util.Map;
+
+import org.opensha2.eq.fault.Faults;
+import org.opensha2.gmm.GmmInput.Constraints;
+
+import com.google.common.collect.Range;
 
 /**
  * Implementation of the Chiou & Youngs (2014) next generation attenuation
@@ -46,6 +57,17 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	static final String NAME = "Chiou & Youngs (2014)";
 
+	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+		.set(MAG, Range.closed(3.5, 8.5))
+		.setDistances(300.0)
+		.set(DIP, Faults.DIP_RANGE)
+		.set(ZTOP, Range.closed(0.0, 20.0))
+		.set(RAKE, Faults.RAKE_RANGE)
+		.set(VS30, Range.closedOpen(180.0, 1500.0))
+		// TODO borrowed from ASK14
+		.set(Z1P0, Range.closed(0.0, 3.0))
+		.build();
+
 	static final CoefficientContainer COEFFS = new CoefficientContainer("CY14.csv");
 
 	private static final double C2 = 1.06;
@@ -61,8 +83,13 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
 	private static final class Coefficients {
 
-		final double c1, c1a, c1b, c1c, c1d, c3, c5, c6, c7, c7b, c9, c9a, c9b, c11b, cn, cM, cHM,
-				γ1, γ2, γ3, φ1, φ2, φ3, φ4, φ5, τ1, τ2, σ1, σ2, σ3;
+		final double
+				c1, c1a, c1b, c1c, c1d, c3, c5, c6, c7, c7b, c9, c9a, c9b, c11b,
+				cn, cM, cHM,
+				γ1, γ2, γ3,
+				φ1, φ2, φ3, φ4, φ5,
+				τ1, τ2,
+				σ1, σ2, σ3;
 
 		// same for all periods; replaced with constant
 		// double c2, c4, c4a, c11, cRB, phi6;

@@ -88,7 +88,7 @@ public final class Parsing {
 	 *         weights
 	 */
 	public static <T extends Enum<T>> Map<T, Double> stringToEnumWeightMap(String s, Class<T> type) {
-		Map<String, String> strMap = MAP_SPLIT.split(trimBrackets(checkNotNull(s)));
+		Map<String, String> strMap = MAP_SPLIT.split(trimEnds(checkNotNull(s)));
 		EnumMap<T, Double> wtMap = Maps.newEnumMap(type);
 		Function<String, T> keyFunc = Enums.stringConverter(type);
 		for (Entry<String, String> entry : strMap.entrySet()) {
@@ -118,7 +118,7 @@ public final class Parsing {
 	 *         weights
 	 */
 	public static NavigableMap<Double, Map<Double, Double>> stringToValueValueWeightMap(String s) {
-		Map<String, String> strMap = MAP_MAP_SPLIT.split(trimBrackets(checkNotNull(s)));
+		Map<String, String> strMap = MAP_MAP_SPLIT.split(trimEnds(checkNotNull(s)));
 		ImmutableSortedMap.Builder<Double, Map<Double, Double>> builder = ImmutableSortedMap
 			.naturalOrder();
 		for (Entry<String, String> entry : strMap.entrySet()) {
@@ -144,7 +144,7 @@ public final class Parsing {
 	 *         weights
 	 */
 	public static NavigableMap<Double, Double> stringToValueWeightMap(String s) {
-		Map<String, String> strMap = MAP_SPLIT.split(trimBrackets(checkNotNull(s)));
+		Map<String, String> strMap = MAP_SPLIT.split(trimEnds(checkNotNull(s)));
 		ImmutableSortedMap.Builder<Double, Double> builder = ImmutableSortedMap.naturalOrder();
 		for (Entry<String, String> entry : strMap.entrySet()) {
 			double key = Doubles.stringConverter().convert(entry.getKey());
@@ -279,7 +279,7 @@ public final class Parsing {
 		parent.appendChild(e);
 		return e;
 	}
-	
+
 	/**
 	 * Add a child {@link Comment} to a parent and return a reference to the
 	 * comment.
@@ -311,6 +311,25 @@ public final class Parsing {
 		checkArgument(value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false"),
 			"Unparseable attribute " + id.toString() + "=\"" + value + "\"");
 		return Boolean.valueOf(value);
+	}
+
+	/**
+	 * Read and return the value associated with an {@code Enum.toString()} name
+	 * from an {@link Attributes} container as an {@code int}.
+	 * 
+	 * @param id the name identifier of the attribute
+	 * @param atts a SAX {@code Attributes} container
+	 * @throws NullPointerException if no attribute with the name
+	 *         {@code id.toString()} exists
+	 */
+	public static int readInt(Enum<?> id, Attributes atts) {
+		String name = checkNotNull(id).toString();
+		String value = checkNotNull(atts).getValue(name);
+		try {
+			return Integer.valueOf(validateAttribute(name, value));
+		} catch (NumberFormatException nfe) {
+			throw createAttributeException(name, value);
+		}
 	}
 
 	/**
@@ -431,7 +450,9 @@ public final class Parsing {
 	 * @param delimiter the {@link Delimiter} to split on
 	 */
 	public static List<Double> splitToDoubleList(CharSequence sequence, Delimiter delimiter) {
-		return FluentIterable.from(split(sequence, delimiter)).transform(Doubles.stringConverter())
+		return FluentIterable
+			.from(split(sequence, delimiter))
+			.transform(Doubles.stringConverter())
 			.toList();
 	}
 
@@ -449,7 +470,7 @@ public final class Parsing {
 
 		/** Dash ('-') delimiter. */
 		DASH('-'),
-		
+
 		/** Period ('.') delimiter. */
 		PERIOD('.'),
 
@@ -496,6 +517,20 @@ public final class Parsing {
 		public Splitter splitter() {
 			return splitter;
 		}
+	}
+
+	/**
+	 * Return a {@code String} representation of an {@code Iterable<Enum>} where
+	 * {@code Enum.name()} is used instead of {@code Enum.toString()}.
+	 * 
+	 * @param iterable to process
+	 * @param enumClass
+	 */
+	public static <E extends Enum<E>> String enumsToString(Iterable<E> iterable, Class<E> enumClass) {
+		return addBrackets(FluentIterable
+			.from(iterable)
+			.transform(Enums.stringConverter(enumClass).reverse())
+			.join(Delimiter.COMMA.joiner()));
 	}
 
 	/**
@@ -546,7 +581,7 @@ public final class Parsing {
 	 * @param s the string to convert
 	 */
 	public static double[] toDoubleArray(String s) {
-		return Doubles.toArray(FluentIterable.from(split(trimBrackets(s), Delimiter.COMMA))
+		return Doubles.toArray(FluentIterable.from(split(trimEnds(s), Delimiter.COMMA))
 			.transform(Doubles.stringConverter()).toList());
 	}
 
@@ -566,12 +601,12 @@ public final class Parsing {
 	}
 
 	/**
-	 * Convert an ordered list of non-repeating {@code Integer}s to a compact
-	 * string form. For example,
+	 * Convert an ordered list of non-repeating {@code Integer}s to a more
+	 * compact string form. For example,
 	 * {@code List<Integer>.toString() = "[1, 2, 3, 4, 10, 19, 18, 17, 16]"}
-	 * would instead be written as {@code "[[1:4],10,[19:16]]"}.
+	 * would instead be written as {@code "1:4,10,19:16"}.
 	 * 
-	 * @param values the values to convert
+	 * @param values to convert
 	 * @throws IllegalArgumentException if {@code values} is empty or if
 	 *         {@code values} contains adjacent repeating values
 	 * @see #rangeStringToIntList(String)
@@ -586,22 +621,31 @@ public final class Parsing {
 		boolean dir = true;
 
 		for (int i = 1; i < values.size(); i++) {
-			int current = values.get(i);
-			checkArgument(current != end, "repeating value %s in %s", current, values);
-			boolean currentDir = current > end;
+			int next = values.get(i);
+			checkArgument(next != end, "repeating value %s in %s", next, values);
+			boolean currentDir = next > end;
 			boolean terminateRange =
-			// step > 1
-			(Math.abs(current - end) != 1) ||
-			// direction change
-				(buildingRange && currentDir != dir) ||
-				// end of list
-				(i == values.size() - 1);
-
+				// step > 1
+				(Math.abs(next - end) != 1) ||
+					// direction change
+					(buildingRange && currentDir != dir) ||
+					// end of list
+					(i == values.size() - 1);
+			
 			if (terminateRange) {
-				ranges.add((i == values.size() - 1) ? new int[] { start, current }
-					: new int[] { start, end });
-				start = current;
-				end = current;
+				if (i == values.size() - 1) {
+					// singleton trailing value
+					if (Math.abs(next - end) == 1 && currentDir == dir) {
+						ranges.add(new int[] { start, next });
+					} else {
+						ranges.add(new int[] { start, end });
+						ranges.add(new int[] { next, next});
+					}
+				} else {
+					ranges.add(new int[] { start, end });
+				}
+				start = next;
+				end = next;
 				buildingRange = false;
 				continue;
 			}
@@ -609,11 +653,9 @@ public final class Parsing {
 			// starting or continuing new range
 			buildingRange = true;
 			dir = currentDir;
-			end = current;
+			end = next;
 		}
-
-		return addBrackets(join(Iterables.transform(ranges, IntArrayToString.INSTANCE),
-			Delimiter.COMMA));
+		return join(Iterables.transform(ranges, IntArrayToString.INSTANCE), Delimiter.COMMA);
 	}
 
 	/**
@@ -627,18 +669,17 @@ public final class Parsing {
 	 * @see #intListToRangeString
 	 */
 	public static List<Integer> rangeStringToIntList(String s) {
-		Iterable<int[]> values = Iterables.transform(split(trimBrackets(s), Delimiter.COMMA),
+		Iterable<int[]> values = Iterables.transform(split(s, Delimiter.COMMA),
 			StringToIntArray.INSTANCE);
 		return Ints.asList(Ints.concat(Iterables.toArray(values, int[].class)));
 	}
 
 	// internal use only - no argument checking
-	// writes 2-element int[]s as '[a:b]' or just 'a' if a==b
+	// writes 2-element int[]s as 'a:b' or just 'a' if a==b
 	private enum IntArrayToString implements Function<int[], String> {
 		INSTANCE;
 		@Override public String apply(int[] ints) {
-			return (ints[0] == ints[1]) ? Integer.toString(ints[0]) : addBrackets(ints[0] + ":" +
-				ints[1]);
+			return (ints[0] == ints[1]) ? Integer.toString(ints[0]) : ints[0] + ":" + ints[1];
 		}
 	}
 
@@ -646,9 +687,9 @@ public final class Parsing {
 	private enum StringToIntArray implements Function<String, int[]> {
 		INSTANCE;
 		@Override public int[] apply(String s) {
-			if (s.startsWith("[")) {
+			if (s.contains(":")) {
 				Iterator<Integer> rangeIt = Iterators.transform(
-					split(trimBrackets(s), Delimiter.COLON).iterator(), Ints.stringConverter());
+					split(s, Delimiter.COLON).iterator(), Ints.stringConverter());
 				return DataUtils.indices(rangeIt.next(), rangeIt.next());
 			}
 			return new int[] { Integer.valueOf(s) };
@@ -670,11 +711,17 @@ public final class Parsing {
 		return s;
 	}
 
-	/*
-	 * Trims the supplied string and then removes the first and last chars. At a
-	 * minimum, this method will return an empty string
+	/**
+	 * Returns a new {@code String} created by first trimming the supplied
+	 * {@code String} of leading and trailing whitespace (via
+	 * {@code String.trim()}), and then removing the first and last characters.
+	 * At a minimum, this method will return an empty string.
+	 * 
+	 * @param s {@code String} to trim
+	 * @throws IllegalArgumentException if the size of the supplied string is
+	 *         &lt;2 after leading and trailing whitespace has been removed
 	 */
-	static String trimBrackets(String s) {
+	public static String trimEnds(String s) {
 		String trimmed = s.trim();
 		checkArgument(trimmed.length() > 1, "\"%s\" is too short", s);
 		return trimmed.substring(1, trimmed.length() - 1);

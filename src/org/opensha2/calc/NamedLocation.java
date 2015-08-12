@@ -14,6 +14,6 @@ public interface NamedLocation {
 	/**
 	 * Return the location.
 	 */
-	public Location location();
+	Location location();
 
 }

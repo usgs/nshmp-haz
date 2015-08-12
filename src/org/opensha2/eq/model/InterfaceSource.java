@@ -4,16 +4,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static org.opensha2.eq.fault.Faults.validateInterfaceDepth;
-import static org.opensha2.eq.fault.Faults.validateTrace;
 import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
-import static org.opensha2.eq.model.FloatStyle.FULL_DOWN_DIP;
+import static org.opensha2.eq.fault.Faults.validateTrace;
 
 import java.util.List;
 
-import org.opensha2.eq.fault.scaling.MagScalingRelationship;
 import org.opensha2.eq.fault.surface.ApproxGriddedSurface;
-import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
+import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.geo.LocationList;
@@ -38,12 +36,23 @@ public class InterfaceSource extends FaultSource {
 
 	final LocationList lowerTrace;
 
-	private InterfaceSource(String name, LocationList upperTrace, LocationList lowerTrace,
-		double dip, double width, GriddedSurface surface, double rake, List<IncrementalMfd> mfds,
-		double spacing, RuptureScaling rupScaling, RuptureFloating rupFloating,
-		boolean rupVariability) {
+	private InterfaceSource(
+			String name,
+			int id,
+			LocationList upperTrace,
+			LocationList lowerTrace,
+			double dip,
+			double width,
+			GriddedSurface surface,
+			double rake,
+			List<IncrementalMfd> mfds,
+			double spacing,
+			RuptureScaling rupScaling,
+			RuptureFloating rupFloating,
+			boolean rupVariability) {
 
-		super(name, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling, rupFloating,
+		super(name, id, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling,
+			rupFloating,
 			rupVariability);
 
 		this.lowerTrace = (lowerTrace == null) ? surface.getEvenlyDiscritizedLowerEdge()
@@ -144,10 +153,9 @@ public class InterfaceSource extends FaultSource {
 					.width(width)
 					.spacing(spacing)
 					.build();
-
 			}
 
-			return new InterfaceSource(name, trace, lowerTrace, dip, width, surface, rake,
+			return new InterfaceSource(name, id, trace, lowerTrace, dip, width, surface, rake,
 				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating, rupVariability);
 		}
 

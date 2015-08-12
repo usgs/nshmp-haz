@@ -17,13 +17,13 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
 /**
- * An earthquake hazard {@code HazardModel} is the top-level wrapper for
- * earthquake {@link Source} definitions and attendant {@link GroundMotionModel}
- * s used in probabilisitic seismic hazard analyses (PSHAs) and related
- * calculations. A {@code HazardModel} contains of a number of {@link SourceSet}
- * s that define logical groupings of sources by {@link SourceType}. Each
- * {@code SourceSet} carries with it references to the {@code GroundMotionModel}
- * s and associated weights to be used when evaluating hazard.
+ * A {@code HazardModel} is the top-level wrapper for earthquake {@link Source}
+ * definitions and attendant {@link GroundMotionModel}s used in probabilisitic
+ * seismic hazard analyses (PSHAs) and related calculations. A
+ * {@code HazardModel} contains of a number of {@link SourceSet}s that define
+ * logical groupings of sources by {@link SourceType}. Each {@code SourceSet}
+ * carries with it references to the {@code GroundMotionModel}s and associated
+ * weights to be used when evaluating hazard.
  * 
  * @author Peter Powers
  * @see Source
@@ -49,18 +49,16 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// low priority
 	// TODO test low rate shortcut in FaultSource
 	// "if (rate < 1e-14) continue; // shortcut low rates"
+	
 	// TODO need to revisit the application of uncertainty when minM < 6.5
 	// e.g. 809a Pine Valley graben in orwa.c.in
 
 	private final String name;
 	private final SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap;
 	private final CalcConfig config;
-	
-	// TODO do we really need config here; calc config properties will likely be accessed from the 
-	// source set or source level; should probably push config to SourceSets, possibly overriding default
 
 	private HazardModel(String name, CalcConfig config,
-		SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
+			SetMultimap<SourceType, SourceSet<? extends Source>> sourceSetMap) {
 		this.name = name;
 		this.config = config;
 		this.sourceSetMap = sourceSetMap;
@@ -81,11 +79,10 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	 * exit.</p>
 	 * 
 	 * @param path to {@code HazardModel} directory or Zip file
-	 * @param name for the {@code HazardModel}
 	 * @return a newly instantiated {@code HazardModel}
 	 */
-	public static HazardModel load(Path path, String name) {
-		return Loader.load(path, name);
+	public static HazardModel load(Path path) {
+		return Loader.load(path);
 	}
 
 	/**
@@ -102,7 +99,10 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	@Override public String name() {
 		return name;
 	}
-	
+
+	/**
+	 * Return the default calculation configuration. This may be overridden.
+	 */
 	public CalcConfig config() {
 		return config;
 	}

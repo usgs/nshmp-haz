@@ -3,11 +3,9 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validateWeight;
 import static org.opensha2.eq.Magnitudes.MAX_MAG;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
-import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -49,11 +47,20 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * minimal overhead.
 	 */
 
-	private GridSourceSet(String name, Double weight, GmmSet gmmSet, List<Location> locs,
-		List<IncrementalMfd> mfds, List<Map<FocalMech, Double>> mechMaps, DepthModel depthModel,
-		double strike, RuptureScaling rupScaling, PointSourceType sourceType) {
+	private GridSourceSet(
+			String name,
+			int id,
+			Double weight,
+			GmmSet gmmSet,
+			List<Location> locs,
+			List<IncrementalMfd> mfds,
+			List<Map<FocalMech, Double>> mechMaps,
+			DepthModel depthModel,
+			double strike,
+			RuptureScaling rupScaling,
+			PointSourceType sourceType) {
 
-		super(name, weight, gmmSet);
+		super(name, id, weight, gmmSet);
 		this.locs = locs;
 		this.mfds = mfds;
 		this.mechMaps = mechMaps;
@@ -130,17 +137,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	// grid sources; may add others later TODO document
 
 	/* Single use builder. */
-	static class Builder {
+	static class Builder extends AbstractSourceSet.Builder  {
 
 		private static final String ID = "GridSourceSet.Builder";
-		private boolean built = false;
 
-		private String name;
-		private Double weight;
 		private Double strike;
 		private PointSourceType sourceType;
 		private RuptureScaling rupScaling;
-		private GmmSet gmmSet;
 		private NavigableMap<Double, Map<Double, Double>> magDepthMap;
 		private Double maxDepth;
 		private Map<FocalMech, Double> mechMap;
@@ -149,21 +152,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private List<IncrementalMfd> mfds = Lists.newArrayList();
 		private List<Map<FocalMech, Double>> mechMaps = Lists.newArrayList();
 		private List<Double> magMaster;
-
-		Builder name(String name) {
-			this.name = validateName(name);
-			return this;
-		}
-
-		Builder weight(double weight) {
-			this.weight = validateWeight(weight);
-			return this;
-		}
-
-		Builder gmms(GmmSet gmmSet) {
-			this.gmmSet = checkNotNull(gmmSet, "Gmm set is null");
-			return this;
-		}
 
 		Builder strike(double strike) {
 			// unknown strike allowed for grid sources
@@ -272,20 +260,17 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			throw new IllegalStateException("MagDepthMap must contain at least one M ≥ " + MAX_MAG);
 		}
 
-		void validateState(String id) {
-			checkState(!built, "This %s instance as already been used", id);
-			checkState(name != null, "%s name not set", id);
-			checkState(weight != null, "%s weight not set", id);
-			checkState(strike != null, "%s strike not set", id);
-			checkState(sourceType != null, "%s source type not set", id);
-			checkState(!locs.isEmpty(), "%s has no locations", id);
-			checkState(!mfds.isEmpty(), "%s has no Mfds", id);
-			checkState(rupScaling != null, "%s has no rupture-scaling relation set", id);
-			checkState(magDepthMap != null, "%s mag-depth-weight map not set", id);
-			checkState(maxDepth != null, "%s maximum depth not set", id);
-			checkState(mechMap != null, "%s focal mech map not set", id);
-			checkState(gmmSet != null, "%s ground motion models not set", id);
-			checkState(magMaster != null, "%s master magnitude list not set", id);
+		@Override void validateState(String buildId) {
+			super.validateState(buildId);
+			checkState(strike != null, "%s strike not set", buildId);
+			checkState(sourceType != null, "%s source type not set", buildId);
+			checkState(!locs.isEmpty(), "%s has no locations", buildId);
+			checkState(!mfds.isEmpty(), "%s has no Mfds", buildId);
+			checkState(rupScaling != null, "%s has no rupture-scaling relation set", buildId);
+			checkState(magDepthMap != null, "%s mag-depth-weight map not set", buildId);
+			checkState(maxDepth != null, "%s maximum depth not set", buildId);
+			checkState(mechMap != null, "%s focal mech map not set", buildId);
+			checkState(magMaster != null, "%s master magnitude list not set", buildId);
 
 			/*
 			 * Validate size of mechMaps; size could get out of sync if mixed
@@ -297,7 +282,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			 */
 			if (!mechMaps.isEmpty()) {
 				checkState(mechMaps.size() == locs.size(),
-					"%s only %s of %s focal mech maps were added", id, mechMaps.size(), locs.size());
+					"%s only %s of %s focal mech maps were added", ID, mechMaps.size(), locs.size());
 			} else {
 				mechMaps = Collections.nCopies(locs.size(), mechMap);
 			}
@@ -308,7 +293,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			 * Must also ensure that all depths (zTop) in the magDepthMap are <
 			 * maxDepth.
 			 */
-			validateMaxAndMapDepths(magDepthMap, maxDepth, id);
+			validateMaxAndMapDepths(magDepthMap, maxDepth, ID);
 
 			/*
 			 * Validate type agreement. If strike != NaN, type must be
@@ -321,14 +306,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 				checkState(sourceType != FIXED_STRIKE,
 					"Source type FIXED_STRIKE invalid for strive [%s]", strike);
 			}
-
-			built = true;
 		}
 
 		GridSourceSet build() {
 			validateState(ID);
 			DepthModel depthModel = DepthModel.create(magMaster, magDepthMap, maxDepth);
-			return new GridSourceSet(name, weight, gmmSet, locs, mfds, mechMaps, depthModel,
+			return new GridSourceSet(name, id, weight, gmmSet, locs, mfds, mechMaps, depthModel,
 				strike, rupScaling, sourceType);
 		}
 

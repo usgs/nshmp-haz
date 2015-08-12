@@ -1,8 +1,8 @@
 package org.opensha2.calc;
 
+import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
-import static org.apache.commons.math3.special.Erf.erf;
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
 import static org.opensha2.gmm.Imt.SA0P75;
@@ -20,6 +20,9 @@ import org.opensha2.gmm.Imt;
  * single value or a {@link XY_Sequence} of values. Some arguments are only used
  * by some models; for example, {@link #NONE} ignores σ, but it must be supplied
  * for consistency. See individual models for details.</p>
+ * 
+ * <p>Internally, models use a high precision approximation of the Gauss error
+ * function (see Abramowitz and Stegun 7.1.26) when computing exceedances.</p>
  * 
  * @author Peter Powers
  */
@@ -188,7 +191,7 @@ public enum ExceedanceModel {
 	 * truncation.
 	 */
 	private static double ccdFn(double μ, double σ, double value) {
-		return (erf((μ - value) / (σ * SQRT_2)) + 1.0) * 0.5;
+		return (1.0 + erf((μ - value) / (σ * SQRT_2))) * 0.5;
 	}
 
 	/*
@@ -236,6 +239,30 @@ public enum ExceedanceModel {
 	 */
 	private static double prob(double μ, double σ, double n, double max) {
 		return ccdFn(μ, σ, min(μ + n * σ, max));
+	}
+
+	/*
+	 * Abramowitz and Stegun 7.1.26 implementation. This erf(x) approximation is
+	 * valid for x ≥ 0. Because erf(x) is an odd function, erf(x) = −erf(−x).
+	 */
+	private static double erf(double x) {
+		return x < 0.0 ? -erfBase(-x) : erfBase(x);
+	}
+
+	private static final double P = 0.3275911;
+	private static final double A1 = 0.254829592;
+	private static final double A2 = -0.284496736;
+	private static final double A3 = 1.421413741;
+	private static final double A4 = -1.453152027;
+	private static final double A5 = 1.061405429;
+
+	private static double erfBase(double x) {
+		double t = 1 / (1 + P * x);
+		return 1 -(A1 * t +
+			A2 * t * t +
+			A3 * t * t * t +
+			A4 * t * t * t * t +
+			A5 * t * t * t * t * t) * exp(-x * x);
 	}
 
 }

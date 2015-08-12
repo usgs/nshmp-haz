@@ -19,21 +19,21 @@ import org.opensha2.eq.model.ClusterSource;
  * 
  * @author Peter Powers
  */
-final class ClusterInputs extends AbstractList<HazardInputs> {
+final class ClusterInputs extends AbstractList<SourceInputList> {
 
 	final ClusterSource parent;
-	final List<HazardInputs> delegate;
+	final List<SourceInputList> delegate;
 
 	ClusterInputs(ClusterSource parent) {
 		this.parent = checkNotNull(parent);
 		delegate = new ArrayList<>();
 	}
 
-	@Override public boolean add(HazardInputs inputs) {
+	@Override public boolean add(SourceInputList inputs) {
 		return delegate.add(inputs);
 	}
 
-	@Override public HazardInputs get(int index) {
+	@Override public SourceInputList get(int index) {
 		return delegate.get(index);
 	}
 

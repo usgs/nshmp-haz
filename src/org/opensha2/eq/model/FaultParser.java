@@ -6,32 +6,29 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
 import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_FLOATING;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
-import static org.opensha2.eq.model.SourceAttribute.SURFACE_SPACING;
+import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
 import static org.opensha2.eq.model.SourceAttribute.RAKE;
+import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
 import static org.opensha2.eq.model.SourceAttribute.TYPE;
 import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceAttribute.WIDTH;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readEnum;
+import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.toMap;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
 import org.opensha2.data.DataUtils;
 import org.opensha2.eq.Magnitudes;
-import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.geo.LocationList;
 import org.opensha2.mfd.GaussianMfd;
@@ -115,14 +112,16 @@ class FaultParser extends DefaultHandler {
 		}
 
 		try {
-			// @formatter:off
 			switch (e) {
 
 				case FAULT_SOURCE_SET:
 					String name = readString(NAME, atts);
 					double weight = readDouble(WEIGHT, atts);
-					sourceSetBuilder = new FaultSourceSet.Builder()
+					int id = readInt(ID, atts);
+					sourceSetBuilder = new FaultSourceSet.Builder();
+					sourceSetBuilder
 						.name(name)
+						.id(id)
 						.weight(weight)
 						.gmms(gmmSet);
 					if (log.isLoggable(FINE)) {
@@ -152,13 +151,16 @@ class FaultParser extends DefaultHandler {
 
 				case SOURCE:
 					String srcName = readString(NAME, atts);
+					int srcId = readInt(ID, atts);
 					sourceBuilder = new FaultSource.Builder()
 						.name(srcName)
+						.id(srcId)
 						.ruptureScaling(rupScaling)
 						.ruptureFloating(config.ruptureFloating)
 						.ruptureVariability(config.ruptureVariability)
 						.surfaceSpacing(config.surfaceSpacing);
-					log.fine("     Source: " + srcName);
+					log.fine("     Source: " + srcName + " [" + srcId + "]");
+					if (srcId < 0) log.warning("  Invalid Id [" + srcId + ", " + srcName + "]");
 					break;
 
 				case INCREMENTAL_MFD:
@@ -300,7 +302,7 @@ class FaultParser extends DefaultHandler {
 					log.finer("   MFD type: GR [+epi -alea] " + epiBranch(i));
 					if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 				} else {
-					log.warning("GR MFD epi branch with no mags [" + sourceBuilder.name + "]");
+					log.warning("  GR MFD epi branch with no mags [" + sourceBuilder.name + "]");
 
 				}
 			}
@@ -322,9 +324,9 @@ class FaultParser extends DefaultHandler {
 		List<IncrementalMfd> mfds = Lists.newArrayList();
 
 		// total moment rate
-		double tmr = data.a * Magnitudes.magToMoment_N_m(data.m);
+		double tmr = data.rate * Magnitudes.magToMoment_N_m(data.m);
 		// total event rate
-		double tcr = data.a;
+		double tcr = data.rate;
 
 		// this was handled previously by GR_Data.hasMagExceptions()
 		// need to catch the single floaters that are less than 6.5
@@ -368,7 +370,7 @@ class FaultParser extends DefaultHandler {
 				log.finer("   MFD type: SINGLE [-epi +alea]");
 				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 			} else {
-				IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.a, data.floats);
+				IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
 				mfds.add(mfd);
 				log.finer("   MFD type: SINGLE [-epi -alea]");
 				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
