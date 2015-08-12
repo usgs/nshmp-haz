@@ -13,11 +13,6 @@
 			<attribute name="javadoc_location" value="http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/commons-math3-3.3.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://commons.apache.org/proper/commons-math/apidocs/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
 		<attributes>
