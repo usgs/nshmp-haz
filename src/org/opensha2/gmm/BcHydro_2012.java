@@ -72,7 +72,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 	private static final double N = 1.18;
 	private static final double VSS_MAX = 1000.0;
 	private static final double SIGMA = 0.74;
-	private static final double DC1_SLAB = -0.3;
+	private static final double ΔC1_SLAB = -0.3;
 
 	private static final class Coefficients {
 
@@ -110,44 +110,37 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 		// pgaRock only required to compute non-linear site response
 		// when vs30 is less than period-dependent vlin cutoff
 		double pgaRock = (in.vs30 < coeffs.vlin) ?
-			exp(calcMean(coeffsPGA, isSlab(), 0.0, in)) :
+			exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, 1000.0)) :
 			0.0;
-		double μ = calcMean(coeffs, isSlab(), pgaRock, in);
+		double μ = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
 		return DefaultScalarGroundMotion.create(μ, SIGMA);
 	}
 
 	abstract boolean isSlab();
 
 	private static final double calcMean(final Coefficients c, final boolean slab,
-			final double pgaRock, final GmmInput in) {
+			final double pgaRock, final double Mw, final double rRup, final double zTop,
+			final double vs30) {
 
-		double Mw = in.Mw;
-		double rRup = in.rRup;
-		double zTop = in.zTop;
-
-		// zTop = hypoDepth and is capped at 125km, only used when slab = true
-		if (slab) zTop = min(zTop, 125.0);
-
-		// DELC fixed at 0.0;
-		double mCut = C1 + (slab ? DC1_SLAB : c.ΔC1mid);
+		double ΔC1 = (slab ? ΔC1_SLAB : c.ΔC1mid);
+		double mCut = C1 + ΔC1;
 		double t13m = c.θ13 * (10 - Mw) * (10 - Mw);
 		double fMag = (Mw <= mCut ? T4 : T5) * (Mw - mCut) + t13m;
 
 		// no depth term for interface events
-		double fDepth = slab ? c.θ11 * (zTop - 60.) : 0.0;
+		double fDepth = slab ? c.θ11 * (min(zTop, 125.0) - 60.) : 0.0;
 
-		double vsS = min(in.vs30, VSS_MAX);
+		double vsS = min(vs30, VSS_MAX);
 
 		double fSite = c.θ12 * log(vsS / c.vlin);
-		if (in.vs30 < c.vlin) { // whether or not we use pgaRock
+		if (vs30 < c.vlin) { // whether or not we use pgaRock
 			fSite += -c.b * log(pgaRock + C) + c.b * log(pgaRock + C * pow((vsS / c.vlin), N));
 		} else {
 			// for pgaRock loop, vs=1000 > vlinPGA=865
 			fSite += c.b * N * log(vsS / c.vlin);
 		}
 
-		return c.θ1 +
-			// c.t4 * delC1 ommitted b/c delC1=0
+		return c.θ1 + T4 * ΔC1 +
 			(c.θ2 + (slab ? c.θ14 : 0.0) + T3 * (Mw - 7.8)) *
 			log(rRup + C4 * exp((Mw - 6.0) * T9)) + c.θ6 * rRup + (slab ? c.θ10 : 0.0) + fMag +
 			fDepth +
