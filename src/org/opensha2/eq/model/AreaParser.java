@@ -56,6 +56,7 @@ class AreaParser extends DefaultHandler {
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
+	private MfdHelper.Builder mfdHelperBuilder;
 	private MfdHelper mfdHelper;
 
 	private GmmSet gmmSet;
@@ -116,7 +117,8 @@ class AreaParser extends DefaultHandler {
 					log.fine("       Name: " + name);
 					log.fine("     Weight: " + weight);
 				}
-				mfdHelper = MfdHelper.create();
+				mfdHelperBuilder = MfdHelper.builder();
+				mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
 				break;
 
 			case DEFAULT_MFDS:
@@ -168,7 +170,7 @@ class AreaParser extends DefaultHandler {
 
 			case INCREMENTAL_MFD:
 				if (parsingDefaultMFDs) {
-					mfdHelper.addDefault(atts);
+					mfdHelperBuilder.addDefault(atts);
 					break;
 				}
 				sourceBuilder.mfd(buildMfd(atts));
@@ -197,6 +199,7 @@ class AreaParser extends DefaultHandler {
 
 			case DEFAULT_MFDS:
 				parsingDefaultMFDs = false;
+				mfdHelper = mfdHelperBuilder.build();
 				break;
 
 			case BORDER:
@@ -230,12 +233,17 @@ class AreaParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
+	/*
+	 * TODO Area sources should support multiple different mfds
+	 * TODO Currently taking only the first entry in defaults
+	 */
+	
 	private IncrementalMfd buildMfd(Attributes atts) {
 		MfdType type = readEnum(TYPE, atts, MfdType.class);
 
 		switch (type) {
 			case GR:
-				MfdHelper.GR_Data grData = mfdHelper.getGR(atts);
+				MfdHelper.GR_Data grData = mfdHelper.grData(atts).get(0);
 				int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
 				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
 					nMagGR, grData.b, 1.0);
@@ -244,18 +252,18 @@ class AreaParser extends DefaultHandler {
 				return mfdGR;
 
 			case INCR:
-				MfdHelper.IncrData incrData = mfdHelper.getIncremental(atts);
+				MfdHelper.IncrData incrData = mfdHelper.incrementalData(atts).get(0);
 				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
 					DataUtils.multiply(incrData.weight, incrData.rates));
 				return mfdIncr;
 
 			case SINGLE:
-				MfdHelper.SingleData singleData = mfdHelper.getSingle(atts);
+				MfdHelper.SingleData singleData = mfdHelper.singleData(atts).get(0);
 				return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
 					singleData.floats);
 
 			case GR_TAPER:
-				MfdHelper.TaperData taperData = mfdHelper.getTapered(atts);
+				MfdHelper.TaperData taperData = mfdHelper.taperData(atts).get(0);
 				int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
 				IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
 					taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,

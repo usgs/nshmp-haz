@@ -247,7 +247,7 @@ class PointSource implements Source {
 	 * [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
 	 * 
 	 * A depth model also encapsulates a maximum depth value that is usually
-	 * source type dependent and may be used when computing determin the maximum
+	 * source type dependent and may be used when computing the maximum
 	 * width of a point source.
 	 * 
 	 * All DepthModel validation is currently performed in

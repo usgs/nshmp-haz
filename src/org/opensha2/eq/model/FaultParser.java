@@ -21,6 +21,7 @@ import static org.opensha2.util.Parsing.toMap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -30,6 +31,9 @@ import javax.xml.parsers.SAXParser;
 import org.opensha2.data.DataUtils;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.eq.model.MfdHelper.GR_Data;
+import org.opensha2.eq.model.MfdHelper.IncrData;
+import org.opensha2.eq.model.MfdHelper.SingleData;
 import org.opensha2.geo.LocationList;
 import org.opensha2.mfd.GaussianMfd;
 import org.opensha2.mfd.GutenbergRichterMfd;
@@ -76,6 +80,7 @@ class FaultParser extends DefaultHandler {
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
+	private MfdHelper.Builder mfdHelperBuilder;
 	private MfdHelper mfdHelper;
 
 	// Traces are the only text content in source files
@@ -129,7 +134,8 @@ class FaultParser extends DefaultHandler {
 						log.fine("       Name: " + name);
 						log.fine("     Weight: " + weight);
 					}
-					mfdHelper = MfdHelper.create();
+					mfdHelperBuilder = MfdHelper.builder();
+					mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
 					break;
 
 				case DEFAULT_MFDS:
@@ -165,10 +171,10 @@ class FaultParser extends DefaultHandler {
 
 				case INCREMENTAL_MFD:
 					if (parsingDefaultMFDs) {
-						mfdHelper.addDefault(atts);
+						mfdHelperBuilder.addDefault(atts);
 						break;
 					}
-					sourceBuilder.mfds(buildMFD(atts, unc));
+					sourceBuilder.mfds(buildMfds(atts));
 					break;
 
 				case GEOMETRY:
@@ -204,6 +210,7 @@ class FaultParser extends DefaultHandler {
 
 				case DEFAULT_MFDS:
 					parsingDefaultMFDs = false;
+					mfdHelper = mfdHelperBuilder.build();
 					break;
 
 				case SETTINGS:
@@ -241,24 +248,37 @@ class FaultParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
-	private List<IncrementalMfd> buildMFD(Attributes atts, MagUncertainty unc) {
+	private List<IncrementalMfd> buildMfds(Attributes atts) {
 		MfdType type = readEnum(TYPE, atts, MfdType.class);
 		switch (type) {
 			case GR:
-				return buildGR(mfdHelper.getGR(atts), unc);
+				return buildGR(atts);
 			case SINGLE:
-				return buildSingle(mfdHelper.getSingle(atts), unc);
+				return buildSingle(atts);
 			case INCR:
-				return buildIncremental(mfdHelper.getIncremental(atts));
+				return buildIncremental(atts);
 			default:
-				throw new IllegalStateException(type + " not yet implemented");
+				throw new IllegalStateException(type + " not supported");
 		}
 	}
 
 	/*
-	 * Builds INCR Mfds. NOTE This ignores uncertainty models.
+	 * FaultSource.Builder creates an ImmutableList; so no need for one
+	 * in methods below.
 	 */
-	private List<IncrementalMfd> buildIncremental(MfdHelper.IncrData data) {
+
+	/*
+	 * Build INCR MFDs. NOTE Incremental ignores uncertainty models.
+	 */
+	private List<IncrementalMfd> buildIncremental(Attributes atts) {
+		List<IncrementalMfd> mfdList = new ArrayList<>();
+		for (IncrData incrData : mfdHelper.incrementalData(atts)) {
+			mfdList.addAll(buildIncremental(incrData));
+		}
+		return mfdList;
+	}
+
+	private List<IncrementalMfd> buildIncremental(IncrData data) {
 		List<IncrementalMfd> mfds = Lists.newArrayList();
 		IncrementalMfd mfd = Mfds.newIncrementalMFD(data.mags,
 			DataUtils.multiply(data.weight, data.rates));
@@ -267,10 +287,18 @@ class FaultParser extends DefaultHandler {
 	}
 
 	/*
-	 * Builds GR Mfds. Method will throw IllegalStateException if attribute
-	 * values yield an MFD with no magnitude bins.
+	 * Build GR MFDs. Method throws IllegalStateException if attribute values
+	 * yield an MFD with no magnitude bins.
 	 */
-	private List<IncrementalMfd> buildGR(MfdHelper.GR_Data data, MagUncertainty unc) {
+	private List<IncrementalMfd> buildGR(Attributes atts) {
+		List<IncrementalMfd> mfdList = new ArrayList<>();
+		for (GR_Data grData : mfdHelper.grData(atts)) {
+			mfdList.addAll(buildGR(grData));
+		}
+		return mfdList;
+	}
+
+	private List<IncrementalMfd> buildGR(GR_Data data) {
 
 		int nMag = Mfds.magCount(data.mMin, data.mMax, data.dMag);
 		checkState(nMag > 0, "GR MFD with no mags [%s]", sourceBuilder.name);
@@ -316,10 +344,16 @@ class FaultParser extends DefaultHandler {
 		return mfds;
 	}
 
-	/*
-	 * Builds single Mfds
-	 */
-	private List<IncrementalMfd> buildSingle(MfdHelper.SingleData data, MagUncertainty unc) {
+	/* Build SINGLE MFDs. */
+	private List<IncrementalMfd> buildSingle(Attributes atts) {
+		List<IncrementalMfd> mfdList = new ArrayList<>();
+		for (SingleData singleData : mfdHelper.singleData(atts)) {
+			mfdList.addAll(buildSingle(singleData));
+		}
+		return mfdList;
+	}
+	
+	private List<IncrementalMfd> buildSingle(SingleData data) {
 
 		List<IncrementalMfd> mfds = Lists.newArrayList();
 

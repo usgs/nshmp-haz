@@ -203,7 +203,6 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 		}
 
 		Builder rate(double rate) {
-			// TODO better rate filtering ??
 			checkArgument(Doubles.isFinite(rate), "Rate is not a finite value");
 			rates.add(rate);
 			return this;

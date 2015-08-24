@@ -221,9 +221,6 @@ public class FaultSource implements Source {
 			return this;
 		}
 
-		// NPE checks in the two methods below will be redone by
-		// ImmutableList.Builder which disallows nulls
-
 		Builder mfd(IncrementalMfd mfd) {
 			this.mfdsBuilder.add(checkNotNull(mfd, "MFD is null"));
 			return this;

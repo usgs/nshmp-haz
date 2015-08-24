@@ -6,13 +6,15 @@ import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
 import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.INDICES;
-import static org.opensha2.eq.model.SourceAttribute.M;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
 import static org.opensha2.eq.model.SourceAttribute.RAKE;
-import static org.opensha2.eq.model.SourceAttribute.RATE;
 import static org.opensha2.eq.model.SourceAttribute.TYPE;
 import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceAttribute.WIDTH;
+import static org.opensha2.mfd.MfdType.GR;
+import static org.opensha2.mfd.MfdType.GR_TAPER;
+import static org.opensha2.mfd.MfdType.INCR;
+import static org.opensha2.mfd.MfdType.SINGLE;
 import static org.opensha2.util.Parsing.rangeStringToIntList;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readEnum;
@@ -27,12 +29,17 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha2.eq.fault.surface.GriddedSurface;
+import org.opensha2.eq.model.MfdHelper.SingleData;
+import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
+import org.opensha2.mfd.Mfds;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.google.common.collect.Iterables;
 
 /*
  * Non-validating indexed fault source parser. SAX parser 'Attributes' are
@@ -54,18 +61,27 @@ class SystemParser extends DefaultHandler {
 	private Locator locator;
 
 	private GmmSet gmmSet;
-
-	private List<GriddedSurface> sections; // TODO can these RuptureSurface??
+	// TODO can these be RuptureSurfaces??
+	private List<GriddedSurface> sections;
 	private SystemSourceSet sourceSet;
 	private SystemSourceSet.Builder sourceSetBuilder;
 
-	// instead of building IncrementalMFD's this parser just holds onto
-	// mag and rate to directly populate SystemSourceSet
-	private double sourceMag;
-	private double sourceRate;
+	/*
+	 * Currently, SystemSourceSets simply maintain lists of magnitudes and rates
+	 * for each rupture, but they may be refactored in the future to support one
+	 * or more MFDs (e.g. aleatory uncertainty on magnitude may be desired).
+	 * This parser has been constructed assuming this will be the case and
+	 * although it adds some unnecessary overhead at this time (mag and rate are
+	 * simply pulled from the MFD for the SystemSourceSet.Builder; the MFD
+	 * reference is not retained), it ensures consistency with other SourceSet
+	 * implementations and that MFDs are fully specified between sources and
+	 * defaults.
+	 */
+	private IncrementalMfd mfd;
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
+	private MfdHelper.Builder mfdHelperBuilder;
 	private MfdHelper mfdHelper;
 
 	// Traces are the only text content in source files
@@ -107,7 +123,6 @@ class SystemParser extends DefaultHandler {
 		}
 
 		try {
-			//@formatter:off
 			switch (e) {
 
 				case SYSTEM_SOURCE_SET:
@@ -122,30 +137,28 @@ class SystemParser extends DefaultHandler {
 						.gmms(gmmSet);
 					sourceSetBuilder.sections(sections);
 					log.info("   Sections: " + sections.size());
-					log.info("Rupture set: "  + name + "/" + RUPTURES_FILENAME);
+					log.info("Rupture set: " + name + "/" + RUPTURES_FILENAME);
 					log.info(" Set weight: " + weight);
+					mfdHelperBuilder = MfdHelper.builder();
+					mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
 					break;
 
 				case DEFAULT_MFDS:
-					mfdHelper = MfdHelper.create();
 					parsingDefaultMFDs = true;
 					break;
 
 				case INCREMENTAL_MFD:
 					if (parsingDefaultMFDs) {
-						mfdHelper.addDefault(atts);
+						mfdHelperBuilder.addDefault(atts);
 						break;
 					}
-					MfdType type = readEnum(TYPE, atts, MfdType.class);
-					checkState(type == MfdType.SINGLE, "Only SINGLE mfds are supported");
-					sourceMag = readDouble(M, atts);
-					sourceRate = readDouble(RATE, atts);
+					mfd = buildMfd(atts);
 					break;
 
 				case GEOMETRY:
 					sourceSetBuilder
-						.mag(sourceMag)
-						.rate(sourceRate)
+						.mag(mfd.getX(0))
+						.rate(mfd.getY(0))
 						.indices(rangeStringToIntList(readString(INDICES, atts)))
 						.depth(readDouble(DEPTH, atts))
 						.dip(readDouble(DIP, atts))
@@ -154,7 +167,6 @@ class SystemParser extends DefaultHandler {
 					break;
 
 			}
-			//@formatter:on
 
 		} catch (Exception ex) {
 			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
@@ -176,6 +188,8 @@ class SystemParser extends DefaultHandler {
 
 				case DEFAULT_MFDS:
 					parsingDefaultMFDs = false;
+					mfdHelper = mfdHelperBuilder.build();
+					checkDefaultMfds();
 					break;
 
 				case SYSTEM_SOURCE_SET:
@@ -195,6 +209,24 @@ class SystemParser extends DefaultHandler {
 
 	@Override public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
+	}
+
+	private void checkDefaultMfds() {
+		checkState(
+			mfdHelper.typeCount(SINGLE) <= 1 &&
+				mfdHelper.typeCount(INCR) == 0 &&
+				mfdHelper.typeCount(GR) == 0 &&
+				mfdHelper.typeCount(GR_TAPER) == 0,
+			"Only one SINGLE default MFD may be defined");
+	}
+
+	private IncrementalMfd buildMfd(Attributes atts) {
+		MfdType type = readEnum(TYPE, atts, MfdType.class);
+		checkState(type == MfdType.SINGLE, "Only SINGLE mfds are supported");
+		// ensures only one SINGLE mfd exists
+		SingleData singleData = Iterables.getOnlyElement(mfdHelper.singleData(atts));
+		return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
+			singleData.floats);
 	}
 
 }

@@ -64,6 +64,10 @@ public final class Mfds {
 		return newSingleMFD(mag, cumRate, floats);
 	}
 
+	// TODO The assumption below is pretty bad, especially if we want to recombine
+	// MFDs and may end up with uneven spacing. Why does an MFD have to be evenly
+	// spaced?? Seems overly restrictive.
+	
 	/**
 	 * Creates a new {@code IncrementalMfd} with the supplied magnitudes and
 	 * rates. For the MFD returned, {@link IncrementalMfd#floats()} always
