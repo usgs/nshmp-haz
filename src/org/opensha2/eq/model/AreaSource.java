@@ -102,7 +102,7 @@ public class AreaSource implements Source {
 	@Override public int size() {
 
 		// TODO revisit
-		// what type of point sources ar ebeing used?
+		// what type of point sources are being used?
 		// create example point source and get rupCount??
 
 		int mechCount = mechCount(mechMap, sourceType);

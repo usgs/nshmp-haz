@@ -1,5 +1,6 @@
 package org.opensha2.eq.model;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
@@ -22,6 +23,8 @@ import static org.opensha2.util.Parsing.stringToValueValueWeightMap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.logging.Logger;
@@ -29,9 +32,14 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha2.data.DataUtils;
+import org.opensha2.data.XY_Sequence;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.eq.model.MfdHelper.GR_Data;
+import org.opensha2.eq.model.MfdHelper.IncrData;
+import org.opensha2.eq.model.MfdHelper.SingleData;
+import org.opensha2.eq.model.MfdHelper.TaperData;
 import org.opensha2.geo.Location;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
@@ -42,6 +50,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSortedSet.Builder;
 import com.google.common.primitives.Doubles;
 
 /*
@@ -61,6 +71,7 @@ class GridParser extends DefaultHandler {
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
+	private MfdHelper.Builder mfdHelperBuilder;
 	private MfdHelper mfdHelper;
 
 	private GmmSet gmmSet;
@@ -115,7 +126,6 @@ class GridParser extends DefaultHandler {
 		} catch (IllegalArgumentException iae) {
 			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
 		}
-		// @formatter:off
 		switch (e) {
 
 			case GRID_SOURCE_SET:
@@ -127,14 +137,15 @@ class GridParser extends DefaultHandler {
 					.name(name)
 					.id(id)
 					.weight(weight);
-				
 				sourceSetBuilder.gmms(gmmSet);
 				if (log.isLoggable(FINE)) {
 					log.fine("");
 					log.fine("       Name: " + name);
 					log.fine("     Weight: " + weight);
 				}
-				mfdHelper = MfdHelper.create();
+//				mfdHelperBuilder = MfdHelper.singleTypeBuilder(); TODO revisit/clean
+				mfdHelperBuilder = MfdHelper.builder();
+				mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
 				break;
 
 			case DEFAULT_MFDS:
@@ -143,7 +154,7 @@ class GridParser extends DefaultHandler {
 
 			case INCREMENTAL_MFD:
 				if (parsingDefaultMFDs) {
-					deltaMag = mfdHelper.addDefault(atts);
+					mfdHelperBuilder.addDefault(atts);
 				}
 				break;
 
@@ -172,8 +183,8 @@ class GridParser extends DefaultHandler {
 					log.fine("Focal mechs: " + mechMap);
 					log.fine("Rup scaling: " + rupScaling);
 					log.fine("     Strike: " + strike);
-					String typeOverride = (type != config.pointSourceType) ? " (" + 
-							config.pointSourceType + " overridden)" : "";
+					String typeOverride = (type != config.pointSourceType) ? " (" +
+						config.pointSourceType + " overridden)" : "";
 					log.fine("Source type: " + type + typeOverride);
 				}
 				break;
@@ -192,7 +203,6 @@ class GridParser extends DefaultHandler {
 				}
 				break;
 		}
-		// @formatter:on
 	}
 
 	@Override public void endElement(String uri, String localName, String qName)
@@ -209,6 +219,7 @@ class GridParser extends DefaultHandler {
 
 			case DEFAULT_MFDS:
 				parsingDefaultMFDs = false;
+				mfdHelper = mfdHelperBuilder.build();
 				break;
 
 			case NODE:
@@ -230,6 +241,9 @@ class GridParser extends DefaultHandler {
 				 * 
 				 * We should read precision of supplied mMin and mMax and delta
 				 * and use largest for formatting
+				 * 
+				 * TODO in the case of single combined/flattened MFDs, mags may
+				 * not be uniformly spaced. Can this be refactored
 				 */
 				double cleanDelta = Double.valueOf(String.format("%.2f", deltaMag));
 				double[] mags = DataUtils.buildCleanSequence(minMag, maxMag, cleanDelta, true, 2);
@@ -258,41 +272,143 @@ class GridParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
+	/*
+	 * Currently, grid sources may have multiple defaults of a uniform
+	 * type. No checking is done to see if node types match defaults.
+	 * Defaults are collapsed into a single MFD.
+	 */
+	
 	private IncrementalMfd processNode(Attributes atts) {
 		MfdType type = readEnum(TYPE, atts, MfdType.class);
 
 		switch (type) {
 			case GR:
-				MfdHelper.GR_Data grData = mfdHelper.getGR(atts);
-				int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
-				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
-					nMagGR, grData.b, 1.0);
-				mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
-					grData.weight);
-				return mfdGR;
+				return buildGR(atts);
+//				MfdHelper.GR_Data grData = mfdHelper.getGR(atts);
+//				int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
+//				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
+//					nMagGR, grData.b, 1.0);
+//				mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
+//					grData.weight);
+//				return mfdGR;
 
 			case INCR:
-				MfdHelper.IncrData incrData = mfdHelper.getIncremental(atts);
-				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
-					DataUtils.multiply(incrData.weight, incrData.rates));
-				return mfdIncr;
+				return buildIncr(atts);
+//				MfdHelper.IncrData incrData = mfdHelper.getIncremental(atts);
+//				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
+//					DataUtils.multiply(incrData.weight, incrData.rates));
+//				return mfdIncr;
 
 			case SINGLE:
-				MfdHelper.SingleData singleData = mfdHelper.getSingle(atts);
-				return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
-					singleData.floats);
+				return buildSingle(atts);
+//				MfdHelper.SingleData singleData = mfdHelper.getSingle(atts);
+//				return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
+//					singleData.floats);
 
 			case GR_TAPER:
-				MfdHelper.TaperData taperData = mfdHelper.getTapered(atts);
-				int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
-				IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
-					taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
-					taperData.weight);
-				return mfdTaper;
+				return buildTapered(atts);
+//				MfdHelper.TaperData taperData = mfdHelper.getTapered(atts);
+//				int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
+//				IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
+//					taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
+//					taperData.weight);
+//				return mfdTaper;
 
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
 
 		}
 	}
+
+	private IncrementalMfd buildGR(Attributes atts) {
+		List<GR_Data> grDataList = mfdHelper.grData(atts);
+		GR_Data grData = grDataList.get(0);
+		deltaMag = grData.dMag;
+		return buildGR(grData);
+//		if (grDataList.size() == 1) return buildGR(grDataList.get(0));
+//		List<IncrementalMfd> mfds = new ArrayList<>();
+//		for (GR_Data grData : grDataList) {
+//			mfds.add(buildGR(grData));
+//		}
+//		return combineGR(mfds);
+	}
+	
+	private static IncrementalMfd buildGR(GR_Data grData) {
+		int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
+		IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
+			nMagGR, grData.b, 1.0);
+		mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
+			grData.weight);
+		return mfdGR;
+	}
+	
+	/*
+	 * TODO we NEED to check that x-domains, spacing are the same/similar for GR
+	 */
+	private IncrementalMfd combineGR(List<IncrementalMfd> mfds) {
+		
+		// TODO just returning the first one for now
+		// TODO
+		// TODO This is likely going to require refactoring Point Source
+		// MFDs to be XY_Sequences because IncrementalMfd descends from
+		// evenly discretized function; more relevant to combining single mfds
+		// that contain non-unifrmely spaced magnitudes
+		//
+		// TODO need to ensure that defaults are only of a single type
+		checkArgument(mfds.size() > 0);
+		return mfds.get(0);
+		
+//		// create master x-value sequence
+//		Builder<Double> builder = ImmutableSortedSet.naturalOrder();
+//		for (IncrementalMfd mfd : mfds) {
+//			builder.addAll(mfd.xValues());
+//		}
+//		double[] xMaster = Doubles.toArray(builder.build());
+		
+	}
+	
+	// TODO are there circumstances under which one would
+	// combine multiple INCR MFDs??
+	private  IncrementalMfd buildIncr(Attributes atts) {
+		List<IncrData> incrDataList = mfdHelper.incrementalData(atts);
+		IncrData incrData = incrDataList.get(0);
+		deltaMag = incrData.mags[1] - incrData.mags[0];
+		return buildIncr(incrData);
+	}
+
+	private static IncrementalMfd buildIncr(IncrData incrData) {
+		IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
+			DataUtils.multiply(incrData.weight, incrData.rates));
+		return mfdIncr;
+	}
+	
+	private IncrementalMfd buildSingle(Attributes atts) {
+		List<SingleData> singleDataList = mfdHelper.singleData(atts);
+		SingleData singleData = singleDataList.get(0);
+		deltaMag = 0.0;
+		return buildSingle(singleData);
+	}
+	
+	private static IncrementalMfd buildSingle(SingleData singleData) {
+		return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
+			singleData.floats);
+	}
+	
+	private IncrementalMfd buildTapered(Attributes atts) {
+		List<TaperData> taperDataList = mfdHelper.taperData(atts);
+		TaperData taperData = taperDataList.get(0);
+		deltaMag = taperData.dMag;
+		return buildTapered(taperData);
+	}
+	
+	private static IncrementalMfd buildTapered(TaperData taperData) {
+		int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
+		IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
+			taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
+			taperData.weight);
+		return mfdTaper;
+	}
+	
+	
+	
 }

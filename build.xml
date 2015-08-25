@@ -28,6 +28,7 @@
 	</target>
 
 
+	<!-- Compile source and copy resources. -->
 	<target name="compile">
 
 		<!-- Clean the classes/ directory -->
@@ -53,6 +54,10 @@
 			<fileset dir="${lib.dir}" excludes="**/*.jar" />
 		</copy>
 
+	</target>
+	
+	<target name="compile-tests">
+	
 	</target>
 
 

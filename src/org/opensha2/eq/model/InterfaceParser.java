@@ -9,9 +9,7 @@ import static org.opensha2.eq.model.SourceAttribute.DIP;
 import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
 import static org.opensha2.eq.model.SourceAttribute.RAKE;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_FLOATING;
 import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
-import static org.opensha2.eq.model.SourceAttribute.SURFACE_SPACING;
 import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceAttribute.WIDTH;
 import static org.opensha2.util.Parsing.readDouble;
@@ -21,12 +19,15 @@ import static org.opensha2.util.Parsing.readString;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.eq.model.MfdHelper.GR_Data;
+import org.opensha2.eq.model.MfdHelper.SingleData;
 import org.opensha2.geo.LocationList;
 import org.opensha2.mfd.GutenbergRichterMfd;
 import org.opensha2.mfd.IncrementalMfd;
@@ -65,6 +66,7 @@ class InterfaceParser extends DefaultHandler {
 
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
+	private MfdHelper.Builder mfdHelperBuilder;
 	private MfdHelper mfdHelper; 
 
 	// Traces are the only text content in source files
@@ -119,7 +121,8 @@ class InterfaceParser extends DefaultHandler {
 						log.fine("       Name: " + name);
 						log.fine("     Weight: " + weight);
 					}
-					mfdHelper = MfdHelper.create();
+					mfdHelperBuilder = MfdHelper.builder();
+					mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
 					break;
 
 				case DEFAULT_MFDS:
@@ -146,10 +149,10 @@ class InterfaceParser extends DefaultHandler {
 
 				case INCREMENTAL_MFD:
 					if (parsingDefaultMFDs) {
-						mfdHelper.addDefault(atts);
+						mfdHelperBuilder.addDefault(atts);
 						break;
 					}
-					sourceBuilder.mfd(buildMFD(atts));
+					sourceBuilder.mfds(buildMfds(atts));
 					break;
 
 				case GEOMETRY:
@@ -204,6 +207,7 @@ class InterfaceParser extends DefaultHandler {
 
 				case DEFAULT_MFDS:
 					parsingDefaultMFDs = false;
+					mfdHelper = mfdHelperBuilder.build();
 					break;
 
 				case TRACE:
@@ -240,24 +244,36 @@ class InterfaceParser extends DefaultHandler {
 		this.locator = locator;
 	}
 
-	private IncrementalMfd buildMFD(Attributes atts) {
-		// TODO revisit, clean, and handle exceptions
+	private List<IncrementalMfd> buildMfds(Attributes atts) {
 		MfdType type = MfdType.valueOf(atts.getValue("type"));
 		switch (type) {
 			case GR:
-				return buildGR(mfdHelper.getGR(atts));
+				return buildGR(atts);
 			case SINGLE:
-				return buildSingle(mfdHelper.getSingle(atts));
+				return buildSingle(atts);
 			default:
-				throw new IllegalStateException(type + " not yet implemented");
+				throw new IllegalStateException(type + " not supported");
 		}
 	}
 
 	/*
-	 * Builds GR MFD. Method will throw IllegalStateException if attribute
-	 * values yield an MFD with no magnitude bins.
+	 * InterfaceSource.Builder creates an ImmutableList; so no need for one
+	 * in methods below.
 	 */
-	private IncrementalMfd buildGR(MfdHelper.GR_Data data) {
+
+	/*
+	 * Build GR MFDs. Method throws IllegalStateException if attribute values
+	 * yield an MFD with no magnitude bins.
+	 */
+	private List<IncrementalMfd> buildGR(Attributes atts) {
+		List<IncrementalMfd> mfdList = new ArrayList<>();
+		for (GR_Data grData : mfdHelper.grData(atts)) {
+			mfdList.add(buildGR(grData));
+		}
+		return mfdList;
+	}
+
+	private IncrementalMfd buildGR(GR_Data data) {
 
 		int nMag = Mfds.magCount(data.mMin, data.mMax, data.dMag);
 		checkState(nMag > 0, "GR MFD with no mags");
@@ -270,8 +286,16 @@ class InterfaceParser extends DefaultHandler {
 		return mfd;
 	}
 
-	/* Builds single MFD */
-	private IncrementalMfd buildSingle(MfdHelper.SingleData data) {
+	/* Build SINGLE MFDs. */
+	private List<IncrementalMfd> buildSingle(Attributes atts) {
+		List<IncrementalMfd> mfdList = new ArrayList<>();
+		for (SingleData singleData : mfdHelper.singleData(atts)) {
+			mfdList.add(buildSingle(singleData));
+		}
+		return mfdList;
+	}
+
+	private IncrementalMfd buildSingle(SingleData data) {
 		IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
 		log.finer("   MFD type: SINGLE");
 		if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());

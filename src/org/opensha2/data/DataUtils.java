@@ -1044,11 +1044,17 @@ public final class DataUtils {
 	 * domain of a sequence are set to 0, while those inside the original domain
 	 * are sampled via linear interpolation.
 	 * 
+	 * 
 	 * @param sequences to combine
 	 * @return a combined sequence
 	 */
+	@Deprecated
 	public static XY_Sequence combine(Iterable<XY_Sequence> sequences) {
 
+		// TODO I think we want to have interpolating and non-interpolating
+		// flavors. Interpolating for visual presentation, non-interpolating
+		// for re-use as MFD
+		
 		// create master x-value sequence
 		Builder<Double> builder = ImmutableSortedSet.naturalOrder();
 		for (XY_Sequence sequence : sequences) {
