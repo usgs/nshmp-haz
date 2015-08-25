@@ -122,7 +122,8 @@ final class AsyncCalc {
 	/**
 	 * Reduce a future HazardCurves to a future HazardCurveSet.
 	 */
-	 static final ListenableFuture<HazardCurveSet> toHazardCurveSet(
+	@SuppressWarnings("unchecked")
+	static final ListenableFuture<HazardCurveSet> toHazardCurveSet(
 			final ListenableFuture<HazardCurves> curves,
 			final SystemSourceSet sourceSet,
 			final Map<Imt, ArrayXY_Sequence> modelCurves,
@@ -149,39 +150,38 @@ final class AsyncCalc {
 			ex);
 	}
 
-	
 	// single thread system calc
 	static final HazardCurveSet systemToCurves(
 			final SystemSourceSet sourceSet,
 			final Site site,
 			final CalcConfig config) {
-		
+
 		Stopwatch sw = Stopwatch.createStarted();
-		
+
 		Function<SystemSourceSet, InputList> inputFn = new SystemSourceSet.ToInputs(site);
 		InputList inputs = inputFn.apply(sourceSet);
 		System.out.println("Inputs: " + inputs.size() + "  " + sw);
-		
+
 		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
 		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, config.imts());
 		Function<InputList, GroundMotions> gmFn = new InputsToGroundMotions(gmmInstances);
 		GroundMotions groundMotions = gmFn.apply(inputs);
 		System.out.println("GroundMotions: " + sw);
-		
+
 		Map<Imt, ArrayXY_Sequence> modelCurves = config.logModelCurves();
 		Function<GroundMotions, HazardCurves> curveFn = new GroundMotionsToCurves(
 			modelCurves, config.exceedanceModel, config.truncationLevel);
 		HazardCurves hazardCurves = curveFn.apply(groundMotions);
 		System.out.println("HazardCurves: " + sw);
-		
+
 		Function<List<HazardCurves>, HazardCurveSet> consolidateFn = new CurveConsolidator(
 			sourceSet, modelCurves);
 		HazardCurveSet curveSet = consolidateFn.apply(ImmutableList.of(hazardCurves));
 		System.out.println("CurveSet: " + sw);
-		
+
 		return curveSet;
 	}
-	
+
 	/*
 	 * System sources ...
 	 * 
