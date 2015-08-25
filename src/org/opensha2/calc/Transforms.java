@@ -23,6 +23,7 @@ import org.opensha2.eq.model.ClusterSourceSet;
 import org.opensha2.eq.model.Distance;
 import org.opensha2.eq.model.Distance.Type;
 import org.opensha2.eq.model.FaultSource;
+import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Rupture;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
@@ -196,17 +197,26 @@ final class Transforms {
 
 	static final class CurveSetConsolidator implements Function<List<HazardCurveSet>, HazardResult> {
 
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
 		private final Site site;
+		private final HazardModel model;
+		private final CalcConfig config;
 
-		CurveSetConsolidator(final Map<Imt, ArrayXY_Sequence> modelCurves, final Site site) {
-			this.modelCurves = modelCurves;
+		CurveSetConsolidator(
+				final Site site,
+				final HazardModel model,
+				final CalcConfig config) {
+
 			this.site = site;
+			this.model = model;
+			this.config = config;
 		}
 
 		@Override public HazardResult apply(final List<HazardCurveSet> curveSetList) {
 
-			HazardResult.Builder resultBuilder = HazardResult.builder(modelCurves, site);
+			HazardResult.Builder resultBuilder = HazardResult
+				.builder(config)
+				.site(site)
+				.model(model);
 
 			for (HazardCurveSet curves : curveSetList) {
 				resultBuilder.addCurveSet(curves);

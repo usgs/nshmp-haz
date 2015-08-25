@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.data.DataUtils;
+import org.opensha2.data.XY_Sequence;
 import org.opensha2.gmm.Imt;
 import org.opensha2.util.Parsing;
 
@@ -163,6 +164,14 @@ public final class CalcConfig {
 	 */
 	public Iterable<Site> sites() {
 		return sites;
+	}
+	
+	/**
+	 * Return an empty linear (i.e. not log) curve for the requested {@code Imt}.
+	 * @param imt to get curve for
+	 */
+	public XY_Sequence modelCurve(Imt imt) {
+		return modelCurves.get(imt);
 	}
 	
 	public static final class DeaggData {

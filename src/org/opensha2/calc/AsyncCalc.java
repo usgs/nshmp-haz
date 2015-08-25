@@ -22,6 +22,7 @@ import org.opensha2.calc.Transforms.SourceToInputs;
 import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.ClusterSourceSet;
+import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SystemSourceSet;
@@ -134,13 +135,14 @@ final class AsyncCalc {
 	 */
 	static final ListenableFuture<HazardResult> toHazardResult(
 			final AsyncList<HazardCurveSet> curveSets,
-			final Map<Imt, ArrayXY_Sequence> modelCurves,
+			final CalcConfig config,
 			final Site site,
+			final HazardModel model,
 			final Executor ex) {
 
 		return transform(
 			allAsList(curveSets),
-			new CurveSetConsolidator(modelCurves, site),
+			new CurveSetConsolidator(site, model, config),
 			ex);
 	}
 

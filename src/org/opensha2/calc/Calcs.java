@@ -129,7 +129,7 @@ public class Calcs {
 		}
 
 		ListenableFuture<HazardResult> futureResult = toHazardResult(curveSetCollector,
-			config.logModelCurves, site, executor);
+			config, site, model, executor);
 
 		return futureResult.get();
 

@@ -145,8 +145,12 @@ final class HazardCurveSet {
 			checkState(!built, "This %s instance has already been used", ID);
 			built = true;
 			computeFinal();
-			return new HazardCurveSet(sourceSet, hazardGroundMotionsList, clusterGroundMotionsList,
-				curveMap, totalCurves);
+			return new HazardCurveSet(
+				sourceSet,
+				hazardGroundMotionsList,
+				clusterGroundMotionsList,
+				curveMap,
+				totalCurves);
 		}
 
 		/*

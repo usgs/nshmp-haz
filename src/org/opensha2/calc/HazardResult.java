@@ -11,11 +11,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 
 /**
@@ -31,13 +33,22 @@ public final class HazardResult {
 
 	final SetMultimap<SourceType, HazardCurveSet> sourceSetMap;
 	final Map<Imt, ArrayXY_Sequence> totalCurves;
+	final HazardModel model;
 	final Site site;
+	final CalcConfig config;
 
-	private HazardResult(SetMultimap<SourceType, HazardCurveSet> sourceSetMap,
-			Map<Imt, ArrayXY_Sequence> totalCurves, Site site) {
+	private HazardResult(
+			SetMultimap<SourceType, HazardCurveSet> sourceSetMap,
+			Map<Imt, ArrayXY_Sequence> totalCurves,
+			HazardModel model,
+			Site site,
+			CalcConfig config) {
+		
 		this.sourceSetMap = sourceSetMap;
 		this.totalCurves = totalCurves;
+		this.model = model;
 		this.site = site;
+		this.config = config;
 	}
 
 	@Override public String toString() {
@@ -80,14 +91,21 @@ public final class HazardResult {
 	}
 
 	/**
-	 * The total mean hazard curve.
+	 * The total mean hazard curves for each calculated {@code Imt}.
 	 */
 	public Map<Imt, ArrayXY_Sequence> curves() {
 		return totalCurves;
 	}
+	
+	/**
+	 * The original configuration used to generate this result.
+	 */
+	public CalcConfig config() {
+		return config;
+	}
 
-	static Builder builder(Map<Imt, ArrayXY_Sequence> modelCurves, Site site) {
-		return new Builder(modelCurves, site);
+	static Builder builder(CalcConfig config) {
+		return new Builder(config);
 	}
 
 	static class Builder {
@@ -95,15 +113,17 @@ public final class HazardResult {
 		private static final String ID = "HazardResult.Builder";
 		private boolean built = false;
 
+		private HazardModel model;
 		private Site site;
+		private CalcConfig config;
+		
 		private ImmutableSetMultimap.Builder<SourceType, HazardCurveSet> resultMapBuilder;
 		private Map<Imt, ArrayXY_Sequence> totalCurves;
 
-		private Builder(Map<Imt, ArrayXY_Sequence> modelCurves, Site site) {
-			this.site = checkNotNull(site);
-			checkNotNull(modelCurves);
+		private Builder(CalcConfig config) {
+			this.config = checkNotNull(config);
 			totalCurves = new EnumMap<>(Imt.class);
-			for (Entry<Imt, ArrayXY_Sequence> entry : modelCurves.entrySet()) {
+			for (Entry<Imt, ArrayXY_Sequence> entry : config.logModelCurves.entrySet()) {
 				totalCurves.put(entry.getKey(), copyOf(entry.getValue()).clear());
 			}
 			resultMapBuilder = ImmutableSetMultimap.builder();
@@ -111,10 +131,16 @@ public final class HazardResult {
 
 		Builder site(Site site) {
 			checkState(this.site == null, "%s site already set", ID);
-			checkNotNull(site);
+			this.site = checkNotNull(site);
 			return this;
 		}
-
+		
+		Builder model(HazardModel model) {
+			checkState(this.model == null, "%s model already set", ID);
+			this.model = checkNotNull(model);
+			return this;
+		}
+		
 		Builder addCurveSet(HazardCurveSet curveSet) {
 			resultMapBuilder.put(curveSet.sourceSet.type(), curveSet);
 			for (Entry<Imt, ArrayXY_Sequence> entry : curveSet.totalCurves.entrySet()) {
@@ -123,11 +149,20 @@ public final class HazardResult {
 			return this;
 		}
 
+		private void validateState(String mssgID) {
+			checkState(!built, "This %s instance has already been used", mssgID);
+			checkState(site != null, "%s site not set", mssgID);
+			checkState(model != null, "%s model not set", mssgID);
+		}
+		
 		HazardResult build() {
-			// TODO totalCurves currently mutable; use ImmutableEnumMap
-			// instead??
-			checkState(!built, "This %s instance has already been used", ID);
-			return new HazardResult(resultMapBuilder.build(), totalCurves, site);
+			validateState(ID);
+			return new HazardResult(
+				resultMapBuilder.build(), 
+				Maps.immutableEnumMap(totalCurves),
+				model,
+				site,
+				config);
 		}
 
 	}
