@@ -31,10 +31,31 @@ import com.google.gson.GsonBuilder;
 
 /**
  * Calculation configuration.
+ * 
+ * All config fields are immutable and all methods return immutable objects.
+ * 
  * @author Peter Powers
  */
 public final class CalcConfig {
 
+	/**
+	 * Returns models of the intensity measure levels for each {@code Imt}
+	 * adressed by this calculation. The {@code Map} returned by this method is
+	 * an immutable {@code EnumMap}.
+	 * 
+	 * @see Maps#immutableEnumMap(Map)
+	 */
+
+	/**
+	 * Returns models of the intensity measure levels for each {@code Imt}
+	 * adressed by this calculation. The x-values in each sequence are in
+	 * natural log space. The {@code Map} returned by this method is an
+	 * immutable {@code EnumMap}.
+	 * 
+	 * @see Maps#immutableEnumMap(Map)
+	 */
+
+	
 	// TODO revisit privatization, comments, and immutability
 
 	static final String FILE_NAME = "config.json";
@@ -43,11 +64,14 @@ public final class CalcConfig {
 
 	final ExceedanceModel exceedanceModel;
 	final double truncationLevel;
-	private final Set<Imt> imts;
+	final Set<Imt> imts;
 	private final double[] defaultImls;
 	private final Map<Imt, double[]> customImls;
-	private final DeaggData deagg;
+	final DeaggData deagg;
 	private final SiteSet sites;
+	
+	final Map<Imt, ArrayXY_Sequence> modelCurves;
+	final Map<Imt, ArrayXY_Sequence> logModelCurves;
 
 	private static final Gson GSON = new GsonBuilder()
 		.registerTypeAdapter(Site.class, new Site.Deserializer())
@@ -62,7 +86,9 @@ public final class CalcConfig {
 			double[] defaultImls,
 			Map<Imt, double[]> customImls,
 			DeaggData deagg,
-			SiteSet sites) {
+			SiteSet sites,
+			Map<Imt, ArrayXY_Sequence> modelCurves,
+			Map<Imt, ArrayXY_Sequence> logModelCurves) {
 
 		this.resource = resource;
 		this.exceedanceModel = exceedanceModel;
@@ -72,6 +98,8 @@ public final class CalcConfig {
 		this.customImls = customImls;
 		this.deagg = deagg;
 		this.sites = sites;
+		this.modelCurves = modelCurves;
+		this.logModelCurves = logModelCurves;
 	}
 
 	private enum Key {
@@ -130,70 +158,13 @@ public final class CalcConfig {
 	}
 
 	/**
-	 * Returns models of the intensity measure levels for each {@code Imt}
-	 * adressed by this calculation. The x-values in each sequence are in
-	 * natural log space. The {@code Map} returned by this method is an
-	 * immutable {@code EnumMap}.
-	 * 
-	 * @see Maps#immutableEnumMap(Map)
-	 */
-	public Map<Imt, ArrayXY_Sequence> logModelCurves() {
-		Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
-		for (Imt imt : imts) {
-			double[] imls = imlsForImt(imt);
-			imls = Arrays.copyOf(imls, imls.length);
-			DataUtils.ln(imls);
-			curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
-		}
-		return Maps.immutableEnumMap(curveMap);
-	}
-
-	/**
-	 * Returns models of the intensity measure levels for each {@code Imt}
-	 * adressed by this calculation. The {@code Map} returned by this method is
-	 * an immutable {@code EnumMap}.
-	 * 
-	 * @see Maps#immutableEnumMap(Map)
-	 */
-	public Map<Imt, ArrayXY_Sequence> modelCurves() {
-		Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
-		for (Imt imt : imts) {
-			double[] imls = imlsForImt(imt);
-			imls = Arrays.copyOf(imls, imls.length);
-			curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
-		}
-		return Maps.immutableEnumMap(curveMap);
-	}
-
-	private double[] imlsForImt(Imt imt) {
-		return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
-	}
-
-	/**
-	 * Return the {@code Set} of {@code Imt}s for which calculations will be
-	 * performed.
-	 */
-	public Set<Imt> imts() {
-		return imts;
-	}
-	
-	/**
 	 * Return an unmodifiable iterator over the {@code Site}s specified by this
 	 * configuration.
-	 * 
-	 * @see Iterables#unmodifiableIterable(Iterable)
 	 */
 	public Iterable<Site> sites() {
-		return Iterables.unmodifiableIterable(sites);
+		return sites;
 	}
 	
-	/**
-	 * Return the deaggregation data model spcified by this configuration.
-	 */
-	public DeaggData deagg() {
-		return deagg;
-	}
-
 	public static final class DeaggData {
 
 		public final double rMin;
@@ -308,6 +279,31 @@ public final class CalcConfig {
 			return this;
 		}
 
+		private Map<Imt, ArrayXY_Sequence> createLogCurveMap() {
+			Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
+			for (Imt imt : imts) {
+				double[] imls = imlsForImt(imt);
+				imls = Arrays.copyOf(imls, imls.length);
+				DataUtils.ln(imls);
+				curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
+			}
+			return Maps.immutableEnumMap(curveMap);
+		}
+
+		private  Map<Imt, ArrayXY_Sequence> createCurveMap() {
+			Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
+			for (Imt imt : imts) {
+				double[] imls = imlsForImt(imt);
+				imls = Arrays.copyOf(imls, imls.length);
+				curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
+			}
+			return Maps.immutableEnumMap(curveMap);
+		}
+
+		private double[] imlsForImt(Imt imt) {
+			return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
+		}
+
 		private static final String MSSG = "%s %s not set";
 
 		private void validateState(String buildId) {
@@ -325,10 +321,13 @@ public final class CalcConfig {
 		public CalcConfig build() {
 			validateState(ID);
 			Set<Imt> finalImts = Sets.immutableEnumSet(imts);
+			Map<Imt, ArrayXY_Sequence> curves = createCurveMap();
+			Map<Imt, ArrayXY_Sequence> logCurves = createLogCurveMap();
 			return new CalcConfig(
 				resource, exceedanceModel, truncationLevel, finalImts,
-				defaultImls, customImls, deagg, sites);
+				defaultImls, customImls, deagg, sites, curves, logCurves);
 		}
+		
 	}
 
 }

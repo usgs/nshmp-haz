@@ -126,14 +126,10 @@ final class Transforms {
 		private final ExceedanceModel exceedanceModel;
 		private final double truncationLevel;
 
-		GroundMotionsToCurves(
-				final Map<Imt, ArrayXY_Sequence> modelCurves,
-				final ExceedanceModel exceedanceModel,
-				final double truncationLevel) {
-
-			this.modelCurves = modelCurves;
-			this.exceedanceModel = exceedanceModel;
-			this.truncationLevel = truncationLevel;
+		GroundMotionsToCurves(CalcConfig config) {
+			this.modelCurves = config.logModelCurves;
+			this.exceedanceModel = config.exceedanceModel;
+			this.truncationLevel = config.truncationLevel;
 		}
 
 		@Override public HazardCurves apply(final GroundMotions groundMotions) {
@@ -158,15 +154,12 @@ final class Transforms {
 					List<Double> sigmas = gmmSigmas.get(gmm);
 
 					for (int i = 0; i < means.size(); i++) {
-						// TODO the model curve is passed in in linear space but
-						// for
-						// lognormal we need x-values to be ln(x)
-						exceedanceModel.exceedance(means.get(i), sigmas.get(i), truncationLevel,
-							imt, utilCurve);
-
-						// TODO clean
-						// setProbExceed(means.get(i), sigmas.get(i), utilCurve,
-						// TRUNCATION_UPPER_ONLY, 3.0);
+						exceedanceModel.exceedance(
+							means.get(i),
+							sigmas.get(i),
+							truncationLevel,
+							imt,
+							utilCurve);
 						utilCurve.multiply(groundMotions.inputs.get(i).rate);
 						gmmCurve.add(utilCurve);
 					}
@@ -267,25 +260,21 @@ final class Transforms {
 	static final class ClusterGroundMotionsToCurves implements
 			Function<ClusterGroundMotions, ClusterCurves> {
 
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
-		private final ExceedanceModel sigmaModel;
-		private final double truncLevel;
+		private final Map<Imt, ArrayXY_Sequence> logModelCurves;
+		private final ExceedanceModel exceedanceModel;
+		private final double truncationLevel;
 
-		ClusterGroundMotionsToCurves(
-				final Map<Imt, ArrayXY_Sequence> modelCurves,
-				final ExceedanceModel sigmaModel,
-				final double truncLevel) {
-
-			this.modelCurves = modelCurves;
-			this.sigmaModel = sigmaModel;
-			this.truncLevel = truncLevel;
+		ClusterGroundMotionsToCurves(CalcConfig config) {
+			this.logModelCurves = config.logModelCurves;
+			this.exceedanceModel = config.exceedanceModel;
+			this.truncationLevel = config.truncationLevel;
 		}
 
 		@Override public ClusterCurves apply(final ClusterGroundMotions clusterGroundMotions) {
 
 			Builder builder = ClusterCurves.builder(clusterGroundMotions);
 
-			for (Entry<Imt, ArrayXY_Sequence> entry : modelCurves.entrySet()) {
+			for (Entry<Imt, ArrayXY_Sequence> entry : logModelCurves.entrySet()) {
 
 				ArrayXY_Sequence modelCurve = entry.getValue();
 				Imt imt = entry.getKey();
@@ -307,13 +296,12 @@ final class Transforms {
 						List<Double> means = gmmMeans.get(gmm);
 						List<Double> sigmas = gmmSigmas.get(gmm);
 						for (int i = 0; i < hazardGroundMotions.inputs.size(); i++) {
-							sigmaModel.exceedance(means.get(i), sigmas.get(i), truncLevel, imt,
+							exceedanceModel.exceedance(
+								means.get(i),
+								sigmas.get(i),
+								truncationLevel,
+								imt,
 								utilCurve);
-
-							// TODO needs ln(x-values)
-							// setProbExceed(means.get(i), sigmas.get(i),
-							// utilCurve,
-							// TRUNCATION_UPPER_ONLY, 3.0);
 							utilCurve.multiply(hazardGroundMotions.inputs.get(i).rate);
 							magVarCurve.add(utilCurve);
 						}
@@ -323,6 +311,7 @@ final class Transforms {
 
 				double rate = clusterGroundMotions.parent.rate();
 				for (Gmm gmm : faultCurves.keySet()) {
+					// TODO where should this be pointing
 					ArrayXY_Sequence clusterCurve = Utils.calcClusterExceedProb(faultCurves
 						.get(gmm));
 					builder.addCurve(imt, gmm, clusterCurve.multiply(rate));

@@ -36,6 +36,7 @@ import org.opensha2.util.Parsing.Delimiter;
 import org.opensha2.util.TextUtils;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -47,7 +48,8 @@ import com.google.gson.JsonParseException;
 /**
  * A {@code SiteSet} is an Iterable over a group of {@code Site}s. The supplied
  * {@code Site}s may be defined internally by a region with common properties or
- * a list of individual sites.
+ * a list of individual sites. Any {@code iterator} returned by this class is
+ * unmodifiable.
  *
  * @author Peter Powers
  */
@@ -56,7 +58,7 @@ final class SiteSet implements Iterable<Site> {
 	final private GriddedRegion region;
 	final private Builder builder;
 	final private List<Site> sites;
-	
+
 	SiteSet(List<Site> sites) {
 		this.sites = checkNotNull(sites);
 		this.region = null;
@@ -73,6 +75,7 @@ final class SiteSet implements Iterable<Site> {
 		return (region == null) ? sites.size() : region.size();
 	}
 
+	// TODO use or clean
 	private static int computeLocationPrecision(GriddedRegion region) {
 		return Math.max(
 			new BigDecimal(region.latSpacing()).scale(),
@@ -80,7 +83,8 @@ final class SiteSet implements Iterable<Site> {
 	}
 
 	@Override public Iterator<Site> iterator() {
-		return (region == null) ? sites.iterator() : new RegionIterator();
+		return (region == null) ? Iterators.unmodifiableIterator(sites.iterator())
+			: new RegionIterator();
 	}
 
 	private final class RegionIterator implements Iterator<Site> {

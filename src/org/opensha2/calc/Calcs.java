@@ -38,6 +38,9 @@ public class Calcs {
 
 	// TODO if config specifies using grid tables, we need to reroute grid calcs
 	// where to build/store lookup table/object for each unique GmmSet
+	
+	// Note that all calcs are done in log space, only in a final
+	// step will x-values be returned to linear space
 
 	/**
 	 * Compute a hazard curve using the supplied {@link Executor}.
@@ -57,10 +60,9 @@ public class Calcs {
 			throws InterruptedException, ExecutionException {
 
 		AsyncList<HazardCurveSet> curveSetCollector = AsyncList.createWithCapacity(model.size());
-		Map<Imt, ArrayXY_Sequence> modelCurves = config.logModelCurves();
 
 		for (SourceSet<? extends Source> sourceSet : model) {
-			
+
 			if (sourceSet.type() == CLUSTER) {
 
 				ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
@@ -69,14 +71,16 @@ public class Calcs {
 				if (inputs.isEmpty()) continue; // all sources out of range
 
 				AsyncList<ClusterGroundMotions> groundMotions = toClusterGroundMotions(inputs,
-					clusterSourceSet, config.imts(), executor);
+					clusterSourceSet, config.imts, executor);
 
-				AsyncList<ClusterCurves> clusterCurves = toClusterCurves(groundMotions,
-					modelCurves, config.exceedanceModel, config.truncationLevel, executor);
+				AsyncList<ClusterCurves> clusterCurves = toClusterCurves(groundMotions, config,
+					executor);
 
-				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(clusterCurves, clusterSourceSet, modelCurves, executor);
+				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(clusterCurves,
+					clusterSourceSet, config.logModelCurves, executor);
 
 				curveSetCollector.add(curveSet);
+
 			} else if (sourceSet.type() == SYSTEM) {
 
 				SystemSourceSet systemSourceSet = (SystemSourceSet) sourceSet;
@@ -89,39 +93,43 @@ public class Calcs {
 					executor);
 
 				ListenableFuture<GroundMotions> groundMotions = toSystemGroundMotions(inputs,
-					systemSourceSet, config.imts(), executor);
+					systemSourceSet, config.imts, executor);
 
-				ListenableFuture<HazardCurves> systemCurves = toSystemCurves(groundMotions,
-					modelCurves, config.exceedanceModel, config.truncationLevel, executor);
-				
-				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(systemCurves, systemSourceSet, modelCurves, executor);
-				
+				ListenableFuture<HazardCurves> systemCurves = toSystemCurves(groundMotions, config,
+					executor);
+
+				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(systemCurves,
+					systemSourceSet, config.logModelCurves, executor);
+
 				curveSetCollector.add(curveSet);
-				
-//				HazardCurveSet curveSet = AsyncCalc.systemToCurves(systemSourceSet, site, config);
-//				curveSetCollector.add(Futures.immediateFuture(curveSet));
-				
+
+				// TODO clean
+				// HazardCurveSet curveSet =
+				// AsyncCalc.systemToCurves(systemSourceSet, site, config);
+				// curveSetCollector.add(Futures.immediateFuture(curveSet));
+
 			} else {
 
 				AsyncList<InputList> inputs = toInputs(sourceSet, site, executor);
 				if (inputs.isEmpty()) continue; // all sources out of range
 
 				AsyncList<GroundMotions> groundMotions = toGroundMotions(inputs, sourceSet,
-					config.imts(), executor);
+					config.imts, executor);
 
-				AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, modelCurves,
-					config.exceedanceModel, config.truncationLevel, executor);
+				AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, config,
+					executor);
 
-				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves, sourceSet, modelCurves, executor);
+				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves,
+					sourceSet, config.logModelCurves, executor);
 
 				curveSetCollector.add(curveSet);
 
 			}
-		
+
 		}
 
 		ListenableFuture<HazardResult> futureResult = toHazardResult(curveSetCollector,
-			modelCurves, site, executor);
+			config.logModelCurves, site, executor);
 
 		return futureResult.get();
 

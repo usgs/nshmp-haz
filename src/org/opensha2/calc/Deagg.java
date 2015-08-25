@@ -317,7 +317,7 @@ class Deagg {
 		 * @param c {@code CalcConfig} to process
 		 */
 		public static Model fromConfig(CalcConfig c) {
-			DeaggData d = c.deagg();
+			DeaggData d = c.deagg;
 			return create(d.mMin, d.mMax, d.Δm, d.rMin, d.rMax, d.Δr, d.εMin, d.εMax, d.Δε);
 		}
 
