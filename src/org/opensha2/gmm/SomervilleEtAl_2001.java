@@ -98,8 +98,12 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
 		// Somerville fixes depth at 6km - faults and gridded
 		double R = hypot(rJB, Z_MIN);
 
-		gnd += c.a3 * log(R) + c.a4 * (Mw - 6.4) * log(R) + c.a5 * rJB;
-		if (rJB >= R_CUT) gnd += c.a6 * (log(R) - log(R1));
+		gnd += c.a4 * (Mw - 6.4) * log(R) + c.a5 * rJB;
+		if (rJB < R_CUT) {
+			gnd += c.a3 * log(R);
+		} else {
+			gnd += c.a3 * log(R1) + c.a6 * (log(R) - log(R1));
+		}
 
 		return GmmUtils.ceusMeanClip(c.imt, gnd);
 	}
