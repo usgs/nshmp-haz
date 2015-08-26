@@ -53,7 +53,6 @@ public class SubSlab extends GmmTest {
 		AB_03_CASC_SLAB,
 		AB_03_CASC_SLAB_LOW_SAT,
 		BCHYDRO_12_SLAB,
-		BCHYDRO_12_SLAB,
 		YOUNGS_97_SLAB,
 		ZHAO_06_SLAB);
 
