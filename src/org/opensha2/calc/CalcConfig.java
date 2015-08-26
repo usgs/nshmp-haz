@@ -23,7 +23,6 @@ import org.opensha2.data.XY_Sequence;
 import org.opensha2.gmm.Imt;
 import org.opensha2.util.Parsing;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -234,14 +233,14 @@ public final class CalcConfig {
 		private static final String ID = "CalcConfig.Builder";
 		private boolean built = false;
 
-		Path resource;
-		ExceedanceModel exceedanceModel;
-		Double truncationLevel;
-		Set<Imt> imts;
-		double[] defaultImls;
-		Map<Imt, double[]> customImls;
-		DeaggData deagg;
-		SiteSet sites;
+		private Path resource;
+		private ExceedanceModel exceedanceModel;
+		private Double truncationLevel;
+		private Set<Imt> imts;
+		private double[] defaultImls;
+		private Map<Imt, double[]> customImls;
+		private DeaggData deagg;
+		private SiteSet sites;
 
 		public Builder copy(CalcConfig config) {
 			checkNotNull(config);
