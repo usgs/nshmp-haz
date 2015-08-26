@@ -22,6 +22,7 @@ import org.opensha2.calc.Transforms.SourceToInputs;
 import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.ClusterSourceSet;
+import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SystemSourceSet;
@@ -89,15 +90,10 @@ final class AsyncCalc {
 	 */
 	static final AsyncList<HazardCurves> toHazardCurves(
 			final AsyncList<GroundMotions> groundMotionsList,
-			final Map<Imt, ArrayXY_Sequence> modelCurves,
-			final ExceedanceModel exceedanceModel,
-			final double truncationLevel,
+			final CalcConfig config,
 			final Executor ex) {
 
-		Function<GroundMotions, HazardCurves> function = new GroundMotionsToCurves(
-			modelCurves,
-			exceedanceModel,
-			truncationLevel);
+		Function<GroundMotions, HazardCurves> function = new GroundMotionsToCurves(config);
 		AsyncList<HazardCurves> result = createWithCapacity(groundMotionsList.size());
 		for (ListenableFuture<GroundMotions> groundMotions : groundMotionsList) {
 			result.add(transform(groundMotions, function, ex));
@@ -122,8 +118,7 @@ final class AsyncCalc {
 	/**
 	 * Reduce a future HazardCurves to a future HazardCurveSet.
 	 */
-	@SuppressWarnings("unchecked")
-	static final ListenableFuture<HazardCurveSet> toHazardCurveSet(
+	@SuppressWarnings("unchecked") static final ListenableFuture<HazardCurveSet> toHazardCurveSet(
 			final ListenableFuture<HazardCurves> curves,
 			final SystemSourceSet sourceSet,
 			final Map<Imt, ArrayXY_Sequence> modelCurves,
@@ -140,13 +135,14 @@ final class AsyncCalc {
 	 */
 	static final ListenableFuture<HazardResult> toHazardResult(
 			final AsyncList<HazardCurveSet> curveSets,
-			final Map<Imt, ArrayXY_Sequence> modelCurves,
+			final CalcConfig config,
 			final Site site,
+			final HazardModel model,
 			final Executor ex) {
 
 		return transform(
 			allAsList(curveSets),
-			new CurveSetConsolidator(modelCurves, site),
+			new CurveSetConsolidator(site, model, config),
 			ex);
 	}
 
@@ -163,14 +159,13 @@ final class AsyncCalc {
 		System.out.println("Inputs: " + inputs.size() + "  " + sw);
 
 		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
-		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, config.imts());
+		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, config.imts);
 		Function<InputList, GroundMotions> gmFn = new InputsToGroundMotions(gmmInstances);
 		GroundMotions groundMotions = gmFn.apply(inputs);
 		System.out.println("GroundMotions: " + sw);
 
-		Map<Imt, ArrayXY_Sequence> modelCurves = config.logModelCurves();
-		Function<GroundMotions, HazardCurves> curveFn = new GroundMotionsToCurves(
-			modelCurves, config.exceedanceModel, config.truncationLevel);
+		Map<Imt, ArrayXY_Sequence> modelCurves = config.logModelCurves;
+		Function<GroundMotions, HazardCurves> curveFn = new GroundMotionsToCurves(config);
 		HazardCurves hazardCurves = curveFn.apply(groundMotions);
 		System.out.println("HazardCurves: " + sw);
 
@@ -226,16 +221,10 @@ final class AsyncCalc {
 	 */
 	static final ListenableFuture<HazardCurves> toSystemCurves(
 			final ListenableFuture<GroundMotions> groundMotions,
-			final Map<Imt, ArrayXY_Sequence> modelCurves,
-			final ExceedanceModel exceedanceModel,
-			final double truncationLevel,
+			final CalcConfig config,
 			final Executor ex) {
 
-		Function<GroundMotions, HazardCurves> function = new GroundMotionsToCurves(
-			modelCurves,
-			exceedanceModel,
-			truncationLevel);
-
+		Function<GroundMotions, HazardCurves> function = new GroundMotionsToCurves(config);
 		return transform(groundMotions, function, ex);
 	}
 
@@ -281,8 +270,8 @@ final class AsyncCalc {
 
 		Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
 		Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, imts);
-		Function<ClusterInputs, ClusterGroundMotions> function = new ClusterInputsToGroundMotions(
-			gmmInstances);
+		Function<ClusterInputs, ClusterGroundMotions> function =
+			new ClusterInputsToGroundMotions(gmmInstances);
 		AsyncList<ClusterGroundMotions> result = createWithCapacity(inputsList.size());
 		for (ListenableFuture<ClusterInputs> inputs : inputsList) {
 			result.add(transform(inputs, function, ex));
@@ -296,13 +285,11 @@ final class AsyncCalc {
 	 */
 	static final AsyncList<ClusterCurves> toClusterCurves(
 			final AsyncList<ClusterGroundMotions> clusterGroundMotions,
-			final Map<Imt, ArrayXY_Sequence> modelCurves,
-			final ExceedanceModel sigmaModel,
-			final double truncLevel,
+			final CalcConfig config,
 			final Executor ex) {
 
-		Function<ClusterGroundMotions, ClusterCurves> function = new ClusterGroundMotionsToCurves(
-			modelCurves, sigmaModel, truncLevel);
+		Function<ClusterGroundMotions, ClusterCurves> function =
+			new ClusterGroundMotionsToCurves(config);
 		AsyncList<ClusterCurves> result = createWithCapacity(clusterGroundMotions.size());
 		for (ListenableFuture<ClusterGroundMotions> groundMotions : clusterGroundMotions) {
 			result.add(transform(groundMotions, function, ex));
