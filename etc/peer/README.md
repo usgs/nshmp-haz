@@ -1,0 +1,9 @@
+PEER Test Cases
+=========
+
+The PEER PSHA validation project developed a number of source models for the purpose of examining
+the sensitivity of seismic hazard to different PSHA implementations (codes). These test cases are
+used as end-to-end unit tests in __nshmp-haz__. 
+
+For more information, including source model specifications, result tables, and summary reports,
+please see the PEER PSHA validation project (TODO: link).

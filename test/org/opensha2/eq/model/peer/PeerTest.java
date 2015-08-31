@@ -179,7 +179,7 @@ public class PeerTest {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(Mfds.probToRate(0.03879, 1));
+		System.out.println(Mfds.rateToProb(0.0395, 1));
 //		String model = MODEL_DIR.resolve(S1_C3_F).toString();
 //		HazardCurve.main(new String[] { model });
 	}
