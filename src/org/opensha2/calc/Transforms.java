@@ -56,14 +56,15 @@ final class Transforms {
 	static final class SourceToInputs implements Function<Source, InputList> {
 
 		private final Site site;
-
+		
 		SourceToInputs(final Site site) {
 			this.site = site;
 		}
 
 		@Override public SourceInputList apply(final Source source) {
-
 			SourceInputList hazardInputs = new SourceInputList(source);
+			int count = 0;
+
 			for (Rupture rup : source) {
 
 				RuptureSurface surface = rup.surface();
@@ -90,7 +91,11 @@ final class Transforms {
 					site.z1p0,
 					site.z2p5);
 				hazardInputs.add(input);
+//				System.out.println(input);
+				if (count % 100000 == 0) System.out.println(count);
+				count++;
 			}
+			
 			return hazardInputs;
 		}
 	}
@@ -175,7 +180,7 @@ final class Transforms {
 
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
 		private final SourceSet<? extends Source> sourceSet;
-
+		
 		CurveConsolidator(
 				final SourceSet<? extends Source> sourceSet,
 				final Map<Imt, ArrayXY_Sequence> modelCurves) {

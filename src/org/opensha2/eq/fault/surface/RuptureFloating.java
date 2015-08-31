@@ -3,6 +3,7 @@ package org.opensha2.eq.fault.surface;
 import static java.lang.Math.sin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,8 +97,15 @@ public enum RuptureFloating {
 		}
 	},
 
+	/**
+	 * Triangular distribution of hypocenters. This model is motivated by the
+	 * PEER PSHA validationtest cases. It is implemented to explicitely weight
+	 * down-dip floating ruptures more hevily down to 10km, and then decrease
+	 * their weight with depth below.
+	 * 
+	 * TODO add reference/link to PEER documentation and test cases in repo
+	 */
 	TRIANGULAR {
-
 		@Override public List<Rupture> createFloatingRuptures(DefaultGriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 
@@ -105,13 +113,15 @@ public enum RuptureFloating {
 			Dimensions d = scaling.dimensions(mag, maxWidth);
 			Map<GriddedSurface, Double> surfaces = createWeightedFloatingSurfaces(surface,
 				d.length, d.width);
-
-			return null;
-			// TODO complete implementation
-
+			return createFloaters(surfaces, mag, rate, rake);
 		}
-
 	};
+	
+	/* 
+	 * TODO note that the triangular PEER test case 2-4b has 1 more rupture than
+	 * the regular floater; why is this? (this was observed by setting surface
+	 * spacing to 1km and outputting Transforms.sourceToInput
+	 */
 
 	private static List<Rupture> createFloaters(List<GriddedSurface> floatingSurfaces, double mag,
 			double rate, double rake) {
@@ -127,7 +137,7 @@ public enum RuptureFloating {
 			double rate, double rake) {
 		List<Rupture> floaters = new ArrayList<>();
 		for (Entry<GriddedSurface, Double> entry : surfaceMap.entrySet()) {
-			floaters.add(Rupture.create(mag, entry.getValue(), rake, entry.getKey()));
+			floaters.add(Rupture.create(mag, entry.getValue() * rate, rake, entry.getKey()));
 		}
 		return floaters;
 	}
@@ -262,7 +272,7 @@ public enum RuptureFloating {
 
 		// generate depth weight array
 		double[] hypoDepths = new double[downCount];
-		double halfDepth = downCount * parent.dipSpacing * sin(parent.dipRad()) / 2.0;
+		double halfDepth = floaterRowSize * parent.dipSpacing * sin(parent.dipRad()) / 2.0;
 		for (int startRow = 0; startRow < downCount; startRow++) {
 			hypoDepths[startRow] = parent.get(startRow, 0).depth() + halfDepth;
 		}
@@ -281,6 +291,8 @@ public enum RuptureFloating {
 				floaterMap.put(gss, depthWeights[startRow]);
 			}
 		}
+		System.out.println(DataUtils.sum(floaterMap.values()));
+		System.out.println(floaterMap.size());
 
 		return floaterMap;
 	}

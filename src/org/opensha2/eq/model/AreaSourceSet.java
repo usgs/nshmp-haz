@@ -93,11 +93,12 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 			return this;
 		}
 
-		void validateState(String id) {
-			checkState(!built, "This %s instance as already been used", id);
-			checkState(name != null, "%s name not set", id);
-			checkState(weight != null, "%s weight not set", id);
-			checkState(gmmSet != null, "%s ground motion models not set", id);
+		void validateState(String buildId) {
+			checkState(!built, "This %s instance as already been used", buildId);
+			checkState(name != null, "%s name not set", buildId);
+			checkState(id != null, "%s id not set", buildId);
+			checkState(weight != null, "%s weight not set", buildId);
+			checkState(gmmSet != null, "%s ground motion models not set", buildId);
 			built = true;
 		}
 

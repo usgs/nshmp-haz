@@ -55,7 +55,6 @@ public final class CalcConfig {
 	 * @see Maps#immutableEnumMap(Map)
 	 */
 
-	
 	// TODO revisit privatization, comments, and immutability
 
 	static final String FILE_NAME = "config.json";
@@ -69,7 +68,7 @@ public final class CalcConfig {
 	private final Map<Imt, double[]> customImls;
 	final DeaggData deagg;
 	private final SiteSet sites;
-	
+
 	final Map<Imt, ArrayXY_Sequence> modelCurves;
 	final Map<Imt, ArrayXY_Sequence> logModelCurves;
 
@@ -164,15 +163,24 @@ public final class CalcConfig {
 	public Iterable<Site> sites() {
 		return sites;
 	}
-	
+
 	/**
-	 * Return an empty linear (i.e. not log) curve for the requested {@code Imt}.
+	 * Return the unmodifiable {@code Set} of IMTs for which calculations should
+	 * be performed.
+	 */
+	public Set<Imt> imts() {
+		return imts;
+	}
+
+	/**
+	 * Return an empty linear (i.e. not log) curve for the requested {@code Imt}
+	 * .
 	 * @param imt to get curve for
 	 */
 	public XY_Sequence modelCurve(Imt imt) {
 		return modelCurves.get(imt);
 	}
-	
+
 	public static final class DeaggData {
 
 		public final double rMin;
@@ -298,7 +306,7 @@ public final class CalcConfig {
 			return Maps.immutableEnumMap(curveMap);
 		}
 
-		private  Map<Imt, ArrayXY_Sequence> createCurveMap() {
+		private Map<Imt, ArrayXY_Sequence> createCurveMap() {
 			Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
 			for (Imt imt : imts) {
 				double[] imls = imlsForImt(imt);
@@ -335,7 +343,7 @@ public final class CalcConfig {
 				resource, exceedanceModel, truncationLevel, finalImts,
 				defaultImls, customImls, deagg, sites, curves, logCurves);
 		}
-		
+
 	}
 
 }

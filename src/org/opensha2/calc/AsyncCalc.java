@@ -5,6 +5,7 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 import static org.opensha2.calc.AsyncList.createWithCapacity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -176,6 +177,44 @@ final class AsyncCalc {
 
 		return curveSet;
 	}
+	
+	// single thread calc
+	static final List<HazardCurveSet> sourceSetToCurves(
+			final SourceSet<? extends Source> sourceSet,
+			final Site site,
+			final CalcConfig config) {
+
+//		Stopwatch sw = Stopwatch.createStarted();
+
+		List<HazardCurveSet> curveSetList = new ArrayList<>();
+		for (Source source : sourceSet.iterableForLocation(site.location)) {
+			
+			Function<Source, InputList> inputFn = new SourceToInputs(site);
+			InputList inputs = inputFn.apply(source);
+//			System.out.println("Inputs: " + inputs.size() + "  " + sw);
+
+			Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
+			Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, config.imts);
+			Function<InputList, GroundMotions> gmFn = new InputsToGroundMotions(gmmInstances);
+			GroundMotions groundMotions = gmFn.apply(inputs);
+//			System.out.println("GroundMotions: " + sw);
+
+			Map<Imt, ArrayXY_Sequence> modelCurves = config.logModelCurves;
+			Function<GroundMotions, HazardCurves> curveFn = new GroundMotionsToCurves(config);
+			HazardCurves hazardCurves = curveFn.apply(groundMotions);
+//			System.out.println("HazardCurves: " + sw);
+
+			Function<List<HazardCurves>, HazardCurveSet> consolidateFn = new CurveConsolidator(
+				sourceSet, modelCurves);
+			HazardCurveSet curveSet = consolidateFn.apply(ImmutableList.of(hazardCurves));
+//			System.out.println("CurveSet: " + sw);
+
+			curveSetList.add(curveSet);
+		}
+
+		return curveSetList;
+	}
+
 
 	/*
 	 * System sources ...

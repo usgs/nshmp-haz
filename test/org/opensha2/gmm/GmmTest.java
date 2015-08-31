@@ -25,8 +25,8 @@ import com.google.common.primitives.Doubles;
 @SuppressWarnings("javadoc")
 public class GmmTest {
 
-	private static final String D_DIR = "data/";
-	private static final double TOL = 0.000001; // results precision = 1e-6
+	private static final String DATA_DIR = "data/";
+	private static final double TOL = 1e-6;
 	static List<GmmInput> inputsList;
 
 	private int idx;
@@ -75,7 +75,7 @@ public class GmmTest {
 	}
 
 	static List<Object[]> loadResults(String resource) throws IOException {
-		URL url = Resources.getResource(Tests_NGAW2.class, D_DIR + resource);
+		URL url = Resources.getResource(GmmTest.class, DATA_DIR + resource);
 		return FluentIterable
 			.from(Resources.readLines(url, StandardCharsets.UTF_8))
 			.transform(ResultsToObjectsFunction.INSTANCE)
@@ -98,7 +98,7 @@ public class GmmTest {
 	}
 
 	static List<GmmInput> loadInputs(String resource) throws IOException {
-		URL url = Resources.getResource(Tests_NGAW2.class, D_DIR + resource);
+		URL url = Resources.getResource(GmmTest.class, DATA_DIR + resource);
 		return FluentIterable
 			.from(Resources.readLines(url, StandardCharsets.UTF_8))
 			.skip(1)

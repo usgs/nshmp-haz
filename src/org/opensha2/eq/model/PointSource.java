@@ -197,7 +197,12 @@ class PointSource implements Source {
 		@Override public double dipRad() { return dipRad; }
 		@Override public double dipDirection() { throw new UnsupportedOperationException(exMessage("dipDirection")); }
 		@Override public double length() { throw new UnsupportedOperationException(exMessage("length")); }
-		@Override public double width() { throw new UnsupportedOperationException(exMessage("width")); }
+		@Override public double width() { 
+			return 10.0; // km
+			// TODO clena; decide if this is appropriate; width IS needed to build a GmmInput
+//			throw new UnsupportedOperationException(exMessage("width"));
+			}
+		
 		@Override public double area() { throw new UnsupportedOperationException(exMessage("area")); }
 		@Override public double depth() { return zTop; }
 		// TODO should this be the true centroid of the surface

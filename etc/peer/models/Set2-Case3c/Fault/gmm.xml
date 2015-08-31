@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<GroundMotionModels>
+  <ModelSet maxDistance="200.0">
+    <Model id="CB_14" weight="1.0"/>
+  </ModelSet>
+</GroundMotionModels>

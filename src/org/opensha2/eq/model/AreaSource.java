@@ -87,6 +87,8 @@ public class AreaSource implements Source {
 		this.strike = strike;
 		this.rupScaling = rupScaling;
 		this.sourceType = sourceType;
+		
+		System.out.println(size());
 	}
 
 	@Override public String name() {
@@ -202,6 +204,7 @@ public class AreaSource implements Source {
 	 */
 	@SuppressWarnings("javadoc")
 	public enum GridScaling {
+		UNIFORM_0P005(0, new double[] { 0.005 }),
 		UNIFORM_0P01(0, new double[] { 0.01 }),
 		UNIFORM_0P05(0, new double[] { 0.05 }),
 		UNIFORM_0P1(0, new double[] { 0.1 }),
@@ -239,6 +242,7 @@ public class AreaSource implements Source {
 		private boolean built = false;
 
 		private String name;
+		private Integer id;
 		private LocationList border;
 		private IncrementalMfd mfd;
 		private Double strike;
@@ -251,6 +255,11 @@ public class AreaSource implements Source {
 
 		Builder name(String name) {
 			this.name = validateName(name);
+			return this;
+		}
+		
+		Builder id(int id) {
+			this.id = id;
 			return this;
 		}
 
@@ -313,18 +322,19 @@ public class AreaSource implements Source {
 			return this;
 		}
 
-		private void validateState(String id) {
-			checkState(!built, "This %s instance as already been used", id);
-			checkState(name != null, "%s name not set", id);
-			checkState(border != null, "%s border not set", id);
-			checkState(mfd != null, "%s MFD not set", id);
-			checkState(strike != null, "%s strike not set", id);
-			checkState(sourceType != null, "%s source type not set", id);
-			checkState(gridScaling != null, "%s grid scaling not set", id);
-			checkState(rupScaling != null, "%s rupture-scaling relation not set", id);
-			checkState(mechMap != null, "%s focal mech map not set", id);
-			checkState(magDepthMap != null, "%s mag-depth-weight map not set", id);
-			checkState(maxDepth != null, "%s maximum depth not set", id);
+		private void validateState(String buildId) {
+			checkState(!built, "This %s instance as already been used", buildId);
+			checkState(name != null, "%s name not set", buildId);
+			checkState(id != null, "%s id not set", buildId);
+			checkState(border != null, "%s border not set", buildId);
+			checkState(mfd != null, "%s MFD not set", buildId);
+			checkState(strike != null, "%s strike not set", buildId);
+			checkState(sourceType != null, "%s source type not set", buildId);
+			checkState(gridScaling != null, "%s grid scaling not set", buildId);
+			checkState(rupScaling != null, "%s rupture-scaling relation not set", buildId);
+			checkState(mechMap != null, "%s focal mech map not set", buildId);
+			checkState(magDepthMap != null, "%s mag-depth-weight map not set", buildId);
+			checkState(maxDepth != null, "%s maximum depth not set", buildId);
 
 			/*
 			 * Validate depths. depths will already have been checked for
@@ -332,7 +342,7 @@ public class AreaSource implements Source {
 			 * Must also ensure that all depths (zTop) in the magDepthMap are <=
 			 * maxDepth.
 			 */
-			GridSourceSet.Builder.validateMaxAndMapDepths(magDepthMap, maxDepth, id);
+			GridSourceSet.Builder.validateMaxAndMapDepths(magDepthMap, maxDepth, buildId);
 
 			built = true;
 		}

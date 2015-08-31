@@ -96,8 +96,8 @@ public enum RuptureScaling {
 
 	/**
 	 * Scaling used for NSHM point sources. Maintains aspect ratio of 1.5 up to
-	 * maximum width and then maintains length (Wells & Coppersmith, 1994)
-	 * at the expense of aspect ratio.
+	 * maximum width and then maintains length (Wells & Coppersmith, 1994) at
+	 * the expense of aspect ratio.
 	 */
 	NSHM_POINT_WC94_LENGTH {
 		/* Steve Harmsen likened 1.5 to the Golden Ratio, 1.618... */
@@ -149,14 +149,11 @@ public enum RuptureScaling {
 	 * </ul>
 	 */
 	PEER {
-		private final IncrementalMfd normal2s = Mfds.newGaussianMFD(0.0, 0.25, 11, 1.0);
+		private final IncrementalMfd normal2s = Mfds.newGaussianMFD(0.0, 0.25, 21, 1.0);
 
 		@Override public Dimensions dimensions(double mag, double maxWidth) {
-			
-			double width = pow(10, (0.5 * mag - 2.15));
-			return (width < maxWidth) ? 
-				new Dimensions(width * 2.0, width) :
-				new Dimensions(pow(10, (mag - 4.0)) / maxWidth, maxWidth);
+			double area = pow(10, (mag - 4.0));
+			return dimensionCalc(area, maxWidth);
 		}
 
 		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
@@ -164,20 +161,20 @@ public enum RuptureScaling {
 			Map<Dimensions, Double> dimensionsMap = new LinkedHashMap<>();
 			for (int i=0; i<normal2s.getNum(); i++) {
 				double scaledArea = area * pow(10, normal2s.getX(i));
-				dimensionsMap.put(dimCalc(scaledArea, maxWidth), normal2s.getY(i));
+				dimensionsMap.put(dimensionCalc(scaledArea, maxWidth), normal2s.getY(i));
 			}
 			return dimensionsMap;
 		}
 
 		@Override public double pointSourceDistance(double mag, double distance) {
-			throw new UnsupportedOperationException();
+			return Math.max(0.5, distance);
+			// TODO celan, comment on no correction (or other if changed)
+//			throw new UnsupportedOperationException();
 		}
 		
-		private Dimensions dimCalc(double area, double maxWidth) {
-			double width = sqrt(area / 2.0);
-			return (width < maxWidth) ? 
-				new Dimensions(width * 2.0, width) :
-				new Dimensions(area / maxWidth, maxWidth);
+		private Dimensions dimensionCalc(double area, double maxWidth) {
+			double width = min(maxWidth, sqrt(area / 2.0));
+			return new Dimensions(area / width, width);
 		}
 	},
 
@@ -297,8 +294,8 @@ public enum RuptureScaling {
 	public abstract Dimensions dimensions(double mag, double maxWidth);
 
 	/**
-	 * Return a ±2σ distribution of {@code Dimensions} and associated
-	 * weights. The distribution is discretized at 11 points.
+	 * Return a ±2σ distribution of {@code Dimensions} and associated weights.
+	 * The distribution is discretized at 11 points.
 	 * 
 	 * @param mag scaling basis magnitude
 	 * @param maxWidth of parent source

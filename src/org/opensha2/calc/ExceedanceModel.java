@@ -95,6 +95,21 @@ public enum ExceedanceModel {
 		}
 	},
 
+	/*
+	 * This is messy for now; TODO need to figure out the best way to pass in
+	 * fixed sigmas. The peer models below simply set a value internally as
+	 * dicated by the test cases that use htese models.
+	 */
+	PEER_MIXTURE_REFERENCE {
+		@Override double exceedance(double μ, double σ, double n, Imt imt, double value) {
+			return boundedCcdFn(μ, 0.65, value, 0.0, 1.0);
+		}
+
+		@Override XY_Sequence exceedance(double μ, double σ, double n, Imt imt, XY_Sequence sequence) {
+			return boundedCcdFn(μ, 0.65, sequence, 0.0, 1.0);
+		}
+	},
+	
 	/**
 	 * Model accomodates the heavy tails observed in earthquake data that are
 	 * not well matched by a purely normal distribution at high ε by combining
@@ -105,6 +120,7 @@ public enum ExceedanceModel {
 	 */
 	PEER_MIXTURE_MODEL {
 		@Override double exceedance(double μ, double σ, double n, Imt imt, double value) {
+			σ = 0.65;
 			double p1 = boundedCcdFn(μ, σ * 0.8, value, 0.0, 1.0);
 			double p2 = boundedCcdFn(μ, σ * 1.2, value, 0.0, 1.0);
 			return (p1 + p2) / 2.0;
@@ -258,7 +274,7 @@ public enum ExceedanceModel {
 
 	private static double erfBase(double x) {
 		double t = 1 / (1 + P * x);
-		return 1 -(A1 * t +
+		return 1 - (A1 * t +
 			A2 * t * t +
 			A3 * t * t * t +
 			A4 * t * t * t * t +

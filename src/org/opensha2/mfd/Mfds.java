@@ -64,10 +64,12 @@ public final class Mfds {
 		return newSingleMFD(mag, cumRate, floats);
 	}
 
-	// TODO The assumption below is pretty bad, especially if we want to recombine
-	// MFDs and may end up with uneven spacing. Why does an MFD have to be evenly
+	// TODO The assumption below is pretty bad, especially if we want to
+	// recombine
+	// MFDs and may end up with uneven spacing. Why does an MFD have to be
+	// evenly
 	// spaced?? Seems overly restrictive.
-	
+
 	/**
 	 * Creates a new {@code IncrementalMfd} with the supplied magnitudes and
 	 * rates. For the MFD returned, {@link IncrementalMfd#floats()} always
@@ -332,12 +334,15 @@ public final class Mfds {
 		return -log(1 - P) / time;
 	}
 
-	public static Converter<Double, Double> annRateToPoissProbConverter() {
-		return AnnualRateToPoissonProbConverter.INSTANCE;
+	/**
+	 * Return a converter between annual rate and Poisson probability.
+	 */
+	public static Converter<Double, Double> rateToProbConverter() {
+		return AnnRateToPoissProbConverter.INSTANCE;
 	}
 
-	private static final class AnnualRateToPoissonProbConverter extends Converter<Double, Double> {
-		static final AnnualRateToPoissonProbConverter INSTANCE = new AnnualRateToPoissonProbConverter();
+	private static final class AnnRateToPoissProbConverter extends Converter<Double, Double> {
+		static final AnnRateToPoissProbConverter INSTANCE = new AnnRateToPoissProbConverter();
 
 		@Override protected Double doForward(Double rate) {
 			return rateToProb(rate, 1.0);
