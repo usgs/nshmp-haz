@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FaultSourceSet id="-1" name="Set1-Case8b" weight="1.0">
+  <!--Single rupture smaller than fault plane; 2x σ truncation-->
+  <Settings>
+    <SourceProperties ruptureScaling="PEER"/>
+  </Settings>
+  <Source id="-1" name="Fault 1">
+    <IncrementalMfd floats="true" m="6.000" rate="0.016042517" type="SINGLE" weight="1.0"/>
+    <Geometry depth="0.0" dip="90.0" rake="0.0" width="12.0">
+      <Trace>
+-122.00000,38.22480,0.00000
+-122.00000,38.00000,0.00000
+</Trace>
+    </Geometry>
+  </Source>
+</FaultSourceSet>

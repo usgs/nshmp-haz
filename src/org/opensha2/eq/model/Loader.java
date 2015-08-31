@@ -64,7 +64,7 @@ class Loader {
 	 * directory containing sub-directories by {@code SourceType}s, or the
 	 * absolute path to a zipped model.
 	 * 
-	 * <p>This method is not thread safe. Any exceptions thrown whil loading
+	 * <p>This method is not thread safe. Any exceptions thrown while loading
 	 * will be logged and the JVM will exit.</p>
 	 * 
 	 * @param path to model directory or Zip file (absolute)
@@ -309,7 +309,7 @@ class Loader {
 			InputStream in = Files.newInputStream(path);
 			switch (type) {
 				case AREA:
-					throw new UnsupportedOperationException("Area sources not currently supported");
+					return AreaParser.create(sax).parse(in, gmmSet, config);
 				case CLUSTER:
 					return ClusterParser.create(sax).parse(in, gmmSet, config);
 				case FAULT:

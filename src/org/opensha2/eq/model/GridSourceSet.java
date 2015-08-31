@@ -238,6 +238,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 				case SLAB:
 					Faults.validateSlabDepth(depth);
 					break;
+				case AREA:
+					Faults.validateDepth(depth);
+					break;
 				default:
 					throw new IllegalStateException(type + " not a grid or related source type");
 			}

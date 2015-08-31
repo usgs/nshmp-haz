@@ -14,6 +14,7 @@ import static org.opensha2.calc.AsyncCalc.toSystemInputs;
 import static org.opensha2.eq.model.SourceType.CLUSTER;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -103,7 +104,7 @@ public class Calcs {
 
 				curveSetCollector.add(curveSet);
 
-				// TODO clean
+				// TODO single threaded experiments
 				// HazardCurveSet curveSet =
 				// AsyncCalc.systemToCurves(systemSourceSet, site, config);
 				// curveSetCollector.add(Futures.immediateFuture(curveSet));
@@ -123,7 +124,12 @@ public class Calcs {
 					sourceSet, config.logModelCurves, executor);
 
 				curveSetCollector.add(curveSet);
-
+				
+				// TODO single threaded experiments
+//				List<HazardCurveSet> curveSetList = AsyncCalc.sourceSetToCurves(sourceSet, site, config);
+//				for (HazardCurveSet curveSet : curveSetList) {
+//					curveSetCollector.add(Futures.immediateFuture(curveSet));
+//				}
 			}
 
 		}

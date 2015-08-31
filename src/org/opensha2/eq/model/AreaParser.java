@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static org.opensha2.eq.model.SourceAttribute.FOCAL_MECH_MAP;
+import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.MAG_DEPTH_MAP;
 import static org.opensha2.eq.model.SourceAttribute.MAX_DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
@@ -14,6 +15,7 @@ import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceType.AREA;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readEnum;
+import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.stringToEnumWeightMap;
 import static org.opensha2.util.Parsing.stringToValueValueWeightMap;
@@ -106,9 +108,11 @@ class AreaParser extends DefaultHandler {
 
 			case AREA_SOURCE_SET:
 				String name = readString(NAME, atts);
+				int id = readInt(ID, atts);
 				double weight = readDouble(WEIGHT, atts);
 				sourceSetBuilder = new AreaSourceSet.Builder()
 					.name(name)
+					.id(id)
 					.weight(weight);
 				
 				sourceSetBuilder.gmms(gmmSet);
@@ -127,8 +131,11 @@ class AreaParser extends DefaultHandler {
 
 			case SOURCE:
 				String srcName = readString(NAME, atts);
+				int srcId = readInt(ID, atts);
 				sourceBuilder = new AreaSource.Builder()
-					.name(srcName);
+					.name(srcName)
+					.id(srcId)
+					.gridScaling(config.areaGridScaling);
 				log.fine("     Source: " + srcName);
 				break;
 
@@ -222,6 +229,10 @@ class AreaParser extends DefaultHandler {
 				}
 				break;
 
+			case AREA_SOURCE_SET:
+				
+				sourceSet = sourceSetBuilder.build();
+				break;
 		}
 	}
 

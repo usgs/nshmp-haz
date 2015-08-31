@@ -44,7 +44,7 @@ import com.google.common.base.Throwables;
  */
 public class HazardCurve {
 
-	private static final int FLUSH_LIMIT = 20;
+	private static final int FLUSH_LIMIT = 2;
 
 	/**
 	 * Entry point for a hazard curve calculation.
@@ -139,7 +139,6 @@ public class HazardCurve {
 				.toString();
 		}
 	}
-	
 
 	private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
 	private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };

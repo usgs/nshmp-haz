@@ -1,0 +1,56 @@
+{
+  "name": "PEER Test: Set2-Case3c",
+  "surfaceSpacing": 0.05,
+  "ruptureFloating": "ON",
+  "ruptureVariability": false,
+  "pointSourceType": "FINITE",
+  "areaGridScaling": "UNIFORM_0P01",
+
+  "exceedanceModel": "NONE",
+  "imts": ["PGA"],
+  "defaultImls": [0.001, 0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.7, 0.8, 0.9, 1.0],
+  "sites": [
+    {
+      "name": "PEER S2-Fault3-Site1",
+      "location": [-64.91005, 0.0],
+      "vsInf": false,
+      "z1p0": 0.048,
+      "z2p5": 0.607
+    },
+    {
+      "name": "PEER S2-Fault3-Site2",
+      "location": [-65.04497, 0.0],
+      "vsInf": false,
+      "z1p0": 0.048,
+      "z2p5": 0.607
+    },
+    {
+      "name": "PEER S2-Fault3-Site3",
+      "location": [-65.08995, 0.0],
+      "vsInf": false,
+      "z1p0": 0.048,
+      "z2p5": 0.607
+    },
+    {
+      "name": "PEER S2-Fault3-Site4",
+      "location": [-65.1349, 0.0],
+      "vsInf": false,
+      "z1p0": 0.048,
+      "z2p5": 0.607
+    },
+    {
+      "name": "PEER S2-Fault3-Site5",
+      "location": [-65.22483, 0.0],
+      "vsInf": false,
+      "z1p0": 0.048,
+      "z2p5": 0.607
+    },
+    {
+      "name": "PEER S2-Fault3-Site6",
+      "location": [-65.009, -0.42718],
+      "vsInf": false,
+      "z1p0": 0.048,
+      "z2p5": 0.607
+    }
+  ]
+}

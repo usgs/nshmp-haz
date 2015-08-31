@@ -20,10 +20,12 @@ import org.opensha2.data.XY_Sequence;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Location;
 import org.opensha2.gmm.Imt;
+import org.opensha2.mfd.Mfds;
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -39,8 +41,8 @@ import com.google.common.collect.Multimap;
 public class Results {
 
 	private static final String CURVE_FILE_SUFFIX = "-curves.csv";
-	private static final String RATE_FMT = "%8e";
-	
+	private static final String RATE_FMT = "%.8e";
+
 	/**
 	 * Write a {@code batch} of {@code HazardResult}s to files in the specified
 	 * directory, one for each {@link Imt} in the {@code batch}. See
@@ -78,7 +80,7 @@ public class Results {
 				headings.add("lat");
 				Iterable<? extends Object> header = Iterables.concat(
 					headings,
-					demo.totalCurves.get(imt).xValues());
+					demo.config.modelCurves.get(imt).xValues());
 				lineList.add(Parsing.join(header, Delimiter.COMMA));
 			}
 			lineMap.put(imt, lineList);
@@ -92,11 +94,21 @@ public class Results {
 				locFmtFunc);
 			String name = result.site.name;
 			for (Entry<Imt, ? extends XY_Sequence> entry : result.totalCurves.entrySet()) {
+
+				// enable to output poisson probability
+				Function<Double, String> valueFunction = Functions.compose(
+					rateFmtFunc,
+					Mfds.rateToProbConverter());
+
+				// enable to output annual rate
+//				Function<Double, String> valueFunction = rateFmtFunc;
+
 				Iterable<String> lineData = Iterables.concat(
 					locData,
 					Iterables.transform(
 						entry.getValue().yValues(),
-						rateFmtFunc));
+						valueFunction));
+
 				String line = Parsing.join(lineData, Delimiter.COMMA);
 				if (namedSites) line = name + "," + line;
 				lineMap.get(entry.getKey()).add(line);
