@@ -217,7 +217,7 @@ class AreaParser extends DefaultHandler {
 			case SOURCE:
 				AreaSource source = sourceBuilder.build();
 				sourceSetBuilder.source(source);
-
+				
 				if (log.isLoggable(FINE)) {
 					log.fine("       Size: " + source.size());
 					log.finer("  Mag count: " + source.depthModel.magMaster.size());

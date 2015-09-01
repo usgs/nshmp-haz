@@ -246,6 +246,33 @@ public class PeerTests {
 			return load(S1_C8C, TOL);
 		}
 	}
+	
+	@RunWith(Parameterized.class)
+	@Ignore
+	public static class Set1Case10 extends PeerTest {
+
+		public Set1Case10(String modelId, HazardModel model, Site site, double[] values, double tol) {
+			super(modelId, model, site, values, tol);
+		}
+
+		@Parameters(name = "{0}, Site{index}") public static Collection<Object[]> data()
+				throws IOException {
+			return load(S1_C10, TOL);
+		}
+	}
+
+	@RunWith(Parameterized.class)
+	public static class Set1Case10_Fast extends PeerTest {
+
+		public Set1Case10_Fast(String modelId, HazardModel model, Site site, double[] values, double tol) {
+			super(modelId, model, site, values, tol);
+		}
+
+		@Parameters(name = "{0}, Site{index}") public static Collection<Object[]> data()
+				throws IOException {
+			return load(S1_C10_F, TOL);
+		}
+	}
 
 	@RunWith(Parameterized.class)
 	@Ignore

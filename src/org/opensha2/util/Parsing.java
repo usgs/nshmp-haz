@@ -119,6 +119,7 @@ public final class Parsing {
 	 */
 	public static NavigableMap<Double, Map<Double, Double>> stringToValueValueWeightMap(String s) {
 		Map<String, String> strMap = MAP_MAP_SPLIT.split(trimEnds(checkNotNull(s)));
+		System.out.println(strMap);
 		ImmutableSortedMap.Builder<Double, Map<Double, Double>> builder = ImmutableSortedMap
 			.naturalOrder();
 		for (Entry<String, String> entry : strMap.entrySet()) {

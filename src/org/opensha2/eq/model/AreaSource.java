@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
+import org.opensha2.data.DataUtils;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.scaling.MagLengthRelationship;
 import org.opensha2.eq.fault.scaling.MagScalingRelationship;
@@ -88,7 +89,16 @@ public class AreaSource implements Source {
 		this.rupScaling = rupScaling;
 		this.sourceType = sourceType;
 		
-		System.out.println(size());
+		double totalRate = DataUtils.sum(mfd.yValues());
+		System.out.println("Area rate: " + totalRate);
+		System.out.println("Mech count: " + mechCount(mechMap, PointSourceType.POINT));
+		double rate = 0.0;
+		int rupCount = 0;
+		for (Rupture rupture : this) {
+			rate += rupture.rate;
+			rupCount++;
+		}
+		System.out.println("Rups: " + rupCount + "  Rate sum: " + rate);
 	}
 
 	@Override public String name() {
@@ -157,9 +167,13 @@ public class AreaSource implements Source {
 
 	private Iterable<Rupture> sourceGridIterable(GriddedRegion gr) {
 
+		System.out.println("Grid size: " + gr.size());
 		IncrementalMfd scaledMfd = IncrementalMfd.copyOf(mfd);
 		scaledMfd.scale(1.0 / gr.size());
 
+		IncrementalMfd testMfd = IncrementalMfd.copyOf(scaledMfd);
+		testMfd.scale(gr.size());
+		System.out.println("RescaledMFD: " + DataUtils.sum(testMfd.yValues()));
 		List<Iterable<Rupture>> sourceRupturesList = new ArrayList<>();
 		for (Location loc : gr) {
 			sourceRupturesList.add(createSource(loc, scaledMfd));
@@ -206,6 +220,7 @@ public class AreaSource implements Source {
 	public enum GridScaling {
 		UNIFORM_0P005(0, new double[] { 0.005 }),
 		UNIFORM_0P01(0, new double[] { 0.01 }),
+		UNIFORM_0P02(0, new double[] { 0.02 }),
 		UNIFORM_0P05(0, new double[] { 0.05 }),
 		UNIFORM_0P1(0, new double[] { 0.1 }),
 		UNIFORM_0P5(0, new double[] { 0.5 }),

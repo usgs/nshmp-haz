@@ -105,7 +105,7 @@ class PointSource implements Source {
 
 		FocalMech mech = mechForIndex(idx);
 		double mechWt = mechWtMap.get(mech);
-
+		
 		rup.mag = mag;
 		rup.rake = mech.rake();
 		rup.rate = rate * zTopWt * mechWt;
@@ -117,22 +117,48 @@ class PointSource implements Source {
 
 	}
 
+//	@Override public Iterator<Rupture> iterator() {
+//		return new Iterator<Rupture>() {
+//			Rupture rupture = new Rupture();
+//			{
+//				rupture.surface = new PointSurface(loc, rupScaling);
+//			}
+//			int size = size();
+//			int caret = 0;
+//
+//			@Override public boolean hasNext() {
+//				System.out.println("hasNext()");
+//				if (caret >= size) return false;
+//				updateRupture(rupture, caret++);
+//				return (rupture.rate > 0.0) ? true : hasNext();
+//			}
+//
+//			@Override public Rupture next() {
+//				System.out.println(caret);
+//				return rupture;
+//			}
+//
+//			@Override public void remove() {
+//				throw new UnsupportedOperationException();
+//			}
+//		};
+//	}
+
 	@Override public Iterator<Rupture> iterator() {
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
 			{
 				rupture.surface = new PointSurface(loc, rupScaling);
 			}
-			int size = size();
+			final int size = size();
 			int caret = 0;
 
 			@Override public boolean hasNext() {
-				if (caret >= size) return false;
-				updateRupture(rupture, caret++);
-				return (rupture.rate > 0.0) ? true : hasNext();
+				return caret < size;
 			}
 
 			@Override public Rupture next() {
+				updateRupture(rupture, caret++);
 				return rupture;
 			}
 
@@ -199,7 +225,7 @@ class PointSource implements Source {
 		@Override public double length() { throw new UnsupportedOperationException(exMessage("length")); }
 		@Override public double width() { 
 			return 10.0; // km
-			// TODO clena; decide if this is appropriate; width IS needed to build a GmmInput
+			// TODO clean; decide if this is appropriate; width IS needed to build a GmmInput
 //			throw new UnsupportedOperationException(exMessage("width"));
 			}
 		
