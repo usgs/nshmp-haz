@@ -1,10 +1,10 @@
 {
-  "name": "PEER Test: Set1-Case11",
+  "name": "PEER Test: Set1-Case10-fast",
   "surfaceSpacing": 1.0,
   "ruptureFloating": "OFF",
   "ruptureVariability": false,
   "pointSourceType": "POINT",
-  "areaGridScaling": "UNIFORM_0P02",
+  "areaGridScaling": "UNIFORM_0P05",
 
   "exceedanceModel": "TRUNCATION_OFF",
   "imts": ["PGA"],

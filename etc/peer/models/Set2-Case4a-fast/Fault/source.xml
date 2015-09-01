@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<FaultSourceSet id="-1" name="Set2-Case4a" weight="1.0">
+<FaultSourceSet id="-1" name="Set2-Case4a-fast" weight="1.0">
   <!--Uniform down-dip distribution of hypocenters-->
   <Settings>
     <SourceProperties ruptureScaling="PEER"/>

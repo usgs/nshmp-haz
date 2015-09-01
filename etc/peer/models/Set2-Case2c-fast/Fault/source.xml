@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<FaultSourceSet id="-1" name="Set2-Case2c" weight="1.0">
+<FaultSourceSet id="-1" name="Set2-Case2c-fast" weight="1.0">
   <!--NGA West 2 Ground Motion Models; CB14; no σ truncation-->
   <Settings>
     <SourceProperties ruptureScaling="PEER"/>
