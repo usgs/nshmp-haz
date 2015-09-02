@@ -70,7 +70,7 @@ class PointSource implements Source {
 	 *        different depth-to-top-of-ruptures
 	 */
 	PointSource(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
-		RuptureScaling rupScaling, DepthModel depthModel) {
+			RuptureScaling rupScaling, DepthModel depthModel) {
 
 		this.loc = loc;
 		this.mfd = mfd;
@@ -88,11 +88,6 @@ class PointSource implements Source {
 		return rupCount;
 	}
 
-	/*
-	 * NOTE/TODO: Should not be many instances where a PointSource.rupture rate
-	 * is reduced to zero; not checked below such that rupture is skipped
-	 */
-
 	private void updateRupture(Rupture rup, int idx) {
 
 		int magDepthIdx = idx % magDepthSize;
@@ -105,7 +100,7 @@ class PointSource implements Source {
 
 		FocalMech mech = mechForIndex(idx);
 		double mechWt = mechWtMap.get(mech);
-		
+
 		rup.mag = mag;
 		rup.rake = mech.rake();
 		rup.rate = rate * zTopWt * mechWt;
@@ -116,33 +111,6 @@ class PointSource implements Source {
 		pSurf.zTop = zTop;
 
 	}
-
-//	@Override public Iterator<Rupture> iterator() {
-//		return new Iterator<Rupture>() {
-//			Rupture rupture = new Rupture();
-//			{
-//				rupture.surface = new PointSurface(loc, rupScaling);
-//			}
-//			int size = size();
-//			int caret = 0;
-//
-//			@Override public boolean hasNext() {
-//				System.out.println("hasNext()");
-//				if (caret >= size) return false;
-//				updateRupture(rupture, caret++);
-//				return (rupture.rate > 0.0) ? true : hasNext();
-//			}
-//
-//			@Override public Rupture next() {
-//				System.out.println(caret);
-//				return rupture;
-//			}
-//
-//			@Override public void remove() {
-//				throw new UnsupportedOperationException();
-//			}
-//		};
-//	}
 
 	@Override public Iterator<Rupture> iterator() {
 		return new Iterator<Rupture>() {
@@ -218,21 +186,21 @@ class PointSource implements Source {
 		}
 
 		// @formatter:off
+		
+		/*
+		 * Width is needed to build GmmInputs, but is generally ignored
+		 * by Gmms that are capable of using point sources; a generic value
+		 * of 10.0 km is returned.
+		 */
+		
 		@Override public double strike() { throw new UnsupportedOperationException(exMessage("strike")); }
 		@Override public double dip() { return dipRad * GeoTools.TO_DEG; }
 		@Override public double dipRad() { return dipRad; }
 		@Override public double dipDirection() { throw new UnsupportedOperationException(exMessage("dipDirection")); }
 		@Override public double length() { throw new UnsupportedOperationException(exMessage("length")); }
-		@Override public double width() { 
-			return 10.0; // km
-			// TODO clean; decide if this is appropriate; width IS needed to build a GmmInput
-//			throw new UnsupportedOperationException(exMessage("width"));
-			}
-		
+		@Override public double width() { return 10.0; } // km 
 		@Override public double area() { throw new UnsupportedOperationException(exMessage("area")); }
 		@Override public double depth() { return zTop; }
-		// TODO should this be the true centroid of the surface
-		// representation or is the grid node location ok?
 		@Override public Location centroid() { return loc; } 
 		// @formatter:on
 
@@ -278,8 +246,8 @@ class PointSource implements Source {
 	 * [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
 	 * 
 	 * A depth model also encapsulates a maximum depth value that is usually
-	 * source type dependent and may be used when computing the maximum
-	 * width of a point source.
+	 * source type dependent and may be used when computing the maximum width of
+	 * a point source.
 	 * 
 	 * All DepthModel validation is currently performed in
 	 * GridSourceSet.Builder.
@@ -317,7 +285,7 @@ class PointSource implements Source {
 		}
 
 		private DepthModel(List<Double> magMaster,
-			NavigableMap<Double, Map<Double, Double>> magDepthMap, double maxDepth) {
+				NavigableMap<Double, Map<Double, Double>> magDepthMap, double maxDepth) {
 
 			this.magMaster = magMaster;
 			this.maxDepth = maxDepth;

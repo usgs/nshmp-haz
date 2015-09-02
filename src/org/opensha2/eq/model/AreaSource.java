@@ -88,17 +88,6 @@ public class AreaSource implements Source {
 		this.strike = strike;
 		this.rupScaling = rupScaling;
 		this.sourceType = sourceType;
-		
-		double totalRate = DataUtils.sum(mfd.yValues());
-		System.out.println("Area rate: " + totalRate);
-		System.out.println("Mech count: " + mechCount(mechMap, PointSourceType.POINT));
-		double rate = 0.0;
-		int rupCount = 0;
-		for (Rupture rupture : this) {
-			rate += rupture.rate;
-			rupCount++;
-		}
-		System.out.println("Rups: " + rupCount + "  Rate sum: " + rate);
 	}
 
 	@Override public String name() {
@@ -166,14 +155,9 @@ public class AreaSource implements Source {
 	}
 
 	private Iterable<Rupture> sourceGridIterable(GriddedRegion gr) {
-
-		System.out.println("Grid size: " + gr.size());
 		IncrementalMfd scaledMfd = IncrementalMfd.copyOf(mfd);
 		scaledMfd.scale(1.0 / gr.size());
 
-		IncrementalMfd testMfd = IncrementalMfd.copyOf(scaledMfd);
-		testMfd.scale(gr.size());
-		System.out.println("RescaledMFD: " + DataUtils.sum(testMfd.yValues()));
 		List<Iterable<Rupture>> sourceRupturesList = new ArrayList<>();
 		for (Location loc : gr) {
 			sourceRupturesList.add(createSource(loc, scaledMfd));

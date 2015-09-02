@@ -63,7 +63,6 @@ final class Transforms {
 
 		@Override public SourceInputList apply(final Source source) {
 			SourceInputList hazardInputs = new SourceInputList(source);
-			int count = 0;
 
 			for (Rupture rup : source) {
 
@@ -91,9 +90,6 @@ final class Transforms {
 					site.z1p0,
 					site.z2p5);
 				hazardInputs.add(input);
-//				System.out.println(input);
-				if (count % 100000 == 0) System.out.println(count);
-				count++;
 			}
 			
 			return hazardInputs;
