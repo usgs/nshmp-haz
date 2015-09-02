@@ -19,6 +19,7 @@ import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.scaling.MagLengthRelationship;
 import org.opensha2.eq.fault.surface.PtSrcDistCorr;
 import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.eq.model.PointSource.PointSurface;
 import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
@@ -115,16 +116,15 @@ class PointSourceFinite extends PointSource {
 			{
 				rupture.surface = new FiniteSurface(loc, rupScaling);
 			}
-			int size = size();
+			final int size = size();
 			int caret = 0;
 
 			@Override public boolean hasNext() {
-				if (caret >= size) return false;
-				updateRupture(rupture, caret++);
-				return (rupture.rate > 0.0) ? true : hasNext();
+				return caret < size;
 			}
 
 			@Override public Rupture next() {
+				updateRupture(rupture, caret++);
 				return rupture;
 			}
 

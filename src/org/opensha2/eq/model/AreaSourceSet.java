@@ -7,10 +7,7 @@ import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
 
-import org.opensha2.eq.model.FaultSourceSet.Builder;
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -31,7 +28,7 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 			double weight,
 			List<AreaSource> sources,
 			GmmSet gmmSet) {
-		
+
 		super(name, id, weight, gmmSet);
 		this.sources = sources;
 	}

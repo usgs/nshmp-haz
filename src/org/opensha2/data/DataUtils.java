@@ -870,8 +870,9 @@ public final class DataUtils {
 	 * @see #WEIGHT_TOLERANCE
 	 */
 	public static void validateWeights(Collection<Double> weights) {
-		checkArgument(fuzzyEquals(sum(weights), 1.0, WEIGHT_TOLERANCE),
-			"Weights do not sum to 1: %s", weights);
+		double sum = sum(weights);
+		checkArgument(fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
+			"Weights Σ %s = %s ≠ 1.0", weights, sum);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<FaultSourceSet id="-1" name="Set2-Case3d" weight="1.0">
+<FaultSourceSet id="-1" name="Set2-Case3d-fast" weight="1.0">
   <!--Hanging wall effects; CY14; σ=0-->
   <Settings>
     <SourceProperties ruptureScaling="PEER"/>

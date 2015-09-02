@@ -154,16 +154,15 @@ class PointSourceFixedStrike extends PointSourceFinite {
 			{
 				rupture.surface = new FixedStrikeSurface(loc, rupScaling);
 			}
-			int size = size();
+			final int size = size();
 			int caret = 0;
 
 			@Override public boolean hasNext() {
-				if (caret >= size) return false;
-				updateRupture(rupture, caret++);
-				return (rupture.rate > 0.0) ? true : hasNext();
+				return caret < size;
 			}
 
 			@Override public Rupture next() {
+				updateRupture(rupture, caret++);
 				return rupture;
 			}
 

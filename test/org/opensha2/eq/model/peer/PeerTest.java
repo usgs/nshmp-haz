@@ -55,7 +55,9 @@ public class PeerTest {
 	public static final String S1_C8B_F = "Set1-Case8b-fast";
 	public static final String S1_C8C = "Set1-Case8c";
 	public static final String S1_C10 = "Set1-Case10";
+	public static final String S1_C10_F = "Set1-Case10-fast";
 	public static final String S1_C11 = "Set1-Case11";
+	public static final String S1_C11_F = "Set1-Case11-fast";
 
 	public static final String S2_C1 = "Set2-Case1";
 	public static final String S2_C2A = "Set2-Case2a";
@@ -179,9 +181,8 @@ public class PeerTest {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(Mfds.rateToProb(0.0395, 1));
-//		String model = MODEL_DIR.resolve(S1_C3_F).toString();
-//		HazardCurve.main(new String[] { model });
+		String model = MODEL_DIR.resolve(S1_C11_F).toString();
+		HazardCurve.main(new String[] { model });
 	}
 
 }
