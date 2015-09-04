@@ -106,36 +106,38 @@ final class HazardCurveSet {
 			totalCurves = new EnumMap<>(Imt.class);
 		}
 
-		Builder addCurves(HazardCurves hazardCurves) {
-			checkNotNull(hazardGroundMotionsList, "%s was intialized with a ClusterSourceSet", ID);
-			hazardGroundMotionsList.add(hazardCurves.groundMotions);
-			double distance = hazardCurves.groundMotions.inputs.minDistance;
+		Builder addCurves(HazardCurves curvesIn) {
+			checkNotNull(hazardGroundMotionsList, "%s only supports ClusterCurves", ID);
+			hazardGroundMotionsList.add(curvesIn.groundMotions);
+			double distance = curvesIn.groundMotions.inputs.minDistance;
 			Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
-			for (Entry<Imt, Map<Gmm, ArrayXY_Sequence>> imtEntry : hazardCurves.curveMap.entrySet()) {
-				Map<Gmm, ArrayXY_Sequence> builderCurveMap = curveMap.get(imtEntry.getKey());
-				for (Entry<Gmm, ArrayXY_Sequence> gmmEntry : imtEntry.getValue().entrySet()) {
-					Gmm gmm = gmmEntry.getKey();
-					double gmmWeight = gmmWeightMap.get(gmm);
-					builderCurveMap.get(gmm).add(copyOf(gmmEntry.getValue()).multiply(gmmWeight));
+			// loop Imts based on what's been calculated
+			for (Imt imt : curvesIn.curveMap.keySet()) {
+				Map<Gmm, ArrayXY_Sequence> curveMapIn = curvesIn.curveMap.get(imt);
+				Map<Gmm, ArrayXY_Sequence> curveMapBuild = curveMap.get(imt);
+				// loop Gmms based on what's supported at this distance
+				for (Gmm gmm : gmmWeightMap.keySet()) {
+					double weight = gmmWeightMap.get(gmm);
+					curveMapBuild.get(gmm).add(copyOf(curveMapIn.get(gmm)).multiply(weight));
 				}
 			}
 			return this;
 		}
 
-		Builder addCurves(ClusterCurves clusterCurves) {
-			checkNotNull(clusterGroundMotionsList, "%s was not intialized with a ClusterSourceSet",
-				ID);
-			clusterGroundMotionsList.add(clusterCurves.clusterGroundMotions);
-			double clusterWeight = clusterCurves.clusterGroundMotions.parent.weight();
-			double distance = clusterCurves.clusterGroundMotions.minDistance;
+		Builder addCurves(ClusterCurves curvesIn) {
+			checkNotNull(clusterGroundMotionsList, "%s only supports HazardCurves", ID);
+			clusterGroundMotionsList.add(curvesIn.clusterGroundMotions);
+			double clusterWeight = curvesIn.clusterGroundMotions.parent.weight();
+			double distance = curvesIn.clusterGroundMotions.minDistance;
 			Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
-			for (Entry<Imt, Map<Gmm, ArrayXY_Sequence>> imtEntry : clusterCurves.curveMap
-				.entrySet()) {
-				Map<Gmm, ArrayXY_Sequence> builderCurveMap = curveMap.get(imtEntry.getKey());
-				for (Entry<Gmm, ArrayXY_Sequence> gmmEntry : imtEntry.getValue().entrySet()) {
-					Gmm gmm = gmmEntry.getKey();
-					double totalWeight = gmmWeightMap.get(gmm) * clusterWeight;
-					builderCurveMap.get(gmm).add(copyOf(gmmEntry.getValue()).multiply(totalWeight));
+			// loop Imts based on what's coming in
+			for (Imt imt : curvesIn.curveMap.keySet()) {
+				Map<Gmm, ArrayXY_Sequence> curveMapIn = curvesIn.curveMap.get(imt);
+				Map<Gmm, ArrayXY_Sequence> curveMapBuild = curveMap.get(imt);
+				// loop Gmms based on what's supported at this distance
+				for (Gmm gmm : gmmWeightMap.keySet()) {
+					double weight = gmmWeightMap.get(gmm) * clusterWeight;
+					curveMapBuild.get(gmm).add(copyOf(curveMapIn.get(gmm)).multiply(weight));
 				}
 			}
 			return this;
