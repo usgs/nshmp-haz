@@ -39,8 +39,7 @@ class Deagg {
 	// private final double mBar, rBar, εBar;
 
 	/*
-	 * Many deagg bins have no data so we will usually be returning a sparse
-	 * matrix
+	 * Many deagg bins have no data so result is a sparse matrix
 	 * 
 	 * TODO track and report ranked source set contributions TODO track and
 	 * report ranked sources; may have source with same name in different
@@ -286,6 +285,16 @@ class Deagg {
 		}
 
 		/**
+		 * Create a deaggregation data model from the supplied
+		 * {@code CalcConfig}.
+		 * @param c {@code CalcConfig} to process
+		 */
+		public static Model fromConfig(CalcConfig c) {
+			DeaggData d = c.deagg;
+			return create(d.mMin, d.mMax, d.Δm, d.rMin, d.rMax, d.Δr, d.εMin, d.εMax, d.Δε);
+		}
+
+		/**
 		 * Create a deaggregation data model. Deaggregation data bins are
 		 * anchored on the {@code min} values supplied. {@code max} values may
 		 * not correspond to final upper edge of uppermost bins if
@@ -309,16 +318,6 @@ class Deagg {
 				.distanceDiscretization(rMin, rMax, Δr)
 				.epsilonDiscretization(εMin, εMax, Δε)
 				.build();
-		}
-
-		/**
-		 * Create a deaggregation data model from the supplied
-		 * {@code CalcConfig}.
-		 * @param c {@code CalcConfig} to process
-		 */
-		public static Model fromConfig(CalcConfig c) {
-			DeaggData d = c.deagg;
-			return create(d.mMin, d.mMax, d.Δm, d.rMin, d.rMax, d.Δr, d.εMin, d.εMax, d.Δε);
 		}
 
 		private static class Builder {
