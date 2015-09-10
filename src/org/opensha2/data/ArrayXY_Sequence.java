@@ -55,7 +55,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 		checkArgument(checkNotNull(xs).length > 1, "Xs too small");
 		if (ys == null) ys = new double[xs.length];
 		checkArgument(xs.length == ys.length, "Xs and Ys are different lengths");
-		checkArgument(isMonotonic(true, false, xs), "Non-monotonic x-values");
+		checkArgument(isMonotonic(true, true, xs), "Non-monotonic x-values");
 		this.xs = Arrays.copyOf(xs, xs.length);
 		this.ys = Arrays.copyOf(ys, ys.length);
 		xHash = Arrays.hashCode(xs);

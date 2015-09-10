@@ -14,6 +14,7 @@ import java.util.Arrays;
  * @author Peter Powers
  * @version $Id:$
  */
+@Deprecated
 public class HazardCurve extends ArrayXY_Sequence {
 
 	/* Only for use by static factory methods. See parent. */
@@ -24,7 +25,7 @@ public class HazardCurve extends ArrayXY_Sequence {
 	/* Only for use by static factory methods. See parent. */
 	HazardCurve(double[] xs, double[] ys) {
 		super(xs, ys);
-		checkArgument(DataUtils.isMonotonic(false, true, ys));
+		checkArgument(DataUtils.isMonotonic(false, false, ys));
 	}
 
 	/**

@@ -648,23 +648,24 @@ public final class DataUtils {
 
 	/**
 	 * Determine whether the elements of {@code data} increase or decrease
-	 * monotonically, with a flag indicating if duplicate elements are
-	 * permitted. The {@code repeats} flag could be {@code false} if checking
-	 * the x-values of a function for any steps, or {@code true} if checking the
-	 * y-values of a cumulative distribution function, which are commonly
-	 * constant.
+	 * monotonically, with a {@code strict} flag indicating if identical
+	 * adjacent elements are forbidden. The {@code strict} flag could be
+	 * {@code true} if checking the x-values of a function for any steps, or
+	 * {@code false} if checking the y-values of a cumulative distribution
+	 * function, which are commonly constant.
 	 * 
-	 * @param ascending if {@code true}, descending if {@code false}
-	 * @param repeats whether repeated adjacent elements are allowed
-	 * @param data to validate
+	 * @param increasing if {@code true}, descending if {@code false}
+	 * @param strict {@code true} if data must always increase or decrease,
+	 *        {@code false} if identical adjacent values are permitted
+	 * @param data to evaluate
 	 * @return {@code true} if monotonic, {@code false} otherwise
 	 */
-	public static boolean isMonotonic(boolean ascending, boolean repeats, double... data) {
+	public static boolean isMonotonic(boolean increasing, boolean strict, double... data) {
 		validateDataArray(data);
 		double[] diff = diff(data);
-		if (!ascending) flip(diff);
+		if (!increasing) flip(diff);
 		double min = Doubles.min(diff);
-		return (repeats) ? min >= 0 : min > 0;
+		return (strict) ? min > 0 : min >= 0;
 	}
 
 	/**
@@ -694,7 +695,6 @@ public final class DataUtils {
 	 * @throws IllegalArgumentException if {@code data.legth < 2}
 	 */
 	public static double[] diff(double... data) {
-		validateDataArray(data);
 		checkArgument(checkNotNull(data).length > 1);
 		int size = data.length - 1;
 		double[] diff = new double[size];
@@ -1049,13 +1049,12 @@ public final class DataUtils {
 	 * @param sequences to combine
 	 * @return a combined sequence
 	 */
-	@Deprecated
-	public static XY_Sequence combine(Iterable<XY_Sequence> sequences) {
+	@Deprecated public static XY_Sequence combine(Iterable<XY_Sequence> sequences) {
 
 		// TODO I think we want to have interpolating and non-interpolating
 		// flavors. Interpolating for visual presentation, non-interpolating
 		// for re-use as MFD
-		
+
 		// create master x-value sequence
 		Builder<Double> builder = ImmutableSortedSet.naturalOrder();
 		for (XY_Sequence sequence : sequences) {
@@ -1327,43 +1326,46 @@ public final class DataUtils {
 	 *         bin {@code size} is <1, or the {@code origin} is greater than all
 	 *         {@code data} values
 	 */
-	// NOTE commented out because unused; is probably useful and should be archived
+	// NOTE commented out because unused; is probably useful and should be
+	// archived
 	// dependency on commons-math StatUtils.percentile
-//	@Deprecated public static DefaultXY_DataSet nearestNeighborHist(double[] data, double origin,
-//			int size) {
-//		checkNotNull(data, "Supplied data is null");
-//		checkArgument(data.length > 0, "Supplied data is empty");
-//		checkArgument(size > 0, "Bin size can't be less than 1");
-//		double[] localData = Arrays.copyOf(data, data.length);
-//		Arrays.sort(localData);
-//		int startIdx = Arrays.binarySearch(localData, origin);
-//		checkArgument(startIdx < localData.length, "Origin is greater than all data values");
-//		startIdx = (startIdx > 0) ? startIdx : -startIdx - 1;
-//		// for multipe identical values, binary search may not return
-//		// the lowest index so walk down
-//		while (startIdx > 0 && origin == localData[startIdx - 1])
-//			startIdx--;
-//		// trim data
-//		localData = Arrays.copyOfRange(localData, startIdx, localData.length);
-//		int binCount = (int) Math.floor(localData.length / size);
-//		// bail on an empty distribution
-//		if (binCount == 0) return null;
-//		List<Double> x = new ArrayList<Double>();
-//		List<Double> y = new ArrayList<Double>();
-//		double binLo, binHi, binDelta;
-//		for (int i = 0; i < binCount; i++) {
-//			int datIdx = i * size;
-//			binLo = (i == 0) ? origin : localData[datIdx - 1];
-//			binHi = localData[datIdx + size - 1];
-//			binDelta = binHi - binLo;
-//			// bail on intervals of identical values
-//			if (binDelta == 0) continue;
-//			y.add(size / (binHi - binLo));
-//			x.add(StatUtils.percentile(localData, datIdx, size, 50.0));
-//		}
-//		// bail on empty distribution
-//		return (x.isEmpty()) ? null : new DefaultXY_DataSet(x, y);
-//	}
+	// @Deprecated public static DefaultXY_DataSet nearestNeighborHist(double[]
+	// data, double origin,
+	// int size) {
+	// checkNotNull(data, "Supplied data is null");
+	// checkArgument(data.length > 0, "Supplied data is empty");
+	// checkArgument(size > 0, "Bin size can't be less than 1");
+	// double[] localData = Arrays.copyOf(data, data.length);
+	// Arrays.sort(localData);
+	// int startIdx = Arrays.binarySearch(localData, origin);
+	// checkArgument(startIdx < localData.length,
+	// "Origin is greater than all data values");
+	// startIdx = (startIdx > 0) ? startIdx : -startIdx - 1;
+	// // for multipe identical values, binary search may not return
+	// // the lowest index so walk down
+	// while (startIdx > 0 && origin == localData[startIdx - 1])
+	// startIdx--;
+	// // trim data
+	// localData = Arrays.copyOfRange(localData, startIdx, localData.length);
+	// int binCount = (int) Math.floor(localData.length / size);
+	// // bail on an empty distribution
+	// if (binCount == 0) return null;
+	// List<Double> x = new ArrayList<Double>();
+	// List<Double> y = new ArrayList<Double>();
+	// double binLo, binHi, binDelta;
+	// for (int i = 0; i < binCount; i++) {
+	// int datIdx = i * size;
+	// binLo = (i == 0) ? origin : localData[datIdx - 1];
+	// binHi = localData[datIdx + size - 1];
+	// binDelta = binHi - binLo;
+	// // bail on intervals of identical values
+	// if (binDelta == 0) continue;
+	// y.add(size / (binHi - binLo));
+	// x.add(StatUtils.percentile(localData, datIdx, size, 50.0));
+	// }
+	// // bail on empty distribution
+	// return (x.isEmpty()) ? null : new DefaultXY_DataSet(x, y);
+	// }
 
 	/**
 	 * Creates a new array from the values in a source array at the specified
@@ -1455,5 +1457,5 @@ public final class DataUtils {
 	// System.out.println(sw.elapsed(TimeUnit.SECONDS));
 	//
 	// }
-	
+
 }
