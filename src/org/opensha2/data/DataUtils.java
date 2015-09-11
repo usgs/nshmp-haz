@@ -8,9 +8,12 @@ import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.isNaN;
 import static java.math.BigDecimal.ROUND_HALF_UP;
+import static com.google.common.base.Strings.repeat;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +21,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import org.opensha2.util.MathUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -53,6 +58,14 @@ import com.google.common.primitives.Ints;
  * @see Doubles
  */
 public final class DataUtils {
+
+	/*
+	 * TODO we really need some finiteness checking, especially with ranges;
+	 * this is ok for explicitely defined (bounded) Range<Double>; this would
+	 * check for NaN and if someone needs the range open on either end, then
+	 * Range.lessThan() Range.greaterThan() should be used rather than passing
+	 * around or allowing unreal values
+	 */
 
 	/*
 	 * NOTE: Transform Functions vs Pure Iteration
@@ -876,19 +889,29 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Confirm that for a specified range {@code [min, max]} that
-	 * {@code max > min}, {@code Δ > 0.0}, & {@code Δ < max - min}. Use this
-	 * prior to creating a set of values discretized in {@code Δ}. Returns
-	 * {@code Δ} for use inline.
+	 * Confirm that for a specified range {@code [min, max]} and {@code Δ} that:
+	 * <ul> <li>{@code min}, {@code max}, and {@code Δ} are finite</li> <li>
+	 * {@code max > min}</li> <li>{@code Δ ≠ 0}</li> <li>{@code Δ < max - min}
+	 * </li></ul>
+	 * 
 	 * @param min value
 	 * @param max value
 	 * @param Δ discretization delta
+	 * @return {@code Δ} for use inline
 	 */
 	public static double validateDelta(double min, double max, double Δ) {
+		validateFiniteness(min, "min");
+		validateFiniteness(max, "max");
+		validateFiniteness(Δ, "Δ");
 		checkArgument(max > min, "min [%s] > max [%s]", min, max);
 		checkArgument(Δ > 0.0, "Invalid Δ [%s]", Δ);
 		checkArgument(Δ <= max - min, "Δ [%s] > max - min [%s]", max - min);
 		return Δ;
+	}
+
+	public static double validateFiniteness(double value, String label) {
+		checkArgument(Doubles.isFinite(value), "Invalid %s value: %s", label, value);
+		return value;
 	}
 
 	/*
@@ -1087,15 +1110,79 @@ public final class DataUtils {
 	}
 
 	private static class Clean implements Function<Double, Double> {
-		private final String format;
+		private final int scale;
 
 		private Clean(int scale) {
-			format = "%." + scale + "f";
+			this.scale = scale;
 		}
 
 		@Override public Double apply(Double d) {
-			return Double.parseDouble(String.format(format, d));
+			return MathUtils.round(d, scale);
 		}
+	}
+
+	/**
+	 * Make a deep copy of a 2D data array.
+	 * @param data to copy
+	 */
+	public static double[][] copyOf(double[][] data) {
+		checkNotNull(data);
+		double[][] out = new double[data.length][];
+		for (int i = 0; i < data.length; i++) {
+			out[i] = Arrays.copyOf(data[i], data[i].length);
+		}
+		return out;
+	}
+
+	/**
+	 * Mke a deep copy of a 3D data array.
+	 * @param data to copy
+	 */
+	public static double[][][] copyOf(double[][][] data) {
+		checkNotNull(data);
+		double[][][] out = new double[data.length][][];
+		for (int i = 0; i < data.length; i++) {
+			out[i] = copyOf(data[i]);
+		}
+		return out;
+	}
+
+	/**
+	 * Format a 2D data array for printing
+	 * @param data to format
+	 */
+	public static String toString(double[][] data) {
+		return toString(checkNotNull(data), 1);
+	}
+
+	/* To support indenting of multidimensional arrays */
+	private static String toString(double[][] data, int indent) {
+		StringBuilder sb = new StringBuilder("[");
+		for (int i = 0; i < data.length; i++) {
+			if (i > 0) sb.append(",").append(NEWLINE).append(repeat(" ", indent));
+			sb.append(Arrays.toString(data[i]));
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	/**
+	 * Format a 3D data array for printing
+	 * @param data to format
+	 */
+	public static String toString(double[][][] data) {
+		return toString(checkNotNull(data), 1);
+	}
+
+	/* To support indenting of multidimensional arrays */
+	private static String toString(double[][][] data, int indent) {
+		StringBuilder sb = new StringBuilder("[");
+		for (int i = 0; i < data.length; i++) {
+			if (i > 0) sb.append(",").append(NEWLINE).append(repeat(" ", indent));
+			sb.append(toString(data[i], indent + 1));
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 	// TODO clean
@@ -1401,61 +1488,6 @@ public final class DataUtils {
 		return out;
 	}
 
-	// NOTE: Transform vs Pure Iteration: are transforms worth it, as cool
-	// as they may be?
-	//
-	// transformTest() shows that the speed difference between a transform
-	// based add() and pure indexed iteration is negligable. What's interesting
-	// though is transform based operations use many more system resources
-	// (watch a CPU monitor) suggesting that in multithreaded situations
-	// performance would suffer. TODO get rid of 'em, they're fluffy
 
-	// static void transformTest() {
-	// int warmup = 100000;
-	// int run = 1000000000;
-	// final double[] data = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4,
-	// 3, 2, 1 };
-	//
-	// // transform performance test
-	// Stopwatch sw = Stopwatch.createUnstarted();
-	// double[] data1 = Arrays.copyOf(data, data.length);
-	// Random rand1 = new Random(1L);
-	// double[] result1 = null;
-	// // warmup 1
-	// for (int i = 0; i < warmup; i++) {
-	// result1 = add(rand1.nextDouble(), data1);
-	// }
-	// // run 1
-	// data1 = Arrays.copyOf(data, data.length);
-	// sw.start();
-	// for (int i = 0; i < run; i++) {
-	// result1 = add(rand1.nextDouble(), data1);
-	// }
-	// sw.stop();
-	// System.out.println("transform");
-	// System.out.println(Arrays.toString(result1));
-	// System.out.println(sw.elapsed(TimeUnit.SECONDS));
-	// System.out.println();
-	//
-	// sw.reset();
-	// double[] data2 = Arrays.copyOf(data, data.length);
-	// Random rand2 = new Random(1L);
-	// double[] result2 = null;
-	// // warmup 2
-	// for (int i = 0; i < warmup; i++) {
-	// result2 = altAdd(rand2.nextDouble(), data2);
-	// }
-	// // run 2
-	// data2 = Arrays.copyOf(data, data.length);
-	// sw.start();
-	// for (int i = 0; i < run; i++) {
-	// result2 = altAdd(rand2.nextDouble(), data2);
-	// }
-	// sw.stop();
-	// System.out.println("pure iterator");
-	// System.out.println(Arrays.toString(result2));
-	// System.out.println(sw.elapsed(TimeUnit.SECONDS));
-	//
-	// }
 
 }
