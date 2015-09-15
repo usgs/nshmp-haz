@@ -193,7 +193,8 @@ final class AsyncCalc {
 			InputList inputs = inputFn.apply(source);
 //			System.out.println("Inputs: " + inputs.size() + "  " + sw);
 
-			Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
+			// TODO why isn't this outside the loop??
+			Set<Gmm> gmms = sourceSet.groundMotionModels().gmms(); 
 			Table<Gmm, Imt, GroundMotionModel> gmmInstances = Gmm.instances(gmms, config.imts);
 			Function<InputList, GroundMotions> gmFn = new InputsToGroundMotions(gmmInstances);
 			GroundMotions groundMotions = gmFn.apply(inputs);
