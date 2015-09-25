@@ -7,14 +7,14 @@ import static org.opensha2.data.DataUtils.validate;
 import static org.opensha2.data.DataUtils.validateWeights;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GroundMotionModel;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
-import com.google.common.collect.Sets;
 
 /**
  * Wrapper class for {@link GroundMotionModel}s associated with a
@@ -25,19 +25,24 @@ import com.google.common.collect.Sets;
  * variants associated with different distance scales.
  * 
  * <p>A {@code GmmSet} can not be created directly; it may only be created by a
- * private parser.</p>
+ * private parser. Currently, although {@code hashCode} and {@code equals} are
+ * consistent, they do not consider </p>
  * 
  * @author Peter Powers
  */
 public final class GmmSet {
+
+	/*
+	 * TODO There is a lot of null checking and handling in this class that
+	 * would be better served by Optional
+	 */
 
 	private final Map<Gmm, Double> weightMapLo;
 	private final double maxDistLo;
 	private final Map<Gmm, Double> weightMapHi; // may be null
 	private final double maxDistHi; // used by distance filters
 	private final boolean singular;
-
-	private final Set<Gmm> gmms;
+	private final int hashCode;
 
 	private final UncertType uncertainty;
 	private final double epiValue;
@@ -45,14 +50,16 @@ public final class GmmSet {
 	private final double[] epiWeights;
 
 	GmmSet(Map<Gmm, Double> weightMapLo, double maxDistLo, Map<Gmm, Double> weightMapHi,
-		double maxDistHi, double[] epiValues, double[] epiWeights) {
+			double maxDistHi, double[] epiValues, double[] epiWeights) {
 		this.weightMapLo = weightMapLo;
 		this.maxDistLo = maxDistLo;
 		this.weightMapHi = weightMapHi;
 		this.maxDistHi = (weightMapHi != null) ? maxDistHi : maxDistLo;
 		this.singular = weightMapHi == null;
 
-		gmms = Sets.immutableEnumSet(weightMapLo.keySet());
+		this.hashCode = Objects.hash(
+			this.weightMapLo, this.maxDistLo,
+			this.weightMapHi, this.maxDistHi);
 
 		uncertainty = (epiValues == null) ? UncertType.NONE : (epiValues.length == 1)
 			? UncertType.SINGLE : UncertType.MULTI;
@@ -74,7 +81,7 @@ public final class GmmSet {
 	 * The {@code Set} of {@link GroundMotionModel} identifiers.
 	 */
 	public Set<Gmm> gmms() {
-		return gmms;
+		return weightMapLo.keySet();
 	}
 
 	/**
@@ -99,8 +106,26 @@ public final class GmmSet {
 		return maxDistHi;
 	}
 
+	@Override public int hashCode() {
+		return hashCode;
+	}
+
+	@Override public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (!(obj instanceof GmmSet)) return false;
+		GmmSet that = (GmmSet) obj;
+		return Objects.equals(this.weightMapLo, that.weightMapLo) &&
+			this.maxDistLo == that.maxDistLo &&
+			Objects.equals(this.weightMapHi, that.weightMapHi) &&
+			this.maxDistHi == that.maxDistHi;
+	}
+
 	private static double[][] initEpiValues(double[] v) {
-		return new double[][] { { v[0], v[1], v[2] }, { v[3], v[4], v[5] }, { v[6], v[7], v[8] } };
+		return new double[][] {
+			{ v[0], v[1], v[2] },
+			{ v[3], v[4], v[5] },
+			{ v[6], v[7], v[8] }
+		};
 	}
 
 	/*
@@ -149,7 +174,7 @@ public final class GmmSet {
 		Builder primaryModelMap(Map<Gmm, Double> gmmWtMap) {
 			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
 			validateWeights(gmmWtMap.values());
-			gmmWtMapLo = ImmutableMap.copyOf(gmmWtMap);
+			gmmWtMapLo = Maps.immutableEnumMap(gmmWtMap);
 			return this;
 		}
 
@@ -161,7 +186,7 @@ public final class GmmSet {
 		Builder secondaryModelMap(Map<Gmm, Double> gmmWtMap) {
 			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
 			validateWeights(gmmWtMap.values());
-			gmmWtMapHi = ImmutableMap.copyOf(gmmWtMap);
+			gmmWtMapHi = Maps.immutableEnumMap(gmmWtMap);
 			return this;
 		}
 
@@ -210,7 +235,9 @@ public final class GmmSet {
 
 			validateState(ID);
 			try {
-				GmmSet gmmSet = new GmmSet(gmmWtMapLo, maxDistanceLo, gmmWtMapHi, maxDistanceHi,
+				GmmSet gmmSet = new GmmSet(
+					gmmWtMapLo, maxDistanceLo,
+					gmmWtMapHi, maxDistanceHi,
 					uncValues, uncWeights);
 				return gmmSet;
 			} catch (Exception e) {
