@@ -51,12 +51,22 @@ import com.google.common.collect.Table.Cell;
  * 
  * @author Peter Powers
  */
-final class Transforms {
+public final class Transforms {
+
+	/**
+	 * Return a {@code Function} that converts a {@code Source} along with an
+	 * initially supplied {@code Site} to a list of ground motion model inputs.
+	 * 
+	 * @param site to initialize function with
+	 */
+	public static Function<Source, InputList> sourceToInputs(Site site) {
+		return new SourceToInputs(site);
+	}
 
 	static final class SourceToInputs implements Function<Source, InputList> {
 
 		private final Site site;
-		
+
 		SourceToInputs(final Site site) {
 			this.site = site;
 		}
@@ -91,7 +101,7 @@ final class Transforms {
 					site.z2p5);
 				hazardInputs.add(input);
 			}
-			
+
 			return hazardInputs;
 		}
 	}
@@ -176,7 +186,7 @@ final class Transforms {
 
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
 		private final SourceSet<? extends Source> sourceSet;
-		
+
 		CurveConsolidator(
 				final SourceSet<? extends Source> sourceSet,
 				final Map<Imt, ArrayXY_Sequence> modelCurves) {
