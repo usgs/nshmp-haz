@@ -19,9 +19,9 @@ import com.google.common.primitives.Doubles;
  * Array based implementation of an {@code XY_Sequence}.
  * 
  * <p>This class provides methods for combining and modifying array-based
- * sequences (e.g. {@link #add(ArrayXY_Sequence)}). These are
- * very efficient implementations that should be used in favor of standard
- * iterators where possible.</p>
+ * sequences (e.g. {@link #add(ArrayXY_Sequence)}). These are very efficient
+ * implementations that should be used in favor of standard iterators where
+ * possible.</p>
  * 
  * <p>If multiple instances of a sequence with a fixed set of x-values are
  * required, use the {@link ArrayXY_Sequence#copyOf(ArrayXY_Sequence)}
@@ -34,8 +34,6 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	private final double[] xs;
 	private final double[] ys;
 
-	private final int xHash;
-
 	/*
 	 * Only for use by static factory methods. Create a new sequence from an
 	 * existing one; copies the fields of {@code seq} to {@code this}.
@@ -43,7 +41,6 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	ArrayXY_Sequence(ArrayXY_Sequence seq) {
 		xs = checkNotNull(seq).xs;
 		ys = Arrays.copyOf(seq.ys, seq.ys.length);
-		xHash = seq.xHash;
 	}
 
 	/*
@@ -58,7 +55,6 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 		checkArgument(isMonotonic(true, true, xs), "Non-monotonic x-values");
 		this.xs = Arrays.copyOf(xs, xs.length);
 		this.ys = Arrays.copyOf(ys, ys.length);
-		xHash = Arrays.hashCode(xs);
 	}
 
 	/**
@@ -76,7 +72,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	public static ArrayXY_Sequence create(double[] xs, double[] ys) {
 		return new ArrayXY_Sequence(xs, ys);
 	}
-	
+
 	/**
 	 * Create a new sequence from the supplied value {@code Collection}s.
 	 * 
@@ -104,7 +100,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	public static ArrayXY_Sequence copyOf(ArrayXY_Sequence sequence) {
 		return new ArrayXY_Sequence(sequence);
 	}
-	
+
 	/**
 	 * Create a copy of the supplied {@code sequence}.
 	 * 
@@ -170,11 +166,16 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	@Override public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof ArrayXY_Sequence)) return false;
-		return hashCode() == obj.hashCode();
+		ArrayXY_Sequence that = (ArrayXY_Sequence) obj;
+		return Arrays.equals(this.xs, that.xs) && Arrays.equals(this.ys, that.ys);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(xHash, Arrays.hashCode(ys));
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(xs);
+		result = prime * result + Arrays.hashCode(ys);
+		return result;
 	}
 
 	/**
@@ -238,7 +239,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 		uncheckedAdd(1, uncheckedFlip(ys));
 		return this;
 	}
-	
+
 	/**
 	 * Sets all y-values to 0.
 	 * 
@@ -248,7 +249,7 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 		Arrays.fill(ys, 0.0);
 		return this;
 	}
-	
+
 	/**
 	 * Transforms all y-values in place using the supplied {@link Function}.
 	 * 
@@ -260,9 +261,18 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 		return this;
 	}
 
-	private ArrayXY_Sequence validateSequence(ArrayXY_Sequence sequence) {
-		checkArgument(checkNotNull(sequence).xHash == xHash);
-		return sequence;
+	/*
+	 * The common use case is for only the x-value hash codes to be compared as
+	 * a result of having used a copyOf(ArrayXY_Sequence) constructor.
+	 */
+	private ArrayXY_Sequence validateSequence(ArrayXY_Sequence that) {
+		checkNotNull(that);
+		checkArgument(
+			this.xs.hashCode() == that.xs.hashCode() || Arrays.equals(this.xs, that.xs),
+			"xValues are not the same:\nthis: %s\nthat: %s",
+			Arrays.toString(this.xs),
+			Arrays.toString(that.xs));
+		return that;
 	}
 
 }
