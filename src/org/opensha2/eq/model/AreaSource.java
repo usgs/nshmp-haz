@@ -349,7 +349,7 @@ public class AreaSource implements Source {
 		AreaSource build() {
 			validateState(ID);
 			List<GriddedRegion> sourceGrids = buildSourceGrids(border, gridScaling);
-			DepthModel depthModel = DepthModel.create(mfd.xValues(), magDepthMap, maxDepth);
+			DepthModel depthModel = DepthModel.create(magDepthMap, mfd.xValues(), maxDepth);
 			return new AreaSource(name, mfd, gridScaling, sourceGrids, mechMap,
 				depthModel, strike, rupScaling, sourceType);
 		}

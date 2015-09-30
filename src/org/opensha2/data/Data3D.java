@@ -5,14 +5,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.DataTables.checkDataSize;
 import static org.opensha2.data.DataTables.checkDataState;
-import static org.opensha2.data.DataTables.createKeys;
 import static org.opensha2.data.DataTables.indexOf;
 import static org.opensha2.data.DataTables.initTable;
 import static org.opensha2.data.DataTables.keyArray;
 import static org.opensha2.data.DataTables.size;
 import static org.opensha2.data.DataUtils.validateDelta;
 
+import java.util.Arrays;
 import java.util.List;
+
+import org.opensha2.data.DataTables.DefaultTable3D;
 
 /**
  * A wrapper around a 3D table (or volume) of double-valued data that is
@@ -131,6 +133,15 @@ public interface Data3D {
 		}
 
 		/**
+		 * Return a copy of the row keys once {@link #rows(double, double, double)}
+		 * has been called, otherwise throw an {@code IllegalStateException}.
+		 */
+		public double[] rows() {
+			checkDataState(rows, "Row");
+			return Arrays.copyOf(rows, rows.length);
+		}
+
+		/**
 		 * Define the data table columns.
 		 * 
 		 * @param min value of lower edge of lowest column bin
@@ -144,6 +155,15 @@ public interface Data3D {
 			columns = keyArray(columnMin, columnMax, columnΔ);
 			if (rows != null && levels != null) init();
 			return this;
+		}
+
+		/**
+		 * Return a copy of the column keys once {@link #columns(double, double, double)}
+		 * has been called, otherwise throw an {@code IllegalStateException}.
+		 */
+		public double[] columns() {
+			checkDataState(columns, "Column");
+			return Arrays.copyOf(columns, columns.length);
 		}
 
 		/**
@@ -162,6 +182,15 @@ public interface Data3D {
 			return this;
 		}
 
+		/**
+		 * Return a copy of the level keys once {@link #levels(double, double, double)}
+		 * has been called, otherwise throw an {@code IllegalStateException}.
+		 */
+		public double[] levels() {
+			checkDataState(levels, "Level");
+			return Arrays.copyOf(levels, levels.length);
+		}
+
 		private void init() {
 			data = initTable(
 				rowMin, rowMax, rowΔ,
@@ -178,9 +207,9 @@ public interface Data3D {
 		 * @param value to set
 		 */
 		public Builder set(double row, double column, double level, double value) {
-			int iRow = indexOf(rowMin, rowΔ, row);
-			int iColumn = indexOf(columnMin, columnΔ, column);
-			int iLevel = indexOf(levelMin, levelΔ, level);
+			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
+			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
+			int iLevel = indexOf(levelMin, levelΔ, level, levels.length);
 			data[iRow][iColumn][iLevel] = value;
 			return this;
 		}
@@ -193,9 +222,9 @@ public interface Data3D {
 		 * @param value to add
 		 */
 		public Builder add(double row, int column, double level, double value) {
-			int iRow = indexOf(rowMin, rowΔ, row);
-			int iColumn = indexOf(columnMin, columnΔ, column);
-			int iLevel = indexOf(levelMin, levelΔ, level);
+			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
+			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
+			int iLevel = indexOf(levelMin, levelΔ, level, levels.length);
 			data[iRow][iColumn][iLevel] += value;
 			return this;
 		}
@@ -209,7 +238,7 @@ public interface Data3D {
 			checkNotNull(data);
 			checkArgument(data.length > 0 && data[0].length > 0 && data[0][0].length > 0,
 				"At least one data dimension is empty");
-			checkDataState(rows, columns);
+			checkDataState(rows, columns, levels);
 			checkDataSize(
 				size(rowMin, rowMax, rowΔ),
 				size(columnMin, columnMax, columnΔ),
@@ -220,10 +249,9 @@ public interface Data3D {
 		}
 
 		/**
-		 * Build a new immutable 3D data container populated with values
-		 * computed by the supplied loader. Note that calling this method will
-		 * overwrite any values already supplied via {@code set*} or
-		 * {@code add*} methods.
+		 * Return an immutable 3D data container populated with values computed
+		 * by the supplied loader. Calling this method will overwrite any values
+		 * already supplied via {@code set*} or {@code add*} methods.
 		 * 
 		 * @param loader that will compute values
 		 */
@@ -242,79 +270,17 @@ public interface Data3D {
 		}
 
 		/**
-		 * Build a new immutable 3D data container.
+		 * Return an immutable 3D data container populated with the contents of
+		 * this {@code Builder}.
 		 */
 		public Data3D build() {
 			checkState(built != true, "This builder has already been used");
 			checkDataState(rows, columns, levels);
-			return new Table(
+			return new DefaultTable3D(
 				rowMin, rowMax, rowΔ,
 				columnMin, columnMax, columnΔ,
 				levelMin, levelMax, levelΔ,
 				data);
-		}
-	}
-
-	/**
-	 * Concrete implementation of a {@code Data3D} table. Users should have no
-	 * need for this class.
-	 * 
-	 * @see Builder
-	 */
-	public final static class Table implements Data3D {
-
-		private final double rowMin;
-		private final double rowMax;
-		private final double rowΔ;
-
-		private final double columnMin;
-		private final double columnMax;
-		private final double columnΔ;
-
-		private final double levelMin;
-		private final double levelMax;
-		private final double levelΔ;
-
-		private final double[][][] data;
-
-		private Table(
-				double rowMin, double rowMax, double rowΔ,
-				double columnMin, double columnMax, double columnΔ,
-				double levelMin, double levelMax, double levelΔ,
-				double[][][] data) {
-
-			this.rowMin = rowMin;
-			this.rowMax = rowMax;
-			this.rowΔ = rowΔ;
-
-			this.columnMin = columnMin;
-			this.columnMax = columnMax;
-			this.columnΔ = columnΔ;
-
-			this.levelMin = levelMin;
-			this.levelMax = levelMax;
-			this.levelΔ = levelΔ;
-
-			this.data = data;
-		}
-
-		@Override public double get(final double row, final double column, final double level) {
-			int iRow = indexOf(rowMin, rowΔ, row);
-			int iColumn = indexOf(columnMin, columnΔ, column);
-			int iLevel = indexOf(levelMin, levelΔ, level);
-			return data[iRow][iColumn][iLevel];
-		}
-
-		@Override public List<Double> rows() {
-			return createKeys(rowMin, rowMax, rowΔ);
-		}
-
-		@Override public List<Double> columns() {
-			return createKeys(columnMin, columnMax, columnΔ);
-		}
-
-		@Override public List<Double> levels() {
-			return createKeys(levelMin, levelMax, levelΔ);
 		}
 	}
 

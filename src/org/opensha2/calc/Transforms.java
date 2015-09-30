@@ -1,77 +1,77 @@
 package org.opensha2.calc;
 
-import static java.lang.Math.min;
-import static org.opensha2.eq.model.Distance.Type.R_JB;
-import static org.opensha2.eq.model.Distance.Type.R_RUP;
-import static org.opensha2.eq.model.Distance.Type.R_X;
+import static org.opensha2.gmm.Gmm.instances;
 
-import java.util.BitSet;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
+import java.util.Set;
 
 import org.opensha2.calc.ClusterCurves.Builder;
 import org.opensha2.data.ArrayXY_Sequence;
-import org.opensha2.data.DataUtils;
 import org.opensha2.eq.fault.Faults;
-import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.RuptureSurface;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.ClusterSourceSet;
 import org.opensha2.eq.model.Distance;
-import org.opensha2.eq.model.Distance.Type;
 import org.opensha2.eq.model.FaultSource;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Rupture;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SystemSourceSet;
-import org.opensha2.eq.model.SystemSourceSet.SystemSource;
-import org.opensha2.geo.Location;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmInput;
 import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ArrayTable;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Table;
-import com.google.common.collect.Table.Cell;
 
 /**
- * Data transform {@code Function}s. This class includes {@code Function}s for
- * all {@code SourceType}s except {@code SystemSource}s. See
- * {@link SystemSourceSet} for more information.
+ * Data transform {@code Function}s.
  * 
  * @author Peter Powers
  */
-public final class Transforms {
+final class Transforms {
 
-	/**
-	 * Return a {@code Function} that converts a {@code Source} along with an
-	 * initially supplied {@code Site} to a list of ground motion model inputs.
+	/*
+	 * Implemenation notes:
+	 * ---------------------------------------------------------------------
+	 * ClusterSourceSets contain ClusterSources, each of which references a
+	 * FaultSourceSet containing one or more fault representations for the
+	 * ClusterSource.
 	 * 
-	 * @param site to initialize function with
+	 * e.g. for New Madrid, each ClusterSourceSet has 5 ClusterSources, one for
+	 * each position variant of the model. For each position variant there is
+	 * one FaultSourceSet containing the FaultSources in the cluster, each of
+	 * which may have one, or more, magnitude or other variants represented by
+	 * its internal List of IncrementalMfds.
+	 * ---------------------------------------------------------------------
+	 * SystemSourceSets contain many single sources and the functions here
+	 * handle them collectively. Rather than creating lists of input lists for
+	 * each source, one large input list is created. This may change if it is
+	 * decided to apply a magnitude distribution on each system source. This
+	 * motivated reordering of the SourceType enum such that SystemSourceSets
+	 * are processed first and granted a thread early in the calculation
+	 * process.
+	 * ---------------------------------------------------------------------
 	 */
-	public static Function<Source, InputList> sourceToInputs(Site site) {
-		return new SourceToInputs(site);
-	}
 
+	/*
+	 * Create a list of ground motion inputs from a source.
+	 */
 	static final class SourceToInputs implements Function<Source, InputList> {
 
 		private final Site site;
 
-		SourceToInputs(final Site site) {
+		SourceToInputs(Site site) {
 			this.site = site;
 		}
 
-		@Override public SourceInputList apply(final Source source) {
+		@Override public SourceInputList apply(Source source) {
 			SourceInputList hazardInputs = new SourceInputList(source);
 
 			for (Rupture rup : source) {
@@ -106,32 +106,42 @@ public final class Transforms {
 		}
 	}
 
+	/*
+	 * Calculate ground motions for a list of ground motion inputs.
+	 */
 	static final class InputsToGroundMotions implements Function<InputList, GroundMotions> {
 
-		private final Table<Gmm, Imt, GroundMotionModel> gmmInstances;
+		private final Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable;
 
-		InputsToGroundMotions(final Table<Gmm, Imt, GroundMotionModel> gmmInstances) {
-			this.gmmInstances = gmmInstances;
+		InputsToGroundMotions(Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable) {
+			this.gmmTable = gmmTable;
 		}
 
-		@Override public GroundMotions apply(final InputList inputs) {
+		@Override public GroundMotions apply(InputList inputs) {
 
-			GroundMotions.Builder builder = GroundMotions.builder(inputs,
-				gmmInstances.rowKeySet(), gmmInstances.columnKeySet());
+			Set<Imt> imtKeys = gmmTable.keySet();
+			Set<Gmm> gmmKeys = gmmTable.get(imtKeys.iterator().next()).keySet();
+			GroundMotions.Builder builder = GroundMotions.builder(
+				inputs,
+				imtKeys,
+				gmmKeys);
 
-			for (Cell<Gmm, Imt, GroundMotionModel> cell : gmmInstances.cellSet()) {
-				Gmm rowKey = cell.getRowKey();
-				Imt colKey = cell.getColumnKey();
-				GroundMotionModel gmm = cell.getValue();
-				int inputIndex = 0;
-				for (GmmInput gmmInput : inputs) {
-					builder.add(rowKey, colKey, gmm.calc(gmmInput), inputIndex++);
+			for (Imt imt : imtKeys) {
+				for (Gmm gmm : gmmKeys) {
+					GroundMotionModel model = gmmTable.get(imt).get(gmm);
+					int inputIndex = 0;
+					for (GmmInput gmmInput : inputs) {
+						builder.add(imt, gmm, model.calc(gmmInput), inputIndex++);
+					}
 				}
 			}
 			return builder.build();
 		}
 	}
 
+	/*
+	 * Derive hazard curves for a set of ground motions.
+	 */
 	static final class GroundMotionsToCurves implements Function<GroundMotions, HazardCurves> {
 
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
@@ -144,7 +154,7 @@ public final class Transforms {
 			this.truncationLevel = config.truncationLevel;
 		}
 
-		@Override public HazardCurves apply(final GroundMotions groundMotions) {
+		@Override public HazardCurves apply(GroundMotions groundMotions) {
 
 			HazardCurves.Builder curveBuilder = HazardCurves.builder(groundMotions);
 
@@ -182,22 +192,57 @@ public final class Transforms {
 		}
 	}
 
-	static final class CurveConsolidator implements Function<List<HazardCurves>, HazardCurveSet> {
+	/*
+	 * Compute hazard curves for a source. This function coalesces the three
+	 * preceeding functions into one.
+	 */
+	static final class SourceToCurves implements Function<Source, HazardCurves> {
 
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
-		private final SourceSet<? extends Source> sourceSet;
+		private final Function<Source, InputList> sourceToInputs;
+		private final Function<InputList, GroundMotions> inputsToGroundMotions;
+		private final Function<GroundMotions, HazardCurves> groundMotionsToCurves;
 
-		CurveConsolidator(
-				final SourceSet<? extends Source> sourceSet,
-				final Map<Imt, ArrayXY_Sequence> modelCurves) {
+		SourceToCurves(
+				SourceSet<? extends Source> sources,
+				CalcConfig config,
+				Site site) {
 
-			this.sourceSet = sourceSet;
-			this.modelCurves = modelCurves;
+			Set<Gmm> gmms = sources.groundMotionModels().gmms();
+			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(config.imts, gmms);
+
+			this.sourceToInputs = new SourceToInputs(site);
+			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
+			this.groundMotionsToCurves = new GroundMotionsToCurves(config);
 		}
 
-		@Override public HazardCurveSet apply(final List<HazardCurves> curvesList) {
+		@Override public HazardCurves apply(Source source) {
+			return groundMotionsToCurves.apply(
+				inputsToGroundMotions.apply(
+					sourceToInputs.apply(source)));
+		}
+	}
 
-			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet.builder(sourceSet, modelCurves);
+	/* Reduce multiple source curves. */
+	static final class CurveConsolidator implements Function<List<HazardCurves>, HazardCurveSet> {
+
+		private final SourceSet<? extends Source> sources;
+		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+
+		CurveConsolidator(
+				SourceSet<? extends Source> sources,
+				CalcConfig config) {
+
+			this.sources = sources;
+			this.modelCurves = config.logModelCurves;
+		}
+
+		@Override public HazardCurveSet apply(List<HazardCurves> curvesList) {
+
+			if (curvesList.isEmpty()) return HazardCurveSet.empty(sources);
+
+			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet.builder(
+				sources,
+				modelCurves);
 
 			for (HazardCurves curves : curvesList) {
 				curveSetBuilder.addCurves(curves);
@@ -206,45 +251,54 @@ public final class Transforms {
 		}
 	}
 
-	static final class CurveSetConsolidator implements Function<List<HazardCurveSet>, HazardResult> {
+	/*
+	 * SYSTEM: Compute hazard curves for system sources. This function derives
+	 * all inputs for an entire SystemSourceSet before being composed with
+	 * standard ground motion and hazard curve functions.
+	 */
+	static final class SystemToCurves implements Function<SystemSourceSet, HazardCurveSet> {
 
-		private final Site site;
-		private final HazardModel model;
-		private final CalcConfig config;
+		private final Function<SystemSourceSet, InputList> sourcesToInputs;
+		private final Function<InputList, GroundMotions> inputsToGroundMotions;
+		private final Function<GroundMotions, HazardCurves> groundMotionsToCurves;
+		private final Function<List<HazardCurves>, HazardCurveSet> curveConsolidator;
 
-		CurveSetConsolidator(
-				final Site site,
-				final HazardModel model,
-				final CalcConfig config) {
+		SystemToCurves(
+				SystemSourceSet sources,
+				CalcConfig config,
+				Site site) {
 
-			this.site = site;
-			this.model = model;
-			this.config = config;
+			Set<Gmm> gmms = sources.groundMotionModels().gmms();
+			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(config.imts, gmms);
+
+			this.sourcesToInputs = new SystemSourceSet.ToInputs(site);
+			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
+			this.groundMotionsToCurves = new GroundMotionsToCurves(config);
+			this.curveConsolidator = new CurveConsolidator(sources, config);
 		}
 
-		@Override public HazardResult apply(final List<HazardCurveSet> curveSetList) {
+		@Override public HazardCurveSet apply(SystemSourceSet sources) {
+			return curveConsolidator.apply(
+				ImmutableList.of(
+					groundMotionsToCurves.apply(
+						inputsToGroundMotions.apply(
+							sourcesToInputs.apply(sources)))));
 
-			HazardResult.Builder resultBuilder = HazardResult
-				.builder(config)
-				.site(site)
-				.model(model);
-
-			for (HazardCurveSet curves : curveSetList) {
-				resultBuilder.addCurveSet(curves);
-			}
-			return resultBuilder.build();
 		}
 	}
 
+	/*
+	 * CLUSTER: Create a list of ground motion inputs from a cluster source.
+	 */
 	static final class ClusterSourceToInputs implements Function<ClusterSource, ClusterInputs> {
 
 		private final SourceToInputs transform;
 
-		ClusterSourceToInputs(final Site site) {
+		ClusterSourceToInputs(Site site) {
 			transform = new SourceToInputs(site);
 		}
 
-		@Override public ClusterInputs apply(final ClusterSource clusterSource) {
+		@Override public ClusterInputs apply(ClusterSource clusterSource) {
 			ClusterInputs clusterInputs = new ClusterInputs(clusterSource);
 			for (FaultSource faultSource : clusterSource.faults()) {
 				clusterInputs.add(transform.apply(faultSource));
@@ -253,16 +307,20 @@ public final class Transforms {
 		}
 	}
 
+	/*
+	 * CLUSTER: Calculate ground motions for a list of cluster ground motion
+	 * inputs.
+	 */
 	static final class ClusterInputsToGroundMotions implements
 			Function<ClusterInputs, ClusterGroundMotions> {
 
 		private final InputsToGroundMotions transform;
 
-		ClusterInputsToGroundMotions(final Table<Gmm, Imt, GroundMotionModel> gmmInstances) {
-			transform = new InputsToGroundMotions(gmmInstances);
+		ClusterInputsToGroundMotions(Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable) {
+			transform = new InputsToGroundMotions(gmmTable);
 		}
 
-		@Override public ClusterGroundMotions apply(final ClusterInputs clusterInputs) {
+		@Override public ClusterGroundMotions apply(ClusterInputs clusterInputs) {
 			ClusterGroundMotions clusterGroundMotions = new ClusterGroundMotions(
 				clusterInputs.parent);
 			for (SourceInputList hazardInputs : clusterInputs) {
@@ -273,7 +331,7 @@ public final class Transforms {
 	}
 
 	/*
-	 * Collapse magnitude variants and compute the joint probability of
+	 * CLUSTER: Collapse magnitude variants and compute the joint probability of
 	 * exceedence for sources in a cluster. Note that this is only to be used
 	 * with cluster sources as the weight of each magnitude variant is stored in
 	 * the TmeporalGmmInput.rate field, which is kinda KLUDGY, but works.
@@ -291,7 +349,7 @@ public final class Transforms {
 			this.truncationLevel = config.truncationLevel;
 		}
 
-		@Override public ClusterCurves apply(final ClusterGroundMotions clusterGroundMotions) {
+		@Override public ClusterCurves apply(ClusterGroundMotions clusterGroundMotions) {
 
 			Builder builder = ClusterCurves.builder(clusterGroundMotions);
 
@@ -343,29 +401,99 @@ public final class Transforms {
 		}
 	}
 
+	/*
+	 * CLUSTER: Compute hazard curves for a cluster source. This function
+	 * coalesces the three preceeding functions into one.
+	 */
+	static final class ClusterToCurves implements Function<ClusterSource, ClusterCurves> {
+
+		private final Function<ClusterSource, ClusterInputs> sourceToInputs;
+		private final Function<ClusterInputs, ClusterGroundMotions> inputsToGroundMotions;
+		private final Function<ClusterGroundMotions, ClusterCurves> groundMotionsToCurves;
+
+		ClusterToCurves(
+				ClusterSourceSet sources,
+				CalcConfig config,
+				Site site) {
+
+			Set<Gmm> gmms = sources.groundMotionModels().gmms();
+			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(config.imts, gmms);
+
+			this.sourceToInputs = new ClusterSourceToInputs(site);
+			this.inputsToGroundMotions = new ClusterInputsToGroundMotions(gmmTable);
+			this.groundMotionsToCurves = new ClusterGroundMotionsToCurves(config);
+		}
+
+		@Override public ClusterCurves apply(ClusterSource source) {
+			return groundMotionsToCurves.apply(
+				inputsToGroundMotions.apply(
+					sourceToInputs.apply(source)));
+		}
+	}
+
+	/*
+	 * CLUSTER: Reduce multiple cluster source curves.
+	 */
 	static final class ClusterCurveConsolidator implements
 			Function<List<ClusterCurves>, HazardCurveSet> {
 
+		private final ClusterSourceSet sources;
 		private final Map<Imt, ArrayXY_Sequence> modelCurves;
-		private final ClusterSourceSet clusterSourceSet;
 
 		ClusterCurveConsolidator(
-				final ClusterSourceSet clusterSourceSet,
-				final Map<Imt, ArrayXY_Sequence> modelCurves) {
+				ClusterSourceSet sources,
+				CalcConfig config) {
 
-			this.clusterSourceSet = clusterSourceSet;
-			this.modelCurves = modelCurves;
+			this.sources = sources;
+			this.modelCurves = config.logModelCurves;
 		}
 
-		@Override public HazardCurveSet apply(final List<ClusterCurves> curvesList) {
+		@Override public HazardCurveSet apply(List<ClusterCurves> curvesList) {
 
-			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet.builder(clusterSourceSet,
+			if (curvesList.isEmpty()) return HazardCurveSet.empty(sources);
+
+			HazardCurveSet.Builder curveSetBuilder = HazardCurveSet.builder(
+				sources,
 				modelCurves);
 
 			for (ClusterCurves curves : curvesList) {
 				curveSetBuilder.addCurves(curves);
 			}
 			return curveSetBuilder.build();
+		}
+	}
+
+	/*
+	 * ALL: Final 'fan-in' consolidator function used for all source types.
+	 */
+	static final class CurveSetConsolidator implements Function<List<HazardCurveSet>, HazardResult> {
+
+		private final HazardModel model;
+		private final CalcConfig config;
+		private final Site site;
+
+		CurveSetConsolidator(
+				HazardModel model,
+				CalcConfig config,
+				Site site) {
+
+			this.model = model;
+			this.config = config;
+			this.site = site;
+		}
+
+		@Override public HazardResult apply(List<HazardCurveSet> curveSetList) {
+
+			HazardResult.Builder resultBuilder = HazardResult
+				.builder(config)
+				.model(model)
+				.site(site);
+
+			for (HazardCurveSet curveSet : curveSetList) {
+				if (curveSet.isEmpty()) continue;
+				resultBuilder.addCurveSet(curveSet);
+			}
+			return resultBuilder.build();
 		}
 	}
 

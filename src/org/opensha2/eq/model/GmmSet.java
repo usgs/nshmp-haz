@@ -26,7 +26,7 @@ import com.google.common.collect.Range;
  * 
  * <p>A {@code GmmSet} can not be created directly; it may only be created by a
  * private parser. Currently, although {@code hashCode} and {@code equals} are
- * consistent, they do not consider </p>
+ * consistent, they do not consider any supplied uncertainty model.</p>
  * 
  * @author Peter Powers
  */

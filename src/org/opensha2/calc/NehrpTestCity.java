@@ -30,6 +30,8 @@ import com.google.common.collect.Maps;
 @SuppressWarnings("all")
 public enum NehrpTestCity implements NamedLocation {
 
+	// TODO move to geo?
+	
 	// SoCal
 	LOS_ANGELES(34.05, -118.25),
 	CENTURY_CITY(34.05, -118.40),

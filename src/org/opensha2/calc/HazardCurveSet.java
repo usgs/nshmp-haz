@@ -67,6 +67,21 @@ final class HazardCurveSet {
 		return new Builder(sourceSet, modelCurves);
 	}
 
+	/*
+	 * A HazardCurveSet is relatively heavyweight wrt initializing its builder.
+	 * This provides a placeholder for functions where a HazardCurveSet is
+	 * required but for which there may be no HazardCurves because all sources
+	 * were out of range of a site. We only retain a reference to the original
+	 * source set.
+	 */
+	static HazardCurveSet empty(SourceSet<? extends Source> sourceSet) {
+		return new HazardCurveSet(sourceSet, null, null, null, null);
+	}
+
+	boolean isEmpty() {
+		return totalCurves == null;
+	}
+
 	static class Builder {
 
 		private static final String ID = "HazardCurveSet.Builder";

@@ -1,18 +1,23 @@
 package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.DataTables.checkDataSize;
 import static org.opensha2.data.DataTables.checkDataState;
-import static org.opensha2.data.DataTables.createKeys;
 import static org.opensha2.data.DataTables.indexOf;
 import static org.opensha2.data.DataTables.initTable;
 import static org.opensha2.data.DataTables.keyArray;
 import static org.opensha2.data.DataTables.size;
 import static org.opensha2.data.DataUtils.validateDelta;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import org.opensha2.data.DataTables.DefaultTable2D;
+import org.opensha2.data.DataTables.SingularTable2D;
 
 /**
  * A wrapper around a 2D table of double-valued data that is arranged according
@@ -82,13 +87,13 @@ public interface Data2D {
 		private double[] rows;
 		private double[] columns;
 
-		private Double rowMin;
-		private Double rowMax;
-		private Double rowΔ;
+		private double rowMin;
+		private double rowMax;
+		private double rowΔ;
 
-		private Double columnMin;
-		private Double columnMax;
-		private Double columnΔ;
+		private double columnMin;
+		private double columnMax;
+		private double columnΔ;
 
 		private boolean built = false;
 
@@ -118,6 +123,16 @@ public interface Data2D {
 		}
 
 		/**
+		 * Return a copy of the row keys once
+		 * {@link #rows(double, double, double)} has been called, otherwise
+		 * throw an {@code IllegalStateException}.
+		 */
+		public double[] rows() {
+			checkDataState(rows, "Row");
+			return Arrays.copyOf(rows, rows.length);
+		}
+
+		/**
 		 * Define the data table columns.
 		 * 
 		 * @param min value of lower edge of lowest column bin
@@ -131,6 +146,16 @@ public interface Data2D {
 			columns = keyArray(columnMin, columnMax, columnΔ);
 			if (rows != null) init();
 			return this;
+		}
+
+		/**
+		 * Return a copy of the column keys once
+		 * {@link #columns(double, double, double)} has been called, otherwise
+		 * throw an {@code IllegalStateException}.
+		 */
+		public double[] columns() {
+			checkDataState(columns, "Column");
+			return Arrays.copyOf(columns, columns.length);
 		}
 
 		private void init() {
@@ -147,9 +172,28 @@ public interface Data2D {
 		 * @param value to set
 		 */
 		public Builder set(double row, double column, double value) {
-			int rowIndex = indexOf(rowMin, rowΔ, row);
-			int columnIndex = indexOf(columnMin, columnΔ, column);
+			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
+			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
 			data[rowIndex][columnIndex] = value;
+			return this;
+		}
+
+		/**
+		 * Set the values in the specified row starting at the specified column.
+		 *
+		 * @param row in which to set values
+		 * @param column at which to start setting values
+		 * @param values to set
+		 * @throws IndexOutOfBoundsException if column values will overrun row
+		 */
+		public Builder set(double row, double column, double[] values) {
+			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
+			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
+			checkElementIndex(columnIndex + values.length - 1, columns.length,
+				"Supplied column values will overrun end of row");
+			for (int i = 0; i <= values.length; i++) {
+				data[rowIndex][columnIndex + i] = values[i];
+			}
 			return this;
 		}
 
@@ -161,12 +205,31 @@ public interface Data2D {
 		 * @param value to add
 		 */
 		public Builder add(double row, int column, double value) {
-			int rowIndex = indexOf(rowMin, rowΔ, row);
-			int columnIndex = indexOf(columnMin, columnΔ, column);
+			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
+			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
 			data[rowIndex][columnIndex] += value;
 			return this;
 		}
 
+		/**
+		 * Add to the exisiting values in the specified row starting at the specified column.
+		 *
+		 * @param row in which to add values
+		 * @param column at which to start adding values
+		 * @param values to add
+		 * @throws IndexOutOfBoundsException if column values will overrun row
+		 */
+		public Builder add(double row, double column, double[] values) {
+			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
+			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
+			checkElementIndex(columnIndex + values.length - 1, columns.length,
+				"Supplied column values will overrun end of row");
+			for (int i = 0; i <= values.length; i++) {
+				data[rowIndex][columnIndex + i] = values[i];
+			}
+			return this;
+		}
+		
 		/**
 		 * Set all values using a copy of the supplied data.
 		 * 
@@ -186,10 +249,9 @@ public interface Data2D {
 		}
 
 		/**
-		 * Build a new immutable 2D data container populated with values
-		 * computed by the supplied loader. Note that calling this method will
-		 * overwrite any values already supplied via {@code set*} or
-		 * {@code add*} methods.
+		 * Return an immutable 2D data container populated with values computed
+		 * by the supplied loader. Calling this method will overwrite any values
+		 * already supplied via {@code set*} or {@code add*} methods.
 		 * 
 		 * @param loader that will compute values
 		 */
@@ -205,64 +267,32 @@ public interface Data2D {
 		}
 
 		/**
-		 * Build a new immutable 2D data container.
+		 * Return an immutable 2D data container populated with the single value
+		 * supplied. Calling this method will ignore any values already supplied
+		 * via {@code set*} or {@code add*} methods and will create a Data2D
+		 * holding only the single value, similar to
+		 * {@link Collections#nCopies(int, Object)}.
+		 * 
+		 * @param value which which to fill data container
+		 */
+		public Data2D build(double value) {
+			return new SingularTable2D(
+				rowMin, rowMax, rowΔ,
+				columnMin, columnMax, columnΔ,
+				value);
+		}
+
+		/**
+		 * Return an immutable 2D data container populated with the contents of
+		 * this {@code Builder}.
 		 */
 		public Data2D build() {
 			checkState(built != true, "This builder has already been used");
 			checkDataState(rows, columns);
-			return new Table(
+			return new DefaultTable2D(
 				rowMin, rowMax, rowΔ,
 				columnMin, columnMax, columnΔ,
 				data);
-		}
-	}
-
-	/**
-	 * Concrete implementation of a {@code Data2D} table. Users should have no
-	 * need for this class.
-	 * 
-	 * @see Builder
-	 */
-	public final static class Table implements Data2D {
-
-		private final double rowMin;
-		private final double rowMax;
-		private final double rowΔ;
-
-		private final double columnMin;
-		private final double columnMax;
-		private final double columnΔ;
-
-		private final double[][] data;
-
-		private Table(
-				double rowMin, double rowMax, double rowΔ,
-				double columnMin, double columnMax, double columnΔ,
-				double[][] data) {
-
-			this.rowMin = rowMin;
-			this.rowMax = rowMax;
-			this.rowΔ = rowΔ;
-
-			this.columnMin = columnMin;
-			this.columnMax = columnMax;
-			this.columnΔ = columnΔ;
-
-			this.data = data;
-		}
-
-		@Override public double get(final double row, final double column) {
-			int iRow = indexOf(rowMin, rowΔ, row);
-			int iColumn = indexOf(columnMin, columnΔ, column);
-			return data[iRow][iColumn];
-		}
-
-		@Override public List<Double> rows() {
-			return createKeys(rowMin, rowMax, rowΔ);
-		}
-
-		@Override public List<Double> columns() {
-			return createKeys(columnMin, columnMax, columnΔ);
 		}
 	}
 

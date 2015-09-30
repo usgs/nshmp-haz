@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.FocalMech;
@@ -35,11 +36,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	private final List<Location> locs;
 	private final List<IncrementalMfd> mfds;
-	private final RuptureScaling rupScaling;
+	final RuptureScaling rupScaling;
 	private final List<Map<FocalMech, Double>> mechMaps;
 	final DepthModel depthModel; // package exposure for parser logging
 	private final double strike;
 	private final PointSourceType sourceType;
+
+	private final Key cacheKey;
 
 	/*
 	 * Most grid sources have the same focal mech map everywhere; in these
@@ -68,6 +71,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		this.strike = strike;
 		this.rupScaling = rupScaling;
 		this.sourceType = sourceType;
+
+		this.cacheKey = new Key();
 	}
 
 	@Override public SourceType type() {
@@ -117,6 +122,15 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		};
 	}
 
+	/**
+	 * Returns a key that can be used to uniquely identify those properties of
+	 * this {@code GridSourceSet} necessary to distinguish it in optimized
+	 * hazard calculations.
+	 */
+	public Key cacheKey() {
+		return cacheKey;
+	}
+
 	private PointSource getSource(int idx) {
 		switch (sourceType) {
 			case POINT:
@@ -137,7 +151,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	// grid sources; may add others later TODO document
 
 	/* Single use builder. */
-	static class Builder extends AbstractSourceSet.Builder  {
+	static class Builder extends AbstractSourceSet.Builder {
 
 		private static final String ID = "GridSourceSet.Builder";
 
@@ -313,11 +327,49 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		GridSourceSet build() {
 			validateState(ID);
-			DepthModel depthModel = DepthModel.create(magMaster, magDepthMap, maxDepth);
+			DepthModel depthModel = DepthModel.create(magDepthMap, magMaster, maxDepth);
 			return new GridSourceSet(name, id, weight, gmmSet, locs, mfds, mechMaps, depthModel,
 				strike, rupScaling, sourceType);
 		}
 
+	}
+
+	/**
+	 * An internally used identifier for this source set. Users should have no
+	 * need for this class.
+	 */
+	public final class Key {
+
+		// local references to outer class fields
+		private final RuptureScaling rupScaling;
+		private final Map<Double, Map<Double, Double>> magDepthMap;
+		private final double maxDepth;
+
+		private final int hashCode;
+
+		private Key() {
+			this.rupScaling = GridSourceSet.this.rupScaling;
+			this.magDepthMap = GridSourceSet.this.depthModel.magDepthMap;
+			this.maxDepth = GridSourceSet.this.depthModel.maxDepth;
+
+			hashCode = Objects.hash(
+				rupScaling,
+				depthModel.magDepthMap,
+				depthModel.maxDepth);
+		}
+
+		@Override public int hashCode() {
+			return hashCode;
+		}
+
+		@Override public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (!(obj instanceof Key)) return false;
+			Key that = (Key) obj;
+			return Objects.equals(this.rupScaling, that.rupScaling) &&
+				Objects.equals(this.magDepthMap, that.magDepthMap) &&
+				Objects.equals(this.maxDepth, that.maxDepth);
+		}
 	}
 
 }
