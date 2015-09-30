@@ -8,8 +8,6 @@ import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
 import static org.opensha2.eq.fault.Faults.validateTrace;
 import static org.opensha2.eq.fault.Faults.validateWidth;
-import static org.opensha2.eq.model.FloatStyle.CENTERED;
-import static org.opensha2.eq.model.FloatStyle.FULL_DOWN_DIP;
 import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.Iterator;
@@ -17,14 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.opensha2.data.DataUtils;
-import org.opensha2.eq.fault.scaling.MagAreaRelationship;
-import org.opensha2.eq.fault.scaling.MagLengthRelationship;
-import org.opensha2.eq.fault.scaling.MagScalingRelationship;
-import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
+import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.fault.surface.RuptureScaling;
-import org.opensha2.eq.fault.surface.RuptureSurface;
 import org.opensha2.geo.LocationList;
 import org.opensha2.mfd.IncrementalMfd;
 
