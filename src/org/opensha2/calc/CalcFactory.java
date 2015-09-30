@@ -27,18 +27,18 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Static utility methods for performing single-threaded and asynchronous hazard
- * calculations.
+ * calculations via functions in {@link Transforms}.
  * 
  * @author Peter Powers
  * @see Transforms
  * @see AsyncList
  */
-final class AsyncCalc {
+final class CalcFactory {
 
-	private AsyncCalc() {}
+	private CalcFactory() {}
 
 	// TODO For future consideration:
-	// -- set initial capcity of source arrays 
+	// -- set initial capcity of source arrays
 	// -- filter entire sourceSets on distance
 
 	/* Compute hazard curves for a SourceSet. */

@@ -1,10 +1,10 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha2.calc.AsyncCalc.clustersToCurves;
-import static org.opensha2.calc.AsyncCalc.sourcesToCurves;
-import static org.opensha2.calc.AsyncCalc.systemToCurves;
-import static org.opensha2.calc.AsyncCalc.toHazardResult;
+import static org.opensha2.calc.CalcFactory.clustersToCurves;
+import static org.opensha2.calc.CalcFactory.sourcesToCurves;
+import static org.opensha2.calc.CalcFactory.systemToCurves;
+import static org.opensha2.calc.CalcFactory.toHazardResult;
 
 import java.util.ArrayList;
 import java.util.List;
