@@ -14,7 +14,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.opensha2.calc.Transforms.SourceToInputs;
+import org.opensha2.data.Data2D;
 import org.opensha2.eq.model.ClusterSourceSet;
+import org.opensha2.eq.model.GridSourceSet;
+import org.opensha2.eq.model.GridSourceSetTable;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
@@ -33,17 +36,17 @@ public class Calcs {
 
 	/*
 	 * Implementation notes:
-	 * ---------------------------------------------------------------------
+	 * -------------------------------------------------------------------------
 	 * Method argument order in this, CalcFactory , and Transforms follow the
 	 * gerneral rule of model (or model derived obejcts), calc config, site, and
 	 * then any others.
-	 * --------------------------------------------------------------------- All
-	 * calculations are done in log space, only on export are x-values returned
-	 * to linear space.
-	 * --------------------------------------------------------------------- The
-	 * ability to run a full calculation on the current thread facilitates
+	 * -------------------------------------------------------------------------
+	 * All calculations are done in log space, only on export are x-values
+	 * returned to linear space.
+	 * -------------------------------------------------------------------------
+	 * The ability to run a full calculation on the current thread facilitates
 	 * debugging.
-	 * ---------------------------------------------------------------------
+	 * -------------------------------------------------------------------------
 	 * Single threaded calcs monitor and log calculation duration of each
 	 * SourceSet.
 	 */
@@ -133,6 +136,13 @@ public class Calcs {
 
 		for (SourceSet<? extends Source> sourceSet : model) {
 			switch (sourceSet.type()) {
+				case GRID:
+					Data2D d = GridSourceSetTable.toSourceTable((GridSourceSet) sourceSet, site.location);
+//					System.out.println(d);
+					curveSets.add(sourcesToCurves(sourceSet, config, site));
+					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
+					break;
+					
 				case CLUSTER:
 					curveSets.add(clustersToCurves((ClusterSourceSet) sourceSet, config, site));
 					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));

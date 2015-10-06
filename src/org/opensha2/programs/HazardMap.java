@@ -38,6 +38,7 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  */
+@Deprecated
 public class HazardMap {
 
 	// TODO expose

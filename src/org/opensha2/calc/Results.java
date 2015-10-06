@@ -95,13 +95,14 @@ public class Results {
 			String name = result.site.name;
 			for (Entry<Imt, ? extends XY_Sequence> entry : result.totalCurves.entrySet()) {
 
-				// enable to output poisson probability
-				Function<Double, String> valueFunction = Functions.compose(
-					rateFmtFunc,
-					Mfds.rateToProbConverter());
+				// enable to output poisson probability - used when running
+				// PEER test cases - TODO should be configurable
+//				Function<Double, String> valueFunction = Functions.compose(
+//					rateFmtFunc,
+//					Mfds.rateToProbConverter());
 
 				// enable to output annual rate
-//				Function<Double, String> valueFunction = rateFmtFunc;
+				Function<Double, String> valueFunction = rateFmtFunc;
 
 				Iterable<String> lineData = Iterables.concat(
 					locData,

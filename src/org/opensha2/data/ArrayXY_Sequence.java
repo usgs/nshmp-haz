@@ -10,7 +10,6 @@ import static org.opensha2.data.DataUtils.uncheckedMultiply;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
 
 import com.google.common.base.Function;
 import com.google.common.primitives.Doubles;
@@ -34,8 +33,6 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	private final double[] xs;
 	private final double[] ys;
 
-	private final int xHash;
-
 	/*
 	 * Only for use by static factory methods. Create a new sequence from an
 	 * existing one; copies the fields of {@code seq} to {@code this}.
@@ -43,7 +40,6 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	ArrayXY_Sequence(ArrayXY_Sequence seq) {
 		xs = checkNotNull(seq).xs;
 		ys = Arrays.copyOf(seq.ys, seq.ys.length);
-		xHash = seq.xHash;
 	}
 
 	/*
@@ -58,7 +54,6 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 		checkArgument(isMonotonic(true, true, xs), "Non-monotonic x-values");
 		this.xs = Arrays.copyOf(xs, xs.length);
 		this.ys = Arrays.copyOf(ys, ys.length);
-		xHash = Arrays.hashCode(xs);
 	}
 
 	/**
@@ -170,11 +165,16 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 	@Override public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof ArrayXY_Sequence)) return false;
-		return hashCode() == obj.hashCode();
+		ArrayXY_Sequence that = (ArrayXY_Sequence) obj;
+		return Arrays.equals(this.xs, that.xs) && Arrays.equals(this.ys, that.ys);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(xHash, Arrays.hashCode(ys));
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(xs);
+		result = prime * result + Arrays.hashCode(ys);
+		return result;
 	}
 
 	/**
@@ -260,9 +260,15 @@ public class ArrayXY_Sequence extends AbstractXY_Sequence {
 		return this;
 	}
 
-	private ArrayXY_Sequence validateSequence(ArrayXY_Sequence sequence) {
-		checkArgument(checkNotNull(sequence).xHash == xHash);
-		return sequence;
+	/*
+	 * The common use case is for only the x-value hash codes to be compared as
+	 * a result of having used a copyOf(ArrayXY_Sequence) constructor.
+	 */
+	private ArrayXY_Sequence validateSequence(ArrayXY_Sequence that) {
+		checkArgument(
+			this.xs.hashCode() == checkNotNull(that).xs.hashCode() ||
+			Arrays.equals(this.xs, that.xs));
+		return that;
 	}
 
 }

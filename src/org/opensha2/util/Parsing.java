@@ -601,6 +601,26 @@ public final class Parsing {
 	}
 
 	/**
+	 * Convert a {@code Collection<Double>} to a string of the same format
+	 * returned by {@link Arrays#toString(double[])} and {@link List#toString()}
+	 * , but will format the values using the supplied format string. The
+	 * supplied {@code format} should match that expected by
+	 * {@code String.format(String, Object...)}
+	 * 
+	 * @param values the values to convert
+	 * @param format a format string
+	 * @param delimiter the delimiter to use
+	 * @param brackets {@code true} if hard brackets should be added to start
+	 *        and end, {@code false} otherwise
+	 */
+	public static String toString(Collection<Double> values, String format, String delimiter,
+			boolean brackets) {
+		String base = Joiner.on(delimiter).join(
+			Iterables.transform(values, new FormatDoubleFunction(format)));
+		return brackets ? addBrackets(base) : base;
+	}
+
+	/**
 	 * Convert an ordered list of non-repeating {@code Integer}s to a more
 	 * compact string form. For example,
 	 * {@code List<Integer>.toString() = "[1, 2, 3, 4, 10, 19, 18, 17, 16]"}
@@ -631,7 +651,7 @@ public final class Parsing {
 					(buildingRange && currentDir != dir) ||
 					// end of list
 					(i == values.size() - 1);
-			
+
 			if (terminateRange) {
 				if (i == values.size() - 1) {
 					// singleton trailing value
@@ -639,7 +659,7 @@ public final class Parsing {
 						ranges.add(new int[] { start, next });
 					} else {
 						ranges.add(new int[] { start, end });
-						ranges.add(new int[] { next, next});
+						ranges.add(new int[] { next, next });
 					}
 				} else {
 					ranges.add(new int[] { start, end });

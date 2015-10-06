@@ -19,6 +19,8 @@ import java.util.List;
 import org.opensha2.data.DataTables.DefaultTable2D;
 import org.opensha2.data.DataTables.SingularTable2D;
 
+import com.google.common.primitives.Doubles;
+
 /**
  * A wrapper around a 2D table of double-valued data that is arranged according
  * to strictly increasing and uniformly spaced double-valued keys. Data tables
@@ -224,10 +226,24 @@ public interface Data2D {
 			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
 			checkElementIndex(columnIndex + values.length - 1, columns.length,
 				"Supplied column values will overrun end of row");
-			for (int i = 0; i <= values.length; i++) {
+//			System.out.println(Arrays.toString(values));
+			for (int i = 0; i < values.length; i++) {
+//				System.out.println(row + " " + rowIndex + " " + column + " " + columnIndex);
 				data[rowIndex][columnIndex + i] = values[i];
 			}
 			return this;
+		}
+		
+		/**
+		 * Add to the exisiting values in the specified row starting at the specified column.
+		 *
+		 * @param row in which to add values
+		 * @param column at which to start adding values
+		 * @param values to add
+		 * @throws IndexOutOfBoundsException if column values will overrun row
+		 */
+		public Builder add(double row, double column, List<Double> values) {
+			return add(row, column, Doubles.toArray(values));
 		}
 		
 		/**

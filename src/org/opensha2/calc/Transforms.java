@@ -39,7 +39,7 @@ final class Transforms {
 
 	/*
 	 * Implemenation notes:
-	 * ---------------------------------------------------------------------
+	 * -------------------------------------------------------------------------
 	 * ClusterSourceSets contain ClusterSources, each of which references a
 	 * FaultSourceSet containing one or more fault representations for the
 	 * ClusterSource.
@@ -49,7 +49,7 @@ final class Transforms {
 	 * one FaultSourceSet containing the FaultSources in the cluster, each of
 	 * which may have one, or more, magnitude or other variants represented by
 	 * its internal List of IncrementalMfds.
-	 * ---------------------------------------------------------------------
+	 * -------------------------------------------------------------------------
 	 * SystemSourceSets contain many single sources and the functions here
 	 * handle them collectively. Rather than creating lists of input lists for
 	 * each source, one large input list is created. This may change if it is
@@ -57,7 +57,7 @@ final class Transforms {
 	 * motivated reordering of the SourceType enum such that SystemSourceSets
 	 * are processed first and granted a thread early in the calculation
 	 * process.
-	 * ---------------------------------------------------------------------
+	 * -------------------------------------------------------------------------
 	 */
 
 	/*

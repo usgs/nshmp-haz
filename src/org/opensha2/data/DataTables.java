@@ -3,8 +3,11 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.List;
+
+import org.opensha2.util.Parsing;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
@@ -50,7 +53,7 @@ final class DataTables {
 	 * to int floors value. No argument checking is performed.
 	 */
 	static int indexOf(double min, double delta, double value, int size) {
-		return checkElementIndex((int) ((value - min) / delta), size) ;
+		return checkElementIndex((int) ((value - min) / delta), size);
 	}
 
 	/*
@@ -80,7 +83,7 @@ final class DataTables {
 	static void checkDataState(double[] data, String label) {
 		checkState(data != null, "%s data have not yet been fully specified", label);
 	}
-	
+
 	/*
 	 * Ensure rows and columns have been specified
 	 */
@@ -174,6 +177,7 @@ final class DataTables {
 		@Override public List<Double> columns() {
 			return createKeys(columnMin, columnMax, columnΔ);
 		}
+
 	}
 
 	static final class DefaultTable2D extends AbstractTable2D {
@@ -194,6 +198,32 @@ final class DataTables {
 			int iRow = indexOf(rowMin, rowΔ, row, rowSize);
 			int iColumn = indexOf(columnMin, columnΔ, column, columnSize);
 			return data[iRow][iColumn];
+		}
+
+		private static final String ROW_COL_FORMAT = "% 8.2f";
+		private static final String DATA_FORMAT = "%7.2e";
+		private static final String ZEROS_IN = "0.00e+00";
+		private static final String ZEROS_OUT = "     0.0";
+		private static final String DELIMITER = ", ";
+
+		@Override public String toString() {
+			StringBuilder sb = new StringBuilder();
+			List<Double> rows = rows();
+			sb.append("           ");
+			sb.append(Parsing.toString(columns(), ROW_COL_FORMAT, DELIMITER, true));
+			sb.append(NEWLINE);
+			for (int i = 0; i < data.length; i++) {
+				sb.append("[");
+				sb.append(String.format(ROW_COL_FORMAT, rows.get(i)));
+				sb.append("] ");
+				// format as scientific but replace zeros
+				List<Double> dataRow = Doubles.asList(data[i]);
+				String dataLine = Parsing.toString(dataRow, DATA_FORMAT, DELIMITER, true);
+				dataLine = dataLine.replace(ZEROS_IN, ZEROS_OUT);
+				sb.append(dataLine);
+				sb.append(NEWLINE);
+			}
+			return sb.toString();
 		}
 	}
 

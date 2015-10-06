@@ -41,8 +41,10 @@ import com.google.common.collect.Maps;
  *
  * @author Peter Powers
  */
-class GridCalc {
+public class GridCalc {
 
+	// TODO reorganize, clean, privatize
+	
 	// private static LoadingCache<Key, V> cache;
 
 	// cache = CacheBuilder.newBuilder().build(new CacheLoader<Imt,
@@ -392,16 +394,20 @@ class GridCalc {
 
 		Map<SourceStyle, Data2D.Builder> builderMap = new EnumMap<>(SourceStyle.class);
 		for (SourceStyle style : SourceStyle.values()) {
-			builderMap.put(style, initBuilder(rMin, rMax, rΔ));
+			builderMap.put(style, createGridBuilder(rMin, rMax, rΔ));
 			if (!multiMech && style == SourceStyle.STRIKE_SLIP) break;
 		}
 		return builderMap;
 	}
 
-	private static Data2D.Builder initBuilder(double rMin, double rMax, double rΔ) {
+	private static Data2D.Builder createGridBuilder(double rMin, double rMax, double rΔ) {
 		return Data2D.Builder.create()
 			.rows(rMin, rMax, rΔ)
 			.columns(M_MIN, M_MAX, M_Δ);
+	}
+	
+	public static Data2D.Builder createGridBuilder(double rMax) {
+		return createGridBuilder(0.0, rMax, distanceDiscretization(rMax));
 	}
 
 	/*
