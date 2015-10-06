@@ -20,6 +20,13 @@ public enum Imt {
 	PGA,
 	PGV,
 	PGD,
+	ASI,
+	SI,
+	DSI,
+	CAV,
+	DS575,
+	DS595,
+	AI,
 	SA0P01,
 	SA0P02,
 	SA0P025,
@@ -54,19 +61,36 @@ public enum Imt {
 	SA7P5,
 	SA10P0;
 
+	/*
+	 */
+
 	@Override public String toString() {
-		switch(this) {
+		switch (this) {
 			case PGA:
 				return "Peak ground acceleration";
 			case PGV:
 				return "Peak ground velocity";
 			case PGD:
 				return "Peak ground displacement";
+			case AI:
+				return "Arias intensity";
+			case ASI:
+				return "Acceleration spectral intesnity";
+			case DSI:
+				return "Displacement ipectral intensity";
+			case SI:
+				return "Spectral intensity";
+			case CAV:
+				return "Cumulative absolute velocity";
+			case DS575:
+				return "Significant duration 5-75%";
+			case DS595:
+				return "Significant duration 5-95%";
 			default:
 				return period() + " sec spectral acceleration";
 		}
 	}
-	
+
 	/**
 	 * Returns the corresponding period or frequency for this {@code Imt} if it
 	 * represents a spectral acceleration.
@@ -75,7 +99,7 @@ public enum Imt {
 	 */
 	public Double period() {
 		// TODO should this throw an IAE instead or return null?
-		if (ordinal() < 3) return null;
+		if (ordinal() < 10) return null;
 		String valStr = name().substring(2).replace("P", ".");
 		return Double.parseDouble(valStr);
 	}
@@ -110,7 +134,7 @@ public enum Imt {
 		for (Imt imt : Imt.values()) {
 			if (imt.name().startsWith("SA")) {
 				double saPeriod = imt.period();
-				
+
 				if (fuzzyEquals(saPeriod, period, 0.000001)) return imt;
 			}
 		}
@@ -137,7 +161,7 @@ public enum Imt {
 	 *         otherwise
 	 */
 	public boolean isSA() {
-		return ordinal() > 2;
+		return ordinal() > 9;
 	}
 
 	/**

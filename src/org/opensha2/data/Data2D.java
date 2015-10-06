@@ -52,6 +52,8 @@ public interface Data2D {
 	 */
 	double get(double row, double column);
 
+//	ArrayXY_Sequence row(double row);
+	
 	/**
 	 * Lazily return an immutable list of row keys.
 	 */
