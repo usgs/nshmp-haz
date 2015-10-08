@@ -164,7 +164,7 @@ public class HazardCurve {
 		boolean firstBatch = true;
 		Path dir = Paths.get(StandardSystemProperty.USER_DIR.value(), "results");
 		Files.createDirectories(dir);
-		
+
 		for (Site site : sites) {
 			HazardResult result = calc(model, config, site, executor);
 			results.add(result);
@@ -211,11 +211,11 @@ public class HazardCurve {
 			Site site,
 			Optional<Executor> executor) {
 
-		Executor ex = executor.or(createExecutor());
+		Optional<Executor> execLocal = executor.or(Optional.of(createExecutor()));
 
 		try {
-			HazardResult result = Calcs.hazardCurve(model, config, site, ex);
-			if (!executor.isPresent()) ((ExecutorService) ex).shutdown();
+			HazardResult result = Calcs.hazardCurve(model, config, site, execLocal);
+			if (!executor.isPresent()) ((ExecutorService) executor).shutdown();
 			return result;
 		} catch (ExecutionException | InterruptedException e) {
 			Throwables.propagate(e);

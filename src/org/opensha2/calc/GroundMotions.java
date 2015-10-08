@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,6 +14,7 @@ import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.gmm.ScalarGroundMotion;
 
+import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
 
 /**
@@ -26,15 +26,9 @@ import com.google.common.primitives.Doubles;
 final class GroundMotions {
 
 	/*
-	 * NOTE the inputList supplied to Builder will be immutable but the mean and
-	 * sigma list tables are not; builder backs mean and sigma lists with
+	 * NOTE the inputList supplied to Builder is immutable but the mean and
+	 * sigma lists it builds are not; builder backs mean and sigma lists with
 	 * double[].
-	 * 
-	 * Can't use Multimaps.newListMultimap(map, factory) backed with
-	 * Doubles.asList(double[]) because list must be empty to start with and
-	 * growable.
-	 * 
-	 * http://code.google.com/p/guava-libraries/issues/detail?id=1827
 	 */
 
 	final InputList inputs;
@@ -71,8 +65,8 @@ final class GroundMotions {
 		return sb.toString();
 	}
 
-	static Builder builder(InputList inputs, Set<Gmm> gmms, Set<Imt> imts) {
-		return new Builder(inputs, gmms, imts);
+	static Builder builder(InputList inputs, Set<Imt> imts, Set<Gmm> gmms) {
+		return new Builder(inputs, imts, gmms);
 	}
 
 	static class Builder {
@@ -86,16 +80,16 @@ final class GroundMotions {
 		private final Map<Imt, Map<Gmm, List<Double>>> means;
 		private final Map<Imt, Map<Gmm, List<Double>>> sigmas;
 
-		private Builder(InputList inputs, Set<Gmm> gmms, Set<Imt> imts) {
+		private Builder(InputList inputs, Set<Imt> imts, Set<Gmm> gmms) {
 			checkArgument(checkNotNull(inputs).size() > 0);
 			checkArgument(checkNotNull(gmms).size() > 0);
 			this.inputs = inputs;
-			means = initValueTable(gmms, imts, inputs.size());
-			sigmas = initValueTable(gmms, imts, inputs.size());
-			size = gmms.size() * imts.size() * inputs.size();
+			means = initValueMaps(imts, gmms, inputs.size());
+			sigmas = initValueMaps(imts, gmms, inputs.size());
+			size = imts.size() * gmms.size() * inputs.size();
 		}
 
-		Builder add(Gmm gmm, Imt imt, ScalarGroundMotion sgm, int index) {
+		Builder add(Imt imt, Gmm gmm, ScalarGroundMotion sgm, int index) {
 			checkState(addCount < size, "This %s instance is already full", ID);
 			means.get(imt).get(gmm).set(index, sgm.mean());
 			sigmas.get(imt).get(gmm).set(index, sgm.sigma());
@@ -110,11 +104,14 @@ final class GroundMotions {
 			return new GroundMotions(inputs, means, sigmas);
 		}
 
-		static Map<Imt, Map<Gmm, List<Double>>> initValueTable(Set<Gmm> gmms, Set<Imt> imts,
+		static Map<Imt, Map<Gmm, List<Double>>> initValueMaps(
+				Set<Imt> imts,
+				Set<Gmm> gmms,
 				int size) {
-			Map<Imt, Map<Gmm, List<Double>>> imtMap = new EnumMap<>(Imt.class);
+			
+			Map<Imt, Map<Gmm, List<Double>>> imtMap = Maps.newEnumMap(Imt.class);
 			for (Imt imt : imts) {
-				Map<Gmm, List<Double>> gmmMap = new EnumMap<>(Gmm.class);
+				Map<Gmm, List<Double>> gmmMap = Maps.newEnumMap(Gmm.class);
 				for (Gmm gmm : gmms) {
 					gmmMap.put(gmm, Doubles.asList(new double[size]));
 				}

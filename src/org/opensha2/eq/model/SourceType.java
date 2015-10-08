@@ -6,41 +6,43 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import com.google.common.base.CaseFormat;
 
 /**
- * Identifier for different earthquake {@link Source} types.
+ * Identifier for different earthquake {@link Source} types. These are declared
+ * in a preferred order of iteration, with potentially longer running source
+ * types coming first.
+ * 
  * @author Peter Powers
  */
 public enum SourceType {
 
+	/** Fault system source type. */
+	SYSTEM,
+
 	/** Area source type. */
 	AREA,
 
-	/** Cluster source type. */
-	CLUSTER,
-
-	/** Finite fault source type. */
-	FAULT, 
-	
 	/** Gridded (background) seismicity source type. */
 	GRID,
-
-	/** Subduction interface source type. */
-	INTERFACE,
 
 	/** Subduction intraslab source type. */
 	SLAB,
 
-	/** Fault system source type. */
-	SYSTEM;
-	
+	/** Subduction interface source type. */
+	INTERFACE,
+
+	/** Finite fault source type. */
+	FAULT,
+
+	/** Cluster source type. */
+	CLUSTER;
+
 	/**
-	 * Returns a {@code CaseFormat#UPPER_CAMEL} {@code String} representation
-	 * of this {@code SourceType}.
+	 * Returns a {@code CaseFormat#UPPER_CAMEL} {@code String} representation of
+	 * this {@code SourceType}.
 	 */
-	@Override
-	public String toString() { 
+	@Override public String toString() {
 		return UPPER_UNDERSCORE.to(UPPER_CAMEL, name());
 	}
-	
+
 	/**
 	 * Converts supplied {@code String} to equivalent {@code SourceType}. Method
 	 * expects a {@code String} with {@code CaseFormat#UPPER_CAMEL}
@@ -53,5 +55,5 @@ public enum SourceType {
 	public static SourceType fromString(String s) {
 		return valueOf(UPPER_CAMEL.to(UPPER_UNDERSCORE, s));
 	}
-			
+
 }

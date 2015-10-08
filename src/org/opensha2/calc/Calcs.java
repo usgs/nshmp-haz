@@ -1,34 +1,31 @@
 package org.opensha2.calc;
 
-import static org.opensha2.calc.AsyncCalc.toClusterCurves;
-import static org.opensha2.calc.AsyncCalc.toClusterGroundMotions;
-import static org.opensha2.calc.AsyncCalc.toClusterInputs;
-import static org.opensha2.calc.AsyncCalc.toGroundMotions;
-import static org.opensha2.calc.AsyncCalc.toHazardCurveSet;
-import static org.opensha2.calc.AsyncCalc.toHazardCurves;
-import static org.opensha2.calc.AsyncCalc.toHazardResult;
-import static org.opensha2.calc.AsyncCalc.toInputs;
-import static org.opensha2.calc.AsyncCalc.toSystemCurves;
-import static org.opensha2.calc.AsyncCalc.toSystemGroundMotions;
-import static org.opensha2.calc.AsyncCalc.toSystemInputs;
-import static org.opensha2.eq.model.SourceType.CLUSTER;
-import static org.opensha2.eq.model.SourceType.SYSTEM;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.opensha2.calc.CalcFactory.clustersToCurves;
+import static org.opensha2.calc.CalcFactory.sourcesToCurves;
+import static org.opensha2.calc.CalcFactory.systemToCurves;
+import static org.opensha2.calc.CalcFactory.toHazardResult;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.calc.Transforms.SourceToInputs;
+import org.opensha2.data.Data2D;
 import org.opensha2.eq.model.ClusterSourceSet;
+import org.opensha2.eq.model.GridSourceSet;
+import org.opensha2.eq.model.GridSourceSetTable;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SystemSourceSet;
-import org.opensha2.gmm.Imt;
 
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Stopwatch;
 
 /**
  * Static probabilistic seismic hazard analysis calculators.
@@ -37,108 +34,149 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class Calcs {
 
-	// TODO if config specifies using grid tables, we need to reroute grid calcs
-	// where to build/store lookup table/object for each unique GmmSet
-	
-	// Note that all calcs are done in log space, only in a final
-	// step will x-values be returned to linear space
+	/*
+	 * Implementation notes:
+	 * -------------------------------------------------------------------------
+	 * Method argument order in this, CalcFactory , and Transforms follow the
+	 * gerneral rule of model (or model derived obejcts), calc config, site, and
+	 * then any others.
+	 * -------------------------------------------------------------------------
+	 * All calculations are done in log space, only on export are x-values
+	 * returned to linear space.
+	 * -------------------------------------------------------------------------
+	 * The ability to run a full calculation on the current thread facilitates
+	 * debugging.
+	 * -------------------------------------------------------------------------
+	 * Single threaded calcs monitor and log calculation duration of each
+	 * SourceSet.
+	 */
 
 	/**
-	 * Compute a hazard curve using the supplied {@link Executor}.
+	 * Return a {@code Function} that converts a {@code Source} along with an
+	 * initially supplied {@code Site} to a list of ground motion model inputs.
+	 * 
+	 * @param site to initialize function with
+	 * @see InputList
+	 */
+	public static Function<Source, InputList> sourceToInputs(Site site) {
+		return new SourceToInputs(site);
+	}
+
+	/**
+	 * Compute a hazard curve, possibly using an {@link Optional}
+	 * {@link Executor}. If no {@code Executor} is supplied, the calculation
+	 * will run on the current thread.
 	 * 
 	 * @param model to use
-	 * @param config
+	 * @param config calculation properties
 	 * @param site of interest
-	 * @param executor optional Executor to use in calculation
-	 * @throws InterruptedException
-	 * @throws ExecutionException
+	 * @param ex optional {@code Executor} to use in calculation
+	 * @throws InterruptedException if an {@code Executor} was supplied and the
+	 *         calculation is interrupted
+	 * @throws ExecutionException if an {@code Executor} was supplied and a
+	 *         problem arises during the calculation
 	 */
 	public static HazardResult hazardCurve(
 			HazardModel model,
 			CalcConfig config,
 			Site site,
-			Executor executor)
+			Optional<Executor> ex)
 			throws InterruptedException, ExecutionException {
 
-		AsyncList<HazardCurveSet> curveSetCollector = AsyncList.createWithCapacity(model.size());
+		checkNotNull(model);
+		checkNotNull(config);
+		checkNotNull(site);
+		checkNotNull(ex);
+
+		Logger log = Logger.getLogger(Calcs.class.getName());
+
+		if (ex.isPresent()) {
+			return asyncHazardCurve(model, config, site, ex.get());
+		}
+		return hazardCurve(model, config, site, log);
+	}
+
+	/* Run a hazard curve calculation using supplied executor. */
+	private static HazardResult asyncHazardCurve(
+			HazardModel model,
+			CalcConfig config,
+			Site site,
+			Executor ex) throws InterruptedException, ExecutionException {
+
+		AsyncList<HazardCurveSet> curveSets = AsyncList.createWithCapacity(model.size());
 
 		for (SourceSet<? extends Source> sourceSet : model) {
-
-			if (sourceSet.type() == CLUSTER) {
-
-				ClusterSourceSet clusterSourceSet = (ClusterSourceSet) sourceSet;
-
-				AsyncList<ClusterInputs> inputs = toClusterInputs(clusterSourceSet, site, executor);
-				if (inputs.isEmpty()) continue; // all sources out of range
-
-				AsyncList<ClusterGroundMotions> groundMotions = toClusterGroundMotions(inputs,
-					clusterSourceSet, config.imts, executor);
-
-				AsyncList<ClusterCurves> clusterCurves = toClusterCurves(groundMotions, config,
-					executor);
-
-				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(clusterCurves,
-					clusterSourceSet, config.logModelCurves, executor);
-
-				curveSetCollector.add(curveSet);
-
-			} else if (sourceSet.type() == SYSTEM) {
-
-				SystemSourceSet systemSourceSet = (SystemSourceSet) sourceSet;
-
-				// TODO how to short circuit if none with in range??
-				// should a systemSourceSet have a boundary defined for
-				// quick comprehensive out of range detection?
-
-				ListenableFuture<InputList> inputs = toSystemInputs(systemSourceSet, site,
-					executor);
-
-				ListenableFuture<GroundMotions> groundMotions = toSystemGroundMotions(inputs,
-					systemSourceSet, config.imts, executor);
-
-				ListenableFuture<HazardCurves> systemCurves = toSystemCurves(groundMotions, config,
-					executor);
-
-				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(systemCurves,
-					systemSourceSet, config.logModelCurves, executor);
-
-				curveSetCollector.add(curveSet);
-
-				// TODO single threaded experiments
-				// HazardCurveSet curveSet =
-				// AsyncCalc.systemToCurves(systemSourceSet, site, config);
-				// curveSetCollector.add(Futures.immediateFuture(curveSet));
-
-			} else {
-
-				AsyncList<InputList> inputs = toInputs(sourceSet, site, executor);
-				if (inputs.isEmpty()) continue; // all sources out of range
-
-				AsyncList<GroundMotions> groundMotions = toGroundMotions(inputs, sourceSet,
-					config.imts, executor);
-
-				AsyncList<HazardCurves> hazardCurves = toHazardCurves(groundMotions, config,
-					executor);
-
-				ListenableFuture<HazardCurveSet> curveSet = toHazardCurveSet(hazardCurves,
-					sourceSet, config.logModelCurves, executor);
-
-				curveSetCollector.add(curveSet);
-				
-				// TODO single threaded experiments
-//				List<HazardCurveSet> curveSetList = AsyncCalc.sourceSetToCurves(sourceSet, site, config);
-//				for (HazardCurveSet curveSet : curveSetList) {
-//					curveSetCollector.add(Futures.immediateFuture(curveSet));
-//				}
+			switch (sourceSet.type()) {
+				case CLUSTER:
+					curveSets.add(clustersToCurves((ClusterSourceSet) sourceSet, config, site, ex));
+					break;
+				case SYSTEM:
+					curveSets.add(systemToCurves((SystemSourceSet) sourceSet, config, site, ex));
+					break;
+				default:
+					curveSets.add(sourcesToCurves(sourceSet, config, site, ex));
 			}
-
 		}
 
-		ListenableFuture<HazardResult> futureResult = toHazardResult(curveSetCollector,
-			config, site, model, executor);
+		return toHazardResult(model, config, site, curveSets, ex);
+	}
 
-		return futureResult.get();
+	/* Run a hazard curve calculation on the current thread. */
+	private static HazardResult hazardCurve(
+			HazardModel model,
+			CalcConfig config,
+			Site site,
+			Logger log) {
 
+		List<HazardCurveSet> curveSets = new ArrayList<>(model.size());
+
+		log.info("Single threaded HazardCurve calculation:");
+		Stopwatch swTotal = Stopwatch.createStarted();
+		Stopwatch swSource = Stopwatch.createStarted();
+
+		for (SourceSet<? extends Source> sourceSet : model) {
+			switch (sourceSet.type()) {
+				case GRID:
+					Data2D d = GridSourceSetTable.toSourceTable((GridSourceSet) sourceSet, site.location);
+//					System.out.println(d);
+					curveSets.add(sourcesToCurves(sourceSet, config, site));
+					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
+					break;
+					
+				case CLUSTER:
+					curveSets.add(clustersToCurves((ClusterSourceSet) sourceSet, config, site));
+					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
+					break;
+				case SYSTEM:
+					curveSets.add(systemToCurves((SystemSourceSet) sourceSet, config, site));
+					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
+					break;
+				default:
+					curveSets.add(sourcesToCurves(sourceSet, config, site));
+					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
+			}
+		}
+
+		log.log(Level.INFO, String.format(" %s: %s", MSSG_DURATION, duration(swTotal)));
+		swTotal.stop();
+		swSource.stop();
+
+		return toHazardResult(model, config, site, curveSets);
+	}
+
+	/* support methods and fields for single-threaded calculations. */
+
+	private static String duration(Stopwatch sw) {
+		String duration = sw.toString();
+		sw.reset().start();
+		return duration;
+	}
+
+	private static final String MSSG_COMPLETED = " Completed";
+	private static final String MSSG_DURATION = "Total time";
+
+	private static void log(Logger log, String leader, String source, String duration) {
+		log.log(Level.INFO, String.format(" %s: %s %s", leader, duration, source));
 	}
 
 }

@@ -15,10 +15,8 @@ import org.opensha2.gmm.CeusMb.*;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
@@ -37,8 +35,6 @@ public enum Gmm {
 
 	// TODO AB06 has PGV clamp of 460m/s; is this correct? or specified
 	// anywhere?
-
-	// TODO Port Gmm grid optimization tables
 
 	// TODO Verify that Campbell03 imposes max(dtor,5); he does require rRup;
 	// why is depth constrained as such in hazgrid? As with somerville, no depth
@@ -452,7 +448,7 @@ public enum Gmm {
 	 * Retreive an instance of a {@code GroundMotionModel}, either by creating a
 	 * new one, or fetching from a cache.
 	 * 
-	 * @param imt intensity measure type of instance
+	 * @param imt of the retreived instance
 	 * @throws UncheckedExecutionException if there is an instantiation problem
 	 */
 	public GroundMotionModel instance(Imt imt) {
@@ -462,40 +458,36 @@ public enum Gmm {
 	}
 
 	/**
-	 * Retrieve multiple {@code GroundMotionModel} instances, either by creating
-	 * new ones, or fetching them from a cache.
+	 * Retrieve an immutable map of {@code GroundMotionModel} instances, either
+	 * by creating new ones, or fetching them from a cache.
 	 * 
+	 * @param imt of each retreived instance
 	 * @param gmms to retrieve
-	 * @param imt
 	 * @throws UncheckedExecutionException if there is an instantiation problem
 	 */
-	public static Map<Gmm, GroundMotionModel> instances(Set<Gmm> gmms, Imt imt) {
-		Map<Gmm, GroundMotionModel> instances = Maps.newEnumMap(Gmm.class);
+	public static Map<Gmm, GroundMotionModel> instances(Imt imt, Set<Gmm> gmms) {
+		Map<Gmm, GroundMotionModel> instanceMap = Maps.newEnumMap(Gmm.class);
 		for (Gmm gmm : gmms) {
-			instances.put(gmm, gmm.instance(imt));
+			instanceMap.put(gmm, gmm.instance(imt));
 		}
-		return instances;
+		return Maps.immutableEnumMap(instanceMap);
 	}
 
-	// TODO deprecate/delete above??
-
 	/**
-	 * Retrieve a {@code Table} of {@code GroundMotionModel} instances for a
+	 * Retrieve immutable maps of {@code GroundMotionModel} instances for a
 	 * range of {@code Imt}s, either by creating new ones, or fetching them from
 	 * a cache.
 	 * 
+	 * @param imts to retrieve instances for
 	 * @param gmms to retrieve
-	 * @param imts
 	 * @throws UncheckedExecutionException if there is an instantiation problem
 	 */
-	public static Table<Gmm, Imt, GroundMotionModel> instances(Set<Gmm> gmms, Set<Imt> imts) {
-		Table<Gmm, Imt, GroundMotionModel> instances = ArrayTable.create(gmms, imts);
-		for (Gmm gmm : gmms) {
-			for (Imt imt : imts) {
-				instances.put(gmm, imt, gmm.instance(imt));
-			}
+	public static Map<Imt, Map<Gmm, GroundMotionModel>> instances(Set<Imt> imts, Set<Gmm> gmms) {
+		Map<Imt, Map<Gmm, GroundMotionModel>> imtMap = Maps.newEnumMap(Imt.class);
+		for (Imt imt : imts) {
+			imtMap.put(imt, instances(imt, gmms));
 		}
-		return instances;
+		return Maps.immutableEnumMap(imtMap);
 	}
 
 	@Override public String toString() {

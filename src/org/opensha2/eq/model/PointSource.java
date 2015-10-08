@@ -255,7 +255,7 @@ class PointSource implements Source {
 	static final class DepthModel {
 
 		/*
-		 * Examples:
+		 * MagDepthMap examples:
 		 * 
 		 * single depth:
 		 * 
@@ -264,12 +264,16 @@ class PointSource implements Source {
 		 * NSHMP depths:
 		 * 
 		 * [6.5 :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 : 0.0]]
+		 * 
+		 * magDepthMap is not used once index arrays are created, but reference
+		 * is retained for cache identification.
 		 */
+		final Map<Double, Map<Double, Double>> magDepthMap;
 
 		/*
 		 * maxDepth constrains the width of finite point sources. In many cases
-		 * (e.g. CEUS) is is not used as sources are simoply modeled as lines;
-		 * the gmm's do not require a full finit-source parameterization.
+		 * (e.g. CEUS) this is not used as sources are simoply modeled as lines;
+		 * the gmm's do not require a full finite-source parameterization.
 		 */
 		final double maxDepth;
 
@@ -279,14 +283,20 @@ class PointSource implements Source {
 		final List<Double> magDepthDepths;
 		final List<Double> magDepthWeights;
 
-		static DepthModel create(List<Double> magMaster,
-				NavigableMap<Double, Map<Double, Double>> magDepthMap, double maxDepth) {
-			return new DepthModel(magMaster, magDepthMap, maxDepth);
+		static DepthModel create(
+				NavigableMap<Double, Map<Double, Double>> magDepthMap,
+				List<Double> magMaster,
+				double maxDepth) {
+			
+			return new DepthModel(magDepthMap, magMaster, maxDepth);
 		}
 
-		private DepthModel(List<Double> magMaster,
-				NavigableMap<Double, Map<Double, Double>> magDepthMap, double maxDepth) {
+		private DepthModel(
+				NavigableMap<Double, Map<Double, Double>> magDepthMap,
+				List<Double> magMaster,
+				double maxDepth) {
 
+			this.magDepthMap = magDepthMap;
 			this.magMaster = magMaster;
 			this.maxDepth = maxDepth;
 
@@ -295,8 +305,8 @@ class PointSource implements Source {
 			List<Double> weights = Lists.newArrayList();
 
 			for (int i = 0; i < magMaster.size(); i++) {
-				Map.Entry<Double, Map<Double, Double>> magEntry = magDepthMap.higherEntry(magMaster
-					.get(i));
+				Map.Entry<Double, Map<Double, Double>> magEntry =
+						magDepthMap.higherEntry(magMaster.get(i));
 				for (Map.Entry<Double, Double> entry : magEntry.getValue().entrySet()) {
 					indices.add(i);
 					depths.add(entry.getKey());
@@ -308,6 +318,7 @@ class PointSource implements Source {
 			magDepthDepths = Doubles.asList(Doubles.toArray(depths));
 			magDepthWeights = Doubles.asList(Doubles.toArray(weights));
 		}
+		
 	}
 
 }

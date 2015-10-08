@@ -1,5 +1,7 @@
 package org.opensha2.calc;
 
+import static org.opensha2.util.TextUtils.NEWLINE;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,15 @@ public abstract class InputList extends AbstractList<HazardInput> {
 
 	@Override public int size() {
 		return delegate.size();
+	}
+	
+	@Override public String toString() {
+		StringBuilder sb = new StringBuilder("[").append(NEWLINE);
+		for (HazardInput input : this) {
+			sb.append(input).append(NEWLINE);
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 	abstract String parentName();
