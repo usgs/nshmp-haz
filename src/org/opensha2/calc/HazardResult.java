@@ -2,7 +2,7 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.ArrayXY_Sequence.copyOf;
+import static org.opensha2.data.XySequence.copyOf;
 import static org.opensha2.eq.model.SourceType.CLUSTER;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
 
@@ -10,7 +10,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Imt;
@@ -32,14 +32,14 @@ import com.google.common.collect.SetMultimap;
 public final class HazardResult {
 
 	final SetMultimap<SourceType, HazardCurveSet> sourceSetMap;
-	final Map<Imt, ArrayXY_Sequence> totalCurves;
+	final Map<Imt, XySequence> totalCurves;
 	final HazardModel model;
 	final Site site;
 	final CalcConfig config;
 
 	private HazardResult(
 			SetMultimap<SourceType, HazardCurveSet> sourceSetMap,
-			Map<Imt, ArrayXY_Sequence> totalCurves,
+			Map<Imt, XySequence> totalCurves,
 			HazardModel model,
 			Site site,
 			CalcConfig config) {
@@ -93,7 +93,7 @@ public final class HazardResult {
 	/**
 	 * The total mean hazard curves for each calculated {@code Imt}.
 	 */
-	public Map<Imt, ArrayXY_Sequence> curves() {
+	public Map<Imt, XySequence> curves() {
 		return totalCurves;
 	}
 	
@@ -118,12 +118,12 @@ public final class HazardResult {
 		private CalcConfig config;
 		
 		private ImmutableSetMultimap.Builder<SourceType, HazardCurveSet> resultMapBuilder;
-		private Map<Imt, ArrayXY_Sequence> totalCurves;
+		private Map<Imt, XySequence> totalCurves;
 
 		private Builder(CalcConfig config) {
 			this.config = checkNotNull(config);
 			totalCurves = new EnumMap<>(Imt.class);
-			for (Entry<Imt, ArrayXY_Sequence> entry : config.logModelCurves.entrySet()) {
+			for (Entry<Imt, XySequence> entry : config.logModelCurves.entrySet()) {
 				totalCurves.put(entry.getKey(), copyOf(entry.getValue()).clear());
 			}
 			resultMapBuilder = ImmutableSetMultimap.builder();
@@ -143,7 +143,7 @@ public final class HazardResult {
 		
 		Builder addCurveSet(HazardCurveSet curveSet) {
 			resultMapBuilder.put(curveSet.sourceSet.type(), curveSet);
-			for (Entry<Imt, ArrayXY_Sequence> entry : curveSet.totalCurves.entrySet()) {
+			for (Entry<Imt, XySequence> entry : curveSet.totalCurves.entrySet()) {
 				totalCurves.get(entry.getKey()).add(entry.getValue());
 			}
 			return this;

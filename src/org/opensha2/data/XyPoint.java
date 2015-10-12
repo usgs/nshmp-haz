@@ -1,11 +1,14 @@
 package org.opensha2.data;
 
 /**
- * XY value container.
+ * Wrapper interface for xy-value data pairs. 
+ * Implementations that permit setting the y-value will propogate through to any
+ * backing data structure (e.g. a {@link XySequence}).
  * 
  * @author Peter Powers
+ * @see XySequence
  */
-public interface XY_Point {
+public interface XyPoint {
 
 	/**
 	 * Return the x-value of this point.
@@ -18,8 +21,7 @@ public interface XY_Point {
 	 * @return x
 	 */
 	double y();
-	
-	
+
 	/**
 	 * Set the y-value of this point.
 	 * @param y

@@ -1,11 +1,12 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.opensha2.data.XySequence.immutableCopyOf;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 
@@ -21,10 +22,10 @@ import org.opensha2.gmm.Imt;
 final class HazardCurves {
 
 	final GroundMotions groundMotions;
-	final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
+	final Map<Imt, Map<Gmm, XySequence>> curveMap;
 
 	private HazardCurves(GroundMotions groundMotions,
-		Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap) {
+		Map<Imt, Map<Gmm, XySequence>> curveMap) {
 		this.groundMotions = groundMotions;
 		this.curveMap = curveMap;
 	}
@@ -39,19 +40,22 @@ final class HazardCurves {
 		private boolean built = false;
 
 		private final GroundMotions groundMotions;
-		private final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
+		private final Map<Imt, Map<Gmm, XySequence>> curveMap;
 
 		private Builder(GroundMotions groundMotions) {
 			this.groundMotions = groundMotions;
 			curveMap = new EnumMap<>(Imt.class);
 			for (Imt imt : groundMotions.means.keySet()) {
-				Map<Gmm, ArrayXY_Sequence> gmmMap = new EnumMap<>(Gmm.class);
+				Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
 				curveMap.put(imt, gmmMap);
 			}
 		}
 
-		Builder addCurve(Imt imt, Gmm gmm, ArrayXY_Sequence curve) {
-			curveMap.get(imt).put(gmm, curve);
+		/*
+		 * Makes an immutable copy of the supplied curve.
+		 */
+		Builder addCurve(Imt imt, Gmm gmm, XySequence curve) {
+			curveMap.get(imt).put(gmm, immutableCopyOf(curve));
 			return this;
 		}
 

@@ -15,15 +15,14 @@ import static org.opensha2.eq.model.SourceAttribute.TYPE;
 import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceType.GRID;
 import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readEnum;
+import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.stringToEnumWeightMap;
 import static org.opensha2.util.Parsing.stringToValueValueWeightMap;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -32,7 +31,6 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha2.data.DataUtils;
-import org.opensha2.data.XY_Sequence;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -50,8 +48,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.ImmutableSortedSet.Builder;
 import com.google.common.primitives.Doubles;
 
 /*
@@ -351,7 +347,7 @@ class GridParser extends DefaultHandler {
 		// TODO just returning the first one for now
 		// TODO
 		// TODO This is likely going to require refactoring Point Source
-		// MFDs to be XY_Sequences because IncrementalMfd descends from
+		// MFDs to be XySequences because IncrementalMfd descends from
 		// evenly discretized function; more relevant to combining single mfds
 		// that contain non-unifrmely spaced magnitudes
 		//

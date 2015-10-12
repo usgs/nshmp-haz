@@ -225,6 +225,16 @@ final class DataTables {
 			}
 			return sb.toString();
 		}
+
+//		@Override public XySequence row(double row) {
+//			return null;
+//			// TODO do nothing
+//			
+//		}
+	}
+	
+	static final class RowXySequence { // extends ImmutableXySequence
+		
 	}
 
 	static final class SingularTable2D extends AbstractTable2D {

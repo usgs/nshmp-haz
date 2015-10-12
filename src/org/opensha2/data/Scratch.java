@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.opensha2.function.ArbitrarilyDiscretizedFunc;
+import org.opensha2.function.DiscretizedFunc;
+import org.opensha2.function.EvenlyDiscretizedFunc;
 import org.opensha2.util.Parsing;
 
 import com.google.common.base.Stopwatch;
@@ -18,17 +20,22 @@ import com.google.common.primitives.Doubles;
  * @author Peter Powers
  */
 class Scratch {
-	static double[] xs = new double[] { 0.0010, 0.0013, 0.0018, 0.0024, 0.0033, 0.0044, 0.0059, 0.0080 };
+	static double[] xs = new double[] { 0.0010, 0.0013, 0.0016, 0.0019, 0.0022, 0.0025, 0.0028, 0.0031 };
 	static double[] ys = new double[] { 1.0, 0.95, 0.85, 0.65, 0.35, 0.15, 0.05, 0.0 };
 
+	/*
+	 * TODO this is probably important to save somewhere wrt
+	 * to performance, clarity/readability, and conciseness
+	 * improvements realized by XySequence
+	 */
 	public static void main(String[] args) {
 		
 		sequenceTest();
 
-//		XY_Sequence xy = ArrayXY_Sequence.create(xs, ys);
+//		XySequence xy = XySequence.create(xs, ys);
 //		int count = 0;
-//		XY_Point pp = null;
-//		for (XY_Point p : xy) {
+//		XyPoint pp = null;
+//		for (XyPoint p : xy) {
 //			System.out.println(p);
 //			if (count == 3) pp = p;
 //			count++;
@@ -57,6 +64,7 @@ class Scratch {
 	private static void sequenceTest() {
 		int its = 100000000;
 		
+		System.out.println("Starting ArbitrarilyDiscretizedFunc...");
 		ArbitrarilyDiscretizedFunc adf = new ArbitrarilyDiscretizedFunc();
 		for (int i=0; i<xs.length; i++) {
 			adf.set(xs[i], ys[i]);
@@ -67,8 +75,6 @@ class Scratch {
 			adfReceiver.set(xs[i], 0);
 		}
 		
-		
-		System.out.println("Starting ArbDiscrFunc...");
 		Stopwatch sw = Stopwatch.createStarted();
 		for (int i=0; i<its; i++) {
 			ArbitrarilyDiscretizedFunc copy = adf.deepClone();
@@ -82,23 +88,53 @@ class Scratch {
 				adfReceiver.set(k, copy.get(k).getY() + y);
 			}
 		}
-		System.out.println(sw.stop().elapsed(TimeUnit.MILLISECONDS));
+		System.out.println("Time: " + sw.stop());
 		System.out.println(adfReceiver);
 		System.out.println();
 		
 
+		System.out.println("Starting EvenlyDiscretizedFunction...");
+		EvenlyDiscretizedFunc edf = new EvenlyDiscretizedFunc(0.0010, 8, 0.0003);
+		for (int i=0; i<xs.length; i++) {
+			edf.set(i, ys[i]);
+		}
+		numPoints = edf.getNum();
+		EvenlyDiscretizedFunc edfReceiver = new EvenlyDiscretizedFunc(0.0010, 8, 0.0003);
+		for (int i=0; i<xs.length; i++) {
+			edfReceiver.set(i, 0);
+		}
 		
-		ArrayXY_Sequence axy = ArrayXY_Sequence.create(xs, ys);
-		ArrayXY_Sequence xyReceiver =  ArrayXY_Sequence.create(xs, null);
-
-		System.out.println("Starting XY_Sequence...");
 		sw.reset().start();
 		for (int i=0; i<its; i++) {
-			ArrayXY_Sequence copy = ArrayXY_Sequence.copyOf(axy);
-			copy.multiply(axy);
+			// why on earth does this return DF when ADF.deepCLone returns an ADF?
+			DiscretizedFunc copy = edf.deepClone(); 
+			
+			for (int k=0; k<numPoints; k++) {
+				copy.set(k, copy.getY(k) * copy.getY(k));
+			}
+			
+			for (int k=0; k<numPoints; k++) {
+				double y = edfReceiver.get(k).getY();
+				edfReceiver.set(k, copy.get(k).getY() + y);
+			}
+		}
+		System.out.println("Time: " + sw.stop());
+		System.out.println(edfReceiver);
+		System.out.println();
+
+		
+
+		System.out.println("Starting XySequence...");
+		XySequence xy = XySequence.createImmutable(xs, ys);
+		XySequence xyReceiver =  XySequence.emptyCopyOf(xy);
+
+		sw.reset().start();
+		for (int i=0; i<its; i++) {
+			XySequence copy = XySequence.copyOf(xy);
+			copy.multiply(xy);
 			xyReceiver.add(copy);
 		}
-		System.out.println(sw.stop().elapsed(TimeUnit.MILLISECONDS));
+		System.out.println("Time: " + sw.stop());
 		System.out.println(xyReceiver);
 		
 		

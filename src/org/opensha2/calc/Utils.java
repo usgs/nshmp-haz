@@ -6,9 +6,8 @@ import static org.opensha2.calc.ExceedanceModel.TRUNCATION_LOWER_UPPER;
 
 import java.util.List;
 
-import org.opensha2.data.ArrayXY_Sequence;
-import org.opensha2.data.XY_Point;
-import org.opensha2.data.XY_Sequence;
+import org.opensha2.data.XyPoint;
+import org.opensha2.data.XySequence;
 
 /**
  * Note that these are all linear space calculations; any hazard values should
@@ -103,7 +102,7 @@ public class Utils {
 	 * @return a reference to the supplied sequence
 	 */
 	@Deprecated
-	public static XY_Sequence setProbExceed(double μ, double σ, XY_Sequence values,
+	public static XySequence setProbExceed(double μ, double σ, XySequence values,
 			ExceedanceModel truncType, double truncLevel) {
 
 		double clip = μ + truncLevel * σ;
@@ -135,8 +134,8 @@ public class Utils {
 	 * @param clamp maximum allowable value
 	 * @return a reference to the supplied sequence
 	 */
-	@Deprecated public static XY_Sequence setClampedProbExceed(double μ, double σ,
-			XY_Sequence values, ExceedanceModel truncType, double truncLevel, double clamp) {
+	@Deprecated public static XySequence setClampedProbExceed(double μ, double σ,
+			XySequence values, ExceedanceModel truncType, double truncLevel, double clamp) {
 
 		double clipHi = min(μ + truncLevel * σ, clamp);
 		double pHi = gaussProbExceed(μ, σ, clipHi);
@@ -173,12 +172,12 @@ public class Utils {
 
 	/*
 	 * Compute the probabilities that the x-values in {@code values} will be
-	 * exceeded. Returns the supplied {@code XY_Sequence} populated with
+	 * exceeded. Returns the supplied {@code XySequence} populated with
 	 * probabilities.
 	 */
-	private static XY_Sequence gaussProbExceed(double μ, double σ, XY_Sequence values, double pHi,
+	private static XySequence gaussProbExceed(double μ, double σ, XySequence values, double pHi,
 			double pLo) {
-		for (XY_Point point : values) {
+		for (XyPoint point : values) {
 			double p = gaussProbExceed(μ, σ, point.x());
 			point.set(probBoundsCheck((p - pHi) / (pLo - pHi)));
 		}
@@ -201,8 +200,8 @@ public class Utils {
 	 * WARNING: Method modifies curves in place and returns result in the first
 	 * supplied curve.s
 	 */
-	public static ArrayXY_Sequence calcClusterExceedProb(List<ArrayXY_Sequence> curves) {
-		ArrayXY_Sequence combined = ArrayXY_Sequence.copyOf(curves.get(0)).complement();
+	public static XySequence calcClusterExceedProb(List<XySequence> curves) {
+		XySequence combined = XySequence.copyOf(curves.get(0)).complement();
 		for (int i = 1; i < curves.size(); i++) {
 			combined.multiply(curves.get(i).complement());
 		}
@@ -217,8 +216,8 @@ public class Utils {
 	public static final double[] NSHM_IMLS = {
 		0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19, 3.28, 4.92, 7.38 };
 	
-	public static ArrayXY_Sequence nshmpCurve() {
-		return ArrayXY_Sequence.create(NSHM_IMLS, null);
+	public static XySequence nshmpCurve() {
+		return XySequence.create(NSHM_IMLS, null);
 	}
 	
 	/**

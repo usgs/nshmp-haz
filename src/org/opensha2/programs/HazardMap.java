@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.opensha2.calc.HazardResult;
 import org.opensha2.calc.Site;
-import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
@@ -64,7 +64,7 @@ public class HazardMap {
 
 	static Result create(HazardModel model, Imt imt, Iterable<Site> sites) {
 		Builder<Site> siteBuilder = ImmutableList.builder();
-		Builder<ArrayXY_Sequence> curveBuilder = ImmutableList.builder();
+		Builder<XySequence> curveBuilder = ImmutableList.builder();
 		for (Site site : sites) {
 			siteBuilder.add(site);
 //			curveBuilder.add(HazardCurve.calc(model, imt, site).curve());
@@ -81,9 +81,9 @@ public class HazardMap {
 		public final List<Site> sites;
 
 		/** A {@code List} of {@code Location}s */
-		public final List<ArrayXY_Sequence> curves;
+		public final List<XySequence> curves;
 
-		Result(List<Site> sites, List<ArrayXY_Sequence> curves) {
+		Result(List<Site> sites, List<XySequence> curves) {
 			this.sites = sites;
 			this.curves = curves;
 		}

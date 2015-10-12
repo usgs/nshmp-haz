@@ -17,9 +17,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.data.DataUtils;
-import org.opensha2.data.XY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
 import org.opensha2.util.Parsing;
 
@@ -69,8 +68,8 @@ public final class CalcConfig {
 	final DeaggData deagg;
 	private final SiteSet sites;
 
-	final Map<Imt, ArrayXY_Sequence> modelCurves;
-	final Map<Imt, ArrayXY_Sequence> logModelCurves;
+	final Map<Imt, XySequence> modelCurves;
+	final Map<Imt, XySequence> logModelCurves;
 
 	private static final Gson GSON = new GsonBuilder()
 		.registerTypeAdapter(Site.class, new Site.Deserializer())
@@ -86,8 +85,8 @@ public final class CalcConfig {
 			Map<Imt, double[]> customImls,
 			DeaggData deagg,
 			SiteSet sites,
-			Map<Imt, ArrayXY_Sequence> modelCurves,
-			Map<Imt, ArrayXY_Sequence> logModelCurves) {
+			Map<Imt, XySequence> modelCurves,
+			Map<Imt, XySequence> logModelCurves) {
 
 		this.resource = resource;
 		this.exceedanceModel = exceedanceModel;
@@ -177,7 +176,7 @@ public final class CalcConfig {
 	 * .
 	 * @param imt to get curve for
 	 */
-	public XY_Sequence modelCurve(Imt imt) {
+	public XySequence modelCurve(Imt imt) {
 		return modelCurves.get(imt);
 	}
 
@@ -295,23 +294,23 @@ public final class CalcConfig {
 			return this;
 		}
 
-		private Map<Imt, ArrayXY_Sequence> createLogCurveMap() {
-			Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
+		private Map<Imt, XySequence> createLogCurveMap() {
+			Map<Imt, XySequence> curveMap = Maps.newEnumMap(Imt.class);
 			for (Imt imt : imts) {
 				double[] imls = imlsForImt(imt);
 				imls = Arrays.copyOf(imls, imls.length);
 				DataUtils.ln(imls);
-				curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
+				curveMap.put(imt, XySequence.createImmutable(imls, null));
 			}
 			return Maps.immutableEnumMap(curveMap);
 		}
 
-		private Map<Imt, ArrayXY_Sequence> createCurveMap() {
-			Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
+		private Map<Imt, XySequence> createCurveMap() {
+			Map<Imt, XySequence> curveMap = Maps.newEnumMap(Imt.class);
 			for (Imt imt : imts) {
 				double[] imls = imlsForImt(imt);
 				imls = Arrays.copyOf(imls, imls.length);
-				curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
+				curveMap.put(imt, XySequence.createImmutable(imls, null));
 			}
 			return Maps.immutableEnumMap(curveMap);
 		}
@@ -337,8 +336,8 @@ public final class CalcConfig {
 		public CalcConfig build() {
 			validateState(ID);
 			Set<Imt> finalImts = Sets.immutableEnumSet(imts);
-			Map<Imt, ArrayXY_Sequence> curves = createCurveMap();
-			Map<Imt, ArrayXY_Sequence> logCurves = createLogCurveMap();
+			Map<Imt, XySequence> curves = createCurveMap();
+			Map<Imt, XySequence> logCurves = createLogCurveMap();
 			return new CalcConfig(
 				resource, exceedanceModel, truncationLevel, finalImts,
 				defaultImls, customImls, deagg, sites, curves, logCurves);

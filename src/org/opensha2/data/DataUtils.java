@@ -1072,7 +1072,7 @@ public final class DataUtils {
 	 * @param sequences to combine
 	 * @return a combined sequence
 	 */
-	@Deprecated public static XY_Sequence combine(Iterable<XY_Sequence> sequences) {
+	@Deprecated public static XySequence combine(Iterable<XySequence> sequences) {
 
 		// TODO I think we want to have interpolating and non-interpolating
 		// flavors. Interpolating for visual presentation, non-interpolating
@@ -1080,17 +1080,17 @@ public final class DataUtils {
 
 		// create master x-value sequence
 		Builder<Double> builder = ImmutableSortedSet.naturalOrder();
-		for (XY_Sequence sequence : sequences) {
+		for (XySequence sequence : sequences) {
 			builder.addAll(sequence.xValues());
 		}
 		double[] xMaster = Doubles.toArray(builder.build());
 
 		// resample and combine sequences
-		ArrayXY_Sequence combined = ArrayXY_Sequence.create(xMaster, null);
-		for (XY_Sequence sequence : sequences) {
+		XySequence combined = XySequence.create(xMaster, null);
+		for (XySequence sequence : sequences) {
 			// TODO need to disable extrapolation in Interpolation
 			if (true) throw new UnsupportedOperationException();
-			ArrayXY_Sequence resampled = ArrayXY_Sequence.resampleTo(sequence, xMaster);
+			XySequence resampled = XySequence.resampleTo(sequence, xMaster);
 			combined.add(resampled);
 		}
 

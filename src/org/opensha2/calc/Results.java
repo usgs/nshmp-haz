@@ -1,8 +1,8 @@
 package org.opensha2.calc;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
-import static org.opensha2.data.ArrayXY_Sequence.copyOf;
-
+import static org.opensha2.data.XySequence.copyOf;
+import static org.opensha2.data.XySequence.immutableCopyOf;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,8 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha2.data.ArrayXY_Sequence;
-import org.opensha2.data.XY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Location;
 import org.opensha2.gmm.Imt;
@@ -93,7 +92,7 @@ public class Results {
 					result.site.location.lat()),
 				locFmtFunc);
 			String name = result.site.name;
-			for (Entry<Imt, ? extends XY_Sequence> entry : result.totalCurves.entrySet()) {
+			for (Entry<Imt, ? extends XySequence> entry : result.totalCurves.entrySet()) {
 
 				// enable to output poisson probability - used when running
 				// PEER test cases - TODO should be configurable
@@ -123,27 +122,26 @@ public class Results {
 		}
 	}
 
-	public static Map<Imt, Map<SourceType, ArrayXY_Sequence>> totalsByType(HazardResult result) {
+	public static Map<Imt, Map<SourceType, XySequence>> totalsByType(HazardResult result) {
 
-		ImmutableMap.Builder<Imt, Map<SourceType, ArrayXY_Sequence>> imtMapBuilder =
+		ImmutableMap.Builder<Imt, Map<SourceType, XySequence>> imtMapBuilder =
 			ImmutableMap.builder();
 
-		Map<Imt, ArrayXY_Sequence> curves = result.curves();
+		Map<Imt, XySequence> curves = result.curves();
 		Set<Imt> imts = curves.keySet();
 
 		for (Imt imt : imts) {
 
-			ArrayXY_Sequence modelCurve = copyOf(curves.get(imt)).clear();
-			Map<SourceType, ArrayXY_Sequence> typeCurves = new EnumMap<>(SourceType.class);
+			XySequence modelCurve = copyOf(curves.get(imt)).clear();
+			Map<SourceType, XySequence> typeCurves = new EnumMap<>(SourceType.class);
 
 			Multimap<SourceType, HazardCurveSet> curveSets = result.sourceSetMap;
 			for (SourceType type : curveSets.keySet()) {
-				ArrayXY_Sequence typeCurve = copyOf(modelCurve);
+				XySequence typeCurve = copyOf(modelCurve);
 				for (HazardCurveSet curveSet : curveSets.get(type)) {
-					ArrayXY_Sequence curve = curveSet.totalCurves.get(imt);
-					typeCurve.add(curve);
+					typeCurve.add(curveSet.totalCurves.get(imt));
 				}
-				typeCurves.put(type, typeCurve);
+				typeCurves.put(type, immutableCopyOf(typeCurve));
 			}
 			imtMapBuilder.put(imt, Maps.immutableEnumMap(typeCurves));
 		}

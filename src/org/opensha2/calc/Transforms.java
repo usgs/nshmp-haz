@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.opensha2.calc.ClusterCurves.Builder;
-import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.RuptureSurface;
 import org.opensha2.eq.model.ClusterSource;
@@ -144,7 +144,7 @@ final class Transforms {
 	 */
 	static final class GroundMotionsToCurves implements Function<GroundMotions, HazardCurves> {
 
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final Map<Imt, XySequence> modelCurves;
 		private final ExceedanceModel exceedanceModel;
 		private final double truncationLevel;
 
@@ -158,19 +158,20 @@ final class Transforms {
 
 			HazardCurves.Builder curveBuilder = HazardCurves.builder(groundMotions);
 
-			for (Entry<Imt, ArrayXY_Sequence> entry : modelCurves.entrySet()) {
+			for (Entry<Imt, XySequence> entry : modelCurves.entrySet()) {
 
-				ArrayXY_Sequence modelCurve = entry.getValue();
+				XySequence modelCurve = entry.getValue();
 				Imt imt = entry.getKey();
 
-				ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
+				XySequence utilCurve = XySequence.copyOf(modelCurve);
+				XySequence gmmCurve = XySequence.copyOf(modelCurve);
 
 				Map<Gmm, List<Double>> gmmMeans = groundMotions.means.get(imt);
 				Map<Gmm, List<Double>> gmmSigmas = groundMotions.sigmas.get(imt);
 
 				for (Gmm gmm : gmmMeans.keySet()) {
-
-					ArrayXY_Sequence gmmCurve = ArrayXY_Sequence.copyOf(modelCurve);
+					
+					gmmCurve.clear();
 
 					List<Double> means = gmmMeans.get(gmm);
 					List<Double> sigmas = gmmSigmas.get(gmm);
@@ -226,7 +227,7 @@ final class Transforms {
 	static final class CurveConsolidator implements Function<List<HazardCurves>, HazardCurveSet> {
 
 		private final SourceSet<? extends Source> sources;
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final Map<Imt, XySequence> modelCurves;
 
 		CurveConsolidator(
 				SourceSet<? extends Source> sources,
@@ -339,7 +340,7 @@ final class Transforms {
 	static final class ClusterGroundMotionsToCurves implements
 			Function<ClusterGroundMotions, ClusterCurves> {
 
-		private final Map<Imt, ArrayXY_Sequence> logModelCurves;
+		private final Map<Imt, XySequence> logModelCurves;
 		private final ExceedanceModel exceedanceModel;
 		private final double truncationLevel;
 
@@ -353,17 +354,17 @@ final class Transforms {
 
 			Builder builder = ClusterCurves.builder(clusterGroundMotions);
 
-			for (Entry<Imt, ArrayXY_Sequence> entry : logModelCurves.entrySet()) {
+			for (Entry<Imt, XySequence> entry : logModelCurves.entrySet()) {
 
-				ArrayXY_Sequence modelCurve = entry.getValue();
+				XySequence modelCurve = entry.getValue();
 				Imt imt = entry.getKey();
 
 				// aggregator of curves for each fault in a cluster
-				ListMultimap<Gmm, ArrayXY_Sequence> faultCurves = MultimapBuilder
+				ListMultimap<Gmm, XySequence> faultCurves = MultimapBuilder
 					.enumKeys(Gmm.class)
 					.arrayListValues(clusterGroundMotions.size())
 					.build();
-				ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
+				XySequence utilCurve = XySequence.copyOf(modelCurve);
 
 				for (GroundMotions hazardGroundMotions : clusterGroundMotions) {
 
@@ -371,7 +372,7 @@ final class Transforms {
 					Map<Gmm, List<Double>> gmmSigmas = hazardGroundMotions.sigmas.get(imt);
 
 					for (Gmm gmm : gmmMeans.keySet()) {
-						ArrayXY_Sequence magVarCurve = ArrayXY_Sequence.copyOf(modelCurve);
+						XySequence magVarCurve = XySequence.copyOf(modelCurve);
 						List<Double> means = gmmMeans.get(gmm);
 						List<Double> sigmas = gmmSigmas.get(gmm);
 						for (int i = 0; i < hazardGroundMotions.inputs.size(); i++) {
@@ -391,7 +392,7 @@ final class Transforms {
 				double rate = clusterGroundMotions.parent.rate();
 				for (Gmm gmm : faultCurves.keySet()) {
 					// TODO where should this be pointing
-					ArrayXY_Sequence clusterCurve = Utils.calcClusterExceedProb(faultCurves
+					XySequence clusterCurve = Utils.calcClusterExceedProb(faultCurves
 						.get(gmm));
 					builder.addCurve(imt, gmm, clusterCurve.multiply(rate));
 				}
@@ -438,7 +439,7 @@ final class Transforms {
 			Function<List<ClusterCurves>, HazardCurveSet> {
 
 		private final ClusterSourceSet sources;
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final Map<Imt, XySequence> modelCurves;
 
 		ClusterCurveConsolidator(
 				ClusterSourceSet sources,
