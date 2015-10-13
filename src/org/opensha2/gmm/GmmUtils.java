@@ -136,8 +136,8 @@ public final class GmmUtils {
 				List<String> values = Lists.newArrayList(Parsing.split(line, Delimiter.SPACE));
 				if (values.size() == 0) continue;
 				int distKey = Integer.parseInt(values.get(0));
-				int magIdx = Integer.parseInt(values.get(1));
-				int magKey = (int) (startMag * 100) + (magIdx - 1) * 10;
+				int magIndex = Integer.parseInt(values.get(1));
+				int magKey = (int) (startMag * 100) + (magIndex - 1) * 10;
 				double hwVal = Double.parseDouble(values.get(2));
 				Map<Integer, Double> magMap = periodMap.get(magKey);
 				if (magMap == null) {

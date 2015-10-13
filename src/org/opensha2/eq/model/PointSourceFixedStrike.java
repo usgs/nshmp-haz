@@ -76,17 +76,17 @@ class PointSourceFixedStrike extends PointSourceFinite {
 	 * condsider getRUpture(int) implementation.
 	 */
 
-	private void updateRupture(Rupture rup, int idx) {
+	private void updateRupture(Rupture rup, int index) {
 
-		int magDepthIdx = idx % magDepthSize;
-		int magIdx = depthModel.magDepthIndices.get(magDepthIdx);
-		double mag = mfd.getX(magIdx);
-		double rate = mfd.getY(magIdx);
+		int magDepthIndex = index % magDepthSize;
+		int magIndex = depthModel.magDepthIndices.get(magDepthIndex);
+		double mag = mfd.getX(magIndex);
+		double rate = mfd.getY(magIndex);
 
-		double zTop = depthModel.magDepthDepths.get(magDepthIdx);
-		double zTopWt = depthModel.magDepthWeights.get(magDepthIdx);
+		double zTop = depthModel.magDepthDepths.get(magDepthIndex);
+		double zTopWt = depthModel.magDepthWeights.get(magDepthIndex);
 
-		FocalMech mech = mechForIndex(idx);
+		FocalMech mech = mechForIndex(index);
 		double mechWt = mechWtMap.get(mech);
 		if (mech != STRIKE_SLIP) mechWt *= 0.5;
 		double dipRad = mech.dip() * TO_RAD;
@@ -109,7 +109,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		fsSurf.widthH = widthH;
 		fsSurf.zTop = zTop;
 		fsSurf.zBot = zBot;
-		fsSurf.footwall = isOnFootwall(idx);
+		fsSurf.footwall = isOnFootwall(index);
 
 		double distToEndpoint = dimensions.length / 2;
 		Location locWithDepth = Location.create(loc.lat(), loc.lon(), zTop);

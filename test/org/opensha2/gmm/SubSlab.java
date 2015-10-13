@@ -42,8 +42,8 @@ public class SubSlab extends GmmTest {
 		return loadResults(GMM_RESULTS);
 	}
 
-	public SubSlab(int idx, Gmm gmm, Imt imt, double exMedian, double exSigma) {
-		super(idx, gmm, imt, exMedian, exSigma);
+	public SubSlab(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
+		super(index, gmm, imt, exMedian, exSigma);
 	}
 
 	/* Result generation sets */

@@ -421,15 +421,15 @@ public final class LocationList implements Iterable<Location> {
 	 */
 	public int minDistIndex(Location loc) {
 		double min = Double.MAX_VALUE;
-		int minIdx = -1;
+		int minIndex = -1;
 		for (int i = 0; i < size() - 1; i++) {
 			double dist = distanceToSegmentFast(get(i), get(i + 1), loc);
 			if (dist < min) {
 				min = dist;
-				minIdx = i;
+				minIndex = i;
 			}
 		}
-		return minIdx;
+		return minIndex;
 	}
 
 }

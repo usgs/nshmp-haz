@@ -43,13 +43,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	final DepthModel depthModel; // package exposure for parser logging
 	private final double strike;
 	private final PointSourceType sourceType;
-	
+
 	final double mMin;
 	final double mMax;
 	final double Δm;
 
 	private final Key cacheKey;
-	
+
 	/*
 	 * Most grid sources have the same focal mech map everywhere; in these
 	 * cases, mechMaps will have been created using Collections.nCopies() with
@@ -84,24 +84,24 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		this.mMin = mMin;
 		this.mMax = mMax;
 		this.Δm = Δm;
-		
+
 		/*
-		 * TODO there are too many assumptions built into this; whose to
-		 * say ones bin spacing should be only be in the hundredths?
+		 * TODO there are too many assumptions built into this; whose to say
+		 * ones bin spacing should be only be in the hundredths?
 		 * 
 		 * Where did this come from anyway? Are mag deltas really all that
 		 * strange
 		 * 
-		 * We should read precision of supplied mMin and mMax and delta
-		 * and use largest for formatting
+		 * We should read precision of supplied mMin and mMax and delta and use
+		 * largest for formatting
 		 * 
-		 * TODO in the case of single combined/flattened MFDs, mags may
-		 * not be uniformly spaced. Can this be refactored
+		 * TODO in the case of single combined/flattened MFDs, mags may not be
+		 * uniformly spaced. Can this be refactored
 		 */
 		double cleanDelta = Double.valueOf(String.format("%.2f", Δm));
 		double[] mags = DataUtils.buildCleanSequence(mMin, mMax, cleanDelta, true, 2);
 		depthModel = DepthModel.create(magDepthMap, Doubles.asList(mags), maxDepth);
-		
+
 		this.cacheKey = new Key();
 	}
 
@@ -161,17 +161,33 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		return cacheKey;
 	}
 
-	private PointSource getSource(int idx) {
+	private PointSource getSource(int index) {
 		switch (sourceType) {
 			case POINT:
-				return new PointSource(locs.get(idx), mfds.get(idx), mechMaps.get(idx), rupScaling,
+				return new PointSource(
+					locs.get(index),
+					mfds.get(index),
+					mechMaps.get(index),
+					rupScaling,
 					depthModel);
+
 			case FINITE:
-				return new PointSourceFinite(locs.get(idx), mfds.get(idx), mechMaps.get(idx),
-					rupScaling, depthModel);
+				return new PointSourceFinite(
+					locs.get(index),
+					mfds.get(index),
+					mechMaps.get(index),
+					rupScaling,
+					depthModel);
+
 			case FIXED_STRIKE:
-				return new PointSourceFixedStrike(locs.get(idx), mfds.get(idx), mechMaps.get(idx),
-					rupScaling, depthModel, strike);
+				return new PointSourceFixedStrike(
+					locs.get(index),
+					mfds.get(index),
+					mechMaps.get(index),
+					rupScaling,
+					depthModel,
+					strike);
+
 			default:
 				throw new IllegalStateException("Unhandled point source type");
 		}
@@ -195,7 +211,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private List<Location> locs = Lists.newArrayList();
 		private List<IncrementalMfd> mfds = Lists.newArrayList();
 		private List<Map<FocalMech, Double>> mechMaps = Lists.newArrayList();
-		
+
 		private Double mMin;
 		private Double mMax;
 		private Double Δm;
@@ -243,7 +259,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			this.mechMap = mechMap;
 			return this;
 		}
-		
+
 		Builder mfdData(double mMin, double mMax, double Δm) {
 			checkArgument(validateMag(mMin) < validateMag(mMax));
 			checkArgument(mMax - mMin > Δm);
@@ -319,11 +335,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(magDepthMap != null, "%s mag-depth-weight map not set", buildId);
 			checkState(maxDepth != null, "%s max depth not set", buildId);
 			checkState(mechMap != null, "%s focal mech map not set", buildId);
-			
+
 			checkState(mMin != null, "%s min mag not set", buildId);
 			checkState(mMax != null, "%s max mag not set", buildId);
 			checkState(Δm != null, "%s delta mag not set", buildId);
-			
+
 			/*
 			 * Validate size of mechMaps; size could get out of sync if mixed
 			 * calls to location(...) were made; one can imagine a future use

@@ -808,8 +808,8 @@ public final class Parsing {
 	 * @param c the comment indicator character
 	 */
 	public static String stripComment(String s, char c) {
-		int idx = s.indexOf(c);
-		return idx != -1 ? s.substring(0, idx) : s;
+		int index = s.indexOf(c);
+		return index != -1 ? s.substring(0, index) : s;
 	}
 
 	/**

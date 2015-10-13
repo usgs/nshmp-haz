@@ -41,8 +41,8 @@ public class Ngaw2 extends GmmTest {
 		return loadResults(GMM_RESULTS);
 	}
 
-	public Ngaw2(int idx, Gmm gmm, Imt imt, double exMedian, double exSigma) {
-		super(idx, gmm, imt, exMedian, exSigma);
+	public Ngaw2(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
+		super(index, gmm, imt, exMedian, exSigma);
 	}
 
 	/* Result generation sets */

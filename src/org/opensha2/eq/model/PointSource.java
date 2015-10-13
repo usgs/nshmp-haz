@@ -58,7 +58,7 @@ class PointSource implements Source {
 
 	int rupCount;
 	int magDepthSize;
-	int ssIdx, revIdx;
+	int ssIndex, revIndex;
 
 	/**
 	 * Constructs a new point earthquake source.
@@ -88,17 +88,17 @@ class PointSource implements Source {
 		return rupCount;
 	}
 
-	private void updateRupture(Rupture rup, int idx) {
+	private void updateRupture(Rupture rup, int index) {
 
-		int magDepthIdx = idx % magDepthSize;
-		int magIdx = depthModel.magDepthIndices.get(magDepthIdx);
-		double mag = mfd.getX(magIdx);
-		double rate = mfd.getY(magIdx);
+		int magDepthIndex = index % magDepthSize;
+		int magIndex = depthModel.magDepthIndices.get(magDepthIndex);
+		double mag = mfd.getX(magIndex);
+		double rate = mfd.getY(magIndex);
 
-		double zTop = depthModel.magDepthDepths.get(magDepthIdx);
-		double zTopWt = depthModel.magDepthWeights.get(magDepthIdx);
+		double zTop = depthModel.magDepthDepths.get(magDepthIndex);
+		double zTopWt = depthModel.magDepthWeights.get(magDepthIndex);
 
-		FocalMech mech = mechForIndex(idx);
+		FocalMech mech = mechForIndex(index);
 		double mechWt = mechWtMap.get(mech);
 
 		rup.mag = mag;
@@ -151,8 +151,8 @@ class PointSource implements Source {
 		int ssCount = (int) ceil(mechWtMap.get(STRIKE_SLIP)) * magDepthSize;
 		int revCount = (int) ceil(mechWtMap.get(REVERSE)) * magDepthSize;
 		int norCount = (int) ceil(mechWtMap.get(NORMAL)) * magDepthSize;
-		ssIdx = ssCount;
-		revIdx = ssCount + revCount;
+		ssIndex = ssCount;
+		revIndex = ssCount + revCount;
 
 		rupCount = ssCount + revCount + norCount;
 	}
@@ -160,9 +160,9 @@ class PointSource implements Source {
 	/*
 	 * Returns the focal mechanism of the rupture at the supplied index.
 	 */
-	FocalMech mechForIndex(int idx) {
+	FocalMech mechForIndex(int index) {
 		// iteration order is always SS -> REV -> NOR
-		return (idx < ssIdx) ? STRIKE_SLIP : (idx < revIdx) ? REVERSE : NORMAL;
+		return (index < ssIndex) ? STRIKE_SLIP : (index < revIndex) ? REVERSE : NORMAL;
 	}
 
 	static class PointSurface implements RuptureSurface {

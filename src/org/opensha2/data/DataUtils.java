@@ -586,14 +586,14 @@ public final class DataUtils {
 	 */
 	public static int minIndex(double... data) {
 		validateDataArray(data);
-		int idx = 0;
+		int index = 0;
 		double min = data[0];
 		for (int i = 1; i < data.length; i++)
 			if (data[i] < min) {
 				min = data[i];
-				idx = i;
+				index = i;
 			}
-		return idx;
+		return index;
 	}
 
 	/**
@@ -604,14 +604,14 @@ public final class DataUtils {
 	 */
 	public static int maxIndex(double... data) {
 		validateDataArray(data);
-		int idx = 0;
+		int index = 0;
 		double max = data[0];
 		for (int i = 1; i < data.length; i++)
 			if (data[i] > max) {
 				max = data[i];
-				idx = i;
+				index = i;
 			}
-		return idx;
+		return index;
 	}
 
 	/**
@@ -1363,9 +1363,9 @@ public final class DataUtils {
 	 */
 	public static List<Integer> bitsToIndices(BitSet bits) {
 		int[] indices = new int[checkNotNull(bits).cardinality()];
-		int idx = 0;
+		int index = 0;
 		for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
-			indices[idx++] = i;
+			indices[index++] = i;
 		}
 		return Ints.asList(indices);
 	}
@@ -1424,16 +1424,16 @@ public final class DataUtils {
 	// checkArgument(size > 0, "Bin size can't be less than 1");
 	// double[] localData = Arrays.copyOf(data, data.length);
 	// Arrays.sort(localData);
-	// int startIdx = Arrays.binarySearch(localData, origin);
-	// checkArgument(startIdx < localData.length,
+	// int startIndex = Arrays.binarySearch(localData, origin);
+	// checkArgument(startIndex < localData.length,
 	// "Origin is greater than all data values");
-	// startIdx = (startIdx > 0) ? startIdx : -startIdx - 1;
+	// startIndex = (startIndex > 0) ? startIndex : -startIndex - 1;
 	// // for multipe identical values, binary search may not return
 	// // the lowest index so walk down
-	// while (startIdx > 0 && origin == localData[startIdx - 1])
-	// startIdx--;
+	// while (startIndex > 0 && origin == localData[startIndex - 1])
+	// startIndex--;
 	// // trim data
-	// localData = Arrays.copyOfRange(localData, startIdx, localData.length);
+	// localData = Arrays.copyOfRange(localData, startIndex, localData.length);
 	// int binCount = (int) Math.floor(localData.length / size);
 	// // bail on an empty distribution
 	// if (binCount == 0) return null;
@@ -1441,14 +1441,14 @@ public final class DataUtils {
 	// List<Double> y = new ArrayList<Double>();
 	// double binLo, binHi, binDelta;
 	// for (int i = 0; i < binCount; i++) {
-	// int datIdx = i * size;
-	// binLo = (i == 0) ? origin : localData[datIdx - 1];
-	// binHi = localData[datIdx + size - 1];
+	// int datIndex = i * size;
+	// binLo = (i == 0) ? origin : localData[datIndex - 1];
+	// binHi = localData[datIndex + size - 1];
 	// binDelta = binHi - binLo;
 	// // bail on intervals of identical values
 	// if (binDelta == 0) continue;
 	// y.add(size / (binHi - binLo));
-	// x.add(StatUtils.percentile(localData, datIdx, size, 50.0));
+	// x.add(StatUtils.percentile(localData, datIndex, size, 50.0));
 	// }
 	// // bail on empty distribution
 	// return (x.isEmpty()) ? null : new DefaultXY_DataSet(x, y);

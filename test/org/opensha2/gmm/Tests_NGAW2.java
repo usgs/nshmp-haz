@@ -61,15 +61,15 @@ public class Tests_NGAW2 {
 		return loadResults(GMM_RESULTS);
 	}
 
-	private int idx;
+	private int index;
 	private Gmm gmm;
 	private Imt imt;
 	private double exMedian;
 	private double exSigma;
 
-	public Tests_NGAW2(int idx, Gmm gmm, Imt imt, double exMedian, double exSigma) {
+	public Tests_NGAW2(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
 
-		this.idx = idx;
+		this.index = index;
 		this.gmm = gmm;
 		this.imt = imt;
 		this.exMedian = exMedian;
@@ -77,7 +77,7 @@ public class Tests_NGAW2 {
 	}
 
 	@Test public void test() {
-		ScalarGroundMotion sgm = gmm.instance(imt).calc(inputsList.get(idx));
+		ScalarGroundMotion sgm = gmm.instance(imt).calc(inputsList.get(index));
 		assertEquals(exMedian, Math.exp(sgm.mean()), TOL);
 		assertEquals(exSigma, sgm.sigma(), TOL);
 	}
@@ -98,12 +98,12 @@ public class Tests_NGAW2 {
 		for (Gmm gmm : gmms) {
 			for (Imt imt : imts) {
 				GroundMotionModel gmModel = gmm.instance(imt);
-				int modelIdx = 0;
+				int modelIndex = 0;
 				String id = gmm.name() + "-" + imt;
 				for (GmmInput input : inputs) {
 					ScalarGroundMotion sgm = gmModel.calc(input);
 					String result = Parsing.join(
-						Lists.newArrayList(modelIdx++ + "-" + id,
+						Lists.newArrayList(modelIndex++ + "-" + id,
 							String.format("%.6f", Math.exp(sgm.mean())),
 							String.format("%.6f", sgm.sigma())), Delimiter.COMMA) +
 						StandardSystemProperty.LINE_SEPARATOR.value();

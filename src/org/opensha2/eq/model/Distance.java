@@ -327,14 +327,14 @@ public final class Distance {
 		// endpoints. If the closest segment distance is less than both endpoint
 		// distances, use that segment as a line to compute rX, otherwise use
 		// endpoints of the trace as a line to compute rX
-		int minIdx = trace.minDistIndex(loc);
-		double rSeg = distanceToSegmentFast(trace.get(minIdx),
-			trace.get(minIdx + 1), loc);
+		int minIndex = trace.minDistIndex(loc);
+		double rSeg = distanceToSegmentFast(trace.get(minIndex),
+			trace.get(minIndex + 1), loc);
 		double rFirst = horzDistanceFast(trace.first(), loc);
 		double rLast = horzDistanceFast(trace.last(), loc);
 
 		return (rSeg < Math.min(rFirst, rLast)) ? distanceToLineFast(
-			trace.get(minIdx), trace.get(minIdx + 1), loc)
+			trace.get(minIndex), trace.get(minIndex + 1), loc)
 			: distanceToLineFast(trace.first(), trace.last(), loc);
 	}
 	

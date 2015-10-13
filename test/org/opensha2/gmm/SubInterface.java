@@ -41,8 +41,8 @@ public class SubInterface extends GmmTest {
 		return loadResults(GMM_RESULTS);
 	}
 
-	public SubInterface(int idx, Gmm gmm, Imt imt, double exMedian, double exSigma) {
-		super(idx, gmm, imt, exMedian, exSigma);
+	public SubInterface(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
+		super(index, gmm, imt, exMedian, exSigma);
 	}
 
 	/* Result generation sets */
