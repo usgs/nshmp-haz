@@ -135,6 +135,8 @@ public class FaultSource implements Source {
 			double rate = mfd.getY(i);
 
 			// TODO do we really want to do this??
+			// TODO low rate shortcut should be derived from config
+			// and applied when building input lists
 			if (rate < 1e-14) continue; // shortcut low rates
 
 			// TODO we want to get the 'floats' attribute out of MFDs
