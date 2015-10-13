@@ -144,13 +144,8 @@ public class PointSources {
 		double rMax = 1000.0;
 		double rΔ = 5.0;
 
-		Data2D.Builder builder = Data2D.Builder
-			.create()
-			.rows(rMin, rMax, rΔ)
-			.columns(M_MIN, M_MAX, M_Δ);
-
-		double[] distances = builder.rows();
-		double[] mags = builder.columns();
+		double[] distances = Data2D.Builder.keys(rMin, rMax, rΔ);
+		double[] mags = Data2D.Builder.keys(M_MIN, M_MAX, M_Δ);
 		double[] rates = new double[mags.length];
 
 		IncrementalMfd mfd = Mfds.newIncrementalMFD(mags, rates);

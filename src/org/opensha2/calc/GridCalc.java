@@ -163,8 +163,9 @@ public class GridCalc {
 			double rMin = 0.0;
 			double rMax = gmmSet.maxDistance();
 			double rΔ = distanceDiscretization(rMax);
-			double[] distances = Data2D.Builder.create().rows(rMin, rMax, rΔ).rows();
-
+//			double[] distances = Data2D.Builder.create().rows(rMin, rMax, rΔ).rows();
+			double[] distances = Data2D.Builder.keys(rMin, rMax, rΔ);
+			
 			List<Site> siteList = createSiteList(distances, vs30);
 
 			boolean multiMech = isMultiMech(gmmSet.gmms());
@@ -264,7 +265,7 @@ public class GridCalc {
 	private static final double M_MAX = 8.0;
 	private static final double M_Δ = 0.1;
 
-	private static final double[] MAGS = Data2D.Builder.create().rows(M_MIN, M_MAX, M_Δ).rows();
+	private static final double[] MAGS = Data2D.Builder.keys(M_MIN, M_MAX, M_Δ);
 	private static final double[] RATES = new double[MAGS.length]; // empty
 	private static final IncrementalMfd GRID_MFD = Mfds.newIncrementalMFD(MAGS, RATES);
 

@@ -2,7 +2,6 @@ package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.primitives.Doubles.toArray;
 import static org.opensha2.data.DataUtils.isMonotonic;
 
 import java.util.AbstractList;
@@ -15,6 +14,7 @@ import java.util.RandomAccess;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.StandardSystemProperty;
+import com.google.common.primitives.Doubles;
 
 /**
  * Sequence of xy-value pairs that is iterable ascending in x. Once created, the
@@ -121,8 +121,8 @@ public abstract class XySequence implements Iterable<XyPoint> {
 			boolean mutable) {
 
 		return construct(
-			toArray(xs),
-			(ys == null) ? new double[xs.size()] : toArray(ys),
+			Doubles.toArray(xs),
+			(ys == null) ? new double[xs.size()] : Doubles.toArray(ys),
 			mutable);
 	}
 

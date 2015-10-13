@@ -6,33 +6,28 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.DataTables.checkDataSize;
 import static org.opensha2.data.DataTables.checkDataState;
 import static org.opensha2.data.DataTables.indexOf;
-import static org.opensha2.data.DataTables.initTable;
-import static org.opensha2.data.DataTables.keyArray;
-import static org.opensha2.data.DataTables.size;
-import static org.opensha2.data.DataUtils.validateDelta;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.opensha2.data.DataTables.DefaultTable3D;
 
 /**
- * A wrapper around a 3D table (or volume) of double-valued data that is
- * arranged according to strictly increasing and uniformly spaced double-valued
- * keys. Data tables are almost always used to represent binned data, and so
- * while row and column keys are bin centers, indexing is managed internally
- * using bin edges. This simplifies issues related to rounding/precision errors
- * that occur when indexing according to explicit double values.
+ * A 3-dimensional volume of immutable, double-valued data that is arranged
+ * according to strictly increasing and uniformly spaced double-valued keys.
+ * Data tables are almost always used to represent binned data, and so while row
+ * and column keys are bin centers, indexing is managed internally using bin
+ * edges. This simplifies issues related to rounding/precision errors that occur
+ * when indexing according to explicit double values.
  * 
- * <p>To create a {@code Data3D} instance, use a {@link Builder}.
+ * <p>To create a {@code Data3D} instance, use a {@link Builder}.</p>
  * 
  * <p>Internally, a {@code Data3D} is backed by a {@code double[][][]} array
- * where 'row' refers to the 1st dimension, 'column' the second dimension, and
- * 'level' the 3rd.
+ * where 'row' refers to the 1st dimension, 'column' the 2nd dimension, and
+ * 'level' the 3rd.</p>
  * 
  * <p>Note that data tables are not intended for use with very high precision
  * data and keys are currently limited to a precision of 4 decimal places. This
- * may be changed or improved in the future.
+ * may be changed or improved in the future.</p>
  *
  * @author Peter Powers
  * @see Data2D
@@ -43,24 +38,32 @@ public interface Data3D {
 	 * Return a value corresponding to the supplied {@code row}, {@code column},
 	 * and {@code level}.
 	 * 
-	 * @param row to retrieve (may not explicitely exist as a key)
-	 * @param column to retrieve (may not explicitely exist as a key)
-	 * @param level to retrieve (may not explicitely exist as a key)
+	 * @param row of value to retrieve (may not explicitely exist as a key)
+	 * @param column of value to retrieve (may not explicitely exist as a key)
+	 * @param level of value to retrieve (may not explicitely exist as a key)
 	 */
 	double get(double row, double column, double level);
 
 	/**
-	 * Lazily return an immutable list of row keys.
+	 * Return an immutable view of a column of values.
+	 * 
+	 * @param row of column to retrieve
+	 * @param column to retrieve
+	 */
+	XySequence column(double row, double column);
+
+	/**
+	 * Return an immutable list of row keys.
 	 */
 	List<Double> rows();
 
 	/**
-	 * Lazily return an immutable list of column keys.
+	 * Return an immutable list of column keys.
 	 */
 	List<Double> columns();
 
 	/**
-	 * Lazily return an immutable list of level keys.
+	 * Return an immutable list of level keys.
 	 */
 	List<Double> levels();
 
@@ -70,7 +73,8 @@ public interface Data3D {
 	interface Loader {
 
 		/**
-		 * Compute the value corresponding to the supplied row and column keys.
+		 * Compute the value corresponding to the supplied row, column, and
+		 * level keys.
 		 * 
 		 * @param row value
 		 * @param column value
@@ -89,21 +93,20 @@ public interface Data3D {
 
 		private double[][][] data;
 
-		private double[] rows;
-		private double[] columns;
-		private double[] levels;
-
 		private double rowMin;
 		private double rowMax;
 		private double rowΔ;
+		private double[] rows;
 
 		private double columnMin;
 		private double columnMax;
 		private double columnΔ;
+		private double[] columns;
 
 		private double levelMin;
 		private double levelMax;
 		private double levelΔ;
+		private double[] levels;
 
 		private boolean built = false;
 
@@ -126,19 +129,10 @@ public interface Data3D {
 		public Builder rows(double min, double max, double Δ) {
 			rowMin = min;
 			rowMax = max;
-			rowΔ = validateDelta(min, max, Δ);
-			rows = keyArray(rowMin, rowMax, rowΔ);
-			if (columns != null && levels != null) init();
+			rowΔ = Δ;
+			rows = Data2D.Builder.keys(min, max, Δ);
+			init();
 			return this;
-		}
-
-		/**
-		 * Return a copy of the row keys once {@link #rows(double, double, double)}
-		 * has been called, otherwise throw an {@code IllegalStateException}.
-		 */
-		public double[] rows() {
-			checkDataState(rows, "Row");
-			return Arrays.copyOf(rows, rows.length);
 		}
 
 		/**
@@ -151,19 +145,10 @@ public interface Data3D {
 		public Builder columns(double min, double max, double Δ) {
 			columnMin = min;
 			columnMax = max;
-			columnΔ = validateDelta(min, max, Δ);
-			columns = keyArray(columnMin, columnMax, columnΔ);
-			if (rows != null && levels != null) init();
+			columnΔ = Δ;
+			columns = Data2D.Builder.keys(min, max, Δ);
+			init();
 			return this;
-		}
-
-		/**
-		 * Return a copy of the column keys once {@link #columns(double, double, double)}
-		 * has been called, otherwise throw an {@code IllegalStateException}.
-		 */
-		public double[] columns() {
-			checkDataState(columns, "Column");
-			return Arrays.copyOf(columns, columns.length);
 		}
 
 		/**
@@ -176,34 +161,24 @@ public interface Data3D {
 		public Builder levels(double min, double max, double Δ) {
 			levelMin = min;
 			levelMax = max;
-			levelΔ = validateDelta(min, max, Δ);
-			levels = keyArray(levelMin, levelMax, levelΔ);
-			if (rows != null && columns != null) init();
+			levelΔ = Δ;
+			levels = Data2D.Builder.keys(min, max, Δ);
+			init();
 			return this;
 		}
 
-		/**
-		 * Return a copy of the level keys once {@link #levels(double, double, double)}
-		 * has been called, otherwise throw an {@code IllegalStateException}.
-		 */
-		public double[] levels() {
-			checkDataState(levels, "Level");
-			return Arrays.copyOf(levels, levels.length);
-		}
-
 		private void init() {
-			data = initTable(
-				rowMin, rowMax, rowΔ,
-				columnMin, columnMax, columnΔ,
-				levelMin, levelMax, levelΔ);
+			if (rows != null && columns != null && levels != null) {
+				data = new double[rows.length][columns.length][levels.length];
+			}
 		}
 
 		/**
 		 * Set the value at the specified row and column.
 		 * 
-		 * @param row value
-		 * @param column value
-		 * @param level value
+		 * @param row key
+		 * @param column key
+		 * @param level key
 		 * @param value to set
 		 */
 		public Builder set(double row, double column, double level, double value) {
@@ -239,19 +214,16 @@ public interface Data3D {
 			checkArgument(data.length > 0 && data[0].length > 0 && data[0][0].length > 0,
 				"At least one data dimension is empty");
 			checkDataState(rows, columns, levels);
-			checkDataSize(
-				size(rowMin, rowMax, rowΔ),
-				size(columnMin, columnMax, columnΔ),
-				size(levelMin, levelMax, levelΔ),
-				data);
+			checkDataSize(rows.length, columns.length, levels.length, data);
 			this.data = DataUtils.copyOf(data);
 			return this;
 		}
 
 		/**
-		 * Return an immutable 3D data container populated with values computed
-		 * by the supplied loader. Calling this method will overwrite any values
-		 * already supplied via {@code set*} or {@code add*} methods.
+		 * Return a newly-created, immutable, 3-dimensional data container
+		 * populated with values computed by the supplied loader. Calling this
+		 * method will overwrite any values already supplied via {@code set*} or
+		 * {@code add*} methods.
 		 * 
 		 * @param loader that will compute values
 		 */
@@ -270,16 +242,16 @@ public interface Data3D {
 		}
 
 		/**
-		 * Return an immutable 3D data container populated with the contents of
-		 * this {@code Builder}.
+		 * Return a newly-created, immutable 3-dimensional data container
+		 * populated with the contents of this {@code Builder}.
 		 */
 		public Data3D build() {
 			checkState(built != true, "This builder has already been used");
 			checkDataState(rows, columns, levels);
 			return new DefaultTable3D(
-				rowMin, rowMax, rowΔ,
-				columnMin, columnMax, columnΔ,
-				levelMin, levelMax, levelΔ,
+				rowMin, rowMax, rowΔ, rows,
+				columnMin, columnMax, columnΔ, columns,
+				levelMin, levelMax, levelΔ, levels,
 				data);
 		}
 	}
