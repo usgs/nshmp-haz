@@ -405,6 +405,4 @@ class GridParser extends DefaultHandler {
 		return mfdTaper;
 	}
 	
-	
-	
 }

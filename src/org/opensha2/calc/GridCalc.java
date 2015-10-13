@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.opensha2.data.DataTable;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.GridSourceSet;
@@ -267,7 +268,8 @@ public class GridCalc {
 
 	private static final double[] MAGS = DataTable.Builder.keys(M_MIN, M_MAX, M_Δ);
 	private static final double[] RATES = new double[MAGS.length]; // empty
-	private static final IncrementalMfd GRID_MFD = Mfds.newIncrementalMFD(MAGS, RATES);
+//	private static final IncrementalMfd GRID_MFD = Mfds.newIncrementalMFD(MAGS, RATES);
+	private static final XySequence GRID_MFD = XySequence.createImmutable(MAGS, RATES);
 
 	/*
 	 * Style of faulting identifier ordered the same way that FinitePointSources

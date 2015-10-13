@@ -15,6 +15,7 @@ import java.util.NavigableMap;
 import java.util.Objects;
 
 import org.opensha2.data.DataUtils;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -22,6 +23,7 @@ import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 import org.opensha2.mfd.IncrementalMfd;
+import org.opensha2.mfd.Mfds;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -49,6 +51,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	final double Δm;
 
 	private final Key cacheKey;
+
+	/*
+	 * TODO We need to (will) impose strict min and delta mag constraints.
+	 * Default MFDs will be checked for agreement. We should change pure INCR
+	 * mfds (defained by mags[] and rates[]) to min, max, delta and validate
+	 * that those 3 params yield a size equivalent to rates.length.
+	 */
 
 	/*
 	 * Most grid sources have the same focal mech map everywhere; in these
@@ -162,31 +171,26 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	}
 
 	private PointSource getSource(int index) {
+
+		/*
+		 * TODO Stricter rules regarding what sorts of default mfds can be used
+		 * with grid sources (in an individual grid source set) will allow
+		 * parsers to create XySequence based MFDs directly using copyOf so as
+		 * to not create zillions of mag arrays.
+		 */
+		Location loc = locs.get(index);
+		XySequence mfd = Mfds.toSequence(mfds.get(index));
+		Map<FocalMech, Double> mechMap = mechMaps.get(index);
+
 		switch (sourceType) {
 			case POINT:
-				return new PointSource(
-					locs.get(index),
-					mfds.get(index),
-					mechMaps.get(index),
-					rupScaling,
-					depthModel);
+				return new PointSource(loc, mfd, mechMap, rupScaling, depthModel);
 
 			case FINITE:
-				return new PointSourceFinite(
-					locs.get(index),
-					mfds.get(index),
-					mechMaps.get(index),
-					rupScaling,
-					depthModel);
+				return new PointSourceFinite(loc, mfd, mechMap, rupScaling, depthModel);
 
 			case FIXED_STRIKE:
-				return new PointSourceFixedStrike(
-					locs.get(index),
-					mfds.get(index),
-					mechMaps.get(index),
-					rupScaling,
-					depthModel,
-					strike);
+				return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel, strike);
 
 			default:
 				throw new IllegalStateException("Unhandled point source type");

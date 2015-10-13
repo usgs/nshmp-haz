@@ -12,6 +12,7 @@ import static org.opensha2.util.MathUtils.hypot;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.scaling.MagLengthRelationship;
@@ -21,7 +22,6 @@ import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationVector;
 import org.opensha2.geo.Locations;
-import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.math.DoubleMath;
 
@@ -56,7 +56,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
-	PointSourceFixedStrike(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
+	PointSourceFixedStrike(Location loc, XySequence mfd, Map<FocalMech, Double> mechWtMap,
 		RuptureScaling rupScaling, DepthModel depthModel, double strike) {
 		super(loc, mfd, mechWtMap, rupScaling, depthModel);
 		this.strike = strike;
@@ -80,8 +80,8 @@ class PointSourceFixedStrike extends PointSourceFinite {
 
 		int magDepthIndex = index % magDepthSize;
 		int magIndex = depthModel.magDepthIndices.get(magDepthIndex);
-		double mag = mfd.getX(magIndex);
-		double rate = mfd.getY(magIndex);
+		double mag = mfd.x(magIndex);
+		double rate = mfd.y(magIndex);
 
 		double zTop = depthModel.magDepthDepths.get(magDepthIndex);
 		double zTopWt = depthModel.magDepthWeights.get(magDepthIndex);

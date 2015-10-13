@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.fault.surface.RuptureSurface;
 import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
-import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
@@ -51,7 +51,7 @@ import com.google.common.primitives.Ints;
 class PointSource implements Source {
 
 	final Location loc;
-	final IncrementalMfd mfd;
+	final XySequence mfd;
 	final Map<FocalMech, Double> mechWtMap;
 	final RuptureScaling rupScaling;
 	final DepthModel depthModel;
@@ -69,7 +69,7 @@ class PointSource implements Source {
 	 * @param depthModel specifies magnitude cutoffs and associated weights for
 	 *        different depth-to-top-of-ruptures
 	 */
-	PointSource(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
+	PointSource(Location loc, XySequence mfd, Map<FocalMech, Double> mechWtMap,
 			RuptureScaling rupScaling, DepthModel depthModel) {
 
 		this.loc = loc;
@@ -92,8 +92,8 @@ class PointSource implements Source {
 
 		int magDepthIndex = index % magDepthSize;
 		int magIndex = depthModel.magDepthIndices.get(magDepthIndex);
-		double mag = mfd.getX(magIndex);
-		double rate = mfd.getY(magIndex);
+		double mag = mfd.x(magIndex);
+		double rate = mfd.y(magIndex);
 
 		double zTop = depthModel.magDepthDepths.get(magDepthIndex);
 		double zTopWt = depthModel.magDepthWeights.get(magDepthIndex);
@@ -142,7 +142,7 @@ class PointSource implements Source {
 		 * Get the number of mag-depth iterations required to get to mMax. See
 		 * explanation in GridSourceSet for how magDepthIndices is set up
 		 */
-		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
+		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.size() - 1) + 1;
 
 		/*
 		 * Init rupture indexing: SS RV NR. Each category will have ruptures for

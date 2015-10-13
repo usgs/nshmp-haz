@@ -15,15 +15,14 @@ import static org.opensha2.util.MathUtils.hypot;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.scaling.MagLengthRelationship;
-import org.opensha2.eq.fault.surface.PtSrcDistCorr;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.PointSource.PointSurface;
 import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
-import org.opensha2.mfd.IncrementalMfd;
 
 /**
  * Point-source earthquake implementation in which all magnitudes are
@@ -59,7 +58,7 @@ class PointSourceFinite extends PointSource {
 	 * @param depthModel specifies magnitude cutoffs and associated weights for
 	 *        different depth-to-top-of-ruptures
 	 */
-	PointSourceFinite(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
+	PointSourceFinite(Location loc, XySequence mfd, Map<FocalMech, Double> mechWtMap,
 			RuptureScaling rupScaling, DepthModel depthModel) {
 		super(loc, mfd, mechWtMap, rupScaling, depthModel);
 		init();
@@ -82,8 +81,8 @@ class PointSourceFinite extends PointSource {
 
 		int magDepthIndex = index % magDepthSize;
 		int magIndex = depthModel.magDepthIndices.get(magDepthIndex);
-		double mag = mfd.getX(magIndex);
-		double rate = mfd.getY(magIndex);
+		double mag = mfd.x(magIndex);
+		double rate = mfd.y(magIndex);
 
 		double zTop = depthModel.magDepthDepths.get(magDepthIndex);
 		double zTopWt = depthModel.magDepthWeights.get(magDepthIndex);
@@ -140,7 +139,7 @@ class PointSourceFinite extends PointSource {
 		 * Get the number of mag-depth iterations required to get to mMax. See
 		 * explanation in GridSourceSet for how magDepthIndices is set up
 		 */
-		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
+		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.size() - 1) + 1;
 
 		/*
 		 * Init rupture indexing: SS-FW RV-FW RV-HW NR-FW NR-HW. Each category

@@ -360,7 +360,8 @@ public final class Mfds {
 	 *         {@code IncrementalMfd}.
 	 */
 	public static XySequence toSequence(IncrementalMfd mfd) {
-		return XySequence.create(Doubles.toArray(mfd.xValues()),
+		return XySequence.createImmutable(
+			Doubles.toArray(mfd.xValues()),
 			Doubles.toArray(mfd.yValues()));
 	}
 

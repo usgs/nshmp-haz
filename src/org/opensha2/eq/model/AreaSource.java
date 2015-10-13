@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 
 import org.opensha2.data.DataUtils;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.scaling.MagLengthRelationship;
 import org.opensha2.eq.fault.scaling.MagScalingRelationship;
@@ -32,6 +33,7 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.Regions;
 import org.opensha2.mfd.IncrementalMfd;
+import org.opensha2.mfd.Mfds;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -157,10 +159,11 @@ public class AreaSource implements Source {
 	private Iterable<Rupture> sourceGridIterable(GriddedRegion gr) {
 		IncrementalMfd scaledMfd = IncrementalMfd.copyOf(mfd);
 		scaledMfd.scale(1.0 / gr.size());
+		XySequence xyMfd = Mfds.toSequence(scaledMfd);
 
 		List<Iterable<Rupture>> sourceRupturesList = new ArrayList<>();
 		for (Location loc : gr) {
-			sourceRupturesList.add(createSource(loc, scaledMfd));
+			sourceRupturesList.add(createSource(loc, xyMfd));
 		}
 
 		// TODO ideally, the returned iterable creates PointSources as
@@ -173,7 +176,7 @@ public class AreaSource implements Source {
 		return Iterables.concat(sourceRupturesList);
 	}
 
-	private PointSource createSource(Location loc, IncrementalMfd mfd) {
+	private PointSource createSource(Location loc, XySequence mfd) {
 		switch (sourceType) {
 			case POINT:
 				return new PointSource(loc, mfd, mechMap, rupScaling, depthModel);
