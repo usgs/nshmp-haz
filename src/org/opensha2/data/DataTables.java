@@ -104,7 +104,7 @@ final class DataTables {
 		}
 	}
 
-	private static abstract class AbstractTable2D implements Data2D {
+	private static abstract class AbstractTable2D implements DataTable {
 
 		final double rowMin;
 		final double rowMax;
@@ -221,7 +221,7 @@ final class DataTables {
 		}
 	}
 
-	private static abstract class AbstractTable3D implements Data3D {
+	private static abstract class AbstractTable3D implements DataVolume {
 
 		final double rowMin;
 		final double rowMax;

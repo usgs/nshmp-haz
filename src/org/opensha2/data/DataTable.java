@@ -26,19 +26,19 @@ import com.google.common.primitives.Doubles;
  * edges. This simplifies issues related to rounding/precision errors that occur
  * when indexing according to explicit double values.
  * 
- * <p>To create a {@code Data2D} instance, use a {@link Builder}.
+ * <p>To create a {@code DataTable} instance, use a {@link Builder}.
  * 
- * <p>Internally, a {@code Data2D} is backed by a {@code double[][]} array where
- * 'row' refers to the 1st dimension and 'column' the second.
+ * <p>Internally, a {@code DataTable} is backed by a {@code double[][]} array where
+ * 'row' refers to the 1st dimension and 'column' the 2nd.
  * 
  * <p>Note that data tables are not intended for use with very high precision
  * data and keys are currently limited to a precision of 4 decimal places. This
  * may be changed or improved in the future.
  *
  * @author Peter Powers
- * @see Data3D
+ * @see DataVolume
  */
-public interface Data2D {
+public interface DataTable {
 
 	/**
 	 * Return a value corresponding to the supplied {@code row} and
@@ -67,7 +67,7 @@ public interface Data2D {
 	List<Double> columns();
 
 	/**
-	 * A supplier of values with which to fill a {@code Data2D} table.
+	 * A supplier of values with which to fill a {@code DataTable}.
 	 */
 	interface Loader {
 
@@ -81,7 +81,7 @@ public interface Data2D {
 	}
 
 	/**
-	 * A builder of immutable {@code Data2D} tables.
+	 * A builder of immutable {@code DataTable}s.
 	 * 
 	 * <p>See {@link #create()} to initialize a new builder. Rows and columns
 	 * must be specified before any data can be added.
@@ -263,7 +263,7 @@ public interface Data2D {
 		 * 
 		 * @param loader that will compute values
 		 */
-		public Data2D build(Loader loader) {
+		public DataTable build(Loader loader) {
 			checkNotNull(loader);
 			for (int i = 0; i < rows.length; i++) {
 				double row = rows[i];
@@ -278,12 +278,12 @@ public interface Data2D {
 		 * Return a newly-created, immutable, 2-dimensional data container
 		 * populated with the single value supplied. Calling this method will
 		 * ignore any values already supplied via {@code set*} or {@code add*}
-		 * methods and will create a Data2D holding only the single value,
+		 * methods and will create a DataTable holding only the single value,
 		 * similar to {@link Collections#nCopies(int, Object)}.
 		 * 
 		 * @param value which which to fill data container
 		 */
-		public Data2D build(double value) {
+		public DataTable build(double value) {
 			checkState(built != true, "This builder has already been used");
 			checkDataState(rows, columns);
 			return new SingularTable2D(
@@ -296,7 +296,7 @@ public interface Data2D {
 		 * Return a newly-created, immutable, 2-dimensional data container
 		 * populated with the contents of this {@code Builder}.
 		 */
-		public Data2D build() {
+		public DataTable build() {
 			checkState(built != true, "This builder has already been used");
 			checkDataState(rows, columns);
 			return new DefaultTable2D(

@@ -51,9 +51,7 @@ final class HazardCurves {
 			}
 		}
 
-		/*
-		 * Makes an immutable copy of the supplied curve.
-		 */
+		/* Makes an immutable copy of the supplied curve. */
 		Builder addCurve(Imt imt, Gmm gmm, XySequence curve) {
 			curveMap.get(imt).put(gmm, immutableCopyOf(curve));
 			return this;

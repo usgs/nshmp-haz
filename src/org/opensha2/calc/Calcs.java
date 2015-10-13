@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.opensha2.calc.Transforms.SourceToInputs;
-import org.opensha2.data.Data2D;
+import org.opensha2.data.DataTable;
 import org.opensha2.eq.model.ClusterSourceSet;
 import org.opensha2.eq.model.GridSourceSet;
 import org.opensha2.eq.model.GridSourceSetTable;
@@ -137,7 +137,7 @@ public class Calcs {
 		for (SourceSet<? extends Source> sourceSet : model) {
 			switch (sourceSet.type()) {
 				case GRID:
-					Data2D d = GridSourceSetTable.toSourceTable((GridSourceSet) sourceSet, site.location);
+					DataTable d = GridSourceSetTable.toSourceTable((GridSourceSet) sourceSet, site.location);
 //					System.out.println(d);
 					curveSets.add(sourcesToCurves(sourceSet, config, site));
 					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));

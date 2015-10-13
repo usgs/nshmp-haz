@@ -19,9 +19,9 @@ import org.opensha2.data.DataTables.DefaultTable3D;
  * edges. This simplifies issues related to rounding/precision errors that occur
  * when indexing according to explicit double values.
  * 
- * <p>To create a {@code Data3D} instance, use a {@link Builder}.</p>
+ * <p>To create a {@code DataVolume} instance, use a {@link Builder}.</p>
  * 
- * <p>Internally, a {@code Data3D} is backed by a {@code double[][][]} array
+ * <p>Internally, a {@code DataVolume} is backed by a {@code double[][][]} array
  * where 'row' refers to the 1st dimension, 'column' the 2nd dimension, and
  * 'level' the 3rd.</p>
  * 
@@ -30,9 +30,9 @@ import org.opensha2.data.DataTables.DefaultTable3D;
  * may be changed or improved in the future.</p>
  *
  * @author Peter Powers
- * @see Data2D
+ * @see DataTable
  */
-public interface Data3D {
+public interface DataVolume {
 
 	/**
 	 * Return a value corresponding to the supplied {@code row}, {@code column},
@@ -68,7 +68,7 @@ public interface Data3D {
 	List<Double> levels();
 
 	/**
-	 * A supplier of values with which to fill a {@code Data3D} table.
+	 * A supplier of values with which to fill a {@code DataVolume}.
 	 */
 	interface Loader {
 
@@ -84,7 +84,7 @@ public interface Data3D {
 	}
 
 	/**
-	 * A builder of immutable {@code Data3D} tables.
+	 * A builder of immutable {@code DataVolume}s.
 	 * 
 	 * <p>See {@link #create()} to initialize a new builder. Rows, columns, and
 	 * levels must be specified before any data can be added.
@@ -130,7 +130,7 @@ public interface Data3D {
 			rowMin = min;
 			rowMax = max;
 			rowΔ = Δ;
-			rows = Data2D.Builder.keys(min, max, Δ);
+			rows = DataTable.Builder.keys(min, max, Δ);
 			init();
 			return this;
 		}
@@ -146,7 +146,7 @@ public interface Data3D {
 			columnMin = min;
 			columnMax = max;
 			columnΔ = Δ;
-			columns = Data2D.Builder.keys(min, max, Δ);
+			columns = DataTable.Builder.keys(min, max, Δ);
 			init();
 			return this;
 		}
@@ -162,7 +162,7 @@ public interface Data3D {
 			levelMin = min;
 			levelMax = max;
 			levelΔ = Δ;
-			levels = Data2D.Builder.keys(min, max, Δ);
+			levels = DataTable.Builder.keys(min, max, Δ);
 			init();
 			return this;
 		}
@@ -227,7 +227,7 @@ public interface Data3D {
 		 * 
 		 * @param loader that will compute values
 		 */
-		public Data3D build(Loader loader) {
+		public DataVolume build(Loader loader) {
 			checkNotNull(loader);
 			for (int i = 0; i < rows.length; i++) {
 				double row = rows[i];
@@ -245,7 +245,7 @@ public interface Data3D {
 		 * Return a newly-created, immutable 3-dimensional data container
 		 * populated with the contents of this {@code Builder}.
 		 */
-		public Data3D build() {
+		public DataVolume build() {
 			checkState(built != true, "This builder has already been used");
 			checkDataState(rows, columns, levels);
 			return new DefaultTable3D(

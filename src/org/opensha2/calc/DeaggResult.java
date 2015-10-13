@@ -46,17 +46,17 @@ public class DeaggResult {
 	 */
 //	private double[] rBins, mBins, εBins;
 //
-//	private double[][][] rmεMatrix; // [r][m][ε] Data3D
+//	private double[][][] rmεMatrix; // [r][m][ε] DataVolume
 //
 //	private double rBar, mBar, εBar;
 ////	private double totalRate;
 //
 //	// wieghted m and r position data
-//	private double[][] rPosValues; // Data2D
-//	private double[][] mPosValues; // Data2D
+//	private double[][] rPosValues; // DataTable
+//	private double[][] mPosValues; // DataTable
 //	// private double[][] rmPosWeights;
-//	// private double[][] rWtPosValues; // Data2D
-//	// private double[][] mWtPosValues; // Data2D
+//	// private double[][] rWtPosValues; // DataTable
+//	// private double[][] mWtPosValues; // DataTable
 
 	List<SourceTypeContribution> primarySourceTypes;
 	List<SourceContribution> primarySources;
@@ -79,14 +79,14 @@ public class DeaggResult {
 	static class Data {
 		private double[] rBins, mBins, εBins;
 
-		private double[][][] rmεMatrix; // [r][m][ε] Data3D
+		private double[][][] rmεMatrix; // [r][m][ε] DataVolume
 
 		private double rBar, mBar, εBar;
 //		private double totalRate;
 
 		// wieghted m and r position data
-		private double[][] rPosValues; // Data2D
-		private double[][] mPosValues; // Data2D
+		private double[][] rPosValues; // DataTable
+		private double[][] mPosValues; // DataTable
 
 	}
 

@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.opensha2.data.Data2D;
+import org.opensha2.data.DataTable;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.GridSourceSet;
@@ -138,10 +138,10 @@ public class GridCalc {
 
 	static final class GroundMotions {
 
-		final Data2D μTable;
-		final Data2D σTable;
+		final DataTable μTable;
+		final DataTable σTable;
 
-		GroundMotions(Data2D μTable, Data2D σTable) {
+		GroundMotions(DataTable μTable, DataTable σTable) {
 			this.μTable = μTable;
 			this.σTable = σTable;
 		}
@@ -163,8 +163,8 @@ public class GridCalc {
 			double rMin = 0.0;
 			double rMax = gmmSet.maxDistance();
 			double rΔ = distanceDiscretization(rMax);
-//			double[] distances = Data2D.Builder.create().rows(rMin, rMax, rΔ).rows();
-			double[] distances = Data2D.Builder.keys(rMin, rMax, rΔ);
+//			double[] distances = DataTable.Builder.create().rows(rMin, rMax, rΔ).rows();
+			double[] distances = DataTable.Builder.keys(rMin, rMax, rΔ);
 			
 			List<Site> siteList = createSiteList(distances, vs30);
 
@@ -184,8 +184,8 @@ public class GridCalc {
 					gmm.instance(imt),
 					inputsList);
 
-				Map<SourceStyle, Data2D.Builder> μBuilders = initBuilders(rMin, rMax, rΔ, multiMech);
-				Map<SourceStyle, Data2D.Builder> σBuilders = initBuilders(rMin, rMax, rΔ, multiMech);
+				Map<SourceStyle, DataTable.Builder> μBuilders = initBuilders(rMin, rMax, rΔ, multiMech);
+				Map<SourceStyle, DataTable.Builder> σBuilders = initBuilders(rMin, rMax, rΔ, multiMech);
 
 				for (int i = 0; i < groundMotionsList.size(); i++) {
 
@@ -199,11 +199,11 @@ public class GridCalc {
 						int end = start + MAGS.length;
 						double startMag = MAGS[0];
 
-						Data2D.Builder μBuilder = μBuilders.get(style);
+						DataTable.Builder μBuilder = μBuilders.get(style);
 						double[] μValues = copyOfRange(groundMotions.μs, start, end);
 						μBuilder.add(rowKey, startMag, μValues);
 
-						Data2D.Builder σBuilder = σBuilders.get(style);
+						DataTable.Builder σBuilder = σBuilders.get(style);
 						double[] σValues = copyOfRange(groundMotions.σs, start, end);
 						σBuilder.add(rowKey, startMag, σValues);
 
@@ -265,7 +265,7 @@ public class GridCalc {
 	private static final double M_MAX = 8.0;
 	private static final double M_Δ = 0.1;
 
-	private static final double[] MAGS = Data2D.Builder.keys(M_MIN, M_MAX, M_Δ);
+	private static final double[] MAGS = DataTable.Builder.keys(M_MIN, M_MAX, M_Δ);
 	private static final double[] RATES = new double[MAGS.length]; // empty
 	private static final IncrementalMfd GRID_MFD = Mfds.newIncrementalMFD(MAGS, RATES);
 
@@ -387,13 +387,13 @@ public class GridCalc {
 	 * Create map of builders. For strike-slip only case, a map with a single
 	 * builder is returned.
 	 */
-	private static Map<SourceStyle, Data2D.Builder> initBuilders(
+	private static Map<SourceStyle, DataTable.Builder> initBuilders(
 			double rMin,
 			double rMax,
 			double rΔ,
 			boolean multiMech) {
 
-		Map<SourceStyle, Data2D.Builder> builderMap = new EnumMap<>(SourceStyle.class);
+		Map<SourceStyle, DataTable.Builder> builderMap = new EnumMap<>(SourceStyle.class);
 		for (SourceStyle style : SourceStyle.values()) {
 			builderMap.put(style, createGridBuilder(rMin, rMax, rΔ));
 			if (!multiMech && style == SourceStyle.STRIKE_SLIP) break;
@@ -401,13 +401,13 @@ public class GridCalc {
 		return builderMap;
 	}
 
-	private static Data2D.Builder createGridBuilder(double rMin, double rMax, double rΔ) {
-		return Data2D.Builder.create()
+	private static DataTable.Builder createGridBuilder(double rMin, double rMax, double rΔ) {
+		return DataTable.Builder.create()
 			.rows(rMin, rMax, rΔ)
 			.columns(M_MIN, M_MAX, M_Δ);
 	}
 	
-	public static Data2D.Builder createGridBuilder(double rMax) {
+	public static DataTable.Builder createGridBuilder(double rMax) {
 		return createGridBuilder(0.0, rMax, distanceDiscretization(rMax));
 	}
 

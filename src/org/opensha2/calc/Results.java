@@ -3,6 +3,7 @@ package org.opensha2.calc;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.opensha2.data.XySequence.copyOf;
 import static org.opensha2.data.XySequence.immutableCopyOf;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -19,13 +20,10 @@ import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Location;
 import org.opensha2.gmm.Imt;
-import org.opensha2.mfd.Mfds;
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;

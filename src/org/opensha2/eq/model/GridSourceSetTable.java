@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.opensha2.calc.GridCalc;
 import org.opensha2.calc.Site;
-import org.opensha2.data.Data2D;
+import org.opensha2.data.DataTable;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 import org.opensha2.util.Parsing;
@@ -28,7 +28,7 @@ public class GridSourceSetTable  {
 	 * 
 	 * This class reduces point source iteration down to a table of distances and magnitudes
 	 * 
-	 * We are going to want to upgrade this to Data3D to handle azimuth bins
+	 * We are going to want to upgrade this to DataVolume to handle azimuth bins
 	 */
 	
 	private int parentSourcesUsed;
@@ -37,7 +37,7 @@ public class GridSourceSetTable  {
 	 * 
 	 * loop all sources for site, combine mfds into mfd, one for each distance bin
 	 * 
-	 * or put them in Data2D
+	 * or put them in DataTable
 	 * 
 	 */
 	
@@ -70,10 +70,10 @@ public class GridSourceSetTable  {
 
 	
 	
-	public static Data2D toSourceTable(GridSourceSet sources, Location loc) {
+	public static DataTable toSourceTable(GridSourceSet sources, Location loc) {
 		
 		double rMax = sources.groundMotionModels().maxDistance();
-		Data2D.Builder tableBuilder = GridCalc.createGridBuilder(rMax);
+		DataTable.Builder tableBuilder = GridCalc.createGridBuilder(rMax);
 		
 //		System.out.println(rMax);
 //		System.out.println(sources.name());
@@ -89,7 +89,7 @@ public class GridSourceSetTable  {
 			tableBuilder.add(r, mMin,rates);
 		}
 		
-		Data2D table = tableBuilder.build();
+		DataTable table = tableBuilder.build();
 		
 		return table;
 	}
