@@ -24,7 +24,6 @@ import java.util.List;
  * to supply valid data.</p>
  * 
  * @author Peter Powers
- * @version $Id:$
  */
 public final class Interpolate {
 

@@ -3,6 +3,7 @@ package org.opensha2.calc;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.XySequence.copyOf;
+import static org.opensha2.data.XySequence.emptyCopyOf;
 import static org.opensha2.data.XySequence.immutableCopyOf;
 
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ final class HazardCurveSet {
 				Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
 				curveMap.put(imt, gmmMap);
 				for (Gmm gmm : gmms) {
-					XySequence emptyCurve = copyOf(modelCurves.get(imt)).clear();
+					XySequence emptyCurve = emptyCopyOf(modelCurves.get(imt));
 					gmmMap.put(gmm, emptyCurve);
 				}
 			}
@@ -179,7 +180,7 @@ final class HazardCurveSet {
 			double sourceSetWeight = sourceSet.weight();
 			for (Entry<Imt, Map<Gmm, XySequence>> entry : curveMap.entrySet()) {
 				Imt imt = entry.getKey();
-				XySequence totalCurve = copyOf(modelCurves.get(imt)).clear();
+				XySequence totalCurve = emptyCopyOf(modelCurves.get(imt));
 				for (XySequence curve : entry.getValue().values()) {
 					totalCurve.add(curve);
 				}

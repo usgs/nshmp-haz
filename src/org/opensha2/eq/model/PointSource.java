@@ -269,6 +269,8 @@ class PointSource implements Source {
 		 * is retained for cache identification.
 		 */
 		final Map<Double, Map<Double, Double>> magDepthMap;
+		// TODO other than for generating key, this field is not referenced so
+		// it proabbly makes more sense to store it with the GridSourceSet
 
 		/*
 		 * maxDepth constrains the width of finite point sources. In many cases

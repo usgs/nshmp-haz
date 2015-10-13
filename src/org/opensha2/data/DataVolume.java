@@ -13,7 +13,7 @@ import org.opensha2.data.DataTables.DefaultTable3D;
 
 /**
  * A 3-dimensional volume of immutable, double-valued data that is arranged
- * according to strictly increasing and uniformly spaced double-valued keys.
+ * according to increasing and uniformly spaced double-valued keys.
  * Data tables are almost always used to represent binned data, and so while row
  * and column keys are bin centers, indexing is managed internally using bin
  * edges. This simplifies issues related to rounding/precision errors that occur

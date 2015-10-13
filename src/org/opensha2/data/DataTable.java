@@ -20,7 +20,7 @@ import com.google.common.primitives.Doubles;
 
 /**
  * A 2-dimensional table of immutable, double-valued data that is arranged
- * according to strictly increasing and uniformly spaced double-valued keys.
+ * according to increasing and uniformly spaced double-valued keys.
  * Data tables are almost always used to represent binned data, and so while row
  * and column keys are bin centers, indexing is managed internally using bin
  * edges. This simplifies issues related to rounding/precision errors that occur
@@ -175,6 +175,35 @@ public interface DataTable {
 		}
 
 		/**
+		 * Set the values in the specified row.
+		 *
+		 * @param row key
+		 * @param values to set
+		 * @throws IndexOutOfBoundsException if values overrun row
+		 */
+		public Builder set(double row, double[] values) {
+			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
+			checkElementIndex(values.length - 1, columns.length,
+				"Supplied values overrun end of row");
+			double[] rowData = data[rowIndex];
+			for (int i = 0; i < values.length; i++) {
+				rowData[i] = values[i];
+			}
+			return this;
+		}
+
+		/**
+		 * Set the values in the specified row.
+		 *
+		 * @param row key
+		 * @param values to set
+		 * @throws IndexOutOfBoundsException if values overrun row
+		 */
+		public Builder set(double row, List<Double> values) {
+			return set(row, Doubles.toArray(values));
+		}
+
+		/**
 		 * Set the values in the specified row starting at the specified column.
 		 *
 		 * @param row key
@@ -187,10 +216,23 @@ public interface DataTable {
 			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
 			checkElementIndex(columnIndex + values.length - 1, columns.length,
 				"Supplied values overrun end of row");
-			for (int i = 0; i <= values.length; i++) {
-				data[rowIndex][columnIndex + i] = values[i];
+			double[] rowData = data[rowIndex];
+			for (int i = 0; i < values.length; i++) {
+				rowData[columnIndex + i] = values[i];
 			}
 			return this;
+		}
+
+		/**
+		 * Set the values in the specified row starting at the specified column.
+		 *
+		 * @param row key
+		 * @param column key from which to start setting values
+		 * @param values to set
+		 * @throws IndexOutOfBoundsException if values overrun row
+		 */
+		public Builder set(double row, double column, List<Double> values) {
+			return set(row, column, Doubles.toArray(values));
 		}
 
 		/**
@@ -208,6 +250,35 @@ public interface DataTable {
 		}
 
 		/**
+		 * Add to the values in the specified row.
+		 *
+		 * @param row key
+		 * @param values to set
+		 * @throws IndexOutOfBoundsException if values overrun row
+		 */
+		public Builder add(double row, double[] values) {
+			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
+			checkElementIndex(values.length - 1, columns.length,
+				"Supplied values overrun end of row");
+			double[] rowData = data[rowIndex];
+			for (int i = 0; i < values.length; i++) {
+				rowData[i] += values[i];
+			}
+			return this;
+		}
+
+		/**
+		 * Add to the values in the specified row.
+		 *
+		 * @param row key
+		 * @param values to set
+		 * @throws IndexOutOfBoundsException if values overrun row
+		 */
+		public Builder add(double row, List<Double> values) {
+			return add(row, Doubles.toArray(values));
+		}
+		
+		/**
 		 * Add to the values in the specified row starting at the specified
 		 * column.
 		 *
@@ -221,8 +292,9 @@ public interface DataTable {
 			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
 			checkElementIndex(columnIndex + values.length - 1, columns.length,
 				"Supplied values overrun end of row");
+			double[] rowData = data[rowIndex];
 			for (int i = 0; i < values.length; i++) {
-				data[rowIndex][columnIndex + i] = values[i];
+				rowData[columnIndex + i] = values[i];
 			}
 			return this;
 		}

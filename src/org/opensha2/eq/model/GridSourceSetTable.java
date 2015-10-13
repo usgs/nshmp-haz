@@ -67,13 +67,35 @@ public class GridSourceSetTable  {
 //		sb.append("]");
 //		return sb.toString();
 //	}
+	
+	public static void buildSources(DataTable table) {
+		
+		// for each row in table
+		//		build a point source
+		
+		
+	}
 
 	
 	
 	public static DataTable toSourceTable(GridSourceSet sources, Location loc) {
 		
+		System.out.println(sources.mMin);
+		System.out.println(sources.mMax);
+		System.out.println(sources.Δm);
+		System.out.println(sources.mMin - sources.Δm / 2.0);
+		
+//		DataTable.Builder tableBuilder = GridCalc.createGridBuilder(
+//			sources.groundMotionModels().maxDistance());
+		
+		// table keys are specified as lowermost and uppermost bin edges
+		double Δm = sources.Δm;
+		double ΔmBy2 = Δm / 2.0;
+		double mMin = sources.mMin - ΔmBy2;
+		double mMax = sources.mMax + ΔmBy2;
+		
 		double rMax = sources.groundMotionModels().maxDistance();
-		DataTable.Builder tableBuilder = GridCalc.createGridBuilder(rMax);
+		DataTable.Builder tableBuilder = GridCalc.createGridBuilder(rMax, mMin, mMax, Δm);
 		
 //		System.out.println(rMax);
 //		System.out.println(sources.name());
@@ -84,15 +106,16 @@ public class GridSourceSetTable  {
 		
 		for (PointSource source : sources.iterableForLocation(loc)) {
 			double r = Locations.horzDistanceFast(loc, source.loc);
-			double mMin = source.mfd.getMinX();
+//			double mMin = source.mfd.getMinX();
 			List<Double> rates = source.mfd.yValues();
-			tableBuilder.add(r, mMin,rates);
+			tableBuilder.add(r, rates);
 		}
 		
 		DataTable table = tableBuilder.build();
 		
 		return table;
 	}
+	
 	
 //	private Predicate
 

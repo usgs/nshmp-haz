@@ -18,13 +18,13 @@ public interface XyPoint {
 
 	/**
 	 * Return the y-value of this point.
-	 * @return x
+	 * @return y
 	 */
 	double y();
 
 	/**
 	 * Set the y-value of this point.
-	 * @param y
+	 * @param y the y-value to set
 	 */
 	void set(double y);
 

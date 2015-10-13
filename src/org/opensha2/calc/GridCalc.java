@@ -407,8 +407,19 @@ public class GridCalc {
 			.columns(M_MIN, M_MAX, M_Δ);
 	}
 	
+	@Deprecated
 	public static DataTable.Builder createGridBuilder(double rMax) {
 		return createGridBuilder(0.0, rMax, distanceDiscretization(rMax));
+	}
+	
+	public static DataTable.Builder createGridBuilder(
+			double rMax,
+			double mMin,
+			double mMax,
+			double Δm) {
+		return DataTable.Builder.create()
+				.rows(0.0, rMax, distanceDiscretization(rMax))
+				.columns(mMin, mMax, Δm);
 	}
 
 	/*

@@ -2,7 +2,7 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.XySequence.copyOf;
+import static org.opensha2.data.XySequence.emptyCopyOf;
 import static org.opensha2.eq.model.SourceType.CLUSTER;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
 
@@ -124,7 +124,7 @@ public final class HazardResult {
 			this.config = checkNotNull(config);
 			totalCurves = new EnumMap<>(Imt.class);
 			for (Entry<Imt, XySequence> entry : config.logModelCurves.entrySet()) {
-				totalCurves.put(entry.getKey(), copyOf(entry.getValue()).clear());
+				totalCurves.put(entry.getKey(), emptyCopyOf(entry.getValue()));
 			}
 			resultMapBuilder = ImmutableSetMultimap.builder();
 		}

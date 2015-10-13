@@ -138,7 +138,7 @@ public class Calcs {
 			switch (sourceSet.type()) {
 				case GRID:
 					DataTable d = GridSourceSetTable.toSourceTable((GridSourceSet) sourceSet, site.location);
-//					System.out.println(d);
+					System.out.println(d);
 					curveSets.add(sourcesToCurves(sourceSet, config, site));
 					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
 					break;

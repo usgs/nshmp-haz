@@ -7,6 +7,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.util.TextUtils.format;
 
+import static org.opensha2.data.XySequence.*;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -300,7 +302,7 @@ public final class CalcConfig {
 				double[] imls = imlsForImt(imt);
 				imls = Arrays.copyOf(imls, imls.length);
 				DataUtils.ln(imls);
-				curveMap.put(imt, XySequence.createImmutable(imls, null));
+				curveMap.put(imt, immutableCopyOf(create(imls, null)));
 			}
 			return Maps.immutableEnumMap(curveMap);
 		}
@@ -310,7 +312,7 @@ public final class CalcConfig {
 			for (Imt imt : imts) {
 				double[] imls = imlsForImt(imt);
 				imls = Arrays.copyOf(imls, imls.length);
-				curveMap.put(imt, XySequence.createImmutable(imls, null));
+				curveMap.put(imt, immutableCopyOf(create(imls, null)));
 			}
 			return Maps.immutableEnumMap(curveMap);
 		}

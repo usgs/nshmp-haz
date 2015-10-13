@@ -18,7 +18,7 @@ import com.google.common.primitives.Doubles;
 
 /**
  * Sequence of xy-value pairs that is iterable ascending in x. Once created, the
- * sequence x-values are immutable. This class provides static operations to
+ * x-values of a sequence are immutable. This class provides static operations to
  * create instances of sequences that have both mutable and immutable y-values.
  * All data supplied to these operations is defensively copied unless it is not
  * necessary to do so. For instance, {@code *copyOf()} variants should be used

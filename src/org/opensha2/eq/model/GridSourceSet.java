@@ -3,7 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.eq.Magnitudes.MAX_MAG;
+import static org.opensha2.eq.Magnitudes.*;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
 
@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
 
+import org.opensha2.data.DataUtils;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -24,6 +25,7 @@ import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
 
 /**
  * A container class for related, evenly-spaced {@link PointSource}s with
@@ -41,9 +43,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	final DepthModel depthModel; // package exposure for parser logging
 	private final double strike;
 	private final PointSourceType sourceType;
+	
+	final double mMin;
+	final double mMax;
+	final double Δm;
 
 	private final Key cacheKey;
-
+	
 	/*
 	 * Most grid sources have the same focal mech map everywhere; in these
 	 * cases, mechMaps will have been created using Collections.nCopies() with
@@ -58,20 +64,44 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			List<Location> locs,
 			List<IncrementalMfd> mfds,
 			List<Map<FocalMech, Double>> mechMaps,
-			DepthModel depthModel,
+			NavigableMap<Double, Map<Double, Double>> magDepthMap,
+			double maxDepth,
 			double strike,
 			RuptureScaling rupScaling,
-			PointSourceType sourceType) {
+			PointSourceType sourceType,
+			double mMin,
+			double mMax,
+			double Δm) {
 
 		super(name, id, weight, gmmSet);
 		this.locs = locs;
 		this.mfds = mfds;
 		this.mechMaps = mechMaps;
-		this.depthModel = depthModel;
 		this.strike = strike;
 		this.rupScaling = rupScaling;
 		this.sourceType = sourceType;
 
+		this.mMin = mMin;
+		this.mMax = mMax;
+		this.Δm = Δm;
+		
+		/*
+		 * TODO there are too many assumptions built into this; whose to
+		 * say ones bin spacing should be only be in the hundredths?
+		 * 
+		 * Where did this come from anyway? Are mag deltas really all that
+		 * strange
+		 * 
+		 * We should read precision of supplied mMin and mMax and delta
+		 * and use largest for formatting
+		 * 
+		 * TODO in the case of single combined/flattened MFDs, mags may
+		 * not be uniformly spaced. Can this be refactored
+		 */
+		double cleanDelta = Double.valueOf(String.format("%.2f", Δm));
+		double[] mags = DataUtils.buildCleanSequence(mMin, mMax, cleanDelta, true, 2);
+		depthModel = DepthModel.create(magDepthMap, Doubles.asList(mags), maxDepth);
+		
 		this.cacheKey = new Key();
 	}
 
@@ -165,7 +195,10 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private List<Location> locs = Lists.newArrayList();
 		private List<IncrementalMfd> mfds = Lists.newArrayList();
 		private List<Map<FocalMech, Double>> mechMaps = Lists.newArrayList();
-		private List<Double> magMaster;
+		
+		private Double mMin;
+		private Double mMax;
+		private Double Δm;
 
 		Builder strike(double strike) {
 			// unknown strike allowed for grid sources
@@ -210,14 +243,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			this.mechMap = mechMap;
 			return this;
 		}
-
-		Builder magMaster(List<Double> magMaster) {
-			/*
-			 * TODO mfds should validate against magMaster or create mag master
-			 * locally, but that is hard
-			 */
-			checkArgument(checkNotNull(magMaster).size() > 0);
-			this.magMaster = magMaster;
+		
+		Builder mfdData(double mMin, double mMax, double Δm) {
+			checkArgument(validateMag(mMin) < validateMag(mMax));
+			checkArgument(mMax - mMin > Δm);
+			this.mMin = mMin;
+			this.mMax = mMax;
+			this.Δm = Δm;
 			return this;
 		}
 
@@ -285,10 +317,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(!mfds.isEmpty(), "%s has no Mfds", buildId);
 			checkState(rupScaling != null, "%s has no rupture-scaling relation set", buildId);
 			checkState(magDepthMap != null, "%s mag-depth-weight map not set", buildId);
-			checkState(maxDepth != null, "%s maximum depth not set", buildId);
+			checkState(maxDepth != null, "%s max depth not set", buildId);
 			checkState(mechMap != null, "%s focal mech map not set", buildId);
-			checkState(magMaster != null, "%s master magnitude list not set", buildId);
-
+			
+			checkState(mMin != null, "%s min mag not set", buildId);
+			checkState(mMax != null, "%s max mag not set", buildId);
+			checkState(Δm != null, "%s delta mag not set", buildId);
+			
 			/*
 			 * Validate size of mechMaps; size could get out of sync if mixed
 			 * calls to location(...) were made; one can imagine a future use
@@ -327,9 +362,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		GridSourceSet build() {
 			validateState(ID);
-			DepthModel depthModel = DepthModel.create(magDepthMap, magMaster, maxDepth);
-			return new GridSourceSet(name, id, weight, gmmSet, locs, mfds, mechMaps, depthModel,
-				strike, rupScaling, sourceType);
+			return new GridSourceSet(name, id, weight, gmmSet, locs, mfds, mechMaps, magDepthMap,
+				maxDepth, strike, rupScaling, sourceType, mMin, mMax, Δm);
 		}
 
 	}

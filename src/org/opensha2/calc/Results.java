@@ -2,6 +2,7 @@ package org.opensha2.calc;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.opensha2.data.XySequence.copyOf;
+import static org.opensha2.data.XySequence.emptyCopyOf;
 import static org.opensha2.data.XySequence.immutableCopyOf;
 
 import java.io.IOException;
@@ -130,7 +131,7 @@ public class Results {
 
 		for (Imt imt : imts) {
 
-			XySequence modelCurve = copyOf(curves.get(imt)).clear();
+			XySequence modelCurve = emptyCopyOf(curves.get(imt));
 			Map<SourceType, XySequence> typeCurves = new EnumMap<>(SourceType.class);
 
 			Multimap<SourceType, HazardCurveSet> curveSets = result.sourceSetMap;
