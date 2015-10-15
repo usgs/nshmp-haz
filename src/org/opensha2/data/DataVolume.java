@@ -10,7 +10,7 @@ import static org.opensha2.data.DataTables.keys;
 
 import java.util.List;
 
-import org.opensha2.data.DataTables.DefaultTable3D;
+import org.opensha2.data.DataTables.DefaultVolume;
 
 /**
  * A 3-dimensional volume of immutable, double-valued data that is arranged
@@ -308,7 +308,7 @@ public interface DataVolume {
 		public DataVolume build() {
 			checkState(built != true, "This builder has already been used");
 			checkDataState(rows, columns, levels);
-			return new DefaultTable3D(
+			return new DefaultVolume(
 				rowMin, rowMax, rowΔ, rows,
 				columnMin, columnMax, columnΔ, columns,
 				levelMin, levelMax, levelΔ, levels,

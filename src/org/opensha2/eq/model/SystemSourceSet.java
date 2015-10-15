@@ -58,10 +58,17 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
 	// NOTE the above Double lists are compact but mutable: Doubles.asList(...)
 
-	private SystemSourceSet(String name, int id, double weight, GmmSet gmmSet,
-			List<GriddedSurface> sections, List<BitSet> bitsets, List<Double> mags,
+	private SystemSourceSet(
+			String name, int id, double weight,
+			GmmSet gmmSet,
+			List<GriddedSurface> sections,
+			List<BitSet> bitsets,
+			List<Double> mags,
 			List<Double> rates,
-			List<Double> depths, List<Double> dips, List<Double> widths, List<Double> rakes) {
+			List<Double> depths,
+			List<Double> dips,
+			List<Double> widths,
+			List<Double> rakes) {
 
 		super(name, id, weight, gmmSet);
 
@@ -484,9 +491,12 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 		@Override public InputList apply(final SystemSourceSet sourceSet) {
 
 			try {
+				SystemInputList inputs = new SystemInputList(sourceSet);
+				
 				// create Site BitSet
 				double maxDistance = sourceSet.groundMotionModels().maxDistance();
 				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
+				if (siteBitset.isEmpty()) return inputs;
 
 				// create and fill distance table
 				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
@@ -504,7 +514,6 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 				// create inputs
 				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
 					rTable, siteBitset, site);
-				SystemInputList inputs = new SystemInputList(sourceSet);
 				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
 				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
 				for (SystemSource source : sources) {

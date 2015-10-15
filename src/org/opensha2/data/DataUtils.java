@@ -150,6 +150,13 @@ public final class DataUtils {
 		}
 		return data1;
 	}
+	
+	static double[][] uncheckedAdd(double[][] data1, double[][] data2) {
+		for (int i = 0; i < data1.length; i++) {
+			uncheckedAdd(data1[i], data2[i]);
+		}
+		return data1;
+	}
 
 	/**
 	 * Add the values of {@code data2} to {@code data1} in place without
@@ -166,7 +173,14 @@ public final class DataUtils {
 		}
 		return data1;
 	}
-
+	
+	static double[][][] uncheckedAdd(double[][][] data1, double[][][] data2) {
+		for (int i = 0; i < data1.length; i++) {
+			uncheckedAdd(data1[i], data2[i]);
+		}
+		return data1;
+	}
+	
 	/**
 	 * Add the values of {@code data2} to {@code data1} in place without
 	 * checking for over/underflow.

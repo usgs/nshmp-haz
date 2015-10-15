@@ -73,14 +73,4 @@ final class MutableXySequence extends ImmutableXySequence {
 		return this;
 	}
 
-	/*
-	 * The common use case is for only the x-value hash codes to be compared as
-	 * a result of having used a copyOf(XySequence) constructor.
-	 */
-	private ImmutableXySequence validateSequence(ImmutableXySequence that) {
-		checkArgument(this.xs.hashCode() == checkNotNull(that).xs.hashCode() ||
-			Arrays.equals(this.xs, that.xs));
-		return that;
-	}
-
 }

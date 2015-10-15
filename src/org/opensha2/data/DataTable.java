@@ -9,11 +9,12 @@ import static org.opensha2.data.DataTables.checkDataState;
 import static org.opensha2.data.DataTables.indexOf;
 import static org.opensha2.data.DataTables.keys;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.opensha2.data.DataTables.DefaultTable2D;
-import org.opensha2.data.DataTables.SingularTable2D;
+import org.opensha2.data.DataTables.DefaultTable;
+import org.opensha2.data.DataTables.SingularTable;
 
 import com.google.common.primitives.Doubles;
 
@@ -88,9 +89,9 @@ public interface DataTable {
 	public static final class Builder {
 
 		// TODO data is not copied on build() so we need to dereference
-		// data arrays on build() to prevent lingering builders from 
+		// data arrays on build() to prevent lingering builders from
 		// further modifying data
-		
+
 		private double[][] data;
 
 		private double rowMin;
@@ -154,7 +155,7 @@ public interface DataTable {
 				initialized = true;
 			}
 		}
-		
+
 		/**
 		 * Return the index of the row that would contain the supplied value.
 		 * @param row value
@@ -162,7 +163,7 @@ public interface DataTable {
 		public int rowIndex(double row) {
 			return indexOf(rowMin, rowΔ, row, rows.length);
 		}
-		
+
 		/**
 		 * Return the index of the column that would contain the supplied value.
 		 * @param column value
@@ -301,8 +302,7 @@ public interface DataTable {
 		 * TODO replace with add(DataTable)
 		 * @param data to set
 		 */
-		@Deprecated
-		public Builder setAll(double[][] data) {
+		@Deprecated public Builder setAll(double[][] data) {
 			checkNotNull(data);
 			checkArgument(data.length > 0 && data[0].length > 0,
 				"At least one data dimension is empty");
@@ -310,6 +310,24 @@ public interface DataTable {
 			checkDataSize(rows.length, columns.length, data);
 			this.data = DataUtils.copyOf(data);
 			return this;
+		}
+
+		public Builder add(DataTable table) {
+			// safe covariant cast
+			DataUtils.uncheckedAdd(data, validateTable((DefaultTable) table).data);
+			return this;
+		}
+
+		/*
+		 * Check hash codes of row and column arrays in case copyOf has been
+		 * used, otherwise check array equality
+		 */
+		DefaultTable validateTable(DefaultTable that) {
+			checkArgument((this.rows.hashCode() == that.rows.hashCode() &&
+				this.columns.hashCode() == that.columns.hashCode()) ||
+				(Arrays.equals(this.rows, that.rows) &&
+				Arrays.equals(this.columns, that.columns)));
+			return that;
 		}
 
 		/**
@@ -343,7 +361,7 @@ public interface DataTable {
 		public DataTable build(double value) {
 			checkState(built != true, "This builder has already been used");
 			checkDataState(rows, columns);
-			return new SingularTable2D(
+			return new SingularTable(
 				rowMin, rowMax, rowΔ, rows,
 				columnMin, columnMax, columnΔ, columns,
 				value);
@@ -356,7 +374,7 @@ public interface DataTable {
 		public DataTable build() {
 			checkState(built != true, "This builder has already been used");
 			checkDataState(rows, columns);
-			return new DefaultTable2D(
+			return new DefaultTable(
 				rowMin, rowMax, rowΔ, rows,
 				columnMin, columnMax, columnΔ, columns,
 				data);

@@ -182,21 +182,28 @@ class Deagg {
 				return this;
 			}
 
+			/* Combine values */
 //			Builder add(Data data) {
-//				// DataUtils.add(this.mrεMatrix, data.mrεMatrix);
-//				this.mBar += data.mBar;
-//				this.rBar += data.rBar;
-//				this.εBar += data.εBar;
-//				this.barWeight += barWeight;
-//				DataUtils.add(this.mPosValues, data.mPosValues);
-//				DataUtils.add(this.rPosValues, data.rPosValues);
-//				DataUtils.add(this.mrPosWeights, data.mrPosWeights);
-//				topContributors.putAll(data.topContributors);
-//			}
-//
-//			Data build() {
 //				
+//				rmε.add(data.rmε);
+//
+//				rBar += data.rBar;
+//				mBar += data.mBar;
+//				εBar += data.εBar;
+//				barWeight += barWeight;
+//				
+//				rPositions.add(data.rPositions);
+//				mPositions.add(data.mPositions);
+//				positionWeights.add(data.positionWeights);
+//				
+//				return this;
 //			}
+
+			Data build() {
+				return new Data(
+					rmε.build(), rBar, mBar, εBar, barWeight,
+					rPositions.build(), mPositions.build(), positionWeights.build());
+			}
 		}
 		
 		
@@ -208,6 +215,7 @@ class Deagg {
 		return new Deaggregator(hazard);
 	}
 
+	/* Builder pattern */
 	static class Deaggregator {
 
 		private HazardCurveSet hazard;
@@ -318,60 +326,33 @@ class Deagg {
 					double probAtIml = SIGMA.exceedance(μ, σ, trunc, imt, iml);
 					double rate = probAtIml * in.rate * sourceSetWeight * gmmWeight;
 					sourceRate += rate;
-					addRupture(in.Mw, in.rRup, ε, rate);
+//					addRupture(in.Mw, in.rRup, ε, rate);
 				}
 			}
 		}
 
-		private void addRupture(double m, double r, double ε, double rate) {
-
-			double mr = m * rate;
-			double rr = r * rate;
-			double εr = ε * rate;
-
-			int im = index(model.mMin, model.Δm, m);
-			int ir = index(model.rMin, model.Δr, r);
-			int iε = index(model.εMin, model.Δε, ε);
-
-			mBar += mr;
-			rBar += rr;
-			εBar += εr;
-			totalRate += rate;
-
-			data[im][ir][iε] += rate;
-
-			mValues[im][ir] += mr;
-			rValues[im][ir] += rr;
-			mrWeights[im][ir] += rate;
-		}
-
-		/*
-		 * Populate Data object with rupture data. Supply DataTable and
-		 * DataVolume indices, weighted (by rate) distance, magnitude, and
-		 * epsilon, and the rate of the rupture.
-		 * 
-		 * Although we could work with the raw distance, magnitude and epsilon
-		 * values, deaggregation is being performed across each Gmm, so
-		 * precomputing indices and weighted values in the calling method brings
-		 * some efficiency.
-		 */
-//		private static void addRupture(
-//				Data data,
-//				int ri, int mi, int εi,
-//				double rw, double mw, double εw,
-//				double rate) {
+//		private void addRupture(double m, double r, double ε, double rate) {
+//TODO clean
+//			double mr = m * rate;
+//			double rr = r * rate;
+//			double εr = ε * rate;
 //
-//			data.rmε.set(ri, mi, εi, rate);
-//			
-//			data.rBar += rw;
-//			data.mBar += mw;
-//			data.εBar += εw;
-//			data.barWeight += rate;
+//			int im = index(model.mMin, model.Δm, m);
+//			int ir = index(model.rMin, model.Δr, r);
+//			int iε = index(model.εMin, model.Δε, ε);
 //
-//			data.rPositions.add(ri, mi, rw);
-//			data.mPositions.add(ri, mi, mw);
-//			data.positionWeights.add(ri, mi, rate);
+//			mBar += mr;
+//			rBar += rr;
+//			εBar += εr;
+//			totalRate += rate;
+//
+//			data[im][ir][iε] += rate;
+//
+//			mValues[im][ir] += mr;
+//			rValues[im][ir] += rr;
+//			mrWeights[im][ir] += rate;
 //		}
+
 	}
 
 	private static int index(double min, double binWidth, double value) {
