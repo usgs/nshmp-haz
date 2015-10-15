@@ -23,10 +23,16 @@ import com.google.common.primitives.Doubles;
 public final class DataTables {
 
 	/**
-	 * Create a set of keys for use in a {@link DataTable} or {@link DataVolume}.
-	 * This is exposed for convenience as there are circumstances
+	 * Create a set of keys for use in a {@link DataTable} or {@link DataVolume}
+	 * . Both these classes call this method directly when initializing their
+	 * backing arrays. It is exposed for convenience as there are circumstances
 	 * where a reference to the row or column keys is helpful to have when
-	 * building.
+	 * working with data table and volume builders. Internally, this method
+	 * calls
+	 * {@link DataUtils#buildCleanSequence(double, double, double, boolean, int)}
+	 * wiht a precision value of 4 decimal places. This may change in the future
+	 * 
+	 * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5, 7.5]</p>
 	 * 
 	 * @param min lower edge of lowermost bin
 	 * @param max upper edge of uppermost bin
@@ -119,7 +125,7 @@ public final class DataTables {
 		}
 	}
 
-	private static abstract class AbstractTable2D implements DataTable {
+	private static abstract class AbstractTable implements DataTable {
 
 		final double rowMin;
 		final double rowMax;
@@ -131,7 +137,7 @@ public final class DataTables {
 		final double columnΔ;
 		final double[] columns;
 
-		private AbstractTable2D(
+		private AbstractTable(
 				double rowMin, double rowMax, double rowΔ, double[] rows,
 				double columnMin, double columnMax, double columnΔ, double[] columns) {
 
@@ -156,11 +162,11 @@ public final class DataTables {
 
 	}
 
-	static final class DefaultTable2D extends AbstractTable2D {
+	static final class DefaultTable extends AbstractTable {
 
-		private final double[][] data;
+		final double[][] data;
 
-		DefaultTable2D(
+		DefaultTable(
 				double rowMin, double rowMax, double rowΔ, double[] rows,
 				double columnMin, double columnMax, double columnΔ, double[] columns,
 				double[][] data) {
@@ -209,12 +215,13 @@ public final class DataTables {
 		}
 	}
 
-	static final class SingularTable2D extends AbstractTable2D {
+	@Deprecated
+	static final class SingularTable extends AbstractTable {
 
 		private final double value;
 		private final double[] row;
 
-		SingularTable2D(
+		SingularTable(
 				double rowMin, double rowMax, double rowΔ, double[] rows,
 				double columnMin, double columnMax, double columnΔ, double[] columns,
 				double value) {
@@ -236,7 +243,7 @@ public final class DataTables {
 		}
 	}
 
-	private static abstract class AbstractTable3D implements DataVolume {
+	private static abstract class AbstractVolume implements DataVolume {
 
 		final double rowMin;
 		final double rowMax;
@@ -247,13 +254,13 @@ public final class DataTables {
 		final double columnMax;
 		final double columnΔ;
 		final double[] columns;
-		
+
 		final double levelMin;
 		final double levelMax;
 		final double levelΔ;
 		final double[] levels;
 
-		private AbstractTable3D(
+		private AbstractVolume(
 				double rowMin, double rowMax, double rowΔ, double[] rows,
 				double columnMin, double columnMax, double columnΔ, double[] columns,
 				double levelMin, double levelMax, double levelΔ, double[] levels) {
@@ -287,11 +294,11 @@ public final class DataTables {
 		}
 	}
 
-	static final class DefaultTable3D extends AbstractTable3D {
+	static final class DefaultVolume extends AbstractVolume {
 
 		final double[][][] data;
 
-		DefaultTable3D(
+		DefaultVolume(
 				double rowMin, double rowMax, double rowΔ, double[] rows,
 				double columnMin, double columnMax, double columnΔ, double[] columns,
 				double levelMin, double levelMax, double levelΔ, double[] levels,

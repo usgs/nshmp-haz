@@ -121,7 +121,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	@Override public SourceType type() {
 		return SourceType.GRID;
 	}
-	
+
 	/**
 	 * The {@link PointSource} representation used by this source set.
 	 */
@@ -532,13 +532,15 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		}
 
 		@Override public Iterable<PointSource> iterableForLocation(Location loc) {
-			// Ignore location; simply iterate over the list of sources
+			/*
+			 * Ignore location; simply iterate over the list of sources. Source
+			 * list will be empty if mfdTable is empty (all zeros).
+			 */
 			return sources;
 		}
 
 		private List<PointSource> initSources() {
 			DataTable mfdTable = initMfdTable();
-//			System.out.println(mfdTable);
 			List<Double> distances = mfdTable.rows();
 			maximumSize = distances.size();
 			ImmutableList.Builder<PointSource> b = ImmutableList.builder();

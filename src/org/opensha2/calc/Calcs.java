@@ -38,6 +38,7 @@ public class Calcs {
 
 	/*
 	 * Implementation notes:
+	 * 
 	 * -------------------------------------------------------------------------
 	 * Method argument order in this, CalcFactory, and Transforms follow the
 	 * general rule of model (or model derived obejcts), calc config, site, and
@@ -51,6 +52,19 @@ public class Calcs {
 	 * -------------------------------------------------------------------------
 	 * Single threaded calcs monitor and log calculation duration of each
 	 * SourceSet.
+	 * -------------------------------------------------------------------------
+	 * Notes on empty objects: In the default calculation pipeline, calculation
+	 * tasks are initiated when SourceSet.iterableForLocation() yields relevant
+	 * sources for a site. Similarly, optimized (table-based) grid sources, once
+	 * created for a site, will not yield sources if the mfd table is empty.
+	 * System source sets, on the other hand, create a list of inputs on a
+	 * separate thread using means other than iterableForLocation. They are
+	 * therefore short-circuited returning an empty HazardCurveSet if no sources
+	 * are within range of a site. Cluster source sets have similar issue. TODO
+	 * follow HazardCurveSet.Builder.mpty() calls because it seems like clusters
+	 * shouldn't have to use it as the iterator in clustersToInputs should just
+	 * not be submitting any sources in any event if they are all too far away.
+	 * -------------------------------------------------------------------------
 	 */
 
 	/**

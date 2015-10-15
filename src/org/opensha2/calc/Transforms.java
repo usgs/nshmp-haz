@@ -265,9 +265,7 @@ final class Transforms {
 	}
 
 	/*
-	 * SYSTEM:
-	 * 
-	 * SystemSourceSet --> HazardCurveSet
+	 * SYSTEM: SystemSourceSet --> HazardCurveSet
 	 * 
 	 * Compute hazard curves for system sources. This function derives all
 	 * inputs for an entire SystemSourceSet before being composed with standard
@@ -302,19 +300,19 @@ final class Transforms {
 			// supplied to the constructor as is passed into apply(), which
 			// is wierd
 
+			InputList inputs = sourcesToInputs.apply(sources);
+			if (inputs.isEmpty()) return HazardCurveSet.empty(sources);
+
 			return curveConsolidator.apply(
 				ImmutableList.of(
 					groundMotionsToCurves.apply(
-						inputsToGroundMotions.apply(
-							sourcesToInputs.apply(sources)))));
+						inputsToGroundMotions.apply(inputs))));
 
 		}
 	}
 
 	/*
-	 * CLUSTER:
-	 * 
-	 * ClusterSource --> ClusterInputs
+	 * CLUSTER: ClusterSource --> ClusterInputs
 	 * 
 	 * Create a list of ground motion inputs from a cluster source.
 	 */
@@ -336,9 +334,7 @@ final class Transforms {
 	}
 
 	/*
-	 * CLUSTER:
-	 * 
-	 * ClusterInputs --> ClusterGroundMotions
+	 * CLUSTER: ClusterInputs --> ClusterGroundMotions
 	 * 
 	 * Calculate ground motions for a list of cluster ground motion inputs.
 	 */
@@ -362,9 +358,7 @@ final class Transforms {
 	}
 
 	/*
-	 * CLUSTER:
-	 * 
-	 * ClusterGroundMotions --> ClusterCurves
+	 * CLUSTER: ClusterGroundMotions --> ClusterCurves
 	 * 
 	 * Collapse magnitude variants and compute the joint probability of
 	 * exceedence for sources in a cluster. Note that this is only to be used
@@ -437,9 +431,7 @@ final class Transforms {
 	}
 
 	/*
-	 * CLUSTER:
-	 * 
-	 * ClusterSource --> ClusterCurves
+	 * CLUSTER: ClusterSource --> ClusterCurves
 	 * 
 	 * Compute hazard curves for a cluster source. This function coalesces the
 	 * three preceeding functions into one.
@@ -471,9 +463,7 @@ final class Transforms {
 	}
 
 	/*
-	 * CLUSTER:
-	 * 
-	 * List<ClusterCurves> --> HazardCurveSet
+	 * CLUSTER: List<ClusterCurves> --> HazardCurveSet
 	 * 
 	 * Reduce multiple cluster source curves.
 	 */
@@ -507,9 +497,7 @@ final class Transforms {
 	}
 
 	/*
-	 * ALL:
-	 * 
-	 * List<HazardCurveSet> --> HazardResult
+	 * ALL: List<HazardCurveSet> --> HazardResult
 	 * 
 	 * Final 'fan-in' consolidator function used for all source types.
 	 */
