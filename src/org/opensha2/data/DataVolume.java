@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.DataTables.checkDataSize;
 import static org.opensha2.data.DataTables.checkDataState;
 import static org.opensha2.data.DataTables.indexOf;
+import static org.opensha2.data.DataTables.keys;
 
 import java.util.List;
 
@@ -13,11 +14,11 @@ import org.opensha2.data.DataTables.DefaultTable3D;
 
 /**
  * A 3-dimensional volume of immutable, double-valued data that is arranged
- * according to increasing and uniformly spaced double-valued keys.
- * Data tables are almost always used to represent binned data, and so while row
- * and column keys are bin centers, indexing is managed internally using bin
- * edges. This simplifies issues related to rounding/precision errors that occur
- * when indexing according to explicit double values.
+ * according to increasing and uniformly spaced double-valued keys. Data tables
+ * are almost always used to represent binned data, and so while row and column
+ * keys are bin centers, indexing is managed internally using bin edges. This
+ * simplifies issues related to rounding/precision errors that occur when
+ * indexing according to explicit double values.
  * 
  * <p>To create a {@code DataVolume} instance, use a {@link Builder}.</p>
  * 
@@ -89,8 +90,12 @@ public interface DataVolume {
 	 * <p>See {@link #create()} to initialize a new builder. Rows, columns, and
 	 * levels must be specified before any data can be added.
 	 */
-	public final static class Builder {
+	public static final class Builder {
 
+		// TODO data is not copied on build() so we need to dereference
+		// data arrays on build() to prevent lingering builders from 
+		// further modifying data
+		
 		private double[][][] data;
 
 		private double rowMin;
@@ -109,6 +114,7 @@ public interface DataVolume {
 		private double[] levels;
 
 		private boolean built = false;
+		private boolean initialized = false;
 
 		private Builder() {}
 
@@ -130,7 +136,7 @@ public interface DataVolume {
 			rowMin = min;
 			rowMax = max;
 			rowΔ = Δ;
-			rows = DataTable.Builder.keys(min, max, Δ);
+			rows = keys(min, max, Δ);
 			init();
 			return this;
 		}
@@ -146,7 +152,7 @@ public interface DataVolume {
 			columnMin = min;
 			columnMax = max;
 			columnΔ = Δ;
-			columns = DataTable.Builder.keys(min, max, Δ);
+			columns = keys(min, max, Δ);
 			init();
 			return this;
 		}
@@ -162,19 +168,46 @@ public interface DataVolume {
 			levelMin = min;
 			levelMax = max;
 			levelΔ = Δ;
-			levels = DataTable.Builder.keys(min, max, Δ);
+			levels = keys(min, max, Δ);
 			init();
 			return this;
 		}
 
 		private void init() {
+			checkState(!initialized, "Builder has already been initialized");
 			if (rows != null && columns != null && levels != null) {
 				data = new double[rows.length][columns.length][levels.length];
+				initialized = true;
 			}
 		}
 
 		/**
-		 * Set the value at the specified row and column.
+		 * Return the index of the row that would contain the supplied value.
+		 * @param row value
+		 */
+		public int rowIndex(double row) {
+			return indexOf(rowMin, rowΔ, row, rows.length);
+		}
+		
+		/**
+		 * Return the index of the column that would contain the supplied value.
+		 * @param column value
+		 */
+		public int columnIndex(double column) {
+			return indexOf(columnMin, columnΔ, column, columns.length);
+		}
+
+		/**
+		 * Return the index of the level that would contain the supplied value.
+		 * @param level value
+		 */
+		public int levelIndex(double level) {
+			return indexOf(levelMin, levelΔ, level, levels.length);
+		}
+
+		/**
+		 * Set the value at the specified row, column, and level. Be careful not
+		 * to confuse this with {@link #set(int, int, int, double)}.
 		 * 
 		 * @param row key
 		 * @param column key
@@ -182,33 +215,60 @@ public interface DataVolume {
 		 * @param value to set
 		 */
 		public Builder set(double row, double column, double level, double value) {
-			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
-			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
-			int iLevel = indexOf(levelMin, levelΔ, level, levels.length);
-			data[iRow][iColumn][iLevel] = value;
+			return set(rowIndex(row), columnIndex(column), levelIndex(level), value);
+		}
+
+		/**
+		 * Set the value at the specified row, column, and level indices. Be
+		 * careful not to confuse this with
+		 * {@link #set(double, double, double, double)}.
+		 * 
+		 * @param row index
+		 * @param column index
+		 * @param level index
+		 * @param value to set
+		 */
+		public Builder set(int row, int column, int level, double value) {
+			data[row][column][level] = value;
 			return this;
 		}
 
 		/**
-		 * Add to the existing value at the specified row and column.
+		 * Add to the existing value at the specified row, column, and level. Be
+		 * careful not to confuse this with {@link #add(int, int, int, double)}.
 		 * 
-		 * @param row value
-		 * @param column value
+		 * @param row key
+		 * @param column key
+		 * @param level key
 		 * @param value to add
 		 */
-		public Builder add(double row, int column, double level, double value) {
-			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
-			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
-			int iLevel = indexOf(levelMin, levelΔ, level, levels.length);
-			data[iRow][iColumn][iLevel] += value;
+		public Builder add(double row, double column, double level, double value) {
+			return add(rowIndex(row), columnIndex(column), levelIndex(level), value);
+		}
+
+		/**
+		 * Add to the existing value at the specified row, column, and level
+		 * indices. Be careful not to confuse this with
+		 * {@link #add(int, int, int, double)}.
+		 * 
+		 * @param row index
+		 * @param column index
+		 * @param level index
+		 * @param value
+		 */
+		public Builder add(int row, int column, int level, double value) {
+			data[row][column][level] += value;
 			return this;
 		}
 
 		/**
 		 * Set all values using a copy of the supplied data.
 		 * 
+		 * TODO replace with add(DataVolume)
+		 * 
 		 * @param data to set
 		 */
+		@Deprecated
 		public Builder setAll(double[][][] data) {
 			checkNotNull(data);
 			checkArgument(data.length > 0 && data[0].length > 0 && data[0][0].length > 0,

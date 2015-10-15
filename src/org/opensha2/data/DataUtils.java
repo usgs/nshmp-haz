@@ -890,9 +890,16 @@ public final class DataUtils {
 
 	/**
 	 * Confirm that for a specified range {@code [min, max]} and {@code Δ} that:
-	 * <ul> <li>{@code min}, {@code max}, and {@code Δ} are finite</li> <li>
-	 * {@code max > min}</li> <li>{@code Δ ≠ 0}</li> <li>{@code Δ < max - min}
-	 * </li></ul>
+	 * 
+	 * <ul><li>{@code min}, {@code max}, and {@code Δ} are finite</li>
+	 * 
+	 * <li>{@code max > min}</li>
+	 * 
+	 * <li>{@code Δ ≥ 0}</li>
+	 * 
+	 * <li>{@code Δ > 0} for {@code max > min}</li>
+	 * 
+	 * <li>{@code Δ ≤ max - min}</li></ul>
 	 * 
 	 * @param min value
 	 * @param max value
@@ -903,8 +910,9 @@ public final class DataUtils {
 		validateFiniteness(min, "min");
 		validateFiniteness(max, "max");
 		validateFiniteness(Δ, "Δ");
-		checkArgument(max > min, "min [%s] > max [%s]", min, max);
-		checkArgument(Δ > 0.0, "Invalid Δ [%s]", Δ);
+		checkArgument(max >= min, "min [%s] >= max [%s]", min, max);
+		checkArgument(Δ >= 0.0, "Invalid Δ [%s]", Δ);
+		if (max > min) checkArgument(Δ > 0.0, "Invalid Δ [%s] for max > min", Δ);
 		checkArgument(Δ <= max - min, "Δ [%s] > max - min [%s]", max - min);
 		return Δ;
 	}
@@ -1487,7 +1495,5 @@ public final class DataUtils {
 		}
 		return out;
 	}
-
-
 
 }

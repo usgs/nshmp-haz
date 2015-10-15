@@ -5,6 +5,10 @@ import static org.opensha2.calc.CalcFactory.clustersToCurves;
 import static org.opensha2.calc.CalcFactory.sourcesToCurves;
 import static org.opensha2.calc.CalcFactory.systemToCurves;
 import static org.opensha2.calc.CalcFactory.toHazardResult;
+import static com.google.common.util.concurrent.Futures.allAsList;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.transform;
+import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +18,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.opensha2.calc.Transforms.SourceToInputs;
-import org.opensha2.data.DataTable;
 import org.opensha2.eq.model.ClusterSourceSet;
 import org.opensha2.eq.model.GridSourceSet;
-import org.opensha2.eq.model.GridSourceSetTable;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
@@ -37,8 +39,8 @@ public class Calcs {
 	/*
 	 * Implementation notes:
 	 * -------------------------------------------------------------------------
-	 * Method argument order in this, CalcFactory , and Transforms follow the
-	 * gerneral rule of model (or model derived obejcts), calc config, site, and
+	 * Method argument order in this, CalcFactory, and Transforms follow the
+	 * general rule of model (or model derived obejcts), calc config, site, and
 	 * then any others.
 	 * -------------------------------------------------------------------------
 	 * All calculations are done in log space, only on export are x-values
@@ -96,7 +98,9 @@ public class Calcs {
 		return hazardCurve(model, config, site, log);
 	}
 
-	/* Run a hazard curve calculation using supplied executor. */
+	/*
+	 * Run a hazard curve calculation in parallel.
+	 */
 	private static HazardResult asyncHazardCurve(
 			HazardModel model,
 			CalcConfig config,
@@ -104,24 +108,51 @@ public class Calcs {
 			Executor ex) throws InterruptedException, ExecutionException {
 
 		AsyncList<HazardCurveSet> curveSets = AsyncList.createWithCapacity(model.size());
+		AsyncList<SourceSet<? extends Source>> gridTables = AsyncList.create();
 
 		for (SourceSet<? extends Source> sourceSet : model) {
+
 			switch (sourceSet.type()) {
+
+				case GRID:
+					GridSourceSet gss = (GridSourceSet) sourceSet;
+					if (config.optimizeGrids && gss.sourceType() != FIXED_STRIKE) {
+						gridTables.add(transform(immediateFuture(gss),
+							GridSourceSet.toTableFunction(site.location), ex));
+						break;
+					}
+					curveSets.add(sourcesToCurves(sourceSet, config, site, ex));
+					break;
+
 				case CLUSTER:
 					curveSets.add(clustersToCurves((ClusterSourceSet) sourceSet, config, site, ex));
 					break;
+
 				case SYSTEM:
 					curveSets.add(systemToCurves((SystemSourceSet) sourceSet, config, site, ex));
 					break;
+
 				default:
 					curveSets.add(sourcesToCurves(sourceSet, config, site, ex));
+					break;
 			}
+		}
+
+		/*
+		 * If grid optimization is enabled, grid calculations were deferred
+		 * (above) while table based source sets were initialized. Submit once
+		 * all other source types have been submitted.
+		 */
+		for (SourceSet<? extends Source> sourceSet : allAsList(gridTables).get()) {
+			curveSets.add(sourcesToCurves(sourceSet, config, site, ex));
 		}
 
 		return toHazardResult(model, config, site, curveSets, ex);
 	}
 
-	/* Run a hazard curve calculation on the current thread. */
+	/*
+	 * Run a hazard curve calculation on the current thread.
+	 */
 	private static HazardResult hazardCurve(
 			HazardModel model,
 			CalcConfig config,
@@ -130,41 +161,50 @@ public class Calcs {
 
 		List<HazardCurveSet> curveSets = new ArrayList<>(model.size());
 
-		log.info("Single threaded HazardCurve calculation:");
+		log.info("HazardCurve: (single-threaded)");
 		Stopwatch swTotal = Stopwatch.createStarted();
 		Stopwatch swSource = Stopwatch.createStarted();
 
 		for (SourceSet<? extends Source> sourceSet : model) {
+
 			switch (sourceSet.type()) {
 				case GRID:
-					DataTable d = GridSourceSetTable.toSourceTable((GridSourceSet) sourceSet, site.location);
-					System.out.println(d);
+					GridSourceSet gss = (GridSourceSet) sourceSet;
+					if (config.optimizeGrids && gss.sourceType() != FIXED_STRIKE) {
+						sourceSet = GridSourceSet.toTableFunction(site.location).apply(gss);
+						log(log, MSSG_GRID_INIT, sourceSet.name(), duration(swSource));
+					}
 					curveSets.add(sourcesToCurves(sourceSet, config, site));
 					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
 					break;
-					
+
 				case CLUSTER:
 					curveSets.add(clustersToCurves((ClusterSourceSet) sourceSet, config, site));
 					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
 					break;
+
 				case SYSTEM:
 					curveSets.add(systemToCurves((SystemSourceSet) sourceSet, config, site));
 					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
 					break;
+
 				default:
 					curveSets.add(sourcesToCurves(sourceSet, config, site));
 					log(log, MSSG_COMPLETED, sourceSet.name(), duration(swSource));
+					break;
 			}
 		}
 
 		log.log(Level.INFO, String.format(" %s: %s", MSSG_DURATION, duration(swTotal)));
 		swTotal.stop();
 		swSource.stop();
-
 		return toHazardResult(model, config, site, curveSets);
 	}
 
-	/* support methods and fields for single-threaded calculations. */
+	/*
+	 * Support methods and fields for single-threaded calculations with more
+	 * verbose output.
+	 */
 
 	private static String duration(Stopwatch sw) {
 		String duration = sw.toString();
@@ -172,8 +212,9 @@ public class Calcs {
 		return duration;
 	}
 
-	private static final String MSSG_COMPLETED = " Completed";
-	private static final String MSSG_DURATION = "Total time";
+	private static final String MSSG_GRID_INIT = "Init grid table";
+	private static final String MSSG_COMPLETED = "      Completed";
+	private static final String MSSG_DURATION = "     Total time";
 
 	private static void log(Logger log, String leader, String source, String duration) {
 		log.log(Level.INFO, String.format(" %s: %s %s", leader, duration, source));

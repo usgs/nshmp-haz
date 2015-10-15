@@ -9,6 +9,7 @@ import org.opensha2.calc.Calcs;
 import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
 import org.opensha2.data.DataTable;
+import org.opensha2.data.DataTables;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -99,7 +100,7 @@ public class PointSources {
 			Map<FocalMech, Double> mechWtMap,
 			GridSourceSet grid) {
 
-		Source source = finiteSource(loc, mfd, mechWtMap, grid.rupScaling, grid.depthModel);
+		Source source = finitePointSource(loc, mfd, mechWtMap, grid.rupScaling, grid.depthModel);
 		return finiteInputs(sites, source);
 	}
 
@@ -125,7 +126,17 @@ public class PointSources {
 		return new PointSourceFinite(loc, mfd, mechWtMap, rupScaling, depthModel);
 	}
 
-	private static PointSource finiteSource(
+	public static PointSource pointSource(
+			Location loc,
+			XySequence mfd,
+			Map<FocalMech, Double> mechWtMap,
+			RuptureScaling rupScaling,
+			DepthModel depthModel) {
+
+		return new PointSource(loc, mfd, mechWtMap, rupScaling, depthModel);
+	}			
+
+	public static PointSource finitePointSource(
 			Location loc,
 			XySequence mfd,
 			Map<FocalMech, Double> mechWtMap,
@@ -133,7 +144,7 @@ public class PointSources {
 			DepthModel depthModel) {
 
 		return new PointSourceFinite(loc, mfd, mechWtMap, rupScaling, depthModel);
-	}
+	}			
 
 	public static void main(String[] args) {
 
@@ -145,8 +156,8 @@ public class PointSources {
 		double rMax = 1000.0;
 		double rΔ = 5.0;
 
-		double[] distances = DataTable.Builder.keys(rMin, rMax, rΔ);
-		double[] mags = DataTable.Builder.keys(M_MIN, M_MAX, M_Δ);
+		double[] distances = DataTables.keys(rMin, rMax, rΔ);
+		double[] mags = DataTables.keys(M_MIN, M_MAX, M_Δ);
 		double[] rates = new double[mags.length];
 
 		// IncrementalMfd mfd = Mfds.newIncrementalMFD(mags, rates);

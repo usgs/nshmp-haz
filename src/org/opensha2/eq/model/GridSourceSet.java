@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
 
+import org.opensha2.calc.GridCalc;
+import org.opensha2.data.DataTable;
 import org.opensha2.data.DataUtils;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
@@ -25,7 +27,9 @@ import org.opensha2.geo.Locations;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.Mfds;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 
@@ -116,6 +120,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	@Override public SourceType type() {
 		return SourceType.GRID;
+	}
+	
+	/**
+	 * The {@link PointSource} representation used by this source set.
+	 */
+	public PointSourceType sourceType() {
+		return sourceType;
 	}
 
 	@Override public int size() {
@@ -265,8 +276,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		}
 
 		Builder mfdData(double mMin, double mMax, double Δm) {
-			checkArgument(validateMag(mMin) < validateMag(mMax));
-			checkArgument(mMax - mMin > Δm);
+			// TODO need better validation here
+			checkArgument(validateMag(mMin) <= validateMag(mMax));
 			this.mMin = mMin;
 			this.mMax = mMax;
 			this.Δm = Δm;
@@ -423,6 +434,148 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return Objects.equals(this.rupScaling, that.rupScaling) &&
 				Objects.equals(this.magDepthMap, that.magDepthMap) &&
 				Objects.equals(this.maxDepth, that.maxDepth);
+		}
+	}
+
+	public static Function<GridSourceSet, SourceSet<? extends Source>> toTableFunction(Location loc) {
+		return new ToTable(loc);
+	}
+
+	private static class ToTable implements Function<GridSourceSet, SourceSet<? extends Source>> {
+		private final Location loc;
+
+		ToTable(Location loc) {
+			this.loc = loc;
+		}
+
+		@Override public Table apply(GridSourceSet sources) {
+			return new Table(sources, loc);
+		}
+	}
+
+	/*
+	 * Notes on dealing with mixedMech situations (e.g. UC3)
+	 * 
+	 * Need 3 tables (SS, R, N)
+	 * 
+	 * Rate in each R-M bin gets partitioned across three tables.
+	 * 
+	 * When building sources we could normalize the rates to create a mechMap on
+	 * the fly and sum back to the total rate.
+	 * 
+	 * Alternatively, and preferably, we reconsolidate partitioned rates into a
+	 * list
+	 */
+
+	/**
+	 * Condensed implementation of a {@code GridSourceSet}. This class
+	 * consolidates the point sources that influence hazard at a site using a
+	 * magnitude-distance-rate {@code DataTable}, from which a list of sources
+	 * is generated. A {@code Table} is created on a per-calculation basis and
+	 * is unique to a location.
+	 * 
+	 * @see GridSourceSet#toTableFunction(Location)
+	 */
+	public static final class Table extends AbstractSourceSet<PointSource> {
+
+		private final GridSourceSet parent;
+		private final Location origin;
+		private final List<PointSource> sources;
+
+		private int maximumSize;
+		private int parentCount;
+
+		private Table(GridSourceSet parent, Location origin) {
+			super(parent.name(), parent.id(), parent.weight(), parent.groundMotionModels());
+			this.parent = parent;
+			this.origin = origin;
+			this.sources = initSources();
+		}
+
+		/**
+		 * The number of sources drawn from a parent {@code GridSourceSet}
+		 * during initialization.
+		 */
+		public int parentCount() {
+			return parentCount;
+		}
+
+		/**
+		 * The maximum number of sources that could be used to represent this
+		 * {@code SourceSet}. This is equivalent to the number of rows in the
+		 * {@code DataTable} used to when consolidating sources. The actual
+		 * number of sources required is commonly less due to empty distance
+		 * bins.
+		 */
+		public int maximumSize() {
+			return maximumSize;
+		}
+
+		@Override public String name() {
+			return parent.name() + " (opt)";
+		}
+
+		@Override public SourceType type() {
+			return parent.type();
+		}
+
+		@Override public int size() {
+			return parent.size();
+		}
+
+		@Override public Predicate<PointSource> distanceFilter(Location loc, double distance) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override public Iterator<PointSource> iterator() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override public Iterable<PointSource> iterableForLocation(Location loc) {
+			// Ignore location; simply iterate over the list of sources
+			return sources;
+		}
+
+		private List<PointSource> initSources() {
+			DataTable mfdTable = initMfdTable();
+//			System.out.println(mfdTable);
+			List<Double> distances = mfdTable.rows();
+			maximumSize = distances.size();
+			ImmutableList.Builder<PointSource> b = ImmutableList.builder();
+			for (double r : distances) {
+				XySequence mfd = mfdTable.row(r);
+				if (mfd.isEmpty()) continue;
+				Location loc = Locations.location(origin, GridCalc.SRC_TO_SITE_AZIMUTH, r);
+				b.add(PointSources.finitePointSource(
+					loc,
+					mfd,
+					parent.mechMaps.get(0),
+					parent.rupScaling,
+					parent.depthModel));
+			}
+			return b.build();
+		}
+
+		private DataTable initMfdTable() {
+			// table keys are specified as lowermost and uppermost bin edges
+			double Δm = parent.Δm;
+			double ΔmBy2 = Δm / 2.0;
+			double mMin = parent.mMin - ΔmBy2;
+			double mMax = parent.mMax + ΔmBy2;
+			double rMax = parent.groundMotionModels().maxDistance();
+
+			DataTable.Builder tableBuilder = DataTable.Builder.create()
+				.rows(0.0, rMax, GridCalc.distanceDiscretization(rMax))
+				.columns(mMin, mMax, Δm);
+
+			for (PointSource source : parent.iterableForLocation(origin)) {
+				double r = Locations.horzDistanceFast(origin, source.loc);
+				tableBuilder.add(r, source.mfd);
+				parentCount++;
+			}
+
+			DataTable table = tableBuilder.build();
+			return table;
 		}
 	}
 

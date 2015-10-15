@@ -16,15 +16,9 @@ import static org.opensha2.geo.Locations.horzDistanceFast;
 
 import java.util.BitSet;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import org.opensha2.calc.HazardInput;
 import org.opensha2.calc.InputList;
@@ -51,7 +45,7 @@ import com.google.common.primitives.Doubles;
  * 
  * @author Peter Powers
  */
-public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSource> {
+public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSource> {
 
 	private final List<GriddedSurface> sections;
 	private final List<BitSet> bitsets;
@@ -468,6 +462,10 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 //		}
 //	}
 	
+	public static Function<SystemSourceSet, InputList> toInputsFunction(Site site) {
+		return new ToInputs(site);
+	}
+	
 	/*
 	 * TODO This is a more compact form of the original ToInputs that was structured to
 	 * be more easily repurposed as a multithreaded implementation. i.e. using Callables
@@ -475,7 +473,7 @@ public class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSou
 	 * anticipating that multipl system models will be run in parallel
 	 *
 	 */
-	public static final class ToInputs implements Function<SystemSourceSet, InputList> {
+	private static final class ToInputs implements Function<SystemSourceSet, InputList> {
 
 		private final Site site;
 

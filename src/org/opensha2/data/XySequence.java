@@ -18,11 +18,11 @@ import com.google.common.primitives.Doubles;
 
 /**
  * Sequence of xy-value pairs that is iterable ascending in x. Once created, the
- * x-values of a sequence are immutable. This class provides static operations to
- * create instances of sequences that have both mutable and immutable y-values.
- * All data supplied to these operations is defensively copied unless it is not
- * necessary to do so. For instance, {@code *copyOf()} variants should be used
- * where possible as x-values will never be replicated in memory.
+ * x-values of a sequence are immutable. This class provides static operations
+ * to create instances of sequences that have both mutable and immutable
+ * y-values. All data supplied to these operations is defensively copied unless
+ * it is not necessary to do so. For instance, {@code *copyOf()} variants should
+ * be used where possible as x-values will never be replicated in memory.
  * 
  * <p>Although this class is not final, it can not be subclassed. Mutable
  * instances of this class are not thread-safe for operations that alter
@@ -127,9 +127,11 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	private static XySequence construct(double[] xs, double[] ys, boolean mutable) {
-		checkArgument(xs.length > 1, "x-values may not be empty");
+		checkArgument(xs.length > 0, "x-values may not be empty");
 		checkArgument(xs.length == ys.length, "x- and y-values are different sizes");
-		checkArgument(isMonotonic(true, true, xs), "x-values do not increase monotonically");
+		if (xs.length > 1) {
+			checkArgument(isMonotonic(true, true, xs), "x-values do not increase monotonically");
+		}
 		return mutable ?
 			new MutableXySequence(xs, ys) :
 			new ImmutableXySequence(xs, ys);
@@ -429,6 +431,11 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	public XySequence clear() {
 		throw new UnsupportedOperationException();
 	}
+
+	/**
+	 * Returns {@code true} if all y-values are 0.0; {@code false} otherwise.
+	 */
+	public abstract boolean isEmpty();
 
 	/**
 	 * Transforms all y-values in place using the supplied {@link Function}.

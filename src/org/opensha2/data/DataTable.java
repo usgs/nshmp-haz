@@ -7,8 +7,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.DataTables.checkDataSize;
 import static org.opensha2.data.DataTables.checkDataState;
 import static org.opensha2.data.DataTables.indexOf;
-import static org.opensha2.data.DataTables.keyArray;
-import static org.opensha2.data.DataUtils.validateDelta;
+import static org.opensha2.data.DataTables.keys;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,16 +19,16 @@ import com.google.common.primitives.Doubles;
 
 /**
  * A 2-dimensional table of immutable, double-valued data that is arranged
- * according to increasing and uniformly spaced double-valued keys.
- * Data tables are almost always used to represent binned data, and so while row
- * and column keys are bin centers, indexing is managed internally using bin
- * edges. This simplifies issues related to rounding/precision errors that occur
- * when indexing according to explicit double values.
+ * according to increasing and uniformly spaced double-valued keys. Data tables
+ * are almost always used to represent binned data, and so while row and column
+ * keys are bin centers, indexing is managed internally using bin edges. This
+ * simplifies issues related to rounding/precision errors that occur when
+ * indexing according to explicit double values.
  * 
  * <p>To create a {@code DataTable} instance, use a {@link Builder}.
  * 
- * <p>Internally, a {@code DataTable} is backed by a {@code double[][]} array where
- * 'row' refers to the 1st dimension and 'column' the 2nd.
+ * <p>Internally, a {@code DataTable} is backed by a {@code double[][]} array
+ * where 'row' refers to the 1st dimension and 'column' the 2nd.
  * 
  * <p>Note that data tables are not intended for use with very high precision
  * data and keys are currently limited to a precision of 4 decimal places. This
@@ -42,7 +41,7 @@ public interface DataTable {
 
 	/**
 	 * Return a value corresponding to the supplied {@code row} and
-	 * {@code column}.
+	 * {@code column} keys.
 	 * 
 	 * @param row of value to retrieve (may not explicitely exist as a key)
 	 * @param column of value to retrieve (may not explicitely exist as a key)
@@ -86,8 +85,12 @@ public interface DataTable {
 	 * <p>See {@link #create()} to initialize a new builder. Rows and columns
 	 * must be specified before any data can be added.
 	 */
-	public final static class Builder {
+	public static final class Builder {
 
+		// TODO data is not copied on build() so we need to dereference
+		// data arrays on build() to prevent lingering builders from 
+		// further modifying data
+		
 		private double[][] data;
 
 		private double rowMin;
@@ -101,6 +104,7 @@ public interface DataTable {
 		private double[] columns;
 
 		private boolean built = false;
+		private boolean initialized = false;
 
 		private Builder() {}
 
@@ -144,108 +148,76 @@ public interface DataTable {
 		}
 
 		private void init() {
+			checkState(!initialized, "Builder has already been initialized");
 			if (rows != null && columns != null) {
 				data = new double[rows.length][columns.length];
+				initialized = true;
 			}
 		}
-
+		
 		/**
-		 * Utility method called by {@link #rows(double, double, double)} and
-		 * {@link #columns(double, double, double)} to initialize row and column
-		 * keys. This is exposed for convenience as there are circumstances
-		 * where a reference to the row or column keys is helpful to have when
-		 * building.
+		 * Return the index of the row that would contain the supplied value.
+		 * @param row value
 		 */
-		public static double[] keys(double min, double max, double Δ) {
-			return keyArray(min, max, validateDelta(min, max, Δ));
+		public int rowIndex(double row) {
+			return indexOf(rowMin, rowΔ, row, rows.length);
+		}
+		
+		/**
+		 * Return the index of the column that would contain the supplied value.
+		 * @param column value
+		 */
+		public int columnIndex(double column) {
+			return indexOf(columnMin, columnΔ, column, columns.length);
 		}
 
 		/**
-		 * Set the value at the specified row and column.
+		 * Set the value at the specified row and column. Be careful not to
+		 * confuse this with {@link #set(int, int, double)}.
 		 * 
 		 * @param row key
 		 * @param column key
 		 * @param value to set
 		 */
 		public Builder set(double row, double column, double value) {
-			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
-			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
-			data[rowIndex][columnIndex] = value;
+			return set(rowIndex(row), columnIndex(column), value);
+		}
+
+		/**
+		 * Set the value at the specified row and column indices. Be careful not
+		 * to confuse this with {@link #set(double, double, double)}.
+		 * 
+		 * @param row index
+		 * @param column index
+		 * @param value to set
+		 */
+		public Builder set(int row, int column, double value) {
+			data[row][column] = value;
 			return this;
 		}
 
 		/**
-		 * Set the values in the specified row.
-		 *
-		 * @param row key
-		 * @param values to set
-		 * @throws IndexOutOfBoundsException if values overrun row
-		 */
-		public Builder set(double row, double[] values) {
-			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
-			checkElementIndex(values.length - 1, columns.length,
-				"Supplied values overrun end of row");
-			double[] rowData = data[rowIndex];
-			for (int i = 0; i < values.length; i++) {
-				rowData[i] = values[i];
-			}
-			return this;
-		}
-
-		/**
-		 * Set the values in the specified row.
-		 *
-		 * @param row key
-		 * @param values to set
-		 * @throws IndexOutOfBoundsException if values overrun row
-		 */
-		public Builder set(double row, List<Double> values) {
-			return set(row, Doubles.toArray(values));
-		}
-
-		/**
-		 * Set the values in the specified row starting at the specified column.
-		 *
-		 * @param row key
-		 * @param column key from which to start setting values
-		 * @param values to set
-		 * @throws IndexOutOfBoundsException if values overrun row
-		 */
-		public Builder set(double row, double column, double[] values) {
-			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
-			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
-			checkElementIndex(columnIndex + values.length - 1, columns.length,
-				"Supplied values overrun end of row");
-			double[] rowData = data[rowIndex];
-			for (int i = 0; i < values.length; i++) {
-				rowData[columnIndex + i] = values[i];
-			}
-			return this;
-		}
-
-		/**
-		 * Set the values in the specified row starting at the specified column.
-		 *
-		 * @param row key
-		 * @param column key from which to start setting values
-		 * @param values to set
-		 * @throws IndexOutOfBoundsException if values overrun row
-		 */
-		public Builder set(double row, double column, List<Double> values) {
-			return set(row, column, Doubles.toArray(values));
-		}
-
-		/**
-		 * Add to the existing value at the specified row and column.
+		 * Add to the existing value at the specified row and column. Be careful
+		 * not to confuse this with {@link #add(int, int, double)}.
 		 * 
 		 * @param row key
 		 * @param column key
 		 * @param value to add
 		 */
-		public Builder add(double row, int column, double value) {
-			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
-			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
-			data[rowIndex][columnIndex] += value;
+		public Builder add(double row, double column, double value) {
+			return add(rowIndex(row), columnIndex(column), value);
+		}
+
+		/**
+		 * Add to the existing value at the specified row and column indices. Be
+		 * careful not to confuse this with {@link #add(int, int, double)}.
+		 * 
+		 * @param row index
+		 * @param column index
+		 * @param value to set
+		 */
+		public Builder add(int row, int column, double value) {
+			data[row][column] += value;
 			return this;
 		}
 
@@ -256,11 +228,10 @@ public interface DataTable {
 		 * @param values to set
 		 * @throws IndexOutOfBoundsException if values overrun row
 		 */
-		public Builder add(double row, double[] values) {
-			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
+		private Builder add(double row, double[] values) {
 			checkElementIndex(values.length - 1, columns.length,
 				"Supplied values overrun end of row");
-			double[] rowData = data[rowIndex];
+			double[] rowData = data[rowIndex(row)];
 			for (int i = 0; i < values.length; i++) {
 				rowData[i] += values[i];
 			}
@@ -277,7 +248,20 @@ public interface DataTable {
 		public Builder add(double row, List<Double> values) {
 			return add(row, Doubles.toArray(values));
 		}
-		
+
+		/**
+		 * Add the y-values of the supplied sequence to the values in the
+		 * specified row.
+		 *
+		 * @param row key
+		 * @param values to set
+		 * @throws IndexOutOfBoundsException if values overrun row
+		 */
+		public Builder add(double row, XySequence sequence) {
+			// safe covariant cast
+			return add(row, ((ImmutableXySequence) sequence).ys);
+		}
+
 		/**
 		 * Add to the values in the specified row starting at the specified
 		 * column.
@@ -288,11 +272,10 @@ public interface DataTable {
 		 * @throws IndexOutOfBoundsException if values overrun row
 		 */
 		public Builder add(double row, double column, double[] values) {
-			int rowIndex = indexOf(rowMin, rowΔ, row, rows.length);
-			int columnIndex = indexOf(columnMin, columnΔ, column, columns.length);
+			int columnIndex = columnIndex(column);
 			checkElementIndex(columnIndex + values.length - 1, columns.length,
 				"Supplied values overrun end of row");
-			double[] rowData = data[rowIndex];
+			double[] rowData = data[rowIndex(row)];
 			for (int i = 0; i < values.length; i++) {
 				rowData[columnIndex + i] = values[i];
 			}
@@ -315,8 +298,10 @@ public interface DataTable {
 		/**
 		 * Set all values using a copy of the supplied data.
 		 * 
+		 * TODO replace with add(DataTable)
 		 * @param data to set
 		 */
+		@Deprecated
 		public Builder setAll(double[][] data) {
 			checkNotNull(data);
 			checkArgument(data.length > 0 && data[0].length > 0,

@@ -6,7 +6,6 @@ import static com.google.common.base.Strings.padEnd;
 import static org.opensha2.data.DataUtils.validateWeight;
 import static org.opensha2.util.TextUtils.validateName;
 
-import org.opensha2.eq.model.FaultSourceSet.Builder;
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -24,9 +23,6 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	private final int id;
 	private final double weight;
 	private final GmmSet gmmSet;
-
-	// NOTE we're holding onto weight for reference, however, MFD
-	// rates will have already been scaled in place. TODO is this true?
 
 	AbstractSourceSet(String name, int id, double weight, GmmSet gmmSet) {
 		this.name = name;
@@ -46,7 +42,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 	@Override public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(" Id: ").append(padEnd(Integer.toString(id), 8, ' '));
-		sb.append("Name: ").append(padEnd(name, 32, ' '));
+		sb.append("Name: ").append(padEnd(name(), 38, ' '));
 		sb.append("Size: ").append(padEnd(Integer.toString(size()), 8, ' '));
 		sb.append("Weight: ").append(padEnd(Double.toString(weight), 12, ' '));
 		return sb.toString();

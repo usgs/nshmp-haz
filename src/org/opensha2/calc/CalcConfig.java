@@ -69,6 +69,8 @@ public final class CalcConfig {
 	private final Map<Imt, double[]> customImls;
 	final DeaggData deagg;
 	private final SiteSet sites;
+	
+	final boolean optimizeGrids;
 
 	final Map<Imt, XySequence> modelCurves;
 	final Map<Imt, XySequence> logModelCurves;
@@ -87,6 +89,7 @@ public final class CalcConfig {
 			Map<Imt, double[]> customImls,
 			DeaggData deagg,
 			SiteSet sites,
+			boolean optimizeGrids,
 			Map<Imt, XySequence> modelCurves,
 			Map<Imt, XySequence> logModelCurves) {
 
@@ -98,6 +101,7 @@ public final class CalcConfig {
 		this.customImls = customImls;
 		this.deagg = deagg;
 		this.sites = sites;
+		this.optimizeGrids = optimizeGrids;
 		this.modelCurves = modelCurves;
 		this.logModelCurves = logModelCurves;
 	}
@@ -250,6 +254,7 @@ public final class CalcConfig {
 		private Map<Imt, double[]> customImls;
 		private DeaggData deagg;
 		private SiteSet sites;
+		private Boolean optimizeGrids;
 
 		public Builder copy(CalcConfig config) {
 			checkNotNull(config);
@@ -261,6 +266,7 @@ public final class CalcConfig {
 			this.customImls = config.customImls;
 			this.deagg = config.deagg;
 			this.sites = config.sites;
+			this.optimizeGrids = config.optimizeGrids;
 			return this;
 		}
 
@@ -275,6 +281,7 @@ public final class CalcConfig {
 			this.customImls = Maps.newHashMap();
 			this.deagg = new DeaggData();
 			this.sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
+			this.optimizeGrids = true;
 			return this;
 		}
 
@@ -288,6 +295,7 @@ public final class CalcConfig {
 			if (that.customImls != null) this.customImls = that.customImls;
 			if (that.deagg != null) this.deagg = that.deagg;
 			if (that.sites != null) this.sites = that.sites;
+			if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
 			return this;
 		}
 
@@ -342,7 +350,8 @@ public final class CalcConfig {
 			Map<Imt, XySequence> logCurves = createLogCurveMap();
 			return new CalcConfig(
 				resource, exceedanceModel, truncationLevel, finalImts,
-				defaultImls, customImls, deagg, sites, curves, logCurves);
+				defaultImls, customImls, deagg, sites, optimizeGrids,
+				curves, logCurves);
 		}
 
 	}

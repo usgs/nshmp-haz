@@ -3,6 +3,7 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
+import static org.opensha2.data.DataUtils.validateDelta;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.Arrays;
@@ -19,13 +20,27 @@ import com.google.common.primitives.Doubles;
  *
  * @author Peter Powers
  */
-final class DataTables {
+public final class DataTables {
+
+	/**
+	 * Create a set of keys for use in a {@link DataTable} or {@link DataVolume}.
+	 * This is exposed for convenience as there are circumstances
+	 * where a reference to the row or column keys is helpful to have when
+	 * building.
+	 * 
+	 * @param min lower edge of lowermost bin
+	 * @param max upper edge of uppermost bin
+	 * @param Δ bin width
+	 */
+	public static double[] keys(double min, double max, double Δ) {
+		return keyArray(min, max, validateDelta(min, max, Δ));
+	}
 
 	/*
 	 * Create clean sequence of keys. Precision is curently set to 4 decimal
 	 * places.
 	 */
-	static double[] keyArray(double min, double max, double Δ) {
+	private static double[] keyArray(double min, double max, double Δ) {
 		double Δby2 = Δ / 2.0;
 		return DataUtils.buildCleanSequence(
 			min + Δby2,

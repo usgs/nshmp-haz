@@ -13,12 +13,14 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.opensha2.data.DataTable;
+import org.opensha2.data.DataTables;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.GridSourceSet;
 import org.opensha2.eq.model.PointSources;
 import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
 import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmInput;
@@ -35,6 +37,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Doubles;
 
 /**
  * Handler for hazard calculations where grid source ground motions have been
@@ -165,9 +168,14 @@ public class GridCalc {
 			double rMax = gmmSet.maxDistance();
 			double rΔ = distanceDiscretization(rMax);
 //			double[] distances = DataTable.Builder.create().rows(rMin, rMax, rΔ).rows();
-			double[] distances = DataTable.Builder.keys(rMin, rMax, rΔ);
+			double[] distances = DataTables.keys(rMin, rMax, rΔ);
 			
-			List<Site> siteList = createSiteList(distances, vs30);
+			LocationList locations = LocationList.create(
+				SRC_LOC,
+				Doubles.asList(distances),
+				SRC_TO_SITE_AZIMUTH);
+
+			List<Site> siteList = createSiteList(locations, vs30);
 
 			boolean multiMech = isMultiMech(gmmSet.gmms());
 			Map<FocalMech, Double> mechWtMap = multiMech ? MULTI_MECH_MAP : SS_MECH_MAP;
@@ -266,7 +274,7 @@ public class GridCalc {
 	private static final double M_MAX = 8.0;
 	private static final double M_Δ = 0.1;
 
-	private static final double[] MAGS = DataTable.Builder.keys(M_MIN, M_MAX, M_Δ);
+	private static final double[] MAGS = DataTables.keys(M_MIN, M_MAX, M_Δ);
 	private static final double[] RATES = new double[MAGS.length]; // empty
 //	private static final IncrementalMfd GRID_MFD = Mfds.newIncrementalMFD(MAGS, RATES);
 	private static final XySequence GRID_MFD = XySequence.createImmutable(MAGS, RATES);
@@ -291,7 +299,7 @@ public class GridCalc {
 	 * Return a distance dependent discretization. Currently this is fixed at
 	 * 1km for r<400km and 5km for r>= 400km
 	 */
-	private static double distanceDiscretization(double r) {
+	public static double distanceDiscretization(double r) {
 		return r < 400.0 ? 1.0 : 5.0;
 	}
 
@@ -326,7 +334,7 @@ public class GridCalc {
 			.build());
 
 	private static final Location SRC_LOC = Location.create(0.0, 0.0);
-	private static final double SRC_TO_SITE_AZIMUTH = 0.0;
+	public static final double SRC_TO_SITE_AZIMUTH = 0.0;
 
 	/*
 	 * Create a list of sites, one at each distance from a source. To build
@@ -334,11 +342,10 @@ public class GridCalc {
 	 * sites are created along a N-S line. This recovers accurate distances
 	 * using fast distance calculation algorthms.
 	 */
-	private static List<Site> createSiteList(double[] distances, Vs30 vs30) {
+	private static List<Site> createSiteList(LocationList locs, Vs30 vs30) {
 		List<Site> siteList = new ArrayList<>();
 		Site.Builder siteBuilder = Site.builder().vs30(vs30.value());
-		for (double r : distances) {
-			Location loc = Locations.location(SRC_LOC, SRC_TO_SITE_AZIMUTH, r);
+		for (Location loc : locs) {
 			siteBuilder.location(loc);
 			siteList.add(siteBuilder.build());
 		}
