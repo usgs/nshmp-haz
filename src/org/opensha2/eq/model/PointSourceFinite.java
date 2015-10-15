@@ -15,15 +15,14 @@ import static org.opensha2.util.MathUtils.hypot;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.scaling.MagLengthRelationship;
-import org.opensha2.eq.fault.surface.PtSrcDistCorr;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.PointSource.PointSurface;
 import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
-import org.opensha2.mfd.IncrementalMfd;
 
 /**
  * Point-source earthquake implementation in which all magnitudes are
@@ -48,7 +47,7 @@ import org.opensha2.mfd.IncrementalMfd;
  */
 class PointSourceFinite extends PointSource {
 
-	int fwIdxLo, fwIdxHi;
+	int fwIndexLo, fwIndexHi;
 
 	/**
 	 * Constructs a new point earthquake source.
@@ -59,8 +58,8 @@ class PointSourceFinite extends PointSource {
 	 * @param depthModel specifies magnitude cutoffs and associated weights for
 	 *        different depth-to-top-of-ruptures
 	 */
-	PointSourceFinite(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
-		RuptureScaling rupScaling, DepthModel depthModel) {
+	PointSourceFinite(Location loc, XySequence mfd, Map<FocalMech, Double> mechWtMap,
+			RuptureScaling rupScaling, DepthModel depthModel) {
 		super(loc, mfd, mechWtMap, rupScaling, depthModel);
 		init();
 	}
@@ -78,17 +77,17 @@ class PointSourceFinite extends PointSource {
 	 * return null reference but don't like returning null.
 	 */
 
-	private void updateRupture(Rupture rup, int idx) {
+	private void updateRupture(Rupture rup, int index) {
 
-		int magDepthIdx = idx % magDepthSize;
-		int magIdx = depthModel.magDepthIndices.get(magDepthIdx);
-		double mag = mfd.getX(magIdx);
-		double rate = mfd.getY(magIdx);
+		int magDepthIndex = index % magDepthSize;
+		int magIndex = depthModel.magDepthIndices.get(magDepthIndex);
+		double mag = mfd.x(magIndex);
+		double rate = mfd.y(magIndex);
 
-		double zTop = depthModel.magDepthDepths.get(magDepthIdx);
-		double zTopWt = depthModel.magDepthWeights.get(magDepthIdx);
+		double zTop = depthModel.magDepthDepths.get(magDepthIndex);
+		double zTopWt = depthModel.magDepthWeights.get(magDepthIndex);
 
-		FocalMech mech = mechForIndex(idx);
+		FocalMech mech = mechForIndex(index);
 		double mechWt = mechWtMap.get(mech);
 		if (mech != STRIKE_SLIP) mechWt *= 0.5;
 		double dipRad = mech.dip() * TO_RAD;
@@ -107,7 +106,7 @@ class PointSourceFinite extends PointSource {
 		fpSurf.widthH = widthDD * cos(dipRad);
 		fpSurf.zTop = zTop;
 		fpSurf.zBot = zTop + widthDD * sin(dipRad);
-		fpSurf.footwall = isOnFootwall(idx);
+		fpSurf.footwall = isOnFootwall(index);
 	}
 
 	@Override public Iterator<Rupture> iterator() {
@@ -140,7 +139,7 @@ class PointSourceFinite extends PointSource {
 		 * Get the number of mag-depth iterations required to get to mMax. See
 		 * explanation in GridSourceSet for how magDepthIndices is set up
 		 */
-		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
+		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.size() - 1) + 1;
 
 		/*
 		 * Init rupture indexing: SS-FW RV-FW RV-HW NR-FW NR-HW. Each category
@@ -150,10 +149,10 @@ class PointSourceFinite extends PointSource {
 		int ssCount = (int) ceil(mechWtMap.get(STRIKE_SLIP)) * magDepthSize;
 		int revCount = (int) ceil(mechWtMap.get(REVERSE)) * magDepthSize * 2;
 		int norCount = (int) ceil(mechWtMap.get(NORMAL)) * magDepthSize * 2;
-		ssIdx = ssCount;
-		revIdx = ssCount + revCount;
-		fwIdxLo = ssCount + revCount / 2;
-		fwIdxHi = ssCount + revCount + norCount / 2;
+		ssIndex = ssCount;
+		revIndex = ssCount + revCount;
+		fwIndexLo = ssCount + revCount / 2;
+		fwIndexHi = ssCount + revCount + norCount / 2;
 
 		rupCount = ssCount + revCount + norCount;
 	}
@@ -164,8 +163,9 @@ class PointSourceFinite extends PointSource {
 	 * potentially short circuit GMPE calcs. Because the index order is SS-FW
 	 * RV-FW RV-HW NR-FW NR-HW
 	 */
-	boolean isOnFootwall(int idx) {
-		return (idx < fwIdxLo) ? true : (idx < revIdx) ? false : (idx < fwIdxHi) ? true : false;
+	boolean isOnFootwall(int index) {
+		return (index < fwIndexLo) ? true : (index < revIndex) ? false :
+			(index < fwIndexHi) ? true : false;
 	}
 
 	static class FiniteSurface extends PointSurface {

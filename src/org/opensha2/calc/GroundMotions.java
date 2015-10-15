@@ -28,7 +28,10 @@ final class GroundMotions {
 	/*
 	 * NOTE the inputList supplied to Builder is immutable but the mean and
 	 * sigma lists it builds are not; builder backs mean and sigma lists with
-	 * double[].
+	 * double[]. Nor are the mean and sigma maps immutable.
+	 * 
+	 * TODO It would be nice to have an immutable variant of a doubl[] backed
+	 * list, but would require copying values on build().
 	 */
 
 	final InputList inputs;

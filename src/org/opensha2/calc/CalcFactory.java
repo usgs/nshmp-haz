@@ -39,16 +39,15 @@ final class CalcFactory {
 
 	// TODO For future consideration:
 	// -- set initial capcity of source arrays
-	// -- filter entire sourceSets on distance
-
+	// -- filter entire sourceSets on distance 
+	
 	/* Compute hazard curves for a SourceSet. */
 	static HazardCurveSet sourcesToCurves(
 			SourceSet<? extends Source> sources,
 			CalcConfig config,
 			Site site) {
 
-		Function<Source, HazardCurves> sourceToCurves = new SourceToCurves(
-			sources, config, site);
+		Function<Source, HazardCurves> sourceToCurves = new SourceToCurves(sources, config, site);
 		List<HazardCurves> curvesList = new ArrayList<>();
 		for (Source source : sources.iterableForLocation(site.location)) {
 			curvesList.add(sourceToCurves.apply(source));
@@ -57,7 +56,7 @@ final class CalcFactory {
 			new CurveConsolidator(sources, config);
 		return consolidateFn.apply(curvesList);
 	}
-
+	
 	/* Asynchronously compute hazard curves for a SourceSet. */
 	static ListenableFuture<HazardCurveSet> sourcesToCurves(
 			SourceSet<? extends Source> sources,
@@ -65,8 +64,7 @@ final class CalcFactory {
 			Site site,
 			Executor ex) {
 
-		Function<Source, HazardCurves> sourceToCurves = new SourceToCurves(
-			sources, config, site);
+		Function<Source, HazardCurves> sourceToCurves = new SourceToCurves(sources, config, site);
 		AsyncList<HazardCurves> curvesList = AsyncList.create();
 		for (Source source : sources.iterableForLocation(site.location)) {
 			ListenableFuture<HazardCurves> curves = transform(
@@ -80,7 +78,7 @@ final class CalcFactory {
 			new CurveConsolidator(sources, config),
 			ex);
 	}
-
+	
 	/* Compute hazard curves for a SystemSourceSet. */
 	static HazardCurveSet systemToCurves(
 			SystemSourceSet sources,

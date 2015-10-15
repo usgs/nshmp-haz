@@ -10,9 +10,8 @@ import static org.opensha2.eq.Magnitudes.magToMoment_N_m;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.data.DataUtils;
-import org.opensha2.data.XY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.Magnitudes;
 
 import com.google.common.base.Converter;
@@ -354,14 +353,15 @@ public final class Mfds {
 	}
 
 	/**
-	 * Convert an {@code IncrementalMfd} to an {@code ArrayXY_Sequence}.
+	 * Convert an {@code IncrementalMfd} to an {@code XySequence}.
 	 * 
 	 * @param mfd to convert
 	 * @return a sequence populated with the values of the supplied
 	 *         {@code IncrementalMfd}.
 	 */
-	public static ArrayXY_Sequence toSequence(IncrementalMfd mfd) {
-		return ArrayXY_Sequence.create(Doubles.toArray(mfd.xValues()),
+	public static XySequence toSequence(IncrementalMfd mfd) {
+		return XySequence.createImmutable(
+			Doubles.toArray(mfd.xValues()),
 			Doubles.toArray(mfd.yValues()));
 	}
 
@@ -369,10 +369,10 @@ public final class Mfds {
 	 * Combine all {@code mfds} into a single sequence.
 	 * @param mfds
 	 */
-	@Deprecated public static XY_Sequence combine(IncrementalMfd... mfds) {
-		// TODO slated for removal once MFDs descend from XY_Sequence
+	@Deprecated public static XySequence combine(IncrementalMfd... mfds) {
+		// TODO slated for removal once MFDs descend from XySequence
 		checkArgument(checkNotNull(mfds).length > 0);
-		List<XY_Sequence> sequences = new ArrayList<>();
+		List<XySequence> sequences = new ArrayList<>();
 		for (IncrementalMfd mfd : mfds) {
 			sequences.add(toSequence(mfd));
 		}

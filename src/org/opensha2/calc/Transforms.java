@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.opensha2.calc.ClusterCurves.Builder;
-import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.RuptureSurface;
 import org.opensha2.eq.model.ClusterSource;
@@ -61,6 +61,8 @@ final class Transforms {
 	 */
 
 	/*
+	 * Source --> InputList
+	 * 
 	 * Create a list of ground motion inputs from a source.
 	 */
 	static final class SourceToInputs implements Function<Source, InputList> {
@@ -107,6 +109,8 @@ final class Transforms {
 	}
 
 	/*
+	 * InputList --> GroundMotions
+	 * 
 	 * Calculate ground motions for a list of ground motion inputs.
 	 */
 	static final class InputsToGroundMotions implements Function<InputList, GroundMotions> {
@@ -140,11 +144,13 @@ final class Transforms {
 	}
 
 	/*
+	 * GroundMotions --> HazardCurves
+	 * 
 	 * Derive hazard curves for a set of ground motions.
 	 */
 	static final class GroundMotionsToCurves implements Function<GroundMotions, HazardCurves> {
 
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final Map<Imt, XySequence> modelCurves;
 		private final ExceedanceModel exceedanceModel;
 		private final double truncationLevel;
 
@@ -158,19 +164,20 @@ final class Transforms {
 
 			HazardCurves.Builder curveBuilder = HazardCurves.builder(groundMotions);
 
-			for (Entry<Imt, ArrayXY_Sequence> entry : modelCurves.entrySet()) {
+			for (Entry<Imt, XySequence> entry : modelCurves.entrySet()) {
 
-				ArrayXY_Sequence modelCurve = entry.getValue();
+				XySequence modelCurve = entry.getValue();
 				Imt imt = entry.getKey();
 
-				ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
+				XySequence utilCurve = XySequence.copyOf(modelCurve);
+				XySequence gmmCurve = XySequence.copyOf(modelCurve);
 
 				Map<Gmm, List<Double>> gmmMeans = groundMotions.means.get(imt);
 				Map<Gmm, List<Double>> gmmSigmas = groundMotions.sigmas.get(imt);
 
 				for (Gmm gmm : gmmMeans.keySet()) {
 
-					ArrayXY_Sequence gmmCurve = ArrayXY_Sequence.copyOf(modelCurve);
+					gmmCurve.clear();
 
 					List<Double> means = gmmMeans.get(gmm);
 					List<Double> sigmas = gmmSigmas.get(gmm);
@@ -193,6 +200,8 @@ final class Transforms {
 	}
 
 	/*
+	 * Source --> HazardCurves
+	 * 
 	 * Compute hazard curves for a source. This function coalesces the three
 	 * preceeding functions into one.
 	 */
@@ -222,11 +231,15 @@ final class Transforms {
 		}
 	}
 
-	/* Reduce multiple source curves. */
+	/*
+	 * List<HazardCurves> --> HazardCurveSet
+	 * 
+	 * Reduce multiple source curves.
+	 */
 	static final class CurveConsolidator implements Function<List<HazardCurves>, HazardCurveSet> {
 
 		private final SourceSet<? extends Source> sources;
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final Map<Imt, XySequence> modelCurves;
 
 		CurveConsolidator(
 				SourceSet<? extends Source> sources,
@@ -252,9 +265,13 @@ final class Transforms {
 	}
 
 	/*
-	 * SYSTEM: Compute hazard curves for system sources. This function derives
-	 * all inputs for an entire SystemSourceSet before being composed with
-	 * standard ground motion and hazard curve functions.
+	 * SYSTEM:
+	 * 
+	 * SystemSourceSet --> HazardCurveSet
+	 * 
+	 * Compute hazard curves for system sources. This function derives all
+	 * inputs for an entire SystemSourceSet before being composed with standard
+	 * ground motion and hazard curve functions.
 	 */
 	static final class SystemToCurves implements Function<SystemSourceSet, HazardCurveSet> {
 
@@ -271,13 +288,20 @@ final class Transforms {
 			Set<Gmm> gmms = sources.groundMotionModels().gmms();
 			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(config.imts, gmms);
 
-			this.sourcesToInputs = new SystemSourceSet.ToInputs(site);
+			this.sourcesToInputs = SystemSourceSet.toInputsFunction(site);
 			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
 			this.groundMotionsToCurves = new GroundMotionsToCurves(config);
 			this.curveConsolidator = new CurveConsolidator(sources, config);
 		}
 
 		@Override public HazardCurveSet apply(SystemSourceSet sources) {
+
+			// TODO given that this is a pretty heavyweight apply()
+			// (i.e. its only called once per source set) the functions should
+			// probably be created on demand; currently the same sources set is
+			// supplied to the constructor as is passed into apply(), which
+			// is wierd
+
 			return curveConsolidator.apply(
 				ImmutableList.of(
 					groundMotionsToCurves.apply(
@@ -288,7 +312,11 @@ final class Transforms {
 	}
 
 	/*
-	 * CLUSTER: Create a list of ground motion inputs from a cluster source.
+	 * CLUSTER:
+	 * 
+	 * ClusterSource --> ClusterInputs
+	 * 
+	 * Create a list of ground motion inputs from a cluster source.
 	 */
 	static final class ClusterSourceToInputs implements Function<ClusterSource, ClusterInputs> {
 
@@ -308,8 +336,11 @@ final class Transforms {
 	}
 
 	/*
-	 * CLUSTER: Calculate ground motions for a list of cluster ground motion
-	 * inputs.
+	 * CLUSTER:
+	 * 
+	 * ClusterInputs --> ClusterGroundMotions
+	 * 
+	 * Calculate ground motions for a list of cluster ground motion inputs.
 	 */
 	static final class ClusterInputsToGroundMotions implements
 			Function<ClusterInputs, ClusterGroundMotions> {
@@ -331,7 +362,11 @@ final class Transforms {
 	}
 
 	/*
-	 * CLUSTER: Collapse magnitude variants and compute the joint probability of
+	 * CLUSTER:
+	 * 
+	 * ClusterGroundMotions --> ClusterCurves
+	 * 
+	 * Collapse magnitude variants and compute the joint probability of
 	 * exceedence for sources in a cluster. Note that this is only to be used
 	 * with cluster sources as the weight of each magnitude variant is stored in
 	 * the TmeporalGmmInput.rate field, which is kinda KLUDGY, but works.
@@ -339,7 +374,7 @@ final class Transforms {
 	static final class ClusterGroundMotionsToCurves implements
 			Function<ClusterGroundMotions, ClusterCurves> {
 
-		private final Map<Imt, ArrayXY_Sequence> logModelCurves;
+		private final Map<Imt, XySequence> logModelCurves;
 		private final ExceedanceModel exceedanceModel;
 		private final double truncationLevel;
 
@@ -353,17 +388,17 @@ final class Transforms {
 
 			Builder builder = ClusterCurves.builder(clusterGroundMotions);
 
-			for (Entry<Imt, ArrayXY_Sequence> entry : logModelCurves.entrySet()) {
+			for (Entry<Imt, XySequence> entry : logModelCurves.entrySet()) {
 
-				ArrayXY_Sequence modelCurve = entry.getValue();
+				XySequence modelCurve = entry.getValue();
 				Imt imt = entry.getKey();
 
 				// aggregator of curves for each fault in a cluster
-				ListMultimap<Gmm, ArrayXY_Sequence> faultCurves = MultimapBuilder
+				ListMultimap<Gmm, XySequence> faultCurves = MultimapBuilder
 					.enumKeys(Gmm.class)
 					.arrayListValues(clusterGroundMotions.size())
 					.build();
-				ArrayXY_Sequence utilCurve = ArrayXY_Sequence.copyOf(modelCurve);
+				XySequence utilCurve = XySequence.copyOf(modelCurve);
 
 				for (GroundMotions hazardGroundMotions : clusterGroundMotions) {
 
@@ -371,7 +406,7 @@ final class Transforms {
 					Map<Gmm, List<Double>> gmmSigmas = hazardGroundMotions.sigmas.get(imt);
 
 					for (Gmm gmm : gmmMeans.keySet()) {
-						ArrayXY_Sequence magVarCurve = ArrayXY_Sequence.copyOf(modelCurve);
+						XySequence magVarCurve = XySequence.copyOf(modelCurve);
 						List<Double> means = gmmMeans.get(gmm);
 						List<Double> sigmas = gmmSigmas.get(gmm);
 						for (int i = 0; i < hazardGroundMotions.inputs.size(); i++) {
@@ -391,7 +426,7 @@ final class Transforms {
 				double rate = clusterGroundMotions.parent.rate();
 				for (Gmm gmm : faultCurves.keySet()) {
 					// TODO where should this be pointing
-					ArrayXY_Sequence clusterCurve = Utils.calcClusterExceedProb(faultCurves
+					XySequence clusterCurve = Utils.calcClusterExceedProb(faultCurves
 						.get(gmm));
 					builder.addCurve(imt, gmm, clusterCurve.multiply(rate));
 				}
@@ -402,8 +437,12 @@ final class Transforms {
 	}
 
 	/*
-	 * CLUSTER: Compute hazard curves for a cluster source. This function
-	 * coalesces the three preceeding functions into one.
+	 * CLUSTER:
+	 * 
+	 * ClusterSource --> ClusterCurves
+	 * 
+	 * Compute hazard curves for a cluster source. This function coalesces the
+	 * three preceeding functions into one.
 	 */
 	static final class ClusterToCurves implements Function<ClusterSource, ClusterCurves> {
 
@@ -432,13 +471,17 @@ final class Transforms {
 	}
 
 	/*
-	 * CLUSTER: Reduce multiple cluster source curves.
+	 * CLUSTER:
+	 * 
+	 * List<ClusterCurves> --> HazardCurveSet
+	 * 
+	 * Reduce multiple cluster source curves.
 	 */
 	static final class ClusterCurveConsolidator implements
 			Function<List<ClusterCurves>, HazardCurveSet> {
 
 		private final ClusterSourceSet sources;
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final Map<Imt, XySequence> modelCurves;
 
 		ClusterCurveConsolidator(
 				ClusterSourceSet sources,
@@ -464,7 +507,11 @@ final class Transforms {
 	}
 
 	/*
-	 * ALL: Final 'fan-in' consolidator function used for all source types.
+	 * ALL:
+	 * 
+	 * List<HazardCurveSet> --> HazardResult
+	 * 
+	 * Final 'fan-in' consolidator function used for all source types.
 	 */
 	static final class CurveSetConsolidator implements Function<List<HazardCurveSet>, HazardResult> {
 

@@ -44,6 +44,7 @@ public final class LocationList implements Iterable<Location> {
 
 	/**
 	 * Creates a new {@code LocationList} from the supplied {@code Location}s.
+	 * 
 	 * @param locs to populate list with
 	 * @return a new {@code LocationList}
 	 * @throws NullPointerException if {@code locs} is {@code null}
@@ -61,6 +62,7 @@ public final class LocationList implements Iterable<Location> {
 
 	/**
 	 * Creates a new {@code LocationList} from the supplied {@code Iterable}.
+	 * 
 	 * @param locs to populate list with
 	 * @return a new {@code LocationList}
 	 */
@@ -75,10 +77,30 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
+	 * Create a new {@code LocationList} of {@code Location}s at the supplied
+	 * {@code distances} and along the bearing specified by {@code azimuth}. The
+	 * returned list does not start with the {@code origin}.
+	 * 
+	 * @param origin {@code Location}
+	 * @param distances at which {@code Location}s exist in the returned list
+	 * @param azimuth from origin for computed locations
+	 * @return a new {@code LocationList}
+	 */
+	@Deprecated // too fancy
+	public static LocationList create(Location origin, Iterable<Double> distances, double azimuth) {
+		Builder b = builder();
+		for (double r : distances) {
+			b.add(Locations.location(origin, azimuth, r));
+		}
+		return b.build();
+	}
+
+	/**
 	 * Creates a new {@code LocationList} that is an exact copy of the supplied
 	 * {@code LocationList}. Because {@code Location}s and {@code LocationList}s
 	 * are immutable, the returned copy references the same {@code Location}s as
 	 * the supplied list.
+	 * 
 	 * @param locs to populate list with
 	 * @return a new {@code LocationList}
 	 */
@@ -93,6 +115,7 @@ public final class LocationList implements Iterable<Location> {
 	/**
 	 * Creates a new {@code LocationList} that is an exact copy of the supplied
 	 * {@code LocationList} but with reversed iteration order.
+	 * 
 	 * @param locs to populate list with
 	 * @return a new {@code LocationList}
 	 */
@@ -135,11 +158,12 @@ public final class LocationList implements Iterable<Location> {
 		if (walker < spacing / 2.0) builder.add(locs.last());
 		return builder.build();
 	}
-	
+
 	/**
 	 * Creates a new {@code LocationList} from the supplied {@code String}. This
 	 * method assumes that {@code s} is formatted in space-delimited xyz tuples,
 	 * each of which are comma-delimited with no spaces (e.g. KML style).
+	 * 
 	 * @param s {@code String} to read
 	 * @return a new {@code LocationList}
 	 */
@@ -151,6 +175,7 @@ public final class LocationList implements Iterable<Location> {
 
 	/**
 	 * Returns the size of this list size.
+	 * 
 	 * @return the number of locations in the list
 	 */
 	public int size() {
@@ -159,6 +184,7 @@ public final class LocationList implements Iterable<Location> {
 
 	/**
 	 * Return the location at {@code index}.
+	 * 
 	 * @param index of {@code Location} to return
 	 * @return the {@code Location} at {@code index}
 	 * @throws IndexOutOfBoundsException if the index is out of range (
@@ -170,6 +196,7 @@ public final class LocationList implements Iterable<Location> {
 
 	/**
 	 * Returns the first {@code Location} in this list.
+	 * 
 	 * @return the first {@code Location}
 	 */
 	public Location first() {
@@ -178,6 +205,7 @@ public final class LocationList implements Iterable<Location> {
 
 	/**
 	 * Returns the last {@code Location} in this list.
+	 * 
 	 * @return the last {@code Location}
 	 */
 	public Location last() {
@@ -187,6 +215,7 @@ public final class LocationList implements Iterable<Location> {
 	/**
 	 * Returns an immutable {@code List} view of the {@code Location}s in the
 	 * list that preserves iteration order.
+	 * 
 	 * @return a {@code List} view of this {@code LocationList}
 	 */
 	public List<Location> asList() {
@@ -196,9 +225,12 @@ public final class LocationList implements Iterable<Location> {
 
 	/**
 	 * Returns the length of this {@code LocationList} in km. Method uses
-	 * {@link Locations#horzDistanceFast(Location, Location)} algorithm. Method is lazy and repeat
-	 * calls to this method will recalculate the length each time.
-	 * @return the length of a line that connects all {@code Location}s in this list
+	 * {@link Locations#horzDistanceFast(Location, Location)} algorithm. Method
+	 * is lazy and repeat calls to this method will recalculate the length each
+	 * time.
+	 * 
+	 * @return the length of a line that connects all {@code Location}s in this
+	 *         list
 	 */
 	public double length() {
 		// TODO perhaps this should be sensitive to depth variations
@@ -211,7 +243,7 @@ public final class LocationList implements Iterable<Location> {
 		}
 		return sum;
 	}
-	
+
 	/**
 	 * Lazily returns the average depth of the {@code Location}s in this list.
 	 */
@@ -223,8 +255,7 @@ public final class LocationList implements Iterable<Location> {
 		return depth / size();
 	}
 
-	@Override
-	public boolean equals(Object obj) {
+	@Override public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof LocationList)) return false;
 		LocationList ll = (LocationList) obj;
@@ -235,18 +266,15 @@ public final class LocationList implements Iterable<Location> {
 		return true;
 	}
 
-	@Override
-	public int hashCode() {
+	@Override public int hashCode() {
 		return locs.hashCode();
 	}
 
-	@Override
-	public String toString() {
+	@Override public String toString() {
 		return LF + JOIN.join(this) + LF;
 	}
 
-	@Override
-	public Iterator<Location> iterator() {
+	@Override public Iterator<Location> iterator() {
 		// @formatter:off
 		return new Iterator<Location>() {
 			int caret = 0;
@@ -261,7 +289,9 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Returns a closed, stright-line {@link Path2D} representation of this list
+	 * Returns a closed, stright-line {@link Path2D} representation of this
+	 * list.
+	 * 
 	 * @return a path representation of {@code this}
 	 */
 	public Path2D toPath() {
@@ -284,6 +314,7 @@ public final class LocationList implements Iterable<Location> {
 
 	/**
 	 * Returns a new {@code LocationList.Builder}.
+	 * 
 	 * @return a new builder
 	 */
 	public static Builder builder() {
@@ -306,6 +337,7 @@ public final class LocationList implements Iterable<Location> {
 
 		/**
 		 * Adds the supplied {@code Location}.
+		 * 
 		 * @param loc to add
 		 * @return a reference to this {@code Builder}
 		 */
@@ -317,6 +349,7 @@ public final class LocationList implements Iterable<Location> {
 		/**
 		 * Adds a new {@code Location} specified by the supplied latitude and
 		 * longitude and a depth of 0 km.
+		 * 
 		 * @param lat latitude in decimal degrees
 		 * @param lon longitude in decimal degrees
 		 * @return a new {@code Location}
@@ -332,6 +365,7 @@ public final class LocationList implements Iterable<Location> {
 		/**
 		 * Adds a new {@code Location} specified by the supplied latitude,
 		 * longitude, and depth.
+		 * 
 		 * @param lat latitude in decimal degrees
 		 * @param lon longitude in decimal degrees
 		 * @param depth in km (positive down)
@@ -344,7 +378,7 @@ public final class LocationList implements Iterable<Location> {
 			locs.add(Location.create(lat, lon, depth));
 			return this;
 		}
-		
+
 		/**
 		 * Adds the supplied {@code LocationList}.
 		 * @param locs to add
@@ -357,6 +391,7 @@ public final class LocationList implements Iterable<Location> {
 
 		/**
 		 * Returns a newly created {@code LocationList}.
+		 * 
 		 * @return a new LocationList
 		 * @throws IllegalStateException if {@code build()} has already been
 		 *         called on this {@code Builder} or no {@code Location}s were
@@ -408,28 +443,29 @@ public final class LocationList implements Iterable<Location> {
 		for (int i = 0; i < size() - 1; i++) {
 			min = Math.min(min, distanceToSegmentFast(get(i), get(i + 1), loc));
 		}
-		return min;		
+		return min;
 	}
 
 	/**
 	 * Computes the segment index that is closest to the supplied
 	 * {@code Location}. There are {@code LocationList.size() - 1} segment
-	 * indices. The endpoints of the returned segment index are {@code [n, n+1]}.
+	 * indices. The endpoints of the returned segment index are {@code [n, n+1]}
+	 * .
 	 * 
 	 * @param loc {@code Location} of interest
 	 * @return the index of the closest segment
 	 */
 	public int minDistIndex(Location loc) {
 		double min = Double.MAX_VALUE;
-		int minIdx = -1;
+		int minIndex = -1;
 		for (int i = 0; i < size() - 1; i++) {
 			double dist = distanceToSegmentFast(get(i), get(i + 1), loc);
 			if (dist < min) {
 				min = dist;
-				minIdx = i;
+				minIndex = i;
 			}
 		}
-		return minIdx;
+		return minIndex;
 	}
 
 }

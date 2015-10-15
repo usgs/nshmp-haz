@@ -2,7 +2,9 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.ArrayXY_Sequence.copyOf;
+import static org.opensha2.data.XySequence.copyOf;
+import static org.opensha2.data.XySequence.emptyCopyOf;
+import static org.opensha2.data.XySequence.immutableCopyOf;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -11,7 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
@@ -45,15 +47,15 @@ final class HazardCurveSet {
 	final SourceSet<? extends Source> sourceSet;
 	final List<GroundMotions> hazardGroundMotionsList;
 	final List<ClusterGroundMotions> clusterGroundMotionsList;
-	final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
-	final Map<Imt, ArrayXY_Sequence> totalCurves;
+	final Map<Imt, Map<Gmm, XySequence>> curveMap;
+	final Map<Imt, XySequence> totalCurves;
 
 	private HazardCurveSet(
 			SourceSet<? extends Source> sourceSet,
 			List<GroundMotions> hazardGroundMotionsList,
 			List<ClusterGroundMotions> clusterGroundMotionsList,
-			Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap,
-			Map<Imt, ArrayXY_Sequence> totalCurves) {
+			Map<Imt, Map<Gmm, XySequence>> curveMap,
+			Map<Imt, XySequence> totalCurves) {
 
 		this.sourceSet = sourceSet;
 		this.hazardGroundMotionsList = hazardGroundMotionsList;
@@ -63,7 +65,7 @@ final class HazardCurveSet {
 	}
 
 	static Builder builder(SourceSet<? extends Source> sourceSet,
-			Map<Imt, ArrayXY_Sequence> modelCurves) {
+			Map<Imt, XySequence> modelCurves) {
 		return new Builder(sourceSet, modelCurves);
 	}
 
@@ -87,16 +89,16 @@ final class HazardCurveSet {
 		private static final String ID = "HazardCurveSet.Builder";
 		private boolean built = false;
 
-		private final Map<Imt, ArrayXY_Sequence> modelCurves;
+		private final Map<Imt, XySequence> modelCurves;
 
 		private final SourceSet<? extends Source> sourceSet;
 		private final List<GroundMotions> hazardGroundMotionsList;
 		private final List<ClusterGroundMotions> clusterGroundMotionsList;
-		private final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
-		private final Map<Imt, ArrayXY_Sequence> totalCurves;
+		private final Map<Imt, Map<Gmm, XySequence>> curveMap;
+		private final Map<Imt, XySequence> totalCurves;
 
 		private Builder(SourceSet<? extends Source> sourceSet,
-				Map<Imt, ArrayXY_Sequence> modelCurves) {
+				Map<Imt, XySequence> modelCurves) {
 
 			this.sourceSet = sourceSet;
 			this.modelCurves = modelCurves;
@@ -111,10 +113,10 @@ final class HazardCurveSet {
 			Set<Imt> imts = modelCurves.keySet();
 			curveMap = new EnumMap<>(Imt.class);
 			for (Imt imt : imts) {
-				Map<Gmm, ArrayXY_Sequence> gmmMap = new EnumMap<>(Gmm.class);
+				Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
 				curveMap.put(imt, gmmMap);
 				for (Gmm gmm : gmms) {
-					ArrayXY_Sequence emptyCurve = copyOf(modelCurves.get(imt)).clear();
+					XySequence emptyCurve = emptyCopyOf(modelCurves.get(imt));
 					gmmMap.put(gmm, emptyCurve);
 				}
 			}
@@ -128,8 +130,8 @@ final class HazardCurveSet {
 			Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
 			// loop Imts based on what's been calculated
 			for (Imt imt : curvesIn.curveMap.keySet()) {
-				Map<Gmm, ArrayXY_Sequence> curveMapIn = curvesIn.curveMap.get(imt);
-				Map<Gmm, ArrayXY_Sequence> curveMapBuild = curveMap.get(imt);
+				Map<Gmm, XySequence> curveMapIn = curvesIn.curveMap.get(imt);
+				Map<Gmm, XySequence> curveMapBuild = curveMap.get(imt);
 				// loop Gmms based on what's supported at this distance
 				for (Gmm gmm : gmmWeightMap.keySet()) {
 					double weight = gmmWeightMap.get(gmm);
@@ -147,8 +149,8 @@ final class HazardCurveSet {
 			Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
 			// loop Imts based on what's coming in
 			for (Imt imt : curvesIn.curveMap.keySet()) {
-				Map<Gmm, ArrayXY_Sequence> curveMapIn = curvesIn.curveMap.get(imt);
-				Map<Gmm, ArrayXY_Sequence> curveMapBuild = curveMap.get(imt);
+				Map<Gmm, XySequence> curveMapIn = curvesIn.curveMap.get(imt);
+				Map<Gmm, XySequence> curveMapBuild = curveMap.get(imt);
 				// loop Gmms based on what's supported at this distance
 				for (Gmm gmm : gmmWeightMap.keySet()) {
 					double weight = gmmWeightMap.get(gmm) * clusterWeight;
@@ -176,14 +178,14 @@ final class HazardCurveSet {
 		 */
 		private void computeFinal() {
 			double sourceSetWeight = sourceSet.weight();
-			for (Entry<Imt, Map<Gmm, ArrayXY_Sequence>> entry : curveMap.entrySet()) {
+			for (Entry<Imt, Map<Gmm, XySequence>> entry : curveMap.entrySet()) {
 				Imt imt = entry.getKey();
-				ArrayXY_Sequence totalCurve = copyOf(modelCurves.get(imt)).clear();
-				for (ArrayXY_Sequence curve : entry.getValue().values()) {
+				XySequence totalCurve = emptyCopyOf(modelCurves.get(imt));
+				for (XySequence curve : entry.getValue().values()) {
 					totalCurve.add(curve);
 				}
 				totalCurve.multiply(sourceSetWeight);
-				totalCurves.put(imt, totalCurve);
+				totalCurves.put(imt, immutableCopyOf(totalCurve));
 			}
 		}
 	}

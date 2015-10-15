@@ -8,7 +8,9 @@ import java.util.NavigableMap;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
-import org.opensha2.data.Data2D;
+import org.opensha2.data.DataTable;
+import org.opensha2.data.DataTables;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.PointSource.DepthModel;
@@ -44,7 +46,7 @@ public class PointSources {
 	public static InputList finiteInputs(
 			Site site,
 			Location loc,
-			IncrementalMfd mfd,
+			XySequence mfd,
 			Map<FocalMech, Double> mechWtMap,
 			RuptureScaling rupScaling,
 			NavigableMap<Double, Map<Double, Double>> magDepthMap,
@@ -70,7 +72,7 @@ public class PointSources {
 	public static List<InputList> finiteInputs(
 			List<Site> sites,
 			Location loc,
-			IncrementalMfd mfd,
+			XySequence mfd,
 			Map<FocalMech, Double> mechWtMap,
 			RuptureScaling rupScaling,
 			NavigableMap<Double, Map<Double, Double>> magDepthMap,
@@ -94,16 +96,16 @@ public class PointSources {
 	public static List<InputList> finiteInputs(
 			List<Site> sites,
 			Location loc,
-			IncrementalMfd mfd,
+			XySequence mfd,
 			Map<FocalMech, Double> mechWtMap,
 			GridSourceSet grid) {
-		
-		Source source = finiteSource(loc, mfd, mechWtMap, grid.rupScaling, grid.depthModel);
+
+		Source source = finitePointSource(loc, mfd, mechWtMap, grid.rupScaling, grid.depthModel);
 		return finiteInputs(sites, source);
 	}
-	
+
 	private static List<InputList> finiteInputs(List<Site> sites, Source source) {
-		
+
 		List<InputList> inputsList = new ArrayList<>();
 		for (Site site : sites) {
 			InputList inputs = Calcs.sourceToInputs(site).apply(source);
@@ -114,7 +116,7 @@ public class PointSources {
 
 	private static PointSource finiteSource(
 			Location loc,
-			IncrementalMfd mfd,
+			XySequence mfd,
 			Map<FocalMech, Double> mechWtMap,
 			RuptureScaling rupScaling,
 			NavigableMap<Double, Map<Double, Double>> magDepthMap,
@@ -123,10 +125,20 @@ public class PointSources {
 		DepthModel depthModel = DepthModel.create(magDepthMap, mfd.xValues(), maxDepth);
 		return new PointSourceFinite(loc, mfd, mechWtMap, rupScaling, depthModel);
 	}
-	
-	private static PointSource finiteSource(
+
+	public static PointSource pointSource(
 			Location loc,
-			IncrementalMfd mfd,
+			XySequence mfd,
+			Map<FocalMech, Double> mechWtMap,
+			RuptureScaling rupScaling,
+			DepthModel depthModel) {
+
+		return new PointSource(loc, mfd, mechWtMap, rupScaling, depthModel);
+	}			
+
+	public static PointSource finitePointSource(
+			Location loc,
+			XySequence mfd,
 			Map<FocalMech, Double> mechWtMap,
 			RuptureScaling rupScaling,
 			DepthModel depthModel) {
@@ -144,16 +156,12 @@ public class PointSources {
 		double rMax = 1000.0;
 		double rΔ = 5.0;
 
-		Data2D.Builder builder = Data2D.Builder
-			.create()
-			.rows(rMin, rMax, rΔ)
-			.columns(M_MIN, M_MAX, M_Δ);
-
-		double[] distances = builder.rows();
-		double[] mags = builder.columns();
+		double[] distances = DataTables.keys(rMin, rMax, rΔ);
+		double[] mags = DataTables.keys(M_MIN, M_MAX, M_Δ);
 		double[] rates = new double[mags.length];
 
-		IncrementalMfd mfd = Mfds.newIncrementalMFD(mags, rates);
+		// IncrementalMfd mfd = Mfds.newIncrementalMFD(mags, rates);
+		XySequence mfd = XySequence.create(mags, rates);
 
 		Map<FocalMech, Double> ssMap = Maps.immutableEnumMap(
 			ImmutableMap.<FocalMech, Double> builder()
@@ -204,36 +212,36 @@ public class PointSources {
 			.vs30(760.0)
 			.build();
 
-		 InputList inputs = finiteInputs(
-		 site,
-		 srcLoc,
-		 mfd,
-		 multiMechMap,
-		 rupScaling,
-		 wusMagDepthMap,
-		 wusMaxDepth);
-		
-		 System.out.println(inputs);
+		InputList inputs = finiteInputs(
+			site,
+			srcLoc,
+			mfd,
+			multiMechMap,
+			rupScaling,
+			wusMagDepthMap,
+			wusMaxDepth);
 
-//		List<Site> siteList = new ArrayList<>();
-//		Site.Builder siteBuilder = Site.builder().vs30(760.0);
-//		for (double r : distances) {
-//			Location loc = Locations.location(srcLoc, az, r);
-//			siteBuilder.location(loc);
-//			siteList.add(siteBuilder.build());
-//		}
-//
-//		List<InputList> inputsList = finiteInputs(
-//			siteList,
-//			srcLoc,
-//			mfd,
-//			multiMechMap,
-//			rupScaling,
-//			wusMagDepthMap,
-//			wusMaxDepth);
-//
-//		System.out.println(inputsList.size());
-//		System.out.println(inputsList.get(inputsList.size() - 1));
+		System.out.println(inputs);
+
+		// List<Site> siteList = new ArrayList<>();
+		// Site.Builder siteBuilder = Site.builder().vs30(760.0);
+		// for (double r : distances) {
+		// Location loc = Locations.location(srcLoc, az, r);
+		// siteBuilder.location(loc);
+		// siteList.add(siteBuilder.build());
+		// }
+		//
+		// List<InputList> inputsList = finiteInputs(
+		// siteList,
+		// srcLoc,
+		// mfd,
+		// multiMechMap,
+		// rupScaling,
+		// wusMagDepthMap,
+		// wusMaxDepth);
+		//
+		// System.out.println(inputsList.size());
+		// System.out.println(inputsList.get(inputsList.size() - 1));
 
 		// System.out.println(inputsList);
 

@@ -3,8 +3,10 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
+import static org.opensha2.data.DataUtils.validateDelta;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.opensha2.util.Parsing;
@@ -18,13 +20,27 @@ import com.google.common.primitives.Doubles;
  *
  * @author Peter Powers
  */
-final class DataTables {
+public final class DataTables {
+
+	/**
+	 * Create a set of keys for use in a {@link DataTable} or {@link DataVolume}.
+	 * This is exposed for convenience as there are circumstances
+	 * where a reference to the row or column keys is helpful to have when
+	 * building.
+	 * 
+	 * @param min lower edge of lowermost bin
+	 * @param max upper edge of uppermost bin
+	 * @param Δ bin width
+	 */
+	public static double[] keys(double min, double max, double Δ) {
+		return keyArray(min, max, validateDelta(min, max, Δ));
+	}
 
 	/*
 	 * Create clean sequence of keys. Precision is curently set to 4 decimal
 	 * places.
 	 */
-	static double[] keyArray(double min, double max, double Δ) {
+	private static double[] keyArray(double min, double max, double Δ) {
 		double Δby2 = Δ / 2.0;
 		return DataUtils.buildCleanSequence(
 			min + Δby2,
@@ -33,54 +49,14 @@ final class DataTables {
 	}
 
 	/*
-	 * Create an immutable list of keys.
-	 */
-	static List<Double> createKeys(double min, double max, double Δ) {
-		double[] keys = keyArray(min, max, Δ);
-		return ImmutableList.copyOf(Doubles.asList(keys));
-	}
-
-	/*
-	 * Compute the size of a DataTable dimension. Min and max define lowermost
-	 * and uppermost bin edges, respectively.
-	 */
-	static int size(double min, double max, double Δ) {
-		return (int) Math.round((max - min) / Δ);
-	}
-
-	/*
 	 * Compute an index from a minimum value, a value and an interval. Casting
-	 * to int floors value. No argument checking is performed.
+	 * to int floors value.
 	 */
 	static int indexOf(double min, double delta, double value, int size) {
 		return checkElementIndex((int) ((value - min) / delta), size);
 	}
 
-	/*
-	 * Initialize an empty 2D table.
-	 */
-	static double[][] initTable(
-			double rowMin, double rowMax, double rowΔ,
-			double columnMin, double columnMax, double columnΔ) {
-		int rowSize = size(rowMin, rowMax, rowΔ);
-		int columnSize = size(columnMin, columnMax, columnΔ);
-		return new double[rowSize][columnSize];
-	}
-
-	/*
-	 * Initialize an empty 3D table.
-	 */
-	static double[][][] initTable(
-			double rowMin, double rowMax, double rowΔ,
-			double columnMin, double columnMax, double columnΔ,
-			double levelMin, double levelMax, double levelΔ) {
-		int rowSize = size(rowMin, rowMax, rowΔ);
-		int columnSize = size(columnMin, columnMax, columnΔ);
-		int levelSize = size(levelMin, levelMax, levelΔ);
-		return new double[rowSize][columnSize][levelSize];
-	}
-
-	static void checkDataState(double[] data, String label) {
+	private static void checkDataState(double[] data, String label) {
 		checkState(data != null, "%s data have not yet been fully specified", label);
 	}
 
@@ -143,39 +119,39 @@ final class DataTables {
 		}
 	}
 
-	private static abstract class AbstractTable2D implements Data2D {
+	private static abstract class AbstractTable2D implements DataTable {
 
 		final double rowMin;
 		final double rowMax;
 		final double rowΔ;
-		final int rowSize;
+		final double[] rows;
 
 		final double columnMin;
 		final double columnMax;
 		final double columnΔ;
-		final int columnSize;
+		final double[] columns;
 
 		private AbstractTable2D(
-				double rowMin, double rowMax, double rowΔ,
-				double columnMin, double columnMax, double columnΔ) {
+				double rowMin, double rowMax, double rowΔ, double[] rows,
+				double columnMin, double columnMax, double columnΔ, double[] columns) {
 
 			this.rowMin = rowMin;
 			this.rowMax = rowMax;
 			this.rowΔ = rowΔ;
-			this.rowSize = size(rowMin, rowMax, rowΔ);
+			this.rows = rows;
 
 			this.columnMin = columnMin;
 			this.columnMax = columnMax;
 			this.columnΔ = columnΔ;
-			this.columnSize = size(columnMin, columnMax, columnΔ);
+			this.columns = columns;
 		}
 
 		@Override public List<Double> rows() {
-			return createKeys(rowMin, rowMax, rowΔ);
+			return ImmutableList.copyOf(Doubles.asList(rows));
 		}
 
 		@Override public List<Double> columns() {
-			return createKeys(columnMin, columnMax, columnΔ);
+			return ImmutableList.copyOf(Doubles.asList(columns));
 		}
 
 	}
@@ -184,19 +160,20 @@ final class DataTables {
 
 		private final double[][] data;
 
-		DefaultTable2D(double rowMin, double rowMax, double rowΔ,
-				double columnMin, double columnMax, double columnΔ,
+		DefaultTable2D(
+				double rowMin, double rowMax, double rowΔ, double[] rows,
+				double columnMin, double columnMax, double columnΔ, double[] columns,
 				double[][] data) {
 
 			super(
-				rowMin, rowMax, rowΔ,
-				columnMin, columnMax, columnΔ);
+				rowMin, rowMax, rowΔ, rows,
+				columnMin, columnMax, columnΔ, columns);
 			this.data = data;
 		}
 
 		@Override public double get(final double row, final double column) {
-			int iRow = indexOf(rowMin, rowΔ, row, rowSize);
-			int iColumn = indexOf(columnMin, columnΔ, column, columnSize);
+			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
+			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
 			return data[iRow][iColumn];
 		}
 
@@ -225,76 +202,88 @@ final class DataTables {
 			}
 			return sb.toString();
 		}
+
+		@Override public XySequence row(double row) {
+			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
+			return new ImmutableXySequence(columns, data[iRow]);
+		}
 	}
 
 	static final class SingularTable2D extends AbstractTable2D {
 
-		private final double data;
+		private final double value;
+		private final double[] row;
 
 		SingularTable2D(
-				double rowMin, double rowMax, double rowΔ,
-				double columnMin, double columnMax, double columnΔ,
-				double data) {
+				double rowMin, double rowMax, double rowΔ, double[] rows,
+				double columnMin, double columnMax, double columnΔ, double[] columns,
+				double value) {
 
 			super(
-				rowMin, rowMax, rowΔ,
-				columnMin, columnMax, columnΔ);
-			this.data = data;
+				rowMin, rowMax, rowΔ, rows,
+				columnMin, columnMax, columnΔ, columns);
+			this.value = value;
+			this.row = new double[columns.length];
+			Arrays.fill(this.row, value);
 		}
 
-		@Override public double get(final double row, final double column) {
-			return data;
+		@Override public double get(final double rowKey, final double columnKey) {
+			return value;
+		}
+
+		@Override public XySequence row(double row) {
+			return new ImmutableXySequence(columns, this.row);
 		}
 	}
 
-	private static abstract class AbstractTable3D implements Data3D {
+	private static abstract class AbstractTable3D implements DataVolume {
 
 		final double rowMin;
 		final double rowMax;
 		final double rowΔ;
-		final int rowSize;
+		final double[] rows;
 
 		final double columnMin;
 		final double columnMax;
 		final double columnΔ;
-		final int columnSize;
-
+		final double[] columns;
+		
 		final double levelMin;
 		final double levelMax;
 		final double levelΔ;
-		final int levelSize;
+		final double[] levels;
 
 		private AbstractTable3D(
-				double rowMin, double rowMax, double rowΔ,
-				double columnMin, double columnMax, double columnΔ,
-				double levelMin, double levelMax, double levelΔ) {
+				double rowMin, double rowMax, double rowΔ, double[] rows,
+				double columnMin, double columnMax, double columnΔ, double[] columns,
+				double levelMin, double levelMax, double levelΔ, double[] levels) {
 
 			this.rowMin = rowMin;
 			this.rowMax = rowMax;
 			this.rowΔ = rowΔ;
-			this.rowSize = size(rowMin, rowMax, rowΔ);
+			this.rows = rows;
 
 			this.columnMin = columnMin;
 			this.columnMax = columnMax;
 			this.columnΔ = columnΔ;
-			this.columnSize = size(columnMin, columnMax, columnΔ);
+			this.columns = columns;
 
 			this.levelMin = levelMin;
 			this.levelMax = levelMax;
 			this.levelΔ = levelΔ;
-			this.levelSize = size(levelMin, levelMax, levelΔ);
+			this.levels = levels;
 		}
 
 		@Override public List<Double> rows() {
-			return createKeys(rowMin, rowMax, rowΔ);
+			return ImmutableList.copyOf(Doubles.asList(rows));
 		}
 
 		@Override public List<Double> columns() {
-			return createKeys(columnMin, columnMax, columnΔ);
+			return ImmutableList.copyOf(Doubles.asList(columns));
 		}
 
 		@Override public List<Double> levels() {
-			return createKeys(levelMin, levelMax, levelΔ);
+			return ImmutableList.copyOf(Doubles.asList(levels));
 		}
 	}
 
@@ -303,23 +292,29 @@ final class DataTables {
 		final double[][][] data;
 
 		DefaultTable3D(
-				double rowMin, double rowMax, double rowΔ,
-				double columnMin, double columnMax, double columnΔ,
-				double levelMin, double levelMax, double levelΔ,
+				double rowMin, double rowMax, double rowΔ, double[] rows,
+				double columnMin, double columnMax, double columnΔ, double[] columns,
+				double levelMin, double levelMax, double levelΔ, double[] levels,
 				double[][][] data) {
 
 			super(
-				rowMin, rowMax, rowΔ,
-				columnMin, columnMax, columnΔ,
-				levelMin, levelMax, levelΔ);
+				rowMin, rowMax, rowΔ, rows,
+				columnMin, columnMax, columnΔ, columns,
+				levelMin, levelMax, levelΔ, levels);
 			this.data = data;
 		}
 
 		@Override public double get(final double row, final double column, final double level) {
-			int iRow = indexOf(rowMin, rowΔ, row, rowSize);
-			int iColumn = indexOf(columnMin, columnΔ, column, columnSize);
-			int iLevel = indexOf(levelMin, levelΔ, level, levelSize);
+			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
+			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
+			int iLevel = indexOf(levelMin, levelΔ, level, levels.length);
 			return data[iRow][iColumn][iLevel];
+		}
+
+		@Override public XySequence column(double row, double column) {
+			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
+			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
+			return new ImmutableXySequence(levels, data[iRow][iColumn]);
 		}
 	}
 

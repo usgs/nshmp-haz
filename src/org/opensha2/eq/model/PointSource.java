@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.fault.surface.RuptureSurface;
 import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
-import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
@@ -51,14 +51,14 @@ import com.google.common.primitives.Ints;
 class PointSource implements Source {
 
 	final Location loc;
-	final IncrementalMfd mfd;
+	final XySequence mfd;
 	final Map<FocalMech, Double> mechWtMap;
 	final RuptureScaling rupScaling;
 	final DepthModel depthModel;
 
 	int rupCount;
 	int magDepthSize;
-	int ssIdx, revIdx;
+	int ssIndex, revIndex;
 
 	/**
 	 * Constructs a new point earthquake source.
@@ -69,7 +69,7 @@ class PointSource implements Source {
 	 * @param depthModel specifies magnitude cutoffs and associated weights for
 	 *        different depth-to-top-of-ruptures
 	 */
-	PointSource(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
+	PointSource(Location loc, XySequence mfd, Map<FocalMech, Double> mechWtMap,
 			RuptureScaling rupScaling, DepthModel depthModel) {
 
 		this.loc = loc;
@@ -88,17 +88,17 @@ class PointSource implements Source {
 		return rupCount;
 	}
 
-	private void updateRupture(Rupture rup, int idx) {
+	private void updateRupture(Rupture rup, int index) {
 
-		int magDepthIdx = idx % magDepthSize;
-		int magIdx = depthModel.magDepthIndices.get(magDepthIdx);
-		double mag = mfd.getX(magIdx);
-		double rate = mfd.getY(magIdx);
+		int magDepthIndex = index % magDepthSize;
+		int magIndex = depthModel.magDepthIndices.get(magDepthIndex);
+		double mag = mfd.x(magIndex);
+		double rate = mfd.y(magIndex);
 
-		double zTop = depthModel.magDepthDepths.get(magDepthIdx);
-		double zTopWt = depthModel.magDepthWeights.get(magDepthIdx);
+		double zTop = depthModel.magDepthDepths.get(magDepthIndex);
+		double zTopWt = depthModel.magDepthWeights.get(magDepthIndex);
 
-		FocalMech mech = mechForIndex(idx);
+		FocalMech mech = mechForIndex(index);
 		double mechWt = mechWtMap.get(mech);
 
 		rup.mag = mag;
@@ -142,7 +142,7 @@ class PointSource implements Source {
 		 * Get the number of mag-depth iterations required to get to mMax. See
 		 * explanation in GridSourceSet for how magDepthIndices is set up
 		 */
-		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.getNum() - 1) + 1;
+		magDepthSize = depthModel.magDepthIndices.lastIndexOf(mfd.size() - 1) + 1;
 
 		/*
 		 * Init rupture indexing: SS RV NR. Each category will have ruptures for
@@ -151,8 +151,8 @@ class PointSource implements Source {
 		int ssCount = (int) ceil(mechWtMap.get(STRIKE_SLIP)) * magDepthSize;
 		int revCount = (int) ceil(mechWtMap.get(REVERSE)) * magDepthSize;
 		int norCount = (int) ceil(mechWtMap.get(NORMAL)) * magDepthSize;
-		ssIdx = ssCount;
-		revIdx = ssCount + revCount;
+		ssIndex = ssCount;
+		revIndex = ssCount + revCount;
 
 		rupCount = ssCount + revCount + norCount;
 	}
@@ -160,9 +160,9 @@ class PointSource implements Source {
 	/*
 	 * Returns the focal mechanism of the rupture at the supplied index.
 	 */
-	FocalMech mechForIndex(int idx) {
+	FocalMech mechForIndex(int index) {
 		// iteration order is always SS -> REV -> NOR
-		return (idx < ssIdx) ? STRIKE_SLIP : (idx < revIdx) ? REVERSE : NORMAL;
+		return (index < ssIndex) ? STRIKE_SLIP : (index < revIndex) ? REVERSE : NORMAL;
 	}
 
 	static class PointSurface implements RuptureSurface {
@@ -269,6 +269,8 @@ class PointSource implements Source {
 		 * is retained for cache identification.
 		 */
 		final Map<Double, Map<Double, Double>> magDepthMap;
+		// TODO other than for generating key, this field is not referenced so
+		// it proabbly makes more sense to store it with the GridSourceSet
 
 		/*
 		 * maxDepth constrains the width of finite point sources. In many cases

@@ -36,8 +36,8 @@ public class CeusSoftRock extends GmmTest {
 		return loadResults(GMM_RESULTS);
 	}
 
-	public CeusSoftRock(int idx, Gmm gmm, Imt imt, double exMedian, double exSigma) {
-		super(idx, gmm, imt, exMedian, exSigma);
+	public CeusSoftRock(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
+		super(index, gmm, imt, exMedian, exSigma);
 	}
 
 	/* Result generation sets */

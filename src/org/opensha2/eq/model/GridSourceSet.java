@@ -3,7 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.eq.Magnitudes.MAX_MAG;
+import static org.opensha2.eq.Magnitudes.*;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
 
@@ -14,6 +14,10 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
 
+import org.opensha2.calc.GridCalc;
+import org.opensha2.data.DataTable;
+import org.opensha2.data.DataUtils;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -21,9 +25,13 @@ import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 import org.opensha2.mfd.IncrementalMfd;
+import org.opensha2.mfd.Mfds;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
 
 /**
  * A container class for related, evenly-spaced {@link PointSource}s with
@@ -42,7 +50,18 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	private final double strike;
 	private final PointSourceType sourceType;
 
+	final double mMin;
+	final double mMax;
+	final double Δm;
+
 	private final Key cacheKey;
+
+	/*
+	 * TODO We need to (will) impose strict min and delta mag constraints.
+	 * Default MFDs will be checked for agreement. We should change pure INCR
+	 * mfds (defained by mags[] and rates[]) to min, max, delta and validate
+	 * that those 3 params yield a size equivalent to rates.length.
+	 */
 
 	/*
 	 * Most grid sources have the same focal mech map everywhere; in these
@@ -58,25 +77,56 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			List<Location> locs,
 			List<IncrementalMfd> mfds,
 			List<Map<FocalMech, Double>> mechMaps,
-			DepthModel depthModel,
+			NavigableMap<Double, Map<Double, Double>> magDepthMap,
+			double maxDepth,
 			double strike,
 			RuptureScaling rupScaling,
-			PointSourceType sourceType) {
+			PointSourceType sourceType,
+			double mMin,
+			double mMax,
+			double Δm) {
 
 		super(name, id, weight, gmmSet);
 		this.locs = locs;
 		this.mfds = mfds;
 		this.mechMaps = mechMaps;
-		this.depthModel = depthModel;
 		this.strike = strike;
 		this.rupScaling = rupScaling;
 		this.sourceType = sourceType;
+
+		this.mMin = mMin;
+		this.mMax = mMax;
+		this.Δm = Δm;
+
+		/*
+		 * TODO there are too many assumptions built into this; whose to say
+		 * ones bin spacing should be only be in the hundredths?
+		 * 
+		 * Where did this come from anyway? Are mag deltas really all that
+		 * strange
+		 * 
+		 * We should read precision of supplied mMin and mMax and delta and use
+		 * largest for formatting
+		 * 
+		 * TODO in the case of single combined/flattened MFDs, mags may not be
+		 * uniformly spaced. Can this be refactored
+		 */
+		double cleanDelta = Double.valueOf(String.format("%.2f", Δm));
+		double[] mags = DataUtils.buildCleanSequence(mMin, mMax, cleanDelta, true, 2);
+		depthModel = DepthModel.create(magDepthMap, Doubles.asList(mags), maxDepth);
 
 		this.cacheKey = new Key();
 	}
 
 	@Override public SourceType type() {
 		return SourceType.GRID;
+	}
+	
+	/**
+	 * The {@link PointSource} representation used by this source set.
+	 */
+	public PointSourceType sourceType() {
+		return sourceType;
 	}
 
 	@Override public int size() {
@@ -131,17 +181,28 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		return cacheKey;
 	}
 
-	private PointSource getSource(int idx) {
+	private PointSource getSource(int index) {
+
+		/*
+		 * TODO Stricter rules regarding what sorts of default mfds can be used
+		 * with grid sources (in an individual grid source set) will allow
+		 * parsers to create XySequence based MFDs directly using copyOf so as
+		 * to not create zillions of mag arrays.
+		 */
+		Location loc = locs.get(index);
+		XySequence mfd = Mfds.toSequence(mfds.get(index));
+		Map<FocalMech, Double> mechMap = mechMaps.get(index);
+
 		switch (sourceType) {
 			case POINT:
-				return new PointSource(locs.get(idx), mfds.get(idx), mechMaps.get(idx), rupScaling,
-					depthModel);
+				return new PointSource(loc, mfd, mechMap, rupScaling, depthModel);
+
 			case FINITE:
-				return new PointSourceFinite(locs.get(idx), mfds.get(idx), mechMaps.get(idx),
-					rupScaling, depthModel);
+				return new PointSourceFinite(loc, mfd, mechMap, rupScaling, depthModel);
+
 			case FIXED_STRIKE:
-				return new PointSourceFixedStrike(locs.get(idx), mfds.get(idx), mechMaps.get(idx),
-					rupScaling, depthModel, strike);
+				return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel, strike);
+
 			default:
 				throw new IllegalStateException("Unhandled point source type");
 		}
@@ -165,7 +226,10 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private List<Location> locs = Lists.newArrayList();
 		private List<IncrementalMfd> mfds = Lists.newArrayList();
 		private List<Map<FocalMech, Double>> mechMaps = Lists.newArrayList();
-		private List<Double> magMaster;
+
+		private Double mMin;
+		private Double mMax;
+		private Double Δm;
 
 		Builder strike(double strike) {
 			// unknown strike allowed for grid sources
@@ -211,13 +275,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		Builder magMaster(List<Double> magMaster) {
-			/*
-			 * TODO mfds should validate against magMaster or create mag master
-			 * locally, but that is hard
-			 */
-			checkArgument(checkNotNull(magMaster).size() > 0);
-			this.magMaster = magMaster;
+		Builder mfdData(double mMin, double mMax, double Δm) {
+			// TODO need better validation here
+			checkArgument(validateMag(mMin) <= validateMag(mMax));
+			this.mMin = mMin;
+			this.mMax = mMax;
+			this.Δm = Δm;
 			return this;
 		}
 
@@ -285,9 +348,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(!mfds.isEmpty(), "%s has no Mfds", buildId);
 			checkState(rupScaling != null, "%s has no rupture-scaling relation set", buildId);
 			checkState(magDepthMap != null, "%s mag-depth-weight map not set", buildId);
-			checkState(maxDepth != null, "%s maximum depth not set", buildId);
+			checkState(maxDepth != null, "%s max depth not set", buildId);
 			checkState(mechMap != null, "%s focal mech map not set", buildId);
-			checkState(magMaster != null, "%s master magnitude list not set", buildId);
+
+			checkState(mMin != null, "%s min mag not set", buildId);
+			checkState(mMax != null, "%s max mag not set", buildId);
+			checkState(Δm != null, "%s delta mag not set", buildId);
 
 			/*
 			 * Validate size of mechMaps; size could get out of sync if mixed
@@ -327,9 +393,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		GridSourceSet build() {
 			validateState(ID);
-			DepthModel depthModel = DepthModel.create(magDepthMap, magMaster, maxDepth);
-			return new GridSourceSet(name, id, weight, gmmSet, locs, mfds, mechMaps, depthModel,
-				strike, rupScaling, sourceType);
+			return new GridSourceSet(name, id, weight, gmmSet, locs, mfds, mechMaps, magDepthMap,
+				maxDepth, strike, rupScaling, sourceType, mMin, mMax, Δm);
 		}
 
 	}
@@ -369,6 +434,148 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return Objects.equals(this.rupScaling, that.rupScaling) &&
 				Objects.equals(this.magDepthMap, that.magDepthMap) &&
 				Objects.equals(this.maxDepth, that.maxDepth);
+		}
+	}
+
+	public static Function<GridSourceSet, SourceSet<? extends Source>> toTableFunction(Location loc) {
+		return new ToTable(loc);
+	}
+
+	private static class ToTable implements Function<GridSourceSet, SourceSet<? extends Source>> {
+		private final Location loc;
+
+		ToTable(Location loc) {
+			this.loc = loc;
+		}
+
+		@Override public Table apply(GridSourceSet sources) {
+			return new Table(sources, loc);
+		}
+	}
+
+	/*
+	 * Notes on dealing with mixedMech situations (e.g. UC3)
+	 * 
+	 * Need 3 tables (SS, R, N)
+	 * 
+	 * Rate in each R-M bin gets partitioned across three tables.
+	 * 
+	 * When building sources we could normalize the rates to create a mechMap on
+	 * the fly and sum back to the total rate.
+	 * 
+	 * Alternatively, and preferably, we reconsolidate partitioned rates into a
+	 * list
+	 */
+
+	/**
+	 * Condensed implementation of a {@code GridSourceSet}. This class
+	 * consolidates the point sources that influence hazard at a site using a
+	 * magnitude-distance-rate {@code DataTable}, from which a list of sources
+	 * is generated. A {@code Table} is created on a per-calculation basis and
+	 * is unique to a location.
+	 * 
+	 * @see GridSourceSet#toTableFunction(Location)
+	 */
+	public static final class Table extends AbstractSourceSet<PointSource> {
+
+		private final GridSourceSet parent;
+		private final Location origin;
+		private final List<PointSource> sources;
+
+		private int maximumSize;
+		private int parentCount;
+
+		private Table(GridSourceSet parent, Location origin) {
+			super(parent.name(), parent.id(), parent.weight(), parent.groundMotionModels());
+			this.parent = parent;
+			this.origin = origin;
+			this.sources = initSources();
+		}
+
+		/**
+		 * The number of sources drawn from a parent {@code GridSourceSet}
+		 * during initialization.
+		 */
+		public int parentCount() {
+			return parentCount;
+		}
+
+		/**
+		 * The maximum number of sources that could be used to represent this
+		 * {@code SourceSet}. This is equivalent to the number of rows in the
+		 * {@code DataTable} used to when consolidating sources. The actual
+		 * number of sources required is commonly less due to empty distance
+		 * bins.
+		 */
+		public int maximumSize() {
+			return maximumSize;
+		}
+
+		@Override public String name() {
+			return parent.name() + " (opt)";
+		}
+
+		@Override public SourceType type() {
+			return parent.type();
+		}
+
+		@Override public int size() {
+			return parent.size();
+		}
+
+		@Override public Predicate<PointSource> distanceFilter(Location loc, double distance) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override public Iterator<PointSource> iterator() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override public Iterable<PointSource> iterableForLocation(Location loc) {
+			// Ignore location; simply iterate over the list of sources
+			return sources;
+		}
+
+		private List<PointSource> initSources() {
+			DataTable mfdTable = initMfdTable();
+//			System.out.println(mfdTable);
+			List<Double> distances = mfdTable.rows();
+			maximumSize = distances.size();
+			ImmutableList.Builder<PointSource> b = ImmutableList.builder();
+			for (double r : distances) {
+				XySequence mfd = mfdTable.row(r);
+				if (mfd.isEmpty()) continue;
+				Location loc = Locations.location(origin, GridCalc.SRC_TO_SITE_AZIMUTH, r);
+				b.add(PointSources.finitePointSource(
+					loc,
+					mfd,
+					parent.mechMaps.get(0),
+					parent.rupScaling,
+					parent.depthModel));
+			}
+			return b.build();
+		}
+
+		private DataTable initMfdTable() {
+			// table keys are specified as lowermost and uppermost bin edges
+			double Δm = parent.Δm;
+			double ΔmBy2 = Δm / 2.0;
+			double mMin = parent.mMin - ΔmBy2;
+			double mMax = parent.mMax + ΔmBy2;
+			double rMax = parent.groundMotionModels().maxDistance();
+
+			DataTable.Builder tableBuilder = DataTable.Builder.create()
+				.rows(0.0, rMax, GridCalc.distanceDiscretization(rMax))
+				.columns(mMin, mMax, Δm);
+
+			for (PointSource source : parent.iterableForLocation(origin)) {
+				double r = Locations.horzDistanceFast(origin, source.loc);
+				tableBuilder.add(r, source.mfd);
+				parentCount++;
+			}
+
+			DataTable table = tableBuilder.build();
+			return table;
 		}
 	}
 

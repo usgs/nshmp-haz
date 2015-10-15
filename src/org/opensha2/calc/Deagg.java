@@ -11,7 +11,9 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.opensha2.calc.CalcConfig.DeaggData;
+import org.opensha2.data.DataTable;
 import org.opensha2.data.DataUtils;
+import org.opensha2.data.DataVolume;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.Rupture;
@@ -27,7 +29,8 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 
 /**
- * Add comments here
+ * For one (or each Imt) One Deagg per source set and ground motion model these
+ * are then combined for total deagg and also combined across each unique gmm
  *
  * 
  * @author Peter Powers
@@ -46,19 +49,14 @@ class Deagg {
 	 * sourceSets
 	 */
 
-	/*
-	 * Doing single threaded for now THis class may be suitable for using Java 8
-	 * DoubleAdder/Accumulators
-	 * 
-	 * Ignoring Gmm deagg
-	 */
-
 	// do we want to track the relative location in each distance bin:
 	// i.e. the bin plots at the contribution weighted distance
 	// private Comparator<ContributingRupture> comparator = Ordering.natural();
 
-	private Queue<Contribution> contribQueue = MinMaxPriorityQueue.orderedBy(Ordering.natural())
-		.maximumSize(20).create();
+	private Queue<Contribution> contribQueue = MinMaxPriorityQueue
+		.orderedBy(Ordering.natural())
+		.maximumSize(20)
+		.create();
 
 	/* Wrapper class for a Rupture and it's contribution to hazard. */
 	static class Contribution implements Comparable<Contribution> {
@@ -71,50 +69,153 @@ class Deagg {
 		}
 	}
 
-	public static Builder builder() {
-		return new Builder();
-	}
-
+	/*
+	 * TODO need data table and volumne copyof constructors that point to same
+	 * dimension arrays for streamlined validation when adding, multiplying etc.
+	 */
+	
 	/**
 	 * Deaggregation data container. This class is used to store deaggregation
-	 * results of individual SourceSets. Data objects may be recombined via
-	 * add().
+	 * results of individual SourceSets and Gmms. Data containers may be
+	 * recombined via add().
 	 */
 	static class Data {
+
+		private final DataVolume rmε;
+
+		/* Weighted mean contributions */
+		private final double rBar, mBar, εBar;
+		private final double barWeight;
+
+		/* Weighted r and m position data */
+		private final DataTable rPositions;
+		private final DataTable mPositions;
+		private final DataTable positionWeights;
+
+		// private Map<SourceSet<Source>, Collection<Source>> topContributors;
 		
-		private double[][][] mrεMatrix; // [M][R][ε]
-
-		private double mBar, rBar, εBar; // these are total
-		private double totalRate; // TODO compare to orignal PoE
-
-		// wieghted m and r position data
-		private double[][] mPosValues;
-		private double[][] rPosValues;
-		private double[][] mrPosWeights;
-		
-		private Map<SourceSet<Source>, Collection<Source>> topContributors;
-
-		private void add(Data data) {
-			DataUtils.add(this.mrεMatrix, data.mrεMatrix);
-			this.mBar += data.mBar;
-			this.rBar += data.rBar;
-			this.εBar += data.εBar;
-			this.totalRate += totalRate;
-			DataUtils.add(this.mPosValues, data.mPosValues);
-			DataUtils.add(this.rPosValues, data.rPosValues);
-			DataUtils.add(this.mrPosWeights, data.mrPosWeights);
-			topContributors.putAll(data.topContributors);
+		private Data(
+				DataVolume rmε,
+				double rBar, double mBar, double εBar,
+				double barWeight,
+				DataTable rPositions,
+				DataTable mPositions,
+				DataTable positionWeights) {
+			
+			this.rmε = rmε;
+			
+			this.rBar = rBar;
+			this.mBar = mBar;
+			this.εBar = εBar;
+			this.barWeight = barWeight;
+			
+			this.rPositions = rPositions;
+			this.mPositions = mPositions;
+			this.positionWeights = positionWeights;
 		}
 
-	}
+		static Builder builder(Model model) {
+			return new Builder(model);
+		}
+		
+		static class Builder {
+			
+			private DataVolume.Builder rmε;
+
+			/* Weighted mean contributions */
+			private double rBar, mBar, εBar;
+			private double barWeight;
+
+			/* Weighted r and m position data */
+			private DataTable.Builder rPositions;
+			private DataTable.Builder mPositions;
+			private DataTable.Builder positionWeights;
+
+			// private Map<SourceSet<Source>, Collection<Source>> topContributors;
 	
-	static class Builder {
+			private Builder(Model model) {
+				
+				rmε = DataVolume.Builder.create()
+						.rows(model.rMin, model.rMax, model.Δr)
+						.columns(model.mMin, model.mMax, model.Δm)
+						.levels(model.εMin, model.εMax, model.Δε);
+				
+				rPositions = DataTable.Builder.create()
+						.rows(model.rMin, model.rMax, model.Δr)
+						.columns(model.mMin, model.mMax, model.Δm);
+				
+				mPositions = DataTable.Builder.create()
+						.rows(model.rMin, model.rMax, model.Δr)
+						.columns(model.mMin, model.mMax, model.Δm);
 
+				positionWeights = DataTable.Builder.create()
+						.rows(model.rMin, model.rMax, model.Δr)
+						.columns(model.mMin, model.mMax, model.Δm);
+			}
+			
+			/*
+			 * Populate Data object with rupture data. Supply DataTable and
+			 * DataVolume indices, weighted (by rate) distance, magnitude, and
+			 * epsilon, and the rate of the rupture.
+			 * 
+			 * Although we could work with the raw distance, magnitude and epsilon
+			 * values, deaggregation is being performed across each Gmm, so
+			 * precomputing indices and weighted values in the calling method brings
+			 * some efficiency.
+			 */
+			Builder add(
+					int ri, int mi, int εi,
+					double rw, double mw, double εw,
+					double rate) {
+
+				rmε.set(ri, mi, εi, rate);
+				
+				rBar += rw;
+				mBar += mw;
+				εBar += εw;
+				barWeight += rate;
+
+				rPositions.add(ri, mi, rw);
+				mPositions.add(ri, mi, mw);
+				positionWeights.add(ri, mi, rate);
+				
+				return this;
+			}
+
+//			Builder add(Data data) {
+//				// DataUtils.add(this.mrεMatrix, data.mrεMatrix);
+//				this.mBar += data.mBar;
+//				this.rBar += data.rBar;
+//				this.εBar += data.εBar;
+//				this.barWeight += barWeight;
+//				DataUtils.add(this.mPosValues, data.mPosValues);
+//				DataUtils.add(this.rPosValues, data.rPosValues);
+//				DataUtils.add(this.mrPosWeights, data.mrPosWeights);
+//				topContributors.putAll(data.topContributors);
+//			}
+//
+//			Data build() {
+//				
+//			}
+		}
+		
+		
+		
+
+	}
+
+	static Deaggregator of(HazardCurveSet hazard) {
+		return new Deaggregator(hazard);
+	}
+
+	static class Deaggregator {
+
+		private HazardCurveSet hazard;
 		private Model model;
-		private HazardResult hazard;
-		private double targetIml;
+		private Imt imt;
+		private double iml;
 
-		private double[][][] data; // [M][R][ε]
+		private double[][][] data; // [R][M][ε]
 
 		private double mBar, rBar, εBar; // these are total
 		private double totalRate; // TODO compare to orignal PoE
@@ -125,49 +226,48 @@ class Deagg {
 		private double[][] rValues;
 		private double[][] mrWeights;
 
-		Builder withModel(Model model) {
+		private Deaggregator(HazardCurveSet hazard) {
+			this.hazard = hazard;
+		}
+
+		Deaggregator withDataModel(Model model) {
 			this.model = checkNotNull(model);
 			return this;
 		}
 
-		Builder forHazard(HazardResult hazard) {
-			this.hazard = checkNotNull(hazard);
+		Deaggregator andTotalRate(double totalRate) {
+			this.totalRate = totalRate;
 			return this;
 		}
 
-		// // TODO need PoE enum
-		// Builder targetExceedance(double exceedance) {
-		// // TODO convert to iml
-		// }
-		//
-		// Builder targetRate(double rate) {
-		// // TODO convert to iml
-		// }
-		//
-		// Builder targetIml(double iml) {
-		// // TODO validate iml against curve range
-		// // this
-		// }
+		Deaggregator forImt(Imt imt) {
+			// check valid imt agains HCS
+			this.imt = imt;
+			return this;
+		}
 
-		Deagg build() {
-			// run deaggregation
-			// build final statistics
+		Deaggregator atIml(double iml) {
+			// check valid iml agains curve x-range for imt??
+			this.iml = iml;
+			return this;
+		}
+
+		Map<Gmm, Data> deaggregate() {
+
+			for (GroundMotions gms : hazard.hazardGroundMotionsList) {
+				InputList inputs = gms.inputs;
+				Map<Gmm, List<Double>> means = gms.means.get(imt);
+				Map<Gmm, List<Double>> sigmas = gms.sigmas.get(imt);
+				processSource(inputs, means, sigmas);
+			}
 			return null;
 		}
 
-		private void process() {
+		private void processSource(
+				InputList inputs,
+				Map<Gmm, List<Double>> means,
+				Map<Gmm, List<Double>> sigmas) {
 
-			// TODO need IML for target rate or PoE
-
-			// data is buried in maps by Imt, need Imt
-
-			for (SourceType type : hazard.sourceSetMap.keySet()) {
-				Set<HazardCurveSet> hazardCurveSets = hazard.sourceSetMap.get(type);
-				switch (type) {
-					case FAULT:
-						// processFaultSources(hazardCurveSets);
-				}
-			}
 		}
 
 		// TODO get us from CalcConfig
@@ -184,6 +284,11 @@ class Deagg {
 			}
 		}
 
+		/*
+		 * loop gmms inside inputs so that correct weight map, and hence correct
+		 * gmm deagg data, are added to; what is done when computing hazard?
+		 * filter on source or rupture/input
+		 */
 		private void processFaultSource(
 				GroundMotions groundMotions,
 				double sourceSetWeight,
@@ -240,6 +345,33 @@ class Deagg {
 			mrWeights[im][ir] += rate;
 		}
 
+		/*
+		 * Populate Data object with rupture data. Supply DataTable and
+		 * DataVolume indices, weighted (by rate) distance, magnitude, and
+		 * epsilon, and the rate of the rupture.
+		 * 
+		 * Although we could work with the raw distance, magnitude and epsilon
+		 * values, deaggregation is being performed across each Gmm, so
+		 * precomputing indices and weighted values in the calling method brings
+		 * some efficiency.
+		 */
+//		private static void addRupture(
+//				Data data,
+//				int ri, int mi, int εi,
+//				double rw, double mw, double εw,
+//				double rate) {
+//
+//			data.rmε.set(ri, mi, εi, rate);
+//			
+//			data.rBar += rw;
+//			data.mBar += mw;
+//			data.εBar += εw;
+//			data.barWeight += rate;
+//
+//			data.rPositions.add(ri, mi, rw);
+//			data.mPositions.add(ri, mi, mw);
+//			data.positionWeights.add(ri, mi, rate);
+//		}
 	}
 
 	private static int index(double min, double binWidth, double value) {
@@ -260,27 +392,32 @@ class Deagg {
 
 	public static class Model {
 
-		private final double mMin, mMax, Δm;
 		private final double rMin, rMax, Δr;
+		private final double mMin, mMax, Δm;
 		private final double εMin, εMax, Δε;
 
-		private final int mSize, rSize, εSize;
+		private final int rSize, mSize, εSize;
 
-		private Model(double mMin, double mMax, double Δm, double rMin, double rMax, double Δr,
+		private Model(
+				double rMin, double rMax, double Δr,
+				double mMin, double mMax, double Δm, 
 				double εMin, double εMax, double Δε) {
 
-			this.mMin = mMin;
-			this.mMax = mMax;
-			this.Δm = Δm;
 			this.rMin = rMin;
 			this.rMax = rMax;
 			this.Δr = Δr;
+			
+			this.mMin = mMin;
+			this.mMax = mMax;
+			this.Δm = Δm;
+			
 			this.εMin = εMin;
 			this.εMax = εMax;
 			this.Δε = Δε;
 
-			mSize = size(mMin, mMax, Δm);
+			// TODO needed?
 			rSize = size(rMin, rMax, Δr);
+			mSize = size(mMin, mMax, Δm);
 			εSize = size(εMin, εMax, Δε);
 		}
 
@@ -291,7 +428,10 @@ class Deagg {
 		 */
 		public static Model fromConfig(CalcConfig c) {
 			DeaggData d = c.deagg;
-			return create(d.mMin, d.mMax, d.Δm, d.rMin, d.rMax, d.Δr, d.εMin, d.εMax, d.Δε);
+			return create(
+				d.rMin, d.rMax, d.Δr,
+				d.mMin, d.mMax, d.Δm,
+				d.εMin, d.εMax, d.Δε);
 		}
 
 		/**
@@ -300,22 +440,24 @@ class Deagg {
 		 * not correspond to final upper edge of uppermost bins if
 		 * {@code max - min} is not evenly divisible by {@code Δ}.
 		 * 
-		 * @param mMin lower edge of lowest magnitude bin
-		 * @param mMax maximum magnitude
-		 * @param Δm
 		 * @param rMin lower edge of lowest distance bin
 		 * @param rMax
 		 * @param Δr
+		 * @param mMin lower edge of lowest magnitude bin
+		 * @param mMax maximum magnitude
+		 * @param Δm
 		 * @param εMin lower edge of lowest epsilon bin
 		 * @param εMax
 		 * @param Δε
 		 */
-		public static Model create(double mMin, double mMax, double Δm, double rMin,
-				double rMax, double Δr, double εMin, double εMax, double Δε) {
+		public static Model create(
+				double rMin, double rMax, double Δr, 
+				double mMin, double mMax, double Δm,
+				double εMin, double εMax, double Δε) {
 
 			return new Builder()
-				.magnitudeDiscretization(mMin, mMax, Δm)
 				.distanceDiscretization(rMin, rMax, Δr)
+				.magnitudeDiscretization(mMin, mMax, Δm)
 				.epsilonDiscretization(εMin, εMax, Δε)
 				.build();
 		}
@@ -325,21 +467,21 @@ class Deagg {
 			private static final String ID = "Deagg.DataModel.Builder";
 			private boolean built = false;
 
-			private Double mMin, mMax, Δm;
 			private Double rMin, rMax, Δr;
+			private Double mMin, mMax, Δm;
 			private Double εMin, εMax, Δε;
-
-			private Builder magnitudeDiscretization(double min, double max, double Δ) {
-				mMin = Magnitudes.validateMag(min);
-				mMax = Magnitudes.validateMag(max);
-				Δm = DataUtils.validateDelta(min, max, Δ);
-				return this;
-			}
 
 			private Builder distanceDiscretization(double min, double max, double Δ) {
 				rMin = DataUtils.validate(rRange, "Min distance", min);
 				rMax = DataUtils.validate(rRange, "Max distance", max);
 				Δr = DataUtils.validateDelta(min, max, Δ);
+				return this;
+			}
+
+			private Builder magnitudeDiscretization(double min, double max, double Δ) {
+				mMin = Magnitudes.validateMag(min);
+				mMax = Magnitudes.validateMag(max);
+				Δm = DataUtils.validateDelta(min, max, Δ);
 				return this;
 			}
 
@@ -352,13 +494,13 @@ class Deagg {
 
 			private Model build() {
 				validateState(ID);
-				return new Model(mMin, mMax, Δm, rMin, rMax, Δr, εMin, εMax, Δε);
+				return new Model(rMin, rMax, Δr, mMin, mMax, Δm, εMin, εMax, Δε);
 			}
 
 			private void validateState(String id) {
 				checkState(!built, "This %s instance as already been used", id);
-				checkState(mMin != null, "%s magnitude discretization not set", id);
 				checkState(rMin != null, "%s distance discretization not set", id);
+				checkState(mMin != null, "%s magnitude discretization not set", id);
 				checkState(εMin != null, "%s epsilon discretization not set", id);
 				built = true;
 			}

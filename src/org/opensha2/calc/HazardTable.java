@@ -3,7 +3,7 @@ package org.opensha2.calc;
 import java.util.List;
 import java.util.Map;
 
-import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.gmm.Gmm;
@@ -28,13 +28,13 @@ class HazardTable {
 	// one approach (ceus)
 	private Map<Gmm, List<List<Double>>> μMap;
 	private Map<Gmm, List<List<Double>>> σMap;
-	private Map<Gmm, List<List<ArrayXY_Sequence>>> curveMap;
-	private List<List<ArrayXY_Sequence>> totalCurveList;
+	private Map<Gmm, List<List<XySequence>>> curveMap;
+	private List<List<XySequence>> totalCurveList;
 	// or (wus)
 	private Table<Gmm, FocalMech, List<List<Double>>> μTable;
 	private Table<Gmm, FocalMech, List<List<Double>>> σTable;
-	private Table<Gmm, FocalMech, List<List<ArrayXY_Sequence>>> curveTable;
-	private Map<FocalMech, List<List<ArrayXY_Sequence>>> totalCurveMap;
+	private Table<Gmm, FocalMech, List<List<XySequence>>> curveTable;
+	private Map<FocalMech, List<List<XySequence>>> totalCurveMap;
 
 	// so, when looping inputs and compiling ground motions
 

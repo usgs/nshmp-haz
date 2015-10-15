@@ -7,8 +7,8 @@ import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
 import static org.opensha2.gmm.Imt.SA0P75;
 
-import org.opensha2.data.XY_Point;
-import org.opensha2.data.XY_Sequence;
+import org.opensha2.data.XyPoint;
+import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
 
 /**
@@ -17,7 +17,7 @@ import org.opensha2.gmm.Imt;
  * standard deviation, σ, and other possibly relevant arguments.
  * 
  * <p>Each model implements methods that compute the probability of exceeding a
- * single value or a {@link XY_Sequence} of values. Some arguments are only used
+ * single value or a {@link XySequence} of values. Some arguments are only used
  * by some models; for example, {@link #NONE} ignores σ, but it must be supplied
  * for consistency. See individual models for details.</p>
  * 
@@ -40,8 +40,8 @@ public enum ExceedanceModel {
 			return stepFn(μ, value);
 		}
 
-		@Override XY_Sequence exceedance(double μ, double σ, double n, Imt imt, XY_Sequence sequence) {
-			for (XY_Point p : sequence) {
+		@Override XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
+			for (XyPoint p : sequence) {
 				p.set(stepFn(μ, p.x()));
 			}
 			return sequence;
@@ -58,7 +58,7 @@ public enum ExceedanceModel {
 			return boundedCcdFn(μ, σ, value, 0.0, 1.0);
 		}
 
-		@Override XY_Sequence exceedance(double μ, double σ, double n, Imt imt, XY_Sequence sequence) {
+		@Override XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
 			return boundedCcdFn(μ, σ, sequence, 0.0, 1.0);
 		}
 	},
@@ -73,7 +73,7 @@ public enum ExceedanceModel {
 			return boundedCcdFn(μ, σ, value, prob(μ, σ, n), 1.0);
 		}
 
-		@Override XY_Sequence exceedance(double μ, double σ, double n, Imt imt, XY_Sequence sequence) {
+		@Override XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
 			return boundedCcdFn(μ, σ, sequence, prob(μ, σ, n), 1.0);
 		}
 	},
@@ -89,7 +89,7 @@ public enum ExceedanceModel {
 			return boundedCcdFn(μ, σ, value, pHi, 1.0 - pHi);
 		}
 
-		@Override XY_Sequence exceedance(double μ, double σ, double n, Imt imt, XY_Sequence sequence) {
+		@Override XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
 			double pHi = prob(μ, σ, n);
 			return boundedCcdFn(μ, σ, sequence, pHi, 1.0 - pHi);
 		}
@@ -105,7 +105,7 @@ public enum ExceedanceModel {
 			return boundedCcdFn(μ, 0.65, value, 0.0, 1.0);
 		}
 
-		@Override XY_Sequence exceedance(double μ, double σ, double n, Imt imt, XY_Sequence sequence) {
+		@Override XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
 			return boundedCcdFn(μ, 0.65, sequence, 0.0, 1.0);
 		}
 	},
@@ -126,8 +126,8 @@ public enum ExceedanceModel {
 			return (p1 + p2) / 2.0;
 		}
 
-		@Override XY_Sequence exceedance(double μ, double σ, double n, Imt imt, XY_Sequence sequence) {
-			for (XY_Point p : sequence) {
+		@Override XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
+			for (XyPoint p : sequence) {
 				p.set(exceedance(μ, σ, n, imt, p.x()));
 			}
 			return sequence;
@@ -147,7 +147,7 @@ public enum ExceedanceModel {
 			return boundedCcdFn(μ, σ, value, pHi, 1.0);
 		}
 
-		@Override XY_Sequence exceedance(double μ, double σ, double n, Imt imt, XY_Sequence sequence) {
+		@Override XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
 			double pHi = prob(μ, σ, n, log(maxValue(imt)));
 			return boundedCcdFn(μ, σ, sequence, pHi, 1.0);
 		}
@@ -190,7 +190,7 @@ public enum ExceedanceModel {
 	 * @param sequence the x-values of which to compute exceedance for
 	 * @return the supplied {@code sequence}
 	 */
-	abstract XY_Sequence exceedance(double μ, double σ, double n, Imt imt, XY_Sequence sequence);
+	abstract XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence);
 
 	private static final double SQRT_2 = Math.sqrt(2);
 
@@ -223,12 +223,12 @@ public enum ExceedanceModel {
 	/*
 	 * Bounded complementary cumulative distribution. Compute the probabilities
 	 * that the x-values in {@code values} will be exceeded, subject to upper
-	 * and lower probability limits. Return the supplied {@code XY_Sequence}
+	 * and lower probability limits. Return the supplied {@code XySequence}
 	 * populated with probabilities.
 	 */
-	private static XY_Sequence boundedCcdFn(double μ, double σ, XY_Sequence sequence, double pHi,
+	private static XySequence boundedCcdFn(double μ, double σ, XySequence sequence, double pHi,
 			double pLo) {
-		for (XY_Point p : sequence) {
+		for (XyPoint p : sequence) {
 			p.set(boundedCcdFn(μ, σ, p.x(), pHi, pLo));
 		}
 		return sequence;

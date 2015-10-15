@@ -154,13 +154,13 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	/**
 	 * Returns the index of the node at the supplied {@code Direction} from the
 	 * node at the supplied index.
-	 * @param idx to move from
+	 * @param index to move from
 	 * @param dir to move
 	 * @return index at {@code Direction} or -1 if no node exists
 	 * @throws NullPointerException if supplied index is not a valid grid index
 	 */
-	public int move(int idx, Direction dir) {
-		Location start = locationForIndex(idx);
+	public int move(int index, Direction dir) {
+		Location start = locationForIndex(index);
 		checkNotNull(start, "Invalid start index");
 		Location end = Location.create(start.lat() + latSpacing * dir.signLatMove(), start.lon() +
 			lonSpacing * dir.signLonMove());
@@ -272,28 +272,28 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		Location pLL = Location.create(rect.getMinY(), rect.getMinX());
 		Location pUL = Location.create(rect.getMaxY(), rect.getMinX());
 		Location pLR = Location.create(rect.getMinY(), rect.getMaxX());
-		int idxLL = indexForLocation(pLL);
-		int idxUL = indexForLocation(pUL);
-		int idxLR = indexForLocation(pLR);
+		int indexLL = indexForLocation(pLL);
+		int indexUL = indexForLocation(pUL);
+		int indexLR = indexForLocation(pLR);
 
 		// indices of row starts
 		List<Integer> rowStarts = Lists.newArrayList();
-		int rowStartIdx = idxLL;
-		int lastRowStartIdx = idxUL;
-		while (rowStartIdx <= lastRowStartIdx) {
-			rowStarts.add(rowStartIdx);
-			Location currLoc = locationForIndex(rowStartIdx);
+		int rowStartIndex = indexLL;
+		int lastRowStartIndex = indexUL;
+		while (rowStartIndex <= lastRowStartIndex) {
+			rowStarts.add(rowStartIndex);
+			Location currLoc = locationForIndex(rowStartIndex);
 			Location nextLoc = Location.create(currLoc.lat() + latSpacing, currLoc.lon());
-			rowStartIdx = indexForLocation(nextLoc);
+			rowStartIndex = indexForLocation(nextLoc);
 		}
 
 		// row length
-		int len = idxLR - idxLL + 1;
+		int len = indexLR - indexLL + 1;
 
 		// build list
 		List<Integer> indices = Lists.newArrayList();
-		for (Integer idx : rowStarts) {
-			addRange(indices, idx, len);
+		for (Integer index : rowStarts) {
+			addRange(indices, index, len);
 		}
 		return indices;
 
@@ -430,11 +430,11 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		// (-insert_point-1). The SHA rule of thumb follows the java rules
 		// of insidedness, so any exact node edge value is associated with
 		// the node above. Therefore, the negative within range values are
-		// adjusted to the correct node index with (-idx-2). Below range
+		// adjusted to the correct node index with (-index-2). Below range
 		// values are already -1; above range values are corrected to -1.
-		int idx = Arrays.binarySearch(edgeVals, value);
-		idx = (idx < -1) ? (-idx - 2) : idx;
-		return (idx == edgeVals.length - 1) ? -1 : idx;
+		int i = Arrays.binarySearch(edgeVals, value);
+		i = (i < -1) ? (-i - 2) : i;
+		return (i == edgeVals.length - 1) ? -1 : i;
 	}
 
 	/*
@@ -522,23 +522,23 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		// node data
 		gridIndices = new int[gridSize];
 		List<Location> nodeList = Lists.newArrayList();
-		int node_idx = 0;
-		int grid_idx = 0;
+		int nodeIndex = 0;
+		int gridIndex = 0;
 		Location loc;
 		for (double lat : latNodes) {
 			for (double lon : lonNodes) {
 				loc = Location.create(lat, lon);
 				if (contains(loc)) {
 					nodeList.add(loc);
-					gridIndices[grid_idx] = node_idx++;
+					gridIndices[gridIndex] = nodeIndex++;
 				} else {
-					gridIndices[grid_idx] = -1;
+					gridIndices[gridIndex] = -1;
 				}
-				grid_idx++;
+				gridIndex++;
 			}
 		}
 		nodes = LocationList.create(nodeList);
-		nodeCount = node_idx;
+		nodeCount = nodeIndex;
 	}
 
 	/*

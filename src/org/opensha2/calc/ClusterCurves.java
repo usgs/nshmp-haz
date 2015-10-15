@@ -1,16 +1,14 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.opensha2.data.XySequence.immutableCopyOf;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.opensha2.data.ArrayXY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
-
-import com.google.common.collect.ArrayTable;
-import com.google.common.collect.Table;
 
 /**
  * Container class for the combined hazard curves derived from the individual
@@ -23,10 +21,10 @@ import com.google.common.collect.Table;
 final class ClusterCurves {
 
 	final ClusterGroundMotions clusterGroundMotions;
-	final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
+	final Map<Imt, Map<Gmm, XySequence>> curveMap;
 
 	private ClusterCurves(ClusterGroundMotions clusterGroundMotions,
-			Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap) {
+			Map<Imt, Map<Gmm, XySequence>> curveMap) {
 		this.clusterGroundMotions = clusterGroundMotions;
 		this.curveMap = curveMap;
 	}
@@ -41,7 +39,7 @@ final class ClusterCurves {
 		private boolean built = false;
 
 		private final ClusterGroundMotions clusterGroundMotions;
-		private final Map<Imt, Map<Gmm, ArrayXY_Sequence>> curveMap;
+		private final Map<Imt, Map<Gmm, XySequence>> curveMap;
 
 		private Builder(ClusterGroundMotions clusterGroundMotions) {
 			this.clusterGroundMotions = clusterGroundMotions;
@@ -49,13 +47,14 @@ final class ClusterCurves {
 			GroundMotions model = clusterGroundMotions.get(0);
 			curveMap = new EnumMap<>(Imt.class);
 			for (Imt imt : model.means.keySet()) {
-				Map<Gmm, ArrayXY_Sequence> gmmMap = new EnumMap<>(Gmm.class);
+				Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
 				curveMap.put(imt, gmmMap);
 			}
 		}
 
-		Builder addCurve(Imt imt, Gmm gmm, ArrayXY_Sequence curve) {
-			curveMap.get(imt).put(gmm, curve);
+		/* Makes an immutable copy of the supplied curve. */
+		Builder addCurve(Imt imt, Gmm gmm, XySequence curve) {
+			curveMap.get(imt).put(gmm, immutableCopyOf(curve));
 			return this;
 		}
 

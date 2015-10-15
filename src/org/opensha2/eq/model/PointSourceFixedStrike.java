@@ -12,6 +12,7 @@ import static org.opensha2.util.MathUtils.hypot;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.scaling.MagLengthRelationship;
@@ -21,7 +22,6 @@ import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationVector;
 import org.opensha2.geo.Locations;
-import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.math.DoubleMath;
 
@@ -56,7 +56,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 	 *        different depth-to-top-of-ruptures
 	 * @param mechWtMap <code>Map</code> of focal mechanism weights
 	 */
-	PointSourceFixedStrike(Location loc, IncrementalMfd mfd, Map<FocalMech, Double> mechWtMap,
+	PointSourceFixedStrike(Location loc, XySequence mfd, Map<FocalMech, Double> mechWtMap,
 		RuptureScaling rupScaling, DepthModel depthModel, double strike) {
 		super(loc, mfd, mechWtMap, rupScaling, depthModel);
 		this.strike = strike;
@@ -76,17 +76,17 @@ class PointSourceFixedStrike extends PointSourceFinite {
 	 * condsider getRUpture(int) implementation.
 	 */
 
-	private void updateRupture(Rupture rup, int idx) {
+	private void updateRupture(Rupture rup, int index) {
 
-		int magDepthIdx = idx % magDepthSize;
-		int magIdx = depthModel.magDepthIndices.get(magDepthIdx);
-		double mag = mfd.getX(magIdx);
-		double rate = mfd.getY(magIdx);
+		int magDepthIndex = index % magDepthSize;
+		int magIndex = depthModel.magDepthIndices.get(magDepthIndex);
+		double mag = mfd.x(magIndex);
+		double rate = mfd.y(magIndex);
 
-		double zTop = depthModel.magDepthDepths.get(magDepthIdx);
-		double zTopWt = depthModel.magDepthWeights.get(magDepthIdx);
+		double zTop = depthModel.magDepthDepths.get(magDepthIndex);
+		double zTopWt = depthModel.magDepthWeights.get(magDepthIndex);
 
-		FocalMech mech = mechForIndex(idx);
+		FocalMech mech = mechForIndex(index);
 		double mechWt = mechWtMap.get(mech);
 		if (mech != STRIKE_SLIP) mechWt *= 0.5;
 		double dipRad = mech.dip() * TO_RAD;
@@ -109,7 +109,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 		fsSurf.widthH = widthH;
 		fsSurf.zTop = zTop;
 		fsSurf.zBot = zBot;
-		fsSurf.footwall = isOnFootwall(idx);
+		fsSurf.footwall = isOnFootwall(index);
 
 		double distToEndpoint = dimensions.length / 2;
 		Location locWithDepth = Location.create(loc.lat(), loc.lon(), zTop);

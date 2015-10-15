@@ -15,15 +15,14 @@ import static org.opensha2.eq.model.SourceAttribute.TYPE;
 import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceType.GRID;
 import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readEnum;
+import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.stringToEnumWeightMap;
 import static org.opensha2.util.Parsing.stringToValueValueWeightMap;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -32,7 +31,6 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha2.data.DataUtils;
-import org.opensha2.data.XY_Sequence;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -50,8 +48,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.ImmutableSortedSet.Builder;
 import com.google.common.primitives.Doubles;
 
 /*
@@ -202,6 +198,14 @@ class GridParser extends DefaultHandler {
 					nodeMechMap = null;
 				}
 				break;
+				
+				/*
+				 * TODO we need to check that delta mag, if included in a node, is
+				 * consistent with deltaMag of all default MFDs. Or, we check that
+				 * all defaults are consistent and don't permit inclusion of deltaMag
+				 * as node attribute. The same could be done for mMin. This ensures a
+				 * basic consistency of structure.
+				 */
 		}
 	}
 
@@ -235,22 +239,12 @@ class GridParser extends DefaultHandler {
 				break;
 
 			case GRID_SOURCE_SET:
-				/*
-				 * TODO there are too many assumptions built into this; whose to
-				 * say ones bin spacing should be only be in the hundredths?
-				 * 
-				 * We should read precision of supplied mMin and mMax and delta
-				 * and use largest for formatting
-				 * 
-				 * TODO in the case of single combined/flattened MFDs, mags may
-				 * not be uniformly spaced. Can this be refactored
-				 */
-				double cleanDelta = Double.valueOf(String.format("%.2f", deltaMag));
-				double[] mags = DataUtils.buildCleanSequence(minMag, maxMag, cleanDelta, true, 2);
-				sourceSetBuilder.magMaster(Doubles.asList(mags));
+				sourceSetBuilder.mfdData(minMag, maxMag, deltaMag);
 				sourceSet = sourceSetBuilder.build();
 
 				if (log.isLoggable(FINE)) {
+					// TODO there must be a better way to organize this so that we
+					// can log the depth model without having to give it package vis
 					log.fine("       Size: " + sourceSet.size());
 					log.finer("  Mag count: " + sourceSet.depthModel.magMaster.size());
 					log.finer(" Mag master: " + sourceSet.depthModel.magMaster);
@@ -285,6 +279,7 @@ class GridParser extends DefaultHandler {
 		switch (type) {
 			case GR:
 				return buildGR(atts);
+				// TODO clean
 //				MfdHelper.GR_Data grData = mfdHelper.getGR(atts);
 //				int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
 //				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
@@ -351,7 +346,7 @@ class GridParser extends DefaultHandler {
 		// TODO just returning the first one for now
 		// TODO
 		// TODO This is likely going to require refactoring Point Source
-		// MFDs to be XY_Sequences because IncrementalMfd descends from
+		// MFDs to be XySequences because IncrementalMfd descends from
 		// evenly discretized function; more relevant to combining single mfds
 		// that contain non-unifrmely spaced magnitudes
 		//
@@ -409,7 +404,5 @@ class GridParser extends DefaultHandler {
 			taperData.weight);
 		return mfdTaper;
 	}
-	
-	
 	
 }

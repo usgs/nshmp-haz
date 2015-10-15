@@ -7,7 +7,7 @@ import static org.opensha2.data.DataUtils.*;
 import java.util.Arrays;
 
 /**
- * A custom XY_Sequence whose y-values must decrease monotonically. This check
+ * A custom XySequence whose y-values must decrease monotonically. This check
  * is made upon creation with new data but is not be enforced as y-values are
  * updated/mutated.
  * 
@@ -15,16 +15,16 @@ import java.util.Arrays;
  * @version $Id:$
  */
 @Deprecated
-public class HazardCurve extends ArrayXY_Sequence {
+public class HazardCurve {
 
 	/* Only for use by static factory methods. See parent. */
-	HazardCurve(ArrayXY_Sequence seq) {
-		super(seq);
+	HazardCurve(XySequence seq) {
+//		super(seq);
 	}
 
 	/* Only for use by static factory methods. See parent. */
 	HazardCurve(double[] xs, double[] ys) {
-		super(xs, ys);
+//		super(xs, ys);
 		checkArgument(DataUtils.isMonotonic(false, false, ys));
 	}
 
@@ -52,7 +52,7 @@ public class HazardCurve extends ArrayXY_Sequence {
 	 * @throws NullPointerException if the supplied {@code sequence} is
 	 *         {@code null}
 	 */
-	public static HazardCurve copyOf(ArrayXY_Sequence sequence) {
+	public static HazardCurve copyOf(XySequence sequence) {
 		return new HazardCurve(sequence);
 	}
 

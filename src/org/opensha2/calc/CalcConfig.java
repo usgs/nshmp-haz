@@ -7,6 +7,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.util.TextUtils.format;
 
+import static org.opensha2.data.XySequence.*;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -17,9 +19,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha2.data.ArrayXY_Sequence;
 import org.opensha2.data.DataUtils;
-import org.opensha2.data.XY_Sequence;
+import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
 import org.opensha2.util.Parsing;
 
@@ -68,9 +69,11 @@ public final class CalcConfig {
 	private final Map<Imt, double[]> customImls;
 	final DeaggData deagg;
 	private final SiteSet sites;
+	
+	final boolean optimizeGrids;
 
-	final Map<Imt, ArrayXY_Sequence> modelCurves;
-	final Map<Imt, ArrayXY_Sequence> logModelCurves;
+	final Map<Imt, XySequence> modelCurves;
+	final Map<Imt, XySequence> logModelCurves;
 
 	private static final Gson GSON = new GsonBuilder()
 		.registerTypeAdapter(Site.class, new Site.Deserializer())
@@ -86,8 +89,9 @@ public final class CalcConfig {
 			Map<Imt, double[]> customImls,
 			DeaggData deagg,
 			SiteSet sites,
-			Map<Imt, ArrayXY_Sequence> modelCurves,
-			Map<Imt, ArrayXY_Sequence> logModelCurves) {
+			boolean optimizeGrids,
+			Map<Imt, XySequence> modelCurves,
+			Map<Imt, XySequence> logModelCurves) {
 
 		this.resource = resource;
 		this.exceedanceModel = exceedanceModel;
@@ -97,6 +101,7 @@ public final class CalcConfig {
 		this.customImls = customImls;
 		this.deagg = deagg;
 		this.sites = sites;
+		this.optimizeGrids = optimizeGrids;
 		this.modelCurves = modelCurves;
 		this.logModelCurves = logModelCurves;
 	}
@@ -177,7 +182,7 @@ public final class CalcConfig {
 	 * .
 	 * @param imt to get curve for
 	 */
-	public XY_Sequence modelCurve(Imt imt) {
+	public XySequence modelCurve(Imt imt) {
 		return modelCurves.get(imt);
 	}
 
@@ -249,6 +254,7 @@ public final class CalcConfig {
 		private Map<Imt, double[]> customImls;
 		private DeaggData deagg;
 		private SiteSet sites;
+		private Boolean optimizeGrids;
 
 		public Builder copy(CalcConfig config) {
 			checkNotNull(config);
@@ -260,6 +266,7 @@ public final class CalcConfig {
 			this.customImls = config.customImls;
 			this.deagg = config.deagg;
 			this.sites = config.sites;
+			this.optimizeGrids = config.optimizeGrids;
 			return this;
 		}
 
@@ -274,6 +281,7 @@ public final class CalcConfig {
 			this.customImls = Maps.newHashMap();
 			this.deagg = new DeaggData();
 			this.sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
+			this.optimizeGrids = true;
 			return this;
 		}
 
@@ -287,6 +295,7 @@ public final class CalcConfig {
 			if (that.customImls != null) this.customImls = that.customImls;
 			if (that.deagg != null) this.deagg = that.deagg;
 			if (that.sites != null) this.sites = that.sites;
+			if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
 			return this;
 		}
 
@@ -295,23 +304,23 @@ public final class CalcConfig {
 			return this;
 		}
 
-		private Map<Imt, ArrayXY_Sequence> createLogCurveMap() {
-			Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
+		private Map<Imt, XySequence> createLogCurveMap() {
+			Map<Imt, XySequence> curveMap = Maps.newEnumMap(Imt.class);
 			for (Imt imt : imts) {
 				double[] imls = imlsForImt(imt);
 				imls = Arrays.copyOf(imls, imls.length);
 				DataUtils.ln(imls);
-				curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
+				curveMap.put(imt, immutableCopyOf(create(imls, null)));
 			}
 			return Maps.immutableEnumMap(curveMap);
 		}
 
-		private Map<Imt, ArrayXY_Sequence> createCurveMap() {
-			Map<Imt, ArrayXY_Sequence> curveMap = Maps.newEnumMap(Imt.class);
+		private Map<Imt, XySequence> createCurveMap() {
+			Map<Imt, XySequence> curveMap = Maps.newEnumMap(Imt.class);
 			for (Imt imt : imts) {
 				double[] imls = imlsForImt(imt);
 				imls = Arrays.copyOf(imls, imls.length);
-				curveMap.put(imt, ArrayXY_Sequence.create(imls, null));
+				curveMap.put(imt, immutableCopyOf(create(imls, null)));
 			}
 			return Maps.immutableEnumMap(curveMap);
 		}
@@ -337,11 +346,12 @@ public final class CalcConfig {
 		public CalcConfig build() {
 			validateState(ID);
 			Set<Imt> finalImts = Sets.immutableEnumSet(imts);
-			Map<Imt, ArrayXY_Sequence> curves = createCurveMap();
-			Map<Imt, ArrayXY_Sequence> logCurves = createLogCurveMap();
+			Map<Imt, XySequence> curves = createCurveMap();
+			Map<Imt, XySequence> logCurves = createLogCurveMap();
 			return new CalcConfig(
 				resource, exceedanceModel, truncationLevel, finalImts,
-				defaultImls, customImls, deagg, sites, curves, logCurves);
+				defaultImls, customImls, deagg, sites, optimizeGrids,
+				curves, logCurves);
 		}
 
 	}

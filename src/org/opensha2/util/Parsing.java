@@ -9,6 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -576,7 +577,8 @@ public final class Parsing {
 	/**
 	 * Convert a bracketed and comma-delimited string of numbers (e.g. [1.0,
 	 * 2.0, 3.0] to a {@code double[]}. This is the reverse of
-	 * {@link Arrays#toString(double[])} and {@link List#toString()}
+	 * {@link Arrays#toString(double[])} and
+	 * {@link AbstractCollection#toString()}
 	 * 
 	 * @param s the string to convert
 	 */
@@ -587,10 +589,10 @@ public final class Parsing {
 
 	/**
 	 * Convert a {@code Collection<Double>} to a string of the same format
-	 * returned by {@link Arrays#toString(double[])} and {@link List#toString()}
-	 * , but will format the values using the supplied format string. The
-	 * supplied {@code format} should match that expected by
-	 * {@code String.format(String, Object...)}
+	 * returned by {@link Arrays#toString(double[])} and
+	 * {@link AbstractCollection#toString()} , but will format the values using
+	 * the supplied format string. The supplied {@code format} should match that
+	 * expected by {@code String.format(String, Object...)}
 	 * 
 	 * @param values the values to convert
 	 * @param format a format string
@@ -602,10 +604,10 @@ public final class Parsing {
 
 	/**
 	 * Convert a {@code Collection<Double>} to a string of the same format
-	 * returned by {@link Arrays#toString(double[])} and {@link List#toString()}
-	 * , but will format the values using the supplied format string. The
-	 * supplied {@code format} should match that expected by
-	 * {@code String.format(String, Object...)}
+	 * returned by {@link Arrays#toString(double[])} and
+	 * {@link AbstractCollection#toString()} , but will format the values using
+	 * the supplied format string. The supplied {@code format} should match that
+	 * expected by {@code String.format(String, Object...)}
 	 * 
 	 * @param values the values to convert
 	 * @param format a format string
@@ -806,8 +808,8 @@ public final class Parsing {
 	 * @param c the comment indicator character
 	 */
 	public static String stripComment(String s, char c) {
-		int idx = s.indexOf(c);
-		return idx != -1 ? s.substring(0, idx) : s;
+		int index = s.indexOf(c);
+		return index != -1 ? s.substring(0, index) : s;
 	}
 
 	/**
