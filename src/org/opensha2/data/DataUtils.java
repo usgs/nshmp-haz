@@ -68,6 +68,18 @@ public final class DataUtils {
 	 */
 
 	/*
+	 * TODO remove unnecessary checkNotNull clutter; only needed when a
+	 * reference is being set; otherwise if an argument is null the NPE will be
+	 * thrown in any event when the argumnet is accessed in any way
+	 * 
+	 * TODO do we really care if supplied arrays are empty; there are certainly 
+	 * situations where an empty array will cause problems but it's probably
+	 * better to recognize and document those and allow empty arrays to pass through
+	 * 
+	 * TODO refactor to just Data.*
+	 */
+
+	/*
 	 * NOTE: Transform Functions vs Pure Iteration
 	 * 
 	 * The original implementation of this class used the built-in transform()
@@ -95,6 +107,52 @@ public final class DataUtils {
 	static double[] uncheckedAdd(double term, double[] data) {
 		for (int i = 0; i < data.length; i++) {
 			data[i] += term;
+		}
+		return data;
+	}
+	
+	/**
+	 * Add a {@code term} to the elements of {@code data} in place without
+	 * checking for over/underflow.
+	 * 
+	 * @param data to operate on
+	 * @param term to add
+	 * @return a reference to the supplied {@code data}
+	 */
+	public static double[][] add(double term, double[][] data) {
+		validateDataArray(data);
+		for (int i = 0; i < data.length; i++) {
+			add(term, data[i]);
+		}
+		return data;
+	}
+
+	static double[][] uncheckedAdd(double term, double[][] data) {
+		for (int i = 0; i < data.length; i++) {
+			uncheckedAdd(term, data[i]);
+		}
+		return data;
+	}
+
+	/**
+	 * Add a {@code term} to the elements of {@code data} in place without
+	 * checking for over/underflow.
+	 * 
+	 * @param data to operate on
+	 * @param term to add
+	 * @return a reference to the supplied {@code data}
+	 */
+	public static double[][][] add(double term, double[][][] data) {
+		validateDataArray(data);
+		for (int i = 0; i < data.length; i++) {
+			add(term, data[i]);
+		}
+		return data;
+	}
+
+	static double[][][] uncheckedAdd(double term, double[][][] data) {
+		for (int i = 0; i < data.length; i++) {
+			uncheckedAdd(term, data[i]);
 		}
 		return data;
 	}
@@ -150,7 +208,7 @@ public final class DataUtils {
 		}
 		return data1;
 	}
-	
+
 	static double[][] uncheckedAdd(double[][] data1, double[][] data2) {
 		for (int i = 0; i < data1.length; i++) {
 			uncheckedAdd(data1[i], data2[i]);
@@ -173,14 +231,14 @@ public final class DataUtils {
 		}
 		return data1;
 	}
-	
+
 	static double[][][] uncheckedAdd(double[][][] data1, double[][][] data2) {
 		for (int i = 0; i < data1.length; i++) {
 			uncheckedAdd(data1[i], data2[i]);
 		}
 		return data1;
 	}
-	
+
 	/**
 	 * Add the values of {@code data2} to {@code data1} in place without
 	 * checking for over/underflow.
@@ -414,7 +472,7 @@ public final class DataUtils {
 	 * @see Math#log(double)
 	 */
 	public static double[] ln(double... data) {
-		validateDataArray(data);
+//		validateDataArray(data);
 		for (int i = 0; i < data.length; i++) {
 			data[i] = Math.log(data[i]);
 		}
@@ -793,10 +851,17 @@ public final class DataUtils {
 		checkArgument(checkNotNull(data).length > 0);
 	}
 
+	private static void validateDataArray(double[][] data) {
+		checkArgument(checkNotNull(data).length > 0);
+	}
+
+	private static void validateDataArray(double[][][] data) {
+		checkArgument(checkNotNull(data).length > 0);
+	}
+
 	private static void validateDataCollection(Collection<? extends Number> data) {
 		checkArgument(checkNotNull(data).size() > 0);
 	}
-
 	private static void validateDataArrays(double[] data1, double[] data2) {
 		checkArgument(checkNotNull(data1).length == checkNotNull(data2).length);
 	}

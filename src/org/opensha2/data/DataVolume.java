@@ -8,9 +8,15 @@ import static org.opensha2.data.DataTables.checkDataState;
 import static org.opensha2.data.DataTables.indexOf;
 import static org.opensha2.data.DataTables.keys;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.opensha2.data.DataTable.Builder;
+import org.opensha2.data.DataTables.AbstractTable;
+import org.opensha2.data.DataTables.AbstractVolume;
+import org.opensha2.data.DataTables.DefaultTable;
 import org.opensha2.data.DataTables.DefaultVolume;
+import org.opensha2.data.DataTables.SingularTable;
 
 /**
  * A 3-dimensional volume of immutable, double-valued data that is arranged
@@ -93,9 +99,9 @@ public interface DataVolume {
 	public static final class Builder {
 
 		// TODO data is not copied on build() so we need to dereference
-		// data arrays on build() to prevent lingering builders from 
+		// data arrays on build() to prevent lingering builders from
 		// further modifying data
-		
+
 		private double[][][] data;
 
 		private double rowMin;
@@ -123,6 +129,36 @@ public interface DataVolume {
 		 */
 		public static Builder create() {
 			return new Builder();
+		}
+
+		/**
+		 * Create a new builder with a structure identical to that of the
+		 * supplied volume as a model.
+		 * 
+		 * @param model data volume
+		 */
+		public static Builder fromModel(DataVolume model) {
+
+			AbstractVolume v = (AbstractVolume) model;
+			Builder b = new Builder();
+
+			b.rowMin = v.rowMin;
+			b.rowMax = v.rowMax;
+			b.rowΔ = v.rowΔ;
+			b.rows = v.rows;
+
+			b.columnMin = v.columnMin;
+			b.columnMax = v.columnMax;
+			b.columnΔ = v.columnΔ;
+			b.columns = v.columns;
+
+			b.levelMin = v.levelMin;
+			b.levelMax = v.levelMax;
+			b.levelΔ = v.levelΔ;
+			b.levels = v.levels;
+
+			b.init();
+			return b;
 		}
 
 		/**
@@ -188,7 +224,7 @@ public interface DataVolume {
 		public int rowIndex(double row) {
 			return indexOf(rowMin, rowΔ, row, rows.length);
 		}
-		
+
 		/**
 		 * Return the index of the column that would contain the supplied value.
 		 * @param column value
@@ -268,8 +304,7 @@ public interface DataVolume {
 		 * 
 		 * @param data to set
 		 */
-		@Deprecated
-		public Builder setAll(double[][][] data) {
+		@Deprecated public Builder setAll(double[][][] data) {
 			checkNotNull(data);
 			checkArgument(data.length > 0 && data[0].length > 0 && data[0][0].length > 0,
 				"At least one data dimension is empty");
@@ -277,6 +312,40 @@ public interface DataVolume {
 			checkDataSize(rows.length, columns.length, levels.length, data);
 			this.data = DataUtils.copyOf(data);
 			return this;
+		}
+
+		/**
+		 * Add the values in the supplied table to this builder. This is a very
+		 * efficient operation if this builder has been created using the
+		 * supplied table as a model.
+		 * 
+		 * @param table to add
+		 * @throws IllegalArgumentException if table
+		 * @return
+		 */
+		public Builder add(DataVolume volume) {
+			// safe covariant casts
+			validateVolume((DefaultVolume) table);
+			if (table instanceof SingularTable) {
+				DataUtils.uncheckedAdd(((SingularTable) table).value, data);
+			} else {
+				DataUtils.uncheckedAdd(data, ((DefaultTable) table).data);
+			}
+			return this;
+		}
+
+		/*
+		 * Check hash codes of row, column, and level arrays in case copyOf has been
+		 * used, otherwise check array equality.
+		 */
+		AbstractVolume validateTable(AbstractVolume that) {
+			checkArgument((this.rows.hashCode() == that.rows.hashCode() &&
+				this.columns.hashCode() == that.columns.hashCode() &&
+				this.levels.hashCode() == that.levels.hashCode()) ||
+				(Arrays.equals(this.rows, that.rows) &&
+					Arrays.equals(this.columns, that.columns) &&
+				Arrays.equals(this.levels, that.levels)));
+			return that;
 		}
 
 		/**

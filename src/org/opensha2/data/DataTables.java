@@ -125,7 +125,7 @@ public final class DataTables {
 		}
 	}
 
-	private static abstract class AbstractTable implements DataTable {
+	static abstract class AbstractTable implements DataTable {
 
 		final double rowMin;
 		final double rowMax;
@@ -215,10 +215,9 @@ public final class DataTables {
 		}
 	}
 
-	@Deprecated
 	static final class SingularTable extends AbstractTable {
 
-		private final double value;
+		final double value;
 		private final double[] row;
 
 		SingularTable(
@@ -243,7 +242,7 @@ public final class DataTables {
 		}
 	}
 
-	private static abstract class AbstractVolume implements DataVolume {
+	static abstract class AbstractVolume implements DataVolume {
 
 		final double rowMin;
 		final double rowMax;

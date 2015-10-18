@@ -296,7 +296,7 @@ final class Transforms {
 
 			// TODO given that this is a pretty heavyweight apply()
 			// (i.e. its only called once per source set) the functions should
-			// probably be created on demand; currently the same sources set is
+			// probably be created on demand; currently the same source set is
 			// supplied to the constructor as is passed into apply(), which
 			// is wierd
 

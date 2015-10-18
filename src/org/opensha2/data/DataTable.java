@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.opensha2.data.DataTables.AbstractTable;
 import org.opensha2.data.DataTables.DefaultTable;
 import org.opensha2.data.DataTables.SingularTable;
 
@@ -114,6 +115,31 @@ public interface DataTable {
 		 */
 		public static Builder create() {
 			return new Builder();
+		}
+
+		/**
+		 * Create a new builder with a structure identical to that of the
+		 * supplied table as a model.
+		 * 
+		 * @param model data table
+		 */
+		public static Builder fromModel(DataTable model) {
+
+			AbstractTable t = (AbstractTable) model;
+			Builder b = new Builder();
+
+			b.rowMin = t.rowMin;
+			b.rowMax = t.rowMax;
+			b.rowΔ = t.rowΔ;
+			b.rows = t.rows;
+
+			b.columnMin = t.columnMin;
+			b.columnMax = t.columnMax;
+			b.columnΔ = t.columnΔ;
+			b.columns = t.columns;
+
+			b.init();
+			return b;
 		}
 
 		/**
@@ -229,7 +255,7 @@ public interface DataTable {
 		 * @param values to set
 		 * @throws IndexOutOfBoundsException if values overrun row
 		 */
-		private Builder add(double row, double[] values) {
+		public Builder add(double row, double[] values) {
 			checkElementIndex(values.length - 1, columns.length,
 				"Supplied values overrun end of row");
 			double[] rowData = data[rowIndex(row)];
@@ -303,7 +329,6 @@ public interface DataTable {
 		 * @param data to set
 		 */
 		@Deprecated public Builder setAll(double[][] data) {
-			checkNotNull(data);
 			checkArgument(data.length > 0 && data[0].length > 0,
 				"At least one data dimension is empty");
 			checkDataState(rows, columns);
@@ -312,17 +337,31 @@ public interface DataTable {
 			return this;
 		}
 
+		/**
+		 * Add the values in the supplied table to this builder. This is a very
+		 * efficient operation if this builder has been created using the
+		 * supplied table as a model.
+		 * 
+		 * @param table to add
+		 * @throws IllegalArgumentException if table
+		 * @return
+		 */
 		public Builder add(DataTable table) {
-			// safe covariant cast
-			DataUtils.uncheckedAdd(data, validateTable((DefaultTable) table).data);
+			// safe covariant casts
+			validateTable((AbstractTable) table);
+			if (table instanceof SingularTable) {
+				DataUtils.uncheckedAdd(((SingularTable) table).value, data);
+			} else {
+				DataUtils.uncheckedAdd(data, ((DefaultTable) table).data);
+			}
 			return this;
 		}
 
 		/*
 		 * Check hash codes of row and column arrays in case copyOf has been
-		 * used, otherwise check array equality
+		 * used, otherwise check array equality.
 		 */
-		DefaultTable validateTable(DefaultTable that) {
+		AbstractTable validateTable(AbstractTable that) {
 			checkArgument((this.rows.hashCode() == that.rows.hashCode() &&
 				this.columns.hashCode() == that.columns.hashCode()) ||
 				(Arrays.equals(this.rows, that.rows) &&
