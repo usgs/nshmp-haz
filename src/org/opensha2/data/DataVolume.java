@@ -325,12 +325,8 @@ public interface DataVolume {
 		 */
 		public Builder add(DataVolume volume) {
 			// safe covariant casts
-			validateVolume((DefaultVolume) table);
-			if (table instanceof SingularTable) {
-				DataUtils.uncheckedAdd(((SingularTable) table).value, data);
-			} else {
-				DataUtils.uncheckedAdd(data, ((DefaultTable) table).data);
-			}
+			validateVolume((AbstractVolume) volume);
+			DataUtils.uncheckedAdd(data, ((DefaultVolume) volume).data);
 			return this;
 		}
 
@@ -338,7 +334,7 @@ public interface DataVolume {
 		 * Check hash codes of row, column, and level arrays in case copyOf has been
 		 * used, otherwise check array equality.
 		 */
-		AbstractVolume validateTable(AbstractVolume that) {
+		AbstractVolume validateVolume(AbstractVolume that) {
 			checkArgument((this.rows.hashCode() == that.rows.hashCode() &&
 				this.columns.hashCode() == that.columns.hashCode() &&
 				this.levels.hashCode() == that.levels.hashCode()) ||
