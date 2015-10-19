@@ -1,14 +1,14 @@
 package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.base.Strings.repeat;
 import static com.google.common.math.DoubleMath.fuzzyEquals;
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.isNaN;
-import static java.math.BigDecimal.ROUND_HALF_UP;
-import static com.google.common.base.Strings.repeat;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.lang.reflect.Array;
@@ -38,18 +38,37 @@ import com.google.common.primitives.Ints;
 /**
  * Utilities for operating on {@code double}-valued data.
  * 
- * <p>The methods of this class generally operate on data in place and
- * universally throw a {@code NullPointerException} or
- * {@code IllegalArguementException} when supplied with a {@code null} or empty
- * data set. Those methods that combine multiple data sets throw an
- * {@code IllegalArguementException} if the data sets are not the same size.
- * Also, no checking for finiteness (e.g. see {@link Doubles#isFinite(double)}
- * is performed on supplied data, methods do not check for over/underflow, and
- * logarithm operations do not check for negative values. Buyer beware.</p>
+ * <p>The methods of this class:</p>
  * 
- * <p>Methods that return a result or information about a supplied data set will
- * typically take a {@code Collection<Double>} as an argument, whereas methods
- * that transform data in place will only take {@code List<Double>}s.</p>
+ * <ul><li>Operate on data in place, ruturning a reference to the supplied
+ * data.</li>
+ * 
+ * <li>Throw a {@code NullPointerException} when supplied with {@code null}
+ * data.</li>
+ * 
+ * <li>Return an empty array when attempting to transform each element of a
+ * dataset for which no varargs elements have been supplied(e.g.
+ * {@link #add(double, double...)}).
+ * 
+ * <li>Throw an {@code IllegalArgumentException} if they operate on all elements
+ * of a dataset and yield a singular result, and the supplied dataset is empty,
+ * with some documented exceptions.
+ * 
+ * <li>Throw an {@code IllegalArguementException} if they operate on multiple
+ * datasets and the datasets are not the same size.</li>
+ * 
+ * <li>Do not check for finiteness (see {@link Doubles#isFinite(double)}). See
+ * {@link Math} for details on the behavior of individual functions referenced
+ * herein.</li>
+ * 
+ * <li>Do not check for over/underflow.</li></ul>
+ * 
+ * <p>Buyer beware.</p>
+ * 
+ * <p>Furthermore, methods that return a result or information about a supplied
+ * data set will typically take a {@code Collection<Double>} as an argument,
+ * whereas methods that transform data in place will only take
+ * {@code List<Double>}s.</p>
  * 
  * <p>For other useful {@code Double} utilities, see the Google Guava
  * {@link Doubles} class.</p>
@@ -60,27 +79,15 @@ import com.google.common.primitives.Ints;
 public final class DataUtils {
 
 	/*
-	 * TODO we really need some finiteness checking, especially with ranges;
-	 * this is ok for explicitely defined (bounded) Range<Double>; this would
-	 * check for NaN and if someone needs the range open on either end, then
-	 * Range.lessThan() Range.greaterThan() should be used rather than passing
-	 * around or allowing unreal values
-	 */
-
-	/*
-	 * TODO remove unnecessary checkNotNull clutter; only needed when a
-	 * reference is being set; otherwise if an argument is null the NPE will be
-	 * thrown in any event when the argumnet is accessed in any way
-	 * 
-	 * TODO do we really care if supplied arrays are empty; there are certainly 
-	 * situations where an empty array will cause problems but it's probably
-	 * better to recognize and document those and allow empty arrays to pass through
 	 * 
 	 * TODO refactor to just Data.*
+	 * 
+	 * TODO verify that 'unchecked' variants actually improve performance; in
+	 * most cases all that's being done is an array.length comparison
 	 */
 
 	/*
-	 * NOTE: Transform Functions vs Pure Iteration
+	 * Developer note: Transform Functions vs Pure Iteration
 	 * 
 	 * The original implementation of this class used the built-in transform()
 	 * methods and math Functions to operate on data arrays. Tests showed the
@@ -92,35 +99,27 @@ public final class DataUtils {
 	private DataUtils() {}
 
 	/**
-	 * Add a {@code term} to the elements of {@code data} in place without
-	 * checking for over/underflow.
+	 * Add a {@code term} to the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @param term to add
 	 * @return a reference to the supplied {@code data}
 	 */
 	public static double[] add(double term, double... data) {
-		validateDataArray(data);
-		return uncheckedAdd(term, data);
-	}
-
-	static double[] uncheckedAdd(double term, double[] data) {
 		for (int i = 0; i < data.length; i++) {
 			data[i] += term;
 		}
 		return data;
 	}
-	
+
 	/**
-	 * Add a {@code term} to the elements of {@code data} in place without
-	 * checking for over/underflow.
+	 * Add a {@code term} to the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @param term to add
 	 * @return a reference to the supplied {@code data}
 	 */
 	public static double[][] add(double term, double[][] data) {
-		validateDataArray(data);
 		for (int i = 0; i < data.length; i++) {
 			add(term, data[i]);
 		}
@@ -129,21 +128,19 @@ public final class DataUtils {
 
 	static double[][] uncheckedAdd(double term, double[][] data) {
 		for (int i = 0; i < data.length; i++) {
-			uncheckedAdd(term, data[i]);
+			add(term, data[i]);
 		}
 		return data;
 	}
 
 	/**
-	 * Add a {@code term} to the elements of {@code data} in place without
-	 * checking for over/underflow.
+	 * Add a {@code term} to the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @param term to add
 	 * @return a reference to the supplied {@code data}
 	 */
 	public static double[][][] add(double term, double[][][] data) {
-		validateDataArray(data);
 		for (int i = 0; i < data.length; i++) {
 			add(term, data[i]);
 		}
@@ -158,15 +155,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Add a {@code term} to the elements of {@code data} in place without
-	 * checking for over/underflow.
+	 * Add a {@code term} to the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @param term to add
 	 * @return a reference to the supplied {@code data}
 	 */
 	public static List<Double> add(double term, List<Double> data) {
-		validateDataCollection(data);
 		for (int i = 0; i < data.size(); i++) {
 			data.set(i, data.get(i) + term);
 		}
@@ -174,15 +169,14 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Add the values of {@code data2} to {@code data1} in place without
-	 * checking for over/underflow.
+	 * Add the values of {@code data2} to {@code data1} in place.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static double[] add(double[] data1, double[] data2) {
-		validateDataArrays(data1, data2);
+		checkArgument(data1.length == data2.length);
 		return uncheckedAdd(data1, data2);
 	}
 
@@ -194,15 +188,14 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Add the values of {@code data2} to {@code data1} in place without
-	 * checking for over/underflow.
+	 * Add the values of {@code data2} to {@code data1} in place.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static double[][] add(double[][] data1, double[][] data2) {
-		validateDataArrays(data1, data2);
+		checkArgument(data1.length == data2.length);
 		for (int i = 0; i < data1.length; i++) {
 			add(data1[i], data2[i]);
 		}
@@ -217,15 +210,14 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Add the values of {@code data2} to {@code data1} in place without
-	 * checking for over/underflow.
+	 * Add the values of {@code data2} to {@code data1} in place.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static double[][][] add(double[][][] data1, double[][][] data2) {
-		validateDataArrays(data1, data2);
+		checkArgument(data1.length == data2.length);
 		for (int i = 0; i < data1.length; i++) {
 			add(data1[i], data2[i]);
 		}
@@ -240,15 +232,14 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Add the values of {@code data2} to {@code data1} in place without
-	 * checking for over/underflow.
+	 * Add the values of {@code data2} to {@code data1} in place.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static List<Double> add(List<Double> data1, List<Double> data2) {
-		validateDataCollections(data1, data2);
+		checkArgument(data1.size() == data2.size());
 		for (int i = 0; i < data1.size(); i++) {
 			data1.set(i, data1.get(i) + data2.get(i));
 		}
@@ -256,16 +247,16 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Subtract the values of {@code data2} from {@code data1} in place without
-	 * checking for over/underflow. To subtract a term from every value of a
-	 * dataset, use {@link #add(double, double...)} with a negative addend.
+	 * Subtract the values of {@code data2} from {@code data1} in place. To
+	 * subtract a term from every value of a dataset, use
+	 * {@link #add(double, double...)} with a negative addend.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static double[] subtract(double[] data1, double[] data2) {
-		validateDataArrays(data1, data2);
+		checkArgument(data1.length == data2.length);
 		return uncheckedSubtract(data1, data2);
 	}
 
@@ -277,16 +268,16 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Subtract the values of {@code data2} from {@code data1} in place without
-	 * checking for over/underflow. To subtract a term from every value of a
-	 * dataset, use {@link #add(double, List)} with a negative addend.
+	 * Subtract the values of {@code data2} from {@code data1} in place. To
+	 * subtract a term from every value of a dataset, use
+	 * {@link #add(double, List)} with a negative addend.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static List<Double> subtract(List<Double> data1, List<Double> data2) {
-		validateDataCollections(data1, data2);
+		checkArgument(data1.size() == data2.size());
 		for (int i = 0; i < data1.size(); i++) {
 			data1.set(i, data1.get(i) - data2.get(i));
 		}
@@ -294,19 +285,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Multiply ({@code scale}) the elements of {@code data} in place without
-	 * checking for over/underflow.
+	 * Multiply ({@code scale}) the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @param scale factor
 	 * @return a reference to the supplied {@code data}
 	 */
 	public static double[] multiply(double scale, double... data) {
-		validateDataArray(data);
-		return uncheckedMultiply(scale, data);
-	}
-
-	static double[] uncheckedMultiply(double scale, double... data) {
 		for (int i = 0; i < data.length; i++) {
 			data[i] *= scale;
 		}
@@ -314,15 +299,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Multiply ({@code scale}) the elements of {@code data} in place without
-	 * checking for over/underflow.
+	 * Multiply ({@code scale}) the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @param scale factor
 	 * @return a reference to the supplied {@code data}
 	 */
 	public static List<Double> multiply(double scale, List<Double> data) {
-		validateDataCollection(data);
 		for (int i = 0; i < data.size(); i++) {
 			data.set(i, data.get(i) * scale);
 		}
@@ -331,14 +314,14 @@ public final class DataUtils {
 
 	/**
 	 * Multiply the elements of {@code data1} by the elements of {@code data2}
-	 * in place without checking for over/underflow.
+	 * in place.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static double[] multiply(double[] data1, double[] data2) {
-		validateDataArrays(data1, data2);
+		checkArgument(data1.length == data2.length);
 		return uncheckedMultiply(data1, data2);
 	}
 
@@ -351,14 +334,14 @@ public final class DataUtils {
 
 	/**
 	 * Multiply the elements of {@code data1} by the elements of {@code data2}
-	 * in place without checking for over/underflow.
+	 * in place.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static List<Double> multiply(List<Double> data1, List<Double> data2) {
-		validateDataCollections(data1, data2);
+		checkArgument(data1.size() == data2.size());
 		for (int i = 0; i < data1.size(); i++) {
 			data1.set(i, data1.get(i) * data2.get(i));
 		}
@@ -367,16 +350,15 @@ public final class DataUtils {
 
 	/**
 	 * Divide the elements of {@code data1} by the elements of {@code data2} in
-	 * place without checking for over/underflow. To divide every value of a
-	 * dataset by some term, use {@link #multiply(double, double...)} with
-	 * 1/divisor.
+	 * place. To divide every value of a dataset by some term, use
+	 * {@link #multiply(double, double...)} with 1/divisor.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static double[] divide(double[] data1, double[] data2) {
-		validateDataArrays(data1, data2);
+		checkArgument(data1.length == data2.length);
 		return uncheckedDivide(data1, data2);
 	}
 
@@ -389,15 +371,15 @@ public final class DataUtils {
 
 	/**
 	 * Divide the elements of {@code data1} by the elements of {@code data2} in
-	 * place without checking for over/underflow. To divide every value of a
-	 * dataset by some term, use {@link #multiply(double, List)} with 1/divisor.
+	 * place. To divide every value of a dataset by some term, use
+	 * {@link #multiply(double, List)} with 1/divisor.
 	 * 
 	 * @param data1
 	 * @param data2
 	 * @return a reference to {@code data1}
 	 */
 	public static List<Double> divide(List<Double> data1, List<Double> data2) {
-		validateDataCollections(data1, data2);
+		checkArgument(data1.size() == data2.size());
 		for (int i = 0; i < data1.size(); i++) {
 			data1.set(i, data1.get(i) / data2.get(i));
 		}
@@ -405,14 +387,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Set every element of {@code data} to its absolute value in place.
+	 * Set the elements of {@code data} to their absolute value in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#abs(double)
 	 */
 	public static double[] abs(double... data) {
-		validateDataArray(data);
 		for (int i = 0; i < data.length; i++) {
 			data[i] = Math.abs(data[i]);
 		}
@@ -420,14 +401,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Set every element of {@code data} to its absolute value in place.
+	 * Set the elements of {@code data} to their absolute value in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#abs(double)
 	 */
 	public static List<Double> abs(List<Double> data) {
-		validateDataCollection(data);
 		for (int i = 0; i < data.size(); i++) {
 			data.set(i, Math.abs(data.get(i)));
 		}
@@ -435,14 +415,14 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Apply the exponential function to every element of {@code data} in place.
+	 * Raise Euler's number {@code e} to each of the elements of {@code data} in
+	 * place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#exp(double)
 	 */
 	public static double[] exp(double... data) {
-		validateDataArray(data);
 		for (int i = 0; i < data.length; i++) {
 			data[i] = Math.exp(data[i]);
 		}
@@ -450,14 +430,14 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Apply the exponential function to every element of {@code data} in place.
+	 * Raise Euler's number {@code e} to each of the elements of {@code data} in
+	 * place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#exp(double)
 	 */
 	public static List<Double> exp(List<Double> data) {
-		validateDataCollection(data);
 		for (int i = 0; i < data.size(); i++) {
 			data.set(i, Math.exp(data.get(i)));
 		}
@@ -465,14 +445,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Apply the natural log function to every element of {@code data} in place.
+	 * Take the natural logarithm of the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#log(double)
 	 */
 	public static double[] ln(double... data) {
-//		validateDataArray(data);
 		for (int i = 0; i < data.length; i++) {
 			data[i] = Math.log(data[i]);
 		}
@@ -480,14 +459,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Apply the natural log function to every element of {@code data} in place.
+	 * Take the natural logarithm of the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#log(double)
 	 */
 	public static List<Double> ln(List<Double> data) {
-		validateDataCollection(data);
 		for (int i = 0; i < data.size(); i++) {
 			data.set(i, Math.log(data.get(i)));
 		}
@@ -495,14 +473,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Apply the power of 10 function to every element {@code data} in place.
+	 * Raise the elements of {@code data} to the power of 10 in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#pow(double, double)
 	 */
 	public static double[] pow10(double... data) {
-		validateDataArray(data);
 		for (int i = 0; i < data.length; i++) {
 			data[i] = Math.pow(10, data[i]);
 		}
@@ -510,14 +487,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Apply the power of 10 function to every element {@code data} in place.
+	 * Raise the elements of {@code data} to the power of 10 in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#pow(double, double)
 	 */
 	public static List<Double> pow10(List<Double> data) {
-		validateDataCollection(data);
 		for (int i = 0; i < data.size(); i++) {
 			data.set(i, Math.pow(10, data.get(i)));
 		}
@@ -525,14 +501,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Apply the base-10 log function to every element of {@code data} in place.
+	 * Take the base-10 logarithm of the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#log10(double)
 	 */
 	public static double[] log(double... data) {
-		validateDataArray(data);
 		for (int i = 0; i < data.length; i++) {
 			data[i] = Math.log10(data[i]);
 		}
@@ -540,14 +515,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Apply the base-10 log function to every element of {@code data} in place.
+	 * Take the base-10 logarithm of the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
 	 * @see Math#log10(double)
 	 */
 	public static List<Double> log(List<Double> data) {
-		validateDataCollection(data);
 		for (int i = 0; i < data.size(); i++) {
 			data.set(i, Math.log10(data.get(i)));
 		}
@@ -555,7 +529,7 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Flip the sign of every element of {@code data} in place.
+	 * Flip the sign of the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
@@ -564,12 +538,8 @@ public final class DataUtils {
 		return multiply(-1, data);
 	}
 
-	static double[] uncheckedFlip(double... data) {
-		return uncheckedMultiply(-1, data);
-	}
-
 	/**
-	 * Flip the sign of every element of {@code data} in place.
+	 * Flip the sign of the elements of {@code data} in place.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied {@code data}
@@ -579,15 +549,15 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Sum of the elements of {@code data} without checking for over/underflow.
-	 * Method returns {@code Double.NaN} if {@code data} contains
-	 * {@code Double.NaN}.
+	 * Sum the elements of {@code data}. Method returns {@code Double.NaN} or
+	 * infinite values if {@code data} contains {@code Double.NaN} or infinite
+	 * values, respectively. Method returns zero for empty {@code data} argument
+	 * or no varargs.
 	 * 
 	 * @param data to sum
 	 * @return the sum of the supplied values
 	 */
 	public static double sum(double... data) {
-		validateDataArray(data);
 		double sum = 0;
 		for (double d : data) {
 			sum += d;
@@ -596,15 +566,15 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Sum of the elements of {@code data} without checking for over/underflow.
-	 * Method returns {@code Double.NaN} if {@code data} contains
-	 * {@code Double.NaN}.
+	 * Sum the elements of {@code data}. Method returns {@code Double.NaN} or
+	 * infinite values if {@code data} contains {@code Double.NaN} or infinite
+	 * values, respectively. Method returns zero for an empty {@code data}
+	 * argument.
 	 * 
 	 * @param data to sum
 	 * @return the sum of the supplied values
 	 */
 	public static double sum(Collection<Double> data) {
-		validateDataCollection(data);
 		double sum = 0;
 		for (double d : data) {
 			sum += d;
@@ -613,8 +583,7 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Transform {@code data} by a {@code function} in place without checking
-	 * for over/underflow.
+	 * Transform {@code data} by a {@code function} in place.
 	 * 
 	 * @param function to apply
 	 * @param data to operate on
@@ -622,10 +591,10 @@ public final class DataUtils {
 	 */
 	public static double[] transform(Function<Double, Double> function, double... data) {
 		checkNotNull(function);
-		validateDataArray(data);
 		return uncheckedTransform(function, data);
 	}
 
+	// TODO behavior test for empty data; can we get rid of null check
 	static double[] uncheckedTransform(Function<Double, Double> function, double... data) {
 		for (int i = 0; i < data.length; i++) {
 			data[i] = function.apply(data[i]);
@@ -634,8 +603,7 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Transform {@code data} by a {@code function} in place without checking
-	 * for over/underflow.
+	 * Transform {@code data} by a {@code function} in place.
 	 * 
 	 * @param function to apply
 	 * @param data to operate on
@@ -643,7 +611,6 @@ public final class DataUtils {
 	 */
 	public static List<Double> transform(Function<Double, Double> function, List<Double> data) {
 		checkNotNull(function);
-		validateDataCollection(data);
 		for (int i = 0; i < data.size(); i++) {
 			data.set(i, function.apply(data.get(i)));
 		}
@@ -655,9 +622,11 @@ public final class DataUtils {
 	 * 
 	 * @param data to evaluate
 	 * @return the index of the minimum value
+	 * @throws IllegalArgumentException if data is empty or no varargs are
+	 *         supplied
 	 */
 	public static int minIndex(double... data) {
-		validateDataArray(data);
+		checkArgument(data.length > 0);
 		int index = 0;
 		double min = data[0];
 		for (int i = 1; i < data.length; i++)
@@ -673,9 +642,11 @@ public final class DataUtils {
 	 * 
 	 * @param data to evaluate
 	 * @return the index of the maximum value
+	 * @throws IllegalArgumentException if data is empty or no varargs are
+	 *         supplied
 	 */
 	public static int maxIndex(double... data) {
-		validateDataArray(data);
+		checkArgument(data.length > 0);
 		int index = 0;
 		double max = data[0];
 		for (int i = 1; i < data.length; i++)
@@ -687,13 +658,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Determine whether {@code data} are all positive.
+	 * Determine whether {@code data} are all positive. Method returns
+	 * {@code true} if data is empty or no varargs are supplied.
 	 * 
 	 * @param data to evaluate
 	 * @return {@code true} if all values are ≥0; {@code false} otherwise
 	 */
 	public static boolean arePositive(double... data) {
-		validateDataArray(data);
 		for (double d : data) {
 			if (d >= 0) continue;
 			return false;
@@ -702,13 +673,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Determine whether {@code data} are all positive.
+	 * Determine whether {@code data} are all positive. Method returns
+	 * {@code true} if data is empty.
 	 * 
 	 * @param data to evaluate
 	 * @return {@code true} if all values are ≥0
 	 */
 	public static boolean arePositive(Collection<Double> data) {
-		validateDataCollection(data);
 		for (double d : data) {
 			if (d >= 0) continue;
 			return false;
@@ -717,14 +688,15 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Ensures positivity of values by adding {@code Math.abs(min(data))} if
-	 * {@code min < 0}. Operation performed in place on supplied array.
+	 * Ensures positivity of values by adding {@code Math.abs(min(data))} in
+	 * place if {@code min < 0}. Method returns an empty array if {@code data}
+	 * is empty or no varargs are supplied.
 	 * 
 	 * @param data to operate on
 	 * @return a reference to the supplied data, positivized if necessary
 	 */
 	public static double[] positivize(double... data) {
-		validateDataArray(data);
+		if (data.length == 0) return data;
 		double min = Doubles.min(data);
 		if (min >= 0) return data;
 		min = Math.abs(min);
@@ -744,9 +716,10 @@ public final class DataUtils {
 	 *        {@code false} if identical adjacent values are permitted
 	 * @param data to evaluate
 	 * @return {@code true} if monotonic, {@code false} otherwise
+	 * @throws IllegalArgumentException if fewer than two data elements are
+	 *         supplied
 	 */
 	public static boolean isMonotonic(boolean increasing, boolean strict, double... data) {
-		validateDataArray(data);
 		double[] diff = diff(data);
 		if (!increasing) flip(diff);
 		double min = Doubles.min(diff);
@@ -754,9 +727,9 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Compute difference between {@code test} and {@code target}, relative to
-	 * {@code target}, as a percent. If {@code target} is 0, method returns 0 if
-	 * {@code test} is also 0, otherwise {@code Double.POSITIVE_INFINITY}. If
+	 * Compute the difference between {@code test} and {@code target}, relative
+	 * to {@code target}, as a percent. If {@code target} is 0, method returns 0
+	 * if {@code test} is also 0, otherwise {@code Double.POSITIVE_INFINITY}. If
 	 * either value is {@code Double.NaN}, method returns {@code Double.NaN}.
 	 * 
 	 * @param test value
@@ -777,10 +750,10 @@ public final class DataUtils {
 	 * 
 	 * @param data to difference
 	 * @return the differences between adjacent values
-	 * @throws IllegalArgumentException if {@code data.legth < 2}
+	 * @throws IllegalArgumentException if {@code data.length < 2}
 	 */
 	public static double[] diff(double... data) {
-		checkArgument(checkNotNull(data).length > 1);
+		checkArgument(data.length > 1);
 		int size = data.length - 1;
 		double[] diff = new double[size];
 		for (int i = 0; i < size; i++) {
@@ -792,36 +765,34 @@ public final class DataUtils {
 	private static final Range<Double> POS_RANGE = Range.open(0d, Double.POSITIVE_INFINITY);
 
 	/**
-	 * Normalize the elements of {@code data} to weights, in place, such that
-	 * they sum to 1.
+	 * Normalize the elements of {@code data} in place such that they sum to 1.
 	 * 
 	 * @param data to normalize
-	 * @return a reference to the supplied array
+	 * @return a reference to the supplied {@code data}
 	 * @throws IllegalArgumentException if {@code data} is empty, contains any
 	 *         {@code Double.NaN} or negative values, or sums to a value outside
 	 *         the range {@code (0..Double.POSITIVE_INFINITY), exclusive}
 	 */
 	public static double[] normalize(double... data) {
-		validateDataArray(data);
+		checkArgument(data.length > 0);
 		checkArgument(arePositive(data));
 		double sum = sum(data);
 		checkArgument(POS_RANGE.contains(sum));
-		double scale = 1d / sum;
+		double scale = 1.0 / sum;
 		return multiply(scale, data);
 	}
 
 	/**
-	 * Normalize the elements of {@code data} to weights, in place, such that
-	 * they sum to 1.
+	 * Normalize the elements of {@code data} in place such that they sum to 1.
 	 * 
 	 * @param data to normalize
-	 * @return a reference to the supplied array
+	 * @return a reference to the supplied {@code data}
 	 * @throws IllegalArgumentException if {@code data} is empty, contains any
 	 *         {@code Double.NaN} or negative values, or sums to a value outside
 	 *         the range {@code (0..Double.POSITIVE_INFINITY), exclusive}
 	 */
 	public static List<Double> normalize(List<Double> data) {
-		validateDataCollection(data);
+		checkArgument(data.size() > 0);
 		checkArgument(arePositive(data));
 		double sum = sum(data);
 		checkArgument(POS_RANGE.contains(sum));
@@ -847,44 +818,14 @@ public final class DataUtils {
 
 	/* * * * * * * * * * * * VALIDATION * * * * * * * * * * * */
 
-	private static void validateDataArray(double... data) {
-		checkArgument(checkNotNull(data).length > 0);
-	}
-
-	private static void validateDataArray(double[][] data) {
-		checkArgument(checkNotNull(data).length > 0);
-	}
-
-	private static void validateDataArray(double[][][] data) {
-		checkArgument(checkNotNull(data).length > 0);
-	}
-
-	private static void validateDataCollection(Collection<? extends Number> data) {
-		checkArgument(checkNotNull(data).size() > 0);
-	}
-	private static void validateDataArrays(double[] data1, double[] data2) {
-		checkArgument(checkNotNull(data1).length == checkNotNull(data2).length);
-	}
-
-	private static void validateDataArrays(double[][] data1, double[][] data2) {
-		/* Only checks outer array; operations check inners. */
-		checkArgument(checkNotNull(data1).length == checkNotNull(data2).length);
-	}
-
-	private static void validateDataArrays(double[][][] data1, double[][][] data2) {
-		/* Only checks outer array; operations check inners. */
-		checkArgument(checkNotNull(data1).length == checkNotNull(data2).length);
-	}
-
 	private static void validateDataCollections(Collection<? extends Number> data1,
 			Collection<? extends Number> data2) {
-		checkArgument(checkNotNull(data1).size() == checkNotNull(data2).size());
+		checkArgument(data1.size() == data2.size());
 	}
 
 	private static void validateIndices(Collection<Integer> indices, int size) {
-		validateDataCollection(indices);
 		for (int index : indices) {
-			checkPositionIndex(index, size);
+			checkElementIndex(index, size);
 		}
 	}
 
@@ -901,7 +842,10 @@ public final class DataUtils {
 	 * @see Range
 	 */
 	public static double validate(Range<Double> range, String label, double value) {
-		uncheckedValidate(checkNotNull(range), value, label);
+		checkArgument(!Double.isNaN(value), "NaN not allowed");
+		checkArgument(range.contains(value),
+			"%s value %s is not in range %s",
+			Strings.nullToEmpty(label), value, range);
 		return value;
 	}
 
@@ -919,22 +863,13 @@ public final class DataUtils {
 	 * @see Range
 	 */
 	public static double[] validate(Range<Double> range, String label, double... values) {
-		checkNotNull(range);
-		validateDataArray(values);
 		for (int i = 0; i < values.length; i++) {
-			uncheckedValidate(range, values[i], label);
+			validate(range, label, values[i]);
 		}
 		return values;
 	}
 
-	/* Does not check if range is null for more performant array checking */
-	private static void uncheckedValidate(Range<Double> range, double value, String label) {
-		checkArgument(!Double.isNaN(value), "NaN not allowed");
-		checkArgument(range.contains(value), "%s value %s is not in range %s",
-			Strings.nullToEmpty(label), value, range);
-	}
-
-	private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0d, 1d);
+	private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0.0, 1.0);
 
 	/**
 	 * Confirm that a weight value is {@code 0.0 < weight ≤ 1.0}. Method returns
@@ -944,7 +879,7 @@ public final class DataUtils {
 	 * @return the supplied {@code weight} value
 	 */
 	public static double validateWeight(double weight) {
-		uncheckedValidate(WEIGHT_RANGE, weight, "Weight");
+		validate(WEIGHT_RANGE, "Weight", weight);
 		return weight;
 	}
 
@@ -968,7 +903,8 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Confirm that for a specified range {@code [min, max]} and {@code Δ} that:
+	 * Validate series discretization parameters. Confirms that for a specified
+	 * range {@code [min, max]} and {@code Δ} that:
 	 * 
 	 * <ul><li>{@code min}, {@code max}, and {@code Δ} are finite</li>
 	 * 
@@ -1185,12 +1121,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * A crude utility to clean double values to a specified scale/precision
-	 * using {@code String.format(%.'scale'f)}.
+	 * 'Clean' the elements of {@code data} in place to be double values of a
+	 * specified scale/precision. Internally, this method uses the rounding and
+	 * precision functionality of {@link BigDecimal}.
 	 * 
 	 * @param data to operate on
 	 * @param scale decimal precision
-	 * @return a cleaned array
+	 * @return a reference to the 'cleaned', supplied {@code data}
 	 */
 	public static double[] clean(int scale, double... data) {
 		return transform(new Clean(scale), data);
@@ -1209,11 +1146,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Make a deep copy of a 2D data array.
+	 * Create a deep copy of a two-dimensional data array.
+	 * 
 	 * @param data to copy
+	 * @return a new two-dimensional array populated with the values of
+	 *         {@code data}
 	 */
 	public static double[][] copyOf(double[][] data) {
-		checkNotNull(data);
 		double[][] out = new double[data.length][];
 		for (int i = 0; i < data.length; i++) {
 			out[i] = Arrays.copyOf(data[i], data[i].length);
@@ -1222,11 +1161,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Mke a deep copy of a 3D data array.
+	 * Create a deep copy of a three-dimensional data array.
+	 * 
 	 * @param data to copy
+	 * @return a new three-dimensional array populated with the values of
+	 *         {@code data}
 	 */
 	public static double[][][] copyOf(double[][][] data) {
-		checkNotNull(data);
 		double[][][] out = new double[data.length][][];
 		for (int i = 0; i < data.length; i++) {
 			out[i] = copyOf(data[i]);
@@ -1235,11 +1176,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Format a 2D data array for printing
+	 * Format a two-dimensional data array for printing.
+	 * 
 	 * @param data to format
+	 * @return a string representation of the supplied {@code data}
 	 */
 	public static String toString(double[][] data) {
-		return toString(checkNotNull(data), 1);
+		return toString(data, 1);
 	}
 
 	/* To support indenting of multidimensional arrays */
@@ -1254,11 +1197,13 @@ public final class DataUtils {
 	}
 
 	/**
-	 * Format a 3D data array for printing
+	 * Format a three-dimensional data array for printing
+	 * 
 	 * @param data to format
+	 * @return a string representation of the supplied {@code data}
 	 */
 	public static String toString(double[][][] data) {
-		return toString(checkNotNull(data), 1);
+		return toString(data, 1);
 	}
 
 	/* To support indenting of multidimensional arrays */
@@ -1375,7 +1320,7 @@ public final class DataUtils {
 	 * @return an index {@code List}
 	 */
 	public static List<Integer> sortedIndices(List<Double> data, boolean ascending) {
-		validateDataCollection(data);
+		checkArgument(data.size() > 0);
 		List<Integer> indices = Ints.asList(indices(data.size()));
 		Collections.sort(indices, new IndexComparator(data, ascending));
 		return indices;
@@ -1426,7 +1371,7 @@ public final class DataUtils {
 	 * @see Table
 	 */
 	public static <K> K minKey(Map<K, Double> data, Collection<K> keys) {
-		checkArgument(checkNotNull(data).size() > 0, "data map is empty");
+		checkArgument(data.size() > 0, "data map is empty");
 		if (keys == null) keys = data.keySet();
 		checkArgument(keys.size() > 0, "keys are empty");
 		K minKey = null;
@@ -1449,7 +1394,7 @@ public final class DataUtils {
 	 * @return the indices of 'set' bits
 	 */
 	public static List<Integer> bitsToIndices(BitSet bits) {
-		int[] indices = new int[checkNotNull(bits).cardinality()];
+		int[] indices = new int[bits.cardinality()];
 		int index = 0;
 		for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
 			indices[index++] = i;

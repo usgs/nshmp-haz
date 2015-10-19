@@ -1,5 +1,6 @@
 /**
- * Classes and utilities for working with {@code array} and {@code List} based
- * data and xy data sequences.
+ * Classes and utilities for working with double-valued data.
+ * 
+ * 
  */
 package org.opensha2.data;

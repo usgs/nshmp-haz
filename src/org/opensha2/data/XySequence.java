@@ -308,6 +308,11 @@ public abstract class XySequence implements Iterable<XyPoint> {
 		}
 	}
 
+	/**
+	 * Returns an iterator over the {@link XyPoint}s in this sequence. For
+	 * immutable implementations, the {@link XyPoint#set(double)} method of a
+	 * returned point will throw an {@code UnsupportedOperationException}.
+	 */
 	@Override public Iterator<XyPoint> iterator() {
 		return new XyIterator(false);
 	}
@@ -358,6 +363,9 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
 	private static final String LF = StandardSystemProperty.LINE_SEPARATOR.value();
 
+	/**
+	 * Returns a readable string representation of this sequence.
+	 */
 	@Override public String toString() {
 		return new StringBuilder(getClass().getSimpleName())
 			.append(":")
@@ -377,8 +385,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	/**
-	 * Add the y-values of a sequence to the y-values of {@code this} sequence
-	 * in place.
+	 * Add the y-values of a sequence to the y-values of this sequence in place.
 	 * 
 	 * @param sequence to add
 	 * @return {@code this} sequence, for use inline
@@ -400,7 +407,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	/**
-	 * Multiply the y-values of {@code this} sequence by the y-values of another
+	 * Multiply the y-values of this sequence by the y-values of another
 	 * sequence in place.
 	 * 
 	 * @param sequence to multiply {@code this} sequence by
@@ -413,7 +420,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	/**
-	 * Sets the y-values of {@code this} sequence to their complement in place [
+	 * Sets the y-values of this sequence to their complement in place [
 	 * {@code 1 - y}]. Assumes this is a probability function limited to the
 	 * domain [0 1].
 	 * 
