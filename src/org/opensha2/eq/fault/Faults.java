@@ -3,7 +3,7 @@ package org.opensha2.eq.fault;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.sin;
-import static org.opensha2.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.checkInRange;
 import static org.opensha2.geo.GeoTools.PI_BY_2;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.geo.GeoTools.TWOPI;
@@ -87,10 +87,10 @@ public final class Faults {
 	 * @param dip to validate
 	 * @return the supplied dip for use inline
 	 * @throws IllegalArgumentException if {@code dip} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see DataUtils#checkInRange(Range, String, double)
 	 */
 	public static double validateDip(double dip) {
-		return validate(DIP_RANGE, "Dip", dip);
+		return checkInRange(DIP_RANGE, "Dip", dip);
 	}
 
 	/**
@@ -99,10 +99,10 @@ public final class Faults {
 	 * @param strike to validate
 	 * @return the supplied strike for use inline
 	 * @throws IllegalArgumentException if {@code strike} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see DataUtils#checkInRange(Range, String, double)
 	 */
 	public static double validateStrike(double strike) {
-		return validate(STRIKE_RANGE, "Strike", strike);
+		return checkInRange(STRIKE_RANGE, "Strike", strike);
 	}
 
 	/**
@@ -111,10 +111,10 @@ public final class Faults {
 	 * @param rake to validate
 	 * @return the supplied rake for use inline
 	 * @throws IllegalArgumentException if {@code rake} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see DataUtils#checkInRange(Range, String, double)
 	 */
 	public static double validateRake(double rake) {
-		return validate(RAKE_RANGE, "Rake", rake);
+		return checkInRange(RAKE_RANGE, "Rake", rake);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateDepth(double depth) {
-		return validate(CRUSTAL_DEPTH_RANGE, "Depth", depth);
+		return checkInRange(CRUSTAL_DEPTH_RANGE, "Depth", depth);
 	}
 
 	/**
@@ -135,10 +135,10 @@ public final class Faults {
 	 * @param depth to validate (positive down)
 	 * @return the supplied depth for use inline
 	 * @throws IllegalArgumentException if {@code depth} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see DataUtils#checkInRange(Range, String, double)
 	 */
 	public static double validateSlabDepth(double depth) {
-		return validate(SLAB_DEPTH_RANGE, "Subduction Slab Depth", depth);
+		return checkInRange(SLAB_DEPTH_RANGE, "Subduction Slab Depth", depth);
 	}
 
 	/**
@@ -147,10 +147,10 @@ public final class Faults {
 	 * @param depth to validate (positive down)
 	 * @return the supplied depth for use inline
 	 * @throws IllegalArgumentException if {@code depth} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see DataUtils#checkInRange(Range, String, double)
 	 */
 	public static double validateInterfaceDepth(double depth) {
-		return validate(INTERFACE_DEPTH_RANGE, "Subduction Interface Depth", depth);
+		return checkInRange(INTERFACE_DEPTH_RANGE, "Subduction Interface Depth", depth);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public final class Faults {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateWidth(double width) {
-		return validate(CRUSTAL_WIDTH_RANGE, "Width", width);
+		return checkInRange(CRUSTAL_WIDTH_RANGE, "Width", width);
 	}
 
 	/**
@@ -171,10 +171,10 @@ public final class Faults {
 	 * @param width to validate
 	 * @return the supplied width for use inline
 	 * @throws IllegalArgumentException if {@code width} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see DataUtils#checkInRange(Range, String, double)
 	 */
 	public static double validateInterfaceWidth(double width) {
-		return validate(INTERFACE_WIDTH_RANGE, "Subduction Interface Width", width);
+		return checkInRange(INTERFACE_WIDTH_RANGE, "Subduction Interface Width", width);
 	}
 
 	/**

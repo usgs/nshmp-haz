@@ -818,12 +818,8 @@ public final class DataUtils {
 
 	/* * * * * * * * * * * * VALIDATION * * * * * * * * * * * */
 
-	private static void validateDataCollections(Collection<? extends Number> data1,
-			Collection<? extends Number> data2) {
-		checkArgument(data1.size() == data2.size());
-	}
-
-	private static void validateIndices(Collection<Integer> indices, int size) {
+	/* Plural form of Guava's checkElementIndex(). */
+	private static void checkElementIndices(Collection<Integer> indices, int size) {
 		for (int index : indices) {
 			checkElementIndex(index, size);
 		}
@@ -841,7 +837,7 @@ public final class DataUtils {
 	 * @throws IllegalArgumentException if value is {@code NaN}
 	 * @see Range
 	 */
-	public static double validate(Range<Double> range, String label, double value) {
+	public static double checkInRange(Range<Double> range, String label, double value) {
 		checkArgument(!Double.isNaN(value), "NaN not allowed");
 		checkArgument(range.contains(value),
 			"%s value %s is not in range %s",
@@ -862,9 +858,9 @@ public final class DataUtils {
 	 * @throws IllegalArgumentException if any value is {@code NaN}
 	 * @see Range
 	 */
-	public static double[] validate(Range<Double> range, String label, double... values) {
+	public static double[] checkInRange(Range<Double> range, String label, double... values) {
 		for (int i = 0; i < values.length; i++) {
-			validate(range, label, values[i]);
+			checkInRange(range, label, values[i]);
 		}
 		return values;
 	}
@@ -873,13 +869,13 @@ public final class DataUtils {
 
 	/**
 	 * Confirm that a weight value is {@code 0.0 < weight ≤ 1.0}. Method returns
-	 * the supplied value and can be used inline.
+	 * the supplied value for use inline.
 	 * 
 	 * @param weight to validate
 	 * @return the supplied {@code weight} value
 	 */
 	public static double validateWeight(double weight) {
-		validate(WEIGHT_RANGE, "Weight", weight);
+		checkInRange(WEIGHT_RANGE, "Weight", weight);
 		return weight;
 	}
 
@@ -1411,7 +1407,7 @@ public final class DataUtils {
 	 */
 	public static BitSet indicesToBits(List<Integer> indices, int capacity) {
 		checkArgument(capacity > 0, "BitSet capacity [%s] must be > 0", capacity);
-		validateIndices(indices, capacity);
+		checkElementIndices(indices, capacity);
 		BitSet bits = new BitSet(capacity);
 		for (int index : indices) {
 			bits.set(index);

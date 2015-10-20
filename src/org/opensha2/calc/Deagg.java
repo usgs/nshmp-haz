@@ -521,8 +521,8 @@ class Deagg {
 				private Double εMin, εMax, Δε;
 
 				private Builder distanceDiscretization(double min, double max, double Δ) {
-					rMin = DataUtils.validate(rRange, "Min distance", min);
-					rMax = DataUtils.validate(rRange, "Max distance", max);
+					rMin = DataUtils.checkInRange(rRange, "Min distance", min);
+					rMax = DataUtils.checkInRange(rRange, "Max distance", max);
 					Δr = DataUtils.validateDelta(min, max, Δ);
 					return this;
 				}
@@ -535,8 +535,8 @@ class Deagg {
 				}
 
 				private Builder epsilonDiscretization(double min, double max, double Δ) {
-					εMin = DataUtils.validate(εRange, "Min epsilon", min);
-					εMax = DataUtils.validate(εRange, "Max epsilon", max);
+					εMin = DataUtils.checkInRange(εRange, "Min epsilon", min);
+					εMax = DataUtils.checkInRange(εRange, "Max epsilon", max);
 					Δε = DataUtils.validateDelta(min, max, Δ);
 					return this;
 				}

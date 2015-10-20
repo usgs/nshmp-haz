@@ -3,7 +3,7 @@ package org.opensha2.eq.fault.surface;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.math.RoundingMode.HALF_UP;
-import static org.opensha2.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateStrike;
@@ -203,14 +203,14 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 		}
 
 		public Builder spacing(double spacing) {
-			dipSpacing = validate(SPACING_RANGE, "Spacing", spacing);
+			dipSpacing = checkInRange(SPACING_RANGE, "Spacing", spacing);
 			strikeSpacing = spacing;
 			return this;
 		}
 
 		public Builder spacing(double dipSpacing, double strikeSpacing) {
-			this.dipSpacing = validate(SPACING_RANGE, "Dip Spacing", dipSpacing);
-			this.strikeSpacing = validate(SPACING_RANGE, "Strike Spacing", strikeSpacing);
+			this.dipSpacing = checkInRange(SPACING_RANGE, "Dip Spacing", dipSpacing);
+			this.strikeSpacing = checkInRange(SPACING_RANGE, "Strike Spacing", strikeSpacing);
 			return this;
 		}
 

@@ -3,7 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.checkInRange;
 import static org.opensha2.data.DataUtils.validateWeights;
 
 import java.util.Map;
@@ -179,7 +179,7 @@ public final class GmmSet {
 		}
 
 		Builder primaryMaxDistance(double maxDistance) {
-			maxDistanceLo = validate(MAX_DIST_RANGE, "Max distance", maxDistance);
+			maxDistanceLo = checkInRange(MAX_DIST_RANGE, "Max distance", maxDistance);
 			return this;
 		}
 
@@ -191,7 +191,7 @@ public final class GmmSet {
 		}
 
 		Builder secondaryMaxDistance(double maxDistance) {
-			maxDistanceHi = validate(MAX_DIST_RANGE, "Max distance", maxDistance);
+			maxDistanceHi = checkInRange(MAX_DIST_RANGE, "Max distance", maxDistance);
 			return this;
 		}
 

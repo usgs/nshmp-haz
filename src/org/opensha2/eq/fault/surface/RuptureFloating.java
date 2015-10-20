@@ -303,7 +303,7 @@ public enum RuptureFloating {
 	 */
 	private static double[] generateTriangularWeights(double zTop, double zBot, double[] depths) {
 		Range<Double> depthRange = Range.closed(zTop, zBot);
-		DataUtils.validate(depthRange, "Depth", depths);
+		DataUtils.checkInRange(depthRange, "Depth", depths);
 
 		// create PDF
 		double xPeak = (zBot - zTop) / 3.0;

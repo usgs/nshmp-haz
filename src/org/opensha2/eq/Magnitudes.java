@@ -1,6 +1,6 @@
 package org.opensha2.eq;
 
-import static org.opensha2.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.checkInRange;
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
 
@@ -54,7 +54,7 @@ public final class Magnitudes {
 	 * @see DataUtils#validate(Range, String, double)
 	 */
 	public static double validateMag(double mag) {
-		return validate(magRange, "Magnitude", mag);
+		return checkInRange(magRange, "Magnitude", mag);
 	}
 
 	// TODO refactor N_m out of signature

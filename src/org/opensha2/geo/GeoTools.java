@@ -2,7 +2,7 @@ package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.PI;
-import static org.opensha2.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.checkInRange;
 
 import org.opensha2.data.DataUtils;
 
@@ -95,10 +95,10 @@ public class GeoTools {
 	 * @param lat to validate
 	 * @return the supplied latitude
 	 * @throws IllegalArgumentException if {@code lat} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see DataUtils#checkInRange(Range, String, double)
 	 */
 	public static double validateLat(double lat) {
-		return validate(latRange, "Latitude", lat);
+		return checkInRange(latRange, "Latitude", lat);
 	}
 
 	/**
@@ -109,10 +109,10 @@ public class GeoTools {
 	 * @param lats to validate
 	 * @return the supplied latitude values
 	 * @throws IllegalArgumentException if any value is out of range
-	 * @see DataUtils#validate(Range, String, double...)
+	 * @see DataUtils#checkInRange(Range, String, double...)
 	 */
 	public static double[] validateLats(double... lats) {
-		return validate(latRange, "Latitude", lats);
+		return checkInRange(latRange, "Latitude", lats);
 	}
 
 	/**
@@ -123,10 +123,10 @@ public class GeoTools {
 	 * @param lon to validate
 	 * @return the supplied longitude
 	 * @throws IllegalArgumentException if {@code lon} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see DataUtils#checkInRange(Range, String, double)
 	 */
 	public static double validateLon(double lon) {
-		return validate(lonRange, "Longitude", lon);
+		return checkInRange(lonRange, "Longitude", lon);
 	}
 
 	/**
@@ -137,10 +137,10 @@ public class GeoTools {
 	 * @param lons to validate
 	 * @return the supplied longitude values
 	 * @throws IllegalArgumentException if any value is out of range
-	 * @see DataUtils#validate(Range, String, double...)
+	 * @see DataUtils#checkInRange(Range, String, double...)
 	 */
 	public static double[] validateLons(double... lons) {
-		return validate(lonRange, "Longitude", lons);
+		return checkInRange(lonRange, "Longitude", lons);
 	}
 
 	/**
@@ -151,10 +151,10 @@ public class GeoTools {
 	 * @param depth to validate
 	 * @return the supplied depth
 	 * @throws IllegalArgumentException if {@code depth} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see DataUtils#checkInRange(Range, String, double)
 	 */
 	public static double validateDepth(double depth) {
-		return validate(depthRange, "Depth", depth);
+		return checkInRange(depthRange, "Depth", depth);
 	}
 
 	/**
@@ -165,10 +165,10 @@ public class GeoTools {
 	 * @param depths to validate
 	 * @return the supplied depth values
 	 * @throws IllegalArgumentException if any value is out of range
-	 * @see DataUtils#validate(Range, String, double...)
+	 * @see DataUtils#checkInRange(Range, String, double...)
 	 */
 	public static double[] validateDepths(double... depths) {
-		return validate(depthRange, "Depth", depths);
+		return checkInRange(depthRange, "Depth", depths);
 	}
 
 	/**

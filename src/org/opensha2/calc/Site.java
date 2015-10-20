@@ -3,7 +3,7 @@ package org.opensha2.calc;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha2.data.DataUtils.validate;
+import static org.opensha2.data.DataUtils.checkInRange;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -196,7 +196,7 @@ public class Site implements Named {
 
 		/** The average shear-wave velocity down to 30 meters depth. */
 		public Builder vs30(double vs30) {
-			this.vs30 = validate(VS30_RANGE, Key.VS30.toString(), vs30);
+			this.vs30 = checkInRange(VS30_RANGE, Key.VS30.toString(), vs30);
 			return this;
 		}
 
@@ -210,13 +210,13 @@ public class Site implements Named {
 
 		/** Depth to the shear-wave velocity horizon of 1.0 km/sec, in km. */
 		public Builder z1p0(double z1p0) {
-			this.z1p0 = validate(Z1P0_RANGE, Key.Z1P0.toString(), z1p0);
+			this.z1p0 = checkInRange(Z1P0_RANGE, Key.Z1P0.toString(), z1p0);
 			return this;
 		}
 
 		/** Depth to the shear-wave velocity horizon of 2.5 km/sec, in km. */
 		public Builder z2p5(double z2p5) {
-			this.z2p5 = validate(Z2P5_RANGE, Key.Z2P5.toString(), z2p5);
+			this.z2p5 = checkInRange(Z2P5_RANGE, Key.Z2P5.toString(), z2p5);
 			return this;
 		}
 
