@@ -2,7 +2,7 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validateWeight;
+import static org.opensha2.data.DataUtils.checkWeight;
 import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.Iterator;
@@ -76,7 +76,7 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 		}
 
 		Builder weight(double weight) {
-			this.weight = validateWeight(weight);
+			this.weight = checkWeight(weight);
 			return this;
 		}
 

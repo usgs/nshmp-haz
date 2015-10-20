@@ -3,7 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padEnd;
-import static org.opensha2.data.DataUtils.validateWeight;
+import static org.opensha2.data.DataUtils.checkWeight;
 import static org.opensha2.util.TextUtils.validateName;
 
 import org.opensha2.geo.Location;
@@ -85,7 +85,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
 		}
 
 		Builder weight(double weight) {
-			this.weight = validateWeight(weight);
+			this.weight = checkWeight(weight);
 			return this;
 		}
 

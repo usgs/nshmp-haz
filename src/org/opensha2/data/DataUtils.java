@@ -874,7 +874,7 @@ public final class DataUtils {
 	 * @param weight to validate
 	 * @return the supplied {@code weight} value
 	 */
-	public static double validateWeight(double weight) {
+	public static double checkWeight(double weight) {
 		checkInRange(WEIGHT_RANGE, "Weight", weight);
 		return weight;
 	}
@@ -892,7 +892,7 @@ public final class DataUtils {
 	 * @param weights to validate
 	 * @see #WEIGHT_TOLERANCE
 	 */
-	public static void validateWeights(Collection<Double> weights) {
+	public static void checkWeights(Collection<Double> weights) {
 		double sum = sum(weights);
 		checkArgument(fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
 			"Weights Σ %s = %s ≠ 1.0", weights, sum);
@@ -917,10 +917,10 @@ public final class DataUtils {
 	 * @param Δ discretization delta
 	 * @return {@code Δ} for use inline
 	 */
-	public static double validateDelta(double min, double max, double Δ) {
-		validateFiniteness(min, "min");
-		validateFiniteness(max, "max");
-		validateFiniteness(Δ, "Δ");
+	public static double checkDelta(double min, double max, double Δ) {
+		checkFiniteness(min, "min");
+		checkFiniteness(max, "max");
+		checkFiniteness(Δ, "Δ");
 		checkArgument(max >= min, "min [%s] >= max [%s]", min, max);
 		checkArgument(Δ >= 0.0, "Invalid Δ [%s]", Δ);
 		if (max > min) checkArgument(Δ > 0.0, "Invalid Δ [%s] for max > min", Δ);
@@ -928,7 +928,7 @@ public final class DataUtils {
 		return Δ;
 	}
 
-	public static double validateFiniteness(double value, String label) {
+	public static double checkFiniteness(double value, String label) {
 		checkArgument(Doubles.isFinite(value), "Invalid %s value: %s", label, value);
 		return value;
 	}

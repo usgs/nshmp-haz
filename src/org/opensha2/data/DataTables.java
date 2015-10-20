@@ -3,7 +3,7 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validateDelta;
+import static org.opensha2.data.DataUtils.checkDelta;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.Arrays;
@@ -39,7 +39,7 @@ public final class DataTables {
 	 * @param Δ bin width
 	 */
 	public static double[] keys(double min, double max, double Δ) {
-		return keyArray(min, max, validateDelta(min, max, Δ));
+		return keyArray(min, max, checkDelta(min, max, Δ));
 	}
 
 	/*

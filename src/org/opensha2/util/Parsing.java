@@ -3,7 +3,7 @@ package org.opensha2.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validateWeights;
+import static org.opensha2.data.DataUtils.checkWeights;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -96,7 +96,7 @@ public final class Parsing {
 			wtMap.put(keyFunc.apply(entry.getKey().trim()),
 				Doubles.stringConverter().convert(entry.getValue()));
 		}
-		validateWeights(wtMap.values());
+		checkWeights(wtMap.values());
 		return wtMap;
 	}
 
@@ -153,7 +153,7 @@ public final class Parsing {
 			builder.put(key, value);
 		}
 		NavigableMap<Double, Double> valMap = builder.build();
-		validateWeights(valMap.values());
+		checkWeights(valMap.values());
 		return valMap;
 	}
 

@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.DataUtils.checkInRange;
-import static org.opensha2.data.DataUtils.validateWeights;
+import static org.opensha2.data.DataUtils.checkWeights;
 
 import java.util.Map;
 import java.util.Objects;
@@ -173,7 +173,7 @@ public final class GmmSet {
 
 		Builder primaryModelMap(Map<Gmm, Double> gmmWtMap) {
 			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
-			validateWeights(gmmWtMap.values());
+			checkWeights(gmmWtMap.values());
 			gmmWtMapLo = Maps.immutableEnumMap(gmmWtMap);
 			return this;
 		}
@@ -185,7 +185,7 @@ public final class GmmSet {
 
 		Builder secondaryModelMap(Map<Gmm, Double> gmmWtMap) {
 			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
-			validateWeights(gmmWtMap.values());
+			checkWeights(gmmWtMap.values());
 			gmmWtMapHi = Maps.immutableEnumMap(gmmWtMap);
 			return this;
 		}

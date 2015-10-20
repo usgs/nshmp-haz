@@ -523,21 +523,21 @@ class Deagg {
 				private Builder distanceDiscretization(double min, double max, double Δ) {
 					rMin = DataUtils.checkInRange(rRange, "Min distance", min);
 					rMax = DataUtils.checkInRange(rRange, "Max distance", max);
-					Δr = DataUtils.validateDelta(min, max, Δ);
+					Δr = DataUtils.checkDelta(min, max, Δ);
 					return this;
 				}
 
 				private Builder magnitudeDiscretization(double min, double max, double Δ) {
 					mMin = Magnitudes.validateMag(min);
 					mMax = Magnitudes.validateMag(max);
-					Δm = DataUtils.validateDelta(min, max, Δ);
+					Δm = DataUtils.checkDelta(min, max, Δ);
 					return this;
 				}
 
 				private Builder epsilonDiscretization(double min, double max, double Δ) {
 					εMin = DataUtils.checkInRange(εRange, "Min epsilon", min);
 					εMax = DataUtils.checkInRange(εRange, "Max epsilon", max);
-					Δε = DataUtils.validateDelta(min, max, Δ);
+					Δε = DataUtils.checkDelta(min, max, Δ);
 					return this;
 				}
 
