@@ -833,7 +833,7 @@ public final class DataUtils {
 	 * @param value to validate
 	 * @param label indicating type of value being checked; used in exception
 	 *        message; may be {@code null}
-	 * @return the supplied value
+	 * @return the supplied value for use inline
 	 * @throws IllegalArgumentException if value is {@code NaN}
 	 * @see Range
 	 */
@@ -854,7 +854,7 @@ public final class DataUtils {
 	 * @param values to validate
 	 * @param label indicating type of value being checked; used in exception
 	 *        message; may be {@code null}
-	 * @return the supplied values
+	 * @return the supplied values for use inline
 	 * @throws IllegalArgumentException if any value is {@code NaN}
 	 * @see Range
 	 */
@@ -890,12 +890,14 @@ public final class DataUtils {
 	 * {@link #WEIGHT_TOLERANCE}.
 	 * 
 	 * @param weights to validate
+	 * @return the supplied weights for use inline
 	 * @see #WEIGHT_TOLERANCE
 	 */
-	public static void checkWeights(Collection<Double> weights) {
+	public static Collection<Double> checkWeightSum(Collection<Double> weights) {
 		double sum = sum(weights);
 		checkArgument(fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
 			"Weights Σ %s = %s ≠ 1.0", weights, sum);
+		return weights;
 	}
 
 	/**
@@ -915,7 +917,7 @@ public final class DataUtils {
 	 * @param min value
 	 * @param max value
 	 * @param Δ discretization delta
-	 * @return {@code Δ} for use inline
+	 * @return the supplied {@code Δ} for use inline
 	 */
 	public static double checkDelta(double min, double max, double Δ) {
 		checkFiniteness(min, "min");
@@ -928,8 +930,16 @@ public final class DataUtils {
 		return Δ;
 	}
 
+	/**
+	 * Checks that a value is finite.
+	 * 
+	 * @param value to check
+	 * @param label for value if check fails
+	 * @return the supplied value for use inline
+	 * @see Doubles#isFinite(double)
+	 */
 	public static double checkFiniteness(double value, String label) {
-		checkArgument(Doubles.isFinite(value), "Invalid %s value: %s", label, value);
+		checkArgument(Doubles.isFinite(value), "Non-finite %s value: %s", label, value);
 		return value;
 	}
 
