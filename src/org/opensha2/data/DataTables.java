@@ -3,7 +3,7 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.checkDelta;
+import static org.opensha2.data.Data.checkDelta;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public final class DataTables {
 	 * where a reference to the row or column keys is helpful to have when
 	 * working with data table and volume builders. Internally, this method
 	 * calls
-	 * {@link DataUtils#buildCleanSequence(double, double, double, boolean, int)}
+	 * {@link Data#buildCleanSequence(double, double, double, boolean, int)}
 	 * wiht a precision value of 4 decimal places. This may change in the future
 	 * 
 	 * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5, 7.5]</p>
@@ -48,7 +48,7 @@ public final class DataTables {
 	 */
 	private static double[] keyArray(double min, double max, double Δ) {
 		double Δby2 = Δ / 2.0;
-		return DataUtils.buildCleanSequence(
+		return Data.buildCleanSequence(
 			min + Δby2,
 			max - Δby2,
 			Δ, true, 4);

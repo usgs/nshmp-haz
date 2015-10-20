@@ -3,8 +3,8 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.checkInRange;
-import static org.opensha2.data.DataUtils.checkWeightSum;
+import static org.opensha2.data.Data.checkInRange;
+import static org.opensha2.data.Data.checkWeightSum;
 
 import java.util.Map;
 import java.util.Objects;

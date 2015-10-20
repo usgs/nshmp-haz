@@ -310,7 +310,7 @@ public interface DataVolume {
 				"At least one data dimension is empty");
 			checkDataState(rows, columns, levels);
 			checkDataSize(rows.length, columns.length, levels.length, data);
-			this.data = DataUtils.copyOf(data);
+			this.data = Data.copyOf(data);
 			return this;
 		}
 
@@ -327,7 +327,7 @@ public interface DataVolume {
 		public Builder add(DataVolume volume) {
 			// safe covariant casts
 			validateVolume((AbstractVolume) volume);
-			DataUtils.uncheckedAdd(data, ((DefaultVolume) volume).data);
+			Data.uncheckedAdd(data, ((DefaultVolume) volume).data);
 			return this;
 		}
 

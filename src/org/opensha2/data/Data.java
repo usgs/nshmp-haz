@@ -76,7 +76,7 @@ import com.google.common.primitives.Ints;
  * @author Peter Powers
  * @see Doubles
  */
-public final class DataUtils {
+public final class Data {
 
 	/*
 	 * 
@@ -96,7 +96,7 @@ public final class DataUtils {
 	 * multi-threaded applications.
 	 */
 
-	private DataUtils() {}
+	private Data() {}
 
 	/**
 	 * Add a {@code term} to the elements of {@code data} in place.

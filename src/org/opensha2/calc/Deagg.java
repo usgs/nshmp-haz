@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.opensha2.calc.CalcConfig.DeaggData;
 import org.opensha2.data.DataTable;
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.data.DataVolume;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.model.GmmSet;
@@ -87,13 +87,13 @@ class Deagg {
 		// private final double sourceSetWeight;
 
 		// private Model model;
-		private Data.Model modelData;
+		private Result.Model modelData;
 
 		private Imt imt;
 		private double iml;
 		private double totalRate;
 
-		private Map<Gmm, Data.Builder> dataMap;
+		private Map<Gmm, Result.Builder> dataMap;
 
 		private Deaggregator(HazardCurveSet hazard) {
 			this.hazard = hazard;
@@ -102,17 +102,17 @@ class Deagg {
 			// this.sourceSetWeight = hazard.sourceSet.weight();
 		}
 
-		Deaggregator withDataModel(Data.Model model) {
+		Deaggregator withDataModel(Result.Model model) {
 			this.modelData = checkNotNull(model);
 			this.dataMap = createDataMap(gmms, model);
 			return this;
 		}
 
 		// TODO these need to be build as copies of a base model
-		private static Map<Gmm, Data.Builder> createDataMap(Set<Gmm> gmms, Data.Model model) {
-			Map<Gmm, Data.Builder> map = Maps.newEnumMap(Gmm.class);
+		private static Map<Gmm, Result.Builder> createDataMap(Set<Gmm> gmms, Result.Model model) {
+			Map<Gmm, Result.Builder> map = Maps.newEnumMap(Gmm.class);
 			for (Gmm gmm : gmms) {
-				map.put(gmm, Data.builder(model));
+				map.put(gmm, Result.builder(model));
 			}
 			return Maps.immutableEnumMap(map);
 		}
@@ -130,7 +130,7 @@ class Deagg {
 			return this;
 		}
 
-		Map<Gmm, Data> deaggregate() {
+		Map<Gmm, Result> deaggregate() {
 			// TODO check required fields set
 
 			for (GroundMotions gms : hazard.hazardGroundMotionsList) {
@@ -292,7 +292,7 @@ class Deagg {
 	 * results of individual SourceSets and Gmms. Data containers may be
 	 * recombined via add().
 	 */
-	static class Data {
+	static class Result {
 
 		private final DataVolume rmε;
 
@@ -307,7 +307,7 @@ class Deagg {
 
 		// private Map<SourceSet<Source>, Collection<Source>> topContributors;
 
-		private Data(
+		private Result(
 				DataVolume rmε,
 				double rBar, double mBar, double εBar,
 				double barWeight,
@@ -331,7 +331,7 @@ class Deagg {
 		 * Initialize a builder using a data model that will likely have been
 		 * specified cia a calculation configuration.
 		 */
-		static Builder builder(Data.Model model) {
+		static Builder builder(Result.Model model) {
 			return new Builder(model);
 		}
 
@@ -340,7 +340,7 @@ class Deagg {
 		 * structural properties will be shared (e.g. row and column arrays of
 		 * data tables).
 		 */
-		static Builder builder(Data model) {
+		static Builder builder(Result model) {
 			return null;
 		}
 
@@ -378,7 +378,7 @@ class Deagg {
 					.columns(model.mMin, model.mMax, model.Δm);
 			}
 			
-			private Builder(Data model) {
+			private Builder(Result model) {
 				rmε = DataVolume.Builder.fromModel(model.rmε);
 				rPositions = DataTable.Builder.fromModel(model.rPositions);
 				mPositions = DataTable.Builder.fromModel(model.mPositions);
@@ -415,7 +415,7 @@ class Deagg {
 			}
 
 			/* Combine values */
-			Builder add(Data data) {
+			Builder add(Result data) {
 
 				rmε.add(data.rmε);
 
@@ -431,8 +431,8 @@ class Deagg {
 				return this;
 			}
 
-			Data build() {
-				return new Data(
+			Result build() {
+				return new Result(
 					rmε.build(), rBar, mBar, εBar, barWeight,
 					rPositions.build(), mPositions.build(), positionWeights.build());
 			}
@@ -521,23 +521,23 @@ class Deagg {
 				private Double εMin, εMax, Δε;
 
 				private Builder distanceDiscretization(double min, double max, double Δ) {
-					rMin = DataUtils.checkInRange(rRange, "Min distance", min);
-					rMax = DataUtils.checkInRange(rRange, "Max distance", max);
-					Δr = DataUtils.checkDelta(min, max, Δ);
+					rMin = Data.checkInRange(rRange, "Min distance", min);
+					rMax = Data.checkInRange(rRange, "Max distance", max);
+					Δr = Data.checkDelta(min, max, Δ);
 					return this;
 				}
 
 				private Builder magnitudeDiscretization(double min, double max, double Δ) {
 					mMin = Magnitudes.validateMag(min);
 					mMax = Magnitudes.validateMag(max);
-					Δm = DataUtils.checkDelta(min, max, Δ);
+					Δm = Data.checkDelta(min, max, Δ);
 					return this;
 				}
 
 				private Builder epsilonDiscretization(double min, double max, double Δ) {
-					εMin = DataUtils.checkInRange(εRange, "Min epsilon", min);
-					εMax = DataUtils.checkInRange(εRange, "Max epsilon", max);
-					Δε = DataUtils.checkDelta(min, max, Δ);
+					εMin = Data.checkInRange(εRange, "Min epsilon", min);
+					εMax = Data.checkInRange(εRange, "Max epsilon", max);
+					Δε = Data.checkDelta(min, max, Δ);
 					return this;
 				}
 

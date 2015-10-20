@@ -3,7 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padEnd;
-import static org.opensha2.data.DataUtils.checkWeight;
+import static org.opensha2.data.Data.checkWeight;
 import static org.opensha2.util.TextUtils.validateName;
 
 import org.opensha2.geo.Location;

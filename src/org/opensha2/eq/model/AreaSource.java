@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.scaling.MagLengthRelationship;

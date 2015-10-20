@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.data.Interpolate;
 import org.opensha2.eq.fault.surface.RuptureScaling.Dimensions;
 import org.opensha2.eq.model.Rupture;
@@ -282,7 +282,7 @@ public enum RuptureFloating {
 
 		// scale weights to consider along-strike uniform weights
 		double horizScale = 1.0 / alongCount;
-		DataUtils.multiply(horizScale, depthWeights);
+		Data.multiply(horizScale, depthWeights);
 
 		for (int startCol = 0; startCol < alongCount; startCol++) {
 			for (int startRow = 0; startRow < downCount; startRow++) {
@@ -291,7 +291,7 @@ public enum RuptureFloating {
 				floaterMap.put(gss, depthWeights[startRow]);
 			}
 		}
-		System.out.println(DataUtils.sum(floaterMap.values()));
+		System.out.println(Data.sum(floaterMap.values()));
 		System.out.println(floaterMap.size());
 
 		return floaterMap;
@@ -303,7 +303,7 @@ public enum RuptureFloating {
 	 */
 	private static double[] generateTriangularWeights(double zTop, double zBot, double[] depths) {
 		Range<Double> depthRange = Range.closed(zTop, zBot);
-		DataUtils.checkInRange(depthRange, "Depth", depths);
+		Data.checkInRange(depthRange, "Depth", depths);
 
 		// create PDF
 		double xPeak = (zBot - zTop) / 3.0;
@@ -313,7 +313,7 @@ public enum RuptureFloating {
 
 		// interpolate and normalize
 		double[] weights = Interpolate.findY(xs, ys, depths);
-		DataUtils.normalize(weights);
+		Data.normalize(weights);
 
 		return weights;
 	}
@@ -341,7 +341,7 @@ public enum RuptureFloating {
 		System.out.println(d);
 
 		Map<GriddedSurface, Double> map = createWeightedFloatingSurfaces(surf, d.length, d.width);
-		System.out.println(DataUtils.sum(map.values()));
+		System.out.println(Data.sum(map.values()));
 		System.out.println(map.size());
 
 	}

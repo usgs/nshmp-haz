@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 
@@ -27,7 +27,7 @@ public class DeaggResult {
 	private double returnPeriod;
 	private double iml;
 
-	private transient Data rawData;
+	private transient DataUnit rawData;
 	
 	private double minmag;
 	private double maxmag;
@@ -76,7 +76,7 @@ public class DeaggResult {
 		double[] εvalues;
 	}
 	
-	static class Data {
+	static class DataUnit {
 		private double[] rBins, mBins, εBins;
 
 		private double[][][] rmεMatrix; // [r][m][ε] DataVolume
@@ -137,9 +137,9 @@ public class DeaggResult {
 		result.returnPeriod = 2475;
 		result.iml = 0.65;
 
-		result.rawData = new Data();
-		result.rawData.rBins = DataUtils.buildCleanSequence(0.0, 100.0, 10.0, true, 1);
-		result.rawData.mBins = DataUtils.buildCleanSequence(5.0, 8.0, 0.2, true, 1);
+		result.rawData = new DataUnit();
+		result.rawData.rBins = Data.buildCleanSequence(0.0, 100.0, 10.0, true, 1);
+		result.rawData.mBins = Data.buildCleanSequence(5.0, 8.0, 0.2, true, 1);
 		result.rawData.εBins = new double[] { -2.0, -1.0, -0.5, 0.0, 0.5, 1.0, 2.0, 3.0 };
 
 		result.rawData.rmεMatrix = new double[result.rawData.rBins.length][result.rawData.mBins.length][result.rawData.εBins.length + 1];
@@ -188,7 +188,7 @@ public class DeaggResult {
 		for (int i=0; i<result.rawData.rBins.length; i++) {
 			for (int j=0; j< result.rawData.mBins.length; j++) {
 				double[] values = result.rawData.rmεMatrix[i][j];
-				double rmBinSum = DataUtils.sum(values);
+				double rmBinSum = Data.sum(values);
 				if (rmBinSum == 0.0) continue;
 				
 				Bin bin = new Bin();

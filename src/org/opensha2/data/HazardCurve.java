@@ -2,7 +2,7 @@ package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha2.data.DataUtils.*;
+import static org.opensha2.data.Data.*;
 
 import java.util.Arrays;
 
@@ -25,7 +25,7 @@ public class HazardCurve {
 	/* Only for use by static factory methods. See parent. */
 	HazardCurve(double[] xs, double[] ys) {
 //		super(xs, ys);
-		checkArgument(DataUtils.isMonotonic(false, false, ys));
+		checkArgument(Data.isMonotonic(false, false, ys));
 	}
 
 	/**

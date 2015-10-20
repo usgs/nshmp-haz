@@ -16,7 +16,7 @@ import java.util.Objects;
 
 import org.opensha2.calc.GridCalc;
 import org.opensha2.data.DataTable;
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.FocalMech;
@@ -112,7 +112,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		 * uniformly spaced. Can this be refactored
 		 */
 		double cleanDelta = Double.valueOf(String.format("%.2f", Δm));
-		double[] mags = DataUtils.buildCleanSequence(mMin, mMax, cleanDelta, true, 2);
+		double[] mags = Data.buildCleanSequence(mMin, mMax, cleanDelta, true, 2);
 		depthModel = DepthModel.create(magDepthMap, Doubles.asList(mags), maxDepth);
 
 		this.cacheKey = new Key();

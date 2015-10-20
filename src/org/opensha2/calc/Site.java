@@ -3,7 +3,7 @@ package org.opensha2.calc;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha2.data.DataUtils.checkInRange;
+import static org.opensha2.data.Data.checkInRange;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

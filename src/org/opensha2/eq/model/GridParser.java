@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -374,7 +374,7 @@ class GridParser extends DefaultHandler {
 
 	private static IncrementalMfd buildIncr(IncrData incrData) {
 		IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
-			DataUtils.multiply(incrData.weight, incrData.rates));
+			Data.multiply(incrData.weight, incrData.rates));
 		return mfdIncr;
 	}
 	

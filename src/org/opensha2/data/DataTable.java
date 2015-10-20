@@ -333,7 +333,7 @@ public interface DataTable {
 				"At least one data dimension is empty");
 			checkDataState(rows, columns);
 			checkDataSize(rows.length, columns.length, data);
-			this.data = DataUtils.copyOf(data);
+			this.data = Data.copyOf(data);
 			return this;
 		}
 
@@ -351,9 +351,9 @@ public interface DataTable {
 			// safe covariant casts
 			validateTable((AbstractTable) table);
 			if (table instanceof SingularTable) {
-				DataUtils.uncheckedAdd(((SingularTable) table).value, data);
+				Data.uncheckedAdd(((SingularTable) table).value, data);
 			} else {
-				DataUtils.uncheckedAdd(data, ((DefaultTable) table).data);
+				Data.uncheckedAdd(data, ((DefaultTable) table).data);
 			}
 			return this;
 		}

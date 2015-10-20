@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.MfdHelper.GR_Data;
@@ -281,7 +281,7 @@ class FaultParser extends DefaultHandler {
 	private List<IncrementalMfd> buildIncremental(IncrData data) {
 		List<IncrementalMfd> mfds = Lists.newArrayList();
 		IncrementalMfd mfd = Mfds.newIncrementalMFD(data.mags,
-			DataUtils.multiply(data.weight, data.rates));
+			Data.multiply(data.weight, data.rates));
 		mfds.add(mfd);
 		return mfds;
 	}
