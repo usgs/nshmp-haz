@@ -3,7 +3,7 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validateDelta;
+import static org.opensha2.data.DataUtils.checkDelta;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.Arrays;
@@ -39,7 +39,7 @@ public final class DataTables {
 	 * @param Δ bin width
 	 */
 	public static double[] keys(double min, double max, double Δ) {
-		return keyArray(min, max, validateDelta(min, max, Δ));
+		return keyArray(min, max, checkDelta(min, max, Δ));
 	}
 
 	/*
@@ -125,7 +125,7 @@ public final class DataTables {
 		}
 	}
 
-	private static abstract class AbstractTable implements DataTable {
+	static abstract class AbstractTable implements DataTable {
 
 		final double rowMin;
 		final double rowMax;
@@ -215,10 +215,9 @@ public final class DataTables {
 		}
 	}
 
-	@Deprecated
 	static final class SingularTable extends AbstractTable {
 
-		private final double value;
+		final double value;
 		private final double[] row;
 
 		SingularTable(
@@ -243,7 +242,7 @@ public final class DataTables {
 		}
 	}
 
-	private static abstract class AbstractVolume implements DataVolume {
+	static abstract class AbstractVolume implements DataVolume {
 
 		final double rowMin;
 		final double rowMax;

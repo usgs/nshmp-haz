@@ -3,8 +3,8 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validate;
-import static org.opensha2.data.DataUtils.validateWeights;
+import static org.opensha2.data.DataUtils.checkInRange;
+import static org.opensha2.data.DataUtils.checkWeightSum;
 
 import java.util.Map;
 import java.util.Objects;
@@ -173,25 +173,25 @@ public final class GmmSet {
 
 		Builder primaryModelMap(Map<Gmm, Double> gmmWtMap) {
 			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
-			validateWeights(gmmWtMap.values());
+			checkWeightSum(gmmWtMap.values());
 			gmmWtMapLo = Maps.immutableEnumMap(gmmWtMap);
 			return this;
 		}
 
 		Builder primaryMaxDistance(double maxDistance) {
-			maxDistanceLo = validate(MAX_DIST_RANGE, "Max distance", maxDistance);
+			maxDistanceLo = checkInRange(MAX_DIST_RANGE, "Max distance", maxDistance);
 			return this;
 		}
 
 		Builder secondaryModelMap(Map<Gmm, Double> gmmWtMap) {
 			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
-			validateWeights(gmmWtMap.values());
+			checkWeightSum(gmmWtMap.values());
 			gmmWtMapHi = Maps.immutableEnumMap(gmmWtMap);
 			return this;
 		}
 
 		Builder secondaryMaxDistance(double maxDistance) {
-			maxDistanceHi = validate(MAX_DIST_RANGE, "Max distance", maxDistance);
+			maxDistanceHi = checkInRange(MAX_DIST_RANGE, "Max distance", maxDistance);
 			return this;
 		}
 

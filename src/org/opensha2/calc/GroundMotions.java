@@ -32,6 +32,8 @@ final class GroundMotions {
 	 * 
 	 * TODO It would be nice to have an immutable variant of a doubl[] backed
 	 * list, but would require copying values on build().
+	 * 
+	 * TODO refactor to μLists σLists
 	 */
 
 	final InputList inputs;

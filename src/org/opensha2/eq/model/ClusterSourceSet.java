@@ -2,13 +2,10 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.validateWeight;
-import static org.opensha2.util.TextUtils.validateName;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensha2.eq.model.FaultSourceSet.Builder;
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;

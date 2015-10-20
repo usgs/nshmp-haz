@@ -3,8 +3,8 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha2.data.DataUtils.uncheckedAdd;
-import static org.opensha2.data.DataUtils.uncheckedFlip;
+import static org.opensha2.data.DataUtils.add;
+import static org.opensha2.data.DataUtils.flip;
 import static org.opensha2.data.DataUtils.uncheckedMultiply;
 
 import java.util.Arrays;
@@ -37,18 +37,18 @@ final class MutableXySequence extends ImmutableXySequence {
 	}
 
 	@Override public XySequence add(double term) {
-		uncheckedAdd(term, ys);
+		DataUtils.add(term, ys);
 		return this;
 	}
 
 	@Override public XySequence add(XySequence sequence) {
 		// safe covariant cast
-		uncheckedAdd(ys, validateSequence((ImmutableXySequence) sequence).ys);
+		DataUtils.add(ys, validateSequence((ImmutableXySequence) sequence).ys);
 		return this;
 	}
 
 	@Override public XySequence multiply(double scale) {
-		uncheckedMultiply(scale, ys);
+		DataUtils.multiply(scale, ys);
 		return this;
 	}
 
@@ -59,7 +59,7 @@ final class MutableXySequence extends ImmutableXySequence {
 	}
 
 	@Override public XySequence complement() {
-		uncheckedAdd(1, uncheckedFlip(ys));
+		DataUtils.add(1, flip(ys));
 		return this;
 	}
 
