@@ -315,13 +315,14 @@ public interface DataVolume {
 		}
 
 		/**
-		 * Add the values in the supplied table to this builder. This is a very
-		 * efficient operation if this builder has been created using the
-		 * supplied table as a model.
+		 * Add the values in the supplied volume to this builder. This operation
+		 * is very efficient if this builder and the supplied volume are sourced
+		 * from the same model.
 		 * 
-		 * @param table to add
-		 * @throws IllegalArgumentException if table
-		 * @return
+		 * @param volume to add
+		 * @throws IllegalArgumentException if the rows, columns, and levels of
+		 *         the supplied volume do not match those of this volume
+		 * @see #fromModel(DataVolume)
 		 */
 		public Builder add(DataVolume volume) {
 			// safe covariant casts
@@ -331,8 +332,8 @@ public interface DataVolume {
 		}
 
 		/*
-		 * Check hash codes of row, column, and level arrays in case copyOf has been
-		 * used, otherwise check array equality.
+		 * Check hash codes of row, column, and level arrays in case copyOf has
+		 * been used, otherwise check array equality.
 		 */
 		AbstractVolume validateVolume(AbstractVolume that) {
 			checkArgument((this.rows.hashCode() == that.rows.hashCode() &&

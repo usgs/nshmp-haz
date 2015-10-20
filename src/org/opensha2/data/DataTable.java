@@ -338,13 +338,14 @@ public interface DataTable {
 		}
 
 		/**
-		 * Add the values in the supplied table to this builder. This is a very
-		 * efficient operation if this builder has been created using the
-		 * supplied table as a model.
+		 * Add the values in the supplied table to this builder. This operation
+		 * is very efficient if this builder and the supplied table are sourced
+		 * from the same model.
 		 * 
 		 * @param table to add
-		 * @throws IllegalArgumentException if table
-		 * @return
+		 * @throws IllegalArgumentException if the rows and columns of the
+		 *         supplied table do not match those of this table
+		 * @see #fromModel(DataTable)
 		 */
 		public Builder add(DataTable table) {
 			// safe covariant casts

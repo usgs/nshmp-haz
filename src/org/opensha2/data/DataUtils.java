@@ -831,7 +831,7 @@ public final class DataUtils {
 
 	/**
 	 * Verify that a value falls within a specified {@link Range}. Method
-	 * returns the supplied value and can be used inline.
+	 * returns the supplied value for use inline.
 	 * 
 	 * @param range of allowable values
 	 * @param value to validate
@@ -851,8 +851,8 @@ public final class DataUtils {
 
 	/**
 	 * Verify that the domain of a {@code double[]} does not exceed that of the
-	 * supplied {@link Range}. Method returns the supplied values and can be
-	 * used inline.
+	 * supplied {@link Range}. Method returns the supplied values for
+	 * use inline.
 	 * 
 	 * @param range of allowable values
 	 * @param values to validate
