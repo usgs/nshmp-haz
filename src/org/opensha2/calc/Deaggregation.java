@@ -32,13 +32,13 @@ import com.google.common.collect.Range;
  * 
  * @author Peter Powers
  */
-final class Deagg {
+final class Deaggregation {
 
 	
 	private final HazardResult hazard;
 	private final double returnPeriod;
 	
-	private Deagg(HazardResult hazard, double returnPeriod) {
+	private Deaggregation(HazardResult hazard, double returnPeriod) {
 		this.hazard = hazard;
 		this.returnPeriod = returnPeriod;
 	}
