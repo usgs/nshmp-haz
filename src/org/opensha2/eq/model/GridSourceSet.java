@@ -277,7 +277,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		Builder mfdData(double mMin, double mMax, double Δm) {
 			// TODO need better validation here
-			checkArgument(validateMag(mMin) <= validateMag(mMax));
+			checkArgument(checkMagnitude(mMin) <= checkMagnitude(mMax));
 			this.mMin = mMin;
 			this.mMax = mMax;
 			this.Δm = Δm;

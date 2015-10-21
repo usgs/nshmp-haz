@@ -32,7 +32,8 @@ public final class DataTables {
 	 * {@link Data#buildCleanSequence(double, double, double, boolean, int)}
 	 * wiht a precision value of 4 decimal places. This may change in the future
 	 * 
-	 * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5, 7.5]</p>
+	 * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5,
+	 * 7.5]</p>
 	 * 
 	 * @param min lower edge of lowermost bin
 	 * @param max upper edge of uppermost bin
@@ -54,11 +55,18 @@ public final class DataTables {
 			Δ, true, 4);
 	}
 
-	/*
-	 * Compute an index from a minimum value, a value and an interval. Casting
-	 * to int floors value.
+	/**
+	 * Compute an index from a minimum value, a value and an interval.
+	 * 
+	 * @param min value
+	 * @param delta interval (i.e. bin width)
+	 * @param value for which to compute index
+	 * @param size of array or collection for which index is to be used
+	 * @throws IllegalArgumentException if the index of {@code value} falls
+	 *         outside the allowed index range of {@code [0, size-1]}.
 	 */
-	static int indexOf(double min, double delta, double value, int size) {
+	public static int indexOf(double min, double delta, double value, int size) {
+		// casting to int floors value
 		return checkElementIndex((int) ((value - min) / delta), size);
 	}
 
@@ -160,6 +168,37 @@ public final class DataTables {
 			return ImmutableList.copyOf(Doubles.asList(columns));
 		}
 
+		@Override public double rowMin() {
+			return rowMin;
+		}
+
+		@Override public double rowMax() {
+			return rowMax;
+		}
+
+		@Override public double rowΔ() {
+			return rowΔ;
+		}
+
+		@Override public int rowCount() {
+			return rows.length;
+		}
+
+		@Override public double columnMin() {
+			return columnMin;
+		}
+
+		@Override public double columnMax() {
+			return columnMax;
+		}
+
+		@Override public double columnΔ() {
+			return columnΔ;
+		}
+		
+		@Override public int columnCount() {
+			return columns.length;
+		}
 	}
 
 	static final class DefaultTable extends AbstractTable {
@@ -213,6 +252,7 @@ public final class DataTables {
 			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
 			return new ImmutableXySequence(columns, data[iRow]);
 		}
+
 	}
 
 	static final class SingularTable extends AbstractTable {
@@ -290,6 +330,54 @@ public final class DataTables {
 
 		@Override public List<Double> levels() {
 			return ImmutableList.copyOf(Doubles.asList(levels));
+		}
+
+		@Override public double rowMin() {
+			return rowMin;
+		}
+
+		@Override public double rowMax() {
+			return rowMax;
+		}
+
+		@Override public double rowΔ() {
+			return rowΔ;
+		}
+
+		@Override public int rowCount() {
+			return rows.length;
+		}
+
+		@Override public double columnMin() {
+			return columnMin;
+		}
+
+		@Override public double columnMax() {
+			return columnMax;
+		}
+
+		@Override public double columnΔ() {
+			return columnΔ;
+		}
+
+		@Override public int columnCount() {
+			return columns.length;
+		}
+
+		@Override public double levelMin() {
+			return levelMin;
+		}
+
+		@Override public double levelMax() {
+			return levelMax;
+		}
+
+		@Override public double levelΔ() {
+			return levelΔ;
+		}
+
+		@Override public int levelCount() {
+			return levels.length;
 		}
 	}
 

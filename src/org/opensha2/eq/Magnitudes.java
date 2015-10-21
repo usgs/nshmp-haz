@@ -51,9 +51,9 @@ public final class Magnitudes {
 	 * @param mag magnitude to validate
 	 * @return the supplied magnitude
 	 * @throws IllegalArgumentException if {@code magdip} value is out of range
-	 * @see Data#validate(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
-	public static double validateMag(double mag) {
+	public static double checkMagnitude(double mag) {
 		return checkInRange(magRange, "Magnitude", mag);
 	}
 

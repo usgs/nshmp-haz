@@ -65,7 +65,7 @@ public class MagUncertainty {
 		mu.epiWeights = epiWeights;
 		mu.epiCount = mu.epiDeltas.length;
 		mu.hasEpistemic = mu.epiCount > 1;
-		mu.epiCutoff = Magnitudes.validateMag(epiCutoff);
+		mu.epiCutoff = Magnitudes.checkMagnitude(epiCutoff);
 
 		checkArgument(aleaSigma >= 0);
 		checkArgument(aleaCount < 40);
@@ -73,7 +73,7 @@ public class MagUncertainty {
 		mu.aleaCount = aleaCount;
 		mu.moBalance = moBalance;
 		mu.hasAleatory = mu.aleaCount > 1 && mu.aleaSigma != 0.0;
-		mu.aleaCutoff = Magnitudes.validateMag(aleaCutoff);
+		mu.aleaCutoff = Magnitudes.checkMagnitude(aleaCutoff);
 
 		return mu;
 	}
