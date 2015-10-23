@@ -34,6 +34,8 @@ import com.google.common.collect.SetMultimap;
  */
 public final class HazardResult {
 
+	// TODO refactor to just Hazard because that's what it is
+	
 	final SetMultimap<SourceType, HazardCurveSet> sourceSetMap;
 	final Map<Imt, XySequence> totalCurves;
 	final HazardModel model;

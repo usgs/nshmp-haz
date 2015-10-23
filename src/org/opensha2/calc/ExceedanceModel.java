@@ -28,6 +28,12 @@ import org.opensha2.gmm.Imt;
  */
 public enum ExceedanceModel {
 
+	/*
+	 * TODO We probably want to refactor this to probability model and provide
+	 * 'occurrence' in addition to exceedence. See commented distribution
+	 * function at eof.
+	 */
+
 	/**
 	 * No uncertainty. Any {@code σ} supplied to methods is ignored yielding a
 	 * complementary unit step function for a range of values spanning μ.
@@ -109,7 +115,7 @@ public enum ExceedanceModel {
 			return boundedCcdFn(μ, 0.65, sequence, 0.0, 1.0);
 		}
 	},
-	
+
 	/**
 	 * Model accomodates the heavy tails observed in earthquake data that are
 	 * not well matched by a purely normal distribution at high ε by combining
@@ -280,5 +286,23 @@ public enum ExceedanceModel {
 			A4 * t * t * t * t +
 			A5 * t * t * t * t * t) * exp(-x * x);
 	}
+
+//	// TODO test performance of compacting tsq
+//	private static double erfBase2(double x) {
+//		double t = 1 / (1 + P * x);
+//		double tsq = t * t;
+//		return 1 - (A1 * t +
+//			A2 * tsq +
+//			A3 * tsq * t +
+//			A4 * tsq * tsq +
+//			A5 * tsq * tsq * t) * exp(-x * x);
+//	}
+//
+//	private static final double SQRT_2PI = Math.sqrt(2 * Math.PI);
+//
+//	private static double dFn(double μ, double σ, double x) {
+//		double Δxμ = x - μ;
+//		return exp(-(Δxμ * Δxμ) / (2 * σ * σ)) / (σ * SQRT_2PI);
+//	}
 
 }

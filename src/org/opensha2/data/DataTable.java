@@ -294,7 +294,7 @@ public interface DataTable {
 		 * 
 		 * @param row index
 		 * @param column index
-		 * @param value to set
+		 * @param value to add
 		 */
 		public Builder add(int row, int column, double value) {
 			data[row][column] += value;
@@ -305,7 +305,7 @@ public interface DataTable {
 		 * Add to the values in the specified row.
 		 *
 		 * @param row key
-		 * @param values to set
+		 * @param values to add
 		 * @throws IndexOutOfBoundsException if values overrun row
 		 */
 		public Builder add(double row, double[] values) {
@@ -322,7 +322,7 @@ public interface DataTable {
 		 * Add to the values in the specified row.
 		 *
 		 * @param row key
-		 * @param values to set
+		 * @param values to add
 		 * @throws IndexOutOfBoundsException if values overrun row
 		 */
 		public Builder add(double row, List<Double> values) {
@@ -334,7 +334,7 @@ public interface DataTable {
 		 * specified row.
 		 *
 		 * @param row key
-		 * @param values to set
+		 * @param sequence to add
 		 * @throws IndexOutOfBoundsException if values overrun row
 		 */
 		public Builder add(double row, XySequence sequence) {

@@ -7,6 +7,7 @@ import static org.opensha2.eq.Magnitudes.checkMagnitude;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 
@@ -14,6 +15,8 @@ import org.opensha2.calc.CalcConfig.DeaggData;
 import org.opensha2.data.DataTable;
 import org.opensha2.data.DataTables;
 import org.opensha2.data.DataVolume;
+import org.opensha2.data.Interpolator;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.Source;
@@ -43,13 +46,25 @@ final class Deaggregation {
 		this.returnPeriod = returnPeriod;
 	}
 	
-//	public static DeaggResult process(HazardResult hazard, double returnPeriod) {
-//		Deagg deagg = new Deagg(hazard, returnPeriod);
-//		
-//		for ()
-//	}
+	// all HazardResult curves are in x-log space already
+	private static final Interpolator IML_INTERPOLATE = Interpolator.builder()
+			.logy()
+			.decreasingX()
+			.build();
+			
+	
+	public static Deaggregation create(HazardResult hazard, double returnPeriod) {
+		Deaggregation deagg = new Deaggregation(hazard, returnPeriod);
+		
+		for (Entry<Imt, XySequence> entry : hazard.totalCurves.entrySet()) {
+			double targetIml = IML_INTERPOLATE.findX(entry.getValue(), returnPeriod);
+			
+		}
+		return null;
+	}
 	
 	
+//	static class Result
 	/*
 	 * TODO track and report ranked source set contributions TODO track and
 	 * report ranked sources; may have source with same name in different

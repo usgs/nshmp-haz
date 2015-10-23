@@ -243,6 +243,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	private final class X_List extends AbstractList<Double> implements RandomAccess {
+		
 		@Override public Double get(int index) {
 			return x(index);
 		}
@@ -280,6 +281,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	private final class Y_List extends AbstractList<Double> implements RandomAccess {
+		
 		@Override public Double get(int index) {
 			return y(index);
 		}

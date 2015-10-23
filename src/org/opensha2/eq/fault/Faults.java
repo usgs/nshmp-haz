@@ -123,7 +123,7 @@ public final class Faults {
 	 * @param depth to validate (positive down)
 	 * @return the supplied depth for use inline
 	 * @throws IllegalArgumentException if {@code depth} is out of range
-	 * @see Data#validate(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateDepth(double depth) {
 		return checkInRange(CRUSTAL_DEPTH_RANGE, "Depth", depth);
@@ -159,7 +159,7 @@ public final class Faults {
 	 * @param width to validate
 	 * @return the supplied width for use inline
 	 * @throws IllegalArgumentException if {@code width} is out of range
-	 * @see Data#validate(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateWidth(double width) {
 		return checkInRange(CRUSTAL_WIDTH_RANGE, "Width", width);

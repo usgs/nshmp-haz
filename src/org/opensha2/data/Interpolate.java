@@ -25,16 +25,20 @@ import java.util.List;
  * 
  * @author Peter Powers
  */
+@Deprecated
 public final class Interpolate {
 
 	// TODO refactor all methods to take extrapolate flag
-	
+
 	// TODO support Lists??
-	
+
 	// TODO high priority
-	
+
 	// TODO unchecked versions?
 	
+	// x-values always assumed to be monotonically increasing
+	// y-values must be reversed (for hazard curves)
+
 	private Interpolate() {}
 
 	/**
@@ -53,9 +57,11 @@ public final class Interpolate {
 	 */
 	public static double findX(double x1, double y1, double x2, double y2,
 			double y) {
-		// instead of:
-		// findX() = x1 + (y - y1) * (x2 - x1) / (y2 - y1);
-		// pass through to findY with rearranged args
+		/*
+		 * pass through to findY with rearranged args, instead of:
+		 * 
+		 * findX() = x1 + (y - y1) * (x2 - x1) / (y2 - y1)
+		 */
 		return findY(y1, x1, y2, x2, y);
 	}
 
@@ -77,7 +83,21 @@ public final class Interpolate {
 			double x) {
 		return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
 	}
-	
+
+//	/**
+//	 * Returns the interpolated or extrapolated y-value using the supplied x-
+//	 * and y-value arrays.
+//	 * 
+//	 * @param xs x-values of some function
+//	 * @param ys y-values of some function
+//	 * @param x value at which to find y
+//	 * @return the interpolated y-value
+//	 */
+//	public static double findX(double[] xs, double[] ys, double y) {
+//		int i = dataIndex(xs, x);
+//		return findX(xs[i], ys[i], xs[i + 1], ys[i + 1], x);
+//	}
+
 	/**
 	 * Returns the interpolated or extrapolated y-value using the supplied x-
 	 * and y-value arrays.
@@ -91,15 +111,31 @@ public final class Interpolate {
 		int i = dataIndex(xs, x);
 		return findY(xs[i], ys[i], xs[i + 1], ys[i + 1], x);
 	}
-	
+
 	public static double findY(List<Double> xs, List<Double> ys, double x) {
 		int i = dataIndex(xs, x);
 		return findY(xs.get(i), ys.get(i), xs.get(i + 1), ys.get(i + 1), x);
 	}
 
+	// /**
+	// * Returns the log interpolated or extrapolated y-value using the
+	// * supplied x- and y-value arrays.
+	// *
+	// * TODO needs unit test
+	// *
+	// * @param xs x-values of some function
+	// * @param ys y-values of some function
+	// * @param x value at which to find y
+	// * @return the interpolated y-value
+	// */
+	// public static double findLogX(double[] xs, double[] ys, double y) {
+	// int i = dataIndex(xs, x);
+	// return exp(findY(xs[i], log(ys[i]), xs[i + 1], log(ys[i + 1]), x));
+	// }
+
 	/**
-	 * Returns the log interpolated or extrapolated y-value using the
-	 * supplied x- and y-value arrays.
+	 * Returns the log interpolated or extrapolated y-value using the supplied
+	 * x- and y-value arrays.
 	 * 
 	 * TODO needs unit test
 	 * 
@@ -112,7 +148,7 @@ public final class Interpolate {
 		int i = dataIndex(xs, x);
 		return exp(findY(xs[i], log(ys[i]), xs[i + 1], log(ys[i + 1]), x));
 	}
-	
+
 	/**
 	 * Returns the log-log interpolated or extrapolated y-value using the
 	 * supplied x- and y-value arrays.
@@ -124,13 +160,12 @@ public final class Interpolate {
 	 */
 	public static double findLogLogY(double[] xs, double[] ys, double x) {
 		int i = dataIndex(xs, x);
-		return exp(findY(log(xs[i]), log(ys[i]), log(xs[i + 1]),
-			log(ys[i + 1]), log(x)));
+		return exp(findY(log(xs[i]), log(ys[i]), log(xs[i + 1]), log(ys[i + 1]), log(x)));
 	}
 
 	/**
-	 * Returns interpolated or extrapolated y-values using the supplied x-
-	 * and y-value arrays.
+	 * Returns interpolated or extrapolated y-values using the supplied x- and
+	 * y-value arrays.
 	 * 
 	 * @param xs x-values of some function
 	 * @param ys y-values of some function
@@ -145,7 +180,7 @@ public final class Interpolate {
 		}
 		return y;
 	}
-	
+
 	public static double[] findY(List<Double> xs, List<Double> ys, double[] x) {
 		double[] y = new double[x.length];
 		int i = 0;
@@ -155,10 +190,9 @@ public final class Interpolate {
 		return y;
 	}
 
-
 	/**
-	 * Returns the log interpolated or extrapolated y-values using the
-	 * supplied x- and y-value arrays.
+	 * Returns the log interpolated or extrapolated y-values using the supplied
+	 * x- and y-value arrays.
 	 * 
 	 * @param xs x-values of some function
 	 * @param ys y-values of some function
@@ -193,31 +227,31 @@ public final class Interpolate {
 	}
 
 	// TODO clean
-	
+
 	// TODO its highly likely that given the average (small) size of things
 	// like hazard curves, simply walking up an array or list is faster than
 	// binary searching.
-	
+
 	// TODO move to DataUtils as some 'unchecked' flavor
-	
+
 	private static int dataIndex(double[] data, double value) {
 		int i = Arrays.binarySearch(data, value);
 		return binarySearchResultToIndex(i, data.length);
-//		// adjust index for low value (-1) and in-sequence insertion pt
-//		i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;
-//		// adjust hi index to next to last index
-//		return (i >= data.length - 1) ? --i : i;
+		// // adjust index for low value (-1) and in-sequence insertion pt
+		// i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;
+		// // adjust hi index to next to last index
+		// return (i >= data.length - 1) ? --i : i;
 	}
 
 	private static int dataIndex(List<Double> data, double value) {
 		int i = Collections.binarySearch(data, value);
 		return binarySearchResultToIndex(i, data.size());
-//		// adjust index for low value (-1) and in-sequence insertion pt
-//		i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;
-//		// adjust hi index to next to last index
-//		return (i >= data.size() - 1) ? --i : i;
+		// // adjust index for low value (-1) and in-sequence insertion pt
+		// i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;
+		// // adjust hi index to next to last index
+		// return (i >= data.size() - 1) ? --i : i;
 	}
-	
+
 	private static int binarySearchResultToIndex(int i, int size) {
 		// adjust index for low value (-1) and in-sequence insertion pt
 		i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;

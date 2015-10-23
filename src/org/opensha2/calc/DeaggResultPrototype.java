@@ -20,7 +20,7 @@ import com.google.gson.GsonBuilder;
  *
  * @author Peter Powers
  */
-public class DeaggResult {
+public class DeaggResultPrototype {
 
 	private String id;
 
@@ -130,8 +130,8 @@ public class DeaggResult {
 		}
 	}
 
-	static DeaggResult demo() {
-		DeaggResult result = new DeaggResult();
+	static DeaggResultPrototype demo() {
+		DeaggResultPrototype result = new DeaggResultPrototype();
 		result.id = "Total";
 
 		result.returnPeriod = 2475;
@@ -204,7 +204,7 @@ public class DeaggResult {
 
 	}
 
-	static String toJson(DeaggResult dr) {
+	static String toJson(DeaggResultPrototype dr) {
 		Gson gson = new GsonBuilder()
 			.disableHtmlEscaping()
 			.setPrettyPrinting()

@@ -37,6 +37,8 @@ import com.google.common.collect.Range;
  * @author Peter Powers
  */
 public class Calcs {
+	
+	// TODO refactor method names to be consistent with refactored hazard/deagg class names
 
 	/*
 	 * Implementation notes:
@@ -87,18 +89,25 @@ public class Calcs {
 
 	private static Range<Double> rpRange = Range.closed(1.0, 4000.0);
 	
-//	public static DeaggResult deaggregation(
-//			HazardResult hazard,
-//			double returnPeriod) {
-//
-//		checkNotNull(hazard);
-//		checkInRange(rpRange, "Return period", returnPeriod);
-//
+	/**
+	 * Perform a deaggregation of probabilisitic seismic hazard.
+	 * 
+	 * @param hazard to deaggregate
+	 * @param returnPeriod at which to deaggregate
+	 */
+	public static Deaggregation deaggregation(
+			HazardResult hazard,
+			double returnPeriod) {
+
+		checkNotNull(hazard);
+		checkInRange(rpRange, "Return period", returnPeriod);
+
 //		Deagg deagg = 
-//	}
+		return null;
+	}
 
 	/**
-	 * Compute a hazard curve, possibly using an {@link Optional}
+	 * Compute probabilistic seismic hazard, possibly using an {@link Optional}
 	 * {@link Executor}. If no {@code Executor} is supplied, the calculation
 	 * will run on the current thread.
 	 * 
