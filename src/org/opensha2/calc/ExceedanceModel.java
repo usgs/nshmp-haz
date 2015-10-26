@@ -7,6 +7,8 @@ import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
 import static org.opensha2.gmm.Imt.SA0P75;
 
+import java.util.List;
+
 import org.opensha2.data.XyPoint;
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
@@ -304,5 +306,21 @@ public enum ExceedanceModel {
 //		double Δxμ = x - μ;
 //		return exp(-(Δxμ * Δxμ) / (2 * σ * σ)) / (σ * SQRT_2PI);
 //	}
+	
+	/**
+	 * Computes joint probability of exceedence given the occurrence of a
+	 * cluster of events: [1 - [(1-PE1) * (1-PE2) * ...]]. The probability of
+	 * exceedance of each individual event is given in the supplied curves.
+	 * 
+	 * @param curves for which to calculate joint probability of exceedance
+	 */
+	public static XySequence clusterExceedance(List<XySequence> curves) {
+		XySequence combined = XySequence.copyOf(curves.get(0)).complement();
+		for (int i = 1; i < curves.size(); i++) {
+			combined.multiply(curves.get(i).complement());
+		}
+		return combined.complement();
+	}
+
 
 }
