@@ -6,26 +6,29 @@ import com.google.common.base.MoreObjects;
 
 /**
  * Identifiers of common return periods, also referred to in PSHA as
- * probabilities of exceedance. Each identifier is structured as follows, for
- * example {@code PE2IN50}:
+ * probabilities of exceedance.
+ * 
+ * <p>Each identifier is structured as follows, for example {@code PE2IN50}:</p>
  * 
  * <ul><li>Reads as a 2% Poisson probability of exceeding some measure of ground
  * motion in a 50 year period.</li>
  * 
- * <li>Is equivalent to an annual rate of occurrence of {@code ~0.000404} (see
+ * <li>Is equivalent to an annual rate of occurrence of ~0.000404 (see
  * {@link #annualRate()}).</li>
  * 
  * <li>Or once every 2475 years or so (see {@link #duration()} ).</li></ul>
+ * 
+ * <p>Note that the {@link Mfds} class includes useful static utilities for
+ * working with Poisson probabilities, rates, and time spans.</p>
  *
  * @author Peter Powers
- * @see Mfds for utilities to working with Poisson probabilities, rates, and
- *      time spans
+ * @see Mfds
  */
 public enum ReturnPeriod {
-	
+
 	/*
-	 * TODO It would be really nice to add some commentary to each value
-	 * about what disciplines or industries use each value and why
+	 * TODO It would be really nice to add some commentary to each value about
+	 * what disciplines or industries use each value and why
 	 */
 
 	/** A 1% probability of exceedance in 10,000 years. */

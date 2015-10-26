@@ -102,8 +102,7 @@ public class Calcs {
 		checkNotNull(hazard);
 		checkInRange(rpRange, "Return period", returnPeriod);
 
-//		Deagg deagg = 
-		return null;
+		return Deaggregation.create(hazard, returnPeriod);
 	}
 
 	/**

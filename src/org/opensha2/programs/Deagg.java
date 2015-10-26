@@ -10,7 +10,7 @@ import org.opensha2.gmm.Imt;
  *
  * @author Peter Powers
  */
-public class Deaggregation {
+public class Deagg {
 
 //	public Deagg calc(HazardResult model, Imt imt, Site site, double rate) {
 //		

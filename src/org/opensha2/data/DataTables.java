@@ -222,6 +222,11 @@ public final class DataTables {
 			return data[iRow][iColumn];
 		}
 
+		@Override public XySequence row(double row) {
+			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
+			return new ImmutableXySequence(columns, data[iRow]);
+		}
+
 		private static final String ROW_COL_FORMAT = "% 8.2f";
 		private static final String DATA_FORMAT = "%7.2e";
 		private static final String ZEROS_IN = "0.00e+00";
@@ -247,12 +252,6 @@ public final class DataTables {
 			}
 			return sb.toString();
 		}
-
-		@Override public XySequence row(double row) {
-			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
-			return new ImmutableXySequence(columns, data[iRow]);
-		}
-
 	}
 
 	static final class SingularTable extends AbstractTable {
@@ -409,6 +408,10 @@ public final class DataTables {
 			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
 			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
 			return new ImmutableXySequence(levels, data[iRow][iColumn]);
+		}
+		
+		@Override public String toString() {
+			return Data.toString(data);
 		}
 	}
 

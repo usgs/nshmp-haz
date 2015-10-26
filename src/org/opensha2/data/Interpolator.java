@@ -326,53 +326,53 @@ public abstract class Interpolator {
 
 	/* Interface for different interpolation functions */
 	private static interface InterpolateFn {
-		double apply(double x1, double x2, double y1, double y2, double value);
+		double apply(double x1, double y1, double x2, double y2, double value);
 	}
 
 	private static final class XFn implements InterpolateFn {
-		@Override public double apply(double x1, double x2, double y1, double y2, double y) {
+		@Override public double apply(double x1, double y1, double x2, double y2, double y) {
 			return findX(x1, y1, x2, y2, y);
 		}
 	}
 
 	private static final class XFn_LogX implements InterpolateFn {
-		@Override public double apply(double x1, double x2, double y1, double y2, double y) {
-			return exp(findY(log(x1), y1, log(x2), y2, y));
+		@Override public double apply(double x1, double y1, double x2, double y2, double y) {
+			return exp(findX(log(x1), y1, log(x2), y2, y));
 		}
 	}
 
 	private static final class XFn_LogY implements InterpolateFn {
-		@Override public double apply(double x1, double x2, double y1, double y2, double y) {
-			return findY(x1, log(y1), x2, log(y2), log(y));
+		@Override public double apply(double x1, double y1, double x2, double y2, double y) {
+			return findX(x1, log(y1), x2, log(y2), log(y));
 		}
 	}
 
 	private static final class XFn_LogX_LogY implements InterpolateFn {
-		@Override public double apply(double x1, double x2, double y1, double y2, double y) {
-			return exp(findY(log(x1), log(y1), log(x2), log(y2), log(y)));
+		@Override public double apply(double x1, double y1, double x2, double y2, double y) {
+			return exp(findX(log(x1), log(y1), log(x2), log(y2), log(y)));
 		}
 	}
 
 	private static final class YFn implements InterpolateFn {
-		@Override public double apply(double x1, double x2, double y1, double y2, double x) {
+		@Override public double apply(double x1, double y1, double x2, double y2, double x) {
 			return findY(x1, y1, x2, y2, x);
 		}
 	}
 
 	private static final class YFn_LogX implements InterpolateFn {
-		@Override public double apply(double x1, double x2, double y1, double y2, double x) {
+		@Override public double apply(double x1, double y1, double x2, double y2, double x) {
 			return findY(log(x1), y1, log(x2), y2, log(x));
 		}
 	}
 
 	private static final class YFn_LogY implements InterpolateFn {
-		@Override public double apply(double x1, double x2, double y1, double y2, double x) {
+		@Override public double apply(double x1, double y1, double x2, double y2, double x) {
 			return exp(findY(x1, log(y1), x2, log(y2), x));
 		}
 	}
 
 	private static final class YFn_LogX_LogY implements InterpolateFn {
-		@Override public double apply(double x1, double x2, double y1, double y2, double x) {
+		@Override public double apply(double x1, double y1, double x2, double y2, double x) {
 			return exp(findY(log(x1), log(y1), log(x2), log(y2), log(x)));
 		}
 	}
