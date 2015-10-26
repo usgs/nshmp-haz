@@ -25,7 +25,7 @@ import org.opensha2.calc.Site;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
 import org.opensha2.mfd.Mfds;
-import org.opensha2.programs.HazardCurve;
+import org.opensha2.programs.HazardCalc;
 import org.opensha2.util.Parsing;
 
 import com.google.common.base.Optional;
@@ -120,7 +120,7 @@ public class PeerTest {
 
 	@Test public void test() {
 		System.out.println(site.name);
-		HazardResult result = HazardCurve.calc(model, model.config(), site,
+		HazardResult result = HazardCalc.calc(model, model.config(), site,
 			Optional.<Executor> absent());
 		// compute y-values converting to Poiss prob
 		double[] actual = Doubles.toArray(
@@ -182,7 +182,7 @@ public class PeerTest {
 
 	public static void main(String[] args) {
 		String model = MODEL_DIR.resolve(S1_C11_F).toString();
-		HazardCurve.main(new String[] { model });
+		HazardCalc.main(new String[] { model });
 	}
 
 }

@@ -42,7 +42,7 @@ import com.google.common.base.Throwables;
  * 
  * @author Peter Powers
  */
-public class HazardCurve {
+public class HazardCalc {
 
 	private static final int FLUSH_LIMIT = 2;
 
@@ -94,7 +94,7 @@ public class HazardCurve {
 		}
 
 		Logging.init();
-		Logger log = Logger.getLogger(HazardCurve.class.getName());
+		Logger log = Logger.getLogger(HazardCalc.class.getName());
 
 		try {
 

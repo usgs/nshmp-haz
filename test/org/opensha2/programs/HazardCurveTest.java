@@ -11,8 +11,8 @@ public class HazardCurveTest {
 
 	@Test public final void testRun() {
 		String[] args = new String[] {};
-		String status = HazardCurve.run(args);
-		assertEquals(HazardCurve.USAGE.substring(0,18), status.substring(0,18));
+		String status = HazardCalc.run(args);
+		assertEquals(HazardCalc.USAGE.substring(0,18), status.substring(0,18));
 	}
 	
 
