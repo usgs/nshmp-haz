@@ -419,9 +419,8 @@ final class Transforms {
 
 				double rate = clusterGroundMotions.parent.rate();
 				for (Gmm gmm : faultCurves.keySet()) {
-					// TODO where should this be pointing
-					XySequence clusterCurve = Utils.calcClusterExceedProb(faultCurves
-						.get(gmm));
+					XySequence clusterCurve = ExceedanceModel.clusterExceedance(
+						faultCurves.get(gmm));
 					builder.addCurve(imt, gmm, clusterCurve.multiply(rate));
 				}
 			}

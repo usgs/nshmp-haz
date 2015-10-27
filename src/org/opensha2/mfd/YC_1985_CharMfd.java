@@ -333,7 +333,6 @@ public class YC_1985_CharMfd extends IncrementalMfd {
 
   /**
    * returns the name of this class
-   * @return
    */
 
   public String getDefaultName() {

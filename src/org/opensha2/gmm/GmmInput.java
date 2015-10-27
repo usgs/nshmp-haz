@@ -172,12 +172,12 @@ public class GmmInput {
 		private Builder() {}
 
 		/**
-		 * Return a preloaded {@code Builder}. Builder has the following
-		 * presets: <ul><li>Mw: 6.5</li><li>rJB: 10.0 (km)</li><li>rRup: 10.3
-		 * (km)</li><li>rX: 10.0 (km)</li> <li>dip: 90˚</li><li>width: 14.0
-		 * (km)</li><li>zTop: 0.5 (km)</li><li>zHyp: 7.5 (km)</li> <li>rake:
-		 * 0˚</li><li>vs30: 760 (m/s)</li><li>vsInf: true</li><li>z2p5:
-		 * NaN</li><li>z1p0: NaN</li></ul>
+		 * Return a {@code Builder} prepopulated with default values. Builder
+		 * has the following presets: <ul><li>Mw: 6.5</li><li>rJB: 10.0
+		 * (km)</li><li>rRup: 10.3 (km)</li><li>rX: 10.0 (km)</li> <li>dip:
+		 * 90˚</li><li>width: 14.0 (km)</li><li>zTop: 0.5 (km)</li><li>zHyp: 7.5
+		 * (km)</li> <li>rake: 0˚</li><li>vs30: 760 (m/s)</li><li>vsInf:
+		 * true</li><li>z2p5: NaN</li><li>z1p0: NaN</li></ul>
 		 */
 		public Builder withDefaults() {
 			Mw = MAG.defaultValue;

@@ -3,7 +3,7 @@ package org.opensha2.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.checkWeightSum;
+import static org.opensha2.data.Data.checkWeightSum;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -82,7 +82,7 @@ public final class Parsing {
 	 * @param type {@code Class} to use as the key of the returned map
 	 * @throws IllegalArgumentException if supplied string is malformed or
 	 *         empty, or if weights do not sum to 1.0, within
-	 *         {@link DataUtils#WEIGHT_TOLERANCE}
+	 *         {@link Data#WEIGHT_TOLERANCE}
 	 * @throws NumberFormatException if supplied string does not contain
 	 *         parseable {@code double} values
 	 * @return a new immutable {@code Map<Enum, Double>} of identifiers and
@@ -112,7 +112,7 @@ public final class Parsing {
 	 * @param s the string to parse
 	 * @throws IllegalArgumentException if {@code s} is malformed or empty, or
 	 *         if weights do not sum to 1.0, within
-	 *         {@link DataUtils#WEIGHT_TOLERANCE}
+	 *         {@link Data#WEIGHT_TOLERANCE}
 	 * @throws NumberFormatException if {@code s} does not contain parseable
 	 *         {@code double} values
 	 * @return a new immutable {@code Map<Double, Double>} of values and their
@@ -138,7 +138,7 @@ public final class Parsing {
 	 * 
 	 * @param s the string to parse
 	 * @throws IllegalArgumentException if {@code s} is malformed or if weights
-	 *         do not sum to 1.0, within {@link DataUtils#WEIGHT_TOLERANCE}
+	 *         do not sum to 1.0, within {@link Data#WEIGHT_TOLERANCE}
 	 * @throws NumberFormatException if {@code s} does not contain parseable
 	 *         {@code double} values
 	 * @return a new immutable {@code Map<Double, Double>} of values and their
@@ -712,7 +712,7 @@ public final class Parsing {
 			if (s.contains(":")) {
 				Iterator<Integer> rangeIt = Iterators.transform(
 					split(s, Delimiter.COLON).iterator(), Ints.stringConverter());
-				return DataUtils.indices(rangeIt.next(), rangeIt.next());
+				return Data.indices(rangeIt.next(), rangeIt.next());
 			}
 			return new int[] { Integer.valueOf(s) };
 		}

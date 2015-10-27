@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.geo.LocationList;
@@ -265,7 +265,7 @@ class AreaParser extends DefaultHandler {
 			case INCR:
 				MfdHelper.IncrData incrData = mfdHelper.incrementalData(atts).get(0);
 				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
-					DataUtils.multiply(incrData.weight, incrData.rates));
+					Data.multiply(incrData.weight, incrData.rates));
 				return mfdIncr;
 
 			case SINGLE:

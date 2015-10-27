@@ -3,7 +3,7 @@ package org.opensha2.eq.fault;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.sin;
-import static org.opensha2.data.DataUtils.checkInRange;
+import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.geo.GeoTools.PI_BY_2;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.geo.GeoTools.TWOPI;
@@ -16,7 +16,7 @@ import static org.opensha2.geo.Locations.location;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.LocationVector;
@@ -87,7 +87,7 @@ public final class Faults {
 	 * @param dip to validate
 	 * @return the supplied dip for use inline
 	 * @throws IllegalArgumentException if {@code dip} is out of range
-	 * @see DataUtils#checkInRange(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateDip(double dip) {
 		return checkInRange(DIP_RANGE, "Dip", dip);
@@ -99,7 +99,7 @@ public final class Faults {
 	 * @param strike to validate
 	 * @return the supplied strike for use inline
 	 * @throws IllegalArgumentException if {@code strike} is out of range
-	 * @see DataUtils#checkInRange(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateStrike(double strike) {
 		return checkInRange(STRIKE_RANGE, "Strike", strike);
@@ -111,7 +111,7 @@ public final class Faults {
 	 * @param rake to validate
 	 * @return the supplied rake for use inline
 	 * @throws IllegalArgumentException if {@code rake} is out of range
-	 * @see DataUtils#checkInRange(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateRake(double rake) {
 		return checkInRange(RAKE_RANGE, "Rake", rake);
@@ -123,7 +123,7 @@ public final class Faults {
 	 * @param depth to validate (positive down)
 	 * @return the supplied depth for use inline
 	 * @throws IllegalArgumentException if {@code depth} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateDepth(double depth) {
 		return checkInRange(CRUSTAL_DEPTH_RANGE, "Depth", depth);
@@ -135,7 +135,7 @@ public final class Faults {
 	 * @param depth to validate (positive down)
 	 * @return the supplied depth for use inline
 	 * @throws IllegalArgumentException if {@code depth} is out of range
-	 * @see DataUtils#checkInRange(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateSlabDepth(double depth) {
 		return checkInRange(SLAB_DEPTH_RANGE, "Subduction Slab Depth", depth);
@@ -147,7 +147,7 @@ public final class Faults {
 	 * @param depth to validate (positive down)
 	 * @return the supplied depth for use inline
 	 * @throws IllegalArgumentException if {@code depth} is out of range
-	 * @see DataUtils#checkInRange(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateInterfaceDepth(double depth) {
 		return checkInRange(INTERFACE_DEPTH_RANGE, "Subduction Interface Depth", depth);
@@ -159,7 +159,7 @@ public final class Faults {
 	 * @param width to validate
 	 * @return the supplied width for use inline
 	 * @throws IllegalArgumentException if {@code width} is out of range
-	 * @see DataUtils#validate(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateWidth(double width) {
 		return checkInRange(CRUSTAL_WIDTH_RANGE, "Width", width);
@@ -171,7 +171,7 @@ public final class Faults {
 	 * @param width to validate
 	 * @return the supplied width for use inline
 	 * @throws IllegalArgumentException if {@code width} is out of range
-	 * @see DataUtils#checkInRange(Range, String, double)
+	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double validateInterfaceWidth(double width) {
 		return checkInRange(INTERFACE_WIDTH_RANGE, "Subduction Interface Width", width);

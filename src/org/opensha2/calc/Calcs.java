@@ -9,6 +9,7 @@ import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
+import static org.opensha2.data.Data.checkInRange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.opensha2.eq.model.SystemSourceSet;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Range;
 
 /**
  * Static probabilistic seismic hazard analysis calculators.
@@ -35,14 +37,16 @@ import com.google.common.base.Stopwatch;
  * @author Peter Powers
  */
 public class Calcs {
+	
+	// TODO refactor method names to be consistent with refactored hazard/deagg class names
 
 	/*
-	 * Implementation notes:
+	 * Developer notes:
 	 * 
 	 * -------------------------------------------------------------------------
-	 * Method argument order in this, CalcFactory, and Transforms follow the
-	 * general rule of model (or model derived obejcts), calc config, site, and
-	 * then any others.
+	 * Method argument order in this class, CalcFactory, and Transforms follow
+	 * the general rule of model (or model derived objects), calc config, site,
+	 * and then any others.
 	 * -------------------------------------------------------------------------
 	 * All calculations are done in log space, only on export are x-values
 	 * returned to linear space.
@@ -52,6 +56,11 @@ public class Calcs {
 	 * -------------------------------------------------------------------------
 	 * Single threaded calcs monitor and log calculation duration of each
 	 * SourceSet.
+	 * -------------------------------------------------------------------------
+	 * Although NPEs will be thrown once any method argument in this class is
+	 * used, because multiple arguments may be passed on the same line thereby
+	 * complicating identification of a null value, preemtive checks are
+	 * performed.
 	 * -------------------------------------------------------------------------
 	 * Notes on empty objects: In the default calculation pipeline, calculation
 	 * tasks are initiated when SourceSet.iterableForLocation() yields relevant
@@ -78,8 +87,26 @@ public class Calcs {
 		return new SourceToInputs(site);
 	}
 
+	private static Range<Double> rpRange = Range.closed(1.0, 4000.0);
+	
 	/**
-	 * Compute a hazard curve, possibly using an {@link Optional}
+	 * Perform a deaggregation of probabilisitic seismic hazard.
+	 * 
+	 * @param hazard to deaggregate
+	 * @param returnPeriod at which to deaggregate
+	 */
+	public static Deaggregation deaggregation(
+			HazardResult hazard,
+			double returnPeriod) {
+
+		checkNotNull(hazard);
+		checkInRange(rpRange, "Return period", returnPeriod);
+
+		return Deaggregation.create(hazard, returnPeriod);
+	}
+
+	/**
+	 * Compute probabilistic seismic hazard, possibly using an {@link Optional}
 	 * {@link Executor}. If no {@code Executor} is supplied, the calculation
 	 * will run on the current thread.
 	 * 
@@ -104,11 +131,10 @@ public class Calcs {
 		checkNotNull(site);
 		checkNotNull(ex);
 
-		Logger log = Logger.getLogger(Calcs.class.getName());
-
 		if (ex.isPresent()) {
 			return asyncHazardCurve(model, config, site, ex.get());
 		}
+		Logger log = Logger.getLogger(Calcs.class.getName());
 		return hazardCurve(model, config, site, log);
 	}
 

@@ -10,7 +10,7 @@ import static org.opensha2.eq.Magnitudes.magToMoment_N_m;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.Magnitudes;
 
@@ -376,7 +376,7 @@ public final class Mfds {
 		for (IncrementalMfd mfd : mfds) {
 			sequences.add(toSequence(mfd));
 		}
-		return DataUtils.combine(sequences);
+		return Data.combine(sequences);
 	}
 
 }

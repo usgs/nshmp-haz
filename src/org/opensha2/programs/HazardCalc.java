@@ -34,20 +34,20 @@ import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 
 /**
- * Entry point for computing a hazard curve at a {@link Site} from a
- * {@link HazardModel}. The {@code main()} method of this class returns mean
- * hazard curves for the model and {@link Imt} specified. For more detailed
- * results at a {@code Site}, consider programmatically using the {@code calc()}
- * methods of this class.
+ * Entry point for computing probabilisitic seismic hazard at a {@link Site}
+ * from a {@link HazardModel}. The main method of this class outputs mean hazard
+ * curves for the model and {@link Imt}s specified per the calculation
+ * configuration. For more detailed results, consider programmatically using the @
+ * calc()} method of this class.
  * 
  * @author Peter Powers
  */
-public class HazardCurve {
+public class HazardCalc {
 
 	private static final int FLUSH_LIMIT = 2;
 
 	/**
-	 * Entry point for a hazard curve calculation.
+	 * Entry point for a hazard calculation.
 	 * 
 	 * <p>Computing hazard curves requires at least 1, and at most 3, arguments.
 	 * At a minimum, the path to a model zip file or directory must be
@@ -77,13 +77,15 @@ public class HazardCurve {
 	 *      example calculations</a>
 	 */
 	public static void main(String[] args) {
-		// delegate to run which has a return value for testing
+
+		/* Delegate to run which has a return value for testing. */
+
 		String status = run(args);
 		if (status != null) {
 			System.err.print(status);
-			// System.exit(1); TODO clean?
+			System.exit(1);
 		}
-		// System.exit(0);
+		System.exit(0);
 	}
 
 	static String run(String[] args) {
@@ -94,7 +96,7 @@ public class HazardCurve {
 		}
 
 		Logging.init();
-		Logger log = Logger.getLogger(HazardCurve.class.getName());
+		Logger log = Logger.getLogger(HazardCalc.class.getName());
 
 		try {
 

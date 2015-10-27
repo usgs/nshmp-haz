@@ -30,7 +30,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Peter Powers
  */
-public class DeterministicSpectra {
+public class ResponseSpectra {
 
 	/**
 	 * Compute the median ground motion and its standard deviation for a

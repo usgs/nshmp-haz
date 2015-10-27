@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.min;
-import static org.opensha2.eq.Magnitudes.validateMag;
+import static org.opensha2.eq.Magnitudes.checkMagnitude;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
@@ -24,7 +24,7 @@ import org.opensha2.calc.HazardInput;
 import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.SystemInputList;
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.model.Distance.Type;
@@ -194,12 +194,12 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 			// NOTE we're doublechecking a UCERF3 rule that ruptures be composed
 			// of at least 2 sections; this may not be the case in the future.
 			checkArgument(indices.size() > 1, "Rupture index list must contain 2 or more values");
-			bitsets.add(DataUtils.indicesToBits(indices, sections.size()));
+			bitsets.add(Data.indicesToBits(indices, sections.size()));
 			return this;
 		}
 
 		Builder mag(double mag) {
-			mags.add(validateMag(mag));
+			mags.add(checkMagnitude(mag));
 			return this;
 		}
 
@@ -499,7 +499,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 				if (siteBitset.isEmpty()) return inputs;
 
 				// create and fill distance table
-				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
+				List<Integer> siteIndices = Data.bitsToIndices(siteBitset);
 				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
 					siteIndices,
 					EnumSet.allOf(Distance.Type.class));
@@ -598,7 +598,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 			// create index list of relevant sections
 			BitSet sectionBitset = (BitSet) source.bitset().clone();
 			sectionBitset.and(siteBitset);
-			List<Integer> sectionIndices = DataUtils.bitsToIndices(sectionBitset);
+			List<Integer> sectionIndices = Data.bitsToIndices(sectionBitset);
 
 			// find r minima
 			double rJB = Double.MAX_VALUE;

@@ -58,7 +58,7 @@ class ImmutableXySequence extends XySequence {
 	}
 
 	@Override public final boolean isEmpty() {
-		return DataUtils.sum(ys) == 0.0;
+		return Data.sum(ys) == 0.0;
 	}
 
 	@Override public final boolean equals(Object obj) {

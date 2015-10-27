@@ -60,17 +60,92 @@ public interface DataVolume {
 	XySequence column(double row, double column);
 
 	/**
-	 * Return an immutable list of row keys.
+	 * Return the lower edge of the lowermost row bin.
+	 */
+	double rowMin();
+
+	/**
+	 * Return the upper edge of the uppermost row bin.
+	 */
+	double rowMax();
+
+	/**
+	 * Return the row bin discretization.
+	 */
+	double rowΔ();
+
+	/**
+	 * Return the number of rows.
+	 */
+	int rowCount();
+
+	/**
+	 * Return an immutable list of row keys. This method creates a copy of the
+	 * keys on each call, so only use this method if the actual row keys are
+	 * required. {@link #rowCount()} should be used in lieu of
+	 * {@code rows().size()}.
+	 * 
+	 * @see #rowCount()
 	 */
 	List<Double> rows();
 
 	/**
-	 * Return an immutable list of column keys.
+	 * Return the lower edge of the lowermost column bin.
+	 */
+	double columnMin();
+
+	/**
+	 * Return the upper edge of the uppermost column bin.
+	 */
+	double columnMax();
+
+	/**
+	 * Return the column bin discretization.
+	 */
+	double columnΔ();
+
+	/**
+	 * Return the number of columns.
+	 */
+	int columnCount();
+
+	/**
+	 * Return an immutable list of column keys. This method creates a copy of the
+	 * keys on each call, so only use this method if the actual column keys are
+	 * required. {@link #columnCount()} should be used in lieu of
+	 * {@code columns().size()}.
+	 * 
+	 * @see #columnCount()
 	 */
 	List<Double> columns();
 
 	/**
-	 * Return an immutable list of level keys.
+	 * Return the lower edge of the lowermost level bin.
+	 */
+	double levelMin();
+
+	/**
+	 * Return the upper edge of the uppermost level bin.
+	 */
+	double levelMax();
+
+	/**
+	 * Return the level bin discretization.
+	 */
+	double levelΔ();
+
+	/**
+	 * Return the number of levels.
+	 */
+	int levelCount();
+
+	/**
+	 * Return an immutable list of level keys. This method creates a copy of the
+	 * keys on each call, so only use this method if the actual level keys are
+	 * required. {@link #levelCount()} should be used in lieu of
+	 * {@code levels().size()}.
+	 * 
+	 * @see #levelCount()
 	 */
 	List<Double> levels();
 
@@ -94,7 +169,10 @@ public interface DataVolume {
 	 * A builder of immutable {@code DataVolume}s.
 	 * 
 	 * <p>See {@link #create()} to initialize a new builder. Rows, columns, and
-	 * levels must be specified before any data can be added.
+	 * levels must be specified before any data can be added. Note that any
+	 * supplied {@code max} values may not correspond to the final upper edge of
+	 * the uppermost bins if {@code max - min} is not evenly divisible by
+	 * {@code Δ}.</p>
 	 */
 	public static final class Builder {
 
@@ -162,11 +240,11 @@ public interface DataVolume {
 		}
 
 		/**
-		 * Define the data table rows.
+		 * Define the data volume rows.
 		 * 
-		 * @param min value of lower edge of lowest row bin
-		 * @param max value of upper edge of highest row bin
-		 * @param Δ step size
+		 * @param min lower edge of lowermost row bin
+		 * @param max upper edge of uppermost row bin
+		 * @param Δ bin discretization
 		 */
 		public Builder rows(double min, double max, double Δ) {
 			rowMin = min;
@@ -178,11 +256,11 @@ public interface DataVolume {
 		}
 
 		/**
-		 * Define the data table columns.
+		 * Define the data volume columns.
 		 * 
-		 * @param min value of lower edge of lowest column bin
-		 * @param max value of upper edge of highest column bin
-		 * @param Δ step size
+		 * @param min lower edge of lowermost column bin
+		 * @param max upper edge of uppermost column bin
+		 * @param Δ bin discretization
 		 */
 		public Builder columns(double min, double max, double Δ) {
 			columnMin = min;
@@ -194,11 +272,11 @@ public interface DataVolume {
 		}
 
 		/**
-		 * Define the data table columns.
+		 * Define the data volume levels.
 		 * 
-		 * @param min value of lower edge of lowest column bin
-		 * @param max value of upper edge of highest column bin
-		 * @param Δ step size
+		 * @param min lower edge of lowermost column bin
+		 * @param max upper edge of uppermost column bin
+		 * @param Δ bin discretization
 		 */
 		public Builder levels(double min, double max, double Δ) {
 			levelMin = min;
@@ -310,7 +388,7 @@ public interface DataVolume {
 				"At least one data dimension is empty");
 			checkDataState(rows, columns, levels);
 			checkDataSize(rows.length, columns.length, levels.length, data);
-			this.data = DataUtils.copyOf(data);
+			this.data = Data.copyOf(data);
 			return this;
 		}
 
@@ -327,7 +405,7 @@ public interface DataVolume {
 		public Builder add(DataVolume volume) {
 			// safe covariant casts
 			validateVolume((AbstractVolume) volume);
-			DataUtils.uncheckedAdd(data, ((DefaultVolume) volume).data);
+			Data.uncheckedAdd(data, ((DefaultVolume) volume).data);
 			return this;
 		}
 

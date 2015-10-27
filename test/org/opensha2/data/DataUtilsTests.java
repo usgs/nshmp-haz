@@ -41,14 +41,14 @@ public final class DataUtilsTests {
 
 		// add term
 		expectedArray = new double[] { 2.0, 11.0, 101.0 };
-		actualArray = DataUtils.add(1.0, valueArray());
-		actualList = DataUtils.add(1.0, valueList());
+		actualArray = Data.add(1.0, valueArray());
+		actualList = Data.add(1.0, valueList());
 		testTransform(expectedArray, actualArray, actualList);
 
 		// add arrays
 		expectedArray = new double[] { 2.0, 20.0, 200.0 };
-		actualArray = DataUtils.add(valueArray(), valueArray());
-		actualList = DataUtils.add(valueList(), valueList());
+		actualArray = Data.add(valueArray(), valueArray());
+		actualList = Data.add(valueList(), valueList());
 		testTransform(expectedArray, actualArray, actualList);
 	}
 
@@ -62,12 +62,12 @@ public final class DataUtilsTests {
 		double[][][] d3_1 = { { valueArray(), valueArray() }, { valueArray(), valueArray() } };
 		double[][][] d3_2 = { { valueArray(), valueArray() }, { valueArray(), valueArray() } };
 
-		double[][] d2_actual = DataUtils.add(d2_1, d2_2);
+		double[][] d2_actual = Data.add(d2_1, d2_2);
 		for (int i = 0; i < d2_ex.length; i++) {
 			assertArrayEquals(d2_ex[i], d2_actual[i], 0.0);
 		}
 
-		double[][][] d3_actual = DataUtils.add(d3_1, d3_2);
+		double[][][] d3_actual = Data.add(d3_1, d3_2);
 		for (int i = 0; i < d3_ex.length; i++) {
 			for (int j = 0; j < d3_ex[1].length; j++) {
 				assertArrayEquals(d3_ex[i][j], d3_actual[i][j], 0.0);
@@ -82,8 +82,8 @@ public final class DataUtilsTests {
 
 		// subtract arrays
 		expectedArray = new double[] { 0.0, 0.0, 0.0 };
-		actualArray = DataUtils.subtract(valueArray(), valueArray());
-		actualList = DataUtils.subtract(valueList(), valueList());
+		actualArray = Data.subtract(valueArray(), valueArray());
+		actualList = Data.subtract(valueList(), valueList());
 		testTransform(expectedArray, actualArray, actualList);
 	}
 	
@@ -93,14 +93,14 @@ public final class DataUtilsTests {
 
 		// multiply term
 		expectedArray = new double[] { 5.0, 50.0, 500.0 };
-		actualArray = DataUtils.multiply(5.0, valueArray());
-		actualList = DataUtils.multiply(5.0, valueList());
+		actualArray = Data.multiply(5.0, valueArray());
+		actualList = Data.multiply(5.0, valueList());
 		testTransform(expectedArray, actualArray, actualList);
 
 		// multiply arrays
 		expectedArray = new double[] { 1.0, 100.0, 10000.0 };
-		actualArray = DataUtils.multiply(valueArray(), valueArray());
-		actualList = DataUtils.multiply(valueList(), valueList());
+		actualArray = Data.multiply(valueArray(), valueArray());
+		actualList = Data.multiply(valueList(), valueList());
 		testTransform(expectedArray, actualArray, actualList);
 	}
 
@@ -110,8 +110,8 @@ public final class DataUtilsTests {
 
 		// divide arrays
 		expectedArray = new double[] { 1.0, 1.0, 1.0 };
-		actualArray = DataUtils.divide(valueArray(), valueArray());
-		actualList = DataUtils.divide(valueList(), valueList());
+		actualArray = Data.divide(valueArray(), valueArray());
+		actualList = Data.divide(valueList(), valueList());
 		testTransform(expectedArray, actualArray, actualList);
 	}
 	
@@ -121,10 +121,10 @@ public final class DataUtilsTests {
 
 		// abs array
 		expectedArray = valueArray();
-		double[] absArray = DataUtils.multiply(-1, valueArray());
-		List<Double> absList = DataUtils.multiply(-1, valueList());
-		actualArray = DataUtils.abs(absArray);
-		actualList = DataUtils.abs(absList);
+		double[] absArray = Data.multiply(-1, valueArray());
+		List<Double> absList = Data.multiply(-1, valueList());
+		actualArray = Data.abs(absArray);
+		actualList = Data.abs(absList);
 		testTransform(expectedArray, actualArray, actualList);
 	}
 
@@ -137,8 +137,8 @@ public final class DataUtilsTests {
 		for (int i=0; i<3; i++) {
 			expectedArray[i] = Math.exp(VALUES[i]);
 		}
-		actualArray = DataUtils.exp(valueArray());
-		actualList = DataUtils.exp(valueList());
+		actualArray = Data.exp(valueArray());
+		actualList = Data.exp(valueList());
 		testTransform(expectedArray, actualArray, actualList);
 	}
 
@@ -151,8 +151,8 @@ public final class DataUtilsTests {
 		for (int i=0; i<3; i++) {
 			expectedArray[i] = Math.log(VALUES[i]);
 		}
-		actualArray = DataUtils.ln(valueArray());
-		actualList = DataUtils.ln(valueList());
+		actualArray = Data.ln(valueArray());
+		actualList = Data.ln(valueList());
 		testTransform(expectedArray, actualArray, actualList);
 	}
 
@@ -165,8 +165,8 @@ public final class DataUtilsTests {
 		for (int i=0; i<3; i++) {
 			expectedArray[i] = Math.pow(10, VALUES[i]);
 		}
-		actualArray = DataUtils.pow10(valueArray());
-		actualList = DataUtils.pow10(valueList());
+		actualArray = Data.pow10(valueArray());
+		actualList = Data.pow10(valueList());
 		testTransform(expectedArray, actualArray, actualList);
 	}
 
@@ -179,8 +179,8 @@ public final class DataUtilsTests {
 		for (int i=0; i<3; i++) {
 			expectedArray[i] = Math.log10(VALUES[i]);
 		}
-		actualArray = DataUtils.log(valueArray());
-		actualList = DataUtils.log(valueList());
+		actualArray = Data.log(valueArray());
+		actualList = Data.log(valueList());
 		testTransform(expectedArray, actualArray, actualList);
 	}
 	
@@ -190,15 +190,15 @@ public final class DataUtilsTests {
 
 		// flip arrays
 		expectedArray = new double[] { -1.0, -10.0, -100.0 };
-		actualArray = DataUtils.flip(valueArray());
-		actualList = DataUtils.flip(valueList());
+		actualArray = Data.flip(valueArray());
+		actualList = Data.flip(valueList());
 		testTransform(expectedArray, actualArray, actualList);
 	}
 	
 	@Test public final void testSum() {
 		double expected = 111.0;
-		assertEquals(expected, DataUtils.sum(valueArray()), 0.0);
-		assertEquals(expected, DataUtils.sum(valueList()), 0.0);
+		assertEquals(expected, Data.sum(valueArray()), 0.0);
+		assertEquals(expected, Data.sum(valueList()), 0.0);
 	}
 
 

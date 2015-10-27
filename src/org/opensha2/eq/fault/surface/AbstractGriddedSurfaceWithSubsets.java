@@ -220,9 +220,6 @@ public abstract class AbstractGriddedSurfaceWithSubsets extends AbstractGriddedS
 	/**
 	 * Get the subSurfaces on this fault. float unit = grid spacing unit
 	 *
-	 * @param subSurfaceLength  Sub Surface length in km
-	 * @param subSurfaceWidth   Sub Surface width in km
-	 * @param subSurfaceOffset  Sub Surface offset
 	 * @return           Iterator over all subSurfaces
 	 */
 	public List<GriddedSubsetSurface> createFloatingSurfaceList(double floatLength,

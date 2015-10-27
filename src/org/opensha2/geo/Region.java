@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.util.Named;
 
 import com.google.common.base.Strings;
@@ -261,8 +261,8 @@ public class Region implements Named {
 	 * except ensuring that all coordinates are positive.
 	 */
 	private static double computeArea(double[] xs, double[] ys) {
-		DataUtils.positivize(xs);
-		DataUtils.positivize(ys);
+		Data.positivize(xs);
+		Data.positivize(ys);
 		double area = 0;
 		for (int i = 0; i < xs.length - 1; i++) {
 			area += xs[i] * ys[i + 1] - xs[i + 1] * ys[i];

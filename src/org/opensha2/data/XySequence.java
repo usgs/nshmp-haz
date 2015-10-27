@@ -2,7 +2,7 @@ package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha2.data.DataUtils.isMonotonic;
+import static org.opensha2.data.Data.isMonotonic;
 
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -243,6 +243,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	private final class X_List extends AbstractList<Double> implements RandomAccess {
+		
 		@Override public Double get(int index) {
 			return x(index);
 		}
@@ -280,6 +281,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	private final class Y_List extends AbstractList<Double> implements RandomAccess {
+		
 		@Override public Double get(int index) {
 			return y(index);
 		}

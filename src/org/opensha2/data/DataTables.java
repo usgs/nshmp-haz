@@ -3,7 +3,7 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.checkDelta;
+import static org.opensha2.data.Data.checkDelta;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.Arrays;
@@ -29,10 +29,11 @@ public final class DataTables {
 	 * where a reference to the row or column keys is helpful to have when
 	 * working with data table and volume builders. Internally, this method
 	 * calls
-	 * {@link DataUtils#buildCleanSequence(double, double, double, boolean, int)}
+	 * {@link Data#buildCleanSequence(double, double, double, boolean, int)}
 	 * wiht a precision value of 4 decimal places. This may change in the future
 	 * 
-	 * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5, 7.5]</p>
+	 * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5,
+	 * 7.5]</p>
 	 * 
 	 * @param min lower edge of lowermost bin
 	 * @param max upper edge of uppermost bin
@@ -48,17 +49,24 @@ public final class DataTables {
 	 */
 	private static double[] keyArray(double min, double max, double Δ) {
 		double Δby2 = Δ / 2.0;
-		return DataUtils.buildCleanSequence(
+		return Data.buildCleanSequence(
 			min + Δby2,
 			max - Δby2,
 			Δ, true, 4);
 	}
 
-	/*
-	 * Compute an index from a minimum value, a value and an interval. Casting
-	 * to int floors value.
+	/**
+	 * Compute an index from a minimum value, a value and an interval.
+	 * 
+	 * @param min value
+	 * @param delta interval (i.e. bin width)
+	 * @param value for which to compute index
+	 * @param size of array or collection for which index is to be used
+	 * @throws IllegalArgumentException if the index of {@code value} falls
+	 *         outside the allowed index range of {@code [0, size-1]}.
 	 */
-	static int indexOf(double min, double delta, double value, int size) {
+	public static int indexOf(double min, double delta, double value, int size) {
+		// casting to int floors value
 		return checkElementIndex((int) ((value - min) / delta), size);
 	}
 
@@ -160,6 +168,37 @@ public final class DataTables {
 			return ImmutableList.copyOf(Doubles.asList(columns));
 		}
 
+		@Override public double rowMin() {
+			return rowMin;
+		}
+
+		@Override public double rowMax() {
+			return rowMax;
+		}
+
+		@Override public double rowΔ() {
+			return rowΔ;
+		}
+
+		@Override public int rowCount() {
+			return rows.length;
+		}
+
+		@Override public double columnMin() {
+			return columnMin;
+		}
+
+		@Override public double columnMax() {
+			return columnMax;
+		}
+
+		@Override public double columnΔ() {
+			return columnΔ;
+		}
+		
+		@Override public int columnCount() {
+			return columns.length;
+		}
 	}
 
 	static final class DefaultTable extends AbstractTable {
@@ -181,6 +220,11 @@ public final class DataTables {
 			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
 			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
 			return data[iRow][iColumn];
+		}
+
+		@Override public XySequence row(double row) {
+			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
+			return new ImmutableXySequence(columns, data[iRow]);
 		}
 
 		private static final String ROW_COL_FORMAT = "% 8.2f";
@@ -207,11 +251,6 @@ public final class DataTables {
 				sb.append(NEWLINE);
 			}
 			return sb.toString();
-		}
-
-		@Override public XySequence row(double row) {
-			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
-			return new ImmutableXySequence(columns, data[iRow]);
 		}
 	}
 
@@ -291,6 +330,54 @@ public final class DataTables {
 		@Override public List<Double> levels() {
 			return ImmutableList.copyOf(Doubles.asList(levels));
 		}
+
+		@Override public double rowMin() {
+			return rowMin;
+		}
+
+		@Override public double rowMax() {
+			return rowMax;
+		}
+
+		@Override public double rowΔ() {
+			return rowΔ;
+		}
+
+		@Override public int rowCount() {
+			return rows.length;
+		}
+
+		@Override public double columnMin() {
+			return columnMin;
+		}
+
+		@Override public double columnMax() {
+			return columnMax;
+		}
+
+		@Override public double columnΔ() {
+			return columnΔ;
+		}
+
+		@Override public int columnCount() {
+			return columns.length;
+		}
+
+		@Override public double levelMin() {
+			return levelMin;
+		}
+
+		@Override public double levelMax() {
+			return levelMax;
+		}
+
+		@Override public double levelΔ() {
+			return levelΔ;
+		}
+
+		@Override public int levelCount() {
+			return levels.length;
+		}
 	}
 
 	static final class DefaultVolume extends AbstractVolume {
@@ -321,6 +408,10 @@ public final class DataTables {
 			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
 			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
 			return new ImmutableXySequence(levels, data[iRow][iColumn]);
+		}
+		
+		@Override public String toString() {
+			return Data.toString(data);
 		}
 	}
 

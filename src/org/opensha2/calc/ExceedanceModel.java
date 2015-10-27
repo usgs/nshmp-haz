@@ -7,6 +7,8 @@ import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
 import static org.opensha2.gmm.Imt.SA0P75;
 
+import java.util.List;
+
 import org.opensha2.data.XyPoint;
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
@@ -27,6 +29,12 @@ import org.opensha2.gmm.Imt;
  * @author Peter Powers
  */
 public enum ExceedanceModel {
+
+	/*
+	 * TODO We probably want to refactor this to probability model and provide
+	 * 'occurrence' in addition to exceedence. See commented distribution
+	 * function at eof.
+	 */
 
 	/**
 	 * No uncertainty. Any {@code σ} supplied to methods is ignored yielding a
@@ -109,7 +117,7 @@ public enum ExceedanceModel {
 			return boundedCcdFn(μ, 0.65, sequence, 0.0, 1.0);
 		}
 	},
-	
+
 	/**
 	 * Model accomodates the heavy tails observed in earthquake data that are
 	 * not well matched by a purely normal distribution at high ε by combining
@@ -280,5 +288,39 @@ public enum ExceedanceModel {
 			A4 * t * t * t * t +
 			A5 * t * t * t * t * t) * exp(-x * x);
 	}
+
+//	// TODO test performance of compacting tsq
+//	private static double erfBase2(double x) {
+//		double t = 1 / (1 + P * x);
+//		double tsq = t * t;
+//		return 1 - (A1 * t +
+//			A2 * tsq +
+//			A3 * tsq * t +
+//			A4 * tsq * tsq +
+//			A5 * tsq * tsq * t) * exp(-x * x);
+//	}
+//
+//	private static final double SQRT_2PI = Math.sqrt(2 * Math.PI);
+//
+//	private static double dFn(double μ, double σ, double x) {
+//		double Δxμ = x - μ;
+//		return exp(-(Δxμ * Δxμ) / (2 * σ * σ)) / (σ * SQRT_2PI);
+//	}
+	
+	/**
+	 * Computes joint probability of exceedence given the occurrence of a
+	 * cluster of events: [1 - [(1-PE1) * (1-PE2) * ...]]. The probability of
+	 * exceedance of each individual event is given in the supplied curves.
+	 * 
+	 * @param curves for which to calculate joint probability of exceedance
+	 */
+	public static XySequence clusterExceedance(List<XySequence> curves) {
+		XySequence combined = XySequence.copyOf(curves.get(0)).complement();
+		for (int i = 1; i < curves.size(); i++) {
+			combined.multiply(curves.get(i).complement());
+		}
+		return combined.complement();
+	}
+
 
 }

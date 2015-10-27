@@ -3,7 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataUtils.checkInRange;
+import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
@@ -113,23 +113,20 @@ public class FaultSource implements Source {
 	}
 
 	@Override public String toString() {
-		// @formatter:off
 		Map<Object, Object> data = ImmutableMap.builder()
-				.put("name", name)
-				.put("dip", dip)
-				.put("width", width)
-				.put("rake", rake)
-				.put("mfds", mfds.size())
-				.put("top", trace.first().depth())
-				.build();
+			.put("name", name)
+			.put("dip", dip)
+			.put("width", width)
+			.put("rake", rake)
+			.put("mfds", mfds.size())
+			.put("top", trace.first().depth())
+			.build();
 		return getClass().getSimpleName() + " " + data;
-		// @formatter:on
 	}
 
 	private List<Rupture> createRuptureList(IncrementalMfd mfd) {
 		ImmutableList.Builder<Rupture> rupListbuilder = ImmutableList.builder();
 
-		// @formatter:off
 		for (int i = 0; i < mfd.getNum(); ++i) {
 			double mag = mfd.getX(i);
 			double rate = mfd.getY(i);
@@ -145,17 +142,16 @@ public class FaultSource implements Source {
 			if (mfd.floats()) {
 
 				DefaultGriddedSurface surf = (DefaultGriddedSurface) surface;
-				
-				List<Rupture> floaters = rupFloating.createFloatingRuptures(surf, rupScaling, mag,
-					rate, rake, rupVariability);
+
+				List<Rupture> floaters = rupFloating.createFloatingRuptures(
+					surf, rupScaling, mag, rate, rake, rupVariability);
 				rupListbuilder.addAll(floaters);
-				
+
 			} else {
 				Rupture rup = Rupture.create(mag, rate, rake, surface);
 				rupListbuilder.add(rup);
 			}
 		}
-		// @formatter:on
 		return rupListbuilder.build();
 	}
 

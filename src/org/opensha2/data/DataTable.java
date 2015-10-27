@@ -27,14 +27,14 @@ import com.google.common.primitives.Doubles;
  * simplifies issues related to rounding/precision errors that occur when
  * indexing according to explicit double values.
  * 
- * <p>To create a {@code DataTable} instance, use a {@link Builder}.
+ * <p>To create a {@code DataTable} instance, use a {@link Builder}.</p>
  * 
  * <p>Internally, a {@code DataTable} is backed by a {@code double[][]} array
- * where 'row' refers to the 1st dimension and 'column' the 2nd.
+ * where 'row' refers to the 1st dimension and 'column' the 2nd.</p>
  * 
  * <p>Note that data tables are not intended for use with very high precision
  * data and keys are currently limited to a precision of 4 decimal places. This
- * may be changed or improved in the future.
+ * may be changed or improved in the future.</p>
  *
  * @author Peter Powers
  * @see DataVolume
@@ -56,14 +56,64 @@ public interface DataTable {
 	 * @param row to retrieve
 	 */
 	XySequence row(double row);
+	
+	/**
+	 * Return the lower edge of the lowermost row bin.
+	 */
+	double rowMin();
+	
+	/**
+	 * Return the upper edge of the uppermost row bin.
+	 */
+	double rowMax();
+	
+	/**
+	 * Return the row bin discretization.
+	 */
+	double rowΔ();
 
 	/**
-	 * Return an immutable list of row keys.
+	 * Return the number of rows.
+	 */
+	int rowCount();
+	
+	/**
+	 * Return an immutable list of row keys. This method creates a copy of the
+	 * keys on each call, so only use this method if the actual row keys are
+	 * required. {@link #rowCount()} should be used in lieu of
+	 * {@code rows().size()}.
+	 * 
+	 * @see #rowCount()
 	 */
 	List<Double> rows();
 
 	/**
-	 * Return an immutable list of column keys.
+	 * Return the lower edge of the lowermost column bin.
+	 */
+	double columnMin();
+	
+	/**
+	 * Return the upper edge of the uppermost column bin.
+	 */
+	double columnMax();
+	
+	/**
+	 * Return the column bin discretization.
+	 */
+	double columnΔ();
+	
+	/**
+	 * Return the number of columns.
+	 */
+	int columnCount();
+
+	/**
+	 * Return an immutable list of column keys. This method creates a copy of the
+	 * keys on each call, so only use this method if the actual column keys are
+	 * required. {@link #columnCount()} should be used in lieu of
+	 * {@code columns().size()}.
+	 * 
+	 * @see #columnCount()
 	 */
 	List<Double> columns();
 
@@ -84,8 +134,11 @@ public interface DataTable {
 	/**
 	 * A builder of immutable {@code DataTable}s.
 	 * 
-	 * <p>See {@link #create()} to initialize a new builder. Rows and columns
-	 * must be specified before any data can be added.
+	 * <p>Use {@link #create()} to initialize a new builder. Rows and columns
+	 * must be specified before any data can be added. Note that any supplied
+	 * {@code max} values may not correspond to the final upper edge of the
+	 * uppermost bins if {@code max - min} is not evenly divisible by {@code Δ}
+	 * .</p>
 	 */
 	public static final class Builder {
 
@@ -145,9 +198,9 @@ public interface DataTable {
 		/**
 		 * Define the data table rows.
 		 * 
-		 * @param min value of lower edge of lowest row bin
-		 * @param max value of upper edge of highest row bin
-		 * @param Δ step size
+		 * @param min lower edge of lowermost row bin
+		 * @param max upper edge of uppermost row bin
+		 * @param Δ bin discretization
 		 */
 		public Builder rows(double min, double max, double Δ) {
 			rowMin = min;
@@ -161,9 +214,9 @@ public interface DataTable {
 		/**
 		 * Define the data table columns.
 		 * 
-		 * @param min value of lower edge of lowest column bin
-		 * @param max value of upper edge of highest column bin
-		 * @param Δ step size
+		 * @param min lower edge of lowermost column bin
+		 * @param max upper edge of uppermost column bin
+		 * @param Δ bin discretization
 		 */
 		public Builder columns(double min, double max, double Δ) {
 			columnMin = min;
@@ -237,11 +290,11 @@ public interface DataTable {
 
 		/**
 		 * Add to the existing value at the specified row and column indices. Be
-		 * careful not to confuse this with {@link #add(int, int, double)}.
+		 * careful not to confuse this with {@link #add(double, double, double)}.
 		 * 
 		 * @param row index
 		 * @param column index
-		 * @param value to set
+		 * @param value to add
 		 */
 		public Builder add(int row, int column, double value) {
 			data[row][column] += value;
@@ -252,7 +305,7 @@ public interface DataTable {
 		 * Add to the values in the specified row.
 		 *
 		 * @param row key
-		 * @param values to set
+		 * @param values to add
 		 * @throws IndexOutOfBoundsException if values overrun row
 		 */
 		public Builder add(double row, double[] values) {
@@ -269,7 +322,7 @@ public interface DataTable {
 		 * Add to the values in the specified row.
 		 *
 		 * @param row key
-		 * @param values to set
+		 * @param values to add
 		 * @throws IndexOutOfBoundsException if values overrun row
 		 */
 		public Builder add(double row, List<Double> values) {
@@ -281,7 +334,7 @@ public interface DataTable {
 		 * specified row.
 		 *
 		 * @param row key
-		 * @param values to set
+		 * @param sequence to add
 		 * @throws IndexOutOfBoundsException if values overrun row
 		 */
 		public Builder add(double row, XySequence sequence) {
@@ -333,7 +386,7 @@ public interface DataTable {
 				"At least one data dimension is empty");
 			checkDataState(rows, columns);
 			checkDataSize(rows.length, columns.length, data);
-			this.data = DataUtils.copyOf(data);
+			this.data = Data.copyOf(data);
 			return this;
 		}
 
@@ -351,9 +404,9 @@ public interface DataTable {
 			// safe covariant casts
 			validateTable((AbstractTable) table);
 			if (table instanceof SingularTable) {
-				DataUtils.uncheckedAdd(((SingularTable) table).value, data);
+				Data.uncheckedAdd(((SingularTable) table).value, data);
 			} else {
-				DataUtils.uncheckedAdd(data, ((DefaultTable) table).data);
+				Data.uncheckedAdd(data, ((DefaultTable) table).data);
 			}
 			return this;
 		}

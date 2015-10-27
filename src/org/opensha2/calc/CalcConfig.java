@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha2.data.DataUtils;
+import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
 import org.opensha2.util.Parsing;
@@ -309,7 +309,7 @@ public final class CalcConfig {
 			for (Imt imt : imts) {
 				double[] imls = imlsForImt(imt);
 				imls = Arrays.copyOf(imls, imls.length);
-				DataUtils.ln(imls);
+				Data.ln(imls);
 				curveMap.put(imt, immutableCopyOf(create(imls, null)));
 			}
 			return Maps.immutableEnumMap(curveMap);

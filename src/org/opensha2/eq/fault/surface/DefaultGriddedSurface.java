@@ -3,7 +3,7 @@ package org.opensha2.eq.fault.surface;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.math.RoundingMode.HALF_UP;
-import static org.opensha2.data.DataUtils.checkInRange;
+import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateStrike;

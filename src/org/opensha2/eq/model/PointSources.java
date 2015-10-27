@@ -41,7 +41,6 @@ public class PointSources {
 	 * @param rupScaling
 	 * @param magDepthMap
 	 * @param maxDepth
-	 * @return
 	 */
 	public static InputList finiteInputs(
 			Site site,
@@ -67,7 +66,6 @@ public class PointSources {
 	 * @param rupScaling
 	 * @param magDepthMap
 	 * @param maxDepth
-	 * @return
 	 */
 	public static List<InputList> finiteInputs(
 			List<Site> sites,
