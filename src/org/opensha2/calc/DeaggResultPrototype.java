@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
  *
  * @author Peter Powers
  */
+@Deprecated
 public class DeaggResultPrototype {
 
 	private String id;

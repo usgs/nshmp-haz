@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.opensha2.util.MathUtils;
@@ -79,21 +80,21 @@ import com.google.common.primitives.Ints;
 public final class Data {
 
 	/*
-	 * 
-	 * TODO refactor to just Data.*
-	 * 
 	 * TODO verify that 'unchecked' variants actually improve performance; in
 	 * most cases all that's being done is an array.length comparison
 	 */
 
 	/*
-	 * Developer note: Transform Functions vs Pure Iteration
+	 * Developer notes:
+	 * -------------------------------------------------------------------------
+	 * Transform Functions vs Pure Iteration
 	 * 
 	 * The original implementation of this class used the built-in transform()
 	 * methods and math Functions to operate on data arrays. Tests showed the
 	 * Function approach to be only marginally slower, but much more processor
 	 * intensive suggesting there would be a performance penalty in
 	 * multi-threaded applications.
+	 * -------------------------------------------------------------------------
 	 */
 
 	private Data() {}
@@ -244,6 +245,26 @@ public final class Data {
 			data1.set(i, data1.get(i) + data2.get(i));
 		}
 		return data1;
+	}
+
+	/**
+	 * Adds the entries of {@code map2} to {@code map1} in place. If a key from
+	 * {@code map2} exists in {@code map1}, then the value for that key is added
+	 * to the corresponding value in {@code map1}. If no such key exists in map
+	 * 1, then the key and value from map2 are transferred as is. Note that this
+	 * method is <i>not</i> synchronized.
+	 * 
+	 * @param map1
+	 * @param map2
+	 * @return a reference to {@code map1}
+	 */
+	public static <T> Map<T, Double> add(Map<T, Double> map1, Map<T, Double> map2) {
+		for (T key : map2.keySet()) {
+			Double v2 = map2.get(key);
+			Double v1 = (map1.containsKey(key)) ? map1.get(key) + v2 : v2;
+			map1.put(key, v1);
+		}
+		return map1;
 	}
 
 	/**
@@ -847,8 +868,8 @@ public final class Data {
 
 	/**
 	 * Verify that the domain of a {@code double[]} does not exceed that of the
-	 * supplied {@link Range}. Method returns the supplied values for
-	 * use inline.
+	 * supplied {@link Range}. Method returns the supplied values for use
+	 * inline.
 	 * 
 	 * @param range of allowable values
 	 * @param values to validate

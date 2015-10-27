@@ -41,7 +41,7 @@ public class Calcs {
 	// TODO refactor method names to be consistent with refactored hazard/deagg class names
 
 	/*
-	 * Implementation notes:
+	 * Developer notes:
 	 * 
 	 * -------------------------------------------------------------------------
 	 * Method argument order in this class, CalcFactory, and Transforms follow
