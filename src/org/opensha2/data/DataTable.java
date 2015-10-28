@@ -56,34 +56,24 @@ public interface DataTable {
 	 * @param row to retrieve
 	 */
 	XySequence row(double row);
-	
+
 	/**
 	 * Return the lower edge of the lowermost row bin.
 	 */
 	double rowMin();
-	
+
 	/**
 	 * Return the upper edge of the uppermost row bin.
 	 */
 	double rowMax();
-	
+
 	/**
 	 * Return the row bin discretization.
 	 */
 	double rowΔ();
 
 	/**
-	 * Return the number of rows.
-	 */
-	int rowCount();
-	
-	/**
-	 * Return an immutable list of row keys. This method creates a copy of the
-	 * keys on each call, so only use this method if the actual row keys are
-	 * required. {@link #rowCount()} should be used in lieu of
-	 * {@code rows().size()}.
-	 * 
-	 * @see #rowCount()
+	 * Return an immutable list <i>view</i> of the row keys.
 	 */
 	List<Double> rows();
 
@@ -91,29 +81,19 @@ public interface DataTable {
 	 * Return the lower edge of the lowermost column bin.
 	 */
 	double columnMin();
-	
+
 	/**
 	 * Return the upper edge of the uppermost column bin.
 	 */
 	double columnMax();
-	
+
 	/**
 	 * Return the column bin discretization.
 	 */
 	double columnΔ();
-	
-	/**
-	 * Return the number of columns.
-	 */
-	int columnCount();
 
 	/**
-	 * Return an immutable list of column keys. This method creates a copy of the
-	 * keys on each call, so only use this method if the actual column keys are
-	 * required. {@link #columnCount()} should be used in lieu of
-	 * {@code columns().size()}.
-	 * 
-	 * @see #columnCount()
+	 * Return an immutable list <i>view</i> of the column keys.
 	 */
 	List<Double> columns();
 
@@ -290,7 +270,8 @@ public interface DataTable {
 
 		/**
 		 * Add to the existing value at the specified row and column indices. Be
-		 * careful not to confuse this with {@link #add(double, double, double)}.
+		 * careful not to confuse this with {@link #add(double, double, double)}
+		 * .
 		 * 
 		 * @param row index
 		 * @param column index

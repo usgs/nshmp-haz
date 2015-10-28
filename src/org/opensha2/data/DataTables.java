@@ -6,6 +6,9 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkDelta;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
+import static com.google.common.primitives.Doubles.asList;
+import static java.util.Collections.unmodifiableList;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,22 +18,22 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
 
 /**
- * Static utilities for working with and concrete implementations of 2D and 3D
- * data containers.
+ * Static utilities for working with and concrete implementations of 2- and
+ * 3-dimensional data containers.
  *
  * @author Peter Powers
  */
 public final class DataTables {
 
 	/**
-	 * Create a set of keys for use in a {@link DataTable} or {@link DataVolume}
-	 * . Both these classes call this method directly when initializing their
+	 * Create key values for use in a {@link DataTable} or {@link DataVolume}.
+	 * Both these classes call this method directly when initializing their
 	 * backing arrays. It is exposed for convenience as there are circumstances
 	 * where a reference to the row or column keys is helpful to have when
-	 * working with data table and volume builders. Internally, this method
+	 * working with the builders for these classes. Internally, this method
 	 * calls
 	 * {@link Data#buildCleanSequence(double, double, double, boolean, int)}
-	 * wiht a precision value of 4 decimal places. This may change in the future
+	 * with a precision value of 4 decimal places. This may change in the future
 	 * 
 	 * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5,
 	 * 7.5]</p>
@@ -161,11 +164,11 @@ public final class DataTables {
 		}
 
 		@Override public List<Double> rows() {
-			return ImmutableList.copyOf(Doubles.asList(rows));
+			return unmodifiableList(asList(rows));
 		}
 
 		@Override public List<Double> columns() {
-			return ImmutableList.copyOf(Doubles.asList(columns));
+			return unmodifiableList(asList(columns));
 		}
 
 		@Override public double rowMin() {
@@ -180,10 +183,6 @@ public final class DataTables {
 			return rowΔ;
 		}
 
-		@Override public int rowCount() {
-			return rows.length;
-		}
-
 		@Override public double columnMin() {
 			return columnMin;
 		}
@@ -194,10 +193,6 @@ public final class DataTables {
 
 		@Override public double columnΔ() {
 			return columnΔ;
-		}
-		
-		@Override public int columnCount() {
-			return columns.length;
 		}
 	}
 
@@ -320,15 +315,15 @@ public final class DataTables {
 		}
 
 		@Override public List<Double> rows() {
-			return ImmutableList.copyOf(Doubles.asList(rows));
+			return  unmodifiableList(asList(rows));
 		}
 
 		@Override public List<Double> columns() {
-			return ImmutableList.copyOf(Doubles.asList(columns));
+			return  unmodifiableList(asList(columns));
 		}
 
 		@Override public List<Double> levels() {
-			return ImmutableList.copyOf(Doubles.asList(levels));
+			return  unmodifiableList(asList(levels));
 		}
 
 		@Override public double rowMin() {
@@ -343,10 +338,6 @@ public final class DataTables {
 			return rowΔ;
 		}
 
-		@Override public int rowCount() {
-			return rows.length;
-		}
-
 		@Override public double columnMin() {
 			return columnMin;
 		}
@@ -357,10 +348,6 @@ public final class DataTables {
 
 		@Override public double columnΔ() {
 			return columnΔ;
-		}
-
-		@Override public int columnCount() {
-			return columns.length;
 		}
 
 		@Override public double levelMin() {
@@ -375,9 +362,6 @@ public final class DataTables {
 			return levelΔ;
 		}
 
-		@Override public int levelCount() {
-			return levels.length;
-		}
 	}
 
 	static final class DefaultVolume extends AbstractVolume {
@@ -409,7 +393,7 @@ public final class DataTables {
 			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
 			return new ImmutableXySequence(levels, data[iRow][iColumn]);
 		}
-		
+
 		@Override public String toString() {
 			return Data.toString(data);
 		}
