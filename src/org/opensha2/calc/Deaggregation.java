@@ -465,17 +465,14 @@ public final class Deaggregation {
 	public static class Exporter {
 
 		final String component;
-		final List<Bin> data;
+		final List<RmBin> data;
 		// final double sum;
 		final List<SourceTypeContribution> primarySourceSets;
 		final List<SourceContributionTmp> primarySources;
 
 		Exporter(Dataset data, String component) {
 			this.component = component;
-			List<Bin> binList = new ArrayList<>();
-
-			// double sumTmp = 0.0;
-
+			List<RmBin> rmBins = new ArrayList<>();
 			// iterate magnitudes descending, distances ascending
 			DataVolume binData = data.rmε;
 			List<Double> magnitudes = Lists.reverse(binData.columns());
@@ -486,13 +483,19 @@ public final class Deaggregation {
 				for (double m : magnitudes) {
 					XySequence εColumn = binData.column(r, m);
 					if (εColumn.isEmpty()) continue;
-					double[] εValues = clean(2, multiply(toPercent, toArray(εColumn.yValues())));
-					// sumTmp += Data.sum(εValues);
-					binList.add(new Bin(r, m, εValues));
+					// double[] εValues = clean(2, multiply(toPercent,
+					// toArray(εColumn.yValues())));
+					double[] εValues = multiply(toPercent, toArray(εColumn.yValues()));
+					List<εData> εDataList = new ArrayList<>();
+					for (int i = 0; i < εValues.length; i++) {
+						double εValue = εValues[i];
+						if (εValue <= 0.0) continue;
+						εDataList.add(new εData(i, εValue));
+					}
+					rmBins.add(new RmBin(r, m, εDataList));
 				}
 			}
-			this.data = binList;
-			// this.sum = sumTmp;
+			this.data = rmBins;
 
 			this.primarySourceSets = ImmutableList.of(
 				new SourceTypeContribution("California B-Faults CH", 28.5, -1, 5.0, 7.4, 0.4),
@@ -506,16 +509,36 @@ public final class Deaggregation {
 
 		}
 
-		static class Bin {
+		/* Distance-magnitude bin container. */
+		@SuppressWarnings("unused")
+		private static final class RmBin {
 
-			double distance;
-			double magnitude;
-			double[] εvalues;
+			final double r;
+			final double m;
+			final List<εData> εdata;
 
-			Bin(double distance, double magnitude, double[] εvalues) {
-				this.distance = distance;
-				this.magnitude = magnitude;
-				this.εvalues = εvalues;
+			private RmBin(
+					double r,
+					double m,
+					List<εData> εdata) {
+				this.r = r;
+				this.m = m;
+				this.εdata = εdata;
+			}
+		}
+
+		/* Epsilon data for a distnace-magnitude bin. */
+		@SuppressWarnings("unused")
+		private static final class εData {
+			final int εbin;
+			final double value;
+
+			// TODO may add this; requires more upstream data tracking
+			// final double εbar;
+
+			private εData(int εbin, double value) {
+				this.εbin = εbin;
+				this.value = value;
 			}
 		}
 
