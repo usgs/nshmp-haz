@@ -75,17 +75,7 @@ public interface DataVolume {
 	double rowΔ();
 
 	/**
-	 * Return the number of rows.
-	 */
-	int rowCount();
-
-	/**
-	 * Return an immutable list of row keys. This method creates a copy of the
-	 * keys on each call, so only use this method if the actual row keys are
-	 * required. {@link #rowCount()} should be used in lieu of
-	 * {@code rows().size()}.
-	 * 
-	 * @see #rowCount()
+	 * Return an immutable list <i>view</i> of the row keys.
 	 */
 	List<Double> rows();
 
@@ -105,17 +95,7 @@ public interface DataVolume {
 	double columnΔ();
 
 	/**
-	 * Return the number of columns.
-	 */
-	int columnCount();
-
-	/**
-	 * Return an immutable list of column keys. This method creates a copy of the
-	 * keys on each call, so only use this method if the actual column keys are
-	 * required. {@link #columnCount()} should be used in lieu of
-	 * {@code columns().size()}.
-	 * 
-	 * @see #columnCount()
+	 * Return an immutable list the <i>view</i> of column keys.
 	 */
 	List<Double> columns();
 
@@ -135,17 +115,7 @@ public interface DataVolume {
 	double levelΔ();
 
 	/**
-	 * Return the number of levels.
-	 */
-	int levelCount();
-
-	/**
-	 * Return an immutable list of level keys. This method creates a copy of the
-	 * keys on each call, so only use this method if the actual level keys are
-	 * required. {@link #levelCount()} should be used in lieu of
-	 * {@code levels().size()}.
-	 * 
-	 * @see #levelCount()
+	 * Return an immutable list <i>view</i> of the level keys.
 	 */
 	List<Double> levels();
 

@@ -583,7 +583,7 @@ public final class Deaggregation {
 		 */
 		int distanceIndex(double r) {
 			try {
-				return DataTables.indexOf(rmε.rowMin(), rmε.rowΔ(), r, rmε.rowCount());
+				return DataTables.indexOf(rmε.rowMin(), rmε.rowΔ(), r, rmε.rows().size());
 			} catch (IndexOutOfBoundsException e) {
 				return -1;
 			}
@@ -598,7 +598,7 @@ public final class Deaggregation {
 		 */
 		int magnitudeIndex(double m) {
 			try {
-				return DataTables.indexOf(rmε.columnMin(), rmε.columnΔ(), m, rmε.columnCount());
+				return DataTables.indexOf(rmε.columnMin(), rmε.columnΔ(), m, rmε.columns().size());
 			} catch (IndexOutOfBoundsException e) {
 				return -1;
 			}
@@ -616,8 +616,8 @@ public final class Deaggregation {
 		 */
 		int epsilonIndex(double ε) {
 			return (ε < rmε.levelMin()) ? 0 :
-				(ε >= rmε.levelMax()) ? rmε.levelCount() - 1 :
-					DataTables.indexOf(rmε.levelMin(), rmε.levelΔ(), ε, rmε.levelCount());
+				(ε >= rmε.levelMax()) ? rmε.levels().size() - 1 :
+					DataTables.indexOf(rmε.levelMin(), rmε.levelΔ(), ε, rmε.levels().size());
 		}
 
 		/**
