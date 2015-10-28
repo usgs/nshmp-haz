@@ -83,11 +83,18 @@ public final class Deaggregation {
 	 */
 
 	private final HazardResult hazard;
+	private final Dataset model;
 	private final double returnPeriod;
 	private final Map<Imt, Deagg> deaggs;
 
-	private Deaggregation(HazardResult hazard, double returnPeriod, Map<Imt, Deagg> deaggs) {
+	private Deaggregation(
+			HazardResult hazard,
+			Dataset model,
+			double returnPeriod,
+			Map<Imt, Deagg> deaggs) {
+
 		this.hazard = hazard;
+		this.model = model;
 		this.returnPeriod = returnPeriod;
 		this.deaggs = deaggs;
 	}
@@ -112,18 +119,20 @@ public final class Deaggregation {
 	public static Deaggregation create(HazardResult hazard, double returnPeriod) {
 
 		Map<Imt, Deagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
+		Dataset model = Dataset.builder(hazard.config).build();
+
 		for (Entry<Imt, XySequence> entry : hazard.totalCurves.entrySet()) {
 			Imt imt = entry.getKey();
 			double rate = 1.0 / returnPeriod;
 			double iml = IML_INTERPOLATE.findX(entry.getValue(), rate);
 
-			Dataset model = Dataset.builder(hazard.config).build();
 			Deagg deagg = new Deagg(hazard, model, imt, rate, iml);
 			imtDeaggMap.put(imt, deagg);
 		}
 
 		return new Deaggregation(
 			hazard,
+			model,
 			returnPeriod,
 			Maps.immutableEnumMap(imtDeaggMap));
 	}
@@ -191,7 +200,6 @@ public final class Deaggregation {
 				datasets.putAll(Multimaps.forMap(sourceSetDatasets));
 			}
 
-			
 			gmmDatasets = Maps.immutableEnumMap(
 				Maps.transformValues(
 					Multimaps.asMap(datasets),
@@ -199,15 +207,15 @@ public final class Deaggregation {
 
 			totalDataset = DATASET_CONSOLIDATOR.apply(gmmDatasets.values());
 
-//			for (Dataset d : gmmDatasets.values()) {
-//				System.out.println("BarWt: " + d.barWeight);
-//
-//			}
+			// for (Dataset d : gmmDatasets.values()) {
+			// System.out.println("BarWt: " + d.barWeight);
+			//
+			// }
 		}
 
 		@Override public String toString() {
 			StringBuilder sb = new StringBuilder();
-//			int index = 0;
+			// int index = 0;
 			double totalRate = 0.0;
 			for (SourceContribution source : totalDataset.sources) {
 				// sb.append(index++).append(":  ").append(source).append(NEWLINE);
@@ -458,35 +466,34 @@ public final class Deaggregation {
 
 		final String component;
 		final List<Bin> data;
-//		final double sum;
+		// final double sum;
 		final List<SourceTypeContribution> primarySourceSets;
 		final List<SourceContributionTmp> primarySources;
-
 
 		Exporter(Dataset data, String component) {
 			this.component = component;
 			List<Bin> binList = new ArrayList<>();
-			
-//			double sumTmp = 0.0;
-			
+
+			// double sumTmp = 0.0;
+
 			// iterate magnitudes descending, distances ascending
 			DataVolume binData = data.rmε;
 			List<Double> magnitudes = Lists.reverse(binData.columns());
 			List<Double> distances = binData.rows();
 			double toPercent = 100.0 / data.barWeight;
-//			System.out.println(data.barWeight);
+			// System.out.println(data.barWeight);
 			for (double r : distances) {
 				for (double m : magnitudes) {
 					XySequence εColumn = binData.column(r, m);
 					if (εColumn.isEmpty()) continue;
 					double[] εValues = clean(2, multiply(toPercent, toArray(εColumn.yValues())));
-//					sumTmp += Data.sum(εValues);
+					// sumTmp += Data.sum(εValues);
 					binList.add(new Bin(r, m, εValues));
 				}
 			}
 			this.data = binList;
-//			this.sum = sumTmp;
-			
+			// this.sum = sumTmp;
+
 			this.primarySourceSets = ImmutableList.of(
 				new SourceTypeContribution("California B-Faults CH", 28.5, -1, 5.0, 7.4, 0.4),
 				new SourceTypeContribution("California B-Faults GR", 22.0, -1, 6.2, 6.7, 0.15),
@@ -812,7 +819,32 @@ public final class Deaggregation {
 		}
 
 	}
-	
+
+	/* Serialization helpers */
+
+	public List<?> εBins() {
+		ImmutableList.Builder<εBin> bins = ImmutableList.builder();
+		List<Double> εs = model.rmε.levels();
+		for (int i = 0; i < εs.size() - 1; i++) {
+			Double min = (i == 0) ? null : εs.get(i);
+			Double max = (i == εs.size() - 2) ? null : εs.get(i + 1);
+			bins.add(new εBin(i, min, max));
+		}
+		return bins.build();
+	}
+
+	private static class εBin {
+		final int id;
+		final Double min;
+		final Double max;
+
+		εBin(int id, Double min, Double max) {
+			this.id = id;
+			this.min = min;
+			this.max = max;
+		}
+	}
+
 	static class SourceTypeContribution {
 		String name;
 		double contribution;
@@ -841,7 +873,8 @@ public final class Deaggregation {
 		double ε;
 		double azimuth;
 
-		SourceContributionTmp(String name, double contribution, int id, double r, double m, double ε,
+		SourceContributionTmp(String name, double contribution, int id, double r, double m,
+				double ε,
 				double azimuth) {
 			this.name = name;
 			this.contribution = contribution;
@@ -852,6 +885,5 @@ public final class Deaggregation {
 			this.azimuth = azimuth;
 		}
 	}
-
 
 }

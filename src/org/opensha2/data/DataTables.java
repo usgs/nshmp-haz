@@ -22,6 +22,11 @@ import com.google.common.primitives.Doubles;
  */
 public final class DataTables {
 
+	/*
+	 * TODO rows() columns() and levels() should jsut use
+	 * Collections.unmodifiableList duh
+	 */
+
 	/**
 	 * Create a set of keys for use in a {@link DataTable} or {@link DataVolume}
 	 * . Both these classes call this method directly when initializing their
@@ -195,7 +200,7 @@ public final class DataTables {
 		@Override public double columnΔ() {
 			return columnΔ;
 		}
-		
+
 		@Override public int columnCount() {
 			return columns.length;
 		}
@@ -409,7 +414,7 @@ public final class DataTables {
 			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
 			return new ImmutableXySequence(levels, data[iRow][iColumn]);
 		}
-		
+
 		@Override public String toString() {
 			return Data.toString(data);
 		}
