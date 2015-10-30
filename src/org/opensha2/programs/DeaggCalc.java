@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Deaggregation;
-import org.opensha2.calc.HazardResult;
+import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Site;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
@@ -80,7 +80,7 @@ public class DeaggCalc {
 		Optional<Executor> execLocal = executor.or(Optional.of(createExecutor()));
 
 		try {
-			HazardResult result = Calcs.hazardCurve(model, config, site, execLocal);
+			Hazard result = Calcs.hazardCurve(model, config, site, execLocal);
 			if (!executor.isPresent()) ((ExecutorService) executor).shutdown();
 			return Calcs.deaggregation(result, returnPeriod);
 		} catch (ExecutionException | InterruptedException e) {

@@ -3,10 +3,8 @@ package org.opensha2.calc;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.eq.Magnitudes.checkMagnitude;
 import static org.opensha2.util.TextUtils.NEWLINE;
 import static org.opensha2.data.Data.multiply;
-import static org.opensha2.data.Data.clean;
 import static com.google.common.primitives.Doubles.toArray;
 
 import java.util.ArrayList;
@@ -18,8 +16,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.opensha2.calc.CalcConfig.DeaggData;
-import org.opensha2.calc.DeaggResultPrototype.SourceContribution;
-import org.opensha2.calc.DeaggResultPrototype.SourceTypeContribution;
 import org.opensha2.calc.Deaggregation.Dataset.Builder;
 import org.opensha2.data.Data;
 import org.opensha2.data.DataTable;
@@ -44,7 +40,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Range;
-import com.google.common.primitives.Doubles;
 
 /**
  * For one (or each Imt) One Deagg per source set and ground motion model these
@@ -82,13 +77,13 @@ public final class Deaggregation {
 	 * warning
 	 */
 
-	private final HazardResult hazard;
+	private final Hazard hazard;
 	private final Dataset model;
 	private final double returnPeriod;
 	private final Map<Imt, Deagg> deaggs;
 
 	private Deaggregation(
-			HazardResult hazard,
+			Hazard hazard,
 			Dataset model,
 			double returnPeriod,
 			Map<Imt, Deagg> deaggs) {
@@ -116,7 +111,7 @@ public final class Deaggregation {
 	// TODO return period is problematic if defined by an integer
 	// number of years; for instance we'll not get the true 2%in50
 	// for a return period of 2475, or whatever other, rate recovered
-	public static Deaggregation create(HazardResult hazard, double returnPeriod) {
+	public static Deaggregation create(Hazard hazard, double returnPeriod) {
 
 		Map<Imt, Deagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
 		Dataset model = Dataset.builder(hazard.config).build();
@@ -159,7 +154,7 @@ public final class Deaggregation {
 		/* Reduction to Gmms. */
 		final Map<Gmm, Dataset> gmmDatasets;
 
-		Deagg(HazardResult hazard, Dataset model, Imt imt, double rate, double iml) {
+		Deagg(Hazard hazard, Dataset model, Imt imt, double rate, double iml) {
 			// this.hazard = hazard;
 			// this.imt = imt;
 

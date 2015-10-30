@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
-import org.opensha2.calc.HazardResult;
+import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
 import org.opensha2.calc.Site;
 import org.opensha2.eq.model.HazardModel;
@@ -162,13 +162,13 @@ public class HazardCalc {
 		Stopwatch totalWatch = Stopwatch.createStarted();
 		int count = 0;
 
-		List<HazardResult> results = new ArrayList<>();
+		List<Hazard> results = new ArrayList<>();
 		boolean firstBatch = true;
 		Path dir = Paths.get(StandardSystemProperty.USER_DIR.value(), "results");
 		Files.createDirectories(dir);
 
 		for (Site site : sites) {
-			HazardResult result = calc(model, config, site, executor);
+			Hazard result = calc(model, config, site, executor);
 			results.add(result);
 
 			if (results.size() == FLUSH_LIMIT) {
@@ -207,7 +207,7 @@ public class HazardCalc {
 	 * @param executor to use ({@link Optional})
 	 * @return a HazardResult
 	 */
-	public static HazardResult calc(
+	public static Hazard calc(
 			HazardModel model,
 			CalcConfig config,
 			Site site,
@@ -216,7 +216,7 @@ public class HazardCalc {
 		Optional<Executor> execLocal = executor.or(Optional.of(createExecutor()));
 
 		try {
-			HazardResult result = Calcs.hazardCurve(model, config, site, execLocal);
+			Hazard result = Calcs.hazardCurve(model, config, site, execLocal);
 			if (!executor.isPresent()) ((ExecutorService) executor).shutdown();
 			return result;
 		} catch (ExecutionException | InterruptedException e) {

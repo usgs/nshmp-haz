@@ -96,7 +96,7 @@ public class Calcs {
 	 * @param returnPeriod at which to deaggregate
 	 */
 	public static Deaggregation deaggregation(
-			HazardResult hazard,
+			Hazard hazard,
 			double returnPeriod) {
 
 		checkNotNull(hazard);
@@ -119,7 +119,7 @@ public class Calcs {
 	 * @throws ExecutionException if an {@code Executor} was supplied and a
 	 *         problem arises during the calculation
 	 */
-	public static HazardResult hazardCurve(
+	public static Hazard hazardCurve(
 			HazardModel model,
 			CalcConfig config,
 			Site site,
@@ -141,7 +141,7 @@ public class Calcs {
 	/*
 	 * Run a hazard curve calculation in parallel.
 	 */
-	private static HazardResult asyncHazardCurve(
+	private static Hazard asyncHazardCurve(
 			HazardModel model,
 			CalcConfig config,
 			Site site,
@@ -193,7 +193,7 @@ public class Calcs {
 	/*
 	 * Run a hazard curve calculation on the current thread.
 	 */
-	private static HazardResult hazardCurve(
+	private static Hazard hazardCurve(
 			HazardModel model,
 			CalcConfig config,
 			Site site,

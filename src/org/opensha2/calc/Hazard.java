@@ -32,7 +32,7 @@ import com.google.common.collect.SetMultimap;
  * @author Peter Powers
  * @see Results
  */
-public final class HazardResult {
+public final class Hazard {
 
 	// TODO refactor to just Hazard because that's what it is
 	
@@ -42,7 +42,7 @@ public final class HazardResult {
 	final Site site;
 	final CalcConfig config;
 
-	private HazardResult(
+	private Hazard(
 			SetMultimap<SourceType, HazardCurveSet> sourceSetMap,
 			Map<Imt, XySequence> totalCurves,
 			HazardModel model,
@@ -177,9 +177,9 @@ public final class HazardResult {
 			checkState(model != null, "%s model not set", mssgID);
 		}
 
-		HazardResult build() {
+		Hazard build() {
 			validateState(ID);
-			return new HazardResult(
+			return new Hazard(
 				resultMapBuilder.build(),
 				Maps.immutableEnumMap(totalCurves),
 				model,
