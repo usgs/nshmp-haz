@@ -143,7 +143,7 @@ final class CalcFactory {
 	}
 
 	/* Reduce hazard curves to a result. */
-	static HazardResult toHazardResult(
+	static Hazard toHazardResult(
 			HazardModel model,
 			CalcConfig config,
 			Site site,
@@ -153,7 +153,7 @@ final class CalcFactory {
 	}
 
 	/* Asynchronously reduce hazard curves to a result. */
-	static HazardResult toHazardResult(
+	static Hazard toHazardResult(
 			HazardModel model,
 			CalcConfig config,
 			Site site,

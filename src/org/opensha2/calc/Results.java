@@ -57,13 +57,13 @@ public class Results {
 	 * @throws IOException if a problem is encountered
 	 * @see Files#write(Path, Iterable, java.nio.charset.Charset, OpenOption...)
 	 */
-	public static void writeResults(Path dir, List<HazardResult> batch, OpenOption... options)
+	public static void writeResults(Path dir, List<Hazard> batch, OpenOption... options)
 			throws IOException {
 
 		Function<Double, String> locFmtFunc = Parsing.formatDoubleFunction(Location.FORMAT);
 		Function<Double, String> rateFmtFunc = Parsing.formatDoubleFunction(RATE_FMT);
 
-		HazardResult demo = batch.get(0);
+		Hazard demo = batch.get(0);
 		boolean newFile = options.length == 0;
 		boolean namedSites = demo.site.name != Site.NO_NAME;
 
@@ -84,7 +84,7 @@ public class Results {
 			lineMap.put(imt, lineList);
 		}
 
-		for (HazardResult result : batch) {
+		for (Hazard result : batch) {
 			Iterable<String> locData = Iterables.transform(
 				Lists.newArrayList(
 					result.site.location.lon(),
@@ -121,7 +121,7 @@ public class Results {
 		}
 	}
 
-	public static Map<Imt, Map<SourceType, XySequence>> totalsByType(HazardResult result) {
+	public static Map<Imt, Map<SourceType, XySequence>> totalsByType(Hazard result) {
 
 		ImmutableMap.Builder<Imt, Map<SourceType, XySequence>> imtMapBuilder =
 			ImmutableMap.builder();

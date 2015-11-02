@@ -20,7 +20,7 @@ import java.util.concurrent.Executor;
 
 import org.junit.Test;
 import org.opensha2.calc.CalcConfig;
-import org.opensha2.calc.HazardResult;
+import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Site;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
@@ -120,7 +120,7 @@ public class PeerTest {
 
 	@Test public void test() {
 		System.out.println(site.name);
-		HazardResult result = HazardCalc.calc(model, model.config(), site,
+		Hazard result = HazardCalc.calc(model, model.config(), site,
 			Optional.<Executor> absent());
 		// compute y-values converting to Poiss prob
 		double[] actual = Doubles.toArray(

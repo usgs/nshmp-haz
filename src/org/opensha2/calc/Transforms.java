@@ -500,7 +500,7 @@ final class Transforms {
 	 * 
 	 * Final 'fan-in' consolidator function used for all source types.
 	 */
-	static final class CurveSetConsolidator implements Function<List<HazardCurveSet>, HazardResult> {
+	static final class CurveSetConsolidator implements Function<List<HazardCurveSet>, Hazard> {
 
 		private final HazardModel model;
 		private final CalcConfig config;
@@ -516,9 +516,9 @@ final class Transforms {
 			this.site = site;
 		}
 
-		@Override public HazardResult apply(List<HazardCurveSet> curveSetList) {
+		@Override public Hazard apply(List<HazardCurveSet> curveSetList) {
 
-			HazardResult.Builder resultBuilder = HazardResult
+			Hazard.Builder resultBuilder = Hazard
 				.builder(config)
 				.model(model)
 				.site(site);
