@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import org.opensha2.gmm.CeusMb.*;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -539,6 +541,110 @@ public enum Gmm {
 	 */
 	public Constraints constraints() {
 		return constraints;
+	}
+
+	@SuppressWarnings("javadoc")
+	public enum Group {
+
+		WUS_14_ACTIVE_CRUST(
+				"2014 Active Crust (WUS)",
+				ImmutableList.of(
+					ASK_14,
+					BSSA_14,
+					CB_14,
+					CY_14)),
+
+		CEUS_14_STABLE_CRUST(
+				"2014 Stable Crust (CEUS)",
+				ImmutableList.of(
+					ATKINSON_08_PRIME,
+					AB_06_PRIME,
+					CAMPBELL_03,
+					FRANKEL_96,
+					PEZESHK_11,
+					SILVA_02,
+					SOMERVILLE_01,
+					TP_05,
+					TORO_97_MW)),
+
+		WUS_14_INTERFACE(
+				"2014 Subduction Interface (WUS)",
+				ImmutableList.of(
+					AB_03_GLOB_INTER,
+					AM_09_INTER,
+					BCHYDRO_12_INTER,
+					ZHAO_06_INTER)),
+
+		WUS_14_SLAB(
+				"2014 WUS Subduction Intraslab (WUS)",
+				ImmutableList.of(
+					AB_03_CASC_SLAB_LOW_SAT,
+					AB_03_GLOB_SLAB_LOW_SAT,
+					BCHYDRO_12_SLAB,
+					ZHAO_06_SLAB)),
+
+		WUS_08_ACTIVE_CRUST(
+				"2008 Active Crust (WUS)",
+				ImmutableList.of(
+					BA_08,
+					CB_08,
+					CY_08)),
+
+		CEUS_08_STABLE_CRUST(
+				"2008 Stable Crust (CEUS)",
+				ImmutableList.of(
+					AB_06_140BAR,
+					AB_06_200BAR,
+					CAMPBELL_03,
+					FRANKEL_96,
+					SILVA_02,
+					SOMERVILLE_01,
+					TP_05,
+					TORO_97_MW)),
+
+		WUS_08_INTERFACE(
+				"2008 Subduction Interface (WUS)",
+				ImmutableList.of(
+					AB_03_GLOB_INTER,
+					YOUNGS_97_INTER,
+					ZHAO_06_INTER)),
+
+		WUS_08_SLAB(
+				"2008 Subduction Intraslab (WUS)",
+				ImmutableList.of(
+					AB_03_CASC_SLAB,
+					AB_03_GLOB_SLAB,
+					YOUNGS_97_SLAB)),
+
+		OTHER(
+				"Others",
+				ImmutableList.of(
+					AB_03_CASC_INTER,
+					MCVERRY_00_CRUSTAL,
+					MCVERRY_00_INTERFACE,
+					MCVERRY_00_SLAB,
+					MCVERRY_00_VOLCANIC,
+					SADIGH_97));
+
+		private final String name;
+		private final List<Gmm> gmms;
+
+		private Group(String name, List<Gmm> gmms) {
+			this.name = name;
+			this.gmms = gmms;
+		}
+		
+		@Override public String toString() {
+			return name;
+		}
+
+		/**
+		 * Return an immutable list of the Gmms in this group, sorted
+		 * alphabetically by their display name.
+		 */
+		public List<Gmm> gmms() {
+			return gmms;
+		}
 	}
 
 }

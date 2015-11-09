@@ -82,6 +82,13 @@ public class PeerTest {
 	public static final String S2_C4B_F = "Set2-Case4b-fast";
 	public static final String S2_C5A = "Set2-Case5a";
 	public static final String S2_C5B = "Set2-Case5b";
+	
+	public static final String S3_C1A = "Set3-Case1a";
+	public static final String S3_C1B = "Set3-Case1a";
+	public static final String S3_C2 = "Set3-Case2";
+	public static final String S3_C3 = "Set3-Case3";
+	public static final String S3_C4 = "Set3-Case4";
+
 
 	// private static final Path PEER_DIR = Paths.get("etc", "peer");
 	private static final Path PEER_DIR = Paths.get("..", "nshmp-model-dev", "models", "PEER");

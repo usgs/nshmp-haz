@@ -71,7 +71,7 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
 
 	static final String NAME = "Toro et al. (1997)";
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 		.set(MAG, Range.closed(4.0, 8.0))
 		.set(RJB, Range.closed(0.0, 1000.0))
 		.set(VS30, Range.closed(760.0, 2000.0))

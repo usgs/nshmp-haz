@@ -54,7 +54,7 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
 	static final String NAME = "Campbell & Bozorgnia (2008)";
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 		// TODO there are rake dependent M restrictions
 		.set(MAG, Range.closed(4.0, 8.5))
 		.set(RJB, Range.closed(0.0, 300.0))

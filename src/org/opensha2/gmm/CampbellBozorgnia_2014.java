@@ -57,7 +57,7 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
 	static final CoefficientContainer COEFFS = new CoefficientContainer("CB14.csv");
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 		// TODO there are rake dependent M restrictions
 		.set(MAG, Range.closed(3.3, 8.5))
 		.setDistances(300.0)

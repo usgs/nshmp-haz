@@ -38,7 +38,8 @@ public final class Magnitudes {
 
 	// above is same as 3e11 dyn/cm^2
 
-	private static final Range<Double> magRange = Range.closed(MIN_MAG, MAX_MAG);
+	/** The minimum and maximum supported magnitude as a range.  */
+	public static final Range<Double> MAG_RANGE = Range.closed(MIN_MAG, MAX_MAG);
 	
 	// equivalent for dyn·cm conversion is 16.05
 	private static final double SCALE_N_M = 9.05;
@@ -54,7 +55,7 @@ public final class Magnitudes {
 	 * @see Data#checkInRange(Range, String, double)
 	 */
 	public static double checkMagnitude(double mag) {
-		return checkInRange(magRange, "Magnitude", mag);
+		return checkInRange(MAG_RANGE, "Magnitude", mag);
 	}
 
 	// TODO refactor N_m out of signature

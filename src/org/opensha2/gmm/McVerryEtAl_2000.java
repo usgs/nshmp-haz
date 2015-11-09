@@ -78,7 +78,7 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 	// TODO will probably want to have constraints per-implementation
 	// (e.g. zHyp only used by subduction)
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 		.set(MAG, Range.closed(4.0, 8.0))
 		.set(RRUP, Range.closed(0.0, 200.0))
 		.set(ZHYP, Range.closed(0.0, 20.0))

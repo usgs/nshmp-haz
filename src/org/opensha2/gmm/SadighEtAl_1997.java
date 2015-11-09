@@ -54,7 +54,7 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 
 	static final String NAME = "Sadigh et al. (1997)";
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 		.set(MAG, Range.closed(5.0, 8.0))
 		.set(RRUP, Range.closed(0.0, 100.0))
 		.set(RAKE, Faults.RAKE_RANGE)

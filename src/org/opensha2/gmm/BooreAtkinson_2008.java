@@ -50,7 +50,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
 
 	static final String NAME = "Boore & Atkinson (2008)";
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 			.set(MAG, Range.closed(5.0, 8.0))
 			.set(RJB, Range.closed(0.0, 200.0))
 			.set(DIP,Faults.DIP_RANGE)

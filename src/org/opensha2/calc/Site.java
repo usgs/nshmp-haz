@@ -53,9 +53,14 @@ public class Site implements Named {
 	/** The name used for {@code Site}s with no supplied name. */
 	public static final String NO_NAME = "Unnamed Site";
 
-	private static final Range<Double> VS30_RANGE = Range.closed(MIN_VS_30, MAX_VS_30);
-	private static final Range<Double> Z2P5_RANGE = Range.closed(MIN_Z2P5, MAX_Z2P5);
-	private static final Range<Double> Z1P0_RANGE = Range.closed(MIN_Z1P0, MAX_Z1P0);
+	/** {@link #MIN_VS_30} and {@link #MAX_VS_30} as a closed {@code Range}. */
+	public static final Range<Double> VS30_RANGE = Range.closed(MIN_VS_30, MAX_VS_30);
+	
+	/** {@link #MIN_Z2P5} and {@link #MAX_Z2P5} as a closed {@code Range}. */
+	public static final Range<Double> Z2P5_RANGE = Range.closed(MIN_Z2P5, MAX_Z2P5);
+	
+	/** {@link #MIN_Z1P0} and {@link #MAX_Z1P0} as a closed {@code Range}. */
+	public static final Range<Double> Z1P0_RANGE = Range.closed(MIN_Z1P0, MAX_Z1P0);
 
 	enum Key {
 		NAME,

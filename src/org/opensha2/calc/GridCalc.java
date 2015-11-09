@@ -25,6 +25,7 @@ import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmInput;
 import org.opensha2.gmm.GmmInput.Constraints;
+import org.opensha2.gmm.GmmInput.Field;
 import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Idriss_2014;
 import org.opensha2.gmm.Imt;
@@ -309,7 +310,7 @@ public class GridCalc {
 	private static boolean isMultiMech(Set<Gmm> gmms) {
 		for (Gmm gmm : gmms) {
 			Constraints c = gmm.constraints();
-			if (c.dip.isPresent() || c.rake.isPresent()) return true;
+			if (c.get(Field.DIP).isPresent() || c.get(Field.RAKE).isPresent()) return true;
 		}
 		return false;
 	}

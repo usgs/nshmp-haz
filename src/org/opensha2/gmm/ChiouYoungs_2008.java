@@ -52,7 +52,7 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 
 	static final String NAME = "Chiou & Youngs (2008)";
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 			.set(MAG, Range.closed(4.0, 8.5))
 			.setDistances(200.0)
 			.set(DIP, Faults.DIP_RANGE)

@@ -54,7 +54,7 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 	static final String NAME = "Youngs et al. (1997)";
 
 	// TODO will probably want to have constraints per-implementation
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 			.set(MAG, Range.closed(5.0, 9.5))
 			.set(RRUP, Range.closed(0.0, 1000.0))
 			.set(ZTOP, Faults.SLAB_DEPTH_RANGE)

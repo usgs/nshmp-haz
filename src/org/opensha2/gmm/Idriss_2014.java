@@ -47,7 +47,7 @@ public final class Idriss_2014 implements GroundMotionModel {
 
 	static final String NAME = "Idriss (2014)";
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 			.set(MAG, Range.closed(5.0, 8.5))
 			.setDistances(150.0)
 			.set(DIP, Faults.DIP_RANGE)
