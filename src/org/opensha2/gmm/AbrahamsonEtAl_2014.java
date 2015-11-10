@@ -44,7 +44,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
 	static final String NAME = "Abrahamson, Silva & Kamai (2014)";
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 			.set(MAG, Range.closed(3.0, 8.5))
 			.setDistances(300.0)
 			.set(DIP,Faults.DIP_RANGE)

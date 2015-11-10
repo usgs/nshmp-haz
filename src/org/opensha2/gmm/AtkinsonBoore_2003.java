@@ -56,7 +56,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 	static final String NAME = "Atkinson & Boore (2003)";
 
 	// TODO will probably want to have constraints per-implementation
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 		.set(MAG, Range.closed(5.0, 9.5))
 		.set(RRUP, Range.closed(0.0, 1000.0))
 		.set(ZTOP, Faults.SLAB_DEPTH_RANGE)

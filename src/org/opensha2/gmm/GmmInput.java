@@ -26,6 +26,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.opensha2.calc.Site;
+import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.model.Distance;
 import org.opensha2.eq.model.Rupture;
 
@@ -173,11 +175,33 @@ public class GmmInput {
 
 		/**
 		 * Return a {@code Builder} prepopulated with default values. Builder
-		 * has the following presets: <ul><li>Mw: 6.5</li><li>rJB: 10.0
-		 * (km)</li><li>rRup: 10.3 (km)</li><li>rX: 10.0 (km)</li> <li>dip:
-		 * 90˚</li><li>width: 14.0 (km)</li><li>zTop: 0.5 (km)</li><li>zHyp: 7.5
-		 * (km)</li> <li>rake: 0˚</li><li>vs30: 760 (m/s)</li><li>vsInf:
-		 * true</li><li>z2p5: NaN</li><li>z1p0: NaN</li></ul>
+		 * has the following presets:
+		 * 
+		 * <ul><li>Mw: 6.5</li>
+		 * 
+		 * <li>rJB: 10.0 (km)</li>
+		 * 
+		 * <li>rRup: 10.3 (km)</li>
+		 * 
+		 * <li>rX: 10.0 (km)</li>
+		 * 
+		 * <li>dip: 90˚</li>
+		 * 
+		 * <li>width: 14.0 (km)</li>
+		 * 
+		 * <li>zTop: 0.5(km)</li>
+		 * 
+		 * <li>zHyp: 7.5 (km)</li>
+		 * 
+		 * <li>rake: 0˚</li>
+		 * 
+		 * <li>vs30: 760 (m/s)</li>
+		 * 
+		 * <li>vsInf: true</li>
+		 * 
+		 * <li>z2p5: NaN</li>
+		 * 
+		 * <li>z1p0: NaN</li></ul>
 		 */
 		public Builder withDefaults() {
 			Mw = MAG.defaultValue;
@@ -326,90 +350,95 @@ public class GmmInput {
 		MAG(
 				"Magnitude",
 				"The moment magnitude of an earthquake",
-				null,
+				Optional.<String> absent(),
 				6.5),
 
 		RJB(
 				"Joyner-Boore Distance",
 				"The shortest distance from a site to the surface projection of a rupture, in kilometers",
-				DISTANCE_UNIT,
+				Optional.of(DISTANCE_UNIT),
 				10.0),
 
 		RRUP(
 				"Rupture Distance",
 				"The shortest distance from a site to a rupture, in kilometers",
-				DISTANCE_UNIT,
+				Optional.of(DISTANCE_UNIT),
 				10.3),
 
 		RX(
 				"Distance X",
 				"The shortest distance from a site to the extended trace a fault, in kilometers",
-				DISTANCE_UNIT,
+				Optional.of(DISTANCE_UNIT),
 				10.0),
 
 		DIP(
 				"Dip",
 				"The dip of a rupture surface, in degrees",
-				ANGLE_UNIT,
+				Optional.of(ANGLE_UNIT),
 				90.0),
 
 		WIDTH(
 				"Width",
 				"The width of a rupture surface, in kilometers",
-				DISTANCE_UNIT,
+				Optional.of(DISTANCE_UNIT),
 				14.0),
 
 		ZTOP(
 				"Depth",
 				"The depth to the top of a rupture surface, in kilometers and positive-down",
-				DISTANCE_UNIT,
+				Optional.of(DISTANCE_UNIT),
 				0.5),
 
 		ZHYP(
 				"Hypocentral Depth",
 				"The depth to the hypocenter on a rupture surface, in kilometers and positive-down",
-				DISTANCE_UNIT,
+				Optional.of(DISTANCE_UNIT),
 				7.5),
 
 		RAKE(
 				"Rake",
 				"The rake (or sense of slip) of a rupture surface, in degrees",
-				ANGLE_UNIT,
+				Optional.of(ANGLE_UNIT),
 				0.0),
 
 		VS30(
 				"Vs30",
 				"The average shear-wave velocity down to 30 meters, in kilometers per second",
-				"km/s",
+				Optional.of("km/s"),
 				760.0),
 
 		VSINF(
 				"Vs30 Inferred",
 				"Whether Vs30 was measured or inferred",
-				null,
+				Optional.<String> absent(),
 				1.0),
 
 		Z1P0(
 				"Depth to Vs=1.0 km/s",
 				"Depth to a shear-wave velocity of 1.0 kilometers per second, in kilometers",
-				DISTANCE_UNIT,
+				Optional.of(DISTANCE_UNIT),
 				NaN),
 
 		Z2P5(
 				"Depth to Vs=2.5 km/s",
 				"Depth to a shear-wave velocity of 2.5 kilometers per second, in kilometers",
-				DISTANCE_UNIT,
+				Optional.of(DISTANCE_UNIT),
 				NaN);
 
 		public final String label;
 		public final String info;
-		public final String unit;
+		public final Optional<String> units;
 		public final double defaultValue;
 
-		private Field(String label, String info, String unit, double defaultValue) {
+		private Field(
+				String label,
+				String info,
+				Optional<String> units,
+				double defaultValue) {
+			
 			this.label = label;
 			this.info = info;
-			this.unit = unit;
+			this.units = units;
 			this.defaultValue = defaultValue;
 		}
 
@@ -449,14 +478,6 @@ public class GmmInput {
 	}
 
 	/**
-	 * Return a builder of {@code GmmInput} constraints. This builder sets all
-	 * fields to {@code Optional.absent()} by default.
-	 */
-	static Constraints.Builder constraintsBuilder() {
-		return new Constraints.Builder();
-	}
-
-	/**
 	 * The constraints associated with each {@code GmmInput} field. All methods
 	 * return an {@link Optional} whose {@link Optional#isPresent()} method will
 	 * indicate whether a field is used by a {@code GroundMotionModel}, or not.
@@ -467,23 +488,28 @@ public class GmmInput {
 		// TODO would moving to RangeSet be a satisfactory way
 		// to handle discrete value sets (using Range.singleton)
 
-		public final Optional<Range<Double>> mag;
-		public final Optional<Range<Double>> rJB;
-		public final Optional<Range<Double>> rRup;
-		public final Optional<Range<Double>> rX;
-		public final Optional<Range<Double>> dip;
-		public final Optional<Range<Double>> width;
-		public final Optional<Range<Double>> zTop;
-		public final Optional<Range<Double>> zHyp;
-		public final Optional<Range<Double>> rake;
-		public final Optional<Range<Double>> vs30;
-		public final Optional<Range<Boolean>> vsInf;
-		public final Optional<Range<Double>> z1p0;
-		public final Optional<Range<Double>> z2p5;
+		// TODO do we need these as type specific fields?
+
+		// TODO clean
+		// public final Optional<Range<Double>> mag;
+		// public final Optional<Range<Double>> rJB;
+		// public final Optional<Range<Double>> rRup;
+		// public final Optional<Range<Double>> rX;
+		// public final Optional<Range<Double>> dip;
+		// public final Optional<Range<Double>> width;
+		// public final Optional<Range<Double>> zTop;
+		// public final Optional<Range<Double>> zHyp;
+		// public final Optional<Range<Double>> rake;
+		// public final Optional<Range<Double>> vs30;
+		// public final Optional<Range<Boolean>> vsInf;
+		// public final Optional<Range<Double>> z1p0;
+		// public final Optional<Range<Double>> z2p5;
 
 		// for internal use only
 		private Map<Field, Optional<?>> constraintMap;
 
+		private Optional<Range<Double>> mag;
+		
 		private Constraints(
 				Optional<Range<Double>> mag,
 				Optional<Range<Double>> rJB,
@@ -499,47 +525,82 @@ public class GmmInput {
 				Optional<Range<Double>> z1p0,
 				Optional<Range<Double>> z2p5) {
 
+			
 			constraintMap = new EnumMap<>(Field.class);
 
-			this.mag = mag;
+			 this.mag = mag;
 			constraintMap.put(MAG, mag);
 
-			this.rJB = rJB;
+			// this.rJB = rJB;
 			constraintMap.put(RJB, rJB);
 
-			this.rRup = rRup;
+			// this.rRup = rRup;
 			constraintMap.put(RRUP, rRup);
 
-			this.rX = rX;
+			// this.rX = rX;
 			constraintMap.put(RX, rX);
 
-			this.dip = dip;
+			// this.dip = dip;
 			constraintMap.put(DIP, dip);
 
-			this.width = width;
+			// this.width = width;
 			constraintMap.put(WIDTH, width);
 
-			this.zTop = zTop;
+			// this.zTop = zTop;
 			constraintMap.put(ZTOP, zTop);
 
-			this.zHyp = zHyp;
+			// this.zHyp = zHyp;
 			constraintMap.put(ZHYP, zHyp);
 
-			this.rake = rake;
+			// this.rake = rake;
 			constraintMap.put(RAKE, rake);
 
-			this.vs30 = vs30;
+			// this.vs30 = vs30;
 			constraintMap.put(VS30, vs30);
 
-			this.vsInf = vsInf;
+			// this.vsInf = vsInf;
 			constraintMap.put(VSINF, vsInf);
 
-			this.z1p0 = z1p0;
+			// this.z1p0 = z1p0;
 			constraintMap.put(Z1P0, z1p0);
 
-			this.z2p5 = z2p5;
+			// this.z2p5 = z2p5;
 			constraintMap.put(Z2P5, z2p5);
 
+		}
+
+		public Optional<?> get(Field field) {
+			return constraintMap.get(field);
+		}
+
+//		@SuppressWarnings("unchecked")
+//		public Optional<Boolean> getBoolean(Field field) {
+//			checkArgument(field.clazz.equals(Boolean.class));
+//			// safe covariant cast
+//			return (Optional<Boolean>) constraintMap.get(field);
+//		}
+//
+//		@SuppressWarnings("unchecked")
+//		public Optional<Double> getDouble(Field field) {
+//			checkArgument(field.clazz.equals(Double.class));
+//			// safe covariant cast
+//			return (Optional<Double>) constraintMap.get(field);
+//		}
+
+		/**
+		 * Return a builder of {@code GmmInput} constraints. This builder sets
+		 * all fields to {@code Optional.absent()}.
+		 */
+		static Builder builder() {
+			return new Builder();
+		}
+
+		/**
+		 * 
+		 * @return
+		 */
+		public static Constraints defaults() {
+			return builder().withDefaults().build();
 		}
 
 		@Override public String toString() {
@@ -668,9 +729,45 @@ public class GmmInput {
 			 * Set all distance metrics [rJB, rRup, rX] to the range [0, r].
 			 */
 			Builder setDistances(double r) {
-				rJB = Optional.of(Range.closed(0.0, r));
-				rRup = Optional.of(Range.closed(0.0, r));
-				rX = Optional.of(Range.closed(0.0, r));
+				set(RJB, Range.closed(0.0, r));
+				set(RRUP, Range.closed(0.0, r));
+				set(RX, Range.closed(0.0, r));
+				return this;
+			}
+
+			Builder withDefaults() {
+
+				/*
+				 * TODO this should really be executed by polling all
+				 * implemented GMMs and unioning results; are also going to need
+				 * an intersection method to support returning the constraints
+				 * supported by subsets of gmms
+				 */
+
+				set(MAG, Magnitudes.MAG_RANGE);
+				set(RJB, Range.closed(0.0, Distance.MAX));
+				set(RRUP, Range.closed(0.0, Distance.MAX));
+				set(RX, Range.closed(0.0, Distance.MAX));
+
+				Range<Double> depthRange = Faults.CRUSTAL_DEPTH_RANGE
+					.intersection(Faults.INTERFACE_DEPTH_RANGE)
+					.intersection(Faults.SLAB_DEPTH_RANGE);
+				set(ZTOP, depthRange);
+				set(ZHYP, depthRange);
+
+				set(DIP, Faults.DIP_RANGE);
+
+				Range<Double> widthRange = Faults.CRUSTAL_WIDTH_RANGE
+					.intersection(Faults.INTERFACE_WIDTH_RANGE);
+				set(WIDTH, widthRange);
+
+				set(RAKE, Faults.RAKE_RANGE);
+
+				set(VS30, Site.VS30_RANGE);
+				set(VSINF);
+				set(Z1P0, Site.Z1P0_RANGE);
+				set(Z2P5, Site.Z2P5_RANGE);
+
 				return this;
 			}
 

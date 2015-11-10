@@ -462,8 +462,8 @@ public final class Deaggregation {
 		final String component;
 		final List<RmBin> data;
 		// final double sum;
-		final List<SourceTypeContribution> primarySourceSets;
-		final List<SourceContributionTmp> primarySources;
+		final List<Contributor> sources;
+		final List<SummaryElement> summary;
 
 		Exporter(Dataset data, String component) {
 			this.component = component;
@@ -492,16 +492,60 @@ public final class Deaggregation {
 			}
 			this.data = rmBins;
 
-			this.primarySourceSets = ImmutableList.of(
-				new SourceTypeContribution("California B-Faults CH", 28.5, -1, 5.0, 7.4, 0.4),
-				new SourceTypeContribution("California B-Faults GR", 22.0, -1, 6.2, 6.7, 0.15),
-				new SourceTypeContribution("CA Crustal Gridded", 15.0, -1, 7.0, 6.7, -0.2));
+			this.sources = ImmutableList.of(
+				new Contributor(
+					"California B-Faults CH", Contributor.Type.MULTI, 28.5, -1,
+					5.0, 7.4, 0.4,
+					null, null, null),
+				new Contributor(
+					"California B-Faults GR", Contributor.Type.MULTI, 22.0, -1,
+					6.2, 6.7, 0.15,
+					null, null, null),
+				new Contributor(
+					"CA Crustal Gridded", Contributor.Type.MULTI, 15.0, -1,
+					7.0, 6.7, -0.2,
+					null, null, null),
+				new Contributor(
+					"Puente Hills", Contributor.Type.SINGLE, 5.2, 521,
+					3.2, 7.6, 0.5,
+					160.1, 33.5, -118.5),
+				new Contributor(
+					"Elysian Park", Contributor.Type.SINGLE, 4.0, 431,
+					5.6, 6.8, 0.7,
+					340.0, 33.6, -118.4),
+				new Contributor(
+					"San Andreas (Mojave)", Contributor.Type.SINGLE, 1.2, 44,
+					32.1, 8.2, 1.5,
+					22.3, 34.0, -117.5),
+				new Contributor(
+					"Grid Source ", Contributor.Type.GRID, 7.4, null,
+					22.5, 6.2, -1.2,
+					345.0, 33.7, -118.6));
 
-			this.primarySources = ImmutableList.of(
-				new SourceContributionTmp("Puente Hills", 5.2, 521, 3.2, 7.6, 0.5, 160.1),
-				new SourceContributionTmp("Elysian Park", 4.0, 431, 5.6, 6.8, 0.7, 340.0),
-				new SourceContributionTmp("San Andreas (Mojave)", 1.2, 44, 32.1, 8.2, 1.5, 22.3));
-
+			this.summary = ImmutableList.of(
+				element("Deaggregation targets", true, ImmutableList.of(
+					item("Return period", 2475, "yrs"),
+					item("Exceedance rate", 4.0404e-4, "yrs⁻¹"),
+					item("Exceedance IML", 0.6085, "g"))),
+				element("Recovered targets", false, ImmutableList.of(
+					item("Return period", 2521, "yrs"),
+					item("Exceedance rate", 3.9315e-4, "yrs⁻¹"),
+					item("Exceedance IML", 0.6085, "g"))),
+				element("Mean", true, ImmutableList.of(
+					item("r", 11.2, "km"),
+					item("m", 6.98, null),
+					item("ε₀", 0.34, null))),
+				element("Mode (largest r-m bin)", true, ImmutableList.of(
+					item("r", 9.4, "km"),
+					item("m", 6.78, null),
+					item("ε₀", 0.79, null),
+					item("Contribution", 27.3, "%"))),
+				element("Mode (largest ε₀ bin)", true, ImmutableList.of(
+					item("r", 9.4, "km"),
+					item("m", 6.78, null),
+					item("ε interval", 0.5, "σ"), // report middle of bin
+					item("Contribution", 15.2, "%")))
+				);
 		}
 
 		/* Distance-magnitude bin container. */
@@ -838,8 +882,12 @@ public final class Deaggregation {
 
 	}
 
-	/* Serialization helpers */
+	/* Serialization helpers. */
 
+	/**
+	 * Returns a list of objects that define the ε bins used in this
+	 * deaggregation when serialized to JSON.
+	 */
 	public List<?> εBins() {
 		ImmutableList.Builder<εBin> bins = ImmutableList.builder();
 		List<Double> εs = model.rmε.levels();
@@ -851,6 +899,7 @@ public final class Deaggregation {
 		return bins.build();
 	}
 
+	@SuppressWarnings("unused")
 	private static class εBin {
 		final int id;
 		final Double min;
@@ -863,44 +912,95 @@ public final class Deaggregation {
 		}
 	}
 
-	static class SourceTypeContribution {
-		String name;
-		double contribution;
-		int id;
-		double rBar;
-		double mBar;
-		double εBar;
+	/* Primitive object fields may be null. */
+	@SuppressWarnings("unused")
+	private static class Contributor {
 
-		SourceTypeContribution(String name, double contribution, int id, double rBar, double mBar,
-				double εBar) {
-			this.name = name;
-			this.contribution = contribution;
-			this.id = id;
-			this.mBar = mBar;
-			this.rBar = rBar;
-			this.εBar = εBar;
-		}
-	}
+		final String name;
+		final Type type;
+		final double contribution;
+		final Integer id;
+		final double r;
+		final double m;
+		final double ε;
+		final Double azimuth;
+		final Double latitude;
+		final Double longitude;
 
-	static class SourceContributionTmp {
-		String name;
-		double contribution;
-		int id;
-		double r;
-		double m;
-		double ε;
-		double azimuth;
-
-		SourceContributionTmp(String name, double contribution, int id, double r, double m,
+		Contributor(
+				String name,
+				Type type,
+				double contribution,
+				Integer id,
+				double r,
+				double m,
 				double ε,
-				double azimuth) {
+				Double azimuth,
+				Double latitude,
+				Double longitude) {
+
 			this.name = name;
+			this.type = type;
 			this.contribution = contribution;
 			this.id = id;
 			this.m = m;
 			this.r = r;
 			this.ε = ε;
 			this.azimuth = azimuth;
+			this.latitude = latitude;
+			this.longitude = longitude;
+		}
+
+		private static enum Type {
+			SINGLE,
+			MULTI,
+			GRID;
+		}
+
+	}
+
+	private static SummaryElement element(
+			String name,
+			boolean display,
+			List<SummaryElement.Item> items) {
+		return new SummaryElement(name, display, items);
+	}
+
+	private static SummaryElement.Item item(
+			String name,
+			double value,
+			String units) {
+		return new SummaryElement.Item(name, value, units);
+	}
+
+	@SuppressWarnings("unused")
+	private static class SummaryElement {
+
+		final String name;
+		final boolean display;
+		final List<Item> data;
+
+		SummaryElement(
+				String name,
+				boolean display,
+				List<Item> data) {
+
+			this.name = name;
+			this.display = display;
+			this.data = data;
+		}
+
+		static class Item {
+
+			final String name;
+			final double value;
+			final String units;
+
+			Item(String name, double value, String units) {
+				this.name = name;
+				this.value = value;
+				this.units = units;
+			}
 		}
 	}
 

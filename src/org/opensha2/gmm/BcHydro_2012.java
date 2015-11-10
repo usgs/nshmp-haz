@@ -53,7 +53,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
 	// TODO will probably want to have constraints per-implementation (e.g. slab
 	// vs interface depth limits)
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 		.set(MAG, Range.closed(5.0, 9.5))
 		.set(RRUP, Range.closed(0.0, 1000.0))
 		.set(ZTOP, Faults.SLAB_DEPTH_RANGE)

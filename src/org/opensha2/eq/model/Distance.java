@@ -26,6 +26,15 @@ import org.opensha2.geo.Regions;
  */
 public final class Distance {
 
+	/**
+	 * Maximum supported distance for PSHA calculations. Currently set to 1000 km, the maximum
+	 * known to be supported by across all implementated ground motion models.
+	 * 
+	 * TODO: ground motion models should be polled for this number
+	 */
+	@Deprecated
+	public static final double MAX = 1000.0;
+	
 	@SuppressWarnings("javadoc")
 	public enum Type {
 		R_JB,

@@ -52,7 +52,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
 	static final String NAME = "Boore, Stewart, Seyhan & Atkinson (2014)";
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 		// TODO normal faults technically only applicable to M7
 		.set(MAG, Range.closed(3.0, 8.5))
 		.set(RJB, Range.closed(0.0, 400.0))

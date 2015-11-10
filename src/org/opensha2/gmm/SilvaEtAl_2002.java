@@ -53,7 +53,7 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 
 	static final String NAME = "Silva et al. (2002)";
 
-	static final Constraints CONSTRAINTS = GmmInput.constraintsBuilder()
+	static final Constraints CONSTRAINTS = Constraints.builder()
 		.set(MAG, Range.closed(4.0, 8.0))
 		.set(RJB, Range.closed(0.0, 1000.0))
 		.set(VS30, Range.closed(760.0, 2000.0))
