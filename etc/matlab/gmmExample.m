@@ -1,14 +1,14 @@
-%% nshmp-sha Ground Motion Model explanatory script
+%% nshmp-haz Ground Motion Model (GMM) explanatory script
 
 % =========================================================================
-% This script describes how to access the ground motion models implemented
-% in the nshmp-sha hazard codes. The models are written in Java and require
-% little more than to be identified to Matlab to function properly.
+% This script provides instruction on how to access the ground motion models
+% implemented in the nshmp-haz library. The models are written in Java and
+% require little more than to be identified to Matlab to function properly.
 % =========================================================================
 
 % Set up:
 
-% (Required) Have the nshmp-sha project cloned somewhere local. The
+% (Required) Have the nshmp-haz project cloned somewhere local. The
 % instructions below that the project has also been compiled such
 % that a 'classes' directory exsists.
 
