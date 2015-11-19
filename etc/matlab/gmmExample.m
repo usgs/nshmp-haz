@@ -1,110 +1,92 @@
 %% nshmp-haz Ground Motion Model (GMM) explanatory script
 
 % =========================================================================
-% This script provides instruction on how to access the ground motion models
+% This script provides instruction on how to access ground motion models
 % implemented in the nshmp-haz library. The models are written in Java and
 % require little more than to be identified to Matlab to function properly.
+%
+% See the README for instructions on how to set up Matlab to use nshmp-haz.
 % =========================================================================
 
-% Set up:
-
-% (Required) Have the nshmp-haz project cloned somewhere local. The
-% instructions below that the project has also been compiled such
-% that a 'classes' directory exsists.
-
-% (Required) Have Matlab R2013B or higher; nshmp-sha codes target Java 7,
-% prior versions of Matlab use Java 6.
-
-% (Required) Due to the numerous outdated Java libraries included with
-% Matlab, one first needs save a 'javaclasspath.txt' file to the directory
-% specified by the 'prefdir' command, that contains the following two
-% lines (modify the path below for your system):
-%
-%     <before>
-%     /PathToGitProjects/nshmp-sha/lib/guava-16.0.1.jar
-%
-% This will add the google guava library to the static classpath, which
-% updates only when Matlab is restarted.
-
-% (Optional) This line is only necessary if models are being actively
-% modified and one wants to keep abreast of those changes in Matlab.
-clear java
-
-% (Required) Add the root of the nshmp-sha Java class heirarchy to the
-% Matlab dynamic classpath; modify the path below for your system (1):
-% javaaddpath('/PathToGitProjects/nshmp-sha/classes')
-javaaddpath('/Users/pmpowers/projects/git/nshmp-sha/classes')
-
-% (Optional) Import classes (2):
-import org.opensha.gmm.*
+% (Optional)
+% Import classes (or whole packages using wildcards) to reduce verbosity:
+import org.opensha2.gmm.*
 
 % =========================================================================
 % Single model ground motion calculation:
 
-% Set up a source object. These data are a source parameterization that
-% will satisfy all currently implemented ground motion models. Not all
-% models will use all values.
+% Set up an input object. These data are a source and site parameterization
+% that will satisfy all currently implemented ground motion models. Not all
+% models will use all parameters.
+
 Mw    =   6.5; % moment magnitude
 rJB   =   5.0; % Joyner-Boore distance
 rRup  =   5.1; % distance to closest point on rupture surface
-rX    =   5.1; % distance from source trace; hanging wall (+); foot-wall (-)
+rX    =   5.1; % distance from source trace; hanging (+); foot (-) wall
 dip   =  90.0; % in degrees
 width =  10.0; % in km
 zTop  =   1.0; % in km
 zHyp  =   6.0; % in km
-rake  =   0.0; % in dsegrees
+rake  =   0.0; % in degrees
 vs30  = 760.0; % in m/s
 vsInf =  true; % boolean
 z2p5  =   NaN; % in km; NaN triggers default basin depth model
 z1p0  =   NaN; % in km; NaN triggers default basin depth model
 
-source = GmmInput.create(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, ...
-	rake, vs30, vsInf, z2p5, z1p0);
+% At present, all parameters, whether required or not, must be set. This is
+% accomplished using a builder. While perhaps verbose, a builder ensures
+% that all parameters are, in fact, set and provides greater argument
+% specificity (i.e. it is very easy to supply out-of-order numeric
+% arguments when many are required).
+b = GmmInput.builder();
+b.mag(Mw);
+b.rJB(rJB);
+b.rRup(rRup);
+b.rX(rX); 
+b.dip(dip);
+b.width(width);
+b.zTop(zTop);
+b.zHyp(zHyp);
+b.rake(rake);
+b.vs30(vs30);
+b.vsInf(vsInf);
+b.z1p0(z1p0);
+b.z2p5(z2p5);
+gmmInput = b.build()
 
-% Set ground motion model. Ground motion model identifiers may by found in
-% the javadocs accompanying the java source.
+% However, a builder is reusable. Now that 'b' has been fully initialized,
+% single parameter can be updated and a new input object created. 
+b.mag(7.0);
+gmmInput = b.build()
+
+% As a shortcut to specifying all parameters, one can also start with a
+% fully initialized builder.
+b.withDefaults();
+gmmInput = b.build()
+
+% Set a ground motion model. Ground motion model identifiers may by found
+% in the javadocs accompanying the java source:
+% http://usgs.github.io/nshmp-haz/javadoc/org/opensha2/gmm/Gmm.html
 gmm = Gmm.ASK_14;
 
+% For information on which parameters a model requires and their
+% recommended ranges, use:
+gmm.constraints()
+
 % Set an intensity measure type. Ground motion modelIntensity measure
-% identifiers may by found in the javadocs accompanying the java source.
+% identifiers may by found in the javadocs accompanying the java source:
+% http://usgs.github.io/nshmp-haz/javadoc/org/opensha2/gmm/Imt.html
 imt = Imt.PGA;
 
-% Do a calculation. The MatUtil.calc(gmm, imt, source) method returns an
+% Do a calculation. The MatUtil.calc(gmm, imt, gmmInput) method returns an
 % array of [ln(median ground motion), sigma]
-calcResult = MatUtil.calc(gmm, imt, source)
+calcResult = MatUtil.calc(gmm, imt, gmmInput)
 
 % =========================================================================
 % Determinisitic response spectrum calculation:
 
-% The object returned by the MatUtil.spectrum(gmm, source) method may
-% conveniently be dumped into a struct.
-spectrumResult = struct(MatUtil.spectrum(gmm, source))
+% The object returned by the MatUtil.spectrum(gmm, gmmInput) method may
+% be dumped into a struct.
+spectrumResult = struct(MatUtil.spectrum(gmm, gmmInput))
 
 % =========================================================================
-% Notes:
-%
-%   1) This is the dynamic classpath and may be slower when making repeated
-%      calls to the models. Alternatively, this and other paths may be
-%      added to the 'javaclasspath.txt' file, however Matlab will have to
-%      be restarted to see any changes made to linked Java classes.
-%
-%   2) Java organizes code into packages; one can think of these as folders
-%      for the time being, however nested packages are separated with dots.
-%      Now that Matlab knows where to look for classes, calls to the
-%      classes themselves must include the full package declaration (e.g.
-%      org.opensha.gmm.GmmInput). To cut down on verbosity, one may
-%      'import' a specific class for use in a script:
-%
-%         import org.opensha.gmm.GmmInput
-%
-%      or import all the classes in a package using a wildcard:
-%
-%         import org.opensha.gmm.*
-%
-%      Note that if GmmInput is not imported above, then the subsequent
-%      source declaration would have to modified to:
-%
-%         source = org.opensha.gmm.GmmInput.create( ...
-% 
-% 
-
