@@ -11,7 +11,7 @@ import java.util.Set;
 public class MatUtil {
 
 	/**
-	 * Compute the median groiund motion and its standard deviation for a
+	 * Compute the median ground motion and its standard deviation for a
 	 * specified model, intensity measure type (Imt), and source
 	 * 
 	 * <p>{@code enum} types are identified in matlab as e.g. {@code Gmm$ASK_14}

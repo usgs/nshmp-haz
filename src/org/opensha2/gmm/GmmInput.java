@@ -31,6 +31,7 @@ import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.model.Distance;
 import org.opensha2.eq.model.Rupture;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -224,7 +225,7 @@ public class GmmInput {
 		/* returns the double value of interest for inlining */
 		private final double validateAndFlag(Field field, double value) {
 			int index = field.ordinal();
-			checkState(!built && !reset.get(index));
+			checkState(!built && !reset.get(index), "Field %s already set", field);
 			flags.set(index);
 			reset.set(index);
 			return value;
@@ -233,7 +234,7 @@ public class GmmInput {
 		/* returns the boolean value of interest for inlining */
 		private final boolean validateAndFlag(Field field, boolean value) {
 			int index = field.ordinal();
-			checkState(!built && !reset.get(index));
+			checkState(!built && !reset.get(index), "Field %s already set", field);
 			flags.set(index);
 			reset.set(index);
 			return value;
@@ -415,7 +416,7 @@ public class GmmInput {
 				"Vs30",
 				"Vs30",
 				"The average shear-wave velocity down to 30 meters, in kilometers per second",
-				Optional.of("m/s"),
+				Optional.of(VELOCITY_UNIT),
 				760.0),
 
 		VSINF(
@@ -473,25 +474,21 @@ public class GmmInput {
 	 * places for output.
 	 */
 	@Override public String toString() {
-		return createKeyValueMap().toString();
-	}
-
-	private Map<Field, Object> createKeyValueMap() {
-		Map<Field, Object> keyValueMap = Maps.newEnumMap(Field.class);
-		keyValueMap.put(MAG, String.format("%.2f", Mw));
-		keyValueMap.put(RJB, String.format("%.3f", rJB));
-		keyValueMap.put(RRUP, String.format("%.3f", rRup));
-		keyValueMap.put(RX, String.format("%.3f", rX));
-		keyValueMap.put(DIP, dip);
-		keyValueMap.put(WIDTH, String.format("%.3f", width));
-		keyValueMap.put(ZTOP, zTop);
-		keyValueMap.put(ZHYP, String.format("%.3f", zHyp));
-		keyValueMap.put(RAKE, rake);
-		keyValueMap.put(VS30, vs30);
-		keyValueMap.put(VSINF, vsInf);
-		keyValueMap.put(Z1P0, z1p0);
-		keyValueMap.put(Z2P5, z2p5);
-		return keyValueMap;
+		return MoreObjects.toStringHelper(this)
+		.add(MAG.toString(), String.format("%.2f", Mw))
+		.add(RJB.toString(), String.format("%.3f", rJB))
+		.add(RRUP.toString(), String.format("%.3f", rRup))
+		.add(RX.toString(), String.format("%.3f", rX))
+		.add(DIP.toString(), dip)
+		.add(WIDTH.toString(), String.format("%.3f", width))
+		.add(ZTOP.toString(), zTop)
+		.add(ZHYP.toString(), String.format("%.3f", zHyp))
+		.add(RAKE.toString(), rake)
+		.add(VS30.toString(), vs30)
+		.add(VSINF.toString(), vsInf)
+		.add(Z1P0.toString(), z1p0)
+		.add(Z2P5.toString(), z2p5)
+		.toString();
 	}
 
 	/**
