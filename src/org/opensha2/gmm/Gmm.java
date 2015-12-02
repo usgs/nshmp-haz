@@ -382,6 +382,13 @@ public enum Gmm {
 
 	// Other
 
+	/** @see Atkinson_2015 */
+	ATKINSON_15(
+			Atkinson_2015.class,
+			Atkinson_2015.NAME,
+			Atkinson_2015.COEFFS,
+			Atkinson_2015.CONSTRAINTS),
+			
 	/** @see SadighEtAl_1997 */
 	SADIGH_97(
 			SadighEtAl_1997.class,
@@ -619,6 +626,7 @@ public enum Gmm {
 		OTHER(
 				"Others",
 				ImmutableList.of(
+					ATKINSON_15,
 					AB_03_CASC_INTER,
 					MCVERRY_00_CRUSTAL,
 					MCVERRY_00_INTERFACE,
@@ -633,7 +641,7 @@ public enum Gmm {
 			this.name = name;
 			this.gmms = gmms;
 		}
-		
+
 		@Override public String toString() {
 			return name;
 		}
