@@ -3,6 +3,8 @@ package org.opensha2.calc;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.PI;
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
 import static org.opensha2.gmm.Imt.SA0P75;
@@ -106,7 +108,7 @@ public enum ExceedanceModel {
 	/*
 	 * This is messy for now; TODO need to figure out the best way to pass in
 	 * fixed sigmas. The peer models below simply set a value internally as
-	 * dicated by the test cases that use htese models.
+	 * dicated by the test cases that use these models.
 	 */
 	PEER_MIXTURE_REFERENCE {
 		@Override double exceedance(double μ, double σ, double n, Imt imt, double value) {
@@ -200,7 +202,8 @@ public enum ExceedanceModel {
 	 */
 	abstract XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence);
 
-	private static final double SQRT_2 = Math.sqrt(2);
+	private static final double SQRT_2 = sqrt(2);
+	private static final double SQRT_2PI = sqrt(2 * PI);
 
 	/*
 	 * Step function.
@@ -216,6 +219,10 @@ public enum ExceedanceModel {
 	 */
 	private static double ccdFn(double μ, double σ, double value) {
 		return (1.0 + erf((μ - value) / (σ * SQRT_2))) * 0.5;
+	}
+	
+	private static double probFn(double μ, double σ, double x) {
+		return exp((μ - x) * (x - μ) / (2 * σ * σ)) / (σ * SQRT_2PI);
 	}
 
 	/*
