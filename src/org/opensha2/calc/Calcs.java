@@ -102,7 +102,7 @@ public class Calcs {
 		checkNotNull(hazard);
 		checkInRange(rpRange, "Return period", returnPeriod);
 
-		return Deaggregation.create(hazard, returnPeriod);
+		return Deaggregation.atReturnPeriod(hazard, returnPeriod);
 	}
 
 	/**
