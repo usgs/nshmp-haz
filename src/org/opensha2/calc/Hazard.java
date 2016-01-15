@@ -34,22 +34,20 @@ import com.google.common.collect.SetMultimap;
  */
 public final class Hazard {
 
-	// TODO refactor to just Hazard because that's what it is
-	
-	final SetMultimap<SourceType, HazardCurveSet> sourceSetMap; // TODO refactor to sourceSetCurves
+	final SetMultimap<SourceType, HazardCurveSet> sourceSetCurves;
 	final Map<Imt, XySequence> totalCurves;
 	final HazardModel model;
 	final Site site;
 	final CalcConfig config;
 
 	private Hazard(
-			SetMultimap<SourceType, HazardCurveSet> sourceSetMap,
+			SetMultimap<SourceType, HazardCurveSet> sourceSetCurves,
 			Map<Imt, XySequence> totalCurves,
 			HazardModel model,
 			Site site,
 			CalcConfig config) {
 
-		this.sourceSetMap = sourceSetMap;
+		this.sourceSetCurves = sourceSetCurves;
 		this.totalCurves = totalCurves;
 		this.model = model;
 		this.site = site;
@@ -60,9 +58,9 @@ public final class Hazard {
 		String LF = StandardSystemProperty.LINE_SEPARATOR.value();
 		StringBuilder sb = new StringBuilder("HazardResult:");
 		sb.append(LF);
-		for (SourceType type : EnumSet.copyOf(sourceSetMap.keySet())) {
+		for (SourceType type : EnumSet.copyOf(sourceSetCurves.keySet())) {
 			sb.append(type).append("SourceSet:").append(LF);
-			for (HazardCurveSet curveSet : sourceSetMap.get(type)) {
+			for (HazardCurveSet curveSet : sourceSetCurves.get(type)) {
 				SourceSet<? extends Source> ss = curveSet.sourceSet;
 				sb.append("  ").append(ss);
 				sb.append("Used: ");
@@ -139,7 +137,7 @@ public final class Hazard {
 		private Site site;
 		private CalcConfig config;
 
-		private ImmutableSetMultimap.Builder<SourceType, HazardCurveSet> resultMapBuilder;
+		private ImmutableSetMultimap.Builder<SourceType, HazardCurveSet> curveMapBuilder;
 		private Map<Imt, XySequence> totalCurves;
 
 		private Builder(CalcConfig config) {
@@ -148,7 +146,7 @@ public final class Hazard {
 			for (Entry<Imt, XySequence> entry : config.logModelCurves.entrySet()) {
 				totalCurves.put(entry.getKey(), emptyCopyOf(entry.getValue()));
 			}
-			resultMapBuilder = ImmutableSetMultimap.builder();
+			curveMapBuilder = ImmutableSetMultimap.builder();
 		}
 
 		Builder site(Site site) {
@@ -164,7 +162,7 @@ public final class Hazard {
 		}
 
 		Builder addCurveSet(HazardCurveSet curveSet) {
-			resultMapBuilder.put(curveSet.sourceSet.type(), curveSet);
+			curveMapBuilder.put(curveSet.sourceSet.type(), curveSet);
 			for (Entry<Imt, XySequence> entry : curveSet.totalCurves.entrySet()) {
 				totalCurves.get(entry.getKey()).add(entry.getValue());
 			}
@@ -180,7 +178,7 @@ public final class Hazard {
 		Hazard build() {
 			validateState(ID);
 			return new Hazard(
-				resultMapBuilder.build(),
+				curveMapBuilder.build(),
 				Maps.immutableEnumMap(totalCurves),
 				model,
 				site,

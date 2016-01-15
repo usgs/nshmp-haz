@@ -2,7 +2,6 @@ package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
 
@@ -77,8 +76,7 @@ class ImmutableXySequence extends XySequence {
 	}
 
 	/*
-	 * The common use case is for only the x-value hash codes to be compared as
-	 * a result of having used a copyOf(XySequence) constructor.
+	 * Check the x-value object references; if mismatched, compare values.
 	 */
 	ImmutableXySequence validateSequence(ImmutableXySequence that) {
 		checkArgument(this.xs.hashCode() == that.xs.hashCode() ||

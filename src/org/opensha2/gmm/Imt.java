@@ -61,9 +61,6 @@ public enum Imt {
 	SA7P5,
 	SA10P0;
 
-	/*
-	 */
-
 	@Override public String toString() {
 		switch (this) {
 			case PGA:
@@ -75,11 +72,11 @@ public enum Imt {
 			case AI:
 				return "Arias intensity";
 			case ASI:
-				return "Acceleration spectral intesnity";
+				return "Acceleration spectrum intensity";
 			case DSI:
-				return "Displacement ipectral intensity";
+				return "Displacement spectrum intensity";
 			case SI:
-				return "Spectral intensity";
+				return "Spectrum intensity";
 			case CAV:
 				return "Cumulative absolute velocity";
 			case DS575:
@@ -88,6 +85,36 @@ public enum Imt {
 				return "Significant duration 5-95%";
 			default:
 				return period() + " sec spectral acceleration";
+		}
+	}
+	
+	/**
+	 * Return the units in which this {@code Imt} is measured.
+	 */
+	public String units() {
+		switch (this) {
+			case PGA:
+				return "g";
+			case PGV:
+				return "cm/s";
+			case PGD:
+				return "cm";
+			case AI:
+				return "m/s";
+			case ASI:
+				return "g⋅s";
+			case DSI:
+				return "cm⋅s";
+			case SI:
+				return "cm⋅s/s";
+			case CAV:
+				return "g⋅s";
+			case DS575:
+				return "s";
+			case DS595:
+				return "s";
+			default:
+				return "g";
 		}
 	}
 

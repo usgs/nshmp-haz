@@ -1,9 +1,6 @@
 package org.opensha2.data;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opensha2.data.Data.add;
 import static org.opensha2.data.Data.flip;
 import static org.opensha2.data.Data.uncheckedMultiply;
 

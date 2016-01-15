@@ -121,12 +121,12 @@ public class Results {
 		}
 	}
 
-	public static Map<Imt, Map<SourceType, XySequence>> totalsByType(Hazard result) {
+	public static Map<Imt, Map<SourceType, XySequence>> totalsByType(Hazard hazard) {
 
 		ImmutableMap.Builder<Imt, Map<SourceType, XySequence>> imtMapBuilder =
 			ImmutableMap.builder();
 
-		Map<Imt, XySequence> curves = result.curves();
+		Map<Imt, XySequence> curves = hazard.curves();
 		Set<Imt> imts = curves.keySet();
 
 		for (Imt imt : imts) {
@@ -134,7 +134,7 @@ public class Results {
 			XySequence modelCurve = emptyCopyOf(curves.get(imt));
 			Map<SourceType, XySequence> typeCurves = new EnumMap<>(SourceType.class);
 
-			Multimap<SourceType, HazardCurveSet> curveSets = result.sourceSetMap;
+			Multimap<SourceType, HazardCurveSet> curveSets = hazard.sourceSetCurves;
 			for (SourceType type : curveSets.keySet()) {
 				XySequence typeCurve = copyOf(modelCurve);
 				for (HazardCurveSet curveSet : curveSets.get(type)) {

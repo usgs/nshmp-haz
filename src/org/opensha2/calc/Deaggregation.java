@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.util.TextUtils.format;
 import static org.opensha2.data.Data.multiply;
 import static com.google.common.primitives.Doubles.toArray;
 
@@ -16,7 +17,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.opensha2.calc.CalcConfig.DeaggData;
-import org.opensha2.calc.Deaggregation.Dataset.Builder;
 import org.opensha2.data.Data;
 import org.opensha2.data.DataTable;
 import org.opensha2.data.DataTables;
@@ -31,6 +31,7 @@ import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -39,137 +40,272 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 
 /**
- * For one (or each Imt) One Deagg per source set and ground motion model these
- * are then combined for total deagg and also combined across each unique gmm
+ * Hazard deaggregation. Given a {@link Hazard} result, this class will
+ * deaggregate the results at all spectral periods supplied in the result at an
+ * intensity measure level or return period of interest.
  * 
  * @author Peter Powers
  */
 public final class Deaggregation {
 
-	// TODO get us from CalcConfig
-	private static final ExceedanceModel EXCEEDANCE = ExceedanceModel.TRUNCATION_UPPER_ONLY;
-	private static final double trunc = 3.0;
-
 	/*
-	 * TODO should we preflight against model; specifically, a hazard results
-	 * will include sources out to whatever distance is specified by gmm.xml and
-	 * mfds will be whatever has been specified; does it make sense to disallow
-	 * deaggregation if M and R exceed that which the deagg is capable of
-	 * handling?
+	 * Developer notes and TODO
+	 * -------------------------------------------------------------------------
+	 * Consider auto-scaling of results (dataset bounds).
+	 * -------------------------------------------------------------------------
+	 * Consider warnings if config does not span source set range.
+	 * -------------------------------------------------------------------------
+	 * Deaggregate on probability of occurrence instead of exceedance.
+	 * -------------------------------------------------------------------------
+	 * Revisit precision issues associated with integre based return period;
+	 * 2%in50 years os really 0.00040405414, not 1/2475 = 0.0004040404
 	 * 
-	 * really should have auto deagg scaling; how best to prescan contributing
-	 * sources? Could loop source set curves, determine if total rate for ss is
-	 * greater than some min cutoff and use remaining source set s to set r and
-	 * m binning - also set some minimum? although this could be set on client
 	 * 
-	 * ss should be able to indicate a magnitude range; r range comes from gmms
+	 * -------------------------------------------------------------------------
+	 * One of the difficulties with deaggregation is deciding how to specify
+	 * magnitude and distance ranges, and respective discretizations, over which
+	 * to deaggregate, given the broad ranges of distances and magnitudes
+	 * supported by various models (e.g. 300km in the WUS NSHMP vs 1000km in the
+	 * CEUS). Invariably, situations will arise where some sources are outside a
+	 * user-specified range and the sum of contributions in a deaggregation data
+	 * matrix will not equal the target rate specified at the outset of a
+	 * calculation. One could query the model(s) being used (set broad limits)
+	 * or create lists of sources and their contributions in advance before
+	 * building deaggregation datasets (set calculation specific limits). The
+	 * former may make sense as a default setting in the absence of any user
+	 * specified settings, the latter complicates the code considerably.
 	 * 
-	 * I think we should screen contributing source sets and log warning if
-	 * specified deagg config does not span hazard result range
+	 * For the time being we require user-specified ranges and encourage high
+	 * resolution deaggregation data bins that can be preserved if the
+	 * contributing sources span only a small part of a deaggregation result
+	 * matrix. If the deaggregation result matrix is heavily populated, bins
+	 * could be consolidated prior to output.
 	 * 
-	 * Deagg is going to operate on all relevant sources, if a source is out of
-	 * range, that's ok, contributing source lists will still have the total
-	 * contribution deagg limits are strange and really should just be used to
-	 * limit plot dimensions In addition to logging, results should come with a
-	 * warning
+	 * For data outside the defined ranges, we track the 'un-binned' or residual
+	 * rate. This is needed to compute mean r, m, and ε.
+	 * 
+	 * Note that in a webservice environment, only relevant data will be
+	 * returned (zero-contribution bins are omitted) and the client will render
+	 * plots based on the data supplied, not based on the ranges specified for
+	 * the calculation itelf.
+	 * -------------------------------------------------------------------------
+	 * Issues related to deaggreagtion targets.
+	 * 
+	 * Because hazard is computed at specific intensity measure levels, only
+	 * when a deaggregation is computed at one of those levels will the
+	 * contributions of the relevant sources equal the target rate specified by
+	 * the total mean hazard curve. Because of the convexity of the hazard curve
+	 * in log space, the 'true' total as derived from the relevant sources will
+	 * be slightly higher.
 	 */
 
-	private final Hazard hazard;
-	private final Dataset model;
-	private final double returnPeriod;
-	private final Map<Imt, Deagg> deaggs;
+	private final Map<Imt, ImtDeagg> deaggs;
 
-	private Deaggregation(
-			Hazard hazard,
-			Dataset model,
-			double returnPeriod,
-			Map<Imt, Deagg> deaggs) {
-
-		this.hazard = hazard;
-		this.model = model;
-		this.returnPeriod = returnPeriod;
+	private Deaggregation(Map<Imt, ImtDeagg> deaggs) {
 		this.deaggs = deaggs;
 	}
 
-	public Exporter export(Imt imt) {
-		return new Exporter(deaggs.get(imt).totalDataset, "Total");
+	/**
+	 * Deaggregate {@code hazard} at the intensity measure level corresponding
+	 * to the supplied {@code returnPeriod}.
+	 * 
+	 * @param hazard to deaggregate.
+	 * @param returnPeriod at which to deaggregate {@code hazard}
+	 */
+	public static Deaggregation atReturnPeriod(Hazard hazard, double returnPeriod) {
+		Map<Imt, ImtDeagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
+		Config.Builder cb = Config.builder(hazard);
+		double rate = 1.0 / returnPeriod;
+
+		for (Entry<Imt, XySequence> entry : hazard.totalCurves.entrySet()) {
+			Imt imt = entry.getKey();
+			double iml = IML_INTERPOLATER.findX(entry.getValue(), rate);
+			Config config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
+			System.out.println(config);
+			ImtDeagg imtDeagg = ImtDeagg.create(hazard, config);
+			imtDeaggMap.put(imt, imtDeagg);
+		}
+
+		return new Deaggregation(Maps.immutableEnumMap(imtDeaggMap));
 	}
 
-	public Exporter export(Imt imt, Gmm gmm) {
-		return new Exporter(deaggs.get(imt).gmmDatasets.get(gmm), gmm.toString());
-	}
-
-	// all HazardResult curves are in x-log space already
-	private static final Interpolator IML_INTERPOLATE = Interpolator.builder()
+	/* Hazard curves are already in log-x space. */
+	private static final Interpolator IML_INTERPOLATER = Interpolator.builder()
 		.logy()
 		.decreasingX()
 		.build();
 
-	// TODO return period is problematic if defined by an integer
-	// number of years; for instance we'll not get the true 2%in50
-	// for a return period of 2475, or whatever other, rate recovered
-	public static Deaggregation create(Hazard hazard, double returnPeriod) {
+	/**
+	 * Deaggregate {@code hazard} at the supplied intensity measure level.
+	 *
+	 * @param hazard to deaggregate.
+	 * @param iml intensity measure level at which to deaggregate {@code hazard}
+	 */
+	public static Deaggregation atIml(Hazard hazard, double iml) {
 
-		Map<Imt, Deagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
-		Dataset model = Dataset.builder(hazard.config).build();
+		Map<Imt, ImtDeagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
+		Config.Builder cb = Config.builder(hazard);
 
 		for (Entry<Imt, XySequence> entry : hazard.totalCurves.entrySet()) {
 			Imt imt = entry.getKey();
-			double rate = 1.0 / returnPeriod;
-			double iml = IML_INTERPOLATE.findX(entry.getValue(), rate);
-
-			Deagg deagg = new Deagg(hazard, model, imt, rate, iml);
-			imtDeaggMap.put(imt, deagg);
+			double rate = RATE_INTERPOLATER.findY(entry.getValue(), iml);
+			double returnPeriod = 1.0 / rate;
+			Config config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
+			ImtDeagg imtDeagg = ImtDeagg.create(hazard, config);
+			imtDeaggMap.put(imt, imtDeagg);
 		}
 
-		return new Deaggregation(
-			hazard,
-			model,
-			returnPeriod,
-			Maps.immutableEnumMap(imtDeaggMap));
+		return new Deaggregation(Maps.immutableEnumMap(imtDeaggMap));
 	}
 
-	// TODO need to provide string summary
-	@Override public String toString() {
-		// Entry<Imt, Deagg> entry = deaggs.entrySet().iterator().next();
-		StringBuilder sb = new StringBuilder();
-		for (Entry<Imt, Deagg> entry : deaggs.entrySet()) {
-			sb.append("Deagg for IMT: ").append(entry.getKey()).append(NEWLINE);
-			sb.append(entry.getValue());
+	/* Hazard curves are already in log-x space. */
+	private static final Interpolator RATE_INTERPOLATER = Interpolator.builder()
+		.logy()
+		.build();
+
+	/*
+	 * A deaggregation configuration container. This class provides a reusable
+	 * builder that comes in handly when iterating over IMTs and only the return
+	 * period and iml require updating. A unique config is required for each
+	 * deaggregation performed.
+	 * 
+	 * Note that this is a class of convenience and assumes that return period
+	 * and IML are in agreement for the IMT of interest, i.e. one or the other
+	 * has been correctly derived from the total curve in a hazard object.
+	 */
+	static class Config {
+
+		final Imt imt;
+		final Dataset model;
+		final double iml;
+		final double rate;
+		final double returnPeriod;
+		final ExceedanceModel probabilityModel;
+		final double truncation;
+
+		private Config(
+				Imt imt,
+				Dataset model,
+				double iml,
+				double rate,
+				double returnPeriod,
+				ExceedanceModel probabilityModel,
+				double truncation) {
+
+			this.imt = imt;
+			this.model = model;
+			this.iml = iml;
+			this.rate = rate;
+			this.returnPeriod = returnPeriod;
+			this.probabilityModel = probabilityModel;
+			this.truncation = truncation;
 		}
-		return sb.toString();
+
+		@Override public String toString() {
+			return new StringBuilder("Deagg config:")
+				.append(format("imt")).append(imt.name()).append(" [").append(imt).append("]")
+				.append(format("iml")).append(iml).append(" ").append(imt.units())
+				.append(format("rate")).append(rate).append(" yr⁻¹")
+				.append(format("returnPeriod")).append(returnPeriod).append(" yrs")
+				.append(format("probabilityModel")).append(probabilityModel)
+				.append(" [trunc = ").append(truncation).append("]")
+				.toString();
+		}
+
+		static Builder builder(Hazard hazard) {
+			return new Builder()
+				.dataModel(
+					Dataset.builder(hazard.config).build())
+				.probabilityModel(
+					hazard.config.exceedanceModel,
+					hazard.config.truncationLevel);
+		}
+
+		/* Reusable builder */
+		static class Builder {
+
+			private Imt imt;
+			private Dataset model;
+			private Double iml;
+			private Double rate;
+			private Double returnPeriod;
+			private ExceedanceModel probabilityModel;
+			private Double truncation;
+
+			Builder imt(Imt imt) {
+				this.imt = imt;
+				return this;
+			}
+
+			Builder dataModel(Dataset model) {
+				this.model = model;
+				return this;
+			}
+
+			/*
+			 * Supply the target iml along with corresponding annual rate and
+			 * return period for the IMT of interest.
+			 */
+			Builder iml(double iml, double rate, double returnPeriod) {
+				this.iml = iml;
+				this.rate = rate;
+				this.returnPeriod = returnPeriod;
+				return this;
+			}
+
+			Builder probabilityModel(ExceedanceModel probabilityModel, double truncation) {
+				this.probabilityModel = probabilityModel;
+				this.truncation = truncation;
+				return this;
+			}
+
+			Config build() {
+				return new Config(
+					checkNotNull(imt),
+					checkNotNull(model),
+					checkNotNull(iml),
+					checkNotNull(rate),
+					checkNotNull(returnPeriod),
+					checkNotNull(probabilityModel),
+					checkNotNull(truncation));
+			}
+		}
+
 	}
 
 	/* One per Imt in supplied Hazard. */
-	static class Deagg {
+	static class ImtDeagg {
 
-		// final HazardResult hazard;
-		// final Imt imt;
-
+		final Config config;
 		final Dataset totalDataset;
-
-		/* Reduction to Gmms. */
 		final Map<Gmm, Dataset> gmmDatasets;
 
-		Deagg(Hazard hazard, Dataset model, Imt imt, double rate, double iml) {
-			// this.hazard = hazard;
-			// this.imt = imt;
+		static ImtDeagg create(Hazard hazard, Config config) {
+			return new ImtDeagg(hazard, config);
+		}
+
+		private ImtDeagg(Hazard hazard, Config config) {
+			this.config = config;
 
 			ListMultimap<Gmm, Dataset> datasets = MultimapBuilder
 				.enumKeys(Gmm.class)
 				.arrayListValues()
 				.build();
 
-			for (HazardCurveSet curveSet : hazard.sourceSetMap.values()) {
+			for (HazardCurveSet curveSet : hazard.sourceSetCurves.values()) {
 
-				Map<Gmm, Dataset> sourceSetDatasets = Deaggregator.of(curveSet)
-					.withDataModel(model)
-					.forImt(imt)
-					.atIml(rate, iml)
-					.deaggregate();
+				XySequence sourceSetCurve = curveSet.totalCurves.get(config.imt);
+				double sourceSetRate = RATE_INTERPOLATER.findY(sourceSetCurve, config.iml);
+				if (Double.isNaN(sourceSetRate) || sourceSetRate == 0.0) {
+					System.out.println("Skipping: " + curveSet.sourceSet.name());
+					continue;
+				}
+
+				Map<Gmm, Dataset> sourceSetDatasets = Deaggregator.deaggregate(curveSet, config);
 
 				/*
 				 * Each dataset (above) contains the contributing sources (rate
@@ -177,7 +313,7 @@ public final class Deaggregation {
 				 * 
 				 * barWeight = sourceSet rate
 				 */
-
+				// TODO clean
 				// for (Entry<Gmm, Dataset> entry :
 				// sourceSetDatasets.entrySet()) {
 				// Dataset d = entry.getValue();
@@ -191,6 +327,8 @@ public final class Deaggregation {
 				// System.out.println(d.barWeight + " " + srcSetRate);
 				//
 				// }
+
+				// TODO run post-deagg rate validation; see toString()
 
 				datasets.putAll(Multimaps.forMap(sourceSetDatasets));
 			}
@@ -208,40 +346,88 @@ public final class Deaggregation {
 			// }
 		}
 
+		private static final Function<Collection<Dataset>, Dataset> DATASET_CONSOLIDATOR =
+			new Function<Collection<Dataset>, Dataset>() {
+				@Override public Dataset apply(Collection<Dataset> datasets) {
+					Dataset.Builder builder = Dataset.builder(datasets.iterator().next());
+					for (Dataset dataset : datasets) {
+						builder.add(dataset);
+					}
+					return builder.build();
+				}
+			};
+
 		@Override public String toString() {
 			StringBuilder sb = new StringBuilder();
-			// int index = 0;
-			double totalRate = 0.0;
+
+			double sourceSetRate = Data.sum(totalDataset.sourceSets.values());
+			sb.append(NEWLINE);
+			sb.append("Rate from source sets").append(NEWLINE);
+			sb.append("  Total:    " + sourceSetRate).append(NEWLINE);
+
+			double binnedSourceRate = 0.0;
+			double residualSourceRate = 0.0;
 			for (SourceContribution source : totalDataset.sources) {
-				// sb.append(index++).append(":  ").append(source).append(NEWLINE);
-				totalRate += (source.rate + source.skipRate);
+				binnedSourceRate += source.rate;
+				residualSourceRate += source.skipRate;
 			}
-			sb.append("TOTAL via sources: " + totalRate).append(NEWLINE);
-			sb.append("TOTAL via barWt  : " + totalDataset.barWeight).append(NEWLINE);
 			sb.append(NEWLINE);
-			sb.append(totalDataset.rmε);
+			sb.append("Rate from sources").append(NEWLINE);
+			sb.append("  Binned:   " + binnedSourceRate).append(NEWLINE);
+			sb.append("  Residual: " + residualSourceRate).append(NEWLINE);
+			double totalSourceRate = binnedSourceRate + residualSourceRate;
+			sb.append("  Total:    " + totalSourceRate).append(NEWLINE);
+
+			double binnedDeaggRate = totalDataset.barWeight;
+			double residualDeaggRate = totalDataset.residualWeight;
 			sb.append(NEWLINE);
+			sb.append("Rate from deagg data").append(NEWLINE);
+			sb.append("  Binned:   " + binnedDeaggRate).append(NEWLINE);
+			sb.append("  Residual: " + residualDeaggRate).append(NEWLINE);
+			double totalDeaggRate = binnedDeaggRate + residualDeaggRate;
+			sb.append("  Total:    " + totalDeaggRate).append(NEWLINE);
+
+			sb.append(NEWLINE);
+
+			/* SourceSet map ordering by descending contribution */
+			Ordering<Entry<SourceSet<? extends Source>, Double>> sourceSetOrdering = Ordering
+				.natural()
+				.onResultOf(
+					new Function<Entry<SourceSet<? extends Source>, Double>, Double>() {
+						@Override public Double apply(
+								Entry<SourceSet<? extends Source>, Double> entry) {
+							return entry.getValue();
+						}
+					})
+				.reverse();
+
+			Ordering<SourceSet<? extends Source>> keyOrdering = Ordering.natural()
+					.onResultOf(Functions.forMap(totalDataset.sourceSets))
+					.reverse();
+
+			Set<SourceSet<? extends Source>> keys = totalDataset.sourceSets.keySet();
+			for (SourceSet<? extends Source> sourceSet : keyOrdering.immutableSortedCopy(keys)) {
+				double contribution = totalDataset.sourceSets.get(sourceSet);
+				sb.append(sourceSet);
+				sb.append("Contrib: ").append(contribution);
+				sb.append(NEWLINE);
+				// sb.append(" Id: ").append(padEnd(Integer.toString(sourceSet.id()),
+				// 8, ' '));
+				// sb.append("Name: ").append(padEnd(name(), 38, ' '));
+				// sb.append("Size: ").append(padEnd(Integer.toString(size()),
+				// 8, ' '));
+				// sb.append("Weight: ").append(padEnd(Double.toString(weight),
+				// 12, ' '));
+			}
+
+			// sb.append(totalDataset.sourceSets).append(NEWLINE).append(NEWLINE);
+			// sb.append(totalDataset.sources).append(NEWLINE).append(NEWLINE);
+			// sb.append(NEWLINE);
+			// sb.append(totalDataset.rmε);
+			// sb.append(NEWLINE);
 			return sb.toString();
 		}
-
 	}
-
-	private static final Function<Collection<Dataset>, Dataset> DATASET_CONSOLIDATOR =
-		new Function<Collection<Dataset>, Dataset>() {
-			@Override public Dataset apply(Collection<Dataset> datasets) {
-				Dataset.Builder builder = Dataset.builder(datasets.iterator().next());
-				for (Dataset dataset : datasets) {
-					builder.add(dataset);
-				}
-				return builder.build();
-			}
-		};
-
-	/*
-	 * TODO track and report ranked source set contributions TODO track and
-	 * report ranked sources; may have source with same name in different
-	 * sourceSets
-	 */
 
 	// do we want to track the relative location in each distance bin:
 	// i.e. the bin plots at the contribution weighted distance
@@ -252,12 +438,33 @@ public final class Deaggregation {
 	// .maximumSize(20)
 	// .create();
 
+	@Deprecated
+	static class SourceSetContribution implements Comparable<SourceSetContribution> {
+		final SourceSet sourceSet;
+		final double rate;
+
+		private SourceSetContribution(SourceSet sourceSet, double rate) {
+			this.sourceSet = sourceSet;
+			this.rate = rate;
+		}
+
+		@Override public int compareTo(SourceSetContribution other) {
+			return Double.compare(rate, other.rate);
+		}
+
+	}
+
 	/* Wrapper class for a Source and it's contribution to hazard. */
 	static class SourceContribution implements Comparable<SourceContribution> {
 
 		// TODO need better way to identify source
 		// point source are created on the fly so they would need to be
 		// compared/summed by location
+
+		// TODO rename skip to residual
+		// TODO track total, or just sum as necessary
+		// TODO are ther einstances where part of gr source falls outside deagg
+		// ranges?
 
 		final String source;
 		final double rate;
@@ -283,39 +490,38 @@ public final class Deaggregation {
 		}
 	}
 
-	/* Builder pattern; one per source set. */
+	/* One deaggregator per source set. */
 	private static class Deaggregator {
 
-		private final HazardCurveSet hazard;
+		private final HazardCurveSet curves;
 		private final SourceSet<? extends Source> sources;
 		private final GmmSet gmmSet;
 
-		/*
-		 * Empty 'model' is used to initialize all builders; also used for
-		 * distance and magnitude index lookups in processSource()
-		 */
-		private Dataset model;
-		private Map<Gmm, Dataset.Builder> datasetBuilders;
+		private final Imt imt;
+		private final Dataset model;
+		private final double iml;
+		private final ExceedanceModel probModel;
+		private final double trunc;
 
-		private Imt imt;
-		private Double rate;
-		private Double iml;
+		private final Map<Gmm, Dataset.Builder> datasetBuilders;
 
-		private Deaggregator(HazardCurveSet hazard) {
-			this.hazard = hazard;
-			this.sources = hazard.sourceSet;
+		private Deaggregator(HazardCurveSet curves, Config config) {
+			this.curves = curves;
+			this.sources = curves.sourceSet;
 			this.gmmSet = sources.groundMotionModels();
+
+			this.imt = config.imt;
+			this.model = config.model;
+			this.iml = config.iml;
+			this.probModel = config.probabilityModel;
+			this.trunc = config.truncation;
+
+			this.datasetBuilders = initDataBuilders(gmmSet.gmms(), config.model);
 		}
 
-		/* Create a new deaggregator. */
-		static Deaggregator of(HazardCurveSet hazard) {
-			return new Deaggregator(checkNotNull(hazard));
-		}
-
-		Deaggregator withDataModel(Dataset model) {
-			this.model = model;
-			this.datasetBuilders = initDataBuilders(gmmSet.gmms(), model);
-			return this;
+		private static Map<Gmm, Dataset> deaggregate(HazardCurveSet curves, Config config) {
+			Deaggregator deaggregator = new Deaggregator(curves, config);
+			return deaggregator.deaggregate();
 		}
 
 		private static Map<Gmm, Dataset.Builder> initDataBuilders(Set<Gmm> gmms, Dataset model) {
@@ -326,43 +532,19 @@ public final class Deaggregation {
 			return map;
 		}
 
-		Deaggregator forImt(Imt imt) {
-			// TODO check valid imt agains HCS
-			this.imt = imt;
-			return this;
-		}
-
-		Deaggregator atIml(double rate, double iml) {
-			// TODO check valid iml agains curve x-range for imt??
-			this.rate = rate;
-			this.iml = iml;
-			return this;
-		}
-
-		Map<Gmm, Dataset> deaggregate() {
-			checkState();
-
-			for (GroundMotions gms : hazard.hazardGroundMotionsList) {
+		private Map<Gmm, Dataset> deaggregate() {
+			for (GroundMotions gms : curves.hazardGroundMotionsList) {
 				InputList inputs = gms.inputs;
 				double minDistance = inputs.minDistance;
 				Map<Gmm, List<Double>> μLists = gms.means.get(imt);
 				Map<Gmm, List<Double>> σLists = gms.sigmas.get(imt);
 				Map<Gmm, Double> gmms = gmmSet.gmmWeightMap(minDistance);
-				processSource(inputs, gmms, μLists, σLists, EXCEEDANCE);
+				processSource(inputs, gmms, μLists, σLists);
 			}
-
 			for (Dataset.Builder builder : datasetBuilders.values()) {
 				builder.sourceSet(sources);
 			}
-
 			return createDataMap();
-		}
-
-		private void checkState() {
-			String clazz = getClass().getSimpleName();
-			checkNotNull(model, "%s: data model not set", clazz);
-			checkNotNull(imt, "%s: IMT not set", clazz);
-			checkNotNull(iml, "%s: target IML not set", clazz);
 		}
 
 		private Map<Gmm, Dataset> createDataMap() {
@@ -370,7 +552,7 @@ public final class Deaggregation {
 				Maps.transformValues(
 					datasetBuilders,
 					new Function<Dataset.Builder, Dataset>() {
-						@Override public Dataset apply(Builder builder) {
+						@Override public Dataset apply(Dataset.Builder builder) {
 							return builder.build();
 						}
 					}));
@@ -380,8 +562,7 @@ public final class Deaggregation {
 				InputList inputs,
 				Map<Gmm, Double> gmms,
 				Map<Gmm, List<Double>> μLists,
-				Map<Gmm, List<Double>> σLists,
-				ExceedanceModel exceedanceModel) {
+				Map<Gmm, List<Double>> σLists) {
 
 			/* Local EnumSet based keys. */
 			final Set<Gmm> gmmKeys = EnumSet.copyOf(gmms.keySet());
@@ -409,17 +590,15 @@ public final class Deaggregation {
 					double σ = σLists.get(gmm).get(i);
 					double ε = epsilon(μ, σ, iml);
 
-					double probAtIml = exceedanceModel.exceedance(μ, σ, trunc, imt, iml);
+					double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
 					double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
 
 					if (skipRupture) {
 						gmmSkipRates.put(gmm, gmmSkipRates.get(gmm) + rate);
+						datasetBuilders.get(gmm).addResidual(rate);
 						continue;
 					}
 					gmmSourceRates.put(gmm, gmmSourceRates.get(gmm) + rate);
-
-					// System.out.println(μ + " " + σ + " " + iml);
-					// System.out.println("ε: " + ε);
 					int εIndex = model.epsilonIndex(ε);
 
 					datasetBuilders.get(gmm).add(
@@ -437,7 +616,6 @@ public final class Deaggregation {
 					gmmSkipRates.get(gmm));
 				datasetBuilders.get(gmm).add(source);
 			}
-
 		}
 
 		private static Map<Gmm, Double> createRateMap(Set<Gmm> gmms) {
@@ -447,15 +625,30 @@ public final class Deaggregation {
 			}
 			return rateMap;
 		}
-
 	}
 
 	private static double epsilon(double μ, double σ, double iml) {
 		return (μ - iml) / σ;
 	}
 
-	private static final Range<Double> rRange = Range.closed(0.0, 1000.0);
-	private static final Range<Double> εRange = Range.closed(-3.0, 3.0);
+	@Override public String toString() {
+		// Entry<Imt, Deagg> entry = deaggs.entrySet().iterator().next();
+		StringBuilder sb = new StringBuilder();
+		for (Entry<Imt, ImtDeagg> entry : deaggs.entrySet()) {
+			sb.append("Deagg for IMT: ").append(entry.getKey()).append(NEWLINE);
+			sb.append(entry.getValue());
+		}
+		return sb.toString();
+	}
+
+	public Exporter export(Imt imt) {
+		System.out.println(this);
+		return new Exporter(deaggs.get(imt).totalDataset, "Total");
+	}
+
+	public Exporter export(Imt imt, Gmm gmm) {
+		return new Exporter(deaggs.get(imt).gmmDatasets.get(gmm), gmm.toString());
+	}
 
 	public static class Exporter {
 
@@ -525,11 +718,11 @@ public final class Deaggregation {
 			this.summary = ImmutableList.of(
 				element("Deaggregation targets", true, ImmutableList.of(
 					item("Return period", 2475, "yrs"),
-					item("Exceedance rate", 4.0404e-4, "yrs⁻¹"),
+					item("Exceedance rate", 4.0404e-4, "yr⁻¹"),
 					item("Exceedance IML", 0.6085, "g"))),
 				element("Recovered targets", false, ImmutableList.of(
 					item("Return period", 2521, "yrs"),
-					item("Exceedance rate", 3.9315e-4, "yrs⁻¹"),
+					item("Exceedance rate", 3.9315e-4, "yr⁻¹"),
 					item("Exceedance IML", 0.6085, "g"))),
 				element("Mean", true, ImmutableList.of(
 					item("r", 11.2, "km"),
@@ -583,9 +776,16 @@ public final class Deaggregation {
 
 	}
 
+	private static final Range<Double> rRange = Range.closed(0.0, 1000.0);
+	private static final Range<Double> εRange = Range.closed(-3.0, 3.0);
+
 	/*
 	 * Deaggregation dataset that stores deaggregation results of individual
 	 * SourceSets and Gmms. Datasets may be recombined via add().
+	 * 
+	 * Binned deaggregation data and summary statistics are commonly weighted by
+	 * the rate of the contributing sources so the term 'weight' in a dataset is
+	 * synonymous with rate or a rate sum.
 	 */
 	static class Dataset {
 
@@ -597,10 +797,15 @@ public final class Deaggregation {
 		/* Total rate for a dataset and summed weight for *Bar fields */
 		private final double barWeight;
 
-		/* Weighted r and m position data */
+		/* r and m position data already weighted by rate */
 		private final DataTable rPositions;
 		private final DataTable mPositions;
+
+		/* Total weight (rate) in each r and m position bin */
 		private final DataTable positionWeights;
+
+		/* Unbinned weight (rate) */
+		private final double residualWeight;
 
 		/* Contributors */
 		private final Map<SourceSet<? extends Source>, Double> sourceSets;
@@ -613,6 +818,7 @@ public final class Deaggregation {
 				DataTable rPositions,
 				DataTable mPositions,
 				DataTable positionWeights,
+				double residualWeight,
 				Map<SourceSet<? extends Source>, Double> sourceSets,
 				List<SourceContribution> sources) {
 
@@ -626,6 +832,7 @@ public final class Deaggregation {
 			this.rPositions = rPositions;
 			this.mPositions = mPositions;
 			this.positionWeights = positionWeights;
+			this.residualWeight = residualWeight;
 
 			this.sources = sources;
 			this.sourceSets = sourceSets;
@@ -738,8 +945,6 @@ public final class Deaggregation {
 
 		static class Builder {
 
-			private static final String ID = "Deaggregation.Dataset.Builder";
-
 			private DataVolume.Builder rmε;
 
 			/* Weighted mean contributions */
@@ -750,6 +955,9 @@ public final class Deaggregation {
 			private DataTable.Builder rPositions;
 			private DataTable.Builder mPositions;
 			private DataTable.Builder positionWeights;
+
+			/* Unbinned weight (rate) */
+			private double residualWeight;
 
 			private Map<SourceSet<? extends Source>, Double> sourceSets;
 			private ImmutableList.Builder<SourceContribution> sources;
@@ -825,9 +1033,15 @@ public final class Deaggregation {
 				return this;
 			}
 
-			// TODO check that this has been set on final validation; size>1
-			// check if singleton? once reducing individual field will not have
-			// been set
+			/*
+			 * Add residual rate for events falling outside distance and
+			 * magnitude ranges supported by this deaggregation.
+			 */
+			Builder addResidual(double rate) {
+				residualWeight += rate;
+				return this;
+			}
+
 			Builder sourceSet(SourceSet<? extends Source> sourceSet) {
 				checkState(sourceSets.isEmpty(), "SourceSet for dataset has already been set");
 				sourceSets.put(sourceSet, 0.0);
@@ -853,6 +1067,7 @@ public final class Deaggregation {
 				rPositions.add(other.rPositions);
 				mPositions.add(other.mPositions);
 				positionWeights.add(other.positionWeights);
+				residualWeight += other.residualWeight;
 
 				sources.addAll(other.sources);
 				Data.add(sourceSets, other.sourceSets);
@@ -861,11 +1076,10 @@ public final class Deaggregation {
 			}
 
 			Dataset build() {
-
 				if (sourceSets.size() == 1) {
 					Entry<SourceSet<? extends Source>, Double> entry =
 						Iterables.getOnlyElement(sourceSets.entrySet());
-					sourceSets.put(entry.getKey(), barWeight);
+					sourceSets.put(entry.getKey(), barWeight + residualWeight);
 				}
 
 				return new Dataset(
@@ -875,14 +1089,12 @@ public final class Deaggregation {
 					rPositions.build(),
 					mPositions.build(),
 					positionWeights.build(),
+					residualWeight,
 					ImmutableMap.copyOf(sourceSets),
 					sources.build());
 			}
 		}
-
 	}
-
-	/* Serialization helpers. */
 
 	/**
 	 * Returns a list of objects that define the ε bins used in this
@@ -890,6 +1102,7 @@ public final class Deaggregation {
 	 */
 	public List<?> εBins() {
 		ImmutableList.Builder<εBin> bins = ImmutableList.builder();
+		Dataset model = deaggs.values().iterator().next().config.model;
 		List<Double> εs = model.rmε.levels();
 		for (int i = 0; i < εs.size() - 1; i++) {
 			Double min = (i == 0) ? null : εs.get(i);
