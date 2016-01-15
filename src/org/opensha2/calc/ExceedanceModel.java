@@ -307,6 +307,17 @@ public enum ExceedanceModel {
 //			A5 * tsq * tsq * t) * exp(-x * x);
 //	}
 //
+//	private static double erfBase3(double x) {
+//		double t = 1 / (1 + P * x);
+//		double t2 = t * t;
+//		double t3 = t2 * t;
+//		return 1 - (A1 * t +
+//			A2 * t2 +
+//			A3 * t3 +
+//			A4 * t2 * t2 +
+//			A5 * t2 * t3) * exp(-x * x);
+//	}
+//
 //	private static final double SQRT_2PI = Math.sqrt(2 * Math.PI);
 //
 //	private static double dFn(double μ, double σ, double x) {
