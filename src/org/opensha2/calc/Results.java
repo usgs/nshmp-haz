@@ -78,7 +78,7 @@ public class Results {
 				headings.add("lat");
 				Iterable<? extends Object> header = Iterables.concat(
 					headings,
-					demo.config.modelCurves.get(imt).xValues());
+					demo.config.modelCurves().get(imt).xValues());
 				lineList.add(Parsing.join(header, Delimiter.COMMA));
 			}
 			lineMap.put(imt, lineList);

@@ -56,25 +56,24 @@ public final class CalcConfig {
 	 * @see Maps#immutableEnumMap(Map)
 	 */
 
-	// TODO revisit privatization, comments, and immutability
-
 	static final String FILE_NAME = "config.json";
 
-	final Path resource;
+	private final Path resource;
 
-	final ExceedanceModel exceedanceModel;
-	final double truncationLevel;
-	final Set<Imt> imts;
+	private final ExceedanceModel exceedanceModel;
+	private final double truncationLevel;
+	private final Set<Imt> imts;
 	private final double[] defaultImls;
 	private final Map<Imt, double[]> customImls;
-	final DeaggData deagg;
-	final boolean optimizeGrids;
-	final boolean gmmUncertainty;
+	private final boolean optimizeGrids;
+	private final boolean gmmUncertainty;
+
+	private final DeaggData deagg;
 
 	private final SiteSet sites;
 
-	final Map<Imt, XySequence> modelCurves;
-	final Map<Imt, XySequence> logModelCurves;
+	private final Map<Imt, XySequence> modelCurves;
+	private final Map<Imt, XySequence> logModelCurves;
 
 	private static final Gson GSON = new GsonBuilder()
 		.registerTypeAdapter(Site.class, new Site.Deserializer())
@@ -169,30 +168,83 @@ public final class CalcConfig {
 	}
 
 	/**
-	 * Return an unmodifiable iterator over the {@code Site}s specified by this
-	 * configuration.
+	 * The probability distribution model to use when computing hazard curves.
 	 */
-	public Iterable<Site> sites() {
-		return sites;
+	public ExceedanceModel exceedanceModel() {
+		return exceedanceModel; // TODO probabilitModel
 	}
 
 	/**
-	 * Return the unmodifiable {@code Set} of IMTs for which calculations should
-	 * be performed.
+	 * The number of standard deviations at which to truncate a distribution.
+	 * This field is ignored if a model does not implement truncation.
+	 */
+	public double truncationLevel() {
+		return truncationLevel;
+	}
+
+	/**
+	 * The unmodifiable {@code Set} of IMTs for which calculations should be
+	 * performed.
 	 */
 	public Set<Imt> imts() {
 		return imts;
 	}
 
 	/**
-	 * Return an empty linear (i.e. not log) curve for the requested {@code Imt}
-	 * .
+	 * Whether to optimize grid source sets, or not.
+	 */
+	public boolean optimizeGrids() {
+		return optimizeGrids;
+	}
+
+	/**
+	 * Whether to consider additional ground motion model uncertainty, or not.
+	 */
+	public boolean gmmUncertainty() {
+		return gmmUncertainty;
+	}
+
+	/**
+	 * Deaggregation configuration data.
+	 */
+	public DeaggData deagg() {
+		return deagg;
+	}
+
+	/**
+	 * An unmodifiable iterator over the {@code Site}s at which hazard should be
+	 * calculated.
+	 */
+	public Iterable<Site> sites() {
+		return sites;
+	}
+
+	/**
+	 * An empty linear curve for the requested {@code Imt}.
 	 * @param imt to get curve for
 	 */
 	public XySequence modelCurve(Imt imt) {
 		return modelCurves.get(imt);
 	}
 
+	/**
+	 * An immutable map of model curves where x-values are in linear space.
+	 */
+	public Map<Imt, XySequence> modelCurves() {
+		return modelCurves;
+	}
+
+	/**
+	 * An immutable map of model curves where x-values are in natural-log space.
+	 */
+	public Map<Imt, XySequence> logModelCurves() {
+		return logModelCurves;
+	}
+
+	/**
+	 * Deaggregation configuration data container.
+	 */
+	@SuppressWarnings("javadoc")
 	public static final class DeaggData {
 
 		public final double rMin;
@@ -220,7 +272,6 @@ public final class CalcConfig {
 			εMax = 3.0;
 			Δε = 0.5;
 		}
-
 	}
 
 	/**
