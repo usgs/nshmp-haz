@@ -5,6 +5,7 @@
 /docs
 /tmp
 /results
+/etc/results
 Scratch*.java
 /src/META-INF
 /etc/examples/results
