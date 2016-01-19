@@ -1,6 +1,8 @@
-Examples
+See the [examples](/usgs/nshmp-haz/tree/master/etc/examples) directory as a starting point for command-line use of nshmp-haz.
 
-Output files are always placed in a 'results' directory within the directory from which a program was run.
+[Matlab](/usgs/nshmp-haz/tree/master/etc/matlab) shows how to take advantage of the ground motion model implementations in nshmp-haz.
 
-Navigate to 
+[Peer](/usgs/nshmp-haz/tree/master/etc/peer) is a collection of simple source models that are also a good starting point.
+
+
 
