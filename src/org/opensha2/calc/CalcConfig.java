@@ -317,6 +317,9 @@ public final class CalcConfig {
 		private DeaggData deagg;
 		private SiteSet sites;
 
+		/**
+		 * Initialize a new builder with a copy of that supplied.
+		 */
 		public Builder copy(CalcConfig config) {
 			checkNotNull(config);
 			this.resource = config.resource;
@@ -332,6 +335,9 @@ public final class CalcConfig {
 			return this;
 		}
 
+		/**
+		 * Initialize a new builder with defaults.
+		 */
 		public Builder withDefaults() {
 			this.exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
 			this.truncationLevel = 3.0;
@@ -348,6 +354,10 @@ public final class CalcConfig {
 			return this;
 		}
 
+		/**
+		 * Extend {@code this} builder to match {@code that} builder. Fields in
+		 * that builder take precedence unless they are not set.
+		 */
 		public Builder extend(final Builder that) {
 			checkNotNull(that);
 			if (that.resource != null) this.resource = that.resource;
@@ -363,6 +373,9 @@ public final class CalcConfig {
 			return this;
 		}
 
+		/**
+		 * Set the IMTs for which results should be calculated.
+		 */
 		public Builder imts(Set<Imt> imts) {
 			this.imts = checkNotNull(imts);
 			return this;
@@ -409,6 +422,9 @@ public final class CalcConfig {
 			built = true;
 		}
 
+		/**
+		 * Build a new calculation configuration.
+		 */
 		public CalcConfig build() {
 			validateState(ID);
 			Set<Imt> finalImts = Sets.immutableEnumSet(imts);
