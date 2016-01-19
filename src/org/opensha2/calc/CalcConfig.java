@@ -32,29 +32,9 @@ import com.google.gson.GsonBuilder;
 
 /**
  * Calculation configuration.
- * 
- * All config fields are immutable and all methods return immutable objects.
- * 
  * @author Peter Powers
  */
 public final class CalcConfig {
-
-	/**
-	 * Returns models of the intensity measure levels for each {@code Imt}
-	 * adressed by this calculation. The {@code Map} returned by this method is
-	 * an immutable {@code EnumMap}.
-	 * 
-	 * @see Maps#immutableEnumMap(Map)
-	 */
-
-	/**
-	 * Returns models of the intensity measure levels for each {@code Imt}
-	 * adressed by this calculation. The x-values in each sequence are in
-	 * natural log space. The {@code Map} returned by this method is an
-	 * immutable {@code EnumMap}.
-	 * 
-	 * @see Maps#immutableEnumMap(Map)
-	 */
 
 	static final String FILE_NAME = "config.json";
 
