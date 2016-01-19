@@ -6,10 +6,12 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.data.Data.checkWeightSum;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.opensha2.data.Data;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GroundMotionModel;
 
@@ -47,7 +49,7 @@ public final class GmmSet {
 	private final UncertType uncertainty;
 	private final double epiValue;
 	private final double[][] epiValues;
-	private final double[] epiWeights;
+	private final double[] epiWeights; // TODO DataArray (vs. Table, Volume)
 
 	GmmSet(Map<Gmm, Double> weightMapLo, double maxDistLo, Map<Gmm, Double> weightMapHi,
 			double maxDistHi, double[] epiValues, double[] epiWeights) {
@@ -128,16 +130,20 @@ public final class GmmSet {
 		};
 	}
 
+	public boolean epiUncertainty() {
+		return uncertainty != UncertType.NONE;
+	}
+	
 	/*
-	 * Returns the epistemic uncertainty for the supplied magnitude (M) and
-	 * distance (D) that
+	 * Returns the epistemic uncertainty for the supplied magnitude and distance
+	 * in natural log units of ground motion.
 	 */
-	private double getUncertainty(double M, double D) {
+	public double epiValue(double m, double r) {
 		switch (uncertainty) {
 			case MULTI:
-				int mi = (M < 6) ? 0 : (M < 7) ? 1 : 2;
-				int di = (D < 10) ? 0 : (D < 30) ? 1 : 2;
-				return epiValues[di][mi];
+				int mi = (m < 6) ? 0 : (m < 7) ? 1 : 2;
+				int ri = (r < 10) ? 0 : (r < 30) ? 1 : 2;
+				return epiValues[ri][mi];
 			case SINGLE:
 				return epiValue;
 			default:
@@ -145,7 +151,16 @@ public final class GmmSet {
 		}
 	}
 
-	static enum UncertType {
+	/*
+	 * Returns the 3 weights used for low, median, and high branches of the epistemic
+	 * uncertainty distribution.
+	 * TODO needs to be immutable, This is a good case for DataArray
+	 */
+	public double[] epiWeights() {
+		return epiWeights;
+	}
+
+	private static enum UncertType {
 		NONE,
 		SINGLE,
 		MULTI;
@@ -201,6 +216,7 @@ public final class GmmSet {
 				"Values must contain 1 or 9 values");
 			checkArgument(checkNotNull(weights, "Weights are null").length == 3,
 				"Weights must contain 3 values");
+			checkArgument(Data.sum(weights) == 1.0, "%s uncertainty weights must sum to 1");
 			uncValues = values;
 			uncWeights = weights;
 			return this;
@@ -227,6 +243,7 @@ public final class GmmSet {
 
 			if (uncValues != null) checkNotNull(uncWeights, "%s uncertainty weights not set", id);
 			if (uncWeights != null) checkNotNull(uncValues, "%s uncertainty values not set", id);
+	
 
 			built = true;
 		}

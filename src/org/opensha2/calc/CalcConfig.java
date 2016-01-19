@@ -68,9 +68,10 @@ public final class CalcConfig {
 	private final double[] defaultImls;
 	private final Map<Imt, double[]> customImls;
 	final DeaggData deagg;
-	private final SiteSet sites;
-	
 	final boolean optimizeGrids;
+	final boolean gmmUncertainty;
+
+	private final SiteSet sites;
 
 	final Map<Imt, XySequence> modelCurves;
 	final Map<Imt, XySequence> logModelCurves;
@@ -87,9 +88,10 @@ public final class CalcConfig {
 			Set<Imt> imts,
 			double[] defaultImls,
 			Map<Imt, double[]> customImls,
+			boolean optimizeGrids,
+			boolean gmmUncertainty,
 			DeaggData deagg,
 			SiteSet sites,
-			boolean optimizeGrids,
 			Map<Imt, XySequence> modelCurves,
 			Map<Imt, XySequence> logModelCurves) {
 
@@ -99,9 +101,10 @@ public final class CalcConfig {
 		this.imts = imts;
 		this.defaultImls = defaultImls;
 		this.customImls = customImls;
+		this.optimizeGrids = optimizeGrids;
+		this.gmmUncertainty = gmmUncertainty;
 		this.deagg = deagg;
 		this.sites = sites;
-		this.optimizeGrids = optimizeGrids;
 		this.modelCurves = modelCurves;
 		this.logModelCurves = logModelCurves;
 	}
@@ -113,6 +116,8 @@ public final class CalcConfig {
 		IMTS,
 		DEFAULT_IMLS,
 		CUSTOM_IMLS,
+		GMM_UNCERTAINTY,
+		OPTIMIZE_GRIDS,
 		DEAGG,
 		SITES;
 
@@ -145,6 +150,8 @@ public final class CalcConfig {
 			.append(format(Key.IMTS)).append(Parsing.enumsToString(imts, Imt.class))
 			.append(format(Key.DEFAULT_IMLS)).append(Arrays.toString(defaultImls))
 			.append(customImlStr)
+			.append(format(Key.OPTIMIZE_GRIDS)).append(optimizeGrids)
+			.append(format(Key.GMM_UNCERTAINTY)).append(gmmUncertainty)
 			.append(format("Deaggregation R"))
 			.append("min=").append(deagg.rMin).append(", ")
 			.append("max=").append(deagg.rMax).append(", ")
@@ -246,15 +253,18 @@ public final class CalcConfig {
 		private static final String ID = "CalcConfig.Builder";
 		private boolean built = false;
 
+		// TODO should resource be Optional; if created with defaults
+		// there will be no path
 		private Path resource;
 		private ExceedanceModel exceedanceModel;
 		private Double truncationLevel;
 		private Set<Imt> imts;
 		private double[] defaultImls;
 		private Map<Imt, double[]> customImls;
+		private Boolean optimizeGrids;
+		private Boolean gmmUncertainty;
 		private DeaggData deagg;
 		private SiteSet sites;
-		private Boolean optimizeGrids;
 
 		public Builder copy(CalcConfig config) {
 			checkNotNull(config);
@@ -264,9 +274,10 @@ public final class CalcConfig {
 			this.imts = config.imts;
 			this.defaultImls = config.defaultImls;
 			this.customImls = config.customImls;
+			this.optimizeGrids = config.optimizeGrids;
+			this.gmmUncertainty = config.gmmUncertainty;
 			this.deagg = config.deagg;
 			this.sites = config.sites;
-			this.optimizeGrids = config.optimizeGrids;
 			return this;
 		}
 
@@ -279,9 +290,10 @@ public final class CalcConfig {
 				0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46,
 				2.19, 3.28, 4.92, 7.38 };
 			this.customImls = Maps.newHashMap();
+			this.optimizeGrids = true;
+			this.gmmUncertainty = false;
 			this.deagg = new DeaggData();
 			this.sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
-			this.optimizeGrids = true;
 			return this;
 		}
 
@@ -293,9 +305,10 @@ public final class CalcConfig {
 			if (that.imts != null) this.imts = that.imts;
 			if (that.defaultImls != null) this.defaultImls = that.defaultImls;
 			if (that.customImls != null) this.customImls = that.customImls;
+			if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
+			if (that.gmmUncertainty != null) this.gmmUncertainty = that.gmmUncertainty;
 			if (that.deagg != null) this.deagg = that.deagg;
 			if (that.sites != null) this.sites = that.sites;
-			if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
 			return this;
 		}
 
@@ -338,6 +351,8 @@ public final class CalcConfig {
 			checkNotNull(imts, MSSG, buildId, Key.IMTS);
 			checkNotNull(defaultImls, MSSG, buildId, Key.DEFAULT_IMLS);
 			checkNotNull(customImls, MSSG, buildId, Key.CUSTOM_IMLS);
+			checkNotNull(optimizeGrids, MSSG, buildId, Key.OPTIMIZE_GRIDS);
+			checkNotNull(gmmUncertainty, MSSG, buildId, Key.GMM_UNCERTAINTY);
 			checkNotNull(deagg, MSSG, buildId, Key.DEAGG);
 			checkNotNull(sites, MSSG, buildId, Key.SITES);
 			built = true;
@@ -349,8 +364,16 @@ public final class CalcConfig {
 			Map<Imt, XySequence> curves = createCurveMap();
 			Map<Imt, XySequence> logCurves = createLogCurveMap();
 			return new CalcConfig(
-				resource, exceedanceModel, truncationLevel, finalImts,
-				defaultImls, customImls, deagg, sites, optimizeGrids,
+				resource,
+				exceedanceModel,
+				truncationLevel,
+				finalImts,
+				defaultImls,
+				customImls,
+				optimizeGrids,
+				gmmUncertainty,
+				deagg,
+				sites,
 				curves, logCurves);
 		}
 
