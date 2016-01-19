@@ -1,4 +1,4 @@
-See the [examples](/usgs/nshmp-haz/tree/master/etc/examples) directory as a starting point for command-line use of nshmp-haz.
+See the [examples](examples) directory as a starting point for command-line use of nshmp-haz.
 
 [Matlab](/usgs/nshmp-haz/tree/master/etc/matlab) shows how to take advantage of the ground motion model implementations in nshmp-haz.
 
