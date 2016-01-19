@@ -32,48 +32,28 @@ import com.google.gson.GsonBuilder;
 
 /**
  * Calculation configuration.
- * 
- * All config fields are immutable and all methods return immutable objects.
- * 
  * @author Peter Powers
  */
 public final class CalcConfig {
 
-	/**
-	 * Returns models of the intensity measure levels for each {@code Imt}
-	 * adressed by this calculation. The {@code Map} returned by this method is
-	 * an immutable {@code EnumMap}.
-	 * 
-	 * @see Maps#immutableEnumMap(Map)
-	 */
-
-	/**
-	 * Returns models of the intensity measure levels for each {@code Imt}
-	 * adressed by this calculation. The x-values in each sequence are in
-	 * natural log space. The {@code Map} returned by this method is an
-	 * immutable {@code EnumMap}.
-	 * 
-	 * @see Maps#immutableEnumMap(Map)
-	 */
-
-	// TODO revisit privatization, comments, and immutability
-
 	static final String FILE_NAME = "config.json";
 
-	final Path resource;
+	private final Path resource;
 
-	final ExceedanceModel exceedanceModel;
-	final double truncationLevel;
-	final Set<Imt> imts;
+	private final ExceedanceModel exceedanceModel;
+	private final double truncationLevel;
+	private final Set<Imt> imts;
 	private final double[] defaultImls;
 	private final Map<Imt, double[]> customImls;
-	final DeaggData deagg;
-	private final SiteSet sites;
-	
-	final boolean optimizeGrids;
+	private final boolean optimizeGrids;
+	private final boolean gmmUncertainty;
 
-	final Map<Imt, XySequence> modelCurves;
-	final Map<Imt, XySequence> logModelCurves;
+	private final DeaggData deagg;
+
+	private final SiteSet sites;
+
+	private final Map<Imt, XySequence> modelCurves;
+	private final Map<Imt, XySequence> logModelCurves;
 
 	private static final Gson GSON = new GsonBuilder()
 		.registerTypeAdapter(Site.class, new Site.Deserializer())
@@ -87,9 +67,10 @@ public final class CalcConfig {
 			Set<Imt> imts,
 			double[] defaultImls,
 			Map<Imt, double[]> customImls,
+			boolean optimizeGrids,
+			boolean gmmUncertainty,
 			DeaggData deagg,
 			SiteSet sites,
-			boolean optimizeGrids,
 			Map<Imt, XySequence> modelCurves,
 			Map<Imt, XySequence> logModelCurves) {
 
@@ -99,9 +80,10 @@ public final class CalcConfig {
 		this.imts = imts;
 		this.defaultImls = defaultImls;
 		this.customImls = customImls;
+		this.optimizeGrids = optimizeGrids;
+		this.gmmUncertainty = gmmUncertainty;
 		this.deagg = deagg;
 		this.sites = sites;
-		this.optimizeGrids = optimizeGrids;
 		this.modelCurves = modelCurves;
 		this.logModelCurves = logModelCurves;
 	}
@@ -113,6 +95,8 @@ public final class CalcConfig {
 		IMTS,
 		DEFAULT_IMLS,
 		CUSTOM_IMLS,
+		GMM_UNCERTAINTY,
+		OPTIMIZE_GRIDS,
 		DEAGG,
 		SITES;
 
@@ -145,6 +129,8 @@ public final class CalcConfig {
 			.append(format(Key.IMTS)).append(Parsing.enumsToString(imts, Imt.class))
 			.append(format(Key.DEFAULT_IMLS)).append(Arrays.toString(defaultImls))
 			.append(customImlStr)
+			.append(format(Key.OPTIMIZE_GRIDS)).append(optimizeGrids)
+			.append(format(Key.GMM_UNCERTAINTY)).append(gmmUncertainty)
 			.append(format("Deaggregation R"))
 			.append("min=").append(deagg.rMin).append(", ")
 			.append("max=").append(deagg.rMax).append(", ")
@@ -162,30 +148,83 @@ public final class CalcConfig {
 	}
 
 	/**
-	 * Return an unmodifiable iterator over the {@code Site}s specified by this
-	 * configuration.
+	 * The probability distribution model to use when computing hazard curves.
 	 */
-	public Iterable<Site> sites() {
-		return sites;
+	public ExceedanceModel exceedanceModel() {
+		return exceedanceModel; // TODO probabilitModel
 	}
 
 	/**
-	 * Return the unmodifiable {@code Set} of IMTs for which calculations should
-	 * be performed.
+	 * The number of standard deviations at which to truncate a distribution.
+	 * This field is ignored if a model does not implement truncation.
+	 */
+	public double truncationLevel() {
+		return truncationLevel;
+	}
+
+	/**
+	 * The unmodifiable {@code Set} of IMTs for which calculations should be
+	 * performed.
 	 */
 	public Set<Imt> imts() {
 		return imts;
 	}
 
 	/**
-	 * Return an empty linear (i.e. not log) curve for the requested {@code Imt}
-	 * .
+	 * Whether to optimize grid source sets, or not.
+	 */
+	public boolean optimizeGrids() {
+		return optimizeGrids;
+	}
+
+	/**
+	 * Whether to consider additional ground motion model uncertainty, or not.
+	 */
+	public boolean gmmUncertainty() {
+		return gmmUncertainty;
+	}
+
+	/**
+	 * Deaggregation configuration data.
+	 */
+	public DeaggData deagg() {
+		return deagg;
+	}
+
+	/**
+	 * An unmodifiable iterator over the {@code Site}s at which hazard should be
+	 * calculated.
+	 */
+	public Iterable<Site> sites() {
+		return sites;
+	}
+
+	/**
+	 * An empty linear curve for the requested {@code Imt}.
 	 * @param imt to get curve for
 	 */
 	public XySequence modelCurve(Imt imt) {
 		return modelCurves.get(imt);
 	}
 
+	/**
+	 * An immutable map of model curves where x-values are in linear space.
+	 */
+	public Map<Imt, XySequence> modelCurves() {
+		return modelCurves;
+	}
+
+	/**
+	 * An immutable map of model curves where x-values are in natural-log space.
+	 */
+	public Map<Imt, XySequence> logModelCurves() {
+		return logModelCurves;
+	}
+
+	/**
+	 * Deaggregation configuration data container.
+	 */
+	@SuppressWarnings("javadoc")
 	public static final class DeaggData {
 
 		public final double rMin;
@@ -213,7 +252,6 @@ public final class CalcConfig {
 			εMax = 3.0;
 			Δε = 0.5;
 		}
-
 	}
 
 	/**
@@ -246,16 +284,22 @@ public final class CalcConfig {
 		private static final String ID = "CalcConfig.Builder";
 		private boolean built = false;
 
+		// TODO should resource be Optional; if created with defaults
+		// there will be no path
 		private Path resource;
 		private ExceedanceModel exceedanceModel;
 		private Double truncationLevel;
 		private Set<Imt> imts;
 		private double[] defaultImls;
 		private Map<Imt, double[]> customImls;
+		private Boolean optimizeGrids;
+		private Boolean gmmUncertainty;
 		private DeaggData deagg;
 		private SiteSet sites;
-		private Boolean optimizeGrids;
 
+		/**
+		 * Initialize a new builder with a copy of that supplied.
+		 */
 		public Builder copy(CalcConfig config) {
 			checkNotNull(config);
 			this.resource = config.resource;
@@ -264,12 +308,16 @@ public final class CalcConfig {
 			this.imts = config.imts;
 			this.defaultImls = config.defaultImls;
 			this.customImls = config.customImls;
+			this.optimizeGrids = config.optimizeGrids;
+			this.gmmUncertainty = config.gmmUncertainty;
 			this.deagg = config.deagg;
 			this.sites = config.sites;
-			this.optimizeGrids = config.optimizeGrids;
 			return this;
 		}
 
+		/**
+		 * Initialize a new builder with defaults.
+		 */
 		public Builder withDefaults() {
 			this.exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
 			this.truncationLevel = 3.0;
@@ -279,12 +327,17 @@ public final class CalcConfig {
 				0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46,
 				2.19, 3.28, 4.92, 7.38 };
 			this.customImls = Maps.newHashMap();
+			this.optimizeGrids = true;
+			this.gmmUncertainty = false;
 			this.deagg = new DeaggData();
 			this.sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
-			this.optimizeGrids = true;
 			return this;
 		}
 
+		/**
+		 * Extend {@code this} builder to match {@code that} builder. Fields in
+		 * that builder take precedence unless they are not set.
+		 */
 		public Builder extend(final Builder that) {
 			checkNotNull(that);
 			if (that.resource != null) this.resource = that.resource;
@@ -293,12 +346,16 @@ public final class CalcConfig {
 			if (that.imts != null) this.imts = that.imts;
 			if (that.defaultImls != null) this.defaultImls = that.defaultImls;
 			if (that.customImls != null) this.customImls = that.customImls;
+			if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
+			if (that.gmmUncertainty != null) this.gmmUncertainty = that.gmmUncertainty;
 			if (that.deagg != null) this.deagg = that.deagg;
 			if (that.sites != null) this.sites = that.sites;
-			if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
 			return this;
 		}
 
+		/**
+		 * Set the IMTs for which results should be calculated.
+		 */
 		public Builder imts(Set<Imt> imts) {
 			this.imts = checkNotNull(imts);
 			return this;
@@ -338,19 +395,32 @@ public final class CalcConfig {
 			checkNotNull(imts, MSSG, buildId, Key.IMTS);
 			checkNotNull(defaultImls, MSSG, buildId, Key.DEFAULT_IMLS);
 			checkNotNull(customImls, MSSG, buildId, Key.CUSTOM_IMLS);
+			checkNotNull(optimizeGrids, MSSG, buildId, Key.OPTIMIZE_GRIDS);
+			checkNotNull(gmmUncertainty, MSSG, buildId, Key.GMM_UNCERTAINTY);
 			checkNotNull(deagg, MSSG, buildId, Key.DEAGG);
 			checkNotNull(sites, MSSG, buildId, Key.SITES);
 			built = true;
 		}
 
+		/**
+		 * Build a new calculation configuration.
+		 */
 		public CalcConfig build() {
 			validateState(ID);
 			Set<Imt> finalImts = Sets.immutableEnumSet(imts);
 			Map<Imt, XySequence> curves = createCurveMap();
 			Map<Imt, XySequence> logCurves = createLogCurveMap();
 			return new CalcConfig(
-				resource, exceedanceModel, truncationLevel, finalImts,
-				defaultImls, customImls, deagg, sites, optimizeGrids,
+				resource,
+				exceedanceModel,
+				truncationLevel,
+				finalImts,
+				defaultImls,
+				customImls,
+				optimizeGrids,
+				gmmUncertainty,
+				deagg,
+				sites,
 				curves, logCurves);
 		}
 
