@@ -1,4 +1,5 @@
 {
+  "exceedanceModel": "TRUNCATION_UPPER_ONLY",
   "truncationLevel": 3.0,
   "imts": ["PGA", "SA0P2", "SA1P0"],
   "customImls": {
@@ -14,10 +15,8 @@
         [-118.5, 33.8],
         [-118.0, 34.3]
       ],
-      "vs30": 459,
-      "vsInf": true,
-      "z1p0": 0.48,
-      "z2p5": 1.62
+      "vs30": ,
+      "vsInf": true
     }
   }
 }

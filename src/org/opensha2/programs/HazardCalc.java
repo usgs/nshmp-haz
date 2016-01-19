@@ -44,7 +44,7 @@ import com.google.common.base.Throwables;
  */
 public class HazardCalc {
 
-	private static final int FLUSH_LIMIT = 2;
+	private static final int FLUSH_LIMIT = 5;
 
 	/**
 	 * Entry point for a hazard calculation.
