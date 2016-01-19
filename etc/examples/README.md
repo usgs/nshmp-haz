@@ -3,7 +3,7 @@ The simplest way to run the HazardCalc program via the command-line is to supply
 ```
 java -cp ../dist/nshmp-haz.jar org.opensha2.programs.HazardCalc peer/models/Set1-Case1
 ```
-The result of this calculation should be available as a single file containing several hazard curves for PGA in a newly created 'results' directory. Note that not all calculation [configuration](https://github.com/usgs/nshmp-haz/wiki/Configuration) parameters need be supplied; see the [configuration file](/usgs/nshmp-haz/blob/master/etc/peer/models/Set1-Case1/config.json) for this example model.  
+The result of this calculation should be available as a single file containing several hazard curves for PGA in a newly created 'results' directory. Note that not all calculation [configuration](https://github.com/usgs/nshmp-haz/wiki/Configuration) parameters need be supplied; see the [configuration file](../peer/models/Set1-Case1/config.json) for this example model.  
 One can override calculation configuration parameters by supplying an alternate configuration file. For example:
 ```
 java -cp ../dist/nshmp-haz.jar org.opensha2.programs.HazardCalc peer/models/Set1-Case1 examples/config-sites.json
