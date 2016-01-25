@@ -46,8 +46,8 @@ class SequenceBenchmark {
 			}
 
 			for (int k = 0; k < numPoints; k++) {
-				double y = adfReceiver.get(k).getY();
-				adfReceiver.set(k, copy.get(k).getY() + y);
+				double y = adfReceiver.getY(k);
+				adfReceiver.set(k, copy.getY(k) + y);
 			}
 		}
 		System.out.println("Time: " + sw.stop());
@@ -76,8 +76,8 @@ class SequenceBenchmark {
 			}
 
 			for (int k = 0; k < numPoints; k++) {
-				double y = edfReceiver.get(k).getY();
-				edfReceiver.set(k, copy.get(k).getY() + y);
+				double y = edfReceiver.getY(k);
+				edfReceiver.set(k, copy.getY(k) + y);
 			}
 		}
 		System.out.println("Time: " + sw.stop());
@@ -91,8 +91,7 @@ class SequenceBenchmark {
 		sw.reset().start();
 		for (int i = 0; i < its; i++) {
 			XySequence copy = XySequence.copyOf(xy);
-			copy.multiply(xy);
-			xyReceiver.add(copy);
+			xyReceiver.add(copy.multiply(xy));
 		}
 		System.out.println("Time: " + sw.stop());
 		System.out.println(xyReceiver);

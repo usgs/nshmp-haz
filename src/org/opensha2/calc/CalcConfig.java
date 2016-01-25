@@ -6,7 +6,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.util.TextUtils.format;
-
 import static org.opensha2.data.XySequence.*;
 
 import java.io.IOException;
@@ -19,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.opensha2.calc.Results.HazardFormat;
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
@@ -47,6 +47,8 @@ public final class CalcConfig {
 	private final Map<Imt, double[]> customImls;
 	private final boolean optimizeGrids;
 	private final boolean gmmUncertainty;
+	
+	private final HazardFormat hazardFormat;
 
 	private final DeaggData deagg;
 
@@ -69,6 +71,7 @@ public final class CalcConfig {
 			Map<Imt, double[]> customImls,
 			boolean optimizeGrids,
 			boolean gmmUncertainty,
+			HazardFormat hazardFormat,
 			DeaggData deagg,
 			SiteSet sites,
 			Map<Imt, XySequence> modelCurves,
@@ -82,6 +85,7 @@ public final class CalcConfig {
 		this.customImls = customImls;
 		this.optimizeGrids = optimizeGrids;
 		this.gmmUncertainty = gmmUncertainty;
+		this.hazardFormat = hazardFormat;
 		this.deagg = deagg;
 		this.sites = sites;
 		this.modelCurves = modelCurves;
@@ -96,6 +100,7 @@ public final class CalcConfig {
 		DEFAULT_IMLS,
 		CUSTOM_IMLS,
 		GMM_UNCERTAINTY,
+		HAZARD_FORMAT,
 		OPTIMIZE_GRIDS,
 		DEAGG,
 		SITES;
@@ -131,6 +136,7 @@ public final class CalcConfig {
 			.append(customImlStr)
 			.append(format(Key.OPTIMIZE_GRIDS)).append(optimizeGrids)
 			.append(format(Key.GMM_UNCERTAINTY)).append(gmmUncertainty)
+			.append(format(Key.HAZARD_FORMAT)).append(hazardFormat)
 			.append(format("Deaggregation R"))
 			.append("min=").append(deagg.rMin).append(", ")
 			.append("max=").append(deagg.rMax).append(", ")
@@ -184,6 +190,9 @@ public final class CalcConfig {
 		return gmmUncertainty;
 	}
 
+	public HazardFormat hazardFormat() {
+		return hazardFormat;
+	}
 	/**
 	 * Deaggregation configuration data.
 	 */
@@ -294,6 +303,7 @@ public final class CalcConfig {
 		private Map<Imt, double[]> customImls;
 		private Boolean optimizeGrids;
 		private Boolean gmmUncertainty;
+		private HazardFormat hazardFormat;
 		private DeaggData deagg;
 		private SiteSet sites;
 
@@ -310,6 +320,7 @@ public final class CalcConfig {
 			this.customImls = config.customImls;
 			this.optimizeGrids = config.optimizeGrids;
 			this.gmmUncertainty = config.gmmUncertainty;
+			this.hazardFormat = config.hazardFormat;
 			this.deagg = config.deagg;
 			this.sites = config.sites;
 			return this;
@@ -329,6 +340,7 @@ public final class CalcConfig {
 			this.customImls = Maps.newHashMap();
 			this.optimizeGrids = true;
 			this.gmmUncertainty = false;
+			this.hazardFormat = HazardFormat.TOTAL;
 			this.deagg = new DeaggData();
 			this.sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
 			return this;
@@ -348,6 +360,7 @@ public final class CalcConfig {
 			if (that.customImls != null) this.customImls = that.customImls;
 			if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
 			if (that.gmmUncertainty != null) this.gmmUncertainty = that.gmmUncertainty;
+			if (that.hazardFormat != null) this.hazardFormat = that.hazardFormat;
 			if (that.deagg != null) this.deagg = that.deagg;
 			if (that.sites != null) this.sites = that.sites;
 			return this;
@@ -397,6 +410,7 @@ public final class CalcConfig {
 			checkNotNull(customImls, MSSG, buildId, Key.CUSTOM_IMLS);
 			checkNotNull(optimizeGrids, MSSG, buildId, Key.OPTIMIZE_GRIDS);
 			checkNotNull(gmmUncertainty, MSSG, buildId, Key.GMM_UNCERTAINTY);
+			checkNotNull(hazardFormat, MSSG, buildId, Key.HAZARD_FORMAT);
 			checkNotNull(deagg, MSSG, buildId, Key.DEAGG);
 			checkNotNull(sites, MSSG, buildId, Key.SITES);
 			built = true;
@@ -419,6 +433,7 @@ public final class CalcConfig {
 				customImls,
 				optimizeGrids,
 				gmmUncertainty,
+				hazardFormat,
 				deagg,
 				sites,
 				curves, logCurves);
