@@ -1,9 +1,7 @@
 package org.opensha2.calc;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
-import static org.opensha2.data.XySequence.copyOf;
 import static org.opensha2.data.XySequence.emptyCopyOf;
-import static org.opensha2.data.XySequence.immutableCopyOf;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -11,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +16,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.opensha2.data.XySequence;
-import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
@@ -30,13 +26,10 @@ import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Doubles;
 
@@ -49,9 +42,10 @@ public class Results {
 
 	private static final String CURVE_FILE_SUFFIX = ".csv";
 	private static final String RATE_FMT = "%.8e";
+	private static final String CURVE_DIR = "curves";
 
 	/**
-	 * Output style.
+	 * Hazard output format.
 	 */
 	public enum HazardFormat {
 
@@ -60,6 +54,18 @@ public class Results {
 
 		/** Additional curves by {@link Gmm} and {@link SourceType}. */
 		DETAILED;
+	}
+	
+	/**
+	 * Curve format.
+	 */
+	public enum CurveFormat {
+		
+		/** Write curves as annual-rate. */
+		ANNUAL_RATE,
+		
+		/** Write curves as Poisson probabilities. */
+		POISSON;
 	}
 
 	/**
@@ -252,7 +258,7 @@ public class Results {
 		for (Entry<Imt, List<String>> totalEntry : totalLineMap.entrySet()) {
 			Imt imt = totalEntry.getKey();
 
-			Path imtDir = dir.resolve(imt.name());
+			Path imtDir = dir.resolve(CURVE_DIR).resolve(imt.name());
 			Files.createDirectories(imtDir);
 			Path totalFile = imtDir.resolve("total" + CURVE_FILE_SUFFIX);
 			Files.write(totalFile, totalEntry.getValue(), US_ASCII, options);
