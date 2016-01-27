@@ -1,7 +1,9 @@
 Example 2: Custom configuration
 -------------------------------
 
-Navigate up to the `examples/` directory and execute the following:
+Working directory: `/path/to/repo/nshmp-haz/etc/examples`
+
+Navigate up one level to the `examples/` directory and execute the following:
 
 ```Shell
 hazard ../peer/models/Set1-Case1 2-custom-config/config.json
