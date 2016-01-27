@@ -104,11 +104,14 @@ public class HazardCalc {
 			HazardModel model = HazardModel.load(modelPath);
 
 			CalcConfig config = model.config();
+			Path out = Paths.get(StandardSystemProperty.USER_DIR.value());
 			if (argCount > 1) {
+				Path userConfigPath = Paths.get(args[1]);
 				config = CalcConfig.builder()
 					.copy(model.config())
-					.extend(CalcConfig.builder(Paths.get(args[1])))
+					.extend(CalcConfig.builder(userConfigPath))
 					.build();
+				out = userConfigPath.getParent();
 			}
 			log.info(config.toString());
 
@@ -125,7 +128,7 @@ public class HazardCalc {
 				log.info(sb.toString());
 			}
 
-			calc(model, config, sites, log);
+			calc(model, config, sites, out, log);
 			return null;
 
 		} catch (Exception e) {
@@ -151,6 +154,7 @@ public class HazardCalc {
 			HazardModel model,
 			CalcConfig config,
 			Iterable<Site> sites,
+			Path out,
 			Logger log) throws IOException {
 
 		ExecutorService execSvc = createExecutor();
@@ -163,7 +167,6 @@ public class HazardCalc {
 
 		List<Hazard> results = new ArrayList<>();
 		boolean firstBatch = true;
-		Path dir = Paths.get(StandardSystemProperty.USER_DIR.value());
 
 		for (Site site : sites) {
 			Hazard result = calc(model, config, site, executor);
@@ -172,8 +175,8 @@ public class HazardCalc {
 			if (results.size() == FLUSH_LIMIT) {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
-				Results.writeResults(dir, results, opts);
-				log.info("      batch: " + (count + 1) + "  " + batchWatch + "  total: " +
+				Results.writeResults(out, results, opts);
+				log.info("     batch: " + (count + 1) + "  " + batchWatch + "  total: " +
 					totalWatch);
 				results.clear();
 				batchWatch.reset();
@@ -184,7 +187,7 @@ public class HazardCalc {
 		// write final batch
 		if (!results.isEmpty()) {
 			OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-			Results.writeResults(dir, results, opts);
+			Results.writeResults(out, results, opts);
 		}
 		log.info(PROGRAM + ": " + count + " complete " + totalWatch);
 

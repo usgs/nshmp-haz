@@ -1,7 +1,7 @@
 Example 2: Custom configuration
 -------------------------------
 
-Working directory: `/path/to/repo/nshmp-haz/etc/examples`
+Working directory: `/path/to/nshmp-haz/etc/examples`
 
 Navigate up one level to the `examples/` directory and execute the following:
 
