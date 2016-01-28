@@ -15,4 +15,4 @@ The result of this calculation should be available as a single comma-delimited f
 
 Also note that when only a model is supplied to `HazardCalc`, all output is written to the current working directory. In the next example, we'll override the model supplied configuration with a custom file.
 
-#### Next: [Example 2](../2-custom-config)
+#### Next: [Example 2 – A custom configuration](../2-custom-config)

@@ -9,5 +9,5 @@ alias hazard='java -cp /path/to/repo/nshmp-haz/dist/nshmp-haz.jar org.opensha2.p
 
 Because each example builds on prior concepts, it is best step through all the examples, however quickly.
 
-#### Start: [Example 1](1-hazard-curve)
+#### Start: [Example 1 – A simple hazard calculation](1-hazard-curve)
 

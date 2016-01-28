@@ -1,4 +1,4 @@
-Example 2: Custom configuration
+Example 2: A custom configuration
 -------------------------------
 
 Working directory: `/path/to/nshmp-haz/etc/examples`
@@ -16,6 +16,8 @@ In this example we've overridden the configuration supplied by the model. Specif
 * The `imls` (intensity measure levels or x-values) of the resultant curves have been explicitely defined for each `imt`.
 * And two different sites have been specified.
 
+See the [configuration specification](https://github.com/usgs/nshmp-haz/wiki/Configuration) for details on default values and supported options and formats.
+
 **A note on output:** Because we supplied a specific configuration file, all program output will be written to the directory where the config resides, thus keeping a record of calculation settings along with any results.
 
-#### Next: [Example 3](../3-sites-file)
+#### Next: [Example 3 – Using a custom sites file](../3-sites-file)
