@@ -1,7 +1,7 @@
 Example 6: Enhanced output
 --------------------------
 
-Working directory: `/path/to/nshmp-haz/etc/examples`
+__Working directory:__ `/path/to/nshmp-haz/etc/examples`
 
 By default, `HazardCalc` outputs only total mean hazard curves, however, curves by ground motion model and source type can also be written. Execute
 

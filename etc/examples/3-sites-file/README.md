@@ -1,7 +1,7 @@
 Example 3: Using a custom sites file
 ------------------------------------
 
-Working directory: `/path/to/nshmp-haz/etc/examples`
+__Working directory:__ `/path/to/nshmp-haz/etc/examples`
 
 One may also supply a comma-delimited site data file, which may be easier to work with in some applications.
 

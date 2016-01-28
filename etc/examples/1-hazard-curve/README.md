@@ -1,7 +1,7 @@
 Example 1: A simple hazard calculation
 --------------------------------------
 
-Working directory: `/path/to/nshmp-haz/etc/examples/1-hazard-curve`
+__Working directory:__ `/path/to/nshmp-haz/etc/examples/1-hazard-curve`
 
 On the command line, navigate to this directory and execute the following:
 
