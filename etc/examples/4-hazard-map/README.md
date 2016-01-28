@@ -1,7 +1,7 @@
 Example 4: A simple hazard map
 ------------------------------
 
-Working directory: `/path/to/repo/nshmp-haz/etc/examples`
+Working directory: `/path/to/nshmp-haz/etc/examples`
 
 A hazard map is just a lot of hazard curves. To compute curves at reqularly spaced intervals in latitude and longitude, the sites configuration can instead be specified as a polygon.
 

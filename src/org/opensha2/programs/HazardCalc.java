@@ -135,7 +135,7 @@ public class HazardCalc {
 			return new StringBuilder()
 				.append(NEWLINE)
 				.append(PROGRAM + ": error").append(NEWLINE)
-				.append("  Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
+				.append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
 				.append(NEWLINE)
 				.append(Throwables.getStackTraceAsString(e)).append(NEWLINE)
 				.append(NEWLINE)
