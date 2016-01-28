@@ -8,13 +8,21 @@ Most PSHAs involve the use of more complex source models, the components of whic
 First, clone the 2008 USGS NSHM. Assuming `examples/` is the current working directory, the following will create a copy of the model adjacent to nshmp-haz:
 
 ```Shell
-git clone https://github.com/usgs/nshmp-model-cous-2008.git ../../..
+git clone https://github.com/usgs/nshmp-model-cous-2008.git ../../../nshmp-model-cous-2008
 ```
 
 The 2008 NSHM repository contains two source models: one for the western U.S. and a one for the central and eastern U.S. More complex models make for longer, per-site calculations. To compute hazard for a few sites in the Western U.S., execute:
 
 ```Shell
-hazard ../../../nshmp-model-cous-2008/Western\ US 5-complex-model/config.json
+hazard ../../../nshmp-model-cous-2008/Western\ US 5-complex-model/config-sites.json
 ```
 
-#### Next: [Example 6](../4-enhanced-output)
+More complex models make for longer, per-site calculations. `HazardCalc` will automatically use all cores available and therefore performs better on multi-core systems. To compute a small, low-resolution map for the central San Francisco Bay Area, execute:
+
+```Shell
+hazard ../../../nshmp-model-cous-2008/Western\ US 5-complex-model/config-map.json
+```
+
+This computes 121 curves over a 2° by 2° area and will give you a sense of how long a larger map might take.
+
+#### Next: [Example 6 – Enhanced output](../4-enhanced-output)

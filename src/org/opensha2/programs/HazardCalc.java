@@ -176,10 +176,11 @@ public class HazardCalc {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
 				Results.writeResults(out, results, opts);
-				log.info("     batch: " + (count + 1) + "  " + batchWatch + "  total: " +
-					totalWatch);
+				log.info(
+					"     batch: " + (count + 1) + "  " + batchWatch +
+					"  total: " + totalWatch);
 				results.clear();
-				batchWatch.reset();
+				batchWatch.reset().start();
 			}
 
 			count++;
