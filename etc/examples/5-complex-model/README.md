@@ -23,6 +23,6 @@ Note that more complex models take longer to initialize, although this only occu
 hazard ../../../nshmp-model-cous-2008/Western\ US 5-complex-model/config-map.json
 ```
 
-This computes 121 curves over a 2° by 2° area and will give you a sense of how long a larger map might take.
+This computes 121 curves over a 2° by 2° area and will give you a sense of how long a larger map might take. These results overwrite those of the prior site-specific calculation.
 
 #### Next: [Example 6 – Enhanced output](../6-enhanced-output)
