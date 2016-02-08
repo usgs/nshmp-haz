@@ -4,8 +4,6 @@
 /dist
 /docs
 /tmp
-/results
-/etc/results
+curves/
 Scratch*.java
 /src/META-INF
-/etc/examples/results

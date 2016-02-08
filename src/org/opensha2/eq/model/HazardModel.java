@@ -7,6 +7,7 @@ import static org.opensha2.util.TextUtils.validateName;
 
 import java.nio.file.Path;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.gmm.GroundMotionModel;
@@ -98,6 +99,13 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 
 	@Override public String name() {
 		return name;
+	}
+	
+	/**
+	 * The set of {@code SourceType}s included in this model.
+	 */
+	public Set<SourceType> types() {
+		return sourceSetMap.keySet();
 	}
 
 	/**

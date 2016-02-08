@@ -7,7 +7,6 @@ import static org.opensha2.util.TextUtils.NEWLINE;
 import static org.opensha2.util.TextUtils.format;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -100,16 +99,19 @@ public class HazardCalc {
 
 		try {
 
-			log.info("Hazard curve: init...");
+			log.info(PROGRAM + ": init...");
 			Path modelPath = Paths.get(args[0]);
 			HazardModel model = HazardModel.load(modelPath);
 
 			CalcConfig config = model.config();
+			Path out = Paths.get(StandardSystemProperty.USER_DIR.value());
 			if (argCount > 1) {
+				Path userConfigPath = Paths.get(args[1]);
 				config = CalcConfig.builder()
 					.copy(model.config())
-					.extend(CalcConfig.builder(Paths.get(args[1])))
+					.extend(CalcConfig.builder(userConfigPath))
 					.build();
+				out = userConfigPath.getParent();
 			}
 			log.info(config.toString());
 
@@ -126,14 +128,14 @@ public class HazardCalc {
 				log.info(sb.toString());
 			}
 
-			calc(model, config, sites, log);
+			calc(model, config, sites, out, log);
 			return null;
 
 		} catch (Exception e) {
 			return new StringBuilder()
 				.append(NEWLINE)
-				.append("Hazard Curve: error").append(NEWLINE)
-				.append("   Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
+				.append(PROGRAM + ": error").append(NEWLINE)
+				.append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
 				.append(NEWLINE)
 				.append(Throwables.getStackTraceAsString(e)).append(NEWLINE)
 				.append(NEWLINE)
@@ -152,20 +154,19 @@ public class HazardCalc {
 			HazardModel model,
 			CalcConfig config,
 			Iterable<Site> sites,
+			Path out,
 			Logger log) throws IOException {
 
 		ExecutorService execSvc = createExecutor();
 		Optional<Executor> executor = Optional.<Executor> of(execSvc);
 
-		log.info("Hazard Curve: calculating ...");
+		log.info(PROGRAM + ": calculating ...");
 		Stopwatch batchWatch = Stopwatch.createStarted();
 		Stopwatch totalWatch = Stopwatch.createStarted();
 		int count = 0;
 
 		List<Hazard> results = new ArrayList<>();
 		boolean firstBatch = true;
-		Path dir = Paths.get(StandardSystemProperty.USER_DIR.value(), "results");
-		Files.createDirectories(dir);
 
 		for (Site site : sites) {
 			Hazard result = calc(model, config, site, executor);
@@ -174,11 +175,12 @@ public class HazardCalc {
 			if (results.size() == FLUSH_LIMIT) {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
-				Results.writeResults(dir, results, opts);
-				log.info("       batch: " + (count + 1) + "  " + batchWatch + "  total: " +
-					totalWatch);
+				Results.writeResults(out, results, opts);
+				log.info(
+					"     batch: " + (count + 1) + "  " + batchWatch +
+					"  total: " + totalWatch);
 				results.clear();
-				batchWatch.reset();
+				batchWatch.reset().start();
 			}
 
 			count++;
@@ -186,9 +188,9 @@ public class HazardCalc {
 		// write final batch
 		if (!results.isEmpty()) {
 			OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-			Results.writeResults(dir, results, opts);
+			Results.writeResults(out, results, opts);
 		}
-		log.info("Hazard Curve: " + count + " complete " + totalWatch);
+		log.info(PROGRAM + ": " + count + " complete " + totalWatch);
 
 		execSvc.shutdown();
 	}
@@ -229,12 +231,13 @@ public class HazardCalc {
 		return newFixedThreadPool(getRuntime().availableProcessors());
 	}
 
-	private static final String USAGE_COMMAND = "java -cp nshmp-haz.jar org.opensha.programs.HazardCurve model [config [sites]]";
-	private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki/Earthquake-Source-Models";
-	private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/wiki/Hazard-Calculations";
+	private static final String PROGRAM = HazardCalc.class.getSimpleName();
+	private static final String USAGE_COMMAND = "java -cp nshmp-haz.jar org.opensha.programs.HazardCalc model [config [sites]]";
+	private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
+	private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
 
 	static final String USAGE = new StringBuilder()
-		.append("HazardCurve usage:").append(NEWLINE)
+		.append(PROGRAM).append(" usage:").append(NEWLINE)
 		.append("  ").append(USAGE_COMMAND).append(NEWLINE)
 		.append(NEWLINE)
 		.append("Where:").append(NEWLINE)

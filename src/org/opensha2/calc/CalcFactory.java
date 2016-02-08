@@ -162,8 +162,7 @@ final class CalcFactory {
 
 		return transform(
 			allAsList(curveSets),
-			new CurveSetConsolidator(model, config, site),
-			ex).get();
+			new CurveSetConsolidator(model, config, site), ex).get();
 	}
 
 }

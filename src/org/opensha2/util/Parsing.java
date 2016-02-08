@@ -829,7 +829,8 @@ public final class Parsing {
 
 	/**
 	 * Returns a {@link Function} for converting {@code double}s to formatted
-	 * strings.
+	 * strings. If a value to format is 0.0, the format string is ignored in 
+	 * favor of always printing the often more compact string: "0.0".
 	 * 
 	 * @param format a format string
 	 * @see String#format(String, Object...)
@@ -846,7 +847,7 @@ public final class Parsing {
 		}
 
 		@Override public String apply(Double value) {
-			return String.format(format, value);
+			return (value == 0.0) ? "0.0" : String.format(format, value);
 		}
 	}
 

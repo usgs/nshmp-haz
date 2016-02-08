@@ -12,6 +12,7 @@ import static org.opensha2.calc.Site.Key.Z1P0;
 import static org.opensha2.calc.Site.Key.Z2P5;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.TextUtils.ALIGN_COL;
+import static org.opensha2.util.TextUtils.format;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -117,9 +118,10 @@ final class SiteSet implements Iterable<Site> {
 			.append(" [size=").append(size()).append("]");
 		if (region == null) {
 			for (Site site : Iterables.limit(sites, TO_STRING_LIMIT)) {
-				sb.append(TextUtils.NEWLINE)
-					.append(repeat(" ", ALIGN_COL - 4))
-					.append(site);
+				sb.append(format("Site")).append(site);
+//				sb.append(TextUtils.NEWLINE)
+//					.append(repeat(" ", ALIGN_COL - 4))
+//					.append(site);
 			}
 			if (sites.size() > TO_STRING_LIMIT) {
 				int delta = sites.size() - TO_STRING_LIMIT;
