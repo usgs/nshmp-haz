@@ -14,6 +14,7 @@ import org.opensha2.geo.Location;
 import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.util.Named;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Range;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -51,14 +52,14 @@ public class Site implements Named {
 	public static final double MAX_Z1P0 = 2.0;
 
 	/** The name used for {@code Site}s with no supplied name. */
-	public static final String NO_NAME = "Unnamed Site";
+	public static final String NO_NAME = "Unnamed";
 
 	/** {@link #MIN_VS_30} and {@link #MAX_VS_30} as a closed {@code Range}. */
 	public static final Range<Double> VS30_RANGE = Range.closed(MIN_VS_30, MAX_VS_30);
-	
+
 	/** {@link #MIN_Z2P5} and {@link #MAX_Z2P5} as a closed {@code Range}. */
 	public static final Range<Double> Z2P5_RANGE = Range.closed(MIN_Z2P5, MAX_Z2P5);
-	
+
 	/** {@link #MIN_Z1P0} and {@link #MAX_Z1P0} as a closed {@code Range}. */
 	public static final Range<Double> Z1P0_RANGE = Range.closed(MIN_Z1P0, MAX_Z1P0);
 
@@ -133,8 +134,11 @@ public class Site implements Named {
 	}
 
 	@Override public String toString() {
-		return String.format("Site: {name=%s, loc=%s, vs30=%s, vsInf=%s, z1p0=%s, z2p5=%s}", name,
-			location, vs30, vsInferred, z1p0, z2p5);
+		return new StringBuilder(Strings.padEnd(name, 16, ' '))
+			.append(String.format("%.3f %.3f Vs30=%s ", location.lon(), location.lat(), vs30))
+			.append(vsInferred ? "inferred " : "measured ")
+			.append(String.format("Z1.0=%s Z2.5=%s", z1p0, z2p5))
+			.toString();
 	}
 
 	@Override public String name() {

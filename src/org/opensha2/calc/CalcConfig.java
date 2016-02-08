@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.util.TextUtils.format;
+import static org.opensha2.util.TextUtils.wrap;
 import static org.opensha2.data.XySequence.*;
 
 import java.io.IOException;
@@ -122,7 +123,7 @@ public final class CalcConfig {
 			StringBuilder sb = new StringBuilder();
 			for (Entry<Imt, double[]> entry : customImls.entrySet()) {
 				String imtStr = "(override) " + entry.getKey().name();
-				sb.append(format(imtStr)).append(Arrays.toString(entry.getValue()));
+				sb.append(format(imtStr)).append(wrap(Arrays.toString(entry.getValue())));
 			}
 			customImlStr = sb.toString();
 		}
@@ -132,7 +133,7 @@ public final class CalcConfig {
 			.append(format(Key.EXCEEDANCE_MODEL)).append(exceedanceModel)
 			.append(format(Key.TRUNCATION_LEVEL)).append(truncationLevel)
 			.append(format(Key.IMTS)).append(Parsing.enumsToString(imts, Imt.class))
-			.append(format(Key.DEFAULT_IMLS)).append(Arrays.toString(defaultImls))
+			.append(format(Key.DEFAULT_IMLS)).append(wrap(Arrays.toString(defaultImls)))
 			.append(customImlStr)
 			.append(format(Key.OPTIMIZE_GRIDS)).append(optimizeGrids)
 			.append(format(Key.GMM_UNCERTAINTY)).append(gmmUncertainty)

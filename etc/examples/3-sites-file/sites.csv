@@ -15,10 +15,10 @@
 #     z2p5: NaN (GMM will use default basin depth model)
 #
 name, lon, lat
-Concord, -122.00, 37.95
-Oakland, -122.25, 37.80
-San Francisco, -122.40, 37.75 
-San Jose, -121.90, 37.35
-San Mateo, -122.30, 37.55
-Santa Rosa, -122.70, 38.45
-Vallejo, -122.25, 38.10
+Concord,       -122.00, 37.95
+Oakland,       -122.25, 37.80
+San Francisco, -122.40, 37.75
+San Jose,      -121.90, 37.35
+San Mateo,     -122.30, 37.55
+Santa Rosa,    -122.70, 38.45
+Vallejo,       -122.25, 38.10
