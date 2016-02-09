@@ -325,161 +325,20 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 	 */
 
 	/*
-	 * Thoughts on multithreading: on systems with few cores, performance is worse
-	 * using the multi-threaded (ExecutorService based) implementation below.
-	 * In most NSHMP casesmany other calculations also need to take place so it
-	 * may be just as well to create system inputs on a single thread. Moreover,
-	 * multiple system models would thne be run in parallel anyway as each
-	 * SystemSourceSet would be farmed out to it's own thread.
+	 * Concurrency
 	 * 
-	 * TODO revisit this in context of performance tuning
+	 * The use case assumed here is that 1 or 2 fault systems (e.g. UCERF3
+	 * branch-averaged solutions) will most commonly be run when supporting
+	 * web-services. We therefore compute hazard by first creating a (large)
+	 * input list and then distribute the more time consuming curve calculation.
+	 * Hoever, note that if many fault systems are to be run, it probably makes
+	 * sense to farm each onto an independent thread.
 	 */
-	
-	// TODO clean
-//	@Deprecated
-//	public static final class ToInputsMT implements Function<SystemSourceSet, SystemInputs> {
-//
-//		private final Site site;
-//		private final ExecutorService executor;
-//
-//		public ToInputsMT(final Site site, final ExecutorService executor) {
-//			this.site = site;
-//			this.executor = executor;
-//		}
-//
-//		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
-//
-//			try {
-//
-//				// create Site BitSet
-//				double maxDistance = sourceSet.groundMotionModels().maxDistance();
-//				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
-//
-//				// create and submit distance calculations
-//				CompletionService<Distance> dCS = new ExecutorCompletionService<Distance>(executor);
-//				Function<GriddedSurface, Distance> rTransform = new DistanceCalc(site.location);
-//				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
-//				// need to track section indices
-//				Map<Future<Distance>, Integer> taskIndexMap = new HashMap<>();
-//				for (int i : siteIndices) {
-//					GriddedSurface surface = sourceSet.sections.get(i);
-//					Callable<Distance> rCalc = new DistanceCalcTask(rTransform, surface);
-//					taskIndexMap.put(dCS.submit(rCalc), i);
-//				}
-//
-//				// fill distance table
-//				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
-//					siteIndices,
-//					EnumSet.allOf(Distance.Type.class));
-//				for (int i = 0; i < siteIndices.size(); i++) {
-//					Future<Distance> result = dCS.take();
-//					int index = taskIndexMap.get(result);
-//					Distance r = result.get();
-//					Map<Distance.Type, Double> rRow = rTable.row(index);
-//					rRow.put(R_JB, r.rJB);
-//					rRow.put(R_RUP, r.rRup);
-//					rRow.put(R_X, r.rX);
-//				}
-//
-//				// create and submit inputs
-//				CompletionService<HazardInput> iCS = new ExecutorCompletionService<HazardInput>(
-//					executor);
-//				Function<SystemSource, HazardInput> iTransform = new InputGenerator(rTable,
-//					siteBitset, site);
-//				SystemInputs inputs = new SystemInputs(sourceSet);
-//				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
-//				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
-//				int count = 0;
-//				for (SystemSource source : sources) {
-//					Callable<HazardInput> inputGenTask = new InputGeneratorTask(iTransform, source);
-//					iCS.submit(inputGenTask);
-//					count++;
-//					HazardInput input = inputGenTask.call();
-//					inputs.add(input);
-//				}
-//
-//				// retrieve and compile inputs
-//				for (int i = 0; i < count; i++) {
-//					HazardInput input = iCS.take().get();
-//					inputs.add(input);
-//				}
-//
-//				return inputs;
-//
-//			} catch (Exception e) {
-//				Throwables.propagate(e);
-//				return null;
-//			}
-//		}
-//	}
 
-	// TODO clean
-//	@Deprecated
-//	public static final class ToInputsOld implements Function<SystemSourceSet, SystemInputs> {
-//
-//		private final Site site;
-//
-//		public ToInputsOld(final Site site) {
-//			this.site = site;
-//		}
-//
-//		@Override public SystemInputs apply(final SystemSourceSet sourceSet) {
-//
-//			try {
-//				// create Site BitSet
-//				double maxDistance = sourceSet.groundMotionModels().maxDistance();
-//				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
-//
-//				// create and fill distance table
-//				List<Integer> siteIndices = DataUtils.bitsToIndices(siteBitset);
-//				Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
-//					siteIndices,
-//					EnumSet.allOf(Distance.Type.class));
-//				Function<GriddedSurface, Distance> rTransform = new DistanceCalc(site.location);
-//				for (int i : siteIndices) {
-//					GriddedSurface surface = sourceSet.sections.get(i);
-//					Callable<Distance> rCalc = new DistanceCalcTask(rTransform, surface);
-//					Distance r = rCalc.call();
-//					Map<Distance.Type, Double> rRow = rTable.row(i);
-//					rRow.put(R_JB, r.rJB);
-//					rRow.put(R_RUP, r.rRup);
-//					rRow.put(R_X, r.rX);
-//				}
-//
-//				// create inputs
-//				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
-//					rTable, siteBitset, site);
-//				SystemInputs inputs = new SystemInputs(sourceSet);
-//				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
-//				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
-//				for (SystemSource source : sources) {
-//					Callable<HazardInput> inputGenTask = new InputGeneratorTask(
-//						inputGenerator,
-//						source);
-//					HazardInput input = inputGenTask.call();
-//					inputs.add(input);
-//				}
-//
-//				return inputs;
-//
-//			} catch (Exception e) {
-//				Throwables.propagate(e);
-//				return null;
-//			}
-//		}
-//	}
-	
 	public static Function<SystemSourceSet, InputList> toInputsFunction(Site site) {
 		return new ToInputs(site);
 	}
-	
-	/*
-	 * TODO This is a more compact form of the original ToInputs that was structured to
-	 * be more easily repurposed as a multithreaded implementation. i.e. using Callables
-	 * etc... Turns out it's more likely a single threaded approach will be more performant
-	 * anticipating that multipl system models will be run in parallel
-	 *
-	 */
+
 	private static final class ToInputs implements Function<SystemSourceSet, InputList> {
 
 		private final Site site;
@@ -492,7 +351,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
 			try {
 				SystemInputList inputs = new SystemInputList(sourceSet);
-				
+
 				// create Site BitSet
 				double maxDistance = sourceSet.groundMotionModels().maxDistance();
 				BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
@@ -529,7 +388,6 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 		}
 	}
 
-
 	private static final class DistanceCalc implements Function<GriddedSurface, Distance> {
 
 		private final Location loc;
@@ -542,22 +400,6 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 			return surface.distanceTo(loc);
 		}
 	}
-
-//	@Deprecated
-//	private static class DistanceCalcTask implements Callable<Distance> {
-//
-//		private final Function<GriddedSurface, Distance> calc;
-//		private final GriddedSurface surface;
-//
-//		DistanceCalcTask(final Function<GriddedSurface, Distance> calc, final GriddedSurface surface) {
-//			this.calc = calc;
-//			this.surface = surface;
-//		}
-//
-//		@Override public Distance call() {
-//			return calc.apply(surface);
-//		}
-//	}
 
 	private static class BitsetFilter implements Predicate<SystemSource> {
 
@@ -637,22 +479,6 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 				site.z2p5);
 		}
 	}
-
-//	@Deprecated
-//	private static final class InputGeneratorTask implements Callable<HazardInput> {
-//
-//		private final Function<SystemSource, HazardInput> calc;
-//		private final SystemSource source;
-//
-//		InputGeneratorTask(final Function<SystemSource, HazardInput> calc, final SystemSource source) {
-//			this.calc = calc;
-//			this.source = source;
-//		}
-//
-//		@Override public HazardInput call() {
-//			return calc.apply(source);
-//		}
-//	}
 
 	private final BitSet bitsetForLocation(final Location loc, final double r) {
 		BitSet bits = new BitSet(sections.size());
