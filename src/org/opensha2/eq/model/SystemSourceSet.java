@@ -343,7 +343,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
 		private final Site site;
 
-		public ToInputs(final Site site) {
+		ToInputs(final Site site) {
 			this.site = site;
 		}
 
@@ -372,7 +372,9 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
 				// create inputs
 				Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
-					rTable, siteBitset, site);
+					rTable,
+					siteBitset,
+					site);
 				Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
 				Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
 				for (SystemSource source : sources) {
@@ -385,19 +387,6 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 				Throwables.propagate(e);
 				return null;
 			}
-		}
-	}
-
-	private static final class DistanceCalc implements Function<GriddedSurface, Distance> {
-
-		private final Location loc;
-
-		DistanceCalc(final Location loc) {
-			this.loc = loc;
-		}
-
-		@Override public Distance apply(final GriddedSurface surface) {
-			return surface.distanceTo(loc);
 		}
 	}
 
