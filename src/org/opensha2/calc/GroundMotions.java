@@ -76,7 +76,7 @@ final class GroundMotions {
 
 	static class Builder {
 
-		private static final String ID = "HazardGroundMotions.Builder";
+		private static final String ID = "GroundMotions.Builder";
 		private boolean built = false;
 		private final int size;
 		private int addCount = 0;
@@ -86,8 +86,8 @@ final class GroundMotions {
 		private final Map<Imt, Map<Gmm, List<Double>>> sigmas;
 
 		private Builder(InputList inputs, Set<Imt> imts, Set<Gmm> gmms) {
-			checkArgument(checkNotNull(inputs).size() > 0);
-			checkArgument(checkNotNull(gmms).size() > 0);
+			checkArgument(inputs.size() > 0);
+			checkArgument(gmms.size() > 0);
 			this.inputs = inputs;
 			means = initValueMaps(imts, gmms, inputs.size());
 			sigmas = initValueMaps(imts, gmms, inputs.size());
