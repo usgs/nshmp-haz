@@ -95,17 +95,6 @@ final class CalcFactory {
 	}
 
 	/* Asynchronously compute hazard curves for a SystemSourceSet. */
-	@Deprecated static ListenableFuture<HazardCurveSet> systemToCurvesOLD(
-			SystemSourceSet sources,
-			CalcConfig config,
-			Site site,
-			Executor ex) {
-
-		Function<SystemSourceSet, HazardCurveSet> systemToCurves = new SystemToCurves(config, site);
-		return transform(immediateFuture(sources), systemToCurves, ex);
-	}
-
-	/* Asynchronously compute hazard curves for a SystemSourceSet. */
 	static ListenableFuture<HazardCurveSet> systemToCurves(
 			SystemSourceSet sources,
 			CalcConfig config,
