@@ -15,6 +15,7 @@ import org.opensha2.calc.Transforms.CurveConsolidator;
 import org.opensha2.calc.Transforms.CurveSetConsolidator;
 import org.opensha2.calc.Transforms.SourceToCurves;
 import org.opensha2.calc.Transforms.SystemToCurves;
+import org.opensha2.calc.Transforms.ParallelSystemToCurves;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.ClusterSourceSet;
 import org.opensha2.eq.model.HazardModel;
@@ -39,8 +40,11 @@ final class CalcFactory {
 
 	// TODO For future consideration:
 	// -- set initial capcity of source arrays
-	// -- filter entire sourceSets on distance 
-	
+	// -- filter entire sourceSets on distance
+
+	// TODO wouldn't it be more compact to just reference all functions as thir
+	// type??
+
 	/* Compute hazard curves for a SourceSet. */
 	static HazardCurveSet sourcesToCurves(
 			SourceSet<? extends Source> sources,
@@ -56,7 +60,7 @@ final class CalcFactory {
 			new CurveConsolidator(sources, config);
 		return consolidateFn.apply(curvesList);
 	}
-	
+
 	/* Asynchronously compute hazard curves for a SourceSet. */
 	static ListenableFuture<HazardCurveSet> sourcesToCurves(
 			SourceSet<? extends Source> sources,
@@ -78,16 +82,27 @@ final class CalcFactory {
 			new CurveConsolidator(sources, config),
 			ex);
 	}
-	
+
+	// TODO get rid of sources argument
 	/* Compute hazard curves for a SystemSourceSet. */
 	static HazardCurveSet systemToCurves(
 			SystemSourceSet sources,
 			CalcConfig config,
 			Site site) {
 
-		Function<SystemSourceSet, HazardCurveSet> systemToCurves = new SystemToCurves(
-			sources, config, site);
+		Function<SystemSourceSet, HazardCurveSet> systemToCurves = new SystemToCurves(config, site);
 		return systemToCurves.apply(sources);
+	}
+
+	/* Asynchronously compute hazard curves for a SystemSourceSet. */
+	@Deprecated static ListenableFuture<HazardCurveSet> systemToCurvesOLD(
+			SystemSourceSet sources,
+			CalcConfig config,
+			Site site,
+			Executor ex) {
+
+		Function<SystemSourceSet, HazardCurveSet> systemToCurves = new SystemToCurves(config, site);
+		return transform(immediateFuture(sources), systemToCurves, ex);
 	}
 
 	/* Asynchronously compute hazard curves for a SystemSourceSet. */
@@ -95,11 +110,17 @@ final class CalcFactory {
 			SystemSourceSet sources,
 			CalcConfig config,
 			Site site,
-			Executor ex) {
+			final Executor ex) {
 
-		Function<SystemSourceSet, HazardCurveSet> systemToCurves = new SystemToCurves(
-			sources, config, site);
-		return transform(immediateFuture(sources), systemToCurves, ex);
+		Function<SystemSourceSet, HazardCurveSet> systemToCurves = new ParallelSystemToCurves(
+			site,
+			config,
+			ex);
+
+		return transform(
+			immediateFuture(sources),
+			systemToCurves,
+			ex);
 	}
 
 	/* Compute hazard curves for a ClusterSourceSet. */

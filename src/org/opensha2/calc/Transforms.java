@@ -1,11 +1,16 @@
 package org.opensha2.calc;
 
+import static com.google.common.util.concurrent.Futures.allAsList;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.transform;
+import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static org.opensha2.gmm.Gmm.instances;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import org.opensha2.calc.ClusterCurves.Builder;
 import org.opensha2.data.XySequence;
@@ -39,7 +44,8 @@ import com.google.common.collect.MultimapBuilder;
 final class Transforms {
 
 	/*
-	 * Implemenation notes:
+	 * Implemenation notes: TODO not sure what these notes have to with current
+	 * state of this class
 	 * -------------------------------------------------------------------------
 	 * ClusterSourceSets contain ClusterSources, each of which references a
 	 * FaultSourceSet containing one or more fault representations for the
@@ -173,7 +179,7 @@ final class Transforms {
 				XySequence utilCurve = XySequence.copyOf(modelCurve);
 				XySequence gmmCurve = XySequence.copyOf(modelCurve);
 
-				// Map<Gmm, List<Double>> gmmMeans =
+				// Map<Gmm, List<Double>> gmmMeans = TODO clean
 				// groundMotions.means.get(imt);
 				// Map<Gmm, List<Double>> gmmSigmas =
 				// groundMotions.sigmas.get(imt);
@@ -356,6 +362,84 @@ final class Transforms {
 		}
 	}
 
+	static final class ParallelSystemToCurves implements Function<SystemSourceSet, HazardCurveSet> {
+
+		private final Site site;
+		private final Executor ex;
+		private final CalcConfig config;
+		private final int size = 20000;
+
+		ParallelSystemToCurves(
+				Site site,
+				CalcConfig config,
+				Executor ex) {
+
+			this.site = site;
+			this.ex = ex;
+			this.config = config;
+		}
+
+		@Override public HazardCurveSet apply(SystemSourceSet sources) {
+
+			// create input list
+			InputList master = SystemSourceSet.toInputsFunction(site).apply(sources);
+			List<InputList> partitions = master.partition(size);
+
+			// calculate curves from list in parallel
+			InputsToCurves inputsToCurves = new InputsToCurves(sources, config);
+			AsyncList<HazardCurves> asyncCurvesList = AsyncList.create();
+			for (InputList partition : partitions) {
+				asyncCurvesList.add(transform(
+					immediateFuture(partition),
+					inputsToCurves,
+					ex));
+			}
+			List<HazardCurves> curvesList = getUnchecked(allAsList(asyncCurvesList));
+
+			// combine and consolidate
+			HazardCurves hazardCurves = HazardCurves.combine(master, curvesList);
+			CurveConsolidator consolidator = new CurveConsolidator(sources, config);
+			
+			return consolidator.apply(ImmutableList.of(hazardCurves));
+		}
+	}
+
+	/*
+	 * SYSTEM: SystemSourceSet --> HazardCurveSet TODO update comments
+	 * 
+	 * Compute hazard curves for system sources. This function derives all
+	 * inputs for an entire SystemSourceSet before being composed with standard
+	 * ground motion and hazard curve functions. For use when a SystemSourceSet
+	 * will be entirely processed on a single thread.
+	 */
+	static final class InputsToCurves implements Function<InputList, HazardCurves> {
+
+		private final Function<InputList, GroundMotions> inputsToGroundMotions;
+		private final Function<GroundMotions, HazardCurves> groundMotionsToCurves;
+
+		InputsToCurves(
+				SourceSet<? extends Source> sources,
+				CalcConfig config) {
+
+			GmmSet gmmSet = sources.groundMotionModels();
+			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(
+				config.imts(),
+				gmmSet.gmms());
+
+			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
+			this.groundMotionsToCurves = config.gmmUncertainty() && gmmSet.epiUncertainty() ?
+				new GroundMotionsToCurvesWithUncertainty(gmmSet, config) :
+				new GroundMotionsToCurves(config);
+		}
+
+		@Override public HazardCurves apply(InputList inputs) {
+
+			// if (inputs.isEmpty()) return HazardCurveSet.empty(sources); TODO
+
+			return groundMotionsToCurves.apply(inputsToGroundMotions.apply(inputs));
+		}
+	}
+
 	/*
 	 * SYSTEM: SystemSourceSet --> HazardCurveSet
 	 * 
@@ -363,14 +447,14 @@ final class Transforms {
 	 * inputs for an entire SystemSourceSet before being composed with standard
 	 * ground motion and hazard curve functions.
 	 */
-	static final class SystemToCurves implements Function<SystemSourceSet, HazardCurveSet> {
+	static final class SystemToCurvesOLD implements Function<SystemSourceSet, HazardCurveSet> {
 
 		private final Function<SystemSourceSet, InputList> sourcesToInputs;
 		private final Function<InputList, GroundMotions> inputsToGroundMotions;
 		private final Function<GroundMotions, HazardCurves> groundMotionsToCurves;
 		private final Function<List<HazardCurves>, HazardCurveSet> curveConsolidator;
 
-		SystemToCurves(
+		SystemToCurvesOLD(
 				SystemSourceSet sources,
 				CalcConfig config,
 				Site site) {
@@ -404,6 +488,47 @@ final class Transforms {
 					groundMotionsToCurves.apply(
 						inputsToGroundMotions.apply(inputs))));
 
+		}
+	}
+
+	/*
+	 * SYSTEM: SystemSourceSet --> HazardCurveSet
+	 * 
+	 * Compute hazard curves for system sources. This function derives all
+	 * inputs for an entire SystemSourceSet before being composed with standard
+	 * ground motion and hazard curve functions.
+	 */
+	static final class SystemToCurves implements Function<SystemSourceSet, HazardCurveSet> {
+
+		private final Site site;
+		private final CalcConfig config;
+
+		SystemToCurves(CalcConfig config, Site site) {
+			this.site = site;
+			this.config = config;
+		}
+
+		@Override public HazardCurveSet apply(SystemSourceSet sources) {
+
+			InputList inputs = SystemSourceSet.toInputsFunction(site).apply(sources);
+			if (inputs.isEmpty()) return HazardCurveSet.empty(sources);
+
+			GmmSet gmmSet = sources.groundMotionModels();
+			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(
+				config.imts(),
+				gmmSet.gmms());
+
+			InputsToGroundMotions inputsToGm = new InputsToGroundMotions(gmmTable);
+			GroundMotions gms = inputsToGm.apply(inputs);
+
+			Function<GroundMotions, HazardCurves> gmToCurves =
+				config.gmmUncertainty() && gmmSet.epiUncertainty() ?
+					new GroundMotionsToCurvesWithUncertainty(gmmSet, config) :
+					new GroundMotionsToCurves(config);
+			HazardCurves curves = gmToCurves.apply(gms);
+			
+			CurveConsolidator consolidator = new CurveConsolidator(sources, config);
+			return consolidator.apply(ImmutableList.of(curves));
 		}
 	}
 
@@ -614,8 +739,7 @@ final class Transforms {
 
 		@Override public Hazard apply(List<HazardCurveSet> curveSetList) {
 
-			Hazard.Builder resultBuilder = Hazard
-				.builder(config)
+			Hazard.Builder resultBuilder = Hazard.builder(config)
 				.model(model)
 				.site(site);
 
