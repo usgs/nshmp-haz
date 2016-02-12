@@ -335,6 +335,12 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 	 * sense to farm each onto an independent thread.
 	 */
 
+	/**
+	 * Return an instance of a {@code Function} that converts a
+	 * {@code SystemSourceSet} to a ground motion model {@code InputList}.
+	 * 
+	 * @param site with which to initialize instance.
+	 */
 	public static Function<SystemSourceSet, InputList> toInputsFunction(Site site) {
 		return new ToInputs(site);
 	}
