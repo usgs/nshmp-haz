@@ -352,41 +352,6 @@ final class Transforms {
 	}
 
 	/*
-	 * SYSTEM: InputList --> HazardCurves
-	 * 
-	 * Compute hazard curves from an input list. Although this function is
-	 * generally applicable to all source types, it is presently only used to
-	 * process partitioned input lists derived from a system source.
-	 */
-	static final class InputsToCurves implements Function<InputList, HazardCurves> {
-
-		private final Function<InputList, GroundMotions> inputsToGroundMotions;
-		private final Function<GroundMotions, HazardCurves> groundMotionsToCurves;
-
-		InputsToCurves(
-				SourceSet<? extends Source> sources,
-				CalcConfig config) {
-
-			GmmSet gmmSet = sources.groundMotionModels();
-			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(
-				config.imts(),
-				gmmSet.gmms());
-
-			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
-			this.groundMotionsToCurves = config.gmmUncertainty() && gmmSet.epiUncertainty() ?
-				new GroundMotionsToCurvesWithUncertainty(gmmSet, config) :
-				new GroundMotionsToCurves(config);
-		}
-
-		@Override public HazardCurves apply(InputList inputs) {
-
-			// if (inputs.isEmpty()) return HazardCurveSet.empty(sources); TODO
-
-			return groundMotionsToCurves.apply(inputsToGroundMotions.apply(inputs));
-		}
-	}
-
-	/*
 	 * A note on system sources:
 	 * 
 	 * SystemSourceSets contain many single sources and the functions here
@@ -468,12 +433,12 @@ final class Transforms {
 
 			// create input list
 			InputList master = SystemSourceSet.toInputsFunction(site).apply(sources);
-			List<InputList> partitions = master.partition(size);
+			if (master.isEmpty()) return HazardCurveSet.empty(sources);
 
 			// calculate curves from list in parallel
 			InputsToCurves inputsToCurves = new InputsToCurves(sources, config);
 			AsyncList<HazardCurves> asyncCurvesList = AsyncList.create();
-			for (InputList partition : partitions) {
+			for (InputList partition : master.partition(size)) {
 				asyncCurvesList.add(transform(
 					immediateFuture(partition),
 					inputsToCurves,
@@ -486,6 +451,38 @@ final class Transforms {
 			CurveConsolidator consolidator = new CurveConsolidator(sources, config);
 
 			return consolidator.apply(ImmutableList.of(hazardCurves));
+		}
+	}
+
+	/*
+	 * SYSTEM: InputList --> HazardCurves
+	 * 
+	 * Compute hazard curves from an input list. Although this function is
+	 * generally applicable to all source types, it is presently only used to
+	 * process partitioned input lists derived from a system source.
+	 */
+	static final class InputsToCurves implements Function<InputList, HazardCurves> {
+
+		private final Function<InputList, GroundMotions> inputsToGroundMotions;
+		private final Function<GroundMotions, HazardCurves> groundMotionsToCurves;
+
+		InputsToCurves(
+				SourceSet<? extends Source> sources,
+				CalcConfig config) {
+
+			GmmSet gmmSet = sources.groundMotionModels();
+			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(
+				config.imts(),
+				gmmSet.gmms());
+
+			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
+			this.groundMotionsToCurves = config.gmmUncertainty() && gmmSet.epiUncertainty() ?
+				new GroundMotionsToCurvesWithUncertainty(gmmSet, config) :
+				new GroundMotionsToCurves(config);
+		}
+
+		@Override public HazardCurves apply(InputList inputs) {
+			return groundMotionsToCurves.apply(inputsToGroundMotions.apply(inputs));
 		}
 	}
 
