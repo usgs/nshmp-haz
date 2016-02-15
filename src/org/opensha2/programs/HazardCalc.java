@@ -218,7 +218,7 @@ public class HazardCalc {
 		Optional<Executor> execLocal = executor.or(Optional.of(createExecutor()));
 
 		try {
-			Hazard result = Calcs.hazardCurve(model, config, site, execLocal);
+			Hazard result = Calcs.hazard(model, config, site, execLocal);
 			if (!executor.isPresent()) ((ExecutorService) executor).shutdown();
 			return result;
 		} catch (ExecutionException | InterruptedException e) {
