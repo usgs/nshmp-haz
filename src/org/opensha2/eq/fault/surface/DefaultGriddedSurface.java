@@ -64,69 +64,14 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 		// compute actual (best fit) spacings
 		double length = trace.length();
 		this.strikeSpacing = length / Math.ceil(length / strikeSpacing);
-		// double downDipWidth = (lowerDepth-depth)/Math.sin(dip *
-		// GeoTools.TO_RAD);
 		this.dipSpacing = width / Math.ceil(width / dipSpacing);
 
-		// set(trace, dip, depth, lowerDepth, strikeSpacing, dipSpacing);
-		// this.lowerDepth = lowerDepth;
-		// this.strikeSpacing = gridSpacingAlong;
-		// this.gridSpacingDown = dipSpacing;
-		// this.sameGridSpacing = true;
-		// if(dipSpacing != gridSpacingAlong) sameGridSpacing = false;
 
 		createEvenlyGriddedSurface();
 
 		centroid = Locations.centroid(this);
 	}
 
-	// private void set(LocationList faultTrace, double dip, double depth,
-	// double lowerDepth, double strikeSpacing, double dipSpacing) {
-	// this.trace =faultTrace;
-	// this.aveDip =dip;
-	// this.upperSeismogenicDepth = depth;
-	// this.lowerSeismogenicDepth =lowerDepth;
-	// this.gridSpacingAlong = strikeSpacing;
-	// this.gridSpacingDown = dipSpacing;
-	// this.sameGridSpacing = true;
-	// if(dipSpacing != strikeSpacing) sameGridSpacing = false;
-	// }
-	//
-
-	// private void assertValidState() {
-
-	// TODO revisit; should only need to validate derived values; all value
-	// from constructor should be valid
-
-	// checkNotNull(trace, "Fault Trace is null");
-	// if( trace == null ) throw new FaultException(C + "Fault Trace is null");
-
-	// Faults.validateDip(dip);
-	// Faults.validateDepth(lowerDepth);
-	// Faults.validateDepth(depth);
-	// checkArgument(depth < lowerDepth);
-
-	// checkArgument(!Double.isNaN(strikeSpacing), "invalid gridSpacing");
-	// if( strikeSpacing == Double.NaN ) throw new FaultException(C +
-	// "invalid gridSpacing");
-
-	// double depth = trace.first().depth();
-	// checkArgument(depth <= depth,
-	// "depth on trace locations %s must be <= upperSeisDepth %s",
-	// depth, depth);
-	// if(depth > depth)
-	// throw new FaultException(C +
-	// "depth on trace locations must be < upperSeisDepth");
-
-	// for (Location loc : trace) {
-	// if (loc.depth() != depth) {
-	// checkArgument(loc.depth() == depth,
-	// "All depth on trace locations must be equal");
-	// // throw new FaultException(C +
-	// ":All depth on trace locations must be equal");
-	// }
-	// }
-	// }
 
 	/**
 	 * Return a new surface builder.
@@ -250,10 +195,6 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	 */
 	private void createEvenlyGriddedSurface() {
 
-		// if( D ) System.out.println("Starting createEvenlyGriddedSurface");
-
-		// assertValidState();
-
 		final int numSegments = trace.size() - 1;
 		// final double avDipRadians = dip * GeoTools.TO_RAD;
 		final double gridSpacingCosAveDipRadians = dipSpacing * Math.cos(dipRad);
@@ -268,16 +209,6 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
 		Location firstLoc;
 		Location lastLoc;
-		// double aveDipDirectionRad;
-		// // Find ave dip direction (defined by end locations):
-		// if( Double.isNaN(dipDir) ) {
-		// aveDipDirectionRad = Faults.dipDirectionRad(trace);
-		// } else {
-		// aveDipDirectionRad = dipDir * GeoTools.TO_RAD;
-		// }
-
-		// if(D) System.out.println("\taveDipDirection = " + aveDipDirectionRad
-		// * GeoTools.TO_DEG);
 
 		// Iterate over each Location in Fault Trace
 		// Calculate distance, cumulativeDistance and azimuth for
@@ -305,45 +236,23 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
 		}
 
-		// Calculate down dip width
-		// double downDipWidth = (lowerDepth-depth)/Math.sin( avDipRadians );
-
 		// Calculate the number of rows and columns
 		int rows = 1 + Math.round((float) (width / dipSpacing));
 		int cols = 1 + Math.round((float) (segmentCumLenth[numSegments - 1] / strikeSpacing));
 
-		// if(D) System.out.println("numLocs: = " + trace.size());
-		// if(D) System.out.println("numSegments: = " + numSegments);
-		// if(D) System.out.println("firstLoc: = " + firstLoc);
-		// if(D) System.out.println("lastLoc(): = " + lastLoc);
-		// if(D) System.out.println("downDipWidth: = " + downDipWidth);
-		// if(D) System.out.println("totTraceLength: = " + segmentCumLenth[
-		// numSegments - 1]);
-		// if(D) System.out.println("numRows: = " + rows);
-		// if(D) System.out.println("numCols: = " + cols);
-
 		// Create GriddedSurface
 		int segmentNumber, ith_row, ith_col = 0;
 		double distanceAlong, distance, hDistance, vDistance;
-		// location object
 		Location location1;
 
-		// initialize the num of Rows and Cols for the container2d object that
-		// holds
+		// initialize the num of Rows and Cols for the container2d object
 		setNumRowsAndNumCols(rows, cols);
 
 		// Loop over each column - ith_col is ith grid step along the fault
-		// trace
-		// if( D ) System.out.println("   Iterating over columns up to " + cols
-		// );
 		while (ith_col < cols) {
-
-			// if( D ) System.out.println("   ith_col = " + ith_col);
 
 			// calculate distance from column number and grid spacing
 			distanceAlong = ith_col * strikeSpacing;
-			// if( D ) System.out.println("   distanceAlongFault = " +
-			// distanceAlong);
 
 			// Determine which segment distanceAlong is in
 			segmentNumber = 1;
@@ -355,22 +264,15 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 			// off the end
 			if (segmentNumber == numSegments + 1) segmentNumber--;
 
-			// if( D ) System.out.println("   segmentNumber " + segmentNumber );
-
 			// Calculate the distance from the last segment point
-			if (segmentNumber > 1)
+			if (segmentNumber > 1) {
 				distance = distanceAlong - segmentCumLenth[segmentNumber - 2];
-			else
+			} else {
 				distance = distanceAlong;
-			// if( D ) System.out.println("   distanceFromLastSegPt " + distance
-			// );
+			}
 
 			// Calculate the grid location along fault trace and put into grid
 			location1 = trace.get(segmentNumber - 1);
-			// dir = new LocationVector(0, distance, segmentAzimuth[
-			// segmentNumber - 1 ], 0);
-			// dir = new LocationVector(segmentAzimuth[ segmentNumber - 1 ],
-			// distance, 0);
 			dir = LocationVector.create(segmentAzimuth[segmentNumber - 1], distance, 0);
 
 			// location on the trace
@@ -428,21 +330,6 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 			ith_col++;
 		}
 
-		// if( D ) System.out.println("Ending createEvenlyGriddedSurface");
-
-		/*
-		 * // test for fittings surfaces exactly
-		 * if((float)(trace.getTraceLength()-getSurfaceLength()) != 0.0)
-		 * System.out.println(trace.getName()+"\n\t"+
-		 * "LengthDiff="+(float)(trace.getTraceLength()-getSurfaceLength())+
-		 * "\t"
-		 * +(float)trace.getTraceLength()+"\t"+(float)getSurfaceLength()+"\t"
-		 * +getNumCols()+"\t"+(float)getGridSpacingAlongStrike()+
-		 * "\n\tWidthDiff="+(float)(downDipWidth-getSurfaceWidth())
-		 * +"\t"+(float)
-		 * (downDipWidth)+"\t"+(float)getSurfaceWidth()+"\t"+getNumRows
-		 * ()+"\t"+(float)getGridSpacingDownDip());
-		 */
 	}
 
 	// Surely the creation of a gridded surface can be easier...
@@ -486,7 +373,6 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	 */
 	public static LocationList resampleTrace(LocationList trace, int num) {
 		double resampInt = trace.length() / num;
-		// FaultTrace resampTrace = new FaultTrace("resampled "+trace.name());
 		List<Location> resampLocs = Lists.newArrayList();
 		resampLocs.add(trace.first()); // add the first location
 		double remainingLength = resampInt;
@@ -496,12 +382,6 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 			Location nextLoc = trace.get(NextLocIndex);
 			double length = linearDistanceFast(lastLoc, nextLoc);
 			if (length > remainingLength) {
-				// set the point
-				// LocationVector dir = vector(lastLoc, nextLoc);
-				// dir.setHorzDistance(dir.getHorzDistance() * remainingLength /
-				// length);
-				// dir.setVertDistance(dir.getVertDistance() * remainingLength /
-				// length);
 				LocationVector dirSrc = LocationVector.create(lastLoc, nextLoc);
 				double hDist = dirSrc.horizontal() * remainingLength / length;
 				double vDist = dirSrc.vertical() * remainingLength / length;
@@ -518,50 +398,11 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 			}
 		}
 
-		// make sure we got the last one (might be missed because of numerical
-		// precision issues?)
+		// make sure we got the last one
+		// (might be missed because of numerical precision issues?)
 		double dist = linearDistanceFast(trace.last(), resampLocs.get(resampLocs.size() - 1));
 		if (dist > resampInt / 2) resampLocs.add(trace.last());
 
-		/* Debugging Stuff **************** */
-		/*
-		 * // write out each to check System.out.println("RESAMPLED"); for(int
-		 * i=0; i<resampTrace.size(); i++) { Location l =
-		 * resampTrace.getLocationAt(i);
-		 * System.out.println(l.getLatitude()+"\t"+
-		 * l.getLongitude()+"\t"+l.getDepth()); }
-		 * 
-		 * System.out.println("ORIGINAL"); for(int i=0; i<trace.size(); i++) {
-		 * Location l = trace.getLocationAt(i);
-		 * System.out.println(l.getLatitude(
-		 * )+"\t"+l.getLongitude()+"\t"+l.getDepth()); }
-		 * 
-		 * // write out each to check
-		 * System.out.println("target resampInt="+resampInt+"\tnum sect="+num);
-		 * System.out.println("RESAMPLED"); double ave=0, min=Double.MAX_VALUE,
-		 * max=Double.MIN_VALUE; for(int i=1; i<resampTrace.size(); i++) {
-		 * double d = Locations.getTotalDistance(resampTrace.getLocationAt(i-1),
-		 * resampTrace.getLocationAt(i)); ave +=d; if(d<min) min=d; if(d>max)
-		 * max=d; } ave /= resampTrace.size()-1;
-		 * System.out.println("ave="+ave+"\tmin="
-		 * +min+"\tmax="+max+"\tnum pts="+resampTrace.size());
-		 * 
-		 * 
-		 * System.out.println("ORIGINAL"); ave=0; min=Double.MAX_VALUE;
-		 * max=Double.MIN_VALUE; for(int i=1; i<trace.size(); i++) { double d =
-		 * Locations.getTotalDistance(trace.getLocationAt(i-1),
-		 * trace.getLocationAt(i)); ave +=d; if(d<min) min=d; if(d>max) max=d; }
-		 * ave /= trace.size()-1;
-		 * System.out.println("ave="+ave+"\tmin="+min+"\tmax="
-		 * +max+"\tnum pts="+trace.size());
-		 * 
-		 * /* End of debugging stuff *******************
-		 */
-
-		// TODO is resampled trace name used? can't it be acquired from a
-		// wrapping source?
-		// return FaultTrace.create("resampled " + trace.name(),
-		// LocationList.create(resampLocs));
 		return LocationList.create(resampLocs);
 	}
 
@@ -570,31 +411,11 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	 */
 	@Override public LocationList getPerimeter() {
 
-		// LocationList topTrace = new LocationList();
 		List<Location> topLocs = Lists.newArrayList();
-		// LocationList botTrace = new LocationList();
 		List<Location> botLocs = Lists.newArrayList();
-		// final double avDipRadians = dip * GeoTools.TO_RAD;
-		// double aveDipDirectionRad;
-		// if( Double.isNaN(dipDir) ) {
-		// aveDipDirectionRad = Faults.dipDirectionRad(trace);
-		// } else {
-		// aveDipDirectionRad = dipDir * GeoTools.TO_RAD;
-		// }
 		double lowerDepth = depth + width * Math.sin(dipRad);
 
 		for (Location traceLoc : trace) {
-
-			// // TODO ignoring seismogenic depth for now
-			// double vDistance = upperSeisDepth - traceLoc.depth();
-			// double hDistance = vDistance / Math.tan(dipRad);
-			//
-			// // LocationVector dir = new LocationVector(aveDipDirection,
-			// hDistance, vDistance);
-			// LocationVector dir = LocationVector.create(dipDirRad, hDistance,
-			// vDistance);
-			// Location topLoc = Locations.location(traceLoc, dir);
-			// topLocs.add(topLoc);
 
 			Location topLoc = Location.create(traceLoc.lat(), traceLoc.lon(), depth);
 			topLocs.add(topLoc);
