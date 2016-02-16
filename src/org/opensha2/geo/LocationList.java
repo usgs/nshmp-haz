@@ -16,6 +16,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
 
 /**
  * An ordered collection of {@link Location}s.
@@ -33,6 +34,8 @@ public final class LocationList implements Iterable<Location> {
 	// TODO should LocationLists really provide the facility to be used as keys
 	// TODO remove reliance on AWT classes; remove Path method elsewhere?
 	// TODO track down awkward uses of create() and replace with Builder
+	// TODO consider make=ing abstract; would allow for alternate and
+	// view based implementations
 
 	private static final String LF = System.getProperty("line.separator");
 	private static final Joiner JOIN = Joiner.on(LF);
@@ -61,7 +64,7 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Creates a new {@code LocationList} from the supplied {@code Iterable}.
+	 * Create a new {@code LocationList} from the supplied {@code Iterable}.
 	 * 
 	 * @param locs to populate list with
 	 * @return a new {@code LocationList}
@@ -86,7 +89,7 @@ public final class LocationList implements Iterable<Location> {
 	 * @param azimuth from origin for computed locations
 	 * @return a new {@code LocationList}
 	 */
-	@Deprecated // too fancy
+	@Deprecated// too fancy
 	public static LocationList create(Location origin, Iterable<Double> distances, double azimuth) {
 		Builder b = builder();
 		for (double r : distances) {
@@ -96,7 +99,7 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Creates a new {@code LocationList} that is an exact copy of the supplied
+	 * Create a new {@code LocationList} that is an exact copy of the supplied
 	 * {@code LocationList}. Because {@code Location}s and {@code LocationList}s
 	 * are immutable, the returned copy references the same {@code Location}s as
 	 * the supplied list.
@@ -113,7 +116,7 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Creates a new {@code LocationList} that is an exact copy of the supplied
+	 * Create a new {@code LocationList} that is an exact copy of the supplied
 	 * {@code LocationList} but with reversed iteration order.
 	 * 
 	 * @param locs to populate list with
@@ -127,29 +130,46 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Creates a new {@code LocationList} by resampling the supplied list with
+	 * Create a new {@code LocationList} by resampling the supplied list with
 	 * the desired spacing. The actual spacing of the returned list will likely
 	 * differ, as spacing is adjusted up or down to be closest to the desired
 	 * value and maintain uniform divisions. The original vertices are also not
 	 * preserved such that some corners might be adversely clipped if
 	 * {@code spacing} is too large. Buyer beware.
 	 * 
+	 * <p>If a singleton list is supplied, it is immediately returned.
+	 * 
 	 * @param locs to resample
 	 * @param spacing resample interval
 	 * @return a new {@code LocationList}
 	 */
 	public static LocationList resampledFrom(LocationList locs, double spacing) {
-		double length = locs.length(); // lazily created and not cached
-		spacing = length / Math.rint(length / spacing);
+		if (checkNotNull(locs).size() == 1) return locs;
+		checkArgument(
+			Doubles.isFinite(spacing) && spacing > 0.0,
+			"Spacing must be positive, real number");
+		return resample(locs, spacing);
+	}
+
+	/*
+	 * Actual spacing is computed using ceil() and is consistent current OpenSHA
+	 * practice when building gridded surfaces. This effectively sets the target
+	 * spacing as a maximum value. TODO Should consider using rint() which will
+	 * generally keep the actual spacing closer to the target spacing, albeit
+	 * sometimes larger.
+	 */
+	private static LocationList resample(LocationList locs, double spacing) {
+		double length = locs.length();
+		spacing = length / Math.ceil(length / spacing);
 		LocationList.Builder builder = LocationList.builder();
 		Location start = locs.first();
-		builder.add(locs.first());
+		builder.add(start);
 		double walker = spacing;
 		for (Location loc : Iterables.skip(locs, 1)) {
 			LocationVector v = LocationVector.create(start, loc);
 			double distance = Locations.horzDistanceFast(start, loc);
 			while (walker < distance) {
-				builder.add(Locations.location(start, v));
+				builder.add(Locations.location(start, v.azimuth(), walker));
 				walker += spacing;
 			}
 			start = loc;
@@ -160,7 +180,7 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Creates a new {@code LocationList} from the supplied {@code String}. This
+	 * Create a new {@code LocationList} from the supplied {@code String}. This
 	 * method assumes that {@code s} is formatted in space-delimited xyz tuples,
 	 * each of which are comma-delimited with no spaces (e.g. KML style).
 	 * 
@@ -229,7 +249,7 @@ public final class LocationList implements Iterable<Location> {
 	 * is lazy and repeat calls to this method will recalculate the length each
 	 * time.
 	 * 
-	 * @return the length of a line that connects all {@code Location}s in this
+	 * @return the length of the line connecting all {@code Location}s in this
 	 *         list
 	 */
 	public double length() {
