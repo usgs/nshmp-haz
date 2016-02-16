@@ -90,8 +90,7 @@ public class LocationVector {
 	 * <p><b>NOTE</b>: create(p1, p2) is not equivalent to create
 	 * reverseOf(create(p2, p1)). Although the horizontal and vertical
 	 * components will likley be the same but the azimuths will potentially be
-
-	 * {@code p2}.
+	 * different.
 	 * 
 	 * @param v {@code LocationVector} to copy and flip
 	 * @return the flipped copy
