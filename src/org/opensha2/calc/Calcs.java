@@ -37,8 +37,6 @@ import com.google.common.collect.Range;
  * @author Peter Powers
  */
 public class Calcs {
-	
-	// TODO refactor method names to be consistent with refactored hazard/deagg class names
 
 	/*
 	 * Developer notes:
@@ -69,10 +67,12 @@ public class Calcs {
 	 * System source sets, on the other hand, create a list of inputs on a
 	 * separate thread using means other than iterableForLocation. They are
 	 * therefore short-circuited returning an empty HazardCurveSet if no sources
-	 * are within range of a site. Cluster source sets have similar issue. TODO
-	 * follow HazardCurveSet.Builder.mpty() calls because it seems like clusters
-	 * shouldn't have to use it as the iterator in clustersToInputs should just
-	 * not be submitting any sources in any event if they are all too far away.
+	 * are within range of a site. Cluster source sets have similar issue.
+	 * 
+	 * TODO follow HazardCurveSet.Builder.empty() calls because it seems like
+	 * clusters shouldn't have to use it as the iterator in clustersToInputs
+	 * should just not be submitting any sources in any event if they are all
+	 * too far away.
 	 * -------------------------------------------------------------------------
 	 */
 
@@ -88,7 +88,7 @@ public class Calcs {
 	}
 
 	private static Range<Double> rpRange = Range.closed(1.0, 4000.0);
-	
+
 	/**
 	 * Perform a deaggregation of probabilisitic seismic hazard.
 	 * 
@@ -119,7 +119,7 @@ public class Calcs {
 	 * @throws ExecutionException if an {@code Executor} was supplied and a
 	 *         problem arises during the calculation
 	 */
-	public static Hazard hazardCurve(
+	public static Hazard hazard(
 			HazardModel model,
 			CalcConfig config,
 			Site site,

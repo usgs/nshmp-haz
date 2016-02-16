@@ -80,7 +80,7 @@ public class DeaggCalc {
 		Optional<Executor> execLocal = executor.or(Optional.of(createExecutor()));
 
 		try {
-			Hazard result = Calcs.hazardCurve(model, config, site, execLocal);
+			Hazard result = Calcs.hazard(model, config, site, execLocal);
 			if (!executor.isPresent()) ((ExecutorService) executor).shutdown();
 			return Calcs.deaggregation(result, returnPeriod);
 		} catch (ExecutionException | InterruptedException e) {

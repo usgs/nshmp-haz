@@ -7,22 +7,28 @@ import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.opensha2.eq.model.FaultSource.Builder;
 import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Cluster source representation. This class wraps a {@code FaultSourceSet} of
- * {@code FaultSource}s that occur as independent events but with a similar
- * rate. Cluster sources are calculated using the joint probabilities of ground
- * motions from the wrapped faults. They are handled internally by a separate
+ * Cluster source representation. Each cluster source wraps a
+ * {@code FaultSourceSet} containing one or more fault representations that
+ * rupture as independent events but with a similar rate. For example, at New
+ * Madrid, each ClusterSourceSet has 5 ClusterSources, one for each position
+ * variant of the model. For each position variant there is one FaultSourceSet
+ * containing the FaultSources in the cluster, each of which may have one, or
+ * more, magnitude or other variants represented by its internal list of
+ * {@code IncrementalMfd}s.
+ * 
+ * <p>Cluster source hazard is calculated from the joint probabilities of ground
+ * motions from the wrapped faults, which is handled internally by a separate
  * calculator and {@link ClusterSource#iterator()} therefore throws an
  * {@code UnsupportedOperationException}.
  * 
- * <p>Unlike other {@code Source}s whose weights are carried exclusively with their
- * associated {@link IncrementalMfd}, {@code ClusterSource}s carry an additional
- * {@link #weight()} value.</p>
+ * <p>Unlike other {@code Source}s whose weights are carried exclusively with
+ * their associated {@link IncrementalMfd}, {@code ClusterSource}s carry an
+ * additional {@link #weight()} value.</p>
  * 
  * <p>A {@code ClusterSource} cannot be created directly; it may only be created
  * by a private parser.</p>
@@ -77,9 +83,8 @@ public class ClusterSource implements Source {
 	@Override public String name() {
 		return faults.name();
 	}
-	
+
 	@Override public String toString() {
-		// @formatter:off
 		Map<Object, Object> data = ImmutableMap.builder()
 				.put("name", name())
 				.put("rate", rate())
@@ -96,7 +101,6 @@ public class ClusterSource implements Source {
 			.append(LINE_SEPARATOR.value());
 		}
 		return sb.toString();
-		// @formatter:on
 	}
 
 	/* Single use builder */

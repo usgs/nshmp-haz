@@ -1,11 +1,16 @@
 package org.opensha2.calc;
 
+import static com.google.common.util.concurrent.Futures.allAsList;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.transform;
+import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static org.opensha2.gmm.Gmm.instances;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import org.opensha2.calc.ClusterCurves.Builder;
 import org.opensha2.data.XySequence;
@@ -32,34 +37,23 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 
 /**
- * Data transform {@code Function}s.
+ * Data transform {@link Function}s. These are called exclusively from
+ * {@link CalcFactory}.
+ * 
+ * <p>These transforms perform all the work of computing probabilistic seismic
+ * hazard and facilitate the reduction of calculations into component tasks that
+ * may be executed concurrently.
+ * 
+ * <p>For convenience, some functions coalesce multiple tasks. For example,
+ * {@link SourceToCurves} merges the work of {@link SourceToInputs},
+ * {@link InputsToGroundMotions}, and {@link GroundMotionsToCurves}. There are
+ * also custom functions to handle special case cluster and system
+ * {@code Source}s.
  * 
  * @author Peter Powers
+ * @see CalcFactory
  */
 final class Transforms {
-
-	/*
-	 * Implemenation notes:
-	 * -------------------------------------------------------------------------
-	 * ClusterSourceSets contain ClusterSources, each of which references a
-	 * FaultSourceSet containing one or more fault representations for the
-	 * ClusterSource.
-	 * 
-	 * e.g. for New Madrid, each ClusterSourceSet has 5 ClusterSources, one for
-	 * each position variant of the model. For each position variant there is
-	 * one FaultSourceSet containing the FaultSources in the cluster, each of
-	 * which may have one, or more, magnitude or other variants represented by
-	 * its internal List of IncrementalMfds.
-	 * -------------------------------------------------------------------------
-	 * SystemSourceSets contain many single sources and the functions here
-	 * handle them collectively. Rather than creating lists of input lists for
-	 * each source, one large input list is created. This may change if it is
-	 * decided to apply a magnitude distribution on each system source. This
-	 * motivated reordering of the SourceType enum such that SystemSourceSets
-	 * are processed first and granted a thread early in the calculation
-	 * process.
-	 * -------------------------------------------------------------------------
-	 */
 
 	/*
 	 * Source --> InputList
@@ -173,11 +167,6 @@ final class Transforms {
 				XySequence utilCurve = XySequence.copyOf(modelCurve);
 				XySequence gmmCurve = XySequence.copyOf(modelCurve);
 
-				// Map<Gmm, List<Double>> gmmMeans =
-				// groundMotions.means.get(imt);
-				// Map<Gmm, List<Double>> gmmSigmas =
-				// groundMotions.sigmas.get(imt);
-
 				for (Gmm gmm : groundMotions.means.get(imt).keySet()) {
 
 					gmmCurve.clear();
@@ -202,6 +191,12 @@ final class Transforms {
 		}
 	}
 
+	/*
+	 * GroundMotions --> HazardCurves
+	 * 
+	 * Derive hazard curves for a set of ground motions considering an
+	 * additional epistemic uncertinaty model.
+	 */
 	static final class GroundMotionsToCurvesWithUncertainty implements
 			Function<GroundMotions, HazardCurves> {
 
@@ -290,7 +285,7 @@ final class Transforms {
 	/*
 	 * Source --> HazardCurves
 	 * 
-	 * Compute hazard curves for a source. This function coalesces the three
+	 * Compute hazard curves for a source. This function coalesces the four
 	 * preceeding functions into one.
 	 */
 	static final class SourceToCurves implements Function<Source, HazardCurves> {
@@ -357,53 +352,137 @@ final class Transforms {
 	}
 
 	/*
+	 * A note on system sources:
+	 * 
+	 * SystemSourceSets contain many single sources and the functions here
+	 * handle them collectively. Rather than creating lists of input lists for
+	 * each source, one large input list is created. This may change if it is
+	 * decided to apply a magnitude distribution on each system source. This
+	 * motivated reordering of the SourceType enum such that SystemSourceSets
+	 * are processed first and granted a thread early in the calculation
+	 * process.
+	 */
+
+	/*
 	 * SYSTEM: SystemSourceSet --> HazardCurveSet
 	 * 
 	 * Compute hazard curves for system sources. This function derives all
-	 * inputs for an entire SystemSourceSet before being composed with standard
-	 * ground motion and hazard curve functions.
+	 * inputs for an entire SystemSourceSet before being composing them with
+	 * standard ground motion and hazard curve functions.
 	 */
 	static final class SystemToCurves implements Function<SystemSourceSet, HazardCurveSet> {
 
-		private final Function<SystemSourceSet, InputList> sourcesToInputs;
-		private final Function<InputList, GroundMotions> inputsToGroundMotions;
-		private final Function<GroundMotions, HazardCurves> groundMotionsToCurves;
-		private final Function<List<HazardCurves>, HazardCurveSet> curveConsolidator;
+		private final Site site;
+		private final CalcConfig config;
 
-		SystemToCurves(
-				SystemSourceSet sources,
-				CalcConfig config,
-				Site site) {
+		SystemToCurves(CalcConfig config, Site site) {
+			this.site = site;
+			this.config = config;
+		}
+
+		@Override public HazardCurveSet apply(SystemSourceSet sources) {
+
+			InputList inputs = SystemSourceSet.toInputsFunction(site).apply(sources);
+			if (inputs.isEmpty()) return HazardCurveSet.empty(sources);
 
 			GmmSet gmmSet = sources.groundMotionModels();
 			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(
 				config.imts(),
 				gmmSet.gmms());
 
-			this.sourcesToInputs = SystemSourceSet.toInputsFunction(site);
-			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
-			this.groundMotionsToCurves = config.gmmUncertainty() && gmmSet.epiUncertainty() ?
-				new GroundMotionsToCurvesWithUncertainty(gmmSet, config) :
-				new GroundMotionsToCurves(config);
-			this.curveConsolidator = new CurveConsolidator(sources, config);
+			InputsToGroundMotions inputsToGm = new InputsToGroundMotions(gmmTable);
+			GroundMotions gms = inputsToGm.apply(inputs);
+
+			Function<GroundMotions, HazardCurves> gmToCurves =
+				config.gmmUncertainty() && gmmSet.epiUncertainty() ?
+					new GroundMotionsToCurvesWithUncertainty(gmmSet, config) :
+					new GroundMotionsToCurves(config);
+			HazardCurves curves = gmToCurves.apply(gms);
+
+			CurveConsolidator consolidator = new CurveConsolidator(sources, config);
+			return consolidator.apply(ImmutableList.of(curves));
+		}
+	}
+
+	/*
+	 * SYSTEM: SystemSourceSet --> HazardCurveSet
+	 * 
+	 * Compute hazard curves for system sources concurrently. This function
+	 * derives all inputs for an entire SystemSourceSet and partitions them
+	 * before composing them with standard ground motion and hazard curve
+	 * functions.
+	 */
+	static final class ParallelSystemToCurves implements Function<SystemSourceSet, HazardCurveSet> {
+
+		private final Site site;
+		private final Executor ex;
+		private final CalcConfig config;
+		private final int size = 20000;
+
+		ParallelSystemToCurves(
+				Site site,
+				CalcConfig config,
+				Executor ex) {
+
+			this.site = site;
+			this.ex = ex;
+			this.config = config;
 		}
 
 		@Override public HazardCurveSet apply(SystemSourceSet sources) {
 
-			// TODO given that this is a pretty heavyweight apply()
-			// (i.e. its only called once per source set) the functions should
-			// probably be created on demand; currently the same source set is
-			// supplied to the constructor as is passed into apply(), which
-			// is wierd
+			// create input list
+			InputList master = SystemSourceSet.toInputsFunction(site).apply(sources);
+			if (master.isEmpty()) return HazardCurveSet.empty(sources);
 
-			InputList inputs = sourcesToInputs.apply(sources);
-			if (inputs.isEmpty()) return HazardCurveSet.empty(sources);
+			// calculate curves from list in parallel
+			InputsToCurves inputsToCurves = new InputsToCurves(sources, config);
+			AsyncList<HazardCurves> asyncCurvesList = AsyncList.create();
+			for (InputList partition : master.partition(size)) {
+				asyncCurvesList.add(transform(
+					immediateFuture(partition),
+					inputsToCurves,
+					ex));
+			}
+			List<HazardCurves> curvesList = getUnchecked(allAsList(asyncCurvesList));
 
-			return curveConsolidator.apply(
-				ImmutableList.of(
-					groundMotionsToCurves.apply(
-						inputsToGroundMotions.apply(inputs))));
+			// combine and consolidate
+			HazardCurves hazardCurves = HazardCurves.combine(master, curvesList);
+			CurveConsolidator consolidator = new CurveConsolidator(sources, config);
 
+			return consolidator.apply(ImmutableList.of(hazardCurves));
+		}
+	}
+
+	/*
+	 * SYSTEM: InputList --> HazardCurves
+	 * 
+	 * Compute hazard curves from an input list. Although this function is
+	 * generally applicable to all source types, it is presently only used to
+	 * process partitioned input lists derived from a system source.
+	 */
+	static final class InputsToCurves implements Function<InputList, HazardCurves> {
+
+		private final Function<InputList, GroundMotions> inputsToGroundMotions;
+		private final Function<GroundMotions, HazardCurves> groundMotionsToCurves;
+
+		InputsToCurves(
+				SourceSet<? extends Source> sources,
+				CalcConfig config) {
+
+			GmmSet gmmSet = sources.groundMotionModels();
+			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(
+				config.imts(),
+				gmmSet.gmms());
+
+			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
+			this.groundMotionsToCurves = config.gmmUncertainty() && gmmSet.epiUncertainty() ?
+				new GroundMotionsToCurvesWithUncertainty(gmmSet, config) :
+				new GroundMotionsToCurves(config);
+		}
+
+		@Override public HazardCurves apply(InputList inputs) {
+			return groundMotionsToCurves.apply(inputsToGroundMotions.apply(inputs));
 		}
 	}
 
@@ -459,7 +538,7 @@ final class Transforms {
 	 * Collapse magnitude variants and compute the joint probability of
 	 * exceedence for sources in a cluster. Note that this is only to be used
 	 * with cluster sources as the weight of each magnitude variant is stored in
-	 * the TmeporalGmmInput.rate field, which is kinda KLUDGY, but works.
+	 * the HazardInput.rate field, which is kinda KLUDGY, but works.
 	 */
 	static final class ClusterGroundMotionsToCurves implements
 			Function<ClusterGroundMotions, ClusterCurves> {
@@ -614,8 +693,7 @@ final class Transforms {
 
 		@Override public Hazard apply(List<HazardCurveSet> curveSetList) {
 
-			Hazard.Builder resultBuilder = Hazard
-				.builder(config)
+			Hazard.Builder resultBuilder = Hazard.builder(config)
 				.model(model)
 				.site(site);
 

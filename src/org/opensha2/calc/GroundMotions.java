@@ -1,7 +1,6 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
@@ -30,7 +29,7 @@ final class GroundMotions {
 	 * sigma lists it builds are not; builder backs mean and sigma lists with
 	 * double[]. Nor are the mean and sigma maps immutable.
 	 * 
-	 * TODO It would be nice to have an immutable variant of a doubl[] backed
+	 * TODO It would be nice to have an immutable variant of a double[] backed
 	 * list, but would require copying values on build().
 	 * 
 	 * TODO refactor to μLists σLists
@@ -74,9 +73,24 @@ final class GroundMotions {
 		return new Builder(inputs, imts, gmms);
 	}
 
+	/*
+	 * Combine GroundMotions resulting from InputList partitioning. The original
+	 * InputList is required as a convenience (the supplied GroundMotions
+	 * contain sublists of this list). The original list is also used as a size
+	 * check against the combined result.
+	 */
+	static GroundMotions combine(InputList inputs, List<GroundMotions> groundMotions) {
+		Map<Imt, Map<Gmm, List<Double>>> keyModel = groundMotions.get(0).means;
+		Set<Imt> imtKeys = keyModel.keySet();
+		Set<Gmm> gmmKeys = keyModel.get(imtKeys.iterator().next()).keySet();
+		return builder(inputs, imtKeys, gmmKeys)
+			.combine(groundMotions)
+			.build();
+	}
+
 	static class Builder {
 
-		private static final String ID = "HazardGroundMotions.Builder";
+		private static final String ID = "GroundMotions.Builder";
 		private boolean built = false;
 		private final int size;
 		private int addCount = 0;
@@ -86,14 +100,15 @@ final class GroundMotions {
 		private final Map<Imt, Map<Gmm, List<Double>>> sigmas;
 
 		private Builder(InputList inputs, Set<Imt> imts, Set<Gmm> gmms) {
-			checkArgument(checkNotNull(inputs).size() > 0);
-			checkArgument(checkNotNull(gmms).size() > 0);
+			checkArgument(inputs.size() > 0);
+			checkArgument(gmms.size() > 0);
 			this.inputs = inputs;
 			means = initValueMaps(imts, gmms, inputs.size());
 			sigmas = initValueMaps(imts, gmms, inputs.size());
 			size = imts.size() * gmms.size() * inputs.size();
 		}
 
+		// TODO refactor to set()
 		Builder add(Imt imt, Gmm gmm, ScalarGroundMotion sgm, int index) {
 			checkState(addCount < size, "This %s instance is already full", ID);
 			means.get(imt).get(gmm).set(index, sgm.mean());
@@ -113,7 +128,7 @@ final class GroundMotions {
 				Set<Imt> imts,
 				Set<Gmm> gmms,
 				int size) {
-			
+
 			Map<Imt, Map<Gmm, List<Double>>> imtMap = Maps.newEnumMap(Imt.class);
 			for (Imt imt : imts) {
 				Map<Gmm, List<Double>> gmmMap = Maps.newEnumMap(Gmm.class);
@@ -123,6 +138,50 @@ final class GroundMotions {
 				imtMap.put(imt, gmmMap);
 			}
 			return imtMap;
+		}
+
+		/*
+		 * For internal use only. Combines multiple ordered GroundMotions that
+		 * result from InputList partitioning. Can only be called once after
+		 * intializing the builder with the original master InputList.
+		 */
+		private Builder combine(List<GroundMotions> groundMotions) {
+			int startIndex = 0;
+			for (GroundMotions gm : groundMotions) {
+				addCount += setValues(means, gm.means, sigmas, gm.sigmas, startIndex);
+				startIndex += gm.inputs.size();
+			}
+			return this;
+		}
+
+		private static int setValues(
+				Map<Imt, Map<Gmm, List<Double>>> μTargetMap,
+				Map<Imt, Map<Gmm, List<Double>>> μValueMap,
+				Map<Imt, Map<Gmm, List<Double>>> σTargetMap,
+				Map<Imt, Map<Gmm, List<Double>>> σValueMap,
+				int startIndex) {
+
+			int setCount = 0;
+			for (Entry<Imt, Map<Gmm, List<Double>>> imtEntry : μTargetMap.entrySet()) {
+				Imt imt = imtEntry.getKey();
+				for (Entry<Gmm, List<Double>> gmmEntry : imtEntry.getValue().entrySet()) {
+					Gmm gmm = gmmEntry.getKey();
+
+					List<Double> μTarget = gmmEntry.getValue();
+					List<Double> μValues = μValueMap.get(imt).get(gmm);
+					List<Double> σTarget = σTargetMap.get(imt).get(gmm);
+					List<Double> σValues = σValueMap.get(imt).get(gmm);
+
+					setCount += μValues.size();
+
+					for (int i = 0; i < μValues.size(); i++) {
+						int targetIndex = startIndex + i;
+						μTarget.set(targetIndex, μValues.get(i));
+						σTarget.set(targetIndex, σValues.get(i));
+					}
+				}
+			}
+			return setCount;
 		}
 
 	}
