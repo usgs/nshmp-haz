@@ -1,6 +1,5 @@
 package org.opensha2.eq.fault.surface;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.math.RoundingMode.HALF_UP;
 import static org.opensha2.data.Data.checkInRange;
@@ -19,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensha2.eq.fault.Faults;
-import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.LocationVector;
@@ -30,34 +28,32 @@ import com.google.common.collect.Range;
 import com.google.common.math.DoubleMath;
 
 /**
- * <b>Title:</b> DefaultGriddedSurface. <br> <b>Description: This creates an
- * GriddedSurface representation of the fault using a scheme described by Mark
- * Stirling to Ned Field in 2001, where grid points are projected down dip at an
- * angle perpendicular to the end-points of the trace (or in dipDir if provided
- * using the appropriate constructor). </b> <br>
- * @author Ned Field.
+ * Default {@link GriddedSurface} implementation. Gridded surfaces are
+ * constructed by evenly discretizing a fault trace and projecting that trace
+ * down-dip in a direction normal to the average-strike of the trace, here
+ * defined as a line connecting the first and last endpoints of the trace.
  * 
- *         TODO doc trace assumed to be at depth=0? TODO do trace depths all
- *         need to be the same; condidtion used to be imposed in
- *         assertValidState
+ * <p>New gridded surfaces can only be created via a {@linkplain Builder
+ * builder}, which provides a variety of construction options.
+ * 
+ * TODO review documentation once builder docs written. There are circumstances
+ * where a dip direction may be specified (e.g. UCERF3 subsections) and the
+ * above staement rendered false.
+ * 
+ * @author Ned Field
+ * @author Peter Powers
  */
-
 public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
 	private final LocationList trace;
 	private final double depth;
-	// private double lowerDepth;// = Double.NaN;
 	private final double dipRad;
 	private final double dipDirRad;
 	private final double width;
 	private final Location centroid;
 
-	// surface is initialized with a dip direction in radians; this may
-	// be normal to Faults.strike(trace), but may not be; in any event,
-	// we do not want to recompute it internally.
-
 	private DefaultGriddedSurface(LocationList trace, double dipRad, double dipDirRad,
-		double depth, double width, double strikeSpacing, double dipSpacing) {
+			double depth, double width, double strikeSpacing, double dipSpacing) {
 
 		this.trace = trace;
 		this.depth = depth;
@@ -80,7 +76,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 		// if(dipSpacing != gridSpacingAlong) sameGridSpacing = false;
 
 		createEvenlyGriddedSurface();
-		
+
 		centroid = Locations.centroid(this);
 	}
 
@@ -133,17 +129,28 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	// }
 
 	/**
-	 * Returns a new {@code DefaultGriddedSurface.Builder}.
+	 * Return a new surface builder.
 	 */
 	public static Builder builder() {
 		return new Builder();
 	}
 
+	/*
+	 * TODO document builder which will almost certainly be part of a public API
+	 * 
+	 * TODO doc trace assumed to be at depth=0?
+	 * 
+	 * TODO do trace depths all need to be the same; condidtion used to be
+	 * imposed in assertValidState
+	 * 
+	 * TODO surface is initialized with a dip direction in radians; this may be
+	 * normal to Faults.strike(trace), but may not be; in any event, we do not
+	 * want to recompute it internally.
+	 * 
+	 * TODO single-use builder
+	 */
 	@SuppressWarnings("javadoc")
 	public static class Builder {
-
-		// build() may only be called once
-		// use Doubles to ensure fields are initially null
 
 		private static final Range<Double> SPACING_RANGE = Range.closed(0.01, 20.0);
 
@@ -219,7 +226,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 			checkState(trace != null, "%s trace not set", id);
 			checkState(dipRad != null, "%s dip not set", id);
 			checkState(depth != null, "%s depth not set", id);
-			
+
 			checkState((width != null) ^ (lowerDepth != null), "%s width or lowerDepth not set", id);
 			if (lowerDepth != null && lowerDepth <= depth) {
 				throw new IllegalStateException("Lower depth is above upper depth");
@@ -370,19 +377,19 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 			Location traceLocation = Locations.location(location1, dir);
 
 			// get location at the top of the fault surface
-//			Location topLocation;
-//			if (traceLocation.depth() < depth) {
-//				// vDistance = traceLocation.getDepth() - depth;
-//				vDistance = depth - traceLocation.depth();
-//				hDistance = vDistance / Math.tan(dipRad);
-//				// dir = new LocationVector(vDistance, hDistance,
-//				// aveDipDirection, 0);
-//				// dir = new LocationVector(aveDipDirection, hDistance,
-//				// vDistance);
-//				dir = LocationVector.create(dipDirRad, hDistance, vDistance);
-//				topLocation = Locations.location(traceLocation, dir);
-//			} else
-//				topLocation = traceLocation;
+			// Location topLocation;
+			// if (traceLocation.depth() < depth) {
+			// // vDistance = traceLocation.getDepth() - depth;
+			// vDistance = depth - traceLocation.depth();
+			// hDistance = vDistance / Math.tan(dipRad);
+			// // dir = new LocationVector(vDistance, hDistance,
+			// // aveDipDirection, 0);
+			// // dir = new LocationVector(aveDipDirection, hDistance,
+			// // vDistance);
+			// dir = LocationVector.create(dipDirRad, hDistance, vDistance);
+			// topLocation = Locations.location(traceLocation, dir);
+			// } else
+			// topLocation = traceLocation;
 
 			// TODO above was improperly edited; buried traces were incorrectly
 			// being projected doewn dip; upperSeisDepth was refactored
@@ -444,7 +451,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	// TODO this is missing use of zTop
 	// TODO revisit this needs to be compared against current
 	// createEvenlyGriddedSurface()
-	@Deprecated // until proven useful or better
+	@Deprecated// until proven useful or better
 	public void create(LocationList trace, double dip, double width, double spacing) {
 		double dipRad = dip * TO_RAD;
 		double dipDirRad = Faults.dipDirectionRad(trace);
@@ -577,20 +584,22 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 		double lowerDepth = depth + width * Math.sin(dipRad);
 
 		for (Location traceLoc : trace) {
-			
-//			// TODO ignoring seismogenic depth for now
-//			double vDistance = upperSeisDepth - traceLoc.depth();
-//			double hDistance = vDistance / Math.tan(dipRad);
-//			
-//			// LocationVector dir = new LocationVector(aveDipDirection, hDistance, vDistance);
-//			LocationVector dir = LocationVector.create(dipDirRad, hDistance, vDistance);
-//			Location topLoc = Locations.location(traceLoc, dir);
-//			topLocs.add(topLoc);
+
+			// // TODO ignoring seismogenic depth for now
+			// double vDistance = upperSeisDepth - traceLoc.depth();
+			// double hDistance = vDistance / Math.tan(dipRad);
+			//
+			// // LocationVector dir = new LocationVector(aveDipDirection,
+			// hDistance, vDistance);
+			// LocationVector dir = LocationVector.create(dipDirRad, hDistance,
+			// vDistance);
+			// Location topLoc = Locations.location(traceLoc, dir);
+			// topLocs.add(topLoc);
 
 			Location topLoc = Location.create(traceLoc.lat(), traceLoc.lon(), depth);
 			topLocs.add(topLoc);
-			
-			double vDistance = lowerDepth - depth; //traceLoc.depth();
+
+			double vDistance = lowerDepth - depth; // traceLoc.depth();
 			double hDistance = vDistance / Math.tan(dipRad);
 			// dir = new LocationVector(aveDipDirection, hDistance, vDistance);
 			LocationVector dir = LocationVector.create(dipDirRad, hDistance, vDistance);
@@ -606,57 +615,6 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 		return LocationList.create(perimiter);
 	}
 
-//	/**
-//	 * Maine method to test this class (found a bug using it)
-//	 * @param args
-//	 */
-//	public static void main(String args[]) {
-//
-//		double test = 4 % 4.1;
-//		System.out.println(test);
-//		// double dip = 15;
-//		// double depth = 9.1;
-//		// double lowerDepth =15.2;
-//		// double gridSpacing=1.0;
-//		// FaultTrace trace = new FaultTrace("Great Valley 13");
-//		// // TO SEE THE POTENTIAL BUG IN THIS CLASS, CHANGE VALUE OF
-//		// "faultTraceDepth" to 0
-//		// double faultTraceDepth = 0;
-//		// trace.addLocation(new Location(36.3547, -120.358, faultTraceDepth));
-//		// trace.addLocation(new Location(36.2671, -120.254, faultTraceDepth));
-//		// trace.addLocation(new Location(36.1499, -120.114, faultTraceDepth));
-//		// DefaultGriddedSurface griddedSurface = new
-//		// DefaultGriddedSurface(trace, dip,
-//		// depth, lowerDepth, gridSpacing);
-//		// System.out.println("******Fault Trace*********");
-//		// System.out.println(trace);
-//		// Iterator it = griddedSurface.getLocationsIterator();
-//		// System.out.println("*******Evenly Gridded Surface************");
-//		// while(it.hasNext()){
-//		// Location loc = (Location)it.next();
-//		// System.out.println(loc.getLatitude()+","+loc.getLongitude()+","+loc.getDepth());
-//		// }
-//
-//		// for N-S strike and E dip, this setup showed that prior to fixing
-//		// Locations.getLocation() the grid of the fault actually
-//		// starts to the left of the trace, rather than to the right.
-//
-//		/*
-//		 * double dip = 30; double depth = 5; double lowerDepth = 15; double
-//		 * gridSpacing=5; FaultTrace trace = new FaultTrace("Test");
-//		 * trace.add(new Location(20.0, -120, 0)); trace.add(new Location(20.2,
-//		 * -120, 0)); DefaultGriddedSurface griddedSurface = new
-//		 * DefaultGriddedSurface(trace, dip, depth, lowerDepth,
-//		 * gridSpacing); System.out.println("******Fault Trace*********");
-//		 * System.out.println(trace); Iterator<Location> it =
-//		 * griddedSurface.getLocationsIterator();
-//		 * System.out.println("*******Evenly Gridded Surface************");
-//		 * while(it.hasNext()){ Location loc = (Location)it.next();
-//		 * System.out.println
-//		 * (loc.getLatitude()+","+loc.getLongitude()+","+loc.getDepth()); }
-//		 */
-//	}
-
 	@Override public double dipDirection() {
 		return dipDirRad * TO_DEG;
 	}
@@ -664,7 +622,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	@Override public double dip() {
 		return dipRad * TO_DEG;
 	}
-	
+
 	@Override public double dipRad() {
 		return dipRad;
 	}
@@ -680,24 +638,5 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	@Override public Location centroid() {
 		return centroid;
 	}
-
-	// TODO is this really necessary; compund rupture surface?
-	// this is clutter and hides AbstractGriddedSurface.getUpperEdge()
-	// that does what we want it to do when building a compound surface from
-	// section surfaces that we know will have uniform zTop
-//	@Override public LocationList getUpperEdge() {
-//		// check that the location depths in trace are same as
-//		// depth
-//		double aveTraceDepth = 0;
-//		for (Location loc : trace)
-//			aveTraceDepth += loc.depth();
-//		aveTraceDepth /= trace.size();
-//		double diff = Math.abs(aveTraceDepth - depth); // km
-//		if (diff < 0.001) return trace;
-//		throw new RuntimeException(" method not yet implemented where depths in the " +
-//			"trace differ from depth (and projecting will create " +
-//			"loops for FrankelGriddedSurface projections; aveTraceDepth=" + aveTraceDepth +
-//			"\tupperSeismogenicDepth=" + depth);
-//	}
 
 }
