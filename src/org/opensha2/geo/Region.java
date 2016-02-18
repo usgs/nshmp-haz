@@ -345,7 +345,7 @@ public class Region implements Named {
 	public double distanceToLocation(Location loc) {
 		checkNotNull(loc, "Supplied location is null");
 		if (contains(loc)) return 0;
-		double min = border.minDistToLine(loc);
+		double min = Locations.minDistanceToLine(loc, border);
 		// check the segment defined by the last and first points
 		// take abs because value may be negative; i.e. value to left of line
 		double temp = Math.abs(Locations.distanceToSegmentFast(border.get(border.size() - 1),
@@ -424,7 +424,8 @@ public class Region implements Named {
 		// first remove last point in list if it is the same as
 		// the first point
 		if (border.get(border.size() - 1).equals(border.get(0))) {
-			border.locs.remove(border.size() - 1);
+			border = LocationList.create(Iterables.limit(border, border.size() - 1));
+//			border.locs.remove(border.size() - 1); TODO test/clean locList refactor
 		}
 
 		if (type.equals(GREAT_CIRCLE)) {
@@ -533,7 +534,7 @@ public class Region implements Named {
 	 * throw exceptions if the generated Area is empty or not singular
 	 */
 	private static Area areaFromBorder(LocationList border) {
-		Area area = new Area(border.toPath());
+		Area area = new Area(Locations.toPath(border));
 		// final checks on area generated, this is redundant for some
 		// constructors that perform other checks on inputs
 		checkArgument(!area.isEmpty(), "Internally computed Area is empty");
