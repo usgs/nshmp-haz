@@ -3,11 +3,9 @@ package org.opensha2.geo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.geo.Locations.distanceToSegmentFast;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.awt.geom.Path2D;
 import java.util.Iterator;
-import java.util.List;
 
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
@@ -15,127 +13,54 @@ import org.opensha2.util.Parsing.Delimiter;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 
 /**
  * An ordered collection of {@link Location}s.
  * 
- * <p>A {@code LocationList} must contain at least 1 {@code Location}.
- * {@code LocationList} instances are immutable and calls to {@code remove()}
- * when iterating will throw an {@code UnsupportedOperationException}. Consider
- * using a {@link LocationList.Builder} if list is being compiled from numerous
- * {@code Location}s that are not known in advance.</p>
+ * <p>A {@code LocationList} must contain at least 1 {@code Location} and does
+ * not permit any location to be {@code null}. {@code LocationList} instances
+ * are immutable and calls to {@code remove()} when iterating will throw an
+ * {@code UnsupportedOperationException}.
+ * 
+ * <p>Consider using a {@link LocationList.Builder} (via a call to
+ * {@link #builder()}) if list is being compiled from numerous {@code Location}s
+ * that are not known in advance.
  * 
  * @author Peter Powers
  */
-public final class LocationList implements Iterable<Location> {
-
-	// TODO should LocationLists really provide the facility to be used as keys
-	// TODO remove reliance on AWT classes; remove Path method elsewhere?
-	// TODO track down awkward uses of create() and replace with Builder
-	// TODO consider make=ing abstract; would allow for alternate and
-	// view based implementations
-
-	private static final String LF = System.getProperty("line.separator");
-	private static final Joiner JOIN = Joiner.on(LF);
-
-	// package private for internal access only
-	List<Location> locs = Lists.newArrayList();
-
-	private LocationList() {};
+public abstract class LocationList implements Iterable<Location> {
 
 	/**
-	 * Creates a new {@code LocationList} from the supplied {@code Location}s.
+	 * Create a new {@code LocationList} containing all {@code Location}s in
+	 * {@code locs}.
 	 * 
 	 * @param locs to populate list with
-	 * @return a new {@code LocationList}
-	 * @throws NullPointerException if {@code locs} is {@code null}
 	 * @throws IllegalArgumentException if {@code locs} is empty
 	 */
 	public static LocationList create(Location... locs) {
 		checkArgument(checkNotNull(locs).length > 0);
-		LocationList list = new LocationList();
-		// Locations are immutable; no need for defensive copies
-		for (Location loc : locs) {
-			list.locs.add(loc);
-		}
-		return list;
+		return builder().add(locs).build();
 	}
 
 	/**
-	 * Create a new {@code LocationList} from the supplied {@code Iterable}.
+	 * Create a new {@code LocationList} containing all {@code Location}s in
+	 * {@code locs}.
 	 * 
 	 * @param locs to populate list with
-	 * @return a new {@code LocationList}
+	 * @throws IllegalArgumentException if {@code locs} is empty
 	 */
 	public static LocationList create(Iterable<Location> locs) {
 		checkArgument(checkNotNull(locs).iterator().hasNext());
-		LocationList list = new LocationList();
-		// Locations are immutable; no need for defensive copies
-		for (Location loc : locs) {
-			list.locs.add(loc);
-		}
-		return list;
-	}
-
-	/**
-	 * Create a new {@code LocationList} of {@code Location}s at the supplied
-	 * {@code distances} and along the bearing specified by {@code azimuth}. The
-	 * returned list does not start with the {@code origin}.
-	 * 
-	 * @param origin {@code Location}
-	 * @param distances at which {@code Location}s exist in the returned list
-	 * @param azimuth from origin for computed locations
-	 * @return a new {@code LocationList}
-	 */
-	@Deprecated// too fancy
-	public static LocationList create(Location origin, Iterable<Double> distances, double azimuth) {
-		Builder b = builder();
-		for (double r : distances) {
-			b.add(Locations.location(origin, azimuth, r));
-		}
-		return b.build();
-	}
-
-	/**
-	 * Create a new {@code LocationList} that is an exact copy of the supplied
-	 * {@code LocationList}. Because {@code Location}s and {@code LocationList}s
-	 * are immutable, the returned copy references the same {@code Location}s as
-	 * the supplied list.
-	 * 
-	 * @param locs to populate list with
-	 * @return a new {@code LocationList}
-	 */
-	public static LocationList copyOf(LocationList locs) {
-		// TODO given the immutability of Location and LocationList, no one
-		// should ever have need of an exact copy, right?
-		LocationList copy = new LocationList();
-		copy.locs = checkNotNull(locs).locs;
-		return copy;
-	}
-
-	/**
-	 * Create a new {@code LocationList} that is an exact copy of the supplied
-	 * {@code LocationList} but with reversed iteration order.
-	 * 
-	 * @param locs to populate list with
-	 * @return a new {@code LocationList}
-	 */
-	public static LocationList reverseOf(LocationList locs) {
-		// uses a reversed view, doesn't actually reverse source Locations
-		LocationList copy = new LocationList();
-		copy.locs = Lists.reverse(locs.locs);
-		return copy;
+		return builder().addAll(locs).build();
 	}
 
 	/**
 	 * Create a new {@code LocationList} by resampling the supplied list with
-	 * the desired spacing. The actual spacing of the returned list will likely
-	 * differ, as spacing is adjusted up or down to be closest to the desired
-	 * value and maintain uniform divisions. The original vertices are also not
-	 * preserved such that some corners might be adversely clipped if
-	 * {@code spacing} is too large. Buyer beware.
+	 * the desired maximum spacing. The actual spacing of the returned list will
+	 * likely differ, as spacing is adjusted down to maintain uniform divisions.
+	 * The original vertices are also not preserved such that some corners might
+	 * be adversely clipped if {@code spacing} is too large. Buyer beware.
 	 * 
 	 * <p>If a singleton list is supplied, it is immediately returned.
 	 * 
@@ -143,12 +68,12 @@ public final class LocationList implements Iterable<Location> {
 	 * @param spacing resample interval
 	 * @return a new {@code LocationList}
 	 */
-	public static LocationList resampledFrom(LocationList locs, double spacing) {
+	public static LocationList resample(LocationList locs, double spacing) {
 		if (checkNotNull(locs).size() == 1) return locs;
 		checkArgument(
 			Doubles.isFinite(spacing) && spacing > 0.0,
 			"Spacing must be positive, real number");
-		return resample(locs, spacing);
+		return resampled(locs, spacing);
 	}
 
 	/*
@@ -158,7 +83,7 @@ public final class LocationList implements Iterable<Location> {
 	 * generally keep the actual spacing closer to the target spacing, albeit
 	 * sometimes larger.
 	 */
-	private static LocationList resample(LocationList locs, double spacing) {
+	private static LocationList resampled(LocationList locs, double spacing) {
 		double length = locs.length();
 		spacing = length / Math.ceil(length / spacing);
 		LocationList.Builder builder = LocationList.builder();
@@ -194,70 +119,54 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Returns the size of this list size.
-	 * 
-	 * @return the number of locations in the list
+	 * Return the number of locations in this list.
 	 */
-	public int size() {
-		return locs.size();
-	}
+	public abstract int size();
 
 	/**
 	 * Return the location at {@code index}.
 	 * 
 	 * @param index of {@code Location} to return
-	 * @return the {@code Location} at {@code index}
 	 * @throws IndexOutOfBoundsException if the index is out of range (
 	 *         {@code index < 0 || index >= size()})
 	 */
-	public Location get(int index) {
-		return locs.get(index);
-	}
+	public abstract Location get(int index);
 
 	/**
-	 * Returns the first {@code Location} in this list.
-	 * 
-	 * @return the first {@code Location}
+	 * Return the first {@code Location} in this list.
 	 */
 	public Location first() {
 		return get(0);
 	}
 
 	/**
-	 * Returns the last {@code Location} in this list.
-	 * 
-	 * @return the last {@code Location}
+	 * Return the last {@code Location} in this list.
 	 */
 	public Location last() {
 		return get(size() - 1);
 	}
 
 	/**
-	 * Returns an immutable {@code List} view of the {@code Location}s in the
-	 * list that preserves iteration order.
-	 * 
-	 * @return a {@code List} view of this {@code LocationList}
+	 * Return a view of this list in reverse order.
 	 */
-	public List<Location> asList() {
-		// TODO is this really needed
-		return ImmutableList.copyOf(locs);
-	}
+	public abstract LocationList reverse();
 
 	/**
-	 * Returns the length of this {@code LocationList} in km. Method uses
-	 * {@link Locations#horzDistanceFast(Location, Location)} algorithm. Method
-	 * is lazy and repeat calls to this method will recalculate the length each
-	 * time.
+	 * Lazily compute the horizontal length of this {@code LocationList} in km.
+	 * Method uses the {@link Locations#horzDistanceFast(Location, Location)}
+	 * algorithm and ignores depth variation between locations. That is, it
+	 * computes length as though all locations in the list have a depth of 0.0
+	 * km. Repeat calls to this method will recalculate the length each time.
 	 * 
 	 * @return the length of the line connecting all {@code Location}s in this
-	 *         list
+	 *         list, ignoring depth variations, or 0.0 if list only contains 1
+	 *         location
 	 */
 	public double length() {
-		// TODO perhaps this should be sensitive to depth variations
 		if (size() == 1) return 0.0;
 		double sum = 0.0;
 		Location prev = first();
-		for (Location loc : Iterables.skip(locs, 1)) {
+		for (Location loc : Iterables.skip(this, 1)) {
 			sum += Locations.horzDistanceFast(prev, loc);
 			prev = loc;
 		}
@@ -265,9 +174,9 @@ public final class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Lazily returns the average depth of the {@code Location}s in this list.
+	 * Lazily computes the average depth of the {@code Location}s in this list.
 	 */
-	public double averageDepth() {
+	public double depth() {
 		double depth = 0.0;
 		for (Location loc : this) {
 			depth += loc.depth();
@@ -275,217 +184,142 @@ public final class LocationList implements Iterable<Location> {
 		return depth / size();
 	}
 
-	@Override public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (!(obj instanceof LocationList)) return false;
-		LocationList ll = (LocationList) obj;
-		if (size() != ll.size()) return false;
-		for (int i = 0; i < size(); i++) {
-			if (!(get(i).equals(ll.get(i)))) return false;
-		}
-		return true;
-	}
-
-	@Override public int hashCode() {
-		return locs.hashCode();
-	}
-
 	@Override public String toString() {
-		return LF + JOIN.join(this) + LF;
+		return NEWLINE + Joiner.on(NEWLINE).join(this) + NEWLINE;
 	}
 
-	@Override public Iterator<Location> iterator() {
-		// @formatter:off
-		return new Iterator<Location>() {
-			int caret = 0;
-			int size = size();
-			@Override public boolean hasNext() { return caret < size; }
-			@Override public Location next() { return locs.get(caret++); }
-			@Override public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
-		// @formatter:on
-	}
-
-	/**
-	 * Returns a closed, stright-line {@link Path2D} representation of this
-	 * list.
-	 * 
-	 * @return a path representation of {@code this}
+	/*
+	 * The default implementation that delegates to an ImmutableList.
 	 */
-	public Path2D toPath() {
-		Path2D path = new Path2D.Double(Path2D.WIND_EVEN_ODD, size());
-		boolean starting = true;
-		for (Location loc : this) {
-			double lat = loc.lat();
-			double lon = loc.lon();
-			// if just starting, then moveTo
-			if (starting) {
-				path.moveTo(lon, lat);
-				starting = false;
-				continue;
-			}
-			path.lineTo(lon, lat);
+	private static class RegularLocationList extends LocationList {
+
+		final ImmutableList<Location> locs;
+
+		private RegularLocationList(ImmutableList<Location> locs) {
+			this.locs = locs;
 		}
-		path.closePath();
-		return path;
+
+		@Override public int size() {
+			return locs.size();
+		}
+
+		@Override public Location get(int index) {
+			return locs.get(index);
+		}
+
+		@Override public Iterator<Location> iterator() {
+			return locs.iterator();
+		}
+
+		@Override public LocationList reverse() {
+			return new RegularLocationList(locs.reverse());
+		}
+
+		@Override public int hashCode() {
+			return locs.hashCode();
+		}
+
+		@Override public boolean equals(Object obj) {
+			return locs.equals(obj);
+		}
 	}
 
 	/**
-	 * Returns a new {@code LocationList.Builder}.
-	 * 
-	 * @return a new builder
+	 * Return a new builder.
 	 */
 	public static Builder builder() {
 		return new Builder();
 	}
 
 	/**
-	 * A builder for creating {@code LocationList}s. Note that builders are not
-	 * reusable and subsequent calls to {@code build()} will throw an
-	 * {@code IllegalStateException}. Use {@link LocationList#builder()} to
-	 * create new {@code Builder} instances.
+	 * A reusable builder of {@code LocationList}s. Repeat calls to
+	 * {@code build()} will return multiple lists in series with each new list
+	 * containing all the {@code Location}s of the one before it.
 	 */
 	public static class Builder {
 
-		List<Location> locs;
+		ImmutableList.Builder<Location> builder;
 
 		private Builder() {
-			locs = Lists.newArrayList();
+			builder = ImmutableList.builder();
 		}
 
 		/**
-		 * Adds the supplied {@code Location}.
+		 * Adds a {@code Location} to the {@code LocationList}.
 		 * 
 		 * @param loc to add
 		 * @return a reference to this {@code Builder}
 		 */
 		public Builder add(Location loc) {
-			locs.add(checkNotNull(loc));
+			builder.add(checkNotNull(loc));
 			return this;
 		}
 
 		/**
 		 * Adds a new {@code Location} specified by the supplied latitude and
-		 * longitude and a depth of 0 km.
+		 * longitude and a depth of 0 km to the {@code LocationList}.
 		 * 
 		 * @param lat latitude in decimal degrees
 		 * @param lon longitude in decimal degrees
-		 * @return a new {@code Location}
-		 * @throws IllegalArgumentException if any supplied values are out of
-		 *         range
+		 * @return a reference to this {@code Builder}
+		 * @throws IllegalArgumentException if any values are out of range
 		 * @see GeoTools
 		 */
 		public Builder add(double lat, double lon) {
-			locs.add(Location.create(lat, lon));
+			builder.add(Location.create(lat, lon));
 			return this;
 		}
 
 		/**
 		 * Adds a new {@code Location} specified by the supplied latitude,
-		 * longitude, and depth.
+		 * longitude, and depth to the {@code LocationList}.
 		 * 
 		 * @param lat latitude in decimal degrees
 		 * @param lon longitude in decimal degrees
 		 * @param depth in km (positive down)
-		 * @return a new {@code Location}
-		 * @throws IllegalArgumentException if any supplied values are out of
-		 *         range
+		 * @return a reference to this {@code Builder}
+		 * @throws IllegalArgumentException if any values are out of range
 		 * @see GeoTools
 		 */
 		public Builder add(double lat, double lon, double depth) {
-			locs.add(Location.create(lat, lon, depth));
+			builder.add(Location.create(lat, lon, depth));
 			return this;
 		}
 
 		/**
-		 * Adds the supplied {@code LocationList}.
+		 * Adds each {@code Location} in {@code locs} to the
+		 * {@code LocationList}.
+		 * 
 		 * @param locs to add
 		 * @return a reference to this {@code Builder}
 		 */
-		public Builder add(LocationList locs) {
-			this.locs.addAll(checkNotNull(locs).locs);
+		public Builder add(Location... locs) {
+			builder.add(locs);
+			return this;
+		}
+
+		/**
+		 * Adds each {@code Location} in {@code locs} to the
+		 * {@code LocationList}.
+		 * 
+		 * @param locs to add
+		 * @return a reference to this {@code Builder}
+		 */
+		public Builder addAll(Iterable<Location> locs) {
+			builder.addAll(locs);
 			return this;
 		}
 
 		/**
 		 * Returns a newly created {@code LocationList}.
 		 * 
-		 * @return a new LocationList
-		 * @throws IllegalStateException if {@code build()} has already been
-		 *         called on this {@code Builder} or no {@code Location}s were
-		 *         ever added subsequent to creating this {@code Builder}.
+		 * @return a new ordered collection of {@code Location}s
+		 * @throws IllegalStateException if the list to be returned is empty
 		 */
 		public LocationList build() {
-			checkState(locs != null, "build() has already been called");
-			checkState(locs.size() > 0, "Builder is empty");
-			LocationList list = new LocationList();
-			list.locs = locs;
-			return list;
+			ImmutableList<Location> locs = builder.build();
+			checkState(locs.size() > 0, "LocationList is empty");
+			return new RegularLocationList(locs);
 		}
 	}
-
-	// TODO move these to Locations (formerly LocationUtils)
-	/**
-	 * Computes the horizontal surface distance (in km) to the closest point in
-	 * this list from the supplied {@code Location}. This method uses
-	 * {@link Locations#horzDistanceFast(Location, Location)} to compute the
-	 * distance.
-	 * 
-	 * @param loc {@code Location} of interest
-	 * @return the distance to the closest point in this {@code LocationList}
-	 * @see Locations#horzDistanceFast(Location, Location)
-	 */
-	public double minDistToLocation(Location loc) {
-		double min = Double.MAX_VALUE;
-		double dist = 0;
-		for (Location p : this) {
-			dist = Locations.horzDistanceFast(loc, p);
-			if (dist < min) min = dist;
-		}
-		return min;
-	}
-
-	/**
-	 * Computes the shortest horizontal distance (in km) from the supplied
-	 * {@code Location} to the line defined by connecting the points in this
-	 * {@code LocationList}. This method uses
-	 * {@link Locations#distanceToSegmentFast(Location, Location, Location)} and
-	 * is inappropriate for for use at large separations (e.g. >200 km).
-	 * 
-	 * @param loc {@code Location} of interest
-	 * @return the shortest distance to the line defined by this
-	 *         {@code LocationList}
-	 */
-	public double minDistToLine(Location loc) {
-		double min = Double.MAX_VALUE;
-		for (int i = 0; i < size() - 1; i++) {
-			min = Math.min(min, distanceToSegmentFast(get(i), get(i + 1), loc));
-		}
-		return min;
-	}
-
-	/**
-	 * Computes the segment index that is closest to the supplied
-	 * {@code Location}. There are {@code LocationList.size() - 1} segment
-	 * indices. The endpoints of the returned segment index are {@code [n, n+1]}
-	 * .
-	 * 
-	 * @param loc {@code Location} of interest
-	 * @return the index of the closest segment
-	 */
-	public int minDistIndex(Location loc) {
-		double min = Double.MAX_VALUE;
-		int minIndex = -1;
-		for (int i = 0; i < size() - 1; i++) {
-			double dist = distanceToSegmentFast(get(i), get(i + 1), loc);
-			if (dist < min) {
-				min = dist;
-				minIndex = i;
-			}
-		}
-		return minIndex;
-	}
-
 }
