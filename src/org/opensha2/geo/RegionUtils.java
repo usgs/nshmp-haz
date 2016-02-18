@@ -459,7 +459,7 @@ public class RegionUtils {
 			Location.create(nodeLat - halfH, nodeLon + halfW), // bot right
 			Location.create(nodeLat - halfH, nodeLon - halfW), // bot left
 			Location.create(nodeLat + halfH, nodeLon - halfW)); // top left
-		return new Area(locs.toPath());
+		return new Area(Locations.toPath(locs));
 	}
 
 
