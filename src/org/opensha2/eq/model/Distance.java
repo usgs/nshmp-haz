@@ -209,14 +209,14 @@ public final class Distance {
 			LocationList region = LocationList.builder()
 					.add(p1)
 					.add(p2)
-					.add(trace)
+					.addAll(trace)
 					.add(p3)
 					.add(p4)
 					.build();
 			
 			LocationList extendedTrace = LocationList.builder()
 					.add(p2)
-					.add(trace)
+					.addAll(trace)
 					.add(p3)
 					.build();
 			// @formatter:on
@@ -312,7 +312,9 @@ public final class Distance {
 				}
 				boolean isInside = polygon.contains(siteLoc);
 
-				double distToExtendedTrace = LocationList.create(extendedTrace).minDistToLine(siteLoc);
+				double distToExtendedTrace = Locations.minDistanceToLine(
+					siteLoc,
+					LocationList.create(extendedTrace));
 
 				if(isInside || distToExtendedTrace == 0.0) { // zero values are always on the hanging wall
 					return distToExtendedTrace;
@@ -336,7 +338,7 @@ public final class Distance {
 		// endpoints. If the closest segment distance is less than both endpoint
 		// distances, use that segment as a line to compute rX, otherwise use
 		// endpoints of the trace as a line to compute rX
-		int minIndex = trace.minDistIndex(loc);
+		int minIndex = Locations.minDistanceIndex(loc, trace);
 		double rSeg = distanceToSegmentFast(trace.get(minIndex),
 			trace.get(minIndex + 1), loc);
 		double rFirst = horzDistanceFast(trace.first(), loc);
