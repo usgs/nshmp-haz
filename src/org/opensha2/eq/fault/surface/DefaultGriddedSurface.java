@@ -93,6 +93,10 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	 * want to recompute it internally.
 	 * 
 	 * TODO single-use builder
+	 * 
+	 * TODO right-hand-rule
+	 * 
+	 * TODO should surface only be a single row if width < dipSpacing/2
 	 */
 	@SuppressWarnings("javadoc")
 	public static class Builder {
@@ -298,7 +302,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 			// out but perhaps will have to be reintroduced
 			Location topLocation = Location.create(traceLocation.lat(), traceLocation.lon(), depth);
 
-			set(0, ith_col, Location.copyOf(topLocation));
+			set(0, ith_col, topLocation);
 			// if( D ) System.out.println("   (x,y) topLocation = (0, " +
 			// ith_col + ") " + topLocation );
 
@@ -321,7 +325,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 				dir = LocationVector.create(dipDirRad, hDistance, vDistance);
 
 				Location depthLocation = Locations.location(topLocation, dir);
-				set(ith_row, ith_col, Location.copyOf(depthLocation));
+				set(ith_row, ith_col, depthLocation);
 				// if( D ) System.out.println("    (x,y) depthLocation = (" +
 				// ith_row + ", " + ith_col + ") " + depthLocation );
 
@@ -342,7 +346,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 	public void create(LocationList trace, double dip, double width, double spacing) {
 		double dipRad = dip * TO_RAD;
 		double dipDirRad = Faults.dipDirectionRad(trace);
-		LocationList resampled = LocationList.resampledFrom(trace, spacing);
+		LocationList resampled = trace.resample(spacing);
 		int nCol = resampled.size();
 		// strike-parallel row count, NOT including trace
 		int nRow = DoubleMath.roundToInt(width / spacing, HALF_UP);
