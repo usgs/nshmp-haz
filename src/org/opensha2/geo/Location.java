@@ -36,14 +36,6 @@ import com.google.common.primitives.Doubles;
  */
 public final class Location implements Comparable<Location> {
 
-	/**
-	 * Format {@code String("%.5f")} used for presentation of {@code Location}
-	 * data. For use with {@link String#format(String, Object...)}.
-	 */
-	public static final String FORMAT = "%.5f";
-
-	private static final String TO_STR_FMT = FORMAT + "," + FORMAT + "," + FORMAT;
-
 	private final double lat;
 	private final double lon;
 	private final double depth;
@@ -64,7 +56,7 @@ public final class Location implements Comparable<Location> {
 	 * @see GeoTools
 	 */
 	public static Location create(double lat, double lon) {
-		return new Location(lat, lon, 0);
+		return create(lat, lon, 0);
 	}
 
 	/**
@@ -129,12 +121,14 @@ public final class Location implements Comparable<Location> {
 		return lon;
 	}
 
+	private static final String FORMAT = "%.5f,%.5f,%.5f";
+
 	/**
-	 * Returns a KML compatible tuple: 'lon,lat,depth' (no spaces).
+	 * Return a KML compatible tuple: 'lon,lat,depth' (no spaces).
 	 * @see #fromString(String)
 	 */
 	@Override public String toString() {
-		return String.format(TO_STR_FMT, lon(), lat(), depth());
+		return String.format(FORMAT, lon(), lat(), depth());
 	}
 
 	@Override public boolean equals(Object obj) {
