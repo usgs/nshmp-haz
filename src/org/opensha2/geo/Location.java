@@ -54,12 +54,6 @@ public final class Location implements Comparable<Location> {
 		this.depth = validateDepth(depth);
 	}
 
-	private Location(Location loc) {
-		this.lat = loc.lat;
-		this.lon = loc.lon;
-		this.depth = loc.depth;
-	}
-
 	/**
 	 * Create a new {@code Location} with the supplied latitude and longitude
 	 * and a depth of 0 km.
@@ -85,15 +79,6 @@ public final class Location implements Comparable<Location> {
 	 */
 	public static Location create(double lat, double lon, double depth) {
 		return new Location(lat, lon, depth);
-	}
-
-	/**
-	 * Create a new {@code Location} that is identircal to the one supplied.
-	 * @param loc {@code Location} to copy
-	 */
-	@Deprecated
-	public static Location copyOf(Location loc) {
-		return new Location(loc);
 	}
 
 	/**
