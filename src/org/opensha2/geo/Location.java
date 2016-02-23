@@ -20,32 +20,30 @@ import com.google.common.primitives.Doubles;
  * A {@code Location} represents a point with reference to the earth's
  * ellipsoid. It is expressed in terms of latitude, longitude, and depth. As in
  * seismology, the convention adopted in here is for depth to be positive-down,
- * always. All utility methods in this package assume this to be the case.
- * {@code Location}s may be defined using longitude values in the range:
- * [-180°, 360°]. {@code Location} instances are immutable.
+ * always. Locations may be defined using longitude values in the range: [-180°,
+ * 360°]. Location instances are immutable.
  * 
  * <p>Note that although static factory methods take arguments in the order:
- * [lat, lon, depth], {@code String} representations of a {@code Location} are
- * in the order: [lon, lat, depth], consistent with KML, GeoJSON, and other
- * digital coordinate formats that match standard plotting coordinate order: [x,
- * y, z].</p>
+ * [lat, lon, depth], {@code String} representations of a location are in the
+ * order: [lon, lat, depth], consistent with KML, GeoJSON, and other digital
+ * coordinate formats that match standard plotting coordinate order: [x, y, z].
  * 
- * <p>For computational cenvenience, latitude and longitude values are converted
+ * <p>For computational convenience, latitude and longitude values are converted
  * and stored internally in radians. Special {@code get***Rad()} methods are
- * provided to access this native format.</p>
+ * provided to access this native format.
  * 
  * @author Peter Powers
  */
 public final class Location implements Comparable<Location> {
 
 	/**
-	 * Format {@code String("%.5f")} used for presentation of {@code Location} data.
-	 * For use with {@link String#format(String, Object...)}.
+	 * Format {@code String("%.5f")} used for presentation of {@code Location}
+	 * data. For use with {@link String#format(String, Object...)}.
 	 */
 	public static final String FORMAT = "%.5f";
-	
+
 	private static final String TO_STR_FMT = FORMAT + "," + FORMAT + "," + FORMAT;
-	
+
 	private final double lat;
 	private final double lon;
 	private final double depth;
@@ -55,7 +53,7 @@ public final class Location implements Comparable<Location> {
 		this.lon = validateLon(lon) * TO_RAD;
 		this.depth = validateDepth(depth);
 	}
-	
+
 	private Location(Location loc) {
 		this.lat = loc.lat;
 		this.lon = loc.lon;
@@ -63,12 +61,11 @@ public final class Location implements Comparable<Location> {
 	}
 
 	/**
-	 * Creates a new {@code Location} with the supplied latitude and
-	 * longitude and a depth of 0 km.
+	 * Create a new {@code Location} with the supplied latitude and longitude
+	 * and a depth of 0 km.
 	 * 
 	 * @param lat latitude in decimal degrees
 	 * @param lon longitude in decimal degrees
-	 * @return a new {@code Location}
 	 * @throws IllegalArgumentException if any supplied values are out of range
 	 * @see GeoTools
 	 */
@@ -77,13 +74,12 @@ public final class Location implements Comparable<Location> {
 	}
 
 	/**
-	 * Creates a new {@code Location} with the supplied latitude, longitude,
-	 * and depth.
+	 * Create a new {@code Location} with the supplied latitude, longitude, and
+	 * depth.
 	 * 
 	 * @param lat latitude in decimal degrees
 	 * @param lon longitude in decimal degrees
 	 * @param depth in km (positive down)
-	 * @return a new {@code Location}
 	 * @throws IllegalArgumentException if any supplied values are out of range
 	 * @see GeoTools
 	 */
@@ -92,21 +88,21 @@ public final class Location implements Comparable<Location> {
 	}
 
 	/**
-	 * Creates a new {@code Location} that is identircal to the one supplied.
+	 * Create a new {@code Location} that is identircal to the one supplied.
 	 * @param loc {@code Location} to copy
-	 * @return an exact copy of the supplied {@code Location}
 	 */
+	@Deprecated
 	public static Location copyOf(Location loc) {
 		return new Location(loc);
 	}
-	
+
 	/**
-	 * Generates a new {@code Location} by parsing the supplied {@code String}.
+	 * Generate a new {@code Location} by parsing the supplied {@code String}.
 	 * Method is the complement of {@link #toString()} and is intended for use
 	 * with the result of that method.
-	 * @param s to parse
-	 * @return a new Location
-	 * @throws NumberFormatException if s is unparseable
+	 * 
+	 * @param s string to parse
+	 * @throws NumberFormatException if {@code s} is unparseable
 	 * @see #toString()
 	 */
 	public static Location fromString(String s) {
@@ -114,40 +110,35 @@ public final class Location implements Comparable<Location> {
 	}
 
 	/**
-	 * Returns the depth of this {@code Location}.
-	 * @return the {@code Location} depth in km
+	 * Returns the depth of this {@code Location} in km.
 	 */
 	public double depth() {
 		return depth;
 	}
 
 	/**
-	 * Returns the latitude of this {@code Location}.
-	 * @return the {@code Location} latitude in decimal degrees
+	 * The latitude of this {@code Location} in decimal degrees.
 	 */
 	public double lat() {
 		return lat * TO_DEG;
 	}
 
 	/**
-	 * Returns the longitude of this {@code Location}.
-	 * @return the {@code Location} longitude in decimal degrees
+	 * The longitude of this {@code Location} in decimal degrees.
 	 */
 	public double lon() {
 		return lon * TO_DEG;
 	}
 
 	/**
-	 * Returns the latitude of this {@code Location} in radians.
-	 * @return the {@code Location} latitude in radians
+	 * The latitude of this {@code Location} in radians.
 	 */
 	public double latRad() {
 		return lat;
 	}
 
 	/**
-	 * Returns the longitude of this {@code Location} in radians.
-	 * @return the {@code Location} longitude in radians
+	 * The longitude of this {@code Location} in radians.
 	 */
 	public double lonRad() {
 		return lon;
@@ -157,13 +148,11 @@ public final class Location implements Comparable<Location> {
 	 * Returns a KML compatible tuple: 'lon,lat,depth' (no spaces).
 	 * @see #fromString(String)
 	 */
-	@Override
-	public String toString() {
+	@Override public String toString() {
 		return String.format(TO_STR_FMT, lon(), lat(), depth());
 	}
 
-	@Override
-	public boolean equals(Object obj) {
+	@Override public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof Location)) return false;
 		Location loc = (Location) obj;
@@ -189,27 +178,23 @@ public final class Location implements Comparable<Location> {
 	}
 
 	/**
-	 * Compares this {@code Location} to another and sorts first by latitude,
-	 * then by longitude. When sorting a list of randomized but evenly spaced
-	 * grid of {@code Location}s, the resultant ordering will be left to right
-	 * across rows of uniform latitude, ascending to the leftmost next higher
-	 * latitude at the end of each row (left-to-right, bottom-to-top).
+	 * Compare this {@code Location} to another and sort first by latitude, then
+	 * by longitude. When sorting a list of {@code Location}s, the resultant
+	 * ordering is left-to-right, bottom-to-top.
 	 * 
 	 * @param loc {@code Location} to compare {@code this} to
 	 * @return a negative integer, zero, or a positive integer if this
 	 *         {@code Location} is less than, equal to, or greater than the
 	 *         specified {@code Location}.
 	 */
-	@Override
-	public int compareTo(Location loc) {
+	@Override public int compareTo(Location loc) {
 		double d = (lat == loc.lat) ? lon - loc.lon : lat - loc.lat;
 		return (d != 0) ? (d < 0) ? -1 : 1 : 0;
 	}
 
 	/**
-	 * Returns a {@link Function} that can be used to convert {@code String}s
-	 * to {@code Location}s. 
-	 * @return a {@code String} to {@code Location} conversion function
+	 * Return a {@link Function} that can be used to convert {@code String}s to
+	 * {@code Location}s.
 	 */
 	public static Function<String, Location> fromStringFunction() {
 		return FromStringFunction.INSTANCE;
@@ -219,8 +204,7 @@ public final class Location implements Comparable<Location> {
 	private static enum FromStringFunction implements
 			Function<String, Location> {
 		INSTANCE;
-		@Override
-		public Location apply(String s) {
+		@Override public Location apply(String s) {
 			Iterator<Double> it = FluentIterable
 				.from(Parsing.split(checkNotNull(s), Delimiter.COMMA))
 				.transform(Doubles.stringConverter()).iterator();
