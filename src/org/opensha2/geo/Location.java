@@ -7,12 +7,13 @@ import static org.opensha2.geo.GeoTools.validateDepth;
 import static org.opensha2.geo.GeoTools.validateLat;
 import static org.opensha2.geo.GeoTools.validateLon;
 
-import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 
-import com.google.common.base.Function;
+import com.google.common.base.Converter;
 import com.google.common.collect.FluentIterable;
 import com.google.common.primitives.Doubles;
 
@@ -24,9 +25,10 @@ import com.google.common.primitives.Doubles;
  * 360°]. Location instances are immutable.
  * 
  * <p>Note that although static factory methods take arguments in the order:
- * [lat, lon, depth], {@code String} representations of a location are in the
- * order: [lon, lat, depth], consistent with KML, GeoJSON, and other digital
- * coordinate formats that match standard plotting coordinate order: [x, y, z].
+ * {@code [lat, lon, depth]}, {@code String} representations of a location are
+ * in the order: {@code [lon, lat, depth]}, consistent with KML, GeoJSON, and
+ * other digital coordinate formats that match standard plotting coordinate
+ * order: {@code [x, y, z]}.
  * 
  * <p>For computational convenience, latitude and longitude values are converted
  * and stored internally in radians. Special {@code get***Rad()} methods are
@@ -75,15 +77,14 @@ public final class Location implements Comparable<Location> {
 
 	/**
 	 * Generate a new {@code Location} by parsing the supplied {@code String}.
-	 * Method is the complement of {@link #toString()} and is intended for use
-	 * with the result of that method.
+	 * Method is intended for use with the result of {@link #toString()}.
 	 * 
 	 * @param s string to parse
 	 * @throws NumberFormatException if {@code s} is unparseable
 	 * @see #toString()
 	 */
 	public static Location fromString(String s) {
-		return FromStringFunction.INSTANCE.apply(s);
+		return StringConverter.INSTANCE.reverse().convert(s);
 	}
 
 	/**
@@ -121,39 +122,52 @@ public final class Location implements Comparable<Location> {
 		return lon;
 	}
 
-	private static final String FORMAT = "%.5f,%.5f,%.5f";
-
 	/**
 	 * Return a KML compatible tuple: 'lon,lat,depth' (no spaces).
 	 * @see #fromString(String)
 	 */
 	@Override public String toString() {
-		return String.format(FORMAT, lon(), lat(), depth());
+		return stringConverter().convert(this);
+	}
+
+	/**
+	 * Return a {@link Converter} that converts between {@code Location}s and
+	 * {@code String}s.
+	 */
+	public static Converter<Location, String> stringConverter() {
+		return StringConverter.INSTANCE;
+	}
+
+	private static final class StringConverter extends Converter<Location, String> {
+		
+		static final StringConverter INSTANCE = new StringConverter();
+		static final String FORMAT = "%.5f,%.5f,%.5f";
+
+		@Override protected String doForward(Location loc) {
+			return String.format(FORMAT, loc.lon(), loc.lat(), loc.depth());
+		}
+
+		@Override protected Location doBackward(String s) {
+			List<Double> values = FluentIterable
+				.from(Parsing.split(checkNotNull(s), Delimiter.COMMA))
+				.transform(Doubles.stringConverter())
+				.toList();
+			return create(values.get(1), values.get(0), values.get(2));
+		}
 	}
 
 	@Override public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof Location)) return false;
 		Location loc = (Location) obj;
-		// NOTE because rounding errors may give rise to very slight
-		// differences in radian values that disappear when converting back
-		// to decimal degrees, and because most Locations are initialized
-		// with decimal degree values, equals() compares decimal degrees
-		// rather than the native radian values. ppowers 4/12/2010
-		if (lat() != loc.lat()) return false;
-		if (lon() != loc.lon()) return false;
-		if (depth() != loc.depth()) return false;
+		if (this.lat != loc.lat) return false;
+		if (this.lon != loc.lon) return false;
+		if (this.depth != loc.depth) return false;
 		return true;
 	}
 
-	// TODO update this with lib hash methods
 	@Override public int hashCode() {
-		// edit did same fix as for equals, now uses getters
-		long latHash = Double.doubleToLongBits(lat());
-		long lonHash = Double.doubleToLongBits(lon() + 1000);
-		long depHash = Double.doubleToLongBits(depth() + 2000);
-		long v = latHash + lonHash + depHash;
-		return (int) (v ^ (v >>> 32));
+		return Objects.hash(lat, lon, depth);
 	}
 
 	/**
@@ -170,27 +184,5 @@ public final class Location implements Comparable<Location> {
 		double d = (lat == loc.lat) ? lon - loc.lon : lat - loc.lat;
 		return (d != 0) ? (d < 0) ? -1 : 1 : 0;
 	}
-
-	/**
-	 * Return a {@link Function} that can be used to convert {@code String}s to
-	 * {@code Location}s.
-	 */
-	public static Function<String, Location> fromStringFunction() {
-		return FromStringFunction.INSTANCE;
-	}
-
-	// TODO possibly refactor this to handle Strings only containing lat and lon
-	private static enum FromStringFunction implements
-			Function<String, Location> {
-		INSTANCE;
-		@Override public Location apply(String s) {
-			Iterator<Double> it = FluentIterable
-				.from(Parsing.split(checkNotNull(s), Delimiter.COMMA))
-				.transform(Doubles.stringConverter()).iterator();
-			// lon is first arg in KML but second in Location constructor
-			double lon = it.next();
-			return create(it.next(), lon, it.next());
-		}
-	};
 
 }
