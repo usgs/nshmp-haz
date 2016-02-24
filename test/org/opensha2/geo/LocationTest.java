@@ -31,40 +31,44 @@ public class LocationTest {
 		loc = Location.create(V, V);
 		assertEquals(loc.depth(), 0, 0);
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public final void createIAE1() {
+
+	@Test(expected = IllegalArgumentException.class)public final void createIAE1() {
 		Location.create(MAX_LAT + 0.1, 0);
 	}
 
-	@Test(expected=IllegalArgumentException.class)
-	public final void createIAE2() {
+	@Test(expected = IllegalArgumentException.class) public final void createIAE2() {
 		Location.create(MIN_LAT - 0.1, 0);
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public final void createIAE3() {
+
+	@Test(expected = IllegalArgumentException.class) public final void createIAE3() {
 		Location.create(0, MAX_LON + 0.1);
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public final void createIAE4() {
+
+	@Test(expected = IllegalArgumentException.class) public final void createIAE4() {
 		Location.create(0, MIN_LON - 0.1);
 	}
 
-	@Test(expected=IllegalArgumentException.class)
-	public final void createIAE5() {
+	@Test(expected = IllegalArgumentException.class) public final void createIAE5() {
 		Location.create(0, 0, MAX_DEPTH + 0.1);
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public final void createIAE6() {
+
+	@Test(expected = IllegalArgumentException.class) public final void createIAE6() {
 		Location.create(0, 0, MIN_DEPTH - 0.1);
 	}
-	
+
 	@Test public final void fromString() {
 		String s = "10.0,10.0,10.0";
 		assertEquals(Location.fromString(s), location);
+	}
+
+	@Test(expected = NumberFormatException.class) public final void fromStringNFE() {
+		String s = "10.0,x,10.0";
+		Location.fromString(s);
+	}
+
+	@Test(expected = IndexOutOfBoundsException.class) public final void fromStringIOOBE() {
+		String s = "10.0,10.0";
+		Location.fromString(s);
 	}
 
 	@Test public final void depth() {
@@ -133,6 +137,10 @@ public class LocationTest {
 		assertTrue(locList.get(3) == l1);
 		assertTrue(locList.get(4) == l0);
 		assertTrue(locList.get(5) == l5);
+	}
+
+	public static void main(String[] args) {
+		Location loc = Location.fromString("10, 20, 30, 40");
 	}
 
 }
