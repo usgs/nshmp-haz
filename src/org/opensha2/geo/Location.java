@@ -81,7 +81,11 @@ public final class Location implements Comparable<Location> {
 	 * 
 	 * @param s string to parse
 	 * @throws NumberFormatException if {@code s} is unparseable
+	 * @throws IndexOutOfBoundsException if {@code s} contains fewer than 3
+	 *         comma-separated values; any additional values in the suppied
+	 *         string are ignored
 	 * @see #toString()
+	 * @see #stringConverter()
 	 */
 	public static Location fromString(String s) {
 		return StringConverter.INSTANCE.reverse().convert(s);
@@ -125,6 +129,7 @@ public final class Location implements Comparable<Location> {
 	/**
 	 * Return a KML compatible tuple: 'lon,lat,depth' (no spaces).
 	 * @see #fromString(String)
+	 * @see #stringConverter()
 	 */
 	@Override public String toString() {
 		return stringConverter().convert(this);
@@ -133,13 +138,19 @@ public final class Location implements Comparable<Location> {
 	/**
 	 * Return a {@link Converter} that converts between {@code Location}s and
 	 * {@code String}s.
+	 * 
+	 * <p>Calls to {@code converter.reverse().convert(String)} will throw a
+	 * {@code NumberFormatException} if the values in the supplied string are
+	 * unparseable; or an {@code IndexOutOfBoundsException} if the supplied
+	 * string contains fewer than 3 comma-separated values; any additional
+	 * values in the suppied string are ignored.
 	 */
 	public static Converter<Location, String> stringConverter() {
 		return StringConverter.INSTANCE;
 	}
 
 	private static final class StringConverter extends Converter<Location, String> {
-		
+
 		static final StringConverter INSTANCE = new StringConverter();
 		static final String FORMAT = "%.5f,%.5f,%.5f";
 
