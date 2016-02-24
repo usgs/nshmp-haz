@@ -1,12 +1,20 @@
 package org.opensha2.geo;
 
-import static org.junit.Assert.*;
-import static org.opensha2.geo.GeoTools.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.opensha2.geo.GeoTools.MAX_DEPTH;
+import static org.opensha2.geo.GeoTools.MAX_LAT;
+import static org.opensha2.geo.GeoTools.MAX_LON;
+import static org.opensha2.geo.GeoTools.MIN_DEPTH;
+import static org.opensha2.geo.GeoTools.MIN_LAT;
+import static org.opensha2.geo.GeoTools.MIN_LON;
+import static org.opensha2.geo.GeoTools.TO_RAD;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,11 +26,13 @@ public class LocationTest {
 	private static final double V = 10.0;
 	Location location;
 
-	@Before public void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		location = Location.create(V, V, V);
 	}
 
-	@Test public final void create() {
+	@Test
+	public final void create() {
 		Location loc = Location.create(V, V, V);
 		assertEquals(loc.lat(), V, 0);
 		assertEquals(loc.lon(), V, 0);
@@ -32,72 +42,88 @@ public class LocationTest {
 		assertEquals(loc.depth(), 0, 0);
 	}
 
-	@Test(expected = IllegalArgumentException.class)public final void createIAE1() {
+	@Test(expected = IllegalArgumentException.class)
+	public final void create_IAE1() {
 		Location.create(MAX_LAT + 0.1, 0);
 	}
 
-	@Test(expected = IllegalArgumentException.class) public final void createIAE2() {
+	@Test(expected = IllegalArgumentException.class)
+	public final void create_IAE2() {
 		Location.create(MIN_LAT - 0.1, 0);
 	}
 
-	@Test(expected = IllegalArgumentException.class) public final void createIAE3() {
+	@Test(expected = IllegalArgumentException.class)
+	public final void create_IAE3() {
 		Location.create(0, MAX_LON + 0.1);
 	}
 
-	@Test(expected = IllegalArgumentException.class) public final void createIAE4() {
+	@Test(expected = IllegalArgumentException.class)
+	public final void create_IAE4() {
 		Location.create(0, MIN_LON - 0.1);
 	}
 
-	@Test(expected = IllegalArgumentException.class) public final void createIAE5() {
+	@Test(expected = IllegalArgumentException.class)
+	public final void create_IAE5() {
 		Location.create(0, 0, MAX_DEPTH + 0.1);
 	}
 
-	@Test(expected = IllegalArgumentException.class) public final void createIAE6() {
+	@Test(expected = IllegalArgumentException.class)
+	public final void create_IAE6() {
 		Location.create(0, 0, MIN_DEPTH - 0.1);
 	}
 
-	@Test public final void fromString() {
+	@Test
+	public final void fromString() {
 		String s = "10.0,10.0,10.0";
 		assertEquals(Location.fromString(s), location);
 	}
 
-	@Test(expected = NumberFormatException.class) public final void fromStringNFE() {
+	@Test(expected = NumberFormatException.class)
+	public final void fromString_NFE() {
 		String s = "10.0,x,10.0";
 		Location.fromString(s);
 	}
 
-	@Test(expected = IndexOutOfBoundsException.class) public final void fromStringIOOBE() {
+	@Test(expected = IndexOutOfBoundsException.class)
+	public final void fromString_IOOBE() {
 		String s = "10.0,10.0";
 		Location.fromString(s);
 	}
 
-	@Test public final void depth() {
+	@Test
+	public final void depth() {
 		assertEquals(location.depth(), 10, 0);
 	}
 
-	@Test public final void lat() {
+	@Test
+	public final void lat() {
 		assertEquals(location.lat(), 10, 0);
 	}
 
-	@Test public final void lon() {
+	@Test
+	public final void lon() {
 		assertEquals(location.lon(), 10, 0);
 	}
 
-	@Test public final void latRad() {
+	@Test
+	public final void latRad() {
 		assertEquals(location.latRad(), V * TO_RAD, 0);
 	}
 
-	@Test public final void lonRad() {
+	@Test
+	public final void lonRad() {
 		assertEquals(location.lonRad(), V * TO_RAD, 0);
 	}
 
-	@Test public final void toStringTest() {
+	@Test
+	public final void toStringTest() {
 		Location loc = Location.create(20, 30, 10);
 		String s = String.format("%.5f,%.5f,%.5f", loc.lon(), loc.lat(), loc.depth());
 		assertEquals(loc.toString(), s);
 	}
 
-	@Test public final void equalsTest() {
+	@Test
+	public final void equalsTest() {
 		// same object
 		assertEquals(location, location);
 		// different object type
@@ -114,7 +140,8 @@ public class LocationTest {
 		assertNotEquals(location, loc);
 	}
 
-	@Test public final void hashCodeTest() {
+	@Test
+	public final void hashCodeTest() {
 		Location other = Location.create(V, V, V);
 		assertEquals(location.hashCode(), other.hashCode());
 		Location locA = Location.create(45, 90, 25);
@@ -122,7 +149,8 @@ public class LocationTest {
 		assertNotEquals(locA.hashCode(), locB.hashCode());
 	}
 
-	@Test public final void compareToTest() {
+	@Test
+	public final void compareToTest() {
 		Location l0 = Location.create(20, -30);
 		Location l1 = Location.create(20, -50);
 		Location l2 = Location.create(-10, 10);
