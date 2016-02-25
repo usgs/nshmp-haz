@@ -45,6 +45,13 @@ import com.google.common.base.Predicate;
  * @see Location
  */
 public final class Locations {
+	
+	/*
+	 * TODO It's good to have these algorithms all in one file. However,
+	 * it might be noice to add methods such as translate(vector) or
+	 * distanceTo(loc) to Location, which would allow more elegant method
+	 * chaining.
+	 */
 
 	/*
 	 * Developer Notes: All experimental, exploratory and test methods were
