@@ -172,7 +172,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
 		double avgDip = (vFirst.plungeDegrees() + vLast.plungeDegrees()) / 2;
 		avgDipRad = avgDip * GeoTools.TO_RAD;
 		
-		avgDepth = upperTrace.averageDepth();
+		avgDepth = upperTrace.depth();
 		
 		centroid = Locations.centroid(this);
 	}
