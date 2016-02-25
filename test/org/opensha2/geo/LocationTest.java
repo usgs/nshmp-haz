@@ -167,8 +167,4 @@ public class LocationTest {
 		assertTrue(locList.get(5) == l5);
 	}
 
-	public static void main(String[] args) {
-		Location loc = Location.fromString("10, 20, 30, 40");
-	}
-
 }
