@@ -38,9 +38,6 @@ import com.google.common.base.Predicate;
  * href="http://www.movable-type.co.uk/scripts/latlong.html"
  * target="_blank">Moveable Type Scripts</a> for other implementations.</p>
  * 
- * <p>Unless explicitely stated, these methods do not perform any {@code null}
- * argument checking. TODO: should this be reconsidered</p>
- * 
  * @author Peter Powers
  * @see Location
  */
