@@ -185,7 +185,7 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location> implements
 				 */
 	public LocationList getPerimeter() {
 		LocationList topTr = getRow(0);
-		LocationList botTr = LocationList.reverseOf(getRow(getNumRows() - 1));
+		LocationList botTr = LocationList.create(getRow(getNumRows() - 1)).reverse();
 		Iterable<Location> locs = Iterables.concat(topTr, botTr,
 			Lists.newArrayList(topTr.get(0)));
 		return LocationList.create(locs);
