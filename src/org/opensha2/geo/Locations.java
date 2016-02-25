@@ -1,26 +1,34 @@
 package org.opensha2.geo;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.math.DoubleMath.fuzzyEquals;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
 import static java.lang.Math.acos;
 import static java.lang.Math.asin;
+import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
-import static com.google.common.math.DoubleMath.fuzzyEquals;
-import static org.opensha2.geo.Direction.NORTH;
-import static org.opensha2.geo.Direction.WEST;
-import static org.opensha2.geo.GeoTools.*;
+import static org.opensha2.geo.GeoTools.EARTH_RADIUS_MEAN;
+import static org.opensha2.geo.GeoTools.MAX_LAT;
+import static org.opensha2.geo.GeoTools.MAX_LON;
+import static org.opensha2.geo.GeoTools.MIN_LAT;
+import static org.opensha2.geo.GeoTools.MIN_LON;
+import static org.opensha2.geo.GeoTools.TO_DEG;
+import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.GeoTools.TWOPI;
+import static org.opensha2.geo.GeoTools.degreesLatPerKm;
+import static org.opensha2.geo.GeoTools.degreesLonPerKm;
 
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
 import com.google.common.base.Predicate;
-import com.google.common.math.DoubleMath;
 
 /**
  * Static utility methods to operate on geographic {@code Location} data.
@@ -30,13 +38,17 @@ import com.google.common.math.DoubleMath;
  * href="http://www.movable-type.co.uk/scripts/latlong.html"
  * target="_blank">Moveable Type Scripts</a> for other implementations.</p>
  * 
- * <p>Unless explicitely stated, these methods do not perform any {@code null}
- * argument checking. TODO: should this be reconsidered</p>
- * 
  * @author Peter Powers
  * @see Location
  */
 public final class Locations {
+	
+	/*
+	 * TODO It's good to have these algorithms all in one file. However,
+	 * it might be noice to add methods such as translate(vector) or
+	 * distanceTo(loc) to Location, which would allow more elegant method
+	 * chaining.
+	 */
 
 	/*
 	 * Developer Notes: All experimental, exploratory and test methods were
@@ -685,6 +697,91 @@ public final class Locations {
 		lonRad /= size;
 		depth /= size;
 		return Location.create(latRad * TO_DEG, lonRad * TO_DEG, depth);
+	}
+
+	/**
+	 * Return a closed, straight-line {@link Path2D} representation of the
+	 * supplied list, ignoring depth.
+	 */
+	public static Path2D toPath(LocationList locs) {
+		Path2D path = new Path2D.Double(Path2D.WIND_EVEN_ODD, locs.size());
+		boolean starting = true;
+		for (Location loc : locs) {
+			double lat = loc.lat();
+			double lon = loc.lon();
+			// if just starting, then moveTo
+			if (starting) {
+				path.moveTo(lon, lat);
+				starting = false;
+				continue;
+			}
+			path.lineTo(lon, lat);
+		}
+		path.closePath();
+		return path;
+	}
+
+	/**
+	 * Compute the horizontal distance (in km) from a {@code Location} to the
+	 * closest point in a {@code LocationList}. This method uses
+	 * {@link #horzDistanceFast(Location, Location)} to compute the distance.
+	 * 
+	 * @param loc {@code Location} of interest
+	 * @param locs {@code LocationList} to compute distance to
+	 * @see #horzDistanceFast(Location, Location)
+	 */
+	public static double minDistanceToLocations(Location loc, LocationList locs) {
+		double min = Double.MAX_VALUE;
+		double dist = 0;
+		for (Location p : locs) {
+			dist = Locations.horzDistanceFast(loc, p);
+			if (dist < min) min = dist;
+		}
+		return min;
+	}
+
+	/**
+	 * Compute the shortest horizontal distance (in km) from a {@code Location}
+	 * to the line defined by connecting the points in a {@code LocationList}.
+	 * This method uses
+	 * {@link Locations#distanceToSegmentFast(Location, Location, Location)} and
+	 * is inappropriate for for use at large separations (e.g. >200 km).
+	 * 
+	 * @param loc {@code Location} of interest
+	 * @param locs {@code LocationList} to compute distance to
+	 * @see #distanceToSegmentFast(Location, Location, Location)
+	 */
+	public static double minDistanceToLine(Location loc, LocationList locs) {
+		if (locs.size() == 1) return horzDistanceFast(loc, locs.get(0));
+		double min = Double.MAX_VALUE;
+		for (int i = 0; i < locs.size() - 1; i++) {
+			min = Math.min(min, distanceToSegmentFast(locs.get(i), locs.get(i + 1), loc));
+		}
+		return min;
+	}
+
+	/**
+	 * Compute the segment index that is closest to a {@code Location}. There
+	 * are {@code locs.size() - 1} segment indices. The indices of the segment
+	 * endpoints in the original location list are {@code [n, n+1]}.
+	 * 
+	 * @param loc {@code Location} of interest
+	 * @param locs {@code LocationList} for which to compute the closest segment
+	 *        index
+	 * @throws IllegalArgumentException if {@code locs.size() < 2}
+	 */
+	public static int minDistanceIndex(Location loc, LocationList locs) {
+		checkArgument(locs.size() > 1);
+		double min = Double.MAX_VALUE;
+		int minIndex = -1;
+		for (int i = 0; i < locs.size() - 1; i++) {
+			double dist = distanceToSegmentFast(locs.get(i), locs.get(i + 1), loc);
+			if (dist < min) {
+				min = dist;
+				minIndex = i;
+			}
+		}
+		return minIndex;
 	}
 
 	/**

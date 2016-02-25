@@ -185,8 +185,7 @@ public final class Faults {
 	 * @return the supplied trace for use inline
 	 */
 	public static LocationList validateTrace(LocationList trace) {
-		checkArgument(checkNotNull(trace, "Trace may not be null").size() > 1,
-			"Trace must have at least 2 points");
+		checkArgument(checkNotNull(trace).size() > 1, "Trace must have at least 2 points");
 		return trace;
 	}
 

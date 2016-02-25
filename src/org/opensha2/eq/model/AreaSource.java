@@ -31,6 +31,7 @@ import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
+import org.opensha2.geo.Locations;
 import org.opensha2.geo.Regions;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.Mfds;
@@ -150,7 +151,8 @@ public class AreaSource implements Source {
 	 * @param loc Location of interest
 	 */
 	public Iterable<Rupture> iterableForLocation(Location loc) {
-		double distance = sourceGrids.get(0).border().minDistToLine(loc);
+		LocationList border = sourceGrids.get(0).border();
+		double distance = Locations.minDistanceToLine(loc, border);
 		int gridIndex = gridScaling.indexForDistance(distance);
 		GriddedRegion sourceGrid = sourceGrids.get(gridIndex);
 		return sourceGridIterable(sourceGrid);

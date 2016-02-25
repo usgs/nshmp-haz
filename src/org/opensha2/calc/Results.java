@@ -88,7 +88,7 @@ public class Results {
 	public static void writeResultsOLD(Path dir, List<Hazard> batch, OpenOption... options)
 			throws IOException {
 
-		Function<Double, String> locFmtFunc = Parsing.formatDoubleFunction(Location.FORMAT);
+		Function<Double, String> locFmtFunc = Parsing.formatDoubleFunction("%.5f");
 		Function<Double, String> rateFmtFunc = Parsing.formatDoubleFunction(RATE_FMT);
 
 		Hazard demo = batch.get(0);
@@ -210,8 +210,8 @@ public class Results {
 			String name = namedSites ? hazard.site.name : null;
 			List<String> locData = Lists.newArrayList(
 				name,
-				String.format(Location.FORMAT, hazard.site.location.lon()),
-				String.format(Location.FORMAT, hazard.site.location.lat()));
+				String.format("%.5f", hazard.site.location.lon()),
+				String.format("%.5f", hazard.site.location.lat()));
 
 			Map<Imt, Map<SourceType, XySequence>> curvesByType = detailed ?
 				curvesByType(hazard) : null;

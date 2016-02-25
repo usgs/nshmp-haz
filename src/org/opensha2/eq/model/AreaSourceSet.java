@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.opensha2.geo.Location;
+import org.opensha2.geo.Locations;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -48,7 +49,7 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 	@Override public Predicate<AreaSource> distanceFilter(final Location loc, final double distance) {
 		return new Predicate<AreaSource>() {
 			@Override public boolean apply(AreaSource source) {
-				return source.border().minDistToLocation(loc) <= distance;
+				return Locations.minDistanceToLocations(loc, source.border()) <= distance;
 			}
 		};
 	}

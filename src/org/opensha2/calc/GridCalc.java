@@ -46,6 +46,7 @@ import com.google.common.primitives.Doubles;
  *
  * @author Peter Powers
  */
+@Deprecated
 public class GridCalc {
 
 	// TODO reorganize, clean, privatize
@@ -171,10 +172,11 @@ public class GridCalc {
 //			double[] distances = DataTable.Builder.create().rows(rMin, rMax, rΔ).rows();
 			double[] distances = DataTables.keys(rMin, rMax, rΔ);
 			
-			LocationList locations = LocationList.create(
-				SRC_LOC,
-				Doubles.asList(distances),
-				SRC_TO_SITE_AZIMUTH);
+			LocationList locations = null;
+//			LocationList locations = LocationList.create(
+//				SRC_LOC,
+//				Doubles.asList(distances),
+//				SRC_TO_SITE_AZIMUTH);
 
 			List<Site> siteList = createSiteList(locations, vs30);
 
