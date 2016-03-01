@@ -10,8 +10,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Big Sur CA",
-        "description": "Big Sur CA"
+        "title": "Big Sur CA"
       }
     },
     {
@@ -23,8 +22,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Coalinga CA",
-        "description": "Coalinga CA"
+        "title": "Coalinga CA"
       }
     },
     {
@@ -36,8 +34,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Concord CA",
-        "description": "Concord CA"
+        "title": "Concord CA"
       }
     },
     {
@@ -49,8 +46,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Eureka CA",
-        "description": "Eureka CA"
+        "title": "Eureka CA"
       }
     },
     {
@@ -62,8 +58,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Fresno CA",
-        "description": "Fresno CA"
+        "title": "Fresno CA"
       }
     },
     {
@@ -75,8 +70,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Monterey CA",
-        "description": "Monterey CA"
+        "title": "Monterey CA"
       }
     },
     {
@@ -88,8 +82,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Morgan Hill CA",
-        "description": "Morgan Hill CA"
+        "title": "Morgan Hill CA"
       }
     },
     {
@@ -101,8 +94,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Oakland CA",
-        "description": "Oakland CA"
+        "title": "Oakland CA"
       }
     },
     {
@@ -114,8 +106,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Redding CA",
-        "description": "Redding CA"
+        "title": "Redding CA"
       }
     },
     {
@@ -127,8 +118,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Sacramento CA",
-        "description": "Sacramento CA"
+        "title": "Sacramento CA"
       }
     },
     {
@@ -140,8 +130,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "San Francisco CA",
-        "description": "San Francisco CA"
+        "title": "San Francisco CA"
       }
     },
     {
@@ -153,8 +142,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "San Jose CA",
-        "description": "San Jose CA"
+        "title": "San Jose CA"
       }
     },
     {
@@ -166,8 +154,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "San Mateo CA",
-        "description": "San Mateo CA"
+        "title": "San Mateo CA"
       }
     },
     {
@@ -179,8 +166,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Santa Cruz CA",
-        "description": "Santa Cruz CA"
+        "title": "Santa Cruz CA"
       }
     },
     {
@@ -192,8 +178,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Santa Rosa CA",
-        "description": "Santa Rosa CA"
+        "title": "Santa Rosa CA"
       }
     },
     {
@@ -205,8 +190,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Vallejo CA",
-        "description": "Vallejo CA"
+        "title": "Vallejo CA"
       }
     },
     {
@@ -218,8 +202,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Bakersfield CA",
-        "description": "Bakersfield CA"
+        "title": "Bakersfield CA"
       }
     },
     {
@@ -231,8 +214,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Brawley CA",
-        "description": "Brawley CA"
+        "title": "Brawley CA"
       }
     },
     {
@@ -244,8 +226,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Century City CA",
-        "description": "Century City CA"
+        "title": "Century City CA"
       }
     },
     {
@@ -257,8 +238,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Cucamonga CA",
-        "description": "Cucamonga CA"
+        "title": "Cucamonga CA"
       }
     },
     {
@@ -270,8 +250,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Death Valley CA",
-        "description": "Death Valley CA"
+        "title": "Death Valley CA"
       }
     },
     {
@@ -283,8 +262,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Diablo Canyon CA",
-        "description": "Diablo Canyon CA"
+        "title": "Diablo Canyon CA"
       }
     },
     {
@@ -296,8 +274,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Irvine CA",
-        "description": "Irvine CA"
+        "title": "Irvine CA"
       }
     },
     {
@@ -309,8 +286,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Long Beach CA",
-        "description": "Long Beach CA"
+        "title": "Long Beach CA"
       }
     },
     {
@@ -322,8 +298,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Los Angeles CA",
-        "description": "Los Angeles CA"
+        "title": "Los Angeles CA"
       }
     },
     {
@@ -335,8 +310,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Malibu West CA",
-        "description": "Malibu West CA"
+        "title": "Malibu West CA"
       }
     },
     {
@@ -348,8 +322,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Mammoth Lakes CA",
-        "description": "Mammoth Lakes CA"
+        "title": "Mammoth Lakes CA"
       }
     },
     {
@@ -361,8 +334,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Northridge CA",
-        "description": "Northridge CA"
+        "title": "Northridge CA"
       }
     },
     {
@@ -374,8 +346,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Palmdale CA",
-        "description": "Palmdale CA"
+        "title": "Palmdale CA"
       }
     },
     {
@@ -387,8 +358,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Palm Springs CA",
-        "description": "Palm Springs CA"
+        "title": "Palm Springs CA"
       }
     },
     {
@@ -400,8 +370,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Pasadena CA",
-        "description": "Pasadena CA"
+        "title": "Pasadena CA"
       }
     },
     {
@@ -413,8 +382,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Riverside CA",
-        "description": "Riverside CA"
+        "title": "Riverside CA"
       }
     },
     {
@@ -426,8 +394,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "San Bernardino CA",
-        "description": "San Bernardino CA"
+        "title": "San Bernardino CA"
       }
     },
     {
@@ -439,8 +406,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "San Diego CA",
-        "description": "San Diego CA"
+        "title": "San Diego CA"
       }
     },
     {
@@ -452,8 +418,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "San Luis Obispo CA",
-        "description": "San Luis Obispo CA"
+        "title": "San Luis Obispo CA"
       }
     },
     {
@@ -465,8 +430,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "San Onofre CA",
-        "description": "San Onofre CA"
+        "title": "San Onofre CA"
       }
     },
     {
@@ -478,8 +442,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Santa Barbara CA",
-        "description": "Santa Barbara CA"
+        "title": "Santa Barbara CA"
       }
     },
     {
@@ -491,8 +454,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Ventura CA",
-        "description": "Ventura CA"
+        "title": "Ventura CA"
       }
     },
     {
@@ -504,8 +466,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Grand Canyon Village AZ",
-        "description": "Grand Canyon Village AZ"
+        "title": "Grand Canyon Village AZ"
       }
     },
     {
@@ -517,8 +478,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Palo Verde AZ",
-        "description": "Palo Verde AZ"
+        "title": "Palo Verde AZ"
       }
     },
     {
@@ -530,8 +490,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Phoenix AZ",
-        "description": "Phoenix AZ"
+        "title": "Phoenix AZ"
       }
     },
     {
@@ -543,8 +502,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Tucson AZ",
-        "description": "Tucson AZ"
+        "title": "Tucson AZ"
       }
     },
     {
@@ -556,8 +514,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Paradox CO",
-        "description": "Paradox CO"
+        "title": "Paradox CO"
       }
     },
     {
@@ -569,8 +526,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Rangely CO",
-        "description": "Rangely CO"
+        "title": "Rangely CO"
       }
     },
     {
@@ -582,8 +538,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Boise ID",
-        "description": "Boise ID"
+        "title": "Boise ID"
       }
     },
     {
@@ -595,8 +550,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Idaho National Lab ID",
-        "description": "Idaho National Lab ID"
+        "title": "Idaho National Lab ID"
       }
     },
     {
@@ -608,8 +562,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Lima MT",
-        "description": "Lima MT"
+        "title": "Lima MT"
       }
     },
     {
@@ -621,8 +574,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Bozeman MT",
-        "description": "Bozeman MT"
+        "title": "Bozeman MT"
       }
     },
     {
@@ -634,8 +586,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Billings MT",
-        "description": "Billings MT"
+        "title": "Billings MT"
       }
     },
     {
@@ -647,8 +598,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Missoula MT",
-        "description": "Missoula MT"
+        "title": "Missoula MT"
       }
     },
     {
@@ -660,8 +610,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Carson City NV",
-        "description": "Carson City NV"
+        "title": "Carson City NV"
       }
     },
     {
@@ -673,8 +622,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Elko NV",
-        "description": "Elko NV"
+        "title": "Elko NV"
       }
     },
     {
@@ -686,8 +634,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Las Vegas NV",
-        "description": "Las Vegas NV"
+        "title": "Las Vegas NV"
       }
     },
     {
@@ -699,8 +646,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Reno NV",
-        "description": "Reno NV"
+        "title": "Reno NV"
       }
     },
     {
@@ -712,8 +658,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Albuquerque NM",
-        "description": "Albuquerque NM"
+        "title": "Albuquerque NM"
       }
     },
     {
@@ -725,8 +670,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Artesia NM",
-        "description": "Artesia NM"
+        "title": "Artesia NM"
       }
     },
     {
@@ -738,8 +682,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Los Alamos National Lab NM",
-        "description": "Los Alamos National Lab NM"
+        "title": "Los Alamos National Lab NM"
       }
     },
     {
@@ -751,8 +694,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Las Cruces NM",
-        "description": "Las Cruces NM"
+        "title": "Las Cruces NM"
       }
     },
     {
@@ -764,8 +706,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Brigham City UT",
-        "description": "Brigham City UT"
+        "title": "Brigham City UT"
       }
     },
     {
@@ -777,8 +718,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Cedar City UT",
-        "description": "Cedar City UT"
+        "title": "Cedar City UT"
       }
     },
     {
@@ -790,8 +730,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Green River UT",
-        "description": "Green River UT"
+        "title": "Green River UT"
       }
     },
     {
@@ -803,8 +742,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Provo UT",
-        "description": "Provo UT"
+        "title": "Provo UT"
       }
     },
     {
@@ -816,8 +754,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Salt Lake City UT",
-        "description": "Salt Lake City UT"
+        "title": "Salt Lake City UT"
       }
     },
     {
@@ -829,8 +766,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Casper WY",
-        "description": "Casper WY"
+        "title": "Casper WY"
       }
     },
     {
@@ -842,8 +778,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Jackson WY",
-        "description": "Jackson WY"
+        "title": "Jackson WY"
       }
     },
     {
@@ -855,8 +790,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Yellowstone WY",
-        "description": "Yellowstone WY"
+        "title": "Yellowstone WY"
       }
     },
     {
@@ -868,8 +802,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Astoria OR",
-        "description": "Astoria OR"
+        "title": "Astoria OR"
       }
     },
     {
@@ -881,8 +814,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Bend OR",
-        "description": "Bend OR"
+        "title": "Bend OR"
       }
     },
     {
@@ -894,8 +826,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Brookings OR",
-        "description": "Brookings OR"
+        "title": "Brookings OR"
       }
     },
     {
@@ -907,8 +838,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Coos Bay OR",
-        "description": "Coos Bay OR"
+        "title": "Coos Bay OR"
       }
     },
     {
@@ -920,8 +850,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Eugene OR",
-        "description": "Eugene OR"
+        "title": "Eugene OR"
       }
     },
     {
@@ -933,8 +862,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Klamath Falls OR",
-        "description": "Klamath Falls OR"
+        "title": "Klamath Falls OR"
       }
     },
     {
@@ -946,8 +874,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Medford OR",
-        "description": "Medford OR"
+        "title": "Medford OR"
       }
     },
     {
@@ -959,8 +886,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Newport OR",
-        "description": "Newport OR"
+        "title": "Newport OR"
       }
     },
     {
@@ -972,8 +898,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Pendleton OR",
-        "description": "Pendleton OR"
+        "title": "Pendleton OR"
       }
     },
     {
@@ -985,8 +910,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Portland OR",
-        "description": "Portland OR"
+        "title": "Portland OR"
       }
     },
     {
@@ -998,8 +922,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Salem OR",
-        "description": "Salem OR"
+        "title": "Salem OR"
       }
     },
     {
@@ -1011,8 +934,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Aberdeen WA",
-        "description": "Aberdeen WA"
+        "title": "Aberdeen WA"
       }
     },
     {
@@ -1024,8 +946,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Bellingham WA",
-        "description": "Bellingham WA"
+        "title": "Bellingham WA"
       }
     },
     {
@@ -1037,8 +958,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Ellensburg WA",
-        "description": "Ellensburg WA"
+        "title": "Ellensburg WA"
       }
     },
     {
@@ -1050,8 +970,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Everett WA",
-        "description": "Everett WA"
+        "title": "Everett WA"
       }
     },
     {
@@ -1063,8 +982,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Hanford Site WA",
-        "description": "Hanford Site WA"
+        "title": "Hanford Site WA"
       }
     },
     {
@@ -1076,8 +994,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Olympia WA",
-        "description": "Olympia WA"
+        "title": "Olympia WA"
       }
     },
     {
@@ -1089,8 +1006,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Seattle WA",
-        "description": "Seattle WA"
+        "title": "Seattle WA"
       }
     },
     {
@@ -1102,8 +1018,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Spokane WA",
-        "description": "Spokane WA"
+        "title": "Spokane WA"
       }
     },
     {
@@ -1115,8 +1030,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Tacoma WA",
-        "description": "Tacoma WA"
+        "title": "Tacoma WA"
       }
     },
     {
@@ -1128,8 +1042,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Yakima WA",
-        "description": "Yakima WA"
+        "title": "Yakima WA"
       }
     },
     {
@@ -1141,8 +1054,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Washington DC",
-        "description": "Washington DC"
+        "title": "Washington DC"
       }
     },
     {
@@ -1154,8 +1066,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Atmore AL",
-        "description": "Atmore AL"
+        "title": "Atmore AL"
       }
     },
     {
@@ -1167,8 +1078,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Birmingham AL",
-        "description": "Birmingham AL"
+        "title": "Birmingham AL"
       }
     },
     {
@@ -1180,8 +1090,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "El Dorado AR",
-        "description": "El Dorado AR"
+        "title": "El Dorado AR"
       }
     },
     {
@@ -1193,8 +1102,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Greenbrier AR",
-        "description": "Greenbrier AR"
+        "title": "Greenbrier AR"
       }
     },
     {
@@ -1206,8 +1114,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Little Rock AR",
-        "description": "Little Rock AR"
+        "title": "Little Rock AR"
       }
     },
     {
@@ -1219,8 +1126,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Denver CO",
-        "description": "Denver CO"
+        "title": "Denver CO"
       }
     },
     {
@@ -1232,8 +1138,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "La Junta CO",
-        "description": "La Junta CO"
+        "title": "La Junta CO"
       }
     },
     {
@@ -1245,8 +1150,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Trinidad CO",
-        "description": "Trinidad CO"
+        "title": "Trinidad CO"
       }
     },
     {
@@ -1258,8 +1162,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Hartford CT",
-        "description": "Hartford CT"
+        "title": "Hartford CT"
       }
     },
     {
@@ -1271,8 +1174,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Wilmington DE",
-        "description": "Wilmington DE"
+        "title": "Wilmington DE"
       }
     },
     {
@@ -1284,8 +1186,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Jacksonville FL",
-        "description": "Jacksonville FL"
+        "title": "Jacksonville FL"
       }
     },
     {
@@ -1297,8 +1198,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Miami FL",
-        "description": "Miami FL"
+        "title": "Miami FL"
       }
     },
     {
@@ -1310,8 +1210,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Atlanta GA",
-        "description": "Atlanta GA"
+        "title": "Atlanta GA"
       }
     },
     {
@@ -1323,8 +1222,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Lincolnton GA",
-        "description": "Lincolnton GA"
+        "title": "Lincolnton GA"
       }
     },
     {
@@ -1336,8 +1234,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Savannah GA",
-        "description": "Savannah GA"
+        "title": "Savannah GA"
       }
     },
     {
@@ -1349,8 +1246,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Central IL",
-        "description": "Central IL"
+        "title": "Central IL"
       }
     },
     {
@@ -1362,8 +1258,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Chicago IL",
-        "description": "Chicago IL"
+        "title": "Chicago IL"
       }
     },
     {
@@ -1375,8 +1270,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Evansville IN",
-        "description": "Evansville IN"
+        "title": "Evansville IN"
       }
     },
     {
@@ -1388,8 +1282,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Indianapolis IN",
-        "description": "Indianapolis IN"
+        "title": "Indianapolis IN"
       }
     },
     {
@@ -1401,8 +1294,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Des Moines IA",
-        "description": "Des Moines IA"
+        "title": "Des Moines IA"
       }
     },
     {
@@ -1414,8 +1306,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Topeka KS",
-        "description": "Topeka KS"
+        "title": "Topeka KS"
       }
     },
     {
@@ -1427,8 +1318,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Wichita KS",
-        "description": "Wichita KS"
+        "title": "Wichita KS"
       }
     },
     {
@@ -1440,8 +1330,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Louisville KY",
-        "description": "Louisville KY"
+        "title": "Louisville KY"
       }
     },
     {
@@ -1453,8 +1342,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "New Orleans LA",
-        "description": "New Orleans LA"
+        "title": "New Orleans LA"
       }
     },
     {
@@ -1466,8 +1354,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Augusta ME",
-        "description": "Augusta ME"
+        "title": "Augusta ME"
       }
     },
     {
@@ -1479,8 +1366,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Bangor ME",
-        "description": "Bangor ME"
+        "title": "Bangor ME"
       }
     },
     {
@@ -1492,8 +1378,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Portland ME",
-        "description": "Portland ME"
+        "title": "Portland ME"
       }
     },
     {
@@ -1505,8 +1390,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Baltimore MD",
-        "description": "Baltimore MD"
+        "title": "Baltimore MD"
       }
     },
     {
@@ -1518,8 +1402,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Boston MA",
-        "description": "Boston MA"
+        "title": "Boston MA"
       }
     },
     {
@@ -1531,8 +1414,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Detroit MI",
-        "description": "Detroit MI"
+        "title": "Detroit MI"
       }
     },
     {
@@ -1544,8 +1426,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Minneapolis MN",
-        "description": "Minneapolis MN"
+        "title": "Minneapolis MN"
       }
     },
     {
@@ -1557,8 +1438,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Jackson MS",
-        "description": "Jackson MS"
+        "title": "Jackson MS"
       }
     },
     {
@@ -1570,8 +1450,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Cape Girardeau MO",
-        "description": "Cape Girardeau MO"
+        "title": "Cape Girardeau MO"
       }
     },
     {
@@ -1583,8 +1462,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "New Madrid MO",
-        "description": "New Madrid MO"
+        "title": "New Madrid MO"
       }
     },
     {
@@ -1596,8 +1474,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "St Louis MO",
-        "description": "St Louis MO"
+        "title": "St Louis MO"
       }
     },
     {
@@ -1609,8 +1486,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Omaha NE",
-        "description": "Omaha NE"
+        "title": "Omaha NE"
       }
     },
     {
@@ -1622,8 +1498,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Manchester NH",
-        "description": "Manchester NH"
+        "title": "Manchester NH"
       }
     },
     {
@@ -1635,8 +1510,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Trenton NJ",
-        "description": "Trenton NJ"
+        "title": "Trenton NJ"
       }
     },
     {
@@ -1648,8 +1522,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Batavia NY",
-        "description": "Batavia NY"
+        "title": "Batavia NY"
       }
     },
     {
@@ -1661,8 +1534,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Malone NY",
-        "description": "Malone NY"
+        "title": "Malone NY"
       }
     },
     {
@@ -1674,8 +1546,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "New York NY",
-        "description": "New York NY"
+        "title": "New York NY"
       }
     },
     {
@@ -1687,8 +1558,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Charlotte NC",
-        "description": "Charlotte NC"
+        "title": "Charlotte NC"
       }
     },
     {
@@ -1700,8 +1570,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Fargo ND",
-        "description": "Fargo ND"
+        "title": "Fargo ND"
       }
     },
     {
@@ -1713,8 +1582,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Columbus OH",
-        "description": "Columbus OH"
+        "title": "Columbus OH"
       }
     },
     {
@@ -1726,8 +1594,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Sidney OH",
-        "description": "Sidney OH"
+        "title": "Sidney OH"
       }
     },
     {
@@ -1739,8 +1606,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Youngstown OH",
-        "description": "Youngstown OH"
+        "title": "Youngstown OH"
       }
     },
     {
@@ -1752,8 +1618,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Elgin OK",
-        "description": "Elgin OK"
+        "title": "Elgin OK"
       }
     },
     {
@@ -1765,8 +1630,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Oklahoma City OK",
-        "description": "Oklahoma City OK"
+        "title": "Oklahoma City OK"
       }
     },
     {
@@ -1778,8 +1642,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Philadelphia PA",
-        "description": "Philadelphia PA"
+        "title": "Philadelphia PA"
       }
     },
     {
@@ -1791,8 +1654,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Providence RI",
-        "description": "Providence RI"
+        "title": "Providence RI"
       }
     },
     {
@@ -1804,8 +1666,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Charleston SC",
-        "description": "Charleston SC"
+        "title": "Charleston SC"
       }
     },
     {
@@ -1817,8 +1678,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Edgemont SD",
-        "description": "Edgemont SD"
+        "title": "Edgemont SD"
       }
     },
     {
@@ -1830,8 +1690,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Platte SD",
-        "description": "Platte SD"
+        "title": "Platte SD"
       }
     },
     {
@@ -1843,8 +1702,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Sioux Falls SD",
-        "description": "Sioux Falls SD"
+        "title": "Sioux Falls SD"
       }
     },
     {
@@ -1856,8 +1714,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Chattanooga TN",
-        "description": "Chattanooga TN"
+        "title": "Chattanooga TN"
       }
     },
     {
@@ -1869,8 +1726,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Knoxville TN",
-        "description": "Knoxville TN"
+        "title": "Knoxville TN"
       }
     },
     {
@@ -1882,8 +1738,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Maryville TN",
-        "description": "Maryville TN"
+        "title": "Maryville TN"
       }
     },
     {
@@ -1895,8 +1750,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Memphis TN",
-        "description": "Memphis TN"
+        "title": "Memphis TN"
       }
     },
     {
@@ -1908,8 +1762,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Amarillo TX",
-        "description": "Amarillo TX"
+        "title": "Amarillo TX"
       }
     },
     {
@@ -1921,8 +1774,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Dallas TX",
-        "description": "Dallas TX"
+        "title": "Dallas TX"
       }
     },
     {
@@ -1934,8 +1786,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Houston TX",
-        "description": "Houston TX"
+        "title": "Houston TX"
       }
     },
     {
@@ -1947,8 +1798,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Kermit TX",
-        "description": "Kermit TX"
+        "title": "Kermit TX"
       }
     },
     {
@@ -1960,8 +1810,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "San Antonio TX",
-        "description": "San Antonio TX"
+        "title": "San Antonio TX"
       }
     },
     {
@@ -1973,8 +1822,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Snyder TX",
-        "description": "Snyder TX"
+        "title": "Snyder TX"
       }
     },
     {
@@ -1986,8 +1834,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Burlington VT",
-        "description": "Burlington VT"
+        "title": "Burlington VT"
       }
     },
     {
@@ -1999,8 +1846,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Richmond VA",
-        "description": "Richmond VA"
+        "title": "Richmond VA"
       }
     },
     {
@@ -2012,8 +1858,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Charleston WV",
-        "description": "Charleston WV"
+        "title": "Charleston WV"
       }
     },
     {
@@ -2025,8 +1870,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Milwaukee WI",
-        "description": "Milwaukee WI"
+        "title": "Milwaukee WI"
       }
     },
     {
@@ -2038,8 +1882,7 @@
       },
       "properties": {
         "marker-size": "small",
-        "title": "Cheyenne WY",
-        "description": "Cheyenne WY"
+        "title": "Cheyenne WY"
       }
     }
   ]
