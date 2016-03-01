@@ -28,6 +28,7 @@ import com.google.common.collect.Maps;
  * @author Peter Powers
  */
 @SuppressWarnings("all")
+@Deprecated
 public enum NehrpTestCity implements NamedLocation {
 
 	// TODO move to geo?
