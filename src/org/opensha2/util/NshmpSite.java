@@ -71,7 +71,7 @@ public enum NshmpSite implements NamedLocation {
 
 	LIMA_MT(-112.60, 44.65),
 	BOZEMAN_MT(-111.05, 45.70),
-	BILLINGS_NT(-108.50, 45.80),
+	BILLINGS_MT(-108.50, 45.80),
 	MISSOULA_MT(-114.00, 46.90),
 
 	CARSON_CITY_NV(-119.75, 39.15),
