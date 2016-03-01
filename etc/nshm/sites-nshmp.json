@@ -10,8 +10,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Big Sur CA"
       }
     },
@@ -24,8 +22,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Coalinga CA"
       }
     },
@@ -38,8 +34,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Concord CA"
       }
     },
@@ -52,8 +46,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Eureka CA"
       }
     },
@@ -66,8 +58,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Fresno CA"
       }
     },
@@ -80,8 +70,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Monterey CA"
       }
     },
@@ -94,8 +82,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Morgan Hill CA"
       }
     },
@@ -108,8 +94,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Oakland CA"
       }
     },
@@ -122,8 +106,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Redding CA"
       }
     },
@@ -136,8 +118,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Sacramento CA"
       }
     },
@@ -150,8 +130,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "San Francisco CA"
       }
     },
@@ -164,8 +142,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "San Jose CA"
       }
     },
@@ -178,8 +154,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "San Mateo CA"
       }
     },
@@ -192,8 +166,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Santa Cruz CA"
       }
     },
@@ -206,8 +178,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Santa Rosa CA"
       }
     },
@@ -220,8 +190,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Vallejo CA"
       }
     },
@@ -234,8 +202,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Bakersfield CA"
       }
     },
@@ -248,8 +214,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Brawley CA"
       }
     },
@@ -262,8 +226,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Century City CA"
       }
     },
@@ -276,8 +238,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Cucamonga CA"
       }
     },
@@ -290,8 +250,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Death Valley CA"
       }
     },
@@ -304,8 +262,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Diablo Canyon CA"
       }
     },
@@ -318,8 +274,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Irvine CA"
       }
     },
@@ -332,8 +286,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Long Beach CA"
       }
     },
@@ -346,8 +298,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Los Angeles CA"
       }
     },
@@ -360,8 +310,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Malibu West CA"
       }
     },
@@ -374,8 +322,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Mammoth Lakes CA"
       }
     },
@@ -388,8 +334,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Northridge CA"
       }
     },
@@ -402,8 +346,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Palmdale CA"
       }
     },
@@ -416,8 +358,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Palm Springs CA"
       }
     },
@@ -430,8 +370,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Pasadena CA"
       }
     },
@@ -444,8 +382,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Riverside CA"
       }
     },
@@ -458,8 +394,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "San Bernardino CA"
       }
     },
@@ -472,8 +406,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "San Diego CA"
       }
     },
@@ -486,8 +418,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "San Luis Obispo CA"
       }
     },
@@ -500,8 +430,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "San Onofre CA"
       }
     },
@@ -514,8 +442,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Santa Barbara CA"
       }
     },
@@ -528,8 +454,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Ventura CA"
       }
     },
@@ -542,8 +466,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Grand Canyon Village AZ"
       }
     },
@@ -556,8 +478,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Palo Verde AZ"
       }
     },
@@ -570,8 +490,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Phoenix AZ"
       }
     },
@@ -584,8 +502,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Tucson AZ"
       }
     },
@@ -598,8 +514,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Paradox CO"
       }
     },
@@ -612,8 +526,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Rangely CO"
       }
     },
@@ -626,8 +538,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Boise ID"
       }
     },
@@ -640,8 +550,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Idaho National Lab ID"
       }
     },
@@ -654,8 +562,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Lima MT"
       }
     },
@@ -668,8 +574,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Bozeman MT"
       }
     },
@@ -682,8 +586,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Billings MT"
       }
     },
@@ -696,8 +598,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Missoula MT"
       }
     },
@@ -710,8 +610,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Carson City NV"
       }
     },
@@ -724,8 +622,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Elko NV"
       }
     },
@@ -738,8 +634,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Las Vegas NV"
       }
     },
@@ -752,8 +646,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Reno NV"
       }
     },
@@ -766,8 +658,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Albuquerque NM"
       }
     },
@@ -780,8 +670,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Artesia NM"
       }
     },
@@ -794,8 +682,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Los Alamos National Lab NM"
       }
     },
@@ -808,8 +694,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Las Cruces NM"
       }
     },
@@ -822,8 +706,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Brigham City UT"
       }
     },
@@ -836,8 +718,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Cedar City UT"
       }
     },
@@ -850,8 +730,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Green River UT"
       }
     },
@@ -864,8 +742,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Provo UT"
       }
     },
@@ -878,8 +754,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Salt Lake City UT"
       }
     },
@@ -892,8 +766,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Casper WY"
       }
     },
@@ -906,8 +778,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Jackson WY"
       }
     },
@@ -920,8 +790,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Yellowstone WY"
       }
     },
@@ -934,8 +802,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Astoria OR"
       }
     },
@@ -948,8 +814,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Bend OR"
       }
     },
@@ -962,8 +826,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Brookings OR"
       }
     },
@@ -976,8 +838,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Coos Bay OR"
       }
     },
@@ -990,8 +850,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Eugene OR"
       }
     },
@@ -1004,8 +862,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Klamath Falls OR"
       }
     },
@@ -1018,8 +874,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Medford OR"
       }
     },
@@ -1032,8 +886,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Newport OR"
       }
     },
@@ -1046,8 +898,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Pendleton OR"
       }
     },
@@ -1060,8 +910,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Portland OR"
       }
     },
@@ -1074,8 +922,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Salem OR"
       }
     },
@@ -1088,8 +934,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Aberdeen WA"
       }
     },
@@ -1102,8 +946,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Bellingham WA"
       }
     },
@@ -1116,8 +958,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Ellensburg WA"
       }
     },
@@ -1130,8 +970,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Everett WA"
       }
     },
@@ -1144,8 +982,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Hanford Site WA"
       }
     },
@@ -1158,8 +994,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Olympia WA"
       }
     },
@@ -1172,8 +1006,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Seattle WA"
       }
     },
@@ -1186,8 +1018,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Spokane WA"
       }
     },
@@ -1200,8 +1030,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Tacoma WA"
       }
     },
@@ -1214,8 +1042,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Yakima WA"
       }
     },
@@ -1228,8 +1054,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Washington DC"
       }
     },
@@ -1242,8 +1066,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Atmore AL"
       }
     },
@@ -1256,8 +1078,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Birmingham AL"
       }
     },
@@ -1270,8 +1090,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "El Dorado AR"
       }
     },
@@ -1284,8 +1102,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Greenbrier AR"
       }
     },
@@ -1298,8 +1114,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Little Rock AR"
       }
     },
@@ -1312,8 +1126,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Denver CO"
       }
     },
@@ -1326,8 +1138,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "La Junta CO"
       }
     },
@@ -1340,8 +1150,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Trinidad CO"
       }
     },
@@ -1354,8 +1162,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Hartford CT"
       }
     },
@@ -1368,8 +1174,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Wilmington DE"
       }
     },
@@ -1382,8 +1186,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Jacksonville FL"
       }
     },
@@ -1396,8 +1198,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Miami FL"
       }
     },
@@ -1410,8 +1210,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Atlanta GA"
       }
     },
@@ -1424,8 +1222,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Lincolnton GA"
       }
     },
@@ -1438,8 +1234,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Savannah GA"
       }
     },
@@ -1452,8 +1246,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Central IL"
       }
     },
@@ -1466,8 +1258,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Chicago IL"
       }
     },
@@ -1480,8 +1270,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Evansville IN"
       }
     },
@@ -1494,8 +1282,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Indianapolis IN"
       }
     },
@@ -1508,8 +1294,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Des Moines IA"
       }
     },
@@ -1522,8 +1306,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Topeka KS"
       }
     },
@@ -1536,8 +1318,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Wichita KS"
       }
     },
@@ -1550,8 +1330,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Louisville KY"
       }
     },
@@ -1564,8 +1342,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "New Orleans LA"
       }
     },
@@ -1578,8 +1354,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Augusta ME"
       }
     },
@@ -1592,8 +1366,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Bangor ME"
       }
     },
@@ -1606,8 +1378,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Portland ME"
       }
     },
@@ -1620,8 +1390,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Baltimore MD"
       }
     },
@@ -1634,8 +1402,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Boston MA"
       }
     },
@@ -1648,8 +1414,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Detroit MI"
       }
     },
@@ -1662,8 +1426,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Minneapolis MN"
       }
     },
@@ -1676,8 +1438,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Jackson MS"
       }
     },
@@ -1690,8 +1450,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Cape Girardeau MO"
       }
     },
@@ -1704,8 +1462,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "New Madrid MO"
       }
     },
@@ -1718,8 +1474,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "St Louis MO"
       }
     },
@@ -1732,8 +1486,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Omaha NE"
       }
     },
@@ -1746,8 +1498,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Manchester NH"
       }
     },
@@ -1760,8 +1510,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Trenton NJ"
       }
     },
@@ -1774,8 +1522,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Batavia NY"
       }
     },
@@ -1788,8 +1534,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Malone NY"
       }
     },
@@ -1802,8 +1546,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "New York NY"
       }
     },
@@ -1816,8 +1558,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Charlotte NC"
       }
     },
@@ -1830,8 +1570,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Fargo ND"
       }
     },
@@ -1844,8 +1582,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Columbus OH"
       }
     },
@@ -1858,8 +1594,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Sidney OH"
       }
     },
@@ -1872,8 +1606,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Youngstown OH"
       }
     },
@@ -1886,8 +1618,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Elgin OK"
       }
     },
@@ -1900,8 +1630,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Oklahoma City OK"
       }
     },
@@ -1914,8 +1642,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Philadelphia PA"
       }
     },
@@ -1928,8 +1654,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Providence RI"
       }
     },
@@ -1942,8 +1666,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Charleston SC"
       }
     },
@@ -1956,8 +1678,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Edgemont SD"
       }
     },
@@ -1970,8 +1690,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Platte SD"
       }
     },
@@ -1984,8 +1702,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Sioux Falls SD"
       }
     },
@@ -1998,8 +1714,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Chattanooga TN"
       }
     },
@@ -2012,8 +1726,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Knoxville TN"
       }
     },
@@ -2026,8 +1738,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Maryville TN"
       }
     },
@@ -2040,8 +1750,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Memphis TN"
       }
     },
@@ -2054,8 +1762,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Amarillo TX"
       }
     },
@@ -2068,8 +1774,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Dallas TX"
       }
     },
@@ -2082,8 +1786,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Houston TX"
       }
     },
@@ -2096,8 +1798,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Kermit TX"
       }
     },
@@ -2110,8 +1810,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "San Antonio TX"
       }
     },
@@ -2124,8 +1822,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Snyder TX"
       }
     },
@@ -2138,8 +1834,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Burlington VT"
       }
     },
@@ -2152,8 +1846,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Richmond VA"
       }
     },
@@ -2166,8 +1858,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Charleston WV"
       }
     },
@@ -2180,8 +1870,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Milwaukee WI"
       }
     },
@@ -2194,8 +1882,6 @@
       },
       "properties": {
         "marker-size": "small",
-        "marker-symbol": "danger",
-        "marker-color": "#E70362",
         "title": "Cheyenne WY"
       }
     }
