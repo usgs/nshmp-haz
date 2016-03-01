@@ -9,6 +9,9 @@
         "coordinates": [-121.75, 36.25]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Big Sur CA"
       }
     },
@@ -20,6 +23,9 @@
         "coordinates": [-120.4, 36.15]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Coalinga CA"
       }
     },
@@ -31,6 +37,9 @@
         "coordinates": [-122.0, 37.95]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Concord CA"
       }
     },
@@ -42,6 +51,9 @@
         "coordinates": [-124.2, 40.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Eureka CA"
       }
     },
@@ -53,6 +65,9 @@
         "coordinates": [-119.75, 36.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Fresno CA"
       }
     },
@@ -64,6 +79,9 @@
         "coordinates": [-121.9, 36.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Monterey CA"
       }
     },
@@ -75,6 +93,9 @@
         "coordinates": [-121.65, 37.15]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Morgan Hill CA"
       }
     },
@@ -86,6 +107,9 @@
         "coordinates": [-122.25, 37.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Oakland CA"
       }
     },
@@ -97,6 +121,9 @@
         "coordinates": [-122.4, 40.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Redding CA"
       }
     },
@@ -108,6 +135,9 @@
         "coordinates": [-121.5, 38.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Sacramento CA"
       }
     },
@@ -119,6 +149,9 @@
         "coordinates": [-122.4, 37.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "San Francisco CA"
       }
     },
@@ -130,6 +163,9 @@
         "coordinates": [-121.9, 37.35]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "San Jose CA"
       }
     },
@@ -141,6 +177,9 @@
         "coordinates": [-122.3, 37.55]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "San Mateo CA"
       }
     },
@@ -152,6 +191,9 @@
         "coordinates": [-122.05, 36.95]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Santa Cruz CA"
       }
     },
@@ -163,6 +205,9 @@
         "coordinates": [-122.7, 38.45]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Santa Rosa CA"
       }
     },
@@ -174,6 +219,9 @@
         "coordinates": [-122.25, 38.1]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Vallejo CA"
       }
     },
@@ -185,6 +233,9 @@
         "coordinates": [-119.35, 35.35]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Bakersfield CA"
       }
     },
@@ -196,6 +247,9 @@
         "coordinates": [-115.55, 33.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Brawley CA"
       }
     },
@@ -207,6 +261,9 @@
         "coordinates": [-118.4, 34.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Century City CA"
       }
     },
@@ -218,6 +275,9 @@
         "coordinates": [-117.55, 34.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Cucamonga CA"
       }
     },
@@ -229,6 +289,9 @@
         "coordinates": [-116.85, 36.35]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Death Valley CA"
       }
     },
@@ -240,6 +303,9 @@
         "coordinates": [-120.85, 35.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Diablo Canyon CA"
       }
     },
@@ -251,6 +317,9 @@
         "coordinates": [-117.8, 33.65]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Irvine CA"
       }
     },
@@ -262,6 +331,9 @@
         "coordinates": [-118.2, 33.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Long Beach CA"
       }
     },
@@ -273,6 +345,9 @@
         "coordinates": [-118.25, 34.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Los Angeles CA"
       }
     },
@@ -284,6 +359,9 @@
         "coordinates": [-118.95, 34.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Malibu West CA"
       }
     },
@@ -295,6 +373,9 @@
         "coordinates": [-119.0, 37.65]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Mammoth Lakes CA"
       }
     },
@@ -306,6 +387,9 @@
         "coordinates": [-118.55, 34.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Northridge CA"
       }
     },
@@ -317,6 +401,9 @@
         "coordinates": [-118.0, 34.5]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Palmdale CA"
       }
     },
@@ -328,6 +415,9 @@
         "coordinates": [-116.55, 33.85]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Palm Springs CA"
       }
     },
@@ -339,6 +429,9 @@
         "coordinates": [-118.15, 34.15]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Pasadena CA"
       }
     },
@@ -350,6 +443,9 @@
         "coordinates": [-117.4, 33.95]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Riverside CA"
       }
     },
@@ -361,6 +457,9 @@
         "coordinates": [-117.3, 34.1]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "San Bernardino CA"
       }
     },
@@ -372,6 +471,9 @@
         "coordinates": [-117.15, 32.7]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "San Diego CA"
       }
     },
@@ -383,6 +485,9 @@
         "coordinates": [-120.65, 35.3]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "San Luis Obispo CA"
       }
     },
@@ -394,6 +499,9 @@
         "coordinates": [-117.55, 33.4]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "San Onofre CA"
       }
     },
@@ -405,6 +513,9 @@
         "coordinates": [-119.7, 34.45]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Santa Barbara CA"
       }
     },
@@ -416,6 +527,9 @@
         "coordinates": [-119.3, 34.3]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Ventura CA"
       }
     },
@@ -427,6 +541,9 @@
         "coordinates": [-112.15, 36.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Grand Canyon Village AZ"
       }
     },
@@ -438,6 +555,9 @@
         "coordinates": [-112.85, 33.4]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Palo Verde AZ"
       }
     },
@@ -449,6 +569,9 @@
         "coordinates": [-112.1, 33.45]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Phoenix AZ"
       }
     },
@@ -460,6 +583,9 @@
         "coordinates": [-110.95, 32.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Tucson AZ"
       }
     },
@@ -471,6 +597,9 @@
         "coordinates": [-108.95, 38.4]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Paradox CO"
       }
     },
@@ -482,6 +611,9 @@
         "coordinates": [-108.8, 40.1]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Rangely CO"
       }
     },
@@ -493,6 +625,9 @@
         "coordinates": [-116.2, 43.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Boise ID"
       }
     },
@@ -504,6 +639,9 @@
         "coordinates": [-112.85, 43.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Idaho National Lab ID"
       }
     },
@@ -515,6 +653,9 @@
         "coordinates": [-112.6, 44.65]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Lima MT"
       }
     },
@@ -526,6 +667,9 @@
         "coordinates": [-111.05, 45.7]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Bozeman MT"
       }
     },
@@ -537,6 +681,9 @@
         "coordinates": [-108.5, 45.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Billings MT"
       }
     },
@@ -548,6 +695,9 @@
         "coordinates": [-114.0, 46.9]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Missoula MT"
       }
     },
@@ -559,6 +709,9 @@
         "coordinates": [-119.75, 39.15]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Carson City NV"
       }
     },
@@ -570,6 +723,9 @@
         "coordinates": [-115.75, 40.85]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Elko NV"
       }
     },
@@ -581,6 +737,9 @@
         "coordinates": [-115.15, 36.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Las Vegas NV"
       }
     },
@@ -592,6 +751,9 @@
         "coordinates": [-119.8, 39.55]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Reno NV"
       }
     },
@@ -603,6 +765,9 @@
         "coordinates": [-106.6, 35.1]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Albuquerque NM"
       }
     },
@@ -614,6 +779,9 @@
         "coordinates": [-104.4, 32.85]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Artesia NM"
       }
     },
@@ -625,6 +793,9 @@
         "coordinates": [-106.3, 35.85]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Los Alamos National Lab NM"
       }
     },
@@ -636,6 +807,9 @@
         "coordinates": [-106.75, 32.3]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Las Cruces NM"
       }
     },
@@ -647,6 +821,9 @@
         "coordinates": [-112.0, 41.5]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Brigham City UT"
       }
     },
@@ -658,6 +835,9 @@
         "coordinates": [-113.05, 37.7]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Cedar City UT"
       }
     },
@@ -669,6 +849,9 @@
         "coordinates": [-110.15, 39.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Green River UT"
       }
     },
@@ -680,6 +863,9 @@
         "coordinates": [-111.65, 40.25]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Provo UT"
       }
     },
@@ -691,6 +877,9 @@
         "coordinates": [-111.9, 40.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Salt Lake City UT"
       }
     },
@@ -702,6 +891,9 @@
         "coordinates": [-106.3, 42.85]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Casper WY"
       }
     },
@@ -713,6 +905,9 @@
         "coordinates": [-110.75, 43.5]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Jackson WY"
       }
     },
@@ -724,6 +919,9 @@
         "coordinates": [-110.55, 44.4]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Yellowstone WY"
       }
     },
@@ -735,6 +933,9 @@
         "coordinates": [-123.85, 46.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Astoria OR"
       }
     },
@@ -746,6 +947,9 @@
         "coordinates": [-121.3, 44.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Bend OR"
       }
     },
@@ -757,6 +961,9 @@
         "coordinates": [-124.25, 42.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Brookings OR"
       }
     },
@@ -768,6 +975,9 @@
         "coordinates": [-124.2, 43.4]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Coos Bay OR"
       }
     },
@@ -779,6 +989,9 @@
         "coordinates": [-123.1, 44.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Eugene OR"
       }
     },
@@ -790,6 +1003,9 @@
         "coordinates": [-121.8, 42.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Klamath Falls OR"
       }
     },
@@ -801,6 +1017,9 @@
         "coordinates": [-122.9, 42.35]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Medford OR"
       }
     },
@@ -812,6 +1031,9 @@
         "coordinates": [-124.05, 44.65]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Newport OR"
       }
     },
@@ -823,6 +1045,9 @@
         "coordinates": [-118.8, 45.7]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Pendleton OR"
       }
     },
@@ -834,6 +1059,9 @@
         "coordinates": [-122.65, 45.5]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Portland OR"
       }
     },
@@ -845,6 +1073,9 @@
         "coordinates": [-123.05, 44.95]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Salem OR"
       }
     },
@@ -856,6 +1087,9 @@
         "coordinates": [-123.8, 47.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Aberdeen WA"
       }
     },
@@ -867,6 +1101,9 @@
         "coordinates": [-122.5, 48.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Bellingham WA"
       }
     },
@@ -878,6 +1115,9 @@
         "coordinates": [-120.55, 47.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Ellensburg WA"
       }
     },
@@ -889,6 +1129,9 @@
         "coordinates": [-122.2, 48.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Everett WA"
       }
     },
@@ -900,6 +1143,9 @@
         "coordinates": [-119.6, 46.55]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Hanford Site WA"
       }
     },
@@ -911,6 +1157,9 @@
         "coordinates": [-122.9, 47.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Olympia WA"
       }
     },
@@ -922,6 +1171,9 @@
         "coordinates": [-122.3, 47.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Seattle WA"
       }
     },
@@ -933,6 +1185,9 @@
         "coordinates": [-117.4, 47.65]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Spokane WA"
       }
     },
@@ -944,6 +1199,9 @@
         "coordinates": [-122.45, 47.25]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Tacoma WA"
       }
     },
@@ -955,6 +1213,9 @@
         "coordinates": [-120.5, 46.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Yakima WA"
       }
     },
@@ -966,6 +1227,9 @@
         "coordinates": [-77.05, 38.9]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Washington DC"
       }
     },
@@ -977,6 +1241,9 @@
         "coordinates": [-87.5, 31.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Atmore AL"
       }
     },
@@ -988,6 +1255,9 @@
         "coordinates": [-86.8, 33.5]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Birmingham AL"
       }
     },
@@ -999,6 +1269,9 @@
         "coordinates": [-92.7, 33.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "El Dorado AR"
       }
     },
@@ -1010,6 +1283,9 @@
         "coordinates": [-92.4, 35.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Greenbrier AR"
       }
     },
@@ -1021,6 +1297,9 @@
         "coordinates": [-92.3, 34.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Little Rock AR"
       }
     },
@@ -1032,6 +1311,9 @@
         "coordinates": [-105.0, 39.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Denver CO"
       }
     },
@@ -1043,6 +1325,9 @@
         "coordinates": [-103.55, 38.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "La Junta CO"
       }
     },
@@ -1054,6 +1339,9 @@
         "coordinates": [-104.5, 37.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Trinidad CO"
       }
     },
@@ -1065,6 +1353,9 @@
         "coordinates": [-72.7, 41.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Hartford CT"
       }
     },
@@ -1076,6 +1367,9 @@
         "coordinates": [-75.55, 39.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Wilmington DE"
       }
     },
@@ -1087,6 +1381,9 @@
         "coordinates": [-81.65, 30.35]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Jacksonville FL"
       }
     },
@@ -1098,6 +1395,9 @@
         "coordinates": [-80.2, 25.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Miami FL"
       }
     },
@@ -1109,6 +1409,9 @@
         "coordinates": [-84.4, 33.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Atlanta GA"
       }
     },
@@ -1120,6 +1423,9 @@
         "coordinates": [-82.5, 33.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Lincolnton GA"
       }
     },
@@ -1131,6 +1437,9 @@
         "coordinates": [-81.1, 32.1]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Savannah GA"
       }
     },
@@ -1142,6 +1451,9 @@
         "coordinates": [-90.0, 40.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Central IL"
       }
     },
@@ -1153,6 +1465,9 @@
         "coordinates": [-87.65, 41.85]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Chicago IL"
       }
     },
@@ -1164,6 +1479,9 @@
         "coordinates": [-87.6, 38.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Evansville IN"
       }
     },
@@ -1175,6 +1493,9 @@
         "coordinates": [-86.15, 39.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Indianapolis IN"
       }
     },
@@ -1186,6 +1507,9 @@
         "coordinates": [-93.6, 41.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Des Moines IA"
       }
     },
@@ -1197,6 +1521,9 @@
         "coordinates": [-95.7, 39.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Topeka KS"
       }
     },
@@ -1208,6 +1535,9 @@
         "coordinates": [-97.35, 37.7]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Wichita KS"
       }
     },
@@ -1219,6 +1549,9 @@
         "coordinates": [-85.75, 38.25]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Louisville KY"
       }
     },
@@ -1230,6 +1563,9 @@
         "coordinates": [-90.05, 29.95]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "New Orleans LA"
       }
     },
@@ -1241,6 +1577,9 @@
         "coordinates": [-69.8, 44.3]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Augusta ME"
       }
     },
@@ -1252,6 +1591,9 @@
         "coordinates": [-68.8, 44.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Bangor ME"
       }
     },
@@ -1263,6 +1605,9 @@
         "coordinates": [-70.25, 43.65]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Portland ME"
       }
     },
@@ -1274,6 +1619,9 @@
         "coordinates": [-76.6, 39.3]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Baltimore MD"
       }
     },
@@ -1285,6 +1633,9 @@
         "coordinates": [-71.05, 42.35]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Boston MA"
       }
     },
@@ -1296,6 +1647,9 @@
         "coordinates": [-83.05, 42.35]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Detroit MI"
       }
     },
@@ -1307,6 +1661,9 @@
         "coordinates": [-93.3, 45.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Minneapolis MN"
       }
     },
@@ -1318,6 +1675,9 @@
         "coordinates": [-90.2, 32.3]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Jackson MS"
       }
     },
@@ -1329,6 +1689,9 @@
         "coordinates": [-89.5, 37.3]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Cape Girardeau MO"
       }
     },
@@ -1340,6 +1703,9 @@
         "coordinates": [-89.55, 36.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "New Madrid MO"
       }
     },
@@ -1351,6 +1717,9 @@
         "coordinates": [-90.2, 38.6]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "St Louis MO"
       }
     },
@@ -1362,6 +1731,9 @@
         "coordinates": [-96.0, 41.25]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Omaha NE"
       }
     },
@@ -1373,6 +1745,9 @@
         "coordinates": [-71.45, 43.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Manchester NH"
       }
     },
@@ -1384,6 +1759,9 @@
         "coordinates": [-74.75, 40.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Trenton NJ"
       }
     },
@@ -1395,6 +1773,9 @@
         "coordinates": [-78.2, 43.0]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Batavia NY"
       }
     },
@@ -1406,6 +1787,9 @@
         "coordinates": [-74.3, 44.85]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Malone NY"
       }
     },
@@ -1417,6 +1801,9 @@
         "coordinates": [-74.0, 40.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "New York NY"
       }
     },
@@ -1428,6 +1815,9 @@
         "coordinates": [-80.85, 35.25]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Charlotte NC"
       }
     },
@@ -1439,6 +1829,9 @@
         "coordinates": [-96.8, 46.9]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Fargo ND"
       }
     },
@@ -1450,6 +1843,9 @@
         "coordinates": [-83.0, 39.95]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Columbus OH"
       }
     },
@@ -1461,6 +1857,9 @@
         "coordinates": [-84.15, 40.3]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Sidney OH"
       }
     },
@@ -1472,6 +1871,9 @@
         "coordinates": [-80.65, 41.1]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Youngstown OH"
       }
     },
@@ -1483,6 +1885,9 @@
         "coordinates": [-98.3, 34.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Elgin OK"
       }
     },
@@ -1494,6 +1899,9 @@
         "coordinates": [-97.5, 35.5]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Oklahoma City OK"
       }
     },
@@ -1505,6 +1913,9 @@
         "coordinates": [-75.15, 39.95]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Philadelphia PA"
       }
     },
@@ -1516,6 +1927,9 @@
         "coordinates": [-71.4, 41.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Providence RI"
       }
     },
@@ -1527,6 +1941,9 @@
         "coordinates": [-79.95, 32.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Charleston SC"
       }
     },
@@ -1538,6 +1955,9 @@
         "coordinates": [-103.85, 43.3]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Edgemont SD"
       }
     },
@@ -1549,6 +1969,9 @@
         "coordinates": [-98.85, 43.4]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Platte SD"
       }
     },
@@ -1560,6 +1983,9 @@
         "coordinates": [-96.75, 43.55]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Sioux Falls SD"
       }
     },
@@ -1571,6 +1997,9 @@
         "coordinates": [-85.25, 35.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Chattanooga TN"
       }
     },
@@ -1582,6 +2011,9 @@
         "coordinates": [-83.9, 35.95]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Knoxville TN"
       }
     },
@@ -1593,6 +2025,9 @@
         "coordinates": [-84.0, 35.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Maryville TN"
       }
     },
@@ -1604,6 +2039,9 @@
         "coordinates": [-90.05, 35.15]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Memphis TN"
       }
     },
@@ -1615,6 +2053,9 @@
         "coordinates": [-101.85, 35.2]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Amarillo TX"
       }
     },
@@ -1626,6 +2067,9 @@
         "coordinates": [-96.8, 32.8]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Dallas TX"
       }
     },
@@ -1637,6 +2081,9 @@
         "coordinates": [-95.35, 29.75]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Houston TX"
       }
     },
@@ -1648,6 +2095,9 @@
         "coordinates": [-103.1, 31.85]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Kermit TX"
       }
     },
@@ -1659,6 +2109,9 @@
         "coordinates": [-98.5, 29.4]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "San Antonio TX"
       }
     },
@@ -1670,6 +2123,9 @@
         "coordinates": [-100.9, 32.7]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Snyder TX"
       }
     },
@@ -1681,6 +2137,9 @@
         "coordinates": [-73.2, 44.5]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Burlington VT"
       }
     },
@@ -1692,6 +2151,9 @@
         "coordinates": [-77.45, 37.55]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Richmond VA"
       }
     },
@@ -1703,6 +2165,9 @@
         "coordinates": [-81.65, 38.35]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Charleston WV"
       }
     },
@@ -1714,6 +2179,9 @@
         "coordinates": [-87.9, 43.05]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Milwaukee WI"
       }
     },
@@ -1725,6 +2193,9 @@
         "coordinates": [-104.8, 41.15]
       },
       "properties": {
+        "marker-size": "small",
+        "marker-symbol": "circle",
+        "marker-color": "#E70362",
         "title": "Cheyenne WY"
       }
     }
