@@ -132,5 +132,9 @@ public enum NehrpTestCity implements NamedLocation {
 	@Override public String toString() {
 		return Parsing.enumLabelWithSpaces(this);
 	}
+	
+	@Override public String id() {
+		return this.name();
+	}
 
 }

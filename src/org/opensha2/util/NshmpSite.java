@@ -207,6 +207,10 @@ public enum NshmpSite implements NamedLocation {
 		return loc;
 	}
 
+	@Override public String id() {
+		return this.name();
+	}
+
 	@Override
 	public String toString() {
 		String label = Parsing.enumLabelWithSpaces(this);
