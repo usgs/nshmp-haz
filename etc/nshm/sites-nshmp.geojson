@@ -3,7 +3,6 @@
   "features": [
     {
       "type": "Feature",
-      "id": "BIG_SUR_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-121.75, 36.25]
@@ -15,7 +14,6 @@
     },
     {
       "type": "Feature",
-      "id": "COALINGA_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-120.4, 36.15]
@@ -27,7 +25,6 @@
     },
     {
       "type": "Feature",
-      "id": "CONCORD_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.0, 37.95]
@@ -39,7 +36,6 @@
     },
     {
       "type": "Feature",
-      "id": "EUREKA_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-124.2, 40.8]
@@ -51,7 +47,6 @@
     },
     {
       "type": "Feature",
-      "id": "FRESNO_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-119.75, 36.75]
@@ -63,7 +58,6 @@
     },
     {
       "type": "Feature",
-      "id": "MONTEREY_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-121.9, 36.6]
@@ -75,7 +69,6 @@
     },
     {
       "type": "Feature",
-      "id": "MORGAN_HILL_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-121.65, 37.15]
@@ -87,7 +80,6 @@
     },
     {
       "type": "Feature",
-      "id": "OAKLAND_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.25, 37.8]
@@ -99,7 +91,6 @@
     },
     {
       "type": "Feature",
-      "id": "REDDING_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.4, 40.6]
@@ -111,7 +102,6 @@
     },
     {
       "type": "Feature",
-      "id": "SACRAMENTO_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-121.5, 38.6]
@@ -123,7 +113,6 @@
     },
     {
       "type": "Feature",
-      "id": "SAN_FRANCISCO_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.4, 37.75]
@@ -135,7 +124,6 @@
     },
     {
       "type": "Feature",
-      "id": "SAN_JOSE_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-121.9, 37.35]
@@ -147,7 +135,6 @@
     },
     {
       "type": "Feature",
-      "id": "SAN_MATEO_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.3, 37.55]
@@ -159,7 +146,6 @@
     },
     {
       "type": "Feature",
-      "id": "SANTA_CRUZ_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.05, 36.95]
@@ -171,7 +157,6 @@
     },
     {
       "type": "Feature",
-      "id": "SANTA_ROSA_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.7, 38.45]
@@ -183,7 +168,6 @@
     },
     {
       "type": "Feature",
-      "id": "VALLEJO_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.25, 38.1]
@@ -195,7 +179,6 @@
     },
     {
       "type": "Feature",
-      "id": "BAKERSFIELD_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-119.35, 35.35]
@@ -207,7 +190,6 @@
     },
     {
       "type": "Feature",
-      "id": "BRAWLEY_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-115.55, 33.0]
@@ -219,7 +201,6 @@
     },
     {
       "type": "Feature",
-      "id": "CENTURY_CITY_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-118.4, 34.05]
@@ -231,7 +212,6 @@
     },
     {
       "type": "Feature",
-      "id": "CUCAMONGA_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-117.55, 34.2]
@@ -243,7 +223,6 @@
     },
     {
       "type": "Feature",
-      "id": "DEATH_VALLEY_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-116.85, 36.35]
@@ -255,7 +234,6 @@
     },
     {
       "type": "Feature",
-      "id": "DIABLO_CANYON_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-120.85, 35.2]
@@ -267,7 +245,6 @@
     },
     {
       "type": "Feature",
-      "id": "IRVINE_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-117.8, 33.65]
@@ -279,7 +256,6 @@
     },
     {
       "type": "Feature",
-      "id": "LONG_BEACH_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-118.2, 33.8]
@@ -291,7 +267,6 @@
     },
     {
       "type": "Feature",
-      "id": "LOS_ANGELES_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-118.25, 34.05]
@@ -303,7 +278,6 @@
     },
     {
       "type": "Feature",
-      "id": "MALIBU_WEST_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-118.95, 34.05]
@@ -315,7 +289,6 @@
     },
     {
       "type": "Feature",
-      "id": "MAMMOTH_LAKES_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-119.0, 37.65]
@@ -327,7 +300,6 @@
     },
     {
       "type": "Feature",
-      "id": "NORTHRIDGE_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-118.55, 34.2]
@@ -339,7 +311,6 @@
     },
     {
       "type": "Feature",
-      "id": "PALMDALE_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-118.0, 34.5]
@@ -351,7 +322,6 @@
     },
     {
       "type": "Feature",
-      "id": "PALM_SPRINGS_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-116.55, 33.85]
@@ -363,7 +333,6 @@
     },
     {
       "type": "Feature",
-      "id": "PASADENA_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-118.15, 34.15]
@@ -375,7 +344,6 @@
     },
     {
       "type": "Feature",
-      "id": "RIVERSIDE_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-117.4, 33.95]
@@ -387,7 +355,6 @@
     },
     {
       "type": "Feature",
-      "id": "SAN_BERNARDINO_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-117.3, 34.1]
@@ -399,7 +366,6 @@
     },
     {
       "type": "Feature",
-      "id": "SAN_DIEGO_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-117.15, 32.7]
@@ -411,7 +377,6 @@
     },
     {
       "type": "Feature",
-      "id": "SAN_LUIS_OBISPO_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-120.65, 35.3]
@@ -423,7 +388,6 @@
     },
     {
       "type": "Feature",
-      "id": "SAN_ONOFRE_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-117.55, 33.4]
@@ -435,7 +399,6 @@
     },
     {
       "type": "Feature",
-      "id": "SANTA_BARBARA_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-119.7, 34.45]
@@ -447,7 +410,6 @@
     },
     {
       "type": "Feature",
-      "id": "VENTURA_CA",
       "geometry": {
         "type": "Point",
         "coordinates": [-119.3, 34.3]
@@ -459,7 +421,6 @@
     },
     {
       "type": "Feature",
-      "id": "GRAND_CANYON_VILLAGE_AZ",
       "geometry": {
         "type": "Point",
         "coordinates": [-112.15, 36.05]
@@ -471,7 +432,6 @@
     },
     {
       "type": "Feature",
-      "id": "PALO_VERDE_AZ",
       "geometry": {
         "type": "Point",
         "coordinates": [-112.85, 33.4]
@@ -483,7 +443,6 @@
     },
     {
       "type": "Feature",
-      "id": "PHOENIX_AZ",
       "geometry": {
         "type": "Point",
         "coordinates": [-112.1, 33.45]
@@ -495,7 +454,6 @@
     },
     {
       "type": "Feature",
-      "id": "TUCSON_AZ",
       "geometry": {
         "type": "Point",
         "coordinates": [-110.95, 32.2]
@@ -507,7 +465,6 @@
     },
     {
       "type": "Feature",
-      "id": "PARADOX_CO",
       "geometry": {
         "type": "Point",
         "coordinates": [-108.95, 38.4]
@@ -519,7 +476,6 @@
     },
     {
       "type": "Feature",
-      "id": "RANGELY_CO",
       "geometry": {
         "type": "Point",
         "coordinates": [-108.8, 40.1]
@@ -531,7 +487,6 @@
     },
     {
       "type": "Feature",
-      "id": "BOISE_ID",
       "geometry": {
         "type": "Point",
         "coordinates": [-116.2, 43.6]
@@ -543,7 +498,6 @@
     },
     {
       "type": "Feature",
-      "id": "IDAHO_NATIONAL_LAB_ID",
       "geometry": {
         "type": "Point",
         "coordinates": [-112.85, 43.6]
@@ -555,7 +509,6 @@
     },
     {
       "type": "Feature",
-      "id": "LIMA_MT",
       "geometry": {
         "type": "Point",
         "coordinates": [-112.6, 44.65]
@@ -567,7 +520,6 @@
     },
     {
       "type": "Feature",
-      "id": "BOZEMAN_MT",
       "geometry": {
         "type": "Point",
         "coordinates": [-111.05, 45.7]
@@ -579,7 +531,6 @@
     },
     {
       "type": "Feature",
-      "id": "BILLINGS_MT",
       "geometry": {
         "type": "Point",
         "coordinates": [-108.5, 45.8]
@@ -591,7 +542,6 @@
     },
     {
       "type": "Feature",
-      "id": "MISSOULA_MT",
       "geometry": {
         "type": "Point",
         "coordinates": [-114.0, 46.9]
@@ -603,7 +553,6 @@
     },
     {
       "type": "Feature",
-      "id": "CARSON_CITY_NV",
       "geometry": {
         "type": "Point",
         "coordinates": [-119.75, 39.15]
@@ -615,7 +564,6 @@
     },
     {
       "type": "Feature",
-      "id": "ELKO_NV",
       "geometry": {
         "type": "Point",
         "coordinates": [-115.75, 40.85]
@@ -627,7 +575,6 @@
     },
     {
       "type": "Feature",
-      "id": "LAS_VEGAS_NV",
       "geometry": {
         "type": "Point",
         "coordinates": [-115.15, 36.2]
@@ -639,7 +586,6 @@
     },
     {
       "type": "Feature",
-      "id": "RENO_NV",
       "geometry": {
         "type": "Point",
         "coordinates": [-119.8, 39.55]
@@ -651,7 +597,6 @@
     },
     {
       "type": "Feature",
-      "id": "ALBUQUERQUE_NM",
       "geometry": {
         "type": "Point",
         "coordinates": [-106.6, 35.1]
@@ -663,7 +608,6 @@
     },
     {
       "type": "Feature",
-      "id": "ARTESIA_NM",
       "geometry": {
         "type": "Point",
         "coordinates": [-104.4, 32.85]
@@ -675,7 +619,6 @@
     },
     {
       "type": "Feature",
-      "id": "LOS_ALAMOS_NATIONAL_LAB_NM",
       "geometry": {
         "type": "Point",
         "coordinates": [-106.3, 35.85]
@@ -687,7 +630,6 @@
     },
     {
       "type": "Feature",
-      "id": "LAS_CRUCES_NM",
       "geometry": {
         "type": "Point",
         "coordinates": [-106.75, 32.3]
@@ -699,7 +641,6 @@
     },
     {
       "type": "Feature",
-      "id": "BRIGHAM_CITY_UT",
       "geometry": {
         "type": "Point",
         "coordinates": [-112.0, 41.5]
@@ -711,7 +652,6 @@
     },
     {
       "type": "Feature",
-      "id": "CEDAR_CITY_UT",
       "geometry": {
         "type": "Point",
         "coordinates": [-113.05, 37.7]
@@ -723,7 +663,6 @@
     },
     {
       "type": "Feature",
-      "id": "GREEN_RIVER_UT",
       "geometry": {
         "type": "Point",
         "coordinates": [-110.15, 39.0]
@@ -735,7 +674,6 @@
     },
     {
       "type": "Feature",
-      "id": "PROVO_UT",
       "geometry": {
         "type": "Point",
         "coordinates": [-111.65, 40.25]
@@ -747,7 +685,6 @@
     },
     {
       "type": "Feature",
-      "id": "SALT_LAKE_CITY_UT",
       "geometry": {
         "type": "Point",
         "coordinates": [-111.9, 40.75]
@@ -759,7 +696,6 @@
     },
     {
       "type": "Feature",
-      "id": "CASPER_WY",
       "geometry": {
         "type": "Point",
         "coordinates": [-106.3, 42.85]
@@ -771,7 +707,6 @@
     },
     {
       "type": "Feature",
-      "id": "JACKSON_WY",
       "geometry": {
         "type": "Point",
         "coordinates": [-110.75, 43.5]
@@ -783,7 +718,6 @@
     },
     {
       "type": "Feature",
-      "id": "YELLOWSTONE_WY",
       "geometry": {
         "type": "Point",
         "coordinates": [-110.55, 44.4]
@@ -795,7 +729,6 @@
     },
     {
       "type": "Feature",
-      "id": "ASTORIA_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-123.85, 46.2]
@@ -807,7 +740,6 @@
     },
     {
       "type": "Feature",
-      "id": "BEND_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-121.3, 44.05]
@@ -819,7 +751,6 @@
     },
     {
       "type": "Feature",
-      "id": "BROOKINGS_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-124.25, 42.05]
@@ -831,7 +762,6 @@
     },
     {
       "type": "Feature",
-      "id": "COOS_BAY_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-124.2, 43.4]
@@ -843,7 +773,6 @@
     },
     {
       "type": "Feature",
-      "id": "EUGENE_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-123.1, 44.05]
@@ -855,7 +784,6 @@
     },
     {
       "type": "Feature",
-      "id": "KLAMATH_FALLS_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-121.8, 42.2]
@@ -867,7 +795,6 @@
     },
     {
       "type": "Feature",
-      "id": "MEDFORD_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.9, 42.35]
@@ -879,7 +806,6 @@
     },
     {
       "type": "Feature",
-      "id": "NEWPORT_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-124.05, 44.65]
@@ -891,7 +817,6 @@
     },
     {
       "type": "Feature",
-      "id": "PENDLETON_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-118.8, 45.7]
@@ -903,7 +828,6 @@
     },
     {
       "type": "Feature",
-      "id": "PORTLAND_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.65, 45.5]
@@ -915,7 +839,6 @@
     },
     {
       "type": "Feature",
-      "id": "SALEM_OR",
       "geometry": {
         "type": "Point",
         "coordinates": [-123.05, 44.95]
@@ -927,7 +850,6 @@
     },
     {
       "type": "Feature",
-      "id": "ABERDEEN_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-123.8, 47.0]
@@ -939,7 +861,6 @@
     },
     {
       "type": "Feature",
-      "id": "BELLINGHAM_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.5, 48.75]
@@ -951,7 +872,6 @@
     },
     {
       "type": "Feature",
-      "id": "ELLENSBURG_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-120.55, 47.0]
@@ -963,7 +883,6 @@
     },
     {
       "type": "Feature",
-      "id": "EVERETT_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.2, 48.0]
@@ -975,7 +894,6 @@
     },
     {
       "type": "Feature",
-      "id": "HANFORD_SITE_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-119.6, 46.55]
@@ -987,7 +905,6 @@
     },
     {
       "type": "Feature",
-      "id": "OLYMPIA_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.9, 47.05]
@@ -999,7 +916,6 @@
     },
     {
       "type": "Feature",
-      "id": "SEATTLE_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.3, 47.6]
@@ -1011,7 +927,6 @@
     },
     {
       "type": "Feature",
-      "id": "SPOKANE_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-117.4, 47.65]
@@ -1023,7 +938,6 @@
     },
     {
       "type": "Feature",
-      "id": "TACOMA_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-122.45, 47.25]
@@ -1035,7 +949,6 @@
     },
     {
       "type": "Feature",
-      "id": "YAKIMA_WA",
       "geometry": {
         "type": "Point",
         "coordinates": [-120.5, 46.6]
@@ -1047,7 +960,6 @@
     },
     {
       "type": "Feature",
-      "id": "WASHINGTON_DC",
       "geometry": {
         "type": "Point",
         "coordinates": [-77.05, 38.9]
@@ -1059,7 +971,6 @@
     },
     {
       "type": "Feature",
-      "id": "ATMORE_AL",
       "geometry": {
         "type": "Point",
         "coordinates": [-87.5, 31.0]
@@ -1071,7 +982,6 @@
     },
     {
       "type": "Feature",
-      "id": "BIRMINGHAM_AL",
       "geometry": {
         "type": "Point",
         "coordinates": [-86.8, 33.5]
@@ -1083,7 +993,6 @@
     },
     {
       "type": "Feature",
-      "id": "EL_DORADO_AR",
       "geometry": {
         "type": "Point",
         "coordinates": [-92.7, 33.2]
@@ -1095,7 +1004,6 @@
     },
     {
       "type": "Feature",
-      "id": "GREENBRIER_AR",
       "geometry": {
         "type": "Point",
         "coordinates": [-92.4, 35.2]
@@ -1107,7 +1015,6 @@
     },
     {
       "type": "Feature",
-      "id": "LITTLE_ROCK_AR",
       "geometry": {
         "type": "Point",
         "coordinates": [-92.3, 34.75]
@@ -1119,7 +1026,6 @@
     },
     {
       "type": "Feature",
-      "id": "DENVER_CO",
       "geometry": {
         "type": "Point",
         "coordinates": [-105.0, 39.75]
@@ -1131,7 +1037,6 @@
     },
     {
       "type": "Feature",
-      "id": "LA_JUNTA_CO",
       "geometry": {
         "type": "Point",
         "coordinates": [-103.55, 38.0]
@@ -1143,7 +1048,6 @@
     },
     {
       "type": "Feature",
-      "id": "TRINIDAD_CO",
       "geometry": {
         "type": "Point",
         "coordinates": [-104.5, 37.2]
@@ -1155,7 +1059,6 @@
     },
     {
       "type": "Feature",
-      "id": "HARTFORD_CT",
       "geometry": {
         "type": "Point",
         "coordinates": [-72.7, 41.75]
@@ -1167,7 +1070,6 @@
     },
     {
       "type": "Feature",
-      "id": "WILMINGTON_DE",
       "geometry": {
         "type": "Point",
         "coordinates": [-75.55, 39.75]
@@ -1179,7 +1081,6 @@
     },
     {
       "type": "Feature",
-      "id": "JACKSONVILLE_FL",
       "geometry": {
         "type": "Point",
         "coordinates": [-81.65, 30.35]
@@ -1191,7 +1092,6 @@
     },
     {
       "type": "Feature",
-      "id": "MIAMI_FL",
       "geometry": {
         "type": "Point",
         "coordinates": [-80.2, 25.75]
@@ -1203,7 +1103,6 @@
     },
     {
       "type": "Feature",
-      "id": "ATLANTA_GA",
       "geometry": {
         "type": "Point",
         "coordinates": [-84.4, 33.75]
@@ -1215,7 +1114,6 @@
     },
     {
       "type": "Feature",
-      "id": "LINCOLNTON_GA",
       "geometry": {
         "type": "Point",
         "coordinates": [-82.5, 33.8]
@@ -1227,7 +1125,6 @@
     },
     {
       "type": "Feature",
-      "id": "SAVANNAH_GA",
       "geometry": {
         "type": "Point",
         "coordinates": [-81.1, 32.1]
@@ -1239,7 +1136,6 @@
     },
     {
       "type": "Feature",
-      "id": "CENTRAL_IL",
       "geometry": {
         "type": "Point",
         "coordinates": [-90.0, 40.0]
@@ -1251,7 +1147,6 @@
     },
     {
       "type": "Feature",
-      "id": "CHICAGO_IL",
       "geometry": {
         "type": "Point",
         "coordinates": [-87.65, 41.85]
@@ -1263,7 +1158,6 @@
     },
     {
       "type": "Feature",
-      "id": "EVANSVILLE_IN",
       "geometry": {
         "type": "Point",
         "coordinates": [-87.6, 38.0]
@@ -1275,7 +1169,6 @@
     },
     {
       "type": "Feature",
-      "id": "INDIANAPOLIS_IN",
       "geometry": {
         "type": "Point",
         "coordinates": [-86.15, 39.8]
@@ -1287,7 +1180,6 @@
     },
     {
       "type": "Feature",
-      "id": "DES_MOINES_IA",
       "geometry": {
         "type": "Point",
         "coordinates": [-93.6, 41.6]
@@ -1299,7 +1191,6 @@
     },
     {
       "type": "Feature",
-      "id": "TOPEKA_KS",
       "geometry": {
         "type": "Point",
         "coordinates": [-95.7, 39.05]
@@ -1311,7 +1202,6 @@
     },
     {
       "type": "Feature",
-      "id": "WICHITA_KS",
       "geometry": {
         "type": "Point",
         "coordinates": [-97.35, 37.7]
@@ -1323,7 +1213,6 @@
     },
     {
       "type": "Feature",
-      "id": "LOUISVILLE_KY",
       "geometry": {
         "type": "Point",
         "coordinates": [-85.75, 38.25]
@@ -1335,7 +1224,6 @@
     },
     {
       "type": "Feature",
-      "id": "NEW_ORLEANS_LA",
       "geometry": {
         "type": "Point",
         "coordinates": [-90.05, 29.95]
@@ -1347,7 +1235,6 @@
     },
     {
       "type": "Feature",
-      "id": "AUGUSTA_ME",
       "geometry": {
         "type": "Point",
         "coordinates": [-69.8, 44.3]
@@ -1359,7 +1246,6 @@
     },
     {
       "type": "Feature",
-      "id": "BANGOR_ME",
       "geometry": {
         "type": "Point",
         "coordinates": [-68.8, 44.8]
@@ -1371,7 +1257,6 @@
     },
     {
       "type": "Feature",
-      "id": "PORTLAND_ME",
       "geometry": {
         "type": "Point",
         "coordinates": [-70.25, 43.65]
@@ -1383,7 +1268,6 @@
     },
     {
       "type": "Feature",
-      "id": "BALTIMORE_MD",
       "geometry": {
         "type": "Point",
         "coordinates": [-76.6, 39.3]
@@ -1395,7 +1279,6 @@
     },
     {
       "type": "Feature",
-      "id": "BOSTON_MA",
       "geometry": {
         "type": "Point",
         "coordinates": [-71.05, 42.35]
@@ -1407,7 +1290,6 @@
     },
     {
       "type": "Feature",
-      "id": "DETROIT_MI",
       "geometry": {
         "type": "Point",
         "coordinates": [-83.05, 42.35]
@@ -1419,7 +1301,6 @@
     },
     {
       "type": "Feature",
-      "id": "MINNEAPOLIS_MN",
       "geometry": {
         "type": "Point",
         "coordinates": [-93.3, 45.0]
@@ -1431,7 +1312,6 @@
     },
     {
       "type": "Feature",
-      "id": "JACKSON_MS",
       "geometry": {
         "type": "Point",
         "coordinates": [-90.2, 32.3]
@@ -1443,7 +1323,6 @@
     },
     {
       "type": "Feature",
-      "id": "CAPE_GIRARDEAU_MO",
       "geometry": {
         "type": "Point",
         "coordinates": [-89.5, 37.3]
@@ -1455,7 +1334,6 @@
     },
     {
       "type": "Feature",
-      "id": "NEW_MADRID_MO",
       "geometry": {
         "type": "Point",
         "coordinates": [-89.55, 36.6]
@@ -1467,7 +1345,6 @@
     },
     {
       "type": "Feature",
-      "id": "ST_LOUIS_MO",
       "geometry": {
         "type": "Point",
         "coordinates": [-90.2, 38.6]
@@ -1479,7 +1356,6 @@
     },
     {
       "type": "Feature",
-      "id": "OMAHA_NE",
       "geometry": {
         "type": "Point",
         "coordinates": [-96.0, 41.25]
@@ -1491,7 +1367,6 @@
     },
     {
       "type": "Feature",
-      "id": "MANCHESTER_NH",
       "geometry": {
         "type": "Point",
         "coordinates": [-71.45, 43.0]
@@ -1503,7 +1378,6 @@
     },
     {
       "type": "Feature",
-      "id": "TRENTON_NJ",
       "geometry": {
         "type": "Point",
         "coordinates": [-74.75, 40.2]
@@ -1515,7 +1389,6 @@
     },
     {
       "type": "Feature",
-      "id": "BATAVIA_NY",
       "geometry": {
         "type": "Point",
         "coordinates": [-78.2, 43.0]
@@ -1527,7 +1400,6 @@
     },
     {
       "type": "Feature",
-      "id": "MALONE_NY",
       "geometry": {
         "type": "Point",
         "coordinates": [-74.3, 44.85]
@@ -1539,7 +1411,6 @@
     },
     {
       "type": "Feature",
-      "id": "NEW_YORK_NY",
       "geometry": {
         "type": "Point",
         "coordinates": [-74.0, 40.75]
@@ -1551,7 +1422,6 @@
     },
     {
       "type": "Feature",
-      "id": "CHARLOTTE_NC",
       "geometry": {
         "type": "Point",
         "coordinates": [-80.85, 35.25]
@@ -1563,7 +1433,6 @@
     },
     {
       "type": "Feature",
-      "id": "FARGO_ND",
       "geometry": {
         "type": "Point",
         "coordinates": [-96.8, 46.9]
@@ -1575,7 +1444,6 @@
     },
     {
       "type": "Feature",
-      "id": "COLUMBUS_OH",
       "geometry": {
         "type": "Point",
         "coordinates": [-83.0, 39.95]
@@ -1587,7 +1455,6 @@
     },
     {
       "type": "Feature",
-      "id": "SIDNEY_OH",
       "geometry": {
         "type": "Point",
         "coordinates": [-84.15, 40.3]
@@ -1599,7 +1466,6 @@
     },
     {
       "type": "Feature",
-      "id": "YOUNGSTOWN_OH",
       "geometry": {
         "type": "Point",
         "coordinates": [-80.65, 41.1]
@@ -1611,7 +1477,6 @@
     },
     {
       "type": "Feature",
-      "id": "ELGIN_OK",
       "geometry": {
         "type": "Point",
         "coordinates": [-98.3, 34.8]
@@ -1623,7 +1488,6 @@
     },
     {
       "type": "Feature",
-      "id": "OKLAHOMA_CITY_OK",
       "geometry": {
         "type": "Point",
         "coordinates": [-97.5, 35.5]
@@ -1635,7 +1499,6 @@
     },
     {
       "type": "Feature",
-      "id": "PHILADELPHIA_PA",
       "geometry": {
         "type": "Point",
         "coordinates": [-75.15, 39.95]
@@ -1647,7 +1510,6 @@
     },
     {
       "type": "Feature",
-      "id": "PROVIDENCE_RI",
       "geometry": {
         "type": "Point",
         "coordinates": [-71.4, 41.8]
@@ -1659,7 +1521,6 @@
     },
     {
       "type": "Feature",
-      "id": "CHARLESTON_SC",
       "geometry": {
         "type": "Point",
         "coordinates": [-79.95, 32.8]
@@ -1671,7 +1532,6 @@
     },
     {
       "type": "Feature",
-      "id": "EDGEMONT_SD",
       "geometry": {
         "type": "Point",
         "coordinates": [-103.85, 43.3]
@@ -1683,7 +1543,6 @@
     },
     {
       "type": "Feature",
-      "id": "PLATTE_SD",
       "geometry": {
         "type": "Point",
         "coordinates": [-98.85, 43.4]
@@ -1695,7 +1554,6 @@
     },
     {
       "type": "Feature",
-      "id": "SIOUX_FALLS_SD",
       "geometry": {
         "type": "Point",
         "coordinates": [-96.75, 43.55]
@@ -1707,7 +1565,6 @@
     },
     {
       "type": "Feature",
-      "id": "CHATTANOOGA_TN",
       "geometry": {
         "type": "Point",
         "coordinates": [-85.25, 35.05]
@@ -1719,7 +1576,6 @@
     },
     {
       "type": "Feature",
-      "id": "KNOXVILLE_TN",
       "geometry": {
         "type": "Point",
         "coordinates": [-83.9, 35.95]
@@ -1731,7 +1587,6 @@
     },
     {
       "type": "Feature",
-      "id": "MARYVILLE_TN",
       "geometry": {
         "type": "Point",
         "coordinates": [-84.0, 35.75]
@@ -1743,7 +1598,6 @@
     },
     {
       "type": "Feature",
-      "id": "MEMPHIS_TN",
       "geometry": {
         "type": "Point",
         "coordinates": [-90.05, 35.15]
@@ -1755,7 +1609,6 @@
     },
     {
       "type": "Feature",
-      "id": "AMARILLO_TX",
       "geometry": {
         "type": "Point",
         "coordinates": [-101.85, 35.2]
@@ -1767,7 +1620,6 @@
     },
     {
       "type": "Feature",
-      "id": "DALLAS_TX",
       "geometry": {
         "type": "Point",
         "coordinates": [-96.8, 32.8]
@@ -1779,7 +1631,6 @@
     },
     {
       "type": "Feature",
-      "id": "HOUSTON_TX",
       "geometry": {
         "type": "Point",
         "coordinates": [-95.35, 29.75]
@@ -1791,7 +1642,6 @@
     },
     {
       "type": "Feature",
-      "id": "KERMIT_TX",
       "geometry": {
         "type": "Point",
         "coordinates": [-103.1, 31.85]
@@ -1803,7 +1653,6 @@
     },
     {
       "type": "Feature",
-      "id": "SAN_ANTONIO_TX",
       "geometry": {
         "type": "Point",
         "coordinates": [-98.5, 29.4]
@@ -1815,7 +1664,6 @@
     },
     {
       "type": "Feature",
-      "id": "SNYDER_TX",
       "geometry": {
         "type": "Point",
         "coordinates": [-100.9, 32.7]
@@ -1827,7 +1675,6 @@
     },
     {
       "type": "Feature",
-      "id": "BURLINGTON_VT",
       "geometry": {
         "type": "Point",
         "coordinates": [-73.2, 44.5]
@@ -1839,7 +1686,6 @@
     },
     {
       "type": "Feature",
-      "id": "RICHMOND_VA",
       "geometry": {
         "type": "Point",
         "coordinates": [-77.45, 37.55]
@@ -1851,7 +1697,6 @@
     },
     {
       "type": "Feature",
-      "id": "CHARLESTON_WV",
       "geometry": {
         "type": "Point",
         "coordinates": [-81.65, 38.35]
@@ -1863,7 +1708,6 @@
     },
     {
       "type": "Feature",
-      "id": "MILWAUKEE_WI",
       "geometry": {
         "type": "Point",
         "coordinates": [-87.9, 43.05]
@@ -1875,7 +1719,6 @@
     },
     {
       "type": "Feature",
-      "id": "CHEYENNE_WY",
       "geometry": {
         "type": "Point",
         "coordinates": [-104.8, 41.15]
