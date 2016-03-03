@@ -159,8 +159,8 @@ public abstract class LocationList implements Iterable<Location> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
 		if (this == obj) return true;
+		if (obj == null) return false;
 		if (!(obj instanceof LocationList)) return false;
 		LocationList other = (LocationList) obj;
 		if (this.size() != other.size()) return false;

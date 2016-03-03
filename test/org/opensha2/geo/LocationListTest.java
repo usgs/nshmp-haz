@@ -242,9 +242,9 @@ public class LocationListTest {
 
 	@Test
 	public final void equalsTest() {
+		assertEquals(locs1, locs1);
 		LocationList equal = null;
 		assertNotEquals(locs1, equal);
-		assertEquals(locs1, locs1);
 		assertNotEquals(locs1, "test");
 		equal = LocationList.create(p1, p2, p3, p4, p5, p6, p7);
 		assertEquals(locs1, equal);

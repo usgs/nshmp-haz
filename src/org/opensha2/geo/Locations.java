@@ -602,7 +602,9 @@ public final class Locations {
 			fuzzyEquals(p1.depth(), p2.depth(), TOLERANCE);
 	}
 
-	// TODO these seem heavy
+	// TODO these seem heavy - why not just compute bounds as we almost
+	// always want more than one of these
+	
 
 	/**
 	 * Calculates the minimum latitude in the supplied {@code Collection} of
