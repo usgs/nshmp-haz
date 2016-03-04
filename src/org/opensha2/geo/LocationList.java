@@ -142,7 +142,7 @@ public abstract class LocationList implements Iterable<Location> {
 	}
 
 	/**
-	 * Lazily computes the average depth of the {@code Location}s in this list.
+	 * Lazily compute the average depth of the {@code Location}s in this list.
 	 */
 	public double depth() {
 		double depth = 0.0;
@@ -150,6 +150,14 @@ public abstract class LocationList implements Iterable<Location> {
 			depth += loc.depth();
 		}
 		return depth / size();
+	}
+
+	/**
+	 * Lazily compute the bounds of the {@code Location}s in this list. Method
+	 * delegates to {@link Locations#bounds(Iterable)}.
+	 */
+	public Bounds bounds() {
+		return Locations.bounds(this);
 	}
 
 	@Override
@@ -336,8 +344,8 @@ public abstract class LocationList implements Iterable<Location> {
 		}
 
 		/**
-		 * Add each {@code Location} in {@code locs} to the
-		 * {@code LocationList}.
+		 * Add each {@code Location} in {@code locs} to the {@code LocationList}
+		 * .
 		 * 
 		 * @param locs to add
 		 * @return this {@code Builder}
@@ -348,8 +356,8 @@ public abstract class LocationList implements Iterable<Location> {
 		}
 
 		/**
-		 * Add each {@code Location} in {@code locs} to the
-		 * {@code LocationList}.
+		 * Add each {@code Location} in {@code locs} to the {@code LocationList}
+		 * .
 		 * 
 		 * @param locs to add
 		 * @return this {@code Builder}

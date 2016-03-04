@@ -162,7 +162,16 @@ public final class LocationGrid implements Iterable<Location> {
 			0, grid.columnKeyList().size());
 	}
 
-	@Override public String toString() {
+	/**
+	 * Lazily compute the bounds of the {@code Location}s in this grid. Method
+	 * delegates to {@link Locations#bounds(Iterable)}.
+	 */
+	public Bounds bounds() {
+		return Locations.bounds(this);
+	}
+
+	@Override
+	public String toString() {
 		StringBuilder sb = new StringBuilder("LocationGrid [")
 			.append(rowWidth).append(" x ")
 			.append(columnWidth).append("]")
@@ -205,23 +214,27 @@ public final class LocationGrid implements Iterable<Location> {
 			.append(NEWLINE);
 	}
 
-	@Override public Iterator<Location> iterator() {
+	@Override
+	public Iterator<Location> iterator() {
 		return new Iterator<Location>() {
 
 			private int rowIndex = rowStart;
 			private int columnIndex = columnStart;
 
-			@Override public boolean hasNext() {
+			@Override
+			public boolean hasNext() {
 				return columnIndex < columnEnd && rowIndex < rowEnd;
 			}
 
-			@Override public Location next() {
+			@Override
+			public Location next() {
 				Location loc = grid.at(rowIndex, columnIndex++);
 				if (columnIndex == columnEnd) rowIndex++;
 				return loc;
 			}
 
-			@Override public void remove() {
+			@Override
+			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 		};
@@ -235,27 +248,33 @@ public final class LocationGrid implements Iterable<Location> {
 			this.rowIndex = rowIndex;
 		}
 
-		@Override public int size() {
+		@Override
+		public int size() {
 			return grid.columnKeyList().size();
 		}
 
-		@Override public Location get(int index) {
+		@Override
+		public Location get(int index) {
 			return grid.at(rowIndex, index);
 		}
 
-		@Override public Iterator<Location> iterator() {
+		@Override
+		public Iterator<Location> iterator() {
 			return new Iterator<Location>() {
 				private int columnIndex;
 
-				@Override public boolean hasNext() {
+				@Override
+				public boolean hasNext() {
 					return columnIndex < columnEnd;
 				}
 
-				@Override public Location next() {
+				@Override
+				public Location next() {
 					return grid.at(rowIndex, columnIndex++);
 				}
 
-				@Override public void remove() {
+				@Override
+				public void remove() {
 					throw new UnsupportedOperationException();
 				}
 			};
@@ -270,27 +289,33 @@ public final class LocationGrid implements Iterable<Location> {
 			this.columnIndex = columnIndex;
 		}
 
-		@Override public int size() {
+		@Override
+		public int size() {
 			return grid.rowKeyList().size();
 		}
 
-		@Override public Location get(int index) {
+		@Override
+		public Location get(int index) {
 			return grid.at(index, columnIndex);
 		}
 
-		@Override public Iterator<Location> iterator() {
+		@Override
+		public Iterator<Location> iterator() {
 			return new Iterator<Location>() {
 				private int rowIndex;
 
-				@Override public boolean hasNext() {
+				@Override
+				public boolean hasNext() {
 					return rowIndex < rowEnd;
 				}
 
-				@Override public Location next() {
+				@Override
+				public Location next() {
 					return grid.at(rowIndex++, columnIndex);
 				}
 
-				@Override public void remove() {
+				@Override
+				public void remove() {
 					throw new UnsupportedOperationException();
 				}
 			};
@@ -409,9 +434,9 @@ public final class LocationGrid implements Iterable<Location> {
 		int rows = 4;
 		int cols = 9;
 		Builder b = builder(4, 9);
-		
-		for (int i = 0; i<rows; i++) {
-			for (int j = 0; j<cols; j++) {
+
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
 				Location loc = Location.create(
 					34.0 + 0.2 * j,
 					-117.4 + 0.1 * i);
