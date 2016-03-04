@@ -100,11 +100,11 @@ public class Region implements Named {
 	// Default segment length for great circle splitting: 100km
 	private static final double GC_SEGMENT = 100;
 
-	String name;
+	private final String name;
 
 	/* for internal package use only */
 	Region(String name) {
-		this.name = !Strings.isNullOrEmpty(name) ? name : "Unnamed Region";
+		this.name = Strings.isNullOrEmpty(name) ? "Unnamed Region" : name;
 	}
 
 	/**
@@ -619,12 +619,5 @@ public class Region implements Named {
 		checkNotNull(r, "Supplied Region is null");
 		checkArgument(r.area.isSingular(), "Region must be singular");
 	}
-
-	// public static void main(String[] args) {
-	// // Region r = new CaliforniaRegions.RELM_TESTING();
-	// Region r = Region.createRectangular("Test Region",
-	// Location.create(20, 20), Location.create(21, 21));
-	// System.out.println(r.extent());
-	// }
 
 }
