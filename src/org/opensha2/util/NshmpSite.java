@@ -207,7 +207,8 @@ public enum NshmpSite implements NamedLocation {
 		return loc;
 	}
 
-	@Override public String id() {
+	@Override
+	public String id() {
 		return this.name();
 	}
 
@@ -219,10 +220,24 @@ public enum NshmpSite implements NamedLocation {
 	}
 
 	/**
+	 * The set of sites used to test the Central &amp; Eastern US NSHM.
+	 */
+	public static EnumSet<NshmpSite> ceus() {
+		return EnumSet.range(WASHINGTON_DC, CHEYENNE_WY);
+	}
+
+	/**
+	 * The set of sites used to test the Western US NSHM.
+	 */
+	public static EnumSet<NshmpSite> wus() {
+		return EnumSet.range(BIG_SUR_CA, YAKIMA_WA);
+	}
+
+	/**
 	 * The set of sites corresponding to U.S. national labs and other Dept. of
 	 * Energy facilities.
 	 */
-	public Set<NshmpSite> facilities() {
+	public static EnumSet<NshmpSite> facilities() {
 		return EnumSet.of(
 			DIABLO_CANYON_CA,
 			SAN_ONOFRE_CA,
@@ -233,9 +248,14 @@ public enum NshmpSite implements NamedLocation {
 	}
 
 	/**
-	 * The set of sites corresponding to the 34 NEHRP test cities.
+	 * The set of sites corresponding to the NEHRP test cities.
+	 * 
+	 * <p>This is a list of 34 city sites in the United States with high seismic
+	 * risk as specified in the 2009 edition of the <a
+	 * href="http://www.fema.gov/library/viewRecord.do?id=4103"
+	 * target=_blank">NEHRP Recommended Seismic Provisions</a>.
 	 */
-	public Set<NshmpSite> nehrpTestCities() {
+	public static EnumSet<NshmpSite> nehrpTestCities() {
 		return EnumSet.of(
 			// SoCal
 			LOS_ANGELES_CA,

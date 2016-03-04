@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * A bounding box specified by a lower-left coordinate ({@link #min()}) and an
- * upper-right coordinate ({@link #max()}).
+ * A rectangular (in Mercator projection) bounding box specified by a lower-left
+ * coordinate ({@link #min()}) and an upper-right coordinate ({@link #max()}).
  * 
  * <p>Bounds are 2-dimensional in that the depth component of the corners will
  * always be 0.
@@ -53,15 +53,15 @@ public final class Bounds {
 			max,
 			Location.create(max.lat(), min.lon()));
 	}
-	
+
 	/**
 	 * Return the values of this {@code Bounds} object in the form
 	 * {@code [min().lon(), min().lat(), max().lon(), max().lat()]}.
 	 */
 	public double[] toArray() {
-		return new double[] { min.lon(), min.lat(), max.lon(), max.lat()};
+		return new double[] { min.lon(), min.lat(), max.lon(), max.lat() };
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -70,12 +70,15 @@ public final class Bounds {
 		if (min == other.min && max == other.max) return true;
 		return min.equals(other.min) && max.equals(other.max);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(min, max);
 	}
 
+	/**
+	 * Returns the string representation of {@link #toArray()}.
+	 */
 	@Override
 	public String toString() {
 		return Arrays.toString(toArray());
