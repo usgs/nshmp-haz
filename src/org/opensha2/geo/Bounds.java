@@ -46,12 +46,20 @@ public final class Bounds {
 	 * Return this {@code Bounds} as a {@code LocationList} of four vertices,
 	 * starting with {@link #min()} and winding counter-clockwise.
 	 */
-	public LocationList asList() {
+	public LocationList toList() {
 		return LocationList.create(
 			min,
 			Location.create(min.lat(), max.lon()),
 			max,
 			Location.create(max.lat(), min.lon()));
+	}
+	
+	/**
+	 * Return the values of this {@code Bounds} object in the form
+	 * {@code [min().lon(), min().lat(), max().lon(), max().lat()]}.
+	 */
+	public double[] toArray() {
+		return new double[] { min.lon(), min.lat(), max.lon(), max.lat()};
 	}
 	
 	@Override
@@ -68,13 +76,9 @@ public final class Bounds {
 		return Objects.hash(min, max);
 	}
 
-	/**
-	 * Return a string representation of this {@code Bounds} in the form:
-	 * {@code [min().lon(), min().lat(), max().lon(), max().lat()]}.
-	 */
 	@Override
 	public String toString() {
-		return Arrays.toString(new double[] { min.lon(), min.lat(), max.lon(), max.lat() });
+		return Arrays.toString(toArray());
 	}
 
 }

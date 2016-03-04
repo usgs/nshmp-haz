@@ -2,6 +2,8 @@ package org.opensha2.geo;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 @SuppressWarnings("javadoc")
@@ -20,7 +22,6 @@ public class BoundsTest {
 	private static final Location MIN = Location.create(MIN_LAT, MIN_LON);
 	private static final Location MAX = Location.create(MAX_LAT, MAX_LON);
 	private static final Location BAD = Location.create(0.0, 0.0);
-	
 
 	@Test
 	public final void minMax() {
@@ -31,11 +32,11 @@ public class BoundsTest {
 		assertEquals(MIN, b.min());
 		assertEquals(MAX, b.max());
 	}
-	
+
 	@Test
-	public void asList() {
+	public void toList() {
 		Bounds b = new Bounds(MIN, MAX);
-		LocationList bList = b.asList();
+		LocationList bList = b.toList();
 		LocationList oList = LocationList.create(
 			MIN,
 			Location.create(MIN_LAT, MAX_LON),
@@ -45,19 +46,26 @@ public class BoundsTest {
 	}
 
 	@Test
+	public void toArray() {
+		Bounds b = new Bounds(MIN, MAX);
+		double[] coords = new double[] { MIN_LON, MIN_LAT, MAX_LON, MAX_LAT };
+		assertArrayEquals(coords, b.toArray(), 0.0);
+	}
+
+	@Test
 	public void equalsTest() {
 		Bounds b1 = new Bounds(MIN, MAX);
 		assertEquals(b1, b1);
 		assertNotEquals(b1, null);
 		assertNotEquals(b1, "test");
-		
+
 		Bounds b2 = new Bounds(MIN, MAX);
 		assertEquals(b1, b2);
 		b2 = new Bounds(MIN, BAD);
 		assertNotEquals(b1, b2);
 		b2 = new Bounds(BAD, MAX);
 		assertNotEquals(b1, b2);
-		
+
 		b2 = new Bounds(MIN_LAT, MIN_LON, MAX_LAT, MAX_LON);
 		assertEquals(b1, b2);
 	}
@@ -67,10 +75,10 @@ public class BoundsTest {
 		Bounds b1 = new Bounds(MIN, MAX);
 		Bounds b2 = new Bounds(MIN_LAT, MIN_LON, MAX_LAT, MAX_LON);
 		assertEquals(b1.hashCode(), b2.hashCode());
-		b2 = new Bounds(0 , 0, 2 , 2);
+		b2 = new Bounds(0, 0, 2, 2);
 		assertNotEquals(b1.hashCode(), b2.hashCode());
 	}
-	
+
 	@Test
 	public void toStringTest() {
 		Bounds b = new Bounds(MIN, MAX);
