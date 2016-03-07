@@ -1,0 +1,775 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-77.05, 38.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Washington DC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-87.5, 31.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Atmore AL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-86.8, 33.5]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Birmingham AL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-92.7, 33.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "El Dorado AR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-92.4, 35.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Greenbrier AR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-92.3, 34.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Little Rock AR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.0, 39.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Denver CO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.55, 38.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "La Junta CO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.5, 37.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Trinidad CO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-72.7, 41.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Hartford CT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.55, 39.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Wilmington DE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.65, 30.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Jacksonville FL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.2, 25.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Miami FL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-84.4, 33.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Atlanta GA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-82.5, 33.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Lincolnton GA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.1, 32.1]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Savannah GA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.0, 40.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Central IL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-87.65, 41.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Chicago IL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-87.6, 38.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Evansville IN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-86.15, 39.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Indianapolis IN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.6, 41.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Des Moines IA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-95.7, 39.05]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Topeka KS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-97.35, 37.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Wichita KS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-85.75, 38.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Louisville KY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.05, 29.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "New Orleans LA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-69.8, 44.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Augusta ME"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-68.8, 44.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Bangor ME"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-70.25, 43.65]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Portland ME"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-76.6, 39.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Baltimore MD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.05, 42.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Boston MA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-83.05, 42.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Detroit MI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.3, 45.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Minneapolis MN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.2, 32.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Jackson MS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-89.5, 37.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cape Girardeau MO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-89.55, 36.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "New Madrid MO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.2, 38.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "St Louis MO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-96.0, 41.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Omaha NE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.45, 43.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Manchester NH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.75, 40.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Trenton NJ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-78.2, 43.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Batavia NY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.3, 44.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Malone NY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.0, 40.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "New York NY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.85, 35.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Charlotte NC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-96.8, 46.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Fargo ND"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-83.0, 39.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Columbus OH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-84.15, 40.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Sidney OH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.65, 41.1]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Youngstown OH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-98.3, 34.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Elgin OK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-97.5, 35.5]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Oklahoma City OK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.15, 39.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Philadelphia PA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.4, 41.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Providence RI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-79.95, 32.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Charleston SC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.85, 43.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Edgemont SD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-98.85, 43.4]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Platte SD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-96.75, 43.55]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Sioux Falls SD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-85.25, 35.05]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Chattanooga TN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-83.9, 35.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Knoxville TN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-84.0, 35.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Maryville TN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.05, 35.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Memphis TN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-101.85, 35.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Amarillo TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-96.8, 32.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Dallas TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-95.35, 29.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Houston TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.1, 31.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Kermit TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-98.5, 29.4]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "San Antonio TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-100.9, 32.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Snyder TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.2, 44.5]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Burlington VT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-77.45, 37.55]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Richmond VA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.65, 38.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Charleston WV"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-87.9, 43.05]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Milwaukee WI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.8, 41.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cheyenne WY"
+      }
+    }
+  ]
+}
