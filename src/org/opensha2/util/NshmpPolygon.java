@@ -10,14 +10,28 @@ import org.opensha2.geo.LocationList;
 @SuppressWarnings("javadoc")
 public enum NshmpPolygon {
 
-	CONTERMINOUS_US(Data.US_COORDS),
-	NSHMP_CEUS_BOUNDS(Data.CEUS_BOUNDS),
-	NSHMP_WUS_BOUNDS(Data.WUS_BOUNDS);
+	CONTERMINOUS_US(Data.CONTERMINOUS, "Conterminous US"),
+	CEUS(Data.CEUS_BOUNDS, "Central & Eastern US"),
+	WUS(Data.WUS_BOUNDS, "Western US"),
+	
+	NSHMP_LA_BASIN(Data.WG_07_LA, "Los Angeles Basin – WGCEP 2007"),
+	NSHMP_BAY_AREA(Data.WG_02_SF, "San Francisco Bay Area – WGCEP 2002"),
+	
+	NSHMP_WASATCH(Data.WASATCH, "Wasatch Front – WGUEP 2013"),
+	NSHMP_NEW_MADRID(Data.NEW_MADRID, "New Madrid Seismic Zone"),
+	NSHMP_PUGET(Data.PUGET, "Puget Lowland"),
+
+	CYBERSHAKE(Data.CYBERSHAKE, "Cybershake – Los Angeles Basin"),
+	
+	UCERF3_RELM(Data.UCERF3_RELM, "UCERF3 Development – RELM Testing Region"),
+	UCERF3_NSHM14(Data.UCERF3_NSHM14, "UCERF3 Production – 2014 NSHM");
 
 	private final LocationList coordinates;
-
-	private NshmpPolygon(double[][] coords) {
+	private final String label;
+	
+	private NshmpPolygon(double[][] coords, String label) {
 		this.coordinates = createPolygon(coords);
+		this.label = label;
 	}
 
 	/**
@@ -43,13 +57,13 @@ public enum NshmpPolygon {
 	        { -115.0, 24.6 },
 			{  -65.0, 50.0 }
 		};
-
+		
 		private static final double[][] WUS_BOUNDS = {
 	        { -125.0, 24.6 },
 			{ -100.0, 50.0 }
 		};
 		
-		private static final double[][] US_COORDS = {
+		private static final double[][] CONTERMINOUS = {
 			{  -97.7, 25.6 },
 			{  -96.9, 25.6 },
 			{  -96.9, 27.6 },
@@ -127,6 +141,92 @@ public enum NshmpPolygon {
 			{  -99.2, 26.1 },
 			{  -97.7, 25.6 }
 		};
+		
+		private static final double[][] CYBERSHAKE = {
+			{ -119.38, 34.13 },
+			{ -117.50, 33.25 },
+			{ -116.85, 34.19 },
+			{ -118.75, 35.08 },
+			{ -119.38, 34.13 }
+		};
+		
+		private static final double[][] WG_07_LA = {
+			{ -119.80, 33.86 },
+			{ -117.42, 32.94 },
+			{ -116.70, 34.23 },
+			{ -119.07, 35.15 },
+			{ -119.80, 33.86 }
+		};
+
+		private static final double[][] WG_02_SF = {
+			{ -122.09, 36.43 },
+			{ -120.61, 37.19 },
+			{ -122.08, 39.02 },
+			{ -123.61, 38.23 },
+			{ -122.09, 36.43 }
+		};
+		
+		private static final double[][] PUGET = {
+			{ -123.5, 46.5 },
+			{ -121.5, 46.5 },
+			{ -121.5, 48.5 },
+			{ -123.5, 48.5 },
+			{ -123.5, 46.5 }
+		};
+		
+		private static final double[][] WASATCH = {
+			{ -113.25, 39.0 },
+			{ -110.75, 39.0 },
+			{ -110.75, 42.5 },
+			{ -113.25, 42.5 },
+			{ -113.25, 39.0 }
+		};
+		
+		private static final double[][] NEW_MADRID = {
+			{ -92.5, 34.0 },
+			{ -86.5, 34.0 },
+			{ -86.5, 40.0 },
+			{ -92.5, 40.0 },
+			{ -92.5, 34.0 }
+		};
+		
+		private static final double[][] UCERF3_RELM = {
+			{ -125.2, 43.0 },
+			{ -125.4, 40.5 },
+			{ -125.4, 40.2 },
+			{ -123.8, 37.7 },
+			{ -121.6, 34.2 },
+			{ -121.0, 33.7 },
+			{ -118.4, 32.8 },
+			{ -117.9, 31.9 },
+			{ -117.1, 31.5 },
+			{ -114.5, 31.7 },
+			{ -113.6, 32.2 },
+			{ -113.5, 32.9 },
+			{ -113.1, 34.3 },
+			{ -114.0, 35.7 },
+			{ -119.0, 39.4 },
+			{ -119.0, 43.0 },
+			{ -125.2, 43.0 },
+		};
+		
+		private static final double[][] UCERF3_NSHM14 = {
+			{ -125.2, 45.0 },
+			{ -125.4, 40.5 },
+			{ -125.4, 40.2 },
+			{ -123.8, 37.7 },
+			{ -121.6, 34.2 },
+			{ -121.0, 33.7 },
+			{ -118.4, 32.8 },
+			{ -117.9, 31.9 },
+			{ -117.1, 31.5 },
+			{ -111.5, 31.5 },
+			{ -111.5, 36.5 },
+			{ -116.5, 40.5 },
+			{ -116.5, 45.0 },
+			{ -125.2, 45.0 }
+		};
 	}
+	
 	
 }
