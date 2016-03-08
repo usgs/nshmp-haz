@@ -3,6 +3,8 @@ package org.opensha2.util;
 import static org.opensha2.util.MathUtils.round;
 import static com.google.common.base.Strings.*;
 
+import static org.opensha2.util.NshmpPolygon.*;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -20,6 +22,8 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -43,8 +47,9 @@ final class Export {
 	private static final Path EXPORT_DIR = Paths.get("etc", "nshm");
 
 	public static void main(String[] args) throws IOException {
-		writeNshmpSites();
+		 writeNshmpSites();
 		writeNshmpPolys();
+		writeNshmpSummaryPoly();
 	}
 
 	/*
@@ -54,16 +59,106 @@ final class Export {
 	 * in any event.
 	 */
 	static void writeNshmpPolys() throws IOException {
-		LocationList usCoords = NshmpPolygon.CONTERMINOUS_US.coordinates();
-		Path jsonOut = EXPORT_DIR.resolve("map-ceus.geojson");
-		LocationList ceusBounds = NshmpPolygon.NSHMP_CEUS_BOUNDS.coordinates();
-		writePolyJson(jsonOut, "NSHMP Central & Eastern US", usCoords, ceusBounds);
+		LocationList usCoords = CONTERMINOUS_US.coordinates();
+
+		Path ceusOut = EXPORT_DIR.resolve("map-ceus.geojson");
+		LocationList ceusBounds = CEUS_CLIP.coordinates();
+		writePolyJson(ceusOut, "NSHMP Central & Eastern US", usCoords, ceusBounds);
+
+		Path wusOut = EXPORT_DIR.resolve("map-wus.geojson");
+		LocationList wusBounds = WUS_CLIP.coordinates();
+		writePolyJson(wusOut, "NSHMP Western US", usCoords, wusBounds);
+
+		writePolyJson(
+			EXPORT_DIR.resolve("map-la-basin.geojson"),
+			LA_BASIN.toString(),
+			LA_BASIN.coordinates(),
+			null);
+
+		writePolyJson(
+			EXPORT_DIR.resolve("map-sf-bay.geojson"),
+			SF_BAY.toString(),
+			SF_BAY.coordinates(),
+			null);
+
+		writePolyJson(
+			EXPORT_DIR.resolve("map-puget.geojson"),
+			PUGET.toString(),
+			PUGET.coordinates(),
+			null);
+
+		writePolyJson(
+			EXPORT_DIR.resolve("map-wasatch.geojson"),
+			WASATCH.toString(),
+			WASATCH.coordinates(),
+			null);
+
+		writePolyJson(
+			EXPORT_DIR.resolve("map-new-madrid.geojson"),
+			NEW_MADRID.toString(),
+			NEW_MADRID.coordinates(),
+			null);
+
+		writePolyJson(
+			EXPORT_DIR.resolve("map-ucerf3-nshm.geojson"),
+			UCERF3_NSHM14.toString(),
+			UCERF3_NSHM14.coordinates(),
+			null);
+
+		writePolyJson(
+			EXPORT_DIR.resolve("map-ucerf3-relm.geojson"),
+			UCERF3_RELM.toString(),
+			UCERF3_RELM.coordinates(),
+			null);
+
+		writePolyJson(
+			EXPORT_DIR.resolve("map-cybershake.geojson"),
+			CYBERSHAKE.toString(),
+			CYBERSHAKE.coordinates(),
+			null);
+
+	}
+
+	static void writeNshmpSummaryPoly() throws IOException {
+		Set<NshmpPolygon> polys = EnumSet.range(LA_BASIN, UCERF3_NSHM14);
+		writePolysJson(
+			EXPORT_DIR.resolve("map-nshmp-all.geojson"),
+			FluentIterable.from(polys)
+				.transform(Functions.toStringFunction())
+				.toList(),
+			FluentIterable.from(polys)
+				.transform(new Function<NshmpPolygon, LocationList>() {
+					@Override
+					public LocationList apply(NshmpPolygon poly) {
+						return poly.coordinates();
+					}
+				})
+				.toList());
 	}
 
 	static void writePolyJson(Path out, String name, LocationList coords, LocationList bounds)
 			throws IOException {
-		Feature f = createPolygon(name, coords, bounds);
-		String json = cleanPoly(GSON.toJson(f));
+		List<Feature> features = new ArrayList<>();
+		if (bounds != null) {
+			features.add(createPolygon(name, "CLIP", coords));
+		}
+		features.add(createPolygon(name, null, coords));
+		FeatureCollection fc = new FeatureCollection();
+		fc.features = features;
+		String json = cleanPoly(GSON.toJson(fc));
+		Files.write(out, json.getBytes(StandardCharsets.UTF_8));
+	}
+
+	static void writePolysJson(Path out, List<String> nameList, List<LocationList> coordList)
+			throws IOException {
+		List<Feature> features = new ArrayList<>();
+		int i = 0;
+		for (LocationList coords : coordList) {
+			features.add(createPolygon(nameList.get(i++), null, coords));
+		}
+		FeatureCollection fc = new FeatureCollection();
+		fc.features = features;
+		String json = cleanPoly(GSON.toJson(fc));
 		Files.write(out, json.getBytes(StandardCharsets.UTF_8));
 	}
 
@@ -120,9 +215,7 @@ final class Export {
 		FeatureCollection fc = new FeatureCollection();
 		fc.features = features;
 		String json = cleanPoints(GSON.toJson(fc));
-
 		Files.write(out, json.getBytes(StandardCharsets.UTF_8));
-
 	}
 
 	/* GeoJSON objects */
@@ -134,7 +227,7 @@ final class Export {
 
 	static class Feature {
 		String type = "Feature";
-		double[] bbox;
+		String id;
 		Geometry geometry = new Geometry();
 		Properties properties;
 	}
@@ -148,9 +241,12 @@ final class Export {
 		return f;
 	}
 
-	static Feature createPolygon(String name, LocationList coords, LocationList bounds) {
+	static Feature createPolygon(String name, String id, LocationList coords) {
 		Feature f = new Feature();
-		f.bbox = bounds.bounds().toArray();
+		if (id != null) {
+			f.id = id;
+			coords = coords.bounds().toList();
+		}
 		f.geometry.type = "Polygon";
 		f.geometry.coordinates = ImmutableList.of(toCoordinates(coords));
 		f.properties = new PolyProperties();
@@ -196,11 +292,11 @@ final class Export {
 	/* brute force compaction of coordinate array onto single line */
 	static String cleanPoly(String s) {
 		return s
-			.replace("\n      [", "[")
-			.replace("[\n          ", "[ ")
-			.replace(",\n          ", ", ")
-			.replace("\n        ]", " ]")
-			.replace("\n    ]", "]") + "\n";
+			.replace("\n          [", "[")
+			.replace("[\n              ", "[ ")
+			.replace(",\n              ", ", ")
+			.replace("\n            ]", " ]")
+			.replace("\n        ]", "]") + "\n";
 	}
 
 }

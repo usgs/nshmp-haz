@@ -3,28 +3,29 @@ package org.opensha2.util;
 import org.opensha2.geo.LocationList;
 
 /**
- * Commonly used geographic polygons used by the NSHMP.
+ * Geographic polygons commonly used by the NSHMP.
  *
  * @author Peter Powers
  */
 @SuppressWarnings("javadoc")
 public enum NshmpPolygon {
 
-	CONTERMINOUS_US(Data.CONTERMINOUS, "Conterminous US"),
-	CEUS(Data.CEUS_BOUNDS, "Central & Eastern US"),
-	WUS(Data.WUS_BOUNDS, "Western US"),
-	
-	NSHMP_LA_BASIN(Data.WG_07_LA, "Los Angeles Basin – WGCEP 2007"),
-	NSHMP_BAY_AREA(Data.WG_02_SF, "San Francisco Bay Area – WGCEP 2002"),
-	
-	NSHMP_WASATCH(Data.WASATCH, "Wasatch Front – WGUEP 2013"),
-	NSHMP_NEW_MADRID(Data.NEW_MADRID, "New Madrid Seismic Zone"),
-	NSHMP_PUGET(Data.PUGET, "Puget Lowland"),
+	CEUS_CLIP(Data.CEUS_CLIP, "Central & Eastern US Map Extents"),
+	WUS_CLIP(Data.WUS_CLIP, "Western US Map Extents"),
 
-	CYBERSHAKE(Data.CYBERSHAKE, "Cybershake – Los Angeles Basin"),
+	CONTERMINOUS_US(Data.CONTERMINOUS, "Conterminous US"),
 	
+	LA_BASIN(Data.WG_07_LA, "Los Angeles Basin – WGCEP 2007"),
+	SF_BAY(Data.WG_02_SF, "San Francisco Bay Area – WGCEP 2002"),
+	
+	WASATCH(Data.WASATCH, "Wasatch Front – WGUEP 2013"),
+	NEW_MADRID(Data.NEW_MADRID, "New Madrid Seismic Zone"),
+	PUGET(Data.PUGET, "Puget Lowland"),
+	
+	UCERF3_NSHM14(Data.UCERF3_NSHM14, "UCERF3 Production – 2014 NSHM"),
 	UCERF3_RELM(Data.UCERF3_RELM, "UCERF3 Development – RELM Testing Region"),
-	UCERF3_NSHM14(Data.UCERF3_NSHM14, "UCERF3 Production – 2014 NSHM");
+
+	CYBERSHAKE(Data.CYBERSHAKE, "Cybershake – Los Angeles Basin");
 
 	private final LocationList coordinates;
 	private final String label;
@@ -40,6 +41,11 @@ public enum NshmpPolygon {
 	public LocationList coordinates() {
 		return coordinates;
 	}
+	
+	@Override
+	public String toString() {
+		return label;
+	}
 
 	private static LocationList createPolygon(double[][] coords) {
 		LocationList.Builder locs = LocationList.builder();
@@ -53,12 +59,12 @@ public enum NshmpPolygon {
 
 		// @formatter:off
 
-		private static final double[][] CEUS_BOUNDS = {
+		private static final double[][] CEUS_CLIP = {
 	        { -115.0, 24.6 },
 			{  -65.0, 50.0 }
 		};
 		
-		private static final double[][] WUS_BOUNDS = {
+		private static final double[][] WUS_CLIP = {
 	        { -125.0, 24.6 },
 			{ -100.0, 50.0 }
 		};
