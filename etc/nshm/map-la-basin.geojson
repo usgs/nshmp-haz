@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [ -119.8, 33.86 ],
+            [ -117.42, 32.94 ],
+            [ -116.7, 34.23 ],
+            [ -119.07, 35.15 ],
+            [ -119.8, 33.86 ]
+          ]]
+      },
+      "properties": {
+        "title": "Los Angeles Basin – WGCEP 2007"
+      }
+    }
+  ]
+}

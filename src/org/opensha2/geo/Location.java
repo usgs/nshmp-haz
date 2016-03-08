@@ -131,7 +131,8 @@ public final class Location implements Comparable<Location> {
 	 * @see #fromString(String)
 	 * @see #stringConverter()
 	 */
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return stringConverter().convert(this);
 	}
 
@@ -154,11 +155,13 @@ public final class Location implements Comparable<Location> {
 		static final StringConverter INSTANCE = new StringConverter();
 		static final String FORMAT = "%.5f,%.5f,%.5f";
 
-		@Override protected String doForward(Location loc) {
+		@Override
+		protected String doForward(Location loc) {
 			return String.format(FORMAT, loc.lon(), loc.lat(), loc.depth());
 		}
 
-		@Override protected Location doBackward(String s) {
+		@Override
+		protected Location doBackward(String s) {
 			List<Double> values = FluentIterable
 				.from(Parsing.split(checkNotNull(s), Delimiter.COMMA))
 				.transform(Doubles.stringConverter())
@@ -167,17 +170,19 @@ public final class Location implements Comparable<Location> {
 		}
 	}
 
-	@Override public boolean equals(Object obj) {
+	@Override
+	public boolean equals(Object obj) {
 		if (this == obj) return true;
+		if (obj == null) return false;
 		if (!(obj instanceof Location)) return false;
 		Location loc = (Location) obj;
-		if (this.lat != loc.lat) return false;
-		if (this.lon != loc.lon) return false;
-		if (this.depth != loc.depth) return false;
-		return true;
+		return this.lat == loc.lat &&
+			this.lon == loc.lon &&
+			this.depth == loc.depth;
 	}
 
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		return Objects.hash(lat, lon, depth);
 	}
 
@@ -191,7 +196,8 @@ public final class Location implements Comparable<Location> {
 	 *         {@code Location} is less than, equal to, or greater than the
 	 *         specified {@code Location}.
 	 */
-	@Override public int compareTo(Location loc) {
+	@Override
+	public int compareTo(Location loc) {
 		double d = (lat == loc.lat) ? lon - loc.lon : lat - loc.lat;
 		return (d != 0) ? (d < 0) ? -1 : 1 : 0;
 	}

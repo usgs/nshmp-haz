@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [ -119.38, 34.13 ],
+            [ -117.5, 33.25 ],
+            [ -116.85, 34.19 ],
+            [ -118.75, 35.08 ],
+            [ -119.38, 34.13 ]
+          ]]
+      },
+      "properties": {
+        "title": "Cybershake – Los Angeles Basin"
+      }
+    }
+  ]
+}

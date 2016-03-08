@@ -124,10 +124,9 @@ public class LocationTest {
 
 	@Test
 	public final void equalsTest() {
-		// same object
 		assertEquals(location, location);
-		// different object type
-		assertFalse(location.equals("test"));
+		assertNotEquals(location, null);
+		assertNotEquals(location, "test");
 		// same values
 		Location loc = Location.create(V, V, V);
 		assertEquals(location, loc);

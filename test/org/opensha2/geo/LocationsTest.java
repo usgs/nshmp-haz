@@ -8,6 +8,7 @@ import static org.opensha2.geo.Locations.angle;
 import static org.opensha2.geo.Locations.areSimilar;
 import static org.opensha2.geo.Locations.azimuth;
 import static org.opensha2.geo.Locations.azimuthRad;
+import static org.opensha2.geo.Locations.bounds;
 import static org.opensha2.geo.Locations.distanceToLine;
 import static org.opensha2.geo.Locations.distanceToLineFast;
 import static org.opensha2.geo.Locations.distanceToSegment;
@@ -91,9 +92,9 @@ public class LocationsTest {
 	
 	// short-range, small-angle test points
 	private static Location L1 = Location.create(32.6, 20.4);
-	private static Location L2 = Location.create(32.4, 20);
+	private static Location L2 = Location.create(32.4, 20.0);
 	private static Location L3 = Location.create(32.2, 20.6);
-	private static Location L4 = Location.create(32, 20.2, 10);
+	private static Location L4 = Location.create(32.0, 20.2, 10.0);
 	
 	// polar and long-distance, large-angle test points
 	private static Location L5 = Location.create(90, 0);
@@ -526,6 +527,25 @@ public class LocationsTest {
 		assertTrue(!areSimilar(p1, p2));
 	}
 	
+	@Test
+	public void testBounds() {
+		Location p1 = Location.create(-10.0, -10.0);
+		Location p2 = Location.create(-10.0, 10.0);
+		Location p3 = Location.create(10.0, 10.0);
+		Location p4 = Location.create(10.0, -10.0);
+		LocationList locs = LocationList.create(p1, p2, p3, p4);
+		Bounds b = bounds(locs);
+		Location min = Location.create(-10.0, -10.0);
+		Location max = Location.create(10.0, 10.0);
+		assertEquals(min, b.min());
+		assertEquals(max, b.max());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testBoundsIAE() {
+		LocationList locs = LocationList.create(Location.create(0,0));
+		bounds(locs);
+	}
 	
 	/**
 	 * DEVELOPER NOTE
@@ -1541,56 +1561,4 @@ public class LocationsTest {
 		return dist * EARTH_RADIUS_MEAN;
 	}
 	
-	@Test
-	public void testCalcMinMaxLatLonEmpty() {
-		ArrayList<Location> locs = new ArrayList<Location>();
-		
-		assertTrue("calcMin* should return infinity when locs is empty",
-				Double.POSITIVE_INFINITY == Locations.calcMinLat(locs));
-		assertTrue("calcMin* should return infinity when locs is empty",
-				Double.POSITIVE_INFINITY == Locations.calcMinLon(locs));
-		
-		assertTrue("calcMax* should return -infinity when locs is empty",
-				Double.NEGATIVE_INFINITY == Locations.calcMaxLat(locs));
-		assertTrue("calcMax* should return -infinity when locs is empty",
-				Double.NEGATIVE_INFINITY == Locations.calcMaxLon(locs));
-	}
-
-	@Test
-	public void testCalcMinMaxLatLon() {
-		ArrayList<Location> locs = new ArrayList<Location>();
-		
-		locs.add(Location.create(34, -118));
-		locs.add(Location.create(35, -118));
-		locs.add(Location.create(35, -117));
-		locs.add(Location.create(34, -117));
-		
-		assertEquals("Min lat is wrong", 34f, (float)Locations.calcMinLat(locs), 0f);
-		assertEquals("Max lat is wrong", 35f, (float)Locations.calcMaxLat(locs), 0f);
-		
-		assertEquals("Min lon is wrong", -118f, (float)Locations.calcMinLon(locs), 0f);
-		assertEquals("Max lon is wrong", -117f, (float)Locations.calcMaxLon(locs), 0f);
-	}
-	
-	@Test (expected=NullPointerException.class)
-	public void testCalcMinLatNull() {
-		Locations.calcMinLat(null);
-	}
-	
-	@Test (expected=NullPointerException.class)
-	public void testCalcMinLonNull() {
-		Locations.calcMinLon(null);
-	}
-	
-	@Test (expected=NullPointerException.class)
-	public void testCalcMaxLatNull() {
-		Locations.calcMaxLat(null);
-	}
-	
-	@Test (expected=NullPointerException.class)
-	public void testCalcMaxLonNull() {
-		Locations.calcMaxLon(null);
-	}
-
-
 }

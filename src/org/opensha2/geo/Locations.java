@@ -42,10 +42,10 @@ import com.google.common.base.Predicate;
  * @see Location
  */
 public final class Locations {
-	
+
 	/*
-	 * TODO It's good to have these algorithms all in one file. However,
-	 * it might be noice to add methods such as translate(vector) or
+	 * TODO It's good to have these algorithms all in one file. However, it
+	 * might be noice to add methods such as translate(vector) or
 	 * distanceTo(loc) to Location, which would allow more elegant method
 	 * chaining.
 	 */
@@ -602,78 +602,29 @@ public final class Locations {
 			fuzzyEquals(p1.depth(), p2.depth(), TOLERANCE);
 	}
 
-	// TODO these seem heavy
-
 	/**
-	 * Calculates the minimum latitude in the supplied {@code Collection} of
-	 * {@code Location} objects.
+	 * Compute the {@link Bounds} of the supplied iterable. If {@code locs}
+	 * contains only 1 element, {@link Bounds#min()} and {@link Bounds#max()} of
+	 * the returned object will be the same.
 	 * 
-	 * @param locs - collection of locations
-	 * @return the minimum latitude in the supplied locations, or positive
-	 *         infinity if the {@code Collection} is empty.
-	 * @throws NullPointerException if {@code locs} is null
+	 * @param locs to compute bounds for
+	 * @throws IllegalArgumentException if {@code locs} is empty
 	 */
-	public static double calcMinLat(Collection<Location> locs) {
-		double min = Double.POSITIVE_INFINITY;
+	public static Bounds bounds(Iterable<Location> locs) {
+		checkArgument(locs.iterator().hasNext(), "Locations may not be empty");
+		double minLatRad = Double.POSITIVE_INFINITY;
+		double maxLatRad = Double.NEGATIVE_INFINITY;
+		double minLonRad = Double.POSITIVE_INFINITY;
+		double maxLonRad = Double.NEGATIVE_INFINITY;
 		for (Location loc : locs) {
-			double val = loc.lat();
-			if (val < min) min = val;
+			minLatRad = loc.latRad() < minLatRad ? loc.latRad() : minLatRad;
+			maxLatRad = loc.latRad() > maxLatRad ? loc.latRad() : maxLatRad;
+			minLonRad = loc.lonRad() < minLonRad ? loc.lonRad() : minLonRad;
+			maxLonRad = loc.lonRad() > maxLonRad ? loc.lonRad() : maxLonRad;
 		}
-		return min;
-	}
-
-	/**
-	 * Calculates the minimum longitude in the supplied {@code Collection} of
-	 * {@code Location} objects.
-	 * 
-	 * @param locs - collection of locations
-	 * @return the minimum longitude in the supplied locations, or positive
-	 *         infinity if the {@code Collection} is empty.
-	 * @throws NullPointerException if {@code locs} is null
-	 */
-	public static double calcMinLon(Collection<Location> locs) {
-		double min = Double.POSITIVE_INFINITY;
-		for (Location loc : locs) {
-			double val = loc.lon();
-			if (val < min) min = val;
-		}
-		return min;
-	}
-
-	/**
-	 * Calculates the maximum latitude in the supplied {@code Collection} of
-	 * {@code Location} objects.
-	 * 
-	 * @param locs - collection of locations
-	 * @return the maximum latitude in the supplied locations, or negative
-	 *         infinity if the {@code Collection} is empty.
-	 * @throws NullPointerException if {@code locs} is null
-	 */
-	public static double calcMaxLat(Collection<Location> locs) {
-		double max = Double.NEGATIVE_INFINITY;
-		for (Location loc : locs) {
-			double val = loc.lat();
-			if (val > max) max = val;
-		}
-		return max;
-	}
-
-	/**
-	 * Calculates the maximum longitude in the supplied {@code Collection} of
-	 * {@code Location} objects.
-	 * 
-	 * @param locs - collection of locations
-	 * @return the maximum longitude in the supplied locations, or negative
-	 *         infinity if the {@code Collection} is empty.
-	 * @throws NullPointerException if {@code locs} is null
-	 */
-	public static double calcMaxLon(Collection<Location> locs) {
-		double max = Double.NEGATIVE_INFINITY;
-		for (Location loc : locs) {
-			double val = loc.lon();
-			if (val > max) max = val;
-		}
-		return max;
+		return new Bounds(
+			minLatRad * TO_DEG, minLonRad * TO_DEG,
+			maxLatRad * TO_DEG, maxLonRad * TO_DEG);
 	}
 
 	/**
@@ -693,10 +644,10 @@ public final class Locations {
 			depth += loc.depth();
 			size++;
 		}
-		latRad /= size;
-		lonRad /= size;
-		depth /= size;
-		return Location.create(latRad * TO_DEG, lonRad * TO_DEG, depth);
+		return Location.create(
+			latRad / size * TO_DEG,
+			lonRad / size * TO_DEG,
+			depth / size);
 	}
 
 	/**
@@ -831,11 +782,13 @@ public final class Locations {
 			rect = rectangle(origin, distance);
 		}
 
-		@Override public boolean apply(Location loc) {
+		@Override
+		public boolean apply(Location loc) {
 			return rect.contains(loc.lonRad(), loc.latRad());
 		}
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			return "Locations.RectangleFilter";
 		}
 
@@ -850,11 +803,13 @@ public final class Locations {
 			this.distance = distance;
 		}
 
-		@Override public boolean apply(Location loc) {
+		@Override
+		public boolean apply(Location loc) {
 			return horzDistanceFast(origin, loc) <= distance;
 		}
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			return "Locations.DistanceFilter " + filterInfo();
 		}
 
@@ -872,11 +827,13 @@ public final class Locations {
 			distFilter = new DistanceFilter(origin, distance);
 		}
 
-		@Override public boolean apply(Location loc) {
+		@Override
+		public boolean apply(Location loc) {
 			return rectFilter.apply(loc) && distFilter.apply(loc);
 		}
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			return "Locations.RectangleAndDistanceFilter " + distFilter.filterInfo();
 		}
 	}

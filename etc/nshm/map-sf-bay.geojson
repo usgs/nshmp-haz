@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [ -122.09, 36.43 ],
+            [ -120.61, 37.19 ],
+            [ -122.08, 39.02 ],
+            [ -123.61, 38.23 ],
+            [ -122.09, 36.43 ]
+          ]]
+      },
+      "properties": {
+        "title": "San Francisco Bay Area – WGCEP 2002"
+      }
+    }
+  ]
+}

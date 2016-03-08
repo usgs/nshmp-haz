@@ -28,6 +28,7 @@ import com.google.common.collect.Maps;
  * @author Peter Powers
  */
 @SuppressWarnings("all")
+@Deprecated
 public enum NehrpTestCity implements NamedLocation {
 
 	// TODO move to geo?
@@ -130,6 +131,10 @@ public enum NehrpTestCity implements NamedLocation {
 
 	@Override public String toString() {
 		return Parsing.enumLabelWithSpaces(this);
+	}
+	
+	@Override public String id() {
+		return this.name();
 	}
 
 }
