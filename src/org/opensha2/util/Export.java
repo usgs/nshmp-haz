@@ -140,7 +140,7 @@ final class Export {
 			throws IOException {
 		List<Feature> features = new ArrayList<>();
 		if (bounds != null) {
-			features.add(createPolygon(name, "CLIP", coords));
+			features.add(createPolygon(name, "CLIP", bounds));
 		}
 		features.add(createPolygon(name, null, coords));
 		FeatureCollection fc = new FeatureCollection();
