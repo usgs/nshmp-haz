@@ -16,7 +16,6 @@ import static org.opensha2.util.TextUtils.format;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,13 +75,6 @@ final class SiteSet implements Iterable<Site> {
 		return (region == null) ? sites.size() : region.size();
 	}
 
-	// TODO use or clean
-	private static int computeLocationPrecision(GriddedRegion region) {
-		return Math.max(
-			new BigDecimal(region.latSpacing()).scale(),
-			new BigDecimal(region.lonSpacing()).scale());
-	}
-
 	@Override public Iterator<Site> iterator() {
 		return (region == null) ? Iterators.unmodifiableIterator(sites.iterator())
 			: new RegionIterator();
@@ -119,9 +111,6 @@ final class SiteSet implements Iterable<Site> {
 		if (region == null) {
 			for (Site site : Iterables.limit(sites, TO_STRING_LIMIT)) {
 				sb.append(format("Site")).append(site);
-//				sb.append(TextUtils.NEWLINE)
-//					.append(repeat(" ", ALIGN_COL - 4))
-//					.append(site);
 			}
 			if (sites.size() > TO_STRING_LIMIT) {
 				int delta = sites.size() - TO_STRING_LIMIT;

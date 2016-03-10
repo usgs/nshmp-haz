@@ -155,7 +155,7 @@ final class ModelConfig {
 		}
 
 		private void validateState(String buildId) {
-			checkState(!built, "This %s instance as already been used", buildId);
+			checkState(!built, "This %s instance has already been used", buildId);
 			checkNotNull(name, "%s %s not set", buildId, Key.NAME);
 			checkNotNull(resource, "%s %s not set", buildId, Key.RESOURCE);
 			checkNotNull(surfaceSpacing, "%s %s not set", buildId, Key.SURFACE_SPACING);
