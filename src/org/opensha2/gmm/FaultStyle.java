@@ -27,7 +27,7 @@ public enum FaultStyle {
 	
 	@Override
 	public String toString() {
-		return Parsing.enumLabelWithDashes(this);
+		return Parsing.enumLabelWithDashes(this, true);
 	}
 
 }

@@ -214,7 +214,7 @@ public enum NshmpSite implements NamedLocation {
 
 	@Override
 	public String toString() {
-		String label = Parsing.enumLabelWithSpaces(this);
+		String label = Parsing.enumLabelWithSpaces(this, true);
 		int stripIndex = label.lastIndexOf(' ');
 		return label.substring(0, stripIndex) + " " + state.name();
 	}
