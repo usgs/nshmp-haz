@@ -1,6 +1,8 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Strings.padEnd;
+import static com.google.common.base.Strings.padStart;
 import static com.google.common.base.Strings.repeat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
@@ -14,7 +16,9 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +34,7 @@ import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 import org.opensha2.util.TextUtils;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -43,18 +48,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
- * A {@code SiteSet} is an Iterable over a group of {@code Site}s. The supplied
- * {@code Site}s may be defined internally by a region with common properties or
- * a list of individual sites. Any {@code iterator} returned by this class is
- * unmodifiable.
+ * {@code Site} factory class used primarily for creating iterables over groups
+ * of sites.
  *
  * @author Peter Powers
  */
 public final class Sites {
 
 	/**
-	 * Create an {@code Iterable<Site>} from the comma-delimted site file
-	 * designated by {@code path}.
+	 * Create an unmodifiable {@code Iterable<Site>} from the comma-delimted
+	 * site file designated by {@code path}.
 	 * 
 	 * @param path to comma-delimited site data file
 	 * @throws IOException if a problem is encountered
@@ -135,7 +138,7 @@ public final class Sites {
 		.create();
 
 	/**
-	 * Create an {@code Iterable<Site>} from the GeoJSON site file
+	 * Create an unmodifiable {@code Iterable<Site>} from the GeoJSON site file
 	 * designated by {@code path}.
 	 * 
 	 * @param path to GeoJson site data file
@@ -148,9 +151,11 @@ public final class Sites {
 		return iterable;
 	}
 
-	/* Marker interface needed for deserialization */
+	/*
+	 * Parent class for deserialization of different GeoJSON site file formats
+	 */
 	private abstract static class SiteIterable implements Iterable<Site> {
-		
+
 		static final int TO_STRING_LIMIT = 5;
 
 		@Override
@@ -188,7 +193,7 @@ public final class Sites {
 			return delegate.iterator();
 		}
 	}
-	
+
 	static final class RegionIterable extends SiteIterable {
 
 		final GriddedRegion region;
@@ -222,12 +227,6 @@ public final class Sites {
 			};
 		}
 	}
-
-
-	static final String SITES = "sites";
-	static final String REGION = "region";
-	static final String BORDER = "border";
-	static final String SPACING = "spacing";
 
 	/*
 	 * Site GeoJSON is currently deserialized with the expectation that the
@@ -269,7 +268,7 @@ public final class Sites {
 			int calcPolyIndex = 0;
 			if (features.size() == 2) {
 				calcPolyIndex++;
-				
+
 				JsonObject extentsFeature = features.get(0).getAsJsonObject();
 				validateProperty(extentsFeature, GeoJson.Key.ID, GeoJson.Value.EXTENTS);
 
@@ -373,4 +372,5 @@ public final class Sites {
 			"Extents polygon does not define a lat-lon Mercator rectangle:%s", locs);
 		return locs;
 	}
+
 }

@@ -139,8 +139,6 @@ public class Site implements Named {
 		return name;
 	}
 
-	// TODO do we need toCsv and to/fromJson??
-
 	/**
 	 * Return a fresh {@link Builder}.
 	 */
@@ -158,7 +156,7 @@ public class Site implements Named {
 	public static class Builder {
 
 		private String name = NO_NAME;
-		private Location location = NehrpTestCity.LOS_ANGELES.location();
+		private Location location;
 		private double vs30 = DEFAULT_VS_30;
 		private boolean vsInferred = true;
 		private double z1p0 = Double.NaN;
@@ -249,15 +247,11 @@ public class Site implements Named {
 		Key.Z2P5);
 
 	/*
-	 * Custom (de)serializers that take care of several issues with sites.
+	 * Custom deserializer that takes care of several issues with sites.
 	 * Specifically, JSON prohibits the use of NaN, which is the default value
 	 * for z1p0 and z2p5, and so these two fields may not be set. Users have
 	 * been notified that as long as no z1p0 or z2p5 value has been supplied in
 	 * any JSON, the default will be used.
-	 * 
-	 * TODO check me: Also, a Location stores data internally in radians and so
-	 * we ensure that user-friendly decimal degree values are used during
-	 * (de)serialization.
 	 */
 
 	static class Deserializer implements JsonDeserializer<Site> {
@@ -300,54 +294,6 @@ public class Site implements Named {
 			if (z2p5 != null) builder.z2p5(z2p5.getAsDouble());
 
 			return builder.build();
-		}
-	}
-
-	static class Serializer implements JsonSerializer<Site> {
-
-		@Override
-		public JsonElement serialize(
-				Site site,
-				Type type,
-				JsonSerializationContext context) {
-
-			JsonObject feature = new JsonObject();
-			feature.addProperty(GeoJson.Key.TYPE, GeoJson.Value.FEATURE);
-
-			JsonObject geometry = new JsonObject();
-			geometry.addProperty(GeoJson.Key.TYPE, GeoJson.Value.POINT);
-			geometry.add(GeoJson.Key.COORDINATES, context.serialize(
-				new double[] { site.location.lon(), site.location.lat() }));
-			feature.add(GeoJson.Key.GEOMETRY, geometry);
-
-			JsonObject properties = new JsonObject();
-			properties.addProperty(GeoJson.Properties.Key.TITLE, site.name);
-			feature.add(GeoJson.Key.PROPERTIES, properties);
-
-			return feature;
-		}
-	}
-
-	static class SerializerWithSiteTerms extends Serializer {
-
-		@Override
-		public JsonElement serialize(
-				Site site,
-				Type type,
-				JsonSerializationContext context) {
-
-			JsonObject feature = (JsonObject) super.serialize(site, type, context);
-			JsonObject properties = feature.getAsJsonObject(GeoJson.Key.PROPERTIES);
-
-			properties.addProperty(Site.Key.VS30, site.vs30);
-			properties.addProperty(Site.Key.VS_INF, site.vsInferred);
-
-			if (Double.isNaN(site.z1p0) && Double.isNaN(site.z1p0)) return feature;
-
-			properties.addProperty(Site.Key.Z1P0, site.z1p0);
-			properties.addProperty(Site.Key.Z2P5, site.z2p5);
-
-			return feature;
 		}
 	}
 

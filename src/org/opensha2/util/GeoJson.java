@@ -1,14 +1,21 @@
 package org.opensha2.util;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.opensha2.util.MathUtils.round;
 
+import java.util.List;
 import java.util.Objects;
 
+import org.opensha2.calc.NamedLocation;
+import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * GeoJSON serialization keys, values, and utilities.
@@ -87,4 +94,108 @@ public final class GeoJson {
 			"Expected \"%s\" : \"%s\", but found \"$s\"",
 			key, value, actual);
 	}
+	
+	/* GeoJSON objectsfor stadard GSON serialization  */
+	
+	static class FeatureCollection {
+		String type = "FeatureCollection";
+		List<Feature> features;
+	}
+
+	static class Feature {
+		String type = "Feature";
+		String id;
+		Geometry geometry = new Geometry();
+		PropertiesObject properties;
+	}
+
+	static Feature createPoint(NamedLocation loc) {
+		Feature f = new Feature();
+		f.geometry.type = "Point";
+		f.geometry.coordinates = toCoordinates(loc.location());
+		f.properties = new PointProperties();
+		f.properties.title = loc.toString();
+		return f;
+	}
+
+	private static final String EXTENTS_COLOR = "#4169E1";
+	
+	static Feature createPolygon(
+			String name,
+			LocationList coords,
+			Optional<String> id,
+			Optional<Double> spacing) {
+		
+		Feature f = new Feature();
+		
+		PolyProperties properties = new PolyProperties();
+		properties.title = name;
+		if (spacing.isPresent()) {
+			properties.spacing = spacing.get();
+		}
+		
+		if (id.isPresent()) {
+			f.id = id.get();
+			coords = coords.bounds().toList();
+			properties.strokeColor = EXTENTS_COLOR;
+			properties.fillColor = EXTENTS_COLOR;
+		}
+		
+		f.geometry.type = "Polygon";
+		f.geometry.coordinates = ImmutableList.of(toCoordinates(coords));
+		f.properties = properties;
+		return f;
+	}
+
+	static class Geometry {
+		String type;
+		Object coordinates;
+	}
+
+	static class PropertiesObject {
+		String title;
+	}
+
+	static class PointProperties extends PropertiesObject {
+		@SerializedName("marker-size")
+		String markerSize = "small";
+	}
+
+	static class PolyProperties extends PropertiesObject {
+		Double spacing;
+		@SerializedName("fill")
+		String fillColor;
+		@SerializedName("marker-color")
+		String strokeColor;
+	}
+
+	static double[] toCoordinates(Location loc) {
+		return new double[] { round(loc.lon(), 5), round(loc.lat(), 5) };
+	}
+
+	static double[][] toCoordinates(LocationList locs) {
+		double[][] coords = new double[locs.size()][2];
+		for (int i = 0; i < locs.size(); i++) {
+			coords[i] = toCoordinates(locs.get(i));
+		}
+		return coords;
+	}
+
+	/* brute force compaction of coordinate array onto single line */
+	static String cleanPoints(String s) {
+		return s.replace(": [\n          ", ": [")
+			.replace(",\n          ", ", ")
+			.replace("\n        ]", "]") + "\n";
+	}
+
+	/* brute force compaction of coordinate array onto single line */
+	static String cleanPoly(String s) {
+		return s
+			.replace("\n          [", "[")
+			.replace("[\n              ", "[ ")
+			.replace(",\n              ", ", ")
+			.replace("\n            ]", " ]")
+			.replace("\n        ]", "]") + "\n";
+	}
+
 }
