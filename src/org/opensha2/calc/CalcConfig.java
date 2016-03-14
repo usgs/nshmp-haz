@@ -53,14 +53,14 @@ public final class CalcConfig {
 
 	private final DeaggData deagg;
 
-	private final SiteSet sites;
+	private final Sites sites;
 
 	private final Map<Imt, XySequence> modelCurves;
 	private final Map<Imt, XySequence> logModelCurves;
 
 	private static final Gson GSON = new GsonBuilder()
 		.registerTypeAdapter(Site.class, new Site.Deserializer())
-		.registerTypeAdapter(SiteSet.class, new SiteSet.Deserializer())
+		.registerTypeAdapter(Sites.class, new Sites.Deserializer())
 		.create();
 
 	private CalcConfig(
@@ -74,7 +74,7 @@ public final class CalcConfig {
 			boolean gmmUncertainty,
 			HazardFormat hazardFormat,
 			DeaggData deagg,
-			SiteSet sites,
+			Sites sites,
 			Map<Imt, XySequence> modelCurves,
 			Map<Imt, XySequence> logModelCurves) {
 
@@ -306,7 +306,7 @@ public final class CalcConfig {
 		private Boolean gmmUncertainty;
 		private HazardFormat hazardFormat;
 		private DeaggData deagg;
-		private SiteSet sites;
+		private Sites sites;
 
 		/**
 		 * Initialize a new builder with a copy of that supplied.
@@ -343,7 +343,7 @@ public final class CalcConfig {
 			this.gmmUncertainty = false;
 			this.hazardFormat = HazardFormat.TOTAL;
 			this.deagg = new DeaggData();
-			this.sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
+			this.sites = new Sites(Lists.newArrayList(Site.builder().build()));
 			return this;
 		}
 

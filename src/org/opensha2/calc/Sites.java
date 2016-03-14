@@ -47,19 +47,19 @@ import com.google.gson.JsonObject;
  *
  * @author Peter Powers
  */
-public final class SiteSet implements Iterable<Site> {
+public final class Sites implements Iterable<Site> {
 
 	final private GriddedRegion region;
 	final private Builder builder;
 	final private List<Site> sites;
 
-	SiteSet(List<Site> sites) {
+	Sites(List<Site> sites) {
 		this.sites = checkNotNull(sites);
 		this.region = null;
 		this.builder = null;
 	}
 
-	SiteSet(GriddedRegion region, Builder builder) {
+	Sites(GriddedRegion region, Builder builder) {
 		this.region = checkNotNull(region);
 		this.builder = checkNotNull(builder);
 		this.sites = null;
@@ -132,7 +132,7 @@ public final class SiteSet implements Iterable<Site> {
 		return processCsv(path);
 	}
 
-	private static SiteSet processCsv(Path path) throws IOException {
+	private static Sites processCsv(Path path) throws IOException {
 		checkNotNull(path);
 
 		List<Site> siteList = new ArrayList<>();
@@ -196,7 +196,7 @@ public final class SiteSet implements Iterable<Site> {
 			builder.location(lat, lon);
 			siteList.add(builder.build());
 		}
-		return new SiteSet(siteList);
+		return new Sites(siteList);
 	}
 
 	static final String SITES = "sites";
@@ -213,10 +213,10 @@ public final class SiteSet implements Iterable<Site> {
 	 * to lines of latitude and longitude. Polygon holes, if present are not
 	 * processed.
 	 */
-	static class Deserializer implements JsonDeserializer<SiteSet> {
+	static class Deserializer implements JsonDeserializer<Sites> {
 
 		@Override
-		public SiteSet deserialize(
+		public Sites deserialize(
 				JsonElement json,
 				Type type,
 				JsonDeserializationContext context) {
@@ -234,7 +234,7 @@ public final class SiteSet implements Iterable<Site> {
 			if (featureType.equals(GeoJson.Value.POINT)) {
 				Type siteType = new TypeToken<List<Site>>() {}.getType();
 				List<Site> sites = context.deserialize(json, siteType);
-				return new SiteSet(sites);
+				return new Sites(sites);
 			}
 
 			// or a region
@@ -296,7 +296,7 @@ public final class SiteSet implements Iterable<Site> {
 				spacing, spacing,
 				GriddedRegion.ANCHOR_0_0);
 
-			return new SiteSet(region, builder);
+			return new Sites(region, builder);
 		}
 	}
 

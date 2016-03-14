@@ -23,7 +23,7 @@ import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
 import org.opensha2.calc.Site;
-import org.opensha2.calc.SiteSet;
+import org.opensha2.calc.Sites;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
 import org.opensha2.util.Logging;
@@ -119,7 +119,7 @@ public class HazardCalc {
 			Iterable<Site> sites = config.sites();
 			if (argCount > 2) {
 				Path sitePath = Paths.get(args[2]);
-				sites = SiteSet.fromCsv(sitePath);
+				sites = Sites.fromCsv(sitePath);
 				log.info("");
 				StringBuilder sb = new StringBuilder()
 					.append("Site config:")
