@@ -3,7 +3,7 @@
   "features": [
     {
       "type": "Feature",
-      "id": "CLIP",
+      "id": "Extents",
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
@@ -101,6 +101,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "NSHMP Central & Eastern US"
       }
     }

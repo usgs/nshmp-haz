@@ -14,6 +14,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "Cybershake – Los Angeles Basin"
       }
     }

@@ -23,6 +23,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "UCERF3 Production – 2014 NSHM"
       }
     }
