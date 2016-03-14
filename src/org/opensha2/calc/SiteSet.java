@@ -47,7 +47,7 @@ import com.google.gson.JsonObject;
  *
  * @author Peter Powers
  */
-final class SiteSet implements Iterable<Site> {
+public final class SiteSet implements Iterable<Site> {
 
 	final private GriddedRegion region;
 	final private Builder builder;
