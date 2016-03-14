@@ -1,8 +1,6 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Strings.padEnd;
-import static com.google.common.base.Strings.padStart;
 import static com.google.common.base.Strings.repeat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
@@ -16,9 +14,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,7 +30,6 @@ import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 import org.opensha2.util.TextUtils;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;

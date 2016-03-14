@@ -2,7 +2,6 @@ package org.opensha2.util;
 
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.padStart;
-import static org.opensha2.util.MathUtils.round;
 import static org.opensha2.util.NshmpPolygon.CEUS_CLIP;
 import static org.opensha2.util.NshmpPolygon.CONTERMINOUS_US;
 import static org.opensha2.util.NshmpPolygon.CYBERSHAKE;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.opensha2.calc.NamedLocation;
-import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.util.GeoJson.Feature;
 import org.opensha2.util.GeoJson.FeatureCollection;
@@ -41,7 +39,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Methods for exporting nshmp site data as CSV and GeoJSON.
