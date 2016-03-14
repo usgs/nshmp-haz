@@ -53,7 +53,7 @@ public final class CalcConfig {
 
 	private final DeaggData deagg;
 
-	private final Sites sites;
+	private final Iterable<Site> sites;
 
 	private final Map<Imt, XySequence> modelCurves;
 	private final Map<Imt, XySequence> logModelCurves;
@@ -74,7 +74,7 @@ public final class CalcConfig {
 			boolean gmmUncertainty,
 			HazardFormat hazardFormat,
 			DeaggData deagg,
-			Sites sites,
+			Iterable<Site> sites,
 			Map<Imt, XySequence> modelCurves,
 			Map<Imt, XySequence> logModelCurves) {
 
@@ -306,7 +306,7 @@ public final class CalcConfig {
 		private Boolean gmmUncertainty;
 		private HazardFormat hazardFormat;
 		private DeaggData deagg;
-		private Sites sites;
+		private Iterable<Site> sites;
 
 		/**
 		 * Initialize a new builder with a copy of that supplied.
@@ -343,7 +343,7 @@ public final class CalcConfig {
 			this.gmmUncertainty = false;
 			this.hazardFormat = HazardFormat.TOTAL;
 			this.deagg = new DeaggData();
-			this.sites = new Sites(Lists.newArrayList(Site.builder().build()));
+			this.sites = null; //new Sites(Lists.newArrayList(Site.builder().build()));
 			return this;
 		}
 
@@ -439,7 +439,6 @@ public final class CalcConfig {
 				sites,
 				curves, logCurves);
 		}
-
 	}
 
 }

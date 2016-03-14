@@ -1,14 +1,15 @@
 package org.opensha2.calc;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.repeat;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.GeoJson.validateProperty;
 import static org.opensha2.util.TextUtils.ALIGN_COL;
 import static org.opensha2.util.TextUtils.format;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -30,9 +31,11 @@ import org.opensha2.util.Parsing.Delimiter;
 import org.opensha2.util.TextUtils;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -47,72 +50,23 @@ import com.google.gson.JsonObject;
  *
  * @author Peter Powers
  */
-public final class Sites implements Iterable<Site> {
-
-	final private GriddedRegion region;
-	final private Builder builder;
-	final private List<Site> sites;
-
-	Sites(List<Site> sites) {
-		this.sites = checkNotNull(sites);
-		this.region = null;
-		this.builder = null;
-	}
-
-	Sites(GriddedRegion region, Builder builder) {
-		this.region = checkNotNull(region);
-		this.builder = checkNotNull(builder);
-		this.sites = null;
-	}
-
-	int size() {
-		return (region == null) ? sites.size() : region.size();
-	}
-
-	@Override
-	public Iterator<Site> iterator() {
-		return (region == null) ? Iterators.unmodifiableIterator(sites.iterator())
-			: new RegionIterator();
-	}
-
-	private final class RegionIterator implements Iterator<Site> {
-
-		private final Iterator<Location> locations;
-
-		private RegionIterator() {
-			locations = region.iterator();
-		}
-
-		@Override
-		public boolean hasNext() {
-			return locations.hasNext();
-		}
-
-		@Override
-		public Site next() {
-			builder.location(locations.next());
-			return builder.build();
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-	}
+public final class Sites {
 
 	private static final int TO_STRING_LIMIT = 5;
 
-	@Override
-	public String toString() {
+	/** Custom {@code Site} iterable string formatting for logging. */
+	String logString(Iterable<Site> sites) {
+		boolean region = sites instanceof RegionIterable;
+		int size = region ? ((RegionIterable) sites).region.size() : Iterables.size(sites);
 		StringBuilder sb = new StringBuilder()
-			.append((region == null) ? "List" : "Region")
-			.append(" [size=").append(size()).append("]");
-		if (region == null) {
+			.append(region ? "Region" : "List")
+			.append(" [size=").append(size).append("]");
+		if (!region) {
 			for (Site site : Iterables.limit(sites, TO_STRING_LIMIT)) {
 				sb.append(format("Site")).append(site);
 			}
-			if (sites.size() > TO_STRING_LIMIT) {
-				int delta = sites.size() - TO_STRING_LIMIT;
+			if (size > TO_STRING_LIMIT) {
+				int delta = size - TO_STRING_LIMIT;
 				sb.append(TextUtils.NEWLINE)
 					.append(repeat(" ", ALIGN_COL + 2))
 					.append("... and ").append(delta).append(" more ...");
@@ -122,21 +76,20 @@ public final class Sites implements Iterable<Site> {
 	}
 
 	/**
-	 * Creates an {@code Iterable<Site>} from the comma-delimted site file
+	 * Create an {@code Iterable<Site>} from the comma-delimted site file
 	 * designated by {@code path}.
 	 * 
 	 * @param path to comma-delimited site data file
 	 * @throws IOException if a problem is encountered
 	 */
 	public static Iterable<Site> fromCsv(Path path) throws IOException {
-		return processCsv(path);
+		return readCsv(path);
 	}
 
-	private static Sites processCsv(Path path) throws IOException {
-		checkNotNull(path);
+	private static Iterable<Site> readCsv(Path path) throws IOException {
 
-		List<Site> siteList = new ArrayList<>();
-		Builder builder = Site.builder();
+		ImmutableList.Builder<Site> listBuilder = ImmutableList.builder();
+		Builder siteBuilder = Site.builder();
 
 		List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
 		boolean firstline = true;
@@ -174,30 +127,100 @@ public final class Sites implements Iterable<Site> {
 						lon = Double.parseDouble(value);
 						break;
 					case Site.Key.NAME:
-						builder.name(value);
+						siteBuilder.name(value);
 						break;
 					case Site.Key.VS30:
-						builder.vs30(Double.parseDouble(value));
+						siteBuilder.vs30(Double.parseDouble(value));
 						break;
 					case Site.Key.VS_INF:
-						builder.vsInferred(Boolean.parseBoolean(value));
+						siteBuilder.vsInferred(Boolean.parseBoolean(value));
 						break;
 					case Site.Key.Z1P0:
-						builder.z1p0(Double.parseDouble(value));
+						siteBuilder.z1p0(Double.parseDouble(value));
 						break;
 					case Site.Key.Z2P5:
-						builder.z2p5(Double.parseDouble(value));
+						siteBuilder.z2p5(Double.parseDouble(value));
 						break;
 					default:
 						throw new IllegalStateException("Unsupported site key: " + key);
 				}
 				index++;
 			}
-			builder.location(lat, lon);
-			siteList.add(builder.build());
+			siteBuilder.location(lat, lon);
+			listBuilder.add(siteBuilder.build());
 		}
-		return new Sites(siteList);
+		return listBuilder.build();
 	}
+
+	private static final Gson GSON = new GsonBuilder()
+		.registerTypeAdapter(Site.class, new Site.Deserializer())
+		.registerTypeAdapter(SiteIterable.class, new Deserializer())
+		.create();
+
+	/**
+	 * Create an {@code Iterable<Site>} from the GeoJSON site file
+	 * designated by {@code path}.
+	 * 
+	 * @param path to GeoJson site data file
+	 * @throws IOException if a problem is encountered
+	 */
+	public static Iterable<Site> fromJson(Path path) throws IOException {
+		Reader reader = Files.newBufferedReader(path, UTF_8);
+		SiteIterable iterable = GSON.fromJson(reader, SiteIterable.class);
+		reader.close();
+		return iterable;
+	}
+
+	/* Marker interface needed for deserialization */
+	private interface SiteIterable extends Iterable<Site> {};
+
+	private static final class ListIterable implements SiteIterable {
+		final List<Site> delegate;
+
+		ListIterable(List<Site> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public Iterator<Site> iterator() {
+			return delegate.iterator();
+		}
+	}
+	
+	private static final class RegionIterable implements SiteIterable {
+
+		final GriddedRegion region;
+		final Builder siteBuilder;
+
+		RegionIterable(GriddedRegion region, Builder siteBuilder) {
+			this.region = region;
+			this.siteBuilder = siteBuilder;
+		}
+
+		@Override
+		public Iterator<Site> iterator() {
+			return new Iterator<Site>() {
+				final Iterator<Location> locations = region.iterator();
+
+				@Override
+				public boolean hasNext() {
+					return locations.hasNext();
+				}
+
+				@Override
+				public Site next() {
+					siteBuilder.location(locations.next());
+					return siteBuilder.build();
+				}
+
+				@Override
+				public void remove() {
+					throw new UnsupportedOperationException();
+				}
+			};
+		}
+	}
+
 
 	static final String SITES = "sites";
 	static final String REGION = "region";
@@ -213,10 +236,10 @@ public final class Sites implements Iterable<Site> {
 	 * to lines of latitude and longitude. Polygon holes, if present are not
 	 * processed.
 	 */
-	static class Deserializer implements JsonDeserializer<Sites> {
+	static class Deserializer implements JsonDeserializer<SiteIterable> {
 
 		@Override
-		public Sites deserialize(
+		public SiteIterable deserialize(
 				JsonElement json,
 				Type type,
 				JsonDeserializationContext context) {
@@ -234,7 +257,7 @@ public final class Sites implements Iterable<Site> {
 			if (featureType.equals(GeoJson.Value.POINT)) {
 				Type siteType = new TypeToken<List<Site>>() {}.getType();
 				List<Site> sites = context.deserialize(json, siteType);
-				return new Sites(sites);
+				return new ListIterable(ImmutableList.copyOf(sites));
 			}
 
 			// or a region
@@ -296,7 +319,7 @@ public final class Sites implements Iterable<Site> {
 				spacing, spacing,
 				GriddedRegion.ANCHOR_0_0);
 
-			return new Sites(region, builder);
+			return new RegionIterable(region, builder);
 		}
 	}
 
