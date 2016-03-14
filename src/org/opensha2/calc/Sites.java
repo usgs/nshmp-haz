@@ -52,29 +52,6 @@ import com.google.gson.JsonObject;
  */
 public final class Sites {
 
-	private static final int TO_STRING_LIMIT = 5;
-
-	/** Custom {@code Site} iterable string formatting for logging. */
-	String logString(Iterable<Site> sites) {
-		boolean region = sites instanceof RegionIterable;
-		int size = region ? ((RegionIterable) sites).region.size() : Iterables.size(sites);
-		StringBuilder sb = new StringBuilder()
-			.append(region ? "Region" : "List")
-			.append(" [size=").append(size).append("]");
-		if (!region) {
-			for (Site site : Iterables.limit(sites, TO_STRING_LIMIT)) {
-				sb.append(format("Site")).append(site);
-			}
-			if (size > TO_STRING_LIMIT) {
-				int delta = size - TO_STRING_LIMIT;
-				sb.append(TextUtils.NEWLINE)
-					.append(repeat(" ", ALIGN_COL + 2))
-					.append("... and ").append(delta).append(" more ...");
-			}
-		}
-		return sb.toString();
-	}
-
 	/**
 	 * Create an {@code Iterable<Site>} from the comma-delimted site file
 	 * designated by {@code path}.
@@ -172,9 +149,34 @@ public final class Sites {
 	}
 
 	/* Marker interface needed for deserialization */
-	private interface SiteIterable extends Iterable<Site> {};
+	private abstract static class SiteIterable implements Iterable<Site> {
+		
+		static final int TO_STRING_LIMIT = 5;
 
-	private static final class ListIterable implements SiteIterable {
+		@Override
+		public String toString() {
+			boolean region = this instanceof RegionIterable;
+			int size = region ? ((RegionIterable) this).region.size() : Iterables.size(this);
+			StringBuilder sb = new StringBuilder()
+				.append(region ? "Region" : "List")
+				.append(" [size=").append(size).append("]");
+			if (!region) {
+				for (Site site : Iterables.limit(this, TO_STRING_LIMIT)) {
+					sb.append(format("Site")).append(site);
+				}
+				if (size > TO_STRING_LIMIT) {
+					int delta = size - TO_STRING_LIMIT;
+					sb.append(TextUtils.NEWLINE)
+						.append(repeat(" ", ALIGN_COL + 2))
+						.append("... and ").append(delta).append(" more ...");
+				}
+			}
+			return sb.toString();
+		}
+
+	}
+
+	private static final class ListIterable extends SiteIterable {
 		final List<Site> delegate;
 
 		ListIterable(List<Site> delegate) {
@@ -187,7 +189,7 @@ public final class Sites {
 		}
 	}
 	
-	private static final class RegionIterable implements SiteIterable {
+	static final class RegionIterable extends SiteIterable {
 
 		final GriddedRegion region;
 		final Builder siteBuilder;
@@ -256,7 +258,7 @@ public final class Sites {
 				.get(GeoJson.Key.TYPE).getAsString();
 			if (featureType.equals(GeoJson.Value.POINT)) {
 				Type siteType = new TypeToken<List<Site>>() {}.getType();
-				List<Site> sites = context.deserialize(json, siteType);
+				List<Site> sites = context.deserialize(features, siteType);
 				return new ListIterable(ImmutableList.copyOf(sites));
 			}
 
@@ -264,8 +266,10 @@ public final class Sites {
 			checkState(features.size() <= 2, "Only 2 polygon features may be defined");
 
 			Optional<Region> extents = Optional.absent();
+			int calcPolyIndex = 0;
 			if (features.size() == 2) {
-
+				calcPolyIndex++;
+				
 				JsonObject extentsFeature = features.get(0).getAsJsonObject();
 				validateProperty(extentsFeature, GeoJson.Key.ID, GeoJson.Value.EXTENTS);
 
@@ -278,13 +282,16 @@ public final class Sites {
 				extents = Optional.of(r);
 			}
 
-			JsonObject sitesFeature = features.get(1).getAsJsonObject();
+			JsonObject sitesFeature = features.get(calcPolyIndex).getAsJsonObject();
 			LocationList border = readPolygon(sitesFeature);
 
 			JsonObject properties = sitesFeature.getAsJsonObject(GeoJson.Key.PROPERTIES);
 			String mapName = readName(properties, "Unnamed Map");
 
 			Region calcRegion = Regions.create(mapName, border, MERCATOR_LINEAR);
+			checkState(
+				properties.has(GeoJson.Properties.Key.SPACING),
+				"A \"spacing\" : value (in degrees) must be defined in \"properties\"");
 			double spacing = properties.get(GeoJson.Properties.Key.SPACING).getAsDouble();
 
 			// builder used to create all sites when iterating over region

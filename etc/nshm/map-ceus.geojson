@@ -10,11 +10,14 @@
             [ -115.0, 24.6 ],
             [ -65.0, 24.6 ],
             [ -65.0, 50.0 ],
-            [ -115.0, 50.0 ]
+            [ -115.0, 50.0 ],
+            [ -115.0, 24.6 ]
           ]]
       },
       "properties": {
-        "title": "NSHMP Central & Eastern US"
+        "fill": "#4169E1",
+        "marker-color": "#4169E1",
+        "title": "NSHMP Central & Eastern US Map Extents"
       }
     },
     {

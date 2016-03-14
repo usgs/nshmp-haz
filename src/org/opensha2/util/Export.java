@@ -1,9 +1,19 @@
 package org.opensha2.util;
 
+import static com.google.common.base.Strings.padEnd;
+import static com.google.common.base.Strings.padStart;
 import static org.opensha2.util.MathUtils.round;
-import static com.google.common.base.Strings.*;
-
-import static org.opensha2.util.NshmpPolygon.*;
+import static org.opensha2.util.NshmpPolygon.CEUS_CLIP;
+import static org.opensha2.util.NshmpPolygon.CONTERMINOUS_US;
+import static org.opensha2.util.NshmpPolygon.CYBERSHAKE;
+import static org.opensha2.util.NshmpPolygon.LA_BASIN;
+import static org.opensha2.util.NshmpPolygon.NEW_MADRID;
+import static org.opensha2.util.NshmpPolygon.PUGET;
+import static org.opensha2.util.NshmpPolygon.SF_BAY;
+import static org.opensha2.util.NshmpPolygon.UCERF3_NSHM14;
+import static org.opensha2.util.NshmpPolygon.UCERF3_RELM;
+import static org.opensha2.util.NshmpPolygon.WASATCH;
+import static org.opensha2.util.NshmpPolygon.WUS_CLIP;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -23,11 +33,10 @@ import org.opensha2.geo.LocationList;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.base.Strings;
+import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
@@ -47,7 +56,7 @@ final class Export {
 	private static final Path EXPORT_DIR = Paths.get("etc", "nshm");
 
 	public static void main(String[] args) throws IOException {
-		 writeNshmpSites();
+		writeNshmpSites();
 		writeNshmpPolys();
 		writeNshmpSummaryPoly();
 	}
@@ -63,58 +72,66 @@ final class Export {
 
 		Path ceusOut = EXPORT_DIR.resolve("map-ceus.geojson");
 		LocationList ceusBounds = CEUS_CLIP.coordinates();
-		writePolyJson(ceusOut, "NSHMP Central & Eastern US", usCoords, ceusBounds);
+		writePolyJson(ceusOut, "NSHMP Central & Eastern US", usCoords, 0.1, ceusBounds);
 
 		Path wusOut = EXPORT_DIR.resolve("map-wus.geojson");
 		LocationList wusBounds = WUS_CLIP.coordinates();
-		writePolyJson(wusOut, "NSHMP Western US", usCoords, wusBounds);
+		writePolyJson(wusOut, "NSHMP Western US", usCoords, 0.1, wusBounds);
 
 		writePolyJson(
 			EXPORT_DIR.resolve("map-la-basin.geojson"),
 			LA_BASIN.toString(),
 			LA_BASIN.coordinates(),
+			0.05,
 			null);
 
 		writePolyJson(
 			EXPORT_DIR.resolve("map-sf-bay.geojson"),
 			SF_BAY.toString(),
 			SF_BAY.coordinates(),
+			0.05,
 			null);
 
 		writePolyJson(
 			EXPORT_DIR.resolve("map-puget.geojson"),
 			PUGET.toString(),
 			PUGET.coordinates(),
+			0.05,
 			null);
 
 		writePolyJson(
 			EXPORT_DIR.resolve("map-wasatch.geojson"),
 			WASATCH.toString(),
 			WASATCH.coordinates(),
+			0.05,
 			null);
 
 		writePolyJson(
 			EXPORT_DIR.resolve("map-new-madrid.geojson"),
 			NEW_MADRID.toString(),
 			NEW_MADRID.coordinates(),
+			0.05,
 			null);
 
 		writePolyJson(
 			EXPORT_DIR.resolve("map-ucerf3-nshm.geojson"),
 			UCERF3_NSHM14.toString(),
 			UCERF3_NSHM14.coordinates(),
+			0.1,
 			null);
 
 		writePolyJson(
 			EXPORT_DIR.resolve("map-ucerf3-relm.geojson"),
 			UCERF3_RELM.toString(),
 			UCERF3_RELM.coordinates(),
+			0.1,
 			null);
 
 		writePolyJson(
 			EXPORT_DIR.resolve("map-cybershake.geojson"),
 			CYBERSHAKE.toString(),
 			CYBERSHAKE.coordinates(),
+			0.1,
 			null);
 
 	}
@@ -136,26 +153,43 @@ final class Export {
 				.toList());
 	}
 
-	static void writePolyJson(Path out, String name, LocationList coords, LocationList bounds)
+	static void writePolysJson(Path out, List<String> nameList, List<LocationList> coordList)
 			throws IOException {
 		List<Feature> features = new ArrayList<>();
-		if (bounds != null) {
-			features.add(createPolygon(name, "CLIP", bounds));
+		int i = 0;
+		for (LocationList coords : coordList) {
+			features.add(createPolygon(
+				nameList.get(i++),
+				coords,
+				Optional.<String> absent(),
+				Optional.of(0.1)));
 		}
-		features.add(createPolygon(name, null, coords));
 		FeatureCollection fc = new FeatureCollection();
 		fc.features = features;
 		String json = cleanPoly(GSON.toJson(fc));
 		Files.write(out, json.getBytes(StandardCharsets.UTF_8));
 	}
 
-	static void writePolysJson(Path out, List<String> nameList, List<LocationList> coordList)
-			throws IOException {
+	static void writePolyJson(
+			Path out,
+			String name,
+			LocationList coords,
+			double spacing,
+			LocationList bounds) throws IOException {
+
 		List<Feature> features = new ArrayList<>();
-		int i = 0;
-		for (LocationList coords : coordList) {
-			features.add(createPolygon(nameList.get(i++), null, coords));
+		if (bounds != null) {
+			features.add(createPolygon(
+				name + " Map Extents",
+				bounds,
+				Optional.of(GeoJson.Value.EXTENTS),
+				Optional.<Double> absent()));
 		}
+		features.add(createPolygon(
+			name,
+			coords,
+			Optional.<String> absent(),
+			Optional.of(spacing)));
 		FeatureCollection fc = new FeatureCollection();
 		fc.features = features;
 		String json = cleanPoly(GSON.toJson(fc));
@@ -241,16 +275,32 @@ final class Export {
 		return f;
 	}
 
-	static Feature createPolygon(String name, String id, LocationList coords) {
+	private static final String EXTENTS_COLOR = "#4169E1";
+	
+	static Feature createPolygon(
+			String name,
+			LocationList coords,
+			Optional<String> id,
+			Optional<Double> spacing) {
+		
 		Feature f = new Feature();
-		if (id != null) {
-			f.id = id;
-			coords = coords.bounds().toList();
+		
+		PolyProperties properties = new PolyProperties();
+		properties.title = name;
+		if (spacing.isPresent()) {
+			properties.spacing = spacing.get();
 		}
+		
+		if (id.isPresent()) {
+			f.id = id.get();
+			coords = coords.bounds().toList();
+			properties.strokeColor = EXTENTS_COLOR;
+			properties.fillColor = EXTENTS_COLOR;
+		}
+		
 		f.geometry.type = "Polygon";
 		f.geometry.coordinates = ImmutableList.of(toCoordinates(coords));
-		f.properties = new PolyProperties();
-		f.properties.title = name;
+		f.properties = properties;
 		return f;
 	}
 
@@ -268,7 +318,13 @@ final class Export {
 		String markerSize = "small";
 	}
 
-	static class PolyProperties extends Properties {}
+	static class PolyProperties extends Properties {
+		Double spacing;
+		@SerializedName("fill")
+		String fillColor;
+		@SerializedName("marker-color")
+		String strokeColor;
+	}
 
 	static double[] toCoordinates(Location loc) {
 		return new double[] { round(loc.lon(), 5), round(loc.lat(), 5) };

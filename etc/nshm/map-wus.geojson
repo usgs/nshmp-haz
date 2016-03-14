@@ -10,11 +10,14 @@
             [ -125.0, 24.6 ],
             [ -100.0, 24.6 ],
             [ -100.0, 50.0 ],
-            [ -125.0, 50.0 ]
+            [ -125.0, 50.0 ],
+            [ -125.0, 24.6 ]
           ]]
       },
       "properties": {
-        "title": "NSHMP Western US"
+        "fill": "#4169E1",
+        "marker-color": "#4169E1",
+        "title": "NSHMP Western US Map Extents"
       }
     },
     {
