@@ -1,10 +1,14 @@
 package org.opensha2.programs;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Runtime.getRuntime;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.util.TextUtils.NEWLINE;
 import static org.opensha2.util.TextUtils.format;
+
+import static org.opensha2.util.Parsing.*;
 
 import java.io.IOException;
 import java.nio.file.OpenOption;
@@ -23,27 +27,32 @@ import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
 import org.opensha2.calc.Site;
+import org.opensha2.calc.Site.Builder;
 import org.opensha2.calc.Sites;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
 import org.opensha2.util.Logging;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Optional;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Entry point for computing probabilisitic seismic hazard at a {@link Site}
  * from a {@link HazardModel}. The main method of this class outputs mean hazard
  * curves for the model and {@link Imt}s specified per the calculation
- * configuration. For more detailed results, consider programmatically using the @
- * calc()} method of this class.
+ * configuration. For more detailed results, consider programmatically using
+ * the @ calc()} method of this class.
  * 
  * @author Peter Powers
  */
 public class HazardCalc {
 
+	// TODO move to config
 	private static final int FLUSH_LIMIT = 5;
 
 	/**
@@ -80,34 +89,33 @@ public class HazardCalc {
 
 		/* Delegate to run which has a return value for testing. */
 
-		String status = run(args);
-		if (status != null) {
+		Optional<String> status = run(args);
+		if (status.isPresent()) {
 			System.err.print(status);
 			System.exit(1);
 		}
 		System.exit(0);
 	}
 
-	static String run(String[] args) {
+	static Optional<String> run(String[] args) {
 		int argCount = args.length;
 
-		if (argCount < 1 || argCount > 3) {
-			return USAGE;
+		if (argCount < 2 || argCount > 3) {
+			return Optional.of(USAGE);
 		}
 
 		Logging.init();
 		Logger log = Logger.getLogger(HazardCalc.class.getName());
 
 		try {
-
-			log.info(PROGRAM + ": init...");
+			log.info(PROGRAM + ": initializing...");
 			Path modelPath = Paths.get(args[0]);
 			HazardModel model = HazardModel.load(modelPath);
 
 			CalcConfig config = model.config();
 			Path out = Paths.get(StandardSystemProperty.USER_DIR.value());
-			if (argCount > 1) {
-				Path userConfigPath = Paths.get(args[1]);
+			if (argCount == 3) {
+				Path userConfigPath = Paths.get(args[2]);
 				config = CalcConfig.builder()
 					.copy(model.config())
 					.extend(CalcConfig.builder(userConfigPath))
@@ -116,33 +124,55 @@ public class HazardCalc {
 			}
 			log.info(config.toString());
 
-			Iterable<Site> sites = config.sites();
-			if (argCount > 2) {
-				Path sitePath = Paths.get(args[2]);
-				sites = Sites.fromCsv(sitePath);
-				log.info("");
-				StringBuilder sb = new StringBuilder()
-					.append("Site config:")
-					.append(format("resource")).append(sitePath)
-					.append(format("(override) sites"))
-					.append(sites);
-				log.info(sb.toString());
-			}
+			
+			Iterable<Site> sites = readSites(args[1]);
+			log.info("");
+			log.info("Sites:" + sites);
+			
+//			Iterable<Site> sites = config.sites();
+//			if (argCount > 2) {
+//				Path sitePath = Paths.get(args[2]);
+//				sites = Sites.fromCsv(sitePath);
+//				log.info("");
+//				StringBuilder sb = new StringBuilder()
+//					.append("Site config:")
+//					.append(format("resource")).append(sitePath)
+//					.append(format("(override) sites"))
+//					.append(sites);
+//				log.info(sb.toString());
+//			}
 
 			calc(model, config, sites, out, log);
-			return null;
+			log.info(PROGRAM + ": finished");
+			return Optional.absent();
 
 		} catch (Exception e) {
-			return new StringBuilder()
+			StringBuilder sb = new StringBuilder()
 				.append(NEWLINE)
 				.append(PROGRAM + ": error").append(NEWLINE)
 				.append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
 				.append(NEWLINE)
 				.append(Throwables.getStackTraceAsString(e)).append(NEWLINE)
 				.append(NEWLINE)
-				.append(USAGE)
-				.toString();
+				.append(USAGE);
+			return Optional.of(sb.toString());
 		}
+	}
+
+	private static Iterable<Site> readSites(String arg) throws IOException {
+		if (arg.startsWith("\"")) {
+			return Sites.fromString(arg);
+		}
+		Path sitePath = Paths.get(arg);
+		if (arg.toLowerCase().endsWith(".csv")) {
+			return Sites.fromCsv(sitePath);
+		}
+		if (arg.toLowerCase().endsWith(".geojson")) {
+			return Sites.fromJson(sitePath);
+		}
+		throw new IllegalArgumentException(
+			"Sites argument [" + arg + "] must either be a quoted string" +
+			"or specify a path to a *.csv or *.geojson file");
 	}
 
 	private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
@@ -177,8 +207,7 @@ public class HazardCalc {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
 				Results.writeResults(out, results, opts);
-				log.info(
-					"     batch: " + (count + 1) + "  " + batchWatch +
+				log.info("     batch: " + (count + 1) + "  " + batchWatch +
 					"  total: " + totalWatch);
 				results.clear();
 				batchWatch.reset().start();
@@ -220,7 +249,7 @@ public class HazardCalc {
 
 		try {
 			Hazard result = Calcs.hazard(model, config, site, execLocal);
-			if (!executor.isPresent()) ((ExecutorService) executor).shutdown();
+			if (executor.isPresent()) ((ExecutorService) executor).shutdown();
 			return result;
 		} catch (ExecutionException | InterruptedException e) {
 			Throwables.propagate(e);
@@ -233,18 +262,29 @@ public class HazardCalc {
 	}
 
 	private static final String PROGRAM = HazardCalc.class.getSimpleName();
-	private static final String USAGE_COMMAND = "java -cp nshmp-haz.jar org.opensha.programs.HazardCalc model [config [sites]]";
+	private static final String USAGE_COMMAND =
+		"java -cp nshmp-haz.jar org.opensha2.programs.HazardCalc model sites [config]";
 	private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
 	private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
+	private static final String SITE_STRING = "\"name, lon, lat[, vs30, vsInf[, z1p0, z2p5]]\"";
 
-	static final String USAGE = new StringBuilder()
+	private static final String USAGE = new StringBuilder()
 		.append(PROGRAM).append(" usage:").append(NEWLINE)
 		.append("  ").append(USAGE_COMMAND).append(NEWLINE)
 		.append(NEWLINE)
 		.append("Where:").append(NEWLINE)
-		.append("  'model' is a model zip file or directory").append(NEWLINE)
-		.append("  'config' supplies a calculation configuration").append(NEWLINE)
-		.append("  'sites' is a comma-delimited site data file").append(NEWLINE)
+		.append("  'model' is a model zip file or directory")
+		.append(NEWLINE)
+		.append("  'sites' is either:")
+		.append(NEWLINE)
+		.append("     - a quoted string, e.g. ").append(SITE_STRING)
+		.append(NEWLINE)
+		.append("       (site class and basin terms are optional)")
+		.append(NEWLINE)
+		.append("     - or a *.csv file or *.geojson file of site data")
+		.append(NEWLINE)
+		.append("  'config' (optional) supplies a calculation configuration")
+		.append(NEWLINE)
 		.append(NEWLINE)
 		.append("For more information, see:").append(NEWLINE)
 		.append("  ").append(USAGE_URL1).append(NEWLINE)

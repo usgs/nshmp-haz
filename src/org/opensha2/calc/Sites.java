@@ -1,10 +1,13 @@
 package org.opensha2.calc;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.repeat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.GeoJson.validateProperty;
+import static org.opensha2.util.Parsing.splitToList;
+import static org.opensha2.util.Parsing.trimEnds;
 import static org.opensha2.util.TextUtils.ALIGN_COL;
 import static org.opensha2.util.TextUtils.format;
 
@@ -62,6 +65,8 @@ public final class Sites {
 	}
 
 	private static Iterable<Site> readCsv(Path path) throws IOException {
+
+		checkArgument(Files.exists(path), "Specified site file [%s] does not exist", path);
 
 		ImmutableList.Builder<Site> listBuilder = ImmutableList.builder();
 		Builder siteBuilder = Site.builder();
@@ -124,7 +129,7 @@ public final class Sites {
 			siteBuilder.location(lat, lon);
 			listBuilder.add(siteBuilder.build());
 		}
-		return listBuilder.build();
+		return new ListIterable(listBuilder.build());
 	}
 
 	private static final Gson GSON = new GsonBuilder()
@@ -140,10 +145,52 @@ public final class Sites {
 	 * @throws IOException if a problem is encountered
 	 */
 	public static Iterable<Site> fromJson(Path path) throws IOException {
+		checkArgument(Files.exists(path), "Specified site file [%s] does not exist", path);
 		Reader reader = Files.newBufferedReader(path, UTF_8);
 		SiteIterable iterable = GSON.fromJson(reader, SiteIterable.class);
 		reader.close();
 		return iterable;
+	}
+
+	/**
+	 * Create an unmodifiable singleton {@code Iterable<Site>} from the supplied
+	 * string. String is extpected to be quoted and have the form:
+	 * 
+	 * <p>{@code "name, lon, lat[, vs30, vsInf[, z1p0, z2p5]]"}
+	 * 
+	 * <p>Although the latter 4 fields are optional, if {@code vs30} is defined,
+	 * so too must {@code vsInf}. Likewise, if {@code z1p0} is defined, so too
+	 * must {@code z2p5}.
+	 * 
+	 * @param s String to parse
+	 */
+	public static Iterable<Site> fromString(String s) {
+		checkArgument(s.startsWith("\"") && s.endsWith("\""), "Supplied string is not quoted");
+		List<String> values = splitToList(trimEnds(s), Delimiter.COMMA);
+		Builder b = Site.builder();
+		checkArgument(
+			values.size() > 2,
+			"Site string %s is incomplete; it must contain at least 'name, lon, lat'",
+			s);
+		b.name(values.get(0)).location(
+			Double.valueOf(values.get(2)),
+			Double.valueOf(values.get(1)));
+		if (values.size() > 3) {
+			checkArgument(
+				values.size() > 4,
+				"Site string %s defines 'vs30'; it must also define 'vsInf'",
+				s);
+			b.vs30(Double.valueOf(values.get(3)))
+				.vsInferred(Boolean.valueOf(values.get(4)));
+		}
+		if (values.size() > 5) {
+			checkArgument(
+				values.size() > 6,
+				"Site string %s defines 'z1p0'; it must also define 'z2p5'",
+				s);
+			b.z1p0(Double.valueOf(values.get(5))).z2p5(Double.valueOf(values.get(6)));
+		}
+		return new ListIterable(ImmutableList.of(b.build()));
 	}
 
 	/*
@@ -189,7 +236,7 @@ public final class Sites {
 		}
 	}
 
-	static final class RegionIterable extends SiteIterable {
+	private static final class RegionIterable extends SiteIterable {
 
 		final GriddedRegion region;
 		final Builder siteBuilder;
@@ -232,7 +279,7 @@ public final class Sites {
 	 * to lines of latitude and longitude. Polygon holes, if present are not
 	 * processed.
 	 */
-	static class Deserializer implements JsonDeserializer<SiteIterable> {
+	private static final class Deserializer implements JsonDeserializer<SiteIterable> {
 
 		@Override
 		public SiteIterable deserialize(
@@ -322,6 +369,7 @@ public final class Sites {
 
 			return new RegionIterable(region, builder);
 		}
+
 	}
 
 	private static LocationList readPolygon(JsonObject feature) {

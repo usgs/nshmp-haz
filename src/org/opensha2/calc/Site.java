@@ -147,7 +147,8 @@ public class Site implements Named {
 	/**
 	 * A reusable {@code Site} builder. In the absence of specifying any site
 	 * characteristics other than location (required), a default {@code Site} is
-	 * returned by {@code build()}.
+	 * returned by {@code build()}. Builder instances may be obtained via
+	 * {@link Site#builder()}.
 	 *
 	 * @see Site for default values
 	 */
@@ -159,6 +160,8 @@ public class Site implements Named {
 		private boolean vsInferred = true;
 		private double z1p0 = Double.NaN;
 		private double z2p5 = Double.NaN;
+
+		private Builder() {}
 
 		/** The name of the {@code Site}. */
 		public Builder name(String name) {
@@ -252,7 +255,7 @@ public class Site implements Named {
 	 * any JSON, the default will be used.
 	 */
 
-	static class Deserializer implements JsonDeserializer<Site> {
+	static final class Deserializer implements JsonDeserializer<Site> {
 
 		@Override
 		public Site deserialize(
