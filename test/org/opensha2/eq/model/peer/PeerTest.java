@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Site;
+import org.opensha2.calc.Sites;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
 import org.opensha2.mfd.Mfds;
@@ -34,7 +35,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.primitives.Doubles;
 
 @SuppressWarnings("javadoc")
-// @RunWith(Parameterized.class)
 public class PeerTest {
 
 	public static final String S1_C1 = "Set1-Case1";
@@ -82,30 +82,20 @@ public class PeerTest {
 	public static final String S2_C4B_F = "Set2-Case4b-fast";
 	public static final String S2_C5A = "Set2-Case5a";
 	public static final String S2_C5B = "Set2-Case5b";
-	
+
 	public static final String S3_C1A = "Set3-Case1a";
 	public static final String S3_C1B = "Set3-Case1a";
 	public static final String S3_C2 = "Set3-Case2";
 	public static final String S3_C3 = "Set3-Case3";
 	public static final String S3_C4 = "Set3-Case4";
 
-
-	// private static final Path PEER_DIR = Paths.get("etc", "peer");
-	private static final Path PEER_DIR = Paths.get("..", "nshmp-model-dev", "models", "PEER");
+	private static final Path PEER_DIR = Paths.get("etc", "peer");
+	// private static final Path PEER_DIR = Paths.get("..", "nshmp-model-dev",
+	// "models", "PEER");
 	private static final Path MODEL_DIR = PEER_DIR.resolve("models");
 	private static final Path RESULT_DIR = PEER_DIR.resolve("results");
 
-	/*
-	 * Each models specifies the sites and periods of interest in its config For
-	 * each model:
-	 * 
-	 * Load model Parameterize sites Load result -pair site name in result
-	 * 
-	 * 
-	 * (fast and slow variants)
-	 */
-
-	private String modelName; // just used to improve test name
+	private String modelName; // just used to improve test name when running
 	private HazardModel model;
 	private Site site;
 	private double[] expected;
@@ -125,16 +115,15 @@ public class PeerTest {
 		this.tolerance = tolerance;
 	}
 
-	@Test public void test() {
+	@Test
+	public void test() {
 		System.out.println(site.name);
-		Hazard result = HazardCalc.calc(model, model.config(), site,
-			Optional.<Executor> absent());
+		Hazard result = HazardCalc.calc(model, model.config(), site, Optional.<Executor> absent());
 		// compute y-values converting to Poiss prob
 		double[] actual = Doubles.toArray(
 			FluentIterable.from(result.curves().get(Imt.PGA).yValues())
 				.transform(Mfds.rateToProbConverter())
-				.toList()
-			);
+				.toList());
 		checkArgument(actual.length == expected.length);
 
 		assertArrayEquals(expected, actual, tolerance);
@@ -154,21 +143,18 @@ public class PeerTest {
 		Map<String, double[]> expectedsMap = loadExpecteds(modelId);
 		HazardModel model = HazardModel.load(MODEL_DIR.resolve(modelId));
 		CalcConfig config = model.config();
+		Iterable<Site> sites = Sites.fromCsv(MODEL_DIR.resolve(modelId).resolve("sites.csv"));
 
 		// ensure that only PGA is being used
 		checkState(config.imts().size() == 1);
 		checkState(config.imts().iterator().next() == Imt.PGA);
 
 		List<Object[]> argsList = new ArrayList<>();
-		for (Site site : config.sites()) {
+		for (Site site : sites) {
 			checkState(expectedsMap.containsKey(site.name()));
-			Object[] args = new Object[] {
-				model.name(),
-				model,
-				site,
-				expectedsMap.get(site.name()),
-				tolerance
-			};
+			Object[] args =
+				new Object[] { model.name(), model, site, expectedsMap.get(site.name()), tolerance
+				};
 			argsList.add(args);
 		}
 		return argsList;

@@ -1,0 +1,2 @@
+name, lon, lat, vs30, vsInf, z1p0, z2p5
+PEER S2-Fault5-Site1, -65.009, 0.0, 760.0, false, 0.048, 0.607
