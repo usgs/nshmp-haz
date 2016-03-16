@@ -154,9 +154,9 @@ public final class Sites {
 
 	/**
 	 * Create an unmodifiable singleton {@code Iterable<Site>} from the supplied
-	 * string. String is extpected to be quoted and have the form:
+	 * string. String is expected to have the form:
 	 * 
-	 * <p>{@code "name, lon, lat[, vs30, vsInf[, z1p0, z2p5]]"}
+	 * <p>{@code "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]"}
 	 * 
 	 * <p>Although the latter 4 fields are optional, if {@code vs30} is defined,
 	 * so too must {@code vsInf}. Likewise, if {@code z1p0} is defined, so too
@@ -165,8 +165,7 @@ public final class Sites {
 	 * @param s String to parse
 	 */
 	public static Iterable<Site> fromString(String s) {
-		checkArgument(s.startsWith("\"") && s.endsWith("\""), "Supplied string is not quoted");
-		List<String> values = splitToList(trimEnds(s), Delimiter.COMMA);
+		List<String> values = splitToList(s, Delimiter.COMMA);
 		Builder b = Site.builder();
 		checkArgument(
 			values.size() > 2,
@@ -275,10 +274,10 @@ public final class Sites {
 	 * feature array will be strictly of type:Point or type:Polygon. Polygon
 	 * feature arrays are assumed to have only 1 or 2 elements. In the event
 	 * that there are 2, the first one is expected to have id:CLIP, define four
-	 * corners, and be rectangular (in a mercator project) with edges parallel
-	 * to lines of latitude and longitude. Polygon holes, if present are not
-	 * processed. Results are undefined for self-intersecting polygon coordinate
-	 * arrays.
+	 * corners, and be rectangular (in a mercator projection) with edges
+	 * parallel to lines of latitude and longitude. Polygon holes, if present
+	 * are not processed. Results are undefined for self-intersecting polygon
+	 * coordinate arrays.
 	 */
 	private static final class Deserializer implements JsonDeserializer<SiteIterable> {
 

@@ -1,14 +1,9 @@
 package org.opensha2.programs;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Runtime.getRuntime;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.util.TextUtils.NEWLINE;
-import static org.opensha2.util.TextUtils.format;
-
-import static org.opensha2.util.Parsing.*;
 
 import java.io.IOException;
 import java.nio.file.OpenOption;
@@ -27,26 +22,18 @@ import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
 import org.opensha2.calc.Site;
-import org.opensha2.calc.Site.Builder;
 import org.opensha2.calc.Sites;
 import org.opensha2.eq.model.HazardModel;
-import org.opensha2.gmm.Imt;
 import org.opensha2.util.Logging;
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Optional;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 
 /**
- * Entry point for computing probabilisitic seismic hazard at a {@link Site}
- * from a {@link HazardModel}. The main method of this class outputs mean hazard
- * curves for the model and {@link Imt}s specified per the calculation
- * configuration. For more detailed results, consider programmatically using
- * the @ calc()} method of this class.
+ * Compute probabilisitic seismic hazard at a {@link Site} from a
+ * {@link HazardModel}.
  * 
  * @author Peter Powers
  */
@@ -58,27 +45,23 @@ public class HazardCalc {
 	/**
 	 * Entry point for a hazard calculation.
 	 * 
-	 * <p>Computing hazard curves requires at least 1, and at most 3, arguments.
-	 * At a minimum, the path to a model zip file or directory must be
-	 * specified. If only a model is supplied, model initialization and
-	 * calculation configuration settings are drawn from the config file that
-	 * must reside at the root of the model directory.</p>
+	 * <p>Computing hazard curves requires at least 2, and at most 3, arguments.
+	 * At a minimum, the path to a model zip file or directory and the site(s)
+	 * at which to perform calculations must be specified. Under the 2-argument
+	 * scenario, model initialization and calculation configuration settings are
+	 * drawn from the config file that <i>must</i> reside at the root of the
+	 * model directory. Sites may be defined as a string, a CSV file, or a
+	 * GeoJSON file.
 	 * 
-	 * <p>Alternatively, the path to a file with calculation configuration may
-	 * also be supplied. A configuration file, whether included with a model or
-	 * supplied independently, is assumed to contain the sites of interest for a
-	 * calculation. Any calculation settings in a supplied configuration file
-	 * will override those included with a model; model initialization settings
-	 * will be ignored and must be updated in the config file at the root of the
-	 * model to take effect.</p>
+	 * <p>To override any default or calculation configuration settings included
+	 * with the model, supply the path to another configuration file as a third
+	 * argument.
 	 * 
-	 * <p>For long lists of sites, it may be easier to supply a third argument:
-	 * the path to a comma-delimited file of site data. Please refer to the
-	 * nshmp-haz <a href="https://github.com/usgs/nshmp-haz/wiki">wiki</a> for
-	 * comprehensive descriptions of source models, configuration files, and
+	 * <p>Please refer to the nshmp-haz <a
+	 * href="https://github.com/usgs/nshmp-haz/wiki">wiki</a> for comprehensive
+	 * descriptions of source models, configuration files, site files, and
 	 * hazard calculations.</p>
 	 * 
-	 * @param args
 	 * @see <a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running">
 	 *      nshmp-haz wiki</a>
 	 * @see <a
@@ -91,7 +74,7 @@ public class HazardCalc {
 
 		Optional<String> status = run(args);
 		if (status.isPresent()) {
-			System.err.print(status);
+			System.err.print(status.get());
 			System.exit(1);
 		}
 		System.exit(0);
@@ -124,23 +107,9 @@ public class HazardCalc {
 			}
 			log.info(config.toString());
 
-			
 			Iterable<Site> sites = readSites(args[1]);
 			log.info("");
 			log.info("Sites:" + sites);
-			
-//			Iterable<Site> sites = config.sites();
-//			if (argCount > 2) {
-//				Path sitePath = Paths.get(args[2]);
-//				sites = Sites.fromCsv(sitePath);
-//				log.info("");
-//				StringBuilder sb = new StringBuilder()
-//					.append("Site config:")
-//					.append(format("resource")).append(sitePath)
-//					.append(format("(override) sites"))
-//					.append(sites);
-//				log.info(sb.toString());
-//			}
 
 			calc(model, config, sites, out, log);
 			log.info(PROGRAM + ": finished");
@@ -152,34 +121,33 @@ public class HazardCalc {
 				.append(PROGRAM + ": error").append(NEWLINE)
 				.append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
 				.append(NEWLINE)
-				.append(Throwables.getStackTraceAsString(e)).append(NEWLINE)
-				.append(NEWLINE)
+				.append(Throwables.getStackTraceAsString(e))
 				.append(USAGE);
 			return Optional.of(sb.toString());
 		}
 	}
 
-	private static Iterable<Site> readSites(String arg) throws IOException {
-		if (arg.startsWith("\"")) {
+	static Iterable<Site> readSites(String arg) {
+		try {
+			if (arg.toLowerCase().endsWith(".csv")) {
+				return Sites.fromCsv(Paths.get(arg));
+			}
+			if (arg.toLowerCase().endsWith(".geojson")) {
+				return Sites.fromJson(Paths.get(arg));
+			}
 			return Sites.fromString(arg);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+				"Sites [" + arg + "] must either be a 3 to 7 argument, comma-delimited string " +
+					"or specify a path to a *.csv or *.geojson file", e);
 		}
-		Path sitePath = Paths.get(arg);
-		if (arg.toLowerCase().endsWith(".csv")) {
-			return Sites.fromCsv(sitePath);
-		}
-		if (arg.toLowerCase().endsWith(".geojson")) {
-			return Sites.fromJson(sitePath);
-		}
-		throw new IllegalArgumentException(
-			"Sites argument [" + arg + "] must either be a quoted string" +
-			"or specify a path to a *.csv or *.geojson file");
 	}
 
 	private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
 	private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
 
 	/*
-	 * Compute hazard curves using the supplied model, config, and site files.
+	 * Compute hazard curves using the supplied model, config, and sites.
 	 */
 	private static void calc(
 			HazardModel model,
@@ -202,7 +170,6 @@ public class HazardCalc {
 		for (Site site : sites) {
 			Hazard result = calc(model, config, site, executor);
 			results.add(result);
-
 			if (results.size() == FLUSH_LIMIT) {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
@@ -212,7 +179,6 @@ public class HazardCalc {
 				results.clear();
 				batchWatch.reset().start();
 			}
-
 			count++;
 		}
 		// write final batch
@@ -249,7 +215,8 @@ public class HazardCalc {
 
 		try {
 			Hazard result = Calcs.hazard(model, config, site, execLocal);
-			if (executor.isPresent()) ((ExecutorService) executor).shutdown();
+			// Shut down the locally created executor if none was supplied
+			if (!executor.isPresent()) ((ExecutorService) execLocal.get()).shutdown();
 			return result;
 		} catch (ExecutionException | InterruptedException e) {
 			Throwables.propagate(e);
@@ -266,9 +233,10 @@ public class HazardCalc {
 		"java -cp nshmp-haz.jar org.opensha2.programs.HazardCalc model sites [config]";
 	private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
 	private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
-	private static final String SITE_STRING = "\"name, lon, lat[, vs30, vsInf[, z1p0, z2p5]]\"";
+	private static final String SITE_STRING = "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]";
 
 	private static final String USAGE = new StringBuilder()
+		.append(NEWLINE)
 		.append(PROGRAM).append(" usage:").append(NEWLINE)
 		.append("  ").append(USAGE_COMMAND).append(NEWLINE)
 		.append(NEWLINE)
@@ -277,9 +245,11 @@ public class HazardCalc {
 		.append(NEWLINE)
 		.append("  'sites' is either:")
 		.append(NEWLINE)
-		.append("     - a quoted string, e.g. ").append(SITE_STRING)
+		.append("     - a string, e.g. ").append(SITE_STRING)
 		.append(NEWLINE)
 		.append("       (site class and basin terms are optional)")
+		.append(NEWLINE)
+		.append("       (escape any spaces or enclose string in double-quotes)")
 		.append(NEWLINE)
 		.append("     - or a *.csv file or *.geojson file of site data")
 		.append(NEWLINE)
@@ -289,5 +259,6 @@ public class HazardCalc {
 		.append("For more information, see:").append(NEWLINE)
 		.append("  ").append(USAGE_URL1).append(NEWLINE)
 		.append("  ").append(USAGE_URL2).append(NEWLINE)
+		.append(NEWLINE)
 		.toString();
 }

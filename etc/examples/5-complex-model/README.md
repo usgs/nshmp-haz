@@ -14,15 +14,15 @@ git clone https://github.com/usgs/nshmp-model-cous-2008.git ../../../nshmp-model
 The 2008 NSHM repository contains two source models: one for the western U.S. and a one for the central and eastern U.S. To compute hazard for a few sites in the Western U.S., execute:
 
 ```Shell
-hazard ../../../nshmp-model-cous-2008/Western\ US 5-complex-model/sites.geojson
+hazard ../../../nshmp-model-cous-2008/Western\ US 5-complex-model/sites.geojson 5-complex-model/config.json
 ```
 
 Note that more complex models take longer to initialize, although this only occurs once per calculation, and make for longer, per-site calculations. However, `HazardCalc` will automatically use all cores available and therefore performs better on multi-core systems. To compute a small, low-resolution map for the central San Francisco bay area, execute:
 
 ```Shell
-hazard ../../../nshmp-model-cous-2008/Western\ US 5-complex-model/map.geojson
+hazard ../../../nshmp-model-cous-2008/Western\ US 5-complex-model/map.geojson 5-complex-model/config.json
 ```
 
-This computes 121 curves over a 2° by 2° area and will give you a sense of how long a larger map might take. These results overwrite those of the prior site-specific calculation.
+This computes 121 curves over a 2° by 2° area and will give you a sense of how long a larger map might take. These results overwrite those of the prior site-specific calculation. For this example we only compute curves at 1.0 and 2.0 second spectral periods.
 
 #### Next: [Example 6 – Enhanced output](../6-enhanced-output)
