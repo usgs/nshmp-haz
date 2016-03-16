@@ -467,6 +467,28 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-105.0, 39.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Denver CO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.55, 38.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "La Junta CO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-108.95, 38.4]
       },
       "properties": {
@@ -483,6 +505,17 @@
       "properties": {
         "marker-size": "small",
         "title": "Rangely CO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.5, 37.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Trinidad CO"
       }
     },
     {
@@ -703,6 +736,17 @@
       "properties": {
         "marker-size": "small",
         "title": "Casper WY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.8, 41.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cheyenne WY"
       }
     },
     {
@@ -956,6 +1000,50 @@
       "properties": {
         "marker-size": "small",
         "title": "Yakima WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.85, 43.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Edgemont SD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-101.85, 35.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Amarillo TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.1, 31.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Kermit TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-100.9, 32.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Snyder TX"
       }
     }
   ]
