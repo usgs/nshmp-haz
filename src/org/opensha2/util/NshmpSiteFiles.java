@@ -202,6 +202,8 @@ final class NshmpSiteFiles {
 		writeSites("nshmp", EnumSet.allOf(NshmpSite.class));
 		writeSites("ceus", NshmpSite.ceus());
 		writeSites("wus", NshmpSite.wus());
+		writeSites("nehrp", NshmpSite.nehrp());
+		writeSites("nrc", NshmpSite.nrc());
 	}
 
 	static void writeSites(String name, Collection<? extends NamedLocation> sites)
@@ -254,21 +256,4 @@ final class NshmpSiteFiles {
 		Files.write(out, json.getBytes(StandardCharsets.UTF_8));
 	}
 	
-//	private static void writeJsonSites(Path out, Collection<? extends NamedLocation> sites)
-//			throws IOException {
-//
-//		List<Feature> features = new ArrayList<>(sites.size());
-//		for (NamedLocation loc : sites) {
-//			features.add(createPoint(loc));
-//		}
-//		FeatureCollection fc = new FeatureCollection();
-//		fc.features = features;
-//		String json = cleanPoints(GSON.toJson(fc));
-//		Files.write(out, json.getBytes(StandardCharsets.UTF_8));
-//	}
-
-
-	/* GeoJSON objects */
-
-
 }
