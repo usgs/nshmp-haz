@@ -277,7 +277,8 @@ public final class Sites {
 	 * that there are 2, the first one is expected to have id:CLIP, define four
 	 * corners, and be rectangular (in a mercator project) with edges parallel
 	 * to lines of latitude and longitude. Polygon holes, if present are not
-	 * processed.
+	 * processed. Results are undefined for self-intersecting polygon coordinate
+	 * arrays.
 	 */
 	private static final class Deserializer implements JsonDeserializer<SiteIterable> {
 

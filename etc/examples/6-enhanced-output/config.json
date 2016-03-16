@@ -1,21 +1,3 @@
 {
-  "hazardFormat": "DETAILED",
-  "sites": [
-    {
-    "name": "Los Angeles",
-    "location": [-118.25, 34.05]
-    },
-    {
-    "name": "San Francisco",
-    "location": [-122.40, 37.75]
-    },
-    {
-    "name": "Seattle",
-    "location": [-122.30, 47.60]
-    },
-    {
-    "name": "Salt Lake City",
-    "location": [-111.90, 40.75]
-    }
-  ]
+  "hazardFormat": "DETAILED"
 }

@@ -1,0 +1,90 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.00, 37.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "Concord CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.25, 37.80]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "Oakland CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.40, 37.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "San Francisco CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.90, 37.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "San Jose CA"
+      }
+    },
+     {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.30, 37.55]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "San Mateo CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.70, 38.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "Santa Rosa CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.25, 38.10]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "Vallejo CA"
+      }
+    }
+  ]
+}
+
