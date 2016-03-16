@@ -163,9 +163,12 @@ public class Site implements Named {
 
 		private Builder() {}
 
-		/** The name of the {@code Site}. */
+		/**
+		 * The name of the {@code Site}. Prior to setting, the supplied name is
+		 * stripped of commas and truncated at 72 characters.
+		 */
 		public Builder name(String name) {
-			this.name = checkNotNull(name);
+			this.name = cleanName(checkNotNull(name));
 			return this;
 		}
 
@@ -224,6 +227,10 @@ public class Site implements Named {
 			return new Site(name, location, vs30, vsInferred, z1p0, z2p5);
 		}
 
+	}
+
+	private static String cleanName(String name) {
+		return name.replaceAll(",", "").substring(0, 72);
 	}
 
 	/* Json and csv serialization keys */
