@@ -5,9 +5,10 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.opensha2.data.XySequence.create;
+import static org.opensha2.data.XySequence.immutableCopyOf;
 import static org.opensha2.util.TextUtils.format;
 import static org.opensha2.util.TextUtils.wrap;
-import static org.opensha2.data.XySequence.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -25,7 +26,6 @@ import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
 import org.opensha2.util.Parsing;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -48,20 +48,15 @@ public final class CalcConfig {
 	private final Map<Imt, double[]> customImls;
 	private final boolean optimizeGrids;
 	private final boolean gmmUncertainty;
-	
+
 	private final HazardFormat hazardFormat;
 
 	private final DeaggData deagg;
 
-	private final SiteSet sites;
-
 	private final Map<Imt, XySequence> modelCurves;
 	private final Map<Imt, XySequence> logModelCurves;
 
-	private static final Gson GSON = new GsonBuilder()
-		.registerTypeAdapter(Site.class, new Site.Deserializer())
-		.registerTypeAdapter(SiteSet.class, new SiteSet.Deserializer())
-		.create();
+	private static final Gson GSON = new GsonBuilder().create();
 
 	private CalcConfig(
 			Path resource,
@@ -74,7 +69,6 @@ public final class CalcConfig {
 			boolean gmmUncertainty,
 			HazardFormat hazardFormat,
 			DeaggData deagg,
-			SiteSet sites,
 			Map<Imt, XySequence> modelCurves,
 			Map<Imt, XySequence> logModelCurves) {
 
@@ -88,7 +82,6 @@ public final class CalcConfig {
 		this.gmmUncertainty = gmmUncertainty;
 		this.hazardFormat = hazardFormat;
 		this.deagg = deagg;
-		this.sites = sites;
 		this.modelCurves = modelCurves;
 		this.logModelCurves = logModelCurves;
 	}
@@ -103,8 +96,7 @@ public final class CalcConfig {
 		GMM_UNCERTAINTY,
 		HAZARD_FORMAT,
 		OPTIMIZE_GRIDS,
-		DEAGG,
-		SITES;
+		DEAGG;
 
 		private String label;
 
@@ -112,12 +104,14 @@ public final class CalcConfig {
 			this.label = UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
 		}
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			return label;
 		}
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		String customImlStr = "";
 		if (!customImls.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
@@ -150,7 +144,6 @@ public final class CalcConfig {
 			.append("min=").append(deagg.εMin).append(", ")
 			.append("max=").append(deagg.εMax).append(", ")
 			.append("Δ=").append(deagg.Δε)
-			.append(format(Key.SITES)).append(sites)
 			.toString();
 	}
 
@@ -194,19 +187,12 @@ public final class CalcConfig {
 	public HazardFormat hazardFormat() {
 		return hazardFormat;
 	}
+
 	/**
 	 * Deaggregation configuration data.
 	 */
 	public DeaggData deagg() {
 		return deagg;
-	}
-
-	/**
-	 * An unmodifiable iterator over the {@code Site}s at which hazard should be
-	 * calculated.
-	 */
-	public Iterable<Site> sites() {
-		return sites;
 	}
 
 	/**
@@ -294,8 +280,6 @@ public final class CalcConfig {
 		private static final String ID = "CalcConfig.Builder";
 		private boolean built = false;
 
-		// TODO should resource be Optional; if created with defaults
-		// there will be no path
 		private Path resource;
 		private ExceedanceModel exceedanceModel;
 		private Double truncationLevel;
@@ -306,7 +290,8 @@ public final class CalcConfig {
 		private Boolean gmmUncertainty;
 		private HazardFormat hazardFormat;
 		private DeaggData deagg;
-		private SiteSet sites;
+
+		private Builder() {}
 
 		/**
 		 * Initialize a new builder with a copy of that supplied.
@@ -323,7 +308,6 @@ public final class CalcConfig {
 			this.gmmUncertainty = config.gmmUncertainty;
 			this.hazardFormat = config.hazardFormat;
 			this.deagg = config.deagg;
-			this.sites = config.sites;
 			return this;
 		}
 
@@ -336,14 +320,13 @@ public final class CalcConfig {
 			this.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
 			// Slightly modified version of NSHM 5Hz curve, size = 20
 			this.defaultImls = new double[] { 0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253,
-				0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46,
-				2.19, 3.28, 4.92, 7.38 };
+					0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19,
+					3.28, 4.92, 7.38 };
 			this.customImls = Maps.newHashMap();
 			this.optimizeGrids = true;
 			this.gmmUncertainty = false;
 			this.hazardFormat = HazardFormat.TOTAL;
 			this.deagg = new DeaggData();
-			this.sites = new SiteSet(Lists.newArrayList(Site.builder().build()));
 			return this;
 		}
 
@@ -363,7 +346,6 @@ public final class CalcConfig {
 			if (that.gmmUncertainty != null) this.gmmUncertainty = that.gmmUncertainty;
 			if (that.hazardFormat != null) this.hazardFormat = that.hazardFormat;
 			if (that.deagg != null) this.deagg = that.deagg;
-			if (that.sites != null) this.sites = that.sites;
 			return this;
 		}
 
@@ -413,7 +395,6 @@ public final class CalcConfig {
 			checkNotNull(gmmUncertainty, MSSG, buildId, Key.GMM_UNCERTAINTY);
 			checkNotNull(hazardFormat, MSSG, buildId, Key.HAZARD_FORMAT);
 			checkNotNull(deagg, MSSG, buildId, Key.DEAGG);
-			checkNotNull(sites, MSSG, buildId, Key.SITES);
 			built = true;
 		}
 
@@ -436,10 +417,9 @@ public final class CalcConfig {
 				gmmUncertainty,
 				hazardFormat,
 				deagg,
-				sites,
-				curves, logCurves);
+				curves,
+				logCurves);
 		}
-
 	}
 
 }

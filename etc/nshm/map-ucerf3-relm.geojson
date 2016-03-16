@@ -26,6 +26,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "UCERF3 Development – RELM Testing Region"
       }
     }

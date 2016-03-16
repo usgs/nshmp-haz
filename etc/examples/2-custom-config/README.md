@@ -6,7 +6,7 @@ __Working directory:__ `/path/to/nshmp-haz/etc/examples`
 Navigate up one level to the `examples/` directory and execute the following:
 
 ```Shell
-hazard ../peer/models/Set1-Case1 2-custom-config/config.json
+hazard ../peer/models/Set1-Case1 "San Francisco,-122.40,37.75" 2-custom-config/config.json
 ```
 
 In this example we've overridden the configuration supplied by the model. Specifically:

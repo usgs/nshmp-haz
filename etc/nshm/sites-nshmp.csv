@@ -41,8 +41,11 @@ Grand Canyon Village AZ,     -112.15,  36.05
 Palo Verde AZ,               -112.85,  33.40
 Phoenix AZ,                  -112.10,  33.45
 Tucson AZ,                   -110.95,  32.20
+Denver CO,                   -105.00,  39.75
+La Junta CO,                 -103.55,  38.00
 Paradox CO,                  -108.95,  38.40
 Rangely CO,                  -108.80,  40.10
+Trinidad CO,                 -104.50,  37.20
 Boise ID,                    -116.20,  43.60
 Idaho National Lab ID,       -112.85,  43.60
 Lima MT,                     -112.60,  44.65
@@ -63,6 +66,7 @@ Green River UT,              -110.15,  39.00
 Provo UT,                    -111.65,  40.25
 Salt Lake City UT,           -111.90,  40.75
 Casper WY,                   -106.30,  42.85
+Cheyenne WY,                 -104.80,  41.15
 Jackson WY,                  -110.75,  43.50
 Yellowstone WY,              -110.55,  44.40
 Astoria OR,                  -123.85,  46.20
@@ -92,9 +96,6 @@ Birmingham AL,                -86.80,  33.50
 El Dorado AR,                 -92.70,  33.20
 Greenbrier AR,                -92.40,  35.20
 Little Rock AR,               -92.30,  34.75
-Denver CO,                   -105.00,  39.75
-La Junta CO,                 -103.55,  38.00
-Trinidad CO,                 -104.50,  37.20
 Hartford CT,                  -72.70,  41.75
 Wilmington DE,                -75.55,  39.75
 Jacksonville FL,              -81.65,  30.35
@@ -155,4 +156,3 @@ Burlington VT,                -73.20,  44.50
 Richmond VA,                  -77.45,  37.55
 Charleston WV,                -81.65,  38.35
 Milwaukee WI,                 -87.90,  43.05
-Cheyenne WY,                 -104.80,  41.15

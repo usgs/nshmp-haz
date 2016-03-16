@@ -43,7 +43,7 @@ public final class Bounds {
 	}
 
 	/**
-	 * Return this {@code Bounds} as a {@code LocationList} of four vertices,
+	 * Return this {@code Bounds} as a {@code LocationList} of five vertices,
 	 * starting with {@link #min()} and winding counter-clockwise.
 	 */
 	public LocationList toList() {
@@ -51,7 +51,8 @@ public final class Bounds {
 			min,
 			Location.create(min.lat(), max.lon()),
 			max,
-			Location.create(max.lat(), min.lon()));
+			Location.create(max.lat(), min.lon()),
+			min);
 	}
 
 	/**

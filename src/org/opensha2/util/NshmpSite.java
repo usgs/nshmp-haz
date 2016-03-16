@@ -1,10 +1,13 @@
 package org.opensha2.util;
 
 import java.util.EnumSet;
-import java.util.Set;
 
 import org.opensha2.calc.NamedLocation;
 import org.opensha2.geo.Location;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Locations that are used for NSHMP hazard comparisons.
@@ -14,6 +17,12 @@ import org.opensha2.geo.Location;
  */
 @SuppressWarnings("javadoc")
 public enum NshmpSite implements NamedLocation {
+
+	/*
+	 * Items are organized broadly by state and states are grouped as belonging
+	 * either to northern or southern Caligornia, the intermountain west, the
+	 * Pacific northwest, of the central and eastern US.
+	 */
 
 	/* Northern CA */
 	BIG_SUR_CA(-121.75, 36.25),
@@ -63,8 +72,11 @@ public enum NshmpSite implements NamedLocation {
 	PHOENIX_AZ(-112.10, 33.45),
 	TUCSON_AZ(-110.95, 32.20),
 
+	DENVER_CO(-105.00, 39.75),
+	LA_JUNTA_CO(-103.55, 38.00),
 	PARADOX_CO(-108.95, 38.40),
 	RANGELY_CO(-108.80, 40.10),
+	TRINIDAD_CO(-104.50, 37.20),
 
 	BOISE_ID(-116.20, 43.60),
 	IDAHO_NATIONAL_LAB_ID(-112.85, 43.60),
@@ -91,6 +103,7 @@ public enum NshmpSite implements NamedLocation {
 	SALT_LAKE_CITY_UT(-111.90, 40.75),
 
 	CASPER_WY(-106.30, 42.85),
+	CHEYENNE_WY(-104.80, 41.15),
 	JACKSON_WY(-110.75, 43.50),
 	YELLOWSTONE_WY(-110.55, 44.40),
 
@@ -125,9 +138,6 @@ public enum NshmpSite implements NamedLocation {
 	EL_DORADO_AR(-92.70, 33.20),
 	GREENBRIER_AR(-92.40, 35.20),
 	LITTLE_ROCK_AR(-92.30, 34.75),
-	DENVER_CO(-105.00, 39.75),
-	LA_JUNTA_CO(-103.55, 38.00),
-	TRINIDAD_CO(-104.50, 37.20),
 	HARTFORD_CT(-72.70, 41.75),
 	WILMINGTON_DE(-75.55, 39.75),
 	JACKSONVILLE_FL(-81.65, 30.35),
@@ -187,8 +197,7 @@ public enum NshmpSite implements NamedLocation {
 	BURLINGTON_VT(-73.20, 44.50),
 	RICHMOND_VA(-77.45, 37.55),
 	CHARLESTON_WV(-81.65, 38.35),
-	MILWAUKEE_WI(-87.90, 43.05),
-	CHEYENNE_WY(-104.80, 41.15);
+	MILWAUKEE_WI(-87.90, 43.05);
 
 	private final Location loc;
 	private final UsRegion state;
@@ -214,23 +223,39 @@ public enum NshmpSite implements NamedLocation {
 
 	@Override
 	public String toString() {
-		String label = Parsing.enumLabelWithSpaces(this);
+		String label = Parsing.enumLabelWithSpaces(this, true);
 		int stripIndex = label.lastIndexOf(' ');
 		return label.substring(0, stripIndex) + " " + state.name();
 	}
 
 	/**
-	 * The set of sites used to test the Central &amp; Eastern US NSHM.
+	 * The set of sites used to test the Central &amp; Eastern US NSHM. This
+	 * includes all NSHMP sites east of -115.0°.
 	 */
 	public static EnumSet<NshmpSite> ceus() {
-		return EnumSet.range(WASHINGTON_DC, CHEYENNE_WY);
+		return Sets.newEnumSet(Iterables.filter(
+			EnumSet.allOf(NshmpSite.class),
+			new Predicate<NshmpSite>() {
+				@Override
+				public boolean apply(NshmpSite site) {
+					return site.loc.lon() >= -115.0;
+				}
+			}), NshmpSite.class);
 	}
 
 	/**
-	 * The set of sites used to test the Western US NSHM.
+	 * The set of sites used to test the Western US NSHM. This includes all
+	 * NSHMP sites west of -100.0°.
 	 */
 	public static EnumSet<NshmpSite> wus() {
-		return EnumSet.range(BIG_SUR_CA, YAKIMA_WA);
+		return Sets.newEnumSet(Iterables.filter(
+			EnumSet.allOf(NshmpSite.class),
+			new Predicate<NshmpSite>() {
+				@Override
+				public boolean apply(NshmpSite site) {
+					return site.loc.lon() <= -100.0;
+				}
+			}), NshmpSite.class);
 	}
 
 	/**
@@ -248,6 +273,20 @@ public enum NshmpSite implements NamedLocation {
 	}
 
 	/**
+	 * A restricted set of CEUS sites that is clipped at -105.5°.
+	 */
+	public static EnumSet<NshmpSite> nrc() {
+		return Sets.newEnumSet(Iterables.filter(
+			EnumSet.allOf(NshmpSite.class),
+			new Predicate<NshmpSite>() {
+				@Override
+				public boolean apply(NshmpSite site) {
+					return site.loc.lon() >= -105.5;
+				}
+			}), NshmpSite.class);
+	}
+
+	/**
 	 * The set of sites corresponding to the NEHRP test cities.
 	 * 
 	 * <p>This is a list of 34 city sites in the United States with high seismic
@@ -255,7 +294,7 @@ public enum NshmpSite implements NamedLocation {
 	 * href="http://www.fema.gov/library/viewRecord.do?id=4103"
 	 * target=_blank">NEHRP Recommended Seismic Provisions</a>.
 	 */
-	public static EnumSet<NshmpSite> nehrpTestCities() {
+	public static EnumSet<NshmpSite> nehrp() {
 		return EnumSet.of(
 			// SoCal
 			LOS_ANGELES_CA,

@@ -83,6 +83,7 @@ public class Region implements Named {
 	// TODO allow Regions spanning the Int'l date line via Locations that
 	// can be in the range -180 to 360
 	// TODO is this equalsRegion() really necessary as public
+	// TODO need to mention results are undefined for self-intersecting regions
 
 	// although border vertices can be accessed by path-iterating over
 	// area, an immutable list is stored for convenience

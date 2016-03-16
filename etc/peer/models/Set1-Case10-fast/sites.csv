@@ -1,0 +1,5 @@
+name, lon, lat
+PEER S1-Area-Site1, -122.0, 38.0
+PEER S1-Area-Site2, -122.0, 37.550
+PEER S1-Area-Site3, -122.0, 37.099
+PEER S1-Area-Site4, -122.0, 36.874

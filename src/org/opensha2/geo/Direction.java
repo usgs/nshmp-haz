@@ -29,7 +29,7 @@ enum Direction {
 
 	@Override
 	public final String toString() {
-		return Parsing.enumLabelWithSpaces(this);
+		return Parsing.enumLabelWithSpaces(this, true);
 	}
 
 	/**

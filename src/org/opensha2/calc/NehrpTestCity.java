@@ -130,7 +130,7 @@ public enum NehrpTestCity implements NamedLocation {
 	}
 
 	@Override public String toString() {
-		return Parsing.enumLabelWithSpaces(this);
+		return Parsing.enumLabelWithSpaces(this, true);
 	}
 	
 	@Override public String id() {

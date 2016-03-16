@@ -1,17 +1,5 @@
 {
   "exceedanceModel": "TRUNCATION_UPPER_ONLY",
   "truncationLevel": 3.0,
-  "imts": ["PGA", "SA0P2", "SA1P0"],
-  "sites": {  
-    "region": {
-      "name": "Bay Area",
-      "spacing": 0.1,
-      "border": [  
-        [-123.0, 37.0],
-        [-121.0, 39.0]
-      ],
-      "vs30": 760,
-      "vsInf": true
-    }
-  }
+  "imts": ["PGA", "SA0P2", "SA1P0"]
 }

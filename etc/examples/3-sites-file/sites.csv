@@ -1,24 +1,8 @@
-#
-# Comma-delimited site file example.
-#
-# Header row must identify columns. At a minimum, lon and lat
-# must be defined. Columns can be in any order and any missing
-# fields will be populated with default values. 
-#
-# [name,] lon, lat [, vs30] [, vsInf] [, z1p0] [, z2p5]
-#
-# Defaults:
-#     name: Unnamed Site
-#     vs30: 760.0
-#    vsInf: true
-#     z1p0: NaN (GMM will use default basin depth model)
-#     z2p5: NaN (GMM will use default basin depth model)
-#
-name, lon, lat
-Concord,       -122.00, 37.95
-Oakland,       -122.25, 37.80
-San Francisco, -122.40, 37.75
-San Jose,      -121.90, 37.35
-San Mateo,     -122.30, 37.55
-Santa Rosa,    -122.70, 38.45
-Vallejo,       -122.25, 38.10
+name,                 lon,   lat
+Concord CA,       -122.00, 37.95
+Oakland CA,       -122.25, 37.80
+San Francisco CA, -122.40, 37.75
+San Jose CA,      -121.90, 37.35
+San Mateo CA,     -122.30, 37.55
+Santa Rosa CA,    -122.70, 38.45
+Vallejo CA,       -122.25, 38.10

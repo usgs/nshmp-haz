@@ -25,7 +25,7 @@ public enum TectonicSetting {
 
 	@Override
 	public String toString() {
-		return Parsing.enumLabelWithSpaces(this);
+		return Parsing.enumLabelWithSpaces(this, true);
 	}
 	
 }

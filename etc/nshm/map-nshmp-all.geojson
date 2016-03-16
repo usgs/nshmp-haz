@@ -14,6 +14,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "Los Angeles Basin – WGCEP 2007"
       }
     },
@@ -30,6 +31,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "San Francisco Bay Area – WGCEP 2002"
       }
     },
@@ -46,6 +48,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "Wasatch Front – WGUEP 2013"
       }
     },
@@ -62,6 +65,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "New Madrid Seismic Zone"
       }
     },
@@ -78,6 +82,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "Puget Lowland"
       }
     },
@@ -103,6 +108,7 @@
           ]]
       },
       "properties": {
+        "spacing": 0.1,
         "title": "UCERF3 Production – 2014 NSHM"
       }
     }

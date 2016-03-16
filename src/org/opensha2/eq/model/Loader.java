@@ -80,13 +80,12 @@ class Loader {
 		}
 
 		HazardModel.Builder builder = HazardModel.builder();
-		Path modelPath = checkNotNull(path, "Path is null");
 		List<Path> typePaths = null;
 
 		try {
 			
-			checkArgument(Files.exists(modelPath), "Path does not exist: %s", path);
-			Path typeDirPath = typeDirectory(modelPath);
+			checkArgument(Files.exists(path), "Specified model does not exist: %s", path);
+			Path typeDirPath = typeDirectory(path);
 
 			ModelConfig modelConfig = ModelConfig.builder(typeDirPath).build();
 			log.info(modelConfig.toString());
@@ -98,7 +97,7 @@ class Loader {
 			builder.config(calcConfig);
 
 			typePaths = typeDirectoryList(typeDirPath);
-			checkState(typePaths.size() > 0, "Empty model: %s", modelPath.getFileName());
+			checkState(typePaths.size() > 0, "Empty model: %s", path.getFileName());
 			builder.name(modelConfig.name);
 
 			for (Path typePath : typePaths) {

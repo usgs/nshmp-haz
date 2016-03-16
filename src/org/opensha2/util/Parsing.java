@@ -88,7 +88,8 @@ public final class Parsing {
 	 * @return a new immutable {@code Map<Enum, Double>} of identifiers and
 	 *         weights
 	 */
-	public static <T extends Enum<T>> Map<T, Double> stringToEnumWeightMap(String s, Class<T> type) {
+	public static <T extends Enum<T>> Map<T, Double> stringToEnumWeightMap(String s,
+			Class<T> type) {
 		Map<String, String> strMap = MAP_SPLIT.split(trimEnds(checkNotNull(s)));
 		EnumMap<T, Double> wtMap = Maps.newEnumMap(type);
 		Function<String, T> keyFunc = Enums.stringConverter(type);
@@ -405,7 +406,8 @@ public final class Parsing {
 	}
 
 	private static IllegalArgumentException createAttributeException(String name, String value) {
-		return new IllegalArgumentException("Unparseable attribute: " + name + "=\"" + value + "\"");
+		return new IllegalArgumentException(
+			"Unparseable attribute: " + name + "=\"" + value + "\"");
 	}
 
 	/**
@@ -527,7 +529,8 @@ public final class Parsing {
 	 * @param iterable to process
 	 * @param enumClass
 	 */
-	public static <E extends Enum<E>> String enumsToString(Iterable<E> iterable, Class<E> enumClass) {
+	public static <E extends Enum<E>> String enumsToString(Iterable<E> iterable,
+			Class<E> enumClass) {
 		return addBrackets(FluentIterable
 			.from(iterable)
 			.transform(Enums.stringConverter(enumClass).reverse())
@@ -539,9 +542,11 @@ public final class Parsing {
 	 * string.
 	 * 
 	 * @param e the {@code Enum} to generate label for
+	 * @param capitalize true if fist letter of each word should be capitalized;
+	 *        false if letters should all be lowercase
 	 */
-	public static String enumLabelWithSpaces(Enum<? extends Enum<?>> e) {
-		return join(splitEnum(e), Delimiter.SPACE);
+	public static String enumLabelWithSpaces(Enum<? extends Enum<?>> e, boolean capitalize) {
+		return join(splitEnum(e, capitalize), Delimiter.SPACE);
 	}
 
 	/**
@@ -549,17 +554,19 @@ public final class Parsing {
 	 * string.
 	 * 
 	 * @param e the {@code Enum} to generate label for
+	 * @param capitalize true if fist letter of each word should be capitalized;
+	 *        false if letters should all be lowercase
 	 */
-	public static String enumLabelWithDashes(Enum<? extends Enum<?>> e) {
-		return join(splitEnum(e), Delimiter.DASH);
+	public static String enumLabelWithDashes(Enum<? extends Enum<?>> e, boolean capitalize) {
+		return join(splitEnum(e, capitalize), Delimiter.DASH);
 	}
 
-	/* Splits and capitalizes an enum.name() */
-	private static List<String> splitEnum(Enum<? extends Enum<?>> e) {
+	/* Splits and possibly capitalizes an enum.name() */
+	private static List<String> splitEnum(Enum<? extends Enum<?>> e, boolean capitalize) {
 		Iterable<String> sources = split(e.name(), Delimiter.UNDERSCORE);
 		List<String> results = Lists.newArrayList();
 		for (String s : sources) {
-			results.add(capitalize(s));
+			results.add(capitalize ? capitalize(s) : s.toLowerCase());
 		}
 		return results;
 	}
@@ -700,7 +707,8 @@ public final class Parsing {
 	// writes 2-element int[]s as 'a:b' or just 'a' if a==b
 	private enum IntArrayToString implements Function<int[], String> {
 		INSTANCE;
-		@Override public String apply(int[] ints) {
+		@Override
+		public String apply(int[] ints) {
 			return (ints[0] == ints[1]) ? Integer.toString(ints[0]) : ints[0] + ":" + ints[1];
 		}
 	}
@@ -708,7 +716,8 @@ public final class Parsing {
 	// close complement of above, converts IntArrayToStrings to List<Integer>s
 	private enum StringToIntArray implements Function<String, int[]> {
 		INSTANCE;
-		@Override public int[] apply(String s) {
+		@Override
+		public int[] apply(String s) {
 			if (s.contains(":")) {
 				Iterator<Integer> rangeIt = Iterators.transform(
 					split(s, Delimiter.COLON).iterator(), Ints.stringConverter());
@@ -829,7 +838,7 @@ public final class Parsing {
 
 	/**
 	 * Returns a {@link Function} for converting {@code double}s to formatted
-	 * strings. If a value to format is 0.0, the format string is ignored in 
+	 * strings. If a value to format is 0.0, the format string is ignored in
 	 * favor of always printing the often more compact string: "0.0".
 	 * 
 	 * @param format a format string
@@ -846,7 +855,8 @@ public final class Parsing {
 			this.format = format;
 		}
 
-		@Override public String apply(Double value) {
+		@Override
+		public String apply(Double value) {
 			return (value == 0.0) ? "0.0" : String.format(format, value);
 		}
 	}
@@ -912,7 +922,8 @@ public final class Parsing {
 	 * @param bitSetSize
 	 * @throws IOException
 	 */
-	@Deprecated public static List<BitSet> readBinaryIntBitSets(InputStream in, int bitSetSize)
+	@Deprecated
+	public static List<BitSet> readBinaryIntBitSets(InputStream in, int bitSetSize)
 			throws IOException {
 		if (!(checkNotNull(in) instanceof BufferedInputStream)) {
 			in = new BufferedInputStream(in);

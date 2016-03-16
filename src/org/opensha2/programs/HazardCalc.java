@@ -4,7 +4,6 @@ import static java.lang.Runtime.getRuntime;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.util.TextUtils.NEWLINE;
-import static org.opensha2.util.TextUtils.format;
 
 import java.io.IOException;
 import java.nio.file.OpenOption;
@@ -23,8 +22,8 @@ import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
 import org.opensha2.calc.Site;
+import org.opensha2.calc.Sites;
 import org.opensha2.eq.model.HazardModel;
-import org.opensha2.gmm.Imt;
 import org.opensha2.util.Logging;
 
 import com.google.common.base.Optional;
@@ -33,42 +32,36 @@ import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 
 /**
- * Entry point for computing probabilisitic seismic hazard at a {@link Site}
- * from a {@link HazardModel}. The main method of this class outputs mean hazard
- * curves for the model and {@link Imt}s specified per the calculation
- * configuration. For more detailed results, consider programmatically using the @
- * calc()} method of this class.
+ * Compute probabilisitic seismic hazard at a {@link Site} from a
+ * {@link HazardModel}.
  * 
  * @author Peter Powers
  */
 public class HazardCalc {
 
+	// TODO move to config
 	private static final int FLUSH_LIMIT = 5;
 
 	/**
 	 * Entry point for a hazard calculation.
 	 * 
-	 * <p>Computing hazard curves requires at least 1, and at most 3, arguments.
-	 * At a minimum, the path to a model zip file or directory must be
-	 * specified. If only a model is supplied, model initialization and
-	 * calculation configuration settings are drawn from the config file that
-	 * must reside at the root of the model directory.</p>
+	 * <p>Computing hazard curves requires at least 2, and at most 3, arguments.
+	 * At a minimum, the path to a model zip file or directory and the site(s)
+	 * at which to perform calculations must be specified. Under the 2-argument
+	 * scenario, model initialization and calculation configuration settings are
+	 * drawn from the config file that <i>must</i> reside at the root of the
+	 * model directory. Sites may be defined as a string, a CSV file, or a
+	 * GeoJSON file.
 	 * 
-	 * <p>Alternatively, the path to a file with calculation configuration may
-	 * also be supplied. A configuration file, whether included with a model or
-	 * supplied independently, is assumed to contain the sites of interest for a
-	 * calculation. Any calculation settings in a supplied configuration file
-	 * will override those included with a model; model initialization settings
-	 * will be ignored and must be updated in the config file at the root of the
-	 * model to take effect.</p>
+	 * <p>To override any default or calculation configuration settings included
+	 * with the model, supply the path to another configuration file as a third
+	 * argument.
 	 * 
-	 * <p>For long lists of sites, it may be easier to supply a third argument:
-	 * the path to a comma-delimited file of site data. Please refer to the
-	 * nshmp-haz <a href="https://github.com/usgs/nshmp-haz/wiki">wiki</a> for
-	 * comprehensive descriptions of source models, configuration files, and
+	 * <p>Please refer to the nshmp-haz <a
+	 * href="https://github.com/usgs/nshmp-haz/wiki">wiki</a> for comprehensive
+	 * descriptions of source models, configuration files, site files, and
 	 * hazard calculations.</p>
 	 * 
-	 * @param args
 	 * @see <a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running">
 	 *      nshmp-haz wiki</a>
 	 * @see <a
@@ -79,34 +72,33 @@ public class HazardCalc {
 
 		/* Delegate to run which has a return value for testing. */
 
-		String status = run(args);
-		if (status != null) {
-			System.err.print(status);
+		Optional<String> status = run(args);
+		if (status.isPresent()) {
+			System.err.print(status.get());
 			System.exit(1);
 		}
 		System.exit(0);
 	}
 
-	static String run(String[] args) {
+	static Optional<String> run(String[] args) {
 		int argCount = args.length;
 
-		if (argCount < 1 || argCount > 3) {
-			return USAGE;
+		if (argCount < 2 || argCount > 3) {
+			return Optional.of(USAGE);
 		}
 
 		Logging.init();
 		Logger log = Logger.getLogger(HazardCalc.class.getName());
 
 		try {
-
-			log.info(PROGRAM + ": init...");
+			log.info(PROGRAM + ": initializing...");
 			Path modelPath = Paths.get(args[0]);
 			HazardModel model = HazardModel.load(modelPath);
 
 			CalcConfig config = model.config();
 			Path out = Paths.get(StandardSystemProperty.USER_DIR.value());
-			if (argCount > 1) {
-				Path userConfigPath = Paths.get(args[1]);
+			if (argCount == 3) {
+				Path userConfigPath = Paths.get(args[2]);
 				config = CalcConfig.builder()
 					.copy(model.config())
 					.extend(CalcConfig.builder(userConfigPath))
@@ -115,32 +107,39 @@ public class HazardCalc {
 			}
 			log.info(config.toString());
 
-			Iterable<Site> sites = config.sites();
-			if (argCount > 2) {
-				Path sitePath = Paths.get(args[2]);
-				sites = Site.fromCsv(sitePath);
-				log.info("");
-				StringBuilder sb = new StringBuilder()
-					.append("Site config:")
-					.append(format("resource")).append(sitePath)
-					.append(format("(override) sites"))
-					.append(sites);
-				log.info(sb.toString());
-			}
+			Iterable<Site> sites = readSites(args[1]);
+			log.info("");
+			log.info("Sites:" + sites);
 
 			calc(model, config, sites, out, log);
-			return null;
+			log.info(PROGRAM + ": finished");
+			return Optional.absent();
 
 		} catch (Exception e) {
-			return new StringBuilder()
+			StringBuilder sb = new StringBuilder()
 				.append(NEWLINE)
 				.append(PROGRAM + ": error").append(NEWLINE)
 				.append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
 				.append(NEWLINE)
-				.append(Throwables.getStackTraceAsString(e)).append(NEWLINE)
-				.append(NEWLINE)
-				.append(USAGE)
-				.toString();
+				.append(Throwables.getStackTraceAsString(e))
+				.append(USAGE);
+			return Optional.of(sb.toString());
+		}
+	}
+
+	static Iterable<Site> readSites(String arg) {
+		try {
+			if (arg.toLowerCase().endsWith(".csv")) {
+				return Sites.fromCsv(Paths.get(arg));
+			}
+			if (arg.toLowerCase().endsWith(".geojson")) {
+				return Sites.fromJson(Paths.get(arg));
+			}
+			return Sites.fromString(arg);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+				"Sites [" + arg + "] must either be a 3 to 7 argument, comma-delimited string " +
+					"or specify a path to a *.csv or *.geojson file", e);
 		}
 	}
 
@@ -148,7 +147,7 @@ public class HazardCalc {
 	private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
 
 	/*
-	 * Compute hazard curves using the supplied model, config, and site files.
+	 * Compute hazard curves using the supplied model, config, and sites.
 	 */
 	private static void calc(
 			HazardModel model,
@@ -171,18 +170,15 @@ public class HazardCalc {
 		for (Site site : sites) {
 			Hazard result = calc(model, config, site, executor);
 			results.add(result);
-
 			if (results.size() == FLUSH_LIMIT) {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
 				Results.writeResults(out, results, opts);
-				log.info(
-					"     batch: " + (count + 1) + "  " + batchWatch +
+				log.info("     batch: " + (count + 1) + "  " + batchWatch +
 					"  total: " + totalWatch);
 				results.clear();
 				batchWatch.reset().start();
 			}
-
 			count++;
 		}
 		// write final batch
@@ -219,7 +215,8 @@ public class HazardCalc {
 
 		try {
 			Hazard result = Calcs.hazard(model, config, site, execLocal);
-			if (!executor.isPresent()) ((ExecutorService) executor).shutdown();
+			// Shut down the locally created executor if none was supplied
+			if (!executor.isPresent()) ((ExecutorService) execLocal.get()).shutdown();
 			return result;
 		} catch (ExecutionException | InterruptedException e) {
 			Throwables.propagate(e);
@@ -232,21 +229,36 @@ public class HazardCalc {
 	}
 
 	private static final String PROGRAM = HazardCalc.class.getSimpleName();
-	private static final String USAGE_COMMAND = "java -cp nshmp-haz.jar org.opensha.programs.HazardCalc model [config [sites]]";
+	private static final String USAGE_COMMAND =
+		"java -cp nshmp-haz.jar org.opensha2.programs.HazardCalc model sites [config]";
 	private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
 	private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
+	private static final String SITE_STRING = "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]";
 
-	static final String USAGE = new StringBuilder()
+	private static final String USAGE = new StringBuilder()
+		.append(NEWLINE)
 		.append(PROGRAM).append(" usage:").append(NEWLINE)
 		.append("  ").append(USAGE_COMMAND).append(NEWLINE)
 		.append(NEWLINE)
 		.append("Where:").append(NEWLINE)
-		.append("  'model' is a model zip file or directory").append(NEWLINE)
-		.append("  'config' supplies a calculation configuration").append(NEWLINE)
-		.append("  'sites' is a comma-delimited site data file").append(NEWLINE)
+		.append("  'model' is a model zip file or directory")
+		.append(NEWLINE)
+		.append("  'sites' is either:")
+		.append(NEWLINE)
+		.append("     - a string, e.g. ").append(SITE_STRING)
+		.append(NEWLINE)
+		.append("       (site class and basin terms are optional)")
+		.append(NEWLINE)
+		.append("       (escape any spaces or enclose string in double-quotes)")
+		.append(NEWLINE)
+		.append("     - or a *.csv file or *.geojson file of site data")
+		.append(NEWLINE)
+		.append("  'config' (optional) supplies a calculation configuration")
+		.append(NEWLINE)
 		.append(NEWLINE)
 		.append("For more information, see:").append(NEWLINE)
 		.append("  ").append(USAGE_URL1).append(NEWLINE)
 		.append("  ").append(USAGE_URL2).append(NEWLINE)
+		.append(NEWLINE)
 		.toString();
 }
