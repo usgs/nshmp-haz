@@ -138,7 +138,7 @@ public class HazardCalc {
 			return Sites.fromString(arg);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
-				"Sites [" + arg + "] must either be a 3 to 7 argument, comma-delimited string " +
+				"'sites' [" + arg + "] must either be a 3 to 7 argument, comma-delimited string " +
 					"or specify a path to a *.csv or *.geojson file", e);
 		}
 	}

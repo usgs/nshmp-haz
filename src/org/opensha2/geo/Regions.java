@@ -43,13 +43,17 @@ public class Regions {
 	}
 
 	/**
-	 * Creates a {@code GriddedRegion} from a list of border locations. The
-	 * border type specifies whether lat-lon values are treated as points in an
-	 * orthogonal coordinate system or as connecting great circles. The border
-	 * {@code LocationList} does not need to repeat the first {@code Location}
-	 * at the end of the list. If the supplied {@code anchor Location} is
-	 * {@code null}, it is automatically set to the Location defined by the
-	 * minimum latitude and longitude of the region's border.
+	 * <img style="padding: 30px 40px; float: right;" src=
+	 * "{@docRoot}/resources/gridded_regions_border.jpg"/>Creates a
+	 * {@code GriddedRegion} from a list of border locations.
+	 * 
+	 * <p>The border type specifies whether lat-lon values are treated as points
+	 * in an orthogonal coordinate system or as connecting great circles. The
+	 * border {@code LocationList} does not need to repeat the first
+	 * {@code Location} at the end of the list. If the supplied
+	 * {@code anchor Location} is {@code null}, it is automatically set to the
+	 * Location defined by the minimum latitude and longitude of the region's
+	 * border.
 	 * 
 	 * @param name of the {@code GriddedRegion}; may be {@code null}
 	 * @param border {@code Locations}
@@ -141,9 +145,22 @@ public class Regions {
 	}
 
 	/**
-	 * Creates a circular {@code Region}. Internally, the centerpoint and radius
-	 * are used to create a circular region composed of straight line segments
-	 * that span 10° wedges.
+	 * <img style="padding: 30px 40px; float: right;" src=
+	 * "{@docRoot}/resources/gridded_regions_circle.jpg"/>Creates a circular
+	 * {@code Region}. Internally, the centerpoint and radius are used to create
+	 * a circular region composed of straight line segments that span 10°
+	 * wedges.
+	 * 
+	 * <p>Passing the resultant region
+	 * {@link #toGridded(Region, double, double, Location)} yields a
+	 * {@link GriddedRegion} like that in the adjacent figure. The heavy black
+	 * line marks the border of the {@code Region}. The light gray dots mark the
+	 * {@code Location}s of nodes outside the region, and black dots those
+	 * inside the region. The dashed grey line marks the border, inside which, a
+	 * {@code Location} will be associated with a grid node. See
+	 * {@link GriddedRegion#indexForLocation(Location)} for more details on
+	 * rules governing whether a grid node is inside a region and whether a
+	 * {@code Location} will be associated with a grid node.
 	 * 
 	 * @param name of the {@code Region}; may be {@code null}
 	 * @param center of the circle
@@ -160,7 +177,19 @@ public class Regions {
 	}
 
 	/**
-	 * Creates a {@code Region} as a buffered area around a line.
+	 * <img style="padding: 30px 40px; float: right;" src=
+	 * "{@docRoot}/resources/gridded_regions_buffer.jpg"/>Creates a
+	 * {@code Region} as a buffered area around a line.
+	 * 
+	 * <p>Passing the resultant region
+	 * {@link #toGridded(Region, double, double, Location)} yields a
+	 * {@link GriddedRegion} like that in the adjacent figure. The light gray
+	 * dots mark the {@code Location}s of nodes outside the region, and black
+	 * dots those inside the region. The dashed grey line marks the border,
+	 * inside which, a {@code Location} will be associated with a grid node. See
+	 * {@link GriddedRegion#indexForLocation(Location)} for more details on
+	 * rules governing whether a grid node is inside a region and whether a
+	 * {@code Location} will be associated with a grid node.
 	 * 
 	 * @param name of the {@code Region}; may be {@code null}
 	 * @param line at center of buffered {@code Region}
@@ -271,8 +300,8 @@ public class Regions {
 
 	/**
 	 * Convenience method to return a {@code Region} spanning the entire globe.
-	 * @return a {@code Region} extending from -180° to +180°
-	 *         longitude and -90° to +90° latitude
+	 * @return a {@code Region} extending from -180° to +180° longitude and -90°
+	 *         to +90° latitude
 	 */
 	public static Region global() {
 		// @formatter:off

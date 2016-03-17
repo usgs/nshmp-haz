@@ -135,7 +135,6 @@ public final class LocationGrid implements Iterable<Location> {
 	 * @param rowWidth number of rows in the window
 	 * @param columnStart first column of window
 	 * @param columnWidth
-	 * @return
 	 */
 	public LocationGrid window(int rowStart, int rowWidth, int columnStart, int columnWidth) {
 		checkElementIndex(rowStart, this.rowWidth);
