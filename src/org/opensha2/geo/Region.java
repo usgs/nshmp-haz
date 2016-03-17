@@ -283,35 +283,15 @@ public class Region implements Named {
 	}
 
 	/**
-	 * Returns the minimum latitude in this {@code Region}'s border.
-	 * @return the minimum latitude
+	 * Lazily create the bounds of this region.
 	 */
-	public double getMinLat() {
-		return area.getBounds2D().getMinY();
-	}
-
-	/**
-	 * Returns the maximum latitude in this {@code Region}'s border.
-	 * @return the maximum latitude
-	 */
-	public double getMaxLat() {
-		return area.getBounds2D().getMaxY();
-	}
-
-	/**
-	 * Returns the minimum longitude in this {@code Region}'s border.
-	 * @return the minimum longitude
-	 */
-	public double getMinLon() {
-		return area.getBounds2D().getMinX();
-	}
-
-	/**
-	 * Returns the maximum longitude in this {@code Region}'s border.
-	 * @return the maximum longitude
-	 */
-	public double getMaxLon() {
-		return area.getBounds2D().getMaxX();
+	public Bounds bounds() {
+		Rectangle2D bounds = area.getBounds2D();
+		return new Bounds(
+			bounds.getMinY(),
+			bounds.getMinX(),
+			bounds.getMaxY(),
+			bounds.getMaxX());
 	}
 
 	/**
@@ -343,9 +323,10 @@ public class Region implements Named {
 	}
 
 	@Override public String toString() {
-		String str = "Region\n" + "\tMinLat: " + this.getMinLat() + "\n" + "\tMinLon: " +
-			this.getMinLon() + "\n" + "\tMaxLat: " + this.getMaxLat() + "\n" + "\tMaxLon: " +
-			this.getMaxLon();
+		Bounds b = bounds();
+		String str = "Region\n" + "\tMinLat: " + b.min().lat() + "\n" + "\tMinLon: " +
+				b.min().lon() + "\n" + "\tMaxLat: " + b.max().lat() + "\n" + "\tMaxLon: " +
+				b.max().lon();
 		return str;
 	}
 
