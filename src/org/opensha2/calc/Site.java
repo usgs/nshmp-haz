@@ -229,10 +229,13 @@ public class Site implements Named {
 
 	}
 
+	private static final int MAX_NAME_LENGTH = 72;
+	
 	private static String cleanName(String name) {
-		return name.replaceAll(",", "").substring(0, 72);
+		name = name.replaceAll(",", "");
+		return name.length() > MAX_NAME_LENGTH ? name.substring(0, MAX_NAME_LENGTH) : name;
 	}
-
+	
 	/* Json and csv serialization keys */
 	static final class Key {
 		static final String NAME = "name";

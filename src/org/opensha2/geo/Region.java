@@ -1,21 +1,3 @@
-/*******************************************************************************
- * Copyright 2009 OpenSHA.org in partnership with the Southern California
- * Earthquake Center (SCEC, http://www.scec.org) at the University of Southern
- * California and the UnitedStates Geological Survey (USGS; http://www.usgs.gov)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
-
 package org.opensha2.geo;
 
 import static org.opensha2.geo.GeoTools.PI_BY_2;
@@ -55,28 +37,30 @@ import com.google.common.primitives.Doubles;
  * same as linear, Mercator paths. Over longer distances, a great circle is a
  * better representation of a line on a globe. Internally, great circles are
  * approximated by multiple straight line segments that have a maximum length of
- * 100km.</p>
+ * 100km.
  * 
  * <p>A {@code Region} may also have interior (or negative) areas. Any call to
  * {@link Region#contains(Location)} for a {@code Location} within or on the
  * border of such an interior area will return {@code false}, subject to the
- * rules of insidedness.</p>
+ * rules of insidedness.
  * 
  * <p><b>Note:</b> The current implementation does not support regions that are
  * intended to span ±180°. Any such regions will wrap the long way around the
  * earth and results are undefined. Regions that encircle either pole are not
- * supported either.</p>
+ * supported either.
  * 
  * <p><b>Note:</b> Due to rounding errors and the use of an {@link Area}
  * internally to define a {@code Region}'s border,
  * {@link Region#contains(Location)} may not always return the expected result
  * near a border. See {@link Region#contains(Location)} for further details.</p>
  * 
+ * <p>Use the {@link Regions} factory class to create new regions.
+ * 
  * @author Peter Powers
- * @version $Id: Region.java 9320 2012-08-23 16:47:45Z pmpowers $
  * @see Shape
  * @see Area
  * @see BorderType
+ * @see Regions
  */
 public class Region implements Named {
 
@@ -340,7 +324,7 @@ public class Region implements Named {
 	 * @param loc the Location to compute a distance to
 	 * @return the minimum distance between this {@code Region} and a point
 	 * @throws NullPointerException if supplied location is {@code null}
-	 * @see LocationList#minDistToLine(Location)
+	 * @see Locations#minDistanceToLine(Location, LocationList)
 	 * @see Locations#distanceToSegmentFast(Location, Location, Location)
 	 */
 	public double distanceToLocation(Location loc) {

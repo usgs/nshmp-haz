@@ -610,8 +610,7 @@ public class GmmInput {
 		}
 
 		/**
-		 * 
-		 * @return
+		 * The default allowed values for each input field.
 		 */
 		public static Constraints defaults() {
 			return builder().withDefaults().build();

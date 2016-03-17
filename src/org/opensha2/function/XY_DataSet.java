@@ -18,7 +18,6 @@ import org.opensha2.util.Named;
  * 
  * @author Kevin Milner
  * @author Peter Powers
- * @version $Id: XY_DataGroup.java 10181 2013-06-04 20:41:07Z kmilner $
  */
 public interface XY_DataSet extends Named, Iterable<Point2D> {
 

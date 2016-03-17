@@ -1,21 +1,3 @@
-/*******************************************************************************
- * Copyright 2009 OpenSHA.org in partnership with the Southern California
- * Earthquake Center (SCEC, http://www.scec.org) at the University of Southern
- * California and the UnitedStates Geological Survey (USGS; http://www.usgs.gov)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
-
 package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -35,15 +17,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
 /**
- * A {@code GriddedRegion} is a {@link Region} that has been discretized in
- * latitude and longitude. Each node in a gridded region represents a small area
- * that is some number of degrees in width and height and is identified by a
- * unique {@link Location} at the geographic (lat-lon) center of the node. <img
- * style="padding: 30px 40px; float: right;" src="{@docRoot}
- * /img/gridded_regions_border.jpg"/> In the adjacent figure, the heavy black
- * line marks the border of the {@code Region} . The light gray dots mark the
- * {@code Location}s of nodes outside the region, and black dots those inside
- * the region. The dashed grey line marks the border, inside which, a
+ * <img style="padding: 30px 40px; float: right;" src="
+ * {@docRoot}/resources/gridded_regions_border.jpg"/>A {@code GriddedRegion} is
+ * a {@link Region} that has been discretized in latitude and longitude. Each
+ * node in a gridded region represents a small area that is some number of
+ * degrees in width and height and is identified by a unique {@link Location} at
+ * the geographic (lat-lon) center of the node. In the adjacent figure, the
+ * heavy black line marks the border of the {@code Region}. The light gray dots
+ * mark the {@code Location}s of nodes outside the region, and black dots those
+ * inside the region. The dashed grey line marks the border, inside which, a
  * {@code Location} will be associated with a grid node. See
  * {@link GriddedRegion#indexForLocation(Location)} for more details on rules
  * governing whether a grid node is inside a region and whether a
@@ -52,29 +34,32 @@ import com.google.common.collect.Range;
  * <p>The {@code Location}s of the grid nodes are indexed internally in order of
  * increasing longitude then latitude starting with the node at the lowest
  * latitude and longitude in the region. {@code GriddedRegion}s are iterable as
- * a shorthand for {@code getNodeList().iterator()}. </p>
+ * a shorthand for {@code getNodeList().iterator()}.
  * 
  * <p>Internally, {@code GriddedRegion}s use an anchor {@code Location} to
  * ensure grid nodes fall on specific lat-lon values. This location can be
  * anywhere in- or outside the region to be gridded. If the region contains the
  * anchor location, the anchor will coincide with a grid node. For example,
- * given a grid spacing of 1° and an anchor {@code Location} of 22.1°N
- * -134.7°W, grid nodes within any region will fall at whole valued
- * latitudes + 0.1° and longitudes - 0.7°.</p>
+ * given a grid spacing of 1° and an anchor {@code Location} of 22.1°N -134.7°W,
+ * grid nodes within any region will fall at whole valued latitudes + 0.1° and
+ * longitudes - 0.7°.
  * 
- * <p><a name="note"></a> <b><Note:</b> Due to rounding errors and the use of an
+ * <p><a name="note"></a> <b>Note:</b> Due to rounding errors and the use of an
  * {@link Area} internally to define a {@code Region}'s border,
  * {@link Region#contains(Location)} may not always return the expected result
  * near a border. See {@link Region#contains(Location)} for further details. For
  * a {@code GriddedRegion}, this results in values returned by calls
  * {@link #minGridLat()} etc. for which there may not be any grid nodes. To
  * guarantee node coverage for a {@code GriddedRegion}, say for eventual map
- * output, 'best-practice' dictates expanding a region slightly.</p>
+ * output, 'best-practice' dictates expanding a region slightly.
+ * 
+ * <p>Use the {@link Regions} factory class to create new gridded regions.
  * 
  * @author Nitin Gupta
  * @author Vipin Gupta
  * @author Peter Powers
  * @see Region
+ * @see Regions
  */
 public class GriddedRegion extends Region implements Iterable<Location> {
 
@@ -187,7 +172,8 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		return true;
 	}
 
-	@Override public boolean equals(Object obj) {
+	@Override
+	public boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof GriddedRegion)) return false;
 		GriddedRegion gr = (GriddedRegion) obj;
@@ -195,7 +181,8 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 		return equalsRegion(gr);
 	}
 
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		return super.hashCode() ^ anchor.hashCode() ^ Double.valueOf(latSpacing).hashCode() ^
 			Double.valueOf(lonSpacing).hashCode();
 	}
@@ -211,12 +198,14 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	 * @throws UnsupportedOperationException
 	 * @see Region#addInterior(Region)
 	 */
-	@Override public void addInterior(Region region) {
+	@Override
+	public void addInterior(Region region) {
 		throw new UnsupportedOperationException(
 			"A GriddedRegion may not have an interior Region set");
 	}
 
-	@Override public Iterator<Location> iterator() {
+	@Override
+	public Iterator<Location> iterator() {
 		return nodes.iterator();
 	}
 
@@ -346,8 +335,8 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	 * value of each. Remember that both methods test for insidedness according
 	 * to the rules defined in the {@link Shape} interface. <br/> <img
 	 * style="padding: 20px; display: block; margin-left:auto;
-	 * margin-right:auto;" src="{@docRoot} /img/node_association.jpg"/> <br/>
-	 * <table id="table-a"> <thead> <tr> <th>Location</th> <th>
+	 * margin-right:auto;" src="{@docRoot}/resources/node_association.jpg"/>
+	 * <br/> <table id="table-a"> <thead> <tr> <th>Location</th> <th>
 	 * {@code contains(Location)}</th> <th>{@code indexForLocation(Location)}
 	 * </th> </tr> <thead> <tbody> <tr> <td><b>A</b></td> <td>{@code true}</td>
 	 * <td>-1</td> </tr> <tr> <td><b>B</b></td> <td>{@code false}</td>

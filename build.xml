@@ -83,6 +83,7 @@
 
 			<fileset dir="${src.dir}" defaultexcludes="yes">
 				<include name="**/*.java" />
+				<exclude name="**/Scratch*.java" />
 			</fileset>
 
 			<link href="http://docs.oracle.com/javase/7/docs/api/" />
@@ -91,6 +92,12 @@
 			<link href="http://google.github.io/gson/apidocs/" />
 
 		</javadoc>
+		
+		<!-- Copy images -->
+		<copy todir="${javadoc.dir}/resources">
+			<fileset dir="etc/resources/docs" includes="*.jpg" />
+		</copy>
+		
 	</target>
 
 </project>
