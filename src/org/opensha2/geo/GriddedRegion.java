@@ -471,9 +471,10 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	 * Locations would coincide with grid nodes.
 	 */
 	private void setAnchor(Location anchor) {
-		if (anchor == null) anchor = Location.create(getMinLat(), getMinLon());
-		double lat = computeAnchor(getMinLat(), anchor.lat(), latSpacing);
-		double lon = computeAnchor(getMinLon(), anchor.lon(), lonSpacing);
+		Bounds bounds = bounds();
+		if (anchor == null) anchor = Location.create(bounds.min().lat(), bounds.min().lon());
+		double lat = computeAnchor(bounds.min().lat(), anchor.lat(), latSpacing);
+		double lon = computeAnchor(bounds.min().lon(), anchor.lon(), lonSpacing);
 		this.anchor = Location.create(lat, lon);
 	}
 
@@ -491,13 +492,15 @@ public class GriddedRegion extends Region implements Iterable<Location> {
 	/* Initilize the grid index, node edge, and Location arrays */
 	private void initNodes() {
 
+		Bounds bounds = bounds();
+		
 		// temp node center arrays
-		double[] lonNodes = initNodeCenters(anchor.lon(), getMaxLon(), lonSpacing);
-		double[] latNodes = initNodeCenters(anchor.lat(), getMaxLat(), latSpacing);
+		double[] lonNodes = initNodeCenters(anchor.lon(), bounds.max().lon(), lonSpacing);
+		double[] latNodes = initNodeCenters(anchor.lat(), bounds.max().lat(), latSpacing);
 
 		// node edge arrays
-		lonEdges = initNodeEdges(anchor.lon(), getMaxLon(), lonSpacing);
-		latEdges = initNodeEdges(anchor.lat(), getMaxLat(), latSpacing);
+		lonEdges = initNodeEdges(anchor.lon(), bounds.max().lon(), lonSpacing);
+		latEdges = initNodeEdges(anchor.lat(), bounds.max().lat(), latSpacing);
 
 		// range data
 		latSize = latNodes.length;
