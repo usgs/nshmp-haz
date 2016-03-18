@@ -83,7 +83,7 @@ final class ModelConfig {
 	@Override public String toString() {
 		return new StringBuilder("Model config:")
 			.append(format(Key.NAME)).append(name)
-			.append(format(Key.RESOURCE)).append(resource)
+			.append(format(Key.RESOURCE)).append(resource.toAbsolutePath().normalize())
 			.append(format(Key.SURFACE_SPACING)).append(surfaceSpacing)
 			.append(format(Key.RUPTURE_FLOATING)).append(ruptureFloating)
 			.append(format(Key.RUPTURE_VARIABILITY)).append(ruptureVariability)

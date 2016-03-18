@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Logger;
 
 import org.opensha2.calc.CalcConfig;
@@ -109,7 +110,7 @@ public class HazardCalc {
 
 			Iterable<Site> sites = readSites(args[1]);
 			log.info("");
-			log.info("Sites:" + sites);
+			log.info("Sites: " + sites);
 
 			calc(model, config, sites, out, log);
 			log.info(PROGRAM + ": finished");
@@ -157,6 +158,8 @@ public class HazardCalc {
 			Logger log) throws IOException {
 
 		ExecutorService execSvc = createExecutor();
+		int threadCount = ((ThreadPoolExecutor) execSvc).getCorePoolSize();
+		log.info("Threads: " + threadCount);
 		Optional<Executor> executor = Optional.<Executor> of(execSvc);
 
 		log.info(PROGRAM + ": calculating ...");
@@ -211,12 +214,16 @@ public class HazardCalc {
 			Site site,
 			Optional<Executor> executor) {
 
+		// TODO not sure why we're mandating an executor here.
+		// legacy from refactoring?
 		Optional<Executor> execLocal = executor.or(Optional.of(createExecutor()));
 
 		try {
 			Hazard result = Calcs.hazard(model, config, site, execLocal);
 			// Shut down the locally created executor if none was supplied
-			if (!executor.isPresent()) ((ExecutorService) execLocal.get()).shutdown();
+			if (!executor.isPresent()) {
+				((ExecutorService) execLocal.get()).shutdown();
+			}
 			return result;
 		} catch (ExecutionException | InterruptedException e) {
 			Throwables.propagate(e);

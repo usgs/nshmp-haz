@@ -38,6 +38,7 @@
 		<!-- Compile to classes/  -->
 		<javac srcdir="${src.dir}"
 		       destdir="${classes.dir}"
+			   excludes="**/Scratch*.java"
 		       classpathref="library.classpath"
 		       nowarn="true"
 			   fork="true"
