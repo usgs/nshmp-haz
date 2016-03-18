@@ -204,7 +204,7 @@ public final class Sites {
 			boolean region = this instanceof RegionIterable;
 			int size = region ? ((RegionIterable) this).region.size() : Iterables.size(this);
 			StringBuilder sb = new StringBuilder()
-				.append(region ? "Region" : "List")
+				.append(region ? ((RegionIterable) this).region.name() + " Region" : "List")
 				.append(" [size=").append(size).append("]");
 			if (!region) {
 				for (Site site : Iterables.limit(this, TO_STRING_LIMIT)) {

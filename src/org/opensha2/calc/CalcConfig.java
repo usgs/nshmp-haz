@@ -123,7 +123,7 @@ public final class CalcConfig {
 		}
 
 		return new StringBuilder("Calc config:")
-			.append(format(Key.RESOURCE)).append(resource)
+			.append(format(Key.RESOURCE)).append(resource.toAbsolutePath().normalize())
 			.append(format(Key.EXCEEDANCE_MODEL)).append(exceedanceModel)
 			.append(format(Key.TRUNCATION_LEVEL)).append(truncationLevel)
 			.append(format(Key.IMTS)).append(Parsing.enumsToString(imts, Imt.class))

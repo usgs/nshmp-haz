@@ -24,16 +24,16 @@ final class AsyncList<T> extends AbstractList<ListenableFuture<T>> {
 	}
 
 	/**
-	 * Creates a new {@code AsynList} with an inital capacity of 256 elements.
-	 * @return a new {@code AsynList}
+	 * Creates a new {@code AsyncList} with an initial capacity of 256 elements.
+	 * @return a new {@code AsyncList}
 	 */
 	static <T> AsyncList<T> create() {
 		return new AsyncList<T>(256);
 	}
 
 	/**
-	 * Creates a new {@code AsynList} with the specified inital capacity.
-	 * @return a new {@code AsynList}
+	 * Creates a new {@code AsyncList} with the specified initial capacity.
+	 * @return a new {@code AsyncList}
 	 */
 	static <T> AsyncList<T> createWithCapacity(int initialCapacity) {
 		return new AsyncList<T>(initialCapacity);
