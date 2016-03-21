@@ -417,7 +417,6 @@ final class Transforms {
 		private final Site site;
 		private final Executor ex;
 		private final CalcConfig config;
-		private final int size = 20000;
 
 		ParallelSystemToCurves(
 				Site site,
@@ -438,7 +437,7 @@ final class Transforms {
 			// calculate curves from list in parallel
 			InputsToCurves inputsToCurves = new InputsToCurves(sources, config);
 			AsyncList<HazardCurves> asyncCurvesList = AsyncList.create();
-			for (InputList partition : master.partition(size)) {
+			for (InputList partition : master.partition(config.systemPartition)) {
 				asyncCurvesList.add(transform(
 					immediateFuture(partition),
 					inputsToCurves,
