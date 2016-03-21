@@ -25,6 +25,6 @@ To compute a small, low-resolution map for the central San Francisco bay area, e
 hazard ../../../../nshmp-model-cous-2008/Western\ US map.geojson config-map.json
 ```
 
-This computes 121 curves over a 2° by 2° area and will give you a sense of how long a larger map might take. Note that in the above two examples we specified different output directories for each calculation.
+This computes 121 curves over a 2° by 2° area and will give you a sense of how long a larger map might take. Note that in the above two examples we specified different output directories in the config files for each calculation.
 
 #### Next: [Example 6 – Enhanced output](../6-enhanced-output)

@@ -7,7 +7,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.GeoJson.validateProperty;
 import static org.opensha2.util.Parsing.splitToList;
-import static org.opensha2.util.Parsing.trimEnds;
 import static org.opensha2.util.TextUtils.ALIGN_COL;
 import static org.opensha2.util.TextUtils.format;
 
@@ -329,7 +328,19 @@ public final class Sites {
 			JsonObject properties = sitesFeature.getAsJsonObject(GeoJson.Key.PROPERTIES);
 			String mapName = readName(properties, "Unnamed Map");
 
-			Region calcRegion = Regions.create(mapName, border, MERCATOR_LINEAR);
+			/*
+			 * We special case a 5-coordinate border that defines a mercator
+			 * recangle so as to create a region that includes sites on the
+			 * north and east borders.
+			 */
+
+			Region calcRegion = null;
+			try {
+				Bounds b = validateExtents(border).bounds();
+				calcRegion = Regions.createRectangular(mapName, b.min(), b.max());
+			} catch (IllegalArgumentException iae) {
+				calcRegion = Regions.create(mapName, border, MERCATOR_LINEAR);
+			}
 			checkState(
 				properties.has(GeoJson.Properties.Key.SPACING),
 				"A \"spacing\" : value (in degrees) must be defined in \"properties\"");
@@ -378,12 +389,12 @@ public final class Sites {
 		JsonArray coords = geometry.getAsJsonArray(GeoJson.Key.COORDINATES);
 		LocationList border = GeoJson.fromCoordinates(coords);
 
-		checkState(
+		checkArgument(
 			border.size() > 2,
 			"A GeoJSON polygon must have at least 3 coordinates:%s",
 			border);
 
-		checkState(
+		checkArgument(
 			border.first().equals(border.last()),
 			"The first and last points in a GeoJSON polygon must be the same:%s",
 			border);
@@ -397,7 +408,7 @@ public final class Sites {
 	}
 
 	private static LocationList validateExtents(LocationList locs) {
-		checkState(locs.size() == 5,
+		checkArgument(locs.size() == 5,
 			"Extents polygon must contain 5 coordinates:%s", locs);
 		Location p1 = locs.get(0);
 		Location p2 = locs.get(1);
@@ -411,7 +422,7 @@ public final class Sites {
 				p2.latRad() == p3.latRad() &&
 				p1.lonRad() == p2.lonRad() &&
 				p3.lonRad() == p4.lonRad());
-		checkState(rectangular,
+		checkArgument(rectangular,
 			"Extents polygon does not define a lat-lon Mercator rectangle:%s", locs);
 		return locs;
 	}
