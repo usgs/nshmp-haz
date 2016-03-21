@@ -4,10 +4,7 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Strings.padStart;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.opensha2.util.TextUtils.ALIGN_COL;
-import static org.opensha2.util.TextUtils.NEWLINE;
 import static org.opensha2.util.TextUtils.format;
 
 import java.io.IOException;
@@ -35,12 +32,12 @@ final class ModelConfig {
 
 	private final Path resource;
 
-	public final String name;
-	public final double surfaceSpacing;
-	public final RuptureFloating ruptureFloating;
-	public final boolean ruptureVariability;
-	public final PointSourceType pointSourceType;
-	public final GridScaling areaGridScaling;
+	final String name;
+	final double surfaceSpacing;
+	final RuptureFloating ruptureFloating;
+	final boolean ruptureVariability;
+	final PointSourceType pointSourceType;
+	final GridScaling areaGridScaling;
 
 	private ModelConfig(
 			String name,
@@ -75,12 +72,14 @@ final class ModelConfig {
 			this.label = UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
 		}
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			return label;
 		}
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return new StringBuilder("Model config:")
 			.append(format(Key.NAME)).append(name)
 			.append(format(Key.RESOURCE)).append(resource.toAbsolutePath().normalize())

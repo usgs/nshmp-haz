@@ -221,8 +221,8 @@ public final class Deaggregation {
 				.dataModel(
 					Dataset.builder(hazard.config).build())
 				.probabilityModel(
-					hazard.config.exceedanceModel(),
-					hazard.config.truncationLevel());
+					hazard.config.exceedanceModel,
+					hazard.config.truncationLevel);
 		}
 
 		/* Reusable builder */
@@ -908,7 +908,7 @@ public final class Deaggregation {
 		 * @see CalcConfig
 		 */
 		static Builder builder(CalcConfig config) {
-			DeaggData d = config.deagg();
+			DeaggData d = config.deagg;
 			return builder(
 				d.rMin, d.rMax, d.Δr,
 				d.mMin, d.mMax, d.Δm,

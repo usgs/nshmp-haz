@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
@@ -23,6 +24,8 @@ import java.util.Set;
 import org.opensha2.calc.Results.HazardFormat;
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
+import org.opensha2.eq.model.SourceType;
+import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.util.Parsing;
 
@@ -41,34 +44,81 @@ public final class CalcConfig {
 
 	private final Path resource;
 
-	private final ExceedanceModel exceedanceModel;
-	private final double truncationLevel;
-	private final Set<Imt> imts;
+	/**
+	 * The probability distribution model to use when computing hazard curves.
+	 */
+	public final ExceedanceModel exceedanceModel;
+	// TODO refactor to probabilitModel
+
+	/**
+	 * The number of standard deviations at which to truncate a distribution.
+	 * This field is ignored if a model does not implement truncation.
+	 */
+	public final double truncationLevel;
+
+	/**
+	 * The {@code Set} of IMTs for which calculations should be performed.
+	 */
+	public final Set<Imt> imts;
+
+	/**
+	 * Whether to optimize grid source sets, or not.
+	 */
+	public final boolean optimizeGrids;
+
+	/**
+	 * The partition or batch size to use when distributing
+	 * {@link SourceType#SYSTEM} calculations.
+	 */
+	public final int systemPartition;
+
+	/**
+	 * Whether to consider additional ground motion model uncertainty, or not.
+	 * Currently this is only applicable when using the PEER NGA-West or
+	 * NGA-West2 {@link Gmm}s with USGS hazard models.
+	 */
+	public final boolean gmmUncertainty;
+
+	/** The hazard output format. */
+	public final HazardFormat hazardFormat;
+
+	/** The directory to write any results to. */
+	public final Path outputDir;
+
+	/**
+	 * The number of results to write at a time. A larger number requires more
+	 * memory.
+	 */
+	public final int outputBatchSize;
+
+	/**
+	 * Deaggregation configuration data.
+	 */
+	public final DeaggData deagg;
+
+	/*
+	 * Iml fields preserved for toString() exclusively. Imls should be retrieved
+	 * using modelCurves() or logModelCurves().
+	 */
 	private final double[] defaultImls;
 	private final Map<Imt, double[]> customImls;
-	private final boolean optimizeGrids;
-	private final boolean gmmUncertainty;
-
-	private final HazardFormat hazardFormat;
-
-	private final DeaggData deagg;
-
 	private final Map<Imt, XySequence> modelCurves;
 	private final Map<Imt, XySequence> logModelCurves;
-
-	private static final Gson GSON = new GsonBuilder().create();
 
 	private CalcConfig(
 			Path resource,
 			ExceedanceModel exceedanceModel,
 			double truncationLevel,
 			Set<Imt> imts,
-			double[] defaultImls,
-			Map<Imt, double[]> customImls,
 			boolean optimizeGrids,
+			int systemPartition,
 			boolean gmmUncertainty,
 			HazardFormat hazardFormat,
+			Path outputDir,
+			int outputBatchSize,
 			DeaggData deagg,
+			double[] defaultImls,
+			Map<Imt, double[]> customImls,
 			Map<Imt, XySequence> modelCurves,
 			Map<Imt, XySequence> logModelCurves) {
 
@@ -76,12 +126,15 @@ public final class CalcConfig {
 		this.exceedanceModel = exceedanceModel;
 		this.truncationLevel = truncationLevel;
 		this.imts = imts;
-		this.defaultImls = defaultImls;
-		this.customImls = customImls;
 		this.optimizeGrids = optimizeGrids;
+		this.systemPartition = systemPartition;
 		this.gmmUncertainty = gmmUncertainty;
 		this.hazardFormat = hazardFormat;
+		this.outputDir = outputDir;
+		this.outputBatchSize = outputBatchSize;
 		this.deagg = deagg;
+		this.defaultImls = defaultImls;
+		this.customImls = customImls;
 		this.modelCurves = modelCurves;
 		this.logModelCurves = logModelCurves;
 	}
@@ -91,12 +144,15 @@ public final class CalcConfig {
 		EXCEEDANCE_MODEL,
 		TRUNCATION_LEVEL,
 		IMTS,
-		DEFAULT_IMLS,
-		CUSTOM_IMLS,
-		GMM_UNCERTAINTY,
-		HAZARD_FORMAT,
 		OPTIMIZE_GRIDS,
-		DEAGG;
+		GMM_UNCERTAINTY,
+		SYSTEM_PARTITION,
+		HAZARD_FORMAT,
+		OUTPUT_DIR,
+		OUTPUT_BATCH_SIZE,
+		DEAGG,
+		DEFAULT_IMLS,
+		CUSTOM_IMLS;
 
 		private String label;
 
@@ -130,8 +186,11 @@ public final class CalcConfig {
 			.append(format(Key.DEFAULT_IMLS)).append(wrap(Arrays.toString(defaultImls)))
 			.append(customImlStr)
 			.append(format(Key.OPTIMIZE_GRIDS)).append(optimizeGrids)
+			.append(format(Key.SYSTEM_PARTITION)).append(systemPartition)
 			.append(format(Key.GMM_UNCERTAINTY)).append(gmmUncertainty)
 			.append(format(Key.HAZARD_FORMAT)).append(hazardFormat)
+			.append(format(Key.OUTPUT_DIR)).append(outputDir.toAbsolutePath().normalize())
+			.append(format(Key.OUTPUT_BATCH_SIZE)).append(outputBatchSize)
 			.append(format("Deaggregation R"))
 			.append("min=").append(deagg.rMin).append(", ")
 			.append("max=").append(deagg.rMax).append(", ")
@@ -145,54 +204,6 @@ public final class CalcConfig {
 			.append("max=").append(deagg.εMax).append(", ")
 			.append("Δ=").append(deagg.Δε)
 			.toString();
-	}
-
-	/**
-	 * The probability distribution model to use when computing hazard curves.
-	 */
-	public ExceedanceModel exceedanceModel() {
-		return exceedanceModel; // TODO probabilitModel
-	}
-
-	/**
-	 * The number of standard deviations at which to truncate a distribution.
-	 * This field is ignored if a model does not implement truncation.
-	 */
-	public double truncationLevel() {
-		return truncationLevel;
-	}
-
-	/**
-	 * The unmodifiable {@code Set} of IMTs for which calculations should be
-	 * performed.
-	 */
-	public Set<Imt> imts() {
-		return imts;
-	}
-
-	/**
-	 * Whether to optimize grid source sets, or not.
-	 */
-	public boolean optimizeGrids() {
-		return optimizeGrids;
-	}
-
-	/**
-	 * Whether to consider additional ground motion model uncertainty, or not.
-	 */
-	public boolean gmmUncertainty() {
-		return gmmUncertainty;
-	}
-
-	public HazardFormat hazardFormat() {
-		return hazardFormat;
-	}
-
-	/**
-	 * Deaggregation configuration data.
-	 */
-	public DeaggData deagg() {
-		return deagg;
 	}
 
 	/**
@@ -250,6 +261,8 @@ public final class CalcConfig {
 		}
 	}
 
+	private static final Gson GSON = new GsonBuilder().create();
+
 	/**
 	 * Create a new calculation configuration builder from the resource at the
 	 * specified {@code path}.
@@ -287,8 +300,11 @@ public final class CalcConfig {
 		private double[] defaultImls;
 		private Map<Imt, double[]> customImls;
 		private Boolean optimizeGrids;
+		private Integer systemPartition;
 		private Boolean gmmUncertainty;
 		private HazardFormat hazardFormat;
+		private Path outputDir;
+		private Integer outputBatchSize;
 		private DeaggData deagg;
 
 		private Builder() {}
@@ -305,8 +321,11 @@ public final class CalcConfig {
 			this.defaultImls = config.defaultImls;
 			this.customImls = config.customImls;
 			this.optimizeGrids = config.optimizeGrids;
+			this.systemPartition = config.systemPartition;
 			this.gmmUncertainty = config.gmmUncertainty;
 			this.hazardFormat = config.hazardFormat;
+			this.outputDir = config.outputDir;
+			this.outputBatchSize = config.outputBatchSize;
 			this.deagg = config.deagg;
 			return this;
 		}
@@ -324,8 +343,11 @@ public final class CalcConfig {
 					3.28, 4.92, 7.38 };
 			this.customImls = Maps.newHashMap();
 			this.optimizeGrids = true;
+			this.systemPartition = 1000;
 			this.gmmUncertainty = false;
 			this.hazardFormat = HazardFormat.TOTAL;
+			this.outputDir = Paths.get(".");
+			this.outputBatchSize = 20;
 			this.deagg = new DeaggData();
 			return this;
 		}
@@ -343,8 +365,11 @@ public final class CalcConfig {
 			if (that.defaultImls != null) this.defaultImls = that.defaultImls;
 			if (that.customImls != null) this.customImls = that.customImls;
 			if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
+			if (that.systemPartition != null) this.systemPartition = that.systemPartition;
 			if (that.gmmUncertainty != null) this.gmmUncertainty = that.gmmUncertainty;
 			if (that.hazardFormat != null) this.hazardFormat = that.hazardFormat;
+			if (that.outputDir != null) this.outputDir = that.outputDir;
+			if (that.outputBatchSize != null) this.outputBatchSize = that.outputBatchSize;
 			if (that.deagg != null) this.deagg = that.deagg;
 			return this;
 		}
@@ -392,8 +417,11 @@ public final class CalcConfig {
 			checkNotNull(defaultImls, MSSG, buildId, Key.DEFAULT_IMLS);
 			checkNotNull(customImls, MSSG, buildId, Key.CUSTOM_IMLS);
 			checkNotNull(optimizeGrids, MSSG, buildId, Key.OPTIMIZE_GRIDS);
+			checkNotNull(systemPartition, MSSG, buildId, Key.SYSTEM_PARTITION);
 			checkNotNull(gmmUncertainty, MSSG, buildId, Key.GMM_UNCERTAINTY);
 			checkNotNull(hazardFormat, MSSG, buildId, Key.HAZARD_FORMAT);
+			checkNotNull(outputDir, MSSG, buildId, Key.OUTPUT_DIR);
+			checkNotNull(outputBatchSize, MSSG, buildId, Key.OUTPUT_BATCH_SIZE);
 			checkNotNull(deagg, MSSG, buildId, Key.DEAGG);
 			built = true;
 		}
@@ -403,22 +431,22 @@ public final class CalcConfig {
 		 */
 		public CalcConfig build() {
 			validateState(ID);
-			Set<Imt> finalImts = Sets.immutableEnumSet(imts);
-			Map<Imt, XySequence> curves = createCurveMap();
-			Map<Imt, XySequence> logCurves = createLogCurveMap();
 			return new CalcConfig(
 				resource,
 				exceedanceModel,
 				truncationLevel,
-				finalImts,
-				defaultImls,
-				customImls,
+				Sets.immutableEnumSet(imts),
 				optimizeGrids,
+				systemPartition,
 				gmmUncertainty,
 				hazardFormat,
+				outputDir,
+				outputBatchSize,
 				deagg,
-				curves,
-				logCurves);
+				defaultImls,
+				customImls,
+				createCurveMap(),
+				createLogCurveMap());
 		}
 	}
 

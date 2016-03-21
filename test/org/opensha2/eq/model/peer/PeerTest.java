@@ -146,8 +146,8 @@ public class PeerTest {
 		Iterable<Site> sites = Sites.fromCsv(MODEL_DIR.resolve(modelId).resolve("sites.csv"));
 
 		// ensure that only PGA is being used
-		checkState(config.imts().size() == 1);
-		checkState(config.imts().iterator().next() == Imt.PGA);
+		checkState(config.imts.size() == 1);
+		checkState(config.imts.iterator().next() == Imt.PGA);
 
 		List<Object[]> argsList = new ArrayList<>();
 		for (Site site : sites) {

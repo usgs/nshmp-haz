@@ -171,7 +171,7 @@ public class Results {
 		Hazard demo = batch.get(0);
 		boolean newFile = options.length == 0;
 		boolean namedSites = demo.site.name != Site.NO_NAME;
-		boolean detailed = demo.config.hazardFormat().equals(HazardFormat.DETAILED);
+		boolean detailed = demo.config.hazardFormat.equals(HazardFormat.DETAILED);
 
 		Map<Imt, List<String>> totalLineMap = Maps.newEnumMap(Imt.class);
 		Map<Imt, Map<SourceType, List<String>>> typeLineMap = Maps.newEnumMap(Imt.class);

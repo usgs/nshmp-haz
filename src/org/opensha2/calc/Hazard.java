@@ -72,7 +72,7 @@ public final class Hazard {
 						sb.append(curveSet.hazardGroundMotionsList.get(0).inputs.size());
 						break;
 					case GRID:
-						if (ss instanceof GridSourceSet.Table && config.optimizeGrids()) {
+						if (ss instanceof GridSourceSet.Table && config.optimizeGrids) {
 							GridSourceSet.Table gsst = (GridSourceSet.Table) curveSet.sourceSet;
 							sb.append(gsst.parentCount());
 							sb.append(" (").append(curveSet.hazardGroundMotionsList.size());
