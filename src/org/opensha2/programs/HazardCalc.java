@@ -40,9 +40,6 @@ import com.google.common.base.Throwables;
  */
 public class HazardCalc {
 
-	// TODO move to config
-	private static final int FLUSH_LIMIT = 5;
-
 	/**
 	 * Entry point for a hazard calculation.
 	 * 
@@ -173,7 +170,7 @@ public class HazardCalc {
 		for (Site site : sites) {
 			Hazard result = calc(model, config, site, executor);
 			results.add(result);
-			if (results.size() == FLUSH_LIMIT) {
+			if (results.size() == config.outputBatchSize) {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
 				Results.writeResults(out, results, opts);
