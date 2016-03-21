@@ -12,6 +12,7 @@ import static org.opensha2.util.TextUtils.wrap;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +34,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
 /**
  * Calculation configuration.
@@ -261,7 +266,17 @@ public final class CalcConfig {
 		}
 	}
 
-	private static final Gson GSON = new GsonBuilder().create();
+	private static final Gson GSON = new GsonBuilder()
+		.registerTypeAdapter(Path.class, new JsonDeserializer<Path>() {
+			@Override
+			public Path deserialize(
+					JsonElement json,
+					Type type,
+					JsonDeserializationContext context) throws JsonParseException {
+				return Paths.get(json.getAsString());
+			}
+		})
+		.create();
 
 	/**
 	 * Create a new calculation configuration builder from the resource at the
@@ -279,6 +294,14 @@ public final class CalcConfig {
 		configBuilder.resource = configPath;
 		reader.close();
 		return configBuilder;
+	}
+
+	public static void main(String[] args) throws IOException {
+		CalcConfig cc = builder()
+			.withDefaults()
+			.extend(builder(Paths.get("etc/examples/5-complex-model/config-sites.json")))
+			.build();
+		System.out.println(cc);
 	}
 
 	/**
@@ -346,7 +369,7 @@ public final class CalcConfig {
 			this.systemPartition = 1000;
 			this.gmmUncertainty = false;
 			this.hazardFormat = HazardFormat.TOTAL;
-			this.outputDir = Paths.get(".");
+			this.outputDir = Paths.get("curves");
 			this.outputBatchSize = 20;
 			this.deagg = new DeaggData();
 			return this;
@@ -449,5 +472,17 @@ public final class CalcConfig {
 				createLogCurveMap());
 		}
 	}
+
+	// static final class PathDeserializer implements JsonDeserializer<Path> {
+	//
+	// @Override
+	// public Path deserialize(
+	// JsonElement json,
+	// Type type,
+	// JsonDeserializationContext context) {
+	//
+	//
+	// }
+	// }
 
 }

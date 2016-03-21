@@ -42,7 +42,6 @@ public class Results {
 
 	private static final String CURVE_FILE_SUFFIX = ".csv";
 	private static final String RATE_FMT = "%.8e";
-	private static final String CURVE_DIR = "curves";
 
 	/**
 	 * Hazard output format.
@@ -258,7 +257,7 @@ public class Results {
 		for (Entry<Imt, List<String>> totalEntry : totalLineMap.entrySet()) {
 			Imt imt = totalEntry.getKey();
 
-			Path imtDir = dir.resolve(CURVE_DIR).resolve(imt.name());
+			Path imtDir = dir.resolve(imt.name());
 			Files.createDirectories(imtDir);
 			Path totalFile = imtDir.resolve("total" + CURVE_FILE_SUFFIX);
 			Files.write(totalFile, totalEntry.getValue(), US_ASCII, options);

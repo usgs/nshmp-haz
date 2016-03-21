@@ -1,12 +1,12 @@
 Example 6: Enhanced output
 --------------------------
 
-__Working directory:__ `/path/to/nshmp-haz/etc/examples`
+__Working directory:__ `/path/to/nshmp-haz/etc/examples/6-enhanced-output`
 
 While mean hazard is of broad interest, it can be useful to preserve individual components of a total curve, particularly with more complex models. Execute the following to write curves for each source type and ground motion model (GMM) used in the 2008 NSHM:
 
 ```Shell
-hazard ../../../nshmp-model-cous-2008/Western\ US 6-enhanced-output/sites.geojson 6-enhanced-output/config.json
+hazard ../../../../nshmp-model-cous-2008/Western\ US sites.geojson config.json
 ```
 
 Note that the output curves directory now contains additional directories of curves by source type and GMM.
