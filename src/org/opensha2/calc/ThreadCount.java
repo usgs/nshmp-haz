@@ -14,7 +14,8 @@ public enum ThreadCount {
 	/**
 	 * A single thread. Use of a single thread will generally prevent an
 	 * {@link ExecutorService} from being used, and all calculations will be run
-	 * on the thread from which a program was called.
+	 * on the thread from which a program was called. This is useful for
+	 * debugging.
 	 */
 	ONE,
 

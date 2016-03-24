@@ -336,7 +336,7 @@ public final class Mfds {
 	/**
 	 * Return a converter between annual rate and Poisson probability.
 	 */
-	public static Converter<Double, Double> rateToProbConverter() {
+	public static Converter<Double, Double> annualRateToProbabilityConverter() {
 		return AnnRateToPoissProbConverter.INSTANCE;
 	}
 

@@ -44,30 +44,6 @@ public class Results {
 	private static final String RATE_FMT = "%.8e";
 
 	/**
-	 * Hazard output format.
-	 */
-	public enum HazardFormat {
-
-		/** Total mean hazard only. */
-		TOTAL,
-
-		/** Additional curves by {@link Gmm} and {@link SourceType}. */
-		DETAILED;
-	}
-	
-	/**
-	 * Curve format.
-	 */
-	public enum CurveFormat {
-		
-		/** Write curves as annual-rate. */
-		ANNUAL_RATE,
-		
-		/** Write curves as Poisson probabilities. */
-		POISSON;
-	}
-
-	/**
 	 * Write a {@code batch} of {@code HazardResult}s to files in the specified
 	 * directory, one for each {@link Imt} in the {@code batch}. See
 	 * {@link Files#write(Path, Iterable, java.nio.charset.Charset, OpenOption...)}
@@ -105,7 +81,7 @@ public class Results {
 				headings.add("lat");
 				Iterable<?> header = Iterables.concat(
 					headings,
-					demo.config.modelCurves().get(imt).xValues());
+					demo.config.curve.modelCurves().get(imt).xValues());
 				lineList.add(Parsing.join(header, Delimiter.COMMA));
 			}
 			lineMap.put(imt, lineList);
@@ -170,7 +146,7 @@ public class Results {
 		Hazard demo = batch.get(0);
 		boolean newFile = options.length == 0;
 		boolean namedSites = demo.site.name != Site.NO_NAME;
-		boolean detailed = demo.config.hazardFormat.equals(HazardFormat.DETAILED);
+		boolean detailed = false; //demo.config.hazardFormat.equals(HazardFormat.DETAILED);
 
 		Map<Imt, List<String>> totalLineMap = Maps.newEnumMap(Imt.class);
 		Map<Imt, Map<SourceType, List<String>>> typeLineMap = Maps.newEnumMap(Imt.class);
@@ -182,7 +158,7 @@ public class Results {
 			if (newFile) {
 				Iterable<?> header = Iterables.concat(
 					Lists.newArrayList(namedSites ? "name" : null, "lon", "lat"),
-					demo.config.modelCurves().get(imt).xValues());
+					demo.config.curve.modelCurves().get(imt).xValues());
 				lines.add(Parsing.join(header, Delimiter.COMMA));
 			}
 			totalLineMap.put(imt, lines);

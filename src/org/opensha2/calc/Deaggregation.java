@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha2.calc.CalcConfig.DeaggData;
+import org.opensha2.calc.CalcConfig;
 import org.opensha2.data.Data;
 import org.opensha2.data.DataTable;
 import org.opensha2.data.DataTables;
@@ -221,8 +221,8 @@ public final class Deaggregation {
 				.dataModel(
 					Dataset.builder(hazard.config).build())
 				.probabilityModel(
-					hazard.config.exceedanceModel,
-					hazard.config.truncationLevel);
+					hazard.config.curve.exceedanceModel,
+					hazard.config.curve.truncationLevel);
 		}
 
 		/* Reusable builder */
@@ -908,7 +908,7 @@ public final class Deaggregation {
 		 * @see CalcConfig
 		 */
 		static Builder builder(CalcConfig config) {
-			DeaggData d = config.deagg;
+			CalcConfig.Deagg d = config.deagg;
 			return builder(
 				d.rMin, d.rMax, d.Δr,
 				d.mMin, d.mMax, d.Δm,

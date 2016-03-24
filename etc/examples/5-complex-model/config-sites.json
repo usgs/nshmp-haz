@@ -1,4 +1,8 @@
 {
-  "imts": ["SA1P0", "SA2P0"],
-  "outputDir": "curves-sites"
+  "curve": {
+    "imts": ["SA1P0", "SA2P0"]
+  },
+  "output": {
+    "directory": "curves-sites"
+  }
 }

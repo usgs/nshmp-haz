@@ -17,7 +17,9 @@ import com.google.common.base.Strings;
  */
 public class TextUtils {
 
+	/** System specific newline string. */
 	public static final String NEWLINE = StandardSystemProperty.LINE_SEPARATOR.value();
+	
 	public static final int ALIGN_COL = 24;
 	private static final int MAX_COL = 100;
 	private static final int DELTA_COL = MAX_COL - ALIGN_COL - 2;
@@ -38,26 +40,10 @@ public class TextUtils {
 		return NEWLINE + padStart(s, ALIGN_COL, ' ') + ": ";
 	}
 	
-	public static String wrap(String s) {
-		return wrap(s, false);
-	}
-	
-	/*
-	 * Used internally; pad flag indents lines consistent with format(s)
-	 */
-	private static String wrap(String s, boolean pad) {
-		if (s.length() <= DELTA_COL) return pad ? INDENT + s : s;
-		StringBuilder sb = new StringBuilder();
-		int lastCommaIndex = s.substring(0, DELTA_COL).lastIndexOf(',') + 1;
-		if (pad) sb.append(INDENT);
-		sb.append(s.substring(0, lastCommaIndex));
-		sb.append(wrap(s.substring(lastCommaIndex).trim(), true));
-		return sb.toString();
-	}
-
 	/**
 	 * Verifies that the supplied {@code String} is neither {@code null} or
 	 * empty. Method returns the supplied value and can be used inline.
+	 * 
 	 * @param name to verify
 	 * @throws IllegalArgumentException if name is {@code null} or empty
 	 */

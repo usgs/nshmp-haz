@@ -1,3 +1,5 @@
 {
-  "hazardFormat": "DETAILED"
+  "output": {
+    "curveTypes": ["TOTAL", "GMM", "SOURCE"]
+  }
 }

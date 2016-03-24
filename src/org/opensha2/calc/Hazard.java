@@ -72,7 +72,8 @@ public final class Hazard {
 						sb.append(curveSet.hazardGroundMotionsList.get(0).inputs.size());
 						break;
 					case GRID:
-						if (ss instanceof GridSourceSet.Table && config.optimizeGrids) {
+						boolean optimized = config.performance.optimizeGrids;
+						if (ss instanceof GridSourceSet.Table && optimized) {
 							GridSourceSet.Table gsst = (GridSourceSet.Table) curveSet.sourceSet;
 							sb.append(gsst.parentCount());
 							sb.append(" (").append(curveSet.hazardGroundMotionsList.size());
@@ -143,7 +144,7 @@ public final class Hazard {
 		private Builder(CalcConfig config) {
 			this.config = checkNotNull(config);
 			totalCurves = new EnumMap<>(Imt.class);
-			for (Entry<Imt, XySequence> entry : config.logModelCurves().entrySet()) {
+			for (Entry<Imt, XySequence> entry : config.curve.logModelCurves().entrySet()) {
 				totalCurves.put(entry.getKey(), emptyCopyOf(entry.getValue()));
 			}
 			curveMapBuilder = ImmutableSetMultimap.builder();

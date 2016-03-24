@@ -4,11 +4,15 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Strings.padEnd;
+import static com.google.common.base.Strings.repeat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.data.XySequence.create;
 import static org.opensha2.data.XySequence.immutableCopyOf;
-import static org.opensha2.util.TextUtils.format;
-import static org.opensha2.util.TextUtils.wrap;
+import static org.opensha2.util.Parsing.enumsToString;
+import static org.opensha2.util.TextUtils.NEWLINE;
+
+// import static org.opensha2.util.TextUtils.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -22,14 +26,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha2.calc.Results.HazardFormat;
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
-import org.opensha2.util.Parsing;
+import org.opensha2.util.TextUtils;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -41,123 +45,546 @@ import com.google.gson.JsonParseException;
 
 /**
  * Calculation configuration.
+ * 
  * @author Peter Powers
  */
 public final class CalcConfig {
 
 	static final String FILE_NAME = "config.json";
-
-	private final Path resource;
-
-	/**
-	 * The probability distribution model to use when computing hazard curves.
-	 */
-	public final ExceedanceModel exceedanceModel;
-	// TODO refactor to probabilitModel
+	private static final String ID = CalcConfig.class.getSimpleName();
+	private static final String STATE_ERROR = "%s %s not set";
+	private static final String DEFAULT_OUT = "curves";
 
 	/**
-	 * The number of standard deviations at which to truncate a distribution.
-	 * This field is ignored if a model does not implement truncation.
+	 * The resource from which {@code this} was derived. If this configuration
+	 * was built using {@link Builder#extend(Builder)}, this field will reflect
+	 * the field of the extending resource. If this configuration was built only
+	 * from {@link Builder#withDefaults()}, this field will be empty.
 	 */
-	public final double truncationLevel;
+	public final Optional<Path> resource;
 
-	/**
-	 * The {@code Set} of IMTs for which calculations should be performed.
-	 */
-	public final Set<Imt> imts;
+	/** Hazard curve calculation settings */
+	public final Curve curve;
 
-	/**
-	 * Whether to optimize grid source sets, or not.
-	 */
-	public final boolean optimizeGrids;
+	/** Performance and optimization settings. */
+	public final Performance performance;
 
-	/**
-	 * The partition or batch size to use when distributing
-	 * {@link SourceType#SYSTEM} calculations.
-	 */
-	public final int systemPartition;
+	/** Output configuration. */
+	public final Output output;
 
-	/**
-	 * Whether to consider additional ground motion model uncertainty, or not.
-	 * Currently this is only applicable when using the PEER NGA-West or
-	 * NGA-West2 {@link Gmm}s with USGS hazard models.
-	 */
-	public final boolean gmmUncertainty;
-
-	/** The hazard output format. */
-	public final HazardFormat hazardFormat;
-
-	/** The directory to write any results to. */
-	public final Path outputDir;
-
-	/**
-	 * The number of results to write at a time. A larger number requires more
-	 * memory.
-	 */
-	public final int outputBatchSize;
-
-	/**
-	 * Deaggregation configuration data.
-	 */
-	public final DeaggData deagg;
-
-	/*
-	 * Iml fields preserved for toString() exclusively. Imls should be retrieved
-	 * using modelCurves() or logModelCurves().
-	 */
-	private final double[] defaultImls;
-	private final Map<Imt, double[]> customImls;
-	private final Map<Imt, XySequence> modelCurves;
-	private final Map<Imt, XySequence> logModelCurves;
+	/** Deaggregation configuration. */
+	public final Deagg deagg;
 
 	private CalcConfig(
-			Path resource,
-			ExceedanceModel exceedanceModel,
-			double truncationLevel,
-			Set<Imt> imts,
-			boolean optimizeGrids,
-			int systemPartition,
-			boolean gmmUncertainty,
-			HazardFormat hazardFormat,
-			Path outputDir,
-			int outputBatchSize,
-			DeaggData deagg,
-			double[] defaultImls,
-			Map<Imt, double[]> customImls,
-			Map<Imt, XySequence> modelCurves,
-			Map<Imt, XySequence> logModelCurves) {
+			Optional<Path> resource,
+			Curve curve,
+			Performance performance,
+			Output output,
+			Deagg deagg) {
 
 		this.resource = resource;
-		this.exceedanceModel = exceedanceModel;
-		this.truncationLevel = truncationLevel;
-		this.imts = imts;
-		this.optimizeGrids = optimizeGrids;
-		this.systemPartition = systemPartition;
-		this.gmmUncertainty = gmmUncertainty;
-		this.hazardFormat = hazardFormat;
-		this.outputDir = outputDir;
-		this.outputBatchSize = outputBatchSize;
+		this.curve = curve;
+		this.performance = performance;
+		this.output = output;
 		this.deagg = deagg;
-		this.defaultImls = defaultImls;
-		this.customImls = customImls;
-		this.modelCurves = modelCurves;
-		this.logModelCurves = logModelCurves;
+	}
+
+	/**
+	 * Hazard curve calculation configuration.
+	 */
+	public final static class Curve {
+
+		static final String ID = CalcConfig.ID + "." + Curve.class.getSimpleName();
+
+		/**
+		 * The probability distribution model to use when computing hazard
+		 * curves.
+		 * 
+		 * <p><b>Default:</b> {@link ExceedanceModel#TRUNCATION_UPPER_ONLY}
+		 */
+		public final ExceedanceModel exceedanceModel;
+		// TODO refactor to probabilityModel
+
+		/**
+		 * The number of standard deviations (σ) at which to truncate a
+		 * distribution. This field is ignored if an {@link ExceedanceModel}
+		 * does not implement truncation.
+		 * 
+		 * <p><b>Default:</b> {@code 3.0}
+		 */
+		public final double truncationLevel;
+
+		/**
+		 * The {@code Set} of IMTs for which calculations should be performed.
+		 *
+		 * <p><b>Default:</b> [{@link Imt#PGA}, {@link Imt#SA0P2},
+		 * {@link Imt#SA1P0}]
+		 */
+		public final Set<Imt> imts;
+
+		/**
+		 * Whether to consider additional ground motion model uncertainty, or
+		 * not. Currently this is only applicable when using the PEER NGA-West
+		 * or NGA-West2 {@link Gmm}s with USGS hazard models.
+		 * 
+		 * <p><b>Default:</b> {@code false}
+		 */
+		public final boolean gmmUncertainty;
+
+		/**
+		 * The value format for hazard curves.
+		 * 
+		 * <p><b>Default:</b> {@link CurveValue#ANNUAL_RATE}
+		 */
+		public final CurveValue valueType;
+
+		private final double[] defaultImls;
+		private final Map<Imt, double[]> customImls;
+
+		private final Map<Imt, XySequence> modelCurves;
+		private final Map<Imt, XySequence> logModelCurves;
+
+		private Curve(
+				ExceedanceModel exceedanceModel,
+				double truncationLevel,
+				Set<Imt> imts,
+				boolean gmmUncertainty,
+				CurveValue valueType,
+				double[] defaultImls,
+				Map<Imt, double[]> customImls,
+				Map<Imt, XySequence> modelCurves,
+				Map<Imt, XySequence> logModelCurves) {
+
+			this.exceedanceModel = exceedanceModel;
+			this.truncationLevel = truncationLevel;
+			this.imts = imts;
+			this.gmmUncertainty = gmmUncertainty;
+			this.valueType = valueType;
+
+			this.defaultImls = defaultImls;
+			this.customImls = customImls;
+			this.modelCurves = modelCurves;
+			this.logModelCurves = logModelCurves;
+		}
+
+		/**
+		 * An empty linear curve for the requested {@code Imt}.
+		 * @param imt to get curve for
+		 */
+		public XySequence modelCurve(Imt imt) {
+			return modelCurves.get(imt);
+		}
+
+		/**
+		 * An immutable map of model curves where x-values are in linear space.
+		 */
+		public Map<Imt, XySequence> modelCurves() {
+			return modelCurves;
+		}
+
+		/**
+		 * An immutable map of model curves where x-values are in natural-log
+		 * space.
+		 */
+		public Map<Imt, XySequence> logModelCurves() {
+			return logModelCurves;
+		}
+
+		private StringBuilder asString() {
+			StringBuilder imlSb = new StringBuilder();
+			if (!customImls.isEmpty()) {
+				for (Entry<Imt, double[]> entry : customImls.entrySet()) {
+					String imtStr = "imls (" + entry.getKey().name() + ")";
+					imlSb.append(formatEntry(imtStr))
+						.append(wrap(Arrays.toString(entry.getValue()), false));
+				}
+			}
+			return new StringBuilder()
+				.append(formatGroup("Curve"))
+				.append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel))
+				.append(formatEntry(Key.TRUNCATION_LEVEL, truncationLevel))
+				.append(formatEntry(Key.IMTS, enumsToString(imts, Imt.class)))
+				.append(formatEntry(Key.GMM_UNCERTAINTY, gmmUncertainty))
+				.append(formatEntry(Key.VALUE_TYPE, valueType))
+				.append(formatEntry(Key.DEFAULT_IMLS, wrap(Arrays.toString(defaultImls), false)))
+				.append(imlSb);
+		}
+
+		private static final class Builder {
+
+			ExceedanceModel exceedanceModel;
+			Double truncationLevel;
+			Set<Imt> imts;
+			Boolean gmmUncertainty;
+			CurveValue valueType;
+			double[] defaultImls;
+			Map<Imt, double[]> customImls;
+
+			Curve build() {
+				return new Curve(
+					exceedanceModel,
+					truncationLevel,
+					Sets.immutableEnumSet(imts),
+					gmmUncertainty,
+					valueType,
+					defaultImls,
+					customImls,
+					createCurveMap(),
+					createLogCurveMap());
+			}
+
+			void copy(Curve that) {
+				this.exceedanceModel = that.exceedanceModel;
+				this.truncationLevel = that.truncationLevel;
+				this.imts = that.imts;
+				this.gmmUncertainty = that.gmmUncertainty;
+				this.valueType = that.valueType;
+				this.defaultImls = that.defaultImls;
+				this.customImls = that.customImls;
+			}
+
+			void extend(Builder that) {
+				if (that.exceedanceModel != null) this.exceedanceModel = that.exceedanceModel;
+				if (that.truncationLevel != null) this.truncationLevel = that.truncationLevel;
+				if (that.imts != null) this.imts = that.imts;
+				if (that.gmmUncertainty != null) this.gmmUncertainty = that.gmmUncertainty;
+				if (that.valueType != null) this.valueType = that.valueType;
+				if (that.defaultImls != null) this.defaultImls = that.defaultImls;
+				if (that.customImls != null) this.customImls = that.customImls;
+			}
+
+			static Builder defaults() {
+				Builder b = new Builder();
+				b.exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
+				b.truncationLevel = 3.0;
+				b.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
+				b.gmmUncertainty = false;
+				b.valueType = CurveValue.ANNUAL_RATE;
+				// Slightly modified version of NSHM 5Hz curve, size = 20
+				b.defaultImls = new double[] { 0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253,
+						0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46,
+						2.19, 3.28, 4.92, 7.38 };
+				b.customImls = Maps.newHashMap();
+				return b;
+			}
+
+			void validate() {
+				checkNotNull(exceedanceModel, STATE_ERROR, Curve.ID, Key.EXCEEDANCE_MODEL);
+				checkNotNull(truncationLevel, STATE_ERROR, Curve.ID, Key.TRUNCATION_LEVEL);
+				checkNotNull(imts, STATE_ERROR, Curve.ID, Key.IMTS);
+				checkNotNull(defaultImls, STATE_ERROR, Curve.ID, Key.DEFAULT_IMLS);
+				checkNotNull(customImls, STATE_ERROR, Curve.ID, Key.CUSTOM_IMLS);
+			}
+
+			Map<Imt, XySequence> createLogCurveMap() {
+				Map<Imt, XySequence> curveMap = Maps.newEnumMap(Imt.class);
+				for (Imt imt : imts) {
+					double[] imls = imlsForImt(imt);
+					imls = Arrays.copyOf(imls, imls.length);
+					Data.ln(imls);
+					curveMap.put(imt, immutableCopyOf(create(imls, null)));
+				}
+				return Maps.immutableEnumMap(curveMap);
+			}
+
+			Map<Imt, XySequence> createCurveMap() {
+				Map<Imt, XySequence> curveMap = Maps.newEnumMap(Imt.class);
+				for (Imt imt : imts) {
+					double[] imls = imlsForImt(imt);
+					imls = Arrays.copyOf(imls, imls.length);
+					curveMap.put(imt, immutableCopyOf(create(imls, null)));
+				}
+				return Maps.immutableEnumMap(curveMap);
+			}
+
+			double[] imlsForImt(Imt imt) {
+				return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
+			}
+		}
+	}
+
+	/**
+	 * Performance and optimization settings.
+	 */
+	public static final class Performance {
+
+		static final String ID = CalcConfig.ID + "." + Performance.class.getSimpleName();
+
+		/**
+		 * Whether to optimize grid source sets, or not.
+		 * 
+		 * <p><b>Default:</b> {@code true}
+		 */
+		public final boolean optimizeGrids;
+
+		/**
+		 * Whether to collapse/combine magnitude-frequency distributions, or
+		 * not. Doing so prevents uncertainty analysis as logic-tree branches
+		 * are obscured.
+		 * 
+		 * <p><b>Default:</b> {@code true}
+		 */
+		public final boolean collapseMfds;
+
+		/**
+		 * The partition or batch size to use when distributing
+		 * {@link SourceType#SYSTEM} calculations.
+		 * 
+		 * <p><b>Default:</b> {@code 1000}
+		 */
+		public final int systemPartition;
+
+		/**
+		 * The number of threads to use when distributing calculations.
+		 * 
+		 * <p><b>Default:</b> {@link ThreadCount#ALL}
+		 */
+		public final ThreadCount threadCount;
+
+		private Performance(
+				boolean optimizeGrids,
+				boolean collapseMfds,
+				int systemPartition,
+				ThreadCount threadCount) {
+
+			this.optimizeGrids = optimizeGrids;
+			this.collapseMfds = collapseMfds;
+			this.systemPartition = systemPartition;
+			this.threadCount = threadCount;
+		}
+
+		private StringBuilder asString() {
+			return new StringBuilder()
+				.append(formatGroup("Performance"))
+				.append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
+				.append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
+				.append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
+				.append(formatEntry(Key.THREAD_COUNT, threadCount));
+		}
+
+		private static final class Builder {
+
+			Boolean optimizeGrids;
+			Boolean collapseMfds;
+			Integer systemPartition;
+			ThreadCount threadCount;
+
+			Performance build() {
+				return new Performance(
+					optimizeGrids,
+					collapseMfds,
+					systemPartition,
+					threadCount);
+			}
+
+			void copy(Performance that) {
+				this.optimizeGrids = that.optimizeGrids;
+				this.collapseMfds = that.collapseMfds;
+				this.systemPartition = that.systemPartition;
+				this.threadCount = that.threadCount;
+			}
+
+			void extend(Builder that) {
+				if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
+				if (that.collapseMfds != null) this.collapseMfds = that.collapseMfds;
+				if (that.systemPartition != null) this.systemPartition = that.systemPartition;
+				if (that.threadCount != null) this.threadCount = that.threadCount;
+			}
+
+			static Builder defaults() {
+				Builder b = new Builder();
+				b.optimizeGrids = true;
+				b.collapseMfds = true;
+				b.systemPartition = 1000;
+				b.threadCount = ThreadCount.ALL;
+				return b;
+			}
+
+			void validate() {
+				checkNotNull(optimizeGrids, STATE_ERROR, Performance.ID, Key.OPTIMIZE_GRIDS);
+				checkNotNull(collapseMfds, STATE_ERROR, Performance.ID, Key.COLLAPSE_MFDS);
+				checkNotNull(systemPartition, STATE_ERROR, Performance.ID, Key.SYSTEM_PARTITION);
+				checkNotNull(threadCount, STATE_ERROR, Performance.ID, Key.THREAD_COUNT);
+			}
+		}
+	}
+
+	/**
+	 * Hazard curve and file output settings.
+	 */
+	public static final class Output {
+
+		static final String ID = CalcConfig.ID + "." + Output.class.getSimpleName();
+
+		/**
+		 * The directory to write any results to.
+		 * 
+		 * <p><b>Default:</b> {@code "curves"}
+		 */
+		public final Path directory;
+
+		/**
+		 * The different {@linkplain CurveType types} of curves to save. Note
+		 * that {@link CurveType#TOTAL} will <i>always</i> be included in this
+		 * set, regardless of any user settings.
+		 * 
+		 * <p><b>Default:</b> [{@link CurveType#TOTAL}]
+		 */
+		public final Set<CurveType> curveTypes;
+
+		/**
+		 * The number of results (one per {@code Site}) to store before writing
+		 * to file(s). A larger number requires more memory.
+		 * 
+		 * <p><b>Default:</b> {@code 20}
+		 */
+		public final int flushLimit;
+
+		private Output(
+				Path directory,
+				Set<CurveType> curveTypes,
+				int flushLimit) {
+
+			this.directory = directory;
+			curveTypes.add(CurveType.TOTAL);
+			this.curveTypes = Sets.immutableEnumSet(curveTypes);
+			this.flushLimit = flushLimit;
+		}
+
+		private StringBuilder asString() {
+			return new StringBuilder()
+				.append(formatGroup("Output"))
+				.append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
+				.append(formatEntry(Key.CURVE_TYPES, enumsToString(curveTypes, CurveType.class)))
+				.append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
+		}
+
+		private static final class Builder {
+
+			Path directory;
+			Set<CurveType> curveTypes;
+			Integer flushLimit;
+
+			Output build() {
+				return new Output(
+					directory,
+					curveTypes,
+					flushLimit);
+			}
+
+			void copy(Output that) {
+				this.directory = that.directory;
+				this.curveTypes = that.curveTypes;
+				this.flushLimit = that.flushLimit;
+			}
+
+			void extend(Builder that) {
+				if (that.directory != null) this.directory = that.directory;
+				if (that.curveTypes != null) this.curveTypes = that.curveTypes;
+				if (that.flushLimit != null) this.flushLimit = that.flushLimit;
+			}
+
+			static Builder defaults() {
+				Builder b = new Builder();
+				b.directory = Paths.get(DEFAULT_OUT);
+				b.curveTypes = EnumSet.of(CurveType.TOTAL);
+				b.flushLimit = 20;
+				return b;
+			}
+
+			void validate() {
+				checkNotNull(directory, STATE_ERROR, Performance.ID, Key.DIRECTORY);
+				checkNotNull(curveTypes, STATE_ERROR, Performance.ID, Key.CURVE_TYPES);
+				checkNotNull(flushLimit, STATE_ERROR, Performance.ID, Key.FLUSH_LIMIT);
+			}
+		}
+	}
+
+	/**
+	 * Deaggregation configuration data container.
+	 */
+	public static final class Deagg {
+
+		static final String ID = CalcConfig.ID + "." + Deagg.class.getSimpleName();
+
+		/** Minimum distance. Lower edge of smallest distance bin. */
+		public final double rMin;
+
+		/** Maximum distance. Upper edge of largest distance bin. */
+		public final double rMax;
+
+		/** Distance bin width. */
+		public final double Δr;
+
+		/** Minimum magnitude. Lower edge of smallest magnitude bin. */
+		public final double mMin;
+
+		/** Maximum magnitude. Upper edge of largest magnitude bin. */
+		public final double mMax;
+
+		/** Magnitude bin width. */
+		public final double Δm;
+
+		/** Minimum epsilon. Lower edge of smallest epsilon bin. */
+		public final double εMin;
+
+		/** Maximum epsilon. Upper edge of largest epsilon bin. */
+		public final double εMax;
+
+		/** Epsilon bin width. */
+		public final double Δε;
+
+		Deagg() {
+			rMin = 0.0;
+			rMax = 100.0;
+			Δr = 10.0;
+			mMin = 5.0;
+			mMax = 7.0;
+			Δm = 0.1;
+			εMin = -3;
+			εMax = 3.0;
+			Δε = 0.5;
+		}
+
+		private StringBuilder asString() {
+			return new StringBuilder()
+				.append(formatGroup("Deaggregation"))
+				.append(formatEntry("R"))
+				.append("min=").append(rMin).append(", ")
+				.append("max=").append(rMax).append(", ")
+				.append("Δ=").append(Δr)
+				.append(formatEntry("M"))
+				.append("min=").append(mMin).append(", ")
+				.append("max=").append(mMax).append(", ")
+				.append("Δ=").append(Δm)
+				.append(formatEntry("ε"))
+				.append("min=").append(εMin).append(", ")
+				.append("max=").append(εMax).append(", ")
+				.append("Δ=").append(Δε);
+		}
 	}
 
 	private enum Key {
 		RESOURCE,
+		/* curve */
 		EXCEEDANCE_MODEL,
 		TRUNCATION_LEVEL,
 		IMTS,
-		OPTIMIZE_GRIDS,
 		GMM_UNCERTAINTY,
-		SYSTEM_PARTITION,
-		HAZARD_FORMAT,
-		OUTPUT_DIR,
-		OUTPUT_BATCH_SIZE,
-		DEAGG,
+		VALUE_TYPE,
 		DEFAULT_IMLS,
-		CUSTOM_IMLS;
+		CUSTOM_IMLS,
+		/* performance */
+		OPTIMIZE_GRIDS,
+		COLLAPSE_MFDS,
+		SYSTEM_PARTITION,
+		THREAD_COUNT,
+		/* output */
+		DIRECTORY,
+		CURVE_TYPES,
+		FLUSH_LIMIT,
+		/* deagg */
+		DEAGG;
 
 		private String label;
 
@@ -173,97 +600,52 @@ public final class CalcConfig {
 
 	@Override
 	public String toString() {
-		String customImlStr = "";
-		if (!customImls.isEmpty()) {
-			StringBuilder sb = new StringBuilder();
-			for (Entry<Imt, double[]> entry : customImls.entrySet()) {
-				String imtStr = "(override) " + entry.getKey().name();
-				sb.append(format(imtStr)).append(wrap(Arrays.toString(entry.getValue())));
-			}
-			customImlStr = sb.toString();
-		}
-
-		return new StringBuilder("Calc config:")
-			.append(format(Key.RESOURCE)).append(resource.toAbsolutePath().normalize())
-			.append(format(Key.EXCEEDANCE_MODEL)).append(exceedanceModel)
-			.append(format(Key.TRUNCATION_LEVEL)).append(truncationLevel)
-			.append(format(Key.IMTS)).append(Parsing.enumsToString(imts, Imt.class))
-			.append(format(Key.DEFAULT_IMLS)).append(wrap(Arrays.toString(defaultImls)))
-			.append(customImlStr)
-			.append(format(Key.OPTIMIZE_GRIDS)).append(optimizeGrids)
-			.append(format(Key.SYSTEM_PARTITION)).append(systemPartition)
-			.append(format(Key.GMM_UNCERTAINTY)).append(gmmUncertainty)
-			.append(format(Key.HAZARD_FORMAT)).append(hazardFormat)
-			.append(format(Key.OUTPUT_DIR)).append(outputDir.toAbsolutePath().normalize())
-			.append(format(Key.OUTPUT_BATCH_SIZE)).append(outputBatchSize)
-			.append(format("Deaggregation R"))
-			.append("min=").append(deagg.rMin).append(", ")
-			.append("max=").append(deagg.rMax).append(", ")
-			.append("Δ=").append(deagg.Δr)
-			.append(format("Deaggregation M"))
-			.append("min=").append(deagg.mMin).append(", ")
-			.append("max=").append(deagg.mMax).append(", ")
-			.append("Δ=").append(deagg.Δm)
-			.append(format("Deaggregation ε"))
-			.append("min=").append(deagg.εMin).append(", ")
-			.append("max=").append(deagg.εMax).append(", ")
-			.append("Δ=").append(deagg.Δε)
+		return new StringBuilder(padEnd("Calc Configuration:", VALUE_INDENT_SIZE, ' '))
+			.append(resource.isPresent()
+				? resource.get().toAbsolutePath().normalize()
+				: "(from defaults)")
+			.append(curve.asString())
+			.append(performance.asString())
+			.append(output.asString())
+			.append(deagg.asString())
 			.toString();
 	}
 
-	/**
-	 * An empty linear curve for the requested {@code Imt}.
-	 * @param imt to get curve for
-	 */
-	public XySequence modelCurve(Imt imt) {
-		return modelCurves.get(imt);
+	// public static <E extends Enum<E>> String format(E id) {
+	// return format(id.toString());
+	// }
+
+	private static final int GROUP_INDENT_SIZE = 8;
+	private static final int KEY_INDENT_SIZE = 10;
+	private static final int VALUE_INDENT_SIZE = 28;
+	private static final int MAX_COL = 100;
+	private static final int VALUE_WIDTH = MAX_COL - VALUE_INDENT_SIZE;
+	private static final String S = " ";
+	private static final String GROUP_INDENT = repeat(S, GROUP_INDENT_SIZE);
+	private static final String KEY_INDENT = repeat(S, KEY_INDENT_SIZE);
+	private static final String VALUE_INDENT = repeat(S, VALUE_INDENT_SIZE);
+
+	private static String formatGroup(String group) {
+		return TextUtils.NEWLINE + GROUP_INDENT + group;
 	}
 
-	/**
-	 * An immutable map of model curves where x-values are in linear space.
-	 */
-	public Map<Imt, XySequence> modelCurves() {
-		return modelCurves;
+	private static String formatEntry(String key) {
+		return NEWLINE + padEnd(KEY_INDENT + '.' + key + ':', VALUE_INDENT_SIZE, ' ');
 	}
 
-	/**
-	 * An immutable map of model curves where x-values are in natural-log space.
-	 */
-	public Map<Imt, XySequence> logModelCurves() {
-		return logModelCurves;
+	private static <E extends Enum<E>> String formatEntry(E key, Object value) {
+		return NEWLINE + padEnd(KEY_INDENT + '.' + key + ':', VALUE_INDENT_SIZE, ' ') + value;
 	}
 
-	/**
-	 * Deaggregation configuration data container.
-	 */
-	@SuppressWarnings("javadoc")
-	public static final class DeaggData {
-
-		public final double rMin;
-		public final double rMax;
-		public final double Δr;
-
-		public final double mMin;
-		public final double mMax;
-		public final double Δm;
-
-		public final double εMin;
-		public final double εMax;
-		public final double Δε;
-
-		DeaggData() {
-			rMin = 0.0;
-			rMax = 100.0;
-			Δr = 10.0;
-
-			mMin = 5.0;
-			mMax = 7.0;
-			Δm = 0.1;
-
-			εMin = -3;
-			εMax = 3.0;
-			Δε = 0.5;
-		}
+	/* wrap a commma-delimited string */
+	private static String wrap(String s, boolean pad) {
+		if (s.length() <= VALUE_WIDTH) return pad ? NEWLINE + VALUE_INDENT + s : s;
+		StringBuilder sb = new StringBuilder();
+		int lastCommaIndex = s.substring(0, VALUE_WIDTH).lastIndexOf(',') + 1;
+		if (pad) sb.append(NEWLINE).append(VALUE_INDENT);
+		sb.append(s.substring(0, lastCommaIndex));
+		sb.append(wrap(s.substring(lastCommaIndex).trim(), true));
+		return sb.toString();
 	}
 
 	private static final Gson GSON = new GsonBuilder()
@@ -278,101 +660,84 @@ public final class CalcConfig {
 		})
 		.create();
 
-	/**
-	 * Create a new calculation configuration builder from the resource at the
-	 * specified {@code path}.
-	 * 
-	 * @param path to configuration file or resource
-	 * @throws IOException
-	 */
-	public static Builder builder(Path path) throws IOException {
-		checkNotNull(path);
-		// TODO test with zip files
-		Path configPath = Files.isDirectory(path) ? path.resolve(FILE_NAME) : path;
-		Reader reader = Files.newBufferedReader(configPath, UTF_8);
-		Builder configBuilder = GSON.fromJson(reader, Builder.class);
-		configBuilder.resource = configPath;
-		reader.close();
-		return configBuilder;
-	}
-
+	// TODO clean
 	public static void main(String[] args) throws IOException {
-		CalcConfig cc = builder()
+
+		// CalcConfig cc =
+		// Builder.fromFile(Paths.get("etc/examples/5-complex-model/config-sites.json")).build();
+		// System.out.println(cc);
+
+		CalcConfig cc = Builder
 			.withDefaults()
-			.extend(builder(Paths.get("etc/examples/5-complex-model/config-sites.json")))
+			// .extend(Builder.fromFile(Paths.get("etc/examples/6-enhanced-output/config.json")))
+			.extend(Builder.fromFile(Paths.get("etc/examples/2-custom-config/config.json")))
 			.build();
 		System.out.println(cc);
 	}
 
 	/**
-	 * Create a new empty calculation configuration builder.
+	 * A builder of configuration instances.
 	 */
-	public static Builder builder() {
-		return new Builder();
-	}
-
 	public static final class Builder {
 
-		private static final String ID = "CalcConfig.Builder";
 		private boolean built = false;
 
 		private Path resource;
-		private ExceedanceModel exceedanceModel;
-		private Double truncationLevel;
-		private Set<Imt> imts;
-		private double[] defaultImls;
-		private Map<Imt, double[]> customImls;
-		private Boolean optimizeGrids;
-		private Integer systemPartition;
-		private Boolean gmmUncertainty;
-		private HazardFormat hazardFormat;
-		private Path outputDir;
-		private Integer outputBatchSize;
-		private DeaggData deagg;
+		private Curve.Builder curve;
+		private Performance.Builder performance;
+		private Output.Builder output;
+		private Deagg deagg;
 
-		private Builder() {}
-
-		/**
-		 * Initialize a new builder with a copy of that supplied.
-		 */
-		public Builder copy(CalcConfig config) {
-			checkNotNull(config);
-			this.resource = config.resource;
-			this.exceedanceModel = config.exceedanceModel;
-			this.truncationLevel = config.truncationLevel;
-			this.imts = config.imts;
-			this.defaultImls = config.defaultImls;
-			this.customImls = config.customImls;
-			this.optimizeGrids = config.optimizeGrids;
-			this.systemPartition = config.systemPartition;
-			this.gmmUncertainty = config.gmmUncertainty;
-			this.hazardFormat = config.hazardFormat;
-			this.outputDir = config.outputDir;
-			this.outputBatchSize = config.outputBatchSize;
-			this.deagg = config.deagg;
-			return this;
+		private Builder() {
+			curve = new Curve.Builder();
+			performance = new Performance.Builder();
+			output = new Output.Builder();
 		}
 
 		/**
-		 * Initialize a new builder with defaults.
+		 * Initialize a new builder with values copied from the supplied config.
 		 */
-		public Builder withDefaults() {
-			this.exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
-			this.truncationLevel = 3.0;
-			this.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
-			// Slightly modified version of NSHM 5Hz curve, size = 20
-			this.defaultImls = new double[] { 0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253,
-					0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19,
-					3.28, 4.92, 7.38 };
-			this.customImls = Maps.newHashMap();
-			this.optimizeGrids = true;
-			this.systemPartition = 1000;
-			this.gmmUncertainty = false;
-			this.hazardFormat = HazardFormat.TOTAL;
-			this.outputDir = Paths.get("curves");
-			this.outputBatchSize = 20;
-			this.deagg = new DeaggData();
-			return this;
+		public static Builder copyOf(CalcConfig config) {
+			Builder b = new Builder();
+			if (config.resource.isPresent()) {
+				b.resource = config.resource.get();
+			}
+			b.curve.copy(config.curve);
+			b.performance.copy(config.performance);
+			b.output.copy(config.output);
+			b.deagg = config.deagg;
+			return b;
+		}
+
+		/**
+		 * Create a new builder from the resource at the specified path. This
+		 * will only set those fields that are explicitely defined.
+		 * 
+		 * @param path to configuration file or resource
+		 * @throws IOException
+		 */
+		public static Builder fromFile(Path path) throws IOException {
+			checkNotNull(path);
+			// TODO test with zip files
+			Path configPath = Files.isDirectory(path) ? path.resolve(FILE_NAME) : path;
+			Reader reader = Files.newBufferedReader(configPath, UTF_8);
+			Builder b = GSON.fromJson(reader, Builder.class);
+			reader.close();
+			b.resource = configPath;
+			return b;
+		}
+
+		/**
+		 * Initialize a new builder with all fields initialized to default
+		 * values.
+		 */
+		public static Builder withDefaults() {
+			Builder b = new Builder();
+			b.curve = Curve.Builder.defaults();
+			b.performance = Performance.Builder.defaults();
+			b.output = Output.Builder.defaults();
+			b.deagg = new Deagg();
+			return b;
 		}
 
 		/**
@@ -381,18 +746,10 @@ public final class CalcConfig {
 		 */
 		public Builder extend(final Builder that) {
 			checkNotNull(that);
-			if (that.resource != null) this.resource = that.resource;
-			if (that.exceedanceModel != null) this.exceedanceModel = that.exceedanceModel;
-			if (that.truncationLevel != null) this.truncationLevel = that.truncationLevel;
-			if (that.imts != null) this.imts = that.imts;
-			if (that.defaultImls != null) this.defaultImls = that.defaultImls;
-			if (that.customImls != null) this.customImls = that.customImls;
-			if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
-			if (that.systemPartition != null) this.systemPartition = that.systemPartition;
-			if (that.gmmUncertainty != null) this.gmmUncertainty = that.gmmUncertainty;
-			if (that.hazardFormat != null) this.hazardFormat = that.hazardFormat;
-			if (that.outputDir != null) this.outputDir = that.outputDir;
-			if (that.outputBatchSize != null) this.outputBatchSize = that.outputBatchSize;
+			this.resource = that.resource;
+			this.curve.extend(that.curve);
+			this.performance.extend(that.performance);
+			this.output.extend(that.output);
 			if (that.deagg != null) this.deagg = that.deagg;
 			return this;
 		}
@@ -401,51 +758,16 @@ public final class CalcConfig {
 		 * Set the IMTs for which results should be calculated.
 		 */
 		public Builder imts(Set<Imt> imts) {
-			this.imts = checkNotNull(imts);
+			this.curve.imts = checkNotNull(imts);
 			return this;
 		}
 
-		private Map<Imt, XySequence> createLogCurveMap() {
-			Map<Imt, XySequence> curveMap = Maps.newEnumMap(Imt.class);
-			for (Imt imt : imts) {
-				double[] imls = imlsForImt(imt);
-				imls = Arrays.copyOf(imls, imls.length);
-				Data.ln(imls);
-				curveMap.put(imt, immutableCopyOf(create(imls, null)));
-			}
-			return Maps.immutableEnumMap(curveMap);
-		}
-
-		private Map<Imt, XySequence> createCurveMap() {
-			Map<Imt, XySequence> curveMap = Maps.newEnumMap(Imt.class);
-			for (Imt imt : imts) {
-				double[] imls = imlsForImt(imt);
-				imls = Arrays.copyOf(imls, imls.length);
-				curveMap.put(imt, immutableCopyOf(create(imls, null)));
-			}
-			return Maps.immutableEnumMap(curveMap);
-		}
-
-		private double[] imlsForImt(Imt imt) {
-			return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
-		}
-
-		private static final String MSSG = "%s %s not set";
-
-		private void validateState(String buildId) {
-			checkState(!built, "This %s instance as already been used", buildId);
-			checkNotNull(exceedanceModel, MSSG, buildId, Key.EXCEEDANCE_MODEL);
-			checkNotNull(truncationLevel, MSSG, buildId, Key.TRUNCATION_LEVEL);
-			checkNotNull(imts, MSSG, buildId, Key.IMTS);
-			checkNotNull(defaultImls, MSSG, buildId, Key.DEFAULT_IMLS);
-			checkNotNull(customImls, MSSG, buildId, Key.CUSTOM_IMLS);
-			checkNotNull(optimizeGrids, MSSG, buildId, Key.OPTIMIZE_GRIDS);
-			checkNotNull(systemPartition, MSSG, buildId, Key.SYSTEM_PARTITION);
-			checkNotNull(gmmUncertainty, MSSG, buildId, Key.GMM_UNCERTAINTY);
-			checkNotNull(hazardFormat, MSSG, buildId, Key.HAZARD_FORMAT);
-			checkNotNull(outputDir, MSSG, buildId, Key.OUTPUT_DIR);
-			checkNotNull(outputBatchSize, MSSG, buildId, Key.OUTPUT_BATCH_SIZE);
-			checkNotNull(deagg, MSSG, buildId, Key.DEAGG);
+		private void validateState() {
+			checkState(!built, "This %s instance as already been used", ID + ".Builder");
+			curve.validate();
+			performance.validate();
+			output.validate();
+			checkNotNull(deagg, STATE_ERROR, Deagg.ID, "deagg");
 			built = true;
 		}
 
@@ -453,36 +775,14 @@ public final class CalcConfig {
 		 * Build a new calculation configuration.
 		 */
 		public CalcConfig build() {
-			validateState(ID);
+			validateState();
 			return new CalcConfig(
-				resource,
-				exceedanceModel,
-				truncationLevel,
-				Sets.immutableEnumSet(imts),
-				optimizeGrids,
-				systemPartition,
-				gmmUncertainty,
-				hazardFormat,
-				outputDir,
-				outputBatchSize,
-				deagg,
-				defaultImls,
-				customImls,
-				createCurveMap(),
-				createLogCurveMap());
+				Optional.fromNullable(resource),
+				curve.build(),
+				performance.build(),
+				output.build(),
+				deagg);
 		}
 	}
-
-	// static final class PathDeserializer implements JsonDeserializer<Path> {
-	//
-	// @Override
-	// public Path deserialize(
-	// JsonElement json,
-	// Type type,
-	// JsonDeserializationContext context) {
-	//
-	//
-	// }
-	// }
 
 }

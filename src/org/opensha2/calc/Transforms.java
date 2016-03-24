@@ -152,9 +152,9 @@ final class Transforms {
 		private final double truncationLevel;
 
 		GroundMotionsToCurves(CalcConfig config) {
-			this.modelCurves = config.logModelCurves();
-			this.exceedanceModel = config.exceedanceModel;
-			this.truncationLevel = config.truncationLevel;
+			this.modelCurves = config.curve.logModelCurves();
+			this.exceedanceModel = config.curve.exceedanceModel;
+			this.truncationLevel = config.curve.truncationLevel;
 		}
 
 		@Override
@@ -210,9 +210,9 @@ final class Transforms {
 
 		GroundMotionsToCurvesWithUncertainty(GmmSet gmmSet, CalcConfig config) {
 			this.gmmSet = gmmSet;
-			this.modelCurves = config.logModelCurves();
-			this.exceedanceModel = config.exceedanceModel;
-			this.truncationLevel = config.truncationLevel;
+			this.modelCurves = config.curve.logModelCurves();
+			this.exceedanceModel = config.curve.exceedanceModel;
+			this.truncationLevel = config.curve.truncationLevel;
 		}
 
 		@Override
@@ -307,12 +307,12 @@ final class Transforms {
 
 			GmmSet gmmSet = sources.groundMotionModels();
 			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(
-				config.imts,
+				config.curve.imts,
 				gmmSet.gmms());
 
 			this.sourceToInputs = new SourceToInputs(site);
 			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
-			this.groundMotionsToCurves = config.gmmUncertainty && gmmSet.epiUncertainty()
+			this.groundMotionsToCurves = config.curve.gmmUncertainty && gmmSet.epiUncertainty()
 				? new GroundMotionsToCurvesWithUncertainty(gmmSet, config)
 				: new GroundMotionsToCurves(config);
 		}
@@ -340,7 +340,7 @@ final class Transforms {
 				CalcConfig config) {
 
 			this.sources = sources;
-			this.modelCurves = config.logModelCurves();
+			this.modelCurves = config.curve.logModelCurves();
 		}
 
 		@Override
@@ -396,14 +396,14 @@ final class Transforms {
 
 			GmmSet gmmSet = sources.groundMotionModels();
 			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(
-				config.imts,
+				config.curve.imts,
 				gmmSet.gmms());
 
 			InputsToGroundMotions inputsToGm = new InputsToGroundMotions(gmmTable);
 			GroundMotions gms = inputsToGm.apply(inputs);
 
 			Function<GroundMotions, HazardCurves> gmToCurves =
-				config.gmmUncertainty && gmmSet.epiUncertainty()
+				config.curve.gmmUncertainty && gmmSet.epiUncertainty()
 					? new GroundMotionsToCurvesWithUncertainty(gmmSet, config)
 					: new GroundMotionsToCurves(config);
 			HazardCurves curves = gmToCurves.apply(gms);
@@ -447,7 +447,8 @@ final class Transforms {
 			// calculate curves from list in parallel
 			InputsToCurves inputsToCurves = new InputsToCurves(sources, config);
 			AsyncList<HazardCurves> asyncCurvesList = AsyncList.create();
-			for (InputList partition : master.partition(config.systemPartition)) {
+			int size = config.performance.systemPartition;
+			for (InputList partition : master.partition(size)) {
 				asyncCurvesList.add(transform(
 					immediateFuture(partition),
 					inputsToCurves,
@@ -481,11 +482,11 @@ final class Transforms {
 
 			GmmSet gmmSet = sources.groundMotionModels();
 			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(
-				config.imts,
+				config.curve.imts,
 				gmmSet.gmms());
 
 			this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
-			this.groundMotionsToCurves = config.gmmUncertainty && gmmSet.epiUncertainty()
+			this.groundMotionsToCurves = config.curve.gmmUncertainty && gmmSet.epiUncertainty()
 				? new GroundMotionsToCurvesWithUncertainty(gmmSet, config)
 				: new GroundMotionsToCurves(config);
 		}
@@ -560,9 +561,9 @@ final class Transforms {
 		private final double truncationLevel;
 
 		ClusterGroundMotionsToCurves(CalcConfig config) {
-			this.logModelCurves = config.logModelCurves();
-			this.exceedanceModel = config.exceedanceModel;
-			this.truncationLevel = config.truncationLevel;
+			this.logModelCurves = config.curve.logModelCurves();
+			this.exceedanceModel = config.curve.exceedanceModel;
+			this.truncationLevel = config.curve.truncationLevel;
 		}
 
 		@Override
@@ -635,7 +636,7 @@ final class Transforms {
 				Site site) {
 
 			Set<Gmm> gmms = sources.groundMotionModels().gmms();
-			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(config.imts, gmms);
+			Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(config.curve.imts, gmms);
 
 			this.sourceToInputs = new ClusterSourceToInputs(site);
 			this.inputsToGroundMotions = new ClusterInputsToGroundMotions(gmmTable);
@@ -666,7 +667,7 @@ final class Transforms {
 				CalcConfig config) {
 
 			this.sources = sources;
-			this.modelCurves = config.logModelCurves();
+			this.modelCurves = config.curve.logModelCurves();
 		}
 
 		@Override

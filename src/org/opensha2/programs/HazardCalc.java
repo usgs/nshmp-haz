@@ -96,9 +96,8 @@ public class HazardCalc {
 			CalcConfig config = model.config();
 			if (argCount == 3) {
 				Path userConfigPath = Paths.get(args[2]);
-				config = CalcConfig.builder()
-					.copy(model.config())
-					.extend(CalcConfig.builder(userConfigPath))
+				config = CalcConfig.Builder.copyOf(model.config())
+					.extend(CalcConfig.Builder.fromFile(userConfigPath))
 					.build();
 			}
 			log.info(config.toString());
@@ -167,10 +166,10 @@ public class HazardCalc {
 		for (Site site : sites) {
 			Hazard result = calc(model, config, site, executor);
 			results.add(result);
-			if (results.size() == config.outputBatchSize) {
+			if (results.size() == config.output.flushLimit) {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
-				Results.writeResults(config.outputDir, results, opts);
+				Results.writeResults(config.output.directory, results, opts);
 				log.info("     batch: " + (count + 1) + "  " + batchWatch +
 					"  total: " + totalWatch);
 				results.clear();
@@ -181,7 +180,7 @@ public class HazardCalc {
 		// write final batch
 		if (!results.isEmpty()) {
 			OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-			Results.writeResults(config.outputDir, results, opts);
+			Results.writeResults(config.output.directory, results, opts);
 		}
 		log.info(PROGRAM + ": " + count + " complete " + totalWatch);
 

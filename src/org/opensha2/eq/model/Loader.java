@@ -87,12 +87,11 @@ class Loader {
 			checkArgument(Files.exists(path), "Specified model does not exist: %s", path);
 			Path typeDirPath = typeDirectory(path);
 
-			ModelConfig modelConfig = ModelConfig.builder(typeDirPath).build();
+			ModelConfig modelConfig = ModelConfig.Builder.fromFile(typeDirPath).build();
 			log.info(modelConfig.toString());
 
-			CalcConfig calcConfig = CalcConfig.builder()
-					.withDefaults()
-					.extend(CalcConfig.builder(typeDirPath))
+			CalcConfig calcConfig = CalcConfig.Builder.withDefaults()
+					.extend(CalcConfig.Builder.fromFile(typeDirPath))
 					.build();
 			builder.config(calcConfig);
 
@@ -190,9 +189,8 @@ class Loader {
 		ModelConfig config = modelConfig;
 		Path configPath = typeDir.resolve(ModelConfig.FILE_NAME);
 		if (Files.exists(configPath)) {
-			config = ModelConfig.builder()
-				.copy(modelConfig)
-				.extend(ModelConfig.builder(configPath))
+			config = ModelConfig.Builder.copyOf(modelConfig)
+				.extend(ModelConfig.Builder.fromFile(configPath))
 				.build();
 			log.info("(override) " + config.toString());
 		}
@@ -262,9 +260,8 @@ class Loader {
 			// config
 			Path nestedConfigPath = sourceDir.resolve(ModelConfig.FILE_NAME);
 			if (Files.exists(nestedConfigPath)) {
-				nestedConfig = ModelConfig.builder()
-					.copy(parentConfig)
-					.extend(ModelConfig.builder(nestedConfigPath))
+				nestedConfig = ModelConfig.Builder.copyOf(parentConfig)
+					.extend(ModelConfig.Builder.fromFile(nestedConfigPath))
 					.build();
 				log.info("(override) " + nestedConfig.toString());
 			}
