@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import org.opensha2.calc.CalcConfig;
@@ -85,10 +86,14 @@ public class HazardCalc {
 			return Optional.of(USAGE);
 		}
 
-		Logging.init();
-		Logger log = Logger.getLogger(HazardCalc.class.getName());
-
 		try {
+			Logging.init();
+			Logger log = Logger.getLogger(HazardCalc.class.getName());
+			Path tempLog = createTempLog();
+			FileHandler fh = new FileHandler(tempLog.getFileName().toString());
+			fh.setFormatter(new Logging.ConsoleFormatter());
+			log.getParent().addHandler(fh);
+
 			log.info(PROGRAM + ": initializing...");
 			Path modelPath = Paths.get(args[0]);
 			HazardModel model = HazardModel.load(modelPath);
@@ -106,7 +111,9 @@ public class HazardCalc {
 			log.info("");
 			log.info("Sites: " + sites);
 
-			calc(model, config, sites, log);
+			Path out = calc(model, config, sites, log);
+			Files.move(tempLog, out.resolve(PROGRAM + ".log"));
+			
 			log.info(PROGRAM + ": finished");
 			return Optional.absent();
 
@@ -143,9 +150,10 @@ public class HazardCalc {
 	private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
 
 	/*
-	 * Compute hazard curves using the supplied model, config, and sites.
+	 * Compute hazard curves using the supplied model, config, and sites. Method
+	 * returns the path to the directory where results were written.
 	 */
-	private static void calc(
+	private static Path calc(
 			HazardModel model,
 			CalcConfig config,
 			Iterable<Site> sites,
@@ -191,21 +199,36 @@ public class HazardCalc {
 			Results.writeResults(outDir, results, opts);
 		}
 		log.info(PROGRAM + ": " + count + " complete " + totalWatch);
-
+		
 		if (threadCount != ThreadCount.ONE) {
 			execSvc.shutdown();
 		}
+		
+		return outDir;
 	}
 
-	/* avoid clobbering exsting result directories via incrementing */
+	/* Avoid clobbering exsting result directories via incrementing */
 	private static Path createOutputDir(Path dir) {
 		int i = 1;
-		Path dirIncrement = dir;
-		while (Files.exists(dirIncrement)) {
-			dirIncrement = dirIncrement.resolveSibling(dir.getFileName() + "-" + i);
+		Path dirIncr = dir;
+		while (Files.exists(dirIncr)) {
+			dirIncr = dirIncr.resolveSibling(dir.getFileName() + "-" + i);
 			i++;
 		}
-		return dirIncrement;
+		return dirIncr;
+	}
+
+	private static final String TMP_LOG = "nshmp-haz-log";
+
+	private static Path createTempLog() {
+		Path logBase = Paths.get(".");
+		Path logIncr = logBase.resolve(TMP_LOG);
+		int i = 1;
+		while (Files.exists(logIncr)) {
+			logIncr = logBase.resolve(TMP_LOG + "-" + i);
+			i++;
+		}
+		return logIncr;
 	}
 
 	/**

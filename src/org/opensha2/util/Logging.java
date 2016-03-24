@@ -58,7 +58,6 @@ public class Logging {
 
 	/**
 	 * Custom console formatter.
-	 * @author Peter Powers
 	 */
 	public final static class ConsoleFormatter extends Formatter {
 
