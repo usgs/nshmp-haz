@@ -19,13 +19,14 @@ import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
-import org.opensha2.geo.Location;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
+import org.opensha2.mfd.Mfds;
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -43,6 +44,28 @@ public class Results {
 	private static final String CURVE_FILE_SUFFIX = ".csv";
 	private static final String RATE_FMT = "%.8e";
 
+	/*
+	 * Individual Hazard results only contain data relevant to the site of
+	 * interest (e.g. for the NSHM WUS models, hazard in San Fancisco is
+	 * influenced by slab sources whereas hazard in Los Angeles is not because
+	 * it is too far away). For consistency when outputting batches of results,
+	 * files are written for all source types and ground motion models supported
+	 * by the HazardModel being used. This yields curve sets that are consistent
+	 * across all locations in a batch, however, some of the curves may be
+	 * empty. Depending on the extents of a map or list of sites, some curve
+	 * sets may consist exclusively of zero-valued curves.
+	 */
+
+	/*
+	 * TODO There is no good reason for this class to be public. It would be
+	 * better as a ResultsWriter, an instance of which would be obtained and
+	 * configured on a per-calculation basis to receive batches of results.
+	 * Although problems are unlikely, we're repeating a number of configuration
+	 * steps below and relying on the same config file coming with the first
+	 * result in each batch (below). We also wouldn't have to pass around
+	 * OpenOptions which are mildly confusing.
+	 */
+
 	/**
 	 * Write a {@code batch} of {@code HazardResult}s to files in the specified
 	 * directory, one for each {@link Imt} in the {@code batch}. See
@@ -59,95 +82,23 @@ public class Results {
 	 * @throws IOException if a problem is encountered
 	 * @see Files#write(Path, Iterable, java.nio.charset.Charset, OpenOption...)
 	 */
-	@Deprecated
-	public static void writeResultsOLD(Path dir, List<Hazard> batch, OpenOption... options)
-			throws IOException {
-
-		Function<Double, String> locFmtFunc = Parsing.formatDoubleFunction("%.5f");
-		Function<Double, String> rateFmtFunc = Parsing.formatDoubleFunction(RATE_FMT);
-
-		Hazard demo = batch.get(0);
-		boolean newFile = options.length == 0;
-		boolean namedSites = demo.site.name != Site.NO_NAME;
-
-		Map<Imt, List<String>> lineMap = new EnumMap<>(Imt.class);
-		for (Imt imt : demo.totalCurves.keySet()) {
-			List<String> lineList = new ArrayList<>();
-			// write header
-			if (newFile) {
-				List<String> headings = new ArrayList<>();
-				if (namedSites) headings.add("name");
-				headings.add("lon");
-				headings.add("lat");
-				Iterable<?> header = Iterables.concat(
-					headings,
-					demo.config.curve.modelCurves().get(imt).xValues());
-				lineList.add(Parsing.join(header, Delimiter.COMMA));
-			}
-			lineMap.put(imt, lineList);
-		}
-
-		for (Hazard result : batch) {
-			Iterable<String> locData = Iterables.transform(
-				Lists.newArrayList(
-					result.site.location.lon(),
-					result.site.location.lat()),
-				locFmtFunc);
-			String name = result.site.name;
-			for (Entry<Imt, XySequence> entry : result.totalCurves.entrySet()) {
-
-				// enable to output poisson probability - used when running
-				// PEER test cases - TODO should be configurable
-				// Function<Double, String> valueFunction = Functions.compose(
-				// rateFmtFunc,
-				// Mfds.rateToProbConverter());
-
-				// enable to output annual rate
-				Function<Double, String> valueFunction = rateFmtFunc;
-
-				Iterable<String> lineData = Iterables.concat(
-					locData,
-					Iterables.transform(
-						entry.getValue().yValues(),
-						valueFunction));
-
-				String line = Parsing.join(lineData, Delimiter.COMMA);
-				if (namedSites) line = name + "," + line;
-				lineMap.get(entry.getKey()).add(line);
-			}
-		}
-
-		for (Entry<Imt, List<String>> entry : lineMap.entrySet()) {
-			String filename = entry.getKey().name() + CURVE_FILE_SUFFIX;
-			Path file = dir.resolve(filename);
-			Files.write(file, entry.getValue(), US_ASCII, options);
-		}
-	}
-
-	/*
-	 * Individual Hazard results only contain data relevant to the site of
-	 * interest (e.g. for the NSHM WUS models, hazard in San Fancisco is
-	 * influenced by slab sources whereas hazard in Los Angeles is not because
-	 * it is too far away). For consistency when outputting batches of results,
-	 * files are written for all source types and ground motion models supported
-	 * by the HazardModel being used. This yields curve sets that are consistent
-	 * across all locations in a batch, however, some of the curves may be
-	 * empty. Depending on the extents of a map or list of sites, some curve
-	 * sets may consist exclusively of zero-valued curves.
-	 */
-
 	public static void writeResults(
 			Path dir,
 			List<Hazard> batch,
 			OpenOption... options) throws IOException {
-
-		Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
 
 		Hazard demo = batch.get(0);
 		boolean newFile = options.length == 0;
 		boolean namedSites = demo.site.name != Site.NO_NAME;
 		boolean gmmCurves = demo.config.output.curveTypes.contains(CurveType.GMM);
 		boolean sourceCurves = demo.config.output.curveTypes.contains(CurveType.SOURCE);
+
+		Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
+		if (demo.config.curve.valueType == CurveValue.POISSON_PROBABILITY) {
+			formatter = Functions.compose(
+				formatter,
+				Mfds.annualRateToProbabilityConverter());
+		}
 
 		Map<Imt, List<String>> totalLineMap = Maps.newEnumMap(Imt.class);
 		Map<Imt, Map<SourceType, List<String>>> sourceLineMap = Maps.newEnumMap(Imt.class);

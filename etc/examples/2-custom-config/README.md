@@ -12,6 +12,7 @@ hazard ../../peer/models/Set1-Case1 "San Francisco,-122.40,37.75" config.json
 In this example we've overridden the configuration supplied by the model. Specifically:
 
 * The upper end of each hazard curve has been truncated at 3 standard deviations.
+* Hazard curves have been saved as poisson probability instead of annual rate.
 * Hazard curves have been calculated for 3 `imts` ([intensity measures](http://usgs.github.io/nshmp-haz/javadoc/index.html?org/opensha2/gmm/Imt.html), or spectral periods).
 * The `imls` (intensity measure levels or x-values) of the resultant curves have been explicitely defined for each `imt`.
 
