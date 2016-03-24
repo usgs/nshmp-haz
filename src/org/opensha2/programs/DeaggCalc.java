@@ -57,8 +57,9 @@ public class DeaggCalc {
 	/**
 	 * Perform a hazard deaggregation at a {@code site} for a {@code model},
 	 * {@code config}, and return period. If an {@code executor} is supplied, it
-	 * will be used to distribute hazard calculation tasks; otherwise, one will
-	 * be created.
+	 * will be used to distribute tasks; otherwise, the calculation will run on
+	 * the current thread. Be sure to shutdown any supplied executor after a
+	 * calculation completes.
 	 * 
 	 * <p><b>Note:</b> any model initialization settings in {@code config} will
 	 * be ignored as the supplied model will already have been initialized.</p>
@@ -76,21 +77,13 @@ public class DeaggCalc {
 			Site site,
 			double returnPeriod,
 			Optional<Executor> executor) {
-
-		Optional<Executor> execLocal = executor.or(Optional.of(createExecutor()));
-
 		try {
-			Hazard result = Calcs.hazard(model, config, site, execLocal);
-			if (!executor.isPresent()) ((ExecutorService) executor).shutdown();
+			Hazard result = Calcs.hazard(model, config, site, executor);
 			return Calcs.deaggregation(result, returnPeriod);
 		} catch (ExecutionException | InterruptedException e) {
 			Throwables.propagate(e);
 			return null;
 		}
-	}
-
-	private static ExecutorService createExecutor() {
-		return newFixedThreadPool(getRuntime().availableProcessors());
 	}
 
 }

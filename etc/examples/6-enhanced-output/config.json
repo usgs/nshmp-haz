@@ -1,5 +1,5 @@
 {
   "output": {
-    "curveTypes": ["TOTAL", "GMM"]
+    "curveTypes": ["TOTAL", "GMM", "SOURCE"]
   }
 }

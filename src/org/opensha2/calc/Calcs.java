@@ -107,7 +107,7 @@ public class Calcs {
 
 	/**
 	 * Compute probabilistic seismic hazard, possibly using an {@link Optional}
-	 * {@link Executor}. If no {@code Executor} is supplied, the calculation
+	 * {@link Executor}. If no executor is supplied, the calculation
 	 * will run on the current thread.
 	 * 
 	 * @param model to use

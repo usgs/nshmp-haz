@@ -1,6 +1,5 @@
 package org.opensha2.programs;
 
-import static java.lang.Runtime.getRuntime;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.util.TextUtils.NEWLINE;
@@ -24,11 +23,11 @@ import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.Sites;
+import org.opensha2.calc.ThreadCount;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.util.Logging;
 
 import com.google.common.base.Optional;
-import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 
@@ -134,7 +133,8 @@ public class HazardCalc {
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
 				"'sites' [" + arg + "] must either be a 3 to 7 argument, comma-delimited string " +
-					"or specify a path to a *.csv or *.geojson file", e);
+					"or specify a path to a *.csv or *.geojson file",
+				e);
 		}
 	}
 
@@ -150,10 +150,15 @@ public class HazardCalc {
 			Iterable<Site> sites,
 			Logger log) throws IOException {
 
-		ExecutorService execSvc = createExecutor();
-		int threadCount = ((ThreadPoolExecutor) execSvc).getCorePoolSize();
-		log.info("Threads: " + threadCount);
-		Optional<Executor> executor = Optional.<Executor> of(execSvc);
+		ExecutorService execSvc = null;
+		ThreadCount threadCount = config.performance.threadCount;
+		if (threadCount != ThreadCount.ONE) {
+			execSvc = newFixedThreadPool(threadCount.value());
+			log.info("Threads: " + ((ThreadPoolExecutor) execSvc).getCorePoolSize());
+		} else {
+			log.info("Threads: Running on calling thread");
+		}
+		Optional<Executor> executor = Optional.<Executor> fromNullable(execSvc);
 
 		log.info(PROGRAM + ": calculating ...");
 		Stopwatch batchWatch = Stopwatch.createStarted();
@@ -184,13 +189,17 @@ public class HazardCalc {
 		}
 		log.info(PROGRAM + ": " + count + " complete " + totalWatch);
 
-		execSvc.shutdown();
+		if (threadCount != ThreadCount.ONE) {
+			execSvc.shutdown();
+		}
 	}
 
 	/**
 	 * Compute hazard curves at a {@code site} for a {@code model} and
 	 * {@code config}. If an {@code executor} is supplied, it will be used to
-	 * distribute tasks; otherwise, one will be created.
+	 * distribute tasks; otherwise, the calculation will run on the current
+	 * thread. Be sure to shutdown any supplied executor after a calculation
+	 * completes.
 	 * 
 	 * <p><b>Note:</b> any model initialization settings in {@code config} will
 	 * be ignored as the supplied model will already have been initialized.</p>
@@ -206,28 +215,14 @@ public class HazardCalc {
 			CalcConfig config,
 			Site site,
 			Optional<Executor> executor) {
-
-		// TODO not sure why we're mandating an executor here.
-		// legacy from refactoring?
-		Optional<Executor> execLocal = executor.or(Optional.of(createExecutor()));
-
 		try {
-			Hazard result = Calcs.hazard(model, config, site, execLocal);
-			// Shut down the locally created executor if none was supplied
-			if (!executor.isPresent()) {
-				((ExecutorService) execLocal.get()).shutdown();
-			}
-			return result;
+			return Calcs.hazard(model, config, site, executor);
 		} catch (ExecutionException | InterruptedException e) {
 			Throwables.propagate(e);
 			return null;
 		}
 	}
-
-	private static ExecutorService createExecutor() {
-		return newFixedThreadPool(getRuntime().availableProcessors());
-	}
-
+	
 	private static final String PROGRAM = HazardCalc.class.getSimpleName();
 	private static final String USAGE_COMMAND =
 		"java -cp nshmp-haz.jar org.opensha2.programs.HazardCalc model sites [config]";
