@@ -1,12 +1,7 @@
 package org.opensha2.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.padStart;
-import static com.google.common.base.Strings.repeat;
 
-import java.util.Map;
-
-import com.google.common.base.Joiner;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Strings;
 
@@ -19,26 +14,14 @@ public class TextUtils {
 
 	/** System specific newline string. */
 	public static final String NEWLINE = StandardSystemProperty.LINE_SEPARATOR.value();
-	
-	public static final int ALIGN_COL = 24;
-	private static final int MAX_COL = 100;
-	private static final int DELTA_COL = MAX_COL - ALIGN_COL - 2;
-	private static final String INDENT = NEWLINE + repeat(" ", ALIGN_COL + 2);
-	
-	
-	private static final Joiner.MapJoiner MAP_JOIN = Joiner.on(", ").withKeyValueSeparator(": ");
 
-	private String toString(Map<?, ?> map) {
-		return Parsing.addBrackets(MAP_JOIN.join(map));
-	}
+	/** The column on which to align values in a log entry. */
+	public static final int LOG_VALUE_COLUMN = 32;
 	
-	public static <E extends Enum<E>> String format(E id) {
-		return format(id.toString());
-	}
+	private static final int LOG_INDENT_SIZE = 8;
 
-	public static String format(String s) {
-		return NEWLINE + padStart(s, ALIGN_COL, ' ') + ": ";
-	}
+	/** A newline plus the number of spaces to indent multiline log entries. */
+	public static final String LOG_INDENT = NEWLINE + Strings.repeat(" ", LOG_INDENT_SIZE);
 	
 	/**
 	 * Verifies that the supplied {@code String} is neither {@code null} or

@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.util.TextUtils.NEWLINE;
-import static org.opensha2.util.TextUtils.format;
+import static org.opensha2.util.TextUtils.LOG_INDENT;
 import static org.opensha2.data.Data.multiply;
 import static com.google.common.primitives.Doubles.toArray;
 
@@ -207,11 +207,16 @@ public final class Deaggregation {
 
 		@Override public String toString() {
 			return new StringBuilder("Deagg config:")
-				.append(format("imt")).append(imt.name()).append(" [").append(imt).append("]")
-				.append(format("iml")).append(iml).append(" ").append(imt.units())
-				.append(format("rate")).append(rate).append(" yr⁻¹")
-				.append(format("returnPeriod")).append(returnPeriod).append(" yrs")
-				.append(format("probabilityModel")).append(probabilityModel)
+				.append(LOG_INDENT)
+				.append("imt: ").append(imt.name()).append(" [").append(imt).append("]")
+				.append(LOG_INDENT)
+				.append("iml: ").append(iml).append(" ").append(imt.units())
+				.append(LOG_INDENT)
+				.append("rate: ").append(rate).append(" yr⁻¹")
+				.append(LOG_INDENT)
+				.append("returnPeriod: ").append(returnPeriod).append(" yrs")
+				.append(LOG_INDENT)
+				.append("probabilityModel: ").append(probabilityModel)
 				.append(" [trunc = ").append(truncation).append("]")
 				.toString();
 		}

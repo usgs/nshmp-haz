@@ -4,15 +4,16 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Strings.padEnd;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.opensha2.util.TextUtils.format;
+import static org.opensha2.util.TextUtils.LOG_INDENT;
+import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.opensha2.calc.CalcConfig;
 import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.model.AreaSource.GridScaling;
 
@@ -20,7 +21,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonStreamParser;
 
 /**
  * Model and calculation configuration class. No defaults; 'config.json' must be
@@ -87,20 +87,26 @@ final class ModelConfig {
 
 	@Override
 	public String toString() {
-		return new StringBuilder("Model Configuration:")
-			.append(format(Key.NAME)).append(name)
-			.append(format(Key.RESOURCE)).append(resource.toAbsolutePath().normalize())
-			.append(format(Key.SURFACE_SPACING)).append(surfaceSpacing)
-			.append(format(Key.RUPTURE_FLOATING)).append(ruptureFloating)
-			.append(format(Key.RUPTURE_VARIABILITY)).append(ruptureVariability)
-			.append(format(Key.POINT_SOURCE_TYPE)).append(pointSourceType)
-			.append(format(Key.AREA_GRID_SCALING)).append(areaGridScaling)
+		return new StringBuilder("Model Config: ")
+			.append(resource.toAbsolutePath().normalize())
+			.append(LOG_INDENT).append("Model")
+			.append(formatEntry(Key.NAME, name))
+			.append(formatEntry(Key.SURFACE_SPACING, surfaceSpacing))
+			.append(formatEntry(Key.RUPTURE_FLOATING, ruptureFloating))
+			.append(formatEntry(Key.RUPTURE_VARIABILITY, ruptureVariability))
+			.append(formatEntry(Key.POINT_SOURCE_TYPE, pointSourceType))
+			.append(formatEntry(Key.AREA_GRID_SCALING, areaGridScaling))
 			.toString();
+	}
+
+	private static final String KEY_INDENT = LOG_INDENT + "  ";
+
+	private static <E extends Enum<E>> String formatEntry(E key, Object value) {
+		return padEnd(KEY_INDENT + '.' + key + ':', LOG_VALUE_COLUMN, ' ') + value;
 	}
 
 	final static class Builder {
 
-		private static final String ID = "ModelConfig.Builder";
 		private boolean built = false;
 
 		private String name;

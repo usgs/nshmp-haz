@@ -10,9 +10,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.data.XySequence.create;
 import static org.opensha2.data.XySequence.immutableCopyOf;
 import static org.opensha2.util.Parsing.enumsToString;
+import static org.opensha2.util.TextUtils.LOG_INDENT;
+import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
 import static org.opensha2.util.TextUtils.NEWLINE;
-
-// import static org.opensha2.util.TextUtils.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -31,7 +31,6 @@ import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
-import org.opensha2.util.TextUtils;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -200,7 +199,7 @@ public final class CalcConfig {
 				}
 			}
 			return new StringBuilder()
-				.append(formatGroup("Curve"))
+				.append(LOG_INDENT).append("Curve")
 				.append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel))
 				.append(formatEntry(Key.TRUNCATION_LEVEL, truncationLevel))
 				.append(formatEntry(Key.IMTS, enumsToString(imts, Imt.class)))
@@ -355,7 +354,7 @@ public final class CalcConfig {
 
 		private StringBuilder asString() {
 			return new StringBuilder()
-				.append(formatGroup("Performance"))
+				.append(LOG_INDENT).append("Performance")
 				.append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
 				.append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
 				.append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
@@ -453,7 +452,7 @@ public final class CalcConfig {
 
 		private StringBuilder asString() {
 			return new StringBuilder()
-				.append(formatGroup("Output"))
+				.append(LOG_INDENT).append("Output")
 				.append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
 				.append(formatEntry(Key.CURVE_TYPES, enumsToString(curveTypes, CurveType.class)))
 				.append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
@@ -548,7 +547,7 @@ public final class CalcConfig {
 
 		private StringBuilder asString() {
 			return new StringBuilder()
-				.append(formatGroup("Deaggregation"))
+				.append(LOG_INDENT).append("Deaggregation")
 				.append(formatEntry("R"))
 				.append("min=").append(rMin).append(", ")
 				.append("max=").append(rMax).append(", ")
@@ -600,7 +599,7 @@ public final class CalcConfig {
 
 	@Override
 	public String toString() {
-		return new StringBuilder("Calc Configuration: ")
+		return new StringBuilder("Calc Config: ")
 			.append(resource.isPresent()
 				? resource.get().toAbsolutePath().normalize()
 				: "(from defaults)")
@@ -611,38 +610,25 @@ public final class CalcConfig {
 			.toString();
 	}
 
-	// public static <E extends Enum<E>> String format(E id) {
-	// return format(id.toString());
-	// }
-
-	private static final int GROUP_INDENT_SIZE = 8;
-	private static final int KEY_INDENT_SIZE = 10;
-	private static final int VALUE_INDENT_SIZE = 28;
 	private static final int MAX_COL = 100;
-	private static final int VALUE_WIDTH = MAX_COL - VALUE_INDENT_SIZE;
-	private static final String S = " ";
-	private static final String GROUP_INDENT = repeat(S, GROUP_INDENT_SIZE);
-	private static final String KEY_INDENT = repeat(S, KEY_INDENT_SIZE);
-	private static final String VALUE_INDENT = repeat(S, VALUE_INDENT_SIZE);
-
-	private static String formatGroup(String group) {
-		return TextUtils.NEWLINE + GROUP_INDENT + group;
-	}
+	private static final int VALUE_WIDTH = MAX_COL - LOG_VALUE_COLUMN;
+	private static final String KEY_INDENT = LOG_INDENT + "  ";
+	private static final String VALUE_INDENT = NEWLINE + repeat(" ", LOG_VALUE_COLUMN);
 
 	private static String formatEntry(String key) {
-		return NEWLINE + padEnd(KEY_INDENT + '.' + key + ':', VALUE_INDENT_SIZE, ' ');
+		return padEnd(KEY_INDENT + '.' + key + ':', LOG_VALUE_COLUMN, ' ');
 	}
 
 	private static <E extends Enum<E>> String formatEntry(E key, Object value) {
-		return NEWLINE + padEnd(KEY_INDENT + '.' + key + ':', VALUE_INDENT_SIZE, ' ') + value;
+		return padEnd(KEY_INDENT + '.' + key + ':', LOG_VALUE_COLUMN, ' ') + value;
 	}
 
 	/* wrap a commma-delimited string */
 	private static String wrap(String s, boolean pad) {
-		if (s.length() <= VALUE_WIDTH) return pad ? NEWLINE + VALUE_INDENT + s : s;
+		if (s.length() <= VALUE_WIDTH) return pad ? VALUE_INDENT + s : s;
 		StringBuilder sb = new StringBuilder();
 		int lastCommaIndex = s.substring(0, VALUE_WIDTH).lastIndexOf(',') + 1;
-		if (pad) sb.append(NEWLINE).append(VALUE_INDENT);
+		if (pad) sb.append(VALUE_INDENT);
 		sb.append(s.substring(0, lastCommaIndex));
 		sb.append(wrap(s.substring(lastCommaIndex).trim(), true));
 		return sb.toString();
@@ -659,21 +645,6 @@ public final class CalcConfig {
 			}
 		})
 		.create();
-
-	// TODO clean
-	public static void main(String[] args) throws IOException {
-
-		// CalcConfig cc =
-		// Builder.fromFile(Paths.get("etc/examples/5-complex-model/config-sites.json")).build();
-		// System.out.println(cc);
-
-		CalcConfig cc = Builder
-			.withDefaults()
-			// .extend(Builder.fromFile(Paths.get("etc/examples/6-enhanced-output/config.json")))
-			.extend(Builder.fromFile(Paths.get("etc/examples/2-custom-config/config.json")))
-			.build();
-		System.out.println(cc);
-	}
 
 	/**
 	 * A builder of configuration instances.
