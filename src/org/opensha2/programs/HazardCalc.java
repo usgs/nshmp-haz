@@ -5,6 +5,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -168,13 +169,15 @@ public class HazardCalc {
 		List<Hazard> results = new ArrayList<>();
 		boolean firstBatch = true;
 
+		Path outDir = createOutputDir(config.output.directory);
+
 		for (Site site : sites) {
 			Hazard result = calc(model, config, site, executor);
 			results.add(result);
 			if (results.size() == config.output.flushLimit) {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
-				Results.writeResults(config.output.directory, results, opts);
+				Results.writeResults(outDir, results, opts);
 				log.info("     batch: " + (count + 1) + "  " + batchWatch +
 					"  total: " + totalWatch);
 				results.clear();
@@ -185,13 +188,24 @@ public class HazardCalc {
 		// write final batch
 		if (!results.isEmpty()) {
 			OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-			Results.writeResults(config.output.directory, results, opts);
+			Results.writeResults(outDir, results, opts);
 		}
 		log.info(PROGRAM + ": " + count + " complete " + totalWatch);
 
 		if (threadCount != ThreadCount.ONE) {
 			execSvc.shutdown();
 		}
+	}
+
+	/* avoid clobbering exsting result directories via incrementing */
+	private static Path createOutputDir(Path dir) {
+		int i = 1;
+		Path dirIncrement = dir;
+		while (Files.exists(dirIncrement)) {
+			dirIncrement = dirIncrement.resolveSibling(dir.getFileName() + "-" + i);
+			i++;
+		}
+		return dirIncrement;
 	}
 
 	/**
@@ -222,7 +236,7 @@ public class HazardCalc {
 			return null;
 		}
 	}
-	
+
 	private static final String PROGRAM = HazardCalc.class.getSimpleName();
 	private static final String USAGE_COMMAND =
 		"java -cp nshmp-haz.jar org.opensha2.programs.HazardCalc model sites [config]";

@@ -62,8 +62,8 @@ public class Logging {
 	 */
 	public final static class ConsoleFormatter extends Formatter {
 
-		@Override public String format(LogRecord record) {
-			// @formatter:off
+		@Override
+		public String format(LogRecord record) {
 			StringBuilder b = new StringBuilder();
 			Level l = record.getLevel();
 			b.append(Strings.padStart(l.toString(), 7, ' '));
@@ -92,7 +92,6 @@ public class Logging {
 			}
 			b.append(LF);
 			return b.toString();
-			// @formatter:on
 		}
 
 	}
