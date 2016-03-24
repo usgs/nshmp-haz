@@ -146,10 +146,11 @@ public class Results {
 		Hazard demo = batch.get(0);
 		boolean newFile = options.length == 0;
 		boolean namedSites = demo.site.name != Site.NO_NAME;
-		boolean detailed = false; //demo.config.hazardFormat.equals(HazardFormat.DETAILED);
+		boolean gmmCurves = demo.config.output.curveTypes.contains(CurveType.GMM);
+		boolean sourceCurves = demo.config.output.curveTypes.contains(CurveType.SOURCE);
 
 		Map<Imt, List<String>> totalLineMap = Maps.newEnumMap(Imt.class);
-		Map<Imt, Map<SourceType, List<String>>> typeLineMap = Maps.newEnumMap(Imt.class);
+		Map<Imt, Map<SourceType, List<String>>> sourceLineMap = Maps.newEnumMap(Imt.class);
 		Map<Imt, Map<Gmm, List<String>>> gmmLineMap = Maps.newEnumMap(Imt.class);
 
 		/* Initialize line maps for all types and gmms referenced by a model */
@@ -163,14 +164,15 @@ public class Results {
 			}
 			totalLineMap.put(imt, lines);
 
-			if (detailed) {
-
+			if (sourceCurves) {
 				Map<SourceType, List<String>> typeLines = Maps.newEnumMap(SourceType.class);
 				for (SourceType type : demo.model.types()) {
 					typeLines.put(type, Lists.newArrayList(lines));
 				}
-				typeLineMap.put(imt, typeLines);
+				sourceLineMap.put(imt, typeLines);
+			}
 
+			if (gmmCurves) {
 				Map<Gmm, List<String>> gmmLines = Maps.newEnumMap(Gmm.class);
 				for (Gmm gmm : gmmSet(demo.model)) {
 					gmmLines.put(gmm, Lists.newArrayList(lines));
@@ -188,10 +190,9 @@ public class Results {
 				String.format("%.5f", hazard.site.location.lon()),
 				String.format("%.5f", hazard.site.location.lat()));
 
-			Map<Imt, Map<SourceType, XySequence>> curvesByType = detailed ?
-				curvesByType(hazard) : null;
-			Map<Imt, Map<Gmm, XySequence>> curvesByGmm = detailed ?
-				curvesByGmm(hazard) : null;
+			Map<Imt, Map<SourceType, XySequence>> curvesBySource =
+				sourceCurves ? curvesBySource(hazard) : null;
+			Map<Imt, Map<Gmm, XySequence>> curvesByGmm = gmmCurves ? curvesByGmm(hazard) : null;
 
 			for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
 				Imt imt = imtEntry.getKey();
@@ -205,24 +206,25 @@ public class Results {
 					imtEntry.getValue().yValues(),
 					formatter));
 
-				if (detailed) {
-
-					Map<SourceType, XySequence> typeCurves = curvesByType.get(imt);
-					for (Entry<SourceType, List<String>> typeEntry : typeLineMap.get(imt)
+				if (sourceCurves) {
+					Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
+					for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
 						.entrySet()) {
 						SourceType type = typeEntry.getKey();
-						String typeLine = typeCurves.containsKey(type) ?
-							toLine(locData, typeCurves.get(type).yValues(), formatter) :
-							emptyLine;
+						String typeLine = sourceCurveMap.containsKey(type)
+							? toLine(locData, sourceCurveMap.get(type).yValues(), formatter)
+							: emptyLine;
 						typeEntry.getValue().add(typeLine);
 					}
+				}
 
-					Map<Gmm, XySequence> gmmCurves = curvesByGmm.get(imt);
+				if (gmmCurves) {
+					Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
 					for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
 						Gmm gmm = gmmEntry.getKey();
-						String gmmLine = gmmCurves.containsKey(gmm) ?
-							toLine(locData, gmmCurves.get(gmm).yValues(), formatter) :
-							emptyLine;
+						String gmmLine = gmmCurveMap.containsKey(gmm)
+							? toLine(locData, gmmCurveMap.get(gmm).yValues(), formatter)
+							: emptyLine;
 						gmmEntry.getValue().add(gmmLine);
 					}
 				}
@@ -238,16 +240,18 @@ public class Results {
 			Path totalFile = imtDir.resolve("total" + CURVE_FILE_SUFFIX);
 			Files.write(totalFile, totalEntry.getValue(), US_ASCII, options);
 
-			if (detailed) {
-
-				Path typeDir = imtDir.resolve("type");
+			if (sourceCurves) {
+				Path typeDir = imtDir.resolve("source");
 				Files.createDirectories(typeDir);
-				for (Entry<SourceType, List<String>> typeEntry : typeLineMap.get(imt).entrySet()) {
+				for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
+					.entrySet()) {
 					Path typeFile = typeDir.resolve(
 						typeEntry.getKey().toString() + CURVE_FILE_SUFFIX);
 					Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
 				}
+			}
 
+			if (gmmCurves) {
 				Path gmmDir = imtDir.resolve("gmm");
 				Files.createDirectories(gmmDir);
 				for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
@@ -272,7 +276,7 @@ public class Results {
 	 * Derive maps of curves by source type for each Imt in a {@code Hazard}
 	 * result.
 	 */
-	public static Map<Imt, Map<SourceType, XySequence>> curvesByType(Hazard hazard) {
+	public static Map<Imt, Map<SourceType, XySequence>> curvesBySource(Hazard hazard) {
 
 		EnumMap<Imt, Map<SourceType, XySequence>> imtMap = Maps.newEnumMap(Imt.class);
 
@@ -324,30 +328,33 @@ public class Results {
 		return Sets.immutableEnumSet(
 			FluentIterable.from(sourceSets).transformAndConcat(
 				new Function<SourceSet<? extends Source>, Set<Gmm>>() {
-					@Override public Set<Gmm> apply(SourceSet<? extends Source> sourceSet) {
+					@Override
+					public Set<Gmm> apply(SourceSet<? extends Source> sourceSet) {
 						return sourceSet.groundMotionModels().gmms();
 					}
-				})
-			);
+				}));
 	}
 
-	/* Initalize a map of curves, one entry for each of the supplied enum keys. */
+	/*
+	 * Initalize a map of curves, one entry for each of the supplied enum keys.
+	 */
 	private static <K extends Enum<K>> Map<K, XySequence> initCurves(
 			final Set<K> keys,
 			final XySequence model) {
 		return Maps.immutableEnumMap(
 			FluentIterable.from(keys).toMap(
 				new Function<K, XySequence>() {
-					@Override public XySequence apply(K key) {
+					@Override
+					public XySequence apply(K key) {
 						return emptyCopyOf(model);
 					}
-				})
-			);
+				}));
 	}
 
 	private static final Function<HazardCurveSet, SourceSet<? extends Source>> CURVE_SET_TO_SOURCE_SET =
 		new Function<HazardCurveSet, SourceSet<? extends Source>>() {
-			@Override public SourceSet<? extends Source> apply(HazardCurveSet curves) {
+			@Override
+			public SourceSet<? extends Source> apply(HazardCurveSet curves) {
 				return curves.sourceSet;
 			}
 		};

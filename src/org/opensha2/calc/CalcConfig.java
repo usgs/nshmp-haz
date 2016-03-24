@@ -600,7 +600,7 @@ public final class CalcConfig {
 
 	@Override
 	public String toString() {
-		return new StringBuilder(padEnd("Calc Configuration:", VALUE_INDENT_SIZE, ' '))
+		return new StringBuilder("Calc Configuration: ")
 			.append(resource.isPresent()
 				? resource.get().toAbsolutePath().normalize()
 				: "(from defaults)")
