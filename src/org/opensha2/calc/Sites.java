@@ -2,13 +2,14 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Strings.padStart;
 import static com.google.common.base.Strings.repeat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.GeoJson.validateProperty;
 import static org.opensha2.util.Parsing.splitToList;
 import static org.opensha2.util.TextUtils.ALIGN_COL;
-import static org.opensha2.util.TextUtils.format;
+import static org.opensha2.util.TextUtils.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -33,6 +34,7 @@ import org.opensha2.util.Parsing.Delimiter;
 import org.opensha2.util.TextUtils;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.TypeToken;
@@ -191,12 +193,14 @@ public final class Sites {
 		return new ListIterable(ImmutableList.of(b.build()));
 	}
 
+	private static final int TO_STRING_LIMIT = 5;
+	private static final int SITE_INDENT_SIZE = 8;
+	private static final String SITE_INDENT = Strings.repeat(" ", SITE_INDENT_SIZE);
+
 	/*
 	 * Parent class for deserialization of different GeoJSON site file formats
 	 */
 	private abstract static class SiteIterable implements Iterable<Site> {
-
-		static final int TO_STRING_LIMIT = 5;
 
 		@Override
 		public String toString() {
@@ -207,12 +211,15 @@ public final class Sites {
 				.append(" [size=").append(size).append("]");
 			if (!region) {
 				for (Site site : Iterables.limit(this, TO_STRING_LIMIT)) {
-					sb.append(format("Site")).append(site);
+					sb.append(NEWLINE)
+						.append(SITE_INDENT)
+						.append("Site: ")
+						.append(site);
 				}
 				if (size > TO_STRING_LIMIT) {
 					int delta = size - TO_STRING_LIMIT;
-					sb.append(TextUtils.NEWLINE)
-						.append(repeat(" ", ALIGN_COL + 2))
+					sb.append(NEWLINE)
+						.append(SITE_INDENT)
 						.append("... and ").append(delta).append(" more ...");
 				}
 			}

@@ -125,7 +125,7 @@ public class Site implements Named {
 
 	@Override
 	public String toString() {
-		return new StringBuilder(Strings.padEnd(name, 16, ' '))
+		return new StringBuilder(Strings.padEnd(name, 24, ' '))
 			.append(String.format("%.3f %.3f Vs30=%s ", location.lon(), location.lat(), vs30))
 			.append(vsInferred ? "inferred " : "measured ")
 			.append(String.format("Z1.0=%s Z2.5=%s", z1p0, z2p5))
