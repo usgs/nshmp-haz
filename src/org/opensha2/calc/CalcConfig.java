@@ -445,8 +445,9 @@ public final class CalcConfig {
 				int flushLimit) {
 
 			this.directory = directory;
-			curveTypes.add(CurveType.TOTAL);
-			this.curveTypes = Sets.immutableEnumSet(curveTypes);
+			this.curveTypes = Sets.immutableEnumSet(
+				CurveType.TOTAL,
+				curveTypes.toArray(new CurveType[curveTypes.size()]));
 			this.flushLimit = flushLimit;
 		}
 
