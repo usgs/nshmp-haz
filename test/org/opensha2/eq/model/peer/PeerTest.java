@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.junit.Test;
+import org.opensha2.HazardCalc;
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Site;
@@ -26,7 +27,6 @@ import org.opensha2.calc.Sites;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
 import org.opensha2.mfd.Mfds;
-import org.opensha2.programs.HazardCalc;
 import org.opensha2.util.Parsing;
 
 import com.google.common.base.Optional;
