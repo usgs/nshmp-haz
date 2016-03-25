@@ -15,6 +15,8 @@ The result of this calculation should be available as a single comma-delimited f
 
 Note that not all [calculation configuration](https://github.com/usgs/nshmp-haz/wiki/Configuration) parameters need be supplied; see the [configuration file](../../peer/models/Set1-Case1/config.json) for this example model.
 
-Also note that all output is written to the current working directory. In the next example, we'll override the model supplied configuration with a custom file.
+Also note that all output is written to a `curves` directory by default, but the ouput destination can be specified via the [`outputDir`](https://github.com/usgs/nshmp-haz/wiki/Configuration) parameter. In addition to hazard curves, the calculation configuration and a log of the calculation are also saved.
+
+In the next example, we'll override the model supplied configuration with a custom file.
 
 #### Next: [Example 2 – A custom configuration](../2-custom-config)

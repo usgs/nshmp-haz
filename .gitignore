@@ -4,6 +4,6 @@
 /dist
 /docs
 /tmp
-curves/
+curves*/
 Scratch*.java
 /src/META-INF

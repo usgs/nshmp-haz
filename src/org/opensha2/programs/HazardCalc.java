@@ -1,11 +1,11 @@
 package org.opensha2.programs;
 
-import static java.lang.Runtime.getRuntime;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import org.opensha2.calc.CalcConfig;
@@ -24,11 +25,11 @@ import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.Sites;
+import org.opensha2.calc.ThreadCount;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.util.Logging;
 
 import com.google.common.base.Optional;
-import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 
@@ -39,9 +40,6 @@ import com.google.common.base.Throwables;
  * @author Peter Powers
  */
 public class HazardCalc {
-
-	// TODO move to config
-	private static final int FLUSH_LIMIT = 5;
 
 	/**
 	 * Entry point for a hazard calculation.
@@ -88,23 +86,24 @@ public class HazardCalc {
 			return Optional.of(USAGE);
 		}
 
-		Logging.init();
-		Logger log = Logger.getLogger(HazardCalc.class.getName());
-
 		try {
+			Logging.init();
+			Logger log = Logger.getLogger(HazardCalc.class.getName());
+			Path tempLog = createTempLog();
+			FileHandler fh = new FileHandler(tempLog.getFileName().toString());
+			fh.setFormatter(new Logging.ConsoleFormatter());
+			log.getParent().addHandler(fh);
+
 			log.info(PROGRAM + ": initializing...");
 			Path modelPath = Paths.get(args[0]);
 			HazardModel model = HazardModel.load(modelPath);
 
 			CalcConfig config = model.config();
-			Path out = Paths.get(StandardSystemProperty.USER_DIR.value());
 			if (argCount == 3) {
 				Path userConfigPath = Paths.get(args[2]);
-				config = CalcConfig.builder()
-					.copy(model.config())
-					.extend(CalcConfig.builder(userConfigPath))
+				config = CalcConfig.Builder.copyOf(model.config())
+					.extend(CalcConfig.Builder.fromFile(userConfigPath))
 					.build();
-				out = userConfigPath.getParent();
 			}
 			log.info(config.toString());
 
@@ -112,7 +111,12 @@ public class HazardCalc {
 			log.info("");
 			log.info("Sites: " + sites);
 
-			calc(model, config, sites, out, log);
+			Path out = calc(model, config, sites, log);
+			
+			// transfer log and write config
+			Files.move(tempLog, out.resolve(PROGRAM + ".log"));
+			config.write(out);
+			
 			log.info(PROGRAM + ": finished");
 			return Optional.absent();
 
@@ -140,7 +144,8 @@ public class HazardCalc {
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
 				"'sites' [" + arg + "] must either be a 3 to 7 argument, comma-delimited string " +
-					"or specify a path to a *.csv or *.geojson file", e);
+					"or specify a path to a *.csv or *.geojson file",
+				e);
 		}
 	}
 
@@ -148,19 +153,24 @@ public class HazardCalc {
 	private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
 
 	/*
-	 * Compute hazard curves using the supplied model, config, and sites.
+	 * Compute hazard curves using the supplied model, config, and sites. Method
+	 * returns the path to the directory where results were written.
 	 */
-	private static void calc(
+	private static Path calc(
 			HazardModel model,
 			CalcConfig config,
 			Iterable<Site> sites,
-			Path out,
 			Logger log) throws IOException {
 
-		ExecutorService execSvc = createExecutor();
-		int threadCount = ((ThreadPoolExecutor) execSvc).getCorePoolSize();
-		log.info("Threads: " + threadCount);
-		Optional<Executor> executor = Optional.<Executor> of(execSvc);
+		ExecutorService execSvc = null;
+		ThreadCount threadCount = config.performance.threadCount;
+		if (threadCount != ThreadCount.ONE) {
+			execSvc = newFixedThreadPool(threadCount.value());
+			log.info("Threads: " + ((ThreadPoolExecutor) execSvc).getCorePoolSize());
+		} else {
+			log.info("Threads: Running on calling thread");
+		}
+		Optional<Executor> executor = Optional.<Executor> fromNullable(execSvc);
 
 		log.info(PROGRAM + ": calculating ...");
 		Stopwatch batchWatch = Stopwatch.createStarted();
@@ -170,13 +180,15 @@ public class HazardCalc {
 		List<Hazard> results = new ArrayList<>();
 		boolean firstBatch = true;
 
+		Path outDir = createOutputDir(config.output.directory);
+
 		for (Site site : sites) {
 			Hazard result = calc(model, config, site, executor);
 			results.add(result);
-			if (results.size() == FLUSH_LIMIT) {
+			if (results.size() == config.output.flushLimit) {
 				OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
 				firstBatch = false;
-				Results.writeResults(out, results, opts);
+				Results.writeResults(outDir, results, opts);
 				log.info("     batch: " + (count + 1) + "  " + batchWatch +
 					"  total: " + totalWatch);
 				results.clear();
@@ -187,17 +199,47 @@ public class HazardCalc {
 		// write final batch
 		if (!results.isEmpty()) {
 			OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-			Results.writeResults(out, results, opts);
+			Results.writeResults(outDir, results, opts);
 		}
 		log.info(PROGRAM + ": " + count + " complete " + totalWatch);
+		
+		if (threadCount != ThreadCount.ONE) {
+			execSvc.shutdown();
+		}
+		
+		return outDir;
+	}
 
-		execSvc.shutdown();
+	/* Avoid clobbering exsting result directories via incrementing */
+	private static Path createOutputDir(Path dir) {
+		int i = 1;
+		Path dirIncr = dir;
+		while (Files.exists(dirIncr)) {
+			dirIncr = dirIncr.resolveSibling(dir.getFileName() + "-" + i);
+			i++;
+		}
+		return dirIncr;
+	}
+
+	private static final String TMP_LOG = "nshmp-haz-log";
+
+	private static Path createTempLog() {
+		Path logBase = Paths.get(".");
+		Path logIncr = logBase.resolve(TMP_LOG);
+		int i = 1;
+		while (Files.exists(logIncr)) {
+			logIncr = logBase.resolve(TMP_LOG + "-" + i);
+			i++;
+		}
+		return logIncr;
 	}
 
 	/**
 	 * Compute hazard curves at a {@code site} for a {@code model} and
 	 * {@code config}. If an {@code executor} is supplied, it will be used to
-	 * distribute tasks; otherwise, one will be created.
+	 * distribute tasks; otherwise, the calculation will run on the current
+	 * thread. Be sure to shutdown any supplied executor after a calculation
+	 * completes.
 	 * 
 	 * <p><b>Note:</b> any model initialization settings in {@code config} will
 	 * be ignored as the supplied model will already have been initialized.</p>
@@ -213,26 +255,12 @@ public class HazardCalc {
 			CalcConfig config,
 			Site site,
 			Optional<Executor> executor) {
-
-		// TODO not sure why we're mandating an executor here.
-		// legacy from refactoring?
-		Optional<Executor> execLocal = executor.or(Optional.of(createExecutor()));
-
 		try {
-			Hazard result = Calcs.hazard(model, config, site, execLocal);
-			// Shut down the locally created executor if none was supplied
-			if (!executor.isPresent()) {
-				((ExecutorService) execLocal.get()).shutdown();
-			}
-			return result;
+			return Calcs.hazard(model, config, site, executor);
 		} catch (ExecutionException | InterruptedException e) {
 			Throwables.propagate(e);
 			return null;
 		}
-	}
-
-	private static ExecutorService createExecutor() {
-		return newFixedThreadPool(getRuntime().availableProcessors());
 	}
 
 	private static final String PROGRAM = HazardCalc.class.getSimpleName();

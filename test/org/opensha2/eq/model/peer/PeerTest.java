@@ -122,7 +122,7 @@ public class PeerTest {
 		// compute y-values converting to Poiss prob
 		double[] actual = Doubles.toArray(
 			FluentIterable.from(result.curves().get(Imt.PGA).yValues())
-				.transform(Mfds.rateToProbConverter())
+				.transform(Mfds.annualRateToProbabilityConverter())
 				.toList());
 		checkArgument(actual.length == expected.length);
 
@@ -146,8 +146,8 @@ public class PeerTest {
 		Iterable<Site> sites = Sites.fromCsv(MODEL_DIR.resolve(modelId).resolve("sites.csv"));
 
 		// ensure that only PGA is being used
-		checkState(config.imts().size() == 1);
-		checkState(config.imts().iterator().next() == Imt.PGA);
+		checkState(config.curve.imts.size() == 1);
+		checkState(config.curve.imts.iterator().next() == Imt.PGA);
 
 		List<Object[]> argsList = new ArrayList<>();
 		for (Site site : sites) {

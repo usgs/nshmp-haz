@@ -2,14 +2,13 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Strings.repeat;
+import static com.google.common.base.Strings.padEnd;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.GeoJson.validateProperty;
 import static org.opensha2.util.Parsing.splitToList;
-import static org.opensha2.util.Parsing.trimEnds;
-import static org.opensha2.util.TextUtils.ALIGN_COL;
-import static org.opensha2.util.TextUtils.format;
+import static org.opensha2.util.TextUtils.LOG_INDENT;
+import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -31,7 +30,6 @@ import org.opensha2.geo.Regions;
 import org.opensha2.util.GeoJson;
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
-import org.opensha2.util.TextUtils;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -192,12 +190,14 @@ public final class Sites {
 		return new ListIterable(ImmutableList.of(b.build()));
 	}
 
+	private static final int TO_STRING_LIMIT = 5;
+	private static final String SITE_INDENT = LOG_INDENT + "       ";
+//	private static final String SITE_STRING = padEnd(SITE_INDENT + "Site:", LOG_VALUE_COLUMN, ' ');
+
 	/*
 	 * Parent class for deserialization of different GeoJSON site file formats
 	 */
 	private abstract static class SiteIterable implements Iterable<Site> {
-
-		static final int TO_STRING_LIMIT = 5;
 
 		@Override
 		public String toString() {
@@ -208,13 +208,11 @@ public final class Sites {
 				.append(" [size=").append(size).append("]");
 			if (!region) {
 				for (Site site : Iterables.limit(this, TO_STRING_LIMIT)) {
-					sb.append(format("Site")).append(site);
+					sb.append(SITE_INDENT).append(site);
 				}
 				if (size > TO_STRING_LIMIT) {
 					int delta = size - TO_STRING_LIMIT;
-					sb.append(TextUtils.NEWLINE)
-						.append(repeat(" ", ALIGN_COL + 2))
-						.append("... and ").append(delta).append(" more ...");
+					sb.append(SITE_INDENT).append("... and ").append(delta).append(" more ...");
 				}
 			}
 			return sb.toString();
@@ -329,7 +327,19 @@ public final class Sites {
 			JsonObject properties = sitesFeature.getAsJsonObject(GeoJson.Key.PROPERTIES);
 			String mapName = readName(properties, "Unnamed Map");
 
-			Region calcRegion = Regions.create(mapName, border, MERCATOR_LINEAR);
+			/*
+			 * We special case a 5-coordinate border that defines a mercator
+			 * recangle so as to create a region that includes sites on the
+			 * north and east borders.
+			 */
+
+			Region calcRegion = null;
+			try {
+				Bounds b = validateExtents(border).bounds();
+				calcRegion = Regions.createRectangular(mapName, b.min(), b.max());
+			} catch (IllegalArgumentException iae) {
+				calcRegion = Regions.create(mapName, border, MERCATOR_LINEAR);
+			}
 			checkState(
 				properties.has(GeoJson.Properties.Key.SPACING),
 				"A \"spacing\" : value (in degrees) must be defined in \"properties\"");
@@ -378,12 +388,12 @@ public final class Sites {
 		JsonArray coords = geometry.getAsJsonArray(GeoJson.Key.COORDINATES);
 		LocationList border = GeoJson.fromCoordinates(coords);
 
-		checkState(
+		checkArgument(
 			border.size() > 2,
 			"A GeoJSON polygon must have at least 3 coordinates:%s",
 			border);
 
-		checkState(
+		checkArgument(
 			border.first().equals(border.last()),
 			"The first and last points in a GeoJSON polygon must be the same:%s",
 			border);
@@ -397,7 +407,7 @@ public final class Sites {
 	}
 
 	private static LocationList validateExtents(LocationList locs) {
-		checkState(locs.size() == 5,
+		checkArgument(locs.size() == 5,
 			"Extents polygon must contain 5 coordinates:%s", locs);
 		Location p1 = locs.get(0);
 		Location p2 = locs.get(1);
@@ -411,7 +421,7 @@ public final class Sites {
 				p2.latRad() == p3.latRad() &&
 				p1.lonRad() == p2.lonRad() &&
 				p3.lonRad() == p4.lonRad());
-		checkState(rectangular,
+		checkArgument(rectangular,
 			"Extents polygon does not define a lat-lon Mercator rectangle:%s", locs);
 		return locs;
 	}

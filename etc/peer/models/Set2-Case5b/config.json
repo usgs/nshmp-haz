@@ -1,12 +1,15 @@
 {
-  "name": "PEER Test: Set2-Case5b",
-  "surfaceSpacing": 0.05,
-  "ruptureFloating": "ON",
-  "ruptureVariability": false,
-  "pointSourceType": "FINITE",
-  "areaGridScaling": "UNIFORM_0P01",
-
-  "exceedanceModel": "PEER_MIXTURE_MODEL",
-  "imts": ["PGA"],
-  "defaultImls": [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0]
+  "model": {
+    "name": "PEER Test: Set2-Case5b",
+    "surfaceSpacing": 0.05,
+    "ruptureFloating": "ON",
+    "ruptureVariability": false,
+    "pointSourceType": "FINITE",
+    "areaGridScaling": "UNIFORM_0P01"
+  },
+  "curve": {
+    "exceedanceModel": "PEER_MIXTURE_MODEL",
+    "imts": ["PGA"],
+    "defaultImls": [0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0]
+  }
 }

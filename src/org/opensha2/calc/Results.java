@@ -19,13 +19,14 @@ import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
-import org.opensha2.geo.Location;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
+import org.opensha2.mfd.Mfds;
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -42,31 +43,28 @@ public class Results {
 
 	private static final String CURVE_FILE_SUFFIX = ".csv";
 	private static final String RATE_FMT = "%.8e";
-	private static final String CURVE_DIR = "curves";
 
-	/**
-	 * Hazard output format.
+	/*
+	 * Individual Hazard results only contain data relevant to the site of
+	 * interest (e.g. for the NSHM WUS models, hazard in San Fancisco is
+	 * influenced by slab sources whereas hazard in Los Angeles is not because
+	 * it is too far away). For consistency when outputting batches of results,
+	 * files are written for all source types and ground motion models supported
+	 * by the HazardModel being used. This yields curve sets that are consistent
+	 * across all locations in a batch, however, some of the curves may be
+	 * empty. Depending on the extents of a map or list of sites, some curve
+	 * sets may consist exclusively of zero-valued curves.
 	 */
-	public enum HazardFormat {
 
-		/** Total mean hazard only. */
-		TOTAL,
-
-		/** Additional curves by {@link Gmm} and {@link SourceType}. */
-		DETAILED;
-	}
-	
-	/**
-	 * Curve format.
+	/*
+	 * TODO There is no good reason for this class to be public. It would be
+	 * better as a ResultsWriter, an instance of which would be obtained and
+	 * configured on a per-calculation basis to receive batches of results.
+	 * Although problems are unlikely, we're repeating a number of configuration
+	 * steps below and relying on the same config file coming with the first
+	 * result in each batch (below). We also wouldn't have to pass around
+	 * OpenOptions which are mildly confusing.
 	 */
-	public enum CurveFormat {
-		
-		/** Write curves as annual-rate. */
-		ANNUAL_RATE,
-		
-		/** Write curves as Poisson probabilities. */
-		POISSON;
-	}
 
 	/**
 	 * Write a {@code batch} of {@code HazardResult}s to files in the specified
@@ -84,97 +82,26 @@ public class Results {
 	 * @throws IOException if a problem is encountered
 	 * @see Files#write(Path, Iterable, java.nio.charset.Charset, OpenOption...)
 	 */
-	@Deprecated
-	public static void writeResultsOLD(Path dir, List<Hazard> batch, OpenOption... options)
-			throws IOException {
-
-		Function<Double, String> locFmtFunc = Parsing.formatDoubleFunction("%.5f");
-		Function<Double, String> rateFmtFunc = Parsing.formatDoubleFunction(RATE_FMT);
-
-		Hazard demo = batch.get(0);
-		boolean newFile = options.length == 0;
-		boolean namedSites = demo.site.name != Site.NO_NAME;
-
-		Map<Imt, List<String>> lineMap = new EnumMap<>(Imt.class);
-		for (Imt imt : demo.totalCurves.keySet()) {
-			List<String> lineList = new ArrayList<>();
-			// write header
-			if (newFile) {
-				List<String> headings = new ArrayList<>();
-				if (namedSites) headings.add("name");
-				headings.add("lon");
-				headings.add("lat");
-				Iterable<?> header = Iterables.concat(
-					headings,
-					demo.config.modelCurves().get(imt).xValues());
-				lineList.add(Parsing.join(header, Delimiter.COMMA));
-			}
-			lineMap.put(imt, lineList);
-		}
-
-		for (Hazard result : batch) {
-			Iterable<String> locData = Iterables.transform(
-				Lists.newArrayList(
-					result.site.location.lon(),
-					result.site.location.lat()),
-				locFmtFunc);
-			String name = result.site.name;
-			for (Entry<Imt, XySequence> entry : result.totalCurves.entrySet()) {
-
-				// enable to output poisson probability - used when running
-				// PEER test cases - TODO should be configurable
-				// Function<Double, String> valueFunction = Functions.compose(
-				// rateFmtFunc,
-				// Mfds.rateToProbConverter());
-
-				// enable to output annual rate
-				Function<Double, String> valueFunction = rateFmtFunc;
-
-				Iterable<String> lineData = Iterables.concat(
-					locData,
-					Iterables.transform(
-						entry.getValue().yValues(),
-						valueFunction));
-
-				String line = Parsing.join(lineData, Delimiter.COMMA);
-				if (namedSites) line = name + "," + line;
-				lineMap.get(entry.getKey()).add(line);
-			}
-		}
-
-		for (Entry<Imt, List<String>> entry : lineMap.entrySet()) {
-			String filename = entry.getKey().name() + CURVE_FILE_SUFFIX;
-			Path file = dir.resolve(filename);
-			Files.write(file, entry.getValue(), US_ASCII, options);
-		}
-	}
-
-	/*
-	 * Individual Hazard results only contain data relevant to the site of
-	 * interest (e.g. for the NSHM WUS models, hazard in San Fancisco is
-	 * influenced by slab sources whereas hazard in Los Angeles is not because
-	 * it is too far away). For consistency when outputting batches of results,
-	 * files are written for all source types and ground motion models supported
-	 * by the HazardModel being used. This yields curve sets that are consistent
-	 * across all locations in a batch, however, some of the curves may be
-	 * empty. Depending on the extents of a map or list of sites, some curve
-	 * sets may consist exclusively of zero-valued curves.
-	 */
-
 	public static void writeResults(
 			Path dir,
 			List<Hazard> batch,
 			OpenOption... options) throws IOException {
 
-		Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
-
 		Hazard demo = batch.get(0);
 		boolean newFile = options.length == 0;
 		boolean namedSites = demo.site.name != Site.NO_NAME;
-		boolean detailed = demo.config.hazardFormat().equals(HazardFormat.DETAILED);
+		boolean gmmCurves = demo.config.output.curveTypes.contains(CurveType.GMM);
+		boolean sourceCurves = demo.config.output.curveTypes.contains(CurveType.SOURCE);
+
+		Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
+		if (demo.config.curve.valueType == CurveValue.POISSON_PROBABILITY) {
+			formatter = Functions.compose(
+				formatter,
+				Mfds.annualRateToProbabilityConverter());
+		}
 
 		Map<Imt, List<String>> totalLineMap = Maps.newEnumMap(Imt.class);
-		Map<Imt, Map<SourceType, List<String>>> typeLineMap = Maps.newEnumMap(Imt.class);
+		Map<Imt, Map<SourceType, List<String>>> sourceLineMap = Maps.newEnumMap(Imt.class);
 		Map<Imt, Map<Gmm, List<String>>> gmmLineMap = Maps.newEnumMap(Imt.class);
 
 		/* Initialize line maps for all types and gmms referenced by a model */
@@ -183,19 +110,20 @@ public class Results {
 			if (newFile) {
 				Iterable<?> header = Iterables.concat(
 					Lists.newArrayList(namedSites ? "name" : null, "lon", "lat"),
-					demo.config.modelCurves().get(imt).xValues());
+					demo.config.curve.modelCurves().get(imt).xValues());
 				lines.add(Parsing.join(header, Delimiter.COMMA));
 			}
 			totalLineMap.put(imt, lines);
 
-			if (detailed) {
-
+			if (sourceCurves) {
 				Map<SourceType, List<String>> typeLines = Maps.newEnumMap(SourceType.class);
 				for (SourceType type : demo.model.types()) {
 					typeLines.put(type, Lists.newArrayList(lines));
 				}
-				typeLineMap.put(imt, typeLines);
+				sourceLineMap.put(imt, typeLines);
+			}
 
+			if (gmmCurves) {
 				Map<Gmm, List<String>> gmmLines = Maps.newEnumMap(Gmm.class);
 				for (Gmm gmm : gmmSet(demo.model)) {
 					gmmLines.put(gmm, Lists.newArrayList(lines));
@@ -213,10 +141,9 @@ public class Results {
 				String.format("%.5f", hazard.site.location.lon()),
 				String.format("%.5f", hazard.site.location.lat()));
 
-			Map<Imt, Map<SourceType, XySequence>> curvesByType = detailed ?
-				curvesByType(hazard) : null;
-			Map<Imt, Map<Gmm, XySequence>> curvesByGmm = detailed ?
-				curvesByGmm(hazard) : null;
+			Map<Imt, Map<SourceType, XySequence>> curvesBySource =
+				sourceCurves ? curvesBySource(hazard) : null;
+			Map<Imt, Map<Gmm, XySequence>> curvesByGmm = gmmCurves ? curvesByGmm(hazard) : null;
 
 			for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
 				Imt imt = imtEntry.getKey();
@@ -230,24 +157,25 @@ public class Results {
 					imtEntry.getValue().yValues(),
 					formatter));
 
-				if (detailed) {
-
-					Map<SourceType, XySequence> typeCurves = curvesByType.get(imt);
-					for (Entry<SourceType, List<String>> typeEntry : typeLineMap.get(imt)
+				if (sourceCurves) {
+					Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
+					for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
 						.entrySet()) {
 						SourceType type = typeEntry.getKey();
-						String typeLine = typeCurves.containsKey(type) ?
-							toLine(locData, typeCurves.get(type).yValues(), formatter) :
-							emptyLine;
+						String typeLine = sourceCurveMap.containsKey(type)
+							? toLine(locData, sourceCurveMap.get(type).yValues(), formatter)
+							: emptyLine;
 						typeEntry.getValue().add(typeLine);
 					}
+				}
 
-					Map<Gmm, XySequence> gmmCurves = curvesByGmm.get(imt);
+				if (gmmCurves) {
+					Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
 					for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
 						Gmm gmm = gmmEntry.getKey();
-						String gmmLine = gmmCurves.containsKey(gmm) ?
-							toLine(locData, gmmCurves.get(gmm).yValues(), formatter) :
-							emptyLine;
+						String gmmLine = gmmCurveMap.containsKey(gmm)
+							? toLine(locData, gmmCurveMap.get(gmm).yValues(), formatter)
+							: emptyLine;
 						gmmEntry.getValue().add(gmmLine);
 					}
 				}
@@ -258,21 +186,23 @@ public class Results {
 		for (Entry<Imt, List<String>> totalEntry : totalLineMap.entrySet()) {
 			Imt imt = totalEntry.getKey();
 
-			Path imtDir = dir.resolve(CURVE_DIR).resolve(imt.name());
+			Path imtDir = dir.resolve(imt.name());
 			Files.createDirectories(imtDir);
 			Path totalFile = imtDir.resolve("total" + CURVE_FILE_SUFFIX);
 			Files.write(totalFile, totalEntry.getValue(), US_ASCII, options);
 
-			if (detailed) {
-
-				Path typeDir = imtDir.resolve("type");
+			if (sourceCurves) {
+				Path typeDir = imtDir.resolve("source");
 				Files.createDirectories(typeDir);
-				for (Entry<SourceType, List<String>> typeEntry : typeLineMap.get(imt).entrySet()) {
+				for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
+					.entrySet()) {
 					Path typeFile = typeDir.resolve(
 						typeEntry.getKey().toString() + CURVE_FILE_SUFFIX);
 					Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
 				}
+			}
 
+			if (gmmCurves) {
 				Path gmmDir = imtDir.resolve("gmm");
 				Files.createDirectories(gmmDir);
 				for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
@@ -297,7 +227,7 @@ public class Results {
 	 * Derive maps of curves by source type for each Imt in a {@code Hazard}
 	 * result.
 	 */
-	public static Map<Imt, Map<SourceType, XySequence>> curvesByType(Hazard hazard) {
+	public static Map<Imt, Map<SourceType, XySequence>> curvesBySource(Hazard hazard) {
 
 		EnumMap<Imt, Map<SourceType, XySequence>> imtMap = Maps.newEnumMap(Imt.class);
 
@@ -349,30 +279,33 @@ public class Results {
 		return Sets.immutableEnumSet(
 			FluentIterable.from(sourceSets).transformAndConcat(
 				new Function<SourceSet<? extends Source>, Set<Gmm>>() {
-					@Override public Set<Gmm> apply(SourceSet<? extends Source> sourceSet) {
+					@Override
+					public Set<Gmm> apply(SourceSet<? extends Source> sourceSet) {
 						return sourceSet.groundMotionModels().gmms();
 					}
-				})
-			);
+				}));
 	}
 
-	/* Initalize a map of curves, one entry for each of the supplied enum keys. */
+	/*
+	 * Initalize a map of curves, one entry for each of the supplied enum keys.
+	 */
 	private static <K extends Enum<K>> Map<K, XySequence> initCurves(
 			final Set<K> keys,
 			final XySequence model) {
 		return Maps.immutableEnumMap(
 			FluentIterable.from(keys).toMap(
 				new Function<K, XySequence>() {
-					@Override public XySequence apply(K key) {
+					@Override
+					public XySequence apply(K key) {
 						return emptyCopyOf(model);
 					}
-				})
-			);
+				}));
 	}
 
 	private static final Function<HazardCurveSet, SourceSet<? extends Source>> CURVE_SET_TO_SOURCE_SET =
 		new Function<HazardCurveSet, SourceSet<? extends Source>>() {
-			@Override public SourceSet<? extends Source> apply(HazardCurveSet curves) {
+			@Override
+			public SourceSet<? extends Source> apply(HazardCurveSet curves) {
 				return curves.sourceSet;
 			}
 		};

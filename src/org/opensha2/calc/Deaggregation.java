@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.util.TextUtils.NEWLINE;
-import static org.opensha2.util.TextUtils.format;
+import static org.opensha2.util.TextUtils.LOG_INDENT;
 import static org.opensha2.data.Data.multiply;
 import static com.google.common.primitives.Doubles.toArray;
 
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha2.calc.CalcConfig.DeaggData;
+import org.opensha2.calc.CalcConfig;
 import org.opensha2.data.Data;
 import org.opensha2.data.DataTable;
 import org.opensha2.data.DataTables;
@@ -207,11 +207,16 @@ public final class Deaggregation {
 
 		@Override public String toString() {
 			return new StringBuilder("Deagg config:")
-				.append(format("imt")).append(imt.name()).append(" [").append(imt).append("]")
-				.append(format("iml")).append(iml).append(" ").append(imt.units())
-				.append(format("rate")).append(rate).append(" yr⁻¹")
-				.append(format("returnPeriod")).append(returnPeriod).append(" yrs")
-				.append(format("probabilityModel")).append(probabilityModel)
+				.append(LOG_INDENT)
+				.append("imt: ").append(imt.name()).append(" [").append(imt).append("]")
+				.append(LOG_INDENT)
+				.append("iml: ").append(iml).append(" ").append(imt.units())
+				.append(LOG_INDENT)
+				.append("rate: ").append(rate).append(" yr⁻¹")
+				.append(LOG_INDENT)
+				.append("returnPeriod: ").append(returnPeriod).append(" yrs")
+				.append(LOG_INDENT)
+				.append("probabilityModel: ").append(probabilityModel)
 				.append(" [trunc = ").append(truncation).append("]")
 				.toString();
 		}
@@ -221,8 +226,8 @@ public final class Deaggregation {
 				.dataModel(
 					Dataset.builder(hazard.config).build())
 				.probabilityModel(
-					hazard.config.exceedanceModel(),
-					hazard.config.truncationLevel());
+					hazard.config.curve.exceedanceModel,
+					hazard.config.curve.truncationLevel);
 		}
 
 		/* Reusable builder */
@@ -908,7 +913,7 @@ public final class Deaggregation {
 		 * @see CalcConfig
 		 */
 		static Builder builder(CalcConfig config) {
-			DeaggData d = config.deagg();
+			CalcConfig.Deagg d = config.deagg;
 			return builder(
 				d.rMin, d.rMax, d.Δr,
 				d.mMin, d.mMax, d.Δm,

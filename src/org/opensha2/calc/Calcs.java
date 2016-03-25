@@ -107,7 +107,7 @@ public class Calcs {
 
 	/**
 	 * Compute probabilistic seismic hazard, possibly using an {@link Optional}
-	 * {@link Executor}. If no {@code Executor} is supplied, the calculation
+	 * {@link Executor}. If no executor is supplied, the calculation
 	 * will run on the current thread.
 	 * 
 	 * @param model to use
@@ -156,7 +156,7 @@ public class Calcs {
 
 				case GRID:
 					GridSourceSet gss = (GridSourceSet) sourceSet;
-					if (config.optimizeGrids() && gss.sourceType() != FIXED_STRIKE) {
+					if (config.performance.optimizeGrids && gss.sourceType() != FIXED_STRIKE) {
 						gridTables.add(transform(immediateFuture(gss),
 							GridSourceSet.toTableFunction(site.location), ex));
 						break;
@@ -210,7 +210,7 @@ public class Calcs {
 			switch (sourceSet.type()) {
 				case GRID:
 					GridSourceSet gss = (GridSourceSet) sourceSet;
-					if (config.optimizeGrids() && gss.sourceType() != FIXED_STRIKE) {
+					if (config.performance.optimizeGrids && gss.sourceType() != FIXED_STRIKE) {
 						sourceSet = GridSourceSet.toTableFunction(site.location).apply(gss);
 						log(log, MSSG_GRID_INIT, sourceSet.name(), duration(swSource));
 					}

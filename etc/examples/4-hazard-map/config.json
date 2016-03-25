@@ -1,5 +1,7 @@
 {
-  "exceedanceModel": "TRUNCATION_UPPER_ONLY",
-  "truncationLevel": 3.0,
-  "imts": ["PGA", "SA0P2", "SA1P0"]
+  "curve": {
+    "exceedanceModel": "TRUNCATION_UPPER_ONLY",
+    "truncationLevel": 3.0,
+    "imts": ["PGA", "SA0P2", "SA1P0"]
+  }
 }

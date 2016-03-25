@@ -4,11 +4,10 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Strings.padStart;
+import static com.google.common.base.Strings.padEnd;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.opensha2.util.TextUtils.ALIGN_COL;
-import static org.opensha2.util.TextUtils.NEWLINE;
-import static org.opensha2.util.TextUtils.format;
+import static org.opensha2.util.TextUtils.LOG_INDENT;
+import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -20,6 +19,8 @@ import org.opensha2.eq.model.AreaSource.GridScaling;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 /**
  * Model and calculation configuration class. No defaults; 'config.json' must be
@@ -30,17 +31,20 @@ import com.google.gson.GsonBuilder;
 final class ModelConfig {
 
 	static final String FILE_NAME = "config.json";
+	private static final String ID = ModelConfig.class.getSimpleName();
+	private static final String STATE_ERROR = "%s %s not set";
+	private static final String ELEMENT_NAME = "model";
 
 	private static final Gson GSON = new GsonBuilder().create();
 
 	private final Path resource;
 
-	public final String name;
-	public final double surfaceSpacing;
-	public final RuptureFloating ruptureFloating;
-	public final boolean ruptureVariability;
-	public final PointSourceType pointSourceType;
-	public final GridScaling areaGridScaling;
+	final String name;
+	final double surfaceSpacing;
+	final RuptureFloating ruptureFloating;
+	final boolean ruptureVariability;
+	final PointSourceType pointSourceType;
+	final GridScaling areaGridScaling;
 
 	private ModelConfig(
 			String name,
@@ -75,51 +79,34 @@ final class ModelConfig {
 			this.label = UPPER_UNDERSCORE.to(LOWER_CAMEL, name());
 		}
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			return label;
 		}
 	}
 
-	@Override public String toString() {
-		return new StringBuilder("Model config:")
-			.append(format(Key.NAME)).append(name)
-			.append(format(Key.RESOURCE)).append(resource.toAbsolutePath().normalize())
-			.append(format(Key.SURFACE_SPACING)).append(surfaceSpacing)
-			.append(format(Key.RUPTURE_FLOATING)).append(ruptureFloating)
-			.append(format(Key.RUPTURE_VARIABILITY)).append(ruptureVariability)
-			.append(format(Key.POINT_SOURCE_TYPE)).append(pointSourceType)
-			.append(format(Key.AREA_GRID_SCALING)).append(areaGridScaling)
+	@Override
+	public String toString() {
+		return new StringBuilder("Model Config: ")
+			.append(resource.toAbsolutePath().normalize())
+			.append(LOG_INDENT).append("Model")
+			.append(formatEntry(Key.NAME, name))
+			.append(formatEntry(Key.SURFACE_SPACING, surfaceSpacing))
+			.append(formatEntry(Key.RUPTURE_FLOATING, ruptureFloating))
+			.append(formatEntry(Key.RUPTURE_VARIABILITY, ruptureVariability))
+			.append(formatEntry(Key.POINT_SOURCE_TYPE, pointSourceType))
+			.append(formatEntry(Key.AREA_GRID_SCALING, areaGridScaling))
 			.toString();
 	}
 
-	/**
-	 * Create a new model configuration builder from the resource at the
-	 * specified {@code path}.
-	 * 
-	 * @param path to configuration file or resource
-	 * @throws IOException
-	 */
-	static Builder builder(Path path) throws IOException {
-		// TODO test with zip files
-		checkNotNull(path);
-		Path configPath = Files.isDirectory(path) ? path.resolve(FILE_NAME) : path;
-		Reader reader = Files.newBufferedReader(configPath, UTF_8);
-		Builder configBuilder = GSON.fromJson(reader, Builder.class);
-		configBuilder.resource = configPath;
-		reader.close();
-		return configBuilder;
-	}
+	private static final String KEY_INDENT = LOG_INDENT + "  ";
 
-	/**
-	 * Create a new empty model configuration builder.
-	 */
-	static Builder builder() {
-		return new Builder();
+	private static <E extends Enum<E>> String formatEntry(E key, Object value) {
+		return padEnd(KEY_INDENT + '.' + key + ':', LOG_VALUE_COLUMN, ' ') + value;
 	}
 
 	final static class Builder {
 
-		private static final String ID = "ModelConfig.Builder";
 		private boolean built = false;
 
 		private String name;
@@ -130,16 +117,38 @@ final class ModelConfig {
 		private PointSourceType pointSourceType;
 		private GridScaling areaGridScaling;
 
-		Builder copy(ModelConfig config) {
-			checkNotNull(config);
-			this.name = config.name;
-			this.resource = config.resource;
-			this.surfaceSpacing = config.surfaceSpacing;
-			this.ruptureFloating = config.ruptureFloating;
-			this.ruptureVariability = config.ruptureVariability;
-			this.pointSourceType = config.pointSourceType;
-			this.areaGridScaling = config.areaGridScaling;
-			return this;
+		static Builder copyOf(ModelConfig that) {
+			checkNotNull(that);
+			Builder b = new Builder();
+			b.name = that.name;
+			b.resource = that.resource;
+			b.surfaceSpacing = that.surfaceSpacing;
+			b.ruptureFloating = that.ruptureFloating;
+			b.ruptureVariability = that.ruptureVariability;
+			b.pointSourceType = that.pointSourceType;
+			b.areaGridScaling = that.areaGridScaling;
+			return b;
+		}
+
+		static Builder fromFile(Path path) throws IOException {
+			// TODO test with zip files
+			checkNotNull(path);
+			Path configPath = Files.isDirectory(path) ? path.resolve(FILE_NAME) : path;
+			Reader reader = Files.newBufferedReader(configPath, UTF_8);
+			JsonElement modelRoot = new JsonParser()
+				.parse(reader)
+				.getAsJsonObject()
+				.get(ELEMENT_NAME);
+			Builder configBuilder = GSON.fromJson(
+				checkNotNull(
+					modelRoot,
+					"'%s' element is missing from root of config: %s",
+					ELEMENT_NAME,
+					configPath),
+				Builder.class);
+			configBuilder.resource = configPath;
+			reader.close();
+			return configBuilder;
 		}
 
 		Builder extend(Builder that) {
@@ -154,20 +163,20 @@ final class ModelConfig {
 			return this;
 		}
 
-		private void validateState(String buildId) {
-			checkState(!built, "This %s instance has already been used", buildId);
-			checkNotNull(name, "%s %s not set", buildId, Key.NAME);
-			checkNotNull(resource, "%s %s not set", buildId, Key.RESOURCE);
-			checkNotNull(surfaceSpacing, "%s %s not set", buildId, Key.SURFACE_SPACING);
-			checkNotNull(ruptureFloating, "%s %s not set", buildId, Key.RUPTURE_FLOATING);
-			checkNotNull(ruptureVariability, "%s %s not set", buildId, Key.RUPTURE_VARIABILITY);
-			checkNotNull(pointSourceType, "%s %s not set", buildId, Key.POINT_SOURCE_TYPE);
-			checkNotNull(areaGridScaling, "%s %s not set", buildId, Key.AREA_GRID_SCALING);
+		private void validateState() {
+			checkState(!built, "This %s instance has already been used", ID + ".Builder");
+			checkNotNull(name, STATE_ERROR, ID, Key.NAME);
+			checkNotNull(resource, STATE_ERROR, ID, Key.RESOURCE);
+			checkNotNull(surfaceSpacing, STATE_ERROR, ID, Key.SURFACE_SPACING);
+			checkNotNull(ruptureFloating, STATE_ERROR, ID, Key.RUPTURE_FLOATING);
+			checkNotNull(ruptureVariability, STATE_ERROR, ID, Key.RUPTURE_VARIABILITY);
+			checkNotNull(pointSourceType, STATE_ERROR, ID, Key.POINT_SOURCE_TYPE);
+			checkNotNull(areaGridScaling, STATE_ERROR, ID, Key.AREA_GRID_SCALING);
 			built = true;
 		}
 
 		ModelConfig build() {
-			validateState(ID);
+			validateState();
 			return new ModelConfig(
 				name, resource, surfaceSpacing, ruptureFloating,
 				ruptureVariability, pointSourceType, areaGridScaling);
