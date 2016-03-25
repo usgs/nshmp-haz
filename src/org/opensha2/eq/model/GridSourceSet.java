@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
 
-import org.opensha2.calc.GridCalc;
 import org.opensha2.data.DataTable;
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
@@ -114,7 +113,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		depthModel = DepthModel.create(magDepthMap, Doubles.asList(mags), maxDepth);
 	}
 
-	@Override public SourceType type() {
+	@Override
+	public SourceType type() {
 		return SourceType.GRID;
 	}
 
@@ -125,11 +125,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		return sourceType;
 	}
 
-	@Override public int size() {
+	@Override
+	public int size() {
 		return locs.size();
 	}
 
-	@Override public Predicate<PointSource> distanceFilter(final Location loc, final double distance) {
+	@Override
+	public Predicate<PointSource> distanceFilter(final Location loc, final double distance) {
 		return new DistanceFilter(loc, distance);
 	}
 
@@ -141,28 +143,34 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			filter = Locations.distanceAndRectangleFilter(loc, distance);
 		}
 
-		@Override public boolean apply(PointSource source) {
+		@Override
+		public boolean apply(PointSource source) {
 			return filter.apply(source.loc);
 		}
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			return "GridSourceSet.DistanceFilter[ " + filter.toString() + " ]";
 		}
 	}
 
-	@Override public Iterator<PointSource> iterator() {
+	@Override
+	public Iterator<PointSource> iterator() {
 		return new Iterator<PointSource>() {
 			int caret = 0;
 
-			@Override public boolean hasNext() {
+			@Override
+			public boolean hasNext() {
 				return caret < locs.size();
 			}
 
-			@Override public PointSource next() {
+			@Override
+			public PointSource next() {
 				return getSource(caret++);
 			}
 
-			@Override public void remove() {
+			@Override
+			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 		};
@@ -188,7 +196,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 				return new PointSourceFinite(loc, mfd, mechMap, rupScaling, depthModel);
 
 			case FIXED_STRIKE:
-				return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel, strike);
+				return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel,
+					strike);
 
 			default:
 				throw new IllegalStateException("Unhandled point source type");
@@ -286,7 +295,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
-		static void validateDepthMap(Map<Double, Map<Double, Double>> magDepthMap, SourceType type) {
+		static void validateDepthMap(Map<Double, Map<Double, Double>> magDepthMap,
+				SourceType type) {
 			for (Map<Double, Double> magMap : magDepthMap.values()) {
 				for (double depth : magMap.keySet()) {
 					validateDepth(depth, type);
@@ -327,7 +337,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			throw new IllegalStateException("MagDepthMap must contain at least one M ≥ " + MAX_MAG);
 		}
 
-		@Override void validateState(String buildId) {
+		@Override
+		void validateState(String buildId) {
 			super.validateState(buildId);
 			checkState(strike != null, "%s strike not set", buildId);
 			checkState(sourceType != null, "%s source type not set", buildId);
@@ -352,7 +363,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			 */
 			if (!mechMaps.isEmpty()) {
 				checkState(mechMaps.size() == locs.size(),
-					"%s only %s of %s focal mech maps were added", ID, mechMaps.size(), locs.size());
+					"%s only %s of %s focal mech maps were added", ID, mechMaps.size(),
+					locs.size());
 			} else {
 				mechMaps = Collections.nCopies(locs.size(), mechMap);
 			}
@@ -386,45 +398,98 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 	}
 
-	/**
-	 * An internally used identifier for this source set. Users should have no
-	 * need for this class.
+	/*
+	 * If, for a basic HazardResult, we want to be able to give a per-source-set
+	 * decomposition by ground motion model, or just a decomposition of the
+	 * total curve, we'll need to have a table of the curves for every model.
+	 * 
+	 * If not necessary, then can have table of total curves and table of mean
+	 * (and sigma?) for each model. Just mean is necessary for deaggeregation
+	 * epsilon
+	 * 
+	 * OK... so...
+	 * 
+	 * Preliminary implementations of grid source optimizations modeled after
+	 * the NSHMP Fortran codes porecomputed median curves in distance and
+	 * magnitude (using a weighted combination of Gmms) and then performed
+	 * lookups for each source, aggregating a total curve along the way. This
+	 * approach is lossy in that data for individual Gmms is lost, and it was
+	 * never extended to support deaggregation where ground motion mean and
+	 * sigma are required.
+	 * 
+	 * Further consideration of these issues suggests that, rather than
+	 * aggregating curves along the way, we should build a separate table in
+	 * magnitude and distance of rates while looping over sources. At the end,
+	 * curves could be computed once for each distance and magnitude bin.
+	 * Although full curves for each Gmm could be precomputed, the time to loop
+	 * over the rate table may not be significant enough to warrant the memory
+	 * overhead (bear in mind that's a lot of curves when considering large
+	 * logic trees of Gmms and numerous periods).
+	 * 
+	 * There is also the additional issue of additional epistemic uncertinaty on
+	 * ground motions, which does not need to be considered here if building
+	 * magnitude-distance rate tables.
+	 * 
+	 * There is the additional issue of different focal mechanisms. For NGAW2
+	 * and the WUS, we would need to have 5 curves per gmm and r/m bin: 2
+	 * reverse, 2 normal 1 strike slip
+	 * 
+	 * Precomputed curves may still be warranted for map calculations where Gmm
+	 * specific data and deaggregation are irrelevant.
 	 */
-	public final class Key {
 
-		// local references to outer class fields
-		private final RuptureScaling rupScaling;
-		private final Map<Double, Map<Double, Double>> magDepthMap;
-		private final double maxDepth;
+	/*
+	 * Why, you say?
+	 * 
+	 * Simply put, speed. In the 2014 CEUS NSHM, 1000km from a site nets about
+	 * 30k sources, each of which has an associated MFD with up to 33 values
+	 * (and that assumes the different mMax models have been collapsed
+	 * together). So 990k curve calculations per GMM. However, if the rates of
+	 * those sources are first aggregated into a matrix of distance (300) and
+	 * magnitude (33) bins, then only 900 chazard curve calculations need be
+	 * performed per GMM. Ha!
+	 */
 
-		private final int hashCode;
+	/*
+	 * need to specify magnitude and distance discretization
+	 * 
+	 * cache by GmmSet alone (need to maintain internal map by period) - or
+	 * another internal cahce; a cache of caches sounds ugly and keeps the table
+	 * management class simpler
+	 * 
+	 * of cache by GmmSet and Imt
+	 * 
+	 * class names GroundMotionCache cahce of ground motion tables in distance
+	 * and magnitude
+	 * 
+	 * NOTE: (warning) current NSHM magDepthMaps define one depth per magnitude.
+	 * If this changes to a distribution in the future, additional tables would
+	 * be required, one for each depth.
+	 * 
+	 * where/hom to to get master mfd: for now lets used fixed discretization
+	 * <500< and set range of M
+	 */
 
-		private Key() {
-			this.rupScaling = GridSourceSet.this.rupScaling;
-			this.magDepthMap = GridSourceSet.this.depthModel.magDepthMap;
-			this.maxDepth = GridSourceSet.this.depthModel.maxDepth;
+	/*
+	 * Order of operations:
+	 * 
+	 * Request table of ground motions from cache using GridSourceSet, GmmSet,
+	 * and Imt If absent, cacheLoader will create table
+	 * 
+	 * Generate master input list based on m & r For each gmm, compute list of
+	 * ScalarGroundMotions
+	 */
 
-			hashCode = Objects.hash(
-				rupScaling,
-				depthModel.magDepthMap,
-				depthModel.maxDepth);
-		}
+	/*
+	 * TODO hypothetical, calculations where any vs30 could be selected; jsut
+	 * the rate binning approach likely achieves performance speed gains; onve
+	 * variable vs30 and basin terms are allowed, there's really no way to
+	 * manage precalculation of gmm gound motions If optimization is enabled, a
+	 * GridSourceSet will delegate to a table when iterating sources
+	 */
 
-		@Override public int hashCode() {
-			return hashCode;
-		}
-
-		@Override public boolean equals(Object obj) {
-			if (this == obj) return true;
-			if (!(obj instanceof Key)) return false;
-			Key that = (Key) obj;
-			return Objects.equals(this.rupScaling, that.rupScaling) &&
-				Objects.equals(this.magDepthMap, that.magDepthMap) &&
-				Objects.equals(this.maxDepth, that.maxDepth);
-		}
-	}
-
-	public static Function<GridSourceSet, SourceSet<? extends Source>> toTableFunction(Location loc) {
+	public static Function<GridSourceSet, SourceSet<? extends Source>> toTableFunction(
+			Location loc) {
 		return new ToTable(loc);
 	}
 
@@ -435,7 +500,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			this.loc = loc;
 		}
 
-		@Override public Table apply(GridSourceSet sources) {
+		@Override
+		public Table apply(GridSourceSet sources) {
 			return new Table(sources, loc);
 		}
 	}
@@ -454,10 +520,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * list
 	 */
 
-
-	/* 
-	 * TODO upgrade this to DataVolume to handle azimuth bins??
-	 * TODO split over focal mechs? required for UC3 grids
+	/*
+	 * TODO upgrade this to DataVolume to handle azimuth bins?? TODO split over
+	 * focal mechs? required for UC3 grids
 	 */
 
 	/**
@@ -504,33 +569,41 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return maximumSize;
 		}
 
-		@Override public String name() {
+		@Override
+		public String name() {
 			return parent.name() + " (opt)";
 		}
 
-		@Override public SourceType type() {
+		@Override
+		public SourceType type() {
 			return parent.type();
 		}
 
-		@Override public int size() {
+		@Override
+		public int size() {
 			return parent.size();
 		}
 
-		@Override public Predicate<PointSource> distanceFilter(Location loc, double distance) {
+		@Override
+		public Predicate<PointSource> distanceFilter(Location loc, double distance) {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override public Iterator<PointSource> iterator() {
+		@Override
+		public Iterator<PointSource> iterator() {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override public Iterable<PointSource> iterableForLocation(Location loc) {
+		@Override
+		public Iterable<PointSource> iterableForLocation(Location loc) {
 			/*
 			 * Ignore location; simply iterate over the list of sources. Source
 			 * list will be empty if mfdTable is empty (all zeros).
 			 */
 			return sources;
 		}
+
+		private static final double SRC_TO_SITE_AZIMUTH = 0.0;
 
 		private List<PointSource> initSources() {
 			DataTable mfdTable = initMfdTable();
@@ -540,7 +613,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			for (double r : distances) {
 				XySequence mfd = mfdTable.row(r);
 				if (mfd.isEmpty()) continue;
-				Location loc = Locations.location(origin, GridCalc.SRC_TO_SITE_AZIMUTH, r);
+				Location loc = Locations.location(origin, SRC_TO_SITE_AZIMUTH, r);
 				b.add(PointSources.finitePointSource(
 					loc,
 					mfd,
@@ -560,7 +633,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			double rMax = parent.groundMotionModels().maxDistance();
 
 			DataTable.Builder tableBuilder = DataTable.Builder.create()
-				.rows(0.0, rMax, GridCalc.distanceDiscretization(rMax))
+				.rows(0.0, rMax, distanceDiscretization(rMax))
 				.columns(mMin, mMax, Δm);
 
 			for (PointSource source : parent.iterableForLocation(origin)) {
@@ -572,6 +645,15 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			DataTable table = tableBuilder.build();
 			return table;
 		}
+
+		/*
+		 * Return a distance dependent discretization. Currently this is fixed
+		 * at 1km for r<400km and 5km for r>= 400km
+		 */
+		private static double distanceDiscretization(double r) {
+			return r < 400.0 ? 1.0 : 5.0;
+		}
+
 	}
 
 }
