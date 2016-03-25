@@ -11,6 +11,8 @@
 	<property name="dist.dir" value="dist/" />
 	<property name="javadoc.dir" value="../nshmp-haz.gh-pages/javadoc" />
 
+	<defaultexcludes add="**/Scratch*.java" />
+
 	<path id="library.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
@@ -38,10 +40,9 @@
 		<!-- Compile to classes/  -->
 		<javac srcdir="${src.dir}"
 		       destdir="${classes.dir}"
-			   excludes="**/Scratch*.java"
 		       classpathref="library.classpath"
 		       nowarn="true"
-			   fork="true"
+		       fork="true"
 		       source="1.7"
 		       target="1.7"
 		       encoding="UTF-8"
@@ -56,9 +57,9 @@
 		</copy>
 
 	</target>
-	
+
 	<target name="compile-tests">
-	
+
 	</target>
 
 
@@ -80,26 +81,36 @@
 		         verbose="false"
 		         encoding="UTF-8"
 		         docencoding="UTF-8"
-		         charset="UTF-8">
+		         charset="UTF-8"
+		         additionalparam="-notimestamp">
 
-			<fileset dir="${src.dir}" defaultexcludes="yes">
+			<fileset dir="${src.dir}">
 				<include name="**/*.java" />
-				<exclude name="**/Scratch*.java" />
 			</fileset>
 
-			<link href="http://docs.oracle.com/javase/7/docs/api/" />
-			<link href="http://commons.apache.org/proper/commons-math/apidocs/" />
-			<link href="http://google.github.io/guava/releases/19.0/api/docs/" />
-			<link href="http://google.github.io/gson/apidocs/" />
+			<bottom>
+				<![CDATA[
+				<div style="float: right; font-size: 14px; padding: 4px;">
+				<span style="font-weight: bold;">U.S. Geological Survey</span>
+				– National Seicmic Hazard Mapping Project
+				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+				</div>
+				]]>
+			</bottom>
 
-		</javadoc>
-		
-		<!-- Copy images -->
-		<copy todir="${javadoc.dir}/resources">
-			<fileset dir="etc/resources/docs" includes="*.jpg" />
-		</copy>
-		
-	</target>
+		<link href="http://docs.oracle.com/javase/7/docs/api/" />
+		<link href="http://commons.apache.org/proper/commons-math/apidocs/" />
+		<link href="http://google.github.io/guava/releases/19.0/api/docs/" />
+		<link href="http://google.github.io/gson/apidocs/" />
+
+	</javadoc>
+
+	<!-- Copy images -->
+	<copy todir="${javadoc.dir}/resources">
+		<fileset dir="etc/resources/docs" includes="*.jpg" />
+	</copy>
+
+</target>
 
 </project>
 
