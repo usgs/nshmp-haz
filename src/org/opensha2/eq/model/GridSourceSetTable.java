@@ -28,12 +28,8 @@ import com.google.common.primitives.Doubles;
  *
  * @author Peter Powers
  */
+@Deprecated
 public class GridSourceSetTable {
-
-	/* 
-	 * TODO upgrade this to DataVolume to handle azimuth bins??
-	 * TODO split over focal mechs? required for UC3 grids
-	 */
 	
 	
 	

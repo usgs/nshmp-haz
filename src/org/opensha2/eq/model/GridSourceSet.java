@@ -54,8 +54,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	final double mMax;
 	final double Δm;
 
-	private final Key cacheKey;
-
 	/*
 	 * TODO We need to (will) impose strict min and delta mag constraints.
 	 * Default MFDs will be checked for agreement. We should change pure INCR
@@ -114,8 +112,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		double cleanDelta = Double.valueOf(String.format("%.2f", Δm));
 		double[] mags = Data.buildCleanSequence(mMin, mMax, cleanDelta, true, 2);
 		depthModel = DepthModel.create(magDepthMap, Doubles.asList(mags), maxDepth);
-
-		this.cacheKey = new Key();
 	}
 
 	@Override public SourceType type() {
@@ -170,15 +166,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 				throw new UnsupportedOperationException();
 			}
 		};
-	}
-
-	/**
-	 * Returns a key that can be used to uniquely identify those properties of
-	 * this {@code GridSourceSet} necessary to distinguish it in optimized
-	 * hazard calculations.
-	 */
-	public Key cacheKey() {
-		return cacheKey;
 	}
 
 	private PointSource getSource(int index) {
@@ -467,8 +454,14 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * list
 	 */
 
+
+	/* 
+	 * TODO upgrade this to DataVolume to handle azimuth bins??
+	 * TODO split over focal mechs? required for UC3 grids
+	 */
+
 	/**
-	 * Condensed implementation of a {@code GridSourceSet}. This class
+	 * Tabular implementation of a {@code GridSourceSet}. This class
 	 * consolidates the point sources that influence hazard at a site using a
 	 * magnitude-distance-rate {@code DataTable}, from which a list of sources
 	 * is generated. A {@code Table} is created on a per-calculation basis and

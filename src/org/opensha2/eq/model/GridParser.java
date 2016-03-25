@@ -251,7 +251,6 @@ class GridParser extends DefaultHandler {
 					log.finer("  MFD index: " + sourceSet.depthModel.magDepthIndices);
 					log.finer("     Depths: " + sourceSet.depthModel.magDepthDepths);
 					log.finer("    Weights: " + sourceSet.depthModel.magDepthWeights);
-					log.fine("  Cache key: " + sourceSet.cacheKey().hashCode());
 					log.fine("");
 				}
 				break;
