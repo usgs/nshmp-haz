@@ -60,10 +60,8 @@ public final class CalcConfig {
 	private static final String DEFAULT_OUT = "curves";
 
 	/**
-	 * The resource from which {@code this} was derived. If this configuration
-	 * was built using {@link Builder#extend(Builder)}, this field will reflect
-	 * the field of the extending resource. If this configuration was built only
-	 * from {@link Builder#withDefaults()}, this field will be empty.
+	 * The resource from which {@code this} was derived. This field may be
+	 * empty.
 	 */
 	public final transient Optional<Path> resource;
 

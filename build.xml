@@ -11,6 +11,8 @@
 	<property name="dist.dir" value="dist/" />
 	<property name="javadoc.dir" value="../nshmp-haz.gh-pages/javadoc" />
 
+	<defaultexcludes add="**/Scratch*.java"/>
+	
 	<path id="library.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
@@ -38,7 +40,6 @@
 		<!-- Compile to classes/  -->
 		<javac srcdir="${src.dir}"
 		       destdir="${classes.dir}"
-			   excludes="**/Scratch*.java"
 		       classpathref="library.classpath"
 		       nowarn="true"
 			   fork="true"
@@ -64,6 +65,7 @@
 
 	<target name="javadoc">
 
+		<defaultexcludes echo="true"/>
 		<!-- Clean the docs directory; .git data preserved by defaultexcludes -->
 		<delete includeEmptyDirs="true" failonerror="yes" verbose="no">
 			<fileset dir="${javadoc.dir}" />
@@ -82,9 +84,8 @@
 		         docencoding="UTF-8"
 		         charset="UTF-8">
 
-			<fileset dir="${src.dir}" defaultexcludes="yes">
+			<fileset dir="${src.dir}">
 				<include name="**/*.java" />
-				<exclude name="**/Scratch*.java" />
 			</fileset>
 
 			<link href="http://docs.oracle.com/javase/7/docs/api/" />
