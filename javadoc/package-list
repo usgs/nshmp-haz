@@ -1,3 +1,4 @@
+org.opensha2
 org.opensha2.calc
 org.opensha2.data
 org.opensha2.eq
@@ -11,5 +12,4 @@ org.opensha2.gcim
 org.opensha2.geo
 org.opensha2.gmm
 org.opensha2.mfd
-org.opensha2.programs
 org.opensha2.util
