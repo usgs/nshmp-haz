@@ -16,7 +16,9 @@ import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,6 +43,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 /**
  * Calculation configuration.
@@ -60,7 +65,7 @@ public final class CalcConfig {
 	 * the field of the extending resource. If this configuration was built only
 	 * from {@link Builder#withDefaults()}, this field will be empty.
 	 */
-	public final Optional<Path> resource;
+	public final transient Optional<Path> resource;
 
 	/** Hazard curve calculation settings */
 	public final Curve curve;
@@ -140,8 +145,9 @@ public final class CalcConfig {
 		private final double[] defaultImls;
 		private final Map<Imt, double[]> customImls;
 
-		private final Map<Imt, XySequence> modelCurves;
-		private final Map<Imt, XySequence> logModelCurves;
+		/* Do not serialize to JSON */
+		private final transient Map<Imt, XySequence> modelCurves;
+		private final transient Map<Imt, XySequence> logModelCurves;
 
 		private Curve(
 				ExceedanceModel exceedanceModel,
@@ -636,6 +642,8 @@ public final class CalcConfig {
 	}
 
 	private static final Gson GSON = new GsonBuilder()
+		.setPrettyPrinting()
+		.enableComplexMapKeySerialization()
 		.registerTypeAdapter(Path.class, new JsonDeserializer<Path>() {
 			@Override
 			public Path deserialize(
@@ -645,7 +653,29 @@ public final class CalcConfig {
 				return Paths.get(json.getAsString());
 			}
 		})
+		.registerTypeAdapter(Path.class, new JsonSerializer<Path>() {
+			@Override
+			public JsonElement serialize(
+					Path path,
+					Type type,
+					JsonSerializationContext context) {
+				return new JsonPrimitive(path.toAbsolutePath().normalize().toString());
+			}
+		})
 		.create();
+
+	/**
+	 * Save this config in JSON format to the speciifed directory.
+	 * 
+	 * @param dir the directory to write to
+	 * @throws IOException if there is a problem writing the file
+	 */
+	public void write(Path dir) throws IOException {
+		Path file = dir.resolve(FILE_NAME);
+		Writer writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8);
+		GSON.toJson(this, writer);
+		writer.close();
+	}
 
 	/**
 	 * A builder of configuration instances.
