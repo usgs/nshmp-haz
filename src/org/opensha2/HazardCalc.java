@@ -107,8 +107,9 @@ public class HazardCalc {
 			}
 			log.info(config.toString());
 
-			Iterable<Site> sites = readSites(args[1]);
+			
 			log.info("");
+			Iterable<Site> sites = readSites(args[1], log);
 			log.info("Sites: " + sites);
 
 			Path out = calc(model, config, sites, log);
@@ -132,13 +133,17 @@ public class HazardCalc {
 		}
 	}
 
-	static Iterable<Site> readSites(String arg) {
+	private static Iterable<Site> readSites(String arg, Logger log) {
 		try {
 			if (arg.toLowerCase().endsWith(".csv")) {
-				return Sites.fromCsv(Paths.get(arg));
+				Path path = Paths.get(arg);
+				log.info("Site file: " + path.toAbsolutePath().normalize());
+				return Sites.fromCsv(path);
 			}
 			if (arg.toLowerCase().endsWith(".geojson")) {
-				return Sites.fromJson(Paths.get(arg));
+				Path path = Paths.get(arg);
+				log.info("Site file: " + path.toAbsolutePath().normalize());
+				return Sites.fromJson(path);
 			}
 			return Sites.fromString(arg);
 		} catch (Exception e) {
