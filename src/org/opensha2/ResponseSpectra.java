@@ -1,4 +1,4 @@
-package org.opensha2.programs;
+package org.opensha2;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 

@@ -1,4 +1,4 @@
-package org.opensha2.programs;
+package org.opensha2;
 
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;

@@ -18,6 +18,6 @@ limitations under the License.
 
 Runtime libs:
 
- - guava-18.0.jar          (https://github.com/google/guava)
- - gson-2.3.jar            (https://code.google.com/p/google-gson)
+ - guava-19.0.jar          (https://github.com/google/guava)
+ - gson-2.5.jar            (https://code.google.com/p/google-gson)
  
