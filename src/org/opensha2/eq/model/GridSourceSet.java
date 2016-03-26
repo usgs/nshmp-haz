@@ -56,8 +56,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	/*
 	 * TODO We need to (will) impose strict min and delta mag constraints.
 	 * Default MFDs will be checked for agreement. We should change pure INCR
-	 * mfds (defained by mags[] and rates[]) to min, max, delta and validate
-	 * that those 3 params yield a size equivalent to rates.length.
+	 * mfds (defined by mags[] and rates[]) to min, max, delta and validate that
+	 * those 3 params yield a size equivalent to rates.length.
+	 * 
+	 * But what about non-evenly discretized incremental distributions? Are the
+	 * only cases where this would occur are after combining multiple SINGLE
+	 * mfds?
 	 */
 
 	/*
@@ -488,6 +492,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 * GridSourceSet will delegate to a table when iterating sources
 	 */
 
+	/**
+	 * Create a {@code Function} for a location the condenses a
+	 * {@code GridSourceSet} into tabular form (distance, magnitude and azimuth
+	 * bins) for speedier iteration.
+	 * 
+	 * @param loc reference point for table
+	 */
 	public static Function<GridSourceSet, SourceSet<? extends Source>> toTableFunction(
 			Location loc) {
 		return new ToTable(loc);

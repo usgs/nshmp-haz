@@ -34,40 +34,48 @@ class ImmutableXySequence extends XySequence {
 		ys = clear ? new double[xs.length] : Arrays.copyOf(s.ys, s.ys.length);
 	}
 
-	@Override public final double x(int index) {
+	@Override
+	public final double x(int index) {
 		checkElementIndex(index, xs.length);
 		return xUnchecked(index);
 	}
 
-	@Override final double xUnchecked(int index) {
+	@Override
+	final double xUnchecked(int index) {
 		return xs[index];
 	}
 
-	@Override public final double y(int index) {
+	@Override
+	public final double y(int index) {
 		checkElementIndex(index, ys.length);
 		return yUnchecked(index);
 	}
 
-	@Override final double yUnchecked(int index) {
+	@Override
+	final double yUnchecked(int index) {
 		return ys[index];
 	}
 
-	@Override public final int size() {
+	@Override
+	public final int size() {
 		return xs.length;
 	}
 
-	@Override public final boolean isEmpty() {
+	@Override
+	public final boolean isEmpty() {
 		return Data.sum(ys) == 0.0;
 	}
 
-	@Override public final boolean equals(Object obj) {
+	@Override
+	public final boolean equals(Object obj) {
 		if (this == obj) return true;
 		if (!(obj instanceof ImmutableXySequence)) return false;
 		ImmutableXySequence that = (ImmutableXySequence) obj;
 		return Arrays.equals(this.xs, that.xs) && Arrays.equals(this.ys, that.ys);
 	}
 
-	@Override public final int hashCode() {
+	@Override
+	public final int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Arrays.hashCode(xs);
