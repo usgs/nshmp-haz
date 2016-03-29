@@ -52,7 +52,7 @@ class MfdHelper {
 	 * System
 	 * 		- only supports a single SINGLE default MFD at this time
 	 * 
-	 * DHow to manage MFD Type and Id mixing and matching?
+	 * How to manage MFD Type and Id mixing and matching?
 	 * 
 	 * Other notes:
 	 * 
@@ -87,11 +87,6 @@ class MfdHelper {
 		return new Builder();
 	}
 	
-	// TODO not sure this has a use
-	static Builder singleTypeBuilder() {
-		return new Builder().restrictType();
-	}
-
 	List<SingleData> singleData(Attributes atts) {
 		if (singleDefaults.isEmpty()) return ImmutableList.of(new SingleData(atts));
 		ImmutableList.Builder<SingleData> builder = ImmutableList.builder();
@@ -154,23 +149,10 @@ class MfdHelper {
 		private ImmutableList.Builder<GR_Data> grBuilder = ImmutableList.builder();
 		private ImmutableList.Builder<IncrData> incrBuilder = ImmutableList.builder();
 		private ImmutableList.Builder<TaperData> taperBuilder = ImmutableList.builder();
-		
-		// TODO type restriction may not be appropriate for defaults
-		private boolean restrictType = false;
-		private Optional<MfdType> typeRestriction = Optional.absent();
-
-		/*
-		 * If set, only one type of mfd may be added to this helper.
-		 */
-		private Builder restrictType() {
-			restrictType = true;
-			return this;
-		}
-		
+				
 		/* Add a default MFD. */
 		Builder addDefault(Attributes atts) {
 			MfdType type = MfdType.valueOf(atts.getValue("type"));
-			checkType(type);
 			switch (type) {
 				case GR:
 					grBuilder.add(new GR_Data(atts));
@@ -190,18 +172,6 @@ class MfdHelper {
 			return this;
 		}
 		
-		// TODO this is wrong; or at least not appropriate
-		// grid nodes may only be one type, but there can be
-		// defaults for each
-		private void checkType(MfdType type) {
-			if (!restrictType) return;
-			if (typeRestriction.isPresent()) {
-				checkArgument(type == typeRestriction.get(), "Only %s MFDs permitted", type);
-				return;
-			}
-			typeRestriction = Optional.of(type);
-		}
-
 		MfdHelper build() {
 			// MfdHelpers can be empty if no defaults
 			// defined for a SourceSet
