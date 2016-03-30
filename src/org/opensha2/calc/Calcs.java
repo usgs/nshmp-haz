@@ -156,9 +156,11 @@ public class Calcs {
 
 				case GRID:
 					GridSourceSet gss = (GridSourceSet) sourceSet;
-					if (config.performance.optimizeGrids && gss.sourceType() != FIXED_STRIKE) {
+					if (config.performance.optimizeGrids 
+							&& gss.sourceType() != FIXED_STRIKE
+							&& gss.optimizable()) {
 						gridTables.add(transform(immediateFuture(gss),
-							GridSourceSet.toTableFunction(site.location), ex));
+							GridSourceSet.optimizer(site.location), ex));
 						break;
 					}
 					curveSets.add(sourcesToCurves(sourceSet, config, site, ex));
@@ -211,7 +213,7 @@ public class Calcs {
 				case GRID:
 					GridSourceSet gss = (GridSourceSet) sourceSet;
 					if (config.performance.optimizeGrids && gss.sourceType() != FIXED_STRIKE) {
-						sourceSet = GridSourceSet.toTableFunction(site.location).apply(gss);
+						sourceSet = GridSourceSet.optimizer(site.location).apply(gss);
 						log(log, MSSG_GRID_INIT, sourceSet.name(), duration(swSource));
 					}
 					curveSets.add(sourcesToCurves(sourceSet, config, site));

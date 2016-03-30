@@ -255,7 +255,7 @@ class PointSource implements Source {
 	static final class DepthModel {
 
 		/*
-		 * MagDepthMap examples:
+		 * Initialized with a MagDepthMap; examples:
 		 * 
 		 * single depth:
 		 * 
@@ -264,17 +264,11 @@ class PointSource implements Source {
 		 * NSHMP depths:
 		 * 
 		 * [6.5 :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 : 0.0]]
-		 * 
-		 * magDepthMap is not used once index arrays are created, but reference
-		 * is retained for cache identification.
 		 */
-		final Map<Double, Map<Double, Double>> magDepthMap;
-		// TODO other than for generating key, this field is not referenced so
-		// it proabbly makes more sense to store it with the GridSourceSet
 
 		/*
 		 * maxDepth constrains the width of finite point sources. In many cases
-		 * (e.g. CEUS) this is not used as sources are simoply modeled as lines;
+		 * (e.g. CEUS) this is not used as sources are simply modeled as lines;
 		 * the gmm's do not require a full finite-source parameterization.
 		 */
 		final double maxDepth;
@@ -298,7 +292,6 @@ class PointSource implements Source {
 				List<Double> magMaster,
 				double maxDepth) {
 
-			this.magDepthMap = magDepthMap;
 			this.magMaster = magMaster;
 			this.maxDepth = maxDepth;
 

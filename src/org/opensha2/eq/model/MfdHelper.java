@@ -19,6 +19,8 @@ import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.toDoubleArray;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.opensha2.mfd.MfdType;
@@ -26,6 +28,7 @@ import org.xml.sax.Attributes;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Doubles;
 
 /*
  * MFD data handler class. Stores default data and creates copies with
@@ -52,7 +55,7 @@ class MfdHelper {
 	 * System
 	 * 		- only supports a single SINGLE default MFD at this time
 	 * 
-	 * DHow to manage MFD Type and Id mixing and matching?
+	 * How to manage MFD Type and Id mixing and matching?
 	 * 
 	 * Other notes:
 	 * 
@@ -87,18 +90,14 @@ class MfdHelper {
 		return new Builder();
 	}
 	
-	// TODO not sure this has a use
-	static Builder singleTypeBuilder() {
-		return new Builder().restrictType();
-	}
-
 	List<SingleData> singleData(Attributes atts) {
 		if (singleDefaults.isEmpty()) return ImmutableList.of(new SingleData(atts));
-		ImmutableList.Builder<SingleData> builder = ImmutableList.builder();
+		List<SingleData> dataList = new ArrayList<>();
 		for (SingleData singleDefault : singleDefaults) {
-			builder.add(new SingleData(atts, singleDefault));
+			dataList.add(new SingleData(atts, singleDefault));
 		}
-		return builder.build();
+		Collections.sort(dataList);
+		return ImmutableList.copyOf(dataList);
 	}
 
 	List<GR_Data> grData(Attributes atts) {
@@ -146,6 +145,14 @@ class MfdHelper {
 				throw new IllegalArgumentException("Unknown MFD type: " + type);
 		}
 	}
+	
+	int size() {
+		int size = 0;
+		for (MfdType type : MfdType.values()) {
+			size += typeCount(type);
+		}
+		return size;
+	}
 
 	/* Re-usable */
 	static final class Builder {
@@ -154,23 +161,10 @@ class MfdHelper {
 		private ImmutableList.Builder<GR_Data> grBuilder = ImmutableList.builder();
 		private ImmutableList.Builder<IncrData> incrBuilder = ImmutableList.builder();
 		private ImmutableList.Builder<TaperData> taperBuilder = ImmutableList.builder();
-		
-		// TODO type restriction may not be appropriate for defaults
-		private boolean restrictType = false;
-		private Optional<MfdType> typeRestriction = Optional.absent();
-
-		/*
-		 * If set, only one type of mfd may be added to this helper.
-		 */
-		private Builder restrictType() {
-			restrictType = true;
-			return this;
-		}
-		
+				
 		/* Add a default MFD. */
 		Builder addDefault(Attributes atts) {
 			MfdType type = MfdType.valueOf(atts.getValue("type"));
-			checkType(type);
 			switch (type) {
 				case GR:
 					grBuilder.add(new GR_Data(atts));
@@ -190,18 +184,6 @@ class MfdHelper {
 			return this;
 		}
 		
-		// TODO this is wrong; or at least not appropriate
-		// grid nodes may only be one type, but there can be
-		// defaults for each
-		private void checkType(MfdType type) {
-			if (!restrictType) return;
-			if (typeRestriction.isPresent()) {
-				checkArgument(type == typeRestriction.get(), "Only %s MFDs permitted", type);
-				return;
-			}
-			typeRestriction = Optional.of(type);
-		}
-
 		MfdHelper build() {
 			// MfdHelpers can be empty if no defaults
 			// defined for a SourceSet
@@ -212,8 +194,8 @@ class MfdHelper {
 				taperBuilder.build());
 		}
 	}
-
-	static final class SingleData {
+	
+	static final class SingleData implements Comparable<SingleData> {
 
 		final double rate;
 		final double m;
@@ -270,6 +252,11 @@ class MfdHelper {
 			this.m = m;
 			this.floats = floats;
 			this.weight = weight;
+		}
+
+		@Override
+		public int compareTo(SingleData other) {
+			return Doubles.compare(m, other.m);
 		}
 	}
 

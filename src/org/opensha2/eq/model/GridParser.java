@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 
 import org.opensha2.data.Data;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -48,6 +49,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.collect.Iterables;
 import com.google.common.primitives.Doubles;
 
 /*
@@ -89,7 +91,7 @@ class GridParser extends DefaultHandler {
 	// TODO why are these fields being initialized to null; necessary?
 
 	// Per-node MFD and mechMap
-	private IncrementalMfd nodeMFD = null;
+	private XySequence nodeMFD = null;
 	private Map<FocalMech, Double> nodeMechMap = null;
 
 	// Exposed for use when validating depths in subclasses
@@ -139,7 +141,6 @@ class GridParser extends DefaultHandler {
 					log.fine("       Name: " + name);
 					log.fine("     Weight: " + weight);
 				}
-//				mfdHelperBuilder = MfdHelper.singleTypeBuilder(); TODO revisit/clean
 				mfdHelperBuilder = MfdHelper.builder();
 				mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
 				break;
@@ -189,8 +190,8 @@ class GridParser extends DefaultHandler {
 				readingLoc = true;
 				locBuilder = new StringBuilder();
 				nodeMFD = processNode(atts);
-				minMag = Math.min(minMag, nodeMFD.getMinX());
-				maxMag = Math.max(maxMag, nodeMFD.getMaxX());
+				minMag = Math.min(minMag, nodeMFD.min().x());
+				maxMag = Math.max(maxMag, nodeMFD.max().x());
 				try {
 					String nodeMechMapStr = readString(FOCAL_MECH_MAP, atts);
 					nodeMechMap = stringToEnumWeightMap(nodeMechMapStr, FocalMech.class);
@@ -246,12 +247,12 @@ class GridParser extends DefaultHandler {
 					// TODO there must be a better way to organize this so that we
 					// can log the depth model without having to give it package vis
 					log.fine("       Size: " + sourceSet.size());
+					log.finer("  MFD count: " + mfdHelper.size());
 					log.finer("  Mag count: " + sourceSet.depthModel.magMaster.size());
 					log.finer(" Mag master: " + sourceSet.depthModel.magMaster);
 					log.finer("  MFD index: " + sourceSet.depthModel.magDepthIndices);
 					log.finer("     Depths: " + sourceSet.depthModel.magDepthDepths);
 					log.finer("    Weights: " + sourceSet.depthModel.magDepthWeights);
-					log.fine("  Cache key: " + sourceSet.cacheKey().hashCode());
 					log.fine("");
 				}
 				break;
@@ -273,60 +274,61 @@ class GridParser extends DefaultHandler {
 	 * Defaults are collapsed into a single MFD.
 	 */
 	
-	private IncrementalMfd processNode(Attributes atts) {
+	private XySequence processNode(Attributes atts) {
 		MfdType type = readEnum(TYPE, atts, MfdType.class);
 
 		switch (type) {
 			case GR:
-				return buildGR(atts);
-				// TODO clean
-//				MfdHelper.GR_Data grData = mfdHelper.getGR(atts);
-//				int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
-//				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
-//					nMagGR, grData.b, 1.0);
-//				mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
-//					grData.weight);
-//				return mfdGR;
+				return buildCollapsedGR(atts);
 
 			case INCR:
 				return buildIncr(atts);
-//				MfdHelper.IncrData incrData = mfdHelper.getIncremental(atts);
-//				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
-//					DataUtils.multiply(incrData.weight, incrData.rates));
-//				return mfdIncr;
 
 			case SINGLE:
-				return buildSingle(atts);
-//				MfdHelper.SingleData singleData = mfdHelper.getSingle(atts);
-//				return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
-//					singleData.floats);
+				return buildCollapsedSingle(atts);
 
 			case GR_TAPER:
 				return buildTapered(atts);
-//				MfdHelper.TaperData taperData = mfdHelper.getTapered(atts);
-//				int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
-//				IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
-//					taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
-//					taperData.weight);
-//				return mfdTaper;
 
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
-
 		}
 	}
 
-	private IncrementalMfd buildGR(Attributes atts) {
+	private XySequence buildGR(Attributes atts) {
 		List<GR_Data> grDataList = mfdHelper.grData(atts);
 		GR_Data grData = grDataList.get(0);
 		deltaMag = grData.dMag;
-		return buildGR(grData);
-//		if (grDataList.size() == 1) return buildGR(grDataList.get(0));
-//		List<IncrementalMfd> mfds = new ArrayList<>();
-//		for (GR_Data grData : grDataList) {
-//			mfds.add(buildGR(grData));
-//		}
-//		return combineGR(mfds);
+		return Mfds.toSequence(buildGR(grData));
+	}
+	
+	private XySequence buildCollapsedGR(Attributes atts) {
+		List<GR_Data> dataList = mfdHelper.grData(atts);
+		// validate callapsability
+		GR_Data grModel = dataList.get(0);
+		double mMin = grModel.mMin;
+		double dMag = grModel.dMag;
+		double mMax = grModel.mMax;
+		for (GR_Data grData : Iterables.skip(dataList, 1)) {
+			checkState(grData.mMin == mMin, "All mMin must be equal");
+			checkState(grData.dMag == dMag, "All dMag must be equal");
+			mMax = Math.max(grData.mMax, mMax);
+		}
+		
+		deltaMag = dMag;
+		
+		double[] mags = Data.buildCleanSequence(mMin, mMax, dMag, true, 2);
+		double[] rates = new double[mags.length];
+		
+		for (GR_Data grData : dataList) {
+			IncrementalMfd mfd = buildGR(grData);
+			List<Double> mfdRates = mfd.yValues();
+			for (int i=0; i<mfdRates.size(); i++) {
+				rates[i] += mfdRates.get(i);
+			}
+		}
+		
+		return XySequence.createImmutable(mags, rates);
 	}
 	
 	private static IncrementalMfd buildGR(GR_Data grData) {
@@ -337,39 +339,14 @@ class GridParser extends DefaultHandler {
 			grData.weight);
 		return mfdGR;
 	}
-	
-	/*
-	 * TODO we NEED to check that x-domains, spacing are the same/similar for GR
-	 */
-	private IncrementalMfd combineGR(List<IncrementalMfd> mfds) {
 		
-		// TODO just returning the first one for now
-		// TODO
-		// TODO This is likely going to require refactoring Point Source
-		// MFDs to be XySequences because IncrementalMfd descends from
-		// evenly discretized function; more relevant to combining single mfds
-		// that contain non-unifrmely spaced magnitudes
-		//
-		// TODO need to ensure that defaults are only of a single type
-		checkArgument(mfds.size() > 0);
-		return mfds.get(0);
-		
-//		// create master x-value sequence
-//		Builder<Double> builder = ImmutableSortedSet.naturalOrder();
-//		for (IncrementalMfd mfd : mfds) {
-//			builder.addAll(mfd.xValues());
-//		}
-//		double[] xMaster = Doubles.toArray(builder.build());
-		
-	}
-	
 	// TODO are there circumstances under which one would
 	// combine multiple INCR MFDs??
-	private  IncrementalMfd buildIncr(Attributes atts) {
+	private  XySequence buildIncr(Attributes atts) {
 		List<IncrData> incrDataList = mfdHelper.incrementalData(atts);
 		IncrData incrData = incrDataList.get(0);
 		deltaMag = incrData.mags[1] - incrData.mags[0];
-		return buildIncr(incrData);
+		return Mfds.toSequence(buildIncr(incrData));
 	}
 
 	private static IncrementalMfd buildIncr(IncrData incrData) {
@@ -378,11 +355,27 @@ class GridParser extends DefaultHandler {
 		return mfdIncr;
 	}
 	
-	private IncrementalMfd buildSingle(Attributes atts) {
+	private XySequence buildSingle(Attributes atts) {
 		List<SingleData> singleDataList = mfdHelper.singleData(atts);
 		SingleData singleData = singleDataList.get(0);
-		deltaMag = 0.0;
-		return buildSingle(singleData);
+		deltaMag = Double.NaN;
+		return Mfds.toSequence(buildSingle(singleData));
+	}
+	
+	private XySequence buildCollapsedSingle(Attributes atts) {
+		List<SingleData> dataList = mfdHelper.singleData(atts);
+		deltaMag = Double.NaN;
+
+		double[] mags = new double[dataList.size()];
+		double[] rates = new double[mags.length];
+		
+		for (int i=0; i<dataList.size(); i++) {
+			SingleData data = dataList.get(i);
+			mags[i] = data.m;
+			rates[i] = data.rate * data.weight;
+		}
+		
+		return XySequence.createImmutable(mags, rates);
 	}
 	
 	private static IncrementalMfd buildSingle(SingleData singleData) {
@@ -390,11 +383,11 @@ class GridParser extends DefaultHandler {
 			singleData.floats);
 	}
 	
-	private IncrementalMfd buildTapered(Attributes atts) {
+	private XySequence buildTapered(Attributes atts) {
 		List<TaperData> taperDataList = mfdHelper.taperData(atts);
 		TaperData taperData = taperDataList.get(0);
 		deltaMag = taperData.dMag;
-		return buildTapered(taperData);
+		return Mfds.toSequence(buildTapered(taperData));
 	}
 	
 	private static IncrementalMfd buildTapered(TaperData taperData) {

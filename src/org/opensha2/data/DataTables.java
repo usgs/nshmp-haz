@@ -163,35 +163,43 @@ public final class DataTables {
 			this.columns = columns;
 		}
 
-		@Override public List<Double> rows() {
+		@Override
+		public List<Double> rows() {
 			return unmodifiableList(asList(rows));
 		}
 
-		@Override public List<Double> columns() {
+		@Override
+		public List<Double> columns() {
 			return unmodifiableList(asList(columns));
 		}
 
-		@Override public double rowMin() {
+		@Override
+		public double rowMin() {
 			return rowMin;
 		}
 
-		@Override public double rowMax() {
+		@Override
+		public double rowMax() {
 			return rowMax;
 		}
 
-		@Override public double rowΔ() {
+		@Override
+		public double rowΔ() {
 			return rowΔ;
 		}
 
-		@Override public double columnMin() {
+		@Override
+		public double columnMin() {
 			return columnMin;
 		}
 
-		@Override public double columnMax() {
+		@Override
+		public double columnMax() {
 			return columnMax;
 		}
 
-		@Override public double columnΔ() {
+		@Override
+		public double columnΔ() {
 			return columnΔ;
 		}
 	}
@@ -211,24 +219,25 @@ public final class DataTables {
 			this.data = data;
 		}
 
-		@Override public double get(final double row, final double column) {
+		@Override
+		public double get(final double row, final double column) {
 			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
 			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
 			return data[iRow][iColumn];
 		}
 
-		@Override public XySequence row(double row) {
+		@Override
+		public XySequence row(double row) {
 			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
 			return new ImmutableXySequence(columns, data[iRow]);
 		}
 
 		private static final String ROW_COL_FORMAT = "% 8.2f";
 		private static final String DATA_FORMAT = "%7.2e";
-		private static final String ZEROS_IN = "0.00e+00";
-		private static final String ZEROS_OUT = "     0.0";
 		private static final String DELIMITER = ", ";
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			List<Double> rows = rows();
 			sb.append("           ");
@@ -241,7 +250,8 @@ public final class DataTables {
 				// format as scientific but replace zeros
 				List<Double> dataRow = Doubles.asList(data[i]);
 				String dataLine = Parsing.toString(dataRow, DATA_FORMAT, DELIMITER, true);
-				dataLine = dataLine.replace(ZEROS_IN, ZEROS_OUT);
+				dataLine = dataLine.replace("0.0,", "     0.0,");
+				dataLine = dataLine.replace("0.0]", "     0.0]");
 				sb.append(dataLine);
 				sb.append(NEWLINE);
 			}
@@ -267,11 +277,13 @@ public final class DataTables {
 			Arrays.fill(this.row, value);
 		}
 
-		@Override public double get(final double rowKey, final double columnKey) {
+		@Override
+		public double get(final double rowKey, final double columnKey) {
 			return value;
 		}
 
-		@Override public XySequence row(double row) {
+		@Override
+		public XySequence row(double row) {
 			return new ImmutableXySequence(columns, this.row);
 		}
 	}
@@ -314,51 +326,63 @@ public final class DataTables {
 			this.levels = levels;
 		}
 
-		@Override public List<Double> rows() {
-			return  unmodifiableList(asList(rows));
+		@Override
+		public List<Double> rows() {
+			return unmodifiableList(asList(rows));
 		}
 
-		@Override public List<Double> columns() {
-			return  unmodifiableList(asList(columns));
+		@Override
+		public List<Double> columns() {
+			return unmodifiableList(asList(columns));
 		}
 
-		@Override public List<Double> levels() {
-			return  unmodifiableList(asList(levels));
+		@Override
+		public List<Double> levels() {
+			return unmodifiableList(asList(levels));
 		}
 
-		@Override public double rowMin() {
+		@Override
+		public double rowMin() {
 			return rowMin;
 		}
 
-		@Override public double rowMax() {
+		@Override
+		public double rowMax() {
 			return rowMax;
 		}
 
-		@Override public double rowΔ() {
+		@Override
+		public double rowΔ() {
 			return rowΔ;
 		}
 
-		@Override public double columnMin() {
+		@Override
+		public double columnMin() {
 			return columnMin;
 		}
 
-		@Override public double columnMax() {
+		@Override
+		public double columnMax() {
 			return columnMax;
 		}
 
-		@Override public double columnΔ() {
+		@Override
+		public double columnΔ() {
 			return columnΔ;
 		}
 
-		@Override public double levelMin() {
+		@Override
+		public double levelMin() {
 			return levelMin;
 		}
 
-		@Override public double levelMax() {
+		@Override
+		public double levelMax() {
 			return levelMax;
 		}
 
-		@Override public double levelΔ() {
+		@Override
+		public double levelΔ() {
 			return levelΔ;
 		}
 
@@ -381,20 +405,23 @@ public final class DataTables {
 			this.data = data;
 		}
 
-		@Override public double get(final double row, final double column, final double level) {
+		@Override
+		public double get(final double row, final double column, final double level) {
 			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
 			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
 			int iLevel = indexOf(levelMin, levelΔ, level, levels.length);
 			return data[iRow][iColumn][iLevel];
 		}
 
-		@Override public XySequence column(double row, double column) {
+		@Override
+		public XySequence column(double row, double column) {
 			int iRow = indexOf(rowMin, rowΔ, row, rows.length);
 			int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
 			return new ImmutableXySequence(levels, data[iRow][iColumn]);
 		}
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			return Data.toString(data);
 		}
 	}
