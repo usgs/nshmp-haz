@@ -19,6 +19,8 @@ import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.toDoubleArray;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.opensha2.mfd.MfdType;
@@ -26,6 +28,7 @@ import org.xml.sax.Attributes;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Doubles;
 
 /*
  * MFD data handler class. Stores default data and creates copies with
@@ -89,11 +92,12 @@ class MfdHelper {
 	
 	List<SingleData> singleData(Attributes atts) {
 		if (singleDefaults.isEmpty()) return ImmutableList.of(new SingleData(atts));
-		ImmutableList.Builder<SingleData> builder = ImmutableList.builder();
+		List<SingleData> dataList = new ArrayList<>();
 		for (SingleData singleDefault : singleDefaults) {
-			builder.add(new SingleData(atts, singleDefault));
+			dataList.add(new SingleData(atts, singleDefault));
 		}
-		return builder.build();
+		Collections.sort(dataList);
+		return ImmutableList.copyOf(dataList);
 	}
 
 	List<GR_Data> grData(Attributes atts) {
@@ -141,6 +145,14 @@ class MfdHelper {
 				throw new IllegalArgumentException("Unknown MFD type: " + type);
 		}
 	}
+	
+	int size() {
+		int size = 0;
+		for (MfdType type : MfdType.values()) {
+			size += typeCount(type);
+		}
+		return size;
+	}
 
 	/* Re-usable */
 	static final class Builder {
@@ -182,8 +194,8 @@ class MfdHelper {
 				taperBuilder.build());
 		}
 	}
-
-	static final class SingleData {
+	
+	static final class SingleData implements Comparable<SingleData> {
 
 		final double rate;
 		final double m;
@@ -240,6 +252,11 @@ class MfdHelper {
 			this.m = m;
 			this.floats = floats;
 			this.weight = weight;
+		}
+
+		@Override
+		public int compareTo(SingleData other) {
+			return Doubles.compare(m, other.m);
 		}
 	}
 

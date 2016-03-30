@@ -54,11 +54,16 @@ public final class Hazard {
 		this.config = config;
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		String LF = StandardSystemProperty.LINE_SEPARATOR.value();
 		StringBuilder sb = new StringBuilder("HazardResult:");
+		if (sourceSetCurves.keySet().isEmpty()) {
+			sb.append(" empty, was the site out of range?");
+			return sb.toString();
+		}
 		sb.append(LF);
-		for (SourceType type : EnumSet.copyOf(sourceSetCurves.keySet())) {
+		for (SourceType type : sourceSetCurves.keySet()) {
 			sb.append(type).append("SourceSet:").append(LF);
 			for (HazardCurveSet curveSet : sourceSetCurves.get(type)) {
 				SourceSet<? extends Source> ss = curveSet.sourceSet;
@@ -72,15 +77,9 @@ public final class Hazard {
 						sb.append(curveSet.hazardGroundMotionsList.get(0).inputs.size());
 						break;
 					case GRID:
-						boolean optimized = config.performance.optimizeGrids;
-						if (ss instanceof GridSourceSet.Table && optimized) {
-							GridSourceSet.Table gsst = (GridSourceSet.Table) curveSet.sourceSet;
-							sb.append(gsst.parentCount());
-							sb.append(" (").append(curveSet.hazardGroundMotionsList.size());
-							sb.append(" of ").append(gsst.maximumSize()).append(")");
-							break;
-						}
-						sb.append(curveSet.hazardGroundMotionsList.size());
+						sb.append(GridSourceSet.sizeString(
+							curveSet.sourceSet,
+							curveSet.hazardGroundMotionsList.size()));
 						break;
 					default:
 						sb.append(curveSet.hazardGroundMotionsList.size());
@@ -94,9 +93,9 @@ public final class Hazard {
 					// for (ClusterGroundMotions cgms : cgmsList) {
 					// sb.append( "|--" + LF);
 					// for (HazardGroundMotions hgms : cgms) {
-					// sb.append("  |--" + LF);
+					// sb.append(" |--" + LF);
 					// for (HazardInput input : hgms.inputs) {
-					// sb.append("    |--" + input + LF);
+					// sb.append(" |--" + input + LF);
 					// }
 					// }
 					// sb.append(LF);

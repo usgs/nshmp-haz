@@ -3,6 +3,7 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.opensha2.data.Data.isMonotonic;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -13,7 +14,6 @@ import java.util.RandomAccess;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.StandardSystemProperty;
 import com.google.common.primitives.Doubles;
 
 /**
@@ -132,9 +132,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 		if (xs.length > 1) {
 			checkArgument(isMonotonic(true, true, xs), "x-values do not increase monotonically");
 		}
-		return mutable ?
-			new MutableXySequence(xs, ys) :
-			new ImmutableXySequence(xs, ys);
+		return mutable ? new MutableXySequence(xs, ys) : new ImmutableXySequence(xs, ys);
 	}
 
 	/**
@@ -168,9 +166,8 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	 * @throws NullPointerException if the supplied {@code sequence} is null
 	 */
 	public static XySequence immutableCopyOf(XySequence sequence) {
-		return (sequence.getClass().equals(ImmutableXySequence.class)) ?
-			sequence :
-			new ImmutableXySequence(sequence, false);
+		return (sequence.getClass().equals(ImmutableXySequence.class)) ? sequence
+			: new ImmutableXySequence(sequence, false);
 	}
 
 	/**
@@ -183,7 +180,8 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	 * @param xs resample values
 	 * @return a resampled sequence
 	 */
-	@Deprecated public static XySequence resampleTo(XySequence sequence, double[] xs) {
+	@Deprecated
+	public static XySequence resampleTo(XySequence sequence, double[] xs) {
 		// NOTE TODO this will support mfd combining
 		checkNotNull(sequence);
 		checkArgument(checkNotNull(xs).length > 0);
@@ -243,29 +241,35 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	private final class X_List extends AbstractList<Double> implements RandomAccess {
-		
-		@Override public Double get(int index) {
+
+		@Override
+		public Double get(int index) {
 			return x(index);
 		}
 
-		@Override public int size() {
+		@Override
+		public int size() {
 			return XySequence.this.size();
 		}
 
-		@Override public Iterator<Double> iterator() {
+		@Override
+		public Iterator<Double> iterator() {
 			return new Iterator<Double>() {
 				private final int size = size();
 				private int caret = 0;
 
-				@Override public boolean hasNext() {
+				@Override
+				public boolean hasNext() {
 					return caret < size;
 				}
 
-				@Override public Double next() {
+				@Override
+				public Double next() {
 					return xUnchecked(caret++);
 				}
 
-				@Override public void remove() {
+				@Override
+				public void remove() {
 					throw new UnsupportedOperationException();
 				}
 			};
@@ -281,29 +285,35 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	private final class Y_List extends AbstractList<Double> implements RandomAccess {
-		
-		@Override public Double get(int index) {
+
+		@Override
+		public Double get(int index) {
 			return y(index);
 		}
 
-		@Override public int size() {
+		@Override
+		public int size() {
 			return XySequence.this.size();
 		}
 
-		@Override public Iterator<Double> iterator() {
+		@Override
+		public Iterator<Double> iterator() {
 			return new Iterator<Double>() {
 				private int caret = 0;
 				private final int size = size();
 
-				@Override public boolean hasNext() {
+				@Override
+				public boolean hasNext() {
 					return caret < size;
 				}
 
-				@Override public Double next() {
+				@Override
+				public Double next() {
 					return yUnchecked(caret++);
 				}
 
-				@Override public void remove() {
+				@Override
+				public void remove() {
 					throw new UnsupportedOperationException();
 				}
 			};
@@ -315,7 +325,8 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	 * immutable implementations, the {@link XyPoint#set(double)} method of a
 	 * returned point will throw an {@code UnsupportedOperationException}.
 	 */
-	@Override public Iterator<XyPoint> iterator() {
+	@Override
+	public Iterator<XyPoint> iterator() {
 		return new XyIterator(false);
 	}
 
@@ -328,51 +339,81 @@ public abstract class XySequence implements Iterable<XyPoint> {
 			this.mutable = mutable;
 		}
 
-		@Override public boolean hasNext() {
+		@Override
+		public boolean hasNext() {
 			return caret < size;
 		}
 
-		@Override public XyPoint next() {
-			return new XyPoint() {
-				int index = caret++;
-
-				@Override public double x() {
-					return XySequence.this.xUnchecked(index);
-				}
-
-				@Override public double y() {
-					return XySequence.this.yUnchecked(index);
-				}
-
-				@Override public void set(double y) {
-					if (mutable) {
-						XySequence.this.set(index, y);
-						return;
-					}
-					throw new UnsupportedOperationException();
-				}
-
-				@Override public String toString() {
-					return "XyPoint: [" + x() + ", " + y() + "]";
-				}
-			};
+		@Override
+		public XyPoint next() {
+			return new Point(caret++, mutable);
 		}
 
-		@Override public void remove() {
+		@Override
+		public void remove() {
 			throw new UnsupportedOperationException();
 		}
 	}
 
-	private static final String LF = StandardSystemProperty.LINE_SEPARATOR.value();
+	/**
+	 * The first {@link XyPoint} in this sequence.
+	 */
+	public XyPoint min() {
+		return new Point(0, false);
+	}
+
+	/**
+	 * The last {@link XyPoint} in this sequence.
+	 */
+	public XyPoint max() {
+		return new Point(size() - 1, false);
+	}
+
+	class Point implements XyPoint {
+
+		final int index;
+		final boolean mutable;
+
+		Point(int index, boolean mutable) {
+			this.index = index;
+			this.mutable = mutable;
+		}
+
+		@Override
+		public double x() {
+			return XySequence.this.xUnchecked(index);
+		}
+
+		@Override
+		public double y() {
+			return XySequence.this.yUnchecked(index);
+		}
+
+		@Override
+		public void set(double y) {
+			if (mutable) {
+				XySequence.this.set(index, y);
+				return;
+			}
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String toString() {
+			return "XyPoint: [" + x() + ", " + y() + "]";
+		}
+
+	}
 
 	/**
 	 * Returns a readable string representation of this sequence.
 	 */
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return new StringBuilder(getClass().getSimpleName())
 			.append(":")
-			.append(LF)
-			.append(Joiner.on(LF).join(this))
+			.append(NEWLINE)
+			.append(Joiner.on(NEWLINE).join(this))
 			.toString();
 	}
 

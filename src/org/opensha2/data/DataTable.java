@@ -357,21 +357,6 @@ public interface DataTable {
 		}
 
 		/**
-		 * Set all values using a copy of the supplied data.
-		 * 
-		 * TODO replace with add(DataTable)
-		 * @param data to set
-		 */
-		@Deprecated public Builder setAll(double[][] data) {
-			checkArgument(data.length > 0 && data[0].length > 0,
-				"At least one data dimension is empty");
-			checkDataState(rows, columns);
-			checkDataSize(rows.length, columns.length, data);
-			this.data = Data.copyOf(data);
-			return this;
-		}
-
-		/**
 		 * Add the values in the supplied table to this builder. This operation
 		 * is very efficient if this builder and the supplied table are sourced
 		 * from the same model.

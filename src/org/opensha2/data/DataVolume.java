@@ -346,23 +346,6 @@ public interface DataVolume {
 		}
 
 		/**
-		 * Set all values using a copy of the supplied data.
-		 * 
-		 * TODO replace with add(DataVolume)
-		 * 
-		 * @param data to set
-		 */
-		@Deprecated public Builder setAll(double[][][] data) {
-			checkNotNull(data);
-			checkArgument(data.length > 0 && data[0].length > 0 && data[0][0].length > 0,
-				"At least one data dimension is empty");
-			checkDataState(rows, columns, levels);
-			checkDataSize(rows.length, columns.length, levels.length, data);
-			this.data = Data.copyOf(data);
-			return this;
-		}
-
-		/**
 		 * Add the values in the supplied volume to this builder. This operation
 		 * is very efficient if this builder and the supplied volume are sourced
 		 * from the same model.
@@ -389,7 +372,7 @@ public interface DataVolume {
 				this.levels.hashCode() == that.levels.hashCode()) ||
 				(Arrays.equals(this.rows, that.rows) &&
 					Arrays.equals(this.columns, that.columns) &&
-				Arrays.equals(this.levels, that.levels)));
+					Arrays.equals(this.levels, that.levels)));
 			return that;
 		}
 
