@@ -53,8 +53,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	private final double strike;
 	private final PointSourceType sourceType;
 
-	final double mMin;
-	final double mMax;
+	final boolean optimizable;
+	final double[] magMaster;
 	final double Δm;
 
 	/*
@@ -77,8 +77,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			double strike,
 			RuptureScaling rupScaling,
 			PointSourceType sourceType,
-			double mMin,
-			double mMax,
+			double[] magMaster,
 			double Δm) {
 
 		super(name, id, weight, gmmSet);
@@ -90,26 +89,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		this.rupScaling = rupScaling;
 		this.sourceType = sourceType;
 
-		this.mMin = mMin;
-		this.mMax = mMax;
+		this.magMaster = magMaster;
 		this.Δm = Δm;
+		this.optimizable = !Double.isNaN(Δm);
 
-		/*
-		 * TODO there are too many assumptions built into this; whose to say
-		 * ones bin spacing should be only be in the hundredths?
-		 * 
-		 * Where did this come from anyway? Are mag deltas really all that
-		 * strange
-		 * 
-		 * We should read precision of supplied mMin and mMax and delta and use
-		 * largest for formatting
-		 * 
-		 * TODO in the case of single combined/flattened MFDs, mags may not be
-		 * uniformly spaced. Can this be refactored
-		 */
-		double cleanDelta = Double.valueOf(String.format("%.2f", Δm));
-		double[] mags = Data.buildCleanSequence(mMin, mMax, cleanDelta, true, 2);
-		depthModel = DepthModel.create(magDepthMap, Doubles.asList(mags), maxDepth);
+		depthModel = DepthModel.create(magDepthMap, Doubles.asList(magMaster), maxDepth);
 	}
 
 	@Override
@@ -122,6 +106,15 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 	 */
 	public PointSourceType sourceType() {
 		return sourceType;
+	}
+	
+	/**
+	 * Whether this source set is capable of being optimized. There are
+	 * circumstances under which a grid optimization table can not
+	 * be built.
+	 */
+	public boolean optimizable() {
+		return optimizable;
 	}
 
 	@Override
@@ -231,6 +224,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private List<Map<FocalMech, Double>> mechMaps = Lists.newArrayList();
 		private boolean singularMechs = true;
 
+		private double[] magMaster;
 		private Double mMin;
 		private Double mMax;
 		private Double Δm;
@@ -279,6 +273,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return this;
 		}
 
+		/* magMaster mfd data
+		 * 
+		 * we could require that this be set first and then all node mfds
+		 * are checked against this.
+		 */
 		Builder mfdData(double mMin, double mMax, double Δm) {
 			// TODO need better validation here
 			checkArgument(checkMagnitude(mMin) <= checkMagnitude(mMax));
@@ -361,9 +360,26 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			checkState(mMax != null, "%s max mag not set", buildId);
 			checkState(Δm != null, "%s delta mag not set", buildId);
 
-			System.out.println(mMin);
-			System.out.println(mMax);
-			System.out.println(Δm);
+			/*
+			 * TODO there are too many assumptions built into this; whose to say
+			 * ones bin spacing should be only be in the hundredths?
+			 * 
+			 * Where did this come from anyway? Are mag deltas really all that
+			 * strange
+			 * 
+			 * We should read precision of supplied mMin and mMax and delta and use
+			 * largest for formatting
+			 * 
+			 * TODO in the case of single combined/flattened MFDs, mags may not be
+			 * uniformly spaced. Can this be refactored
+			 */
+			if (Double.isNaN(Δm)) {
+				magMaster = Doubles.toArray(mfds.get(0).xValues());
+			} else {
+				double cleanDelta = Double.valueOf(String.format("%.2f", Δm));
+				magMaster = Data.buildCleanSequence(mMin, mMax, cleanDelta, true, 2);
+			}
+			
 			/*
 			 * Validate size of mechMaps; size could get out of sync if mixed
 			 * calls to location(...) were made; one can imagine a future use
@@ -411,7 +427,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 				mechMaps, singularMechs,
 				magDepthMap, maxDepth,
 				strike, rupScaling, sourceType,
-				mMin, mMax, Δm);
+				magMaster, Δm);
 		}
 
 	}
@@ -632,8 +648,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			// table keys are specified as lowermost and uppermost bin edges
 			double Δm = parent.Δm;
 			double ΔmBy2 = Δm / 2.0;
-			double mMin = parent.mMin - ΔmBy2;
-			double mMax = parent.mMax + ΔmBy2;
+			double mMin = parent.magMaster[0] - ΔmBy2;
+			double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
 			double rMax = parent.groundMotionModels().maxDistance();
 
 			DataTable.Builder tableBuilder = DataTable.Builder.create()
@@ -672,8 +688,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 		private List<PointSource> initMultiMechSources() {
 			double Δm = parent.Δm;
 			double ΔmBy2 = Δm / 2.0;
-			double mMin = parent.mMin - ΔmBy2;
-			double mMax = parent.mMax + ΔmBy2;
+			double mMin = parent.magMaster[0] - ΔmBy2;
+			double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
 			double rMax = parent.groundMotionModels().maxDistance();
 
 			DataTable.Builder ssTableBuilder = DataTable.Builder.create()

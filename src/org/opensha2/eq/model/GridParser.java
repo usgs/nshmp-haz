@@ -358,12 +358,13 @@ class GridParser extends DefaultHandler {
 	private XySequence buildSingle(Attributes atts) {
 		List<SingleData> singleDataList = mfdHelper.singleData(atts);
 		SingleData singleData = singleDataList.get(0);
-		deltaMag = 0.0;
+		deltaMag = Double.NaN;
 		return Mfds.toSequence(buildSingle(singleData));
 	}
 	
 	private XySequence buildCollapsedSingle(Attributes atts) {
 		List<SingleData> dataList = mfdHelper.singleData(atts);
+		deltaMag = Double.NaN;
 
 		double[] mags = new double[dataList.size()];
 		double[] rates = new double[mags.length];

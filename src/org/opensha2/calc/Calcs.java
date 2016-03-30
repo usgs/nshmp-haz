@@ -156,7 +156,9 @@ public class Calcs {
 
 				case GRID:
 					GridSourceSet gss = (GridSourceSet) sourceSet;
-					if (config.performance.optimizeGrids && gss.sourceType() != FIXED_STRIKE) {
+					if (config.performance.optimizeGrids 
+							&& gss.sourceType() != FIXED_STRIKE
+							&& gss.optimizable()) {
 						gridTables.add(transform(immediateFuture(gss),
 							GridSourceSet.optimizer(site.location), ex));
 						break;
