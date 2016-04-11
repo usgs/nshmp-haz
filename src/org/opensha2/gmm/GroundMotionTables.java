@@ -399,7 +399,7 @@ final class GroundMotionTables {
 			if (values.isEmpty()) return true;
 
 			rIndex++;
-			for (int i = 1; i < imts.size(); i++) {
+			for (int i = 0; i < imts.size(); i++) {
 				Imt imt = imts.get(i);
 				List<List<Double>> data = dataMap.get(imt);
 				data.get(rIndex).add(values.get(i + 1));
