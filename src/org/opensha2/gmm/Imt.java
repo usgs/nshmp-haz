@@ -179,7 +179,7 @@ public enum Imt {
 	public double frequency() {
 		if (this == PGA) return 100;
 		if (this.isSA()) return 1.0 / period();
-		throw new UnsupportedOperationException("frequncy() not supported for PGD and PGV");
+		throw new UnsupportedOperationException("frequncy() not supported for PGD, PGV, etc…");
 	}
 
 	/**
@@ -196,7 +196,7 @@ public enum Imt {
 	 * @return the IMTs that represent spectral accelerations
 	 */
 	public static Set<Imt> saImts() {
-		return EnumSet.complementOf(EnumSet.of(PGA, PGV, PGD));
+		return EnumSet.complementOf(EnumSet.range(PGA, AI));
 	}
 
 	/**
