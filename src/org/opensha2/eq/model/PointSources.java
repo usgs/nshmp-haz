@@ -98,7 +98,8 @@ public class PointSources {
 			Map<FocalMech, Double> mechWtMap,
 			GridSourceSet grid) {
 
-		Source source = finitePointSource(loc, mfd, mechWtMap, grid.rupScaling, grid.depthModel);
+		Source source = pointSource(PointSourceType.FINITE, loc, mfd, mechWtMap, grid.rupScaling,
+			grid.depthModel);
 		return finiteInputs(sites, source);
 	}
 
@@ -125,24 +126,23 @@ public class PointSources {
 	}
 
 	public static PointSource pointSource(
+			PointSourceType type,
 			Location loc,
 			XySequence mfd,
 			Map<FocalMech, Double> mechWtMap,
 			RuptureScaling rupScaling,
 			DepthModel depthModel) {
 
-		return new PointSource(loc, mfd, mechWtMap, rupScaling, depthModel);
-	}			
+		switch (type) {
+			case POINT:
+				return new PointSource(loc, mfd, mechWtMap, rupScaling, depthModel);
+			case FINITE:
+				return new PointSourceFinite(loc, mfd, mechWtMap, rupScaling, depthModel);
+			default:
+				throw new UnsupportedOperationException("FIXED_STRIKE point sources not supported");
+		}
 
-	public static PointSource finitePointSource(
-			Location loc,
-			XySequence mfd,
-			Map<FocalMech, Double> mechWtMap,
-			RuptureScaling rupScaling,
-			DepthModel depthModel) {
-
-		return new PointSourceFinite(loc, mfd, mechWtMap, rupScaling, depthModel);
-	}			
+	}
 
 	public static void main(String[] args) {
 
