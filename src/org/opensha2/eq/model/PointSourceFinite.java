@@ -38,10 +38,10 @@ import org.opensha2.geo.Locations;
  * <p>This is the generalized point earthquake source representation used for
  * the 2014 NSHMP. It was created to provide support for weighted
  * magnitude-depth distributions and improved approximations of hanging wall
- * terms vis-a-vis self-consistent distance calculations.</p>
+ * terms vis-a-vis self-consistent distance calculations.
  * 
  * <p><b>NOTE</b>: See {@link PointSource} description for notes on thread
- * safety and {@code Rupture} creation and iteration.</p>
+ * safety and {@code Rupture} creation and iteration.
  * 
  * @author Peter Powers
  */
@@ -64,7 +64,8 @@ class PointSourceFinite extends PointSource {
 		init();
 	}
 
-	@Override public String name() {
+	@Override
+	public String name() {
 		return "PointSourceFinite: " + loc;
 	}
 
@@ -109,7 +110,8 @@ class PointSourceFinite extends PointSource {
 		fpSurf.footwall = isOnFootwall(index);
 	}
 
-	@Override public Iterator<Rupture> iterator() {
+	@Override
+	public Iterator<Rupture> iterator() {
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
 			{
@@ -118,22 +120,26 @@ class PointSourceFinite extends PointSource {
 			final int size = size();
 			int caret = 0;
 
-			@Override public boolean hasNext() {
+			@Override
+			public boolean hasNext() {
 				return caret < size;
 			}
 
-			@Override public Rupture next() {
+			@Override
+			public Rupture next() {
 				updateRupture(rupture, caret++);
 				return rupture;
 			}
 
-			@Override public void remove() {
+			@Override
+			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 		};
 	}
 
-	@Override void init() {
+	@Override
+	void init() {
 
 		/*
 		 * Get the number of mag-depth iterations required to get to mMax. See
@@ -164,8 +170,10 @@ class PointSourceFinite extends PointSource {
 	 * RV-FW RV-HW NR-FW NR-HW
 	 */
 	boolean isOnFootwall(int index) {
-		return (index < fwIndexLo) ? true : (index < revIndex) ? false :
-			(index < fwIndexHi) ? true : false;
+		return (index < fwIndexLo)
+			? true : (index < revIndex)
+				? false : (index < fwIndexHi)
+					? true : false;
 	}
 
 	static class FiniteSurface extends PointSurface {
@@ -179,15 +187,10 @@ class PointSourceFinite extends PointSource {
 			super(loc, rupScaling);
 		}
 
-		@Override public Distance distanceTo(Location loc) {
-			// TODO 0.5 is WUS specific and based on discretization of distances
-			// in grid source Gmm lookup tables
-
-			// because we're not using table lookup optimizations, we push the
-			// minimum rJB out to 0.5 (half the table bin-width)
+		@Override
+		public Distance distanceTo(Location loc) {
 			double rJB = Locations.horzDistanceFast(this.loc, loc);
 			rJB = rupScaling.pointSourceDistance(mag, rJB);
-			rJB = max(0.5, rJB); // TODO this should go away
 			double rX = footwall ? -rJB : rJB + widthH;
 
 			if (footwall) return Distance.create(rJB, hypot(rJB, zTop), rX);
