@@ -8,7 +8,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * Note that magLower and magUpper must exactly equal one of the descrete x-axis
  * values.</p>
  *
- * floats() always returns false.
+ * floats() always returns true.
  * 
  * @author Nitin Gupta
  * @author Vipin Gupta
@@ -36,7 +36,7 @@ public class GutenbergRichterMfd extends IncrementalMfd {
    */
 
   public GutenbergRichterMfd(double min, int num, double delta) {
-    super(min, num, delta, false);
+    super(min, num, delta, true);
     this.magLower = min;
   }
 
