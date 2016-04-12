@@ -643,6 +643,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 		private static final double SRC_TO_SITE_AZIMUTH = 0.0;
 
+		/* creates the type of point source specified in the parent */
 		private List<PointSource> initSources() {
 
 			// table keys are specified as lowermost and uppermost bin edges
@@ -674,7 +675,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 				XySequence mfd = mfdTable.row(r);
 				if (mfd.isEmpty()) continue;
 				Location loc = Locations.location(origin, SRC_TO_SITE_AZIMUTH, r);
-				b.add(PointSources.finitePointSource(
+				
+				b.add(PointSources.pointSource(
+					parent.sourceType,
 					loc,
 					mfd,
 					parent.mechMaps.get(0),
@@ -685,6 +688,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 			return b.build();
 		}
 
+		/* always creates finite point sources */
 		private List<PointSource> initMultiMechSources() {
 			double Δm = parent.Δm;
 			double ΔmBy2 = Δm / 2.0;
@@ -754,7 +758,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 				XySequence ssMfd = ssTable.row(r);
 				if (ssMfd.isEmpty()) continue;
-				b.add(PointSources.finitePointSource(
+				b.add(PointSources.pointSource(
+					PointSourceType.FINITE,
 					loc,
 					ssMfd,
 					parent.mechMaps.get(0),
@@ -764,7 +769,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 				XySequence rMfd = rTable.row(r);
 				if (rMfd.isEmpty()) continue;
-				b.add(PointSources.finitePointSource(
+				b.add(PointSources.pointSource(
+					PointSourceType.FINITE,
 					loc,
 					rMfd,
 					parent.mechMaps.get(0),
@@ -774,7 +780,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
 				XySequence nMfd = nTable.row(r);
 				if (nMfd.isEmpty()) continue;
-				b.add(PointSources.finitePointSource(
+				b.add(PointSources.pointSource(
+					PointSourceType.FINITE,
 					loc,
 					nMfd,
 					parent.mechMaps.get(0),
