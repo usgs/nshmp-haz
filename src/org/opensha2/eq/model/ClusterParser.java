@@ -37,6 +37,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.math.DoubleMath;
+
 /*
  * Non-validating cluster source parser. SAX parser 'Attributes' are stateful
  * and cannot be stored. This class is not thread safe.
@@ -99,7 +101,8 @@ class ClusterParser extends DefaultHandler {
 		return sourceSet;
 	}
 
-	@Override public void startElement(String uri, String localName, String qName, Attributes atts)
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes atts)
 			throws SAXException {
 
 		SourceElement e = null;
@@ -153,7 +156,7 @@ class ClusterParser extends DefaultHandler {
 					int clustId = readInt(ID, atts);
 					clusterBuilder = new ClusterSource.Builder();
 					clusterBuilder.rate(clusterRate);
-					
+
 					faultSetBuilder = new FaultSourceSet.Builder();
 					faultSetBuilder
 						.name(clustName)
@@ -209,7 +212,8 @@ class ClusterParser extends DefaultHandler {
 		}
 	}
 
-	@Override public void endElement(String uri, String localName, String qName)
+	@Override
+	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
 		SourceElement e = null;
@@ -232,7 +236,9 @@ class ClusterParser extends DefaultHandler {
 					break;
 
 				case SOURCE:
-					faultSetBuilder.source(faultBuilder.buildFaultSource());
+					FaultSource faultSource = faultBuilder.buildFaultSource();
+					checkMagVariantWeights(faultSource);
+					faultSetBuilder.source(faultSource);
 					break;
 
 				case CLUSTER:
@@ -252,11 +258,13 @@ class ClusterParser extends DefaultHandler {
 		}
 	}
 
-	@Override public void characters(char ch[], int start, int length) throws SAXException {
+	@Override
+	public void characters(char ch[], int start, int length) throws SAXException {
 		if (readingTrace) traceBuilder.append(ch, start, length);
 	}
 
-	@Override public void setDocumentLocator(Locator locator) {
+	@Override
+	public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
 	}
 
@@ -272,6 +280,21 @@ class ClusterParser extends DefaultHandler {
 			default:
 				throw new IllegalStateException(type + " not yet implemented");
 		}
+	}
+
+	/*
+	 * This method ensures that the weights of the mag variants of a source in a
+	 * cluster (wherein a source weight is stored in the rate field) sum to 1.
+	 */
+	private static void checkMagVariantWeights(FaultSource source) {
+		double totalWeight = 0.0;
+		for (IncrementalMfd mfd : source.mfds) {
+			totalWeight += mfd.getMinY();
+		}
+		checkState(
+			DoubleMath.fuzzyEquals(totalWeight, 1.0, 0.00001),
+			"Magnitude variant weights (%s) in a cluster source must sum to 1.0",
+			totalWeight);
 	}
 
 }
