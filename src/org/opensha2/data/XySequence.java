@@ -428,6 +428,16 @@ public abstract class XySequence implements Iterable<XyPoint> {
 	}
 
 	/**
+	 * Add the supplied y-values to the y-values of this sequence in place.
+	 * 
+	 * @param ys y-values to add
+	 * @return {@code this} sequence, for use inline
+	 */
+	public XySequence add(double[] ys) {
+		throw new UnsupportedOperationException();
+	}
+	
+	/**
 	 * Add the y-values of a sequence to the y-values of this sequence in place.
 	 * 
 	 * @param sequence to add

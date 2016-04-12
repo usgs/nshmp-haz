@@ -1,5 +1,6 @@
 package org.opensha2.data;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static org.opensha2.data.Data.flip;
 import static org.opensha2.data.Data.uncheckedMultiply;
@@ -30,7 +31,7 @@ final class MutableXySequence extends ImmutableXySequence {
 	public Iterator<XyPoint> iterator() {
 		return new XyIterator(true);
 	}
-	
+
 	@Override
 	public XyPoint min() {
 		return new Point(0, true);
@@ -50,6 +51,12 @@ final class MutableXySequence extends ImmutableXySequence {
 	@Override
 	public XySequence add(double term) {
 		Data.add(term, ys);
+		return this;
+	}
+
+	@Override
+	public XySequence add(double[] ys) {
+		Data.add(this.ys, ys);
 		return this;
 	}
 
