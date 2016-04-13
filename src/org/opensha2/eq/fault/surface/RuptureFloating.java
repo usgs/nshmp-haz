@@ -32,7 +32,7 @@ public enum RuptureFloating {
 
 	/** Do not float. */
 	OFF {
-		@Override public List<Rupture> createFloatingRuptures(DefaultGriddedSurface surface,
+		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 			List<Rupture> floaters = new ArrayList<>();
 			floaters.add(Rupture.create(mag, rate, rake, surface));
@@ -42,7 +42,7 @@ public enum RuptureFloating {
 
 	/** Float both down-dip and along-strike. */
 	ON {
-		@Override public List<Rupture> createFloatingRuptures(DefaultGriddedSurface surface,
+		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 
 			double maxWidth = surface.width();
@@ -58,13 +58,10 @@ public enum RuptureFloating {
 					double scaledRate = rate * entry.getValue();
 					floaters.addAll(createFloaters(surfaces, mag, scaledRate, rake));
 				}
-				System.out.println(floaters.size());
-
 				return floaters;
 			}
 			Dimensions d = scaling.dimensions(mag, maxWidth);
 			List<GriddedSurface> surfaces = createFloatingSurfaces(surface, d.length, d.width);
-			System.out.println(surfaces.size());
 			return createFloaters(surfaces, mag, rate, rake);
 		}
 	},
@@ -74,7 +71,7 @@ public enum RuptureFloating {
 	 * model currently ignores any rupture area {@code sigma}.
 	 */
 	STRIKE_ONLY {
-		@Override public List<Rupture> createFloatingRuptures(DefaultGriddedSurface surface,
+		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 			double maxWidth = surface.width();
 			Dimensions d = scaling.dimensions(mag, maxWidth);
@@ -90,7 +87,7 @@ public enum RuptureFloating {
 	 * area {@code sigma}.
 	 */
 	NSHM {
-		@Override public List<Rupture> createFloatingRuptures(DefaultGriddedSurface surface,
+		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 			List<GriddedSurface> surfaces = floatListNshm(surface, scaling, mag);
 			return createFloaters(surfaces, mag, rate, rake);
@@ -106,7 +103,7 @@ public enum RuptureFloating {
 	 * TODO add reference/link to PEER documentation and test cases in repo
 	 */
 	TRIANGULAR {
-		@Override public List<Rupture> createFloatingRuptures(DefaultGriddedSurface surface,
+		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 
 			double maxWidth = surface.width();
@@ -150,10 +147,10 @@ public enum RuptureFloating {
 	 *        dimensions
 	 * @param mag the magnitude of interest
 	 */
-	public abstract List<Rupture> createFloatingRuptures(DefaultGriddedSurface surface,
+	public abstract List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
 			RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty);
 
-	private static List<GriddedSurface> floatListNshm(DefaultGriddedSurface parent,
+	private static List<GriddedSurface> floatListNshm(AbstractGriddedSurface parent,
 			RuptureScaling scaling, double mag) {
 
 		// zTop > 1, no down-dip variants

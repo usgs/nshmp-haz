@@ -34,17 +34,17 @@ import com.google.common.primitives.Ints;
  * <p><b>NOTE:</b> This source type should <i>not</i> be used in in conjunction
  * with ground motion models (GMMs) that consider hanging wall effects or
  * require more detailed distance metrics that are consistent with a
- * {@code Rupture}'s {@code FocalMech}, dip, and rake. Current implementation
- * throws an {code UnsupportedOperationException} when such metrics are
- * queried.</p>
+ * {@code Rupture}'s {@code FocalMech}, dip, and rake; use a
+ * {@link PointSourceFinite} instead. This implementation throws an {code
+ * UnsupportedOperationException} when such metrics are queried.
  * 
  * <p><b>NOTE</b>: {@code PointSource}s are thread safe, however the
- * {@code Rupture}s returned by {@link Source#iterator()} are not.</p>
+ * {@code Rupture}s returned by {@link Source#iterator()} are not.
  * 
  * <p><b>NOTE</b>: {@link #size()} returns the absolute number of
  * {@code Rupture}s that can be created given the supplied source input
  * arguments; the iterator, however, <i>may</i> return fewer {@code Rupture}s as
- * some may have zero rates.</p>
+ * some may have zero rates.
  * 
  * @author Peter Powers
  */
@@ -80,11 +80,13 @@ class PointSource implements Source {
 		init();
 	}
 
-	@Override public String name() {
+	@Override
+	public String name() {
 		return "PointSource: " + loc;
 	}
 
-	@Override public int size() {
+	@Override
+	public int size() {
 		return rupCount;
 	}
 
@@ -112,7 +114,8 @@ class PointSource implements Source {
 
 	}
 
-	@Override public Iterator<Rupture> iterator() {
+	@Override
+	public Iterator<Rupture> iterator() {
 		return new Iterator<Rupture>() {
 			Rupture rupture = new Rupture();
 			{
@@ -121,16 +124,19 @@ class PointSource implements Source {
 			final int size = size();
 			int caret = 0;
 
-			@Override public boolean hasNext() {
+			@Override
+			public boolean hasNext() {
 				return caret < size;
 			}
 
-			@Override public Rupture next() {
+			@Override
+			public Rupture next() {
 				updateRupture(rupture, caret++);
 				return rupture;
 			}
 
-			@Override public void remove() {
+			@Override
+			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 		};
@@ -178,7 +184,8 @@ class PointSource implements Source {
 			this.rupScaling = rupScaling;
 		}
 
-		@Override public Distance distanceTo(Location loc) {
+		@Override
+		public Distance distanceTo(Location loc) {
 			double rJB = Locations.horzDistanceFast(this.loc, loc);
 			rJB = rupScaling.pointSourceDistance(mag, rJB);
 			double rRup = hypot(rJB, zTop);
@@ -283,7 +290,7 @@ class PointSource implements Source {
 				NavigableMap<Double, Map<Double, Double>> magDepthMap,
 				List<Double> magMaster,
 				double maxDepth) {
-			
+
 			return new DepthModel(magDepthMap, magMaster, maxDepth);
 		}
 
@@ -301,7 +308,7 @@ class PointSource implements Source {
 
 			for (int i = 0; i < magMaster.size(); i++) {
 				Map.Entry<Double, Map<Double, Double>> magEntry =
-						magDepthMap.higherEntry(magMaster.get(i));
+					magDepthMap.higherEntry(magMaster.get(i));
 				for (Map.Entry<Double, Double> entry : magEntry.getValue().entrySet()) {
 					indices.add(i);
 					depths.add(entry.getKey());
@@ -313,7 +320,7 @@ class PointSource implements Source {
 			magDepthDepths = Doubles.asList(Doubles.toArray(depths));
 			magDepthWeights = Doubles.asList(Doubles.toArray(weights));
 		}
-		
+
 	}
 
 }

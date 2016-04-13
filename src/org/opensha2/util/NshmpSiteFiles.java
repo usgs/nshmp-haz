@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.opensha2.calc.NamedLocation;
+import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.util.GeoJson.Feature;
 import org.opensha2.util.GeoJson.FeatureCollection;
@@ -61,6 +62,7 @@ final class NshmpSiteFiles {
 		writeNshmpSites();
 		writeNshmpPolys();
 		writeNshmpSummaryPoly();
+//		writeNshmpSites_0p1();
 	}
 
 	/*
@@ -198,6 +200,17 @@ final class NshmpSiteFiles {
 		Files.write(out, json.getBytes(StandardCharsets.UTF_8));
 	}
 
+	static void writeNshmpSites_0p1() throws IOException {
+		writeSites("ceus-0p1",
+			FluentIterable.from(NshmpSite.ceus())
+				.transform(adjustLocation_0p1())
+				.toList());
+		writeSites("wus-0p1",
+			FluentIterable.from(NshmpSite.wus())
+				.transform(adjustLocation_0p1())
+				.toList());
+	}
+
 	static void writeNshmpSites() throws IOException {
 		writeSites("nshmp", EnumSet.allOf(NshmpSite.class));
 		writeSites("ceus", NshmpSite.ceus());
@@ -255,5 +268,33 @@ final class NshmpSiteFiles {
 		String json = GeoJson.cleanPoints(GSON.toJson(fc));
 		Files.write(out, json.getBytes(StandardCharsets.UTF_8));
 	}
-	
+
+	private static final Function<NamedLocation, NamedLocation> adjustLocation_0p1() {
+		return new Function<NamedLocation, NamedLocation>() {
+
+			@Override
+			public NamedLocation apply(final NamedLocation input) {
+				return new NamedLocation() {
+
+					@Override
+					public Location location() {
+						return Location.create(
+							MathUtils.round(input.location().lat(), 1),
+							MathUtils.round(input.location().lon(), 1));
+					}
+
+					@Override
+					public String id() {
+						return input.id();
+					}
+					
+					@Override
+					public String toString() {
+						return input.toString();
+					}
+				};
+			}
+		};
+	}
+
 }

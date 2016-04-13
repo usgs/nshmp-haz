@@ -23,29 +23,29 @@ import com.google.common.collect.Range;
  * <p>This model supports both slab and interface type events. In the 2008
  * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
  * and the 'slab' form is used with gridded 'deep' events in northern California
- * and the Pacific Northwest.</p>
+ * and the Pacific Northwest.
  * 
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  * 
  * <p><b>Implementation notes:</b> <ol><li>When used for interface events, sigma
  * is computed using the generic value of tau, rather than the interface
  * specific value (see inline comments for more information).<li><li>Hypocentral
  * depths for interface events are fixed at 20km.</li><li>Hypocentral depths for
  * slab events are set to {@code min(zTop, 125)}; minimum rupture distance
- * (rRup) is 1.0 km.</li></ol></p>
+ * (rRup) is 1.0 km.</li></ol>
  * 
  * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T.,
  * Takahashi, T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G.,
  * Fukushima, Y., and Fukushima, Y., 2006, Attenuation relations of strong
  * ground motion in Japan using site classification based on predominant period:
- * Bulletin of the Seismological Society of America, v. 96, p. 898–913.</p>
+ * Bulletin of the Seismological Society of America, v. 96, p. 898–913.
  * 
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050122">
- * 10.1785/0120050122</a></p>
+ * 10.1785/0120050122</a>
  * 
- * <p><b>Component:</b> Geometric mean of two horizontal components</p>
+ * <p><b>Component:</b> Geometric mean of two horizontal components
  * 
  * @author Peter Powers
  * @see Gmm#ZHAO_06_INTER
@@ -57,17 +57,17 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
 	// TODO will probably want to have constraints per-implementation
 	static final Constraints CONSTRAINTS = Constraints.builder()
-			.set(MAG, Range.closed(5.0, 9.5))
-			.set(RRUP, Range.closed(0.0, 1000.0))
-			.set(ZTOP, Faults.SLAB_DEPTH_RANGE)
-			.set(VS30, Range.closed(150.0, 1000.0))
-			.build();
-	
+		.set(MAG, Range.closed(5.0, 9.5))
+		.set(RRUP, Range.closed(0.0, 1000.0))
+		.set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+		.set(VS30, Range.closed(150.0, 1000.0))
+		.build();
+
 	static final CoefficientContainer COEFFS = new CoefficientContainer("Zhao06.csv");
 
 	private static final double HC = 15.0;
-	private static final double MC_S = 6.3;
-	private static final double MC_I = 6.5;
+	private static final double MC_S = 6.5;
+	private static final double MC_I = 6.3;
 	private static final double GCOR = 6.88806;
 	private static final double MAX_SLAB_DEPTH = 125.0;
 	private static final double INTERFACE_DEPTH = 20.0;
@@ -109,7 +109,8 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 		coeffs = new Coefficients(imt, COEFFS);
 	}
 
-	@Override public final ScalarGroundMotion calc(GmmInput in) {
+	@Override
+	public final ScalarGroundMotion calc(GmmInput in) {
 		double μ = calcMean(coeffs, isSlab(), in);
 		double σ = calcStdDev(coeffs, isSlab());
 		return DefaultScalarGroundMotion.create(μ, σ);
@@ -117,7 +118,8 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
 	abstract boolean isSlab();
 
-	private static final double calcMean(final Coefficients c, final boolean slab, final GmmInput in) {
+	private static final double calcMean(final Coefficients c, final boolean slab,
+			final GmmInput in) {
 
 		double Mw = in.Mw;
 		double rRup = Math.max(in.rRup, 1.0); // avoid ln(0) below
@@ -126,7 +128,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
 		double site = (vs30 >= 600.0) ? c.C1 : (vs30 >= 300.0) ? c.C2 : c.C3;
 
-		double hfac = (zTop < HC) ? 0.0 : -HC;
+		double hfac = (zTop < HC) ? 0.0 : zTop - HC;
 
 		double m2 = Mw - (slab ? MC_S : MC_I);
 
@@ -161,7 +163,8 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 			super(imt);
 		}
 
-		@Override final boolean isSlab() {
+		@Override
+		final boolean isSlab() {
 			return false;
 		}
 	}
@@ -173,7 +176,8 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 			super(imt);
 		}
 
-		@Override final boolean isSlab() {
+		@Override
+		final boolean isSlab() {
 			return true;
 		}
 	}
