@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.opensha2.eq.fault.surface.AbstractGriddedSurface;
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.RuptureFloating;
@@ -141,7 +142,7 @@ public class FaultSource implements Source {
 			// it should just be a SourceProperty
 			if (mfd.floats()) {
 
-				DefaultGriddedSurface surf = (DefaultGriddedSurface) surface;
+				AbstractGriddedSurface surf = (AbstractGriddedSurface) surface;
 
 				List<Rupture> floaters = rupFloating.createFloatingRuptures(
 					surf, rupScaling, mag, rate, rake, rupVariability);
