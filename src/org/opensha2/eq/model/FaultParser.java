@@ -106,7 +106,8 @@ class FaultParser extends DefaultHandler {
 		return sourceSet;
 	}
 
-	@Override public void startElement(String uri, String localName, String qName, Attributes atts)
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes atts)
 			throws SAXException {
 
 		SourceElement e = null;
@@ -135,7 +136,8 @@ class FaultParser extends DefaultHandler {
 						log.fine("     Weight: " + weight);
 					}
 					mfdHelperBuilder = MfdHelper.builder();
-					mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
+					// dummy; usually overwritten
+					mfdHelper = mfdHelperBuilder.build(); 
 					break;
 
 				case DEFAULT_MFDS:
@@ -195,7 +197,8 @@ class FaultParser extends DefaultHandler {
 		}
 	}
 
-	@Override public void endElement(String uri, String localName, String qName)
+	@Override
+	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
 		SourceElement e = null;
@@ -240,11 +243,13 @@ class FaultParser extends DefaultHandler {
 		}
 	}
 
-	@Override public void characters(char ch[], int start, int length) throws SAXException {
+	@Override
+	public void characters(char ch[], int start, int length) throws SAXException {
 		if (readingTrace) traceBuilder.append(ch, start, length);
 	}
 
-	@Override public void setDocumentLocator(Locator locator) {
+	@Override
+	public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
 	}
 
@@ -263,8 +268,8 @@ class FaultParser extends DefaultHandler {
 	}
 
 	/*
-	 * FaultSource.Builder creates an ImmutableList; so no need for one
-	 * in methods below.
+	 * FaultSource.Builder creates an ImmutableList; so no need for one in
+	 * methods below.
 	 */
 
 	/*
@@ -352,7 +357,7 @@ class FaultParser extends DefaultHandler {
 		}
 		return mfdList;
 	}
-	
+
 	private List<IncrementalMfd> buildSingle(SingleData data) {
 
 		List<IncrementalMfd> mfds = Lists.newArrayList();
@@ -368,7 +373,6 @@ class FaultParser extends DefaultHandler {
 		double minUncertMag = data.m + (unc.hasEpistemic ? unc.epiDeltas[0] : 0.0);
 		boolean uncertAllowed = !((minUncertMag < unc.epiCutoff) && data.floats);
 
-		// @formatter:off
 		// loop over epistemic uncertainties
 		if (unc.hasEpistemic && uncertAllowed) {
 			for (int i = 0; i < unc.epiCount; i++) {
@@ -377,17 +381,28 @@ class FaultParser extends DefaultHandler {
 				double mfdWeight = data.weight * unc.epiWeights[i];
 
 				if (unc.hasAleatory) {
-					GaussianMfd mfd = (unc.moBalance) ? 
-						Mfds.newGaussianMoBalancedMFD(epiMag, unc.aleaSigma, unc.aleaCount, mfdWeight * tmr) :
-						Mfds.newGaussianMFD(epiMag, unc.aleaSigma, unc.aleaCount, mfdWeight * tcr);
+					GaussianMfd mfd = (unc.moBalance)
+						? Mfds.newGaussianMoBalancedMFD(
+							epiMag,
+							unc.aleaSigma,
+							unc.aleaCount,
+							mfdWeight * tmr,
+							data.floats)
+						: Mfds.newGaussianMFD(
+							epiMag,
+							unc.aleaSigma,
+							unc.aleaCount,
+							mfdWeight * tcr,
+							data.floats);
 					mfds.add(mfd);
 					log.finer("   MFD type: SINGLE [+epi +alea] " + epiBranch(i));
 					if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 				} else {
-					
-					// single Mfds with epi uncertainty are moment balanced at the
+
+					// single Mfds with epi uncertainty are moment balanced at
+					// the
 					// central/single magnitude of the distribution
-					
+
 					double moRate = tmr * mfdWeight;
 					IncrementalMfd mfd = Mfds.newSingleMoBalancedMFD(epiMag, moRate, data.floats);
 					mfds.add(mfd);
@@ -397,20 +412,30 @@ class FaultParser extends DefaultHandler {
 			}
 		} else {
 			if (unc.hasAleatory && uncertAllowed) {
-				GaussianMfd mfd = (unc.moBalance) ? 
-					Mfds.newGaussianMoBalancedMFD(data.m, unc.aleaSigma, unc.aleaCount, data.weight * tmr) :
-					Mfds.newGaussianMFD(data.m, unc.aleaSigma, unc.aleaCount, data.weight * tcr);
+				GaussianMfd mfd = (unc.moBalance)
+					? Mfds.newGaussianMoBalancedMFD(
+						data.m,
+						unc.aleaSigma,
+						unc.aleaCount,
+						data.weight * tmr,
+						data.floats)
+					: Mfds.newGaussianMFD(
+						data.m,
+						unc.aleaSigma,
+						unc.aleaCount,
+						data.weight * tcr,
+						data.floats);
 				mfds.add(mfd);
 				log.finer("   MFD type: SINGLE [-epi +alea]");
 				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 			} else {
-				IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
+				IncrementalMfd mfd =
+					Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
 				mfds.add(mfd);
 				log.finer("   MFD type: SINGLE [-epi -alea]");
 				if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
 			}
 		}
-		// @formatter:on
 		return mfds;
 	}
 

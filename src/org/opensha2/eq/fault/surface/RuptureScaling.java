@@ -149,7 +149,7 @@ public enum RuptureScaling {
 	 * </ul>
 	 */
 	PEER {
-		private final IncrementalMfd normal2s = Mfds.newGaussianMFD(0.0, 0.25, 21, 1.0);
+		private final IncrementalMfd normal2s = Mfds.newGaussianMFD(0.0, 0.25, 21, 1.0, false);
 
 		@Override public Dimensions dimensions(double mag, double maxWidth) {
 			double area = pow(10, (mag - 4.0));
