@@ -759,6 +759,7 @@ public final class CalcConfig {
 	private static final Gson GSON = new GsonBuilder()
 		.setPrettyPrinting()
 		.enableComplexMapKeySerialization()
+		.serializeSpecialFloatingPointValues()
 		.registerTypeAdapter(Path.class, new JsonDeserializer<Path>() {
 			@Override
 			public Path deserialize(
