@@ -32,46 +32,65 @@ import com.google.gson.JsonObject;
  */
 public class Site implements Named {
 
-	/** Minimum allowed Vs30 value (150 m/sec). */
-	public static final double MIN_VS_30 = 150.0;
+	/** Minimum allowed Vs30 value ({@code 150} m/sec). */
+	public static final double VS_30_MIN = 150.0;
 
-	/** Maximum allowed Vs30 value (2000 m/sec). */
-	public static final double MAX_VS_30 = 2000.0;
+	/** Maximum allowed Vs30 value ({@code 2000} m/sec). */
+	public static final double VS_30_MAX = 2000.0;
 
-	/** Default Vs30 value (760 m/sec). */
-	public static final double DEFAULT_VS_30 = 760.0;
+	/** Default Vs30 value ({@code 760} m/sec). */
+	public static final double VS_30_DEFAULT = 760.0;
 
-	/**
-	 * Minimum allowed depth to a shear wave velocity of 2.5 km/sec (0.0 km).
-	 */
-	public static final double MIN_Z2P5 = 0.0;
+	/** Default Vs30 inferred (or not) value ({@code true}). */
+	public static final boolean VS_INF_DEFAULT = true;
 
 	/**
-	 * Minimum allowed depth to a shear wave velocity of 2.5 km/sec (5.0 km).
+	 * Minimum allowed depth to a shear wave velocity of 2.5 km/sec ({@code 0.0}
+	 * km).
 	 */
-	public static final double MAX_Z2P5 = 5.0;
+	public static final double Z2P5_MIN = 0.0;
 
 	/**
-	 * Minimum allowed depth to a shear wave velocity of 1.0 km/sec (0.0 km).
+	 * Minimum allowed depth to a shear wave velocity of 2.5 km/sec ({@code 5.0}
+	 * km).
 	 */
-	public static final double MIN_Z1P0 = 0.0;
+	public static final double Z2P5_MAX = 5.0;
 
 	/**
-	 * Minimum allowed depth to a shear wave velocity of 1.0 km/sec (2.0 km).
+	 * Default depth to a shear wave velocity of 2.5 km/sec ({@code NaN} –
+	 * {@link GroundMotionModel}s will use a default value or model).
 	 */
-	public static final double MAX_Z1P0 = 2.0;
+	public static final double Z2P5_DEFAULT = Double.NaN;
+
+	/**
+	 * Minimum allowed depth to a shear wave velocity of 1.0 km/sec ({@code 0.0}
+	 * km).
+	 */
+	public static final double Z1P0_MIN = 0.0;
+
+	/**
+	 * Minimum allowed depth to a shear wave velocity of 1.0 km/sec ({@code 2.0}
+	 * km).
+	 */
+	public static final double Z1P0_MAX = 2.0;
+
+	/**
+	 * Default depth to a shear wave velocity of 1.0 km/sec ({@code NaN} –
+	 * {@link GroundMotionModel}s will use a default value or model).
+	 */
+	public static final double Z1P0_DEFAULT = Double.NaN;
 
 	/** The name used for {@code Site}s with no supplied name. */
 	public static final String NO_NAME = "Unnamed";
 
-	/** {@link #MIN_VS_30} and {@link #MAX_VS_30} as a closed {@code Range}. */
-	public static final Range<Double> VS30_RANGE = Range.closed(MIN_VS_30, MAX_VS_30);
+	/** {@link #VS_30_MIN} and {@link #VS_30_MAX} as a closed {@code Range}. */
+	public static final Range<Double> VS30_RANGE = Range.closed(VS_30_MIN, VS_30_MAX);
 
-	/** {@link #MIN_Z2P5} and {@link #MAX_Z2P5} as a closed {@code Range}. */
-	public static final Range<Double> Z2P5_RANGE = Range.closed(MIN_Z2P5, MAX_Z2P5);
+	/** {@link #Z2P5_MIN} and {@link #Z2P5_MAX} as a closed {@code Range}. */
+	public static final Range<Double> Z2P5_RANGE = Range.closed(Z2P5_MIN, Z2P5_MAX);
 
-	/** {@link #MIN_Z1P0} and {@link #MAX_Z1P0} as a closed {@code Range}. */
-	public static final Range<Double> Z1P0_RANGE = Range.closed(MIN_Z1P0, MAX_Z1P0);
+	/** {@link #Z1P0_MIN} and {@link #Z1P0_MAX} as a closed {@code Range}. */
+	public static final Range<Double> Z1P0_RANGE = Range.closed(Z1P0_MIN, Z1P0_MAX);
 
 	/** The site name. */
 	public final String name;
@@ -156,7 +175,7 @@ public class Site implements Named {
 
 		private String name = NO_NAME;
 		private Location location;
-		private double vs30 = DEFAULT_VS_30;
+		private double vs30 = VS_30_DEFAULT;
 		private boolean vsInferred = true;
 		private double z1p0 = Double.NaN;
 		private double z2p5 = Double.NaN;
@@ -230,12 +249,12 @@ public class Site implements Named {
 	}
 
 	private static final int MAX_NAME_LENGTH = 72;
-	
+
 	private static String cleanName(String name) {
 		name = name.replaceAll(",", "");
 		return name.length() > MAX_NAME_LENGTH ? name.substring(0, MAX_NAME_LENGTH) : name;
 	}
-	
+
 	/* Json and csv serialization keys */
 	static final class Key {
 		static final String NAME = "name";
