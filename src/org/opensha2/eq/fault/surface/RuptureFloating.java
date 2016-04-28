@@ -3,7 +3,6 @@ package org.opensha2.eq.fault.surface;
 import static java.lang.Math.sin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

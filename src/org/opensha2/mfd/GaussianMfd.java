@@ -59,8 +59,8 @@ public class GaussianMfd extends IncrementalMfd {
    * @param max - maximum mag of distribution
    * @param num - number of points in distribution
    */
-  public GaussianMfd(double min,double max,int num) {
-    super(min,max,num, false);
+  public GaussianMfd(double min,double max,int num, boolean floats) {
+    super(min,max,num, floats);
   }
 
 

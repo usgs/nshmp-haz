@@ -50,7 +50,7 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	// low priority
 	// TODO test low rate shortcut in FaultSource
 	// "if (rate < 1e-14) continue; // shortcut low rates"
-	
+
 	// TODO need to revisit the application of uncertainty when minM < 6.5
 	// e.g. 809a Pine Valley graben in orwa.c.in
 
@@ -72,7 +72,7 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 	 * <p>For more information on a HazardModel directory and file structure,
 	 * see the <a
 	 * href="https://github.com/usgs/nshmp-haz/wiki/Earthquake-Source-Models"
-	 * >nshmp-haz wiki</a>.</p>
+	 * target="_top">nshmp-haz wiki</a>.</p>
 	 * 
 	 * <p><b>Notes:</b> HazardModel loading is not thread safe. Also, there are
 	 * a wide variety of exceptions that may be encountered when loading a
@@ -93,14 +93,16 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 		return sourceSetMap.size();
 	}
 
-	@Override public Iterator<SourceSet<? extends Source>> iterator() {
+	@Override
+	public Iterator<SourceSet<? extends Source>> iterator() {
 		return sourceSetMap.values().iterator();
 	}
 
-	@Override public String name() {
+	@Override
+	public String name() {
 		return name;
 	}
-	
+
 	/**
 	 * The set of {@code SourceType}s included in this model.
 	 */
@@ -115,7 +117,8 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
 		return config;
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		StringBuilder sb = new StringBuilder("HazardModel: ");
 		sb.append(name).append(NEWLINE);
 		for (SourceSet<? extends Source> sourceSet : this) {

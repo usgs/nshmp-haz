@@ -96,17 +96,19 @@ public final class Mfds {
 
 	/**
 	 * Creates a new {@code GaussianMfd} that is doubly-truncated at
-	 * {@code 2*sigma}. For the MFD returned, {@link IncrementalMfd#floats()}
-	 * always returns {@code false}.
+	 * {@code 2*sigma}.
 	 * 
 	 * @param mean magnitude
 	 * @param sigma standard deviation
 	 * @param size number of magnitude bins inclusive of min and max magnitudes
 	 * @param cumRate total cumulative rate
+	 * @param floats {@code true} if ruptures referencing this mfd should float;
+	 *        {@code false} otherwise
 	 * @return a new {@code GaussianMfd}
 	 */
-	public static GaussianMfd newGaussianMFD(double mean, double sigma, int size, double cumRate) {
-		GaussianMfd mfd = buildGaussianBaseMFD(mean, sigma, size);
+	public static GaussianMfd newGaussianMFD(double mean, double sigma, int size, double cumRate,
+			boolean floats) {
+		GaussianMfd mfd = buildGaussianBaseMFD(mean, sigma, size, floats);
 		mfd.setAllButTotMoRate(mean, sigma, cumRate, DEFAULT_TRUNC_LEVEL, DEFAULT_TRUNC_TYPE);
 		return mfd;
 	}
@@ -120,11 +122,13 @@ public final class Mfds {
 	 * @param sigma standard deviation
 	 * @param size number of magnitude bins inclusive of min and max magnitudes
 	 * @param moRate total moment rate
+	 * @param floats {@code true} if ruptures referencing this mfd should float;
+	 *        {@code false} otherwise
 	 * @return a new {@code GaussianMfd}
 	 */
 	public static GaussianMfd newGaussianMoBalancedMFD(double mean, double sigma, int size,
-			double moRate) {
-		GaussianMfd mfd = buildGaussianBaseMFD(mean, sigma, size);
+			double moRate, boolean floats) {
+		GaussianMfd mfd = buildGaussianBaseMFD(mean, sigma, size, floats);
 		mfd.setAllButCumRate(mean, sigma, moRate, DEFAULT_TRUNC_LEVEL, DEFAULT_TRUNC_TYPE);
 		return mfd;
 	}
@@ -233,8 +237,9 @@ public final class Mfds {
 		return new IncrementalMfd(min, max, size, floats);
 	}
 
-	private static GaussianMfd buildGaussianBaseMFD(double mean, double sigma, int size) {
-		return new GaussianMfd(mean - 2 * sigma, mean + 2 * sigma, size);
+	private static GaussianMfd buildGaussianBaseMFD(double mean, double sigma, int size,
+			boolean floats) {
+		return new GaussianMfd(mean - 2 * sigma, mean + 2 * sigma, size, floats);
 	}
 
 	private static GutenbergRichterMfd buildGutenbergRichterBaseMFD(double min, double delta,
@@ -343,11 +348,13 @@ public final class Mfds {
 	private static final class AnnRateToPoissProbConverter extends Converter<Double, Double> {
 		static final AnnRateToPoissProbConverter INSTANCE = new AnnRateToPoissProbConverter();
 
-		@Override protected Double doForward(Double rate) {
+		@Override
+		protected Double doForward(Double rate) {
 			return rateToProb(rate, 1.0);
 		}
 
-		@Override protected Double doBackward(Double prob) {
+		@Override
+		protected Double doBackward(Double prob) {
 			return probToRate(prob, 1.0);
 		}
 	}
@@ -369,7 +376,8 @@ public final class Mfds {
 	 * Combine all {@code mfds} into a single sequence.
 	 * @param mfds
 	 */
-	@Deprecated public static XySequence combine(IncrementalMfd... mfds) {
+	@Deprecated
+	public static XySequence combine(IncrementalMfd... mfds) {
 		// TODO slated for removal once MFDs descend from XySequence
 		checkArgument(checkNotNull(mfds).length > 0);
 		List<XySequence> sequences = new ArrayList<>();

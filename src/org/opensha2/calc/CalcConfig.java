@@ -32,6 +32,7 @@ import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Gmm;
+import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Optional;
@@ -65,8 +66,11 @@ public final class CalcConfig {
 	 */
 	public final transient Optional<Path> resource;
 
-	/** Hazard curve calculation settings */
+	/** Hazard curve calculation settings. */
 	public final Curve curve;
+	
+	/** Default site settings. */
+	public final SiteDefaults siteDefaults;
 
 	/** Performance and optimization settings. */
 	public final Performance performance;
@@ -80,12 +84,14 @@ public final class CalcConfig {
 	private CalcConfig(
 			Optional<Path> resource,
 			Curve curve,
+			SiteDefaults site,
 			Performance performance,
 			Output output,
 			Deagg deagg) {
 
 		this.resource = resource;
 		this.curve = curve;
+		this.siteDefaults = site;
 		this.performance = performance;
 		this.output = output;
 		this.deagg = deagg;
@@ -302,6 +308,111 @@ public final class CalcConfig {
 
 			double[] imlsForImt(Imt imt) {
 				return customImls.containsKey(imt) ? customImls.get(imt) : defaultImls;
+			}
+		}
+	}
+	
+	/**
+	 * Default site settings. 
+	 */
+	public static final class SiteDefaults {
+
+		static final String ID = CalcConfig.ID + "." + SiteDefaults.class.getSimpleName();
+
+		/**
+		 * The default average shear-wave velocity down to 30 meters depth.
+		 * 
+		 * <p><b>Default:</b> {@code 760.0} m/sec
+		 */
+		public final double vs30;
+
+		/**
+		 * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
+		 * 
+		 * <p><b>Default:</b> {@code true} (inferred)</p>
+		 */
+		public final boolean vsInferred;
+
+		/**
+		 * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
+		 * 
+		 * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
+		 * default value or model)</p>
+		 */
+		public final double z1p0;
+
+		/**
+		 * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
+		 * 
+		 * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a default
+		 * value or model)</p>
+		 */
+		public final double z2p5;
+		
+		private SiteDefaults(
+				double vs30,
+				boolean vsInferred,
+				double z1p0,
+				double z2p5) {
+
+			this.vs30 = vs30;
+			this.vsInferred = vsInferred;
+			this.z1p0 = z1p0;
+			this.z2p5 = z2p5;
+		}
+
+		private StringBuilder asString() {
+			return new StringBuilder()
+				.append(LOG_INDENT).append("Site Defaults")
+				.append(formatEntry(Key.VS30, vs30))
+				.append(formatEntry(Key.VS_INF, vsInferred))
+				.append(formatEntry(Key.Z1P0, z1p0))
+				.append(formatEntry(Key.Z2P5, z2p5));
+		}
+
+		private static final class Builder {
+
+			Double vs30;
+			Boolean vsInferred;
+			Double z1p0;
+			Double z2p5;
+
+			SiteDefaults build() {
+				return new SiteDefaults(
+					vs30,
+					vsInferred,
+					z1p0,
+					z2p5);
+			}
+
+			void copy(SiteDefaults that) {
+				this.vs30 = that.vs30;
+				this.vsInferred = that.vsInferred;
+				this.z1p0 = that.z1p0;
+				this.z2p5 = that.z2p5;
+			}
+
+			void extend(Builder that) {
+				if (that.vs30 != null) this.vs30 = that.vs30;
+				if (that.vsInferred != null) this.vsInferred = that.vsInferred;
+				if (that.z1p0 != null) this.z1p0 = that.z1p0;
+				if (that.z2p5 != null) this.z2p5 = that.z2p5;
+			}
+
+			static Builder defaults() {
+				Builder b = new Builder();
+				b.vs30 = Site.VS_30_DEFAULT;
+				b.vsInferred = Site.VS_INF_DEFAULT;
+				b.z1p0 = Site.Z1P0_DEFAULT;
+				b.z2p5 = Site.Z2P5_DEFAULT;
+				return b;
+			}
+
+			void validate() {
+				checkNotNull(vs30, STATE_ERROR, Performance.ID, Key.VS30);
+				checkNotNull(vsInferred, STATE_ERROR, Performance.ID, Key.VS_INF);
+				checkNotNull(z1p0, STATE_ERROR, Performance.ID, Key.Z1P0);
+				checkNotNull(z2p5, STATE_ERROR, Performance.ID, Key.Z2P5);
 			}
 		}
 	}
@@ -578,6 +689,11 @@ public final class CalcConfig {
 		VALUE_TYPE,
 		DEFAULT_IMLS,
 		CUSTOM_IMLS,
+		/* site defaults */
+		VS30,
+		VS_INF,
+		Z1P0,
+		Z2P5,
 		/* performance */
 		OPTIMIZE_GRIDS,
 		COLLAPSE_MFDS,
@@ -609,6 +725,7 @@ public final class CalcConfig {
 				? resource.get().toAbsolutePath().normalize()
 				: "(from defaults)")
 			.append(curve.asString())
+			.append(siteDefaults.asString())
 			.append(performance.asString())
 			.append(output.asString())
 			.append(deagg.asString())
@@ -642,6 +759,7 @@ public final class CalcConfig {
 	private static final Gson GSON = new GsonBuilder()
 		.setPrettyPrinting()
 		.enableComplexMapKeySerialization()
+		.serializeSpecialFloatingPointValues()
 		.registerTypeAdapter(Path.class, new JsonDeserializer<Path>() {
 			@Override
 			public Path deserialize(
@@ -684,12 +802,14 @@ public final class CalcConfig {
 
 		private Path resource;
 		private Curve.Builder curve;
+		private SiteDefaults.Builder siteDefaults;
 		private Performance.Builder performance;
 		private Output.Builder output;
 		private Deagg deagg;
 
 		private Builder() {
 			curve = new Curve.Builder();
+			siteDefaults = new SiteDefaults.Builder();
 			performance = new Performance.Builder();
 			output = new Output.Builder();
 		}
@@ -703,6 +823,7 @@ public final class CalcConfig {
 				b.resource = config.resource.get();
 			}
 			b.curve.copy(config.curve);
+			b.siteDefaults.copy(config.siteDefaults);
 			b.performance.copy(config.performance);
 			b.output.copy(config.output);
 			b.deagg = config.deagg;
@@ -734,6 +855,7 @@ public final class CalcConfig {
 		public static Builder withDefaults() {
 			Builder b = new Builder();
 			b.curve = Curve.Builder.defaults();
+			b.siteDefaults = SiteDefaults.Builder.defaults();
 			b.performance = Performance.Builder.defaults();
 			b.output = Output.Builder.defaults();
 			b.deagg = new Deagg();
@@ -748,6 +870,7 @@ public final class CalcConfig {
 			checkNotNull(that);
 			this.resource = that.resource;
 			this.curve.extend(that.curve);
+			this.siteDefaults.extend(that.siteDefaults);
 			this.performance.extend(that.performance);
 			this.output.extend(that.output);
 			if (that.deagg != null) this.deagg = that.deagg;
@@ -765,6 +888,7 @@ public final class CalcConfig {
 		private void validateState() {
 			checkState(!built, "This %s instance as already been used", ID + ".Builder");
 			curve.validate();
+			siteDefaults.validate();
 			performance.validate();
 			output.validate();
 			checkNotNull(deagg, STATE_ERROR, Deagg.ID, "deagg");
@@ -779,6 +903,7 @@ public final class CalcConfig {
 			return new CalcConfig(
 				Optional.fromNullable(resource),
 				curve.build(),
+				siteDefaults.build(),
 				performance.build(),
 				output.build(),
 				deagg);
