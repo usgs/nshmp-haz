@@ -268,7 +268,7 @@ public class HazardCalc {
 
 	private static final String PROGRAM = HazardCalc.class.getSimpleName();
 	private static final String USAGE_COMMAND =
-		"java -cp nshmp-haz.jar org.opensha2.programs.HazardCalc model sites [config]";
+		"java -cp nshmp-haz.jar org.opensha2.HazardCalc model sites [config]";
 	private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
 	private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
 	private static final String SITE_STRING = "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]";
