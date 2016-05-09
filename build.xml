@@ -1,46 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="nshmp-haz" default="build" basedir=".">
+<project name="nshmp-haz" default="jar" basedir=".">
 
 	<description>
 		nshmp-haz is a platform for conducting seismic hazard calculations
 	</description>
 
-	<property name="src.dir" value="src/" />
-	<property name="lib.dir" value="lib/" />
-	<property name="classes.dir" value="classes/" />
-	<property name="dist.dir" value="dist/" />
-	<property name="javadoc.dir" value="../nshmp-haz.gh-pages/javadoc" />
+	<!-- PROPERTIES -->
+	<property name="src" location="src" />
+	<property name="test" location="test" />
+	<property name="lib" location="lib" />
+	<property name="classes" location="classes" />
+	<property name="dist" location="dist" />
+	<!-- <property name="docs" location="docs" /> -->
+	<property name="docs" location="../nshmp-haz.gh-pages" />
+	<property name="javadoc" location="${docs}/javadoc" />
+	
+
+	<property name="instrumented" location="instrumented" />
+	<property name="reports" location="${docs}/reports" />
+	<property name="reports.xml" location="${reports}/junit-xml" />
+	<property name="reports.html" location="${reports}/junit-html" />
+	<property name="coverage.xml" location="${reports}/coverage-xml" />
+	<property name="coverage.html" location="${reports}/coverage-html" />
+
+	<property name="guava.jar" location="${lib}/guava-19.0.jar" />
+	<property name="gson.jar" location="${lib}/gson-2.5.jar" />
 
 	<defaultexcludes add="**/Scratch*.java" />
 
-	<path id="library.classpath">
-		<fileset dir="${lib.dir}">
-			<include name="**/*.jar" />
-		</fileset>
+	<path id="classpath">
+		<pathelement location="${guava.jar}" />
+		<pathelement location="${gson.jar}" />
 	</path>
 
+	<path id="classpath.test">
+		<pathelement location="${lib}/junit-4.12.jar" />
+		<!-- <pathelement location="${lib}/hamcrest-core-1.3.jar" />-->
+	</path>
 
-	<target name="build" depends="compile">
-		<jar destfile="${dist.dir}nshmp-haz.jar">
-			<fileset dir="${classes.dir}" />
-			<zipgroupfileset dir="${lib.dir}">
-				<include name="*.jar" />
-			</zipgroupfileset>
+	<path id="classpath.cobertura">
+		<pathelement location="${lib}/cobertura-2.1.1.jar" />
+
+		<!--
+		<pathelement location="${lib}/asm-3.0.jar" />
+		<pathelement location="${lib}/asm-tree-3.0.jar" />
+		<pathelement location="${lib}/hamcrest-core-1.3.jar" />
+		<pathelement location="${lib}/jakarta-oro-2.0.8.jar" />
+		<pathelement location="${lib}/log4j-1.2.9.jar" />
+		-->
+	</path>
+
+	
+	<!-- TASK IMPORTS -->
+	<taskdef classpathref="classpath.cobertura" resource="tasks.properties" />
+	
+	<!-- TODO consider skipping utility classes and exporters in build -->
+
+	<!-- TARGETS -->
+	<target name="jar" depends="compile.source">
+		<jar destfile="${dist}/nshmp-haz.jar">
+			<fileset dir="${classes}" />
+			<zipfileset src="${guava.jar}" excludes="**/META-INF/**" />
+			<zipfileset src="${gson.jar}" />
 		</jar>
 	</target>
 
 
+	<target name="test" depends="compile.test">
+		<mkdir dir="${reports.xml.dir}" />
+		<mkdir dir="${reports.html.dir}" />
+
+		<junit fork="yes" printsummary="yes" haltonfailure="yes" failureProperty="test.failed">
+			<classpath location="${instrumented.dir}" />
+			<classpath refid="classpath-test" />
+			<classpath refid="classpath-cobertura" />
+
+			<formatter type="xml" />
+			<formatter type="plain" usefile="false" />
+
+			<batchtest todir="${reports.xml.dir}">
+				<!-- any class with the name Test in its name -->
+				<fileset dir="${src}" includes="**/*Test.java" />
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${reports.xml.dir}">
+			<fileset dir="${reports.xml.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${reports.html.dir}" />
+		</junitreport>
+
+	</target>
+
 	<!-- Compile source and copy resources. -->
-	<target name="compile">
+	<target name="compile.source" description="Compile source code">
 
-		<!-- Clean the classes/ directory -->
-		<delete dir="${classes.dir}" />
-		<mkdir dir="${classes.dir}" />
+		<delete dir="${classes}" />
+		<mkdir dir="${classes}" />
 
-		<!-- Compile to classes/  -->
-		<javac srcdir="${src.dir}"
-		       destdir="${classes.dir}"
-		       classpathref="library.classpath"
+		<antcall target="compile">
+			<param name="file.dir" value="${src}" />
+		</antcall>
+
+		<!-- Copy non-Java resources -->
+		<copy todir="${classes}" includeEmptyDirs="false">
+			<fileset dir="${src}" excludes="**/*.java" />
+			<file name="${lib}/logging.properties" />
+		</copy>
+
+	</target>
+
+	<target name="compile.test" depends="compile.source" description="Compile unit test code">
+
+		<antcall target="compile">
+			<param name="file.dir" value="${test}" />
+		</antcall>
+
+		<!-- Copy any non-Java resources -->
+		<copy todir="${classes}" includeEmptyDirs="false">
+			<fileset dir="${test}" excludes="**/*.java" />
+		</copy>
+
+	</target>
+
+	<!-- Base compiler -->
+	<target name="compile" description="Compile code">
+		<javac srcdir="${file.dir}"
+		       destdir="${classes}"
+		       classpathref="classpath"
 		       nowarn="true"
 		       fork="true"
 		       source="1.7"
@@ -49,29 +137,42 @@
 		       debug="true"
 		       includeantruntime="false"
 		       createMissingPackageInfoClass="false" />
-
-		<!-- Copy any non-Java resources -->
-		<copy todir="${classes.dir}" includeEmptyDirs="false">
-			<fileset dir="${src.dir}" excludes="**/*.java" />
-			<fileset dir="${lib.dir}" excludes="**/*.jar" />
-		</copy>
-
 	</target>
 
-	<target name="compile-tests">
+	<target name="instrument" depends="compile" description="Cobertura intrumentation">
+		
+		<delete file="cobertura.ser" />
+		<delete dir="${instrumented}" />
 
+		<cobertura-instrument todir="${instrumented}">
+			<!--
+				The following line causes instrument to ignore any
+				source line containing a reference to log4j, for the
+				purposes of coverage reporting.
+			-->
+			<ignore regex="org.apache.log4j.*" />
+
+			<fileset dir="${build}">
+				<!--
+					Instrument all the application classes, but
+					don't instrument the test classes.
+				-->
+				<include name="**/*.class" />
+				<exclude name="**/*Test.class" />
+				<exclude name="**/*Test$*.class" />
+				<exclude name="com/isti/quakewatch/server/qw_feeder/*.class" />
+				<exclude name="gov/usgs/earthquake/quakewatch/*.class" />
+			</fileset>
+		</cobertura-instrument>
 	</target>
 
 
-	<target name="javadoc">
+	<target name="javadoc" description="Generate Javadocs">
 
-		<!-- Clean the docs directory; .git data preserved by defaultexcludes -->
-		<delete includeEmptyDirs="true" failonerror="yes" verbose="no">
-			<fileset dir="${javadoc.dir}" />
-		</delete>
+		<delete dir="${javadoc}" />
 
-		<javadoc classpathref="library.classpath"
-		         destdir="${javadoc.dir}"
+		<javadoc classpathref="classpath"
+		         destdir="${javadoc}"
 		         author="true"
 		         version="true"
 		         use="true"
@@ -84,7 +185,7 @@
 		         charset="UTF-8"
 		         additionalparam="-notimestamp">
 
-			<fileset dir="${src.dir}">
+			<fileset dir="${src}">
 				<include name="**/*.java" />
 			</fileset>
 
@@ -99,14 +200,13 @@
 			</bottom>
 
 		<link href="http://docs.oracle.com/javase/7/docs/api/" />
-		<link href="http://commons.apache.org/proper/commons-math/apidocs/" />
 		<link href="http://google.github.io/guava/releases/19.0/api/docs/" />
 		<link href="http://google.github.io/gson/apidocs/" />
 
 	</javadoc>
 
 	<!-- Copy images -->
-	<copy todir="${javadoc.dir}/resources">
+	<copy todir="${javadoc}/resources">
 		<fileset dir="etc/resources/docs" includes="*.jpg" />
 	</copy>
 
