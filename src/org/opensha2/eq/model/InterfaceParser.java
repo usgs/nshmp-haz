@@ -47,63 +47,63 @@ import org.xml.sax.helpers.DefaultHandler;
 @SuppressWarnings("incomplete-switch")
 class InterfaceParser extends DefaultHandler {
 
-	private final Logger log = Logger.getLogger(InterfaceParser.class.getName());
-	private final SAXParser sax;
-	private boolean used = false;
+  private final Logger log = Logger.getLogger(InterfaceParser.class.getName());
+  private final SAXParser sax;
+  private boolean used = false;
 
-	private Locator locator;
+  private Locator locator;
 
-	private GmmSet gmmSet;
+  private GmmSet gmmSet;
 
-	private ModelConfig config;
+  private ModelConfig config;
 
-	private InterfaceSourceSet sourceSet;
-	private InterfaceSourceSet.Builder sourceSetBuilder;
-	private InterfaceSource.Builder sourceBuilder;
+  private InterfaceSourceSet sourceSet;
+  private InterfaceSourceSet.Builder sourceSetBuilder;
+  private InterfaceSource.Builder sourceBuilder;
 
-	private RuptureScaling rupScaling;
+  private RuptureScaling rupScaling;
 
-	// Default MFD data
-	private boolean parsingDefaultMFDs = false;
-	private MfdHelper.Builder mfdHelperBuilder;
-	private MfdHelper mfdHelper;
+  // Default MFD data
+  private boolean parsingDefaultMFDs = false;
+  private MfdHelper.Builder mfdHelperBuilder;
+  private MfdHelper mfdHelper;
 
-	// Traces are the only text content in source files
-	private boolean readingTrace = false;
-	private StringBuilder traceBuilder = null;
+  // Traces are the only text content in source files
+  private boolean readingTrace = false;
+  private StringBuilder traceBuilder = null;
 
-	private InterfaceParser(SAXParser sax) {
-		this.sax = sax;
-	}
+  private InterfaceParser(SAXParser sax) {
+    this.sax = sax;
+  }
 
-	static InterfaceParser create(SAXParser sax) {
-		return new InterfaceParser(checkNotNull(sax));
-	}
+  static InterfaceParser create(SAXParser sax) {
+    return new InterfaceParser(checkNotNull(sax));
+  }
 
-	InterfaceSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-			IOException {
-		checkState(!used, "This parser has expired");
-		this.gmmSet = gmmSet;
-		this.config = config;
-		sax.parse(in, this);
-		checkState(sourceSet.size() > 0, "InterfaceSourceSet is empty");
-		used = true;
-		return sourceSet;
-	}
+  InterfaceSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
+      IOException {
+    checkState(!used, "This parser has expired");
+    this.gmmSet = gmmSet;
+    this.config = config;
+    sax.parse(in, this);
+    checkState(sourceSet.size() > 0, "InterfaceSourceSet is empty");
+    used = true;
+    return sourceSet;
+  }
 
-	@Override
-	public void startElement(String uri, String localName, String qName, Attributes atts)
-			throws SAXException {
+  @Override
+  public void startElement(String uri, String localName, String qName, Attributes atts)
+      throws SAXException {
 
-		SourceElement e = null;
-		try {
-			e = SourceElement.fromString(qName);
-		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
-		}
+    SourceElement e = null;
+    try {
+      e = SourceElement.fromString(qName);
+    } catch (IllegalArgumentException iae) {
+      throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
+    }
 
-		try {
-			// @formatter:off
+    try {
+      // @formatter:off
 			switch (e) {
 
 				case SUBDUCTION_SOURCE_SET:
@@ -187,122 +187,122 @@ class InterfaceParser extends DefaultHandler {
 					break;
 			}
 			// @formatter:on
-		} catch (Exception ex) {
-			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
-		}
-	}
+    } catch (Exception ex) {
+      throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
+    }
+  }
 
-	@Override
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+  @Override
+  public void endElement(String uri, String localName, String qName)
+      throws SAXException {
 
-		SourceElement e = null;
-		try {
-			e = SourceElement.fromString(qName);
-		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
-		}
+    SourceElement e = null;
+    try {
+      e = SourceElement.fromString(qName);
+    } catch (IllegalArgumentException iae) {
+      throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
+    }
 
-		try {
-			switch (e) {
+    try {
+      switch (e) {
 
-				case DEFAULT_MFDS:
-					parsingDefaultMFDs = false;
-					mfdHelper = mfdHelperBuilder.build();
-					break;
+        case DEFAULT_MFDS:
+          parsingDefaultMFDs = false;
+          mfdHelper = mfdHelperBuilder.build();
+          break;
 
-				case TRACE:
-					readingTrace = false;
-					sourceBuilder.trace(LocationList.fromString(traceBuilder.toString()));
-					break;
+        case TRACE:
+          readingTrace = false;
+          sourceBuilder.trace(LocationList.fromString(traceBuilder.toString()));
+          break;
 
-				case LOWER_TRACE:
-					readingTrace = false;
-					sourceBuilder.lowerTrace(LocationList.fromString(traceBuilder.toString()));
-					break;
+        case LOWER_TRACE:
+          readingTrace = false;
+          sourceBuilder.lowerTrace(LocationList.fromString(traceBuilder.toString()));
+          break;
 
-				case SOURCE:
-					sourceSetBuilder.source(sourceBuilder.buildSubductionSource());
-					log.finer(""); // insert blank line for detailed source
-									// output
-					break;
+        case SOURCE:
+          sourceSetBuilder.source(sourceBuilder.buildSubductionSource());
+          log.finer(""); // insert blank line for detailed source
+          // output
+          break;
 
-				case SUBDUCTION_SOURCE_SET:
-					sourceSet = sourceSetBuilder.buildSubductionSet();
+        case SUBDUCTION_SOURCE_SET:
+          sourceSet = sourceSetBuilder.buildSubductionSet();
 
-			}
+      }
 
-		} catch (Exception ex) {
-			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
-		}
-	}
+    } catch (Exception ex) {
+      throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
+    }
+  }
 
-	@Override
-	public void characters(char ch[], int start, int length) throws SAXException {
-		if (readingTrace) traceBuilder.append(ch, start, length);
-	}
+  @Override
+  public void characters(char ch[], int start, int length) throws SAXException {
+    if (readingTrace) traceBuilder.append(ch, start, length);
+  }
 
-	@Override
-	public void setDocumentLocator(Locator locator) {
-		this.locator = locator;
-	}
+  @Override
+  public void setDocumentLocator(Locator locator) {
+    this.locator = locator;
+  }
 
-	private List<IncrementalMfd> buildMfds(Attributes atts) {
-		MfdType type = MfdType.valueOf(atts.getValue("type"));
-		switch (type) {
-			case GR:
-				return buildGR(atts);
-			case SINGLE:
-				return buildSingle(atts);
-			default:
-				throw new IllegalStateException(type + " not supported");
-		}
-	}
+  private List<IncrementalMfd> buildMfds(Attributes atts) {
+    MfdType type = MfdType.valueOf(atts.getValue("type"));
+    switch (type) {
+      case GR:
+        return buildGR(atts);
+      case SINGLE:
+        return buildSingle(atts);
+      default:
+        throw new IllegalStateException(type + " not supported");
+    }
+  }
 
-	/*
-	 * InterfaceSource.Builder creates an ImmutableList; so no need for one in
-	 * methods below.
-	 */
+  /*
+   * InterfaceSource.Builder creates an ImmutableList; so no need for one in
+   * methods below.
+   */
 
-	/*
-	 * Build GR MFDs. Method throws IllegalStateException if attribute values
-	 * yield an MFD with no magnitude bins.
-	 */
-	private List<IncrementalMfd> buildGR(Attributes atts) {
-		List<IncrementalMfd> mfdList = new ArrayList<>();
-		for (GR_Data grData : mfdHelper.grData(atts)) {
-			mfdList.add(buildGR(grData));
-		}
-		return mfdList;
-	}
+  /*
+   * Build GR MFDs. Method throws IllegalStateException if attribute values
+   * yield an MFD with no magnitude bins.
+   */
+  private List<IncrementalMfd> buildGR(Attributes atts) {
+    List<IncrementalMfd> mfdList = new ArrayList<>();
+    for (GR_Data grData : mfdHelper.grData(atts)) {
+      mfdList.add(buildGR(grData));
+    }
+    return mfdList;
+  }
 
-	private IncrementalMfd buildGR(GR_Data data) {
+  private IncrementalMfd buildGR(GR_Data data) {
 
-		int nMag = Mfds.magCount(data.mMin, data.mMax, data.dMag);
-		checkState(nMag > 0, "GR MFD with no mags");
-		double tmr = Mfds.totalMoRate(data.mMin, nMag, data.dMag, data.a, data.b);
+    int nMag = Mfds.magCount(data.mMin, data.mMax, data.dMag);
+    checkState(nMag > 0, "GR MFD with no mags");
+    double tmr = Mfds.totalMoRate(data.mMin, nMag, data.dMag, data.a, data.b);
 
-		IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
-			data.b, tmr * data.weight);
-		log.finer("   MFD type: GR");
-		if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
-		return mfd;
-	}
+    IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
+      data.b, tmr * data.weight);
+    log.finer("   MFD type: GR");
+    if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+    return mfd;
+  }
 
-	/* Build SINGLE MFDs. */
-	private List<IncrementalMfd> buildSingle(Attributes atts) {
-		List<IncrementalMfd> mfdList = new ArrayList<>();
-		for (SingleData singleData : mfdHelper.singleData(atts)) {
-			mfdList.add(buildSingle(singleData));
-		}
-		return mfdList;
-	}
+  /* Build SINGLE MFDs. */
+  private List<IncrementalMfd> buildSingle(Attributes atts) {
+    List<IncrementalMfd> mfdList = new ArrayList<>();
+    for (SingleData singleData : mfdHelper.singleData(atts)) {
+      mfdList.add(buildSingle(singleData));
+    }
+    return mfdList;
+  }
 
-	private IncrementalMfd buildSingle(SingleData data) {
-		IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
-		log.finer("   MFD type: SINGLE");
-		if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
-		return mfd;
-	}
+  private IncrementalMfd buildSingle(SingleData data) {
+    IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
+    log.finer("   MFD type: SINGLE");
+    if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+    return mfd;
+  }
 
 }

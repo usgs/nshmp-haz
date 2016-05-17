@@ -7,7 +7,7 @@ package org.opensha2.eq.model;
  */
 @SuppressWarnings("javadoc")
 public enum PointSourceType {
-	POINT,
-	FINITE,
-	FIXED_STRIKE;
+  POINT,
+  FINITE,
+  FIXED_STRIKE;
 }

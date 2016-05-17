@@ -10,26 +10,27 @@ import com.google.common.primitives.Doubles;
 
 public class MfdsTests {
 
-	private static final double MFD_TOL = 1e-10;
-	
-	@Test public final void testTaperedGR() {
-		IncrementalMfd tGR = Mfds.newTaperedGutenbergRichterMFD(5.05, 0.1, 30, 4.0, 0.8, 7.5, 1.0);
-		assertArrayEquals(TAPERED_GR_MAGS, Doubles.toArray(tGR.xValues()), MFD_TOL);
-		assertArrayEquals(TAPERED_GR_RATES, Doubles.toArray(tGR.yValues()), MFD_TOL);
-	}
+  private static final double MFD_TOL = 1e-10;
 
-	// private static
+  @Test
+  public final void testTaperedGR() {
+    IncrementalMfd tGR = Mfds.newTaperedGutenbergRichterMFD(5.05, 0.1, 30, 4.0, 0.8, 7.5, 1.0);
+    assertArrayEquals(TAPERED_GR_MAGS, Doubles.toArray(tGR.xValues()), MFD_TOL);
+    assertArrayEquals(TAPERED_GR_RATES, Doubles.toArray(tGR.yValues()), MFD_TOL);
+  }
 
-	public static void main(String[] args) {
-		IncrementalMfd tGR = Mfds.newTaperedGutenbergRichterMFD(5.05, 0.1, 30, 4.0, 0.8, 7.5, 1.0);
-		System.out.println(tGR.xValues());
-		System.out.println(tGR.yValues());
-		for (Point2D p : tGR) {
-			System.out.println(p.getX() + " " + p.getY());
-		}
-	}
+  // private static
 
-	// @formatter:off
+  public static void main(String[] args) {
+    IncrementalMfd tGR = Mfds.newTaperedGutenbergRichterMFD(5.05, 0.1, 30, 4.0, 0.8, 7.5, 1.0);
+    System.out.println(tGR.xValues());
+    System.out.println(tGR.yValues());
+    for (Point2D p : tGR) {
+      System.out.println(p.getX() + " " + p.getY());
+    }
+  }
+
+  // @formatter:off
 	private static final double[] TAPERED_GR_MAGS = { 5.05, 5.15, 5.25, 5.35, 5.45, 5.55, 5.65,
 		5.75, 5.85, 5.95, 6.05, 6.15, 6.25, 6.35, 6.45, 6.55, 6.65, 6.75, 6.85, 6.95, 7.05, 7.15,
 		7.25, 7.35, 7.45, 7.55, 7.65, 7.75, 7.85, 7.95 };

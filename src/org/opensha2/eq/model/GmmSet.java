@@ -34,235 +34,235 @@ import com.google.common.collect.Range;
  */
 public final class GmmSet {
 
-	/*
-	 * TODO There is a lot of null checking and handling in this class that
-	 * would be better served by Optional
-	 */
+  /*
+   * TODO There is a lot of null checking and handling in this class that would
+   * be better served by Optional
+   */
 
-	private final Map<Gmm, Double> weightMapLo;
-	private final double maxDistLo;
-	private final Map<Gmm, Double> weightMapHi; // may be null
-	private final double maxDistHi; // used by distance filters
-	private final boolean singular;
-	private final int hashCode;
+  private final Map<Gmm, Double> weightMapLo;
+  private final double maxDistLo;
+  private final Map<Gmm, Double> weightMapHi; // may be null
+  private final double maxDistHi; // used by distance filters
+  private final boolean singular;
+  private final int hashCode;
 
-	private final UncertType uncertainty;
-	private final double epiValue;
-	private final double[][] epiValues;
-	private final double[] epiWeights; // TODO DataArray (vs. Table, Volume)
+  private final UncertType uncertainty;
+  private final double epiValue;
+  private final double[][] epiValues;
+  private final double[] epiWeights; // TODO DataArray (vs. Table, Volume)
 
-	GmmSet(Map<Gmm, Double> weightMapLo, double maxDistLo, Map<Gmm, Double> weightMapHi,
-			double maxDistHi, double[] epiValues, double[] epiWeights) {
-		this.weightMapLo = weightMapLo;
-		this.maxDistLo = maxDistLo;
-		this.weightMapHi = weightMapHi;
-		this.maxDistHi = (weightMapHi != null) ? maxDistHi : maxDistLo;
-		this.singular = weightMapHi == null;
+  GmmSet(Map<Gmm, Double> weightMapLo, double maxDistLo, Map<Gmm, Double> weightMapHi,
+      double maxDistHi, double[] epiValues, double[] epiWeights) {
+    this.weightMapLo = weightMapLo;
+    this.maxDistLo = maxDistLo;
+    this.weightMapHi = weightMapHi;
+    this.maxDistHi = (weightMapHi != null) ? maxDistHi : maxDistLo;
+    this.singular = weightMapHi == null;
 
-		this.hashCode = Objects.hash(
-			this.weightMapLo, this.maxDistLo,
-			this.weightMapHi, this.maxDistHi);
+    this.hashCode = Objects.hash(
+      this.weightMapLo, this.maxDistLo,
+      this.weightMapHi, this.maxDistHi);
 
-		uncertainty = (epiValues == null) ? UncertType.NONE : (epiValues.length == 1)
-			? UncertType.SINGLE : UncertType.MULTI;
+    uncertainty = (epiValues == null) ? UncertType.NONE : (epiValues.length == 1)
+      ? UncertType.SINGLE : UncertType.MULTI;
 
-		this.epiWeights = epiWeights;
-		if (uncertainty == UncertType.NONE) {
-			this.epiValue = Double.NaN;
-			this.epiValues = null;
-		} else if (uncertainty == UncertType.SINGLE) {
-			this.epiValue = epiValues[0];
-			this.epiValues = null;
-		} else {
-			this.epiValue = Double.NaN;
-			this.epiValues = initEpiValues(epiValues);
-		}
-	}
+    this.epiWeights = epiWeights;
+    if (uncertainty == UncertType.NONE) {
+      this.epiValue = Double.NaN;
+      this.epiValues = null;
+    } else if (uncertainty == UncertType.SINGLE) {
+      this.epiValue = epiValues[0];
+      this.epiValues = null;
+    } else {
+      this.epiValue = Double.NaN;
+      this.epiValues = initEpiValues(epiValues);
+    }
+  }
 
-	/**
-	 * The {@code Set} of {@link GroundMotionModel} identifiers.
-	 */
-	public Set<Gmm> gmms() {
-		return weightMapLo.keySet();
-	}
+  /**
+   * The {@code Set} of {@link GroundMotionModel} identifiers.
+   */
+  public Set<Gmm> gmms() {
+    return weightMapLo.keySet();
+  }
 
-	/**
-	 * The {@code Map} of {@link GroundMotionModel} identifiers and associated
-	 * weights to use at a given {@code distance} from a {@code Site}.
-	 * @param distance
-	 */
-	public Map<Gmm, Double> gmmWeightMap(double distance) {
-		/*
-		 * Note that below (maxDistance) is used by all distance filters, so
-		 * here, as long as distance isn't < maxDistLo, weightMapHi will be
-		 * used.
-		 */
-		return singular ? weightMapLo : distance <= maxDistLo ? weightMapLo : weightMapHi;
-	}
+  /**
+   * The {@code Map} of {@link GroundMotionModel} identifiers and associated
+   * weights to use at a given {@code distance} from a {@code Site}.
+   * @param distance
+   */
+  public Map<Gmm, Double> gmmWeightMap(double distance) {
+    /*
+     * Note that below (maxDistance) is used by all distance filters, so here,
+     * as long as distance isn't < maxDistLo, weightMapHi will be used.
+     */
+    return singular ? weightMapLo : distance <= maxDistLo ? weightMapLo : weightMapHi;
+  }
 
-	/**
-	 * The maximum distance for which the contained {@link GroundMotionModel}s
-	 * are applicable.
-	 */
-	public double maxDistance() {
-		return maxDistHi;
-	}
+  /**
+   * The maximum distance for which the contained {@link GroundMotionModel}s are
+   * applicable.
+   */
+  public double maxDistance() {
+    return maxDistHi;
+  }
 
-	@Override public int hashCode() {
-		return hashCode;
-	}
+  @Override
+  public int hashCode() {
+    return hashCode;
+  }
 
-	@Override public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (!(obj instanceof GmmSet)) return false;
-		GmmSet that = (GmmSet) obj;
-		return Objects.equals(this.weightMapLo, that.weightMapLo) &&
-			this.maxDistLo == that.maxDistLo &&
-			Objects.equals(this.weightMapHi, that.weightMapHi) &&
-			this.maxDistHi == that.maxDistHi;
-	}
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (!(obj instanceof GmmSet)) return false;
+    GmmSet that = (GmmSet) obj;
+    return Objects.equals(this.weightMapLo, that.weightMapLo) &&
+      this.maxDistLo == that.maxDistLo &&
+      Objects.equals(this.weightMapHi, that.weightMapHi) &&
+      this.maxDistHi == that.maxDistHi;
+  }
 
-	private static double[][] initEpiValues(double[] v) {
-		return new double[][] {
-			{ v[0], v[1], v[2] },
-			{ v[3], v[4], v[5] },
-			{ v[6], v[7], v[8] }
-		};
-	}
+  private static double[][] initEpiValues(double[] v) {
+    return new double[][] {
+        { v[0], v[1], v[2] },
+        { v[3], v[4], v[5] },
+        { v[6], v[7], v[8] }
+    };
+  }
 
-	public boolean epiUncertainty() {
-		return uncertainty != UncertType.NONE;
-	}
-	
-	/*
-	 * Returns the epistemic uncertainty for the supplied magnitude and distance
-	 * in natural log units of ground motion.
-	 */
-	public double epiValue(double m, double r) {
-		switch (uncertainty) {
-			case MULTI:
-				int mi = (m < 6) ? 0 : (m < 7) ? 1 : 2;
-				int ri = (r < 10) ? 0 : (r < 30) ? 1 : 2;
-				return epiValues[ri][mi];
-			case SINGLE:
-				return epiValue;
-			default:
-				return 0.0;
-		}
-	}
+  public boolean epiUncertainty() {
+    return uncertainty != UncertType.NONE;
+  }
 
-	/*
-	 * Returns the 3 weights used for low, median, and high branches of the epistemic
-	 * uncertainty distribution.
-	 * TODO needs to be immutable, This is a good case for DataArray
-	 */
-	public double[] epiWeights() {
-		return epiWeights;
-	}
+  /*
+   * Returns the epistemic uncertainty for the supplied magnitude and distance
+   * in natural log units of ground motion.
+   */
+  public double epiValue(double m, double r) {
+    switch (uncertainty) {
+      case MULTI:
+        int mi = (m < 6) ? 0 : (m < 7) ? 1 : 2;
+        int ri = (r < 10) ? 0 : (r < 30) ? 1 : 2;
+        return epiValues[ri][mi];
+      case SINGLE:
+        return epiValue;
+      default:
+        return 0.0;
+    }
+  }
 
-	private static enum UncertType {
-		NONE,
-		SINGLE,
-		MULTI;
-	}
+  /*
+   * Returns the 3 weights used for low, median, and high branches of the
+   * epistemic uncertainty distribution. TODO needs to be immutable, This is a
+   * good case for DataArray
+   */
+  public double[] epiWeights() {
+    return epiWeights;
+  }
 
-	/* Single use builder */
-	static class Builder {
+  private static enum UncertType {
+    NONE,
+    SINGLE,
+    MULTI;
+  }
 
-		static final String ID = "GmmSet.Builder";
-		boolean built = false;
+  /* Single use builder */
+  static class Builder {
 
-		private static final Range<Double> MAX_DIST_RANGE = Range.closed(50.0, 1000.0);
+    static final String ID = "GmmSet.Builder";
+    boolean built = false;
 
-		private Map<Gmm, Double> gmmWtMapLo;
-		private Map<Gmm, Double> gmmWtMapHi;
-		private Double maxDistanceLo;
-		private double maxDistanceHi;
+    private static final Range<Double> MAX_DIST_RANGE = Range.closed(50.0, 1000.0);
 
-		// optional
-		private double[] uncValues;
-		private double[] uncWeights;
+    private Map<Gmm, Double> gmmWtMapLo;
+    private Map<Gmm, Double> gmmWtMapHi;
+    private Double maxDistanceLo;
+    private double maxDistanceHi;
 
-		// leave maxDistanceHi as primitive unless validation required
-		// at some later date; GmmSet throws NPE if Double used
+    // optional
+    private double[] uncValues;
+    private double[] uncWeights;
 
-		Builder primaryModelMap(Map<Gmm, Double> gmmWtMap) {
-			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
-			checkWeightSum(gmmWtMap.values());
-			gmmWtMapLo = Maps.immutableEnumMap(gmmWtMap);
-			return this;
-		}
+    // leave maxDistanceHi as primitive unless validation required
+    // at some later date; GmmSet throws NPE if Double used
 
-		Builder primaryMaxDistance(double maxDistance) {
-			maxDistanceLo = checkInRange(MAX_DIST_RANGE, "Max distance", maxDistance);
-			return this;
-		}
+    Builder primaryModelMap(Map<Gmm, Double> gmmWtMap) {
+      checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
+      checkWeightSum(gmmWtMap.values());
+      gmmWtMapLo = Maps.immutableEnumMap(gmmWtMap);
+      return this;
+    }
 
-		Builder secondaryModelMap(Map<Gmm, Double> gmmWtMap) {
-			checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
-			checkWeightSum(gmmWtMap.values());
-			gmmWtMapHi = Maps.immutableEnumMap(gmmWtMap);
-			return this;
-		}
+    Builder primaryMaxDistance(double maxDistance) {
+      maxDistanceLo = checkInRange(MAX_DIST_RANGE, "Max distance", maxDistance);
+      return this;
+    }
 
-		Builder secondaryMaxDistance(double maxDistance) {
-			maxDistanceHi = checkInRange(MAX_DIST_RANGE, "Max distance", maxDistance);
-			return this;
-		}
+    Builder secondaryModelMap(Map<Gmm, Double> gmmWtMap) {
+      checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
+      checkWeightSum(gmmWtMap.values());
+      gmmWtMapHi = Maps.immutableEnumMap(gmmWtMap);
+      return this;
+    }
 
-		Builder uncertainty(double[] values, double[] weights) {
-			checkNotNull(values, "Values is null");
-			checkArgument(values.length == 9 || values.length == 1,
-				"Values must contain 1 or 9 values");
-			checkArgument(checkNotNull(weights, "Weights are null").length == 3,
-				"Weights must contain 3 values");
-			checkArgument(Data.sum(weights) == 1.0, "%s uncertainty weights must sum to 1");
-			uncValues = values;
-			uncWeights = weights;
-			return this;
-		}
+    Builder secondaryMaxDistance(double maxDistance) {
+      maxDistanceHi = checkInRange(MAX_DIST_RANGE, "Max distance", maxDistance);
+      return this;
+    }
 
-		void validateState(String id) {
+    Builder uncertainty(double[] values, double[] weights) {
+      checkNotNull(values, "Values is null");
+      checkArgument(values.length == 9 || values.length == 1,
+        "Values must contain 1 or 9 values");
+      checkArgument(checkNotNull(weights, "Weights are null").length == 3,
+        "Weights must contain 3 values");
+      checkArgument(Data.sum(weights) == 1.0, "%s uncertainty weights must sum to 1");
+      uncValues = values;
+      uncWeights = weights;
+      return this;
+    }
 
-			// at a minimum the '*Lo' fields must be set
-			checkState(!built, "This %s instance as already been used", id);
-			checkState(gmmWtMapLo != null, "%s primary weight map not set", id);
-			checkState(maxDistanceLo != null, "%s primary max distance not set", id);
+    void validateState(String id) {
 
-			if (gmmWtMapHi != null) {
-				// hi gmms must be same as or subset of lo gmms
-				checkState(gmmWtMapLo.keySet().containsAll(gmmWtMapHi.keySet()),
-					"%s secondary models must be a subset of primary models", id);
-				// maxDistanceHi must also be set and greater than maxDistanceLo
-				checkNotNull(maxDistanceHi,
-					"%s secondary distance must be set for secondary models", id);
-				checkState(maxDistanceHi > maxDistanceLo,
-					"%s secondary distance [%s] ≤ primary distance [%s]", id, maxDistanceHi,
-					maxDistanceLo);
-			}
+      // at a minimum the '*Lo' fields must be set
+      checkState(!built, "This %s instance as already been used", id);
+      checkState(gmmWtMapLo != null, "%s primary weight map not set", id);
+      checkState(maxDistanceLo != null, "%s primary max distance not set", id);
 
-			if (uncValues != null) checkNotNull(uncWeights, "%s uncertainty weights not set", id);
-			if (uncWeights != null) checkNotNull(uncValues, "%s uncertainty values not set", id);
-	
+      if (gmmWtMapHi != null) {
+        // hi gmms must be same as or subset of lo gmms
+        checkState(gmmWtMapLo.keySet().containsAll(gmmWtMapHi.keySet()),
+          "%s secondary models must be a subset of primary models", id);
+        // maxDistanceHi must also be set and greater than maxDistanceLo
+        checkNotNull(maxDistanceHi,
+          "%s secondary distance must be set for secondary models", id);
+        checkState(maxDistanceHi > maxDistanceLo,
+          "%s secondary distance [%s] ≤ primary distance [%s]", id, maxDistanceHi,
+          maxDistanceLo);
+      }
 
-			built = true;
-		}
+      if (uncValues != null) checkNotNull(uncWeights, "%s uncertainty weights not set", id);
+      if (uncWeights != null) checkNotNull(uncValues, "%s uncertainty values not set", id);
 
-		GmmSet build() {
+      built = true;
+    }
 
-			validateState(ID);
-			try {
-				GmmSet gmmSet = new GmmSet(
-					gmmWtMapLo, maxDistanceLo,
-					gmmWtMapHi, maxDistanceHi,
-					uncValues, uncWeights);
-				return gmmSet;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
+    GmmSet build() {
 
-	}
+      validateState(ID);
+      try {
+        GmmSet gmmSet = new GmmSet(
+          gmmWtMapLo, maxDistanceLo,
+          gmmWtMapHi, maxDistanceHi,
+          uncValues, uncWeights);
+        return gmmSet;
+      } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+      }
+    }
+
+  }
 
 }

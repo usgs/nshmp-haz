@@ -10,10 +10,10 @@ package org.opensha2.util;
  */
 public interface Named {
 
-	/**
-	 * Returns an object's display name.
-	 * @return the name
-	 */
-	String name();
+  /**
+   * Returns an object's display name.
+   * @return the name
+   */
+  String name();
 
 }

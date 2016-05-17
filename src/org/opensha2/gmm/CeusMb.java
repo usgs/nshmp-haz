@@ -11,10 +11,10 @@ import static org.opensha2.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
  */
 class CeusMb {
 
-	private static final String J_NAME =  ": mb [J]";
-	private static final String AB_NAME =  ": mb [AB]";
+  private static final String J_NAME = ": mb [J]";
+  private static final String AB_NAME = ": mb [AB]";
 
-	// @formatter:off
+  // @formatter:off
 	
 	static final class AtkinsonBoore_2006_140bar_J extends AtkinsonBoore_2006.StressDrop_140bar {
 		static final String NAME = AtkinsonBoore_2006.StressDrop_140bar.NAME + J_NAME;

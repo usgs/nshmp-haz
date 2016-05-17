@@ -18,68 +18,73 @@ import com.google.common.collect.Lists;
  */
 public abstract class InputList extends AbstractList<HazardInput> {
 
-	final List<HazardInput> delegate;
-	double minDistance = Double.MAX_VALUE;
+  final List<HazardInput> delegate;
+  double minDistance = Double.MAX_VALUE;
 
-	/*
-	 * minDistance is used to track the closest distance of any Rupture in a
-	 * Source. This is used when multiple gmmSets for different distances are
-	 * defined.
-	 */
+  /*
+   * minDistance is used to track the closest distance of any Rupture in a
+   * Source. This is used when multiple gmmSets for different distances are
+   * defined.
+   */
 
-	InputList() {
-		delegate = new ArrayList<>();
-	}
-	
-	private InputList(List<HazardInput> sublist) {
-		delegate = sublist;
-	}
+  InputList() {
+    delegate = new ArrayList<>();
+  }
 
-	@Override public boolean add(HazardInput input) {
-		minDistance = Math.min(minDistance, input.rJB);
-		return delegate.add(input);
-	}
+  private InputList(List<HazardInput> sublist) {
+    delegate = sublist;
+  }
 
-	@Override public HazardInput get(int index) {
-		return delegate.get(index);
-	}
+  @Override
+  public boolean add(HazardInput input) {
+    minDistance = Math.min(minDistance, input.rJB);
+    return delegate.add(input);
+  }
 
-	@Override public int size() {
-		return delegate.size();
-	}
+  @Override
+  public HazardInput get(int index) {
+    return delegate.get(index);
+  }
 
-	@Override public String toString() {
-		StringBuilder sb = new StringBuilder("[").append(NEWLINE);
-		for (HazardInput input : this) {
-			sb.append(input).append(NEWLINE);
-		}
-		sb.append("]");
-		return sb.toString();
-	}
+  @Override
+  public int size() {
+    return delegate.size();
+  }
 
-	abstract String parentName();
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder("[").append(NEWLINE);
+    for (HazardInput input : this) {
+      sb.append(input).append(NEWLINE);
+    }
+    sb.append("]");
+    return sb.toString();
+  }
 
-	/*
-	 * Returns consecutive sub-{@code InputList}s of this list, each of the same
-	 * size, although the final list may be smaller.
-	 */
-	List<InputList> partition(int size) {
-		ImmutableList.Builder<InputList> builder = ImmutableList.builder();
-		for (List<HazardInput> subList : Lists.partition(this, size)) {
-			builder.add(new Partition(subList));
-		}
-		return builder.build();
-	}
-	
-	private class Partition extends InputList {
-		
-		Partition(List<HazardInput> sublist) {
-			super(sublist);
-		}
+  abstract String parentName();
 
-		@Override String parentName() {
-			return InputList.this.parentName();
-		}
-	}
+  /*
+   * Returns consecutive sub-{@code InputList}s of this list, each of the same
+   * size, although the final list may be smaller.
+   */
+  List<InputList> partition(int size) {
+    ImmutableList.Builder<InputList> builder = ImmutableList.builder();
+    for (List<HazardInput> subList : Lists.partition(this, size)) {
+      builder.add(new Partition(subList));
+    }
+    return builder.build();
+  }
+
+  private class Partition extends InputList {
+
+    Partition(List<HazardInput> sublist) {
+      super(sublist);
+    }
+
+    @Override
+    String parentName() {
+      return InputList.this.parentName();
+    }
+  }
 
 }

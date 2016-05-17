@@ -16,21 +16,21 @@ import org.xml.sax.SAXException;
  */
 class SlabParser {
 
-	private GridParser gridParser;
+  private GridParser gridParser;
 
-	private SlabParser(SAXParser sax) {
-		gridParser = GridParser.create(sax);
-		gridParser.type = SLAB;
-	}
+  private SlabParser(SAXParser sax) {
+    gridParser = GridParser.create(sax);
+    gridParser.type = SLAB;
+  }
 
-	static SlabParser create(SAXParser sax) {
-		return new SlabParser(sax);
-	}
+  static SlabParser create(SAXParser sax) {
+    return new SlabParser(sax);
+  }
 
-	SlabSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-			IOException {
-		GridSourceSet delegate = gridParser.parse(in, gmmSet, config);
-		return new SlabSourceSet(delegate);
-	}
+  SlabSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
+      IOException {
+    GridSourceSet delegate = gridParser.parse(in, gmmSet, config);
+    return new SlabSourceSet(delegate);
+  }
 
 }

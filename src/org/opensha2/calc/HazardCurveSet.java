@@ -44,152 +44,152 @@ import org.opensha2.gmm.Imt;
  */
 final class HazardCurveSet {
 
-	final SourceSet<? extends Source> sourceSet;
-	final List<GroundMotions> hazardGroundMotionsList;
-	final List<ClusterGroundMotions> clusterGroundMotionsList;
-	final Map<Imt, Map<Gmm, XySequence>> curveMap;
-	final Map<Imt, XySequence> totalCurves;
+  final SourceSet<? extends Source> sourceSet;
+  final List<GroundMotions> hazardGroundMotionsList;
+  final List<ClusterGroundMotions> clusterGroundMotionsList;
+  final Map<Imt, Map<Gmm, XySequence>> curveMap;
+  final Map<Imt, XySequence> totalCurves;
 
-	private HazardCurveSet(
-			SourceSet<? extends Source> sourceSet,
-			List<GroundMotions> hazardGroundMotionsList,
-			List<ClusterGroundMotions> clusterGroundMotionsList,
-			Map<Imt, Map<Gmm, XySequence>> curveMap,
-			Map<Imt, XySequence> totalCurves) {
+  private HazardCurveSet(
+      SourceSet<? extends Source> sourceSet,
+      List<GroundMotions> hazardGroundMotionsList,
+      List<ClusterGroundMotions> clusterGroundMotionsList,
+      Map<Imt, Map<Gmm, XySequence>> curveMap,
+      Map<Imt, XySequence> totalCurves) {
 
-		this.sourceSet = sourceSet;
-		this.hazardGroundMotionsList = hazardGroundMotionsList;
-		this.clusterGroundMotionsList = clusterGroundMotionsList;
-		this.curveMap = curveMap;
-		this.totalCurves = totalCurves;
-	}
+    this.sourceSet = sourceSet;
+    this.hazardGroundMotionsList = hazardGroundMotionsList;
+    this.clusterGroundMotionsList = clusterGroundMotionsList;
+    this.curveMap = curveMap;
+    this.totalCurves = totalCurves;
+  }
 
-	static Builder builder(SourceSet<? extends Source> sourceSet,
-			Map<Imt, XySequence> modelCurves) {
-		return new Builder(sourceSet, modelCurves);
-	}
+  static Builder builder(SourceSet<? extends Source> sourceSet,
+      Map<Imt, XySequence> modelCurves) {
+    return new Builder(sourceSet, modelCurves);
+  }
 
-	/*
-	 * A HazardCurveSet is relatively heavyweight wrt initializing its builder.
-	 * This provides a placeholder for functions where a HazardCurveSet is
-	 * required but for which there may be no HazardCurves because all sources
-	 * were out of range of a site. We only retain a reference to the original
-	 * source set.
-	 */
-	static HazardCurveSet empty(SourceSet<? extends Source> sourceSet) {
-		return new HazardCurveSet(sourceSet, null, null, null, null);
-	}
+  /*
+   * A HazardCurveSet is relatively heavyweight wrt initializing its builder.
+   * This provides a placeholder for functions where a HazardCurveSet is
+   * required but for which there may be no HazardCurves because all sources
+   * were out of range of a site. We only retain a reference to the original
+   * source set.
+   */
+  static HazardCurveSet empty(SourceSet<? extends Source> sourceSet) {
+    return new HazardCurveSet(sourceSet, null, null, null, null);
+  }
 
-	boolean isEmpty() {
-		return totalCurves == null;
-	}
+  boolean isEmpty() {
+    return totalCurves == null;
+  }
 
-	static class Builder {
+  static class Builder {
 
-		private static final String ID = "HazardCurveSet.Builder";
-		private boolean built = false;
+    private static final String ID = "HazardCurveSet.Builder";
+    private boolean built = false;
 
-		private final Map<Imt, XySequence> modelCurves;
+    private final Map<Imt, XySequence> modelCurves;
 
-		private final SourceSet<? extends Source> sourceSet;
-		private final List<GroundMotions> hazardGroundMotionsList;
-		private final List<ClusterGroundMotions> clusterGroundMotionsList;
-		private final Map<Imt, Map<Gmm, XySequence>> curveMap;
-		private final Map<Imt, XySequence> totalCurves;
+    private final SourceSet<? extends Source> sourceSet;
+    private final List<GroundMotions> hazardGroundMotionsList;
+    private final List<ClusterGroundMotions> clusterGroundMotionsList;
+    private final Map<Imt, Map<Gmm, XySequence>> curveMap;
+    private final Map<Imt, XySequence> totalCurves;
 
-		private Builder(SourceSet<? extends Source> sourceSet,
-				Map<Imt, XySequence> modelCurves) {
+    private Builder(SourceSet<? extends Source> sourceSet,
+        Map<Imt, XySequence> modelCurves) {
 
-			this.sourceSet = sourceSet;
-			this.modelCurves = modelCurves;
-			if (sourceSet.type() == SourceType.CLUSTER) {
-				clusterGroundMotionsList = new ArrayList<>();
-				hazardGroundMotionsList = null;
-			} else {
-				hazardGroundMotionsList = new ArrayList<>();
-				clusterGroundMotionsList = null;
-			}
-			Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
-			Set<Imt> imts = modelCurves.keySet();
-			curveMap = new EnumMap<>(Imt.class);
-			for (Imt imt : imts) {
-				Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
-				curveMap.put(imt, gmmMap);
-				for (Gmm gmm : gmms) {
-					XySequence emptyCurve = emptyCopyOf(modelCurves.get(imt));
-					gmmMap.put(gmm, emptyCurve);
-				}
-			}
-			totalCurves = new EnumMap<>(Imt.class);
-		}
+      this.sourceSet = sourceSet;
+      this.modelCurves = modelCurves;
+      if (sourceSet.type() == SourceType.CLUSTER) {
+        clusterGroundMotionsList = new ArrayList<>();
+        hazardGroundMotionsList = null;
+      } else {
+        hazardGroundMotionsList = new ArrayList<>();
+        clusterGroundMotionsList = null;
+      }
+      Set<Gmm> gmms = sourceSet.groundMotionModels().gmms();
+      Set<Imt> imts = modelCurves.keySet();
+      curveMap = new EnumMap<>(Imt.class);
+      for (Imt imt : imts) {
+        Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
+        curveMap.put(imt, gmmMap);
+        for (Gmm gmm : gmms) {
+          XySequence emptyCurve = emptyCopyOf(modelCurves.get(imt));
+          gmmMap.put(gmm, emptyCurve);
+        }
+      }
+      totalCurves = new EnumMap<>(Imt.class);
+    }
 
-		Builder addCurves(HazardCurves curvesIn) {
-			checkNotNull(hazardGroundMotionsList, "%s only supports ClusterCurves", ID);
-			hazardGroundMotionsList.add(curvesIn.groundMotions);
-			double distance = curvesIn.groundMotions.inputs.minDistance;
-			Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
-			// loop Imts based on what's been calculated
-			for (Imt imt : curvesIn.curveMap.keySet()) {
-				Map<Gmm, XySequence> curveMapIn = curvesIn.curveMap.get(imt);
-				Map<Gmm, XySequence> curveMapBuild = curveMap.get(imt);
-				// loop Gmms based on what's supported at this distance
-				for (Gmm gmm : gmmWeightMap.keySet()) {
-					double gmmWeight = gmmWeightMap.get(gmm);
-					curveMapBuild.get(gmm).add(copyOf(curveMapIn.get(gmm))
-						.multiply(gmmWeight)
-						.multiply(sourceSet.weight()));
-				}
-			}
-			return this;
-		}
+    Builder addCurves(HazardCurves curvesIn) {
+      checkNotNull(hazardGroundMotionsList, "%s only supports ClusterCurves", ID);
+      hazardGroundMotionsList.add(curvesIn.groundMotions);
+      double distance = curvesIn.groundMotions.inputs.minDistance;
+      Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
+      // loop Imts based on what's been calculated
+      for (Imt imt : curvesIn.curveMap.keySet()) {
+        Map<Gmm, XySequence> curveMapIn = curvesIn.curveMap.get(imt);
+        Map<Gmm, XySequence> curveMapBuild = curveMap.get(imt);
+        // loop Gmms based on what's supported at this distance
+        for (Gmm gmm : gmmWeightMap.keySet()) {
+          double gmmWeight = gmmWeightMap.get(gmm);
+          curveMapBuild.get(gmm).add(copyOf(curveMapIn.get(gmm))
+            .multiply(gmmWeight)
+            .multiply(sourceSet.weight()));
+        }
+      }
+      return this;
+    }
 
-		Builder addCurves(ClusterCurves curvesIn) {
-			checkNotNull(clusterGroundMotionsList, "%s only supports HazardCurves", ID);
-			clusterGroundMotionsList.add(curvesIn.clusterGroundMotions);
-			double clusterWeight = curvesIn.clusterGroundMotions.parent.weight();
-			double distance = curvesIn.clusterGroundMotions.minDistance;
-			Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
-			// loop Imts based on what's coming in
-			for (Imt imt : curvesIn.curveMap.keySet()) {
-				Map<Gmm, XySequence> curveMapIn = curvesIn.curveMap.get(imt);
-				Map<Gmm, XySequence> curveMapBuild = curveMap.get(imt);
-				// loop Gmms based on what's supported at this distance
-				for (Gmm gmm : gmmWeightMap.keySet()) {
-					double weight = gmmWeightMap.get(gmm) * clusterWeight;
-					curveMapBuild.get(gmm).add(copyOf(curveMapIn.get(gmm))
-						.multiply(weight)
-						.multiply(sourceSet.weight()));
-				}
-			}
-			return this;
-		}
+    Builder addCurves(ClusterCurves curvesIn) {
+      checkNotNull(clusterGroundMotionsList, "%s only supports HazardCurves", ID);
+      clusterGroundMotionsList.add(curvesIn.clusterGroundMotions);
+      double clusterWeight = curvesIn.clusterGroundMotions.parent.weight();
+      double distance = curvesIn.clusterGroundMotions.minDistance;
+      Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
+      // loop Imts based on what's coming in
+      for (Imt imt : curvesIn.curveMap.keySet()) {
+        Map<Gmm, XySequence> curveMapIn = curvesIn.curveMap.get(imt);
+        Map<Gmm, XySequence> curveMapBuild = curveMap.get(imt);
+        // loop Gmms based on what's supported at this distance
+        for (Gmm gmm : gmmWeightMap.keySet()) {
+          double weight = gmmWeightMap.get(gmm) * clusterWeight;
+          curveMapBuild.get(gmm).add(copyOf(curveMapIn.get(gmm))
+            .multiply(weight)
+            .multiply(sourceSet.weight()));
+        }
+      }
+      return this;
+    }
 
-		HazardCurveSet build() {
-			checkState(!built, "This %s instance has already been used", ID);
-			built = true;
-			computeFinal();
-			return new HazardCurveSet(
-				sourceSet,
-				hazardGroundMotionsList,
-				clusterGroundMotionsList,
-				curveMap,
-				totalCurves);
-		}
+    HazardCurveSet build() {
+      checkState(!built, "This %s instance has already been used", ID);
+      built = true;
+      computeFinal();
+      return new HazardCurveSet(
+        sourceSet,
+        hazardGroundMotionsList,
+        clusterGroundMotionsList,
+        curveMap,
+        totalCurves);
+    }
 
-		/*
-		 * Create the final wieghted (Gmm) combined curve. The Gmm curves were
-		 * scaled by their weights while building (above).
-		 */
-		private void computeFinal() {
-			for (Entry<Imt, Map<Gmm, XySequence>> entry : curveMap.entrySet()) {
-				Imt imt = entry.getKey();
-				XySequence totalCurve = emptyCopyOf(modelCurves.get(imt));
-				for (XySequence curve : entry.getValue().values()) {
-					totalCurve.add(curve);
-				}
-				totalCurves.put(imt, immutableCopyOf(totalCurve));
-			}
-		}
-	}
+    /*
+     * Create the final wieghted (Gmm) combined curve. The Gmm curves were
+     * scaled by their weights while building (above).
+     */
+    private void computeFinal() {
+      for (Entry<Imt, Map<Gmm, XySequence>> entry : curveMap.entrySet()) {
+        Imt imt = entry.getKey();
+        XySequence totalCurve = emptyCopyOf(modelCurves.get(imt));
+        for (XySequence curve : entry.getValue().values()) {
+          totalCurve.add(curve);
+        }
+        totalCurves.put(imt, immutableCopyOf(totalCurve));
+      }
+    }
+  }
 
 }

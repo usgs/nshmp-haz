@@ -12,25 +12,24 @@ import org.opensha2.gmm.GroundMotionModel;
  * @see GmmInput
  */
 public final class HazardInput extends GmmInput {
-// TODO package rpivatize
-	
-	final double rate;
+  // TODO package rpivatize
 
-	public HazardInput(
-			double rate, 
-			double Mw, double rJB, double rRup, double rX,
-			double dip, double width, double zTop, double zHyp, double rake,
-			double vs30, boolean vsInf, double z1p0, double z2p5) {
+  final double rate;
 
-		super(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf, z1p0, z2p5);
-		this.rate = rate;
-	}
-	
-	
+  public HazardInput(
+      double rate,
+      double Mw, double rJB, double rRup, double rX,
+      double dip, double width, double zTop, double zHyp, double rake,
+      double vs30, boolean vsInf, double z1p0, double z2p5) {
 
-	@Override public String toString() {
-		return getClass().getSimpleName() + " [rate=" + String.format("%.4g", rate) + " " +
-			super.toString() + "]";
-	}
-	
+    super(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, rake, vs30, vsInf, z1p0, z2p5);
+    this.rate = rate;
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " [rate=" + String.format("%.4g", rate) + " " +
+      super.toString() + "]";
+  }
+
 }

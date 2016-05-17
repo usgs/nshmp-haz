@@ -20,69 +20,76 @@ import com.google.common.collect.Lists;
  */
 public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
-	private final List<ClusterSource> sources;
+  private final List<ClusterSource> sources;
 
-	ClusterSourceSet(
-			String name,
-			int id,
-			double weight,
-			List<ClusterSource> sources,
-			GmmSet gmmSet) {
+  ClusterSourceSet(
+      String name,
+      int id,
+      double weight,
+      List<ClusterSource> sources,
+      GmmSet gmmSet) {
 
-		super(name, id, weight, gmmSet);
-		this.sources = sources;
-	}
+    super(name, id, weight, gmmSet);
+    this.sources = sources;
+  }
 
-	@Override public Iterator<ClusterSource> iterator() {
-		return sources.iterator();
-	}
+  @Override
+  public Iterator<ClusterSource> iterator() {
+    return sources.iterator();
+  }
 
-	@Override public int size() {
-		return sources.size();
-	}
+  @Override
+  public int size() {
+    return sources.size();
+  }
 
-	@Override public SourceType type() {
-		return SourceType.CLUSTER;
-	}
+  @Override
+  public SourceType type() {
+    return SourceType.CLUSTER;
+  }
 
-	@Override public Predicate<ClusterSource> distanceFilter(final Location loc,
-			final double distance) {
-		return new Predicate<ClusterSource>() {
+  @Override
+  public Predicate<ClusterSource> distanceFilter(final Location loc,
+      final double distance) {
+    return new Predicate<ClusterSource>() {
 
-			private final Predicate<FaultSource> filter = new FaultSourceSet.DistanceFilter(loc,
-				distance);
+      private final Predicate<FaultSource> filter = new FaultSourceSet.DistanceFilter(loc,
+        distance);
 
-			@Override public boolean apply(ClusterSource cs) {
-				return Iterables.any(cs.faults, filter);
-			}
+      @Override
+      public boolean apply(ClusterSource cs) {
+        return Iterables.any(cs.faults, filter);
+      }
 
-			@Override public String toString() {
-				return "ClusterSourceSet.DistanceFilter [ " + filter.toString() + " ]";
-			}
-		};
-	}
+      @Override
+      public String toString() {
+        return "ClusterSourceSet.DistanceFilter [ " + filter.toString() + " ]";
+      }
+    };
+  }
 
-	/* Single use builder */
-	static class Builder extends AbstractSourceSet.Builder {
+  /* Single use builder */
+  static class Builder extends AbstractSourceSet.Builder {
 
-		private static final String ID = "ClusterSourceSet.Builder";
+    private static final String ID = "ClusterSourceSet.Builder";
 
-		private final List<ClusterSource> sources = Lists.newArrayList();
+    private final List<ClusterSource> sources = Lists.newArrayList();
 
-		Builder source(ClusterSource source) {
-			sources.add(checkNotNull(source, "ClusterSource is null"));
-			return this;
-		}
+    Builder source(ClusterSource source) {
+      sources.add(checkNotNull(source, "ClusterSource is null"));
+      return this;
+    }
 
-		@Override void validateState(String buildId) {
-			super.validateState(buildId);
-			checkState(sources.size() > 0, "%s source list is empty", buildId);
-		}
+    @Override
+    void validateState(String buildId) {
+      super.validateState(buildId);
+      checkState(sources.size() > 0, "%s source list is empty", buildId);
+    }
 
-		ClusterSourceSet buildClusterSet() {
-			validateState(ID);
-			return new ClusterSourceSet(name, id, weight, sources, gmmSet);
-		}
-	}
+    ClusterSourceSet buildClusterSet() {
+      validateState(ID);
+      return new ClusterSourceSet(name, id, weight, sources, gmmSet);
+    }
+  }
 
 }

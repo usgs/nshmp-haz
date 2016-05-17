@@ -50,60 +50,61 @@ import org.xml.sax.helpers.DefaultHandler;
 @SuppressWarnings("incomplete-switch")
 class AreaParser extends DefaultHandler {
 
-	private final Logger log = Logger.getLogger(AreaParser.class.getName());
-	private final SAXParser sax;
-	private boolean used = false;
+  private final Logger log = Logger.getLogger(AreaParser.class.getName());
+  private final SAXParser sax;
+  private boolean used = false;
 
-	private Locator locator;
+  private Locator locator;
 
-	// Default MFD data
-	private boolean parsingDefaultMFDs = false;
-	private MfdHelper.Builder mfdHelperBuilder;
-	private MfdHelper mfdHelper;
+  // Default MFD data
+  private boolean parsingDefaultMFDs = false;
+  private MfdHelper.Builder mfdHelperBuilder;
+  private MfdHelper mfdHelper;
 
-	private GmmSet gmmSet;
+  private GmmSet gmmSet;
 
-	private ModelConfig config;
+  private ModelConfig config;
 
-	private AreaSourceSet sourceSet;
-	private AreaSourceSet.Builder sourceSetBuilder;
-	private AreaSource.Builder sourceBuilder;
+  private AreaSourceSet sourceSet;
+  private AreaSourceSet.Builder sourceSetBuilder;
+  private AreaSource.Builder sourceBuilder;
 
-	// Node locations are the only text content in source files
-	private boolean readingBorder = false;
-	private StringBuilder borderBuilder = null;
+  // Node locations are the only text content in source files
+  private boolean readingBorder = false;
+  private StringBuilder borderBuilder = null;
 
-	// Used to when validating depths in magDepthMap
-	SourceType type = AREA;
+  // Used to when validating depths in magDepthMap
+  SourceType type = AREA;
 
-	private AreaParser(SAXParser sax) {
-		this.sax = checkNotNull(sax);
-	}
+  private AreaParser(SAXParser sax) {
+    this.sax = checkNotNull(sax);
+  }
 
-	static AreaParser create(SAXParser sax) {
-		return new AreaParser(sax);
-	}
+  static AreaParser create(SAXParser sax) {
+    return new AreaParser(sax);
+  }
 
-	AreaSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-			IOException {
-		checkState(!used, "This parser has expired");
-		this.gmmSet = gmmSet;
-		this.config = config;
-		sax.parse(in, this);
-		used = true;
-		return sourceSet;
-	}
+  AreaSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
+      IOException {
+    checkState(!used, "This parser has expired");
+    this.gmmSet = gmmSet;
+    this.config = config;
+    sax.parse(in, this);
+    used = true;
+    return sourceSet;
+  }
 
-	@Override public void startElement(String uri, String localName, String qName, Attributes atts)
-			throws SAXException {
+  @Override
+  public void startElement(String uri, String localName, String qName, Attributes atts)
+      throws SAXException {
 
-		SourceElement e = null;
-		try {
-			e = SourceElement.fromString(qName);
-		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
-		}
-		// @formatter:off
+    SourceElement e = null;
+    try {
+      e = SourceElement.fromString(qName);
+    } catch (IllegalArgumentException iae) {
+      throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
+    }
+    // @formatter:off
 		switch (e) {
 
 			case AREA_SOURCE_SET:
@@ -190,100 +191,103 @@ class AreaParser extends DefaultHandler {
 			
 		}
 		// @formatter:on
-	}
+  }
 
-	@Override public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+  @Override
+  public void endElement(String uri, String localName, String qName)
+      throws SAXException {
 
-		SourceElement e = null;
-		try {
-			e = SourceElement.fromString(qName);
-		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
-		}
+    SourceElement e = null;
+    try {
+      e = SourceElement.fromString(qName);
+    } catch (IllegalArgumentException iae) {
+      throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
+    }
 
-		switch (e) {
+    switch (e) {
 
-			case DEFAULT_MFDS:
-				parsingDefaultMFDs = false;
-				mfdHelper = mfdHelperBuilder.build();
-				break;
+      case DEFAULT_MFDS:
+        parsingDefaultMFDs = false;
+        mfdHelper = mfdHelperBuilder.build();
+        break;
 
-			case BORDER:
-				readingBorder = false;
-				sourceBuilder.border(LocationList.fromString(borderBuilder.toString()));
-				break;
+      case BORDER:
+        readingBorder = false;
+        sourceBuilder.border(LocationList.fromString(borderBuilder.toString()));
+        break;
 
-			case SOURCE:
-				AreaSource source = sourceBuilder.build();
-				sourceSetBuilder.source(source);
-				
-				if (log.isLoggable(FINE)) {
-					log.fine("       Size: " + source.size());
-					log.finer("  Mag count: " + source.depthModel.magMaster.size());
-					log.finer(" Mag master: " + source.depthModel.magMaster);
-					log.finer("  MFD index: " + source.depthModel.magDepthIndices);
-					log.finer("     Depths: " + source.depthModel.magDepthDepths);
-					log.finer("    Weights: " + source.depthModel.magDepthWeights);
-					log.fine("");
-				}
-				break;
+      case SOURCE:
+        AreaSource source = sourceBuilder.build();
+        sourceSetBuilder.source(source);
 
-			case AREA_SOURCE_SET:
-				
-				sourceSet = sourceSetBuilder.build();
-				break;
-		}
-	}
+        if (log.isLoggable(FINE)) {
+          log.fine("       Size: " + source.size());
+          log.finer("  Mag count: " + source.depthModel.magMaster.size());
+          log.finer(" Mag master: " + source.depthModel.magMaster);
+          log.finer("  MFD index: " + source.depthModel.magDepthIndices);
+          log.finer("     Depths: " + source.depthModel.magDepthDepths);
+          log.finer("    Weights: " + source.depthModel.magDepthWeights);
+          log.fine("");
+        }
+        break;
 
-	@Override public void characters(char ch[], int start, int length) throws SAXException {
-		if (readingBorder) borderBuilder.append(ch, start, length);
-	}
+      case AREA_SOURCE_SET:
 
-	@Override public void setDocumentLocator(Locator locator) {
-		this.locator = locator;
-	}
+        sourceSet = sourceSetBuilder.build();
+        break;
+    }
+  }
 
-	/*
-	 * TODO Area sources should support multiple different mfds
-	 * TODO Currently taking only the first entry in defaults
-	 */
-	
-	private IncrementalMfd buildMfd(Attributes atts) {
-		MfdType type = readEnum(TYPE, atts, MfdType.class);
+  @Override
+  public void characters(char ch[], int start, int length) throws SAXException {
+    if (readingBorder) borderBuilder.append(ch, start, length);
+  }
 
-		switch (type) {
-			case GR:
-				MfdHelper.GR_Data grData = mfdHelper.grData(atts).get(0);
-				int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
-				IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
-					nMagGR, grData.b, 1.0);
-				mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
-					grData.weight);
-				return mfdGR;
+  @Override
+  public void setDocumentLocator(Locator locator) {
+    this.locator = locator;
+  }
 
-			case INCR:
-				MfdHelper.IncrData incrData = mfdHelper.incrementalData(atts).get(0);
-				IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
-					Data.multiply(incrData.weight, incrData.rates));
-				return mfdIncr;
+  /*
+   * TODO Area sources should support multiple different mfds TODO Currently
+   * taking only the first entry in defaults
+   */
 
-			case SINGLE:
-				MfdHelper.SingleData singleData = mfdHelper.singleData(atts).get(0);
-				return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
-					singleData.floats);
+  private IncrementalMfd buildMfd(Attributes atts) {
+    MfdType type = readEnum(TYPE, atts, MfdType.class);
 
-			case GR_TAPER:
-				MfdHelper.TaperData taperData = mfdHelper.taperData(atts).get(0);
-				int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
-				IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
-					taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
-					taperData.weight);
-				return mfdTaper;
+    switch (type) {
+      case GR:
+        MfdHelper.GR_Data grData = mfdHelper.grData(atts).get(0);
+        int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
+        IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
+          nMagGR, grData.b, 1.0);
+        mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
+          grData.weight);
+        return mfdGR;
 
-			default:
-				throw new IllegalStateException(type + " not yet implemented");
+      case INCR:
+        MfdHelper.IncrData incrData = mfdHelper.incrementalData(atts).get(0);
+        IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
+          Data.multiply(incrData.weight, incrData.rates));
+        return mfdIncr;
 
-		}
-	}
+      case SINGLE:
+        MfdHelper.SingleData singleData = mfdHelper.singleData(atts).get(0);
+        return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
+          singleData.floats);
+
+      case GR_TAPER:
+        MfdHelper.TaperData taperData = mfdHelper.taperData(atts).get(0);
+        int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
+        IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
+          taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
+          taperData.weight);
+        return mfdTaper;
+
+      default:
+        throw new IllegalStateException(type + " not yet implemented");
+
+    }
+  }
 }

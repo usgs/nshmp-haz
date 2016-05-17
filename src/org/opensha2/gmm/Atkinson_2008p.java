@@ -46,32 +46,33 @@ import com.google.common.collect.Range;
  */
 public final class Atkinson_2008p implements GroundMotionModel {
 
-	static final String NAME = "Atkinson (2008) Prime";
+  static final String NAME = "Atkinson (2008) Prime";
 
-	static final Constraints CONSTRAINTS = Constraints.builder()
-		.set(MAG, Range.closed(4.0, 8.0))
-		.set(RJB, Range.closed(0.0, 1000.0))
-		.set(VS30, Range.closed(760.0, 2000.0))
-		.build();
+  static final Constraints CONSTRAINTS = Constraints.builder()
+    .set(MAG, Range.closed(4.0, 8.0))
+    .set(RJB, Range.closed(0.0, 1000.0))
+    .set(VS30, Range.closed(760.0, 2000.0))
+    .build();
 
-	static final CoefficientContainer COEFFS = new CoefficientContainer("AB08P.csv");
+  static final CoefficientContainer COEFFS = new CoefficientContainer("AB08P.csv");
 
-	private static final double SIGMA = 0.3 * BASE_10_TO_E;
+  private static final double SIGMA = 0.3 * BASE_10_TO_E;
 
-	private final double bcfac;
-	private final Imt imt;
-	private final GroundMotionTable table;
+  private final double bcfac;
+  private final Imt imt;
+  private final GroundMotionTable table;
 
-	Atkinson_2008p(final Imt imt) {
-		this.imt = imt;
-		bcfac = COEFFS.get(imt, "bcfac");
-		table = GroundMotionTables.getAtkinson08(imt);
-	}
+  Atkinson_2008p(final Imt imt) {
+    this.imt = imt;
+    bcfac = COEFFS.get(imt, "bcfac");
+    table = GroundMotionTables.getAtkinson08(imt);
+  }
 
-	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		double r = Math.max(in.rJB, 0.11);
-		double μ = atkinsonTableValue(table, imt, in.Mw, r, in.vs30, bcfac);
-		return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ), SIGMA);
-	}
+  @Override
+  public final ScalarGroundMotion calc(final GmmInput in) {
+    double r = Math.max(in.rJB, 0.11);
+    double μ = atkinsonTableValue(table, imt, in.Mw, r, in.vs30, bcfac);
+    return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ), SIGMA);
+  }
 
 }

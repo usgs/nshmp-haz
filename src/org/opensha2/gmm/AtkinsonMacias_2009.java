@@ -42,66 +42,67 @@ import com.google.common.collect.Range;
  */
 public final class AtkinsonMacias_2009 implements GroundMotionModel {
 
-	static final String NAME = "Atkinson & Macias (2009): Interface";
+  static final String NAME = "Atkinson & Macias (2009): Interface";
 
-	static final Constraints CONSTRAINTS = Constraints.builder()
-		.set(MAG, Range.closed(5.0, 9.5))
-		.set(RRUP, Range.closed(0.0, 1000.0))
-		.set(VS30, Range.closed(150.0, 1500.0))
-		.build();
+  static final Constraints CONSTRAINTS = Constraints.builder()
+    .set(MAG, Range.closed(5.0, 9.5))
+    .set(RRUP, Range.closed(0.0, 1000.0))
+    .set(VS30, Range.closed(150.0, 1500.0))
+    .build();
 
-	static final CoefficientContainer COEFFS = new CoefficientContainer("AM09.csv");
+  static final CoefficientContainer COEFFS = new CoefficientContainer("AM09.csv");
 
-	private static final class Coefficients {
+  private static final class Coefficients {
 
-		final double c0, c1, c2, c3, c4, σ;
+    final double c0, c1, c2, c3, c4, σ;
 
-		Coefficients(Imt imt, CoefficientContainer cc) {
-			Map<String, Double> coeffs = cc.get(imt);
-			c0 = coeffs.get("c0");
-			c1 = coeffs.get("c1");
-			c2 = coeffs.get("c2");
-			c3 = coeffs.get("c3");
-			c4 = coeffs.get("c4");
-			σ = coeffs.get("sig");
-		}
-	}
+    Coefficients(Imt imt, CoefficientContainer cc) {
+      Map<String, Double> coeffs = cc.get(imt);
+      c0 = coeffs.get("c0");
+      c1 = coeffs.get("c1");
+      c2 = coeffs.get("c2");
+      c3 = coeffs.get("c3");
+      c4 = coeffs.get("c4");
+      σ = coeffs.get("sig");
+    }
+  }
 
-	private final Coefficients coeffs;
-	private final Coefficients coeffsPGA;
-	private final BooreAtkinsonSiteAmp siteAmp;
+  private final Coefficients coeffs;
+  private final Coefficients coeffsPGA;
+  private final BooreAtkinsonSiteAmp siteAmp;
 
-	AtkinsonMacias_2009(final Imt imt) {
-		coeffs = new Coefficients(imt, COEFFS);
-		coeffsPGA = new Coefficients(PGA, COEFFS);
-		siteAmp = new BooreAtkinsonSiteAmp(imt);
-	}
+  AtkinsonMacias_2009(final Imt imt) {
+    coeffs = new Coefficients(imt, COEFFS);
+    coeffsPGA = new Coefficients(PGA, COEFFS);
+    siteAmp = new BooreAtkinsonSiteAmp(imt);
+  }
 
-	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		double μ = calcMean(coeffs, coeffsPGA, siteAmp, in);
-		double σ = coeffs.σ * BASE_10_TO_E;
-		return DefaultScalarGroundMotion.create(μ, σ);
-	}
+  @Override
+  public final ScalarGroundMotion calc(final GmmInput in) {
+    double μ = calcMean(coeffs, coeffsPGA, siteAmp, in);
+    double σ = coeffs.σ * BASE_10_TO_E;
+    return DefaultScalarGroundMotion.create(μ, σ);
+  }
 
-	private static final double calcMean(final Coefficients c, final Coefficients cPga,
-			final BooreAtkinsonSiteAmp siteAmp, final GmmInput in) {
+  private static final double calcMean(final Coefficients c, final Coefficients cPga,
+      final BooreAtkinsonSiteAmp siteAmp, final GmmInput in) {
 
-		double μ = calcMean(c, in);
-		if (in.vs30 != 760.0) {
-			double μPgaRock = calcMean(cPga, in);
-			μ += siteAmp.calc(μPgaRock, in.vs30, 760.0);
-		}
-		return μ;
-	}
+    double μ = calcMean(c, in);
+    if (in.vs30 != 760.0) {
+      double μPgaRock = calcMean(cPga, in);
+      μ += siteAmp.calc(μPgaRock, in.vs30, 760.0);
+    }
+    return μ;
+  }
 
-	private static final double calcMean(final Coefficients c, final GmmInput in) {
-		double Mw = in.Mw;
-		double h = (Mw * Mw) - (3.1 * Mw) - 14.55;
-		double dM = Mw - 8.0;
-		double gnd = c.c0 + (c.c3 * dM) + (c.c4 * dM * dM);
-		double r = hypot(in.rRup, h);
-		gnd += c.c1 * log10(r) + c.c2 * r;
-		return gnd * BASE_10_TO_E - LN_G_CM_TO_M;
-	}
+  private static final double calcMean(final Coefficients c, final GmmInput in) {
+    double Mw = in.Mw;
+    double h = (Mw * Mw) - (3.1 * Mw) - 14.55;
+    double dM = Mw - 8.0;
+    double gnd = c.c0 + (c.c3 * dM) + (c.c4 * dM * dM);
+    double r = hypot(in.rRup, h);
+    gnd += c.c1 * log10(r) + c.c2 * r;
+    return gnd * BASE_10_TO_E - LN_G_CM_TO_M;
+  }
 
 }

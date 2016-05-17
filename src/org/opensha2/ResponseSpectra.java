@@ -32,136 +32,136 @@ import com.google.common.collect.Maps;
  */
 public class ResponseSpectra {
 
-	/**
-	 * Compute the median ground motion and its standard deviation for a
-	 * specified {@link GroundMotionModel}, intensity measure type ({@link Imt}
-	 * ), and source and site parameterization ({@link GmmInput}).
-	 * 
-	 * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
-	 * .</p>
-	 * 
-	 * @param model to use
-	 * @param imt intensity measure type (e.g. {@code PGA}, {@code SA1P00})
-	 * @param source and site parameterization
-	 * @return a two-element double[] containing the natural log of the median
-	 *         ground motion and its standard deviation
-	 */
-	public static double[] groundMotion(Gmm model, Imt imt, GmmInput source) {
-		ScalarGroundMotion sgm = model.instance(imt).calc(source);
-		return new double[] { sgm.mean(), sgm.sigma() };
-	}
+  /**
+   * Compute the median ground motion and its standard deviation for a specified
+   * {@link GroundMotionModel}, intensity measure type ({@link Imt} ), and
+   * source and site parameterization ({@link GmmInput}).
+   * 
+   * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
+   * .</p>
+   * 
+   * @param model to use
+   * @param imt intensity measure type (e.g. {@code PGA}, {@code SA1P00})
+   * @param source and site parameterization
+   * @return a two-element double[] containing the natural log of the median
+   *         ground motion and its standard deviation
+   */
+  public static double[] groundMotion(Gmm model, Imt imt, GmmInput source) {
+    ScalarGroundMotion sgm = model.instance(imt).calc(source);
+    return new double[] { sgm.mean(), sgm.sigma() };
+  }
 
-	/**
-	 * Compute a spectrum of ground motions and their standard deviations for a
-	 * specified {@link GroundMotionModel} and source and site parameterization
-	 * ({@link GmmInput}). All spectral periods supported by the model are
-	 * returned.
-	 * 
-	 * <p>This method is intended for use with Matlab, which converts
-	 * {@code Result} to a struct automatically.</p>
-	 * 
-	 * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
-	 * .</p>
-	 * 
-	 * @param model to use
-	 * @param input source and site parameterization
-	 * @return a Result
-	 */
-	public static Result spectrum(Gmm model, GmmInput input) {
-		Set<Imt> imts = model.responseSpectrumIMTs();
-		Result spectrum = new Result(imts.size());
-		int i = 0;
-		for (Imt imt : imts) {
-			ScalarGroundMotion sgm = model.instance(imt).calc(input);
-			spectrum.periods[i] = imt.period();
-			spectrum.means[i] = sgm.mean();
-			spectrum.sigmas[i] = sgm.sigma();
-			i++;
-		}
-		return spectrum;
-	}
+  /**
+   * Compute a spectrum of ground motions and their standard deviations for a
+   * specified {@link GroundMotionModel} and source and site parameterization (
+   * {@link GmmInput}). All spectral periods supported by the model are
+   * returned.
+   * 
+   * <p>This method is intended for use with Matlab, which converts
+   * {@code Result} to a struct automatically.</p>
+   * 
+   * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
+   * .</p>
+   * 
+   * @param model to use
+   * @param input source and site parameterization
+   * @return a Result
+   */
+  public static Result spectrum(Gmm model, GmmInput input) {
+    Set<Imt> imts = model.responseSpectrumIMTs();
+    Result spectrum = new Result(imts.size());
+    int i = 0;
+    for (Imt imt : imts) {
+      ScalarGroundMotion sgm = model.instance(imt).calc(input);
+      spectrum.periods[i] = imt.period();
+      spectrum.means[i] = sgm.mean();
+      spectrum.sigmas[i] = sgm.sigma();
+      i++;
+    }
+    return spectrum;
+  }
 
-	/** The result produced by calling {@link #spectrum(Gmm, GmmInput)}. */
-	public static class Result {
+  /** The result produced by calling {@link #spectrum(Gmm, GmmInput)}. */
+  public static class Result {
 
-		/** Spectral periods. */
-		public final double[] periods;
+    /** Spectral periods. */
+    public final double[] periods;
 
-		/** Ground motion means. */
-		public final double[] means;
+    /** Ground motion means. */
+    public final double[] means;
 
-		/** Ground motion sigmas. */
-		public final double[] sigmas;
+    /** Ground motion sigmas. */
+    public final double[] sigmas;
 
-		Result(int size) {
-			periods = new double[size];
-			means = new double[size];
-			sigmas = new double[size];
-		}
-	}
+    Result(int size) {
+      periods = new double[size];
+      means = new double[size];
+      sigmas = new double[size];
+    }
+  }
 
-	/**
-	 * Compute the spectra of ground motions and their standard deviations for
-	 * multiple models and a source. All common spectral periods supported by
-	 * the model are returned.
-	 * 
-	 * <p>This method is intended for use with Matlab, which converts
-	 * {@code Result} to a strct automatically.</p>
-	 * 
-	 * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
-	 * .</p>
-	 * 
-	 * @param gmms {@code GroundMotionModel}s to use
-	 * @param input source and site parameterization
-	 * @return a {@link MatSpectrum} data container
-	 */
-	public static MultiResult spectra(Set<Gmm> gmms, GmmInput input) {
+  /**
+   * Compute the spectra of ground motions and their standard deviations for
+   * multiple models and a source. All common spectral periods supported by the
+   * model are returned.
+   * 
+   * <p>This method is intended for use with Matlab, which converts
+   * {@code Result} to a strct automatically.</p>
+   * 
+   * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
+   * .</p>
+   * 
+   * @param gmms {@code GroundMotionModel}s to use
+   * @param input source and site parameterization
+   * @return a {@link MatSpectrum} data container
+   */
+  public static MultiResult spectra(Set<Gmm> gmms, GmmInput input) {
 
-		// set up result aggregators
-		Set<Imt> imts = Gmm.responseSpectrumIMTs(gmms);
-		List<Double> periods = ImmutableList.copyOf(Imt.periods(imts));
-		Map<Gmm, List<Double>> meanMap = Maps.newEnumMap(Gmm.class);
-		Map<Gmm, List<Double>> sigmaMap = Maps.newEnumMap(Gmm.class);
+    // set up result aggregators
+    Set<Imt> imts = Gmm.responseSpectrumIMTs(gmms);
+    List<Double> periods = ImmutableList.copyOf(Imt.periods(imts));
+    Map<Gmm, List<Double>> meanMap = Maps.newEnumMap(Gmm.class);
+    Map<Gmm, List<Double>> sigmaMap = Maps.newEnumMap(Gmm.class);
 
-		// compute spectra
-		for (Gmm gmm : gmms) {
-			ImmutableList.Builder<Double> means = ImmutableList.builder();
-			ImmutableList.Builder<Double> sigmas = ImmutableList.builder();
-			for (Imt imt : imts) {
-				ScalarGroundMotion sgm = gmm.instance(imt).calc(input);
-				means.add(sgm.mean());
-				sigmas.add(sgm.sigma());
-			}
-			meanMap.put(gmm, means.build());
-			sigmaMap.put(gmm, sigmas.build());
-		}
+    // compute spectra
+    for (Gmm gmm : gmms) {
+      ImmutableList.Builder<Double> means = ImmutableList.builder();
+      ImmutableList.Builder<Double> sigmas = ImmutableList.builder();
+      for (Imt imt : imts) {
+        ScalarGroundMotion sgm = gmm.instance(imt).calc(input);
+        means.add(sgm.mean());
+        sigmas.add(sgm.sigma());
+      }
+      meanMap.put(gmm, means.build());
+      sigmaMap.put(gmm, sigmas.build());
+    }
 
-		return new MultiResult(periods, Maps.immutableEnumMap(meanMap),
-			Maps.immutableEnumMap(sigmaMap));
-	}
+    return new MultiResult(periods, Maps.immutableEnumMap(meanMap),
+      Maps.immutableEnumMap(sigmaMap));
+  }
 
-	/** The result produced by calling {@link #spectra(Set, GmmInput)}. */
-	public static class MultiResult {
+  /** The result produced by calling {@link #spectra(Set, GmmInput)}. */
+  public static class MultiResult {
 
-		/** Spectral periods. */
-		public final List<Double> periods;
+    /** Spectral periods. */
+    public final List<Double> periods;
 
-		/** Map of ground motion means. */
-		public final Map<Gmm, List<Double>> meanMap;
+    /** Map of ground motion means. */
+    public final Map<Gmm, List<Double>> meanMap;
 
-		/** Map of ground motion sigmas. */
-		public final Map<Gmm, List<Double>> sigmaMap;
+    /** Map of ground motion sigmas. */
+    public final Map<Gmm, List<Double>> sigmaMap;
 
-		// spectra() supplies immutable maps and lists
-		MultiResult(List<Double> periods, Map<Gmm, List<Double>> meanMap,
-			Map<Gmm, List<Double>> sigmaMap) {
-			this.periods = periods;
-			this.meanMap = meanMap;
-			this.sigmaMap = sigmaMap;
-		}
-	}
+    // spectra() supplies immutable maps and lists
+    MultiResult(List<Double> periods, Map<Gmm, List<Double>> meanMap,
+        Map<Gmm, List<Double>> sigmaMap) {
+      this.periods = periods;
+      this.meanMap = meanMap;
+      this.sigmaMap = sigmaMap;
+    }
+  }
 
-	// @formatter:off
+  // @formatter:off
 
 	/**
 	 * Entry point for computing deterministic response spectra from the command
@@ -214,14 +214,14 @@ public class ResponseSpectra {
 
 	// @formatter:on
 
-	private static final String USAGE = "DeterministicSpectra usage:" +
-		LINE_SEPARATOR.value() +
-		LINE_SEPARATOR.value() +
-		"command: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra Gmm mag rJB rRup rX dip width zTop zHyp rake vs30 vsInf z1p0 z2p5" +
-		LINE_SEPARATOR.value() +
-		"example: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra ASK_14 6.5 10.0 10.3 10.0 90.0 14.0 0.5 7.5 0.0 760.0 true NaN NaN" +
-		LINE_SEPARATOR.value() +
-		LINE_SEPARATOR.value() +
-		"  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha2/programs/DeterministicSpectra.html";
+  private static final String USAGE = "DeterministicSpectra usage:" +
+    LINE_SEPARATOR.value() +
+    LINE_SEPARATOR.value() +
+    "command: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra Gmm mag rJB rRup rX dip width zTop zHyp rake vs30 vsInf z1p0 z2p5" +
+    LINE_SEPARATOR.value() +
+    "example: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra ASK_14 6.5 10.0 10.3 10.0 90.0 14.0 0.5 7.5 0.0 760.0 true NaN NaN" +
+    LINE_SEPARATOR.value() +
+    LINE_SEPARATOR.value() +
+    "  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha2/programs/DeterministicSpectra.html";
 
 }

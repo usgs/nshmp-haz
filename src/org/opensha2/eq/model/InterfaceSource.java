@@ -34,46 +34,47 @@ import com.google.common.collect.ImmutableList;
  */
 public class InterfaceSource extends FaultSource {
 
-	final LocationList lowerTrace;
+  final LocationList lowerTrace;
 
-	private InterfaceSource(
-			String name,
-			int id,
-			LocationList upperTrace,
-			LocationList lowerTrace,
-			double dip,
-			double width,
-			GriddedSurface surface,
-			double rake,
-			List<IncrementalMfd> mfds,
-			double spacing,
-			RuptureScaling rupScaling,
-			RuptureFloating rupFloating,
-			boolean rupVariability) {
+  private InterfaceSource(
+      String name,
+      int id,
+      LocationList upperTrace,
+      LocationList lowerTrace,
+      double dip,
+      double width,
+      GriddedSurface surface,
+      double rake,
+      List<IncrementalMfd> mfds,
+      double spacing,
+      RuptureScaling rupScaling,
+      RuptureFloating rupFloating,
+      boolean rupVariability) {
 
-		super(name, id, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling,
-			rupFloating,
-			rupVariability);
+    super(name, id, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling,
+      rupFloating,
+      rupVariability);
 
-		this.lowerTrace = (lowerTrace == null) ? surface.getEvenlyDiscritizedLowerEdge()
-			: lowerTrace;
+    this.lowerTrace = (lowerTrace == null) ? surface.getEvenlyDiscritizedLowerEdge()
+      : lowerTrace;
 
-		// TODO lowerTrace may be null and this is bad bad; lowerTrace
-		// is referenced in InterfaceSourceSet distanceFilter and
-		// we should populate this even if the original source only
-		// specified an upper trace. This highlights another shortcoming
-		// of Container2D and GriddedSurface: why is there no getRow(int)
-		// of getBottomRow() given that there is a getUpperEdge(),
-		// acknowledging that the latter may not be the same as the trace
-		// due to seismogenic depth constraints. For now, we are ignoring
-		// lower trace in distance filter, but given large width of interface
-		// sources TODO clean up Container2D methods
+    // TODO lowerTrace may be null and this is bad bad; lowerTrace
+    // is referenced in InterfaceSourceSet distanceFilter and
+    // we should populate this even if the original source only
+    // specified an upper trace. This highlights another shortcoming
+    // of Container2D and GriddedSurface: why is there no getRow(int)
+    // of getBottomRow() given that there is a getUpperEdge(),
+    // acknowledging that the latter may not be the same as the trace
+    // due to seismogenic depth constraints. For now, we are ignoring
+    // lower trace in distance filter, but given large width of interface
+    // sources TODO clean up Container2D methods
 
-	}
+  }
 
-	@Override public String toString() {
-		// TODO use joiner
-		// @formatter:off
+  @Override
+  public String toString() {
+    // TODO use joiner
+    // @formatter:off
 		return new StringBuilder()
 		.append("==========  Interface Source  ==========")
 		.append(LINE_SEPARATOR.value())
@@ -90,61 +91,63 @@ public class InterfaceSource extends FaultSource {
 		.append("          top: ").append(trace.first().depth())
 		.append(LINE_SEPARATOR.value()).toString();
 		// @formatter:on
-	}
+  }
 
-	/* Single use builder. */
-	static class Builder extends FaultSource.Builder {
+  /* Single use builder. */
+  static class Builder extends FaultSource.Builder {
 
-		private static final String ID = "InterfaceSource.Builder";
+    private static final String ID = "InterfaceSource.Builder";
 
-		// required
-		private LocationList lowerTrace;
+    // required
+    private LocationList lowerTrace;
 
-		@Override Builder depth(double depth) {
-			this.depth = validateInterfaceDepth(depth);
-			return this;
-		}
+    @Override
+    Builder depth(double depth) {
+      this.depth = validateInterfaceDepth(depth);
+      return this;
+    }
 
-		@Override Builder width(double width) {
-			this.width = validateInterfaceWidth(width);
-			return this;
-		}
+    @Override
+    Builder width(double width) {
+      this.width = validateInterfaceWidth(width);
+      return this;
+    }
 
-		Builder lowerTrace(LocationList trace) {
-			checkNotNull(this.trace, "Upper trace must be set first");
-			validateTrace(trace);
-			checkArgument(this.trace.size() == trace.size(),
-				"Upper and lower trace must be the same size");
-			this.lowerTrace = trace;
-			return this;
-		}
+    Builder lowerTrace(LocationList trace) {
+      checkNotNull(this.trace, "Upper trace must be set first");
+      validateTrace(trace);
+      checkArgument(this.trace.size() == trace.size(),
+        "Upper and lower trace must be the same size");
+      this.lowerTrace = trace;
+      return this;
+    }
 
-		InterfaceSource buildSubductionSource() {
+    InterfaceSource buildSubductionSource() {
 
-			/*
-			 * Either upper and lower trace must be set, or upper trace depth,
-			 * dip, and width. If upper and lower are set, depth, dip and width
-			 * (if also set) will ultimately be ignored and computed lazily by
-			 * the subduction surface implementation; otherwise the three fields
-			 * are set to NaN to satisfy parent builder.
-			 */
+      /*
+       * Either upper and lower trace must be set, or upper trace depth, dip,
+       * and width. If upper and lower are set, depth, dip and width (if also
+       * set) will ultimately be ignored and computed lazily by the subduction
+       * surface implementation; otherwise the three fields are set to NaN to
+       * satisfy parent builder.
+       */
 
-			mfds = mfdsBuilder.build();
+      mfds = mfdsBuilder.build();
 
-			GriddedSurface surface = null;
+      GriddedSurface surface = null;
 
-			if (lowerTrace != null) {
+      if (lowerTrace != null) {
 
-				// if going dual-trace route, satisfy parent builder with NaNs
-				this.depth = Double.NaN;
-				this.dip = Double.NaN;
-				this.width = Double.NaN;
-				validateState(ID);
-				surface = new ApproxGriddedSurface(trace, lowerTrace, spacing);
+        // if going dual-trace route, satisfy parent builder with NaNs
+        this.depth = Double.NaN;
+        this.dip = Double.NaN;
+        this.width = Double.NaN;
+        validateState(ID);
+        surface = new ApproxGriddedSurface(trace, lowerTrace, spacing);
 
-			} else {
+      } else {
 
-				// otherwise build a basic fault source @formatter:off
+        // otherwise build a basic fault source @formatter:off
 				validateState(ID);
 				surface = DefaultGriddedSurface.builder()
 					.trace(trace)

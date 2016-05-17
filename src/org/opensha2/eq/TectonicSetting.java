@@ -8,24 +8,24 @@ import org.opensha2.util.Parsing;
  */
 public enum TectonicSetting {
 
-	/** Active shallow crust tectonic setting identifier. */
-	ACTIVE_SHALLOW_CRUST,
-	
-	/** Stable shallow crust tectonic setting identifier. */
-	STABLE_SHALLOW_CRUST,
-	
-	/** Subduction Interface tectonic setting identifier. */
-	SUBDUCTION_INTERFACE,
-	
-	/** Subduction IntraSlab tectonic setting identifier. */
-	SUBDUCTION_INTRASLAB,
-	
-	/** Volcanic tectonic setting identifier. */
-	VOLCANIC;
+  /** Active shallow crust tectonic setting identifier. */
+  ACTIVE_SHALLOW_CRUST,
 
-	@Override
-	public String toString() {
-		return Parsing.enumLabelWithSpaces(this, true);
-	}
-	
+  /** Stable shallow crust tectonic setting identifier. */
+  STABLE_SHALLOW_CRUST,
+
+  /** Subduction Interface tectonic setting identifier. */
+  SUBDUCTION_INTERFACE,
+
+  /** Subduction IntraSlab tectonic setting identifier. */
+  SUBDUCTION_INTRASLAB,
+
+  /** Volcanic tectonic setting identifier. */
+  VOLCANIC;
+
+  @Override
+  public String toString() {
+    return Parsing.enumLabelWithSpaces(this, true);
+  }
+
 }

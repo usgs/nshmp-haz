@@ -42,130 +42,133 @@ import com.google.common.collect.Maps;
 @SuppressWarnings("incomplete-switch")
 class GmmParser extends DefaultHandler {
 
-	static final String FILE_NAME = "gmm.xml";
+  static final String FILE_NAME = "gmm.xml";
 
-	private final Logger log = Logger.getLogger(GmmParser.class.getName());
-	private final SAXParser sax;
-	private boolean used = false;
-	
-	private Locator locator;
+  private final Logger log = Logger.getLogger(GmmParser.class.getName());
+  private final SAXParser sax;
+  private boolean used = false;
 
-	private int mapCount = 0;
-	private GmmSet gmmSet;
-	private GmmSet.Builder setBuilder;
-	private Map<Gmm, Double> gmmWtMap;
+  private Locator locator;
 
-	private GmmParser(SAXParser sax) {
-		this.sax = sax;
-	}
+  private int mapCount = 0;
+  private GmmSet gmmSet;
+  private GmmSet.Builder setBuilder;
+  private Map<Gmm, Double> gmmWtMap;
 
-	static GmmParser create(SAXParser sax) {
-		return new GmmParser(checkNotNull(sax));
-	}
+  private GmmParser(SAXParser sax) {
+    this.sax = sax;
+  }
 
-	GmmSet parse(InputStream in) throws SAXException, IOException {
-		checkState(!used, "This parser has expired");
-		sax.parse(checkNotNull(in), this);
-		used = true;
-		return gmmSet;
-	}
+  static GmmParser create(SAXParser sax) {
+    return new GmmParser(checkNotNull(sax));
+  }
 
-	@Override public void startElement(String uri, String localName, String qName, Attributes atts)
-			throws SAXException {
+  GmmSet parse(InputStream in) throws SAXException, IOException {
+    checkState(!used, "This parser has expired");
+    sax.parse(checkNotNull(in), this);
+    used = true;
+    return gmmSet;
+  }
 
-		GmmElement e = null;
-		try {
-			e = GmmElement.fromString(qName);
-		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
-		}
+  @Override
+  public void startElement(String uri, String localName, String qName, Attributes atts)
+      throws SAXException {
 
-		try {
-			switch (e) {
+    GmmElement e = null;
+    try {
+      e = GmmElement.fromString(qName);
+    } catch (IllegalArgumentException iae) {
+      throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
+    }
 
-				case GROUND_MOTION_MODELS:
-					setBuilder = new GmmSet.Builder();
-					break;
+    try {
+      switch (e) {
 
-				case UNCERTAINTY:
-					double[] uncValues = readDoubleArray(VALUES, atts);
-					double[] uncWeights = readDoubleArray(WEIGHTS, atts);
-					setBuilder.uncertainty(uncValues, uncWeights);
-					log.fine("");
-					log.fine("Uncertainty...");
-					log.fine("     Values: " + Arrays.toString(uncValues));
-					log.fine("    Weights: " + Arrays.toString(uncWeights));
-					break;
-					
-				case MODEL_SET:
-					mapCount++;
-					checkState(mapCount < 3, "Only two ground motion model sets are allowed");
-					gmmWtMap = Maps.newEnumMap(Gmm.class);
-					double rMax = Double.NaN;
-					if (mapCount == 1) {
-						rMax = readDouble(MAX_DISTANCE, atts);
-						setBuilder.primaryMaxDistance(rMax);
-					} else {
-						rMax = readDouble(MAX_DISTANCE, atts);
-						setBuilder.secondaryMaxDistance(rMax);
-					}
-					log.fine("");
-					log.fine("        Set: " + mapCount + " [rMax = " + rMax + "]");
-					break;
+        case GROUND_MOTION_MODELS:
+          setBuilder = new GmmSet.Builder();
+          break;
 
-				case MODEL:
-					Gmm model = readEnum(ID, atts, Gmm.class);
-					double weight = readDouble(WEIGHT, atts);
-					gmmWtMap.put(model, weight);
-					if (log.isLoggable(FINE)) {
-						log.fine(" Model [wt]: " + Strings.padEnd(model.toString(), 44, ' ') +
-							" [" + weight + "]");
-					}
-					break;
+        case UNCERTAINTY:
+          double[] uncValues = readDoubleArray(VALUES, atts);
+          double[] uncWeights = readDoubleArray(WEIGHTS, atts);
+          setBuilder.uncertainty(uncValues, uncWeights);
+          log.fine("");
+          log.fine("Uncertainty...");
+          log.fine("     Values: " + Arrays.toString(uncValues));
+          log.fine("    Weights: " + Arrays.toString(uncWeights));
+          break;
 
-			}
+        case MODEL_SET:
+          mapCount++;
+          checkState(mapCount < 3, "Only two ground motion model sets are allowed");
+          gmmWtMap = Maps.newEnumMap(Gmm.class);
+          double rMax = Double.NaN;
+          if (mapCount == 1) {
+            rMax = readDouble(MAX_DISTANCE, atts);
+            setBuilder.primaryMaxDistance(rMax);
+          } else {
+            rMax = readDouble(MAX_DISTANCE, atts);
+            setBuilder.secondaryMaxDistance(rMax);
+          }
+          log.fine("");
+          log.fine("        Set: " + mapCount + " [rMax = " + rMax + "]");
+          break;
 
-		} catch (Exception ex) {
-			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
-		}
+        case MODEL:
+          Gmm model = readEnum(ID, atts, Gmm.class);
+          double weight = readDouble(WEIGHT, atts);
+          gmmWtMap.put(model, weight);
+          if (log.isLoggable(FINE)) {
+            log.fine(" Model [wt]: " + Strings.padEnd(model.toString(), 44, ' ') +
+              " [" + weight + "]");
+          }
+          break;
 
-	}
+      }
 
-	@Override public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+    } catch (Exception ex) {
+      throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
+    }
 
-		GmmElement e = null;
-		try {
-			e = GmmElement.fromString(qName);
-		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
-		}
+  }
 
-		try {
-			switch (e) {
+  @Override
+  public void endElement(String uri, String localName, String qName)
+      throws SAXException {
 
-				case MODEL_SET:
-					if (mapCount == 1) {
-						setBuilder.primaryModelMap(gmmWtMap);
-					} else {
-						setBuilder.secondaryModelMap(gmmWtMap);
-					}
-					log.fine("");
-					break;
+    GmmElement e = null;
+    try {
+      e = GmmElement.fromString(qName);
+    } catch (IllegalArgumentException iae) {
+      throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
+    }
 
-				case GROUND_MOTION_MODELS:
-					gmmSet = setBuilder.build();
-					break;
+    try {
+      switch (e) {
 
-			}
+        case MODEL_SET:
+          if (mapCount == 1) {
+            setBuilder.primaryModelMap(gmmWtMap);
+          } else {
+            setBuilder.secondaryModelMap(gmmWtMap);
+          }
+          log.fine("");
+          break;
 
-		} catch (Exception ex) {
-			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
-		}
-	}
+        case GROUND_MOTION_MODELS:
+          gmmSet = setBuilder.build();
+          break;
 
-	@Override public void setDocumentLocator(Locator locator) {
-		this.locator = locator;
-	}
+      }
+
+    } catch (Exception ex) {
+      throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
+    }
+  }
+
+  @Override
+  public void setDocumentLocator(Locator locator) {
+    this.locator = locator;
+  }
 
 }

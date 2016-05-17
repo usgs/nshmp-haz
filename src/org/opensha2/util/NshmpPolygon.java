@@ -10,54 +10,54 @@ import org.opensha2.geo.LocationList;
 @SuppressWarnings("javadoc")
 public enum NshmpPolygon {
 
-	CEUS_CLIP(Data.CEUS_CLIP, "Central & Eastern US Map Extents"),
-	WUS_CLIP(Data.WUS_CLIP, "Western US Map Extents"),
+  CEUS_CLIP(Data.CEUS_CLIP, "Central & Eastern US Map Extents"),
+  WUS_CLIP(Data.WUS_CLIP, "Western US Map Extents"),
 
-	CONTERMINOUS_US(Data.CONTERMINOUS, "Conterminous US"),
-	
-	LA_BASIN(Data.WG_07_LA, "Los Angeles Basin – WGCEP 2007"),
-	SF_BAY(Data.WG_02_SF, "San Francisco Bay Area – WGCEP 2002"),
-	
-	WASATCH(Data.WASATCH, "Wasatch Front – WGUEP 2013"),
-	NEW_MADRID(Data.NEW_MADRID, "New Madrid Seismic Zone"),
-	PUGET(Data.PUGET, "Puget Lowland"),
-	
-	UCERF3_NSHM14(Data.UCERF3_NSHM14, "UCERF3 Production – 2014 NSHM"),
-	UCERF3_RELM(Data.UCERF3_RELM, "UCERF3 Development – RELM Testing Region"),
+  CONTERMINOUS_US(Data.CONTERMINOUS, "Conterminous US"),
 
-	CYBERSHAKE(Data.CYBERSHAKE, "Cybershake – Los Angeles Basin");
+  LA_BASIN(Data.WG_07_LA, "Los Angeles Basin – WGCEP 2007"),
+  SF_BAY(Data.WG_02_SF, "San Francisco Bay Area – WGCEP 2002"),
 
-	private final LocationList coordinates;
-	private final String label;
-	
-	private NshmpPolygon(double[][] coords, String label) {
-		this.coordinates = createPolygon(coords);
-		this.label = label;
-	}
+  WASATCH(Data.WASATCH, "Wasatch Front – WGUEP 2013"),
+  NEW_MADRID(Data.NEW_MADRID, "New Madrid Seismic Zone"),
+  PUGET(Data.PUGET, "Puget Lowland"),
 
-	/**
-	 * Return a list of locations containing the coordinates of this polygon.
-	 */
-	public LocationList coordinates() {
-		return coordinates;
-	}
-	
-	@Override
-	public String toString() {
-		return label;
-	}
+  UCERF3_NSHM14(Data.UCERF3_NSHM14, "UCERF3 Production – 2014 NSHM"),
+  UCERF3_RELM(Data.UCERF3_RELM, "UCERF3 Development – RELM Testing Region"),
 
-	private static LocationList createPolygon(double[][] coords) {
-		LocationList.Builder locs = LocationList.builder();
-		for (double[] coord : coords) {
-			locs.add(coord[1], coord[0]);
-		}
-		return locs.build();
-	}
+  CYBERSHAKE(Data.CYBERSHAKE, "Cybershake – Los Angeles Basin");
 
-	private static class Data {
+  private final LocationList coordinates;
+  private final String label;
 
-		// @formatter:off
+  private NshmpPolygon(double[][] coords, String label) {
+    this.coordinates = createPolygon(coords);
+    this.label = label;
+  }
+
+  /**
+   * Return a list of locations containing the coordinates of this polygon.
+   */
+  public LocationList coordinates() {
+    return coordinates;
+  }
+
+  @Override
+  public String toString() {
+    return label;
+  }
+
+  private static LocationList createPolygon(double[][] coords) {
+    LocationList.Builder locs = LocationList.builder();
+    for (double[] coord : coords) {
+      locs.add(coord[1], coord[0]);
+    }
+    return locs.build();
+  }
+
+  private static class Data {
+
+    // @formatter:off
 
 		private static final double[][] CEUS_CLIP = {
 	        { -115.0, 24.6 },

@@ -37,105 +37,109 @@ import com.google.common.collect.ImmutableMap;
  */
 public class ClusterSource implements Source {
 
-	final double rate; // from the default mfd xml
-	final FaultSourceSet faults;
+  final double rate; // from the default mfd xml
+  final FaultSourceSet faults;
 
-	ClusterSource(double rate, FaultSourceSet faults) {
-		this.rate = rate;
-		this.faults = faults;
-	}
+  ClusterSource(double rate, FaultSourceSet faults) {
+    this.rate = rate;
+    this.faults = faults;
+  }
 
-	/**
-	 * {@code (1 / return period)} of this source in years.
-	 * @return the cluster rate
-	 */
-	public double rate() {
-		return rate;
-	}
+  /**
+   * {@code (1 / return period)} of this source in years.
+   * @return the cluster rate
+   */
+  public double rate() {
+    return rate;
+  }
 
-	/**
-	 * The weight applicable to this {@code ClusterSource}.
-	 */
-	public double weight() {
-		return faults.weight();
-	}
+  /**
+   * The weight applicable to this {@code ClusterSource}.
+   */
+  public double weight() {
+    return faults.weight();
+  }
 
-	/**
-	 * The {@code FaultSourceSet} of all {@code FaultSource}s that participate
-	 * in this cluster.
-	 */
-	public FaultSourceSet faults() {
-		return faults;
-	}
+  /**
+   * The {@code FaultSourceSet} of all {@code FaultSource}s that participate in
+   * this cluster.
+   */
+  public FaultSourceSet faults() {
+    return faults;
+  }
 
-	@Override public int size() {
-		return faults.size();
-	}
+  @Override
+  public int size() {
+    return faults.size();
+  }
 
-	/**
-	 * Overriden to throw an {@code UnsupportedOperationException}. Cluster
-	 * sources are handled differently than other source types.
-	 */
-	@Override public Iterator<Rupture> iterator() {
-		throw new UnsupportedOperationException();
-	}
+  /**
+   * Overriden to throw an {@code UnsupportedOperationException}. Cluster
+   * sources are handled differently than other source types.
+   */
+  @Override
+  public Iterator<Rupture> iterator() {
+    throw new UnsupportedOperationException();
+  }
 
-	@Override public String name() {
-		return faults.name();
-	}
+  @Override
+  public String name() {
+    return faults.name();
+  }
 
-	@Override public String toString() {
-		Map<Object, Object> data = ImmutableMap.builder()
-				.put("name", name())
-				.put("rate", rate())
-				.put("weight", weight())
-				.build();
-		StringBuilder sb = new StringBuilder()
-				.append(getClass().getSimpleName())
-				.append(" ")
-				.append(data)
-				.append(LINE_SEPARATOR.value());
-		for (FaultSource fs : faults) {
-			sb.append("  ")
-			.append(fs.toString())
-			.append(LINE_SEPARATOR.value());
-		}
-		return sb.toString();
-	}
+  @Override
+  public String toString() {
+    Map<Object, Object> data = ImmutableMap.builder()
+      .put("name", name())
+      .put("rate", rate())
+      .put("weight", weight())
+      .build();
+    StringBuilder sb = new StringBuilder()
+      .append(getClass().getSimpleName())
+      .append(" ")
+      .append(data)
+      .append(LINE_SEPARATOR.value());
+    for (FaultSource fs : faults) {
+      sb.append("  ")
+        .append(fs.toString())
+        .append(LINE_SEPARATOR.value());
+    }
+    return sb.toString();
+  }
 
-	/* Single use builder */
-	static class Builder {
+  /* Single use builder */
+  static class Builder {
 
-		static final String ID = "ClusterSource.Builder";
-		boolean built = false;
+    static final String ID = "ClusterSource.Builder";
+    boolean built = false;
 
-		Double rate;
-		FaultSourceSet faults;
+    Double rate;
+    FaultSourceSet faults;
 
-		Builder rate(double rate) {
-			// TODO what sort of value checking should be done for rate (<1 ??)
-			this.rate = rate;
-			return this;
-		}
+    Builder rate(double rate) {
+      // TODO what sort of value checking should be done for rate (<1 ??)
+      this.rate = rate;
+      return this;
+    }
 
-		Builder faults(FaultSourceSet faults) {
-			checkState(checkNotNull(faults, "Fault source set is null").size() > 0,
-				"Fault source set is empty");
-			this.faults = faults;
-			return this;
-		}
+    Builder faults(FaultSourceSet faults) {
+      checkState(checkNotNull(faults, "Fault source set is null").size() > 0,
+        "Fault source set is empty");
+      this.faults = faults;
+      return this;
+    }
 
-		void validateState(String source) {
-			checkState(!built, "This %s instance as already been used", source);
-			checkState(rate != null, "%s rate not set", source);
-			checkState(faults != null, "%s has no fault sources", source);
-			built = true;
-		}
+    void validateState(String source) {
+      checkState(!built, "This %s instance as already been used", source);
+      checkState(rate != null, "%s rate not set", source);
+      checkState(faults != null, "%s has no fault sources", source);
+      built = true;
+    }
 
-		ClusterSource buildClusterSource() {
-			validateState(ID);
-			return new ClusterSource(rate, faults);
-		}
-	}
+    ClusterSource buildClusterSource() {
+      validateState(ID);
+      return new ClusterSource(rate, faults);
+    }
+  }
 
 }

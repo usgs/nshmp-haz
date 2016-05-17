@@ -18,15 +18,15 @@ package org.opensha2.geo;
  */
 public enum BorderType {
 
-	/**
-	 * Defines a {@link Region} border as following a straight line in a
-	 * Mercator projection
-	 */
-	MERCATOR_LINEAR,
+  /**
+   * Defines a {@link Region} border as following a straight line in a Mercator
+   * projection
+   */
+  MERCATOR_LINEAR,
 
-	/**
-	 * Defines a {@link Region} border as following a great circle.
-	 */
-	GREAT_CIRCLE;
+  /**
+   * Defines a {@link Region} border as following a great circle.
+   */
+  GREAT_CIRCLE;
 
 }
