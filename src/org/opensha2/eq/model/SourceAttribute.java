@@ -9,8 +9,7 @@ import com.google.common.base.CaseFormat;
  * HazardModel source XML attributes.
  * @author Peter Powers
  */
-@SuppressWarnings("javadoc")
-public enum SourceAttribute {
+enum SourceAttribute {
 	NAME,
 	ID,
 	WEIGHT,

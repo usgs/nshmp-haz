@@ -31,22 +31,22 @@ import java.util.NoSuchElementException;
 class Container2DImpl<T> implements Container2D<T> {
 
 	/** Array of data elements - 2D flattened into 1D Array */
-	protected Object[] data;
+	private Object[] data;
 
 	/** The number of rows in this two dimensional matrix. */
-	protected int numRows = 0;
+	private int numRows = 0;
 
 	/** The number of columns in this two dimensional matrix. */
-	protected int numCols = 0;
+	private int numCols = 0;
 
 	/** The number of rows times the number of columns. */
-	protected long size = 0L;
+	private long size = 0L;
 
 	/**
 	 * Name assigned to an instance of this container. Can be used
 	 * to display in a GUI, or used as a key in a Java Hashtable.
 	 */
-	protected String name;
+	private String name;
 
 	/**
 	 *  No Argument Constructor for the Container2D object. Set's
@@ -756,7 +756,7 @@ class Container2DImpl<T> implements Container2D<T> {
 	}
 
 
-	final protected static char TAB = '\t';
+	private final static char TAB = '\t';
 
 	/** Prints out each location and fault information for debugging */
 	public String toString(){

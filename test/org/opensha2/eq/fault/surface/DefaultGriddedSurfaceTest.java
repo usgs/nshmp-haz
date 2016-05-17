@@ -17,8 +17,8 @@ public class DefaultGriddedSurfaceTest {
 		assertEquals(surface.dipSpacing, 1.0, 0.0);
 		assertEquals(surface.strikeSpacing, 0.9884, 0.000001);
 		
-		assertEquals(surface.numRows, 16);
-		assertEquals(surface.numCols, 46);
+		assertEquals(surface.getNumRows(), 16);
+		assertEquals(surface.getNumCols(), 46);
 		
 	}
 	

@@ -9,8 +9,7 @@ import com.google.common.base.CaseFormat;
  * HazardModel source XML elements.
  * @author Peter Powers
  */
-@SuppressWarnings("javadoc")
-public enum SourceElement {
+enum SourceElement {
 
 	SOURCE,
 	SETTINGS,

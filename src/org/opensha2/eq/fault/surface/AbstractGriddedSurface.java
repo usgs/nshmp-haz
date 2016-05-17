@@ -1,14 +1,11 @@
 package org.opensha2.eq.fault.surface;
 
 import java.util.List;
-import java.util.ListIterator;
 
 import org.opensha2.eq.model.Distance;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
-import org.opensha2.geo.Region;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**

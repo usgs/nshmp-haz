@@ -47,8 +47,8 @@ public class RuptureFloatingTest {
 		System.out.println(surface);
 		System.out.println(surface.dipSpacing);
 		System.out.println(surface.strikeSpacing);
-		System.out.println(surface.numRows);
-		System.out.println(surface.numCols);
+		System.out.println(surface.getNumRows());
+		System.out.println(surface.getNumCols());
 
 	}
 }
