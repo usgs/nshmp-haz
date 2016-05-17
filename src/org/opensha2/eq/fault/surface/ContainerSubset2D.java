@@ -41,7 +41,7 @@ import java.util.NoSuchElementException;
  * @version    1.0
  */
 
-public class ContainerSubset2D<T> implements Container2D<T> {
+class ContainerSubset2D<T> implements Container2D<T> {
 
 	/** Class name used for debbuging */
 	protected final static String C = "ContainerSubset2D";

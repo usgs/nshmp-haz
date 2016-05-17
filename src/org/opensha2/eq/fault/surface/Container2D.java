@@ -24,7 +24,7 @@ import org.opensha2.util.Named;
  *
  * @author     Steven W. Rock
  */
-
+@Deprecated
 public interface Container2D<T> extends Named, Iterable<T> {
 
     /**

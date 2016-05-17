@@ -31,7 +31,8 @@ public enum RuptureFloating {
 
 	/** Do not float. */
 	OFF {
-		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
+		@Override
+		public List<Rupture> createFloatingRuptures(GriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 			List<Rupture> floaters = new ArrayList<>();
 			floaters.add(Rupture.create(mag, rate, rake, surface));
@@ -41,7 +42,8 @@ public enum RuptureFloating {
 
 	/** Float both down-dip and along-strike. */
 	ON {
-		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
+		@Override
+		public List<Rupture> createFloatingRuptures(GriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 
 			double maxWidth = surface.width();
@@ -70,7 +72,8 @@ public enum RuptureFloating {
 	 * model currently ignores any rupture area {@code sigma}.
 	 */
 	STRIKE_ONLY {
-		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
+		@Override
+		public List<Rupture> createFloatingRuptures(GriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 			double maxWidth = surface.width();
 			Dimensions d = scaling.dimensions(mag, maxWidth);
@@ -86,7 +89,8 @@ public enum RuptureFloating {
 	 * area {@code sigma}.
 	 */
 	NSHM {
-		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
+		@Override
+		public List<Rupture> createFloatingRuptures(GriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 			List<GriddedSurface> surfaces = floatListNshm(surface, scaling, mag);
 			return createFloaters(surfaces, mag, rate, rake);
@@ -102,7 +106,8 @@ public enum RuptureFloating {
 	 * TODO add reference/link to PEER documentation and test cases in repo
 	 */
 	TRIANGULAR {
-		@Override public List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
+		@Override
+		public List<Rupture> createFloatingRuptures(GriddedSurface surface,
 				RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty) {
 
 			double maxWidth = surface.width();
@@ -112,8 +117,8 @@ public enum RuptureFloating {
 			return createFloaters(surfaces, mag, rate, rake);
 		}
 	};
-	
-	/* 
+
+	/*
 	 * TODO note that the triangular PEER test case 2-4b has 1 more rupture than
 	 * the regular floater; why is this? (this was observed by setting surface
 	 * spacing to 1km and outputting Transforms.sourceToInput
@@ -146,10 +151,10 @@ public enum RuptureFloating {
 	 *        dimensions
 	 * @param mag the magnitude of interest
 	 */
-	public abstract List<Rupture> createFloatingRuptures(AbstractGriddedSurface surface,
+	public abstract List<Rupture> createFloatingRuptures(GriddedSurface surface,
 			RuptureScaling scaling, double mag, double rate, double rake, boolean uncertainty);
 
-	private static List<GriddedSurface> floatListNshm(AbstractGriddedSurface parent,
+	private static List<GriddedSurface> floatListNshm(GriddedSurface parent,
 			RuptureScaling scaling, double mag) {
 
 		// zTop > 1, no down-dip variants
@@ -159,9 +164,7 @@ public enum RuptureFloating {
 		// else [zTop, +2, +4, +6]
 
 		double zTop = parent.depth();
-		int downDipCount = (zTop > 1.0 || mag > 7.0) ? 1 :
-			(mag > 6.75) ? 2 :
-				(mag > 6.5) ? 3 : 4;
+		int downDipCount = (zTop > 1.0 || mag > 7.0) ? 1 : (mag > 6.75) ? 2 : (mag > 6.5) ? 3 : 4;
 		List<Double> zTopWidths = new ArrayList<>();
 
 		for (int i = 0; i < downDipCount; i++) {
@@ -177,11 +180,11 @@ public enum RuptureFloating {
 			Dimensions d = scaling.dimensions(mag, parent.width() - zTopWidth);
 
 			// row start and
-			int startRow = (int) Math.rint(zTopWidth / parent.dipSpacing);
-			int floaterRowSize = (int) Math.rint(d.width / parent.dipSpacing + 1);
+			int startRow = (int) Math.rint(zTopWidth / parent.getGridSpacingDownDip());
+			int floaterRowSize = (int) Math.rint(d.width / parent.getGridSpacingDownDip() + 1);
 
 			// along-strike size & count
-			int floaterColSize = (int) Math.rint(d.length / parent.strikeSpacing + 1);
+			int floaterColSize = (int) Math.rint(d.length / parent.getGridSpacingAlongStrike() + 1);
 			int alongCount = parent.getNumCols() - floaterColSize + 1;
 			if (alongCount <= 1) {
 				alongCount = 1;
@@ -198,13 +201,13 @@ public enum RuptureFloating {
 	}
 
 	/* Create a List of floating surfaces. */
-	private static List<GriddedSurface> createFloatingSurfaces(AbstractGriddedSurface parent,
+	private static List<GriddedSurface> createFloatingSurfaces(GriddedSurface parent,
 			double floatLength, double floatWidth) {
 
 		List<GriddedSurface> floaterList = new ArrayList<>();
 
 		// along-strike size & count
-		int floaterColSize = (int) Math.rint(floatLength / parent.strikeSpacing + 1);
+		int floaterColSize = (int) Math.rint(floatLength / parent.getGridSpacingAlongStrike() + 1);
 		int alongCount = parent.getNumCols() - floaterColSize + 1;
 		if (alongCount <= 1) {
 			alongCount = 1;
@@ -212,7 +215,7 @@ public enum RuptureFloating {
 		}
 
 		// down-dip size & count
-		int floaterRowSize = (int) Math.rint(floatWidth / parent.dipSpacing + 1);
+		int floaterRowSize = (int) Math.rint(floatWidth / parent.getGridSpacingDownDip() + 1);
 		int downCount = parent.getNumRows() - floaterRowSize + 1;
 		if (downCount <= 1) {
 			downCount = 1;
@@ -246,12 +249,12 @@ public enum RuptureFloating {
 	 * crust.
 	 */
 	private static Map<GriddedSurface, Double> createWeightedFloatingSurfaces(
-			AbstractGriddedSurface parent, double floatLength, double floatWidth) {
+			GriddedSurface parent, double floatLength, double floatWidth) {
 
 		Map<GriddedSurface, Double> floaterMap = new HashMap<>();
 
 		// along-strike size & count
-		int floaterColSize = (int) Math.rint(floatLength / parent.strikeSpacing + 1);
+		int floaterColSize = (int) Math.rint(floatLength / parent.getGridSpacingAlongStrike() + 1);
 		int alongCount = parent.getNumCols() - floaterColSize + 1;
 		if (alongCount <= 1) {
 			alongCount = 1;
@@ -259,7 +262,7 @@ public enum RuptureFloating {
 		}
 
 		// down-dip size & count
-		int floaterRowSize = (int) Math.rint(floatWidth / parent.dipSpacing + 1);
+		int floaterRowSize = (int) Math.rint(floatWidth / parent.getGridSpacingDownDip() + 1);
 		int downCount = parent.getNumRows() - floaterRowSize + 1;
 		if (downCount <= 1) {
 			downCount = 1;
@@ -268,7 +271,7 @@ public enum RuptureFloating {
 
 		// generate depth weight array
 		double[] hypoDepths = new double[downCount];
-		double halfDepth = floaterRowSize * parent.dipSpacing * sin(parent.dipRad()) / 2.0;
+		double halfDepth = floaterRowSize * parent.getGridSpacingDownDip() * sin(parent.dipRad()) / 2.0;
 		for (int startRow = 0; startRow < downCount; startRow++) {
 			hypoDepths[startRow] = parent.get(startRow, 0).depth() + halfDepth;
 		}

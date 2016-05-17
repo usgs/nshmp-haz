@@ -56,16 +56,19 @@ public enum RuptureScaling {
 	 * @see RuptureFloating#NSHM
 	 */
 	NSHM_FAULT_WC94_LENGTH {
-		@Override public Dimensions dimensions(double mag, double maxWidth) {
+		@Override
+		public Dimensions dimensions(double mag, double maxWidth) {
 			double length = lengthWc94(mag);
 			return new Dimensions(length, min(maxWidth, length));
 		}
 
-		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+		@Override
+		public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override public double pointSourceDistance(double mag, double distance) {
+		@Override
+		public double pointSourceDistance(double mag, double distance) {
 			throw new UnsupportedOperationException();
 		}
 	},
@@ -78,16 +81,19 @@ public enum RuptureScaling {
 	 * below M≈6.9 and Ellsworth-B (WGCEP, 2002) above.
 	 */
 	NSHM_FAULT_CA_ELLB_WC94_AREA {
-		@Override public Dimensions dimensions(double mag, double maxWidth) {
+		@Override
+		public Dimensions dimensions(double mag, double maxWidth) {
 			double length = lengthCa08(mag, maxWidth);
 			return new Dimensions(length, min(maxWidth, length));
 		}
 
-		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+		@Override
+		public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override public double pointSourceDistance(double mag, double distance) {
+		@Override
+		public double pointSourceDistance(double mag, double distance) {
 			throw new UnsupportedOperationException();
 		}
 	},
@@ -99,16 +105,19 @@ public enum RuptureScaling {
 	 */
 	NSHM_POINT_WC94_LENGTH {
 		/* Steve Harmsen likened 1.5 to the Golden Ratio, 1.618... */
-		@Override public Dimensions dimensions(double mag, double maxWidth) {
+		@Override
+		public Dimensions dimensions(double mag, double maxWidth) {
 			double length = lengthWc94(mag);
 			return new Dimensions(length, min(maxWidth, length / 1.5));
 		}
 
-		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+		@Override
+		public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override public double pointSourceDistance(double mag, double distance) {
+		@Override
+		public double pointSourceDistance(double mag, double distance) {
 			return correctedRjb(mag, distance, RJB_DAT_WC94LENGTH);
 		}
 	},
@@ -121,55 +130,57 @@ public enum RuptureScaling {
 	 */
 	NSHM_SUB_GEOMAT_LENGTH {
 
-		@Override public Dimensions dimensions(double mag, double maxWidth) {
+		@Override
+		public Dimensions dimensions(double mag, double maxWidth) {
 			return new Dimensions(pow(10.0, (mag - 4.94) / 1.39), maxWidth);
 		}
 
-		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+		@Override
+		public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override public double pointSourceDistance(double mag, double distance) {
+		@Override
+		public double pointSourceDistance(double mag, double distance) {
 			return correctedRjb(mag, distance, RJB_DAT_GEOMATRIX);
 		}
 	},
 
-	// @formatter:off
 	/**
 	 * Peer PSHA test scaling. Maintains aspect ratio of 2.0 up to maximum
-	 * width, then increases length. Conservation of area at the expense
-	 * of aspect ratio. The uncertainty in area for this model is 0.25.
+	 * width, then increases length. Conservation of area at the expense of
+	 * aspect ratio. The uncertainty in area for this model is 0.25.
 	 * 
-	 * <ul>
-	 * 	<li>Log (A) = M – 4</li>
-	 * 	<li>Log (W) = 0.5 * M - 2.15</li>
-	 * 	<li>Log (L) = 0.5 * M - 1.85</li>
-	 * </ul>
+	 * <ul> <li>Log (A) = M – 4</li> <li>Log (W) = 0.5 * M - 2.15</li> <li>Log
+	 * (L) = 0.5 * M - 1.85</li> </ul>
 	 */
 	PEER {
 		private final IncrementalMfd normal2s = Mfds.newGaussianMFD(0.0, 0.25, 21, 1.0, false);
 
-		@Override public Dimensions dimensions(double mag, double maxWidth) {
+		@Override
+		public Dimensions dimensions(double mag, double maxWidth) {
 			double area = pow(10, (mag - 4.0));
 			return dimensionCalc(area, maxWidth);
 		}
 
-		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+		@Override
+		public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
 			double area = pow(10, (mag - 4.0));
 			Map<Dimensions, Double> dimensionsMap = new LinkedHashMap<>();
-			for (int i=0; i<normal2s.getNum(); i++) {
+			for (int i = 0; i < normal2s.getNum(); i++) {
 				double scaledArea = area * pow(10, normal2s.getX(i));
 				dimensionsMap.put(dimensionCalc(scaledArea, maxWidth), normal2s.getY(i));
 			}
 			return dimensionsMap;
 		}
 
-		@Override public double pointSourceDistance(double mag, double distance) {
+		@Override
+		public double pointSourceDistance(double mag, double distance) {
 			return Math.max(0.5, distance);
-			// TODO celan, comment on no correction (or other if changed)
-//			throw new UnsupportedOperationException();
+			// TODO clean, comment on no correction (or other if changed)
+			// throw new UnsupportedOperationException();
 		}
-		
+
 		private Dimensions dimensionCalc(double area, double maxWidth) {
 			double width = min(maxWidth, sqrt(area / 2.0));
 			return new Dimensions(area / width, width);
@@ -184,23 +195,24 @@ public enum RuptureScaling {
 	 * attained and then increasing length as necessary.
 	 */
 	NSHM_SOMERVILLE {
-		@Override public Dimensions dimensions(double mag, double maxWidth) {
+		@Override
+		public Dimensions dimensions(double mag, double maxWidth) {
 			double area = pow(10, mag - 4.366);
 			double width = sqrt(area);
-			return (width < maxWidth) ?
-				new Dimensions(width, width) :
-				new Dimensions(area / maxWidth, maxWidth);
+			return (width < maxWidth) ? new Dimensions(width, width)
+				: new Dimensions(area / maxWidth, maxWidth);
 		}
 
-		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+		@Override
+		public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override public double pointSourceDistance(double mag, double distance) {
+		@Override
+		public double pointSourceDistance(double mag, double distance) {
 			return correctedRjb(mag, distance, RJB_DAT_SOMERVILLE);
 		}
 	},
-	// @formatter:on
 
 	/**
 	 * Placeholder for no rupture scaling model. This may be used when rupture
@@ -210,15 +222,18 @@ public enum RuptureScaling {
 	 * supplied.
 	 */
 	NONE {
-		@Override public Dimensions dimensions(double mag, double maxWidth) {
+		@Override
+		public Dimensions dimensions(double mag, double maxWidth) {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
+		@Override
+		public Map<Dimensions, Double> dimensionsDistribution(double mag, double maxWidth) {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override public double pointSourceDistance(double mag, double distance) {
+		@Override
+		public double pointSourceDistance(double mag, double distance) {
 			return distance;
 		}
 	};
@@ -326,7 +341,8 @@ public enum RuptureScaling {
 			this.width = width;
 		}
 
-		@Override public String toString() {
+		@Override
+		public String toString() {
 			return String.format("RuptureScaling.Dimensions [%.3f (l) x %.3f (w)]", length, width);
 		}
 	}

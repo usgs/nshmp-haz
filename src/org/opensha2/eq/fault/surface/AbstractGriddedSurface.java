@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
  *
  * @author revised by field
  */
-public abstract class AbstractGriddedSurface  extends Container2DImpl<Location> implements GriddedSurface {
+abstract class AbstractGriddedSurface  extends Container2DImpl<Location> implements GriddedSurface {
 
 	double strikeSpacing;
 	double dipSpacing;

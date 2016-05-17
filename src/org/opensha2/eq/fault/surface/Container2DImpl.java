@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
  * @author     Steven W. Rock
  */
 
-public class Container2DImpl<T> implements Container2D<T> {
+class Container2DImpl<T> implements Container2D<T> {
 
 	/** Array of data elements - 2D flattened into 1D Array */
 	protected Object[] data;

@@ -18,7 +18,7 @@ package org.opensha2.eq.fault.surface;
  * @version    1.0
  */
 
-public class Window2D {
+class Window2D {
 
     /** Class name used for debugging. */
     protected final static String C = "ContainerSubset2D";

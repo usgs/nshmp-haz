@@ -1,7 +1,5 @@
 package org.opensha2.eq.fault.surface;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
@@ -12,20 +10,17 @@ import static org.opensha2.eq.fault.Faults.validateTrace;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 
 import org.opensha2.eq.fault.Faults;
-import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationGrid;
 import org.opensha2.geo.LocationList;
 
-import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Range;
-import com.google.common.primitives.Doubles;
 
 /**
  * Add comments here
  *
  * @author Peter Powers
  */
-public class GriddedFaultSurface {
+class GriddedFaultSurface {
 
 	private final LocationGrid grid;
 

@@ -1,14 +1,11 @@
 package org.opensha2.eq.fault.surface;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.opensha2.eq.model.Distance;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.Locations;
-import org.opensha2.geo.Region;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -25,7 +22,7 @@ import com.google.common.collect.Lists;
  *
  * @author Steven W. Rock & revised by Ned Field
  */
-public class GriddedSubsetSurface extends ContainerSubset2D<Location> implements GriddedSurface {
+class GriddedSubsetSurface extends ContainerSubset2D<Location> implements GriddedSurface {
 
 	// for distance measures
 	// Location siteLocForDistCalcs= null; //new

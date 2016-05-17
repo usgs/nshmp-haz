@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableList;
  *
  * @author Peter Powers
  */
-public class Surfaces {
+class Surfaces {
 
 	// TODO this is corny and must be deleted
 
