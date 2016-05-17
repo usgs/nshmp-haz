@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opensha2.HazardCalc;
 import org.opensha2.calc.CalcConfig;
@@ -35,6 +36,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.primitives.Doubles;
 
 @SuppressWarnings("javadoc")
+@Ignore
 public class PeerTest {
 
 	public static final String S1_C1 = "Set1-Case1";

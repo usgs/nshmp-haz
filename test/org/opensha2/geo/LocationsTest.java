@@ -22,6 +22,7 @@ import static org.opensha2.geo.Locations.location;
 import static org.opensha2.geo.Locations.vertDistance;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.junit.BeforeClass;
@@ -29,6 +30,9 @@ import org.junit.Test;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.Locations;
+
+import com.google.common.collect.Lists;
+
 import org.opensha2.geo.LocationVector;
 
 @SuppressWarnings("javadoc")
@@ -543,7 +547,7 @@ public class LocationsTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testBoundsIAE() {
-		LocationList locs = LocationList.create(Location.create(0,0));
+		List<Location> locs = Lists.newArrayList();
 		bounds(locs);
 	}
 	

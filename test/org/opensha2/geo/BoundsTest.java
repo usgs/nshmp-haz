@@ -42,7 +42,8 @@ public class BoundsTest {
 			MIN,
 			Location.create(MIN_LAT, MAX_LON),
 			MAX,
-			Location.create(MAX_LAT, MIN_LON));
+			Location.create(MAX_LAT, MIN_LON),
+			MIN);
 		assertEquals(oList, bList);
 	}
 
