@@ -11,12 +11,10 @@
 	<property name="lib" location="lib" />
 	<property name="classes" location="classes" />
 	<property name="dist" location="dist" />
-	<!-- <property name="docs" location="docs" /> -->
-	<property name="docs" location="../nshmp-haz.gh-pages" />
+	<property name="docs" location="docs" />
 	<property name="javadoc" location="${docs}/javadoc" />
-	
 
-	<property name="instrumented" location="instrumented" />
+
 	<property name="reports" location="${docs}/reports" />
 	<property name="reports.xml" location="${reports}/junit-xml" />
 	<property name="reports.html" location="${reports}/junit-html" />
@@ -34,26 +32,27 @@
 	</path>
 
 	<path id="classpath.test">
+		<path refid="classpath" />
+		<pathelement path="${classes}" />
 		<pathelement location="${lib}/junit-4.12.jar" />
-		<!-- <pathelement location="${lib}/hamcrest-core-1.3.jar" />-->
+		<pathelement location="${lib}/hamcrest-core-1.3.jar" />
 	</path>
 
 	<path id="classpath.cobertura">
+		<path refid="classpath.test" />
 		<pathelement location="${lib}/cobertura-2.1.1.jar" />
-
-		<!--
-		<pathelement location="${lib}/asm-3.0.jar" />
-		<pathelement location="${lib}/asm-tree-3.0.jar" />
-		<pathelement location="${lib}/hamcrest-core-1.3.jar" />
-		<pathelement location="${lib}/jakarta-oro-2.0.8.jar" />
-		<pathelement location="${lib}/log4j-1.2.9.jar" />
-		-->
+		<pathelement location="${lib}/commons-lang3-3.4.jar" />
+		<pathelement location="${lib}/slf4j-api-1.7.21.jar" />
+		<pathelement location="${lib}/slf4j-jdk14-1.7.21.jar" />
+		<pathelement location="${lib}/oro-2.0.8.jar" />
+		<pathelement location="${lib}/asm-5.1.jar" />
+		<pathelement location="${lib}/asm-util-5.1.jar" />
+		<pathelement location="${lib}/asm-tree-5.1.jar" />
+		<pathelement location="${lib}/asm-analysis-5.1.jar" />
+		<pathelement location="${lib}/asm-commons-5.1.jar" />
 	</path>
 
-	
-	<!-- TASK IMPORTS -->
-	<taskdef classpathref="classpath.cobertura" resource="tasks.properties" />
-	
+
 	<!-- TODO consider skipping utility classes and exporters in build -->
 
 	<!-- TARGETS -->
@@ -65,70 +64,11 @@
 		</jar>
 	</target>
 
-
-	<target name="test" depends="compile.test">
-		<mkdir dir="${reports.xml.dir}" />
-		<mkdir dir="${reports.html.dir}" />
-
-		<junit fork="yes" printsummary="yes" haltonfailure="yes" failureProperty="test.failed">
-			<classpath location="${instrumented.dir}" />
-			<classpath refid="classpath-test" />
-			<classpath refid="classpath-cobertura" />
-
-			<formatter type="xml" />
-			<formatter type="plain" usefile="false" />
-
-			<batchtest todir="${reports.xml.dir}">
-				<!-- any class with the name Test in its name -->
-				<fileset dir="${src}" includes="**/*Test.java" />
-			</batchtest>
-		</junit>
-
-		<junitreport todir="${reports.xml.dir}">
-			<fileset dir="${reports.xml.dir}">
-				<include name="TEST-*.xml" />
-			</fileset>
-			<report format="frames" todir="${reports.html.dir}" />
-		</junitreport>
-
-	</target>
-
-	<!-- Compile source and copy resources. -->
-	<target name="compile.source" description="Compile source code">
-
-		<delete dir="${classes}" />
+	<target name="compile">
 		<mkdir dir="${classes}" />
-
-		<antcall target="compile">
-			<param name="file.dir" value="${src}" />
-		</antcall>
-
-		<!-- Copy non-Java resources -->
-		<copy todir="${classes}" includeEmptyDirs="false">
-			<fileset dir="${src}" excludes="**/*.java" />
-			<file name="${lib}/logging.properties" />
-		</copy>
-
-	</target>
-
-	<target name="compile.test" depends="compile.source" description="Compile unit test code">
-
-		<antcall target="compile">
-			<param name="file.dir" value="${test}" />
-		</antcall>
-
-		<!-- Copy any non-Java resources -->
-		<copy todir="${classes}" includeEmptyDirs="false">
-			<fileset dir="${test}" excludes="**/*.java" />
-		</copy>
-
-	</target>
-
-	<!-- Base compiler -->
-	<target name="compile" description="Compile code">
-		<javac srcdir="${file.dir}"
+		<javac srcdir="${param.srcdir}"
 		       destdir="${classes}"
-		       classpathref="classpath"
+		       classpathref="${param.classpath}"
 		       nowarn="true"
 		       fork="true"
 		       source="1.7"
@@ -139,33 +79,121 @@
 		       createMissingPackageInfoClass="false" />
 	</target>
 
-	<target name="instrument" depends="compile" description="Cobertura intrumentation">
-		
+	<target name="compile.source">
+		<delete dir="${classes}" />
+		<antcall target="compile">
+			<param name="param.srcdir" value="${src}" />
+			<param name="param.classpath" value="classpath" />
+		</antcall>
+
+		<!-- Copy non-Java resources -->
+		<copy todir="${classes}" includeEmptyDirs="false">
+			<fileset dir="${src}" excludes="**/*.java" />
+			<file name="${lib}/logging.properties" />
+		</copy>
+
+	</target>
+
+	<target name="compile.test">
+
+		<antcall target="compile">
+			<param name="param.srcdir" value="${test}" />
+			<param name="param.classpath" value="classpath.test" />
+		</antcall>
+
+		<!-- Copy non-Java resources -->
+		<copy todir="${classes}" includeEmptyDirs="false">
+			<fileset dir="${test}" excludes="**/*.java" />
+		</copy>
+
+	</target>
+
+	<target name="init.test">
+		<taskdef classpathref="classpath.cobertura"
+		         resource="tasks.properties" />
+	</target>
+
+	<target name="instrument" depends="compile.source">
+
 		<delete file="cobertura.ser" />
-		<delete dir="${instrumented}" />
 
-		<cobertura-instrument todir="${instrumented}">
-			<!--
-				The following line causes instrument to ignore any
-				source line containing a reference to log4j, for the
-				purposes of coverage reporting.
-			-->
-			<ignore regex="org.apache.log4j.*" />
+		<cobertura-instrument>
+			<!-- Ignore any logging for the purposes of coverage reporting. -->
+			<ignore regex="java.util.logging.*" />
 
-			<fileset dir="${build}">
-				<!--
-					Instrument all the application classes, but
-					don't instrument the test classes.
-				-->
+			<fileset dir="${classes}">
 				<include name="**/*.class" />
-				<exclude name="**/*Test.class" />
-				<exclude name="**/*Test$*.class" />
-				<exclude name="com/isti/quakewatch/server/qw_feeder/*.class" />
-				<exclude name="gov/usgs/earthquake/quakewatch/*.class" />
 			</fileset>
 		</cobertura-instrument>
 	</target>
 
+	<!-- 
+		With JUnit4 and annotated tests, test classes will not
+		necessarily contain the word 'test'. We therefore first
+		build and instrument all sources, and only then compile
+		any test classes.
+	-->
+
+	<target name="test"
+	        depends="init.test, instrument"
+	        description="Run unit tests and document code coverage">
+
+		<echo>${docs}</echo>
+		
+		<delete dir="${reports}" />
+		<mkdir dir="${reports.xml}" />
+		<mkdir dir="${reports.html}" />
+
+		<antcall target="compile.test" />
+
+		<junit fork="yes"
+		       forkmode="once"
+		       printsummary="no"
+		       haltonfailure="yes"
+		       failureProperty="test.failed">
+			<classpath location="${classes}" />
+			<classpath refid="classpath.cobertura" />
+
+			<formatter type="xml" />
+			<formatter type="plain" usefile="false" />
+
+			<batchtest skipNonTests="true" todir="${reports.xml}">
+				<fileset dir="${test}">
+					<include name="**/Ngaw2.java" />
+					<!--<exclude name="**/PeerTests.java" />-->
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${reports.xml}">
+			<fileset dir="${reports.xml}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${reports.html}" />
+		</junitreport>
+
+		<antcall target="coverage" />
+
+		<!-- Rebuild with uninstrumented -->
+		<echo>Removing instrumentation</echo>
+		<antcall target="compile.source" />
+		<antcall target="compile.test" />
+
+	</target>
+
+	<target name="coverage">
+		<mkdir dir="${coverage.xml}" />
+		<mkdir dir="${coverage.html}" />
+
+		<cobertura-report srcdir="${src}"
+		                  destdir="${coverage.xml}"
+		                  format="xml" />
+		<cobertura-report destdir="${coverage.html}">
+			<fileset dir="${src}">
+				<include name="**/*.java" />
+			</fileset>
+		</cobertura-report>
+	</target>
 
 	<target name="javadoc" description="Generate Javadocs">
 
@@ -209,8 +237,6 @@
 	<copy todir="${javadoc}/resources">
 		<fileset dir="etc/resources/docs" includes="*.jpg" />
 	</copy>
-
 </target>
 
 </project>
-

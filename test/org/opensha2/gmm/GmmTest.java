@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
@@ -23,6 +24,7 @@ import com.google.common.io.Resources;
 import com.google.common.primitives.Doubles;
 
 @SuppressWarnings("javadoc")
+@Ignore
 public class GmmTest {
 
 	private static final String DATA_DIR = "data/";

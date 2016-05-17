@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.opensha2.geo.Bounds;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Regions;
@@ -59,8 +60,7 @@ class BinaryCurves {
 		//
 		// read(testFile.toURI().toURL());
 		//
-		
-		
+
 	}
 
 	public static void read(URL url) throws IOException {
@@ -127,6 +127,24 @@ class BinaryCurves {
 	// write(cc, spacing, out, meta);
 	// }
 
+	public static void write(
+			CurveContainer curves,
+			Imt imt,
+			double[] xs,
+			double spacing,
+			String desc,
+			File out) throws IOException {
+
+		Metadata meta = new Metadata();
+		meta.description = desc;
+		meta.timestamp = (new Timestamp(System.currentTimeMillis())).toString();
+		meta.imt = imt;
+		meta.xs = xs;
+
+		Files.createParentDirs(out);
+		write(curves, spacing, out, meta);
+	}
+
 	public static void writeWus(
 			CurveContainer curves,
 			Imt imt,
@@ -141,10 +159,10 @@ class BinaryCurves {
 			Location.create(LAT_MAX, LON_MAX),
 			spacing, spacing,
 			GriddedRegion.ANCHOR_0_0);
-		
+
 		CurveContainer ccWus = CurveContainer.create(regionWus, xs);
 		ccWus.union(curves);
-		
+
 		Metadata meta = new Metadata();
 		meta.description = desc;
 		meta.timestamp = (new Timestamp(System.currentTimeMillis())).toString();
@@ -152,10 +170,99 @@ class BinaryCurves {
 		meta.xs = xs;
 
 		Files.createParentDirs(out);
-		write(ccWus, spacing, out, meta);
+		writeWus(ccWus, spacing, out, meta);
 	}
 
 	private static void write(CurveContainer cc, double outSpacing, File file, Metadata meta)
+			throws IOException {
+		LittleEndianDataOutputStream out =
+			new LittleEndianDataOutputStream(new FileOutputStream(file));
+
+		// write info lines 6 * char(128)
+		int n = 128;
+		Charset charset = Charsets.US_ASCII;
+		byte[] desc = Strings.padEnd(meta.description, n, ' ').getBytes(charset);
+		byte[] ts = Strings.padEnd(meta.timestamp, n, ' ').getBytes(charset);
+		byte[] dummy = Strings.padEnd("", n, ' ').getBytes(charset);
+		out.write(desc);
+		out.write(ts);
+		for (int i = 0; i < 4; i++) {
+			out.write(dummy);
+		}
+
+		double period = (meta.imt == Imt.PGA) ? 0.0 : meta.imt.period();
+		out.writeFloat((float) period);
+		out.writeInt(meta.xs.length);
+
+		for (int i = 0; i < meta.xs.length; i++) {
+			out.writeFloat((float) meta.xs[i]);
+		}
+		// pad end of curve with 0s so that 20 values are present, even though
+		// fewer may be used
+		int pad = 20 - meta.xs.length;
+		for (int i = 0; i < pad; i++) {
+			out.writeFloat(0.0f);
+		}
+
+		Bounds b = cc.region.bounds();
+
+		double dLonMin = Math.rint(b.min().lon());
+		double dLonMax = Math.rint(b.max().lon());
+		double dLatMin = Math.rint(b.min().lat());
+		double dLatMax = Math.rint(b.max().lat());
+
+		// grid info
+		float empty = -1.0f;
+		float lonMin = (float) dLonMin; // 2
+		float lonMax = (float) dLonMax; // 3
+		float spacing = (float) outSpacing; // 4,7
+		float latMin = (float) dLatMin; // 5
+		float latMax = (float) dLatMax; // 6
+		float nodeCt = 64005f; // 3
+		float vs = 760.0f; // 9
+		float sedDepth = 2.0f; // 10
+
+		out.writeFloat(empty);
+		out.writeFloat(lonMin);
+		out.writeFloat(lonMax);
+		out.writeFloat(spacing);
+		out.writeFloat(latMin);
+		out.writeFloat(latMax);
+		out.writeFloat(spacing);
+		out.writeFloat(nodeCt);
+		out.writeFloat(vs);
+		out.writeFloat(sedDepth);
+
+		// may just be testing header
+		if (cc == null) {
+			out.close();
+			return;
+		}
+
+		// write curves
+		int nRows = (int) Math.rint((dLatMax - dLatMin) / outSpacing) + 1;
+		int nCols = (int) Math.rint((dLonMax - dLonMin) / outSpacing) + 1;
+		for (int i = 0; i < nRows; i++) {
+			double lat = dLatMax - outSpacing * i;
+			for (int j = 0; j < nCols; j++) {
+				double lon = dLonMin + outSpacing * j;
+				Location loc = Location.create(lat, lon);
+				List<Double> vals = cc.getValues(loc);
+				// // we compute one too many values for 0.3s; strip first value
+				// to
+				// // bring array in line with 5Hz
+				// if (meta.period == Period.GM0P30) {
+				// vals = vals.subList(1, vals.size());
+				// }
+				for (double val : vals) {
+					out.writeFloat((float) val);
+				}
+			}
+		}
+		out.close();
+	}
+
+	private static void writeWus(CurveContainer cc, double outSpacing, File file, Metadata meta)
 			throws IOException {
 		LittleEndianDataOutputStream out =
 			new LittleEndianDataOutputStream(new FileOutputStream(file));
@@ -250,61 +357,61 @@ class BinaryCurves {
 	// private static final double SPACING = 0.05; // 4,7
 	private static final double LAT_MIN = 24.6; // 5
 	private static final double LAT_MAX = 50.0; // 6
-	
-	
-//	// creates a WUS NSHMP curve container and populates it with the supplied
-//	// curves; really just handles a fix for large PGA values being slightly
-//	// different; SH extended the PGA range from
-//	// ... 1.09 1.52 2.13 to
-//	// ... 1.09 1.52 2.2 3.3
-//	public static CurveContainer createNSHMP(
-//			CurveContainer curves, double spacing, Imt imt) {
-//		
-//		GriddedRegion nshmpRegion = Regions.createRectangularGridded(
-//			"NSHMP Map Region",
-//			Location.create(LAT_MIN, LON_MIN),
-//			Location.create(LAT_MAX, LON_MAX),
-//			spacing, spacing,
-//			GriddedRegion.ANCHOR_0_0);
-//
-//		// if (p != Period.GM0P00) {
-//		CurveContainer nshmpCC = CurveContainer.create(nshmpRegion, imt.getIMLs());
-//		nshmpCC.union(curves);
-//		return nshmpCC;
-//		// }
-//
-//		// // for PGA
-//		// // - create receiver container with 1 more x-value
-//		// // - replace 2.13 with extrapolated 2.2 (idx=18)
-//		// // - set extrapolated 3.3 (idx=19)
-//		//
-//		// CurveContainer pgaCC = CurveContainer.create(
-//		// TestGrid.CA_NSHMP.grid(spacing), Doubles.asList(xPGA));
-//		//
-//		// List<Double> xSrc = Period.GM0P00.getIMLs();
-//		// double[] xs = {xSrc.get(17), xSrc.get(18)};
-//		//
-//		// for (Location loc : shaCC) {
-//		//
-//		// List<Double> ySrc = shaCC.getValues(loc);
-//		// List<Double> yDest = pgaCC.getValues(loc);
-//		// // copy values at indices 0-17
-//		// for (int i=0; i<18; i++) {
-//		// yDest.set(i, ySrc.get(i));
-//		// }
-//		// if (ySrc.get(17) <= 0.0) continue;
-//		// double[] ys = {ySrc.get(17), ySrc.get(18)};
-//		// double interp2p2 = Interpolate.findLogLogY(xs, ys, 2.2);
-//		// double interp3p3 = Interpolate.findLogLogY(xs, ys, 3.3);
-//		// yDest.set(18, interp2p2);
-//		// yDest.set(19, interp3p3);
-//		// }
-//		//
-//		// CurveContainer nshmpCC = CurveContainer.create(nshmpRegion,
-//		// Doubles.asList(xPGA));
-//		// nshmpCC.union(pgaCC);
-//		//
-//		// return nshmpCC;
-//	}
+
+	// // creates a WUS NSHMP curve container and populates it with the supplied
+	// // curves; really just handles a fix for large PGA values being slightly
+	// // different; SH extended the PGA range from
+	// // ... 1.09 1.52 2.13 to
+	// // ... 1.09 1.52 2.2 3.3
+	// public static CurveContainer createNSHMP(
+	// CurveContainer curves, double spacing, Imt imt) {
+	//
+	// GriddedRegion nshmpRegion = Regions.createRectangularGridded(
+	// "NSHMP Map Region",
+	// Location.create(LAT_MIN, LON_MIN),
+	// Location.create(LAT_MAX, LON_MAX),
+	// spacing, spacing,
+	// GriddedRegion.ANCHOR_0_0);
+	//
+	// // if (p != Period.GM0P00) {
+	// CurveContainer nshmpCC = CurveContainer.create(nshmpRegion,
+	// imt.getIMLs());
+	// nshmpCC.union(curves);
+	// return nshmpCC;
+	// // }
+	//
+	// // // for PGA
+	// // // - create receiver container with 1 more x-value
+	// // // - replace 2.13 with extrapolated 2.2 (idx=18)
+	// // // - set extrapolated 3.3 (idx=19)
+	// //
+	// // CurveContainer pgaCC = CurveContainer.create(
+	// // TestGrid.CA_NSHMP.grid(spacing), Doubles.asList(xPGA));
+	// //
+	// // List<Double> xSrc = Period.GM0P00.getIMLs();
+	// // double[] xs = {xSrc.get(17), xSrc.get(18)};
+	// //
+	// // for (Location loc : shaCC) {
+	// //
+	// // List<Double> ySrc = shaCC.getValues(loc);
+	// // List<Double> yDest = pgaCC.getValues(loc);
+	// // // copy values at indices 0-17
+	// // for (int i=0; i<18; i++) {
+	// // yDest.set(i, ySrc.get(i));
+	// // }
+	// // if (ySrc.get(17) <= 0.0) continue;
+	// // double[] ys = {ySrc.get(17), ySrc.get(18)};
+	// // double interp2p2 = Interpolate.findLogLogY(xs, ys, 2.2);
+	// // double interp3p3 = Interpolate.findLogLogY(xs, ys, 3.3);
+	// // yDest.set(18, interp2p2);
+	// // yDest.set(19, interp3p3);
+	// // }
+	// //
+	// // CurveContainer nshmpCC = CurveContainer.create(nshmpRegion,
+	// // Doubles.asList(xPGA));
+	// // nshmpCC.union(pgaCC);
+	// //
+	// // return nshmpCC;
+	// }
 
 }
