@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Nitin Gupta
  * @author Vipin Gupta
  */
-public class GutenbergRichterMfd extends IncrementalMfd {
+class GutenbergRichterMfd extends IncrementalMfd {
 
   public static String NAME = new String("Gutenberg Richter Dist");
 

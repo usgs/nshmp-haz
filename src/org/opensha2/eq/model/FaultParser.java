@@ -35,8 +35,6 @@ import org.opensha2.eq.model.MfdHelper.GR_Data;
 import org.opensha2.eq.model.MfdHelper.IncrData;
 import org.opensha2.eq.model.MfdHelper.SingleData;
 import org.opensha2.geo.LocationList;
-import org.opensha2.mfd.GaussianMfd;
-import org.opensha2.mfd.GutenbergRichterMfd;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
@@ -137,7 +135,7 @@ class FaultParser extends DefaultHandler {
 					}
 					mfdHelperBuilder = MfdHelper.builder();
 					// dummy; usually overwritten
-					mfdHelper = mfdHelperBuilder.build(); 
+					mfdHelper = mfdHelperBuilder.build();
 					break;
 
 				case DEFAULT_MFDS:
@@ -329,7 +327,7 @@ class FaultParser extends DefaultHandler {
 					// not mMax to ensure that Mo is 'spent' on earthquakes
 					// represented by the epi GR distribution with adj. mMax.
 
-					GutenbergRichterMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin,
+					IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin,
 						data.dMag, nMagEpi, data.b, tmr * weightEpi);
 					mfds.add(mfd);
 					log.finer("   MFD type: GR [+epi -alea] " + epiBranch(i));
@@ -340,7 +338,7 @@ class FaultParser extends DefaultHandler {
 				}
 			}
 		} else {
-			GutenbergRichterMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag,
+			IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag,
 				nMag, data.b, tmr * data.weight);
 			mfds.add(mfd);
 			log.finer("   MFD type: GR [-epi -alea]");
@@ -381,7 +379,7 @@ class FaultParser extends DefaultHandler {
 				double mfdWeight = data.weight * unc.epiWeights[i];
 
 				if (unc.hasAleatory) {
-					GaussianMfd mfd = (unc.moBalance)
+					IncrementalMfd mfd = (unc.moBalance)
 						? Mfds.newGaussianMoBalancedMFD(
 							epiMag,
 							unc.aleaSigma,
@@ -412,7 +410,7 @@ class FaultParser extends DefaultHandler {
 			}
 		} else {
 			if (unc.hasAleatory && uncertAllowed) {
-				GaussianMfd mfd = (unc.moBalance)
+				IncrementalMfd mfd = (unc.moBalance)
 					? Mfds.newGaussianMoBalancedMFD(
 						data.m,
 						unc.aleaSigma,

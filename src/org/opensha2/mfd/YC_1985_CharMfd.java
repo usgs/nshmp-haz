@@ -23,7 +23,7 @@ import java.awt.geom.Point2D;
  */
 
 
-public class YC_1985_CharMfd extends IncrementalMfd {
+class YC_1985_CharMfd extends IncrementalMfd {
 
   private String C = new String("YC_1985_CharMfd"); // for showing messages
   public static String NAME = new String("Youngs and Coppersmith Dist");

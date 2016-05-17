@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
-import org.opensha2.eq.Magnitudes;
 
 import com.google.common.base.Converter;
 import com.google.common.primitives.Doubles;

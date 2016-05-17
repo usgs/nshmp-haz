@@ -18,7 +18,7 @@ import java.awt.geom.Point2D;
  * @author Ned Field (Nov, 21, 2002)
  * @author Peter Powers
  */
-public class GaussianMfd extends IncrementalMfd {
+class GaussianMfd extends IncrementalMfd {
 
   public  static String NAME = "Gaussian Dist";
   private double mean= Double.NaN;

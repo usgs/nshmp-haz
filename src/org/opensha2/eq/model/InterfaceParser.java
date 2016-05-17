@@ -29,7 +29,6 @@ import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.MfdHelper.GR_Data;
 import org.opensha2.eq.model.MfdHelper.SingleData;
 import org.opensha2.geo.LocationList;
-import org.opensha2.mfd.GutenbergRichterMfd;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
@@ -41,7 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /*
  * Non-validating subduction source parser. SAX parser 'Attributes' are stateful
- * and cannot be stored. This class is not thread safe. 
+ * and cannot be stored. This class is not thread safe.
  * 
  * @author Peter Powers
  */
@@ -55,7 +54,7 @@ class InterfaceParser extends DefaultHandler {
 	private Locator locator;
 
 	private GmmSet gmmSet;
-	
+
 	private ModelConfig config;
 
 	private InterfaceSourceSet sourceSet;
@@ -67,7 +66,7 @@ class InterfaceParser extends DefaultHandler {
 	// Default MFD data
 	private boolean parsingDefaultMFDs = false;
 	private MfdHelper.Builder mfdHelperBuilder;
-	private MfdHelper mfdHelper; 
+	private MfdHelper mfdHelper;
 
 	// Traces are the only text content in source files
 	private boolean readingTrace = false;
@@ -92,7 +91,8 @@ class InterfaceParser extends DefaultHandler {
 		return sourceSet;
 	}
 
-	@Override public void startElement(String uri, String localName, String qName, Attributes atts)
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes atts)
 			throws SAXException {
 
 		SourceElement e = null;
@@ -192,7 +192,8 @@ class InterfaceParser extends DefaultHandler {
 		}
 	}
 
-	@Override public void endElement(String uri, String localName, String qName)
+	@Override
+	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 
 		SourceElement e = null;
@@ -236,11 +237,13 @@ class InterfaceParser extends DefaultHandler {
 		}
 	}
 
-	@Override public void characters(char ch[], int start, int length) throws SAXException {
+	@Override
+	public void characters(char ch[], int start, int length) throws SAXException {
 		if (readingTrace) traceBuilder.append(ch, start, length);
 	}
 
-	@Override public void setDocumentLocator(Locator locator) {
+	@Override
+	public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
 	}
 
@@ -257,8 +260,8 @@ class InterfaceParser extends DefaultHandler {
 	}
 
 	/*
-	 * InterfaceSource.Builder creates an ImmutableList; so no need for one
-	 * in methods below.
+	 * InterfaceSource.Builder creates an ImmutableList; so no need for one in
+	 * methods below.
 	 */
 
 	/*
@@ -279,7 +282,7 @@ class InterfaceParser extends DefaultHandler {
 		checkState(nMag > 0, "GR MFD with no mags");
 		double tmr = Mfds.totalMoRate(data.mMin, nMag, data.dMag, data.a, data.b);
 
-		GutenbergRichterMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
+		IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
 			data.b, tmr * data.weight);
 		log.finer("   MFD type: GR");
 		if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
