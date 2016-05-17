@@ -278,13 +278,19 @@ public class GriddedSubsetSurface extends ContainerSubset2D<Location> implements
 	//
 
 	@Override public double depth() {
-		if (this.data instanceof GriddedSurfFromSimpleFaultData) {// all depths
-																	// are the
-																	// same on
-																	// the top
-																	// row
-			return getLocation(0, 0).depth();
-		}
+		
+		
+		// TODO depth could be computed more efficiently
+		// for traces with uniform dpeths, will we ever know
+		// this to be absolutely true?
+		
+//		if (this.data instanceof GriddedSurfFromSimpleFaultData) {// all depths
+//																	// are the
+//																	// same on
+//																	// the top
+//																	// row
+//			return getLocation(0, 0).depth();
+//		}
 		double depth = 0;
 		LocationList topTrace = getRow(0);
 		for (Location loc : topTrace)
