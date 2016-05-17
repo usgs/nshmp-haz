@@ -12,7 +12,6 @@
 	<property name="classes" location="classes" />
 	<property name="dist" location="dist" />
 	<property name="docs" location="docs" />
-	<!-- <property name="docs" location="../nshmp-haz.gh-pages" /> -->
 	<property name="javadoc" location="${docs}/javadoc" />
 
 
@@ -139,6 +138,8 @@
 	        depends="init.test, instrument"
 	        description="Run unit tests and document code coverage">
 
+		<echo>${docs}</echo>
+		
 		<delete dir="${reports}" />
 		<mkdir dir="${reports.xml}" />
 		<mkdir dir="${reports.html}" />
@@ -173,8 +174,10 @@
 
 		<antcall target="coverage" />
 
-		<!-- TODO Rebuild with uninstrumented -->
-		<!-- <antcall target="compile.source" /> -->
+		<!-- Rebuild with uninstrumented -->
+		<echo>Removing instrumentation</echo>
+		<antcall target="compile.source" />
+		<antcall target="compile.test" />
 
 	</target>
 
