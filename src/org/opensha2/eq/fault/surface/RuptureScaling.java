@@ -12,12 +12,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opensha2.eq.fault.scaling.MagScalingRelationship;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.Mfds;
 import org.opensha2.util.Logging;
@@ -25,7 +23,7 @@ import org.opensha2.util.Parsing;
 
 /**
  * Identifiers for different rupture dimension scaling models. Most are rooted
- * in specific {@link MagScalingRelationship}s, with this class providing more
+ * in specific magnitude scaling relationships, with this class providing more
  * direct access to how such relations are used in practice. All incorporate a
  * fixed rupture aspect ratio. As magnitudes increase, some models will preserve
  * area at the expense of aspect ratio; others may preserve length at the

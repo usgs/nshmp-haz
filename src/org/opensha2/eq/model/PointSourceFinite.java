@@ -2,7 +2,6 @@ package org.opensha2.eq.model;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.cos;
-import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.tan;
@@ -17,10 +16,7 @@ import java.util.Map;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
-import org.opensha2.eq.fault.scaling.MagLengthRelationship;
 import org.opensha2.eq.fault.surface.RuptureScaling;
-import org.opensha2.eq.model.PointSource.PointSurface;
-import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
