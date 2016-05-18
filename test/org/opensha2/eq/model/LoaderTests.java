@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.opensha2.eq.model.Loader;
 
 import com.google.common.io.Resources;
 

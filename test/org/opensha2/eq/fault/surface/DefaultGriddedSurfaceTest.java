@@ -1,6 +1,6 @@
 package org.opensha2.eq.fault.surface;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.opensha2.geo.Location;

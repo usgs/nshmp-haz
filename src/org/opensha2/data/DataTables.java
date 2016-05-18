@@ -3,18 +3,16 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.Data.checkDelta;
-import static org.opensha2.util.TextUtils.NEWLINE;
-
 import static com.google.common.primitives.Doubles.asList;
 import static java.util.Collections.unmodifiableList;
+import static org.opensha2.data.Data.checkDelta;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.opensha2.util.Parsing;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
 
 /**

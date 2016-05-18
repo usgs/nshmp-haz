@@ -1,7 +1,7 @@
 package org.opensha2.mfd;
 
-import org.opensha2.function.EvenlyDiscretizedFunc;
 import org.opensha2.eq.Magnitudes;
+import org.opensha2.function.EvenlyDiscretizedFunc;
 
 /**
  * Base implementation for magnitude-frequency distributions (MFDs) that give

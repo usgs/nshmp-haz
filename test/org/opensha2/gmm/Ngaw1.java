@@ -1,6 +1,8 @@
 package org.opensha2.gmm;
 
-import static org.opensha2.gmm.Gmm.*;
+import static org.opensha2.gmm.Gmm.BA_08;
+import static org.opensha2.gmm.Gmm.CB_08;
+import static org.opensha2.gmm.Gmm.CY_08;
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.SA0P02;
 import static org.opensha2.gmm.Imt.SA0P2;

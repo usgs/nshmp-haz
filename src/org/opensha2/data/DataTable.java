@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.DataTables.checkDataSize;
 import static org.opensha2.data.DataTables.checkDataState;
 import static org.opensha2.data.DataTables.indexOf;
 import static org.opensha2.data.DataTables.keys;

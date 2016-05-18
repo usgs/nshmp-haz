@@ -1,9 +1,9 @@
 package org.opensha2.calc;
 
 import static com.google.common.util.concurrent.Futures.allAsList;
+import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
-import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static org.opensha2.gmm.Gmm.instances;
 
 import java.util.List;

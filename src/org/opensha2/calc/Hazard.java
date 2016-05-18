@@ -6,7 +6,6 @@ import static org.opensha2.data.XySequence.emptyCopyOf;
 import static org.opensha2.eq.model.SourceType.CLUSTER;
 
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
 

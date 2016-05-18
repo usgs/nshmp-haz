@@ -1,15 +1,15 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.allAsList;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.transform;
 import static org.opensha2.calc.CalcFactory.clustersToCurves;
 import static org.opensha2.calc.CalcFactory.sourcesToCurves;
 import static org.opensha2.calc.CalcFactory.systemToCurves;
 import static org.opensha2.calc.CalcFactory.toHazardResult;
-import static com.google.common.util.concurrent.Futures.allAsList;
-import static com.google.common.util.concurrent.Futures.immediateFuture;
-import static com.google.common.util.concurrent.Futures.transform;
-import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
 import static org.opensha2.data.Data.checkInRange;
+import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
 
 import java.util.ArrayList;
 import java.util.List;

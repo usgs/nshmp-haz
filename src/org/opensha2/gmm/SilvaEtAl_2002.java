@@ -1,9 +1,11 @@
 package org.opensha2.gmm;
 
-import static org.opensha2.gmm.GmmInput.Field.*;
 import static java.lang.Math.exp;
-import static org.opensha2.gmm.SiteClass.HARD_ROCK;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RJB;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.MagConverter.NONE;
+import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 
 import java.util.Map;
 

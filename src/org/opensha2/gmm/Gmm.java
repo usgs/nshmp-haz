@@ -10,8 +10,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.opensha2.gmm.CeusMb.AtkinsonBoore_2006_140bar_AB;
+import org.opensha2.gmm.CeusMb.AtkinsonBoore_2006_140bar_J;
+import org.opensha2.gmm.CeusMb.AtkinsonBoore_2006_200bar_AB;
+import org.opensha2.gmm.CeusMb.AtkinsonBoore_2006_200bar_J;
+import org.opensha2.gmm.CeusMb.Campbell_2003_AB;
+import org.opensha2.gmm.CeusMb.Campbell_2003_J;
+import org.opensha2.gmm.CeusMb.FrankelEtAl_1996_AB;
+import org.opensha2.gmm.CeusMb.FrankelEtAl_1996_J;
+import org.opensha2.gmm.CeusMb.SilvaEtAl_2002_AB;
+import org.opensha2.gmm.CeusMb.SilvaEtAl_2002_J;
+import org.opensha2.gmm.CeusMb.TavakoliPezeshk_2005_AB;
+import org.opensha2.gmm.CeusMb.TavakoliPezeshk_2005_J;
 import org.opensha2.gmm.GmmInput.Constraints;
-import org.opensha2.gmm.CeusMb.*;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

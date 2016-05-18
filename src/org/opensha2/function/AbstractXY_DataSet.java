@@ -2,12 +2,8 @@ package org.opensha2.function;
 
 import java.awt.geom.Point2D;
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-
-import com.google.common.collect.Lists;
 
 public abstract class AbstractXY_DataSet implements XY_DataSet {
 

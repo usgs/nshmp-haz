@@ -1,7 +1,5 @@
 package org.opensha2.eq.fault.surface;
 
-import static org.junit.Assert.*;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opensha2.geo.Location;

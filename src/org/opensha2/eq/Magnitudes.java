@@ -1,8 +1,8 @@
 package org.opensha2.eq;
 
-import static org.opensha2.data.Data.checkInRange;
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
+import static org.opensha2.data.Data.checkInRange;
 
 import org.opensha2.data.Data;
 

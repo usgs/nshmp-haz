@@ -1,6 +1,5 @@
 package org.opensha2.eq.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.eq.model.SourceAttribute.A;
 import static org.opensha2.eq.model.SourceAttribute.B;
@@ -26,7 +25,6 @@ import java.util.List;
 import org.opensha2.mfd.MfdType;
 import org.xml.sax.Attributes;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
 

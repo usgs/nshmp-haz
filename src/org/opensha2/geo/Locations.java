@@ -26,7 +26,6 @@ import static org.opensha2.geo.GeoTools.degreesLonPerKm;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
 
 import com.google.common.base.Predicate;
 

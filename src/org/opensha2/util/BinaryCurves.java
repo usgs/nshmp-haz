@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
-import com.google.common.primitives.Doubles;
 
 class BinaryCurves {
 

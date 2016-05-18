@@ -2,13 +2,11 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Strings.padEnd;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.GeoJson.validateProperty;
 import static org.opensha2.util.Parsing.splitToList;
 import static org.opensha2.util.TextUtils.LOG_INDENT;
-import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
 
 import java.io.IOException;
 import java.io.Reader;

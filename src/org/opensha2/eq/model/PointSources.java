@@ -8,7 +8,6 @@ import java.util.NavigableMap;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
-import org.opensha2.data.DataTable;
 import org.opensha2.data.DataTables;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
@@ -16,8 +15,6 @@ import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
-import org.opensha2.mfd.IncrementalMfd;
-import org.opensha2.mfd.Mfds;
 import org.opensha2.util.Parsing;
 
 import com.google.common.collect.ImmutableMap;

@@ -34,7 +34,6 @@ import org.opensha2.eq.model.Rupture;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 
 /**

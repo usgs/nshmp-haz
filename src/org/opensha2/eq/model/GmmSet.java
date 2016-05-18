@@ -6,7 +6,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.data.Data.checkWeightSum;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;

@@ -1,6 +1,5 @@
 package org.opensha2.eq.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
@@ -50,7 +49,6 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Iterables;
-import com.google.common.primitives.Doubles;
 
 /*
  * Non-validating grid source parser. SAX parser 'Attributes' are stateful and

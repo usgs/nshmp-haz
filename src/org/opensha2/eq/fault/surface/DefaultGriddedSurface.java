@@ -5,14 +5,14 @@ import static java.math.RoundingMode.HALF_UP;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
+import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.Faults.validateTrace;
-import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
+import static org.opensha2.geo.GeoTools.TO_DEG;
+import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.geo.LocationVector.createWithPlunge;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
-
-import static org.opensha2.geo.GeoTools.*;
 
 import java.util.Iterator;
 import java.util.List;

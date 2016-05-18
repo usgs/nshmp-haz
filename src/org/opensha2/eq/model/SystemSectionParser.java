@@ -2,8 +2,6 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.eq.model.SourceAttribute.ASEIS;
 import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
@@ -12,6 +10,8 @@ import static org.opensha2.eq.model.SourceAttribute.INDEX;
 import static org.opensha2.eq.model.SourceAttribute.LOWER_DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
 import static org.opensha2.eq.model.SystemParser.SECTIONS_FILENAME;
+import static org.opensha2.util.Parsing.readDouble;
+import static org.opensha2.util.Parsing.readString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +20,8 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
+import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.geo.LocationList;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;

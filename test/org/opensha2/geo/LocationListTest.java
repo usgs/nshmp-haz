@@ -1,21 +1,18 @@
 package org.opensha2.geo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha2.geo.LocationList.RegularLocationList;
-import org.opensha2.util.TextUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

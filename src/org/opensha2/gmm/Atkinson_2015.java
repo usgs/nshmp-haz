@@ -1,7 +1,7 @@
 package org.opensha2.gmm;
 
-import static java.lang.Math.pow;
 import static java.lang.Math.max;
+import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;

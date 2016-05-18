@@ -1,9 +1,11 @@
 package org.opensha2.geo;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.opensha2.geo.BorderType.GREAT_CIRCLE;
+import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.geo.GeoTools.PI_BY_2;
 import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.geo.BorderType.*;
-import static com.google.common.base.Preconditions.*;
 
 import java.awt.Shape;
 import java.awt.geom.Area;

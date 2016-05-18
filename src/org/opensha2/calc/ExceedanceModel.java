@@ -1,10 +1,10 @@
 package org.opensha2.calc;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
-import static java.lang.Math.PI;
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
 import static org.opensha2.gmm.Imt.SA0P75;

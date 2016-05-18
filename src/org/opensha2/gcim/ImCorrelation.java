@@ -1,7 +1,14 @@
 package org.opensha2.gcim;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.lang.Math.*;
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.exp;
+import static java.lang.Math.log;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.sqrt;
+
 import org.opensha2.gmm.Imt;
 
 /**

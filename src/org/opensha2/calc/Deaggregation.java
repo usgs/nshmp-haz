@@ -2,11 +2,11 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.util.TextUtils.NEWLINE;
-import static org.opensha2.util.TextUtils.LOG_INDENT;
-import static org.opensha2.data.Data.multiply;
 import static com.google.common.primitives.Doubles.toArray;
+import static org.opensha2.data.Data.checkInRange;
+import static org.opensha2.data.Data.multiply;
+import static org.opensha2.util.TextUtils.LOG_INDENT;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.opensha2.calc.CalcConfig;
 import org.opensha2.data.Data;
 import org.opensha2.data.DataTable;
 import org.opensha2.data.DataTables;

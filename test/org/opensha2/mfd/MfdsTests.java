@@ -1,6 +1,6 @@
 package org.opensha2.mfd;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.awt.geom.Point2D;
 

@@ -1,11 +1,7 @@
 package org.opensha2;
 
-import static java.lang.Runtime.getRuntime;
-import static java.util.concurrent.Executors.newFixedThreadPool;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;

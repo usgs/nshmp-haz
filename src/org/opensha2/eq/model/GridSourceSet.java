@@ -27,7 +27,6 @@ import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 import org.opensha2.mfd.IncrementalMfd;
-import org.opensha2.mfd.Mfds;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

@@ -1,6 +1,7 @@
 package org.opensha2.gmm;
 
-import static org.opensha2.gmm.Gmm.*;
+import static org.opensha2.gmm.Gmm.AB_06_PRIME;
+import static org.opensha2.gmm.Gmm.TORO_97_MB;
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.SA0P2;
 import static org.opensha2.gmm.Imt.SA1P0;

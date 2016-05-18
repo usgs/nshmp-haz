@@ -11,10 +11,7 @@ import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
-import static org.opensha2.gmm.GmmInput.Field.VSINF;
 import static org.opensha2.gmm.GmmInput.Field.WIDTH;
-import static org.opensha2.gmm.GmmInput.Field.Z1P0;
-import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.gmm.Imt.PGA;
 
 import java.util.Map;

@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Strings.*;
+import static com.google.common.base.Strings.padStart;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
 import java.util.Iterator;
