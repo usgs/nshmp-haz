@@ -2,11 +2,6 @@ package org.opensha2;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmInput;
 import org.opensha2.gmm.GroundMotionModel;
@@ -17,9 +12,14 @@ import org.opensha2.gmm.ScalarGroundMotion;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Entry point for computing deterministic response spectra.
- * 
+ *
  * <p>In addition to a {@code main()} method, several utility methods are
  * provided for different target users. For instance
  * {@link #groundMotion(Gmm, Imt, GmmInput)} and
@@ -27,7 +27,7 @@ import com.google.common.collect.Maps;
  * return simple data container objects that are automatically converted to
  * Matlab structs and arrays. {@link #spectra(Set, GmmInput)} returns a more
  * complex result and is for use with web services.</p>
- * 
+ *
  * @author Peter Powers
  */
 public class ResponseSpectra {
@@ -36,10 +36,10 @@ public class ResponseSpectra {
    * Compute the median ground motion and its standard deviation for a specified
    * {@link GroundMotionModel}, intensity measure type ({@link Imt} ), and
    * source and site parameterization ({@link GmmInput}).
-   * 
+   *
    * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
    * .</p>
-   * 
+   *
    * @param model to use
    * @param imt intensity measure type (e.g. {@code PGA}, {@code SA1P00})
    * @param source and site parameterization
@@ -56,13 +56,13 @@ public class ResponseSpectra {
    * specified {@link GroundMotionModel} and source and site parameterization (
    * {@link GmmInput}). All spectral periods supported by the model are
    * returned.
-   * 
+   *
    * <p>This method is intended for use with Matlab, which converts
    * {@code Result} to a struct automatically.</p>
-   * 
+   *
    * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
    * .</p>
-   * 
+   *
    * @param model to use
    * @param input source and site parameterization
    * @return a Result
@@ -104,13 +104,13 @@ public class ResponseSpectra {
    * Compute the spectra of ground motions and their standard deviations for
    * multiple models and a source. All common spectral periods supported by the
    * model are returned.
-   * 
+   *
    * <p>This method is intended for use with Matlab, which converts
    * {@code Result} to a strct automatically.</p>
-   * 
+   *
    * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
    * .</p>
-   * 
+   *
    * @param gmms {@code GroundMotionModel}s to use
    * @param input source and site parameterization
    * @return a {@link MatSpectrum} data container
@@ -166,12 +166,12 @@ public class ResponseSpectra {
    * line. Quite a few arguments are required to specify the GroundMotionModel
    * to use and parameterize the earthquake source and site of interest. Example
    * usage:
-   * 
+   *
    * <pre>
    * java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra ...
    *   ... ASK_14 6.5 10.0 10.3 10.0 90.0 14.0 0.5 7.5 0.0 760.0 true NaN NaN
    * </pre>
-   * 
+   *
    * @param args
    *        {@code [Gmm  mag rJB  rRup rX dip width zTop zHyp rake vs30 vsInf z1p0 z2p5]}
    */

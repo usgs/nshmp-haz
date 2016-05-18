@@ -2,17 +2,17 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Convenience {@code List} implementation for {@code List}s of
  * {@code ListenableFuture}s of some type {@code <T>}. An {@code AsyncList} does
  * not permit {@code null} elements.
- * 
+ *
  * @author Peter Powers
  */
 final class AsyncList<T> extends AbstractList<ListenableFuture<T>> {

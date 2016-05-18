@@ -1,13 +1,13 @@
 package org.opensha2.mfd;
 
-import org.opensha2.function.EvenlyDiscretizedFunc;
 import org.opensha2.eq.Magnitudes;
+import org.opensha2.function.EvenlyDiscretizedFunc;
 
 /**
  * Base implementation for magnitude-frequency distributions (MFDs) that give
  * the rate of one or more earthquakes with differing magnitudes per year.
- * 
- * 
+ *
+ *
  * @author Nitin Gupta
  * @author Peter Powers
  */
@@ -92,8 +92,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
 
   public double getCumRate(int index) {
     double sum = 0.0;
-    for (int i = index; i < num; ++i)
+    for (int i = index; i < num; ++i) {
       sum += getIncrRate(i);
+    }
     return sum;
   }
 
@@ -121,8 +122,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
 
   public double getTotalMomentRate() {
     double sum = 0.0;
-    for (int i = 0; i < num; ++i)
+    for (int i = 0; i < num; ++i) {
       sum += getMomentRate(i);
+    }
     return sum;
   }
 
@@ -132,8 +134,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    */
   public double getTotalIncrRate() {
     double sum = 0.0;
-    for (int i = 0; i < num; ++i)
+    for (int i = 0; i < num; ++i) {
       sum += getIncrRate(i);
+    }
     return sum;
   }
 
@@ -227,13 +230,19 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
 
   public void scaleToTotalMomentRate(double newTotMoRate) {
     double oldTotMoRate = getTotalMomentRate();
-    if (D) System.out.println("old Mo. Rate = " + oldTotMoRate);
-    if (D) System.out.println("target Mo. Rate = " + newTotMoRate);
+    if (D) {
+      System.out.println("old Mo. Rate = " + oldTotMoRate);
+    }
+    if (D) {
+      System.out.println("target Mo. Rate = " + newTotMoRate);
+    }
     double scaleRate = newTotMoRate / oldTotMoRate;
     for (int i = 0; i < num; ++i) {
       super.set(i, scaleRate * getIncrRate(i));
     }
-    if (D) System.out.println("actual Mo. Rate = " + getTotalMomentRate());
+    if (D) {
+      System.out.println("actual Mo. Rate = " + getTotalMomentRate());
+    }
 
   }
 
@@ -259,8 +268,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
   public void scaleToCumRate(int index, double rate) {
     double temp = getCumRate(index);
     double scaleCumRate = rate / temp;
-    for (int i = 0; i < num; ++i)
+    for (int i = 0; i < num; ++i) {
       super.set(i, scaleCumRate * getIncrRate(i));
+    }
   }
 
   /**
@@ -285,8 +295,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
   public void scaleToIncrRate(int index, double newRate) {
     double temp = getIncrRate(index);
     double scaleIncrRate = newRate / temp;
-    for (int i = 0; i < num; ++i)
+    for (int i = 0; i < num; ++i) {
       super.set(i, scaleIncrRate * getIncrRate(i));
+    }
   }
 
   /**
@@ -315,8 +326,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    */
   @Override
   public String name() {
-    if (name != null && !(name.trim().equals("")))
+    if (name != null && !(name.trim().equals(""))) {
       return super.name();
+    }
     return getDefaultName();
   }
 
@@ -327,9 +339,11 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    * application.
    * @return String
    */
+  @Override
   public String getInfo() {
-    if (info != null && !(info.equals("")))
+    if (info != null && !(info.equals(""))) {
       return super.getInfo();
+    }
     return getDefaultInfo();
   }
 
@@ -354,7 +368,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    */
   public double getMinMagWithNonZeroRate() {
     for (int i = 0; i < num; i++) {
-      if (getY(i) > 0) return getX(i);
+      if (getY(i) > 0) {
+        return getX(i);
+      }
     }
     return Double.NaN;
   }
@@ -364,7 +380,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    */
   public double getMaxMagWithNonZeroRate() {
     for (int i = num - 1; i >= 0; i--) {
-      if (getY(i) > 0) return getX(i);
+      if (getY(i) > 0) {
+        return getX(i);
+      }
     }
     return Double.NaN;
   }
@@ -410,7 +428,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    */
   public void setValuesAboveMomentRateToZero(double moRate) {
     double mag = findMagJustAboveMomentRate(moRate);
-    if (Double.isNaN(mag)) return;
+    if (Double.isNaN(mag)) {
+      return;
+    }
     zeroAboveMag(mag);
   }
 
@@ -429,10 +449,11 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
         break;
       }
     }
-    if (targetIndex == -1)
+    if (targetIndex == -1) {
       return Double.NaN;
-    else
+    } else {
       return getX(targetIndex);
+    }
 
   }
 
@@ -451,7 +472,9 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
 
   public void zeroAboveMag2(double mag) {
     for (int i = 0; i < getNum(); i++) {
-      if (getX(i) > mag) set(i, 0);
+      if (getX(i) > mag) {
+        set(i, 0);
+      }
     }
   }
 

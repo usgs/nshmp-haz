@@ -1,24 +1,23 @@
 package org.opensha2.geo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+
 import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import org.opensha2.geo.LocationList.RegularLocationList;
 
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
-import org.opensha2.geo.LocationList.RegularLocationList;
-import org.opensha2.util.TextUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 @SuppressWarnings("javadoc")
 public class LocationListTest {
@@ -55,9 +54,9 @@ public class LocationListTest {
     g12 = Location.create(2, 1);
     g13 = Location.create(3, 1);
     grid = LocationGrid.builder(2, 4)
-      .fillRow(0, LocationList.builder().add(g00, g01, g02, g03).build())
-      .fillRow(1, LocationList.builder().add(g10, g11, g12, g13).build())
-      .build();
+        .fillRow(0, LocationList.builder().add(g00, g01, g02, g03).build())
+        .fillRow(1, LocationList.builder().add(g10, g11, g12, g13).build())
+        .build();
   }
 
   /* Factory */
@@ -217,9 +216,9 @@ public class LocationListTest {
     String locStr = "-117.0,34.0,0.1 -117.0,34.1,0.2 -117.1,34.0,0.3";
     LocationList locsFromString = LocationList.fromString(locStr);
     LocationList locsActual = LocationList.create(
-      Location.create(34.0, -117.0, 0.1),
-      Location.create(34.1, -117.0, 0.2),
-      Location.create(34.0, -117.1, 0.3));
+        Location.create(34.0, -117.0, 0.1),
+        Location.create(34.1, -117.0, 0.2),
+        Location.create(34.0, -117.1, 0.3));
     assertEquals(locsFromString, locsActual);
   }
 
@@ -258,9 +257,9 @@ public class LocationListTest {
   @Test
   public final void toStringTest() {
     String locStr = new StringBuilder(NEWLINE)
-      .append("0.00000,0.00000,0.00000").append(NEWLINE)
-      .append("1.00000,1.00000,0.00000").append(NEWLINE)
-      .toString();
+        .append("0.00000,0.00000,0.00000").append(NEWLINE)
+        .append("1.00000,1.00000,0.00000").append(NEWLINE)
+        .toString();
     LocationList locs = LocationList.create(pp1, pp2);
     assertEquals(locStr, locs.toString());
   }
@@ -300,9 +299,9 @@ public class LocationListTest {
   @Test
   public final void depth() {
     LocationList locs = LocationList.create(
-      Location.create(0, 0, 0),
-      Location.create(1, 1, 0),
-      Location.create(2, 2, 1));
+        Location.create(0, 0, 0),
+        Location.create(1, 1, 0),
+        Location.create(2, 2, 1));
     assertEquals(0.3333333333333333, locs.depth(), 0.0);
   }
 
@@ -354,7 +353,7 @@ public class LocationListTest {
   @Test(expected = NullPointerException.class)
   public final void builderAdd_NPE3() {
     List<Location> locs = Lists.newArrayList(
-      Location.create(0, 0), null);
+        Location.create(0, 0), null);
     LocationList.builder().addAll(locs);
   }
 

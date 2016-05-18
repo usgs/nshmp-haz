@@ -17,7 +17,7 @@ import com.google.common.base.Stopwatch;
 class SequenceBenchmark {
 
   private static final double[] XS =
-    new double[] { 0.0010, 0.0013, 0.0016, 0.0019, 0.0022, 0.0025, 0.0028, 0.0031 };
+      new double[] { 0.0010, 0.0013, 0.0016, 0.0019, 0.0022, 0.0025, 0.0028, 0.0031 };
   private static final double[] YS = new double[] { 1.0, 0.95, 0.85, 0.65, 0.35, 0.15, 0.05, 0.0 };
   private static final int its = 100000000;
 

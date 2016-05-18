@@ -5,20 +5,21 @@ import static java.lang.Math.cos;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.tan;
+
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.util.MathUtils.hypot;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Point-source earthquake implementation in which all magnitudes are
@@ -30,15 +31,15 @@ import org.opensha2.geo.Locations;
  * the fault dips towards the observer, in its complement the top trace is at
  * the point {@code Location} and the fault dips away from the observer; TODO
  * add illustration or link).
- * 
+ *
  * <p>This is the generalized point earthquake source representation used for
  * the 2014 NSHMP. It was created to provide support for weighted
  * magnitude-depth distributions and improved approximations of hanging wall
  * terms vis-a-vis self-consistent distance calculations.
- * 
+ *
  * <p><b>NOTE</b>: See {@link PointSource} description for notes on thread
  * safety and {@code Rupture} creation and iteration.
- * 
+ *
  * @author Peter Powers
  */
 class PointSourceFinite extends PointSource {
@@ -86,7 +87,9 @@ class PointSourceFinite extends PointSource {
 
     FocalMech mech = mechForIndex(index);
     double mechWt = mechWtMap.get(mech);
-    if (mech != STRIKE_SLIP) mechWt *= 0.5;
+    if (mech != STRIKE_SLIP) {
+      mechWt *= 0.5;
+    }
     double dipRad = mech.dip() * TO_RAD;
 
     double maxWidthDD = (depthModel.maxDepth - zTop) / sin(dipRad);
@@ -188,11 +191,15 @@ class PointSourceFinite extends PointSource {
       rJB = rupScaling.pointSourceDistance(mag, rJB);
       double rX = footwall ? -rJB : rJB + widthH;
 
-      if (footwall) return Distance.create(rJB, hypot(rJB, zTop), rX);
+      if (footwall) {
+        return Distance.create(rJB, hypot(rJB, zTop), rX);
+      }
 
       double rCut = zBot * tan(dipRad);
 
-      if (rJB > rCut) return Distance.create(rJB, hypot(rJB, zBot), rX);
+      if (rJB > rCut) {
+        return Distance.create(rJB, hypot(rJB, zBot), rX);
+      }
 
       // rRup when rJB is 0 -- we take the minimum the site-to-top-edge
       // and site-to-normal of rupture for the site being directly over

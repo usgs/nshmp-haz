@@ -115,7 +115,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
    */
   public ContainerSubset2D(int numRows, int numCols, int startRow, int startCol,
       Container2D<T> data)
-      throws ArrayIndexOutOfBoundsException {
+          throws ArrayIndexOutOfBoundsException {
 
     String S = C + ": Constructor2():";
 
@@ -235,9 +235,10 @@ class ContainerSubset2D<T> implements Container2D<T> {
    * @param obj new object to place in the container cell
    * @exception ArrayIndexOutOfBoundsException Never thrown, function disabled.
    */
+  @Override
   public void set(int row, int column, T obj) throws ArrayIndexOutOfBoundsException {
     throw new java.lang.UnsupportedOperationException(
-      "This function is not implemented in this subclass");
+        "This function is not implemented in this subclass");
   }
 
   /**
@@ -272,6 +273,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
    *
    * @return The num rows
    */
+  @Override
   public int getNumRows() {
     return window.numRows;
   }
@@ -281,6 +283,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
    *
    * @return The num cols
    */
+  @Override
   public int getNumCols() {
     return window.numCols;
   }
@@ -314,20 +317,21 @@ class ContainerSubset2D<T> implements Container2D<T> {
    * @exception ArrayIndexOutOfBoundsException If the indices value are invalid
    *            for the container2D
    */
+  @Override
   public T get(int row, int column) throws ArrayIndexOutOfBoundsException {
 
     String S = C + ": getColumnIterator(): ";
 
     if (!window.isValidCol(column)) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "The specified column is invalid, either negative or beyond upper index of window. " +
-          column);
+          S + "The specified column is invalid, either negative or beyond upper index of window. " +
+              column);
     }
 
     if (!window.isValidRow(row)) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "The specified row is invalid, either negative or beyond upper index of window. " +
-          column);
+          S + "The specified row is invalid, either negative or beyond upper index of window. " +
+              column);
     }
 
     int transRow = window.getTranslatedRow(row);
@@ -346,14 +350,15 @@ class ContainerSubset2D<T> implements Container2D<T> {
    * @exception ArrayIndexOutOfBoundsException If the x-coord index value are
    *            invalid for the container2D
    */
+  @Override
   public ListIterator<T> getColumnIterator(int row) throws ArrayIndexOutOfBoundsException {
 
     String S = C + ": getColumnIterator(): ";
 
     if (!window.isValidRow(row)) {
       throw new ArrayIndexOutOfBoundsException(S +
-        "The specified row is invalid, either negative or beyond upper index of window. " +
-        row);
+          "The specified row is invalid, either negative or beyond upper index of window. " +
+          row);
     }
 
     validate();
@@ -370,13 +375,14 @@ class ContainerSubset2D<T> implements Container2D<T> {
    * @exception ArrayIndexOutOfBoundsException If the y-coord index value are
    *            invalid for the container2D
    */
+  @Override
   public ListIterator<T> getRowIterator(int column) throws ArrayIndexOutOfBoundsException {
 
     String S = C + ": getRowIterator(): ";
     if (!window.isValidCol(column)) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "The specified column is invalid, either negative or beyond upper index of window. " +
-          column);
+          S + "The specified column is invalid, either negative or beyond upper index of window. " +
+              column);
     }
 
     validate();
@@ -395,6 +401,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
    *
    * @return The allByColumnsIterator value
    */
+  @Override
   public ListIterator<T> getAllByColumnsIterator() {
     validate();
     AllByColumnsIterator it = new AllByColumnsIterator();
@@ -412,6 +419,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
    *
    * @return The allByRowsIterator value
    */
+  @Override
   public ListIterator<T> getAllByRowsIterator() {
     validate();
     AllByRowsIterator it = new AllByRowsIterator();
@@ -501,6 +509,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
    *
    * @return Description of the Return Value
    */
+  @Override
   public long size() {
     return window.windowSize();
   }
@@ -513,20 +522,21 @@ class ContainerSubset2D<T> implements Container2D<T> {
    * @param column y-coord
    * @return true or false if the object exits.
    */
+  @Override
   public boolean exist(int row, int column) {
 
     String S = C + ": exist():";
 
     if (!window.isValidCol(column)) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "The specified column is invalid, either negative or beyond upper index of window. " +
-          column);
+          S + "The specified column is invalid, either negative or beyond upper index of window. " +
+              column);
     }
 
     if (!window.isValidRow(row)) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "The specified row is invalid, either negative or beyond upper index of window. " +
-          column);
+          S + "The specified row is invalid, either negative or beyond upper index of window. " +
+              column);
     }
 
     int transRow = window.getTranslatedRow(row);
@@ -539,9 +549,10 @@ class ContainerSubset2D<T> implements Container2D<T> {
    * Sublcass not allowed to modify data, i.e. read only. Therefore this
    * function is not supported, but required by the API.
    */
+  @Override
   public void clear() {
     throw new java.lang.UnsupportedOperationException(
-      "This function is not implemented in this subclass");
+        "This function is not implemented in this subclass");
   }
 
   /**
@@ -641,6 +652,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @param obj Description of the Parameter
      * @exception UnsupportedOperationException Description of the Exception
      */
+    @Override
     public void set(Object obj) throws UnsupportedOperationException {
       throw new UnsupportedOperationException("set(Object obj) Not implemented.");
     }
@@ -650,6 +662,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      *
      * @return Description of the Return Value
      */
+    @Override
     public boolean hasNext() {
       return cursor != lastIndex;
     }
@@ -659,6 +672,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      *
      * @return Description of the Return Value
      */
+    @Override
     public int nextIndex() {
       return cursor;
     }
@@ -669,6 +683,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception NoSuchElementException Description of the Exception
      */
+    @Override
     public abstract T next() throws NoSuchElementException;
 
     /**
@@ -677,6 +692,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception UnsupportedOperationException Description of the Exception
      */
+    @Override
     public T previous() throws UnsupportedOperationException {
       throw new UnsupportedOperationException("hasPrevious() Not implemented.");
     }
@@ -687,6 +703,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception UnsupportedOperationException Description of the Exception
      */
+    @Override
     public int previousIndex() throws UnsupportedOperationException {
       throw new UnsupportedOperationException("hasPrevious() Not implemented.");
     }
@@ -697,6 +714,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception UnsupportedOperationException Description of the Exception
      */
+    @Override
     public boolean hasPrevious() throws UnsupportedOperationException {
       throw new UnsupportedOperationException("hasPrevious() Not implemented.");
     }
@@ -707,6 +725,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @param obj Description of the Parameter
      * @exception UnsupportedOperationException Description of the Exception
      */
+    @Override
     public void add(Object obj) throws UnsupportedOperationException {
       throw new UnsupportedOperationException("add(Object obj) Not implemented.");
     }
@@ -716,6 +735,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      *
      * @exception UnsupportedOperationException Description of the Exception
      */
+    @Override
     public void remove() throws UnsupportedOperationException {
       throw new UnsupportedOperationException("remove() Not implemented.");
     }
@@ -750,8 +770,8 @@ class ContainerSubset2D<T> implements Container2D<T> {
 
       if (!window.isValidRow(row)) {
         throw new ArrayIndexOutOfBoundsException(
-          S + "The specified row is invalid, either negative or beyond upper index of window. " +
-            row);
+            S + "The specified row is invalid, either negative or beyond upper index of window. " +
+                row);
       }
 
       translatedPinnedRow = window.getTranslatedRow(row);
@@ -765,6 +785,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception NoSuchElementException Description of the Exception
      */
+    @Override
     public T next() throws NoSuchElementException {
       try {
 
@@ -774,7 +795,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
         return object;
       } catch (IndexOutOfBoundsException e) {
         throw new NoSuchElementException(
-          "You have iterated past the last element." + e.toString());
+            "You have iterated past the last element." + e.toString());
       }
     }
 
@@ -783,7 +804,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
   /**
    * <b>Title:</b> RowIterator<p> <b>Description:</b> Returns all column points
    * for one row<p>
-   * 
+   *
    * @author Steven W. Rock
    * @created February 25, 2002
    * @version 1.0
@@ -808,8 +829,8 @@ class ContainerSubset2D<T> implements Container2D<T> {
 
       if (!window.isValidRow(col)) {
         throw new ArrayIndexOutOfBoundsException(
-          S + "The specified col is invalid, either negative or beyond upper index of window. " +
-            col);
+            S + "The specified col is invalid, either negative or beyond upper index of window. " +
+                col);
       }
 
       translatedPinnedCol = window.getTranslatedRow(col);
@@ -823,6 +844,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception NoSuchElementException Description of the Exception
      */
+    @Override
     public T next() throws NoSuchElementException {
       try {
 
@@ -832,7 +854,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
         return object;
       } catch (IndexOutOfBoundsException e) {
         throw new NoSuchElementException(
-          "You have iterated past the last element." + e.toString());
+            "You have iterated past the last element." + e.toString());
       }
     }
 
@@ -876,6 +898,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception NoSuchElementException Description of the Exception
      */
+    @Override
     public T next() throws NoSuchElementException {
 
       try {
@@ -895,7 +918,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
         return object;
       } catch (IndexOutOfBoundsException e) {
         throw new NoSuchElementException(
-          "You have iterated past the last element. " + e.toString());
+            "You have iterated past the last element. " + e.toString());
       }
 
     }
@@ -939,6 +962,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception NoSuchElementException Description of the Exception
      */
+    @Override
     public T next() throws NoSuchElementException {
 
       try {
@@ -958,7 +982,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
         return object;
       } catch (IndexOutOfBoundsException e) {
         throw new NoSuchElementException(
-          "You have iterated past the last element." + e.toString());
+            "You have iterated past the last element." + e.toString());
       }
 
     }
@@ -969,6 +993,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
   final protected static char TAB = '\t';
 
   /** Prints out each location and fault information for debugging */
+  @Override
   public String toString() {
 
     StringBuffer b = new StringBuffer();
@@ -989,8 +1014,9 @@ class ContainerSubset2D<T> implements Container2D<T> {
           if (obj != null) {
             b.append(obj.toString());
             counter++;
-          } else
+          } else {
             b.append("NULL");
+          }
           b.append('\n');
 
           j++;
@@ -1035,7 +1061,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
     int startRow = 1;
     int startCol = 2;
     ContainerSubset2D<String> sub =
-      new ContainerSubset2D<String>(numRows, numCols, startRow, startCol, data);
+        new ContainerSubset2D<String>(numRows, numCols, startRow, startCol, data);
     sub.validate();
     System.out.println(S + sub.window.toString());
 
@@ -1119,10 +1145,12 @@ class ContainerSubset2D<T> implements Container2D<T> {
 
   }
 
+  @Override
   public void setName(String name) {
     this.name = name;
   }
 
+  @Override
   public String name() {
     return name;
   }

@@ -1,8 +1,8 @@
 package org.opensha2.calc;
 
-import java.util.concurrent.ExecutorService;
-
 import com.google.common.util.concurrent.MoreExecutors;
+
+import java.util.concurrent.ExecutorService;
 
 /**
  * The number of threads with which to intialize thread pools. Values reference

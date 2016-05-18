@@ -1,17 +1,12 @@
 package org.opensha2.geo;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import static org.opensha2.geo.BorderType.GREAT_CIRCLE;
+import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.geo.GeoTools.PI_BY_2;
 import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.geo.BorderType.*;
-import static com.google.common.base.Preconditions.*;
-
-import java.awt.Shape;
-import java.awt.geom.Area;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.opensha2.data.Data;
 import org.opensha2.util.Named;
@@ -21,13 +16,21 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 
+import java.awt.Shape;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * A {@code Region} is a polygonal area on the surface of the earth. The
  * vertices comprising the border of each {@code Region} are stored internally
  * as latitude-longitude coordinate pairs in an {@link Area}, facilitating
  * operations such as union, intersect, and contains. Insidedness rules follow
  * those defined in the {@link Shape} interface.
- * 
+ *
  * <p>New {@code Region}s are created exclusively through static factory
  * methods, some of which require the specification of a {@link BorderType}. If
  * one wishes to create a geographic {@code Region} that represents a rectangle
@@ -38,24 +41,24 @@ import com.google.common.primitives.Doubles;
  * better representation of a line on a globe. Internally, great circles are
  * approximated by multiple straight line segments that have a maximum length of
  * 100km.
- * 
+ *
  * <p>A {@code Region} may also have interior (or negative) areas. Any call to
  * {@link Region#contains(Location)} for a {@code Location} within or on the
  * border of such an interior area will return {@code false}, subject to the
  * rules of insidedness.
- * 
+ *
  * <p><b>Note:</b> The current implementation does not support regions that are
  * intended to span ±180°. Any such regions will wrap the long way around the
  * earth and results are undefined. Regions that encircle either pole are not
  * supported either.
- * 
+ *
  * <p><b>Note:</b> Due to rounding errors and the use of an {@link Area}
  * internally to define a {@code Region}'s border,
  * {@link Region#contains(Location)} may not always return the expected result
  * near a border. See {@link Region#contains(Location)} for further details.</p>
- * 
+ *
  * <p>Use the {@link Regions} factory class to create new regions.
- * 
+ *
  * @author Peter Powers
  * @see Shape
  * @see Area
@@ -96,7 +99,7 @@ public class Region implements Named {
    * Returns whether the given {@code Location} is inside this {@code Region}.
    * The determination follows the rules of insidedness defined in the
    * {@link Shape} interface.
-   * 
+   *
    * <p><b>Note:</b> By using an {@link Area} internally to manage this
    * {@code Region}'s geometry, there are instances where rounding errors may
    * cause this method to yield unexpected results. For instance, although a
@@ -104,7 +107,7 @@ public class Region implements Named {
    * the internal {@code Area} may return 40.0000000000001 on a call to
    * {@code getMinLat()} and calls to {@code contains(new Location(40,*))} will
    * return false.</p>
-   * 
+   *
    * @param loc the {@code Location} to test
    * @return {@code true} if the {@code Location} is inside the Region,
    *         {@code false} otherwise
@@ -117,7 +120,7 @@ public class Region implements Named {
   /**
    * Tests whether another {@code Region} is entirely contained within this
    * {@code Region}.
-   * 
+   *
    * @param region to check
    * @return {@code true} if this contains the {@code Region}; {@code false}
    *         otherwise
@@ -131,7 +134,7 @@ public class Region implements Named {
   /**
    * Returns whether this {@code Region} is rectangular in shape when
    * represented in a Mercator projection.
-   * 
+   *
    * @return {@code true} if rectangular, {@code false} otherwise
    */
   public boolean isRectangular() {
@@ -146,7 +149,7 @@ public class Region implements Named {
    * overlap or enclose any existing interior region. Internally, the border of
    * the supplied {@code Region} is copied and stored as an unmodifiable
    * {@code List}. No reference to the supplied {@code Region} is retained.
-   * 
+   *
    * @param region to use as an interior or negative space
    * @throws NullPointerException if the supplied {@code Region} is {@code null}
    * @throws IllegalArgumentException if the supplied {@code Region} is not
@@ -169,7 +172,7 @@ public class Region implements Named {
         Area existing = areaFromBorder(interior);
         existing.intersect(newArea);
         checkArgument(existing.isEmpty(),
-          "Supplied interior Region overlaps existing interiors");
+            "Supplied interior Region overlaps existing interiors");
       }
     } else {
       interiors = new ArrayList<LocationList>();
@@ -184,7 +187,7 @@ public class Region implements Named {
    * {@code LocationList}s (also unmodifiable) of points that decribe the
    * interiors of this {@code Region}, if such exist. If no interior is defined,
    * the method returns {@code null}.
-   * 
+   *
    * @return a {@code List} the interior {@code LocationList}s or {@code null}
    *         if no interiors are defined
    */
@@ -195,7 +198,7 @@ public class Region implements Named {
   /**
    * Returns a reference to the internal, immutable {@code LocationList} of
    * points that decribe the border of this {@code Region}.
-   * 
+   *
    * @return the immutable border {@code LocationList}
    */
   public LocationList border() {
@@ -205,7 +208,7 @@ public class Region implements Named {
   /**
    * Returns a deep copy of the internal {@link Area} used to manage this
    * {@code Region}.
-   * 
+   *
    * @return a copy of the {@code Area} used by this {@code Region}
    */
   public Area area() {
@@ -258,7 +261,7 @@ public class Region implements Named {
    * Compares the geometry of this {@code Region} to another and returns
    * {@code true} if they are the same, ignoring any differences in name. Use
    * {@code Region.equals(Object)} to include name comparison.
-   * 
+   *
    * @param r the {@code Regions} to compare
    * @return {@code true} if this {@code Region} has the same geometry as the
    *         supplied {@code Region}, {@code false} otherwise
@@ -271,10 +274,16 @@ public class Region implements Named {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (!(obj instanceof Region)) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof Region)) {
+      return false;
+    }
     Region r = (Region) obj;
-    if (!name().equals(r.name())) return false;
+    if (!name().equals(r.name())) {
+      return false;
+    }
     return equalsRegion(r);
   }
 
@@ -289,10 +298,10 @@ public class Region implements Named {
   public Bounds bounds() {
     Rectangle2D bounds = area.getBounds2D();
     return new Bounds(
-      bounds.getMinY(),
-      bounds.getMinX(),
-      bounds.getMaxY(),
-      bounds.getMaxX());
+        bounds.getMinY(),
+        bounds.getMinX(),
+        bounds.getMaxY(),
+        bounds.getMaxX());
   }
 
   /**
@@ -300,7 +309,7 @@ public class Region implements Named {
    * {@code Region} and the {@code Location} specified. If the given
    * {@code Location} is inside the {@code Region}, the method returns 0. The
    * distance algorithm used only works well at short distances (e.g. ≤250 km).
-   * 
+   *
    * @param loc the Location to compute a distance to
    * @return the minimum distance between this {@code Region} and a point
    * @throws NullPointerException if supplied location is {@code null}
@@ -309,12 +318,14 @@ public class Region implements Named {
    */
   public double distanceToLocation(Location loc) {
     checkNotNull(loc, "Supplied location is null");
-    if (contains(loc)) return 0;
+    if (contains(loc)) {
+      return 0;
+    }
     double min = Locations.minDistanceToLine(loc, border);
     // check the segment defined by the last and first points
     // take abs because value may be negative; i.e. value to left of line
     double temp = Math.abs(Locations.distanceToSegmentFast(border.get(border.size() - 1),
-      border.get(0), loc));
+        border.get(0), loc));
     return Math.min(temp, min);
   }
 
@@ -327,8 +338,8 @@ public class Region implements Named {
   public String toString() {
     Bounds b = bounds();
     String str = "Region\n" + "\tMinLat: " + b.min().lat() + "\n" + "\tMinLon: " +
-      b.min().lon() + "\n" + "\tMaxLat: " + b.max().lat() + "\n" + "\tMaxLon: " +
-      b.max().lon();
+        b.min().lon() + "\n" + "\tMaxLat: " + b.max().lat() + "\n" + "\tMaxLon: " +
+        b.max().lon();
     return str;
   }
 
@@ -340,7 +351,9 @@ public class Region implements Named {
     validate(r2);
     Area newArea = (Area) r1.area.clone();
     newArea.intersect(r2.area);
-    if (newArea.isEmpty()) return null;
+    if (newArea.isEmpty()) {
+      return null;
+    }
     if (!Strings.isNullOrEmpty(name)) {
       name = "Intersection of " + r1.name() + " and " + r2.name();
     }
@@ -358,7 +371,9 @@ public class Region implements Named {
     validate(r2);
     Area newArea = (Area) r1.area.clone();
     newArea.add(r2.area);
-    if (!newArea.isSingular()) return null;
+    if (!newArea.isSingular()) {
+      return null;
+    }
     if (!Strings.isNullOrEmpty(name)) {
       name = "Union of " + r1.name() + " and " + r2.name();
     }
@@ -387,7 +402,9 @@ public class Region implements Named {
   void initBordered(LocationList border, BorderType type) {
     checkNotNull(border, "Supplied border is null");
     checkArgument(border.size() >= 3, "Supplied border must have at least 3 vertices");
-    if (type == null) type = MERCATOR_LINEAR;
+    if (type == null) {
+      type = MERCATOR_LINEAR;
+    }
 
     // first remove last point in list if it is the same as
     // the first point
@@ -455,8 +472,8 @@ public class Region implements Named {
     minLon -= (minLon >= -180.0 + offset) ? offset : 0.0;
 
     LocationList locs = LocationList.create(Location.create(minLat, minLon),
-      Location.create(minLat, maxLon), Location.create(maxLat, maxLon),
-      Location.create(maxLat, minLon));
+        Location.create(minLat, maxLon), Location.create(maxLat, maxLon),
+        Location.create(maxLat, minLon));
 
     initBordered(locs, MERCATOR_LINEAR);
   }
@@ -469,7 +486,7 @@ public class Region implements Named {
   void initCircular(Location center, double radius) {
     checkNotNull(center, "Supplied center Location is null");
     checkArgument((radius > 0 && radius <= 1000), "Radius [%s] is out of [0 1000] km range",
-      radius);
+        radius);
     border = locationCircle(center, radius);
     area = areaFromBorder(border);
   }
@@ -482,7 +499,7 @@ public class Region implements Named {
   void initBuffered(LocationList line, double buffer) {
     checkNotNull(line, "Supplied LocationList is null");
     checkArgument((buffer > 0 && buffer <= 500), "Buffer [%s] is out of [0 500] km range",
-      buffer);
+        buffer);
 
     // init an Area with first point
     Area area = areaFromBorder(locationCircle(line.first(), buffer));
@@ -538,7 +555,9 @@ public class Region implements Named {
       List<Location> cleanLocs = Lists.newArrayList();
       Location prev = locs.get(locs.size() - 1);
       for (Location loc : locs) {
-        if (loc.equals(prev)) continue;
+        if (loc.equals(prev)) {
+          continue;
+        }
         cleanLocs.add(loc);
         prev = loc;
       }
@@ -572,14 +591,14 @@ public class Region implements Named {
 
     // add the four corners
     LocationList ll = LocationList.create(
-      // corner 1 is azimuth p1 to p2 - 90 from p1
-      Locations.location(p1, az12 - PI_BY_2, distance),
-      // corner 2 is azimuth p1 to p2 + 90 from p1
-      Locations.location(p1, az12 + PI_BY_2, distance),
-      // corner 3 is azimuth p2 to p1 - 90 from p2
-      Locations.location(p2, az21 - PI_BY_2, distance),
-      // corner 4 is azimuth p2 to p1 + 90 from p2
-      Locations.location(p2, az21 + PI_BY_2, distance));
+        // corner 1 is azimuth p1 to p2 - 90 from p1
+        Locations.location(p1, az12 - PI_BY_2, distance),
+        // corner 2 is azimuth p1 to p2 + 90 from p1
+        Locations.location(p1, az12 + PI_BY_2, distance),
+        // corner 3 is azimuth p2 to p1 - 90 from p2
+        Locations.location(p2, az21 - PI_BY_2, distance),
+        // corner 4 is azimuth p2 to p1 + 90 from p2
+        Locations.location(p2, az21 + PI_BY_2, distance));
     return ll;
   }
 

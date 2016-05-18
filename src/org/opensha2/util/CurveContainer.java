@@ -2,15 +2,6 @@ package org.opensha2.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.geo.GriddedRegion;
@@ -30,12 +21,21 @@ import com.google.common.io.LineProcessor;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.primitives.Doubles;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Class for storing and accessing grids of hazard curves. These can be NSHMP
  * national scale datasets such as those available here:
- * 
+ *
  * http://earthquake.usgs.gov/hazards/products/conterminous/2008/data/
- * 
+ *
  * and on related pages (see comments at bottom of class for formatting
  * variants), or OpenSHA regional and national curve data sets. Class does not
  * specify whether curves are probability or rate based.
@@ -65,7 +65,7 @@ class CurveContainer implements Iterable<Location> {
   public List<Double> getValues(Location loc) {
     int idx = region.indexForLocation(loc);
     Preconditions.checkArgument(
-      idx != -1, "Location is out of range: " + loc);
+        idx != -1, "Location is out of range: " + loc);
     return Doubles.asList(ysMap.get(idx));
   }
 
@@ -104,15 +104,15 @@ class CurveContainer implements Iterable<Location> {
 
   /**
    * Adds the curves in the supplied container to this.
-   * 
+   *
    * NOTE be careful using this: Supplied container should be equivalent or
    * HIGHER resolution than this
    */
   public void union(CurveContainer cc) {
     checkArgument(
-      xs.length == cc.xs.length,
-      "Curve container size: %s != %s",
-      xs.length, cc.xs.length);
+        xs.length == cc.xs.length,
+        "Curve container size: %s != %s",
+        xs.length, cc.xs.length);
 
     for (Location loc : this) {
       int idxFrom = cc.region.indexForLocation(loc);
@@ -179,7 +179,7 @@ class CurveContainer implements Iterable<Location> {
    * Creates a curve container for NSHMP national scale datafrom the supplied
    * data file and region. The supplied file is assumed to be in the standard
    * format output by NSHMP fortran 'combine' codes.
-   * 
+   *
    * @param f file
    * @return a new curve container object
    */
@@ -206,7 +206,7 @@ class CurveContainer implements Iterable<Location> {
    * region, and grid spacing. The data locations should match the nodes in the
    * gridded region. Results are unspecified if the two do not agree. The
    * supplied file is assumed to be in curve csv format.
-   * 
+   *
    * @param f file
    * @param region for file
    * @return a new curve container object
@@ -232,7 +232,7 @@ class CurveContainer implements Iterable<Location> {
   // create cc for binary nshmp curve file
   public static CurveContainer create(URL url) throws IOException {
     LittleEndianDataInputStream in =
-      new LittleEndianDataInputStream(url.openStream());
+        new LittleEndianDataInputStream(url.openStream());
 
     CurveContainer cc = new CurveContainer();
 
@@ -255,7 +255,9 @@ class CurveContainer implements Iterable<Location> {
       double val = MathUtils.round(in.readFloat(), 3);
       // System.out.println(val);
       // need to read 20 values to advance caret, but only save ones used
-      if (i < nX) xs.add(val);
+      if (i < nX) {
+        xs.add(val);
+      }
     }
     cc.xs = Doubles.toArray(xs);
     // System.out.println("xVals: " + cc.xs);
@@ -276,10 +278,10 @@ class CurveContainer implements Iterable<Location> {
     Location seLoc = Location.create(minLat, maxLon);
 
     cc.region = Regions.createRectangularGridded(
-      "NSHMP Region",
-      nwLoc, seLoc,
-      spacing, spacing,
-      GriddedRegion.ANCHOR_0_0);
+        "NSHMP Region",
+        nwLoc, seLoc,
+        spacing, spacing,
+        GriddedRegion.ANCHOR_0_0);
     // System.out.println(gr.getNodeCount());
     int nRows = (int) Math.rint((maxLat - minLat) / spacing) + 1;
     int nCols = (int) Math.rint((maxLon - minLon) / spacing) + 1;
@@ -351,7 +353,9 @@ class CurveContainer implements Iterable<Location> {
         return true;
       }
 
-      if (cc.xs == null) cc.xs = Doubles.toArray(xs);
+      if (cc.xs == null) {
+        cc.xs = Doubles.toArray(xs);
+      }
 
       addCurve(line);
       return true;
@@ -361,7 +365,7 @@ class CurveContainer implements Iterable<Location> {
       Iterator<String> it = split.split(line).iterator();
       // read location
       Location loc =
-        Location.create(Double.parseDouble(it.next()), Double.parseDouble(it.next()));
+          Location.create(Double.parseDouble(it.next()), Double.parseDouble(it.next()));
       int idx = cc.region.indexForLocation(loc);
       double[] vals = new double[xCount];
       for (int i = 0; i < xCount; i++) {
@@ -411,8 +415,8 @@ class CurveContainer implements Iterable<Location> {
       Iterable<String> it = split.split(line);
       // read location
       Location loc = Location.create(
-        Double.parseDouble(Iterables.get(it, 1)),
-        Double.parseDouble(Iterables.get(it, 0)));
+          Double.parseDouble(Iterables.get(it, 1)),
+          Double.parseDouble(Iterables.get(it, 0)));
       int idx = cc.region.indexForLocation(loc);
       List<Double> vals = Lists.newArrayList();
       for (String sVal : Iterables.skip(it, 2)) {

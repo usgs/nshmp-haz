@@ -2,20 +2,18 @@ package org.opensha2.eq.fault.surface;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.math.RoundingMode.HALF_UP;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
+import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.Faults.validateTrace;
-import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
+import static org.opensha2.geo.GeoTools.TO_DEG;
+import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.geo.LocationVector.createWithPlunge;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
-
-import static org.opensha2.geo.GeoTools.*;
-
-import java.util.Iterator;
-import java.util.List;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.geo.Location;
@@ -27,19 +25,22 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.math.DoubleMath;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Default {@link GriddedSurface} implementation. Gridded surfaces are
  * constructed by evenly discretizing a fault trace and projecting that trace
  * down-dip in a direction normal to the average-strike of the trace, here
  * defined as a line connecting the first and last endpoints of the trace.
- * 
+ *
  * <p>New gridded surfaces can only be created via a {@linkplain Builder
  * builder}, which provides a variety of construction options.
- * 
+ *
  * TODO review documentation once builder docs written. There are circumstances
  * where a dip direction may be specified (e.g. UCERF3 subsections) and the
  * above staement rendered false.
- * 
+ *
  * @author Ned Field
  * @author Peter Powers
  */
@@ -80,20 +81,20 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
   /*
    * TODO document builder which will almost certainly be part of a public API
-   * 
+   *
    * TODO doc trace assumed to be at depth=0?
-   * 
+   *
    * TODO do trace depths all need to be the same; condidtion used to be imposed
    * in assertValidState
-   * 
+   *
    * TODO surface is initialized with a dip direction in radians; this may be
    * normal to Faults.strike(trace), but may not be; in any event, we do not
    * want to recompute it internally.
-   * 
+   *
    * TODO single-use builder
-   * 
+   *
    * TODO right-hand-rule
-   * 
+   *
    * TODO should surface only be a single row if width < dipSpacing/2
    */
   @SuppressWarnings("javadoc")
@@ -175,7 +176,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
       checkState(depth != null, "%s depth not set", id);
 
       checkState((width != null) ^ (lowerDepth != null), "%s width or lowerDepth not set",
-        id);
+          id);
       if (lowerDepth != null && lowerDepth <= depth) {
         throw new IllegalStateException("Lower depth is above upper depth");
       }
@@ -184,10 +185,14 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
     public DefaultGriddedSurface build() {
       validateState(ID);
-      if (dipDirRad == null) dipDirRad = Faults.dipDirectionRad(trace);
-      if (width == null) width = (lowerDepth - depth) / Math.sin(dipRad);
+      if (dipDirRad == null) {
+        dipDirRad = Faults.dipDirectionRad(trace);
+      }
+      if (width == null) {
+        width = (lowerDepth - depth) / Math.sin(dipRad);
+      }
       return new DefaultGriddedSurface(trace, dipRad, dipDirRad, depth, width,
-        strikeSpacing, dipSpacing);
+          strikeSpacing, dipSpacing);
     }
 
   }
@@ -260,12 +265,14 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
       // Determine which segment distanceAlong is in
       segmentNumber = 1;
       while (segmentNumber <= numSegments &&
-        distanceAlong > segmentCumLenth[segmentNumber - 1]) {
+          distanceAlong > segmentCumLenth[segmentNumber - 1]) {
         segmentNumber++;
       }
       // put back in last segment if grid point has just barely stepped
       // off the end
-      if (segmentNumber == numSegments + 1) segmentNumber--;
+      if (segmentNumber == numSegments + 1) {
+        segmentNumber--;
+      }
 
       // Calculate the distance from the last segment point
       if (segmentNumber > 1) {
@@ -404,7 +411,9 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
     // make sure we got the last one
     // (might be missed because of numerical precision issues?)
     double dist = linearDistanceFast(trace.last(), resampLocs.get(resampLocs.size() - 1));
-    if (dist > resampInt / 2) resampLocs.add(trace.last());
+    if (dist > resampInt / 2) {
+      resampLocs.add(trace.last());
+    }
 
     return LocationList.create(resampLocs);
   }

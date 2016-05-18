@@ -1,10 +1,11 @@
 package org.opensha2.eq.fault.surface;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
+
+import org.junit.Test;
 
 @SuppressWarnings("javadoc")
 public class DefaultGriddedSurfaceTest {
@@ -25,15 +26,15 @@ public class DefaultGriddedSurfaceTest {
   private static DefaultGriddedSurface createBasic() {
 
     LocationList trace = LocationList.create(
-      Location.create(34.0, -118.0),
-      Location.create(34.4, -118.0));
+        Location.create(34.0, -118.0),
+        Location.create(34.4, -118.0));
 
     DefaultGriddedSurface surface = DefaultGriddedSurface.builder()
-      .trace(trace)
-      .depth(0.0)
-      .dip(90.0)
-      .width(15.0)
-      .build();
+        .trace(trace)
+        .depth(0.0)
+        .dip(90.0)
+        .width(15.0)
+        .build();
 
     return surface;
   }

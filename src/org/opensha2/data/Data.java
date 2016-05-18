@@ -9,19 +9,8 @@ import static com.google.common.math.DoubleMath.fuzzyEquals;
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.isNaN;
-import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import org.opensha2.util.MathUtils;
 
@@ -36,44 +25,55 @@ import com.google.common.math.DoubleMath;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 /**
  * Utilities for operating on {@code double}-valued data.
- * 
+ *
  * <p>The methods of this class:</p>
- * 
+ *
  * <ul><li>Operate on data in place, ruturning a reference to the supplied
  * data.</li>
- * 
+ *
  * <li>Throw a {@code NullPointerException} when supplied with {@code null}
  * data.</li>
- * 
+ *
  * <li>Return an empty array when attempting to transform each element of a
  * dataset for which no varargs elements have been supplied(e.g.
  * {@link #add(double, double...)}).
- * 
+ *
  * <li>Throw an {@code IllegalArgumentException} if they operate on all elements
  * of a dataset and yield a singular result, and the supplied dataset is empty,
  * with some documented exceptions.
- * 
+ *
  * <li>Throw an {@code IllegalArguementException} if they operate on multiple
  * datasets and the datasets are not the same size.</li>
- * 
+ *
  * <li>Do not check for finiteness (see {@link Doubles#isFinite(double)}). See
  * {@link Math} for details on the behavior of individual functions referenced
  * herein.</li>
- * 
+ *
  * <li>Do not check for over/underflow.</li></ul>
- * 
+ *
  * <p>Buyer beware.</p>
- * 
+ *
  * <p>Furthermore, methods that return a result or information about a supplied
  * data set will typically take a {@code Collection<Double>} as an argument,
  * whereas methods that transform data in place will only take
  * {@code List<Double>}s.</p>
- * 
+ *
  * <p>For other useful {@code Double} utilities, see the Google Guava
  * {@link Doubles} class.</p>
- * 
+ *
  * @author Peter Powers
  * @see Doubles
  */
@@ -88,7 +88,7 @@ public final class Data {
    * Developer notes:
    * -------------------------------------------------------------------------
    * Transform Functions vs Pure Iteration
-   * 
+   *
    * The original implementation of this class used the built-in transform()
    * methods and math Functions to operate on data arrays. Tests showed the
    * Function approach to be only marginally slower, but much more processor
@@ -101,7 +101,7 @@ public final class Data {
 
   /**
    * Add a {@code term} to the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @param term to add
    * @return a reference to the supplied {@code data}
@@ -115,7 +115,7 @@ public final class Data {
 
   /**
    * Add a {@code term} to the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @param term to add
    * @return a reference to the supplied {@code data}
@@ -136,7 +136,7 @@ public final class Data {
 
   /**
    * Add a {@code term} to the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @param term to add
    * @return a reference to the supplied {@code data}
@@ -157,7 +157,7 @@ public final class Data {
 
   /**
    * Add a {@code term} to the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @param term to add
    * @return a reference to the supplied {@code data}
@@ -171,7 +171,7 @@ public final class Data {
 
   /**
    * Add the values of {@code data2} to {@code data1} in place.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -190,7 +190,7 @@ public final class Data {
 
   /**
    * Add the values of {@code data2} to {@code data1} in place.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -212,7 +212,7 @@ public final class Data {
 
   /**
    * Add the values of {@code data2} to {@code data1} in place.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -234,7 +234,7 @@ public final class Data {
 
   /**
    * Add the values of {@code data2} to {@code data1} in place.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -253,7 +253,7 @@ public final class Data {
    * to the corresponding value in {@code map1}. If no such key exists in map 1,
    * then the key and value from map2 are transferred as is. Note that this
    * method is <i>not</i> synchronized.
-   * 
+   *
    * @param map1
    * @param map2
    * @return a reference to {@code map1}
@@ -271,7 +271,7 @@ public final class Data {
    * Subtract the values of {@code data2} from {@code data1} in place. To
    * subtract a term from every value of a dataset, use
    * {@link #add(double, double...)} with a negative addend.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -292,7 +292,7 @@ public final class Data {
    * Subtract the values of {@code data2} from {@code data1} in place. To
    * subtract a term from every value of a dataset, use
    * {@link #add(double, List)} with a negative addend.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -307,7 +307,7 @@ public final class Data {
 
   /**
    * Multiply ({@code scale}) the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @param scale factor
    * @return a reference to the supplied {@code data}
@@ -321,7 +321,7 @@ public final class Data {
 
   /**
    * Multiply ({@code scale}) the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @param scale factor
    * @return a reference to the supplied {@code data}
@@ -336,7 +336,7 @@ public final class Data {
   /**
    * Multiply the elements of {@code data1} by the elements of {@code data2} in
    * place.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -356,7 +356,7 @@ public final class Data {
   /**
    * Multiply the elements of {@code data1} by the elements of {@code data2} in
    * place.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -373,7 +373,7 @@ public final class Data {
    * Divide the elements of {@code data1} by the elements of {@code data2} in
    * place. To divide every value of a dataset by some term, use
    * {@link #multiply(double, double...)} with 1/divisor.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -394,7 +394,7 @@ public final class Data {
    * Divide the elements of {@code data1} by the elements of {@code data2} in
    * place. To divide every value of a dataset by some term, use
    * {@link #multiply(double, List)} with 1/divisor.
-   * 
+   *
    * @param data1
    * @param data2
    * @return a reference to {@code data1}
@@ -409,7 +409,7 @@ public final class Data {
 
   /**
    * Set the elements of {@code data} to their absolute value in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#abs(double)
@@ -423,7 +423,7 @@ public final class Data {
 
   /**
    * Set the elements of {@code data} to their absolute value in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#abs(double)
@@ -438,7 +438,7 @@ public final class Data {
   /**
    * Raise Euler's number {@code e} to each of the elements of {@code data} in
    * place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#exp(double)
@@ -453,7 +453,7 @@ public final class Data {
   /**
    * Raise Euler's number {@code e} to each of the elements of {@code data} in
    * place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#exp(double)
@@ -467,7 +467,7 @@ public final class Data {
 
   /**
    * Take the natural logarithm of the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#log(double)
@@ -481,7 +481,7 @@ public final class Data {
 
   /**
    * Take the natural logarithm of the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#log(double)
@@ -495,7 +495,7 @@ public final class Data {
 
   /**
    * Raise the elements of {@code data} to the power of 10 in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#pow(double, double)
@@ -509,7 +509,7 @@ public final class Data {
 
   /**
    * Raise the elements of {@code data} to the power of 10 in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#pow(double, double)
@@ -523,7 +523,7 @@ public final class Data {
 
   /**
    * Take the base-10 logarithm of the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#log10(double)
@@ -537,7 +537,7 @@ public final class Data {
 
   /**
    * Take the base-10 logarithm of the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    * @see Math#log10(double)
@@ -551,7 +551,7 @@ public final class Data {
 
   /**
    * Flip the sign of the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    */
@@ -561,7 +561,7 @@ public final class Data {
 
   /**
    * Flip the sign of the elements of {@code data} in place.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    */
@@ -574,7 +574,7 @@ public final class Data {
    * infinite values if {@code data} contains {@code Double.NaN} or infinite
    * values, respectively. Method returns zero for empty {@code data} argument
    * or no varargs.
-   * 
+   *
    * @param data to sum
    * @return the sum of the supplied values
    */
@@ -591,7 +591,7 @@ public final class Data {
    * infinite values if {@code data} contains {@code Double.NaN} or infinite
    * values, respectively. Method returns zero for an empty {@code data}
    * argument.
-   * 
+   *
    * @param data to sum
    * @return the sum of the supplied values
    */
@@ -605,7 +605,7 @@ public final class Data {
 
   /**
    * Transform {@code data} by a {@code function} in place.
-   * 
+   *
    * @param function to apply
    * @param data to operate on
    * @return a reference to the supplied {@code data}
@@ -625,7 +625,7 @@ public final class Data {
 
   /**
    * Transform {@code data} by a {@code function} in place.
-   * 
+   *
    * @param function to apply
    * @param data to operate on
    * @return a reference to the supplied {@code data}
@@ -640,7 +640,7 @@ public final class Data {
 
   /**
    * Find the index of the minimum value in {@code data}.
-   * 
+   *
    * @param data to evaluate
    * @return the index of the minimum value
    * @throws IllegalArgumentException if data is empty or no varargs are
@@ -650,17 +650,18 @@ public final class Data {
     checkArgument(data.length > 0);
     int index = 0;
     double min = data[0];
-    for (int i = 1; i < data.length; i++)
+    for (int i = 1; i < data.length; i++) {
       if (data[i] < min) {
         min = data[i];
         index = i;
       }
+    }
     return index;
   }
 
   /**
    * Find the index of the maximum value in {@code data}.
-   * 
+   *
    * @param data to evaluate
    * @return the index of the maximum value
    * @throws IllegalArgumentException if data is empty or no varargs are
@@ -670,24 +671,27 @@ public final class Data {
     checkArgument(data.length > 0);
     int index = 0;
     double max = data[0];
-    for (int i = 1; i < data.length; i++)
+    for (int i = 1; i < data.length; i++) {
       if (data[i] > max) {
         max = data[i];
         index = i;
       }
+    }
     return index;
   }
 
   /**
    * Determine whether {@code data} are all positive. Method returns
    * {@code true} if data is empty or no varargs are supplied.
-   * 
+   *
    * @param data to evaluate
    * @return {@code true} if all values are ≥0; {@code false} otherwise
    */
   public static boolean arePositive(double... data) {
     for (double d : data) {
-      if (d >= 0) continue;
+      if (d >= 0) {
+        continue;
+      }
       return false;
     }
     return true;
@@ -696,13 +700,15 @@ public final class Data {
   /**
    * Determine whether {@code data} are all positive. Method returns
    * {@code true} if data is empty.
-   * 
+   *
    * @param data to evaluate
    * @return {@code true} if all values are ≥0
    */
   public static boolean arePositive(Collection<Double> data) {
     for (double d : data) {
-      if (d >= 0) continue;
+      if (d >= 0) {
+        continue;
+      }
       return false;
     }
     return true;
@@ -712,14 +718,18 @@ public final class Data {
    * Ensures positivity of values by adding {@code Math.abs(min(data))} in place
    * if {@code min < 0}. Method returns an empty array if {@code data} is empty
    * or no varargs are supplied.
-   * 
+   *
    * @param data to operate on
    * @return a reference to the supplied data, positivized if necessary
    */
   public static double[] positivize(double... data) {
-    if (data.length == 0) return data;
+    if (data.length == 0) {
+      return data;
+    }
     double min = Doubles.min(data);
-    if (min >= 0) return data;
+    if (min >= 0) {
+      return data;
+    }
     min = Math.abs(min);
     return add(min, data);
   }
@@ -731,7 +741,7 @@ public final class Data {
    * checking the x-values of a function for any steps, or {@code false} if
    * checking the y-values of a cumulative distribution function, which are
    * commonly constant.
-   * 
+   *
    * @param increasing if {@code true}, descending if {@code false}
    * @param strict {@code true} if data must always increase or decrease,
    *        {@code false} if identical adjacent values are permitted
@@ -742,7 +752,9 @@ public final class Data {
    */
   public static boolean isMonotonic(boolean increasing, boolean strict, double... data) {
     double[] diff = diff(data);
-    if (!increasing) flip(diff);
+    if (!increasing) {
+      flip(diff);
+    }
     double min = Doubles.min(diff);
     return (strict) ? min > 0 : min >= 0;
   }
@@ -752,14 +764,18 @@ public final class Data {
    * {@code target}, as a percent. If {@code target} is 0, method returns 0 if
    * {@code test} is also 0, otherwise {@code Double.POSITIVE_INFINITY}. If
    * either value is {@code Double.NaN}, method returns {@code Double.NaN}.
-   * 
+   *
    * @param test value
    * @param target value
    * @return the percent difference
    */
   public static double percentDiff(double test, double target) {
-    if (isNaN(target) || isNaN(test)) return NaN;
-    if (target == 0) return test == 0 ? 0 : POSITIVE_INFINITY;
+    if (isNaN(target) || isNaN(test)) {
+      return NaN;
+    }
+    if (target == 0) {
+      return test == 0 ? 0 : POSITIVE_INFINITY;
+    }
     return Math.abs(test - target) / target * 100d;
   }
 
@@ -768,7 +784,7 @@ public final class Data {
    * {@code data}. Method returns results in a new array that has
    * {@code data.length - 1} where differences are computed per
    * {@code data[i+1] - data[i]}.
-   * 
+   *
    * @param data to difference
    * @return the differences between adjacent values
    * @throws IllegalArgumentException if {@code data.length < 2}
@@ -787,7 +803,7 @@ public final class Data {
 
   /**
    * Normalize the elements of {@code data} in place such that they sum to 1.
-   * 
+   *
    * @param data to normalize
    * @return a reference to the supplied {@code data}
    * @throws IllegalArgumentException if {@code data} is empty, contains any
@@ -805,7 +821,7 @@ public final class Data {
 
   /**
    * Normalize the elements of {@code data} in place such that they sum to 1.
-   * 
+   *
    * @param data to normalize
    * @return a reference to the supplied {@code data}
    * @throws IllegalArgumentException if {@code data} is empty, contains any
@@ -823,7 +839,7 @@ public final class Data {
 
   /**
    * Create a {@code double[]} of pseudorandom values.
-   * 
+   *
    * @param size of the output array
    * @param seed for random number generator; may be {@code null}
    * @return an array of random {@code double}s
@@ -849,7 +865,7 @@ public final class Data {
   /**
    * Verify that a value falls within a specified {@link Range}. Method returns
    * the supplied value for use inline.
-   * 
+   *
    * @param range of allowable values
    * @param value to validate
    * @param label indicating type of value being checked; used in exception
@@ -861,15 +877,15 @@ public final class Data {
   public static double checkInRange(Range<Double> range, String label, double value) {
     checkArgument(!Double.isNaN(value), "NaN not allowed");
     checkArgument(range.contains(value),
-      "%s value %s is not in range %s",
-      Strings.nullToEmpty(label), value, range);
+        "%s value %s is not in range %s",
+        Strings.nullToEmpty(label), value, range);
     return value;
   }
 
   /**
    * Verify that the domain of a {@code double[]} does not exceed that of the
    * supplied {@link Range}. Method returns the supplied values for use inline.
-   * 
+   *
    * @param range of allowable values
    * @param values to validate
    * @param label indicating type of value being checked; used in exception
@@ -890,7 +906,7 @@ public final class Data {
   /**
    * Confirm that a weight value is {@code 0.0 < weight ≤ 1.0}. Method returns
    * the supplied value for use inline.
-   * 
+   *
    * @param weight to validate
    * @return the supplied {@code weight} value
    */
@@ -908,7 +924,7 @@ public final class Data {
   /**
    * Confirm that a {@code Collection<Double>} of weights sums to 1.0 within
    * {@link #WEIGHT_TOLERANCE}.
-   * 
+   *
    * @param weights to validate
    * @return the supplied weights for use inline
    * @see #WEIGHT_TOLERANCE
@@ -916,24 +932,24 @@ public final class Data {
   public static Collection<Double> checkWeightSum(Collection<Double> weights) {
     double sum = sum(weights);
     checkArgument(fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
-      "Weights Σ %s = %s ≠ 1.0", weights, sum);
+        "Weights Σ %s = %s ≠ 1.0", weights, sum);
     return weights;
   }
 
   /**
    * Validate series discretization parameters. Confirms that for a specified
    * range {@code [min, max]} and {@code Δ} that:
-   * 
+   *
    * <ul><li>{@code min}, {@code max}, and {@code Δ} are finite</li>
-   * 
+   *
    * <li>{@code max > min}</li>
-   * 
+   *
    * <li>{@code Δ ≥ 0}</li>
-   * 
+   *
    * <li>{@code Δ > 0} for {@code max > min}</li>
-   * 
+   *
    * <li>{@code Δ ≤ max - min}</li></ul>
-   * 
+   *
    * @param min value
    * @param max value
    * @param Δ discretization delta
@@ -945,14 +961,16 @@ public final class Data {
     checkFiniteness(Δ, "Δ");
     checkArgument(max >= min, "min [%s] >= max [%s]", min, max);
     checkArgument(Δ >= 0.0, "Invalid Δ [%s]", Δ);
-    if (max > min) checkArgument(Δ > 0.0, "Invalid Δ [%s] for max > min", Δ);
+    if (max > min) {
+      checkArgument(Δ > 0.0, "Invalid Δ [%s] for max > min", Δ);
+    }
     checkArgument(Δ <= max - min, "Δ [%s] > max - min [%s]", max - min);
     return Δ;
   }
 
   /**
    * Checks that a value is finite.
-   * 
+   *
    * @param value to check
    * @param label for value if check fails
    * @return the supplied value for use inline
@@ -964,16 +982,16 @@ public final class Data {
   }
 
   /*
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
    * Everything below needs review
    */
 
@@ -983,12 +1001,12 @@ public final class Data {
    * array of random values. If profiling shows that in practice the function
    * based approach of transforming arrays is slow, primitive implementations
    * may be substituted. See DubblesTest for speed test.
-   * 
+   *
    * Similarly, boolean tests such as isSorted() could be short-circuited to
    * return at the first failure. However, there is more reusable code in the
    * current implementation that is easier to follow. Again, this will may be
    * changed if there is a demonstrable performance hit.
-   * 
+   *
    * We could probably intern commonly used scale functions.
    */
 
@@ -1057,7 +1075,7 @@ public final class Data {
    *         or any arguments are {@code Double.NaN},
    *         {@code Double.POSITIVE_INFINITY}, or
    *         {@code Double.NEGATIVE_INFINITY}
-   * 
+   *
    */
   public static double[] buildLogSequence(double min, double max, double step,
       boolean ascending) {
@@ -1085,10 +1103,14 @@ public final class Data {
     // then capacity [c] will end up 0 because (int) NaN = 0, or outside the
     // range 1:10000
     checkArgument(min <= max, "min-max reversed");
-    if (min == max) return new double[] { min };
+    if (min == max) {
+      return new double[] { min };
+    }
     int c = (int) ((max - min) / step);
     checkArgument(c > 0 && c < MAX_SEQ_LEN, "sequence size");
-    if (ascending) return buildSequence(min, max, step, c + 2);
+    if (ascending) {
+      return buildSequence(min, max, step, c + 2);
+    }
     double[] descSeq = buildSequence(-max, -min, step, c + 2);
     return flip(descSeq);
 
@@ -1107,7 +1129,9 @@ public final class Data {
       seq.add(val);
     }
     // do not add max if current max is equal to max wihthin tolerance
-    if (!DoubleMath.fuzzyEquals(seq.get(seq.size() - 1), max, SEQ_MAX_VAL_TOL)) seq.add(max);
+    if (!DoubleMath.fuzzyEquals(seq.get(seq.size() - 1), max, SEQ_MAX_VAL_TOL)) {
+      seq.add(max);
+    }
     return Doubles.toArray(seq);
   }
 
@@ -1117,8 +1141,8 @@ public final class Data {
    * x-values. When summing, x-values for points outside the original domain of
    * a sequence are set to 0, while those inside the original domain are sampled
    * via linear interpolation.
-   * 
-   * 
+   *
+   *
    * @param sequences to combine
    * @return a combined sequence
    */
@@ -1140,7 +1164,9 @@ public final class Data {
     XySequence combined = XySequence.create(xMaster, null);
     for (XySequence sequence : sequences) {
       // TODO need to disable extrapolation in Interpolation
-      if (true) throw new UnsupportedOperationException();
+      if (true) {
+        throw new UnsupportedOperationException();
+      }
       XySequence resampled = XySequence.resampleTo(sequence, xMaster);
       combined.add(resampled);
     }
@@ -1152,7 +1178,7 @@ public final class Data {
    * 'Clean' the elements of {@code data} in place to be double values of a
    * specified scale/precision. Internally, this method uses the rounding and
    * precision functionality of {@link BigDecimal}.
-   * 
+   *
    * @param data to operate on
    * @param scale decimal precision
    * @return a reference to the 'cleaned', supplied {@code data}
@@ -1176,7 +1202,7 @@ public final class Data {
 
   /**
    * Create a deep copy of a two-dimensional data array.
-   * 
+   *
    * @param data to copy
    * @return a new two-dimensional array populated with the values of
    *         {@code data}
@@ -1191,7 +1217,7 @@ public final class Data {
 
   /**
    * Create a deep copy of a three-dimensional data array.
-   * 
+   *
    * @param data to copy
    * @return a new three-dimensional array populated with the values of
    *         {@code data}
@@ -1206,7 +1232,7 @@ public final class Data {
 
   /**
    * Format a two-dimensional data array for printing.
-   * 
+   *
    * @param data to format
    * @return a string representation of the supplied {@code data}
    */
@@ -1218,7 +1244,9 @@ public final class Data {
   private static String toString(double[][] data, int indent) {
     StringBuilder sb = new StringBuilder("[");
     for (int i = 0; i < data.length; i++) {
-      if (i > 0) sb.append(",").append(NEWLINE).append(repeat(" ", indent));
+      if (i > 0) {
+        sb.append(",").append(NEWLINE).append(repeat(" ", indent));
+      }
       sb.append(Arrays.toString(data[i]));
     }
     sb.append("]");
@@ -1227,7 +1255,7 @@ public final class Data {
 
   /**
    * Format a three-dimensional data array for printing
-   * 
+   *
    * @param data to format
    * @return a string representation of the supplied {@code data}
    */
@@ -1239,7 +1267,9 @@ public final class Data {
   private static String toString(double[][][] data, int indent) {
     StringBuilder sb = new StringBuilder("[");
     for (int i = 0; i < data.length; i++) {
-      if (i > 0) sb.append(",").append(NEWLINE).append(repeat(" ", indent));
+      if (i > 0) {
+        sb.append(",").append(NEWLINE).append(repeat(" ", indent));
+      }
       sb.append(toString(data[i], indent + 1));
     }
     sb.append("]");
@@ -1305,7 +1335,7 @@ public final class Data {
   /**
    * Create an {@code int[]} of values ascending from {@code 0} to
    * {@code 1-size}.
-   * 
+   *
    * @param size of output array
    * @return an index array
    */
@@ -1317,7 +1347,7 @@ public final class Data {
    * Create an {@code int[]} of values spanning {@code from} to {@code to},
    * inclusive. Sequence will be descending if {@code from} is greater than
    * {@code to}.
-   * 
+   *
    * @param from start value
    * @param to end value
    * @return an int[] sequence
@@ -1338,12 +1368,12 @@ public final class Data {
    * to the sort order of one of them. Supply this method with the desired
    * {@code data} and use the returned indices in a custom iterator, leaving all
    * original data in place.
-   * 
+   *
    * <p><b>Notes:</b><ul><li>The supplied data should not be sorted.</li>
    * <li>This method does not modify the supplied {@code data} in any
    * way.</li><li>Any {@code NaN}s in {@code data} are placed at the start of
    * the sort order, regardless of sort direction.</li><ul></p>
-   * 
+   *
    * @param data to provide sort indices for
    * @param ascending if {@code true}, descending if {@code false}
    * @return an index {@code List}
@@ -1377,14 +1407,14 @@ public final class Data {
   }
 
   /*
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
    * TODO clean below
    */
 
@@ -1401,7 +1431,9 @@ public final class Data {
    */
   public static <K> K minKey(Map<K, Double> data, Collection<K> keys) {
     checkArgument(data.size() > 0, "data map is empty");
-    if (keys == null) keys = data.keySet();
+    if (keys == null) {
+      keys = data.keySet();
+    }
     checkArgument(keys.size() > 0, "keys are empty");
     K minKey = null;
     double minVal = Double.MAX_VALUE;
@@ -1418,7 +1450,7 @@ public final class Data {
   /**
    * Return an index {@code List<Integer>} corresponding to the 'set' bits of
    * the supplied {@code BitSet}. The returned {@code List} is mutable.
-   * 
+   *
    * @param bits to operate on
    * @return the indices of 'set' bits
    */
@@ -1434,7 +1466,7 @@ public final class Data {
   /**
    * Return a {@code BitSet} with {@code capacity} and with all bits at
    * {@code indices} 'set'.
-   * 
+   *
    * @param indices to operate on
    * @param capacity of returned {@code BitSet}
    */
@@ -1463,7 +1495,7 @@ public final class Data {
    * s it's possible to have bins of identical values such that corresponding
    * bin value is Infinity. Such values are not included in the resultant data
    * set.
-   * 
+   *
    * @param data to be binned
    * @param origin for binning
    * @param size of each bin
@@ -1518,7 +1550,7 @@ public final class Data {
   /**
    * Creates a new array from the values in a source array at the specified
    * indices. Returned array is of same type as source.
-   * 
+   *
    * @param array array source
    * @param indices index values of items to select
    * @return a new array of values at indices in source

@@ -1,8 +1,9 @@
 package org.opensha2.eq;
 
-import static org.opensha2.data.Data.checkInRange;
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
+
+import static org.opensha2.data.Data.checkInRange;
 
 import org.opensha2.data.Data;
 
@@ -10,7 +11,7 @@ import com.google.common.collect.Range;
 
 /**
  * Earthquake magnitude utilities.
- * 
+ *
  * @author Peter Powers
  */
 public final class Magnitudes {
@@ -48,7 +49,7 @@ public final class Magnitudes {
    * Verify that a magnitude value is between {@code MIN_MAG} and
    * {@code MAX_MAG} (inclusive). Method returns the supplied value and can be
    * used inline.
-   * 
+   *
    * @param mag magnitude to validate
    * @return the supplied magnitude
    * @throws IllegalArgumentException if {@code magdip} value is out of range
@@ -63,7 +64,7 @@ public final class Magnitudes {
    * Convert moment magnitude, <em>M</em><sub>W</sub>, to seismic moment,
    * <em>M</em><sub>0</sub>, following the equation of Hanks and Kanamori
    * (1997).
-   * 
+   *
    * @param magnitude to convert
    * @return the equivalent seismic moment in N·m
    */
@@ -75,7 +76,7 @@ public final class Magnitudes {
    * Convert seismic moment, <em>M</em><sub>0</sub>, to moment magnitude,
    * <em>M</em><sub>w</sub>, following the equation of Hanks and Kanamori
    * (1997).
-   * 
+   *
    * @param moment to convert (in N·m)
    * @return the equivalent moment magnitude
    */
@@ -87,7 +88,7 @@ public final class Magnitudes {
    * Calculate (in SI units) the seismic moment of a fault area and average
    * slip, assuming a shear modulus of {@link #MU}. If slip <em>rate</em> is
    * supplied, moment <em>rate</em> is returned.
-   * 
+   *
    * @param area in m<sup>2</sup>
    * @param slip in m
    * @return moment in N·m
@@ -100,7 +101,7 @@ public final class Magnitudes {
    * Calculate (in SI units) the average slip across a fault area with the
    * supplied moment, assuming a shear modulus of {@link #MU}. If moment
    * <em>rate</em> is supplied, slip <em>rate</em> is returned.
-   * 
+   *
    * @param area in m<sup>2</sup>
    * @param moment in N·m
    * @return slip in m

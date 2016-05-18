@@ -3,19 +3,18 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.Data.checkDelta;
-import static org.opensha2.util.TextUtils.NEWLINE;
-
 import static com.google.common.primitives.Doubles.asList;
 import static java.util.Collections.unmodifiableList;
 
-import java.util.Arrays;
-import java.util.List;
+import static org.opensha2.data.Data.checkDelta;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import org.opensha2.util.Parsing;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Static utilities for working with and concrete implementations of 2- and
@@ -33,9 +32,9 @@ public final class DataTables {
    * with the builders for these classes. Internally, this method calls
    * {@link Data#buildCleanSequence(double, double, double, boolean, int)} with
    * a precision value of 4 decimal places. This may change in the future
-   * 
+   *
    * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5, 7.5]</p>
-   * 
+   *
    * @param min lower edge of lowermost bin
    * @param max upper edge of uppermost bin
    * @param Δ bin width
@@ -51,14 +50,14 @@ public final class DataTables {
   private static double[] keyArray(double min, double max, double Δ) {
     double Δby2 = Δ / 2.0;
     return Data.buildCleanSequence(
-      min + Δby2,
-      max - Δby2,
-      Δ, true, 4);
+        min + Δby2,
+        max - Δby2,
+        Δ, true, 4);
   }
 
   /**
    * Compute an index from a minimum value, a value and an interval.
-   * 
+   *
    * @param min value
    * @param delta interval (i.e. bin width)
    * @param value for which to compute index
@@ -97,15 +96,15 @@ public final class DataTables {
    */
   static void checkDataSize(int rowSize, int columnSize, double[][] data) {
     checkArgument(
-      data.length == rowSize,
-      "Expected %s rows of data but only %s were supplied",
-      rowSize, data.length);
+        data.length == rowSize,
+        "Expected %s rows of data but only %s were supplied",
+        rowSize, data.length);
     for (int i = 0; i < data.length; i++) {
       double[] column = data[i];
       checkArgument(
-        column.length == columnSize,
-        "Expected %s columns but only %s were supplied on row %s",
-        columnSize, column.length, i);
+          column.length == columnSize,
+          "Expected %s columns but only %s were supplied on row %s",
+          columnSize, column.length, i);
     }
   }
 
@@ -115,21 +114,21 @@ public final class DataTables {
    */
   static void checkDataSize(int rowSize, int columnSize, int levelSize, double[][][] data) {
     checkArgument(
-      data.length == rowSize,
-      "Expected %s rows of data but only %s were supplied",
-      rowSize, data.length);
+        data.length == rowSize,
+        "Expected %s rows of data but only %s were supplied",
+        rowSize, data.length);
     for (int i = 0; i < data.length; i++) {
       double[][] column = data[i];
       checkArgument(
-        column.length == columnSize,
-        "Expected %s columns but only %s were supplied on row %s",
-        columnSize, column.length, i);
+          column.length == columnSize,
+          "Expected %s columns but only %s were supplied on row %s",
+          columnSize, column.length, i);
       for (int j = 0; j < column.length; j++) {
         double[] level = column[j];
         checkArgument(
-          level.length == levelSize,
-          "Expected %s levels but only %s were supplied on row %s, column %s",
-          levelSize, level.length, i, j);
+            level.length == levelSize,
+            "Expected %s levels but only %s were supplied on row %s, column %s",
+            levelSize, level.length, i, j);
       }
     }
   }
@@ -212,8 +211,8 @@ public final class DataTables {
         double[][] data) {
 
       super(
-        rowMin, rowMax, rowΔ, rows,
-        columnMin, columnMax, columnΔ, columns);
+          rowMin, rowMax, rowΔ, rows,
+          columnMin, columnMax, columnΔ, columns);
       this.data = data;
     }
 
@@ -268,8 +267,8 @@ public final class DataTables {
         double value) {
 
       super(
-        rowMin, rowMax, rowΔ, rows,
-        columnMin, columnMax, columnΔ, columns);
+          rowMin, rowMax, rowΔ, rows,
+          columnMin, columnMax, columnΔ, columns);
       this.value = value;
       this.row = new double[columns.length];
       Arrays.fill(this.row, value);
@@ -397,9 +396,9 @@ public final class DataTables {
         double[][][] data) {
 
       super(
-        rowMin, rowMax, rowΔ, rows,
-        columnMin, columnMax, columnΔ, columns,
-        levelMin, levelMax, levelΔ, levels);
+          rowMin, rowMax, rowΔ, rows,
+          columnMin, columnMax, columnΔ, columns,
+          levelMin, levelMax, levelΔ, levels);
       this.data = data;
     }
 

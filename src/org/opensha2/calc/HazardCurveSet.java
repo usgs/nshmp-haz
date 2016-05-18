@@ -2,16 +2,10 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.XySequence.copyOf;
 import static org.opensha2.data.XySequence.emptyCopyOf;
 import static org.opensha2.data.XySequence.immutableCopyOf;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
@@ -20,26 +14,33 @@ import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 /**
  * Container class for hazard curves derived from a {@code SourceSet}. Class
  * stores the {@code GroundMotions}s associated with each {@code Source} used in
  * a hazard calculation and the individual curves for each
  * {@code GroundMotionModel} used.
- * 
+ *
  * <p>The {@code Builder} for this class is used to aggregate the HazardCurves
  * associated with each {@code Source} in a {@code SourceSet}, scaled by the
  * {@code SourceSet} weight. It also scales curves by their associated
  * {@code GroundMotionModel} weight, using distance-dependent weights when
  * appropriate. Note that this may lead to the dropping of some curves that are
  * not appropriate at large distances.</p>
- * 
+ *
  * <p>A HazardCurveSet is compatible with all types of {@code SourceSet}s,
  * including {@code ClusterSourceSet}s, which are handled differently in hazard
  * calculations. This container marks a point in the calculation pipeline where
  * results from cluster and other sources may be recombined into a single
  * {@code Hazard} result, regardless of {@code SourceSet.type()} for all
  * relevant {@code SourceSet}s.</p>
- * 
+ *
  * @author Peter Powers
  */
 final class HazardCurveSet {
@@ -136,8 +137,8 @@ final class HazardCurveSet {
         for (Gmm gmm : gmmWeightMap.keySet()) {
           double gmmWeight = gmmWeightMap.get(gmm);
           curveMapBuild.get(gmm).add(copyOf(curveMapIn.get(gmm))
-            .multiply(gmmWeight)
-            .multiply(sourceSet.weight()));
+              .multiply(gmmWeight)
+              .multiply(sourceSet.weight()));
         }
       }
       return this;
@@ -157,8 +158,8 @@ final class HazardCurveSet {
         for (Gmm gmm : gmmWeightMap.keySet()) {
           double weight = gmmWeightMap.get(gmm) * clusterWeight;
           curveMapBuild.get(gmm).add(copyOf(curveMapIn.get(gmm))
-            .multiply(weight)
-            .multiply(sourceSet.weight()));
+              .multiply(weight)
+              .multiply(sourceSet.weight()));
         }
       }
       return this;
@@ -169,11 +170,11 @@ final class HazardCurveSet {
       built = true;
       computeFinal();
       return new HazardCurveSet(
-        sourceSet,
-        hazardGroundMotionsList,
-        clusterGroundMotionsList,
-        curveMap,
-        totalCurves);
+          sourceSet,
+          hazardGroundMotionsList,
+          clusterGroundMotionsList,
+          curveMap,
+          totalCurves);
     }
 
     /*

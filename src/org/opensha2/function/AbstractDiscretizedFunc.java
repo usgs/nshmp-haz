@@ -27,7 +27,7 @@ import java.awt.geom.Point2D;
  */
 
 public abstract class AbstractDiscretizedFunc extends AbstractXY_DataSet
-    implements DiscretizedFunc {
+implements DiscretizedFunc {
 
   /** Class name used for debbuging */
   protected final static String C = "DiscretizedFunc";
@@ -43,6 +43,7 @@ public abstract class AbstractDiscretizedFunc extends AbstractXY_DataSet
   protected double tolerance = 0.0;
 
   /** Returns the tolerance of this function. */
+  @Override
   public double getTolerance() {
     return tolerance;
   }
@@ -51,6 +52,7 @@ public abstract class AbstractDiscretizedFunc extends AbstractXY_DataSet
    * Sets the tolerance of this function.
    * @throws IllegalArgumentException if tolerance is less than zero
    */
+  @Override
   public void setTolerance(double newTolerance) {
     checkArgument(newTolerance >= 0, "Tolerance must be larger or equal to 0");
     tolerance = newTolerance;
@@ -65,10 +67,12 @@ public abstract class AbstractDiscretizedFunc extends AbstractXY_DataSet
   }
 
   private boolean isSameWithNull(String first, String second) {
-    if (areBothNull(first, second))
+    if (areBothNull(first, second)) {
       return true;
-    if (isOneNull(first, second))
+    }
+    if (isOneNull(first, second)) {
       return false;
+    }
     return first.equals(second);
   }
 
@@ -76,22 +80,27 @@ public abstract class AbstractDiscretizedFunc extends AbstractXY_DataSet
    * Default equals for all Discretized Functions. Determines if two functions
    * are the same by comparing that the name, info, and values are the same.
    */
+  @Override
   public boolean equals(Object obj) {
     // if (true)
     // return true;
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (!(obj instanceof DiscretizedFunc))
+    }
+    if (!(obj instanceof DiscretizedFunc)) {
       return false;
+    }
     DiscretizedFunc function = (DiscretizedFunc) obj;
 
     // now check names equal
-    if (!isSameWithNull(name(), function.name()))
+    if (!isSameWithNull(name(), function.name())) {
       return false;
+    }
 
     if ((name() == null && function.name() != null) ||
-      (name() != null && !name().equals(function.name())))
+        (name() != null && !name().equals(function.name()))) {
       return false;
+    }
 
     if (D) {
       String S = C + ": equals(): ";
@@ -102,19 +111,23 @@ public abstract class AbstractDiscretizedFunc extends AbstractXY_DataSet
 
     // now check info equal
     if (!isSameWithNull(getInfo(), function.getInfo()))
+    {
       return false;
-    // if( !getInfo().equals(function.getInfo() ) ) return false;
+      // if( !getInfo().equals(function.getInfo() ) ) return false;
+    }
 
     // now check size
-    if (this.getNum() != function.getNum())
+    if (this.getNum() != function.getNum()) {
       return false;
+    }
 
     // now check that the points are equal
     for (int i = 0; i < this.getNum(); i++) {
       Point2D pt1 = this.get(i);
       Point2D pt2 = function.get(i);
-      if (!pt1.equals(pt2))
+      if (!pt1.equals(pt2)) {
         return false;
+      }
     }
     return true;
   }
@@ -250,15 +263,17 @@ public abstract class AbstractDiscretizedFunc extends AbstractXY_DataSet
 
   public double calcSumOfY_Vals() {
     double sum = 0;
-    for (int i = 0; i < getNum(); i++)
+    for (int i = 0; i < getNum(); i++) {
       sum += getY(i);
+    }
     return sum;
   }
 
   @Override
   public void scale(double val) {
-    for (int i = 0; i < getNum(); i++)
+    for (int i = 0; i < getNum(); i++) {
       this.set(i, val * getY(i));
+    }
   }
 
 }

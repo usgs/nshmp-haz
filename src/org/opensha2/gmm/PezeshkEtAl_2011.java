@@ -6,36 +6,36 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
 
-import java.util.Map;
-
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the Pezeshk, Zandieh, & Tavakoli (2011) ground motion model
  * for stable continental regions. This implementation matches that used in the
  * 2014 USGS NSHMP and uses table lookups (median) and functional forms (sigma)
  * to compute ground motions.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
- * 
+ *
  * <p><b>Reference:</b> Pezeshk, S., Zandieh, A., Tavakoli, B., 2011. Hybrid
  * empirical ground-motion prediction equations for eastern North America using
  * NGA models and updated seismological parameters: Bulletin of the
  * Seismological Society of America, v. 101, no. 4, p. 1859–1870.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120100144">
  * 10.1785/0120100144</a></p>
- * 
+ *
  * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#PEZESHK_11
  */
@@ -44,10 +44,10 @@ public final class PezeshkEtAl_2011 implements GroundMotionModel {
   static final String NAME = "Pezeshk et al. (2011)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(760.0, 2000.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(760.0, 2000.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("P11.csv");
 

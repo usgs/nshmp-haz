@@ -1,10 +1,8 @@
 package org.opensha2.util;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.util.MathUtils.round;
 
-import java.util.List;
-import java.util.Objects;
+import static org.opensha2.util.MathUtils.round;
 
 import org.opensha2.calc.NamedLocation;
 import org.opensha2.geo.Location;
@@ -16,6 +14,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * GeoJSON serialization keys, values, and utilities.
@@ -64,7 +65,7 @@ public final class GeoJson {
    * nested array of coordinates that define a polygonal border with no holes
    * per the GeoJSON <a
    * href="http://geojson.org/geojson-spec.html#id4">polygon</a> spec.
-   * 
+   *
    * @param coordsArray to process
    */
   public static LocationList fromCoordinates(JsonArray coordsArray) {
@@ -73,8 +74,8 @@ public final class GeoJson {
     for (JsonElement element : coords) {
       JsonArray coord = element.getAsJsonArray();
       builder.add(
-        coord.get(1).getAsDouble(),
-        coord.get(0).getAsDouble());
+          coord.get(1).getAsDouble(),
+          coord.get(0).getAsDouble());
     }
     return builder.build();
   }
@@ -82,7 +83,7 @@ public final class GeoJson {
   /**
    * Checks that the property in the supplied object with the name {@code key}
    * matches an expected {@code value}.
-   * 
+   *
    * @param json object to check for property
    * @param key property name
    * @param value of property
@@ -90,9 +91,9 @@ public final class GeoJson {
   public static void validateProperty(JsonObject json, String key, String value) {
     String actual = json.get(key).getAsString();
     checkState(
-      Objects.equals(value, actual),
-      "Expected \"%s\" : \"%s\", but found \"$s\"",
-      key, value, actual);
+        Objects.equals(value, actual),
+        "Expected \"%s\" : \"%s\", but found \"$s\"",
+        key, value, actual);
   }
 
   /* GeoJSON objectsfor stadard GSON serialization */
@@ -184,18 +185,18 @@ public final class GeoJson {
   /* brute force compaction of coordinate array onto single line */
   static String cleanPoints(String s) {
     return s.replace(": [\n          ", ": [")
-      .replace(",\n          ", ", ")
-      .replace("\n        ]", "]") + "\n";
+        .replace(",\n          ", ", ")
+        .replace("\n        ]", "]") + "\n";
   }
 
   /* brute force compaction of coordinate array onto single line */
   static String cleanPoly(String s) {
     return s
-      .replace("\n          [", "[")
-      .replace("[\n              ", "[ ")
-      .replace(",\n              ", ", ")
-      .replace("\n            ]", " ]")
-      .replace("\n        ]", "]") + "\n";
+        .replace("\n          [", "[")
+        .replace("[\n              ", "[ ")
+        .replace(",\n              ", ", ")
+        .replace("\n            ]", " ]")
+        .replace("\n        ]", "]") + "\n";
   }
 
 }

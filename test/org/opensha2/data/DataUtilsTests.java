@@ -1,16 +1,14 @@
 package org.opensha2.data;
 
-import static java.lang.Math.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.primitives.Doubles;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("javadoc")
 public final class DataUtilsTests {

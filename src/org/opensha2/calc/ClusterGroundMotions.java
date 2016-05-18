@@ -1,10 +1,10 @@
 package org.opensha2.calc;
 
+import org.opensha2.eq.model.ClusterSource;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opensha2.eq.model.ClusterSource;
 
 /**
  * Lightweight {@code List} wrapper of {@code HazardGroundMotions}s
@@ -13,7 +13,7 @@ import org.opensha2.eq.model.ClusterSource;
  * {@code ClusterSource} so that its rate and weight are available. The
  * {@code List} may only be added to; all other optional operations of
  * {@code AbstractList} throw an {@code UnsupportedOperationException}.
- * 
+ *
  * @author Peter Powers
  */
 final class ClusterGroundMotions extends AbstractList<GroundMotions> {

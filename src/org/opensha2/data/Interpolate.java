@@ -11,18 +11,18 @@ import java.util.List;
  * Utility class to perform linear interpolations. Methods are also provided to
  * perform interpolations in log space. The methods of this class are designed
  * to be fast and, as such perform almost no argument checking.
- * 
+ *
  * <p>NOTE: This class is designed to be used primarily with the OpenSHA
  * function classes and should probably be relocated to that package and given
  * default visibility due to the lack of error-checking. We could write public
  * methods that do thorough error checking.</p>
- * 
+ *
  * <p><strong>Warning:</strong> These methods do no error checking for
  * {@code null} , empty, or single valued arrays; arrays of different lengths;
  * nor does it check that the supplied x-values are monotonically increasing
  * (sorted). Internally the method uses binary search and it is up to the user
  * to supply valid data.</p>
- * 
+ *
  * @author Peter Powers
  */
 @Deprecated
@@ -58,7 +58,7 @@ public final class Interpolate {
       double y) {
     /*
      * pass through to findY with rearranged args, instead of:
-     * 
+     *
      * findX() = x1 + (y - y1) * (x2 - x1) / (y2 - y1)
      */
     return findY(y1, x1, y2, x2, y);
@@ -70,7 +70,7 @@ public final class Interpolate {
    * also be {@code NaN}. Method does not do any input validation such that if
    * the supplied points are coincident or define a vertical line, the method
    * may return {@code Infinity}, {@code -Infinity}, or {@code NaN}.
-   * 
+   *
    * @param x1 x-value of first point
    * @param y1 y-value of first point
    * @param x2 x-value of second point
@@ -100,7 +100,7 @@ public final class Interpolate {
   /**
    * Returns the interpolated or extrapolated y-value using the supplied x- and
    * y-value arrays.
-   * 
+   *
    * @param xs x-values of some function
    * @param ys y-values of some function
    * @param x value at which to find y
@@ -135,9 +135,9 @@ public final class Interpolate {
   /**
    * Returns the log interpolated or extrapolated y-value using the supplied x-
    * and y-value arrays.
-   * 
+   *
    * TODO needs unit test
-   * 
+   *
    * @param xs x-values of some function
    * @param ys y-values of some function
    * @param x value at which to find y
@@ -151,7 +151,7 @@ public final class Interpolate {
   /**
    * Returns the log-log interpolated or extrapolated y-value using the supplied
    * x- and y-value arrays.
-   * 
+   *
    * @param xs x-values of some function
    * @param ys y-values of some function
    * @param x value at which to find y
@@ -165,7 +165,7 @@ public final class Interpolate {
   /**
    * Returns interpolated or extrapolated y-values using the supplied x- and
    * y-value arrays.
-   * 
+   *
    * @param xs x-values of some function
    * @param ys y-values of some function
    * @param x value at which to find y
@@ -192,7 +192,7 @@ public final class Interpolate {
   /**
    * Returns the log interpolated or extrapolated y-values using the supplied x-
    * and y-value arrays.
-   * 
+   *
    * @param xs x-values of some function
    * @param ys y-values of some function
    * @param x value at which to find y
@@ -210,7 +210,7 @@ public final class Interpolate {
   /**
    * Returns the log-log interpolated or extrapolated y-values using the
    * supplied x- and y-value arrays.
-   * 
+   *
    * @param xs x-values of some function
    * @param ys y-values of some function
    * @param x value at which to find y

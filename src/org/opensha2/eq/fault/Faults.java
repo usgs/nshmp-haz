@@ -3,6 +3,7 @@ package org.opensha2.eq.fault;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.sin;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.geo.GeoTools.PI_BY_2;
 import static org.opensha2.geo.GeoTools.TO_RAD;
@@ -12,9 +13,6 @@ import static org.opensha2.geo.Locations.azimuthRad;
 import static org.opensha2.geo.Locations.horzDistance;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.opensha2.data.Data;
 import org.opensha2.geo.Location;
@@ -26,9 +24,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Fault utilities.
- * 
+ *
  * @author Peter Powers
  */
 public final class Faults {
@@ -82,7 +83,7 @@ public final class Faults {
 
   /**
    * Verifies that {@code dip} is within {@link #DIP_RANGE}.
-   * 
+   *
    * @param dip to validate
    * @return the supplied dip for use inline
    * @throws IllegalArgumentException if {@code dip} is out of range
@@ -94,7 +95,7 @@ public final class Faults {
 
   /**
    * Verifies that {@code strike} is within {@link #STRIKE_RANGE}.
-   * 
+   *
    * @param strike to validate
    * @return the supplied strike for use inline
    * @throws IllegalArgumentException if {@code strike} is out of range
@@ -106,7 +107,7 @@ public final class Faults {
 
   /**
    * Verifies that {@code rake} is within {@link #RAKE_RANGE}.
-   * 
+   *
    * @param rake to validate
    * @return the supplied rake for use inline
    * @throws IllegalArgumentException if {@code rake} is out of range
@@ -118,7 +119,7 @@ public final class Faults {
 
   /**
    * Verifies that {@code depth} is within {@link #CRUSTAL_DEPTH_RANGE}.
-   * 
+   *
    * @param depth to validate (positive down)
    * @return the supplied depth for use inline
    * @throws IllegalArgumentException if {@code depth} is out of range
@@ -130,7 +131,7 @@ public final class Faults {
 
   /**
    * Verifies that {@code depth} value is within {@link #SLAB_DEPTH_RANGE}.
-   * 
+   *
    * @param depth to validate (positive down)
    * @return the supplied depth for use inline
    * @throws IllegalArgumentException if {@code depth} is out of range
@@ -142,7 +143,7 @@ public final class Faults {
 
   /**
    * Verifies that {@code depth} is within {@link #INTERFACE_DEPTH_RANGE}.
-   * 
+   *
    * @param depth to validate (positive down)
    * @return the supplied depth for use inline
    * @throws IllegalArgumentException if {@code depth} is out of range
@@ -154,7 +155,7 @@ public final class Faults {
 
   /**
    * Verifies that {@code width} is within {@link #CRUSTAL_WIDTH_RANGE}.
-   * 
+   *
    * @param width to validate
    * @return the supplied width for use inline
    * @throws IllegalArgumentException if {@code width} is out of range
@@ -166,7 +167,7 @@ public final class Faults {
 
   /**
    * Verifies that {@code width} is within {@link #INTERFACE_WIDTH_RANGE}.
-   * 
+   *
    * @param width to validate
    * @return the supplied width for use inline
    * @throws IllegalArgumentException if {@code width} is out of range
@@ -179,7 +180,7 @@ public final class Faults {
   /**
    * Ensures that a {@code LocationList} contains at least two points and is not
    * {@code null}.
-   * 
+   *
    * @param trace
    * @return the supplied trace for use inline
    */
@@ -248,11 +249,14 @@ public final class Faults {
 
     // find the number of sub sections
     double numSubSec = faultTrace.length() / maxSubSectionLen;
-    if (Math.floor(numSubSec) != numSubSec)
+    if (Math.floor(numSubSec) != numSubSec) {
       numSubSections = (int) Math.floor(numSubSec) + 1;
-    else
+    } else {
       numSubSections = (int) numSubSec;
-    if (numSubSections < minSubSections) numSubSections = minSubSections;
+    }
+    if (numSubSections < minSubSections) {
+      numSubSections = minSubSections;
+    }
     // find the length of each sub section
     double subSecLength = faultTrace.length() / numSubSections;
     double distance = 0, distLocs = 0;
@@ -284,7 +288,7 @@ public final class Faults {
           LocationVector dirSrc = LocationVector.create(prevLoc, nextLoc);
           double hDist = subSecLength - (distance - distLocs);
           LocationVector direction = LocationVector.create(dirSrc.azimuth(), hDist,
-            dirSrc.vertical());
+              dirSrc.vertical());
           prevLoc = location(prevLoc, direction);
           subSectionLocs.add(prevLoc);
           --index;
@@ -351,7 +355,9 @@ public final class Faults {
     // make sure we got the last one (might be missed because of numerical
     // precision issues?)
     double dist = linearDistanceFast(trace.last(), resampLocs.get(resampLocs.size() - 1));
-    if (dist > resampInt / 2) resampLocs.add(trace.last());
+    if (dist > resampInt / 2) {
+      resampLocs.add(trace.last());
+    }
 
     /* Debugging Stuff **************** */
     /*
@@ -359,11 +365,11 @@ public final class Faults {
      * i<resampTrace.size(); i++) { Location l = resampTrace.getLocationAt(i);
      * System.out.println(l.getLatitude()+"\t"+
      * l.getLongitude()+"\t"+l.getDepth()); }
-     * 
+     *
      * System.out.println("ORIGINAL"); for(int i=0; i<trace.size(); i++) {
      * Location l = trace.getLocationAt(i); System.out.println(l.getLatitude(
      * )+"\t"+l.getLongitude()+"\t"+l.getDepth()); }
-     * 
+     *
      * // write out each to check System.out.println("target resampInt="
      * +resampInt+"\tnum sect="+num); System.out.println("RESAMPLED"); double
      * ave=0, min=Double.MAX_VALUE, max=Double.MIN_VALUE; for(int i=1;
@@ -372,15 +378,15 @@ public final class Faults {
      * resampTrace.getLocationAt(i)); ave +=d; if(d<min) min=d; if(d>max) max=d;
      * } ave /= resampTrace.size()-1; System.out.println("ave="+ave+"\tmin="
      * +min+"\tmax="+max+"\tnum pts=" +resampTrace.size());
-     * 
-     * 
+     *
+     *
      * System.out.println("ORIGINAL"); ave=0; min=Double.MAX_VALUE;
      * max=Double.MIN_VALUE; for(int i=1; i<trace.size(); i++) { double d =
      * Locations.getTotalDistance(trace.getLocationAt(i-1),
      * trace.getLocationAt(i)); ave +=d; if(d<min) min=d; if(d>max) max=d; } ave
      * /= trace.size()-1; System.out.println("ave="+ave+"\tmin="+min+"\tmax="
      * +max+"\tnum pts=" +trace.size());
-     * 
+     *
      * /* End of debugging stuff *******************
      */
 
@@ -436,19 +442,20 @@ public final class Faults {
    * Returns an average of the given angles scaled by the distances between the
    * corresponding locations. Note that this expects angles in degrees, and will
    * return angles from 0 to 360 degrees.
-   * 
+   *
    * @param locs locations for distance scaling
    * @param angles angles in degrees corresponding to each pair of locations
    */
   public static double getLengthBasedAngleAverage(LocationList locs, List<Double> angles) {
     Preconditions.checkArgument(locs.size() >= 2, "must have at least 2 locations!");
     Preconditions.checkArgument(angles.size() == locs.size() - 1,
-      "must have exactly one fewer angles than location");
+        "must have exactly one fewer angles than location");
 
     ArrayList<Double> lengths = new ArrayList<Double>();
 
-    for (int i = 1; i < locs.size(); i++)
+    for (int i = 1; i < locs.size(); i++) {
       lengths.add(linearDistanceFast(locs.get(i), locs.get(i - 1)));
+    }
 
     return getScaledAngleAverage(lengths, angles);
   }
@@ -457,7 +464,7 @@ public final class Faults {
    * Returns an average of the given angles scaled by the given scalars. Note
    * that this expects angles in degrees, and will return angles from 0 to 360
    * degrees.
-   * 
+   *
    * @param scalars scalar weights for each angle (does not need to be
    *        normalized)
    * @param angles angles in degrees corresponding to each pair of locations
@@ -465,19 +472,27 @@ public final class Faults {
   public static double getScaledAngleAverage(List<Double> scalars, List<Double> angles) {
     Preconditions.checkArgument(scalars.size() >= 1, "must have at least 1 lengths!");
     Preconditions.checkArgument(angles.size() == scalars.size(),
-      "must have exactly the same amount of lengths as angles");
+        "must have exactly the same amount of lengths as angles");
 
     // see if we have an easy case, or a NaN
-    if (angles.size() == 1) return angles.get(0);
-    if (Double.isNaN(angles.get(0))) return Double.NaN;
+    if (angles.size() == 1) {
+      return angles.get(0);
+    }
+    if (Double.isNaN(angles.get(0))) {
+      return Double.NaN;
+    }
     boolean equal = true;
     for (int i = 1; i < angles.size(); i++) {
-      if (Double.isNaN(angles.get(i))) return Double.NaN;
+      if (Double.isNaN(angles.get(i))) {
+        return Double.NaN;
+      }
       if (angles.get(i) != angles.get(0)) {
         equal = false;
       }
     }
-    if (equal) return angles.get(0);
+    if (equal) {
+      return angles.get(0);
+    }
 
     double xdir = 0;
     double ydir = 0;
@@ -490,23 +505,27 @@ public final class Faults {
 
     double avg;
 
-    if (xdir > 0 & ydir >= 0)
+    if (xdir > 0 & ydir >= 0) {
       avg = Math.toDegrees(Math.atan(ydir / xdir));
-    else if (xdir > 0 & ydir < 0)
+    } else if (xdir > 0 & ydir < 0) {
       avg = Math.toDegrees(Math.atan(ydir / xdir)) + 360;
-    else if (xdir < 0)
+    } else if (xdir < 0) {
       avg = Math.toDegrees(Math.atan(ydir / xdir)) + 180;
-    else if (xdir == 0 & ydir > 0)
+    } else if (xdir == 0 & ydir > 0) {
       avg = 90;
-    else if (xdir == 0 & ydir < 0)
+    } else if (xdir == 0 & ydir < 0) {
       avg = 270;
-    else
+    }
+    else {
       avg = 0; // if both xdir==0 & ydir=0
+    }
 
-    while (avg > 360)
+    while (avg > 360) {
       avg -= 360;
-    while (avg < 0)
+    }
+    while (avg < 0) {
       avg += 360;
+    }
 
     return avg;
   }
@@ -515,13 +534,14 @@ public final class Faults {
    * Averages angles dealing with any -180/180 or 0/360 cut issues. Note that
    * this expects angles in degrees, and will return angles from 0 to 360
    * degrees.
-   * 
+   *
    * @param angles
    */
   public static double getAngleAverage(List<Double> angles) {
     ArrayList<Double> scalars = new ArrayList<Double>();
-    for (int i = 0; i < angles.size(); i++)
+    for (int i = 0; i < angles.size(); i++) {
       scalars.add(1d);
+    }
     return getScaledAngleAverage(scalars, angles);
   }
 
@@ -529,7 +549,7 @@ public final class Faults {
    * Generic model for hypocentral depth returns a value that is halfway between
    * the top and bottom of a fault, parameterized by its dip, width, and depth.
    * This method performs no input validation.
-   * 
+   *
    * @param dip of the fault plane
    * @param width of the fault plane
    * @param zTop depth to the fault plane
@@ -542,12 +562,12 @@ public final class Faults {
    * Compute the strike in degrees of the supplied line, or trace, by connecting
    * the first and last points in {@code locs}. Method forwards to
    * {@link Locations#azimuth(Location, Location)}.
-   * 
+   *
    * <p>This approach has been shown to be as accurate as length-weighted angle
    * averaging and is significantly faster; see <a
    * href="https://opensha.org/trac/wiki/StrikeDirectionMethods"
    * >StrikeDirectionMethods</a> for more information.</p>
-   * 
+   *
    * @param locs line for which to compute strike
    * @return strike direction in the range [0°, 360°)
    * @see #strikeRad(LocationList)
@@ -572,12 +592,12 @@ public final class Faults {
    * Compute the strike in radians of the supplied line, or trace, by connecting
    * the first and last points in {@code locs}. Method forwards to
    * {@link Locations#azimuth(Location, Location)}.
-   * 
+   *
    * <p>This approach has been shown to be as accurate as length-weighted angle
    * averaging and is significantly faster; see <a
    * href="https://opensha.org/trac/wiki/StrikeDirectionMethods"
    * >StrikeDirectionMethods</a> for more information.</p>
-   * 
+   *
    * @param locs line for which to compute strike
    * @return strike direction in the range [0, 2π)
    * @see #strike(LocationList)
@@ -608,7 +628,7 @@ public final class Faults {
   /**
    * Returns the dip direction for the supplied line/trace assuming the
    * right-hand rule (strike + 90°).
-   * 
+   *
    * @param locs line for which to compute dip direction
    * @return dip direction in the range 0° and 360°)
    */
@@ -653,29 +673,29 @@ public final class Faults {
     double[] startVector = VY_UNIT_NORMAL;
     // rotate rake amount about z-axis (negative axial rotation)
     double[] rakeRotVector = vectorMatrixMultiply(zAxisRotMatrix(-strikeDipRake[2]),
-      startVector);
+        startVector);
     // rotate dip amount about y-axis (negative axial rotation)
     double[] dipRotVector = vectorMatrixMultiply(yAxisRotMatrix(-strikeDipRake[1]),
-      rakeRotVector);
+        rakeRotVector);
     // rotate strike amount about z-axis (positive axial rotation)
     double[] strikeRotVector = vectorMatrixMultiply(zAxisRotMatrix(strikeDipRake[0]),
-      dipRotVector);
+        dipRotVector);
     return strikeRotVector;
   }
 
   /*
    * Multiplies the vector provided with a matrix. Useful for rotations.
-   * 
+   *
    * @param matrix double[][] matrix (likely one of the rotation matrices from
    * this class).
-   * 
+   *
    * @param vector double[x,y,z] to be modified.
    */
   private static double[] vectorMatrixMultiply(double[][] matrix, double[] vector) {
     double[] rotatedVector = new double[3];
     for (int i = 0; i < 3; i++) {
       rotatedVector[i] = vector[0] * matrix[i][0] + vector[1] * matrix[i][1] + vector[2] *
-        matrix[i][2];
+          matrix[i][2];
     }
     return rotatedVector;
   }
@@ -685,9 +705,9 @@ public final class Faults {
    * system for a given theta. Note that these are coordinate transformations
    * and that a positive (anticlockwise) rotation of a vector is the same as a
    * negative rotation of the reference frame.
-   * 
+   *
    * @param theta axial rotation in degrees.
-   * 
+   *
    * @return double[][] rotation matrix.
    */
   private static double[][] xAxisRotMatrix(double theta) {
@@ -705,9 +725,9 @@ public final class Faults {
    * system for a given theta. Note that these are coordinate transformations
    * and that a positive (anticlockwise) rotation of a vector is the same as a
    * negative rotation of the reference frame.
-   * 
+   *
    * @param theta axial rotation in degrees.
-   * 
+   *
    * @return double[][] rotation matrix.
    */
   private static double[][] yAxisRotMatrix(double theta) {
@@ -725,9 +745,9 @@ public final class Faults {
    * system for a given theta. Note that these are coordinate transformations
    * and that a positive (anticlockwise) rotation of a vector is the same as a
    * negative rotation of the reference frame.
-   * 
+   *
    * @param theta axial rotation in degrees.
-   * 
+   *
    * @return double[][] rotation matrix.
    */
   private static double[][] zAxisRotMatrix(double theta) {

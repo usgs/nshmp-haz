@@ -1,9 +1,9 @@
 package org.opensha2.eq.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
+
 import static org.opensha2.eq.model.SourceAttribute.FOCAL_MECH_MAP;
 import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.MAG_DEPTH_MAP;
@@ -21,15 +21,6 @@ import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.stringToEnumWeightMap;
 import static org.opensha2.util.Parsing.stringToValueValueWeightMap;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.SAXParser;
-
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.Magnitudes;
@@ -43,6 +34,7 @@ import org.opensha2.geo.Location;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -50,12 +42,20 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Iterables;
-import com.google.common.primitives.Doubles;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.SAXParser;
 
 /*
  * Non-validating grid source parser. SAX parser 'Attributes' are stateful and
  * cannot be stored. This class is not thread safe.
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -106,7 +106,7 @@ class GridParser extends DefaultHandler {
   }
 
   GridSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -133,9 +133,9 @@ class GridParser extends DefaultHandler {
         double weight = readDouble(WEIGHT, atts);
         sourceSetBuilder = new GridSourceSet.Builder();
         sourceSetBuilder
-          .name(name)
-          .id(id)
-          .weight(weight);
+        .name(name)
+        .id(id)
+        .weight(weight);
         sourceSetBuilder.gmms(gmmSet);
         if (log.isLoggable(FINE)) {
           log.fine("");
@@ -160,22 +160,24 @@ class GridParser extends DefaultHandler {
       case SOURCE_PROPERTIES:
         String depthMapStr = readString(MAG_DEPTH_MAP, atts);
         NavigableMap<Double, Map<Double, Double>> depthMap =
-          stringToValueValueWeightMap(depthMapStr);
+            stringToValueValueWeightMap(depthMapStr);
         double maxDepth = readDouble(MAX_DEPTH, atts);
         String mechMapStr = readString(FOCAL_MECH_MAP, atts);
         Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
         RuptureScaling rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
         sourceSetBuilder
-          .depthMap(depthMap, type)
-          .maxDepth(maxDepth, type)
-          .mechs(mechMap)
-          .ruptureScaling(rupScaling);
+        .depthMap(depthMap, type)
+        .maxDepth(maxDepth, type)
+        .mechs(mechMap)
+        .ruptureScaling(rupScaling);
         double strike = readDouble(STRIKE, atts);
         // first validate strike by setting it in builder
         sourceSetBuilder.strike(strike);
         // then possibly override type if strike is set
         PointSourceType type = config.pointSourceType;
-        if (!Double.isNaN(strike)) type = PointSourceType.FIXED_STRIKE;
+        if (!Double.isNaN(strike)) {
+          type = PointSourceType.FIXED_STRIKE;
+        }
         sourceSetBuilder.sourceType(type);
         if (log.isLoggable(FINE)) {
           log.fine("     Depths: " + depthMap);
@@ -184,7 +186,7 @@ class GridParser extends DefaultHandler {
           log.fine("Rup scaling: " + rupScaling);
           log.fine("     Strike: " + strike);
           String typeOverride = (type != config.pointSourceType) ? " (" +
-            config.pointSourceType + " overridden)" : "";
+              config.pointSourceType + " overridden)" : "";
           log.fine("Source type: " + type + typeOverride);
         }
         break;
@@ -203,13 +205,13 @@ class GridParser extends DefaultHandler {
         }
         break;
 
-      /*
-       * TODO we need to check that delta mag, if included in a node, is
-       * consistent with deltaMag of all default MFDs. Or, we check that all
-       * defaults are consistent and don't permit inclusion of deltaMag as node
-       * attribute. The same could be done for mMin. This ensures a basic
-       * consistency of structure.
-       */
+        /*
+         * TODO we need to check that delta mag, if included in a node, is
+         * consistent with deltaMag of all default MFDs. Or, we check that all
+         * defaults are consistent and don't permit inclusion of deltaMag as node
+         * attribute. The same could be done for mMin. This ensures a basic
+         * consistency of structure.
+         */
     }
   }
 
@@ -268,7 +270,9 @@ class GridParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingLoc) locBuilder.append(ch, start, length);
+    if (readingLoc) {
+      locBuilder.append(ch, start, length);
+    }
   }
 
   @Override
@@ -342,9 +346,9 @@ class GridParser extends DefaultHandler {
   private static IncrementalMfd buildGR(GR_Data grData) {
     int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
     IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
-      nMagGR, grData.b, 1.0);
+        nMagGR, grData.b, 1.0);
     mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
-      grData.weight);
+        grData.weight);
     return mfdGR;
   }
 
@@ -359,7 +363,7 @@ class GridParser extends DefaultHandler {
 
   private static IncrementalMfd buildIncr(IncrData incrData) {
     IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
-      Data.multiply(incrData.weight, incrData.rates));
+        Data.multiply(incrData.weight, incrData.rates));
     return mfdIncr;
   }
 
@@ -388,7 +392,7 @@ class GridParser extends DefaultHandler {
 
   private static IncrementalMfd buildSingle(SingleData singleData) {
     return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
-      singleData.floats);
+        singleData.floats);
   }
 
   private XySequence buildTapered(Attributes atts) {
@@ -401,8 +405,8 @@ class GridParser extends DefaultHandler {
   private static IncrementalMfd buildTapered(TaperData taperData) {
     int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
     IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
-      taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
-      taperData.weight);
+        taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
+        taperData.weight);
     return mfdTaper;
   }
 

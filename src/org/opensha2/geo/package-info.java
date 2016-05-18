@@ -1,9 +1,9 @@
 /**
  * Geographic data classes and utilities.
- * 
+ *
  * <p>All objects and methods in this package assume that depths are
  * positive-down, consistent with seismological convention.
- * 
+ *
  * <p>Note that while the objects and methods of this package produce reliable
  * results for most regions of the globe, situations may arise in which users
  * encounter unexpected behaviour and results. For instance, the 'fast'

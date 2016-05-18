@@ -4,7 +4,7 @@ package org.opensha2.data;
  * Wrapper interface for xy-value data pairs. Implementations that permit
  * setting the y-value will propogate through to any backing data structure
  * (e.g. a {@link XySequence}).
- * 
+ *
  * @author Peter Powers
  * @see XySequence
  */

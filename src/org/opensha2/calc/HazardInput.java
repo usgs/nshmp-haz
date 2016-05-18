@@ -7,7 +7,7 @@ import org.opensha2.gmm.GroundMotionModel;
 /**
  * A {@link GroundMotionModel} input that carries {@link Rupture} rate
  * information along with it
- * 
+ *
  * @author Peter Powers
  * @see GmmInput
  */
@@ -29,7 +29,7 @@ public final class HazardInput extends GmmInput {
   @Override
   public String toString() {
     return getClass().getSimpleName() + " [rate=" + String.format("%.4g", rate) + " " +
-      super.toString() + "]";
+        super.toString() + "]";
   }
 
 }

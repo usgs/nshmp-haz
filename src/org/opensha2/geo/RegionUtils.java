@@ -1,5 +1,13 @@
 package org.opensha2.geo;
 
+import org.opensha2.eq.fault.surface.GriddedSurface;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+
 import java.awt.Color;
 import java.awt.geom.Area;
 import java.io.File;
@@ -15,16 +23,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.opensha2.eq.fault.surface.GriddedSurface;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-
 /**
  * Region export utilities.
- * 
+ *
  * @author Peter Powers
  */
 public class RegionUtils {
@@ -70,7 +71,7 @@ public class RegionUtils {
     if (region.interiors() != null) {
       for (LocationList interior : region.interiors()) {
         addPoints(e_folder, "Interior Nodes", interior,
-          Style.BORDER_VERTEX);
+            Style.BORDER_VERTEX);
       }
     }
 
@@ -100,8 +101,8 @@ public class RegionUtils {
   // write region
   public static void locListToKML(
       LocationList locs, String filename, Color c)
-      throws ParserConfigurationException,
-      TransformerConfigurationException, TransformerException {
+          throws ParserConfigurationException,
+          TransformerConfigurationException, TransformerException {
     String kmlFileName = filename + ".kml";
 
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -396,7 +397,7 @@ public class RegionUtils {
    * that is inside the given region. This will commonly be used with the
    * {@link GriddedSurface}s to determine the fraction of a fault surface that
    * is inside of a region.
-   * 
+   *
    * @param region the region for which to test
    * @param locs any instance of Iterable<Location>, for example,
    *        ArrayList<Location> or GriddedSurface.
@@ -411,8 +412,9 @@ public class RegionUtils {
     int numInside = 0;
     int cnt = 0;
     for (Location loc : locs) {
-      if (region.contains(loc))
+      if (region.contains(loc)) {
         numInside++;
+      }
       cnt++;
     }
     Preconditions.checkArgument(cnt > 0, "locs must contain at least one location!");
@@ -433,10 +435,10 @@ public class RegionUtils {
     double nodeLat = p.lat();
     double nodeLon = p.lon();
     LocationList locs = LocationList.create(
-      Location.create(nodeLat + halfH, nodeLon + halfW), // top right
-      Location.create(nodeLat - halfH, nodeLon + halfW), // bot right
-      Location.create(nodeLat - halfH, nodeLon - halfW), // bot left
-      Location.create(nodeLat + halfH, nodeLon - halfW)); // top left
+        Location.create(nodeLat + halfH, nodeLon + halfW), // top right
+        Location.create(nodeLat - halfH, nodeLon + halfW), // bot right
+        Location.create(nodeLat - halfH, nodeLon - halfW), // bot left
+        Location.create(nodeLat + halfH, nodeLon - halfW)); // top left
     return new Area(Locations.toPath(locs));
   }
 
@@ -514,10 +516,10 @@ public class RegionUtils {
 
     // SAUSAGE
     LocationList ll = LocationList.create(
-      Location.create(35, -125),
-      Location.create(38, -117),
-      Location.create(37, -109),
-      Location.create(41, -95));
+        Location.create(35, -125),
+        Location.create(38, -117),
+        Location.create(37, -109),
+        Location.create(41, -95));
 
     Region sausage = Regions.createBuffered("Test Buffer", ll, 100.0);
     // regionToKML(sausage, "Sausage", Color.ORANGE);

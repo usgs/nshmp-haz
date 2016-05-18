@@ -1,38 +1,39 @@
 package org.opensha2.gmm;
 
 import static java.lang.Math.log;
+
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 import static org.opensha2.util.MathUtils.hypot;
 
-import java.util.Map;
-
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the hard rock ground motion model for the Central and
  * Eastern US by Somerville et al. (2001). This implementation matches that used
  * in the 2008 USGS NSHMP and is only used for fault sources and gridded
  * representation of faults (e.g. Charleston).
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
- * 
+ *
  * <p><b>Reference:</b> Somerville, P., Collins, N., Abrahamson, N., Graves, R.,
  * and Saikia, C., 2001, Ground motion attenuation relations for the Central and
  * Eastern United States — Final report, June 30, 2001: Report to U.S.
  * Geological Survey for award 99HQGR0098, 38 p.</p>
- * 
+ *
  * <p><b>Component:</b> not specified</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#SOMERVILLE_01
  */
@@ -46,10 +47,10 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
   static final String NAME = "Somerville et al. (2001)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RJB, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(760.0, 2000.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RJB, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(760.0, 2000.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("Somerville01.csv");
 

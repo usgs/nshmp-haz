@@ -3,6 +3,7 @@ package org.opensha2.gmm;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Double.NaN;
+
 import static org.opensha2.gmm.GmmInput.Field.DIP;
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
@@ -18,13 +19,6 @@ import static org.opensha2.gmm.GmmInput.Field.ZHYP;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.util.BitSet;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.opensha2.calc.Site;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.Faults;
@@ -34,14 +28,20 @@ import org.opensha2.eq.model.Rupture;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
+
+import java.util.BitSet;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Earthquake {@link Rupture} and receiver {@link Site} property container used
  * as input to {@link GroundMotionModel}s (GMMs). Not all GMMs use all
  * properties.
- * 
+ *
  * @author Peter Powers
  * @see GroundMotionModel#calc(GmmInput)
  */
@@ -80,10 +80,10 @@ public class GmmInput {
   /**
    * Create a deterministic rupture and site property container with all
    * properties common to the supported set of ground motion models (GMMs).
-   * 
+   *
    * <p>It is generally preferred to use a {@link Builder} to assemble the
    * components of a {@code GmmInput}.</p>
-   * 
+   *
    * @param Mw moment magnitude of rupture
    * @param rJB Joyner-Boore distance to rupture (in km)
    * @param rRup 3D distance to rupture plane (in km)
@@ -128,9 +128,9 @@ public class GmmInput {
       double vs30, boolean vsInf, double z2p5, double z1p0) {
 
     return new GmmInput(
-      Mw, rJB, rRup, rX,
-      dip, width, zTop, zHyp, rake,
-      vs30, vsInf, z1p0, z2p5);
+        Mw, rJB, rRup, rX,
+        dip, width, zTop, zHyp, rake,
+        vs30, vsInf, z1p0, z2p5);
   }
 
   /**
@@ -138,7 +138,7 @@ public class GmmInput {
    * explicitely set. This builder is stateful and may be reused (by a single
    * thread) preserving previously set fields. However, repeat calls of builder
    * methods are not permitted until {@code build()} has been called.
-   * 
+   *
    * @see GmmInput.Builder
    */
   public static Builder builder() {
@@ -177,31 +177,31 @@ public class GmmInput {
     /**
      * Return a {@code Builder} prepopulated with default values. Builder has
      * the following presets:
-     * 
+     *
      * <ul><li>Mw: 6.5</li>
-     * 
+     *
      * <li>rJB: 10.0 (km)</li>
-     * 
+     *
      * <li>rRup: 10.3 (km)</li>
-     * 
+     *
      * <li>rX: 10.0 (km)</li>
-     * 
+     *
      * <li>dip: 90˚</li>
-     * 
+     *
      * <li>width: 14.0 (km)</li>
-     * 
+     *
      * <li>zTop: 0.5(km)</li>
-     * 
+     *
      * <li>zHyp: 7.5 (km)</li>
-     * 
+     *
      * <li>rake: 0˚</li>
-     * 
+     *
      * <li>vs30: 760 (m/s)</li>
-     * 
+     *
      * <li>vsInf: true</li>
-     * 
+     *
      * <li>z2p5: NaN</li>
-     * 
+     *
      * <li>z1p0: NaN</li></ul>
      */
     public Builder withDefaults() {
@@ -329,9 +329,9 @@ public class GmmInput {
       checkState(flags.cardinality() == SIZE, "Not all fields set");
       reset.clear();
       return new GmmInput(
-        Mw, rJB, rRup, rX,
-        dip, width, zTop, zHyp, rake,
-        vs30, vsInf, z1p0, z2p5);
+          Mw, rJB, rRup, rX,
+          dip, width, zTop, zHyp, rake,
+          vs30, vsInf, z1p0, z2p5);
     }
   }
 
@@ -343,7 +343,7 @@ public class GmmInput {
    * {@code GmmInput} field identifiers. These are used internally to manage
    * builder flags and provides access to the case-sensitive keys (via
    * toString()) used when building http queries
-   * 
+   *
    * Lets use negative positive for vsInf for now
    */
   @SuppressWarnings("javadoc")
@@ -477,20 +477,20 @@ public class GmmInput {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-      .add(MAG.toString(), String.format("%.2f", Mw))
-      .add(RJB.toString(), String.format("%.3f", rJB))
-      .add(RRUP.toString(), String.format("%.3f", rRup))
-      .add(RX.toString(), String.format("%.3f", rX))
-      .add(DIP.toString(), dip)
-      .add(WIDTH.toString(), String.format("%.3f", width))
-      .add(ZTOP.toString(), zTop)
-      .add(ZHYP.toString(), String.format("%.3f", zHyp))
-      .add(RAKE.toString(), rake)
-      .add(VS30.toString(), vs30)
-      .add(VSINF.toString(), vsInf)
-      .add(Z1P0.toString(), z1p0)
-      .add(Z2P5.toString(), z2p5)
-      .toString();
+        .add(MAG.toString(), String.format("%.2f", Mw))
+        .add(RJB.toString(), String.format("%.3f", rJB))
+        .add(RRUP.toString(), String.format("%.3f", rRup))
+        .add(RX.toString(), String.format("%.3f", rX))
+        .add(DIP.toString(), dip)
+        .add(WIDTH.toString(), String.format("%.3f", width))
+        .add(ZTOP.toString(), zTop)
+        .add(ZHYP.toString(), String.format("%.3f", zHyp))
+        .add(RAKE.toString(), rake)
+        .add(VS30.toString(), vs30)
+        .add(VSINF.toString(), vsInf)
+        .add(Z1P0.toString(), z1p0)
+        .add(Z2P5.toString(), z2p5)
+        .toString();
   }
 
   /**
@@ -659,7 +659,7 @@ public class GmmInput {
       for (Entry<Field, Optional<?>> entry : constraintMap.entrySet()) {
         Optional<?> opt = entry.getValue();
         String optStr = Strings.padEnd(
-          opt.isPresent() ? opt.get().toString() : "", CONSTRAINT_STR_COL_WIDTH, ' ');
+            opt.isPresent() ? opt.get().toString() : "", CONSTRAINT_STR_COL_WIDTH, ' ');
         sb.append(optStr);
       }
       return sb;
@@ -725,8 +725,8 @@ public class GmmInput {
             break;
           default:
             throw new IllegalArgumentException(
-              "GmmInput.Constraints.Builder " +
-                "Unsupported field: " + id.name());
+                "GmmInput.Constraints.Builder " +
+                    "Unsupported field: " + id.name());
         }
         return this;
       }
@@ -764,15 +764,15 @@ public class GmmInput {
         set(RX, Range.closed(0.0, Distance.MAX));
 
         Range<Double> depthRange = Faults.CRUSTAL_DEPTH_RANGE
-          .intersection(Faults.INTERFACE_DEPTH_RANGE)
-          .intersection(Faults.SLAB_DEPTH_RANGE);
+            .intersection(Faults.INTERFACE_DEPTH_RANGE)
+            .intersection(Faults.SLAB_DEPTH_RANGE);
         set(ZTOP, depthRange);
         set(ZHYP, depthRange);
 
         set(DIP, Faults.DIP_RANGE);
 
         Range<Double> widthRange = Faults.CRUSTAL_WIDTH_RANGE
-          .intersection(Faults.INTERFACE_WIDTH_RANGE);
+            .intersection(Faults.INTERFACE_WIDTH_RANGE);
         set(WIDTH, widthRange);
 
         set(RAKE, Faults.RAKE_RANGE);
@@ -790,11 +790,11 @@ public class GmmInput {
        */
       Constraints build() {
         return new Constraints(
-          mag,
-          rJB, rRup, rX,
-          dip, width, zTop, zHyp, rake,
-          vs30, vsInf,
-          z1p0, z2p5);
+            mag,
+            rJB, rRup, rX,
+            dip, width, zTop, zHyp, rake,
+            vs30, vsInf,
+            z1p0, z2p5);
       }
     }
 

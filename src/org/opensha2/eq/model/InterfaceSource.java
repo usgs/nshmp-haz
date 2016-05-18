@@ -3,11 +3,10 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
+
 import static org.opensha2.eq.fault.Faults.validateInterfaceDepth;
 import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateTrace;
-
-import java.util.List;
 
 import org.opensha2.eq.fault.surface.ApproxGriddedSurface;
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
@@ -19,6 +18,8 @@ import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.List;
+
 /**
  * Subduction source representation. This class wraps a model of a subduction
  * interface geometry and a list of magnitude frequency distributions that
@@ -26,10 +27,10 @@ import com.google.common.collect.ImmutableList;
  * geometry-filling event, or as multiple smaller events) during earthquakes.
  * Smaller events are modeled as 'floating' ruptures; they occur in multiple
  * locations on the fault surface with appropriately scaled rates.
- * 
+ *
  * <p>An {@code InterfaceSource} cannot be created directly; it may only be
  * created by a private parser.</p>
- * 
+ *
  * @author Peter Powers
  */
 public class InterfaceSource extends FaultSource {

@@ -12,14 +12,14 @@ import static org.opensha2.gmm.Imt.SA0P2;
 import static org.opensha2.gmm.Imt.SA1P0;
 import static org.opensha2.gmm.Imt.SA3P0;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 @SuppressWarnings("javadoc")
 @RunWith(Parameterized.class)
@@ -49,19 +49,19 @@ public class SubSlab extends GmmTest {
 
   /* Result generation sets */
   private static Set<Gmm> gmms = EnumSet.of(
-    AB_03_GLOB_SLAB,
-    AB_03_GLOB_SLAB_LOW_SAT,
-    AB_03_CASC_SLAB,
-    AB_03_CASC_SLAB_LOW_SAT,
-    BCHYDRO_12_SLAB,
-    YOUNGS_97_SLAB,
-    ZHAO_06_SLAB);
+      AB_03_GLOB_SLAB,
+      AB_03_GLOB_SLAB_LOW_SAT,
+      AB_03_CASC_SLAB,
+      AB_03_CASC_SLAB_LOW_SAT,
+      BCHYDRO_12_SLAB,
+      YOUNGS_97_SLAB,
+      ZHAO_06_SLAB);
 
   private static Set<Imt> imts = EnumSet.of(
-    PGA,
-    SA0P2,
-    SA1P0,
-    SA3P0);
+      PGA,
+      SA0P2,
+      SA1P0,
+      SA3P0);
 
   public static void main(String[] args) throws IOException {
     GmmTest.generateResults(gmms, imts, GMM_INPUTS, GMM_RESULTS);

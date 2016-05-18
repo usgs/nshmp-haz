@@ -4,11 +4,6 @@ import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-
 import org.opensha2.calc.Transforms.ClusterCurveConsolidator;
 import org.opensha2.calc.Transforms.ClusterToCurves;
 import org.opensha2.calc.Transforms.CurveConsolidator;
@@ -25,10 +20,15 @@ import org.opensha2.eq.model.SystemSourceSet;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+
 /**
  * Static utility methods for performing single-threaded and asynchronous hazard
  * calculations via functions in {@link Transforms}.
- * 
+ *
  * @author Peter Powers
  * @see Transforms
  * @see AsyncList
@@ -63,15 +63,15 @@ final class CalcFactory {
     AsyncList<HazardCurves> curvesList = AsyncList.create();
     for (Source source : sources.iterableForLocation(site.location)) {
       ListenableFuture<HazardCurves> curves = transform(
-        immediateFuture(source),
-        sourceToCurves,
-        ex);
+          immediateFuture(source),
+          sourceToCurves,
+          ex);
       curvesList.add(curves);
     }
     return transform(
-      allAsList(curvesList),
-      new CurveConsolidator(sources, config),
-      ex);
+        allAsList(curvesList),
+        new CurveConsolidator(sources, config),
+        ex);
   }
 
   /* Compute hazard curves for a SystemSourceSet. */
@@ -91,9 +91,9 @@ final class CalcFactory {
       final Executor ex) {
 
     return transform(
-      immediateFuture(sources),
-      new ParallelSystemToCurves(site, config, ex),
-      ex);
+        immediateFuture(sources),
+        new ParallelSystemToCurves(site, config, ex),
+        ex);
   }
 
   /* Compute hazard curves for a ClusterSourceSet. */
@@ -122,15 +122,15 @@ final class CalcFactory {
     AsyncList<ClusterCurves> curvesList = AsyncList.create();
     for (ClusterSource source : sources.iterableForLocation(site.location)) {
       ListenableFuture<ClusterCurves> curves = transform(
-        immediateFuture(source),
-        clusterToCurves,
-        ex);
+          immediateFuture(source),
+          clusterToCurves,
+          ex);
       curvesList.add(curves);
     }
     return transform(
-      allAsList(curvesList),
-      new ClusterCurveConsolidator(sources, config),
-      ex);
+        allAsList(curvesList),
+        new ClusterCurveConsolidator(sources, config),
+        ex);
   }
 
   /* Reduce hazard curves to a result. */
@@ -152,8 +152,8 @@ final class CalcFactory {
       Executor ex) throws InterruptedException, ExecutionException {
 
     return transform(
-      allAsList(curveSets),
-      new CurveSetConsolidator(model, config, site), ex).get();
+        allAsList(curveSets),
+        new CurveSetConsolidator(model, config, site), ex).get();
   }
 
 }

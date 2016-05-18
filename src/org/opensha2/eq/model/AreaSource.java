@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.ceil;
+
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
@@ -11,12 +12,6 @@ import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.geo.GriddedRegion.ANCHOR_0_0;
 import static org.opensha2.util.TextUtils.validateName;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
@@ -33,11 +28,17 @@ import org.opensha2.mfd.Mfds;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+
 /**
  * Area source representation. An {@code AreaSource} represents a region over
  * which there is a equal likelihood of earthquake occurrence, as specified by a
  * single {@link IncrementalMfd}.
- * 
+ *
  * <p>Internally, an {@code AreaSource} distributes ruptures over a grid of
  * point {@link Source}s; the resolution of the grid may scale with distance
  * from a site according to the assigned {@link GridScaling}. An
@@ -47,7 +48,7 @@ import com.google.common.collect.Iterables;
  * as the built-in {@link #iterator()}. If the specified scaling <em>is</em>
  * location-dependent, the standard {@link #iterator()} returns ruptures derived
  * from 0.1° spaced sources.</p>
- * 
+ *
  * @author Peter Powers
  */
 public class AreaSource implements Source {
@@ -143,7 +144,7 @@ public class AreaSource implements Source {
   /**
    * Return a {@code Rupture} iterator over distributed point {@code Source}s
    * whose spacing is a function of the distance from the supplied Location.
-   * 
+   *
    * @param loc Location of interest
    */
   public Iterable<Rupture> iterableForLocation(Location loc) {
@@ -182,7 +183,7 @@ public class AreaSource implements Source {
         return new PointSourceFinite(loc, mfd, mechMap, rupScaling, depthModel);
       case FIXED_STRIKE:
         return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel,
-          strike);
+            strike);
       default:
         throw new IllegalStateException("Unhandled point source type");
     }
@@ -191,12 +192,12 @@ public class AreaSource implements Source {
   /**
    * Point source discretization scaling. {@code UNIFORM_*} variants provide
    * approximately 1 km (0.01°), 5 km (0.05°), and 10 km (0.1°) source spacing.
-   * 
+   *
    * <p>{@code SCALED_SM} provides fine source spacing of 0.02° from 0 to 20km,
    * 0.05° from 20 to 50 km, 0.1° from 50 to 100 km, 0.2 from 100 to 200 km, 0.5
    * for 200 to 400 km, and uses a single source at the closest point on the
    * area border beyond 400 km.</p>
-   * 
+   *
    * <p>{@code SCALED_LG} provides coarser source spacing of 0.1° from 0 to 100
    * km, 0.2 from 100 to 200 km, 0.5 for 200 to 400 km, and uses a single source
    * at the closest point on the area border beyond 400 km.</p>
@@ -213,7 +214,7 @@ public class AreaSource implements Source {
       @Override
       int indexForDistance(double d) {
         return d < 20.0 ? 0 : d < 50.0 ? 1 : d < 100.0 ? 2 : d < 200.0 ? 3 : d < 400.0 ? 4
-          : 5;
+            : 5;
       }
     },
     SCALED_LARGE(0, new double[] { 0.1, 0.2, 0.5 }) {
@@ -353,7 +354,7 @@ public class AreaSource implements Source {
       List<GriddedRegion> sourceGrids = buildSourceGrids(border, gridScaling);
       DepthModel depthModel = DepthModel.create(magDepthMap, mfd.xValues(), maxDepth);
       return new AreaSource(name, mfd, gridScaling, sourceGrids, mechMap,
-        depthModel, strike, rupScaling, sourceType);
+          depthModel, strike, rupScaling, sourceType);
     }
 
     private static List<GriddedRegion> buildSourceGrids(LocationList border,
@@ -362,7 +363,7 @@ public class AreaSource implements Source {
       for (double resolution : scaling.resolutions) {
         String name = "Area source grid [" + resolution + "° spacing]";
         GriddedRegion grid = Regions.createGridded(name, border, MERCATOR_LINEAR,
-          resolution, resolution, ANCHOR_0_0);
+            resolution, resolution, ANCHOR_0_0);
         // TODO revisit; small areas and coarse grids will likely cause
         // problems and we'll need to substitute single node grids
         checkState(grid.size() > 0, "Grid is empty");

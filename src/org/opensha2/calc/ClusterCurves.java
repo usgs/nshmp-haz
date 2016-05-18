@@ -1,21 +1,22 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.data.XySequence.immutableCopyOf;
 
-import java.util.EnumMap;
-import java.util.Map;
+import static org.opensha2.data.XySequence.immutableCopyOf;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Container class for the combined hazard curves derived from the individual
  * {@code Source}s in a {@code ClusterSource}, one for each
  * {@code GroundMotionModel} used. The curves will have been scaled by source
  * and rupture weights, but not by {@code GroundMotionModel} weights.
- * 
+ *
  * @author Peter Powers
  */
 final class ClusterCurves {

@@ -7,12 +7,12 @@ package org.opensha2.gmm;
  * concrete implementations in favor of using the corresponding {@link Gmm}
  * {@code enum} identifier and its {@link Gmm#instance(Imt)} method. Concrete
  * implementations are public solely for the purpose of documentation.
- * 
+ *
  * <p>Models generally have a single concrete implementation. However, for those
  * supplying region- or source-specific variants, there will typically be an
  * abstract base-model implementation and subclasses to handle each flavor (e.g.
  * {@link ZhaoEtAl_2006}. Each flavor has a unique {@link Gmm} identifier.</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm
  */

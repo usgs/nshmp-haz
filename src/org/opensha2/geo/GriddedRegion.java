@@ -3,18 +3,18 @@ package org.opensha2.geo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.opensha2.util.MathUtils;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
+
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import org.opensha2.util.MathUtils;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Range;
 
 /**
  * <img style="padding: 30px 40px; float: right;" src="
@@ -30,12 +30,12 @@ import com.google.common.collect.Range;
  * {@link GriddedRegion#indexForLocation(Location)} for more details on rules
  * governing whether a grid node is inside a region and whether a
  * {@code Location} will be associated with a grid node.
- * 
+ *
  * <p>The {@code Location}s of the grid nodes are indexed internally in order of
  * increasing longitude then latitude starting with the node at the lowest
  * latitude and longitude in the region. {@code GriddedRegion}s are iterable as
  * a shorthand for {@code getNodeList().iterator()}.
- * 
+ *
  * <p>Internally, {@code GriddedRegion}s use an anchor {@code Location} to
  * ensure grid nodes fall on specific lat-lon values. This location can be
  * anywhere in- or outside the region to be gridded. If the region contains the
@@ -43,7 +43,7 @@ import com.google.common.collect.Range;
  * given a grid spacing of 1° and an anchor {@code Location} of 22.1°N -134.7°W,
  * grid nodes within any region will fall at whole valued latitudes + 0.1° and
  * longitudes - 0.7°.
- * 
+ *
  * <p><a name="note"></a> <b>Note:</b> Due to rounding errors and the use of an
  * {@link Area} internally to define a {@code Region}'s border,
  * {@link Region#contains(Location)} may not always return the expected result
@@ -52,9 +52,9 @@ import com.google.common.collect.Range;
  * {@link #minGridLat()} etc. for which there may not be any grid nodes. To
  * guarantee node coverage for a {@code GriddedRegion}, say for eventual map
  * output, 'best-practice' dictates expanding a region slightly.
- * 
+ *
  * <p>Use the {@link Regions} factory class to create new gridded regions.
- * 
+ *
  * @author Nitin Gupta
  * @author Vipin Gupta
  * @author Peter Powers
@@ -148,7 +148,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
     Location start = locationForIndex(index);
     checkNotNull(start, "Invalid start index");
     Location end = Location.create(start.lat() + latSpacing * dir.signLatMove(), start.lon() +
-      lonSpacing * dir.signLonMove());
+        lonSpacing * dir.signLonMove());
     return indexForLocation(end);
   }
 
@@ -158,33 +158,47 @@ public class GriddedRegion extends Region implements Iterable<Location> {
    * borders), grid node spacing, and location. This method ignores the names of
    * the {@code GriddedRegion}s. Use {@code GriddedRegion.equals(Object)} to
    * include name comparison.
-   * 
+   *
    * @param gr the {@code Regions} to compare
    * @return {@code true} if this {@code Region} has the same geometry as the
    *         supplied {@code Region}, {@code false} otherwise
    * @see GriddedRegion#equals(Object)
    */
   public boolean equalsRegion(GriddedRegion gr) {
-    if (!super.equalsRegion(gr)) return false;
-    if (!gr.anchor.equals(anchor)) return false;
-    if (gr.latSpacing != latSpacing) return false;
-    if (gr.lonSpacing != lonSpacing) return false;
+    if (!super.equalsRegion(gr)) {
+      return false;
+    }
+    if (!gr.anchor.equals(anchor)) {
+      return false;
+    }
+    if (gr.latSpacing != latSpacing) {
+      return false;
+    }
+    if (gr.lonSpacing != lonSpacing) {
+      return false;
+    }
     return true;
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (!(obj instanceof GriddedRegion)) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof GriddedRegion)) {
+      return false;
+    }
     GriddedRegion gr = (GriddedRegion) obj;
-    if (!name().equals(gr.name())) return false;
+    if (!name().equals(gr.name())) {
+      return false;
+    }
     return equalsRegion(gr);
   }
 
   @Override
   public int hashCode() {
     return super.hashCode() ^ anchor.hashCode() ^ Double.valueOf(latSpacing).hashCode() ^
-      Double.valueOf(lonSpacing).hashCode();
+        Double.valueOf(lonSpacing).hashCode();
   }
 
   /**
@@ -194,14 +208,14 @@ public class GriddedRegion extends Region implements Iterable<Location> {
    * create a {@code Region} with the required border and interiors using
    * {@link Region#addInterior(Region)} and then use it to initialize a
    * {@code GriddedRegion}.
-   * 
+   *
    * @throws UnsupportedOperationException
    * @see Region#addInterior(Region)
    */
   @Override
   public void addInterior(Region region) {
     throw new UnsupportedOperationException(
-      "A GriddedRegion may not have an interior Region set");
+        "A GriddedRegion may not have an interior Region set");
   }
 
   @Override
@@ -222,7 +236,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
    * Returns the {@code Location} at a given grid index. This method is intended
    * for random access of nodes in this gridded region; to cycle over all nodes,
    * iterate over the region.
-   * 
+   *
    * @param index of location to retrieve
    * @return the {@code Location} or {@code null} if index is out of range
    */
@@ -294,7 +308,9 @@ public class GriddedRegion extends Region implements Iterable<Location> {
     List<Integer> indices = Lists.newArrayList();
     for (int i = 0; i < nodeCount; i++) {
       Area area = areaForIndex(i);
-      if (area.intersects(rect)) indices.add(i);
+      if (area.intersects(rect)) {
+        indices.add(i);
+      }
     }
     return indices;
   }
@@ -344,15 +360,19 @@ public class GriddedRegion extends Region implements Iterable<Location> {
    * <td><b>E</b></td> <td>{@code true}</td> <td>3</td> </tr> <tr>
    * <td><b>F</b></td> <td>{@code true}</td> <td>3</td> </tr> <tr>
    * <td><b>G</b></td> <td>{@code true}</td> <td>4</td> </tr> </tbody> </table>
-   * 
+   *
    * @param loc the {@code Location} to match to a grid node index
    * @return the index of the associated node or -1 if no such node exists
    */
   public int indexForLocation(Location loc) {
     int lonIndex = nodeIndex(lonEdges, loc.lon());
-    if (lonIndex == -1) return -1;
+    if (lonIndex == -1) {
+      return -1;
+    }
     int latIndex = nodeIndex(latEdges, loc.lat());
-    if (latIndex == -1) return -1;
+    if (latIndex == -1) {
+      return -1;
+    }
     int gridIndex = ((latIndex) * lonSize) + lonIndex;
     return gridIndices[gridIndex];
   }
@@ -361,7 +381,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
    * Returns the minimum grid latitude. Note that there may not actually be any
    * nodes at this latitude. See class <a href="#note">note</a>. If the region
    * is devoid of nodes, method will return {@code Double.NaN}.
-   * 
+   *
    * @return the minimum grid latitude
    * @see Region#contains(Location)
    */
@@ -373,7 +393,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
    * Returns the maximum grid latitude. Note that there may not actually be any
    * nodes at this latitude. See class <a href="#note">note</a>. If the region
    * is devoid of nodes, method will return {@code Double.NaN}.
-   * 
+   *
    * @return the maximum grid latitude
    * @see Region#contains(Location)
    */
@@ -385,7 +405,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
    * Returns the minimum grid longitude. Note that there may not actually be any
    * nodes at this longitude. See class <a href="#note">note</a>. If the region
    * is devoid of nodes, method will return {@code Double.NaN}.
-   * 
+   *
    * @return the minimum grid longitude
    * @see Region#contains(Location)
    */
@@ -397,7 +417,7 @@ public class GriddedRegion extends Region implements Iterable<Location> {
    * Returns the maximum grid longitude. Note that there may not actually be any
    * nodes at this longitude. See class <a href="#note">note</a>. If the region
    * is devoid of nodes, method will return {@code Double.NaN}.
-   * 
+   *
    * @return the maximum grid longitude
    * @see Region#contains(Location)
    */
@@ -470,7 +490,9 @@ public class GriddedRegion extends Region implements Iterable<Location> {
    */
   private void setAnchor(Location anchor) {
     Bounds bounds = bounds();
-    if (anchor == null) anchor = Location.create(bounds.min().lat(), bounds.min().lon());
+    if (anchor == null) {
+      anchor = Location.create(bounds.min().lat(), bounds.min().lon());
+    }
     double lat = computeAnchor(bounds.min().lat(), anchor.lat(), latSpacing);
     double lon = computeAnchor(bounds.min().lon(), anchor.lon(), lonSpacing);
     this.anchor = Location.create(lat, lon);

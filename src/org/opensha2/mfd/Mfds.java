@@ -5,10 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
-import static org.opensha2.eq.Magnitudes.magToMoment_N_m;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.opensha2.eq.Magnitudes.magToMoment_N_m;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
@@ -16,14 +14,17 @@ import org.opensha2.data.XySequence;
 import com.google.common.base.Converter;
 import com.google.common.primitives.Doubles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Factory and utility methods for working with magnitude frequency
  * distributions (Mfds).
- * 
+ *
  * TODO note application guidance implied by floats() TODO should Incremental
  * Mfds really descend from EvenlyDiscretizedFunction; if someone passes in
  * non-uniformely spaced mag values, there will be problems
- * 
+ *
  * @author Peter Powers
  */
 public final class Mfds {
@@ -35,7 +36,7 @@ public final class Mfds {
 
   /**
    * Creates a new single magnitude {@code IncrementalMfd}.
-   * 
+   *
    * @param mag for MFD
    * @param cumRate total cumulative event rate for lone magnitude bin
    * @param floats {@code true} if ruptures referencing this mfd should float;
@@ -50,7 +51,7 @@ public final class Mfds {
 
   /**
    * Creates a new single magnitude moment-balanced {@code IncrementalMfd}.
-   * 
+   *
    * @param mag for MFD
    * @param moRate total moment rate of lone magnitude bin
    * @param floats {@code true} if ruptures referencing this mfd should float;
@@ -72,10 +73,10 @@ public final class Mfds {
    * Creates a new {@code IncrementalMfd} with the supplied magnitudes and
    * rates. For the MFD returned, {@link IncrementalMfd#floats()} always returns
    * {@code true}.
-   * 
+   *
    * <p><b>NOTE:</b> This method expects evenly spaced magnitudes; if they are
    * not, results are undefined.</p>
-   * 
+   *
    * @param mags for MFD
    * @param rates for MFD
    * @return a new {@code IncrementalMfd}
@@ -86,7 +87,7 @@ public final class Mfds {
     checkArgument(rates.length > 1);
 
     IncrementalMfd mfd = buildIncrementalBaseMFD(mags[0], mags[mags.length - 1], mags.length,
-      true);
+        true);
     for (int i = 0; i < mags.length; i++) {
       mfd.set(mags[i], rates[i]);
     }
@@ -96,7 +97,7 @@ public final class Mfds {
   /**
    * Creates a new {@code GaussianMfd} that is doubly-truncated at
    * {@code 2*sigma}.
-   * 
+   *
    * @param mean magnitude
    * @param sigma standard deviation
    * @param size number of magnitude bins inclusive of min and max magnitudes
@@ -116,7 +117,7 @@ public final class Mfds {
    * Creates a new moment-balanced {@code GaussianMfd} that is doubly-truncated
    * at {@code 2*sigma}. For the MFD returned, {@link IncrementalMfd#floats()}
    * always returns {@code false}.
-   * 
+   *
    * @param mean magnitude
    * @param sigma standard deviation
    * @param size number of magnitude bins inclusive of min and max magnitudes
@@ -135,7 +136,7 @@ public final class Mfds {
   /**
    * Creates a new {@code GutenbergRichterMfd}. For the MFD returned,
    * {@link IncrementalMfd#floats()} always returns {@code true}.
-   * 
+   *
    * @param min magnitude
    * @param delta magnitude
    * @param size number of magnitude bins inclusive of min and max magnitudes
@@ -153,7 +154,7 @@ public final class Mfds {
   /**
    * Creates a new moment-balanced {@code GutenbergRichterMfd}. For the MFD
    * returned, {@link IncrementalMfd#floats()} always returns {@code true}.
-   * 
+   *
    * @param min magnitude
    * @param delta magnitude
    * @param size number of magnitude bins inclusive of min and max magnitudes
@@ -250,7 +251,7 @@ public final class Mfds {
    * Computes total moment rate as done by NSHMP code from supplied magnitude
    * info and the Gutenberg-Richter a- and b-values. <b>Note:</b> the a- and
    * b-values assume an incremental distribution.
-   * 
+   *
    * @param mMin minimum magnitude (after adding {@code dMag/2})
    * @param nMag number of magnitudes
    * @param dMag magnitude bin width
@@ -271,7 +272,7 @@ public final class Mfds {
   /**
    * Returns the Gutenberg Richter event rate for the supplied a- and b-values
    * and magnitude.
-   * 
+   *
    * @param a value (log10 rate of M=0 events)
    * @param b value
    * @param M magnitude of interest
@@ -284,10 +285,10 @@ public final class Mfds {
   /**
    * Computes the Gutenberg-Richter incremental rate at the supplied magnitude.
    * Convenience method for {@code N(M) = a*(10^-bm)}.
-   * 
+   *
    * TODO is this confusing? the NSHMP stores a-values in different ways [a A]
    * where a = log10(A); should users just supply grRate() with
-   * 
+   *
    * @param a value (incremental and defined wrt {@code dMag} for M0)
    * @param b value
    * @param mMin minimum magnitude of distribution
@@ -302,7 +303,7 @@ public final class Mfds {
    * does not divide evenly into {@code mMax - mMin}, and the result of this
    * method is used to build a Gutenberg-Richter MFD, the maximum magnitude of
    * the MFD may not equal the {@code mMax} supplied here.
-   * 
+   *
    * @param mMin minimum magnitude to consider
    * @param mMax maximum magnitude to consider
    * @param dMag magnitude delta
@@ -359,15 +360,15 @@ public final class Mfds {
 
   /**
    * Convert an {@code IncrementalMfd} to an {@code XySequence}.
-   * 
+   *
    * @param mfd to convert
    * @return a sequence populated with the values of the supplied
    *         {@code IncrementalMfd}.
    */
   public static XySequence toSequence(IncrementalMfd mfd) {
     return XySequence.createImmutable(
-      Doubles.toArray(mfd.xValues()),
-      Doubles.toArray(mfd.yValues()));
+        Doubles.toArray(mfd.xValues()),
+        Doubles.toArray(mfd.yValues()));
   }
 
   /**

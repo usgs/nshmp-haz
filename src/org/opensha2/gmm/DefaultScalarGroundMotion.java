@@ -2,7 +2,7 @@ package org.opensha2.gmm;
 
 /**
  * Default wrapper for ground motion prediction equation (GMPE) results.
- * 
+ *
  * @author Peter Powers
  */
 public class DefaultScalarGroundMotion implements ScalarGroundMotion {
@@ -17,7 +17,7 @@ public class DefaultScalarGroundMotion implements ScalarGroundMotion {
 
   /**
    * Create a new ground motion container.
-   * 
+   *
    * @param mean ground motion (in natural log units)
    * @param sigma aleatory uncertainty
    * @return a new scalar ground motion container.
@@ -39,11 +39,11 @@ public class DefaultScalarGroundMotion implements ScalarGroundMotion {
   @Override
   public String toString() {
     return new StringBuilder(getClass().getSimpleName())
-      .append(" [Median: ")
-      .append(String.format("%.6f", Math.exp(mean)))
-      .append(" Sigma: ")
-      .append(String.format("%.6f", sigma))
-      .append("]")
-      .toString();
+        .append(" [Median: ")
+        .append(String.format("%.6f", Math.exp(mean)))
+        .append(" Sigma: ")
+        .append(String.format("%.6f", sigma))
+        .append("]")
+        .toString();
   }
 }

@@ -5,13 +5,17 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
+import static org.opensha2.gmm.GmmInput.Field.DIP;
 import static org.opensha2.gmm.GmmInput.Field.MAG;
-import static org.opensha2.gmm.GmmInput.Field.RRUP;
-import static org.opensha2.gmm.GmmInput.Field.*;
-
-import java.util.Map;
+import static org.opensha2.gmm.GmmInput.Field.RAKE;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.VSINF;
+import static org.opensha2.gmm.GmmInput.Field.WIDTH;
+import static org.opensha2.gmm.GmmInput.Field.Z1P0;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import org.opensha2.data.Interpolate;
 import org.opensha2.eq.fault.Faults;
@@ -19,24 +23,26 @@ import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
 
+import java.util.Map;
+
 /**
  * Implementation of the Abrahamson, Silva & Kamai (2014) next generation ground
  * motion model for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Reference:</b> Abrahamson, N.A., Silva, W.J., and Kamai, R., 2014,
  * Summary of the ASK14 ground-motion relation for active crustal regions:
  * Earthquake Spectra, v. 30, n. 3, p. 1025-1055.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070913EQS198M">
  * 10.1193/070913EQS198M</a></p>
- * 
+ *
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#ASK_14
  */
@@ -45,16 +51,16 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
   static final String NAME = "Abrahamson, Silva & Kamai (2014)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(3.0, 8.5))
-    .setDistances(300.0)
-    .set(DIP, Faults.DIP_RANGE)
-    .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)
-    .set(ZTOP, Faults.CRUSTAL_DEPTH_RANGE)
-    .set(RAKE, Faults.RAKE_RANGE)
-    .set(VS30, Range.closedOpen(180.0, 1000.0))
-    .set(VSINF)
-    .set(Z1P0, Range.closed(0.0, 3.0))
-    .build();
+      .set(MAG, Range.closed(3.0, 8.5))
+      .setDistances(300.0)
+      .set(DIP, Faults.DIP_RANGE)
+      .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)
+      .set(ZTOP, Faults.CRUSTAL_DEPTH_RANGE)
+      .set(RAKE, Faults.RAKE_RANGE)
+      .set(VS30, Range.closedOpen(180.0, 1000.0))
+      .set(VSINF)
+      .set(Z1P0, Range.closed(0.0, 3.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("ASK14.csv");
 
@@ -79,9 +85,9 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
     final Imt imt;
     final double a1, a2, a6, a8, a10, a12, a13, a15, a17, a43, a44, a45, a46,
-        b, c,
-        s1e, s2e, s3, s4, s1m, s2m,
-        M1, Vlin;
+    b, c,
+    s1e, s2e, s3, s4, s1m, s2m,
+    M1, Vlin;
 
     // same for all periods; replaced with constant
     // final double a3, a4, a5, c4, n;
@@ -216,14 +222,16 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
     // Depth to Rupture Top Model -- Equation 16
     double f6 = c.a15;
-    if (zTop < 20.0) f6 *= zTop / 20.0;
+    if (zTop < 20.0) {
+      f6 *= zTop / 20.0;
+    }
 
     // Style-of-Faulting Model -- Equations 5 & 6
     // Note: REVERSE doesn not need to be implemented as f7 always resolves
     // to 0 as a11==0; we skip f7 here
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
     double f78 = (style == NORMAL) ? (Mw > 5.0) ? c.a12 : (Mw >= 4.0) ? c.a12 * (Mw - 4) : 0.0
-      : 0.0;
+        : 0.0;
 
     // Soil Depth Model -- Equation 17
     double f10 = calcSoilTerm(c, vs30, in.z1p0);
@@ -246,7 +254,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
       double f5_rk = (c.a10 + c_b * N) * log(vs30s_rk / c_Vlin);
       saRock = exp(f1 + f78 + f5_rk + f4 + f6);
       f5 = c.a10 * log(vs30s / c_Vlin) - c_b * log(saRock + c_c) + c_b *
-        log(saRock + c_c * pow(vs30s / c_Vlin, N));
+          log(saRock + c_c * pow(vs30s / c_Vlin, N));
     } else {
       f5 = (c.a10 + c_b * N) * log(vs30s / c_Vlin);
     }
@@ -288,9 +296,15 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
   // -- Equation 9
   private static final double getV1(final Imt imt) {
     Double T = imt.period();
-    if (T == null) return 1500.0;
-    if (T >= 3.0) return 800.0;
-    if (T > 0.5) return exp(-0.35 * log(T / 0.5) + log(1500.0));
+    if (T == null) {
+      return 1500.0;
+    }
+    if (T >= 3.0) {
+      return 800.0;
+    }
+    if (T > 0.5) {
+      return exp(-0.35 * log(T / 0.5) + log(1500.0));
+    }
     return 1500.0;
   }
 
@@ -301,7 +315,9 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
   private static final double calcSoilTerm(final Coefficients c, final double vs30,
       final double z1p0) {
     // short circuit; default z1 will be the same as z1ref
-    if (Double.isNaN(z1p0)) return 0.0;
+    if (Double.isNaN(z1p0)) {
+      return 0.0;
+    }
     // -- Equation 18
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.67 / 4.0 * log((vsPow4 + A) / B)) / 1000.0; // km
@@ -330,9 +346,11 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
   // -- Equation 30
   private static final double get_dAmp(final double b, final double c, final double vLin,
       final double vs30, final double saRock) {
-    if (vs30 >= vLin) return 0.0;
+    if (vs30 >= vLin) {
+      return 0.0;
+    }
     return (-b * saRock) / (saRock + c) +
-      (b * saRock) / (saRock + c * pow(vs30 / vLin, N));
+        (b * saRock) / (saRock + c * pow(vs30 / vLin, N));
   }
 
 }

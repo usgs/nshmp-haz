@@ -10,9 +10,9 @@ import java.awt.geom.Point2D;
  * above and below these points). The mean can be any value (it doesn't have to
  * exactly equal one of the descrete x-axis values). <br/><br/> This MFD does
  * not permit independent setting of values.
- * 
+ *
  * floats() always returns false.
- * 
+ *
  * @author Nitin Gupta (Aug,8,2002)
  * @author Ned Field (Nov, 21, 2002)
  * @author Peter Powers
@@ -248,6 +248,7 @@ class GaussianMfd extends IncrementalMfd {
   /**
    * returns the name of the class
    */
+  @Override
   public String getDefaultName() {
     return NAME;
   }
@@ -255,12 +256,13 @@ class GaussianMfd extends IncrementalMfd {
   /**
    * return the info stored in the class in form of a String
    */
+  @Override
   public String getDefaultInfo() {
 
     return "minMag=" + minX + "; maxMag=" + maxX + "; numMag=" + num + "; mean=" + mean +
-      "; stdDev=" + stdDev + "; totMoRate=" + (float) getTotalMomentRate() +
-      "; totCumRate=" + (float) this.getCumRate(0) + "; truncType=" +
-      truncType + "; truncLevel=" + truncLevel;
+        "; stdDev=" + stdDev + "; totMoRate=" + (float) getTotalMomentRate() +
+        "; totCumRate=" + (float) this.getCumRate(0) + "; truncType=" +
+        truncType + "; truncLevel=" + truncLevel;
 
   }
 
@@ -312,8 +314,9 @@ class GaussianMfd extends IncrementalMfd {
         int index = Math.round((float) ((magUpper - minX) / delta));
         // Make this the last non-zero rate by adding one in the next
         // loop
-        for (int i = index + 1; i >= 0 && i < num; i++)
+        for (int i = index + 1; i >= 0 && i < num; i++) {
           super.set(i, 0);
+        }
       }
 
       if (truncType == 2) {
@@ -321,17 +324,19 @@ class GaussianMfd extends IncrementalMfd {
         int index = Math.round((float) ((magLower - this.minX) / this.delta));
         // Make this the first non-zero rate by the <index in the next
         // loop
-        for (int i = 0; i < index && i < num; i++)
+        for (int i = 0; i < index && i < num; i++) {
           super.set(i, 0);
+        }
       }
     } else {
-      for (int i = 0; i < num; ++i)
+      for (int i = 0; i < num; ++i) {
         super.set(i, 0);
+      }
       try {
         super.set(mean, 1.0);
       } catch (RuntimeException e) {
         throw new RuntimeException(
-          "If sigma=0, then mean must equal one of the discrete X-axis magnitudes");
+            "If sigma=0, then mean must equal one of the discrete X-axis magnitudes");
       }
     }
   }

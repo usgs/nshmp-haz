@@ -3,13 +3,6 @@ package org.opensha2.gmm;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 
@@ -21,14 +14,21 @@ import com.google.common.collect.Table;
 import com.google.common.io.Resources;
 import com.google.common.primitives.Doubles;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Class loads and manages {@code GroundMotionModel} coefficients.
- * 
+ *
  * <p>Coefficients are loaded from CSV files. When such files are updated, it
  * may be necessary to edit certain {@code Imt} designations that are commonly
  * coded as integers (e.g. -1 = PGV, usually) or coefficient IDs that contain
  * illegal characters (e.g those with units labels in parentheses). </p>
- * 
+ *
  * @author Peter Powers
  */
 final class CoefficientContainer {
@@ -39,7 +39,7 @@ final class CoefficientContainer {
   /**
    * Create a new coefficent container from a comma-delimited coefficient
    * resource.
-   * 
+   *
    * @param resource coefficent csv text resource
    */
   CoefficientContainer(String resource) {
@@ -54,7 +54,7 @@ final class CoefficientContainer {
   /**
    * Return the value of the coefficient for the supplied name and intensity
    * measure type.
-   * 
+   *
    * @param imt intensity measure type
    * @param name of the coefficient to look up
    */
@@ -65,7 +65,7 @@ final class CoefficientContainer {
   /**
    * Return a {@code Map} of all coefficient for the supplied intensity measure
    * type.
-   * 
+   *
    * @param imt intensity measure type
    */
   Map<String, Double> get(Imt imt) {

@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.eq.TectonicSetting.ACTIVE_SHALLOW_CRUST;
 import static org.opensha2.eq.TectonicSetting.SUBDUCTION_INTERFACE;
 import static org.opensha2.eq.TectonicSetting.VOLCANIC;
@@ -19,17 +20,17 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmInput.Field.ZHYP;
 import static org.opensha2.gmm.Imt.PGA;
 
-import java.util.Map;
-
 import org.opensha2.eq.TectonicSetting;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
 
+import java.util.Map;
+
 /**
  * Abstract implementation of the ground motion model by McVerry et al. (2000).
- * 
+ *
  * <p><b>Implementation details:</b><ul><li>McVerry proposes a hanging wall term
  * but it was not specifically modeled and is not implemented here.</li><li> New
  * Zealand uses site classes that do not strictly correspond to fixed ranges of
@@ -40,29 +41,29 @@ import com.google.common.collect.Range;
  * 1500 < Vs30</li><li>Class B: 360 < Vs30 ≤ 1500</li><li>Class C: 250 < Vs30 ≤
  * 360</li><li>Class D: 150 < Vs30 ≤ 250</li><li>Class E: s30 ≤ 150 (not
  * supported)</li></ul></li></ul></p>
- * 
+ *
  * <p><b>Model applicability:</b> This needs work (TODO). Prior implementations
  * restricted distance to 400km, foacl depths to 100km, and Magnitudes between
  * 5.0 and 8.5. However the model supports a range of tectonic settings and
  * McVerry et al. (2006) restrict magnitude to 7.5 and distance to 400km for
  * curstal earthquakes, and restrict magnitudes to 8.0 and distances to 500km
  * for subduction earthquake.<p>
- * 
+ *
  * <p><b>Reference:</b> McVerry, G.H., Zhao, J.X., Abrahamson, N.A., and
  * Somerville, P.G., 2000, Crustal and subduction zone attenuation realations
  * for New Zealand earthquakes: Proc 12th World conference on earthquake
  * engineering, Auckland, New Zealand, February, 2000.</p>
- * 
+ *
  * <p><b>Reference:</b> McVerry, G.H., Zhao, J.X., Abrahamson, N.A., and
  * Somerville, P.G., 2000, New Zealand acceleration response spectrum
  * attenuation relations for crustal and subduction zone earthquakes: Bulletin
  * of the New Zealand Society of Earthquake Engineering, v. 39, n. 4, p.
  * 1-58.</p>
- * 
+ *
  * <p><b>Component:</b> Model supports geometric mean or maximum of two
  * horizontal components; only concrete implementations of max-horizontal
  * component are provided at this time.</p>
- * 
+ *
  * @author Brendon A. Bradley
  * @author Peter Powers
  */
@@ -79,12 +80,12 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
   // (e.g. zHyp only used by subduction)
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RRUP, Range.closed(0.0, 200.0))
-    .set(ZHYP, Range.closed(0.0, 20.0))
-    .set(RAKE, Faults.RAKE_RANGE)
-    .set(VS30, Range.closed(150.0, 1500.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RRUP, Range.closed(0.0, 200.0))
+      .set(ZHYP, Range.closed(0.0, 20.0))
+      .set(RAKE, Faults.RAKE_RANGE)
+      .set(VS30, Range.closed(150.0, 1500.0))
+      .build();
 
   // geomean and max-horizontal coefficients
   static final CoefficientContainer COEFFS_GM = new CoefficientContainer("McVerry00_gm.csv");
@@ -104,7 +105,7 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 
     final Imt imt;
     final double c1, c3as, c5, c8, c10as, c11, c13y, c15, c17, c20, c24, c29, c30as, c33as,
-        c43, c46, σ6, σSlope, τ;
+    c43, c46, σ6, σSlope, τ;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       this.imt = imt;
@@ -206,7 +207,9 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 
     double pgaMean = calcMeanBase(cPGA, tect, in);
 
-    if (c.imt == PGA) return pgaMean;
+    if (c.imt == PGA) {
+      return pgaMean;
+    }
 
     double pga_prime = exp(calcMeanBase(cPGAp, tect, in));
     double sa_prime = exp(calcMeanBase(c, tect, in));
@@ -217,11 +220,11 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
       final GmmInput in) {
 
     double lnSA_AB = (tect == ACTIVE_SHALLOW_CRUST || tect == VOLCANIC)
-      ? calcCrustal(c, tect, in) : calcSubduction(c, tect, in);
+        ? calcCrustal(c, tect, in) : calcSubduction(c, tect, in);
 
-    double lnSA_CD = calcSiteTerm(c, in.vs30, lnSA_AB);
+        double lnSA_CD = calcSiteTerm(c, in.vs30, lnSA_AB);
 
-    return lnSA_AB + lnSA_CD;
+        return lnSA_AB + lnSA_CD;
   }
 
   private static double calcCrustal(final Coefficients c, final TectonicSetting tect,
@@ -234,14 +237,14 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 
     FaultStyle style = rakeToFaultStyle(in.rake);
     double faultTerm = (style == REVERSE) ? c.c33as : (style == REVERSE_OBLIQUE)
-      ? c.c33as * 0.5 : (style == NORMAL) ? C32 : 0.0;
+        ? c.c33as * 0.5 : (style == NORMAL) ? C32 : 0.0;
 
     return c.c1 +
-      C4AS * (Mw - 6.0) +
-      c.c3as * (8.5 - Mw) * (8.5 - Mw) +
-      c.c5 * rRup +
-      (c.c8 + C6AS * (Mw - 6.0)) * log(sqrt(rRup * rRup + c.c10as * c.c10as)) +
-      c.c46 * rVol + faultTerm;
+        C4AS * (Mw - 6.0) +
+        c.c3as * (8.5 - Mw) * (8.5 - Mw) +
+        c.c5 * rRup +
+        (c.c8 + C6AS * (Mw - 6.0)) * log(sqrt(rRup * rRup + c.c10as * c.c10as)) +
+        c.c46 * rVol + faultTerm;
   }
 
   private static double calcSubduction(final Coefficients c, final TectonicSetting tect,
@@ -253,10 +256,10 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
     double subTerm = (tect == SUBDUCTION_INTERFACE) ? c.c24 : 0.0;
 
     return c.c11 +
-      (C12Y + (c.c15 - c.c17) * C19Y) * (Mw - 6) +
-      c.c13y * magTerm * magTerm * magTerm +
-      c.c17 * log(in.rRup + C18Y * exp(C19Y * Mw)) +
-      c.c20 * in.zHyp + subTerm;
+        (C12Y + (c.c15 - c.c17) * C19Y) * (Mw - 6) +
+        c.c13y * magTerm * magTerm * magTerm +
+        c.c17 * log(in.rRup + C18Y * exp(C19Y * Mw)) +
+        c.c20 * in.zHyp + subTerm;
 
     // NOTE: tectonic setting terms from publication:
     // c.c24 * SI + c.c46 * rVol * (1 - DS);
@@ -270,12 +273,12 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
     SiteClass siteClass = SiteClass.fromVs30(vs30);
     checkState(siteClass != SiteClass.E);
     return (siteClass == SiteClass.C) ? c.c29
-      : (siteClass == SiteClass.D) ? c.c30as * log(exp(lnSA_AB) + 0.03) + c.c43 : 0.0;
+        : (siteClass == SiteClass.D) ? c.c30as * log(exp(lnSA_AB) + 0.03) + c.c43 : 0.0;
   }
 
   private double calcStdDev(final Coefficients c, final double Mw) {
     double sigma = c.σ6 +
-      ((Mw >= 7.0) ? c.σSlope : (Mw <= 5.0) ? -c.σSlope : c.σSlope * (Mw - 6.0));
+        ((Mw >= 7.0) ? c.σSlope : (Mw <= 5.0) ? -c.σSlope : c.σSlope * (Mw - 6.0));
     return sqrt(sigma * sigma + c.τ * c.τ);
   }
 
@@ -300,7 +303,9 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
     static SiteClass fromVs30(double vs30) {
       checkArgument(vs30 > 0.0);
       for (SiteClass siteClass : values()) {
-        if (vs30 > siteClass.min) return siteClass;
+        if (vs30 > siteClass.min) {
+          return siteClass;
+        }
       }
       throw new IllegalStateException("Shouldn't be here");
     }

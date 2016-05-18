@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+
 import static org.opensha2.geo.GeoTools.TO_DEG;
 import static org.opensha2.geo.GeoTools.TWOPI;
 import static org.opensha2.geo.Locations.azimuthRad;
@@ -18,14 +19,14 @@ import static org.opensha2.geo.Locations.vertDistance;
  * of that from point B to A. Although the horizontal and vertical components
  * will be the same, the azimuth will likely change by some value other than
  * 180°.
- * 
+ *
  * <p><b>NOTE:</b> Although a {@code LocationVector} will function in any
  * reference frame, the convention in seismology and that adopted in OpenSHA is
  * for depth to be positive down. Also, azimuth is stored internally in radians
  * for computational convenience. Be sure to use the {@link #azimuth()}
  * (radians) or // {@link #azimuthDegrees()} (decimal-degrees) where
  * appropriate.</p>
- * 
+ *
  * @author Peter Powers
  */
 public class LocationVector {
@@ -44,7 +45,7 @@ public class LocationVector {
   /**
    * Initializes a new {@code LocationVector} with the supplied values. Note
    * that {@code azimuth} is expected in <i>radians</i>.
-   * 
+   *
    * @param azimuth to set in <i>radians</i>
    * @param horizontal component to set in km
    * @param vertical component to set in km
@@ -59,7 +60,7 @@ public class LocationVector {
    * components derived from the supplied {@code plunge} and {@code length}.
    * Note that {@code azimuth} and {@code plunge} are expected in
    * <i>radians</i>.
-   * 
+   *
    * @param azimuth to set in <i>radians</i>
    * @param plunge to set in <i>radians</i>
    * @param length of vector in km
@@ -72,7 +73,7 @@ public class LocationVector {
   /**
    * Returns the {@code LocationVector} describing the move from one
    * {@code Location} to another.
-   * 
+   *
    * @param p1 the first {@code Location}
    * @param p2 the second {@code Location}
    * @return a new {@code LocationVector}
@@ -86,11 +87,11 @@ public class LocationVector {
   /**
    * Returns a copy of the supplied vector with azimuth and vertical components
    * reversed.
-   * 
+   *
    * <p><b>NOTE</b>: create(p1, p2) is not equivalent to create
    * reverseOf(create(p2, p1)). Although the horizontal and vertical components
    * will likley be the same but the azimuths will potentially be different.
-   * 
+   *
    * @param v {@code LocationVector} to copy and flip
    * @return the flipped copy
    */

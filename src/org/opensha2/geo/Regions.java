@@ -1,20 +1,21 @@
 package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 
 import java.awt.Shape;
 
 /**
  * Static utility methods pertaining to geographic regions.
- * 
+ *
  * <p>Note that intersection and union operations will discard any grid
  * information if {@code GriddedRegion}s are supplied as arguments.</p>
- * 
+ *
  * <p>To build complex gridded regions (e.g. circular or buffered, or via
  * intersections and unions) create a Region first and use
  * {@link Regions#toGridded(Region, double, double, Location)}.</p>
- * 
+ *
  * @author Peter Powers
  */
 public class Regions {
@@ -25,7 +26,7 @@ public class Regions {
    * coordinate system or as connecting great circles. The border
    * {@code LocationList} does not need to repeat the first {@code Location} at
    * the end of the list.
-   * 
+   *
    * @param name of the {@code Region}; may be {@code null}
    * @param border {@code Locations}
    * @param type the {@link BorderType} to use when initializing; a {@code null}
@@ -46,7 +47,7 @@ public class Regions {
    * <img style="padding: 30px 40px; float: right;" src=
    * "{@docRoot}/resources/gridded_regions_border.jpg"/>Creates a
    * {@code GriddedRegion} from a list of border locations.
-   * 
+   *
    * <p>The border type specifies whether lat-lon values are treated as points
    * in an orthogonal coordinate system or as connecting great circles. The
    * border {@code LocationList} does not need to repeat the first
@@ -54,7 +55,7 @@ public class Regions {
    * {@code anchor Location} is {@code null}, it is automatically set to the
    * Location defined by the minimum latitude and longitude of the region's
    * border.
-   * 
+   *
    * @param name of the {@code GriddedRegion}; may be {@code null}
    * @param border {@code Locations}
    * @param type the {@link BorderType} to use when initializing; a {@code null}
@@ -82,7 +83,7 @@ public class Regions {
    * a Mercator projection, the {@code Region} will be a rectangle. If either
    * both latitude or both longitude values in the {@code Location}s are the
    * same, an exception is thrown.
-   * 
+   *
    * <p><b>Note:</b> Internally, the size of the region is expanded by a very
    * small value (~1m) to ensure that calls to {@link Region#contains(Location)}
    * for any {@code Location} on the north or east border of the region will
@@ -90,7 +91,7 @@ public class Regions {
    * clip the south and west borders (e.g. 45.0 may be interpreted as
    * 44.9999...). See also the rules governing insidedness in the {@link Shape}
    * interface.</p>
-   * 
+   *
    * @param name of the {@code Region}; may be {@code null}
    * @param loc1 the first {@code Location}
    * @param loc2 the second {@code Location}
@@ -113,7 +114,7 @@ public class Regions {
    * the same, an exception is thrown. If the supplied {@code anchor Location}
    * is {@code null}, it is automatically set to the Location defined by the
    * minimum latitude and longitude of the region's border.
-   * 
+   *
    * <p><b>Note:</b> Internally, the size of the region is expanded by a very
    * small value (~1m) to ensure that calls to {@link Region#contains(Location)}
    * for any {@code Location} on the north or east border of the region will
@@ -121,7 +122,7 @@ public class Regions {
    * clip the south and west borders (e.g. 45.0 may be interpreted as
    * 44.9999...). See also the rules governing insidedness in the {@link Shape}
    * interface.</p>
-   * 
+   *
    * @param name of the {@code GriddedRegion}; may be {@code null}
    * @param loc1 the first {@code Location}
    * @param loc2 the second {@code Location}
@@ -148,7 +149,7 @@ public class Regions {
    * "{@docRoot}/resources/gridded_regions_circle.jpg"/>Creates a circular
    * {@code Region}. Internally, the centerpoint and radius are used to create a
    * circular region composed of straight line segments that span 10° wedges.
-   * 
+   *
    * <p>Passing the resultant region
    * {@link #toGridded(Region, double, double, Location)} yields a
    * {@link GriddedRegion} like that in the adjacent figure. The heavy black
@@ -159,7 +160,7 @@ public class Regions {
    * {@link GriddedRegion#indexForLocation(Location)} for more details on rules
    * governing whether a grid node is inside a region and whether a
    * {@code Location} will be associated with a grid node.
-   * 
+   *
    * @param name of the {@code Region}; may be {@code null}
    * @param center of the circle
    * @param radius of the circle
@@ -178,7 +179,7 @@ public class Regions {
    * <img style="padding: 30px 40px; float: right;" src=
    * "{@docRoot}/resources/gridded_regions_buffer.jpg"/>Creates a {@code Region}
    * as a buffered area around a line.
-   * 
+   *
    * <p>Passing the resultant region
    * {@link #toGridded(Region, double, double, Location)} yields a
    * {@link GriddedRegion} like that in the adjacent figure. The light gray dots
@@ -188,7 +189,7 @@ public class Regions {
    * {@link GriddedRegion#indexForLocation(Location)} for more details on rules
    * governing whether a grid node is inside a region and whether a
    * {@code Location} will be associated with a grid node.
-   * 
+   *
    * @param name of the {@code Region}; may be {@code null}
    * @param line at center of buffered {@code Region}
    * @param buffer distance from line
@@ -205,7 +206,7 @@ public class Regions {
 
   /**
    * Creates an exact copy of a {@code Region}.
-   * 
+   *
    * @return a copy of the supplied {@code Region}
    * @param region to copy
    * @throws NullPointerException if the supplied {@code Region} is {@code null}
@@ -219,7 +220,7 @@ public class Regions {
 
   /**
    * Creates a copy of a {@code GriddedRegion}.
-   * 
+   *
    * @return a copy of the supplied {@code GriddedRegion}
    * @param region to copy
    * @throws NullPointerException if the supplied {@code GriddedRegion} is
@@ -237,7 +238,7 @@ public class Regions {
    * {@code Region}. If the supplied {@code anchor Location} is {@code null}, it
    * is automatically set to the Location defined by the minimum latitude and
    * longitude of the region's border.
-   * 
+   *
    * @param region to use as basis for new {@code GriddedRegion}
    * @param latSpacing of grid nodes
    * @param lonSpacing of grid nodes
@@ -261,7 +262,7 @@ public class Regions {
   /**
    * Returns the intersection of two {@code Region}s. If the {@code Region}s do
    * not overlap, the method returns {@code null}.
-   * 
+   *
    * @param name of the {@code Region}; may be {@code null}
    * @param r1 the first {@code Region}
    * @param r2 the second {@code Region}
@@ -279,7 +280,7 @@ public class Regions {
   /**
    * Returns the union of two {@code Region}s. If the {@code Region}s do not
    * overlap, the method returns {@code null}.
-   * 
+   *
    * @param name of the {@code Region}; may be {@code null}
    * @param r1 the first {@code Region}
    * @param r2 the second {@code Region}

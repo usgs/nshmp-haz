@@ -2,8 +2,7 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readString;
+
 import static org.opensha2.eq.model.SourceAttribute.ASEIS;
 import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
@@ -12,17 +11,13 @@ import static org.opensha2.eq.model.SourceAttribute.INDEX;
 import static org.opensha2.eq.model.SourceAttribute.LOWER_DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.NAME;
 import static org.opensha2.eq.model.SystemParser.SECTIONS_FILENAME;
+import static org.opensha2.util.Parsing.readDouble;
+import static org.opensha2.util.Parsing.readString;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.SAXParser;
-
-import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
+import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.geo.LocationList;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -31,12 +26,19 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Lists;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.SAXParser;
+
 /*
  * Non-validating indexed fault section parser. SAX parser 'Attributes' are
  * stateful and cannot be stored. This class is not thread safe. The List
  * returned by parse() is mutable as it will be made immutable when ultimately
  * passed to SystemSourceSet.Builder
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -107,9 +109,9 @@ class SystemSectionParser extends DefaultHandler {
           double lowerDepth = readDouble(LOWER_DEPTH, atts);
           depth += aseis * (lowerDepth - depth);
           surfaceBuilder.depth(depth)
-              .lowerDepth(lowerDepth)
-              .dip(readDouble(DIP, atts))
-              .dipDir(readDouble(DIP_DIR, atts));
+          .lowerDepth(lowerDepth)
+          .dip(readDouble(DIP, atts))
+          .dipDir(readDouble(DIP_DIR, atts));
           break;
 
         case TRACE:
@@ -155,7 +157,9 @@ class SystemSectionParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingTrace) traceBuilder.append(ch, start, length);
+    if (readingTrace) {
+      traceBuilder.append(ch, start, length);
+    }
   }
 
   @Override

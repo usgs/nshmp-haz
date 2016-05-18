@@ -1,6 +1,7 @@
 package org.opensha2.eq.fault.surface;
 
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
@@ -51,20 +52,20 @@ class GriddedFaultSurface {
 
   /*
    * TODO document builder which will almost certainly be part of a public API
-   * 
+   *
    * TODO doc trace assumed to be at depth=0?
-   * 
+   *
    * TODO do trace depths all need to be the same; condidtion used to be imposed
    * in assertValidState
-   * 
+   *
    * TODO surface is initialized with a dip direction in radians; this may be
    * normal to Faults.strike(trace), but may not be; in any event, we do not
    * want to recompute it internally.
-   * 
+   *
    * TODO single-use builder
-   * 
+   *
    * TODO right-hand-rule
-   * 
+   *
    * TODO should surface only be a single row if width < dipSpacing/2
    */
   public static class Builder {
@@ -143,7 +144,7 @@ class GriddedFaultSurface {
       checkState(depth != null, "%s depth not set", id);
 
       checkState((width != null) ^ (lowerDepth != null), "%s width or lowerDepth not set",
-        id);
+          id);
       if (lowerDepth != null && lowerDepth <= depth) {
         throw new IllegalStateException("Lower depth is above upper depth");
       }
@@ -152,8 +153,12 @@ class GriddedFaultSurface {
 
     public DefaultGriddedSurface build() {
       validateState(ID);
-      if (dipDirRad == null) dipDirRad = Faults.dipDirectionRad(trace);
-      if (width == null) width = (lowerDepth - depth) / Math.sin(dipRad);
+      if (dipDirRad == null) {
+        dipDirRad = Faults.dipDirectionRad(trace);
+      }
+      if (width == null) {
+        width = (lowerDepth - depth) / Math.sin(dipRad);
+      }
       return null;
       // new DefaultGriddedSurface(trace, dipRad, dipDirRad, depth, width,
       // strikeSpacing, dipSpacing);

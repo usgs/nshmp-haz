@@ -10,7 +10,7 @@ import com.google.common.base.Predicate;
  * Wrapper class for groups of {@link Source}s of similar {@link SourceType}.
  * The use of the word 'Set' in the class name implies the {@code Source}s in a
  * {@code SourceSet} will be unique, but no steps are taken to enforce this.
- * 
+ *
  * @author Peter Powers
  */
 public interface SourceSet<T extends Source> extends Named, Iterable<T>, Comparable<SourceSet<T>> {
@@ -40,7 +40,7 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
    * cutoff distance of the supplied {@code Location}. The cutoff distance is
    * derived from the {@code GroundMotionModel}s associated with this
    * {@code SourceSet}.
-   * 
+   *
    * @param loc {@code Location} of interest
    */
   Iterable<T> iterableForLocation(Location loc);
@@ -50,7 +50,7 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
    * within {@code distance} of the supplied {@link Location}. This
    * {@code Predicate} performs a quick distance calculation and is used to
    * determine whether this source should be included in a hazard calculation.
-   * 
+   *
    * @param loc {@code Location} of interest
    * @param distance limit
    */
@@ -59,7 +59,7 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
   /**
    * Return the {@link GroundMotionModel}s associated with this
    * {@code SourceSet} as a {@link GmmSet}.
-   * 
+   *
    * @see GmmSet
    */
   GmmSet groundMotionModels();

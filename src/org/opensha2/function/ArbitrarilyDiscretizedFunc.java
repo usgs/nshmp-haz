@@ -52,14 +52,15 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
 
   /**
    * Creates an ArbitrarilyDiscretizedFunc from an DiscretizedFunc
-   * 
+   *
    * @param func
    */
   public ArbitrarilyDiscretizedFunc(AbstractDiscretizedFunc func) {
     this(func.getTolerance());
     Iterator<Point2D> it = func.iterator();
-    while (it.hasNext())
+    while (it.hasNext()) {
       this.set(it.next());
+    }
     this.setInfo(func.getInfo());
     this.setName(func.name());
     this.setXAxisName(func.getXAxisName());
@@ -87,7 +88,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * comparator. The comparator is used for sorting the DataPoint2D. This
    * default Comparator compares only x-values within tolerance to determine if
    * two points are equal.<p>
-   * 
+   *
    * made private pending ticket #341
    */
   private ArbitrarilyDiscretizedFunc(double tolerance) {
@@ -133,6 +134,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * (1.0+1e-16) = 1.0).
    */
 
+  @Override
   public void setTolerance(double newTolerance) {
     checkArgument(newTolerance >= 0, "Tolerance must be larger or equal to 0");
     points.setTolerance(newTolerance);
@@ -140,6 +142,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
   }
 
   /** returns the number of points in this function list */
+  @Override
   public int getNum() {
     return points.size();
   }
@@ -148,6 +151,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * return the minimum x value along the x-axis. Since the values are sorted
    * this is a very quick lookup
    */
+  @Override
   public double getMinX() {
     ;
     return points.getMinX();
@@ -157,6 +161,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * return the maximum x value along the x-axis. Since the values are sorted
    * this is a very quick lookup
    */
+  @Override
   public double getMaxX() {
     return points.getMaxX();
   }
@@ -169,6 +174,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * for plotting and in other functions, in other words more lookups than
    * inserts.
    */
+  @Override
   public double getMinY() {
     return points.getMinY();
   }
@@ -181,6 +187,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * for plotting and in other functions, in other words more lookups than
    * inserts.
    */
+  @Override
   public double getMaxY() {
     return points.getMaxY();
   }
@@ -189,23 +196,28 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Returns the nth (x,y) point in the Function, else null if this index point
    * doesn't exist
    */
+  @Override
   public Point2D get(int index) {
     return points.get(index);
   }
 
   /** Returns the x value of a point given the index */
+  @Override
   public double getX(int index) {
     Point2D pt = get(index);
-    if (pt == null)
+    if (pt == null) {
       throw new IndexOutOfBoundsException("no point at index " + index);
+    }
     return pt.getX();
   }
 
   /** Returns the y value of a point given the index */
+  @Override
   public double getY(int index) {
     Point2D pt = get(index);
-    if (pt == null)
+    if (pt == null) {
       throw new IndexOutOfBoundsException("no point at index " + index);
+    }
     return pt.getY();
   }
 
@@ -213,6 +225,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * returns the Y value given an x value - within tolerance, returns null if
    * not found
    */
+  @Override
   public double getY(double x) {
     return points.get(x).getY();
   }
@@ -221,11 +234,13 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * returns the Y value given an x value - within tolerance, returns null if
    * not found
    */
+  @Override
   public int getIndex(Point2D point) {
     return points.indexOf(point);
   }
 
   /** Returns the x value of a point given the index or -1 if not found */
+  @Override
   public int getXIndex(double x) {
     return points.indexOf(new Point2D.Double(x, 0.0));
   }
@@ -233,6 +248,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
   /**
    * Either adds a new DataPoint, or replaces an existing one, within tolerance
    */
+  @Override
   public void set(Point2D point) {
     points.add(point);
     // wtf; the exception below can never be thrown; parent add
@@ -246,6 +262,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Either adds a new DataPoint, or replaces an existing one, within tolerance,
    * created from the input x and y values.
    */
+  @Override
   public void set(double x, double y) {
     set(new Point2D.Double(x, y));
   }
@@ -254,31 +271,36 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Replaces a y value for an existing point, accessed by index. If no
    * DataPoint exists nothing is done.
    */
+  @Override
   public void set(int index, double y) {
     Point2D point = get(index);
     if (point != null) {
       point.setLocation(point.getX(), y);
       set(point);
-    } else
+    } else {
       throw new IndexOutOfBoundsException();
+    }
   }
 
   /**
    * Determinces if a DataPoit2D exists in the treemap base on it's x value
    * lookup. Returns true if found, else false if point not in list.
    */
+  @Override
   public boolean hasPoint(Point2D point) {
     int index = getIndex(point);
-    if (index < 0)
+    if (index < 0) {
       return false;
-    else
+    } else {
       return true;
+    }
   }
 
   /**
    * Determinces if a DataPoit2D exists in the treemap base on it's x value
    * lookup. Returns true if found, else false if point not in list.
    */
+  @Override
   public boolean hasPoint(double x, double y) {
     return hasPoint(new Point2D.Double(x, y));
   }
@@ -291,6 +313,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
     return points.iterator();
   }
 
+  @Override
   public Iterator<Point2D> iterator() {
     return points.iterator();
   }
@@ -307,14 +330,16 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * @return x the interpolated x based on the given y value
    */
 
+  @Override
   public double getFirstInterpolatedX(double y) {
     // finds the size of the point array
     int max = points.size();
     // if Size of the function is 1 and Y value is equal to Y val of
     // function
     // return the only X value
-    if (max == 1 && y == getY(0))
+    if (max == 1 && y == getY(0)) {
       return getX(0);
+    }
     double y1 = Double.NaN;
     double y2 = Double.NaN;
     int i;
@@ -334,7 +359,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
 
     // if passed parameter(y value) is not within range then throw exception
     checkArgument(found, "Y Value (%s) must be within the range: %s and %s", y, getY(0),
-      getY(max - 1));
+        getY(max - 1));
 
     // finding the x values for the coressponding y values
     double x1 = getX(i);
@@ -357,14 +382,16 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    *        required to find the interpolated x value in the log space.
    * @return x(this is the interpolated x based on the given y value)
    */
+  @Override
   public double getFirstInterpolatedX_inLogXLogYDomain(double y) {
     // finds the size of the point array
     int max = points.size();
     // if Size of the function is 1 and Y value is equal to Y val of
     // function
     // return the only X value
-    if (max == 1 && y == getY(0))
+    if (max == 1 && y == getY(0)) {
       return getX(0);
+    }
 
     double y1 = Double.NaN;
     double y2 = Double.NaN;
@@ -385,7 +412,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
 
     // if passed parameter(y value) is not within range then throw exception
     checkArgument(found, "Y Value (%s) must be within the range: %s and %s", y, getY(0),
-      getY(max - 1));
+        getY(max - 1));
 
     // finding the x values for the coressponding y values
     double x1 = Math.log(getX(i));
@@ -402,8 +429,9 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
 
   private int getXIndexBefore(double x) {
     int ind = points.binarySearch(new Point2D.Double(x, 0));
-    if (ind < 0)
+    if (ind < 0) {
       return -ind - 2;
+    }
     return ind - 1;
   }
 
@@ -415,22 +443,25 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * @param x value for which interpolated first y value has to be found
    * @return y the interpolated x based on the given x value
    */
+  @Override
   public double getInterpolatedY(double x) {
     // finds the size of the point array
     int max = points.size();
     // if passed parameter(x value) is not within range then throw exception
     checkArgument(x <= getX(max - 1) && x >= getX(0),
-      "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(max - 1));
+        "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(max - 1));
 
     // if x value is equal to the maximum value of all given X's then return
     // the corresponding Y value
-    if (x == getX(max - 1))
+    if (x == getX(max - 1)) {
       return getY(x);
+    }
     // finds the X values within which the the given x value lies
     int x1Ind = getXIndexBefore(x);
-    if (x1Ind == -1)
+    if (x1Ind == -1) {
       // this means that it matches at index 0
       return getY(0);
+    }
     int x2Ind = x1Ind + 1;
     Point2D pt1 = get(x1Ind);
     Point2D pt2 = get(x2Ind);
@@ -457,17 +488,19 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * @return y(this is the interpolated y in linear space based on the given x
    *         value)
    */
+  @Override
   public double getInterpolatedY_inLogXLogYDomain(double x) {
     // finds the size of the point array
     int max = points.size();
     // if passed parameter(x value) is not within range then throw exception
     checkArgument(x <= getX(max - 1) && x >= getX(0),
-      "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(max - 1));
+        "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(max - 1));
 
     // if x value is equal to the maximum value of all given X's then return
     // the corresponding Y value
-    if (x == getX(max - 1))
+    if (x == getX(max - 1)) {
       return getY(x);
+    }
     int x1Ind = getXIndexBefore(x);
     int x2Ind = x1Ind + 1;
     Point2D pt1 = get(x1Ind);
@@ -476,9 +509,15 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
     double y1 = pt1.getY();
     double x2 = pt2.getX();
     double y2 = pt2.getY();
-    if (y1 == 0 && y2 == 0) return 0;
-    if (y1 == 0) y1 = Double.MIN_VALUE;
-    if (y2 == 0) y2 = Double.MIN_VALUE;
+    if (y1 == 0 && y2 == 0) {
+      return 0;
+    }
+    if (y1 == 0) {
+      y1 = Double.MIN_VALUE;
+    }
+    if (y2 == 0) {
+      y2 = Double.MIN_VALUE;
+    }
     double logY1 = Math.log(y1);
     double logY2 = Math.log(y2);
     x1 = Math.log(x1);
@@ -488,7 +527,9 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
     // given x
     double y = ((logY2 - logY1) * (x - x1)) / (x2 - x1) + logY1;
     double expY = Math.exp(y);
-    if (expY == Double.MIN_VALUE) expY = 0.0;
+    if (expY == Double.MIN_VALUE) {
+      expY = 0.0;
+    }
     return expY;
   }
 
@@ -516,9 +557,9 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * System.out.println(y1+"\t"+y2+"\t"+logY1+"\t"+logY2+"\t"+x1+"\t"+x2+"\t"+
    * x+ "\t"+y+"\t"+Math.exp(x1)+"\t"+Math.exp(x2)+"\t"+Math.exp(x)+"\t"+expY+
    * "\t"+Double.MIN_VALUE); }
-   * 
+   *
    * return expY;
-   * 
+   *
    * }
    */
 
@@ -531,17 +572,19 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * @return y(this is the interpolated y in linear space based on the given x
    *         value)
    */
+  @Override
   public double getInterpolatedY_inLogYDomain(double x) {
     // finds the size of the point array
     int max = points.size();
     // if passed parameter(x value) is not within range then throw exception
     checkArgument(x <= getX(max - 1) && x >= getX(0),
-      "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(max - 1));
+        "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(max - 1));
 
     // if x value is equal to the maximum value of all given X's then return
     // the corresponding Y value
-    if (x == getX(max - 1))
+    if (x == getX(max - 1)) {
       return getY(x);
+    }
     // finds the X values within which the the given x value lies
     int x1Ind = getXIndexBefore(x);
     int x2Ind = x1Ind + 1;
@@ -551,7 +594,9 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
     double y1 = pt1.getY();
     double x2 = pt2.getX();
     double y2 = pt2.getY();
-    if (y1 == 0 && y2 == 0) return 0;
+    if (y1 == 0 && y2 == 0) {
+      return 0;
+    }
     double logY1 = Math.log(y1);
     double logY2 = Math.log(y2);
     // using the linear interpolation equation finding the value of y for
@@ -582,11 +627,11 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
       // We gotta extrapolate...
       if (x < getX(0)) {
         return Math.exp(extrapolate(getX(0), getX(1), Math.log(getY(0)),
-          Math.log(getY(1)), x));
+            Math.log(getY(1)), x));
       }
       int max = points.size();
       return Math.exp(extrapolate(getX(max - 2), getX(max - 1),
-        Math.log(getY(max - 2)), Math.log(getY(max - 1)), x));
+          Math.log(getY(max - 2)), Math.log(getY(max - 1)), x));
     }
   }
 
@@ -597,6 +642,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    *
    * Since this is a clone, you can modify it without changing the original.
    */
+  @Override
   public ArbitrarilyDiscretizedFunc deepClone() {
 
     ArbitrarilyDiscretizedFunc function = new ArbitrarilyDiscretizedFunc();
@@ -623,11 +669,15 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    */
   public boolean equalXValues(DiscretizedFunc function) {
     // String S = C + ": equalXValues():";
-    if (this.getNum() != function.getNum()) return false;
+    if (this.getNum() != function.getNum()) {
+      return false;
+    }
     Iterator it = this.iterator();
     while (it.hasNext()) {
       Point2D point = (Point2D) it.next();
-      if (!function.hasPoint(point)) return false;
+      if (!function.hasPoint(point)) {
+        return false;
+      }
     }
     return true;
 
@@ -637,6 +687,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Standard java function, usually used for debugging, prints out the state of
    * the list, such as number of points, the value of each point, etc.
    */
+  @Override
   public String toString() {
     StringBuffer b = new StringBuffer();
 
@@ -652,6 +703,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    *
    * @return value of each point in the function in String format
    */
+  @Override
   public String getMetadataString() {
     StringBuffer b = new StringBuffer();
     Iterator it2 = this.iterator();
@@ -738,12 +790,13 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
   public ArbitrarilyDiscretizedFunc getYY_Function(DiscretizedFunc function) {
 
     checkArgument(getNum() == function.getNum(),
-      "This operation cannot be performed on functions with different size");
+        "This operation cannot be performed on functions with different size");
 
     ArbitrarilyDiscretizedFunc newFunction = new ArbitrarilyDiscretizedFunc();
     int numPoints = function.getNum();
-    for (int j = 0; j < numPoints; ++j)
+    for (int j = 0; j < numPoints; ++j) {
       newFunction.set(getY(j), function.getY(j));
+    }
 
     return newFunction;
   }
@@ -801,7 +854,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
   /*
    * temp main method to investige numerical precision issues public static void
    * main( String[] args ) {
-   * 
+   *
    * ArbitrarilyDiscretizedFunc func = new ArbitrarilyDiscretizedFunc(); //
    * func.setTolerance(Double.MIN_VALUE); func.set(1.0,0);
    * func.set(Double.MIN_VALUE,0); func.set(1+1e-16,1); func.set(1+2e-16,2);
@@ -810,35 +863,35 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
    * func.set(1+9e-16,9); func.set(1+10e-16,10); Iterator it = func.iterator();
    * Point2D point; while( it.hasNext()) { point = (Point2D) it.next();
    * System.out.println(point.getX()+"  "+point.getY()); } }
-   * 
+   *
    */
 
   /*
    * public void rebuild(){
-   * 
+   *
    * // make temporary storage ArrayList points = new ArrayList();
-   * 
+   *
    * // get all points Iterator it = getPointsIterator(); if( it != null )
    * while(it.hasNext()) { points.add( (Point2D)it.next() ); }
-   * 
+   *
    * // get all non-log points if any it = getNonLogPointsIterator(); if( it !=
    * null ) while(it.hasNext()) { points.add( (Point2D)it.next() ); }
-   * 
+   *
    * // clear permanent storage points.clear(); nonPositivepoints.clear();
-   * 
+   *
    * // rebuild permanent storage it = points.listIterator(); if( it != null )
    * while(it.hasNext()) { set( (Point2D)it.next() ); }
-   * 
+   *
    * if( D ) System.out.println("rebuild: " + toDebugString()); points = null; }
-   * 
+   *
    * public boolean isYLog() { return yLog; } public void setYLog(boolean yLog)
    * {
-   * 
+   *
    * if( yLog != this.yLog ) { this.yLog = yLog; rebuild(); } }
-   * 
+   *
    * public boolean isXLog() { return xLog; } public void setXLog(boolean xLog)
    * { if( xLog != this.xLog ) { this.xLog = xLog; rebuild(); } }
-   * 
+   *
    */
 
 }

@@ -1,17 +1,17 @@
 package org.opensha2.eq.model;
 
-import java.util.Map;
-
-import org.opensha2.geo.Location;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.RuptureSurface;
+import org.opensha2.geo.Location;
 
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 /**
  * A {@code Rupture} is a proxy for an actual earthquake and encapsulates all
  * the source information required by a ground motion model (Gmm).
- * 
+ *
  * @author Peter Powers
  */
 public class Rupture {
@@ -38,7 +38,7 @@ public class Rupture {
   }
 
   /**
-   * 
+   *
    * @param mag moment magnitude
    * @param rate of occurrence (annual)
    * @param rake slip direction on rupture surface
@@ -51,7 +51,7 @@ public class Rupture {
 
   /**
    * Creates a new {@code Rupture}.
-   * 
+   *
    * @param mag moment magnitude
    * @param rate of occurrence (annual)
    * @param rake slip direction on rupture surface

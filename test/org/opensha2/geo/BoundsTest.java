@@ -39,11 +39,11 @@ public class BoundsTest {
     Bounds b = new Bounds(MIN, MAX);
     LocationList bList = b.toList();
     LocationList oList = LocationList.create(
-      MIN,
-      Location.create(MIN_LAT, MAX_LON),
-      MAX,
-      Location.create(MAX_LAT, MIN_LON),
-      MIN);
+        MIN,
+        Location.create(MIN_LAT, MAX_LON),
+        MAX,
+        Location.create(MAX_LAT, MIN_LON),
+        MIN);
     assertEquals(oList, bList);
   }
 

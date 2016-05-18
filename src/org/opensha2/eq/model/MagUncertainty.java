@@ -2,17 +2,26 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
-import static org.opensha2.eq.model.SourceAttribute.*;
+
+import static org.opensha2.eq.model.SourceAttribute.COUNT;
+import static org.opensha2.eq.model.SourceAttribute.CUTOFF;
+import static org.opensha2.eq.model.SourceAttribute.DELTAS;
+import static org.opensha2.eq.model.SourceAttribute.MO_BALANCE;
+import static org.opensha2.eq.model.SourceAttribute.SIGMA;
+import static org.opensha2.eq.model.SourceAttribute.WEIGHTS;
 import static org.opensha2.eq.model.SourceElement.ALEATORY;
 import static org.opensha2.eq.model.SourceElement.EPISTEMIC;
 import static org.opensha2.eq.model.SourceElement.MAG_UNCERTAINTY;
-import static org.opensha2.util.Parsing.*;
+import static org.opensha2.util.Parsing.addAttribute;
+import static org.opensha2.util.Parsing.addElement;
+import static org.opensha2.util.Parsing.toDoubleArray;
+
+import org.opensha2.eq.Magnitudes;
+
+import org.w3c.dom.Element;
 
 import java.util.Arrays;
 import java.util.Map;
-
-import org.opensha2.eq.Magnitudes;
-import org.w3c.dom.Element;
 
 /**
  * Wrapper class for magnitude uncertainty data. Uncertainty flags are
@@ -38,7 +47,7 @@ public class MagUncertainty {
 
   /**
    * Factory magnitude uncertainty container constructor.
-   * 
+   *
    * @param epiDeltas epistemic change to magnitude (M +/- delta)
    * @param epiWeights weight for each change; must be same length as
    *        {@code epiDeltas}
@@ -134,7 +143,9 @@ public class MagUncertainty {
    * @return a reference to the newly created {@code Element}
    */
   public Element appendTo(Element node) {
-    if (!hasAleatory && !hasEpistemic) return null;
+    if (!hasAleatory && !hasEpistemic) {
+      return null;
+    }
     Element e = addElement(MAG_UNCERTAINTY, node);
     if (hasEpistemic) {
       Element eEpistemic = addElement(EPISTEMIC, e);

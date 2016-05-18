@@ -76,12 +76,13 @@ public class Point2DToleranceComparator implements Point2DComparator {
    * @param newTolerance The new tolerance value
    * @exception InvalidRangeException Thrown if tolerance is negative
    */
+  @Override
   public void setTolerance(double newTolerance) {
 
     // TODO WTF!! this adapted from original where it doesn't make any sense
     checkArgument(tolerance >= 0, "Tolerance must be larger or equal to 0");
     checkState(tolerance == 0, "Tolerance is now fixed at 0.0 until we decide what to do" +
-      " with it. See trac ticket #341");
+        " with it. See trac ticket #341");
     tolerance = newTolerance;
   }
 
@@ -91,6 +92,7 @@ public class Point2DToleranceComparator implements Point2DComparator {
    *
    * @return The tolerance value
    */
+  @Override
   public double getTolerance() {
     return tolerance;
   }
@@ -110,6 +112,7 @@ public class Point2DToleranceComparator implements Point2DComparator {
    * @param o2 Second DataPoint2D
    * @return -1 if o1 < 02, 0 if o1 = o2, +1 if o1 > o2
    */
+  @Override
   public int compare(Point2D o1, Point2D o2) {
 
     double x1 = o1.getX();

@@ -6,20 +6,9 @@ import static java.lang.Math.abs;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
+
 import static org.opensha2.util.Parsing.Delimiter.COMMA;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
-
-import org.junit.Ignore;
-import org.junit.Test;
 import org.opensha2.HazardCalc;
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Hazard;
@@ -30,10 +19,23 @@ import org.opensha2.gmm.Imt;
 import org.opensha2.mfd.Mfds;
 import org.opensha2.util.Parsing;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Doubles;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
 
 @SuppressWarnings("javadoc")
 @Ignore
@@ -123,7 +125,7 @@ public class PeerTest {
     Hazard result = HazardCalc.calc(model, model.config(), site, Optional.<Executor> absent());
     // compute y-values converting to Poiss prob
     double[] actual = Doubles.toArray(
-      FluentIterable.from(result.curves().get(Imt.PGA).yValues())
+        FluentIterable.from(result.curves().get(Imt.PGA).yValues())
         .transform(Mfds.annualRateToProbabilityConverter())
         .toList());
     checkArgument(actual.length == expected.length);
@@ -131,14 +133,14 @@ public class PeerTest {
     assertArrayEquals(expected, actual, tolerance);
     for (int i = 0; i < expected.length; i++) {
       String message = String.format("arrays differ at [%s] expected:<[%s]> but was:<[%s]>",
-        i, expected[i], actual[i]);
+          i, expected[i], actual[i]);
       assertTrue(message, compare(expected[i], actual[i], tolerance));
     }
   }
 
   private static boolean compare(double expected, double actual, double tolerance) {
     return abs(actual - expected) / expected < tolerance ||
-      Double.valueOf(expected).equals(Double.valueOf(actual));
+        Double.valueOf(expected).equals(Double.valueOf(actual));
   }
 
   static List<Object[]> load(String modelId, double tolerance) throws IOException {
@@ -155,8 +157,8 @@ public class PeerTest {
     for (Site site : sites) {
       checkState(expectedsMap.containsKey(site.name()));
       Object[] args =
-        new Object[] { model.name(), model, site, expectedsMap.get(site.name()), tolerance
-        };
+          new Object[] { model.name(), model, site, expectedsMap.get(site.name()), tolerance
+      };
       argsList.add(args);
     }
     return argsList;

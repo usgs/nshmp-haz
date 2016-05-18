@@ -1,38 +1,39 @@
 package org.opensha2.gmm;
 
-import static java.lang.Math.pow;
 import static java.lang.Math.max;
+import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.LN_G_CM_TO_M;
 
-import java.util.Map;
-
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
 
+import java.util.Map;
+
 /**
  * Implementation of the ground motion model by Atkinson (2015) for induced
  * seismicity.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Reference:</b> Atkinson, G.M., 2015, Ground-motion prediction equation
  * for small-to-moderate events at short hypocentral distances, with application
  * to induced-seismicity hazards: Bulletin of the Seismological Society of
  * America, v. 105, p. 981-992.</p>
- * 
+ *
  * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120140142">
  * 10.1785/0120140142</a></p>
- * 
+ *
  * <p><b>Component:</b> orientation-independent horizontal</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#AM_09_INTER
  */
@@ -42,10 +43,10 @@ public final class Atkinson_2015 implements GroundMotionModel {
 
   // TODO
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(3.0, 6.0))
-    .set(RRUP, Range.closed(0.0, 300.0))
-    .set(VS30, Range.singleton(760.0))
-    .build();
+      .set(MAG, Range.closed(3.0, 6.0))
+      .set(RRUP, Range.closed(0.0, 300.0))
+      .set(VS30, Range.singleton(760.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("Atkinson15.csv");
 

@@ -3,18 +3,18 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Container class for related {@link ClusterSource}s.
- * 
+ *
  * @author Peter Powers
  * @see ClusterSource
  */
@@ -54,7 +54,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
     return new Predicate<ClusterSource>() {
 
       private final Predicate<FaultSource> filter = new FaultSourceSet.DistanceFilter(loc,
-        distance);
+          distance);
 
       @Override
       public boolean apply(ClusterSource cs) {

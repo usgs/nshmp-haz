@@ -7,7 +7,7 @@ import com.google.common.base.Strings;
 
 /**
  * Miscellaneous {@code String} utilities.
- * 
+ *
  * @author Peter Powers
  */
 public class TextUtils {
@@ -26,7 +26,7 @@ public class TextUtils {
   /**
    * Verifies that the supplied {@code String} is neither {@code null} or empty.
    * Method returns the supplied value and can be used inline.
-   * 
+   *
    * @param name to verify
    * @throws IllegalArgumentException if name is {@code null} or empty
    */

@@ -3,6 +3,9 @@ package org.opensha2.util;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.util.logging.Level.SEVERE;
 
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,9 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 
 /**
  * Logging utilities.
@@ -33,7 +33,9 @@ public class Logging {
        * root of the source directory, otherwise it can be found in lib.
        */
       InputStream is = Logging.class.getResourceAsStream("/logging.properties");
-      if (is == null) is = new FileInputStream("lib/logging.properties");
+      if (is == null) {
+        is = new FileInputStream("lib/logging.properties");
+      }
       LogManager.getLogManager().readConfiguration(is);
     } catch (IOException ioe) {
       ioe.printStackTrace();
@@ -42,7 +44,7 @@ public class Logging {
 
   /**
    * Log a resource loading error and exit.
-   * 
+   *
    * @param clazz for which resource is required
    * @param e the exception that was thrown
    */
@@ -68,18 +70,18 @@ public class Logging {
       if (l == Level.WARNING) {
         String cName = record.getSourceClassName();
         b.append(" @ ")
-          .append(cName.substring(cName.lastIndexOf(".") + 1))
-          .append(".")
-          .append(record.getSourceMethodName())
-          .append("()");
+        .append(cName.substring(cName.lastIndexOf(".") + 1))
+        .append(".")
+        .append(record.getSourceMethodName())
+        .append("()");
         b.append(record.getMessage());
       } else if (l == Level.SEVERE) {
         String cName = record.getSourceClassName();
         b.append(" @ ")
-          .append(cName.substring(cName.lastIndexOf(".") + 1))
-          .append(".")
-          .append(record.getSourceMethodName())
-          .append("()");
+        .append(cName.substring(cName.lastIndexOf(".") + 1))
+        .append(".")
+        .append(record.getSourceMethodName())
+        .append("()");
         b.append(record.getMessage());
         if (record.getThrown() != null) {
           b.append(LF).append(LF);

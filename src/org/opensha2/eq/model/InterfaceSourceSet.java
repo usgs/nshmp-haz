@@ -3,18 +3,18 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Container class for groups of related {@link InterfaceSource}s.
- * 
+ *
  * @author Peter Powers
  * @see InterfaceSource
  */
@@ -53,8 +53,8 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
       @Override
       public boolean apply(InterfaceSource source) {
         return filter.apply(source.trace.first()) || filter.apply(source.trace.last()) ||
-          filter.apply(source.lowerTrace.first()) ||
-          filter.apply(source.lowerTrace.last());
+            filter.apply(source.lowerTrace.first()) ||
+            filter.apply(source.lowerTrace.last());
       }
 
       @Override

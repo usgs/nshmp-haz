@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * A rectangular (in Mercator projection) bounding box specified by a lower-left
  * coordinate ({@link #min()}) and an upper-right coordinate ({@link #max()}).
- * 
+ *
  * <p>Bounds are 2-dimensional in that the depth component of the corners will
  * always be 0.
  *
@@ -48,11 +48,11 @@ public final class Bounds {
    */
   public LocationList toList() {
     return LocationList.create(
-      min,
-      Location.create(min.lat(), max.lon()),
-      max,
-      Location.create(max.lat(), min.lon()),
-      min);
+        min,
+        Location.create(min.lat(), max.lon()),
+        max,
+        Location.create(max.lat(), min.lon()),
+        min);
   }
 
   /**
@@ -65,10 +65,16 @@ public final class Bounds {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj == null) return false;
-    if (!(obj instanceof Bounds)) return false;
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof Bounds)) {
+      return false;
+    }
     Bounds other = (Bounds) obj;
-    if (min == other.min && max == other.max) return true;
+    if (min == other.min && max == other.max) {
+      return true;
+    }
     return min.equals(other.min) && max.equals(other.max);
   }
 

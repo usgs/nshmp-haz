@@ -17,30 +17,30 @@ import com.google.common.collect.Range;
  * incorporates a new, magnitude-dependent stress parameter, and uses table
  * lookups instead of functional forms to compute ground motions. This relation
  * is commonly referred to as AB06 Prime (AB06').
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
- * 
+ *
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
  * ground-motion prediction equations for eastern North America: Bulletin of the
  * Seismological Society of America, v. 96, p. 2181–2205.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050245">
  * 10.1785/0120050245</a></p>
- * 
+ *
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2011, Modifications to
  * existing ground-motion prediction equations in light of new data: Bulletin of
  * the Seismological Society of America, v. 101, n. 3, p. 1121–1135.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120100270">
  * 10.1785/0120100270</a></p>
- * 
+ *
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#AB_06_PRIME
  */
@@ -49,10 +49,10 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
   static final String NAME = "Atkinson & Boore (2006): Prime";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(760.0, 2000.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(760.0, 2000.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("AB06P.csv");
 

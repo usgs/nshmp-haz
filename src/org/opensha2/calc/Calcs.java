@@ -1,22 +1,16 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.allAsList;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.transform;
+
 import static org.opensha2.calc.CalcFactory.clustersToCurves;
 import static org.opensha2.calc.CalcFactory.sourcesToCurves;
 import static org.opensha2.calc.CalcFactory.systemToCurves;
 import static org.opensha2.calc.CalcFactory.toHazardResult;
-import static com.google.common.util.concurrent.Futures.allAsList;
-import static com.google.common.util.concurrent.Futures.immediateFuture;
-import static com.google.common.util.concurrent.Futures.transform;
-import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
 import static org.opensha2.data.Data.checkInRange;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
 
 import org.opensha2.calc.Transforms.SourceToInputs;
 import org.opensha2.eq.model.ClusterSourceSet;
@@ -31,16 +25,23 @@ import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Range;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Static probabilistic seismic hazard analysis calculators.
- * 
+ *
  * @author Peter Powers
  */
 public class Calcs {
 
   /*
    * Developer notes:
-   * 
+   *
    * -------------------------------------------------------------------------
    * Method argument order in this class, CalcFactory, and Transforms follow the
    * general rule of model (or model derived objects), calc config, site, and
@@ -68,7 +69,7 @@ public class Calcs {
    * separate thread using means other than iterableForLocation. They are
    * therefore short-circuited returning an empty HazardCurveSet if no sources
    * are within range of a site. Cluster source sets have similar issue.
-   * 
+   *
    * TODO follow HazardCurveSet.Builder.empty() calls because it seems like
    * clusters shouldn't have to use it as the iterator in clustersToInputs
    * should just not be submitting any sources in any event if they are all too
@@ -79,7 +80,7 @@ public class Calcs {
   /**
    * Return a {@code Function} that converts a {@code Source} along with an
    * initially supplied {@code Site} to a list of ground motion model inputs.
-   * 
+   *
    * @param site to initialize function with
    * @see InputList
    */
@@ -91,7 +92,7 @@ public class Calcs {
 
   /**
    * Perform a deaggregation of probabilisitic seismic hazard.
-   * 
+   *
    * @param hazard to deaggregate
    * @param returnPeriod at which to deaggregate
    */
@@ -109,7 +110,7 @@ public class Calcs {
    * Compute probabilistic seismic hazard, possibly using an {@link Optional}
    * {@link Executor}. If no executor is supplied, the calculation will run on
    * the current thread.
-   * 
+   *
    * @param model to use
    * @param config calculation properties
    * @param site of interest
@@ -124,7 +125,7 @@ public class Calcs {
       CalcConfig config,
       Site site,
       Optional<Executor> ex)
-      throws InterruptedException, ExecutionException {
+          throws InterruptedException, ExecutionException {
 
     checkNotNull(model);
     checkNotNull(config);
@@ -157,9 +158,9 @@ public class Calcs {
         case GRID:
           GridSourceSet gss = (GridSourceSet) sourceSet;
           if (config.performance.optimizeGrids && gss.sourceType() != FIXED_STRIKE &&
-            gss.optimizable()) {
+              gss.optimizable()) {
             gridTables.add(transform(immediateFuture(gss),
-              GridSourceSet.optimizer(site.location), ex));
+                GridSourceSet.optimizer(site.location), ex));
             break;
           }
           curveSets.add(sourcesToCurves(sourceSet, config, site, ex));

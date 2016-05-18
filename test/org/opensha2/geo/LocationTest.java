@@ -1,9 +1,9 @@
 package org.opensha2.geo;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+
 import static org.opensha2.geo.GeoTools.MAX_DEPTH;
 import static org.opensha2.geo.GeoTools.MAX_LAT;
 import static org.opensha2.geo.GeoTools.MAX_LON;
@@ -12,13 +12,13 @@ import static org.opensha2.geo.GeoTools.MIN_LAT;
 import static org.opensha2.geo.GeoTools.MIN_LON;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("javadoc")
 public class LocationTest {

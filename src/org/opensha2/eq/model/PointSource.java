@@ -1,15 +1,11 @@
 package org.opensha2.eq.model;
 
 import static java.lang.Math.ceil;
+
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.util.MathUtils.hypot;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
@@ -23,6 +19,11 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+
 /**
  * Point-source earthquake {@code Source} supplies the simplest possible
  * representation of point-source {@code Rupture}s. When iterating, a
@@ -30,22 +31,22 @@ import com.google.common.primitives.Ints;
  * corresponding to different {@link FocalMech} types, but all distance metrics
  * are based on the site to point source location distance. This distance may be
  * corrected depending on choice of {@link RuptureScaling} model.
- * 
+ *
  * <p><b>NOTE:</b> This source type should <i>not</i> be used in in conjunction
  * with ground motion models (GMMs) that consider hanging wall effects or
  * require more detailed distance metrics that are consistent with a
  * {@code Rupture}'s {@code FocalMech}, dip, and rake; use a
  * {@link PointSourceFinite} instead. This implementation throws an {code
  * UnsupportedOperationException} when such metrics are queried.
- * 
+ *
  * <p><b>NOTE</b>: {@code PointSource}s are thread safe, however the
  * {@code Rupture}s returned by {@link Source#iterator()} are not.
- * 
+ *
  * <p><b>NOTE</b>: {@link #size()} returns the absolute number of
  * {@code Rupture}s that can be created given the supplied source input
  * arguments; the iterator, however, <i>may</i> return fewer {@code Rupture}s as
  * some may have zero rates.
- * 
+ *
  * @author Peter Powers
  */
 class PointSource implements Source {
@@ -226,7 +227,7 @@ class PointSource implements Source {
     @Override
     public double width() {
       return 10.0; // km
-    } 
+    }
 
     @Override
     public double area() {
@@ -258,49 +259,49 @@ class PointSource implements Source {
    * Implementations will only ever reference those indices up to their
    * individual mMax so there should only be one per GridSourceSet or
    * AreaSource.
-   * 
+   *
    * Given magDepthMap:
-   * 
+   *
    * [6.5 :: [1.0:0.4, 3.0:0.5, 5.0:0.1]; 10.0 :: [1.0:0.1, 5.0:0.9]]
-   * 
+   *
    * and an MFD with mags:
-   * 
+   *
    * [5.0, 5.5, 6.0, 6.5, 7.0]
-   * 
+   *
    * The number of mag-depth combinations a point source would iterate over is:
    * sum(m = MFD.mag(i) * nDepths(m)) = 3 * 3 + 2 * 2 = 13
-   * 
+   *
    * (note: mag cutoffs in magDepthMap are always used as m < cutoff)
-   * 
+   *
    * magDepthIndices[] : magnitude index in original MFD
-   * 
+   *
    * [ 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4]
-   * 
+   *
    * magDepthDepths[] : depth for index
-   * 
+   *
    * [1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 3.0, 5.0, 1.0, 5.0, 1.0, 5.0]
-   * 
+   *
    * magDepthWeights[] : depth weight for index
-   * 
+   *
    * [0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.4, 0.5, 0.1, 0.1, 0.9, 0.1, 0.9]
-   * 
+   *
    * A depth model also encapsulates a maximum depth value that is usually
    * source type dependent and may be used when computing the maximum width of a
    * point source.
-   * 
+   *
    * All DepthModel validation is currently performed in GridSourceSet.Builder.
    */
   static final class DepthModel {
 
     /*
      * Initialized with a MagDepthMap; examples:
-     * 
+     *
      * single depth:
-     * 
+     *
      * [10.0 :: [depth : 1.0 ]]
-     * 
+     *
      * NSHMP depths:
-     * 
+     *
      * [6.5 :: [1.0 : 0.0, 5.0 : 1.0], 10.0 :: [1.0 : 1.0, 5.0 : 0.0]]
      */
 

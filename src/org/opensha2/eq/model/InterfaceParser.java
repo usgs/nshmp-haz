@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
+
 import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
 import static org.opensha2.eq.model.SourceAttribute.ID;
@@ -17,6 +18,20 @@ import static org.opensha2.util.Parsing.readEnum;
 import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
 
+import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.eq.model.MfdHelper.GR_Data;
+import org.opensha2.eq.model.MfdHelper.SingleData;
+import org.opensha2.geo.LocationList;
+import org.opensha2.mfd.IncrementalMfd;
+import org.opensha2.mfd.MfdType;
+import org.opensha2.mfd.Mfds;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,23 +40,10 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha2.eq.fault.surface.RuptureScaling;
-import org.opensha2.eq.model.MfdHelper.GR_Data;
-import org.opensha2.eq.model.MfdHelper.SingleData;
-import org.opensha2.geo.LocationList;
-import org.opensha2.mfd.IncrementalMfd;
-import org.opensha2.mfd.MfdType;
-import org.opensha2.mfd.Mfds;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
-
 /*
  * Non-validating subduction source parser. SAX parser 'Attributes' are stateful
  * and cannot be stored. This class is not thread safe.
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -81,7 +83,7 @@ class InterfaceParser extends DefaultHandler {
   }
 
   InterfaceSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -112,10 +114,10 @@ class InterfaceParser extends DefaultHandler {
           double weight = readDouble(WEIGHT, atts);
           sourceSetBuilder = new InterfaceSourceSet.Builder();
           sourceSetBuilder
-              .name(name)
-              .id(id)
-              .weight(weight)
-              .gmms(gmmSet);
+          .name(name)
+          .id(id)
+          .weight(weight)
+          .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -168,8 +170,8 @@ class InterfaceParser extends DefaultHandler {
            */
           try {
             sourceBuilder.depth(readDouble(DEPTH, atts))
-                .dip(readDouble(DIP, atts))
-                .width(readDouble(WIDTH, atts));
+            .dip(readDouble(DIP, atts))
+            .width(readDouble(WIDTH, atts));
           } catch (NullPointerException npe) {
             // keep moving, these atts are not necessarily required
           }
@@ -238,7 +240,9 @@ class InterfaceParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingTrace) traceBuilder.append(ch, start, length);
+    if (readingTrace) {
+      traceBuilder.append(ch, start, length);
+    }
   }
 
   @Override
@@ -284,7 +288,9 @@ class InterfaceParser extends DefaultHandler {
     IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
         data.b, tmr * data.weight);
     log.finer("   MFD type: GR");
-    if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+    if (log.isLoggable(FINEST)) {
+      log.finest(mfd.getMetadataString());
+    }
     return mfd;
   }
 
@@ -300,7 +306,9 @@ class InterfaceParser extends DefaultHandler {
   private IncrementalMfd buildSingle(SingleData data) {
     IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
     log.finer("   MFD type: SINGLE");
-    if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+    if (log.isLoggable(FINEST)) {
+      log.finest(mfd.getMetadataString());
+    }
     return mfd;
   }
 

@@ -3,10 +3,8 @@ package org.opensha2.geo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.util.Iterator;
-import java.util.List;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
@@ -20,24 +18,27 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * An immutable, ordered collection of {@link Location}s.
- * 
+ *
  * <p>A {@code LocationList} must contain at least 1 {@code Location} and does
  * not permit {@code null} elements. {@code LocationList} instances are
  * immutable and calls to {@code remove()} when iterating will throw an
  * {@code UnsupportedOperationException}. A variety of methods exist to simplify
  * the creation of new lists via modification (e.g. {@link #resample(double)} ,
  * {@link #reverse()}, and {@link #translate(LocationVector)}.
- * 
+ *
  * <p>Consider using a {@link LocationList.Builder} (via {@link #builder()}) if
  * a list is being compiled from numerous {@code Location}s that are not known
  * in advance.
- * 
+ *
  * <p><b>Note:</b> Although this class is not final, it cannot be subclassed
  * outside its package as it has no public or protected constructors. Thus,
  * instances of this type are guaranteed to be immutable.
- * 
+ *
  * @author Peter Powers
  */
 public abstract class LocationList implements Iterable<Location> {
@@ -45,7 +46,7 @@ public abstract class LocationList implements Iterable<Location> {
   /**
    * Create a new {@code LocationList} containing all {@code Location}s in
    * {@code locs}.
-   * 
+   *
    * @param locs to populate list with
    * @throws IllegalArgumentException if {@code locs} is empty
    */
@@ -58,7 +59,7 @@ public abstract class LocationList implements Iterable<Location> {
    * Create a new {@code LocationList} containing all {@code Location}s in
    * {@code locs}. This method avoids copying the supplied iterable if it is
    * safe to do so.
-   * 
+   *
    * @param locs to populate list with
    * @throws IllegalArgumentException if {@code locs} is empty
    */
@@ -78,15 +79,15 @@ public abstract class LocationList implements Iterable<Location> {
    * method assumes that {@code s} is formatted as one or more space-delimited
    * {@code [lat,lon,depth]} tuples (comma-delimited); see
    * {@link Location#fromString(String)}.
-   * 
+   *
    * @param s {@code String} to read
    * @return a new {@code LocationList}
    * @see Location#fromString(String)
    */
   public static LocationList fromString(String s) {
     return create(Iterables.transform(
-      Parsing.split(checkNotNull(s), Delimiter.SPACE),
-      Location.stringConverter().reverse()));
+        Parsing.split(checkNotNull(s), Delimiter.SPACE),
+        Location.stringConverter().reverse()));
   }
 
   LocationList() {}
@@ -98,7 +99,7 @@ public abstract class LocationList implements Iterable<Location> {
 
   /**
    * Return the location at {@code index}.
-   * 
+   *
    * @param index of {@code Location} to return
    * @throws IndexOutOfBoundsException if the index is out of range (
    *         {@code index < 0 || index >= size()})
@@ -125,14 +126,16 @@ public abstract class LocationList implements Iterable<Location> {
    * algorithm and ignores depth variation between locations. That is, it
    * computes length as though all locations in the list have a depth of 0.0 km.
    * Repeat calls to this method will recalculate the length each time.
-   * 
+   *
    * @return the length of the line connecting all {@code Location}s in this
    *         list, ignoring depth variations, or 0.0 if list only contains 1
    *         location
    */
   public double length() {
     double sum = 0.0;
-    if (size() == 1) return sum;
+    if (size() == 1) {
+      return sum;
+    }
     Location prev = first();
     for (Location loc : Iterables.skip(this, 1)) {
       sum += Locations.horzDistanceFast(prev, loc);
@@ -167,11 +170,19 @@ public abstract class LocationList implements Iterable<Location> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (!(obj instanceof LocationList)) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof LocationList)) {
+      return false;
+    }
     LocationList other = (LocationList) obj;
-    if (this.size() != other.size()) return false;
+    if (this.size() != other.size()) {
+      return false;
+    }
     return Iterators.elementsEqual(this.iterator(), other.iterator());
   }
 
@@ -186,9 +197,9 @@ public abstract class LocationList implements Iterable<Location> {
    * likely differ, as spacing is adjusted down to maintain uniform divisions.
    * The original vertices are also not preserved such that some corners might
    * be adversely clipped if {@code spacing} is large. Buyer beware.
-   * 
+   *
    * <p>For a singleton list, this method immediately returns this list.
-   * 
+   *
    * @param spacing resample interval
    */
   public LocationList resample(double spacing) {
@@ -196,8 +207,8 @@ public abstract class LocationList implements Iterable<Location> {
       return this;
     }
     checkArgument(
-      Doubles.isFinite(spacing) && spacing > 0.0,
-      "Spacing must be positive, real number");
+        Doubles.isFinite(spacing) && spacing > 0.0,
+        "Spacing must be positive, real number");
 
     /*
      * TODO Consider using rint() which will keep the actual spacing closer to
@@ -238,7 +249,7 @@ public abstract class LocationList implements Iterable<Location> {
   /**
    * Return a new {@code LocationList} with each {@code Location} translated
    * according to the supplied vector.
-   * 
+   *
    * @param vector to translate list by
    */
   public LocationList translate(final LocationVector vector) {
@@ -288,7 +299,7 @@ public abstract class LocationList implements Iterable<Location> {
    * {@code build()} will return multiple lists in series with each new list
    * containing all the {@code Location}s of the one before it. Builders do not
    * permit the addition of {@code null} elements.
-   * 
+   *
    * <p>Use {@link LocationList#builder()} to create new builder instances.
    */
   public static final class Builder {
@@ -302,7 +313,7 @@ public abstract class LocationList implements Iterable<Location> {
 
     /**
      * Add a {@code Location} to the {@code LocationList}.
-     * 
+     *
      * @param loc to add
      * @return this {@code Builder}
      */
@@ -314,7 +325,7 @@ public abstract class LocationList implements Iterable<Location> {
     /**
      * Add a new {@code Location} specified by the supplied latitude and
      * longitude and a depth of 0 km to the {@code LocationList}.
-     * 
+     *
      * @param lat latitude in decimal degrees
      * @param lon longitude in decimal degrees
      * @return this {@code Builder}
@@ -329,7 +340,7 @@ public abstract class LocationList implements Iterable<Location> {
     /**
      * Add a new {@code Location} specified by the supplied latitude, longitude,
      * and depth to the {@code LocationList}.
-     * 
+     *
      * @param lat latitude in decimal degrees
      * @param lon longitude in decimal degrees
      * @param depth in km (positive down)
@@ -344,7 +355,7 @@ public abstract class LocationList implements Iterable<Location> {
 
     /**
      * Add each {@code Location} in {@code locs} to the {@code LocationList} .
-     * 
+     *
      * @param locs to add
      * @return this {@code Builder}
      */
@@ -355,7 +366,7 @@ public abstract class LocationList implements Iterable<Location> {
 
     /**
      * Add each {@code Location} in {@code locs} to the {@code LocationList} .
-     * 
+     *
      * @param locs to add
      * @return this {@code Builder}
      */
@@ -366,7 +377,7 @@ public abstract class LocationList implements Iterable<Location> {
 
     /**
      * Return a newly created {@code LocationList}.
-     * 
+     *
      * @return a new ordered collection of {@code Location}s
      * @throws IllegalStateException if the list to be returned is empty
      */

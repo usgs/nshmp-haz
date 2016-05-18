@@ -1,38 +1,41 @@
 package org.opensha2.gmm;
 
-import static org.opensha2.gmm.GmmInput.Field.*;
 import static java.lang.Math.exp;
-import static org.opensha2.gmm.SiteClass.HARD_ROCK;
-import static org.opensha2.gmm.MagConverter.NONE;
 
-import java.util.Map;
+import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.RJB;
+import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.MagConverter.NONE;
+import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the Silva et al. (2002) ground motion model for stable
  * continental regions. This implementation matches that used in the 2008 USGS
  * NSHMP and comes in two additional magnitude converting (mb to Mw) flavors to
  * support the 2008 central and eastern US model.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
- * 
+ *
  * <p><b>Reference:</b> Silva, W., Gregor, N., and Darragh, R., 2002,
  * Development of hard rock attenuation relations for central and eastern North
  * America, internal report from Pacific Engineering, November 1, 2002, <a href=
  * "http://www.pacificengineering.org/CEUS/Development%20of%20Regional%20Hard_ABC.pdf"
  * >http://www.pacificengineering.org/CEUS/Development of Regional
  * Hard_ABC.pdf</a></p>
- * 
+ *
  * <p><b>Component:</b> average horizontal (not clear from publication)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#SILVA_02
  * @see Gmm#SILVA_02_AB
@@ -54,10 +57,10 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
   static final String NAME = "Silva et al. (2002)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RJB, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(760.0, 2000.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RJB, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(760.0, 2000.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("Silva02.csv");
 

@@ -1,12 +1,5 @@
 package org.opensha2;
 
-import static java.lang.Runtime.getRuntime;
-import static java.util.concurrent.Executors.newFixedThreadPool;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Deaggregation;
@@ -18,14 +11,17 @@ import org.opensha2.gmm.Imt;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+
 /**
  * Entry point for deaggregating probabilisitic seismic hazard.
- * 
+ *
  * computing a hazard curve at a {@link Site} from a {@link HazardModel}. The
  * {@code main()} method of this class returns mean hazard curves for the model
  * and {@link Imt} specified. For more detailed results at a {@code Site},
  * consider programmatically using the {@code calc()} methods of this class.
- * 
+ *
  * @author Peter Powers
  */
 public class DeaggCalc {
@@ -44,7 +40,7 @@ public class DeaggCalc {
 
   static String run(String[] args) {
     throw new UnsupportedOperationException(
-      "Not yet implemented: how to specify return period");
+        "Not yet implemented: how to specify return period");
   }
 
   // TODO when doing deagg as a program, what is output?
@@ -60,10 +56,10 @@ public class DeaggCalc {
    * will be used to distribute tasks; otherwise, the calculation will run on
    * the current thread. Be sure to shutdown any supplied executor after a
    * calculation completes.
-   * 
+   *
    * <p><b>Note:</b> any model initialization settings in {@code config} will be
    * ignored as the supplied model will already have been initialized.</p>
-   * 
+   *
    * @param model to use
    * @param config calculation configuration
    * @param site of interest

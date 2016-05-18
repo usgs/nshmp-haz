@@ -2,13 +2,9 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.XySequence.emptyCopyOf;
 import static org.opensha2.eq.model.SourceType.CLUSTER;
-
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.GridSourceSet;
@@ -23,12 +19,16 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * The result of a hazard calculation. This container class is public for
  * reference by external packages but is not directly modifiable, nor it's field
  * accessible. The {@link Results} class provides HazardResult exporting and
  * processing utilities.
- * 
+ *
  * @author Peter Powers
  * @see Results
  */
@@ -78,8 +78,8 @@ public final class Hazard {
             break;
           case GRID:
             sb.append(GridSourceSet.sizeString(
-              curveSet.sourceSet,
-              curveSet.hazardGroundMotionsList.size()));
+                curveSet.sourceSet,
+                curveSet.hazardGroundMotionsList.size()));
             break;
           default:
             sb.append(curveSet.hazardGroundMotionsList.size());
@@ -178,11 +178,11 @@ public final class Hazard {
     Hazard build() {
       validateState(ID);
       return new Hazard(
-        curveMapBuilder.build(),
-        Maps.immutableEnumMap(totalCurves),
-        model,
-        site,
-        config);
+          curveMapBuilder.build(),
+          Maps.immutableEnumMap(totalCurves),
+          model,
+          site,
+          config);
     }
 
   }

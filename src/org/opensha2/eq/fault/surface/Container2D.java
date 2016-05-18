@@ -1,8 +1,8 @@
 package org.opensha2.eq.fault.surface;
 
-import java.util.ListIterator;
-
 import org.opensha2.util.Named;
+
+import java.util.ListIterator;
 
 /**
  * <b>Title:</b> Container2DAPI<p>
@@ -84,7 +84,7 @@ public interface Container2D<T> extends Named, Iterable<T> {
    *            type of Java object.
    */
   public void set(int row, int column, T obj) throws ArrayIndexOutOfBoundsException,
-      ClassCastException;
+  ClassCastException;
 
   // TODO should be immutable and have a Builder
 

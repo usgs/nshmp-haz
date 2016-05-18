@@ -2,7 +2,7 @@ package org.opensha2.gmm;
 
 /**
  * Ground motion model (Gmm) result container.
- * 
+ *
  * @author Peter Powers
  */
 public interface ScalarGroundMotion {

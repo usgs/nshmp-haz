@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 /**
  * Miscellaneous math and number utilities.
- * 
+ *
  * @author Peter Powers
  */
 public final class MathUtils {
@@ -17,7 +17,7 @@ public final class MathUtils {
   /**
    * Same as {@link Math#hypot(double, double)} without regard to intermediate
    * under/over flow.
-   * 
+   *
    * @param v1 first value
    * @param v2 second value
    * @see Math#hypot(double, double)
@@ -29,7 +29,7 @@ public final class MathUtils {
   /**
    * Round a double to a specified number of decimal places. Internally this
    * method uses the scaling and rounding capabilities of {@link BigDecimal}.
-   * 
+   *
    * @param value to round
    * @param scale the number of decimal places in the result
    */

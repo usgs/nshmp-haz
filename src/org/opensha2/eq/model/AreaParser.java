@@ -3,6 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
+
 import static org.opensha2.eq.model.SourceAttribute.FOCAL_MECH_MAP;
 import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.MAG_DEPTH_MAP;
@@ -20,6 +21,20 @@ import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.stringToEnumWeightMap;
 import static org.opensha2.util.Parsing.stringToValueValueWeightMap;
 
+import org.opensha2.data.Data;
+import org.opensha2.eq.fault.FocalMech;
+import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.geo.LocationList;
+import org.opensha2.mfd.IncrementalMfd;
+import org.opensha2.mfd.MfdType;
+import org.opensha2.mfd.Mfds;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -28,23 +43,10 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 
-import org.opensha2.data.Data;
-import org.opensha2.eq.fault.FocalMech;
-import org.opensha2.eq.fault.surface.RuptureScaling;
-import org.opensha2.geo.LocationList;
-import org.opensha2.mfd.IncrementalMfd;
-import org.opensha2.mfd.MfdType;
-import org.opensha2.mfd.Mfds;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
-
 /*
  * Non-validating area source parser. SAX parser 'Attributes' are stateful and
  * cannot be stored. This class is not thread safe.
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -85,7 +87,7 @@ class AreaParser extends DefaultHandler {
   }
 
   AreaSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -152,16 +154,18 @@ class AreaParser extends DefaultHandler {
         double strike = readDouble(STRIKE, atts);
 
         sourceBuilder
-            .depthMap(depthMap, type)
-            .maxDepth(maxDepth, type)
-            .mechs(mechMap)
-            .ruptureScaling(rupScaling);
+        .depthMap(depthMap, type)
+        .maxDepth(maxDepth, type)
+        .mechs(mechMap)
+        .ruptureScaling(rupScaling);
 
         // first validate strike by setting it in builder
         sourceBuilder.strike(strike);
         // then possibly override type if strike is set
         PointSourceType type = config.pointSourceType;
-        if (!Double.isNaN(strike)) type = PointSourceType.FIXED_STRIKE;
+        if (!Double.isNaN(strike)) {
+          type = PointSourceType.FIXED_STRIKE;
+        }
         sourceBuilder.sourceType(type);
         if (log.isLoggable(FINE)) {
           log.fine("     Depths: " + depthMap);
@@ -238,7 +242,9 @@ class AreaParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingBorder) borderBuilder.append(ch, start, length);
+    if (readingBorder) {
+      borderBuilder.append(ch, start, length);
+    }
   }
 
   @Override

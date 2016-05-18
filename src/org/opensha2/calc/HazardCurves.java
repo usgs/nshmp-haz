@@ -1,13 +1,9 @@
 package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.XySequence.copyOf;
 import static org.opensha2.data.XySequence.immutableCopyOf;
-
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Gmm;
@@ -17,13 +13,18 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Container class for the combined hazard curves derived from the
  * {@code Rupture}s in an individual {@code Source}, one for each
  * {@code GroundMotionModel} and {@code Imt} of interest. The curves will have
  * been scaled by the associated Mfd or rupture weights, but not by
  * {@code GroundMotionModel} weights.
- * 
+ *
  * @author Peter Powers
  */
 final class HazardCurves {
@@ -48,17 +49,17 @@ final class HazardCurves {
    */
   static HazardCurves combine(InputList inputs, List<HazardCurves> curvesList) {
     List<GroundMotions> groundMotionsList = FluentIterable.from(curvesList)
-      .transform(new Function<HazardCurves, GroundMotions>() {
-        @Override
-        public GroundMotions apply(HazardCurves curves) {
-          return curves.groundMotions;
-        }
-      })
-      .toList();
+        .transform(new Function<HazardCurves, GroundMotions>() {
+          @Override
+          public GroundMotions apply(HazardCurves curves) {
+            return curves.groundMotions;
+          }
+        })
+        .toList();
     GroundMotions groundMotions = GroundMotions.combine(inputs, groundMotionsList);
     return builder(groundMotions)
-      .combine(curvesList)
-      .build();
+        .combine(curvesList)
+        .build();
   }
 
   static class Builder {

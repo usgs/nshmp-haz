@@ -3,41 +3,42 @@ package org.opensha2.gmm;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.MagConverter.NONE;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 
-import java.util.Map;
-
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the hybrid ground motion model for stable continental
  * regions by Campbell (2003). This implementation matches that used in the 2008
  * USGS NSHMP and comes in two additional magnitude converting (mb to Mw)
  * flavors to support the 2008 central and eastern US model.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
- * 
+ *
  * <p><b>Reference:</b> Campbell, K.W., 2003, Prediction of strong ground motion
  * using the hybrid empirical method and its use in the devel- opment of
  * ground-motion (attenuation) relations in eastern North America: Bulletin of
  * the Seismological Society of America, v. 93, p. 1012–1033.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020002">
  * 10.1785/0120020002</a></p>
- * 
+ *
  * <p><b>Component:</b> geometric mean of two horizontal components</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#CAMPBELL_03
  * @see Gmm#CAMPBELL_03_AB
@@ -58,10 +59,10 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
   static final String NAME = "Campbell (2003)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(760.0, 2000.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(760.0, 2000.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("Campbell03.csv");
 
@@ -125,8 +126,12 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
 
     double arg = sqrt(rRup * rRup + cfac);
     double fac = 0.0;
-    if (rRup > 70.0) fac = c.c7 * (log(rRup) - LOG_70);
-    if (rRup > 130.0) fac = fac + c.c8 * (log(rRup) - LOG_130);
+    if (rRup > 70.0) {
+      fac = c.c7 * (log(rRup) - LOG_70);
+    }
+    if (rRup > 130.0) {
+      fac = fac + c.c8 * (log(rRup) - LOG_130);
+    }
     double gnd = gndm + c.c4 * log(arg) + fac + (c.c9 + c.c10 * Mw) * rRup;
 
     return GmmUtils.ceusMeanClip(c.imt, gnd);

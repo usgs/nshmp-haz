@@ -9,7 +9,7 @@ import com.google.common.base.CaseFormat;
  * Identifier for different earthquake {@link Source} types. These are declared
  * in a preferred order of iteration, with potentially longer running source
  * types coming first.
- * 
+ *
  * @author Peter Powers
  */
 public enum SourceType {

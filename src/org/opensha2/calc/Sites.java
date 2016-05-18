@@ -2,23 +2,12 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Strings.padEnd;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.GeoJson.validateProperty;
 import static org.opensha2.util.Parsing.splitToList;
 import static org.opensha2.util.TextUtils.LOG_INDENT;
-import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.opensha2.calc.Site.Builder;
 import org.opensha2.geo.Bounds;
@@ -43,6 +32,16 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * {@code Site} factory class used primarily for creating iterables over groups
  * of sites.
@@ -54,7 +53,7 @@ public final class Sites {
   /**
    * Create an unmodifiable {@code Iterable<Site>} from the comma-delimted site
    * file designated by {@code path}.
-   * 
+   *
    * @param path to comma-delimited site data file
    * @throws IOException if a problem is encountered
    */
@@ -75,8 +74,12 @@ public final class Sites {
     for (String line : lines) {
 
       // skip comments
-      if (line.startsWith("#")) continue;
-      if (line.trim().isEmpty()) continue;
+      if (line.startsWith("#")) {
+        continue;
+      }
+      if (line.trim().isEmpty()) {
+        continue;
+      }
 
       List<String> values = Parsing.splitToList(line, Delimiter.COMMA);
 
@@ -131,14 +134,14 @@ public final class Sites {
   }
 
   private static final Gson GSON = new GsonBuilder()
-    .registerTypeAdapter(Site.class, new Site.Deserializer())
-    .registerTypeAdapter(SiteIterable.class, new Deserializer())
-    .create();
+      .registerTypeAdapter(Site.class, new Site.Deserializer())
+      .registerTypeAdapter(SiteIterable.class, new Deserializer())
+      .create();
 
   /**
    * Create an unmodifiable {@code Iterable<Site>} from the GeoJSON site file
    * designated by {@code path}.
-   * 
+   *
    * @param path to GeoJson site data file
    * @throws IOException if a problem is encountered
    */
@@ -153,38 +156,38 @@ public final class Sites {
   /**
    * Create an unmodifiable singleton {@code Iterable<Site>} from the supplied
    * string. String is expected to have the form:
-   * 
+   *
    * <p>{@code "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]"}
-   * 
+   *
    * <p>Although the latter 4 fields are optional, if {@code vs30} is defined,
    * so too must {@code vsInf}. Likewise, if {@code z1p0} is defined, so too
    * must {@code z2p5}.
-   * 
+   *
    * @param s String to parse
    */
   public static Iterable<Site> fromString(String s) {
     List<String> values = splitToList(s, Delimiter.COMMA);
     Builder b = Site.builder();
     checkArgument(
-      values.size() > 2,
-      "Site string %s is incomplete; it must contain at least 'name, lon, lat'",
-      s);
+        values.size() > 2,
+        "Site string %s is incomplete; it must contain at least 'name, lon, lat'",
+        s);
     b.name(values.get(0)).location(
-      Double.valueOf(values.get(2)),
-      Double.valueOf(values.get(1)));
+        Double.valueOf(values.get(2)),
+        Double.valueOf(values.get(1)));
     if (values.size() > 3) {
       checkArgument(
-        values.size() > 4,
-        "Site string %s defines 'vs30'; it must also define 'vsInf'",
-        s);
+          values.size() > 4,
+          "Site string %s defines 'vs30'; it must also define 'vsInf'",
+          s);
       b.vs30(Double.valueOf(values.get(3)))
-        .vsInferred(Boolean.valueOf(values.get(4)));
+      .vsInferred(Boolean.valueOf(values.get(4)));
     }
     if (values.size() > 5) {
       checkArgument(
-        values.size() > 6,
-        "Site string %s defines 'z1p0'; it must also define 'z2p5'",
-        s);
+          values.size() > 6,
+          "Site string %s defines 'z1p0'; it must also define 'z2p5'",
+          s);
       b.z1p0(Double.valueOf(values.get(5))).z2p5(Double.valueOf(values.get(6)));
     }
     return new ListIterable(ImmutableList.of(b.build()));
@@ -205,8 +208,8 @@ public final class Sites {
       boolean region = this instanceof RegionIterable;
       int size = region ? ((RegionIterable) this).region.size() : Iterables.size(this);
       StringBuilder sb = new StringBuilder()
-        .append(region ? ((RegionIterable) this).region.name() + " Region" : "List")
-        .append(" [size=").append(size).append("]");
+          .append(region ? ((RegionIterable) this).region.name() + " Region" : "List")
+          .append(" [size=").append(size).append("]");
       if (!region) {
         for (Site site : Iterables.limit(this, TO_STRING_LIMIT)) {
           sb.append(SITE_INDENT).append(site);
@@ -288,14 +291,14 @@ public final class Sites {
 
       // should always have a features array
       JsonArray features = json.getAsJsonObject()
-        .get(GeoJson.Key.FEATURES)
-        .getAsJsonArray();
+          .get(GeoJson.Key.FEATURES)
+          .getAsJsonArray();
       checkState(features.size() > 0, "Feature array is empty");
 
       // check if we have a site list
       String featureType = features.get(0).getAsJsonObject()
-        .get(GeoJson.Key.GEOMETRY).getAsJsonObject()
-        .get(GeoJson.Key.TYPE).getAsString();
+          .get(GeoJson.Key.GEOMETRY).getAsJsonObject()
+          .get(GeoJson.Key.TYPE).getAsString();
       if (featureType.equals(GeoJson.Value.POINT)) {
         Type siteType = new TypeToken<List<Site>>() {}.getType();
         List<Site> sites = context.deserialize(features, siteType);
@@ -342,8 +345,8 @@ public final class Sites {
         calcRegion = Regions.create(mapName, border, MERCATOR_LINEAR);
       }
       checkState(
-        properties.has(GeoJson.Properties.Key.SPACING),
-        "A \"spacing\" : value (in degrees) must be defined in \"properties\"");
+          properties.has(GeoJson.Properties.Key.SPACING),
+          "A \"spacing\" : value (in degrees) must be defined in \"properties\"");
       double spacing = properties.get(GeoJson.Properties.Key.SPACING).getAsDouble();
 
       // builder used to create all sites when iterating over region
@@ -370,15 +373,15 @@ public final class Sites {
       }
 
       Region mapRegion = extents.isPresent()
-        ? Regions.intersectionOf(mapName, extents.get(), calcRegion)
-        : calcRegion;
+          ? Regions.intersectionOf(mapName, extents.get(), calcRegion)
+              : calcRegion;
 
-      GriddedRegion region = Regions.toGridded(
-        mapRegion,
-        spacing, spacing,
-        GriddedRegion.ANCHOR_0_0);
+          GriddedRegion region = Regions.toGridded(
+              mapRegion,
+              spacing, spacing,
+              GriddedRegion.ANCHOR_0_0);
 
-      return new RegionIterable(region, builder);
+          return new RegionIterable(region, builder);
     }
 
   }
@@ -390,41 +393,41 @@ public final class Sites {
     LocationList border = GeoJson.fromCoordinates(coords);
 
     checkArgument(
-      border.size() > 2,
-      "A GeoJSON polygon must have at least 3 coordinates:%s",
-      border);
+        border.size() > 2,
+        "A GeoJSON polygon must have at least 3 coordinates:%s",
+        border);
 
     checkArgument(
-      border.first().equals(border.last()),
-      "The first and last points in a GeoJSON polygon must be the same:%s",
-      border);
+        border.first().equals(border.last()),
+        "The first and last points in a GeoJSON polygon must be the same:%s",
+        border);
 
     return border;
   }
 
   private static String readName(JsonObject properties, String defaultName) {
     return properties.has(GeoJson.Properties.Key.TITLE)
-      ? properties.get(GeoJson.Properties.Key.TITLE).getAsString() : defaultName;
+        ? properties.get(GeoJson.Properties.Key.TITLE).getAsString() : defaultName;
   }
 
   private static LocationList validateExtents(LocationList locs) {
     checkArgument(locs.size() == 5,
-      "Extents polygon must contain 5 coordinates:%s", locs);
+        "Extents polygon must contain 5 coordinates:%s", locs);
     Location p1 = locs.get(0);
     Location p2 = locs.get(1);
     Location p3 = locs.get(2);
     Location p4 = locs.get(3);
     boolean rectangular = (p1.latRad() == p2.latRad())
-      ? (p3.latRad() == p4.latRad() &&
+        ? (p3.latRad() == p4.latRad() &&
         p1.lonRad() == p4.lonRad() &&
         p2.lonRad() == p3.lonRad())
-      : (p1.latRad() == p4.latRad() &&
-        p2.latRad() == p3.latRad() &&
-        p1.lonRad() == p2.lonRad() &&
-        p3.lonRad() == p4.lonRad());
-    checkArgument(rectangular,
-      "Extents polygon does not define a lat-lon Mercator rectangle:%s", locs);
-    return locs;
+            : (p1.latRad() == p4.latRad() &&
+            p2.latRad() == p3.latRad() &&
+            p1.lonRad() == p2.lonRad() &&
+            p3.lonRad() == p4.lonRad());
+        checkArgument(rectangular,
+            "Extents polygon does not define a lat-lon Mercator rectangle:%s", locs);
+        return locs;
   }
 
 }

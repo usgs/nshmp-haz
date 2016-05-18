@@ -5,6 +5,7 @@ import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
@@ -19,34 +20,34 @@ import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.SA0P01;
 import static org.opensha2.gmm.Imt.SA0P25;
 
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
 
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Implementation of the Campbell & Bozorgnia (2008) next generation attenuation
  * for active crustal regions relationship developed as part of <a
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Reference:</b> NGA Ground Motion Model for the Geometric Mean
  * Horizontal Component of PGA, PGV, PGD and 5% Damped Linear Elastic Response
  * Spectra for Periods Ranging from 0.01 to 10 s: Earthquake Spectra, v. 24, n.
  * 1, pp. 139-171.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/1.2857546">
  * 10.1193/1.2857546</a></p>
- * 
+ *
  * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#CB_08
  */
@@ -55,17 +56,17 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
   static final String NAME = "Campbell & Bozorgnia (2008)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    // TODO there are rake dependent M restrictions
-    .set(MAG, Range.closed(4.0, 8.5))
-    .set(RJB, Range.closed(0.0, 300.0))
-    .set(RRUP, Range.closed(0.0, 300.0))
-    // TODO actually is 15-90
-    .set(DIP, Faults.DIP_RANGE)
-    .set(ZTOP, Range.closed(0.0, 15.0))
-    .set(RAKE, Faults.RAKE_RANGE)
-    .set(VS30, Range.closedOpen(150.0, 1500.0))
-    .set(Z2P5, Range.closed(0.0, 10.0))
-    .build();
+      // TODO there are rake dependent M restrictions
+      .set(MAG, Range.closed(4.0, 8.5))
+      .set(RJB, Range.closed(0.0, 300.0))
+      .set(RRUP, Range.closed(0.0, 300.0))
+      // TODO actually is 15-90
+      .set(DIP, Faults.DIP_RANGE)
+      .set(ZTOP, Range.closed(0.0, 15.0))
+      .set(RAKE, Faults.RAKE_RANGE)
+      .set(VS30, Range.closedOpen(150.0, 1500.0))
+      .set(Z2P5, Range.closed(0.0, 10.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("CB08.csv");
 
@@ -80,8 +81,8 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
     final Imt imt;
     final double c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12,
-        k1, k2, k3,
-        s_lny, t_lny, ρ;
+    k1, k2, k3,
+    s_lny, t_lny, ρ;
 
     // unused
     // double s_c;
@@ -157,15 +158,19 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
     // Magnitude Term
     fmag = c.c0 + c.c1 * Mw;
-    if (Mw > 5.5) fmag += c.c2 * (Mw - 5.5);
-    if (Mw > 6.5) fmag += c.c3 * (Mw - 6.5);
+    if (Mw > 5.5) {
+      fmag += c.c2 * (Mw - 5.5);
+    }
+    if (Mw > 6.5) {
+      fmag += c.c3 * (Mw - 6.5);
+    }
 
     // Source to Site Term
     fdis = (c.c4 + c.c5 * Mw) * log(sqrt(rRup * rRup + c.c6 * c.c6));
 
     // Fault-style Term
     fflt = (style == REVERSE) ? c.c7 * ((zTop < 1.0) ? zTop : 1.0)
-      : (style == NORMAL) ? c.c8 : 0.0;
+        : (style == NORMAL) ? c.c8 : 0.0;
 
     // Hanging-wall Term
     double fhngr, fhngm, fhngz, fhngd;
@@ -197,7 +202,7 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
     double vsk1 = vs30 / c.k1;
     if (vs30 < c.k1) {
       fsite = c.c10 * log(vsk1) + c.k2 *
-        (log(pga_rock + C * pow(vsk1, N)) - log(pga_rock + C));
+          (log(pga_rock + C * pow(vsk1, N)) - log(pga_rock + C));
     } else if (vs30 < 1100.0) {
       fsite = (c.c10 + c.k2 * N) * Math.log(vsk1);
     } else {
@@ -206,7 +211,9 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
     // update z2p5 if not supplied
     double z2p5 = in.z2p5;
-    if (Double.isNaN(z2p5)) z2p5 = (vs30 <= 2500) ? 2.0 : 0.0;
+    if (Double.isNaN(z2p5)) {
+      z2p5 = (vs30 <= 2500) ? 2.0 : 0.0;
+    }
     // Shallow Sediment and Basin Term
     if (z2p5 < 1.0) {
       fsed = c.c11 * (z2p5 - 1.0);
@@ -234,9 +241,9 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
       double s_lnYb = sqrt(c.s_lny * c.s_lny - S_lnAFsq);
       double s_lnAb = sqrt(cPGA.s_lny * cPGA.s_lny - S_lnAFsq);
       double alpha = c.k2 * pgaRock *
-        ((1.0 / (pgaRock + C * pow(vs30 / c.k1, N))) - 1 / (pgaRock + C));
+          ((1.0 / (pgaRock + C * pow(vs30 / c.k1, N))) - 1 / (pgaRock + C));
       sigma = sqrt(s_lnYb * s_lnYb + S_lnAF * S_lnAF + alpha * alpha *
-        s_lnAb * s_lnAb + 2.0 * alpha * c.ρ * s_lnYb * s_lnAb);
+          s_lnAb * s_lnAb + 2.0 * alpha * c.ρ * s_lnYb * s_lnAb);
     }
 
     // Total Model

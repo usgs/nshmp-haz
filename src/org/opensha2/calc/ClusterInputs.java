@@ -2,11 +2,11 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.opensha2.eq.model.ClusterSource;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opensha2.eq.model.ClusterSource;
 
 /**
  * Lightweight {@code List} wrapper of {@code HazardInput}s corresponding to the
@@ -16,7 +16,7 @@ import org.opensha2.eq.model.ClusterSource;
  * properties. The {@code List} may only be added to; all other optional
  * operations of {@code AbstractList} throw an
  * {@code UnsupportedOperationException}.
- * 
+ *
  * @author Peter Powers
  */
 final class ClusterInputs extends AbstractList<SourceInputList> {

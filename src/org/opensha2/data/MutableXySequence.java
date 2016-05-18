@@ -1,16 +1,14 @@
 package org.opensha2.data;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
+
 import static org.opensha2.data.Data.flip;
 import static org.opensha2.data.Data.uncheckedMultiply;
 
+import com.google.common.base.Function;
+
 import java.util.Arrays;
 import java.util.Iterator;
-
-import org.opensha2.data.XySequence.Point;
-
-import com.google.common.base.Function;
 
 /**
  * Mutable variant of {@code XySequence}.

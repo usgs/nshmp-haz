@@ -7,26 +7,13 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.repeat;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.opensha2.data.XySequence.create;
 import static org.opensha2.data.XySequence.immutableCopyOf;
 import static org.opensha2.util.Parsing.enumsToString;
 import static org.opensha2.util.TextUtils.LOG_INDENT;
 import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
 import static org.opensha2.util.TextUtils.NEWLINE;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
@@ -48,9 +35,23 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 /**
  * Calculation configuration.
- * 
+ *
  * @author Peter Powers
  */
 public final class CalcConfig {
@@ -105,7 +106,7 @@ public final class CalcConfig {
 
     /**
      * The probability distribution model to use when computing hazard curves.
-     * 
+     *
      * <p><b>Default:</b> {@link ExceedanceModel#TRUNCATION_UPPER_ONLY}
      */
     public final ExceedanceModel exceedanceModel;
@@ -115,7 +116,7 @@ public final class CalcConfig {
      * The number of standard deviations (σ) at which to truncate a
      * distribution. This field is ignored if an {@link ExceedanceModel} does
      * not implement truncation.
-     * 
+     *
      * <p><b>Default:</b> {@code 3.0}
      */
     public final double truncationLevel;
@@ -132,14 +133,14 @@ public final class CalcConfig {
      * Whether to consider additional ground motion model uncertainty, or not.
      * Currently this is only applicable when using the PEER NGA-West or
      * NGA-West2 {@link Gmm}s with USGS hazard models.
-     * 
+     *
      * <p><b>Default:</b> {@code false}
      */
     public final boolean gmmUncertainty;
 
     /**
      * The value format for hazard curves.
-     * 
+     *
      * <p><b>Default:</b> {@link CurveValue#ANNUAL_RATE}
      */
     public final CurveValue valueType;
@@ -202,18 +203,18 @@ public final class CalcConfig {
         for (Entry<Imt, double[]> entry : customImls.entrySet()) {
           String imtStr = "imls (" + entry.getKey().name() + ")";
           imlSb.append(formatEntry(imtStr))
-            .append(wrap(Arrays.toString(entry.getValue()), false));
+          .append(wrap(Arrays.toString(entry.getValue()), false));
         }
       }
       return new StringBuilder()
-        .append(LOG_INDENT).append("Curve")
-        .append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel))
-        .append(formatEntry(Key.TRUNCATION_LEVEL, truncationLevel))
-        .append(formatEntry(Key.IMTS, enumsToString(imts, Imt.class)))
-        .append(formatEntry(Key.GMM_UNCERTAINTY, gmmUncertainty))
-        .append(formatEntry(Key.VALUE_TYPE, valueType))
-        .append(formatEntry(Key.DEFAULT_IMLS, wrap(Arrays.toString(defaultImls), false)))
-        .append(imlSb);
+          .append(LOG_INDENT).append("Curve")
+          .append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel))
+          .append(formatEntry(Key.TRUNCATION_LEVEL, truncationLevel))
+          .append(formatEntry(Key.IMTS, enumsToString(imts, Imt.class)))
+          .append(formatEntry(Key.GMM_UNCERTAINTY, gmmUncertainty))
+          .append(formatEntry(Key.VALUE_TYPE, valueType))
+          .append(formatEntry(Key.DEFAULT_IMLS, wrap(Arrays.toString(defaultImls), false)))
+          .append(imlSb);
     }
 
     private static final class Builder {
@@ -228,15 +229,15 @@ public final class CalcConfig {
 
       Curve build() {
         return new Curve(
-          exceedanceModel,
-          truncationLevel,
-          Sets.immutableEnumSet(imts),
-          gmmUncertainty,
-          valueType,
-          defaultImls,
-          customImls,
-          createCurveMap(),
-          createLogCurveMap());
+            exceedanceModel,
+            truncationLevel,
+            Sets.immutableEnumSet(imts),
+            gmmUncertainty,
+            valueType,
+            defaultImls,
+            customImls,
+            createCurveMap(),
+            createLogCurveMap());
       }
 
       void copy(Curve that) {
@@ -250,13 +251,27 @@ public final class CalcConfig {
       }
 
       void extend(Builder that) {
-        if (that.exceedanceModel != null) this.exceedanceModel = that.exceedanceModel;
-        if (that.truncationLevel != null) this.truncationLevel = that.truncationLevel;
-        if (that.imts != null) this.imts = that.imts;
-        if (that.gmmUncertainty != null) this.gmmUncertainty = that.gmmUncertainty;
-        if (that.valueType != null) this.valueType = that.valueType;
-        if (that.defaultImls != null) this.defaultImls = that.defaultImls;
-        if (that.customImls != null) this.customImls = that.customImls;
+        if (that.exceedanceModel != null) {
+          this.exceedanceModel = that.exceedanceModel;
+        }
+        if (that.truncationLevel != null) {
+          this.truncationLevel = that.truncationLevel;
+        }
+        if (that.imts != null) {
+          this.imts = that.imts;
+        }
+        if (that.gmmUncertainty != null) {
+          this.gmmUncertainty = that.gmmUncertainty;
+        }
+        if (that.valueType != null) {
+          this.valueType = that.valueType;
+        }
+        if (that.defaultImls != null) {
+          this.defaultImls = that.defaultImls;
+        }
+        if (that.customImls != null) {
+          this.customImls = that.customImls;
+        }
       }
 
       static Builder defaults() {
@@ -318,21 +333,21 @@ public final class CalcConfig {
 
     /**
      * The default average shear-wave velocity down to 30 meters depth.
-     * 
+     *
      * <p><b>Default:</b> {@code 760.0} m/sec
      */
     public final double vs30;
 
     /**
      * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
-     * 
+     *
      * <p><b>Default:</b> {@code true} (inferred)</p>
      */
     public final boolean vsInferred;
 
     /**
      * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
-     * 
+     *
      * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
      * default value or model)</p>
      */
@@ -340,7 +355,7 @@ public final class CalcConfig {
 
     /**
      * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
-     * 
+     *
      * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
      * default value or model)</p>
      */
@@ -360,11 +375,11 @@ public final class CalcConfig {
 
     private StringBuilder asString() {
       return new StringBuilder()
-        .append(LOG_INDENT).append("Site Defaults")
-        .append(formatEntry(Key.VS30, vs30))
-        .append(formatEntry(Key.VS_INF, vsInferred))
-        .append(formatEntry(Key.Z1P0, z1p0))
-        .append(formatEntry(Key.Z2P5, z2p5));
+          .append(LOG_INDENT).append("Site Defaults")
+          .append(formatEntry(Key.VS30, vs30))
+          .append(formatEntry(Key.VS_INF, vsInferred))
+          .append(formatEntry(Key.Z1P0, z1p0))
+          .append(formatEntry(Key.Z2P5, z2p5));
     }
 
     private static final class Builder {
@@ -376,10 +391,10 @@ public final class CalcConfig {
 
       SiteDefaults build() {
         return new SiteDefaults(
-          vs30,
-          vsInferred,
-          z1p0,
-          z2p5);
+            vs30,
+            vsInferred,
+            z1p0,
+            z2p5);
       }
 
       void copy(SiteDefaults that) {
@@ -390,10 +405,18 @@ public final class CalcConfig {
       }
 
       void extend(Builder that) {
-        if (that.vs30 != null) this.vs30 = that.vs30;
-        if (that.vsInferred != null) this.vsInferred = that.vsInferred;
-        if (that.z1p0 != null) this.z1p0 = that.z1p0;
-        if (that.z2p5 != null) this.z2p5 = that.z2p5;
+        if (that.vs30 != null) {
+          this.vs30 = that.vs30;
+        }
+        if (that.vsInferred != null) {
+          this.vsInferred = that.vsInferred;
+        }
+        if (that.z1p0 != null) {
+          this.z1p0 = that.z1p0;
+        }
+        if (that.z2p5 != null) {
+          this.z2p5 = that.z2p5;
+        }
       }
 
       static Builder defaults() {
@@ -423,7 +446,7 @@ public final class CalcConfig {
 
     /**
      * Whether to optimize grid source sets, or not.
-     * 
+     *
      * <p><b>Default:</b> {@code true}
      */
     public final boolean optimizeGrids;
@@ -432,7 +455,7 @@ public final class CalcConfig {
      * Whether to collapse/combine magnitude-frequency distributions, or not.
      * Doing so prevents uncertainty analysis as logic-tree branches are
      * obscured.
-     * 
+     *
      * <p><b>Default:</b> {@code true}
      */
     public final boolean collapseMfds;
@@ -440,14 +463,14 @@ public final class CalcConfig {
     /**
      * The partition or batch size to use when distributing
      * {@link SourceType#SYSTEM} calculations.
-     * 
+     *
      * <p><b>Default:</b> {@code 1000}
      */
     public final int systemPartition;
 
     /**
      * The number of threads to use when distributing calculations.
-     * 
+     *
      * <p><b>Default:</b> {@link ThreadCount#ALL}
      */
     public final ThreadCount threadCount;
@@ -466,11 +489,11 @@ public final class CalcConfig {
 
     private StringBuilder asString() {
       return new StringBuilder()
-        .append(LOG_INDENT).append("Performance")
-        .append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
-        .append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
-        .append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
-        .append(formatEntry(Key.THREAD_COUNT, threadCount));
+          .append(LOG_INDENT).append("Performance")
+          .append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
+          .append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
+          .append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
+          .append(formatEntry(Key.THREAD_COUNT, threadCount));
     }
 
     private static final class Builder {
@@ -482,10 +505,10 @@ public final class CalcConfig {
 
       Performance build() {
         return new Performance(
-          optimizeGrids,
-          collapseMfds,
-          systemPartition,
-          threadCount);
+            optimizeGrids,
+            collapseMfds,
+            systemPartition,
+            threadCount);
       }
 
       void copy(Performance that) {
@@ -496,10 +519,18 @@ public final class CalcConfig {
       }
 
       void extend(Builder that) {
-        if (that.optimizeGrids != null) this.optimizeGrids = that.optimizeGrids;
-        if (that.collapseMfds != null) this.collapseMfds = that.collapseMfds;
-        if (that.systemPartition != null) this.systemPartition = that.systemPartition;
-        if (that.threadCount != null) this.threadCount = that.threadCount;
+        if (that.optimizeGrids != null) {
+          this.optimizeGrids = that.optimizeGrids;
+        }
+        if (that.collapseMfds != null) {
+          this.collapseMfds = that.collapseMfds;
+        }
+        if (that.systemPartition != null) {
+          this.systemPartition = that.systemPartition;
+        }
+        if (that.threadCount != null) {
+          this.threadCount = that.threadCount;
+        }
       }
 
       static Builder defaults() {
@@ -529,7 +560,7 @@ public final class CalcConfig {
 
     /**
      * The directory to write any results to.
-     * 
+     *
      * <p><b>Default:</b> {@code "curves"}
      */
     public final Path directory;
@@ -538,7 +569,7 @@ public final class CalcConfig {
      * The different {@linkplain CurveType types} of curves to save. Note that
      * {@link CurveType#TOTAL} will <i>always</i> be included in this set,
      * regardless of any user settings.
-     * 
+     *
      * <p><b>Default:</b> [{@link CurveType#TOTAL}]
      */
     public final Set<CurveType> curveTypes;
@@ -546,7 +577,7 @@ public final class CalcConfig {
     /**
      * The number of results (one per {@code Site}) to store before writing to
      * file(s). A larger number requires more memory.
-     * 
+     *
      * <p><b>Default:</b> {@code 20}
      */
     public final int flushLimit;
@@ -558,17 +589,17 @@ public final class CalcConfig {
 
       this.directory = directory;
       this.curveTypes = Sets.immutableEnumSet(
-        CurveType.TOTAL,
-        curveTypes.toArray(new CurveType[curveTypes.size()]));
+          CurveType.TOTAL,
+          curveTypes.toArray(new CurveType[curveTypes.size()]));
       this.flushLimit = flushLimit;
     }
 
     private StringBuilder asString() {
       return new StringBuilder()
-        .append(LOG_INDENT).append("Output")
-        .append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
-        .append(formatEntry(Key.CURVE_TYPES, enumsToString(curveTypes, CurveType.class)))
-        .append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
+          .append(LOG_INDENT).append("Output")
+          .append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
+          .append(formatEntry(Key.CURVE_TYPES, enumsToString(curveTypes, CurveType.class)))
+          .append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
     }
 
     private static final class Builder {
@@ -579,9 +610,9 @@ public final class CalcConfig {
 
       Output build() {
         return new Output(
-          directory,
-          curveTypes,
-          flushLimit);
+            directory,
+            curveTypes,
+            flushLimit);
       }
 
       void copy(Output that) {
@@ -591,9 +622,15 @@ public final class CalcConfig {
       }
 
       void extend(Builder that) {
-        if (that.directory != null) this.directory = that.directory;
-        if (that.curveTypes != null) this.curveTypes = that.curveTypes;
-        if (that.flushLimit != null) this.flushLimit = that.flushLimit;
+        if (that.directory != null) {
+          this.directory = that.directory;
+        }
+        if (that.curveTypes != null) {
+          this.curveTypes = that.curveTypes;
+        }
+        if (that.flushLimit != null) {
+          this.flushLimit = that.flushLimit;
+        }
       }
 
       static Builder defaults() {
@@ -660,19 +697,19 @@ public final class CalcConfig {
 
     private StringBuilder asString() {
       return new StringBuilder()
-        .append(LOG_INDENT).append("Deaggregation")
-        .append(formatEntry("R"))
-        .append("min=").append(rMin).append(", ")
-        .append("max=").append(rMax).append(", ")
-        .append("Δ=").append(Δr)
-        .append(formatEntry("M"))
-        .append("min=").append(mMin).append(", ")
-        .append("max=").append(mMax).append(", ")
-        .append("Δ=").append(Δm)
-        .append(formatEntry("ε"))
-        .append("min=").append(εMin).append(", ")
-        .append("max=").append(εMax).append(", ")
-        .append("Δ=").append(Δε);
+          .append(LOG_INDENT).append("Deaggregation")
+          .append(formatEntry("R"))
+          .append("min=").append(rMin).append(", ")
+          .append("max=").append(rMax).append(", ")
+          .append("Δ=").append(Δr)
+          .append(formatEntry("M"))
+          .append("min=").append(mMin).append(", ")
+          .append("max=").append(mMax).append(", ")
+          .append("Δ=").append(Δm)
+          .append(formatEntry("ε"))
+          .append("min=").append(εMin).append(", ")
+          .append("max=").append(εMax).append(", ")
+          .append("Δ=").append(Δε);
     }
   }
 
@@ -718,15 +755,15 @@ public final class CalcConfig {
   @Override
   public String toString() {
     return new StringBuilder("Calc Config: ")
-      .append(resource.isPresent()
-        ? resource.get().toAbsolutePath().normalize()
-        : "(from defaults)")
-      .append(curve.asString())
-      .append(siteDefaults.asString())
-      .append(performance.asString())
-      .append(output.asString())
-      .append(deagg.asString())
-      .toString();
+        .append(resource.isPresent()
+            ? resource.get().toAbsolutePath().normalize()
+                : "(from defaults)")
+        .append(curve.asString())
+        .append(siteDefaults.asString())
+        .append(performance.asString())
+        .append(output.asString())
+        .append(deagg.asString())
+        .toString();
   }
 
   private static final int MAX_COL = 100;
@@ -744,42 +781,46 @@ public final class CalcConfig {
 
   /* wrap a commma-delimited string */
   private static String wrap(String s, boolean pad) {
-    if (s.length() <= VALUE_WIDTH) return pad ? VALUE_INDENT + s : s;
+    if (s.length() <= VALUE_WIDTH) {
+      return pad ? VALUE_INDENT + s : s;
+    }
     StringBuilder sb = new StringBuilder();
     int lastCommaIndex = s.substring(0, VALUE_WIDTH).lastIndexOf(',') + 1;
-    if (pad) sb.append(VALUE_INDENT);
+    if (pad) {
+      sb.append(VALUE_INDENT);
+    }
     sb.append(s.substring(0, lastCommaIndex));
     sb.append(wrap(s.substring(lastCommaIndex).trim(), true));
     return sb.toString();
   }
 
   private static final Gson GSON = new GsonBuilder()
-    .setPrettyPrinting()
-    .enableComplexMapKeySerialization()
-    .serializeSpecialFloatingPointValues()
-    .registerTypeAdapter(Path.class, new JsonDeserializer<Path>() {
-      @Override
-      public Path deserialize(
-          JsonElement json,
-          Type type,
-          JsonDeserializationContext context) throws JsonParseException {
-        return Paths.get(json.getAsString());
-      }
-    })
-    .registerTypeAdapter(Path.class, new JsonSerializer<Path>() {
-      @Override
-      public JsonElement serialize(
-          Path path,
-          Type type,
-          JsonSerializationContext context) {
-        return new JsonPrimitive(path.toAbsolutePath().normalize().toString());
-      }
-    })
-    .create();
+      .setPrettyPrinting()
+      .enableComplexMapKeySerialization()
+      .serializeSpecialFloatingPointValues()
+      .registerTypeAdapter(Path.class, new JsonDeserializer<Path>() {
+        @Override
+        public Path deserialize(
+            JsonElement json,
+            Type type,
+            JsonDeserializationContext context) throws JsonParseException {
+          return Paths.get(json.getAsString());
+        }
+      })
+      .registerTypeAdapter(Path.class, new JsonSerializer<Path>() {
+        @Override
+        public JsonElement serialize(
+            Path path,
+            Type type,
+            JsonSerializationContext context) {
+          return new JsonPrimitive(path.toAbsolutePath().normalize().toString());
+        }
+      })
+      .create();
 
   /**
    * Save this config in JSON format to the speciifed directory.
-   * 
+   *
    * @param dir the directory to write to
    * @throws IOException if there is a problem writing the file
    */
@@ -830,7 +871,7 @@ public final class CalcConfig {
     /**
      * Create a new builder from the resource at the specified path. This will
      * only set those fields that are explicitely defined.
-     * 
+     *
      * @param path to configuration file or resource
      * @throws IOException
      */
@@ -869,7 +910,9 @@ public final class CalcConfig {
       this.siteDefaults.extend(that.siteDefaults);
       this.performance.extend(that.performance);
       this.output.extend(that.output);
-      if (that.deagg != null) this.deagg = that.deagg;
+      if (that.deagg != null) {
+        this.deagg = that.deagg;
+      }
       return this;
     }
 
@@ -897,12 +940,12 @@ public final class CalcConfig {
     public CalcConfig build() {
       validateState();
       return new CalcConfig(
-        Optional.fromNullable(resource),
-        curve.build(),
-        siteDefaults.build(),
-        performance.build(),
-        output.build(),
-        deagg);
+          Optional.fromNullable(resource),
+          curve.build(),
+          siteDefaults.build(),
+          performance.build(),
+          output.build(),
+          deagg);
     }
   }
 

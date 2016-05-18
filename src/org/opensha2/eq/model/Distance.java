@@ -1,13 +1,10 @@
 package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.geo.Locations.distanceToLineFast;
 import static org.opensha2.geo.Locations.distanceToSegmentFast;
 import static org.opensha2.geo.Locations.horzDistanceFast;
-
-import java.awt.geom.Area;
-import java.awt.geom.Path2D;
-import java.util.Iterator;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
@@ -19,9 +16,13 @@ import org.opensha2.geo.Locations;
 import org.opensha2.geo.Region;
 import org.opensha2.geo.Regions;
 
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
+import java.util.Iterator;
+
 /**
  * Distance value wrapper.
- * 
+ *
  * @author Peter Powers
  */
 public final class Distance {
@@ -30,7 +31,7 @@ public final class Distance {
    * Maximum supported distance for PSHA calculations. Currently set to 1000 km,
    * the maximum known to be supported by across all implementated ground motion
    * models.
-   * 
+   *
    * TODO: ground motion models should be polled for this number
    */
   @Deprecated
@@ -97,10 +98,14 @@ public final class Distance {
       // get the horizontal dist depending on desired accuracy
       horzDist = Locations.horzDistanceFast(loc1, loc2);
 
-      if (horzDist < distJB) distJB = horzDist;
+      if (horzDist < distJB) {
+        distJB = horzDist;
+      }
 
       rupDist = horzDist * horzDist + vertDist * vertDist;
-      if (rupDist < distRup) distRup = rupDist;
+      if (rupDist < distRup) {
+        distRup = rupDist;
+      }
 
       // if (loc2.depth() >= SEIS_DEPTH) {
       // if (rupDist < distSeis)
@@ -143,12 +148,16 @@ public final class Distance {
       // if (frankelTypeSurface) {
       // if (isDjbZeroFrankel(surface, distJB)) distJB = 0;
       // } else {
-      if (isDjbZero(surface.getPerimeter(), loc)) distJB = 0;
-      // }
+      if (isDjbZero(surface.getPerimeter(), loc))
+      {
+        distJB = 0;
+        // }
+      }
     }
 
-    if (distJB < surface.getAveGridSpacing() && isDjbZero(surface.getPerimeter(), loc))
+    if (distJB < surface.getAveGridSpacing() && isDjbZero(surface.getPerimeter(), loc)) {
       distJB = 0;
+    }
 
     // double[] results = {distRup, distJB, distSeis};
 
@@ -162,7 +171,7 @@ public final class Distance {
 
   /**
    * This computes distanceX
-   * 
+   *
    * TODO I cannot believe there is not a cleaner implementation
    * @param surface
    * @param siteLoc
@@ -189,7 +198,7 @@ public final class Distance {
     // } else {
 
     // @formatter:off
-    
+
     /*
      *    P4                        P1
      *    |                          |
@@ -198,7 +207,7 @@ public final class Distance {
      *    P3------************------P2
      *            <- strike --
      */
-    
+
     // @formatter:on
     double strike = Faults.strikeRad(trace);
     double dipDir = Faults.dipDirectionRad(strike);
@@ -346,7 +355,9 @@ public final class Distance {
   // a segment. See Kevins distance X tests in Quad Surface and possible
   // azimuth based solution in my notes. p powers
   private static double calcDistanceX(LocationList trace, Location loc) {
-    if (trace.size() == 1) return 0.0;
+    if (trace.size() == 1) {
+      return 0.0;
+    }
 
     // Compare the distance to the closest segment to the distances to the
     // endpoints. If the closest segment distance is less than both endpoint
@@ -370,7 +381,7 @@ public final class Distance {
    * traces. This method borrows from Region using a java.awt.geom.Area to
    * perform a contains test, however no checking is done of the area's
    * singularity.
-   * 
+   *
    * The Elsinore fault was the culprit leading to this implementation. For a
    * near-vertical (85??) strike-slip fault, it is has an unrealistic ???90 jog
    * in it. Even this method does not technically give a 100% correct answer.

@@ -2,18 +2,11 @@ package org.opensha2.gmm;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.base.StandardSystemProperty;
@@ -22,6 +15,14 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import com.google.common.primitives.Doubles;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("javadoc")
 @Ignore
@@ -67,11 +68,11 @@ public class GmmTest {
         for (GmmInput input : inputs) {
           ScalarGroundMotion sgm = gmModel.calc(input);
           String result = Parsing.join(
-            Lists.newArrayList(modelIndex++ + "-" + id,
-              String.format("%.6f", Math.exp(sgm.mean())),
-              String.format("%.6f", sgm.sigma())),
-            Delimiter.COMMA) +
-            StandardSystemProperty.LINE_SEPARATOR.value();
+              Lists.newArrayList(modelIndex++ + "-" + id,
+                  String.format("%.6f", Math.exp(sgm.mean())),
+                  String.format("%.6f", sgm.sigma())),
+              Delimiter.COMMA) +
+              StandardSystemProperty.LINE_SEPARATOR.value();
           Files.append(result, out, StandardCharsets.UTF_8);
         }
       }
@@ -81,9 +82,9 @@ public class GmmTest {
   static List<Object[]> loadResults(String resource) throws IOException {
     URL url = Resources.getResource(GmmTest.class, DATA_DIR + resource);
     return FluentIterable
-      .from(Resources.readLines(url, StandardCharsets.UTF_8))
-      .transform(ResultsToObjectsFunction.INSTANCE)
-      .toList();
+        .from(Resources.readLines(url, StandardCharsets.UTF_8))
+        .transform(ResultsToObjectsFunction.INSTANCE)
+        .toList();
   }
 
   private enum ResultsToObjectsFunction implements Function<String, Object[]> {
@@ -105,10 +106,10 @@ public class GmmTest {
   static List<GmmInput> loadInputs(String resource) throws IOException {
     URL url = Resources.getResource(GmmTest.class, DATA_DIR + resource);
     return FluentIterable
-      .from(Resources.readLines(url, StandardCharsets.UTF_8))
-      .skip(1)
-      .transform(ArgsToInputFunction.INSTANCE)
-      .toList();
+        .from(Resources.readLines(url, StandardCharsets.UTF_8))
+        .skip(1)
+        .transform(ArgsToInputFunction.INSTANCE)
+        .toList();
   }
 
   private enum ArgsToInputFunction implements Function<String, GmmInput> {
@@ -117,22 +118,22 @@ public class GmmTest {
     public GmmInput apply(String line) {
 
       Iterator<Double> it = FluentIterable
-        .from(Parsing.split(line, Delimiter.COMMA))
-        .transform(Doubles.stringConverter())
-        .iterator();
+          .from(Parsing.split(line, Delimiter.COMMA))
+          .transform(Doubles.stringConverter())
+          .iterator();
 
       return GmmInput.builder()
-        .mag(it.next())
-        .distances(it.next(), it.next(), it.next())
-        .dip(it.next())
-        .width(it.next())
-        .zTop(it.next())
-        .zHyp(it.next())
-        .rake(it.next())
-        .vs30(it.next(), it.next() > 0.0)
-        .z1p0(it.next())
-        .z2p5(it.next())
-        .build();
+          .mag(it.next())
+          .distances(it.next(), it.next(), it.next())
+          .dip(it.next())
+          .width(it.next())
+          .zTop(it.next())
+          .zHyp(it.next())
+          .rake(it.next())
+          .vs30(it.next(), it.next() > 0.0)
+          .z1p0(it.next())
+          .z2p5(it.next())
+          .build();
     }
   }
 

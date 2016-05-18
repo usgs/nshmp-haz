@@ -2,6 +2,7 @@ package org.opensha2.gmm;
 
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
+
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
@@ -11,38 +12,35 @@ import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
-import static org.opensha2.gmm.GmmInput.Field.VSINF;
 import static org.opensha2.gmm.GmmInput.Field.WIDTH;
-import static org.opensha2.gmm.GmmInput.Field.Z1P0;
-import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.gmm.Imt.PGA;
-
-import java.util.Map;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
 
+import java.util.Map;
+
 /**
  * Implementation of the Boore & Atkinson (2008) next generation attenuation
  * relationship for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Reference:</b> Boore, D.M., and Atkinson, G.M., 2008, Ground-motion
  * prediction equations for the average horizontal component of PGA, PGV, and
  * 5%-damped PSA at spectral periods between 0.01s and 10.0s: Earthquake
  * Spectra, v. 24, n. 1, pp. 99-138.</p>
- * 
+ *
  * <p><b>doi:</b><a href="http://dx.doi.org/10.1193/1.2830434">
  * http://dx.doi.org/10.1193/1.2830434</a></p>
- * 
+ *
  * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#BA_08
  */
@@ -51,13 +49,13 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
   static final String NAME = "Boore & Atkinson (2008)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(5.0, 8.0))
-    .set(RJB, Range.closed(0.0, 200.0))
-    .set(DIP, Faults.DIP_RANGE)
-    .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)
-    .set(RAKE, Faults.RAKE_RANGE)
-    .set(VS30, Range.closedOpen(180.0, 1300.0))
-    .build();
+      .set(MAG, Range.closed(5.0, 8.0))
+      .set(RJB, Range.closed(0.0, 200.0))
+      .set(DIP, Faults.DIP_RANGE)
+      .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)
+      .set(RAKE, Faults.RAKE_RANGE)
+      .set(VS30, Range.closedOpen(180.0, 1300.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("BA08.csv");
 
@@ -73,10 +71,10 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
   static final class Coefficients {
 
     final double b_lin, b1, b2,
-        c1, c2, c3,
-        e1, e2, e3, e4, e5, e6, e7,
-        h, mh, s,
-        t_u, s_tu, t_m, s_tm;
+    c1, c2, c3,
+    e1, e2, e3, e4, e5, e6, e7,
+    h, mh, s,
+    t_u, s_tu, t_m, s_tm;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
@@ -199,7 +197,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
   private static final double calcSourceTerm(final Coefficients c, final double Mw,
       final FaultStyle style) {
     double Fm = (style == STRIKE_SLIP) ? c.e2
-      : (style == NORMAL) ? c.e3 : (style == REVERSE) ? c.e4 : c.e1; // else
+        : (style == NORMAL) ? c.e3 : (style == REVERSE) ? c.e4 : c.e1; // else
     // unkown
     double MwMh = Mw - c.mh;
     Fm += (Mw <= c.mh) ? c.e5 * MwMh + c.e6 * MwMh * MwMh : c.e7 * MwMh;
@@ -211,7 +209,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
       final double rJB) {
     double r = Math.sqrt(rJB * rJB + c.h * c.h);
     return (c.c1 + c.c2 * (Mw - Mref)) * log(r / Rref) + c.c3 *
-      (r - Rref);
+        (r - Rref);
   }
 
   // Aleatory uncertainty model

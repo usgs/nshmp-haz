@@ -2,12 +2,9 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.util.TextUtils.NEWLINE;
 import static org.opensha2.util.TextUtils.validateName;
-
-import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.gmm.GroundMotionModel;
@@ -17,6 +14,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.Set;
+
 /**
  * A {@code HazardModel} is the top-level wrapper for earthquake {@link Source}
  * definitions and attendant {@link GroundMotionModel}s used in probabilisitic
@@ -25,7 +26,7 @@ import com.google.common.collect.SetMultimap;
  * logical groupings of sources by {@link SourceType}. Each {@code SourceSet}
  * carries with it references to the {@code GroundMotionModel}s and associated
  * weights to be used when evaluating hazard.
- * 
+ *
  * @author Peter Powers
  * @see Source
  * @see SourceSet
@@ -68,16 +69,16 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
   /**
    * Load a {@code HazardModel} from a directory or Zip file specified by the
    * supplied {@code path}.
-   * 
+   *
    * <p>For more information on a HazardModel directory and file structure, see
    * the <a
    * href="https://github.com/usgs/nshmp-haz/wiki/Earthquake-Source-Models"
    * target="_top">nshmp-haz wiki</a>.</p>
-   * 
+   *
    * <p><b>Notes:</b> HazardModel loading is not thread safe. Also, there are a
    * wide variety of exceptions that may be encountered when loading a model. In
    * most cases, the exception will be logged and the JVM will exit.</p>
-   * 
+   *
    * @param path to {@code HazardModel} directory or Zip file
    * @return a newly instantiated {@code HazardModel}
    */

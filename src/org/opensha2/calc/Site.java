@@ -2,11 +2,9 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.util.GeoJson.validateProperty;
-
-import java.lang.reflect.Type;
-import java.util.Set;
 
 import org.opensha2.geo.Location;
 import org.opensha2.gmm.GroundMotionModel;
@@ -22,12 +20,15 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.lang.reflect.Type;
+import java.util.Set;
+
 /**
  * Site characteristics container. Take note of default values; this minimum
  * information required to create a {@code Site} is its location. Not all
  * {@link GroundMotionModel}s will use all fields and additional fields may be
  * added at any time in the future.
- * 
+ *
  * @author Peter Powers
  */
 public class Site implements Named {
@@ -103,21 +104,21 @@ public class Site implements Named {
 
   /**
    * The average shear-wave velocity down to 30 meters depth.
-   * 
+   *
    * <p>Default: 760.0 m/sec</p>
    */
   public final double vs30;
 
   /**
    * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
-   * 
+   *
    * <p>Default: true (inferred)</p>
    */
   public final boolean vsInferred;
 
   /**
    * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
-   * 
+   *
    * <p>Default: {@code NaN} ({@link GroundMotionModel}s will use a default
    * value or model)</p>
    */
@@ -125,7 +126,7 @@ public class Site implements Named {
 
   /**
    * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
-   * 
+   *
    * <p>Default: {@code NaN} ({@link GroundMotionModel}s will use a default
    * value or model)</p>
    */
@@ -145,10 +146,10 @@ public class Site implements Named {
   @Override
   public String toString() {
     return new StringBuilder(Strings.padEnd(name, 28, ' '))
-      .append(String.format("%.3f %.3f Vs30=%s ", location.lon(), location.lat(), vs30))
-      .append(vsInferred ? "inferred " : "measured ")
-      .append(String.format("Z1.0=%s Z2.5=%s", z1p0, z2p5))
-      .toString();
+        .append(String.format("%.3f %.3f Vs30=%s ", location.lon(), location.lat(), vs30))
+        .append(vsInferred ? "inferred " : "measured ")
+        .append(String.format("Z1.0=%s Z2.5=%s", z1p0, z2p5))
+        .toString();
   }
 
   @Override
@@ -268,13 +269,13 @@ public class Site implements Named {
 
   /* Json and csv serialization key set */
   static final Set<String> KEYS = ImmutableSet.of(
-    Key.NAME,
-    Key.LAT,
-    Key.LON,
-    Key.VS30,
-    Key.VS_INF,
-    Key.Z1P0,
-    Key.Z2P5);
+      Key.NAME,
+      Key.LAT,
+      Key.LON,
+      Key.VS30,
+      Key.VS_INF,
+      Key.Z1P0,
+      Key.Z2P5);
 
   /*
    * Custom deserializer that takes care of several issues with sites.
@@ -299,29 +300,39 @@ public class Site implements Named {
       validateProperty(geometry, GeoJson.Key.TYPE, GeoJson.Value.POINT);
 
       JsonArray coordinates = feature
-        .getAsJsonObject(GeoJson.Key.GEOMETRY)
-        .getAsJsonArray(GeoJson.Key.COORDINATES);
+          .getAsJsonObject(GeoJson.Key.GEOMETRY)
+          .getAsJsonArray(GeoJson.Key.COORDINATES);
 
       Builder builder = Site.builder().location(
-        coordinates.get(1).getAsDouble(),
-        coordinates.get(0).getAsDouble());
+          coordinates.get(1).getAsDouble(),
+          coordinates.get(0).getAsDouble());
 
       JsonObject properties = feature.getAsJsonObject(GeoJson.Key.PROPERTIES);
 
       JsonElement name = properties.get(GeoJson.Properties.Key.TITLE);
-      if (name != null) builder.name(name.getAsString());
+      if (name != null) {
+        builder.name(name.getAsString());
+      }
 
       JsonElement vs30 = properties.get(Site.Key.VS30);
-      if (vs30 != null) builder.vs30(vs30.getAsDouble());
+      if (vs30 != null) {
+        builder.vs30(vs30.getAsDouble());
+      }
 
       JsonElement vsInf = properties.get(Site.Key.VS_INF);
-      if (vsInf != null) builder.vsInferred(vs30.getAsBoolean());
+      if (vsInf != null) {
+        builder.vsInferred(vs30.getAsBoolean());
+      }
 
       JsonElement z1p0 = properties.get(Site.Key.Z1P0);
-      if (z1p0 != null) builder.z1p0(z1p0.getAsDouble());
+      if (z1p0 != null) {
+        builder.z1p0(z1p0.getAsDouble());
+      }
 
       JsonElement z2p5 = properties.get(Site.Key.Z2P5);
-      if (z2p5 != null) builder.z2p5(z2p5.getAsDouble());
+      if (z2p5 != null) {
+        builder.z2p5(z2p5.getAsDouble());
+      }
 
       return builder.build();
     }

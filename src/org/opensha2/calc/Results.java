@@ -1,19 +1,8 @@
 package org.opensha2.calc;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
-import static org.opensha2.data.XySequence.emptyCopyOf;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import static org.opensha2.data.XySequence.emptyCopyOf;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
@@ -33,6 +22,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Doubles;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Factory class for reducing and exporting various result types.
@@ -75,7 +76,7 @@ public class Results {
    * will be written as well. Files are encoded as
    * {@link StandardCharsets#US_ASCII}, lat and lon values are formatted to 2
    * decimal places, and curve values are formatted to 8 significant figures.
-   * 
+   *
    * @param dir to write to
    * @param batch of results to write
    * @param options specifying how the file is opened
@@ -96,8 +97,8 @@ public class Results {
     Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
     if (demo.config.curve.valueType == CurveValue.POISSON_PROBABILITY) {
       formatter = Functions.compose(
-        formatter,
-        Mfds.annualRateToProbabilityConverter());
+          formatter,
+          Mfds.annualRateToProbabilityConverter());
     }
 
     Map<Imt, List<String>> totalLineMap = Maps.newEnumMap(Imt.class);
@@ -109,8 +110,8 @@ public class Results {
       List<String> lines = new ArrayList<>();
       if (newFile) {
         Iterable<?> header = Iterables.concat(
-          Lists.newArrayList(namedSites ? "name" : null, "lon", "lat"),
-          demo.config.curve.modelCurves().get(imt).xValues());
+            Lists.newArrayList(namedSites ? "name" : null, "lon", "lat"),
+            demo.config.curve.modelCurves().get(imt).xValues());
         lines.add(Parsing.join(header, Delimiter.COMMA));
       }
       totalLineMap.put(imt, lines);
@@ -137,49 +138,49 @@ public class Results {
 
       String name = namedSites ? hazard.site.name : null;
       List<String> locData = Lists.newArrayList(
-        name,
-        String.format("%.5f", hazard.site.location.lon()),
-        String.format("%.5f", hazard.site.location.lat()));
+          name,
+          String.format("%.5f", hazard.site.location.lon()),
+          String.format("%.5f", hazard.site.location.lat()));
 
       Map<Imt, Map<SourceType, XySequence>> curvesBySource =
-        sourceCurves ? curvesBySource(hazard) : null;
-      Map<Imt, Map<Gmm, XySequence>> curvesByGmm = gmmCurves ? curvesByGmm(hazard) : null;
+          sourceCurves ? curvesBySource(hazard) : null;
+          Map<Imt, Map<Gmm, XySequence>> curvesByGmm = gmmCurves ? curvesByGmm(hazard) : null;
 
-      for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
-        Imt imt = imtEntry.getKey();
+          for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
+            Imt imt = imtEntry.getKey();
 
-        XySequence totalCurve = imtEntry.getValue();
-        Iterable<Double> emptyValues = Doubles.asList(new double[totalCurve.size()]);
-        String emptyLine = toLine(locData, emptyValues, formatter);
+            XySequence totalCurve = imtEntry.getValue();
+            Iterable<Double> emptyValues = Doubles.asList(new double[totalCurve.size()]);
+            String emptyLine = toLine(locData, emptyValues, formatter);
 
-        totalLineMap.get(imt).add(toLine(
-          locData,
-          imtEntry.getValue().yValues(),
-          formatter));
+            totalLineMap.get(imt).add(toLine(
+                locData,
+                imtEntry.getValue().yValues(),
+                formatter));
 
-        if (sourceCurves) {
-          Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
-          for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
-            .entrySet()) {
-            SourceType type = typeEntry.getKey();
-            String typeLine = sourceCurveMap.containsKey(type)
-              ? toLine(locData, sourceCurveMap.get(type).yValues(), formatter)
-              : emptyLine;
-            typeEntry.getValue().add(typeLine);
+            if (sourceCurves) {
+              Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
+              for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
+                  .entrySet()) {
+                SourceType type = typeEntry.getKey();
+                String typeLine = sourceCurveMap.containsKey(type)
+                    ? toLine(locData, sourceCurveMap.get(type).yValues(), formatter)
+                        : emptyLine;
+                    typeEntry.getValue().add(typeLine);
+              }
+            }
+
+            if (gmmCurves) {
+              Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
+              for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
+                Gmm gmm = gmmEntry.getKey();
+                String gmmLine = gmmCurveMap.containsKey(gmm)
+                    ? toLine(locData, gmmCurveMap.get(gmm).yValues(), formatter)
+                        : emptyLine;
+                    gmmEntry.getValue().add(gmmLine);
+              }
+            }
           }
-        }
-
-        if (gmmCurves) {
-          Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
-          for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
-            Gmm gmm = gmmEntry.getKey();
-            String gmmLine = gmmCurveMap.containsKey(gmm)
-              ? toLine(locData, gmmCurveMap.get(gmm).yValues(), formatter)
-              : emptyLine;
-            gmmEntry.getValue().add(gmmLine);
-          }
-        }
-      }
     }
 
     /* write/append */
@@ -195,9 +196,9 @@ public class Results {
         Path typeDir = imtDir.resolve("source");
         Files.createDirectories(typeDir);
         for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
-          .entrySet()) {
+            .entrySet()) {
           Path typeFile = typeDir.resolve(
-            typeEntry.getKey().toString() + CURVE_FILE_SUFFIX);
+              typeEntry.getKey().toString() + CURVE_FILE_SUFFIX);
           Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
         }
       }
@@ -219,8 +220,8 @@ public class Results {
       Function<Double, String> formatter) {
 
     return Parsing.join(
-      FluentIterable.from(location).append(Iterables.transform(values, formatter)),
-      Delimiter.COMMA);
+        FluentIterable.from(location).append(Iterables.transform(values, formatter)),
+        Delimiter.COMMA);
   }
 
   /**
@@ -240,8 +241,8 @@ public class Results {
     for (Entry<SourceType, HazardCurveSet> curveSet : hazard.sourceSetCurves.entries()) {
       for (Entry<Imt, XySequence> typeTotals : curveSet.getValue().totalCurves.entrySet()) {
         imtMap.get(typeTotals.getKey())
-          .get(curveSet.getKey())
-          .add(typeTotals.getValue());
+        .get(curveSet.getKey())
+        .add(typeTotals.getValue());
       }
     }
     return Maps.immutableEnumMap(imtMap);
@@ -257,8 +258,8 @@ public class Results {
 
     // initialize receiver
     Iterable<SourceSet<? extends Source>> sources = Iterables.transform(
-      hazard.sourceSetCurves.values(),
-      CURVE_SET_TO_SOURCE_SET);
+        hazard.sourceSetCurves.values(),
+        CURVE_SET_TO_SOURCE_SET);
     Set<Gmm> gmms = gmmSet(sources);
     for (Entry<Imt, XySequence> entry : hazard.curves().entrySet()) {
       imtMap.put(entry.getKey(), initCurves(gmms, entry.getValue()));
@@ -277,13 +278,13 @@ public class Results {
   /* Scan the supplied source sets for the set of all GMMs used. */
   private static Set<Gmm> gmmSet(final Iterable<SourceSet<? extends Source>> sourceSets) {
     return Sets.immutableEnumSet(
-      FluentIterable.from(sourceSets).transformAndConcat(
-        new Function<SourceSet<? extends Source>, Set<Gmm>>() {
-          @Override
-          public Set<Gmm> apply(SourceSet<? extends Source> sourceSet) {
-            return sourceSet.groundMotionModels().gmms();
-          }
-        }));
+        FluentIterable.from(sourceSets).transformAndConcat(
+            new Function<SourceSet<? extends Source>, Set<Gmm>>() {
+              @Override
+              public Set<Gmm> apply(SourceSet<? extends Source> sourceSet) {
+                return sourceSet.groundMotionModels().gmms();
+              }
+            }));
   }
 
   /*
@@ -293,21 +294,21 @@ public class Results {
       final Set<K> keys,
       final XySequence model) {
     return Maps.immutableEnumMap(
-      FluentIterable.from(keys).toMap(
-        new Function<K, XySequence>() {
-          @Override
-          public XySequence apply(K key) {
-            return emptyCopyOf(model);
-          }
-        }));
+        FluentIterable.from(keys).toMap(
+            new Function<K, XySequence>() {
+              @Override
+              public XySequence apply(K key) {
+                return emptyCopyOf(model);
+              }
+            }));
   }
 
   private static final Function<HazardCurveSet, SourceSet<? extends Source>> CURVE_SET_TO_SOURCE_SET =
-    new Function<HazardCurveSet, SourceSet<? extends Source>>() {
-      @Override
-      public SourceSet<? extends Source> apply(HazardCurveSet curves) {
-        return curves.sourceSet;
-      }
-    };
+      new Function<HazardCurveSet, SourceSet<? extends Source>>() {
+    @Override
+    public SourceSet<? extends Source> apply(HazardCurveSet curves) {
+      return curves.sourceSet;
+    }
+  };
 
 }

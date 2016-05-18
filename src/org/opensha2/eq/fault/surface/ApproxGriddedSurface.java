@@ -1,7 +1,5 @@
 package org.opensha2.eq.fault.surface;
 
-import java.util.List;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
@@ -12,13 +10,15 @@ import org.opensha2.geo.Locations;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import java.util.List;
+
 /**
  * A {@code GriddedSurface} defined by an upper and lower trace whose spacing is
  * scaled to the be as close to a desired target spacing as possible over the
  * entire surface. The fault traces supplied to this surface <i>must</i> adhere
  * to the right-hand-rule (dip of surface is to right of direction of travel
  * along trace).
- * 
+ *
  * @author Ned Field
  * @author Peter Powers
  */
@@ -444,8 +444,9 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
 
   public LocationList getRow(int row) {
     List<Location> locs = Lists.newArrayList();
-    for (int col = 0; col < getNumCols(); col++)
+    for (int col = 0; col < getNumCols(); col++) {
       locs.add(get(row, col));
+    }
     return LocationList.create(locs);
   }
 
@@ -454,7 +455,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
     LocationList topTr = getRow(0);
     LocationList botTr = LocationList.create(getRow(getNumRows() - 1)).reverse();
     Iterable<Location> locs = Iterables.concat(topTr, botTr,
-      Lists.newArrayList(topTr.get(0)));
+        Lists.newArrayList(topTr.get(0)));
     return LocationList.create(locs);
   }
 
@@ -523,7 +524,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
    * -25.7599999999 -70.0563464355 50. -25.1999999999 -70.0945446773 50.
    * -24.9400000001 -70.0942907718 50. -22.5600000003 -69.8766857908 50.
    * -22.0599999998 -69.855518799 50. -21.5010148695 -69.8649200561 50.
-   * 
+   *
    */
 
 }

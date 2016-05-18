@@ -8,11 +8,11 @@ import org.opensha2.eq.model.SystemSourceSet;
  * A {@code List} of {@code HazardInput}s that contains a reference to the
  * parent {@code SystemSourceSet} from which the inputs were derived. This
  * allows for downstream access to parent source properties.
- * 
+ *
  * <p>Presently, a {@code SystemSourceSet} consists of sources for which there
  * is only a single rupture. Note that this could change in the future if some
  * magnitude variability were imposed on each source.</p>
- * 
+ *
  * @author Peter Powers
  */
 public final class SystemInputList extends InputList {

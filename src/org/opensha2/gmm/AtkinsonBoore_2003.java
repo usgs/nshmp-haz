@@ -2,20 +2,21 @@ package org.opensha2.gmm;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
+
 import static org.opensha2.gmm.GmmInput.Field.MAG;
-import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
+import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.LN_G_CM_TO_M;
 import static org.opensha2.gmm.Imt.PGA;
-
-import java.util.Map;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Abstract implementation of the subduction ground motion model by Atkinson &
@@ -25,24 +26,24 @@ import com.google.common.collect.Range;
  * with the Cascadia subduction zone models and the 'slab' form is used with
  * gridded 'deep' events in northern California and the Pacific Northwest. In
  * the 2014 NSHM, 'slab' implementations with Mw saturation at 7.8 were added.
- * 
+ *
  * <p><b>Note:</b> NSHM fortran implementations implement strict hypocentral
  * depths that are hardcoded into these implementations as well. FOr interface
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Reference:</b> Atkinson, G.M. and Boore, D.M., 2003, Empirical
  * ground-motion relations for subduction-zone earthquakes and their application
  * to Cascadia and other regions: Bulletin of the Seismological Society of
  * America, v. 93, p. 1703-1729.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020156">
  * 10.1785/0120020156</a></p>
- * 
+ *
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#AB_03_CASC_INTER
  * @see Gmm#AB_03_CASC_SLAB
@@ -57,16 +58,16 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
   // TODO will probably want to have constraints per-implementation
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(5.0, 9.5))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
-    .set(VS30, Range.closed(150.0, 1500.0))
-    .build();
+      .set(MAG, Range.closed(5.0, 9.5))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+      .set(VS30, Range.closed(150.0, 1500.0))
+      .build();
 
   static final CoefficientContainer COEFFS_CASC_SLAB,
-      COEFFS_CASC_INTERFACE,
-      COEFFS_GLOBAL_SLAB,
-      COEFFS_GLOBAL_INTERFACE;
+  COEFFS_CASC_INTERFACE,
+  COEFFS_GLOBAL_SLAB,
+  COEFFS_GLOBAL_INTERFACE;
 
   static {
     COEFFS_CASC_SLAB = new CoefficientContainer("AB03_cascadia_slab.csv");
@@ -107,7 +108,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
   private static Coefficients initCoeffs(final Imt imt, final boolean slab,
       final boolean global) {
     CoefficientContainer coeffs = slab && global ? COEFFS_GLOBAL_SLAB : slab ? COEFFS_CASC_SLAB
-      : global ? COEFFS_GLOBAL_INTERFACE : COEFFS_CASC_INTERFACE;
+        : global ? COEFFS_GLOBAL_INTERFACE : COEFFS_CASC_INTERFACE;
     return new Coefficients(imt, coeffs);
   }
 
@@ -164,7 +165,7 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
     double dist2 = Math.sqrt(in.rRup * in.rRup + delta * delta);
     double gnd = gndm + c.c3 * depth + c.c4 * dist2 - g * log10(dist2);
     double rpga = cPGA.c1 + cPGA.c2 * Mw + cPGA.c3 * depth + cPGA.c4 * dist2 - g *
-      log10(dist2);
+        log10(dist2);
     rpga = pow(10, rpga);
 
     double freq = c.imt.frequency();

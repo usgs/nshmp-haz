@@ -2,11 +2,11 @@ package org.opensha2.function;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.StandardSystemProperty;
+
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import com.google.common.base.StandardSystemProperty;
 
 /**
  * <b>Title:</b> EvenlyDiscretizedFunc<p>
@@ -30,8 +30,8 @@ import com.google.common.base.StandardSystemProperty;
  * should be set greater than delta. Add methods should then be used to add to Y
  * values for histograms. The x value is the mid-point of the histogram
  * interval<p>
- * 
- * 
+ *
+ *
  * @author Steven W. Rock
  * @version 1.0
  */
@@ -108,8 +108,12 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
 
   public void set(double min, double max, int num) {
     checkArgument(num > 0, "num points must be > 0");
-    if (min == max) checkArgument(num == 1, "num must = 1 if min = max");
-    if (num == 1) checkArgument(min == max, "min must equal max if num points = 1");
+    if (min == max) {
+      checkArgument(num == 1, "num must = 1 if min = max");
+    }
+    if (num == 1) {
+      checkArgument(min == max, "min must equal max if num points = 1");
+    }
     checkArgument(max >= min, "min must be less than or equal than max");
 
     delta = (num == 1) ? 0 : (max - min) / (num - 1);
@@ -132,10 +136,11 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Used internally
    */
   protected boolean withinTolerance(double x, double xx) {
-    if (Math.abs(x - xx) <= this.tolerance)
+    if (Math.abs(x - xx) <= this.tolerance) {
       return true;
-    else
+    } else {
       return false;
+    }
   }
 
   /** Returns the spacing between x-values */
@@ -144,6 +149,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
   }
 
   /** Returns the number of points in this series */
+  @Override
   public int getNum() {
     return num;
   }
@@ -152,6 +158,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Returns the minimum x-value in this series. Since the value is stored,
    * lookup is very quick
    */
+  @Override
   public double getMinX() {
     return minX;
   }
@@ -160,6 +167,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Returns the maximum x-value in this series. Since the value is stored,
    * lookup is very quick
    */
+  @Override
   public double getMaxX() {
     return maxX;
   }
@@ -173,10 +181,14 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * is inserted and store the miny value. This would only slightly slow down
    * the insert, but greatly speed up the lookup. <p>
    */
+  @Override
   public double getMinY() {
     double minY = Double.POSITIVE_INFINITY;
-    for (int i = 0; i < num; ++i)
-      if (points[i] < minY) minY = points[i];
+    for (int i = 0; i < num; ++i) {
+      if (points[i] < minY) {
+        minY = points[i];
+      }
+    }
     return minY;
   }
 
@@ -189,10 +201,14 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * is inserted and store the miny value. This would only slightly slow down
    * the insert, but greatly speed up the lookup. <p>
    */
+  @Override
   public double getMaxY() {
     double maxY = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < num; ++i)
-      if (points[i] > maxY) maxY = points[i];
+    for (int i = 0; i < num; ++i) {
+      if (points[i] > maxY) {
+        maxY = points[i];
+      }
+    }
     return maxY;
   }
 
@@ -200,9 +216,11 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Returns an x and y value in a Point2D based on index into the y-points
    * array. The index is based along the x-axis.
    */
+  @Override
   public Point2D get(int index) {
-    if (index < 0 || index >= getNum())
+    if (index < 0 || index >= getNum()) {
       return null;
+    }
     return new Point2D.Double(getX(index), getY(index));
   }
 
@@ -211,11 +229,13 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * negative or greater than number of points. The index is based along the
    * x-axis.
    */
+  @Override
   public double getX(int index) {
-    if (index < 0 || index > (num - 1))
+    if (index < 0 || index > (num - 1)) {
       throw new IndexOutOfBoundsException("no point at index " + index);
-    else
+    } else {
       return (minX + delta * index);
+    }
   }
 
   /**
@@ -223,9 +243,11 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * negative or greater than number of points. The index is based along the
    * x-axis.
    */
+  @Override
   public double getY(int index) {
-    if (index < 0 || index > (num - 1))
+    if (index < 0 || index > (num - 1)) {
       throw new IndexOutOfBoundsException("no point at index " + index);
+    }
     return points[index];
   }
 
@@ -235,6 +257,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * it's index into the storage array. Returns null if x is not one of the
    * x-axis points.
    */
+  @Override
   public double getY(double x) {
     return getY(getXIndex(x));
   }
@@ -244,6 +267,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * of one of the discretized values.
    * @see #getClosestXIndex(double)
    */
+  @Override
   public int getXIndex(double x) {
     int i = getClosestXIndex(x);
     double closestX = getX(i);
@@ -273,6 +297,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Calls set( x value, y value ). A DataPoint2DException is thrown if the x
    * value is not an x-axis point.
    */
+  @Override
   public void set(Point2D point) {
 
     set(point.getX(), point.getY());
@@ -283,6 +308,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * calculated, then the y-value is set in it's array. A DataPoint2DException
    * is thrown if the x value is not an x-axis point.
    */
+  @Override
   public void set(double x, double y) {
     int index = getXIndex(x);
     points[index] = y;
@@ -293,7 +319,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * greater than delta. Adds to the y-value at a specified index. The x-value
    * index is first calculated, then the y-value is added in it's array. The
    * specified x value is the mid-point of the histogram interval.
-   * 
+   *
    * DataPoint2DException is thrown if the x value is not an x-axis point.
    */
   public void add(double x, double y) {
@@ -305,6 +331,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * this function will throw an exception if the index is not within the range
    * of 0 to num -1
    */
+  @Override
   public void set(int index, double y) {
     if (index < 0 || index >= num) {
       throw new IndexOutOfBoundsException(C + ": set(): The specified index (" + index +
@@ -317,7 +344,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * This method can be used for generating histograms if tolerance is set
    * greater than delta. Adds to the y-value at a specified index. The specified
    * x value is the mid-point of the histogram interval.
-   * 
+   *
    * this function will throw an exception if the index is not within the range
    * of 0 to num -1
    */
@@ -354,6 +381,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * @return x the interpolated x based on the given y value)
    */
 
+  @Override
   public double getFirstInterpolatedX(double y) {
     double y1 = Double.NaN;
     double y2 = Double.NaN;
@@ -362,8 +390,9 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
     // if Size of the function is 1 and Y value is equal to Y val of
     // function
     // return the only X value
-    if (num == 1 && y == getY(0))
+    if (num == 1 && y == getY(0)) {
       return getX(0);
+    }
 
     boolean found = false; // this boolean hold whether the passed y value
     // lies within range
@@ -403,6 +432,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    *        required to find the interpolated x value in the log space.
    * @return x(this is the interpolated x based on the given y value)
    */
+  @Override
   public double getFirstInterpolatedX_inLogXLogYDomain(double y) {
     double y1 = Double.NaN;
     double y2 = Double.NaN;
@@ -411,8 +441,9 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
     // if Size of the function is 1 and Y value is equal to Y val of
     // function
     // return the only X value
-    if (num == 1 && y == getY(0))
+    if (num == 1 && y == getY(0)) {
       return getX(0);
+    }
 
     boolean found = false; // this boolean hold whether the passed y value
     // lies within range
@@ -450,17 +481,20 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * @param x value for which interpolated first y value has to be found
    * @return y the interpolated y based on the given x value)
    */
+  @Override
   public double getInterpolatedY(double x) {
     // if passed parameter(x value) is not within range then throw exception
     checkArgument(x >= minX - tolerance && x <= maxX + tolerance,
         "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(num - 1));
 
-    if (x >= maxX)
+    if (x >= maxX) {
       return getY(getNum() - 1);
+    }
 
     int x1Ind = getIndexBefore(x);
-    if (x1Ind == -1) // this happens if x<minX (but within tolerance)
+    if (x1Ind == -1) {
       return getY(0);
+    }
 
     double x1 = getX(x1Ind);
     double x2 = getX(x1Ind + 1);
@@ -506,17 +540,20 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
   @Override
   public double getClosestY(double x) {
     // TODO unit test
-    if (x >= maxX)
+    if (x >= maxX) {
       return getY(getNum() - 1);
-    if (x <= minX)
+    }
+    if (x <= minX) {
       return getY(0);
+    }
     int ind = getIndexBefore(x);
     double x1 = getX(ind);
     double x2 = getX(ind + 1);
     double d1 = x - x1;
     double d2 = x2 - x;
-    if (d1 < d2)
+    if (d1 < d2) {
       return getY(ind);
+    }
     return getY(ind + 1);
   }
 
@@ -530,17 +567,20 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * @return y(this is the interpolated y in linear space based on the given x
    *         value)
    */
+  @Override
   public double getInterpolatedY_inLogXLogYDomain(double x) {
     // if passed parameter(x value) is not within range then throw exception
     checkArgument(x >= minX - tolerance && x <= maxX + tolerance,
         "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(num - 1));
 
-    if (x >= maxX)
+    if (x >= maxX) {
       return getY(getNum() - 1);
+    }
 
     int x1Ind = getIndexBefore(x);
-    if (x1Ind == -1) // this happens if x<minX (but within tolerance)
+    if (x1Ind == -1) {
       return getY(0);
+    }
 
     double x1 = getX(x1Ind);
     double x2 = getX(x1Ind + 1);
@@ -567,17 +607,20 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * @return y(this is the interpolated y in linear space based on the given x
    *         value)
    */
+  @Override
   public double getInterpolatedY_inLogYDomain(double x) {
     // if passed parameter(x value) is not within range then throw exception
     checkArgument(x >= minX - tolerance && x <= maxX + tolerance,
         "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(num - 1));
 
-    if (x >= maxX)
+    if (x >= maxX) {
       return getY(getNum() - 1);
+    }
 
     int x1Ind = getIndexBefore(x);
-    if (x1Ind == -1) // this happens if x<minX (but within tolerance)
+    if (x1Ind == -1) {
       return getY(0);
+    }
 
     double x1 = getX(x1Ind);
     double x2 = getX(x1Ind + 1);
@@ -599,6 +642,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    *
    * This is a deep clone so all fields and all data points are copies. <p>
    */
+  @Override
   public DiscretizedFunc deepClone() {
 
     EvenlyDiscretizedFunc f = new EvenlyDiscretizedFunc(
@@ -613,8 +657,9 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
     f.tolerance = tolerance;
     f.setInfo(this.getInfo());
     f.setName(name());
-    for (int i = 0; i < num; i++)
+    for (int i = 0; i < num; i++) {
       f.set(i, points[i]);
+    }
 
     return f;
   }
@@ -626,16 +671,24 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
   public boolean equalXValues(DiscretizedFunc function) {
     // String S = C + ": equalXValues():";
 
-    if (!(function instanceof EvenlyDiscretizedFunc)) return false;
-    if (num != function.getNum()) return false;
+    if (!(function instanceof EvenlyDiscretizedFunc)) {
+      return false;
+    }
+    if (num != function.getNum()) {
+      return false;
+    }
 
     double min = minX;
     double min1 = ((EvenlyDiscretizedFunc) function).getMinX();
-    if (!withinTolerance(min, min1)) return false;
+    if (!withinTolerance(min, min1)) {
+      return false;
+    }
 
     double d = delta;
     double d1 = ((EvenlyDiscretizedFunc) function).getDelta();
-    if (d != d1) return false;
+    if (d != d1) {
+      return false;
+    }
 
     return true;
 
@@ -648,14 +701,19 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * @return true if all X values are within the tolerance of an integer value
    *         else returns false
    */
+  @Override
   public boolean areAllXValuesInteger(double tolerance) {
 
     double diff;
     // check that min X and delta are integer values
     diff = Math.abs(minX - Math.rint(minX));
-    if (diff > tolerance) return false;
+    if (diff > tolerance) {
+      return false;
+    }
     diff = Math.abs(delta - Math.rint(delta));
-    if (diff > tolerance) return false;
+    if (diff > tolerance) {
+      return false;
+    }
     return true;
 
   }
@@ -668,18 +726,22 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
   public boolean equalXAndYValues(DiscretizedFunc function) {
     // String S = C + ": equalXAndYValues():";
 
-    if (!equalXValues(function)) return false;
+    if (!equalXValues(function)) {
+      return false;
+    }
 
     for (int i = 0; i < num; i++) {
 
       double y1 = getY(i);
       double y2 = function.getY(i);
 
-      if (Double.isNaN(y1) && !Double.isNaN(y2))
+      if (Double.isNaN(y1) && !Double.isNaN(y2)) {
         return false;
-      else if (Double.isNaN(y2) && !Double.isNaN(y1))
+      } else if (Double.isNaN(y2) && !Double.isNaN(y1)) {
         return false;
-      else if (y1 != y2) return false;
+      } else if (y1 != y2) {
+        return false;
+      }
 
     }
 
@@ -693,6 +755,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Standard java function, usually used for debugging, prints out the state of
    * the list, such as number of points, the value of each point, etc.
    */
+  @Override
   public String toString() {
     StringBuffer b = new StringBuffer()
         .append("     Name: ").append(name())
@@ -713,6 +776,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    *
    * @return value of each point in the function in String format
    */
+  @Override
   public String getMetadataString() {
     StringBuffer b = new StringBuffer();
     b.append("     Values:\n");
@@ -730,6 +794,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Returns true if the x value is withing tolerance of an x-value in this
    * list, and the y value is equal to y value in the list.
    */
+  @Override
   public boolean hasPoint(Point2D point) {
     return point != null && hasPoint(point.getX(), point.getY());
   }
@@ -738,11 +803,16 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * Returns true if the x value is withing tolerance of an x-value in this
    * list, and the y value is equal to y value in the list.
    */
+  @Override
   public boolean hasPoint(double x, double y) {
     int index = getXIndex(x);
-    if (index < 0) return false;
+    if (index < 0) {
+      return false;
+    }
     double yVal = this.getY(index);
-    if (Double.isNaN(yVal) || yVal != y) return false;
+    if (Double.isNaN(yVal) || yVal != y) {
+      return false;
+    }
     return true;
   }
 
@@ -751,11 +821,16 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * x-value and y-values in list should match with that of point returns -1 if
    * there is no such value in the list
    */
+  @Override
   public int getIndex(Point2D point) {
     int index = getXIndex(point.getX());
-    if (index < 0) return -1;
+    if (index < 0) {
+      return -1;
+    }
     double y = this.getY(index);
-    if (y != point.getY()) return -1;
+    if (y != point.getY()) {
+      return -1;
+    }
     return index;
   }
 

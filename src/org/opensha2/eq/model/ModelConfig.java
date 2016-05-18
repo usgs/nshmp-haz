@@ -6,13 +6,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padEnd;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.opensha2.util.TextUtils.LOG_INDENT;
 import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.model.AreaSource.GridScaling;
@@ -21,6 +17,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Model and calculation configuration class. No defaults; 'config.json' must be
@@ -88,15 +89,15 @@ final class ModelConfig {
   @Override
   public String toString() {
     return new StringBuilder("Model Config: ")
-      .append(resource.toAbsolutePath().normalize())
-      .append(LOG_INDENT).append("Model")
-      .append(formatEntry(Key.NAME, name))
-      .append(formatEntry(Key.SURFACE_SPACING, surfaceSpacing))
-      .append(formatEntry(Key.RUPTURE_FLOATING, ruptureFloating))
-      .append(formatEntry(Key.RUPTURE_VARIABILITY, ruptureVariability))
-      .append(formatEntry(Key.POINT_SOURCE_TYPE, pointSourceType))
-      .append(formatEntry(Key.AREA_GRID_SCALING, areaGridScaling))
-      .toString();
+        .append(resource.toAbsolutePath().normalize())
+        .append(LOG_INDENT).append("Model")
+        .append(formatEntry(Key.NAME, name))
+        .append(formatEntry(Key.SURFACE_SPACING, surfaceSpacing))
+        .append(formatEntry(Key.RUPTURE_FLOATING, ruptureFloating))
+        .append(formatEntry(Key.RUPTURE_VARIABILITY, ruptureVariability))
+        .append(formatEntry(Key.POINT_SOURCE_TYPE, pointSourceType))
+        .append(formatEntry(Key.AREA_GRID_SCALING, areaGridScaling))
+        .toString();
   }
 
   private static final String KEY_INDENT = LOG_INDENT + "  ";
@@ -136,16 +137,16 @@ final class ModelConfig {
       Path configPath = Files.isDirectory(path) ? path.resolve(FILE_NAME) : path;
       Reader reader = Files.newBufferedReader(configPath, UTF_8);
       JsonElement modelRoot = new JsonParser()
-        .parse(reader)
-        .getAsJsonObject()
-        .get(ELEMENT_NAME);
+          .parse(reader)
+          .getAsJsonObject()
+          .get(ELEMENT_NAME);
       Builder configBuilder = GSON.fromJson(
-        checkNotNull(
-          modelRoot,
-          "'%s' element is missing from root of config: %s",
-          ELEMENT_NAME,
-          configPath),
-        Builder.class);
+          checkNotNull(
+              modelRoot,
+              "'%s' element is missing from root of config: %s",
+              ELEMENT_NAME,
+              configPath),
+          Builder.class);
       configBuilder.resource = configPath;
       reader.close();
       return configBuilder;
@@ -154,12 +155,24 @@ final class ModelConfig {
     Builder extend(Builder that) {
       checkNotNull(that);
       // name can't be overridden
-      if (that.resource != null) this.resource = that.resource;
-      if (that.surfaceSpacing != null) this.surfaceSpacing = that.surfaceSpacing;
-      if (that.ruptureFloating != null) this.ruptureFloating = that.ruptureFloating;
-      if (that.ruptureVariability != null) this.ruptureVariability = that.ruptureVariability;
-      if (that.pointSourceType != null) this.pointSourceType = that.pointSourceType;
-      if (that.areaGridScaling != null) this.areaGridScaling = that.areaGridScaling;
+      if (that.resource != null) {
+        this.resource = that.resource;
+      }
+      if (that.surfaceSpacing != null) {
+        this.surfaceSpacing = that.surfaceSpacing;
+      }
+      if (that.ruptureFloating != null) {
+        this.ruptureFloating = that.ruptureFloating;
+      }
+      if (that.ruptureVariability != null) {
+        this.ruptureVariability = that.ruptureVariability;
+      }
+      if (that.pointSourceType != null) {
+        this.pointSourceType = that.pointSourceType;
+      }
+      if (that.areaGridScaling != null) {
+        this.areaGridScaling = that.areaGridScaling;
+      }
       return this;
     }
 
@@ -178,8 +191,8 @@ final class ModelConfig {
     ModelConfig build() {
       validateState();
       return new ModelConfig(
-        name, resource, surfaceSpacing, ruptureFloating,
-        ruptureVariability, pointSourceType, areaGridScaling);
+          name, resource, surfaceSpacing, ruptureFloating,
+          ruptureVariability, pointSourceType, areaGridScaling);
     }
   }
 

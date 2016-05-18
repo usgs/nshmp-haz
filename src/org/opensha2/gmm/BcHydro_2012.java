@@ -4,45 +4,46 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
+
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.gmm.Imt.PGA;
 
-import java.util.Map;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
 
+import java.util.Map;
+
 /**
  * Abstract implementation of the subduction ground motion model created for BC
  * Hydro, Canada, by Addo, Abrahamson, & Youngs (2012). This implementation
  * matches that used in the USGS NSHM as supplied by N. Abrahamson.
- * 
+ *
  * <p>This model supports both slab and interface type events. In the 2008
  * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
  * and the 'slab' form is used with gridded 'deep' events in northern California
  * and the Pacific Northwest.</p>
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation notes:</b> <ol><li>Treats all sites as
  * forearc.</li><li>'zTop' is interpreted as hypocentral depth and is only used
  * for slab events; it is limited to 125 km, consistent with other subduction
  * models.</li><li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for
  * interface events and fixed at -0.3 for slab events.</li></ol></p>
- * 
+ *
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
  * characterization (GMC) model: Report E658, v. 3, November.</p>
- * 
+ *
  * <p><b>Component:</b> Geometric mean of two horizontal components</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#BCHYDRO_12_INTER
  * @see Gmm#BCHYDRO_12_SLAB
@@ -54,11 +55,11 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   // TODO will probably want to have constraints per-implementation (e.g. slab
   // vs interface depth limits)
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(5.0, 9.5))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
-    .set(VS30, Range.closed(150.0, 1000.0))
-    .build();
+      .set(MAG, Range.closed(5.0, 9.5))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+      .set(VS30, Range.closed(150.0, 1000.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("BCHydro12.csv");
 
@@ -111,9 +112,9 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     // pgaRock only required to compute non-linear site response
     // when vs30 is less than period-dependent vlin cutoff
     double pgaRock = (in.vs30 < coeffs.vlin)
-      ? exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, 1000.0)) : 0.0;
-    double μ = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
-    return DefaultScalarGroundMotion.create(μ, SIGMA);
+        ? exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, 1000.0)) : 0.0;
+        double μ = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
+        return DefaultScalarGroundMotion.create(μ, SIGMA);
   }
 
   abstract boolean isSlab();
@@ -141,12 +142,12 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
 
     return c.θ1 + T4 * ΔC1 +
-      (c.θ2 + (slab ? c.θ14 : 0.0) + T3 * (Mw - 7.8)) *
+        (c.θ2 + (slab ? c.θ14 : 0.0) + T3 * (Mw - 7.8)) *
         log(rRup + C4 * exp((Mw - 6.0) * T9)) +
-      c.θ6 * rRup + (slab ? c.θ10 : 0.0) + fMag +
-      fDepth +
-      // fterm + no fterm for forearc sites
-      fSite;
+        c.θ6 * rRup + (slab ? c.θ10 : 0.0) + fMag +
+        fDepth +
+        // fterm + no fterm for forearc sites
+        fSite;
   }
 
   static final class Interface extends BcHydro_2012 {
