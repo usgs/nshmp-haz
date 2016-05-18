@@ -1,5 +1,5 @@
 /**
- * Classes and utilities for working with geographic data.
+ * Geographic data classes and utilities.
  * 
  * <p>All objects and methods in this package assume that depths are
  * positive-down, consistent with seismological convention.

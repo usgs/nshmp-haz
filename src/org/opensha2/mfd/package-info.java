@@ -1,5 +1,4 @@
 /**
- * Classes and utilties for working with magnitude frequency distributions
- * (MFDs).
+ * Magnitude frequency distribution (MFDs) classes and utilties.
  */
 package org.opensha2.mfd;
