@@ -68,11 +68,11 @@ public class GmmTest {
         for (GmmInput input : inputs) {
           ScalarGroundMotion sgm = gmModel.calc(input);
           String result = Parsing.join(
-            Lists.newArrayList(modelIndex++ + "-" + id,
-              String.format("%.6f", Math.exp(sgm.mean())),
-              String.format("%.6f", sgm.sigma())),
-            Delimiter.COMMA) +
-            StandardSystemProperty.LINE_SEPARATOR.value();
+              Lists.newArrayList(modelIndex++ + "-" + id,
+                  String.format("%.6f", Math.exp(sgm.mean())),
+                  String.format("%.6f", sgm.sigma())),
+              Delimiter.COMMA) +
+              StandardSystemProperty.LINE_SEPARATOR.value();
           Files.append(result, out, StandardCharsets.UTF_8);
         }
       }
@@ -82,9 +82,9 @@ public class GmmTest {
   static List<Object[]> loadResults(String resource) throws IOException {
     URL url = Resources.getResource(GmmTest.class, DATA_DIR + resource);
     return FluentIterable
-      .from(Resources.readLines(url, StandardCharsets.UTF_8))
-      .transform(ResultsToObjectsFunction.INSTANCE)
-      .toList();
+        .from(Resources.readLines(url, StandardCharsets.UTF_8))
+        .transform(ResultsToObjectsFunction.INSTANCE)
+        .toList();
   }
 
   private enum ResultsToObjectsFunction implements Function<String, Object[]> {
@@ -106,10 +106,10 @@ public class GmmTest {
   static List<GmmInput> loadInputs(String resource) throws IOException {
     URL url = Resources.getResource(GmmTest.class, DATA_DIR + resource);
     return FluentIterable
-      .from(Resources.readLines(url, StandardCharsets.UTF_8))
-      .skip(1)
-      .transform(ArgsToInputFunction.INSTANCE)
-      .toList();
+        .from(Resources.readLines(url, StandardCharsets.UTF_8))
+        .skip(1)
+        .transform(ArgsToInputFunction.INSTANCE)
+        .toList();
   }
 
   private enum ArgsToInputFunction implements Function<String, GmmInput> {
@@ -118,22 +118,22 @@ public class GmmTest {
     public GmmInput apply(String line) {
 
       Iterator<Double> it = FluentIterable
-        .from(Parsing.split(line, Delimiter.COMMA))
-        .transform(Doubles.stringConverter())
-        .iterator();
+          .from(Parsing.split(line, Delimiter.COMMA))
+          .transform(Doubles.stringConverter())
+          .iterator();
 
       return GmmInput.builder()
-        .mag(it.next())
-        .distances(it.next(), it.next(), it.next())
-        .dip(it.next())
-        .width(it.next())
-        .zTop(it.next())
-        .zHyp(it.next())
-        .rake(it.next())
-        .vs30(it.next(), it.next() > 0.0)
-        .z1p0(it.next())
-        .z2p5(it.next())
-        .build();
+          .mag(it.next())
+          .distances(it.next(), it.next(), it.next())
+          .dip(it.next())
+          .width(it.next())
+          .zTop(it.next())
+          .zHyp(it.next())
+          .rake(it.next())
+          .vs30(it.next(), it.next() > 0.0)
+          .z1p0(it.next())
+          .z2p5(it.next())
+          .build();
     }
   }
 

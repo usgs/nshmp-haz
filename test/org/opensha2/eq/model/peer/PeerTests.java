@@ -18,9 +18,9 @@ public class PeerTests {
 
   /*
    * This is the primary entry point for running all PEER test cases.
-   * 
+   *
    * All tolerances are percentages.
-   * 
+   *
    * Although HazardCurve calculations return results in annual rate, all PEER
    * test case comparisons are done as Poisson probability.
    */

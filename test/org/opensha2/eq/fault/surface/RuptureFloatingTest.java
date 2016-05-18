@@ -19,8 +19,8 @@ public class RuptureFloatingTest {
   public final void testOff() {
 
     LocationList trace = LocationList.create(
-      Location.create(34.0, -118.0),
-      Location.create(34.4, -118.0));
+        Location.create(34.0, -118.0),
+        Location.create(34.4, -118.0));
 
     // DefaultGriddedSurface surface = DefaultGriddedSurface.builder()
     // .trace(trace)
@@ -34,15 +34,15 @@ public class RuptureFloatingTest {
   public static void main(String[] args) {
 
     LocationList trace = LocationList.create(
-      Location.create(34.0, -118.0),
-      Location.create(34.4, -118.0));
+        Location.create(34.0, -118.0),
+        Location.create(34.4, -118.0));
 
     DefaultGriddedSurface surface = DefaultGriddedSurface.builder()
-      .trace(trace)
-      .depth(0.0)
-      .dip(90.0)
-      .width(15.0)
-      .build();
+        .trace(trace)
+        .depth(0.0)
+        .dip(90.0)
+        .width(15.0)
+        .build();
 
     System.out.println(surface);
     System.out.println(surface.dipSpacing);

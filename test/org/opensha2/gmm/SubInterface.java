@@ -48,18 +48,18 @@ public class SubInterface extends GmmTest {
 
   /* Result generation sets */
   private static Set<Gmm> gmms = EnumSet.of(
-    AB_03_GLOB_INTER,
-    AB_03_CASC_INTER,
-    AM_09_INTER,
-    BCHYDRO_12_INTER,
-    YOUNGS_97_INTER,
-    ZHAO_06_INTER);
+      AB_03_GLOB_INTER,
+      AB_03_CASC_INTER,
+      AM_09_INTER,
+      BCHYDRO_12_INTER,
+      YOUNGS_97_INTER,
+      ZHAO_06_INTER);
 
   private static Set<Imt> imts = EnumSet.of(
-    PGA,
-    SA0P2,
-    SA1P0,
-    SA3P0);
+      PGA,
+      SA0P2,
+      SA1P0,
+      SA3P0);
 
   public static void main(String[] args) throws IOException {
     GmmTest.generateResults(gmms, imts, GMM_INPUTS, GMM_RESULTS);

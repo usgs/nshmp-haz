@@ -125,7 +125,7 @@ public class PeerTest {
     Hazard result = HazardCalc.calc(model, model.config(), site, Optional.<Executor> absent());
     // compute y-values converting to Poiss prob
     double[] actual = Doubles.toArray(
-      FluentIterable.from(result.curves().get(Imt.PGA).yValues())
+        FluentIterable.from(result.curves().get(Imt.PGA).yValues())
         .transform(Mfds.annualRateToProbabilityConverter())
         .toList());
     checkArgument(actual.length == expected.length);
@@ -133,14 +133,14 @@ public class PeerTest {
     assertArrayEquals(expected, actual, tolerance);
     for (int i = 0; i < expected.length; i++) {
       String message = String.format("arrays differ at [%s] expected:<[%s]> but was:<[%s]>",
-        i, expected[i], actual[i]);
+          i, expected[i], actual[i]);
       assertTrue(message, compare(expected[i], actual[i], tolerance));
     }
   }
 
   private static boolean compare(double expected, double actual, double tolerance) {
     return abs(actual - expected) / expected < tolerance ||
-      Double.valueOf(expected).equals(Double.valueOf(actual));
+        Double.valueOf(expected).equals(Double.valueOf(actual));
   }
 
   static List<Object[]> load(String modelId, double tolerance) throws IOException {
@@ -157,8 +157,8 @@ public class PeerTest {
     for (Site site : sites) {
       checkState(expectedsMap.containsKey(site.name()));
       Object[] args =
-        new Object[] { model.name(), model, site, expectedsMap.get(site.name()), tolerance
-        };
+          new Object[] { model.name(), model, site, expectedsMap.get(site.name()), tolerance
+      };
       argsList.add(args);
     }
     return argsList;

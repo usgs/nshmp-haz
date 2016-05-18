@@ -25,17 +25,17 @@ import java.nio.file.Paths;
 /*
  * This class first tests ground motion mean and sigma for NSHMP CEUS
  * attenuation relationships. Tests are performed for events at:
- * 
+ *
  * distance R = 0km, 10km, 100km
- * 
+ *
  * magnitude M = 5.05, 5.75, 6.45, 7.15
- * 
+ *
  * period P = 0.0 (PGA), 0.2sec, 1.0sec, 2.0sec
- * 
+ *
  * The NSHMP results were calculated using hazgridXnga5.f which creates lookup
  * arrays of hazard values spannning user specified distances, mags, etc. As
  * such a Okm = 2.5km, 10km = 12.5km etc.
- * 
+ *
  * This class tests both Atkinson & Boore and Johnson mblg to Mw magnitude
  * conversion branches.
  */

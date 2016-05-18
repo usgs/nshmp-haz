@@ -394,13 +394,13 @@ public class LocationsTest {
     LocationVector d = LocationVector.create(L1, L2);
     // TODO need to switch to getAzimuthRad
     assertTrue(areSimilar(L2, location(
-      L1, d.azimuth(), d.horizontal())));
+        L1, d.azimuth(), d.horizontal())));
     d = LocationVector.create(L1, L3);
     assertTrue(areSimilar(L3, location(
-      L1, d.azimuth(), d.horizontal())));
+        L1, d.azimuth(), d.horizontal())));
     d = LocationVector.create(L2, L3);
     assertTrue(areSimilar(L3, location(
-      L2, d.azimuth(), d.horizontal())));
+        L2, d.azimuth(), d.horizontal())));
   }
 
   @Test
@@ -548,11 +548,11 @@ public class LocationsTest {
 
   /**
    * DEVELOPER NOTE
-   * 
+   *
    * Test value generation along with various speed comparisons provided below.
    * Speed tests can be run with fixed or randomized values; randomization
    * generally only adds a set amount of time to each test.
-   * 
+   *
    * Internal methods marked with *OLD were removed intact from Locations to
    * preserve history and preserve ability to document performance enhancements.
    */
@@ -632,65 +632,65 @@ public class LocationsTest {
 
     System.out.println("\nSPEED TEST -- Distance to Line\n");
     System.out.println("distanceToLine(): " +
-      distanceToLine(L1, L2, L3));
+        distanceToLine(L1, L2, L3));
     for (int i = 0; i < 5; i++) {
       long T = System.currentTimeMillis();
       double d;
       for (int j = 0; j < numIter; j++) {
         d = (fixedVals) ? distanceToLine(L1, L2, L3)
-          : distanceToLine(randomLoc(), randomLoc(), randomLoc());
+            : distanceToLine(randomLoc(), randomLoc(), randomLoc());
       }
       T = (System.currentTimeMillis() - T);
       System.out.println("    DTL: " + T);
     }
 
     System.out.println("distToLineFastOLD(): " +
-      distanceToLineFastOLD(L1, L2, L3));
+        distanceToLineFastOLD(L1, L2, L3));
     for (int i = 0; i < 5; i++) {
       long T = System.currentTimeMillis();
       double d;
       for (int j = 0; j < numIter; j++) {
         d = (fixedVals) ? distanceToLineFastOLD(L1, L2, L3) : distanceToLineFastOLD(
-          randomLoc(), randomLoc(), randomLoc());
+            randomLoc(), randomLoc(), randomLoc());
       }
       T = (System.currentTimeMillis() - T);
       System.out.println("  DTLFo: " + T);
     }
 
     System.out.println("distanceToLineFast(): " +
-      distanceToLineFast(L1, L2, L3));
+        distanceToLineFast(L1, L2, L3));
     for (int i = 0; i < 5; i++) {
       long T = System.currentTimeMillis();
       double d;
       for (int j = 0; j < numIter; j++) {
         d = (fixedVals) ? distanceToLineFast(L1, L2, L3)
-          : distanceToLineFast(randomLoc(), randomLoc(), randomLoc());
+            : distanceToLineFast(randomLoc(), randomLoc(), randomLoc());
       }
       T = (System.currentTimeMillis() - T);
       System.out.println("   DTLF: " + T);
     }
 
     System.out.println("distanceToSegment(): " +
-      distanceToSegment(L1, L2, L3));
+        distanceToSegment(L1, L2, L3));
     for (int i = 0; i < 5; i++) {
       long T = System.currentTimeMillis();
       double d;
       for (int j = 0; j < numIter; j++) {
         d = (fixedVals) ? distanceToSegment(L1, L2, L3)
-          : distanceToSegment(randomLoc(), randomLoc(), randomLoc());
+            : distanceToSegment(randomLoc(), randomLoc(), randomLoc());
       }
       T = (System.currentTimeMillis() - T);
       System.out.println("    DTS: " + T);
     }
 
     System.out.println("distanceToSegmentFast(): " +
-      distanceToSegmentFast(L1, L2, L3));
+        distanceToSegmentFast(L1, L2, L3));
     for (int i = 0; i < 5; i++) {
       long T = System.currentTimeMillis();
       double d;
       for (int j = 0; j < numIter; j++) {
         d = (fixedVals) ? distanceToSegmentFast(L1, L2, L3)
-          : distanceToSegmentFast(randomLoc(), randomLoc(), randomLoc());
+            : distanceToSegmentFast(randomLoc(), randomLoc(), randomLoc());
       }
       T = (System.currentTimeMillis() - T);
       System.out.println("   DTSF: " + T);
@@ -1064,7 +1064,7 @@ public class LocationsTest {
   private static LocationList createLocList(
       Location L1, Location L2, double lonInterval) {
     int numPoints = (int) Math.floor(Math.abs(
-      L2.lon() - L1.lon()) / lonInterval);
+        L2.lon() - L1.lon()) / lonInterval);
     double dLat = (L2.lat() - L1.lat()) / numPoints;
     double dLon = (L1.lon() - L2.lon() < 0) ? lonInterval : -lonInterval;
     LocationList.Builder llb = LocationList.builder();
@@ -1109,13 +1109,13 @@ public class LocationsTest {
    */
   private static double getHorzDistanceOLD(Location loc1, Location loc2) {
     return getHorzDistanceOLD(
-      loc1.lat(), loc1.lon(),
-      loc2.lat(), loc2.lon());
+        loc1.lat(), loc1.lon(),
+        loc2.lat(), loc2.lon());
   }
 
   /**
    * OLD METHOD
-   * 
+   *
    * Second way to calculate the distance between two points. Obtained off the
    * internet, but forgot where now. When used in comparision with the
    * latLonDistance function you see they give practically the same values at
@@ -1161,13 +1161,13 @@ public class LocationsTest {
   private static double getApproxHorzDistanceOLD(
       Location loc1, Location loc2) {
     return getApproxHorzDistanceOLD(
-      loc1.lat(), loc1.lon(),
-      loc2.lat(), loc2.lon());
+        loc1.lat(), loc1.lon(),
+        loc2.lat(), loc2.lon());
   }
 
   /**
    * OLD METHOD
-   * 
+   *
    * This computes the approximate horizontal distance (in km) using the
    * standard cartesian coordinate transformation. Not implemented correctly is
    * lons straddle 360 or 0 degrees!
@@ -1181,7 +1181,7 @@ public class LocationsTest {
 
   /**
    * OLD METHOD
-   * 
+   *
    * Helper method that calculates the angle between two locations on the
    * earth.<p>
    *
@@ -1191,12 +1191,12 @@ public class LocationsTest {
    */
   private static double getAzimuthOLD(Location loc1, Location loc2) {
     return getAzimuthOLD(loc1.lat(), loc1.lon(),
-      loc2.lat(), loc2.lon());
+        loc2.lat(), loc2.lon());
   }
 
   /**
    * OLD METHOD
-   * 
+   *
    * Helper method that calculates the angle between two locations (value
    * returned is between -180 and 180 degrees) on the earth.<p>
    *
@@ -1236,7 +1236,7 @@ public class LocationsTest {
 
   /**
    * OLD METHOD
-   * 
+   *
    * Helper method that calculates the angle between two locations on the
    * earth.<p>
    *
@@ -1279,7 +1279,7 @@ public class LocationsTest {
 
   /**
    * OLD METHOD
-   * 
+   *
    * This computes the total distance in km.
    */
   private static double getTotalDistanceOLD(Location loc1, Location loc2) {
@@ -1290,7 +1290,7 @@ public class LocationsTest {
 
   /**
    * OLD METHOD
-   * 
+   *
    * Given a Location and a LocationVector object, this function calculates a
    * second Location the LocationVector points to (only the azimuth is used;
    * backAzimuth is ignored). The fields calculated for the second Location are:
@@ -1306,7 +1306,7 @@ public class LocationsTest {
    */
   private static Location getLocationOLD(
       Location location, LocationVector direction)
-      throws UnsupportedOperationException {
+          throws UnsupportedOperationException {
 
     double lat1 = location.lat();
     double lon1 = location.lon();
@@ -1327,7 +1327,7 @@ public class LocationsTest {
 
   /**
    * OLD METHOD
-   * 
+   *
    * By passing in two Locations this calculator will determine the Distance
    * object between them. The four fields calculated are:
    *
@@ -1342,7 +1342,7 @@ public class LocationsTest {
    */
   private static LocationVector getDirectionOLD(
       Location location1, Location location2)
-      throws UnsupportedOperationException {
+          throws UnsupportedOperationException {
 
     double lat1 = location1.lat();
     double lon1 = location1.lon();
@@ -1358,7 +1358,7 @@ public class LocationsTest {
 
   /**
    * OLD METHOD
-   * 
+   *
    * Internal helper method that calculates the latitude of a second location
    * given the input location and direction components
    *
@@ -1401,7 +1401,7 @@ public class LocationsTest {
 
   /**
    * OLD METHOD
-   * 
+   *
    * Internal helper method that calculates the longitude of a second location
    * given the input location and direction components
    *
@@ -1443,10 +1443,10 @@ public class LocationsTest {
   }
 
   /**
-   * 
+   *
    * OLD METHOD - although fast, curent implementation is faster and not nearly
    * as complicated
-   * 
+   *
    * Computes the shortest distance between a point and a line. Both the line
    * and point are assumed to be at the earth's surface; the depth component of
    * each <code>Location</code> is ignored. This is a fast, geometric, cartesion
@@ -1455,7 +1455,7 @@ public class LocationsTest {
    * (e.g. &lt;200 km).<br/> <br/> <b>Note:</b> This method does <i>NOT</i>
    * support values spanning &#177;180&#176; and results for such input values
    * are not guaranteed.
-   * 
+   *
    * @param p1 the first <code>Location</code> point on the line
    * @param p2 the second <code>Location</code> point on the line
    * @param p3 the <code>Location</code> point for which distance will be
@@ -1496,15 +1496,18 @@ public class LocationsTest {
       // make sure the target point is in between the two endpoints
       boolean betweenPts = false;
       if (x2 > x1) {
-        if (xT <= x2 && xT >= x1) betweenPts = true;
+        if (xT <= x2 && xT >= x1) {
+          betweenPts = true;
+        }
       } else {
-        if (xT <= x1 && xT >= x2) betweenPts = true;
+        if (xT <= x1 && xT >= x2) {
+          betweenPts = true;
+        }
       }
 
-      if (betweenPts)
+      if (betweenPts) {
         dist = Math.sqrt(xT * xT + yT * yT);
-      // return Math.sqrt(xT*xT + yT*yT) * EARTH_RADIUS_MEAN;
-      else {
+      } else {
         double d1 = Math.sqrt(x1 * x1 + y1 * y1);
         double d2 = Math.sqrt(x2 * x2 + y2 * y2);
         dist = Math.min(d1, d2);
