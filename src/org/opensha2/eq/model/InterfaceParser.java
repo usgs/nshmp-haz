@@ -103,90 +103,89 @@ class InterfaceParser extends DefaultHandler {
     }
 
     try {
-      // @formatter:off
-			switch (e) {
 
-				case SUBDUCTION_SOURCE_SET:
-					String name = readString(NAME, atts);
-					int id = readInt(ID, atts);
-					double weight = readDouble(WEIGHT, atts);
-					sourceSetBuilder = new InterfaceSourceSet.Builder();
-					sourceSetBuilder
-						.name(name)
-						.id(id)
-						.weight(weight)
-						.gmms(gmmSet);
-					if (log.isLoggable(FINE)) {
-						log.fine("");
-						log.fine("       Name: " + name);
-						log.fine("     Weight: " + weight);
-					}
-					mfdHelperBuilder = MfdHelper.builder();
-					mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
-					break;
+      switch (e) {
 
-				case DEFAULT_MFDS:
-					parsingDefaultMFDs = true;
-					break;
+        case SUBDUCTION_SOURCE_SET:
+          String name = readString(NAME, atts);
+          int id = readInt(ID, atts);
+          double weight = readDouble(WEIGHT, atts);
+          sourceSetBuilder = new InterfaceSourceSet.Builder();
+          sourceSetBuilder
+              .name(name)
+              .id(id)
+              .weight(weight)
+              .gmms(gmmSet);
+          if (log.isLoggable(FINE)) {
+            log.fine("");
+            log.fine("       Name: " + name);
+            log.fine("     Weight: " + weight);
+          }
+          mfdHelperBuilder = MfdHelper.builder();
+          mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
+          break;
 
-				case SOURCE_PROPERTIES:
-					rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
-					log.fine("Rup scaling: " + rupScaling);
-					break;
+        case DEFAULT_MFDS:
+          parsingDefaultMFDs = true;
+          break;
 
-				case SOURCE:
-					String srcName = readString(NAME, atts);
-					int srcId = readInt(ID, atts);
-					sourceBuilder = new InterfaceSource.Builder();
-					sourceBuilder.name(srcName);
-					sourceBuilder.id(srcId);
-					sourceBuilder.ruptureScaling(rupScaling);
-					sourceBuilder.ruptureFloating(config.ruptureFloating);
-					sourceBuilder.ruptureVariability(config.ruptureVariability);
-					sourceBuilder.surfaceSpacing(config.surfaceSpacing);
-					log.fine("     Source: " + srcName);
-					break;
+        case SOURCE_PROPERTIES:
+          rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
+          log.fine("Rup scaling: " + rupScaling);
+          break;
 
-				case INCREMENTAL_MFD:
-					if (parsingDefaultMFDs) {
-						mfdHelperBuilder.addDefault(atts);
-						break;
-					}
-					sourceBuilder.mfds(buildMfds(atts));
-					break;
+        case SOURCE:
+          String srcName = readString(NAME, atts);
+          int srcId = readInt(ID, atts);
+          sourceBuilder = new InterfaceSource.Builder();
+          sourceBuilder.name(srcName);
+          sourceBuilder.id(srcId);
+          sourceBuilder.ruptureScaling(rupScaling);
+          sourceBuilder.ruptureFloating(config.ruptureFloating);
+          sourceBuilder.ruptureVariability(config.ruptureVariability);
+          sourceBuilder.surfaceSpacing(config.surfaceSpacing);
+          log.fine("     Source: " + srcName);
+          break;
 
-				case GEOMETRY:
-					sourceBuilder.rake(readDouble(RAKE, atts));
-					
-					/*
-					 * At present, an InterfaceSource geometry may be defined
-					 * with an upper trace, dip, depth and width, or and upper
-					 * and lower trace. Rake is always required (above), but the
-					 * three scalar parameters (dip, depth, and width) must be
-					 * conditionally read. The InterfaceSource.Builder will
-					 * check if either construction technique has been
-					 * satisfied.
-					 */
-					try {
-						sourceBuilder.depth(readDouble(DEPTH, atts))
-							.dip(readDouble(DIP, atts))
-							.width(readDouble(WIDTH, atts));
-					} catch (NullPointerException npe) {
-						// keep moving, these atts are not necessarily required
-					}
-					break;
+        case INCREMENTAL_MFD:
+          if (parsingDefaultMFDs) {
+            mfdHelperBuilder.addDefault(atts);
+            break;
+          }
+          sourceBuilder.mfds(buildMfds(atts));
+          break;
 
-				case TRACE:
-					readingTrace = true;
-					traceBuilder = new StringBuilder();
-					break;
+        case GEOMETRY:
+          sourceBuilder.rake(readDouble(RAKE, atts));
 
-				case LOWER_TRACE:
-					readingTrace = true;
-					traceBuilder = new StringBuilder();
-					break;
-			}
-			// @formatter:on
+          /*
+           * At present, an InterfaceSource geometry may be defined with an
+           * upper trace, dip, depth and width, or and upper and lower trace.
+           * Rake is always required (above), but the three scalar parameters
+           * (dip, depth, and width) must be conditionally read. The
+           * InterfaceSource.Builder will check if either construction technique
+           * has been satisfied.
+           */
+          try {
+            sourceBuilder.depth(readDouble(DEPTH, atts))
+                .dip(readDouble(DIP, atts))
+                .width(readDouble(WIDTH, atts));
+          } catch (NullPointerException npe) {
+            // keep moving, these atts are not necessarily required
+          }
+          break;
+
+        case TRACE:
+          readingTrace = true;
+          traceBuilder = new StringBuilder();
+          break;
+
+        case LOWER_TRACE:
+          readingTrace = true;
+          traceBuilder = new StringBuilder();
+          break;
+      }
+
     } catch (Exception ex) {
       throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
     }
@@ -283,7 +282,7 @@ class InterfaceParser extends DefaultHandler {
     double tmr = Mfds.totalMoRate(data.mMin, nMag, data.dMag, data.a, data.b);
 
     IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
-      data.b, tmr * data.weight);
+        data.b, tmr * data.weight);
     log.finer("   MFD type: GR");
     if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
     return mfd;

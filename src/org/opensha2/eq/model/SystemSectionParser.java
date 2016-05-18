@@ -102,17 +102,15 @@ class SystemSectionParser extends DefaultHandler {
           break;
 
         case GEOMETRY:
-          // @formatter:off
-					double aseis = readDouble(ASEIS, atts);
-					double depth = readDouble(DEPTH, atts);
-					double lowerDepth = readDouble(LOWER_DEPTH, atts);
-					depth += aseis * (lowerDepth - depth);
-					surfaceBuilder.depth(depth)
-						.lowerDepth(lowerDepth)
-						.dip(readDouble(DIP, atts))
-						.dipDir(readDouble(DIP_DIR, atts));
-					break;
-					// @formatter:on
+          double aseis = readDouble(ASEIS, atts);
+          double depth = readDouble(DEPTH, atts);
+          double lowerDepth = readDouble(LOWER_DEPTH, atts);
+          depth += aseis * (lowerDepth - depth);
+          surfaceBuilder.depth(depth)
+              .lowerDepth(lowerDepth)
+              .dip(readDouble(DIP, atts))
+              .dipDir(readDouble(DIP_DIR, atts));
+          break;
 
         case TRACE:
           readingTrace = true;

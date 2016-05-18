@@ -692,12 +692,12 @@ public final class Faults {
    */
   private static double[][] xAxisRotMatrix(double theta) {
     // @formatter:off
-		double thetaRad = Math.toRadians(theta);
-		double[][] rotMatrix= {{ 1.0 ,                 0.0 ,                0.0 },
-				{ 0.0 ,  Math.cos(thetaRad) , Math.sin(thetaRad) },
-				{ 0.0 , -Math.sin(thetaRad) , Math.cos(thetaRad) }};
-		return rotMatrix;
-		// @formatter:on
+    double thetaRad = Math.toRadians(theta);
+    double[][] rotMatrix= {{ 1.0 ,                 0.0 ,                0.0 },
+        { 0.0 ,  Math.cos(thetaRad) , Math.sin(thetaRad) },
+        { 0.0 , -Math.sin(thetaRad) , Math.cos(thetaRad) }};
+    return rotMatrix;
+    // @formatter:on
   }
 
   /*
@@ -712,12 +712,12 @@ public final class Faults {
    */
   private static double[][] yAxisRotMatrix(double theta) {
     // @formatter:off
-		double thetaRad = Math.toRadians(theta);
-		double[][] rotMatrix= {{ Math.cos(thetaRad) , 0.0 , -Math.sin(thetaRad) },
-				{                0.0 , 1.0 ,                 0.0 },
-				{ Math.sin(thetaRad) , 0.0 ,  Math.cos(thetaRad) }};
-		return rotMatrix;
-		// @formatter:on
+    double thetaRad = Math.toRadians(theta);
+    double[][] rotMatrix= {{ Math.cos(thetaRad) , 0.0 , -Math.sin(thetaRad) },
+        {                0.0 , 1.0 ,                 0.0 },
+        { Math.sin(thetaRad) , 0.0 ,  Math.cos(thetaRad) }};
+    return rotMatrix;
+    // @formatter:on
   }
 
   /*
@@ -732,12 +732,12 @@ public final class Faults {
    */
   private static double[][] zAxisRotMatrix(double theta) {
     // @formatter:off
-		double thetaRad = Math.toRadians(theta);
-		double[][] rotMatrix= {{  Math.cos(thetaRad) , Math.sin(thetaRad) , 0.0 },
-				{ -Math.sin(thetaRad) , Math.cos(thetaRad) , 0.0 },
-				{                 0.0 ,                0.0 , 1.0 }};
-		return rotMatrix;
-		// @formatter:on
+    double thetaRad = Math.toRadians(theta);
+    double[][] rotMatrix= {{  Math.cos(thetaRad) , Math.sin(thetaRad) , 0.0 },
+        { -Math.sin(thetaRad) , Math.cos(thetaRad) , 0.0 },
+        {                 0.0 ,                0.0 , 1.0 }};
+    return rotMatrix;
+    // @formatter:on
   }
 
 }

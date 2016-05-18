@@ -189,42 +189,42 @@ public final class Distance {
     // } else {
 
     // @formatter:off
-			
-			/*
-			 *    P4                        P1
-			 *    |                          |
-			 *    |          dip dir         |
-			 *    |             |            |
-			 *    P3------************------P2
-			 *            <- strike --
-			 */
-			
-			double strike = Faults.strikeRad(trace);
-			double dipDir = Faults.dipDirectionRad(strike);
-			
-			LocationVector toP3 = LocationVector.create(strike, 1000.0, 0.0);
-			LocationVector toP2 = LocationVector.reverseOf(toP3);
-			LocationVector toP14 = LocationVector.create(dipDir, 1000.0, 0.0);
-			
-			Location p3 = Locations.location(trace.last(), toP3);
-			Location p4 = Locations.location(p3, toP14);
-			Location p2 = Locations.location(trace.first(), toP2);
-			Location p1 = Locations.location(p2, toP14);
-			
-			LocationList region = LocationList.builder()
-					.add(p1)
-					.add(p2)
-					.addAll(trace)
-					.add(p3)
-					.add(p4)
-					.build();
-			
-			LocationList extendedTrace = LocationList.builder()
-					.add(p2)
-					.addAll(trace)
-					.add(p3)
-					.build();
-			// @formatter:on
+    
+    /*
+     *    P4                        P1
+     *    |                          |
+     *    |          dip dir         |
+     *    |             |            |
+     *    P3------************------P2
+     *            <- strike --
+     */
+    
+    // @formatter:on
+    double strike = Faults.strikeRad(trace);
+    double dipDir = Faults.dipDirectionRad(strike);
+
+    LocationVector toP3 = LocationVector.create(strike, 1000.0, 0.0);
+    LocationVector toP2 = LocationVector.reverseOf(toP3);
+    LocationVector toP14 = LocationVector.create(dipDir, 1000.0, 0.0);
+
+    Location p3 = Locations.location(trace.last(), toP3);
+    Location p4 = Locations.location(p3, toP14);
+    Location p2 = Locations.location(trace.first(), toP2);
+    Location p1 = Locations.location(p2, toP14);
+
+    LocationList region = LocationList.builder()
+        .add(p1)
+        .add(p2)
+        .addAll(trace)
+        .add(p3)
+        .add(p4)
+        .build();
+
+    LocationList extendedTrace = LocationList.builder()
+        .add(p2)
+        .addAll(trace)
+        .add(p3)
+        .build();
 
     // We should probably set something here here too if it's vertical
     // strike-slip
@@ -308,8 +308,8 @@ public final class Distance {
     Region polygon = null;
     try {
       polygon = Regions.create("",
-        LocationList.create(region),
-        BorderType.MERCATOR_LINEAR);
+          LocationList.create(region),
+          BorderType.MERCATOR_LINEAR);
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -326,8 +326,8 @@ public final class Distance {
     boolean isInside = polygon.contains(siteLoc);
 
     double distToExtendedTrace = Locations.minDistanceToLine(
-      siteLoc,
-      LocationList.create(extendedTrace));
+        siteLoc,
+        LocationList.create(extendedTrace));
 
     if (isInside || distToExtendedTrace == 0.0) { // zero values are always
       // on the hanging wall
@@ -354,13 +354,13 @@ public final class Distance {
     // endpoints of the trace as a line to compute rX
     int minIndex = Locations.minDistanceIndex(loc, trace);
     double rSeg = distanceToSegmentFast(trace.get(minIndex),
-      trace.get(minIndex + 1), loc);
+        trace.get(minIndex + 1), loc);
     double rFirst = horzDistanceFast(trace.first(), loc);
     double rLast = horzDistanceFast(trace.last(), loc);
 
     return (rSeg < Math.min(rFirst, rLast)) ? distanceToLineFast(
-      trace.get(minIndex), trace.get(minIndex + 1), loc)
-      : distanceToLineFast(trace.first(), trace.last(), loc);
+        trace.get(minIndex), trace.get(minIndex + 1), loc)
+        : distanceToLineFast(trace.first(), trace.last(), loc);
   }
 
   /*

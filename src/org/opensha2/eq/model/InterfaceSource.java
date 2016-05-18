@@ -52,11 +52,11 @@ public class InterfaceSource extends FaultSource {
       boolean rupVariability) {
 
     super(name, id, upperTrace, dip, width, surface, rake, mfds, spacing, rupScaling,
-      rupFloating,
-      rupVariability);
+        rupFloating,
+        rupVariability);
 
     this.lowerTrace = (lowerTrace == null) ? surface.getEvenlyDiscritizedLowerEdge()
-      : lowerTrace;
+        : lowerTrace;
 
     // TODO lowerTrace may be null and this is bad bad; lowerTrace
     // is referenced in InterfaceSourceSet distanceFilter and
@@ -74,23 +74,21 @@ public class InterfaceSource extends FaultSource {
   @Override
   public String toString() {
     // TODO use joiner
-    // @formatter:off
-		return new StringBuilder()
-		.append("==========  Interface Source  ==========")
-		.append(LINE_SEPARATOR.value())
-		.append("  Source name: ").append(name())
-		.append(LINE_SEPARATOR.value())
-		.append("          dip: ").append(dip)
-		.append(LINE_SEPARATOR.value())
-		.append("        width: ").append(width)
-		.append(LINE_SEPARATOR.value())
-		.append("         rake: ").append(rake)
-		.append(LINE_SEPARATOR.value())
-		.append("         mfds: ").append(mfds.size())
-		.append(LINE_SEPARATOR.value())
-		.append("          top: ").append(trace.first().depth())
-		.append(LINE_SEPARATOR.value()).toString();
-		// @formatter:on
+    return new StringBuilder()
+        .append("==========  Interface Source  ==========")
+        .append(LINE_SEPARATOR.value())
+        .append("  Source name: ").append(name())
+        .append(LINE_SEPARATOR.value())
+        .append("          dip: ").append(dip)
+        .append(LINE_SEPARATOR.value())
+        .append("        width: ").append(width)
+        .append(LINE_SEPARATOR.value())
+        .append("         rake: ").append(rake)
+        .append(LINE_SEPARATOR.value())
+        .append("         mfds: ").append(mfds.size())
+        .append(LINE_SEPARATOR.value())
+        .append("          top: ").append(trace.first().depth())
+        .append(LINE_SEPARATOR.value()).toString();
   }
 
   /* Single use builder. */
@@ -117,7 +115,7 @@ public class InterfaceSource extends FaultSource {
       checkNotNull(this.trace, "Upper trace must be set first");
       validateTrace(trace);
       checkArgument(this.trace.size() == trace.size(),
-        "Upper and lower trace must be the same size");
+          "Upper and lower trace must be the same size");
       this.lowerTrace = trace;
       return this;
     }
@@ -147,21 +145,21 @@ public class InterfaceSource extends FaultSource {
 
       } else {
 
-        // otherwise build a basic fault source @formatter:off
-				validateState(ID);
-				surface = DefaultGriddedSurface.builder()
-					.trace(trace)
-					.depth(depth)
-					.dip(dip)
-					.width(width)
-					.spacing(spacing)
-					.build();
-			}
+        // otherwise build a basic fault source
+        validateState(ID);
+        surface = DefaultGriddedSurface.builder()
+            .trace(trace)
+            .depth(depth)
+            .dip(dip)
+            .width(width)
+            .spacing(spacing)
+            .build();
+      }
 
-			return new InterfaceSource(name, id, trace, lowerTrace, dip, width, surface, rake,
-				ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating, rupVariability);
-		}
+      return new InterfaceSource(name, id, trace, lowerTrace, dip, width, surface, rake,
+          ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating, rupVariability);
+    }
 
-	}
+  }
 
 }

@@ -300,14 +300,12 @@ public class Regions {
    *         to +90° latitude
    */
   public static Region global() {
-    // @formatter:off
-		LocationList locs = LocationList.create(
-			Location.create(-90, -180),
-			Location.create(-90, 180),
-			Location.create(90, 180),
-			Location.create(90, -180));
-		return create("Global Region", locs, MERCATOR_LINEAR);
-	}
-
+    LocationList locs = LocationList.create(
+        Location.create(-90, -180),
+        Location.create(-90, 180),
+        Location.create(90, 180),
+        Location.create(90, -180));
+    return create("Global Region", locs, MERCATOR_LINEAR);
+  }
 
 }

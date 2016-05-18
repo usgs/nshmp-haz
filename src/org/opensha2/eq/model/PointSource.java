@@ -192,24 +192,56 @@ class PointSource implements Source {
       return Distance.create(rJB, rRup, rJB);
     }
 
-    // @formatter:off
-		
-		/*
-		 * Width is needed to build GmmInputs, but is generally ignored
-		 * by Gmms that are capable of using point sources; a generic value
-		 * of 10.0 km is returned.
-		 */
-		
-		@Override public double strike() { throw new UnsupportedOperationException(exMessage("strike")); }
-		@Override public double dip() { return dipRad * GeoTools.TO_DEG; }
-		@Override public double dipRad() { return dipRad; }
-		@Override public double dipDirection() { throw new UnsupportedOperationException(exMessage("dipDirection")); }
-		@Override public double length() { throw new UnsupportedOperationException(exMessage("length")); }
-		@Override public double width() { return 10.0; } // km 
-		@Override public double area() { throw new UnsupportedOperationException(exMessage("area")); }
-		@Override public double depth() { return zTop; }
-		@Override public Location centroid() { return loc; } 
-		// @formatter:on
+    /*
+     * Width is needed to build GmmInputs, but is generally ignored by Gmms that
+     * are capable of using point sources; a generic value of 10.0 km is
+     * returned.
+     */
+
+    @Override
+    public double strike() {
+      throw new UnsupportedOperationException(exMessage("strike"));
+    }
+
+    @Override
+    public double dip() {
+      return dipRad * GeoTools.TO_DEG;
+    }
+
+    @Override
+    public double dipRad() {
+      return dipRad;
+    }
+
+    @Override
+    public double dipDirection() {
+      throw new UnsupportedOperationException(exMessage("dipDirection"));
+    }
+
+    @Override
+    public double length() {
+      throw new UnsupportedOperationException(exMessage("length"));
+    }
+
+    @Override
+    public double width() {
+      return 10.0; // km
+    } 
+
+    @Override
+    public double area() {
+      throw new UnsupportedOperationException(exMessage("area"));
+    }
+
+    @Override
+    public double depth() {
+      return zTop;
+    }
+
+    @Override
+    public Location centroid() {
+      return loc;
+    }
 
     private static String exMessage(String field) {
       return "No '" + field + "' for PointSource surface";
@@ -307,7 +339,7 @@ class PointSource implements Source {
 
       for (int i = 0; i < magMaster.size(); i++) {
         Map.Entry<Double, Map<Double, Double>> magEntry =
-          magDepthMap.higherEntry(magMaster.get(i));
+            magDepthMap.higherEntry(magMaster.get(i));
         for (Map.Entry<Double, Double> entry : magEntry.getValue().entrySet()) {
           indices.add(i);
           depths.add(entry.getKey());

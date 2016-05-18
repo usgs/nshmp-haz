@@ -37,36 +37,36 @@ import com.google.common.primitives.Doubles;
  */
 class MfdHelper {
 
-  // @formatter:off
-	/*
-	 * For documentation:
-	 * 
-	 * MFD default recombination rules
-	 * 
-	 * Grid, Slab sources (with spatially varying rates)
-	 * 		- a <Node> can only be of one type
-	 * 		- will map to the default of that type
-	 * 				(e.g. CA in 2008 had downweighted M>6.5 in places that
-	 * 				led to a node being either pure GR or INCR, but never both)
-	 * 		- only support multiple defaults of the same type
-	 * 
-	 * Fault, Interface sources
-	 * 
-	 * System
-	 * 		- only supports a single SINGLE default MFD at this time
-	 * 
-	 * How to manage MFD Type and Id mixing and matching?
-	 * 
-	 * Other notes:
-	 * 
-	 * Most source files will have a <settings> block
-	 * those that don't will not trigger build() on a 
-	 * MfdHelper.Builder so most parsers preempt this possibility
-	 * be creating and empty Helper that is then
-	 * ocverridden in most cases.
-	 * 
-	 */
-	// @formatter:on
+  /*
+   * For documentation:
+   * 
+   * MFD default recombination rules
+   * 
+   * Grid, Slab sources (with spatially varying rates)
+   * 
+   * - a <Node> can only be of one type
+   * 
+   * - will map to the default of that type (e.g. CA in 2008 had downweighted
+   * M>6.5 in places that led to a node being either pure GR or INCR, but never
+   * both)
+   * 
+   * - only support multiple defaults of the same type
+   * 
+   * Fault, Interface sources
+   * 
+   * System
+   * 
+   * - only supports a single SINGLE default MFD at this time
+   * 
+   * How to manage MFD Type and Id mixing and matching?
+   * 
+   * Other notes:
+   * 
+   * Most source files will have a <settings> block; those that don't will not
+   * trigger build() on a MfdHelper.Builder so most parsers preempt this
+   * possibility be creating and empty Helper that is then ocverridden in most
+   * cases.
+   */
 
   // mfd data instances
   private final List<SingleData> singleDefaults;
@@ -188,10 +188,10 @@ class MfdHelper {
       // MfdHelpers can be empty if no defaults
       // defined for a SourceSet
       return new MfdHelper(
-        singleBuilder.build(),
-        grBuilder.build(),
-        incrBuilder.build(),
-        taperBuilder.build());
+          singleBuilder.build(),
+          grBuilder.build(),
+          incrBuilder.build(),
+          taperBuilder.build());
     }
   }
 
@@ -408,8 +408,8 @@ class MfdHelper {
       mags = toDoubleArray(readString(MAGS, atts));
       rates = toDoubleArray(readString(RATES, atts));
       checkState(mags.length == rates.length,
-        "Inconsistent INCR MFD mag[%s] and rate[%s] arrays",
-        mags.length, rates.length);
+          "Inconsistent INCR MFD mag[%s] and rate[%s] arrays",
+          mags.length, rates.length);
       weight = readDouble(WEIGHT, atts);
     }
 
@@ -444,8 +444,8 @@ class MfdHelper {
       }
 
       checkState(mags.length == rates.length,
-        "Inconsistent INCR MFD mag[%s] and rate[%s] arrays",
-        mags.length, rates.length);
+          "Inconsistent INCR MFD mag[%s] and rate[%s] arrays",
+          mags.length, rates.length);
 
       // export final fields
       this.mags = mags;

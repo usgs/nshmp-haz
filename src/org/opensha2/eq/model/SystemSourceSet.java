@@ -157,15 +157,33 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
       throw new UnsupportedOperationException();
     }
 
-    // @formatter:off
-		private final BitSet bitset()    { return bitsets.get(index); }
-		private final double magnitude() { return mags.get(index); }
-		private final double rate()      { return rates.get(index); }
-		private final double depth()     { return depths.get(index); }
-		private final double dip()       { return dips.get(index); }
-		private final double width()     { return widths.get(index); }
-		private final double rake()      { return rakes.get(index); }
-		// @formatter:on
+    private final BitSet bitset() {
+      return bitsets.get(index);
+    }
+
+    private final double magnitude() {
+      return mags.get(index);
+    }
+
+    private final double rate() {
+      return rates.get(index);
+    }
+
+    private final double depth() {
+      return depths.get(index);
+    }
+
+    private final double dip() {
+      return dips.get(index);
+    }
+
+    private final double width() {
+      return widths.get(index);
+    }
+
+    private final double rake() {
+      return rakes.get(index);
+    }
   }
 
   /*
@@ -262,18 +280,18 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
       validateState(ID);
 
       return new SystemSourceSet(
-        name,
-        id,
-        weight,
-        gmmSet,
-        ImmutableList.copyOf(sections),
-        ImmutableList.copyOf(bitsets),
-        Doubles.asList(Doubles.toArray(mags)),
-        Doubles.asList(Doubles.toArray(rates)),
-        Doubles.asList(Doubles.toArray(depths)),
-        Doubles.asList(Doubles.toArray(dips)),
-        Doubles.asList(Doubles.toArray(widths)),
-        Doubles.asList(Doubles.toArray(rakes)));
+          name,
+          id,
+          weight,
+          gmmSet,
+          ImmutableList.copyOf(sections),
+          ImmutableList.copyOf(bitsets),
+          Doubles.asList(Doubles.toArray(mags)),
+          Doubles.asList(Doubles.toArray(rates)),
+          Doubles.asList(Doubles.toArray(depths)),
+          Doubles.asList(Doubles.toArray(dips)),
+          Doubles.asList(Doubles.toArray(widths)),
+          Doubles.asList(Doubles.toArray(rakes)));
 
     }
   }
@@ -376,8 +394,8 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
         // create and fill distance table
         List<Integer> siteIndices = Data.bitsToIndices(siteBitset);
         Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
-          siteIndices,
-          EnumSet.allOf(Distance.Type.class));
+            siteIndices,
+            EnumSet.allOf(Distance.Type.class));
         for (int i : siteIndices) {
           Distance r = sourceSet.sections.get(i).distanceTo(site.location);
           Map<Distance.Type, Double> rRow = rTable.row(i);
@@ -388,9 +406,9 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
         // create inputs
         Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
-          rTable,
-          siteBitset,
-          site);
+            rTable,
+            siteBitset,
+            site);
         Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
         Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
         for (SystemSource source : sources) {
@@ -471,20 +489,20 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
       double zHyp = Faults.hypocentralDepth(dip, width, zTop);
 
       return new HazardInput(
-        source.rate(),
-        source.magnitude(),
-        rJB,
-        rRup,
-        rX,
-        dip,
-        width,
-        zTop,
-        zHyp,
-        source.rake(),
-        site.vs30,
-        site.vsInferred,
-        site.z1p0,
-        site.z2p5);
+          source.rate(),
+          source.magnitude(),
+          rJB,
+          rRup,
+          rX,
+          dip,
+          width,
+          zTop,
+          zHyp,
+          source.rake(),
+          site.vs30,
+          site.vsInferred,
+          site.z1p0,
+          site.z2p5);
     }
   }
 

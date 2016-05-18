@@ -97,16 +97,14 @@ public class Rupture {
 
   @Override
   public String toString() {
-    // @formatter:off
-		Map<Object, Object> data = ImmutableMap.builder()
-				.put("mag", mag)
-				.put("rake", rake)
-				.put("rate", rate)
-				.put("hypo", hypocenter)
-				.put("surface", surface)
-				.build();
-		return getClass().getSimpleName() + " " + data;
-    }
-    
+    Map<Object, Object> data = ImmutableMap.builder()
+        .put("mag", mag)
+        .put("rake", rake)
+        .put("rate", rate)
+        .put("hypo", hypocenter)
+        .put("surface", surface)
+        .build();
+    return getClass().getSimpleName() + " " + data;
+  }
 
 }

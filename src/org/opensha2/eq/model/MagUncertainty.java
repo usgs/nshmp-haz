@@ -89,8 +89,8 @@ public class MagUncertainty {
       mu.epiWeights = toDoubleArray(epiAtts.get(WEIGHTS.toString()));
       mu.epiCutoff = Double.valueOf(epiAtts.get(CUTOFF.toString()));
       checkArgument(mu.epiDeltas.length == mu.epiWeights.length,
-        "Epistemic deltas and mags are different lengths [%s, %s]", mu.epiDeltas.length,
-        mu.epiWeights.length);
+          "Epistemic deltas and mags are different lengths [%s, %s]", mu.epiDeltas.length,
+          mu.epiWeights.length);
       mu.epiCount = mu.epiDeltas.length;
       mu.hasEpistemic = mu.epiCount > 1;
     }
@@ -101,7 +101,7 @@ public class MagUncertainty {
       mu.aleaCount = Integer.valueOf(aleaAtts.get(COUNT.toString()));
       mu.aleaCutoff = Double.valueOf(aleaAtts.get(CUTOFF.toString()));
       checkArgument(mu.aleaCount % 2 == 1,
-        "Aleatory bins [%s] should be odd so they center on mean magnitude", mu.aleaCount);
+          "Aleatory bins [%s] should be odd so they center on mean magnitude", mu.aleaCount);
       mu.moBalance = Boolean.valueOf(aleaAtts.get(MO_BALANCE.toString()));
       // two ways to kill aleatory
       mu.hasAleatory = mu.aleaCount > 1 && mu.aleaSigma != 0.0;
@@ -114,19 +114,17 @@ public class MagUncertainty {
 
   @Override
   public String toString() {
-    // @formatter:off
-		return new StringBuilder()
-		.append("   MFD Data...").append(LF)
-		.append("      Epistemic unc: ").append(hasEpistemic).append(LF)
-		.append("             deltas: ").append(Arrays.toString(epiDeltas)).append(LF)
-		.append("            weights: ").append(Arrays.toString(epiWeights)).append(LF)
-		.append("             cutoff: ").append(epiCutoff).append(LF)
-		.append("       Aleatory unc: ").append(hasAleatory).append(LF)
-		.append("              sigma: ").append(aleaSigma).append(LF)
-		.append("              count: ").append(aleaCount).append(LF)
-		.append("         Mo balance: ").append(moBalance).append(LF)
-		.append("             cutoff: ").append(aleaCutoff).append(LF).toString();
-		// @formatter:on
+    return new StringBuilder()
+        .append("   MFD Data...").append(LF)
+        .append("      Epistemic unc: ").append(hasEpistemic).append(LF)
+        .append("             deltas: ").append(Arrays.toString(epiDeltas)).append(LF)
+        .append("            weights: ").append(Arrays.toString(epiWeights)).append(LF)
+        .append("             cutoff: ").append(epiCutoff).append(LF)
+        .append("       Aleatory unc: ").append(hasAleatory).append(LF)
+        .append("              sigma: ").append(aleaSigma).append(LF)
+        .append("              count: ").append(aleaCount).append(LF)
+        .append("         Mo balance: ").append(moBalance).append(LF)
+        .append("             cutoff: ").append(aleaCutoff).append(LF).toString();
   }
 
   /**

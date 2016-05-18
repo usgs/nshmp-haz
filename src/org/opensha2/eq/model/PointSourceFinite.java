@@ -166,9 +166,9 @@ class PointSourceFinite extends PointSource {
    */
   boolean isOnFootwall(int index) {
     return (index < fwIndexLo)
-      ? true : (index < revIndex)
-        ? false : (index < fwIndexHi)
-          ? true : false;
+        ? true : (index < revIndex)
+            ? false : (index < fwIndexHi)
+                ? true : false;
   }
 
   static class FiniteSurface extends PointSurface {
@@ -206,9 +206,11 @@ class PointSourceFinite extends PointSource {
       return Distance.create(rJB, rRup, rX);
     }
 
-    // @formatter:off
-		@Override public double width() { return widthDD; }
-		
-	}
-	
+    @Override
+    public double width() {
+      return widthDD;
+    }
+
+  }
+
 }

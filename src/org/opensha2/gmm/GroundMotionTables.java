@@ -48,7 +48,7 @@ final class GroundMotionTables {
 
   static GroundMotionTable getFrankel96(Imt imt, SiteClass siteClass) {
     return siteClass == SiteClass.SOFT_ROCK ? frankelSoftRock.get(imt)
-      : frankelHardRock.get(imt);
+        : frankelHardRock.get(imt);
   }
 
   static GroundMotionTable getAtkinson06(Imt imt) {
@@ -230,12 +230,12 @@ final class GroundMotionTables {
       double rFrac = fraction(rKeys[ir], rKeys[ir + 1], r);
       double mFrac = fraction(mKeys[im], mKeys[im + 1], m);
       return interpolate(
-        data[ir][im],
-        data[ir][im + 1],
-        data[ir + 1][im],
-        data[ir + 1][im + 1],
-        mFrac,
-        rFrac);
+          data[ir][im],
+          data[ir][im + 1],
+          data[ir + 1][im],
+          data[ir + 1][im + 1],
+          mFrac,
+          rFrac);
     }
   }
 
@@ -276,168 +276,174 @@ final class GroundMotionTables {
   }
 
   // @formatter:off
-	
-	/*
-	 * Basic bilinear interpolation
-	 * 
-	 *    c11---i1----c12
-	 *     |     |     |
-	 *     |-----o-----| < f2
-	 *     |     |     |
-	 *    c21---i2----c22
-	 *           ^
-	 *          f1
-	 * 
-	 */
-	private static final double interpolate(
-			double c11,
-			double c12,
-			double c21,
-			double c22,
-			double f1,
-			double f2) {
+  /*
+   * Basic bilinear interpolation
+   * 
+   *    c11---i1----c12
+   *     |     |     |
+   *     |-----o-----| < f2
+   *     |     |     |
+   *    c21---i2----c22
+   *           ^
+   *          f1
+   * 
+   */
+  // @formatter:on
 
-		double i1 = c11 + f1 * (c12 - c11);
-		double i2 = c21 + f1 * (c22 - c21);
-		return i1 + f2 * (i2 - i1);
-	}
+  private static final double interpolate(
+      double c11,
+      double c12,
+      double c21,
+      double c22,
+      double f1,
+      double f2) {
 
-	private static final double fraction(double lo, double hi, double value) {
-		return value < lo ? 0.0 : value > hi ? 1.0 : (value - lo) / (hi - lo);
-	}
+    double i1 = c11 + f1 * (c12 - c11);
+    double i2 = c21 + f1 * (c22 - c21);
+    return i1 + f2 * (i2 - i1);
+  }
 
-	/*
-	 * NOTE this was lifted from the interpolate class and could parhaps benefit
-	 * from checking the size of 'data' and then doing linear instead of binary
-	 * search.
-	 * 
-	 * This is a clamping index search algorithm; it will always return an index
-	 * in the range [0, data.length - 2]; it is always used to get some value at
-	 * index and index+1
-	 */
-	private static final int dataIndex(final double[] data, final double value) {
-		int i = Arrays.binarySearch(data, value);
-		// adjust index for low value (-1) and in-sequence insertion pt
-		i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;
-		// adjust hi index to next to last index
-		return (i >= data.length - 1) ? --i : i;
-	}
-	
-	private static class FrankelParser implements LineProcessor<double[][]> {
+  private static final double fraction(double lo, double hi, double value) {
+    return value < lo ? 0.0 : value > hi ? 1.0 : (value - lo) / (hi - lo);
+  }
 
-		boolean firstLine = true;
-		List<List<Double>> data = Lists.newArrayList();
+  /*
+   * NOTE this was lifted from the interpolate class and could parhaps benefit
+   * from checking the size of 'data' and then doing linear instead of binary
+   * search.
+   * 
+   * This is a clamping index search algorithm; it will always return an index
+   * in the range [0, data.length - 2]; it is always used to get some value at
+   * index and index+1
+   */
+  private static final int dataIndex(final double[] data, final double value) {
+    int i = Arrays.binarySearch(data, value);
+    // adjust index for low value (-1) and in-sequence insertion pt
+    i = (i == -1) ? 0 : (i < 0) ? -i - 2 : i;
+    // adjust hi index to next to last index
+    return (i >= data.length - 1) ? --i : i;
+  }
 
-		@Override public double[][] getResult() {
-			return toArray(data);
-		}
+  private static class FrankelParser implements LineProcessor<double[][]> {
 
-		@Override public boolean processLine(String line) throws IOException {
-			if (firstLine) {
-				firstLine = false;
-				return true;
-			}
-			List<Double> values = splitToDoubleList(line, Delimiter.SPACE);
-			data.add(values.subList(1, values.size()));
-			return true;
-		}
-	}
+    boolean firstLine = true;
+    List<List<Double>> data = Lists.newArrayList();
 
-	/* Parser for Atkinson style tables */
-	private static class AtkinsonParser implements LineProcessor<Map<Imt, double[][]>> {
+    @Override
+    public double[][] getResult() {
+      return toArray(data);
+    }
 
-		int lineIndex = -1;
-		int rIndex = -1;
-		final int rSize;
-		List<Imt> imts = null;
-		Map<Imt, List<List<Double>>> dataMap = Maps.newEnumMap(Imt.class);
+    @Override
+    public boolean processLine(String line) throws IOException {
+      if (firstLine) {
+        firstLine = false;
+        return true;
+      }
+      List<Double> values = splitToDoubleList(line, Delimiter.SPACE);
+      data.add(values.subList(1, values.size()));
+      return true;
+    }
+  }
 
-		AtkinsonParser(int rSize) {
-			this.rSize = rSize;
-		}
+  /* Parser for Atkinson style tables */
+  private static class AtkinsonParser implements LineProcessor<Map<Imt, double[][]>> {
 
-		@Override public Map<Imt, double[][]> getResult() {
+    int lineIndex = -1;
+    int rIndex = -1;
+    final int rSize;
+    List<Imt> imts = null;
+    Map<Imt, List<List<Double>>> dataMap = Maps.newEnumMap(Imt.class);
 
-			Map<Imt, double[][]> out = Maps.newEnumMap(Imt.class);
+    AtkinsonParser(int rSize) {
+      this.rSize = rSize;
+    }
 
-			for (Entry<Imt, List<List<Double>>> entry : dataMap.entrySet()) {
-				Imt imt = entry.getKey();
-				out.put(imt, toArray(entry.getValue()));
-			}
-			return out;
-		}
+    @Override
+    public Map<Imt, double[][]> getResult() {
 
-		@Override public boolean processLine(String line) throws IOException {
-			lineIndex++;
-			if (lineIndex < 2) return true;
+      Map<Imt, double[][]> out = Maps.newEnumMap(Imt.class);
 
-			if (lineIndex == 2) {
-				List<Imt> imtList = FluentIterable
-					.from(Parsing.split(line, Delimiter.SPACE))
-					.transform(Doubles.stringConverter())
-					.transform(new FrequencyToIMT())
-					.toList();
-				// remove dupes -- (e.g., 2s PGA columns in P11)
-				imts = Lists.newArrayList(new LinkedHashSet<Imt>(imtList));
-				for (Imt imt : imts) {
-					List<List<Double>> outerList = new ArrayList<List<Double>>(); // r
-					dataMap.put(imt, outerList);
-					for (int i = 0; i < rSize; i++) {
-						List<Double> innerList = new ArrayList<Double>(); // m
-						outerList.add(innerList);
-					}
-				}
-				return true;
-			}
+      for (Entry<Imt, List<List<Double>>> entry : dataMap.entrySet()) {
+        Imt imt = entry.getKey();
+        out.put(imt, toArray(entry.getValue()));
+      }
+      return out;
+    }
 
-			List<Double> values = Parsing.splitToDoubleList(line, Delimiter.SPACE);
+    @Override
+    public boolean processLine(String line) throws IOException {
+      lineIndex++;
+      if (lineIndex < 2) return true;
 
-			if (values.size() == 1) {
-				// reset rIndex for every single mag line encountered
-				rIndex = -1;
-				return true;
-			}
+      if (lineIndex == 2) {
+        List<Imt> imtList = FluentIterable
+            .from(Parsing.split(line, Delimiter.SPACE))
+            .transform(Doubles.stringConverter())
+            .transform(new FrequencyToIMT())
+            .toList();
+        // remove dupes -- (e.g., 2s PGA columns in P11)
+        imts = Lists.newArrayList(new LinkedHashSet<Imt>(imtList));
+        for (Imt imt : imts) {
+          List<List<Double>> outerList = new ArrayList<List<Double>>(); // r
+          dataMap.put(imt, outerList);
+          for (int i = 0; i < rSize; i++) {
+            List<Double> innerList = new ArrayList<Double>(); // m
+            outerList.add(innerList);
+          }
+        }
+        return true;
+      }
 
-			if (values.isEmpty()) return true;
+      List<Double> values = Parsing.splitToDoubleList(line, Delimiter.SPACE);
 
-			rIndex++;
-			for (int i = 0; i < imts.size(); i++) {
-				Imt imt = imts.get(i);
-				List<List<Double>> data = dataMap.get(imt);
-				data.get(rIndex).add(values.get(i + 1));
-			}
+      if (values.size() == 1) {
+        // reset rIndex for every single mag line encountered
+        rIndex = -1;
+        return true;
+      }
 
-			return true;
-		}
-	}
+      if (values.isEmpty()) return true;
 
-	/*
-	 * Converts frequencies from Gail Atkinson style Gmm tables to IMTs.
-	 * Frequencies corresponding to 0.03s, 0.3s, and 3s are variably identified
-	 * and handled independently. AB06 uses 0.32, 3.2, and 32 which do not
-	 * strictly correspond to 3s, 0.3s, and 0.03s, but we use them anyway.
-	 */
-	static class FrequencyToIMT implements Function<Double, Imt> {
-		@Override public Imt apply(Double f) {
-			if (FREQ3_LO.contains(f)) return SA3P0;
-			if (FREQ3_MID.contains(f)) return SA0P3;
-			if (FREQ3_HI.contains(f)) return SA0P03;
-			if (f == 99.0) return PGA;
-			if (f == 89.0) return PGV;
-			return Imt.fromPeriod(1.0 / f);
-		}
-	}
-	
-	private static double[][] toArray(List<List<Double>> data) {
-		int s1 = data.size();
-		int s2 = data.get(0).size();
-		double[][] out = new double[s1][s2];
-		for (int i = 0; i < s1; i++) {
-			for (int j = 0; j < s2; j++) {
-				out[i][j] = data.get(i).get(j);
-			}
-		}
-		return out;
-	}
+      rIndex++;
+      for (int i = 0; i < imts.size(); i++) {
+        Imt imt = imts.get(i);
+        List<List<Double>> data = dataMap.get(imt);
+        data.get(rIndex).add(values.get(i + 1));
+      }
+
+      return true;
+    }
+  }
+
+  /*
+   * Converts frequencies from Gail Atkinson style Gmm tables to IMTs.
+   * Frequencies corresponding to 0.03s, 0.3s, and 3s are variably identified
+   * and handled independently. AB06 uses 0.32, 3.2, and 32 which do not
+   * strictly correspond to 3s, 0.3s, and 0.03s, but we use them anyway.
+   */
+  static class FrequencyToIMT implements Function<Double, Imt> {
+    @Override
+    public Imt apply(Double f) {
+      if (FREQ3_LO.contains(f)) return SA3P0;
+      if (FREQ3_MID.contains(f)) return SA0P3;
+      if (FREQ3_HI.contains(f)) return SA0P03;
+      if (f == 99.0) return PGA;
+      if (f == 89.0) return PGV;
+      return Imt.fromPeriod(1.0 / f);
+    }
+  }
+
+  private static double[][] toArray(List<List<Double>> data) {
+    int s1 = data.size();
+    int s2 = data.get(0).size();
+    double[][] out = new double[s1][s2];
+    for (int i = 0; i < s1; i++) {
+      for (int j = 0; j < s2; j++) {
+        out[i][j] = data.get(i).get(j);
+      }
+    }
+    return out;
+  }
 
 }

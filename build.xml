@@ -207,7 +207,6 @@
              charset="UTF-8"
              additionalparam="-notimestamp">
 
-
       <fileset dir="${src}">
         <include name="**/*.java" />
         <exclude name="**/gcim/*.java" />

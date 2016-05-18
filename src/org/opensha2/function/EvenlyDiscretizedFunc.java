@@ -308,7 +308,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
   public void set(int index, double y) {
     if (index < 0 || index >= num) {
       throw new IndexOutOfBoundsException(C + ": set(): The specified index (" + index +
-        ") doesn't match this function domain.");
+          ") doesn't match this function domain.");
     }
     points[index] = y;
   }
@@ -323,7 +323,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    */
   public void add(int index, double y) {
     checkArgument(index >= 0 && index <= (num - 1),
-      "The specified index doesn't match this function domain");
+        "The specified index doesn't match this function domain");
     points[index] = y + points[index];
   }
 
@@ -380,7 +380,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
 
     // if passed parameter(y value) is not within range then throw exception
     checkArgument(found, "Y Value (%s) must be within the range: %s and %s", y, getY(0),
-      getY(num - 1));
+        getY(num - 1));
 
     // finding the x values for the coressponding y values
     double x1 = getX(i);
@@ -429,7 +429,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
 
     // if passed parameter(y value) is not within range then throw exception
     checkArgument(found, "Y Value (%s) must be within the range: %s and %s", y, getY(0),
-      getY(num - 1));
+        getY(num - 1));
 
     // finding the x values for the coressponding y values
     double x1 = Math.log(getX(i));
@@ -453,7 +453,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
   public double getInterpolatedY(double x) {
     // if passed parameter(x value) is not within range then throw exception
     checkArgument(x >= minX - tolerance && x <= maxX + tolerance,
-      "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(num - 1));
+        "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(num - 1));
 
     if (x >= maxX)
       return getY(getNum() - 1);
@@ -533,7 +533,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
   public double getInterpolatedY_inLogXLogYDomain(double x) {
     // if passed parameter(x value) is not within range then throw exception
     checkArgument(x >= minX - tolerance && x <= maxX + tolerance,
-      "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(num - 1));
+        "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(num - 1));
 
     if (x >= maxX)
       return getY(getNum() - 1);
@@ -570,7 +570,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
   public double getInterpolatedY_inLogYDomain(double x) {
     // if passed parameter(x value) is not within range then throw exception
     checkArgument(x >= minX - tolerance && x <= maxX + tolerance,
-      "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(num - 1));
+        "x-value (%s) must be within the range: %s and %s", x, getX(0), getX(num - 1));
 
     if (x >= maxX)
       return getY(getNum() - 1);
@@ -602,7 +602,7 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
   public DiscretizedFunc deepClone() {
 
     EvenlyDiscretizedFunc f = new EvenlyDiscretizedFunc(
-      minX, num, delta);
+        minX, num, delta);
 
     f.info = info;
     f.minX = minX;
@@ -694,21 +694,19 @@ public class EvenlyDiscretizedFunc extends AbstractDiscretizedFunc {
    * the list, such as number of points, the value of each point, etc.
    */
   public String toString() {
-    // @formatter:off
-		StringBuffer b = new StringBuffer()
-			.append("     Name: ").append(name())
-			.append(LF)
-			.append("   Points: ").append(getNum())
-			.append(LF)
-			.append("     Info: ").append(getInfo())
-			.append(LF)
-			.append(LF)
-			.append("Data[x,y]:")
-			.append(LF)
-			.append(getMetadataString())
-			.append(LF);
-		return b.toString();
-		// @formatter:on
+    StringBuffer b = new StringBuffer()
+        .append("     Name: ").append(name())
+        .append(LF)
+        .append("   Points: ").append(getNum())
+        .append(LF)
+        .append("     Info: ").append(getInfo())
+        .append(LF)
+        .append(LF)
+        .append("Data[x,y]:")
+        .append(LF)
+        .append(getMetadataString())
+        .append(LF);
+    return b.toString();
   }
 
   /**

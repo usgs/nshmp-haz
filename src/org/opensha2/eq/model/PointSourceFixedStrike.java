@@ -219,7 +219,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
       double rCutTop = tan(dipRad) * zTop;
       double rCutBot = tan(dipRad) * zBot + widthH;
       double rRup = (rX > rCutBot) ? hypot(rX - widthH, zBot) : (rX < rCutTop) ? hypot(rX,
-        zTop) : hypot(rCutTop, zTop) + (rX - rCutTop) * sin(dipRad);
+          zTop) : hypot(rCutTop, zTop) + (rX - rCutTop) * sin(dipRad);
 
       // test if we're normal to trace or past its endpoints
       boolean offEnd = DoubleMath.fuzzyCompare(rSeg, rX, 0.00001) > 0;
@@ -227,7 +227,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
       if (offEnd) {
         // distance from surface projection of ends/caps of fault
         double rJB = min(Locations.distanceToSegmentFast(p1, p4, loc),
-          Locations.distanceToSegmentFast(p2, p3, loc));
+            Locations.distanceToSegmentFast(p2, p3, loc));
         double rY = sqrt(rSeg * rSeg - rX * rX);
         // rRup is the hypoteneuse of rRup (above) and rY
         return Distance.create(rJB, hypot(rRup, rY), rX);
@@ -237,9 +237,11 @@ class PointSourceFixedStrike extends PointSourceFinite {
       return Distance.create(rJB, rRup, rX);
     }
 
-    // @formatter:off
-		@Override public double width() { return widthDD; }
-		
-	}
-	
+    @Override
+    public double width() {
+      return widthDD;
+    }
+
+  }
+
 }

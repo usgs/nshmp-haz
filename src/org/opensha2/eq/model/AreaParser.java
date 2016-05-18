@@ -104,93 +104,91 @@ class AreaParser extends DefaultHandler {
     } catch (IllegalArgumentException iae) {
       throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
     }
-    // @formatter:off
-		switch (e) {
+    switch (e) {
 
-			case AREA_SOURCE_SET:
-				String name = readString(NAME, atts);
-				int id = readInt(ID, atts);
-				double weight = readDouble(WEIGHT, atts);
-				sourceSetBuilder = new AreaSourceSet.Builder()
-					.name(name)
-					.id(id)
-					.weight(weight);
-				
-				sourceSetBuilder.gmms(gmmSet);
-				if (log.isLoggable(FINE)) {
-					log.fine("");
-					log.fine("       Name: " + name);
-					log.fine("     Weight: " + weight);
-				}
-				mfdHelperBuilder = MfdHelper.builder();
-				mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
-				break;
+      case AREA_SOURCE_SET:
+        String name = readString(NAME, atts);
+        int id = readInt(ID, atts);
+        double weight = readDouble(WEIGHT, atts);
+        sourceSetBuilder = new AreaSourceSet.Builder()
+            .name(name)
+            .id(id)
+            .weight(weight);
 
-			case DEFAULT_MFDS:
-				parsingDefaultMFDs = true;
-				break;
+        sourceSetBuilder.gmms(gmmSet);
+        if (log.isLoggable(FINE)) {
+          log.fine("");
+          log.fine("       Name: " + name);
+          log.fine("     Weight: " + weight);
+        }
+        mfdHelperBuilder = MfdHelper.builder();
+        mfdHelper = mfdHelperBuilder.build(); // dummy; usually overwritten
+        break;
 
-			case SOURCE:
-				String srcName = readString(NAME, atts);
-				int srcId = readInt(ID, atts);
-				sourceBuilder = new AreaSource.Builder()
-					.name(srcName)
-					.id(srcId)
-					.gridScaling(config.areaGridScaling);
-				log.fine("     Source: " + srcName);
-				break;
+      case DEFAULT_MFDS:
+        parsingDefaultMFDs = true;
+        break;
 
-			case SOURCE_PROPERTIES:
-				// identical to shared source properties in grid sources
-				// but with one element for each area source
-				String depthMapStr = readString(MAG_DEPTH_MAP, atts);
-				NavigableMap<Double, Map<Double, Double>> depthMap = stringToValueValueWeightMap(depthMapStr);
-				double maxDepth = readDouble(MAX_DEPTH, atts);
-				String mechMapStr = readString(FOCAL_MECH_MAP, atts);
-				Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
-				RuptureScaling rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
-				double strike = readDouble(STRIKE, atts);
-				
-				sourceBuilder
-					.depthMap(depthMap, type)
-					.maxDepth(maxDepth, type)
-					.mechs(mechMap)
-					.ruptureScaling(rupScaling);
-				
-				// first validate strike by setting it in builder
-				sourceBuilder.strike(strike);
-				// then possibly override type if strike is set
-				PointSourceType type = config.pointSourceType;
-				if (!Double.isNaN(strike)) type = PointSourceType.FIXED_STRIKE;
-				sourceBuilder.sourceType(type);
-				if (log.isLoggable(FINE)) {
-					log.fine("     Depths: " + depthMap);
-					log.fine("  Max depth: " + maxDepth);
-					log.fine("Focal mechs: " + mechMap);
-					log.fine("Rup scaling: " + rupScaling);
-					log.fine("     Strike: " + strike);
-					String typeOverride = (type != config.pointSourceType) ? " (" + 
-							config.pointSourceType + " overridden)" : "";
-					log.fine("Source type: " + type + typeOverride);
-				}
-				break;
+      case SOURCE:
+        String srcName = readString(NAME, atts);
+        int srcId = readInt(ID, atts);
+        sourceBuilder = new AreaSource.Builder()
+            .name(srcName)
+            .id(srcId)
+            .gridScaling(config.areaGridScaling);
+        log.fine("     Source: " + srcName);
+        break;
 
+      case SOURCE_PROPERTIES:
+        // identical to shared source properties in grid sources
+        // but with one element for each area source
+        String depthMapStr = readString(MAG_DEPTH_MAP, atts);
+        NavigableMap<Double, Map<Double, Double>> depthMap =
+            stringToValueValueWeightMap(depthMapStr);
+        double maxDepth = readDouble(MAX_DEPTH, atts);
+        String mechMapStr = readString(FOCAL_MECH_MAP, atts);
+        Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
+        RuptureScaling rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
+        double strike = readDouble(STRIKE, atts);
 
-			case INCREMENTAL_MFD:
-				if (parsingDefaultMFDs) {
-					mfdHelperBuilder.addDefault(atts);
-					break;
-				}
-				sourceBuilder.mfd(buildMfd(atts));
-				break;
+        sourceBuilder
+            .depthMap(depthMap, type)
+            .maxDepth(maxDepth, type)
+            .mechs(mechMap)
+            .ruptureScaling(rupScaling);
 
-			case BORDER:
-				readingBorder = true;
-				borderBuilder = new StringBuilder();
-				break;
-			
-		}
-		// @formatter:on
+        // first validate strike by setting it in builder
+        sourceBuilder.strike(strike);
+        // then possibly override type if strike is set
+        PointSourceType type = config.pointSourceType;
+        if (!Double.isNaN(strike)) type = PointSourceType.FIXED_STRIKE;
+        sourceBuilder.sourceType(type);
+        if (log.isLoggable(FINE)) {
+          log.fine("     Depths: " + depthMap);
+          log.fine("  Max depth: " + maxDepth);
+          log.fine("Focal mechs: " + mechMap);
+          log.fine("Rup scaling: " + rupScaling);
+          log.fine("     Strike: " + strike);
+          String typeOverride = (type != config.pointSourceType) ? " (" +
+              config.pointSourceType + " overridden)" : "";
+          log.fine("Source type: " + type + typeOverride);
+        }
+        break;
+
+      case INCREMENTAL_MFD:
+        if (parsingDefaultMFDs) {
+          mfdHelperBuilder.addDefault(atts);
+          break;
+        }
+        sourceBuilder.mfd(buildMfd(atts));
+        break;
+
+      case BORDER:
+        readingBorder = true;
+        borderBuilder = new StringBuilder();
+        break;
+
+    }
   }
 
   @Override
@@ -261,28 +259,28 @@ class AreaParser extends DefaultHandler {
         MfdHelper.GR_Data grData = mfdHelper.grData(atts).get(0);
         int nMagGR = Mfds.magCount(grData.mMin, grData.mMax, grData.dMag);
         IncrementalMfd mfdGR = Mfds.newGutenbergRichterMFD(grData.mMin, grData.dMag,
-          nMagGR, grData.b, 1.0);
+            nMagGR, grData.b, 1.0);
         mfdGR.scaleToIncrRate(grData.mMin, Mfds.incrRate(grData.a, grData.b, grData.mMin) *
-          grData.weight);
+            grData.weight);
         return mfdGR;
 
       case INCR:
         MfdHelper.IncrData incrData = mfdHelper.incrementalData(atts).get(0);
         IncrementalMfd mfdIncr = Mfds.newIncrementalMFD(incrData.mags,
-          Data.multiply(incrData.weight, incrData.rates));
+            Data.multiply(incrData.weight, incrData.rates));
         return mfdIncr;
 
       case SINGLE:
         MfdHelper.SingleData singleData = mfdHelper.singleData(atts).get(0);
         return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
-          singleData.floats);
+            singleData.floats);
 
       case GR_TAPER:
         MfdHelper.TaperData taperData = mfdHelper.taperData(atts).get(0);
         int nMagTaper = Mfds.magCount(taperData.mMin, taperData.mMax, taperData.dMag);
         IncrementalMfd mfdTaper = Mfds.newTaperedGutenbergRichterMFD(taperData.mMin,
-          taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
-          taperData.weight);
+            taperData.dMag, nMagTaper, taperData.a, taperData.b, taperData.cMag,
+            taperData.weight);
         return mfdTaper;
 
       default:
