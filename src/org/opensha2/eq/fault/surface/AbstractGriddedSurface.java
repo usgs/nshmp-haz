@@ -1,12 +1,12 @@
 package org.opensha2.eq.fault.surface;
 
-import java.util.List;
-
 import org.opensha2.eq.model.Distance;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 /**
  * <b>Title:</b> GriddedSurface<p> <b>Description:</b>

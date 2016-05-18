@@ -2,6 +2,7 @@ package org.opensha2.gmm;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
+
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -10,12 +11,12 @@ import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.LN_G_CM_TO_M;
 import static org.opensha2.gmm.Imt.PGA;
 
-import java.util.Map;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Abstract implementation of the subduction ground motion model by Atkinson &

@@ -1,15 +1,11 @@
 package org.opensha2.eq.model;
 
 import static java.lang.Math.ceil;
+
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.util.MathUtils.hypot;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
@@ -22,6 +18,11 @@ import org.opensha2.geo.Locations;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 
 /**
  * Point-source earthquake {@code Source} supplies the simplest possible

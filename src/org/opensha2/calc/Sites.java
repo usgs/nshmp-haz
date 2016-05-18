@@ -3,20 +3,11 @@ package org.opensha2.calc;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.GeoJson.validateProperty;
 import static org.opensha2.util.Parsing.splitToList;
 import static org.opensha2.util.TextUtils.LOG_INDENT;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.opensha2.calc.Site.Builder;
 import org.opensha2.geo.Bounds;
@@ -40,6 +31,16 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * {@code Site} factory class used primarily for creating iterables over groups

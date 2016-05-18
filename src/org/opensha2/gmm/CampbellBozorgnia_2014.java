@@ -6,6 +6,7 @@ import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
@@ -20,14 +21,14 @@ import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.SA0P01;
 import static org.opensha2.gmm.Imt.SA0P25;
 
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementation of the Campbell & Bozorgnia (2014) next generation ground

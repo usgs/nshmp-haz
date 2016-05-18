@@ -1,13 +1,5 @@
 package org.opensha2.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.sql.Timestamp;
-import java.util.List;
-
 import org.opensha2.geo.Bounds;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
@@ -20,6 +12,14 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.sql.Timestamp;
+import java.util.List;
 
 class BinaryCurves {
 

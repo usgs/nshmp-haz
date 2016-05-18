@@ -2,6 +2,7 @@ package org.opensha2.util;
 
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.padStart;
+
 import static org.opensha2.util.NshmpPolygon.CEUS_CLIP;
 import static org.opensha2.util.NshmpPolygon.CONTERMINOUS_US;
 import static org.opensha2.util.NshmpPolygon.CYBERSHAKE;
@@ -13,18 +14,6 @@ import static org.opensha2.util.NshmpPolygon.UCERF3_NSHM14;
 import static org.opensha2.util.NshmpPolygon.UCERF3_RELM;
 import static org.opensha2.util.NshmpPolygon.WASATCH;
 import static org.opensha2.util.NshmpPolygon.WUS_CLIP;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 
 import org.opensha2.calc.NamedLocation;
 import org.opensha2.geo.Location;
@@ -40,6 +29,18 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Methods for exporting nshmp site data as CSV and GeoJSON.

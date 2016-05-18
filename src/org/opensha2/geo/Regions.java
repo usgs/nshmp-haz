@@ -1,6 +1,7 @@
 package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 
 import java.awt.Shape;

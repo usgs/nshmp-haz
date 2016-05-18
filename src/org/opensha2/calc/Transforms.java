@@ -4,13 +4,8 @@ import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
-import static org.opensha2.gmm.Gmm.instances;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.Executor;
+import static org.opensha2.gmm.Gmm.instances;
 
 import org.opensha2.calc.ClusterCurves.Builder;
 import org.opensha2.data.XySequence;
@@ -35,6 +30,12 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.Executor;
 
 /**
  * Data transform {@link Function}s. These are called exclusively from

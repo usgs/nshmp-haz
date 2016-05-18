@@ -4,17 +4,18 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
-import java.util.Map;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Abstract implementation of the subduction ground motion model by Zhao et al.

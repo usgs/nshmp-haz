@@ -2,11 +2,11 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.opensha2.eq.model.ClusterSource;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opensha2.eq.model.ClusterSource;
 
 /**
  * Lightweight {@code List} wrapper of {@code HazardInput}s corresponding to the

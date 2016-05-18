@@ -3,15 +3,16 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.DataTables.checkDataState;
 import static org.opensha2.data.DataTables.indexOf;
 import static org.opensha2.data.DataTables.keys;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.opensha2.data.DataTables.AbstractVolume;
 import org.opensha2.data.DataTables.DefaultVolume;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A 3-dimensional volume of immutable, double-valued data that is arranged

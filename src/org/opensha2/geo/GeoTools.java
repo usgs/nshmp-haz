@@ -2,6 +2,7 @@ package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.PI;
+
 import static org.opensha2.data.Data.checkInRange;
 
 import org.opensha2.data.Data;

@@ -3,6 +3,7 @@ package org.opensha2.eq.fault;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.sin;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.geo.GeoTools.PI_BY_2;
 import static org.opensha2.geo.GeoTools.TO_RAD;
@@ -13,9 +14,6 @@ import static org.opensha2.geo.Locations.horzDistance;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opensha2.data.Data;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
@@ -25,6 +23,9 @@ import org.opensha2.geo.Locations;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Fault utilities.

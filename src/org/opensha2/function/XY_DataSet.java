@@ -1,11 +1,11 @@
 package org.opensha2.function;
 
+import org.opensha2.util.Named;
+
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.opensha2.util.Named;
 
 /**
  * A wrapper for 2D double-valued data that provides access to data points via

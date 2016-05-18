@@ -2,6 +2,7 @@ package org.opensha2.eq.fault.surface;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.math.RoundingMode.HALF_UP;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
@@ -14,9 +15,6 @@ import static org.opensha2.geo.LocationVector.createWithPlunge;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
@@ -26,6 +24,9 @@ import org.opensha2.geo.Locations;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.math.DoubleMath;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Default {@link GriddedSurface} implementation. Gridded surfaces are

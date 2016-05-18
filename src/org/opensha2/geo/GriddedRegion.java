@@ -3,18 +3,18 @@ package org.opensha2.geo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.opensha2.util.MathUtils;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
+
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import org.opensha2.util.MathUtils;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Range;
 
 /**
  * <img style="padding: 30px 40px; float: right;" src="

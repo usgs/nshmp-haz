@@ -1,6 +1,7 @@
 package org.opensha2.eq.fault.surface;
 
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;

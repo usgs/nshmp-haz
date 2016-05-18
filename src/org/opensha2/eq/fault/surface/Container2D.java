@@ -1,8 +1,8 @@
 package org.opensha2.eq.fault.surface;
 
-import java.util.ListIterator;
-
 import org.opensha2.util.Named;
+
+import java.util.ListIterator;
 
 /**
  * <b>Title:</b> Container2DAPI<p>

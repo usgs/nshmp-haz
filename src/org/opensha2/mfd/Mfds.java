@@ -5,16 +5,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
-import static org.opensha2.eq.Magnitudes.magToMoment_N_m;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.opensha2.eq.Magnitudes.magToMoment_N_m;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 
 import com.google.common.base.Converter;
 import com.google.common.primitives.Doubles;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factory and utility methods for working with magnitude frequency

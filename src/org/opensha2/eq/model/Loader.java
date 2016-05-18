@@ -5,9 +5,24 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.nio.file.Files.newDirectoryStream;
 import static java.util.logging.Level.SEVERE;
+
 import static org.opensha2.eq.model.SystemParser.GRIDSOURCE_FILENAME;
 import static org.opensha2.eq.model.SystemParser.RUPTURES_FILENAME;
 import static org.opensha2.eq.model.SystemParser.SECTIONS_FILENAME;
+
+import org.opensha2.calc.CalcConfig;
+import org.opensha2.eq.model.HazardModel.Builder;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,19 +41,6 @@ import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import org.opensha2.calc.CalcConfig;
-import org.opensha2.eq.model.HazardModel.Builder;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 /**
  * {@code HazardModel} loader. This class takes care of extensive checked

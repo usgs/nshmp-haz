@@ -6,20 +6,9 @@ import static java.lang.Math.abs;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
+
 import static org.opensha2.util.Parsing.Delimiter.COMMA;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
-
-import org.junit.Ignore;
-import org.junit.Test;
 import org.opensha2.HazardCalc;
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Hazard;
@@ -30,10 +19,23 @@ import org.opensha2.gmm.Imt;
 import org.opensha2.mfd.Mfds;
 import org.opensha2.util.Parsing;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Doubles;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
 
 @SuppressWarnings("javadoc")
 @Ignore

@@ -12,6 +12,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.geo.GeoTools.EARTH_RADIUS_MEAN;
 import static org.opensha2.geo.GeoTools.MAX_LAT;
 import static org.opensha2.geo.GeoTools.MAX_LON;
@@ -23,11 +24,11 @@ import static org.opensha2.geo.GeoTools.TWOPI;
 import static org.opensha2.geo.GeoTools.degreesLatPerKm;
 import static org.opensha2.geo.GeoTools.degreesLonPerKm;
 
+import com.google.common.base.Predicate;
+
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-
-import com.google.common.base.Predicate;
 
 /**
  * Static utility methods to operate on geographic {@code Location} data.

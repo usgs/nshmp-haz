@@ -6,12 +6,12 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.atkinsonTableValue;
 
-import java.util.Map;
-
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the Pezeshk, Zandieh, & Tavakoli (2011) ground motion model

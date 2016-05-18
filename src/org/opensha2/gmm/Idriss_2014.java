@@ -2,6 +2,7 @@ package org.opensha2.gmm;
 
 import static java.lang.Math.log;
 import static java.lang.Math.min;
+
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
 import static org.opensha2.gmm.GmmInput.Field.MAG;
@@ -10,12 +11,12 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmInput.Field.Z1P0;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
-import java.util.Map;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the Idriss (2014) next generation ground motion model for

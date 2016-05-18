@@ -2,12 +2,9 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.util.TextUtils.NEWLINE;
 import static org.opensha2.util.TextUtils.validateName;
-
-import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.gmm.GroundMotionModel;
@@ -16,6 +13,10 @@ import org.opensha2.util.Named;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
+
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * A {@code HazardModel} is the top-level wrapper for earthquake {@link Source}

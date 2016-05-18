@@ -1,19 +1,8 @@
 package org.opensha2.calc;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
-import static org.opensha2.data.XySequence.emptyCopyOf;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import static org.opensha2.data.XySequence.emptyCopyOf;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
@@ -33,6 +22,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Doubles;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Factory class for reducing and exporting various result types.

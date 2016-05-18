@@ -1,15 +1,16 @@
 package org.opensha2.eq.model.peer;
 
-import java.io.IOException;
-import java.util.Collection;
+import org.opensha2.calc.Site;
+import org.opensha2.eq.model.HazardModel;
 
 import org.junit.Ignore;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.opensha2.calc.Site;
-import org.opensha2.eq.model.HazardModel;
+
+import java.io.IOException;
+import java.util.Collection;
 
 @SuppressWarnings("javadoc")
 @RunWith(Enclosed.class)

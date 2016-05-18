@@ -7,26 +7,13 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.repeat;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.opensha2.data.XySequence.create;
 import static org.opensha2.data.XySequence.immutableCopyOf;
 import static org.opensha2.util.Parsing.enumsToString;
 import static org.opensha2.util.TextUtils.LOG_INDENT;
 import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
 import static org.opensha2.util.TextUtils.NEWLINE;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
@@ -47,6 +34,20 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Calculation configuration.

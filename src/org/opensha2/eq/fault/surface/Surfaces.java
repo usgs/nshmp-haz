@@ -1,10 +1,10 @@
 package org.opensha2.eq.fault.surface;
 
-import java.util.Iterator;
-
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 import org.opensha2.geo.Region;
+
+import java.util.Iterator;
 
 /**
  * Add comments here

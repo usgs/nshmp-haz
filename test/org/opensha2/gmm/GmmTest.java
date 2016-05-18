@@ -2,18 +2,11 @@ package org.opensha2.gmm;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import org.opensha2.util.Parsing;
+import org.opensha2.util.Parsing.Delimiter;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.base.StandardSystemProperty;
@@ -22,6 +15,14 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import com.google.common.primitives.Doubles;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("javadoc")
 @Ignore

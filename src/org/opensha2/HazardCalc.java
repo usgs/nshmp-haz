@@ -2,7 +2,22 @@ package org.opensha2;
 
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
+
 import static org.opensha2.util.TextUtils.NEWLINE;
+
+import org.opensha2.calc.CalcConfig;
+import org.opensha2.calc.Calcs;
+import org.opensha2.calc.Hazard;
+import org.opensha2.calc.Results;
+import org.opensha2.calc.Site;
+import org.opensha2.calc.Sites;
+import org.opensha2.calc.ThreadCount;
+import org.opensha2.eq.model.HazardModel;
+import org.opensha2.util.Logging;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Stopwatch;
+import com.google.common.base.Throwables;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,20 +33,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-
-import org.opensha2.calc.CalcConfig;
-import org.opensha2.calc.Calcs;
-import org.opensha2.calc.Hazard;
-import org.opensha2.calc.Results;
-import org.opensha2.calc.Site;
-import org.opensha2.calc.Sites;
-import org.opensha2.calc.ThreadCount;
-import org.opensha2.eq.model.HazardModel;
-import org.opensha2.util.Logging;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Stopwatch;
-import com.google.common.base.Throwables;
 
 /**
  * Compute probabilisitic seismic hazard at a {@link Site} from a

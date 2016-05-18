@@ -5,17 +5,19 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
+
 import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.util.List;
+import org.opensha2.geo.LocationList.RegularLocationList;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opensha2.geo.LocationList.RegularLocationList;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 @SuppressWarnings("javadoc")
 public class LocationListTest {

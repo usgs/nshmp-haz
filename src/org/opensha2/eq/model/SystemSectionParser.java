@@ -2,6 +2,7 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.eq.model.SourceAttribute.ASEIS;
 import static org.opensha2.eq.model.SourceAttribute.DEPTH;
 import static org.opensha2.eq.model.SourceAttribute.DIP;
@@ -13,16 +14,10 @@ import static org.opensha2.eq.model.SystemParser.SECTIONS_FILENAME;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readString;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.SAXParser;
-
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.geo.LocationList;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -30,6 +25,13 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Lists;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.SAXParser;
 
 /*
  * Non-validating indexed fault section parser. SAX parser 'Attributes' are

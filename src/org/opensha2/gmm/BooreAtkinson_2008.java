@@ -2,6 +2,7 @@ package org.opensha2.gmm;
 
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
+
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
@@ -14,12 +15,12 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmInput.Field.WIDTH;
 import static org.opensha2.gmm.Imt.PGA;
 
-import java.util.Map;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the Boore & Atkinson (2008) next generation attenuation

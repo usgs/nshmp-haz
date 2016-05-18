@@ -1,6 +1,7 @@
 package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.eq.model.SourceAttribute.A;
 import static org.opensha2.eq.model.SourceAttribute.B;
 import static org.opensha2.eq.model.SourceAttribute.C_MAG;
@@ -18,15 +19,16 @@ import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.toDoubleArray;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.opensha2.mfd.MfdType;
+
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /*
  * MFD data handler class. Stores default data and creates copies with

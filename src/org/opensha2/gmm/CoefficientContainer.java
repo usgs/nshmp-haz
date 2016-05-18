@@ -3,13 +3,6 @@ package org.opensha2.gmm;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
 
@@ -20,6 +13,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.google.common.io.Resources;
 import com.google.common.primitives.Doubles;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class loads and manages {@code GroundMotionModel} coefficients.

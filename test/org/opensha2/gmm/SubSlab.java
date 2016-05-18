@@ -12,14 +12,14 @@ import static org.opensha2.gmm.Imt.SA0P2;
 import static org.opensha2.gmm.Imt.SA1P0;
 import static org.opensha2.gmm.Imt.SA3P0;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 @SuppressWarnings("javadoc")
 @RunWith(Parameterized.class)

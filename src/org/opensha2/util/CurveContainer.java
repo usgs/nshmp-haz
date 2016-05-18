@@ -2,15 +2,6 @@ package org.opensha2.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.geo.GriddedRegion;
@@ -29,6 +20,15 @@ import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.primitives.Doubles;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class for storing and accessing grids of hazard curves. These can be NSHMP

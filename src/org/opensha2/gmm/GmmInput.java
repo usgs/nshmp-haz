@@ -3,6 +3,7 @@ package org.opensha2.gmm;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Double.NaN;
+
 import static org.opensha2.gmm.GmmInput.Field.DIP;
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
@@ -18,13 +19,6 @@ import static org.opensha2.gmm.GmmInput.Field.ZHYP;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.util.BitSet;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.opensha2.calc.Site;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.Faults;
@@ -35,6 +29,13 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
+
+import java.util.BitSet;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Earthquake {@link Rupture} and receiver {@link Site} property container used

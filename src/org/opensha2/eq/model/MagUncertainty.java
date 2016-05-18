@@ -2,6 +2,7 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
+
 import static org.opensha2.eq.model.SourceAttribute.COUNT;
 import static org.opensha2.eq.model.SourceAttribute.CUTOFF;
 import static org.opensha2.eq.model.SourceAttribute.DELTAS;
@@ -15,11 +16,12 @@ import static org.opensha2.util.Parsing.addAttribute;
 import static org.opensha2.util.Parsing.addElement;
 import static org.opensha2.util.Parsing.toDoubleArray;
 
+import org.opensha2.eq.Magnitudes;
+
+import org.w3c.dom.Element;
+
 import java.util.Arrays;
 import java.util.Map;
-
-import org.opensha2.eq.Magnitudes;
-import org.w3c.dom.Element;
 
 /**
  * Wrapper class for magnitude uncertainty data. Uncertainty flags are

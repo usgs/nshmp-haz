@@ -1,12 +1,12 @@
 package org.opensha2.eq.model;
 
-import java.util.Map;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.RuptureSurface;
 import org.opensha2.geo.Location;
 
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 /**
  * A {@code Rupture} is a proxy for an actual earthquake and encapsulates all

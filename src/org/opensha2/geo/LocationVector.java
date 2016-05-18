@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+
 import static org.opensha2.geo.GeoTools.TO_DEG;
 import static org.opensha2.geo.GeoTools.TWOPI;
 import static org.opensha2.geo.Locations.azimuthRad;

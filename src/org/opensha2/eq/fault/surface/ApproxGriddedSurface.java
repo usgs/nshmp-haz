@@ -1,7 +1,5 @@
 package org.opensha2.eq.fault.surface;
 
-import java.util.List;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
@@ -11,6 +9,8 @@ import org.opensha2.geo.Locations;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 /**
  * A {@code GriddedSurface} defined by an upper and lower trace whose spacing is

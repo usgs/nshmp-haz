@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.ceil;
+
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
@@ -11,12 +12,6 @@ import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.geo.GriddedRegion.ANCHOR_0_0;
 import static org.opensha2.util.TextUtils.validateName;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
@@ -32,6 +27,12 @@ import org.opensha2.mfd.Mfds;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 
 /**
  * Area source representation. An {@code AreaSource} represents a region over

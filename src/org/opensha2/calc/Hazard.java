@@ -2,12 +2,9 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.XySequence.emptyCopyOf;
 import static org.opensha2.eq.model.SourceType.CLUSTER;
-
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.GridSourceSet;
@@ -21,6 +18,10 @@ import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * The result of a hazard calculation. This container class is public for

@@ -1,10 +1,8 @@
 package org.opensha2.util;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.util.MathUtils.round;
 
-import java.util.List;
-import java.util.Objects;
+import static org.opensha2.util.MathUtils.round;
 
 import org.opensha2.calc.NamedLocation;
 import org.opensha2.geo.Location;
@@ -16,6 +14,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * GeoJSON serialization keys, values, and utilities.

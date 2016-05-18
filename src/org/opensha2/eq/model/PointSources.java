@@ -1,10 +1,5 @@
 package org.opensha2.eq.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
@@ -19,6 +14,11 @@ import org.opensha2.util.Parsing;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 
 /**
  * Factory class for generating lists of {@code GmmInput}s for point sources.

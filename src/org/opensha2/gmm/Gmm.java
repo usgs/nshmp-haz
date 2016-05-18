@@ -3,13 +3,6 @@ package org.opensha2.gmm;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.opensha2.gmm.CeusMb.AtkinsonBoore_2006_140bar_AB;
 import org.opensha2.gmm.CeusMb.AtkinsonBoore_2006_140bar_J;
 import org.opensha2.gmm.CeusMb.AtkinsonBoore_2006_200bar_AB;
@@ -31,6 +24,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * {@link GroundMotionModel} (Gmm) identifiers. Use these to generate

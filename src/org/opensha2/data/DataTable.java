@@ -4,19 +4,20 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.DataTables.checkDataState;
 import static org.opensha2.data.DataTables.indexOf;
 import static org.opensha2.data.DataTables.keys;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.opensha2.data.DataTables.AbstractTable;
 import org.opensha2.data.DataTables.DefaultTable;
 import org.opensha2.data.DataTables.SingularTable;
 
 import com.google.common.primitives.Doubles;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A 2-dimensional table of immutable, double-valued data that is arranged

@@ -2,12 +2,6 @@ package org.opensha2.eq.fault.surface;
 
 import static java.lang.Math.sin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.opensha2.data.Data;
 import org.opensha2.data.Interpolate;
 import org.opensha2.eq.fault.surface.RuptureScaling.Dimensions;
@@ -16,6 +10,12 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 
 import com.google.common.collect.Range;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Rupture floating models for gridded surfaces. Each provides the means to

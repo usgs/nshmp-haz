@@ -3,18 +3,11 @@ package org.opensha2.calc;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.primitives.Doubles.toArray;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.data.Data.multiply;
 import static org.opensha2.util.TextUtils.LOG_INDENT;
 import static org.opensha2.util.TextUtils.NEWLINE;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.DataTable;
@@ -41,6 +34,14 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Hazard deaggregation. Given a {@link Hazard} result, this class will

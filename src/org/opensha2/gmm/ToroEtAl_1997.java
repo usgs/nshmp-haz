@@ -3,6 +3,7 @@ package org.opensha2.gmm;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -10,11 +11,11 @@ import static org.opensha2.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
 import static org.opensha2.gmm.MagConverter.MB_TO_MW_JOHNSTON;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 
-import java.util.Map;
-
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the Toro et al. (1997) ground motion model for stable

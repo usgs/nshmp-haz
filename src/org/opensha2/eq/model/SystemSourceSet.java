@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.min;
+
 import static org.opensha2.eq.Magnitudes.checkMagnitude;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
@@ -13,12 +14,6 @@ import static org.opensha2.eq.model.Distance.Type.R_JB;
 import static org.opensha2.eq.model.Distance.Type.R_RUP;
 import static org.opensha2.eq.model.Distance.Type.R_X;
 import static org.opensha2.geo.Locations.horzDistanceFast;
-
-import java.util.BitSet;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.opensha2.calc.HazardInput;
 import org.opensha2.calc.InputList;
@@ -39,6 +34,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.primitives.Doubles;
+
+import java.util.BitSet;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Wrapper class for related {@link SystemSource}s.

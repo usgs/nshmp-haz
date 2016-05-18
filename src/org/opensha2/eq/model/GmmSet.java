@@ -3,12 +3,9 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.data.Data.checkWeightSum;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import org.opensha2.data.Data;
 import org.opensha2.gmm.Gmm;
@@ -16,6 +13,10 @@ import org.opensha2.gmm.GroundMotionModel;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Wrapper class for {@link GroundMotionModel}s associated with a

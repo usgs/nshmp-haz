@@ -3,6 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
@@ -10,10 +11,6 @@ import static org.opensha2.eq.fault.Faults.validateRake;
 import static org.opensha2.eq.fault.Faults.validateTrace;
 import static org.opensha2.eq.fault.Faults.validateWidth;
 import static org.opensha2.util.TextUtils.validateName;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha2.eq.fault.surface.GriddedSurface;
@@ -26,6 +23,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Fault source representation. This class wraps a model of a fault geometry and

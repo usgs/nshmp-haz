@@ -4,6 +4,7 @@ import static com.google.common.io.Resources.getResource;
 import static com.google.common.io.Resources.readLines;
 import static java.lang.Math.log10;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
 import static org.opensha2.gmm.Imt.SA0P03;
@@ -11,17 +12,6 @@ import static org.opensha2.gmm.Imt.SA0P3;
 import static org.opensha2.gmm.Imt.SA3P0;
 import static org.opensha2.util.Parsing.splitToDoubleList;
 import static org.opensha2.util.TextUtils.NEWLINE;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.logging.Logger;
 
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
@@ -33,6 +23,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.LineProcessor;
 import com.google.common.primitives.Doubles;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Utility class to load and fetch {@code GroundMotionModel} lookup tables.

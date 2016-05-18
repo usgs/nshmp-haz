@@ -1,8 +1,5 @@
 package org.opensha2;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Deaggregation;
@@ -13,6 +10,9 @@ import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 /**
  * Entry point for deaggregating probabilisitic seismic hazard.

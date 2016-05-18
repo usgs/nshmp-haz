@@ -2,11 +2,6 @@ package org.opensha2;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmInput;
 import org.opensha2.gmm.GroundMotionModel;
@@ -16,6 +11,11 @@ import org.opensha2.gmm.ScalarGroundMotion;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Entry point for computing deterministic response spectra.

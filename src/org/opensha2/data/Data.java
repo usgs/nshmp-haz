@@ -9,18 +9,8 @@ import static com.google.common.math.DoubleMath.fuzzyEquals;
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.isNaN;
-import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import org.opensha2.util.MathUtils;
 
@@ -34,6 +24,17 @@ import com.google.common.collect.Table;
 import com.google.common.math.DoubleMath;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
+
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Utilities for operating on {@code double}-valued data.

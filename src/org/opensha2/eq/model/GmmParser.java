@@ -3,6 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
+
 import static org.opensha2.gmm.GmmAttribute.ID;
 import static org.opensha2.gmm.GmmAttribute.MAX_DISTANCE;
 import static org.opensha2.gmm.GmmAttribute.VALUES;
@@ -12,16 +13,9 @@ import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readDoubleArray;
 import static org.opensha2.util.Parsing.readEnum;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.SAXParser;
-
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmElement;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -30,6 +24,14 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.SAXParser;
 
 /*
  * Non-validating gmm.xml parser. SAX parser 'Attributes' are stateful and

@@ -3,6 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
+
 import static org.opensha2.eq.model.SourceAttribute.FOCAL_MECH_MAP;
 import static org.opensha2.eq.model.SourceAttribute.ID;
 import static org.opensha2.eq.model.SourceAttribute.MAG_DEPTH_MAP;
@@ -20,14 +21,6 @@ import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.stringToEnumWeightMap;
 import static org.opensha2.util.Parsing.stringToValueValueWeightMap;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.SAXParser;
-
 import org.opensha2.data.Data;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -35,11 +28,20 @@ import org.opensha2.geo.LocationList;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.SAXParser;
 
 /*
  * Non-validating area source parser. SAX parser 'Attributes' are stateful and

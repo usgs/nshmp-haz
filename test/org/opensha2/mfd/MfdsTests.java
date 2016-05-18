@@ -2,11 +2,11 @@ package org.opensha2.mfd;
 
 import static org.junit.Assert.assertArrayEquals;
 
-import java.awt.geom.Point2D;
-
 import org.junit.Test;
 
 import com.google.common.primitives.Doubles;
+
+import java.awt.geom.Point2D;
 
 public class MfdsTests {
 

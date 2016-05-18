@@ -5,6 +5,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
@@ -16,13 +17,13 @@ import static org.opensha2.gmm.GmmInput.Field.WIDTH;
 import static org.opensha2.gmm.GmmInput.Field.Z1P0;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
-import java.util.Map;
-
 import org.opensha2.data.Interpolate;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the Abrahamson, Silva & Kamai (2014) next generation ground

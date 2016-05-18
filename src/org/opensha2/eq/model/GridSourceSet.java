@@ -3,6 +3,7 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.eq.Magnitudes.MAX_MAG;
 import static org.opensha2.eq.Magnitudes.checkMagnitude;
 import static org.opensha2.eq.fault.Faults.validateStrike;
@@ -10,12 +11,6 @@ import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.DataTable;
@@ -33,6 +28,12 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 
 /**
  * A container class for related, evenly-spaced {@link PointSource}s with

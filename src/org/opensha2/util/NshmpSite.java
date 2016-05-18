@@ -1,13 +1,13 @@
 package org.opensha2.util;
 
-import java.util.EnumSet;
-
 import org.opensha2.calc.NamedLocation;
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+
+import java.util.EnumSet;
 
 /**
  * Locations that are used for NSHMP hazard comparisons.

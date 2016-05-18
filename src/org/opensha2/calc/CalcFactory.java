@@ -4,11 +4,6 @@ import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-
 import org.opensha2.calc.Transforms.ClusterCurveConsolidator;
 import org.opensha2.calc.Transforms.ClusterToCurves;
 import org.opensha2.calc.Transforms.CurveConsolidator;
@@ -24,6 +19,11 @@ import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SystemSourceSet;
 
 import com.google.common.util.concurrent.ListenableFuture;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 /**
  * Static utility methods for performing single-threaded and asynchronous hazard

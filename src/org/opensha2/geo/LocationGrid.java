@@ -5,15 +5,16 @@ import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padStart;
-import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.util.Iterator;
-import java.util.Set;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Range;
+
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * An immutable, tabular grid of locations that supplies row and column data as

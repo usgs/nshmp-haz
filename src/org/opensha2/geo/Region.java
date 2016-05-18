@@ -2,18 +2,11 @@ package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import static org.opensha2.geo.BorderType.GREAT_CIRCLE;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.geo.GeoTools.PI_BY_2;
 import static org.opensha2.geo.GeoTools.TO_RAD;
-
-import java.awt.Shape;
-import java.awt.geom.Area;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.opensha2.data.Data;
 import org.opensha2.util.Named;
@@ -22,6 +15,14 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
+
+import java.awt.Shape;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A {@code Region} is a polygonal area on the surface of the earth. The

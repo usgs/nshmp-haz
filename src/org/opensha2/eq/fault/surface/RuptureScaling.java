@@ -10,16 +10,16 @@ import static java.lang.Math.round;
 import static java.lang.Math.sqrt;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import org.opensha2.mfd.IncrementalMfd;
+import org.opensha2.mfd.Mfds;
+import org.opensha2.util.Logging;
+import org.opensha2.util.Parsing;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.opensha2.mfd.IncrementalMfd;
-import org.opensha2.mfd.Mfds;
-import org.opensha2.util.Logging;
-import org.opensha2.util.Parsing;
 
 /**
  * Identifiers for different rupture dimension scaling models. Most are rooted

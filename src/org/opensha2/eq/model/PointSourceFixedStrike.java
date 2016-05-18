@@ -5,12 +5,10 @@ import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
+
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.util.MathUtils.hypot;
-
-import java.util.Iterator;
-import java.util.Map;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
@@ -22,6 +20,9 @@ import org.opensha2.geo.LocationVector;
 import org.opensha2.geo.Locations;
 
 import com.google.common.math.DoubleMath;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Fixed-strike point-source earthquake implementation. As with parent class,

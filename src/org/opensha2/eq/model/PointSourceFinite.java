@@ -5,20 +5,21 @@ import static java.lang.Math.cos;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.tan;
+
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.util.MathUtils.hypot;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Point-source earthquake implementation in which all magnitudes are

@@ -1,5 +1,13 @@
 package org.opensha2.geo;
 
+import org.opensha2.eq.fault.surface.GriddedSurface;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+
 import java.awt.Color;
 import java.awt.geom.Area;
 import java.io.File;
@@ -14,13 +22,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.opensha2.eq.fault.surface.GriddedSurface;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 /**
  * Region export utilities.

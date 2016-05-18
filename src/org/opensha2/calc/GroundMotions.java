@@ -4,17 +4,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.gmm.ScalarGroundMotion;
 
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Container class for scalar ground motions associated with individual

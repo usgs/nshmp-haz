@@ -4,18 +4,19 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
+
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 
-import java.util.Map;
-
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Implementation of the ground motion model for shallow crustal earthquakes by

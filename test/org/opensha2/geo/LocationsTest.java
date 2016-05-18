@@ -2,6 +2,7 @@ package org.opensha2.geo;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import static org.opensha2.geo.GeoTools.EARTH_RADIUS_MEAN;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.geo.Locations.angle;
@@ -21,13 +22,14 @@ import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
 import static org.opensha2.geo.Locations.vertDistance;
 
-import java.util.List;
-import java.util.Random;
-
-import org.junit.Test;
 import org.opensha2.eq.model.Distance;
 
+import org.junit.Test;
+
 import com.google.common.collect.Lists;
+
+import java.util.List;
+import java.util.Random;
 
 @SuppressWarnings("javadoc")
 public class LocationsTest {

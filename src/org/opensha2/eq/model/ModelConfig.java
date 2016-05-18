@@ -6,13 +6,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padEnd;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.opensha2.util.TextUtils.LOG_INDENT;
 import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.model.AreaSource.GridScaling;
@@ -21,6 +17,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Model and calculation configuration class. No defaults; 'config.json' must be

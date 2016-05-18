@@ -1,9 +1,10 @@
 package org.opensha2.eq.fault.surface;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class RuptureFloatingTest {
 

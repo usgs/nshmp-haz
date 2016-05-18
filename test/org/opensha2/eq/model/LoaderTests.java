@@ -1,14 +1,14 @@
 package org.opensha2.eq.model;
 
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.file.Paths;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.io.Resources;
+
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.file.Paths;
 
 @SuppressWarnings("javadoc")
 public class LoaderTests {

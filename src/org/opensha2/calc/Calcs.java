@@ -4,19 +4,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
+
 import static org.opensha2.calc.CalcFactory.clustersToCurves;
 import static org.opensha2.calc.CalcFactory.sourcesToCurves;
 import static org.opensha2.calc.CalcFactory.systemToCurves;
 import static org.opensha2.calc.CalcFactory.toHazardResult;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.opensha2.calc.Transforms.SourceToInputs;
 import org.opensha2.eq.model.ClusterSourceSet;
@@ -30,6 +24,13 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Range;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Static probabilistic seismic hazard analysis calculators.

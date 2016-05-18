@@ -5,6 +5,7 @@ import static java.lang.Math.log;
 import static java.lang.Math.log10;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+
 import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -13,11 +14,11 @@ import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.MagConverter.NONE;
 import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
 
-import java.util.Map;
-
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
+
+import java.util.Map;
 
 /**
  * Abstract implementation of the ground motion model for stable continental

@@ -2,12 +2,12 @@ package org.opensha2.calc;
 
 import static org.opensha2.util.TextUtils.NEWLINE;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * Lightweight {@code List} wrapper of {@code HazardInput}s. The {@code List}

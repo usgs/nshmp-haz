@@ -1,13 +1,10 @@
 package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.geo.Locations.distanceToLineFast;
 import static org.opensha2.geo.Locations.distanceToSegmentFast;
 import static org.opensha2.geo.Locations.horzDistanceFast;
-
-import java.awt.geom.Area;
-import java.awt.geom.Path2D;
-import java.util.Iterator;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
@@ -18,6 +15,10 @@ import org.opensha2.geo.LocationVector;
 import org.opensha2.geo.Locations;
 import org.opensha2.geo.Region;
 import org.opensha2.geo.Regions;
+
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
+import java.util.Iterator;
 
 /**
  * Distance value wrapper.

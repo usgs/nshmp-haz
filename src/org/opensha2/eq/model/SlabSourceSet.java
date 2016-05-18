@@ -1,10 +1,10 @@
 package org.opensha2.eq.model;
 
-import java.util.Iterator;
-
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
+
+import java.util.Iterator;
 
 /**
  * Container class for related, evenly-spaced subduction slab sources. Class

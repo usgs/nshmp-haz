@@ -5,15 +5,16 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
+
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
 import static org.opensha2.gmm.Imt.SA0P75;
 
-import java.util.List;
-
 import org.opensha2.data.XyPoint;
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
+
+import java.util.List;
 
 /**
  * Uncertainty models govern how the values of a complementary cumulative normal

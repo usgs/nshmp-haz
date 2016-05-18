@@ -2,17 +2,18 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.data.Data.checkWeight;
 import static org.opensha2.util.TextUtils.validateName;
-
-import java.util.Iterator;
-import java.util.List;
 
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A container class for related {@link AreaSource}s.

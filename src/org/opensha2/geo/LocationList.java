@@ -3,10 +3,8 @@ package org.opensha2.geo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.opensha2.util.TextUtils.NEWLINE;
 
-import java.util.Iterator;
-import java.util.List;
+import static org.opensha2.util.TextUtils.NEWLINE;
 
 import org.opensha2.util.Parsing;
 import org.opensha2.util.Parsing.Delimiter;
@@ -19,6 +17,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * An immutable, ordered collection of {@link Location}s.
