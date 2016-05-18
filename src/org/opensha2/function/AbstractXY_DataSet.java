@@ -25,16 +25,19 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
   }
 
   /** Sets the name of this function. */
+  @Override
   public void setName(String name) {
     this.name = name;
   }
 
   /** Returns the info of this function. */
+  @Override
   public String getInfo() {
     return info;
   }
 
   /** Sets the info string of this function. */
+  @Override
   public void setInfo(String info) {
     this.info = info;
   }
@@ -42,18 +45,22 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
   // X and Y Axis name
   protected String xAxisName, yAxisName;
 
+  @Override
   public void setXAxisName(String xName) {
     xAxisName = xName;
   }
 
+  @Override
   public String getXAxisName() {
     return xAxisName;
   }
 
+  @Override
   public void setYAxisName(String yName) {
     yAxisName = yName;
   }
 
+  @Override
   public String getYAxisName() {
     return yAxisName;
   }
@@ -95,13 +102,16 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
    * @return true if all X values are within the tolerance of an integer value
    *         else returns false
    */
+  @Override
   public boolean areAllXValuesInteger(double tolerance) {
     int num = getNum();
     double x, diff;
     for (int i = 0; i < num; ++i) {
       x = getX(i);
       diff = Math.abs(x - Math.rint(x));
-      if (diff > tolerance) return false;
+      if (diff > tolerance) {
+        return false;
+      }
     }
     return true;
   }
@@ -110,6 +120,7 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
    * Returns an iterator over all x-values in the list. Results returned in
    * sorted order. Returns null if no points present.
    */
+  @Override
   public Iterator<Double> getXValuesIterator() {
     return new Iterator<Double>() {
 
@@ -136,6 +147,7 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
    * Returns an iterator over all y-values in the list. Results returned in
    * sorted order along the x-axis. Returns null if no points present.
    */
+  @Override
   public Iterator<Double> getYValuesIterator() {
     return new Iterator<Double>() {
 
@@ -181,6 +193,7 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
     };
   }
 
+  @Override
   public List<Double> xValues() {
     return new AbstractList<Double>() {
       @Override
@@ -216,6 +229,7 @@ public abstract class AbstractXY_DataSet implements XY_DataSet {
     };
   }
 
+  @Override
   public List<Double> yValues() {
     // doublecheck AbstractList docs and check/test immutability of list
     return new AbstractList<Double>() {

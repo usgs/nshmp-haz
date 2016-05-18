@@ -8,7 +8,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * must exactly equal one of the descrete x-axis values.</p>
  *
  * floats() always returns true.
- * 
+ *
  * @author Nitin Gupta
  * @author Vipin Gupta
  */
@@ -150,11 +150,21 @@ class GutenbergRichterMfd extends IncrementalMfd {
       double totCumRate,
       double bValue, boolean relaxTotMoRate) {
 
-    if (D) System.out.println("magLower = " + magLower);
-    if (D) System.out.println("totMoRate = " + totMoRate);
-    if (D) System.out.println("totCumRate = " + totCumRate);
-    if (D) System.out.println("bValue = " + bValue);
-    if (D) System.out.println("relaxCumRate = " + relaxTotMoRate);
+    if (D) {
+      System.out.println("magLower = " + magLower);
+    }
+    if (D) {
+      System.out.println("totMoRate = " + totMoRate);
+    }
+    if (D) {
+      System.out.println("totCumRate = " + totCumRate);
+    }
+    if (D) {
+      System.out.println("bValue = " + bValue);
+    }
+    if (D) {
+      System.out.println("relaxCumRate = " + relaxTotMoRate);
+    }
 
     // create variables for analytical moment integration
     double b = bValue;
@@ -177,16 +187,24 @@ class GutenbergRichterMfd extends IncrementalMfd {
       lastMoRate = tempTotMoRate;
       M2 = getX(index);
       tempTotMoRate = X * (Math.pow(10, z * M2) - Math.pow(10, z * M1)) /
-        (Math.pow(10, -b * M1) - Math.pow(10, -b * M2));
+          (Math.pow(10, -b * M1) - Math.pow(10, -b * M2));
     }
 
     index--;
 
-    if (D) System.out.println("just above target: index=" + index + "; mag=" +
-      getX(index));
-    if (D) System.out.println("lastMoRate = " + lastMoRate);
-    if (D) System.out.println("tempTotMoRate = " + tempTotMoRate);
-    if (D) System.out.println("targetMoRate = " + totMoRate);
+    if (D) {
+      System.out.println("just above target: index=" + index + "; mag=" +
+          getX(index));
+    }
+    if (D) {
+      System.out.println("lastMoRate = " + lastMoRate);
+    }
+    if (D) {
+      System.out.println("tempTotMoRate = " + tempTotMoRate);
+    }
+    if (D) {
+      System.out.println("targetMoRate = " + totMoRate);
+    }
 
     // find which mag point it's closer:
     if (lastMoRate <= totMoRate && tempTotMoRate >= totMoRate) {
@@ -194,19 +212,25 @@ class GutenbergRichterMfd extends IncrementalMfd {
       double diff2 = totMoRate - lastMoRate;
 
       // if it's closer to previous point
-      if (diff2 < diff1) index--;
-    } else
+      if (diff2 < diff1) {
+        index--;
+      }
+    } else {
       throw new RuntimeException("Moment rate not attainable; totMoRate=" + totMoRate +
-        "  totCumRate=" + totCumRate);
+          "  totCumRate=" + totCumRate);
+    }
 
     magUpper = getX(index);
 
-    if (D) System.out.println("chosen magUpper=" + magUpper);
+    if (D) {
+      System.out.println("chosen magUpper=" + magUpper);
+    }
 
-    if (relaxTotMoRate)
+    if (relaxTotMoRate) {
       setAllButTotMoRate(magLower, magUpper, totCumRate, bValue);
-    else
+    } else {
       setAllButTotCumRate(magLower, magUpper, totMoRate, bValue);
+    }
   }
 
   /**
@@ -218,28 +242,33 @@ class GutenbergRichterMfd extends IncrementalMfd {
     // checks that magUpper, magLower lie between minX and maxX
     // it also checks that magUpper > magLower
     checkArgument(magLower >= minX && magLower <= maxX,
-      "magLower (%s) should be between %s and %s", magLower, minX, maxX);
+        "magLower (%s) should be between %s and %s", magLower, minX, maxX);
     checkArgument(magUpper >= magLower, "magLower must be < magUpper; magLower=%s", magLower);
 
     int indexLow = getXIndex(magLower); // find the index of magLower
-    if (indexLow == -1)
+    if (indexLow == -1) {
       throw new RuntimeException("magLower is not within tolerance of an x-axis value");
+    }
 
     int indexUp = getXIndex(magUpper); // find the index of magUpper
-    if (indexUp == -1)
+    if (indexUp == -1) {
       throw new RuntimeException("magUpper is not within tolerance of an x-axis value");
+    }
 
     int i;
 
-    for (i = 0; i < indexLow; ++i) // set all rates below magLower to 0
+    for (i = 0; i < indexLow; ++i) {
       super.set(i, 0.0);
+    }
 
-    for (i = indexLow; i <= indexUp; ++i) // assign correct values to rates
+    for (i = indexLow; i <= indexUp; ++i) {
       // between magLower and magUpper
       super.set(i, Math.pow(10, -bValue * getX(i)));
+    }
 
-    for (i = indexUp + 1; i < num; ++i) // set all rates above magUpper tp 0
+    for (i = indexUp + 1; i < num; ++i) {
       super.set(i, 0.0);
+    }
   }
 
   /**
@@ -279,6 +308,7 @@ class GutenbergRichterMfd extends IncrementalMfd {
    * returns the name of this class
    */
 
+  @Override
   public String getDefaultName() {
     return NAME;
   }
@@ -287,12 +317,13 @@ class GutenbergRichterMfd extends IncrementalMfd {
    * this function returns String for drawing Legen in JFreechart
    * @return : returns the String which is needed for Legend in graph
    */
+  @Override
   public String getDefaultInfo() {
     return ("minMag=" + minX + "; maxMag=" + maxX + "; numMag=" + num +
-      "; bValue=" + bValue + "; magLower=" + magLower + "; magUpper=" +
-      (float) magUpper +
-      "; totMoRate=" + (float) this.getTotalMomentRate() + "; totCumRate=" +
-      (float) getCumRate(magLower));
+        "; bValue=" + bValue + "; magLower=" + magLower + "; magUpper=" +
+        (float) magUpper +
+        "; totMoRate=" + (float) this.getTotalMomentRate() + "; totCumRate=" +
+        (float) getCumRate(magLower));
   }
 
   // public static void main(String[] args) {

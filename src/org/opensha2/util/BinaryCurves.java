@@ -64,7 +64,7 @@ class BinaryCurves {
 
   public static void read(URL url) throws IOException {
     LittleEndianDataInputStream in =
-      new LittleEndianDataInputStream(url.openStream());
+        new LittleEndianDataInputStream(url.openStream());
 
     CurveContainer cc = new CurveContainer();
 
@@ -153,11 +153,11 @@ class BinaryCurves {
       File out) throws IOException {
 
     GriddedRegion regionWus = Regions.createRectangularGridded(
-      "NSHMP Map Region",
-      Location.create(LAT_MIN, LON_MIN),
-      Location.create(LAT_MAX, LON_MAX),
-      spacing, spacing,
-      GriddedRegion.ANCHOR_0_0);
+        "NSHMP Map Region",
+        Location.create(LAT_MIN, LON_MIN),
+        Location.create(LAT_MAX, LON_MAX),
+        spacing, spacing,
+        GriddedRegion.ANCHOR_0_0);
 
     CurveContainer ccWus = CurveContainer.create(regionWus, xs);
     ccWus.union(curves);
@@ -175,7 +175,7 @@ class BinaryCurves {
   private static void write(CurveContainer cc, double outSpacing, File file, Metadata meta)
       throws IOException {
     LittleEndianDataOutputStream out =
-      new LittleEndianDataOutputStream(new FileOutputStream(file));
+        new LittleEndianDataOutputStream(new FileOutputStream(file));
 
     // write info lines 6 * char(128)
     int n = 128;
@@ -264,7 +264,7 @@ class BinaryCurves {
   private static void writeWus(CurveContainer cc, double outSpacing, File file, Metadata meta)
       throws IOException {
     LittleEndianDataOutputStream out =
-      new LittleEndianDataOutputStream(new FileOutputStream(file));
+        new LittleEndianDataOutputStream(new FileOutputStream(file));
 
     // write info lines 6 * char(128)
     int n = 128;

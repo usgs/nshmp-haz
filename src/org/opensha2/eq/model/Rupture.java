@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * A {@code Rupture} is a proxy for an actual earthquake and encapsulates all
  * the source information required by a ground motion model (Gmm).
- * 
+ *
  * @author Peter Powers
  */
 public class Rupture {
@@ -38,7 +38,7 @@ public class Rupture {
   }
 
   /**
-   * 
+   *
    * @param mag moment magnitude
    * @param rate of occurrence (annual)
    * @param rake slip direction on rupture surface
@@ -51,7 +51,7 @@ public class Rupture {
 
   /**
    * Creates a new {@code Rupture}.
-   * 
+   *
    * @param mag moment magnitude
    * @param rate of occurrence (annual)
    * @param rake slip direction on rupture surface

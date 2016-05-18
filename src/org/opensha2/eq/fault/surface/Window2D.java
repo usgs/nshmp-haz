@@ -199,7 +199,7 @@ class Window2D {
     }
     if (numCols < 0) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "Number of columns cannot be less than zero");
+          S + "Number of columns cannot be less than zero");
     }
   }
 
@@ -220,20 +220,20 @@ class Window2D {
 
     if (startRow > maxNumRows) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "Start row cannot be greater than the last index of the larger dataset");
+          S + "Start row cannot be greater than the last index of the larger dataset");
     }
     if (startCol > maxNumCols) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "Start column cannot be greater than the last index of the larger dataset");
+          S + "Start column cannot be greater than the last index of the larger dataset");
     }
 
     if (endRow > maxNumRows) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "End row cannot be greater than the last index of the larger dataset");
+          S + "End row cannot be greater than the last index of the larger dataset");
     }
     if (endCol > maxNumCols) {
       throw new ArrayIndexOutOfBoundsException(
-        S + "End column cannot be greater than the last index of the larger dataset");
+          S + "End column cannot be greater than the last index of the larger dataset");
     }
   }
 
@@ -243,6 +243,7 @@ class Window2D {
    *
    * @return A cloned copy of this window.
    */
+  @Override
   public Object clone() {
     return cloneWindow();
   }
@@ -319,6 +320,7 @@ class Window2D {
    * @param obj The input window to compare to this object.
    * @return True if all indices ie. class variables are the same.
    */
+  @Override
   public boolean equals(Object obj) {
     if (obj instanceof Window2D) {
       return equalsWindow((Window2D) obj);
@@ -333,6 +335,7 @@ class Window2D {
    *
    * @return Formatted string of instance information.
    */
+  @Override
   public String toString() {
 
     StringBuffer b = new StringBuffer();

@@ -13,7 +13,7 @@ import java.util.List;
  * {@code ClusterSource} so that its rate and weight are available. The
  * {@code List} may only be added to; all other optional operations of
  * {@code AbstractList} throw an {@code UnsupportedOperationException}.
- * 
+ *
  * @author Peter Powers
  */
 final class ClusterGroundMotions extends AbstractList<GroundMotions> {

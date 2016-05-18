@@ -57,7 +57,7 @@ class Container2DImpl<T> implements Container2D<T> {
 
   /**
    * Constructs a new <code>Container2D</code> with the supplied dimensions.
-   * 
+   *
    * @param numRows number of rows
    * @param numCols number of columns
    * @exception IllegalArgumentException if <code>numRows</code> or
@@ -69,7 +69,7 @@ class Container2DImpl<T> implements Container2D<T> {
     checkArgument(numRows > 0, "Number of rows must be greater than 0");
     checkArgument(numCols > 0, "Number of columns must be greater than 0");
     checkArgument((((long) numRows * (long) numCols) < 2147483647L),
-      "Container size exceeds allowable 32-bit address space");
+        "Container size exceeds allowable 32-bit address space");
     this.numRows = numRows;
     this.numCols = numCols;
     size = (long) numRows * (long) numCols;
@@ -77,11 +77,13 @@ class Container2DImpl<T> implements Container2D<T> {
   }
 
   /** Sets the name of this container */
+  @Override
   public void setName(String name) {
     this.name = name;
   }
 
   /** Gets the name of this container */
+  @Override
   public String name() {
     return name;
   }
@@ -96,6 +98,7 @@ class Container2DImpl<T> implements Container2D<T> {
    * @exception ArrayIndexOutOfBoundsException Thrown if the row and column are
    *            beyond the two dimensional matrix range.
    */
+  @Override
   public void set(int row, int column, T obj) throws ArrayIndexOutOfBoundsException {
     checkBounds(row, column);
     data[row * numCols + column] = obj;
@@ -119,6 +122,7 @@ class Container2DImpl<T> implements Container2D<T> {
    *
    * @return Number of rows.
    */
+  @Override
   public int getNumRows() {
     return numRows;
   }
@@ -128,6 +132,7 @@ class Container2DImpl<T> implements Container2D<T> {
    *
    * @return Get number of columns.
    */
+  @Override
   public int getNumCols() {
     return numCols;
   }
@@ -138,6 +143,7 @@ class Container2DImpl<T> implements Container2D<T> {
    * @param row The x coordinate of the cell.
    * @param column The y coordinate of the cell.
    */
+  @Override
   @SuppressWarnings("unchecked")
   public T get(int row, int column) {
     checkBounds(row, column);
@@ -154,6 +160,7 @@ class Container2DImpl<T> implements Container2D<T> {
    * @exception ArrayIndexOutOfBoundsException Thrown if the row is beyond the
    *            two dimensional matrix range.
    */
+  @Override
   public ListIterator<T> getColumnIterator(int row) throws ArrayIndexOutOfBoundsException {
     if (row >= numRows) {
       throw new ArrayIndexOutOfBoundsException("colIt: Row cannot be greater than max index");
@@ -173,10 +180,11 @@ class Container2DImpl<T> implements Container2D<T> {
    * @exception ArrayIndexOutOfBoundsException Thrown if the column is beyond
    *            the two dimensional matrix range.
    */
+  @Override
   public ListIterator<T> getRowIterator(int column) throws ArrayIndexOutOfBoundsException {
     if (column >= numCols) {
       throw new ArrayIndexOutOfBoundsException(
-        "rowIt Column cannot be greater than max index");
+          "rowIt Column cannot be greater than max index");
     }
 
     RowIterator it = new RowIterator(column);
@@ -191,6 +199,7 @@ class Container2DImpl<T> implements Container2D<T> {
    *
    * @return The allByColumnsIterator value
    */
+  @Override
   public ListIterator<T> getAllByColumnsIterator() {
     AllByColumnsIterator it = new AllByColumnsIterator();
     return it;
@@ -204,6 +213,7 @@ class Container2DImpl<T> implements Container2D<T> {
    *
    * @return The allByRowsIterator value
    */
+  @Override
   public ListIterator<T> getAllByRowsIterator() {
     AllByRowsIterator it = new AllByRowsIterator();
     return it;
@@ -229,11 +239,11 @@ class Container2DImpl<T> implements Container2D<T> {
     }
     if (row >= numRows) {
       throw new ArrayIndexOutOfBoundsException(
-        "Container2D Row cannot be greater than max index: " + numRows);
+          "Container2D Row cannot be greater than max index: " + numRows);
     }
     if (column >= numCols) {
       throw new ArrayIndexOutOfBoundsException(
-        "Container2D Column cannot be greater than max index: " + numCols);
+          "Container2D Column cannot be greater than max index: " + numCols);
     }
   }
 
@@ -242,6 +252,7 @@ class Container2DImpl<T> implements Container2D<T> {
    * metics back to 0. Doesn't delete the actual objects, only removes the
    * pointer references stored at each grid cell location.
    */
+  @Override
   public void clear() {
 
     data = null;
@@ -276,6 +287,7 @@ class Container2DImpl<T> implements Container2D<T> {
    * @param column The y coordinate of the cell.
    * @return True if an object has been set in this cell.
    */
+  @Override
   public boolean exist(int row, int column) {
     checkBounds(row, column);
 
@@ -292,6 +304,7 @@ class Container2DImpl<T> implements Container2D<T> {
    *
    * @return The number of cells.
    */
+  @Override
   public long size() {
     return size;
   }
@@ -460,6 +473,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @exception UnsupportedOperationException Funciton not currently
      *            implemented .
      */
+    @Override
     public void set(Object obj) throws UnsupportedOperationException {
       throw new UnsupportedOperationException("set(Object obj) Not implemented.");
     }
@@ -468,11 +482,13 @@ class Container2DImpl<T> implements Container2D<T> {
      * Returns true if there are more elements in this container, else returns
      * false.
      */
+    @Override
     public boolean hasNext() {
       return cursor != lastIndex;
     }
 
     /** Returns the index value of the next iteration. */
+    @Override
     public int nextIndex() {
       return cursor;
     }
@@ -484,6 +500,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @exception NoSuchElementException No more elements available, at end of
      *            list.
      */
+    @Override
     public abstract T next() throws NoSuchElementException;
 
     /**
@@ -494,6 +511,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @exception UnsupportedOperationException Function currently not
      *            implemented.
      */
+    @Override
     public T previous() throws UnsupportedOperationException {
       throw new UnsupportedOperationException("hasPrevious() Not implemented.");
     }
@@ -504,6 +522,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @exception UnsupportedOperationException Function currently not
      *            implemented.
      */
+    @Override
     public int previousIndex() throws UnsupportedOperationException {
       throw new UnsupportedOperationException("hasPrevious() Not implemented.");
     }
@@ -515,6 +534,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @exception UnsupportedOperationException Function currently not
      *            implemented.
      */
+    @Override
     public boolean hasPrevious() throws UnsupportedOperationException {
       throw new UnsupportedOperationException("hasPrevious() Not implemented.");
     }
@@ -526,6 +546,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @exception UnsupportedOperationException Function currently not
      *            implemented.
      */
+    @Override
     public void add(Object obj) throws UnsupportedOperationException {
       throw new UnsupportedOperationException("add(Object obj) Not implemented.");
     }
@@ -536,6 +557,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @exception UnsupportedOperationException Function currently not
      *            implemented.
      */
+    @Override
     public void remove() throws UnsupportedOperationException {
       throw new UnsupportedOperationException("remove() Not implemented.");
     }
@@ -574,6 +596,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception NoSuchElementException Description of the Exception
      */
+    @Override
     @SuppressWarnings("unchecked")
     public T next() throws NoSuchElementException {
       try {
@@ -582,7 +605,7 @@ class Container2DImpl<T> implements Container2D<T> {
         return object;
       } catch (IndexOutOfBoundsException e) {
         throw new NoSuchElementException(
-          "You have iterated past the last element." + e.toString());
+            "You have iterated past the last element." + e.toString());
       }
     }
 
@@ -621,6 +644,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception NoSuchElementException Description of the Exception
      */
+    @Override
     @SuppressWarnings("unchecked")
     public T next() throws NoSuchElementException {
       try {
@@ -630,7 +654,7 @@ class Container2DImpl<T> implements Container2D<T> {
         return object;
       } catch (IndexOutOfBoundsException e) {
         throw new NoSuchElementException(
-          "You have iterated past the last element." + e.toString());
+            "You have iterated past the last element." + e.toString());
       }
     }
 
@@ -669,6 +693,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception NoSuchElementException Description of the Exception
      */
+    @Override
     @SuppressWarnings("unchecked")
     public T next() throws NoSuchElementException {
 
@@ -687,7 +712,7 @@ class Container2DImpl<T> implements Container2D<T> {
         return object;
       } catch (IndexOutOfBoundsException e) {
         throw new NoSuchElementException(
-          "You have iterated past the last element. " + e.toString());
+            "You have iterated past the last element. " + e.toString());
       }
 
     }
@@ -717,6 +742,7 @@ class Container2DImpl<T> implements Container2D<T> {
      * @return Description of the Return Value
      * @exception NoSuchElementException Description of the Exception
      */
+    @Override
     @SuppressWarnings("unchecked")
     public T next() throws NoSuchElementException {
 
@@ -731,7 +757,7 @@ class Container2DImpl<T> implements Container2D<T> {
         return object;
       } catch (IndexOutOfBoundsException e) {
         throw new NoSuchElementException(
-          "You have iterated past the last element. " + e.toString());
+            "You have iterated past the last element. " + e.toString());
       }
 
     }
@@ -741,6 +767,7 @@ class Container2DImpl<T> implements Container2D<T> {
   private final static char TAB = '\t';
 
   /** Prints out each location and fault information for debugging */
+  @Override
   public String toString() {
 
     StringBuffer b = new StringBuffer();
@@ -757,8 +784,9 @@ class Container2DImpl<T> implements Container2D<T> {
         if (obj != null) {
           b.append(obj.toString());
           counter++;
-        } else
+        } else {
           b.append("NULL");
+        }
         b.append('\n');
 
         j++;

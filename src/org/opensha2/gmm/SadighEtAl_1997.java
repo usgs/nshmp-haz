@@ -22,21 +22,21 @@ import java.util.Map;
  * Implementation of the ground motion model for shallow crustal earthquakes by
  * Sadigh et al. (1997). This implementation supports soil and rock sites, the
  * rather too brad cutoff for which is vs30=750 m/s.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Reference:</b> Sadigh, K., Chang, C.-Y. , Egan, J.A., Makdisi, F., and
  * Youngs, R.R., 1997, Attenuation relationships for shallow crustal earthquakes
  * based on California strong motion data: Seismological Research Letters, v. 6,
  * n. 1, p. 180-189.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.180">
  * 10.1785/gssrl.68.1.180</a></p>
- * 
+ *
  * <p><b>Component:</b> geometric mean of two horizontal components</p>
- * 
+ *
  * @author Peter Powers
  */
 public class SadighEtAl_1997 implements GroundMotionModel {
@@ -56,11 +56,11 @@ public class SadighEtAl_1997 implements GroundMotionModel {
   static final String NAME = "Sadigh et al. (1997)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(5.0, 8.0))
-    .set(RRUP, Range.closed(0.0, 100.0))
-    .set(RAKE, Faults.RAKE_RANGE)
-    .set(VS30, Range.closed(250.0, 760.0))
-    .build();
+      .set(MAG, Range.closed(5.0, 8.0))
+      .set(RRUP, Range.closed(0.0, 100.0))
+      .set(RAKE, Faults.RAKE_RANGE)
+      .set(VS30, Range.closed(250.0, 760.0))
+      .build();
 
   static final CoefficientContainer COEFFS_BC_LO, COEFFS_BC_HI, COEFFS_D_LO, COEFFS_D_HI;
 
@@ -135,7 +135,7 @@ public class SadighEtAl_1997 implements GroundMotionModel {
     // so we just use the rock flavor (c1r == c1ss)
 
     double lnY = c.c1r + c.c2 * Mw + c.c3 * pow(max(8.5 - Mw, 0.0), 2.5) + c.c4 *
-      log(rRup + exp(c.c5 + c.c6r * Mw)) + c.c7 * log(rRup + 2);
+        log(rRup + exp(c.c5 + c.c6r * Mw)) + c.c7 * log(rRup + 2);
 
     // scale reverse amplitudes by 1.2; 0.18232 = ln(1.2)
     return (style == REVERSE) ? lnY + 0.18232 : lnY;
@@ -149,7 +149,7 @@ public class SadighEtAl_1997 implements GroundMotionModel {
     double c6 = (style == REVERSE) ? c.c6r : c.c6ss;
 
     return c1 + c.c2 * Mw - c.c3 * log(rRup + c.c4 * exp(c.c5 * Mw)) + c6 + c.c7 *
-      pow(max(8.5 - Mw, 0.0), 2.5);
+        pow(max(8.5 - Mw, 0.0), 2.5);
   }
 
   private static final double calcStdDev(final Coefficients c, final double Mw) {

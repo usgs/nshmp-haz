@@ -27,21 +27,21 @@ import java.util.Map;
  * Implementation of the Boore, Stewart, Seyhan, & Atkinson (2014) next
  * generation ground motion model for active crustal regions developed as part
  * of<a href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Reference:</b> Boore, D.M., Stewart, J.P., Seyhan, E., and Atkinson,
  * G.M., 2014, NGA-West 2 equations for predicting PGA, PGV, and 5%-damped PSA
  * for shallow crustal earthquakes, Earthquake Spectra, v. 30, n. 3, p.
  * 1057-1085.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070113EQS184M">
  * 10.1193/070113EQS184M</a></p>
- * 
+ *
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#BSSA_14
  */
@@ -50,13 +50,13 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
   static final String NAME = "Boore, Stewart, Seyhan & Atkinson (2014)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    // TODO normal faults technically only applicable to M7
-    .set(MAG, Range.closed(3.0, 8.5))
-    .set(RJB, Range.closed(0.0, 400.0))
-    .set(RAKE, Faults.RAKE_RANGE)
-    .set(VS30, Range.closedOpen(150.0, 1500.0))
-    .set(Z1P0, Range.closed(0.0, 3.0))
-    .build();
+      // TODO normal faults technically only applicable to M7
+      .set(MAG, Range.closed(3.0, 8.5))
+      .set(RJB, Range.closed(0.0, 400.0))
+      .set(RAKE, Faults.RAKE_RANGE)
+      .set(VS30, Range.closedOpen(150.0, 1500.0))
+      .set(Z1P0, Range.closed(0.0, 3.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("BSSA14.csv");
 
@@ -75,7 +75,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
     final Imt imt;
     final double e0, e1, e2, e3, e4, e5, e6, Mh, c1, c2, c3, h, c, Vc, f4, f5,
-        f6, f7, r1, r2, Δφ_r, Δφ_v, φ1, φ2, τ1, τ2;
+    f6, f7, r1, r2, Δφ_r, Δφ_v, φ1, φ2, τ1, τ2;
 
     // same for all periods; replaced with constant
     // double Mref, Rref, Dc3CaTw, Vref, f1, f3, v1, v2;
@@ -168,7 +168,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
     // Basin depth term -- Equations 9, 10 , 11
     double DZ1 = calcDeltaZ1(in.z1p0, vs30);
     double Fdz1 = (c.imt.isSA() && c.imt.period() >= 0.65)
-      ? (DZ1 <= c.f7 / c.f6) ? c.f6 * DZ1 : c.f7 : 0.0;
+        ? (DZ1 <= c.f7 / c.f6) ? c.f6 * DZ1 : c.f7 : 0.0;
 
     // Total site term -- Equation 5
     double Fs = lnFlin + lnFnl + Fdz1;
@@ -199,7 +199,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
   private static final double calcSourceTerm(final Coefficients c, final double Mw,
       final FaultStyle style) {
     double Fe = (style == STRIKE_SLIP) ? c.e1
-      : (style == REVERSE) ? c.e3 : (style == NORMAL) ? c.e2 : c.e0; // else
+        : (style == REVERSE) ? c.e3 : (style == NORMAL) ? c.e2 : c.e0; // else
     // UNKNOWN
     double MwMh = Mw - c.Mh;
     Fe += (Mw <= c.Mh) ? c.e4 * MwMh + c.e5 * MwMh * MwMh : c.e6 * MwMh;
@@ -210,13 +210,15 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
   private static final double calcPathTerm(final Coefficients c, final double Mw,
       final double R) {
     return (c.c1 + c.c2 * (Mw - M_REF)) * log(R / R_REF) +
-      (c.c3 + DC3_CA_TW) * (R - R_REF);
+        (c.c3 + DC3_CA_TW) * (R - R_REF);
   }
 
   // Calculate delta Z1 in km as a function of vs30 and using the default
   // model of ChiouYoungs_2013 -- Equations 10, 11
   private static final double calcDeltaZ1(final double z1p0, final double vs30) {
-    if (Double.isNaN(z1p0)) return 0.0;
+    if (Double.isNaN(z1p0)) {
+      return 0.0;
+    }
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     return z1p0 - exp(-7.15 / 4.0 * log((vsPow4 + A) / B)) / 1000.0;
   }

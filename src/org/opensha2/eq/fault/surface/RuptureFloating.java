@@ -21,10 +21,10 @@ import java.util.Map.Entry;
  * Rupture floating models for gridded surfaces. Each provides the means to
  * create an immutable {@code List} of {@link Rupture}s from a
  * {@link GriddedSurface}, magnitude, rate, rake, and uncertainty flag.
- * 
+ *
  * <p>NOTE: Only {@code ON} currently recognizes and applies rupture area
  * uncertainty.</p>
- * 
+ *
  * @author Peter Powers
  */
 public enum RuptureFloating {
@@ -51,11 +51,11 @@ public enum RuptureFloating {
       if (uncertainty) {
         List<Rupture> floaters = new ArrayList<>();
         Map<Dimensions, Double> dimensionsMap = scaling.dimensionsDistribution(mag,
-          maxWidth);
+            maxWidth);
         for (Entry<Dimensions, Double> entry : dimensionsMap.entrySet()) {
           Dimensions d = entry.getKey();
           List<GriddedSurface> surfaces = createFloatingSurfaces(surface, d.length,
-            d.width);
+              d.width);
           double scaledRate = rate * entry.getValue();
           floaters.addAll(createFloaters(surfaces, mag, scaledRate, rake));
         }
@@ -102,7 +102,7 @@ public enum RuptureFloating {
    * PSHA validationtest cases. It is implemented to explicitely weight down-dip
    * floating ruptures more hevily down to 10km, and then decrease their weight
    * with depth below.
-   * 
+   *
    * TODO add reference/link to PEER documentation and test cases in repo
    */
   TRIANGULAR {
@@ -113,7 +113,7 @@ public enum RuptureFloating {
       double maxWidth = surface.width();
       Dimensions d = scaling.dimensions(mag, maxWidth);
       Map<GriddedSurface, Double> surfaces = createWeightedFloatingSurfaces(surface,
-        d.length, d.width);
+          d.length, d.width);
       return createFloaters(surfaces, mag, rate, rake);
     }
   };
@@ -193,7 +193,7 @@ public enum RuptureFloating {
 
       for (int startCol = 0; startCol < alongCount; startCol++) {
         GriddedSubsetSurface gss = new GriddedSubsetSurface(floaterRowSize, floaterColSize,
-          startRow, startCol, parent);
+            startRow, startCol, parent);
         floaterList.add(gss);
       }
     }
@@ -225,7 +225,7 @@ public enum RuptureFloating {
     for (int startCol = 0; startCol < alongCount; startCol++) {
       for (int startRow = 0; startRow < downCount; startRow++) {
         GriddedSubsetSurface gss = new GriddedSubsetSurface(floaterRowSize, floaterColSize,
-          startRow, startCol, parent);
+            startRow, startCol, parent);
         floaterList.add(gss);
       }
     }
@@ -244,7 +244,7 @@ public enum RuptureFloating {
    * above to generate a pdf of weights that peaks at a depth of 1/3 the parent
    * surface width with weight such that the integral over the distribution is
    * 1.
-   * 
+   *
    * Generally this should only be used with wide faults in stable continental
    * crust.
    */
@@ -272,7 +272,7 @@ public enum RuptureFloating {
     // generate depth weight array
     double[] hypoDepths = new double[downCount];
     double halfDepth =
-      floaterRowSize * parent.getGridSpacingDownDip() * sin(parent.dipRad()) / 2.0;
+        floaterRowSize * parent.getGridSpacingDownDip() * sin(parent.dipRad()) / 2.0;
     for (int startRow = 0; startRow < downCount; startRow++) {
       hypoDepths[startRow] = parent.get(startRow, 0).depth() + halfDepth;
     }
@@ -287,7 +287,7 @@ public enum RuptureFloating {
     for (int startCol = 0; startCol < alongCount; startCol++) {
       for (int startRow = 0; startRow < downCount; startRow++) {
         GriddedSubsetSurface gss = new GriddedSubsetSurface(floaterRowSize, floaterColSize,
-          startRow, startCol, parent);
+            startRow, startCol, parent);
         floaterMap.put(gss, depthWeights[startRow]);
       }
     }
@@ -329,13 +329,13 @@ public enum RuptureFloating {
     // System.out.println(DataUtils.sum(weights));
 
     DefaultGriddedSurface surf = DefaultGriddedSurface.builder()
-      .trace(LocationList.create(
-        Location.create(33.0, -118.0),
-        Location.create(33.5, -118.0)))
-      .depth(0.0)
-      .width(30.0)
-      .dip(90.0)
-      .build();
+        .trace(LocationList.create(
+            Location.create(33.0, -118.0),
+            Location.create(33.5, -118.0)))
+        .depth(0.0)
+        .width(30.0)
+        .dip(90.0)
+        .build();
 
     Dimensions d = RuptureScaling.PEER.dimensions(7.0, 30.0);
     System.out.println(d);

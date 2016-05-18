@@ -37,30 +37,30 @@ import java.util.logging.Logger;
 /**
  * Compute probabilisitic seismic hazard at a {@link Site} from a
  * {@link HazardModel}.
- * 
+ *
  * @author Peter Powers
  */
 public class HazardCalc {
 
   /**
    * Entry point for a hazard calculation.
-   * 
+   *
    * <p>Computing hazard curves requires at least 2, and at most 3, arguments.
    * At a minimum, the path to a model zip file or directory and the site(s) at
    * which to perform calculations must be specified. Under the 2-argument
    * scenario, model initialization and calculation configuration settings are
    * drawn from the config file that <i>must</i> reside at the root of the model
    * directory. Sites may be defined as a string, a CSV file, or a GeoJSON file.
-   * 
+   *
    * <p>To override any default or calculation configuration settings included
    * with the model, supply the path to another configuration file as a third
    * argument.
-   * 
+   *
    * <p>Please refer to the nshmp-haz <a
    * href="https://github.com/usgs/nshmp-haz/wiki" target="_top">wiki</a> for
    * comprehensive descriptions of source models, configuration files, site
    * files, and hazard calculations.</p>
-   * 
+   *
    * @see <a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running"
    *      target="_top"> nshmp-haz wiki</a>
    * @see <a href="https://github.com/usgs/nshmp-haz/tree/master/etc/examples"
@@ -101,8 +101,8 @@ public class HazardCalc {
       if (argCount == 3) {
         Path userConfigPath = Paths.get(args[2]);
         config = CalcConfig.Builder.copyOf(model.config())
-          .extend(CalcConfig.Builder.fromFile(userConfigPath))
-          .build();
+            .extend(CalcConfig.Builder.fromFile(userConfigPath))
+            .build();
       }
       log.info(config.toString());
 
@@ -121,12 +121,12 @@ public class HazardCalc {
 
     } catch (Exception e) {
       StringBuilder sb = new StringBuilder()
-        .append(NEWLINE)
-        .append(PROGRAM + ": error").append(NEWLINE)
-        .append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
-        .append(NEWLINE)
-        .append(Throwables.getStackTraceAsString(e))
-        .append(USAGE);
+          .append(NEWLINE)
+          .append(PROGRAM + ": error").append(NEWLINE)
+          .append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
+          .append(NEWLINE)
+          .append(Throwables.getStackTraceAsString(e))
+          .append(USAGE);
       return Optional.of(sb.toString());
     }
   }
@@ -146,9 +146,9 @@ public class HazardCalc {
       return Sites.fromString(arg);
     } catch (Exception e) {
       throw new IllegalArgumentException(
-        "'sites' [" + arg + "] must either be a 3 to 7 argument, comma-delimited string " +
-          "or specify a path to a *.csv or *.geojson file",
-        e);
+          "'sites' [" + arg + "] must either be a 3 to 7 argument, comma-delimited string " +
+              "or specify a path to a *.csv or *.geojson file",
+              e);
     }
   }
 
@@ -193,7 +193,7 @@ public class HazardCalc {
         firstBatch = false;
         Results.writeResults(outDir, results, opts);
         log.info("     batch: " + (count + 1) + "  " + batchWatch +
-          "  total: " + totalWatch);
+            "  total: " + totalWatch);
         results.clear();
         batchWatch.reset().start();
       }
@@ -243,10 +243,10 @@ public class HazardCalc {
    * distribute tasks; otherwise, the calculation will run on the current
    * thread. Be sure to shutdown any supplied executor after a calculation
    * completes.
-   * 
+   *
    * <p><b>Note:</b> any model initialization settings in {@code config} will be
    * ignored as the supplied model will already have been initialized.</p>
-   * 
+   *
    * @param model to use
    * @param config calculation configuration
    * @param site of interest
@@ -268,35 +268,35 @@ public class HazardCalc {
 
   private static final String PROGRAM = HazardCalc.class.getSimpleName();
   private static final String USAGE_COMMAND =
-    "java -cp nshmp-haz.jar org.opensha2.HazardCalc model sites [config]";
+      "java -cp nshmp-haz.jar org.opensha2.HazardCalc model sites [config]";
   private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
   private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
   private static final String SITE_STRING = "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]";
 
   private static final String USAGE = new StringBuilder()
-    .append(NEWLINE)
-    .append(PROGRAM).append(" usage:").append(NEWLINE)
-    .append("  ").append(USAGE_COMMAND).append(NEWLINE)
-    .append(NEWLINE)
-    .append("Where:").append(NEWLINE)
-    .append("  'model' is a model zip file or directory")
-    .append(NEWLINE)
-    .append("  'sites' is either:")
-    .append(NEWLINE)
-    .append("     - a string, e.g. ").append(SITE_STRING)
-    .append(NEWLINE)
-    .append("       (site class and basin terms are optional)")
-    .append(NEWLINE)
-    .append("       (escape any spaces or enclose string in double-quotes)")
-    .append(NEWLINE)
-    .append("     - or a *.csv file or *.geojson file of site data")
-    .append(NEWLINE)
-    .append("  'config' (optional) supplies a calculation configuration")
-    .append(NEWLINE)
-    .append(NEWLINE)
-    .append("For more information, see:").append(NEWLINE)
-    .append("  ").append(USAGE_URL1).append(NEWLINE)
-    .append("  ").append(USAGE_URL2).append(NEWLINE)
-    .append(NEWLINE)
-    .toString();
+      .append(NEWLINE)
+      .append(PROGRAM).append(" usage:").append(NEWLINE)
+      .append("  ").append(USAGE_COMMAND).append(NEWLINE)
+      .append(NEWLINE)
+      .append("Where:").append(NEWLINE)
+      .append("  'model' is a model zip file or directory")
+      .append(NEWLINE)
+      .append("  'sites' is either:")
+      .append(NEWLINE)
+      .append("     - a string, e.g. ").append(SITE_STRING)
+      .append(NEWLINE)
+      .append("       (site class and basin terms are optional)")
+      .append(NEWLINE)
+      .append("       (escape any spaces or enclose string in double-quotes)")
+      .append(NEWLINE)
+      .append("     - or a *.csv file or *.geojson file of site data")
+      .append(NEWLINE)
+      .append("  'config' (optional) supplies a calculation configuration")
+      .append(NEWLINE)
+      .append(NEWLINE)
+      .append("For more information, see:").append(NEWLINE)
+      .append("  ").append(USAGE_URL1).append(NEWLINE)
+      .append("  ").append(USAGE_URL2).append(NEWLINE)
+      .append(NEWLINE)
+      .toString();
 }

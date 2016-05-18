@@ -7,17 +7,17 @@ import com.google.common.base.MoreObjects;
 /**
  * Identifiers of common return periods, also referred to in PSHA as
  * probabilities of exceedance.
- * 
+ *
  * <p>Each identifier is structured as follows, for example {@code PE2IN50}:</p>
- * 
+ *
  * <ul><li>Reads as a 2% Poisson probability of exceeding some measure of ground
  * motion in a 50 year period.</li>
- * 
+ *
  * <li>Is equivalent to an annual rate of occurrence of ~0.000404 (see
  * {@link #annualRate()}).</li>
- * 
+ *
  * <li>Or once every 2475 years or so (see {@link #duration()} ).</li></ul>
- * 
+ *
  * <p>Note that the {@link Mfds} class includes useful static utilities for
  * working with Poisson probabilities, rates, and time spans.</p>
  *
@@ -64,10 +64,10 @@ public enum ReturnPeriod {
   @Override
   public String toString() {
     return MoreObjects
-      .toStringHelper(getClass().getSimpleName() + "." + name())
-      .add("annualRate", annualRate)
-      .add("duration", duration())
-      .toString();
+        .toStringHelper(getClass().getSimpleName() + "." + name())
+        .add("annualRate", annualRate)
+        .add("duration", duration())
+        .toString();
   }
 
   /**

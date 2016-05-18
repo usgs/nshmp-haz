@@ -26,26 +26,26 @@ import java.util.Map;
  * the 2008 USGS NSHMP. In addition to have two stress-drop scaling variants,
  * this model also comes in magnitude converting (mb to Mw) flavors to support
  * the 2008 central and eastern US model.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation note:</b> this uses a reduced set of frequencies that
  * correspond most closely to defined {@code Imt}s.</p>
- * 
+ *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
- * 
+ *
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
  * ground-motion prediction equations for eastern North America: Bulletin of the
  * Seismological Society of America, v. 96, p. 2181–2205.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050245">
  * 10.1785/0120050245</a></p>
- * 
+ *
  * <p><b>Component:</b> horizontal (not clear from publication)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#AB_06_140BAR
  * @see Gmm#AB_06_140BAR_AB
@@ -77,10 +77,10 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
   static final String NAME = "Atkinson & Boore (2006)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(760.0, 2000.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(760.0, 2000.0))
+      .build();
 
   static final CoefficientContainer COEFFS_A = new CoefficientContainer("AB06A.csv");
   static final CoefficientContainer COEFFS_BC = new CoefficientContainer("AB06BC.csv");
@@ -103,9 +103,9 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
     final Imt imt;
     final double c1, c2, c3, c4, c5, c6, c7, c8, c9, c10,
-        bln, b1, b2,
-        del,
-        m1, mh;
+    bln, b1, b2,
+    del,
+    m1, mh;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       this.imt = imt;
@@ -166,8 +166,8 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
   private static final double scaleFactorCalc(final double stress) {
     checkArgument(stress >= MIN_STRESS && stress <= MAX_STRESS,
-      "Supplied stress value [%s] is out of range [%s, %s]", stress,
-      MIN_STRESS, MAX_STRESS);
+        "Supplied stress value [%s] is out of range [%s, %s]", stress,
+        MIN_STRESS, MAX_STRESS);
     return log(stress / DEFAULT_STRESS) / log(2);
   }
 
@@ -186,7 +186,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
     if (stressScale != 0.0) {
       double diff = max(Mw - c.m1, 0.0);
       sf2 = stressScale *
-        min(c.del + 0.05, 0.05 + c.del * diff / (c.mh - c.m1));
+          min(c.del + 0.05, 0.05 + c.del * diff / (c.mh - c.m1));
     }
 
     // per NSHMP implementation rRup floored to 2km
@@ -205,8 +205,8 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
       // compute pga on rock
       double gndPGA = cPGA.c1 + cPGA.c2 * Mw + cPGA.c3 * Mw * Mw;
       gnd = gndPGA + (cPGA.c4 + cPGA.c5 * Mw) * f1 +
-        (cPGA.c6 + cPGA.c7 * Mw) * f2 + (cPGA.c8 + cPGA.c9 * Mw) * f0 +
-        cPGA.c10 * rRup + sf2;
+          (cPGA.c6 + cPGA.c7 * Mw) * f2 + (cPGA.c8 + cPGA.c9 * Mw) * f0 +
+          cPGA.c10 * rRup + sf2;
 
       double bnl;
 
@@ -214,7 +214,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
         bnl = c.b1;
       } else if (vs30 <= v2) {
         bnl = (c.b1 - c.b2) * Math.log(vs30 / v2) / facv1 +
-          c.b1;
+            c.b1;
       } else if (vs30 <= vref) {
         bnl = c.b2 * Math.log(vs30 / vref) / facv2;
       } else {
@@ -233,12 +233,14 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
     }
 
     gnd = gndmp + (c.c4 + c.c5 * Mw) * f1 +
-      (c.c6 + c.c7 * Mw) * f2 + (c.c8 + c.c9 * Mw) *
+        (c.c6 + c.c7 * Mw) * f2 + (c.c8 + c.c9 * Mw) *
         f0 +
-      c.c10 * rRup + sf2 + S;
+        c.c10 * rRup + sf2 + S;
 
     gnd *= BASE_10_TO_E;
-    if (c.imt != Imt.PGV) gnd -= GFAC;
+    if (c.imt != Imt.PGV) {
+      gnd -= GFAC;
+    }
 
     return GmmUtils.ceusMeanClip(c.imt, gnd);
   }

@@ -24,11 +24,11 @@ import java.util.RandomAccess;
  * y-values. All data supplied to these operations is defensively copied unless
  * it is not necessary to do so. For instance, {@code *copyOf()} variants should
  * be used where possible as x-values will never be replicated in memory.
- * 
+ *
  * <p>Although this class is not final, it can not be subclassed. Mutable
  * instances of this class are not thread-safe for operations that alter
  * y-values.</p>
- * 
+ *
  * @author Peter Powers
  */
 public abstract class XySequence implements Iterable<XyPoint> {
@@ -36,7 +36,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
   /**
    * Create a new sequence with mutable y-values from the supplied value arrays.
    * If the supplied y-value array is null, all y-values are initialized to 0.
-   * 
+   *
    * @param xs x-values to initialize sequence with
    * @param ys y-values to initialize sequence with; may be null
    * @return a mutable, {@code double[]}-backed sequence
@@ -54,7 +54,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * Create a new, immutable sequence from the supplied value arrays. Unlike
    * {@link #create(double[], double[])}, the supplied y-value array may not be
    * null.
-   * 
+   *
    * @param xs x-values to initialize sequence with
    * @param ys y-values to initialize sequence with
    * @return an immutable, {@code double[]}-backed sequence
@@ -70,16 +70,16 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
   private static XySequence create(double[] xs, double[] ys, boolean mutable) {
     return construct(
-      Arrays.copyOf(xs, xs.length),
-      (ys == null) ? new double[xs.length] : Arrays.copyOf(ys, ys.length),
-      mutable);
+        Arrays.copyOf(xs, xs.length),
+        (ys == null) ? new double[xs.length] : Arrays.copyOf(ys, ys.length),
+            mutable);
   }
 
   /**
    * Create a new sequence with mutable y-values from the supplied value
    * collections. If the y-value collection is null, all y-values are
    * initialized to 0.
-   * 
+   *
    * @param xs x-values to initialize sequence with
    * @param ys y-values to initialize sequence with; may be null
    * @return a mutable, {@code double[]}-backed sequence
@@ -99,7 +99,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * Create a new, immutable sequence from the supplied value collections.
    * Unlike {@link #create(Collection, Collection)} , the supplied y-value
    * collection may not be null.
-   * 
+   *
    * @param xs x-values to initialize sequence with
    * @param ys y-values to initialize sequence with
    * @return an immutable, {@code double[]}-backed sequence
@@ -121,9 +121,9 @@ public abstract class XySequence implements Iterable<XyPoint> {
       boolean mutable) {
 
     return construct(
-      Doubles.toArray(xs),
-      (ys == null) ? new double[xs.size()] : Doubles.toArray(ys),
-      mutable);
+        Doubles.toArray(xs),
+        (ys == null) ? new double[xs.size()] : Doubles.toArray(ys),
+            mutable);
   }
 
   private static XySequence construct(double[] xs, double[] ys, boolean mutable) {
@@ -137,7 +137,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
   /**
    * Create a mutable copy of the supplied {@code sequence}.
-   * 
+   *
    * @param sequence to copy
    * @return a mutable copy of the supplied {@code sequence}
    * @throws NullPointerException if the supplied {@code sequence} is null
@@ -149,7 +149,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
   /**
    * Create a mutable copy of the supplied {@code sequence} with all y-values
    * reset to zero.
-   * 
+   *
    * @param sequence to copy
    * @return a mutable copy of the supplied {@code sequence}
    * @throws NullPointerException if the supplied {@code sequence} is null
@@ -160,14 +160,14 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
   /**
    * Create an immutable copy of the supplied {@code sequence}.
-   * 
+   *
    * @param sequence to copy
    * @return an immutable copy of the supplied {@code sequence}
    * @throws NullPointerException if the supplied {@code sequence} is null
    */
   public static XySequence immutableCopyOf(XySequence sequence) {
     return (sequence.getClass().equals(ImmutableXySequence.class)) ? sequence
-      : new ImmutableXySequence(sequence, false);
+        : new ImmutableXySequence(sequence, false);
   }
 
   /**
@@ -175,7 +175,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * resamples via linear interpolation and does not extrapolate beyond the
    * domain of the source {@code sequence}; y-values with x-values outside the
    * domain of the source sequence are set to 0.
-   * 
+   *
    * @param sequence to resample
    * @param xs resample values
    * @return a resampled sequence
@@ -187,7 +187,9 @@ public abstract class XySequence implements Iterable<XyPoint> {
     checkArgument(checkNotNull(xs).length > 0);
     double[] yResample = Interpolate.findY(sequence.xValues(), sequence.yValues(), xs);
     // TODO disable extrapolation
-    if (true) throw new UnsupportedOperationException();
+    if (true) {
+      throw new UnsupportedOperationException();
+    }
     return XySequence.create(xs, yResample);
   }
 
@@ -411,15 +413,15 @@ public abstract class XySequence implements Iterable<XyPoint> {
   @Override
   public String toString() {
     return new StringBuilder(getClass().getSimpleName())
-      .append(":")
-      .append(NEWLINE)
-      .append(Joiner.on(NEWLINE).join(this))
-      .toString();
+        .append(":")
+        .append(NEWLINE)
+        .append(Joiner.on(NEWLINE).join(this))
+        .toString();
   }
 
   /**
    * Add a {@code term} to the y-values of this sequence in place.
-   * 
+   *
    * @param term to add
    * @return {@code this} sequence, for use inline
    */
@@ -429,7 +431,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
   /**
    * Add the supplied y-values to the y-values of this sequence in place.
-   * 
+   *
    * @param ys y-values to add
    * @return {@code this} sequence, for use inline
    */
@@ -439,7 +441,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
   /**
    * Add the y-values of a sequence to the y-values of this sequence in place.
-   * 
+   *
    * @param sequence to add
    * @return {@code this} sequence, for use inline
    * @throws IllegalArgumentException if
@@ -451,7 +453,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
   /**
    * Multiply ({@code scale}) the y-values of this sequence in place.
-   * 
+   *
    * @param scale factor
    * @return {@code this} sequence, for use inline
    */
@@ -462,7 +464,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
   /**
    * Multiply the y-values of this sequence by the y-values of another sequence
    * in place.
-   * 
+   *
    * @param sequence to multiply {@code this} sequence by
    * @return {@code this} sequence, for use inline
    * @throws IllegalArgumentException if
@@ -476,7 +478,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * Sets the y-values of this sequence to their complement in place [
    * {@code 1 - y}]. Assumes this is a probability function limited to the
    * domain [0 1].
-   * 
+   *
    * @return {@code this} sequence, for use inline
    */
   public XySequence complement() {
@@ -485,7 +487,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
   /**
    * Sets all y-values to 0.
-   * 
+   *
    * @return {@code this} sequence, for use inline
    */
   public XySequence clear() {
@@ -499,7 +501,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
   /**
    * Transforms all y-values in place using the supplied {@link Function}.
-   * 
+   *
    * @param function for transform
    * @return {@code this} sequence, for use inline
    */

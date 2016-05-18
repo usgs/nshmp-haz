@@ -38,7 +38,7 @@ import java.util.Set;
  * methods. Single or corporate authored models are identified as
  * NAME_YR_FLAVOR; multi-author models as INITIALS_YR_FLAVOR. FLAVOR is only
  * used for those models with region specific implementations or other variants.
- * 
+ *
  * @author Peter Powers
  */
 public enum Gmm {
@@ -212,7 +212,7 @@ public enum Gmm {
    * Base implementations of the Gmm used in the 2008 CEUS model all work with
    * and assume magnitude = Mw. The method converter() is provided to allow
    * subclasses to impose a conversion if necessary.
-   * 
+   *
    * All CEUS models impose a clamp on median ground motions; see
    * GmmUtils.ceusMeanClip()
    */
@@ -459,7 +459,7 @@ public enum Gmm {
 
   private GroundMotionModel createInstance(Imt imt) throws Exception {
     checkArgument(this.imts.contains(checkNotNull(imt)),
-      "Gmm: %s does not support Imt: %s", this.name(), imt.name());
+        "Gmm: %s does not support Imt: %s", this.name(), imt.name());
     Constructor<? extends GroundMotionModel> con = delegate.getDeclaredConstructor(Imt.class);
     GroundMotionModel gmm = con.newInstance(imt);
     return gmm;
@@ -468,7 +468,7 @@ public enum Gmm {
   /**
    * Retreive an instance of a {@code GroundMotionModel}, either by creating a
    * new one, or fetching from a cache.
-   * 
+   *
    * @param imt of the retreived instance
    * @throws UncheckedExecutionException if there is an instantiation problem
    */
@@ -481,7 +481,7 @@ public enum Gmm {
   /**
    * Retrieve an immutable map of {@code GroundMotionModel} instances, either by
    * creating new ones, or fetching them from a cache.
-   * 
+   *
    * @param imt of each retreived instance
    * @param gmms to retrieve
    * @throws UncheckedExecutionException if there is an instantiation problem
@@ -498,7 +498,7 @@ public enum Gmm {
    * Retrieve immutable maps of {@code GroundMotionModel} instances for a range
    * of {@code Imt}s, either by creating new ones, or fetching them from a
    * cache.
-   * 
+   *
    * @param imts to retrieve instances for
    * @param gmms to retrieve
    * @throws UncheckedExecutionException if there is an instantiation problem
@@ -527,7 +527,7 @@ public enum Gmm {
   /**
    * Return the {@code Set} of the intensity measure types ({@code Imt}s)
    * supported by all of the supplied {@code Gmm}s.
-   * 
+   *
    * @param gmms models for which to return common {@code Imt} support
    */
   public static Set<Imt> supportedIMTs(Collection<Gmm> gmms) {
@@ -549,7 +549,7 @@ public enum Gmm {
   /**
    * Return the set of spectral acceleration (SA) {@code Imt}s that are common
    * to the supplied {@code Gmm}s.
-   * 
+   *
    * @param gmms models for which to return common SA {@code Imt} support
    */
   public static Set<Imt> responseSpectrumIMTs(Collection<Gmm> gmms) {
@@ -569,83 +569,83 @@ public enum Gmm {
     WUS_14_ACTIVE_CRUST(
         "2014 Active Crust (WUS)",
         ImmutableList.of(
-          ASK_14,
-          BSSA_14,
-          CB_14,
-          CY_14)),
+            ASK_14,
+            BSSA_14,
+            CB_14,
+            CY_14)),
 
     CEUS_14_STABLE_CRUST(
         "2014 Stable Crust (CEUS)",
         ImmutableList.of(
-          ATKINSON_08_PRIME,
-          AB_06_PRIME,
-          CAMPBELL_03,
-          FRANKEL_96,
-          PEZESHK_11,
-          SILVA_02,
-          SOMERVILLE_01,
-          TP_05,
-          TORO_97_MW)),
+            ATKINSON_08_PRIME,
+            AB_06_PRIME,
+            CAMPBELL_03,
+            FRANKEL_96,
+            PEZESHK_11,
+            SILVA_02,
+            SOMERVILLE_01,
+            TP_05,
+            TORO_97_MW)),
 
     WUS_14_INTERFACE(
         "2014 Subduction Interface (WUS)",
         ImmutableList.of(
-          AB_03_GLOB_INTER,
-          AM_09_INTER,
-          BCHYDRO_12_INTER,
-          ZHAO_06_INTER)),
+            AB_03_GLOB_INTER,
+            AM_09_INTER,
+            BCHYDRO_12_INTER,
+            ZHAO_06_INTER)),
 
     WUS_14_SLAB(
         "2014 WUS Subduction Intraslab (WUS)",
         ImmutableList.of(
-          AB_03_CASC_SLAB_LOW_SAT,
-          AB_03_GLOB_SLAB_LOW_SAT,
-          BCHYDRO_12_SLAB,
-          ZHAO_06_SLAB)),
+            AB_03_CASC_SLAB_LOW_SAT,
+            AB_03_GLOB_SLAB_LOW_SAT,
+            BCHYDRO_12_SLAB,
+            ZHAO_06_SLAB)),
 
     WUS_08_ACTIVE_CRUST(
         "2008 Active Crust (WUS)",
         ImmutableList.of(
-          BA_08,
-          CB_08,
-          CY_08)),
+            BA_08,
+            CB_08,
+            CY_08)),
 
     CEUS_08_STABLE_CRUST(
         "2008 Stable Crust (CEUS)",
         ImmutableList.of(
-          AB_06_140BAR,
-          AB_06_200BAR,
-          CAMPBELL_03,
-          FRANKEL_96,
-          SILVA_02,
-          SOMERVILLE_01,
-          TP_05,
-          TORO_97_MW)),
+            AB_06_140BAR,
+            AB_06_200BAR,
+            CAMPBELL_03,
+            FRANKEL_96,
+            SILVA_02,
+            SOMERVILLE_01,
+            TP_05,
+            TORO_97_MW)),
 
     WUS_08_INTERFACE(
         "2008 Subduction Interface (WUS)",
         ImmutableList.of(
-          AB_03_GLOB_INTER,
-          YOUNGS_97_INTER,
-          ZHAO_06_INTER)),
+            AB_03_GLOB_INTER,
+            YOUNGS_97_INTER,
+            ZHAO_06_INTER)),
 
     WUS_08_SLAB(
         "2008 Subduction Intraslab (WUS)",
         ImmutableList.of(
-          AB_03_CASC_SLAB,
-          AB_03_GLOB_SLAB,
-          YOUNGS_97_SLAB)),
+            AB_03_CASC_SLAB,
+            AB_03_GLOB_SLAB,
+            YOUNGS_97_SLAB)),
 
     OTHER(
         "Others",
         ImmutableList.of(
-          ATKINSON_15,
-          AB_03_CASC_INTER,
-          MCVERRY_00_CRUSTAL,
-          MCVERRY_00_INTERFACE,
-          MCVERRY_00_SLAB,
-          MCVERRY_00_VOLCANIC,
-          SADIGH_97));
+            ATKINSON_15,
+            AB_03_CASC_INTER,
+            MCVERRY_00_CRUSTAL,
+            MCVERRY_00_INTERFACE,
+            MCVERRY_00_SLAB,
+            MCVERRY_00_VOLCANIC,
+            SADIGH_97));
 
     private final String name;
     private final List<Gmm> gmms;

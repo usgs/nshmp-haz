@@ -39,29 +39,29 @@ class MfdHelper {
 
   /*
    * For documentation:
-   * 
+   *
    * MFD default recombination rules
-   * 
+   *
    * Grid, Slab sources (with spatially varying rates)
-   * 
+   *
    * - a <Node> can only be of one type
-   * 
+   *
    * - will map to the default of that type (e.g. CA in 2008 had downweighted
    * M>6.5 in places that led to a node being either pure GR or INCR, but never
    * both)
-   * 
+   *
    * - only support multiple defaults of the same type
-   * 
+   *
    * Fault, Interface sources
-   * 
+   *
    * System
-   * 
+   *
    * - only supports a single SINGLE default MFD at this time
-   * 
+   *
    * How to manage MFD Type and Id mixing and matching?
-   * 
+   *
    * Other notes:
-   * 
+   *
    * Most source files will have a <settings> block; those that don't will not
    * trigger build() on a MfdHelper.Builder so most parsers preempt this
    * possibility be creating and empty Helper that is then ocverridden in most
@@ -91,7 +91,9 @@ class MfdHelper {
   }
 
   List<SingleData> singleData(Attributes atts) {
-    if (singleDefaults.isEmpty()) return ImmutableList.of(new SingleData(atts));
+    if (singleDefaults.isEmpty()) {
+      return ImmutableList.of(new SingleData(atts));
+    }
     List<SingleData> dataList = new ArrayList<>();
     for (SingleData singleDefault : singleDefaults) {
       dataList.add(new SingleData(atts, singleDefault));
@@ -101,7 +103,9 @@ class MfdHelper {
   }
 
   List<GR_Data> grData(Attributes atts) {
-    if (grDefaults.isEmpty()) return ImmutableList.of(new GR_Data(atts));
+    if (grDefaults.isEmpty()) {
+      return ImmutableList.of(new GR_Data(atts));
+    }
     ImmutableList.Builder<GR_Data> builder = ImmutableList.builder();
     for (GR_Data grDefault : grDefaults) {
       builder.add(new GR_Data(atts, grDefault));
@@ -110,7 +114,9 @@ class MfdHelper {
   }
 
   List<IncrData> incrementalData(Attributes atts) {
-    if (incrDefaults.isEmpty()) return ImmutableList.of(new IncrData(atts));
+    if (incrDefaults.isEmpty()) {
+      return ImmutableList.of(new IncrData(atts));
+    }
     ImmutableList.Builder<IncrData> builder = ImmutableList.builder();
     for (IncrData incrDefault : incrDefaults) {
       builder.add(new IncrData(atts, incrDefault));
@@ -119,7 +125,9 @@ class MfdHelper {
   }
 
   List<TaperData> taperData(Attributes atts) {
-    if (taperDefaults.isEmpty()) return ImmutableList.of(new TaperData(atts));
+    if (taperDefaults.isEmpty()) {
+      return ImmutableList.of(new TaperData(atts));
+    }
     ImmutableList.Builder<TaperData> builder = ImmutableList.builder();
     for (TaperData taperDefault : taperDefaults) {
       builder.add(new TaperData(atts, taperDefault));

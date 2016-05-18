@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Container class for related {@link FaultSource}s.
- * 
+ *
  * @author Peter Powers
  * @see FaultSource
  */

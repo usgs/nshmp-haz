@@ -11,7 +11,7 @@ import com.google.common.collect.Range;
 
 /**
  * Constants and utility methods related to geographic calculations.
- * 
+ *
  * @author Peter Powers
  */
 public class GeoTools {
@@ -90,7 +90,7 @@ public class GeoTools {
    * Verifies that a latitude value is between {@code MIN_LAT} and
    * {@code MAX_LAT} (inclusive). Method returns the supplied value and can be
    * used inline.
-   * 
+   *
    * @param lat to validate
    * @return the supplied latitude
    * @throws IllegalArgumentException if {@code lat} is out of range
@@ -104,7 +104,7 @@ public class GeoTools {
    * Verifies that an array of latitude values are between {@code MIN_LAT} and
    * {@code MAX_LAT} (inclusive). Method returns the supplied values and can be
    * used inline.
-   * 
+   *
    * @param lats to validate
    * @return the supplied latitude values
    * @throws IllegalArgumentException if any value is out of range
@@ -118,7 +118,7 @@ public class GeoTools {
    * Verifies that a longitude value is between {@code MIN_LON} and
    * {@code MAX_LON} (inclusive). Method returns the supplied value and can be
    * used inline.
-   * 
+   *
    * @param lon to validate
    * @return the supplied longitude
    * @throws IllegalArgumentException if {@code lon} is out of range
@@ -132,7 +132,7 @@ public class GeoTools {
    * Verifies that an array of longitude values are between {@code MIN_LON} and
    * {@code MAX_LON} (inclusive). Method returns the supplied values and can be
    * used inline.
-   * 
+   *
    * @param lons to validate
    * @return the supplied longitude values
    * @throws IllegalArgumentException if any value is out of range
@@ -146,7 +146,7 @@ public class GeoTools {
    * Verifies that a depth value is between {@code MIN_DEPTH} and
    * {@code MAX_DEPTH} (inclusive). Method returns the supplied value and can be
    * used inline.
-   * 
+   *
    * @param depth to validate
    * @return the supplied depth
    * @throws IllegalArgumentException if {@code depth} is out of range
@@ -160,7 +160,7 @@ public class GeoTools {
    * Verifies that an array of depth values are between {@code MIN_DEPTH} and
    * {@code MAX_DEPTH} (inclusive). Method returns the supplied values and can
    * be used inline.
-   * 
+   *
    * @param depths to validate
    * @return the supplied depth values
    * @throws IllegalArgumentException if any value is out of range
@@ -175,7 +175,7 @@ public class GeoTools {
    * <code>Location</code> (see <a
    * href="http://en.wikipedia.org/wiki/Earth_radius#Authalic_radius"
    * target="_blank">Wikipedia</a> for source).
-   * 
+   *
    * @param p the <code>Location</code> at which to compute the earth's radius
    * @return the earth's radius at the supplied <code>Location</code>
    */
@@ -195,7 +195,7 @@ public class GeoTools {
    * <code>Location</code>. This can be used to convert between km-based and
    * degree-based grid spacing. The calculation takes into account the shape of
    * the earth (oblate spheroid) and scales the conversion accordingly.
-   * 
+   *
    * @param p the <code>Location</code> at which to conversion value
    * @return the number of decimal degrees latitude per km at a given
    *         <code>Location</code>
@@ -212,7 +212,7 @@ public class GeoTools {
    * km at the equator by the cosine of the supplied latitude. (<i>Note</i>: The
    * values returned are not based on the radius of curvature of the earth at
    * the supplied location.)
-   * 
+   *
    * @param p the <code>Location</code> at which to conversion value
    * @return the number of decimal degrees longitude per km at a given
    *         <code>Location</code>
@@ -241,13 +241,13 @@ public class GeoTools {
 
   /**
    * Convert {@code degrees} and decimal {@code minutes} to decimal degrees.
-   * 
+   *
    * @param degrees
    * @param minutes
    */
   public static double toDecimalDegrees(double degrees, double minutes) {
     return (degrees < 0) ? (degrees - minutesToDeg(minutes))
-      : (degrees + minutesToDeg(minutes));
+        : (degrees + minutesToDeg(minutes));
   }
 
 }

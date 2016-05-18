@@ -37,10 +37,10 @@ import java.util.logging.Logger;
 
 /**
  * Utility class to load and fetch {@code GroundMotionModel} lookup tables.
- * 
+ *
  * The currently implemented tables store ground motion in log10 values;
  * additionaly, Atkinson flavored tables store ground motion in cm/s^2.
- * 
+ *
  * @author Peter Powers
  */
 final class GroundMotionTables {
@@ -157,7 +157,9 @@ final class GroundMotionTables {
   }
 
   private static Imt frankelFilenameToIMT(String s) {
-    if (s.startsWith("pga")) return PGA;
+    if (s.startsWith("pga")) {
+      return PGA;
+    }
     StringBuilder sb = new StringBuilder();
     sb.append(s.charAt(1)).append('.').append(s.charAt(3));
     return Imt.fromPeriod(Double.valueOf(sb.toString()));
@@ -176,13 +178,13 @@ final class GroundMotionTables {
 
   /*
    * Interface implemented by handlers of table-based ground motion data.
-   * 
+   *
    * Single method returns a interpolated ground motion value from the table.
    * Values outside the range supported by the table are generally constrained
    * to min or max values, although implementations may behave differently. Some
    * implementations store data in log space and therefore perform log
    * interpolation.
-   * 
+   *
    * Whether r is rRup or rJB is implementation specific. Whether
    */
   interface GroundMotionTable {
@@ -192,7 +194,7 @@ final class GroundMotionTables {
      * outside the range supported by the table are generally constrained to min
      * or max values, although implementations may behave differently. Some
      * implementations store data in log space and
-     * 
+     *
      * @param m magnitude to consider
      * @param r distance to consider, whether this is rRup or rJB is
      *        implementation specific
@@ -279,7 +281,7 @@ final class GroundMotionTables {
   // @formatter:off
   /*
    * Basic bilinear interpolation
-   * 
+   *
    *    c11---i1----c12
    *     |     |     |
    *     |-----o-----| < f2
@@ -287,7 +289,7 @@ final class GroundMotionTables {
    *    c21---i2----c22
    *           ^
    *          f1
-   * 
+   *
    */
   // @formatter:on
 
@@ -312,7 +314,7 @@ final class GroundMotionTables {
    * NOTE this was lifted from the interpolate class and could parhaps benefit
    * from checking the size of 'data' and then doing linear instead of binary
    * search.
-   * 
+   *
    * This is a clamping index search algorithm; it will always return an index
    * in the range [0, data.length - 2]; it is always used to get some value at
    * index and index+1
@@ -375,7 +377,9 @@ final class GroundMotionTables {
     @Override
     public boolean processLine(String line) throws IOException {
       lineIndex++;
-      if (lineIndex < 2) return true;
+      if (lineIndex < 2) {
+        return true;
+      }
 
       if (lineIndex == 2) {
         List<Imt> imtList = FluentIterable
@@ -404,7 +408,9 @@ final class GroundMotionTables {
         return true;
       }
 
-      if (values.isEmpty()) return true;
+      if (values.isEmpty()) {
+        return true;
+      }
 
       rIndex++;
       for (int i = 0; i < imts.size(); i++) {
@@ -426,11 +432,21 @@ final class GroundMotionTables {
   static class FrequencyToIMT implements Function<Double, Imt> {
     @Override
     public Imt apply(Double f) {
-      if (FREQ3_LO.contains(f)) return SA3P0;
-      if (FREQ3_MID.contains(f)) return SA0P3;
-      if (FREQ3_HI.contains(f)) return SA0P03;
-      if (f == 99.0) return PGA;
-      if (f == 89.0) return PGV;
+      if (FREQ3_LO.contains(f)) {
+        return SA3P0;
+      }
+      if (FREQ3_MID.contains(f)) {
+        return SA0P3;
+      }
+      if (FREQ3_HI.contains(f)) {
+        return SA0P03;
+      }
+      if (f == 99.0) {
+        return PGA;
+      }
+      if (f == 89.0) {
+        return PGV;
+      }
       return Imt.fromPeriod(1.0 / f);
     }
   }

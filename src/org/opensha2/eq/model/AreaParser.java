@@ -46,7 +46,7 @@ import javax.xml.parsers.SAXParser;
 /*
  * Non-validating area source parser. SAX parser 'Attributes' are stateful and
  * cannot be stored. This class is not thread safe.
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -87,7 +87,7 @@ class AreaParser extends DefaultHandler {
   }
 
   AreaSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -154,16 +154,18 @@ class AreaParser extends DefaultHandler {
         double strike = readDouble(STRIKE, atts);
 
         sourceBuilder
-            .depthMap(depthMap, type)
-            .maxDepth(maxDepth, type)
-            .mechs(mechMap)
-            .ruptureScaling(rupScaling);
+        .depthMap(depthMap, type)
+        .maxDepth(maxDepth, type)
+        .mechs(mechMap)
+        .ruptureScaling(rupScaling);
 
         // first validate strike by setting it in builder
         sourceBuilder.strike(strike);
         // then possibly override type if strike is set
         PointSourceType type = config.pointSourceType;
-        if (!Double.isNaN(strike)) type = PointSourceType.FIXED_STRIKE;
+        if (!Double.isNaN(strike)) {
+          type = PointSourceType.FIXED_STRIKE;
+        }
         sourceBuilder.sourceType(type);
         if (log.isLoggable(FINE)) {
           log.fine("     Depths: " + depthMap);
@@ -240,7 +242,9 @@ class AreaParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingBorder) borderBuilder.append(ch, start, length);
+    if (readingBorder) {
+      borderBuilder.append(ch, start, length);
+    }
   }
 
   @Override

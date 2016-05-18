@@ -4,7 +4,7 @@ package org.opensha2.gmm;
  * Magnitude conversion identifiers. At present these are only used in some
  * flavors of CEUS GMMs that are used with gridded seismicity sources that are
  * based on mblg catalogs.
- * 
+ *
  * @author Peter Powers
  * @see ConvertsMag
  */
@@ -12,7 +12,7 @@ public enum MagConverter {
 
   /**
    * m<sub>b</sub> to M<sub>w</sub> conversion of Johnston (1996).
-   * 
+   *
    * <p><b>Reference:</b> Johnston, A.C., 1996, Seismic moment assessment of
    * earthquakes in stable continental regions—I. Instrumental seismicity:
    * Geophysical Journal International, v. 126, p. 381–414.</p>
@@ -26,7 +26,7 @@ public enum MagConverter {
 
   /**
    * m<sub>b</sub> to M<sub>w</sub> conversion of Atkinson & Boore (1995).
-   * 
+   *
    * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 1995, Ground motion
    * relations for eastern North America: Bulletin of the Seismological Society
    * of America, v. 85, p. 17–30.</p>

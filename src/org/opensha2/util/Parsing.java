@@ -46,7 +46,7 @@ import java.util.NavigableMap;
 
 /**
  * String, file, and XML parsing utilities.
- * 
+ *
  * @author Peter Powers
  */
 public final class Parsing {
@@ -55,16 +55,16 @@ public final class Parsing {
 
   private static final Joiner.MapJoiner MAP_JOIN = Joiner.on(',').withKeyValueSeparator(":");
   private static final Splitter.MapSplitter MAP_SPLIT = Splitter.on(',').trimResults()
-    .withKeyValueSeparator(":");
+      .withKeyValueSeparator(":");
   private static final Splitter.MapSplitter MAP_MAP_SPLIT = Splitter.on(';').trimResults()
-    .withKeyValueSeparator("::");
+      .withKeyValueSeparator("::");
 
   // TODO refactor as Converters
 
   /**
    * Convert a {@code Map<Enum, Double>} to a string with the form
    * {@code [ENUM_1 : 0.8, ENUM_2 : 0.2]}.
-   * 
+   *
    * @param map the {@code map} to convert
    * @return a string representation of the supplied {@code Map}
    */
@@ -79,7 +79,7 @@ public final class Parsing {
   /**
    * Convert a string of the form {@code [ENUM_1 : 0.8, ENUM_2 : 0.2]} to a
    * {@code Map<Enum, Double>}. The returned map is immutable.
-   * 
+   *
    * @param s the string to parse
    * @param type {@code Class} to use as the key of the returned map
    * @throws IllegalArgumentException if supplied string is malformed or empty,
@@ -97,7 +97,7 @@ public final class Parsing {
     Function<String, T> keyFunc = Enums.stringConverter(type);
     for (Entry<String, String> entry : strMap.entrySet()) {
       wtMap.put(keyFunc.apply(entry.getKey().trim()),
-        Doubles.stringConverter().convert(entry.getValue()));
+          Doubles.stringConverter().convert(entry.getValue()));
     }
     checkWeightSum(wtMap.values());
     return wtMap;
@@ -111,7 +111,7 @@ public final class Parsing {
    * {@code Map.entrySet()} references or using keys derived from
    * {@code Map.keySet()} as {@code Double} comparisons are inherently
    * problematic.
-   * 
+   *
    * @param s the string to parse
    * @throws IllegalArgumentException if {@code s} is malformed or empty, or if
    *         weights do not sum to 1.0, within {@link Data#WEIGHT_TOLERANCE}
@@ -123,7 +123,7 @@ public final class Parsing {
   public static NavigableMap<Double, Map<Double, Double>> stringToValueValueWeightMap(String s) {
     Map<String, String> strMap = MAP_MAP_SPLIT.split(trimEnds(checkNotNull(s)));
     ImmutableSortedMap.Builder<Double, Map<Double, Double>> builder = ImmutableSortedMap
-      .naturalOrder();
+        .naturalOrder();
     for (Entry<String, String> entry : strMap.entrySet()) {
       double key = Doubles.stringConverter().convert(entry.getKey());
       builder.put(key, stringToValueWeightMap(entry.getValue()));
@@ -137,7 +137,7 @@ public final class Parsing {
    * should only be accessed via {@code Map.entrySet()} references or using keys
    * derived from {@code Map.keySet()} as {@code Double} comparisons are
    * inherently problematic.
-   * 
+   *
    * @param s the string to parse
    * @throws IllegalArgumentException if {@code s} is malformed or if weights do
    *         not sum to 1.0, within {@link Data#WEIGHT_TOLERANCE}
@@ -162,7 +162,7 @@ public final class Parsing {
   /**
    * Put SAX {@code Attributes} into a name-value {@code Map<String, String>} (
    * {@code Attributes} are stateful when parsing XML).
-   * 
+   *
    * @param atts the {@code Attributes} to store in {@code Map}
    * @return a {@code Map} of name-value XML attribute pairs
    */
@@ -177,7 +177,7 @@ public final class Parsing {
   /**
    * Add an attribute with an {@code Enum.toString()} name and string value to
    * an XML {@link Element}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param value the value of the attribute
    * @param parent the {@code Element} to add attribute to
@@ -189,7 +189,7 @@ public final class Parsing {
   /**
    * Add an attribute with an {@code Enum.toString()} name and
    * {@code Enum.name()} value to an XML {@link Element}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param value the value of the attribute
    * @param parent the {@code Element} to add attribute to
@@ -201,7 +201,7 @@ public final class Parsing {
   /**
    * Add an attribute with an {@code Enum.toString()} name and
    * {@code Boolean.toString()} value to an XML {@link Element}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param value the value of the attribute
    * @param parent the {@code Element} to add attribute to
@@ -213,7 +213,7 @@ public final class Parsing {
   /**
    * Add an attribute with an {@code Enum.toString()} name and
    * {@code Double.toString()} value to an XML {@link Element}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param value the value of the attribute
    * @param parent the {@code Element} to add attribute to
@@ -225,7 +225,7 @@ public final class Parsing {
   /**
    * Add an attribute with an {@code Enum.toString()} name and
    * {@code Integer.toString()} value to an XML {@link Element}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param value the value of the attribute
    * @param parent the {@code Element} to add attribute to
@@ -237,7 +237,7 @@ public final class Parsing {
   /**
    * Add an attribute with an {@code Enum.toString()} name and
    * {@code Arrays.toString(double[])} value to an XML {@link Element}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param values the value of the attribute
    * @param parent the {@code Element} to add attribute to
@@ -251,7 +251,7 @@ public final class Parsing {
    * {@code double} value to an XML {@link Element}. Note that extra leading and
    * trailing zeros are removed from the formatted value per
    * {@link #stripZeros(String)}.
-   * 
+   *
    * @param id the attribute name identifier
    * @param value the {@code double} value of the attribute
    * @param format a format string
@@ -269,7 +269,7 @@ public final class Parsing {
   /**
    * Add a child {@link Element} to a parent and return a reference to the
    * child.
-   * 
+   *
    * @param id the {@code Element} name identifier
    * @param parent {@code Element} for child
    */
@@ -286,7 +286,7 @@ public final class Parsing {
   /**
    * Add a child {@link Comment} to a parent and return a reference to the
    * comment.
-   * 
+   *
    * @param comment to add
    * @param parent {@code Element} for comment
    */
@@ -301,7 +301,7 @@ public final class Parsing {
    * from an {@link Attributes} container as a {@code boolean}. Method
    * explicitely checks that a case-insensitive value of "true" or "false" is
    * supplied (as opposed to simply defaulting to {@code false}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param atts a SAX {@code Attributes} container
    * @throws NullPointerException if no attribute with the name
@@ -312,14 +312,14 @@ public final class Parsing {
     String value = checkNotNull(atts).getValue(name);
     validateAttribute(name, value);
     checkArgument(value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false"),
-      "Unparseable attribute " + id.toString() + "=\"" + value + "\"");
+        "Unparseable attribute " + id.toString() + "=\"" + value + "\"");
     return Boolean.valueOf(value);
   }
 
   /**
    * Read and return the value associated with an {@code Enum.toString()} name
    * from an {@link Attributes} container as an {@code int}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param atts a SAX {@code Attributes} container
    * @throws NullPointerException if no attribute with the name
@@ -338,7 +338,7 @@ public final class Parsing {
   /**
    * Read and return the value associated with an {@code Enum.toString()} name
    * from an {@link Attributes} container as a {@code double}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param atts a SAX {@code Attributes} container
    * @throws NullPointerException if no attribute with the name
@@ -357,7 +357,7 @@ public final class Parsing {
   /**
    * Read and return the value associated with an {@code Enum.toString()} name
    * from an {@link Attributes} container as a {@code double[]}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param atts a SAX {@code Attributes} container
    * @throws NullPointerException if no attribute with the name
@@ -376,7 +376,7 @@ public final class Parsing {
   /**
    * Read and return the value associated with an {@code Enum.toString()} name
    * from an {@link Attributes} container as a {@code String}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param atts a SAX {@code Attributes} container
    * @throws NullPointerException if no attribute with the name
@@ -391,7 +391,7 @@ public final class Parsing {
   /**
    * Read and return the value associated with an {@code Enum.toString()} name
    * from an {@link Attributes} container as an {@code Enum}.
-   * 
+   *
    * @param id the name identifier of the attribute
    * @param atts a SAX {@code Attributes} container
    * @param type the {@code class} of {@code enum} to return
@@ -408,13 +408,13 @@ public final class Parsing {
 
   private static IllegalArgumentException createAttributeException(String name, String value) {
     return new IllegalArgumentException(
-      "Unparseable attribute: " + name + "=\"" + value + "\"");
+        "Unparseable attribute: " + name + "=\"" + value + "\"");
   }
 
   /**
    * Returns a string containing the string representation of each of
    * {@code parts} joined with {@code delimiter}.
-   * 
+   *
    * @param parts the objects to join
    * @param delimiter the {@link Delimiter} to join on
    * @see Joiner
@@ -426,7 +426,7 @@ public final class Parsing {
   /**
    * Split a {@code sequence} into string components and make them available
    * through a (possibly-lazy) {@code Iterator}.
-   * 
+   *
    * @param sequence the sequence of characters to split
    * @param delimiter the {@link Delimiter} to split on
    * @see Splitter
@@ -438,7 +438,7 @@ public final class Parsing {
   /**
    * Split a {@code sequence} into string components and make them available
    * through an immutable {@code List}.
-   * 
+   *
    * @param sequence the sequence of characters to split
    * @param delimiter the {@link Delimiter} to split on
    */
@@ -449,15 +449,15 @@ public final class Parsing {
   /**
    * Split {@code sequence} into {@code Double} components and make them
    * available through an immutable {@code List}.
-   * 
+   *
    * @param sequence the sequence of characters to split
    * @param delimiter the {@link Delimiter} to split on
    */
   public static List<Double> splitToDoubleList(CharSequence sequence, Delimiter delimiter) {
     return FluentIterable
-      .from(split(sequence, delimiter))
-      .transform(Doubles.stringConverter())
-      .toList();
+        .from(split(sequence, delimiter))
+        .transform(Doubles.stringConverter())
+        .toList();
   }
 
   /**
@@ -514,7 +514,7 @@ public final class Parsing {
     /**
      * Returns an empty-string-omitting and result-trimming {@link Splitter} on
      * this {@code Delimiter}.
-     * 
+     *
      * @see Splitter#omitEmptyStrings()
      * @see Splitter#trimResults()
      */
@@ -526,22 +526,22 @@ public final class Parsing {
   /**
    * Return a {@code String} representation of an {@code Iterable<Enum>} where
    * {@code Enum.name()} is used instead of {@code Enum.toString()}.
-   * 
+   *
    * @param iterable to process
    * @param enumClass
    */
   public static <E extends Enum<E>> String enumsToString(Iterable<E> iterable,
       Class<E> enumClass) {
     return addBrackets(FluentIterable
-      .from(iterable)
-      .transform(Enums.stringConverter(enumClass).reverse())
-      .join(Delimiter.COMMA.joiner()));
+        .from(iterable)
+        .transform(Enums.stringConverter(enumClass).reverse())
+        .join(Delimiter.COMMA.joiner()));
   }
 
   /**
    * Convert an {@code Enum.name()} to a space-delimited presentation-friendly
    * string.
-   * 
+   *
    * @param e the {@code Enum} to generate label for
    * @param capitalize true if fist letter of each word should be capitalized;
    *        false if letters should all be lowercase
@@ -553,7 +553,7 @@ public final class Parsing {
   /**
    * Convert an {@code Enum.name()} to a dash-delimited presentation-friendly
    * string.
-   * 
+   *
    * @param e the {@code Enum} to generate label for
    * @param capitalize true if fist letter of each word should be capitalized;
    *        false if letters should all be lowercase
@@ -575,7 +575,7 @@ public final class Parsing {
   /**
    * Capitalize supplied string by converting the first {@code char} to
    * uppercase and all subsequent {@code char}s to lowercase.
-   * 
+   *
    * @param s the string to capitalize
    */
   public static String capitalize(String s) {
@@ -586,12 +586,12 @@ public final class Parsing {
    * Convert a bracketed and comma-delimited string of numbers (e.g. [1.0, 2.0,
    * 3.0] to a {@code double[]}. This is the reverse of
    * {@link Arrays#toString(double[])} and {@link AbstractCollection#toString()}
-   * 
+   *
    * @param s the string to convert
    */
   public static double[] toDoubleArray(String s) {
     return Doubles.toArray(FluentIterable.from(split(trimEnds(s), Delimiter.COMMA))
-      .transform(Doubles.stringConverter()).toList());
+        .transform(Doubles.stringConverter()).toList());
   }
 
   /**
@@ -600,13 +600,13 @@ public final class Parsing {
    * {@link AbstractCollection#toString()} , but will format the values using
    * the supplied format string. The supplied {@code format} should match that
    * expected by {@code String.format(String, Object...)}
-   * 
+   *
    * @param values the values to convert
    * @param format a format string
    */
   public static String toString(Collection<Double> values, String format) {
     return addBrackets(join(Iterables.transform(values, new FormatDoubleFunction(format)),
-      Delimiter.COMMA));
+        Delimiter.COMMA));
   }
 
   /**
@@ -615,7 +615,7 @@ public final class Parsing {
    * {@link AbstractCollection#toString()} , but will format the values using
    * the supplied format string. The supplied {@code format} should match that
    * expected by {@code String.format(String, Object...)}
-   * 
+   *
    * @param values the values to convert
    * @param format a format string
    * @param delimiter the delimiter to use
@@ -625,7 +625,7 @@ public final class Parsing {
   public static String toString(Collection<Double> values, String format, String delimiter,
       boolean brackets) {
     String base = Joiner.on(delimiter).join(
-      Iterables.transform(values, new FormatDoubleFunction(format)));
+        Iterables.transform(values, new FormatDoubleFunction(format)));
     return brackets ? addBrackets(base) : base;
   }
 
@@ -634,7 +634,7 @@ public final class Parsing {
    * string form. For example,
    * {@code List<Integer>.toString() = "[1, 2, 3, 4, 10, 19, 18, 17, 16]"} would
    * instead be written as {@code "1:4,10,19:16"}.
-   * 
+   *
    * @param values to convert
    * @throws IllegalArgumentException if {@code values} is empty or if
    *         {@code values} contains adjacent repeating values
@@ -654,8 +654,8 @@ public final class Parsing {
       checkArgument(next != end, "repeating value %s in %s", next, values);
       boolean currentDir = next > end;
       boolean terminateRange =
-        // step > 1
-        (Math.abs(next - end) != 1) ||
+          // step > 1
+          (Math.abs(next - end) != 1) ||
           // direction change
           (buildingRange && currentDir != dir) ||
           // end of list
@@ -693,13 +693,13 @@ public final class Parsing {
    * {@code [1, 2, 3, 4, 10, 19, 18, 17, 16]}). This method should only be
    * called with strings created by {@link #intListToRangeString}, otherwise
    * results are undefined.
-   * 
+   *
    * @param s the string to convert
    * @see #intListToRangeString
    */
   public static List<Integer> rangeStringToIntList(String s) {
     Iterable<int[]> values = Iterables.transform(split(s, Delimiter.COMMA),
-      StringToIntArray.INSTANCE);
+        StringToIntArray.INSTANCE);
     return Ints.asList(Ints.concat(Iterables.toArray(values, int[].class)));
   }
 
@@ -720,7 +720,7 @@ public final class Parsing {
     public int[] apply(String s) {
       if (s.contains(":")) {
         Iterator<Integer> rangeIt = Iterators.transform(
-          split(s, Delimiter.COLON).iterator(), Ints.stringConverter());
+            split(s, Delimiter.COLON).iterator(), Ints.stringConverter());
         return Data.indices(rangeIt.next(), rangeIt.next());
       }
       return new int[] { Integer.valueOf(s) };
@@ -731,13 +731,17 @@ public final class Parsing {
    * Strip trailing zeros of a decimal number that has already been formatted as
    * a string. Method will leave a single zero after a decimal. Method will not
    * alter exponential forms, which may have a critical '0' in last position.
-   * 
+   *
    * @param s the string to clean
    */
   public static String stripZeros(String s) {
-    if (s.charAt(1) == '.' && s.contains("e-")) return s;
+    if (s.charAt(1) == '.' && s.contains("e-")) {
+      return s;
+    }
     s = s.replaceAll("0*$", "");
-    if (s.endsWith(".")) s += "0";
+    if (s.endsWith(".")) {
+      s += "0";
+    }
     return s;
   }
 
@@ -746,7 +750,7 @@ public final class Parsing {
    * {@code String} of leading and trailing whitespace (via
    * {@code String.trim()}), and then removing the first and last characters. At
    * a minimum, this method will return an empty string.
-   * 
+   *
    * @param s {@code String} to trim
    * @throws IllegalArgumentException if the size of the supplied string is
    *         &lt;2 after leading and trailing whitespace has been removed
@@ -765,7 +769,7 @@ public final class Parsing {
   }
 
   private static final Splitter.MapSplitter QUERY_SPLITTER = Splitter.on('&').trimResults()
-    .withKeyValueSeparator('=');
+      .withKeyValueSeparator('=');
 
   private static final Joiner.MapJoiner QUERY_JOINER = Joiner.on('&').withKeyValueSeparator("=");
 
@@ -782,14 +786,16 @@ public final class Parsing {
    * @param query the string to convert
    */
   public static Map<String, String> queryToMap(String query) {
-    if (query.startsWith("?")) query = query.substring(1);
+    if (query.startsWith("?")) {
+      query = query.substring(1);
+    }
     return QUERY_SPLITTER.split(query);
   }
 
   /**
    * Read and return the {@code int} at {@code position} in a space-delimited
    * string.
-   * 
+   *
    * @param s the string to read from
    * @param position the position to read
    */
@@ -800,7 +806,7 @@ public final class Parsing {
   /**
    * Read and return the {@code double} at {@code position} in a space-delimited
    * string.
-   * 
+   *
    * @param s the string to read from
    * @param position the position to read
    */
@@ -811,7 +817,7 @@ public final class Parsing {
   /**
    * Strip a trailing comment from a string that starts with the supplied
    * character and return the cleaned string.
-   * 
+   *
    * @param s the string to process
    * @param c the comment indicator character
    */
@@ -823,7 +829,7 @@ public final class Parsing {
   /**
    * Read the specified number of strings from an {@code Iterator} and return
    * them as a {@code List}.
-   * 
+   *
    * @param it the string {@code Iterator} to read from
    * @param n the number of strings to read
    */
@@ -839,7 +845,7 @@ public final class Parsing {
    * Returns a {@link Function} for converting {@code double}s to formatted
    * strings. If a value to format is 0.0, the format string is ignored in favor
    * of always printing the often more compact string: "0.0".
-   * 
+   *
    * @param format a format string
    * @see String#format(String, Object...)
    */
@@ -863,7 +869,7 @@ public final class Parsing {
   /**
    * Reads a binary {@code byte} stream as a sequence of {@code double}s. Method
    * closes the supplied {@code InputStream} before returning.
-   * 
+   *
    * @param in the {@code InputStream} to read from
    * @param byteCount number of bytes to read
    * @return a {@code List<Double>}
@@ -889,7 +895,7 @@ public final class Parsing {
   /**
    * Reads a binary {@code byte} stream as a sequence of {@code int}s. Method
    * closes the supplied {@code InputStream} before returning.
-   * 
+   *
    * @param in the {@code InputStream} to read from
    * @return a {@code List} of {@code List<Integer>}s
    * @throws IOException if there is a problem reading the supplied
@@ -916,7 +922,7 @@ public final class Parsing {
 
   /**
    * This method is currently unused and slated for removal.
-   * 
+   *
    * @param in
    * @param bitSetSize
    * @throws IOException

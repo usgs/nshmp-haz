@@ -15,7 +15,7 @@ class BooreAtkinsonSiteAmp {
    * NOTE: Currently only 2 Gmms use this model. One object is created for every
    * period instance. Should the model be more broadly used, consider adding a
    * loading cache.
-   * 
+   *
    * Boore & Atkinson 2008 also have this model nested in implementation.
    * Consider removing and pointing here.
    */
@@ -56,7 +56,7 @@ class BooreAtkinsonSiteAmp {
    * of <code>vs30</code>: log(AMP at vs30)-log(AMP at vs30r). Value at
    * <code>vs30 == vs30r</code> is unity. This function was adapted from
    * hazSUBXngatest.f and is valid for 23 periods.
-   * 
+   *
    * @param lnPga reference natural log pga
    * @param vs30 at a site of interest
    * @param vs30r reference vs30, usually one value for soil and another for

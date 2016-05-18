@@ -25,17 +25,19 @@ class Surfaces {
     Location loc3 = surf.getLocation(surf.getNumRows() - 1, 0);
     Location loc4 = surf.getLocation(surf.getNumRows() - 1, surf.getNumCols() - 1);
     return new String("\tRup. Surf. Corner Locations (lat, lon, depth (km):" + "\n\n" + "\t\t" +
-      (float) loc1.lat() + ", " + (float) loc1.lon() + ", " + (float) loc1.depth() + "\n" +
-      "\t\t" + (float) loc2.lat() + ", " + (float) loc2.lon() + ", " + (float) loc2.depth() +
-      "\n" + "\t\t" + (float) loc3.lat() + ", " + (float) loc3.lon() + ", " +
-      (float) loc3.depth() + "\n" + "\t\t" + (float) loc4.lat() + ", " + (float) loc4.lon() +
-      ", " + (float) loc4.depth() + "\n");
+        (float) loc1.lat() + ", " + (float) loc1.lon() + ", " + (float) loc1.depth() + "\n" +
+        "\t\t" + (float) loc2.lat() + ", " + (float) loc2.lon() + ", " + (float) loc2.depth() +
+        "\n" + "\t\t" + (float) loc3.lat() + ", " + (float) loc3.lon() + ", " +
+        (float) loc3.depth() + "\n" + "\t\t" + (float) loc4.lat() + ", " + (float) loc4.lon() +
+        ", " + (float) loc4.depth() + "\n");
   }
 
   public static double getFractionOfSurfaceInRegion(GriddedSurface surface, Region region) {
     double numInside = 0;
     for (Location loc : surface) {
-      if (region.contains(loc)) numInside += 1;
+      if (region.contains(loc)) {
+        numInside += 1;
+      }
     }
     return numInside / surface.size();
   }

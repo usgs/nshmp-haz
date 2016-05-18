@@ -32,12 +32,12 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Static utility methods to operate on geographic {@code Location} data.
- * 
+ *
  * <p> See: <a href="http://williams.best.vwh.net/avform.htm" target="_blank">
  * Aviation Formulary</a> for formulae implemented in this class as well as <a
  * href="http://www.movable-type.co.uk/scripts/latlong.html"
  * target="_blank">Moveable Type Scripts</a> for other implementations.</p>
- * 
+ *
  * @author Peter Powers
  * @see Location
  */
@@ -57,12 +57,12 @@ public final class Locations {
    * 'fast' versions were updated as well. All legacy methods, however, are
    * preserved in LocationUtilsTest.java where comparison tests can be rerun.
    * P.Powers 3-6-2010
-   * 
+   *
    * Most methods take Locations exclusively as arguments. This alleviates any
    * error checking that must otherwise be performed on user supplied lat-lon
    * values. It also alleviates the need for expensive degree-radian conversions
    * by using radians, the native format for Locations, exclusively.
-   * 
+   *
    * TODO: Add log warnings when 'fast' methods are being used for points that
    * exceed some max separation.
    */
@@ -76,7 +76,7 @@ public final class Locations {
    * Haversine</a> formula. This method properly handles values spanning ±180°.
    * See <a href="http://williams.best.vwh.net/avform.htm#Dist"> Aviation
    * Formulary</a> for source. Result is returned in radians.
-   * 
+   *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
    * @return the angle between the points (in radians)
@@ -96,7 +96,7 @@ public final class Locations {
    * using the Haversine formula for computing the angle between two points. For
    * a faster, but less accurate implementation at large separations, see
    * {@link #horzDistanceFast(Location, Location)}.
-   * 
+   *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
    * @return the distance between the points in km
@@ -113,12 +113,12 @@ public final class Locations {
    * imprecise at large distances. Method uses the latitudinal and longitudinal
    * differences between the points as the sides of a right triangle. The
    * longitudinal distance is scaled by the cosine of the mean latitude.
-   * 
+   *
    * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
    * #177;180° and fails where the numeric angle exceeds 180°. Convert data to
    * the 0-360° interval or use {@link #horzDistance(Location, Location)} in
    * such instances.</p>
-   * 
+   *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
    * @return the distance between the points in km
@@ -153,7 +153,7 @@ public final class Locations {
    * Returns the vertical separation between two {@code Location}s. The returned
    * value is not absolute and preserves the sign of the difference between the
    * points.
-   * 
+   *
    * @param p1 the first {@code Location} point
    * @param p2 the first {@code Location} point
    * @return the vertical separation between the points
@@ -168,7 +168,7 @@ public final class Locations {
    * into account the depths of the points. For a faster, but less accurate
    * implementation at large separations, see
    * {@link #linearDistanceFast(Location, Location)}.
-   * 
+   *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
    * @return the distance in km between the points
@@ -188,15 +188,15 @@ public final class Locations {
    * {@code Location}s. This simple and speedy implementation uses the
    * Pythagorean theorem, treating horizontal and vertical separations as
    * orthogonal.
-   * 
+   *
    * <p><b>Note:</b> This method is very imprecise at large separations and
    * should not be used for points >200km apart. If an estimate of separation
    * distance is not known in advance use
    * {@link #linearDistance(Location, Location)} for more reliable results.</p>
-   * 
+   *
    * <p><b>Note:</b> This method fails for values spanning ±180°; see
    * {@link #horzDistanceFast(Location, Location)}.</p>
-   * 
+   *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
    * @return the distance in km between the points
@@ -219,17 +219,17 @@ public final class Locations {
    * href="http://williams.best.vwh.net/avform.htm#XTE"> Aviation Formulary</a>
    * for source. The sign of the result indicates which side of the supplied
    * line {@code p3} is on (right:[+] left:[-]).
-   * 
+   *
    * <p>This method, though more accurate over longer distances and line
    * lengths, is up to 20x slower than
    * {@link #distanceToLineFast(Location, Location, Location)}. However, this
    * method returns accurate results for values spanning #177;180°.</p>
-   * 
+   *
    * <p>If the line should instead be treated as a segment such that the result
    * will be a distance to an endpoint if {@code p3} does not project onto the
    * segment, use {@link #distanceToSegment(Location, Location, Location)}
    * instead.</p>
-   * 
+   *
    * @param p1 the first {@code Location} point on the line
    * @param p2 the second {@code Location} point on the line
    * @param p3 the {@code Location} point for which distance will be calculated
@@ -255,18 +255,18 @@ public final class Locations {
    * are scaled by the cosine of latitude; it is only appropriate for use over
    * short distances (e.g. <200 km). The sign of the result indicates which side
    * of the supplied line {@code p3} is on (right:[+] left:[-]).
-   * 
+   *
    * <p><b>Note:</b> This method does <i>NOT</i> support values spanning ±180°
    * and results for such input values are not guaranteed. Convert data to the
    * 0-360° interval or use
    * {@link #distanceToLine(Location, Location, Location)} in such
    * instances.</p>
-   * 
+   *
    * <p>If the line should instead be treated as a segment such that the result
    * will be a distance to an endpoint if {@code p3} does not project onto the
    * segment, use {@link #distanceToSegmentFast(Location, Location, Location)}
    * instead.</p>
-   * 
+   *
    * @param p1 the first {@code Location} point on the line
    * @param p2 the second {@code Location} point on the line
    * @param p3 the {@code Location} point for which distance will be calculated
@@ -299,7 +299,7 @@ public final class Locations {
    * {@code EventlyGridddedSurface} by looping over all the locations in the
    * surface and returning the smallest one determined by
    * {@link #horzDistance(Location, Location)}.
-   * 
+   *
    * @param loc a {@code Location}
    * @param rupSurf an EvenlyGriddedSurfaceAPI
    * @return the minimum distance to a surface from the supplied
@@ -323,7 +323,7 @@ public final class Locations {
    * {@code EventlyGridddedSurface} by looping over all the locations in the
    * surface and returning the smallest one determined by
    * {@link #horzDistanceFast(Location, Location)}.
-   * 
+   *
    * @param loc a {@code Location}
    * @param rupSurf an EvenlyGriddedSurfaceAPI
    * @return the minimum distance to a surface from the supplied
@@ -351,15 +351,15 @@ public final class Locations {
    * distance'; See <a href="http://williams.best.vwh.net/avform.htm#XTE">
    * Aviation Formulary</a> for source. This method always returns a positive
    * result.
-   * 
+   *
    * <p>This method, though more accurate over longer distances and line
    * lengths, is up to 20x slower than
    * {@link #distanceToSegmentFast(Location, Location, Location)}. However, this
    * method returns accurate results for values spanning ±180°.</p>
-   * 
+   *
    * <p> If the line should instead be treated as infinite, use
    * {@link #distanceToLine(Location, Location, Location)} instead.</p>
-   * 
+   *
    * @param p1 the first {@code Location} point on the line
    * @param p2 the second {@code Location} point on the line
    * @param p3 the {@code Location} point for which distance will be calculated
@@ -381,9 +381,13 @@ public final class Locations {
     // along-track distance (in km)
     double atd = acos(cos(ad13) / cos(xtd)) * EARTH_RADIUS_MEAN;
     // check if beyond p3
-    if (atd > horzDistance(p1, p2)) return horzDistance(p2, p3);
+    if (atd > horzDistance(p1, p2)) {
+      return horzDistance(p2, p3);
+    }
     // check if before p1
-    if (cos(Daz13az12) < 0) return horzDistance(p1, p3);
+    if (cos(Daz13az12) < 0) {
+      return horzDistance(p1, p3);
+    }
     return (abs(xtd) < TOLERANCE) ? 0.0 : abs(xtd) * EARTH_RADIUS_MEAN;
   }
 
@@ -394,13 +398,13 @@ public final class Locations {
    * cartesion (flat-earth approximation) solution in which longitude of the
    * line points are scaled by the cosine of latitude; it is only appropriate
    * for use over short distances (e.g. <200 km).
-   * 
+   *
    * <p><b>Note:</b> This method fails for values spanning ±180°; see
    * {@link #distanceToSegment(Location, Location, Location)}.</p>
-   * 
+   *
    * <p>If the line should instead be treated as infinite, use
    * {@link #distanceToLineFast(Location, Location, Location)} instead.</p>
-   * 
+   *
    * @param p1 the first {@code Location} point on the line
    * @param p2 the second {@code Location} point on the line
    * @param p3 the {@code Location} point for which distance will be calculated
@@ -433,11 +437,11 @@ public final class Locations {
    * href="http://williams.best.vwh.net/avform.htm#Crs"> Aviation Formulary</a>
    * for source. For back azimuth, reverse the {@code Location} arguments.
    * Result is returned in radians over the interval [0, 2π).
-   * 
+   *
    * <p><b>Note:</b> It is more efficient to use this method for computation
    * because {@code Location}s store lat and lon in radians internally. Use
    * {@link #azimuth(Location, Location)} for presentation.</p>
-   * 
+   *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
    * @return the azimuth (bearing) from p1 to p2 in radians
@@ -457,7 +461,7 @@ public final class Locations {
     double dLon = p2.lonRad() - p1.lonRad();
     double cosLat2 = cos(lat2);
     double azRad = atan2(sin(dLon) * cosLat2, cos(lat1) * sin(lat2) - sin(lat1) * cosLat2 *
-      cos(dLon));
+        cos(dLon));
 
     return (azRad + TWOPI) % TWOPI;
   }
@@ -468,7 +472,7 @@ public final class Locations {
    * href="http://williams.best.vwh.net/avform.htm#Crs"> Aviation Formulary</a>
    * for source. For back azimuth, reverse the {@code Location} arguments.
    * Result is returned in decimal degrees over the interval 0° to 360°.
-   * 
+   *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
    * @return the azimuth (bearing) from p1 to p2 in decimal degrees
@@ -483,7 +487,7 @@ public final class Locations {
    * See <a href="http://williams.best.vwh.net/avform.htm#LL"> Aviation
    * Formulary</a> for source. Note that {@code azimuth} is expected in
    * <i>radians</i>.
-   * 
+   *
    * @param p starting location point
    * @param azimuth (bearing) in <i>radians</i> away from origin
    * @param distance (horizontal) along bearing in km
@@ -498,14 +502,14 @@ public final class Locations {
    * {@code LocationVector}. See <a
    * href="http://williams.best.vwh.net/avform.htm#LL"> Aviation Formulary</a>
    * for source.
-   * 
+   *
    * @param p starting location point
    * @param d distance along bearing
    * @return the end location
    */
   public static Location location(Location p, LocationVector d) {
     return location(p.latRad(), p.lonRad(), p.depth(), d.azimuth(), d.horizontal(),
-      d.vertical());
+        d.vertical());
   }
 
   /*
@@ -567,7 +571,7 @@ public final class Locations {
    * Returns whether the supplied {@code Location} coincides with one of the
    * poles. Any supplied {@code Location}s that are very close (less than a mm)
    * will return {@code true}.
-   * 
+   *
    * @param p {@code Location} to check
    * @return {@code true} if {@code loc} coincides with one of the earth's
    *         poles, {@code false} otherwise.
@@ -580,7 +584,7 @@ public final class Locations {
    * Returns {@code true} if the supplied {@code Location}s are very, very close
    * to one another. Internally, lat, lon, and depth values must be within <1mm
    * of each other.
-   * 
+   *
    * @param p1 the first {@code Location} to compare
    * @param p2 the second {@code Location} to compare
    * @return {@code true} if the supplied {@code Location}s are very close,
@@ -588,15 +592,15 @@ public final class Locations {
    */
   public static boolean areSimilar(Location p1, Location p2) {
     return fuzzyEquals(p1.latRad(), p2.latRad(), TOLERANCE) &&
-      fuzzyEquals(p1.lonRad(), p2.lonRad(), TOLERANCE) &&
-      fuzzyEquals(p1.depth(), p2.depth(), TOLERANCE);
+        fuzzyEquals(p1.lonRad(), p2.lonRad(), TOLERANCE) &&
+        fuzzyEquals(p1.depth(), p2.depth(), TOLERANCE);
   }
 
   /**
    * Compute the {@link Bounds} of the supplied iterable. If {@code locs}
    * contains only 1 element, {@link Bounds#min()} and {@link Bounds#max()} of
    * the returned object will be the same.
-   * 
+   *
    * @param locs to compute bounds for
    * @throws IllegalArgumentException if {@code locs} is empty
    */
@@ -613,14 +617,14 @@ public final class Locations {
       maxLonRad = loc.lonRad() > maxLonRad ? loc.lonRad() : maxLonRad;
     }
     return new Bounds(
-      minLatRad * TO_DEG, minLonRad * TO_DEG,
-      maxLatRad * TO_DEG, maxLonRad * TO_DEG);
+        minLatRad * TO_DEG, minLonRad * TO_DEG,
+        maxLatRad * TO_DEG, maxLonRad * TO_DEG);
   }
 
   /**
    * Computes a centroid for a group of {@code Location}s as the average of
    * latitude, longitude, and depth;
-   * 
+   *
    * @param locs locations to process
    */
   public static Location centroid(Iterable<Location> locs) {
@@ -635,9 +639,9 @@ public final class Locations {
       size++;
     }
     return Location.create(
-      latRad / size * TO_DEG,
-      lonRad / size * TO_DEG,
-      depth / size);
+        latRad / size * TO_DEG,
+        lonRad / size * TO_DEG,
+        depth / size);
   }
 
   /**
@@ -666,7 +670,7 @@ public final class Locations {
    * Compute the horizontal distance (in km) from a {@code Location} to the
    * closest point in a {@code LocationList}. This method uses
    * {@link #horzDistanceFast(Location, Location)} to compute the distance.
-   * 
+   *
    * @param loc {@code Location} of interest
    * @param locs {@code LocationList} to compute distance to
    * @see #horzDistanceFast(Location, Location)
@@ -676,7 +680,9 @@ public final class Locations {
     double dist = 0;
     for (Location p : locs) {
       dist = Locations.horzDistanceFast(loc, p);
-      if (dist < min) min = dist;
+      if (dist < min) {
+        min = dist;
+      }
     }
     return min;
   }
@@ -687,13 +693,15 @@ public final class Locations {
    * method uses
    * {@link Locations#distanceToSegmentFast(Location, Location, Location)} and
    * is inappropriate for for use at large separations (e.g. >200 km).
-   * 
+   *
    * @param loc {@code Location} of interest
    * @param locs {@code LocationList} to compute distance to
    * @see #distanceToSegmentFast(Location, Location, Location)
    */
   public static double minDistanceToLine(Location loc, LocationList locs) {
-    if (locs.size() == 1) return horzDistanceFast(loc, locs.get(0));
+    if (locs.size() == 1) {
+      return horzDistanceFast(loc, locs.get(0));
+    }
     double min = Double.MAX_VALUE;
     for (int i = 0; i < locs.size() - 1; i++) {
       min = Math.min(min, distanceToSegmentFast(locs.get(i), locs.get(i + 1), loc));
@@ -705,7 +713,7 @@ public final class Locations {
    * Compute the segment index that is closest to a {@code Location}. There are
    * {@code locs.size() - 1} segment indices. The indices of the segment
    * endpoints in the original location list are {@code [n, n+1]}.
-   * 
+   *
    * @param loc {@code Location} of interest
    * @param locs {@code LocationList} for which to compute the closest segment
    *        index
@@ -727,7 +735,7 @@ public final class Locations {
 
   /**
    * Return a radial distance {@code Location} filter.
-   * 
+   *
    * @param origin of filter
    * @param distance beyond which the filter will return {@code false}
    */
@@ -738,7 +746,7 @@ public final class Locations {
   /**
    * Return a radial distance {@code Location} filter that preprocesses
    * {@code Location}s through a {@link #rectangleFilter(Location, double)}.
-   * 
+   *
    * @param origin of filter
    * @param distance beyond which the filter will return {@code false}
    * @see #rectangleFilter(Location, double)
@@ -755,7 +763,7 @@ public final class Locations {
    * for both height and width, and is centered on the supplied {@code Location}
    * . This filter is for use as a fast, first-pass filter before more
    * computationally intensive distance filtering.
-   * 
+   *
    * @param origin (center) of filter
    * @param distance half-width and half-height of rectangle outside of which
    *        the filter will return {@code false}

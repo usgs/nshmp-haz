@@ -19,25 +19,25 @@ import java.util.Map;
 /**
  * Implementation of the subduction interface ground motion model by Atkinson &
  * Macias (2009). This implementation matches that used in the 2014 USGS NSHMP.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation notes:</b> <ul><li>NSHM fortran implementation converts
  * 0.13Hz to 7.7s; this implementation uses 7.5s instead.</li><li>Model uses a
  * magnitude dependent depth term and so does not impose 20km hypocentral depth
  * as other subduction interface models do.</li></ul></p>
- * 
+ *
  * <p><b>Reference:</b> Atkinson, G.M. and Macias, D.M., 2009, Predicted ground
  * motions for great interface earthquakes in the Cascadia subduction zone:
  * Bulletin of the Seismological Society of America, v. 99, p. 1552-1578.</p>
- * 
+ *
  * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120080147">
  * 10.1785/0120080147</a></p>
- * 
+ *
  * <p><b>Component:</b> geometric mean of two horizontal components</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#AM_09_INTER
  */
@@ -46,10 +46,10 @@ public final class AtkinsonMacias_2009 implements GroundMotionModel {
   static final String NAME = "Atkinson & Macias (2009): Interface";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(5.0, 9.5))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(150.0, 1500.0))
-    .build();
+      .set(MAG, Range.closed(5.0, 9.5))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(150.0, 1500.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("AM09.csv");
 

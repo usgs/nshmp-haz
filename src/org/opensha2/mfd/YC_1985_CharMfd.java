@@ -204,16 +204,16 @@ class YC_1985_CharMfd extends IncrementalMfd {
     checkArgument(deltaMagChar >= 0.0, "deltaMagChar must be positive");
     checkArgument(deltaMagPrime >= 0.0, "deltaMagPrime must be positive");
     checkArgument(magLower >= minX && magLower <= maxX,
-      "magLower should lie between minX and maxX");
+        "magLower should lie between minX and maxX");
     checkArgument(magLower <= magUpper, "magLower cannot be less than magUpper");
     checkArgument(magPrime <= magUpper && magPrime >= magLower,
-      "magPrime must be between magLower and magUpper");
+        "magPrime must be between magLower and magUpper");
     checkArgument((magPrime - deltaMagPrime) >= magLower,
-      "magPrime-deltaMagPrime must be greater than magLower");
+        "magPrime-deltaMagPrime must be greater than magLower");
     checkArgument(deltaMagChar <= (magUpper - magPrime + deltaMagPrime),
-      "deltaMagChar > (magUpper-magPrime+deltaMagPrime), which is not allowed");
+        "deltaMagChar > (magUpper-magPrime+deltaMagPrime), which is not allowed");
     checkArgument(magPrime <= (magUpper - deltaMagChar),
-      "magPrime > (magUpper-deltaMagChar), which is not allowed");
+        "magPrime > (magUpper-deltaMagChar), which is not allowed");
 
     // checks that magUpper, magLower, magPrime, deltaMagPrime, and
     // deltaMagChar
@@ -251,18 +251,21 @@ class YC_1985_CharMfd extends IncrementalMfd {
 
     int i;
 
-    for (i = 0; i < num; ++i) // initialize all rates to 0
+    for (i = 0; i < num; ++i) {
       super.set(i, 0.0);
+    }
 
-    for (i = indexLower; i <= indexMagPrime; ++i) // assign correct values
+    for (i = indexLower; i <= indexMagPrime; ++i) {
       // to rates between
       // magLower and magPrime
       super.set(i, Math.pow(10, -bValue * getX(i)));
+    }
 
-    for (i = indexCharStart; i <= indexUpper; ++i) // set rates over the
+    for (i = indexCharStart; i <= indexUpper; ++i) {
       // characteristic-mag
       // range
       super.set(i, Math.pow(10, -bValue * magForRate));
+    }
 
   }
 
@@ -326,6 +329,7 @@ class YC_1985_CharMfd extends IncrementalMfd {
    * returns the name of this class
    */
 
+  @Override
   public String getDefaultName() {
     return NAME;
   }
@@ -334,31 +338,32 @@ class YC_1985_CharMfd extends IncrementalMfd {
    * this function returns String for drawing Legen in JFreechart
    * @return : returns the String which is needed for Legend in graph
    */
+  @Override
   public String getDefaultInfo() {
     return ("minMag=" + minX + "; maxMag=" + maxX + "; numMag=" + num + "; magLower=" +
-      magLower + "; magUpper=" +
-      magUpper + "; deltaMagChar=" + this.getDeltaMagChar() +
-      "; magPrime=" + this.getMagPrime() + "; deltaMagPrime=" + getDeltaMagPrime() +
-      " bValue=" + bValue + "; totMoRate=" + (float) this.getTotalMomentRate() +
-      "; totCumRate=" + (float) getCumRate(magLower));
+        magLower + "; magUpper=" +
+        magUpper + "; deltaMagChar=" + this.getDeltaMagChar() +
+        "; magPrime=" + this.getMagPrime() + "; deltaMagPrime=" + getDeltaMagPrime() +
+        " bValue=" + bValue + "; totMoRate=" + (float) this.getTotalMomentRate() +
+        "; totCumRate=" + (float) getCumRate(magLower));
 
   }
 
   /**
    * this method (defined in parent) is deactivated here (name is finalized)
-   * 
+   *
    * public void setName(String name) throws UnsupportedOperationException{
    * throw new UnsupportedOperationException(
    * "setName not allowed for MagFreqDist.");
-   * 
+   *
    * }
-   * 
-   * 
+   *
+   *
    * this method (defined in parent) is deactivated here (name is finalized)
-   * 
+   *
    * public void setInfo(String info)throws UnsupportedOperationException{ throw
    * new UnsupportedOperationException( "setInfo not allowed for MagFreqDist.");
-   * 
+   *
    * }
    */
 

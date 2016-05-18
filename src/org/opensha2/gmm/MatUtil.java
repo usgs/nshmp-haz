@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * Static utiltiy methods targeted at Matlab users wishing to compute scalar
  * ground motions.
- * 
+ *
  * @author Peter Powers
  */
 public class MatUtil {
@@ -13,10 +13,10 @@ public class MatUtil {
   /**
    * Compute the median ground motion and its standard deviation for a specified
    * model, intensity measure type (Imt), and source
-   * 
+   *
    * <p>{@code enum} types are identified in matlab as e.g. {@code Gmm$ASK_14}
    * .</p>
-   * 
+   *
    * @param model to use
    * @param imt intensity measure type (e.g. {@code PGA}, {@code SA1P00})
    * @param source parameterization
@@ -32,10 +32,10 @@ public class MatUtil {
    * Compute a spectrum of ground motions and their standard deviations for a
    * specified model and source. All spectral periods supported by the model are
    * returned.
-   * 
+   *
    * <p>{@code enum} types are identified in matlab as e.g. {@code Gmm$ASK_14}
    * .</p>
-   * 
+   *
    * @param model to use
    * @param source parameterization
    * @return a {@link MatSpectrum} data container

@@ -47,7 +47,7 @@ public class MagUncertainty {
 
   /**
    * Factory magnitude uncertainty container constructor.
-   * 
+   *
    * @param epiDeltas epistemic change to magnitude (M +/- delta)
    * @param epiWeights weight for each change; must be same length as
    *        {@code epiDeltas}
@@ -143,7 +143,9 @@ public class MagUncertainty {
    * @return a reference to the newly created {@code Element}
    */
   public Element appendTo(Element node) {
-    if (!hasAleatory && !hasEpistemic) return null;
+    if (!hasAleatory && !hasEpistemic) {
+      return null;
+    }
     Element e = addElement(MAG_UNCERTAINTY, node);
     if (hasEpistemic) {
       Element eEpistemic = addElement(EPISTEMIC, e);

@@ -10,12 +10,12 @@ import java.util.Set;
 /**
  * A wrapper for 2D double-valued data that provides access to data points via
  * {@link Point2D}s.
- * 
+ *
  * <p><i>Note:</i> Use of the word 'Set' in this class does not imply adherence
  * to the {@link Set} interface. An {@code XY_DataGroup} may contain multiple
  * identical points, although subclasses are free to provide alternate behavior.
  * </p>
- * 
+ *
  * @author Kevin Milner
  * @author Peter Powers
  */
@@ -71,14 +71,14 @@ public interface XY_DataSet extends Named, Iterable<Point2D> {
 
   /**
    * Get the Y value for the point with closest X
-   * 
+   *
    * @param x
    */
   public double getClosestY(double x);
 
   /**
    * Get the X value for the point with closest Y
-   * 
+   *
    * @param y
    */
   public double getClosestX(double y);
@@ -108,7 +108,7 @@ public interface XY_DataSet extends Named, Iterable<Point2D> {
   /**
    * Determine wheither a point exists in the list, as determined by it's
    * x-value within tolerance.
-   * 
+   *
    * Will return false if given a null value.
    */
   public boolean hasPoint(Point2D point);
@@ -143,6 +143,7 @@ public interface XY_DataSet extends Named, Iterable<Point2D> {
    * Standard java function, usually used for debugging, prints out the state of
    * the list, such as number of points, the value of each point, etc.
    */
+  @Override
   public String toString();
 
   // /**

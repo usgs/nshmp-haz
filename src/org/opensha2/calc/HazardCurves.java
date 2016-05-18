@@ -24,7 +24,7 @@ import java.util.Map.Entry;
  * {@code GroundMotionModel} and {@code Imt} of interest. The curves will have
  * been scaled by the associated Mfd or rupture weights, but not by
  * {@code GroundMotionModel} weights.
- * 
+ *
  * @author Peter Powers
  */
 final class HazardCurves {
@@ -49,17 +49,17 @@ final class HazardCurves {
    */
   static HazardCurves combine(InputList inputs, List<HazardCurves> curvesList) {
     List<GroundMotions> groundMotionsList = FluentIterable.from(curvesList)
-      .transform(new Function<HazardCurves, GroundMotions>() {
-        @Override
-        public GroundMotions apply(HazardCurves curves) {
-          return curves.groundMotions;
-        }
-      })
-      .toList();
+        .transform(new Function<HazardCurves, GroundMotions>() {
+          @Override
+          public GroundMotions apply(HazardCurves curves) {
+            return curves.groundMotions;
+          }
+        })
+        .toList();
     GroundMotions groundMotions = GroundMotions.combine(inputs, groundMotionsList);
     return builder(groundMotions)
-      .combine(curvesList)
-      .build();
+        .combine(curvesList)
+        .build();
   }
 
   static class Builder {

@@ -46,7 +46,7 @@ import javax.xml.parsers.SAXParserFactory;
  * {@code HazardModel} loader. This class takes care of extensive checked
  * exceptions required when initializing a {@code HazardModel} and will exit the
  * JVM in most cases.
- * 
+ *
  * @author Peter Powers
  */
 class Loader {
@@ -64,10 +64,10 @@ class Loader {
    * Load a {@code HazardModel}. Supplied path should be an absolute path to a
    * directory containing sub-directories by {@code SourceType}s, or the
    * absolute path to a zipped model.
-   * 
+   *
    * <p>This method is not thread safe. Any exceptions thrown while loading will
    * be logged and the JVM will exit.</p>
-   * 
+   *
    * @param path to model directory or Zip file (absolute)
    * @return a newly created {@code HazardModel}
    */
@@ -92,8 +92,8 @@ class Loader {
       log.info(modelConfig.toString());
 
       CalcConfig calcConfig = CalcConfig.Builder.withDefaults()
-        .extend(CalcConfig.Builder.fromFile(typeDirPath))
-        .build();
+          .extend(CalcConfig.Builder.fromFile(typeDirPath))
+          .build();
       builder.config(calcConfig);
 
       typePaths = typeDirectoryList(typeDirPath);
@@ -119,7 +119,7 @@ class Loader {
   }
 
   private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",
-    "encoding", "UTF-8");
+      "encoding", "UTF-8");
 
   private static final String ZIP_SCHEME = "jar:file";
 
@@ -150,7 +150,7 @@ class Loader {
 
       Path nestedTypeDir = firstPath(zipRoot);
       checkArgument(Files.isDirectory(nestedTypeDir), "No nested directory in zip: %s",
-        nestedTypeDir);
+          nestedTypeDir);
       return nestedTypeDir;
     }
     return path;
@@ -191,8 +191,8 @@ class Loader {
     Path configPath = typeDir.resolve(ModelConfig.FILE_NAME);
     if (Files.exists(configPath)) {
       config = ModelConfig.Builder.copyOf(modelConfig)
-        .extend(ModelConfig.Builder.fromFile(configPath))
-        .build();
+          .extend(ModelConfig.Builder.fromFile(configPath))
+          .build();
       log.info("(override) " + config.toString());
     }
 
@@ -204,7 +204,7 @@ class Loader {
     if (typePaths.size() > 0) {
       try {
         checkState(Files.exists(gmmPath), "%s sources present. Where is gmm.xml?",
-          typeDir.getFileName());
+            typeDir.getFileName());
       } catch (IllegalStateException ise) {
         handleConfigException(ise);
         throw ise;
@@ -221,12 +221,12 @@ class Loader {
     for (Path sourcePath : typePaths) {
       log.info("Parsing: " + typeDir.getParent().relativize(sourcePath));
       SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, gmmSet, config,
-        sax);
+          sax);
       builder.sourceSet(sourceSet);
     }
 
     try (DirectoryStream<Path> ds =
-      Files.newDirectoryStream(typeDir, NestedDirFilter.INSTANCE)) {
+        Files.newDirectoryStream(typeDir, NestedDirFilter.INSTANCE)) {
       boolean firstDir = true;
       for (Path nestedSourceDir : ds) {
         if (firstDir) {
@@ -250,7 +250,7 @@ class Loader {
     // Collect nested paths
     List<Path> nestedSourcePaths = null;
     try (DirectoryStream<Path> ds =
-      Files.newDirectoryStream(sourceDir, SourceFilter.INSTANCE)) {
+        Files.newDirectoryStream(sourceDir, SourceFilter.INSTANCE)) {
       nestedSourcePaths = Lists.newArrayList(ds);
     }
 
@@ -264,8 +264,8 @@ class Loader {
       Path nestedConfigPath = sourceDir.resolve(ModelConfig.FILE_NAME);
       if (Files.exists(nestedConfigPath)) {
         nestedConfig = ModelConfig.Builder.copyOf(parentConfig)
-          .extend(ModelConfig.Builder.fromFile(nestedConfigPath))
-          .build();
+            .extend(ModelConfig.Builder.fromFile(nestedConfigPath))
+            .build();
         log.info("(override) " + nestedConfig.toString());
       }
 
@@ -273,7 +273,7 @@ class Loader {
       Path nestedGmmPath = sourceDir.resolve(GmmParser.FILE_NAME);
       try {
         checkState(Files.exists(nestedGmmPath) || gmmSet != null,
-          "%s sources present. Where is gmm.xml?", sourceDir.getFileName());
+            "%s sources present. Where is gmm.xml?", sourceDir.getFileName());
       } catch (IllegalStateException ise) {
         handleConfigException(ise);
         throw ise;
@@ -296,7 +296,7 @@ class Loader {
       for (Path sourcePath : nestedSourcePaths) {
         log.info("Parsing: " + typeDir.relativize(sourcePath));
         SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, nestedGmmSet,
-          nestedConfig, sax);
+            nestedConfig, sax);
         builder.sourceSet(sourceSet);
       }
     }
@@ -321,7 +321,7 @@ class Loader {
           return SlabParser.create(sax).parse(in, gmmSet, config);
         case SYSTEM:
           throw new UnsupportedOperationException(
-            "Fault system sources are not processed with this method");
+              "Fault system sources are not processed with this method");
         default:
           throw new IllegalStateException("Unkown source type");
       }
@@ -396,7 +396,7 @@ class Loader {
       sb.append("** Exiting **").append(LF).append(LF);
       log.log(SEVERE, sb.toString(), ioe);
     } else if (e instanceof UnsupportedOperationException ||
-      e instanceof IllegalStateException || e instanceof NullPointerException) {
+        e instanceof IllegalStateException || e instanceof NullPointerException) {
       StringBuilder sb = new StringBuilder(LF);
       sb.append("** Parsing error: ").append(e.getMessage()).append(LF);
       sb.append("** Exiting **").append(LF).append(LF);
@@ -453,8 +453,8 @@ class Loader {
     public boolean accept(Path path) throws IOException {
       String s = path.getFileName().toString();
       return Files.isRegularFile(path) && !Files.isHidden(path) &&
-        s.toLowerCase().endsWith(".xml") && !s.equals(GmmParser.FILE_NAME) &&
-        !s.startsWith("~");
+          s.toLowerCase().endsWith(".xml") && !s.equals(GmmParser.FILE_NAME) &&
+          !s.startsWith("~");
     }
   }
 

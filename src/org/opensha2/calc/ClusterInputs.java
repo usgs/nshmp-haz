@@ -16,7 +16,7 @@ import java.util.List;
  * properties. The {@code List} may only be added to; all other optional
  * operations of {@code AbstractList} throw an
  * {@code UnsupportedOperationException}.
- * 
+ *
  * @author Peter Powers
  */
 final class ClusterInputs extends AbstractList<SourceInputList> {

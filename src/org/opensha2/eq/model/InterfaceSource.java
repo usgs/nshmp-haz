@@ -27,10 +27,10 @@ import java.util.List;
  * geometry-filling event, or as multiple smaller events) during earthquakes.
  * Smaller events are modeled as 'floating' ruptures; they occur in multiple
  * locations on the fault surface with appropriately scaled rates.
- * 
+ *
  * <p>An {@code InterfaceSource} cannot be created directly; it may only be
  * created by a private parser.</p>
- * 
+ *
  * @author Peter Powers
  */
 public class InterfaceSource extends FaultSource {

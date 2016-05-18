@@ -15,7 +15,7 @@ import com.google.common.collect.Ordering;
 
 /**
  * Skeletal {@code SourceSet} implementation.
- * 
+ *
  * @author Peter Powers
  */
 abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {

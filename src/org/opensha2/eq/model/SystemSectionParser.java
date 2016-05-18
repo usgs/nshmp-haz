@@ -38,7 +38,7 @@ import javax.xml.parsers.SAXParser;
  * stateful and cannot be stored. This class is not thread safe. The List
  * returned by parse() is mutable as it will be made immutable when ultimately
  * passed to SystemSourceSet.Builder
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -109,9 +109,9 @@ class SystemSectionParser extends DefaultHandler {
           double lowerDepth = readDouble(LOWER_DEPTH, atts);
           depth += aseis * (lowerDepth - depth);
           surfaceBuilder.depth(depth)
-              .lowerDepth(lowerDepth)
-              .dip(readDouble(DIP, atts))
-              .dipDir(readDouble(DIP_DIR, atts));
+          .lowerDepth(lowerDepth)
+          .dip(readDouble(DIP, atts))
+          .dipDir(readDouble(DIP_DIR, atts));
           break;
 
         case TRACE:
@@ -157,7 +157,9 @@ class SystemSectionParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingTrace) traceBuilder.append(ch, start, length);
+    if (readingTrace) {
+      traceBuilder.append(ch, start, length);
+    }
   }
 
   @Override

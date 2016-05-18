@@ -11,50 +11,50 @@ import java.util.List;
  * Utility class to perform linear and log interpolations. The methods of this
  * class are designed to be fast and, as such, perform very little argument
  * checking for monotonicity and the like.
- * 
+ *
  * <p>Making some assumptions, interpolation is fairly straightforward. Most of
  * the methods implemented here are designed to support interpolation (or
  * derivation) of y-values keyed to monotonically increasing x-values. x-value
  * interpolation is somewhat thornier. Assumptions and behaviors:</p>
- * 
+ *
  * <ul><li>No error checking for null, empty, single-valued arrays; or arrays of
  * different lengths is performed. Buyer beware.</li>
- * 
+ *
  * <li>X-value arrays are always assumed to be strictly monotonically ascending
  * (no repeated values)</li>
- * 
+ *
  * <li>Internally, binary search is used for y-value interpolation; linear
  * search is used for x-value interpolation.</li>
- * 
+ *
  * <li>Y-value interpolation will always extrapolate off the ends a sequence;
  * this may change, or be configurable, in the future.</li>
- * 
+ *
  * <li>X-value interpolation is predicated on x-values representing some form of
  * cumulative distribution function, either increasing or decreasing
  * (complementary), and must be specified as such. X-values are assumed to be
  * increasing by default.</li>
- * 
+ *
  * <li>X-value interpolation never extrapolates off the ends of a sequence and
  * will always return 0 for out-of-range targets.</li></ul>
- * 
+ *
  * <p>Presently, only single value interpolation of x-values is supported. The
  * more common use case is to resample a sequence of y-values, which is
  * supported.</p>
- * 
+ *
  * <p>Two static methods, {@link #findX(double, double, double, double, double)}
  * and {@link #findY(double, double, double, double, double)}, are the basis for
  * all interpolation operations in this class. These two methods are point-order
  * agnostic.</p>
- * 
+ *
  * TODO example; explain array swapping techniques for x-interpolation
- * 
+ *
  * @author Peter Powers
  */
 public abstract class Interpolator {
 
   /*
    * Developer notes:
-   * 
+   *
    * -------------------------------------------------------------------------
    * Perhaps add extrapolation constraint (on/off) for y value interpolation
    * -------------------------------------------------------------------------
@@ -68,7 +68,7 @@ public abstract class Interpolator {
    * also be {@code NaN}. Method does not perform any input validation such that
    * if the supplied points are coincident or define a horizontal line, the
    * method may return {@code Infinity}, {@code -Infinity}, or {@code NaN}.
-   * 
+   *
    * @param x1 x-value of first point
    * @param y1 y-value of first point
    * @param x2 x-value of second point
@@ -84,7 +84,7 @@ public abstract class Interpolator {
   /**
    * Return an interpolated x-value corresponding to the supplied y-value in the
    * supplied x- and y-value arrays.
-   * 
+   *
    * @param xs x-values of a sequence
    * @param ys y-values of a sequence
    * @param y value at which to find x
@@ -95,7 +95,7 @@ public abstract class Interpolator {
   /**
    * Return an interpolated x-value corresponding to the supplied y-value in the
    * supplied x- and y-value arrays.
-   * 
+   *
    * @param xs x-values of a sequence
    * @param ys y-values of a sequence
    * @param y value at which to find x
@@ -106,7 +106,7 @@ public abstract class Interpolator {
   /**
    * Return an interpolated x-value corresponding to the supplied y-value in the
    * supplied xy-sequence.
-   * 
+   *
    * @param xys an xy-sequence
    * @param y value at which to find x
    * @return an interpolated x-value
@@ -119,7 +119,7 @@ public abstract class Interpolator {
    * also be {@code NaN}. Method does not perform any input validation such that
    * if the supplied points are coincident or define a vertical line, the method
    * may return {@code Infinity}, {@code -Infinity}, or {@code NaN}.
-   * 
+   *
    * @param x1 x-value of first point
    * @param y1 y-value of first point
    * @param x2 x-value of second point
@@ -134,7 +134,7 @@ public abstract class Interpolator {
   /**
    * Return an interpolated or extrapolated y-value corresponding to the
    * supplied x-value in the supplied x- and y-value arrays.
-   * 
+   *
    * @param xs x-values of a sequence
    * @param ys y-values of a sequence
    * @param x value at which to find y
@@ -145,7 +145,7 @@ public abstract class Interpolator {
   /**
    * Return an interpolated or extrapolated y-value corresponding to the
    * supplied x-value in the supplied x- and y-value arrays.
-   * 
+   *
    * @param xs x-values of a sequence
    * @param ys y-values of a sequence
    * @param x value at which to find y
@@ -156,7 +156,7 @@ public abstract class Interpolator {
   /**
    * Return an interpolated or extrapolated y-value corresponding to the
    * supplied x-value in the supplied xy-sequence.
-   * 
+   *
    * @param xys an xy-sequence
    * @param x value at which to find y
    * @return an interpolated y-value
@@ -166,7 +166,7 @@ public abstract class Interpolator {
   /**
    * Return interpolated or extrapolated y-values using the supplied x- and
    * y-value arrays.
-   * 
+   *
    * @param xs x-values of a sequence
    * @param ys y-values of a sequence
    * @param x values at which to find y-values
@@ -177,7 +177,7 @@ public abstract class Interpolator {
   /**
    * Return interpolated or extrapolated y-values using the supplied x- and
    * y-value arrays.
-   * 
+   *
    * @param xs x-values of a sequence
    * @param ys y-values of a sequence
    * @param x values at which to find y-values
@@ -188,7 +188,7 @@ public abstract class Interpolator {
   /**
    * Return interpolated or extrapolated y-values using the supplied x- and
    * y-value arrays.
-   * 
+   *
    * @param xys an xy-sequence
    * @param x values at which to find y-values
    * @return interpolated y-values
@@ -268,14 +268,18 @@ public abstract class Interpolator {
     @Override
     public double findX(double[] xs, double[] ys, double y) {
       int i = linearIndex(ys, y, xIncreasing);
-      if (i == -1) return 0;
+      if (i == -1) {
+        return 0;
+      }
       return xFunction.apply(xs[i], ys[i], xs[i + 1], ys[i + 1], y);
     }
 
     @Override
     public double findX(List<Double> xs, List<Double> ys, double y) {
       int i = linearIndex(ys, y, xIncreasing);
-      if (i == -1) return 0;
+      if (i == -1) {
+        return 0;
+      }
       return xFunction.apply(xs.get(i), ys.get(i), xs.get(i + 1), ys.get(i + 1), y);
     }
 
@@ -394,14 +398,16 @@ public abstract class Interpolator {
 
   /*
    * Used for x-value interpolation.
-   * 
+   *
    * Constrained linear search. Returns -1 if target is out of range.
    */
   private static int linearIndex(double[] sequence, double target, boolean increasing) {
     for (int i = 0; i < sequence.length - 1; i++) {
       double v1 = sequence[increasing ? i : i + 1];
       double v2 = sequence[increasing ? i + 1 : i];
-      if (target >= v1 && target <= v2) return i;
+      if (target >= v1 && target <= v2) {
+        return i;
+      }
     }
     return -1;
   }
@@ -411,14 +417,16 @@ public abstract class Interpolator {
     for (int i = 0; i < sequence.size() - 1; i++) {
       double v1 = sequence.get(increasing ? i : i + 1);
       double v2 = sequence.get(increasing ? i + 1 : i);
-      if (target >= v1 && target <= v2) return i;
+      if (target >= v1 && target <= v2) {
+        return i;
+      }
     }
     return -1;
   }
 
   /*
    * Used for y-value interpolation.
-   * 
+   *
    * Returns the lower index of the 'segment' bounding the target. If target is
    * outside the range of the sequence, the lower index of the uppermost or
    * lowermost segment is returned, whichever would need to be extrapolated.

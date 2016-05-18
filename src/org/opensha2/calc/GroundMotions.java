@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * Container class for scalar ground motions associated with individual
  * {@code Source}s in a {@code SourceSet}.
- * 
+ *
  * @author Peter Powers
  */
 final class GroundMotions {
@@ -28,10 +28,10 @@ final class GroundMotions {
    * NOTE the inputList supplied to Builder is immutable but the mean and sigma
    * lists it builds are not; builder backs mean and sigma lists with double[].
    * Nor are the mean and sigma maps immutable.
-   * 
+   *
    * TODO It would be nice to have an immutable variant of a double[] backed
    * list, but would require copying values on build().
-   * 
+   *
    * TODO refactor to μLists σLists
    */
 
@@ -85,8 +85,8 @@ final class GroundMotions {
     Set<Imt> imtKeys = keyModel.keySet();
     Set<Gmm> gmmKeys = keyModel.get(imtKeys.iterator().next()).keySet();
     return builder(inputs, imtKeys, gmmKeys)
-      .combine(groundMotions)
-      .build();
+        .combine(groundMotions)
+        .build();
   }
 
   static class Builder {

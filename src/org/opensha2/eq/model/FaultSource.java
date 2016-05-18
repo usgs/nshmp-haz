@@ -35,10 +35,10 @@ import java.util.Map;
  * smaller events) during earthquakes. Smaller events are modeled as 'floating'
  * ruptures; they occur in multiple locations on the fault surface with
  * appropriately scaled rates.
- * 
+ *
  * <p>A {@code FaultSource} cannot be created directly; it may only be created
  * by a private parser.</p>
- * 
+ *
  * @author Peter Powers
  */
 public class FaultSource implements Source {
@@ -88,7 +88,7 @@ public class FaultSource implements Source {
 
     ruptureLists = initRuptureLists();
     checkState(Iterables.size(Iterables.concat(ruptureLists)) > 0,
-      "FaultSource has no ruptures");
+        "FaultSource has no ruptures");
   }
 
   private List<List<Rupture>> initRuptureLists() {
@@ -119,13 +119,13 @@ public class FaultSource implements Source {
   @Override
   public String toString() {
     Map<Object, Object> data = ImmutableMap.builder()
-      .put("name", name)
-      .put("dip", dip)
-      .put("width", width)
-      .put("rake", rake)
-      .put("mfds", mfds.size())
-      .put("top", trace.first().depth())
-      .build();
+        .put("name", name)
+        .put("dip", dip)
+        .put("width", width)
+        .put("rake", rake)
+        .put("mfds", mfds.size())
+        .put("top", trace.first().depth())
+        .build();
     return getClass().getSimpleName() + " " + data;
   }
 
@@ -139,7 +139,10 @@ public class FaultSource implements Source {
       // TODO do we really want to do this??
       // TODO low rate shortcut should be derived from config
       // and applied when building input lists
-      if (rate < 1e-14) continue; // shortcut low rates
+      if (rate < 1e-14)
+      {
+        continue; // shortcut low rates
+      }
 
       // TODO we want to get the 'floats' attribute out of MFDs
       // the only reason it is there is to allow SINGLE to flip-flop
@@ -150,7 +153,7 @@ public class FaultSource implements Source {
         // surface;
         //
         List<Rupture> floaters = rupFloating.createFloatingRuptures(
-          surface, rupScaling, mag, rate, rake, rupVariability);
+            surface, rupScaling, mag, rate, rake, rupVariability);
         rupListbuilder.addAll(floaters);
 
       } else {
@@ -276,10 +279,10 @@ public class FaultSource implements Source {
 
       // create surface
       DefaultGriddedSurface surface = DefaultGriddedSurface.builder().trace(trace)
-        .depth(depth).dip(dip).width(width).spacing(spacing).build();
+          .depth(depth).dip(dip).width(width).spacing(spacing).build();
 
       return new FaultSource(name, id, trace, dip, width, surface, rake,
-        ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating, rupVariability);
+          ImmutableList.copyOf(mfds), spacing, rupScaling, rupFloating, rupVariability);
     }
   }
 

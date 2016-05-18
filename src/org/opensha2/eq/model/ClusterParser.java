@@ -44,14 +44,14 @@ import javax.xml.parsers.SAXParser;
 /*
  * Non-validating cluster source parser. SAX parser 'Attributes' are stateful
  * and cannot be stored. This class is not thread safe.
- * 
+ *
  * NOTE: Cluster sources only support SINGLE magnitude frequency distributions
  * and do not support epistemic or aleatory uncertainty on magnitude. These
  * restrictions could be lifted in the future.
- * 
+ *
  * NOTE: A ClusterSource wraps a FaultSourceSet that it delegates to for various
  * methods.
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -93,7 +93,7 @@ class ClusterParser extends DefaultHandler {
   }
 
   ClusterSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -123,10 +123,10 @@ class ClusterParser extends DefaultHandler {
           double weight = readDouble(WEIGHT, atts);
           clusterSetBuilder = new ClusterSourceSet.Builder();
           clusterSetBuilder
-            .name(name)
-            .id(id)
-            .weight(weight)
-            .gmms(gmmSet);
+          .name(name)
+          .id(id)
+          .weight(weight)
+          .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -143,7 +143,7 @@ class ClusterParser extends DefaultHandler {
           // explicitely
           // NOT supporting it for now.
           throw new IllegalStateException(
-            "Cluster sources do no support magnitude uncertainty");
+              "Cluster sources do no support magnitude uncertainty");
 
         case SOURCE_PROPERTIES:
           // this isn't really needed for cluster sources,
@@ -161,10 +161,10 @@ class ClusterParser extends DefaultHandler {
 
           faultSetBuilder = new FaultSourceSet.Builder();
           faultSetBuilder
-            .name(clustName)
-            .id(clustId)
-            .weight(clustWeight)
-            .gmms(gmmSet);
+          .name(clustName)
+          .id(clustId)
+          .weight(clustWeight)
+          .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("    Cluster: " + clustName);
@@ -177,19 +177,19 @@ class ClusterParser extends DefaultHandler {
           String srcName = readString(NAME, atts);
           int srcId = readInt(ID, atts);
           faultBuilder = new FaultSource.Builder()
-            .name(srcName)
-            .id(srcId)
-            .ruptureScaling(rupScaling)
-            .ruptureFloating(config.ruptureFloating)
-            .ruptureVariability(config.ruptureVariability)
-            .surfaceSpacing(config.surfaceSpacing);
+              .name(srcName)
+              .id(srcId)
+              .ruptureScaling(rupScaling)
+              .ruptureFloating(config.ruptureFloating)
+              .ruptureVariability(config.ruptureVariability)
+              .surfaceSpacing(config.surfaceSpacing);
           log.finer("      Fault: " + srcName);
           break;
 
         case INCREMENTAL_MFD:
           if (parsingDefaultMFDs) {
             checkState(readEnum(TYPE, atts, MfdType.class) == MfdType.SINGLE,
-              "Only SINGLE MFDs are supported by cluster sources");
+                "Only SINGLE MFDs are supported by cluster sources");
             clusterRate = readDouble(RATE, atts);
             break;
           }
@@ -198,9 +198,9 @@ class ClusterParser extends DefaultHandler {
 
         case GEOMETRY:
           faultBuilder.depth(readDouble(DEPTH, atts))
-            .dip(readDouble(DIP, atts))
-            .width(readDouble(WIDTH, atts))
-            .rake(readDouble(RAKE, atts));
+          .dip(readDouble(DIP, atts))
+          .width(readDouble(WIDTH, atts))
+          .rake(readDouble(RAKE, atts));
           break;
 
         case TRACE:
@@ -262,7 +262,9 @@ class ClusterParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingTrace) traceBuilder.append(ch, start, length);
+    if (readingTrace) {
+      traceBuilder.append(ch, start, length);
+    }
   }
 
   @Override
@@ -275,9 +277,11 @@ class ClusterParser extends DefaultHandler {
     switch (type) {
       case SINGLE:
         IncrementalMfd mfd = Mfds.newSingleMFD(readDouble(M, atts),
-          readDouble(WEIGHT, atts), false);
+            readDouble(WEIGHT, atts), false);
         log.finer("   MFD type: SINGLE");
-        if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+        if (log.isLoggable(FINEST)) {
+          log.finest(mfd.getMetadataString());
+        }
         return mfd;
       default:
         throw new IllegalStateException(type + " not yet implemented");
@@ -294,9 +298,9 @@ class ClusterParser extends DefaultHandler {
       totalWeight += mfd.getMinY();
     }
     checkState(
-      DoubleMath.fuzzyEquals(totalWeight, 1.0, 0.00001),
-      "Magnitude variant weights (%s) in a cluster source must sum to 1.0",
-      totalWeight);
+        DoubleMath.fuzzyEquals(totalWeight, 1.0, 0.00001),
+        "Magnitude variant weights (%s) in a cluster source must sum to 1.0",
+        totalWeight);
   }
 
 }

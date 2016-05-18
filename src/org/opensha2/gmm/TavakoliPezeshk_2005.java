@@ -20,23 +20,23 @@ import java.util.Map;
  * stable continental regions. This implementation matches that used in the 2008
  * USGS NSHMP and comes in two additional magnitude converting (mb to Mw)
  * flavors to support the 2008 central and eastern US model.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
- * 
+ *
  * <p><b>Reference:</b> Tavakoli, B., and Pezeshk, S., 2005,
  * Empirical-stochastic ground-motion prediction for eastern North America:
  * Bulletin of the Seismological Society of America, v. 95, p. 2283–2296.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050030">
  * 10.1785/0120050030</a></p>
- * 
+ *
  * <p><b>Component:</b> not specified (avg horizontal implied)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#TP_05
  * @see Gmm#TP_05_AB
@@ -72,10 +72,10 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
   static final String NAME = "Tavakoli & Pezeshk (2005)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(760.0, 2000.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(760.0, 2000.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("TP05.csv");
 
@@ -167,8 +167,12 @@ public class TavakoliPezeshk_2005 implements GroundMotionModel, ConvertsMag {
 
     double f2 = c.c9 * log(rRup + 4.5);
     // System.out.println("c9: " + c9 + " rRup: " + rRup);
-    if (rRup > 70.0) f2 = f2 + c.c10 * log(rRup / 70.0);
-    if (rRup > 130.0) f2 = f2 + c.c11 * log(rRup / 130.0);
+    if (rRup > 70.0) {
+      f2 = f2 + c.c10 * log(rRup / 70.0);
+    }
+    if (rRup > 130.0) {
+      f2 = f2 + c.c11 * log(rRup / 130.0);
+    }
     double R = sqrt(rRup * rRup + c.c5 * c.c5 * cor * cor);
     double f3 = (c.c4 + c.c13 * Mw) * log(R) + (c.c8 + c.c12 * Mw) * R;
     double gnd = f1 + f2 + f3;

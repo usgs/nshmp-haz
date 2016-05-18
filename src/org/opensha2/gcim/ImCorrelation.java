@@ -79,8 +79,8 @@ public enum ImCorrelation {
 
     if (t_max < 0.2) {
       c2 = 1.0 - 0.105 *
-        (1.0 - 1.0 / (1.0 + exp(100.0 * t_max - 5.))) *
-        (t_max - t_min) / (t_max - 0.0099);
+          (1.0 - 1.0 / (1.0 + exp(100.0 * t_max - 5.))) *
+          (t_max - t_min) / (t_max - 0.0099);
     }
 
     // if (t_max < 0.109) {

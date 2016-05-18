@@ -5,7 +5,7 @@ import org.opensha2.geo.Location;
 
 /**
  * A parameterization of an earthquake rupture surface.
- * 
+ *
  * @author Ned Field
  * @author Peter Powers
  */

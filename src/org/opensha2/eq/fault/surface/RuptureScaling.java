@@ -28,16 +28,16 @@ import java.util.Map;
  * fixed rupture aspect ratio. As magnitudes increase, some models will preserve
  * area at the expense of aspect ratio; others may preserve length at the
  * expense of area.
- * 
+ *
  * <p>Some scaling models also internally provide corrected Joyner-Boore
  * distances that can be used to approximate average distances from a site to a
  * point source of unknown strike.</p>
- * 
+ *
  * <p>Models may also provide a range of {@link Dimensions} for a given
  * magnitude if {@link #dimensionsDistribution(double, double)} is requested.
  * This method considers any uncertainty associated with a model and returns a
  * ±2σ distribution of {@code Dimensions} discretized at 11 points.</p>
- * 
+ *
  * @author Peter Powers
  */
 public enum RuptureScaling {
@@ -48,11 +48,11 @@ public enum RuptureScaling {
    * thereby maintaining a minimum aspect ratio of 1.0. In practice,
    * {@code maxWidth} is also a function of magnitude but is prescribed by a
    * RuptureFloating model.
-   * 
+   *
    * <p>The {@code pointSourceDistance(double, double)} implementation returns
    * corrected distances for magnitudes in the closed range [6.0..8.6] and
    * distances in the closed range [0..1000]</p>
-   * 
+   *
    * @see RuptureFloating#NSHM
    */
   NSHM_FAULT_WC94_LENGTH {
@@ -150,7 +150,7 @@ public enum RuptureScaling {
    * Peer PSHA test scaling. Maintains aspect ratio of 2.0 up to maximum width,
    * then increases length. Conservation of area at the expense of aspect ratio.
    * The uncertainty in area for this model is 0.25.
-   * 
+   *
    * <ul> <li>Log (A) = M – 4</li> <li>Log (W) = 0.5 * M - 2.15</li> <li>Log (L)
    * = 0.5 * M - 1.85</li> </ul>
    */
@@ -200,7 +200,7 @@ public enum RuptureScaling {
       double area = pow(10, mag - 4.366);
       double width = sqrt(area);
       return (width < maxWidth) ? new Dimensions(width, width)
-        : new Dimensions(area / maxWidth, maxWidth);
+          : new Dimensions(area / maxWidth, maxWidth);
     }
 
     @Override
@@ -241,7 +241,7 @@ public enum RuptureScaling {
   /**
    * Given a magnitude and distance from a site to a point source, return the
    * average distance for a finite fault of unkown strike.
-   * 
+   *
    * @param mag of a rupture
    * @param distance to the centroid of a point source
    */
@@ -268,13 +268,17 @@ public enum RuptureScaling {
     int magIndex = -1;
     int rIndex = 0;
     for (String line : lines) {
-      if (line.trim().isEmpty()) continue;
+      if (line.trim().isEmpty()) {
+        continue;
+      }
       if (line.startsWith(MAG_ID)) {
         magIndex++;
         rIndex = 0;
         continue;
       }
-      if (line.startsWith(COMMENT_ID)) continue;
+      if (line.startsWith(COMMENT_ID)) {
+        continue;
+      }
       rjbs[magIndex][rIndex++] = Parsing.readDouble(line, 1);
     }
     return rjbs;
@@ -291,7 +295,9 @@ public enum RuptureScaling {
    */
 
   private static double correctedRjb(double m, double r, double[][] rjb) {
-    if (m < 6.0) return r;
+    if (m < 6.0) {
+      return r;
+    }
     int mIndex = min((int) round((m - 6.05) / 0.1), 25);
     int rIndex = (int) floor(r);
     return (rIndex <= 1000) ? rjb[mIndex][rIndex] : r;
@@ -300,7 +306,7 @@ public enum RuptureScaling {
   /**
    * Return the dimensions of a magnitude-dependent and width-constrained
    * rupture.
-   * 
+   *
    * @param mag scaling basis magnitude
    * @param maxWidth of parent source
    */
@@ -309,7 +315,7 @@ public enum RuptureScaling {
   /**
    * Return a ±2σ distribution of {@code Dimensions} and associated weights. The
    * distribution is discretized at 11 points.
-   * 
+   *
    * @param mag scaling basis magnitude
    * @param maxWidth of parent source
    */

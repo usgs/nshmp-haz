@@ -28,7 +28,7 @@ import java.util.Map.Entry;
  * reference by external packages but is not directly modifiable, nor it's field
  * accessible. The {@link Results} class provides HazardResult exporting and
  * processing utilities.
- * 
+ *
  * @author Peter Powers
  * @see Results
  */
@@ -78,8 +78,8 @@ public final class Hazard {
             break;
           case GRID:
             sb.append(GridSourceSet.sizeString(
-              curveSet.sourceSet,
-              curveSet.hazardGroundMotionsList.size()));
+                curveSet.sourceSet,
+                curveSet.hazardGroundMotionsList.size()));
             break;
           default:
             sb.append(curveSet.hazardGroundMotionsList.size());
@@ -178,11 +178,11 @@ public final class Hazard {
     Hazard build() {
       validateState(ID);
       return new Hazard(
-        curveMapBuilder.build(),
-        Maps.immutableEnumMap(totalCurves),
-        model,
-        site,
-        config);
+          curveMapBuilder.build(),
+          Maps.immutableEnumMap(totalCurves),
+          model,
+          site,
+          config);
     }
 
   }

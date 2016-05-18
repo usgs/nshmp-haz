@@ -27,25 +27,25 @@ import java.util.Map;
  * (sigma remains the same as original). This is acheived through use of a
  * period-dependent site amplification function modified from Boore & Atkinson
  * (2008).
- * 
+ *
  * <p>This model supports both slab and interface type events. In the 2008
  * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
  * and the 'slab' form is used with gridded 'deep' events in northern California
  * and the Pacific Northwest.</p>
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Reference:</b> Youngs, R.R., Chiou, S.-J., Silva, W.J., and Humphrey,
  * J.R., 1997, Strong ground motion ground motion models for subduction zone
  * earthquakes: Seismological Research Letters, v. 68, p. 58-73.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.58">
  * 10.1785/gssrl.68.1.58</a></p>
- * 
+ *
  * <p><b>Component:</b> Geometric mean of two horizontal components</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#YOUNGS_97_INTER
  * @see Gmm#YOUNGS_97_SLAB
@@ -56,11 +56,11 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 
   // TODO will probably want to have constraints per-implementation
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(5.0, 9.5))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
-    .set(VS30, Range.closed(150.0, 1000.0))
-    .build();
+      .set(MAG, Range.closed(5.0, 9.5))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+      .set(VS30, Range.closed(150.0, 1000.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("Youngs97.csv");
 
@@ -122,7 +122,9 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
     double slabVal = slab ? 1 : 0;
 
     // NSHMP hazgridXnga caps slab events at M=8 after AB03 sub
-    if (slab) Mw = Math.min(8.0, Mw);
+    if (slab) {
+      Mw = Math.min(8.0, Mw);
+    }
 
     // reference PGA; determine nonlinear response using this value
     double gnd0p = GC0 + CI * slabVal;

@@ -9,7 +9,7 @@ import java.util.Iterator;
 /**
  * Container class for related, evenly-spaced subduction slab sources. Class
  * decorates a {@link GridSourceSet}.
- * 
+ *
  * @author Peter Powers
  * @see GridSourceSet
  */

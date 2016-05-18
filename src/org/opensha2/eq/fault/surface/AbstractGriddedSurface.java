@@ -16,7 +16,7 @@ import java.util.List;
  * specified by subclasses), but the presumption is that the the grid of
  * locations map out the surface in some evenly discretized way. It is also
  * presumed that the zeroeth row represent the top edge (or trace). <p>
- * 
+ *
  * There are also methods for getting info about the surface (e.g., ave dip, ave
  * strike, and various distance metrics). <p>
  *
@@ -88,6 +88,7 @@ abstract class AbstractGriddedSurface extends Container2DImpl<Location> implemen
   /**
    * Returns the grid spacing along strike
    */
+  @Override
   public double getGridSpacingAlongStrike() {
     return this.strikeSpacing;
   }
@@ -95,6 +96,7 @@ abstract class AbstractGriddedSurface extends Container2DImpl<Location> implemen
   /**
    * returns the grid spacing down dip
    */
+  @Override
   public double getGridSpacingDownDip() {
     return this.dipSpacing;
   }
@@ -127,6 +129,7 @@ abstract class AbstractGriddedSurface extends Container2DImpl<Location> implemen
    * @param row
    * @param column
    */
+  @Override
   public Location getLocation(int row, int column) {
     return get(row, column);
   }

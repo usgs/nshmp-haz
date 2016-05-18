@@ -20,15 +20,15 @@ import java.util.List;
  * Uncertainty models govern how the values of a complementary cumulative normal
  * distribution (or probability of exceedence) are computed given a mean, μ,
  * standard deviation, σ, and other possibly relevant arguments.
- * 
+ *
  * <p>Each model implements methods that compute the probability of exceeding a
  * single value or a {@link XySequence} of values. Some arguments are only used
  * by some models; for example, {@link #NONE} ignores σ, but it must be supplied
  * for consistency. See individual models for details.</p>
- * 
+ *
  * <p>Internally, models use a high precision approximation of the Gauss error
  * function (see Abramowitz and Stegun 7.1.26) when computing exceedances.</p>
- * 
+ *
  * @author Peter Powers
  */
 public enum ExceedanceModel {
@@ -42,7 +42,7 @@ public enum ExceedanceModel {
   /**
    * No uncertainty. Any {@code σ} supplied to methods is ignored yielding a
    * complementary unit step function for a range of values spanning μ.
-   * 
+   *
    * <p>Model ignores {@code σ}, truncation level,{@code n}, and {@code imt}
    * .</p>
    */
@@ -63,7 +63,7 @@ public enum ExceedanceModel {
 
   /**
    * No truncation.
-   * 
+   *
    * <p>Model ignores truncation level, {@code n}, and {@code imt}.</p>
    */
   TRUNCATION_OFF {
@@ -80,7 +80,7 @@ public enum ExceedanceModel {
 
   /**
    * Upper truncation only at {@code μ + σ * n}.
-   * 
+   *
    * <p>Model ignores {@code imt}.</p>
    */
   TRUNCATION_UPPER_ONLY {
@@ -97,7 +97,7 @@ public enum ExceedanceModel {
 
   /**
    * Upper and lower truncation at {@code μ ± σ * n}.
-   * 
+   *
    * <p>Model ignores {@code imt}.</p>
    */
   TRUNCATION_LOWER_UPPER {
@@ -136,7 +136,7 @@ public enum ExceedanceModel {
    * well matched by a purely normal distribution at high ε by combining two
    * distributions (with 50% weight each) created using modulated σ-values (0.8σ
    * and 1.2σ). Model does not impose any truncation.
-   * 
+   *
    * <p>Model ignores truncation level, {@code n}, and {@code imt}.</p>
    */
   PEER_MIXTURE_MODEL {
@@ -180,13 +180,19 @@ public enum ExceedanceModel {
     private double maxValue(Imt imt) {
       /*
        * Clamping/limiting is turned off at and above 0.75 sec.
-       * 
+       *
        * TODO few CEUS Gmms support PGV; only Atkinson 06p and 08p. Revisit as
        * it may just be more appropriate to throw a UOE.
        */
-      if (imt.isSA()) return imt.ordinal() < SA0P75.ordinal() ? 6.0 : Double.MAX_VALUE;
-      if (imt == PGA) return 3.0;
-      if (imt == PGV) return 400.0;
+      if (imt.isSA()) {
+        return imt.ordinal() < SA0P75.ordinal() ? 6.0 : Double.MAX_VALUE;
+      }
+      if (imt == PGA) {
+        return 3.0;
+      }
+      if (imt == PGV) {
+        return 400.0;
+      }
       throw new UnsupportedOperationException();
     }
 
@@ -194,7 +200,7 @@ public enum ExceedanceModel {
 
   /**
    * Compute the probability of exceeding a {@code value}.
-   * 
+   *
    * @param μ mean
    * @param σ standard deviation
    * @param n truncation level in units of {@code σ} (truncation = n * σ)
@@ -206,7 +212,7 @@ public enum ExceedanceModel {
 
   /**
    * Compute the probability of exceeding a sequence of x-values.
-   * 
+   *
    * @param μ mean
    * @param σ standard deviation
    * @param n truncation level in units of {@code σ} (truncation = n * σ)
@@ -303,10 +309,10 @@ public enum ExceedanceModel {
   private static double erfBase(double x) {
     double t = 1 / (1 + P * x);
     return 1 - (A1 * t +
-      A2 * t * t +
-      A3 * t * t * t +
-      A4 * t * t * t * t +
-      A5 * t * t * t * t * t) * exp(-x * x);
+        A2 * t * t +
+        A3 * t * t * t +
+        A4 * t * t * t * t +
+        A5 * t * t * t * t * t) * exp(-x * x);
   }
 
   // // TODO test performance of compacting tsq
@@ -342,7 +348,7 @@ public enum ExceedanceModel {
    * Computes joint probability of exceedence given the occurrence of a cluster
    * of events: [1 - [(1-PE1) * (1-PE2) * ...]]. The probability of exceedance
    * of each individual event is given in the supplied curves.
-   * 
+   *
    * @param curves for which to calculate joint probability of exceedance
    */
   public static XySequence clusterExceedance(List<XySequence> curves) {

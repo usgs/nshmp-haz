@@ -21,13 +21,13 @@ import java.util.List;
  * keys are bin centers, indexing is managed internally using bin edges. This
  * simplifies issues related to rounding/precision errors that occur when
  * indexing according to explicit double values.
- * 
+ *
  * <p>To create a {@code DataVolume} instance, use a {@link Builder}.</p>
- * 
+ *
  * <p>Internally, a {@code DataVolume} is backed by a {@code double[][][]} array
  * where 'row' refers to the 1st dimension, 'column' the 2nd dimension, and
  * 'level' the 3rd.</p>
- * 
+ *
  * <p>Note that data tables are not intended for use with very high precision
  * data and keys are currently limited to a precision of 4 decimal places. This
  * may be changed or improved in the future.</p>
@@ -40,7 +40,7 @@ public interface DataVolume {
   /**
    * Return a value corresponding to the supplied {@code row}, {@code column},
    * and {@code level}.
-   * 
+   *
    * @param row of value to retrieve (may not explicitely exist as a key)
    * @param column of value to retrieve (may not explicitely exist as a key)
    * @param level of value to retrieve (may not explicitely exist as a key)
@@ -49,7 +49,7 @@ public interface DataVolume {
 
   /**
    * Return an immutable view of a column of values.
-   * 
+   *
    * @param row of column to retrieve
    * @param column to retrieve
    */
@@ -123,7 +123,7 @@ public interface DataVolume {
     /**
      * Compute the value corresponding to the supplied row, column, and level
      * keys.
-     * 
+     *
      * @param row value
      * @param column value
      * @param level value
@@ -133,7 +133,7 @@ public interface DataVolume {
 
   /**
    * A builder of immutable {@code DataVolume}s.
-   * 
+   *
    * <p>See {@link #create()} to initialize a new builder. Rows, columns, and
    * levels must be specified before any data can be added. Note that any
    * supplied {@code max} values may not correspond to the final upper edge of
@@ -178,7 +178,7 @@ public interface DataVolume {
     /**
      * Create a new builder with a structure identical to that of the supplied
      * volume as a model.
-     * 
+     *
      * @param model data volume
      */
     public static Builder fromModel(DataVolume model) {
@@ -207,7 +207,7 @@ public interface DataVolume {
 
     /**
      * Define the data volume rows.
-     * 
+     *
      * @param min lower edge of lowermost row bin
      * @param max upper edge of uppermost row bin
      * @param Δ bin discretization
@@ -223,7 +223,7 @@ public interface DataVolume {
 
     /**
      * Define the data volume columns.
-     * 
+     *
      * @param min lower edge of lowermost column bin
      * @param max upper edge of uppermost column bin
      * @param Δ bin discretization
@@ -239,7 +239,7 @@ public interface DataVolume {
 
     /**
      * Define the data volume levels.
-     * 
+     *
      * @param min lower edge of lowermost column bin
      * @param max upper edge of uppermost column bin
      * @param Δ bin discretization
@@ -288,7 +288,7 @@ public interface DataVolume {
     /**
      * Set the value at the specified row, column, and level. Be careful not to
      * confuse this with {@link #set(int, int, int, double)}.
-     * 
+     *
      * @param row key
      * @param column key
      * @param level key
@@ -301,7 +301,7 @@ public interface DataVolume {
     /**
      * Set the value at the specified row, column, and level indices. Be careful
      * not to confuse this with {@link #set(double, double, double, double)}.
-     * 
+     *
      * @param row index
      * @param column index
      * @param level index
@@ -315,7 +315,7 @@ public interface DataVolume {
     /**
      * Add to the existing value at the specified row, column, and level. Be
      * careful not to confuse this with {@link #add(int, int, int, double)}.
-     * 
+     *
      * @param row key
      * @param column key
      * @param level key
@@ -329,7 +329,7 @@ public interface DataVolume {
      * Add to the existing value at the specified row, column, and level
      * indices. Be careful not to confuse this with
      * {@link #add(int, int, int, double)}.
-     * 
+     *
      * @param row index
      * @param column index
      * @param level index
@@ -344,7 +344,7 @@ public interface DataVolume {
      * Add the values in the supplied volume to this builder. This operation is
      * very efficient if this builder and the supplied volume are sourced from
      * the same model.
-     * 
+     *
      * @param volume to add
      * @throws IllegalArgumentException if the rows, columns, and levels of the
      *         supplied volume do not match those of this volume
@@ -363,11 +363,11 @@ public interface DataVolume {
      */
     AbstractVolume validateVolume(AbstractVolume that) {
       checkArgument((this.rows.hashCode() == that.rows.hashCode() &&
-        this.columns.hashCode() == that.columns.hashCode() &&
-        this.levels.hashCode() == that.levels.hashCode()) ||
-        (Arrays.equals(this.rows, that.rows) &&
-          Arrays.equals(this.columns, that.columns) &&
-          Arrays.equals(this.levels, that.levels)));
+          this.columns.hashCode() == that.columns.hashCode() &&
+          this.levels.hashCode() == that.levels.hashCode()) ||
+          (Arrays.equals(this.rows, that.rows) &&
+              Arrays.equals(this.columns, that.columns) &&
+              Arrays.equals(this.levels, that.levels)));
       return that;
     }
 
@@ -376,7 +376,7 @@ public interface DataVolume {
      * with values computed by the supplied loader. Calling this method will
      * overwrite any values already supplied via {@code set*} or {@code add*}
      * methods.
-     * 
+     *
      * @param loader that will compute values
      */
     public DataVolume build(Loader loader) {
@@ -401,10 +401,10 @@ public interface DataVolume {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns, levels);
       return new DefaultVolume(
-        rowMin, rowMax, rowΔ, rows,
-        columnMin, columnMax, columnΔ, columns,
-        levelMin, levelMax, levelΔ, levels,
-        data);
+          rowMin, rowMax, rowΔ, rows,
+          columnMin, columnMax, columnΔ, columns,
+          levelMin, levelMax, levelΔ, levels,
+          data);
     }
   }
 

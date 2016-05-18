@@ -36,9 +36,9 @@ import javax.xml.parsers.SAXParser;
 /*
  * Non-validating gmm.xml parser. SAX parser 'Attributes' are stateful and
  * cannot be stored. This class is not thread safe.
- * 
+ *
  * Support is included for a second Gmm map for distance splits.
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -122,7 +122,7 @@ class GmmParser extends DefaultHandler {
           gmmWtMap.put(model, weight);
           if (log.isLoggable(FINE)) {
             log.fine(" Model [wt]: " + Strings.padEnd(model.toString(), 44, ' ') +
-              " [" + weight + "]");
+                " [" + weight + "]");
           }
           break;
 

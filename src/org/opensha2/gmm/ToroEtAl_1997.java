@@ -22,30 +22,30 @@ import java.util.Map;
  * continental regions with 2002 updates. This implementation matches that used
  * in the 2008 USGS NSHMP and comes in two flavors (mb and Mw) to support the
  * 2008 central and eastern US model.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
- * 
+ *
  * <p><b>Reference:</b> Toro, G.R., 2002, Modification of the Toro et al. (1997)
  * attenuation relations for large magnitudes and short distances: Risk
  * Engineering, Inc. <a href=
  * "http://www.ce.memphis.edu/7137/PDFs/attenuations/Toro_2001_(modification_1997).pdf"
  * >Report</a></p>
- * 
+ *
  * <p><b>Reference:</b> Toro, G.R., Abrahamson, N.A., and Schneider, J.F., 1997,
  * A model of strong ground motions from earthquakes in central and eastern
  * North America: Best estimates and uncertainties: Seismological Research
  * Letters, v. 68, p. 41–57.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.41">
  * 10.1785/gssrl.68.1.41</a></p>
- * 
+ *
  * <p><b>Component:</b> not specified</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#TORO_97_MB
  * @see Gmm#TORO_97_MW
@@ -73,10 +73,10 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
   static final String NAME = "Toro et al. (1997)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RJB, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(760.0, 2000.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RJB, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(760.0, 2000.0))
+      .build();
 
   static final CoefficientContainer COEFFS_MW = new CoefficientContainer("Toro97Mw.csv");
   static final CoefficientContainer COEFFS_MB = new CoefficientContainer("Toro97Mb.csv");
@@ -152,7 +152,9 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
     gnd += -c.t4 * log(dist) - c.t6 * dist;
 
     double factor = log(dist / 100.0);
-    if (factor > 0) gnd = gnd - (c.t5 - c.t4) * factor;
+    if (factor > 0) {
+      gnd = gnd - (c.t5 - c.t4) * factor;
+    }
 
     return GmmUtils.ceusMeanClip(c.imt, gnd);
   }

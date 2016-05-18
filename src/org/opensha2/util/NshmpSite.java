@@ -234,13 +234,13 @@ public enum NshmpSite implements NamedLocation {
    */
   public static EnumSet<NshmpSite> ceus() {
     return Sets.newEnumSet(Iterables.filter(
-      EnumSet.allOf(NshmpSite.class),
-      new Predicate<NshmpSite>() {
-        @Override
-        public boolean apply(NshmpSite site) {
-          return site.loc.lon() >= -115.0;
-        }
-      }), NshmpSite.class);
+        EnumSet.allOf(NshmpSite.class),
+        new Predicate<NshmpSite>() {
+          @Override
+          public boolean apply(NshmpSite site) {
+            return site.loc.lon() >= -115.0;
+          }
+        }), NshmpSite.class);
   }
 
   /**
@@ -249,13 +249,13 @@ public enum NshmpSite implements NamedLocation {
    */
   public static EnumSet<NshmpSite> wus() {
     return Sets.newEnumSet(Iterables.filter(
-      EnumSet.allOf(NshmpSite.class),
-      new Predicate<NshmpSite>() {
-        @Override
-        public boolean apply(NshmpSite site) {
-          return site.loc.lon() <= -100.0;
-        }
-      }), NshmpSite.class);
+        EnumSet.allOf(NshmpSite.class),
+        new Predicate<NshmpSite>() {
+          @Override
+          public boolean apply(NshmpSite site) {
+            return site.loc.lon() <= -100.0;
+          }
+        }), NshmpSite.class);
   }
 
   /**
@@ -264,12 +264,12 @@ public enum NshmpSite implements NamedLocation {
    */
   public static EnumSet<NshmpSite> facilities() {
     return EnumSet.of(
-      DIABLO_CANYON_CA,
-      SAN_ONOFRE_CA,
-      PALO_VERDE_AZ,
-      HANFORD_SITE_WA,
-      IDAHO_NATIONAL_LAB_ID,
-      LOS_ALAMOS_NATIONAL_LAB_NM);
+        DIABLO_CANYON_CA,
+        SAN_ONOFRE_CA,
+        PALO_VERDE_AZ,
+        HANFORD_SITE_WA,
+        IDAHO_NATIONAL_LAB_ID,
+        LOS_ALAMOS_NATIONAL_LAB_NM);
   }
 
   /**
@@ -277,18 +277,18 @@ public enum NshmpSite implements NamedLocation {
    */
   public static EnumSet<NshmpSite> nrc() {
     return Sets.newEnumSet(Iterables.filter(
-      EnumSet.allOf(NshmpSite.class),
-      new Predicate<NshmpSite>() {
-        @Override
-        public boolean apply(NshmpSite site) {
-          return site.loc.lon() >= -105.5;
-        }
-      }), NshmpSite.class);
+        EnumSet.allOf(NshmpSite.class),
+        new Predicate<NshmpSite>() {
+          @Override
+          public boolean apply(NshmpSite site) {
+            return site.loc.lon() >= -105.5;
+          }
+        }), NshmpSite.class);
   }
 
   /**
    * The set of sites corresponding to the NEHRP test cities.
-   * 
+   *
    * <p>This is a list of 34 city sites in the United States with high seismic
    * risk as specified in the 2009 edition of the <a
    * href="http://www.fema.gov/library/viewRecord.do?id=4103"
@@ -296,45 +296,45 @@ public enum NshmpSite implements NamedLocation {
    */
   public static EnumSet<NshmpSite> nehrp() {
     return EnumSet.of(
-      // SoCal
-      LOS_ANGELES_CA,
-      CENTURY_CITY_CA,
-      NORTHRIDGE_CA,
-      LONG_BEACH_CA,
-      IRVINE_CA,
-      RIVERSIDE_CA,
-      SAN_BERNARDINO_CA,
-      SAN_LUIS_OBISPO_CA,
-      SAN_DIEGO_CA,
-      SANTA_BARBARA_CA,
-      VENTURA_CA,
-      // NoCal
-      OAKLAND_CA,
-      CONCORD_CA,
-      MONTEREY_CA,
-      SACRAMENTO_CA,
-      SAN_FRANCISCO_CA,
-      SAN_MATEO_CA,
-      SAN_JOSE_CA,
-      SANTA_CRUZ_CA,
-      VALLEJO_CA,
-      SANTA_ROSA_CA,
-      // PNW
-      SEATTLE_WA,
-      TACOMA_WA,
-      EVERETT_WA,
-      PORTLAND_OR,
-      // B&R
-      SALT_LAKE_CITY_UT,
-      BOISE_ID,
-      RENO_NV,
-      LAS_VEGAS_NV,
-      // CEUS
-      ST_LOUIS_MO,
-      MEMPHIS_TN,
-      CHARLESTON_SC,
-      CHICAGO_IL,
-      NEW_YORK_NY);
+        // SoCal
+        LOS_ANGELES_CA,
+        CENTURY_CITY_CA,
+        NORTHRIDGE_CA,
+        LONG_BEACH_CA,
+        IRVINE_CA,
+        RIVERSIDE_CA,
+        SAN_BERNARDINO_CA,
+        SAN_LUIS_OBISPO_CA,
+        SAN_DIEGO_CA,
+        SANTA_BARBARA_CA,
+        VENTURA_CA,
+        // NoCal
+        OAKLAND_CA,
+        CONCORD_CA,
+        MONTEREY_CA,
+        SACRAMENTO_CA,
+        SAN_FRANCISCO_CA,
+        SAN_MATEO_CA,
+        SAN_JOSE_CA,
+        SANTA_CRUZ_CA,
+        VALLEJO_CA,
+        SANTA_ROSA_CA,
+        // PNW
+        SEATTLE_WA,
+        TACOMA_WA,
+        EVERETT_WA,
+        PORTLAND_OR,
+        // B&R
+        SALT_LAKE_CITY_UT,
+        BOISE_ID,
+        RENO_NV,
+        LAS_VEGAS_NV,
+        // CEUS
+        ST_LOUIS_MO,
+        MEMPHIS_TN,
+        CHARLESTON_SC,
+        CHICAGO_IL,
+        NEW_YORK_NY);
   }
 
 }

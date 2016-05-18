@@ -16,7 +16,7 @@ import java.util.Map;
  * {@code Source}s in a {@code ClusterSource}, one for each
  * {@code GroundMotionModel} used. The curves will have been scaled by source
  * and rupture weights, but not by {@code GroundMotionModel} weights.
- * 
+ *
  * @author Peter Powers
  */
 final class ClusterCurves {

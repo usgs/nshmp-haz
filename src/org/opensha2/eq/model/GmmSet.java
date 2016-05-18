@@ -25,11 +25,11 @@ import java.util.Set;
  * encapsulates any additional epistemic uncertainty that should be applied to
  * the ground motions computed from these models, as well as model weight
  * variants associated with different distance scales.
- * 
+ *
  * <p>A {@code GmmSet} can not be created directly; it may only be created by a
  * private parser. Currently, although {@code hashCode} and {@code equals} are
  * consistent, they do not consider any supplied uncertainty model.</p>
- * 
+ *
  * @author Peter Powers
  */
 public final class GmmSet {
@@ -60,11 +60,11 @@ public final class GmmSet {
     this.singular = weightMapHi == null;
 
     this.hashCode = Objects.hash(
-      this.weightMapLo, this.maxDistLo,
-      this.weightMapHi, this.maxDistHi);
+        this.weightMapLo, this.maxDistLo,
+        this.weightMapHi, this.maxDistHi);
 
     uncertainty = (epiValues == null) ? UncertType.NONE : (epiValues.length == 1)
-      ? UncertType.SINGLE : UncertType.MULTI;
+        ? UncertType.SINGLE : UncertType.MULTI;
 
     this.epiWeights = epiWeights;
     if (uncertainty == UncertType.NONE) {
@@ -114,20 +114,24 @@ public final class GmmSet {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (!(obj instanceof GmmSet)) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof GmmSet)) {
+      return false;
+    }
     GmmSet that = (GmmSet) obj;
     return Objects.equals(this.weightMapLo, that.weightMapLo) &&
-      this.maxDistLo == that.maxDistLo &&
-      Objects.equals(this.weightMapHi, that.weightMapHi) &&
-      this.maxDistHi == that.maxDistHi;
+        this.maxDistLo == that.maxDistLo &&
+        Objects.equals(this.weightMapHi, that.weightMapHi) &&
+        this.maxDistHi == that.maxDistHi;
   }
 
   private static double[][] initEpiValues(double[] v) {
     return new double[][] {
-        { v[0], v[1], v[2] },
-        { v[3], v[4], v[5] },
-        { v[6], v[7], v[8] }
+      { v[0], v[1], v[2] },
+      { v[3], v[4], v[5] },
+      { v[6], v[7], v[8] }
     };
   }
 
@@ -214,9 +218,9 @@ public final class GmmSet {
     Builder uncertainty(double[] values, double[] weights) {
       checkNotNull(values, "Values is null");
       checkArgument(values.length == 9 || values.length == 1,
-        "Values must contain 1 or 9 values");
+          "Values must contain 1 or 9 values");
       checkArgument(checkNotNull(weights, "Weights are null").length == 3,
-        "Weights must contain 3 values");
+          "Weights must contain 3 values");
       checkArgument(Data.sum(weights) == 1.0, "%s uncertainty weights must sum to 1");
       uncValues = values;
       uncWeights = weights;
@@ -233,17 +237,21 @@ public final class GmmSet {
       if (gmmWtMapHi != null) {
         // hi gmms must be same as or subset of lo gmms
         checkState(gmmWtMapLo.keySet().containsAll(gmmWtMapHi.keySet()),
-          "%s secondary models must be a subset of primary models", id);
+            "%s secondary models must be a subset of primary models", id);
         // maxDistanceHi must also be set and greater than maxDistanceLo
         checkNotNull(maxDistanceHi,
-          "%s secondary distance must be set for secondary models", id);
+            "%s secondary distance must be set for secondary models", id);
         checkState(maxDistanceHi > maxDistanceLo,
-          "%s secondary distance [%s] ≤ primary distance [%s]", id, maxDistanceHi,
-          maxDistanceLo);
+            "%s secondary distance [%s] ≤ primary distance [%s]", id, maxDistanceHi,
+            maxDistanceLo);
       }
 
-      if (uncValues != null) checkNotNull(uncWeights, "%s uncertainty weights not set", id);
-      if (uncWeights != null) checkNotNull(uncValues, "%s uncertainty values not set", id);
+      if (uncValues != null) {
+        checkNotNull(uncWeights, "%s uncertainty weights not set", id);
+      }
+      if (uncWeights != null) {
+        checkNotNull(uncValues, "%s uncertainty values not set", id);
+      }
 
       built = true;
     }
@@ -253,9 +261,9 @@ public final class GmmSet {
       validateState(ID);
       try {
         GmmSet gmmSet = new GmmSet(
-          gmmWtMapLo, maxDistanceLo,
-          gmmWtMapHi, maxDistanceHi,
-          uncValues, uncWeights);
+            gmmWtMapLo, maxDistanceLo,
+            gmmWtMapHi, maxDistanceHi,
+            uncValues, uncWeights);
         return gmmSet;
       } catch (Exception e) {
         e.printStackTrace();

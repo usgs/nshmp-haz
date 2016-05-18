@@ -26,12 +26,12 @@ import java.util.List;
  * keys are bin centers, indexing is managed internally using bin edges. This
  * simplifies issues related to rounding/precision errors that occur when
  * indexing according to explicit double values.
- * 
+ *
  * <p>To create a {@code DataTable} instance, use a {@link Builder}.</p>
- * 
+ *
  * <p>Internally, a {@code DataTable} is backed by a {@code double[][]} array
  * where 'row' refers to the 1st dimension and 'column' the 2nd.</p>
- * 
+ *
  * <p>Note that data tables are not intended for use with very high precision
  * data and keys are currently limited to a precision of 4 decimal places. This
  * may be changed or improved in the future.</p>
@@ -44,7 +44,7 @@ public interface DataTable {
   /**
    * Return a value corresponding to the supplied {@code row} and {@code column}
    * keys.
-   * 
+   *
    * @param row of value to retrieve (may not explicitely exist as a key)
    * @param column of value to retrieve (may not explicitely exist as a key)
    */
@@ -52,7 +52,7 @@ public interface DataTable {
 
   /**
    * Return an immutable view of a row of values.
-   * 
+   *
    * @param row to retrieve
    */
   XySequence row(double row);
@@ -104,7 +104,7 @@ public interface DataTable {
 
     /**
      * Compute the value corresponding to the supplied row and column keys.
-     * 
+     *
      * @param row value
      * @param column value
      */
@@ -113,7 +113,7 @@ public interface DataTable {
 
   /**
    * A builder of immutable {@code DataTable}s.
-   * 
+   *
    * <p>Use {@link #create()} to initialize a new builder. Rows and columns must
    * be specified before any data can be added. Note that any supplied
    * {@code max} values may not correspond to the final upper edge of the
@@ -153,7 +153,7 @@ public interface DataTable {
     /**
      * Create a new builder with a structure identical to that of the supplied
      * table as a model.
-     * 
+     *
      * @param model data table
      */
     public static Builder fromModel(DataTable model) {
@@ -177,7 +177,7 @@ public interface DataTable {
 
     /**
      * Define the data table rows.
-     * 
+     *
      * @param min lower edge of lowermost row bin
      * @param max upper edge of uppermost row bin
      * @param Δ bin discretization
@@ -193,7 +193,7 @@ public interface DataTable {
 
     /**
      * Define the data table columns.
-     * 
+     *
      * @param min lower edge of lowermost column bin
      * @param max upper edge of uppermost column bin
      * @param Δ bin discretization
@@ -234,7 +234,7 @@ public interface DataTable {
     /**
      * Set the value at the specified row and column. Be careful not to confuse
      * this with {@link #set(int, int, double)}.
-     * 
+     *
      * @param row key
      * @param column key
      * @param value to set
@@ -246,7 +246,7 @@ public interface DataTable {
     /**
      * Set the value at the specified row and column indices. Be careful not to
      * confuse this with {@link #set(double, double, double)}.
-     * 
+     *
      * @param row index
      * @param column index
      * @param value to set
@@ -259,7 +259,7 @@ public interface DataTable {
     /**
      * Add to the existing value at the specified row and column. Be careful not
      * to confuse this with {@link #add(int, int, double)}.
-     * 
+     *
      * @param row key
      * @param column key
      * @param value to add
@@ -271,7 +271,7 @@ public interface DataTable {
     /**
      * Add to the existing value at the specified row and column indices. Be
      * careful not to confuse this with {@link #add(double, double, double)} .
-     * 
+     *
      * @param row index
      * @param column index
      * @param value to add
@@ -290,7 +290,7 @@ public interface DataTable {
      */
     public Builder add(double row, double[] values) {
       checkElementIndex(values.length - 1, columns.length,
-        "Supplied values overrun end of row");
+          "Supplied values overrun end of row");
       double[] rowData = data[rowIndex(row)];
       for (int i = 0; i < values.length; i++) {
         rowData[i] += values[i];
@@ -333,7 +333,7 @@ public interface DataTable {
     public Builder add(double row, double column, double[] values) {
       int columnIndex = columnIndex(column);
       checkElementIndex(columnIndex + values.length - 1, columns.length,
-        "Supplied values overrun end of row");
+          "Supplied values overrun end of row");
       double[] rowData = data[rowIndex(row)];
       for (int i = 0; i < values.length; i++) {
         rowData[columnIndex + i] = values[i];
@@ -357,7 +357,7 @@ public interface DataTable {
      * Add the values in the supplied table to this builder. This operation is
      * very efficient if this builder and the supplied table are sourced from
      * the same model.
-     * 
+     *
      * @param table to add
      * @throws IllegalArgumentException if the rows and columns of the supplied
      *         table do not match those of this table
@@ -380,9 +380,9 @@ public interface DataTable {
      */
     AbstractTable validateTable(AbstractTable that) {
       checkArgument((this.rows.hashCode() == that.rows.hashCode() &&
-        this.columns.hashCode() == that.columns.hashCode()) ||
-        (Arrays.equals(this.rows, that.rows) &&
-          Arrays.equals(this.columns, that.columns)));
+          this.columns.hashCode() == that.columns.hashCode()) ||
+          (Arrays.equals(this.rows, that.rows) &&
+              Arrays.equals(this.columns, that.columns)));
       return that;
     }
 
@@ -391,7 +391,7 @@ public interface DataTable {
      * with values computed by the supplied loader. Calling this method will
      * overwrite any values already supplied via {@code set*} or {@code add*}
      * methods.
-     * 
+     *
      * @param loader that will compute values
      */
     public DataTable build(Loader loader) {
@@ -411,16 +411,16 @@ public interface DataTable {
      * values already supplied via {@code set*} or {@code add*} methods and will
      * create a DataTable holding only the single value, similar to
      * {@link Collections#nCopies(int, Object)}.
-     * 
+     *
      * @param value which which to fill data container
      */
     public DataTable build(double value) {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns);
       return new SingularTable(
-        rowMin, rowMax, rowΔ, rows,
-        columnMin, columnMax, columnΔ, columns,
-        value);
+          rowMin, rowMax, rowΔ, rows,
+          columnMin, columnMax, columnΔ, columns,
+          value);
     }
 
     /**
@@ -431,9 +431,9 @@ public interface DataTable {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns);
       return new DefaultTable(
-        rowMin, rowMax, rowΔ, rows,
-        columnMin, columnMax, columnΔ, columns,
-        data);
+          rowMin, rowMax, rowΔ, rows,
+          columnMin, columnMax, columnΔ, columns,
+          data);
     }
   }
 

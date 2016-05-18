@@ -124,6 +124,7 @@ public interface DiscretizedFunc extends XY_DataSet {
    */
   public void scale(double scale);
 
+  @Override
   public DiscretizedFunc deepClone();
 
 }

@@ -51,7 +51,7 @@ import javax.xml.parsers.SAXParser;
 /*
  * Non-validating fault source parser. SAX parser 'Attributes' are stateful and
  * cannot be stored. This class is not thread safe.
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -96,7 +96,7 @@ class FaultParser extends DefaultHandler {
   }
 
   FaultSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -126,10 +126,10 @@ class FaultParser extends DefaultHandler {
           int id = readInt(ID, atts);
           sourceSetBuilder = new FaultSourceSet.Builder();
           sourceSetBuilder
-            .name(name)
-            .id(id)
-            .weight(weight)
-            .gmms(gmmSet);
+          .name(name)
+          .id(id)
+          .weight(weight)
+          .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -161,14 +161,16 @@ class FaultParser extends DefaultHandler {
           String srcName = readString(NAME, atts);
           int srcId = readInt(ID, atts);
           sourceBuilder = new FaultSource.Builder()
-            .name(srcName)
-            .id(srcId)
-            .ruptureScaling(rupScaling)
-            .ruptureFloating(config.ruptureFloating)
-            .ruptureVariability(config.ruptureVariability)
-            .surfaceSpacing(config.surfaceSpacing);
+              .name(srcName)
+              .id(srcId)
+              .ruptureScaling(rupScaling)
+              .ruptureFloating(config.ruptureFloating)
+              .ruptureVariability(config.ruptureVariability)
+              .surfaceSpacing(config.surfaceSpacing);
           log.fine("     Source: " + srcName + " [" + srcId + "]");
-          if (srcId < 0) log.warning("  Invalid Id [" + srcId + ", " + srcName + "]");
+          if (srcId < 0) {
+            log.warning("  Invalid Id [" + srcId + ", " + srcName + "]");
+          }
           break;
 
         case INCREMENTAL_MFD:
@@ -181,9 +183,9 @@ class FaultParser extends DefaultHandler {
 
         case GEOMETRY:
           sourceBuilder.depth(readDouble(DEPTH, atts))
-            .dip(readDouble(DIP, atts))
-            .rake(readDouble(RAKE, atts))
-            .width(readDouble(WIDTH, atts));
+          .dip(readDouble(DIP, atts))
+          .rake(readDouble(RAKE, atts))
+          .width(readDouble(WIDTH, atts));
           break;
 
         case TRACE:
@@ -220,7 +222,9 @@ class FaultParser extends DefaultHandler {
           // may not have mag uncertainty element so create the
           // uncertainty container upon leaving 'Settings'
           unc = MagUncertainty.create(epiAtts, aleaAtts);
-          if (log.isLoggable(FINE)) log.fine(unc.toString());
+          if (log.isLoggable(FINE)) {
+            log.fine(unc.toString());
+          }
           break;
 
         case TRACE:
@@ -245,7 +249,9 @@ class FaultParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingTrace) traceBuilder.append(ch, start, length);
+    if (readingTrace) {
+      traceBuilder.append(ch, start, length);
+    }
   }
 
   @Override
@@ -286,7 +292,7 @@ class FaultParser extends DefaultHandler {
   private List<IncrementalMfd> buildIncremental(IncrData data) {
     List<IncrementalMfd> mfds = Lists.newArrayList();
     IncrementalMfd mfd = Mfds.newIncrementalMFD(data.mags,
-      Data.multiply(data.weight, data.rates));
+        Data.multiply(data.weight, data.rates));
     mfds.add(mfd);
     return mfds;
   }
@@ -330,10 +336,12 @@ class FaultParser extends DefaultHandler {
           // represented by the epi GR distribution with adj. mMax.
 
           IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin,
-            data.dMag, nMagEpi, data.b, tmr * weightEpi);
+              data.dMag, nMagEpi, data.b, tmr * weightEpi);
           mfds.add(mfd);
           log.finer("   MFD type: GR [+epi -alea] " + epiBranch(i));
-          if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+          if (log.isLoggable(FINEST)) {
+            log.finest(mfd.getMetadataString());
+          }
         } else {
           log.warning("  GR MFD epi branch with no mags [" + sourceBuilder.name + "]");
 
@@ -341,10 +349,12 @@ class FaultParser extends DefaultHandler {
       }
     } else {
       IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag,
-        nMag, data.b, tmr * data.weight);
+          nMag, data.b, tmr * data.weight);
       mfds.add(mfd);
       log.finer("   MFD type: GR [-epi -alea]");
-      if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+      if (log.isLoggable(FINEST)) {
+        log.finest(mfd.getMetadataString());
+      }
     }
     return mfds;
   }
@@ -382,21 +392,23 @@ class FaultParser extends DefaultHandler {
 
         if (unc.hasAleatory) {
           IncrementalMfd mfd = (unc.moBalance)
-            ? Mfds.newGaussianMoBalancedMFD(
-              epiMag,
-              unc.aleaSigma,
-              unc.aleaCount,
-              mfdWeight * tmr,
-              data.floats)
-            : Mfds.newGaussianMFD(
-              epiMag,
-              unc.aleaSigma,
-              unc.aleaCount,
-              mfdWeight * tcr,
-              data.floats);
-          mfds.add(mfd);
-          log.finer("   MFD type: SINGLE [+epi +alea] " + epiBranch(i));
-          if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+              ? Mfds.newGaussianMoBalancedMFD(
+                  epiMag,
+                  unc.aleaSigma,
+                  unc.aleaCount,
+                  mfdWeight * tmr,
+                  data.floats)
+                  : Mfds.newGaussianMFD(
+                      epiMag,
+                      unc.aleaSigma,
+                      unc.aleaCount,
+                      mfdWeight * tcr,
+                      data.floats);
+                  mfds.add(mfd);
+                  log.finer("   MFD type: SINGLE [+epi +alea] " + epiBranch(i));
+                  if (log.isLoggable(FINEST)) {
+                    log.finest(mfd.getMetadataString());
+                  }
         } else {
 
           // single Mfds with epi uncertainty are moment balanced at
@@ -407,33 +419,39 @@ class FaultParser extends DefaultHandler {
           IncrementalMfd mfd = Mfds.newSingleMoBalancedMFD(epiMag, moRate, data.floats);
           mfds.add(mfd);
           log.finer("   MFD type: SINGLE [+epi -alea] " + epiBranch(i));
-          if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+          if (log.isLoggable(FINEST)) {
+            log.finest(mfd.getMetadataString());
+          }
         }
       }
     } else {
       if (unc.hasAleatory && uncertAllowed) {
         IncrementalMfd mfd = (unc.moBalance)
-          ? Mfds.newGaussianMoBalancedMFD(
-            data.m,
-            unc.aleaSigma,
-            unc.aleaCount,
-            data.weight * tmr,
-            data.floats)
-          : Mfds.newGaussianMFD(
-            data.m,
-            unc.aleaSigma,
-            unc.aleaCount,
-            data.weight * tcr,
-            data.floats);
-        mfds.add(mfd);
-        log.finer("   MFD type: SINGLE [-epi +alea]");
-        if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+            ? Mfds.newGaussianMoBalancedMFD(
+                data.m,
+                unc.aleaSigma,
+                unc.aleaCount,
+                data.weight * tmr,
+                data.floats)
+                : Mfds.newGaussianMFD(
+                    data.m,
+                    unc.aleaSigma,
+                    unc.aleaCount,
+                    data.weight * tcr,
+                    data.floats);
+                mfds.add(mfd);
+                log.finer("   MFD type: SINGLE [-epi +alea]");
+                if (log.isLoggable(FINEST)) {
+                  log.finest(mfd.getMetadataString());
+                }
       } else {
         IncrementalMfd mfd =
-          Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
+            Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
         mfds.add(mfd);
         log.finer("   MFD type: SINGLE [-epi -alea]");
-        if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+        if (log.isLoggable(FINEST)) {
+          log.finest(mfd.getMetadataString());
+        }
       }
     }
     return mfds;

@@ -43,7 +43,7 @@ import javax.xml.parsers.SAXParser;
 /*
  * Non-validating subduction source parser. SAX parser 'Attributes' are stateful
  * and cannot be stored. This class is not thread safe.
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -83,7 +83,7 @@ class InterfaceParser extends DefaultHandler {
   }
 
   InterfaceSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -114,10 +114,10 @@ class InterfaceParser extends DefaultHandler {
           double weight = readDouble(WEIGHT, atts);
           sourceSetBuilder = new InterfaceSourceSet.Builder();
           sourceSetBuilder
-              .name(name)
-              .id(id)
-              .weight(weight)
-              .gmms(gmmSet);
+          .name(name)
+          .id(id)
+          .weight(weight)
+          .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -170,8 +170,8 @@ class InterfaceParser extends DefaultHandler {
            */
           try {
             sourceBuilder.depth(readDouble(DEPTH, atts))
-                .dip(readDouble(DIP, atts))
-                .width(readDouble(WIDTH, atts));
+            .dip(readDouble(DIP, atts))
+            .width(readDouble(WIDTH, atts));
           } catch (NullPointerException npe) {
             // keep moving, these atts are not necessarily required
           }
@@ -240,7 +240,9 @@ class InterfaceParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingTrace) traceBuilder.append(ch, start, length);
+    if (readingTrace) {
+      traceBuilder.append(ch, start, length);
+    }
   }
 
   @Override
@@ -286,7 +288,9 @@ class InterfaceParser extends DefaultHandler {
     IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
         data.b, tmr * data.weight);
     log.finer("   MFD type: GR");
-    if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+    if (log.isLoggable(FINEST)) {
+      log.finest(mfd.getMetadataString());
+    }
     return mfd;
   }
 
@@ -302,7 +306,9 @@ class InterfaceParser extends DefaultHandler {
   private IncrementalMfd buildSingle(SingleData data) {
     IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
     log.finer("   MFD type: SINGLE");
-    if (log.isLoggable(FINEST)) log.finest(mfd.getMetadataString());
+    if (log.isLoggable(FINEST)) {
+      log.finest(mfd.getMetadataString());
+    }
     return mfd;
   }
 

@@ -30,16 +30,16 @@ import java.util.Map;
  * sources are represented with two possible geometries. However in these
  * representations, the trace is always located at the point {@code Location}
  * (TODO: add illustration or link).
- * 
+ *
  * <p>The {@link PointSourceFixedStrike#getRupture(int)} method is thread safe,
  * however, it is inefficient in that it creates a new {@link Rupture} on every
  * call. Use of {@link Source#iterator()} is preferred, but {@code Rupture}
  * instances returned by the iterator should <i>not</i> be retained and an
  * iterator instance should only ever be used by a single thread.</p>
- * 
+ *
  * <p><b>NOTE</b>: See {@link PointSource} description for notes on thread
  * safety and {@code Rupture} creation and iteration.</p>
- * 
+ *
  * @author Peter Powers
  */
 class PointSourceFixedStrike extends PointSourceFinite {
@@ -88,7 +88,9 @@ class PointSourceFixedStrike extends PointSourceFinite {
 
     FocalMech mech = mechForIndex(index);
     double mechWt = mechWtMap.get(mech);
-    if (mech != STRIKE_SLIP) mechWt *= 0.5;
+    if (mech != STRIKE_SLIP) {
+      mechWt *= 0.5;
+    }
     double dipRad = mech.dip() * TO_RAD;
     double strikeRad = strike * TO_RAD;
 
@@ -194,7 +196,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
      * not strict relation between the site location and the geometry of the
      * fault, we just need to have two pseudo representations for dipping
      * faults.
-     * 
+     *
      * Here, dipping faults will have two real representations (defined by
      * corner Locations) and one will be on the footwall and one won't. When
      * initializing the surface (above), the footwall flag is used to create the
@@ -212,7 +214,9 @@ class PointSourceFixedStrike extends PointSourceFinite {
 
       // simple footwall case
       boolean isVertical = (dipRad == 90.0 * TO_RAD);
-      if (rX <= 0.0 || isVertical) return Distance.create(rSeg, hypot(rSeg, zTop), rX);
+      if (rX <= 0.0 || isVertical) {
+        return Distance.create(rSeg, hypot(rSeg, zTop), rX);
+      }
 
       // otherwise, we're on the hanging wall...
 

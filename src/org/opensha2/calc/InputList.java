@@ -13,7 +13,7 @@ import java.util.List;
  * Lightweight {@code List} wrapper of {@code HazardInput}s. The {@code List}
  * may only be added to; all other optional operations of {@code AbstractList}
  * throw an {@code UnsupportedOperationException}.
- * 
+ *
  * @author Peter Powers
  */
 public abstract class InputList extends AbstractList<HazardInput> {

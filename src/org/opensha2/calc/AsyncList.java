@@ -12,7 +12,7 @@ import java.util.List;
  * Convenience {@code List} implementation for {@code List}s of
  * {@code ListenableFuture}s of some type {@code <T>}. An {@code AsyncList} does
  * not permit {@code null} elements.
- * 
+ *
  * @author Peter Powers
  */
 final class AsyncList<T> extends AbstractList<ListenableFuture<T>> {

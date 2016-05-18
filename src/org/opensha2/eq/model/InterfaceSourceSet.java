@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Container class for groups of related {@link InterfaceSource}s.
- * 
+ *
  * @author Peter Powers
  * @see InterfaceSource
  */
@@ -53,8 +53,8 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
       @Override
       public boolean apply(InterfaceSource source) {
         return filter.apply(source.trace.first()) || filter.apply(source.trace.last()) ||
-          filter.apply(source.lowerTrace.first()) ||
-          filter.apply(source.lowerTrace.last());
+            filter.apply(source.lowerTrace.first()) ||
+            filter.apply(source.lowerTrace.last());
       }
 
       @Override

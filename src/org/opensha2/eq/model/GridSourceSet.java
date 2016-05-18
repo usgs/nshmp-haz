@@ -39,7 +39,7 @@ import java.util.NavigableMap;
  * A container class for related, evenly-spaced {@link PointSource}s with
  * varying magnitudes and/or rates derived from an {@link IncrementalMfd} at
  * each grid node.
- * 
+ *
  * @author Peter Powers
  */
 public class GridSourceSet extends AbstractSourceSet<PointSource> {
@@ -196,7 +196,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
       case FIXED_STRIKE:
         return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel,
-          strike);
+            strike);
 
       default:
         throw new IllegalStateException("Unhandled point source type");
@@ -274,7 +274,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
     /*
      * magMaster mfd data
-     * 
+     *
      * we could require that this be set first and then all node mfds are
      * checked against this.
      */
@@ -332,14 +332,16 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       for (Map<Double, Double> magMap : magDepthMap.values()) {
         for (double depth : magMap.keySet()) {
           checkState(depth <= maxDepth, "%s mag-depth-weight map depth %s > %s", id,
-            depth, maxDepth);
+              depth, maxDepth);
         }
       }
     }
 
     static void validateMagCutoffs(Map<Double, Map<Double, Double>> magDepthMap) {
       for (double mag : magDepthMap.keySet()) {
-        if (mag >= MAX_MAG) return;
+        if (mag >= MAX_MAG) {
+          return;
+        }
       }
       throw new IllegalStateException("MagDepthMap must contain at least one M ≥ " + MAX_MAG);
     }
@@ -363,12 +365,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       /*
        * TODO there are too many assumptions built into this; whose to say ones
        * bin spacing should be only be in the hundredths?
-       * 
+       *
        * Where did this come from anyway? Are mag deltas really all that strange
-       * 
+       *
        * We should read precision of supplied mMin and mMax and delta and use
        * largest for formatting
-       * 
+       *
        * TODO in the case of single combined/flattened MFDs, mags may not be
        * uniformly spaced. Can this be refactored
        */
@@ -391,9 +393,9 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         mechMaps = Collections.nCopies(locs.size(), mechMap);
       } else {
         checkState(
-          mechMaps.size() == locs.size(),
-          "%s only %s of %s focal mech maps were added", ID,
-          mechMaps.size(), locs.size());
+            mechMaps.size() == locs.size(),
+            "%s only %s of %s focal mech maps were added", ID,
+            mechMaps.size(), locs.size());
         singularMechs = false;
       }
 
@@ -409,58 +411,58 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
        */
       if (!Double.isNaN(strike)) {
         checkState(sourceType == FIXED_STRIKE,
-          "Source type must be FIXED_STRIKE for strike [%s]", strike);
+            "Source type must be FIXED_STRIKE for strike [%s]", strike);
       } else {
         checkState(sourceType != FIXED_STRIKE,
-          "Source type FIXED_STRIKE invalid for strike [%s]", strike);
+            "Source type FIXED_STRIKE invalid for strike [%s]", strike);
       }
     }
 
     GridSourceSet build() {
       validateState(ID);
       return new GridSourceSet(
-        name, id, weight,
-        gmmSet, locs, mfds,
-        mechMaps, singularMechs,
-        magDepthMap, maxDepth,
-        strike, rupScaling, sourceType,
-        magMaster, Δm);
+          name, id, weight,
+          gmmSet, locs, mfds,
+          mechMaps, singularMechs,
+          magDepthMap, maxDepth,
+          strike, rupScaling, sourceType,
+          magMaster, Δm);
     }
 
   }
 
   /*
    * Notes on refactoring GridSourceSet xml.
-   * 
+   *
    * The existing implementation permits one mfd per node and that maps to the
    * default of the same 'type'. This was fine assuming mfds were collapsed
    * (CEUS 2008) or MFDs were explicitly one type or another as required for CA
    * 2008 grids (GR or INCR, the latter to handle the M>6.5 rate reduction).
-   * 
+   *
    * However, we want to be able to track mMax and other logic tree branches.
-   * 
+   *
    * Given gridded sources where rate or a-value at each node is consistent for
    * all applicable MFDs:
-   * 
+   *
    * - each node will map to all defaults
-   * 
+   *
    * - defaults must have unique 'id' (logic tree branch id), but can be of
    * similar 'type'; throw error if field doesn't match
-   * 
+   *
    * - CA 2008 will need to be converted to only INCR MFDs with explicit rates
    * for all nodes.
-   * 
+   *
    * - refactor IncrementalMfd to Mfd in XML
-   * 
+   *
    * - refactor Node to Source
-   * 
+   *
    * - usually the MFD 'type' is consistent across branches for a given grid
    * source set so collapsing MFD's isn't too problematic.
-   * 
+   *
    * Grid optimizations:
-   * 
+   *
    * - create GridSourceSet subclass, one for each default MFD (siblings)
-   * 
+   *
    * - also create a subclass that uses a collapsed MFD, or perhaps this is just
    * the original.
    */
@@ -469,20 +471,20 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
    * If, for a basic HazardResult, we want to be able to give a per-source-set
    * decomposition by ground motion model, or just a decomposition of the total
    * curve, we'll need to have a table of the curves for every model.
-   * 
+   *
    * If not necessary, then can have table of total curves and table of mean
    * (and sigma?) for each model. Just mean is necessary for deaggeregation
    * epsilon
-   * 
+   *
    * OK... so...
-   * 
+   *
    * Preliminary implementations of grid source optimizations modeled after the
    * NSHMP Fortran codes porecomputed median curves in distance and magnitude
    * (using a weighted combination of Gmms) and then performed lookups for each
    * source, aggregating a total curve along the way. This approach is lossy in
    * that data for individual Gmms is lost, and it was never extended to support
    * deaggregation where ground motion mean and sigma are required.
-   * 
+   *
    * Further consideration of these issues suggests that, rather than
    * aggregating curves along the way, we should build a separate table in
    * magnitude and distance of rates while looping over sources. In the end,
@@ -491,25 +493,25 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
    * rate table may not be significant enough to warrant the memory overhead
    * (bear in mind that's a lot of curves when considering large logic trees of
    * Gmms and numerous periods).
-   * 
+   *
    * There is also the additional issue of additional epistemic uncertinaty on
    * ground motions, which does not need to be considered here if building
    * magnitude-distance rate tables.
-   * 
+   *
    * There is the additional issue of different focal mechanisms. For NGAW2 and
    * the WUS, we would need to have 5 curves per gmm and r/m bin: 2 reverse, 2
    * normal 1 strike slip
-   * 
+   *
    * Also assumes uniform vs30 or bsain terms; these will likely be spatially
    * varying in the future; this would also be incompatible with gmm tables.
-   * 
+   *
    * Precomputed curves may still be warranted for map calculations where Gmm
    * specific data and deaggregation are irrelevant.
    */
 
   /*
    * Why, you say?
-   * 
+   *
    * Simply put, speed. In the 2014 CEUS NSHM, 1000km from a site nets about 30k
    * sources, each of which has an associated MFD with up to 33 values (and that
    * assumes the different mMax models have been collapsed together). So 990k
@@ -526,7 +528,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
    * Create a {@code Function} for a location the condenses a
    * {@code GridSourceSet} into tabular form (distance, magnitude and azimuth
    * bins) for speedier iteration.
-   * 
+   *
    * @param loc reference point for table
    */
   public static Function<GridSourceSet, SourceSet<? extends Source>> optimizer(Location loc) {
@@ -548,14 +550,14 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
   /*
    * Notes on dealing with mixedMech situations (e.g. UC3)
-   * 
+   *
    * Need 3 tables (SS, R, N)
-   * 
+   *
    * Rate in each R-M bin gets partitioned across three tables.
-   * 
+   *
    * When building sources we could normalize the rates to create a mechMap on
    * the fly and sum back to the total rate.
-   * 
+   *
    * Alternatively, and preferably, we reconsolidate partitioned rates into a
    * list
    */
@@ -571,7 +573,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
    * magnitude-distance-rate {@code DataTable}, from which a list of sources is
    * generated. A {@code Table} is created on a per-calculation basis and is
    * unique to a location.
-   * 
+   *
    * @see GridSourceSet#optimizer(Location)
    */
   private static final class Table extends AbstractSourceSet<PointSource> {
@@ -653,8 +655,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       double rMax = parent.groundMotionModels().maxDistance();
 
       DataTable.Builder tableBuilder = DataTable.Builder.create()
-        .rows(0.0, rMax, distanceDiscretization(rMax))
-        .columns(mMin, mMax, Δm);
+          .rows(0.0, rMax, distanceDiscretization(rMax))
+          .columns(mMin, mMax, Δm);
 
       for (PointSource source : parent.iterableForLocation(origin)) {
         double r = Locations.horzDistanceFast(origin, source.loc);
@@ -672,16 +674,18 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       ImmutableList.Builder<PointSource> b = ImmutableList.builder();
       for (double r : distances) {
         XySequence mfd = mfdTable.row(r);
-        if (mfd.isEmpty()) continue;
+        if (mfd.isEmpty()) {
+          continue;
+        }
         Location loc = Locations.location(origin, SRC_TO_SITE_AZIMUTH, r);
 
         b.add(PointSources.pointSource(
-          parent.sourceType,
-          loc,
-          mfd,
-          parent.mechMaps.get(0),
-          parent.rupScaling,
-          parent.depthModel));
+            parent.sourceType,
+            loc,
+            mfd,
+            parent.mechMaps.get(0),
+            parent.rupScaling,
+            parent.depthModel));
         rowCount++;
       }
       return b.build();
@@ -696,16 +700,16 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       double rMax = parent.groundMotionModels().maxDistance();
 
       DataTable.Builder ssTableBuilder = DataTable.Builder.create()
-        .rows(0.0, rMax, distanceDiscretization(rMax))
-        .columns(mMin, mMax, Δm);
+          .rows(0.0, rMax, distanceDiscretization(rMax))
+          .columns(mMin, mMax, Δm);
 
       DataTable.Builder rTableBuilder = DataTable.Builder.create()
-        .rows(0.0, rMax, distanceDiscretization(rMax))
-        .columns(mMin, mMax, Δm);
+          .rows(0.0, rMax, distanceDiscretization(rMax))
+          .columns(mMin, mMax, Δm);
 
       DataTable.Builder nTableBuilder = DataTable.Builder.create()
-        .rows(0.0, rMax, distanceDiscretization(rMax))
-        .columns(mMin, mMax, Δm);
+          .rows(0.0, rMax, distanceDiscretization(rMax))
+          .columns(mMin, mMax, Δm);
 
       // XySequence srcMfdSum = null;
 
@@ -717,11 +721,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
         double r = Locations.horzDistanceFast(origin, source.loc);
         ssTableBuilder.add(r, XySequence.copyOf(source.mfd)
-          .multiply(source.mechWtMap.get(STRIKE_SLIP)));
+            .multiply(source.mechWtMap.get(STRIKE_SLIP)));
         rTableBuilder.add(r, XySequence.copyOf(source.mfd)
-          .multiply(source.mechWtMap.get(REVERSE)));
+            .multiply(source.mechWtMap.get(REVERSE)));
         nTableBuilder.add(r, XySequence.copyOf(source.mfd)
-          .multiply(source.mechWtMap.get(NORMAL)));
+            .multiply(source.mechWtMap.get(NORMAL)));
         parentCount++;
       }
 
@@ -757,36 +761,42 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         boolean tableRowUsed = false;
 
         XySequence ssMfd = ssTable.row(r);
-        if (ssMfd.isEmpty()) continue;
+        if (ssMfd.isEmpty()) {
+          continue;
+        }
         b.add(PointSources.pointSource(
-          PointSourceType.FINITE,
-          loc,
-          ssMfd,
-          parent.mechMaps.get(0),
-          parent.rupScaling,
-          parent.depthModel));
+            PointSourceType.FINITE,
+            loc,
+            ssMfd,
+            parent.mechMaps.get(0),
+            parent.rupScaling,
+            parent.depthModel));
         tableRowUsed = true;
 
         XySequence rMfd = rTable.row(r);
-        if (rMfd.isEmpty()) continue;
+        if (rMfd.isEmpty()) {
+          continue;
+        }
         b.add(PointSources.pointSource(
-          PointSourceType.FINITE,
-          loc,
-          rMfd,
-          parent.mechMaps.get(0),
-          parent.rupScaling,
-          parent.depthModel));
+            PointSourceType.FINITE,
+            loc,
+            rMfd,
+            parent.mechMaps.get(0),
+            parent.rupScaling,
+            parent.depthModel));
         tableRowUsed = true;
 
         XySequence nMfd = nTable.row(r);
-        if (nMfd.isEmpty()) continue;
+        if (nMfd.isEmpty()) {
+          continue;
+        }
         b.add(PointSources.pointSource(
-          PointSourceType.FINITE,
-          loc,
-          nMfd,
-          parent.mechMaps.get(0),
-          parent.rupScaling,
-          parent.depthModel));
+            PointSourceType.FINITE,
+            loc,
+            nMfd,
+            parent.mechMaps.get(0),
+            parent.rupScaling,
+            parent.depthModel));
         tableRowUsed = true;
 
         if (tableRowUsed) {

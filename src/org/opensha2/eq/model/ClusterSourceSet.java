@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Container class for related {@link ClusterSource}s.
- * 
+ *
  * @author Peter Powers
  * @see ClusterSource
  */
@@ -54,7 +54,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
     return new Predicate<ClusterSource>() {
 
       private final Predicate<FaultSource> filter = new FaultSourceSet.DistanceFilter(loc,
-        distance);
+          distance);
 
       @Override
       public boolean apply(ClusterSource cs) {

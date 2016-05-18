@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * A container class for related {@link AreaSource}s.
- * 
+ *
  * @author Peter Powers
  */
 public class AreaSourceSet extends AbstractSourceSet<AreaSource> {

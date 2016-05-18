@@ -18,21 +18,21 @@ import com.google.common.collect.Range;
  * continental regions. This implementation matches that used in the 2008 USGS
  * NSHMP and comes in two additional magnitude converting (mb to Mw) flavors to
  * support the 2008 central and eastern US model.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
- * 
+ *
  * <p><b>Reference:</b> Frankel, A., Mueller, C., Barnhard, T., Perkins, D.,
  * Leyendecker, E., Dickman, N., Hanson, S., and Hopper, M., 1996, National
  * Seismic Hazard Maps—Documentation June 1996: U.S. Geological Survey Open-File
  * Report 96–532, 110 p.</p>
- * 
+ *
  * <p><b>Component:</b> not specified</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#FRANKEL_96
  * @see Gmm#FRANKEL_96_AB
@@ -43,10 +43,10 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
   static final String NAME = "Frankel et al. (1996)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    .set(MAG, Range.closed(4.0, 8.0))
-    .set(RRUP, Range.closed(0.0, 1000.0))
-    .set(VS30, Range.closed(760.0, 2000.0))
-    .build();
+      .set(MAG, Range.closed(4.0, 8.0))
+      .set(RRUP, Range.closed(0.0, 1000.0))
+      .set(VS30, Range.closed(760.0, 2000.0))
+      .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("Frankel96.csv");
 

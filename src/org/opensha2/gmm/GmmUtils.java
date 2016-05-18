@@ -47,17 +47,19 @@ public final class GmmUtils {
   /**
    * Returns the NSHMP interpretation of fault type based on rake; divisions are
    * on 45° diagonals.
-   * 
+   *
    * <p><b>Note:</b> This is inconsistent with next generation attenuation
    * relationship (NGAW1 and NGAW2) recommendations.</p>
-   * 
+   *
    * @param rake to convert (in degrees)
    * @return the corresponding {@code FaultStyle}
    */
   public static FaultStyle rakeToFaultStyle_NSHMP(double rake) {
-    if (Double.isNaN(rake)) return UNKNOWN;
+    if (Double.isNaN(rake)) {
+      return UNKNOWN;
+    }
     return (rake >= 45 && rake <= 135) ? REVERSE
-      : (rake >= -135 && rake <= -45) ? NORMAL : STRIKE_SLIP;
+        : (rake >= -135 && rake <= -45) ? NORMAL : STRIKE_SLIP;
   }
 
   // internally values are converted and/or scaled up to
@@ -92,22 +94,26 @@ public final class GmmUtils {
     String magID = "#Mag";
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(
-        GmmUtils.class.getResourceAsStream(rjbDatPath)));
+          GmmUtils.class.getResourceAsStream(rjbDatPath)));
       String line;
       HashMap<Integer, Double> magMap = null;
       while ((line = br.readLine()) != null) {
         if (line.startsWith(magID)) {
           double mag = Double.parseDouble(line.substring(
-            magID.length() + 1).trim());
+              magID.length() + 1).trim());
           int magKey = new Double(mag * 100).intValue();
           magMap = new HashMap<Integer, Double>();
           rjb_map.put(magKey, magMap);
           continue;
         }
-        if (line.startsWith("#")) continue;
+        if (line.startsWith("#")) {
+          continue;
+        }
 
         List<String> dVal = Lists.newArrayList(Parsing.split(line, Delimiter.SPACE));
-        if (dVal.size() == 0) continue;
+        if (dVal.size() == 0) {
+          continue;
+        }
         int distKey = new Double(dVal.get(0)).intValue();
         magMap.put(distKey, Double.parseDouble(dVal.get(1)));
       }
@@ -121,7 +127,7 @@ public final class GmmUtils {
       double startMag) {
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(
-        GmmUtils.class.getResourceAsStream(path)));
+          GmmUtils.class.getResourceAsStream(path)));
       String line;
       Map<Integer, Map<Integer, Double>> periodMap = null;
       while ((line = br.readLine()) != null) {
@@ -135,7 +141,9 @@ public final class GmmUtils {
           continue;
         }
         List<String> values = Lists.newArrayList(Parsing.split(line, Delimiter.SPACE));
-        if (values.size() == 0) continue;
+        if (values.size() == 0) {
+          continue;
+        }
         int distKey = Integer.parseInt(values.get(0));
         int magIndex = Integer.parseInt(values.get(1));
         int magKey = (int) (startMag * 100) + (magIndex - 1) * 10;
@@ -157,7 +165,7 @@ public final class GmmUtils {
    * distance and magnitude. Magnitude is expected to be a 0.05 centered value
    * between 6 and 7.6 (e.g [6.05, 6.15, ... 7.55]). Distance values should be
    * <1000km. If <code>D</code> ≥ 1000km, method returns D.
-   * 
+   *
    * @param M magnitude
    * @param D distance
    * @return the corrected distance or <code>D</code> if <code>D</code> ??? 1000
@@ -179,7 +187,7 @@ public final class GmmUtils {
    * Distance values should be ≤200km. If distance value is &gt200km, method
    * returns 0. Valid periods are those prescribed by
    * {@link CampbellBozorgnia_2008}.
-   * 
+   *
    * @param M magnitude
    * @param D distance
    * @param P period
@@ -204,7 +212,7 @@ public final class GmmUtils {
    * values should be ≤200km. If distance value is &gt200km, method returns 0.
    * Valid periods are those prescribed by {@link ChiouYoungs_2008}
    * (<em>Note:</em>PGV is currently missing).
-   * 
+   *
    * @param M magnitude
    * @param D distance
    * @param P period
@@ -224,7 +232,9 @@ public final class GmmUtils {
     checkArgument(map.containsKey(perKey), "Invalid period: " + P);
     Map<Integer, Map<Integer, Double>> magMap = map.get(perKey);
     int magKey = new Double(M * 100).intValue();
-    if (!magMap.containsKey(magKey)) return 0;
+    if (!magMap.containsKey(magKey)) {
+      return 0;
+    }
     int distKey = new Double(Math.floor(D)).intValue();
     return (distKey > 200) ? 0 : magMap.get(magKey).get(distKey);
   }
@@ -234,7 +244,7 @@ public final class GmmUtils {
    * method returns {@code Math.min(ln(1.5g), μ)}; for
    * {@code 0.02s < period < 0.5s}, method returns {@code Math.min(ln(3.0g), μ)}
    * . This is used to clip the upper tail of the exceedance curve.
-   * 
+   *
    * @param imt of interest
    * @param μ natural log of ground motion
    * @return the clipped ground motion if required by the supplied
@@ -242,20 +252,28 @@ public final class GmmUtils {
    */
   static double ceusMeanClip(final Imt imt, final double μ) {
     // ln(1.5) = 0.405; ln(3.0) = 1.099
-    if (imt == Imt.PGA) return Math.min(0.405, μ);
-    if (imt.period() > 0.02 && imt.period() < 0.5) return Math.min(μ, 1.099);
+    if (imt == Imt.PGA) {
+      return Math.min(0.405, μ);
+    }
+    if (imt.period() > 0.02 && imt.period() < 0.5) {
+      return Math.min(μ, 1.099);
+    }
     return μ;
   }
 
   /**
    * Returns a site calss identifier for use with CEUS GMMs.
-   * 
+   *
    * @param vs30
    * @return the site class corresponding to the supplied vs30
    */
   static SiteClass ceusSiteClass(final double vs30) {
-    if (vs30 == 760.0) return SOFT_ROCK;
-    if (vs30 == 2000.0) return HARD_ROCK;
+    if (vs30 == 760.0) {
+      return SOFT_ROCK;
+    }
+    if (vs30 == 2000.0) {
+      return HARD_ROCK;
+    }
     throw new IllegalArgumentException("Unsupported CEUS vs30: " + vs30);
   }
 
@@ -282,7 +300,9 @@ public final class GmmUtils {
     }
 
     μ *= BASE_10_TO_E;
-    if (imt != Imt.PGV) μ -= LN_G_CM_TO_M;
+    if (imt != Imt.PGV) {
+      μ -= LN_G_CM_TO_M;
+    }
     return μ;
   }
 

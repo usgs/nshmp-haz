@@ -46,7 +46,7 @@ import javax.xml.parsers.SAXParser;
 /*
  * Non-validating indexed fault source parser. SAX parser 'Attributes' are
  * stateful and cannot be stored. This class is not thread safe.
- * 
+ *
  * @author Peter Powers
  */
 @SuppressWarnings("incomplete-switch")
@@ -133,10 +133,10 @@ class SystemParser extends DefaultHandler {
           double weight = readDouble(WEIGHT, atts);
           sourceSetBuilder = new SystemSourceSet.Builder();
           sourceSetBuilder
-            .name(name)
-            .id(id)
-            .weight(weight)
-            .gmms(gmmSet);
+          .name(name)
+          .id(id)
+          .weight(weight)
+          .gmms(gmmSet);
           sourceSetBuilder.sections(sections);
           log.info("   Sections: " + sections.size());
           log.info("Rupture set: " + name + "/" + RUPTURES_FILENAME);
@@ -160,13 +160,13 @@ class SystemParser extends DefaultHandler {
 
         case GEOMETRY:
           sourceSetBuilder
-            .mag(mfd.getX(0))
-            .rate(mfd.getY(0))
-            .indices(rangeStringToIntList(readString(INDICES, atts)))
-            .depth(readDouble(DEPTH, atts))
-            .dip(readDouble(DIP, atts))
-            .rake(readDouble(RAKE, atts))
-            .width(readDouble(WIDTH, atts));
+          .mag(mfd.getX(0))
+          .rate(mfd.getY(0))
+          .indices(rangeStringToIntList(readString(INDICES, atts)))
+          .depth(readDouble(DEPTH, atts))
+          .dip(readDouble(DIP, atts))
+          .rake(readDouble(RAKE, atts))
+          .width(readDouble(WIDTH, atts));
           break;
 
       }
@@ -209,7 +209,9 @@ class SystemParser extends DefaultHandler {
 
   @Override
   public void characters(char ch[], int start, int length) throws SAXException {
-    if (readingTrace) traceBuilder.append(ch, start, length);
+    if (readingTrace) {
+      traceBuilder.append(ch, start, length);
+    }
   }
 
   @Override
@@ -219,11 +221,11 @@ class SystemParser extends DefaultHandler {
 
   private void checkDefaultMfds() {
     checkState(
-      mfdHelper.typeCount(SINGLE) <= 1 &&
+        mfdHelper.typeCount(SINGLE) <= 1 &&
         mfdHelper.typeCount(INCR) == 0 &&
         mfdHelper.typeCount(GR) == 0 &&
         mfdHelper.typeCount(GR_TAPER) == 0,
-      "Only one SINGLE default MFD may be defined");
+        "Only one SINGLE default MFD may be defined");
   }
 
   private IncrementalMfd buildMfd(Attributes atts) {
@@ -232,7 +234,7 @@ class SystemParser extends DefaultHandler {
     // ensures only one SINGLE mfd exists
     SingleData singleData = Iterables.getOnlyElement(mfdHelper.singleData(atts));
     return Mfds.newSingleMFD(singleData.m, singleData.rate * singleData.weight,
-      singleData.floats);
+        singleData.floats);
   }
 
 }

@@ -37,6 +37,7 @@ public class Point2DToleranceSortedArrayList implements Point2DToleranceSortedLi
     comparator.setTolerance(newTolerance);
   }
 
+  @Override
   public int binarySearch(Point2D p) {
     return Collections.binarySearch(list, p, comparator);
   }
@@ -44,17 +45,19 @@ public class Point2DToleranceSortedArrayList implements Point2DToleranceSortedLi
   @Override
   public boolean add(Point2D e) {
     int ind = binarySearch(e);
-    if (ind >= 0)
+    if (ind >= 0) {
       list.set(ind, e);
-    else
+    } else {
       list.add(-ind - 1, e);
+    }
     return true;
   }
 
   @Override
   public boolean addAll(Collection<? extends Point2D> c) {
-    for (Point2D p : c)
+    for (Point2D p : c) {
       add(p);
+    }
     return !c.isEmpty();
   }
 
@@ -75,52 +78,62 @@ public class Point2DToleranceSortedArrayList implements Point2DToleranceSortedLi
   public boolean removeAll(Collection<?> c) {
     boolean ret = false;
     for (Object o : c) {
-      if (remove(o))
+      if (remove(o)) {
         ret = true;
+      }
     }
     return ret;
   }
 
   @Override
   public double getMinY() {
-    if (isEmpty())
+    if (isEmpty()) {
       throw new IndexOutOfBoundsException("list is empty!");
+    }
     double minY = Double.POSITIVE_INFINITY;
-    for (Point2D p : this)
-      if (p.getY() < minY)
+    for (Point2D p : this) {
+      if (p.getY() < minY) {
         minY = p.getY();
+      }
+    }
     return minY;
   }
 
   @Override
   public double getMaxY() {
-    if (isEmpty())
+    if (isEmpty()) {
       throw new IndexOutOfBoundsException("list is empty!");
+    }
     double maxY = Double.NEGATIVE_INFINITY;
-    for (Point2D p : this)
-      if (p.getY() > maxY)
+    for (Point2D p : this) {
+      if (p.getY() > maxY) {
         maxY = p.getY();
+      }
+    }
     return maxY;
   }
 
   @Override
   public double getMinX() {
-    if (isEmpty())
+    if (isEmpty()) {
       throw new IndexOutOfBoundsException("list is empty!");
+    }
     return get(0).getX();
   }
 
   @Override
   public double getMaxX() {
-    if (isEmpty())
+    if (isEmpty()) {
       throw new IndexOutOfBoundsException("list is empty!");
+    }
     return get(size() - 1).getX();
   }
 
   @Override
   public Point2D get(int index) {
-    if (index >= 0 && index < size())
+    if (index >= 0 && index < size()) {
       return list.get(index);
+    }
     return null;
   }
 
@@ -139,8 +152,9 @@ public class Point2DToleranceSortedArrayList implements Point2DToleranceSortedLi
   @Override
   public int indexOf(Point2D findPoint) {
     int ind = binarySearch(findPoint);
-    if (ind < -1)
+    if (ind < -1) {
       ind = -1;
+    }
     return ind;
   }
 

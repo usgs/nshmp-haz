@@ -37,12 +37,12 @@ public enum FocalMech {
 
   /**
    * Returns a 'standard' rake value for this mechanism.
-   * 
+   *
    * <p><b>NOTE:</b> This value may not be appropriate for future PSHA if
    * directivity is considered. For example, {@code STRIKE_SLIP} currently
    * returns a left-lateral rake. Furthermore, oblique focal mechanisms will
    * need to specify right- or left-lateral reverse and normal combinations.</p>
-   * 
+   *
    * @return the rake
    */
   public double rake() {

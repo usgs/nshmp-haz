@@ -45,7 +45,7 @@ class GriddedSubsetSurface extends ContainerSubset2D<Location> implements Gridde
    */
   public GriddedSubsetSurface(int numRows, int numCols, int startRow, int startCol,
       GriddedSurface data)
-      throws ArrayIndexOutOfBoundsException {
+          throws ArrayIndexOutOfBoundsException {
     super(numRows, numCols, startRow, startCol, data);
     parentSurface = data;
   }
@@ -56,7 +56,7 @@ class GriddedSubsetSurface extends ContainerSubset2D<Location> implements Gridde
    */
   public void setLocation(int row, int col, Location location) {
     throw new java.lang.UnsupportedOperationException(
-      "This function is not implemented in this subclass");
+        "This function is not implemented in this subclass");
   }
 
   /**
@@ -126,6 +126,7 @@ class GriddedSubsetSurface extends ContainerSubset2D<Location> implements Gridde
   /**
    * returns the grid spacing along strike
    */
+  @Override
   public double getGridSpacingAlongStrike() {
     return ((AbstractGriddedSurface) data).getGridSpacingAlongStrike();
   }
@@ -133,6 +134,7 @@ class GriddedSubsetSurface extends ContainerSubset2D<Location> implements Gridde
   /**
    * returns the grid spacing down dip
    */
+  @Override
   public double getGridSpacingDownDip() {
     return ((AbstractGriddedSurface) data).getGridSpacingDownDip();
   }
@@ -150,14 +152,16 @@ class GriddedSubsetSurface extends ContainerSubset2D<Location> implements Gridde
     return width() * length();
   }
 
+  @Override
   public Location getLocation(int row, int column) {
     return get(row, column);
   }
 
   public LocationList getRow(int row) {
     List<Location> locs = Lists.newArrayList();
-    for (int col = 0; col < getNumCols(); col++)
+    for (int col = 0; col < getNumCols(); col++) {
       locs.add(get(row, col));
+    }
     return LocationList.create(locs);
   }
 
@@ -193,13 +197,13 @@ class GriddedSubsetSurface extends ContainerSubset2D<Location> implements Gridde
   }
 
   @Override /**
-             * This assumes the lateral edges are straight lines
-             */
+   * This assumes the lateral edges are straight lines
+   */
   public LocationList getPerimeter() {
     LocationList topTr = getRow(0);
     LocationList botTr = LocationList.create(getRow(getNumRows() - 1)).reverse();
     Iterable<Location> locs = Iterables.concat(topTr, botTr,
-      Lists.newArrayList(topTr.get(0)));
+        Lists.newArrayList(topTr.get(0)));
     return LocationList.create(locs);
   }
 
@@ -308,8 +312,9 @@ class GriddedSubsetSurface extends ContainerSubset2D<Location> implements Gridde
     // }
     double depth = 0;
     LocationList topTrace = getRow(0);
-    for (Location loc : topTrace)
+    for (Location loc : topTrace) {
       depth += loc.depth();
+    }
     return depth / topTrace.size();
   }
 

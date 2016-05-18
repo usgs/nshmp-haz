@@ -26,7 +26,7 @@ import java.util.Set;
  * logical groupings of sources by {@link SourceType}. Each {@code SourceSet}
  * carries with it references to the {@code GroundMotionModel}s and associated
  * weights to be used when evaluating hazard.
- * 
+ *
  * @author Peter Powers
  * @see Source
  * @see SourceSet
@@ -69,16 +69,16 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
   /**
    * Load a {@code HazardModel} from a directory or Zip file specified by the
    * supplied {@code path}.
-   * 
+   *
    * <p>For more information on a HazardModel directory and file structure, see
    * the <a
    * href="https://github.com/usgs/nshmp-haz/wiki/Earthquake-Source-Models"
    * target="_top">nshmp-haz wiki</a>.</p>
-   * 
+   *
    * <p><b>Notes:</b> HazardModel loading is not thread safe. Also, there are a
    * wide variety of exceptions that may be encountered when loading a model. In
    * most cases, the exception will be logged and the JVM will exit.</p>
-   * 
+   *
    * @param path to {@code HazardModel} directory or Zip file
    * @return a newly instantiated {@code HazardModel}
    */

@@ -30,7 +30,7 @@ public class PointSources {
   /**
    * Using the supplied {@code Site} and the standard data that is used to build
    * point sources, create and return an {@code InputList}.
-   * 
+   *
    * @param site of interest
    * @param loc
    * @param mfd
@@ -55,7 +55,7 @@ public class PointSources {
   /**
    * Using the supplied {@code Site}s and the standard data that is used to
    * build point sources, create and return a {@code List<InputList>}.
-   * 
+   *
    * @param sites
    * @param loc
    * @param mfd
@@ -86,7 +86,7 @@ public class PointSources {
    * Using the supplied {@code Site}s and a GridSourceSet, from which the
    * standard data that is used to build point sources is derived, create and
    * return a {@code List<InputList>}.
-   * 
+   *
    */
   public static List<InputList> finiteInputs(
       List<Site> sites,
@@ -96,7 +96,7 @@ public class PointSources {
       GridSourceSet grid) {
 
     Source source = pointSource(PointSourceType.FINITE, loc, mfd, mechWtMap, grid.rupScaling,
-      grid.depthModel);
+        grid.depthModel);
     return finiteInputs(sites, source);
   }
 
@@ -159,14 +159,14 @@ public class PointSources {
     XySequence mfd = XySequence.create(mags, rates);
 
     Map<FocalMech, Double> ssMap = Maps.immutableEnumMap(
-      ImmutableMap.<FocalMech, Double> builder()
+        ImmutableMap.<FocalMech, Double> builder()
         .put(FocalMech.STRIKE_SLIP, 1.0)
         .put(FocalMech.REVERSE, 0.0)
         .put(FocalMech.NORMAL, 0.0)
         .build());
 
     Map<FocalMech, Double> multiMechMap = Maps.immutableEnumMap(
-      ImmutableMap.<FocalMech, Double> builder()
+        ImmutableMap.<FocalMech, Double> builder()
         .put(FocalMech.STRIKE_SLIP, 0.3334)
         .put(FocalMech.REVERSE, 0.3333)
         .put(FocalMech.NORMAL, 0.3333)
@@ -178,20 +178,20 @@ public class PointSources {
     String wusMagDepthStr = "[6.5::[5.0:1.0]; 10.0::[1.0:1.0]]";
 
     NavigableMap<Double, Map<Double, Double>> ceusMagDepthMap =
-      Parsing.stringToValueValueWeightMap(ceusMagDepthStr);
+        Parsing.stringToValueValueWeightMap(ceusMagDepthStr);
     NavigableMap<Double, Map<Double, Double>> wusMagDepthMap =
-      Parsing.stringToValueValueWeightMap(wusMagDepthStr);
+        Parsing.stringToValueValueWeightMap(wusMagDepthStr);
 
     double ceusMaxDepth = 22.0;
     double wusMaxDepth = 14.0;
 
     PointSource source = finiteSource(
-      Location.create(0.0, 0.0),
-      mfd,
-      multiMechMap,
-      rupScaling,
-      wusMagDepthMap,
-      wusMaxDepth);
+        Location.create(0.0, 0.0),
+        mfd,
+        multiMechMap,
+        rupScaling,
+        wusMagDepthMap,
+        wusMaxDepth);
     System.out.println(source.name());
 
     Location srcLoc = Location.create(0.0, 0.0);
@@ -203,18 +203,18 @@ public class PointSources {
     double az = 0.0; // radians;
     Location siteLoc = Locations.location(srcLoc, az, distances[1]);
     Site site = Site.builder()
-      .location(siteLoc)
-      .vs30(760.0)
-      .build();
+        .location(siteLoc)
+        .vs30(760.0)
+        .build();
 
     InputList inputs = finiteInputs(
-      site,
-      srcLoc,
-      mfd,
-      multiMechMap,
-      rupScaling,
-      wusMagDepthMap,
-      wusMaxDepth);
+        site,
+        srcLoc,
+        mfd,
+        multiMechMap,
+        rupScaling,
+        wusMagDepthMap,
+        wusMaxDepth);
 
     System.out.println(inputs);
 

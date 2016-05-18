@@ -127,7 +127,9 @@ public enum Imt {
    */
   public Double period() {
     // TODO should this throw an IAE instead or return null?
-    if (ordinal() < 10) return null;
+    if (ordinal() < 10) {
+      return null;
+    }
     String valStr = name().substring(2).replace("P", ".");
     return Double.parseDouble(valStr);
   }
@@ -137,7 +139,7 @@ public enum Imt {
    * result will be sorted according to the iteration order of the supplied
    * {@code Collection}. Any non spectral acceleration {@code Imt}s will have
    * null values in the returned {@code List}.
-   * 
+   *
    * @param imts to list periods for
    * @return a {@code List} of spectral periods
    * @see #saImts()
@@ -163,7 +165,9 @@ public enum Imt {
       if (imt.name().startsWith("SA")) {
         double saPeriod = imt.period();
 
-        if (fuzzyEquals(saPeriod, period, 0.000001)) return imt;
+        if (fuzzyEquals(saPeriod, period, 0.000001)) {
+          return imt;
+        }
       }
     }
     throw new IllegalArgumentException("No corresponding Imt for period:" + period);
@@ -178,8 +182,12 @@ public enum Imt {
    *         {@code PGD}
    */
   public double frequency() {
-    if (this == PGA) return 100;
-    if (this.isSA()) return 1.0 / period();
+    if (this == PGA) {
+      return 100;
+    }
+    if (this.isSA()) {
+      return 1.0 / period();
+    }
     throw new UnsupportedOperationException("frequncy() not supported for PGD, PGV, etc…");
   }
 

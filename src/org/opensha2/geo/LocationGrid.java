@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * An immutable, tabular grid of locations that supplies row and column data as
  * {@link LocationList}s.
- * 
+ *
  * <p>Internally, the grid is backed by a Guava {@link ArrayTable}.
  *
  * @author Peter Powers
@@ -57,7 +57,7 @@ public final class LocationGrid implements Iterable<Location> {
     this.columnEnd = columnStart + columnWidth;
 
     this.master = rowStart == 0 && rowWidth == grid.rowKeyList().size() &&
-      columnStart == 0 && columnWidth == grid.columnKeyList().size();
+        columnStart == 0 && columnWidth == grid.columnKeyList().size();
   }
 
   /**
@@ -131,7 +131,7 @@ public final class LocationGrid implements Iterable<Location> {
   /**
    * Return a new grid that is a window into this one. The specified window
    * dimensions must be less than or equal to the dimensions of this grid.
-   * 
+   *
    * @param rowStart first row of window
    * @param rowWidth number of rows in the window
    * @param columnStart first column of window
@@ -143,11 +143,11 @@ public final class LocationGrid implements Iterable<Location> {
     checkElementIndex(columnStart, this.columnWidth);
     checkPositionIndex(columnStart + columnWidth, this.columnWidth);
     return new LocationGrid(
-      this.grid,
-      this.rowStart + rowStart,
-      rowWidth,
-      this.columnStart + columnStart,
-      columnWidth);
+        this.grid,
+        this.rowStart + rowStart,
+        rowWidth,
+        this.columnStart + columnStart,
+        columnWidth);
   }
 
   /**
@@ -157,9 +157,9 @@ public final class LocationGrid implements Iterable<Location> {
    */
   public LocationGrid parent() {
     return master ? this : new LocationGrid(
-      grid,
-      0, grid.rowKeyList().size(),
-      0, grid.columnKeyList().size());
+        grid,
+        0, grid.rowKeyList().size(),
+        0, grid.columnKeyList().size());
   }
 
   /**
@@ -173,13 +173,13 @@ public final class LocationGrid implements Iterable<Location> {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder("LocationGrid [")
-      .append(rowWidth).append(" x ")
-      .append(columnWidth).append("]")
-      .append(" window=").append(!master);
+        .append(rowWidth).append(" x ")
+        .append(columnWidth).append("]")
+        .append(" window=").append(!master);
     if (!master) {
       sb.append(" [parent ")
-        .append(grid.rowKeyList().size()).append("r x ")
-        .append(grid.columnKeyList().size()).append("c]");
+      .append(grid.rowKeyList().size()).append("r x ")
+      .append(grid.columnKeyList().size()).append("c]");
     }
     sb.append(NEWLINE);
     LocationList firstRow = firstRow();
@@ -209,9 +209,9 @@ public final class LocationGrid implements Iterable<Location> {
 
   private static void appendLocation(StringBuilder builder, int row, int column, Location loc) {
     builder.append(padStart(Integer.toString(row), 5, ' '))
-      .append(padStart(Integer.toString(column), 5, ' '))
-      .append("    ").append(loc)
-      .append(NEWLINE);
+    .append(padStart(Integer.toString(column), 5, ' '))
+    .append("    ").append(loc)
+    .append(NEWLINE);
   }
 
   @Override
@@ -229,7 +229,9 @@ public final class LocationGrid implements Iterable<Location> {
       @Override
       public Location next() {
         Location loc = grid.at(rowIndex, columnIndex++);
-        if (columnIndex == columnEnd) rowIndex++;
+        if (columnIndex == columnEnd) {
+          rowIndex++;
+        }
         return loc;
       }
 
@@ -324,7 +326,7 @@ public final class LocationGrid implements Iterable<Location> {
 
   /**
    * Return a new builder.
-   * 
+   *
    * @param rows expected number of rows
    * @param columns expected number of columns
    */
@@ -343,13 +345,13 @@ public final class LocationGrid implements Iterable<Location> {
 
     private Builder(int rows, int columns) {
       grid = ArrayTable.create(
-        ContiguousSet.create(Range.closedOpen(0, rows), DiscreteDomain.integers()),
-        ContiguousSet.create(Range.closedOpen(0, columns), DiscreteDomain.integers()));
+          ContiguousSet.create(Range.closedOpen(0, rows), DiscreteDomain.integers()),
+          ContiguousSet.create(Range.closedOpen(0, columns), DiscreteDomain.integers()));
     };
 
     /**
      * Set the Location at the specified {@code row} and {@code column} indices.
-     * 
+     *
      * @param row index of location to set
      * @param column index of location to set
      * @param loc to set
@@ -362,7 +364,7 @@ public final class LocationGrid implements Iterable<Location> {
 
     /**
      * Fill a row with the specified {@code Location}s.
-     * 
+     *
      * @param index of row to fill
      * @param locs to fill row with
      * @return this {@code Builder}
@@ -378,7 +380,7 @@ public final class LocationGrid implements Iterable<Location> {
 
     /**
      * Fill a row with the specified {@code Location}s.
-     * 
+     *
      * @param index of column to fill
      * @param locs to fill column with
      * @return this {@code Builder}
@@ -399,9 +401,9 @@ public final class LocationGrid implements Iterable<Location> {
       checkState(!grid.containsValue(null), "Some Locations have not been set");
       checkState(!built, "This builder has already been used");
       return new LocationGrid(
-        grid,
-        0, grid.rowKeyList().size(),
-        0, grid.columnKeyList().size());
+          grid,
+          0, grid.rowKeyList().size(),
+          0, grid.columnKeyList().size());
     }
   }
 
@@ -409,20 +411,20 @@ public final class LocationGrid implements Iterable<Location> {
   public static void main(String[] args) {
 
     Set<Integer> strikeIndices = ContiguousSet.create(
-      Range.closedOpen(0, 9),
-      DiscreteDomain.integers());
+        Range.closedOpen(0, 9),
+        DiscreteDomain.integers());
 
     Set<Integer> dipIndices = ContiguousSet.create(
-      Range.closedOpen(0, 4),
-      DiscreteDomain.integers());
+        Range.closedOpen(0, 4),
+        DiscreteDomain.integers());
 
     ArrayTable<Integer, Integer, Location> t = ArrayTable.create(dipIndices, strikeIndices);
 
     for (int dipIndex : dipIndices) {
       for (int strikeIndex : strikeIndices) {
         Location loc = Location.create(
-          34.0 + 0.2 * strikeIndex,
-          -117.4 + 0.1 * dipIndex);
+            34.0 + 0.2 * strikeIndex,
+            -117.4 + 0.1 * dipIndex);
         t.set(dipIndex, strikeIndex, loc);
       }
     }
@@ -437,8 +439,8 @@ public final class LocationGrid implements Iterable<Location> {
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
         Location loc = Location.create(
-          34.0 + 0.2 * j,
-          -117.4 + 0.1 * i);
+            34.0 + 0.2 * j,
+            -117.4 + 0.1 * i);
         b.set(i, j, loc);
       }
     }

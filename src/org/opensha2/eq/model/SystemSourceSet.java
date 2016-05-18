@@ -43,7 +43,7 @@ import java.util.Map;
 
 /**
  * Wrapper class for related {@link SystemSource}s.
- * 
+ *
  * @author Peter Powers
  */
 public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSource> {
@@ -124,7 +124,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   /**
    * A single source in a fault system. These sources do not currently support
    * rupture iteration.
-   * 
+   *
    * <p>We skip the notion of a {@code Rupture} for now. Aleatory uncertainty on
    * magnitude isn't required, but if it is, we'll alter this implementation to
    * return List<GmmInput> per source rather than one GmmInput.</p>
@@ -299,62 +299,62 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
   /*
    * System source calculation pipeline.
-   * 
+   *
    * Rather than expose highly mutable bitsets and attendant logic that is used
    * to generate HazardInputs from SystemSourceSets, we opt to locate transform
    * Functions and related classes here.
-   * 
+   *
    * System sources (e.g. UCERF3 ruptures) are composed of multiple small (~7km
    * long x ~15km wide) adjacent fault sections in a large and dense fault
    * network. Each source is defined by the indices of the participating fault
    * sections, magnitude, average width, average rake, and average dip, among
    * other parameters.
-   * 
+   *
    * In order to filter ruptures and calculate distance parameters when doing a
    * hazard calculation, one can treat each source as a finite fault. This
    * ultimately requires careful handling of site-to-source calculations when
    * trying to reduce redundant calculations because many sources share the same
    * fault sections and sources will be handled one-at-a-time, in sequence.
-   * 
+   *
    * Alternatively, one can approach the problem from an indexing standpoint,
    * precomuting that data which will be required, and then mining it on a
    * per-source basis, as follows:
-   * 
+   *
    * 1) For each source, create a BitSet with size = nSections. Set the bits for
    * each section that the source uses. [sourceBitSet]
-   * 
+   *
    * 2) Create another BitSet with size = nSections. Set the bits for each
    * section within the distance cutoff for a Site. Do this quickly using only
    * the centroid of each fault section. [siteBitSet]
-   * 
+   *
    * 3) Create and populate a Table<Metric, SectionIndex, Value> of distance
    * metrics for each section in the siteBitSet.
-   * 
+   *
    * 4) For each sourceBitSet, 'siteBitSet.intersects(sourceBitSet)' returns
    * whether the source is close enough to the site to be considered.
-   * 
+   *
    * 5) For each considered source, 'sourceBitSet AND siteBitSet' yields a
    * BitSet that only includes set bits with indices in the distance metric
    * table.
-   * 
+   *
    * 6) For the relevant fault sections in each source, find the minimum
    * distance metrics in the table (the rX value used is keyed to the minimum
    * rRup).
-   * 
+   *
    * 7) Build GmmInputs and proceed with hazard calculation.
-   * 
+   *
    * Note on the above. Although one could argue that only rRup or rJb be
    * calculated first, there are geometries for which min(rRup) != min(rJB);
    * e.g. location on hanging wall of dipping fault that abuts a vertical
    * fault... vertical might yield min(rRup) but min(rJB) would be 0 (over
    * dipping fault).
-   * 
+   *
    * Deaggregation considerations. TODO
    */
 
   /*
    * Concurrency
-   * 
+   *
    * The use case assumed here is that 1 or 2 fault systems (e.g. UCERF3
    * branch-averaged solutions) will most commonly be run when supporting
    * web-services. We therefore compute hazard by first creating a (large) input
@@ -366,7 +366,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   /**
    * Return an instance of a {@code Function} that converts a
    * {@code SystemSourceSet} to a ground motion model {@code InputList}.
-   * 
+   *
    * @param site with which to initialize instance.
    */
   public static Function<SystemSourceSet, InputList> toInputsFunction(Site site) {
@@ -390,7 +390,9 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
         // create Site BitSet
         double maxDistance = sourceSet.groundMotionModels().maxDistance();
         BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
-        if (siteBitset.isEmpty()) return inputs;
+        if (siteBitset.isEmpty()) {
+          return inputs;
+        }
 
         // create and fill distance table
         List<Integer> siteIndices = Data.bitsToIndices(siteBitset);

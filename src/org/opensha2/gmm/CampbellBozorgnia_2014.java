@@ -34,21 +34,21 @@ import java.util.Set;
  * Implementation of the Campbell & Bozorgnia (2014) next generation ground
  * motion model for active crustal regions developed as part of <a
  * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
- * 
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.</p>
- * 
+ *
  * <p><b>Reference:</b> Campbell, K.W., and Bozorgnia, Y., 2014, NGA-West2
  * ground motion model for the average horizontal components of PGA, PGV, and
  * 5%-damped linear acceleration response spectra: Earthquake Spectra, v. 30, n.
  * 3, p. 1087-1115.</p>
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/062913EQS175M">
  * 10.1193/062913EQS175M</a></p>
- * 
+ *
  * <p><b>Component:</b> RotD50 (average horizontal)</p>
- * 
+ *
  * @author Peter Powers
  * @see Gmm#CB_14
  */
@@ -59,18 +59,18 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
   static final CoefficientContainer COEFFS = new CoefficientContainer("CB14.csv");
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-    // TODO there are rake dependent M restrictions
-    .set(MAG, Range.closed(3.3, 8.5))
-    .setDistances(300.0)
-    // TODO actually is 15-90
-    .set(DIP, Faults.DIP_RANGE)
-    .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)
-    .set(ZHYP, Range.closed(0.0, 20.0))
-    .set(ZTOP, Range.closed(0.0, 20.0))
-    .set(RAKE, Faults.RAKE_RANGE)
-    .set(VS30, Range.closedOpen(150.0, 1500.0))
-    .set(Z2P5, Range.closed(0.0, 10.0))
-    .build();
+      // TODO there are rake dependent M restrictions
+      .set(MAG, Range.closed(3.3, 8.5))
+      .setDistances(300.0)
+      // TODO actually is 15-90
+      .set(DIP, Faults.DIP_RANGE)
+      .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)
+      .set(ZHYP, Range.closed(0.0, 20.0))
+      .set(ZTOP, Range.closed(0.0, 20.0))
+      .set(RAKE, Faults.RAKE_RANGE)
+      .set(VS30, Range.closedOpen(150.0, 1500.0))
+      .set(Z2P5, Range.closed(0.0, 10.0))
+      .build();
 
   private static final double H4 = 1.0;
   private static final double C = 1.88;
@@ -83,12 +83,12 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
     final Imt imt;
     final double c0, c1, c2, c3, c4, c5, c6, c7, c9, c10, c11, c14, c16, c17, c18, c19, c20,
-        a2,
-        h1, h2, h3, h5, h6,
-        k1, k2, k3,
-        φ1, φ2,
-        τ1, τ2,
-        ρ;
+    a2,
+    h1, h2, h3, h5, h6,
+    k1, k2, k3,
+    φ1, φ2,
+    τ1, τ2,
+    ρ;
 
     // same for all periods; replaced with constant; or unused (c8)
     // double c8, c12, c13, h4, c, n, phi_lnaf;
@@ -198,7 +198,9 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
     double Fflt = 0.0;
     if (style == NORMAL && Mw > 4.5) {
       Fflt = c.c9;
-      if (Mw <= 5.5) Fflt *= (Mw - 4.5);
+      if (Mw <= 5.5) {
+        Fflt *= (Mw - 4.5);
+      }
     }
 
     // Hanging-Wall term
@@ -224,7 +226,9 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
       // ... magnitude -- Equation 14
       double Fhw_m = 1.0 + c.a2 * (Mw - 6.5);
-      if (Mw <= 6.5) Fhw_m *= (Mw - 5.5);
+      if (Mw <= 6.5) {
+        Fhw_m *= (Mw - 5.5);
+      }
 
       // ... depth -- Equation 15
       double Fhw_z = 1.0 - 0.06 * in.zTop;
@@ -241,39 +245,41 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
     // k1 value so else condition always prevails -- Equation 18
     double vsk1 = vs30 / c.k1;
     double Fsite = (vs30 <= c.k1) ? c.c11 * log(vsk1) +
-      c.k2 * (log(pgaRock + C * pow(vsk1, N)) - log(pgaRock + C))
-      : (c.c11 + c.k2 * N) * log(vsk1);
+        c.k2 * (log(pgaRock + C * pow(vsk1, N)) - log(pgaRock + C))
+        : (c.c11 + c.k2 * N) * log(vsk1);
 
-    // Basin Response term -- Equation 20
-    // update z2p5 with CA model if not supplied -- Equation 33
-    double z2p5copy = z2p5;
-    if (Double.isNaN(z2p5)) z2p5copy = exp(7.089 - 1.144 * log(vs30));
-    double Fsed = 0.0;
-    if (z2p5copy <= 1.0) {
-      Fsed = c.c14 * (z2p5copy - 1.0);
-    } else if (z2p5copy > 3.0) {
-      Fsed = c.c16 * c.k3 * exp(-0.75) * (1.0 - exp(-0.25 * (z2p5copy - 3.0)));
-    }
+        // Basin Response term -- Equation 20
+        // update z2p5 with CA model if not supplied -- Equation 33
+        double z2p5copy = z2p5;
+        if (Double.isNaN(z2p5)) {
+          z2p5copy = exp(7.089 - 1.144 * log(vs30));
+        }
+        double Fsed = 0.0;
+        if (z2p5copy <= 1.0) {
+          Fsed = c.c14 * (z2p5copy - 1.0);
+        } else if (z2p5copy > 3.0) {
+          Fsed = c.c16 * c.k3 * exp(-0.75) * (1.0 - exp(-0.25 * (z2p5copy - 3.0)));
+        }
 
-    // Hypocentral Depth term -- Equations 21, 22, 23
-    double zHyp = in.zHyp;
-    double Fhyp = (zHyp <= 7.0) ? 0.0 : (zHyp <= 20.0) ? zHyp - 7.0 : 13.0;
-    if (Mw <= 5.5) {
-      Fhyp *= c.c17;
-    } else if (Mw <= 6.5) {
-      Fhyp *= (c.c17 + (c.c18 - c.c17) * (Mw - 5.5));
-    } else {
-      Fhyp *= c.c18;
-    }
+        // Hypocentral Depth term -- Equations 21, 22, 23
+        double zHyp = in.zHyp;
+        double Fhyp = (zHyp <= 7.0) ? 0.0 : (zHyp <= 20.0) ? zHyp - 7.0 : 13.0;
+        if (Mw <= 5.5) {
+          Fhyp *= c.c17;
+        } else if (Mw <= 6.5) {
+          Fhyp *= (c.c17 + (c.c18 - c.c17) * (Mw - 5.5));
+        } else {
+          Fhyp *= c.c18;
+        }
 
-    // Fault Dip term -- Equation 24
-    double Fdip = (Mw > 5.5) ? 0.0 : (Mw > 4.5) ? c.c19 * (5.5 - Mw) * dip : c.c19 * dip;
+        // Fault Dip term -- Equation 24
+        double Fdip = (Mw > 5.5) ? 0.0 : (Mw > 4.5) ? c.c19 * (5.5 - Mw) * dip : c.c19 * dip;
 
-    // Anelastic Attenuation term -- Equation 25
-    double Fatn = (rRup > 80.0) ? c.c20 * (rRup - 80.0) : 0.0;
+        // Anelastic Attenuation term -- Equation 25
+        double Fatn = (rRup > 80.0) ? c.c20 * (rRup - 80.0) : 0.0;
 
-    // total model -- Equation 1
-    return Fmag + Fr + Fflt + Fhw + Fsite + Fsed + Fhyp + Fdip + Fatn;
+        // total model -- Equation 1
+        return Fmag + Fr + Fflt + Fhw + Fsite + Fsed + Fhyp + Fdip + Fatn;
   }
 
   // Aleatory uncertainty model
@@ -283,43 +289,43 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
     // -- Equation 31
     double vsk1 = vs30 / c.k1;
     double alpha = (vs30 < c.k1) ? c.k2 * pgaRock *
-      (1 / (pgaRock + C * pow(vsk1, N)) - 1 / (pgaRock + C)) : 0.0;
+        (1 / (pgaRock + C * pow(vsk1, N)) - 1 / (pgaRock + C)) : 0.0;
 
-    // Magnitude dependence -- Equations 29 & 30
-    double tau_lnYB, tau_lnPGAB, phi_lnY, phi_lnPGAB;
-    if (Mw <= 4.5) {
-      tau_lnYB = c.τ1;
-      phi_lnY = c.φ1;
-      tau_lnPGAB = cPGA.τ1;
-      phi_lnPGAB = cPGA.φ1;
-    } else if (Mw < 5.5) {
-      tau_lnYB = stdMagDep(c.τ1, c.τ2, Mw);
-      phi_lnY = stdMagDep(c.φ1, c.φ2, Mw);
-      tau_lnPGAB = stdMagDep(cPGA.τ1, cPGA.τ2, Mw);
-      phi_lnPGAB = stdMagDep(cPGA.φ1, cPGA.φ2, Mw);
-    } else {
-      tau_lnYB = c.τ2;
-      phi_lnY = c.φ2;
-      tau_lnPGAB = cPGA.τ2;
-      phi_lnPGAB = cPGA.φ2;
-    }
+        // Magnitude dependence -- Equations 29 & 30
+        double tau_lnYB, tau_lnPGAB, phi_lnY, phi_lnPGAB;
+        if (Mw <= 4.5) {
+          tau_lnYB = c.τ1;
+          phi_lnY = c.φ1;
+          tau_lnPGAB = cPGA.τ1;
+          phi_lnPGAB = cPGA.φ1;
+        } else if (Mw < 5.5) {
+          tau_lnYB = stdMagDep(c.τ1, c.τ2, Mw);
+          phi_lnY = stdMagDep(c.φ1, c.φ2, Mw);
+          tau_lnPGAB = stdMagDep(cPGA.τ1, cPGA.τ2, Mw);
+          phi_lnPGAB = stdMagDep(cPGA.φ1, cPGA.φ2, Mw);
+        } else {
+          tau_lnYB = c.τ2;
+          phi_lnY = c.φ2;
+          tau_lnPGAB = cPGA.τ2;
+          phi_lnPGAB = cPGA.φ2;
+        }
 
-    // intra-event std dev -- Equation 27
-    double alphaTau = alpha * tau_lnPGAB;
-    double tauSq = tau_lnYB * tau_lnYB + alphaTau * alphaTau +
-      2.0 * alpha * c.ρ * tau_lnYB * tau_lnPGAB;
+        // intra-event std dev -- Equation 27
+        double alphaTau = alpha * tau_lnPGAB;
+        double tauSq = tau_lnYB * tau_lnYB + alphaTau * alphaTau +
+            2.0 * alpha * c.ρ * tau_lnYB * tau_lnPGAB;
 
-    // inter-event std dev -- Equation 28
-    double phi_lnYB = sqrt(phi_lnY * phi_lnY - PHI_LNAF_SQ);
-    phi_lnPGAB = sqrt(phi_lnPGAB * phi_lnPGAB - PHI_LNAF_SQ);
-    double aPhi_lnPGAB = alpha * phi_lnPGAB;
+        // inter-event std dev -- Equation 28
+        double phi_lnYB = sqrt(phi_lnY * phi_lnY - PHI_LNAF_SQ);
+        phi_lnPGAB = sqrt(phi_lnPGAB * phi_lnPGAB - PHI_LNAF_SQ);
+        double aPhi_lnPGAB = alpha * phi_lnPGAB;
 
-    // phi_lnaf terms in eqn. 30 cancel when expanded leaving phi_lnY only
-    double phiSq = phi_lnY * phi_lnY + aPhi_lnPGAB * aPhi_lnPGAB +
-      2.0 * c.ρ * phi_lnYB * aPhi_lnPGAB;
+        // phi_lnaf terms in eqn. 30 cancel when expanded leaving phi_lnY only
+        double phiSq = phi_lnY * phi_lnY + aPhi_lnPGAB * aPhi_lnPGAB +
+            2.0 * c.ρ * phi_lnYB * aPhi_lnPGAB;
 
-    // total model -- Equation 32
-    return sqrt(phiSq + tauSq);
+        // total model -- Equation 32
+        return sqrt(phiSq + tauSq);
   }
 
   private static final double stdMagDep(final double lo, final double hi, final double Mw) {
