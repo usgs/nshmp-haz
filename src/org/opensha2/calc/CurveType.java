@@ -11,21 +11,20 @@ import org.opensha2.gmm.Gmm;
  */
 public enum CurveType {
 
-	/** Total mean hazard curves. */
-	TOTAL,
+  /** Total mean hazard curves. */
+  TOTAL,
 
-	/** {@linkplain Gmm Ground motion model} curves. */
-	GMM,
+  /** {@linkplain Gmm Ground motion model} curves. */
+  GMM,
 
-	/** Hazard curves by {@link SourceType} */
-	SOURCE,
+  /** Hazard curves by {@link SourceType} */
+  SOURCE,
 
-	/**
-	 * Binary hazard curves. Binary curves may only be saved for map
-	 * calculations for which a map 'extents' region has been defined. See the
-	 * <a href=
-	 * "https://github.com/usgs/nshmp-haz/wiki/Sites#geojson-format-geojson"
-	 * target="_top"> site specification</a> page for more details.
-	 */
-	BINARY;
+  /**
+   * Binary hazard curves. Binary curves may only be saved for map calculations
+   * for which a map 'extents' region has been defined. See the <a href=
+   * "https://github.com/usgs/nshmp-haz/wiki/Sites#geojson-format-geojson"
+   * target="_top"> site specification</a> page for more details.
+   */
+  BINARY;
 }

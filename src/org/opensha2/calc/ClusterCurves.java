@@ -20,52 +20,52 @@ import org.opensha2.gmm.Imt;
  */
 final class ClusterCurves {
 
-	final ClusterGroundMotions clusterGroundMotions;
-	final Map<Imt, Map<Gmm, XySequence>> curveMap;
+  final ClusterGroundMotions clusterGroundMotions;
+  final Map<Imt, Map<Gmm, XySequence>> curveMap;
 
-	private ClusterCurves(ClusterGroundMotions clusterGroundMotions,
-			Map<Imt, Map<Gmm, XySequence>> curveMap) {
-		this.clusterGroundMotions = clusterGroundMotions;
-		this.curveMap = curveMap;
-	}
+  private ClusterCurves(ClusterGroundMotions clusterGroundMotions,
+      Map<Imt, Map<Gmm, XySequence>> curveMap) {
+    this.clusterGroundMotions = clusterGroundMotions;
+    this.curveMap = curveMap;
+  }
 
-	static Builder builder(ClusterGroundMotions clusterGroundMotions) {
-		return new Builder(clusterGroundMotions);
-	}
+  static Builder builder(ClusterGroundMotions clusterGroundMotions) {
+    return new Builder(clusterGroundMotions);
+  }
 
-	static class Builder {
+  static class Builder {
 
-		private static final String ID = "ClusterCurves.Builder";
-		private boolean built = false;
+    private static final String ID = "ClusterCurves.Builder";
+    private boolean built = false;
 
-		private final ClusterGroundMotions clusterGroundMotions;
-		private final Map<Imt, Map<Gmm, XySequence>> curveMap;
+    private final ClusterGroundMotions clusterGroundMotions;
+    private final Map<Imt, Map<Gmm, XySequence>> curveMap;
 
-		private Builder(ClusterGroundMotions clusterGroundMotions) {
-			this.clusterGroundMotions = clusterGroundMotions;
-			// look at first HazardGM to determine curve table dimensions
-			GroundMotions model = clusterGroundMotions.get(0);
-			curveMap = new EnumMap<>(Imt.class);
-			for (Imt imt : model.means.keySet()) {
-				Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
-				curveMap.put(imt, gmmMap);
-			}
-		}
+    private Builder(ClusterGroundMotions clusterGroundMotions) {
+      this.clusterGroundMotions = clusterGroundMotions;
+      // look at first HazardGM to determine curve table dimensions
+      GroundMotions model = clusterGroundMotions.get(0);
+      curveMap = new EnumMap<>(Imt.class);
+      for (Imt imt : model.means.keySet()) {
+        Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
+        curveMap.put(imt, gmmMap);
+      }
+    }
 
-		/* Makes an immutable copy of the supplied curve. */
-		Builder addCurve(Imt imt, Gmm gmm, XySequence curve) {
-			curveMap.get(imt).put(gmm, immutableCopyOf(curve));
-			return this;
-		}
+    /* Makes an immutable copy of the supplied curve. */
+    Builder addCurve(Imt imt, Gmm gmm, XySequence curve) {
+      curveMap.get(imt).put(gmm, immutableCopyOf(curve));
+      return this;
+    }
 
-		ClusterCurves build() {
-			checkState(!built, "This %s instance has already been used", ID);
-			// TODO check that all gmms have been set? it'll be difficult to
-			// track whether all curves for all inputs have been added
-			built = true;
-			return new ClusterCurves(clusterGroundMotions, curveMap);
-		}
+    ClusterCurves build() {
+      checkState(!built, "This %s instance has already been used", ID);
+      // TODO check that all gmms have been set? it'll be difficult to
+      // track whether all curves for all inputs have been added
+      built = true;
+      return new ClusterCurves(clusterGroundMotions, curveMap);
+    }
 
-	}
+  }
 
 }

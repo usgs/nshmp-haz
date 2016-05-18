@@ -49,127 +49,130 @@ import com.google.common.collect.Range;
  */
 public abstract class BcHydro_2012 implements GroundMotionModel {
 
-	static final String NAME = "BC Hydro (2012)";
+  static final String NAME = "BC Hydro (2012)";
 
-	// TODO will probably want to have constraints per-implementation (e.g. slab
-	// vs interface depth limits)
-	static final Constraints CONSTRAINTS = Constraints.builder()
-		.set(MAG, Range.closed(5.0, 9.5))
-		.set(RRUP, Range.closed(0.0, 1000.0))
-		.set(ZTOP, Faults.SLAB_DEPTH_RANGE)
-		.set(VS30, Range.closed(150.0, 1000.0))
-		.build();
+  // TODO will probably want to have constraints per-implementation (e.g. slab
+  // vs interface depth limits)
+  static final Constraints CONSTRAINTS = Constraints.builder()
+    .set(MAG, Range.closed(5.0, 9.5))
+    .set(RRUP, Range.closed(0.0, 1000.0))
+    .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+    .set(VS30, Range.closed(150.0, 1000.0))
+    .build();
 
-	static final CoefficientContainer COEFFS = new CoefficientContainer("BCHydro12.csv");
+  static final CoefficientContainer COEFFS = new CoefficientContainer("BCHydro12.csv");
 
-	private static final double C1 = 7.8;
-	private static final double T3 = 0.1;
-	private static final double T4 = 0.9;
-	private static final double T5 = 0.0;
-	private static final double T9 = 0.4;
-	private static final double C4 = 10.0;
-	private static final double C = 1.88;
-	private static final double N = 1.18;
-	private static final double VSS_MAX = 1000.0;
-	private static final double SIGMA = 0.74;
-	private static final double ΔC1_SLAB = -0.3;
+  private static final double C1 = 7.8;
+  private static final double T3 = 0.1;
+  private static final double T4 = 0.9;
+  private static final double T5 = 0.0;
+  private static final double T9 = 0.4;
+  private static final double C4 = 10.0;
+  private static final double C = 1.88;
+  private static final double N = 1.18;
+  private static final double VSS_MAX = 1000.0;
+  private static final double SIGMA = 0.74;
+  private static final double ΔC1_SLAB = -0.3;
 
-	private static final class Coefficients {
+  private static final class Coefficients {
 
-		final double vlin, b, θ1, θ2, θ6, θ10, θ11, θ12, θ13, θ14, ΔC1mid;
+    final double vlin, b, θ1, θ2, θ6, θ10, θ11, θ12, θ13, θ14, ΔC1mid;
 
-		// not currently used
-		// final double t7, t8, t15, t16, dC1lo, dC1hi;
+    // not currently used
+    // final double t7, t8, t15, t16, dC1lo, dC1hi;
 
-		Coefficients(Imt imt, CoefficientContainer cc) {
-			Map<String, Double> coeffs = cc.get(imt);
-			vlin = coeffs.get("vlin");
-			b = coeffs.get("b");
-			θ1 = coeffs.get("t1");
-			θ2 = coeffs.get("t2");
-			θ6 = coeffs.get("t6");
-			θ10 = coeffs.get("t10");
-			θ11 = coeffs.get("t11");
-			θ12 = coeffs.get("t12");
-			θ13 = coeffs.get("t13");
-			θ14 = coeffs.get("t14");
-			ΔC1mid = coeffs.get("dC1mid");
-		}
-	}
+    Coefficients(Imt imt, CoefficientContainer cc) {
+      Map<String, Double> coeffs = cc.get(imt);
+      vlin = coeffs.get("vlin");
+      b = coeffs.get("b");
+      θ1 = coeffs.get("t1");
+      θ2 = coeffs.get("t2");
+      θ6 = coeffs.get("t6");
+      θ10 = coeffs.get("t10");
+      θ11 = coeffs.get("t11");
+      θ12 = coeffs.get("t12");
+      θ13 = coeffs.get("t13");
+      θ14 = coeffs.get("t14");
+      ΔC1mid = coeffs.get("dC1mid");
+    }
+  }
 
-	private final Coefficients coeffs;
-	private final Coefficients coeffsPGA;
+  private final Coefficients coeffs;
+  private final Coefficients coeffsPGA;
 
-	BcHydro_2012(final Imt imt) {
-		coeffs = new Coefficients(imt, COEFFS);
-		coeffsPGA = new Coefficients(PGA, COEFFS);
-	}
+  BcHydro_2012(final Imt imt) {
+    coeffs = new Coefficients(imt, COEFFS);
+    coeffsPGA = new Coefficients(PGA, COEFFS);
+  }
 
-	@Override public final ScalarGroundMotion calc(final GmmInput in) {
+  @Override
+  public final ScalarGroundMotion calc(final GmmInput in) {
 
-		// pgaRock only required to compute non-linear site response
-		// when vs30 is less than period-dependent vlin cutoff
-		double pgaRock = (in.vs30 < coeffs.vlin) ?
-			exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, 1000.0)) :
-			0.0;
-		double μ = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
-		return DefaultScalarGroundMotion.create(μ, SIGMA);
-	}
+    // pgaRock only required to compute non-linear site response
+    // when vs30 is less than period-dependent vlin cutoff
+    double pgaRock = (in.vs30 < coeffs.vlin)
+      ? exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, 1000.0)) : 0.0;
+    double μ = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
+    return DefaultScalarGroundMotion.create(μ, SIGMA);
+  }
 
-	abstract boolean isSlab();
+  abstract boolean isSlab();
 
-	private static final double calcMean(final Coefficients c, final boolean slab,
-			final double pgaRock, final double Mw, final double rRup, final double zTop,
-			final double vs30) {
+  private static final double calcMean(final Coefficients c, final boolean slab,
+      final double pgaRock, final double Mw, final double rRup, final double zTop,
+      final double vs30) {
 
-		double ΔC1 = (slab ? ΔC1_SLAB : c.ΔC1mid);
-		double mCut = C1 + ΔC1;
-		double t13m = c.θ13 * (10 - Mw) * (10 - Mw);
-		double fMag = (Mw <= mCut ? T4 : T5) * (Mw - mCut) + t13m;
+    double ΔC1 = (slab ? ΔC1_SLAB : c.ΔC1mid);
+    double mCut = C1 + ΔC1;
+    double t13m = c.θ13 * (10 - Mw) * (10 - Mw);
+    double fMag = (Mw <= mCut ? T4 : T5) * (Mw - mCut) + t13m;
 
-		// no depth term for interface events
-		double fDepth = slab ? c.θ11 * (min(zTop, 125.0) - 60.) : 0.0;
+    // no depth term for interface events
+    double fDepth = slab ? c.θ11 * (min(zTop, 125.0) - 60.) : 0.0;
 
-		double vsS = min(vs30, VSS_MAX);
+    double vsS = min(vs30, VSS_MAX);
 
-		double fSite = c.θ12 * log(vsS / c.vlin);
-		if (vs30 < c.vlin) { // whether or not we use pgaRock
-			fSite += -c.b * log(pgaRock + C) + c.b * log(pgaRock + C * pow((vsS / c.vlin), N));
-		} else {
-			// for pgaRock loop, vs=1000 > vlinPGA=865
-			fSite += c.b * N * log(vsS / c.vlin);
-		}
+    double fSite = c.θ12 * log(vsS / c.vlin);
+    if (vs30 < c.vlin) { // whether or not we use pgaRock
+      fSite += -c.b * log(pgaRock + C) + c.b * log(pgaRock + C * pow((vsS / c.vlin), N));
+    } else {
+      // for pgaRock loop, vs=1000 > vlinPGA=865
+      fSite += c.b * N * log(vsS / c.vlin);
+    }
 
-		return c.θ1 + T4 * ΔC1 +
-			(c.θ2 + (slab ? c.θ14 : 0.0) + T3 * (Mw - 7.8)) *
-			log(rRup + C4 * exp((Mw - 6.0) * T9)) + c.θ6 * rRup + (slab ? c.θ10 : 0.0) + fMag +
-			fDepth +
-			// fterm + no fterm for forearc sites
-			fSite;
-	}
+    return c.θ1 + T4 * ΔC1 +
+      (c.θ2 + (slab ? c.θ14 : 0.0) + T3 * (Mw - 7.8)) *
+        log(rRup + C4 * exp((Mw - 6.0) * T9)) +
+      c.θ6 * rRup + (slab ? c.θ10 : 0.0) + fMag +
+      fDepth +
+      // fterm + no fterm for forearc sites
+      fSite;
+  }
 
-	static final class Interface extends BcHydro_2012 {
-		static final String NAME = BcHydro_2012.NAME + ": Interface";
+  static final class Interface extends BcHydro_2012 {
+    static final String NAME = BcHydro_2012.NAME + ": Interface";
 
-		Interface(Imt imt) {
-			super(imt);
-		}
+    Interface(Imt imt) {
+      super(imt);
+    }
 
-		@Override final boolean isSlab() {
-			return false;
-		}
-	}
+    @Override
+    final boolean isSlab() {
+      return false;
+    }
+  }
 
-	static final class Slab extends BcHydro_2012 {
-		static final String NAME = BcHydro_2012.NAME + ": Slab";
+  static final class Slab extends BcHydro_2012 {
+    static final String NAME = BcHydro_2012.NAME + ": Slab";
 
-		Slab(Imt imt) {
-			super(imt);
-		}
+    Slab(Imt imt) {
+      super(imt);
+    }
 
-		@Override final boolean isSlab() {
-			return true;
-		}
-	}
+    @Override
+    final boolean isSlab() {
+      return true;
+    }
+  }
 
 }

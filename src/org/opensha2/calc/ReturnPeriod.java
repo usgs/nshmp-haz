@@ -26,67 +26,68 @@ import com.google.common.base.MoreObjects;
  */
 public enum ReturnPeriod {
 
-	/*
-	 * TODO It would be really nice to add some commentary to each value about
-	 * what disciplines or industries use each value and why
-	 */
+  /*
+   * TODO It would be really nice to add some commentary to each value about
+   * what disciplines or industries use each value and why
+   */
 
-	/** A 1% probability of exceedance in 10,000 years. */
-	PE1IN10000(0.000001),
+  /** A 1% probability of exceedance in 10,000 years. */
+  PE1IN10000(0.000001),
 
-	/** A 1% probability of exceedance in 1,000 years. */
-	PE1IN1000(0.00001),
+  /** A 1% probability of exceedance in 1,000 years. */
+  PE1IN1000(0.00001),
 
-	/** A 1% probability of exceedance in 100 years. */
-	PE1IN100(0.000101),
+  /** A 1% probability of exceedance in 100 years. */
+  PE1IN100(0.000101),
 
-	/** A 1% probability of exceedance in 50 years. */
-	PE1IN50(0.000201),
+  /** A 1% probability of exceedance in 50 years. */
+  PE1IN50(0.000201),
 
-	/** A 2% probability of exceedance in 50 years. */
-	PE2IN50(0.000404),
+  /** A 2% probability of exceedance in 50 years. */
+  PE2IN50(0.000404),
 
-	/** A 5% probability of exceedance in 50 years. */
-	PE5IN50(0.001026),
+  /** A 5% probability of exceedance in 50 years. */
+  PE5IN50(0.001026),
 
-	/** A 10% probability of exceedance in 50 years. */
-	PE10IN50(0.002107),
+  /** A 10% probability of exceedance in 50 years. */
+  PE10IN50(0.002107),
 
-	/** A 40% probability of exceedance in 50 years. */
-	PE40IN50(0.010217);
+  /** A 40% probability of exceedance in 50 years. */
+  PE40IN50(0.010217);
 
-	private double annualRate;
+  private double annualRate;
 
-	private ReturnPeriod(double annualRate) {
-		this.annualRate = nameToAnnRate(name());
-	}
+  private ReturnPeriod(double annualRate) {
+    this.annualRate = nameToAnnRate(name());
+  }
 
-	@Override public String toString() {
-		return MoreObjects
-			.toStringHelper(getClass().getSimpleName() + "." + name())
-			.add("annualRate", annualRate)
-			.add("duration", duration())
-			.toString();
-	}
+  @Override
+  public String toString() {
+    return MoreObjects
+      .toStringHelper(getClass().getSimpleName() + "." + name())
+      .add("annualRate", annualRate)
+      .add("duration", duration())
+      .toString();
+  }
 
-	/**
-	 * Return the annual rate of occurrence represented by this time period.
-	 */
-	public double annualRate() {
-		return annualRate;
-	}
+  /**
+   * Return the annual rate of occurrence represented by this time period.
+   */
+  public double annualRate() {
+    return annualRate;
+  }
 
-	/**
-	 * Return the duration (number of years spanned) by this return period.
-	 */
-	public int duration() {
-		return (int) Math.rint(1.0 / annualRate);
-	}
+  /**
+   * Return the duration (number of years spanned) by this return period.
+   */
+  public int duration() {
+    return (int) Math.rint(1.0 / annualRate);
+  }
 
-	private double nameToAnnRate(String name) {
-		String[] values = name.substring(2).split("IN");
-		double prob = Double.parseDouble(values[0]) / 100.0;
-		double time = Double.parseDouble(values[1]);
-		return Mfds.probToRate(prob, time);
-	}
+  private double nameToAnnRate(String name) {
+    String[] values = name.substring(2).split("IN");
+    double prob = Double.parseDouble(values[0]) / 100.0;
+    double time = Double.parseDouble(values[1]);
+    return Mfds.probToRate(prob, time);
+  }
 }

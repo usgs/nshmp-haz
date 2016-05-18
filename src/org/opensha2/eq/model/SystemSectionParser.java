@@ -42,122 +42,125 @@ import com.google.common.collect.Lists;
 @SuppressWarnings("incomplete-switch")
 class SystemSectionParser extends DefaultHandler {
 
-	private final Logger log = Logger.getLogger(SystemParser.class.getName());
-	private final SAXParser sax;
-	private boolean used = false;
+  private final Logger log = Logger.getLogger(SystemParser.class.getName());
+  private final SAXParser sax;
+  private boolean used = false;
 
-	private Locator locator;
+  private Locator locator;
 
-	private List<GriddedSurface> sections;
-	private DefaultGriddedSurface.Builder surfaceBuilder;
+  private List<GriddedSurface> sections;
+  private DefaultGriddedSurface.Builder surfaceBuilder;
 
-	// Traces are the only text content in source files
-	private boolean readingTrace = false;
-	private StringBuilder traceBuilder = null;
+  // Traces are the only text content in source files
+  private boolean readingTrace = false;
+  private StringBuilder traceBuilder = null;
 
-	private SystemSectionParser(SAXParser sax) {
-		this.sax = sax;
-	}
+  private SystemSectionParser(SAXParser sax) {
+    this.sax = sax;
+  }
 
-	static SystemSectionParser create(SAXParser sax) {
-		return new SystemSectionParser(checkNotNull(sax));
-	}
+  static SystemSectionParser create(SAXParser sax) {
+    return new SystemSectionParser(checkNotNull(sax));
+  }
 
-	// TODO can we just return RuptureSurface? are grid details necessary downstream?
-	List<GriddedSurface> parse(InputStream in) throws SAXException, IOException {
-		checkState(!used, "This parser has expired");
-		sax.parse(in, this);
-		checkState(sections.size() > 0, "Section surface list is empty");
-		used = true;
-		return sections;
-	}
+  // TODO can we just return RuptureSurface? are grid details necessary
+  // downstream?
+  List<GriddedSurface> parse(InputStream in) throws SAXException, IOException {
+    checkState(!used, "This parser has expired");
+    sax.parse(in, this);
+    checkState(sections.size() > 0, "Section surface list is empty");
+    used = true;
+    return sections;
+  }
 
-	@Override public void startElement(String uri, String localName, String qName, Attributes atts)
-			throws SAXException {
+  @Override
+  public void startElement(String uri, String localName, String qName, Attributes atts)
+      throws SAXException {
 
-		SourceElement e = null;
-		try {
-			e = SourceElement.fromString(qName);
-		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
-		}
+    SourceElement e = null;
+    try {
+      e = SourceElement.fromString(qName);
+    } catch (IllegalArgumentException iae) {
+      throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
+    }
 
-		try {
-			switch (e) {
+    try {
+      switch (e) {
 
-				case SYSTEM_FAULT_SECTIONS:
-					sections = Lists.newArrayList();
-					String setName = readString(NAME, atts);
-					log.info("");
-					log.info("Section set: " + setName + "/" + SECTIONS_FILENAME);
-					break;
+        case SYSTEM_FAULT_SECTIONS:
+          sections = Lists.newArrayList();
+          String setName = readString(NAME, atts);
+          log.info("");
+          log.info("Section set: " + setName + "/" + SECTIONS_FILENAME);
+          break;
 
-				case SECTION:
-					surfaceBuilder = DefaultGriddedSurface.builder();
-					String sectionName = readString(NAME, atts);
-					String sectionIndex = readString(INDEX, atts);
-					log.finer("    Section: [" + sectionIndex + "] " + sectionName);
-					break;
+        case SECTION:
+          surfaceBuilder = DefaultGriddedSurface.builder();
+          String sectionName = readString(NAME, atts);
+          String sectionIndex = readString(INDEX, atts);
+          log.finer("    Section: [" + sectionIndex + "] " + sectionName);
+          break;
 
-				case GEOMETRY:
-					// @formatter:off
-					double aseis = readDouble(ASEIS, atts);
-					double depth = readDouble(DEPTH, atts);
-					double lowerDepth = readDouble(LOWER_DEPTH, atts);
-					depth += aseis * (lowerDepth - depth);
-					surfaceBuilder.depth(depth)
-						.lowerDepth(lowerDepth)
-						.dip(readDouble(DIP, atts))
-						.dipDir(readDouble(DIP_DIR, atts));
-					break;
-					// @formatter:on
+        case GEOMETRY:
+          double aseis = readDouble(ASEIS, atts);
+          double depth = readDouble(DEPTH, atts);
+          double lowerDepth = readDouble(LOWER_DEPTH, atts);
+          depth += aseis * (lowerDepth - depth);
+          surfaceBuilder.depth(depth)
+              .lowerDepth(lowerDepth)
+              .dip(readDouble(DIP, atts))
+              .dipDir(readDouble(DIP_DIR, atts));
+          break;
 
-				case TRACE:
-					readingTrace = true;
-					traceBuilder = new StringBuilder();
-					break;
-			}
+        case TRACE:
+          readingTrace = true;
+          traceBuilder = new StringBuilder();
+          break;
+      }
 
-		} catch (Exception ex) {
-			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
-		}
-	}
+    } catch (Exception ex) {
+      throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
+    }
+  }
 
-	@Override public void endElement(String uri, String localName, String qName)
-			throws SAXException {
+  @Override
+  public void endElement(String uri, String localName, String qName)
+      throws SAXException {
 
-		SourceElement e = null;
-		try {
-			e = SourceElement.fromString(qName);
-		} catch (IllegalArgumentException iae) {
-			throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
-		}
+    SourceElement e = null;
+    try {
+      e = SourceElement.fromString(qName);
+    } catch (IllegalArgumentException iae) {
+      throw new SAXParseException("Invalid element <" + qName + ">", locator, iae);
+    }
 
-		try {
-			switch (e) {
+    try {
+      switch (e) {
 
-				case TRACE:
-					readingTrace = false;
-					surfaceBuilder.trace(LocationList.fromString(traceBuilder.toString()));
-					break;
+        case TRACE:
+          readingTrace = false;
+          surfaceBuilder.trace(LocationList.fromString(traceBuilder.toString()));
+          break;
 
-				case SECTION:
-					sections.add(surfaceBuilder.build());
-					break;
+        case SECTION:
+          sections.add(surfaceBuilder.build());
+          break;
 
-			}
+      }
 
-		} catch (Exception ex) {
-			throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
-		}
-	}
+    } catch (Exception ex) {
+      throw new SAXParseException("Error parsing <" + qName + ">", locator, ex);
+    }
+  }
 
-	@Override public void characters(char ch[], int start, int length) throws SAXException {
-		if (readingTrace) traceBuilder.append(ch, start, length);
-	}
+  @Override
+  public void characters(char ch[], int start, int length) throws SAXException {
+    if (readingTrace) traceBuilder.append(ch, start, length);
+  }
 
-	@Override public void setDocumentLocator(Locator locator) {
-		this.locator = locator;
-	}
+  @Override
+  public void setDocumentLocator(Locator locator) {
+    this.locator = locator;
+  }
 
 }

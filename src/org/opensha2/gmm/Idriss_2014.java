@@ -45,91 +45,92 @@ import com.google.common.collect.Range;
  */
 public final class Idriss_2014 implements GroundMotionModel {
 
-	static final String NAME = "Idriss (2014)";
+  static final String NAME = "Idriss (2014)";
 
-	static final Constraints CONSTRAINTS = Constraints.builder()
-			.set(MAG, Range.closed(5.0, 8.5))
-			.setDistances(150.0)
-			.set(DIP, Faults.DIP_RANGE)
-			.set(ZTOP, Range.closed(0.0, 20.0))
-			.set(RAKE, Faults.RAKE_RANGE)
-			.set(VS30, Range.closedOpen(450.0, 1500.0))
-			// TODO borrowed from ASK14
-			.set(Z1P0, Range.closed(0.0, 3.0))
-			.build();
+  static final Constraints CONSTRAINTS = Constraints.builder()
+    .set(MAG, Range.closed(5.0, 8.5))
+    .setDistances(150.0)
+    .set(DIP, Faults.DIP_RANGE)
+    .set(ZTOP, Range.closed(0.0, 20.0))
+    .set(RAKE, Faults.RAKE_RANGE)
+    .set(VS30, Range.closedOpen(450.0, 1500.0))
+    // TODO borrowed from ASK14
+    .set(Z1P0, Range.closed(0.0, 3.0))
+    .build();
 
-	static final CoefficientContainer COEFFS = new CoefficientContainer("Idriss14.csv");
+  static final CoefficientContainer COEFFS = new CoefficientContainer("Idriss14.csv");
 
-	private static final class Coefficients {
+  private static final class Coefficients {
 
-		final Imt imt;
-		final double a1_lo, a2_lo, a1_hi, a2_hi, a3, b1_lo, b2_lo, b1_hi, b2_hi, ξ, γ, φ;
+    final Imt imt;
+    final double a1_lo, a2_lo, a1_hi, a2_hi, a3, b1_lo, b2_lo, b1_hi, b2_hi, ξ, γ, φ;
 
-		Coefficients(Imt imt, CoefficientContainer cc) {
-			this.imt = imt;
-			Map<String, Double> coeffs = cc.get(imt);
-			a1_lo = coeffs.get("a1_lo");
-			a2_lo = coeffs.get("a2_lo");
-			a1_hi = coeffs.get("a1_hi");
-			a2_hi = coeffs.get("a2_hi");
-			a3 = coeffs.get("a3");
-			b1_lo = coeffs.get("b1_lo");
-			b2_lo = coeffs.get("b2_lo");
-			b1_hi = coeffs.get("b1_hi");
-			b2_hi = coeffs.get("b2_hi");
-			ξ = coeffs.get("xi");
-			γ = coeffs.get("gamma");
-			φ = coeffs.get("phi");
-		}
-	}
+    Coefficients(Imt imt, CoefficientContainer cc) {
+      this.imt = imt;
+      Map<String, Double> coeffs = cc.get(imt);
+      a1_lo = coeffs.get("a1_lo");
+      a2_lo = coeffs.get("a2_lo");
+      a1_hi = coeffs.get("a1_hi");
+      a2_hi = coeffs.get("a2_hi");
+      a3 = coeffs.get("a3");
+      b1_lo = coeffs.get("b1_lo");
+      b2_lo = coeffs.get("b2_lo");
+      b1_hi = coeffs.get("b1_hi");
+      b2_hi = coeffs.get("b2_hi");
+      ξ = coeffs.get("xi");
+      γ = coeffs.get("gamma");
+      φ = coeffs.get("phi");
+    }
+  }
 
-	private final Coefficients coeffs;
+  private final Coefficients coeffs;
 
-	Idriss_2014(Imt imt) {
-		coeffs = new Coefficients(imt, COEFFS);
-	}
+  Idriss_2014(Imt imt) {
+    coeffs = new Coefficients(imt, COEFFS);
+  }
 
-	@Override public final ScalarGroundMotion calc(GmmInput in) {
-		return calc(coeffs, in);
-	}
+  @Override
+  public final ScalarGroundMotion calc(GmmInput in) {
+    return calc(coeffs, in);
+  }
 
-	private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in) {
+  private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in) {
 
-		double μ = calcMean(c, in);
-		double σ = calcStdDev(c, in.Mw);
+    double μ = calcMean(c, in);
+    double σ = calcStdDev(c, in.Mw);
 
-		return DefaultScalarGroundMotion.create(μ, σ);
-	}
+    return DefaultScalarGroundMotion.create(μ, σ);
+  }
 
-	// Mean ground motion model - cap of Vs = 1200 m/s
-	private static final double calcMean(final Coefficients c, final GmmInput in) {
+  // Mean ground motion model - cap of Vs = 1200 m/s
+  private static final double calcMean(final Coefficients c, final GmmInput in) {
 
-		double Mw = in.Mw;
-		double rRup = in.rRup;
+    double Mw = in.Mw;
+    double rRup = in.rRup;
 
-		FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
+    FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
 
-		double a1 = c.a1_lo, a2 = c.a2_lo;
-		double b1 = c.b1_lo, b2 = c.b2_lo;
-		if (Mw > 6.75) {
-			a1 = c.a1_hi;
-			a2 = c.a2_hi;
-			b1 = c.b1_hi;
-			b2 = c.b2_hi;
-		}
+    double a1 = c.a1_lo, a2 = c.a2_lo;
+    double b1 = c.b1_lo, b2 = c.b2_lo;
+    if (Mw > 6.75) {
+      a1 = c.a1_hi;
+      a2 = c.a2_hi;
+      b1 = c.b1_hi;
+      b2 = c.b2_hi;
+    }
 
-		return a1 + a2 * Mw + c.a3 * (8.5 - Mw) * (8.5 - Mw) - (b1 + b2 * Mw) * log(rRup + 10.0) +
-			c.ξ * log(min(in.vs30, 1200.0)) + c.γ * rRup + (style == REVERSE ? c.φ : 0.0);
-	}
+    return a1 + a2 * Mw + c.a3 * (8.5 - Mw) * (8.5 - Mw) - (b1 + b2 * Mw) * log(rRup + 10.0) +
+      c.ξ * log(min(in.vs30, 1200.0)) + c.γ * rRup + (style == REVERSE ? c.φ : 0.0);
+  }
 
-	// Aleatory uncertainty model
-	private static final double calcStdDev(final Coefficients c, final double Mw) {
-		double s1 = 0.035;
-		Double T = c.imt.period();
-		s1 *= (T == null || T <= 0.05) ? log(0.05) : (T < 3.0) ? log(T) : log(3d);
-		double s2 = 0.06;
-		s2 *= (Mw <= 5.0) ? 5.0 : (Mw < 7.5) ? Mw : 7.5;
-		return 1.18 + s1 - s2;
-	}
+  // Aleatory uncertainty model
+  private static final double calcStdDev(final Coefficients c, final double Mw) {
+    double s1 = 0.035;
+    Double T = c.imt.period();
+    s1 *= (T == null || T <= 0.05) ? log(0.05) : (T < 3.0) ? log(T) : log(3d);
+    double s2 = 0.06;
+    s2 *= (Mw <= 5.0) ? 5.0 : (Mw < 7.5) ? Mw : 7.5;
+    return 1.18 + s1 - s2;
+  }
 
 }

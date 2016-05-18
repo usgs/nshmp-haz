@@ -20,61 +20,67 @@ import com.google.common.collect.Lists;
  */
 public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 
-	private final List<InterfaceSource> sources;
+  private final List<InterfaceSource> sources;
 
-	private InterfaceSourceSet(String name, int id, double weight, GmmSet gmmSet,
-		List<InterfaceSource> sources) {
-		super(name, id, weight, gmmSet);
-		this.sources = sources;
-	}
+  private InterfaceSourceSet(String name, int id, double weight, GmmSet gmmSet,
+      List<InterfaceSource> sources) {
+    super(name, id, weight, gmmSet);
+    this.sources = sources;
+  }
 
-	@Override public Iterator<InterfaceSource> iterator() {
-		return sources.iterator();
-	}
+  @Override
+  public Iterator<InterfaceSource> iterator() {
+    return sources.iterator();
+  }
 
-	@Override public int size() {
-		return sources.size();
-	}
+  @Override
+  public int size() {
+    return sources.size();
+  }
 
-	@Override public SourceType type() {
-		return SourceType.INTERFACE;
-	}
+  @Override
+  public SourceType type() {
+    return SourceType.INTERFACE;
+  }
 
-	@Override public Predicate<InterfaceSource> distanceFilter(final Location loc,
-			final double distance) {
+  @Override
+  public Predicate<InterfaceSource> distanceFilter(final Location loc,
+      final double distance) {
 
-		return new Predicate<InterfaceSource>() {
-			private Predicate<Location> filter = Locations.distanceFilter(loc, distance);
+    return new Predicate<InterfaceSource>() {
+      private Predicate<Location> filter = Locations.distanceFilter(loc, distance);
 
-			@Override public boolean apply(InterfaceSource source) {
-				return filter.apply(source.trace.first()) || filter.apply(source.trace.last()) ||
-					filter.apply(source.lowerTrace.first()) ||
-					filter.apply(source.lowerTrace.last());
-			}
+      @Override
+      public boolean apply(InterfaceSource source) {
+        return filter.apply(source.trace.first()) || filter.apply(source.trace.last()) ||
+          filter.apply(source.lowerTrace.first()) ||
+          filter.apply(source.lowerTrace.last());
+      }
 
-			@Override public String toString() {
-				return "InterfaceSourceSet.DistanceFilter[ " + filter.toString() + " ]";
-			}
-		};
-	}
+      @Override
+      public String toString() {
+        return "InterfaceSourceSet.DistanceFilter[ " + filter.toString() + " ]";
+      }
+    };
+  }
 
-	/* Single use builder. */
-	static class Builder extends FaultSourceSet.Builder {
+  /* Single use builder. */
+  static class Builder extends FaultSourceSet.Builder {
 
-		static final String ID = "InterfaceSourceSet.Builder";
+    static final String ID = "InterfaceSourceSet.Builder";
 
-		final List<InterfaceSource> sources = Lists.newArrayList();
+    final List<InterfaceSource> sources = Lists.newArrayList();
 
-		Builder source(InterfaceSource source) {
-			sources.add(checkNotNull(source, "InterfaceSource is null"));
-			return this;
-		}
+    Builder source(InterfaceSource source) {
+      sources.add(checkNotNull(source, "InterfaceSource is null"));
+      return this;
+    }
 
-		InterfaceSourceSet buildSubductionSet() {
-			validateState(ID);
-			checkState(sources.size() > 0, "%s source list is empty", id);
-			return new InterfaceSourceSet(name, id, weight, gmmSet, sources);
-		}
-	}
+    InterfaceSourceSet buildSubductionSet() {
+      validateState(ID);
+      checkState(sources.size() > 0, "%s source list is empty", id);
+      return new InterfaceSourceSet(name, id, weight, gmmSet, sources);
+    }
+  }
 
 }

@@ -20,33 +20,34 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class Ngaw1 extends GmmTest {
 
-	private static String GMM_INPUTS = "NGA_inputs.csv";
-	private static String GMM_RESULTS = "NGAW1_results.csv";
+  private static String GMM_INPUTS = "NGA_inputs.csv";
+  private static String GMM_RESULTS = "NGAW1_results.csv";
 
-	static {
-		try {
-			inputsList = loadInputs(GMM_INPUTS);
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			System.exit(1);
-		}
-	}
+  static {
+    try {
+      inputsList = loadInputs(GMM_INPUTS);
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+      System.exit(1);
+    }
+  }
 
-	@Parameters(name = "{index}: {0} {2} {1}") public static Collection<Object[]> data()
-			throws IOException {
-		return loadResults(GMM_RESULTS);
-	}
+  @Parameters(name = "{index}: {0} {2} {1}")
+  public static Collection<Object[]> data()
+      throws IOException {
+    return loadResults(GMM_RESULTS);
+  }
 
-	public Ngaw1(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
-		super(index, gmm, imt, exMedian, exSigma);
-	}
+  public Ngaw1(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
+    super(index, gmm, imt, exMedian, exSigma);
+  }
 
-	/* Result generation sets */
-	private static Set<Gmm> gmms = EnumSet.of(BA_08, CB_08, CY_08);
-	private static Set<Imt> imts = EnumSet.of(PGA, SA0P02, SA0P2, SA1P0, SA3P0);
+  /* Result generation sets */
+  private static Set<Gmm> gmms = EnumSet.of(BA_08, CB_08, CY_08);
+  private static Set<Imt> imts = EnumSet.of(PGA, SA0P02, SA0P2, SA1P0, SA3P0);
 
-	public static void main(String[] args) throws IOException {
-		GmmTest.generateResults(gmms, imts, GMM_INPUTS, GMM_RESULTS);
-	}
+  public static void main(String[] args) throws IOException {
+    GmmTest.generateResults(gmms, imts, GMM_INPUTS, GMM_RESULTS);
+  }
 
 }

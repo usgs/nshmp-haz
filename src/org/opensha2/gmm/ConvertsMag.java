@@ -21,10 +21,10 @@ package org.opensha2.gmm;
  */
 public interface ConvertsMag {
 
-	/**
-	 * Returns a magnitude scale converter.
-	 * @return a magnitude converter
-	 */
-	public MagConverter converter();
-		
+  /**
+   * Returns a magnitude scale converter.
+   * @return a magnitude converter
+   */
+  public MagConverter converter();
+
 }

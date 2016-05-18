@@ -21,23 +21,26 @@ import org.opensha2.eq.model.ClusterSource;
  */
 final class ClusterInputs extends AbstractList<SourceInputList> {
 
-	final ClusterSource parent;
-	final List<SourceInputList> delegate;
+  final ClusterSource parent;
+  final List<SourceInputList> delegate;
 
-	ClusterInputs(ClusterSource parent) {
-		this.parent = checkNotNull(parent);
-		delegate = new ArrayList<>();
-	}
+  ClusterInputs(ClusterSource parent) {
+    this.parent = checkNotNull(parent);
+    delegate = new ArrayList<>();
+  }
 
-	@Override public boolean add(SourceInputList inputs) {
-		return delegate.add(inputs);
-	}
+  @Override
+  public boolean add(SourceInputList inputs) {
+    return delegate.add(inputs);
+  }
 
-	@Override public SourceInputList get(int index) {
-		return delegate.get(index);
-	}
+  @Override
+  public SourceInputList get(int index) {
+    return delegate.get(index);
+  }
 
-	@Override public int size() {
-		return delegate.size();
-	}
+  @Override
+  public int size() {
+    return delegate.size();
+  }
 }

@@ -46,44 +46,45 @@ import com.google.common.collect.Range;
  */
 public final class AtkinsonBoore_2006p implements GroundMotionModel {
 
-	static final String NAME = "Atkinson & Boore (2006): Prime";
+  static final String NAME = "Atkinson & Boore (2006): Prime";
 
-	static final Constraints CONSTRAINTS = Constraints.builder()
-		.set(MAG, Range.closed(4.0, 8.0))
-		.set(RRUP, Range.closed(0.0, 1000.0))
-		.set(VS30, Range.closed(760.0, 2000.0))
-		.build();
+  static final Constraints CONSTRAINTS = Constraints.builder()
+    .set(MAG, Range.closed(4.0, 8.0))
+    .set(RRUP, Range.closed(0.0, 1000.0))
+    .set(VS30, Range.closed(760.0, 2000.0))
+    .build();
 
-	static final CoefficientContainer COEFFS = new CoefficientContainer("AB06P.csv");
+  static final CoefficientContainer COEFFS = new CoefficientContainer("AB06P.csv");
 
-	private static final double SIGMA = 0.3 * BASE_10_TO_E;
+  private static final double SIGMA = 0.3 * BASE_10_TO_E;
 
-	private final double bcfac;
-	private final Imt imt;
-	private final GroundMotionTable table;
+  private final double bcfac;
+  private final Imt imt;
+  private final GroundMotionTable table;
 
-	AtkinsonBoore_2006p(final Imt imt) {
-		this.imt = imt;
-		bcfac = COEFFS.get(imt, "bcfac");
-		table = GroundMotionTables.getAtkinson06(imt);
-	}
+  AtkinsonBoore_2006p(final Imt imt) {
+    this.imt = imt;
+    bcfac = COEFFS.get(imt, "bcfac");
+    table = GroundMotionTables.getAtkinson06(imt);
+  }
 
-	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		double r = Math.max(in.rRup, 1.8);
-		double μ = atkinsonTableValue(table, imt, in.Mw, r, in.vs30, bcfac);
-		return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ), SIGMA);
-	}
+  @Override
+  public final ScalarGroundMotion calc(final GmmInput in) {
+    double r = Math.max(in.rRup, 1.8);
+    double μ = atkinsonTableValue(table, imt, in.Mw, r, in.vs30, bcfac);
+    return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ), SIGMA);
+  }
 
-	// TODO clean
-	public static void main(String[] args) {
-		AtkinsonBoore_2006p gmm = new AtkinsonBoore_2006p(Imt.PGA);
-		double m = atkinsonTableValue(gmm.table, Imt.PGA, 3.5, 4.0, 760.0, gmm.bcfac);
-		System.out.println(m);
-		System.out.println(Math.exp(m));
-		double clipped = GmmUtils.ceusMeanClip(Imt.PGA, m);
-		System.out.println(clipped);
-		System.out.println(Math.exp(clipped));
+  // TODO clean
+  public static void main(String[] args) {
+    AtkinsonBoore_2006p gmm = new AtkinsonBoore_2006p(Imt.PGA);
+    double m = atkinsonTableValue(gmm.table, Imt.PGA, 3.5, 4.0, 760.0, gmm.bcfac);
+    System.out.println(m);
+    System.out.println(Math.exp(m));
+    double clipped = GmmUtils.ceusMeanClip(Imt.PGA, m);
+    System.out.println(clipped);
+    System.out.println(Math.exp(clipped));
 
-	}
+  }
 
 }

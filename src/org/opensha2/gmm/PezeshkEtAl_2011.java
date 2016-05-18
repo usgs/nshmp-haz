@@ -41,51 +41,52 @@ import com.google.common.collect.Range;
  */
 public final class PezeshkEtAl_2011 implements GroundMotionModel {
 
-	static final String NAME = "Pezeshk et al. (2011)";
+  static final String NAME = "Pezeshk et al. (2011)";
 
-	static final Constraints CONSTRAINTS = Constraints.builder()
-			.set(MAG, Range.closed(4.0, 8.0))
-			.set(RRUP, Range.closed(0.0, 1000.0))
-			.set(VS30, Range.closed(760.0, 2000.0))
-			.build();
-	
-	static final CoefficientContainer COEFFS = new CoefficientContainer("P11.csv");
+  static final Constraints CONSTRAINTS = Constraints.builder()
+    .set(MAG, Range.closed(4.0, 8.0))
+    .set(RRUP, Range.closed(0.0, 1000.0))
+    .set(VS30, Range.closed(760.0, 2000.0))
+    .build();
 
-	private static final double SIGMA_FAC = -6.95e-3;
+  static final CoefficientContainer COEFFS = new CoefficientContainer("P11.csv");
 
-	private static final class Coefficients {
+  private static final double SIGMA_FAC = -6.95e-3;
 
-		final Imt imt;
-		final double c12, c13, c14, bcfac;
+  private static final class Coefficients {
 
-		Coefficients(Imt imt, CoefficientContainer cc) {
-			this.imt = imt;
-			Map<String, Double> coeffs = cc.get(imt);
-			c12 = coeffs.get("c12");
-			c13 = coeffs.get("c13");
-			c14 = coeffs.get("c14");
-			bcfac = coeffs.get("bcfac");
-		}
-	}
+    final Imt imt;
+    final double c12, c13, c14, bcfac;
 
-	private final Coefficients coeffs;
-	private final GroundMotionTable table;
+    Coefficients(Imt imt, CoefficientContainer cc) {
+      this.imt = imt;
+      Map<String, Double> coeffs = cc.get(imt);
+      c12 = coeffs.get("c12");
+      c13 = coeffs.get("c13");
+      c14 = coeffs.get("c14");
+      bcfac = coeffs.get("bcfac");
+    }
+  }
 
-	PezeshkEtAl_2011(final Imt imt) {
-		coeffs = new Coefficients(imt, COEFFS);
-		table = GroundMotionTables.getPezeshk11(imt);
-	}
+  private final Coefficients coeffs;
+  private final GroundMotionTable table;
 
-	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		double r = Math.max(in.rRup, 1.0);
-		double μ = atkinsonTableValue(table, coeffs.imt, in.Mw, r, in.vs30, coeffs.bcfac);
-		double σ = calcStdDev(coeffs, in.Mw);
-		return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(coeffs.imt, μ), σ);
-	}
+  PezeshkEtAl_2011(final Imt imt) {
+    coeffs = new Coefficients(imt, COEFFS);
+    table = GroundMotionTables.getPezeshk11(imt);
+  }
 
-	private static double calcStdDev(final Coefficients c, final double Mw) {
-		double σ = (Mw <= 7.0) ? c.c12 * Mw + c.c13 : SIGMA_FAC * Mw + c.c14;
-		return σ * BASE_10_TO_E;
-	}
+  @Override
+  public final ScalarGroundMotion calc(final GmmInput in) {
+    double r = Math.max(in.rRup, 1.0);
+    double μ = atkinsonTableValue(table, coeffs.imt, in.Mw, r, in.vs30, coeffs.bcfac);
+    double σ = calcStdDev(coeffs, in.Mw);
+    return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(coeffs.imt, μ), σ);
+  }
+
+  private static double calcStdDev(final Coefficients c, final double Mw) {
+    double σ = (Mw <= 7.0) ? c.c12 * Mw + c.c13 : SIGMA_FAC * Mw + c.c14;
+    return σ * BASE_10_TO_E;
+  }
 
 }

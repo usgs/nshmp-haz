@@ -1,4 +1,4 @@
 /**
- * Base package for earthquake source representations and hazard models.
+ * Earthquake source models.
  */
 package org.opensha2.eq;

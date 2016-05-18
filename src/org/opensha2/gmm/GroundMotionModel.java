@@ -1,6 +1,5 @@
 package org.opensha2.gmm;
 
-
 /**
  * Interface implemented by all ground motion models (GMMs); these are also
  * commonly referred to as ground motion prediction equations (GMPEs) or
@@ -19,12 +18,12 @@ package org.opensha2.gmm;
  */
 public interface GroundMotionModel {
 
-	/**
-	 * Compute the scalar ground motion and its standard deviation for the
-	 * supplied arguments.
-	 * @param args a ground motion model input argument container
-	 * @return a scalar ground motion wrapper
-	 */
-	ScalarGroundMotion calc(GmmInput args);
+  /**
+   * Compute the scalar ground motion and its standard deviation for the
+   * supplied arguments.
+   * @param args a ground motion model input argument container
+   * @return a scalar ground motion wrapper
+   */
+  ScalarGroundMotion calc(GmmInput args);
 
 }

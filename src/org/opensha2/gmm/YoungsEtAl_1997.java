@@ -51,146 +51,149 @@ import com.google.common.collect.Range;
  */
 public abstract class YoungsEtAl_1997 implements GroundMotionModel {
 
-	static final String NAME = "Youngs et al. (1997)";
+  static final String NAME = "Youngs et al. (1997)";
 
-	// TODO will probably want to have constraints per-implementation
-	static final Constraints CONSTRAINTS = Constraints.builder()
-			.set(MAG, Range.closed(5.0, 9.5))
-			.set(RRUP, Range.closed(0.0, 1000.0))
-			.set(ZTOP, Faults.SLAB_DEPTH_RANGE)
-			.set(VS30, Range.closed(150.0, 1000.0))
-			.build();
-	
-	static final CoefficientContainer COEFFS = new CoefficientContainer("Youngs97.csv");
+  // TODO will probably want to have constraints per-implementation
+  static final Constraints CONSTRAINTS = Constraints.builder()
+    .set(MAG, Range.closed(5.0, 9.5))
+    .set(RRUP, Range.closed(0.0, 1000.0))
+    .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+    .set(VS30, Range.closed(150.0, 1000.0))
+    .build();
 
-	private static final double[] VGEO = { 760.0, 300.0, 475.0 };
-	private static final double GC0 = 0.2418;
-	private static final double GCS0 = -0.6687;
-	private static final double CI = 0.3846;
-	private static final double CIS = 0.3643;
-	private static final double GCH = 0.00607;
-	private static final double GCHS = 0.00648;
-	private static final double GMR = 1.414;
-	private static final double GMS = 1.438;
-	private static final double GEP = 0.554;
+  static final CoefficientContainer COEFFS = new CoefficientContainer("Youngs97.csv");
 
-	private static final class Coefficients {
+  private static final double[] VGEO = { 760.0, 300.0, 475.0 };
+  private static final double GC0 = 0.2418;
+  private static final double GCS0 = -0.6687;
+  private static final double CI = 0.3846;
+  private static final double CIS = 0.3643;
+  private static final double GCH = 0.00607;
+  private static final double GCHS = 0.00648;
+  private static final double GMR = 1.414;
+  private static final double GMS = 1.438;
+  private static final double GEP = 0.554;
 
-		final double gc1, gc1s, gc2, gc2s, gc3, gc3s, gc4, gc5;
+  private static final class Coefficients {
 
-		Coefficients(Imt imt, CoefficientContainer cc) {
-			Map<String, Double> coeffs = cc.get(imt);
-			gc1 = coeffs.get("gc1");
-			gc1s = coeffs.get("gc1s");
-			gc2 = coeffs.get("gc2");
-			gc2s = coeffs.get("gc2s");
-			gc3 = coeffs.get("gc3");
-			gc3s = coeffs.get("gc3s");
-			gc4 = coeffs.get("gc4");
-			gc5 = coeffs.get("gc5");
-		}
-	}
+    final double gc1, gc1s, gc2, gc2s, gc3, gc3s, gc4, gc5;
 
-	private final Coefficients coeffs;
-	private final Coefficients coeffsPGA;
-	private final BooreAtkinsonSiteAmp siteAmp;
+    Coefficients(Imt imt, CoefficientContainer cc) {
+      Map<String, Double> coeffs = cc.get(imt);
+      gc1 = coeffs.get("gc1");
+      gc1s = coeffs.get("gc1s");
+      gc2 = coeffs.get("gc2");
+      gc2s = coeffs.get("gc2s");
+      gc3 = coeffs.get("gc3");
+      gc3s = coeffs.get("gc3s");
+      gc4 = coeffs.get("gc4");
+      gc5 = coeffs.get("gc5");
+    }
+  }
 
-	YoungsEtAl_1997(final Imt imt) {
-		coeffs = new Coefficients(imt, COEFFS);
-		coeffsPGA = new Coefficients(PGA, COEFFS);
-		siteAmp = new BooreAtkinsonSiteAmp(imt);
-	}
+  private final Coefficients coeffs;
+  private final Coefficients coeffsPGA;
+  private final BooreAtkinsonSiteAmp siteAmp;
 
-	@Override public final ScalarGroundMotion calc(final GmmInput in) {
-		double μ = calcMean(coeffs, coeffsPGA, siteAmp, isSlab(), in);
-		double σ = calcStdDev(coeffs, in.Mw);
-		return DefaultScalarGroundMotion.create(μ, σ);
-	}
+  YoungsEtAl_1997(final Imt imt) {
+    coeffs = new Coefficients(imt, COEFFS);
+    coeffsPGA = new Coefficients(PGA, COEFFS);
+    siteAmp = new BooreAtkinsonSiteAmp(imt);
+  }
 
-	abstract boolean isSlab();
+  @Override
+  public final ScalarGroundMotion calc(final GmmInput in) {
+    double μ = calcMean(coeffs, coeffsPGA, siteAmp, isSlab(), in);
+    double σ = calcStdDev(coeffs, in.Mw);
+    return DefaultScalarGroundMotion.create(μ, σ);
+  }
 
-	private static final double calcMean(final Coefficients c, final Coefficients cPGA,
-			final BooreAtkinsonSiteAmp siteAmp, final boolean slab, final GmmInput in) {
+  abstract boolean isSlab();
 
-		double Mw = in.Mw;
-		double rRup = in.rRup;
-		double zTop = in.zTop;
-		double vs30 = in.vs30;
+  private static final double calcMean(final Coefficients c, final Coefficients cPGA,
+      final BooreAtkinsonSiteAmp siteAmp, final boolean slab, final GmmInput in) {
 
-		double slabVal = slab ? 1 : 0;
+    double Mw = in.Mw;
+    double rRup = in.rRup;
+    double zTop = in.zTop;
+    double vs30 = in.vs30;
 
-		// NSHMP hazgridXnga caps slab events at M=8 after AB03 sub
-		if (slab) Mw = Math.min(8.0, Mw);
+    double slabVal = slab ? 1 : 0;
 
-		// reference PGA; determine nonlinear response using this value
-		double gnd0p = GC0 + CI * slabVal;
-		double gnd0, gz, g1, g2, g3, g4, ge, gm;
-		int ir;
-		if (vs30 > 520.0) { // rock
-			gnd0 = GC0 + CI * slabVal; // no interface term ci for subduction
-			gz = GCH;
-			g1 = c.gc1;
-			g2 = c.gc2;
-			g3 = c.gc3;
-			g4 = 1.7818;
-			ge = 0.554;
-			gm = GMR;
-			ir = 0;
-		} else { // soil
-			gnd0 = GCS0 + CIS * slabVal; // no interface term cis for subduction
-			gz = GCHS;
-			g1 = c.gc1s;
-			g2 = c.gc2s;
-			g3 = c.gc3s;
-			g4 = 1.097;
-			ge = 0.617;
-			gm = GMS;
-			ir = 1;
-		}
+    // NSHMP hazgridXnga caps slab events at M=8 after AB03 sub
+    if (slab) Mw = Math.min(8.0, Mw);
 
-		double gndm = gnd0 + g1 + (gm * Mw) + g2 * Math.pow(10.0 - Mw, 3) + (gz * zTop);
-		double arg = Math.exp(ge * Mw);
-		double gnd = gndm + g3 * Math.log(rRup + g4 * arg);
-		if (vs30 != VGEO[ir]) {
-			// frankel mods for nonlin siteamp July 7/09
-			double gndzp = gnd0p + zTop * GCH + cPGA.gc1;
-			double gndmp = gndzp + GMR * Mw + cPGA.gc2 * pow(10.0 - Mw, 3);
-			double argp = exp(GEP * Mw);
-			double gndp = gndmp + cPGA.gc3 * log(rRup + 1.7818 * argp);
-			double pganl = exp(gndp);
-			gnd = gnd + siteAmp.calc(pganl, vs30, VGEO[ir]);
-		}
-		return gnd;
+    // reference PGA; determine nonlinear response using this value
+    double gnd0p = GC0 + CI * slabVal;
+    double gnd0, gz, g1, g2, g3, g4, ge, gm;
+    int ir;
+    if (vs30 > 520.0) { // rock
+      gnd0 = GC0 + CI * slabVal; // no interface term ci for subduction
+      gz = GCH;
+      g1 = c.gc1;
+      g2 = c.gc2;
+      g3 = c.gc3;
+      g4 = 1.7818;
+      ge = 0.554;
+      gm = GMR;
+      ir = 0;
+    } else { // soil
+      gnd0 = GCS0 + CIS * slabVal; // no interface term cis for subduction
+      gz = GCHS;
+      g1 = c.gc1s;
+      g2 = c.gc2s;
+      g3 = c.gc3s;
+      g4 = 1.097;
+      ge = 0.617;
+      gm = GMS;
+      ir = 1;
+    }
 
-	}
+    double gndm = gnd0 + g1 + (gm * Mw) + g2 * Math.pow(10.0 - Mw, 3) + (gz * zTop);
+    double arg = Math.exp(ge * Mw);
+    double gnd = gndm + g3 * Math.log(rRup + g4 * arg);
+    if (vs30 != VGEO[ir]) {
+      // frankel mods for nonlin siteamp July 7/09
+      double gndzp = gnd0p + zTop * GCH + cPGA.gc1;
+      double gndmp = gndzp + GMR * Mw + cPGA.gc2 * pow(10.0 - Mw, 3);
+      double argp = exp(GEP * Mw);
+      double gndp = gndmp + cPGA.gc3 * log(rRup + 1.7818 * argp);
+      double pganl = exp(gndp);
+      gnd = gnd + siteAmp.calc(pganl, vs30, VGEO[ir]);
+    }
+    return gnd;
 
-	private static final double calcStdDev(final Coefficients c, final double Mw) {
-		// same sigma for soil and rock; sigma capped at M=8 per Youngs et al.
-		return c.gc4 + c.gc5 * min(8.0, Mw);
-	}
+  }
 
-	static final class Interface extends YoungsEtAl_1997 {
-		static final String NAME = YoungsEtAl_1997.NAME + ": Interface";
+  private static final double calcStdDev(final Coefficients c, final double Mw) {
+    // same sigma for soil and rock; sigma capped at M=8 per Youngs et al.
+    return c.gc4 + c.gc5 * min(8.0, Mw);
+  }
 
-		Interface(Imt imt) {
-			super(imt);
-		}
+  static final class Interface extends YoungsEtAl_1997 {
+    static final String NAME = YoungsEtAl_1997.NAME + ": Interface";
 
-		@Override final boolean isSlab() {
-			return false;
-		}
-	}
+    Interface(Imt imt) {
+      super(imt);
+    }
 
-	static final class Slab extends YoungsEtAl_1997 {
-		static final String NAME = YoungsEtAl_1997.NAME + ": Slab";
+    @Override
+    final boolean isSlab() {
+      return false;
+    }
+  }
 
-		Slab(Imt imt) {
-			super(imt);
-		}
+  static final class Slab extends YoungsEtAl_1997 {
+    static final String NAME = YoungsEtAl_1997.NAME + ": Slab";
 
-		@Override final boolean isSlab() {
-			return true;
-		}
-	}
+    Slab(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    final boolean isSlab() {
+      return true;
+    }
+  }
 
 }

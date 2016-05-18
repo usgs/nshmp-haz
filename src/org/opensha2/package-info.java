@@ -1,5 +1,4 @@
 /**
- * Entry points for conducting probabilisitic seismic hazard analysis (PSHA)
- * calculations.
+ * Entry points for conducting probabilisitic seismic hazard analyses (PSHA).
  */
 package org.opensha2;

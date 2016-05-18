@@ -14,15 +14,15 @@ import org.opensha2.util.Named;
  */
 public interface NamedLocation {
 
-	/**
-	 * Return the location.
-	 */
-	Location location();
+  /**
+   * Return the location.
+   */
+  Location location();
 
-	/**
-	 * Return a unique id for the location. This is typically the value returned
-	 * by {@link Enum#name()}.
-	 */
-	String id();
+  /**
+   * Return a unique id for the location. This is typically the value returned
+   * by {@link Enum#name()}.
+   */
+  String id();
 
 }

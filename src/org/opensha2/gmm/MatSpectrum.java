@@ -9,15 +9,15 @@ package org.opensha2.gmm;
  * @see MatUtil
  */
 public class MatSpectrum {
-	
-	public final double[] periods;
-	public final double[] means;
-	public final double[] sigmas;
-	
-	MatSpectrum(int size) {
-		periods = new double[size];
-		means = new double[size];
-		sigmas = new double[size];
-	}
-	
+
+  public final double[] periods;
+  public final double[] means;
+  public final double[] sigmas;
+
+  MatSpectrum(int size) {
+    periods = new double[size];
+    means = new double[size];
+    sigmas = new double[size];
+  }
+
 }

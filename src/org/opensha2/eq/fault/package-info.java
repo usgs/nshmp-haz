@@ -1,4 +1,4 @@
 /**
- * Classes and utilities for working with fault representations.
+ * Fault representations.
  */
 package org.opensha2.eq.fault;

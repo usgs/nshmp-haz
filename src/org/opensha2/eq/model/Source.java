@@ -12,9 +12,9 @@ import org.opensha2.util.Named;
  */
 public interface Source extends Named, Iterable<Rupture> {
 
-	/**
-	 * The number of {@link Rupture}s this {@code Source} represents.
-	 */
-	int size();
+  /**
+   * The number of {@link Rupture}s this {@code Source} represents.
+   */
+  int size();
 
 }

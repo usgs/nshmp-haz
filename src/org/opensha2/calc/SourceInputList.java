@@ -13,14 +13,15 @@ import org.opensha2.eq.model.Source;
  */
 final class SourceInputList extends InputList {
 
-	final Source parent;
+  final Source parent;
 
-	SourceInputList(Source parent) {
-		this.parent = checkNotNull(parent);
-	}
+  SourceInputList(Source parent) {
+    this.parent = checkNotNull(parent);
+  }
 
-	@Override String parentName() {
-		return parent.name();
-	}
+  @Override
+  String parentName() {
+    return parent.name();
+  }
 
 }

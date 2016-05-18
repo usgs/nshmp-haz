@@ -53,133 +53,133 @@ import com.google.common.collect.Range;
  */
 public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
-	static final String NAME = "Zhao et al. (2006)";
+  static final String NAME = "Zhao et al. (2006)";
 
-	// TODO will probably want to have constraints per-implementation
-	static final Constraints CONSTRAINTS = Constraints.builder()
-		.set(MAG, Range.closed(5.0, 9.5))
-		.set(RRUP, Range.closed(0.0, 1000.0))
-		.set(ZTOP, Faults.SLAB_DEPTH_RANGE)
-		.set(VS30, Range.closed(150.0, 1000.0))
-		.build();
+  // TODO will probably want to have constraints per-implementation
+  static final Constraints CONSTRAINTS = Constraints.builder()
+    .set(MAG, Range.closed(5.0, 9.5))
+    .set(RRUP, Range.closed(0.0, 1000.0))
+    .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+    .set(VS30, Range.closed(150.0, 1000.0))
+    .build();
 
-	static final CoefficientContainer COEFFS = new CoefficientContainer("Zhao06.csv");
+  static final CoefficientContainer COEFFS = new CoefficientContainer("Zhao06.csv");
 
-	private static final double HC = 15.0;
-	private static final double MC_S = 6.5;
-	private static final double MC_I = 6.3;
-	private static final double GCOR = 6.88806;
-	private static final double MAX_SLAB_DEPTH = 125.0;
-	private static final double INTERFACE_DEPTH = 20.0;
+  private static final double HC = 15.0;
+  private static final double MC_S = 6.5;
+  private static final double MC_I = 6.3;
+  private static final double GCOR = 6.88806;
+  private static final double MAX_SLAB_DEPTH = 125.0;
+  private static final double INTERFACE_DEPTH = 20.0;
 
-	private static final class Coefficients {
+  private static final class Coefficients {
 
-		final double a, b, c, d, e, Si, Ss, Ssl, C1, C2, C3, σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
+    final double a, b, c, d, e, Si, Ss, Ssl, C1, C2, C3, σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
 
-		// unused
-		// final double Sr, tauI;
+    // unused
+    // final double Sr, tauI;
 
-		Coefficients(Imt imt, CoefficientContainer cc) {
-			Map<String, Double> coeffs = cc.get(imt);
-			a = coeffs.get("a");
-			b = coeffs.get("b");
-			c = coeffs.get("c");
-			d = coeffs.get("d");
-			e = coeffs.get("e");
-			Si = coeffs.get("Si");
-			Ss = coeffs.get("Ss");
-			Ssl = coeffs.get("Ssl");
-			C1 = coeffs.get("C1");
-			C2 = coeffs.get("C2");
-			C3 = coeffs.get("C3");
-			σ = coeffs.get("sigma");
-			τ = coeffs.get("tau");
-			τS = coeffs.get("tauS");
-			Ps = coeffs.get("Ps");
-			Qi = coeffs.get("Qi");
-			Qs = coeffs.get("Qs");
-			Wi = coeffs.get("Wi");
-			Ws = coeffs.get("Ws");
-		}
-	}
+    Coefficients(Imt imt, CoefficientContainer cc) {
+      Map<String, Double> coeffs = cc.get(imt);
+      a = coeffs.get("a");
+      b = coeffs.get("b");
+      c = coeffs.get("c");
+      d = coeffs.get("d");
+      e = coeffs.get("e");
+      Si = coeffs.get("Si");
+      Ss = coeffs.get("Ss");
+      Ssl = coeffs.get("Ssl");
+      C1 = coeffs.get("C1");
+      C2 = coeffs.get("C2");
+      C3 = coeffs.get("C3");
+      σ = coeffs.get("sigma");
+      τ = coeffs.get("tau");
+      τS = coeffs.get("tauS");
+      Ps = coeffs.get("Ps");
+      Qi = coeffs.get("Qi");
+      Qs = coeffs.get("Qs");
+      Wi = coeffs.get("Wi");
+      Ws = coeffs.get("Ws");
+    }
+  }
 
-	private final Coefficients coeffs;
+  private final Coefficients coeffs;
 
-	ZhaoEtAl_2006(final Imt imt) {
-		coeffs = new Coefficients(imt, COEFFS);
-	}
+  ZhaoEtAl_2006(final Imt imt) {
+    coeffs = new Coefficients(imt, COEFFS);
+  }
 
-	@Override
-	public final ScalarGroundMotion calc(GmmInput in) {
-		double μ = calcMean(coeffs, isSlab(), in);
-		double σ = calcStdDev(coeffs, isSlab());
-		return DefaultScalarGroundMotion.create(μ, σ);
-	}
+  @Override
+  public final ScalarGroundMotion calc(GmmInput in) {
+    double μ = calcMean(coeffs, isSlab(), in);
+    double σ = calcStdDev(coeffs, isSlab());
+    return DefaultScalarGroundMotion.create(μ, σ);
+  }
 
-	abstract boolean isSlab();
+  abstract boolean isSlab();
 
-	private static final double calcMean(final Coefficients c, final boolean slab,
-			final GmmInput in) {
+  private static final double calcMean(final Coefficients c, final boolean slab,
+      final GmmInput in) {
 
-		double Mw = in.Mw;
-		double rRup = Math.max(in.rRup, 1.0); // avoid ln(0) below
-		double zTop = slab ? min(in.zTop, MAX_SLAB_DEPTH) : INTERFACE_DEPTH;
-		double vs30 = in.vs30;
+    double Mw = in.Mw;
+    double rRup = Math.max(in.rRup, 1.0); // avoid ln(0) below
+    double zTop = slab ? min(in.zTop, MAX_SLAB_DEPTH) : INTERFACE_DEPTH;
+    double vs30 = in.vs30;
 
-		double site = (vs30 >= 600.0) ? c.C1 : (vs30 >= 300.0) ? c.C2 : c.C3;
+    double site = (vs30 >= 600.0) ? c.C1 : (vs30 >= 300.0) ? c.C2 : c.C3;
 
-		double hfac = (zTop < HC) ? 0.0 : zTop - HC;
+    double hfac = (zTop < HC) ? 0.0 : zTop - HC;
 
-		double m2 = Mw - (slab ? MC_S : MC_I);
+    double m2 = Mw - (slab ? MC_S : MC_I);
 
-		double afac, xmcor;
+    double afac, xmcor;
 
-		if (slab) {
-			afac = c.Ssl * log(rRup) + c.Ss;
-			xmcor = c.Ps * m2 + c.Qs * m2 * m2 + c.Ws;
-		} else {
-			afac = c.Si;
-			xmcor = c.Qi * m2 * m2 + c.Wi;
-		}
+    if (slab) {
+      afac = c.Ssl * log(rRup) + c.Ss;
+      xmcor = c.Ps * m2 + c.Qs * m2 * m2 + c.Ws;
+    } else {
+      afac = c.Si;
+      xmcor = c.Qi * m2 * m2 + c.Wi;
+    }
 
-		double r = rRup + c.c * exp(c.d * Mw);
-		double gnd = c.a * Mw + c.b * rRup - Math.log(r) + site;
-		gnd = gnd + c.e * hfac + afac;
-		return gnd + xmcor - GCOR;
+    double r = rRup + c.c * exp(c.d * Mw);
+    double gnd = c.a * Mw + c.b * rRup - Math.log(r) + site;
+    gnd = gnd + c.e * hfac + afac;
+    return gnd + xmcor - GCOR;
 
-	}
+  }
 
-	private static final double calcStdDev(final Coefficients c, final boolean slab) {
-		// Frankel email may 22 2007: use sigt from table 5. Not the
-		// reduced-tau sigma associated with mag correction seen in
-		// table 6. Zhao says "truth" is somewhere in between.
-		return sqrt(c.σ * c.σ + (slab ? c.τS * c.τS : c.τ * c.τ));
-	}
+  private static final double calcStdDev(final Coefficients c, final boolean slab) {
+    // Frankel email may 22 2007: use sigt from table 5. Not the
+    // reduced-tau sigma associated with mag correction seen in
+    // table 6. Zhao says "truth" is somewhere in between.
+    return sqrt(c.σ * c.σ + (slab ? c.τS * c.τS : c.τ * c.τ));
+  }
 
-	static final class Interface extends ZhaoEtAl_2006 {
-		static final String NAME = ZhaoEtAl_2006.NAME + ": Interface";
+  static final class Interface extends ZhaoEtAl_2006 {
+    static final String NAME = ZhaoEtAl_2006.NAME + ": Interface";
 
-		Interface(Imt imt) {
-			super(imt);
-		}
+    Interface(Imt imt) {
+      super(imt);
+    }
 
-		@Override
-		final boolean isSlab() {
-			return false;
-		}
-	}
+    @Override
+    final boolean isSlab() {
+      return false;
+    }
+  }
 
-	static final class Slab extends ZhaoEtAl_2006 {
-		static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
+  static final class Slab extends ZhaoEtAl_2006 {
+    static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
 
-		Slab(Imt imt) {
-			super(imt);
-		}
+    Slab(Imt imt) {
+      super(imt);
+    }
 
-		@Override
-		final boolean isSlab() {
-			return true;
-		}
-	}
+    @Override
+    final boolean isSlab() {
+      return true;
+    }
+  }
 
 }

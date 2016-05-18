@@ -1,5 +1,5 @@
 /**
- * Provides implementations of all {@link org.opensha2.gmm.GroundMotionModel}s
+ * Implementations of all {@link org.opensha2.gmm.GroundMotionModel}s
  * used in the 2008 and 2014 USGS National Seismic Hazard Models.
  * 
  * <p>Most of the model implementations in this package may not be instantiated

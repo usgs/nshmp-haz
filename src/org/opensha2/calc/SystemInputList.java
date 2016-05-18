@@ -16,18 +16,19 @@ import org.opensha2.eq.model.SystemSourceSet;
  * @author Peter Powers
  */
 public final class SystemInputList extends InputList {
-	// TODO package privacy - or move to SYstemSourceSet
-	// TODO how to get back to parent to mine info; index?
-	// TODO need index reference
+  // TODO package privacy - or move to SYstemSourceSet
+  // TODO how to get back to parent to mine info; index?
+  // TODO need index reference
 
-	final SystemSourceSet parent;
+  final SystemSourceSet parent;
 
-	public SystemInputList(SystemSourceSet parent) {
-		this.parent = checkNotNull(parent);
-	}
+  public SystemInputList(SystemSourceSet parent) {
+    this.parent = checkNotNull(parent);
+  }
 
-	@Override String parentName() {
-		return parent.name();
-	}
+  @Override
+  String parentName() {
+    return parent.name();
+  }
 
 }

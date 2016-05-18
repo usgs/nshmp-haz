@@ -30,60 +30,60 @@ import com.google.common.base.Throwables;
  */
 public class DeaggCalc {
 
-	public static void main(String[] args) {
+  public static void main(String[] args) {
 
-		/* Delegate to run which has a return value for testing. */
+    /* Delegate to run which has a return value for testing. */
 
-		String status = run(args);
-		if (status != null) {
-			System.err.print(status);
-			System.exit(1);
-		}
-		System.exit(0);
-	}
+    String status = run(args);
+    if (status != null) {
+      System.err.print(status);
+      System.exit(1);
+    }
+    System.exit(0);
+  }
 
-	static String run(String[] args) {
-		throw new UnsupportedOperationException(
-			"Not yet implemented: how to specify return period");
-	}
+  static String run(String[] args) {
+    throw new UnsupportedOperationException(
+      "Not yet implemented: how to specify return period");
+  }
 
-	// TODO when doing deagg as a program, what is output?
-	// Do we skip curve output? probably not
-	// - csv files of total and each gmm, deagg table
-	// - metadatafile about mean, mode (json??)
-	// - file of contributions?
-	// - one folder per site
+  // TODO when doing deagg as a program, what is output?
+  // Do we skip curve output? probably not
+  // - csv files of total and each gmm, deagg table
+  // - metadatafile about mean, mode (json??)
+  // - file of contributions?
+  // - one folder per site
 
-	/**
-	 * Perform a hazard deaggregation at a {@code site} for a {@code model},
-	 * {@code config}, and return period. If an {@code executor} is supplied, it
-	 * will be used to distribute tasks; otherwise, the calculation will run on
-	 * the current thread. Be sure to shutdown any supplied executor after a
-	 * calculation completes.
-	 * 
-	 * <p><b>Note:</b> any model initialization settings in {@code config} will
-	 * be ignored as the supplied model will already have been initialized.</p>
-	 * 
-	 * @param model to use
-	 * @param config calculation configuration
-	 * @param site of interest
-	 * @param returnPeriod at which to deaggregate
-	 * @param executor to use ({@link Optional})
-	 * @return a HazardResult
-	 */
-	public static Deaggregation calc(
-			HazardModel model,
-			CalcConfig config,
-			Site site,
-			double returnPeriod,
-			Optional<Executor> executor) {
-		try {
-			Hazard result = Calcs.hazard(model, config, site, executor);
-			return Calcs.deaggregation(result, returnPeriod);
-		} catch (ExecutionException | InterruptedException e) {
-			Throwables.propagate(e);
-			return null;
-		}
-	}
+  /**
+   * Perform a hazard deaggregation at a {@code site} for a {@code model},
+   * {@code config}, and return period. If an {@code executor} is supplied, it
+   * will be used to distribute tasks; otherwise, the calculation will run on
+   * the current thread. Be sure to shutdown any supplied executor after a
+   * calculation completes.
+   * 
+   * <p><b>Note:</b> any model initialization settings in {@code config} will be
+   * ignored as the supplied model will already have been initialized.</p>
+   * 
+   * @param model to use
+   * @param config calculation configuration
+   * @param site of interest
+   * @param returnPeriod at which to deaggregate
+   * @param executor to use ({@link Optional})
+   * @return a HazardResult
+   */
+  public static Deaggregation calc(
+      HazardModel model,
+      CalcConfig config,
+      Site site,
+      double returnPeriod,
+      Optional<Executor> executor) {
+    try {
+      Hazard result = Calcs.hazard(model, config, site, executor);
+      return Calcs.deaggregation(result, returnPeriod);
+    } catch (ExecutionException | InterruptedException e) {
+      Throwables.propagate(e);
+      return null;
+    }
+  }
 
 }

@@ -1,6 +1,4 @@
 /**
- * Classes and utilities for working with double-valued data.
- * 
- * 
+ * Double-valued data utilities.
  */
 package org.opensha2.data;
