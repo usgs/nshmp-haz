@@ -163,6 +163,13 @@ public class Site implements Named {
   public static Builder builder() {
     return new Builder();
   }
+  
+  /**
+   * Return a fresh {@link Builder} configured with the supplied defaults.
+   */
+  public static Builder builder(CalcConfig defaults) {
+    return new Builder(defaults);
+  }
 
   /**
    * A reusable {@code Site} builder. In the absence of specifying any site
@@ -183,6 +190,13 @@ public class Site implements Named {
 
     private Builder() {}
 
+    private Builder(CalcConfig config) {
+      vs30(config.siteDefaults.vs30);
+      vsInferred(config.siteDefaults.vsInferred);
+      z1p0(config.siteDefaults.z1p0);
+      z2p5(config.siteDefaults.z2p5);
+    }
+    
     /**
      * The name of the {@code Site}. Prior to setting, the supplied name is
      * stripped of commas and truncated at 72 characters.
@@ -229,13 +243,21 @@ public class Site implements Named {
 
     /** Depth to the shear-wave velocity horizon of 1.0 km/sec, in km. */
     public Builder z1p0(double z1p0) {
-      this.z1p0 = checkInRange(Z1P0_RANGE, Site.Key.Z1P0, z1p0);
+      if (Double.isNaN(z1p0)) {
+        this.z1p0 = z1p0;
+      } else {
+        this.z1p0 = checkInRange(Z1P0_RANGE, Site.Key.Z1P0, z1p0);
+      }
       return this;
     }
 
     /** Depth to the shear-wave velocity horizon of 2.5 km/sec, in km. */
     public Builder z2p5(double z2p5) {
-      this.z2p5 = checkInRange(Z2P5_RANGE, Site.Key.Z2P5, z2p5);
+      if (Double.isNaN(z2p5)) {
+        this.z2p5 = z2p5;
+      } else {
+        this.z2p5 = checkInRange(Z2P5_RANGE, Site.Key.Z2P5, z2p5);
+      }
       return this;
     }
 
