@@ -203,7 +203,7 @@ public final class CalcConfig {
         for (Entry<Imt, double[]> entry : customImls.entrySet()) {
           String imtStr = "imls (" + entry.getKey().name() + ")";
           imlSb.append(formatEntry(imtStr))
-          .append(wrap(Arrays.toString(entry.getValue()), false));
+              .append(wrap(Arrays.toString(entry.getValue()), false));
         }
       }
       return new StringBuilder()
@@ -429,10 +429,10 @@ public final class CalcConfig {
       }
 
       void validate() {
-        checkNotNull(vs30, STATE_ERROR, Performance.ID, Key.VS30);
-        checkNotNull(vsInferred, STATE_ERROR, Performance.ID, Key.VS_INF);
-        checkNotNull(z1p0, STATE_ERROR, Performance.ID, Key.Z1P0);
-        checkNotNull(z2p5, STATE_ERROR, Performance.ID, Key.Z2P5);
+        checkNotNull(vs30, STATE_ERROR, SiteDefaults.ID, Key.VS30);
+        checkNotNull(vsInferred, STATE_ERROR, SiteDefaults.ID, Key.VS_INF);
+        checkNotNull(z1p0, STATE_ERROR, SiteDefaults.ID, Key.Z1P0);
+        checkNotNull(z2p5, STATE_ERROR, SiteDefaults.ID, Key.Z2P5);
       }
     }
   }
@@ -642,9 +642,9 @@ public final class CalcConfig {
       }
 
       void validate() {
-        checkNotNull(directory, STATE_ERROR, Performance.ID, Key.DIRECTORY);
-        checkNotNull(curveTypes, STATE_ERROR, Performance.ID, Key.CURVE_TYPES);
-        checkNotNull(flushLimit, STATE_ERROR, Performance.ID, Key.FLUSH_LIMIT);
+        checkNotNull(directory, STATE_ERROR, Output.ID, Key.DIRECTORY);
+        checkNotNull(curveTypes, STATE_ERROR, Output.ID, Key.CURVE_TYPES);
+        checkNotNull(flushLimit, STATE_ERROR, Output.ID, Key.FLUSH_LIMIT);
       }
     }
   }
@@ -757,7 +757,7 @@ public final class CalcConfig {
     return new StringBuilder("Calc Config: ")
         .append(resource.isPresent()
             ? resource.get().toAbsolutePath().normalize()
-                : "(from defaults)")
+            : "(from defaults)")
         .append(curve.asString())
         .append(siteDefaults.asString())
         .append(performance.asString())
@@ -797,7 +797,16 @@ public final class CalcConfig {
   private static final Gson GSON = new GsonBuilder()
       .setPrettyPrinting()
       .enableComplexMapKeySerialization()
-      .serializeSpecialFloatingPointValues()
+      .serializeNulls()
+      .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+        @Override
+        public JsonElement serialize(
+            Double value,
+            Type type,
+            JsonSerializationContext context) {
+          return Double.isNaN(value) ? null : new JsonPrimitive(value);
+        }
+      })
       .registerTypeAdapter(Path.class, new JsonDeserializer<Path>() {
         @Override
         public Path deserialize(

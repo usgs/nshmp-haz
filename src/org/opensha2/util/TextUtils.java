@@ -15,6 +15,9 @@ public class TextUtils {
   /** System specific newline string. */
   public static final String NEWLINE = StandardSystemProperty.LINE_SEPARATOR.value();
 
+  /** Null string ("null"). */
+  public static final String NULL = "null";
+
   /** The column on which to align values in a log entry. */
   public static final int LOG_VALUE_COLUMN = 32;
 

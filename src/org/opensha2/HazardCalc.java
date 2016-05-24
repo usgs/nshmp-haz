@@ -107,7 +107,7 @@ public class HazardCalc {
       log.info(config.toString());
 
       log.info("");
-      Iterable<Site> sites = readSites(args[1], log);
+      Iterable<Site> sites = readSites(args[1], config, log);
       log.info("Sites: " + sites);
 
       Path out = calc(model, config, sites, log);
@@ -131,7 +131,7 @@ public class HazardCalc {
     }
   }
 
-  private static Iterable<Site> readSites(String arg, Logger log) {
+  private static Iterable<Site> readSites(String arg, CalcConfig defaults ,Logger log) {
     try {
       if (arg.toLowerCase().endsWith(".csv")) {
         Path path = Paths.get(arg);
@@ -143,12 +143,12 @@ public class HazardCalc {
         log.info("Site file: " + path.toAbsolutePath().normalize());
         return Sites.fromJson(path);
       }
-      return Sites.fromString(arg);
+      return Sites.fromString(arg, defaults);
     } catch (Exception e) {
-      throw new IllegalArgumentException(
-          "'sites' [" + arg + "] must either be a 3 to 7 argument, comma-delimited string " +
-              "or specify a path to a *.csv or *.geojson file",
-              e);
+      throw new IllegalArgumentException(NEWLINE + "    sites = \"" + arg +
+          "\" must either be a 3 to 7 argument," + NEWLINE +
+          "    comma-delimited string, or specify a path to a *.csv or *.geojson file",
+          e);
     }
   }
 

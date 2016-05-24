@@ -8,6 +8,8 @@ import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.util.GeoJson.validateProperty;
 import static org.opensha2.util.Parsing.splitToList;
 import static org.opensha2.util.TextUtils.LOG_INDENT;
+import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.util.TextUtils.NULL;
 
 import org.opensha2.calc.Site.Builder;
 import org.opensha2.geo.Bounds;
@@ -117,10 +119,10 @@ public final class Sites {
             siteBuilder.vsInferred(Boolean.parseBoolean(value));
             break;
           case Site.Key.Z1P0:
-            siteBuilder.z1p0(Double.parseDouble(value));
+            siteBuilder.z1p0(value.equals(NULL) ? Double.NaN : Double.parseDouble(value));
             break;
           case Site.Key.Z2P5:
-            siteBuilder.z2p5(Double.parseDouble(value));
+            siteBuilder.z2p5(value.equals(NULL) ? Double.NaN : Double.parseDouble(value));
             break;
           default:
             throw new IllegalStateException("Unsupported site key: " + key);
@@ -165,12 +167,12 @@ public final class Sites {
    *
    * @param s String to parse
    */
-  public static Iterable<Site> fromString(String s) {
+  public static Iterable<Site> fromString(String s, CalcConfig defaults) {
     List<String> values = splitToList(s, Delimiter.COMMA);
-    Builder b = Site.builder();
+    Builder b = Site.builder(defaults);
     checkArgument(
         values.size() > 2,
-        "Site string %s is incomplete; it must contain at least 'name, lon, lat'",
+        NEWLINE + "    Site string \"%s\" is incomplete; it must contain at least 'name, lon, lat'",
         s);
     b.name(values.get(0)).location(
         Double.valueOf(values.get(2)),
@@ -178,17 +180,20 @@ public final class Sites {
     if (values.size() > 3) {
       checkArgument(
           values.size() > 4,
-          "Site string %s defines 'vs30'; it must also define 'vsInf'",
+          NEWLINE + "    Site string \"%s\" defines 'vs30'; it must also define 'vsInf'",
           s);
-      b.vs30(Double.valueOf(values.get(3)))
-      .vsInferred(Boolean.valueOf(values.get(4)));
+      b.vs30(Double.valueOf(values.get(3)));
+      b.vsInferred(Boolean.valueOf(values.get(4)));
     }
     if (values.size() > 5) {
       checkArgument(
           values.size() > 6,
-          "Site string %s defines 'z1p0'; it must also define 'z2p5'",
+          NEWLINE + "    Site string \"%s\" defines 'z1p0'; it must also define 'z2p5'",
           s);
-      b.z1p0(Double.valueOf(values.get(5))).z2p5(Double.valueOf(values.get(6)));
+      String z1p0str = values.get(5);
+      b.z1p0(z1p0str.equals(NULL) ? Double.NaN : Double.valueOf(z1p0str));
+      String z2p5str = values.get(6);
+      b.z2p5(z2p5str.equals(NULL) ? Double.NaN : Double.valueOf(z2p5str));
     }
     return new ListIterable(ImmutableList.of(b.build()));
   }
@@ -374,14 +379,14 @@ public final class Sites {
 
       Region mapRegion = extents.isPresent()
           ? Regions.intersectionOf(mapName, extents.get(), calcRegion)
-              : calcRegion;
+          : calcRegion;
 
-          GriddedRegion region = Regions.toGridded(
-              mapRegion,
-              spacing, spacing,
-              GriddedRegion.ANCHOR_0_0);
+      GriddedRegion region = Regions.toGridded(
+          mapRegion,
+          spacing, spacing,
+          GriddedRegion.ANCHOR_0_0);
 
-          return new RegionIterable(region, builder);
+      return new RegionIterable(region, builder);
     }
 
   }
@@ -419,15 +424,15 @@ public final class Sites {
     Location p4 = locs.get(3);
     boolean rectangular = (p1.latRad() == p2.latRad())
         ? (p3.latRad() == p4.latRad() &&
-        p1.lonRad() == p4.lonRad() &&
-        p2.lonRad() == p3.lonRad())
-            : (p1.latRad() == p4.latRad() &&
+            p1.lonRad() == p4.lonRad() &&
+            p2.lonRad() == p3.lonRad())
+        : (p1.latRad() == p4.latRad() &&
             p2.latRad() == p3.latRad() &&
             p1.lonRad() == p2.lonRad() &&
             p3.lonRad() == p4.lonRad());
-        checkArgument(rectangular,
-            "Extents polygon does not define a lat-lon Mercator rectangle:%s", locs);
-        return locs;
+    checkArgument(rectangular,
+        "Extents polygon does not define a lat-lon Mercator rectangle:%s", locs);
+    return locs;
   }
 
 }
