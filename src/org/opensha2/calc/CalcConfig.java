@@ -203,7 +203,7 @@ public final class CalcConfig {
         for (Entry<Imt, double[]> entry : customImls.entrySet()) {
           String imtStr = "imls (" + entry.getKey().name() + ")";
           imlSb.append(formatEntry(imtStr))
-          .append(wrap(Arrays.toString(entry.getValue()), false));
+              .append(wrap(Arrays.toString(entry.getValue()), false));
         }
       }
       return new StringBuilder()
@@ -757,7 +757,7 @@ public final class CalcConfig {
     return new StringBuilder("Calc Config: ")
         .append(resource.isPresent()
             ? resource.get().toAbsolutePath().normalize()
-                : "(from defaults)")
+            : "(from defaults)")
         .append(curve.asString())
         .append(siteDefaults.asString())
         .append(performance.asString())
@@ -797,6 +797,16 @@ public final class CalcConfig {
   private static final Gson GSON = new GsonBuilder()
       .setPrettyPrinting()
       .enableComplexMapKeySerialization()
+      .serializeNulls()
+      .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+        @Override
+        public JsonElement serialize(
+            Double value,
+            Type type,
+            JsonSerializationContext context) {
+          return Double.isNaN(value) ? null : new JsonPrimitive(value);
+        }
+      })
       .registerTypeAdapter(Path.class, new JsonDeserializer<Path>() {
         @Override
         public Path deserialize(
