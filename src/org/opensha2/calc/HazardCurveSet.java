@@ -143,6 +143,8 @@ final class HazardCurveSet {
       }
       return this;
     }
+    
+    // TODO can't the two multiply steps (both above and below) be combined?
 
     Builder addCurves(ClusterCurves curvesIn) {
       checkNotNull(clusterGroundMotionsList, "%s only supports HazardCurves", ID);

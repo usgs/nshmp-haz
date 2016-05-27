@@ -133,14 +133,14 @@ class SystemParser extends DefaultHandler {
           double weight = readDouble(WEIGHT, atts);
           sourceSetBuilder = new SystemSourceSet.Builder();
           sourceSetBuilder
-          .name(name)
-          .id(id)
-          .weight(weight)
-          .gmms(gmmSet);
+              .name(name)
+              .id(id)
+              .weight(weight)
+              .gmms(gmmSet);
           sourceSetBuilder.sections(sections);
+          log.info("     Weight: " + weight);
           log.info("   Sections: " + sections.size());
-          log.info("Rupture set: " + name + "/" + RUPTURES_FILENAME);
-          log.info(" Set weight: " + weight);
+          log.info("   Ruptures: " + name + "/" + RUPTURES_FILENAME);
           mfdHelperBuilder = MfdHelper.builder();
           mfdHelper = mfdHelperBuilder.build(); // dummy; usually
           // overwritten
@@ -160,13 +160,13 @@ class SystemParser extends DefaultHandler {
 
         case GEOMETRY:
           sourceSetBuilder
-          .mag(mfd.getX(0))
-          .rate(mfd.getY(0))
-          .indices(rangeStringToIntList(readString(INDICES, atts)))
-          .depth(readDouble(DEPTH, atts))
-          .dip(readDouble(DIP, atts))
-          .rake(readDouble(RAKE, atts))
-          .width(readDouble(WIDTH, atts));
+              .mag(mfd.getX(0))
+              .rate(mfd.getY(0))
+              .indices(rangeStringToIntList(readString(INDICES, atts)))
+              .depth(readDouble(DEPTH, atts))
+              .dip(readDouble(DIP, atts))
+              .rake(readDouble(RAKE, atts))
+              .width(readDouble(WIDTH, atts));
           break;
 
       }
@@ -198,7 +198,7 @@ class SystemParser extends DefaultHandler {
 
         case SYSTEM_SOURCE_SET:
           sourceSet = sourceSetBuilder.build();
-          log.info("   Ruptures: " + sourceSet.size());
+          log.info("       Size: " + sourceSet.size());
           break;
       }
 
@@ -222,9 +222,9 @@ class SystemParser extends DefaultHandler {
   private void checkDefaultMfds() {
     checkState(
         mfdHelper.typeCount(SINGLE) <= 1 &&
-        mfdHelper.typeCount(INCR) == 0 &&
-        mfdHelper.typeCount(GR) == 0 &&
-        mfdHelper.typeCount(GR_TAPER) == 0,
+            mfdHelper.typeCount(INCR) == 0 &&
+            mfdHelper.typeCount(GR) == 0 &&
+            mfdHelper.typeCount(GR_TAPER) == 0,
         "Only one SINGLE default MFD may be defined");
   }
 

@@ -106,7 +106,7 @@ class GridParser extends DefaultHandler {
   }
 
   GridSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-  IOException {
+      IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -133,9 +133,9 @@ class GridParser extends DefaultHandler {
         double weight = readDouble(WEIGHT, atts);
         sourceSetBuilder = new GridSourceSet.Builder();
         sourceSetBuilder
-        .name(name)
-        .id(id)
-        .weight(weight);
+            .name(name)
+            .id(id)
+            .weight(weight);
         sourceSetBuilder.gmms(gmmSet);
         if (log.isLoggable(FINE)) {
           log.fine("");
@@ -166,10 +166,10 @@ class GridParser extends DefaultHandler {
         Map<FocalMech, Double> mechMap = stringToEnumWeightMap(mechMapStr, FocalMech.class);
         RuptureScaling rupScaling = readEnum(RUPTURE_SCALING, atts, RuptureScaling.class);
         sourceSetBuilder
-        .depthMap(depthMap, type)
-        .maxDepth(maxDepth, type)
-        .mechs(mechMap)
-        .ruptureScaling(rupScaling);
+            .depthMap(depthMap, type)
+            .maxDepth(maxDepth, type)
+            .mechs(mechMap)
+            .ruptureScaling(rupScaling);
         double strike = readDouble(STRIKE, atts);
         // first validate strike by setting it in builder
         sourceSetBuilder.strike(strike);
@@ -205,13 +205,13 @@ class GridParser extends DefaultHandler {
         }
         break;
 
-        /*
-         * TODO we need to check that delta mag, if included in a node, is
-         * consistent with deltaMag of all default MFDs. Or, we check that all
-         * defaults are consistent and don't permit inclusion of deltaMag as node
-         * attribute. The same could be done for mMin. This ensures a basic
-         * consistency of structure.
-         */
+      /*
+       * TODO we need to check that delta mag, if included in a node, is
+       * consistent with deltaMag of all default MFDs. Or, we check that all
+       * defaults are consistent and don't permit inclusion of deltaMag as node
+       * attribute. The same could be done for mMin. This ensures a basic
+       * consistency of structure.
+       */
     }
   }
 

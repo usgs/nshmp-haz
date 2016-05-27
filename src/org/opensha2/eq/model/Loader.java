@@ -333,21 +333,32 @@ class Loader {
 
   private static void parseSystemSource(Path dir, GmmSet gmmSet, Builder builder,
       ModelConfig config, SAXParser sax) {
+    log.info("");
     try {
       Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
-      InputStream sectionsIn = Files.newInputStream(sectionsPath);
       Path rupturesPath = dir.resolve(RUPTURES_FILENAME);
-      InputStream rupturesIn = Files.newInputStream(rupturesPath);
+      if (Files.exists(sectionsPath) && Files.exists(rupturesPath)) {
+        InputStream sectionsIn = Files.newInputStream(sectionsPath);
+        InputStream rupturesIn = Files.newInputStream(rupturesPath);
 
-      SystemParser faultParser = SystemParser.create(sax);
-      builder.sourceSet(faultParser.parse(sectionsIn, rupturesIn, gmmSet));
+        SystemParser systemParser = SystemParser.create(sax);
+        builder.sourceSet(systemParser.parse(sectionsIn, rupturesIn, gmmSet));
+      } else {
+        log.info("Fault model: (no fault sources supplied with system)");
+      }
 
+      log.info("");
       Path gridSourcePath = dir.resolve(GRIDSOURCE_FILENAME);
-      InputStream gridIn = Files.newInputStream(gridSourcePath);
-      GridSourceSet gridSet = GridParser.create(sax).parse(gridIn, gmmSet, config);
-      builder.sourceSet(gridSet);
-      log.info("   Grid set: " + dir.getFileName() + "/" + GRIDSOURCE_FILENAME);
-      log.info("    Sources: " + gridSet.size());
+      if (Files.exists(gridSourcePath)) {
+        InputStream gridIn = Files.newInputStream(gridSourcePath);
+        GridSourceSet gridSet = GridParser.create(sax).parse(gridIn, gmmSet, config);
+        builder.sourceSet(gridSet);
+        log.info(" Grid model: " + dir.getFileName() + "/" + GRIDSOURCE_FILENAME);
+        log.info("     Weight: " + gridSet.weight());
+        log.info("    Sources: " + gridSet.size());
+      } else {
+        log.info(" Grid model: (no grid sources supplied with system)");
+      }
     } catch (Exception e) {
       handleParseException(e, dir);
     }
@@ -373,40 +384,29 @@ class Loader {
 
   /* This method will exit runtime environment */
   private static void handleParseException(Exception e, Path path) {
+    StringBuilder sb = new StringBuilder(LF);
     if (e instanceof SAXParseException) {
       SAXParseException spe = (SAXParseException) e;
-      StringBuilder sb = new StringBuilder(LF);
       sb.append("** SAX parser error:").append(LF);
       sb.append("**   Path: ").append(path).append(LF);
       sb.append("**   Line: ").append(spe.getLineNumber());
       sb.append(" [").append(spe.getColumnNumber()).append("]").append(LF);
       sb.append("**   Info: ").append(spe.getMessage()).append(LF);
-      sb.append("** Exiting **").append(LF).append(LF);
-      log.log(SEVERE, sb.toString(), spe);
     } else if (e instanceof SAXException) {
-      StringBuilder sb = new StringBuilder(LF);
       sb.append("** Other SAX parsing error **");
-      sb.append("** Exiting **").append(LF).append(LF);
-      log.log(SEVERE, sb.toString(), e);
     } else if (e instanceof IOException) {
       IOException ioe = (IOException) e;
-      StringBuilder sb = new StringBuilder(LF);
       sb.append("** IO error: ").append(ioe.getMessage()).append(LF);
       sb.append("**     Path: ").append(path).append(LF);
-      sb.append("** Exiting **").append(LF).append(LF);
-      log.log(SEVERE, sb.toString(), ioe);
     } else if (e instanceof UnsupportedOperationException ||
-        e instanceof IllegalStateException || e instanceof NullPointerException) {
-      StringBuilder sb = new StringBuilder(LF);
+        e instanceof IllegalStateException ||
+        e instanceof NullPointerException) {
       sb.append("** Parsing error: ").append(e.getMessage()).append(LF);
-      sb.append("** Exiting **").append(LF).append(LF);
-      log.log(SEVERE, sb.toString(), e);
     } else {
-      StringBuilder sb = new StringBuilder(LF);
       sb.append("** Unknown parsing error: ").append(e.getMessage()).append(LF);
-      sb.append("** Exiting **").append(LF).append(LF);
-      log.log(SEVERE, sb.toString(), e);
     }
+    sb.append("** Exiting **").append(LF).append(LF);
+    log.log(SEVERE, sb.toString(), e);
     System.exit(1);
   }
 
