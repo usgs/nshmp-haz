@@ -76,7 +76,10 @@
            encoding="UTF-8"
            debug="true"
            includeantruntime="false"
-           createMissingPackageInfoClass="false" />
+           createMissingPackageInfoClass="false">
+      
+      <!--<compilerarg value="-Xlint" />-->
+    </javac>
   </target>
 
   <target name="compile.source">

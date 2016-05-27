@@ -92,8 +92,7 @@ class SystemSectionParser extends DefaultHandler {
         case SYSTEM_FAULT_SECTIONS:
           sections = Lists.newArrayList();
           String setName = readString(NAME, atts);
-          log.info("");
-          log.info("Section set: " + setName + "/" + SECTIONS_FILENAME);
+          log.info("Fault model: " + setName + "/" + SECTIONS_FILENAME);
           break;
 
         case SECTION:
@@ -109,9 +108,9 @@ class SystemSectionParser extends DefaultHandler {
           double lowerDepth = readDouble(LOWER_DEPTH, atts);
           depth += aseis * (lowerDepth - depth);
           surfaceBuilder.depth(depth)
-          .lowerDepth(lowerDepth)
-          .dip(readDouble(DIP, atts))
-          .dipDir(readDouble(DIP_DIR, atts));
+              .lowerDepth(lowerDepth)
+              .dip(readDouble(DIP, atts))
+              .dipDir(readDouble(DIP_DIR, atts));
           break;
 
         case TRACE:
