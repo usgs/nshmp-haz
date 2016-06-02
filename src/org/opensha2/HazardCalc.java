@@ -136,12 +136,12 @@ public class HazardCalc {
       if (arg.toLowerCase().endsWith(".csv")) {
         Path path = Paths.get(arg);
         log.info("Site file: " + path.toAbsolutePath().normalize());
-        return Sites.fromCsv(path);
+        return Sites.fromCsv(path, defaults);
       }
       if (arg.toLowerCase().endsWith(".geojson")) {
         Path path = Paths.get(arg);
         log.info("Site file: " + path.toAbsolutePath().normalize());
-        return Sites.fromJson(path);
+        return Sites.fromJson(path, defaults);
       }
       return Sites.fromString(arg, defaults);
     } catch (Exception e) {
