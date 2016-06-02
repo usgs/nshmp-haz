@@ -59,16 +59,16 @@ public final class Sites {
    * @param path to comma-delimited site data file
    * @throws IOException if a problem is encountered
    */
-  public static Iterable<Site> fromCsv(Path path) throws IOException {
-    return readCsv(path);
+  public static Iterable<Site> fromCsv(Path path, CalcConfig defaults) throws IOException {
+    return readCsv(path, defaults);
   }
 
-  private static Iterable<Site> readCsv(Path path) throws IOException {
+  private static Iterable<Site> readCsv(Path path, CalcConfig defaults) throws IOException {
 
     checkArgument(Files.exists(path), "Specified site file [%s] does not exist", path);
 
     ImmutableList.Builder<Site> listBuilder = ImmutableList.builder();
-    Builder siteBuilder = Site.builder();
+    Builder siteBuilder = Site.builder(defaults);
 
     List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
     boolean firstline = true;
@@ -135,11 +135,6 @@ public final class Sites {
     return new ListIterable(listBuilder.build());
   }
 
-  private static final Gson GSON = new GsonBuilder()
-      .registerTypeAdapter(Site.class, new Site.Deserializer())
-      .registerTypeAdapter(SiteIterable.class, new Deserializer())
-      .create();
-
   /**
    * Create an unmodifiable {@code Iterable<Site>} from the GeoJSON site file
    * designated by {@code path}.
@@ -147,10 +142,14 @@ public final class Sites {
    * @param path to GeoJson site data file
    * @throws IOException if a problem is encountered
    */
-  public static Iterable<Site> fromJson(Path path) throws IOException {
+  public static Iterable<Site> fromJson(Path path, CalcConfig defaults) throws IOException {
     checkArgument(Files.exists(path), "Specified site file [%s] does not exist", path);
+    Gson gson = new GsonBuilder()
+        .registerTypeAdapter(Site.class, new Site.Deserializer(defaults))
+        .registerTypeAdapter(SiteIterable.class, new Deserializer(defaults))
+        .create();
     Reader reader = Files.newBufferedReader(path, UTF_8);
-    SiteIterable iterable = GSON.fromJson(reader, SiteIterable.class);
+    SiteIterable iterable = gson.fromJson(reader, SiteIterable.class);
     reader.close();
     return iterable;
   }
@@ -210,12 +209,22 @@ public final class Sites {
 
     @Override
     public String toString() {
-      boolean region = this instanceof RegionIterable;
-      int size = region ? ((RegionIterable) this).region.size() : Iterables.size(this);
-      StringBuilder sb = new StringBuilder()
-          .append(region ? ((RegionIterable) this).region.name() + " Region" : "List")
-          .append(" [size=").append(size).append("]");
-      if (!region) {
+      boolean map = this instanceof RegionIterable;
+      StringBuilder sb = new StringBuilder();
+      if (map) {
+        RegionIterable mapIterable = (RegionIterable) this;
+        sb.append(mapIterable.region.name())
+            .append(" Region [size=")
+            .append(mapIterable.region.size())
+            .append(" ").append(mapIterable.siteBuilder.state())
+            .append("]");
+      } else {
+        int size = Iterables.size(this);
+        sb.append("List")
+            .append(" [size=")
+            .append(size)
+            .append("]");
+
         for (Site site : Iterables.limit(this, TO_STRING_LIMIT)) {
           sb.append(SITE_INDENT).append(site);
         }
@@ -288,6 +297,12 @@ public final class Sites {
    */
   private static final class Deserializer implements JsonDeserializer<SiteIterable> {
 
+    final CalcConfig defaults;
+    
+    Deserializer(CalcConfig defaults) {
+      this.defaults = defaults;
+    }
+    
     @Override
     public SiteIterable deserialize(
         JsonElement json,
@@ -355,7 +370,7 @@ public final class Sites {
       double spacing = properties.get(GeoJson.Properties.Key.SPACING).getAsDouble();
 
       // builder used to create all sites when iterating over region
-      Builder builder = Site.builder();
+      Builder builder = Site.builder(defaults);
 
       if (properties.has(Site.Key.VS30)) {
         double vs30 = properties.get(Site.Key.VS30).getAsDouble();

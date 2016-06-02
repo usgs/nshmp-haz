@@ -146,10 +146,15 @@ public class Site implements Named {
   @Override
   public String toString() {
     return new StringBuilder(Strings.padEnd(name, 28, ' '))
-        .append(String.format("%.3f %.3f Vs30=%s ", location.lon(), location.lat(), vs30))
-        .append(vsInferred ? "inferred " : "measured ")
-        .append(String.format("Z1.0=%s Z2.5=%s", z1p0, z2p5))
+        .append(String.format("%.3f %.3f ", location.lon(), location.lat()))
+        .append(paramString(vs30, vsInferred, z1p0, z2p5))
         .toString();
+  }
+
+  private static String paramString(double vs30, boolean vsInf, double z1p0, double z2p5) {
+    return String.format(
+        "Vs30=%s %s Z1.0=%s Z2.5=%s",
+        vs30, vsInf ? "inferred " : "measured ", z1p0, z2p5);
   }
 
   @Override
@@ -163,11 +168,11 @@ public class Site implements Named {
   public static Builder builder() {
     return new Builder();
   }
-  
+
   /**
    * Return a fresh {@link Builder} configured with the supplied defaults.
    */
-  public static Builder builder(CalcConfig defaults) {
+  static Builder builder(CalcConfig defaults) {
     return new Builder(defaults);
   }
 
@@ -184,9 +189,9 @@ public class Site implements Named {
     private String name = NO_NAME;
     private Location location;
     private double vs30 = VS_30_DEFAULT;
-    private boolean vsInferred = true;
-    private double z1p0 = Double.NaN;
-    private double z2p5 = Double.NaN;
+    private boolean vsInferred = VS_INF_DEFAULT;
+    private double z1p0 = Z1P0_DEFAULT;
+    private double z2p5 = Z2P5_DEFAULT;
 
     private Builder() {}
 
@@ -196,7 +201,7 @@ public class Site implements Named {
       z1p0(config.siteDefaults.z1p0);
       z2p5(config.siteDefaults.z2p5);
     }
-    
+
     /**
      * The name of the {@code Site}. Prior to setting, the supplied name is
      * stripped of commas and truncated at 72 characters.
@@ -262,6 +267,14 @@ public class Site implements Named {
     }
 
     /**
+     * Return a string reflecting the current site parameter state of this
+     * builder.
+     */
+    String state() {
+      return paramString(vs30, vsInferred, z1p0, z2p5);
+    }
+
+    /**
      * Build the {@code Site}.
      */
     public Site build() {
@@ -309,6 +322,12 @@ public class Site implements Named {
 
   static final class Deserializer implements JsonDeserializer<Site> {
 
+    final CalcConfig defaults;
+    
+    Deserializer(CalcConfig defaults) {
+      this.defaults = defaults;
+    }
+    
     @Override
     public Site deserialize(
         JsonElement json,
@@ -325,7 +344,7 @@ public class Site implements Named {
           .getAsJsonObject(GeoJson.Key.GEOMETRY)
           .getAsJsonArray(GeoJson.Key.COORDINATES);
 
-      Builder builder = Site.builder().location(
+      Builder builder = Site.builder(defaults).location(
           coordinates.get(1).getAsDouble(),
           coordinates.get(0).getAsDouble());
 
