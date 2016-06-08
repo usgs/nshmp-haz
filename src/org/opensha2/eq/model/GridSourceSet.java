@@ -195,8 +195,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         return new PointSourceFinite(loc, mfd, mechMap, rupScaling, depthModel);
 
       case FIXED_STRIKE:
-        return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel,
-            strike);
+        return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel, strike);
 
       default:
         throw new IllegalStateException("Unhandled point source type");
