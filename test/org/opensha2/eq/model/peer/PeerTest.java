@@ -147,7 +147,7 @@ public class PeerTest {
     Map<String, double[]> expectedsMap = loadExpecteds(modelId);
     HazardModel model = HazardModel.load(MODEL_DIR.resolve(modelId));
     CalcConfig config = model.config();
-    Iterable<Site> sites = Sites.fromCsv(MODEL_DIR.resolve(modelId).resolve("sites.csv"));
+    Iterable<Site> sites = Sites.fromCsv(MODEL_DIR.resolve(modelId).resolve("sites.csv"), config);
 
     // ensure that only PGA is being used
     checkState(config.curve.imts.size() == 1);
