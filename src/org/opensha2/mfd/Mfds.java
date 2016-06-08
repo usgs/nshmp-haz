@@ -69,6 +69,12 @@ public final class Mfds {
   // evenly
   // spaced?? Seems overly restrictive.
 
+  // TODO why on earth does the code below take mags and rates (which are
+  // presumed to be the same size) and rather than use the supplied mags
+  // rebuilds the mag array introducing double-precision issues.
+  //
+  // TODO can't this just go direct to XySequence??
+  
   /**
    * Creates a new {@code IncrementalMfd} with the supplied magnitudes and
    * rates. For the MFD returned, {@link IncrementalMfd#floats()} always returns
