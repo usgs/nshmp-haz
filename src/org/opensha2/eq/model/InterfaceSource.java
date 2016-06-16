@@ -1,6 +1,5 @@
 package org.opensha2.eq.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
@@ -115,8 +114,6 @@ public class InterfaceSource extends FaultSource {
     Builder lowerTrace(LocationList trace) {
       checkNotNull(this.trace, "Upper trace must be set first");
       validateTrace(trace);
-      checkArgument(this.trace.size() == trace.size(),
-          "Upper and lower trace must be the same size");
       this.lowerTrace = trace;
       return this;
     }
