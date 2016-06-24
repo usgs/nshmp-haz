@@ -140,7 +140,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
   private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in) {
 
-    // ferquently used method locals
+    // frequently used method locals
     double Mw = in.Mw;
     double rJB = in.rJB;
     double rRup = in.rRup;
