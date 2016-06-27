@@ -19,9 +19,9 @@ import java.util.Map;
 
 /**
  * Implementation of the Boore, Joyner & Fumal (1997) ground motion model for
- * shallow earthquakes in active continental crust. This implementation supports
- * rock and soil sites abnd provides independent treatment for strike-slip,
- * reverse, and unknown faulting mechanisms.
+ * shallow earthquakes in active continental crust. In keeping with prior NSHMP
+ * implementations of this older model, only soft rock sites are supported
+ * (V𝗌30 = 760 m/s).
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -57,7 +57,7 @@ public final class BooreEtAl_1997 implements GroundMotionModel {
       .set(MAG, Range.closed(4.0, 8.0))
       .set(RJB, Range.closed(0.0, 80.0))
       .set(RAKE, Faults.RAKE_RANGE)
-      .set(VS30, Range.closed(250.0, 1100.0))
+      .set(VS30, Range.singleton(760.0))
       .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("BJF97.csv");
@@ -86,8 +86,11 @@ public final class BooreEtAl_1997 implements GroundMotionModel {
 
   private final Coefficients coeffs;
 
+  private final double siteScaling;
+
   BooreEtAl_1997(final Imt imt) {
     coeffs = new Coefficients(imt, COEFFS);
+    siteScaling = coeffs.bv * log(760.0 / coeffs.va);
   }
 
   @Override
@@ -96,16 +99,12 @@ public final class BooreEtAl_1997 implements GroundMotionModel {
     return DefaultScalarGroundMotion.create(μ, coeffs.σlnY);
   }
 
-  private static final double calcMean(final Coefficients c, final GmmInput in) {
+  private final double calcMean(final Coefficients c, final GmmInput in) {
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
     double b1 = (style == STRIKE_SLIP) ? c.b1ss : (style == REVERSE) ? c.b1rv : c.b1all;
     double r = sqrt(in.rJB * in.rJB + c.h * c.h);
     double mFac = in.Mw - 6.0;
-    return b1 +
-        c.b2 * mFac +
-        c.b3 * mFac * mFac +
-        c.b5 * log(r) +
-        c.bv * log(in.vs30 / c.va);
+    return b1 + c.b2 * mFac + c.b3 * mFac * mFac + c.b5 * log(r) + siteScaling;
   }
 
 }
