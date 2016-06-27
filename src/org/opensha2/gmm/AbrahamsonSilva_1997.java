@@ -124,12 +124,12 @@ public class AbrahamsonSilva_1997 implements GroundMotionModel {
     // hanging-wall term
     double f4 = 0.0;
     if (in.rJB == 0.0 && in.dip < 90.0) {
-      double hwM = (Mw <= 5.5) ? 0.0 : (Mw < 6.5) ? Mw - 5.5 : 1.0;
+      double hwM = (Mw >= 6.5) ? 1.0 : (Mw > 5.5) ? Mw - 5.5 : 0.0;
       double hwR = 0.0;
       if (rRup < 4.0) {
         hwR = 0.0;
       } else if (rRup < 8.0) {
-        hwR = c.a9 * ((rRup - 4.0) / 4.0);
+        hwR = c.a9 * (rRup - 4.0) / 4.0;
       } else if (rRup < 18.0) {
         hwR = c.a9;
       } else if (rRup < 25.0) {
@@ -138,7 +138,7 @@ public class AbrahamsonSilva_1997 implements GroundMotionModel {
       f4 = hwM * hwR;
     }
 
-    // no site response term required for rock
+    // no site response term required for rock (f5)
 
     return f1 + f3 + f4;
   }
