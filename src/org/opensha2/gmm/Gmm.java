@@ -17,10 +17,12 @@ import org.opensha2.gmm.CeusMb.TavakoliPezeshk_2005_AB;
 import org.opensha2.gmm.CeusMb.TavakoliPezeshk_2005_J;
 import org.opensha2.gmm.GmmInput.Constraints;
 
+import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -393,12 +395,33 @@ public enum Gmm {
 
   // Other
 
+  /** @see AbrahamsonSilva_1997 */
+  AS_97(
+      AbrahamsonSilva_1997.class,
+      AbrahamsonSilva_1997.NAME,
+      AbrahamsonSilva_1997.COEFFS,
+      AbrahamsonSilva_1997.CONSTRAINTS),
+
   /** @see Atkinson_2015 */
   ATKINSON_15(
       Atkinson_2015.class,
       Atkinson_2015.NAME,
       Atkinson_2015.COEFFS,
       Atkinson_2015.CONSTRAINTS),
+  
+  /** @see BooreEtAl_1997 */
+  BJF_97(
+      BooreEtAl_1997.class,
+      BooreEtAl_1997.NAME,
+      BooreEtAl_1997.COEFFS,
+      BooreEtAl_1997.CONSTRAINTS),
+  
+  /** @see CampbellBozorgnia_2003 */
+  CB_03(
+      CampbellBozorgnia_2003.class,
+      CampbellBozorgnia_2003.NAME,
+      CampbellBozorgnia_2003.COEFFS,
+      CampbellBozorgnia_2003.CONSTRAINTS),
 
   /** @see SadighEtAl_1997 */
   SADIGH_97(
@@ -554,6 +577,24 @@ public enum Gmm {
    */
   public static Set<Imt> responseSpectrumIMTs(Collection<Gmm> gmms) {
     return Sets.intersection(supportedIMTs(gmms), Imt.saImts());
+  }
+
+  /**
+   * Return the {@code Set} of {@code Gmm}s that support the supplied
+   * {@code Imt}.
+   * 
+   * @param imt for which to return the {@code Gmm}s that support it
+   */
+  public static Set<Gmm> supportedGmms(final Imt imt) {
+    return Sets.newEnumSet(Iterables.filter(
+        EnumSet.allOf(Gmm.class),
+        new Predicate<Gmm>() {
+          @Override
+          public boolean apply(Gmm gmm) {
+            return gmm.imts.contains(imt);
+          }
+        }),
+        Gmm.class);
   }
 
   /**
