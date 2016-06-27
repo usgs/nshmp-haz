@@ -1,6 +1,5 @@
 package org.opensha2.gmm;
 
-import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
 
@@ -20,9 +19,9 @@ import java.util.Map;
 
 /**
  * Implementation of the Abrahamson & Silva (1997) ground motion model for
- * shallow crustal earthquakes. This model supports deep soil (combination of
- * Geomatrix site classes C and D) and rock sites (combination of Geomatrix site
- * classes A & B), the cutoff for which is vs30 = 600 m/s.
+ * shallow earthquakes in active continental crust. In keeping with prior NSHMP
+ * implementations of this older model, only soft rock sites are supported
+ * (V𝗌30 = 760 m/s).
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -39,6 +38,7 @@ import java.util.Map;
  *
  * @author Allison Shumway
  * @author Peter Powers
+ * @see Gmm#AS_97
  */
 public class AbrahamsonSilva_1997 implements GroundMotionModel {
 
@@ -50,24 +50,25 @@ public class AbrahamsonSilva_1997 implements GroundMotionModel {
       .set(RRUP, Range.closed(0.0, 300.0))
       .set(DIP, Faults.DIP_RANGE)
       .set(RAKE, Faults.RAKE_RANGE)
-      .set(VS30, Range.closed(250.0, 760.0))
+      .set(VS30, Range.singleton(760.0))
       .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("AS97.csv");
 
-  private static final double VS30_CUT = 600.0;
   private static final double A2 = 0.512;
   private static final double A4 = 0.144;
   private static final double A13 = 0.17;
   private static final double C1 = 6.4;
-  private static final double C5 = 0.03;
 
   private static final class Coefficients {
 
-    final double a1, a3, a5, a6, a9, a10, a11, a12, b5, b6, c4;
+    final double a1, a3, a5, a6, a9, a12, b5, b6, c4;
 
     // same for all periods; replaced with constant
     // final double a2, a4, a13, c1, c5, n;
+    
+    // unused
+    // final double a10, a11;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
@@ -76,8 +77,6 @@ public class AbrahamsonSilva_1997 implements GroundMotionModel {
       a5 = coeffs.get("a5");
       a6 = coeffs.get("a6");
       a9 = coeffs.get("a9");
-      a10 = coeffs.get("a10");
-      a11 = coeffs.get("a11");
       a12 = coeffs.get("a12");
       b5 = coeffs.get("b5");
       b6 = coeffs.get("b6");
@@ -86,27 +85,19 @@ public class AbrahamsonSilva_1997 implements GroundMotionModel {
   }
 
   private final Coefficients coeffs;
-  private final Coefficients coeffsPGA;
 
   AbrahamsonSilva_1997(final Imt imt) {
     coeffs = new Coefficients(imt, COEFFS);
-    coeffsPGA = new Coefficients(Imt.PGA, COEFFS);
   }
 
   @Override
   public ScalarGroundMotion calc(final GmmInput in) {
-    boolean soil = in.vs30 < VS30_CUT;
-    double pgaRock = soil ? exp(calcMean(coeffsPGA, in, false, 0.0)) : 0.0;
-    double μ = calcMean(coeffs, in, soil, pgaRock);
-    double σ = calcSigma(coeffs, in.Mw);
+    double μ = calcMean(coeffs, in);
+    double σ = calcStdDev(coeffs, in.Mw);
     return DefaultScalarGroundMotion.create(μ, σ);
   }
 
-  private static final double calcMean(
-      final Coefficients c,
-      final GmmInput in,
-      final boolean soil,
-      final double pgaRock) {
+  private static final double calcMean(final Coefficients c, final GmmInput in) {
 
     // frequently used method locals
     double Mw = in.Mw;
@@ -147,20 +138,16 @@ public class AbrahamsonSilva_1997 implements GroundMotionModel {
       f4 = hwM * hwR;
     }
 
-    // site response term
-    double f5 = 0.0;
-    if (soil) {
-      f5 = c.a10 + c.a11 * log(pgaRock + C5);
-    }
+    // no site response term required for rock
 
-    return f1 + f3 + f4 + f5;
+    return f1 + f3 + f4;
   }
 
   private static double calcFaultStyle(final Coefficients c, final double Mw) {
     return (Mw <= 5.8) ? c.a5 : (Mw < C1) ? c.a5 + (c.a6 - c.a5) / (C1 - 5.8) : c.a6;
   }
 
-  private static double calcSigma(final Coefficients c, final double Mw) {
+  private static double calcStdDev(final Coefficients c, final double Mw) {
     return (Mw <= 5.0) ? c.b5 : (Mw < 7.0) ? c.b5 - c.b6 * (Mw - 5.0) : c.b5 - 2 * c.b6;
   }
 
