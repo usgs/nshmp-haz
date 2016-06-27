@@ -264,8 +264,6 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
     // ****** Aleatory uncertainty model ******
 
-    // the code below removes unnecessary square-sqrt pairs
-
     // Intra-event term -- Equation 24
     double phiAsq = in.vsInf ? getPhiA(Mw, c.s1e, c.s2e) : getPhiA(Mw, c.s1m, c.s2m);
     phiAsq *= phiAsq;
