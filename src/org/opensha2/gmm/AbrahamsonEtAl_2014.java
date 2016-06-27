@@ -140,7 +140,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
   private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in) {
 
-    // ferquently used method locals
+    // frequently used method locals
     double Mw = in.Mw;
     double rJB = in.rJB;
     double rRup = in.rRup;
@@ -263,8 +263,6 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
     double μ = f1 + f78 + f5 + f4 + f6 + f10;
 
     // ****** Aleatory uncertainty model ******
-
-    // the code below removes unnecessary square-sqrt pairs
 
     // Intra-event term -- Equation 24
     double phiAsq = in.vsInf ? getPhiA(Mw, c.s1e, c.s2e) : getPhiA(Mw, c.s1m, c.s2m);
