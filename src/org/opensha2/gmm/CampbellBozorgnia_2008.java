@@ -81,8 +81,8 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
     final Imt imt;
     final double c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12,
-    k1, k2, k3,
-    s_lny, t_lny, ρ;
+        k1, k2, k3,
+        s_lny, t_lny, ρ;
 
     // unused
     // double s_c;

@@ -65,9 +65,9 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
       .build();
 
   static final CoefficientContainer COEFFS_CASC_SLAB,
-  COEFFS_CASC_INTERFACE,
-  COEFFS_GLOBAL_SLAB,
-  COEFFS_GLOBAL_INTERFACE;
+      COEFFS_CASC_INTERFACE,
+      COEFFS_GLOBAL_SLAB,
+      COEFFS_GLOBAL_INTERFACE;
 
   static {
     COEFFS_CASC_SLAB = new CoefficientContainer("AB03_cascadia_slab.csv");

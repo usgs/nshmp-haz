@@ -66,7 +66,7 @@ public class AbrahamsonSilva_1997 implements GroundMotionModel {
 
     // same for all periods; replaced with constant
     // final double a2, a4, a13, c1, c5, n;
-    
+
     // unused
     // final double a10, a11;
 

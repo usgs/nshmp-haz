@@ -88,7 +88,7 @@ class AreaParser extends DefaultHandler {
   }
 
   AreaSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-  IOException {
+      IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -155,10 +155,10 @@ class AreaParser extends DefaultHandler {
         double strike = readDouble(STRIKE, atts);
 
         sourceBuilder
-        .depthMap(depthMap, type)
-        .maxDepth(maxDepth, type)
-        .mechs(mechMap)
-        .ruptureScaling(rupScaling);
+            .depthMap(depthMap, type)
+            .maxDepth(maxDepth, type)
+            .mechs(mechMap)
+            .ruptureScaling(rupScaling);
 
         // first validate strike by setting it in builder
         sourceBuilder.strike(strike);

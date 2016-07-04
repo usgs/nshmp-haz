@@ -113,8 +113,8 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     // when vs30 is less than period-dependent vlin cutoff
     double pgaRock = (in.vs30 < coeffs.vlin)
         ? exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, 1000.0)) : 0.0;
-        double μ = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
-        return DefaultScalarGroundMotion.create(μ, SIGMA);
+    double μ = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
+    return DefaultScalarGroundMotion.create(μ, SIGMA);
   }
 
   abstract boolean isSlab();
@@ -143,7 +143,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
     return c.θ1 + T4 * ΔC1 +
         (c.θ2 + (slab ? c.θ14 : 0.0) + T3 * (Mw - 7.8)) *
-        log(rRup + C4 * exp((Mw - 6.0) * T9)) +
+            log(rRup + C4 * exp((Mw - 6.0) * T9)) +
         c.θ6 * rRup + (slab ? c.θ10 : 0.0) + fMag +
         fDepth +
         // fterm + no fterm for forearc sites

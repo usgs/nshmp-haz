@@ -202,7 +202,7 @@ final class Transforms {
    * epistemic uncertinaty model.
    */
   static final class GroundMotionsToCurvesWithUncertainty implements
-  Function<GroundMotions, HazardCurves> {
+      Function<GroundMotions, HazardCurves> {
 
     private final GmmSet gmmSet;
     private final Map<Imt, XySequence> modelCurves;
@@ -315,7 +315,7 @@ final class Transforms {
       this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
       this.groundMotionsToCurves = config.curve.gmmUncertainty && gmmSet.epiUncertainty()
           ? new GroundMotionsToCurvesWithUncertainty(gmmSet, config)
-              : new GroundMotionsToCurves(config);
+          : new GroundMotionsToCurves(config);
     }
 
     @Override
@@ -408,12 +408,12 @@ final class Transforms {
 
       Function<GroundMotions, HazardCurves> gmToCurves =
           config.curve.gmmUncertainty && gmmSet.epiUncertainty()
-          ? new GroundMotionsToCurvesWithUncertainty(gmmSet, config)
+              ? new GroundMotionsToCurvesWithUncertainty(gmmSet, config)
               : new GroundMotionsToCurves(config);
-          HazardCurves curves = gmToCurves.apply(gms);
+      HazardCurves curves = gmToCurves.apply(gms);
 
-          CurveConsolidator consolidator = new CurveConsolidator(sources, config);
-          return consolidator.apply(ImmutableList.of(curves));
+      CurveConsolidator consolidator = new CurveConsolidator(sources, config);
+      return consolidator.apply(ImmutableList.of(curves));
     }
   }
 
@@ -493,7 +493,7 @@ final class Transforms {
       this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
       this.groundMotionsToCurves = config.curve.gmmUncertainty && gmmSet.epiUncertainty()
           ? new GroundMotionsToCurvesWithUncertainty(gmmSet, config)
-              : new GroundMotionsToCurves(config);
+          : new GroundMotionsToCurves(config);
     }
 
     @Override
@@ -531,7 +531,7 @@ final class Transforms {
    * Calculate ground motions for a list of cluster ground motion inputs.
    */
   static final class ClusterInputsToGroundMotions implements
-  Function<ClusterInputs, ClusterGroundMotions> {
+      Function<ClusterInputs, ClusterGroundMotions> {
 
     private final InputsToGroundMotions transform;
 
@@ -559,7 +559,7 @@ final class Transforms {
    * HazardInput.rate field, which is kinda KLUDGY, but works.
    */
   static final class ClusterGroundMotionsToCurves implements
-  Function<ClusterGroundMotions, ClusterCurves> {
+      Function<ClusterGroundMotions, ClusterCurves> {
 
     private final Map<Imt, XySequence> logModelCurves;
     private final ExceedanceModel exceedanceModel;
@@ -662,7 +662,7 @@ final class Transforms {
    * Reduce multiple cluster source curves.
    */
   static final class ClusterCurveConsolidator implements
-  Function<List<ClusterCurves>, HazardCurveSet> {
+      Function<List<ClusterCurves>, HazardCurveSet> {
 
     private final ClusterSourceSet sources;
     private final Map<Imt, XySequence> modelCurves;

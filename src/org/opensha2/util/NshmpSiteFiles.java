@@ -146,16 +146,16 @@ final class NshmpSiteFiles {
     writePolysJson(
         EXPORT_DIR.resolve("map-nshmp-all.geojson"),
         FluentIterable.from(polys)
-        .transform(Functions.toStringFunction())
-        .toList(),
+            .transform(Functions.toStringFunction())
+            .toList(),
         FluentIterable.from(polys)
-        .transform(new Function<NshmpPolygon, LocationList>() {
-          @Override
-          public LocationList apply(NshmpPolygon poly) {
-            return poly.coordinates();
-          }
-        })
-        .toList());
+            .transform(new Function<NshmpPolygon, LocationList>() {
+              @Override
+              public LocationList apply(NshmpPolygon poly) {
+                return poly.coordinates();
+              }
+            })
+            .toList());
   }
 
   static void writePolysJson(Path out, List<String> nameList, List<LocationList> coordList)
@@ -204,12 +204,12 @@ final class NshmpSiteFiles {
   static void writeNshmpSites_0p1() throws IOException {
     writeSites("ceus-0p1",
         FluentIterable.from(NshmpSite.ceus())
-        .transform(adjustLocation_0p1())
-        .toList());
+            .transform(adjustLocation_0p1())
+            .toList());
     writeSites("wus-0p1",
         FluentIterable.from(NshmpSite.wus())
-        .transform(adjustLocation_0p1())
-        .toList());
+            .transform(adjustLocation_0p1())
+            .toList());
   }
 
   static void writeNshmpSites() throws IOException {

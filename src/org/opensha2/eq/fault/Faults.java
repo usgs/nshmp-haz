@@ -515,8 +515,7 @@ public final class Faults {
       avg = 90;
     } else if (xdir == 0 & ydir < 0) {
       avg = 270;
-    }
-    else {
+    } else {
       avg = 0; // if both xdir==0 & ydir=0
     }
 

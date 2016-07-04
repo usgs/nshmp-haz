@@ -20,11 +20,11 @@ import java.util.Set;
 @SuppressWarnings("javadoc")
 @RunWith(Parameterized.class)
 public class LegacySoftRock extends GmmTest {
-  
+
   /*
-   * Tests for older active crust ground motion models that have
-   * limited parameterizations and only support soft-rock sites.
-   * These models are currently used in the 2007 Alaska NSHM.
+   * Tests for older active crust ground motion models that have limited
+   * parameterizations and only support soft-rock sites. These models are
+   * currently used in the 2007 Alaska NSHM.
    */
 
   private static String GMM_INPUTS = "CEUS_vs760_inputs.csv";

@@ -139,8 +139,7 @@ public class FaultSource implements Source {
       // TODO do we really want to do this??
       // TODO low rate shortcut should be derived from config
       // and applied when building input lists
-      if (rate < 1e-14)
-      {
+      if (rate < 1e-14) {
         continue; // shortcut low rates
       }
 

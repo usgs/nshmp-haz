@@ -126,8 +126,8 @@ public class PeerTest {
     // compute y-values converting to Poiss prob
     double[] actual = Doubles.toArray(
         FluentIterable.from(result.curves().get(Imt.PGA).yValues())
-        .transform(Mfds.annualRateToProbabilityConverter())
-        .toList());
+            .transform(Mfds.annualRateToProbabilityConverter())
+            .toList());
     checkArgument(actual.length == expected.length);
 
     assertArrayEquals(expected, actual, tolerance);
@@ -158,7 +158,7 @@ public class PeerTest {
       checkState(expectedsMap.containsKey(site.name()));
       Object[] args =
           new Object[] { model.name(), model, site, expectedsMap.get(site.name()), tolerance
-      };
+          };
       argsList.add(args);
     }
     return argsList;

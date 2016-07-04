@@ -101,8 +101,8 @@ public class ClusterSource implements Source {
         .append(LINE_SEPARATOR.value());
     for (FaultSource fs : faults) {
       sb.append("  ")
-      .append(fs.toString())
-      .append(LINE_SEPARATOR.value());
+          .append(fs.toString())
+          .append(LINE_SEPARATOR.value());
     }
     return sb.toString();
   }

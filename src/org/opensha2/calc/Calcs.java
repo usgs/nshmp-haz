@@ -125,7 +125,7 @@ public class Calcs {
       CalcConfig config,
       Site site,
       Optional<Executor> ex)
-          throws InterruptedException, ExecutionException {
+      throws InterruptedException, ExecutionException {
 
     checkNotNull(model);
     checkNotNull(config);

@@ -298,11 +298,11 @@ public final class Sites {
   private static final class Deserializer implements JsonDeserializer<SiteIterable> {
 
     final CalcConfig defaults;
-    
+
     Deserializer(CalcConfig defaults) {
       this.defaults = defaults;
     }
-    
+
     @Override
     public SiteIterable deserialize(
         JsonElement json,

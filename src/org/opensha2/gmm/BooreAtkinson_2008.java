@@ -71,10 +71,10 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
   static final class Coefficients {
 
     final double b_lin, b1, b2,
-    c1, c2, c3,
-    e1, e2, e3, e4, e5, e6, e7,
-    h, mh, s,
-    t_u, s_tu, t_m, s_tm;
+        c1, c2, c3,
+        e1, e2, e3, e4, e5, e6, e7,
+        h, mh, s,
+        t_u, s_tu, t_m, s_tm;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);

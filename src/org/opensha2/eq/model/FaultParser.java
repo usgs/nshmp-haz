@@ -97,7 +97,7 @@ class FaultParser extends DefaultHandler {
   }
 
   FaultSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-  IOException {
+      IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -127,10 +127,10 @@ class FaultParser extends DefaultHandler {
           int id = readInt(ID, atts);
           sourceSetBuilder = new FaultSourceSet.Builder();
           sourceSetBuilder
-          .name(name)
-          .id(id)
-          .weight(weight)
-          .gmms(gmmSet);
+              .name(name)
+              .id(id)
+              .weight(weight)
+              .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -184,9 +184,9 @@ class FaultParser extends DefaultHandler {
 
         case GEOMETRY:
           sourceBuilder.depth(readDouble(DEPTH, atts))
-          .dip(readDouble(DIP, atts))
-          .rake(readDouble(RAKE, atts))
-          .width(readDouble(WIDTH, atts));
+              .dip(readDouble(DIP, atts))
+              .rake(readDouble(RAKE, atts))
+              .width(readDouble(WIDTH, atts));
           break;
 
         case TRACE:
@@ -399,17 +399,17 @@ class FaultParser extends DefaultHandler {
                   unc.aleaCount,
                   mfdWeight * tmr,
                   data.floats)
-                  : Mfds.newGaussianMFD(
-                      epiMag,
-                      unc.aleaSigma,
-                      unc.aleaCount,
-                      mfdWeight * tcr,
-                      data.floats);
-                  mfds.add(mfd);
-                  log.finer("   MFD type: SINGLE [+epi +alea] " + epiBranch(i));
-                  if (log.isLoggable(FINEST)) {
-                    log.finest(mfd.getMetadataString());
-                  }
+              : Mfds.newGaussianMFD(
+                  epiMag,
+                  unc.aleaSigma,
+                  unc.aleaCount,
+                  mfdWeight * tcr,
+                  data.floats);
+          mfds.add(mfd);
+          log.finer("   MFD type: SINGLE [+epi +alea] " + epiBranch(i));
+          if (log.isLoggable(FINEST)) {
+            log.finest(mfd.getMetadataString());
+          }
         } else {
 
           // single Mfds with epi uncertainty are moment balanced at
@@ -434,17 +434,17 @@ class FaultParser extends DefaultHandler {
                 unc.aleaCount,
                 data.weight * tmr,
                 data.floats)
-                : Mfds.newGaussianMFD(
-                    data.m,
-                    unc.aleaSigma,
-                    unc.aleaCount,
-                    data.weight * tcr,
-                    data.floats);
-                mfds.add(mfd);
-                log.finer("   MFD type: SINGLE [-epi +alea]");
-                if (log.isLoggable(FINEST)) {
-                  log.finest(mfd.getMetadataString());
-                }
+            : Mfds.newGaussianMFD(
+                data.m,
+                unc.aleaSigma,
+                unc.aleaCount,
+                data.weight * tcr,
+                data.floats);
+        mfds.add(mfd);
+        log.finer("   MFD type: SINGLE [-epi +alea]");
+        if (log.isLoggable(FINEST)) {
+          log.finest(mfd.getMetadataString());
+        }
       } else {
         IncrementalMfd mfd =
             Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);

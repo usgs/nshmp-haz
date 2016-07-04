@@ -45,7 +45,7 @@ class GriddedSubsetSurface extends ContainerSubset2D<Location> implements Gridde
    */
   public GriddedSubsetSurface(int numRows, int numCols, int startRow, int startCol,
       GriddedSurface data)
-          throws ArrayIndexOutOfBoundsException {
+      throws ArrayIndexOutOfBoundsException {
     super(numRows, numCols, startRow, startCol, data);
     parentSurface = data;
   }
@@ -197,8 +197,8 @@ class GriddedSubsetSurface extends ContainerSubset2D<Location> implements Gridde
   }
 
   @Override /**
-   * This assumes the lateral edges are straight lines
-   */
+             * This assumes the lateral edges are straight lines
+             */
   public LocationList getPerimeter() {
     LocationList topTr = getRow(0);
     LocationList botTr = LocationList.create(getRow(getNumRows() - 1)).reverse();

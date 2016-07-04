@@ -105,7 +105,7 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
 
     final Imt imt;
     final double c1, c3as, c5, c8, c10as, c11, c13y, c15, c17, c20, c24, c29, c30as, c33as,
-    c43, c46, σ6, σSlope, τ;
+        c43, c46, σ6, σSlope, τ;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       this.imt = imt;
@@ -222,9 +222,9 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
     double lnSA_AB = (tect == ACTIVE_SHALLOW_CRUST || tect == VOLCANIC)
         ? calcCrustal(c, tect, in) : calcSubduction(c, tect, in);
 
-        double lnSA_CD = calcSiteTerm(c, in.vs30, lnSA_AB);
+    double lnSA_CD = calcSiteTerm(c, in.vs30, lnSA_AB);
 
-        return lnSA_AB + lnSA_CD;
+    return lnSA_AB + lnSA_CD;
   }
 
   private static double calcCrustal(final Coefficients c, final TectonicSetting tect,

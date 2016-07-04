@@ -74,7 +74,7 @@ public final class Mfds {
   // rebuilds the mag array introducing double-precision issues.
   //
   // TODO can't this just go direct to XySequence??
-  
+
   /**
    * Creates a new {@code IncrementalMfd} with the supplied magnitudes and
    * rates. For the MFD returned, {@link IncrementalMfd#floats()} always returns

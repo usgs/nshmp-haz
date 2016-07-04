@@ -77,9 +77,9 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
   private static final class Coefficients {
 
     final double c1, c1a, c1b, c5, c6, c7, c9, c9a,
-    cg1, cg2, cn, cm,
-    φ1, φ2, φ3, φ4, φ5, φ6, φ7, φ8,
-    τ1, τ2, σ1, σ2, σ3;
+        cg1, cg2, cn, cm,
+        φ1, φ2, φ3, φ4, φ5, φ6, φ7, φ8,
+        τ1, τ2, σ1, σ2, σ3;
 
     // unused
     // final double c7a, c10, sig4
@@ -161,7 +161,7 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
         (C4A - C4) * 0.5 * log(rRup * rRup + CRB * CRB) +
         (c.cg1 + c.cg2 / cosh(max(Mw - CG3, 0.0))) * rRup +
         c.c9 * hw * tanh(in.rX * cosDelta * cosDelta / c.c9a) *
-        (1 - rAlt / (rRup + 0.001));
+            (1 - rAlt / (rRup + 0.001));
   }
 
   // Mean ground motion model

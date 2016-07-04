@@ -354,15 +354,15 @@ public final class Deaggregation {
 
     private static final Function<Collection<Dataset>, Dataset> DATASET_CONSOLIDATOR =
         new Function<Collection<Dataset>, Dataset>() {
-      @Override
-      public Dataset apply(Collection<Dataset> datasets) {
-        Dataset.Builder builder = Dataset.builder(datasets.iterator().next());
-        for (Dataset dataset : datasets) {
-          builder.add(dataset);
-        }
-        return builder.build();
-      }
-    };
+          @Override
+          public Dataset apply(Collection<Dataset> datasets) {
+            Dataset.Builder builder = Dataset.builder(datasets.iterator().next());
+            for (Dataset dataset : datasets) {
+              builder.add(dataset);
+            }
+            return builder.build();
+          }
+        };
 
     @Override
     public String toString() {

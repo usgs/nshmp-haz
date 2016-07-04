@@ -323,11 +323,11 @@ public class Site implements Named {
   static final class Deserializer implements JsonDeserializer<Site> {
 
     final CalcConfig defaults;
-    
+
     Deserializer(CalcConfig defaults) {
       this.defaults = defaults;
     }
-    
+
     @Override
     public Site deserialize(
         JsonElement json,

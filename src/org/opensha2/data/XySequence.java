@@ -72,7 +72,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
     return construct(
         Arrays.copyOf(xs, xs.length),
         (ys == null) ? new double[xs.length] : Arrays.copyOf(ys, ys.length),
-            mutable);
+        mutable);
   }
 
   /**
@@ -123,7 +123,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
     return construct(
         Doubles.toArray(xs),
         (ys == null) ? new double[xs.size()] : Doubles.toArray(ys),
-            mutable);
+        mutable);
   }
 
   private static XySequence construct(double[] xs, double[] ys, boolean mutable) {

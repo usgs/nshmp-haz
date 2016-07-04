@@ -84,7 +84,7 @@ class InterfaceParser extends DefaultHandler {
   }
 
   InterfaceSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-  IOException {
+      IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -115,10 +115,10 @@ class InterfaceParser extends DefaultHandler {
           double weight = readDouble(WEIGHT, atts);
           sourceSetBuilder = new InterfaceSourceSet.Builder();
           sourceSetBuilder
-          .name(name)
-          .id(id)
-          .weight(weight)
-          .gmms(gmmSet);
+              .name(name)
+              .id(id)
+              .weight(weight)
+              .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -171,8 +171,8 @@ class InterfaceParser extends DefaultHandler {
            */
           try {
             sourceBuilder.depth(readDouble(DEPTH, atts))
-            .dip(readDouble(DIP, atts))
-            .width(readDouble(WIDTH, atts));
+                .dip(readDouble(DIP, atts))
+                .width(readDouble(WIDTH, atts));
           } catch (NullPointerException npe) {
             // keep moving, these atts are not necessarily required
           }

@@ -94,7 +94,7 @@ class ClusterParser extends DefaultHandler {
   }
 
   ClusterSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-  IOException {
+      IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -124,10 +124,10 @@ class ClusterParser extends DefaultHandler {
           double weight = readDouble(WEIGHT, atts);
           clusterSetBuilder = new ClusterSourceSet.Builder();
           clusterSetBuilder
-          .name(name)
-          .id(id)
-          .weight(weight)
-          .gmms(gmmSet);
+              .name(name)
+              .id(id)
+              .weight(weight)
+              .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -162,10 +162,10 @@ class ClusterParser extends DefaultHandler {
 
           faultSetBuilder = new FaultSourceSet.Builder();
           faultSetBuilder
-          .name(clustName)
-          .id(clustId)
-          .weight(clustWeight)
-          .gmms(gmmSet);
+              .name(clustName)
+              .id(clustId)
+              .weight(clustWeight)
+              .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("    Cluster: " + clustName);
@@ -199,9 +199,9 @@ class ClusterParser extends DefaultHandler {
 
         case GEOMETRY:
           faultBuilder.depth(readDouble(DEPTH, atts))
-          .dip(readDouble(DIP, atts))
-          .width(readDouble(WIDTH, atts))
-          .rake(readDouble(RAKE, atts));
+              .dip(readDouble(DIP, atts))
+              .width(readDouble(WIDTH, atts))
+              .rake(readDouble(RAKE, atts));
           break;
 
         case TRACE:

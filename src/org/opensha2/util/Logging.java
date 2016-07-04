@@ -70,18 +70,18 @@ public class Logging {
       if (l == Level.WARNING) {
         String cName = record.getSourceClassName();
         b.append(" @ ")
-        .append(cName.substring(cName.lastIndexOf(".") + 1))
-        .append(".")
-        .append(record.getSourceMethodName())
-        .append("()");
+            .append(cName.substring(cName.lastIndexOf(".") + 1))
+            .append(".")
+            .append(record.getSourceMethodName())
+            .append("()");
         b.append(record.getMessage());
       } else if (l == Level.SEVERE) {
         String cName = record.getSourceClassName();
         b.append(" @ ")
-        .append(cName.substring(cName.lastIndexOf(".") + 1))
-        .append(".")
-        .append(record.getSourceMethodName())
-        .append("()");
+            .append(cName.substring(cName.lastIndexOf(".") + 1))
+            .append(".")
+            .append(record.getSourceMethodName())
+            .append("()");
         b.append(record.getMessage());
         if (record.getThrown() != null) {
           b.append(LF).append(LF);

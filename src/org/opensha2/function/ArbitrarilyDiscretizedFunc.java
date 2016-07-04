@@ -840,7 +840,7 @@ public class ArbitrarilyDiscretizedFunc extends AbstractDiscretizedFunc {
     // double[] lookups =
     // {10,20,30,40,50,60,70,80,100,150,200,250,333,475,700,800,1000,1200,1300,1500,1800,2000,2475,10000};
     double[] lookups =
-      { 150, 200, 250, 333, 475, 700, 800, 1000, 1200, 1300, 1500, 1800, 2000, 2475, 10000 };
+        { 150, 200, 250, 333, 475, 700, 800, 1000, 1200, 1300, 1500, 1800, 2000, 2475, 10000 };
 
     for (double v : lookups) {
       int iBefore = f.getXIndexBefore(v);

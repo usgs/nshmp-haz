@@ -75,7 +75,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
     final Imt imt;
     final double e0, e1, e2, e3, e4, e5, e6, Mh, c1, c2, c3, h, c, Vc, f4, f5,
-    f6, f7, r1, r2, Δφ_r, Δφ_v, φ1, φ2, τ1, τ2;
+        f6, f7, r1, r2, Δφ_r, Δφ_v, φ1, φ2, τ1, τ2;
 
     // same for all periods; replaced with constant
     // double Mref, Rref, Dc3CaTw, Vref, f1, f3, v1, v2;

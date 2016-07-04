@@ -160,17 +160,17 @@ public class PointSources {
 
     Map<FocalMech, Double> ssMap = Maps.immutableEnumMap(
         ImmutableMap.<FocalMech, Double> builder()
-        .put(FocalMech.STRIKE_SLIP, 1.0)
-        .put(FocalMech.REVERSE, 0.0)
-        .put(FocalMech.NORMAL, 0.0)
-        .build());
+            .put(FocalMech.STRIKE_SLIP, 1.0)
+            .put(FocalMech.REVERSE, 0.0)
+            .put(FocalMech.NORMAL, 0.0)
+            .build());
 
     Map<FocalMech, Double> multiMechMap = Maps.immutableEnumMap(
         ImmutableMap.<FocalMech, Double> builder()
-        .put(FocalMech.STRIKE_SLIP, 0.3334)
-        .put(FocalMech.REVERSE, 0.3333)
-        .put(FocalMech.NORMAL, 0.3333)
-        .build());
+            .put(FocalMech.STRIKE_SLIP, 0.3334)
+            .put(FocalMech.REVERSE, 0.3333)
+            .put(FocalMech.NORMAL, 0.3333)
+            .build());
 
     RuptureScaling rupScaling = RuptureScaling.NSHM_POINT_WC94_LENGTH;
 

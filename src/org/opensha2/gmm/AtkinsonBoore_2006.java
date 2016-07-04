@@ -103,9 +103,9 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
     final Imt imt;
     final double c1, c2, c3, c4, c5, c6, c7, c8, c9, c10,
-    bln, b1, b2,
-    del,
-    m1, mh;
+        bln, b1, b2,
+        del,
+        m1, mh;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       this.imt = imt;
@@ -234,7 +234,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
     gnd = gndmp + (c.c4 + c.c5 * Mw) * f1 +
         (c.c6 + c.c7 * Mw) * f2 + (c.c8 + c.c9 * Mw) *
-        f0 +
+            f0 +
         c.c10 * rRup + sf2 + S;
 
     gnd *= BASE_10_TO_E;

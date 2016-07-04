@@ -131,7 +131,7 @@ public class HazardCalc {
     }
   }
 
-  private static Iterable<Site> readSites(String arg, CalcConfig defaults ,Logger log) {
+  private static Iterable<Site> readSites(String arg, CalcConfig defaults, Logger log) {
     try {
       if (arg.toLowerCase().endsWith(".csv")) {
         Path path = Paths.get(arg);

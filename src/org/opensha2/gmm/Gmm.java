@@ -408,14 +408,14 @@ public enum Gmm {
       Atkinson_2015.NAME,
       Atkinson_2015.COEFFS,
       Atkinson_2015.CONSTRAINTS),
-  
+
   /** @see BooreEtAl_1997 */
   BJF_97(
       BooreEtAl_1997.class,
       BooreEtAl_1997.NAME,
       BooreEtAl_1997.COEFFS,
       BooreEtAl_1997.CONSTRAINTS),
-  
+
   /** @see CampbellBozorgnia_2003 */
   CB_03(
       CampbellBozorgnia_2003.class,
