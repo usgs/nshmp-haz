@@ -3,15 +3,6 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.eq.model.SourceAttribute.DEPTH;
-import static org.opensha2.eq.model.SourceAttribute.DIP;
-import static org.opensha2.eq.model.SourceAttribute.ID;
-import static org.opensha2.eq.model.SourceAttribute.INDICES;
-import static org.opensha2.eq.model.SourceAttribute.NAME;
-import static org.opensha2.eq.model.SourceAttribute.RAKE;
-import static org.opensha2.eq.model.SourceAttribute.TYPE;
-import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
-import static org.opensha2.eq.model.SourceAttribute.WIDTH;
 import static org.opensha2.mfd.MfdType.GR;
 import static org.opensha2.mfd.MfdType.GR_TAPER;
 import static org.opensha2.mfd.MfdType.INCR;
@@ -21,12 +12,22 @@ import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readEnum;
 import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
+import static org.opensha2.util.SourceAttribute.DEPTH;
+import static org.opensha2.util.SourceAttribute.DIP;
+import static org.opensha2.util.SourceAttribute.ID;
+import static org.opensha2.util.SourceAttribute.INDICES;
+import static org.opensha2.util.SourceAttribute.NAME;
+import static org.opensha2.util.SourceAttribute.RAKE;
+import static org.opensha2.util.SourceAttribute.TYPE;
+import static org.opensha2.util.SourceAttribute.WEIGHT;
+import static org.opensha2.util.SourceAttribute.WIDTH;
 
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.model.MfdHelper.SingleData;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
+import org.opensha2.util.SourceElement;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;

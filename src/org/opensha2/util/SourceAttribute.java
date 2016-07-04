@@ -1,4 +1,4 @@
-package org.opensha2.eq.model;
+package org.opensha2.util;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;

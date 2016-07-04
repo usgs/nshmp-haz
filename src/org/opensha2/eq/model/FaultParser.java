@@ -5,20 +5,20 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
 
-import static org.opensha2.eq.model.SourceAttribute.DEPTH;
-import static org.opensha2.eq.model.SourceAttribute.DIP;
-import static org.opensha2.eq.model.SourceAttribute.ID;
-import static org.opensha2.eq.model.SourceAttribute.NAME;
-import static org.opensha2.eq.model.SourceAttribute.RAKE;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
-import static org.opensha2.eq.model.SourceAttribute.TYPE;
-import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
-import static org.opensha2.eq.model.SourceAttribute.WIDTH;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readEnum;
 import static org.opensha2.util.Parsing.readInt;
 import static org.opensha2.util.Parsing.readString;
 import static org.opensha2.util.Parsing.toMap;
+import static org.opensha2.util.SourceAttribute.DEPTH;
+import static org.opensha2.util.SourceAttribute.DIP;
+import static org.opensha2.util.SourceAttribute.ID;
+import static org.opensha2.util.SourceAttribute.NAME;
+import static org.opensha2.util.SourceAttribute.RAKE;
+import static org.opensha2.util.SourceAttribute.RUPTURE_SCALING;
+import static org.opensha2.util.SourceAttribute.TYPE;
+import static org.opensha2.util.SourceAttribute.WEIGHT;
+import static org.opensha2.util.SourceAttribute.WIDTH;
 
 import org.opensha2.data.Data;
 import org.opensha2.eq.Magnitudes;
@@ -30,6 +30,7 @@ import org.opensha2.geo.LocationList;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
+import org.opensha2.util.SourceElement;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;

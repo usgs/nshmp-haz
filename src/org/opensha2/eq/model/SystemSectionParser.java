@@ -3,20 +3,21 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.eq.model.SourceAttribute.ASEIS;
-import static org.opensha2.eq.model.SourceAttribute.DEPTH;
-import static org.opensha2.eq.model.SourceAttribute.DIP;
-import static org.opensha2.eq.model.SourceAttribute.DIP_DIR;
-import static org.opensha2.eq.model.SourceAttribute.INDEX;
-import static org.opensha2.eq.model.SourceAttribute.LOWER_DEPTH;
-import static org.opensha2.eq.model.SourceAttribute.NAME;
 import static org.opensha2.eq.model.SystemParser.SECTIONS_FILENAME;
 import static org.opensha2.util.Parsing.readDouble;
 import static org.opensha2.util.Parsing.readString;
+import static org.opensha2.util.SourceAttribute.ASEIS;
+import static org.opensha2.util.SourceAttribute.DEPTH;
+import static org.opensha2.util.SourceAttribute.DIP;
+import static org.opensha2.util.SourceAttribute.DIP_DIR;
+import static org.opensha2.util.SourceAttribute.INDEX;
+import static org.opensha2.util.SourceAttribute.LOWER_DEPTH;
+import static org.opensha2.util.SourceAttribute.NAME;
 
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.geo.LocationList;
+import org.opensha2.util.SourceElement;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
