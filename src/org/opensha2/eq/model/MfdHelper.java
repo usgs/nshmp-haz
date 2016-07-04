@@ -2,25 +2,25 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.util.Parsing.readBoolean;
-import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readString;
-import static org.opensha2.util.Parsing.toDoubleArray;
-import static org.opensha2.util.SourceAttribute.A;
-import static org.opensha2.util.SourceAttribute.B;
-import static org.opensha2.util.SourceAttribute.C_MAG;
-import static org.opensha2.util.SourceAttribute.D_MAG;
-import static org.opensha2.util.SourceAttribute.FLOATS;
-import static org.opensha2.util.SourceAttribute.M;
-import static org.opensha2.util.SourceAttribute.MAGS;
-import static org.opensha2.util.SourceAttribute.M_MAX;
-import static org.opensha2.util.SourceAttribute.M_MIN;
-import static org.opensha2.util.SourceAttribute.RATE;
-import static org.opensha2.util.SourceAttribute.RATES;
-import static org.opensha2.util.SourceAttribute.WEIGHT;
+import static org.opensha2.internal.Parsing.readBoolean;
+import static org.opensha2.internal.Parsing.readDouble;
+import static org.opensha2.internal.Parsing.readString;
+import static org.opensha2.internal.Parsing.toDoubleArray;
+import static org.opensha2.internal.SourceAttribute.A;
+import static org.opensha2.internal.SourceAttribute.B;
+import static org.opensha2.internal.SourceAttribute.C_MAG;
+import static org.opensha2.internal.SourceAttribute.D_MAG;
+import static org.opensha2.internal.SourceAttribute.FLOATS;
+import static org.opensha2.internal.SourceAttribute.M;
+import static org.opensha2.internal.SourceAttribute.MAGS;
+import static org.opensha2.internal.SourceAttribute.M_MAX;
+import static org.opensha2.internal.SourceAttribute.M_MIN;
+import static org.opensha2.internal.SourceAttribute.RATE;
+import static org.opensha2.internal.SourceAttribute.RATES;
+import static org.opensha2.internal.SourceAttribute.WEIGHT;
 
+import org.opensha2.internal.SourceAttribute;
 import org.opensha2.mfd.MfdType;
-import org.opensha2.util.SourceAttribute;
 
 import org.xml.sax.Attributes;
 

@@ -13,8 +13,8 @@ import static org.opensha2.gmm.SiteClass.HARD_ROCK;
 import static org.opensha2.gmm.SiteClass.SOFT_ROCK;
 
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
+import org.opensha2.internal.Parsing;
+import org.opensha2.internal.Parsing.Delimiter;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;

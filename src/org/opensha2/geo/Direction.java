@@ -2,7 +2,7 @@ package org.opensha2.geo;
 
 import static org.opensha2.geo.GeoTools.TO_RAD;
 
-import org.opensha2.util.Parsing;
+import org.opensha2.internal.Parsing;
 
 /**
  * Identifiers for basic geographic directions.

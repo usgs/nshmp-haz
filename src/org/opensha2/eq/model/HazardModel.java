@@ -3,8 +3,8 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.util.TextUtils.NEWLINE;
-import static org.opensha2.util.TextUtils.validateName;
+import static org.opensha2.internal.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.validateName;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.gmm.GroundMotionModel;

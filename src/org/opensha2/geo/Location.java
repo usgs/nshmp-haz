@@ -8,8 +8,8 @@ import static org.opensha2.geo.GeoTools.validateDepth;
 import static org.opensha2.geo.GeoTools.validateLat;
 import static org.opensha2.geo.GeoTools.validateLon;
 
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
+import org.opensha2.internal.Parsing;
+import org.opensha2.internal.Parsing.Delimiter;
 
 import com.google.common.base.Converter;
 import com.google.common.collect.FluentIterable;

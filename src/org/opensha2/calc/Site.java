@@ -4,12 +4,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.util.GeoJson.validateProperty;
+import static org.opensha2.internal.GeoJson.validateProperty;
 
 import org.opensha2.geo.Location;
 import org.opensha2.gmm.GroundMotionModel;
-import org.opensha2.util.GeoJson;
+import org.opensha2.internal.GeoJson;
 import org.opensha2.util.Named;
+import org.opensha2.util.NamedLocation;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;

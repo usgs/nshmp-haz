@@ -77,7 +77,7 @@
            debug="true"
            includeantruntime="false"
            createMissingPackageInfoClass="false">
-      
+
       <!--<compilerarg value="-Xlint" />-->
     </javac>
   </target>
@@ -210,10 +210,11 @@
              charset="UTF-8"
              additionalparam="-notimestamp">
 
-      <fileset dir="${src}">
-        <include name="**/*.java" />
-        <exclude name="**/gcim/*.java" />
-      </fileset>
+      <packageset dir="src" defaultexcludes="yes">
+        <include name="org/opensha2/**" />
+        <exclude name="org/opensha2/gcim/**" />
+        <exclude name="org/opensha2/internal/**" />
+      </packageset>
 
       <!-- 
       enabling sourcepath will caputure documentation from jdk

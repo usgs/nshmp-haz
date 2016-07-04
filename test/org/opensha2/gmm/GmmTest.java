@@ -2,8 +2,8 @@ package org.opensha2.gmm;
 
 import static org.junit.Assert.assertEquals;
 
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
+import org.opensha2.internal.Parsing;
+import org.opensha2.internal.Parsing.Delimiter;
 
 import org.junit.Ignore;
 import org.junit.Test;

@@ -11,7 +11,7 @@ import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.geo.GriddedRegion.ANCHOR_0_0;
-import static org.opensha2.util.TextUtils.validateName;
+import static org.opensha2.internal.TextUtils.validateName;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;

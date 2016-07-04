@@ -1,7 +1,7 @@
-package org.opensha2.util;
+package org.opensha2.internal;
 
-import org.opensha2.calc.NamedLocation;
 import org.opensha2.geo.Location;
+import org.opensha2.util.NamedLocation;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;

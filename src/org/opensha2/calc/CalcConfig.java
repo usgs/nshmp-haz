@@ -10,10 +10,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static org.opensha2.data.XySequence.create;
 import static org.opensha2.data.XySequence.immutableCopyOf;
-import static org.opensha2.util.Parsing.enumsToString;
-import static org.opensha2.util.TextUtils.LOG_INDENT;
-import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.Parsing.enumsToString;
+import static org.opensha2.internal.TextUtils.LOG_INDENT;
+import static org.opensha2.internal.TextUtils.LOG_VALUE_COLUMN;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;

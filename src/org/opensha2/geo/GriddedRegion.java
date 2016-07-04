@@ -3,7 +3,7 @@ package org.opensha2.geo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.opensha2.util.MathUtils;
+import org.opensha2.internal.MathUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;

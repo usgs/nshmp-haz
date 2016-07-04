@@ -1,25 +1,25 @@
-package org.opensha2.util;
+package org.opensha2.internal;
 
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.padStart;
 
-import static org.opensha2.util.NshmpPolygon.CEUS_CLIP;
-import static org.opensha2.util.NshmpPolygon.CONTERMINOUS_US;
-import static org.opensha2.util.NshmpPolygon.CYBERSHAKE;
-import static org.opensha2.util.NshmpPolygon.LA_BASIN;
-import static org.opensha2.util.NshmpPolygon.NEW_MADRID;
-import static org.opensha2.util.NshmpPolygon.PUGET;
-import static org.opensha2.util.NshmpPolygon.SF_BAY;
-import static org.opensha2.util.NshmpPolygon.UCERF3_NSHM14;
-import static org.opensha2.util.NshmpPolygon.UCERF3_RELM;
-import static org.opensha2.util.NshmpPolygon.WASATCH;
-import static org.opensha2.util.NshmpPolygon.WUS_CLIP;
+import static org.opensha2.internal.NshmpPolygon.CEUS_CLIP;
+import static org.opensha2.internal.NshmpPolygon.CONTERMINOUS_US;
+import static org.opensha2.internal.NshmpPolygon.CYBERSHAKE;
+import static org.opensha2.internal.NshmpPolygon.LA_BASIN;
+import static org.opensha2.internal.NshmpPolygon.NEW_MADRID;
+import static org.opensha2.internal.NshmpPolygon.PUGET;
+import static org.opensha2.internal.NshmpPolygon.SF_BAY;
+import static org.opensha2.internal.NshmpPolygon.UCERF3_NSHM14;
+import static org.opensha2.internal.NshmpPolygon.UCERF3_RELM;
+import static org.opensha2.internal.NshmpPolygon.WASATCH;
+import static org.opensha2.internal.NshmpPolygon.WUS_CLIP;
 
-import org.opensha2.calc.NamedLocation;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
-import org.opensha2.util.GeoJson.Feature;
-import org.opensha2.util.GeoJson.FeatureCollection;
+import org.opensha2.internal.GeoJson.Feature;
+import org.opensha2.internal.GeoJson.FeatureCollection;
+import org.opensha2.util.NamedLocation;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;

@@ -10,9 +10,9 @@ import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.isNaN;
 
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
-import org.opensha2.util.MathUtils;
+import org.opensha2.internal.MathUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;

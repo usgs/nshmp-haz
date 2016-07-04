@@ -5,11 +5,11 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
-import static org.opensha2.util.GeoJson.validateProperty;
-import static org.opensha2.util.Parsing.splitToList;
-import static org.opensha2.util.TextUtils.LOG_INDENT;
-import static org.opensha2.util.TextUtils.NEWLINE;
-import static org.opensha2.util.TextUtils.NULL;
+import static org.opensha2.internal.GeoJson.validateProperty;
+import static org.opensha2.internal.Parsing.splitToList;
+import static org.opensha2.internal.TextUtils.LOG_INDENT;
+import static org.opensha2.internal.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NULL;
 
 import org.opensha2.calc.Site.Builder;
 import org.opensha2.geo.Bounds;
@@ -18,9 +18,9 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.Region;
 import org.opensha2.geo.Regions;
-import org.opensha2.util.GeoJson;
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
+import org.opensha2.internal.GeoJson;
+import org.opensha2.internal.Parsing;
+import org.opensha2.internal.Parsing.Delimiter;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;

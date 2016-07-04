@@ -6,8 +6,8 @@ import static com.google.common.primitives.Doubles.toArray;
 
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.data.Data.multiply;
-import static org.opensha2.util.TextUtils.LOG_INDENT;
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.LOG_INDENT;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.DataTable;

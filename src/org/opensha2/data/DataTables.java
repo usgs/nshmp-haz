@@ -7,9 +7,9 @@ import static com.google.common.primitives.Doubles.asList;
 import static java.util.Collections.unmodifiableList;
 
 import static org.opensha2.data.Data.checkDelta;
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
-import org.opensha2.util.Parsing;
+import org.opensha2.internal.Parsing;
 
 import com.google.common.primitives.Doubles;
 

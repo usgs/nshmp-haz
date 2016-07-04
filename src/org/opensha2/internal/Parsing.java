@@ -1,4 +1,4 @@
-package org.opensha2.util;
+package org.opensha2.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;

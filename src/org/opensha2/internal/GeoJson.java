@@ -1,12 +1,12 @@
-package org.opensha2.util;
+package org.opensha2.internal;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.util.MathUtils.round;
+import static org.opensha2.internal.MathUtils.round;
 
-import org.opensha2.calc.NamedLocation;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
+import org.opensha2.util.NamedLocation;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;

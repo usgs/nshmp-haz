@@ -1,6 +1,6 @@
 package org.opensha2.gmm;
 
-import org.opensha2.util.Parsing;
+import org.opensha2.internal.Parsing;
 
 /**
  * Style-of-faulting identifier.

@@ -10,7 +10,7 @@ import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
-import org.opensha2.util.Parsing;
+import org.opensha2.internal.Parsing;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;

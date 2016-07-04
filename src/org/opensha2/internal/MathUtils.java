@@ -1,4 +1,4 @@
-package org.opensha2.util;
+package org.opensha2.internal;
 
 import static java.lang.Math.sqrt;
 import static java.math.BigDecimal.ROUND_HALF_UP;

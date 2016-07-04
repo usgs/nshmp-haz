@@ -9,9 +9,9 @@ import static org.opensha2.gmm.GmmAttribute.MAX_DISTANCE;
 import static org.opensha2.gmm.GmmAttribute.VALUES;
 import static org.opensha2.gmm.GmmAttribute.WEIGHT;
 import static org.opensha2.gmm.GmmAttribute.WEIGHTS;
-import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readDoubleArray;
-import static org.opensha2.util.Parsing.readEnum;
+import static org.opensha2.internal.Parsing.readDouble;
+import static org.opensha2.internal.Parsing.readDoubleArray;
+import static org.opensha2.internal.Parsing.readEnum;
 
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmElement;

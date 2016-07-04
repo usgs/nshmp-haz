@@ -10,10 +10,10 @@ import static java.lang.Math.round;
 import static java.lang.Math.sqrt;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import org.opensha2.internal.Logging;
+import org.opensha2.internal.Parsing;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.Mfds;
-import org.opensha2.util.Logging;
-import org.opensha2.util.Parsing;
 
 import java.io.IOException;
 import java.net.URL;
