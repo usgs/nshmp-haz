@@ -24,8 +24,6 @@
   <property name="guava.jar" location="${lib}/guava-19.0.jar" />
   <property name="gson.jar" location="${lib}/gson-2.5.jar" />
 
-  <defaultexcludes add="**/Scratch*.java" />
-
   <path id="classpath">
     <pathelement location="${guava.jar}" />
     <pathelement location="${gson.jar}" />
@@ -210,7 +208,7 @@
              charset="UTF-8"
              additionalparam="-notimestamp">
 
-      <packageset dir="src" defaultexcludes="yes">
+      <packageset dir="${src}">
         <include name="org/opensha2/**" />
         <exclude name="org/opensha2/gcim/**" />
         <exclude name="org/opensha2/internal/**" />
