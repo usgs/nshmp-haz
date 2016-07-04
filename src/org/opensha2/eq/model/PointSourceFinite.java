@@ -10,7 +10,7 @@ import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.util.MathUtils.hypot;
+import static org.opensha2.internal.MathUtils.hypot;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;

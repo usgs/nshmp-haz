@@ -5,20 +5,20 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
 
-import static org.opensha2.eq.model.SourceAttribute.DEPTH;
-import static org.opensha2.eq.model.SourceAttribute.DIP;
-import static org.opensha2.eq.model.SourceAttribute.ID;
-import static org.opensha2.eq.model.SourceAttribute.NAME;
-import static org.opensha2.eq.model.SourceAttribute.RAKE;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
-import static org.opensha2.eq.model.SourceAttribute.TYPE;
-import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
-import static org.opensha2.eq.model.SourceAttribute.WIDTH;
-import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readEnum;
-import static org.opensha2.util.Parsing.readInt;
-import static org.opensha2.util.Parsing.readString;
-import static org.opensha2.util.Parsing.toMap;
+import static org.opensha2.internal.Parsing.readDouble;
+import static org.opensha2.internal.Parsing.readEnum;
+import static org.opensha2.internal.Parsing.readInt;
+import static org.opensha2.internal.Parsing.readString;
+import static org.opensha2.internal.Parsing.toMap;
+import static org.opensha2.internal.SourceAttribute.DEPTH;
+import static org.opensha2.internal.SourceAttribute.DIP;
+import static org.opensha2.internal.SourceAttribute.ID;
+import static org.opensha2.internal.SourceAttribute.NAME;
+import static org.opensha2.internal.SourceAttribute.RAKE;
+import static org.opensha2.internal.SourceAttribute.RUPTURE_SCALING;
+import static org.opensha2.internal.SourceAttribute.TYPE;
+import static org.opensha2.internal.SourceAttribute.WEIGHT;
+import static org.opensha2.internal.SourceAttribute.WIDTH;
 
 import org.opensha2.data.Data;
 import org.opensha2.eq.Magnitudes;
@@ -27,6 +27,7 @@ import org.opensha2.eq.model.MfdHelper.GR_Data;
 import org.opensha2.eq.model.MfdHelper.IncrData;
 import org.opensha2.eq.model.MfdHelper.SingleData;
 import org.opensha2.geo.LocationList;
+import org.opensha2.internal.SourceElement;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
@@ -96,7 +97,7 @@ class FaultParser extends DefaultHandler {
   }
 
   FaultSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-  IOException {
+      IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -126,10 +127,10 @@ class FaultParser extends DefaultHandler {
           int id = readInt(ID, atts);
           sourceSetBuilder = new FaultSourceSet.Builder();
           sourceSetBuilder
-          .name(name)
-          .id(id)
-          .weight(weight)
-          .gmms(gmmSet);
+              .name(name)
+              .id(id)
+              .weight(weight)
+              .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -183,9 +184,9 @@ class FaultParser extends DefaultHandler {
 
         case GEOMETRY:
           sourceBuilder.depth(readDouble(DEPTH, atts))
-          .dip(readDouble(DIP, atts))
-          .rake(readDouble(RAKE, atts))
-          .width(readDouble(WIDTH, atts));
+              .dip(readDouble(DIP, atts))
+              .rake(readDouble(RAKE, atts))
+              .width(readDouble(WIDTH, atts));
           break;
 
         case TRACE:
@@ -398,17 +399,17 @@ class FaultParser extends DefaultHandler {
                   unc.aleaCount,
                   mfdWeight * tmr,
                   data.floats)
-                  : Mfds.newGaussianMFD(
-                      epiMag,
-                      unc.aleaSigma,
-                      unc.aleaCount,
-                      mfdWeight * tcr,
-                      data.floats);
-                  mfds.add(mfd);
-                  log.finer("   MFD type: SINGLE [+epi +alea] " + epiBranch(i));
-                  if (log.isLoggable(FINEST)) {
-                    log.finest(mfd.getMetadataString());
-                  }
+              : Mfds.newGaussianMFD(
+                  epiMag,
+                  unc.aleaSigma,
+                  unc.aleaCount,
+                  mfdWeight * tcr,
+                  data.floats);
+          mfds.add(mfd);
+          log.finer("   MFD type: SINGLE [+epi +alea] " + epiBranch(i));
+          if (log.isLoggable(FINEST)) {
+            log.finest(mfd.getMetadataString());
+          }
         } else {
 
           // single Mfds with epi uncertainty are moment balanced at
@@ -433,17 +434,17 @@ class FaultParser extends DefaultHandler {
                 unc.aleaCount,
                 data.weight * tmr,
                 data.floats)
-                : Mfds.newGaussianMFD(
-                    data.m,
-                    unc.aleaSigma,
-                    unc.aleaCount,
-                    data.weight * tcr,
-                    data.floats);
-                mfds.add(mfd);
-                log.finer("   MFD type: SINGLE [-epi +alea]");
-                if (log.isLoggable(FINEST)) {
-                  log.finest(mfd.getMetadataString());
-                }
+            : Mfds.newGaussianMFD(
+                data.m,
+                unc.aleaSigma,
+                unc.aleaCount,
+                data.weight * tcr,
+                data.floats);
+        mfds.add(mfd);
+        log.finer("   MFD type: SINGLE [-epi +alea]");
+        if (log.isLoggable(FINEST)) {
+          log.finest(mfd.getMetadataString());
+        }
       } else {
         IncrementalMfd mfd =
             Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);

@@ -32,14 +32,14 @@ import java.util.Set;
  * {@code SourceSet} weight. It also scales curves by their associated
  * {@code GroundMotionModel} weight, using distance-dependent weights when
  * appropriate. Note that this may lead to the dropping of some curves that are
- * not appropriate at large distances.</p>
+ * not appropriate at large distances.
  *
  * <p>A HazardCurveSet is compatible with all types of {@code SourceSet}s,
  * including {@code ClusterSourceSet}s, which are handled differently in hazard
  * calculations. This container marks a point in the calculation pipeline where
  * results from cluster and other sources may be recombined into a single
  * {@code Hazard} result, regardless of {@code SourceSet.type()} for all
- * relevant {@code SourceSet}s.</p>
+ * relevant {@code SourceSet}s.
  *
  * @author Peter Powers
  */
@@ -143,7 +143,7 @@ final class HazardCurveSet {
       }
       return this;
     }
-    
+
     // TODO can't the two multiply steps (both above and below) be combined?
 
     Builder addCurves(ClusterCurves curvesIn) {

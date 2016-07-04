@@ -23,7 +23,7 @@ import java.util.Map.Entry;
  * {@link GriddedSurface}, magnitude, rate, rake, and uncertainty flag.
  *
  * <p>NOTE: Only {@code ON} currently recognizes and applies rupture area
- * uncertainty.</p>
+ * uncertainty.
  *
  * @author Peter Powers
  */

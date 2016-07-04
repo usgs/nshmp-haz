@@ -10,11 +10,11 @@ import java.awt.Shape;
  * Static utility methods pertaining to geographic regions.
  *
  * <p>Note that intersection and union operations will discard any grid
- * information if {@code GriddedRegion}s are supplied as arguments.</p>
+ * information if {@code GriddedRegion}s are supplied as arguments.
  *
  * <p>To build complex gridded regions (e.g. circular or buffered, or via
  * intersections and unions) create a Region first and use
- * {@link Regions#toGridded(Region, double, double, Location)}.</p>
+ * {@link Regions#toGridded(Region, double, double, Location)}.
  *
  * @author Peter Powers
  */
@@ -90,7 +90,7 @@ public class Regions {
    * return {@code true} and that any double precision rounding issues do not
    * clip the south and west borders (e.g. 45.0 may be interpreted as
    * 44.9999...). See also the rules governing insidedness in the {@link Shape}
-   * interface.</p>
+   * interface.
    *
    * @param name of the {@code Region}; may be {@code null}
    * @param loc1 the first {@code Location}
@@ -121,7 +121,7 @@ public class Regions {
    * return {@code true} and that any double precision rounding issues do not
    * clip the south and west borders (e.g. 45.0 may be interpreted as
    * 44.9999...). See also the rules governing insidedness in the {@link Shape}
-   * interface.</p>
+   * interface.
    *
    * @param name of the {@code GriddedRegion}; may be {@code null}
    * @param loc1 the first {@code Location}

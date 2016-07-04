@@ -32,17 +32,17 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> Atkinson, G.M. and Boore, D.M., 2003, Empirical
  * ground-motion relations for subduction-zone earthquakes and their application
  * to Cascadia and other regions: Bulletin of the Seismological Society of
- * America, v. 93, p. 1703-1729.</p>
+ * America, v. 93, p. 1703-1729.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020156">
- * 10.1785/0120020156</a></p>
+ * 10.1785/0120020156</a>
  *
- * <p><b>Component:</b> horizontal (not clear from publication)</p>
+ * <p><b>Component:</b> horizontal (not clear from publication)
  *
  * @author Peter Powers
  * @see Gmm#AB_03_CASC_INTER
@@ -65,9 +65,9 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
       .build();
 
   static final CoefficientContainer COEFFS_CASC_SLAB,
-  COEFFS_CASC_INTERFACE,
-  COEFFS_GLOBAL_SLAB,
-  COEFFS_GLOBAL_INTERFACE;
+      COEFFS_CASC_INTERFACE,
+      COEFFS_GLOBAL_SLAB,
+      COEFFS_GLOBAL_INTERFACE;
 
   static {
     COEFFS_CASC_SLAB = new CoefficientContainer("AB03_cascadia_slab.csv");

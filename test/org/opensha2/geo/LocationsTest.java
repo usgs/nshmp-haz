@@ -1306,7 +1306,7 @@ public class LocationsTest {
    */
   private static Location getLocationOLD(
       Location location, LocationVector direction)
-          throws UnsupportedOperationException {
+      throws UnsupportedOperationException {
 
     double lat1 = location.lat();
     double lon1 = location.lon();
@@ -1342,7 +1342,7 @@ public class LocationsTest {
    */
   private static LocationVector getDirectionOLD(
       Location location1, Location location2)
-          throws UnsupportedOperationException {
+      throws UnsupportedOperationException {
 
     double lat1 = location1.lat();
     double lon1 = location1.lon();

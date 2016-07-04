@@ -115,7 +115,7 @@ class ContainerSubset2D<T> implements Container2D<T> {
    */
   public ContainerSubset2D(int numRows, int numCols, int startRow, int startCol,
       Container2D<T> data)
-          throws ArrayIndexOutOfBoundsException {
+      throws ArrayIndexOutOfBoundsException {
 
     String S = C + ": Constructor2():";
 

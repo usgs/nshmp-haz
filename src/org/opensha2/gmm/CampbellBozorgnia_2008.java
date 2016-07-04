@@ -36,17 +36,17 @@ import java.util.Set;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> NGA Ground Motion Model for the Geometric Mean
  * Horizontal Component of PGA, PGV, PGD and 5% Damped Linear Elastic Response
  * Spectra for Periods Ranging from 0.01 to 10 s: Earthquake Spectra, v. 24, n.
- * 1, pp. 139-171.</p>
+ * 1, pp. 139-171.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/1.2857546">
- * 10.1193/1.2857546</a></p>
+ * 10.1193/1.2857546</a>
  *
- * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
+ * <p><b>Component:</b> GMRotI50 (geometric mean)
  *
  * @author Peter Powers
  * @see Gmm#CB_08
@@ -81,8 +81,8 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
     final Imt imt;
     final double c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12,
-    k1, k2, k3,
-    s_lny, t_lny, ρ;
+        k1, k2, k3,
+        s_lny, t_lny, ρ;
 
     // unused
     // double s_c;

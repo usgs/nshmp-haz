@@ -3,18 +3,18 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
-import static org.opensha2.eq.model.SourceAttribute.COUNT;
-import static org.opensha2.eq.model.SourceAttribute.CUTOFF;
-import static org.opensha2.eq.model.SourceAttribute.DELTAS;
-import static org.opensha2.eq.model.SourceAttribute.MO_BALANCE;
-import static org.opensha2.eq.model.SourceAttribute.SIGMA;
-import static org.opensha2.eq.model.SourceAttribute.WEIGHTS;
-import static org.opensha2.eq.model.SourceElement.ALEATORY;
-import static org.opensha2.eq.model.SourceElement.EPISTEMIC;
-import static org.opensha2.eq.model.SourceElement.MAG_UNCERTAINTY;
-import static org.opensha2.util.Parsing.addAttribute;
-import static org.opensha2.util.Parsing.addElement;
-import static org.opensha2.util.Parsing.toDoubleArray;
+import static org.opensha2.internal.Parsing.addAttribute;
+import static org.opensha2.internal.Parsing.addElement;
+import static org.opensha2.internal.Parsing.toDoubleArray;
+import static org.opensha2.internal.SourceAttribute.COUNT;
+import static org.opensha2.internal.SourceAttribute.CUTOFF;
+import static org.opensha2.internal.SourceAttribute.DELTAS;
+import static org.opensha2.internal.SourceAttribute.MO_BALANCE;
+import static org.opensha2.internal.SourceAttribute.SIGMA;
+import static org.opensha2.internal.SourceAttribute.WEIGHTS;
+import static org.opensha2.internal.SourceElement.ALEATORY;
+import static org.opensha2.internal.SourceElement.EPISTEMIC;
+import static org.opensha2.internal.SourceElement.MAG_UNCERTAINTY;
 
 import org.opensha2.eq.Magnitudes;
 

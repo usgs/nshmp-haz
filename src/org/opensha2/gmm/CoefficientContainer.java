@@ -3,8 +3,8 @@ package org.opensha2.gmm;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
+import org.opensha2.internal.Parsing;
+import org.opensha2.internal.Parsing.Delimiter;
 
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.ImmutableTable;
@@ -27,7 +27,7 @@ import java.util.Set;
  * <p>Coefficients are loaded from CSV files. When such files are updated, it
  * may be necessary to edit certain {@code Imt} designations that are commonly
  * coded as integers (e.g. -1 = PGV, usually) or coefficient IDs that contain
- * illegal characters (e.g those with units labels in parentheses). </p>
+ * illegal characters (e.g those with units labels in parentheses). 
  *
  * @author Peter Powers
  */

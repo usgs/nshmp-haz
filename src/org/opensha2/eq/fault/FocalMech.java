@@ -1,6 +1,6 @@
 package org.opensha2.eq.fault;
 
-import org.opensha2.util.Parsing;
+import org.opensha2.internal.Parsing;
 
 /**
  * Generalized identifier for different focal mechanism types.
@@ -41,7 +41,7 @@ public enum FocalMech {
    * <p><b>NOTE:</b> This value may not be appropriate for future PSHA if
    * directivity is considered. For example, {@code STRIKE_SLIP} currently
    * returns a left-lateral rake. Furthermore, oblique focal mechanisms will
-   * need to specify right- or left-lateral reverse and normal combinations.</p>
+   * need to specify right- or left-lateral reverse and normal combinations.
    *
    * @return the rake
    */

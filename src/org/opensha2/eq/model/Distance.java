@@ -148,8 +148,7 @@ public final class Distance {
       // if (frankelTypeSurface) {
       // if (isDjbZeroFrankel(surface, distJB)) distJB = 0;
       // } else {
-      if (isDjbZero(surface.getPerimeter(), loc))
-      {
+      if (isDjbZero(surface.getPerimeter(), loc)) {
         distJB = 0;
         // }
       }

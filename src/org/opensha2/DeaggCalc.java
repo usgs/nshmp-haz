@@ -4,9 +4,9 @@ import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Deaggregation;
 import org.opensha2.calc.Hazard;
-import org.opensha2.calc.Site;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
+import org.opensha2.util.Site;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
@@ -58,7 +58,7 @@ public class DeaggCalc {
    * calculation completes.
    *
    * <p><b>Note:</b> any model initialization settings in {@code config} will be
-   * ignored as the supplied model will already have been initialized.</p>
+   * ignored as the supplied model will already have been initialized.
    *
    * @param model to use
    * @param config calculation configuration

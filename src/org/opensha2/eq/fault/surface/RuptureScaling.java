@@ -10,10 +10,10 @@ import static java.lang.Math.round;
 import static java.lang.Math.sqrt;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import org.opensha2.internal.Logging;
+import org.opensha2.internal.Parsing;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.Mfds;
-import org.opensha2.util.Logging;
-import org.opensha2.util.Parsing;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,12 +31,12 @@ import java.util.Map;
  *
  * <p>Some scaling models also internally provide corrected Joyner-Boore
  * distances that can be used to approximate average distances from a site to a
- * point source of unknown strike.</p>
+ * point source of unknown strike.
  *
  * <p>Models may also provide a range of {@link Dimensions} for a given
  * magnitude if {@link #dimensionsDistribution(double, double)} is requested.
  * This method considers any uncertainty associated with a model and returns a
- * ±2σ distribution of {@code Dimensions} discretized at 11 points.</p>
+ * ±2σ distribution of {@code Dimensions} discretized at 11 points.
  *
  * @author Peter Powers
  */
@@ -51,7 +51,7 @@ public enum RuptureScaling {
    *
    * <p>The {@code pointSourceDistance(double, double)} implementation returns
    * corrected distances for magnitudes in the closed range [6.0..8.6] and
-   * distances in the closed range [0..1000]</p>
+   * distances in the closed range [0..1000]
    *
    * @see RuptureFloating#NSHM
    */

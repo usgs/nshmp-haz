@@ -28,7 +28,7 @@ import java.util.Set;
  *
  * <p>A {@code GmmSet} can not be created directly; it may only be created by a
  * private parser. Currently, although {@code hashCode} and {@code equals} are
- * consistent, they do not consider any supplied uncertainty model.</p>
+ * consistent, they do not consider any supplied uncertainty model.
  *
  * @author Peter Powers
  */
@@ -129,9 +129,9 @@ public final class GmmSet {
 
   private static double[][] initEpiValues(double[] v) {
     return new double[][] {
-      { v[0], v[1], v[2] },
-      { v[3], v[4], v[5] },
-      { v[6], v[7], v[8] }
+        { v[0], v[1], v[2] },
+        { v[3], v[4], v[5] },
+        { v[6], v[7], v[8] }
     };
   }
 

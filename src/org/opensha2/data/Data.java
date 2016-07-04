@@ -10,9 +10,9 @@ import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.isNaN;
 
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
-import org.opensha2.util.MathUtils;
+import org.opensha2.internal.MathUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -39,7 +39,7 @@ import java.util.Random;
 /**
  * Utilities for operating on {@code double}-valued data.
  *
- * <p>The methods of this class:</p>
+ * <p>The methods of this class:
  *
  * <ul><li>Operate on data in place, ruturning a reference to the supplied
  * data.</li>
@@ -64,15 +64,15 @@ import java.util.Random;
  *
  * <li>Do not check for over/underflow.</li></ul>
  *
- * <p>Buyer beware.</p>
+ * <p>Buyer beware.
  *
  * <p>Furthermore, methods that return a result or information about a supplied
  * data set will typically take a {@code Collection<Double>} as an argument,
  * whereas methods that transform data in place will only take
- * {@code List<Double>}s.</p>
+ * {@code List<Double>}s.
  *
  * <p>For other useful {@code Double} utilities, see the Google Guava
- * {@link Doubles} class.</p>
+ * {@link Doubles} class.
  *
  * @author Peter Powers
  * @see Doubles
@@ -1372,7 +1372,7 @@ public final class Data {
    * <p><b>Notes:</b><ul><li>The supplied data should not be sorted.</li>
    * <li>This method does not modify the supplied {@code data} in any
    * way.</li><li>Any {@code NaN}s in {@code data} are placed at the start of
-   * the sort order, regardless of sort direction.</li><ul></p>
+   * the sort order, regardless of sort direction.</li><ul>
    *
    * @param data to provide sort indices for
    * @param ascending if {@code true}, descending if {@code false}

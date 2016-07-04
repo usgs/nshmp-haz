@@ -10,9 +10,10 @@ import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
+import org.opensha2.internal.Parsing;
+import org.opensha2.internal.Parsing.Delimiter;
 import org.opensha2.mfd.Mfds;
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
+import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -144,43 +145,43 @@ public class Results {
 
       Map<Imt, Map<SourceType, XySequence>> curvesBySource =
           sourceCurves ? curvesBySource(hazard) : null;
-          Map<Imt, Map<Gmm, XySequence>> curvesByGmm = gmmCurves ? curvesByGmm(hazard) : null;
+      Map<Imt, Map<Gmm, XySequence>> curvesByGmm = gmmCurves ? curvesByGmm(hazard) : null;
 
-          for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
-            Imt imt = imtEntry.getKey();
+      for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
+        Imt imt = imtEntry.getKey();
 
-            XySequence totalCurve = imtEntry.getValue();
-            Iterable<Double> emptyValues = Doubles.asList(new double[totalCurve.size()]);
-            String emptyLine = toLine(locData, emptyValues, formatter);
+        XySequence totalCurve = imtEntry.getValue();
+        Iterable<Double> emptyValues = Doubles.asList(new double[totalCurve.size()]);
+        String emptyLine = toLine(locData, emptyValues, formatter);
 
-            totalLineMap.get(imt).add(toLine(
-                locData,
-                imtEntry.getValue().yValues(),
-                formatter));
+        totalLineMap.get(imt).add(toLine(
+            locData,
+            imtEntry.getValue().yValues(),
+            formatter));
 
-            if (sourceCurves) {
-              Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
-              for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
-                  .entrySet()) {
-                SourceType type = typeEntry.getKey();
-                String typeLine = sourceCurveMap.containsKey(type)
-                    ? toLine(locData, sourceCurveMap.get(type).yValues(), formatter)
-                        : emptyLine;
-                    typeEntry.getValue().add(typeLine);
-              }
-            }
-
-            if (gmmCurves) {
-              Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
-              for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
-                Gmm gmm = gmmEntry.getKey();
-                String gmmLine = gmmCurveMap.containsKey(gmm)
-                    ? toLine(locData, gmmCurveMap.get(gmm).yValues(), formatter)
-                        : emptyLine;
-                    gmmEntry.getValue().add(gmmLine);
-              }
-            }
+        if (sourceCurves) {
+          Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
+          for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
+              .entrySet()) {
+            SourceType type = typeEntry.getKey();
+            String typeLine = sourceCurveMap.containsKey(type)
+                ? toLine(locData, sourceCurveMap.get(type).yValues(), formatter)
+                : emptyLine;
+            typeEntry.getValue().add(typeLine);
           }
+        }
+
+        if (gmmCurves) {
+          Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
+          for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
+            Gmm gmm = gmmEntry.getKey();
+            String gmmLine = gmmCurveMap.containsKey(gmm)
+                ? toLine(locData, gmmCurveMap.get(gmm).yValues(), formatter)
+                : emptyLine;
+            gmmEntry.getValue().add(gmmLine);
+          }
+        }
+      }
     }
 
     /* write/append */
@@ -241,8 +242,8 @@ public class Results {
     for (Entry<SourceType, HazardCurveSet> curveSet : hazard.sourceSetCurves.entries()) {
       for (Entry<Imt, XySequence> typeTotals : curveSet.getValue().totalCurves.entrySet()) {
         imtMap.get(typeTotals.getKey())
-        .get(curveSet.getKey())
-        .add(typeTotals.getValue());
+            .get(curveSet.getKey())
+            .add(typeTotals.getValue());
       }
     }
     return Maps.immutableEnumMap(imtMap);
@@ -305,10 +306,10 @@ public class Results {
 
   private static final Function<HazardCurveSet, SourceSet<? extends Source>> CURVE_SET_TO_SOURCE_SET =
       new Function<HazardCurveSet, SourceSet<? extends Source>>() {
-    @Override
-    public SourceSet<? extends Source> apply(HazardCurveSet curves) {
-      return curves.sourceSet;
-    }
-  };
+        @Override
+        public SourceSet<? extends Source> apply(HazardCurveSet curves) {
+          return curves.sourceSet;
+        }
+      };
 
 }

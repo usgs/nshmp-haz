@@ -1,25 +1,25 @@
-package org.opensha2.util;
+package org.opensha2.internal;
 
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.padStart;
 
-import static org.opensha2.util.NshmpPolygon.CEUS_CLIP;
-import static org.opensha2.util.NshmpPolygon.CONTERMINOUS_US;
-import static org.opensha2.util.NshmpPolygon.CYBERSHAKE;
-import static org.opensha2.util.NshmpPolygon.LA_BASIN;
-import static org.opensha2.util.NshmpPolygon.NEW_MADRID;
-import static org.opensha2.util.NshmpPolygon.PUGET;
-import static org.opensha2.util.NshmpPolygon.SF_BAY;
-import static org.opensha2.util.NshmpPolygon.UCERF3_NSHM14;
-import static org.opensha2.util.NshmpPolygon.UCERF3_RELM;
-import static org.opensha2.util.NshmpPolygon.WASATCH;
-import static org.opensha2.util.NshmpPolygon.WUS_CLIP;
+import static org.opensha2.internal.NshmpPolygon.CEUS_CLIP;
+import static org.opensha2.internal.NshmpPolygon.CONTERMINOUS_US;
+import static org.opensha2.internal.NshmpPolygon.CYBERSHAKE;
+import static org.opensha2.internal.NshmpPolygon.LA_BASIN;
+import static org.opensha2.internal.NshmpPolygon.NEW_MADRID;
+import static org.opensha2.internal.NshmpPolygon.PUGET;
+import static org.opensha2.internal.NshmpPolygon.SF_BAY;
+import static org.opensha2.internal.NshmpPolygon.UCERF3_NSHM14;
+import static org.opensha2.internal.NshmpPolygon.UCERF3_RELM;
+import static org.opensha2.internal.NshmpPolygon.WASATCH;
+import static org.opensha2.internal.NshmpPolygon.WUS_CLIP;
 
-import org.opensha2.calc.NamedLocation;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
-import org.opensha2.util.GeoJson.Feature;
-import org.opensha2.util.GeoJson.FeatureCollection;
+import org.opensha2.internal.GeoJson.Feature;
+import org.opensha2.internal.GeoJson.FeatureCollection;
+import org.opensha2.util.NamedLocation;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -146,16 +146,16 @@ final class NshmpSiteFiles {
     writePolysJson(
         EXPORT_DIR.resolve("map-nshmp-all.geojson"),
         FluentIterable.from(polys)
-        .transform(Functions.toStringFunction())
-        .toList(),
+            .transform(Functions.toStringFunction())
+            .toList(),
         FluentIterable.from(polys)
-        .transform(new Function<NshmpPolygon, LocationList>() {
-          @Override
-          public LocationList apply(NshmpPolygon poly) {
-            return poly.coordinates();
-          }
-        })
-        .toList());
+            .transform(new Function<NshmpPolygon, LocationList>() {
+              @Override
+              public LocationList apply(NshmpPolygon poly) {
+                return poly.coordinates();
+              }
+            })
+            .toList());
   }
 
   static void writePolysJson(Path out, List<String> nameList, List<LocationList> coordList)
@@ -204,12 +204,12 @@ final class NshmpSiteFiles {
   static void writeNshmpSites_0p1() throws IOException {
     writeSites("ceus-0p1",
         FluentIterable.from(NshmpSite.ceus())
-        .transform(adjustLocation_0p1())
-        .toList());
+            .transform(adjustLocation_0p1())
+            .toList());
     writeSites("wus-0p1",
         FluentIterable.from(NshmpSite.wus())
-        .transform(adjustLocation_0p1())
-        .toList());
+            .transform(adjustLocation_0p1())
+            .toList());
   }
 
   static void writeNshmpSites() throws IOException {

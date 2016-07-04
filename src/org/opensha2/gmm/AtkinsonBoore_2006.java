@@ -29,22 +29,22 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation note:</b> this uses a reduced set of frequencies that
- * correspond most closely to defined {@code Imt}s.</p>
+ * correspond most closely to defined {@code Imt}s.
  *
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
  * ground-motion prediction equations for eastern North America: Bulletin of the
- * Seismological Society of America, v. 96, p. 2181–2205.</p>
+ * Seismological Society of America, v. 96, p. 2181–2205.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050245">
- * 10.1785/0120050245</a></p>
+ * 10.1785/0120050245</a>
  *
- * <p><b>Component:</b> horizontal (not clear from publication)</p>
+ * <p><b>Component:</b> horizontal (not clear from publication)
  *
  * @author Peter Powers
  * @see Gmm#AB_06_140BAR
@@ -103,9 +103,9 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
     final Imt imt;
     final double c1, c2, c3, c4, c5, c6, c7, c8, c9, c10,
-    bln, b1, b2,
-    del,
-    m1, mh;
+        bln, b1, b2,
+        del,
+        m1, mh;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       this.imt = imt;
@@ -234,7 +234,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
 
     gnd = gndmp + (c.c4 + c.c5 * Mw) * f1 +
         (c.c6 + c.c7 * Mw) * f2 + (c.c8 + c.c9 * Mw) *
-        f0 +
+            f0 +
         c.c10 * rRup + sf2 + S;
 
     gnd *= BASE_10_TO_E;

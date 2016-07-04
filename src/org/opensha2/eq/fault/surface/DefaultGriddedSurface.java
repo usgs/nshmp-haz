@@ -52,11 +52,11 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
   private final double dipRad;
   private final double dipDirRad;
   private final double depth;
-  
+
   private final double width;
   private final double aseisReduceV;
   private final double aseisReduceH;
-  
+
   private final Location centroid;
 
   private DefaultGriddedSurface(LocationList trace, double dipRad, double dipDirRad,
@@ -66,7 +66,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
     this.dipRad = dipRad;
     this.dipDirRad = dipDirRad;
     this.depth = depth;
-    
+
     this.width = width * (1.0 - aseis);
     double aseisReduceWidth = width * aseis;
     this.aseisReduceV = sin(dipRad) * aseisReduceWidth;
@@ -162,9 +162,9 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
      * which is considered to slip aseismically. When building a gridded
      * surface, the top trace is projected down-dip the corresponding distance.
      * 
-     * Aseismicity factors are always applied to the top of a fault plane
-     * and are currently only used for system sources (UCERF3). The default
-     * value of 0.0 has no effect on the majority of NSHM fault sources.
+     * Aseismicity factors are always applied to the top of a fault plane and
+     * are currently only used for system sources (UCERF3). The default value of
+     * 0.0 has no effect on the majority of NSHM fault sources.
      */
     public Builder aseis(double aseis) {
       this.aseis = checkInRange(ASEIS_RANGE, "Aseismicity factor", aseis);
@@ -316,25 +316,25 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
       Location traceLocation = Locations.location(location1, dir);
 
       // get location at the top of the fault surface
-//       Location topLocation;
-//       if (traceLocation.depth() < depth) {
-//       // vDistance = traceLocation.getDepth() - depth;
-//       vDistance = depth - traceLocation.depth();
-//       hDistance = vDistance / Math.tan(dipRad);
-//       // dir = new LocationVector(vDistance, hDistance,
-//       // aveDipDirection, 0);
-//       // dir = new LocationVector(aveDipDirection, hDistance,
-//       // vDistance);
-//       dir = LocationVector.create(dipDirRad, hDistance, vDistance);
-//       topLocation = Locations.location(traceLocation, dir);
-//       } else
-//       topLocation = traceLocation;
+      // Location topLocation;
+      // if (traceLocation.depth() < depth) {
+      // // vDistance = traceLocation.getDepth() - depth;
+      // vDistance = depth - traceLocation.depth();
+      // hDistance = vDistance / Math.tan(dipRad);
+      // // dir = new LocationVector(vDistance, hDistance,
+      // // aveDipDirection, 0);
+      // // dir = new LocationVector(aveDipDirection, hDistance,
+      // // vDistance);
+      // dir = LocationVector.create(dipDirRad, hDistance, vDistance);
+      // topLocation = Locations.location(traceLocation, dir);
+      // } else
+      // topLocation = traceLocation;
 
       // TODO above was improperly edited; buried traces were incorrectly
       // being projected doewn dip; upperSeisDepth was refactored
       // out but perhaps will have to be reintroduced
       Location topLocation = Location.create(traceLocation.lat(), traceLocation.lon(), depth);
-      
+
       if (aseisReduceV > 0.0 || aseisReduceH > 0.0) {
         LocationVector topTrans = LocationVector.create(dipDirRad, aseisReduceH, aseisReduceV);
         topLocation = Locations.location(topLocation, topTrans);
@@ -401,16 +401,14 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
       }
       iCol++;
     }
-    
-    
-    /* 
-     * alternate/cleaner pseudo code -- perhaps this is better suited in 
+
+    /*
+     * alternate/cleaner pseudo code -- perhaps this is better suited in
      * LocationGrid.Builder
      * 
      * Given trace, compute initial aseis reduction vector and translate.
-     * LocationGrid.fillRow(firstRow)
-     * Compute down dip translation vector
-     * Loop down dip positions, translating trace and filling locGrid rows
+     * LocationGrid.fillRow(firstRow) Compute down dip translation vector Loop
+     * down dip positions, translating trace and filling locGrid rows
      */
   }
 

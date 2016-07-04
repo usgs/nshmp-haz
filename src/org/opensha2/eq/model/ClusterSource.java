@@ -28,10 +28,10 @@ import java.util.Map;
  *
  * <p>Unlike other {@code Source}s whose weights are carried exclusively with
  * their associated {@link IncrementalMfd}, {@code ClusterSource}s carry an
- * additional {@link #weight()} value.</p>
+ * additional {@link #weight()} value.
  *
  * <p>A {@code ClusterSource} cannot be created directly; it may only be created
- * by a private parser.</p>
+ * by a private parser.
  *
  * @author Peter Powers
  */
@@ -101,8 +101,8 @@ public class ClusterSource implements Source {
         .append(LINE_SEPARATOR.value());
     for (FaultSource fs : faults) {
       sb.append("  ")
-      .append(fs.toString())
-      .append(LINE_SEPARATOR.value());
+          .append(fs.toString())
+          .append(LINE_SEPARATOR.value());
     }
     return sb.toString();
   }

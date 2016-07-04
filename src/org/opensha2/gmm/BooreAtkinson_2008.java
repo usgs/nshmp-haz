@@ -29,17 +29,17 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> Boore, D.M., and Atkinson, G.M., 2008, Ground-motion
  * prediction equations for the average horizontal component of PGA, PGV, and
  * 5%-damped PSA at spectral periods between 0.01s and 10.0s: Earthquake
- * Spectra, v. 24, n. 1, pp. 99-138.</p>
+ * Spectra, v. 24, n. 1, pp. 99-138.
  *
  * <p><b>doi:</b><a href="http://dx.doi.org/10.1193/1.2830434">
- * http://dx.doi.org/10.1193/1.2830434</a></p>
+ * http://dx.doi.org/10.1193/1.2830434</a>
  *
- * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
+ * <p><b>Component:</b> GMRotI50 (geometric mean)
  *
  * @author Peter Powers
  * @see Gmm#BA_08
@@ -71,10 +71,10 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
   static final class Coefficients {
 
     final double b_lin, b1, b2,
-    c1, c2, c3,
-    e1, e2, e3, e4, e5, e6, e7,
-    h, mh, s,
-    t_u, s_tu, t_m, s_tm;
+        c1, c2, c3,
+        e1, e2, e3, e4, e5, e6, e7,
+        h, mh, s,
+        t_u, s_tu, t_m, s_tm;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);

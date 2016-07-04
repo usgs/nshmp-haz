@@ -6,7 +6,7 @@ import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
-import static org.opensha2.util.MathUtils.hypot;
+import static org.opensha2.internal.MathUtils.hypot;
 
 import org.opensha2.gmm.GmmInput.Constraints;
 
@@ -22,17 +22,17 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>Reference:</b> Somerville, P., Collins, N., Abrahamson, N., Graves, R.,
  * and Saikia, C., 2001, Ground motion attenuation relations for the Central and
  * Eastern United States — Final report, June 30, 2001: Report to U.S.
- * Geological Survey for award 99HQGR0098, 38 p.</p>
+ * Geological Survey for award 99HQGR0098, 38 p.
  *
- * <p><b>Component:</b> not specified</p>
+ * <p><b>Component:</b> not specified
  *
  * @author Peter Powers
  * @see Gmm#SOMERVILLE_01

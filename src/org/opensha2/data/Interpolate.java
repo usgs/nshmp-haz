@@ -15,13 +15,13 @@ import java.util.List;
  * <p>NOTE: This class is designed to be used primarily with the OpenSHA
  * function classes and should probably be relocated to that package and given
  * default visibility due to the lack of error-checking. We could write public
- * methods that do thorough error checking.</p>
+ * methods that do thorough error checking.
  *
  * <p><strong>Warning:</strong> These methods do no error checking for
  * {@code null} , empty, or single valued arrays; arrays of different lengths;
  * nor does it check that the supplied x-values are monotonically increasing
  * (sorted). Internally the method uses binary search and it is up to the user
- * to supply valid data.</p>
+ * to supply valid data.
  *
  * @author Peter Powers
  */

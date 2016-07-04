@@ -515,8 +515,7 @@ public final class Faults {
       avg = 90;
     } else if (xdir == 0 & ydir < 0) {
       avg = 270;
-    }
-    else {
+    } else {
       avg = 0; // if both xdir==0 & ydir=0
     }
 
@@ -566,7 +565,7 @@ public final class Faults {
    * <p>This approach has been shown to be as accurate as length-weighted angle
    * averaging and is significantly faster; see <a
    * href="https://opensha.org/trac/wiki/StrikeDirectionMethods"
-   * >StrikeDirectionMethods</a> for more information.</p>
+   * >StrikeDirectionMethods</a> for more information.
    *
    * @param locs line for which to compute strike
    * @return strike direction in the range [0°, 360°)
@@ -596,7 +595,7 @@ public final class Faults {
    * <p>This approach has been shown to be as accurate as length-weighted angle
    * averaging and is significantly faster; see <a
    * href="https://opensha.org/trac/wiki/StrikeDirectionMethods"
-   * >StrikeDirectionMethods</a> for more information.</p>
+   * >StrikeDirectionMethods</a> for more information.
    *
    * @param locs line for which to compute strike
    * @return strike direction in the range [0, 2π)

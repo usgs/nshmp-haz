@@ -14,7 +14,7 @@ import java.util.Set;
  * <p><i>Note:</i> Use of the word 'Set' in this class does not imply adherence
  * to the {@link Set} interface. An {@code XY_DataGroup} may contain multiple
  * identical points, although subclasses are free to provide alternate behavior.
- * </p>
+ * 
  *
  * @author Kevin Milner
  * @author Peter Powers

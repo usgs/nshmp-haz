@@ -15,7 +15,7 @@ import java.util.List;
  * <p>Making some assumptions, interpolation is fairly straightforward. Most of
  * the methods implemented here are designed to support interpolation (or
  * derivation) of y-values keyed to monotonically increasing x-values. x-value
- * interpolation is somewhat thornier. Assumptions and behaviors:</p>
+ * interpolation is somewhat thornier. Assumptions and behaviors:
  *
  * <ul><li>No error checking for null, empty, single-valued arrays; or arrays of
  * different lengths is performed. Buyer beware.</li>
@@ -39,12 +39,12 @@ import java.util.List;
  *
  * <p>Presently, only single value interpolation of x-values is supported. The
  * more common use case is to resample a sequence of y-values, which is
- * supported.</p>
+ * supported.
  *
  * <p>Two static methods, {@link #findX(double, double, double, double, double)}
  * and {@link #findY(double, double, double, double, double)}, are the basis for
  * all interpolation operations in this class. These two methods are point-order
- * agnostic.</p>
+ * agnostic.
  *
  * TODO example; explain array swapping techniques for x-interpolation
  *

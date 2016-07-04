@@ -34,19 +34,19 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
- * <p><b>Implementation note:</b> 0.01s SA values used for PGA.</p>
+ * <p><b>Implementation note:</b> 0.01s SA values used for PGA.
  *
  * <p><b>Reference:</b> Chiou, B.S.-J. and Youngs, R.R., 2014, Update of the
  * Chiou and Youngs NGA model for the average horizontal component of peak
  * ground motion and response spectra, Earthquake Spectra, v. 30, n. 3, p.
- * 1117-1153.</p>
+ * 1117-1153.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/072813EQS219M">
- * 10.1193/072813EQS219M</a></p>
+ * 10.1193/072813EQS219M</a>
  *
- * <p><b>Component:</b> RotD50 (average horizontal)</p>
+ * <p><b>Component:</b> RotD50 (average horizontal)
  *
  * @author Peter Powers
  * @see Gmm#CY_14
@@ -85,11 +85,11 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
   private static final class Coefficients {
 
     final double c1, c1a, c1b, c1c, c1d, c3, c5, c6, c7, c7b, c9, c9a, c9b, c11b,
-    cn, cM, cHM,
-    γ1, γ2, γ3,
-    φ1, φ2, φ3, φ4, φ5,
-    τ1, τ2,
-    σ1, σ2, σ3;
+        cn, cM, cHM,
+        γ1, γ2, γ3,
+        φ1, φ2, φ3, φ4, φ5,
+        τ1, τ2,
+        σ1, σ2, σ3;
 
     // same for all periods; replaced with constant
     // double c2, c4, c4a, c11, cRB, phi6;
@@ -186,25 +186,25 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
     r4 += (style == REVERSE) ? (c.c1a + c.c1c / coshM)
         : (style == NORMAL) ? (c.c1b + c.c1d / coshM) : 0.0;
 
-        // Hanging-wall effect
-        double r5 = 0.0;
-        if (in.rX >= 0.0) {
-          r5 = c.c9 * cos(in.dip * TO_RAD) *
-              (c.c9a + (1.0 - c.c9a) * tanh(in.rX / c.c9b)) *
-              (1 - sqrt(rJB * rJB + zTop * zTop) / (rRup + 1.0));
-        }
+    // Hanging-wall effect
+    double r5 = 0.0;
+    if (in.rX >= 0.0) {
+      r5 = c.c9 * cos(in.dip * TO_RAD) *
+          (c.c9a + (1.0 - c.c9a) * tanh(in.rX / c.c9b)) *
+          (1 - sqrt(rJB * rJB + zTop * zTop) / (rRup + 1.0));
+    }
 
-        // Directivity effect (not implemented)
-        // cDPP = centered DPP (direct point directivity parameter)
-        // double c8 = 0.2154; // corrected from 2.154 12/3/13 per email from
-        // Sanaz
-        // double c8a = 0.2695;
-        // double Mc8 = Mw-c.c8b;
-        // double r6 = c8 * exp(-c8a * Mc8 * Mc8) *
-        // max(0.0, 1.0 - max(0, rRup - 40.0) / 30.0) *
-        // min(max(0, Mw - 5.5) / 0.8, 1.0) * cDPP;
+    // Directivity effect (not implemented)
+    // cDPP = centered DPP (direct point directivity parameter)
+    // double c8 = 0.2154; // corrected from 2.154 12/3/13 per email from
+    // Sanaz
+    // double c8a = 0.2695;
+    // double Mc8 = Mw-c.c8b;
+    // double r6 = c8 * exp(-c8a * Mc8 * Mc8) *
+    // max(0.0, 1.0 - max(0, rRup - 40.0) / 30.0) *
+    // min(max(0, Mw - 5.5) / 0.8, 1.0) * cDPP;
 
-        return exp(r1 + r2 + r3 + r4 + r5);
+    return exp(r1 + r2 + r3 + r4 + r5);
   }
 
   private static final double calcSoilNonLin(final Coefficients c, final double vs30) {

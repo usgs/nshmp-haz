@@ -24,20 +24,20 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>Reference:</b> Campbell, K.W., 2003, Prediction of strong ground motion
  * using the hybrid empirical method and its use in the devel- opment of
  * ground-motion (attenuation) relations in eastern North America: Bulletin of
- * the Seismological Society of America, v. 93, p. 1012–1033.</p>
+ * the Seismological Society of America, v. 93, p. 1012–1033.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020002">
- * 10.1785/0120020002</a></p>
+ * 10.1785/0120020002</a>
  *
- * <p><b>Component:</b> geometric mean of two horizontal components</p>
+ * <p><b>Component:</b> geometric mean of two horizontal components
  *
  * @author Peter Powers
  * @see Gmm#CAMPBELL_03

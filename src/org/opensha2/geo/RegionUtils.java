@@ -101,8 +101,8 @@ public class RegionUtils {
   // write region
   public static void locListToKML(
       LocationList locs, String filename, Color c)
-          throws ParserConfigurationException,
-          TransformerConfigurationException, TransformerException {
+      throws ParserConfigurationException,
+      TransformerConfigurationException, TransformerException {
     String kmlFileName = filename + ".kml";
 
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();

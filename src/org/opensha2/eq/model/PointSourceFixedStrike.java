@@ -8,7 +8,7 @@ import static java.lang.Math.tan;
 
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.util.MathUtils.hypot;
+import static org.opensha2.internal.MathUtils.hypot;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
@@ -35,10 +35,10 @@ import java.util.Map;
  * however, it is inefficient in that it creates a new {@link Rupture} on every
  * call. Use of {@link Source#iterator()} is preferred, but {@code Rupture}
  * instances returned by the iterator should <i>not</i> be retained and an
- * iterator instance should only ever be used by a single thread.</p>
+ * iterator instance should only ever be used by a single thread.
  *
  * <p><b>NOTE</b>: See {@link PointSource} description for notes on thread
- * safety and {@code Rupture} creation and iteration.</p>
+ * safety and {@code Rupture} creation and iteration.
  *
  * @author Peter Powers
  */

@@ -10,11 +10,11 @@ import static org.opensha2.gmm.Imt.PGV;
 import static org.opensha2.gmm.Imt.SA0P03;
 import static org.opensha2.gmm.Imt.SA0P3;
 import static org.opensha2.gmm.Imt.SA3P0;
-import static org.opensha2.util.Parsing.splitToDoubleList;
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.Parsing.splitToDoubleList;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
+import org.opensha2.internal.Parsing;
+import org.opensha2.internal.Parsing.Delimiter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;

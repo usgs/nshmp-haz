@@ -27,14 +27,14 @@ import java.util.List;
  * simplifies issues related to rounding/precision errors that occur when
  * indexing according to explicit double values.
  *
- * <p>To create a {@code DataTable} instance, use a {@link Builder}.</p>
+ * <p>To create a {@code DataTable} instance, use a {@link Builder}.
  *
  * <p>Internally, a {@code DataTable} is backed by a {@code double[][]} array
- * where 'row' refers to the 1st dimension and 'column' the 2nd.</p>
+ * where 'row' refers to the 1st dimension and 'column' the 2nd.
  *
  * <p>Note that data tables are not intended for use with very high precision
  * data and keys are currently limited to a precision of 4 decimal places. This
- * may be changed or improved in the future.</p>
+ * may be changed or improved in the future.
  *
  * @author Peter Powers
  * @see DataVolume
@@ -118,7 +118,7 @@ public interface DataTable {
    * be specified before any data can be added. Note that any supplied
    * {@code max} values may not correspond to the final upper edge of the
    * uppermost bins if {@code max - min} is not evenly divisible by {@code Δ}
-   * .</p>
+   * .
    */
   public static final class Builder {
 

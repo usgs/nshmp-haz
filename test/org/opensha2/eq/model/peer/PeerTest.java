@@ -7,17 +7,17 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
-import static org.opensha2.util.Parsing.Delimiter.COMMA;
+import static org.opensha2.internal.Parsing.Delimiter.COMMA;
 
 import org.opensha2.HazardCalc;
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Hazard;
-import org.opensha2.calc.Site;
-import org.opensha2.calc.Sites;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
+import org.opensha2.internal.Parsing;
 import org.opensha2.mfd.Mfds;
-import org.opensha2.util.Parsing;
+import org.opensha2.util.Site;
+import org.opensha2.util.Sites;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -126,8 +126,8 @@ public class PeerTest {
     // compute y-values converting to Poiss prob
     double[] actual = Doubles.toArray(
         FluentIterable.from(result.curves().get(Imt.PGA).yValues())
-        .transform(Mfds.annualRateToProbabilityConverter())
-        .toList());
+            .transform(Mfds.annualRateToProbabilityConverter())
+            .toList());
     checkArgument(actual.length == expected.length);
 
     assertArrayEquals(expected, actual, tolerance);
@@ -158,7 +158,7 @@ public class PeerTest {
       checkState(expectedsMap.containsKey(site.name()));
       Object[] args =
           new Object[] { model.name(), model, site, expectedsMap.get(site.name()), tolerance
-      };
+          };
       argsList.add(args);
     }
     return argsList;

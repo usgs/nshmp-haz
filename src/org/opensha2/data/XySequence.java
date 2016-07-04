@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import static org.opensha2.data.Data.isMonotonic;
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -27,7 +27,7 @@ import java.util.RandomAccess;
  *
  * <p>Although this class is not final, it can not be subclassed. Mutable
  * instances of this class are not thread-safe for operations that alter
- * y-values.</p>
+ * y-values.
  *
  * @author Peter Powers
  */
@@ -72,7 +72,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
     return construct(
         Arrays.copyOf(xs, xs.length),
         (ys == null) ? new double[xs.length] : Arrays.copyOf(ys, ys.length),
-            mutable);
+        mutable);
   }
 
   /**
@@ -123,7 +123,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
     return construct(
         Doubles.toArray(xs),
         (ys == null) ? new double[xs.size()] : Doubles.toArray(ys),
-            mutable);
+        mutable);
   }
 
   private static XySequence construct(double[] xs, double[] ys, boolean mutable) {

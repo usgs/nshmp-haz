@@ -15,7 +15,7 @@ public class MatUtil {
    * model, intensity measure type (Imt), and source
    *
    * <p>{@code enum} types are identified in matlab as e.g. {@code Gmm$ASK_14}
-   * .</p>
+   * .
    *
    * @param model to use
    * @param imt intensity measure type (e.g. {@code PGA}, {@code SA1P00})
@@ -34,7 +34,7 @@ public class MatUtil {
    * returned.
    *
    * <p>{@code enum} types are identified in matlab as e.g. {@code Gmm$ASK_14}
-   * .</p>
+   * .
    *
    * @param model to use
    * @param source parameterization

@@ -3,17 +3,17 @@ package org.opensha2;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
-import org.opensha2.calc.Site;
-import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
 import org.opensha2.eq.model.HazardModel;
-import org.opensha2.util.Logging;
+import org.opensha2.internal.Logging;
+import org.opensha2.util.Site;
+import org.opensha2.util.Sites;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
@@ -59,7 +59,7 @@ public class HazardCalc {
    * <p>Please refer to the nshmp-haz <a
    * href="https://github.com/usgs/nshmp-haz/wiki" target="_top">wiki</a> for
    * comprehensive descriptions of source models, configuration files, site
-   * files, and hazard calculations.</p>
+   * files, and hazard calculations.
    *
    * @see <a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running"
    *      target="_top"> nshmp-haz wiki</a>
@@ -131,7 +131,7 @@ public class HazardCalc {
     }
   }
 
-  private static Iterable<Site> readSites(String arg, CalcConfig defaults ,Logger log) {
+  private static Iterable<Site> readSites(String arg, CalcConfig defaults, Logger log) {
     try {
       if (arg.toLowerCase().endsWith(".csv")) {
         Path path = Paths.get(arg);
@@ -245,7 +245,7 @@ public class HazardCalc {
    * completes.
    *
    * <p><b>Note:</b> any model initialization settings in {@code config} will be
-   * ignored as the supplied model will already have been initialized.</p>
+   * ignored as the supplied model will already have been initialized.
    *
    * @param model to use
    * @param config calculation configuration

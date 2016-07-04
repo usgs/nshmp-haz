@@ -36,7 +36,7 @@ import java.awt.geom.Rectangle2D;
  * <p> See: <a href="http://williams.best.vwh.net/avform.htm" target="_blank">
  * Aviation Formulary</a> for formulae implemented in this class as well as <a
  * href="http://www.movable-type.co.uk/scripts/latlong.html"
- * target="_blank">Moveable Type Scripts</a> for other implementations.</p>
+ * target="_blank">Moveable Type Scripts</a> for other implementations.
  *
  * @author Peter Powers
  * @see Location
@@ -117,7 +117,7 @@ public final class Locations {
    * <p><b>Note:</b> This method does <i>NOT</i> support values spanning
    * #177;180° and fails where the numeric angle exceeds 180°. Convert data to
    * the 0-360° interval or use {@link #horzDistance(Location, Location)} in
-   * such instances.</p>
+   * such instances.
    *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
@@ -192,10 +192,10 @@ public final class Locations {
    * <p><b>Note:</b> This method is very imprecise at large separations and
    * should not be used for points >200km apart. If an estimate of separation
    * distance is not known in advance use
-   * {@link #linearDistance(Location, Location)} for more reliable results.</p>
+   * {@link #linearDistance(Location, Location)} for more reliable results.
    *
    * <p><b>Note:</b> This method fails for values spanning ±180°; see
-   * {@link #horzDistanceFast(Location, Location)}.</p>
+   * {@link #horzDistanceFast(Location, Location)}.
    *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
@@ -223,12 +223,12 @@ public final class Locations {
    * <p>This method, though more accurate over longer distances and line
    * lengths, is up to 20x slower than
    * {@link #distanceToLineFast(Location, Location, Location)}. However, this
-   * method returns accurate results for values spanning #177;180°.</p>
+   * method returns accurate results for values spanning #177;180°.
    *
    * <p>If the line should instead be treated as a segment such that the result
    * will be a distance to an endpoint if {@code p3} does not project onto the
    * segment, use {@link #distanceToSegment(Location, Location, Location)}
-   * instead.</p>
+   * instead.
    *
    * @param p1 the first {@code Location} point on the line
    * @param p2 the second {@code Location} point on the line
@@ -260,12 +260,12 @@ public final class Locations {
    * and results for such input values are not guaranteed. Convert data to the
    * 0-360° interval or use
    * {@link #distanceToLine(Location, Location, Location)} in such
-   * instances.</p>
+   * instances.
    *
    * <p>If the line should instead be treated as a segment such that the result
    * will be a distance to an endpoint if {@code p3} does not project onto the
    * segment, use {@link #distanceToSegmentFast(Location, Location, Location)}
-   * instead.</p>
+   * instead.
    *
    * @param p1 the first {@code Location} point on the line
    * @param p2 the second {@code Location} point on the line
@@ -355,10 +355,10 @@ public final class Locations {
    * <p>This method, though more accurate over longer distances and line
    * lengths, is up to 20x slower than
    * {@link #distanceToSegmentFast(Location, Location, Location)}. However, this
-   * method returns accurate results for values spanning ±180°.</p>
+   * method returns accurate results for values spanning ±180°.
    *
    * <p> If the line should instead be treated as infinite, use
-   * {@link #distanceToLine(Location, Location, Location)} instead.</p>
+   * {@link #distanceToLine(Location, Location, Location)} instead.
    *
    * @param p1 the first {@code Location} point on the line
    * @param p2 the second {@code Location} point on the line
@@ -400,10 +400,10 @@ public final class Locations {
    * for use over short distances (e.g. <200 km).
    *
    * <p><b>Note:</b> This method fails for values spanning ±180°; see
-   * {@link #distanceToSegment(Location, Location, Location)}.</p>
+   * {@link #distanceToSegment(Location, Location, Location)}.
    *
    * <p>If the line should instead be treated as infinite, use
-   * {@link #distanceToLineFast(Location, Location, Location)} instead.</p>
+   * {@link #distanceToLineFast(Location, Location, Location)} instead.
    *
    * @param p1 the first {@code Location} point on the line
    * @param p2 the second {@code Location} point on the line
@@ -440,7 +440,7 @@ public final class Locations {
    *
    * <p><b>Note:</b> It is more efficient to use this method for computation
    * because {@code Location}s store lat and lon in radians internally. Use
-   * {@link #azimuth(Location, Location)} for presentation.</p>
+   * {@link #azimuth(Location, Location)} for presentation.
    *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point

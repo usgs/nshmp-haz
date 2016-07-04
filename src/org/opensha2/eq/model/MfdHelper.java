@@ -2,23 +2,24 @@ package org.opensha2.eq.model;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.eq.model.SourceAttribute.A;
-import static org.opensha2.eq.model.SourceAttribute.B;
-import static org.opensha2.eq.model.SourceAttribute.C_MAG;
-import static org.opensha2.eq.model.SourceAttribute.D_MAG;
-import static org.opensha2.eq.model.SourceAttribute.FLOATS;
-import static org.opensha2.eq.model.SourceAttribute.M;
-import static org.opensha2.eq.model.SourceAttribute.MAGS;
-import static org.opensha2.eq.model.SourceAttribute.M_MAX;
-import static org.opensha2.eq.model.SourceAttribute.M_MIN;
-import static org.opensha2.eq.model.SourceAttribute.RATE;
-import static org.opensha2.eq.model.SourceAttribute.RATES;
-import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
-import static org.opensha2.util.Parsing.readBoolean;
-import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readString;
-import static org.opensha2.util.Parsing.toDoubleArray;
+import static org.opensha2.internal.Parsing.readBoolean;
+import static org.opensha2.internal.Parsing.readDouble;
+import static org.opensha2.internal.Parsing.readString;
+import static org.opensha2.internal.Parsing.toDoubleArray;
+import static org.opensha2.internal.SourceAttribute.A;
+import static org.opensha2.internal.SourceAttribute.B;
+import static org.opensha2.internal.SourceAttribute.C_MAG;
+import static org.opensha2.internal.SourceAttribute.D_MAG;
+import static org.opensha2.internal.SourceAttribute.FLOATS;
+import static org.opensha2.internal.SourceAttribute.M;
+import static org.opensha2.internal.SourceAttribute.MAGS;
+import static org.opensha2.internal.SourceAttribute.M_MAX;
+import static org.opensha2.internal.SourceAttribute.M_MIN;
+import static org.opensha2.internal.SourceAttribute.RATE;
+import static org.opensha2.internal.SourceAttribute.RATES;
+import static org.opensha2.internal.SourceAttribute.WEIGHT;
 
+import org.opensha2.internal.SourceAttribute;
 import org.opensha2.mfd.MfdType;
 
 import org.xml.sax.Attributes;

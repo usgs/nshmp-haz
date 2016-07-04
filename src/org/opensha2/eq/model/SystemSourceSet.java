@@ -17,13 +17,13 @@ import static org.opensha2.geo.Locations.horzDistanceFast;
 
 import org.opensha2.calc.HazardInput;
 import org.opensha2.calc.InputList;
-import org.opensha2.calc.Site;
 import org.opensha2.calc.SystemInputList;
 import org.opensha2.data.Data;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.model.Distance.Type;
 import org.opensha2.geo.Location;
+import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -127,7 +127,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
    *
    * <p>We skip the notion of a {@code Rupture} for now. Aleatory uncertainty on
    * magnitude isn't required, but if it is, we'll alter this implementation to
-   * return List<GmmInput> per source rather than one GmmInput.</p>
+   * return List<GmmInput> per source rather than one GmmInput.
    */
   public final class SystemSource implements Source {
 

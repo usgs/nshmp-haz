@@ -1,4 +1,4 @@
-package org.opensha2.util;
+package org.opensha2.internal;
 
 import org.opensha2.geo.LocationList;
 

@@ -10,10 +10,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static org.opensha2.data.XySequence.create;
 import static org.opensha2.data.XySequence.immutableCopyOf;
-import static org.opensha2.util.Parsing.enumsToString;
-import static org.opensha2.util.TextUtils.LOG_INDENT;
-import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.Parsing.enumsToString;
+import static org.opensha2.internal.TextUtils.LOG_INDENT;
+import static org.opensha2.internal.TextUtils.LOG_VALUE_COLUMN;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
@@ -21,6 +21,7 @@ import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
+import org.opensha2.util.Site;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -341,7 +342,7 @@ public final class CalcConfig {
     /**
      * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
      *
-     * <p><b>Default:</b> {@code true} (inferred)</p>
+     * <p><b>Default:</b> {@code true} (inferred)
      */
     public final boolean vsInferred;
 
@@ -349,7 +350,7 @@ public final class CalcConfig {
      * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
      *
      * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
-     * default value or model)</p>
+     * default value or model)
      */
     public final double z1p0;
 
@@ -357,7 +358,7 @@ public final class CalcConfig {
      * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
      *
      * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
-     * default value or model)</p>
+     * default value or model)
      */
     public final double z2p5;
 

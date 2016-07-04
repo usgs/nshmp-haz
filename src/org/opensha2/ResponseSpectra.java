@@ -26,7 +26,7 @@ import java.util.Set;
  * {@link #spectrum(Gmm, GmmInput)} are convenient for use within Matlab as they
  * return simple data container objects that are automatically converted to
  * Matlab structs and arrays. {@link #spectra(Set, GmmInput)} returns a more
- * complex result and is for use with web services.</p>
+ * complex result and is for use with web services.
  *
  * @author Peter Powers
  */
@@ -38,7 +38,7 @@ public class ResponseSpectra {
    * source and site parameterization ({@link GmmInput}).
    *
    * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
-   * .</p>
+   * .
    *
    * @param model to use
    * @param imt intensity measure type (e.g. {@code PGA}, {@code SA1P00})
@@ -58,10 +58,10 @@ public class ResponseSpectra {
    * returned.
    *
    * <p>This method is intended for use with Matlab, which converts
-   * {@code Result} to a struct automatically.</p>
+   * {@code Result} to a struct automatically.
    *
    * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
-   * .</p>
+   * .
    *
    * @param model to use
    * @param input source and site parameterization
@@ -106,10 +106,10 @@ public class ResponseSpectra {
    * model are returned.
    *
    * <p>This method is intended for use with Matlab, which converts
-   * {@code Result} to a strct automatically.</p>
+   * {@code Result} to a strct automatically.
    *
    * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
-   * .</p>
+   * .
    *
    * @param gmms {@code GroundMotionModel}s to use
    * @param input source and site parameterization

@@ -1,7 +1,7 @@
 package org.opensha2.eq.model.peer;
 
-import org.opensha2.calc.Site;
 import org.opensha2.eq.model.HazardModel;
+import org.opensha2.util.Site;
 
 import org.junit.Ignore;
 import org.junit.experimental.runners.Enclosed;

@@ -27,7 +27,7 @@ import java.awt.geom.Point2D;
  */
 
 public abstract class AbstractDiscretizedFunc extends AbstractXY_DataSet
-implements DiscretizedFunc {
+    implements DiscretizedFunc {
 
   /** Class name used for debbuging */
   protected final static String C = "DiscretizedFunc";
@@ -110,8 +110,7 @@ implements DiscretizedFunc {
     }
 
     // now check info equal
-    if (!isSameWithNull(getInfo(), function.getInfo()))
-    {
+    if (!isSameWithNull(getInfo(), function.getInfo())) {
       return false;
       // if( !getInfo().equals(function.getInfo() ) ) return false;
     }

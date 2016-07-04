@@ -20,26 +20,26 @@ import com.google.common.collect.Range;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2006, Earthquake
  * ground-motion prediction equations for eastern North America: Bulletin of the
- * Seismological Society of America, v. 96, p. 2181–2205.</p>
+ * Seismological Society of America, v. 96, p. 2181–2205.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050245">
- * 10.1785/0120050245</a></p>
+ * 10.1785/0120050245</a>
  *
  * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 2011, Modifications to
  * existing ground-motion prediction equations in light of new data: Bulletin of
- * the Seismological Society of America, v. 101, n. 3, p. 1121–1135.</p>
+ * the Seismological Society of America, v. 101, n. 3, p. 1121–1135.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120100270">
- * 10.1785/0120100270</a></p>
+ * 10.1785/0120100270</a>
  *
- * <p><b>Component:</b> horizontal (not clear from publication)</p>
+ * <p><b>Component:</b> horizontal (not clear from publication)
  *
  * @author Peter Powers
  * @see Gmm#AB_06_PRIME

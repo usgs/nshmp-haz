@@ -30,17 +30,17 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> Boore, D.M., Stewart, J.P., Seyhan, E., and Atkinson,
  * G.M., 2014, NGA-West 2 equations for predicting PGA, PGV, and 5%-damped PSA
  * for shallow crustal earthquakes, Earthquake Spectra, v. 30, n. 3, p.
- * 1057-1085.</p>
+ * 1057-1085.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070113EQS184M">
- * 10.1193/070113EQS184M</a></p>
+ * 10.1193/070113EQS184M</a>
  *
- * <p><b>Component:</b> RotD50 (average horizontal)</p>
+ * <p><b>Component:</b> RotD50 (average horizontal)
  *
  * @author Peter Powers
  * @see Gmm#BSSA_14
@@ -75,7 +75,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
     final Imt imt;
     final double e0, e1, e2, e3, e4, e5, e6, Mh, c1, c2, c3, h, c, Vc, f4, f5,
-    f6, f7, r1, r2, Δφ_r, Δφ_v, φ1, φ2, τ1, τ2;
+        f6, f7, r1, r2, Δφ_r, Δφ_v, φ1, φ2, τ1, τ2;
 
     // same for all periods; replaced with constant
     // double Mref, Rref, Dc3CaTw, Vref, f1, f3, v1, v2;

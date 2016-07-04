@@ -1,4 +1,4 @@
-package org.opensha2.util;
+package org.opensha2.internal;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.util.logging.Level.SEVERE;
@@ -70,18 +70,18 @@ public class Logging {
       if (l == Level.WARNING) {
         String cName = record.getSourceClassName();
         b.append(" @ ")
-        .append(cName.substring(cName.lastIndexOf(".") + 1))
-        .append(".")
-        .append(record.getSourceMethodName())
-        .append("()");
+            .append(cName.substring(cName.lastIndexOf(".") + 1))
+            .append(".")
+            .append(record.getSourceMethodName())
+            .append("()");
         b.append(record.getMessage());
       } else if (l == Level.SEVERE) {
         String cName = record.getSourceClassName();
         b.append(" @ ")
-        .append(cName.substring(cName.lastIndexOf(".") + 1))
-        .append(".")
-        .append(record.getSourceMethodName())
-        .append("()");
+            .append(cName.substring(cName.lastIndexOf(".") + 1))
+            .append(".")
+            .append(record.getSourceMethodName())
+            .append("()");
         b.append(record.getMessage());
         if (record.getThrown() != null) {
           b.append(LF).append(LF);

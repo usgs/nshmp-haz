@@ -10,7 +10,7 @@ import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
 import static org.opensha2.eq.fault.Faults.validateTrace;
 import static org.opensha2.eq.fault.Faults.validateWidth;
-import static org.opensha2.util.TextUtils.validateName;
+import static org.opensha2.internal.TextUtils.validateName;
 
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha2.eq.fault.surface.GriddedSurface;
@@ -37,7 +37,7 @@ import java.util.Map;
  * appropriately scaled rates.
  *
  * <p>A {@code FaultSource} cannot be created directly; it may only be created
- * by a private parser.</p>
+ * by a private parser.
  *
  * @author Peter Powers
  */
@@ -139,8 +139,7 @@ public class FaultSource implements Source {
       // TODO do we really want to do this??
       // TODO low rate shortcut should be derived from config
       // and applied when building input lists
-      if (rate < 1e-14)
-      {
+      if (rate < 1e-14) {
         continue; // shortcut low rates
       }
 

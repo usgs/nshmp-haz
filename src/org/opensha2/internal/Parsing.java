@@ -1,4 +1,4 @@
-package org.opensha2.util;
+package org.opensha2.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -656,10 +656,10 @@ public final class Parsing {
       boolean terminateRange =
           // step > 1
           (Math.abs(next - end) != 1) ||
-          // direction change
-          (buildingRange && currentDir != dir) ||
-          // end of list
-          (i == values.size() - 1);
+              // direction change
+              (buildingRange && currentDir != dir) ||
+              // end of list
+              (i == values.size() - 1);
 
       if (terminateRange) {
         if (i == values.size() - 1) {

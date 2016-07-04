@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.geo.LocationList.RegularLocationList;
 

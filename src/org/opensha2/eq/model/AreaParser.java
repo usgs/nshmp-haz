@@ -4,27 +4,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 
-import static org.opensha2.eq.model.SourceAttribute.FOCAL_MECH_MAP;
-import static org.opensha2.eq.model.SourceAttribute.ID;
-import static org.opensha2.eq.model.SourceAttribute.MAG_DEPTH_MAP;
-import static org.opensha2.eq.model.SourceAttribute.MAX_DEPTH;
-import static org.opensha2.eq.model.SourceAttribute.NAME;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
-import static org.opensha2.eq.model.SourceAttribute.STRIKE;
-import static org.opensha2.eq.model.SourceAttribute.TYPE;
-import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
 import static org.opensha2.eq.model.SourceType.AREA;
-import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readEnum;
-import static org.opensha2.util.Parsing.readInt;
-import static org.opensha2.util.Parsing.readString;
-import static org.opensha2.util.Parsing.stringToEnumWeightMap;
-import static org.opensha2.util.Parsing.stringToValueValueWeightMap;
+import static org.opensha2.internal.Parsing.readDouble;
+import static org.opensha2.internal.Parsing.readEnum;
+import static org.opensha2.internal.Parsing.readInt;
+import static org.opensha2.internal.Parsing.readString;
+import static org.opensha2.internal.Parsing.stringToEnumWeightMap;
+import static org.opensha2.internal.Parsing.stringToValueValueWeightMap;
+import static org.opensha2.internal.SourceAttribute.FOCAL_MECH_MAP;
+import static org.opensha2.internal.SourceAttribute.ID;
+import static org.opensha2.internal.SourceAttribute.MAG_DEPTH_MAP;
+import static org.opensha2.internal.SourceAttribute.MAX_DEPTH;
+import static org.opensha2.internal.SourceAttribute.NAME;
+import static org.opensha2.internal.SourceAttribute.RUPTURE_SCALING;
+import static org.opensha2.internal.SourceAttribute.STRIKE;
+import static org.opensha2.internal.SourceAttribute.TYPE;
+import static org.opensha2.internal.SourceAttribute.WEIGHT;
 
 import org.opensha2.data.Data;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.geo.LocationList;
+import org.opensha2.internal.SourceElement;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
@@ -87,7 +88,7 @@ class AreaParser extends DefaultHandler {
   }
 
   AreaSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-  IOException {
+      IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -154,10 +155,10 @@ class AreaParser extends DefaultHandler {
         double strike = readDouble(STRIKE, atts);
 
         sourceBuilder
-        .depthMap(depthMap, type)
-        .maxDepth(maxDepth, type)
-        .mechs(mechMap)
-        .ruptureScaling(rupScaling);
+            .depthMap(depthMap, type)
+            .maxDepth(maxDepth, type)
+            .mechs(mechMap)
+            .ruptureScaling(rupScaling);
 
         // first validate strike by setting it in builder
         sourceBuilder.strike(strike);

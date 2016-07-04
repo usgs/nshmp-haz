@@ -4,10 +4,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
-import org.opensha2.util.Parsing;
-import org.opensha2.util.Parsing.Delimiter;
+import org.opensha2.internal.Parsing;
+import org.opensha2.internal.Parsing.Delimiter;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;

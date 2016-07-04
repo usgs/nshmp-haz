@@ -2,7 +2,6 @@ package org.opensha2.eq.model;
 
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.InputList;
-import org.opensha2.calc.Site;
 import org.opensha2.data.DataTables;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
@@ -10,7 +9,8 @@ import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
-import org.opensha2.util.Parsing;
+import org.opensha2.internal.Parsing;
+import org.opensha2.util.Site;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -160,17 +160,17 @@ public class PointSources {
 
     Map<FocalMech, Double> ssMap = Maps.immutableEnumMap(
         ImmutableMap.<FocalMech, Double> builder()
-        .put(FocalMech.STRIKE_SLIP, 1.0)
-        .put(FocalMech.REVERSE, 0.0)
-        .put(FocalMech.NORMAL, 0.0)
-        .build());
+            .put(FocalMech.STRIKE_SLIP, 1.0)
+            .put(FocalMech.REVERSE, 0.0)
+            .put(FocalMech.NORMAL, 0.0)
+            .build());
 
     Map<FocalMech, Double> multiMechMap = Maps.immutableEnumMap(
         ImmutableMap.<FocalMech, Double> builder()
-        .put(FocalMech.STRIKE_SLIP, 0.3334)
-        .put(FocalMech.REVERSE, 0.3333)
-        .put(FocalMech.NORMAL, 0.3333)
-        .build());
+            .put(FocalMech.STRIKE_SLIP, 0.3334)
+            .put(FocalMech.REVERSE, 0.3333)
+            .put(FocalMech.NORMAL, 0.3333)
+            .build());
 
     RuptureScaling rupScaling = RuptureScaling.NSHM_POINT_WC94_LENGTH;
 

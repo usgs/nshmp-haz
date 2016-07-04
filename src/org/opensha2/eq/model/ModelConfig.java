@@ -7,8 +7,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padEnd;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static org.opensha2.util.TextUtils.LOG_INDENT;
-import static org.opensha2.util.TextUtils.LOG_VALUE_COLUMN;
+import static org.opensha2.internal.TextUtils.LOG_INDENT;
+import static org.opensha2.internal.TextUtils.LOG_VALUE_COLUMN;
 
 import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.model.AreaSource.GridScaling;

@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padStart;
 
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.ContiguousSet;
@@ -178,8 +178,8 @@ public final class LocationGrid implements Iterable<Location> {
         .append(" window=").append(!master);
     if (!master) {
       sb.append(" [parent ")
-      .append(grid.rowKeyList().size()).append("r x ")
-      .append(grid.columnKeyList().size()).append("c]");
+          .append(grid.rowKeyList().size()).append("r x ")
+          .append(grid.columnKeyList().size()).append("c]");
     }
     sb.append(NEWLINE);
     LocationList firstRow = firstRow();
@@ -209,9 +209,9 @@ public final class LocationGrid implements Iterable<Location> {
 
   private static void appendLocation(StringBuilder builder, int row, int column, Location loc) {
     builder.append(padStart(Integer.toString(row), 5, ' '))
-    .append(padStart(Integer.toString(column), 5, ' '))
-    .append("    ").append(loc)
-    .append(NEWLINE);
+        .append(padStart(Integer.toString(column), 5, ' '))
+        .append("    ").append(loc)
+        .append(NEWLINE);
   }
 
   @Override

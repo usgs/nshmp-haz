@@ -17,6 +17,7 @@ import org.opensha2.eq.model.HazardModel;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SystemSourceSet;
+import org.opensha2.util.Site;
 
 import com.google.common.util.concurrent.ListenableFuture;
 

@@ -5,24 +5,25 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
 
-import static org.opensha2.eq.model.SourceAttribute.DEPTH;
-import static org.opensha2.eq.model.SourceAttribute.DIP;
-import static org.opensha2.eq.model.SourceAttribute.ID;
-import static org.opensha2.eq.model.SourceAttribute.M;
-import static org.opensha2.eq.model.SourceAttribute.NAME;
-import static org.opensha2.eq.model.SourceAttribute.RAKE;
-import static org.opensha2.eq.model.SourceAttribute.RATE;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
-import static org.opensha2.eq.model.SourceAttribute.TYPE;
-import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
-import static org.opensha2.eq.model.SourceAttribute.WIDTH;
-import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readEnum;
-import static org.opensha2.util.Parsing.readInt;
-import static org.opensha2.util.Parsing.readString;
+import static org.opensha2.internal.Parsing.readDouble;
+import static org.opensha2.internal.Parsing.readEnum;
+import static org.opensha2.internal.Parsing.readInt;
+import static org.opensha2.internal.Parsing.readString;
+import static org.opensha2.internal.SourceAttribute.DEPTH;
+import static org.opensha2.internal.SourceAttribute.DIP;
+import static org.opensha2.internal.SourceAttribute.ID;
+import static org.opensha2.internal.SourceAttribute.M;
+import static org.opensha2.internal.SourceAttribute.NAME;
+import static org.opensha2.internal.SourceAttribute.RAKE;
+import static org.opensha2.internal.SourceAttribute.RATE;
+import static org.opensha2.internal.SourceAttribute.RUPTURE_SCALING;
+import static org.opensha2.internal.SourceAttribute.TYPE;
+import static org.opensha2.internal.SourceAttribute.WEIGHT;
+import static org.opensha2.internal.SourceAttribute.WIDTH;
 
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.geo.LocationList;
+import org.opensha2.internal.SourceElement;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
@@ -93,7 +94,7 @@ class ClusterParser extends DefaultHandler {
   }
 
   ClusterSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-  IOException {
+      IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -123,10 +124,10 @@ class ClusterParser extends DefaultHandler {
           double weight = readDouble(WEIGHT, atts);
           clusterSetBuilder = new ClusterSourceSet.Builder();
           clusterSetBuilder
-          .name(name)
-          .id(id)
-          .weight(weight)
-          .gmms(gmmSet);
+              .name(name)
+              .id(id)
+              .weight(weight)
+              .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -161,10 +162,10 @@ class ClusterParser extends DefaultHandler {
 
           faultSetBuilder = new FaultSourceSet.Builder();
           faultSetBuilder
-          .name(clustName)
-          .id(clustId)
-          .weight(clustWeight)
-          .gmms(gmmSet);
+              .name(clustName)
+              .id(clustId)
+              .weight(clustWeight)
+              .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("    Cluster: " + clustName);
@@ -198,9 +199,9 @@ class ClusterParser extends DefaultHandler {
 
         case GEOMETRY:
           faultBuilder.depth(readDouble(DEPTH, atts))
-          .dip(readDouble(DIP, atts))
-          .width(readDouble(WIDTH, atts))
-          .rake(readDouble(RAKE, atts));
+              .dip(readDouble(DIP, atts))
+              .width(readDouble(WIDTH, atts))
+              .rake(readDouble(RAKE, atts));
           break;
 
         case TRACE:

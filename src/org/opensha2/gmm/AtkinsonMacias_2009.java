@@ -8,7 +8,7 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.LN_G_CM_TO_M;
 import static org.opensha2.gmm.Imt.PGA;
-import static org.opensha2.util.MathUtils.hypot;
+import static org.opensha2.internal.MathUtils.hypot;
 
 import org.opensha2.gmm.GmmInput.Constraints;
 
@@ -22,21 +22,21 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation notes:</b> <ul><li>NSHM fortran implementation converts
  * 0.13Hz to 7.7s; this implementation uses 7.5s instead.</li><li>Model uses a
  * magnitude dependent depth term and so does not impose 20km hypocentral depth
- * as other subduction interface models do.</li></ul></p>
+ * as other subduction interface models do.</li></ul>
  *
  * <p><b>Reference:</b> Atkinson, G.M. and Macias, D.M., 2009, Predicted ground
  * motions for great interface earthquakes in the Cascadia subduction zone:
- * Bulletin of the Seismological Society of America, v. 99, p. 1552-1578.</p>
+ * Bulletin of the Seismological Society of America, v. 99, p. 1552-1578.
  *
  * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120080147">
- * 10.1785/0120080147</a></p>
+ * 10.1785/0120080147</a>
  *
- * <p><b>Component:</b> geometric mean of two horizontal components</p>
+ * <p><b>Component:</b> geometric mean of two horizontal components
  *
  * @author Peter Powers
  * @see Gmm#AM_09_INTER

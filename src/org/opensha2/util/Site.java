@@ -1,15 +1,15 @@
-package org.opensha2.calc;
+package org.opensha2.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.util.GeoJson.validateProperty;
+import static org.opensha2.internal.GeoJson.validateProperty;
 
+import org.opensha2.calc.CalcConfig;
 import org.opensha2.geo.Location;
 import org.opensha2.gmm.GroundMotionModel;
-import org.opensha2.util.GeoJson;
-import org.opensha2.util.Named;
+import org.opensha2.internal.GeoJson;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -105,14 +105,14 @@ public class Site implements Named {
   /**
    * The average shear-wave velocity down to 30 meters depth.
    *
-   * <p>Default: 760.0 m/sec</p>
+   * <p>Default: 760.0 m/sec
    */
   public final double vs30;
 
   /**
    * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
    *
-   * <p>Default: true (inferred)</p>
+   * <p>Default: true (inferred)
    */
   public final boolean vsInferred;
 
@@ -120,7 +120,7 @@ public class Site implements Named {
    * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
    *
    * <p>Default: {@code NaN} ({@link GroundMotionModel}s will use a default
-   * value or model)</p>
+   * value or model)
    */
   public final double z1p0;
 
@@ -128,7 +128,7 @@ public class Site implements Named {
    * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
    *
    * <p>Default: {@code NaN} ({@link GroundMotionModel}s will use a default
-   * value or model)</p>
+   * value or model)
    */
   public final double z2p5;
 
@@ -323,11 +323,11 @@ public class Site implements Named {
   static final class Deserializer implements JsonDeserializer<Site> {
 
     final CalcConfig defaults;
-    
+
     Deserializer(CalcConfig defaults) {
       this.defaults = defaults;
     }
-    
+
     @Override
     public Site deserialize(
         JsonElement json,

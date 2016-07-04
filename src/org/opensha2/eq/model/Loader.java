@@ -66,7 +66,7 @@ class Loader {
    * absolute path to a zipped model.
    *
    * <p>This method is not thread safe. Any exceptions thrown while loading will
-   * be logged and the JVM will exit.</p>
+   * be logged and the JVM will exit.
    *
    * @param path to model directory or Zip file (absolute)
    * @return a newly created {@code HazardModel}

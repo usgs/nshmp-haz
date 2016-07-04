@@ -22,19 +22,19 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>Reference:</b> Silva, W., Gregor, N., and Darragh, R., 2002,
  * Development of hard rock attenuation relations for central and eastern North
  * America, internal report from Pacific Engineering, November 1, 2002, <a href=
  * "http://www.pacificengineering.org/CEUS/Development%20of%20Regional%20Hard_ABC.pdf"
  * >http://www.pacificengineering.org/CEUS/Development of Regional
- * Hard_ABC.pdf</a></p>
+ * Hard_ABC.pdf</a>
  *
- * <p><b>Component:</b> average horizontal (not clear from publication)</p>
+ * <p><b>Component:</b> average horizontal (not clear from publication)
  *
  * @author Peter Powers
  * @see Gmm#SILVA_02

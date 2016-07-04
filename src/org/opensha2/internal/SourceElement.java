@@ -1,4 +1,4 @@
-package org.opensha2.eq.model;
+package org.opensha2.internal;
 
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
@@ -9,7 +9,8 @@ import com.google.common.base.CaseFormat;
  * HazardModel source XML elements.
  * @author Peter Powers
  */
-enum SourceElement {
+@SuppressWarnings("javadoc")
+public enum SourceElement {
 
   SOURCE,
   SETTINGS,

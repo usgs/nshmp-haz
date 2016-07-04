@@ -17,13 +17,13 @@ import static org.opensha2.gmm.GmmInput.Field.Z1P0;
 import static org.opensha2.gmm.GmmInput.Field.Z2P5;
 import static org.opensha2.gmm.GmmInput.Field.ZHYP;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
-import static org.opensha2.util.TextUtils.NEWLINE;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
-import org.opensha2.calc.Site;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.model.Distance;
 import org.opensha2.eq.model.Rupture;
+import org.opensha2.util.Site;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
@@ -82,7 +82,7 @@ public class GmmInput {
    * properties common to the supported set of ground motion models (GMMs).
    *
    * <p>It is generally preferred to use a {@link Builder} to assemble the
-   * components of a {@code GmmInput}.</p>
+   * components of a {@code GmmInput}.
    *
    * @param Mw moment magnitude of rupture
    * @param rJB Joyner-Boore distance to rupture (in km)

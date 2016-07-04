@@ -5,23 +5,24 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.FINEST;
 
-import static org.opensha2.eq.model.SourceAttribute.DEPTH;
-import static org.opensha2.eq.model.SourceAttribute.DIP;
-import static org.opensha2.eq.model.SourceAttribute.ID;
-import static org.opensha2.eq.model.SourceAttribute.NAME;
-import static org.opensha2.eq.model.SourceAttribute.RAKE;
-import static org.opensha2.eq.model.SourceAttribute.RUPTURE_SCALING;
-import static org.opensha2.eq.model.SourceAttribute.WEIGHT;
-import static org.opensha2.eq.model.SourceAttribute.WIDTH;
-import static org.opensha2.util.Parsing.readDouble;
-import static org.opensha2.util.Parsing.readEnum;
-import static org.opensha2.util.Parsing.readInt;
-import static org.opensha2.util.Parsing.readString;
+import static org.opensha2.internal.Parsing.readDouble;
+import static org.opensha2.internal.Parsing.readEnum;
+import static org.opensha2.internal.Parsing.readInt;
+import static org.opensha2.internal.Parsing.readString;
+import static org.opensha2.internal.SourceAttribute.DEPTH;
+import static org.opensha2.internal.SourceAttribute.DIP;
+import static org.opensha2.internal.SourceAttribute.ID;
+import static org.opensha2.internal.SourceAttribute.NAME;
+import static org.opensha2.internal.SourceAttribute.RAKE;
+import static org.opensha2.internal.SourceAttribute.RUPTURE_SCALING;
+import static org.opensha2.internal.SourceAttribute.WEIGHT;
+import static org.opensha2.internal.SourceAttribute.WIDTH;
 
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.MfdHelper.GR_Data;
 import org.opensha2.eq.model.MfdHelper.SingleData;
 import org.opensha2.geo.LocationList;
+import org.opensha2.internal.SourceElement;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.mfd.MfdType;
 import org.opensha2.mfd.Mfds;
@@ -83,7 +84,7 @@ class InterfaceParser extends DefaultHandler {
   }
 
   InterfaceSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-  IOException {
+      IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -114,10 +115,10 @@ class InterfaceParser extends DefaultHandler {
           double weight = readDouble(WEIGHT, atts);
           sourceSetBuilder = new InterfaceSourceSet.Builder();
           sourceSetBuilder
-          .name(name)
-          .id(id)
-          .weight(weight)
-          .gmms(gmmSet);
+              .name(name)
+              .id(id)
+              .weight(weight)
+              .gmms(gmmSet);
           if (log.isLoggable(FINE)) {
             log.fine("");
             log.fine("       Name: " + name);
@@ -170,8 +171,8 @@ class InterfaceParser extends DefaultHandler {
            */
           try {
             sourceBuilder.depth(readDouble(DEPTH, atts))
-            .dip(readDouble(DIP, atts))
-            .width(readDouble(WIDTH, atts));
+                .dip(readDouble(DIP, atts))
+                .width(readDouble(WIDTH, atts));
           } catch (NullPointerException npe) {
             // keep moving, these atts are not necessarily required
           }
