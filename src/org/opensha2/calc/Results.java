@@ -13,6 +13,7 @@ import org.opensha2.gmm.Imt;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
 import org.opensha2.mfd.Mfds;
+import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;

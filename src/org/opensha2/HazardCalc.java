@@ -9,11 +9,11 @@ import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
-import org.opensha2.calc.Site;
-import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.internal.Logging;
+import org.opensha2.util.Site;
+import org.opensha2.util.Sites;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;

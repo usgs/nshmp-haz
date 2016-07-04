@@ -1,4 +1,4 @@
-package org.opensha2.calc;
+package org.opensha2.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -11,7 +11,7 @@ import static org.opensha2.internal.TextUtils.LOG_INDENT;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 import static org.opensha2.internal.TextUtils.NULL;
 
-import org.opensha2.calc.Site.Builder;
+import org.opensha2.calc.CalcConfig;
 import org.opensha2.geo.Bounds;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
@@ -21,6 +21,7 @@ import org.opensha2.geo.Regions;
 import org.opensha2.internal.GeoJson;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
+import org.opensha2.util.Site.Builder;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;

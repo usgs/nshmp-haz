@@ -13,6 +13,7 @@ import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Imt;
+import org.opensha2.util.Site;
 
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableSetMultimap;

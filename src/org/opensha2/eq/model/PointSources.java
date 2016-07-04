@@ -2,7 +2,6 @@ package org.opensha2.eq.model;
 
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.InputList;
-import org.opensha2.calc.Site;
 import org.opensha2.data.DataTables;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
@@ -11,6 +10,7 @@ import org.opensha2.eq.model.PointSource.DepthModel;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 import org.opensha2.internal.Parsing;
+import org.opensha2.util.Site;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;

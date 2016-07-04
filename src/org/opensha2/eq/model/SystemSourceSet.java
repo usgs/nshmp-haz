@@ -17,13 +17,13 @@ import static org.opensha2.geo.Locations.horzDistanceFast;
 
 import org.opensha2.calc.HazardInput;
 import org.opensha2.calc.InputList;
-import org.opensha2.calc.Site;
 import org.opensha2.calc.SystemInputList;
 import org.opensha2.data.Data;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.model.Distance.Type;
 import org.opensha2.geo.Location;
+import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
