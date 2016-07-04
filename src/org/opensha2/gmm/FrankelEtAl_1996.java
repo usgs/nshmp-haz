@@ -21,17 +21,17 @@ import com.google.common.collect.Range;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>Reference:</b> Frankel, A., Mueller, C., Barnhard, T., Perkins, D.,
  * Leyendecker, E., Dickman, N., Hanson, S., and Hopper, M., 1996, National
  * Seismic Hazard Maps—Documentation June 1996: U.S. Geological Survey Open-File
- * Report 96–532, 110 p.</p>
+ * Report 96–532, 110 p.
  *
- * <p><b>Component:</b> not specified</p>
+ * <p><b>Component:</b> not specified
  *
  * @author Peter Powers
  * @see Gmm#FRANKEL_96

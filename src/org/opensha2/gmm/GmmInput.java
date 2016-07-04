@@ -82,7 +82,7 @@ public class GmmInput {
    * properties common to the supported set of ground motion models (GMMs).
    *
    * <p>It is generally preferred to use a {@link Builder} to assemble the
-   * components of a {@code GmmInput}.</p>
+   * components of a {@code GmmInput}.
    *
    * @param Mw moment magnitude of rupture
    * @param rJB Joyner-Boore distance to rupture (in km)

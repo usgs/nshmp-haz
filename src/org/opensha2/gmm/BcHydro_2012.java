@@ -26,23 +26,23 @@ import java.util.Map;
  * <p>This model supports both slab and interface type events. In the 2008
  * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
  * and the 'slab' form is used with gridded 'deep' events in northern California
- * and the Pacific Northwest.</p>
+ * and the Pacific Northwest.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation notes:</b> <ol><li>Treats all sites as
  * forearc.</li><li>'zTop' is interpreted as hypocentral depth and is only used
  * for slab events; it is limited to 125 km, consistent with other subduction
  * models.</li><li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for
- * interface events and fixed at -0.3 for slab events.</li></ol></p>
+ * interface events and fixed at -0.3 for slab events.</li></ol>
  *
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
- * characterization (GMC) model: Report E658, v. 3, November.</p>
+ * characterization (GMC) model: Report E658, v. 3, November.
  *
- * <p><b>Component:</b> Geometric mean of two horizontal components</p>
+ * <p><b>Component:</b> Geometric mean of two horizontal components
  *
  * @author Peter Powers
  * @see Gmm#BCHYDRO_12_INTER

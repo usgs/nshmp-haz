@@ -31,20 +31,20 @@ import java.util.Map;
  * <p>This model supports both slab and interface type events. In the 2008
  * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
  * and the 'slab' form is used with gridded 'deep' events in northern California
- * and the Pacific Northwest.</p>
+ * and the Pacific Northwest.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> Youngs, R.R., Chiou, S.-J., Silva, W.J., and Humphrey,
  * J.R., 1997, Strong ground motion ground motion models for subduction zone
- * earthquakes: Seismological Research Letters, v. 68, p. 58-73.</p>
+ * earthquakes: Seismological Research Letters, v. 68, p. 58-73.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.58">
- * 10.1785/gssrl.68.1.58</a></p>
+ * 10.1785/gssrl.68.1.58</a>
  *
- * <p><b>Component:</b> Geometric mean of two horizontal components</p>
+ * <p><b>Component:</b> Geometric mean of two horizontal components
  *
  * @author Peter Powers
  * @see Gmm#YOUNGS_97_INTER

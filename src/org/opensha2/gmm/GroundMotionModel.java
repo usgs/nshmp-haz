@@ -11,7 +11,7 @@ package org.opensha2.gmm;
  * <p>Models generally have a single concrete implementation. However, for those
  * supplying region- or source-specific variants, there will typically be an
  * abstract base-model implementation and subclasses to handle each flavor (e.g.
- * {@link ZhaoEtAl_2006}. Each flavor has a unique {@link Gmm} identifier.</p>
+ * {@link ZhaoEtAl_2006}. Each flavor has a unique {@link Gmm} identifier.
  *
  * @author Peter Powers
  * @see Gmm

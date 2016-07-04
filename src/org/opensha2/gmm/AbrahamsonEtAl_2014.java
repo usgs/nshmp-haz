@@ -32,16 +32,16 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> Abrahamson, N.A., Silva, W.J., and Kamai, R., 2014,
  * Summary of the ASK14 ground-motion relation for active crustal regions:
- * Earthquake Spectra, v. 30, n. 3, p. 1025-1055.</p>
+ * Earthquake Spectra, v. 30, n. 3, p. 1025-1055.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070913EQS198M">
- * 10.1193/070913EQS198M</a></p>
+ * 10.1193/070913EQS198M</a>
  *
- * <p><b>Component:</b> RotD50 (average horizontal)</p>
+ * <p><b>Component:</b> RotD50 (average horizontal)
  *
  * @author Peter Powers
  * @see Gmm#ASK_14

@@ -34,19 +34,19 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
- * <p><b>Implementation note:</b> 0.01s SA values used for PGA.</p>
+ * <p><b>Implementation note:</b> 0.01s SA values used for PGA.
  *
  * <p><b>Reference:</b> Chiou, B.S.-J. and Youngs, R.R., 2014, Update of the
  * Chiou and Youngs NGA model for the average horizontal component of peak
  * ground motion and response spectra, Earthquake Spectra, v. 30, n. 3, p.
- * 1117-1153.</p>
+ * 1117-1153.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/072813EQS219M">
- * 10.1193/072813EQS219M</a></p>
+ * 10.1193/072813EQS219M</a>
  *
- * <p><b>Component:</b> RotD50 (average horizontal)</p>
+ * <p><b>Component:</b> RotD50 (average horizontal)
  *
  * @author Peter Powers
  * @see Gmm#CY_14

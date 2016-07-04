@@ -3,7 +3,7 @@ package org.opensha2.gmm;
 /**
  * Ground motion spectrum data container for use with Matlab.
  *
- * <p><b>Note:</b> This class is not intended for use in production code.</p>
+ * <p><b>Note:</b> This class is not intended for use in production code.
  *
  * @author Peter Powers
  * @see MatUtil

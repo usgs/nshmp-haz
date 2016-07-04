@@ -37,17 +37,17 @@ import java.util.Set;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> Campbell, K.W., and Bozorgnia, Y., 2014, NGA-West2
  * ground motion model for the average horizontal components of PGA, PGV, and
  * 5%-damped linear acceleration response spectra: Earthquake Spectra, v. 30, n.
- * 3, p. 1087-1115.</p>
+ * 3, p. 1087-1115.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/062913EQS175M">
- * 10.1193/062913EQS175M</a></p>
+ * 10.1193/062913EQS175M</a>
  *
- * <p><b>Component:</b> RotD50 (average horizontal)</p>
+ * <p><b>Component:</b> RotD50 (average horizontal)
  *
  * @author Peter Powers
  * @see Gmm#CB_14

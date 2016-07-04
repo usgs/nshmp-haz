@@ -35,16 +35,16 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
- * <p><p>Reference:</p> Chiou, B.S.-J. and Youngs R.R., 2008, An NGA model for
+ * <p><p>Reference: Chiou, B.S.-J. and Youngs R.R., 2008, An NGA model for
  * the average horizontal component of peak ground motion and response spectra:
- * Earthquake Spectra, v. 24, n. 1, p. 173-215.</p>
+ * Earthquake Spectra, v. 24, n. 1, p. 173-215.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/1.2894832">
- * 10.1193/1.2894832</a></p>
+ * 10.1193/1.2894832</a>
  *
- * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
+ * <p><b>Component:</b> GMRotI50 (geometric mean)
  *
  * @author Peter Powers
  * @see Gmm#CY_08

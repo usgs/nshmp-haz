@@ -25,26 +25,26 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>Reference:</b> Toro, G.R., 2002, Modification of the Toro et al. (1997)
  * attenuation relations for large magnitudes and short distances: Risk
  * Engineering, Inc. <a href=
  * "http://www.ce.memphis.edu/7137/PDFs/attenuations/Toro_2001_(modification_1997).pdf"
- * >Report</a></p>
+ * >Report</a>
  *
  * <p><b>Reference:</b> Toro, G.R., Abrahamson, N.A., and Schneider, J.F., 1997,
  * A model of strong ground motions from earthquakes in central and eastern
  * North America: Best estimates and uncertainties: Seismological Research
- * Letters, v. 68, p. 41–57.</p>
+ * Letters, v. 68, p. 41–57.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.41">
- * 10.1785/gssrl.68.1.41</a></p>
+ * 10.1785/gssrl.68.1.41</a>
  *
- * <p><b>Component:</b> not specified</p>
+ * <p><b>Component:</b> not specified
  *
  * @author Peter Powers
  * @see Gmm#TORO_97_MB

@@ -40,7 +40,7 @@ import java.util.Map;
  * consistency with the majority of other ground motion models:<ul><li>Class A:
  * 1500 < Vs30</li><li>Class B: 360 < Vs30 ≤ 1500</li><li>Class C: 250 < Vs30 ≤
  * 360</li><li>Class D: 150 < Vs30 ≤ 250</li><li>Class E: s30 ≤ 150 (not
- * supported)</li></ul></li></ul></p>
+ * supported)</li></ul></li></ul>
  *
  * <p><b>Model applicability:</b> This needs work (TODO). Prior implementations
  * restricted distance to 400km, foacl depths to 100km, and Magnitudes between
@@ -52,17 +52,17 @@ import java.util.Map;
  * <p><b>Reference:</b> McVerry, G.H., Zhao, J.X., Abrahamson, N.A., and
  * Somerville, P.G., 2000, Crustal and subduction zone attenuation realations
  * for New Zealand earthquakes: Proc 12th World conference on earthquake
- * engineering, Auckland, New Zealand, February, 2000.</p>
+ * engineering, Auckland, New Zealand, February, 2000.
  *
  * <p><b>Reference:</b> McVerry, G.H., Zhao, J.X., Abrahamson, N.A., and
  * Somerville, P.G., 2000, New Zealand acceleration response spectrum
  * attenuation relations for crustal and subduction zone earthquakes: Bulletin
  * of the New Zealand Society of Earthquake Engineering, v. 39, n. 4, p.
- * 1-58.</p>
+ * 1-58.
  *
  * <p><b>Component:</b> Model supports geometric mean or maximum of two
  * horizontal components; only concrete implementations of max-horizontal
- * component are provided at this time.</p>
+ * component are provided at this time.
  *
  * @author Brendon A. Bradley
  * @author Peter Powers

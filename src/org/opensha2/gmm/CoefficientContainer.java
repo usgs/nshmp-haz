@@ -27,7 +27,7 @@ import java.util.Set;
  * <p>Coefficients are loaded from CSV files. When such files are updated, it
  * may be necessary to edit certain {@code Imt} designations that are commonly
  * coded as integers (e.g. -1 = PGV, usually) or coefficient IDs that contain
- * illegal characters (e.g those with units labels in parentheses). </p>
+ * illegal characters (e.g those with units labels in parentheses). 
  *
  * @author Peter Powers
  */

@@ -29,17 +29,17 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> Boore, D.M., and Atkinson, G.M., 2008, Ground-motion
  * prediction equations for the average horizontal component of PGA, PGV, and
  * 5%-damped PSA at spectral periods between 0.01s and 10.0s: Earthquake
- * Spectra, v. 24, n. 1, pp. 99-138.</p>
+ * Spectra, v. 24, n. 1, pp. 99-138.
  *
  * <p><b>doi:</b><a href="http://dx.doi.org/10.1193/1.2830434">
- * http://dx.doi.org/10.1193/1.2830434</a></p>
+ * http://dx.doi.org/10.1193/1.2830434</a>
  *
- * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
+ * <p><b>Component:</b> GMRotI50 (geometric mean)
  *
  * @author Peter Powers
  * @see Gmm#BA_08

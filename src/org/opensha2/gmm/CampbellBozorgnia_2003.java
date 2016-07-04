@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> Campbell, K.W., and Bozorgnia, Y., 2003, Updated
  * near-source ground-motion (attenuation) relations for the horizontal and

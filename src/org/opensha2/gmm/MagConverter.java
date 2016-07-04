@@ -15,7 +15,7 @@ public enum MagConverter {
    *
    * <p><b>Reference:</b> Johnston, A.C., 1996, Seismic moment assessment of
    * earthquakes in stable continental regions—I. Instrumental seismicity:
-   * Geophysical Journal International, v. 126, p. 381–414.</p>
+   * Geophysical Journal International, v. 126, p. 381–414.
    */
   MB_TO_MW_JOHNSTON {
     @Override
@@ -29,7 +29,7 @@ public enum MagConverter {
    *
    * <p><b>Reference:</b> Atkinson, G.M., and Boore, D.M., 1995, Ground motion
    * relations for eastern North America: Bulletin of the Seismological Society
-   * of America, v. 85, p. 17–30.</p>
+   * of America, v. 85, p. 17–30.
    */
   MB_TO_MW_ATKIN_BOORE {
     @Override

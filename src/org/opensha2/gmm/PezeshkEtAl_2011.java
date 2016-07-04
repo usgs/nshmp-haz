@@ -21,20 +21,20 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Implementation note:</b> Mean values are clamped per
- * {@link GmmUtils#ceusMeanClip(Imt, double)}.</p>
+ * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>Reference:</b> Pezeshk, S., Zandieh, A., Tavakoli, B., 2011. Hybrid
  * empirical ground-motion prediction equations for eastern North America using
  * NGA models and updated seismological parameters: Bulletin of the
- * Seismological Society of America, v. 101, no. 4, p. 1859–1870.</p>
+ * Seismological Society of America, v. 101, no. 4, p. 1859–1870.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120100144">
- * 10.1785/0120100144</a></p>
+ * 10.1785/0120100144</a>
  *
- * <p><b>Component:</b> GMRotI50 (geometric mean)</p>
+ * <p><b>Component:</b> GMRotI50 (geometric mean)
  *
  * @author Peter Powers
  * @see Gmm#PEZESHK_11

@@ -22,17 +22,17 @@ import java.util.Map;
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
- * desired {@link Imt}.</p>
+ * desired {@link Imt}.
  *
  * <p><b>Reference:</b> Atkinson, G.M., 2015, Ground-motion prediction equation
  * for small-to-moderate events at short hypocentral distances, with application
  * to induced-seismicity hazards: Bulletin of the Seismological Society of
- * America, v. 105, p. 981-992.</p>
+ * America, v. 105, p. 981-992.
  *
  * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120140142">
- * 10.1785/0120140142</a></p>
+ * 10.1785/0120140142</a>
  *
- * <p><b>Component:</b> orientation-independent horizontal</p>
+ * <p><b>Component:</b> orientation-independent horizontal
  *
  * @author Peter Powers
  * @see Gmm#AM_09_INTER

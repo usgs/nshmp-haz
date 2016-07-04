@@ -49,7 +49,7 @@ public final class GmmUtils {
    * on 45° diagonals.
    *
    * <p><b>Note:</b> This is inconsistent with next generation attenuation
-   * relationship (NGAW1 and NGAW2) recommendations.</p>
+   * relationship (NGAW1 and NGAW2) recommendations.
    *
    * @param rake to convert (in degrees)
    * @return the corresponding {@code FaultStyle}
