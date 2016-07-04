@@ -81,7 +81,7 @@ public final class Mfds {
    * {@code true}.
    *
    * <p><b>NOTE:</b> This method expects evenly spaced magnitudes; if they are
-   * not, results are undefined.</p>
+   * not, results are undefined.
    *
    * @param mags for MFD
    * @param rates for MFD

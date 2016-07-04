@@ -33,7 +33,7 @@ public final class DataTables {
    * {@link Data#buildCleanSequence(double, double, double, boolean, int)} with
    * a precision value of 4 decimal places. This may change in the future
    *
-   * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5, 7.5]</p>
+   * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5, 7.5]
    *
    * @param min lower edge of lowermost bin
    * @param max upper edge of uppermost bin

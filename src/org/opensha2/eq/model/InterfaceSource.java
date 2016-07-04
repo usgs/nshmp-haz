@@ -28,7 +28,7 @@ import java.util.List;
  * locations on the fault surface with appropriately scaled rates.
  *
  * <p>An {@code InterfaceSource} cannot be created directly; it may only be
- * created by a private parser.</p>
+ * created by a private parser.
  *
  * @author Peter Powers
  */

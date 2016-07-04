@@ -37,7 +37,7 @@ import java.util.Map;
  * appropriately scaled rates.
  *
  * <p>A {@code FaultSource} cannot be created directly; it may only be created
- * by a private parser.</p>
+ * by a private parser.
  *
  * @author Peter Powers
  */

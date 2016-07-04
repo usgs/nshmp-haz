@@ -73,11 +73,11 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
    * <p>For more information on a HazardModel directory and file structure, see
    * the <a
    * href="https://github.com/usgs/nshmp-haz/wiki/Earthquake-Source-Models"
-   * target="_top">nshmp-haz wiki</a>.</p>
+   * target="_top">nshmp-haz wiki</a>.
    *
    * <p><b>Notes:</b> HazardModel loading is not thread safe. Also, there are a
    * wide variety of exceptions that may be encountered when loading a model. In
-   * most cases, the exception will be logged and the JVM will exit.</p>
+   * most cases, the exception will be logged and the JVM will exit.
    *
    * @param path to {@code HazardModel} directory or Zip file
    * @return a newly instantiated {@code HazardModel}

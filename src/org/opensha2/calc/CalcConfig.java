@@ -341,7 +341,7 @@ public final class CalcConfig {
     /**
      * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
      *
-     * <p><b>Default:</b> {@code true} (inferred)</p>
+     * <p><b>Default:</b> {@code true} (inferred)
      */
     public final boolean vsInferred;
 
@@ -349,7 +349,7 @@ public final class CalcConfig {
      * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
      *
      * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
-     * default value or model)</p>
+     * default value or model)
      */
     public final double z1p0;
 
@@ -357,7 +357,7 @@ public final class CalcConfig {
      * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
      *
      * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
-     * default value or model)</p>
+     * default value or model)
      */
     public final double z2p5;
 

@@ -58,7 +58,7 @@ public class DeaggCalc {
    * calculation completes.
    *
    * <p><b>Note:</b> any model initialization settings in {@code config} will be
-   * ignored as the supplied model will already have been initialized.</p>
+   * ignored as the supplied model will already have been initialized.
    *
    * @param model to use
    * @param config calculation configuration

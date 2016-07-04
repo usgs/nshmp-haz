@@ -127,7 +127,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
    *
    * <p>We skip the notion of a {@code Rupture} for now. Aleatory uncertainty on
    * magnitude isn't required, but if it is, we'll alter this implementation to
-   * return List<GmmInput> per source rather than one GmmInput.</p>
+   * return List<GmmInput> per source rather than one GmmInput.
    */
   public final class SystemSource implements Source {
 

@@ -47,7 +47,7 @@ import java.util.NavigableMap;
  * specified, this custom {@code Iterable}'s {@code iterator()} behaves the same
  * as the built-in {@link #iterator()}. If the specified scaling <em>is</em>
  * location-dependent, the standard {@link #iterator()} returns ruptures derived
- * from 0.1° spaced sources.</p>
+ * from 0.1° spaced sources.
  *
  * @author Peter Powers
  */
@@ -196,11 +196,11 @@ public class AreaSource implements Source {
    * <p>{@code SCALED_SM} provides fine source spacing of 0.02° from 0 to 20km,
    * 0.05° from 20 to 50 km, 0.1° from 50 to 100 km, 0.2 from 100 to 200 km, 0.5
    * for 200 to 400 km, and uses a single source at the closest point on the
-   * area border beyond 400 km.</p>
+   * area border beyond 400 km.
    *
    * <p>{@code SCALED_LG} provides coarser source spacing of 0.1° from 0 to 100
    * km, 0.2 from 100 to 200 km, 0.5 for 200 to 400 km, and uses a single source
-   * at the closest point on the area border beyond 400 km.</p>
+   * at the closest point on the area border beyond 400 km.
    */
   @SuppressWarnings("javadoc")
   public enum GridScaling {

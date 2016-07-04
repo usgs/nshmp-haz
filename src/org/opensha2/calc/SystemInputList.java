@@ -11,7 +11,7 @@ import org.opensha2.eq.model.SystemSourceSet;
  *
  * <p>Presently, a {@code SystemSourceSet} consists of sources for which there
  * is only a single rupture. Note that this could change in the future if some
- * magnitude variability were imposed on each source.</p>
+ * magnitude variability were imposed on each source.
  *
  * @author Peter Powers
  */

@@ -25,7 +25,7 @@ import static org.opensha2.geo.Locations.vertDistance;
  * for depth to be positive down. Also, azimuth is stored internally in radians
  * for computational convenience. Be sure to use the {@link #azimuth()}
  * (radians) or // {@link #azimuthDegrees()} (decimal-degrees) where
- * appropriate.</p>
+ * appropriate.
  *
  * @author Peter Powers
  */

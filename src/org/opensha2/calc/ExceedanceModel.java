@@ -24,10 +24,10 @@ import java.util.List;
  * <p>Each model implements methods that compute the probability of exceeding a
  * single value or a {@link XySequence} of values. Some arguments are only used
  * by some models; for example, {@link #NONE} ignores σ, but it must be supplied
- * for consistency. See individual models for details.</p>
+ * for consistency. See individual models for details.
  *
  * <p>Internally, models use a high precision approximation of the Gauss error
- * function (see Abramowitz and Stegun 7.1.26) when computing exceedances.</p>
+ * function (see Abramowitz and Stegun 7.1.26) when computing exceedances.
  *
  * @author Peter Powers
  */
@@ -44,7 +44,7 @@ public enum ExceedanceModel {
    * complementary unit step function for a range of values spanning μ.
    *
    * <p>Model ignores {@code σ}, truncation level,{@code n}, and {@code imt}
-   * .</p>
+   * .
    */
   NONE {
     @Override
@@ -64,7 +64,7 @@ public enum ExceedanceModel {
   /**
    * No truncation.
    *
-   * <p>Model ignores truncation level, {@code n}, and {@code imt}.</p>
+   * <p>Model ignores truncation level, {@code n}, and {@code imt}.
    */
   TRUNCATION_OFF {
     @Override
@@ -81,7 +81,7 @@ public enum ExceedanceModel {
   /**
    * Upper truncation only at {@code μ + σ * n}.
    *
-   * <p>Model ignores {@code imt}.</p>
+   * <p>Model ignores {@code imt}.
    */
   TRUNCATION_UPPER_ONLY {
     @Override
@@ -98,7 +98,7 @@ public enum ExceedanceModel {
   /**
    * Upper and lower truncation at {@code μ ± σ * n}.
    *
-   * <p>Model ignores {@code imt}.</p>
+   * <p>Model ignores {@code imt}.
    */
   TRUNCATION_LOWER_UPPER {
     @Override
@@ -137,7 +137,7 @@ public enum ExceedanceModel {
    * distributions (with 50% weight each) created using modulated σ-values (0.8σ
    * and 1.2σ). Model does not impose any truncation.
    *
-   * <p>Model ignores truncation level, {@code n}, and {@code imt}.</p>
+   * <p>Model ignores truncation level, {@code n}, and {@code imt}.
    */
   PEER_MIXTURE_MODEL {
     @Override

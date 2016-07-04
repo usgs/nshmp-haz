@@ -105,14 +105,14 @@ public class Site implements Named {
   /**
    * The average shear-wave velocity down to 30 meters depth.
    *
-   * <p>Default: 760.0 m/sec</p>
+   * <p>Default: 760.0 m/sec
    */
   public final double vs30;
 
   /**
    * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
    *
-   * <p>Default: true (inferred)</p>
+   * <p>Default: true (inferred)
    */
   public final boolean vsInferred;
 
@@ -120,7 +120,7 @@ public class Site implements Named {
    * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
    *
    * <p>Default: {@code NaN} ({@link GroundMotionModel}s will use a default
-   * value or model)</p>
+   * value or model)
    */
   public final double z1p0;
 
@@ -128,7 +128,7 @@ public class Site implements Named {
    * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
    *
    * <p>Default: {@code NaN} ({@link GroundMotionModel}s will use a default
-   * value or model)</p>
+   * value or model)
    */
   public final double z2p5;
 

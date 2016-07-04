@@ -59,7 +59,7 @@ public class HazardCalc {
    * <p>Please refer to the nshmp-haz <a
    * href="https://github.com/usgs/nshmp-haz/wiki" target="_top">wiki</a> for
    * comprehensive descriptions of source models, configuration files, site
-   * files, and hazard calculations.</p>
+   * files, and hazard calculations.
    *
    * @see <a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running"
    *      target="_top"> nshmp-haz wiki</a>
@@ -245,7 +245,7 @@ public class HazardCalc {
    * completes.
    *
    * <p><b>Note:</b> any model initialization settings in {@code config} will be
-   * ignored as the supplied model will already have been initialized.</p>
+   * ignored as the supplied model will already have been initialized.
    *
    * @param model to use
    * @param config calculation configuration

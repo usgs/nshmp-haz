@@ -55,7 +55,7 @@ import java.util.List;
  * <p><b>Note:</b> Due to rounding errors and the use of an {@link Area}
  * internally to define a {@code Region}'s border,
  * {@link Region#contains(Location)} may not always return the expected result
- * near a border. See {@link Region#contains(Location)} for further details.</p>
+ * near a border. See {@link Region#contains(Location)} for further details.
  *
  * <p>Use the {@link Regions} factory class to create new regions.
  *
@@ -106,7 +106,7 @@ public class Region implements Named {
    * {@code Region}'s southernmost point might be initially defined as 40.0°,
    * the internal {@code Area} may return 40.0000000000001 on a call to
    * {@code getMinLat()} and calls to {@code contains(new Location(40,*))} will
-   * return false.</p>
+   * return false.
    *
    * @param loc the {@code Location} to test
    * @return {@code true} if the {@code Location} is inside the Region,

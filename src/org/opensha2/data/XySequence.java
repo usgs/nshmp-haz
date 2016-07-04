@@ -27,7 +27,7 @@ import java.util.RandomAccess;
  *
  * <p>Although this class is not final, it can not be subclassed. Mutable
  * instances of this class are not thread-safe for operations that alter
- * y-values.</p>
+ * y-values.
  *
  * @author Peter Powers
  */
