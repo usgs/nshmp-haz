@@ -1,56 +1,56 @@
 name,                            lon,    lat
-Denver CO,                   -105.00,  39.75
-La Junta CO,                 -103.55,  38.00
-Trinidad CO,                 -104.50,  37.20
-Artesia NM,                  -104.40,  32.85
-Cheyenne WY,                 -104.80,  41.15
-Washington DC,                -77.05,  38.90
 Atmore AL,                    -87.50,  31.00
 Birmingham AL,                -86.80,  33.50
 El Dorado AR,                 -92.70,  33.20
 Greenbrier AR,                -92.40,  35.20
 Little Rock AR,               -92.30,  34.75
+Denver CO,                   -105.00,  39.75
+La Junta CO,                 -103.55,  38.00
+Trinidad CO,                 -104.50,  37.20
 Hartford CT,                  -72.70,  41.75
+Washington DC,                -77.05,  38.90
 Wilmington DE,                -75.55,  39.75
 Jacksonville FL,              -81.65,  30.35
 Miami FL,                     -80.20,  25.75
 Atlanta GA,                   -84.40,  33.75
 Lincolnton GA,                -82.50,  33.80
 Savannah GA,                  -81.10,  32.10
+Des Moines IA,                -93.60,  41.60
 Central IL,                   -90.00,  40.00
 Chicago IL,                   -87.65,  41.85
 Evansville IN,                -87.60,  38.00
 Indianapolis IN,              -86.15,  39.80
-Des Moines IA,                -93.60,  41.60
 Topeka KS,                    -95.70,  39.05
 Wichita KS,                   -97.35,  37.70
 Louisville KY,                -85.75,  38.25
 New Orleans LA,               -90.05,  29.95
+Boston MA,                    -71.05,  42.35
+Baltimore MD,                 -76.60,  39.30
 Augusta ME,                   -69.80,  44.30
 Bangor ME,                    -68.80,  44.80
 Portland ME,                  -70.25,  43.65
-Baltimore MD,                 -76.60,  39.30
-Boston MA,                    -71.05,  42.35
 Detroit MI,                   -83.05,  42.35
 Minneapolis MN,               -93.30,  45.00
-Jackson MS,                   -90.20,  32.30
 Cape Girardeau MO,            -89.50,  37.30
 New Madrid MO,                -89.55,  36.60
-St Louis MO,                  -90.20,  38.60
+St. Louis MO,                 -90.20,  38.60
+Jackson MS,                   -90.20,  32.30
+Charlotte NC,                 -80.85,  35.25
+Fargo ND,                     -96.80,  46.90
 Omaha NE,                     -96.00,  41.25
 Manchester NH,                -71.45,  43.00
 Trenton NJ,                   -74.75,  40.20
+Artesia NM,                  -104.40,  32.85
 Batavia NY,                   -78.20,  43.00
 Malone NY,                    -74.30,  44.85
 New York NY,                  -74.00,  40.75
-Charlotte NC,                 -80.85,  35.25
-Fargo ND,                     -96.80,  46.90
 Columbus OH,                  -83.00,  39.95
 Sidney OH,                    -84.15,  40.30
 Youngstown OH,                -80.65,  41.10
 Elgin OK,                     -98.30,  34.80
 Oklahoma City OK,             -97.50,  35.50
 Philadelphia PA,              -75.15,  39.95
+Pittsburg PA,                 -80.00,  40.45
 Providence RI,                -71.40,  41.80
 Charleston SC,                -79.95,  32.80
 Edgemont SD,                 -103.85,  43.30
@@ -66,7 +66,9 @@ Houston TX,                   -95.35,  29.75
 Kermit TX,                   -103.10,  31.85
 San Antonio TX,               -98.50,  29.40
 Snyder TX,                   -100.90,  32.70
-Burlington VT,                -73.20,  44.50
+Blacksburg VA,                -80.40,  37.25
 Richmond VA,                  -77.45,  37.55
-Charleston WV,                -81.65,  38.35
+Burlington VT,                -73.20,  44.50
 Milwaukee WI,                 -87.90,  43.05
+Charleston WV,                -81.65,  38.35
+Cheyenne WY,                 -104.80,  41.15
