@@ -215,11 +215,11 @@ final class NshmpSiteFiles {
   }
 
   static void writeNshmpSites() throws IOException {
-    writeNshmpSites("nshmp", EnumSet.allOf(NshmpSite.class));
+//    writeNshmpSites("nshmp", EnumSet.allOf(NshmpSite.class));
     writeNshmpSites("ceus", NshmpSite.ceus());
-    writeNshmpSites("wus", NshmpSite.wus());
-    writeNshmpSites("nrc", NshmpSite.nrc());
-    writeSites("nehrp", NshmpSite.nehrp());
+//    writeNshmpSites("wus", NshmpSite.wus());
+//    writeNshmpSites("nrc", NshmpSite.nrc());
+//    writeSites("nehrp", NshmpSite.nehrp());
   }
 
   static void writeNshmpSites(String name, Collection<NshmpSite> sites)

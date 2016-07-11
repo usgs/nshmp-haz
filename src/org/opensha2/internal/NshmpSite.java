@@ -4,6 +4,7 @@ import org.opensha2.geo.Location;
 import org.opensha2.util.NamedLocation;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -343,7 +344,10 @@ public enum NshmpSite implements NamedLocation {
   static class StateComparator implements Comparator<NshmpSite> {
     @Override
     public int compare(NshmpSite s1, NshmpSite s2) {
-      return s1.state().compareTo(s2.state());
+      return ComparisonChain.start()
+          .compare(s1.state(), s2.state())
+          .compare(s1.name(), s2.name())
+          .result();
     }
   }
 
