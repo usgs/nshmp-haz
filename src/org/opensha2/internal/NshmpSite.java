@@ -179,6 +179,7 @@ public enum NshmpSite implements NamedLocation {
   ELGIN_OK(-98.30, 34.80),
   OKLAHOMA_CITY_OK(-97.50, 35.50),
   PHILADELPHIA_PA(-75.15, 39.95),
+  PITTSBURG_PA(-80.00, 40.45),
   PROVIDENCE_RI(-71.40, 41.80),
   CHARLESTON_SC(-79.95, 32.80),
   EDGEMONT_SD(-103.85, 43.30),
@@ -195,6 +196,7 @@ public enum NshmpSite implements NamedLocation {
   SAN_ANTONIO_TX(-98.50, 29.40),
   SNYDER_TX(-100.90, 32.70),
   BURLINGTON_VT(-73.20, 44.50),
+  BLACKSBURG_VA(-80.40, 27.25),
   RICHMOND_VA(-77.45, 37.55),
   CHARLESTON_WV(-81.65, 38.35),
   MILWAUKEE_WI(-87.90, 43.05);
