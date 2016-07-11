@@ -5,72 +5,6 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-105.0, 39.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Denver CO"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-103.55, 38.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "La Junta CO"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-104.5, 37.2]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Trinidad CO"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-104.4, 32.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Artesia NM"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-104.8, 41.15]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Cheyenne WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-77.05, 38.9]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Washington DC"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
         "coordinates": [-87.5, 31.0]
       },
       "properties": {
@@ -126,11 +60,55 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-105.0, 39.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Denver CO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.55, 38.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "La Junta CO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.5, 37.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Trinidad CO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-72.7, 41.75]
       },
       "properties": {
         "marker-size": "small",
         "title": "Hartford CT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-77.05, 38.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Washington DC"
       }
     },
     {
@@ -203,6 +181,17 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-93.6, 41.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Des Moines IA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-90.0, 40.0]
       },
       "properties": {
@@ -241,17 +230,6 @@
       "properties": {
         "marker-size": "small",
         "title": "Indianapolis IN"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-93.6, 41.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Des Moines IA"
       }
     },
     {
@@ -302,6 +280,28 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-71.05, 42.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Boston MA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-76.6, 39.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Baltimore MD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-69.8, 44.3]
       },
       "properties": {
@@ -335,28 +335,6 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-76.6, 39.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Baltimore MD"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-71.05, 42.35]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Boston MA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
         "coordinates": [-83.05, 42.35]
       },
       "properties": {
@@ -373,17 +351,6 @@
       "properties": {
         "marker-size": "small",
         "title": "Minneapolis MN"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-90.2, 32.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Jackson MS"
       }
     },
     {
@@ -423,6 +390,39 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-90.2, 32.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Jackson MS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.85, 35.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Charlotte NC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-96.8, 46.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Fargo ND"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-96.0, 41.25]
       },
       "properties": {
@@ -456,6 +456,17 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-104.4, 32.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Artesia NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-78.2, 43.0]
       },
       "properties": {
@@ -483,28 +494,6 @@
       "properties": {
         "marker-size": "small",
         "title": "New York NY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-80.85, 35.25]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Charlotte NC"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-96.8, 46.9]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Fargo ND"
       }
     },
     {
@@ -571,6 +560,17 @@
       "properties": {
         "marker-size": "small",
         "title": "Philadelphia PA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.0, 40.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Pittsburg PA"
       }
     },
     {
@@ -742,11 +742,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-73.2, 44.5]
+        "coordinates": [-80.4, 37.25]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Burlington VT"
+        "title": "Blacksburg VA"
       }
     },
     {
@@ -764,11 +764,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-81.65, 38.35]
+        "coordinates": [-73.2, 44.5]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Charleston WV"
+        "title": "Burlington VT"
       }
     },
     {
@@ -780,6 +780,28 @@
       "properties": {
         "marker-size": "small",
         "title": "Milwaukee WI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.65, 38.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Charleston WV"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.8, 41.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cheyenne WY"
       }
     }
   ]

@@ -5,176 +5,44 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-121.75, 36.25]
+        "coordinates": [-112.15, 36.05]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Big Sur CA"
+        "title": "Grand Canyon Village AZ"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-120.4, 36.15]
+        "coordinates": [-112.85, 33.4]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Coalinga CA"
+        "title": "Palo Verde AZ"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-122.0, 37.95]
+        "coordinates": [-112.1, 33.45]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Concord CA"
+        "title": "Phoenix AZ"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-124.2, 40.8]
+        "coordinates": [-110.95, 32.2]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Eureka CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-119.75, 36.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Fresno CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-121.9, 36.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Monterey CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-121.65, 37.15]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Morgan Hill CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.25, 37.8]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Oakland CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.4, 40.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Redding CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-121.5, 38.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Sacramento CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.4, 37.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "San Francisco CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-121.9, 37.35]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "San Jose CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.3, 37.55]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "San Mateo CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.05, 36.95]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Santa Cruz CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.7, 38.45]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Santa Rosa CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.25, 38.1]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Vallejo CA"
+        "title": "Tucson AZ"
       }
     },
     {
@@ -186,6 +54,17 @@
       "properties": {
         "marker-size": "small",
         "title": "Bakersfield CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.75, 36.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Big Sur CA"
       }
     },
     {
@@ -208,6 +87,28 @@
       "properties": {
         "marker-size": "small",
         "title": "Century City CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-120.4, 36.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Coalinga CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.0, 37.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Concord CA"
       }
     },
     {
@@ -241,6 +142,28 @@
       "properties": {
         "marker-size": "small",
         "title": "Diablo Canyon CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-124.2, 40.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Eureka CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-119.75, 36.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Fresno CA"
       }
     },
     {
@@ -302,11 +225,44 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-121.9, 36.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Monterey CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.65, 37.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Morgan Hill CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-118.55, 34.2]
       },
       "properties": {
         "marker-size": "small",
         "title": "Northridge CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.25, 37.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Oakland CA"
       }
     },
     {
@@ -346,11 +302,66 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-122.4, 40.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Redding CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-117.4, 33.95]
       },
       "properties": {
         "marker-size": "small",
         "title": "Riverside CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.5, 38.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Sacramento CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-119.7, 34.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Santa Barbara CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.05, 36.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Santa Cruz CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.7, 38.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Santa Rosa CA"
       }
     },
     {
@@ -379,11 +390,44 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-122.4, 37.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "San Francisco CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.9, 37.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "San Jose CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-120.65, 35.3]
       },
       "properties": {
         "marker-size": "small",
         "title": "San Luis Obispo CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.3, 37.55]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "San Mateo CA"
       }
     },
     {
@@ -401,11 +445,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-119.7, 34.45]
+        "coordinates": [-122.25, 38.1]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Santa Barbara CA"
+        "title": "Vallejo CA"
       }
     },
     {
@@ -417,50 +461,6 @@
       "properties": {
         "marker-size": "small",
         "title": "Ventura CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-112.15, 36.05]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Grand Canyon Village AZ"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-112.85, 33.4]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Palo Verde AZ"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-112.1, 33.45]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Phoenix AZ"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.95, 32.2]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Tucson AZ"
       }
     },
     {
@@ -544,11 +544,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-112.6, 44.65]
+        "coordinates": [-108.5, 45.8]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Lima MT"
+        "title": "Billings MT"
       }
     },
     {
@@ -566,11 +566,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-108.5, 45.8]
+        "coordinates": [-112.6, 44.65]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Billings MT"
+        "title": "Lima MT"
       }
     },
     {
@@ -582,6 +582,50 @@
       "properties": {
         "marker-size": "small",
         "title": "Missoula MT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.6, 35.1]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Albuquerque NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.4, 32.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Artesia NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.75, 32.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Las Cruces NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.3, 35.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Los Alamos National Lab NM"
       }
     },
     {
@@ -626,149 +670,6 @@
       "properties": {
         "marker-size": "small",
         "title": "Reno NV"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-106.6, 35.1]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Albuquerque NM"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-104.4, 32.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Artesia NM"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-106.3, 35.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Los Alamos National Lab NM"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-106.75, 32.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Las Cruces NM"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-112.0, 41.5]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Brigham City UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-113.05, 37.7]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Cedar City UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.15, 39.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Green River UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-111.65, 40.25]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Provo UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-111.9, 40.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Salt Lake City UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-106.3, 42.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Casper WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-104.8, 41.15]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Cheyenne WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.75, 43.5]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Jackson WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.55, 44.4]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Yellowstone WY"
       }
     },
     {
@@ -896,6 +797,105 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-103.85, 43.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Edgemont SD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-101.85, 35.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Amarillo TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.1, 31.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Kermit TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-100.9, 32.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Snyder TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-112.0, 41.5]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Brigham City UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-113.05, 37.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cedar City UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-110.15, 39.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Green River UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.65, 40.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Provo UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.9, 40.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Salt Lake City UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-123.8, 47.0]
       },
       "properties": {
@@ -1006,44 +1006,44 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-103.85, 43.3]
+        "coordinates": [-106.3, 42.85]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Edgemont SD"
+        "title": "Casper WY"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-101.85, 35.2]
+        "coordinates": [-104.8, 41.15]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Amarillo TX"
+        "title": "Cheyenne WY"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-103.1, 31.85]
+        "coordinates": [-110.75, 43.5]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Kermit TX"
+        "title": "Jackson WY"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-100.9, 32.7]
+        "coordinates": [-110.55, 44.4]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Snyder TX"
+        "title": "Yellowstone WY"
       }
     }
   ]
