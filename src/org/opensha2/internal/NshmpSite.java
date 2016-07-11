@@ -7,6 +7,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
+import java.util.Comparator;
 import java.util.EnumSet;
 
 /**
@@ -337,6 +338,13 @@ public enum NshmpSite implements NamedLocation {
         CHARLESTON_SC,
         CHICAGO_IL,
         NEW_YORK_NY);
+  }
+  
+  static class StateComparator implements Comparator<NshmpSite> {
+    @Override
+    public int compare(NshmpSite s1, NshmpSite s2) {
+      return s1.state().compareTo(s2.state());
+    }
   }
 
 }
