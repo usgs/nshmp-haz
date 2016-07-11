@@ -198,7 +198,7 @@ public enum NshmpSite implements NamedLocation {
   SAN_ANTONIO_TX(-98.50, 29.40),
   SNYDER_TX(-100.90, 32.70),
   BURLINGTON_VT(-73.20, 44.50),
-  BLACKSBURG_VA(-80.40, 27.25),
+  BLACKSBURG_VA(-80.40, 37.25),
   RICHMOND_VA(-77.45, 37.55),
   CHARLESTON_WV(-81.65, 38.35),
   MILWAUKEE_WI(-87.90, 43.05);
@@ -228,6 +228,9 @@ public enum NshmpSite implements NamedLocation {
   @Override
   public String toString() {
     String label = Parsing.enumLabelWithSpaces(this, true);
+    if (label.startsWith("St ")) {
+      label = "St. " + label.substring(3);
+    }
     int stripIndex = label.lastIndexOf(' ');
     return label.substring(0, stripIndex) + " " + state.name();
   }
@@ -345,7 +348,7 @@ public enum NshmpSite implements NamedLocation {
     @Override
     public int compare(NshmpSite s1, NshmpSite s2) {
       return ComparisonChain.start()
-          .compare(s1.state(), s2.state())
+          .compare(s1.state().name(), s2.state().name())
           .compare(s1.name(), s2.name())
           .result();
     }
