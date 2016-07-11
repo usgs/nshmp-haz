@@ -5,176 +5,99 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-121.75, 36.25]
+        "coordinates": [-87.5, 31.0]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Big Sur CA"
+        "title": "Atmore AL"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-120.4, 36.15]
+        "coordinates": [-86.8, 33.5]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Coalinga CA"
+        "title": "Birmingham AL"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-122.0, 37.95]
+        "coordinates": [-92.7, 33.2]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Concord CA"
+        "title": "El Dorado AR"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-124.2, 40.8]
+        "coordinates": [-92.4, 35.2]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Eureka CA"
+        "title": "Greenbrier AR"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-119.75, 36.75]
+        "coordinates": [-92.3, 34.75]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Fresno CA"
+        "title": "Little Rock AR"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-121.9, 36.6]
+        "coordinates": [-112.15, 36.05]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Monterey CA"
+        "title": "Grand Canyon Village AZ"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-121.65, 37.15]
+        "coordinates": [-112.85, 33.4]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Morgan Hill CA"
+        "title": "Palo Verde AZ"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-122.25, 37.8]
+        "coordinates": [-112.1, 33.45]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Oakland CA"
+        "title": "Phoenix AZ"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-122.4, 40.6]
+        "coordinates": [-110.95, 32.2]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Redding CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-121.5, 38.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Sacramento CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.4, 37.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "San Francisco CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-121.9, 37.35]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "San Jose CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.3, 37.55]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "San Mateo CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.05, 36.95]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Santa Cruz CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.7, 38.45]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Santa Rosa CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.25, 38.1]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Vallejo CA"
+        "title": "Tucson AZ"
       }
     },
     {
@@ -186,6 +109,17 @@
       "properties": {
         "marker-size": "small",
         "title": "Bakersfield CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.75, 36.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Big Sur CA"
       }
     },
     {
@@ -208,6 +142,28 @@
       "properties": {
         "marker-size": "small",
         "title": "Century City CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-120.4, 36.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Coalinga CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.0, 37.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Concord CA"
       }
     },
     {
@@ -241,6 +197,28 @@
       "properties": {
         "marker-size": "small",
         "title": "Diablo Canyon CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-124.2, 40.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Eureka CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-119.75, 36.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Fresno CA"
       }
     },
     {
@@ -302,11 +280,44 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-121.9, 36.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Monterey CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.65, 37.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Morgan Hill CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-118.55, 34.2]
       },
       "properties": {
         "marker-size": "small",
         "title": "Northridge CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.25, 37.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Oakland CA"
       }
     },
     {
@@ -346,11 +357,66 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-122.4, 40.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Redding CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-117.4, 33.95]
       },
       "properties": {
         "marker-size": "small",
         "title": "Riverside CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.5, 38.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Sacramento CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-119.7, 34.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Santa Barbara CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.05, 36.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Santa Cruz CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.7, 38.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Santa Rosa CA"
       }
     },
     {
@@ -379,11 +445,44 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-122.4, 37.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "San Francisco CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.9, 37.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "San Jose CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-120.65, 35.3]
       },
       "properties": {
         "marker-size": "small",
         "title": "San Luis Obispo CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.3, 37.55]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "San Mateo CA"
       }
     },
     {
@@ -401,11 +500,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-119.7, 34.45]
+        "coordinates": [-122.25, 38.1]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Santa Barbara CA"
+        "title": "Vallejo CA"
       }
     },
     {
@@ -417,50 +516,6 @@
       "properties": {
         "marker-size": "small",
         "title": "Ventura CA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-112.15, 36.05]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Grand Canyon Village AZ"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-112.85, 33.4]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Palo Verde AZ"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-112.1, 33.45]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Phoenix AZ"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.95, 32.2]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Tucson AZ"
       }
     },
     {
@@ -522,6 +577,105 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-72.7, 41.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Hartford CT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-77.05, 38.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Washington DC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.55, 39.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Wilmington DE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.65, 30.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Jacksonville FL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.2, 25.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Miami FL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-84.4, 33.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Atlanta GA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-82.5, 33.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Lincolnton GA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.1, 32.1]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Savannah GA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.6, 41.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Des Moines IA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-116.2, 43.6]
       },
       "properties": {
@@ -544,22 +698,209 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-112.6, 44.65]
+        "coordinates": [-90.0, 40.0]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Lima MT"
+        "title": "Central IL"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-111.05, 45.7]
+        "coordinates": [-87.65, 41.85]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Bozeman MT"
+        "title": "Chicago IL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-87.6, 38.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Evansville IN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-86.15, 39.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Indianapolis IN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-95.7, 39.05]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Topeka KS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-97.35, 37.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Wichita KS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-85.75, 38.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Louisville KY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.05, 29.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "New Orleans LA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.05, 42.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Boston MA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-76.6, 39.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Baltimore MD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-69.8, 44.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Augusta ME"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-68.8, 44.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Bangor ME"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-70.25, 43.65]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Portland ME"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-83.05, 42.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Detroit MI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.3, 45.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Minneapolis MN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-89.5, 37.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cape Girardeau MO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-89.55, 36.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "New Madrid MO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.2, 38.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "St Louis MO"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.2, 32.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Jackson MS"
       }
     },
     {
@@ -577,11 +918,132 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-111.05, 45.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Bozeman MT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-112.6, 44.65]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Lima MT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-114.0, 46.9]
       },
       "properties": {
         "marker-size": "small",
         "title": "Missoula MT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.85, 35.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Charlotte NC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-96.8, 46.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Fargo ND"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-96.0, 41.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Omaha NE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.45, 43.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Manchester NH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.75, 40.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Trenton NJ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.6, 35.1]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Albuquerque NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.4, 32.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Artesia NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.75, 32.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Las Cruces NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.3, 35.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Los Alamos National Lab NM"
       }
     },
     {
@@ -632,143 +1094,88 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-106.6, 35.1]
+        "coordinates": [-78.2, 43.0]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Albuquerque NM"
+        "title": "Batavia NY"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-104.4, 32.85]
+        "coordinates": [-74.3, 44.85]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Artesia NM"
+        "title": "Malone NY"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-106.3, 35.85]
+        "coordinates": [-74.0, 40.75]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Los Alamos National Lab NM"
+        "title": "New York NY"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-106.75, 32.3]
+        "coordinates": [-83.0, 39.95]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Las Cruces NM"
+        "title": "Columbus OH"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-112.0, 41.5]
+        "coordinates": [-84.15, 40.3]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Brigham City UT"
+        "title": "Sidney OH"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-113.05, 37.7]
+        "coordinates": [-80.65, 41.1]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Cedar City UT"
+        "title": "Youngstown OH"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-110.15, 39.0]
+        "coordinates": [-98.3, 34.8]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Green River UT"
+        "title": "Elgin OK"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-111.65, 40.25]
+        "coordinates": [-97.5, 35.5]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Provo UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-111.9, 40.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Salt Lake City UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-106.3, 42.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Casper WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-104.8, 41.15]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Cheyenne WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.75, 43.5]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Jackson WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.55, 44.4]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Yellowstone WY"
+        "title": "Oklahoma City OK"
       }
     },
     {
@@ -896,627 +1303,22 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-123.8, 47.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Aberdeen WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.5, 48.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Bellingham WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-120.55, 47.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Ellensburg WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.2, 48.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Everett WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-119.6, 46.55]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Hanford Site WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.9, 47.05]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Olympia WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.3, 47.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Seattle WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-117.4, 47.65]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Spokane WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-122.45, 47.25]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Tacoma WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-120.5, 46.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Yakima WA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-77.05, 38.9]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Washington DC"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-87.5, 31.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Atmore AL"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-86.8, 33.5]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Birmingham AL"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-92.7, 33.2]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "El Dorado AR"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-92.4, 35.2]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Greenbrier AR"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-92.3, 34.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Little Rock AR"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-72.7, 41.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Hartford CT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-75.55, 39.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Wilmington DE"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-81.65, 30.35]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Jacksonville FL"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-80.2, 25.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Miami FL"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-84.4, 33.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Atlanta GA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-82.5, 33.8]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Lincolnton GA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-81.1, 32.1]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Savannah GA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-90.0, 40.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Central IL"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-87.65, 41.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Chicago IL"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-87.6, 38.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Evansville IN"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-86.15, 39.8]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Indianapolis IN"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-93.6, 41.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Des Moines IA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-95.7, 39.05]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Topeka KS"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-97.35, 37.7]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Wichita KS"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-85.75, 38.25]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Louisville KY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-90.05, 29.95]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "New Orleans LA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-69.8, 44.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Augusta ME"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-68.8, 44.8]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Bangor ME"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-70.25, 43.65]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Portland ME"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-76.6, 39.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Baltimore MD"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-71.05, 42.35]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Boston MA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-83.05, 42.35]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Detroit MI"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-93.3, 45.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Minneapolis MN"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-90.2, 32.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Jackson MS"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-89.5, 37.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Cape Girardeau MO"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-89.55, 36.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "New Madrid MO"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-90.2, 38.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "St Louis MO"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-96.0, 41.25]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Omaha NE"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-71.45, 43.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Manchester NH"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-74.75, 40.2]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Trenton NJ"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-78.2, 43.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Batavia NY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-74.3, 44.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Malone NY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-74.0, 40.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "New York NY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-80.85, 35.25]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Charlotte NC"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-96.8, 46.9]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Fargo ND"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-83.0, 39.95]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Columbus OH"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-84.15, 40.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Sidney OH"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-80.65, 41.1]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Youngstown OH"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-98.3, 34.8]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Elgin OK"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-97.5, 35.5]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Oklahoma City OK"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
         "coordinates": [-75.15, 39.95]
       },
       "properties": {
         "marker-size": "small",
         "title": "Philadelphia PA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.0, 40.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Pittsburg PA"
       }
     },
     {
@@ -1688,11 +1490,66 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-73.2, 44.5]
+        "coordinates": [-112.0, 41.5]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Burlington VT"
+        "title": "Brigham City UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-113.05, 37.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cedar City UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-110.15, 39.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Green River UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.65, 40.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Provo UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.9, 40.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Salt Lake City UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.4, 37.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Blacksburg VA"
       }
     },
     {
@@ -1710,11 +1567,121 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-81.65, 38.35]
+        "coordinates": [-73.2, 44.5]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Charleston WV"
+        "title": "Burlington VT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-123.8, 47.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Aberdeen WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.5, 48.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Bellingham WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-120.55, 47.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Ellensburg WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.2, 48.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Everett WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-119.6, 46.55]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Hanford Site WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.9, 47.05]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Olympia WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.3, 47.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Seattle WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-117.4, 47.65]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Spokane WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.45, 47.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Tacoma WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-120.5, 46.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Yakima WA"
       }
     },
     {
@@ -1726,6 +1693,61 @@
       "properties": {
         "marker-size": "small",
         "title": "Milwaukee WI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.65, 38.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Charleston WV"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.3, 42.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Casper WY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.8, 41.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cheyenne WY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-110.75, 43.5]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Jackson WY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-110.55, 44.4]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Yellowstone WY"
       }
     }
   ]

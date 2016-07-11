@@ -5,6 +5,61 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-87.5, 31.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Atmore AL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-86.8, 33.5]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Birmingham AL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-92.7, 33.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "El Dorado AR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-92.4, 35.2]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Greenbrier AR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-92.3, 34.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Little Rock AR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-112.15, 36.05]
       },
       "properties": {
@@ -104,198 +159,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-112.85, 43.6]
+        "coordinates": [-72.7, 41.75]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Idaho National Lab ID"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-112.6, 44.65]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Lima MT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-111.05, 45.7]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Bozeman MT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-108.5, 45.8]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Billings MT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-114.0, 46.9]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Missoula MT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-106.6, 35.1]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Albuquerque NM"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-104.4, 32.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Artesia NM"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-106.3, 35.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Los Alamos National Lab NM"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-106.75, 32.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Las Cruces NM"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-112.0, 41.5]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Brigham City UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-113.05, 37.7]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Cedar City UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.15, 39.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Green River UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-111.65, 40.25]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Provo UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-111.9, 40.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Salt Lake City UT"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-106.3, 42.85]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Casper WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-104.8, 41.15]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Cheyenne WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.75, 43.5]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Jackson WY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-110.55, 44.4]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Yellowstone WY"
+        "title": "Hartford CT"
       }
     },
     {
@@ -307,72 +175,6 @@
       "properties": {
         "marker-size": "small",
         "title": "Washington DC"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-87.5, 31.0]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Atmore AL"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-86.8, 33.5]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Birmingham AL"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-92.7, 33.2]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "El Dorado AR"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-92.4, 35.2]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Greenbrier AR"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-92.3, 34.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Little Rock AR"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-72.7, 41.75]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Hartford CT"
       }
     },
     {
@@ -445,6 +247,28 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-93.6, 41.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Des Moines IA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-112.85, 43.6]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Idaho National Lab ID"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-90.0, 40.0]
       },
       "properties": {
@@ -483,17 +307,6 @@
       "properties": {
         "marker-size": "small",
         "title": "Indianapolis IN"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-93.6, 41.6]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Des Moines IA"
       }
     },
     {
@@ -544,6 +357,28 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-71.05, 42.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Boston MA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-76.6, 39.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Baltimore MD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-69.8, 44.3]
       },
       "properties": {
@@ -577,28 +412,6 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-76.6, 39.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Baltimore MD"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-71.05, 42.35]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Boston MA"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
         "coordinates": [-83.05, 42.35]
       },
       "properties": {
@@ -615,17 +428,6 @@
       "properties": {
         "marker-size": "small",
         "title": "Minneapolis MN"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-90.2, 32.3]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Jackson MS"
       }
     },
     {
@@ -665,6 +467,83 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-90.2, 32.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Jackson MS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-108.5, 45.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Billings MT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.05, 45.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Bozeman MT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-112.6, 44.65]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Lima MT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-114.0, 46.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Missoula MT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.85, 35.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Charlotte NC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-96.8, 46.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Fargo ND"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-96.0, 41.25]
       },
       "properties": {
@@ -698,6 +577,50 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
+        "coordinates": [-106.6, 35.1]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Albuquerque NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.4, 32.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Artesia NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.75, 32.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Las Cruces NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.3, 35.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Los Alamos National Lab NM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
         "coordinates": [-78.2, 43.0]
       },
       "properties": {
@@ -725,28 +648,6 @@
       "properties": {
         "marker-size": "small",
         "title": "New York NY"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-80.85, 35.25]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Charlotte NC"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-96.8, 46.9]
-      },
-      "properties": {
-        "marker-size": "small",
-        "title": "Fargo ND"
       }
     },
     {
@@ -813,6 +714,17 @@
       "properties": {
         "marker-size": "small",
         "title": "Philadelphia PA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.0, 40.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Pittsburg PA"
       }
     },
     {
@@ -984,11 +896,66 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-73.2, 44.5]
+        "coordinates": [-112.0, 41.5]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Burlington VT"
+        "title": "Brigham City UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-113.05, 37.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cedar City UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-110.15, 39.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Green River UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.65, 40.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Provo UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.9, 40.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Salt Lake City UT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-80.4, 37.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Blacksburg VA"
       }
     },
     {
@@ -1006,11 +973,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-81.65, 38.35]
+        "coordinates": [-73.2, 44.5]
       },
       "properties": {
         "marker-size": "small",
-        "title": "Charleston WV"
+        "title": "Burlington VT"
       }
     },
     {
@@ -1022,6 +989,61 @@
       "properties": {
         "marker-size": "small",
         "title": "Milwaukee WI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.65, 38.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Charleston WV"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.3, 42.85]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Casper WY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.8, 41.15]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Cheyenne WY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-110.75, 43.5]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Jackson WY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-110.55, 44.4]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Yellowstone WY"
       }
     }
   ]

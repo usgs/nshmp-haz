@@ -29,6 +29,9 @@ Pasadena CA,                 -118.15,  34.15
 Redding CA,                  -122.40,  40.60
 Riverside CA,                -117.40,  33.95
 Sacramento CA,               -121.50,  38.60
+Santa Barbara CA,            -119.70,  34.45
+Santa Cruz CA,               -122.05,  36.95
+Santa Rosa CA,               -122.70,  38.45
 San Bernardino CA,           -117.30,  34.10
 San Diego CA,                -117.15,  32.70
 San Francisco CA,            -122.40,  37.75
@@ -36,9 +39,6 @@ San Jose CA,                 -121.90,  37.35
 San Luis Obispo CA,          -120.65,  35.30
 San Mateo CA,                -122.30,  37.55
 San Onofre CA,               -117.55,  33.40
-Santa Barbara CA,            -119.70,  34.45
-Santa Cruz CA,               -122.05,  36.95
-Santa Rosa CA,               -122.70,  38.45
 Vallejo CA,                  -122.25,  38.10
 Ventura CA,                  -119.30,  34.30
 Denver CO,                   -105.00,  39.75
@@ -54,8 +54,8 @@ Lima MT,                     -112.60,  44.65
 Missoula MT,                 -114.00,  46.90
 Albuquerque NM,              -106.60,  35.10
 Artesia NM,                  -104.40,  32.85
-Los Alamos National Lab NM,  -106.30,  35.85
 Las Cruces NM,               -106.75,  32.30
+Los Alamos National Lab NM,  -106.30,  35.85
 Carson City NV,              -119.75,  39.15
 Elko NV,                     -115.75,  40.85
 Las Vegas NV,                -115.15,  36.20

@@ -27,6 +27,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -38,6 +39,7 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -61,8 +63,8 @@ final class NshmpSiteFiles {
    */
   public static void main(String[] args) throws IOException {
     writeNshmpSites();
-    writeNshmpPolys();
-    writeNshmpSummaryPoly();
+    // writeNshmpPolys();
+    // writeNshmpSummaryPoly();
     // writeNshmpSites_0p1();
   }
 
@@ -213,11 +215,18 @@ final class NshmpSiteFiles {
   }
 
   static void writeNshmpSites() throws IOException {
-    writeSites("nshmp", EnumSet.allOf(NshmpSite.class));
-    writeSites("ceus", NshmpSite.ceus());
-    writeSites("wus", NshmpSite.wus());
+    writeNshmpSites("nshmp", EnumSet.allOf(NshmpSite.class));
+    writeNshmpSites("ceus", NshmpSite.ceus());
+    writeNshmpSites("wus", NshmpSite.wus());
+    writeNshmpSites("nrc", NshmpSite.nrc());
     writeSites("nehrp", NshmpSite.nehrp());
-    writeSites("nrc", NshmpSite.nrc());
+  }
+
+  static void writeNshmpSites(String name, Collection<NshmpSite> sites)
+      throws IOException {
+    List<NshmpSite> sortedSites = Lists.newArrayList(sites);
+    Collections.sort(sortedSites, new NshmpSite.StateComparator());
+    writeSites(name, sortedSites);
   }
 
   static void writeSites(String name, Collection<? extends NamedLocation> sites)
