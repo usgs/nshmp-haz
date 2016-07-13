@@ -47,7 +47,7 @@ final class ClusterCurves {
       // look at first HazardGM to determine curve table dimensions
       GroundMotions model = clusterGroundMotions.get(0);
       curveMap = new EnumMap<>(Imt.class);
-      for (Imt imt : model.means.keySet()) {
+      for (Imt imt : model.μLists.keySet()) {
         Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
         curveMap.put(imt, gmmMap);
       }

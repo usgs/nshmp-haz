@@ -549,8 +549,8 @@ public final class Deaggregation {
       for (GroundMotions gms : curves.hazardGroundMotionsList) {
         InputList inputs = gms.inputs;
         double minDistance = inputs.minDistance;
-        Map<Gmm, List<Double>> μLists = gms.means.get(imt);
-        Map<Gmm, List<Double>> σLists = gms.sigmas.get(imt);
+        Map<Gmm, List<Double>> μLists = gms.μLists.get(imt);
+        Map<Gmm, List<Double>> σLists = gms.σLists.get(imt);
         Map<Gmm, Double> gmms = gmmSet.gmmWeightMap(minDistance);
         processSource(inputs, gmms, μLists, σLists);
       }
