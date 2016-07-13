@@ -61,7 +61,7 @@ public final class Deaggregation {
    * -------------------------------------------------------------------------
    * Deaggregate on probability of occurrence instead of exceedance.
    * -------------------------------------------------------------------------
-   * Revisit precision issues associated with integre based return period;
+   * Revisit precision issues associated with integer based return period;
    * 2%in50 years os really 0.00040405414, not 1/2475 = 0.0004040404
    *
    *
@@ -169,7 +169,7 @@ public final class Deaggregation {
 
   /*
    * A deaggregation configuration container. This class provides a reusable
-   * builder that comes in handly when iterating over IMTs and only the return
+   * builder that comes in handy when iterating over IMTs and only the return
    * period and iml require updating. A unique config is required for each
    * deaggregation performed.
    *
@@ -777,7 +777,7 @@ public final class Deaggregation {
       }
     }
 
-    /* Epsilon data for a distnace-magnitude bin. */
+    /* Epsilon data for a distance-magnitude bin. */
     @SuppressWarnings("unused")
     private static final class εData {
       final int εbin;
