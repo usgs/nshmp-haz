@@ -117,14 +117,9 @@ public interface DataTable {
    * <p>Use {@link #create()} to initialize a new builder. Rows and columns must
    * be specified before any data can be added. Note that any supplied
    * {@code max} values may not correspond to the final upper edge of the
-   * uppermost bins if {@code max - min} is not evenly divisible by {@code Δ}
-   * .
+   * uppermost bins if {@code max - min} is not evenly divisible by {@code Δ} .
    */
   public static final class Builder {
-
-    // TODO data is not copied on build() so we need to dereference
-    // data arrays on build() to prevent lingering builders from
-    // further modifying data
 
     private double[][] data;
 
@@ -367,10 +362,19 @@ public interface DataTable {
       // safe covariant casts
       validateTable((AbstractTable) table);
       if (table instanceof SingularTable) {
-        Data.uncheckedAdd(((SingularTable) table).value, data);
+        Data.add(((SingularTable) table).value, data);
       } else {
         Data.uncheckedAdd(data, ((DefaultTable) table).data);
       }
+      return this;
+    }
+
+    /**
+     * Multiply ({@code scale}) all values in this builder.
+     * @param scale factor
+     */
+    public Builder multiply(double scale) {
+      Data.multiply(scale, data);
       return this;
     }
 
@@ -384,6 +388,16 @@ public interface DataTable {
           (Arrays.equals(this.rows, that.rows) &&
               Arrays.equals(this.columns, that.columns)));
       return that;
+    }
+
+    /*
+     * Data is not copied on build() so we need to dereference data arrays to
+     * prevent lingering builders from further modifying data.
+     */
+    private void dereference() {
+      data = null;
+      rows = null;
+      columns = null;
     }
 
     /**
@@ -430,10 +444,12 @@ public interface DataTable {
     public DataTable build() {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns);
-      return new DefaultTable(
+      DataTable table = new DefaultTable(
           rowMin, rowMax, rowΔ, rows,
           columnMin, columnMax, columnΔ, columns,
           data);
+      dereference();
+      return table;
     }
   }
 

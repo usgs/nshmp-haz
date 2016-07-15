@@ -142,10 +142,6 @@ public interface DataVolume {
    */
   public static final class Builder {
 
-    // TODO data is not copied on build() so we need to dereference
-    // data arrays on build() to prevent lingering builders from
-    // further modifying data
-
     private double[][][] data;
 
     private double rowMin;
@@ -328,7 +324,7 @@ public interface DataVolume {
     /**
      * Add to the existing value at the specified row, column, and level
      * indices. Be careful not to confuse this with
-     * {@link #add(int, int, int, double)}.
+     * {@link #add(double, double, double, double)}.
      *
      * @param row index
      * @param column index
@@ -357,6 +353,15 @@ public interface DataVolume {
       return this;
     }
 
+    /**
+     * Multiply ({@code scale}) all values in this builder.
+     * @param scale factor
+     */
+    public Builder multiply(double scale) {
+      Data.multiply(scale, data);
+      return this;
+    }
+
     /*
      * Check hash codes of row, column, and level arrays in case copyOf has been
      * used, otherwise check array equality.
@@ -369,6 +374,17 @@ public interface DataVolume {
               Arrays.equals(this.columns, that.columns) &&
               Arrays.equals(this.levels, that.levels)));
       return that;
+    }
+
+    /*
+     * Data is not copied on build() so we need to dereference data arrays to
+     * prevent lingering builders from further modifying data.
+     */
+    private void dereference() {
+      data = null;
+      rows = null;
+      columns = null;
+      levels = null;
     }
 
     /**
@@ -400,11 +416,13 @@ public interface DataVolume {
     public DataVolume build() {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns, levels);
-      return new DefaultVolume(
+      DataVolume volume = new DefaultVolume(
           rowMin, rowMax, rowΔ, rows,
           columnMin, columnMax, columnΔ, columns,
           levelMin, levelMax, levelΔ, levels,
           data);
+      dereference();
+      return volume;
     }
   }
 
