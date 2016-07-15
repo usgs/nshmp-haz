@@ -106,6 +106,20 @@ public final class Data {
    * @param term to add
    * @return a reference to the supplied {@code data}
    */
+  public static List<Double> add(double term, List<Double> data) {
+    for (int i = 0; i < data.size(); i++) {
+      data.set(i, data.get(i) + term);
+    }
+    return data;
+  }
+
+  /**
+   * Add a {@code term} to the elements of {@code data} in place.
+   *
+   * @param data to operate on
+   * @param term to add
+   * @return a reference to the supplied {@code data}
+   */
   public static double[] add(double term, double... data) {
     for (int i = 0; i < data.length; i++) {
       data[i] += term;
@@ -127,13 +141,6 @@ public final class Data {
     return data;
   }
 
-  static double[][] uncheckedAdd(double term, double[][] data) {
-    for (int i = 0; i < data.length; i++) {
-      add(term, data[i]);
-    }
-    return data;
-  }
-
   /**
    * Add a {@code term} to the elements of {@code data} in place.
    *
@@ -144,27 +151,6 @@ public final class Data {
   public static double[][][] add(double term, double[][][] data) {
     for (int i = 0; i < data.length; i++) {
       add(term, data[i]);
-    }
-    return data;
-  }
-
-  static double[][][] uncheckedAdd(double term, double[][][] data) {
-    for (int i = 0; i < data.length; i++) {
-      uncheckedAdd(term, data[i]);
-    }
-    return data;
-  }
-
-  /**
-   * Add a {@code term} to the elements of {@code data} in place.
-   *
-   * @param data to operate on
-   * @param term to add
-   * @return a reference to the supplied {@code data}
-   */
-  public static List<Double> add(double term, List<Double> data) {
-    for (int i = 0; i < data.size(); i++) {
-      data.set(i, data.get(i) + term);
     }
     return data;
   }
@@ -270,6 +256,23 @@ public final class Data {
   /**
    * Subtract the values of {@code data2} from {@code data1} in place. To
    * subtract a term from every value of a dataset, use
+   * {@link #add(double, List)} with a negative addend.
+   *
+   * @param data1
+   * @param data2
+   * @return a reference to {@code data1}
+   */
+  public static List<Double> subtract(List<Double> data1, List<Double> data2) {
+    checkArgument(data1.size() == data2.size());
+    for (int i = 0; i < data1.size(); i++) {
+      data1.set(i, data1.get(i) - data2.get(i));
+    }
+    return data1;
+  }
+
+  /**
+   * Subtract the values of {@code data2} from {@code data1} in place. To
+   * subtract a term from every value of a dataset, use
    * {@link #add(double, double...)} with a negative addend.
    *
    * @param data1
@@ -289,20 +292,17 @@ public final class Data {
   }
 
   /**
-   * Subtract the values of {@code data2} from {@code data1} in place. To
-   * subtract a term from every value of a dataset, use
-   * {@link #add(double, List)} with a negative addend.
+   * Multiply ({@code scale}) the elements of {@code data} in place.
    *
-   * @param data1
-   * @param data2
-   * @return a reference to {@code data1}
+   * @param data to operate on
+   * @param scale factor
+   * @return a reference to the supplied {@code data}
    */
-  public static List<Double> subtract(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
-    for (int i = 0; i < data1.size(); i++) {
-      data1.set(i, data1.get(i) - data2.get(i));
+  public static List<Double> multiply(double scale, List<Double> data) {
+    for (int i = 0; i < data.size(); i++) {
+      data.set(i, data.get(i) * scale);
     }
-    return data1;
+    return data;
   }
 
   /**
@@ -326,9 +326,23 @@ public final class Data {
    * @param scale factor
    * @return a reference to the supplied {@code data}
    */
-  public static List<Double> multiply(double scale, List<Double> data) {
-    for (int i = 0; i < data.size(); i++) {
-      data.set(i, data.get(i) * scale);
+  public static double[][] multiply(double scale, double[][] data) {
+    for (int i = 0; i < data.length; i++) {
+      multiply(scale, data[i]);
+    }
+    return data;
+  }
+
+  /**
+   * Multiply ({@code scale}) the elements of {@code data} in place.
+   *
+   * @param data to operate on
+   * @param scale factor
+   * @return a reference to the supplied {@code data}
+   */
+  public static double[][][] multiply(double scale, double[][][] data) {
+    for (int i = 0; i < data.length; i++) {
+      multiply(scale, data[i]);
     }
     return data;
   }
