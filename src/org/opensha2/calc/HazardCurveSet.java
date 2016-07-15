@@ -184,15 +184,6 @@ final class HazardCurveSet {
         Map<Gmm, XySequence> curveMapIn = curvesIn.curveMap.get(imt);
         Map<Gmm, XySequence> curveMapBuild = curveMap.get(imt);
 
-//        // loop Gmms based on what's supported at this distance
-//        for (Gmm gmm : gmmWeightMap.keySet()) {
-//          double weight = gmmWeightMap.get(gmm) * clusterWeight;
-//          XySequence curve = copyOf(curveMapIn.get(gmm))
-//              .multiply(weight)
-//              .multiply(sourceSet.weight());
-//          curveMapBuild.get(gmm).add(curve);
-//        }
-
         /*
          * In standard curve aggregation, we're only concerned with the GMMs
          * applicable to the source given it's distance from a site. However,
@@ -207,12 +198,12 @@ final class HazardCurveSet {
         Set<Gmm> gmmsForDistance = gmmWeightMap.keySet();
         
         for (Gmm gmm : curveLists.keySet()) {
-          boolean inGmmRange = gmmsForDistance.contains(gmm);
+          boolean includeGmm = gmmsForDistance.contains(gmm);
           double weight = clusterWeight * sourceSet.weight();
-          weight = inGmmRange ? weight * gmmWeightMap.get(gmm) : 0.0;
+          weight = includeGmm ? weight * gmmWeightMap.get(gmm) : 0.0;
           XySequence curve = copyOf(curveMapIn.get(gmm)).multiply(weight);
           curveLists.get(gmm).add(curve);
-          if (inGmmRange) {
+          if (includeGmm) {
             curveMapBuild.get(gmm).add(curve);
           }
         }
