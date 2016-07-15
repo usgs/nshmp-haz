@@ -121,9 +121,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     return locs.size();
   }
 
-  public static String sizeString(SourceSet<? extends Source> sources, int size) {
-    if (sources instanceof Table) {
-      Table t = (Table) sources;
+  /**
+   * For internal use only. Public for access outside of package.
+   */
+  public static String sizeString(SourceSet<? extends Source> sourceSet, int size) {
+    if (sourceSet instanceof Table) {
+      Table t = (Table) sourceSet;
       return t.parentCount() + " (" + t.rowCount + " of " + t.maximumSize + ")";
     }
     return Integer.toString(size);
