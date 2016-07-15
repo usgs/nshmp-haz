@@ -102,7 +102,7 @@ final class Deaggregator {
     Map<Gmm, List<Double>> μLists = gms.μLists.get(imt);
     Map<Gmm, List<Double>> σLists = gms.σLists.get(imt);
 
-    /* Local EnumSet based keys. */
+    /* Local EnumSet based keys; we know gmms.keySet() is not an EnumSet. */
     final Set<Gmm> gmmKeys = EnumSet.copyOf(gmms.keySet());
 
     /* Per-gmm rates for the source being processed. */
@@ -177,7 +177,8 @@ final class Deaggregator {
    */
   private void processClusterSource(ClusterGroundMotions cgms) {
     System.out.println(cgms.parent.name());
-    System.out.println(cgms.delegate);
+//    System.out.println(cgms.delegate);
+    System.out.println(curves.clusterCurveLists);
     // /* Local references from argument. */
     // InputList inputs = gms.inputs;
     // Map<Gmm, Double> gmms = gmmSet.gmmWeightMap(gms.inputs.minDistance);

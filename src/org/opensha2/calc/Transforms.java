@@ -542,8 +542,7 @@ final class Transforms {
 
     @Override
     public ClusterGroundMotions apply(ClusterInputs clusterInputs) {
-      ClusterGroundMotions clusterGroundMotions = new ClusterGroundMotions(
-          clusterInputs.parent);
+      ClusterGroundMotions clusterGroundMotions = new ClusterGroundMotions(clusterInputs.parent);
       for (SourceInputList hazardInputs : clusterInputs) {
         clusterGroundMotions.add(transform.apply(hazardInputs));
       }
@@ -614,8 +613,7 @@ final class Transforms {
 
         double rate = clusterGroundMotions.parent.rate();
         for (Gmm gmm : faultCurves.keySet()) {
-          XySequence clusterCurve = ExceedanceModel.clusterExceedance(
-              faultCurves.get(gmm));
+          XySequence clusterCurve = ExceedanceModel.clusterExceedance(faultCurves.get(gmm));
           builder.addCurve(imt, gmm, clusterCurve.multiply(rate));
         }
       }
