@@ -56,7 +56,7 @@ final class HazardCurveSet {
   final SourceSet<? extends Source> sourceSet;
   final List<GroundMotions> hazardGroundMotionsList;
   final List<ClusterGroundMotions> clusterGroundMotionsList;
-  final Map<Imt, Map<Gmm, List<XySequence>>> clusterCurveLists;
+  final Map<Imt, List<Map<Gmm, XySequence>>> clusterCurveLists;
   final Map<Imt, Map<Gmm, XySequence>> curveMap;
   final Map<Imt, XySequence> totalCurves;
 
@@ -64,7 +64,7 @@ final class HazardCurveSet {
       SourceSet<? extends Source> sourceSet,
       List<GroundMotions> hazardGroundMotionsList,
       List<ClusterGroundMotions> clusterGroundMotionsList,
-      Map<Imt, Map<Gmm, List<XySequence>>> clusterCurveLists,
+      Map<Imt, List<Map<Gmm, XySequence>>> clusterCurveLists,
       Map<Imt, Map<Gmm, XySequence>> curveMap,
       Map<Imt, XySequence> totalCurves) {
 
@@ -106,7 +106,7 @@ final class HazardCurveSet {
     private final SourceSet<? extends Source> sourceSet;
     private final List<GroundMotions> hazardGroundMotionsList;
     private final List<ClusterGroundMotions> clusterGroundMotionsList;
-    private final Map<Imt, Map<Gmm, List<XySequence>>> clusterCurveLists;
+    private final Map<Imt, List<Map<Gmm, XySequence>>> clusterCurveLists;
     private final Map<Imt, Map<Gmm, XySequence>> curveMap;
     private final Map<Imt, XySequence> totalCurves;
 
@@ -137,19 +137,16 @@ final class HazardCurveSet {
       for (Imt imt : imts) {
 
         Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
-        curveMap.put(imt, gmmMap);
         for (Gmm gmm : gmms) {
           XySequence emptyCurve = emptyCopyOf(modelCurves.get(imt));
           gmmMap.put(gmm, emptyCurve);
         }
+        curveMap.put(imt, gmmMap);
 
         if (cluster) {
-          Map<Gmm, List<XySequence>> clusterCurveGmmMap = new EnumMap<>(Gmm.class);
-          clusterCurveLists.put(imt, clusterCurveGmmMap);
-          for (Gmm gmm : gmms) {
-            List<XySequence> emptyCurveList = new ArrayList<>();
-            clusterCurveGmmMap.put(gmm, emptyCurveList);
-          }
+          List<Map<Gmm, XySequence>> clusterCurveList = new ArrayList<>();
+          clusterCurveLists.put(imt, clusterCurveList);
+          
         }
       }
       totalCurves = new EnumMap<>(Imt.class);
@@ -179,34 +176,29 @@ final class HazardCurveSet {
       double clusterWeight = curvesIn.clusterGroundMotions.parent.weight();
       double distance = curvesIn.clusterGroundMotions.minDistance;
       Map<Gmm, Double> gmmWeightMap = sourceSet.groundMotionModels().gmmWeightMap(distance);
-      // loop Imts based on what's coming in
+      // loop Imts based on what's been calculated
       for (Imt imt : curvesIn.curveMap.keySet()) {
         Map<Gmm, XySequence> curveMapIn = curvesIn.curveMap.get(imt);
         Map<Gmm, XySequence> curveMapBuild = curveMap.get(imt);
 
         /*
-         * In standard curve aggregation, we're only concerned with the GMMs
-         * applicable to the source given it's distance from a site. However,
-         * when keeping track of the cluster source curves, we ultimately need
-         * the cluster curve list to match the length of the cluster ground
-         * motion list. If a source is beyond minDistance, some of the curves in
-         * the list will be zero-valued given that some GMMs are not used
-         * (i.e. weight = 0.0).
+         * Retain references to the total curve for each cluster source
+         * for deaggregation in clusterCurveLists. These lists of maps by
+         * GMM will contain only those curves for the GMMs approprate for
+         * the source-site distance. When deaggreagting, the same distance
+         * cutoff will be considered so retrieval of curves from the maps
+         * should never thrwo an NPE.
          */
-
-        Map<Gmm, List<XySequence>> curveLists = clusterCurveLists.get(imt);
-        Set<Gmm> gmmsForDistance = gmmWeightMap.keySet();
         
-        for (Gmm gmm : curveLists.keySet()) {
-          boolean includeGmm = gmmsForDistance.contains(gmm);
-          double weight = clusterWeight * sourceSet.weight();
-          weight = includeGmm ? weight * gmmWeightMap.get(gmm) : 0.0;
-          XySequence curve = copyOf(curveMapIn.get(gmm)).multiply(weight);
-          curveLists.get(gmm).add(curve);
-          if (includeGmm) {
-            curveMapBuild.get(gmm).add(curve);
-          }
+        Map<Gmm, XySequence> clusterCurves = new EnumMap<>(Gmm.class);
+        // loop Gmms based on what's supported at this distance
+        for (Gmm gmm : gmmWeightMap.keySet()) {
+          double weight = gmmWeightMap.get(gmm) * sourceSet.weight() * clusterWeight;
+          XySequence clusterCurve = copyOf(curveMapIn.get(gmm)).multiply(weight);
+          curveMapBuild.get(gmm).add(clusterCurve);
+          clusterCurves.put(gmm, clusterCurve);
         }
+        clusterCurveLists.get(imt).add(clusterCurves);
       }
       return this;
     }

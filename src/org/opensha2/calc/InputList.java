@@ -18,7 +18,7 @@ import java.util.List;
  */
 public abstract class InputList extends AbstractList<HazardInput> {
 
-  final List<HazardInput> delegate;
+  private final List<HazardInput> delegate;
   double minDistance = Double.MAX_VALUE;
 
   /*

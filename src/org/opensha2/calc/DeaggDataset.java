@@ -16,9 +16,10 @@ import org.opensha2.eq.model.SourceSet;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -208,7 +209,7 @@ final class DeaggDataset {
     private double residualWeight;
 
     private Map<SourceSet<? extends Source>, Double> sourceSets;
-    private ImmutableList.Builder<SourceContribution> sources;
+    private List<SourceContribution> sources;
 
     private Builder(
         double rMin, double rMax, double Δr,
@@ -239,8 +240,8 @@ final class DeaggDataset {
           .rows(rMin, rMax, Δr)
           .columns(mMin, mMax, Δm);
 
-      sourceSets = Maps.newHashMap();
-      sources = ImmutableList.builder();
+      sourceSets = new HashMap<>();
+      sources = new ArrayList<>();
     }
 
     private Builder(DeaggDataset model) {
@@ -248,8 +249,8 @@ final class DeaggDataset {
       rPositions = DataTable.Builder.fromModel(model.rPositions);
       mPositions = DataTable.Builder.fromModel(model.mPositions);
       positionWeights = DataTable.Builder.fromModel(model.positionWeights);
-      sourceSets = Maps.newHashMap();
-      sources = ImmutableList.builder();
+      sourceSets = new HashMap<>();
+      sources = new ArrayList<>();
     }
 
     /*
@@ -301,6 +302,41 @@ final class DeaggDataset {
       return this;
     }
 
+    /*
+     * Scale all values. This will usually be called just before build(). This
+     * is a relatively heavyweight operation in that it will cause the source
+     * contribution list to be rebuilt.
+     */
+    Builder multiply(double scale) {
+
+      rmε.multiply(scale);
+
+      rBar *= scale;
+      mBar *= scale;
+      εBar *= scale;
+      barWeight *= scale;
+
+      rPositions.multiply(scale);
+      mPositions.multiply(scale);
+      positionWeights.multiply(scale);
+      residualWeight *= scale;
+
+      List<SourceContribution> oldSources = sources;
+      sources = new ArrayList<>();
+      for (SourceContribution source : oldSources) {
+        sources.add(new SourceContribution(
+            source.name,
+            source.rate * scale,
+            source.residualRate * scale));
+      }
+      
+      for (Entry<SourceSet<? extends Source>, Double> entry : sourceSets.entrySet()) {
+        entry.setValue(entry.getValue() * scale);
+      }
+      
+      return this;
+    }
+
     /* Combine values */
     Builder add(DeaggDataset other) {
 
@@ -328,7 +364,7 @@ final class DeaggDataset {
             Iterables.getOnlyElement(sourceSets.entrySet());
         sourceSets.put(entry.getKey(), barWeight + residualWeight);
       }
-
+      
       return new DeaggDataset(
           rmε.build(),
           rBar, mBar, εBar,
@@ -338,7 +374,16 @@ final class DeaggDataset {
           positionWeights.build(),
           residualWeight,
           ImmutableMap.copyOf(sourceSets),
-          sources.build());
+          ImmutableList.copyOf(sources));
+    }
+    
+    /*
+     * Utility method to return the curent total rate of ruptures added to
+     * this builder, i.e. barWeight + residualWeight.
+     * @return
+     */
+    double rate() {
+      return barWeight + residualWeight;
     }
   }
 

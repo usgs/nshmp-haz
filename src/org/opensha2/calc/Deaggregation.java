@@ -121,12 +121,6 @@ public final class Deaggregation {
     return new Deaggregation(Maps.immutableEnumMap(imtDeaggMap));
   }
 
-  /* Hazard curves are already in log-x space. */
-  private static final Interpolator IML_INTERPOLATER = Interpolator.builder()
-      .logy()
-      .decreasingX()
-      .build();
-
   /**
    * Deaggregate {@code hazard} at the supplied intensity measure level.
    *
@@ -151,9 +145,28 @@ public final class Deaggregation {
   }
 
   /* Hazard curves are already in log-x space. */
-  private static final Interpolator RATE_INTERPOLATER = Interpolator.builder()
+  static final Interpolator IML_INTERPOLATER = Interpolator.builder()
+      .logy()
+      .decreasingX()
+      .build();
+
+  /* Hazard curves are already in log-x space. */
+  static final Interpolator RATE_INTERPOLATER = Interpolator.builder()
       .logy()
       .build();
+  
+  /* Dataset merger that uses first dataset as a model. */
+  static final Function<Collection<DeaggDataset>, DeaggDataset> DATASET_CONSOLIDATOR =
+      new Function<Collection<DeaggDataset>, DeaggDataset>() {
+        @Override
+        public DeaggDataset apply(Collection<DeaggDataset> datasets) {
+          DeaggDataset.Builder builder = DeaggDataset.builder(datasets.iterator().next());
+          for (DeaggDataset dataset : datasets) {
+            builder.add(dataset);
+          }
+          return builder.build();
+        }
+      };
 
   /* One per Imt in supplied Hazard. */
   static class ImtDeagg {
@@ -211,10 +224,9 @@ public final class Deaggregation {
         datasets.putAll(Multimaps.forMap(sourceSetDatasets));
       }
 
-      gmmDatasets = Maps.immutableEnumMap(
-          Maps.transformValues(
-              Multimaps.asMap(datasets),
-              DATASET_CONSOLIDATOR));
+      gmmDatasets = Maps.immutableEnumMap(Maps.transformValues(
+          Multimaps.asMap(datasets),
+          DATASET_CONSOLIDATOR));
 
       totalDataset = DATASET_CONSOLIDATOR.apply(gmmDatasets.values());
 
@@ -223,18 +235,6 @@ public final class Deaggregation {
       //
       // }
     }
-
-    private static final Function<Collection<DeaggDataset>, DeaggDataset> DATASET_CONSOLIDATOR =
-        new Function<Collection<DeaggDataset>, DeaggDataset>() {
-          @Override
-          public DeaggDataset apply(Collection<DeaggDataset> datasets) {
-            DeaggDataset.Builder builder = DeaggDataset.builder(datasets.iterator().next());
-            for (DeaggDataset dataset : datasets) {
-              builder.add(dataset);
-            }
-            return builder.build();
-          }
-        };
 
     @Override
     public String toString() {
@@ -345,15 +345,13 @@ public final class Deaggregation {
     // compared/summed by location
 
     // TODO track total, or just sum as necessary
-    // TODO are there instances where part of gr source falls outside deagg
-    // ranges?
 
-    final String source;
+    final String name;
     final double rate;
     final double residualRate;
 
     SourceContribution(String source, double sourceRate, double residualRate) {
-      this.source = source;
+      this.name = source;
       this.rate = sourceRate;
       this.residualRate = residualRate;
     }
@@ -369,7 +367,7 @@ public final class Deaggregation {
       sb.append(rate).append(" ");
       sb.append(residualRate).append(" ");
       sb.append(rate + residualRate).append(" ");
-      sb.append(source);
+      sb.append(name);
       return sb.toString();
     }
   }
