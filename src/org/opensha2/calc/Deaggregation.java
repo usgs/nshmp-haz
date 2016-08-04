@@ -9,6 +9,7 @@ import org.opensha2.data.Data;
 import org.opensha2.data.DataVolume;
 import org.opensha2.data.Interpolator;
 import org.opensha2.data.XySequence;
+import org.opensha2.eq.model.ClusterSourceSet;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.gmm.Gmm;
@@ -16,6 +17,7 @@ import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -154,19 +156,36 @@ public final class Deaggregation {
   static final Interpolator RATE_INTERPOLATER = Interpolator.builder()
       .logy()
       .build();
-  
-  /* Dataset merger that uses first dataset as a model. */
-  static final Function<Collection<DeaggDataset>, DeaggDataset> DATASET_CONSOLIDATOR =
-      new Function<Collection<DeaggDataset>, DeaggDataset>() {
-        @Override
-        public DeaggDataset apply(Collection<DeaggDataset> datasets) {
-          DeaggDataset.Builder builder = DeaggDataset.builder(datasets.iterator().next());
-          for (DeaggDataset dataset : datasets) {
-            builder.add(dataset);
-          }
-          return builder.build();
-        }
-      };
+
+  static final DatasetConsolidator DEFAULT_DATASET_CONSOLIDATOR =
+      new DatasetConsolidator(Optional.<ClusterSourceSet> absent());
+
+  /*
+   * Dataset merger that uses first dataset as a model. Because cluster sources
+   * consolidate data from individual sources within a ClusterSourceSet an
+   * optional ClusterSourceSet is provided.
+   */
+  static final class DatasetConsolidator
+      implements Function<Collection<DeaggDataset>, DeaggDataset> {
+
+    final Optional<ClusterSourceSet> clusterSources;
+
+    DatasetConsolidator(Optional<ClusterSourceSet> clusterSources) {
+      this.clusterSources = clusterSources;
+    }
+
+    @Override
+    public DeaggDataset apply(Collection<DeaggDataset> datasets) {
+      DeaggDataset.Builder builder = DeaggDataset.builder(datasets.iterator().next());
+      for (DeaggDataset dataset : datasets) {
+        builder.add(dataset);
+      }
+      if (clusterSources.isPresent()) {
+        builder.sourceSet(clusterSources.get());
+      }
+      return builder.build();
+    }
+  }
 
   /* One per Imt in supplied Hazard. */
   static class ImtDeagg {
@@ -226,9 +245,9 @@ public final class Deaggregation {
 
       gmmDatasets = Maps.immutableEnumMap(Maps.transformValues(
           Multimaps.asMap(datasets),
-          DATASET_CONSOLIDATOR));
+          DEFAULT_DATASET_CONSOLIDATOR));
 
-      totalDataset = DATASET_CONSOLIDATOR.apply(gmmDatasets.values());
+      totalDataset = DEFAULT_DATASET_CONSOLIDATOR.apply(gmmDatasets.values());
 
       // for (Dataset d : gmmDatasets.values()) {
       // System.out.println("BarWt: " + d.barWeight);

@@ -83,6 +83,7 @@ final class DeaggDataset {
 
     this.sources = sources;
     this.sourceSets = sourceSets;
+
   }
 
   /*
@@ -133,6 +134,11 @@ final class DeaggDataset {
   int epsilonIndex(double ε) {
     return (ε < rmε.levelMin()) ? 0 : (ε >= rmε.levelMax()) ? rmε.levels().size() - 1
         : DataTables.indexOf(rmε.levelMin(), rmε.levelΔ(), ε, rmε.levels().size());
+  }
+  
+  @Override
+  public String toString() {
+    return rmε.toString();
   }
 
   /**
@@ -329,11 +335,11 @@ final class DeaggDataset {
             source.rate * scale,
             source.residualRate * scale));
       }
-      
+
       for (Entry<SourceSet<? extends Source>, Double> entry : sourceSets.entrySet()) {
         entry.setValue(entry.getValue() * scale);
       }
-      
+
       return this;
     }
 
@@ -364,7 +370,7 @@ final class DeaggDataset {
             Iterables.getOnlyElement(sourceSets.entrySet());
         sourceSets.put(entry.getKey(), barWeight + residualWeight);
       }
-      
+
       return new DeaggDataset(
           rmε.build(),
           rBar, mBar, εBar,
@@ -376,11 +382,10 @@ final class DeaggDataset {
           ImmutableMap.copyOf(sourceSets),
           ImmutableList.copyOf(sources));
     }
-    
+
     /*
-     * Utility method to return the curent total rate of ruptures added to
-     * this builder, i.e. barWeight + residualWeight.
-     * @return
+     * Utility method to return the current total rate of ruptures added to this
+     * builder, i.e. barWeight + residualWeight.
      */
     double rate() {
       return barWeight + residualWeight;

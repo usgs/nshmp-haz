@@ -1,7 +1,9 @@
 package org.opensha2.calc;
 
+import org.opensha2.calc.Deaggregation.DatasetConsolidator;
 import org.opensha2.calc.Deaggregation.SourceContribution;
 import org.opensha2.data.XySequence;
+import org.opensha2.eq.model.ClusterSourceSet;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
@@ -9,6 +11,7 @@ import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
@@ -123,14 +126,21 @@ final class Deaggregator {
         builder.multiply(clusterRate / builder.rate());
       }
 
+//      for (DeaggDataset.Builder builder : builders.values()) {
+//        builder.sourceSet(sources);
+//      }
+
       // combine the cluster datasets
       Map<Gmm, DeaggDataset> clusterDatasets = buildDatasets(builders);
       datasets.putAll(Multimaps.forMap(clusterDatasets));
     }
 
+    Optional<ClusterSourceSet> optionalSources = Optional.of((ClusterSourceSet) sources);
+    DatasetConsolidator consolidator = new DatasetConsolidator(optionalSources);
+    
     return ImmutableMap.copyOf(Maps.transformValues(
         Multimaps.asMap(datasets),
-        Deaggregation.DATASET_CONSOLIDATOR));
+        consolidator));
   }
 
   private void processSource(GroundMotions gms, Map<Gmm, DeaggDataset.Builder> builders) {
