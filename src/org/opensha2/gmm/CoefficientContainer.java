@@ -7,6 +7,7 @@ import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
 
 import com.google.common.collect.ArrayTable;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -27,7 +28,7 @@ import java.util.Set;
  * <p>Coefficients are loaded from CSV files. When such files are updated, it
  * may be necessary to edit certain {@code Imt} designations that are commonly
  * coded as integers (e.g. -1 = PGV, usually) or coefficient IDs that contain
- * illegal characters (e.g those with units labels in parentheses). 
+ * illegal characters (e.g those with units labels in parentheses).
  *
  * @author Peter Powers
  */
@@ -85,8 +86,9 @@ final class CoefficientContainer {
     URL url = Resources.getResource(CoefficientContainer.class, C_DIR + resource);
     List<String> lines = Resources.readLines(url, UTF_8);
     // build coeff name list
-    Iterable<String> nameList = Parsing.split(lines.get(0), Delimiter.COMMA);
-    Iterable<String> names = Iterables.skip(nameList, 1);
+    Iterable<String> names = FluentIterable
+        .from(Parsing.split(lines.get(0), Delimiter.COMMA))
+        .skip(1);
     // build Imt-value map
     Map<Imt, Double[]> valueMap = Maps.newHashMap();
     for (String line : Iterables.skip(lines, 1)) {

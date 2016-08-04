@@ -50,6 +50,7 @@ import java.util.Map;
  *
  * @author Allison Shumway
  * @author Peter Powers
+ * @see Gmm#CB_03
  */
 public class CampbellBozorgnia_2003 implements GroundMotionModel {
 
@@ -140,7 +141,8 @@ public class CampbellBozorgnia_2003 implements GroundMotionModel {
     double f1 = c.c2 * Mw + c.c3 * mTerm;
 
     // distance scaling - per verbal communication with Ken Campbell it
-    // is ok to approximate rSeis by constraining rRup to be >= 3.0 km
+    // is ok to approximate rSeis by constraining rRup to be >= 3.0 km.
+    // (see also Campbell 1997)
     double rSeis = max(in.rRup, 3.0);
     double rTerm = gS * exp(c.c8 * Mw + c.c9 * mTerm);
     double f2 = rSeis * rSeis + rTerm * rTerm;

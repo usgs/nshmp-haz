@@ -35,7 +35,7 @@ import java.util.Map;
  * <p><b>Component:</b> orientation-independent horizontal
  *
  * @author Peter Powers
- * @see Gmm#AM_09_INTER
+ * @see Gmm#ATKINSON_15
  */
 public final class Atkinson_2015 implements GroundMotionModel {
 
