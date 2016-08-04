@@ -416,6 +416,13 @@ public enum Gmm {
       BooreEtAl_1997.COEFFS,
       BooreEtAl_1997.CONSTRAINTS),
 
+  /** @see Campbell_1997 */
+  CAMPBELL_97(
+      Campbell_1997.class,
+      Campbell_1997.NAME,
+      Campbell_1997.COEFFS,
+      Campbell_1997.CONSTRAINTS),
+
   /** @see CampbellBozorgnia_2003 */
   CB_03(
       CampbellBozorgnia_2003.class,
@@ -456,7 +463,14 @@ public enum Gmm {
       McVerryEtAl_2000.Volcanic.class,
       McVerryEtAl_2000.Volcanic.NAME,
       McVerryEtAl_2000.COEFFS_GM,
-      McVerryEtAl_2000.CONSTRAINTS);
+      McVerryEtAl_2000.CONSTRAINTS),
+
+  /** @see MunsonThurber_1997 */
+  MT_97(
+      MunsonThurber_1997.class,
+      MunsonThurber_1997.NAME,
+      MunsonThurber_1997.COEFFS,
+      MunsonThurber_1997.CONSTRAINTS);
 
   private final Class<? extends GroundMotionModel> delegate;
   private final String name;
