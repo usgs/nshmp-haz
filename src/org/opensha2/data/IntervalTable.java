@@ -5,13 +5,13 @@ import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.data.DataTables.checkDataState;
-import static org.opensha2.data.DataTables.indexOf;
-import static org.opensha2.data.DataTables.keys;
+import static org.opensha2.data.IntervalData.checkDataState;
+import static org.opensha2.data.IntervalData.indexOf;
+import static org.opensha2.data.IntervalData.keys;
 
-import org.opensha2.data.DataTables.AbstractTable;
-import org.opensha2.data.DataTables.DefaultTable;
-import org.opensha2.data.DataTables.SingularTable;
+import org.opensha2.data.IntervalData.AbstractTable;
+import org.opensha2.data.IntervalData.DefaultTable;
+import org.opensha2.data.IntervalData.SingularTable;
 
 import com.google.common.primitives.Doubles;
 
@@ -27,19 +27,21 @@ import java.util.List;
  * simplifies issues related to rounding/precision errors that occur when
  * indexing according to explicit double values.
  *
- * <p>To create a {@code DataTable} instance, use a {@link Builder}.
+ * <p>To create an instance of an {@code IntervalTable}, use a {@link Builder}.
  *
- * <p>Internally, a {@code DataTable} is backed by a {@code double[][]} array
- * where 'row' refers to the 1st dimension and 'column' the 2nd.
+ * <p>Internally, an {@code IntervalTable} is backed by a {@code double[][]}
+ * array where 'row' refers to the 1st dimension and 'column' the 2nd.
  *
- * <p>Note that data tables are not intended for use with very high precision
- * data and keys are currently limited to a precision of 4 decimal places. This
- * may be changed or improved in the future.
+ * <p>Note that interval tables are not intended for use with very high
+ * precision data and keys are currently limited to a precision of 4 decimal
+ * places. This may change in the future.
  *
  * @author Peter Powers
- * @see DataVolume
+ * @see IntervalData
+ * @see IntervalArray
+ * @see IntervalVolume
  */
-public interface DataTable {
+public interface IntervalTable {
 
   /**
    * Return a value corresponding to the supplied {@code row} and {@code column}
@@ -98,7 +100,7 @@ public interface DataTable {
   List<Double> columns();
 
   /**
-   * A supplier of values with which to fill a {@code DataTable}.
+   * A supplier of values with which to fill a {@code IntervalTable}.
    */
   interface Loader {
 
@@ -112,7 +114,7 @@ public interface DataTable {
   }
 
   /**
-   * A builder of immutable {@code DataTable}s.
+   * A builder of immutable {@code IntervalTable}s.
    *
    * <p>Use {@link #create()} to initialize a new builder. Rows and columns must
    * be specified before any data can be added. Note that any supplied
@@ -151,7 +153,7 @@ public interface DataTable {
      *
      * @param model data table
      */
-    public static Builder fromModel(DataTable model) {
+    public static Builder fromModel(IntervalTable model) {
 
       AbstractTable t = (AbstractTable) model;
       Builder b = new Builder();
@@ -356,9 +358,9 @@ public interface DataTable {
      * @param table to add
      * @throws IllegalArgumentException if the rows and columns of the supplied
      *         table do not match those of this table
-     * @see #fromModel(DataTable)
+     * @see #fromModel(IntervalTable)
      */
-    public Builder add(DataTable table) {
+    public Builder add(IntervalTable table) {
       // safe covariant casts
       validateTable((AbstractTable) table);
       if (table instanceof SingularTable) {
@@ -408,7 +410,7 @@ public interface DataTable {
      *
      * @param loader that will compute values
      */
-    public DataTable build(Loader loader) {
+    public IntervalTable build(Loader loader) {
       checkNotNull(loader);
       for (int i = 0; i < rows.length; i++) {
         double row = rows[i];
@@ -423,12 +425,12 @@ public interface DataTable {
      * Return a newly-created, immutable, 2-dimensional data container populated
      * with the single value supplied. Calling this method will ignore any
      * values already supplied via {@code set*} or {@code add*} methods and will
-     * create a DataTable holding only the single value, similar to
+     * create a IntervalTable holding only the single value, similar to
      * {@link Collections#nCopies(int, Object)}.
      *
      * @param value which which to fill data container
      */
-    public DataTable build(double value) {
+    public IntervalTable build(double value) {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns);
       return new SingularTable(
@@ -441,10 +443,10 @@ public interface DataTable {
      * Return a newly-created, immutable, 2-dimensional data container populated
      * with the contents of this {@code Builder}.
      */
-    public DataTable build() {
+    public IntervalTable build() {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns);
-      DataTable table = new DefaultTable(
+      IntervalTable table = new DefaultTable(
           rowMin, rowMax, rowΔ, rows,
           columnMin, columnMax, columnΔ, columns,
           data);

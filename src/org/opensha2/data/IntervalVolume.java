@@ -4,38 +4,41 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.data.DataTables.checkDataState;
-import static org.opensha2.data.DataTables.indexOf;
-import static org.opensha2.data.DataTables.keys;
+import static org.opensha2.data.IntervalData.checkDataState;
+import static org.opensha2.data.IntervalData.indexOf;
+import static org.opensha2.data.IntervalData.keys;
 
-import org.opensha2.data.DataTables.AbstractVolume;
-import org.opensha2.data.DataTables.DefaultVolume;
+import org.opensha2.data.IntervalData.AbstractVolume;
+import org.opensha2.data.IntervalData.DefaultVolume;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * A 3-dimensional volume of immutable, double-valued data that is arranged
- * according to increasing and uniformly spaced double-valued keys. Data tables
- * are almost always used to represent binned data, and so while row and column
+ * according to increasing and uniformly spaced double-valued keys. Data volumes
+ * are almost always used to represent binned data, and so while row, column,
+ * and level
  * keys are bin centers, indexing is managed internally using bin edges. This
  * simplifies issues related to rounding/precision errors that occur when
  * indexing according to explicit double values.
  *
- * <p>To create a {@code DataVolume} instance, use a {@link Builder}.
+ * <p>To create an instance of an {@code IntervalVolume}, use a {@link Builder}.
  *
- * <p>Internally, a {@code DataVolume} is backed by a {@code double[][][]} array
+ * <p>Internally, an {@code IntervalVolume} is backed by a {@code double[][][]} array
  * where 'row' refers to the 1st dimension, 'column' the 2nd dimension, and
  * 'level' the 3rd.
  *
- * <p>Note that data tables are not intended for use with very high precision
+ * <p>Note that interval volumes are not intended for use with very high precision
  * data and keys are currently limited to a precision of 4 decimal places. This
- * may be changed or improved in the future.
+ * may change in the future.
  *
  * @author Peter Powers
- * @see DataTable
+ * @see IntervalData
+ * @see IntervalArray
+ * @see IntervalTable
  */
-public interface DataVolume {
+public interface IntervalVolume {
 
   /**
    * Return a value corresponding to the supplied {@code row}, {@code column},
@@ -116,7 +119,7 @@ public interface DataVolume {
   List<Double> levels();
 
   /**
-   * A supplier of values with which to fill a {@code DataVolume}.
+   * A supplier of values with which to fill a {@code IntervalVolume}.
    */
   interface Loader {
 
@@ -132,7 +135,7 @@ public interface DataVolume {
   }
 
   /**
-   * A builder of immutable {@code DataVolume}s.
+   * A builder of immutable {@code IntervalVolume}s.
    *
    * <p>See {@link #create()} to initialize a new builder. Rows, columns, and
    * levels must be specified before any data can be added. Note that any
@@ -177,7 +180,7 @@ public interface DataVolume {
      *
      * @param model data volume
      */
-    public static Builder fromModel(DataVolume model) {
+    public static Builder fromModel(IntervalVolume model) {
 
       AbstractVolume v = (AbstractVolume) model;
       Builder b = new Builder();
@@ -344,9 +347,9 @@ public interface DataVolume {
      * @param volume to add
      * @throws IllegalArgumentException if the rows, columns, and levels of the
      *         supplied volume do not match those of this volume
-     * @see #fromModel(DataVolume)
+     * @see #fromModel(IntervalVolume)
      */
-    public Builder add(DataVolume volume) {
+    public Builder add(IntervalVolume volume) {
       // safe covariant casts
       validateVolume((AbstractVolume) volume);
       Data.uncheckedAdd(data, ((DefaultVolume) volume).data);
@@ -395,7 +398,7 @@ public interface DataVolume {
      *
      * @param loader that will compute values
      */
-    public DataVolume build(Loader loader) {
+    public IntervalVolume build(Loader loader) {
       checkNotNull(loader);
       for (int i = 0; i < rows.length; i++) {
         double row = rows[i];
@@ -413,10 +416,10 @@ public interface DataVolume {
      * Return a newly-created, immutable 3-dimensional data container populated
      * with the contents of this {@code Builder}.
      */
-    public DataVolume build() {
+    public IntervalVolume build() {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns, levels);
-      DataVolume volume = new DefaultVolume(
+      IntervalVolume volume = new DefaultVolume(
           rowMin, rowMax, rowΔ, rows,
           columnMin, columnMax, columnΔ, columns,
           levelMin, levelMax, levelΔ, levels,

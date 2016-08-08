@@ -2,7 +2,7 @@ package org.opensha2.eq.model;
 
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.InputList;
-import org.opensha2.data.DataTables;
+import org.opensha2.data.IntervalData;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
@@ -151,8 +151,8 @@ public class PointSources {
     double rMax = 1000.0;
     double rΔ = 5.0;
 
-    double[] distances = DataTables.keys(rMin, rMax, rΔ);
-    double[] mags = DataTables.keys(M_MIN, M_MAX, M_Δ);
+    double[] distances = IntervalData.keys(rMin, rMax, rΔ);
+    double[] mags = IntervalData.keys(M_MIN, M_MAX, M_Δ);
     double[] rates = new double[mags.length];
 
     // IncrementalMfd mfd = Mfds.newIncrementalMFD(mags, rates);

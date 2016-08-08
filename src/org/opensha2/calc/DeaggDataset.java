@@ -6,9 +6,9 @@ import static org.opensha2.data.Data.checkInRange;
 
 import org.opensha2.calc.Deaggregation.SourceContribution;
 import org.opensha2.data.Data;
-import org.opensha2.data.DataTable;
-import org.opensha2.data.DataTables;
-import org.opensha2.data.DataVolume;
+import org.opensha2.data.IntervalTable;
+import org.opensha2.data.IntervalData;
+import org.opensha2.data.IntervalVolume;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
@@ -36,7 +36,7 @@ import java.util.Map.Entry;
  */
 final class DeaggDataset {
 
-  final DataVolume rmε;
+  final IntervalVolume rmε;
 
   /* Weighted mean contributions */
   final double rBar, mBar, εBar;
@@ -45,11 +45,11 @@ final class DeaggDataset {
   final double barWeight;
 
   /* r and m position data already weighted by rate */
-  final DataTable rPositions;
-  final DataTable mPositions;
+  final IntervalTable rPositions;
+  final IntervalTable mPositions;
 
   /* Total weight (rate) in each r and m position bin */
-  final DataTable positionWeights;
+  final IntervalTable positionWeights;
 
   /* Unbinned weight (rate) */
   final double residualWeight;
@@ -59,12 +59,12 @@ final class DeaggDataset {
   final List<SourceContribution> sources;
 
   private DeaggDataset(
-      DataVolume rmε,
+      IntervalVolume rmε,
       double rBar, double mBar, double εBar,
       double barWeight,
-      DataTable rPositions,
-      DataTable mPositions,
-      DataTable positionWeights,
+      IntervalTable rPositions,
+      IntervalTable mPositions,
+      IntervalTable positionWeights,
       double residualWeight,
       Map<SourceSet<? extends Source>, Double> sourceSets,
       List<SourceContribution> sources) {
@@ -100,7 +100,7 @@ final class DeaggDataset {
    */
   int distanceIndex(double r) {
     try {
-      return DataTables.indexOf(rmε.rowMin(), rmε.rowΔ(), r, rmε.rows().size());
+      return IntervalData.indexOf(rmε.rowMin(), rmε.rowΔ(), r, rmε.rows().size());
     } catch (IndexOutOfBoundsException e) {
       return -1;
     }
@@ -115,7 +115,7 @@ final class DeaggDataset {
    */
   int magnitudeIndex(double m) {
     try {
-      return DataTables.indexOf(rmε.columnMin(), rmε.columnΔ(), m, rmε.columns().size());
+      return IntervalData.indexOf(rmε.columnMin(), rmε.columnΔ(), m, rmε.columns().size());
     } catch (IndexOutOfBoundsException e) {
       return -1;
     }
@@ -133,7 +133,7 @@ final class DeaggDataset {
    */
   int epsilonIndex(double ε) {
     return (ε < rmε.levelMin()) ? 0 : (ε >= rmε.levelMax()) ? rmε.levels().size() - 1
-        : DataTables.indexOf(rmε.levelMin(), rmε.levelΔ(), ε, rmε.levels().size());
+        : IntervalData.indexOf(rmε.levelMin(), rmε.levelΔ(), ε, rmε.levels().size());
   }
   
   @Override
@@ -200,16 +200,16 @@ final class DeaggDataset {
 
   static class Builder {
 
-    private DataVolume.Builder rmε;
+    private IntervalVolume.Builder rmε;
 
     /* Weighted mean contributions */
     private double rBar, mBar, εBar;
     private double barWeight;
 
     /* Weighted r and m position data */
-    private DataTable.Builder rPositions;
-    private DataTable.Builder mPositions;
-    private DataTable.Builder positionWeights;
+    private IntervalTable.Builder rPositions;
+    private IntervalTable.Builder mPositions;
+    private IntervalTable.Builder positionWeights;
 
     /* Unbinned weight (rate) */
     private double residualWeight;
@@ -222,7 +222,7 @@ final class DeaggDataset {
         double mMin, double mMax, double Δm,
         double εMin, double εMax, double Δε) {
 
-      rmε = DataVolume.Builder.create()
+      rmε = IntervalVolume.Builder.create()
           .rows(
               checkInRange(rRange, "Min distance", rMin),
               checkInRange(rRange, "Max distance", rMax),
@@ -236,13 +236,13 @@ final class DeaggDataset {
               checkInRange(εRange, "Max epsilon", εMax),
               Δε);
 
-      rPositions = DataTable.Builder.create()
+      rPositions = IntervalTable.Builder.create()
           .rows(rMin, rMax, Δr)
           .columns(mMin, mMax, Δm);
-      mPositions = DataTable.Builder.create()
+      mPositions = IntervalTable.Builder.create()
           .rows(rMin, rMax, Δr)
           .columns(mMin, mMax, Δm);
-      positionWeights = DataTable.Builder.create()
+      positionWeights = IntervalTable.Builder.create()
           .rows(rMin, rMax, Δr)
           .columns(mMin, mMax, Δm);
 
@@ -251,10 +251,10 @@ final class DeaggDataset {
     }
 
     private Builder(DeaggDataset model) {
-      rmε = DataVolume.Builder.fromModel(model.rmε);
-      rPositions = DataTable.Builder.fromModel(model.rPositions);
-      mPositions = DataTable.Builder.fromModel(model.mPositions);
-      positionWeights = DataTable.Builder.fromModel(model.positionWeights);
+      rmε = IntervalVolume.Builder.fromModel(model.rmε);
+      rPositions = IntervalTable.Builder.fromModel(model.rPositions);
+      mPositions = IntervalTable.Builder.fromModel(model.mPositions);
+      positionWeights = IntervalTable.Builder.fromModel(model.positionWeights);
       sourceSets = new HashMap<>();
       sources = new ArrayList<>();
     }

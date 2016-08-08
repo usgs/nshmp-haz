@@ -21,17 +21,21 @@ import java.util.List;
  * 3-dimensional data containers.
  *
  * @author Peter Powers
+ * @see IntervalArray
+ * @see IntervalTable
+ * @see IntervalVolume
  */
-public final class DataTables {
+public final class IntervalData {
 
   /**
-   * Create key values for use in a {@link DataTable} or {@link DataVolume}.
-   * Both these classes call this method directly when initializing their
-   * backing arrays. It is exposed for convenience as there are circumstances
-   * where a reference to the row or column keys is helpful to have when working
-   * with the builders for these classes. Internally, this method calls
+   * Create key values for use in an {@link IntervalArray},
+   * {@link IntervalTable} or {@link IntervalVolume}. These classes call this
+   * method directly when initializing their backing arrays. It is exposed for
+   * convenience as there are circumstances where a reference to the row or
+   * column keys is helpful to have when working with the builders for these
+   * classes. Internally, this method calls
    * {@link Data#buildCleanSequence(double, double, double, boolean, int)} with
-   * a precision value of 4 decimal places. This may change in the future
+   * a precision value of 4 decimal places. This may change in the future.
    *
    * <p><b>Example:</b> {@code keys(5.0, 8.0, 1.0)} returns [5.5, 6.5, 7.5]
    *
@@ -133,7 +137,7 @@ public final class DataTables {
     }
   }
 
-  static abstract class AbstractTable implements DataTable {
+  static abstract class AbstractTable implements IntervalTable {
 
     final double rowMin;
     final double rowMax;
@@ -285,7 +289,7 @@ public final class DataTables {
     }
   }
 
-  static abstract class AbstractVolume implements DataVolume {
+  static abstract class AbstractVolume implements IntervalVolume {
 
     final double rowMin;
     final double rowMax;

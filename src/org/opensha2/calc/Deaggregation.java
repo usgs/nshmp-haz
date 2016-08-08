@@ -6,7 +6,7 @@ import static org.opensha2.data.Data.multiply;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.data.Data;
-import org.opensha2.data.DataVolume;
+import org.opensha2.data.IntervalVolume;
 import org.opensha2.data.Interpolator;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.ClusterSourceSet;
@@ -423,7 +423,7 @@ public final class Deaggregation {
       this.component = component;
       List<RmBin> rmBins = new ArrayList<>();
       // iterate magnitudes descending, distances ascending
-      DataVolume binData = data.rmε;
+      IntervalVolume binData = data.rmε;
       List<Double> magnitudes = Lists.reverse(binData.columns());
       List<Double> distances = binData.rows();
       double toPercent = 100.0 / data.barWeight;

@@ -13,7 +13,7 @@ import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
 
 import org.opensha2.data.Data;
-import org.opensha2.data.DataTable;
+import org.opensha2.data.IntervalTable;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.FocalMech;
@@ -656,7 +656,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
       double rMax = parent.groundMotionModels().maxDistance();
 
-      DataTable.Builder tableBuilder = DataTable.Builder.create()
+      IntervalTable.Builder tableBuilder = IntervalTable.Builder.create()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
@@ -666,7 +666,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         parentCount++;
       }
 
-      DataTable mfdTable = tableBuilder.build();
+      IntervalTable mfdTable = tableBuilder.build();
 
       // System.out.println(parent.name());
       // System.out.println(mfdTable);
@@ -701,15 +701,15 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
       double rMax = parent.groundMotionModels().maxDistance();
 
-      DataTable.Builder ssTableBuilder = DataTable.Builder.create()
+      IntervalTable.Builder ssTableBuilder = IntervalTable.Builder.create()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
-      DataTable.Builder rTableBuilder = DataTable.Builder.create()
+      IntervalTable.Builder rTableBuilder = IntervalTable.Builder.create()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
-      DataTable.Builder nTableBuilder = DataTable.Builder.create()
+      IntervalTable.Builder nTableBuilder = IntervalTable.Builder.create()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
@@ -731,11 +731,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         parentCount++;
       }
 
-      DataTable ssTable = ssTableBuilder.build();
+      IntervalTable ssTable = ssTableBuilder.build();
       // System.out.println("SS Table:" + TextUtils.NEWLINE + ssTable);
-      DataTable rTable = rTableBuilder.build();
+      IntervalTable rTable = rTableBuilder.build();
       // System.out.println("R Table:" + TextUtils.NEWLINE + rTable);
-      DataTable nTable = nTableBuilder.build();
+      IntervalTable nTable = nTableBuilder.build();
       // System.out.println("N Table:" + TextUtils.NEWLINE + nTable);
 
       // DataTable tableSum = DataTable.Builder.fromModel(ssTable)
