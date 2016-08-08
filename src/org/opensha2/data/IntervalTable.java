@@ -22,10 +22,10 @@ import java.util.List;
 /**
  * A 2-dimensional table of immutable, double-valued data that is arranged
  * according to increasing and uniformly spaced double-valued keys. Data tables
- * are almost always used to represent binned data, and so while row and column
- * keys are bin centers, indexing is managed internally using bin edges. This
- * simplifies issues related to rounding/precision errors that occur when
- * indexing according to explicit double values.
+ * are used to represent binned data, and so while row and column keys are bin
+ * centers, indexing is managed internally using bin edges. This simplifies
+ * issues related to rounding/precision errors that occur when indexing
+ * according to explicit double values.
  *
  * <p>To create an instance of an {@code IntervalTable}, use a {@link Builder}.
  *
@@ -173,7 +173,7 @@ public interface IntervalTable {
     }
 
     /**
-     * Define the data table rows.
+     * Define the table row intervals.
      *
      * @param min lower edge of lowermost row bin
      * @param max upper edge of uppermost row bin
@@ -189,7 +189,7 @@ public interface IntervalTable {
     }
 
     /**
-     * Define the data table columns.
+     * Define the table column intervals.
      *
      * @param min lower edge of lowermost column bin
      * @param max upper edge of uppermost column bin

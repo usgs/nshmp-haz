@@ -17,21 +17,20 @@ import java.util.List;
 /**
  * A 3-dimensional volume of immutable, double-valued data that is arranged
  * according to increasing and uniformly spaced double-valued keys. Data volumes
- * are almost always used to represent binned data, and so while row, column,
- * and level
- * keys are bin centers, indexing is managed internally using bin edges. This
+ * are used to represent binned data, and so while row, column, and level keys
+ * are bin centers, indexing is managed internally using bin edges. This
  * simplifies issues related to rounding/precision errors that occur when
  * indexing according to explicit double values.
  *
  * <p>To create an instance of an {@code IntervalVolume}, use a {@link Builder}.
  *
- * <p>Internally, an {@code IntervalVolume} is backed by a {@code double[][][]} array
- * where 'row' refers to the 1st dimension, 'column' the 2nd dimension, and
- * 'level' the 3rd.
+ * <p>Internally, an {@code IntervalVolume} is backed by a {@code double[][][]}
+ * array where 'row' refers to the 1st dimension, 'column' the 2nd dimension,
+ * and 'level' the 3rd.
  *
- * <p>Note that interval volumes are not intended for use with very high precision
- * data and keys are currently limited to a precision of 4 decimal places. This
- * may change in the future.
+ * <p>Note that interval volumes are not intended for use with very high
+ * precision data and keys are currently limited to a precision of 4 decimal
+ * places. This may change in the future.
  *
  * @author Peter Powers
  * @see IntervalData

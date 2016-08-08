@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Static utilities for working with and concrete implementations of 2- and
- * 3-dimensional data containers.
+ * Static utilities for working with and concrete implementations of 1-, 2- and
+ * 3-dimensional interval data containers.
  *
  * @author Peter Powers
  * @see IntervalArray
@@ -79,19 +79,37 @@ public final class IntervalData {
   }
 
   /*
-   * Ensure rows and columns have been specified
+   * Ensure rows and have been specified
    */
-  static void checkDataState(double[] rows, double[] columns) {
+  static void checkDataState(double[] rows) {
     checkDataState(rows, "Row");
-    checkDataState(columns, "Column");
   }
 
   /*
    * Ensure rows and columns have been specified
    */
+  static void checkDataState(double[] rows, double[] columns) {
+    checkDataState(rows);
+    checkDataState(columns, "Column");
+  }
+
+  /*
+   * Ensure rows, columns, and levels have been specified
+   */
   static void checkDataState(double[] rows, double[] columns, double[] levels) {
     checkDataState(rows, columns);
     checkDataState(levels, "Level");
+  }
+
+  /*
+   * Confirm that data array conforms to the row and column sizes already
+   * configured.
+   */
+  static void checkDataSize(int rowSize, double[] data) {
+    checkArgument(
+        data.length == rowSize,
+        "Expected %s rows of data but only %s were supplied",
+        rowSize, data.length);
   }
 
   /*
@@ -134,6 +152,106 @@ public final class IntervalData {
             "Expected %s levels but only %s were supplied on row %s, column %s",
             levelSize, level.length, i, j);
       }
+    }
+  }
+
+  static abstract class AbstractArray implements IntervalArray {
+
+    final double rowMin;
+    final double rowMax;
+    final double rowΔ;
+    final double[] rows;
+
+    private AbstractArray(double rowMin, double rowMax, double rowΔ, double[] rows) {
+      this.rowMin = rowMin;
+      this.rowMax = rowMax;
+      this.rowΔ = rowΔ;
+      this.rows = rows;
+    }
+
+    @Override
+    public List<Double> rows() {
+      return unmodifiableList(asList(rows));
+    }
+
+    @Override
+    public double rowMin() {
+      return rowMin;
+    }
+
+    @Override
+    public double rowMax() {
+      return rowMax;
+    }
+
+    @Override
+    public double rowΔ() {
+      return rowΔ;
+    }
+  }
+
+  static final class DefaultArray extends AbstractArray {
+
+    final double[] data;
+
+    DefaultArray(
+        double rowMin, double rowMax, double rowΔ, double[] rows,
+        double[] data) {
+
+      super(rowMin, rowMax, rowΔ, rows);
+      this.data = data;
+    }
+
+    @Override
+    public double get(final double row) {
+      int iRow = indexOf(rowMin, rowΔ, row, rows.length);
+      return data[iRow];
+    }
+
+    @Override
+    public XySequence asXySequence() {
+      return new ImmutableXySequence(rows, data);
+    }
+
+    private static final String ROW_COL_FORMAT = "% 8.2f";
+    private static final String DATA_FORMAT = "%7.2e";
+    private static final String DELIMITER = ", ";
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+      sb.append("           ");
+      sb.append("[");
+      sb.append(String.format(ROW_COL_FORMAT, data));
+      sb.append("] ");
+      // format as scientific but replace zeros
+      return sb.toString();
+    }
+  }
+
+  static final class SingularArray extends AbstractArray {
+
+    final double value;
+    private final double[] row;
+
+    SingularArray(
+        double rowMin, double rowMax, double rowΔ, double[] rows,
+        double value) {
+
+      super(rowMin, rowMax, rowΔ, rows);
+      this.value = value;
+      this.row = new double[rows.length];
+      Arrays.fill(this.row, value);
+    }
+
+    @Override
+    public double get(final double rowKey) {
+      return value;
+    }
+
+    @Override
+    public XySequence asXySequence() {
+      return new ImmutableXySequence(rows, this.row);
     }
   }
 
