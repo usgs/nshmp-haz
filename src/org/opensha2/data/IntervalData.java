@@ -1,6 +1,5 @@
 package org.opensha2.data;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.primitives.Doubles.asList;
@@ -11,9 +10,8 @@ import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.internal.Parsing;
 
-import com.google.common.primitives.Doubles;
-
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -66,8 +64,9 @@ public final class IntervalData {
    * @param delta interval (i.e. bin width)
    * @param value for which to compute index
    * @param size of array or collection for which index is to be used
-   * @throws IllegalArgumentException if the index of {@code value} falls
+   * @throws IndexOutOfBoundsException if the index of {@code value} falls
    *         outside the allowed index range of {@code [0, size-1]}.
+   * @throws IllegalArgumentException if {@code size} is negative
    */
   public static int indexOf(double min, double delta, double value, int size) {
     // casting to int floors value
@@ -101,60 +100,6 @@ public final class IntervalData {
     checkDataState(levels, "Level");
   }
 
-  /*
-   * Confirm that data array conforms to the row and column sizes already
-   * configured.
-   */
-  static void checkDataSize(int rowSize, double[] data) {
-    checkArgument(
-        data.length == rowSize,
-        "Expected %s rows of data but only %s were supplied",
-        rowSize, data.length);
-  }
-
-  /*
-   * Confirm that data array conforms to the row and column sizes already
-   * configured.
-   */
-  static void checkDataSize(int rowSize, int columnSize, double[][] data) {
-    checkArgument(
-        data.length == rowSize,
-        "Expected %s rows of data but only %s were supplied",
-        rowSize, data.length);
-    for (int i = 0; i < data.length; i++) {
-      double[] column = data[i];
-      checkArgument(
-          column.length == columnSize,
-          "Expected %s columns but only %s were supplied on row %s",
-          columnSize, column.length, i);
-    }
-  }
-
-  /*
-   * Confirm that data array conforms to the row and column sizes already
-   * configured.
-   */
-  static void checkDataSize(int rowSize, int columnSize, int levelSize, double[][][] data) {
-    checkArgument(
-        data.length == rowSize,
-        "Expected %s rows of data but only %s were supplied",
-        rowSize, data.length);
-    for (int i = 0; i < data.length; i++) {
-      double[][] column = data[i];
-      checkArgument(
-          column.length == columnSize,
-          "Expected %s columns but only %s were supplied on row %s",
-          columnSize, column.length, i);
-      for (int j = 0; j < column.length; j++) {
-        double[] level = column[j];
-        checkArgument(
-            level.length == levelSize,
-            "Expected %s levels but only %s were supplied on row %s, column %s",
-            levelSize, level.length, i, j);
-      }
-    }
-  }
-
   static abstract class AbstractArray implements IntervalArray {
 
     final double rowMin;
@@ -167,6 +112,12 @@ public final class IntervalData {
       this.rowMax = rowMax;
       this.rowΔ = rowΔ;
       this.rows = rows;
+    }
+
+    @Override
+    public double get(final double rowValue) {
+      int iRow = indexOf(rowMin, rowΔ, rowValue, rows.length);
+      return get(iRow);
     }
 
     @Override
@@ -188,6 +139,14 @@ public final class IntervalData {
     public double rowΔ() {
       return rowΔ;
     }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+      appendArrayKeys(sb, "", rows());
+      appendArrayValues(sb, values().yValues());
+      return sb.toString();
+    }
   }
 
   static final class DefaultArray extends AbstractArray {
@@ -203,29 +162,13 @@ public final class IntervalData {
     }
 
     @Override
-    public double get(final double row) {
-      int iRow = indexOf(rowMin, rowΔ, row, rows.length);
-      return data[iRow];
+    public double get(final int rowIndex) {
+      return data[rowIndex];
     }
 
     @Override
-    public XySequence asXySequence() {
+    public XySequence values() {
       return new ImmutableXySequence(rows, data);
-    }
-
-    private static final String ROW_COL_FORMAT = "% 8.2f";
-    private static final String DATA_FORMAT = "%7.2e";
-    private static final String DELIMITER = ", ";
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("           ");
-      sb.append("[");
-      sb.append(String.format(ROW_COL_FORMAT, data));
-      sb.append("] ");
-      // format as scientific but replace zeros
-      return sb.toString();
     }
   }
 
@@ -245,14 +188,20 @@ public final class IntervalData {
     }
 
     @Override
-    public double get(final double rowKey) {
+    public double get(final double rowValue) {
       return value;
     }
 
     @Override
-    public XySequence asXySequence() {
+    public double get(final int rowIndex) {
+      return value;
+    }
+
+    @Override
+    public XySequence values() {
       return new ImmutableXySequence(rows, this.row);
     }
+
   }
 
   static abstract class AbstractTable implements IntervalTable {
@@ -280,6 +229,19 @@ public final class IntervalData {
       this.columnMax = columnMax;
       this.columnΔ = columnΔ;
       this.columns = columns;
+    }
+
+    @Override
+    public double get(final double rowValue, final double columnValue) {
+      int iRow = indexOf(rowMin, rowΔ, rowValue, rows.length);
+      int iColumn = indexOf(columnMin, columnΔ, columnValue, columns.length);
+      return get(iRow, iColumn);
+    }
+    
+    @Override
+    public XySequence row(double rowValue) {
+      int rowIndex = indexOf(rowMin, rowΔ, rowValue, rows.length);
+      return row(rowIndex);
     }
 
     @Override
@@ -321,6 +283,18 @@ public final class IntervalData {
     public double columnΔ() {
       return columnΔ;
     }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+      List<Double> rows = rows();
+      appendArrayKeys(sb, "          ", columns());
+      for (int i = 0; i < rows.size(); i++) {
+        sb.append(String.format(KEY_WITH_BRACKETS, rows.get(i)));
+        appendArrayValues(sb, row(i).yValues());
+      }
+      return sb.toString();
+    }
   }
 
   static final class DefaultTable extends AbstractTable {
@@ -339,42 +313,13 @@ public final class IntervalData {
     }
 
     @Override
-    public double get(final double row, final double column) {
-      int iRow = indexOf(rowMin, rowΔ, row, rows.length);
-      int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
-      return data[iRow][iColumn];
+    public double get(final int rowIndex, final int columnIndex) {
+      return data[rowIndex][columnIndex];
     }
 
     @Override
-    public XySequence row(double row) {
-      int iRow = indexOf(rowMin, rowΔ, row, rows.length);
-      return new ImmutableXySequence(columns, data[iRow]);
-    }
-
-    private static final String ROW_COL_FORMAT = "% 8.2f";
-    private static final String DATA_FORMAT = "%7.2e";
-    private static final String DELIMITER = ", ";
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-      List<Double> rows = rows();
-      sb.append("           ");
-      sb.append(Parsing.toString(columns(), ROW_COL_FORMAT, DELIMITER, true));
-      sb.append(NEWLINE);
-      for (int i = 0; i < data.length; i++) {
-        sb.append("[");
-        sb.append(String.format(ROW_COL_FORMAT, rows.get(i)));
-        sb.append("] ");
-        // format as scientific but replace zeros
-        List<Double> dataRow = Doubles.asList(data[i]);
-        String dataLine = Parsing.toString(dataRow, DATA_FORMAT, DELIMITER, true);
-        dataLine = dataLine.replace("0.0,", "     0.0,");
-        dataLine = dataLine.replace("0.0]", "     0.0]");
-        sb.append(dataLine);
-        sb.append(NEWLINE);
-      }
-      return sb.toString();
+    public XySequence row(int rowIndex) {
+      return new ImmutableXySequence(columns, data[rowIndex]);
     }
   }
 
@@ -397,12 +342,17 @@ public final class IntervalData {
     }
 
     @Override
-    public double get(final double rowKey, final double columnKey) {
+    public double get(final double rowValue, final double columnValue) {
       return value;
     }
 
     @Override
-    public XySequence row(double row) {
+    public double get(final int rowIndex, final int columnIndex) {
+      return value;
+    }
+
+    @Override
+    public XySequence row(int rowIndex) {
       return new ImmutableXySequence(columns, this.row);
     }
   }
@@ -443,6 +393,21 @@ public final class IntervalData {
       this.levelMax = levelMax;
       this.levelΔ = levelΔ;
       this.levels = levels;
+    }
+
+    @Override
+    public double get(final double rowValue, final double columnValue, final double levelValue) {
+      int iRow = indexOf(rowMin, rowΔ, rowValue, rows.length);
+      int iColumn = indexOf(columnMin, columnΔ, columnValue, columns.length);
+      int iLevel = indexOf(levelMin, levelΔ, levelValue, levels.length);
+      return get(iRow, iColumn, iLevel);
+    }
+    
+    @Override
+    public XySequence column(double rowValue, double columnValue) {
+      int iRow = indexOf(rowMin, rowΔ, rowValue, rows.length);
+      int iColumn = indexOf(columnMin, columnΔ, columnValue, columns.length);
+      return column(iRow, iColumn);
     }
 
     @Override
@@ -505,6 +470,21 @@ public final class IntervalData {
       return levelΔ;
     }
 
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+      List<Double> rows = rows();
+      List<Double> columns = columns();
+      appendArrayKeys(sb, "                    ", levels());
+      for (int i = 0; i < rows.size(); i++) {
+        for (int j = 0; j < columns.size(); j++) {
+          sb.append(String.format(KEY_WITH_BRACKETS, rows.get(i)));
+          sb.append(String.format(KEY_WITH_BRACKETS, columns.get(j)));
+          appendArrayValues(sb, column(i, j).yValues());
+        }
+      }
+      return sb.toString();
+    }
   }
 
   static final class DefaultVolume extends AbstractVolume {
@@ -525,24 +505,71 @@ public final class IntervalData {
     }
 
     @Override
-    public double get(final double row, final double column, final double level) {
-      int iRow = indexOf(rowMin, rowΔ, row, rows.length);
-      int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
-      int iLevel = indexOf(levelMin, levelΔ, level, levels.length);
-      return data[iRow][iColumn][iLevel];
+    public double get(final int rowIndex, final int columnIndex, final int levelIndex) {
+      return data[rowIndex][columnIndex][levelIndex];
     }
 
     @Override
-    public XySequence column(double row, double column) {
-      int iRow = indexOf(rowMin, rowΔ, row, rows.length);
-      int iColumn = indexOf(columnMin, columnΔ, column, columns.length);
-      return new ImmutableXySequence(levels, data[iRow][iColumn]);
-    }
-
-    @Override
-    public String toString() {
-      return Data.toString(data);
+    public XySequence column(int rowIndex, int columnIndex) {
+      return new ImmutableXySequence(levels, data[rowIndex][columnIndex]);
     }
   }
+
+  static final class SingularVolume extends AbstractVolume {
+
+    final double value;
+    private final double[] column;
+
+    SingularVolume(
+        double rowMin, double rowMax, double rowΔ, double[] rows,
+        double columnMin, double columnMax, double columnΔ, double[] columns,
+        double levelMin, double levelMax, double levelΔ, double[] levels,
+        double value) {
+
+      super(
+          rowMin, rowMax, rowΔ, rows,
+          columnMin, columnMax, columnΔ, columns,
+          levelMin, levelMax, levelΔ, levels);
+      this.value = value;
+      this.column = new double[levels.length];
+      Arrays.fill(this.column, value);
+    }
+
+    @Override
+    public double get(final double rowValue, final double columnValue, final double levelValue) {
+      return value;
+    }
+    
+    @Override
+    public double get(final int rowIndex, final int columnIndex, final int levelIndex) {
+      return value;
+    }
+
+    @Override
+    public XySequence column(int rowIndex, int columnIndex) {
+      return new ImmutableXySequence(columns, this.column);
+    }
+  }
+
+  /* string utilities */
+
+  private static void appendArrayKeys(StringBuilder sb, String prefix, Collection<Double> values) {
+    sb.append(prefix);
+    sb.append(Parsing.toString(values, KEY_FORMAT, DELIMITER, true, true));
+    sb.append(NEWLINE);
+  }
+
+  private static void appendArrayValues(StringBuilder sb, Collection<Double> values) {
+    String dataLine = Parsing.toString(values, DATA_FORMAT, DELIMITER, true, true);
+    dataLine = dataLine.replace("0.0,", "     0.0,");
+    dataLine = dataLine.replace("0.0]", "     0.0]");
+    sb.append(dataLine);
+    sb.append(NEWLINE);
+  }
+
+  private static final String KEY_FORMAT = "%8.2f";
+  private static final String KEY_WITH_BRACKETS = "[%7.2f] ";
+  private static final String DATA_FORMAT = "%7.2e";
+  private static final String DELIMITER = ", ";
 
 }

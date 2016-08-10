@@ -10,8 +10,10 @@ import static org.opensha2.data.IntervalData.keys;
 
 import org.opensha2.data.IntervalData.AbstractVolume;
 import org.opensha2.data.IntervalData.DefaultVolume;
+import org.opensha2.data.IntervalData.SingularVolume;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,8 +27,8 @@ import java.util.List;
  * <p>To create an instance of an {@code IntervalVolume}, use a {@link Builder}.
  *
  * <p>Internally, an {@code IntervalVolume} is backed by a {@code double[][][]}
- * array where 'row' refers to the 1st dimension, 'column' the 2nd dimension,
- * and 'level' the 3rd.
+ * where 'row' maps to the 1st dimension, 'column' the 2nd dimension, and
+ * 'level' the 3rd.
  *
  * <p>Note that interval volumes are not intended for use with very high
  * precision data and keys are currently limited to a precision of 4 decimal
@@ -40,22 +42,48 @@ import java.util.List;
 public interface IntervalVolume {
 
   /**
-   * Return a value corresponding to the supplied {@code row}, {@code column},
-   * and {@code level}.
+   * Return the value of the bin that maps to the supplied row, column, and
+   * level values. Do not confuse this method with {@link #get(int, int, int)}
+   * by row index.
    *
-   * @param row of value to retrieve (may not explicitely exist as a key)
-   * @param column of value to retrieve (may not explicitely exist as a key)
-   * @param level of value to retrieve (may not explicitely exist as a key)
+   * @param rowValue of bin to retrieve
+   * @param columnValue of bin to retrieve
+   * @param levelValue of bin to retrieve
+   * @throws IndexOutOfBoundsException if any value is out of range
    */
-  double get(double row, double column, double level);
+  double get(double rowValue, double columnValue, double levelValue);
 
   /**
-   * Return an immutable view of a column of values.
+   * Return the value of the bin that maps to the supplied row, column, and
+   * level indices. Do not confuse this method with
+   * {@link #get(double, double, double)} by row value.
    *
-   * @param row of column to retrieve
-   * @param column to retrieve
+   * @param rowIndex of bin to retrieve
+   * @param columnIndex of bin to retrieve
+   * @param levelIndex of bin to retrieve
+   * @throws IndexOutOfBoundsException if any index is out of range
    */
-  XySequence column(double row, double column);
+  double get(int rowIndex, int columnIndex, int levelIndex);
+
+  /**
+   * Return an immutable view of the values that map to the supplied row and
+   * column values. Do not confuse with {@link #column(int, int)} retrieval by
+   * index.
+   *
+   * @param rowValue of bin to retrieve
+   * @param columnValue of bin to retrieve
+   */
+  XySequence column(double rowValue, double columnValue);
+
+  /**
+   * Return an immutable view of the values that map to the supplied row and
+   * column values. Do not confuse with {@link #column(double, double)}
+   * retrieval by index.
+   *
+   * @param rowIndex of bin to retrieve
+   * @param columnIndex of bin to retrieve
+   */
+  XySequence column(int rowIndex, int columnIndex);
 
   /**
    * Return the lower edge of the lowermost row bin.
@@ -351,7 +379,11 @@ public interface IntervalVolume {
     public Builder add(IntervalVolume volume) {
       // safe covariant casts
       validateVolume((AbstractVolume) volume);
-      Data.uncheckedAdd(data, ((DefaultVolume) volume).data);
+      if (volume instanceof SingularVolume) {
+        Data.add(((SingularVolume) volume).value, data);
+      } else {
+        Data.uncheckedAdd(data, ((DefaultVolume) volume).data);
+      }
       return this;
     }
 
@@ -379,8 +411,8 @@ public interface IntervalVolume {
     }
 
     /*
-     * Data is not copied on build() so we need to dereference data arrays to
-     * prevent lingering builders from further modifying data.
+     * Data is not copied on build() so we dereference data arrays to prevent
+     * lingering builders from further modifying data.
      */
     private void dereference() {
       data = null;
@@ -390,10 +422,10 @@ public interface IntervalVolume {
     }
 
     /**
-     * Return a newly-created, immutable, 3-dimensional data container populated
-     * with values computed by the supplied loader. Calling this method will
-     * overwrite any values already supplied via {@code set*} or {@code add*}
-     * methods.
+     * Return a newly-created, immutable, 3-dimensional interval data container
+     * populated with values computed by the supplied loader. Calling this
+     * method will overwrite any values already supplied via {@code set*} or
+     * {@code add*} methods.
      *
      * @param loader that will compute values
      */
@@ -412,8 +444,27 @@ public interface IntervalVolume {
     }
 
     /**
-     * Return a newly-created, immutable 3-dimensional data container populated
-     * with the contents of this {@code Builder}.
+     * Return a newly-created, immutable, 3-dimensional interval data container
+     * populated with the single value supplied. Calling this method will ignore
+     * any values already supplied via {@code set*} or {@code add*} methods and
+     * will create a IntervalTable holding only the single value, similar to
+     * {@link Collections#nCopies(int, Object)}.
+     *
+     * @param value which which to fill data container
+     */
+    public IntervalVolume build(double value) {
+      checkState(built != true, "This builder has already been used");
+      checkDataState(rows, columns, levels);
+      return new SingularVolume(
+          rowMin, rowMax, rowΔ, rows,
+          columnMin, columnMax, columnΔ, columns,
+          levelMin, levelMax, levelΔ, levels,
+          value);
+    }
+
+    /**
+     * Return a newly-created, immutable 3-dimensional interval data container
+     * populated with the contents of this {@code Builder}.
      */
     public IntervalVolume build() {
       checkState(built != true, "This builder has already been used");

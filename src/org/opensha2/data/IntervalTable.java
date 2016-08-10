@@ -21,16 +21,16 @@ import java.util.List;
 
 /**
  * A 2-dimensional table of immutable, double-valued data that is arranged
- * according to increasing and uniformly spaced double-valued keys. Data tables
- * are used to represent binned data, and so while row and column keys are bin
- * centers, indexing is managed internally using bin edges. This simplifies
- * issues related to rounding/precision errors that occur when indexing
- * according to explicit double values.
+ * according to increasing and uniformly spaced double-valued keys. Interval
+ * tables are used to represent binned data, and so while row and column keys
+ * are bin centers, indexing is managed internally using bin edges. This
+ * simplifies issues related to rounding/precision errors that occur when
+ * indexing according to explicit double values.
  *
  * <p>To create an instance of an {@code IntervalTable}, use a {@link Builder}.
  *
  * <p>Internally, an {@code IntervalTable} is backed by a {@code double[][]}
- * array where 'row' refers to the 1st dimension and 'column' the 2nd.
+ * where a 'row' maps to the 1st dimension and a 'column' the 2nd.
  *
  * <p>Note that interval tables are not intended for use with very high
  * precision data and keys are currently limited to a precision of 4 decimal
@@ -44,20 +44,42 @@ import java.util.List;
 public interface IntervalTable {
 
   /**
-   * Return a value corresponding to the supplied {@code row} and {@code column}
-   * keys.
+   * Return the value of the bin that maps to the supplied row and column
+   * values. Do not confuse this method with {@link #get(int, int)} by row
+   * index.
    *
-   * @param row of value to retrieve (may not explicitely exist as a key)
-   * @param column of value to retrieve (may not explicitely exist as a key)
+   * @param rowValue of bin to retrieve
+   * @param columnValue of bin to retrieve
+   * @throws IndexOutOfBoundsException if either value is out of range
    */
-  double get(double row, double column);
+  double get(double rowValue, double columnValue);
 
   /**
-   * Return an immutable view of a row of values.
-   *
-   * @param row to retrieve
+   * Return the value of the bin that maps to the supplied row and column
+   * indices. Do not confuse this method with {@link #get(double, double)} by
+   * row value.
+   * 
+   * @param rowIndex of bin to retrieve
+   * @param columnIndex of bin to retrieve
+   * @throws IndexOutOfBoundsException if either index is out of range
    */
-  XySequence row(double row);
+  double get(int rowIndex, int columnIndex);
+
+  /**
+   * Return an immutable view of the values that map to the supplied row value.
+   * Do not confuse with {@link #row(int)} retrieval by index.
+   *
+   * @param rowValue of bin to retrieve
+   */
+  XySequence row(double rowValue);
+
+  /**
+   * Return an immutable view of the values that map to the supplied row index.
+   * Do not confuse with {@link #row(double)} retrieval by value.
+   *
+   * @param rowIndex of bin to retrieve
+   */
+  XySequence row(int rowIndex);
 
   /**
    * Return the lower edge of the lowermost row bin.
@@ -75,7 +97,7 @@ public interface IntervalTable {
   double rowΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the row keys.
+   * Return an immutable list <i>view</i> of the row keys (bin centers).
    */
   List<Double> rows();
 
@@ -95,7 +117,7 @@ public interface IntervalTable {
   double columnΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the column keys.
+   * Return an immutable list <i>view</i> of the column keys (bin centers).
    */
   List<Double> columns();
 
@@ -105,7 +127,8 @@ public interface IntervalTable {
   interface Loader {
 
     /**
-     * Compute the value corresponding to the supplied row and column keys.
+     * Compute the value corresponding to the supplied row and column keys (bin
+     * centers).
      *
      * @param row value
      * @param column value
@@ -393,8 +416,8 @@ public interface IntervalTable {
     }
 
     /*
-     * Data is not copied on build() so we need to dereference data arrays to
-     * prevent lingering builders from further modifying data.
+     * Data is not copied on build() so we dereference data arrays to prevent
+     * lingering builders from further modifying data.
      */
     private void dereference() {
       data = null;

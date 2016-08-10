@@ -30,7 +30,7 @@ import java.util.List;
  * <p>To create an instance of an {@code IntervalArray}, use a {@link Builder}.
  *
  * <p>Internally, an {@code IntervalArray} is backed by a {@code double[]} where
- * 'row' refers to an index in the backing array.
+ * a 'row' maps to an index in the backing array.
  *
  * <p>Note that interval arrays are not intended for use with very high
  * precision data and keys are currently limited to a precision of 4 decimal
@@ -44,24 +44,35 @@ import java.util.List;
 public interface IntervalArray {
 
   /**
-   * Return a value corresponding to the supplied {@code row} key.
+   * Return the value of the bin that maps to the supplied row value. Do not
+   * confuse this method with {@link #get(int)} by row index.
    *
-   * @param row of value to retrieve (may not explicitely exist as a key)
+   * @param rowValue of bin to retrieve
+   * @throws IndexOutOfBoundsException if value is out of range
    */
-  double get(double row);
+  double get(double rowValue);
+
+  /**
+   * Return the value of the bin that maps to the supplied row index. Do not
+   * confuse this method with {@link #get(double)} by row value.
+   *
+   * @param rowIndex of bin to retrieve
+   * @throws IndexOutOfBoundsException if index is out of range
+   */
+  double get(int rowIndex);
 
   /**
    * Return an immutable view of {@code this} as an {@link XySequence}.
    */
-  XySequence asXySequence();
+  XySequence values();
 
   /**
-   * Return the lower edge of the lowermost row bin.
+   * Return the lower edge of the lowermost bin.
    */
   double rowMin();
 
   /**
-   * Return the upper edge of the uppermost row bin.
+   * Return the upper edge of the uppermost bin.
    */
   double rowMax();
 
@@ -71,7 +82,7 @@ public interface IntervalArray {
   double rowΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the row keys.
+   * Return an immutable list <i>view</i> of the row keys (bin centers).
    */
   List<Double> rows();
 
@@ -81,7 +92,7 @@ public interface IntervalArray {
   interface Loader {
 
     /**
-     * Compute the value corresponding to the supplied row and column keys.
+     * Compute the value corresponding to the supplied row key (bin center).
      *
      * @param row value
      */
@@ -320,8 +331,8 @@ public interface IntervalArray {
     }
 
     /*
-     * Data is not copied on build() so we need to dereference data arrays to
-     * prevent lingering builders from further modifying data.
+     * Data is not copied on build() so we dereference data arrays to prevent
+     * lingering builders from further modifying data.
      */
     private void dereference() {
       data = null;
