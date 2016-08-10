@@ -749,6 +749,19 @@ public final class Data {
   }
 
   /**
+   * Return whether all the elements of {@code data} are equal to 0.
+   * @param data to evaluate
+   */
+  public static boolean isZeroValued(double... data) {
+    for (double d : data) {
+      if (d != 0.0) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  /**
    * Determine whether the elements of {@code data} increase or decrease
    * monotonically, with a {@code strict} flag indicating if identical adjacent
    * elements are forbidden. The {@code strict} flag could be {@code true} if
