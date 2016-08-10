@@ -496,8 +496,9 @@ public abstract class XySequence implements Iterable<XyPoint> {
 
   /**
    * Returns {@code true} if all y-values are 0.0; {@code false} otherwise.
+   * a
    */
-  public abstract boolean isEmpty();
+  public abstract boolean isClear();
 
   /**
    * Transforms all y-values in place using the supplied {@link Function}.
