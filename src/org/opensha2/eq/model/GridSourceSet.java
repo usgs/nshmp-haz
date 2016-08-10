@@ -676,7 +676,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       ImmutableList.Builder<PointSource> b = ImmutableList.builder();
       for (double r : distances) {
         XySequence mfd = mfdTable.row(r);
-        if (mfd.isEmpty()) {
+        if (mfd.isClear()) {
           continue;
         }
         Location loc = Locations.location(origin, SRC_TO_SITE_AZIMUTH, r);
@@ -763,7 +763,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         boolean tableRowUsed = false;
 
         XySequence ssMfd = ssTable.row(r);
-        if (ssMfd.isEmpty()) {
+        if (ssMfd.isClear()) {
           continue;
         }
         b.add(PointSources.pointSource(
@@ -776,7 +776,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         tableRowUsed = true;
 
         XySequence rMfd = rTable.row(r);
-        if (rMfd.isEmpty()) {
+        if (rMfd.isClear()) {
           continue;
         }
         b.add(PointSources.pointSource(
@@ -789,7 +789,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         tableRowUsed = true;
 
         XySequence nMfd = nTable.row(r);
-        if (nMfd.isEmpty()) {
+        if (nMfd.isClear()) {
           continue;
         }
         b.add(PointSources.pointSource(
