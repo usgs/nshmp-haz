@@ -79,6 +79,11 @@ import java.util.Random;
  */
 public final class Data {
 
+  // TODO note behavior of NaN, any method that operates on data containing NaN
+  // will likely return NaN as a result
+
+  // TODO should allow empty varargs (see minINdex maxIndex, normalize)
+
   /*
    * TODO verify that 'unchecked' variants actually improve performance; in most
    * cases all that's being done is an array.length comparison
@@ -618,6 +623,36 @@ public final class Data {
   }
 
   /**
+   * Sum the arrays in the 2nd dimension of {@code data} into a new 1-D array.
+   * 
+   * @param data to collapse
+   * @return a new array with the sums of the second dimension of {@code data}
+   */
+  public static double[] collapse(double[][] data) {
+    double[] collapsed = new double[data.length];
+    for (int i = 0; i < data.length; i++) {
+      collapsed[i] = sum(data[i]);
+    }
+    return collapsed;
+  }
+
+  /**
+   * Sum the arrays in the 3rd dimension of {@code data} into the 2nd dimension
+   * of a new 2-D array.
+   * 
+   * @param data to collapse
+   * @return a new 2-D array with the sums of the third dimension of
+   *         {@code data}
+   */
+  public static double[][] collapse(double[][][] data) {
+    double[][] collapsed = new double[data.length][];
+    for (int i = 0; i < data.length; i++) {
+      collapsed[i] = collapse(data[i]);
+    }
+    return collapsed;
+  }
+
+  /**
    * Transform {@code data} by a {@code function} in place.
    *
    * @param function to apply
@@ -653,45 +688,161 @@ public final class Data {
   }
 
   /**
-   * Find the index of the minimum value in {@code data}.
+   * Find the index of the minimum value in {@code data}. For equivalent minima,
+   * method returns the index of the first minimum encountered. If the supplied
+   * array is empty, method returns {@code -1}.
    *
    * @param data to evaluate
-   * @return the index of the minimum value
-   * @throws IllegalArgumentException if data is empty or no varargs are
-   *         supplied
+   * @return the index of the minimum value or {@code -1} if the array is empty
    */
   public static int minIndex(double... data) {
-    checkArgument(data.length > 0);
-    int index = 0;
-    double min = data[0];
+    int index = -1;
+    double min = Double.MAX_VALUE;
     for (int i = 1; i < data.length; i++) {
       if (data[i] < min) {
-        min = data[i];
         index = i;
+        min = data[i];
       }
     }
     return index;
   }
 
   /**
-   * Find the index of the maximum value in {@code data}.
+   * Find the indices of the minimum value in {@code data}. For equivalent
+   * maxima, method returns the indices of the first minimum encountered. If the
+   * 1st dimension of the supplied array is empty or all arrays in the 2nd
+   * dimension are empty, method returns {@code [-1, -1]}.
    *
    * @param data to evaluate
-   * @return the index of the maximum value
-   * @throws IllegalArgumentException if data is empty or no varargs are
-   *         supplied
+   * @return the indices of the minimum value or {@code [-1, -1]} for empty
+   *         arrays
+   */
+  public static int[] minIndex(double[][] data) {
+    int index0 = -1;
+    int index1 = -1;
+    double max = Double.MAX_VALUE;
+    for (int i = 0; i < data.length; i++) {
+      double[] data1 = data[i];
+      for (int j = 0; j < data1.length; j++) {
+        if (data1[j] < max) {
+          index0 = i;
+          index1 = j;
+          max = data1[j];
+        }
+      }
+    }
+    return new int[] { index0, index1 };
+  }
+
+  /**
+   * Find the indices of the minimum value in {@code data}. For equivalent
+   * minima, method returns the indices of the first minimum encountered. If the
+   * 1st dimension of the supplied array is empty or all arrays in the 2nd or
+   * 3rd dimensions are empty, method returns {@code [-1, -1, -1]}.
+   *
+   * @param data to evaluate
+   * @return the indices of the minimum value or {@code [-1, -1, -1]} for empty
+   *         arrays
+   */
+  public static int[] minIndex(double[][][] data) {
+    int index0 = -1;
+    int index1 = -1;
+    int index2 = -1;
+    double max = Double.MAX_VALUE;
+    for (int i = 0; i < data.length; i++) {
+      double[][] data1 = data[i];
+      for (int j = 0; j < data1.length; j++) {
+        double[] data2 = data1[j];
+        for (int k = 0; k < data2.length; k++) {
+          if (data2[k] < max) {
+            index0 = i;
+            index1 = j;
+            index2 = k;
+            max = data2[k];
+          }
+        }
+      }
+    }
+    return new int[] { index0, index1, index2 };
+  }
+
+  /**
+   * Find the index of the maximum value in {@code data}. For equivalent maxima,
+   * method returns the index of the first maximum encountered. If the supplied
+   * array is empty, method returns {@code -1}.
+   *
+   * @param data to evaluate
+   * @return the index of the maximum value or -1 if the array is empty
    */
   public static int maxIndex(double... data) {
-    checkArgument(data.length > 0);
-    int index = 0;
-    double max = data[0];
+    int index = -1;
+    double max = Double.MIN_VALUE;
     for (int i = 1; i < data.length; i++) {
       if (data[i] > max) {
-        max = data[i];
         index = i;
+        max = data[i];
       }
     }
     return index;
+  }
+
+  /**
+   * Find the indices of the maximum value in {@code data}. For equivalent
+   * maxima, method returns the indices of the first maximum encountered. If the
+   * 1st dimension of the supplied array is empty or all arrays in the 2nd
+   * dimension are empty, method returns {@code [-1, -1]}.
+   *
+   * @param data to evaluate
+   * @return the indices of the maximum value or {@code [-1, -1]} for empty
+   *         arrays
+   */
+  public static int[] maxIndex(double[][] data) {
+    int index0 = -1;
+    int index1 = -1;
+    double max = Double.MIN_VALUE;
+    for (int i = 0; i < data.length; i++) {
+      double[] data1 = data[i];
+      for (int j = 0; j < data1.length; j++) {
+        if (data1[j] > max) {
+          index0 = i;
+          index1 = j;
+          max = data1[j];
+        }
+      }
+    }
+    return new int[] { index0, index1 };
+  }
+
+  /**
+   * Find the indices of the maximum value in {@code data}. For equivalent
+   * maxima, method returns the indices of the first maximum encountered. If the
+   * 1st dimension of the supplied array is empty or all arrays in the 2nd or
+   * 3rd dimensions are empty, method returns {@code [-1, -1, -1]}.
+   *
+   * @param data to evaluate
+   * @return the indices of the maximum value or {@code [-1, -1, -1]} for empty
+   *         arrays
+   */
+  public static int[] maxIndex(double[][][] data) {
+    int index0 = -1;
+    int index1 = -1;
+    int index2 = -1;
+    double max = Double.MIN_VALUE;
+    for (int i = 0; i < data.length; i++) {
+      double[][] data1 = data[i];
+      for (int j = 0; j < data1.length; j++) {
+        double[] data2 = data1[j];
+        for (int k = 0; k < data2.length; k++) {
+          if (data2[k] > max) {
+            index0 = i;
+            index1 = j;
+            index2 = k;
+            max = data2[k];
+          }
+        }
+      }
+    }
+    return new int[] { index0, index1, index2 };
   }
 
   /**
@@ -760,7 +911,7 @@ public final class Data {
     }
     return true;
   }
-  
+
   /**
    * Determine whether the elements of {@code data} increase or decrease
    * monotonically, with a {@code strict} flag indicating if identical adjacent
