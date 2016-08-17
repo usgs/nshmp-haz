@@ -10,7 +10,6 @@ import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.internal.Parsing;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -170,38 +169,21 @@ public final class IntervalData {
     public XySequence values() {
       return new ImmutableXySequence(rows, data);
     }
-  }
 
-  static final class SingularArray extends AbstractArray {
-
-    final double value;
-    private final double[] row;
-
-    SingularArray(
-        double rowMin, double rowMax, double rowΔ, double[] rows,
-        double value) {
-
-      super(rowMin, rowMax, rowΔ, rows);
-      this.value = value;
-      this.row = new double[rows.length];
-      Arrays.fill(this.row, value);
+    @Override
+    public double sum() {
+      return Data.sum(data);
     }
 
     @Override
-    public double get(final double rowValue) {
-      return value;
+    public int minIndex() {
+      return Data.minIndex(data);
     }
 
     @Override
-    public double get(final int rowIndex) {
-      return value;
+    public int maxIndex() {
+      return Data.maxIndex(data);
     }
-
-    @Override
-    public XySequence values() {
-      return new ImmutableXySequence(rows, this.row);
-    }
-
   }
 
   static abstract class AbstractTable implements IntervalTable {
@@ -321,39 +303,20 @@ public final class IntervalData {
     public XySequence row(int rowIndex) {
       return new ImmutableXySequence(columns, data[rowIndex]);
     }
-  }
 
-  static final class SingularTable extends AbstractTable {
-
-    final double value;
-    private final double[] row;
-
-    SingularTable(
-        double rowMin, double rowMax, double rowΔ, double[] rows,
-        double columnMin, double columnMax, double columnΔ, double[] columns,
-        double value) {
-
-      super(
-          rowMin, rowMax, rowΔ, rows,
-          columnMin, columnMax, columnΔ, columns);
-      this.value = value;
-      this.row = new double[columns.length];
-      Arrays.fill(this.row, value);
+    @Override
+    public IntervalArray collapse() {
+      return new DefaultArray(rowMin, rowMax, rowΔ, rows, Data.collapse(data));
     }
 
     @Override
-    public double get(final double rowValue, final double columnValue) {
-      return value;
+    public int[] minIndex() {
+      return Data.minIndex(data);
     }
 
     @Override
-    public double get(final int rowIndex, final int columnIndex) {
-      return value;
-    }
-
-    @Override
-    public XySequence row(int rowIndex) {
-      return new ImmutableXySequence(columns, this.row);
+    public int[] maxIndex() {
+      return Data.maxIndex(data);
     }
   }
 
@@ -513,45 +476,27 @@ public final class IntervalData {
     public XySequence column(int rowIndex, int columnIndex) {
       return new ImmutableXySequence(levels, data[rowIndex][columnIndex]);
     }
-  }
 
-  static final class SingularVolume extends AbstractVolume {
-
-    final double value;
-    private final double[] column;
-
-    SingularVolume(
-        double rowMin, double rowMax, double rowΔ, double[] rows,
-        double columnMin, double columnMax, double columnΔ, double[] columns,
-        double levelMin, double levelMax, double levelΔ, double[] levels,
-        double value) {
-
-      super(
+    @Override
+    public IntervalTable collapse() {
+      return new DefaultTable(
           rowMin, rowMax, rowΔ, rows,
           columnMin, columnMax, columnΔ, columns,
-          levelMin, levelMax, levelΔ, levels);
-      this.value = value;
-      this.column = new double[levels.length];
-      Arrays.fill(this.column, value);
+          Data.collapse(data));
     }
 
     @Override
-    public double get(final double rowValue, final double columnValue, final double levelValue) {
-      return value;
-    }
-    
-    @Override
-    public double get(final int rowIndex, final int columnIndex, final int levelIndex) {
-      return value;
+    public int[] minIndex() {
+      return Data.minIndex(data);
     }
 
     @Override
-    public XySequence column(int rowIndex, int columnIndex) {
-      return new ImmutableXySequence(columns, this.column);
+    public int[] maxIndex() {
+      return Data.maxIndex(data);
     }
   }
 
-  /* string utilities */
+  /* String utilities */
 
   private static void appendArrayKeys(StringBuilder sb, String prefix, Collection<Double> values) {
     sb.append(prefix);

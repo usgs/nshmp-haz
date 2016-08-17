@@ -10,10 +10,8 @@ import static org.opensha2.data.IntervalData.keys;
 
 import org.opensha2.data.IntervalData.AbstractVolume;
 import org.opensha2.data.IntervalData.DefaultVolume;
-import org.opensha2.data.IntervalData.SingularVolume;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -101,7 +99,7 @@ public interface IntervalVolume {
   double rowΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the row keys.
+   * Return an immutable list <i>view</i> of the row keys (bin centers).
    */
   List<Double> rows();
 
@@ -121,7 +119,7 @@ public interface IntervalVolume {
   double columnΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the column keys.
+   * Return an immutable list <i>view</i> of the column keys (bin centers).
    */
   List<Double> columns();
 
@@ -141,9 +139,27 @@ public interface IntervalVolume {
   double levelΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the level keys.
+   * Return an immutable list <i>view</i> of the level keys (bin centers).
    */
   List<Double> levels();
+
+  /**
+   * Return a new {@code IntervalTable} created by summing the levels of this
+   * volume.
+   */
+  IntervalTable collapse();
+
+  /**
+   * Return the indices of the bin with smallest value in the form
+   * {@code [rowIndex, columnIndex, levelIndex]}.
+   */
+  int[] minIndex();
+
+  /**
+   * Return the indices of the bin with largest value in the form
+   * {@code [rowIndex, columnIndex, levelIndex]}.
+   */
+  int[] maxIndex();
 
   /**
    * A supplier of values with which to fill a {@code IntervalVolume}.
@@ -377,13 +393,10 @@ public interface IntervalVolume {
      * @see #fromModel(IntervalVolume)
      */
     public Builder add(IntervalVolume volume) {
-      // safe covariant casts
+      // safe covariant cast
       validateVolume((AbstractVolume) volume);
-      if (volume instanceof SingularVolume) {
-        Data.add(((SingularVolume) volume).value, data);
-      } else {
-        Data.uncheckedAdd(data, ((DefaultVolume) volume).data);
-      }
+      // safe covariant cast until other concrete implementations exist
+      Data.uncheckedAdd(data, ((DefaultVolume) volume).data);
       return this;
     }
 
@@ -441,25 +454,6 @@ public interface IntervalVolume {
         }
       }
       return build();
-    }
-
-    /**
-     * Return a newly-created, immutable, 3-dimensional interval data container
-     * populated with the single value supplied. Calling this method will ignore
-     * any values already supplied via {@code set*} or {@code add*} methods and
-     * will create a IntervalTable holding only the single value, similar to
-     * {@link Collections#nCopies(int, Object)}.
-     *
-     * @param value which which to fill data container
-     */
-    public IntervalVolume build(double value) {
-      checkState(built != true, "This builder has already been used");
-      checkDataState(rows, columns, levels);
-      return new SingularVolume(
-          rowMin, rowMax, rowΔ, rows,
-          columnMin, columnMax, columnΔ, columns,
-          levelMin, levelMax, levelΔ, levels,
-          value);
     }
 
     /**

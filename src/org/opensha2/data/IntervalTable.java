@@ -11,12 +11,10 @@ import static org.opensha2.data.IntervalData.keys;
 
 import org.opensha2.data.IntervalData.AbstractTable;
 import org.opensha2.data.IntervalData.DefaultTable;
-import org.opensha2.data.IntervalData.SingularTable;
 
 import com.google.common.primitives.Doubles;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -120,6 +118,24 @@ public interface IntervalTable {
    * Return an immutable list <i>view</i> of the column keys (bin centers).
    */
   List<Double> columns();
+
+  /**
+   * Return a new {@code IntervalArray} created by summing the columns of this
+   * table.
+   */
+  IntervalArray collapse();
+
+  /**
+   * Return the indices of the bin with smallest value in the form
+   * {@code [rowIndex, columnIndex]}.
+   */
+  int[] minIndex();
+
+  /**
+   * Return the indices of the bin with largest value in the form
+   * {@code [rowIndex, columnIndex]}.
+   */
+  int[] maxIndex();
 
   /**
    * A supplier of values with which to fill a {@code IntervalTable}.
@@ -384,13 +400,10 @@ public interface IntervalTable {
      * @see #fromModel(IntervalTable)
      */
     public Builder add(IntervalTable table) {
-      // safe covariant casts
+      // safe covariant cast
       validateTable((AbstractTable) table);
-      if (table instanceof SingularTable) {
-        Data.add(((SingularTable) table).value, data);
-      } else {
-        Data.uncheckedAdd(data, ((DefaultTable) table).data);
-      }
+      // safe covariant cast until other concrete implementations exist
+      Data.uncheckedAdd(data, ((DefaultTable) table).data);
       return this;
     }
 
@@ -442,24 +455,6 @@ public interface IntervalTable {
         }
       }
       return build();
-    }
-
-    /**
-     * Return a newly-created, immutable, 2-dimensional data container populated
-     * with the single value supplied. Calling this method will ignore any
-     * values already supplied via {@code set*} or {@code add*} methods and will
-     * create a IntervalTable holding only the single value, similar to
-     * {@link Collections#nCopies(int, Object)}.
-     *
-     * @param value which which to fill data container
-     */
-    public IntervalTable build(double value) {
-      checkState(built != true, "This builder has already been used");
-      checkDataState(rows, columns);
-      return new SingularTable(
-          rowMin, rowMax, rowΔ, rows,
-          columnMin, columnMax, columnΔ, columns,
-          value);
     }
 
     /**

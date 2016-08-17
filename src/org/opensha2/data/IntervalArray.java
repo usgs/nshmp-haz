@@ -11,12 +11,10 @@ import static org.opensha2.data.IntervalData.keys;
 
 import org.opensha2.data.IntervalData.AbstractArray;
 import org.opensha2.data.IntervalData.DefaultArray;
-import org.opensha2.data.IntervalData.SingularArray;
 
 import com.google.common.primitives.Doubles;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -85,6 +83,21 @@ public interface IntervalArray {
    * Return an immutable list <i>view</i> of the row keys (bin centers).
    */
   List<Double> rows();
+
+  /**
+   * Return the sum of the values in this array.
+   */
+  double sum();
+
+  /**
+   * Return the index of the bin with smallest value.
+   */
+  int minIndex();
+
+  /**
+   * Return the index of the bin with largest value.
+   */
+  int maxIndex();
 
   /**
    * A supplier of values with which to fill an {@code IntervalArray}.
@@ -301,13 +314,10 @@ public interface IntervalArray {
      * @see #fromModel(IntervalArray)
      */
     public Builder add(IntervalArray array) {
-      // safe covariant casts
+      // safe covariant cast
       validateArray((AbstractArray) array);
-      if (array instanceof SingularArray) {
-        Data.add(((SingularArray) array).value, data);
-      } else {
-        Data.uncheckedAdd(data, ((DefaultArray) array).data);
-      }
+      // safe covariant cast until other concrete implementations exist
+      Data.uncheckedAdd(data, ((DefaultArray) array).data);
       return this;
     }
 
@@ -353,23 +363,6 @@ public interface IntervalArray {
         data[i] = loader.compute(rows[i]);
       }
       return build();
-    }
-
-    /**
-     * Return a newly-created, immutable, interval data array populated with the
-     * single value supplied. Calling this method will ignore any values already
-     * supplied via {@code set*} or {@code add*} methods and will create a
-     * IntervalArray holding only the single value, similar to
-     * {@link Collections#nCopies(int, Object)}.
-     *
-     * @param value which which to fill interval array
-     */
-    public IntervalArray build(double value) {
-      checkState(built != true, "This builder has already been used");
-      checkDataState(rows);
-      return new SingularArray(
-          rowMin, rowMax, rowΔ, rows,
-          value);
     }
 
     /**
