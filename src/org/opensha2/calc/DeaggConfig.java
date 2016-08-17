@@ -102,7 +102,10 @@ final class DeaggConfig {
       return this;
     }
 
-    Builder probabilityModel(ExceedanceModel probabilityModel, double truncation) {
+    Builder probabilityModel(
+        ExceedanceModel probabilityModel,
+        double truncation) {
+      
       this.probabilityModel = probabilityModel;
       this.truncation = truncation;
       return this;
