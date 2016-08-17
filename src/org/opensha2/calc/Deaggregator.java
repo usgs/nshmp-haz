@@ -54,14 +54,6 @@ final class Deaggregator {
     this.trunc = config.truncation;
   }
 
-  private static Map<Gmm, DeaggDataset.Builder> createBuilders(Set<Gmm> gmms, DeaggDataset model) {
-    Map<Gmm, DeaggDataset.Builder> map = Maps.newEnumMap(Gmm.class);
-    for (Gmm gmm : gmms) {
-      map.put(gmm, DeaggDataset.builder(model));
-    }
-    return map;
-  }
-
   static Map<Gmm, DeaggDataset> deaggregate(HazardCurveSet curves, DeaggConfig config) {
     Deaggregator deaggregator = new Deaggregator(curves, config);
     return Maps.immutableEnumMap(deaggregator.run());
@@ -74,6 +66,14 @@ final class Deaggregator {
       default:
         return processSources();
     }
+  }
+
+  private static Map<Gmm, DeaggDataset.Builder> createBuilders(Set<Gmm> gmms, DeaggDataset model) {
+    Map<Gmm, DeaggDataset.Builder> map = Maps.newEnumMap(Gmm.class);
+    for (Gmm gmm : gmms) {
+      map.put(gmm, DeaggDataset.builder(model));
+    }
+    return map;
   }
 
   private Map<Gmm, DeaggDataset> processSources() {

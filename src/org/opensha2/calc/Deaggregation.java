@@ -116,7 +116,7 @@ public final class Deaggregation {
       double iml = IML_INTERPOLATER.findX(entry.getValue(), rate);
       DeaggConfig config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
       System.out.println(config);
-      ImtDeagg imtDeagg = ImtDeagg.create(hazard, config);
+      ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
       imtDeaggMap.put(imt, imtDeagg);
     }
 
@@ -139,7 +139,7 @@ public final class Deaggregation {
       double rate = RATE_INTERPOLATER.findY(entry.getValue(), iml);
       double returnPeriod = 1.0 / rate;
       DeaggConfig config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
-      ImtDeagg imtDeagg = ImtDeagg.create(hazard, config);
+      ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
       imtDeaggMap.put(imt, imtDeagg);
     }
 
@@ -194,11 +194,7 @@ public final class Deaggregation {
     final DeaggDataset totalDataset;
     final Map<Gmm, DeaggDataset> gmmDatasets;
 
-    static ImtDeagg create(Hazard hazard, DeaggConfig config) {
-      return new ImtDeagg(hazard, config);
-    }
-
-    private ImtDeagg(Hazard hazard, DeaggConfig config) {
+    ImtDeagg(Hazard hazard, DeaggConfig config) {
       this.config = config;
 
       ListMultimap<Gmm, DeaggDataset> datasets = MultimapBuilder
@@ -277,8 +273,8 @@ public final class Deaggregation {
       double totalSourceRate = binnedSourceRate + residualSourceRate;
       sb.append("  Total:    " + totalSourceRate).append(NEWLINE);
 
-      double binnedDeaggRate = totalDataset.barWeight;
-      double residualDeaggRate = totalDataset.residualWeight;
+      double binnedDeaggRate = totalDataset.binned;
+      double residualDeaggRate = totalDataset.residual;
       sb.append(NEWLINE);
       sb.append("Rate from deagg data").append(NEWLINE);
       sb.append("  Binned:   " + binnedDeaggRate).append(NEWLINE);
@@ -287,6 +283,12 @@ public final class Deaggregation {
       sb.append("  Total:    " + totalDeaggRate).append(NEWLINE);
 
       sb.append(NEWLINE);
+      
+      DeaggExport export = new DeaggExport(totalDataset, config);
+      sb.append(export.toString());
+
+      sb.append(NEWLINE);
+      
 
       /* SourceSet map ordering by descending contribution */
       Ordering<Entry<SourceSet<? extends Source>, Double>> sourceSetOrdering = Ordering
@@ -426,12 +428,12 @@ public final class Deaggregation {
       IntervalVolume binData = data.rmε;
       List<Double> magnitudes = Lists.reverse(binData.columns());
       List<Double> distances = binData.rows();
-      double toPercent = 100.0 / data.barWeight;
+      double toPercent = 100.0 / data.binned;
       // System.out.println(data.barWeight);
       for (double r : distances) {
         for (double m : magnitudes) {
           XySequence εColumn = binData.column(r, m);
-          if (εColumn.isEmpty()) {
+          if (εColumn.isClear()) {
             continue;
           }
           // double[] εValues = clean(2, multiply(toPercent,
@@ -615,6 +617,7 @@ public final class Deaggregation {
 
   }
 
+  @Deprecated
   private static SummaryElement element(
       String name,
       boolean display,
@@ -622,6 +625,7 @@ public final class Deaggregation {
     return new SummaryElement(name, display, items);
   }
 
+  @Deprecated
   private static SummaryElement.Item item(
       String name,
       double value,
@@ -630,6 +634,7 @@ public final class Deaggregation {
   }
 
   @SuppressWarnings("unused")
+  @Deprecated
   private static class SummaryElement {
 
     final String name;

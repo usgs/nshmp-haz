@@ -6,8 +6,8 @@ import static org.opensha2.data.Data.checkInRange;
 
 import org.opensha2.calc.Deaggregation.SourceContribution;
 import org.opensha2.data.Data;
-import org.opensha2.data.IntervalTable;
 import org.opensha2.data.IntervalData;
+import org.opensha2.data.IntervalTable;
 import org.opensha2.data.IntervalVolume;
 import org.opensha2.eq.Magnitudes;
 import org.opensha2.eq.model.Source;
@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Deaggregation dataset that stores deaggregation results of individual
- * SourceSets and Gmms. Datasets may be recombined via add().
+ * Deaggregation dataset that holds deaggregation results of individual
+ * {@code SourceSet}s and {@code Gmm}s. Datasets may be recombined via add().
  *
  * Binned deaggregation data and summary statistics are commonly weighted by the
  * rate of the contributing sources so the term 'weight' in a dataset is
@@ -36,54 +36,62 @@ import java.util.Map.Entry;
  */
 final class DeaggDataset {
 
+  /* Rate bins. */
   final IntervalVolume rmε;
 
-  /* Weighted mean contributions */
-  final double rBar, mBar, εBar;
+  /* Bins of r, m, and ε values scaled by rate. */
+  final IntervalVolume rScaled;
+  final IntervalVolume mScaled;
+  final IntervalVolume εScaled;
 
-  /* Total rate for a dataset and summed weight for *Bar fields */
-  final double barWeight;
+  /* Binned and unbinned rates. */
+  final double binned;
+  final double residual;
 
-  /* r and m position data already weighted by rate */
-  final IntervalTable rPositions;
-  final IntervalTable mPositions;
-
-  /* Total weight (rate) in each r and m position bin */
-  final IntervalTable positionWeights;
-
-  /* Unbinned weight (rate) */
-  final double residualWeight;
-
-  /* Contributors */
+  /* Contributing source sets and sources. */
   final Map<SourceSet<? extends Source>, Double> sourceSets;
   final List<SourceContribution> sources;
 
+  /*
+   * Fields derived at construction time.
+   */
+
+  /* Value bins collapsed to r-m tables. */
+  final IntervalTable rmWeights;
+  final IntervalTable rmrScaled;
+  final IntervalTable rmmScaled;
+  final IntervalTable rmεScaled;
+
+  /* Mean values over all bins weighted by rate. */
+  final double rBar, mBar, εBar;
+
   private DeaggDataset(
       IntervalVolume rmε,
-      double rBar, double mBar, double εBar,
-      double barWeight,
-      IntervalTable rPositions,
-      IntervalTable mPositions,
-      IntervalTable positionWeights,
-      double residualWeight,
+      IntervalVolume rScaled,
+      IntervalVolume mScaled,
+      IntervalVolume εScaled,
+      double binned,
+      double residual,
       Map<SourceSet<? extends Source>, Double> sourceSets,
       List<SourceContribution> sources) {
 
     this.rmε = rmε;
-
-    this.rBar = rBar;
-    this.mBar = mBar;
-    this.εBar = εBar;
-    this.barWeight = barWeight;
-
-    this.rPositions = rPositions;
-    this.mPositions = mPositions;
-    this.positionWeights = positionWeights;
-    this.residualWeight = residualWeight;
-
+    this.rScaled = rScaled;
+    this.mScaled = mScaled;
+    this.εScaled = εScaled;
+    this.binned = binned;
+    this.residual = residual;
     this.sources = sources;
     this.sourceSets = sourceSets;
 
+    this.rmWeights = rmε.collapse();
+    this.rmrScaled = this.rScaled.collapse();
+    this.rmmScaled = this.mScaled.collapse();
+    this.rmεScaled = this.εScaled.collapse();
+
+    this.rBar = this.rmrScaled.collapse().sum() / binned;
+    this.mBar = this.rmmScaled.collapse().sum() / binned;
+    this.εBar = this.rmεScaled.collapse().sum() / binned;
   }
 
   /*
@@ -134,11 +142,6 @@ final class DeaggDataset {
   int epsilonIndex(double ε) {
     return (ε < rmε.levelMin()) ? 0 : (ε >= rmε.levelMax()) ? rmε.levels().size() - 1
         : IntervalData.indexOf(rmε.levelMin(), rmε.levelΔ(), ε, rmε.levels().size());
-  }
-  
-  @Override
-  public String toString() {
-    return rmε.toString();
   }
 
   /**
@@ -200,20 +203,19 @@ final class DeaggDataset {
 
   static class Builder {
 
+    /* Rate bin builder. */
     private IntervalVolume.Builder rmε;
 
-    /* Weighted mean contributions */
-    private double rBar, mBar, εBar;
-    private double barWeight;
+    /* Bin builders for r, m, and ε values scaled by rate. */
+    private IntervalVolume.Builder rScaled;
+    private IntervalVolume.Builder mScaled;
+    private IntervalVolume.Builder εScaled;
 
-    /* Weighted r and m position data */
-    private IntervalTable.Builder rPositions;
-    private IntervalTable.Builder mPositions;
-    private IntervalTable.Builder positionWeights;
+    /* Binned and unbinned rate. */
+    private double binned;
+    private double residual;
 
-    /* Unbinned weight (rate) */
-    private double residualWeight;
-
+    /* Contributing source sets and sources. */
     private Map<SourceSet<? extends Source>, Double> sourceSets;
     private List<SourceContribution> sources;
 
@@ -236,15 +238,18 @@ final class DeaggDataset {
               checkInRange(εRange, "Max epsilon", εMax),
               Δε);
 
-      rPositions = IntervalTable.Builder.create()
+      rScaled = IntervalVolume.Builder.create()
           .rows(rMin, rMax, Δr)
-          .columns(mMin, mMax, Δm);
-      mPositions = IntervalTable.Builder.create()
+          .columns(mMin, mMax, Δm)
+          .levels(εMin, εMax, Δε);
+      mScaled = IntervalVolume.Builder.create()
           .rows(rMin, rMax, Δr)
-          .columns(mMin, mMax, Δm);
-      positionWeights = IntervalTable.Builder.create()
+          .columns(mMin, mMax, Δm)
+          .levels(εMin, εMax, Δε);
+      εScaled = IntervalVolume.Builder.create()
           .rows(rMin, rMax, Δr)
-          .columns(mMin, mMax, Δm);
+          .columns(mMin, mMax, Δm)
+          .levels(εMin, εMax, Δε);
 
       sourceSets = new HashMap<>();
       sources = new ArrayList<>();
@@ -252,21 +257,21 @@ final class DeaggDataset {
 
     private Builder(DeaggDataset model) {
       rmε = IntervalVolume.Builder.fromModel(model.rmε);
-      rPositions = IntervalTable.Builder.fromModel(model.rPositions);
-      mPositions = IntervalTable.Builder.fromModel(model.mPositions);
-      positionWeights = IntervalTable.Builder.fromModel(model.positionWeights);
+      rScaled = IntervalVolume.Builder.fromModel(model.rScaled);
+      mScaled = IntervalVolume.Builder.fromModel(model.mScaled);
+      εScaled = IntervalVolume.Builder.fromModel(model.εScaled);
       sourceSets = new HashMap<>();
       sources = new ArrayList<>();
     }
 
     /*
-     * Populate dataset with rupture data. Supply DataTable and DataVolume
-     * indices, distance, magnitude, and epsilon (weighted by rate), and the
-     * rate of the rupture.
+     * Populate dataset with rupture data. Supply data indices of distance,
+     * magnitude, and epsilon values, scaled by rate, and the rate of the
+     * rupture.
      *
      * Although we could work with the raw distance, magnitude and epsilon
      * values, deaggregation is being performed across each Gmm, so precomputing
-     * indices and weighted values in the calling method brings some efficiency.
+     * indices and scaled values in the calling method brings some efficiency.
      */
     Builder add(
         int ri, int mi, int εi,
@@ -274,16 +279,10 @@ final class DeaggDataset {
         double rate) {
 
       rmε.add(ri, mi, εi, rate);
-
-      rBar += rw;
-      mBar += mw;
-      εBar += εw;
-      barWeight += rate;
-
-      rPositions.add(ri, mi, rw);
-      mPositions.add(ri, mi, mw);
-      positionWeights.add(ri, mi, rate);
-
+      rScaled.add(ri, mi, εi, rw);
+      mScaled.add(ri, mi, εi, mw);
+      εScaled.add(ri, mi, εi, εw);
+      binned += rate;
       return this;
     }
 
@@ -292,7 +291,7 @@ final class DeaggDataset {
      * ranges supported by this deaggregation.
      */
     Builder addResidual(double rate) {
-      residualWeight += rate;
+      residual += rate;
       return this;
     }
 
@@ -314,18 +313,12 @@ final class DeaggDataset {
      * contribution list to be rebuilt.
      */
     Builder multiply(double scale) {
-
       rmε.multiply(scale);
-
-      rBar *= scale;
-      mBar *= scale;
-      εBar *= scale;
-      barWeight *= scale;
-
-      rPositions.multiply(scale);
-      mPositions.multiply(scale);
-      positionWeights.multiply(scale);
-      residualWeight *= scale;
+      rScaled.multiply(scale);
+      mScaled.multiply(scale);
+      εScaled.multiply(scale);
+      binned *= scale;
+      residual *= scale;
 
       List<SourceContribution> oldSources = sources;
       sources = new ArrayList<>();
@@ -343,24 +336,16 @@ final class DeaggDataset {
       return this;
     }
 
-    /* Combine values */
+    /* Add values from other datasets. */
     Builder add(DeaggDataset other) {
-
       rmε.add(other.rmε);
-
-      rBar += other.rBar;
-      mBar += other.mBar;
-      εBar += other.εBar;
-      barWeight += other.barWeight;
-
-      rPositions.add(other.rPositions);
-      mPositions.add(other.mPositions);
-      positionWeights.add(other.positionWeights);
-      residualWeight += other.residualWeight;
-
+      rScaled.add(other.rScaled);
+      mScaled.add(other.mScaled);
+      εScaled.add(other.εScaled);
+      binned += other.binned;
+      residual += other.residual;
       sources.addAll(other.sources);
       Data.add(sourceSets, other.sourceSets);
-
       return this;
     }
 
@@ -368,27 +353,26 @@ final class DeaggDataset {
       if (sourceSets.size() == 1) {
         Entry<SourceSet<? extends Source>, Double> entry =
             Iterables.getOnlyElement(sourceSets.entrySet());
-        sourceSets.put(entry.getKey(), barWeight + residualWeight);
+        sourceSets.put(entry.getKey(), binned + residual);
       }
 
       return new DeaggDataset(
           rmε.build(),
-          rBar, mBar, εBar,
-          barWeight,
-          rPositions.build(),
-          mPositions.build(),
-          positionWeights.build(),
-          residualWeight,
+          rScaled.build(),
+          mScaled.build(),
+          εScaled.build(),
+          binned,
+          residual,
           ImmutableMap.copyOf(sourceSets),
           ImmutableList.copyOf(sources));
     }
 
     /*
      * Utility method to return the current total rate of ruptures added to this
-     * builder, i.e. barWeight + residualWeight.
+     * builder thus far.
      */
     double rate() {
-      return barWeight + residualWeight;
+      return binned + residual;
     }
   }
 
