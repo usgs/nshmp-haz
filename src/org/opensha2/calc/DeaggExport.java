@@ -248,6 +248,10 @@ final class DeaggExport {
 
     double toPercent = percentScalar(dd);
     int ri, mi, εi;
+    
+    /* targets */
+    double recoveredRate = dd.binned + dd.residual;
+    double recoveredReturnPeriod = 1.0 / recoveredRate;
 
     /* totals */
     double total = dd.binned * toPercent;
@@ -284,8 +288,8 @@ final class DeaggExport {
             new SummaryItem("Exceedance IML", dc.iml, "g"))),
 
         new SummaryElement("Recovered targets", true, ImmutableList.of(
-            new SummaryItem("Return period", dc.returnPeriod, "yrs"),
-            new SummaryItem("Exceedance rate", dc.rate, "yr⁻¹"))),
+            new SummaryItem("Return period", recoveredReturnPeriod, "yrs"),
+            new SummaryItem("Exceedance rate", recoveredRate, "yr⁻¹"))),
 
         new SummaryElement("Totals", true, ImmutableList.of(
             new SummaryItem("Binned", round(total, RME_ROUNDING), "%"),
