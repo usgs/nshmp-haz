@@ -108,10 +108,10 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
  y-values. All data supplied to these operations is defensively copied unless
  it is not necessary to do so. For instance, <code>*copyOf()</code> variants should
  be used where possible as x-values will never be replicated in memory.
- 
+
  <p>Although this class is not final, it can not be subclassed. Mutable
  instances of this class are not thread-safe for operations that alter
- y-values.</p></div>
+ y-values.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd></dl>
 </li>
@@ -181,8 +181,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <td class="colFirst"><code>static <a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/data/XySequence.html#create(double[], double[])">create</a></strong>(double[]&nbsp;xs,
       double[]&nbsp;ys)</code>
-<div class="block">Create a new sequence with mutable y-values from the supplied value
- arrays.</div>
+<div class="block">Create a new sequence with mutable y-values from the supplied value arrays.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -214,7 +213,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>abstract boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/XySequence.html#isEmpty()">isEmpty</a></strong>()</code>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/XySequence.html#isClear()">isClear</a></strong>()</code>
 <div class="block">Returns <code>true</code> if all y-values are 0.0; <code>false</code> otherwise.</div>
 </td>
 </tr>
@@ -245,8 +244,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/data/XySequence.html#multiply(org.opensha2.data.XySequence)">multiply</a></strong>(<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;sequence)</code>
-<div class="block">Multiply the y-values of this sequence by the y-values of another
- sequence in place.</div>
+<div class="block">Multiply the y-values of this sequence by the y-values of another sequence
+ in place.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -335,9 +334,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;create(double[]&nbsp;xs,
                 double[]&nbsp;ys)</pre>
-<div class="block">Create a new sequence with mutable y-values from the supplied value
- arrays. If the supplied y-value array is null, all y-values are
- initialized to 0.</div>
+<div class="block">Create a new sequence with mutable y-values from the supplied value arrays.
+ If the supplied y-value array is null, all y-values are initialized to 0.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>xs</code> - x-values to initialize sequence with</dd><dd><code>ys</code> - y-values to initialize sequence with; may be null</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a mutable, <code>double[]</code>-backed sequence</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -357,8 +355,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <pre>public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;createImmutable(double[]&nbsp;xs,
                          double[]&nbsp;ys)</pre>
 <div class="block">Create a new, immutable sequence from the supplied value arrays. Unlike
- <a href="../../../org/opensha2/data/XySequence.html#create(double[], double[])"><code>create(double[], double[])</code></a>, the supplied y-value array may not
- be null.</div>
+ <a href="../../../org/opensha2/data/XySequence.html#create(double[], double[])"><code>create(double[], double[])</code></a>, the supplied y-value array may not be
+ null.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>xs</code> - x-values to initialize sequence with</dd><dd><code>ys</code> - y-values to initialize sequence with</dd>
 <dt><span class="strong">Returns:</span></dt><dd>an immutable, <code>double[]</code>-backed sequence</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -658,8 +656,8 @@ public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="c
 <li class="blockList">
 <h4>multiply</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;multiply(<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;sequence)</pre>
-<div class="block">Multiply the y-values of this sequence by the y-values of another
- sequence in place.</div>
+<div class="block">Multiply the y-values of this sequence by the y-values of another sequence
+ in place.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>sequence</code> - to multiply <code>this</code> sequence by</dd>
 <dt><span class="strong">Returns:</span></dt><dd><code>this</code> sequence, for use inline</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -691,14 +689,15 @@ public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="c
 <dl><dt><span class="strong">Returns:</span></dt><dd><code>this</code> sequence, for use inline</dd></dl>
 </li>
 </ul>
-<a name="isEmpty()">
+<a name="isClear()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isEmpty</h4>
-<pre>public abstract&nbsp;boolean&nbsp;isEmpty()</pre>
-<div class="block">Returns <code>true</code> if all y-values are 0.0; <code>false</code> otherwise.</div>
+<h4>isClear</h4>
+<pre>public abstract&nbsp;boolean&nbsp;isClear()</pre>
+<div class="block">Returns <code>true</code> if all y-values are 0.0; <code>false</code> otherwise.
+ a</div>
 </li>
 </ul>
 <a name="transform(com.google.common.base.Function)">
@@ -781,13 +780,13 @@ public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="c
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

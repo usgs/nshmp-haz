@@ -130,8 +130,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/AreaSource.html" title="class in org.opensha2.eq.model">AreaSource</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>
-<div class="block">Return a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source
- is within <code>distance</code> of the supplied <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo"><code>Location</code></a>.</div>
+<div class="block">Return a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source is
+ within <code>distance</code> of the supplied <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo"><code>Location</code></a>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -150,8 +150,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#iterableForLocation(org.opensha2.geo.Location)">iterableForLocation</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
-<div class="block">Return an <code>Iterable</code> over those <code>Source</code>s that are within
- the cutoff distance of the supplied <code>Location</code>.</div>
+<div class="block">Return an <code>Iterable</code> over those <code>Source</code>s that are within the
+ cutoff distance of the supplied <code>Location</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -248,8 +248,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/AreaSource.html" title="class in org.opensha2.eq.model">AreaSource</a>&gt;&nbsp;distanceFilter(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
                                    double&nbsp;distance)</pre>
 <div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../org/opensha2/eq/model/SourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">SourceSet</a></code></strong></div>
-<div class="block">Return a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source
- is within <code>distance</code> of the supplied <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo"><code>Location</code></a>. This
+<div class="block">Return a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source is
+ within <code>distance</code> of the supplied <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo"><code>Location</code></a>. This
  <code>Predicate</code> performs a quick distance calculation and is used to
  determine whether this source should be included in a hazard calculation.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>loc</code> - <code>Location</code> of interest</dd><dd><code>distance</code> - limit</dd></dl>
@@ -350,9 +350,9 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>iterableForLocation</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;&nbsp;iterableForLocation(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</pre>
 <div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../org/opensha2/eq/model/SourceSet.html#iterableForLocation(org.opensha2.geo.Location)">SourceSet</a></code></strong></div>
-<div class="block">Return an <code>Iterable</code> over those <code>Source</code>s that are within
- the cutoff distance of the supplied <code>Location</code>. The cutoff distance
- is derived from the <code>GroundMotionModel</code>s associated with this
+<div class="block">Return an <code>Iterable</code> over those <code>Source</code>s that are within the
+ cutoff distance of the supplied <code>Location</code>. The cutoff distance is
+ derived from the <code>GroundMotionModel</code>s associated with this
  <code>SourceSet</code>.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
@@ -428,13 +428,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

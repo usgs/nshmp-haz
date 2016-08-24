@@ -120,12 +120,12 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
  <a href="../../../org/opensha2/geo/GriddedRegion.html#indexForLocation(org.opensha2.geo.Location)"><code>indexForLocation(Location)</code></a> for more details on rules
  governing whether a grid node is inside a region and whether a
  <code>Location</code> will be associated with a grid node.
- 
+
  <p>The <code>Location</code>s of the grid nodes are indexed internally in order of
  increasing longitude then latitude starting with the node at the lowest
  latitude and longitude in the region. <code>GriddedRegion</code>s are iterable as
  a shorthand for <code>getNodeList().iterator()</code>.
- 
+
  <p>Internally, <code>GriddedRegion</code>s use an anchor <code>Location</code> to
  ensure grid nodes fall on specific lat-lon values. This location can be
  anywhere in- or outside the region to be gridded. If the region contains the
@@ -133,7 +133,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
  given a grid spacing of 1° and an anchor <code>Location</code> of 22.1°N -134.7°W,
  grid nodes within any region will fall at whole valued latitudes + 0.1° and
  longitudes - 0.7°.
- 
+
  <p><a name="note"></a> <b>Note:</b> Due to rounding errors and the use of an
  <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Area.html?is-external=true" title="class or interface in java.awt.geom"><code>Area</code></a> internally to define a <code>Region</code>'s border,
  <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a> may not always return the expected result
@@ -142,7 +142,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
  <a href="../../../org/opensha2/geo/GriddedRegion.html#minGridLat()"><code>minGridLat()</code></a> etc. for which there may not be any grid nodes. To
  guarantee node coverage for a <code>GriddedRegion</code>, say for eventual map
  output, 'best-practice' dictates expanding a region slightly.
- 
+
  <p>Use the <a href="../../../org/opensha2/geo/Regions.html" title="class in org.opensha2.geo"><code>Regions</code></a> factory class to create new gridded regions.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Nitin Gupta, Vipin Gupta, Peter Powers</dd>
@@ -206,9 +206,9 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/GriddedRegion.html#equalsRegion(org.opensha2.geo.GriddedRegion)">equalsRegion</a></strong>(<a href="../../../org/opensha2/geo/GriddedRegion.html" title="class in org.opensha2.geo">GriddedRegion</a>&nbsp;gr)</code>
-<div class="block">Compares this <code>GriddedRegion</code> to another and returns <code>true</code>
- if they are the same with respect to aerial extent (both exterior and
- interior borders), grid node spacing, and location.</div>
+<div class="block">Compares this <code>GriddedRegion</code> to another and returns <code>true</code> if
+ they are the same with respect to aerial extent (both exterior and interior
+ borders), grid node spacing, and location.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -218,9 +218,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/GriddedRegion.html#indexForLocation(org.opensha2.geo.Location)">indexForLocation</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
-<div class="block">Returns the index of the grid node associated with a given
- <code>Location</code> or -1 if the associated grid node is ouside this gridded
- region.</div>
+<div class="block">Returns the index of the grid node associated with a given <code>Location</code>
+ or -1 if the associated grid node is ouside this gridded region.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -418,11 +417,11 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <li class="blockList">
 <h4>equalsRegion</h4>
 <pre>public&nbsp;boolean&nbsp;equalsRegion(<a href="../../../org/opensha2/geo/GriddedRegion.html" title="class in org.opensha2.geo">GriddedRegion</a>&nbsp;gr)</pre>
-<div class="block">Compares this <code>GriddedRegion</code> to another and returns <code>true</code>
- if they are the same with respect to aerial extent (both exterior and
- interior borders), grid node spacing, and location. This method ignores
- the names of the <code>GriddedRegion</code>s. Use
- <code>GriddedRegion.equals(Object)</code> to include name comparison.</div>
+<div class="block">Compares this <code>GriddedRegion</code> to another and returns <code>true</code> if
+ they are the same with respect to aerial extent (both exterior and interior
+ borders), grid node spacing, and location. This method ignores the names of
+ the <code>GriddedRegion</code>s. Use <code>GriddedRegion.equals(Object)</code> to
+ include name comparison.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>gr</code> - the <code>Regions</code> to compare</dd>
 <dt><span class="strong">Returns:</span></dt><dd><code>true</code> if this <code>Region</code> has the same geometry as the
          supplied <code>Region</code>, <code>false</code> otherwise</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/GriddedRegion.html#equals(java.lang.Object)"><code>equals(Object)</code></a></dd></dl>
@@ -462,8 +461,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <h4>addInterior</h4>
 <pre>public&nbsp;void&nbsp;addInterior(<a href="../../../org/opensha2/geo/Region.html" title="class in org.opensha2.geo">Region</a>&nbsp;region)</pre>
 <div class="block">Overridden to throw an <code>UnsupportedOperationException</code> when called.
- The border of a <code>GriddedRegion</code> may only be set on initialization.
- To create a <code>GriddedRegion</code> that has interiors (donut-holes), first
+ The border of a <code>GriddedRegion</code> may only be set on initialization. To
+ create a <code>GriddedRegion</code> that has interiors (donut-holes), first
  create a <code>Region</code> with the required border and interiors using
  <a href="../../../org/opensha2/geo/Region.html#addInterior(org.opensha2.geo.Region)"><code>Region.addInterior(Region)</code></a> and then use it to initialize a
  <code>GriddedRegion</code>.</div>
@@ -507,9 +506,9 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <li class="blockList">
 <h4>locationForIndex</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;locationForIndex(int&nbsp;index)</pre>
-<div class="block">Returns the <code>Location</code> at a given grid index. This method is
- intended for random access of nodes in this gridded region; to cycle over
- all nodes, iterate over the region.</div>
+<div class="block">Returns the <code>Location</code> at a given grid index. This method is intended
+ for random access of nodes in this gridded region; to cycle over all nodes,
+ iterate over the region.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - of location to retrieve</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the <code>Location</code> or <code>null</code> if index is out of range</dd></dl>
 </li>
@@ -552,35 +551,33 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <li class="blockList">
 <h4>indexForLocation</h4>
 <pre>public&nbsp;int&nbsp;indexForLocation(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</pre>
-<div class="block">Returns the index of the grid node associated with a given
- <code>Location</code> or -1 if the associated grid node is ouside this gridded
- region. For a <code>Location</code> to be associated with a node, it must fall
- within the square region on which the node is centered. Note that this
- allows for some <code>Location</code>s that are outside the region border to
- still be associated with a node. Conversely, a
- <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a> may return <code>true</code> while this
- method returns -1. Users interested in node association should always use
- this method alone and test for -1 return value.
- <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a> should <i>NOT</i> be used a as a test
- prior to calling this method. <br/> <br/> The figure and table below
+<div class="block">Returns the index of the grid node associated with a given <code>Location</code>
+ or -1 if the associated grid node is ouside this gridded region. For a
+ <code>Location</code> to be associated with a node, it must fall within the
+ square region on which the node is centered. Note that this allows for some
+ <code>Location</code>s that are outside the region border to still be associated
+ with a node. Conversely, a <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a> may return
+ <code>true</code> while this method returns -1. Users interested in node
+ association should always use this method alone and test for -1 return
+ value. <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a> should <i>NOT</i> be used a as a
+ test prior to calling this method. <br/> <br/> The figure and table below
  indicate the results produced by calling <code>contains()</code> or
  <code>indexForLocation()</code>. The arrows in the figure point towards the
- interior of the <code>Region</code>. The dots mark the centered
- <code>Location</code> of each grid node and the numbers indicate the index
- value of each. Remember that both methods test for insidedness according
- to the rules defined in the <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><code>Shape</code></a> interface. <br/> <img
- style="padding: 20px; display: block; margin-left:auto;
- margin-right:auto;" src="../../../resources/node_association.jpg"/>
- <br/> <table id="table-a"> <thead> <tr> <th>Location</th> <th>
- <code>contains(Location)</code></th> <th><code>indexForLocation(Location)</code>
- </th> </tr> <thead> <tbody> <tr> <td><b>A</b></td> <td><code>true</code></td>
- <td>-1</td> </tr> <tr> <td><b>B</b></td> <td><code>false</code></td>
- <td>3</td> </tr> <tr> <td><b>C</b></td> <td><code>false</code></td> <td>3</td>
- </tr> <tr> <td><b>D</b></td> <td><code>false</code></td> <td>-1</td> </tr>
- <tr> <td><b>E</b></td> <td><code>true</code></td> <td>3</td> </tr> <tr>
+ interior of the <code>Region</code>. The dots mark the centered <code>Location</code>
+ of each grid node and the numbers indicate the index value of each.
+ Remember that both methods test for insidedness according to the rules
+ defined in the <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><code>Shape</code></a> interface. <br/> <img style="padding: 20px;
+ display: block; margin-left:auto; margin-right:auto;" src="
+ ../../../resources/node_association.jpg"/> <br/> <table id="table-a">
+ <thead> <tr> <th>Location</th> <th> <code>contains(Location)</code></th> <th>
+ <code>indexForLocation(Location)</code> </th> </tr> <thead> <tbody> <tr>
+ <td><b>A</b></td> <td><code>true</code></td> <td>-1</td> </tr> <tr>
+ <td><b>B</b></td> <td><code>false</code></td> <td>3</td> </tr> <tr>
+ <td><b>C</b></td> <td><code>false</code></td> <td>3</td> </tr> <tr>
+ <td><b>D</b></td> <td><code>false</code></td> <td>-1</td> </tr> <tr>
+ <td><b>E</b></td> <td><code>true</code></td> <td>3</td> </tr> <tr>
  <td><b>F</b></td> <td><code>true</code></td> <td>3</td> </tr> <tr>
- <td><b>G</b></td> <td><code>true</code></td> <td>4</td> </tr> </tbody>
- </table></div>
+ <td><b>G</b></td> <td><code>true</code></td> <td>4</td> </tr> </tbody> </table></div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>loc</code> - the <code>Location</code> to match to a grid node index</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the index of the associated node or -1 if no such node exists</dd></dl>
 </li>
@@ -592,9 +589,9 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <li class="blockList">
 <h4>minGridLat</h4>
 <pre>public&nbsp;double&nbsp;minGridLat()</pre>
-<div class="block">Returns the minimum grid latitude. Note that there may not actually be
- any nodes at this latitude. See class <a href="#note">note</a>. If the
- region is devoid of nodes, method will return <code>Double.NaN</code>.</div>
+<div class="block">Returns the minimum grid latitude. Note that there may not actually be any
+ nodes at this latitude. See class <a href="#note">note</a>. If the region
+ is devoid of nodes, method will return <code>Double.NaN</code>.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the minimum grid latitude</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a></dd></dl>
 </li>
 </ul>
@@ -605,9 +602,9 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <li class="blockList">
 <h4>maxGridLat</h4>
 <pre>public&nbsp;double&nbsp;maxGridLat()</pre>
-<div class="block">Returns the maximum grid latitude. Note that there may not actually be
- any nodes at this latitude. See class <a href="#note">note</a>. If the
- region is devoid of nodes, method will return <code>Double.NaN</code>.</div>
+<div class="block">Returns the maximum grid latitude. Note that there may not actually be any
+ nodes at this latitude. See class <a href="#note">note</a>. If the region
+ is devoid of nodes, method will return <code>Double.NaN</code>.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the maximum grid latitude</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a></dd></dl>
 </li>
 </ul>
@@ -618,9 +615,9 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <li class="blockList">
 <h4>minGridLon</h4>
 <pre>public&nbsp;double&nbsp;minGridLon()</pre>
-<div class="block">Returns the minimum grid longitude. Note that there may not actually be
- any nodes at this longitude. See class <a href="#note">note</a>. If the
- region is devoid of nodes, method will return <code>Double.NaN</code>.</div>
+<div class="block">Returns the minimum grid longitude. Note that there may not actually be any
+ nodes at this longitude. See class <a href="#note">note</a>. If the region
+ is devoid of nodes, method will return <code>Double.NaN</code>.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the minimum grid longitude</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a></dd></dl>
 </li>
 </ul>
@@ -631,9 +628,9 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <li class="blockList">
 <h4>maxGridLon</h4>
 <pre>public&nbsp;double&nbsp;maxGridLon()</pre>
-<div class="block">Returns the maximum grid longitude. Note that there may not actually be
- any nodes at this longitude. See class <a href="#note">note</a>. If the
- region is devoid of nodes, method will return <code>Double.NaN</code>.</div>
+<div class="block">Returns the maximum grid longitude. Note that there may not actually be any
+ nodes at this longitude. See class <a href="#note">note</a>. If the region
+ is devoid of nodes, method will return <code>Double.NaN</code>.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the maximum grid longitude</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a></dd></dl>
 </li>
 </ul>
@@ -705,13 +702,13 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

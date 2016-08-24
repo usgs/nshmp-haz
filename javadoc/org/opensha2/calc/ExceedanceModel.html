@@ -35,7 +35,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../org/opensha2/calc/Deaggregation.Exporter.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -109,14 +109,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Enum.html?is
 <div class="block">Uncertainty models govern how the values of a complementary cumulative normal
  distribution (or probability of exceedence) are computed given a mean, μ,
  standard deviation, σ, and other possibly relevant arguments.
- 
+
  <p>Each model implements methods that compute the probability of exceeding a
  single value or a <a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data"><code>XySequence</code></a> of values. Some arguments are only used
  by some models; for example, <a href="../../../org/opensha2/calc/ExceedanceModel.html#NONE"><code>NONE</code></a> ignores σ, but it must be supplied
- for consistency. See individual models for details.</p>
- 
+ for consistency. See individual models for details.
+
  <p>Internally, models use a high precision approximation of the Gauss error
- function (see Abramowitz and Stegun 7.1.26) when computing exceedances.</p></div>
+ function (see Abramowitz and Stegun 7.1.26) when computing exceedances.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd></dl>
 </li>
@@ -143,18 +143,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Enum.html?is
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><strong><a href="../../../org/opensha2/calc/ExceedanceModel.html#NSHM_CEUS_MAX_INTENSITY">NSHM_CEUS_MAX_INTENSITY</a></strong></code>
-<div class="block">Model provides <a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm"><code>Imt</code></a>-dependent maxima end exists to support
- 'clamps' on ground motions that have historically been applied in the
- CEUS NSHM due to sometimes unreasonably high ground motions implied by
- <code>μ + 3σ</code>.</div>
+<div class="block">Model provides <a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm"><code>Imt</code></a>-dependent maxima end exists to support 'clamps'
+ on ground motions that have historically been applied in the CEUS NSHM due
+ to sometimes unreasonably high ground motions implied by <code>μ + 3σ</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../org/opensha2/calc/ExceedanceModel.html#PEER_MIXTURE_MODEL">PEER_MIXTURE_MODEL</a></strong></code>
-<div class="block">Model accomodates the heavy tails observed in earthquake data that are
- not well matched by a purely normal distribution at high ε by combining
- two distributions (with 50% weight each) created using modulated σ-values
- (0.8σ and 1.2σ).</div>
+<div class="block">Model accomodates the heavy tails observed in earthquake data that are not
+ well matched by a purely normal distribution at high ε by combining two
+ distributions (with 50% weight each) created using modulated σ-values (0.8σ
+ and 1.2σ).</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -193,8 +192,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Enum.html?is
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/ExceedanceModel.html#clusterExceedance(java.util.List)">clusterExceedance</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;&nbsp;curves)</code>
-<div class="block">Computes joint probability of exceedence given the occurrence of a
- cluster of events: [1 - [(1-PE1) * (1-PE2) * ...]].</div>
+<div class="block">Computes joint probability of exceedence given the occurrence of a cluster
+ of events: [1 - [(1-PE1) * (1-PE2) * ...]].</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -248,9 +247,9 @@ the order they are declared.</div>
 <pre>public static final&nbsp;<a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc">ExceedanceModel</a> NONE</pre>
 <div class="block">No uncertainty. Any <code>σ</code> supplied to methods is ignored yielding a
  complementary unit step function for a range of values spanning μ.
- 
+
  <p>Model ignores <code>σ</code>, truncation level,<code>n</code>, and <code>imt</code>
- .</p></div>
+ .</div>
 </li>
 </ul>
 <a name="TRUNCATION_OFF">
@@ -261,8 +260,8 @@ the order they are declared.</div>
 <h4>TRUNCATION_OFF</h4>
 <pre>public static final&nbsp;<a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc">ExceedanceModel</a> TRUNCATION_OFF</pre>
 <div class="block">No truncation.
- 
- <p>Model ignores truncation level, <code>n</code>, and <code>imt</code>.</p></div>
+
+ <p>Model ignores truncation level, <code>n</code>, and <code>imt</code>.</div>
 </li>
 </ul>
 <a name="TRUNCATION_UPPER_ONLY">
@@ -273,8 +272,8 @@ the order they are declared.</div>
 <h4>TRUNCATION_UPPER_ONLY</h4>
 <pre>public static final&nbsp;<a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc">ExceedanceModel</a> TRUNCATION_UPPER_ONLY</pre>
 <div class="block">Upper truncation only at <code>μ + σ * n</code>.
- 
- <p>Model ignores <code>imt</code>.</p></div>
+
+ <p>Model ignores <code>imt</code>.</div>
 </li>
 </ul>
 <a name="TRUNCATION_LOWER_UPPER">
@@ -285,8 +284,8 @@ the order they are declared.</div>
 <h4>TRUNCATION_LOWER_UPPER</h4>
 <pre>public static final&nbsp;<a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc">ExceedanceModel</a> TRUNCATION_LOWER_UPPER</pre>
 <div class="block">Upper and lower truncation at <code>μ ± σ * n</code>.
- 
- <p>Model ignores <code>imt</code>.</p></div>
+
+ <p>Model ignores <code>imt</code>.</div>
 </li>
 </ul>
 <a name="PEER_MIXTURE_REFERENCE">
@@ -305,12 +304,12 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>PEER_MIXTURE_MODEL</h4>
 <pre>public static final&nbsp;<a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc">ExceedanceModel</a> PEER_MIXTURE_MODEL</pre>
-<div class="block">Model accomodates the heavy tails observed in earthquake data that are
- not well matched by a purely normal distribution at high ε by combining
- two distributions (with 50% weight each) created using modulated σ-values
- (0.8σ and 1.2σ). Model does not impose any truncation.
- 
- <p>Model ignores truncation level, <code>n</code>, and <code>imt</code>.</p></div>
+<div class="block">Model accomodates the heavy tails observed in earthquake data that are not
+ well matched by a purely normal distribution at high ε by combining two
+ distributions (with 50% weight each) created using modulated σ-values (0.8σ
+ and 1.2σ). Model does not impose any truncation.
+
+ <p>Model ignores truncation level, <code>n</code>, and <code>imt</code>.</div>
 </li>
 </ul>
 <a name="NSHM_CEUS_MAX_INTENSITY">
@@ -320,11 +319,11 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>NSHM_CEUS_MAX_INTENSITY</h4>
 <pre>public static final&nbsp;<a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc">ExceedanceModel</a> NSHM_CEUS_MAX_INTENSITY</pre>
-<div class="block">Model provides <a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm"><code>Imt</code></a>-dependent maxima end exists to support
- 'clamps' on ground motions that have historically been applied in the
- CEUS NSHM due to sometimes unreasonably high ground motions implied by
- <code>μ + 3σ</code>. Model imposes one-sided (upper) truncation at
- <code>μ + nσ</code> if clamp is not exceeded.</div>
+<div class="block">Model provides <a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm"><code>Imt</code></a>-dependent maxima end exists to support 'clamps'
+ on ground motions that have historically been applied in the CEUS NSHM due
+ to sometimes unreasonably high ground motions implied by <code>μ + 3σ</code>.
+ Model imposes one-sided (upper) truncation at <code>μ + nσ</code> if clamp is
+ not exceeded.</div>
 </li>
 </ul>
 </li>
@@ -379,9 +378,9 @@ with the specified name</dd>
 <li class="blockList">
 <h4>clusterExceedance</h4>
 <pre>public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;clusterExceedance(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;&nbsp;curves)</pre>
-<div class="block">Computes joint probability of exceedence given the occurrence of a
- cluster of events: [1 - [(1-PE1) * (1-PE2) * ...]]. The probability of
- exceedance of each individual event is given in the supplied curves.</div>
+<div class="block">Computes joint probability of exceedence given the occurrence of a cluster
+ of events: [1 - [(1-PE1) * (1-PE2) * ...]]. The probability of exceedance
+ of each individual event is given in the supplied curves.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>curves</code> - for which to calculate joint probability of exceedance</dd></dl>
 </li>
 </ul>
@@ -411,7 +410,7 @@ with the specified name</dd>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../org/opensha2/calc/Deaggregation.Exporter.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -453,13 +452,13 @@ with the specified name</dd>
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

@@ -35,7 +35,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../org/opensha2/eq/fault/surface/ContainerSubset2D.html" title="class in org.opensha2.eq.fault.surface"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.Builder.html" title="class in org.opensha2.eq.fault.surface"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -61,7 +61,7 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields_inherited_from_class_org.opensha2.eq.fault.surface.Container2DImpl">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
@@ -86,17 +86,7 @@
 <li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html" title="class in org.opensha2.eq.fault.surface">org.opensha2.eq.fault.surface.Container2DImpl</a>&lt;<a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</li>
-<li>
-<ul class="inheritance">
-<li><a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html" title="class in org.opensha2.eq.fault.surface">org.opensha2.eq.fault.surface.AbstractGriddedSurface</a></li>
-<li>
-<ul class="inheritance">
 <li>org.opensha2.eq.fault.surface.DefaultGriddedSurface</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -110,14 +100,14 @@
 <hr>
 <br>
 <pre>public class <span class="strong">DefaultGriddedSurface</span>
-extends <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html" title="class in org.opensha2.eq.fault.surface">AbstractGriddedSurface</a></pre>
+extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Default <a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface"><code>GriddedSurface</code></a> implementation. Gridded surfaces are
  constructed by evenly discretizing a fault trace and projecting that trace
  down-dip in a direction normal to the average-strike of the trace, here
  defined as a line connecting the first and last endpoints of the trace.
- 
+
  <p>New gridded surfaces can only be created via a <a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.Builder.html" title="class in org.opensha2.eq.fault.surface">builder</a>, which provides a variety of construction options.
- 
+
  TODO review documentation once builder docs written. There are circumstances
  where a dip direction may be specified (e.g. UCERF3 subsections) and the
  above staement rendered false.</div>
@@ -148,21 +138,6 @@ extends <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSur
 </table>
 </li>
 </ul>
-<!-- =========== FIELD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field_summary">
-<!--   -->
-</a>
-<h3>Field Summary</h3>
-<ul class="blockList">
-<li class="blockList"><a name="fields_inherited_from_class_org.opensha2.eq.fault.surface.Container2DImpl">
-<!--   -->
-</a>
-<h3>Fields inherited from class&nbsp;org.opensha2.eq.fault.surface.<a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html" title="class in org.opensha2.eq.fault.surface">Container2DImpl</a></h3>
-<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#data">data</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#name">name</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#numCols">numCols</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#numRows">numRows</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#size">size</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#TAB">TAB</a></code></li>
-</ul>
-</li>
-</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method_summary">
@@ -176,18 +151,39 @@ extends <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSur
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#area()">area</a></strong>()</code>
+<div class="block">The surface area of this surface in km<sup>2</sup>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.Builder.html" title="class in org.opensha2.eq.fault.surface">DefaultGriddedSurface.Builder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#builder()">builder</a></strong>()</code>
 <div class="block">Return a new surface builder.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#centroid()">centroid</a></strong>()</code>
 <div class="block">The centroid of this surface.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#checkBounds(int, int)">checkBounds</a></strong>(int&nbsp;row,
+           int&nbsp;column)</code>
+<div class="block">Checks that the specified row and column are valid indices into the 2D
+ array.</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#clear()">clear</a></strong>()</code>
+<div class="block">Removes all object reference stored in this container and resets all grid
+ metics back to 0.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#create(org.opensha2.geo.LocationList, double, double, double)">create</a></strong>(<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace,
       double&nbsp;dip,
@@ -196,65 +192,258 @@ extends <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSur
 <div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#depth()">depth</a></strong>()</code>
 <div class="block">The average depth to the top of this surface in km (always positive)</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#dip()">dip</a></strong>()</code>
 <div class="block">The average dip of this surface in degrees [0°, 90°].</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#dipDirection()">dipDirection</a></strong>()</code>
 <div class="block">The average dip direction of this surface in degrees [0°, 360°).</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#dipRad()">dipRad</a></strong>()</code>
 <div class="block">The average dip of this surface in radians [0, π/2].</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/Distance.html" title="class in org.opensha2.eq.model">Distance</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#distanceTo(org.opensha2.geo.Location)">distanceTo</a></strong>(<a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
+<div class="block">Returns the distance metrics commonly required by PSHA ground motion models
+ (GMMs): rJB, rRup, and rX.</div>
+</td>
+</tr>
 <tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#exist(int, int)">exist</a></strong>(int&nbsp;row,
+     int&nbsp;column)</code>
+<div class="block">check if this grid cell has a java object stored in it.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>T</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#get(int, int)">get</a></strong>(int&nbsp;row,
+   int&nbsp;column)</code>
+<div class="block">Returns the object stored in this two dimensional cell.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html?is-external=true" title="class or interface in java.util">ListIterator</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getAllByColumnsIterator()">getAllByColumnsIterator</a></strong>()</code>
+<div class="block">This returns an iterator of all the Java objects stored in this two
+ dimensional matrix iterating over all rows within a column and then moving
+ to the next column until iteration has been done over all rows and all
+ columns.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html?is-external=true" title="class or interface in java.util">ListIterator</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getAllByRowsIterator()">getAllByRowsIterator</a></strong>()</code>
+<div class="block">This returns an iterator of all the Java objects stored in this two
+ dimensional matrix iterating over all columns within a rows and then moving
+ to the next column until iteration has been done over all columns and all
+ rows.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getAveGridSpacing()">getAveGridSpacing</a></strong>()</code>
+<div class="block">This returns the average grid spacing used to define the discretization
+ used in what's returned by the methods here that contain "Discretized" in
+ their names.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html?is-external=true" title="class or interface in java.util">ListIterator</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getColumnIterator(int)">getColumnIterator</a></strong>(int&nbsp;row)</code>
+<div class="block">Returns an ordered list iterator over all columns associated with one row.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getEvenlyDiscritizedListOfLocsOnSurface()">getEvenlyDiscritizedListOfLocsOnSurface</a></strong>()</code>
+<div class="block">This returns a list of locations that are evenly spread (at least
+ approximately) over the rupture surface, with a spacing given by what's
+ returned by the getGridSpacing() method.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getEvenlyDiscritizedLowerEdge()">getEvenlyDiscritizedLowerEdge</a></strong>()</code>
+<div class="block">This returns a list of locations that are evenly spread along the lower
+ edge of the surface.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getEvenlyDiscritizedPerimeter()">getEvenlyDiscritizedPerimeter</a></strong>()</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getEvenlyDiscritizedUpperEdge()">getEvenlyDiscritizedUpperEdge</a></strong>()</code>
+<div class="block">This returns a list of locations that are evenly spread along the upper
+ edge of the surface.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getFirstLocOnUpperEdge()">getFirstLocOnUpperEdge</a></strong>()</code>
+<div class="block">This returns the first location on row zero (which should be the same as
+ the first loc of the FaultTrace)</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getGridSpacingAlongStrike()">getGridSpacingAlongStrike</a></strong>()</code>
+<div class="block">Returns the grid spacing along strike</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getGridSpacingDownDip()">getGridSpacingDownDip</a></strong>()</code>
+<div class="block">returns the grid spacing down dip</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getLastLocOnUpperEdge()">getLastLocOnUpperEdge</a></strong>()</code>
+<div class="block">This returns the last location on row zero (which may not be the same as
+ the last loc of the FaultTrace depending on the discretization)</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getLocation(int, int)">getLocation</a></strong>(int&nbsp;row,
+           int&nbsp;column)</code>
+<div class="block">gets the location from the 2D container</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getNumCols()">getNumCols</a></strong>()</code>
+<div class="block">Returns the number of columns in this two dimensional container.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getNumRows()">getNumRows</a></strong>()</code>
+<div class="block">Returns the number of rows int this two dimensional container.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getPerimeter()">getPerimeter</a></strong>()</code>
 <div class="block">Override the parent with a version with fewer points</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getRowAsTrace(int)">getRowAsTrace</a></strong>(int&nbsp;row)</code>
+<div class="block">Gets a specified row as a fault trace</div>
+</td>
+</tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#resampleTrace(org.opensha2.geo.LocationList, int)">resampleTrace</a></strong>(<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace,
-             int&nbsp;num)</code>
-<div class="block">This resamples the trace into num subsections of equal length (final
- number of points in trace is num+1).</div>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html?is-external=true" title="class or interface in java.util">ListIterator</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getRowIterator(int)">getRowIterator</a></strong>(int&nbsp;column)</code>
+<div class="block">Returns an ordered list iterator over all rows associated with one column.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getUpperEdge()">getUpperEdge</a></strong>()</code>
+<div class="block">This returns the upper edge of the rupture surface (where the locations are
+ not necessarily equally spaced).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#iterator()">iterator</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#length()">length</a></strong>()</code>
+<div class="block">The average length of the upper edge or trace of this surface in km.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#name()">name</a></strong>()</code>
+<div class="block">Gets the name of this container</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#resampleTrace(org.opensha2.geo.LocationList, int)">resampleTrace</a></strong>(<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace,
+             int&nbsp;num)</code>
+<div class="block">This resamples the trace into num subsections of equal length (final number
+ of points in trace is num+1).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#set(int, int, T)">set</a></strong>(int&nbsp;row,
+   int&nbsp;column,
+   T&nbsp;obj)</code>
+<div class="block">Places a Java object into one cell in this two dimensional matrix specified
+ by the row and column indices.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#setName(java.lang.String)">setName</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</code>
+<div class="block">Sets the name of this container</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#setNumRowsAndNumCols(int, int)">setNumRowsAndNumCols</a></strong>(int&nbsp;numRows,
+                    int&nbsp;numCols)</code>
+<div class="block">Sets the number of Rows and Cols of the 2D container object.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#size()">size</a></strong>()</code>
+<div class="block">returns the number of cells in this two dimensional matrix, i.e.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#strike()">strike</a></strong>()</code>
 <div class="block">The average strike of this surface in degrees [0°, 360°).</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[][]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#toJava2D()">toJava2D</a></strong>()</code>
+<div class="block">Converts our internal data structure to the Java 2 dimensional array.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#toString()">toString</a></strong>()</code>
+<div class="block">Prints out each location and fault information for debugging</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#width()">width</a></strong>()</code>
+<div class="block">The average down-dip width of this surface in km.</div>
+</td>
+</tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_org.opensha2.eq.fault.surface.AbstractGriddedSurface">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;org.opensha2.eq.fault.surface.<a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html" title="class in org.opensha2.eq.fault.surface">AbstractGriddedSurface</a></h3>
-<code><a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#area()">area</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#distanceTo(org.opensha2.geo.Location)">distanceTo</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getAveGridSpacing()">getAveGridSpacing</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getEvenlyDiscritizedListOfLocsOnSurface()">getEvenlyDiscritizedListOfLocsOnSurface</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getEvenlyDiscritizedLowerEdge()">getEvenlyDiscritizedLowerEdge</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getEvenlyDiscritizedPerimeter()">getEvenlyDiscritizedPerimeter</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getEvenlyDiscritizedUpperEdge()">getEvenlyDiscritizedUpperEdge</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getFirstLocOnUpperEdge()">getFirstLocOnUpperEdge</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getGridSpacingAlongStrike()">getGridSpacingAlongStrike</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getGridSpacingDownDip()">getGridSpacingDownDip</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getLastLocOnUpperEdge()">getLastLocOnUpperEdge</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getLocation(int, int)">getLocation</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getRowAsTrace(int)">getRowAsTrace</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getUpperEdge()">getUpperEdge</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#length()">length</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#toString()">toString</a>, <a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#width()">width</a></code></li>
-</ul>
-<ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_org.opensha2.eq.fault.surface.Container2DImpl">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;org.opensha2.eq.fault.surface.<a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html" title="class in org.opensha2.eq.fault.surface">Container2DImpl</a></h3>
-<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#checkBounds(int, int)">checkBounds</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#clear()">clear</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#exist(int, int)">exist</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#get(int, int)">get</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#getAllByColumnsIterator()">getAllByColumnsIterator</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#getAllByRowsIterator()">getAllByRowsIterator</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#getColumnIterator(int)">getColumnIterator</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#getNumCols()">getNumCols</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#getNumRows()">getNumRows</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#getRowIterator(int)">getRowIterator</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#iterator()">iterator</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#name()">name</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#set(int, int, T)">set</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#setName(java.lang.String)">setName</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#setNumRowsAndNumCols(int, int)">setNumRowsAndNumCols</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#size()">size</a>, <a href="../../../../../org/opensha2/eq/fault/surface/Container2DImpl.html#toJava2D()">toJava2D</a></code></li>
-</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
@@ -329,11 +518,11 @@ public&nbsp;void&nbsp;create(<a href="../../../../../org/opensha2/geo/LocationLi
 <h4>resampleTrace</h4>
 <pre>public static&nbsp;<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;resampleTrace(<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace,
                          int&nbsp;num)</pre>
-<div class="block">This resamples the trace into num subsections of equal length (final
- number of points in trace is num+1). However, note that these subsections
- of are equal length on the original trace, and that the final subsections
- will be less than that if there is curvature in the original between the
- points (e.g., corners getting cut).</div>
+<div class="block">This resamples the trace into num subsections of equal length (final number
+ of points in trace is num+1). However, note that these subsections of are
+ equal length on the original trace, and that the final subsections will be
+ less than that if there is curvature in the original between the points
+ (e.g., corners getting cut).</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>trace</code> - </dd><dd><code>num</code> - - number of subsections</dd></dl>
 </li>
 </ul>
@@ -348,8 +537,6 @@ public&nbsp;void&nbsp;create(<a href="../../../../../org/opensha2/geo/LocationLi
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getPerimeter()">getPerimeter</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
-<dt><strong>Overrides:</strong></dt>
-<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getPerimeter()">getPerimeter</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html" title="class in org.opensha2.eq.fault.surface">AbstractGriddedSurface</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -411,12 +598,550 @@ public&nbsp;void&nbsp;create(<a href="../../../../../org/opensha2/geo/LocationLi
 <a name="centroid()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>centroid</h4>
 <pre>public&nbsp;<a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;centroid()</pre>
 <div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html#centroid()">RuptureSurface</a></code></strong></div>
 <div class="block">The centroid of this surface.</div>
+</li>
+</ul>
+<a name="getEvenlyDiscritizedListOfLocsOnSurface()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEvenlyDiscritizedListOfLocsOnSurface</h4>
+<pre>public&nbsp;<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;getEvenlyDiscritizedListOfLocsOnSurface()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedListOfLocsOnSurface()">GriddedSurface</a></code></strong></div>
+<div class="block">This returns a list of locations that are evenly spread (at least
+ approximately) over the rupture surface, with a spacing given by what's
+ returned by the getGridSpacing() method. Further details are specified by
+ the implementing class. Don't assume the locations are ordered as one reads
+ the words on a page in a book (not the case for CompoundGriddedSurface).</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedListOfLocsOnSurface()">getEvenlyDiscritizedListOfLocsOnSurface</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getGridSpacingAlongStrike()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getGridSpacingAlongStrike</h4>
+<pre>public&nbsp;double&nbsp;getGridSpacingAlongStrike()</pre>
+<div class="block">Returns the grid spacing along strike</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getGridSpacingAlongStrike()">getGridSpacingAlongStrike</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getGridSpacingDownDip()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getGridSpacingDownDip</h4>
+<pre>public&nbsp;double&nbsp;getGridSpacingDownDip()</pre>
+<div class="block">returns the grid spacing down dip</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getGridSpacingDownDip()">getGridSpacingDownDip</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getEvenlyDiscritizedPerimeter()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEvenlyDiscritizedPerimeter</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+public&nbsp;<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;getEvenlyDiscritizedPerimeter()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedPerimeter()">GriddedSurface</a></code></strong></div>
+<div class="block">This returns a list of locations that are evenly spread (at least
+ approximately) over the surface perimeter, with a spacing given by what's
+ returned by the getGridSpacing() method. Further details are specified by
+ the implementing class. These locations should be ordered starting along
+ the top and moving along following the Aki and Richards convention.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedPerimeter()">getEvenlyDiscritizedPerimeter</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getLocation(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLocation</h4>
+<pre>public&nbsp;<a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;getLocation(int&nbsp;row,
+                   int&nbsp;column)</pre>
+<div class="block">gets the location from the 2D container</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getLocation(int, int)">getLocation</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - </dd><dd><code>column</code> - </dd></dl>
+</li>
+</ul>
+<a name="getRowAsTrace(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRowAsTrace</h4>
+<pre>public&nbsp;<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;getRowAsTrace(int&nbsp;row)</pre>
+<div class="block">Gets a specified row as a fault trace</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - </dd></dl>
+</li>
+</ul>
+<a name="distanceTo(org.opensha2.geo.Location)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>distanceTo</h4>
+<pre>public&nbsp;<a href="../../../../../org/opensha2/eq/model/Distance.html" title="class in org.opensha2.eq.model">Distance</a>&nbsp;distanceTo(<a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html#distanceTo(org.opensha2.geo.Location)">RuptureSurface</a></code></strong></div>
+<div class="block">Returns the distance metrics commonly required by PSHA ground motion models
+ (GMMs): rJB, rRup, and rX.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html#distanceTo(org.opensha2.geo.Location)">distanceTo</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html" title="interface in org.opensha2.eq.fault.surface">RuptureSurface</a></code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>loc</code> - <code>Location</code> to compute distances to</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a distance metric wrapper object</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/opensha2/eq/model/Distance.html" title="class in org.opensha2.eq.model"><code>Distance</code></a></dd></dl>
+</li>
+</ul>
+<a name="getEvenlyDiscritizedUpperEdge()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEvenlyDiscritizedUpperEdge</h4>
+<pre>public&nbsp;<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;getEvenlyDiscritizedUpperEdge()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedUpperEdge()">GriddedSurface</a></code></strong></div>
+<div class="block">This returns a list of locations that are evenly spread along the upper
+ edge of the surface. Further details are specified by the implementing
+ class. These locations should be ordered along the fault following the Aki
+ and Richards convention. TODO move to Container2D topRow()</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedUpperEdge()">getEvenlyDiscritizedUpperEdge</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getEvenlyDiscritizedLowerEdge()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEvenlyDiscritizedLowerEdge</h4>
+<pre>public&nbsp;<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;getEvenlyDiscritizedLowerEdge()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedLowerEdge()">GriddedSurface</a></code></strong></div>
+<div class="block">This returns a list of locations that are evenly spread along the lower
+ edge of the surface. Further details are specified by the implementing
+ class. These locations should be ordered along the fault following the Aki
+ and Richards convention. TODO move to Container2D bottomRow()</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedLowerEdge()">getEvenlyDiscritizedLowerEdge</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getUpperEdge()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUpperEdge</h4>
+<pre>public&nbsp;<a href="../../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;getUpperEdge()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getUpperEdge()">GriddedSurface</a></code></strong></div>
+<div class="block">This returns the upper edge of the rupture surface (where the locations are
+ not necessarily equally spaced). This may be the original Fault Trace used
+ to define the surface, but not necessarily.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getUpperEdge()">getUpperEdge</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getFirstLocOnUpperEdge()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFirstLocOnUpperEdge</h4>
+<pre>public&nbsp;<a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;getFirstLocOnUpperEdge()</pre>
+<div class="block">This returns the first location on row zero (which should be the same as
+ the first loc of the FaultTrace)</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getFirstLocOnUpperEdge()">getFirstLocOnUpperEdge</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getLastLocOnUpperEdge()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLastLocOnUpperEdge</h4>
+<pre>public&nbsp;<a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;getLastLocOnUpperEdge()</pre>
+<div class="block">This returns the last location on row zero (which may not be the same as
+ the last loc of the FaultTrace depending on the discretization)</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getLastLocOnUpperEdge()">getLastLocOnUpperEdge</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="length()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>length</h4>
+<pre>public&nbsp;double&nbsp;length()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html#length()">RuptureSurface</a></code></strong></div>
+<div class="block">The average length of the upper edge or trace of this surface in km.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html#length()">length</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html" title="interface in org.opensha2.eq.fault.surface">RuptureSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="width()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>width</h4>
+<pre>public&nbsp;double&nbsp;width()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html#width()">RuptureSurface</a></code></strong></div>
+<div class="block">The average down-dip width of this surface in km.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html#width()">width</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html" title="interface in org.opensha2.eq.fault.surface">RuptureSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="area()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>area</h4>
+<pre>public&nbsp;double&nbsp;area()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html#area()">RuptureSurface</a></code></strong></div>
+<div class="block">The surface area of this surface in km<sup>2</sup>.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html#area()">area</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/RuptureSurface.html" title="interface in org.opensha2.eq.fault.surface">RuptureSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getAveGridSpacing()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAveGridSpacing</h4>
+<pre>public&nbsp;double&nbsp;getAveGridSpacing()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getAveGridSpacing()">GriddedSurface</a></code></strong></div>
+<div class="block">This returns the average grid spacing used to define the discretization
+ used in what's returned by the methods here that contain "Discretized" in
+ their names.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getAveGridSpacing()">getAveGridSpacing</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/GriddedSurface.html" title="interface in org.opensha2.eq.fault.surface">GriddedSurface</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
+<div class="block">Prints out each location and fault information for debugging</div>
+</li>
+</ul>
+<a name="setName(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setName</h4>
+<pre>public&nbsp;void&nbsp;setName(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</pre>
+<div class="block">Sets the name of this container</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#setName(java.lang.String)">setName</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+</dl>
+</li>
+</ul>
+<a name="name()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>name</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name()</pre>
+<div class="block">Gets the name of this container</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/util/Named.html#name()">name</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/util/Named.html" title="interface in org.opensha2.util">Named</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>the name</dd></dl>
+</li>
+</ul>
+<a name="set(int,int,java.lang.Object)">
+<!--   -->
+</a><a name="set(int, int, T)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>set</h4>
+<pre>public&nbsp;void&nbsp;set(int&nbsp;row,
+       int&nbsp;column,
+       T&nbsp;obj)
+         throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ArrayIndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">ArrayIndexOutOfBoundsException</a></pre>
+<div class="block">Places a Java object into one cell in this two dimensional matrix specified
+ by the row and column indices.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#set(int, int, T)">set</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - The x coordinate of the cell.</dd><dd><code>column</code> - The y coordinate of the cell.</dd><dd><code>obj</code> - The Java object to place in the cell.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ArrayIndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">ArrayIndexOutOfBoundsException</a></code> - Thrown if the row and column are
+            beyond the two dimensional matrix range.</dd></dl>
+</li>
+</ul>
+<a name="setNumRowsAndNumCols(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setNumRowsAndNumCols</h4>
+<pre>protected&nbsp;void&nbsp;setNumRowsAndNumCols(int&nbsp;numRows,
+                        int&nbsp;numCols)</pre>
+<div class="block">Sets the number of Rows and Cols of the 2D container object.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>numRows</code> - int number of rows</dd><dd><code>numCols</code> - int number of cols</dd></dl>
+</li>
+</ul>
+<a name="getNumRows()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNumRows</h4>
+<pre>public&nbsp;int&nbsp;getNumRows()</pre>
+<div class="block">Returns the number of rows int this two dimensional container.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#getNumRows()">getNumRows</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>Number of rows.</dd></dl>
+</li>
+</ul>
+<a name="getNumCols()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNumCols</h4>
+<pre>public&nbsp;int&nbsp;getNumCols()</pre>
+<div class="block">Returns the number of columns in this two dimensional container.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#getNumCols()">getNumCols</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>Get number of columns.</dd></dl>
+</li>
+</ul>
+<a name="get(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>get</h4>
+<pre>public&nbsp;T&nbsp;get(int&nbsp;row,
+    int&nbsp;column)</pre>
+<div class="block">Returns the object stored in this two dimensional cell.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#get(int, int)">get</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - The x coordinate of the cell.</dd><dd><code>column</code> - The y coordinate of the cell.</dd></dl>
+</li>
+</ul>
+<a name="getColumnIterator(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getColumnIterator</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html?is-external=true" title="class or interface in java.util">ListIterator</a>&lt;T&gt;&nbsp;getColumnIterator(int&nbsp;row)
+                                  throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ArrayIndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">ArrayIndexOutOfBoundsException</a></pre>
+<div class="block">Returns an ordered list iterator over all columns associated with one row.
+ This returns all the objects in that row. The results are returned from
+ lowest index to highest along the interating row.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#getColumnIterator(int)">getColumnIterator</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - The x coordinate of the cell.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The columnIterator value</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ArrayIndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">ArrayIndexOutOfBoundsException</a></code> - Thrown if the row is beyond the
+            two dimensional matrix range.</dd></dl>
+</li>
+</ul>
+<a name="getRowIterator(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRowIterator</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html?is-external=true" title="class or interface in java.util">ListIterator</a>&lt;T&gt;&nbsp;getRowIterator(int&nbsp;column)
+                               throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ArrayIndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">ArrayIndexOutOfBoundsException</a></pre>
+<div class="block">Returns an ordered list iterator over all rows associated with one column.
+ This returns all the objects in that column. The results are returned from
+ lowest index to highest along the interating column.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#getRowIterator(int)">getRowIterator</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - The y coordinate of the cell.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The rowIterator value</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ArrayIndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">ArrayIndexOutOfBoundsException</a></code> - Thrown if the column is beyond
+            the two dimensional matrix range.</dd></dl>
+</li>
+</ul>
+<a name="getAllByColumnsIterator()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAllByColumnsIterator</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html?is-external=true" title="class or interface in java.util">ListIterator</a>&lt;T&gt;&nbsp;getAllByColumnsIterator()</pre>
+<div class="block">This returns an iterator of all the Java objects stored in this two
+ dimensional matrix iterating over all rows within a column and then moving
+ to the next column until iteration has been done over all rows and all
+ columns.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#getAllByColumnsIterator()">getAllByColumnsIterator</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>The allByColumnsIterator value</dd></dl>
+</li>
+</ul>
+<a name="getAllByRowsIterator()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAllByRowsIterator</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html?is-external=true" title="class or interface in java.util">ListIterator</a>&lt;T&gt;&nbsp;getAllByRowsIterator()</pre>
+<div class="block">This returns an iterator of all the Java objects stored in this two
+ dimensional matrix iterating over all columns within a rows and then moving
+ to the next column until iteration has been done over all columns and all
+ rows.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#getAllByRowsIterator()">getAllByRowsIterator</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>The allByRowsIterator value</dd></dl>
+</li>
+</ul>
+<a name="checkBounds(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkBounds</h4>
+<pre>protected&nbsp;void&nbsp;checkBounds(int&nbsp;row,
+               int&nbsp;column)
+                    throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ArrayIndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">ArrayIndexOutOfBoundsException</a></pre>
+<div class="block">Checks that the specified row and column are valid indices into the 2D
+ array. Internal helper function used only by this class.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - check row value less that max row index</dd><dd><code>column</code> - check col value less that max col index</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ArrayIndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">ArrayIndexOutOfBoundsException</a></code> - Thrown if row or column < 0 or >
+            max row or max col.</dd></dl>
+</li>
+</ul>
+<a name="clear()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clear</h4>
+<pre>public&nbsp;void&nbsp;clear()</pre>
+<div class="block">Removes all object reference stored in this container and resets all grid
+ metics back to 0. Doesn't delete the actual objects, only removes the
+ pointer references stored at each grid cell location.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#clear()">clear</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+</dl>
+</li>
+</ul>
+<a name="exist(int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>exist</h4>
+<pre>public&nbsp;boolean&nbsp;exist(int&nbsp;row,
+            int&nbsp;column)</pre>
+<div class="block">check if this grid cell has a java object stored in it. Returns false if
+ this data point is null.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#exist(int, int)">exist</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>row</code> - The x coordinate of the cell.</dd><dd><code>column</code> - The y coordinate of the cell.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>True if an object has been set in this cell.</dd></dl>
+</li>
+</ul>
+<a name="size()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>size</h4>
+<pre>public&nbsp;long&nbsp;size()</pre>
+<div class="block">returns the number of cells in this two dimensional matrix, i.e. numwRows *
+ numCols.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html#size()">size</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface">Container2D</a>&lt;T&gt;</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>The number of cells.</dd></dl>
+</li>
+</ul>
+<a name="toJava2D()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toJava2D</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>[][]&nbsp;toJava2D()</pre>
+<div class="block">Converts our internal data structure to the Java 2 dimensional array.
+ Helper translation function.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>2D Object array - Object[][]</dd></dl>
+</li>
+</ul>
+<a name="iterator()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>iterator</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;T&gt;&nbsp;iterator()</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true#iterator()" title="class or interface in java.lang">iterator</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;</code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -445,7 +1170,7 @@ public&nbsp;void&nbsp;create(<a href="../../../../../org/opensha2/geo/LocationLi
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../org/opensha2/eq/fault/surface/ContainerSubset2D.html" title="class in org.opensha2.eq.fault.surface"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../org/opensha2/eq/fault/surface/Container2D.html" title="interface in org.opensha2.eq.fault.surface"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.Builder.html" title="class in org.opensha2.eq.fault.surface"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -471,7 +1196,7 @@ public&nbsp;void&nbsp;create(<a href="../../../../../org/opensha2/geo/LocationLi
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields_inherited_from_class_org.opensha2.eq.fault.surface.Container2DImpl">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
@@ -487,13 +1212,13 @@ public&nbsp;void&nbsp;create(<a href="../../../../../org/opensha2/geo/LocationLi
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

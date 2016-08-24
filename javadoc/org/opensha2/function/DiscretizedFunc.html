@@ -91,7 +91,7 @@
 </dl>
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" title="class in org.opensha2.function">AbstractDiscretizedFunc</a>, <a href="../../../org/opensha2/function/ArbitrarilyDiscretizedFunc.html" title="class in org.opensha2.function">ArbitrarilyDiscretizedFunc</a>, <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a>, <a href="../../../org/opensha2/mfd/GaussianMfd.html" title="class in org.opensha2.mfd">GaussianMfd</a>, <a href="../../../org/opensha2/mfd/GutenbergRichterMfd.html" title="class in org.opensha2.mfd">GutenbergRichterMfd</a>, <a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a>, <a href="../../../org/opensha2/mfd/YC_1985_CharMfd.html" title="class in org.opensha2.mfd">YC_1985_CharMfd</a></dd>
+<dd><a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" title="class in org.opensha2.function">AbstractDiscretizedFunc</a>, <a href="../../../org/opensha2/function/ArbitrarilyDiscretizedFunc.html" title="class in org.opensha2.function">ArbitrarilyDiscretizedFunc</a>, <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a>, <a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a></dd>
 </dl>
 <hr>
 <br>
@@ -99,35 +99,36 @@
 extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interface in org.opensha2.function">XY_DataSet</a></pre>
 <div class="block"><b>Title:</b> DiscretizedFuncAPI<p>
 
- <b>Description:</b> Interface that all Discretized Functions must implement. <P>
+ <b>Description:</b> Interface that all Discretized Functions must implement.
+ <P>
 
  A Discretized Function is a collection of x and y values grouped together as
  the points that describe a function. A discretized form of a function is the
  only ways computers can represent functions. Instead of having y=x^2, you
  would have a sample of possible x and y values. <p>
 
- This functional framework is modeled after mathmatical functions
- such as sin(x), etc. It assumes that there are no duplicate x values,
- and that if two points have the same x value but different y values,
- they are still considered the same point. The framework also sorts the
- points along the x axis, so the first point contains the mimimum
- x-value and the last point contains the maximum value.<p>
+ This functional framework is modeled after mathmatical functions such as
+ sin(x), etc. It assumes that there are no duplicate x values, and that if two
+ points have the same x value but different y values, they are still
+ considered the same point. The framework also sorts the points along the x
+ axis, so the first point contains the mimimum x-value and the last point
+ contains the maximum value.<p>
 
  Since this API represents the points in a list, alot of these API functions
  are standard list access functions such as (paraphrasing) get(), set(),
  delete(). numElements(), iterator(), etc.<p>
 
  There are three fields along with getXXX() and setXXX() matching the field
- names. These javabean fields provide the basic information to describe
- a function. All functions have a name, information string, and a
- tolerance level that specifies how close two points have to be along
- the x axis to be considered equal.<p>
+ names. These javabean fields provide the basic information to describe a
+ function. All functions have a name, information string, and a tolerance
+ level that specifies how close two points have to be along the x axis to be
+ considered equal.<p>
 
  Point2D = (x,y)<p>
 
- Note: This interface defines a tolerance so that you can say two x-values
- are the same within this tolerance limit. THERE IS NO TOLERANCE FOR THE
- Y-AXIS VALUES. This may be useful to add in the future.<p></div>
+ Note: This interface defines a tolerance so that you can say two x-values are
+ the same within this tolerance limit. THERE IS NO TOLERANCE FOR THE Y-AXIS
+ VALUES. This may be useful to add in the future.<p></div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Steven W. Rock</dd></dl>
 </li>
@@ -151,37 +152,38 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/function/DiscretizedFunc.html" title="interface in org.opensha2.function">DiscretizedFunc</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/DiscretizedFunc.html#deepClone()">deepClone</a></strong>()</code>
-<div class="block">This function returns a new copy of this list, including copies
- of all the points.</div>
+<div class="block">This function returns a new copy of this list, including copies of all the
+ points.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/DiscretizedFunc.html#getFirstInterpolatedX_inLogXLogYDomain(double)">getFirstInterpolatedX_inLogXLogYDomain</a></strong>(double&nbsp;y)</code>
-<div class="block">Given the input y value, finds the two sequential
- x values with the closest y values, then calculates an
- interpolated x value for this y value, fitted to the curve.</div>
+<div class="block">Given the input y value, finds the two sequential x values with the closest
+ y values, then calculates an interpolated x value for this y value, fitted
+ to the curve.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/DiscretizedFunc.html#getFirstInterpolatedX(double)">getFirstInterpolatedX</a></strong>(double&nbsp;y)</code>
-<div class="block">Given the imput y value, finds the two sequential
- x values with the closest y values, then calculates an
- interpolated x value for this y value, fitted to the curve.</div>
+<div class="block">Given the imput y value, finds the two sequential x values with the closest
+ y values, then calculates an interpolated x value for this y value, fitted
+ to the curve.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/DiscretizedFunc.html#getIndex(java.awt.geom.Point2D)">getIndex</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;point)</code>
-<div class="block">Since the x-axis is sorted and points stored in a list,
- they can be accessed by index.</div>
+<div class="block">Since the x-axis is sorted and points stored in a list, they can be
+ accessed by index.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/DiscretizedFunc.html#getInterpolatedY_inLogXLogYDomain(double)">getInterpolatedY_inLogXLogYDomain</a></strong>(double&nbsp;x)</code>
-<div class="block">This function interpolates the Y values in the log space between x and y values.</div>
+<div class="block">This function interpolates the Y values in the log space between x and y
+ values.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -193,9 +195,9 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/DiscretizedFunc.html#getInterpolatedY(double)">getInterpolatedY</a></strong>(double&nbsp;x)</code>
-<div class="block">Given the input x value, finds the two sequential
- x values with the closest x values, then calculates an
- interpolated y value for this x value, fitted to the curve.</div>
+<div class="block">Given the input x value, finds the two sequential x values with the closest
+ x values, then calculates an interpolated y value for this x value, fitted
+ to the curve.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -207,8 +209,8 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/DiscretizedFunc.html#getXIndex(double)">getXIndex</a></strong>(double&nbsp;x)</code>
-<div class="block">Since the x-axis is sorted and points stored in a list,
- they can be accessed by index.</div>
+<div class="block">Since the x-axis is sorted and points stored in a list, they can be
+ accessed by index.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -302,13 +304,12 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <li class="blockList">
 <h4>getFirstInterpolatedX</h4>
 <pre>double&nbsp;getFirstInterpolatedX(double&nbsp;y)</pre>
-<div class="block">Given the imput y value, finds the two sequential
- x values with the closest y values, then calculates an
- interpolated x value for this y value, fitted to the curve. <p>
+<div class="block">Given the imput y value, finds the two sequential x values with the closest
+ y values, then calculates an interpolated x value for this y value, fitted
+ to the curve. <p>
 
- Since there may be multiple y values with the same value, this
- function just matches the first found starting at the x-min point
- along the x-axis.</div>
+ Since there may be multiple y values with the same value, this function
+ just matches the first found starting at the x-min point along the x-axis.</div>
 </li>
 </ul>
 <a name="getInterpolatedY(double)">
@@ -318,9 +319,9 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <li class="blockList">
 <h4>getInterpolatedY</h4>
 <pre>double&nbsp;getInterpolatedY(double&nbsp;x)</pre>
-<div class="block">Given the input x value, finds the two sequential
- x values with the closest x values, then calculates an
- interpolated y value for this x value, fitted to the curve.</div>
+<div class="block">Given the input x value, finds the two sequential x values with the closest
+ x values, then calculates an interpolated y value for this x value, fitted
+ to the curve.</div>
 </li>
 </ul>
 <a name="getInterpolatedY_inLogXLogYDomain(double)">
@@ -330,10 +331,11 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <li class="blockList">
 <h4>getInterpolatedY_inLogXLogYDomain</h4>
 <pre>double&nbsp;getInterpolatedY_inLogXLogYDomain(double&nbsp;x)</pre>
-<div class="block">This function interpolates the Y values in the log space between x and y values.
- The Y value returned is in the linear space but the interpolation is done in the log space.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - : X value in the linear space corresponding to which we are required to find the interpolated
- y value in log space.</dd></dl>
+<div class="block">This function interpolates the Y values in the log space between x and y
+ values. The Y value returned is in the linear space but the interpolation
+ is done in the log space.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - : X value in the linear space corresponding to which we are
+        required to find the interpolated y value in log space.</dd></dl>
 </li>
 </ul>
 <a name="getInterpolatedY_inLogYDomain(double)">
@@ -343,10 +345,10 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <li class="blockList">
 <h4>getInterpolatedY_inLogYDomain</h4>
 <pre>double&nbsp;getInterpolatedY_inLogYDomain(double&nbsp;x)</pre>
-<div class="block">This function interpolates the Y values in the log-Y space.
- The Y value returned is in the linear space.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - : X value in the linear space corresponding to which we are required to find the interpolated
- y value in log space.</dd></dl>
+<div class="block">This function interpolates the Y values in the log-Y space. The Y value
+ returned is in the linear space.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - : X value in the linear space corresponding to which we are
+        required to find the interpolated y value in log space.</dd></dl>
 </li>
 </ul>
 <a name="getFirstInterpolatedX_inLogXLogYDomain(double)">
@@ -356,17 +358,14 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <li class="blockList">
 <h4>getFirstInterpolatedX_inLogXLogYDomain</h4>
 <pre>double&nbsp;getFirstInterpolatedX_inLogXLogYDomain(double&nbsp;y)</pre>
-<div class="block">Given the input y value, finds the two sequential
- x values with the closest y values, then calculates an
- interpolated x value for this y value, fitted to the curve.
- The interpolated Y value returned is in the linear space but
- the interpolation is done in the log space.
- Since there may be multiple y values with the same value, this
- function just matches the first found starting at the x-min point
- along the x-axis.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>y</code> - : Y value in the linear space corresponding to which we are 
- required to find the interpolated
- x value in the log space.</dd></dl>
+<div class="block">Given the input y value, finds the two sequential x values with the closest
+ y values, then calculates an interpolated x value for this y value, fitted
+ to the curve. The interpolated Y value returned is in the linear space but
+ the interpolation is done in the log space. Since there may be multiple y
+ values with the same value, this function just matches the first found
+ starting at the x-min point along the x-axis.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>y</code> - : Y value in the linear space corresponding to which we are
+        required to find the interpolated x value in the log space.</dd></dl>
 </li>
 </ul>
 <a name="getXIndex(double)">
@@ -376,9 +375,9 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <li class="blockList">
 <h4>getXIndex</h4>
 <pre>int&nbsp;getXIndex(double&nbsp;x)</pre>
-<div class="block">Since the x-axis is sorted and points stored in a list,
- they can be accessed by index. This function returns the index
- of the specified x value if found within tolerance, else returns -1.</div>
+<div class="block">Since the x-axis is sorted and points stored in a list, they can be
+ accessed by index. This function returns the index of the specified x value
+ if found within tolerance, else returns -1.</div>
 </li>
 </ul>
 <a name="getIndex(java.awt.geom.Point2D)">
@@ -388,10 +387,9 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <li class="blockList">
 <h4>getIndex</h4>
 <pre>int&nbsp;getIndex(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;point)</pre>
-<div class="block">Since the x-axis is sorted and points stored in a list,
- they can be accessed by index. This function returns the index
- of the specified x value in the Point2D if found withing tolerance,
- else returns -1.</div>
+<div class="block">Since the x-axis is sorted and points stored in a list, they can be
+ accessed by index. This function returns the index of the specified x value
+ in the Point2D if found withing tolerance, else returns -1.</div>
 </li>
 </ul>
 <a name="scale(double)">
@@ -413,9 +411,9 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 <h4>deepClone</h4>
 <pre><a href="../../../org/opensha2/function/DiscretizedFunc.html" title="interface in org.opensha2.function">DiscretizedFunc</a>&nbsp;deepClone()</pre>
 <div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../org/opensha2/function/XY_DataSet.html#deepClone()">XY_DataSet</a></code></strong></div>
-<div class="block">This function returns a new copy of this list, including copies
- of all the points. A shallow clone would only create a new DiscretizedFunc
- instance, but would maintain a reference to the original points. <p>
+<div class="block">This function returns a new copy of this list, including copies of all the
+ points. A shallow clone would only create a new DiscretizedFunc instance,
+ but would maintain a reference to the original points. <p>
 
  Since this is a clone, you can modify it without changing the original.</div>
 <dl>
@@ -492,13 +490,13 @@ extends <a href="../../../org/opensha2/function/XY_DataSet.html" title="interfac
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

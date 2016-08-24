@@ -99,7 +99,7 @@
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Factory and utility methods for working with magnitude frequency
  distributions (Mfds).
- 
+
  TODO note application guidance implied by floats() TODO should Incremental
  Mfds really descend from EvenlyDiscretizedFunction; if someone passes in
  non-uniformely spaced mag values, there will be problems</div>
@@ -149,8 +149,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#incrRate(double, double, double)">incrRate</a></strong>(double&nbsp;a,
         double&nbsp;b,
         double&nbsp;mMin)</code>
-<div class="block">Computes the Gutenberg-Richter incremental rate at the supplied
- magnitude.</div>
+<div class="block">Computes the Gutenberg-Richter incremental rate at the supplied magnitude.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -162,27 +161,29 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../org/opensha2/mfd/GaussianMfd.html" title="class in org.opensha2.mfd">GaussianMfd</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGaussianMFD(double, double, int, double)">newGaussianMFD</a></strong>(double&nbsp;mean,
+<td class="colFirst"><code>static org.opensha2.mfd.GaussianMfd</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGaussianMFD(double, double, int, double, boolean)">newGaussianMFD</a></strong>(double&nbsp;mean,
               double&nbsp;sigma,
               int&nbsp;size,
-              double&nbsp;cumRate)</code>
+              double&nbsp;cumRate,
+              boolean&nbsp;floats)</code>
 <div class="block">Creates a new <code>GaussianMfd</code> that is doubly-truncated at
  <code>2*sigma</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../org/opensha2/mfd/GaussianMfd.html" title="class in org.opensha2.mfd">GaussianMfd</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGaussianMoBalancedMFD(double, double, int, double)">newGaussianMoBalancedMFD</a></strong>(double&nbsp;mean,
+<td class="colFirst"><code>static org.opensha2.mfd.GaussianMfd</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGaussianMoBalancedMFD(double, double, int, double, boolean)">newGaussianMoBalancedMFD</a></strong>(double&nbsp;mean,
                         double&nbsp;sigma,
                         int&nbsp;size,
-                        double&nbsp;moRate)</code>
-<div class="block">Creates a new moment-balanced <code>GaussianMfd</code> that is
- doubly-truncated at <code>2*sigma</code>.</div>
+                        double&nbsp;moRate,
+                        boolean&nbsp;floats)</code>
+<div class="block">Creates a new moment-balanced <code>GaussianMfd</code> that is doubly-truncated
+ at <code>2*sigma</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../org/opensha2/mfd/GutenbergRichterMfd.html" title="class in org.opensha2.mfd">GutenbergRichterMfd</a></code></td>
+<td class="colFirst"><code>static org.opensha2.mfd.GutenbergRichterMfd</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGutenbergRichterMFD(double, double, int, double, double)">newGutenbergRichterMFD</a></strong>(double&nbsp;min,
                       double&nbsp;delta,
                       int&nbsp;size,
@@ -192,7 +193,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../org/opensha2/mfd/GutenbergRichterMfd.html" title="class in org.opensha2.mfd">GutenbergRichterMfd</a></code></td>
+<td class="colFirst"><code>static org.opensha2.mfd.GutenbergRichterMfd</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGutenbergRichterMoBalancedMFD(double, double, int, double, double)">newGutenbergRichterMoBalancedMFD</a></strong>(double&nbsp;min,
                                 double&nbsp;delta,
                                 int&nbsp;size,
@@ -240,8 +241,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#probToRate(double, double)">probToRate</a></strong>(double&nbsp;P,
           double&nbsp;time)</code>
 <div class="block">Given the Poisson probability of the occurence of some event over a
- specified time period, method returns the annual rate of occurrence of
- that event.</div>
+ specified time period, method returns the annual rate of occurrence of that
+ event.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -249,8 +250,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#rateToProb(double, double)">rateToProb</a></strong>(double&nbsp;rate,
           double&nbsp;time)</code>
 <div class="block">Given an observed annual rate of occurrence of some event (in num/yr),
- method returns the Poisson probability of occurence over the specified
- time period.</div>
+ method returns the Poisson probability of occurence over the specified time
+ period.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -331,46 +332,49 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public static&nbsp;<a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a>&nbsp;newIncrementalMFD(double[]&nbsp;mags,
                                double[]&nbsp;rates)</pre>
 <div class="block">Creates a new <code>IncrementalMfd</code> with the supplied magnitudes and
- rates. For the MFD returned, <a href="../../../org/opensha2/mfd/IncrementalMfd.html#floats()"><code>IncrementalMfd.floats()</code></a> always
- returns <code>true</code>.
- 
+ rates. For the MFD returned, <a href="../../../org/opensha2/mfd/IncrementalMfd.html#floats()"><code>IncrementalMfd.floats()</code></a> always returns
+ <code>true</code>.
+
  <p><b>NOTE:</b> This method expects evenly spaced magnitudes; if they are
- not, results are undefined.</p></div>
+ not, results are undefined.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>mags</code> - for MFD</dd><dd><code>rates</code> - for MFD</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new <code>IncrementalMfd</code></dd></dl>
 </li>
 </ul>
-<a name="newGaussianMFD(double, double, int, double)">
+<a name="newGaussianMFD(double, double, int, double, boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>newGaussianMFD</h4>
-<pre>public static&nbsp;<a href="../../../org/opensha2/mfd/GaussianMfd.html" title="class in org.opensha2.mfd">GaussianMfd</a>&nbsp;newGaussianMFD(double&nbsp;mean,
-                         double&nbsp;sigma,
-                         int&nbsp;size,
-                         double&nbsp;cumRate)</pre>
+<pre>public static&nbsp;org.opensha2.mfd.GaussianMfd&nbsp;newGaussianMFD(double&nbsp;mean,
+                                          double&nbsp;sigma,
+                                          int&nbsp;size,
+                                          double&nbsp;cumRate,
+                                          boolean&nbsp;floats)</pre>
 <div class="block">Creates a new <code>GaussianMfd</code> that is doubly-truncated at
- <code>2*sigma</code>. For the MFD returned, <a href="../../../org/opensha2/mfd/IncrementalMfd.html#floats()"><code>IncrementalMfd.floats()</code></a>
- always returns <code>false</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>mean</code> - magnitude</dd><dd><code>sigma</code> - standard deviation</dd><dd><code>size</code> - number of magnitude bins inclusive of min and max magnitudes</dd><dd><code>cumRate</code> - total cumulative rate</dd>
+ <code>2*sigma</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>mean</code> - magnitude</dd><dd><code>sigma</code> - standard deviation</dd><dd><code>size</code> - number of magnitude bins inclusive of min and max magnitudes</dd><dd><code>cumRate</code> - total cumulative rate</dd><dd><code>floats</code> - <code>true</code> if ruptures referencing this mfd should float;
+        <code>false</code> otherwise</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new <code>GaussianMfd</code></dd></dl>
 </li>
 </ul>
-<a name="newGaussianMoBalancedMFD(double, double, int, double)">
+<a name="newGaussianMoBalancedMFD(double, double, int, double, boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>newGaussianMoBalancedMFD</h4>
-<pre>public static&nbsp;<a href="../../../org/opensha2/mfd/GaussianMfd.html" title="class in org.opensha2.mfd">GaussianMfd</a>&nbsp;newGaussianMoBalancedMFD(double&nbsp;mean,
-                                   double&nbsp;sigma,
-                                   int&nbsp;size,
-                                   double&nbsp;moRate)</pre>
-<div class="block">Creates a new moment-balanced <code>GaussianMfd</code> that is
- doubly-truncated at <code>2*sigma</code>. For the MFD returned,
- <a href="../../../org/opensha2/mfd/IncrementalMfd.html#floats()"><code>IncrementalMfd.floats()</code></a> always returns <code>false</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>mean</code> - magnitude</dd><dd><code>sigma</code> - standard deviation</dd><dd><code>size</code> - number of magnitude bins inclusive of min and max magnitudes</dd><dd><code>moRate</code> - total moment rate</dd>
+<pre>public static&nbsp;org.opensha2.mfd.GaussianMfd&nbsp;newGaussianMoBalancedMFD(double&nbsp;mean,
+                                                    double&nbsp;sigma,
+                                                    int&nbsp;size,
+                                                    double&nbsp;moRate,
+                                                    boolean&nbsp;floats)</pre>
+<div class="block">Creates a new moment-balanced <code>GaussianMfd</code> that is doubly-truncated
+ at <code>2*sigma</code>. For the MFD returned, <a href="../../../org/opensha2/mfd/IncrementalMfd.html#floats()"><code>IncrementalMfd.floats()</code></a>
+ always returns <code>false</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>mean</code> - magnitude</dd><dd><code>sigma</code> - standard deviation</dd><dd><code>size</code> - number of magnitude bins inclusive of min and max magnitudes</dd><dd><code>moRate</code> - total moment rate</dd><dd><code>floats</code> - <code>true</code> if ruptures referencing this mfd should float;
+        <code>false</code> otherwise</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new <code>GaussianMfd</code></dd></dl>
 </li>
 </ul>
@@ -380,11 +384,11 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>newGutenbergRichterMFD</h4>
-<pre>public static&nbsp;<a href="../../../org/opensha2/mfd/GutenbergRichterMfd.html" title="class in org.opensha2.mfd">GutenbergRichterMfd</a>&nbsp;newGutenbergRichterMFD(double&nbsp;min,
-                                         double&nbsp;delta,
-                                         int&nbsp;size,
-                                         double&nbsp;b,
-                                         double&nbsp;cumRate)</pre>
+<pre>public static&nbsp;org.opensha2.mfd.GutenbergRichterMfd&nbsp;newGutenbergRichterMFD(double&nbsp;min,
+                                                          double&nbsp;delta,
+                                                          int&nbsp;size,
+                                                          double&nbsp;b,
+                                                          double&nbsp;cumRate)</pre>
 <div class="block">Creates a new <code>GutenbergRichterMfd</code>. For the MFD returned,
  <a href="../../../org/opensha2/mfd/IncrementalMfd.html#floats()"><code>IncrementalMfd.floats()</code></a> always returns <code>true</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - magnitude</dd><dd><code>delta</code> - magnitude</dd><dd><code>size</code> - number of magnitude bins inclusive of min and max magnitudes</dd><dd><code>b</code> - value (slope of GR relation)</dd><dd><code>cumRate</code> - total cumulative rate</dd>
@@ -397,11 +401,11 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>newGutenbergRichterMoBalancedMFD</h4>
-<pre>public static&nbsp;<a href="../../../org/opensha2/mfd/GutenbergRichterMfd.html" title="class in org.opensha2.mfd">GutenbergRichterMfd</a>&nbsp;newGutenbergRichterMoBalancedMFD(double&nbsp;min,
-                                                   double&nbsp;delta,
-                                                   int&nbsp;size,
-                                                   double&nbsp;b,
-                                                   double&nbsp;moRate)</pre>
+<pre>public static&nbsp;org.opensha2.mfd.GutenbergRichterMfd&nbsp;newGutenbergRichterMoBalancedMFD(double&nbsp;min,
+                                                                    double&nbsp;delta,
+                                                                    int&nbsp;size,
+                                                                    double&nbsp;b,
+                                                                    double&nbsp;moRate)</pre>
 <div class="block">Creates a new moment-balanced <code>GutenbergRichterMfd</code>. For the MFD
  returned, <a href="../../../org/opensha2/mfd/IncrementalMfd.html#floats()"><code>IncrementalMfd.floats()</code></a> always returns <code>true</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - magnitude</dd><dd><code>delta</code> - magnitude</dd><dd><code>size</code> - number of magnitude bins inclusive of min and max magnitudes</dd><dd><code>b</code> - value (slope of GR relation)</dd><dd><code>moRate</code> - total moment rate</dd>
@@ -465,9 +469,9 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public static&nbsp;double&nbsp;incrRate(double&nbsp;a,
               double&nbsp;b,
               double&nbsp;mMin)</pre>
-<div class="block">Computes the Gutenberg-Richter incremental rate at the supplied
- magnitude. Convenience method for <code>N(M) = a*(10^-bm)</code>.
- 
+<div class="block">Computes the Gutenberg-Richter incremental rate at the supplied magnitude.
+ Convenience method for <code>N(M) = a*(10^-bm)</code>.
+
  TODO is this confusing? the NSHMP stores a-values in different ways [a A]
  where a = log10(A); should users just supply grRate() with</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>a</code> - value (incremental and defined wrt <code>dMag</code> for M0)</dd><dd><code>b</code> - value</dd><dd><code>mMin</code> - minimum magnitude of distribution</dd>
@@ -483,10 +487,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public static&nbsp;int&nbsp;magCount(double&nbsp;mMin,
            double&nbsp;mMax,
            double&nbsp;dMag)</pre>
-<div class="block">Determines the number of magnitude bins for the supplied arguments. If
- dMag does not divide evenly into <code>mMax - mMin</code>, and the result of
- this method is used to build a Gutenberg-Richter MFD, the maximum
- magnitude of the MFD may not equal the <code>mMax</code> supplied here.</div>
+<div class="block">Determines the number of magnitude bins for the supplied arguments. If dMag
+ does not divide evenly into <code>mMax - mMin</code>, and the result of this
+ method is used to build a Gutenberg-Richter MFD, the maximum magnitude of
+ the MFD may not equal the <code>mMax</code> supplied here.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>mMin</code> - minimum magnitude to consider</dd><dd><code>mMax</code> - maximum magnitude to consider</dd><dd><code>dMag</code> - magnitude delta</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the number of magnitude bins</dd></dl>
 </li>
@@ -500,11 +504,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public static&nbsp;double&nbsp;rateToProb(double&nbsp;rate,
                 double&nbsp;time)</pre>
 <div class="block">Given an observed annual rate of occurrence of some event (in num/yr),
- method returns the Poisson probability of occurence over the specified
- time period.</div>
+ method returns the Poisson probability of occurence over the specified time
+ period.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>rate</code> - (annual) of occurence of some event</dd><dd><code>time</code> - period of interest</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the Poisson probability of occurrence in the specified
-         <code>time</code></dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>the Poisson probability of occurrence in the specified <code>time</code></dd></dl>
 </li>
 </ul>
 <a name="probToRate(double, double)">
@@ -516,8 +519,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public static&nbsp;double&nbsp;probToRate(double&nbsp;P,
                 double&nbsp;time)</pre>
 <div class="block">Given the Poisson probability of the occurence of some event over a
- specified time period, method returns the annual rate of occurrence of
- that event.</div>
+ specified time period, method returns the annual rate of occurrence of that
+ event.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>P</code> - the Poisson probability of an event's occurrence</dd><dd><code>time</code> - period of interest</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the annnual rate of occurrence of the event</dd></dl>
 </li>
@@ -626,13 +629,13 @@ public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="c
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

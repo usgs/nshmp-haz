@@ -63,6 +63,10 @@
 <!-- ========= END OF TOP NAVBAR ========= -->
 <div class="header">
 <h1 title="Package" class="title">Package&nbsp;org.opensha2.util</h1>
+<div class="docSummary">
+<div class="block">Miscellaneous utilties.</div>
+</div>
+<p>See:&nbsp;<a href="#package_description">Description</a></p>
 </div>
 <div class="contentContainer">
 <ul class="blockList">
@@ -82,6 +86,12 @@
  description of an object, or a raw data representation.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../org/opensha2/util/NamedLocation.html" title="interface in org.opensha2.util">NamedLocation</a></td>
+<td class="colLast">
+<div class="block">Marker interface for <code>enum</code>s of <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo"><code>Location</code></a>s.</div>
+</td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -94,55 +104,22 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/GeoJson.html" title="class in org.opensha2.util">GeoJson</a></td>
+<td class="colFirst"><a href="../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a></td>
 <td class="colLast">
-<div class="block">GeoJSON serialization keys, values, and utilities.</div>
+<div class="block">Site characteristics container.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/GeoJson.Key.html" title="class in org.opensha2.util">GeoJson.Key</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/GeoJson.Properties.html" title="class in org.opensha2.util">GeoJson.Properties</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/GeoJson.Properties.Key.html" title="class in org.opensha2.util">GeoJson.Properties.Key</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/GeoJson.Value.html" title="class in org.opensha2.util">GeoJson.Value</a></td>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/Logging.html" title="class in org.opensha2.util">Logging</a></td>
+<td class="colFirst"><a href="../../../org/opensha2/util/Site.Builder.html" title="class in org.opensha2.util">Site.Builder</a></td>
 <td class="colLast">
-<div class="block">Logging utilities.</div>
+<div class="block">A reusable <code>Site</code> builder.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/Logging.ConsoleFormatter.html" title="class in org.opensha2.util">Logging.ConsoleFormatter</a></td>
+<td class="colFirst"><a href="../../../org/opensha2/util/Sites.html" title="class in org.opensha2.util">Sites</a></td>
 <td class="colLast">
-<div class="block">Custom console formatter.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/MathUtils.html" title="class in org.opensha2.util">MathUtils</a></td>
-<td class="colLast">
-<div class="block">Miscellaneous math and number utilities.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/Parsing.html" title="class in org.opensha2.util">Parsing</a></td>
-<td class="colLast">
-<div class="block">String, file, and XML parsing utilities.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/TextUtils.html" title="class in org.opensha2.util">TextUtils</a></td>
-<td class="colLast">
-<div class="block">Miscellaneous <code>String</code> utilities.</div>
+<div class="block"><code>Site</code> factory class used primarily for creating iterables over groups
+ of sites.</div>
 </td>
 </tr>
 </tbody>
@@ -157,34 +134,20 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/NshmpPolygon.html" title="enum in org.opensha2.util">NshmpPolygon</a></td>
+<td class="colFirst"><a href="../../../org/opensha2/util/Vs30.html" title="enum in org.opensha2.util">Vs30</a></td>
 <td class="colLast">
-<div class="block">Geographic polygons commonly used by the NSHMP.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/NshmpSite.html" title="enum in org.opensha2.util">NshmpSite</a></td>
-<td class="colLast">
-<div class="block">Locations that are used for NSHMP hazard comparisons.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/Parsing.Delimiter.html" title="enum in org.opensha2.util">Parsing.Delimiter</a></td>
-<td class="colLast">
-<div class="block">Delimiter identifiers, each of which can provide a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Joiner.html?is-external=true" title="class or interface in com.google.common.base"><code>Joiner</code></a> and
- <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Splitter.html?is-external=true" title="class or interface in com.google.common.base"><code>Splitter</code></a>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../../org/opensha2/util/UsRegion.html" title="enum in org.opensha2.util">UsRegion</a></td>
-<td class="colLast">
-<div class="block">Identifiers for U.S.</div>
+<div class="block">Identifiers for commonly used values of Vs30.</div>
 </td>
 </tr>
 </tbody>
 </table>
 </li>
 </ul>
+<a name="package_description">
+<!--   -->
+</a>
+<h2 title="Package org.opensha2.util Description">Package org.opensha2.util Description</h2>
+<div class="block">Miscellaneous utilties.</div>
 </div>
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
 <div class="bottomNav"><a name="navbar_bottom">
@@ -232,13 +195,13 @@
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

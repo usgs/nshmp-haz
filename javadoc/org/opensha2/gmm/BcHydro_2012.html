@@ -105,27 +105,27 @@ implements <a href="../../../org/opensha2/gmm/GroundMotionModel.html" title="int
 <div class="block">Abstract implementation of the subduction ground motion model created for BC
  Hydro, Canada, by Addo, Abrahamson, & Youngs (2012). This implementation
  matches that used in the USGS NSHM as supplied by N. Abrahamson.
- 
+
  <p>This model supports both slab and interface type events. In the 2008
  NSHMP, the 'interface' form is used with the Cascadia subduction zone models
  and the 'slab' form is used with gridded 'deep' events in northern California
- and the Pacific Northwest.</p>
- 
+ and the Pacific Northwest.
+
  <p><b>Note:</b> Direct instantiation of <code>GroundMotionModel</code>s is
  prohibited. Use <a href="../../../org/opensha2/gmm/Gmm.html#instance(org.opensha2.gmm.Imt)"><code>Gmm.instance(Imt)</code></a> to retrieve an instance for a
- desired <a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm"><code>Imt</code></a>.</p>
- 
+ desired <a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm"><code>Imt</code></a>.
+
  <p><b>Implementation notes:</b> <ol><li>Treats all sites as
  forearc.</li><li>'zTop' is interpreted as hypocentral depth and is only used
  for slab events; it is limited to 125 km, consistent with other subduction
  models.</li><li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for
- interface events and fixed at -0.3 for slab events.</li></ol></p>
- 
+ interface events and fixed at -0.3 for slab events.</li></ol>
+
  <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
- characterization (GMC) model: Report E658, v. 3, November.</p>
- 
- <p><b>Component:</b> Geometric mean of two horizontal components</p></div>
+ characterization (GMC) model: Report E658, v. 3, November.
+
+ <p><b>Component:</b> Geometric mean of two horizontal components</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd>
 <dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/gmm/Gmm.html#BCHYDRO_12_INTER"><code>Gmm.BCHYDRO_12_INTER</code></a>, 
@@ -262,13 +262,13 @@ implements <a href="../../../org/opensha2/gmm/GroundMotionModel.html" title="int
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

@@ -97,7 +97,7 @@
 <br>
 <pre>public class <span class="strong">HazardCalc</span>
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Compute probabilisitic seismic hazard at a <a href="../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc"><code>Site</code></a> from a
+<div class="block">Compute probabilisitic seismic hazard at a <a href="../../org/opensha2/util/Site.html" title="class in org.opensha2.util"><code>Site</code></a> from a
  <a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model"><code>HazardModel</code></a>.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd></dl>
@@ -138,9 +138,9 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></code></td>
-<td class="colLast"><code><strong><a href="../../org/opensha2/HazardCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site, com.google.common.base.Optional)">calc</a></strong>(<a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
+<td class="colLast"><code><strong><a href="../../org/opensha2/HazardCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, com.google.common.base.Optional)">calc</a></strong>(<a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
     <a href="../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-    <a href="../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+    <a href="../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
     <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</code>
 <div class="block">Compute hazard curves at a <code>site</code> for a <code>model</code> and
  <code>config</code>.</div>
@@ -199,31 +199,29 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>main</h4>
 <pre>public static&nbsp;void&nbsp;main(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)</pre>
 <div class="block">Entry point for a hazard calculation.
- 
+
  <p>Computing hazard curves requires at least 2, and at most 3, arguments.
- At a minimum, the path to a model zip file or directory and the site(s)
- at which to perform calculations must be specified. Under the 2-argument
+ At a minimum, the path to a model zip file or directory and the site(s) at
+ which to perform calculations must be specified. Under the 2-argument
  scenario, model initialization and calculation configuration settings are
- drawn from the config file that <i>must</i> reside at the root of the
- model directory. Sites may be defined as a string, a CSV file, or a
- GeoJSON file.
- 
+ drawn from the config file that <i>must</i> reside at the root of the model
+ directory. Sites may be defined as a string, a CSV file, or a GeoJSON file.
+
  <p>To override any default or calculation configuration settings included
  with the model, supply the path to another configuration file as a third
  argument.
- 
+
  <p>Please refer to the nshmp-haz <a
- href="https://github.com/usgs/nshmp-haz/wiki">wiki</a> for comprehensive
- descriptions of source models, configuration files, site files, and
- hazard calculations.</p></div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running">
-      nshmp-haz wiki</a>, 
-<a
-      href="https://github.com/usgs/nshmp-haz/tree/master/etc/examples">
-      example calculations</a></dd></dl>
+ href="https://github.com/usgs/nshmp-haz/wiki" target="_top">wiki</a> for
+ comprehensive descriptions of source models, configuration files, site
+ files, and hazard calculations.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running"
+      target="_top"> nshmp-haz wiki</a>, 
+<a href="https://github.com/usgs/nshmp-haz/tree/master/etc/examples"
+      target="_top"> example calculations</a></dd></dl>
 </li>
 </ul>
-<a name="calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site, com.google.common.base.Optional)">
+<a name="calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, com.google.common.base.Optional)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -231,16 +229,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>calc</h4>
 <pre>public static&nbsp;<a href="../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;calc(<a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
           <a href="../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-          <a href="../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+          <a href="../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
           <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</pre>
 <div class="block">Compute hazard curves at a <code>site</code> for a <code>model</code> and
  <code>config</code>. If an <code>executor</code> is supplied, it will be used to
  distribute tasks; otherwise, the calculation will run on the current
  thread. Be sure to shutdown any supplied executor after a calculation
  completes.
- 
- <p><b>Note:</b> any model initialization settings in <code>config</code> will
- be ignored as the supplied model will already have been initialized.</p></div>
+
+ <p><b>Note:</b> any model initialization settings in <code>config</code> will be
+ ignored as the supplied model will already have been initialized.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - to use</dd><dd><code>config</code> - calculation configuration</dd><dd><code>site</code> - of interest</dd><dd><code>executor</code> - to use (<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base"><code>Optional</code></a>)</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a HazardResult</dd></dl>
 </li>
@@ -313,13 +311,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

@@ -104,32 +104,32 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 implements <a href="../../../org/opensha2/function/Point2DComparator.html" title="interface in org.opensha2.function">Point2DComparator</a></pre>
 <div class="block"><b>Title:</b> DataPoint2DComparatorAPI<p>
 
-  <b>Description:</b> Implementing comparator of DataPoint2d. The comparator
-  uses a tolerance to specify that when two values are within tolerance of
-  each other, they are equal<p>
+ <b>Description:</b> Implementing comparator of DataPoint2d. The comparator
+ uses a tolerance to specify that when two values are within tolerance of each
+ other, they are equal<p>
 
- This class sounds more complicated that it really is. The whole purpose
- is for calling the function compare(Object o1, Object o2). The x-coordinates
- are obtained from each, then this algorythmn determines if the x-values are
+ This class sounds more complicated that it really is. The whole purpose is
+ for calling the function compare(Object o1, Object o2). The x-coordinates are
+ obtained from each, then this algorythmn determines if the x-values are
  equal:<p>
 
  Math.abs( x1 - x2 ) <= tolerance)<p>
 
- A tolerance=0 is actually abaout 1e-16 due to the numerical precision of floating
- point arithmetic (1.0 + 1e-16 = 1.0 )<p>
+ A tolerance=0 is actually abaout 1e-16 due to the numerical precision of
+ floating point arithmetic (1.0 + 1e-16 = 1.0 )<p>
 
  Note: In general comparators are created so that you can have more than one
- sorting for a class. Imagine that you have a Javabean with 4 fields, id, first name,
- last name, date created. Typical for a user record in a database. Now you can
- build the compareTo() function inside this Javabean, nut then you can only sort
- on 1 column. What if you present these javabeans in a GUI List, and you want to
- sort on any field by clicking on the header. You simply make 4 comparators,
- one for each field. Each header would use the particular comparator for the
- sorting function. Very nice design pattern. <p>
+ sorting for a class. Imagine that you have a Javabean with 4 fields, id,
+ first name, last name, date created. Typical for a user record in a database.
+ Now you can build the compareTo() function inside this Javabean, nut then you
+ can only sort on 1 column. What if you present these javabeans in a GUI List,
+ and you want to sort on any field by clicking on the header. You simply make
+ 4 comparators, one for each field. Each header would use the particular
+ comparator for the sorting function. Very nice design pattern. <p>
 
- Now let's say you add another field. You simply make a new Comparator ( almost copy and paste).
- You don't have to change youre Javabean or your sorting function. Just pass in this
- new comparator. <p></div>
+ Now let's say you add another field. You simply make a new Comparator (
+ almost copy and paste). You don't have to change youre Javabean or your
+ sorting function. Just pass in this new comparator. <p></div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Steven W. Rock</dd></dl>
 </li>
@@ -199,22 +199,22 @@ implements <a href="../../../org/opensha2/function/Point2DComparator.html" title
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/Point2DToleranceComparator.html#compare(java.awt.geom.Point2D, java.awt.geom.Point2D)">compare</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;o1,
        <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;o2)</code>
-<div class="block">Returns 0 if the two Objects are equal, -1 if the first object is less
-  than the second, or +1 if it's greater.</div>
+<div class="block">Returns 0 if the two Objects are equal, -1 if the first object is less than
+ the second, or +1 if it's greater.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/Point2DToleranceComparator.html#getTolerance()">getTolerance</a></strong>()</code>
 <div class="block">Tolerance indicates the distance two values can be apart, but still
-  considered equal.</div>
+ considered equal.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/Point2DToleranceComparator.html#setTolerance(double)">setTolerance</a></strong>(double&nbsp;newTolerance)</code>
 <div class="block">Tolerance indicates the distance two values can be apart, but still
-  considered equal.</div>
+ considered equal.</div>
 </td>
 </tr>
 </table>
@@ -253,12 +253,12 @@ implements <a href="../../../org/opensha2/function/Point2DComparator.html" title
 <li class="blockList">
 <h4>tolerance</h4>
 <pre>protected&nbsp;double tolerance</pre>
-<div class="block">The tolerance for determining whether two x values are different.  A
-  tolerance of 0.0 (the default) is really about 1e-16 due to the numerical
-  precision of floating point arithmetic ( 1.0 - (1.0+1e-16) = 0.0 ).
-  Note that the tolerance must be smaller than 1/2 of any desired delta
-  between data points. If the tolerance is less than zero an
-  InvalidRangeException is thrown</div>
+<div class="block">The tolerance for determining whether two x values are different. A
+ tolerance of 0.0 (the default) is really about 1e-16 due to the numerical
+ precision of floating point arithmetic ( 1.0 - (1.0+1e-16) = 0.0 ). Note
+ that the tolerance must be smaller than 1/2 of any desired delta between
+ data points. If the tolerance is less than zero an InvalidRangeException is
+ thrown</div>
 </li>
 </ul>
 </li>
@@ -287,10 +287,10 @@ implements <a href="../../../org/opensha2/function/Point2DComparator.html" title
 <h4>Point2DToleranceComparator</h4>
 <pre>public&nbsp;Point2DToleranceComparator(double&nbsp;tolerance)</pre>
 <div class="block">Constructor that sets the tolerance when created. Throws an
-  InvalidRangeException if the tolerance is less than zero. Negative
-  tolerance makes no sense.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>tolerance</code> - The distance two values can be apart
-      and still considered equal</dd></dl>
+ InvalidRangeException if the tolerance is less than zero. Negative
+ tolerance makes no sense.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>tolerance</code> - The distance two values can be apart and still considered
+        equal</dd></dl>
 </li>
 </ul>
 </li>
@@ -309,9 +309,9 @@ implements <a href="../../../org/opensha2/function/Point2DComparator.html" title
 <h4>setTolerance</h4>
 <pre>public&nbsp;void&nbsp;setTolerance(double&nbsp;newTolerance)</pre>
 <div class="block">Tolerance indicates the distance two values can be apart, but still
-  considered equal. This function returns the tolerance.  Any tolerance
-  less than about 1e-16 is about 1e-16 due to the numerical precision of
-  floating point arithmetic.</div>
+ considered equal. This function returns the tolerance. Any tolerance less
+ than about 1e-16 is about 1e-16 due to the numerical precision of floating
+ point arithmetic.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/opensha2/function/Point2DComparator.html#setTolerance(double)">setTolerance</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/opensha2/function/Point2DComparator.html" title="interface in org.opensha2.function">Point2DComparator</a></code></dd>
@@ -328,7 +328,7 @@ implements <a href="../../../org/opensha2/function/Point2DComparator.html" title
 <h4>getTolerance</h4>
 <pre>public&nbsp;double&nbsp;getTolerance()</pre>
 <div class="block">Tolerance indicates the distance two values can be apart, but still
-  considered equal. This function returns the tolerance.</div>
+ considered equal. This function returns the tolerance.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/opensha2/function/Point2DComparator.html#getTolerance()">getTolerance</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/opensha2/function/Point2DComparator.html" title="interface in org.opensha2.function">Point2DComparator</a></code></dd>
@@ -343,21 +343,20 @@ implements <a href="../../../org/opensha2/function/Point2DComparator.html" title
 <h4>compare</h4>
 <pre>public&nbsp;int&nbsp;compare(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;o1,
           <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;o2)</pre>
-<div class="block">Returns 0 if the two Objects are equal, -1 if the first object is less
-  than the second, or +1 if it's greater. This function throws a
-  ClassCastException if the two values are not DataPoint2Ds. Only the
-  X-Value is compared, the Y-Value is ignored. If the distance between the
-  two X-Values are less than or equal to the tolerance, they are
-  considered equal. <P>
+<div class="block">Returns 0 if the two Objects are equal, -1 if the first object is less than
+ the second, or +1 if it's greater. This function throws a
+ ClassCastException if the two values are not DataPoint2Ds. Only the X-Value
+ is compared, the Y-Value is ignored. If the distance between the two
+ X-Values are less than or equal to the tolerance, they are considered
+ equal. <P>
 
-  One use for this class is to sort a DiscretizedFunction by it's X-Values
-  (independent variable) ascending, to prepare the function for plotting.</div>
+ One use for this class is to sort a DiscretizedFunction by it's X-Values
+ (independent variable) ascending, to prepare the function for plotting.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Comparator.html?is-external=true#compare(T, T)" title="class or interface in java.util">compare</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Comparator.html?is-external=true" title="class or interface in java.util">Comparator</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&gt;</code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>o1</code> - First DataPoint2D</dd><dd><code>o2</code> - Second DataPoint2D</dd>
-<dt><span class="strong">Returns:</span></dt><dd>-1 if o1 < 02, 0 if o1 = o2, +1 if o1 >
-      o2</dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>-1 if o1 < 02, 0 if o1 = o2, +1 if o1 > o2</dd></dl>
 </li>
 </ul>
 </li>
@@ -428,13 +427,13 @@ implements <a href="../../../org/opensha2/function/Point2DComparator.html" title
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

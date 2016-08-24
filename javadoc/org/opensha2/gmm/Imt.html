@@ -280,8 +280,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Enum.html?is
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/gmm/Imt.html#fromPeriod(double)">fromPeriod</a></strong>(double&nbsp;period)</code>
-<div class="block">Returns the spectral acceleration <code>Imt</code> associated with the
- supplied period.</div>
+<div class="block">Returns the spectral acceleration <code>Imt</code> associated with the supplied
+ period.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -859,12 +859,12 @@ with the specified name</dd>
 <li class="blockList">
 <h4>fromPeriod</h4>
 <pre>public static&nbsp;<a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;fromPeriod(double&nbsp;period)</pre>
-<div class="block">Returns the spectral acceleration <code>Imt</code> associated with the
- supplied period. Due to potential floating point precision problems, this
- method internally checks values to within a small tolerance.</div>
+<div class="block">Returns the spectral acceleration <code>Imt</code> associated with the supplied
+ period. Due to potential floating point precision problems, this method
+ internally checks values to within a small tolerance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>period</code> - for <code>Imt</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>an <code>Imt</code>, or <code>null</code> if no Imt exsists for the
-         supplied period</dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>an <code>Imt</code>, or <code>null</code> if no Imt exsists for the supplied
+         period</dd></dl>
 </li>
 </ul>
 <a name="frequency()">
@@ -874,8 +874,8 @@ with the specified name</dd>
 <li class="blockList">
 <h4>frequency</h4>
 <pre>public&nbsp;double&nbsp;frequency()</pre>
-<div class="block">Returns the frequency (in Hz) for this <code>Imt</code>. <code>PGA</code> returns
- 100 Hz, spectral periods return their expected value (1 / period), and
+<div class="block">Returns the frequency (in Hz) for this <code>Imt</code>. <code>PGA</code> returns 100
+ Hz, spectral periods return their expected value (1 / period), and
  <code>PGV</code> and <code>PGD</code> throw exceptions.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the frequency associated with this <code>Imt</code></dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -891,8 +891,7 @@ with the specified name</dd>
 <h4>isSA</h4>
 <pre>public&nbsp;boolean&nbsp;isSA()</pre>
 <div class="block">Returns true if this Imt is some flavor of spectral acceleration.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd><code>true</code> if this is a spectral period, <code>false</code>
-         otherwise</dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd><code>true</code> if this is a spectral period, <code>false</code> otherwise</dd></dl>
 </li>
 </ul>
 <a name="saImts()">
@@ -990,13 +989,13 @@ with the specified name</dd>
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

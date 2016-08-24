@@ -166,8 +166,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/gmm/FaultStyle.html" title="enum in org.opensha2.gmm">FaultStyle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/gmm/GmmUtils.html#rakeToFaultStyle_NSHMP(double)">rakeToFaultStyle_NSHMP</a></strong>(double&nbsp;rake)</code>
-<div class="block">Returns the NSHMP interpretation of fault type based on rake; divisions
- are on 45° diagonals.</div>
+<div class="block">Returns the NSHMP interpretation of fault type based on rake; divisions are
+ on 45° diagonals.</div>
 </td>
 </tr>
 </table>
@@ -216,11 +216,11 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>rakeToFaultStyle_NSHMP</h4>
 <pre>public static&nbsp;<a href="../../../org/opensha2/gmm/FaultStyle.html" title="enum in org.opensha2.gmm">FaultStyle</a>&nbsp;rakeToFaultStyle_NSHMP(double&nbsp;rake)</pre>
-<div class="block">Returns the NSHMP interpretation of fault type based on rake; divisions
- are on 45° diagonals.
- 
+<div class="block">Returns the NSHMP interpretation of fault type based on rake; divisions are
+ on 45° diagonals.
+
  <p><b>Note:</b> This is inconsistent with next generation attenuation
- relationship (NGAW1 and NGAW2) recommendations.</p></div>
+ relationship (NGAW1 and NGAW2) recommendations.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>rake</code> - to convert (in degrees)</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the corresponding <code>FaultStyle</code></dd></dl>
 </li>
@@ -238,8 +238,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  between 6 and 7.6 (e.g [6.05, 6.15, ... 7.55]). Distance values should be
  <1000km. If <code>D</code> ≥ 1000km, method returns D.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>M</code> - magnitude</dd><dd><code>D</code> - distance</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the corrected distance or <code>D</code> if <code>D</code> ???
-         1000</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the corrected distance or <code>D</code> if <code>D</code> ??? 1000</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>M</code> is not one of [6.05,
          6.15, ... 8.55]</dd></dl>
@@ -256,8 +255,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
                  double&nbsp;P)</pre>
 <div class="block">Returns the average hanging-wall factor appropriate for
  <a href="../../../org/opensha2/gmm/CampbellBozorgnia_2008.html" title="class in org.opensha2.gmm"><code>CampbellBozorgnia_2008</code></a> for a dipping point source at the supplied
- distance and magnitude and period of interest. Magnitude is expected to
- be a 0.05 centered value between 6 and 7.5 (e.g [6.05, 6.15, ... 7.45]).
+ distance and magnitude and period of interest. Magnitude is expected to be
+ a 0.05 centered value between 6 and 7.5 (e.g [6.05, 6.15, ... 7.45]).
  Distance values should be ≤200km. If distance value is &gt200km, method
  returns 0. Valid periods are those prescribed by
  <a href="../../../org/opensha2/gmm/CampbellBozorgnia_2008.html" title="class in org.opensha2.gmm"><code>CampbellBozorgnia_2008</code></a>.</div>
@@ -267,9 +266,9 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>M</code> is not one of [6.05,
          6.15, ... 7.45]</dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>P</code> is not one of [-2.0
-         (pgd), -1.0 (pgv), 0.0 (pga), 0.01, 0.02, 0.03, 0.04, 0.05,
-         0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1.0, 1.5, 2.0,
-         3.0, 4.0, 5.0, 7.5, 10.0]</dd></dl>
+         (pgd), -1.0 (pgv), 0.0 (pga), 0.01, 0.02, 0.03, 0.04, 0.05, 0.075,
+         0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0,
+         5.0, 7.5, 10.0]</dd></dl>
 </li>
 </ul>
 <a name="getAvgHW_CY(double, double, double)">
@@ -283,11 +282,11 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
                  double&nbsp;P)</pre>
 <div class="block">Returns the average hanging-wall factor appropriate for
  <a href="../../../org/opensha2/gmm/ChiouYoungs_2008.html" title="class in org.opensha2.gmm"><code>ChiouYoungs_2008</code></a> for a dipping point source at the supplied
- distance and magnitude and period of interest. Magnitude is expected to
- be a 0.05 centered value between 5 and 7.5 (e.g [5.05, 6.15, ... 7.45]).
- If there is no match for the supplied magnitude, method returns 0.
- Distance values should be ≤200km. If distance value is &gt200km, method
- returns 0. Valid periods are those prescribed by <a href="../../../org/opensha2/gmm/ChiouYoungs_2008.html" title="class in org.opensha2.gmm"><code>ChiouYoungs_2008</code></a>
+ distance and magnitude and period of interest. Magnitude is expected to be
+ a 0.05 centered value between 5 and 7.5 (e.g [5.05, 6.15, ... 7.45]). If
+ there is no match for the supplied magnitude, method returns 0. Distance
+ values should be ≤200km. If distance value is &gt200km, method returns 0.
+ Valid periods are those prescribed by <a href="../../../org/opensha2/gmm/ChiouYoungs_2008.html" title="class in org.opensha2.gmm"><code>ChiouYoungs_2008</code></a>
  (<em>Note:</em>PGV is currently missing).</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>M</code> - magnitude</dd><dd><code>D</code> - distance</dd><dd><code>P</code> - period</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the hanging wall factor</dd>
@@ -365,13 +364,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

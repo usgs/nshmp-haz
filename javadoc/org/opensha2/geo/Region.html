@@ -111,7 +111,7 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
  as latitude-longitude coordinate pairs in an <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Area.html?is-external=true" title="class or interface in java.awt.geom"><code>Area</code></a>, facilitating
  operations such as union, intersect, and contains. Insidedness rules follow
  those defined in the <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><code>Shape</code></a> interface.
- 
+
  <p>New <code>Region</code>s are created exclusively through static factory
  methods, some of which require the specification of a <a href="../../../org/opensha2/geo/BorderType.html" title="enum in org.opensha2.geo"><code>BorderType</code></a>. If
  one wishes to create a geographic <code>Region</code> that represents a rectangle
@@ -122,22 +122,22 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
  better representation of a line on a globe. Internally, great circles are
  approximated by multiple straight line segments that have a maximum length of
  100km.
- 
+
  <p>A <code>Region</code> may also have interior (or negative) areas. Any call to
  <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>contains(Location)</code></a> for a <code>Location</code> within or on the
  border of such an interior area will return <code>false</code>, subject to the
  rules of insidedness.
- 
+
  <p><b>Note:</b> The current implementation does not support regions that are
  intended to span ±180°. Any such regions will wrap the long way around the
  earth and results are undefined. Regions that encircle either pole are not
  supported either.
- 
+
  <p><b>Note:</b> Due to rounding errors and the use of an <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Area.html?is-external=true" title="class or interface in java.awt.geom"><code>Area</code></a>
  internally to define a <code>Region</code>'s border,
  <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>contains(Location)</code></a> may not always return the expected result
- near a border. See <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>contains(Location)</code></a> for further details.</p>
- 
+ near a border. See <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>contains(Location)</code></a> for further details.
+
  <p>Use the <a href="../../../org/opensha2/geo/Regions.html" title="class in org.opensha2.geo"><code>Regions</code></a> factory class to create new regions.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd>
@@ -205,8 +205,8 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Region.html#distanceToLocation(org.opensha2.geo.Location)">distanceToLocation</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
-<div class="block">Returns the minimum horizonatal distance (in km) between the border of
- this <code>Region</code> and the <code>Location</code> specified.</div>
+<div class="block">Returns the minimum horizonatal distance (in km) between the border of this
+ <code>Region</code> and the <code>Location</code> specified.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -223,8 +223,7 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Region.html#extent()">extent</a></strong>()</code>
-<div class="block">Returns a flat-earth estimate of the area of this region in
- km<sup>2</sup>.</div>
+<div class="block">Returns a flat-earth estimate of the area of this region in km<sup>2</sup>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -288,14 +287,14 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
 <div class="block">Returns whether the given <code>Location</code> is inside this <code>Region</code>.
  The determination follows the rules of insidedness defined in the
  <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><code>Shape</code></a> interface.
- 
+
  <p><b>Note:</b> By using an <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Area.html?is-external=true" title="class or interface in java.awt.geom"><code>Area</code></a> internally to manage this
  <code>Region</code>'s geometry, there are instances where rounding errors may
  cause this method to yield unexpected results. For instance, although a
  <code>Region</code>'s southernmost point might be initially defined as 40.0°,
  the internal <code>Area</code> may return 40.0000000000001 on a call to
- <code>getMinLat()</code> and calls to <code>contains(new Location(40,*))</code>
- will return false.</p></div>
+ <code>getMinLat()</code> and calls to <code>contains(new Location(40,*))</code> will
+ return false.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>loc</code> - the <code>Location</code> to test</dd>
 <dt><span class="strong">Returns:</span></dt><dd><code>true</code> if the <code>Location</code> is inside the Region,
          <code>false</code> otherwise</dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><code>Shape</code></a></dd></dl>
@@ -338,13 +337,12 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
  <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>contains(Location)</code></a> for a <code>Location</code> within this
  interior area will return <code>false</code>. Any interior <code>Region</code> must
  lie entirely inside this <code>Region</code>. Moreover, any interior may not
- overlap or enclose any existing interior region. Internally, the border
- of the supplied <code>Region</code> is copied and stored as an unmodifiable
+ overlap or enclose any existing interior region. Internally, the border of
+ the supplied <code>Region</code> is copied and stored as an unmodifiable
  <code>List</code>. No reference to the supplied <code>Region</code> is retained.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>region</code> - to use as an interior or negative space</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if the supplied <code>Region</code> is
-         <code>null</code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if the supplied <code>Region</code> is <code>null</code></dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if the supplied <code>Region</code> is not
          entirly contained within this <code>Region</code></dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if the supplied <code>Region</code> is not
@@ -362,8 +360,8 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&gt;&nbsp;interiors()</pre>
 <div class="block">Returns an unmodifiable <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util"><code>List</code></a> view of the internal
  <code>LocationList</code>s (also unmodifiable) of points that decribe the
- interiors of this <code>Region</code>, if such exist. If no interior is
- defined, the method returns <code>null</code>.</div>
+ interiors of this <code>Region</code>, if such exist. If no interior is defined,
+ the method returns <code>null</code>.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>a <code>List</code> the interior <code>LocationList</code>s or <code>null</code>
          if no interiors are defined</dd></dl>
 </li>
@@ -399,11 +397,11 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
 <li class="blockList">
 <h4>extent</h4>
 <pre>public&nbsp;double&nbsp;extent()</pre>
-<div class="block">Returns a flat-earth estimate of the area of this region in
- km<sup>2</sup>. Method uses the center of this <code>Region</code>'s bounding
- polygon as the origin of an orthogonal coordinate system. This method is
- not appropriate for use with very large <code>Region</code>s where the
- curvature of the earth is more significant.</div>
+<div class="block">Returns a flat-earth estimate of the area of this region in km<sup>2</sup>.
+ Method uses the center of this <code>Region</code>'s bounding polygon as the
+ origin of an orthogonal coordinate system. This method is not appropriate
+ for use with very large <code>Region</code>s where the curvature of the earth is
+ more significant.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the area of this region in km<sup>2</sup></dd></dl>
 </li>
 </ul>
@@ -465,11 +463,10 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
 <li class="blockList">
 <h4>distanceToLocation</h4>
 <pre>public&nbsp;double&nbsp;distanceToLocation(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</pre>
-<div class="block">Returns the minimum horizonatal distance (in km) between the border of
- this <code>Region</code> and the <code>Location</code> specified. If the given
+<div class="block">Returns the minimum horizonatal distance (in km) between the border of this
+ <code>Region</code> and the <code>Location</code> specified. If the given
  <code>Location</code> is inside the <code>Region</code>, the method returns 0. The
- distance algorithm used only works well at short distances (e.g. ≤250
- km).</div>
+ distance algorithm used only works well at short distances (e.g. ≤250 km).</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>loc</code> - the Location to compute a distance to</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the minimum distance between this <code>Region</code> and a point</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -573,13 +570,13 @@ implements <a href="../../../org/opensha2/util/Named.html" title="interface in o
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

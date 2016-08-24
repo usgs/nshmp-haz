@@ -98,13 +98,13 @@
 <pre>public class <span class="strong">Regions</span>
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Static utility methods pertaining to geographic regions.
- 
+
  <p>Note that intersection and union operations will discard any grid
- information if <code>GriddedRegion</code>s are supplied as arguments.</p>
- 
+ information if <code>GriddedRegion</code>s are supplied as arguments.
+
  <p>To build complex gridded regions (e.g. circular or buffered, or via
  intersections and unions) create a Region first and use
- <a href="../../../org/opensha2/geo/Regions.html#toGridded(org.opensha2.geo.Region, double, double, org.opensha2.geo.Location)"><code>toGridded(Region, double, double, Location)</code></a>.</p></div>
+ <a href="../../../org/opensha2/geo/Regions.html#toGridded(org.opensha2.geo.Region, double, double, org.opensha2.geo.Location)"><code>toGridded(Region, double, double, Location)</code></a>.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd></dl>
 </li>
@@ -168,8 +168,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
               <a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;line,
               double&nbsp;buffer)</code>
 <div class="block"><img style="padding: 30px 40px; float: right;" src=
- "../../../resources/gridded_regions_buffer.jpg"/>Creates a
- <code>Region</code> as a buffered area around a line.</div>
+ "../../../resources/gridded_regions_buffer.jpg"/>Creates a <code>Region</code>
+ as a buffered area around a line.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -297,15 +297,15 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Creates a <code>Region</code> from a list of border locations. The border type
  specifies whether lat-lon values are treated as points in an orthogonal
  coordinate system or as connecting great circles. The border
- <code>LocationList</code> does not need to repeat the first <code>Location</code>
- at the end of the list.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - of the <code>Region</code>; may be <code>null</code></dd><dd><code>border</code> - <code>Locations</code></dd><dd><code>type</code> - the <a href="../../../org/opensha2/geo/BorderType.html" title="enum in org.opensha2.geo"><code>BorderType</code></a> to use when initializing; a
-        <code>null</code> value defaults to <code>BorderType.MERCATOR_LINEAR</code></dd>
+ <code>LocationList</code> does not need to repeat the first <code>Location</code> at
+ the end of the list.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - of the <code>Region</code>; may be <code>null</code></dd><dd><code>border</code> - <code>Locations</code></dd><dd><code>type</code> - the <a href="../../../org/opensha2/geo/BorderType.html" title="enum in org.opensha2.geo"><code>BorderType</code></a> to use when initializing; a <code>null</code>
+        value defaults to <code>BorderType.MERCATOR_LINEAR</code></dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new <code>Region</code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if the <code>border</code> does not have at
-         least 3 points, defines a <code>Region</code> that is empty, or
-         consists of more than a single closed path.</dd>
+         least 3 points, defines a <code>Region</code> that is empty, or consists
+         of more than a single closed path.</dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if the <code>border</code> is <code>null</code></dd></dl>
 </li>
 </ul>
@@ -324,7 +324,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block"><img style="padding: 30px 40px; float: right;" src=
  "../../../resources/gridded_regions_border.jpg"/>Creates a
  <code>GriddedRegion</code> from a list of border locations.
- 
+
  <p>The border type specifies whether lat-lon values are treated as points
  in an orthogonal coordinate system or as connecting great circles. The
  border <code>LocationList</code> does not need to repeat the first
@@ -332,14 +332,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <code>anchor Location</code> is <code>null</code>, it is automatically set to the
  Location defined by the minimum latitude and longitude of the region's
  border.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - of the <code>GriddedRegion</code>; may be <code>null</code></dd><dd><code>border</code> - <code>Locations</code></dd><dd><code>type</code> - the <a href="../../../org/opensha2/geo/BorderType.html" title="enum in org.opensha2.geo"><code>BorderType</code></a> to use when initializing; a
-        <code>null</code> value defaults to <code>BorderType.MERCATOR_LINEAR</code></dd><dd><code>latSpacing</code> - of grid nodes</dd><dd><code>lonSpacing</code> - of grid nodes</dd><dd><code>anchor</code> - <code>Location</code> for grid; may be <code>null</code></dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - of the <code>GriddedRegion</code>; may be <code>null</code></dd><dd><code>border</code> - <code>Locations</code></dd><dd><code>type</code> - the <a href="../../../org/opensha2/geo/BorderType.html" title="enum in org.opensha2.geo"><code>BorderType</code></a> to use when initializing; a <code>null</code>
+        value defaults to <code>BorderType.MERCATOR_LINEAR</code></dd><dd><code>latSpacing</code> - of grid nodes</dd><dd><code>lonSpacing</code> - of grid nodes</dd><dd><code>anchor</code> - <code>Location</code> for grid; may be <code>null</code></dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new <code>GriddedRegion</code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if the <code>border</code> does not have at
-         least 3 points, defines a <code>Region</code> that is empty, or
-         consists of more than a single closed path; or <code>spacing</code> is
-         outside the range 0° < <code>spacing</code> ≤ 5°</dd>
+         least 3 points, defines a <code>Region</code> that is empty, or consists
+         of more than a single closed path; or <code>spacing</code> is outside
+         the range 0° < <code>spacing</code> ≤ 5°</dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if the <code>border</code> is <code>null</code></dd></dl>
 </li>
 </ul>
@@ -352,23 +352,23 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public static&nbsp;<a href="../../../org/opensha2/geo/Region.html" title="class in org.opensha2.geo">Region</a>&nbsp;createRectangular(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
                        <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc1,
                        <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc2)</pre>
-<div class="block">Creates a <code>Region</code> from a pair of <code>Location </code>s. When viewed
- in a Mercator projection, the <code>Region</code> will be a rectangle. If
- either both latitude or both longitude values in the <code>Location</code>s
- are the same, an exception is thrown.
- 
+<div class="block">Creates a <code>Region</code> from a pair of <code>Location </code>s. When viewed in
+ a Mercator projection, the <code>Region</code> will be a rectangle. If either
+ both latitude or both longitude values in the <code>Location</code>s are the
+ same, an exception is thrown.
+
  <p><b>Note:</b> Internally, the size of the region is expanded by a very
- small value (~1m) to ensure that calls to
- <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a> for any <code>Location</code> on the north
- or east border of the region will return <code>true</code> and that any double
- precision rounding issues do not clip the south and west borders (e.g.
- 45.0 may be interpreted as 44.9999...). See also the rules governing
- insidedness in the <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><code>Shape</code></a> interface.</p></div>
+ small value (~1m) to ensure that calls to <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a>
+ for any <code>Location</code> on the north or east border of the region will
+ return <code>true</code> and that any double precision rounding issues do not
+ clip the south and west borders (e.g. 45.0 may be interpreted as
+ 44.9999...). See also the rules governing insidedness in the <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><code>Shape</code></a>
+ interface.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - of the <code>Region</code>; may be <code>null</code></dd><dd><code>loc1</code> - the first <code>Location</code></dd><dd><code>loc2</code> - the second <code>Location</code></dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new rectangular (broadly-defined) <code>Region</code></dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if the latitude or longitude values in
-         the <code>Location</code>s provided are the same</dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if the latitude or longitude values in the
+         <code>Location</code>s provided are the same</dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if either <code>Location</code> argument is
          <code>null</code></dd></dl>
 </li>
@@ -386,25 +386,24 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
                                      double&nbsp;lonSpacing,
                                      <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;anchor)</pre>
 <div class="block">Creates a <code>GriddedRegion</code> from a pair of <code>Location </code>s. When
- viewed in a Mercator projection, the <code>Region</code> will be a rectangle.
- If either both latitude or both longitude values in the <code>Location</code>s
- are the same, an exception is thrown. If the supplied
- <code>anchor Location</code> is <code>null</code>, it is automatically set to the
- Location defined by the minimum latitude and longitude of the region's
- border.
- 
+ viewed in a Mercator projection, the <code>Region</code> will be a rectangle. If
+ either both latitude or both longitude values in the <code>Location</code>s are
+ the same, an exception is thrown. If the supplied <code>anchor Location</code>
+ is <code>null</code>, it is automatically set to the Location defined by the
+ minimum latitude and longitude of the region's border.
+
  <p><b>Note:</b> Internally, the size of the region is expanded by a very
- small value (~1m) to ensure that calls to
- <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a> for any <code>Location</code> on the north
- or east border of the region will return <code>true</code> and that any double
- precision rounding issues do not clip the south and west borders (e.g.
- 45.0 may be interpreted as 44.9999...). See also the rules governing
- insidedness in the <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><code>Shape</code></a> interface.</p></div>
+ small value (~1m) to ensure that calls to <a href="../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)"><code>Region.contains(Location)</code></a>
+ for any <code>Location</code> on the north or east border of the region will
+ return <code>true</code> and that any double precision rounding issues do not
+ clip the south and west borders (e.g. 45.0 may be interpreted as
+ 44.9999...). See also the rules governing insidedness in the <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html?is-external=true" title="class or interface in java.awt"><code>Shape</code></a>
+ interface.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - of the <code>GriddedRegion</code>; may be <code>null</code></dd><dd><code>loc1</code> - the first <code>Location</code></dd><dd><code>loc2</code> - the second <code>Location</code></dd><dd><code>latSpacing</code> - of grid nodes</dd><dd><code>lonSpacing</code> - of grid nodes</dd><dd><code>anchor</code> - <code>Location</code> for grid; may be <code>null</code></dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new rectangular (broadly-defined) <code>GriddedRegion</code></dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if the latitude or longitude values in
-         the <code>Location</code>s provided are the same or <code>spacing</code> is
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if the latitude or longitude values in the
+         <code>Location</code>s provided are the same or <code>spacing</code> is
          outside the range 0° < <code>spacing</code> ≤ 5°</dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if either <code>Location</code> argument is
          <code>null</code></dd></dl>
@@ -421,19 +420,18 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
                     double&nbsp;radius)</pre>
 <div class="block"><img style="padding: 30px 40px; float: right;" src=
  "../../../resources/gridded_regions_circle.jpg"/>Creates a circular
- <code>Region</code>. Internally, the centerpoint and radius are used to create
- a circular region composed of straight line segments that span 10°
- wedges.
- 
+ <code>Region</code>. Internally, the centerpoint and radius are used to create a
+ circular region composed of straight line segments that span 10° wedges.
+
  <p>Passing the resultant region
  <a href="../../../org/opensha2/geo/Regions.html#toGridded(org.opensha2.geo.Region, double, double, org.opensha2.geo.Location)"><code>toGridded(Region, double, double, Location)</code></a> yields a
  <a href="../../../org/opensha2/geo/GriddedRegion.html" title="class in org.opensha2.geo"><code>GriddedRegion</code></a> like that in the adjacent figure. The heavy black
  line marks the border of the <code>Region</code>. The light gray dots mark the
- <code>Location</code>s of nodes outside the region, and black dots those
- inside the region. The dashed grey line marks the border, inside which, a
+ <code>Location</code>s of nodes outside the region, and black dots those inside
+ the region. The dashed grey line marks the border, inside which, a
  <code>Location</code> will be associated with a grid node. See
- <a href="../../../org/opensha2/geo/GriddedRegion.html#indexForLocation(org.opensha2.geo.Location)"><code>GriddedRegion.indexForLocation(Location)</code></a> for more details on
- rules governing whether a grid node is inside a region and whether a
+ <a href="../../../org/opensha2/geo/GriddedRegion.html#indexForLocation(org.opensha2.geo.Location)"><code>GriddedRegion.indexForLocation(Location)</code></a> for more details on rules
+ governing whether a grid node is inside a region and whether a
  <code>Location</code> will be associated with a grid node.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - of the <code>Region</code>; may be <code>null</code></dd><dd><code>center</code> - of the circle</dd><dd><code>radius</code> - of the circle</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new circular <code>Region</code></dd>
@@ -453,17 +451,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
                     <a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;line,
                     double&nbsp;buffer)</pre>
 <div class="block"><img style="padding: 30px 40px; float: right;" src=
- "../../../resources/gridded_regions_buffer.jpg"/>Creates a
- <code>Region</code> as a buffered area around a line.
- 
+ "../../../resources/gridded_regions_buffer.jpg"/>Creates a <code>Region</code>
+ as a buffered area around a line.
+
  <p>Passing the resultant region
  <a href="../../../org/opensha2/geo/Regions.html#toGridded(org.opensha2.geo.Region, double, double, org.opensha2.geo.Location)"><code>toGridded(Region, double, double, Location)</code></a> yields a
- <a href="../../../org/opensha2/geo/GriddedRegion.html" title="class in org.opensha2.geo"><code>GriddedRegion</code></a> like that in the adjacent figure. The light gray
- dots mark the <code>Location</code>s of nodes outside the region, and black
- dots those inside the region. The dashed grey line marks the border,
- inside which, a <code>Location</code> will be associated with a grid node. See
- <a href="../../../org/opensha2/geo/GriddedRegion.html#indexForLocation(org.opensha2.geo.Location)"><code>GriddedRegion.indexForLocation(Location)</code></a> for more details on
- rules governing whether a grid node is inside a region and whether a
+ <a href="../../../org/opensha2/geo/GriddedRegion.html" title="class in org.opensha2.geo"><code>GriddedRegion</code></a> like that in the adjacent figure. The light gray dots
+ mark the <code>Location</code>s of nodes outside the region, and black dots
+ those inside the region. The dashed grey line marks the border, inside
+ which, a <code>Location</code> will be associated with a grid node. See
+ <a href="../../../org/opensha2/geo/GriddedRegion.html#indexForLocation(org.opensha2.geo.Location)"><code>GriddedRegion.indexForLocation(Location)</code></a> for more details on rules
+ governing whether a grid node is inside a region and whether a
  <code>Location</code> will be associated with a grid node.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - of the <code>Region</code>; may be <code>null</code></dd><dd><code>line</code> - at center of buffered <code>Region</code></dd><dd><code>buffer</code> - distance from line</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new buffered <code>Region</code> around a line</dd>
@@ -484,8 +482,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>region</code> - to copy</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a copy of the supplied <code>Region</code></dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if the supplied <code>Region</code> is
-         <code>null</code></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if the supplied <code>Region</code> is <code>null</code></dd></dl>
 </li>
 </ul>
 <a name="copyOf(org.opensha2.geo.GriddedRegion)">
@@ -514,16 +511,15 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
                       double&nbsp;lonSpacing,
                       <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;anchor)</pre>
 <div class="block">Creates a <code>GriddedRegion</code> with the same shape as the supplied
- <code>Region</code>. If the supplied <code>anchor Location</code> is <code>null</code>,
- it is automatically set to the Location defined by the minimum latitude
- and longitude of the region's border.</div>
+ <code>Region</code>. If the supplied <code>anchor Location</code> is <code>null</code>, it
+ is automatically set to the Location defined by the minimum latitude and
+ longitude of the region's border.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>region</code> - to use as basis for new <code>GriddedRegion</code></dd><dd><code>latSpacing</code> - of grid nodes</dd><dd><code>lonSpacing</code> - of grid nodes</dd><dd><code>anchor</code> - <code>Location</code> for grid; may be <code>null</code></dd>
 <dt><span class="strong">Returns:</span></dt><dd>a new <code>GriddedRegion</code></dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>spacing</code> is outside the range
-         0° < <code>spacing</code> ≤ 5°</dd>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if the supplied <code>Region</code> is
-         <code>null</code></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>spacing</code> is outside the range 0°
+         < <code>spacing</code> ≤ 5°</dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if the supplied <code>Region</code> is <code>null</code></dd></dl>
 </li>
 </ul>
 <a name="intersectionOf(java.lang.String, org.opensha2.geo.Region, org.opensha2.geo.Region)">
@@ -535,14 +531,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public static&nbsp;<a href="../../../org/opensha2/geo/Region.html" title="class in org.opensha2.geo">Region</a>&nbsp;intersectionOf(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
                     <a href="../../../org/opensha2/geo/Region.html" title="class in org.opensha2.geo">Region</a>&nbsp;r1,
                     <a href="../../../org/opensha2/geo/Region.html" title="class in org.opensha2.geo">Region</a>&nbsp;r2)</pre>
-<div class="block">Returns the intersection of two <code>Region</code>s. If the <code>Region</code>s
- do not overlap, the method returns <code>null</code>.</div>
+<div class="block">Returns the intersection of two <code>Region</code>s. If the <code>Region</code>s do
+ not overlap, the method returns <code>null</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - of the <code>Region</code>; may be <code>null</code></dd><dd><code>r1</code> - the first <code>Region</code></dd><dd><code>r2</code> - the second <code>Region</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>a new <code>Region</code> defined by the intersection of <code>r1</code>
-         and <code>r2</code> or <code>null</code> if they do not overlap</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a new <code>Region</code> defined by the intersection of <code>r1</code> and
+         <code>r2</code> or <code>null</code> if they do not overlap</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if either supplied <code>Region</code> is not
-         a single closed <code>Region</code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if either supplied <code>Region</code> is not a
+         single closed <code>Region</code></dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if either supplied <code>Region</code> is
          <code>null</code></dd></dl>
 </li>
@@ -562,8 +558,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a new <code>Region</code> defined by the union of <code>r1</code> and
          <code>r2</code> or <code>null</code> if they do not overlap</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if either supplied <code>Region</code> is not
-         a single closed <code>Region</code></dd>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if either supplied <code>Region</code> is not a
+         single closed <code>Region</code></dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if either supplied <code>Region</code> is
          <code>null</code></dd></dl>
 </li>
@@ -648,13 +644,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

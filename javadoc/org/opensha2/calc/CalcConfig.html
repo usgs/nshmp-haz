@@ -148,6 +148,12 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Performance and optimization settings.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.SiteDefaults.html" title="class in org.opensha2.calc">CalcConfig.SiteDefaults</a></strong></code>
+<div class="block">Default site settings.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -166,7 +172,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/calc/CalcConfig.Curve.html" title="class in org.opensha2.calc">CalcConfig.Curve</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#curve">curve</a></strong></code>
-<div class="block">Hazard curve calculation settings</div>
+<div class="block">Hazard curve calculation settings.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -191,6 +197,12 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#resource">resource</a></strong></code>
 <div class="block">The resource from which <code>this</code> was derived.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../org/opensha2/calc/CalcConfig.SiteDefaults.html" title="class in org.opensha2.calc">CalcConfig.SiteDefaults</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#siteDefaults">siteDefaults</a></strong></code>
+<div class="block">Default site settings.</div>
 </td>
 </tr>
 </table>
@@ -247,8 +259,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>resource</h4>
 <pre>public final transient&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt; resource</pre>
-<div class="block">The resource from which <code>this</code> was derived. This field may be
- empty.</div>
+<div class="block">The resource from which <code>this</code> was derived. This field may be empty.</div>
 </li>
 </ul>
 <a name="curve">
@@ -258,7 +269,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>curve</h4>
 <pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.Curve.html" title="class in org.opensha2.calc">CalcConfig.Curve</a> curve</pre>
-<div class="block">Hazard curve calculation settings</div>
+<div class="block">Hazard curve calculation settings.</div>
+</li>
+</ul>
+<a name="siteDefaults">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>siteDefaults</h4>
+<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.SiteDefaults.html" title="class in org.opensha2.calc">CalcConfig.SiteDefaults</a> siteDefaults</pre>
+<div class="block">Default site settings.</div>
 </li>
 </ul>
 <a name="performance">
@@ -394,13 +415,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

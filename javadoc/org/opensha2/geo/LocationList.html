@@ -103,18 +103,18 @@
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
 implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</pre>
 <div class="block">An immutable, ordered collection of <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo"><code>Location</code></a>s.
- 
+
  <p>A <code>LocationList</code> must contain at least 1 <code>Location</code> and does
  not permit <code>null</code> elements. <code>LocationList</code> instances are
  immutable and calls to <code>remove()</code> when iterating will throw an
  <code>UnsupportedOperationException</code>. A variety of methods exist to simplify
  the creation of new lists via modification (e.g. <a href="../../../org/opensha2/geo/LocationList.html#resample(double)"><code>resample(double)</code></a> ,
  <a href="../../../org/opensha2/geo/LocationList.html#reverse()"><code>reverse()</code></a>, and <a href="../../../org/opensha2/geo/LocationList.html#translate(org.opensha2.geo.LocationVector)"><code>translate(LocationVector)</code></a>.
- 
+
  <p>Consider using a <a href="../../../org/opensha2/geo/LocationList.Builder.html" title="class in org.opensha2.geo"><code>LocationList.Builder</code></a> (via <a href="../../../org/opensha2/geo/LocationList.html#builder()"><code>builder()</code></a>) if
  a list is being compiled from numerous <code>Location</code>s that are not known
  in advance.
- 
+
  <p><b>Note:</b> Although this class is not final, it cannot be subclassed
  outside its package as it has no public or protected constructors. Thus,
  instances of this type are guaranteed to be immutable.</div>
@@ -232,15 +232,14 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/LocationList.html#resample(double)">resample</a></strong>(double&nbsp;spacing)</code>
-<div class="block">Return a new <code>LocationList</code> created by resampling this list with
- the desired maximum spacing.</div>
+<div class="block">Return a new <code>LocationList</code> created by resampling this list with the
+ desired maximum spacing.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/LocationList.html#reverse()">reverse</a></strong>()</code>
-<div class="block">Return a new <code>LocationList</code> with <code>Location</code>s in reverse
- order.</div>
+<div class="block">Return a new <code>LocationList</code> with <code>Location</code>s in reverse order.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -387,8 +386,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <div class="block">Lazily compute the horizontal length of this <code>LocationList</code> in km.
  Method uses the <a href="../../../org/opensha2/geo/Locations.html#horzDistanceFast(org.opensha2.geo.Location, org.opensha2.geo.Location)"><code>Locations.horzDistanceFast(Location, Location)</code></a>
  algorithm and ignores depth variation between locations. That is, it
- computes length as though all locations in the list have a depth of 0.0
- km. Repeat calls to this method will recalculate the length each time.</div>
+ computes length as though all locations in the list have a depth of 0.0 km.
+ Repeat calls to this method will recalculate the length each time.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the length of the line connecting all <code>Location</code>s in this
          list, ignoring depth variations, or 0.0 if list only contains 1
          location</dd></dl>
@@ -461,12 +460,12 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <li class="blockList">
 <h4>resample</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;resample(double&nbsp;spacing)</pre>
-<div class="block">Return a new <code>LocationList</code> created by resampling this list with
- the desired maximum spacing. The actual spacing of the returned list will
+<div class="block">Return a new <code>LocationList</code> created by resampling this list with the
+ desired maximum spacing. The actual spacing of the returned list will
  likely differ, as spacing is adjusted down to maintain uniform divisions.
  The original vertices are also not preserved such that some corners might
  be adversely clipped if <code>spacing</code> is large. Buyer beware.
- 
+
  <p>For a singleton list, this method immediately returns this list.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>spacing</code> - resample interval</dd></dl>
 </li>
@@ -478,8 +477,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <li class="blockList">
 <h4>reverse</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;reverse()</pre>
-<div class="block">Return a new <code>LocationList</code> with <code>Location</code>s in reverse
- order.</div>
+<div class="block">Return a new <code>LocationList</code> with <code>Location</code>s in reverse order.</div>
 </li>
 </ul>
 <a name="translate(org.opensha2.geo.LocationVector)">
@@ -572,13 +570,13 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

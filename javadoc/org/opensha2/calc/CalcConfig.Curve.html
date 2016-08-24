@@ -123,15 +123,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc">ExceedanceModel</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Curve.html#exceedanceModel">exceedanceModel</a></strong></code>
-<div class="block">The probability distribution model to use when computing hazard
- curves.</div>
+<div class="block">The probability distribution model to use when computing hazard curves.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Curve.html#gmmUncertainty">gmmUncertainty</a></strong></code>
-<div class="block">Whether to consider additional ground motion model uncertainty, or
- not.</div>
+<div class="block">Whether to consider additional ground motion model uncertainty, or not.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -171,8 +169,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Curve.html#logModelCurves()">logModelCurves</a></strong>()</code>
-<div class="block">An immutable map of model curves where x-values are in natural-log
- space.</div>
+<div class="block">An immutable map of model curves where x-values are in natural-log space.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -216,9 +213,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>exceedanceModel</h4>
 <pre>public final&nbsp;<a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc">ExceedanceModel</a> exceedanceModel</pre>
-<div class="block">The probability distribution model to use when computing hazard
- curves.
- 
+<div class="block">The probability distribution model to use when computing hazard curves.
+
  <p><b>Default:</b> <a href="../../../org/opensha2/calc/ExceedanceModel.html#TRUNCATION_UPPER_ONLY"><code>ExceedanceModel.TRUNCATION_UPPER_ONLY</code></a></div>
 </li>
 </ul>
@@ -230,9 +226,9 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>truncationLevel</h4>
 <pre>public final&nbsp;double truncationLevel</pre>
 <div class="block">The number of standard deviations (σ) at which to truncate a
- distribution. This field is ignored if an <a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc"><code>ExceedanceModel</code></a>
- does not implement truncation.
- 
+ distribution. This field is ignored if an <a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc"><code>ExceedanceModel</code></a> does
+ not implement truncation.
+
  <p><b>Default:</b> <code>3.0</code></div>
 </li>
 </ul>
@@ -245,8 +241,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&gt; imts</pre>
 <div class="block">The <code>Set</code> of IMTs for which calculations should be performed.
 
- <p><b>Default:</b> [<a href="../../../org/opensha2/gmm/Imt.html#PGA"><code>Imt.PGA</code></a>, <a href="../../../org/opensha2/gmm/Imt.html#SA0P2"><code>Imt.SA0P2</code></a>,
- <a href="../../../org/opensha2/gmm/Imt.html#SA1P0"><code>Imt.SA1P0</code></a>]</div>
+ <p><b>Default:</b> [<a href="../../../org/opensha2/gmm/Imt.html#PGA"><code>Imt.PGA</code></a>, <a href="../../../org/opensha2/gmm/Imt.html#SA0P2"><code>Imt.SA0P2</code></a>, <a href="../../../org/opensha2/gmm/Imt.html#SA1P0"><code>Imt.SA1P0</code></a>
+ ]</div>
 </li>
 </ul>
 <a name="gmmUncertainty">
@@ -256,10 +252,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>gmmUncertainty</h4>
 <pre>public final&nbsp;boolean gmmUncertainty</pre>
-<div class="block">Whether to consider additional ground motion model uncertainty, or
- not. Currently this is only applicable when using the PEER NGA-West
- or NGA-West2 <a href="../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm"><code>Gmm</code></a>s with USGS hazard models.
- 
+<div class="block">Whether to consider additional ground motion model uncertainty, or not.
+ Currently this is only applicable when using the PEER NGA-West or
+ NGA-West2 <a href="../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm"><code>Gmm</code></a>s with USGS hazard models.
+
  <p><b>Default:</b> <code>false</code></div>
 </li>
 </ul>
@@ -271,7 +267,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>valueType</h4>
 <pre>public final&nbsp;<a href="../../../org/opensha2/calc/CurveValue.html" title="enum in org.opensha2.calc">CurveValue</a> valueType</pre>
 <div class="block">The value format for hazard curves.
- 
+
  <p><b>Default:</b> <a href="../../../org/opensha2/calc/CurveValue.html#ANNUAL_RATE"><code>CurveValue.ANNUAL_RATE</code></a></div>
 </li>
 </ul>
@@ -311,8 +307,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>logModelCurves</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;&nbsp;logModelCurves()</pre>
-<div class="block">An immutable map of model curves where x-values are in natural-log
- space.</div>
+<div class="block">An immutable map of model curves where x-values are in natural-log space.</div>
 </li>
 </ul>
 </li>
@@ -383,13 +378,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

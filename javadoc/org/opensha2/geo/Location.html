@@ -107,13 +107,13 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Comparabl
  seismology, the convention adopted in here is for depth to be positive-down,
  always. Locations may be defined using longitude values in the range: [-180°,
  360°]. Location instances are immutable.
- 
+
  <p>Note that although static factory methods take arguments in the order:
  <code>[lat, lon, depth]</code>, <code>String</code> representations of a location are
  in the order: <code>[lon, lat, depth]</code>, consistent with KML, GeoJSON, and
  other digital coordinate formats that match standard plotting coordinate
  order: <code>[x, y, z]</code>.
- 
+
  <p>For computational convenience, latitude and longitude values are converted
  and stored internally in radians. Special <code>get***Rad()</code> methods are
  provided to access this native format.</div>
@@ -148,8 +148,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Comparabl
 <td class="colFirst"><code>static <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Location.html#create(double, double)">create</a></strong>(double&nbsp;lat,
       double&nbsp;lon)</code>
-<div class="block">Create a new <code>Location</code> with the supplied latitude and longitude
- and a depth of 0 km.</div>
+<div class="block">Create a new <code>Location</code> with the supplied latitude and longitude and
+ a depth of 0 km.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -248,8 +248,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Comparabl
 <h4>create</h4>
 <pre>public static&nbsp;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;create(double&nbsp;lat,
               double&nbsp;lon)</pre>
-<div class="block">Create a new <code>Location</code> with the supplied latitude and longitude
- and a depth of 0 km.</div>
+<div class="block">Create a new <code>Location</code> with the supplied latitude and longitude and
+ a depth of 0 km.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>lat</code> - latitude in decimal degrees</dd><dd><code>lon</code> - longitude in decimal degrees</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if any supplied values are out of range</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/GeoTools.html" title="class in org.opensha2.geo"><code>GeoTools</code></a></dd></dl>
@@ -284,8 +284,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Comparabl
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NumberFormatException.html?is-external=true" title="class or interface in java.lang">NumberFormatException</a></code> - if <code>s</code> is unparseable</dd>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">IndexOutOfBoundsException</a></code> - if <code>s</code> contains fewer than 3
-         comma-separated values; any additional values in the suppied
-         string are ignored</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/Location.html#toString()"><code>toString()</code></a>, 
+         comma-separated values; any additional values in the suppied string
+         are ignored</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/Location.html#toString()"><code>toString()</code></a>, 
 <a href="../../../org/opensha2/geo/Location.html#stringConverter()"><code>stringConverter()</code></a></dd></dl>
 </li>
 </ul>
@@ -363,12 +363,12 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Comparabl
 <pre>public static&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base">Converter</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;stringConverter()</pre>
 <div class="block">Return a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base"><code>Converter</code></a> that converts between <code>Location</code>s and
  <code>String</code>s.
- 
+
  <p>Calls to <code>converter.reverse().convert(String)</code> will throw a
  <code>NumberFormatException</code> if the values in the supplied string are
- unparseable; or an <code>IndexOutOfBoundsException</code> if the supplied
- string contains fewer than 3 comma-separated values; any additional
- values in the suppied string are ignored.</div>
+ unparseable; or an <code>IndexOutOfBoundsException</code> if the supplied string
+ contains fewer than 3 comma-separated values; any additional values in the
+ suppied string are ignored.</div>
 </li>
 </ul>
 <a name="equals(java.lang.Object)">
@@ -484,13 +484,13 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Comparabl
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

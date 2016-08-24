@@ -107,20 +107,20 @@
 <pre>public enum <span class="strong">RuptureScaling</span>
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Enum.html?is-external=true" title="class or interface in java.lang">Enum</a>&lt;<a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.html" title="enum in org.opensha2.eq.fault.surface">RuptureScaling</a>&gt;</pre>
 <div class="block">Identifiers for different rupture dimension scaling models. Most are rooted
- in specific <a href="../../../../../org/opensha2/eq/fault/scaling/MagScalingRelationship.html" title="class in org.opensha2.eq.fault.scaling"><code>MagScalingRelationship</code></a>s, with this class providing more
+ in specific magnitude scaling relationships, with this class providing more
  direct access to how such relations are used in practice. All incorporate a
  fixed rupture aspect ratio. As magnitudes increase, some models will preserve
  area at the expense of aspect ratio; others may preserve length at the
  expense of area.
- 
+
  <p>Some scaling models also internally provide corrected Joyner-Boore
  distances that can be used to approximate average distances from a site to a
- point source of unknown strike.</p>
- 
+ point source of unknown strike.
+
  <p>Models may also provide a range of <a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.Dimensions.html" title="class in org.opensha2.eq.fault.surface"><code>RuptureScaling.Dimensions</code></a> for a given
  magnitude if <a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.html#dimensionsDistribution(double, double)"><code>dimensionsDistribution(double, double)</code></a> is requested.
  This method considers any uncertainty associated with a model and returns a
- ±2σ distribution of <code>Dimensions</code> discretized at 11 points.</p></div>
+ ±2σ distribution of <code>Dimensions</code> discretized at 11 points.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd></dl>
 </li>
@@ -286,10 +286,10 @@ the order they are declared.</div>
  thereby maintaining a minimum aspect ratio of 1.0. In practice,
  <code>maxWidth</code> is also a function of magnitude but is prescribed by a
  RuptureFloating model.
- 
+
  <p>The <code>pointSourceDistance(double, double)</code> implementation returns
  corrected distances for magnitudes in the closed range [6.0..8.6] and
- distances in the closed range [0..1000]</p></div>
+ distances in the closed range [0..1000]</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../org/opensha2/eq/fault/surface/RuptureFloating.html#NSHM"><code>RuptureFloating.NSHM</code></a></dd></dl>
 </li>
 </ul>
@@ -303,8 +303,8 @@ the order they are declared.</div>
 <div class="block">Scaling used for NSHM finite faults in California in 2008 (UCERF2). This
  relation Returns a magnitude-dependent length and
  <code>min(length, maxWidth)</code>, thereby maintaining a minimum aspect ratio
- of 1.0. It is a hybrid relation that uses Wells & Coppersmith (1994)
- below M≈6.9 and Ellsworth-B (WGCEP, 2002) above.</div>
+ of 1.0. It is a hybrid relation that uses Wells & Coppersmith (1994) below
+ M≈6.9 and Ellsworth-B (WGCEP, 2002) above.</div>
 </li>
 </ul>
 <a name="NSHM_POINT_WC94_LENGTH">
@@ -315,8 +315,8 @@ the order they are declared.</div>
 <h4>NSHM_POINT_WC94_LENGTH</h4>
 <pre>public static final&nbsp;<a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.html" title="enum in org.opensha2.eq.fault.surface">RuptureScaling</a> NSHM_POINT_WC94_LENGTH</pre>
 <div class="block">Scaling used for NSHM point sources. Maintains aspect ratio of 1.5 up to
- maximum width and then maintains length (Wells & Coppersmith, 1994) at
- the expense of aspect ratio.</div>
+ maximum width and then maintains length (Wells & Coppersmith, 1994) at the
+ expense of aspect ratio.</div>
 </li>
 </ul>
 <a name="NSHM_SUB_GEOMAT_LENGTH">
@@ -327,9 +327,9 @@ the order they are declared.</div>
 <h4>NSHM_SUB_GEOMAT_LENGTH</h4>
 <pre>public static final&nbsp;<a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.html" title="enum in org.opensha2.eq.fault.surface">RuptureScaling</a> NSHM_SUB_GEOMAT_LENGTH</pre>
 <div class="block">Scaling used for NSHM subduction sources. Returns a magnitude-dependent
- length (Geomatrix Consultants, 1995) and <code>maxWidth</code>. This relation
- is used when floating ruptures along strike and <code>maxWidth</code> will
- always be specified as the full down-dip width of the rupture.</div>
+ length (Geomatrix Consultants, 1995) and <code>maxWidth</code>. This relation is
+ used when floating ruptures along strike and <code>maxWidth</code> will always
+ be specified as the full down-dip width of the rupture.</div>
 </li>
 </ul>
 <a name="PEER">
@@ -339,15 +339,12 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>PEER</h4>
 <pre>public static final&nbsp;<a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.html" title="enum in org.opensha2.eq.fault.surface">RuptureScaling</a> PEER</pre>
-<div class="block">Peer PSHA test scaling. Maintains aspect ratio of 2.0 up to maximum
- width, then increases length. Conservation of area at the expense
- of aspect ratio. The uncertainty in area for this model is 0.25.
- 
- <ul>
-        <li>Log (A) = M – 4</li>
-        <li>Log (W) = 0.5 * M - 2.15</li>
-        <li>Log (L) = 0.5 * M - 1.85</li>
- </ul></div>
+<div class="block">Peer PSHA test scaling. Maintains aspect ratio of 2.0 up to maximum width,
+ then increases length. Conservation of area at the expense of aspect ratio.
+ The uncertainty in area for this model is 0.25.
+
+ <ul> <li>Log (A) = M – 4</li> <li>Log (W) = 0.5 * M - 2.15</li> <li>Log (L)
+ = 0.5 * M - 1.85</li> </ul></div>
 </li>
 </ul>
 <a name="NSHM_SOMERVILLE">
@@ -457,8 +454,8 @@ with the specified name</dd>
 <h4>dimensionsDistribution</h4>
 <pre>public abstract&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.Dimensions.html" title="class in org.opensha2.eq.fault.surface">RuptureScaling.Dimensions</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;dimensionsDistribution(double&nbsp;mag,
                                                            double&nbsp;maxWidth)</pre>
-<div class="block">Return a ±2σ distribution of <code>Dimensions</code> and associated weights.
- The distribution is discretized at 11 points.</div>
+<div class="block">Return a ±2σ distribution of <code>Dimensions</code> and associated weights. The
+ distribution is discretized at 11 points.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>mag</code> - scaling basis magnitude</dd><dd><code>maxWidth</code> - of parent source</dd></dl>
 </li>
 </ul>
@@ -530,13 +527,13 @@ with the specified name</dd>
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

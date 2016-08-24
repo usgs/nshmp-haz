@@ -104,13 +104,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  of that from point B to A. Although the horizontal and vertical components
  will be the same, the azimuth will likely change by some value other than
  180°.
- 
+
  <p><b>NOTE:</b> Although a <code>LocationVector</code> will function in any
  reference frame, the convention in seismology and that adopted in OpenSHA is
  for depth to be positive down. Also, azimuth is stored internally in radians
  for computational convenience. Be sure to use the <a href="../../../org/opensha2/geo/LocationVector.html#azimuth()"><code>azimuth()</code></a>
  (radians) or // <a href="../../../org/opensha2/geo/LocationVector.html#azimuthDegrees()"><code>azimuthDegrees()</code></a> (decimal-degrees) where
- appropriate.</p></div>
+ appropriate.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd></dl>
 </li>
@@ -177,22 +177,21 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/LocationVector.html#plunge()">plunge</a></strong>()</code>
-<div class="block">Returns the angle (in radians) between this vector and a horizontal
- plane.</div>
+<div class="block">Returns the angle (in radians) between this vector and a horizontal plane.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/LocationVector.html#plungeDegrees()">plungeDegrees</a></strong>()</code>
-<div class="block">Returns the angle (in decimal degrees) between this vector and a
- horizontal plane.</div>
+<div class="block">Returns the angle (in decimal degrees) between this vector and a horizontal
+ plane.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/geo/LocationVector.html" title="class in org.opensha2.geo">LocationVector</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/LocationVector.html#reverseOf(org.opensha2.geo.LocationVector)">reverseOf</a></strong>(<a href="../../../org/opensha2/geo/LocationVector.html" title="class in org.opensha2.geo">LocationVector</a>&nbsp;v)</code>
-<div class="block">Returns a copy of the supplied vector with azimuth and vertical
- components reversed.</div>
+<div class="block">Returns a copy of the supplied vector with azimuth and vertical components
+ reversed.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -280,13 +279,12 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>reverseOf</h4>
 <pre>public static&nbsp;<a href="../../../org/opensha2/geo/LocationVector.html" title="class in org.opensha2.geo">LocationVector</a>&nbsp;reverseOf(<a href="../../../org/opensha2/geo/LocationVector.html" title="class in org.opensha2.geo">LocationVector</a>&nbsp;v)</pre>
-<div class="block">Returns a copy of the supplied vector with azimuth and vertical
- components reversed.
- 
+<div class="block">Returns a copy of the supplied vector with azimuth and vertical components
+ reversed.
+
  <p><b>NOTE</b>: create(p1, p2) is not equivalent to create
- reverseOf(create(p2, p1)). Although the horizontal and vertical
- components will likley be the same but the azimuths will potentially be
- different.</div>
+ reverseOf(create(p2, p1)). Although the horizontal and vertical components
+ will likley be the same but the azimuths will potentially be different.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>v</code> - <code>LocationVector</code> to copy and flip</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the flipped copy</dd></dl>
 </li>
@@ -320,11 +318,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>plunge</h4>
 <pre>public&nbsp;double&nbsp;plunge()</pre>
-<div class="block">Returns the angle (in radians) between this vector and a horizontal
- plane. This method is intended for use at relatively short separations
- (e.g. ≤200km) as it degrades at large distances where curvature is
- not considered. Note that positive angles are down, negative angles are
- up.</div>
+<div class="block">Returns the angle (in radians) between this vector and a horizontal plane.
+ This method is intended for use at relatively short separations (e.g.
+ ≤200km) as it degrades at large distances where curvature is not
+ considered. Note that positive angles are down, negative angles are up.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the plunge of this vector</dd></dl>
 </li>
 </ul>
@@ -335,11 +332,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>plungeDegrees</h4>
 <pre>public&nbsp;double&nbsp;plungeDegrees()</pre>
-<div class="block">Returns the angle (in decimal degrees) between this vector and a
- horizontal plane. This method is intended for use at relatively short
- separations (e.g. ≤200km) as it degrades at large distances where
- curvature is not considered. Note that positive angles are down, negative
- angles are up.</div>
+<div class="block">Returns the angle (in decimal degrees) between this vector and a horizontal
+ plane. This method is intended for use at relatively short separations
+ (e.g. ≤200km) as it degrades at large distances where curvature is not
+ considered. Note that positive angles are down, negative angles are up.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>the plunge of this vector</dd></dl>
 </li>
 </ul>
@@ -446,13 +442,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

@@ -103,9 +103,9 @@
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">A reusable builder of <code>LocationList</code>s. Repeat calls to
  <code>build()</code> will return multiple lists in series with each new list
- containing all the <code>Location</code>s of the one before it. Builders do
- not permit the addition of <code>null</code> elements.
- 
+ containing all the <code>Location</code>s of the one before it. Builders do not
+ permit the addition of <code>null</code> elements.
+
  <p>Use <a href="../../../org/opensha2/geo/LocationList.html#builder()"><code>LocationList.builder()</code></a> to create new builder instances.</div>
 </li>
 </ul>
@@ -138,15 +138,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/LocationList.Builder.html#add(double, double, double)">add</a></strong>(double&nbsp;lat,
    double&nbsp;lon,
    double&nbsp;depth)</code>
-<div class="block">Add a new <code>Location</code> specified by the supplied latitude,
- longitude, and depth to the <code>LocationList</code>.</div>
+<div class="block">Add a new <code>Location</code> specified by the supplied latitude, longitude,
+ and depth to the <code>LocationList</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/geo/LocationList.Builder.html" title="class in org.opensha2.geo">LocationList.Builder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/LocationList.Builder.html#add(org.opensha2.geo.Location...)">add</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>...&nbsp;locs)</code>
-<div class="block">Add each <code>Location</code> in <code>locs</code> to the <code>LocationList</code>
- .</div>
+<div class="block">Add each <code>Location</code> in <code>locs</code> to the <code>LocationList</code> .</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -158,8 +157,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/geo/LocationList.Builder.html" title="class in org.opensha2.geo">LocationList.Builder</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/LocationList.Builder.html#addAll(java.lang.Iterable)">addAll</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;&nbsp;locs)</code>
-<div class="block">Add each <code>Location</code> in <code>locs</code> to the <code>LocationList</code>
- .</div>
+<div class="block">Add each <code>Location</code> in <code>locs</code> to the <code>LocationList</code> .</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -227,8 +225,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public&nbsp;<a href="../../../org/opensha2/geo/LocationList.Builder.html" title="class in org.opensha2.geo">LocationList.Builder</a>&nbsp;add(double&nbsp;lat,
                        double&nbsp;lon,
                        double&nbsp;depth)</pre>
-<div class="block">Add a new <code>Location</code> specified by the supplied latitude,
- longitude, and depth to the <code>LocationList</code>.</div>
+<div class="block">Add a new <code>Location</code> specified by the supplied latitude, longitude,
+ and depth to the <code>LocationList</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>lat</code> - latitude in decimal degrees</dd><dd><code>lon</code> - longitude in decimal degrees</dd><dd><code>depth</code> - in km (positive down)</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this <code>Builder</code></dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -242,8 +240,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>add</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/geo/LocationList.Builder.html" title="class in org.opensha2.geo">LocationList.Builder</a>&nbsp;add(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>...&nbsp;locs)</pre>
-<div class="block">Add each <code>Location</code> in <code>locs</code> to the <code>LocationList</code>
- .</div>
+<div class="block">Add each <code>Location</code> in <code>locs</code> to the <code>LocationList</code> .</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>locs</code> - to add</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this <code>Builder</code></dd></dl>
 </li>
@@ -255,8 +252,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>addAll</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/geo/LocationList.Builder.html" title="class in org.opensha2.geo">LocationList.Builder</a>&nbsp;addAll(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;&nbsp;locs)</pre>
-<div class="block">Add each <code>Location</code> in <code>locs</code> to the <code>LocationList</code>
- .</div>
+<div class="block">Add each <code>Location</code> in <code>locs</code> to the <code>LocationList</code> .</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>locs</code> - to add</dd>
 <dt><span class="strong">Returns:</span></dt><dd>this <code>Builder</code></dd></dl>
 </li>
@@ -342,13 +338,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

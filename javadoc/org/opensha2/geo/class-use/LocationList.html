@@ -27,7 +27,7 @@
 <li><a href="../package-summary.html">Package</a></li>
 <li><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">Class</a></li>
 <li class="navBarCell1Rev">Use</li>
-<li><a href="../../../../overview-tree.html">Tree</a></li>
+<li><a href="../package-tree.html">Tree</a></li>
 <li><a href="../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../index-all.html">Index</a></li>
 <li><a href="../../../../help-doc.html">Help</a></li>
@@ -77,30 +77,27 @@
 <tr class="altColor">
 <td class="colFirst"><a href="#org.opensha2.eq.fault">org.opensha2.eq.fault</a></td>
 <td class="colLast">
-<div class="block">Classes and utilities for working with fault representations.</div>
+<div class="block">Fault representations.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="#org.opensha2.eq.fault.surface">org.opensha2.eq.fault.surface</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Fault surfaces.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="#org.opensha2.eq.model">org.opensha2.eq.model</a></td>
 <td class="colLast">
-<div class="block">Provides the <a href="../../../../org/opensha2/eq/model/Source.html" title="interface in org.opensha2.eq.model"><code>Source</code></a> representations and
- containers, as well as <a href="../../../../org/opensha2/gmm/GroundMotionModel.html" title="interface in org.opensha2.gmm"><code>GroundMotionModel</code></a> containers
- for use in a <a href="../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model"><code>HazardModel</code></a>.</div>
+<div class="block">Earthquake <a href="../../../../org/opensha2/eq/model/Source.html" title="interface in org.opensha2.eq.model"><code>Source</code></a> and
+ <a href="../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model"><code>HazardModel</code></a> representations.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="#org.opensha2.geo">org.opensha2.geo</a></td>
 <td class="colLast">
-<div class="block">Classes and utilities for working with geographic data.</div>
+<div class="block">Geographic data classes and utilities.</div>
 </td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a href="#org.opensha2.util">org.opensha2.util</a></td>
-<td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -122,15 +119,15 @@
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#resampleTrace(org.opensha2.geo.LocationList, int)">resampleTrace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace,
              int&nbsp;num)</code>
-<div class="block">This resamples the trace into num subsections of equal length (final
- number of points in trace is num+1).</div>
+<div class="block">This resamples the trace into num subsections of equal length (final number
+ of points in trace is num+1).</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateTrace(org.opensha2.geo.LocationList)">validateTrace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace)</code>
-<div class="block">Ensures that a <code>LocationList</code> contains at least two points and is
- not <code>null</code>.</div>
+<div class="block">Ensures that a <code>LocationList</code> contains at least two points and is not
+ <code>null</code>.</div>
 </td>
 </tr>
 </tbody>
@@ -146,8 +143,8 @@
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#getEqualLengthSubsectionTraces(org.opensha2.geo.LocationList, double)">getEqualLengthSubsectionTraces</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;faultTrace,
                               double&nbsp;maxSubSectionLen)</code>
-<div class="block">This subdivides the given fault trace into sub-traces that have the
- length as given (or less).</div>
+<div class="block">This subdivides the given fault trace into sub-traces that have the length
+ as given (or less).</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -155,8 +152,8 @@
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#getEqualLengthSubsectionTraces(org.opensha2.geo.LocationList, double, int)">getEqualLengthSubsectionTraces</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;faultTrace,
                               double&nbsp;maxSubSectionLen,
                               int&nbsp;minSubSections)</code>
-<div class="block">This subdivides the given fault trace into sub-traces that have the
- length as given (or less).</div>
+<div class="block">This subdivides the given fault trace into sub-traces that have the length
+ as given (or less).</div>
 </td>
 </tr>
 </tbody>
@@ -183,8 +180,8 @@
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#getEqualLengthSubsectionTraces(org.opensha2.geo.LocationList, double)">getEqualLengthSubsectionTraces</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;faultTrace,
                               double&nbsp;maxSubSectionLen)</code>
-<div class="block">This subdivides the given fault trace into sub-traces that have the
- length as given (or less).</div>
+<div class="block">This subdivides the given fault trace into sub-traces that have the length
+ as given (or less).</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -192,45 +189,45 @@
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#getEqualLengthSubsectionTraces(org.opensha2.geo.LocationList, double, int)">getEqualLengthSubsectionTraces</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;faultTrace,
                               double&nbsp;maxSubSectionLen,
                               int&nbsp;minSubSections)</code>
-<div class="block">This subdivides the given fault trace into sub-traces that have the
- length as given (or less).</div>
+<div class="block">This subdivides the given fault trace into sub-traces that have the length
+ as given (or less).</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#getLengthBasedAngleAverage(org.opensha2.geo.LocationList, java.util.List)">getLengthBasedAngleAverage</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs,
                           <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;angles)</code>
-<div class="block">Returns an average of the given angles scaled by the distances between
- the corresponding locations.</div>
+<div class="block">Returns an average of the given angles scaled by the distances between the
+ corresponding locations.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#resampleTrace(org.opensha2.geo.LocationList, int)">resampleTrace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace,
              int&nbsp;num)</code>
-<div class="block">This resamples the trace into num subsections of equal length (final
- number of points in trace is num+1).</div>
+<div class="block">This resamples the trace into num subsections of equal length (final number
+ of points in trace is num+1).</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#strike(org.opensha2.geo.LocationList)">strike</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
-<div class="block">Compute the strike in degrees of the supplied line, or trace, by
- connecting the first and last points in <code>locs</code>.</div>
+<div class="block">Compute the strike in degrees of the supplied line, or trace, by connecting
+ the first and last points in <code>locs</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#strikeRad(org.opensha2.geo.LocationList)">strikeRad</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
-<div class="block">Compute the strike in radians of the supplied line, or trace, by
- connecting the first and last points in <code>locs</code>.</div>
+<div class="block">Compute the strike in radians of the supplied line, or trace, by connecting
+ the first and last points in <code>locs</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">Faults.</span><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateTrace(org.opensha2.geo.LocationList)">validateTrace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace)</code>
-<div class="block">Ensures that a <code>LocationList</code> contains at least two points and is
- not <code>null</code>.</div>
+<div class="block">Ensures that a <code>LocationList</code> contains at least two points and is not
+ <code>null</code>.</div>
 </td>
 </tr>
 </tbody>
@@ -240,21 +237,6 @@
 <!--   -->
 </a>
 <h3>Uses of <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a> in <a href="../../../../org/opensha2/eq/fault/surface/package-summary.html">org.opensha2.eq.fault.surface</a></h3>
-<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing fields, and an explanation">
-<caption><span>Fields in <a href="../../../../org/opensha2/eq/fault/surface/package-summary.html">org.opensha2.eq.fault.surface</a> declared as <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code>protected <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GriddedSurfFromSimpleFaultData.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSurfFromSimpleFaultData.html#faultTrace">faultTrace</a></strong></code>
-<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
-&nbsp;</td>
-</tr>
-</tbody>
-</table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
 <caption><span>Methods in <a href="../../../../org/opensha2/eq/fault/surface/package-summary.html">org.opensha2.eq.fault.surface</a> that return <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -264,27 +246,11 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">AbstractGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getEvenlyDiscritizedListOfLocsOnSurface()">getEvenlyDiscritizedListOfLocsOnSurface</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GriddedSubsetSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSubsetSurface.html#getEvenlyDiscritizedListOfLocsOnSurface()">getEvenlyDiscritizedListOfLocsOnSurface</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">GriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedListOfLocsOnSurface()">getEvenlyDiscritizedListOfLocsOnSurface</a></strong>()</code>
-<div class="block">This returns a list of locations that are evenly spread (at least 
- approximately) over the rupture surface, with a spacing given by
- what's returned by the getGridSpacing() method.</div>
+<div class="block">This returns a list of locations that are evenly spread (at least
+ approximately) over the rupture surface, with a spacing given by what's
+ returned by the getGridSpacing() method.</div>
 </td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">AbstractGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getEvenlyDiscritizedLowerEdge()">getEvenlyDiscritizedLowerEdge</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GriddedSubsetSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSubsetSurface.html#getEvenlyDiscritizedLowerEdge()">getEvenlyDiscritizedLowerEdge</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
@@ -295,27 +261,9 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">AbstractGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getEvenlyDiscritizedPerimeter()">getEvenlyDiscritizedPerimeter</a></strong>()</code>
-<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GriddedSubsetSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSubsetSurface.html#getEvenlyDiscritizedPerimeter()">getEvenlyDiscritizedPerimeter</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">GriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getEvenlyDiscritizedPerimeter()">getEvenlyDiscritizedPerimeter</a></strong>()</code>
 <div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">AbstractGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getEvenlyDiscritizedUpperEdge()">getEvenlyDiscritizedUpperEdge</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GriddedSubsetSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSubsetSurface.html#getEvenlyDiscritizedUpperEdge()">getEvenlyDiscritizedUpperEdge</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
@@ -326,28 +274,20 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">AbstractGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getPerimeter()">getPerimeter</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">GriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getPerimeter()">getPerimeter</a></strong>()</code>
+<div class="block">Get a list of locations that constitutes the perimeter of the surface (not
+ necessarily evenly spaced)</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">ApproxGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/ApproxGriddedSurface.html#getPerimeter()">getPerimeter</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">DefaultGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#getPerimeter()">getPerimeter</a></strong>()</code>
 <div class="block">Override the parent with a version with fewer points</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GriddedSubsetSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSubsetSurface.html#getPerimeter()">getPerimeter</a></strong>()</code>&nbsp;</td>
-</tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getPerimeter()">getPerimeter</a></strong>()</code>
-<div class="block">Get a list of locations that constitutes the perimeter of the surface
- (not necessarily evenly spaced)</div>
-</td>
+<td class="colLast"><span class="strong">ApproxGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/ApproxGriddedSurface.html#getPerimeter()">getPerimeter</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
@@ -355,37 +295,17 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GriddedSubsetSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSubsetSurface.html#getRow(int)">getRow</a></strong>(int&nbsp;row)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">AbstractGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getRowAsTrace(int)">getRowAsTrace</a></strong>(int&nbsp;row)</code>
-<div class="block">Gets a specified row as a fault trace</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">AbstractGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/AbstractGriddedSurface.html#getUpperEdge()">getUpperEdge</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GriddedSubsetSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSubsetSurface.html#getUpperEdge()">getUpperEdge</a></strong>()</code>
-<div class="block">Returns same as getEvenlyDiscritizedUpperEdge()</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">GriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSurface.html#getUpperEdge()">getUpperEdge</a></strong>()</code>
-<div class="block">This returns the upper edge of the rupture surface (where the locations
- are not necessarily equally spaced).</div>
+<div class="block">This returns the upper edge of the rupture surface (where the locations are
+ not necessarily equally spaced).</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">DefaultGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#resampleTrace(org.opensha2.geo.LocationList, int)">resampleTrace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace,
              int&nbsp;num)</code>
-<div class="block">This resamples the trace into num subsections of equal length (final
- number of points in trace is num+1).</div>
+<div class="block">This resamples the trace into num subsections of equal length (final number
+ of points in trace is num+1).</div>
 </td>
 </tr>
 </tbody>
@@ -410,28 +330,13 @@
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">DefaultGriddedSurface.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.html#resampleTrace(org.opensha2.geo.LocationList, int)">resampleTrace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace,
              int&nbsp;num)</code>
-<div class="block">This resamples the trace into num subsections of equal length (final
- number of points in trace is num+1).</div>
+<div class="block">This resamples the trace into num subsections of equal length (final number
+ of points in trace is num+1).</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><span class="strong">GriddedSurfFromSimpleFaultData.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSurfFromSimpleFaultData.html#set(org.opensha2.geo.LocationList, double, double, double, double, double)">set</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;faultTrace,
-   double&nbsp;aveDip,
-   double&nbsp;upperSeismogenicDepth,
-   double&nbsp;lowerSeismogenicDepth,
-   double&nbsp;gridSpacingAlong,
-   double&nbsp;gridSpacingDown)</code>
-<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
-&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.Builder.html" title="class in org.opensha2.eq.fault.surface">DefaultGriddedSurface.Builder</a></code></td>
 <td class="colLast"><span class="strong">DefaultGriddedSurface.Builder.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/DefaultGriddedSurface.Builder.html#trace(org.opensha2.geo.LocationList)">trace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/eq/fault/surface/GriddedFaultSurface.Builder.html" title="class in org.opensha2.eq.fault.surface">GriddedFaultSurface.Builder</a></code></td>
-<td class="colLast"><span class="strong">GriddedFaultSurface.Builder.</span><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedFaultSurface.Builder.html#trace(org.opensha2.geo.LocationList)">trace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -446,21 +351,9 @@
                     <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;lowerTrace,
                     double&nbsp;spacing)</code>
 <div class="block">This constructor takes an upper and lower fault trace, re-samples these
- according the the given aveGridSpacing to represent the first and last
- rows of the surface, and then fills in the intermediate rows by evenly
- sampling a straight line between the top and bottom point of each column.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/surface/GriddedSurfFromSimpleFaultData.html#GriddedSurfFromSimpleFaultData(org.opensha2.geo.LocationList, double, double, double, double, double)">GriddedSurfFromSimpleFaultData</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;faultTrace,
-                              double&nbsp;aveDip,
-                              double&nbsp;upperSeismogenicDepth,
-                              double&nbsp;lowerSeismogenicDepth,
-                              double&nbsp;maxGridSpacingAlong,
-                              double&nbsp;maxGridSpacingDown)</code>
-<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
-<div class="block">This constructor will adjust the grid spacings along strike and down dip to exactly fill the surface
- (not cut off ends), leaving the grid spacings just less then the originals.</div>
+ according the the given aveGridSpacing to represent the first and last rows
+ of the surface, and then fills in the intermediate rows by evenly sampling
+ a straight line between the top and bottom point of each column.</div>
 </td>
 </tr>
 </tbody>
@@ -570,15 +463,14 @@
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">LocationList.</span><code><strong><a href="../../../../org/opensha2/geo/LocationList.html#resample(double)">resample</a></strong>(double&nbsp;spacing)</code>
-<div class="block">Return a new <code>LocationList</code> created by resampling this list with
- the desired maximum spacing.</div>
+<div class="block">Return a new <code>LocationList</code> created by resampling this list with the
+ desired maximum spacing.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">LocationList.</span><code><strong><a href="../../../../org/opensha2/geo/LocationList.html#reverse()">reverse</a></strong>()</code>
-<div class="block">Return a new <code>LocationList</code> with <code>Location</code>s in reverse
- order.</div>
+<div class="block">Return a new <code>LocationList</code> with <code>Location</code>s in reverse order.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -641,8 +533,8 @@
               <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;line,
               double&nbsp;buffer)</code>
 <div class="block"><img style="padding: 30px 40px; float: right;" src=
- "../../../../resources/gridded_regions_buffer.jpg"/>Creates a
- <code>Region</code> as a buffered area around a line.</div>
+ "../../../../resources/gridded_regions_buffer.jpg"/>Creates a <code>Region</code>
+ as a buffered area around a line.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -689,8 +581,8 @@
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#minDistanceToLine(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">minDistanceToLine</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
                  <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
-<div class="block">Compute the shortest horizontal distance (in km) from a <code>Location</code>
- to the line defined by connecting the points in a <code>LocationList</code>.</div>
+<div class="block">Compute the shortest horizontal distance (in km) from a <code>Location</code> to
+ the line defined by connecting the points in a <code>LocationList</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -711,33 +603,6 @@
 </tbody>
 </table>
 </li>
-<li class="blockList"><a name="org.opensha2.util">
-<!--   -->
-</a>
-<h3>Uses of <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a> in <a href="../../../../org/opensha2/util/package-summary.html">org.opensha2.util</a></h3>
-<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
-<caption><span>Methods in <a href="../../../../org/opensha2/util/package-summary.html">org.opensha2.util</a> that return <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">NshmpPolygon.</span><code><strong><a href="../../../../org/opensha2/util/NshmpPolygon.html#coordinates()">coordinates</a></strong>()</code>
-<div class="block">Return a list of locations containing the coordinates of this polygon.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><span class="strong">GeoJson.</span><code><strong><a href="../../../../org/opensha2/util/GeoJson.html#fromCoordinates(com.google.gson.JsonArray)">fromCoordinates</a></strong>(<a href="http://google.github.io/gson/apidocs/com/google/gson/JsonArray.html?is-external=true" title="class or interface in com.google.gson">JsonArray</a>&nbsp;coordsArray)</code>
-<div class="block">Returns the <code>LocationList</code> represented by the values in the
- supplied JSON array.</div>
-</td>
-</tr>
-</tbody>
-</table>
-</li>
 </ul>
 </li>
 </ul>
@@ -753,7 +618,7 @@
 <li><a href="../package-summary.html">Package</a></li>
 <li><a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">Class</a></li>
 <li class="navBarCell1Rev">Use</li>
-<li><a href="../../../../overview-tree.html">Tree</a></li>
+<li><a href="../package-tree.html">Tree</a></li>
 <li><a href="../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../index-all.html">Index</a></li>
 <li><a href="../../../../help-doc.html">Help</a></li>
@@ -788,13 +653,13 @@
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

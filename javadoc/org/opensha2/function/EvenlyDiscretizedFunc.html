@@ -119,22 +119,23 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 
  <b>Description:</b> Subclass of DiscretizedFunc and full implementation of
  DiscretizedFuncAPI. Assumes even spacing between the x points represented by
- the delta distance. Y Values are stored as doubles in an array of primitives. This
- allows replacement of values at specified indexes.<p>
+ the delta distance. Y Values are stored as doubles in an array of primitives.
+ This allows replacement of values at specified indexes.<p>
 
- Note that the basic unit for this function framework are Point2D which contain
- x and y values. Since the x-values are evenly space there are no need to store
- them. They can be calculated on the fly based on index. So the internal storage
- saves space by only saving the y values, and reconstituting the Point2D values
- as needed. <p>
+ Note that the basic unit for this function framework are Point2D which
+ contain x and y values. Since the x-values are evenly space there are no need
+ to store them. They can be calculated on the fly based on index. So the
+ internal storage saves space by only saving the y values, and reconstituting
+ the Point2D values as needed. <p>
 
- Since the x values are not stored, what is stored instead is the x-min value, x-max value,
- and the delta spacing between x values. This is enough to calculate any x-value by
- index.<p>
+ Since the x values are not stored, what is stored instead is the x-min value,
+ x-max value, and the delta spacing between x values. This is enough to
+ calculate any x-value by index.<p>
 
- This function can be used to generate histograms. To do that, tolerance should be set greater 
- than delta.  Add methods should then be used to add to Y values for histograms. 
- The x value is the mid-point of the histogram interval<p></div>
+ This function can be used to generate histograms. To do that, tolerance
+ should be set greater than delta. Add methods should then be used to add to Y
+ values for histograms. The x value is the mid-point of the histogram
+ interval<p></div>
 <dl><dt><span class="strong">Version:</span></dt>
   <dd>1.0</dd>
 <dt><span class="strong">Author:</span></dt>
@@ -166,8 +167,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#first">first</a></strong></code>
-<div class="block">Helper boolean that indicates no values have been put
- into this function yet.</div>
+<div class="block">Helper boolean that indicates no values have been put into this function
+ yet.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -226,16 +227,16 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <td class="colOne"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#EvenlyDiscretizedFunc(double, double, int)">EvenlyDiscretizedFunc</a></strong>(double&nbsp;min,
                      double&nbsp;max,
                      int&nbsp;num)</code>
-<div class="block">The other three input options to fully quantify the domain
- of this list, i.e.</div>
+<div class="block">The other three input options to fully quantify the domain of this list,
+ i.e.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#EvenlyDiscretizedFunc(double, int, double)">EvenlyDiscretizedFunc</a></strong>(double&nbsp;min,
                      int&nbsp;num,
                      double&nbsp;delta)</code>
-<div class="block">This is one of two constructor options
- to fully quantify the domain of this list, i.e.</div>
+<div class="block">This is one of two constructor options to fully quantify the domain of this
+ list, i.e.</div>
 </td>
 </tr>
 </table>
@@ -257,14 +258,16 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#add(double, double)">add</a></strong>(double&nbsp;x,
    double&nbsp;y)</code>
-<div class="block">This method can be used for generating histograms if tolerance is set greater than delta.</div>
+<div class="block">This method can be used for generating histograms if tolerance is set
+ greater than delta.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#add(int, double)">add</a></strong>(int&nbsp;index,
    double&nbsp;y)</code>
-<div class="block">This method can be used for generating histograms if tolerance is set greater than delta.</div>
+<div class="block">This method can be used for generating histograms if tolerance is set
+ greater than delta.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -288,23 +291,23 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#equalXAndYValues(org.opensha2.function.DiscretizedFunc)">equalXAndYValues</a></strong>(<a href="../../../org/opensha2/function/DiscretizedFunc.html" title="interface in org.opensha2.function">DiscretizedFunc</a>&nbsp;function)</code>
-<div class="block">Determines if two functions are the same by comparing
- that each point x value is the same, within tolerance,
- and that each y value is the same, including nulls.</div>
+<div class="block">Determines if two functions are the same by comparing that each point x
+ value is the same, within tolerance, and that each y value is the same,
+ including nulls.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#equalXValues(org.opensha2.function.DiscretizedFunc)">equalXValues</a></strong>(<a href="../../../org/opensha2/function/DiscretizedFunc.html" title="interface in org.opensha2.function">DiscretizedFunc</a>&nbsp;function)</code>
-<div class="block">Determines if two functions are the same by comparing
- that each point x value is the same, within tolerance</div>
+<div class="block">Determines if two functions are the same by comparing that each point x
+ value is the same, within tolerance</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#get(int)">get</a></strong>(int&nbsp;index)</code>
-<div class="block">Returns an x and y value in a Point2D based on index
- into the y-points array.</div>
+<div class="block">Returns an x and y value in a Point2D based on index into the y-points
+ array.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -328,43 +331,46 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#getFirstInterpolatedX_inLogXLogYDomain(double)">getFirstInterpolatedX_inLogXLogYDomain</a></strong>(double&nbsp;y)</code>
-<div class="block">Given the input y value, finds the two sequential
- x values with the closest y values, then calculates an
- interpolated x value for this y value, fitted to the curve.</div>
+<div class="block">Given the input y value, finds the two sequential x values with the closest
+ y values, then calculates an interpolated x value for this y value, fitted
+ to the curve.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#getFirstInterpolatedX(double)">getFirstInterpolatedX</a></strong>(double&nbsp;y)</code>
-<div class="block">Given the imput y value, finds the two sequential
- x values with the closest y values, then calculates an
- interpolated x value for this y value, fitted to the curve.</div>
+<div class="block">Given the imput y value, finds the two sequential x values with the closest
+ y values, then calculates an interpolated x value for this y value, fitted
+ to the curve.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#getIndex(java.awt.geom.Point2D)">getIndex</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;point)</code>
-<div class="block">Returns the index of this DataPoint based on it's x any y value
-  both the x-value and y-values in list should match with that of point
- returns -1 if there is no such value in the list</div>
+<div class="block">Returns the index of this DataPoint based on it's x any y value both the
+ x-value and y-values in list should match with that of point returns -1 if
+ there is no such value in the list</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#getInterpolatedY_inLogXLogYDomain(double)">getInterpolatedY_inLogXLogYDomain</a></strong>(double&nbsp;x)</code>
-<div class="block">This function interpolates the y-axis value corresponding to the given value of x.</div>
+<div class="block">This function interpolates the y-axis value corresponding to the given
+ value of x.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#getInterpolatedY_inLogYDomain(double)">getInterpolatedY_inLogYDomain</a></strong>(double&nbsp;x)</code>
-<div class="block">This function interpolates the y-axis value corresponding to the given value of x.</div>
+<div class="block">This function interpolates the y-axis value corresponding to the given
+ value of x.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#getInterpolatedY(double)">getInterpolatedY</a></strong>(double&nbsp;x)</code>
-<div class="block">This function interpolates the y-axis value corresponding to the given value of x</div>
+<div class="block">This function interpolates the y-axis value corresponding to the given
+ value of x</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -382,8 +388,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#getMetadataString()">getMetadataString</a></strong>()</code>
-<div class="block">prints out the state of the list, such as number of points,
- the value of each point, etc.</div>
+<div class="block">prints out the state of the list, such as number of points, the value of
+ each point, etc.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -419,8 +425,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#getXIndex(double)">getXIndex</a></strong>(double&nbsp;x)</code>
-<div class="block">Returns the index of the supplied value provided it's within the
- tolerance of one of the discretized values.</div>
+<div class="block">Returns the index of the supplied value provided it's within the tolerance
+ of one of the discretized values.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -439,15 +445,15 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#hasPoint(double, double)">hasPoint</a></strong>(double&nbsp;x,
         double&nbsp;y)</code>
-<div class="block">Returns true if the x value is withing tolerance of an x-value in this list,
- and the y value is equal to y value in the list.</div>
+<div class="block">Returns true if the x value is withing tolerance of an x-value in this
+ list, and the y value is equal to y value in the list.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#hasPoint(java.awt.geom.Point2D)">hasPoint</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;point)</code>
-<div class="block">Returns true if the x value is withing tolerance of an x-value in this list,
- and the y value is equal to y value in the list.</div>
+<div class="block">Returns true if the x value is withing tolerance of an x-value in this
+ list, and the y value is equal to y value in the list.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -462,8 +468,7 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#set(double, double, int)">set</a></strong>(double&nbsp;min,
    double&nbsp;max,
    int&nbsp;num)</code>
-<div class="block">Three input options to fully quantify the domain
- of this list, i.e.</div>
+<div class="block">Three input options to fully quantify the domain of this list, i.e.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -478,8 +483,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#set(int, double)">set</a></strong>(int&nbsp;index,
    double&nbsp;y)</code>
-<div class="block">this function will throw an exception if the index is not
- within the range of 0 to num -1</div>
+<div class="block">this function will throw an exception if the index is not within the range
+ of 0 to num -1</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -491,16 +496,15 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#toString()">toString</a></strong>()</code>
-<div class="block">Standard java function, usually used for debugging, prints out
- the state of the list, such as number of points, the value of each point, etc.</div>
+<div class="block">Standard java function, usually used for debugging, prints out the state of
+ the list, such as number of points, the value of each point, etc.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#withinTolerance(double, double)">withinTolerance</a></strong>(double&nbsp;x,
                double&nbsp;xx)</code>
-<div class="block">Returns true if two values are within tolerance to
- be considered equal.</div>
+<div class="block">Returns true if two values are within tolerance to be considered equal.</div>
 </td>
 </tr>
 </table>
@@ -617,8 +621,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>first</h4>
 <pre>protected&nbsp;boolean first</pre>
-<div class="block">Helper boolean that indicates no values have been put
- into this function yet. Used only internally.</div>
+<div class="block">Helper boolean that indicates no values have been put into this function
+ yet. Used only internally.</div>
 </li>
 </ul>
 </li>
@@ -638,9 +642,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <pre>public&nbsp;EvenlyDiscretizedFunc(double&nbsp;min,
                      int&nbsp;num,
                      double&nbsp;delta)</pre>
-<div class="block">This is one of two constructor options
- to fully quantify the domain of this list, i.e.
- the x-axis.</div>
+<div class="block">This is one of two constructor options to fully quantify the domain of this
+ list, i.e. the x-axis.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - - Starting x value</dd><dd><code>num</code> - - number of points in list</dd><dd><code>delta</code> - - distance between x values</dd></dl>
 </li>
 </ul>
@@ -653,8 +656,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <pre>public&nbsp;EvenlyDiscretizedFunc(double&nbsp;min,
                      double&nbsp;max,
                      int&nbsp;num)</pre>
-<div class="block">The other three input options to fully quantify the domain
- of this list, i.e. the x-axis.</div>
+<div class="block">The other three input options to fully quantify the domain of this list,
+ i.e. the x-axis.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - - Starting x value</dd><dd><code>num</code> - - number of points in list</dd><dd><code>max</code> - - Ending x value</dd></dl>
 </li>
 </ul>
@@ -675,9 +678,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <pre>public&nbsp;void&nbsp;set(double&nbsp;min,
        int&nbsp;num,
        double&nbsp;delta)</pre>
-<div class="block">Fully quantify the domain of this list, i.e.
- the x-axis. This function clears the list of points
- previously in this function</div>
+<div class="block">Fully quantify the domain of this list, i.e. the x-axis. This function
+ clears the list of points previously in this function</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - - Starting x value</dd><dd><code>num</code> - - number of points in list</dd><dd><code>delta</code> - - distance between x values</dd></dl>
 </li>
 </ul>
@@ -690,9 +692,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <pre>public&nbsp;void&nbsp;set(double&nbsp;min,
        double&nbsp;max,
        int&nbsp;num)</pre>
-<div class="block">Three input options to fully quantify the domain
- of this list, i.e. the x-axis. This function clears the list of points
- previously in this function</div>
+<div class="block">Three input options to fully quantify the domain of this list, i.e. the
+ x-axis. This function clears the list of points previously in this function</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - - Starting x value</dd><dd><code>num</code> - - number of points in list</dd><dd><code>max</code> - - Ending x value</dd></dl>
 </li>
 </ul>
@@ -714,8 +715,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <h4>withinTolerance</h4>
 <pre>protected&nbsp;boolean&nbsp;withinTolerance(double&nbsp;x,
                       double&nbsp;xx)</pre>
-<div class="block">Returns true if two values are within tolerance to
- be considered equal. Used internally</div>
+<div class="block">Returns true if two values are within tolerance to be considered equal.
+ Used internally</div>
 </li>
 </ul>
 <a name="getDelta()">
@@ -745,8 +746,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getMinX</h4>
 <pre>public&nbsp;double&nbsp;getMinX()</pre>
-<div class="block">Returns the minimum x-value in this series. Since the value is
- stored, lookup is very quick</div>
+<div class="block">Returns the minimum x-value in this series. Since the value is stored,
+ lookup is very quick</div>
 </li>
 </ul>
 <a name="getMaxX()">
@@ -756,8 +757,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getMaxX</h4>
 <pre>public&nbsp;double&nbsp;getMaxX()</pre>
-<div class="block">Returns the maximum x-value in this series. Since the value is
- stored, lookup is very quick</div>
+<div class="block">Returns the maximum x-value in this series. Since the value is stored,
+ lookup is very quick</div>
 </li>
 </ul>
 <a name="getMinY()">
@@ -767,12 +768,12 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getMinY</h4>
 <pre>public&nbsp;double&nbsp;getMinY()</pre>
-<div class="block">Returns the minimum y-value in this series. Since the value could
- appear aywhere along the x-axis, each point needs to be
- examined, lookup is slower the larger the dataset. <p>
+<div class="block">Returns the minimum y-value in this series. Since the value could appear
+ aywhere along the x-axis, each point needs to be examined, lookup is slower
+ the larger the dataset. <p>
 
- Note: An alternative would be to check for the min value every time a
- point is inserted and store the miny value. This would only slightly slow down
+ Note: An alternative would be to check for the min value every time a point
+ is inserted and store the miny value. This would only slightly slow down
  the insert, but greatly speed up the lookup. <p></div>
 </li>
 </ul>
@@ -783,12 +784,12 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getMaxY</h4>
 <pre>public&nbsp;double&nbsp;getMaxY()</pre>
-<div class="block">Returns the maximum y-value in this series. Since the value could
- appear aywhere along the x-axis, each point needs to be
- examined, lookup is slower the larger the dataset. <p>
+<div class="block">Returns the maximum y-value in this series. Since the value could appear
+ aywhere along the x-axis, each point needs to be examined, lookup is slower
+ the larger the dataset. <p>
 
- Note: An alternative would be to check for the min value every time a
- point is inserted and store the miny value. This would only slightly slow down
+ Note: An alternative would be to check for the min value every time a point
+ is inserted and store the miny value. This would only slightly slow down
  the insert, but greatly speed up the lookup. <p></div>
 </li>
 </ul>
@@ -799,8 +800,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>get</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;get(int&nbsp;index)</pre>
-<div class="block">Returns an x and y value in a Point2D based on index
- into the y-points array.  The index is based along the x-axis.</div>
+<div class="block">Returns an x and y value in a Point2D based on index into the y-points
+ array. The index is based along the x-axis.</div>
 </li>
 </ul>
 <a name="getX(int)">
@@ -810,9 +811,9 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getX</h4>
 <pre>public&nbsp;double&nbsp;getX(int&nbsp;index)</pre>
-<div class="block">Returns the ith x element in this function. Returns null
- if index is negative or greater than number of points.
- The index is based along the x-axis.</div>
+<div class="block">Returns the ith x element in this function. Returns null if index is
+ negative or greater than number of points. The index is based along the
+ x-axis.</div>
 </li>
 </ul>
 <a name="getY(int)">
@@ -822,9 +823,9 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getY</h4>
 <pre>public&nbsp;double&nbsp;getY(int&nbsp;index)</pre>
-<div class="block">Returns the ith y element in this function. Returns null
- if index is negative or greater than number of points.
- The index is based along the x-axis.</div>
+<div class="block">Returns the ith y element in this function. Returns null if index is
+ negative or greater than number of points. The index is based along the
+ x-axis.</div>
 </li>
 </ul>
 <a name="getY(double)">
@@ -834,10 +835,10 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getY</h4>
 <pre>public&nbsp;double&nbsp;getY(double&nbsp;x)</pre>
-<div class="block">Returns they-value associated with this x-value. First
- the index of the x-value is calculated, within tolerance.
- Then they value is obtained by it's index into the storage
- array. Returns null if x is not one of the x-axis points.</div>
+<div class="block">Returns they-value associated with this x-value. First the index of the
+ x-value is calculated, within tolerance. Then they value is obtained by
+ it's index into the storage array. Returns null if x is not one of the
+ x-axis points.</div>
 </li>
 </ul>
 <a name="getXIndex(double)">
@@ -847,8 +848,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getXIndex</h4>
 <pre>public&nbsp;int&nbsp;getXIndex(double&nbsp;x)</pre>
-<div class="block">Returns the index of the supplied value provided it's within the
- tolerance of one of the discretized values.</div>
+<div class="block">Returns the index of the supplied value provided it's within the tolerance
+ of one of the discretized values.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html#getClosestXIndex(double)"><code>getClosestXIndex(double)</code></a></dd></dl>
 </li>
 </ul>
@@ -859,15 +860,15 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getClosestXIndex</h4>
 <pre>public&nbsp;int&nbsp;getClosestXIndex(double&nbsp;x)</pre>
-<div class="block">Returns the index of the supplied value (ignoring tolerance). It should
- be noted that this method uses a very small internal scale factor to
- provide accurate results. Double precision errors can result in x-values
- that fall on the boundary between adjacent function values. This may
- cause the value to be associated with the index below, when in fact
- boundary values should be associated with the index above. This is the
- convention followed in other data analysis software (e.g. Matlab). Values
- well outside the range spanned by the function are associated with index
- of the min or max function value as appropriate.</div>
+<div class="block">Returns the index of the supplied value (ignoring tolerance). It should be
+ noted that this method uses a very small internal scale factor to provide
+ accurate results. Double precision errors can result in x-values that fall
+ on the boundary between adjacent function values. This may cause the value
+ to be associated with the index below, when in fact boundary values should
+ be associated with the index above. This is the convention followed in
+ other data analysis software (e.g. Matlab). Values well outside the range
+ spanned by the function are associated with index of the min or max
+ function value as appropriate.</div>
 </li>
 </ul>
 <a name="set(java.awt.geom.Point2D)">
@@ -877,8 +878,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>set</h4>
 <pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;point)</pre>
-<div class="block">Calls set( x value, y value ). A DataPoint2DException is thrown
- if the x value is not an x-axis point.</div>
+<div class="block">Calls set( x value, y value ). A DataPoint2DException is thrown if the x
+ value is not an x-axis point.</div>
 </li>
 </ul>
 <a name="set(double, double)">
@@ -890,8 +891,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <pre>public&nbsp;void&nbsp;set(double&nbsp;x,
        double&nbsp;y)</pre>
 <div class="block">Sets the y-value at a specified index. The x-value index is first
- calculated, then the y-value is set in it's array. A
- DataPoint2DException is thrown if the x value is not an x-axis point.</div>
+ calculated, then the y-value is set in it's array. A DataPoint2DException
+ is thrown if the x value is not an x-axis point.</div>
 </li>
 </ul>
 <a name="add(double, double)">
@@ -902,11 +903,11 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <h4>add</h4>
 <pre>public&nbsp;void&nbsp;add(double&nbsp;x,
        double&nbsp;y)</pre>
-<div class="block">This method can be used for generating histograms if tolerance is set greater than delta.
- Adds to the y-value at a specified index. The x-value index is first
- calculated, then the y-value is added in it's array.  
- The specified x value is the mid-point of the histogram interval.
- 
+<div class="block">This method can be used for generating histograms if tolerance is set
+ greater than delta. Adds to the y-value at a specified index. The x-value
+ index is first calculated, then the y-value is added in it's array. The
+ specified x value is the mid-point of the histogram interval.
+
  DataPoint2DException is thrown if the x value is not an x-axis point.</div>
 </li>
 </ul>
@@ -918,8 +919,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <h4>set</h4>
 <pre>public&nbsp;void&nbsp;set(int&nbsp;index,
        double&nbsp;y)</pre>
-<div class="block">this function will throw an exception if the index is not
- within the range of 0 to num -1</div>
+<div class="block">this function will throw an exception if the index is not within the range
+ of 0 to num -1</div>
 </li>
 </ul>
 <a name="add(int, double)">
@@ -930,11 +931,12 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <h4>add</h4>
 <pre>public&nbsp;void&nbsp;add(int&nbsp;index,
        double&nbsp;y)</pre>
-<div class="block">This method can be used for generating histograms if tolerance is set greater than delta.
- Adds to the y-value at a specified index. The specified x value is the mid-point of the histogram interval.
- 
- this function will throw an exception if the index is not
- within the range of 0 to num -1</div>
+<div class="block">This method can be used for generating histograms if tolerance is set
+ greater than delta. Adds to the y-value at a specified index. The specified
+ x value is the mid-point of the histogram interval.
+
+ this function will throw an exception if the index is not within the range
+ of 0 to num -1</div>
 </li>
 </ul>
 <a name="getPointsIterator()">
@@ -947,7 +949,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <div class="block">This function may be slow if there are many points in the list. It has to
  reconstitute all the Point2D x-values by index, only y values are stored
  internally in this function type. A Point2D is built for each y value and
- added to a local ArrayList. Then the iterator of the local ArrayList is returned.</div>
+ added to a local ArrayList. Then the iterator of the local ArrayList is
+ returned.</div>
 </li>
 </ul>
 <a name="getFirstInterpolatedX(double)">
@@ -957,12 +960,12 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getFirstInterpolatedX</h4>
 <pre>public&nbsp;double&nbsp;getFirstInterpolatedX(double&nbsp;y)</pre>
-<div class="block">Given the imput y value, finds the two sequential
- x values with the closest y values, then calculates an
- interpolated x value for this y value, fitted to the curve. <p>
+<div class="block">Given the imput y value, finds the two sequential x values with the closest
+ y values, then calculates an interpolated x value for this y value, fitted
+ to the curve. <p>
 
- Since there may be multiple y values with the same value, this
- function just matches the first found.</div>
+ Since there may be multiple y values with the same value, this function
+ just matches the first found.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>y</code> - value for which interpolated first x value has to be found</dd>
 <dt><span class="strong">Returns:</span></dt><dd>x the interpolated x based on the given y value)</dd></dl>
 </li>
@@ -974,17 +977,15 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getFirstInterpolatedX_inLogXLogYDomain</h4>
 <pre>public&nbsp;double&nbsp;getFirstInterpolatedX_inLogXLogYDomain(double&nbsp;y)</pre>
-<div class="block">Given the input y value, finds the two sequential
- x values with the closest y values, then calculates an
- interpolated x value for this y value, fitted to the curve.
- The interpolated Y value returned is in the linear space but
- the interpolation is done in the log space.
- Since there may be multiple y values with the same value, this
- function just matches the first found starting at the x-min point
- along the x-axis.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>y</code> - : Y value in the linear space coressponding to which we are required to find the interpolated
- x value in the log space.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>x(this  is the interpolated x based on the given y value)</dd></dl>
+<div class="block">Given the input y value, finds the two sequential x values with the closest
+ y values, then calculates an interpolated x value for this y value, fitted
+ to the curve. The interpolated Y value returned is in the linear space but
+ the interpolation is done in the log space. Since there may be multiple y
+ values with the same value, this function just matches the first found
+ starting at the x-min point along the x-axis.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>y</code> - : Y value in the linear space coressponding to which we are
+        required to find the interpolated x value in the log space.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>x(this is the interpolated x based on the given y value)</dd></dl>
 </li>
 </ul>
 <a name="getInterpolatedY(double)">
@@ -994,7 +995,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getInterpolatedY</h4>
 <pre>public&nbsp;double&nbsp;getInterpolatedY(double&nbsp;x)</pre>
-<div class="block">This function interpolates the y-axis value corresponding to the given value of x</div>
+<div class="block">This function interpolates the y-axis value corresponding to the given
+ value of x</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - value for which interpolated first y value has to be found</dd>
 <dt><span class="strong">Returns:</span></dt><dd>y the interpolated y based on the given x value)</dd></dl>
 </li>
@@ -1023,12 +1025,14 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getInterpolatedY_inLogXLogYDomain</h4>
 <pre>public&nbsp;double&nbsp;getInterpolatedY_inLogXLogYDomain(double&nbsp;x)</pre>
-<div class="block">This function interpolates the y-axis value corresponding to the given value of x.
- the interpolation of the Y value is done in the log space for x and y values.
- The Y value returned is in the linear space but the interpolation is done in the log space.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - : X value in the linear space corresponding to which we are required to find the interpolated
- y value in log space.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>y(this  is the interpolated y in linear space based on the given x value)</dd></dl>
+<div class="block">This function interpolates the y-axis value corresponding to the given
+ value of x. the interpolation of the Y value is done in the log space for x
+ and y values. The Y value returned is in the linear space but the
+ interpolation is done in the log space.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - : X value in the linear space corresponding to which we are
+        required to find the interpolated y value in log space.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>y(this is the interpolated y in linear space based on the given x
+         value)</dd></dl>
 </li>
 </ul>
 <a name="getInterpolatedY_inLogYDomain(double)">
@@ -1038,12 +1042,14 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getInterpolatedY_inLogYDomain</h4>
 <pre>public&nbsp;double&nbsp;getInterpolatedY_inLogYDomain(double&nbsp;x)</pre>
-<div class="block">This function interpolates the y-axis value corresponding to the given value of x.
- the interpolation of the Y value is done in the log space y values.
- The Y value returned is in the linear space but the interpolation is done in the log space.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - : X value in the linear space corresponding to which we are required to find the interpolated
- y value in log space.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>y(this  is the interpolated y in linear space based on the given x value)</dd></dl>
+<div class="block">This function interpolates the y-axis value corresponding to the given
+ value of x. the interpolation of the Y value is done in the log space y
+ values. The Y value returned is in the linear space but the interpolation
+ is done in the log space.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - : X value in the linear space corresponding to which we are
+        required to find the interpolated y value in log space.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>y(this is the interpolated y in linear space based on the given x
+         value)</dd></dl>
 </li>
 </ul>
 <a name="deepClone()">
@@ -1053,10 +1059,10 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>deepClone</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/function/DiscretizedFunc.html" title="interface in org.opensha2.function">DiscretizedFunc</a>&nbsp;deepClone()</pre>
-<div class="block">Returns a copy of this and all points in this DiscretizedFunction.
-  A copy, or clone has all values the same, but is a different java class
-  instance. That means you can change the copy without affecting the original
-  instance. <p>
+<div class="block">Returns a copy of this and all points in this DiscretizedFunction. A copy,
+ or clone has all values the same, but is a different java class instance.
+ That means you can change the copy without affecting the original instance.
+ <p>
 
  This is a deep clone so all fields and all data points are copies. <p></div>
 </li>
@@ -1068,8 +1074,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>equalXValues</h4>
 <pre>public&nbsp;boolean&nbsp;equalXValues(<a href="../../../org/opensha2/function/DiscretizedFunc.html" title="interface in org.opensha2.function">DiscretizedFunc</a>&nbsp;function)</pre>
-<div class="block">Determines if two functions are the same by comparing
- that each point x value is the same, within tolerance</div>
+<div class="block">Determines if two functions are the same by comparing that each point x
+ value is the same, within tolerance</div>
 </li>
 </ul>
 <a name="areAllXValuesInteger(double)">
@@ -1085,9 +1091,9 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <dd><code><a href="../../../org/opensha2/function/XY_DataSet.html#areAllXValuesInteger(double)">areAllXValuesInteger</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/opensha2/function/XY_DataSet.html" title="interface in org.opensha2.function">XY_DataSet</a></code></dd>
 <dt><strong>Overrides:</strong></dt>
 <dd><code><a href="../../../org/opensha2/function/AbstractXY_DataSet.html#areAllXValuesInteger(double)">areAllXValuesInteger</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/opensha2/function/AbstractXY_DataSet.html" title="class in org.opensha2.function">AbstractXY_DataSet</a></code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>tolerance</code> - value to consider  rounding errors</dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>tolerance</code> - value to consider rounding errors</dd>
 <dt><span class="strong">Returns:</span></dt><dd>true if all X values are within the tolerance of an integer value
- else returns false</dd></dl>
+         else returns false</dd></dl>
 </li>
 </ul>
 <a name="equalXAndYValues(org.opensha2.function.DiscretizedFunc)">
@@ -1097,9 +1103,9 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>equalXAndYValues</h4>
 <pre>public&nbsp;boolean&nbsp;equalXAndYValues(<a href="../../../org/opensha2/function/DiscretizedFunc.html" title="interface in org.opensha2.function">DiscretizedFunc</a>&nbsp;function)</pre>
-<div class="block">Determines if two functions are the same by comparing
- that each point x value is the same, within tolerance,
- and that each y value is the same, including nulls.</div>
+<div class="block">Determines if two functions are the same by comparing that each point x
+ value is the same, within tolerance, and that each y value is the same,
+ including nulls.</div>
 </li>
 </ul>
 <a name="toString()">
@@ -1109,8 +1115,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
-<div class="block">Standard java function, usually used for debugging, prints out
- the state of the list, such as number of points, the value of each point, etc.</div>
+<div class="block">Standard java function, usually used for debugging, prints out the state of
+ the list, such as number of points, the value of each point, etc.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/opensha2/function/XY_DataSet.html#toString()">toString</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/opensha2/function/XY_DataSet.html" title="interface in org.opensha2.function">XY_DataSet</a></code></dd>
@@ -1127,8 +1133,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <h4>getMetadataString</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getMetadataString()</pre>
 <div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../org/opensha2/function/XY_DataSet.html#getMetadataString()">XY_DataSet</a></code></strong></div>
-<div class="block">prints out the state of the list, such as number of points,
- the value of each point, etc.</div>
+<div class="block">prints out the state of the list, such as number of points, the value of
+ each point, etc.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>value of each point in the function in String format</dd></dl>
 </li>
 </ul>
@@ -1139,8 +1145,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>hasPoint</h4>
 <pre>public&nbsp;boolean&nbsp;hasPoint(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;point)</pre>
-<div class="block">Returns true if the x value is withing tolerance of an x-value in this list,
- and the y value is equal to y value in the list.</div>
+<div class="block">Returns true if the x value is withing tolerance of an x-value in this
+ list, and the y value is equal to y value in the list.</div>
 </li>
 </ul>
 <a name="hasPoint(double, double)">
@@ -1151,8 +1157,8 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <h4>hasPoint</h4>
 <pre>public&nbsp;boolean&nbsp;hasPoint(double&nbsp;x,
                double&nbsp;y)</pre>
-<div class="block">Returns true if the x value is withing tolerance of an x-value in this list,
- and the y value is equal to y value in the list.</div>
+<div class="block">Returns true if the x value is withing tolerance of an x-value in this
+ list, and the y value is equal to y value in the list.</div>
 </li>
 </ul>
 <a name="getIndex(java.awt.geom.Point2D)">
@@ -1162,9 +1168,9 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 <li class="blockList">
 <h4>getIndex</h4>
 <pre>public&nbsp;int&nbsp;getIndex(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&nbsp;point)</pre>
-<div class="block">Returns the index of this DataPoint based on it's x any y value
-  both the x-value and y-values in list should match with that of point
- returns -1 if there is no such value in the list</div>
+<div class="block">Returns the index of this DataPoint based on it's x any y value both the
+ x-value and y-values in list should match with that of point returns -1 if
+ there is no such value in the list</div>
 </li>
 </ul>
 </li>
@@ -1235,13 +1241,13 @@ extends <a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html" ti
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

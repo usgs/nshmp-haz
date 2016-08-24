@@ -113,22 +113,18 @@ extends <a href="../../../org/opensha2/function/AbstractXY_DataSet.html" title="
 implements <a href="../../../org/opensha2/function/DiscretizedFunc.html" title="interface in org.opensha2.function">DiscretizedFunc</a></pre>
 <div class="block"><b>Title:</b> DiscretizedFunc<p>
 
- <b>Description:</b> Abstract implementation of the DiscretizedFuncAPI. Performs standard
- simple or default functions so that subclasses don't have to keep reimplementing the
- same function bodies.<p>
+ <b>Description:</b> Abstract implementation of the DiscretizedFuncAPI.
+ Performs standard simple or default functions so that subclasses don't have
+ to keep reimplementing the same function bodies.<p>
 
  A Discretized Function is a collection of x and y values grouped together as
  the points that describe a function. A discretized form of a function is the
  only ways computers can represent functions. Instead of having y=x^2, you
  would have a sample of possible x and y values. <p>
 
- The basic functions this abstract class implements are:<br>
- <ul>
- <li>get, set Name()
- <li>get, set, Info()
- <li>get, set, Tolerance()
- <li>equals() - returns true if all three fields have the same values.
- </ul>
+ The basic functions this abstract class implements are:<br> <ul> <li>get, set
+ Name() <li>get, set, Info() <li>get, set, Tolerance() <li>equals() - returns
+ true if all three fields have the same values. </ul>
 
  See the interface documentation for further explanation of this framework<p></div>
 <dl><dt><span class="strong">Version:</span></dt>
@@ -168,8 +164,8 @@ implements <a href="../../../org/opensha2/function/DiscretizedFunc.html" title="
 <tr class="altColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/function/AbstractDiscretizedFunc.html#tolerance">tolerance</a></strong></code>
-<div class="block">The tolerance allowed in specifying a x-value near a real x-value,
- so that the real x-value is used.</div>
+<div class="block">The tolerance allowed in specifying a x-value near a real x-value, so that
+ the real x-value is used.</div>
 </td>
 </tr>
 </table>
@@ -325,9 +321,9 @@ implements <a href="../../../org/opensha2/function/DiscretizedFunc.html" title="
 <li class="blockList">
 <h4>tolerance</h4>
 <pre>protected&nbsp;double tolerance</pre>
-<div class="block">The tolerance allowed in specifying a x-value near a real x-value,
- so that the real x-value is used. Note that the tolerance must be smaller
- than 1/2 the delta between data points for evenly discretized function, no
+<div class="block">The tolerance allowed in specifying a x-value near a real x-value, so that
+ the real x-value is used. Note that the tolerance must be smaller than 1/2
+ the delta between data points for evenly discretized function, no
  restriction for arb discretized function, no standard delta.</div>
 </li>
 </ul>
@@ -492,13 +488,13 @@ implements <a href="../../../org/opensha2/function/DiscretizedFunc.html" title="
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>

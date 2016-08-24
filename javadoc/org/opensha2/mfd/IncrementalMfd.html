@@ -35,7 +35,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../org/opensha2/mfd/GutenbergRichterMfd.html" title="class in org.opensha2.mfd"><span class="strong">Prev Class</span></a></li>
+<li>Prev Class</li>
 <li><a href="../../../org/opensha2/mfd/Mfds.html" title="class in org.opensha2.mfd"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -112,16 +112,12 @@
 <dt>All Implemented Interfaces:</dt>
 <dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Point2D.html?is-external=true" title="class or interface in java.awt.geom">Point2D</a>&gt;, <a href="../../../org/opensha2/function/DiscretizedFunc.html" title="interface in org.opensha2.function">DiscretizedFunc</a>, <a href="../../../org/opensha2/function/XY_DataSet.html" title="interface in org.opensha2.function">XY_DataSet</a>, <a href="../../../org/opensha2/util/Named.html" title="interface in org.opensha2.util">Named</a></dd>
 </dl>
-<dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../org/opensha2/mfd/GaussianMfd.html" title="class in org.opensha2.mfd">GaussianMfd</a>, <a href="../../../org/opensha2/mfd/GutenbergRichterMfd.html" title="class in org.opensha2.mfd">GutenbergRichterMfd</a>, <a href="../../../org/opensha2/mfd/YC_1985_CharMfd.html" title="class in org.opensha2.mfd">YC_1985_CharMfd</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="strong">IncrementalMfd</span>
 extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a></pre>
-<div class="block">Base implementation for magnitude-frequency distributions (MFDs) that give the rate of
- one or more earthquakes with differing magnitudes per year.</div>
+<div class="block">Base implementation for magnitude-frequency distributions (MFDs) that give
+ the rate of one or more earthquakes with differing magnitudes per year.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Nitin Gupta, Peter Powers</dd></dl>
 </li>
@@ -236,36 +232,39 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#getCumMomentRateDist()">getCumMomentRateDist</a></strong>()</code>
-<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains cumulative
- Moment Rate (the total moment rate for all points greater than and equal to each mag)</div>
+<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains
+ cumulative Moment Rate (the total moment rate for all points greater than
+ and equal to each mag)</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#getCumRate(double)">getCumRate</a></strong>(double&nbsp;mag)</code>
-<div class="block">This function finds the cumulative Rate at a specified magnitude (the rate greater than
- and equal to that mag)</div>
+<div class="block">This function finds the cumulative Rate at a specified magnitude (the rate
+ greater than and equal to that mag)</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#getCumRate(int)">getCumRate</a></strong>(int&nbsp;index)</code>
-<div class="block">This function finds the cumulative Rate at a specified index  (the rate greater than
- and equal to that index)</div>
+<div class="block">This function finds the cumulative Rate at a specified index (the rate
+ greater than and equal to that index)</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#getCumRateDist()">getCumRateDist</a></strong>()</code>
-<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains all the points
- with Cum Rate Distribution (the rate greater than and equal to each magnitude)</div>
+<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains
+ all the points with Cum Rate Distribution (the rate greater than and equal
+ to each magnitude)</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#getCumRateDistWithOffset()">getCumRateDistWithOffset</a></strong>()</code>
-<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains all the points
- with Cum Rate Distribution (the rate greater than and equal to each magnitude).</div>
+<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains
+ all the points with Cum Rate Distribution (the rate greater than and equal
+ to each magnitude).</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -295,8 +294,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <tr class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#getInfo()">getInfo</a></strong>()</code>
-<div class="block">Returns the info of the distribution that user has set from outside,
- if it is null then it returns the default info from the distribution.</div>
+<div class="block">Returns the info of the distribution that user has set from outside, if it
+ is null then it returns the default info from the distribution.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -326,14 +325,15 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#getMomentRateDist()">getMomentRateDist</a></strong>()</code>
-<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains all the points
- with Moment Rate Distribution</div>
+<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains
+ all the points with Moment Rate Distribution</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#getTotalIncrRate()">getTotalIncrRate</a></strong>()</code>
-<div class="block">This function returns the sum of all the incremental rate as the double varibale</div>
+<div class="block">This function returns the sum of all the incremental rate as the double
+ varibale</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -345,55 +345,56 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <tr class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#name()">name</a></strong>()</code>
-<div class="block">Returns the Name of the Distribution that user has set from outside,
- if it is null then it returns the default Name from the distribution.</div>
+<div class="block">Returns the Name of the Distribution that user has set from outside, if it
+ is null then it returns the default Name from the distribution.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#normalizeByTotalRate()">normalizeByTotalRate</a></strong>()</code>
-<div class="block">This function normalises the values of all the Incremental rate at each point, by dividing each one
- by the totalIncrRate, so that after normalization the sum addition of all incremental rate at each point
- comes to be 1.</div>
+<div class="block">This function normalises the values of all the Incremental rate at each
+ point, by dividing each one by the totalIncrRate, so that after
+ normalization the sum addition of all incremental rate at each point comes
+ to be 1.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#scaleToCumRate(double, double)">scaleToCumRate</a></strong>(double&nbsp;mag,
               double&nbsp;rate)</code>
-<div class="block">Using this function each data point is scaled to the ratio of the CumRate at a given
- magnitude and the specified rate.</div>
+<div class="block">Using this function each data point is scaled to the ratio of the CumRate
+ at a given magnitude and the specified rate.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#scaleToCumRate(int, double)">scaleToCumRate</a></strong>(int&nbsp;index,
               double&nbsp;rate)</code>
-<div class="block">Using this function each data point is scaled to the ratio of the CumRate at a given
- index and the specified rate</div>
+<div class="block">Using this function each data point is scaled to the ratio of the CumRate
+ at a given index and the specified rate</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#scaleToIncrRate(double, double)">scaleToIncrRate</a></strong>(double&nbsp;mag,
                double&nbsp;newRate)</code>
-<div class="block">Using this function each data point is scaled to the ratio of the IncrRate at a given
- magnitude and the specified newRate</div>
+<div class="block">Using this function each data point is scaled to the ratio of the IncrRate
+ at a given magnitude and the specified newRate</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#scaleToIncrRate(int, double)">scaleToIncrRate</a></strong>(int&nbsp;index,
                double&nbsp;newRate)</code>
-<div class="block">Using this function each data point is scaled to the ratio of the IncrRate at a given
- index and the specified newRate</div>
+<div class="block">Using this function each data point is scaled to the ratio of the IncrRate
+ at a given index and the specified newRate</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/IncrementalMfd.html#scaleToTotalMomentRate(double)">scaleToTotalMomentRate</a></strong>(double&nbsp;newTotMoRate)</code>
-<div class="block">Using this function each data point is scaled to ratio of specified newTotalMomentRate
- and oldTotalMomentRate.</div>
+<div class="block">Using this function each data point is scaled to ratio of specified
+ newTotalMomentRate and oldTotalMomentRate.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -512,7 +513,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
               double&nbsp;delta,
               boolean&nbsp;floats)</pre>
 <div class="block">todo constructors</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - </dd><dd><code>num</code> - </dd><dd><code>delta</code> - using the parameters we call the parent class constructors to initialise the parent class variables</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>min</code> - </dd><dd><code>num</code> - </dd><dd><code>delta</code> - using the parameters we call the parent class constructors to
+        initialise the parent class variables</dd></dl>
 </li>
 </ul>
 <a name="IncrementalMfd(double, double, int, boolean)">
@@ -575,8 +577,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>getCumRate</h4>
 <pre>public&nbsp;double&nbsp;getCumRate(double&nbsp;mag)</pre>
-<div class="block">This function finds the cumulative Rate at a specified magnitude (the rate greater than
- and equal to that mag)</div>
+<div class="block">This function finds the cumulative Rate at a specified magnitude (the rate
+ greater than and equal to that mag)</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>mag</code> - </dd></dl>
 </li>
 </ul>
@@ -587,8 +589,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>getCumRate</h4>
 <pre>public&nbsp;double&nbsp;getCumRate(int&nbsp;index)</pre>
-<div class="block">This function finds the cumulative Rate at a specified index  (the rate greater than
- and equal to that index)</div>
+<div class="block">This function finds the cumulative Rate at a specified index (the rate
+ greater than and equal to that index)</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd></dl>
 </li>
 </ul>
@@ -631,7 +633,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>getTotalIncrRate</h4>
 <pre>public&nbsp;double&nbsp;getTotalIncrRate()</pre>
-<div class="block">This function returns the sum of all the incremental rate as the double varibale</div>
+<div class="block">This function returns the sum of all the incremental rate as the double
+ varibale</div>
 </li>
 </ul>
 <a name="normalizeByTotalRate()">
@@ -641,9 +644,10 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>normalizeByTotalRate</h4>
 <pre>public&nbsp;void&nbsp;normalizeByTotalRate()</pre>
-<div class="block">This function normalises the values of all the Incremental rate at each point, by dividing each one
- by the totalIncrRate, so that after normalization the sum addition of all incremental rate at each point
- comes to be 1.</div>
+<div class="block">This function normalises the values of all the Incremental rate at each
+ point, by dividing each one by the totalIncrRate, so that after
+ normalization the sum addition of all incremental rate at each point comes
+ to be 1.</div>
 </li>
 </ul>
 <a name="getCumRateDist()">
@@ -653,8 +657,9 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>getCumRateDist</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a>&nbsp;getCumRateDist()</pre>
-<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains all the points
- with Cum Rate Distribution (the rate greater than and equal to each magnitude)</div>
+<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains
+ all the points with Cum Rate Distribution (the rate greater than and equal
+ to each magnitude)</div>
 </li>
 </ul>
 <a name="getCumRateDistWithOffset()">
@@ -664,10 +669,11 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>getCumRateDistWithOffset</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a>&nbsp;getCumRateDistWithOffset()</pre>
-<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains all the points
- with Cum Rate Distribution (the rate greater than and equal to each magnitude).
- It differs from getCumRateDist() in the X Values because the values are offset
- by delta/2 in the CumDist returned by this method.</div>
+<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains
+ all the points with Cum Rate Distribution (the rate greater than and equal
+ to each magnitude). It differs from getCumRateDist() in the X Values
+ because the values are offset by delta/2 in the CumDist returned by this
+ method.</div>
 </li>
 </ul>
 <a name="getMomentRateDist()">
@@ -677,8 +683,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>getMomentRateDist</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a>&nbsp;getMomentRateDist()</pre>
-<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains all the points
- with Moment Rate Distribution</div>
+<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains
+ all the points with Moment Rate Distribution</div>
 </li>
 </ul>
 <a name="getCumMomentRateDist()">
@@ -688,8 +694,9 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>getCumMomentRateDist</h4>
 <pre>public&nbsp;<a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" title="class in org.opensha2.function">EvenlyDiscretizedFunc</a>&nbsp;getCumMomentRateDist()</pre>
-<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains cumulative
- Moment Rate (the total moment rate for all points greater than and equal to each mag)</div>
+<div class="block">This returns the object of the class EvenlyDiscretizedFunc which contains
+ cumulative Moment Rate (the total moment rate for all points greater than
+ and equal to each mag)</div>
 </li>
 </ul>
 <a name="scaleToTotalMomentRate(double)">
@@ -699,8 +706,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>scaleToTotalMomentRate</h4>
 <pre>public&nbsp;void&nbsp;scaleToTotalMomentRate(double&nbsp;newTotMoRate)</pre>
-<div class="block">Using this function each data point is scaled to ratio of specified newTotalMomentRate
- and oldTotalMomentRate.</div>
+<div class="block">Using this function each data point is scaled to ratio of specified
+ newTotalMomentRate and oldTotalMomentRate.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>newTotMoRate</code> - </dd></dl>
 </li>
 </ul>
@@ -712,8 +719,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <h4>scaleToCumRate</h4>
 <pre>public&nbsp;void&nbsp;scaleToCumRate(double&nbsp;mag,
                   double&nbsp;rate)</pre>
-<div class="block">Using this function each data point is scaled to the ratio of the CumRate at a given
- magnitude and the specified rate.</div>
+<div class="block">Using this function each data point is scaled to the ratio of the CumRate
+ at a given magnitude and the specified rate.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>mag</code> - </dd><dd><code>rate</code> - </dd></dl>
 </li>
 </ul>
@@ -725,8 +732,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <h4>scaleToCumRate</h4>
 <pre>public&nbsp;void&nbsp;scaleToCumRate(int&nbsp;index,
                   double&nbsp;rate)</pre>
-<div class="block">Using this function each data point is scaled to the ratio of the CumRate at a given
- index and the specified rate</div>
+<div class="block">Using this function each data point is scaled to the ratio of the CumRate
+ at a given index and the specified rate</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd><dd><code>rate</code> - </dd></dl>
 </li>
 </ul>
@@ -738,8 +745,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <h4>scaleToIncrRate</h4>
 <pre>public&nbsp;void&nbsp;scaleToIncrRate(double&nbsp;mag,
                    double&nbsp;newRate)</pre>
-<div class="block">Using this function each data point is scaled to the ratio of the IncrRate at a given
- magnitude and the specified newRate</div>
+<div class="block">Using this function each data point is scaled to the ratio of the IncrRate
+ at a given magnitude and the specified newRate</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>mag</code> - </dd><dd><code>newRate</code> - </dd></dl>
 </li>
 </ul>
@@ -751,8 +758,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <h4>scaleToIncrRate</h4>
 <pre>public&nbsp;void&nbsp;scaleToIncrRate(int&nbsp;index,
                    double&nbsp;newRate)</pre>
-<div class="block">Using this function each data point is scaled to the ratio of the IncrRate at a given
- index and the specified newRate</div>
+<div class="block">Using this function each data point is scaled to the ratio of the IncrRate
+ at a given index and the specified newRate</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>index</code> - </dd><dd><code>newRate</code> - </dd></dl>
 </li>
 </ul>
@@ -785,10 +792,10 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>name</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name()</pre>
-<div class="block">Returns the Name of the Distribution that user has set from outside,
- if it is null then it returns the default Name from the distribution.
- Makes the call to the parent "getName()" method to get the metadata
- set outside the application.</div>
+<div class="block">Returns the Name of the Distribution that user has set from outside, if it
+ is null then it returns the default Name from the distribution. Makes the
+ call to the parent "getName()" method to get the metadata set outside the
+ application.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/opensha2/util/Named.html#name()">name</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/opensha2/util/Named.html" title="interface in org.opensha2.util">Named</a></code></dd>
@@ -804,10 +811,10 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>getInfo</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getInfo()</pre>
-<div class="block">Returns the info of the distribution that user has set from outside,
- if it is null then it returns the default info from the distribution.
- Makes the call to the parent "getInfo()" method to get the metadata
- set outside the application.</div>
+<div class="block">Returns the info of the distribution that user has set from outside, if it
+ is null then it returns the default info from the distribution. Makes the
+ call to the parent "getInfo()" method to get the metadata set outside the
+ application.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../org/opensha2/function/XY_DataSet.html#getInfo()">getInfo</a></code>&nbsp;in interface&nbsp;<code><a href="../../../org/opensha2/function/XY_DataSet.html" title="interface in org.opensha2.function">XY_DataSet</a></code></dd>
@@ -843,8 +850,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>setValuesAboveMomentRateToZero</h4>
 <pre>public&nbsp;void&nbsp;setValuesAboveMomentRateToZero(double&nbsp;moRate)</pre>
-<div class="block">This sets all y-axis values above the given total moment rate to zero.
- The final total moment rate will be something less than the value passed in.</div>
+<div class="block">This sets all y-axis values above the given total moment rate to zero. The
+ final total moment rate will be something less than the value passed in.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>moRate</code> - </dd></dl>
 </li>
 </ul>
@@ -901,8 +908,8 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 <li class="blockList">
 <h4>floats</h4>
 <pre>public&nbsp;boolean&nbsp;floats()</pre>
-<div class="block">Returns whether ruptures generated using this MFD should float. May not
- be applicable to all source types (e.g. grid or point sources).</div>
+<div class="block">Returns whether ruptures generated using this MFD should float. May not be
+ applicable to all source types (e.g. grid or point sources).</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd><code>true</code> if ruptures should float, <code>false</code> otherwise</dd></dl>
 </li>
 </ul>
@@ -932,7 +939,7 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../org/opensha2/mfd/GutenbergRichterMfd.html" title="class in org.opensha2.mfd"><span class="strong">Prev Class</span></a></li>
+<li>Prev Class</li>
 <li><a href="../../../org/opensha2/mfd/Mfds.html" title="class in org.opensha2.mfd"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -974,13 +981,13 @@ extends <a href="../../../org/opensha2/function/EvenlyDiscretizedFunc.html" titl
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-				
-				<div style="float: right; font-size: 14px; padding: 4px;">
-				<span style="font-weight: bold;">U.S. Geological Survey</span>
-				– National Seicmic Hazard Mapping Project
-				(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-				</div>
-				
-			</small></p>
+        
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <span style="font-weight: bold;">U.S. Geological Survey</span>
+        – National Seicmic Hazard Mapping Project
+        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        </div>
+        
+      </small></p>
 </body>
 </html>
