@@ -4,29 +4,32 @@ import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
 
-import org.opensha2.calc.Deaggregation.SourceContribution;
-import org.opensha2.data.Data;
+import org.opensha2.calc.DeaggContributor.ClusterContributor;
+import org.opensha2.calc.DeaggContributor.SourceContributor;
+import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.data.IntervalData;
 import org.opensha2.data.IntervalTable;
 import org.opensha2.data.IntervalVolume;
 import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.Source;
-import org.opensha2.eq.model.SourceSet;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
- * Deaggregation dataset that holds deaggregation results of individual
- * {@code SourceSet}s and {@code Gmm}s. Datasets may be recombined via add().
+ * A deaggregation dataset class that provides a variety of builder flavors to
+ * create initial datasets for specific {@code SourceSet}s and {@code Gmm}s and
+ * then recombine them in different ways. Some of the more complex operations in
+ * this class involve the handling of ClusterSources and the recombining of
+ * DeaggContributors.
  *
  * Binned deaggregation data and summary statistics are commonly weighted by the
  * rate of the contributing sources so the term 'weight' in a dataset is
@@ -49,8 +52,7 @@ final class DeaggDataset {
   final double residual;
 
   /* Contributing source sets and sources. */
-  final Map<SourceSet<? extends Source>, Double> sourceSets;
-  final List<SourceContribution> sources;
+  final List<? extends DeaggContributor> contributors;
 
   /*
    * Fields derived at construction time.
@@ -72,8 +74,7 @@ final class DeaggDataset {
       IntervalVolume εScaled,
       double binned,
       double residual,
-      Map<SourceSet<? extends Source>, Double> sourceSets,
-      List<SourceContribution> sources) {
+      List<? extends DeaggContributor> contributors) {
 
     this.rmε = rmε;
     this.rScaled = rScaled;
@@ -81,8 +82,7 @@ final class DeaggDataset {
     this.εScaled = εScaled;
     this.binned = binned;
     this.residual = residual;
-    this.sources = sources;
-    this.sourceSets = sourceSets;
+    this.contributors = contributors;
 
     this.rmWeights = rmε.collapse();
     this.rmrScaled = this.rScaled.collapse();
@@ -201,25 +201,21 @@ final class DeaggDataset {
   private static final Range<Double> rRange = Range.closed(0.0, 1000.0);
   private static final Range<Double> εRange = Range.closed(-3.0, 3.0);
 
-  static class Builder {
+  private static class AbstractBuilder {
 
     /* Rate bin builder. */
-    private IntervalVolume.Builder rmε;
+    IntervalVolume.Builder rmε;
 
     /* Bin builders for r, m, and ε values scaled by rate. */
-    private IntervalVolume.Builder rScaled;
-    private IntervalVolume.Builder mScaled;
-    private IntervalVolume.Builder εScaled;
+    IntervalVolume.Builder rScaled;
+    IntervalVolume.Builder mScaled;
+    IntervalVolume.Builder εScaled;
 
     /* Binned and unbinned rate. */
-    private double binned;
-    private double residual;
+    double binned;
+    double residual;
 
-    /* Contributing source sets and sources. */
-    private Map<SourceSet<? extends Source>, Double> sourceSets;
-    private List<SourceContribution> sources;
-
-    private Builder(
+    private AbstractBuilder(
         double rMin, double rMax, double Δr,
         double mMin, double mMax, double Δm,
         double εMin, double εMax, double Δε) {
@@ -250,18 +246,41 @@ final class DeaggDataset {
           .rows(rMin, rMax, Δr)
           .columns(mMin, mMax, Δm)
           .levels(εMin, εMax, Δε);
-
-      sourceSets = new HashMap<>();
-      sources = new ArrayList<>();
     }
 
-    private Builder(DeaggDataset model) {
+    private AbstractBuilder(DeaggDataset model) {
       rmε = IntervalVolume.Builder.fromModel(model.rmε);
       rScaled = IntervalVolume.Builder.fromModel(model.rScaled);
       mScaled = IntervalVolume.Builder.fromModel(model.mScaled);
       εScaled = IntervalVolume.Builder.fromModel(model.εScaled);
-      sourceSets = new HashMap<>();
-      sources = new ArrayList<>();
+    }
+
+    /*
+     * Return the current total rate of ruptures added to this builder thus far.
+     */
+    double rate() {
+      return binned + residual;
+    }
+  }
+
+  /*
+   * A builder of deaggregation data for which parent contributor can be of any
+   * type.
+   */
+  static class Builder extends AbstractBuilder {
+
+    /* Primary contributor for this dataset. */
+    DeaggContributor.Builder parent;
+
+    private Builder(
+        double rMin, double rMax, double Δr,
+        double mMin, double mMax, double Δm,
+        double εMin, double εMax, double Δε) {
+      super(rMin, rMax, Δr, mMin, mMax, Δm, εMin, εMax, Δε);
+    }
+
+    private Builder(DeaggDataset model) {
+      super(model);
     }
 
     /*
@@ -273,7 +292,7 @@ final class DeaggDataset {
      * values, deaggregation is being performed across each Gmm, so precomputing
      * indices and scaled values in the calling method brings some efficiency.
      */
-    Builder add(
+    Builder addRate(
         int ri, int mi, int εi,
         double rw, double mw, double εw,
         double rate) {
@@ -290,27 +309,32 @@ final class DeaggDataset {
      * Add residual rate for events falling outside distance and magnitude
      * ranges supported by this deaggregation.
      */
-    Builder addResidual(double rate) {
-      residual += rate;
+    Builder addResidual(double residual) {
+      residual += residual;
       return this;
     }
 
-    Builder sourceSet(SourceSet<? extends Source> sourceSet) {
-      checkState(sourceSets.isEmpty(), "SourceSet for dataset has already been set");
-      sourceSets.put(sourceSet, 0.0);
-      return this;
-    }
-
-    /* Add a contributing source to a dataset. */
-    Builder add(SourceContribution source) {
-      sources.add(source);
+    Builder setParentContributor(DeaggContributor.Builder parent) {
+      this.parent = parent;
       return this;
     }
 
     /*
-     * Scale all values. This will usually be called just before build(). This
-     * is a relatively heavyweight operation in that it will cause the source
-     * contribution list to be rebuilt.
+     * Add a contributing source to a dataset. A contributor will likely be
+     * added after multiple calls to add(data...) for the ruptures it represents
+     * wioth the total rate for the source having been tracked externally.
+     */
+    Builder addChildContributor(DeaggContributor.Builder contributor) {
+      checkState(parent != null, "Parent contributor has not been set");
+      parent.addChild(contributor);
+      return this;
+    }
+
+    /*
+     * Scale all values. This will usually be called just before build(). At
+     * this point, the total parent rate and residual may not have been set, but
+     * the call to parent.multiply() will cascade down to child contributors.
+     * Parent rate is always updated on build().
      */
     Builder multiply(double scale) {
       rmε.multiply(scale);
@@ -319,42 +343,20 @@ final class DeaggDataset {
       εScaled.multiply(scale);
       binned *= scale;
       residual *= scale;
-
-      List<SourceContribution> oldSources = sources;
-      sources = new ArrayList<>();
-      for (SourceContribution source : oldSources) {
-        sources.add(new SourceContribution(
-            source.name,
-            source.rate * scale,
-            source.residualRate * scale));
-      }
-
-      for (Entry<SourceSet<? extends Source>, Double> entry : sourceSets.entrySet()) {
-        entry.setValue(entry.getValue() * scale);
-      }
-
+      parent.multiply(scale);
       return this;
     }
 
-    /* Add values from other datasets. */
-    Builder add(DeaggDataset other) {
-      rmε.add(other.rmε);
-      rScaled.add(other.rScaled);
-      mScaled.add(other.mScaled);
-      εScaled.add(other.εScaled);
-      binned += other.binned;
-      residual += other.residual;
-      sources.addAll(other.sources);
-      Data.add(sourceSets, other.sourceSets);
-      return this;
-    }
-
+    /*
+     * A dataset may not have any contributors if it was created from a
+     * DeaggConfig for use as a base DeaggDataset model. See the empty
+     * ImmutableList below.
+     */
     DeaggDataset build() {
-      if (sourceSets.size() == 1) {
-        Entry<SourceSet<? extends Source>, Double> entry =
-            Iterables.getOnlyElement(sourceSets.entrySet());
-        sourceSets.put(entry.getKey(), binned + residual);
-      }
+      ImmutableList<DeaggContributor> contributorList =
+          (parent == null) ? ImmutableList.<DeaggContributor> of() : ImmutableList.of(parent
+              .add(binned, residual)
+              .build());
 
       return new DeaggDataset(
           rmε.build(),
@@ -363,16 +365,201 @@ final class DeaggDataset {
           εScaled.build(),
           binned,
           residual,
-          ImmutableMap.copyOf(sourceSets),
-          ImmutableList.copyOf(sources));
+          contributorList);
+    }
+  }
+
+  private abstract static class AbstractCombiner extends AbstractBuilder {
+
+    private AbstractCombiner(DeaggDataset model) {
+      super(model);
+    }
+
+    /* Add values from other datasets. */
+    AbstractCombiner add(DeaggDataset other) {
+      rmε.add(other.rmε);
+      rScaled.add(other.rScaled);
+      mScaled.add(other.mScaled);
+      εScaled.add(other.εScaled);
+      binned += other.binned;
+      residual += other.residual;
+      return this;
+    }
+
+    protected DeaggDataset build(List<? extends DeaggContributor> contributors) {
+      return new DeaggDataset(
+          rmε.build(),
+          rScaled.build(),
+          mScaled.build(),
+          εScaled.build(),
+          binned,
+          residual,
+          contributors);
+    }
+  }
+
+  static final SourceSetConsolidator SOURCE_SET_CONSOLIDATOR = new SourceSetConsolidator();
+
+  static final class SourceSetConsolidator
+      implements Function<Collection<DeaggDataset>, DeaggDataset> {
+    @Override
+    public DeaggDataset apply(Collection<DeaggDataset> datasets) {
+      SourceSetCombiner combiner = new SourceSetCombiner(datasets.iterator().next());
+      for (DeaggDataset dataset : datasets) {
+        combiner.add(dataset);
+      }
+      return combiner.build();
+    }
+  }
+
+  /*
+   * Specialized builder that combines datasets across multiple SourceSets.
+   */
+  static class SourceSetCombiner extends AbstractCombiner {
+
+    ImmutableList.Builder<DeaggContributor> contributors;
+
+    SourceSetCombiner(DeaggDataset model) {
+      super(model);
+      contributors = ImmutableList.builder();
+    }
+
+    @Override
+    SourceSetCombiner add(DeaggDataset other) {
+      super.add(other);
+      contributors.addAll(other.contributors);
+      return this;
+    }
+
+    DeaggDataset build() {
+      return super.build(contributors.build());
+    }
+  }
+
+  static final SourceConsolidator SOURCE_CONSOLIDATOR = new SourceConsolidator();
+
+  static final class SourceConsolidator
+      implements Function<Collection<DeaggDataset>, DeaggDataset> {
+    @Override
+    public DeaggDataset apply(Collection<DeaggDataset> datasets) {
+      SourceCombiner combiner = new SourceCombiner(datasets.iterator().next());
+      for (DeaggDataset dataset : datasets) {
+        combiner.add(dataset);
+      }
+      return combiner.build();
+    }
+  }
+
+  /*
+   * Specialized builder that combines datasets across Gmms for a single
+   * SourceSet. The model supplied must be one of the datasets to be combined,
+   * and all additions must reference the same singleton SourceSet of the model.
+   */
+  static class SourceCombiner extends AbstractCombiner {
+
+    SourceSetContributor.Builder contributor;
+    Map<Source, DeaggContributor.Builder> childMap;
+
+    SourceCombiner(DeaggDataset model) {
+      super(model);
+      SourceSetContributor ssc = (SourceSetContributor) Iterables
+          .getOnlyElement(model.contributors);
+      contributor = new SourceSetContributor.Builder().sourceSet(ssc.sourceSet);
+      childMap = new HashMap<>();
+    }
+
+    @Override
+    SourceCombiner add(DeaggDataset other) {
+      super.add(other);
+      SourceSetContributor sourceSetContributor = (SourceSetContributor) Iterables
+          .getOnlyElement(other.contributors);
+      for (DeaggContributor deaggContributor : sourceSetContributor.children) {
+        switch (sourceSetContributor.sourceSet.type()) {
+          case CLUSTER:
+            putOrAddCluster((ClusterContributor) deaggContributor);
+            break;
+          default:
+            putOrAddSource((SourceContributor) deaggContributor);
+        }
+      }
+      return this;
+    }
+
+    private void putOrAddSource(SourceContributor contributor) {
+      Source source = contributor.source;
+
+      /* Add to existing. */
+      if (childMap.containsKey(source)) {
+        childMap.get(source).add(contributor.rate, contributor.residual);
+        return;
+      }
+
+      /* Put new. */
+      DeaggContributor.Builder sourceContributor = new SourceContributor.Builder()
+          .source(source)
+          .add(contributor.rate, contributor.residual);
+      childMap.put(source, sourceContributor);
+    }
+
+    private void putOrAddCluster(ClusterContributor contributor) {
+      ClusterSource cluster = contributor.cluster;
+
+      /* Add to existing. */
+      if (childMap.containsKey(cluster)) {
+        ClusterContributor.Builder clusterBuilder =
+            (ClusterContributor.Builder) childMap.get(cluster);
+        clusterBuilder.add(contributor.rate, contributor.residual);
+
+        /* Processs faults. */
+        Map<Source, SourceContributor.Builder> sourceMap = createFaultSourceMap(clusterBuilder);
+        for (DeaggContributor child : contributor.faults) {
+          SourceContributor fault = (SourceContributor) child;
+          Source source = fault.source;
+          sourceMap.get(source).add(fault.rate, fault.residual);
+        }
+        return;
+      }
+
+      /* Put new. */
+      DeaggContributor.Builder clusterBuilder = new ClusterContributor.Builder()
+          .cluster(cluster)
+          .add(contributor.rate, contributor.residual);
+
+      /* Add faults. */
+      for (DeaggContributor child : contributor.faults) {
+        SourceContributor fault = (SourceContributor) child;
+        // TODO possibly copy other fields
+        DeaggContributor.Builder sourceContributor = new SourceContributor.Builder()
+            .source(fault.source)
+            .add(fault.rate, fault.residual);
+        clusterBuilder.addChild(sourceContributor);
+      }
+      childMap.put(cluster, clusterBuilder);
     }
 
     /*
-     * Utility method to return the current total rate of ruptures added to this
-     * builder thus far.
+     * This is a relatively heavyweight operation that is called with each
+     * addition of a ClusterContributor, however it does not need to be called
+     * that often. It is the only way to merge the contributions from child
+     * FaultSources in a ClusterContributor that are added in unknown order.
      */
-    double rate() {
-      return binned + residual;
+    private static Map<Source, SourceContributor.Builder> createFaultSourceMap(
+        ClusterContributor.Builder clusterBuilder) {
+      HashMap<Source, SourceContributor.Builder> sourceMap = new HashMap<>();
+      for (DeaggContributor.Builder child : clusterBuilder.faults) {
+        SourceContributor.Builder sourceBuilder = (SourceContributor.Builder) child;
+        sourceMap.put(sourceBuilder.source, sourceBuilder);
+      }
+      return sourceMap;
+    }
+
+    DeaggDataset build() {
+      // TODO change to DeaggCOntributor.buildAndSort()
+      for (DeaggContributor.Builder child : childMap.values()) {
+        contributor.addChild(child);
+      }
+      contributor.add(binned, residual);
+      return super.build(ImmutableList.of(contributor.build()));
     }
   }
 

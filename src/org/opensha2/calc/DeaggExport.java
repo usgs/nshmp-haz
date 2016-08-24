@@ -1,7 +1,9 @@
 package org.opensha2.calc;
 
-import static org.opensha2.internal.TextUtils.NEWLINE;
+import static java.lang.Math.exp;
+
 import static org.opensha2.internal.MathUtils.round;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.data.Data;
 import org.opensha2.internal.Parsing.Delimiter;
@@ -20,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Deaggregation exporter. This class handles String/Text and JSON output of
+ * Deaggregation dataset exporter. This class handles String/Text and JSON output of
  * DeaggDatasets. JSON output is supported through the serialization of custom
  * data containers. String output is supported through the {@code toString()}
  * methods of those objects.
@@ -29,6 +31,7 @@ import java.util.List;
  */
 final class DeaggExport {
 
+  final transient DeaggDataset ddTotal;
   final transient DeaggDataset dd;
   final transient DeaggConfig dc;
   final transient EpsilonBins εBins;
@@ -36,17 +39,28 @@ final class DeaggExport {
   final DistanceMagnitudeData data;
   final SummaryElements summary;
 
-  DeaggExport(DeaggDataset dd, DeaggConfig dc) {
+  /*
+   * All component DeaggDatasets require data from the final total DeaggDataset
+   * to correctly calculate contributions and represent summary data that is not
+   * specific to the component dataset.
+   */
+
+  DeaggExport(DeaggDataset ddTotal, DeaggDataset dd, DeaggConfig dc) {
+    this.ddTotal = ddTotal;
     this.dd = dd;
     this.dc = dc;
-    εBins = createEpsilonBins(dd.rmε.levels(), dd.rmε.levelΔ());
-    summary = createSummaryElements(dd, dc);
-    data = createDistanceMagnitudeData(dd);
+    εBins = createEpsilonBins(ddTotal.rmε.levels(), ddTotal.rmε.levelΔ());
+    summary = createSummaryElements(ddTotal, dd, dc);
+    data = createDistanceMagnitudeData(ddTotal, dd);
   }
 
   @Deprecated
   public String toString() {
-    return "" + data + NEWLINE + summary + NEWLINE + εBins;
+    return "" +
+        data + NEWLINE +
+        summary + NEWLINE +
+        εBins + NEWLINE +
+        contributionsToString(ddTotal, dd);
   }
 
   /*
@@ -58,11 +72,14 @@ final class DeaggExport {
    * distance but descending in magnitude to facilitate rendering order in a
    * standard deaggregation 3D histogram.
    */
-  private static DistanceMagnitudeData createDistanceMagnitudeData(DeaggDataset dd) {
+  private static DistanceMagnitudeData createDistanceMagnitudeData(
+      DeaggDataset ddTotal, 
+      DeaggDataset dd) {
+    
     ImmutableList.Builder<RmBin> rmBins = ImmutableList.builder();
     List<Double> distances = dd.rmε.rows();
     List<Double> magnitudes = dd.rmε.columns();
-    double toPercent = percentScalar(dd);
+    double toPercent = percentScalar(ddTotal);
 
     // iterate distances ascending, magnitudes descending
     for (int ri = 0; ri < distances.size(); ri++) {
@@ -119,7 +136,7 @@ final class DeaggExport {
       sb.append(NEWLINE);
       for (RmBin rmBin : RM_BIN_SORTER.immutableSortedCopy(this)) {
         sb.append(String.format(
-            "%7.2f, %6.2f, %4.2f, %4.2f,",
+            "%6.2f, %6.2f, %4.2f, %4.2f,",
             rmBin.r, rmBin.r̅, rmBin.m, rmBin.m̅));
         double total = Data.sum(rmBin.εValues);
         sb.append(EPSILON_FORMATTER.apply(total)).append(",");
@@ -207,7 +224,7 @@ final class DeaggExport {
    */
 
   private static final String DEAGG_DATA_HEADER = String.format(
-      "%7s, %7s, %4s, %5s, %5s",
+      "%6s, %7s, %4s, %5s, %5s",
       "r", "r̅", "m", "m̅", "Σε");
 
   private static final String E_TRACE = "     T";
@@ -220,8 +237,7 @@ final class DeaggExport {
     @Override
     public String apply(Double value) {
       return (value == 0.0) ? E_ZERO
-          : (value < TRACE_LIMIT) ? E_TRACE
-              : String.format(E_FORMAT, value);
+          : (value < TRACE_LIMIT) ? E_TRACE : String.format(E_FORMAT, value);
     }
   };
 
@@ -232,10 +248,7 @@ final class DeaggExport {
   private static Ordering<RmBin> RM_BIN_SORTER = new Ordering<RmBin>() {
     @Override
     public int compare(RmBin left, RmBin right) {
-      return ComparisonChain.start()
-          .compare(left.r, right.r)
-          .compare(left.m, right.m)
-          .result();
+      return ComparisonChain.start().compare(left.r, right.r).compare(left.m, right.m).result();
     }
   };
 
@@ -244,19 +257,22 @@ final class DeaggExport {
    * 
    * Create a container of summary information for a DeaggDataset.
    */
-  private static SummaryElements createSummaryElements(DeaggDataset dd, DeaggConfig dc) {
+  private static SummaryElements createSummaryElements(
+      DeaggDataset total,
+      DeaggDataset dd,
+      DeaggConfig dc) {
 
-    double toPercent = percentScalar(dd);
+    double toPercent = percentScalar(total);
     int ri, mi, εi;
-    
+
     /* targets */
-    double recoveredRate = dd.binned + dd.residual;
+    double recoveredRate = total.binned + total.residual;
     double recoveredReturnPeriod = 1.0 / recoveredRate;
 
     /* totals */
-    double total = dd.binned * toPercent;
-    double residual = dd.residual * toPercent;
-    double trace = traceContribution(dd);
+    double ddTotal = dd.binned * toPercent;
+    double ddResidual = dd.residual * toPercent;
+    double ddTrace = traceContribution(dd);
 
     /* modes: largest r-m bin */
     int[] rmIndex = dd.rmWeights.maxIndex();
@@ -285,16 +301,16 @@ final class DeaggExport {
         new SummaryElement("Deaggregation targets", true, ImmutableList.of(
             new SummaryItem("Return period", dc.returnPeriod, "yrs"),
             new SummaryItem("Exceedance rate", dc.rate, "yr⁻¹"),
-            new SummaryItem("Exceedance IML", dc.iml, "g"))),
+            new SummaryItem("Exceedance IML", exp(dc.iml), "g"))),
 
         new SummaryElement("Recovered targets", true, ImmutableList.of(
             new SummaryItem("Return period", recoveredReturnPeriod, "yrs"),
             new SummaryItem("Exceedance rate", recoveredRate, "yr⁻¹"))),
 
         new SummaryElement("Totals", true, ImmutableList.of(
-            new SummaryItem("Binned", round(total, RME_ROUNDING), "%"),
-            new SummaryItem("Residual", round(residual, RME_ROUNDING), "%"),
-            new SummaryItem("Trace", round(trace, RME_ROUNDING), "%"))),
+            new SummaryItem("Binned", round(ddTotal, RME_ROUNDING), "%"),
+            new SummaryItem("Residual", round(ddResidual, RME_ROUNDING), "%"),
+            new SummaryItem("Trace", round(ddTrace, RME_ROUNDING), "%"))),
 
         new SummaryElement("Mean (for all sources)", true, ImmutableList.of(
             new SummaryItem("r", round(dd.rBar, RME_ROUNDING), "km"),
@@ -395,6 +411,56 @@ final class DeaggExport {
       this.value = value;
       this.units = units;
     }
+  }
+
+  private static final int NAME_WIDTH = 44;
+  private static final int TYPE_WIDTH = 9;
+  private static final String SRC_SET_NAME_FMT = "%-" + NAME_WIDTH + "s";
+  private static final String SRC_NAME_FMT = "%-" + (NAME_WIDTH + TYPE_WIDTH) + "s";
+  private static final String HEADER_COLUMN_FMT = "%9s%8s%6s%7s%9s%8s%6s%8s";
+  private static final String SOURCE_COLUMN_FMT = "%8.2f%6.2f%7.2f%9.2f%8.2f%6.1f%8.2f";
+  private static final String CONTRIB_HEADER_FMT = SRC_SET_NAME_FMT + HEADER_COLUMN_FMT;
+  static final String CONTRIB_SOURCE_SET_FMT = SRC_SET_NAME_FMT + "%9s%52.2f";
+  static final String CONTRIB_SOURCE_FMT = SRC_NAME_FMT + SOURCE_COLUMN_FMT;
+
+  private static final String CONTRIBUTION_HEADER = new StringBuilder()
+      .append(String.format(CONTRIB_HEADER_FMT,
+          "Source Set Name ↳ Source Name", "Type", "r", "m", "ε₀", "lon", "lat", "az", "%"))
+      .append(NEWLINE)
+      .append(String.format(CONTRIB_HEADER_FMT,
+          "—————————————————————————————", "—————————", "——————", "————", "—————",
+          "———————", "——————", "————", "——————"))
+      .toString();
+
+  /*
+   * Source contributions.
+   */
+  static String contributionsToString(DeaggDataset ddTotal, DeaggDataset dd) {
+    double toPercent = percentScalar(ddTotal);
+    StringBuilder sb = new StringBuilder(CONTRIBUTION_HEADER);
+    sb.append(NEWLINE);
+    for (DeaggContributor contributor : dd.contributors) {
+      contributor.appendTo(sb, toPercent, "");
+      sb.append(NEWLINE);
+    }
+
+    // for (DeaggSourceSet dss : dd.sourceSets) {
+    //
+    // double contrib = dss.rate * toPercent;
+    // sb.append(String.format(CONTRIB_SOURCE_SET_FMT, dss.sourceSet.name(),
+    // dss.rate));
+    // sb.append(NEWLINE);
+    //
+    // for (SourceContributor source : dss.sources) {
+    // sb.append(String.format(
+    // CONTRIB_SOURCE_FMT,
+    // source.source, 1.2, 5.4, -0.3, -117.0, 34.0, 23.0, source.rate *
+    // toPercent));
+    // sb.append(NEWLINE);
+    // }
+    //
+    // }
+    return sb.toString();
   }
 
   /*
