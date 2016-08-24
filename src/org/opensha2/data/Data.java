@@ -1241,27 +1241,6 @@ public final class Data {
   }
 
   /**
-   * Creates a sequence of values starting at {@code min} and ending at
-   * {@code max}, the log of which are evenly spaced.
-   * @param min sequence value
-   * @param max sequence value
-   * @param step sequence spacing
-   * @param ascending if {@code true}, descending if {@code false}
-   * @return a monotonically increasing or decreasing sequence where the log of
-   *         the values are evenly spaced
-   * @throws IllegalArgumentException if {@code min >= max}, {@code step <= 0} ,
-   *         or any arguments are {@code Double.NaN},
-   *         {@code Double.POSITIVE_INFINITY}, or
-   *         {@code Double.NEGATIVE_INFINITY}
-   *
-   */
-  public static double[] buildLogSequence(double min, double max, double step,
-      boolean ascending) {
-    double[] seq = buildSequence(Math.log(min), Math.log(max), Math.log(step), ascending);
-    return exp(seq);
-  }
-
-  /**
    * Creates a sequence of evenly spaced values starting at {@code min} and
    * ending at {@code max}. If {@code (max - min) / step} is not integer valued,
    * the last step in the sequence will be {@code <step}. If {@code min == max},
@@ -1362,6 +1341,7 @@ public final class Data {
    * @return a reference to the 'cleaned', supplied {@code data}
    */
   public static double[] clean(int scale, double... data) {
+    // TODO should check that scale is > 0
     return transform(new Clean(scale), data);
   }
 
