@@ -8,6 +8,7 @@ import org.opensha2.data.Interpolator;
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
+import org.opensha2.util.Site;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
@@ -78,10 +79,12 @@ public final class Deaggregation {
    * higher.
    */
 
-  private final Map<Imt, ImtDeagg> deaggs;
+  final Map<Imt, ImtDeagg> deaggs;
+  final Site site;
 
-  private Deaggregation(Map<Imt, ImtDeagg> deaggs) {
+  private Deaggregation(Map<Imt, ImtDeagg> deaggs, Site site) {
     this.deaggs = deaggs;
+    this.site = site;
   }
 
   /**
@@ -100,12 +103,14 @@ public final class Deaggregation {
       Imt imt = entry.getKey();
       double iml = IML_INTERPOLATER.findX(entry.getValue(), rate);
       DeaggConfig config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
-      System.out.println(config); // TODO clean
+      //System.out.println(config); // TODO clean
       ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
       imtDeaggMap.put(imt, imtDeagg);
     }
 
-    return new Deaggregation(Maps.immutableEnumMap(imtDeaggMap));
+    return new Deaggregation(
+        Maps.immutableEnumMap(imtDeaggMap),
+        hazard.site);
   }
 
   /**
@@ -128,7 +133,9 @@ public final class Deaggregation {
       imtDeaggMap.put(imt, imtDeagg);
     }
 
-    return new Deaggregation(Maps.immutableEnumMap(imtDeaggMap));
+    return new Deaggregation(
+        Maps.immutableEnumMap(imtDeaggMap),
+        hazard.site);
   }
 
   /* Hazard curves are already in log-x space. */
@@ -183,8 +190,8 @@ public final class Deaggregation {
         XySequence sourceSetCurve = curveSet.totalCurves.get(config.imt);
         double sourceSetRate = RATE_INTERPOLATER.findY(sourceSetCurve, config.iml);
         if (Double.isNaN(sourceSetRate) || sourceSetRate == 0.0) {
-          // TODO log instead ??
-          System.out.println("Skipping: " + curveSet.sourceSet.name());
+          // TODO log me instead FINER??
+          //System.out.println("Skipping: " + curveSet.sourceSet.name());
           continue;
         }
         Map<Gmm, DeaggDataset> sourceSetDatasets = Deaggregator.deaggregate(curveSet, config);
@@ -205,11 +212,19 @@ public final class Deaggregation {
     public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append(NEWLINE);
-      DeaggExport export = new DeaggExport(totalDataset, totalDataset, config);
+      DeaggExport export = new DeaggExport(
+          totalDataset, 
+          totalDataset, 
+          config,
+          "Total");
       sb.append(export.toString());
       sb.append(NEWLINE);
-      for (DeaggDataset dd : gmmDatasets.values()) {
-        export = new DeaggExport(totalDataset, dd, config);
+      for (Entry<Gmm, DeaggDataset> ddEntry : gmmDatasets.entrySet()) {
+        export = new DeaggExport(
+            totalDataset, 
+            ddEntry.getValue(), 
+            config, 
+            ddEntry.getKey().toString());
         sb.append(export.toString());
         sb.append(NEWLINE);
       }

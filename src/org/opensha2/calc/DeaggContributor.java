@@ -1,18 +1,20 @@
 package org.opensha2.calc;
 
+import static org.opensha2.calc.DeaggExport.CONTRIBUTOR_LIMIT;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.eq.model.ClusterSource;
+import org.opensha2.eq.model.Rupture;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 
 import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -101,9 +103,13 @@ abstract class DeaggContributor {
 
     @Override
     public StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
+      double contribution = total() * toPercent;
+      if (contribution < CONTRIBUTOR_LIMIT) {
+        return sb;
+      }
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_SET_FMT,
-          sourceSet.name(), sourceSet.type(), total() * toPercent));
+          sourceSet.name(), sourceSet.type(), contribution));
       sb.append(NEWLINE);
       for (DeaggContributor child : children) {
         child.appendTo(sb, toPercent, "  ");
@@ -134,14 +140,11 @@ abstract class DeaggContributor {
 
       @Override
       SourceSetContributor build() {
-        // TODO sort using SORTER
         return new SourceSetContributor(
             sourceSet,
             rate,
             residual,
-            FluentIterable.from(children)
-                .transform(BUILDER)
-                .toList());
+            buildAndSort(children));
       }
     }
   }
@@ -150,17 +153,38 @@ abstract class DeaggContributor {
   static class SourceContributor extends DeaggContributor {
 
     final Source source;
+    final double rScaled;
+    final double mScaled;
+    final double εScaled;
 
-    private SourceContributor(Source source, double rate, double residual) {
+    private SourceContributor(
+        Source source,
+        double rate,
+        double residual,
+        double rScaled,
+        double mScaled,
+        double εScaled) {
+
       super(rate, residual);
       this.source = source;
+      this.rScaled = rScaled;
+      this.mScaled = mScaled;
+      this.εScaled = εScaled;
     }
 
     @Override
     StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
+      double total = total();
+      double contribution = total * toPercent;
+      if (contribution < CONTRIBUTOR_LIMIT) {
+        return sb;
+      }
+      double rBar = rScaled / total;
+      double mBar = mScaled / total;
+      double εBar = εScaled / total;
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_FMT,
-          indent + source.name(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, total() * toPercent));
+          indent + source.name(), rBar, mBar, εBar, 0.0, 0.0, 0.0, contribution));
       sb.append(NEWLINE);
       return sb;
     }
@@ -168,10 +192,20 @@ abstract class DeaggContributor {
     static final class Builder extends DeaggContributor.Builder {
 
       Source source;
+      double rScaled;
+      double mScaled;
+      double εScaled;
 
       Builder source(Source source) {
-
         this.source = source;
+        return this;
+      }
+
+      Builder add(double rate, double residual, double rScaled, double mScaled, double εScaled) {
+        super.add(rate, residual);
+        this.rScaled += rScaled;
+        this.mScaled += mScaled;
+        this.εScaled += εScaled;
         return this;
       }
 
@@ -182,7 +216,7 @@ abstract class DeaggContributor {
 
       @Override
       SourceContributor build() {
-        return new SourceContributor(source, rate, residual);
+        return new SourceContributor(source, rate, residual, rScaled, mScaled, εScaled);
       }
     }
   }
@@ -206,9 +240,13 @@ abstract class DeaggContributor {
 
     @Override
     StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
+      double contribution = total() * toPercent;
+      if (contribution < CONTRIBUTOR_LIMIT) {
+        return sb;
+      }
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_FMT,
-          indent + cluster.name(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, total() * toPercent));
+          indent + cluster.name(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, contribution));
       sb.append(NEWLINE);
       for (DeaggContributor fault : faults) {
         fault.appendTo(sb, toPercent, "    ");
@@ -243,47 +281,84 @@ abstract class DeaggContributor {
 
       @Override
       ClusterContributor build() {
-        // TODO sort using SORTER
         return new ClusterContributor(
             cluster,
             rate,
             residual,
-            FluentIterable.from(faults)
-                .transform(BUILDER)
-                .toList());
+            buildAndSort(faults));
       }
     }
   }
 
-  @Deprecated
-  static final class GridContributor extends DeaggContributor {
+  static final class SystemContributor extends DeaggContributor {
 
-    // TODO need to handle point source iteration and
-    // table optimizations
-    GridContributor(double rate, double residual) {
+    final SectionSource section;
+
+    SystemContributor(SectionSource section, double rate, double residual) {
       super(rate, residual);
+      this.section = section;
     }
 
     @Override
     StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
-      sb.append("TBD").append(NEWLINE);
+      double contribution = total() * toPercent;
+      if (contribution < CONTRIBUTOR_LIMIT) {
+        return sb;
+      }
+      sb.append(String.format(
+          DeaggExport.CONTRIB_SOURCE_FMT,
+          indent + section.name(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, contribution));
+      sb.append(NEWLINE);
       return sb;
+    }
+
+    static final class Builder extends DeaggContributor.Builder {
+
+      SectionSource section;
+
+      Builder section(SectionSource section) {
+        this.section = section;
+        return this;
+      }
+
+      @Override
+      Builder addChild(DeaggContributor.Builder contributor) {
+        throw new UnsupportedOperationException();
+      }
+
+      @Override
+      DeaggContributor build() {
+        return new SystemContributor(section, rate, residual);
+      }
     }
   }
 
-  @Deprecated
-  static final class SystemContributor extends DeaggContributor {
+  /*
+   * Custom source that encapsulates the fact that relevant data in the
+   * deaggregation of SystemSourceSet is associated with individual fault
+   * sections rather than sources/ruptures.
+   */
+  static final class SectionSource implements Source {
 
-    // TODO this needs some new object that represents a fault
-    // section and a pseudo-participation MFD
-    SystemContributor(double rate, double residual) {
-      super(rate, residual);
+    final int sectionIndex;
+
+    SectionSource(int sectionIndex) {
+      this.sectionIndex = sectionIndex;
     }
 
     @Override
-    StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
-      sb.append("TBD").append(NEWLINE);
-      return sb;
+    public String name() {
+      return "System Section (" + sectionIndex + ")";
+    }
+
+    @Override
+    public Iterator<Rupture> iterator() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int size() {
+      return 1;
     }
   }
 
@@ -304,7 +379,7 @@ abstract class DeaggContributor {
   static final Ordering<DeaggContributor> SORTER = new Ordering<DeaggContributor>() {
     @Override
     public int compare(DeaggContributor left, DeaggContributor right) {
-      return Double.compare(left.total(), right.total());
+      return Double.compare(right.total(), left.total());
     }
   };
 

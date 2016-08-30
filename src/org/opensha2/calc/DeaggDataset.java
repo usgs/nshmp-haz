@@ -5,8 +5,10 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 
 import org.opensha2.calc.DeaggContributor.ClusterContributor;
+import org.opensha2.calc.DeaggContributor.SectionSource;
 import org.opensha2.calc.DeaggContributor.SourceContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
+import org.opensha2.calc.DeaggContributor.SystemContributor;
 import org.opensha2.data.IntervalData;
 import org.opensha2.data.IntervalTable;
 import org.opensha2.data.IntervalVolume;
@@ -19,6 +21,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -310,7 +313,7 @@ final class DeaggDataset {
      * ranges supported by this deaggregation.
      */
     Builder addResidual(double residual) {
-      residual += residual;
+      this.residual += residual;
       return this;
     }
 
@@ -347,12 +350,15 @@ final class DeaggDataset {
       return this;
     }
 
-    /*
-     * A dataset may not have any contributors if it was created from a
-     * DeaggConfig for use as a base DeaggDataset model. See the empty
-     * ImmutableList below.
-     */
     DeaggDataset build() {
+      /*
+       * A dataset may not have any contributors if it was created from a
+       * DeaggConfig for use as a base DeaggDataset model. See the empty
+       * ImmutableList below. A Gmm dataset may also not have any contributors
+       * when the total contribution for a source set is low and one or more
+       * Gmm's do not make up any part of the contribution. (e.g. 2008 NSHM,
+       * site=Seattle, Imt=PGA, rp=2475: AB_03_GLOB_INTER contribution = 0.0)
+       */
       ImmutableList<DeaggContributor> contributorList =
           (parent == null) ? ImmutableList.<DeaggContributor> of() : ImmutableList.of(parent
               .add(binned, residual)
@@ -417,11 +423,11 @@ final class DeaggDataset {
    */
   static class SourceSetCombiner extends AbstractCombiner {
 
-    ImmutableList.Builder<DeaggContributor> contributors;
+    ArrayList<DeaggContributor> contributors;
 
     SourceSetCombiner(DeaggDataset model) {
       super(model);
-      contributors = ImmutableList.builder();
+      contributors = new ArrayList<>();
     }
 
     @Override
@@ -432,7 +438,7 @@ final class DeaggDataset {
     }
 
     DeaggDataset build() {
-      return super.build(contributors.build());
+      return super.build(DeaggContributor.SORTER.immutableSortedCopy(contributors));
     }
   }
 
@@ -478,6 +484,9 @@ final class DeaggDataset {
           case CLUSTER:
             putOrAddCluster((ClusterContributor) deaggContributor);
             break;
+          case SYSTEM:
+            putOrAddSystem((SystemContributor) deaggContributor);
+            break;
           default:
             putOrAddSource((SourceContributor) deaggContributor);
         }
@@ -485,19 +494,20 @@ final class DeaggDataset {
       return this;
     }
 
-    private void putOrAddSource(SourceContributor contributor) {
-      Source source = contributor.source;
+    private void putOrAddSource(SourceContributor sc) {
+      Source source = sc.source;
 
       /* Add to existing. */
       if (childMap.containsKey(source)) {
-        childMap.get(source).add(contributor.rate, contributor.residual);
+        SourceContributor.Builder child = (SourceContributor.Builder) childMap.get(source);
+        child.add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
         return;
       }
 
       /* Put new. */
       DeaggContributor.Builder sourceContributor = new SourceContributor.Builder()
           .source(source)
-          .add(contributor.rate, contributor.residual);
+          .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
       childMap.put(source, sourceContributor);
     }
 
@@ -551,6 +561,23 @@ final class DeaggDataset {
         sourceMap.put(sourceBuilder.source, sourceBuilder);
       }
       return sourceMap;
+    }
+
+    private void putOrAddSystem(SystemContributor contributor) {
+
+      SectionSource section = contributor.section;
+
+      /* Add to existing. */
+      if (childMap.containsKey(section)) {
+        childMap.get(section).add(contributor.rate, contributor.residual);
+        return;
+      }
+
+      /* Put new. */
+      DeaggContributor.Builder sourceContributor = new SystemContributor.Builder()
+          .section(section)
+          .add(contributor.rate, contributor.residual);
+      childMap.put(section, sourceContributor);
     }
 
     DeaggDataset build() {

@@ -3,8 +3,11 @@ package org.opensha2.calc;
 import static org.opensha2.calc.DeaggDataset.SOURCE_CONSOLIDATOR;
 
 import org.opensha2.calc.DeaggContributor.ClusterContributor;
+import org.opensha2.calc.DeaggContributor.SectionSource;
 import org.opensha2.calc.DeaggContributor.SourceContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
+import org.opensha2.calc.DeaggContributor.SystemContributor;
+import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.Source;
@@ -18,8 +21,13 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
+import com.google.common.primitives.Ints;
 
+import java.util.BitSet;
+import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,6 +72,8 @@ final class Deaggregator {
     switch (sources.type()) {
       case CLUSTER:
         return processClusterSources();
+      case SYSTEM:
+        return processSystemSources();
       default:
         return processSources();
     }
@@ -119,14 +129,17 @@ final class Deaggregator {
        */
       Map<Gmm, XySequence> clusterCurves = clusterCurveList.get(i);
       for (Entry<Gmm, DeaggDataset.Builder> entry : datasetBuilders.entrySet()) {
-        
+
         /* Scale. */
         Gmm gmm = entry.getKey();
         DeaggDataset.Builder clusterBuilder = entry.getValue();
         XySequence clusterCurve = clusterCurves.get(gmm);
         double clusterRate = Deaggregation.RATE_INTERPOLATER.findY(clusterCurve, iml);
         clusterBuilder.multiply(clusterRate / clusterBuilder.rate());
-        
+
+        /* Set cluster rate. */
+        clusterBuilder.parent.add(clusterBuilder.binned, clusterBuilder.residual);
+
         /* Swap parents. */
         DeaggContributor.Builder sourceSetContributor = new SourceSetContributor.Builder()
             .sourceSet(curves.sourceSet)
@@ -155,9 +168,11 @@ final class Deaggregator {
     /* Local EnumSet based keys; gmms.keySet() is not an EnumSet. */
     final Set<Gmm> gmmKeys = EnumSet.copyOf(gmms.keySet());
 
-    /* Per-gmm rates for the source being processed. */
-    Map<Gmm, Double> gmmSourceRates = createRateMap(gmmKeys);
-    Map<Gmm, Double> gmmSkipRates = createRateMap(gmmKeys);
+    /*
+     * Per-gmm data for the source being processed. The double[] array below is
+     * composed of [rate, residual, rScaled, mScaled, εScaled].
+     */
+    Map<Gmm, double[]> gmmData = createDataMap(gmmKeys);
 
     /* Add rupture data to builders */
     for (int i = 0; i < inputs.size(); i++) {
@@ -181,12 +196,16 @@ final class Deaggregator {
         double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
         double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
 
+        gmmData.get(gmm)[2] += (rRup * rate);
+        gmmData.get(gmm)[3] += (Mw * rate);
+        gmmData.get(gmm)[4] += (ε * rate);
+
         if (skipRupture) {
-          gmmSkipRates.put(gmm, gmmSkipRates.get(gmm) + rate);
+          gmmData.get(gmm)[1] += rate;
           builders.get(gmm).addResidual(rate);
           continue;
         }
-        gmmSourceRates.put(gmm, gmmSourceRates.get(gmm) + rate);
+        gmmData.get(gmm)[0] += rate;
         int εIndex = model.epsilonIndex(ε);
 
         builders.get(gmm).addRate(
@@ -198,11 +217,14 @@ final class Deaggregator {
 
     /* Add sources/contributors to builders. */
     for (Gmm gmm : gmmKeys) {
-      // TODO bad cast; how to provide access to parent reference
-      // TODO will likely cause problem with SystemInputList
+      /* Safe covariant cast assuming switch handles variants. */
       DeaggContributor.Builder source = new SourceContributor.Builder()
           .source(((SourceInputList) inputs).parent)
-          .add(gmmSourceRates.get(gmm), gmmSkipRates.get(gmm));
+          .add(gmmData.get(gmm)[0],
+              gmmData.get(gmm)[1],
+              gmmData.get(gmm)[2],
+              gmmData.get(gmm)[3],
+              gmmData.get(gmm)[4]);
       builders.get(gmm).addChildContributor(source);
     }
   }
@@ -225,16 +247,102 @@ final class Deaggregator {
     return ImmutableMap.copyOf(Maps.transformValues(builders, DATASET_BUILDER));
   }
 
-  private static Map<Gmm, Double> createRateMap(Set<Gmm> gmms) {
-    Map<Gmm, Double> rateMap = Maps.newEnumMap(Gmm.class);
+  private static Map<Gmm, double[]> createDataMap(Set<Gmm> gmms) {
+    Map<Gmm, double[]> rateMap = Maps.newEnumMap(Gmm.class);
     for (Gmm gmm : gmms) {
-      rateMap.put(gmm, 0.0);
+      rateMap.put(gmm, new double[5]);
     }
     return rateMap;
   }
 
   private static double epsilon(double μ, double σ, double iml) {
-    return (μ - iml) / σ;
+    return (iml - μ) / σ;
+  }
+
+  private Map<Gmm, DeaggDataset> processSystemSources() {
+
+    Map<Gmm, DeaggDataset.Builder> builders = createBuilders(gmmSet.gmms(), model);
+    for (DeaggDataset.Builder builder : builders.values()) {
+      SourceSetContributor.Builder parent = new SourceSetContributor.Builder();
+      builder.setParentContributor(parent.sourceSet(sources));
+    }
+
+    /*
+     * Subsequent to deaggregation we no longer need references to the source
+     * bitsets so we drain it in place rather than making a copy to drain.
+     */
+
+    GroundMotions gms = curves.hazardGroundMotionsList.get(0);
+    SystemInputList inputs = (SystemInputList) gms.inputs;
+    List<BitSet> bitsets = inputs.bitsets;
+    Map<Gmm, Double> gmms = gmmSet.gmmWeightMap(gms.inputs.minDistance);
+    Map<Gmm, List<Double>> μLists = gms.μLists.get(imt);
+    Map<Gmm, List<Double>> σLists = gms.σLists.get(imt);
+
+    /* Local EnumSet based keys; gmms.keySet() is not an EnumSet. */
+    final Set<Gmm> gmmKeys = EnumSet.copyOf(gmms.keySet());
+
+    List<Integer> sourceIndices = new LinkedList<>(Ints.asList(Data.indices(bitsets.size())));
+
+    for (int sectionIndex : inputs.sectionIndices) {
+
+      /* Create system contributors for section and attach to parent. */
+      Map<Gmm, SystemContributor.Builder> contributors = new EnumMap<>(Gmm.class);
+      SectionSource section = new SectionSource(sectionIndex);
+      for (Gmm gmm : gmmKeys) {
+        SystemContributor.Builder contributor = new SystemContributor.Builder()
+            .section(section);
+        contributors.put(gmm, contributor);
+        builders.get(gmm).addChildContributor(contributor);
+      }
+
+      Iterator<Integer> iter = sourceIndices.iterator();
+      while (iter.hasNext()) {
+        int sourceIndex = iter.next();
+
+        /* Source includes section. */
+        if (bitsets.get(sourceIndex).get(sectionIndex)) {
+
+          HazardInput in = inputs.get(sourceIndex);
+          double rRup = in.rRup;
+          double Mw = in.Mw;
+
+          int rIndex = model.distanceIndex(rRup);
+          int mIndex = model.magnitudeIndex(Mw);
+          boolean skipRupture = (rIndex == -1 || mIndex == -1);
+
+          for (Gmm gmm : gmmKeys) {
+
+            double gmmWeight = gmms.get(gmm);
+
+            double μ = μLists.get(gmm).get(sourceIndex);
+            double σ = σLists.get(gmm).get(sourceIndex);
+            double ε = epsilon(μ, σ, iml);
+
+            double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
+            double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
+
+            SystemContributor.Builder contributor = contributors.get(gmm);
+
+            if (skipRupture) {
+              contributor.add(0.0, rate);
+              builders.get(gmm).addResidual(rate);
+              continue;
+            }
+            contributor.add(rate, 0.0);
+            int εIndex = model.epsilonIndex(ε);
+
+            builders.get(gmm).addRate(
+                rIndex, mIndex, εIndex,
+                rRup * rate, Mw * rate, ε * rate,
+                rate);
+          }
+          iter.remove();
+        }
+      }
+    }
+
+    return buildDatasets(builders);
   }
 
 }
