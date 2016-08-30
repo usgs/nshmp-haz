@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 public class HazardCalc {
 
   /**
-   * Entry point for a hazard calculation.
+   * Entry point for a probabilisitic seismic hazard calculation.
    *
    * <p>Computing hazard curves requires at least 2, and at most 3, arguments.
    * At a minimum, the path to a model zip file or directory and the site(s) at
@@ -178,7 +178,8 @@ public class HazardCalc {
     log.info(PROGRAM + ": calculating ...");
     Stopwatch batchWatch = Stopwatch.createStarted();
     Stopwatch totalWatch = Stopwatch.createStarted();
-    int count = 0;
+    int batchCount = 0;
+    int siteCount = 0;
 
     List<Hazard> results = new ArrayList<>();
     boolean firstBatch = true;
@@ -186,26 +187,30 @@ public class HazardCalc {
     Path outDir = createOutputDir(config.output.directory);
 
     for (Site site : sites) {
-      Hazard result = calc(model, config, site, executor);
-      results.add(result);
+      Hazard hazard = calc(model, config, site, executor);
+      results.add(hazard);
       if (results.size() == config.output.flushLimit) {
         OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
         firstBatch = false;
         Results.writeResults(outDir, results, opts);
-        log.info("     batch: " + (count + 1) + "  " + batchWatch +
-            "  total: " + totalWatch);
+        log.info(String.format(
+            "     batch: %s in %s – %s sites in %s",
+            batchCount, batchWatch, siteCount, totalWatch));
         results.clear();
         batchWatch.reset().start();
+        batchCount++;
       }
-      count++;
+      siteCount++;
     }
     // write final batch
     if (!results.isEmpty()) {
       OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
       Results.writeResults(outDir, results, opts);
     }
-    log.info(PROGRAM + ": " + count + " complete " + totalWatch);
-
+    log.info(String.format(
+        PROGRAM + ": %s sites completed in %s",
+        siteCount, totalWatch));
+    
     if (threadCount != ThreadCount.ONE) {
       execSvc.shutdown();
     }
@@ -214,7 +219,7 @@ public class HazardCalc {
   }
 
   /* Avoid clobbering exsting result directories via incrementing */
-  private static Path createOutputDir(Path dir) {
+  static Path createOutputDir(Path dir) {
     int i = 1;
     Path dirIncr = dir;
     while (Files.exists(dirIncr)) {
@@ -224,9 +229,9 @@ public class HazardCalc {
     return dirIncr;
   }
 
-  private static final String TMP_LOG = "nshmp-haz-log";
+  static final String TMP_LOG = "nshmp-haz-log";
 
-  private static Path createTempLog() {
+  static Path createTempLog() {
     Path logBase = Paths.get(".");
     Path logIncr = logBase.resolve(TMP_LOG);
     int i = 1;
@@ -251,7 +256,7 @@ public class HazardCalc {
    * @param config calculation configuration
    * @param site of interest
    * @param executor to use ({@link Optional})
-   * @return a HazardResult
+   * @return a {@code Hazard} object
    */
   public static Hazard calc(
       HazardModel model,
