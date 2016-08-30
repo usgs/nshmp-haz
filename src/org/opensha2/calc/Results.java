@@ -4,10 +4,12 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 import static org.opensha2.data.XySequence.emptyCopyOf;
 
+import org.opensha2.calc.Deaggregation.ImtDeagg;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
+import org.opensha2.geo.Location;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.internal.Parsing;
@@ -67,6 +69,63 @@ public class Results {
    * result in each batch (below). We also wouldn't have to pass around
    * OpenOptions which are mildly confusing.
    */
+
+  private static final String DEAGG_DIR = "deagg";
+  private static final String GMM_DIR = "gmm";
+  /*
+   * TODO This should be refactored such that much of the work of compiling
+   * hazard curves is performed in a HazardExport class, much like DeaggExport
+   */
+
+  public static void writeDeagg(
+      Path dir,
+      List<Deaggregation> batch,
+      CalcConfig config) throws IOException {
+
+    Deaggregation demo = batch.get(0);
+    boolean namedSites = demo.site.name != Site.NO_NAME;
+    boolean gmmDeagg = config.output.curveTypes.contains(CurveType.GMM);
+
+    /*
+     * Writing of Hazard results will have already created necessary Imt
+     * directories.
+     */
+    for (Deaggregation deagg : batch) {
+      String name = namedSites ? deagg.site.name : lonLatStr(deagg.site.location);
+      for (Entry<Imt, ImtDeagg> imtEntry : deagg.deaggs.entrySet()) {
+
+        /* Write total dataset. */
+        Path imtDir = dir.resolve(imtEntry.getKey().name());
+        Path imtDeaggDir = imtDir.resolve(DEAGG_DIR);
+        Files.createDirectories(imtDeaggDir);
+        ImtDeagg imtDeagg = imtEntry.getValue();
+        DeaggDataset ddTotal = imtDeagg.totalDataset;
+        DeaggConfig dc = imtDeagg.config;
+        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total");
+        exporter.write(imtDeaggDir, name);
+
+        if (gmmDeagg) {
+          for (Entry<Gmm, DeaggDataset> gmmEntry : imtDeagg.gmmDatasets.entrySet()) {
+            Path gmmDir = imtDir.resolve(GMM_DIR)
+                .resolve(DEAGG_DIR)
+                .resolve(gmmEntry.getKey().name());
+            Files.createDirectories(gmmDir);
+            DeaggDataset ddGmm = gmmEntry.getValue();
+            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmmEntry.getKey().toString());
+            exporter.write(gmmDir, name);
+          }
+        }
+      }
+    }
+  }
+
+  private static String lonLatStr(Location loc) {
+    return new StringBuilder()
+        .append(loc.lon())
+        .append("_")
+        .append(loc.lat())
+        .toString();
+  }
 
   /**
    * Write a {@code batch} of {@code HazardResult}s to files in the specified
@@ -250,7 +309,7 @@ public class Results {
   }
 
   /**
-   * Derive maps of curves by groudn motion model for each Imt in a
+   * Derive maps of curves by ground motion model for each Imt in a
    * {@code Hazard} result.
    */
   public static Map<Imt, Map<Gmm, XySequence>> curvesByGmm(Hazard hazard) {
