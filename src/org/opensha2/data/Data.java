@@ -697,7 +697,7 @@ public final class Data {
    */
   public static int minIndex(double... data) {
     int index = -1;
-    double min = Double.MAX_VALUE;
+    double min = Double.POSITIVE_INFINITY;
     for (int i = 1; i < data.length; i++) {
       if (data[i] < min) {
         index = i;
@@ -720,7 +720,7 @@ public final class Data {
   public static int[] minIndex(double[][] data) {
     int index0 = -1;
     int index1 = -1;
-    double max = Double.MAX_VALUE;
+    double max = Double.POSITIVE_INFINITY;
     for (int i = 0; i < data.length; i++) {
       double[] data1 = data[i];
       for (int j = 0; j < data1.length; j++) {
@@ -748,7 +748,7 @@ public final class Data {
     int index0 = -1;
     int index1 = -1;
     int index2 = -1;
-    double max = Double.MAX_VALUE;
+    double max = Double.POSITIVE_INFINITY;
     for (int i = 0; i < data.length; i++) {
       double[][] data1 = data[i];
       for (int j = 0; j < data1.length; j++) {
@@ -776,7 +776,7 @@ public final class Data {
    */
   public static int maxIndex(double... data) {
     int index = -1;
-    double max = Double.MIN_VALUE;
+    double max = Double.NEGATIVE_INFINITY;
     for (int i = 1; i < data.length; i++) {
       if (data[i] > max) {
         index = i;
@@ -799,7 +799,7 @@ public final class Data {
   public static int[] maxIndex(double[][] data) {
     int index0 = -1;
     int index1 = -1;
-    double max = Double.MIN_VALUE;
+    double max = Double.NEGATIVE_INFINITY;
     for (int i = 0; i < data.length; i++) {
       double[] data1 = data[i];
       for (int j = 0; j < data1.length; j++) {
@@ -827,7 +827,7 @@ public final class Data {
     int index0 = -1;
     int index1 = -1;
     int index2 = -1;
-    double max = Double.MIN_VALUE;
+    double max = Double.NEGATIVE_INFINITY;
     for (int i = 0; i < data.length; i++) {
       double[][] data1 = data[i];
       for (int j = 0; j < data1.length; j++) {
@@ -1606,19 +1606,19 @@ public final class Data {
   }
 
   /**
-   * Return an index {@code List<Integer>} corresponding to the 'set' bits of
-   * the supplied {@code BitSet}. The returned {@code List} is mutable.
+   * Return an index array corresponding to the 'set' bits of the supplied
+   * {@code BitSet}.
    *
    * @param bits to operate on
    * @return the indices of 'set' bits
    */
-  public static List<Integer> bitsToIndices(BitSet bits) {
+  public static int[] bitsToIndices(BitSet bits) {
     int[] indices = new int[bits.cardinality()];
     int index = 0;
     for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
       indices[index++] = i;
     }
-    return Ints.asList(indices);
+    return indices;
   }
 
   /**
