@@ -59,6 +59,10 @@ final class HazardCurveSet {
   final Map<Imt, List<Map<Gmm, XySequence>>> clusterCurveLists;
   final Map<Imt, Map<Gmm, XySequence>> curveMap;
   final Map<Imt, XySequence> totalCurves;
+  
+  // TODO separate references by what is needed for hazard vs deagg
+  // deagg of cluster and system types requires us to hold onto some
+  // objects created when generating hazard curves
 
   private HazardCurveSet(
       SourceSet<? extends Source> sourceSet,
