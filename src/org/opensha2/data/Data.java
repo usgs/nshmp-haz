@@ -79,6 +79,11 @@ import java.util.Random;
  */
 public final class Data {
 
+  // TODO note behavior of NaN, any method that operates on data containing NaN
+  // will likely return NaN as a result
+
+  // TODO should allow empty varargs (see minINdex maxIndex, normalize)
+
   /*
    * TODO verify that 'unchecked' variants actually improve performance; in most
    * cases all that's being done is an array.length comparison
@@ -98,6 +103,20 @@ public final class Data {
    */
 
   private Data() {}
+
+  /**
+   * Add a {@code term} to the elements of {@code data} in place.
+   *
+   * @param data to operate on
+   * @param term to add
+   * @return a reference to the supplied {@code data}
+   */
+  public static List<Double> add(double term, List<Double> data) {
+    for (int i = 0; i < data.size(); i++) {
+      data.set(i, data.get(i) + term);
+    }
+    return data;
+  }
 
   /**
    * Add a {@code term} to the elements of {@code data} in place.
@@ -127,13 +146,6 @@ public final class Data {
     return data;
   }
 
-  static double[][] uncheckedAdd(double term, double[][] data) {
-    for (int i = 0; i < data.length; i++) {
-      add(term, data[i]);
-    }
-    return data;
-  }
-
   /**
    * Add a {@code term} to the elements of {@code data} in place.
    *
@@ -144,27 +156,6 @@ public final class Data {
   public static double[][][] add(double term, double[][][] data) {
     for (int i = 0; i < data.length; i++) {
       add(term, data[i]);
-    }
-    return data;
-  }
-
-  static double[][][] uncheckedAdd(double term, double[][][] data) {
-    for (int i = 0; i < data.length; i++) {
-      uncheckedAdd(term, data[i]);
-    }
-    return data;
-  }
-
-  /**
-   * Add a {@code term} to the elements of {@code data} in place.
-   *
-   * @param data to operate on
-   * @param term to add
-   * @return a reference to the supplied {@code data}
-   */
-  public static List<Double> add(double term, List<Double> data) {
-    for (int i = 0; i < data.size(); i++) {
-      data.set(i, data.get(i) + term);
     }
     return data;
   }
@@ -270,6 +261,23 @@ public final class Data {
   /**
    * Subtract the values of {@code data2} from {@code data1} in place. To
    * subtract a term from every value of a dataset, use
+   * {@link #add(double, List)} with a negative addend.
+   *
+   * @param data1
+   * @param data2
+   * @return a reference to {@code data1}
+   */
+  public static List<Double> subtract(List<Double> data1, List<Double> data2) {
+    checkArgument(data1.size() == data2.size());
+    for (int i = 0; i < data1.size(); i++) {
+      data1.set(i, data1.get(i) - data2.get(i));
+    }
+    return data1;
+  }
+
+  /**
+   * Subtract the values of {@code data2} from {@code data1} in place. To
+   * subtract a term from every value of a dataset, use
    * {@link #add(double, double...)} with a negative addend.
    *
    * @param data1
@@ -289,20 +297,17 @@ public final class Data {
   }
 
   /**
-   * Subtract the values of {@code data2} from {@code data1} in place. To
-   * subtract a term from every value of a dataset, use
-   * {@link #add(double, List)} with a negative addend.
+   * Multiply ({@code scale}) the elements of {@code data} in place.
    *
-   * @param data1
-   * @param data2
-   * @return a reference to {@code data1}
+   * @param data to operate on
+   * @param scale factor
+   * @return a reference to the supplied {@code data}
    */
-  public static List<Double> subtract(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
-    for (int i = 0; i < data1.size(); i++) {
-      data1.set(i, data1.get(i) - data2.get(i));
+  public static List<Double> multiply(double scale, List<Double> data) {
+    for (int i = 0; i < data.size(); i++) {
+      data.set(i, data.get(i) * scale);
     }
-    return data1;
+    return data;
   }
 
   /**
@@ -326,9 +331,23 @@ public final class Data {
    * @param scale factor
    * @return a reference to the supplied {@code data}
    */
-  public static List<Double> multiply(double scale, List<Double> data) {
-    for (int i = 0; i < data.size(); i++) {
-      data.set(i, data.get(i) * scale);
+  public static double[][] multiply(double scale, double[][] data) {
+    for (int i = 0; i < data.length; i++) {
+      multiply(scale, data[i]);
+    }
+    return data;
+  }
+
+  /**
+   * Multiply ({@code scale}) the elements of {@code data} in place.
+   *
+   * @param data to operate on
+   * @param scale factor
+   * @return a reference to the supplied {@code data}
+   */
+  public static double[][][] multiply(double scale, double[][][] data) {
+    for (int i = 0; i < data.length; i++) {
+      multiply(scale, data[i]);
     }
     return data;
   }
@@ -604,6 +623,36 @@ public final class Data {
   }
 
   /**
+   * Sum the arrays in the 2nd dimension of {@code data} into a new 1-D array.
+   * 
+   * @param data to collapse
+   * @return a new array with the sums of the second dimension of {@code data}
+   */
+  public static double[] collapse(double[][] data) {
+    double[] collapsed = new double[data.length];
+    for (int i = 0; i < data.length; i++) {
+      collapsed[i] = sum(data[i]);
+    }
+    return collapsed;
+  }
+
+  /**
+   * Sum the arrays in the 3rd dimension of {@code data} into the 2nd dimension
+   * of a new 2-D array.
+   * 
+   * @param data to collapse
+   * @return a new 2-D array with the sums of the third dimension of
+   *         {@code data}
+   */
+  public static double[][] collapse(double[][][] data) {
+    double[][] collapsed = new double[data.length][];
+    for (int i = 0; i < data.length; i++) {
+      collapsed[i] = collapse(data[i]);
+    }
+    return collapsed;
+  }
+
+  /**
    * Transform {@code data} by a {@code function} in place.
    *
    * @param function to apply
@@ -639,45 +688,161 @@ public final class Data {
   }
 
   /**
-   * Find the index of the minimum value in {@code data}.
+   * Find the index of the minimum value in {@code data}. For equivalent minima,
+   * method returns the index of the first minimum encountered. If the supplied
+   * array is empty, method returns {@code -1}.
    *
    * @param data to evaluate
-   * @return the index of the minimum value
-   * @throws IllegalArgumentException if data is empty or no varargs are
-   *         supplied
+   * @return the index of the minimum value or {@code -1} if the array is empty
    */
   public static int minIndex(double... data) {
-    checkArgument(data.length > 0);
-    int index = 0;
-    double min = data[0];
+    int index = -1;
+    double min = Double.POSITIVE_INFINITY;
     for (int i = 1; i < data.length; i++) {
       if (data[i] < min) {
-        min = data[i];
         index = i;
+        min = data[i];
       }
     }
     return index;
   }
 
   /**
-   * Find the index of the maximum value in {@code data}.
+   * Find the indices of the minimum value in {@code data}. For equivalent
+   * maxima, method returns the indices of the first minimum encountered. If the
+   * 1st dimension of the supplied array is empty or all arrays in the 2nd
+   * dimension are empty, method returns {@code [-1, -1]}.
    *
    * @param data to evaluate
-   * @return the index of the maximum value
-   * @throws IllegalArgumentException if data is empty or no varargs are
-   *         supplied
+   * @return the indices of the minimum value or {@code [-1, -1]} for empty
+   *         arrays
+   */
+  public static int[] minIndex(double[][] data) {
+    int index0 = -1;
+    int index1 = -1;
+    double max = Double.POSITIVE_INFINITY;
+    for (int i = 0; i < data.length; i++) {
+      double[] data1 = data[i];
+      for (int j = 0; j < data1.length; j++) {
+        if (data1[j] < max) {
+          index0 = i;
+          index1 = j;
+          max = data1[j];
+        }
+      }
+    }
+    return new int[] { index0, index1 };
+  }
+
+  /**
+   * Find the indices of the minimum value in {@code data}. For equivalent
+   * minima, method returns the indices of the first minimum encountered. If the
+   * 1st dimension of the supplied array is empty or all arrays in the 2nd or
+   * 3rd dimensions are empty, method returns {@code [-1, -1, -1]}.
+   *
+   * @param data to evaluate
+   * @return the indices of the minimum value or {@code [-1, -1, -1]} for empty
+   *         arrays
+   */
+  public static int[] minIndex(double[][][] data) {
+    int index0 = -1;
+    int index1 = -1;
+    int index2 = -1;
+    double max = Double.POSITIVE_INFINITY;
+    for (int i = 0; i < data.length; i++) {
+      double[][] data1 = data[i];
+      for (int j = 0; j < data1.length; j++) {
+        double[] data2 = data1[j];
+        for (int k = 0; k < data2.length; k++) {
+          if (data2[k] < max) {
+            index0 = i;
+            index1 = j;
+            index2 = k;
+            max = data2[k];
+          }
+        }
+      }
+    }
+    return new int[] { index0, index1, index2 };
+  }
+
+  /**
+   * Find the index of the maximum value in {@code data}. For equivalent maxima,
+   * method returns the index of the first maximum encountered. If the supplied
+   * array is empty, method returns {@code -1}.
+   *
+   * @param data to evaluate
+   * @return the index of the maximum value or -1 if the array is empty
    */
   public static int maxIndex(double... data) {
-    checkArgument(data.length > 0);
-    int index = 0;
-    double max = data[0];
+    int index = -1;
+    double max = Double.NEGATIVE_INFINITY;
     for (int i = 1; i < data.length; i++) {
       if (data[i] > max) {
-        max = data[i];
         index = i;
+        max = data[i];
       }
     }
     return index;
+  }
+
+  /**
+   * Find the indices of the maximum value in {@code data}. For equivalent
+   * maxima, method returns the indices of the first maximum encountered. If the
+   * 1st dimension of the supplied array is empty or all arrays in the 2nd
+   * dimension are empty, method returns {@code [-1, -1]}.
+   *
+   * @param data to evaluate
+   * @return the indices of the maximum value or {@code [-1, -1]} for empty
+   *         arrays
+   */
+  public static int[] maxIndex(double[][] data) {
+    int index0 = -1;
+    int index1 = -1;
+    double max = Double.NEGATIVE_INFINITY;
+    for (int i = 0; i < data.length; i++) {
+      double[] data1 = data[i];
+      for (int j = 0; j < data1.length; j++) {
+        if (data1[j] > max) {
+          index0 = i;
+          index1 = j;
+          max = data1[j];
+        }
+      }
+    }
+    return new int[] { index0, index1 };
+  }
+
+  /**
+   * Find the indices of the maximum value in {@code data}. For equivalent
+   * maxima, method returns the indices of the first maximum encountered. If the
+   * 1st dimension of the supplied array is empty or all arrays in the 2nd or
+   * 3rd dimensions are empty, method returns {@code [-1, -1, -1]}.
+   *
+   * @param data to evaluate
+   * @return the indices of the maximum value or {@code [-1, -1, -1]} for empty
+   *         arrays
+   */
+  public static int[] maxIndex(double[][][] data) {
+    int index0 = -1;
+    int index1 = -1;
+    int index2 = -1;
+    double max = Double.NEGATIVE_INFINITY;
+    for (int i = 0; i < data.length; i++) {
+      double[][] data1 = data[i];
+      for (int j = 0; j < data1.length; j++) {
+        double[] data2 = data1[j];
+        for (int k = 0; k < data2.length; k++) {
+          if (data2[k] > max) {
+            index0 = i;
+            index1 = j;
+            index2 = k;
+            max = data2[k];
+          }
+        }
+      }
+    }
+    return new int[] { index0, index1, index2 };
   }
 
   /**
@@ -732,6 +897,19 @@ public final class Data {
     }
     min = Math.abs(min);
     return add(min, data);
+  }
+
+  /**
+   * Return whether all the elements of {@code data} are equal to 0.
+   * @param data to evaluate
+   */
+  public static boolean isZeroValued(double... data) {
+    for (double d : data) {
+      if (d != 0.0) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -1063,27 +1241,6 @@ public final class Data {
   }
 
   /**
-   * Creates a sequence of values starting at {@code min} and ending at
-   * {@code max}, the log of which are evenly spaced.
-   * @param min sequence value
-   * @param max sequence value
-   * @param step sequence spacing
-   * @param ascending if {@code true}, descending if {@code false}
-   * @return a monotonically increasing or decreasing sequence where the log of
-   *         the values are evenly spaced
-   * @throws IllegalArgumentException if {@code min >= max}, {@code step <= 0} ,
-   *         or any arguments are {@code Double.NaN},
-   *         {@code Double.POSITIVE_INFINITY}, or
-   *         {@code Double.NEGATIVE_INFINITY}
-   *
-   */
-  public static double[] buildLogSequence(double min, double max, double step,
-      boolean ascending) {
-    double[] seq = buildSequence(Math.log(min), Math.log(max), Math.log(step), ascending);
-    return exp(seq);
-  }
-
-  /**
    * Creates a sequence of evenly spaced values starting at {@code min} and
    * ending at {@code max}. If {@code (max - min) / step} is not integer valued,
    * the last step in the sequence will be {@code <step}. If {@code min == max},
@@ -1184,6 +1341,7 @@ public final class Data {
    * @return a reference to the 'cleaned', supplied {@code data}
    */
   public static double[] clean(int scale, double... data) {
+    // TODO should check that scale is > 0
     return transform(new Clean(scale), data);
   }
 
@@ -1448,19 +1606,19 @@ public final class Data {
   }
 
   /**
-   * Return an index {@code List<Integer>} corresponding to the 'set' bits of
-   * the supplied {@code BitSet}. The returned {@code List} is mutable.
+   * Return an index array corresponding to the 'set' bits of the supplied
+   * {@code BitSet}.
    *
    * @param bits to operate on
    * @return the indices of 'set' bits
    */
-  public static List<Integer> bitsToIndices(BitSet bits) {
+  public static int[] bitsToIndices(BitSet bits) {
     int[] indices = new int[bits.cardinality()];
     int index = 0;
     for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
       indices[index++] = i;
     }
-    return Ints.asList(indices);
+    return indices;
   }
 
   /**

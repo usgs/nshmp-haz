@@ -51,8 +51,14 @@ public final class GmmSet {
   private final double[][] epiValues;
   private final double[] epiWeights; // TODO DataArray (vs. Table, Volume)
 
-  GmmSet(Map<Gmm, Double> weightMapLo, double maxDistLo, Map<Gmm, Double> weightMapHi,
-      double maxDistHi, double[] epiValues, double[] epiWeights) {
+  GmmSet(
+      Map<Gmm, Double> weightMapLo,
+      double maxDistLo,
+      Map<Gmm, Double> weightMapHi,
+      double maxDistHi,
+      double[] epiValues,
+      double[] epiWeights) {
+    
     this.weightMapLo = weightMapLo;
     this.maxDistLo = maxDistLo;
     this.weightMapHi = weightMapHi;

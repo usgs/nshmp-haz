@@ -4,56 +4,84 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.data.DataTables.checkDataState;
-import static org.opensha2.data.DataTables.indexOf;
-import static org.opensha2.data.DataTables.keys;
+import static org.opensha2.data.IntervalData.checkDataState;
+import static org.opensha2.data.IntervalData.indexOf;
+import static org.opensha2.data.IntervalData.keys;
 
-import org.opensha2.data.DataTables.AbstractVolume;
-import org.opensha2.data.DataTables.DefaultVolume;
+import org.opensha2.data.IntervalData.AbstractVolume;
+import org.opensha2.data.IntervalData.DefaultVolume;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * A 3-dimensional volume of immutable, double-valued data that is arranged
- * according to increasing and uniformly spaced double-valued keys. Data tables
- * are almost always used to represent binned data, and so while row and column
- * keys are bin centers, indexing is managed internally using bin edges. This
+ * according to increasing and uniformly spaced double-valued keys. Data volumes
+ * are used to represent binned data, and so while row, column, and level keys
+ * are bin centers, indexing is managed internally using bin edges. This
  * simplifies issues related to rounding/precision errors that occur when
  * indexing according to explicit double values.
  *
- * <p>To create a {@code DataVolume} instance, use a {@link Builder}.
+ * <p>To create an instance of an {@code IntervalVolume}, use a {@link Builder}.
  *
- * <p>Internally, a {@code DataVolume} is backed by a {@code double[][][]} array
- * where 'row' refers to the 1st dimension, 'column' the 2nd dimension, and
+ * <p>Internally, an {@code IntervalVolume} is backed by a {@code double[][][]}
+ * where 'row' maps to the 1st dimension, 'column' the 2nd dimension, and
  * 'level' the 3rd.
  *
- * <p>Note that data tables are not intended for use with very high precision
- * data and keys are currently limited to a precision of 4 decimal places. This
- * may be changed or improved in the future.
+ * <p>Note that interval volumes are not intended for use with very high
+ * precision data and keys are currently limited to a precision of 4 decimal
+ * places. This may change in the future.
  *
  * @author Peter Powers
- * @see DataTable
+ * @see IntervalData
+ * @see IntervalArray
+ * @see IntervalTable
  */
-public interface DataVolume {
+public interface IntervalVolume {
 
   /**
-   * Return a value corresponding to the supplied {@code row}, {@code column},
-   * and {@code level}.
+   * Return the value of the bin that maps to the supplied row, column, and
+   * level values. Do not confuse this method with {@link #get(int, int, int)}
+   * by row index.
    *
-   * @param row of value to retrieve (may not explicitely exist as a key)
-   * @param column of value to retrieve (may not explicitely exist as a key)
-   * @param level of value to retrieve (may not explicitely exist as a key)
+   * @param rowValue of bin to retrieve
+   * @param columnValue of bin to retrieve
+   * @param levelValue of bin to retrieve
+   * @throws IndexOutOfBoundsException if any value is out of range
    */
-  double get(double row, double column, double level);
+  double get(double rowValue, double columnValue, double levelValue);
 
   /**
-   * Return an immutable view of a column of values.
+   * Return the value of the bin that maps to the supplied row, column, and
+   * level indices. Do not confuse this method with
+   * {@link #get(double, double, double)} by row value.
    *
-   * @param row of column to retrieve
-   * @param column to retrieve
+   * @param rowIndex of bin to retrieve
+   * @param columnIndex of bin to retrieve
+   * @param levelIndex of bin to retrieve
+   * @throws IndexOutOfBoundsException if any index is out of range
    */
-  XySequence column(double row, double column);
+  double get(int rowIndex, int columnIndex, int levelIndex);
+
+  /**
+   * Return an immutable view of the values that map to the supplied row and
+   * column values. Do not confuse with {@link #column(int, int)} retrieval by
+   * index.
+   *
+   * @param rowValue of bin to retrieve
+   * @param columnValue of bin to retrieve
+   */
+  XySequence column(double rowValue, double columnValue);
+
+  /**
+   * Return an immutable view of the values that map to the supplied row and
+   * column values. Do not confuse with {@link #column(double, double)}
+   * retrieval by index.
+   *
+   * @param rowIndex of bin to retrieve
+   * @param columnIndex of bin to retrieve
+   */
+  XySequence column(int rowIndex, int columnIndex);
 
   /**
    * Return the lower edge of the lowermost row bin.
@@ -71,7 +99,7 @@ public interface DataVolume {
   double rowΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the row keys.
+   * Return an immutable list <i>view</i> of the row keys (bin centers).
    */
   List<Double> rows();
 
@@ -91,7 +119,7 @@ public interface DataVolume {
   double columnΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the column keys.
+   * Return an immutable list <i>view</i> of the column keys (bin centers).
    */
   List<Double> columns();
 
@@ -111,12 +139,30 @@ public interface DataVolume {
   double levelΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the level keys.
+   * Return an immutable list <i>view</i> of the level keys (bin centers).
    */
   List<Double> levels();
 
   /**
-   * A supplier of values with which to fill a {@code DataVolume}.
+   * Return a new {@code IntervalTable} created by summing the levels of this
+   * volume.
+   */
+  IntervalTable collapse();
+
+  /**
+   * Return the indices of the bin with smallest value in the form
+   * {@code [rowIndex, columnIndex, levelIndex]}.
+   */
+  int[] minIndex();
+
+  /**
+   * Return the indices of the bin with largest value in the form
+   * {@code [rowIndex, columnIndex, levelIndex]}.
+   */
+  int[] maxIndex();
+
+  /**
+   * A supplier of values with which to fill a {@code IntervalVolume}.
    */
   interface Loader {
 
@@ -132,7 +178,7 @@ public interface DataVolume {
   }
 
   /**
-   * A builder of immutable {@code DataVolume}s.
+   * A builder of immutable {@code IntervalVolume}s.
    *
    * <p>See {@link #create()} to initialize a new builder. Rows, columns, and
    * levels must be specified before any data can be added. Note that any
@@ -141,10 +187,6 @@ public interface DataVolume {
    * {@code Δ}.
    */
   public static final class Builder {
-
-    // TODO data is not copied on build() so we need to dereference
-    // data arrays on build() to prevent lingering builders from
-    // further modifying data
 
     private double[][][] data;
 
@@ -181,7 +223,7 @@ public interface DataVolume {
      *
      * @param model data volume
      */
-    public static Builder fromModel(DataVolume model) {
+    public static Builder fromModel(IntervalVolume model) {
 
       AbstractVolume v = (AbstractVolume) model;
       Builder b = new Builder();
@@ -328,7 +370,7 @@ public interface DataVolume {
     /**
      * Add to the existing value at the specified row, column, and level
      * indices. Be careful not to confuse this with
-     * {@link #add(int, int, int, double)}.
+     * {@link #add(double, double, double, double)}.
      *
      * @param row index
      * @param column index
@@ -348,12 +390,22 @@ public interface DataVolume {
      * @param volume to add
      * @throws IllegalArgumentException if the rows, columns, and levels of the
      *         supplied volume do not match those of this volume
-     * @see #fromModel(DataVolume)
+     * @see #fromModel(IntervalVolume)
      */
-    public Builder add(DataVolume volume) {
-      // safe covariant casts
+    public Builder add(IntervalVolume volume) {
+      // safe covariant cast
       validateVolume((AbstractVolume) volume);
+      // safe covariant cast until other concrete implementations exist
       Data.uncheckedAdd(data, ((DefaultVolume) volume).data);
+      return this;
+    }
+
+    /**
+     * Multiply ({@code scale}) all values in this builder.
+     * @param scale factor
+     */
+    public Builder multiply(double scale) {
+      Data.multiply(scale, data);
       return this;
     }
 
@@ -371,15 +423,26 @@ public interface DataVolume {
       return that;
     }
 
+    /*
+     * Data is not copied on build() so we dereference data arrays to prevent
+     * lingering builders from further modifying data.
+     */
+    private void dereference() {
+      data = null;
+      rows = null;
+      columns = null;
+      levels = null;
+    }
+
     /**
-     * Return a newly-created, immutable, 3-dimensional data container populated
-     * with values computed by the supplied loader. Calling this method will
-     * overwrite any values already supplied via {@code set*} or {@code add*}
-     * methods.
+     * Return a newly-created, immutable, 3-dimensional interval data container
+     * populated with values computed by the supplied loader. Calling this
+     * method will overwrite any values already supplied via {@code set*} or
+     * {@code add*} methods.
      *
      * @param loader that will compute values
      */
-    public DataVolume build(Loader loader) {
+    public IntervalVolume build(Loader loader) {
       checkNotNull(loader);
       for (int i = 0; i < rows.length; i++) {
         double row = rows[i];
@@ -394,17 +457,19 @@ public interface DataVolume {
     }
 
     /**
-     * Return a newly-created, immutable 3-dimensional data container populated
-     * with the contents of this {@code Builder}.
+     * Return a newly-created, immutable 3-dimensional interval data container
+     * populated with the contents of this {@code Builder}.
      */
-    public DataVolume build() {
+    public IntervalVolume build() {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns, levels);
-      return new DefaultVolume(
+      IntervalVolume volume = new DefaultVolume(
           rowMin, rowMax, rowΔ, rows,
           columnMin, columnMax, columnΔ, columns,
           levelMin, levelMax, levelΔ, levels,
           data);
+      dereference();
+      return volume;
     }
   }
 

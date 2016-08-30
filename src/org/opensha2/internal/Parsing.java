@@ -605,7 +605,7 @@ public final class Parsing {
    * @param format a format string
    */
   public static String toString(Collection<Double> values, String format) {
-    return addBrackets(join(Iterables.transform(values, new FormatDoubleFunction(format)),
+    return addBrackets(join(Iterables.transform(values, new FormatDoubleFunction(format, true)),
         Delimiter.COMMA));
   }
 
@@ -623,9 +623,9 @@ public final class Parsing {
    *        end, {@code false} otherwise
    */
   public static String toString(Collection<Double> values, String format, String delimiter,
-      boolean brackets) {
+      boolean brackets, boolean cleanZeros) {
     String base = Joiner.on(delimiter).join(
-        Iterables.transform(values, new FormatDoubleFunction(format)));
+        Iterables.transform(values, new FormatDoubleFunction(format, cleanZeros)));
     return brackets ? addBrackets(base) : base;
   }
 
@@ -850,19 +850,21 @@ public final class Parsing {
    * @see String#format(String, Object...)
    */
   public static Function<Double, String> formatDoubleFunction(String format) {
-    return new FormatDoubleFunction(format);
+    return new FormatDoubleFunction(format, true);
   }
 
   private static class FormatDoubleFunction implements Function<Double, String> {
     private String format;
+    private boolean cleanZeros;
 
-    private FormatDoubleFunction(String format) {
+    private FormatDoubleFunction(String format, boolean cleanZeros) {
       this.format = format;
+      this.cleanZeros = cleanZeros;
     }
 
     @Override
     public String apply(Double value) {
-      return (value == 0.0) ? "0.0" : String.format(format, value);
+      return (cleanZeros && value == 0.0) ? "0.0" : String.format(format, value);
     }
   }
 

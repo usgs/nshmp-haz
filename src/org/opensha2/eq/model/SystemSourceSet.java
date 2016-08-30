@@ -10,9 +10,6 @@ import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
 import static org.opensha2.eq.fault.Faults.validateWidth;
-import static org.opensha2.eq.model.Distance.Type.R_JB;
-import static org.opensha2.eq.model.Distance.Type.R_RUP;
-import static org.opensha2.eq.model.Distance.Type.R_X;
 import static org.opensha2.geo.Locations.horzDistanceFast;
 
 import org.opensha2.calc.HazardInput;
@@ -21,22 +18,19 @@ import org.opensha2.calc.SystemInputList;
 import org.opensha2.data.Data;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
-import org.opensha2.eq.model.Distance.Type;
 import org.opensha2.geo.Location;
 import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ArrayTable;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Table;
+import com.google.common.collect.Ordering;
 import com.google.common.primitives.Doubles;
 
+import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,28 +42,31 @@ import java.util.Map;
  */
 public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSource> {
 
-  private final List<GriddedSurface> sections;
-  private final List<BitSet> bitsets;
-  private final List<Double> mags;
-  private final List<Double> rates;
-  private final List<Double> depths;
-  private final List<Double> dips;
-  private final List<Double> widths;
-  private final List<Double> rakes;
+  private final GriddedSurface[] sections;
+  private final BitSet[] bitsets;
+  private final double[] mags;
+  private final double[] rates;
+  private final double[] depths;
+  private final double[] dips;
+  private final double[] widths;
+  private final double[] rakes;
 
-  // NOTE the above Double lists are compact but mutable: Doubles.asList(...)
+  /*
+   * TODO revisit the fact that BitSets are mutable and could potentially be
+   * altered via a SystemSource.
+   */
 
   private SystemSourceSet(
       String name, int id, double weight,
       GmmSet gmmSet,
-      List<GriddedSurface> sections,
-      List<BitSet> bitsets,
-      List<Double> mags,
-      List<Double> rates,
-      List<Double> depths,
-      List<Double> dips,
-      List<Double> widths,
-      List<Double> rakes) {
+      GriddedSurface[] sections,
+      BitSet[] bitsets,
+      double[] mags,
+      double[] rates,
+      double[] depths,
+      double[] dips,
+      double[] widths,
+      double[] rakes) {
 
     super(name, id, weight, gmmSet);
 
@@ -90,7 +87,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
   @Override
   public int size() {
-    return bitsets.size();
+    return bitsets.length;
   }
 
   @Override
@@ -159,31 +156,31 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     private final BitSet bitset() {
-      return bitsets.get(index);
+      return bitsets[index];
     }
 
     private final double magnitude() {
-      return mags.get(index);
+      return mags[index];
     }
 
     private final double rate() {
-      return rates.get(index);
+      return rates[index];
     }
 
     private final double depth() {
-      return depths.get(index);
+      return depths[index];
     }
 
     private final double dip() {
-      return dips.get(index);
+      return dips[index];
     }
 
     private final double width() {
-      return widths.get(index);
+      return widths[index];
     }
 
     private final double rake() {
-      return rakes.get(index);
+      return rakes[index];
     }
   }
 
@@ -201,13 +198,13 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     static final String ID = "SystemSourceSet.Builder";
 
     private List<GriddedSurface> sections;
-    private final List<BitSet> bitsets = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
-    private final List<Double> mags = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
-    private final List<Double> rates = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
-    private final List<Double> depths = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
-    private final List<Double> dips = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
-    private final List<Double> widths = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
-    private final List<Double> rakes = Lists.newArrayListWithCapacity(RUP_SET_SIZE);
+    private final List<BitSet> bitsets = new ArrayList<>(RUP_SET_SIZE);
+    private final List<Double> mags = new ArrayList<>(RUP_SET_SIZE);
+    private final List<Double> rates = new ArrayList<>(RUP_SET_SIZE);
+    private final List<Double> depths = new ArrayList<>(RUP_SET_SIZE);
+    private final List<Double> dips = new ArrayList<>(RUP_SET_SIZE);
+    private final List<Double> widths = new ArrayList<>(RUP_SET_SIZE);
+    private final List<Double> rakes = new ArrayList<>(RUP_SET_SIZE);
 
     Builder sections(List<GriddedSurface> sections) {
       checkNotNull(sections, "Section surface list is null");
@@ -285,15 +282,14 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
           id,
           weight,
           gmmSet,
-          ImmutableList.copyOf(sections),
-          ImmutableList.copyOf(bitsets),
-          Doubles.asList(Doubles.toArray(mags)),
-          Doubles.asList(Doubles.toArray(rates)),
-          Doubles.asList(Doubles.toArray(depths)),
-          Doubles.asList(Doubles.toArray(dips)),
-          Doubles.asList(Doubles.toArray(widths)),
-          Doubles.asList(Doubles.toArray(rakes)));
-
+          sections.toArray(new GriddedSurface[] {}), // ImmutableList.copyOf(sections),
+          bitsets.toArray(new BitSet[] {}),
+          Doubles.toArray(mags),
+          Doubles.toArray(rates),
+          Doubles.toArray(depths),
+          Doubles.toArray(dips),
+          Doubles.toArray(widths),
+          Doubles.toArray(rakes));
     }
   }
 
@@ -327,19 +323,21 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
    * section within the distance cutoff for a Site. Do this quickly using only
    * the centroid of each fault section. [siteBitSet]
    *
-   * 3) Create and populate a Table<Metric, SectionIndex, Value> of distance
-   * metrics for each section in the siteBitSet.
+   * 3) Create and populate a Map<SectionIndex, double[rJB, rRup, rX]> of
+   * distance metrics for each section in the siteBitSet. This is created
+   * pre-sorted ascending on rRup (the closest sections to a site come first).
    *
    * 4) For each sourceBitSet, 'siteBitSet.intersects(sourceBitSet)' returns
-   * whether the source is close enough to the site to be considered.
+   * whether a source is close enough to the site to be considered.
    *
    * 5) For each considered source, 'sourceBitSet AND siteBitSet' yields a
    * BitSet that only includes set bits with indices in the distance metric
    * table.
    *
-   * 6) For the relevant fault sections in each source, find the minimum
-   * distance metrics in the table (the rX value used is keyed to the minimum
-   * rRup).
+   * 6) For each source, loop the ascending indices, checking whether the bit at
+   * 'index' is set in the sources bitset. The first hit will be the closest
+   * section in a source, relative to a site. (the rX value used is keyed to the
+   * minimum rRup).
    *
    * 7) Build GmmInputs and proceed with hazard calculation.
    *
@@ -347,9 +345,8 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
    * calculated first, there are geometries for which min(rRup) != min(rJB);
    * e.g. location on hanging wall of dipping fault that abuts a vertical
    * fault... vertical might yield min(rRup) but min(rJB) would be 0 (over
-   * dipping fault).
-   *
-   * Deaggregation considerations. TODO
+   * dipping fault). While checking the bits in a source, we therefore look at
+   * the three closest sections.
    */
 
   /*
@@ -358,8 +355,8 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
    * The use case assumed here is that 1 or 2 fault systems (e.g. UCERF3
    * branch-averaged solutions) will most commonly be run when supporting
    * web-services. We therefore compute hazard by first creating a (large) input
-   * list and then distribute the more time consuming curve calculation. Hoever,
-   * note that if many fault systems are to be run, it probably makes sense to
+   * list and then distribute the more time consuming curve calculation.
+   * However, if many fault systems were to be run, it probably makes sense to
    * farm each onto an independent thread.
    */
 
@@ -383,39 +380,40 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
     @Override
     public InputList apply(final SystemSourceSet sourceSet) {
+      // TODO is try-catch needed?
 
       try {
-        SystemInputList inputs = new SystemInputList(sourceSet);
 
-        // create Site BitSet
+        /* Create Site BitSet. */
         double maxDistance = sourceSet.groundMotionModels().maxDistance();
         BitSet siteBitset = sourceSet.bitsetForLocation(site.location, maxDistance);
         if (siteBitset.isEmpty()) {
-          return inputs;
+          return SystemInputList.empty(sourceSet);
         }
 
-        // create and fill distance table
-        List<Integer> siteIndices = Data.bitsToIndices(siteBitset);
-        Table<Integer, Distance.Type, Double> rTable = ArrayTable.create(
-            siteIndices,
-            EnumSet.allOf(Distance.Type.class));
+        /* Create and fill distance map. */
+        int[] siteIndices = Data.bitsToIndices(siteBitset);
+        ImmutableMap.Builder<Integer, double[]> rMapBuilder = ImmutableMap.<Integer, double[]> builder()
+            .orderEntriesByValue(new DistanceTypeSorter(R_RUP_INDEX));
         for (int i : siteIndices) {
-          Distance r = sourceSet.sections.get(i).distanceTo(site.location);
-          Map<Distance.Type, Double> rRow = rTable.row(i);
-          rRow.put(R_JB, r.rJB);
-          rRow.put(R_RUP, r.rRup);
-          rRow.put(R_X, r.rX);
+          Distance r = sourceSet.sections[i].distanceTo(site.location);
+          rMapBuilder.put(i, new double[] { r.rJB, r.rRup, r.rX });
         }
 
-        // create inputs
+        /* Create inputs. */
+        Map<Integer, double[]> rMap = rMapBuilder.build();
         Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
-            rTable,
-            siteBitset,
+            rMap,
             site);
         Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
         Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
+        
+        /* Fill input list. */
+        SystemInputList inputs = new SystemInputList(sourceSet, rMap.keySet());
         for (SystemSource source : sources) {
           inputs.add(inputGenerator.apply(source));
+          // for deagg
+          inputs.addBitset(source.bitset());
         }
 
         return inputs;
@@ -424,6 +422,20 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
         Throwables.propagate(e);
         return null;
       }
+    }
+  }
+
+  private static final class DistanceTypeSorter extends Ordering<double[]> {
+
+    final int rTypeIndex;
+
+    DistanceTypeSorter(int rTypeIndex) {
+      this.rTypeIndex = rTypeIndex;
+    }
+
+    @Override
+    public int compare(double[] left, double[] right) {
+      return Double.compare(left[rTypeIndex], right[rTypeIndex]);
     }
   }
 
@@ -447,44 +459,48 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
   }
 
+  private static final int R_JB_INDEX = 0;
+  private static final int R_RUP_INDEX = 1;
+  private static final int R_X_INDEX = 2;
+
+  private static final int R_HIT_LIMIT = 3;
+
   private static final class InputGenerator implements Function<SystemSource, HazardInput> {
 
-    private final Table<Integer, Distance.Type, Double> rTable;
-    private final BitSet siteBitset;
+    private final Map<Integer, double[]> rMap;
     private final Site site;
 
     InputGenerator(
-        final Table<Integer, Distance.Type, Double> rTable,
-        final BitSet siteBitset,
+        final Map<Integer, double[]> rMap,
         final Site site) {
 
-      this.rTable = rTable;
-      this.siteBitset = siteBitset;
+      this.rMap = rMap;
       this.site = site;
     }
 
     @Override
     public HazardInput apply(SystemSource source) {
 
-      // create index list of relevant sections
-      BitSet sectionBitset = (BitSet) source.bitset().clone();
-      sectionBitset.and(siteBitset);
-      List<Integer> sectionIndices = Data.bitsToIndices(sectionBitset);
-
-      // find r minima
+      /* Find r minima. */
+      BitSet sectionBitset = source.bitset();
       double rJB = Double.MAX_VALUE;
       double rRup = Double.MAX_VALUE;
-      int rRupIndex = -1;
-      for (int sectionIndex : sectionIndices) {
-        Map<Type, Double> rRow = rTable.row(sectionIndex);
-        rJB = min(rJB, rRow.get(R_JB));
-        double rRupNew = rRow.get(R_RUP);
-        if (rRupNew < rRup) {
-          rRup = rRupNew;
-          rRupIndex = sectionIndex;
+      double rX = Double.MAX_VALUE;
+      int hitCount = 0;
+      for (int sectionIndex : rMap.keySet()) {
+        if (sectionBitset.get(sectionIndex)) {
+          double[] distances = rMap.get(sectionIndex);
+          rJB = min(rJB, distances[R_JB_INDEX]);
+          double rRupNew = distances[R_RUP_INDEX];
+          if (rRupNew < rRup) {
+            rRup = rRupNew;
+            rX = distances[R_X_INDEX];
+          }
+          if (++hitCount > R_HIT_LIMIT) {
+            break;
+          }
         }
       }
-      double rX = rTable.get(rRupIndex, R_X);
 
       double dip = source.dip();
       double width = source.width();
@@ -510,12 +526,14 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   }
 
   private final BitSet bitsetForLocation(final Location loc, final double r) {
-    BitSet bits = new BitSet(sections.size());
+    BitSet bits = new BitSet(sections.length);
     int count = 0;
     for (GriddedSurface surface : sections) {
       bits.set(count++, horzDistanceFast(loc, surface.centroid()) <= r);
     }
     return bits;
   }
+  
+  
 
 }

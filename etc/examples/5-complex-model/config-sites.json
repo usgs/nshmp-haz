@@ -3,6 +3,7 @@
     "imts": ["SA1P0", "SA2P0"]
   },
   "output": {
-    "directory": "curves-sites"
+    "directory": "curves-sites",
+    "flushLimit": 1
   }
 }

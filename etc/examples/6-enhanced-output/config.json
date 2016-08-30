@@ -1,5 +1,6 @@
 {
   "output": {
-    "curveTypes": ["TOTAL", "GMM", "SOURCE"]
+    "curveTypes": ["TOTAL", "GMM", "SOURCE"],
+    "flushLimit": 1
   }
 }

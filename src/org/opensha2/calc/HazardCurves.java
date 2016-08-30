@@ -73,7 +73,7 @@ final class HazardCurves {
     private Builder(GroundMotions groundMotions) {
       this.groundMotions = groundMotions;
       curveMap = new EnumMap<>(Imt.class);
-      for (Imt imt : groundMotions.means.keySet()) {
+      for (Imt imt : groundMotions.μLists.keySet()) {
         Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
         curveMap.put(imt, gmmMap);
       }

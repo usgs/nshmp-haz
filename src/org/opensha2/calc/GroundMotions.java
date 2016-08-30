@@ -31,19 +31,19 @@ final class GroundMotions {
    *
    * TODO It would be nice to have an immutable variant of a double[] backed
    * list, but would require copying values on build().
-   *
-   * TODO refactor to μLists σLists
    */
 
   final InputList inputs;
-  final Map<Imt, Map<Gmm, List<Double>>> means;
-  final Map<Imt, Map<Gmm, List<Double>>> sigmas;
+  final Map<Imt, Map<Gmm, List<Double>>> μLists;
+  final Map<Imt, Map<Gmm, List<Double>>> σLists;
 
-  private GroundMotions(InputList inputs, Map<Imt, Map<Gmm, List<Double>>> means,
-      Map<Imt, Map<Gmm, List<Double>>> sigmas) {
+  private GroundMotions(
+      InputList inputs,
+      Map<Imt, Map<Gmm, List<Double>>> μLists,
+      Map<Imt, Map<Gmm, List<Double>>> σLists) {
     this.inputs = inputs;
-    this.means = means;
-    this.sigmas = sigmas;
+    this.μLists = μLists;
+    this.σLists = σLists;
   }
 
   @Override
@@ -54,14 +54,14 @@ final class GroundMotions {
     for (int i = 0; i < inputs.size(); i++) {
       sb.append(inputs.get(i));
       sb.append(" ");
-      for (Entry<Imt, Map<Gmm, List<Double>>> imtEntry : means.entrySet()) {
+      for (Entry<Imt, Map<Gmm, List<Double>>> imtEntry : μLists.entrySet()) {
         Imt imt = imtEntry.getKey();
         sb.append(imt.name()).append(" [");
         for (Entry<Gmm, List<Double>> gmmEntry : imtEntry.getValue().entrySet()) {
           Gmm gmm = gmmEntry.getKey();
           sb.append(gmm.name()).append(" ");
           sb.append(String.format("μ=%.3f", gmmEntry.getValue().get(i))).append(" ");
-          sb.append(String.format("σ=%.3f", sigmas.get(imt).get(gmm).get(i))).append(" ");
+          sb.append(String.format("σ=%.3f", σLists.get(imt).get(gmm).get(i))).append(" ");
         }
         sb.append("] ");
       }
@@ -81,7 +81,7 @@ final class GroundMotions {
    * against the combined result.
    */
   static GroundMotions combine(InputList inputs, List<GroundMotions> groundMotions) {
-    Map<Imt, Map<Gmm, List<Double>>> keyModel = groundMotions.get(0).means;
+    Map<Imt, Map<Gmm, List<Double>>> keyModel = groundMotions.get(0).μLists;
     Set<Imt> imtKeys = keyModel.keySet();
     Set<Gmm> gmmKeys = keyModel.get(imtKeys.iterator().next()).keySet();
     return builder(inputs, imtKeys, gmmKeys)
@@ -149,7 +149,7 @@ final class GroundMotions {
     private Builder combine(List<GroundMotions> groundMotions) {
       int startIndex = 0;
       for (GroundMotions gm : groundMotions) {
-        addCount += setValues(means, gm.means, sigmas, gm.sigmas, startIndex);
+        addCount += setValues(means, gm.μLists, sigmas, gm.σLists, startIndex);
         startIndex += gm.inputs.size();
       }
       return this;

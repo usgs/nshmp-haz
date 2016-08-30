@@ -5,57 +5,79 @@ import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.data.DataTables.checkDataState;
-import static org.opensha2.data.DataTables.indexOf;
-import static org.opensha2.data.DataTables.keys;
+import static org.opensha2.data.IntervalData.checkDataState;
+import static org.opensha2.data.IntervalData.indexOf;
+import static org.opensha2.data.IntervalData.keys;
 
-import org.opensha2.data.DataTables.AbstractTable;
-import org.opensha2.data.DataTables.DefaultTable;
-import org.opensha2.data.DataTables.SingularTable;
+import org.opensha2.data.IntervalData.AbstractTable;
+import org.opensha2.data.IntervalData.DefaultTable;
 
 import com.google.common.primitives.Doubles;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * A 2-dimensional table of immutable, double-valued data that is arranged
- * according to increasing and uniformly spaced double-valued keys. Data tables
- * are almost always used to represent binned data, and so while row and column
- * keys are bin centers, indexing is managed internally using bin edges. This
+ * according to increasing and uniformly spaced double-valued keys. Interval
+ * tables are used to represent binned data, and so while row and column keys
+ * are bin centers, indexing is managed internally using bin edges. This
  * simplifies issues related to rounding/precision errors that occur when
  * indexing according to explicit double values.
  *
- * <p>To create a {@code DataTable} instance, use a {@link Builder}.
+ * <p>To create an instance of an {@code IntervalTable}, use a {@link Builder}.
  *
- * <p>Internally, a {@code DataTable} is backed by a {@code double[][]} array
- * where 'row' refers to the 1st dimension and 'column' the 2nd.
+ * <p>Internally, an {@code IntervalTable} is backed by a {@code double[][]}
+ * where a 'row' maps to the 1st dimension and a 'column' the 2nd.
  *
- * <p>Note that data tables are not intended for use with very high precision
- * data and keys are currently limited to a precision of 4 decimal places. This
- * may be changed or improved in the future.
+ * <p>Note that interval tables are not intended for use with very high
+ * precision data and keys are currently limited to a precision of 4 decimal
+ * places. This may change in the future.
  *
  * @author Peter Powers
- * @see DataVolume
+ * @see IntervalData
+ * @see IntervalArray
+ * @see IntervalVolume
  */
-public interface DataTable {
+public interface IntervalTable {
 
   /**
-   * Return a value corresponding to the supplied {@code row} and {@code column}
-   * keys.
+   * Return the value of the bin that maps to the supplied row and column
+   * values. Do not confuse this method with {@link #get(int, int)} by row
+   * index.
    *
-   * @param row of value to retrieve (may not explicitely exist as a key)
-   * @param column of value to retrieve (may not explicitely exist as a key)
+   * @param rowValue of bin to retrieve
+   * @param columnValue of bin to retrieve
+   * @throws IndexOutOfBoundsException if either value is out of range
    */
-  double get(double row, double column);
+  double get(double rowValue, double columnValue);
 
   /**
-   * Return an immutable view of a row of values.
-   *
-   * @param row to retrieve
+   * Return the value of the bin that maps to the supplied row and column
+   * indices. Do not confuse this method with {@link #get(double, double)} by
+   * row value.
+   * 
+   * @param rowIndex of bin to retrieve
+   * @param columnIndex of bin to retrieve
+   * @throws IndexOutOfBoundsException if either index is out of range
    */
-  XySequence row(double row);
+  double get(int rowIndex, int columnIndex);
+
+  /**
+   * Return an immutable view of the values that map to the supplied row value.
+   * Do not confuse with {@link #row(int)} retrieval by index.
+   *
+   * @param rowValue of bin to retrieve
+   */
+  XySequence row(double rowValue);
+
+  /**
+   * Return an immutable view of the values that map to the supplied row index.
+   * Do not confuse with {@link #row(double)} retrieval by value.
+   *
+   * @param rowIndex of bin to retrieve
+   */
+  XySequence row(int rowIndex);
 
   /**
    * Return the lower edge of the lowermost row bin.
@@ -73,7 +95,7 @@ public interface DataTable {
   double rowΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the row keys.
+   * Return an immutable list <i>view</i> of the row keys (bin centers).
    */
   List<Double> rows();
 
@@ -93,17 +115,36 @@ public interface DataTable {
   double columnΔ();
 
   /**
-   * Return an immutable list <i>view</i> of the column keys.
+   * Return an immutable list <i>view</i> of the column keys (bin centers).
    */
   List<Double> columns();
 
   /**
-   * A supplier of values with which to fill a {@code DataTable}.
+   * Return a new {@code IntervalArray} created by summing the columns of this
+   * table.
+   */
+  IntervalArray collapse();
+
+  /**
+   * Return the indices of the bin with smallest value in the form
+   * {@code [rowIndex, columnIndex]}.
+   */
+  int[] minIndex();
+
+  /**
+   * Return the indices of the bin with largest value in the form
+   * {@code [rowIndex, columnIndex]}.
+   */
+  int[] maxIndex();
+
+  /**
+   * A supplier of values with which to fill a {@code IntervalTable}.
    */
   interface Loader {
 
     /**
-     * Compute the value corresponding to the supplied row and column keys.
+     * Compute the value corresponding to the supplied row and column keys (bin
+     * centers).
      *
      * @param row value
      * @param column value
@@ -112,19 +153,14 @@ public interface DataTable {
   }
 
   /**
-   * A builder of immutable {@code DataTable}s.
+   * A builder of immutable {@code IntervalTable}s.
    *
    * <p>Use {@link #create()} to initialize a new builder. Rows and columns must
    * be specified before any data can be added. Note that any supplied
    * {@code max} values may not correspond to the final upper edge of the
-   * uppermost bins if {@code max - min} is not evenly divisible by {@code Δ}
-   * .
+   * uppermost bins if {@code max - min} is not evenly divisible by {@code Δ} .
    */
   public static final class Builder {
-
-    // TODO data is not copied on build() so we need to dereference
-    // data arrays on build() to prevent lingering builders from
-    // further modifying data
 
     private double[][] data;
 
@@ -156,7 +192,7 @@ public interface DataTable {
      *
      * @param model data table
      */
-    public static Builder fromModel(DataTable model) {
+    public static Builder fromModel(IntervalTable model) {
 
       AbstractTable t = (AbstractTable) model;
       Builder b = new Builder();
@@ -176,7 +212,7 @@ public interface DataTable {
     }
 
     /**
-     * Define the data table rows.
+     * Define the table row intervals.
      *
      * @param min lower edge of lowermost row bin
      * @param max upper edge of uppermost row bin
@@ -192,7 +228,7 @@ public interface DataTable {
     }
 
     /**
-     * Define the data table columns.
+     * Define the table column intervals.
      *
      * @param min lower edge of lowermost column bin
      * @param max upper edge of uppermost column bin
@@ -361,16 +397,22 @@ public interface DataTable {
      * @param table to add
      * @throws IllegalArgumentException if the rows and columns of the supplied
      *         table do not match those of this table
-     * @see #fromModel(DataTable)
+     * @see #fromModel(IntervalTable)
      */
-    public Builder add(DataTable table) {
-      // safe covariant casts
+    public Builder add(IntervalTable table) {
+      // safe covariant cast
       validateTable((AbstractTable) table);
-      if (table instanceof SingularTable) {
-        Data.uncheckedAdd(((SingularTable) table).value, data);
-      } else {
-        Data.uncheckedAdd(data, ((DefaultTable) table).data);
-      }
+      // safe covariant cast until other concrete implementations exist
+      Data.uncheckedAdd(data, ((DefaultTable) table).data);
+      return this;
+    }
+
+    /**
+     * Multiply ({@code scale}) all values in this builder.
+     * @param scale factor
+     */
+    public Builder multiply(double scale) {
+      Data.multiply(scale, data);
       return this;
     }
 
@@ -386,6 +428,16 @@ public interface DataTable {
       return that;
     }
 
+    /*
+     * Data is not copied on build() so we dereference data arrays to prevent
+     * lingering builders from further modifying data.
+     */
+    private void dereference() {
+      data = null;
+      rows = null;
+      columns = null;
+    }
+
     /**
      * Return a newly-created, immutable, 2-dimensional data container populated
      * with values computed by the supplied loader. Calling this method will
@@ -394,7 +446,7 @@ public interface DataTable {
      *
      * @param loader that will compute values
      */
-    public DataTable build(Loader loader) {
+    public IntervalTable build(Loader loader) {
       checkNotNull(loader);
       for (int i = 0; i < rows.length; i++) {
         double row = rows[i];
@@ -407,33 +459,17 @@ public interface DataTable {
 
     /**
      * Return a newly-created, immutable, 2-dimensional data container populated
-     * with the single value supplied. Calling this method will ignore any
-     * values already supplied via {@code set*} or {@code add*} methods and will
-     * create a DataTable holding only the single value, similar to
-     * {@link Collections#nCopies(int, Object)}.
-     *
-     * @param value which which to fill data container
-     */
-    public DataTable build(double value) {
-      checkState(built != true, "This builder has already been used");
-      checkDataState(rows, columns);
-      return new SingularTable(
-          rowMin, rowMax, rowΔ, rows,
-          columnMin, columnMax, columnΔ, columns,
-          value);
-    }
-
-    /**
-     * Return a newly-created, immutable, 2-dimensional data container populated
      * with the contents of this {@code Builder}.
      */
-    public DataTable build() {
+    public IntervalTable build() {
       checkState(built != true, "This builder has already been used");
       checkDataState(rows, columns);
-      return new DefaultTable(
+      IntervalTable table = new DefaultTable(
           rowMin, rowMax, rowΔ, rows,
           columnMin, columnMax, columnΔ, columns,
           data);
+      dereference();
+      return table;
     }
   }
 

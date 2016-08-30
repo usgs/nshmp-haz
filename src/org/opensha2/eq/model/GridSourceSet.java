@@ -13,7 +13,7 @@ import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
 
 import org.opensha2.data.Data;
-import org.opensha2.data.DataTable;
+import org.opensha2.data.IntervalTable;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.FocalMech;
@@ -121,9 +121,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     return locs.size();
   }
 
-  public static String sizeString(SourceSet<? extends Source> sources, int size) {
-    if (sources instanceof Table) {
-      Table t = (Table) sources;
+  /**
+   * For internal use only. Public for access outside of package.
+   */
+  public static String sizeString(SourceSet<? extends Source> sourceSet, int size) {
+    if (sourceSet instanceof Table) {
+      Table t = (Table) sourceSet;
       return t.parentCount() + " (" + t.rowCount + " of " + t.maximumSize + ")";
     }
     return Integer.toString(size);
@@ -653,7 +656,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
       double rMax = parent.groundMotionModels().maxDistance();
 
-      DataTable.Builder tableBuilder = DataTable.Builder.create()
+      IntervalTable.Builder tableBuilder = IntervalTable.Builder.create()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
@@ -663,7 +666,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         parentCount++;
       }
 
-      DataTable mfdTable = tableBuilder.build();
+      IntervalTable mfdTable = tableBuilder.build();
 
       // System.out.println(parent.name());
       // System.out.println(mfdTable);
@@ -673,7 +676,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       ImmutableList.Builder<PointSource> b = ImmutableList.builder();
       for (double r : distances) {
         XySequence mfd = mfdTable.row(r);
-        if (mfd.isEmpty()) {
+        if (mfd.isClear()) {
           continue;
         }
         Location loc = Locations.location(origin, SRC_TO_SITE_AZIMUTH, r);
@@ -698,15 +701,15 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
       double rMax = parent.groundMotionModels().maxDistance();
 
-      DataTable.Builder ssTableBuilder = DataTable.Builder.create()
+      IntervalTable.Builder ssTableBuilder = IntervalTable.Builder.create()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
-      DataTable.Builder rTableBuilder = DataTable.Builder.create()
+      IntervalTable.Builder rTableBuilder = IntervalTable.Builder.create()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
-      DataTable.Builder nTableBuilder = DataTable.Builder.create()
+      IntervalTable.Builder nTableBuilder = IntervalTable.Builder.create()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
@@ -728,11 +731,11 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         parentCount++;
       }
 
-      DataTable ssTable = ssTableBuilder.build();
+      IntervalTable ssTable = ssTableBuilder.build();
       // System.out.println("SS Table:" + TextUtils.NEWLINE + ssTable);
-      DataTable rTable = rTableBuilder.build();
+      IntervalTable rTable = rTableBuilder.build();
       // System.out.println("R Table:" + TextUtils.NEWLINE + rTable);
-      DataTable nTable = nTableBuilder.build();
+      IntervalTable nTable = nTableBuilder.build();
       // System.out.println("N Table:" + TextUtils.NEWLINE + nTable);
 
       // DataTable tableSum = DataTable.Builder.fromModel(ssTable)
@@ -760,7 +763,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         boolean tableRowUsed = false;
 
         XySequence ssMfd = ssTable.row(r);
-        if (ssMfd.isEmpty()) {
+        if (ssMfd.isClear()) {
           continue;
         }
         b.add(PointSources.pointSource(
@@ -773,7 +776,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         tableRowUsed = true;
 
         XySequence rMfd = rTable.row(r);
-        if (rMfd.isEmpty()) {
+        if (rMfd.isClear()) {
           continue;
         }
         b.add(PointSources.pointSource(
@@ -786,7 +789,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         tableRowUsed = true;
 
         XySequence nMfd = nTable.row(r);
-        if (nMfd.isEmpty()) {
+        if (nMfd.isClear()) {
           continue;
         }
         b.add(PointSources.pointSource(

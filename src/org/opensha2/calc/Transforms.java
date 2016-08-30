@@ -172,12 +172,12 @@ final class Transforms {
         XySequence utilCurve = XySequence.copyOf(modelCurve);
         XySequence gmmCurve = XySequence.copyOf(modelCurve);
 
-        for (Gmm gmm : groundMotions.means.get(imt).keySet()) {
+        for (Gmm gmm : groundMotions.μLists.get(imt).keySet()) {
 
           gmmCurve.clear();
 
-          List<Double> means = groundMotions.means.get(imt).get(gmm);
-          List<Double> sigmas = groundMotions.sigmas.get(imt).get(gmm);
+          List<Double> means = groundMotions.μLists.get(imt).get(gmm);
+          List<Double> sigmas = groundMotions.σLists.get(imt).get(gmm);
 
           for (int i = 0; i < means.size(); i++) {
             exceedanceModel.exceedance(
@@ -240,12 +240,12 @@ final class Transforms {
         XySequence utilCurve = XySequence.copyOf(modelCurve);
         XySequence gmmCurve = XySequence.copyOf(modelCurve);
 
-        for (Gmm gmm : groundMotions.means.get(imt).keySet()) {
+        for (Gmm gmm : groundMotions.μLists.get(imt).keySet()) {
 
           gmmCurve.clear();
 
-          List<Double> means = groundMotions.means.get(imt).get(gmm);
-          List<Double> sigmas = groundMotions.sigmas.get(imt).get(gmm);
+          List<Double> means = groundMotions.μLists.get(imt).get(gmm);
+          List<Double> sigmas = groundMotions.σLists.get(imt).get(gmm);
 
           for (int i = 0; i < means.size(); i++) {
             double mean = means.get(i);
@@ -542,8 +542,7 @@ final class Transforms {
 
     @Override
     public ClusterGroundMotions apply(ClusterInputs clusterInputs) {
-      ClusterGroundMotions clusterGroundMotions = new ClusterGroundMotions(
-          clusterInputs.parent);
+      ClusterGroundMotions clusterGroundMotions = new ClusterGroundMotions(clusterInputs.parent);
       for (SourceInputList hazardInputs : clusterInputs) {
         clusterGroundMotions.add(transform.apply(hazardInputs));
       }
@@ -589,23 +588,23 @@ final class Transforms {
             .build();
         XySequence utilCurve = XySequence.copyOf(modelCurve);
 
-        for (GroundMotions hazardGroundMotions : clusterGroundMotions) {
+        for (GroundMotions groundMotions : clusterGroundMotions) {
 
-          Map<Gmm, List<Double>> gmmMeans = hazardGroundMotions.means.get(imt);
-          Map<Gmm, List<Double>> gmmSigmas = hazardGroundMotions.sigmas.get(imt);
+          Map<Gmm, List<Double>> gmmMeans = groundMotions.μLists.get(imt);
+          Map<Gmm, List<Double>> gmmSigmas = groundMotions.σLists.get(imt);
 
           for (Gmm gmm : gmmMeans.keySet()) {
             XySequence magVarCurve = XySequence.copyOf(modelCurve);
             List<Double> means = gmmMeans.get(gmm);
             List<Double> sigmas = gmmSigmas.get(gmm);
-            for (int i = 0; i < hazardGroundMotions.inputs.size(); i++) {
+            for (int i = 0; i < groundMotions.inputs.size(); i++) {
               exceedanceModel.exceedance(
                   means.get(i),
                   sigmas.get(i),
                   truncationLevel,
                   imt,
                   utilCurve);
-              utilCurve.multiply(hazardGroundMotions.inputs.get(i).rate);
+              utilCurve.multiply(groundMotions.inputs.get(i).rate);
               magVarCurve.add(utilCurve);
             }
             faultCurves.put(gmm, magVarCurve);
@@ -614,8 +613,7 @@ final class Transforms {
 
         double rate = clusterGroundMotions.parent.rate();
         for (Gmm gmm : faultCurves.keySet()) {
-          XySequence clusterCurve = ExceedanceModel.clusterExceedance(
-              faultCurves.get(gmm));
+          XySequence clusterCurve = ExceedanceModel.clusterExceedance(faultCurves.get(gmm));
           builder.addCurve(imt, gmm, clusterCurve.multiply(rate));
         }
       }

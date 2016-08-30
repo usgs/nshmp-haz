@@ -1,0 +1,53 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-118.25, 34.05]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "Los Angeles CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.40, 37.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "San Francisco CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.30, 47.60]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "Seattle WA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.90, 40.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "marker-color": "#ff0080",
+        "title": "Salt Lake City UT"
+      }
+    }
+  ]
+}
