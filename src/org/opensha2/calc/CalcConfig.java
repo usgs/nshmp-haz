@@ -638,7 +638,7 @@ public final class CalcConfig {
         Builder b = new Builder();
         b.directory = Paths.get(DEFAULT_OUT);
         b.curveTypes = EnumSet.of(CurveType.TOTAL);
-        b.flushLimit = 20;
+        b.flushLimit = 5;
         return b;
       }
 
