@@ -178,8 +178,8 @@ public class HazardCalc {
     log.info(PROGRAM + ": calculating ...");
     Stopwatch batchWatch = Stopwatch.createStarted();
     Stopwatch totalWatch = Stopwatch.createStarted();
-    int batchCount = 0;
-    int siteCount = 0;
+    int batchCount = 1;
+    int siteCount = 1;
 
     List<Hazard> results = new ArrayList<>();
     boolean firstBatch = true;
