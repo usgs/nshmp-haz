@@ -100,6 +100,11 @@ abstract class DeaggContributor {
       this.sourceSet = sourceSet;
       this.children = children;
     }
+    
+    @Override
+    public String toString() {
+      return "SourceSet contributor: " + sourceSet.name();
+    }
 
     @Override
     public StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
@@ -173,6 +178,11 @@ abstract class DeaggContributor {
     }
 
     @Override
+    public String toString() {
+      return "Source contributor: " + source.name();
+    }
+    
+    @Override
     StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
       double total = total();
       double contribution = total * toPercent;
@@ -239,6 +249,11 @@ abstract class DeaggContributor {
     }
 
     @Override
+    public String toString() {
+      return "Cluster contributor: " + cluster.name();
+    }
+    
+    @Override
     StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
       double contribution = total() * toPercent;
       if (contribution < CONTRIBUTOR_LIMIT) {
@@ -297,6 +312,11 @@ abstract class DeaggContributor {
     SystemContributor(SectionSource section, double rate, double residual) {
       super(rate, residual);
       this.section = section;
+    }
+
+    @Override
+    public String toString() {
+      return "System contributor: Section " + section.sectionIndex;
     }
 
     @Override
