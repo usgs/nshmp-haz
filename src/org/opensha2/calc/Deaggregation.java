@@ -103,7 +103,6 @@ public final class Deaggregation {
       Imt imt = entry.getKey();
       double iml = IML_INTERPOLATER.findX(entry.getValue(), rate);
       DeaggConfig config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
-      //System.out.println(config); // TODO clean
       ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
       imtDeaggMap.put(imt, imtDeagg);
     }
@@ -191,7 +190,7 @@ public final class Deaggregation {
         double sourceSetRate = RATE_INTERPOLATER.findY(sourceSetCurve, config.iml);
         if (Double.isNaN(sourceSetRate) || sourceSetRate == 0.0) {
           // TODO log me instead FINER??
-          //System.out.println("Skipping: " + curveSet.sourceSet.name());
+          // System.out.println("Skipping: " + curveSet.sourceSet.name());
           continue;
         }
         Map<Gmm, DeaggDataset> sourceSetDatasets = Deaggregator.deaggregate(curveSet, config);
@@ -213,17 +212,17 @@ public final class Deaggregation {
       StringBuilder sb = new StringBuilder();
       sb.append(NEWLINE);
       DeaggExport export = new DeaggExport(
-          totalDataset, 
-          totalDataset, 
+          totalDataset,
+          totalDataset,
           config,
           "Total");
       sb.append(export.toString());
       sb.append(NEWLINE);
       for (Entry<Gmm, DeaggDataset> ddEntry : gmmDatasets.entrySet()) {
         export = new DeaggExport(
-            totalDataset, 
-            ddEntry.getValue(), 
-            config, 
+            totalDataset,
+            ddEntry.getValue(),
+            config,
             ddEntry.getKey().toString());
         sb.append(export.toString());
         sb.append(NEWLINE);
