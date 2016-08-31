@@ -130,12 +130,17 @@ final class Deaggregator {
       Map<Gmm, XySequence> clusterCurves = clusterCurveList.get(i);
       for (Entry<Gmm, DeaggDataset.Builder> entry : datasetBuilders.entrySet()) {
 
-        /* Scale. */
+        /*
+         * Scale, skipping clusters that do not contribute as their attendant
+         * sources will also not contribute and 0/0 will yield NaNs.
+         */
         Gmm gmm = entry.getKey();
         DeaggDataset.Builder clusterBuilder = entry.getValue();
         XySequence clusterCurve = clusterCurves.get(gmm);
         double clusterRate = Deaggregation.RATE_INTERPOLATER.findY(clusterCurve, iml);
-        clusterBuilder.multiply(clusterRate / clusterBuilder.rate());
+        if (clusterBuilder.rate() > 0.0) {
+          clusterBuilder.multiply(clusterRate / clusterBuilder.rate());
+        }
 
         /* Set cluster rate. */
         clusterBuilder.parent.add(clusterBuilder.binned, clusterBuilder.residual);
