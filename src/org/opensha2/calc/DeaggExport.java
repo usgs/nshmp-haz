@@ -2,9 +2,9 @@ package org.opensha2.calc;
 
 import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.APPEND;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
-import static java.nio.file.StandardOpenOption.APPEND;
 
 import org.opensha2.data.Data;
 import org.opensha2.internal.MathUtils;
