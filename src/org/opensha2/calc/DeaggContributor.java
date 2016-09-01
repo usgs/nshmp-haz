@@ -3,6 +3,7 @@ package org.opensha2.calc;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.calc.DeaggExport.CONTRIBUTOR_LIMIT;
+import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.data.Data;
@@ -10,6 +11,7 @@ import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.Rupture;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
+import org.opensha2.eq.model.SourceType;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -479,6 +481,16 @@ abstract class DeaggContributor {
     }
 
     @Override
+    public int size() {
+      return 1;
+    }
+    
+    @Override
+    public SourceType type() {
+      return SYSTEM;
+    }
+
+    @Override
     public String name() {
       return "System Section (" + sectionIndex + ")";
     }
@@ -486,11 +498,6 @@ abstract class DeaggContributor {
     @Override
     public Iterator<Rupture> iterator() {
       throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int size() {
-      return 1;
     }
   }
 
