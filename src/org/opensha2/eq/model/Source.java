@@ -17,4 +17,9 @@ public interface Source extends Named, Iterable<Rupture> {
    */
   int size();
 
+  /**
+   * The {@code SourceType} identifier.
+   */
+  SourceType type();
+
 }

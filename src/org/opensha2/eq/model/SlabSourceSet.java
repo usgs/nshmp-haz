@@ -1,5 +1,7 @@
 package org.opensha2.eq.model;
 
+import static org.opensha2.eq.model.SourceType.SLAB;
+
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -48,7 +50,7 @@ public final class SlabSourceSet implements SourceSet<PointSource> {
 
   @Override
   public final SourceType type() {
-    return SourceType.SLAB;
+    return SLAB;
   }
 
   @Override

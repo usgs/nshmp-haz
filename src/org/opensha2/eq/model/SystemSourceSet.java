@@ -11,6 +11,7 @@ import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
 import static org.opensha2.eq.fault.Faults.validateWidth;
 import static org.opensha2.geo.Locations.horzDistanceFast;
+import static org.opensha2.eq.model.SourceType.SYSTEM;
 
 import org.opensha2.calc.HazardInput;
 import org.opensha2.calc.InputList;
@@ -82,7 +83,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
   @Override
   public SourceType type() {
-    return SourceType.SYSTEM;
+    return SYSTEM;
   }
 
   @Override
@@ -137,6 +138,11 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     @Override
     public int size() {
       return 1;
+    }
+
+    @Override
+    public SourceType type() {
+      return SourceType.SYSTEM;
     }
 
     @Override

@@ -9,6 +9,7 @@ import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
+import static org.opensha2.eq.model.SourceType.AREA;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.geo.GriddedRegion.ANCHOR_0_0;
 import static org.opensha2.internal.TextUtils.validateName;
@@ -88,11 +89,6 @@ public class AreaSource implements Source {
     this.sourceType = sourceType;
   }
 
-  @Override
-  public String name() {
-    return name;
-  }
-
   /**
    * The number of {@code Rupture}s for an {@code AreaSource} will vary if
    * {@code GridScaling} is non-uniform. In such cases, this method returns the
@@ -110,6 +106,16 @@ public class AreaSource implements Source {
     int sourceCount = sourceGrids.get(gridScaling.defaultIndex).size();
 
     return sourceCount * magCount * mechCount;
+  }
+
+  @Override
+  public SourceType type() {
+    return AREA;
+  }
+
+  @Override
+  public String name() {
+    return name;
   }
 
   private static int mechCount(Map<FocalMech, Double> mechWtMap, PointSourceType type) {
@@ -178,12 +184,11 @@ public class AreaSource implements Source {
   private PointSource createSource(Location loc, XySequence mfd) {
     switch (sourceType) {
       case POINT:
-        return new PointSource(loc, mfd, mechMap, rupScaling, depthModel);
+        return new PointSource(AREA, loc, mfd, mechMap, rupScaling, depthModel);
       case FINITE:
-        return new PointSourceFinite(loc, mfd, mechMap, rupScaling, depthModel);
+        return new PointSourceFinite(AREA, loc, mfd, mechMap, rupScaling, depthModel);
       case FIXED_STRIKE:
-        return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel,
-            strike);
+        return new PointSourceFixedStrike(AREA, loc, mfd, mechMap, rupScaling, depthModel, strike);
       default:
         throw new IllegalStateException("Unhandled point source type");
     }
@@ -377,7 +382,6 @@ public class AreaSource implements Source {
       checkArgument(border.size() > 2, "Border contains fewer than 3 points");
       return border;
     }
-
   }
 
 }

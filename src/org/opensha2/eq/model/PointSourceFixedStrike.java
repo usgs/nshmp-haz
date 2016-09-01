@@ -48,16 +48,29 @@ class PointSourceFixedStrike extends PointSourceFinite {
   private final double strike;
 
   /**
-   * Constructs a new point earthquake source.
+   * Constructs a new point earthquake source that provides fixed-strike
+   * ruptures.
+   * 
+   * @param type of source, as supplied from parent {@code SourceSet}
    * @param loc <code>Location</code> of the point source
    * @param mfd magnitude frequency distribution of the source
-   * @param magDepthMap specifies magnitude cutoffs and associated weights for
-   *        different depth-to-top-of-ruptures
    * @param mechWtMap <code>Map</code> of focal mechanism weights
+   * @param rupScaling rupture scaling model that may will be used to compute
+   *        the geometry of each rupture
+   * @param depthModel specifies magnitude cutoffs and associated weights for
+   *        different depth-to-top-of-ruptures
+   * @param strike of the source
    */
-  PointSourceFixedStrike(Location loc, XySequence mfd, Map<FocalMech, Double> mechWtMap,
-      RuptureScaling rupScaling, DepthModel depthModel, double strike) {
-    super(loc, mfd, mechWtMap, rupScaling, depthModel);
+  PointSourceFixedStrike(
+      SourceType type,
+      Location loc,
+      XySequence mfd,
+      Map<FocalMech, Double> mechWtMap,
+      RuptureScaling rupScaling,
+      DepthModel depthModel,
+      double strike) {
+
+    super(type, loc, mfd, mechWtMap, rupScaling, depthModel);
     this.strike = strike;
   }
 

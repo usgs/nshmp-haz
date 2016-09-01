@@ -3,6 +3,8 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import static org.opensha2.eq.model.SourceType.INTERFACE;
+
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
@@ -40,7 +42,7 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 
   @Override
   public SourceType type() {
-    return SourceType.INTERFACE;
+    return INTERFACE;
   }
 
   @Override

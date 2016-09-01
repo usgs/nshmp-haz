@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkWeight;
+import static org.opensha2.eq.model.SourceType.AREA;
 import static org.opensha2.internal.TextUtils.validateName;
 
 import org.opensha2.geo.Location;
@@ -47,7 +48,7 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 
   @Override
   public SourceType type() {
-    return SourceType.AREA;
+    return AREA;
   }
 
   @Override

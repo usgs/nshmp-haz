@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
+import static org.opensha2.eq.model.SourceType.CLUSTER;
+
 import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableMap;
@@ -45,6 +47,21 @@ public class ClusterSource implements Source {
     this.faults = faults;
   }
 
+  @Override
+  public int size() {
+    return faults.size();
+  }
+
+  @Override
+  public SourceType type() {
+    return CLUSTER;
+  }
+
+  @Override
+  public String name() {
+    return faults.name();
+  }
+
   /**
    * {@code (1 / return period)} of this source in years.
    * @return the cluster rate
@@ -68,11 +85,6 @@ public class ClusterSource implements Source {
     return faults;
   }
 
-  @Override
-  public int size() {
-    return faults.size();
-  }
-
   /**
    * Overriden to throw an {@code UnsupportedOperationException}. Cluster
    * sources are handled differently than other source types.
@@ -80,11 +92,6 @@ public class ClusterSource implements Source {
   @Override
   public Iterator<Rupture> iterator() {
     throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public String name() {
-    return faults.name();
   }
 
   @Override

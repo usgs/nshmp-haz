@@ -41,6 +41,7 @@ public class PointSources {
    */
   public static InputList finiteInputs(
       Site site,
+      SourceType sourceType,
       Location loc,
       XySequence mfd,
       Map<FocalMech, Double> mechWtMap,
@@ -48,7 +49,15 @@ public class PointSources {
       NavigableMap<Double, Map<Double, Double>> magDepthMap,
       double maxDepth) {
 
-    Source source = finiteSource(loc, mfd, mechWtMap, rupScaling, magDepthMap, maxDepth);
+    Source source = finiteSource(
+        sourceType,
+        loc,
+        mfd,
+        mechWtMap,
+        rupScaling,
+        magDepthMap,
+        maxDepth);
+    
     return Calcs.sourceToInputs(site).apply(source);
   }
 
@@ -66,6 +75,7 @@ public class PointSources {
    */
   public static List<InputList> finiteInputs(
       List<Site> sites,
+      SourceType sourceType,
       Location loc,
       XySequence mfd,
       Map<FocalMech, Double> mechWtMap,
@@ -73,7 +83,15 @@ public class PointSources {
       NavigableMap<Double, Map<Double, Double>> magDepthMap,
       double maxDepth) {
 
-    Source source = finiteSource(loc, mfd, mechWtMap, rupScaling, magDepthMap, maxDepth);
+    Source source = finiteSource(
+        sourceType,
+        loc,
+        mfd,
+        mechWtMap,
+        rupScaling,
+        magDepthMap,
+        maxDepth);
+    
     List<InputList> inputsList = new ArrayList<>();
     for (Site site : sites) {
       InputList inputs = Calcs.sourceToInputs(site).apply(source);
@@ -90,13 +108,21 @@ public class PointSources {
    */
   public static List<InputList> finiteInputs(
       List<Site> sites,
+      SourceType sourceType,
       Location loc,
       XySequence mfd,
       Map<FocalMech, Double> mechWtMap,
       GridSourceSet grid) {
 
-    Source source = pointSource(PointSourceType.FINITE, loc, mfd, mechWtMap, grid.rupScaling,
+    Source source = pointSource(
+        sourceType,
+        PointSourceType.FINITE, 
+        loc, 
+        mfd, 
+        mechWtMap, 
+        grid.rupScaling,
         grid.depthModel);
+    
     return finiteInputs(sites, source);
   }
 
@@ -111,6 +137,7 @@ public class PointSources {
   }
 
   private static PointSource finiteSource(
+      SourceType sourceType,
       Location loc,
       XySequence mfd,
       Map<FocalMech, Double> mechWtMap,
@@ -119,22 +146,23 @@ public class PointSources {
       double maxDepth) {
 
     DepthModel depthModel = DepthModel.create(magDepthMap, mfd.xValues(), maxDepth);
-    return new PointSourceFinite(loc, mfd, mechWtMap, rupScaling, depthModel);
+    return new PointSourceFinite(sourceType, loc, mfd, mechWtMap, rupScaling, depthModel);
   }
 
   public static PointSource pointSource(
-      PointSourceType type,
+      SourceType sourceType,
+      PointSourceType pointType,
       Location loc,
       XySequence mfd,
       Map<FocalMech, Double> mechWtMap,
       RuptureScaling rupScaling,
       DepthModel depthModel) {
 
-    switch (type) {
+    switch (pointType) {
       case POINT:
-        return new PointSource(loc, mfd, mechWtMap, rupScaling, depthModel);
+        return new PointSource(sourceType, loc, mfd, mechWtMap, rupScaling, depthModel);
       case FINITE:
-        return new PointSourceFinite(loc, mfd, mechWtMap, rupScaling, depthModel);
+        return new PointSourceFinite(sourceType, loc, mfd, mechWtMap, rupScaling, depthModel);
       default:
         throw new UnsupportedOperationException("FIXED_STRIKE point sources not supported");
     }
@@ -186,6 +214,7 @@ public class PointSources {
     double wusMaxDepth = 14.0;
 
     PointSource source = finiteSource(
+        SourceType.GRID,
         Location.create(0.0, 0.0),
         mfd,
         multiMechMap,
@@ -209,6 +238,7 @@ public class PointSources {
 
     InputList inputs = finiteInputs(
         site,
+        SourceType.GRID,
         srcLoc,
         mfd,
         multiMechMap,

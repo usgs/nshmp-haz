@@ -10,6 +10,7 @@ import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
 import static org.opensha2.eq.fault.Faults.validateTrace;
 import static org.opensha2.eq.fault.Faults.validateWidth;
+import static org.opensha2.eq.model.SourceType.FAULT;
 import static org.opensha2.internal.TextUtils.validateName;
 
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
@@ -104,6 +105,11 @@ public class FaultSource implements Source {
   @Override
   public int size() {
     return Iterables.size(this);
+  }
+
+  @Override
+  public SourceType type() {
+    return FAULT;
   }
 
   @Override
