@@ -155,7 +155,7 @@ public class DeaggCalc {
    * Compute hazard curves using the supplied model, config, and sites. Method
    * returns the path to the directory where results were written.
    * 
-   * TODO consider refactoring to supply an Optional<Double> retrun period to
+   * TODO consider refactoring to supply an Optional<Double> return period to
    * HazardCalc.calc() that will trigger deaggregations if the value is present.
    */
   private static Path calc(

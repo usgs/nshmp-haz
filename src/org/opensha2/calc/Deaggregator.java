@@ -34,8 +34,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Factory class that deaggregates the hazard for a single {@code SourceSet} by
- * {@code Gmm}.
+ * Factory class that deaggregates the hazard for a single {@code SourceSet}
+ * across all relevant {@code Gmm}s.
  * 
  * @author Peter Powers
  */
@@ -142,9 +142,6 @@ final class Deaggregator {
           clusterBuilder.multiply(clusterRate / clusterBuilder.rate());
         }
 
-        /* Set cluster rate. */
-        clusterBuilder.parent.add(clusterBuilder.binned, clusterBuilder.residual);
-
         /* Swap parents. */
         DeaggContributor.Builder sourceSetContributor = new SourceSetContributor.Builder()
             .sourceSet(curves.sourceSet)
@@ -174,8 +171,8 @@ final class Deaggregator {
     final Set<Gmm> gmmKeys = EnumSet.copyOf(gmms.keySet());
 
     /*
-     * Per-gmm data for the source being processed. The double[] array below is
-     * composed of [rate, residual, rScaled, mScaled, εScaled].
+     * Per-gmm data for the source being processed. The double[] arrays below
+     * are [rate, residual, rScaled, mScaled, εScaled].
      */
     Map<Gmm, double[]> gmmData = createDataMap(gmmKeys);
 
@@ -201,35 +198,36 @@ final class Deaggregator {
         double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
         double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
 
-        gmmData.get(gmm)[2] += (rRup * rate);
-        gmmData.get(gmm)[3] += (Mw * rate);
-        gmmData.get(gmm)[4] += (ε * rate);
+        double rScaled = rRup * rate;
+        double mScaled = Mw * rate;
+        double εScaled = ε * rate;
+        double[] data = gmmData.get(gmm);
+        data[2] += rScaled;
+        data[3] += mScaled;
+        data[4] += εScaled;
 
         if (skipRupture) {
-          gmmData.get(gmm)[1] += rate;
+          data[1] += rate;
           builders.get(gmm).addResidual(rate);
           continue;
         }
-        gmmData.get(gmm)[0] += rate;
+        data[0] += rate;
         int εIndex = model.epsilonIndex(ε);
 
         builders.get(gmm).addRate(
             rIndex, mIndex, εIndex,
-            rRup * rate, Mw * rate, ε * rate,
+            rScaled, mScaled, εScaled,
             rate);
       }
     }
 
     /* Add sources/contributors to builders. */
     for (Gmm gmm : gmmKeys) {
+      double[] data = gmmData.get(gmm);
       /* Safe covariant cast assuming switch handles variants. */
       DeaggContributor.Builder source = new SourceContributor.Builder()
           .source(((SourceInputList) inputs).parent)
-          .add(gmmData.get(gmm)[0],
-              gmmData.get(gmm)[1],
-              gmmData.get(gmm)[2],
-              gmmData.get(gmm)[3],
-              gmmData.get(gmm)[4]);
+          .add(data[0], data[1], data[2], data[3], data[4]);
       builders.get(gmm).addChildContributor(source);
     }
   }
@@ -329,24 +327,27 @@ final class Deaggregator {
 
             SystemContributor.Builder contributor = contributors.get(gmm);
 
+            double rScaled = rRup * rate;
+            double mScaled = Mw * rate;
+            double εScaled = ε * rate;
+
             if (skipRupture) {
-              contributor.add(0.0, rate);
+              contributor.add(0.0, rate, rScaled, mScaled, εScaled);
               builders.get(gmm).addResidual(rate);
               continue;
             }
-            contributor.add(rate, 0.0);
+            contributor.add(rate, 0.0, rScaled, mScaled, εScaled);
             int εIndex = model.epsilonIndex(ε);
 
             builders.get(gmm).addRate(
                 rIndex, mIndex, εIndex,
-                rRup * rate, Mw * rate, ε * rate,
+                rScaled, mScaled, εScaled,
                 rate);
           }
           iter.remove();
         }
       }
     }
-
     return buildDatasets(builders);
   }
 

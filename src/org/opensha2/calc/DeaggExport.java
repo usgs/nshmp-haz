@@ -487,10 +487,10 @@ final class DeaggExport {
 
   private static final String CONTRIBUTION_HEADER = new StringBuilder()
       .append(String.format(CONTRIB_HEADER_LABEL_FMT,
-          "Source Set ↳ Source Name", "Type", "r̅", "m̅", "ε₀", "lon", "lat", "az", "%"))
+          "Source Set ↳ Source", "Type", "r̅", "m̅", "ε₀", "lon", "lat", "az", "%"))
       .append(NEWLINE)
       .append(String.format(CONTRIB_HEADER_LINE_FMT,
-          "————————————————————————", "—————————", "——————", "————", "—————",
+          "——————————————————————————————————————————", "—————————", "——————", "————", "—————",
           "———————", "——————", "————", "——————"))
       .append(NEWLINE)
       .toString();
