@@ -17,7 +17,9 @@ import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
+import org.opensha2.geo.Locations;
 import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
@@ -92,14 +94,9 @@ public class FaultSource implements Source {
         "FaultSource has no ruptures");
   }
 
-  private List<List<Rupture>> initRuptureLists() {
-    ImmutableList.Builder<List<Rupture>> rupListsBuilder = ImmutableList.builder();
-    for (IncrementalMfd mfd : mfds) {
-      List<Rupture> rupList = createRuptureList(mfd);
-      checkState(rupList.size() > 0, "Rupture list is empty");
-      rupListsBuilder.add(rupList);
-    }
-    return rupListsBuilder.build();
+  @Override
+  public String name() {
+    return name;
   }
 
   @Override
@@ -112,9 +109,13 @@ public class FaultSource implements Source {
     return FAULT;
   }
 
+  /**
+   * The closest point on the fault trace, relative to the supplied site
+   * {@code Location}.
+   */
   @Override
-  public String name() {
-    return name;
+  public Location location(Location site) {
+    return Locations.closestPoint(site, trace);
   }
 
   @Override
@@ -133,6 +134,16 @@ public class FaultSource implements Source {
         .put("top", trace.first().depth())
         .build();
     return getClass().getSimpleName() + " " + data;
+  }
+
+  private List<List<Rupture>> initRuptureLists() {
+    ImmutableList.Builder<List<Rupture>> rupListsBuilder = ImmutableList.builder();
+    for (IncrementalMfd mfd : mfds) {
+      List<Rupture> rupList = createRuptureList(mfd);
+      checkState(rupList.size() > 0, "Rupture list is empty");
+      rupListsBuilder.add(rupList);
+    }
+    return rupListsBuilder.build();
   }
 
   private List<Rupture> createRuptureList(IncrementalMfd mfd) {

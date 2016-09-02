@@ -63,9 +63,9 @@ class PointSource implements Source {
   int ssIndex, revIndex;
 
   /**
-   * Constructs a new point earthquake source. This is a simple model that
-   * does not simulate finiteness (e.g. rupture rRup values will differ from rJB
-   * only by virtue of the depth of the source).
+   * Constructs a new point earthquake source. This is a simple model that does
+   * not simulate finiteness (e.g. rupture rRup values will differ from rJB only
+   * by virtue of the depth of the source).
    * 
    * @param type of source, as supplied from a parent {@code SourceSet}
    * @param loc <code>Location</code> of the point source
@@ -94,6 +94,11 @@ class PointSource implements Source {
   }
 
   @Override
+  public String name() {
+    return "PointSource: " + loc;
+  }
+
+  @Override
   public int size() {
     return rupCount;
   }
@@ -103,9 +108,14 @@ class PointSource implements Source {
     return type;
   }
 
+  /**
+   * The location of the point source, irrespective of any distance corrections
+   * that might be applied to attendant ruptures and ignoring the supplied site
+   * {@code Location}.
+   */
   @Override
-  public String name() {
-    return "PointSource: " + loc;
+  public Location location(Location site) {
+    return loc;
   }
 
   private void updateRupture(Rupture rup, int index) {

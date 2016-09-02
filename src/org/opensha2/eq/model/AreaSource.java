@@ -69,15 +69,24 @@ public class AreaSource implements Source {
   private final RuptureScaling rupScaling;
   private final PointSourceType sourceType;
 
+  private final Location centroid;
+
   // TODO need singleton source grid for border representation
   // which side of an area a site is on is important; either point grids
   // need to be created at runtime or need to be located at the centroid of
   // area
 
-  AreaSource(String name, IncrementalMfd mfd, GridScaling gridScaling,
-      List<GriddedRegion> sourceGrids, Map<FocalMech, Double> mechMap,
-      DepthModel depthModel, double strike, RuptureScaling rupScaling,
+  AreaSource(
+      String name,
+      IncrementalMfd mfd,
+      GridScaling gridScaling,
+      List<GriddedRegion> sourceGrids,
+      Map<FocalMech, Double> mechMap,
+      DepthModel depthModel,
+      double strike,
+      RuptureScaling rupScaling,
       PointSourceType sourceType) {
+
     this.name = name;
     this.mfd = mfd;
     this.gridScaling = gridScaling;
@@ -87,6 +96,13 @@ public class AreaSource implements Source {
     this.strike = strike;
     this.rupScaling = rupScaling;
     this.sourceType = sourceType;
+
+    this.centroid = Locations.centroid(sourceGrids.get(gridScaling.defaultIndex));
+  }
+
+  @Override
+  public String name() {
+    return name;
   }
 
   /**
@@ -113,9 +129,13 @@ public class AreaSource implements Source {
     return AREA;
   }
 
+  /**
+   * The centroid of this source. This method always returns the same value,
+   * ignoring the supplied site {@code Location}.
+   */
   @Override
-  public String name() {
-    return name;
+  public Location location(Location site) {
+    return centroid;
   }
 
   private static int mechCount(Map<FocalMech, Double> mechWtMap, PointSourceType type) {
@@ -362,8 +382,10 @@ public class AreaSource implements Source {
           depthModel, strike, rupScaling, sourceType);
     }
 
-    private static List<GriddedRegion> buildSourceGrids(LocationList border,
+    private static List<GriddedRegion> buildSourceGrids(
+        LocationList border,
         GridScaling scaling) {
+
       ImmutableList.Builder<GriddedRegion> gridBuilder = ImmutableList.builder();
       for (double resolution : scaling.resolutions) {
         String name = "Area source grid [" + resolution + "° spacing]";

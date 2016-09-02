@@ -10,8 +10,8 @@ import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
 import static org.opensha2.eq.fault.Faults.validateWidth;
-import static org.opensha2.geo.Locations.horzDistanceFast;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
+import static org.opensha2.geo.Locations.horzDistanceFast;
 
 import org.opensha2.calc.HazardInput;
 import org.opensha2.calc.InputList;
@@ -136,6 +136,12 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     @Override
+    public String name() {
+      // TODO How to create name? SourceSet will need parent section names
+      return "Unnamed fault system source";
+    }
+
+    @Override
     public int size() {
       return 1;
     }
@@ -145,10 +151,14 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
       return SourceType.SYSTEM;
     }
 
+    /**
+     * This method is not required for deaggregation and currently throws an
+     * {@code UnsupportedOperationException}.
+     */
     @Override
-    public String name() {
-      // TODO How to create name? SourceSet will need parent section names
-      return "Unnamed fault system source";
+    public Location location(Location location) {
+      // TODO for consistency, should we return something here?
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -399,8 +409,9 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
         /* Create and fill distance map. */
         int[] siteIndices = Data.bitsToIndices(siteBitset);
-        ImmutableMap.Builder<Integer, double[]> rMapBuilder = ImmutableMap.<Integer, double[]> builder()
-            .orderEntriesByValue(new DistanceTypeSorter(R_RUP_INDEX));
+        ImmutableMap.Builder<Integer, double[]> rMapBuilder =
+            ImmutableMap.<Integer, double[]> builder()
+                .orderEntriesByValue(new DistanceTypeSorter(R_RUP_INDEX));
         for (int i : siteIndices) {
           Distance r = sourceSet.sections[i].distanceTo(site.location);
           rMapBuilder.put(i, new double[] { r.rJB, r.rRup, r.rX });
@@ -413,7 +424,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
             site);
         Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
         Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
-        
+
         /* Fill input list. */
         SystemInputList inputs = new SystemInputList(sourceSet, rMap.keySet());
         for (SystemSource source : sources) {
@@ -539,7 +550,5 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
     return bits;
   }
-  
-  
 
 }

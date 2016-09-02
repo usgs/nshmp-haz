@@ -13,7 +13,9 @@ import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.RuptureFloating;
 import org.opensha2.eq.fault.surface.RuptureScaling;
+import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
+import org.opensha2.geo.Locations;
 import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableList;
@@ -75,6 +77,19 @@ public class InterfaceSource extends FaultSource {
   @Override
   public SourceType type() {
     return INTERFACE;
+  }
+
+  /**
+   * The closest point on the upper or lower fault trace, relative to the
+   * supplied site {@code Location}.
+   */
+  @Override
+  public Location location(Location site) {
+    return Locations.closestPoint(site,
+        LocationList.builder()
+            .addAll(trace)
+            .addAll(lowerTrace)
+            .build());
   }
 
   @Override

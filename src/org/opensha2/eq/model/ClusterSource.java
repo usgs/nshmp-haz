@@ -6,6 +6,9 @@ import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import static org.opensha2.eq.model.SourceType.CLUSTER;
 
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
+import org.opensha2.geo.Locations;
 import org.opensha2.mfd.IncrementalMfd;
 
 import com.google.common.collect.ImmutableMap;
@@ -48,6 +51,11 @@ public class ClusterSource implements Source {
   }
 
   @Override
+  public String name() {
+    return faults.name();
+  }
+
+  @Override
   public int size() {
     return faults.size();
   }
@@ -57,9 +65,17 @@ public class ClusterSource implements Source {
     return CLUSTER;
   }
 
+  /**
+   * The closest point across the traces of all fault sources that participate
+   * in this cluster, relative to the supplied site {@code Location}.
+   */
   @Override
-  public String name() {
-    return faults.name();
+  public Location location(Location site) {
+    LocationList.Builder locs = LocationList.builder();
+    for (FaultSource fault : faults) {
+      locs.add(fault.location(site));
+    }
+    return Locations.closestPoint(site, locs.build());
   }
 
   /**
