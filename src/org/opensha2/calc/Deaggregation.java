@@ -193,7 +193,10 @@ public final class Deaggregation {
           // System.out.println("Skipping: " + curveSet.sourceSet.name());
           continue;
         }
-        Map<Gmm, DeaggDataset> sourceSetDatasets = Deaggregator.deaggregate(curveSet, config);
+        Map<Gmm, DeaggDataset> sourceSetDatasets = Deaggregator.deaggregate(
+            curveSet,
+            config,
+            hazard.site);
         gmmDatasetLists.putAll(Multimaps.forMap(sourceSetDatasets));
         totalDatasetList.add(SOURCE_CONSOLIDATOR.apply(sourceSetDatasets.values()));
       }

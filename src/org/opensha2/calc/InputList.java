@@ -19,18 +19,19 @@ import java.util.List;
 public abstract class InputList extends AbstractList<HazardInput> {
 
   private final List<HazardInput> delegate;
-  double minDistance = Double.MAX_VALUE;
 
   /*
    * minDistance is used to track the closest distance of any Rupture in a
    * Source. This is used when multiple gmmSets for different distances are
    * defined.
    */
+  double minDistance = Double.MAX_VALUE;
 
   InputList() {
     delegate = new ArrayList<>();
   }
 
+  /* Internal use only for Partitions. */
   private InputList(List<HazardInput> sublist) {
     delegate = sublist;
   }

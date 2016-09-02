@@ -12,8 +12,11 @@ import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
+import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -50,8 +53,10 @@ final class Deaggregator {
   private final double iml;
   private final ExceedanceModel probModel;
   private final double trunc;
+  
+  private final Site site;
 
-  private Deaggregator(HazardCurveSet curves, DeaggConfig config) {
+  private Deaggregator(HazardCurveSet curves, DeaggConfig config, Site site) {
     this.curves = curves;
     this.sources = curves.sourceSet;
     this.gmmSet = sources.groundMotionModels();
@@ -61,10 +66,16 @@ final class Deaggregator {
     this.iml = config.iml;
     this.probModel = config.probabilityModel;
     this.trunc = config.truncation;
+    
+    this.site = site;
   }
 
-  static Map<Gmm, DeaggDataset> deaggregate(HazardCurveSet curves, DeaggConfig config) {
-    Deaggregator deaggregator = new Deaggregator(curves, config);
+  static Map<Gmm, DeaggDataset> deaggregate(
+      HazardCurveSet curves, 
+      DeaggConfig config,
+      Site site) {
+    
+    Deaggregator deaggregator = new Deaggregator(curves, config, site);
     return Maps.immutableEnumMap(deaggregator.run());
   }
 
@@ -221,14 +232,23 @@ final class Deaggregator {
       }
     }
 
+    /* 
+     * Pre-fetch source and site-specific source attributes so that
+     * they are not recalculated multiple times downstream.
+     */
+    Source source = ((SourceInputList) inputs).parent;
+    Location location = source.location(site.location);
+    double azimuth = Locations.azimuth(site.location, location);
+    
+    
     /* Add sources/contributors to builders. */
     for (Gmm gmm : gmmKeys) {
       double[] data = gmmData.get(gmm);
       /* Safe covariant cast assuming switch handles variants. */
-      DeaggContributor.Builder source = new SourceContributor.Builder()
-          .source(((SourceInputList) inputs).parent)
+      DeaggContributor.Builder contributor = new SourceContributor.Builder()
+          .source(source, location, azimuth)
           .add(data[0], data[1], data[2], data[3], data[4]);
-      builders.get(gmm).addChildContributor(source);
+      builders.get(gmm).addChildContributor(contributor);
     }
   }
 

@@ -12,6 +12,7 @@ import org.opensha2.eq.model.Rupture;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
+import org.opensha2.geo.Location;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -206,13 +207,23 @@ abstract class DeaggContributor {
     }
   }
 
-  /* Generic Source contributor */
+  /* 
+   * TODO Builders should have better state checking. e.g. once the source
+   * has been set for a source contributor, it may not be set again. Likewise,
+   * add() can not be called unless source is set.
+   */
+  
+  /* Generic Source contributor. Location and azimuth are site-specific. */
   static class SourceContributor extends DeaggContributor {
 
     final Source source;
+    final Location location;
+    final double azimuth;
 
     private SourceContributor(
         Source source,
+        Location location,
+        double azimuth,
         double rate,
         double residual,
         double rScaled,
@@ -221,6 +232,8 @@ abstract class DeaggContributor {
 
       super(rate, residual, rScaled, mScaled, εScaled);
       this.source = source;
+      this.location = location;
+      this.azimuth = azimuth;
     }
 
     @Override
@@ -248,10 +261,14 @@ abstract class DeaggContributor {
     static final class Builder extends DeaggContributor.Builder {
 
       Source source;
+      Location location;
+      double azimuth;
       boolean scaled = false;
 
-      Builder source(Source source) {
+      Builder source(Source source, Location location, double azimuth) {
         this.source = source;
+        this.location = location;
+        this.azimuth = azimuth;
         return this;
       }
 
@@ -288,6 +305,8 @@ abstract class DeaggContributor {
       SourceContributor build() {
         return new SourceContributor(
             source,
+            location,
+            azimuth,
             rate,
             residual,
             rScaled,
@@ -481,18 +500,25 @@ abstract class DeaggContributor {
     }
 
     @Override
+    public String name() {
+      return "System Section (" + sectionIndex + ")";
+    }
+
+    @Override
     public int size() {
       return 1;
     }
-    
+
     @Override
     public SourceType type() {
       return SYSTEM;
     }
 
     @Override
-    public String name() {
-      return "System Section (" + sectionIndex + ")";
+    public Location location(Location site) {
+      return null;
+      // TODO do nothing
+
     }
 
     @Override

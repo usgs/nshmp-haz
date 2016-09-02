@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 
 import org.opensha2.calc.DeaggContributor.ClusterContributor;
-import org.opensha2.calc.DeaggContributor.SectionSource;
 import org.opensha2.calc.DeaggContributor.SourceContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
@@ -454,6 +453,9 @@ final class DeaggDataset {
     }
   }
 
+  // TODO lat, lon, and az fields only need to be added from the
+  // first child added to any sourceMap
+
   /*
    * Specialized builder that combines datasets across Gmms for a single
    * SourceSet. The model supplied must be one of the datasets to be combined,
@@ -493,19 +495,19 @@ final class DeaggDataset {
     }
 
     private void putOrAddSource(SourceContributor sc) {
-      Source source = sc.source;
 
       /* Add to existing. */
-      if (childMap.containsKey(source)) {
-        SourceContributor.Builder child = (SourceContributor.Builder) childMap.get(source);
+      if (childMap.containsKey(sc.source)) {
+        SourceContributor.Builder child = (SourceContributor.Builder) childMap.get(sc.source);
         child.add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
         return;
       }
+
       /* Put new. */
       DeaggContributor.Builder sourceContributor = new SourceContributor.Builder()
-          .source(source)
+          .source(sc.source, sc.location, sc.azimuth)
           .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
-      childMap.put(source, sourceContributor);
+      childMap.put(sc.source, sourceContributor);
     }
 
     private void putOrAddCluster(ClusterContributor cc) {
@@ -531,7 +533,7 @@ final class DeaggDataset {
       for (DeaggContributor child : cc.faults) {
         SourceContributor sc = (SourceContributor) child;
         DeaggContributor.Builder sourceContributor = new SourceContributor.Builder()
-            .source(sc.source)
+            .source(sc.source, sc.location, sc.azimuth)
             .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
         cb.addChild(sourceContributor);
       }
@@ -556,20 +558,18 @@ final class DeaggDataset {
 
     private void putOrAddSystem(SystemContributor sc) {
 
-      SectionSource section = sc.section;
-
       /* Add to existing. */
-      if (childMap.containsKey(section)) {
-        SystemContributor.Builder child = (SystemContributor.Builder) childMap.get(section);
+      if (childMap.containsKey(sc.section)) {
+        SystemContributor.Builder child = (SystemContributor.Builder) childMap.get(sc.section);
         child.add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
         return;
       }
 
       /* Put new. */
       DeaggContributor.Builder sourceContributor = new SystemContributor.Builder()
-          .section(section)
+          .section(sc.section)
           .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
-      childMap.put(section, sourceContributor);
+      childMap.put(sc.section, sourceContributor);
     }
 
     DeaggDataset build() {
