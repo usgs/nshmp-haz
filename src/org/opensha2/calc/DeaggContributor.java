@@ -430,9 +430,13 @@ abstract class DeaggContributor {
   static final class SystemContributor extends DeaggContributor {
 
     final SectionSource section;
+    final Location location;
+    final double azimuth;
 
     SystemContributor(
         SectionSource section,
+        Location location,
+        double azimuth,
         double rate,
         double residual,
         double rScaled,
@@ -441,6 +445,8 @@ abstract class DeaggContributor {
 
       super(rate, residual, rScaled, mScaled, εScaled);
       this.section = section;
+      this.location = location;
+      this.azimuth = azimuth;
     }
 
     @Override
@@ -450,13 +456,20 @@ abstract class DeaggContributor {
 
     @Override
     StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
-      double contribution = total() * toPercent;
+      double total = total();
+      double contribution = total * toPercent;
       if (contribution < CONTRIBUTOR_LIMIT) {
         return sb;
       }
+      double rBar = rScaled / total;
+      double mBar = mScaled / total;
+      double εBar = εScaled / total;
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_FMT,
-          indent + section.name(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, contribution));
+          indent + section.name(),
+          rBar, mBar, εBar,
+          location.lon(), location.lat(), azimuth,
+          contribution));
       sb.append(NEWLINE);
       return sb;
     }
@@ -464,9 +477,13 @@ abstract class DeaggContributor {
     static final class Builder extends DeaggContributor.Builder {
 
       SectionSource section;
+      Location location;
+      double azimuth;
 
-      Builder section(SectionSource section) {
+      Builder section(SectionSource section, Location location, double azimuth) {
         this.section = section;
+        this.location = location;
+        this.azimuth = azimuth;
         return this;
       }
 
@@ -495,6 +512,8 @@ abstract class DeaggContributor {
       DeaggContributor build() {
         return new SystemContributor(
             section,
+            location,
+            azimuth,
             rate,
             residual,
             rScaled,
@@ -524,6 +543,7 @@ abstract class DeaggContributor {
 
     @Override
     public int size() {
+      //TODO perhaps this should return the number of participating ruptures
       return 1;
     }
 

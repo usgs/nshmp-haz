@@ -13,6 +13,7 @@ import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
+import org.opensha2.eq.model.SystemSourceSet;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
@@ -245,7 +246,8 @@ final class Deaggregator {
 
     /*
      * Fetch site-specific source attributes so that they don't need to be
-     * recalculated multiple times downstream.
+     * recalculated multiple times downstream. Safe covariant cast assuming
+     * switch handles variants.
      */
     Source source = ((SourceInputList) inputs).parent;
     Location location = source.location(site.location);
@@ -254,7 +256,6 @@ final class Deaggregator {
     /* Add sources/contributors to builders. */
     for (Gmm gmm : gmmKeys) {
       double[] data = gmmData.get(gmm);
-      /* Safe covariant cast assuming switch handles variants. */
       DeaggContributor.Builder contributor = new SourceContributor.Builder()
           .source(source, location, azimuth)
           .add(data[0], data[1], data[2], data[3], data[4]);
@@ -294,6 +295,9 @@ final class Deaggregator {
 
   private Map<Gmm, DeaggDataset> processSystemSources() {
 
+    /* Safe covariant cast assuming switch handles variants. */
+    SystemSourceSet systemSources = (SystemSourceSet) sources;
+    
     Map<Gmm, DeaggDataset.Builder> builders = createBuilders(gmmSet.gmms(), model);
     for (DeaggDataset.Builder builder : builders.values()) {
       SourceSetContributor.Builder parent = new SourceSetContributor.Builder();
@@ -319,12 +323,22 @@ final class Deaggregator {
 
     for (int sectionIndex : inputs.sectionIndices) {
 
+      /*
+       * Fetch site-specific source attributes so that they don't need to be
+       * recalculated multiple times downstream. Safe covariant cast assuming
+       * switch handles variants.
+       */
+      SectionSource section = new SectionSource(sectionIndex);
+      Location location = Locations.closestPoint(
+          site.location,
+          systemSources.section(sectionIndex).getUpperEdge());
+      double azimuth = Locations.azimuth(site.location, location);
+
       /* Create system contributors for section and attach to parent. */
       Map<Gmm, SystemContributor.Builder> contributors = new EnumMap<>(Gmm.class);
-      SectionSource section = new SectionSource(sectionIndex);
       for (Gmm gmm : gmmKeys) {
         SystemContributor.Builder contributor = new SystemContributor.Builder()
-            .section(section);
+            .section(section, location, azimuth);
         contributors.put(gmm, contributor);
         builders.get(gmm).addChildContributor(contributor);
       }

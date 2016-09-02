@@ -452,9 +452,6 @@ final class DeaggDataset {
     }
   }
 
-  // TODO lat, lon, and az fields only need to be added from the
-  // first child added to any sourceMap
-
   /*
    * Specialized builder that combines datasets across Gmms for a single
    * SourceSet. The model supplied must be one of the datasets to be combined,
@@ -566,7 +563,7 @@ final class DeaggDataset {
 
       /* Put new. */
       DeaggContributor.Builder sourceContributor = new SystemContributor.Builder()
-          .section(sc.section)
+          .section(sc.section, sc.location, sc.azimuth)
           .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
       childMap.put(sc.section, sourceContributor);
     }
