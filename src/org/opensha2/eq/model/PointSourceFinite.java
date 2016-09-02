@@ -47,17 +47,27 @@ class PointSourceFinite extends PointSource {
   int fwIndexLo, fwIndexHi;
 
   /**
-   * Constructs a new point earthquake source.
+   * Constructs a new point earthquake source that provides ruptures will
+   * simulate finite fault parameterizations such as hanging-wall effects.
+   * 
+   * @param type of source, as supplied from a parent {@code SourceSet}
    * @param loc <code>Location</code> of the point source
    * @param mfd magnitude frequency distribution of the source
    * @param mechWtMap <code>Map</code> of focal mechanism weights
-   * @param rupScaling rupture scaling model
+   * @param rupScaling rupture scaling model that may, or may not, impose an rJB
+   *        distance correction
    * @param depthModel specifies magnitude cutoffs and associated weights for
    *        different depth-to-top-of-ruptures
    */
-  PointSourceFinite(Location loc, XySequence mfd, Map<FocalMech, Double> mechWtMap,
-      RuptureScaling rupScaling, DepthModel depthModel) {
-    super(loc, mfd, mechWtMap, rupScaling, depthModel);
+  PointSourceFinite(
+      SourceType type,
+      Location loc,
+      XySequence mfd,
+      Map<FocalMech, Double> mechWtMap,
+      RuptureScaling rupScaling,
+      DepthModel depthModel) {
+
+    super(type, loc, mfd, mechWtMap, rupScaling, depthModel);
     init();
   }
 

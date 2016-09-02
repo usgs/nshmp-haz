@@ -21,19 +21,18 @@ import java.util.Set;
  * @author Peter Powers
  */
 public final class SystemInputList extends InputList {
-  
-  /* TODO
+
+  /*
+   * TODO
    * 
-   * This is messy, cross package interaction is requiring 
-   * exposure of some things we'd rather not expose. THis isn't really meant to be
-   * a public class.
+   * This is messy, cross package interaction is requiring exposure of some
+   * things we'd rather not expose. This isn't really meant to be a public
+   * class.
    * 
-   * package privacy - or move to SYstemSourceSet
-   * how to get back to parent to mine info; index?
-   * need index reference
-   * comment
-   * bitset array is going to be reallocating because we don't know it's size
-   * at creation time; using linked list
+   * package privacy - or move to SYstemSourceSet how to get back to parent to
+   * mine info; index? need index reference comment bitset array is going to be
+   * reallocating because we don't know it's size at creation time; using linked
+   * list
    * 
    * Well suited for a builder
    */
@@ -45,16 +44,16 @@ public final class SystemInputList extends InputList {
   public SystemInputList(
       SystemSourceSet parent,
       Set<Integer> sectionIndices) {
-    
+
     this.parent = checkNotNull(parent);
     this.sectionIndices = sectionIndices; // may be null for empty only
     this.bitsets = new ArrayList<>();
   }
-  
+
   public static SystemInputList empty(SystemSourceSet parent) {
     return new SystemInputList(parent, null);
   }
-  
+
   public void addBitset(BitSet bitset) {
     bitsets.add(bitset);
   }

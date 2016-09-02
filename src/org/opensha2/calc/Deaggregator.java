@@ -9,11 +9,16 @@ import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
+import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
+import org.opensha2.eq.model.SystemSourceSet;
+import org.opensha2.geo.Location;
+import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
+import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -34,8 +39,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Factory class that deaggregates the hazard for a single {@code SourceSet} by
- * {@code Gmm}.
+ * Factory class that deaggregates the hazard for a single {@code SourceSet}
+ * across all relevant {@code Gmm}s.
  * 
  * @author Peter Powers
  */
@@ -51,7 +56,9 @@ final class Deaggregator {
   private final ExceedanceModel probModel;
   private final double trunc;
 
-  private Deaggregator(HazardCurveSet curves, DeaggConfig config) {
+  private final Site site;
+
+  private Deaggregator(HazardCurveSet curves, DeaggConfig config, Site site) {
     this.curves = curves;
     this.sources = curves.sourceSet;
     this.gmmSet = sources.groundMotionModels();
@@ -61,10 +68,16 @@ final class Deaggregator {
     this.iml = config.iml;
     this.probModel = config.probabilityModel;
     this.trunc = config.truncation;
+
+    this.site = site;
   }
 
-  static Map<Gmm, DeaggDataset> deaggregate(HazardCurveSet curves, DeaggConfig config) {
-    Deaggregator deaggregator = new Deaggregator(curves, config);
+  static Map<Gmm, DeaggDataset> deaggregate(
+      HazardCurveSet curves,
+      DeaggConfig config,
+      Site site) {
+
+    Deaggregator deaggregator = new Deaggregator(curves, config, site);
     return Maps.immutableEnumMap(deaggregator.run());
   }
 
@@ -114,8 +127,18 @@ final class Deaggregator {
       /* ClusterSource level builders. */
       Map<Gmm, DeaggDataset.Builder> datasetBuilders = createBuilders(gmmSet.gmms(), model);
       for (DeaggDataset.Builder datasetBuilder : datasetBuilders.values()) {
-        ClusterContributor.Builder clusterContributor = new ClusterContributor.Builder();
-        datasetBuilder.setParentContributor(clusterContributor.cluster(cgms.parent));
+
+        /*
+         * Fetch site-specific source attributes so that they don't need to be
+         * recalculated multiple times downstream.
+         */
+        ClusterSource cluster = cgms.parent;
+        Location location = cluster.location(site.location);
+        double azimuth = Locations.azimuth(site.location, location);
+
+        ClusterContributor.Builder clusterContributor = new ClusterContributor.Builder()
+            .cluster(cluster, location, azimuth);
+        datasetBuilder.setParentContributor(clusterContributor);
       }
 
       /* Process the individual sources in a cluster. */
@@ -141,9 +164,6 @@ final class Deaggregator {
         if (clusterBuilder.rate() > 0.0) {
           clusterBuilder.multiply(clusterRate / clusterBuilder.rate());
         }
-
-        /* Set cluster rate. */
-        clusterBuilder.parent.add(clusterBuilder.binned, clusterBuilder.residual);
 
         /* Swap parents. */
         DeaggContributor.Builder sourceSetContributor = new SourceSetContributor.Builder()
@@ -174,8 +194,8 @@ final class Deaggregator {
     final Set<Gmm> gmmKeys = EnumSet.copyOf(gmms.keySet());
 
     /*
-     * Per-gmm data for the source being processed. The double[] array below is
-     * composed of [rate, residual, rScaled, mScaled, εScaled].
+     * Per-gmm data for the source being processed. The double[] arrays below
+     * are [rate, residual, rScaled, mScaled, εScaled].
      */
     Map<Gmm, double[]> gmmData = createDataMap(gmmKeys);
 
@@ -201,36 +221,45 @@ final class Deaggregator {
         double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
         double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
 
-        gmmData.get(gmm)[2] += (rRup * rate);
-        gmmData.get(gmm)[3] += (Mw * rate);
-        gmmData.get(gmm)[4] += (ε * rate);
+        double rScaled = rRup * rate;
+        double mScaled = Mw * rate;
+        double εScaled = ε * rate;
+        double[] data = gmmData.get(gmm);
+        data[2] += rScaled;
+        data[3] += mScaled;
+        data[4] += εScaled;
 
         if (skipRupture) {
-          gmmData.get(gmm)[1] += rate;
+          data[1] += rate;
           builders.get(gmm).addResidual(rate);
           continue;
         }
-        gmmData.get(gmm)[0] += rate;
+        data[0] += rate;
         int εIndex = model.epsilonIndex(ε);
 
         builders.get(gmm).addRate(
             rIndex, mIndex, εIndex,
-            rRup * rate, Mw * rate, ε * rate,
+            rScaled, mScaled, εScaled,
             rate);
       }
     }
 
+    /*
+     * Fetch site-specific source attributes so that they don't need to be
+     * recalculated multiple times downstream. Safe covariant cast assuming
+     * switch handles variants.
+     */
+    Source source = ((SourceInputList) inputs).parent;
+    Location location = source.location(site.location);
+    double azimuth = Locations.azimuth(site.location, location);
+
     /* Add sources/contributors to builders. */
     for (Gmm gmm : gmmKeys) {
-      /* Safe covariant cast assuming switch handles variants. */
-      DeaggContributor.Builder source = new SourceContributor.Builder()
-          .source(((SourceInputList) inputs).parent)
-          .add(gmmData.get(gmm)[0],
-              gmmData.get(gmm)[1],
-              gmmData.get(gmm)[2],
-              gmmData.get(gmm)[3],
-              gmmData.get(gmm)[4]);
-      builders.get(gmm).addChildContributor(source);
+      double[] data = gmmData.get(gmm);
+      DeaggContributor.Builder contributor = new SourceContributor.Builder()
+          .source(source, location, azimuth)
+          .add(data[0], data[1], data[2], data[3], data[4]);
+      builders.get(gmm).addChildContributor(contributor);
     }
   }
 
@@ -266,6 +295,9 @@ final class Deaggregator {
 
   private Map<Gmm, DeaggDataset> processSystemSources() {
 
+    /* Safe covariant cast assuming switch handles variants. */
+    SystemSourceSet systemSources = (SystemSourceSet) sources;
+    
     Map<Gmm, DeaggDataset.Builder> builders = createBuilders(gmmSet.gmms(), model);
     for (DeaggDataset.Builder builder : builders.values()) {
       SourceSetContributor.Builder parent = new SourceSetContributor.Builder();
@@ -291,12 +323,22 @@ final class Deaggregator {
 
     for (int sectionIndex : inputs.sectionIndices) {
 
+      /*
+       * Fetch site-specific source attributes so that they don't need to be
+       * recalculated multiple times downstream. Safe covariant cast assuming
+       * switch handles variants.
+       */
+      SectionSource section = new SectionSource(sectionIndex);
+      Location location = Locations.closestPoint(
+          site.location,
+          systemSources.section(sectionIndex).getUpperEdge());
+      double azimuth = Locations.azimuth(site.location, location);
+
       /* Create system contributors for section and attach to parent. */
       Map<Gmm, SystemContributor.Builder> contributors = new EnumMap<>(Gmm.class);
-      SectionSource section = new SectionSource(sectionIndex);
       for (Gmm gmm : gmmKeys) {
         SystemContributor.Builder contributor = new SystemContributor.Builder()
-            .section(section);
+            .section(section, location, azimuth);
         contributors.put(gmm, contributor);
         builders.get(gmm).addChildContributor(contributor);
       }
@@ -329,24 +371,27 @@ final class Deaggregator {
 
             SystemContributor.Builder contributor = contributors.get(gmm);
 
+            double rScaled = rRup * rate;
+            double mScaled = Mw * rate;
+            double εScaled = ε * rate;
+
             if (skipRupture) {
-              contributor.add(0.0, rate);
+              contributor.add(0.0, rate, rScaled, mScaled, εScaled);
               builders.get(gmm).addResidual(rate);
               continue;
             }
-            contributor.add(rate, 0.0);
+            contributor.add(rate, 0.0, rScaled, mScaled, εScaled);
             int εIndex = model.epsilonIndex(ε);
 
             builders.get(gmm).addRate(
                 rIndex, mIndex, εIndex,
-                rRup * rate, Mw * rate, ε * rate,
+                rScaled, mScaled, εScaled,
                 rate);
           }
           iter.remove();
         }
       }
     }
-
     return buildDatasets(builders);
   }
 

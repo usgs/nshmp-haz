@@ -11,6 +11,7 @@ import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
 import static org.opensha2.eq.model.PointSourceType.FIXED_STRIKE;
+import static org.opensha2.eq.model.SourceType.GRID;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.IntervalTable;
@@ -98,7 +99,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
   @Override
   public SourceType type() {
-    return SourceType.GRID;
+    return GRID;
   }
 
   /**
@@ -192,13 +193,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
     switch (sourceType) {
       case POINT:
-        return new PointSource(loc, mfd, mechMap, rupScaling, depthModel);
+        return new PointSource(GRID, loc, mfd, mechMap, rupScaling, depthModel);
 
       case FINITE:
-        return new PointSourceFinite(loc, mfd, mechMap, rupScaling, depthModel);
+        return new PointSourceFinite(GRID, loc, mfd, mechMap, rupScaling, depthModel);
 
       case FIXED_STRIKE:
-        return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel, strike);
+        return new PointSourceFixedStrike(GRID, loc, mfd, mechMap, rupScaling, depthModel, strike);
 
       default:
         throw new IllegalStateException("Unhandled point source type");
@@ -682,6 +683,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         Location loc = Locations.location(origin, SRC_TO_SITE_AZIMUTH, r);
 
         b.add(PointSources.pointSource(
+            parent.type(),
             parent.sourceType,
             loc,
             mfd,
@@ -767,6 +769,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
           continue;
         }
         b.add(PointSources.pointSource(
+            parent.type(),
             PointSourceType.FINITE,
             loc,
             ssMfd,
@@ -780,6 +783,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
           continue;
         }
         b.add(PointSources.pointSource(
+            parent.type(),
             PointSourceType.FINITE,
             loc,
             rMfd,
@@ -793,6 +797,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
           continue;
         }
         b.add(PointSources.pointSource(
+            parent.type(),
             PointSourceType.FINITE,
             loc,
             nMfd,

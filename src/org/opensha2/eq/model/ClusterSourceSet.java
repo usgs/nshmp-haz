@@ -3,6 +3,8 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import static org.opensha2.eq.model.SourceType.CLUSTER;
+
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
@@ -45,7 +47,7 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
   @Override
   public SourceType type() {
-    return SourceType.CLUSTER;
+    return CLUSTER;
   }
 
   @Override

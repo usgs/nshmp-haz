@@ -51,6 +51,7 @@ import java.util.NavigableMap;
  */
 class PointSource implements Source {
 
+  final SourceType type;
   final Location loc;
   final XySequence mfd;
   final Map<FocalMech, Double> mechWtMap;
@@ -62,17 +63,28 @@ class PointSource implements Source {
   int ssIndex, revIndex;
 
   /**
-   * Constructs a new point earthquake source.
+   * Constructs a new point earthquake source. This is a simple model that does
+   * not simulate finiteness (e.g. rupture rRup values will differ from rJB only
+   * by virtue of the depth of the source).
+   * 
+   * @param type of source, as supplied from a parent {@code SourceSet}
    * @param loc <code>Location</code> of the point source
    * @param mfd magnitude frequency distribution of the source
    * @param mechWtMap <code>Map</code> of focal mechanism weights
-   * @param rupScaling rupture scaling model
+   * @param rupScaling rupture scaling model that may, or may not, impose an rJB
+   *        distance correction
    * @param depthModel specifies magnitude cutoffs and associated weights for
    *        different depth-to-top-of-ruptures
    */
-  PointSource(Location loc, XySequence mfd, Map<FocalMech, Double> mechWtMap,
-      RuptureScaling rupScaling, DepthModel depthModel) {
+  PointSource(
+      SourceType type,
+      Location loc,
+      XySequence mfd,
+      Map<FocalMech, Double> mechWtMap,
+      RuptureScaling rupScaling,
+      DepthModel depthModel) {
 
+    this.type = type;
     this.loc = loc;
     this.mfd = mfd;
     this.mechWtMap = mechWtMap;
@@ -89,6 +101,21 @@ class PointSource implements Source {
   @Override
   public int size() {
     return rupCount;
+  }
+
+  @Override
+  public SourceType type() {
+    return type;
+  }
+
+  /**
+   * The location of the point source, irrespective of any distance corrections
+   * that might be applied to attendant ruptures and ignoring the supplied site
+   * {@code Location}.
+   */
+  @Override
+  public Location location(Location site) {
+    return loc;
   }
 
   private void updateRupture(Rupture rup, int index) {
@@ -352,7 +379,6 @@ class PointSource implements Source {
       magDepthDepths = Doubles.asList(Doubles.toArray(depths));
       magDepthWeights = Doubles.asList(Doubles.toArray(weights));
     }
-
   }
 
 }

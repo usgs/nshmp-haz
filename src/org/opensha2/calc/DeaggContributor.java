@@ -1,12 +1,18 @@
 package org.opensha2.calc;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import static org.opensha2.calc.DeaggExport.CONTRIBUTOR_LIMIT;
+import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
+import org.opensha2.data.Data;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.Rupture;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
+import org.opensha2.eq.model.SourceType;
+import org.opensha2.geo.Location;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -29,14 +35,31 @@ abstract class DeaggContributor {
 
   final double rate;
   final double residual;
+  final double rScaled;
+  final double mScaled;
+  final double εScaled;
 
-  DeaggContributor(double rate, double residual) {
+  DeaggContributor(
+      double rate,
+      double residual,
+      double rScaled,
+      double mScaled,
+      double εScaled) {
+
     this.rate = rate;
     this.residual = residual;
+    this.rScaled = rScaled;
+    this.mScaled = mScaled;
+    this.εScaled = εScaled;
   }
 
   double total() {
     return rate + residual;
+  }
+
+  /* Convenience array for use when combining children. */
+  private double[] values() {
+    return new double[] { rate, residual, rScaled, mScaled, εScaled };
   }
 
   abstract StringBuilder appendTo(StringBuilder sb, double percentScalar, String indent);
@@ -45,22 +68,40 @@ abstract class DeaggContributor {
 
     double rate;
     double residual;
+    double rScaled;
+    double mScaled;
+    double εScaled;
 
-    Builder add(double rate, double residual) {
+    /* Only for use by inner concrete subtypes. */
+    private void add(
+        double rate,
+        double residual,
+        double rScaled,
+        double mScaled,
+        double εScaled) {
+
       this.rate += rate;
       this.residual += residual;
-      return this;
+      this.rScaled += rScaled;
+      this.mScaled += mScaled;
+      this.εScaled += εScaled;
+    }
+
+    /* Only for use by inner concrete subtypes. */
+    private void add(double[] values) {
+      this.rate += values[0];
+      this.residual += values[1];
+      this.rScaled += values[2];
+      this.mScaled += values[3];
+      this.εScaled += values[4];
     }
 
     /*
-     * Optional operation; some implementations may throw an
-     * UnsupportedOperationException.
+     * Optional, single-call operation. Some implementations may throw an
+     * UnsupportedOperationException. May only be called once with subsequent
+     * calls to addChild() throwing an IllegalStateException.
      */
-    Builder multiply(double scale) {
-      rate *= scale;
-      residual *= scale;
-      return this;
-    }
+    abstract Builder multiply(double scale);
 
     /*
      * Optional operation; some implementations may throw an
@@ -68,6 +109,10 @@ abstract class DeaggContributor {
      */
     abstract Builder addChild(DeaggContributor.Builder contributor);
 
+    /*
+     * Build implementations should compile rate and statistic values for this
+     * from any children instead of allowing them to be add()-ed directly.
+     */
     abstract DeaggContributor build();
 
   }
@@ -88,19 +133,22 @@ abstract class DeaggContributor {
   static final class SourceSetContributor extends DeaggContributor {
 
     final SourceSet<? extends Source> sourceSet;
-    final List<DeaggContributor> children; // TODO sorted
+    final List<DeaggContributor> children;
 
     private SourceSetContributor(
         SourceSet<? extends Source> sourceSet,
+        List<DeaggContributor> children,
         double rate,
         double residual,
-        List<DeaggContributor> children) {
+        double rScaled,
+        double mScaled,
+        double εScaled) {
 
-      super(rate, residual);
+      super(rate, residual, rScaled, mScaled, εScaled);
       this.sourceSet = sourceSet;
       this.children = children;
     }
-    
+
     @Override
     public String toString() {
       return "SourceSet contributor: " + sourceSet.name();
@@ -145,43 +193,54 @@ abstract class DeaggContributor {
 
       @Override
       SourceSetContributor build() {
+        List<DeaggContributor> sortedChildren = buildAndSort(children);
+        super.add(sumChildValues(sortedChildren));
         return new SourceSetContributor(
             sourceSet,
+            sortedChildren,
             rate,
             residual,
-            buildAndSort(children));
+            rScaled,
+            mScaled,
+            εScaled);
       }
     }
   }
 
-  /* Generic Source contributor */
+  /*
+   * TODO Builders should have better state checking. e.g. once the source has
+   * been set for a source contributor, it may not be set again. Likewise, add()
+   * can not be called unless source is set.
+   */
+
+  /* Generic Source contributor. Location and azimuth are site-specific. */
   static class SourceContributor extends DeaggContributor {
 
     final Source source;
-    final double rScaled;
-    final double mScaled;
-    final double εScaled;
+    final Location location;
+    final double azimuth;
 
     private SourceContributor(
         Source source,
+        Location location,
+        double azimuth,
         double rate,
         double residual,
         double rScaled,
         double mScaled,
         double εScaled) {
 
-      super(rate, residual);
+      super(rate, residual, rScaled, mScaled, εScaled);
       this.source = source;
-      this.rScaled = rScaled;
-      this.mScaled = mScaled;
-      this.εScaled = εScaled;
+      this.location = location;
+      this.azimuth = azimuth;
     }
 
     @Override
     public String toString() {
       return "Source contributor: " + source.name();
     }
-    
+
     @Override
     StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
       double total = total();
@@ -194,7 +253,10 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_FMT,
-          indent + source.name(), rBar, mBar, εBar, 0.0, 0.0, 0.0, contribution));
+          indent + source.name(),
+          rBar, mBar, εBar,
+          location.lon(), location.lat(), azimuth,
+          contribution));
       sb.append(NEWLINE);
       return sb;
     }
@@ -202,20 +264,38 @@ abstract class DeaggContributor {
     static final class Builder extends DeaggContributor.Builder {
 
       Source source;
-      double rScaled;
-      double mScaled;
-      double εScaled;
+      Location location;
+      double azimuth;
+      boolean scaled = false;
 
-      Builder source(Source source) {
+      Builder source(Source source, Location location, double azimuth) {
         this.source = source;
+        this.location = location;
+        this.azimuth = azimuth;
         return this;
       }
 
-      Builder add(double rate, double residual, double rScaled, double mScaled, double εScaled) {
-        super.add(rate, residual);
-        this.rScaled += rScaled;
-        this.mScaled += mScaled;
-        this.εScaled += εScaled;
+      Builder add(
+          double rate,
+          double residual,
+          double rScaled,
+          double mScaled,
+          double εScaled) {
+
+        checkState(!scaled);
+        super.add(rate, residual, rScaled, mScaled, εScaled);
+        return this;
+      }
+
+      @Override
+      Builder multiply(double scale) {
+        checkState(!scaled);
+        rate *= scale;
+        residual *= scale;
+        rScaled *= scale;
+        mScaled *= scale;
+        εScaled *= scale;
+        scaled = true;
         return this;
       }
 
@@ -226,7 +306,15 @@ abstract class DeaggContributor {
 
       @Override
       SourceContributor build() {
-        return new SourceContributor(source, rate, residual, rScaled, mScaled, εScaled);
+        return new SourceContributor(
+            source,
+            location,
+            azimuth,
+            rate,
+            residual,
+            rScaled,
+            mScaled,
+            εScaled);
       }
     }
   }
@@ -236,32 +324,48 @@ abstract class DeaggContributor {
 
     final ClusterSource cluster;
     final List<DeaggContributor> faults;
+    final Location location;
+    final double azimuth;
 
     ClusterContributor(
         ClusterSource cluster,
+        List<DeaggContributor> faults,
+        Location location,
+        double azimuth,
         double rate,
         double residual,
-        List<DeaggContributor> faults) {
+        double rScaled,
+        double mScaled,
+        double εScaled) {
 
-      super(rate, residual);
+      super(rate, residual, rScaled, mScaled, εScaled);
       this.cluster = cluster;
       this.faults = faults;
+      this.location = location;
+      this.azimuth = azimuth;
     }
 
     @Override
     public String toString() {
       return "Cluster contributor: " + cluster.name();
     }
-    
+
     @Override
     StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
+      double total = total();
       double contribution = total() * toPercent;
       if (contribution < CONTRIBUTOR_LIMIT) {
         return sb;
       }
+      double rBar = rScaled / total;
+      double mBar = mScaled / total;
+      double εBar = εScaled / total;
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_FMT,
-          indent + cluster.name(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, contribution));
+          indent + cluster.name(),
+          rBar, mBar, εBar,
+          location.lon(), location.lat(), azimuth,
+          contribution));
       sb.append(NEWLINE);
       for (DeaggContributor fault : faults) {
         fault.appendTo(sb, toPercent, "    ");
@@ -273,9 +377,21 @@ abstract class DeaggContributor {
 
       ClusterSource cluster;
       ArrayList<DeaggContributor.Builder> faults = new ArrayList<>();
+      Location location;
+      double azimuth;
 
-      Builder cluster(ClusterSource cluster) {
+      Builder cluster(ClusterSource cluster, Location location, double azimuth) {
         this.cluster = cluster;
+        this.location = location;
+        this.azimuth = azimuth;
+        return this;
+      }
+
+      @Override
+      Builder multiply(double scale) {
+        for (DeaggContributor.Builder fault : faults) {
+          fault.multiply(scale);
+        }
         return this;
       }
 
@@ -286,32 +402,51 @@ abstract class DeaggContributor {
       }
 
       @Override
-      Builder multiply(double scale) {
-        super.multiply(scale);
-        for (DeaggContributor.Builder fault : faults) {
-          fault.multiply(scale);
-        }
-        return this;
-      }
-
-      @Override
       ClusterContributor build() {
+        List<DeaggContributor> sortedFaults = buildAndSort(faults);
+        super.add(sumChildValues(sortedFaults));
         return new ClusterContributor(
             cluster,
+            sortedFaults,
+            location,
+            azimuth,
             rate,
             residual,
-            buildAndSort(faults));
+            rScaled,
+            mScaled,
+            εScaled);
       }
     }
+  }
+
+  private static double[] sumChildValues(Collection<DeaggContributor> contributors) {
+    double[] sum = new double[5];
+    for (DeaggContributor contributor : contributors) {
+      Data.add(sum, contributor.values());
+    }
+    return sum;
   }
 
   static final class SystemContributor extends DeaggContributor {
 
     final SectionSource section;
+    final Location location;
+    final double azimuth;
 
-    SystemContributor(SectionSource section, double rate, double residual) {
-      super(rate, residual);
+    SystemContributor(
+        SectionSource section,
+        Location location,
+        double azimuth,
+        double rate,
+        double residual,
+        double rScaled,
+        double mScaled,
+        double εScaled) {
+
+      super(rate, residual, rScaled, mScaled, εScaled);
       this.section = section;
+      this.location = location;
+      this.azimuth = azimuth;
     }
 
     @Override
@@ -321,13 +456,20 @@ abstract class DeaggContributor {
 
     @Override
     StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
-      double contribution = total() * toPercent;
+      double total = total();
+      double contribution = total * toPercent;
       if (contribution < CONTRIBUTOR_LIMIT) {
         return sb;
       }
+      double rBar = rScaled / total;
+      double mBar = mScaled / total;
+      double εBar = εScaled / total;
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_FMT,
-          indent + section.name(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, contribution));
+          indent + section.name(),
+          rBar, mBar, εBar,
+          location.lon(), location.lat(), azimuth,
+          contribution));
       sb.append(NEWLINE);
       return sb;
     }
@@ -335,10 +477,30 @@ abstract class DeaggContributor {
     static final class Builder extends DeaggContributor.Builder {
 
       SectionSource section;
+      Location location;
+      double azimuth;
 
-      Builder section(SectionSource section) {
+      Builder section(SectionSource section, Location location, double azimuth) {
         this.section = section;
+        this.location = location;
+        this.azimuth = azimuth;
         return this;
+      }
+
+      Builder add(
+          double rate,
+          double residual,
+          double rScaled,
+          double mScaled,
+          double εScaled) {
+
+        super.add(rate, residual, rScaled, mScaled, εScaled);
+        return this;
+      }
+
+      @Override
+      Builder multiply(double scale) {
+        throw new UnsupportedOperationException();
       }
 
       @Override
@@ -348,7 +510,15 @@ abstract class DeaggContributor {
 
       @Override
       DeaggContributor build() {
-        return new SystemContributor(section, rate, residual);
+        return new SystemContributor(
+            section,
+            location,
+            azimuth,
+            rate,
+            residual,
+            rScaled,
+            mScaled,
+            εScaled);
       }
     }
   }
@@ -372,13 +542,26 @@ abstract class DeaggContributor {
     }
 
     @Override
-    public Iterator<Rupture> iterator() {
-      throw new UnsupportedOperationException();
+    public int size() {
+      //TODO perhaps this should return the number of participating ruptures
+      return 1;
     }
 
     @Override
-    public int size() {
-      return 1;
+    public SourceType type() {
+      return SYSTEM;
+    }
+
+    @Override
+    public Location location(Location site) {
+      return null;
+      // TODO do nothing
+
+    }
+
+    @Override
+    public Iterator<Rupture> iterator() {
+      throw new UnsupportedOperationException();
     }
   }
 

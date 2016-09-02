@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 
 import org.opensha2.calc.DeaggContributor.ClusterContributor;
-import org.opensha2.calc.DeaggContributor.SectionSource;
 import org.opensha2.calc.DeaggContributor.SourceContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
@@ -13,7 +12,6 @@ import org.opensha2.data.IntervalData;
 import org.opensha2.data.IntervalTable;
 import org.opensha2.data.IntervalVolume;
 import org.opensha2.eq.Magnitudes;
-import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.Source;
 
 import com.google.common.base.Function;
@@ -267,8 +265,7 @@ final class DeaggDataset {
   }
 
   /*
-   * A builder of deaggregation data for which parent contributor can be of any
-   * type.
+   * Base DeaggDataset builder for which parent contributor can be of any type.
    */
   static class Builder extends AbstractBuilder {
 
@@ -335,9 +332,9 @@ final class DeaggDataset {
 
     /*
      * Scale all values. This will usually be called just before build(). At
-     * this point, the total parent rate and residual may not have been set, but
-     * the call to parent.multiply() will cascade down to child contributors.
-     * Parent rate is always updated on build().
+     * this point, the total parent rate and residual will not have been set,
+     * but the call to parent.multiply() will cascade down to child
+     * contributors. Parent rate is set on build().
      */
     Builder multiply(double scale) {
       rmε.multiply(scale);
@@ -351,6 +348,7 @@ final class DeaggDataset {
     }
 
     DeaggDataset build() {
+
       /*
        * A dataset may not have any contributors if it was created from a
        * DeaggConfig for use as a base DeaggDataset model. See the empty
@@ -359,10 +357,8 @@ final class DeaggDataset {
        * Gmm's do not make up any part of the contribution. (e.g. 2008 NSHM,
        * site=Seattle, Imt=PGA, rp=2475: AB_03_GLOB_INTER contribution = 0.0)
        */
-      ImmutableList<DeaggContributor> contributorList =
-          (parent == null) ? ImmutableList.<DeaggContributor> of() : ImmutableList.of(parent
-              .add(binned, residual)
-              .build());
+      ImmutableList<DeaggContributor> contributorList = (parent == null)
+          ? ImmutableList.<DeaggContributor> of() : ImmutableList.of(parent.build());
 
       return new DeaggDataset(
           rmε.build(),
@@ -495,56 +491,49 @@ final class DeaggDataset {
     }
 
     private void putOrAddSource(SourceContributor sc) {
-      Source source = sc.source;
 
       /* Add to existing. */
-      if (childMap.containsKey(source)) {
-        SourceContributor.Builder child = (SourceContributor.Builder) childMap.get(source);
+      if (childMap.containsKey(sc.source)) {
+        SourceContributor.Builder child = (SourceContributor.Builder) childMap.get(sc.source);
         child.add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
         return;
       }
 
       /* Put new. */
       DeaggContributor.Builder sourceContributor = new SourceContributor.Builder()
-          .source(source)
+          .source(sc.source, sc.location, sc.azimuth)
           .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
-      childMap.put(source, sourceContributor);
+      childMap.put(sc.source, sourceContributor);
     }
 
-    private void putOrAddCluster(ClusterContributor contributor) {
-      ClusterSource cluster = contributor.cluster;
+    private void putOrAddCluster(ClusterContributor cc) {
 
       /* Add to existing. */
-      if (childMap.containsKey(cluster)) {
-        ClusterContributor.Builder clusterBuilder =
-            (ClusterContributor.Builder) childMap.get(cluster);
-        clusterBuilder.add(contributor.rate, contributor.residual);
+      if (childMap.containsKey(cc.cluster)) {
 
         /* Processs faults. */
-        Map<Source, SourceContributor.Builder> sourceMap = createFaultSourceMap(clusterBuilder);
-        for (DeaggContributor child : contributor.faults) {
-          SourceContributor fault = (SourceContributor) child;
-          Source source = fault.source;
-          sourceMap.get(source).add(fault.rate, fault.residual);
+        Map<Source, SourceContributor.Builder> sourceMap = createFaultSourceMap(
+            (ClusterContributor.Builder) childMap.get(cc.cluster));
+        for (DeaggContributor child : cc.faults) {
+          SourceContributor sc = (SourceContributor) child;
+          sourceMap.get(sc.source).add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
         }
         return;
       }
 
       /* Put new. */
-      DeaggContributor.Builder clusterBuilder = new ClusterContributor.Builder()
-          .cluster(cluster)
-          .add(contributor.rate, contributor.residual);
+      DeaggContributor.Builder cb = new ClusterContributor.Builder()
+          .cluster(cc.cluster, cc.location, cc.azimuth);
 
       /* Add faults. */
-      for (DeaggContributor child : contributor.faults) {
-        SourceContributor fault = (SourceContributor) child;
-        // TODO possibly copy other fields
+      for (DeaggContributor child : cc.faults) {
+        SourceContributor sc = (SourceContributor) child;
         DeaggContributor.Builder sourceContributor = new SourceContributor.Builder()
-            .source(fault.source)
-            .add(fault.rate, fault.residual);
-        clusterBuilder.addChild(sourceContributor);
+            .source(sc.source, sc.location, sc.azimuth)
+            .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
+        cb.addChild(sourceContributor);
       }
-      childMap.put(cluster, clusterBuilder);
+      childMap.put(cc.cluster, cb);
     }
 
     /*
@@ -563,29 +552,26 @@ final class DeaggDataset {
       return sourceMap;
     }
 
-    private void putOrAddSystem(SystemContributor contributor) {
-
-      SectionSource section = contributor.section;
+    private void putOrAddSystem(SystemContributor sc) {
 
       /* Add to existing. */
-      if (childMap.containsKey(section)) {
-        childMap.get(section).add(contributor.rate, contributor.residual);
+      if (childMap.containsKey(sc.section)) {
+        SystemContributor.Builder child = (SystemContributor.Builder) childMap.get(sc.section);
+        child.add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
         return;
       }
 
       /* Put new. */
       DeaggContributor.Builder sourceContributor = new SystemContributor.Builder()
-          .section(section)
-          .add(contributor.rate, contributor.residual);
-      childMap.put(section, sourceContributor);
+          .section(sc.section, sc.location, sc.azimuth)
+          .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
+      childMap.put(sc.section, sourceContributor);
     }
 
     DeaggDataset build() {
-      // TODO change to DeaggCOntributor.buildAndSort()
       for (DeaggContributor.Builder child : childMap.values()) {
         contributor.addChild(child);
       }
-      contributor.add(binned, residual);
       return super.build(ImmutableList.of(contributor.build()));
     }
   }

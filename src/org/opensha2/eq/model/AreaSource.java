@@ -9,6 +9,7 @@ import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
+import static org.opensha2.eq.model.SourceType.AREA;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import static org.opensha2.geo.GriddedRegion.ANCHOR_0_0;
 import static org.opensha2.internal.TextUtils.validateName;
@@ -68,15 +69,24 @@ public class AreaSource implements Source {
   private final RuptureScaling rupScaling;
   private final PointSourceType sourceType;
 
+  private final Location centroid;
+
   // TODO need singleton source grid for border representation
   // which side of an area a site is on is important; either point grids
   // need to be created at runtime or need to be located at the centroid of
   // area
 
-  AreaSource(String name, IncrementalMfd mfd, GridScaling gridScaling,
-      List<GriddedRegion> sourceGrids, Map<FocalMech, Double> mechMap,
-      DepthModel depthModel, double strike, RuptureScaling rupScaling,
+  AreaSource(
+      String name,
+      IncrementalMfd mfd,
+      GridScaling gridScaling,
+      List<GriddedRegion> sourceGrids,
+      Map<FocalMech, Double> mechMap,
+      DepthModel depthModel,
+      double strike,
+      RuptureScaling rupScaling,
       PointSourceType sourceType) {
+
     this.name = name;
     this.mfd = mfd;
     this.gridScaling = gridScaling;
@@ -86,6 +96,8 @@ public class AreaSource implements Source {
     this.strike = strike;
     this.rupScaling = rupScaling;
     this.sourceType = sourceType;
+
+    this.centroid = Locations.centroid(sourceGrids.get(gridScaling.defaultIndex));
   }
 
   @Override
@@ -110,6 +122,20 @@ public class AreaSource implements Source {
     int sourceCount = sourceGrids.get(gridScaling.defaultIndex).size();
 
     return sourceCount * magCount * mechCount;
+  }
+
+  @Override
+  public SourceType type() {
+    return AREA;
+  }
+
+  /**
+   * The centroid of this source. This method always returns the same value,
+   * ignoring the supplied site {@code Location}.
+   */
+  @Override
+  public Location location(Location site) {
+    return centroid;
   }
 
   private static int mechCount(Map<FocalMech, Double> mechWtMap, PointSourceType type) {
@@ -178,12 +204,11 @@ public class AreaSource implements Source {
   private PointSource createSource(Location loc, XySequence mfd) {
     switch (sourceType) {
       case POINT:
-        return new PointSource(loc, mfd, mechMap, rupScaling, depthModel);
+        return new PointSource(AREA, loc, mfd, mechMap, rupScaling, depthModel);
       case FINITE:
-        return new PointSourceFinite(loc, mfd, mechMap, rupScaling, depthModel);
+        return new PointSourceFinite(AREA, loc, mfd, mechMap, rupScaling, depthModel);
       case FIXED_STRIKE:
-        return new PointSourceFixedStrike(loc, mfd, mechMap, rupScaling, depthModel,
-            strike);
+        return new PointSourceFixedStrike(AREA, loc, mfd, mechMap, rupScaling, depthModel, strike);
       default:
         throw new IllegalStateException("Unhandled point source type");
     }
@@ -357,8 +382,10 @@ public class AreaSource implements Source {
           depthModel, strike, rupScaling, sourceType);
     }
 
-    private static List<GriddedRegion> buildSourceGrids(LocationList border,
+    private static List<GriddedRegion> buildSourceGrids(
+        LocationList border,
         GridScaling scaling) {
+
       ImmutableList.Builder<GriddedRegion> gridBuilder = ImmutableList.builder();
       for (double resolution : scaling.resolutions) {
         String name = "Area source grid [" + resolution + "° spacing]";
@@ -377,7 +404,6 @@ public class AreaSource implements Source {
       checkArgument(border.size() > 2, "Border contains fewer than 3 points");
       return border;
     }
-
   }
 
 }

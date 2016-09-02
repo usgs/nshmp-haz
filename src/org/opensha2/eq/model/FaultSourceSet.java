@@ -3,6 +3,8 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import static org.opensha2.eq.model.SourceType.FAULT;
+
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
@@ -45,7 +47,7 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
   @Override
   public SourceType type() {
-    return SourceType.FAULT;
+    return FAULT;
   }
 
   @Override

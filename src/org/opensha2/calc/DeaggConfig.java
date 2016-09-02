@@ -18,6 +18,7 @@ import org.opensha2.gmm.Imt;
  */
 final class DeaggConfig {
 
+  final CalcConfig.Deagg settings;
   final Imt imt;
   final DeaggDataset model;
   final double iml;
@@ -27,6 +28,7 @@ final class DeaggConfig {
   final double truncation;
 
   private DeaggConfig(
+      CalcConfig.Deagg settings,
       Imt imt,
       DeaggDataset model,
       double iml,
@@ -35,6 +37,7 @@ final class DeaggConfig {
       ExceedanceModel probabilityModel,
       double truncation) {
 
+    this.settings = settings;
     this.imt = imt;
     this.model = model;
     this.iml = iml;
@@ -67,12 +70,14 @@ final class DeaggConfig {
             DeaggDataset.builder(hazard.config).build())
         .probabilityModel(
             hazard.config.curve.exceedanceModel,
-            hazard.config.curve.truncationLevel);
+            hazard.config.curve.truncationLevel)
+        .settings(hazard.config.deagg);
   }
 
   /* Reusable builder */
   static class Builder {
 
+    private CalcConfig.Deagg settings;
     private Imt imt;
     private DeaggDataset model;
     private Double iml;
@@ -86,6 +91,11 @@ final class DeaggConfig {
       return this;
     }
 
+    Builder settings(CalcConfig.Deagg settings) {
+      this.settings = settings;
+      return this;
+    }
+    
     Builder dataModel(DeaggDataset model) {
       this.model = model;
       return this;
@@ -113,6 +123,7 @@ final class DeaggConfig {
 
     DeaggConfig build() {
       return new DeaggConfig(
+          settings,
           imt,
           model,
           iml,

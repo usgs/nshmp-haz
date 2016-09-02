@@ -10,6 +10,7 @@ import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
 import static org.opensha2.eq.fault.Faults.validateWidth;
+import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.geo.Locations.horzDistanceFast;
 
 import org.opensha2.calc.HazardInput;
@@ -37,7 +38,7 @@ import java.util.Map;
 
 /**
  * Wrapper class for related {@link SystemSource}s.
- *
+ * 
  * @author Peter Powers
  */
 public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSource> {
@@ -54,6 +55,9 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   /*
    * TODO revisit the fact that BitSets are mutable and could potentially be
    * altered via a SystemSource.
+   * 
+   * TODO don't like the fact that original trace data for sections is lost;
+   * same for other attributes
    */
 
   private SystemSourceSet(
@@ -82,7 +86,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
   @Override
   public SourceType type() {
-    return SourceType.SYSTEM;
+    return SYSTEM;
   }
 
   @Override
@@ -119,6 +123,21 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   }
 
   /**
+   * Return the fault section surface corresponding to the supplied
+   * {@code index}.
+   * 
+   * * <p>This method exists because system source sets are complex and comonly
+   * encapsulate 100K+ sources. The results of a hazard calculation and
+   * deaggregation are therefore better represented in the context of individual
+   * fault sections, rather than on a per-source basis.
+   *
+   * @param index of fault section surface to retrieve
+   */
+  public GriddedSurface section(int index) {
+    return sections[index];
+  }
+
+  /**
    * A single source in a fault system. These sources do not currently support
    * rupture iteration.
    *
@@ -135,14 +154,29 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     @Override
+    public String name() {
+      // TODO How to create name? SourceSet will need parent section names
+      return "Unnamed fault system source";
+    }
+
+    @Override
     public int size() {
       return 1;
     }
 
     @Override
-    public String name() {
-      // TODO How to create name? SourceSet will need parent section names
-      return "Unnamed fault system source";
+    public SourceType type() {
+      return SourceType.SYSTEM;
+    }
+
+    /**
+     * This method is not required for deaggregation and currently throws an
+     * {@code UnsupportedOperationException}.
+     */
+    @Override
+    public Location location(Location location) {
+      // TODO for consistency, should we return something here?
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -393,8 +427,9 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
         /* Create and fill distance map. */
         int[] siteIndices = Data.bitsToIndices(siteBitset);
-        ImmutableMap.Builder<Integer, double[]> rMapBuilder = ImmutableMap.<Integer, double[]> builder()
-            .orderEntriesByValue(new DistanceTypeSorter(R_RUP_INDEX));
+        ImmutableMap.Builder<Integer, double[]> rMapBuilder =
+            ImmutableMap.<Integer, double[]> builder()
+                .orderEntriesByValue(new DistanceTypeSorter(R_RUP_INDEX));
         for (int i : siteIndices) {
           Distance r = sourceSet.sections[i].distanceTo(site.location);
           rMapBuilder.put(i, new double[] { r.rJB, r.rRup, r.rX });
@@ -407,7 +442,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
             site);
         Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
         Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
-        
+
         /* Fill input list. */
         SystemInputList inputs = new SystemInputList(sourceSet, rMap.keySet());
         for (SystemSource source : sources) {
@@ -533,7 +568,5 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
     return bits;
   }
-  
-  
 
 }

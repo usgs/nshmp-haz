@@ -686,11 +686,11 @@ public final class CalcConfig {
 
     Deagg() {
       rMin = 0.0;
-      rMax = 100.0;
+      rMax = 200.0;
       Δr = 10.0;
       mMin = 5.0;
-      mMax = 7.0;
-      Δm = 0.1;
+      mMax = 8.4;
+      Δm = 0.2;
       εMin = -3;
       εMax = 3.0;
       Δε = 0.5;
