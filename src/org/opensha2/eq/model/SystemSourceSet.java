@@ -38,7 +38,7 @@ import java.util.Map;
 
 /**
  * Wrapper class for related {@link SystemSource}s.
- *
+ * 
  * @author Peter Powers
  */
 public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSource> {
@@ -55,6 +55,9 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   /*
    * TODO revisit the fact that BitSets are mutable and could potentially be
    * altered via a SystemSource.
+   * 
+   * TODO don't like the fact that original trace data for sections is lost;
+   * same for other attributes
    */
 
   private SystemSourceSet(
@@ -117,6 +120,21 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   public Predicate<SystemSource> distanceFilter(Location loc, double distance) {
     BitSet siteBitset = bitsetForLocation(loc, distance);
     return new BitsetFilter(siteBitset);
+  }
+
+  /**
+   * Return the fault section surface corresponding to the supplied
+   * {@code index}.
+   * 
+   * * <p>This method exists because system source sets are complex and comonly
+   * encapsulate 100K+ sources. The results of a hazard calculation and
+   * deaggregation are therefore better represented in the context of individual
+   * fault sections, rather than on a per-source basis.
+   *
+   * @param index of fault section surface to retrieve
+   */
+  public GriddedSurface section(int index) {
+    return sections[index];
   }
 
   /**
