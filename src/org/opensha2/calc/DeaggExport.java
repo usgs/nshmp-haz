@@ -41,6 +41,7 @@ final class DeaggExport {
   final transient DeaggConfig dc;
   final transient String id;
   final transient EpsilonBins εBins;
+  final transient String discretization;
 
   final DistanceMagnitudeData data;
   final SummaryElements summary;
@@ -57,6 +58,7 @@ final class DeaggExport {
     this.dc = dc;
     this.id = id;
     εBins = createEpsilonBins(ddTotal.rmε.levels(), ddTotal.rmε.levelΔ());
+    discretization = createDataDiscretization(dc);
     summary = createSummaryElements(ddTotal, dd, dc);
     data = createDistanceMagnitudeData(ddTotal, dd);
     // TODO need contributions to be JSON serializable
@@ -81,6 +83,7 @@ final class DeaggExport {
     Files.write(summaryPath, header.getBytes(UTF_8));
     Files.write(summaryPath, summary.toString().getBytes(UTF_8), APPEND);
     if (dd.binned > 0.0) {
+      Files.write(summaryPath, discretization.toString().getBytes(UTF_8), APPEND);
       Files.write(summaryPath, εBins.toString().getBytes(UTF_8), APPEND);
     }
     Files.write(summaryPath, SECTION_SEPARATOR.getBytes(UTF_8), APPEND);
@@ -95,7 +98,8 @@ final class DeaggExport {
         .append(DATASET_SEPARATOR)
         .append(summary);
     if (dd.binned > 0.0) {
-      sb.append(εBins).append(NEWLINE);
+      sb.append(discretization);
+      sb.append(εBins);
     }
     sb.append(SECTION_SEPARATOR);
     appendData(sb, data, dd);
@@ -595,6 +599,7 @@ final class DeaggExport {
         sb.append((bin.max == null) ? "]" : ")");
         sb.append(NEWLINE);
       }
+      sb.append(NEWLINE);
       return sb.toString();
     }
   }
@@ -611,6 +616,25 @@ final class DeaggExport {
       this.max = max;
     }
   }
+  
+  
+  /*
+   * Create a string reflecting the r, m, and ε discretizations that
+   * were used to intialize DeaggDatasets.
+   */
+  static String createDataDiscretization(DeaggConfig config) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Discretization:").append(NEWLINE);
+    CalcConfig.Deagg ccd = config.settings;
+    sb.append(String.format(DISCRETIZATION_FMT, "r", ccd.rMin, ccd.rMax, ccd.Δr));
+    sb.append(String.format(DISCRETIZATION_FMT, "m", ccd.mMin, ccd.mMax, ccd.Δm));
+    sb.append(String.format(DISCRETIZATION_FMT, "ε", ccd.εMin, ccd.εMax, ccd.Δε));
+    sb.append(NEWLINE);
+    return sb.toString();
+  }
+  
+  private static final String DISCRETIZATION_FMT = "%" + (SUMMARY_NAME_WIDTH-3) + 
+      "s:  min = %.1f, max = %.1f, Δ = %.1f" + NEWLINE; 
 
   /*
    * List wrapper that preserves JSON serialization yet permits custom
