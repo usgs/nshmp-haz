@@ -667,6 +667,28 @@ public final class Locations {
   }
 
   /**
+   * Return the point in a {@code LocationList} that is that closest to the
+   * supplied {@code Location}. This method uses
+   * {@link #horzDistanceFast(Location, Location)} to compute the distance.
+   * 
+   * @param loc @code Location} of interest
+   * @param locs {@code LocationList} to search for closest point in
+   * @see #horzDistanceFast(Location, Location)
+   */
+  public static Location closestPoint(Location loc, LocationList locs) {
+    double rMin = Double.POSITIVE_INFINITY;
+    Location closest = locs.first();
+    for (Location p : locs) {
+      double r = horzDistanceFast(loc, p);
+      if (r < rMin) {
+        rMin = r;
+        closest = p;
+      }
+    }
+    return closest;
+  }
+  
+  /**
    * Compute the horizontal distance (in km) from a {@code Location} to the
    * closest point in a {@code LocationList}. This method uses
    * {@link #horzDistanceFast(Location, Location)} to compute the distance.
@@ -676,15 +698,14 @@ public final class Locations {
    * @see #horzDistanceFast(Location, Location)
    */
   public static double minDistanceToLocations(Location loc, LocationList locs) {
-    double min = Double.MAX_VALUE;
-    double dist = 0;
+    double rMin = Double.POSITIVE_INFINITY;
     for (Location p : locs) {
-      dist = Locations.horzDistanceFast(loc, p);
-      if (dist < min) {
-        min = dist;
+      double r = horzDistanceFast(loc, p);
+      if (r < rMin) {
+        rMin = r;
       }
     }
-    return min;
+    return rMin;
   }
 
   /**
@@ -702,7 +723,7 @@ public final class Locations {
     if (locs.size() == 1) {
       return horzDistanceFast(loc, locs.get(0));
     }
-    double min = Double.MAX_VALUE;
+    double min = Double.POSITIVE_INFINITY;
     for (int i = 0; i < locs.size() - 1; i++) {
       min = Math.min(min, distanceToSegmentFast(locs.get(i), locs.get(i + 1), loc));
     }
@@ -721,7 +742,7 @@ public final class Locations {
    */
   public static int minDistanceIndex(Location loc, LocationList locs) {
     checkArgument(locs.size() > 1);
-    double min = Double.MAX_VALUE;
+    double min = Double.POSITIVE_INFINITY;
     int minIndex = -1;
     for (int i = 0; i < locs.size() - 1; i++) {
       double dist = distanceToSegmentFast(locs.get(i), locs.get(i + 1), loc);
