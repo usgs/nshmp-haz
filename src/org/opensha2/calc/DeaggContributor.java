@@ -207,12 +207,12 @@ abstract class DeaggContributor {
     }
   }
 
-  /* 
-   * TODO Builders should have better state checking. e.g. once the source
-   * has been set for a source contributor, it may not be set again. Likewise,
-   * add() can not be called unless source is set.
+  /*
+   * TODO Builders should have better state checking. e.g. once the source has
+   * been set for a source contributor, it may not be set again. Likewise, add()
+   * can not be called unless source is set.
    */
-  
+
   /* Generic Source contributor. Location and azimuth are site-specific. */
   static class SourceContributor extends DeaggContributor {
 
@@ -253,9 +253,9 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_FMT,
-          indent + source.name(), 
-          rBar, mBar, εBar, 
-          location.lon(), location.lat(), azimuth, 
+          indent + source.name(),
+          rBar, mBar, εBar,
+          location.lon(), location.lat(), azimuth,
           contribution));
       sb.append(NEWLINE);
       return sb;
@@ -324,10 +324,14 @@ abstract class DeaggContributor {
 
     final ClusterSource cluster;
     final List<DeaggContributor> faults;
+    final Location location;
+    final double azimuth;
 
     ClusterContributor(
         ClusterSource cluster,
         List<DeaggContributor> faults,
+        Location location,
+        double azimuth,
         double rate,
         double residual,
         double rScaled,
@@ -337,6 +341,8 @@ abstract class DeaggContributor {
       super(rate, residual, rScaled, mScaled, εScaled);
       this.cluster = cluster;
       this.faults = faults;
+      this.location = location;
+      this.azimuth = azimuth;
     }
 
     @Override
@@ -356,7 +362,10 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_FMT,
-          indent + cluster.name(), rBar, mBar, εBar, 0.0, 0.0, 0.0, contribution));
+          indent + cluster.name(),
+          rBar, mBar, εBar,
+          location.lon(), location.lat(), azimuth,
+          contribution));
       sb.append(NEWLINE);
       for (DeaggContributor fault : faults) {
         fault.appendTo(sb, toPercent, "    ");
@@ -368,9 +377,13 @@ abstract class DeaggContributor {
 
       ClusterSource cluster;
       ArrayList<DeaggContributor.Builder> faults = new ArrayList<>();
+      Location location;
+      double azimuth;
 
-      Builder cluster(ClusterSource cluster) {
+      Builder cluster(ClusterSource cluster, Location location, double azimuth) {
         this.cluster = cluster;
+        this.location = location;
+        this.azimuth = azimuth;
         return this;
       }
 
@@ -395,6 +408,8 @@ abstract class DeaggContributor {
         return new ClusterContributor(
             cluster,
             sortedFaults,
+            location,
+            azimuth,
             rate,
             residual,
             rScaled,

@@ -12,7 +12,6 @@ import org.opensha2.data.IntervalData;
 import org.opensha2.data.IntervalTable;
 import org.opensha2.data.IntervalVolume;
 import org.opensha2.eq.Magnitudes;
-import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.Source;
 
 import com.google.common.base.Function;
@@ -511,14 +510,13 @@ final class DeaggDataset {
     }
 
     private void putOrAddCluster(ClusterContributor cc) {
-      ClusterSource cluster = cc.cluster;
 
       /* Add to existing. */
-      if (childMap.containsKey(cluster)) {
+      if (childMap.containsKey(cc.cluster)) {
 
         /* Processs faults. */
         Map<Source, SourceContributor.Builder> sourceMap = createFaultSourceMap(
-            (ClusterContributor.Builder) childMap.get(cluster));
+            (ClusterContributor.Builder) childMap.get(cc.cluster));
         for (DeaggContributor child : cc.faults) {
           SourceContributor sc = (SourceContributor) child;
           sourceMap.get(sc.source).add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
@@ -527,7 +525,8 @@ final class DeaggDataset {
       }
 
       /* Put new. */
-      DeaggContributor.Builder cb = new ClusterContributor.Builder().cluster(cluster);
+      DeaggContributor.Builder cb = new ClusterContributor.Builder()
+          .cluster(cc.cluster, cc.location, cc.azimuth);
 
       /* Add faults. */
       for (DeaggContributor child : cc.faults) {
@@ -537,7 +536,7 @@ final class DeaggDataset {
             .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
         cb.addChild(sourceContributor);
       }
-      childMap.put(cluster, cb);
+      childMap.put(cc.cluster, cb);
     }
 
     /*

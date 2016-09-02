@@ -9,6 +9,7 @@ import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
+import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.GmmSet;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
@@ -53,7 +54,7 @@ final class Deaggregator {
   private final double iml;
   private final ExceedanceModel probModel;
   private final double trunc;
-  
+
   private final Site site;
 
   private Deaggregator(HazardCurveSet curves, DeaggConfig config, Site site) {
@@ -66,15 +67,15 @@ final class Deaggregator {
     this.iml = config.iml;
     this.probModel = config.probabilityModel;
     this.trunc = config.truncation;
-    
+
     this.site = site;
   }
 
   static Map<Gmm, DeaggDataset> deaggregate(
-      HazardCurveSet curves, 
+      HazardCurveSet curves,
       DeaggConfig config,
       Site site) {
-    
+
     Deaggregator deaggregator = new Deaggregator(curves, config, site);
     return Maps.immutableEnumMap(deaggregator.run());
   }
@@ -125,8 +126,18 @@ final class Deaggregator {
       /* ClusterSource level builders. */
       Map<Gmm, DeaggDataset.Builder> datasetBuilders = createBuilders(gmmSet.gmms(), model);
       for (DeaggDataset.Builder datasetBuilder : datasetBuilders.values()) {
-        ClusterContributor.Builder clusterContributor = new ClusterContributor.Builder();
-        datasetBuilder.setParentContributor(clusterContributor.cluster(cgms.parent));
+
+        /*
+         * Fetch site-specific source attributes so that they don't need to be
+         * recalculated multiple times downstream.
+         */
+        ClusterSource cluster = cgms.parent;
+        Location location = cluster.location(site.location);
+        double azimuth = Locations.azimuth(site.location, location);
+
+        ClusterContributor.Builder clusterContributor = new ClusterContributor.Builder()
+            .cluster(cluster, location, azimuth);
+        datasetBuilder.setParentContributor(clusterContributor);
       }
 
       /* Process the individual sources in a cluster. */
@@ -232,15 +243,14 @@ final class Deaggregator {
       }
     }
 
-    /* 
-     * Pre-fetch source and site-specific source attributes so that
-     * they are not recalculated multiple times downstream.
+    /*
+     * Fetch site-specific source attributes so that they don't need to be
+     * recalculated multiple times downstream.
      */
     Source source = ((SourceInputList) inputs).parent;
     Location location = source.location(site.location);
     double azimuth = Locations.azimuth(site.location, location);
-    
-    
+
     /* Add sources/contributors to builders. */
     for (Gmm gmm : gmmKeys) {
       double[] data = gmmData.get(gmm);
