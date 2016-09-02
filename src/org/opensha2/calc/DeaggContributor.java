@@ -253,7 +253,10 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_FMT,
-          indent + source.name(), rBar, mBar, εBar, 0.0, 0.0, 0.0, contribution));
+          indent + source.name(), 
+          rBar, mBar, εBar, 
+          location.lon(), location.lat(), azimuth, 
+          contribution));
       sb.append(NEWLINE);
       return sb;
     }

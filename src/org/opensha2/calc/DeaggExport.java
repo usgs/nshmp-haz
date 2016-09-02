@@ -479,7 +479,7 @@ final class DeaggExport {
   private static final String SRC_NAME_FMT = "%-" + (NAME_WIDTH + TYPE_WIDTH) + "s";
   private static final String HEADER_LABEL_FMT = "%9s%9s%7s%7s%9s%8s%6s%8s";
   private static final String HEADER_LINE_FMT = "%9s%8s%6s%7s%9s%8s%6s%8s";
-  private static final String SOURCE_COLUMN_FMT = "%8.2f%6.2f%7.2f%9.2f%8.2f%6.1f%8.2f";
+  private static final String SOURCE_COLUMN_FMT = "%8.2f%6.2f%7.2f%9.2f%8.2f%6.0f%8.2f";
   private static final String CONTRIB_HEADER_LABEL_FMT = SRC_SET_NAME_FMT + HEADER_LABEL_FMT;
   private static final String CONTRIB_HEADER_LINE_FMT = SRC_SET_NAME_FMT + HEADER_LINE_FMT;
   static final String CONTRIB_SOURCE_SET_FMT = SRC_SET_NAME_FMT + "%9s%52.2f";
