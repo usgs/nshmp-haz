@@ -256,10 +256,16 @@ public final class Sites {
 
     final GriddedRegion region;
     final Builder siteBuilder;
+    final Optional<Bounds> bounds;
 
-    RegionIterable(GriddedRegion region, Builder siteBuilder) {
+    RegionIterable(
+        GriddedRegion region,
+        Builder siteBuilder,
+        Optional<Bounds> bounds) {
+      
       this.region = region;
       this.siteBuilder = siteBuilder;
+      this.bounds = bounds;
     }
 
     @Override
@@ -329,7 +335,9 @@ public final class Sites {
       // or a region
       checkState(features.size() <= 2, "Only 2 polygon features may be defined");
 
-      Optional<Region> extents = Optional.absent();
+//      Optional<Region> extents = Optional.absent();
+      Optional<Bounds> mapBounds = Optional.absent();
+      String boundsName = "";
       int calcPolyIndex = 0;
       if (features.size() == 2) {
         calcPolyIndex++;
@@ -337,13 +345,10 @@ public final class Sites {
         JsonObject extentsFeature = features.get(0).getAsJsonObject();
         validateProperty(extentsFeature, GeoJson.Key.ID, GeoJson.Value.EXTENTS);
 
-        Bounds bounds = validateExtents(readPolygon(extentsFeature)).bounds();
+        mapBounds = Optional.of(validateExtents(readPolygon(extentsFeature)).bounds());
 
         JsonObject properties = extentsFeature.getAsJsonObject(GeoJson.Key.PROPERTIES);
-        String extentsName = readName(properties, "Map Extents");
-
-        Region r = Regions.createRectangular(extentsName, bounds.min(), bounds.max());
-        extents = Optional.of(r);
+        boundsName = readName(properties, "Map Extents");
       }
 
       JsonObject sitesFeature = features.get(calcPolyIndex).getAsJsonObject();
@@ -393,16 +398,19 @@ public final class Sites {
         builder.z2p5(z2p5);
       }
 
-      Region mapRegion = extents.isPresent()
-          ? Regions.intersectionOf(mapName, extents.get(), calcRegion)
-          : calcRegion;
+      Region mapRegion = calcRegion;
+      if (mapBounds.isPresent()) {
+        Bounds b = mapBounds.get();
+        Region r = Regions.createRectangular(boundsName, b.min(), b.max());
+        mapRegion = Regions.intersectionOf(mapName, r, calcRegion);
+      }
 
       GriddedRegion region = Regions.toGridded(
           mapRegion,
           spacing, spacing,
           GriddedRegion.ANCHOR_0_0);
 
-      return new RegionIterable(region, builder);
+      return new RegionIterable(region, builder, mapBounds);
     }
 
   }
