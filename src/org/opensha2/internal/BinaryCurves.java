@@ -1,6 +1,10 @@
 package org.opensha2.internal;
 
-import org.opensha2.data.XySequence;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
+import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.file.StandardOpenOption.WRITE;
+
 import org.opensha2.geo.Bounds;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
@@ -14,11 +18,6 @@ import com.google.common.io.Files;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
 
-import static java.nio.file.StandardOpenOption.WRITE;
-import static java.nio.charset.StandardCharsets.US_ASCII;
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.nio.ByteOrder.LITTLE_ENDIAN;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,8 +28,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 
+@Deprecated
 class BinaryCurves {
 
   // // needed becasue SH changed the NSHMP discretization
