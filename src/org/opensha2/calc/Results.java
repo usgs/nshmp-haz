@@ -1,5 +1,6 @@
 package org.opensha2.calc;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.file.StandardOpenOption.APPEND;
@@ -19,10 +20,11 @@ import org.opensha2.gmm.Imt;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
 import org.opensha2.mfd.Mfds;
-import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Optional;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
@@ -34,7 +36,6 @@ import com.google.common.primitives.Doubles;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
@@ -45,134 +46,168 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Factory class for reducing and exporting various result types.
  *
  * @author Peter Powers
  */
-public class Results {
+public final class Results {
 
+  private static final String DEAGG_DIR = "deagg";
+  private static final String GMM_DIR = "gmm";
   private static final String BINARY_SUFFIX = ".bin";
   private static final String TEXT_SUFFIX = ".csv";
   private static final String RATE_FMT = "%.8e";
 
-  /*
-   * Individual Hazard results only contain data relevant to the site of
-   * interest (e.g. for the NSHM WUS models, hazard in San Fancisco is
-   * influenced by slab sources whereas hazard in Los Angeles is not because it
-   * is too far away). For consistency when outputting batches of results, files
-   * are written for all source types and ground motion models supported by the
-   * HazardModel being used. This yields curve sets that are consistent across
-   * all locations in a batch, however, some of the curves may be empty.
-   * Depending on the extents of a map or list of sites, some curve sets may
-   * consist exclusively of zero-valued curves.
-   */
-
-  /*
-   * TODO There is no good reason for this class to be public. It would be
-   * better as a ResultsWriter, an instance of which would be obtained and
-   * configured on a per-calculation basis to receive batches of results.
-   * Although problems are unlikely, we're repeating a number of configuration
-   * steps below and relying on the same config file coming with the first
-   * result in each batch (below).
-   */
-
-  private static final String DEAGG_DIR = "deagg";
-  private static final String GMM_DIR = "gmm";
-
   private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
   private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
 
-  /*
-   * TODO This should be refactored such that much of the work of compiling
-   * hazard curves is performed in a HazardExport class, much like DeaggExport
-   */
+  private final Logger log;
+  private final Path dir;
+  private final CalcConfig config;
+  private final boolean exportGmm;
+  private final boolean exportSource;
+  private final boolean exportBinary;
 
-  public static void writeDeagg(
-      Path dir,
-      List<Deaggregation> batch,
-      CalcConfig config) throws IOException {
+  private final Stopwatch batchWatch;
+  private final Stopwatch totalWatch;
+  private int batchCount = 1;
+  private int resultCount = 1;
 
-    Deaggregation demo = batch.get(0);
-    boolean namedSites = demo.site.name != Site.NO_NAME;
-    boolean gmmDeagg = config.output.curveTypes.contains(CurveType.GMM);
+  private final boolean namedSites;
+  private boolean firstBatch = true;
+  private boolean used = false;
 
-    /*
-     * Writing of Hazard results will have already created necessary Imt
-     * directories.
-     */
-    for (Deaggregation deagg : batch) {
-      String name = namedSites ? deagg.site.name : lonLatStr(deagg.site.location);
-      for (Entry<Imt, ImtDeagg> imtEntry : deagg.deaggs.entrySet()) {
+  private final List<Hazard> hazards;
+  private final List<Deaggregation> deaggs;
 
-        /* Write total dataset. */
-        Path imtDir = dir.resolve(imtEntry.getKey().name());
-        Path imtDeaggDir = imtDir.resolve(DEAGG_DIR);
-        Files.createDirectories(imtDeaggDir);
-        ImtDeagg imtDeagg = imtEntry.getValue();
-        DeaggDataset ddTotal = imtDeagg.totalDataset;
-        DeaggConfig dc = imtDeagg.config;
-        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total");
-        exporter.write(imtDeaggDir, name);
+  private Results(CalcConfig config, boolean namedSites, Logger log) {
+    this.log = log;
+    this.dir = createOutputDir(config.output.directory);
+    this.config = config;
+    this.exportGmm = config.output.curveTypes.contains(CurveType.GMM);
+    this.exportSource = config.output.curveTypes.contains(CurveType.SOURCE);
+    this.exportBinary = config.output.curveTypes.contains(CurveType.BINARY);
+    this.namedSites = namedSites;
+    this.hazards = new ArrayList<>();
+    this.deaggs = new ArrayList<>();
 
-        if (gmmDeagg) {
-          for (Entry<Gmm, DeaggDataset> gmmEntry : imtDeagg.gmmDatasets.entrySet()) {
-            Path gmmDir = imtDir.resolve(GMM_DIR)
-                .resolve(DEAGG_DIR)
-                .resolve(gmmEntry.getKey().name());
-            Files.createDirectories(gmmDir);
-            DeaggDataset ddGmm = gmmEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmmEntry.getKey().toString());
-            exporter.write(gmmDir, name);
-          }
-        }
-      }
-    }
-  }
-
-  private static String lonLatStr(Location loc) {
-    return new StringBuilder()
-        .append(loc.lon())
-        .append("_")
-        .append(loc.lat())
-        .toString();
+    this.batchWatch = Stopwatch.createStarted();
+    this.totalWatch = Stopwatch.createStarted();
   }
 
   /**
-   * Write a {@code batch} of {@code HazardResult}s to files in the specified
-   * directory, one for each {@link Imt} in the {@code batch}. See
-   * {@link Files#write(Path, Iterable, java.nio.charset.Charset, OpenOption...)}
-   * for details on {@code options}. If no {@code options} are specified, the
-   * default behavior is to (over)write a new file. In this case a header row
-   * will be written as well. Files are encoded as
-   * {@link StandardCharsets#US_ASCII}, lat and lon values are formatted to 2
-   * decimal places, and curve values are formatted to 8 significant figures.
-   *
-   * @param dir to write to
-   * @param batch of results to write
-   * @param append to existing file or create new
-   * @throws IOException if a problem is encountered
-   * @see Files#write(Path, Iterable, java.nio.charset.Charset, OpenOption...)
+   * Create a new results handler.
+   * 
+   * @param config that specifies output options and formats
+   * @param log shared logging instance from calling class
    */
-  public static void writeResults(
-      Path dir,
-      List<Hazard> batch,
-      boolean append) throws IOException {
+  public static Results create(
+      CalcConfig config,
+      boolean namedSites,
+      Logger log) {
 
-    Hazard demo = batch.get(0);
-    boolean firstBatch = !append;
-    boolean namedSites = demo.site.name != Site.NO_NAME;
-    boolean exportGmms = demo.config.output.curveTypes.contains(CurveType.GMM);
-    boolean exportSources = demo.config.output.curveTypes.contains(CurveType.SOURCE);
-    boolean exportBinary = demo.config.output.curveTypes.contains(CurveType.BINARY);
+    return new Results(config, namedSites, log);
+  }
 
-    Metadata meta = null; //new Metadata();
+  /* Avoid clobbering exsting result directories via incrementing. */
+  private static Path createOutputDir(Path dir) {
+    int i = 1;
+    Path incrementedDir = dir;
+    while (Files.exists(incrementedDir)) {
+      incrementedDir = incrementedDir.resolveSibling(dir.getFileName() + "-" + i);
+      i++;
+    }
+    return incrementedDir;
+  }
+
+  public void add(Hazard hazard, Optional<Deaggregation> deagg) throws IOException {
+    checkState(!used, "This results object is expired");
+    hazards.add(hazard);
+    if (deagg.isPresent()) {
+      deaggs.add(deagg.get());
+    }
+    if (hazards.size() == config.output.flushLimit) {
+      flush();
+      log.info(String.format(
+          "     batch: %s in %s – %s sites in %s",
+          batchCount, batchWatch, resultCount, totalWatch));
+      batchWatch.reset().start();
+      batchCount++;
+    }
+    resultCount++;
+  }
+
+  /**
+   * Flush any stored Hazard and Deaggregation results to file, clearing
+   */
+  public void flush() throws IOException {
+    if (!hazards.isEmpty()) {
+      writeHazards();
+      hazards.clear();
+      firstBatch = false;
+    }
+    if (!deaggs.isEmpty()) {
+      writeDeaggs();
+      deaggs.clear();
+    }
+  }
+
+  /**
+   * Calls {@link #flush()} a final time, stops all timers and sets the state of
+   * this {@code Results} instance to 'used'; no more results may be added.
+   */
+  public void expire() throws IOException {
+    flush();
+    batchWatch.stop();
+    totalWatch.stop();
+    used = true;
+  }
+
+  /**
+   * The number of hazard [and deagg] results passed to this handler thus far.
+   */
+  public int resultsProcessed() {
+    return resultCount;
+  }
+
+  /**
+   * The number of {@code Hazard} results this handler is currently storing.
+   */
+  public int size() {
+    return hazards.size();
+  }
+
+  /**
+   * A string representation of the time duration that this result handler has
+   * been running.
+   */
+  public String elapsedTime() {
+    return totalWatch.toString();
+  }
+
+  /**
+   * The target output directory established by this handler.
+   */
+  public Path outputDir() {
+    return dir;
+  }
+
+  /*
+   * Write the current list of {@code Hazard}s to file.
+   */
+  private void writeHazards() throws IOException {
+
+    Hazard demo = hazards.get(0);
+
+    Metadata meta = null; // new Metadata();
     ByteBuffer buffer = ByteBuffer.allocate(MAX_IML_COUNT).order(LITTLE_ENDIAN);
 
     Set<Gmm> gmms = gmmSet(demo.model);
 
-    OpenOption[] options = append ? APPEND_OPTIONS : WRITE_OPTIONS;
+    OpenOption[] options = !firstBatch ? APPEND_OPTIONS : WRITE_OPTIONS;
 
     Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
     if (demo.config.curve.valueType == CurveValue.POISSON_PROBABILITY) {
@@ -204,7 +239,7 @@ public class Results {
         lines.add(Parsing.join(header, Delimiter.COMMA));
       }
 
-      if (exportSources) {
+      if (exportSource) {
         Map<SourceType, List<String>> typeMap = new EnumMap<>(SourceType.class);
         typeLines.put(imt, typeMap);
         for (SourceType type : demo.model.types()) {
@@ -212,7 +247,7 @@ public class Results {
         }
       }
 
-      if (exportGmms) {
+      if (exportGmm) {
         Map<Gmm, List<String>> gmmMap = new EnumMap<>(Gmm.class);
         gmmLines.put(imt, gmmMap);
         for (Gmm gmm : gmms) {
@@ -226,7 +261,7 @@ public class Results {
       for (Imt imt : demo.totalCurves.keySet()) {
         totalCurves.put(imt, new HashMap<Integer, XySequence>());
 
-        if (exportSources) {
+        if (exportSource) {
           Map<SourceType, Map<Integer, XySequence>> typeMap = new EnumMap<>(SourceType.class);
           typeCurves.put(imt, typeMap);
           for (SourceType type : demo.model.types()) {
@@ -234,7 +269,7 @@ public class Results {
           }
         }
 
-        if (exportGmms) {
+        if (exportGmm) {
           Map<Gmm, Map<Integer, XySequence>> gmmMap = new EnumMap<>(Gmm.class);
           gmmCurves.put(imt, gmmMap);
           for (Gmm gmm : gmms) {
@@ -245,7 +280,7 @@ public class Results {
     }
 
     /* Process batch */
-    for (Hazard hazard : batch) {
+    for (Hazard hazard : hazards) {
 
       String name = namedSites ? hazard.site.name : null;
       Location location = hazard.site.location;
@@ -257,10 +292,10 @@ public class Results {
           String.format("%.5f", hazard.site.location.lat()));
 
       Map<Imt, Map<SourceType, XySequence>> curvesBySource =
-          exportSources ? curvesBySource(hazard) : null;
+          exportSource ? curvesBySource(hazard) : null;
 
       Map<Imt, Map<Gmm, XySequence>> curvesByGmm =
-          exportGmms ? curvesByGmm(hazard) : null;
+          exportGmm ? curvesByGmm(hazard) : null;
 
       for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
         Imt imt = imtEntry.getKey();
@@ -278,7 +313,7 @@ public class Results {
           totalCurves.get(imt).put(binIndex, totalCurve);
         }
 
-        if (exportSources) {
+        if (exportSource) {
           Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
           for (Entry<SourceType, List<String>> typeEntry : typeLines.get(imt).entrySet()) {
             SourceType type = typeEntry.getKey();
@@ -294,7 +329,7 @@ public class Results {
           }
         }
 
-        if (exportGmms) {
+        if (exportGmm) {
           Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
           for (Entry<Gmm, List<String>> gmmEntry : gmmLines.get(imt).entrySet()) {
             Gmm gmm = gmmEntry.getKey();
@@ -329,7 +364,7 @@ public class Results {
         writeBinaryBatch(totalBinFile, totalCurves.get(imt), buffer);
       }
 
-      if (exportSources) {
+      if (exportSource) {
         Path typeDir = imtDir.resolve("source");
         Files.createDirectories(typeDir);
         for (Entry<SourceType, List<String>> typeEntry : typeLines.get(imt).entrySet()) {
@@ -348,7 +383,7 @@ public class Results {
 
       }
 
-      if (exportGmms) {
+      if (exportGmm) {
         Path gmmDir = imtDir.resolve("gmm");
         Files.createDirectories(gmmDir);
         for (Entry<Gmm, List<String>> gmmEntry : gmmLines.get(imt).entrySet()) {
@@ -368,6 +403,44 @@ public class Results {
     }
   }
 
+  /*
+   * Write the current list of {@code Deaggregation}s to file.
+   */
+  private void writeDeaggs() throws IOException {
+
+    /*
+     * Writing of Hazard results will have already created necessary Imt
+     * directories.
+     */
+    for (Deaggregation deagg : deaggs) {
+      String name = namedSites ? deagg.site.name : lonLatStr(deagg.site.location);
+      for (Entry<Imt, ImtDeagg> imtEntry : deagg.deaggs.entrySet()) {
+
+        /* Write total dataset. */
+        Path imtDir = dir.resolve(imtEntry.getKey().name());
+        Path imtDeaggDir = imtDir.resolve(DEAGG_DIR);
+        Files.createDirectories(imtDeaggDir);
+        ImtDeagg imtDeagg = imtEntry.getValue();
+        DeaggDataset ddTotal = imtDeagg.totalDataset;
+        DeaggConfig dc = imtDeagg.config;
+        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total");
+        exporter.write(imtDeaggDir, name);
+
+        if (exportGmm) {
+          for (Entry<Gmm, DeaggDataset> gmmEntry : imtDeagg.gmmDatasets.entrySet()) {
+            Path gmmDir = imtDir.resolve(GMM_DIR)
+                .resolve(DEAGG_DIR)
+                .resolve(gmmEntry.getKey().name());
+            Files.createDirectories(gmmDir);
+            DeaggDataset ddGmm = gmmEntry.getValue();
+            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmmEntry.getKey().toString());
+            exporter.write(gmmDir, name);
+          }
+        }
+      }
+    }
+  }
+
   private static String toLine(
       Iterable<String> location,
       Iterable<Double> values,
@@ -378,11 +451,16 @@ public class Results {
         Delimiter.COMMA);
   }
 
-  /**
-   * Derive maps of curves by source type for each Imt in a {@code Hazard}
-   * result.
-   */
-  public static Map<Imt, Map<SourceType, XySequence>> curvesBySource(Hazard hazard) {
+  private static String lonLatStr(Location loc) {
+    return new StringBuilder()
+        .append(loc.lon())
+        .append("_")
+        .append(loc.lat())
+        .toString();
+  }
+
+  /* Derive maps of curves by source type for each Imt. */
+  private static Map<Imt, Map<SourceType, XySequence>> curvesBySource(Hazard hazard) {
 
     EnumMap<Imt, Map<SourceType, XySequence>> imtMap = Maps.newEnumMap(Imt.class);
 
@@ -410,7 +488,7 @@ public class Results {
 
     EnumMap<Imt, Map<Gmm, XySequence>> imtMap = Maps.newEnumMap(Imt.class);
 
-    // initialize receiver
+    /* Initialize receiver */
     Iterable<SourceSet<? extends Source>> sources = Iterables.transform(
         hazard.sourceSetCurves.values(),
         CURVE_SET_TO_SOURCE_SET);
@@ -441,9 +519,7 @@ public class Results {
             }));
   }
 
-  /*
-   * Initalize a map of curves, one entry for each of the supplied enum keys.
-   */
+  /* Initalize a map of curves, one entry for each of the supplied enum key. */
   private static <K extends Enum<K>> Map<K, XySequence> initCurves(
       final Set<K> keys,
       final XySequence model) {
@@ -484,8 +560,11 @@ public class Results {
     final List<Double> imls;
     final double vs30;
     final double basin = 0.0;
-    
-    final int curveCount;
+    final int gridSize;
+
+    static Builder builder() {
+      return new Builder();
+    }
 
     Metadata(
         Bounds bounds,
@@ -494,7 +573,8 @@ public class Results {
         String timestamp,
         Imt imt,
         List<Double> imls,
-        double vs30) {
+        double vs30,
+        int gridSize) {
 
       this.bounds = bounds;
       this.spacing = spacing;
@@ -503,8 +583,67 @@ public class Results {
       this.imt = imt;
       this.imls = imls;
       this.vs30 = vs30;
-      
-      this.curveCount = curveCount(bounds, spacing);
+      this.gridSize = gridSize;
+    }
+
+    static final class Builder {
+
+      Bounds bounds;
+      double spacing;
+      String description;
+      String timestamp;
+      Imt imt;
+      List<Double> imls;
+      double vs30;
+
+      private Builder() {}
+
+      Builder bounds(Bounds bounds) {
+        this.bounds = bounds;
+        return this;
+      }
+
+      Builder spacing(double spacing) {
+        this.spacing = spacing;
+        return this;
+      }
+
+      Builder description(String description) {
+        this.description = description;
+        return this;
+      }
+
+      Builder timestamp(String timestamp) {
+        this.timestamp = timestamp;
+        return this;
+      }
+
+      Builder imt(Imt imt) {
+        this.imt = imt;
+        return this;
+      }
+
+      Builder imls(List<Double> imls) {
+        this.imls = imls;
+        return this;
+      }
+
+      Builder vs30(double vs30) {
+        this.vs30 = vs30;
+        return this;
+      }
+
+      Metadata build() {
+        return new Metadata(
+            bounds,
+            spacing,
+            description,
+            timestamp,
+            imt,
+            imls,
+            vs30,
+            gridSize(bounds, spacing));
+      }
     }
   }
 
@@ -528,14 +667,14 @@ public class Results {
       buf.putFloat((float) y);
     }
   }
-  
+
   private static void initBinary(Path path, Metadata m) throws IOException {
     FileChannel channel = FileChannel.open(path, WRITE);
     channel.write(createHeader(m));
-    channel.write(ByteBuffer.allocate(m.curveCount * MAX_IML_COUNT));
+    channel.write(ByteBuffer.allocate(m.gridSize * MAX_IML_COUNT));
     channel.close();
   }
-  
+
   /* Header occupies 1664 bytes total */
   private static ByteBuffer createHeader(Metadata m) {
     ByteBuffer buf = ByteBuffer.allocate(HEADER_OFFSET).order(LITTLE_ENDIAN);
@@ -569,14 +708,14 @@ public class Results {
         .putFloat((float) m.bounds.min().lat())
         .putFloat((float) m.bounds.max().lat())
         .putFloat((float) m.spacing)
-        .putFloat(m.curveCount)
+        .putFloat(m.gridSize)
         .putFloat((float) m.vs30)
         .putFloat((float) m.basin);
 
     return buf;
   }
 
-  private static int curveCount(Bounds b, double spacing) {
+  private static int gridSize(Bounds b, double spacing) {
     int lonDim = (int) Math.rint((b.max().lon() - b.min().lon()) / spacing) + 1;
     int latDim = (int) Math.rint((b.max().lat() - b.min().lat()) / spacing) + 1;
     return lonDim * latDim;

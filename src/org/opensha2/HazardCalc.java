@@ -6,6 +6,7 @@ import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
+import org.opensha2.calc.Deaggregation;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.Results;
 import org.opensha2.calc.ThreadCount;
@@ -15,16 +16,13 @@ import org.opensha2.util.Site;
 import org.opensha2.util.Sites;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -171,55 +169,23 @@ public class HazardCalc {
     Optional<Executor> executor = Optional.<Executor> fromNullable(execSvc);
 
     log.info(PROGRAM + ": calculating ...");
-    Stopwatch batchWatch = Stopwatch.createStarted();
-    Stopwatch totalWatch = Stopwatch.createStarted();
-    int batchCount = 1;
-    int siteCount = 1;
 
-    List<Hazard> results = new ArrayList<>();
-    boolean firstBatch = true;
-
-    Path outDir = createOutputDir(config.output.directory);
-
+    boolean namedSites = sites.iterator().next().name() != Site.NO_NAME;
+    Results handler = Results.create(config, namedSites, log);
     for (Site site : sites) {
       Hazard hazard = calc(model, config, site, executor);
-      results.add(hazard);
-      if (results.size() == config.output.flushLimit) {
-        Results.writeResults(outDir, results, !firstBatch);
-        log.info(String.format(
-            "     batch: %s in %s – %s sites in %s",
-            batchCount, batchWatch, siteCount, totalWatch));
-        results.clear();
-        batchWatch.reset().start();
-        batchCount++;
-        firstBatch = false;
-      }
-      siteCount++;
+      handler.add(hazard, Optional.<Deaggregation> absent());
     }
-    // write final batch
-    if (!results.isEmpty()) {
-      Results.writeResults(outDir, results, !firstBatch);
-    }
+    handler.expire();
+
     log.info(String.format(
         PROGRAM + ": %s sites completed in %s",
-        siteCount, totalWatch));
-    
+        handler.resultsProcessed(), handler.elapsedTime()));
+
     if (threadCount != ThreadCount.ONE) {
       execSvc.shutdown();
     }
-
-    return outDir;
-  }
-
-  /* Avoid clobbering exsting result directories via incrementing */
-  static Path createOutputDir(Path dir) {
-    int i = 1;
-    Path dirIncr = dir;
-    while (Files.exists(dirIncr)) {
-      dirIncr = dirIncr.resolveSibling(dir.getFileName() + "-" + i);
-      i++;
-    }
-    return dirIncr;
+    return handler.outputDir();
   }
 
   static final String TMP_LOG = "nshmp-haz-log";
