@@ -1,6 +1,5 @@
 package org.opensha2;
 
-import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
@@ -22,7 +21,6 @@ import com.google.common.base.Throwables;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -148,8 +146,6 @@ public class DeaggCalc {
     }
   }
 
-  private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
-  private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
 
   /*
    * Compute hazard curves using the supplied model, config, and sites. Method
@@ -193,9 +189,7 @@ public class DeaggCalc {
       Deaggregation deagg = calc(hazard, returnPeriod);
       deaggResults.add(deagg);
       if (deaggResults.size() == config.output.flushLimit) {
-        OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-        firstBatch = false;
-        Results.writeResults(outDir, hazardResults, opts);
+        Results.writeResults(outDir, hazardResults, !firstBatch);
         Results.writeDeagg(outDir, deaggResults, config);
         log.info(String.format(
             "    batch: %s in %s – %s sites in %s",
@@ -204,13 +198,13 @@ public class DeaggCalc {
         deaggResults.clear();
         batchWatch.reset().start();
         batchCount++;
+        firstBatch = false;
       }
       siteCount++;
     }
     // write final batch
     if (!deaggResults.isEmpty()) {
-      OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-      Results.writeResults(outDir, hazardResults, opts);
+      Results.writeResults(outDir, hazardResults, !firstBatch);
       Results.writeDeagg(outDir, deaggResults, config);
     }
     log.info(String.format(

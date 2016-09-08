@@ -1,6 +1,5 @@
 package org.opensha2;
 
-import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
@@ -21,7 +20,6 @@ import com.google.common.base.Throwables;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -152,9 +150,6 @@ public class HazardCalc {
     }
   }
 
-  private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
-  private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
-
   /*
    * Compute hazard curves using the supplied model, config, and sites. Method
    * returns the path to the directory where results were written.
@@ -190,22 +185,20 @@ public class HazardCalc {
       Hazard hazard = calc(model, config, site, executor);
       results.add(hazard);
       if (results.size() == config.output.flushLimit) {
-        OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-        firstBatch = false;
-        Results.writeResults(outDir, results, opts);
+        Results.writeResults(outDir, results, !firstBatch);
         log.info(String.format(
             "     batch: %s in %s – %s sites in %s",
             batchCount, batchWatch, siteCount, totalWatch));
         results.clear();
         batchWatch.reset().start();
         batchCount++;
+        firstBatch = false;
       }
       siteCount++;
     }
     // write final batch
     if (!results.isEmpty()) {
-      OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-      Results.writeResults(outDir, results, opts);
+      Results.writeResults(outDir, results, !firstBatch);
     }
     log.info(String.format(
         PROGRAM + ": %s sites completed in %s",
