@@ -12,12 +12,12 @@ import static org.opensha2.internal.Parsing.Delimiter.COMMA;
 import org.opensha2.HazardCalc;
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Hazard;
+import org.opensha2.calc.Site;
+import org.opensha2.calc.Sites;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.gmm.Imt;
 import org.opensha2.internal.Parsing;
 import org.opensha2.mfd.Mfds;
-import org.opensha2.util.Site;
-import org.opensha2.util.Sites;
 
 import org.junit.Ignore;
 import org.junit.Test;

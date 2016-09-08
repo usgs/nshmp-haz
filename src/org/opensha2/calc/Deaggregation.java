@@ -8,7 +8,6 @@ import org.opensha2.data.Interpolator;
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
-import org.opensha2.util.Site;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
