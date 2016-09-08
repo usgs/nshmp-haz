@@ -7,7 +7,6 @@ import org.opensha2.data.XySequence;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Regions;
-import org.opensha2.gmm.Imt;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
@@ -49,10 +48,15 @@ class CurveContainer implements Iterable<Location> {
   Map<Integer, double[]> ysMap;
   XySequence baseCurve;
 
+  /*
+   * NSHMP binary curve files are always structured with 20 entries, not all of
+   * which may be used (e.g. nX = 19)
+   */
+  private static final int NSHMP_DATA_LENGTH = 20;
+
   /**
-   * Returns the hazard curve for the supplied location.
-   * @param loc of interest
-   * @return the associated hazard curve
+   * The hazard curve at the supplied location.
+   * 
    * @throws IllegalArgumentException if loc is out of range of curve data
    */
   public XySequence getCurve(Location loc) {
@@ -70,7 +74,8 @@ class CurveContainer implements Iterable<Location> {
   }
 
   /**
-   * Returns the number of curves stored in this container.
+   * The number of curves stored in this container.
+   * 
    * @return the container size
    */
   public int size() {
@@ -78,9 +83,9 @@ class CurveContainer implements Iterable<Location> {
   }
 
   /**
-   * Scales the contained curves in place by the supplied value.
-   * @param scale
-   * @return a reference to {@code this} (for inlining and chaining)
+   * Scale the contained curves in place by the supplied value.
+   * 
+   * @return a reference to this
    */
   public CurveContainer scale(double scale) {
     for (double[] values : ysMap.values()) {
@@ -90,8 +95,8 @@ class CurveContainer implements Iterable<Location> {
   }
 
   /**
-   * Adds the curves of the supplied container to this one.
-   * @param cc container to add
+   * Add the curves of the supplied container to this one.
+   * 
    * @throws IllegalArgumentException if underlying gridded regions are not the
    *         same
    */
@@ -103,7 +108,7 @@ class CurveContainer implements Iterable<Location> {
   }
 
   /**
-   * Adds the curves in the supplied container to this.
+   * Add the curves in the supplied container to this.
    *
    * NOTE be careful using this: Supplied container should be equivalent or
    * HIGHER resolution than this
@@ -126,7 +131,6 @@ class CurveContainer implements Iterable<Location> {
 
   /**
    * Adds the curves as available from the supplied NSHMP container.
-   * @param cc
    */
   public void addNSHMP(CurveContainer cc) {
     for (Location loc : this) {
@@ -143,8 +147,8 @@ class CurveContainer implements Iterable<Location> {
   }
 
   /**
-   * Subtracts the curves of the supplied container from this one.
-   * @param cc container to add
+   * Subtract the curves of the supplied container from this one.
+   * 
    * @throws IllegalArgumentException if underlying gridded regions are not the
    *         same
    */
@@ -160,56 +164,11 @@ class CurveContainer implements Iterable<Location> {
     return region.iterator();
   }
 
-  private static double minLat = 24.6;
-  private static double maxLat = 50.0;
-  private static double minLon = -125.0;
-  private static double maxLon = -100.0;
-
-  // private GriddedRegion createWusRegion(double spacing) {
-  // return Regions.createRectangularGridded(
-  // "NSHMP Map Region",
-  // Location.create(minLat, minLon),
-  // Location.create(maxLat, maxLon),
-  // spacing, spacing,
-  // GriddedRegion.ANCHOR_0_0);
-  //
-  // }
-
   /**
-   * Creates a curve container for NSHMP national scale datafrom the supplied
-   * data file and region. The supplied file is assumed to be in the standard
-   * format output by NSHMP fortran 'combine' codes.
-   *
-   * @param f file
-   * @return a new curve container object
-   */
-  // public static CurveContainer create(File f) {
-  //
-  // GriddedRegion wusRegion = Regions.createRectangularGridded(
-  // "NSHMP WUS Map Region",
-  // Location.create(minLat, minLon),
-  // Location.create(maxLat, maxLon),
-  // 0.05, 0.05,
-  // GriddedRegion.ANCHOR_0_0);
-  // CurveFileProcessor_NSHMP cfp = new CurveFileProcessor_NSHMP(region);
-  // CurveContainer curves = null;
-  // try {
-  // curves = Files.readLines(f, Charsets.US_ASCII, cfp);
-  // } catch (IOException ioe) {
-  // ioe.printStackTrace();
-  // }
-  // return curves;
-  // }
-
-  /**
-   * Creates a curve container for a localized area from supplied data file,
-   * region, and grid spacing. The data locations should match the nodes in the
+   * Create a curve container for a localized area from supplied data file and
+   * gridded region. The data locations should match the nodes in the
    * gridded region. Results are unspecified if the two do not agree. The
    * supplied file is assumed to be in curve csv format.
-   *
-   * @param f file
-   * @param region for file
-   * @return a new curve container object
    */
   public static CurveContainer create(File f, GriddedRegion region) throws IOException {
     CurveFileProcessor_SHA cfp = new CurveFileProcessor_SHA(region);
@@ -217,7 +176,9 @@ class CurveContainer implements Iterable<Location> {
     return curves;
   }
 
-  // create an empty curve container; all curves are zero-valued
+  /**
+   * Create an empty curve container; all curves are zero-valued.
+   */
   public static CurveContainer create(GriddedRegion gr, double[] xs) {
     CurveContainer cc = new CurveContainer();
     cc.xs = Arrays.copyOf(xs, xs.length);
@@ -229,46 +190,40 @@ class CurveContainer implements Iterable<Location> {
     return cc;
   }
 
-  // create cc for binary nshmp curve file
+  /**
+   * Create a container from binary NSHMP curves.
+   */
   public static CurveContainer create(URL url) throws IOException {
-    LittleEndianDataInputStream in =
-        new LittleEndianDataInputStream(url.openStream());
+    LittleEndianDataInputStream in = new LittleEndianDataInputStream(url.openStream());
 
     CurveContainer cc = new CurveContainer();
 
-    // read names 6 * char(128)
+    /* Read names 6 * char(128) */
     int n = 128;
     for (int i = 0; i < 6; i++) {
       byte[] nameDat = new byte[n];
       in.read(nameDat, 0, n);
-      // System.out.println(new String(nameDat));
     }
-    float period = in.readFloat();
+    in.readFloat(); // period
     int nX = in.readInt();
-    Imt imt = Imt.fromPeriod(period);
-    // System.out.println("period: " + period);
-    // System.out.println("nX: " + nX);
 
-    // read x-vals real*4 * 20
+    /* Read x-vals real * 4 * 20 */
     List<Double> xs = Lists.newArrayList();
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < NSHMP_DATA_LENGTH; i++) {
       double val = MathUtils.round(in.readFloat(), 3);
-      // System.out.println(val);
       // need to read 20 values to advance caret, but only save ones used
       if (i < nX) {
         xs.add(val);
       }
     }
     cc.xs = Doubles.toArray(xs);
-    // System.out.println("xVals: " + cc.xs);
 
-    // read extras real*4 * 10
+    /* Read extras real * 4 * 10 */
     List<Double> extras = Lists.newArrayList();
     for (int i = 0; i < 10; i++) {
       double val = MathUtils.round(in.readFloat(), 2);
       extras.add(val);
     }
-    // System.out.println("extras: " + extras);
     double minLon = extras.get(1);
     double maxLon = extras.get(2);
     double spacing = extras.get(3);
@@ -282,14 +237,13 @@ class CurveContainer implements Iterable<Location> {
         nwLoc, seLoc,
         spacing, spacing,
         GriddedRegion.ANCHOR_0_0);
-    // System.out.println(gr.getNodeCount());
     int nRows = (int) Math.rint((maxLat - minLat) / spacing) + 1;
     int nCols = (int) Math.rint((maxLon - minLon) / spacing) + 1;
 
     cc.ysMap = Maps.newHashMapWithExpectedSize(cc.region.size());
 
     for (int i = 0; i < cc.region.size(); i++) {
-      // read nX values for each i
+      /* read nX values for each i */
       List<Double> vals = Lists.newArrayList();
       for (int j = 0; j < nX; j++) {
         vals.add((double) in.readFloat());
@@ -297,13 +251,12 @@ class CurveContainer implements Iterable<Location> {
       int regionIdx = calcIndex(i, nRows, nCols);
       cc.ysMap.put(regionIdx, Doubles.toArray(vals));
     }
-
     in.close();
     return cc;
   }
 
   /*
-   * This method converts an NSHMP index to the correct GriddedRegion index
+   * Convert an NSHMP index to the correct GriddedRegion index
    */
   private static int calcIndex(int idx, int nRows, int nCols) {
     return (nRows - (idx / nCols) - 1) * nCols + (idx % nCols);
@@ -314,7 +267,7 @@ class CurveContainer implements Iterable<Location> {
     // return targetRow * nCols + col;
   }
 
-  // reads from ascii curve files
+  /* Reads from ascii curve files */
   static class CurveFileProcessor_NSHMP implements LineProcessor<CurveContainer> {
 
     private Splitter split;
@@ -340,13 +293,13 @@ class CurveContainer implements Iterable<Location> {
     @Override
     public boolean processLine(String line) throws IOException {
 
-      // skip first 3 lines for either format
+      /* Skip first 3 lines for either format */
       if (headCount < headLines) {
         headCount++;
         return true;
       }
 
-      // short lines are going to be x values
+      /* Short lines are going to be x values */
       if (line.length() < 20) {
         xs.add(Double.parseDouble(line));
         xCount++;
@@ -363,7 +316,6 @@ class CurveContainer implements Iterable<Location> {
 
     private void addCurve(String line) {
       Iterator<String> it = split.split(line).iterator();
-      // read location
       Location loc =
           Location.create(Double.parseDouble(it.next()), Double.parseDouble(it.next()));
       int idx = cc.region.indexForLocation(loc);
@@ -413,7 +365,6 @@ class CurveContainer implements Iterable<Location> {
 
     private void addCurve(String line) {
       Iterable<String> it = split.split(line);
-      // read location
       Location loc = Location.create(
           Double.parseDouble(Iterables.get(it, 1)),
           Double.parseDouble(Iterables.get(it, 0)));
@@ -427,7 +378,7 @@ class CurveContainer implements Iterable<Location> {
   }
 
   /**
-   * Test
+   * TODO clean
    * @param args
    */
   public static void main(String[] args) throws IOException {
