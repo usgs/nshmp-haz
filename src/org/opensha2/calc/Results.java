@@ -102,6 +102,8 @@ public final class Results {
    * Create a new results handler.
    * 
    * @param config that specifies output options and formats
+   * @param namedSites whether incoming sites have name or are simply editified
+   *        by this longitude and latitude
    * @param log shared logging instance from calling class
    */
   public static Results create(
@@ -358,9 +360,6 @@ public final class Results {
 
       if (exportBinary) {
         Path totalBinFile = imtDir.resolve("total" + BINARY_SUFFIX);
-        if (!Files.exists(totalBinFile)) {
-          initBinary(totalBinFile, meta);
-        }
         writeBinaryBatch(totalBinFile, totalCurves.get(imt), buffer);
       }
 
@@ -374,13 +373,9 @@ public final class Results {
           Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
           if (exportBinary) {
             Path typeBinFile = typeDir.resolve(filename + BINARY_SUFFIX);
-            if (!Files.exists(typeBinFile)) {
-              initBinary(typeBinFile, meta);
-            }
             writeBinaryBatch(typeBinFile, typeCurves.get(imt).get(type), buffer);
           }
         }
-
       }
 
       if (exportGmm) {
@@ -393,9 +388,6 @@ public final class Results {
           Files.write(gmmFile, gmmEntry.getValue(), US_ASCII, options);
           if (exportBinary) {
             Path gmmBinFile = gmmDir.resolve(filename + BINARY_SUFFIX);
-            if (!Files.exists(gmmBinFile)) {
-              initBinary(gmmBinFile, meta);
-            }
             writeBinaryBatch(gmmBinFile, gmmCurves.get(imt).get(gmm), buffer);
           }
         }
@@ -651,6 +643,10 @@ public final class Results {
       Path path,
       Map<Integer, XySequence> curves,
       ByteBuffer buf) throws IOException {
+
+    if (!Files.exists(path)) {
+//      initBinary(path, meta);
+    }
 
     FileChannel channel = FileChannel.open(path, WRITE);
     for (Entry<Integer, XySequence> entry : curves.entrySet()) {
