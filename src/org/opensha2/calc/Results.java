@@ -1,6 +1,9 @@
 package org.opensha2.calc;
 
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.WRITE;
 
 import static org.opensha2.data.XySequence.emptyCopyOf;
 
@@ -9,6 +12,7 @@ import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
+import org.opensha2.geo.Bounds;
 import org.opensha2.geo.Location;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
@@ -19,6 +23,7 @@ import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -27,12 +32,15 @@ import com.google.common.collect.Sets;
 import com.google.common.primitives.Doubles;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,7 +53,8 @@ import java.util.Set;
  */
 public class Results {
 
-  private static final String CURVE_FILE_SUFFIX = ".csv";
+  private static final String BINARY_SUFFIX = ".bin";
+  private static final String TEXT_SUFFIX = ".csv";
   private static final String RATE_FMT = "%.8e";
 
   /*
@@ -66,12 +75,15 @@ public class Results {
    * configured on a per-calculation basis to receive batches of results.
    * Although problems are unlikely, we're repeating a number of configuration
    * steps below and relying on the same config file coming with the first
-   * result in each batch (below). We also wouldn't have to pass around
-   * OpenOptions which are mildly confusing.
+   * result in each batch (below).
    */
 
   private static final String DEAGG_DIR = "deagg";
   private static final String GMM_DIR = "gmm";
+
+  private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
+  private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
+
   /*
    * TODO This should be refactored such that much of the work of compiling
    * hazard curves is performed in a HazardExport class, much like DeaggExport
@@ -139,20 +151,28 @@ public class Results {
    *
    * @param dir to write to
    * @param batch of results to write
-   * @param options specifying how the file is opened
+   * @param append to existing file or create new
    * @throws IOException if a problem is encountered
    * @see Files#write(Path, Iterable, java.nio.charset.Charset, OpenOption...)
    */
   public static void writeResults(
       Path dir,
       List<Hazard> batch,
-      OpenOption... options) throws IOException {
+      boolean append) throws IOException {
 
     Hazard demo = batch.get(0);
-    boolean newFile = options.length == 0;
+    boolean firstBatch = !append;
     boolean namedSites = demo.site.name != Site.NO_NAME;
-    boolean gmmCurves = demo.config.output.curveTypes.contains(CurveType.GMM);
-    boolean sourceCurves = demo.config.output.curveTypes.contains(CurveType.SOURCE);
+    boolean exportGmms = demo.config.output.curveTypes.contains(CurveType.GMM);
+    boolean exportSources = demo.config.output.curveTypes.contains(CurveType.SOURCE);
+    boolean exportBinary = demo.config.output.curveTypes.contains(CurveType.BINARY);
+
+    Metadata meta = null; //new Metadata();
+    ByteBuffer buffer = ByteBuffer.allocate(MAX_IML_COUNT).order(LITTLE_ENDIAN);
+
+    Set<Gmm> gmms = gmmSet(demo.model);
+
+    OpenOption[] options = append ? APPEND_OPTIONS : WRITE_OPTIONS;
 
     Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
     if (demo.config.curve.valueType == CurveValue.POISSON_PROBABILITY) {
@@ -161,35 +181,66 @@ public class Results {
           Mfds.annualRateToProbabilityConverter());
     }
 
-    Map<Imt, List<String>> totalLineMap = Maps.newEnumMap(Imt.class);
-    Map<Imt, Map<SourceType, List<String>>> sourceLineMap = Maps.newEnumMap(Imt.class);
-    Map<Imt, Map<Gmm, List<String>>> gmmLineMap = Maps.newEnumMap(Imt.class);
+    /* Line maps for ascii output; may or may not be used */
+    Map<Imt, List<String>> totalLines = Maps.newEnumMap(Imt.class);
+    Map<Imt, Map<SourceType, List<String>>> typeLines = Maps.newEnumMap(Imt.class);
+    Map<Imt, Map<Gmm, List<String>>> gmmLines = Maps.newEnumMap(Imt.class);
 
-    /* Initialize line maps for all types and gmms referenced by a model */
+    /* Curve maps for binary output; may or may not be used */
+    Map<Imt, Map<Integer, XySequence>> totalCurves = Maps.newEnumMap(Imt.class);
+    Map<Imt, Map<SourceType, Map<Integer, XySequence>>> typeCurves = Maps.newEnumMap(Imt.class);
+    Map<Imt, Map<Gmm, Map<Integer, XySequence>>> gmmCurves = Maps.newEnumMap(Imt.class);
+
+    /* Initialize line maps. */
     for (Imt imt : demo.totalCurves.keySet()) {
+
       List<String> lines = new ArrayList<>();
-      if (newFile) {
+      totalLines.put(imt, lines);
+
+      if (firstBatch) {
         Iterable<?> header = Iterables.concat(
             Lists.newArrayList(namedSites ? "name" : null, "lon", "lat"),
             demo.config.curve.modelCurves().get(imt).xValues());
         lines.add(Parsing.join(header, Delimiter.COMMA));
       }
-      totalLineMap.put(imt, lines);
 
-      if (sourceCurves) {
-        Map<SourceType, List<String>> typeLines = Maps.newEnumMap(SourceType.class);
+      if (exportSources) {
+        Map<SourceType, List<String>> typeMap = new EnumMap<>(SourceType.class);
+        typeLines.put(imt, typeMap);
         for (SourceType type : demo.model.types()) {
-          typeLines.put(type, Lists.newArrayList(lines));
+          typeMap.put(type, Lists.newArrayList(lines));
         }
-        sourceLineMap.put(imt, typeLines);
       }
 
-      if (gmmCurves) {
-        Map<Gmm, List<String>> gmmLines = Maps.newEnumMap(Gmm.class);
-        for (Gmm gmm : gmmSet(demo.model)) {
-          gmmLines.put(gmm, Lists.newArrayList(lines));
+      if (exportGmms) {
+        Map<Gmm, List<String>> gmmMap = new EnumMap<>(Gmm.class);
+        gmmLines.put(imt, gmmMap);
+        for (Gmm gmm : gmms) {
+          gmmMap.put(gmm, Lists.newArrayList(lines));
         }
-        gmmLineMap.put(imt, gmmLines);
+      }
+    }
+
+    /* Initialize curve maps and binary output files. */
+    if (exportBinary) {
+      for (Imt imt : demo.totalCurves.keySet()) {
+        totalCurves.put(imt, new HashMap<Integer, XySequence>());
+
+        if (exportSources) {
+          Map<SourceType, Map<Integer, XySequence>> typeMap = new EnumMap<>(SourceType.class);
+          typeCurves.put(imt, typeMap);
+          for (SourceType type : demo.model.types()) {
+            typeMap.put(type, new HashMap<Integer, XySequence>());
+          }
+        }
+
+        if (exportGmms) {
+          Map<Gmm, Map<Integer, XySequence>> gmmMap = new EnumMap<>(Gmm.class);
+          gmmCurves.put(imt, gmmMap);
+          for (Gmm gmm : gmms) {
+            gmmMap.put(gmm, new HashMap<Integer, XySequence>());
+          }
+        }
       }
     }
 
@@ -197,14 +248,19 @@ public class Results {
     for (Hazard hazard : batch) {
 
       String name = namedSites ? hazard.site.name : null;
+      Location location = hazard.site.location;
+      int binIndex = curveIndex(meta.bounds, meta.spacing, location);
+
       List<String> locData = Lists.newArrayList(
           name,
           String.format("%.5f", hazard.site.location.lon()),
           String.format("%.5f", hazard.site.location.lat()));
 
       Map<Imt, Map<SourceType, XySequence>> curvesBySource =
-          sourceCurves ? curvesBySource(hazard) : null;
-      Map<Imt, Map<Gmm, XySequence>> curvesByGmm = gmmCurves ? curvesByGmm(hazard) : null;
+          exportSources ? curvesBySource(hazard) : null;
+
+      Map<Imt, Map<Gmm, XySequence>> curvesByGmm =
+          exportGmms ? curvesByGmm(hazard) : null;
 
       for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
         Imt imt = imtEntry.getKey();
@@ -213,30 +269,43 @@ public class Results {
         Iterable<Double> emptyValues = Doubles.asList(new double[totalCurve.size()]);
         String emptyLine = toLine(locData, emptyValues, formatter);
 
-        totalLineMap.get(imt).add(toLine(
+        totalLines.get(imt).add(toLine(
             locData,
             imtEntry.getValue().yValues(),
             formatter));
 
-        if (sourceCurves) {
+        if (exportBinary) {
+          totalCurves.get(imt).put(binIndex, totalCurve);
+        }
+
+        if (exportSources) {
           Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
-          for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
-              .entrySet()) {
+          for (Entry<SourceType, List<String>> typeEntry : typeLines.get(imt).entrySet()) {
             SourceType type = typeEntry.getKey();
-            String typeLine = sourceCurveMap.containsKey(type)
-                ? toLine(locData, sourceCurveMap.get(type).yValues(), formatter)
-                : emptyLine;
+            String typeLine = emptyLine;
+            if (sourceCurveMap.containsKey(type)) {
+              XySequence typeCurve = sourceCurveMap.get(type);
+              typeLine = toLine(locData, typeCurve.yValues(), formatter);
+              if (exportBinary) {
+                typeCurves.get(imt).get(type).put(binIndex, typeCurve);
+              }
+            }
             typeEntry.getValue().add(typeLine);
           }
         }
 
-        if (gmmCurves) {
+        if (exportGmms) {
           Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
-          for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
+          for (Entry<Gmm, List<String>> gmmEntry : gmmLines.get(imt).entrySet()) {
             Gmm gmm = gmmEntry.getKey();
-            String gmmLine = gmmCurveMap.containsKey(gmm)
-                ? toLine(locData, gmmCurveMap.get(gmm).yValues(), formatter)
-                : emptyLine;
+            String gmmLine = emptyLine;
+            if (gmmCurveMap.containsKey(gmm)) {
+              XySequence gmmCurve = gmmCurveMap.get(gmm);
+              gmmLine = toLine(locData, gmmCurveMap.get(gmm).yValues(), formatter);
+              if (exportBinary) {
+                gmmCurves.get(imt).get(gmm).put(binIndex, gmmCurve);
+              }
+            }
             gmmEntry.getValue().add(gmmLine);
           }
         }
@@ -244,31 +313,56 @@ public class Results {
     }
 
     /* write/append */
-    for (Entry<Imt, List<String>> totalEntry : totalLineMap.entrySet()) {
+    for (Entry<Imt, List<String>> totalEntry : totalLines.entrySet()) {
       Imt imt = totalEntry.getKey();
 
       Path imtDir = dir.resolve(imt.name());
       Files.createDirectories(imtDir);
-      Path totalFile = imtDir.resolve("total" + CURVE_FILE_SUFFIX);
+      Path totalFile = imtDir.resolve("total" + TEXT_SUFFIX);
       Files.write(totalFile, totalEntry.getValue(), US_ASCII, options);
 
-      if (sourceCurves) {
-        Path typeDir = imtDir.resolve("source");
-        Files.createDirectories(typeDir);
-        for (Entry<SourceType, List<String>> typeEntry : sourceLineMap.get(imt)
-            .entrySet()) {
-          Path typeFile = typeDir.resolve(
-              typeEntry.getKey().toString() + CURVE_FILE_SUFFIX);
-          Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
+      if (exportBinary) {
+        Path totalBinFile = imtDir.resolve("total" + BINARY_SUFFIX);
+        if (!Files.exists(totalBinFile)) {
+          initBinary(totalBinFile, meta);
         }
+        writeBinaryBatch(totalBinFile, totalCurves.get(imt), buffer);
       }
 
-      if (gmmCurves) {
+      if (exportSources) {
+        Path typeDir = imtDir.resolve("source");
+        Files.createDirectories(typeDir);
+        for (Entry<SourceType, List<String>> typeEntry : typeLines.get(imt).entrySet()) {
+          SourceType type = typeEntry.getKey();
+          String filename = type.toString();
+          Path typeFile = typeDir.resolve(filename + TEXT_SUFFIX);
+          Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
+          if (exportBinary) {
+            Path typeBinFile = typeDir.resolve(filename + BINARY_SUFFIX);
+            if (!Files.exists(typeBinFile)) {
+              initBinary(typeBinFile, meta);
+            }
+            writeBinaryBatch(typeBinFile, typeCurves.get(imt).get(type), buffer);
+          }
+        }
+
+      }
+
+      if (exportGmms) {
         Path gmmDir = imtDir.resolve("gmm");
         Files.createDirectories(gmmDir);
-        for (Entry<Gmm, List<String>> gmmEntry : gmmLineMap.get(imt).entrySet()) {
-          Path gmmFile = gmmDir.resolve(gmmEntry.getKey().name() + CURVE_FILE_SUFFIX);
+        for (Entry<Gmm, List<String>> gmmEntry : gmmLines.get(imt).entrySet()) {
+          Gmm gmm = gmmEntry.getKey();
+          String filename = gmm.name();
+          Path gmmFile = gmmDir.resolve(filename + TEXT_SUFFIX);
           Files.write(gmmFile, gmmEntry.getValue(), US_ASCII, options);
+          if (exportBinary) {
+            Path gmmBinFile = gmmDir.resolve(filename + BINARY_SUFFIX);
+            if (!Files.exists(gmmBinFile)) {
+              initBinary(gmmBinFile, meta);
+            }
+            writeBinaryBatch(gmmBinFile, gmmCurves.get(imt).get(gmm), buffer);
+          }
         }
       }
     }
@@ -370,5 +464,132 @@ public class Results {
           return curves.sourceSet;
         }
       };
+
+  /*
+   * Binary file export utilities.
+   */
+
+  private static final int MAX_IML_COUNT = 20;
+  private static final int CURVE_SIZE = MAX_IML_COUNT * 4; // bytes
+  private static final int HEADER_OFFSET = 1664; // bytes
+  private static final int INFO_LINE_SIZE = 128; // chars
+
+  static final class Metadata {
+
+    final Bounds bounds;
+    final double spacing;
+    final String description;
+    final String timestamp;
+    final Imt imt;
+    final List<Double> imls;
+    final double vs30;
+    final double basin = 0.0;
+    
+    final int curveCount;
+
+    Metadata(
+        Bounds bounds,
+        double spacing,
+        String description,
+        String timestamp,
+        Imt imt,
+        List<Double> imls,
+        double vs30) {
+
+      this.bounds = bounds;
+      this.spacing = spacing;
+      this.description = description;
+      this.timestamp = timestamp;
+      this.imt = imt;
+      this.imls = imls;
+      this.vs30 = vs30;
+      
+      this.curveCount = curveCount(bounds, spacing);
+    }
+  }
+
+  private static void writeBinaryBatch(
+      Path path,
+      Map<Integer, XySequence> curves,
+      ByteBuffer buf) throws IOException {
+
+    FileChannel channel = FileChannel.open(path, WRITE);
+    for (Entry<Integer, XySequence> entry : curves.entrySet()) {
+      toBuffer(entry.getValue(), buf);
+      int position = HEADER_OFFSET + entry.getKey() * CURVE_SIZE;
+      channel.write(buf, position);
+    }
+    channel.close();
+  }
+
+  private static void toBuffer(XySequence curve, ByteBuffer buf) {
+    buf.clear();
+    for (double y : curve.yValues()) {
+      buf.putFloat((float) y);
+    }
+  }
+  
+  private static void initBinary(Path path, Metadata m) throws IOException {
+    FileChannel channel = FileChannel.open(path, WRITE);
+    channel.write(createHeader(m));
+    channel.write(ByteBuffer.allocate(m.curveCount * MAX_IML_COUNT));
+    channel.close();
+  }
+  
+  /* Header occupies 1664 bytes total */
+  private static ByteBuffer createHeader(Metadata m) {
+    ByteBuffer buf = ByteBuffer.allocate(HEADER_OFFSET).order(LITTLE_ENDIAN);
+
+    /* Info lines: 6 lines * 128 chars * 2 bytes = 1536 */
+    byte[] desc = Strings.padEnd(m.description, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
+    byte[] time = Strings.padEnd(m.timestamp, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
+    byte[] dummy = Strings.padEnd("", INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
+
+    buf.put(desc)
+        .put(time)
+        .put(dummy)
+        .put(dummy)
+        .put(dummy)
+        .put(dummy);
+
+    /* Imt and Imls: (1 int + 21 floats) * 4 bytes = 88 */
+    float period = (float) ((m.imt == Imt.PGA) ? 0.0 : m.imt.period());
+    int imlCount = m.imls.size();
+    buf.putFloat(period)
+        .putInt(imlCount);
+    for (int i = 0; i < MAX_IML_COUNT; i++) {
+      buf.putFloat(i < imlCount ? m.imls.get(i).floatValue() : 0.0f);
+    }
+
+    /* Grid info: 10 floats * 4 bytes = 40 */
+    buf.putFloat(-1.0f) // empty
+        .putFloat((float) m.bounds.min().lon())
+        .putFloat((float) m.bounds.max().lon())
+        .putFloat((float) m.spacing)
+        .putFloat((float) m.bounds.min().lat())
+        .putFloat((float) m.bounds.max().lat())
+        .putFloat((float) m.spacing)
+        .putFloat(m.curveCount)
+        .putFloat((float) m.vs30)
+        .putFloat((float) m.basin);
+
+    return buf;
+  }
+
+  private static int curveCount(Bounds b, double spacing) {
+    int lonDim = (int) Math.rint((b.max().lon() - b.min().lon()) / spacing) + 1;
+    int latDim = (int) Math.rint((b.max().lat() - b.min().lat()) / spacing) + 1;
+    return lonDim * latDim;
+  }
+
+  /*
+   * Compute the target position of a curve in a binary file. NSHMP binary files
+   * index ascending in longitude, but descending in latitude.
+   */
+  private static int curveIndex(Bounds b, double spacing, Location loc) {
+    int rowIndex = (int) Math.rint((b.max().lat() - loc.lat()) / spacing);
+    int colIndex = (int) Math.rint((loc.lon() - b.min().lon()) / spacing);
+    return rowIndex * MAX_IML_COUNT + colIndex;
+  }
 
 }
