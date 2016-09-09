@@ -25,6 +25,11 @@ public enum CurveType {
    * for which a map 'extents' region has been defined. See the <a href=
    * "https://github.com/usgs/nshmp-haz/wiki/Sites#geojson-format-geojson"
    * target="_top"> site specification</a> page for more details.
+   * 
+   * <p>The output format is a NSHMP file format that works with a number of
+   * legacy fortran codes still in use. See <a
+   * href="https://github.com/usgs/nshmp-haz-fortran"
+   * target="_top">nshmp-haz-fortran</a>.
    */
   BINARY;
 }

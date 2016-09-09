@@ -1,5 +1,10 @@
 package org.opensha2.internal;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
+import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.file.StandardOpenOption.WRITE;
+
 import org.opensha2.geo.Bounds;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
@@ -17,10 +22,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.List;
 
+@Deprecated
 class BinaryCurves {
 
   // // needed becasue SH changed the NSHMP discretization
@@ -33,34 +42,6 @@ class BinaryCurves {
   // // our 0P30 calcs include an extra value (0.0025), should be identical to
   // 0P20 (5Hz)
   // static double[] x0P30 = Doubles.toArray(Period.GM0P20.getIMLs());
-
-  public static void main(String[] args) throws IOException {
-    // String file =
-    // "/Users/pmpowers/projects/svn/NSHMP/tmp/out/CAdeep_2014.5hz";
-    // String file = "tmp/NSHMP-CA-binaries/CA-5Hz.curves";
-    // read(new File(file).toURI().toURL());
-
-    // double[] xx = {1.52, 2.13};
-    // double[] yy = {1e-13, 1e-16};
-    // System.out.println(Interpolate.findLogLogY(xx, yy, 2.2));
-
-    // Metadata meta = new Metadata();
-    // meta.description = "UCERF3.3 Fault Sources";
-    // meta.timestamp = (new
-    // Timestamp(System.currentTimeMillis())).toString();
-    // meta.period = Period.GM0P00.getValue();
-    // meta.Xs = xPGA; //Doubles.toArray(Period.GM0P00.getIMLs());
-    //
-    // String path = "tmp/binaryTest/test.curves";
-    // File testFile = new File(path);
-    // Files.createParentDirs(testFile);
-    //
-    // write(null, testFile, meta);
-    //
-    // read(testFile.toURI().toURL());
-    //
-
-  }
 
   public static void read(URL url) throws IOException {
     LittleEndianDataInputStream in =
@@ -105,27 +86,6 @@ class BinaryCurves {
     in.close();
   }
 
-  // public static void writeUC3(
-  // CurveContainer uc3,
-  // Imt imt,
-  // double[] xs,
-  // double spacing,
-  // String desc,
-  // File out) throws IOException {
-  //
-  // // create WUS cc for supplied curves - summy period being supplied so as
-  // // to not trigger custom PGA logic
-  // CurveContainer cc = createNSHMP(uc3, spacing, Imt.GM1P00);
-  //
-  // Metadata meta = new Metadata();
-  // meta.description = desc;
-  // meta.timestamp = (new Timestamp(System.currentTimeMillis())).toString();
-  // meta.imt = imt;
-  // meta.Xs = xs;
-  //
-  // write(cc, spacing, out, meta);
-  // }
-
   public static void write(
       CurveContainer curves,
       Imt imt,
@@ -138,7 +98,7 @@ class BinaryCurves {
     meta.description = desc;
     meta.timestamp = (new Timestamp(System.currentTimeMillis())).toString();
     meta.imt = imt;
-    meta.xs = xs;
+    meta.imls = xs;
 
     Files.createParentDirs(out);
     write(curves, spacing, out, meta);
@@ -166,7 +126,7 @@ class BinaryCurves {
     meta.description = desc;
     meta.timestamp = (new Timestamp(System.currentTimeMillis())).toString();
     meta.imt = imt;
-    meta.xs = xs;
+    meta.imls = xs;
 
     Files.createParentDirs(out);
     writeWus(ccWus, spacing, out, meta);
@@ -177,7 +137,7 @@ class BinaryCurves {
     LittleEndianDataOutputStream out =
         new LittleEndianDataOutputStream(new FileOutputStream(file));
 
-    // write info lines 6 * char(128)
+    /* write info lines 6 * char(128) */
     int n = 128;
     Charset charset = Charsets.US_ASCII;
     byte[] desc = Strings.padEnd(meta.description, n, ' ').getBytes(charset);
@@ -191,14 +151,16 @@ class BinaryCurves {
 
     double period = (meta.imt == Imt.PGA) ? 0.0 : meta.imt.period();
     out.writeFloat((float) period);
-    out.writeInt(meta.xs.length);
+    out.writeInt(meta.imls.length);
 
-    for (int i = 0; i < meta.xs.length; i++) {
-      out.writeFloat((float) meta.xs[i]);
+    for (int i = 0; i < meta.imls.length; i++) {
+      out.writeFloat((float) meta.imls[i]);
     }
-    // pad end of curve with 0s so that 20 values are present, even though
-    // fewer may be used
-    int pad = 20 - meta.xs.length;
+    /*
+     * Pad end of curve with 0s so that 20 values are present, even though fewer
+     * may be used
+     */
+    int pad = 20 - meta.imls.length;
     for (int i = 0; i < pad; i++) {
       out.writeFloat(0.0f);
     }
@@ -210,7 +172,7 @@ class BinaryCurves {
     double dLatMin = Math.rint(b.min().lat());
     double dLatMax = Math.rint(b.max().lat());
 
-    // grid info
+    /* grid info */
     float empty = -1.0f;
     float lonMin = (float) dLonMin; // 2
     float lonMax = (float) dLonMax; // 3
@@ -261,6 +223,12 @@ class BinaryCurves {
     out.close();
   }
 
+  private static final double LON_MIN = -125.0; // 2
+  private static final double LON_MAX = -100.0; // 3
+  // private static final double SPACING = 0.05; // 4,7
+  private static final double LAT_MIN = 24.6; // 5
+  private static final double LAT_MAX = 50.0; // 6
+
   private static void writeWus(CurveContainer cc, double outSpacing, File file, Metadata meta)
       throws IOException {
     LittleEndianDataOutputStream out =
@@ -280,14 +248,14 @@ class BinaryCurves {
 
     double period = (meta.imt == Imt.PGA) ? 0.0 : meta.imt.period();
     out.writeFloat((float) period);
-    out.writeInt(meta.xs.length);
+    out.writeInt(meta.imls.length);
 
-    for (int i = 0; i < meta.xs.length; i++) {
-      out.writeFloat((float) meta.xs[i]);
+    for (int i = 0; i < meta.imls.length; i++) {
+      out.writeFloat((float) meta.imls[i]);
     }
     // pad end of curve with 0s so that 20 values are present, even though
     // fewer may be used
-    int pad = 20 - meta.xs.length;
+    int pad = 20 - meta.imls.length;
     for (int i = 0; i < pad; i++) {
       out.writeFloat(0.0f);
     }
@@ -347,16 +315,108 @@ class BinaryCurves {
     String description;
     String timestamp;
     Imt imt;
-    double[] xs;
+    double[] imls;
+
+    double vs30 = 760.0;
+    double basinDepth = 2.0;
+    double spacing = 0.1;
+    
+    // TODO replace with Bounds??
+    double lonMin = 0;
+    double lonMax = 0;
+    double latMin = 0;
+    double latMax = 0;
 
   }
 
-  private static final double LON_MIN = -125.0; // 2
-  private static final double LON_MAX = -100.0; // 3
-  // private static final double SPACING = 0.05; // 4,7
-  private static final double LAT_MIN = 24.6; // 5
-  private static final double LAT_MAX = 50.0; // 6
 
+  private static final int MAX_IML_COUNT = 20;
+  private static final int HEADER_OFFSET = 1664; // bytes
+  private static final int INFO_LINE_SIZE = 128; // chars
+
+  /**
+   * Writes results to a NSHMP binary format file. NOTE this class will have
+   * problems if there are more than 20 IMLs.
+   */
+  public static class Writer {
+
+    private final Path path;
+    private final Metadata meta;
+    private final int curveCount;
+    private final FileChannel channel;
+
+
+    public Writer(Path path, Metadata meta) throws IOException {
+      checkArgument(meta.imls.length <= MAX_IML_COUNT);
+      this.path = path;
+      this.meta = meta;
+      this.curveCount = curveCount(meta);
+      this.channel = FileChannel.open(path, WRITE);
+      
+      //init with 0's
+//      int 
+      this.channel.write(createHeader());
+      this.channel.write(ByteBuffer.allocate(curveCount * MAX_IML_COUNT));
+    }
+    
+
+    /* Header occupies 1664 bytes total */
+    private ByteBuffer createHeader() {
+      ByteBuffer buf = ByteBuffer.allocate(HEADER_OFFSET).order(LITTLE_ENDIAN);
+
+      /* Info lines: 6 lines * 128 chars * 2 bytes = 1536 */
+      byte[] desc = Strings.padEnd(meta.description, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
+      byte[] time = Strings.padEnd(meta.timestamp, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
+      byte[] dummy = Strings.padEnd("", INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
+
+      buf.put(desc)
+          .put(time)
+          .put(dummy)
+          .put(dummy)
+          .put(dummy)
+          .put(dummy);
+
+      /* Imt and Imls: (1 int + 21 floats) * 4 bytes = 88 */
+      float period = (float) ((meta.imt == Imt.PGA) ? 0.0 : meta.imt.period());
+      int imlCount = meta.imls.length;
+      buf.putFloat(period)
+          .putInt(imlCount);
+      for (int i = 0; i < MAX_IML_COUNT; i++) {
+        buf.putFloat(i < imlCount ? (float) meta.imls[i] : 0.0f);
+      }
+
+      /* Grid info: 10 floats * 4 bytes = 40 */
+      buf.putFloat(-1.0f) // empty
+          .putFloat((float) meta.lonMin)
+          .putFloat((float) meta.lonMax)
+          .putFloat((float) meta.spacing)
+          .putFloat((float) meta.latMin)
+          .putFloat((float) meta.latMax)
+          .putFloat((float) meta.spacing)
+          .putFloat(curveCount)
+          .putFloat((float) meta.vs30)
+          .putFloat((float) meta.basinDepth);
+
+      return buf;
+    }
+    
+    private static int curveCount(Metadata m) {
+      int lonDim = (int) Math.rint((m.lonMax - m.lonMin) / m.spacing + 1);
+      int latDim = (int) Math.rint((m.latMax - m.latMin) / m.spacing + 1);
+      return lonDim * latDim;
+    }
+    
+    /*
+     * Compute the target position of a curve in a binary file. NSHMP binary
+     * files index ascending in longitude, but descending in latitude.
+     */
+    private static int curveIndex(Metadata m, Location loc) {
+      int rowIndex = (int) Math.rint((m.latMax - loc.lat()) / m.spacing);
+      int colIndex = (int) Math.rint((loc.lon() - m.lonMin) / m.spacing);
+      return rowIndex * MAX_IML_COUNT + colIndex;
+    }
+
+  }
   // // creates a WUS NSHMP curve container and populates it with the supplied
   // // curves; really just handles a fix for large PGA values being slightly
   // // different; SH extended the PGA range from

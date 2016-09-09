@@ -1,6 +1,5 @@
 package org.opensha2;
 
-import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
@@ -9,25 +8,21 @@ import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Deaggregation;
 import org.opensha2.calc.Hazard;
-import org.opensha2.calc.Results;
+import org.opensha2.calc.ResultHandler;
+import org.opensha2.calc.Site;
+import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.internal.Logging;
-import org.opensha2.util.Site;
-import org.opensha2.util.Sites;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -101,7 +96,7 @@ public class DeaggCalc {
       log.info(config.toString());
 
       log.info("");
-      Iterable<Site> sites = readSites(args[1], config, log);
+      Sites sites = HazardCalc.readSites(args[1], config, log);
       log.info("Sites: " + sites);
 
       double returnPeriod = Double.valueOf(args[2]);
@@ -127,30 +122,6 @@ public class DeaggCalc {
     }
   }
 
-  private static Iterable<Site> readSites(String arg, CalcConfig defaults, Logger log) {
-    try {
-      if (arg.toLowerCase().endsWith(".csv")) {
-        Path path = Paths.get(arg);
-        log.info("Site file: " + path.toAbsolutePath().normalize());
-        return Sites.fromCsv(path, defaults);
-      }
-      if (arg.toLowerCase().endsWith(".geojson")) {
-        Path path = Paths.get(arg);
-        log.info("Site file: " + path.toAbsolutePath().normalize());
-        return Sites.fromJson(path, defaults);
-      }
-      return Sites.fromString(arg, defaults);
-    } catch (Exception e) {
-      throw new IllegalArgumentException(NEWLINE + "    sites = \"" + arg +
-          "\" must either be a 3 to 7 argument," + NEWLINE +
-          "    comma-delimited string, or specify a path to a *.csv or *.geojson file",
-          e);
-    }
-  }
-
-  private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
-  private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
-
   /*
    * Compute hazard curves using the supplied model, config, and sites. Method
    * returns the path to the directory where results were written.
@@ -161,7 +132,7 @@ public class DeaggCalc {
   private static Path calc(
       HazardModel model,
       CalcConfig config,
-      Iterable<Site> sites,
+      Sites sites,
       double returnPeriod,
       Logger log) throws IOException {
 
@@ -176,52 +147,24 @@ public class DeaggCalc {
     Optional<Executor> executor = Optional.<Executor> fromNullable(execSvc);
 
     log.info(PROGRAM + ": calculating ...");
-    Stopwatch batchWatch = Stopwatch.createStarted();
-    Stopwatch totalWatch = Stopwatch.createStarted();
-    int batchCount = 1;
-    int siteCount = 1;
 
-    List<Hazard> hazardResults = new ArrayList<>();
-    List<Deaggregation> deaggResults = new ArrayList<>();
-    boolean firstBatch = true;
-
-    Path outDir = HazardCalc.createOutputDir(config.output.directory);
+    ResultHandler handler = ResultHandler.create(config, sites, log);
 
     for (Site site : sites) {
       Hazard hazard = HazardCalc.calc(model, config, site, executor);
-      hazardResults.add(hazard);
       Deaggregation deagg = calc(hazard, returnPeriod);
-      deaggResults.add(deagg);
-      if (deaggResults.size() == config.output.flushLimit) {
-        OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-        firstBatch = false;
-        Results.writeResults(outDir, hazardResults, opts);
-        Results.writeDeagg(outDir, deaggResults, config);
-        log.info(String.format(
-            "    batch: %s in %s – %s sites in %s",
-            batchCount, batchWatch, siteCount, totalWatch));
-        hazardResults.clear();
-        deaggResults.clear();
-        batchWatch.reset().start();
-        batchCount++;
-      }
-      siteCount++;
+      handler.add(hazard, Optional.of(deagg));
     }
-    // write final batch
-    if (!deaggResults.isEmpty()) {
-      OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-      Results.writeResults(outDir, hazardResults, opts);
-      Results.writeDeagg(outDir, deaggResults, config);
-    }
+    handler.expire();
+
     log.info(String.format(
         PROGRAM + ": %s sites completed in %s",
-        siteCount, totalWatch));
+        handler.resultsProcessed(), handler.elapsedTime()));
 
     if (threadCount != ThreadCount.ONE) {
       execSvc.shutdown();
     }
-
-    return outDir;
+    return handler.outputDir();
   }
 
   /**

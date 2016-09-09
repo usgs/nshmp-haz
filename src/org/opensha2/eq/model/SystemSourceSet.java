@@ -15,12 +15,12 @@ import static org.opensha2.geo.Locations.horzDistanceFast;
 
 import org.opensha2.calc.HazardInput;
 import org.opensha2.calc.InputList;
+import org.opensha2.calc.Site;
 import org.opensha2.calc.SystemInputList;
 import org.opensha2.data.Data;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.geo.Location;
-import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -239,7 +239,10 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     private final List<Double> dips = new ArrayList<>(RUP_SET_SIZE);
     private final List<Double> widths = new ArrayList<>(RUP_SET_SIZE);
     private final List<Double> rakes = new ArrayList<>(RUP_SET_SIZE);
-
+    
+    private double minMag = Double.POSITIVE_INFINITY;
+    private double maxMag = Double.NEGATIVE_INFINITY;
+    
     Builder sections(List<GriddedSurface> sections) {
       checkNotNull(sections, "Section surface list is null");
       checkArgument(sections.size() > 0, "Section surface list is empty");
@@ -259,6 +262,9 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
     Builder mag(double mag) {
       mags.add(checkMagnitude(mag));
+//      dfjgsdklf TODO clean finish stats
+      minMag = (mag < minMag) ? mag : minMag;
+      maxMag = (mag > maxMag) ? mag : maxMag;
       return this;
     }
 

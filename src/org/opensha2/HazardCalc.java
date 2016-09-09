@@ -1,32 +1,28 @@
 package org.opensha2;
 
-import static java.nio.file.StandardOpenOption.APPEND;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
+import org.opensha2.calc.Deaggregation;
 import org.opensha2.calc.Hazard;
-import org.opensha2.calc.Results;
+import org.opensha2.calc.ResultHandler;
+import org.opensha2.calc.Site;
+import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.internal.Logging;
-import org.opensha2.util.Site;
-import org.opensha2.util.Sites;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -107,7 +103,7 @@ public class HazardCalc {
       log.info(config.toString());
 
       log.info("");
-      Iterable<Site> sites = readSites(args[1], config, log);
+      Sites sites = readSites(args[1], config, log);
       log.info("Sites: " + sites);
 
       Path out = calc(model, config, sites, log);
@@ -131,7 +127,7 @@ public class HazardCalc {
     }
   }
 
-  private static Iterable<Site> readSites(String arg, CalcConfig defaults, Logger log) {
+  static Sites readSites(String arg, CalcConfig defaults, Logger log) {
     try {
       if (arg.toLowerCase().endsWith(".csv")) {
         Path path = Paths.get(arg);
@@ -152,9 +148,6 @@ public class HazardCalc {
     }
   }
 
-  private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
-  private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
-
   /*
    * Compute hazard curves using the supplied model, config, and sites. Method
    * returns the path to the directory where results were written.
@@ -162,7 +155,7 @@ public class HazardCalc {
   private static Path calc(
       HazardModel model,
       CalcConfig config,
-      Iterable<Site> sites,
+      Sites sites,
       Logger log) throws IOException {
 
     ExecutorService execSvc = null;
@@ -176,57 +169,22 @@ public class HazardCalc {
     Optional<Executor> executor = Optional.<Executor> fromNullable(execSvc);
 
     log.info(PROGRAM + ": calculating ...");
-    Stopwatch batchWatch = Stopwatch.createStarted();
-    Stopwatch totalWatch = Stopwatch.createStarted();
-    int batchCount = 1;
-    int siteCount = 1;
 
-    List<Hazard> results = new ArrayList<>();
-    boolean firstBatch = true;
-
-    Path outDir = createOutputDir(config.output.directory);
-
+    ResultHandler handler = ResultHandler.create(config, sites, log);
     for (Site site : sites) {
       Hazard hazard = calc(model, config, site, executor);
-      results.add(hazard);
-      if (results.size() == config.output.flushLimit) {
-        OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-        firstBatch = false;
-        Results.writeResults(outDir, results, opts);
-        log.info(String.format(
-            "     batch: %s in %s – %s sites in %s",
-            batchCount, batchWatch, siteCount, totalWatch));
-        results.clear();
-        batchWatch.reset().start();
-        batchCount++;
-      }
-      siteCount++;
+      handler.add(hazard, Optional.<Deaggregation> absent());
     }
-    // write final batch
-    if (!results.isEmpty()) {
-      OpenOption[] opts = firstBatch ? WRITE_OPTIONS : APPEND_OPTIONS;
-      Results.writeResults(outDir, results, opts);
-    }
+    handler.expire();
+
     log.info(String.format(
         PROGRAM + ": %s sites completed in %s",
-        siteCount, totalWatch));
-    
+        handler.resultsProcessed(), handler.elapsedTime()));
+
     if (threadCount != ThreadCount.ONE) {
       execSvc.shutdown();
     }
-
-    return outDir;
-  }
-
-  /* Avoid clobbering exsting result directories via incrementing */
-  static Path createOutputDir(Path dir) {
-    int i = 1;
-    Path dirIncr = dir;
-    while (Files.exists(dirIncr)) {
-      dirIncr = dirIncr.resolveSibling(dir.getFileName() + "-" + i);
-      i++;
-    }
-    return dirIncr;
+    return handler.outputDir();
   }
 
   static final String TMP_LOG = "nshmp-haz-log";

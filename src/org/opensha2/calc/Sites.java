@@ -1,4 +1,4 @@
-package org.opensha2.util;
+package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -11,7 +11,7 @@ import static org.opensha2.internal.TextUtils.LOG_INDENT;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 import static org.opensha2.internal.TextUtils.NULL;
 
-import org.opensha2.calc.CalcConfig;
+import org.opensha2.calc.Site.Builder;
 import org.opensha2.geo.Bounds;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
@@ -21,7 +21,6 @@ import org.opensha2.geo.Regions;
 import org.opensha2.internal.GeoJson;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
-import org.opensha2.util.Site.Builder;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -46,12 +45,12 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@code Site} factory class used primarily for creating iterables over groups
- * of sites.
+ * Iterable {@code Site} container. Factory methods are supplied to creating
+ * instances from different input formats.
  *
  * @author Peter Powers
  */
-public final class Sites {
+public abstract class Sites implements Iterable<Site> {
 
   /**
    * Create an unmodifiable {@code Iterable<Site>} from the comma-delimted site
@@ -60,11 +59,11 @@ public final class Sites {
    * @param path to comma-delimited site data file
    * @throws IOException if a problem is encountered
    */
-  public static Iterable<Site> fromCsv(Path path, CalcConfig defaults) throws IOException {
+  public static Sites fromCsv(Path path, CalcConfig defaults) throws IOException {
     return readCsv(path, defaults);
   }
 
-  private static Iterable<Site> readCsv(Path path, CalcConfig defaults) throws IOException {
+  private static Sites readCsv(Path path, CalcConfig defaults) throws IOException {
 
     checkArgument(Files.exists(path), "Specified site file [%s] does not exist", path);
 
@@ -76,7 +75,7 @@ public final class Sites {
     List<String> keyList = new ArrayList<>();
     for (String line : lines) {
 
-      // skip comments
+      /* Skip comments */
       if (line.startsWith("#")) {
         continue;
       }
@@ -86,7 +85,7 @@ public final class Sites {
 
       List<String> values = Parsing.splitToList(line, Delimiter.COMMA);
 
-      // set up key/column ordering
+      /* Set up key/column ordering */
       if (firstline) {
         for (String key : values) {
           checkState(Site.KEYS.contains(key), "Illegal site property key [%s]", key);
@@ -143,14 +142,14 @@ public final class Sites {
    * @param path to GeoJson site data file
    * @throws IOException if a problem is encountered
    */
-  public static Iterable<Site> fromJson(Path path, CalcConfig defaults) throws IOException {
+  public static Sites fromJson(Path path, CalcConfig defaults) throws IOException {
     checkArgument(Files.exists(path), "Specified site file [%s] does not exist", path);
     Gson gson = new GsonBuilder()
         .registerTypeAdapter(Site.class, new Site.Deserializer(defaults))
-        .registerTypeAdapter(SiteIterable.class, new Deserializer(defaults))
+        .registerTypeAdapter(Sites.class, new Deserializer(defaults))
         .create();
     Reader reader = Files.newBufferedReader(path, UTF_8);
-    SiteIterable iterable = gson.fromJson(reader, SiteIterable.class);
+    Sites iterable = gson.fromJson(reader, Sites.class);
     reader.close();
     return iterable;
   }
@@ -167,7 +166,7 @@ public final class Sites {
    *
    * @param s String to parse
    */
-  public static Iterable<Site> fromString(String s, CalcConfig defaults) {
+  public static Sites fromString(String s, CalcConfig defaults) {
     List<String> values = splitToList(s, Delimiter.COMMA);
     Builder b = Site.builder(defaults);
     checkArgument(
@@ -200,46 +199,52 @@ public final class Sites {
 
   private static final int TO_STRING_LIMIT = 5;
   private static final String SITE_INDENT = LOG_INDENT + "       ";
-  // private static final String SITE_STRING = padEnd(SITE_INDENT + "Site:",
-  // LOG_VALUE_COLUMN, ' ');
 
-  /*
-   * Parent class for deserialization of different GeoJSON site file formats
-   */
-  private abstract static class SiteIterable implements Iterable<Site> {
+  @Override
+  public String toString() {
+    boolean map = this instanceof RegionIterable;
+    StringBuilder sb = new StringBuilder();
+    if (map) {
+      RegionIterable mapIterable = (RegionIterable) this;
+      sb.append(mapIterable.region.name())
+          .append(" Region [size=")
+          .append(mapIterable.region.size())
+          .append(" ").append(mapIterable.siteBuilder.state())
+          .append("]");
+    } else {
+      int size = Iterables.size(this);
+      sb.append("List")
+          .append(" [size=")
+          .append(size)
+          .append("]");
 
-    @Override
-    public String toString() {
-      boolean map = this instanceof RegionIterable;
-      StringBuilder sb = new StringBuilder();
-      if (map) {
-        RegionIterable mapIterable = (RegionIterable) this;
-        sb.append(mapIterable.region.name())
-            .append(" Region [size=")
-            .append(mapIterable.region.size())
-            .append(" ").append(mapIterable.siteBuilder.state())
-            .append("]");
-      } else {
-        int size = Iterables.size(this);
-        sb.append("List")
-            .append(" [size=")
-            .append(size)
-            .append("]");
-
-        for (Site site : Iterables.limit(this, TO_STRING_LIMIT)) {
-          sb.append(SITE_INDENT).append(site);
-        }
-        if (size > TO_STRING_LIMIT) {
-          int delta = size - TO_STRING_LIMIT;
-          sb.append(SITE_INDENT).append("... and ").append(delta).append(" more ...");
-        }
+      for (Site site : Iterables.limit(this, TO_STRING_LIMIT)) {
+        sb.append(SITE_INDENT).append(site);
       }
-      return sb.toString();
+      if (size > TO_STRING_LIMIT) {
+        int delta = size - TO_STRING_LIMIT;
+        sb.append(SITE_INDENT).append("... and ").append(delta).append(" more ...");
+      }
     }
-
+    return sb.toString();
   }
 
-  private static final class ListIterable extends SiteIterable {
+  /**
+   * An optional {@code Bounds} that is used to specify rectangular map extents,
+   * which may differ from the range spanned by the sites in this. Presently
+   * only containers initialized with GeoJSON that includes an 'Extents' polygon
+   * will return an {@code Optional} where {@link Optional#isPresent()}
+   * {@code == true}.
+   */
+  public abstract Optional<Bounds> mapBounds();
+  
+  /**
+   * An optional spacing value that reflects the spacing of sites within an
+   * attendant {@link #mapBounds()}.
+   */
+  public abstract Optional<Double> mapSpacing();
+
+  private static final class ListIterable extends Sites {
     final List<Site> delegate;
 
     ListIterable(List<Site> delegate) {
@@ -250,16 +255,32 @@ public final class Sites {
     public Iterator<Site> iterator() {
       return delegate.iterator();
     }
+
+    @Override
+    public Optional<Bounds> mapBounds() {
+      return Optional.absent();
+    }
+
+    @Override
+    public Optional<Double> mapSpacing() {
+      return Optional.absent();
+    }
   }
 
-  private static final class RegionIterable extends SiteIterable {
+  private static final class RegionIterable extends Sites {
 
     final GriddedRegion region;
     final Builder siteBuilder;
+    final Optional<Bounds> bounds;
 
-    RegionIterable(GriddedRegion region, Builder siteBuilder) {
+    RegionIterable(
+        GriddedRegion region,
+        Builder siteBuilder,
+        Optional<Bounds> bounds) {
+
       this.region = region;
       this.siteBuilder = siteBuilder;
+      this.bounds = bounds;
     }
 
     @Override
@@ -284,6 +305,16 @@ public final class Sites {
         }
       };
     }
+
+    @Override
+    public Optional<Bounds> mapBounds() {
+      return bounds;
+    }
+
+    @Override
+    public Optional<Double> mapSpacing() {
+      return Optional.of(region.latSpacing());
+    }
   }
 
   /*
@@ -296,7 +327,7 @@ public final class Sites {
    * processed. Results are undefined for self-intersecting polygon coordinate
    * arrays.
    */
-  private static final class Deserializer implements JsonDeserializer<SiteIterable> {
+  private static final class Deserializer implements JsonDeserializer<Sites> {
 
     final CalcConfig defaults;
 
@@ -305,7 +336,7 @@ public final class Sites {
     }
 
     @Override
-    public SiteIterable deserialize(
+    public Sites deserialize(
         JsonElement json,
         Type type,
         JsonDeserializationContext context) {
@@ -329,7 +360,9 @@ public final class Sites {
       // or a region
       checkState(features.size() <= 2, "Only 2 polygon features may be defined");
 
-      Optional<Region> extents = Optional.absent();
+      // Optional<Region> extents = Optional.absent();
+      Optional<Bounds> mapBounds = Optional.absent();
+      String boundsName = "";
       int calcPolyIndex = 0;
       if (features.size() == 2) {
         calcPolyIndex++;
@@ -337,13 +370,10 @@ public final class Sites {
         JsonObject extentsFeature = features.get(0).getAsJsonObject();
         validateProperty(extentsFeature, GeoJson.Key.ID, GeoJson.Value.EXTENTS);
 
-        Bounds bounds = validateExtents(readPolygon(extentsFeature)).bounds();
+        mapBounds = Optional.of(validateExtents(readPolygon(extentsFeature)).bounds());
 
         JsonObject properties = extentsFeature.getAsJsonObject(GeoJson.Key.PROPERTIES);
-        String extentsName = readName(properties, "Map Extents");
-
-        Region r = Regions.createRectangular(extentsName, bounds.min(), bounds.max());
-        extents = Optional.of(r);
+        boundsName = readName(properties, "Map Extents");
       }
 
       JsonObject sitesFeature = features.get(calcPolyIndex).getAsJsonObject();
@@ -393,16 +423,19 @@ public final class Sites {
         builder.z2p5(z2p5);
       }
 
-      Region mapRegion = extents.isPresent()
-          ? Regions.intersectionOf(mapName, extents.get(), calcRegion)
-          : calcRegion;
+      Region mapRegion = calcRegion;
+      if (mapBounds.isPresent()) {
+        Bounds b = mapBounds.get();
+        Region r = Regions.createRectangular(boundsName, b.min(), b.max());
+        mapRegion = Regions.intersectionOf(mapName, r, calcRegion);
+      }
 
       GriddedRegion region = Regions.toGridded(
           mapRegion,
           spacing, spacing,
           GriddedRegion.ANCHOR_0_0);
 
-      return new RegionIterable(region, builder);
+      return new RegionIterable(region, builder, mapBounds);
     }
 
   }

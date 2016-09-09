@@ -25,7 +25,6 @@ import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmInput;
 import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
-import org.opensha2.util.Site;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;

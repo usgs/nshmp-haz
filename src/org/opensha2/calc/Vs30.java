@@ -1,4 +1,4 @@
-package org.opensha2.util;
+package org.opensha2.calc;
 
 /**
  * Identifiers for commonly used values of Vs30. These correspond to the NEHERP
