@@ -103,7 +103,7 @@ public class HazardCalc {
       log.info(config.toString());
 
       log.info("");
-      Iterable<Site> sites = readSites(args[1], config, log);
+      Sites sites = readSites(args[1], config, log);
       log.info("Sites: " + sites);
 
       Path out = calc(model, config, sites, log);
@@ -127,7 +127,7 @@ public class HazardCalc {
     }
   }
 
-  private static Iterable<Site> readSites(String arg, CalcConfig defaults, Logger log) {
+  static Sites readSites(String arg, CalcConfig defaults, Logger log) {
     try {
       if (arg.toLowerCase().endsWith(".csv")) {
         Path path = Paths.get(arg);
@@ -155,7 +155,7 @@ public class HazardCalc {
   private static Path calc(
       HazardModel model,
       CalcConfig config,
-      Iterable<Site> sites,
+      Sites sites,
       Logger log) throws IOException {
 
     ExecutorService execSvc = null;
@@ -170,8 +170,7 @@ public class HazardCalc {
 
     log.info(PROGRAM + ": calculating ...");
 
-    boolean namedSites = sites.iterator().next().name() != Site.NO_NAME;
-    Results handler = Results.create(config, namedSites, log);
+    Results handler = Results.create(config, sites, log);
     for (Site site : sites) {
       Hazard hazard = calc(model, config, site, executor);
       handler.add(hazard, Optional.<Deaggregation> absent());

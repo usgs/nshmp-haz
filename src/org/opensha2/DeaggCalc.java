@@ -96,7 +96,7 @@ public class DeaggCalc {
       log.info(config.toString());
 
       log.info("");
-      Iterable<Site> sites = readSites(args[1], config, log);
+      Sites sites = HazardCalc.readSites(args[1], config, log);
       log.info("Sites: " + sites);
 
       double returnPeriod = Double.valueOf(args[2]);
@@ -122,27 +122,6 @@ public class DeaggCalc {
     }
   }
 
-  private static Iterable<Site> readSites(String arg, CalcConfig defaults, Logger log) {
-    try {
-      if (arg.toLowerCase().endsWith(".csv")) {
-        Path path = Paths.get(arg);
-        log.info("Site file: " + path.toAbsolutePath().normalize());
-        return Sites.fromCsv(path, defaults);
-      }
-      if (arg.toLowerCase().endsWith(".geojson")) {
-        Path path = Paths.get(arg);
-        log.info("Site file: " + path.toAbsolutePath().normalize());
-        return Sites.fromJson(path, defaults);
-      }
-      return Sites.fromString(arg, defaults);
-    } catch (Exception e) {
-      throw new IllegalArgumentException(NEWLINE + "    sites = \"" + arg +
-          "\" must either be a 3 to 7 argument," + NEWLINE +
-          "    comma-delimited string, or specify a path to a *.csv or *.geojson file",
-          e);
-    }
-  }
-
   /*
    * Compute hazard curves using the supplied model, config, and sites. Method
    * returns the path to the directory where results were written.
@@ -153,7 +132,7 @@ public class DeaggCalc {
   private static Path calc(
       HazardModel model,
       CalcConfig config,
-      Iterable<Site> sites,
+      Sites sites,
       double returnPeriod,
       Logger log) throws IOException {
 
@@ -169,8 +148,7 @@ public class DeaggCalc {
 
     log.info(PROGRAM + ": calculating ...");
 
-    boolean namedSites = sites.iterator().next().name() != Site.NO_NAME;
-    Results handler = Results.create(config, namedSites, log);
+    Results handler = Results.create(config, sites, log);
 
     for (Site site : sites) {
       Hazard hazard = HazardCalc.calc(model, config, site, executor);
