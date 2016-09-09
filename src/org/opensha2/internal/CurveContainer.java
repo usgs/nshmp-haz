@@ -166,9 +166,9 @@ class CurveContainer implements Iterable<Location> {
 
   /**
    * Create a curve container for a localized area from supplied data file and
-   * gridded region. The data locations should match the nodes in the
-   * gridded region. Results are unspecified if the two do not agree. The
-   * supplied file is assumed to be in curve csv format.
+   * gridded region. The data locations should match the nodes in the gridded
+   * region. Results are unspecified if the two do not agree. The supplied file
+   * is assumed to be in curve csv format.
    */
   public static CurveContainer create(File f, GriddedRegion region) throws IOException {
     CurveFileProcessor_SHA cfp = new CurveFileProcessor_SHA(region);
