@@ -8,7 +8,7 @@ import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.Calcs;
 import org.opensha2.calc.Deaggregation;
 import org.opensha2.calc.Hazard;
-import org.opensha2.calc.Results;
+import org.opensha2.calc.ResultHandler;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
@@ -148,7 +148,7 @@ public class DeaggCalc {
 
     log.info(PROGRAM + ": calculating ...");
 
-    Results handler = Results.create(config, sites, log);
+    ResultHandler handler = ResultHandler.create(config, sites, log);
 
     for (Site site : sites) {
       Hazard hazard = HazardCalc.calc(model, config, site, executor);

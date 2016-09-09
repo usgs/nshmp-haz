@@ -57,7 +57,7 @@ import java.util.logging.Logger;
  *
  * @author Peter Powers
  */
-public final class Results {
+public final class ResultHandler {
 
   private static final String DEAGG_DIR = "deagg";
   private static final String GMM_DIR = "gmm";
@@ -95,7 +95,7 @@ public final class Results {
   private final Metadata.Builder metaBuilder;
   private final Metadata metaDefault;
 
-  private Results(CalcConfig config, Sites sites, Logger log) {
+  private ResultHandler(CalcConfig config, Sites sites, Logger log) {
     this.log = log;
     this.dir = createOutputDir(config.output.directory);
     this.config = config;
@@ -137,12 +137,12 @@ public final class Results {
    *         {@code config} but the {@code sites} container does not specify map
    *         extents.
    */
-  public static Results create(
+  public static ResultHandler create(
       CalcConfig config,
       Sites sites,
       Logger log) {
 
-    return new Results(config, sites, log);
+    return new ResultHandler(config, sites, log);
   }
 
   /* Avoid clobbering exsting result directories via incrementing. */

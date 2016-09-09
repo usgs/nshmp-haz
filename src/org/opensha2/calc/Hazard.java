@@ -25,12 +25,12 @@ import java.util.Map.Entry;
 
 /**
  * The result of a hazard calculation. This container class is public for
- * reference by external packages but is not directly modifiable, nor it's field
- * accessible. The {@link Results} class provides HazardResult exporting and
- * processing utilities.
+ * reference by external packages but is not directly modifiable, nor its fields
+ * accessible. The {@link ResultHandler} class provides {@code Hazard} exporting
+ * and processing utilities.
  *
  * @author Peter Powers
- * @see Results
+ * @see ResultHandler
  */
 public final class Hazard {
 
@@ -184,7 +184,6 @@ public final class Hazard {
           site,
           config);
     }
-
   }
 
 }
