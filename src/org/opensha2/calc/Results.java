@@ -1,9 +1,12 @@
 package org.opensha2.calc;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
 import static org.opensha2.data.XySequence.emptyCopyOf;
@@ -15,6 +18,7 @@ import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Bounds;
 import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.internal.Parsing;
@@ -27,6 +31,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -39,7 +44,10 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -83,35 +91,62 @@ public final class Results {
   private final List<Hazard> hazards;
   private final List<Deaggregation> deaggs;
 
-  private Results(CalcConfig config, boolean namedSites, Logger log) {
+  /*
+   * Currently used when intializing binary files; the only variation in
+   * metadata is for different Imt and their attendant IMLs, which are largely
+   * unused when processed by other codes.
+   */
+  private final Metadata.Builder metaBuilder;
+  private final Metadata metaDefault;
+
+  private Results(CalcConfig config, Sites sites, Logger log) {
     this.log = log;
     this.dir = createOutputDir(config.output.directory);
     this.config = config;
     this.exportGmm = config.output.curveTypes.contains(CurveType.GMM);
     this.exportSource = config.output.curveTypes.contains(CurveType.SOURCE);
     this.exportBinary = config.output.curveTypes.contains(CurveType.BINARY);
-    this.namedSites = namedSites;
     this.hazards = new ArrayList<>();
     this.deaggs = new ArrayList<>();
 
+    Site demoSite = sites.iterator().next();
+    this.namedSites = demoSite.name() != Site.NO_NAME;
+
     this.batchWatch = Stopwatch.createStarted();
     this.totalWatch = Stopwatch.createStarted();
+
+    if (exportBinary) {
+      checkState(exportBinary && sites.mapBounds().isPresent(),
+          BINARY_EXTENTS_REQUIRED_MSSG);
+      this.metaBuilder = Metadata.builder()
+          .bounds(sites.mapBounds().get())
+          .spacing(sites.mapSpacing().get())
+          .description("nshmp-haz generated curves")
+          .timestamp(new Timestamp(System.currentTimeMillis()).toString())
+          .vs30(demoSite.vs30);
+      this.metaDefault = metaBuilder.build();
+    } else {
+      metaBuilder = null;
+      metaDefault = null;
+    }
   }
 
   /**
    * Create a new results handler.
    * 
    * @param config that specifies output options and formats
-   * @param namedSites whether incoming sites have name or are simply editified
-   *        by this longitude and latitude
+   * @param sites reference to the sites to be processed (not retained)
    * @param log shared logging instance from calling class
+   * @throws IllegalStateException if binary output has been specified in the
+   *         {@code config} but the {@code sites} container does not specify map
+   *         extents.
    */
   public static Results create(
       CalcConfig config,
-      boolean namedSites,
+      Sites sites,
       Logger log) {
 
-    return new Results(config, namedSites, log);
+    return new Results(config, sites, log);
   }
 
   /* Avoid clobbering exsting result directories via incrementing. */
@@ -125,8 +160,14 @@ public final class Results {
     return incrementedDir;
   }
 
+  /**
+   * Add a Hazard and optional Deaggregation result to this handler.
+   * 
+   * @param hazard to add
+   * @param deagg to add
+   */
   public void add(Hazard hazard, Optional<Deaggregation> deagg) throws IOException {
-    checkState(!used, "This results object is expired");
+    checkState(!used, "This result handler is expired");
     hazards.add(hazard);
     if (deagg.isPresent()) {
       deaggs.add(deagg.get());
@@ -204,8 +245,7 @@ public final class Results {
 
     Hazard demo = hazards.get(0);
 
-    Metadata meta = null; // new Metadata();
-    ByteBuffer buffer = ByteBuffer.allocate(MAX_IML_COUNT).order(LITTLE_ENDIAN);
+    ByteBuffer buffer = ByteBuffer.allocate(CURVE_SIZE).order(LITTLE_ENDIAN);
 
     Set<Gmm> gmms = gmmSet(demo.model);
 
@@ -286,7 +326,6 @@ public final class Results {
 
       String name = namedSites ? hazard.site.name : null;
       Location location = hazard.site.location;
-      int binIndex = curveIndex(meta.bounds, meta.spacing, location);
 
       List<String> locData = Lists.newArrayList(
           name,
@@ -311,7 +350,9 @@ public final class Results {
             imtEntry.getValue().yValues(),
             formatter));
 
+        int binIndex = -1;
         if (exportBinary) {
+          binIndex = curveIndex(metaDefault.bounds, metaDefault.spacing, location);
           totalCurves.get(imt).put(binIndex, totalCurve);
         }
 
@@ -360,7 +401,7 @@ public final class Results {
 
       if (exportBinary) {
         Path totalBinFile = imtDir.resolve("total" + BINARY_SUFFIX);
-        writeBinaryBatch(totalBinFile, totalCurves.get(imt), buffer);
+        writeBinaryBatch(totalBinFile, totalCurves.get(imt), buffer, imt);
       }
 
       if (exportSource) {
@@ -373,7 +414,7 @@ public final class Results {
           Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
           if (exportBinary) {
             Path typeBinFile = typeDir.resolve(filename + BINARY_SUFFIX);
-            writeBinaryBatch(typeBinFile, typeCurves.get(imt).get(type), buffer);
+            writeBinaryBatch(typeBinFile, typeCurves.get(imt).get(type), buffer, imt);
           }
         }
       }
@@ -388,7 +429,7 @@ public final class Results {
           Files.write(gmmFile, gmmEntry.getValue(), US_ASCII, options);
           if (exportBinary) {
             Path gmmBinFile = gmmDir.resolve(filename + BINARY_SUFFIX);
-            writeBinaryBatch(gmmBinFile, gmmCurves.get(imt).get(gmm), buffer);
+            writeBinaryBatch(gmmBinFile, gmmCurves.get(imt).get(gmm), buffer, imt);
           }
         }
       }
@@ -539,8 +580,12 @@ public final class Results {
 
   private static final int MAX_IML_COUNT = 20;
   private static final int CURVE_SIZE = MAX_IML_COUNT * 4; // bytes
-  private static final int HEADER_OFFSET = 1664; // bytes
+  private static final int HEADER_OFFSET = 896; // bytes
   private static final int INFO_LINE_SIZE = 128; // chars
+
+  private static final String BINARY_EXTENTS_REQUIRED_MSSG =
+      "Binary output is only supported when map extents are defined\n" +
+          "    See: https://github.com/usgs/nshmp-haz/wiki/Sites#map-regions";
 
   static final class Metadata {
 
@@ -580,13 +625,13 @@ public final class Results {
 
     static final class Builder {
 
-      Bounds bounds;
-      double spacing;
-      String description;
-      String timestamp;
-      Imt imt;
-      List<Double> imls;
-      double vs30;
+      private Bounds bounds;
+      private double spacing;
+      private String description;
+      private String timestamp;
+      private Imt imt;
+      private List<Double> imls;
+      private double vs30;
 
       private Builder() {}
 
@@ -616,6 +661,8 @@ public final class Results {
       }
 
       Builder imls(List<Double> imls) {
+        checkArgument(imls.size() <= MAX_IML_COUNT,
+            "Binary output only supports <=20 IMLs");
         this.imls = imls;
         return this;
       }
@@ -626,6 +673,7 @@ public final class Results {
       }
 
       Metadata build() {
+
         return new Metadata(
             bounds,
             spacing,
@@ -639,13 +687,14 @@ public final class Results {
     }
   }
 
-  private static void writeBinaryBatch(
+  private void writeBinaryBatch(
       Path path,
       Map<Integer, XySequence> curves,
-      ByteBuffer buf) throws IOException {
+      ByteBuffer buf,
+      Imt imt) throws IOException {
 
     if (!Files.exists(path)) {
-//      initBinary(path, meta);
+      initBinary(path, imt);
     }
 
     FileChannel channel = FileChannel.open(path, WRITE);
@@ -653,6 +702,7 @@ public final class Results {
       toBuffer(entry.getValue(), buf);
       int position = HEADER_OFFSET + entry.getKey() * CURVE_SIZE;
       channel.write(buf, position);
+      
     }
     channel.close();
   }
@@ -662,11 +712,19 @@ public final class Results {
     for (double y : curve.yValues()) {
       buf.putFloat((float) y);
     }
+    buf.flip();
   }
 
-  private static void initBinary(Path path, Metadata m) throws IOException {
-    FileChannel channel = FileChannel.open(path, WRITE);
-    channel.write(createHeader(m));
+  private void initBinary(Path path, Imt imt) throws IOException {
+    Metadata m = metaBuilder
+        .imt(imt)
+        .imls(config.curve.modelCurve(imt).xValues())
+        .build();
+
+    FileChannel channel = FileChannel.open(path, CREATE, TRUNCATE_EXISTING, WRITE);
+    ByteBuffer header = createHeader(m);
+    header.flip();
+    channel.write(header);
     channel.write(ByteBuffer.allocate(m.gridSize * MAX_IML_COUNT));
     channel.close();
   }
@@ -675,7 +733,7 @@ public final class Results {
   private static ByteBuffer createHeader(Metadata m) {
     ByteBuffer buf = ByteBuffer.allocate(HEADER_OFFSET).order(LITTLE_ENDIAN);
 
-    /* Info lines: 6 lines * 128 chars * 2 bytes = 1536 */
+    /* Info lines: 6 lines * 128 chars (1 byte) = 768 */
     byte[] desc = Strings.padEnd(m.description, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
     byte[] time = Strings.padEnd(m.timestamp, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
     byte[] dummy = Strings.padEnd("", INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
@@ -688,7 +746,7 @@ public final class Results {
         .put(dummy);
 
     /* Imt and Imls: (1 int + 21 floats) * 4 bytes = 88 */
-    float period = (float) ((m.imt == Imt.PGA) ? 0.0 : m.imt.period());
+    float period = (float) ((m.imt == Imt.PGA) ? 0.0 : (m.imt == Imt.PGV) ? -1.0 : m.imt.period());
     int imlCount = m.imls.size();
     buf.putFloat(period)
         .putInt(imlCount);
