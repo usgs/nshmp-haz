@@ -18,7 +18,6 @@ import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Bounds;
 import org.opensha2.geo.Location;
-import org.opensha2.geo.LocationList;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.internal.Parsing;
@@ -31,7 +30,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -44,10 +42,8 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +53,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * Factory class for reducing and exporting various result types.
+ * Hazard calculation result exporter.
  *
  * @author Peter Powers
  */
