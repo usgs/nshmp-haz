@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
 
+import org.opensha2.calc.CalcConfig.Deagg.Bins;
 import org.opensha2.calc.DeaggContributor.ClusterContributor;
 import org.opensha2.calc.DeaggContributor.SourceContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
@@ -164,11 +165,11 @@ final class DeaggDataset {
    * @see CalcConfig
    */
   static Builder builder(CalcConfig config) {
-    CalcConfig.Deagg d = config.deagg;
+    Bins bins = config.deagg.bins;
     return builder(
-        d.rMin, d.rMax, d.Δr,
-        d.mMin, d.mMax, d.Δm,
-        d.εMin, d.εMax, d.Δε);
+        bins.rMin, bins.rMax, bins.Δr,
+        bins.mMin, bins.mMax, bins.Δm,
+        bins.εMin, bins.εMax, bins.Δε);
   }
 
   /**

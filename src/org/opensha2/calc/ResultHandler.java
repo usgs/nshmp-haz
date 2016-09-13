@@ -77,8 +77,8 @@ public final class ResultHandler {
 
   private final Stopwatch batchWatch;
   private final Stopwatch totalWatch;
-  private int batchCount = 1;
-  private int resultCount = 1;
+  private int batchCount = 0;
+  private int resultCount = 0;
 
   private final boolean namedSites;
   private boolean firstBatch = true;
@@ -164,19 +164,19 @@ public final class ResultHandler {
    */
   public void add(Hazard hazard, Optional<Deaggregation> deagg) throws IOException {
     checkState(!used, "This result handler is expired");
+    resultCount++;
     hazards.add(hazard);
     if (deagg.isPresent()) {
       deaggs.add(deagg.get());
     }
     if (hazards.size() == config.output.flushLimit) {
       flush();
+      batchCount++;
       log.info(String.format(
           "     batch: %s in %s – %s sites in %s",
           batchCount, batchWatch, resultCount, totalWatch));
       batchWatch.reset().start();
-      batchCount++;
     }
-    resultCount++;
   }
 
   /**

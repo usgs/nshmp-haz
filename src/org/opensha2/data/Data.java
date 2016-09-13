@@ -1142,7 +1142,7 @@ public final class Data {
     if (max > min) {
       checkArgument(Δ > 0.0, "Invalid Δ [%s] for max > min", Δ);
     }
-    checkArgument(Δ <= max - min, "Δ [%s] > max - min [%s]", max - min);
+    checkArgument(Δ <= max - min, "Δ [%s] > max - min [%s]", Δ, max - min);
     return Δ;
   }
 

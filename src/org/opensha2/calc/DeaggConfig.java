@@ -2,6 +2,7 @@ package org.opensha2.calc;
 
 import static org.opensha2.internal.TextUtils.LOG_INDENT;
 
+import org.opensha2.calc.CalcConfig.Deagg.Bins;
 import org.opensha2.gmm.Imt;
 
 /**
@@ -18,7 +19,9 @@ import org.opensha2.gmm.Imt;
  */
 final class DeaggConfig {
 
-  final CalcConfig.Deagg settings;
+  final Bins bins;
+  final double contributorLimit;
+
   final Imt imt;
   final DeaggDataset model;
   final double iml;
@@ -28,7 +31,8 @@ final class DeaggConfig {
   final double truncation;
 
   private DeaggConfig(
-      CalcConfig.Deagg settings,
+      Bins bins,
+      double contributorLimit,
       Imt imt,
       DeaggDataset model,
       double iml,
@@ -37,7 +41,8 @@ final class DeaggConfig {
       ExceedanceModel probabilityModel,
       double truncation) {
 
-    this.settings = settings;
+    this.bins = bins;
+    this.contributorLimit = contributorLimit;
     this.imt = imt;
     this.model = model;
     this.iml = iml;
@@ -77,7 +82,9 @@ final class DeaggConfig {
   /* Reusable builder */
   static class Builder {
 
-    private CalcConfig.Deagg settings;
+    private Bins bins;
+    private Double contributorLimit;
+
     private Imt imt;
     private DeaggDataset model;
     private Double iml;
@@ -92,10 +99,11 @@ final class DeaggConfig {
     }
 
     Builder settings(CalcConfig.Deagg settings) {
-      this.settings = settings;
+      this.bins = settings.bins;
+      this.contributorLimit = settings.contributorLimit;
       return this;
     }
-    
+
     Builder dataModel(DeaggDataset model) {
       this.model = model;
       return this;
@@ -115,15 +123,21 @@ final class DeaggConfig {
     Builder probabilityModel(
         ExceedanceModel probabilityModel,
         double truncation) {
-      
+
       this.probabilityModel = probabilityModel;
       this.truncation = truncation;
       return this;
     }
 
+    Builder contributorLimit(double contributorLimit) {
+      this.contributorLimit = contributorLimit;
+      return this;
+    }
+
     DeaggConfig build() {
       return new DeaggConfig(
-          settings,
+          bins,
+          contributorLimit,
           imt,
           model,
           iml,
