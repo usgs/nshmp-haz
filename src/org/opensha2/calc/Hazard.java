@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.XySequence.emptyCopyOf;
-import static org.opensha2.eq.model.SourceType.CLUSTER;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.GridSourceSet;
@@ -85,26 +84,6 @@ public final class Hazard {
             sb.append(curveSet.hazardGroundMotionsList.size());
         }
         sb.append(LF);
-
-        if (ss.type() == CLUSTER) {
-          // TODO ??
-          // List<ClusterGroundMotions> cgmsList =
-          // curveSet.clusterGroundMotionsList;
-          // for (ClusterGroundMotions cgms : cgmsList) {
-          // sb.append( "|--" + LF);
-          // for (HazardGroundMotions hgms : cgms) {
-          // sb.append(" |--" + LF);
-          // for (HazardInput input : hgms.inputs) {
-          // sb.append(" |--" + input + LF);
-          // }
-          // }
-          // sb.append(LF);
-          // }
-          // sb.append(curveSet.clusterGroundMotionsList);
-
-        } else {
-          // sb.append(curveSet.hazardGroundMotionsList);
-        }
       }
     }
     return sb.toString();
