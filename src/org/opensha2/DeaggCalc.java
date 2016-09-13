@@ -154,6 +154,7 @@ public class DeaggCalc {
       Hazard hazard = HazardCalc.calc(model, config, site, executor);
       Deaggregation deagg = calc(hazard, returnPeriod);
       handler.add(hazard, Optional.of(deagg));
+      log.fine(hazard.toString());
     }
     handler.expire();
 

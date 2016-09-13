@@ -174,6 +174,7 @@ public class HazardCalc {
     for (Site site : sites) {
       Hazard hazard = calc(model, config, site, executor);
       handler.add(hazard, Optional.<Deaggregation> absent());
+      log.fine(hazard.toString());
     }
     handler.expire();
 
