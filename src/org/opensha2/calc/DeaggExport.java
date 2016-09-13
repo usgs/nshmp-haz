@@ -567,12 +567,6 @@ final class DeaggExport {
    * Metadata.
    * 
    * ε-bin bounds data is included in the metadata section of JSON output.
-   * 
-   * TODO should pass in parent metadata object to Deaggregation.class when
-   * exporting, otherwise these objects/methods will have to be accessible
-   * outside this package
-   * 
-   * TODO can this be private??
    */
   static EpsilonBins createEpsilonBins(List<Double> εLevels, double εDelta) {
     double εDeltaBy2 = εDelta / 2.0;
