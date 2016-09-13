@@ -6,6 +6,7 @@ import static java.nio.file.StandardOpenOption.APPEND;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
+import org.opensha2.calc.CalcConfig.Deagg.Bins;
 import org.opensha2.data.Data;
 import org.opensha2.internal.MathUtils;
 import org.opensha2.internal.Parsing.Delimiter;
@@ -70,7 +71,11 @@ final class DeaggExport {
     Files.write(dataPath, data.toString().getBytes(UTF_8));
 
     Path summaryPath = dir.resolve(site + "-summary.txt");
-    String contribString = appendContributions(new StringBuilder(), ddTotal, dd).toString();
+    String contribString = appendContributions(
+        new StringBuilder(), 
+        ddTotal, 
+        dd, 
+        dc.contributorLimit).toString();
 
     String header = new StringBuilder()
         .append(NEWLINE)
@@ -104,7 +109,7 @@ final class DeaggExport {
     sb.append(SECTION_SEPARATOR);
     appendData(sb, data, dd);
     sb.append(SECTION_SEPARATOR);
-    appendContributions(sb, ddTotal, dd);
+    appendContributions(sb, ddTotal, dd, dc.contributorLimit);
     sb.append(DATASET_SEPARATOR);
     return sb.toString();
   }
@@ -277,9 +282,7 @@ final class DeaggExport {
   private static final String E_ZERO = "     0";
   private static final String E_FORMAT = " %5.2f";
 
-  // TODO move to CalcConfig
   private static final double TRACE_LIMIT = 0.01;
-  static final double CONTRIBUTOR_LIMIT = 0.1;
 
   private static Function<Double, String> EPSILON_FORMATTER = new Function<Double, String>() {
     @Override
@@ -521,7 +524,8 @@ final class DeaggExport {
   static StringBuilder appendContributions(
       StringBuilder sb,
       DeaggDataset ddTotal,
-      DeaggDataset dd) {
+      DeaggDataset dd,
+      double contributorLimit) {
 
     double toPercent = percentScalar(ddTotal);
 
@@ -531,7 +535,7 @@ final class DeaggExport {
      */
     boolean contributorsAboveLimit = false;
     for (DeaggContributor contributor : dd.contributors) {
-      if (contributor.total() * toPercent >= CONTRIBUTOR_LIMIT) {
+      if (contributor.total() * toPercent >= contributorLimit) {
         contributorsAboveLimit = true;
         break;
       }
@@ -542,17 +546,17 @@ final class DeaggExport {
       sb.append(NEWLINE).append(NEWLINE).append(CONTRIBUTION_HEADER);
       boolean firstPrinted = false;
       for (DeaggContributor contributor : dd.contributors) {
-        if (contributor.total() * toPercent >= CONTRIBUTOR_LIMIT) {
+        if (contributor.total() * toPercent >= contributorLimit) {
           if (firstPrinted) {
             sb.append(NEWLINE);
           }
           firstPrinted = true;
         }
-        contributor.appendTo(sb, toPercent, "");
+        contributor.appendTo(sb, toPercent, "", contributorLimit);
       }
     } else {
       sb.append(" Suppressed (all contributions < ")
-          .append(CONTRIBUTOR_LIMIT)
+          .append(contributorLimit)
           .append("%).")
           .append(NEWLINE);
     }
@@ -616,25 +620,24 @@ final class DeaggExport {
       this.max = max;
     }
   }
-  
-  
+
   /*
-   * Create a string reflecting the r, m, and ε discretizations that
-   * were used to intialize DeaggDatasets.
+   * Create a string reflecting the r, m, and ε discretizations that were used
+   * to intialize DeaggDatasets.
    */
   static String createDataDiscretization(DeaggConfig config) {
     StringBuilder sb = new StringBuilder();
     sb.append("Discretization:").append(NEWLINE);
-    CalcConfig.Deagg ccd = config.settings;
-    sb.append(String.format(DISCRETIZATION_FMT, "r", ccd.rMin, ccd.rMax, ccd.Δr));
-    sb.append(String.format(DISCRETIZATION_FMT, "m", ccd.mMin, ccd.mMax, ccd.Δm));
-    sb.append(String.format(DISCRETIZATION_FMT, "ε", ccd.εMin, ccd.εMax, ccd.Δε));
+    Bins bins = config.bins;
+    sb.append(String.format(DISCRETIZATION_FMT, "r", bins.rMin, bins.rMax, bins.Δr));
+    sb.append(String.format(DISCRETIZATION_FMT, "m", bins.mMin, bins.mMax, bins.Δm));
+    sb.append(String.format(DISCRETIZATION_FMT, "ε", bins.εMin, bins.εMax, bins.Δε));
     sb.append(NEWLINE);
     return sb.toString();
   }
-  
-  private static final String DISCRETIZATION_FMT = "%" + (SUMMARY_NAME_WIDTH-3) + 
-      "s:  min = %.1f, max = %.1f, Δ = %.1f" + NEWLINE; 
+
+  private static final String DISCRETIZATION_FMT = "%" + (SUMMARY_NAME_WIDTH - 3) +
+      "s:  min = %.1f, max = %.1f, Δ = %.1f" + NEWLINE;
 
   /*
    * List wrapper that preserves JSON serialization yet permits custom

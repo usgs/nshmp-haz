@@ -2,7 +2,6 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.calc.DeaggExport.CONTRIBUTOR_LIMIT;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
@@ -62,7 +61,11 @@ abstract class DeaggContributor {
     return new double[] { rate, residual, rScaled, mScaled, εScaled };
   }
 
-  abstract StringBuilder appendTo(StringBuilder sb, double percentScalar, String indent);
+  abstract StringBuilder appendTo(
+      StringBuilder sb,
+      double percentScalar,
+      String indent,
+      double contributorLimit);
 
   abstract static class Builder {
 
@@ -155,9 +158,14 @@ abstract class DeaggContributor {
     }
 
     @Override
-    public StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
+    public StringBuilder appendTo(
+        StringBuilder sb,
+        double toPercent,
+        String indent,
+        double contributorLimit) {
+
       double contribution = total() * toPercent;
-      if (contribution < CONTRIBUTOR_LIMIT) {
+      if (contribution < contributorLimit) {
         return sb;
       }
       sb.append(String.format(
@@ -165,7 +173,7 @@ abstract class DeaggContributor {
           sourceSet.name(), sourceSet.type(), contribution));
       sb.append(NEWLINE);
       for (DeaggContributor child : children) {
-        child.appendTo(sb, toPercent, "  ");
+        child.appendTo(sb, toPercent, "  ", contributorLimit);
       }
       return sb;
     }
@@ -242,10 +250,15 @@ abstract class DeaggContributor {
     }
 
     @Override
-    StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
+    StringBuilder appendTo(
+        StringBuilder sb,
+        double toPercent,
+        String indent,
+        double contributorLimit) {
+
       double total = total();
       double contribution = total * toPercent;
-      if (contribution < CONTRIBUTOR_LIMIT) {
+      if (contribution < contributorLimit) {
         return sb;
       }
       double rBar = rScaled / total;
@@ -351,10 +364,15 @@ abstract class DeaggContributor {
     }
 
     @Override
-    StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
+    StringBuilder appendTo(
+        StringBuilder sb,
+        double toPercent,
+        String indent,
+        double contributorLimit) {
+
       double total = total();
       double contribution = total() * toPercent;
-      if (contribution < CONTRIBUTOR_LIMIT) {
+      if (contribution < contributorLimit) {
         return sb;
       }
       double rBar = rScaled / total;
@@ -368,7 +386,7 @@ abstract class DeaggContributor {
           contribution));
       sb.append(NEWLINE);
       for (DeaggContributor fault : faults) {
-        fault.appendTo(sb, toPercent, "    ");
+        fault.appendTo(sb, toPercent, "    ", contributorLimit);
       }
       return sb;
     }
@@ -455,10 +473,15 @@ abstract class DeaggContributor {
     }
 
     @Override
-    StringBuilder appendTo(StringBuilder sb, double toPercent, String indent) {
+    StringBuilder appendTo(
+        StringBuilder sb,
+        double toPercent,
+        String indent,
+        double contributorLimit) {
+
       double total = total();
       double contribution = total * toPercent;
-      if (contribution < CONTRIBUTOR_LIMIT) {
+      if (contribution < contributorLimit) {
         return sb;
       }
       double rBar = rScaled / total;
@@ -543,7 +566,7 @@ abstract class DeaggContributor {
 
     @Override
     public int size() {
-      //TODO perhaps this should return the number of participating ruptures
+      // TODO perhaps this should return the number of participating ruptures
       return 1;
     }
 

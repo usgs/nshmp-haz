@@ -663,60 +663,150 @@ public final class CalcConfig {
 
     static final String ID = CalcConfig.ID + "." + Deagg.class.getSimpleName();
 
-    /** Minimum distance. Lower edge of smallest distance bin. */
-    public final double rMin;
+    /**
+     * The distance, magnitude, and epsilon bins into which contributing sources
+     * to hazard are sorted.
+     */
+    public final Bins bins;
 
-    /** Maximum distance. Upper edge of largest distance bin. */
-    public final double rMax;
+    /**
+     * The minimum contribution (in %) that a source must make to hazard to be
+     * included on the contributor source list in deaggregation result.
+     */
+    public final Double contributorLimit;
 
-    /** Distance bin width. */
-    public final double Δr;
+    Deagg(
+        Bins bins,
+        double contributorLimit) {
 
-    /** Minimum magnitude. Lower edge of smallest magnitude bin. */
-    public final double mMin;
-
-    /** Maximum magnitude. Upper edge of largest magnitude bin. */
-    public final double mMax;
-
-    /** Magnitude bin width. */
-    public final double Δm;
-
-    /** Minimum epsilon. Lower edge of smallest epsilon bin. */
-    public final double εMin;
-
-    /** Maximum epsilon. Upper edge of largest epsilon bin. */
-    public final double εMax;
-
-    /** Epsilon bin width. */
-    public final double Δε;
-
-    Deagg() {
-      rMin = 0.0;
-      rMax = 200.0;
-      Δr = 10.0;
-      mMin = 5.0;
-      mMax = 8.4;
-      Δm = 0.2;
-      εMin = -3.0;
-      εMax = 3.0;
-      Δε = 0.5;
+      this.bins = bins;
+      this.contributorLimit = contributorLimit;
     }
 
     private StringBuilder asString() {
       return new StringBuilder()
           .append(LOG_INDENT).append("Deaggregation")
-          .append(formatEntry("R"))
-          .append("min=").append(rMin).append(", ")
-          .append("max=").append(rMax).append(", ")
-          .append("Δ=").append(Δr)
-          .append(formatEntry("M"))
-          .append("min=").append(mMin).append(", ")
-          .append("max=").append(mMax).append(", ")
-          .append("Δ=").append(Δm)
-          .append(formatEntry("ε"))
-          .append("min=").append(εMin).append(", ")
-          .append("max=").append(εMax).append(", ")
-          .append("Δ=").append(Δε);
+          .append(formatEntry("rBins"))
+          .append("min=").append(bins.rMin).append(", ")
+          .append("max=").append(bins.rMax).append(", ")
+          .append("Δ=").append(bins.Δr)
+          .append(formatEntry("mBins"))
+          .append("min=").append(bins.mMin).append(", ")
+          .append("max=").append(bins.mMax).append(", ")
+          .append("Δ=").append(bins.Δm)
+          .append(formatEntry("εBins"))
+          .append("min=").append(bins.εMin).append(", ")
+          .append("max=").append(bins.εMax).append(", ")
+          .append("Δ=").append(bins.Δε)
+          .append(formatEntry(Key.CONTRIBUTOR_LIMIT, contributorLimit));
+    }
+
+    /**
+     * The distance, magnitude, and epsilon bins into which contributing sources
+     * to hazard will be sorted.
+     *
+     * @author Peter Powers
+     */
+    public static final class Bins {
+
+      static final String ID = CalcConfig.ID + "." + Deagg.ID + "." + Bins.class.getSimpleName();
+
+      /** Minimum distance. Lower edge of smallest distance bin. */
+      public final Double rMin;
+
+      /** Maximum distance. Upper edge of largest distance bin. */
+      public final Double rMax;
+
+      /** Distance bin width. */
+      public final Double Δr;
+
+      /** Minimum magnitude. Lower edge of smallest magnitude bin. */
+      public final Double mMin;
+
+      /** Maximum magnitude. Upper edge of largest magnitude bin. */
+      public final Double mMax;
+
+      /** Magnitude bin width. */
+      public final Double Δm;
+
+      /** Minimum epsilon. Lower edge of smallest epsilon bin. */
+      public final Double εMin;
+
+      /** Maximum epsilon. Upper edge of largest epsilon bin. */
+      public final Double εMax;
+
+      /** Epsilon bin width. */
+      public final Double Δε;
+
+      Bins(
+          double rMin, double rMax, double Δr,
+          double mMin, double mMax, double Δm,
+          double εMin, double εMax, double Δε) {
+
+        this.rMin = rMin;
+        this.rMax = rMax;
+        this.Δr = Δr;
+        this.mMin = mMin;
+        this.mMax = mMax;
+        this.Δm = Δm;
+        this.εMin = εMin;
+        this.εMax = εMax;
+        this.Δε = Δε;
+      }
+
+      static Bins defaults() {
+        return new Bins(
+            0.0, 200.0, 10.0,
+            5.0, 8.4, 0.2,
+            -3.0, 3.0, 0.5);
+      }
+    }
+
+    private static final class Builder {
+
+      Bins bins;
+      Double contributorLimit;
+
+      Deagg build() {
+        return new Deagg(
+            bins,
+            contributorLimit);
+      }
+
+      void copy(Deagg that) {
+        this.bins = that.bins;
+        this.contributorLimit = that.contributorLimit;
+      }
+
+      void extend(Builder that) {
+        if (that.bins != null) {
+          this.bins = that.bins;
+        }
+        if (that.contributorLimit != null) {
+          this.contributorLimit = that.contributorLimit;
+        }
+      }
+
+      static Builder defaults() {
+        Builder b = new Builder();
+        b.bins = Bins.defaults();
+        b.contributorLimit = 0.1;
+        return b;
+      }
+
+      void validate() {
+        checkNotNull(bins, STATE_ERROR, Deagg.ID, Key.BINS);
+        checkNotNull(bins.rMin, STATE_ERROR, Deagg.ID, Key.BINS + ".rMin");
+        checkNotNull(bins.rMax, STATE_ERROR, Deagg.ID, Key.BINS + ".rMax");
+        checkNotNull(bins.Δr, STATE_ERROR, Deagg.ID, Key.BINS + ".Δr");
+        checkNotNull(bins.mMin, STATE_ERROR, Deagg.ID, Key.BINS + ".mMin");
+        checkNotNull(bins.mMax, STATE_ERROR, Deagg.ID, Key.BINS + ".mMax");
+        checkNotNull(bins.Δm, STATE_ERROR, Deagg.ID, Key.BINS + ".Δm");
+        checkNotNull(bins.εMin, STATE_ERROR, Deagg.ID, Key.BINS + ".εMin");
+        checkNotNull(bins.εMax, STATE_ERROR, Deagg.ID, Key.BINS + ".εMax");
+        checkNotNull(bins.Δε, STATE_ERROR, Deagg.ID, Key.BINS + ".Δε");
+        checkNotNull(contributorLimit, STATE_ERROR, Deagg.ID, Key.CONTRIBUTOR_LIMIT);
+      }
     }
   }
 
@@ -745,7 +835,8 @@ public final class CalcConfig {
     CURVE_TYPES,
     FLUSH_LIMIT,
     /* deagg */
-    DEAGG;
+    BINS,
+    CONTRIBUTOR_LIMIT;
 
     private String label;
 
@@ -859,13 +950,14 @@ public final class CalcConfig {
     private SiteDefaults.Builder siteDefaults;
     private Performance.Builder performance;
     private Output.Builder output;
-    private Deagg deagg;
+    private Deagg.Builder deagg;
 
     private Builder() {
       curve = new Curve.Builder();
       siteDefaults = new SiteDefaults.Builder();
       performance = new Performance.Builder();
       output = new Output.Builder();
+      deagg = new Deagg.Builder();
     }
 
     /**
@@ -880,7 +972,7 @@ public final class CalcConfig {
       b.siteDefaults.copy(config.siteDefaults);
       b.performance.copy(config.performance);
       b.output.copy(config.output);
-      b.deagg = config.deagg;
+      b.deagg.copy(config.deagg);
       return b;
     }
 
@@ -911,7 +1003,7 @@ public final class CalcConfig {
       b.siteDefaults = SiteDefaults.Builder.defaults();
       b.performance = Performance.Builder.defaults();
       b.output = Output.Builder.defaults();
-      b.deagg = new Deagg();
+      b.deagg = Deagg.Builder.defaults();
       return b;
     }
 
@@ -926,9 +1018,7 @@ public final class CalcConfig {
       this.siteDefaults.extend(that.siteDefaults);
       this.performance.extend(that.performance);
       this.output.extend(that.output);
-      if (that.deagg != null) {
-        this.deagg = that.deagg;
-      }
+      this.deagg.extend(that.deagg);
       return this;
     }
 
@@ -946,7 +1036,7 @@ public final class CalcConfig {
       siteDefaults.validate();
       performance.validate();
       output.validate();
-      checkNotNull(deagg, STATE_ERROR, Deagg.ID, "deagg");
+      deagg.validate();
       built = true;
     }
 
@@ -961,7 +1051,7 @@ public final class CalcConfig {
           siteDefaults.build(),
           performance.build(),
           output.build(),
-          deagg);
+          deagg.build());
     }
   }
 
