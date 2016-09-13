@@ -270,9 +270,18 @@ public final class CalcConfig {
           this.defaultImls = that.defaultImls;
         }
         if (that.customImls != null) {
-          this.customImls = that.customImls;
+          this.customImls.putAll(that.customImls);
         }
       }
+
+      /* Slightly modified version of NSHM 5Hz curve, size = 20 */
+      private static final double[] IMLS_PGA_SA = new double[] { 0.0025, 0.0045, 0.0075, 0.0113,
+          0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46,
+          2.19, 3.28, 4.92, 7.38 };
+
+      private static final double[] IMLS_PGV = new double[] { 0.0100, 0.0177, 0.0312, 0.0552,
+          0.0976, 0.173, 0.305, 0.539, 0.953, 1.68, 2.98, 5.26, 9.30, 16.4, 29.1, 51.3, 90.8,
+          160.0, 284.0, 501.0 };
 
       static Builder defaults() {
         Builder b = new Builder();
@@ -281,11 +290,9 @@ public final class CalcConfig {
         b.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
         b.gmmUncertainty = false;
         b.valueType = CurveValue.ANNUAL_RATE;
-        // Slightly modified version of NSHM 5Hz curve, size = 20
-        b.defaultImls = new double[] { 0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253,
-            0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46,
-            2.19, 3.28, 4.92, 7.38 };
+        b.defaultImls = IMLS_PGA_SA;
         b.customImls = Maps.newHashMap();
+        b.customImls.put(Imt.PGV, IMLS_PGV);
         return b;
       }
 
@@ -690,7 +697,7 @@ public final class CalcConfig {
       mMin = 5.0;
       mMax = 8.4;
       Δm = 0.2;
-      εMin = -3;
+      εMin = -3.0;
       εMax = 3.0;
       Δε = 0.5;
     }
