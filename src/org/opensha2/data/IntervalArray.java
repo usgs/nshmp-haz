@@ -305,7 +305,7 @@ public interface IntervalArray {
 
     /**
      * Add the values in the supplied table to this builder. This operation is
-     * very efficient if this builder and the supplied table are sourced from
+     * very efficient if this builder and the supplied array are sourced from
      * the same model.
      *
      * @param array to add
@@ -331,8 +331,8 @@ public interface IntervalArray {
     }
 
     /*
-     * Check hash codes of row and column arrays in case copyOf has been used,
-     * otherwise check array equality.
+     * Check hash codes of row arrays in case fromModel has been used, otherwise
+     * check array equality.
      */
     AbstractArray validateArray(AbstractArray that) {
       checkArgument(this.rows.hashCode() == that.rows.hashCode() ||

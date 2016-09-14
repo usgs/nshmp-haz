@@ -410,8 +410,8 @@ public interface IntervalVolume {
     }
 
     /*
-     * Check hash codes of row, column, and level arrays in case copyOf has been
-     * used, otherwise check array equality.
+     * Check hash codes of row, column, and level arrays in case fromModel has
+     * been used, otherwise check array equality.
      */
     AbstractVolume validateVolume(AbstractVolume that) {
       checkArgument((this.rows.hashCode() == that.rows.hashCode() &&

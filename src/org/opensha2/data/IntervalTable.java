@@ -417,8 +417,8 @@ public interface IntervalTable {
     }
 
     /*
-     * Check hash codes of row and column arrays in case copyOf has been used,
-     * otherwise check array equality.
+     * Check hash codes of row and column arrays in case fromModel has been
+     * used, otherwise check array equality.
      */
     AbstractTable validateTable(AbstractTable that) {
       checkArgument((this.rows.hashCode() == that.rows.hashCode() &&
