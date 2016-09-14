@@ -1,7 +1,6 @@
 package org.opensha2.internal;
 
 import static java.lang.Math.sqrt;
-import static java.math.BigDecimal.ROUND_HALF_UP;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

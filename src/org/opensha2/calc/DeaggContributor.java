@@ -469,7 +469,7 @@ abstract class DeaggContributor {
 
     @Override
     public String toString() {
-      return "System contributor: Section " + section.sectionIndex;
+      return "System contributor: Section " + section.index;
     }
 
     @Override
@@ -553,15 +553,18 @@ abstract class DeaggContributor {
    */
   static final class SectionSource implements Source {
 
-    final int sectionIndex;
+    final int index;
+    final String name;
 
-    SectionSource(int sectionIndex) {
-      this.sectionIndex = sectionIndex;
+    SectionSource(int index, String name) {
+      this.index = index;
+      this.name = name;
     }
 
     @Override
     public String name() {
-      return "System Section (" + sectionIndex + ")";
+      return name;
+//      return "System Section (" + index + ")";
     }
 
     @Override
@@ -577,9 +580,7 @@ abstract class DeaggContributor {
 
     @Override
     public Location location(Location site) {
-      return null;
-      // TODO do nothing
-
+      return null; // unused
     }
 
     @Override

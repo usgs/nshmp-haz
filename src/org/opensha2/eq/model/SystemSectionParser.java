@@ -52,6 +52,7 @@ class SystemSectionParser extends DefaultHandler {
   private Locator locator;
 
   private List<GriddedSurface> sections;
+  private List<String> sectionNames;
   private DefaultGriddedSurface.Builder surfaceBuilder;
 
   // Traces are the only text content in source files
@@ -68,12 +69,23 @@ class SystemSectionParser extends DefaultHandler {
 
   // TODO can we just return RuptureSurface? are grid details necessary
   // downstream?
-  List<GriddedSurface> parse(InputStream in) throws SAXException, IOException {
+  void parse(InputStream in) throws SAXException, IOException {
     checkState(!used, "This parser has expired");
     sax.parse(in, this);
     checkState(sections.size() > 0, "Section surface list is empty");
     used = true;
+  }
+
+  /* Can't call before parse(). */
+  List<GriddedSurface> sections() {
+    checkState(used == true);
     return sections;
+  }
+
+  /* Can't call before parse(). */
+  List<String> sectionNames() {
+    checkState(used == true);
+    return sectionNames;
   }
 
   @Override
@@ -92,13 +104,20 @@ class SystemSectionParser extends DefaultHandler {
 
         case SYSTEM_FAULT_SECTIONS:
           sections = Lists.newArrayList();
+          sectionNames = Lists.newArrayList();
           String setName = readString(NAME, atts);
           log.info("Fault model: " + setName + "/" + SECTIONS_FILENAME);
           break;
 
+        /*
+         * NOTE: currently, section indices are ordered ascending from zero; if
+         * this were to change we'd need agregate a list of indices as well.
+         */
+          
         case SECTION:
           surfaceBuilder = DefaultGriddedSurface.builder();
           String sectionName = readString(NAME, atts);
+          sectionNames.add(cleanName(sectionName));
           String sectionIndex = readString(INDEX, atts);
           log.finer("    Section: [" + sectionIndex + "] " + sectionName);
           break;
@@ -165,6 +184,15 @@ class SystemSectionParser extends DefaultHandler {
   @Override
   public void setDocumentLocator(Locator locator) {
     this.locator = locator;
+  }
+  
+  /*
+   * TODO for consistency during development we have kept the original (long)
+   * UCERF3 section names in fault_sections.xml but it might make sense down
+   * the road to update the source file rather thna clean the name here.
+   */
+  private static String cleanName(String name) {
+    return name.replace(" 2011 CFM", "").replace(", Subsection ", " [") + "]";
   }
 
 }

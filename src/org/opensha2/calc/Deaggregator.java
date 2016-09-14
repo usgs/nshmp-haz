@@ -305,7 +305,7 @@ final class Deaggregator {
 
     /*
      * Subsequent to deaggregation we no longer need references to the source
-     * bitsets so we drain it in place rather than making a copy to drain.
+     * bitsets so we drain it in place rather than making a copy.
      */
 
     GroundMotions gms = curves.hazardGroundMotionsList.get(0);
@@ -327,7 +327,9 @@ final class Deaggregator {
        * recalculated multiple times downstream. Safe covariant cast assuming
        * switch handles variants.
        */
-      SectionSource section = new SectionSource(sectionIndex);
+      SectionSource section = new SectionSource(
+          sectionIndex, 
+          systemSources.sectionName(sectionIndex));
       Location location = Locations.closestPoint(
           site.location,
           systemSources.section(sectionIndex).getUpperEdge());
