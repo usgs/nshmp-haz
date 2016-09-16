@@ -120,7 +120,6 @@ final class DeaggExport {
     appendData(sb, data, dd);
     sb.append(SECTION_SEPARATOR);
     appendContributions(sb, ddTotal, dd, dc.contributorLimit);
-    sb.append(DATASET_SEPARATOR);
     appendSystemMfds(sb, ddTotal, dd, dc.contributorLimit);
     sb.append(SECTION_SEPARATOR);
     return sb.toString();
@@ -610,7 +609,6 @@ final class DeaggExport {
 
   static final String SYSTEM_MFD_FORMAT = "%5s, %48s,";
 
-
   static StringBuilder appendSystemMfds(
       StringBuilder sb,
       DeaggDataset ddTotal,
@@ -625,6 +623,10 @@ final class DeaggExport {
         .filter(SYSTEM_FILTER)
         .filter(new ContributionFilter(contributorLimit, toPercent))
         .toList();
+
+    if (systemSourceSetContributors.size() > 0) {
+      sb.append(DATASET_SEPARATOR);
+    }
 
     for (SourceSetContributor ssc : systemSourceSetContributors) {
       // TODO this check isn't needed, children will always be present even
@@ -642,7 +644,7 @@ final class DeaggExport {
       sb.append(NEWLINE).append(NEWLINE);
       sb.append(String.format(SYSTEM_MFD_FORMAT, "Index", "Section"));
       sb.append(Parsing.toString(model.mfd.rows(), "%9.2f", ",", false, true));
-      
+
       sb.append(NEWLINE);
       for (DeaggContributor child : ssc.children) {
         ((SystemContributor) child).appendMfd(sb, toPercent, contributorLimit);

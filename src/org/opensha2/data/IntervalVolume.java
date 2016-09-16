@@ -214,33 +214,48 @@ public interface IntervalVolume {
     public Builder() {}
 
     /**
+     * Create a new builder with the structure and content identical to that of
+     * the supplied volume.
+     *
+     * @param volume to copy
+     */
+    public static Builder copyOf(IntervalVolume volume) {
+      /* Safe covariant cast. */
+      DefaultVolume defaultVolume = (DefaultVolume) volume;
+      Builder builder = copyStructure(defaultVolume);
+      builder.data = Data.copyOf(defaultVolume.data);
+      builder.init();
+      return builder;
+    }
+
+    /**
      * Create a new builder with a structure identical to that of the supplied
-     * volume as a model.
+     * model.
      *
      * @param model data volume
      */
     public static Builder fromModel(IntervalVolume model) {
+      /* Safe covariant cast. */
+      Builder builder = copyStructure((AbstractVolume) model);
+      builder.init();
+      return builder;
+    }
 
-      AbstractVolume v = (AbstractVolume) model;
-      Builder b = new Builder();
-
-      b.rowMin = v.rowMin;
-      b.rowMax = v.rowMax;
-      b.rowΔ = v.rowΔ;
-      b.rows = v.rows;
-
-      b.columnMin = v.columnMin;
-      b.columnMax = v.columnMax;
-      b.columnΔ = v.columnΔ;
-      b.columns = v.columns;
-
-      b.levelMin = v.levelMin;
-      b.levelMax = v.levelMax;
-      b.levelΔ = v.levelΔ;
-      b.levels = v.levels;
-
-      b.init();
-      return b;
+    private static Builder copyStructure(AbstractVolume from) {
+      Builder to = new Builder();
+      to.rowMin = from.rowMin;
+      to.rowMax = from.rowMax;
+      to.rowΔ = from.rowΔ;
+      to.rows = from.rows;
+      to.columnMin = from.columnMin;
+      to.columnMax = from.columnMax;
+      to.columnΔ = from.columnΔ;
+      to.columns = from.columns;
+      to.levelMin = from.levelMin;
+      to.levelMax = from.levelMax;
+      to.levelΔ = from.levelΔ;
+      to.levels = from.levels;
+      return to;
     }
 
     /**
@@ -294,7 +309,9 @@ public interface IntervalVolume {
     private void init() {
       checkState(!initialized, "Builder has already been initialized");
       if (rows != null && columns != null && levels != null) {
-        data = new double[rows.length][columns.length][levels.length];
+        if (data == null) {
+          data = new double[rows.length][columns.length][levels.length];
+        }
         initialized = true;
       }
     }

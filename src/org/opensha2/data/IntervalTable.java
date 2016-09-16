@@ -183,28 +183,44 @@ public interface IntervalTable {
     public Builder() {}
 
     /**
+     * Create a new builder with the structure and content identical to that of
+     * the supplied table.
+     *
+     * @param table to copy
+     */
+    public static Builder copyOf(IntervalTable table) {
+      /* Safe covariant cast. */
+      DefaultTable defaultTable = (DefaultTable) table;
+      Builder builder = copyStructure(defaultTable);
+      builder.data = Data.copyOf(defaultTable.data);
+      builder.init();
+      return builder;
+    }
+
+    /**
      * Create a new builder with a structure identical to that of the supplied
-     * table as a model.
+     * model.
      *
      * @param model data table
      */
     public static Builder fromModel(IntervalTable model) {
-
-      AbstractTable t = (AbstractTable) model;
-      Builder b = new Builder();
-
-      b.rowMin = t.rowMin;
-      b.rowMax = t.rowMax;
-      b.rowΔ = t.rowΔ;
-      b.rows = t.rows;
-
-      b.columnMin = t.columnMin;
-      b.columnMax = t.columnMax;
-      b.columnΔ = t.columnΔ;
-      b.columns = t.columns;
-
-      b.init();
-      return b;
+      /* Safe covariant cast. */
+      Builder builder = copyStructure((AbstractTable) model);
+      builder.init();
+      return builder;
+    }
+    
+    private static Builder copyStructure(AbstractTable from) {
+      Builder to = new Builder();
+      to.rowMin = from.rowMin;
+      to.rowMax = from.rowMax;
+      to.rowΔ = from.rowΔ;
+      to.rows = from.rows;
+      to.columnMin = from.columnMin;
+      to.columnMax = from.columnMax;
+      to.columnΔ = from.columnΔ;
+      to.columns = from.columns;
+      return to;
     }
 
     /**
@@ -242,7 +258,9 @@ public interface IntervalTable {
     private void init() {
       checkState(!initialized, "Builder has already been initialized");
       if (rows != null && columns != null) {
-        data = new double[rows.length][columns.length];
+        if (data == null) {
+          data = new double[rows.length][columns.length];
+        }
         initialized = true;
       }
     }
