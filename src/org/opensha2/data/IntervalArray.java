@@ -115,10 +115,10 @@ public interface IntervalArray {
   /**
    * A builder of immutable {@code IntervalArray}s.
    *
-   * <p>Use {@link #create()} to initialize a new builder. Rows and columns must
-   * be specified before any data can be added. Note that any supplied
-   * {@code max} values may not correspond to the final upper edge of the
-   * uppermost bins if {@code max - min} is not evenly divisible by {@code Δ} .
+   * <p>Rows and columns must be specified before any data can be added. Note
+   * that any supplied {@code max} values may not correspond to the final upper
+   * edge of the uppermost bins if {@code max - min} is not evenly divisible by
+   * {@code Δ} .
    */
   public static final class Builder {
 
@@ -132,33 +132,48 @@ public interface IntervalArray {
     private boolean built = false;
     private boolean initialized = false;
 
-    private Builder() {}
-
     /**
      * Create a new builder.
      */
-    public static Builder create() {
-      return new Builder();
+    public Builder() {}
+
+    /**
+     * Create a new builder with the structure and content identical to that of
+     * the supplied array.
+     *
+     * @param array to copy
+     */
+    public static Builder copyOf(IntervalArray array) {
+      /* Safe covariant cast. */
+      DefaultArray defaultArray = (DefaultArray) array;
+      Builder builder = copyStructure(defaultArray);
+      builder.data = Arrays.copyOf(
+          defaultArray.data,
+          defaultArray.data.length);
+      builder.init();
+      return builder;
     }
 
     /**
      * Create a new builder with a structure identical to that of the supplied
-     * array as a model.
+     * model.
      *
      * @param model interval array
      */
     public static Builder fromModel(IntervalArray model) {
+      /* Safe covariant cast. */
+      Builder builder = copyStructure((AbstractArray) model);
+      builder.init();
+      return builder;
+    }
 
-      AbstractArray a = (AbstractArray) model;
-      Builder b = new Builder();
-
-      b.rowMin = a.rowMin;
-      b.rowMax = a.rowMax;
-      b.rowΔ = a.rowΔ;
-      b.rows = a.rows;
-
-      b.init();
-      return b;
+    private static Builder copyStructure(AbstractArray from) {
+      Builder to = new Builder();
+      to.rowMin = from.rowMin;
+      to.rowMax = from.rowMax;
+      to.rowΔ = from.rowΔ;
+      to.rows = from.rows;
+      return to;
     }
 
     /**
@@ -179,10 +194,10 @@ public interface IntervalArray {
 
     private void init() {
       checkState(!initialized, "Builder has already been initialized");
-      if (rows != null) {
+      if (data == null) {
         data = new double[rows.length];
-        initialized = true;
       }
+      initialized = true;
     }
 
     /**
@@ -331,8 +346,8 @@ public interface IntervalArray {
     }
 
     /*
-     * Check hash codes of row arrays in case fromModel has been used, otherwise
-     * check array equality.
+     * Check hash codes of row arrays in case fromModel or copyOf has been used,
+     * otherwise check array equality.
      */
     AbstractArray validateArray(AbstractArray that) {
       checkArgument(this.rows.hashCode() == that.rows.hashCode() ||

@@ -6,12 +6,14 @@ import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.data.Data;
+import org.opensha2.data.IntervalArray;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.Rupture;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Location;
+import org.opensha2.internal.Parsing;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -450,11 +452,13 @@ abstract class DeaggContributor {
     final SectionSource section;
     final Location location;
     final double azimuth;
+    final IntervalArray mfd;
 
     SystemContributor(
         SectionSource section,
         Location location,
         double azimuth,
+        IntervalArray mfd,
         double rate,
         double residual,
         double rScaled,
@@ -465,6 +469,7 @@ abstract class DeaggContributor {
       this.section = section;
       this.location = location;
       this.azimuth = azimuth;
+      this.mfd = mfd;
     }
 
     @Override
@@ -496,20 +501,46 @@ abstract class DeaggContributor {
       sb.append(NEWLINE);
       return sb;
     }
+    
+    StringBuilder appendMfd(
+        StringBuilder sb,
+        double toPercent,
+        double contributorLimit) {
+      
+      double total = total();
+      double contribution = total * toPercent;
+      if (contribution < contributorLimit) {
+        return sb;
+      }
+      sb.append(String.format(DeaggExport.SYSTEM_MFD_FORMAT, section.index, section.name()));
+      sb.append(Parsing.toString(mfd.values().yValues(), "%9.3g", ",", false, false));
+      sb.append(NEWLINE);
+      return sb;
+    }
 
     static final class Builder extends DeaggContributor.Builder {
 
       SectionSource section;
       Location location;
       double azimuth;
+      IntervalArray.Builder mfd;
 
-      Builder section(SectionSource section, Location location, double azimuth) {
+      Builder section(
+          SectionSource section,
+          Location location,
+          double azimuth,
+          IntervalArray.Builder mfd) {
+
         this.section = section;
         this.location = location;
         this.azimuth = azimuth;
+        this.mfd = mfd;
         return this;
       }
 
+      // TODO this isn't needed unless we wanted to add to MFD here, but
+      // this would require repeat index lookup across GMMs. test removal
+      // the only reason one might want it is to return this covariant builder
       Builder add(
           double rate,
           double residual,
@@ -518,6 +549,20 @@ abstract class DeaggContributor {
           double εScaled) {
 
         super.add(rate, residual, rScaled, mScaled, εScaled);
+        return this;
+      }
+
+      /*
+       * The mfd data could be backed out on every call to add, but this likely
+       * requires a bin index lookup to be repeated across all relevant Gmms.
+       */
+      Builder addToMfd(int index, double rate) {
+        mfd.add(index, rate);
+        return this;
+      }
+      
+      Builder addMfd(IntervalArray mfd) {
+        this.mfd.add(mfd);
         return this;
       }
 
@@ -537,6 +582,7 @@ abstract class DeaggContributor {
             section,
             location,
             azimuth,
+            mfd.build(),
             rate,
             residual,
             rScaled,
@@ -564,7 +610,7 @@ abstract class DeaggContributor {
     @Override
     public String name() {
       return name;
-//      return "System Section (" + index + ")";
+      // return "System Section (" + index + ")"; TODO use or clean
     }
 
     @Override

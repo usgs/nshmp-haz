@@ -8,6 +8,7 @@ import org.opensha2.calc.DeaggContributor.SourceContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
 import org.opensha2.data.Data;
+import org.opensha2.data.IntervalArray;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.GmmSet;
@@ -18,6 +19,7 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
+import org.opensha2.internal.MathUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -27,6 +29,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.google.common.primitives.Ints;
 
+import java.math.RoundingMode;
 import java.util.BitSet;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -296,7 +299,7 @@ final class Deaggregator {
 
     /* Safe covariant cast assuming switch handles variants. */
     SystemSourceSet systemSources = (SystemSourceSet) sources;
-    
+
     Map<Gmm, DeaggDataset.Builder> builders = createBuilders(gmmSet.gmms(), model);
     for (DeaggDataset.Builder builder : builders.values()) {
       SourceSetContributor.Builder parent = new SourceSetContributor.Builder();
@@ -318,28 +321,43 @@ final class Deaggregator {
     /* Local EnumSet based keys; gmms.keySet() is not an EnumSet. */
     final Set<Gmm> gmmKeys = EnumSet.copyOf(gmms.keySet());
 
+    /*
+     * Set up generic IntervalArray to be copied and used to aggregate magnitude
+     * contributions by section. We also create a utility builder for magnitude
+     * indexing.
+     */
+    IntervalArray mfdModel = new IntervalArray.Builder().rows(
+        MathUtils.round(systemSources.stats.mMin, 1, RoundingMode.FLOOR),
+        MathUtils.round(systemSources.stats.mMax, 1, RoundingMode.CEILING),
+        0.1).build();
+    IntervalArray.Builder mfdIndexer = IntervalArray.Builder.fromModel(mfdModel);
+
     List<Integer> sourceIndices = new LinkedList<>(Ints.asList(Data.indices(bitsets.size())));
 
     for (int sectionIndex : inputs.sectionIndices) {
 
       /*
-       * Fetch site-specific source attributes so that they don't need to be
-       * recalculated multiple times downstream. Safe covariant cast assuming
-       * switch handles variants.
+       * Init section and fetch site-specific source attributes so that they
+       * don't need to be recalculated multiple times downstream. Safe covariant
+       * cast assuming switch in deaggregate() correctly handles variants.
        */
       SectionSource section = new SectionSource(
-          sectionIndex, 
+          sectionIndex,
           systemSources.sectionName(sectionIndex));
       Location location = Locations.closestPoint(
           site.location,
           systemSources.section(sectionIndex).getUpperEdge());
       double azimuth = Locations.azimuth(site.location, location);
 
-      /* Create system contributors for section and attach to parent. */
+      /*
+       * Init sectionMfds and create system contributors for section and attach
+       * to parent.
+       */
       Map<Gmm, SystemContributor.Builder> contributors = new EnumMap<>(Gmm.class);
       for (Gmm gmm : gmmKeys) {
+        IntervalArray.Builder mfdBuilder = IntervalArray.Builder.fromModel(mfdModel);
         SystemContributor.Builder contributor = new SystemContributor.Builder()
-            .section(section, location, azimuth);
+            .section(section, location, azimuth, mfdBuilder);
         contributors.put(gmm, contributor);
         builders.get(gmm).addChildContributor(contributor);
       }
@@ -359,6 +377,13 @@ final class Deaggregator {
           int mIndex = model.magnitudeIndex(Mw);
           boolean skipRupture = (rIndex == -1 || mIndex == -1);
 
+          int mfdIndex = -1;
+          try {
+            mfdIndex = mfdIndexer.rowIndex(Mw);
+          } catch (IndexOutOfBoundsException iobe) {
+            System.out.println(mfdModel.rowMax() + " " + Mw);
+          }
+
           for (Gmm gmm : gmmKeys) {
 
             double gmmWeight = gmms.get(gmm);
@@ -371,6 +396,8 @@ final class Deaggregator {
             double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
 
             SystemContributor.Builder contributor = contributors.get(gmm);
+
+            contributor.addToMfd(mfdIndex, rate);
 
             double rScaled = rRup * rate;
             double mScaled = Mw * rate;

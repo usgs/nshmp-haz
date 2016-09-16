@@ -53,7 +53,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   private final double[] widths;
   private final double[] rakes;
 
-  private final Statistics stats;
+  public final Statistics stats;
 
   /*
    * TODO revisit the fact that BitSets are mutable and could potentially be
@@ -234,14 +234,18 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
   }
 
-  /*
+  /**
    * Container of summary data for this sytem source set.
    */
-  private static final class Statistics {
+  public static final class Statistics {
 
     /* Currently used to build section participation MFDs for deagg. */
-    final double mMin;
-    final double mMax;
+    
+    /** Minimum magnitude over all ruptures. */
+    public final double mMin;
+
+    /** Maximum magnitude over all ruptures. */
+    public final double mMax;
 
     Statistics(
         double mMin,
@@ -260,7 +264,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
    */
   static class Builder extends AbstractSourceSet.Builder {
 
-    // Unfiltered UCERF3: FM31 = 253,706 FM32 = 305,709
+    /* Unfiltered UCERF3: FM31 = 253,706 FM32 = 305,709 */
     static final int RUP_SET_SIZE = 306000;
 
     static final String ID = "SystemSourceSet.Builder";

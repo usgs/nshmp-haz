@@ -208,14 +208,10 @@ public interface IntervalVolume {
     private boolean built = false;
     private boolean initialized = false;
 
-    private Builder() {}
-
     /**
      * Create a new builder.
      */
-    public static Builder create() {
-      return new Builder();
-    }
+    public Builder() {}
 
     /**
      * Create a new builder with a structure identical to that of the supplied
@@ -410,8 +406,8 @@ public interface IntervalVolume {
     }
 
     /*
-     * Check hash codes of row, column, and level arrays in case fromModel has
-     * been used, otherwise check array equality.
+     * Check hash codes of row, column, and level arrays in case fromModel or
+     * copyOf has been used, otherwise check array equality.
      */
     AbstractVolume validateVolume(AbstractVolume that) {
       checkArgument((this.rows.hashCode() == that.rows.hashCode() &&

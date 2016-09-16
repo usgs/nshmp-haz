@@ -177,14 +177,10 @@ public interface IntervalTable {
     private boolean built = false;
     private boolean initialized = false;
 
-    private Builder() {}
-
     /**
      * Create a new builder.
      */
-    public static Builder create() {
-      return new Builder();
-    }
+    public Builder() {}
 
     /**
      * Create a new builder with a structure identical to that of the supplied
@@ -417,8 +413,8 @@ public interface IntervalTable {
     }
 
     /*
-     * Check hash codes of row and column arrays in case fromModel has been
-     * used, otherwise check array equality.
+     * Check hash codes of row and column arrays in case fromModel or copyOf has
+     * been used, otherwise check array equality.
      */
     AbstractTable validateTable(AbstractTable that) {
       checkArgument((this.rows.hashCode() == that.rows.hashCode() &&
