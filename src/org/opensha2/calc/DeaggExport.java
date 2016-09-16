@@ -539,31 +539,32 @@ final class DeaggExport {
       double contributorLimit) {
 
     double toPercent = percentScalar(ddTotal);
+    ContributionFilter contributionFilter = new ContributionFilter(
+        contributorLimit,
+        toPercent);
 
     /*
      * Pre-determine whether any source set contributors will actually be
      * rendered and selectively print contributor table header.
      */
-    boolean contributorsAboveLimit = false;
+
+    List<DeaggContributor> sourceSetContributors = new ArrayList<>();
     for (DeaggContributor contributor : dd.contributors) {
-      if (contributor.total() * toPercent >= contributorLimit) {
-        contributorsAboveLimit = true;
-        break;
+      if (contributionFilter.apply(contributor)) {
+        sourceSetContributors.add(contributor);
+        continue;
       }
+      break;
     }
 
     sb.append("Deaggregation contributors:");
-    if (contributorsAboveLimit) {
+    if (sourceSetContributors.size() > 0) {
       sb.append(NEWLINE).append(NEWLINE).append(CONTRIBUTION_HEADER);
-      boolean firstPrinted = false;
+      boolean firstContributor = true;
       for (DeaggContributor contributor : dd.contributors) {
-        if (contributor.total() * toPercent >= contributorLimit) {
-          if (firstPrinted) {
-            sb.append(NEWLINE);
-          }
-          firstPrinted = true;
-        }
-        contributor.appendTo(sb, toPercent, "", contributorLimit);
+        sb.append(firstContributor ? "" : NEWLINE);
+        firstContributor = false;
+        contributor.appendTo(sb, "", contributionFilter);
       }
     } else {
       sb.append(" Suppressed (all contributions < ")
@@ -590,21 +591,25 @@ final class DeaggExport {
         }
       };
 
-  private static final class ContributionFilter implements Predicate<DeaggContributor> {
+  /* Filters out contributors whose contribution is below supplied limit. */
+  static final class ContributionFilter implements Predicate<DeaggContributor> {
 
-    final double contributorLimit;
-    final double toPercent;
+    private final double limit;
+    private final double toPercent;
 
-    ContributionFilter(double contributorLimit, double toPercent) {
-      this.contributorLimit = contributorLimit;
+    ContributionFilter(double limit, double toPercent) {
+      this.limit = limit;
       this.toPercent = toPercent;
+    }
+    
+    double toPercent(double rate) {
+      return rate * toPercent;
     }
 
     @Override
     public boolean apply(DeaggContributor contributor) {
-      return contributor.total() * toPercent >= contributorLimit;
+      return contributor.total() * toPercent >= limit;
     }
-
   }
 
   static final String SYSTEM_MFD_FORMAT = "%5s, %48s,";

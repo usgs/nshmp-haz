@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
+import org.opensha2.calc.DeaggExport.ContributionFilter;
 import org.opensha2.data.Data;
 import org.opensha2.data.IntervalArray;
 import org.opensha2.eq.model.ClusterSource;
@@ -65,9 +66,8 @@ abstract class DeaggContributor {
 
   abstract StringBuilder appendTo(
       StringBuilder sb,
-      double percentScalar,
       String indent,
-      double contributorLimit);
+      ContributionFilter filter);
 
   abstract static class Builder {
 
@@ -162,20 +162,20 @@ abstract class DeaggContributor {
     @Override
     public StringBuilder appendTo(
         StringBuilder sb,
-        double toPercent,
         String indent,
-        double contributorLimit) {
+        ContributionFilter filter) {
 
-      double contribution = total() * toPercent;
-      if (contribution < contributorLimit) {
-        return sb;
-      }
+      double contribution = filter.toPercent(total());
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_SET_FMT,
           sourceSet.name(), sourceSet.type(), contribution));
       sb.append(NEWLINE);
       for (DeaggContributor child : children) {
-        child.appendTo(sb, toPercent, "  ", contributorLimit);
+        if (filter.apply(child)) {
+          child.appendTo(sb, "  ", filter);
+          continue;
+        }
+        break;
       }
       return sb;
     }
@@ -254,15 +254,10 @@ abstract class DeaggContributor {
     @Override
     StringBuilder appendTo(
         StringBuilder sb,
-        double toPercent,
         String indent,
-        double contributorLimit) {
+        ContributionFilter filter) {
 
       double total = total();
-      double contribution = total * toPercent;
-      if (contribution < contributorLimit) {
-        return sb;
-      }
       double rBar = rScaled / total;
       double mBar = mScaled / total;
       double εBar = εScaled / total;
@@ -271,7 +266,7 @@ abstract class DeaggContributor {
           indent + source.name(),
           rBar, mBar, εBar,
           location.lon(), location.lat(), azimuth,
-          contribution));
+          filter.toPercent(total)));
       sb.append(NEWLINE);
       return sb;
     }
@@ -368,15 +363,10 @@ abstract class DeaggContributor {
     @Override
     StringBuilder appendTo(
         StringBuilder sb,
-        double toPercent,
         String indent,
-        double contributorLimit) {
+        ContributionFilter filter) {
 
       double total = total();
-      double contribution = total() * toPercent;
-      if (contribution < contributorLimit) {
-        return sb;
-      }
       double rBar = rScaled / total;
       double mBar = mScaled / total;
       double εBar = εScaled / total;
@@ -385,10 +375,14 @@ abstract class DeaggContributor {
           indent + cluster.name(),
           rBar, mBar, εBar,
           location.lon(), location.lat(), azimuth,
-          contribution));
+          filter.toPercent(total)));
       sb.append(NEWLINE);
       for (DeaggContributor fault : faults) {
-        fault.appendTo(sb, toPercent, "    ", contributorLimit);
+        if (filter.apply(fault)) {
+          fault.appendTo(sb, "    ", filter);
+          continue;
+        }
+        break;
       }
       return sb;
     }
@@ -480,15 +474,10 @@ abstract class DeaggContributor {
     @Override
     StringBuilder appendTo(
         StringBuilder sb,
-        double toPercent,
         String indent,
-        double contributorLimit) {
+        ContributionFilter filter) {
 
       double total = total();
-      double contribution = total * toPercent;
-      if (contribution < contributorLimit) {
-        return sb;
-      }
       double rBar = rScaled / total;
       double mBar = mScaled / total;
       double εBar = εScaled / total;
@@ -497,7 +486,7 @@ abstract class DeaggContributor {
           indent + section.name(),
           rBar, mBar, εBar,
           location.lon(), location.lat(), azimuth,
-          contribution));
+          filter.toPercent(total)));
       sb.append(NEWLINE);
       return sb;
     }
@@ -538,9 +527,6 @@ abstract class DeaggContributor {
         return this;
       }
 
-      // TODO this isn't needed unless we wanted to add to MFD here, but
-      // this would require repeat index lookup across GMMs. test removal
-      // the only reason one might want it is to return this covariant builder
       Builder add(
           double rate,
           double residual,
@@ -610,7 +596,6 @@ abstract class DeaggContributor {
     @Override
     public String name() {
       return name;
-      // return "System Section (" + index + ")"; TODO use or clean
     }
 
     @Override
