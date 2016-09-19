@@ -491,16 +491,7 @@ abstract class DeaggContributor {
       return sb;
     }
     
-    StringBuilder appendMfd(
-        StringBuilder sb,
-        double toPercent,
-        double contributorLimit) {
-      
-      double total = total();
-      double contribution = total * toPercent;
-      if (contribution < contributorLimit) {
-        return sb;
-      }
+    StringBuilder appendMfd(StringBuilder sb) {
       sb.append(String.format(DeaggExport.SYSTEM_MFD_FORMAT, section.index, section.name()));
       sb.append(Parsing.toString(mfd.values().yValues(), "%9.3g", ",", false, false));
       sb.append(NEWLINE);

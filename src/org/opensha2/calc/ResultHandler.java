@@ -455,7 +455,7 @@ public final class ResultHandler {
         DeaggDataset ddTotal = imtDeagg.totalDataset;
         DeaggConfig dc = imtDeagg.config;
         DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total");
-        exporter.write(imtDeaggDir, name);
+        exporter.toFile(imtDeaggDir, name);
 
         if (exportGmm) {
           for (Entry<Gmm, DeaggDataset> gmmEntry : imtDeagg.gmmDatasets.entrySet()) {
@@ -465,7 +465,7 @@ public final class ResultHandler {
             Files.createDirectories(gmmDir);
             DeaggDataset ddGmm = gmmEntry.getValue();
             exporter = new DeaggExport(ddTotal, ddGmm, dc, gmmEntry.getKey().toString());
-            exporter.write(gmmDir, name);
+            exporter.toFile(gmmDir, name);
           }
         }
       }

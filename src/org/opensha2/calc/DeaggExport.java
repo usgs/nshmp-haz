@@ -2,7 +2,7 @@ package org.opensha2.calc;
 
 import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.opensha2.calc.ResultHandler.APPEND;
+
 import static org.opensha2.calc.ResultHandler.WRITE;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
@@ -71,57 +71,39 @@ final class DeaggExport {
     // TODO need contributions to be JSON serializable
   }
 
-  void write(Path dir, String site) throws IOException {
-
+  void toFile(Path dir, String site) throws IOException {
     Path dataPath = dir.resolve(site + "-data.csv");
     Files.write(dataPath, data.toString().getBytes(UTF_8));
-
     Path summaryPath = dir.resolve(site + "-summary.txt");
-    String contribString = appendContributions(
-        new StringBuilder(),
-        ddTotal,
-        dd,
-        dc.contributorLimit).toString();
-
-    String header = new StringBuilder()
-        .append(NEWLINE)
-        .append("Component: ")
-        .append(id)
-        .append(NEWLINE)
+    String summaryString = summaryStringBuilder()
         .append(DATASET_SEPARATOR)
         .toString();
-
-    Files.write(summaryPath, SECTION_SEPARATOR.getBytes(UTF_8), WRITE);
-    Files.write(summaryPath, header.getBytes(UTF_8));
-    Files.write(summaryPath, summary.toString().getBytes(UTF_8), APPEND);
-    if (dd.binned > 0.0) {
-      Files.write(summaryPath, discretization.toString().getBytes(UTF_8), APPEND);
-      Files.write(summaryPath, εBins.toString().getBytes(UTF_8), APPEND);
-    }
-    Files.write(summaryPath, SECTION_SEPARATOR.getBytes(UTF_8), APPEND);
-    Files.write(summaryPath, contribString.toString().getBytes(UTF_8), APPEND);
-    Files.write(summaryPath, DATASET_SEPARATOR.getBytes(UTF_8), APPEND);
-    // TODO system MFDs
-    Files.write(summaryPath, SECTION_SEPARATOR.getBytes(UTF_8), APPEND);
+    Files.write(summaryPath, summaryString.getBytes(UTF_8), WRITE);
   }
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder()
-        .append(SECTION_SEPARATOR)
-        .append("Component: ").append(id).append(NEWLINE)
-        .append(DATASET_SEPARATOR)
-        .append(summary);
-    if (dd.binned > 0.0) {
-      sb.append(discretization);
-      sb.append(εBins);
-    }
+    StringBuilder sb = summaryStringBuilder();
     sb.append(SECTION_SEPARATOR);
     appendData(sb, data, dd);
+    sb.append(DATASET_SEPARATOR);
+    return sb.toString();
+  }
+
+  private StringBuilder summaryStringBuilder() {
+    StringBuilder sb = new StringBuilder()
+        .append("Component: ")
+        .append(id)
+        .append(NEWLINE)
+        .append(SECTION_SEPARATOR)
+        .append(summary);
+    if (dd.binned > 0.0) {
+      sb.append(discretization)
+          .append(εBins);
+    }
     sb.append(SECTION_SEPARATOR);
     appendContributions(sb, ddTotal, dd, dc.contributorLimit);
-    sb.append(SECTION_SEPARATOR);
-    return sb.toString();
+    return sb;
   }
 
   /*
@@ -537,16 +519,17 @@ final class DeaggExport {
       DeaggDataset dd,
       double contributorLimit) {
 
-    double toPercent = percentScalar(ddTotal);
     ContributionFilter contributionFilter = new ContributionFilter(
         contributorLimit,
-        toPercent);
+        percentScalar(ddTotal));
 
     /*
      * Pre-determine whether any source set contributors will actually be
      * rendered and selectively print contributor table header.
+     * 
+     * Could use a FluentIterable generated list below, but because we know the
+     * contributors are sorted, we short circuit an iterator instead.
      */
-
     List<DeaggContributor> sourceSetContributors = new ArrayList<>();
     for (DeaggContributor contributor : dd.contributors) {
       if (contributionFilter.apply(contributor)) {
@@ -573,7 +556,7 @@ final class DeaggExport {
     }
 
     /* This will append content only if system sources contribute. */
-    appendSystemMfds(sb, ddTotal, dd, contributorLimit);
+    appendSystemMfds(sb, dd, contributionFilter);
 
     return sb;
   }
@@ -586,7 +569,7 @@ final class DeaggExport {
         }
       };
 
-  private static Function<DeaggContributor, SourceSetContributor> SOURCE_SET_CASTER =
+  private static Function<DeaggContributor, SourceSetContributor> TO_SOURCE_SET_CONTRIBUTOR =
       new Function<DeaggContributor, SourceSetContributor>() {
         @Override
         public SourceSetContributor apply(DeaggContributor contributor) {
@@ -619,45 +602,36 @@ final class DeaggExport {
 
   static StringBuilder appendSystemMfds(
       StringBuilder sb,
-      DeaggDataset ddTotal,
       DeaggDataset dd,
-      double contributorLimit) {
-
-    double toPercent = percentScalar(ddTotal);
+      ContributionFilter contributionFilter) {
 
     List<SourceSetContributor> systemSourceSetContributors = FluentIterable
         .from(dd.contributors)
-        .transform(SOURCE_SET_CASTER)
+        .transform(TO_SOURCE_SET_CONTRIBUTOR)
         .filter(SYSTEM_FILTER)
-        .filter(new ContributionFilter(contributorLimit, toPercent))
+        .filter(contributionFilter)
         .toList();
 
-    if (systemSourceSetContributors.size() > 0) {
-      sb.append(DATASET_SEPARATOR);
-    }
-
-    // TODO smooth this out; use predicate/filter
+    boolean first = true;
     for (SourceSetContributor ssc : systemSourceSetContributors) {
-      // TODO this check isn't needed, children will always be present even
-      // for a trace contribution and are only cut off only during rendering
-      // clean this along with contributor toString cleanup
-      if (ssc.children.size() == 0) {
-        continue;
-      }
       SystemContributor model = (SystemContributor) ssc.children.get(0);
-      double modelContribution = model.total() * toPercent;
-      if (modelContribution < contributorLimit) {
+      if (!contributionFilter.apply(model)) {
         continue;
       }
-      sb.append("System section MFDs: " + ssc.sourceSet.name());
-      sb.append(NEWLINE).append(NEWLINE);
-      sb.append(String.format(SYSTEM_MFD_FORMAT, "Index", "Section"));
-      sb.append(Parsing.toString(model.mfd.rows(), "%9.2f", ",", false, true));
-
-      sb.append(NEWLINE);
+      sb.append(first ? SECTION_SEPARATOR : NEWLINE)
+          .append("System section MFDs: " + ssc.sourceSet.name())
+          .append(NEWLINE).append(NEWLINE)
+          .append(String.format(SYSTEM_MFD_FORMAT, "Index", "Section"))
+          .append(Parsing.toString(model.mfd.rows(), "%9.2f", ",", false, true))
+          .append(NEWLINE);
       for (DeaggContributor child : ssc.children) {
-        ((SystemContributor) child).appendMfd(sb, toPercent, contributorLimit);
+        if (contributionFilter.apply(child)) {
+          ((SystemContributor) child).appendMfd(sb);
+          continue;
+        }
+        break;
       }
+      first = false;
     }
     return sb;
   }
