@@ -9,6 +9,7 @@ import org.opensha2.calc.DeaggContributor.ClusterContributor;
 import org.opensha2.calc.DeaggContributor.SourceContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
+import org.opensha2.data.IntervalArray;
 import org.opensha2.data.IntervalData;
 import org.opensha2.data.IntervalTable;
 import org.opensha2.data.IntervalVolume;
@@ -222,7 +223,7 @@ final class DeaggDataset {
         double mMin, double mMax, double Δm,
         double εMin, double εMax, double Δε) {
 
-      rmε = IntervalVolume.Builder.create()
+      rmε = new IntervalVolume.Builder()
           .rows(
               checkInRange(rRange, "Min distance", rMin),
               checkInRange(rRange, "Max distance", rMax),
@@ -236,15 +237,15 @@ final class DeaggDataset {
               checkInRange(εRange, "Max epsilon", εMax),
               Δε);
 
-      rScaled = IntervalVolume.Builder.create()
+      rScaled = new IntervalVolume.Builder()
           .rows(rMin, rMax, Δr)
           .columns(mMin, mMax, Δm)
           .levels(εMin, εMax, Δε);
-      mScaled = IntervalVolume.Builder.create()
+      mScaled = new IntervalVolume.Builder()
           .rows(rMin, rMax, Δr)
           .columns(mMin, mMax, Δm)
           .levels(εMin, εMax, Δε);
-      εScaled = IntervalVolume.Builder.create()
+      εScaled = new IntervalVolume.Builder()
           .rows(rMin, rMax, Δr)
           .columns(mMin, mMax, Δm)
           .levels(εMin, εMax, Δε);
@@ -559,12 +560,14 @@ final class DeaggDataset {
       if (childMap.containsKey(sc.section)) {
         SystemContributor.Builder child = (SystemContributor.Builder) childMap.get(sc.section);
         child.add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
+        child.addMfd(sc.mfd);
         return;
       }
 
       /* Put new. */
+      IntervalArray.Builder mfdBuilder = IntervalArray.Builder.copyOf(sc.mfd);
       DeaggContributor.Builder sourceContributor = new SystemContributor.Builder()
-          .section(sc.section, sc.location, sc.azimuth)
+          .section(sc.section, sc.location, sc.azimuth, mfdBuilder)
           .add(sc.rate, sc.residual, sc.rScaled, sc.mScaled, sc.εScaled);
       childMap.put(sc.section, sourceContributor);
     }

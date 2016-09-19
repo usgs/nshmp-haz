@@ -657,7 +657,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
       double rMax = parent.groundMotionModels().maxDistance();
 
-      IntervalTable.Builder tableBuilder = IntervalTable.Builder.create()
+      IntervalTable.Builder tableBuilder = new IntervalTable.Builder()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
@@ -703,15 +703,15 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
       double rMax = parent.groundMotionModels().maxDistance();
 
-      IntervalTable.Builder ssTableBuilder = IntervalTable.Builder.create()
+      IntervalTable.Builder ssTableBuilder = new IntervalTable.Builder()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
-      IntervalTable.Builder rTableBuilder = IntervalTable.Builder.create()
+      IntervalTable.Builder rTableBuilder = new IntervalTable.Builder()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 
-      IntervalTable.Builder nTableBuilder = IntervalTable.Builder.create()
+      IntervalTable.Builder nTableBuilder = new IntervalTable.Builder()
           .rows(0.0, rMax, distanceDiscretization(rMax))
           .columns(mMin, mMax, Δm);
 

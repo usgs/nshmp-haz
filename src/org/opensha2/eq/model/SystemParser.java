@@ -66,6 +66,7 @@ class SystemParser extends DefaultHandler {
   private GmmSet gmmSet;
   // TODO can these be RuptureSurfaces??
   private List<GriddedSurface> sections;
+  private List<String> sectionNames;
   private SystemSourceSet sourceSet;
   private SystemSourceSet.Builder sourceSetBuilder;
 
@@ -102,16 +103,18 @@ class SystemParser extends DefaultHandler {
       throws SAXException, IOException {
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
-    sections = parseSections(sectionsIn);
+    parseSections(sectionsIn);
     sax.parse(rupturesIn, this);
     checkState(sourceSet.size() > 0, "SystemSourceSet is empty");
     used = true;
     return sourceSet;
   }
 
-  private List<GriddedSurface> parseSections(InputStream in) throws SAXException, IOException {
+  private void parseSections(InputStream in) throws SAXException, IOException {
     SystemSectionParser parser = SystemSectionParser.create(sax);
-    return parser.parse(in);
+    parser.parse(in);
+    sections = parser.sections();
+    sectionNames = parser.sectionNames();
   }
 
   @Override
@@ -139,6 +142,7 @@ class SystemParser extends DefaultHandler {
               .weight(weight)
               .gmms(gmmSet);
           sourceSetBuilder.sections(sections);
+          sourceSetBuilder.sectionNames(sectionNames);
           log.info("     Weight: " + weight);
           log.info("   Sections: " + sections.size());
           log.info("   Ruptures: " + name + "/" + RUPTURES_FILENAME);

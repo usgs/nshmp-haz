@@ -5,13 +5,16 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
+import org.opensha2.calc.DeaggExport.ContributionFilter;
 import org.opensha2.data.Data;
+import org.opensha2.data.IntervalArray;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.Rupture;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Location;
+import org.opensha2.internal.Parsing;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -63,9 +66,8 @@ abstract class DeaggContributor {
 
   abstract StringBuilder appendTo(
       StringBuilder sb,
-      double percentScalar,
       String indent,
-      double contributorLimit);
+      ContributionFilter filter);
 
   abstract static class Builder {
 
@@ -160,20 +162,20 @@ abstract class DeaggContributor {
     @Override
     public StringBuilder appendTo(
         StringBuilder sb,
-        double toPercent,
         String indent,
-        double contributorLimit) {
+        ContributionFilter filter) {
 
-      double contribution = total() * toPercent;
-      if (contribution < contributorLimit) {
-        return sb;
-      }
+      double contribution = filter.toPercent(total());
       sb.append(String.format(
           DeaggExport.CONTRIB_SOURCE_SET_FMT,
           sourceSet.name(), sourceSet.type(), contribution));
       sb.append(NEWLINE);
       for (DeaggContributor child : children) {
-        child.appendTo(sb, toPercent, "  ", contributorLimit);
+        if (filter.apply(child)) {
+          child.appendTo(sb, "  ", filter);
+          continue;
+        }
+        break;
       }
       return sb;
     }
@@ -252,15 +254,10 @@ abstract class DeaggContributor {
     @Override
     StringBuilder appendTo(
         StringBuilder sb,
-        double toPercent,
         String indent,
-        double contributorLimit) {
+        ContributionFilter filter) {
 
       double total = total();
-      double contribution = total * toPercent;
-      if (contribution < contributorLimit) {
-        return sb;
-      }
       double rBar = rScaled / total;
       double mBar = mScaled / total;
       double εBar = εScaled / total;
@@ -269,7 +266,7 @@ abstract class DeaggContributor {
           indent + source.name(),
           rBar, mBar, εBar,
           location.lon(), location.lat(), azimuth,
-          contribution));
+          filter.toPercent(total)));
       sb.append(NEWLINE);
       return sb;
     }
@@ -366,15 +363,10 @@ abstract class DeaggContributor {
     @Override
     StringBuilder appendTo(
         StringBuilder sb,
-        double toPercent,
         String indent,
-        double contributorLimit) {
+        ContributionFilter filter) {
 
       double total = total();
-      double contribution = total() * toPercent;
-      if (contribution < contributorLimit) {
-        return sb;
-      }
       double rBar = rScaled / total;
       double mBar = mScaled / total;
       double εBar = εScaled / total;
@@ -383,10 +375,14 @@ abstract class DeaggContributor {
           indent + cluster.name(),
           rBar, mBar, εBar,
           location.lon(), location.lat(), azimuth,
-          contribution));
+          filter.toPercent(total)));
       sb.append(NEWLINE);
       for (DeaggContributor fault : faults) {
-        fault.appendTo(sb, toPercent, "    ", contributorLimit);
+        if (filter.apply(fault)) {
+          fault.appendTo(sb, "    ", filter);
+          continue;
+        }
+        break;
       }
       return sb;
     }
@@ -450,11 +446,13 @@ abstract class DeaggContributor {
     final SectionSource section;
     final Location location;
     final double azimuth;
+    final IntervalArray mfd;
 
     SystemContributor(
         SectionSource section,
         Location location,
         double azimuth,
+        IntervalArray mfd,
         double rate,
         double residual,
         double rScaled,
@@ -465,25 +463,21 @@ abstract class DeaggContributor {
       this.section = section;
       this.location = location;
       this.azimuth = azimuth;
+      this.mfd = mfd;
     }
 
     @Override
     public String toString() {
-      return "System contributor: Section " + section.sectionIndex;
+      return "System contributor: Section " + section.index;
     }
 
     @Override
     StringBuilder appendTo(
         StringBuilder sb,
-        double toPercent,
         String indent,
-        double contributorLimit) {
+        ContributionFilter filter) {
 
       double total = total();
-      double contribution = total * toPercent;
-      if (contribution < contributorLimit) {
-        return sb;
-      }
       double rBar = rScaled / total;
       double mBar = mScaled / total;
       double εBar = εScaled / total;
@@ -492,7 +486,14 @@ abstract class DeaggContributor {
           indent + section.name(),
           rBar, mBar, εBar,
           location.lon(), location.lat(), azimuth,
-          contribution));
+          filter.toPercent(total)));
+      sb.append(NEWLINE);
+      return sb;
+    }
+    
+    StringBuilder appendMfd(StringBuilder sb) {
+      sb.append(String.format(DeaggExport.SYSTEM_MFD_FORMAT, section.index, section.name()));
+      sb.append(Parsing.toString(mfd.values().yValues(), "%9.3g", ",", false, false));
       sb.append(NEWLINE);
       return sb;
     }
@@ -502,11 +503,18 @@ abstract class DeaggContributor {
       SectionSource section;
       Location location;
       double azimuth;
+      IntervalArray.Builder mfd;
 
-      Builder section(SectionSource section, Location location, double azimuth) {
+      Builder section(
+          SectionSource section,
+          Location location,
+          double azimuth,
+          IntervalArray.Builder mfd) {
+
         this.section = section;
         this.location = location;
         this.azimuth = azimuth;
+        this.mfd = mfd;
         return this;
       }
 
@@ -518,6 +526,20 @@ abstract class DeaggContributor {
           double εScaled) {
 
         super.add(rate, residual, rScaled, mScaled, εScaled);
+        return this;
+      }
+
+      /*
+       * The mfd data could be backed out on every call to add, but this likely
+       * requires a bin index lookup to be repeated across all relevant Gmms.
+       */
+      Builder addToMfd(int index, double rate) {
+        mfd.add(index, rate);
+        return this;
+      }
+      
+      Builder addMfd(IntervalArray mfd) {
+        this.mfd.add(mfd);
         return this;
       }
 
@@ -537,6 +559,7 @@ abstract class DeaggContributor {
             section,
             location,
             azimuth,
+            mfd.build(),
             rate,
             residual,
             rScaled,
@@ -553,15 +576,17 @@ abstract class DeaggContributor {
    */
   static final class SectionSource implements Source {
 
-    final int sectionIndex;
+    final int index;
+    final String name;
 
-    SectionSource(int sectionIndex) {
-      this.sectionIndex = sectionIndex;
+    SectionSource(int index, String name) {
+      this.index = index;
+      this.name = name;
     }
 
     @Override
     public String name() {
-      return "System Section (" + sectionIndex + ")";
+      return name;
     }
 
     @Override
@@ -577,9 +602,7 @@ abstract class DeaggContributor {
 
     @Override
     public Location location(Location site) {
-      return null;
-      // TODO do nothing
-
+      return null; // unused
     }
 
     @Override

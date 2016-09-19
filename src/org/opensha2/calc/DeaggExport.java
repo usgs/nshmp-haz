@@ -2,18 +2,24 @@ package org.opensha2.calc;
 
 import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.StandardOpenOption.APPEND;
 
+import static org.opensha2.calc.ResultHandler.WRITE;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig.Deagg.Bins;
+import org.opensha2.calc.DeaggContributor.SourceSetContributor;
+import org.opensha2.calc.DeaggContributor.SystemContributor;
 import org.opensha2.data.Data;
+import org.opensha2.eq.model.SourceType;
 import org.opensha2.internal.MathUtils;
+import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
@@ -65,53 +71,39 @@ final class DeaggExport {
     // TODO need contributions to be JSON serializable
   }
 
-  void write(Path dir, String site) throws IOException {
-
+  void toFile(Path dir, String site) throws IOException {
     Path dataPath = dir.resolve(site + "-data.csv");
     Files.write(dataPath, data.toString().getBytes(UTF_8));
-
     Path summaryPath = dir.resolve(site + "-summary.txt");
-    String contribString = appendContributions(
-        new StringBuilder(), 
-        ddTotal, 
-        dd, 
-        dc.contributorLimit).toString();
-
-    String header = new StringBuilder()
-        .append(NEWLINE)
-        .append("Component: ")
-        .append(id)
-        .append(NEWLINE)
+    String summaryString = summaryStringBuilder()
         .append(DATASET_SEPARATOR)
         .toString();
-
-    Files.write(summaryPath, header.getBytes(UTF_8));
-    Files.write(summaryPath, summary.toString().getBytes(UTF_8), APPEND);
-    if (dd.binned > 0.0) {
-      Files.write(summaryPath, discretization.toString().getBytes(UTF_8), APPEND);
-      Files.write(summaryPath, εBins.toString().getBytes(UTF_8), APPEND);
-    }
-    Files.write(summaryPath, SECTION_SEPARATOR.getBytes(UTF_8), APPEND);
-    Files.write(summaryPath, contribString.toString().getBytes(UTF_8), APPEND);
-    Files.write(summaryPath, DATASET_SEPARATOR.getBytes(UTF_8), APPEND);
+    Files.write(summaryPath, summaryString.getBytes(UTF_8), WRITE);
   }
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder(NEWLINE)
-        .append("Component: ").append(id).append(NEWLINE)
-        .append(DATASET_SEPARATOR)
-        .append(summary);
-    if (dd.binned > 0.0) {
-      sb.append(discretization);
-      sb.append(εBins);
-    }
+    StringBuilder sb = summaryStringBuilder();
     sb.append(SECTION_SEPARATOR);
     appendData(sb, data, dd);
-    sb.append(SECTION_SEPARATOR);
-    appendContributions(sb, ddTotal, dd, dc.contributorLimit);
     sb.append(DATASET_SEPARATOR);
     return sb.toString();
+  }
+
+  private StringBuilder summaryStringBuilder() {
+    StringBuilder sb = new StringBuilder()
+        .append("Component: ")
+        .append(id)
+        .append(NEWLINE)
+        .append(SECTION_SEPARATOR)
+        .append(summary);
+    if (dd.binned > 0.0) {
+      sb.append(discretization)
+          .append(εBins);
+    }
+    sb.append(SECTION_SEPARATOR);
+    appendContributions(sb, ddTotal, dd, dc.contributorLimit);
+    return sb;
   }
 
   /*
@@ -527,38 +519,119 @@ final class DeaggExport {
       DeaggDataset dd,
       double contributorLimit) {
 
-    double toPercent = percentScalar(ddTotal);
+    ContributionFilter contributionFilter = new ContributionFilter(
+        contributorLimit,
+        percentScalar(ddTotal));
 
     /*
      * Pre-determine whether any source set contributors will actually be
      * rendered and selectively print contributor table header.
+     * 
+     * Could use a FluentIterable generated list below, but because we know the
+     * contributors are sorted, we short circuit an iterator instead.
      */
-    boolean contributorsAboveLimit = false;
+    List<DeaggContributor> sourceSetContributors = new ArrayList<>();
     for (DeaggContributor contributor : dd.contributors) {
-      if (contributor.total() * toPercent >= contributorLimit) {
-        contributorsAboveLimit = true;
-        break;
+      if (contributionFilter.apply(contributor)) {
+        sourceSetContributors.add(contributor);
+        continue;
       }
+      break;
     }
 
     sb.append("Deaggregation contributors:");
-    if (contributorsAboveLimit) {
+    if (sourceSetContributors.size() > 0) {
       sb.append(NEWLINE).append(NEWLINE).append(CONTRIBUTION_HEADER);
-      boolean firstPrinted = false;
-      for (DeaggContributor contributor : dd.contributors) {
-        if (contributor.total() * toPercent >= contributorLimit) {
-          if (firstPrinted) {
-            sb.append(NEWLINE);
-          }
-          firstPrinted = true;
-        }
-        contributor.appendTo(sb, toPercent, "", contributorLimit);
+      boolean firstContributor = true;
+      for (DeaggContributor contributor : sourceSetContributors) {
+        sb.append(firstContributor ? "" : NEWLINE);
+        firstContributor = false;
+        contributor.appendTo(sb, "", contributionFilter);
       }
     } else {
       sb.append(" Suppressed (all contributions < ")
           .append(contributorLimit)
           .append("%).")
           .append(NEWLINE);
+    }
+
+    /* This will append content only if system sources contribute. */
+    appendSystemMfds(sb, dd, contributionFilter);
+
+    return sb;
+  }
+
+  private static Predicate<SourceSetContributor> SYSTEM_FILTER =
+      new Predicate<SourceSetContributor>() {
+        @Override
+        public boolean apply(SourceSetContributor contributor) {
+          return contributor.sourceSet.type() == SourceType.SYSTEM;
+        }
+      };
+
+  private static Function<DeaggContributor, SourceSetContributor> TO_SOURCE_SET_CONTRIBUTOR =
+      new Function<DeaggContributor, SourceSetContributor>() {
+        @Override
+        public SourceSetContributor apply(DeaggContributor contributor) {
+          return (SourceSetContributor) contributor;
+        }
+      };
+
+  /* Filters out contributors whose contribution is below supplied limit. */
+  static final class ContributionFilter implements Predicate<DeaggContributor> {
+
+    private final double limit;
+    private final double toPercent;
+
+    ContributionFilter(double limit, double toPercent) {
+      this.limit = limit;
+      this.toPercent = toPercent;
+    }
+
+    double toPercent(double rate) {
+      return rate * toPercent;
+    }
+
+    @Override
+    public boolean apply(DeaggContributor contributor) {
+      return contributor.total() * toPercent >= limit;
+    }
+  }
+
+  static final String SYSTEM_MFD_FORMAT = "%5s, %48s,";
+
+  static StringBuilder appendSystemMfds(
+      StringBuilder sb,
+      DeaggDataset dd,
+      ContributionFilter contributionFilter) {
+
+    List<SourceSetContributor> systemSourceSetContributors = FluentIterable
+        .from(dd.contributors)
+        .transform(TO_SOURCE_SET_CONTRIBUTOR)
+        .filter(SYSTEM_FILTER)
+        .filter(contributionFilter)
+        .toList();
+
+    boolean first = true;
+    for (SourceSetContributor ssc : systemSourceSetContributors) {
+      SystemContributor model = (SystemContributor) ssc.children.get(0);
+      if (!contributionFilter.apply(model)) {
+        continue;
+      }
+      sb.append(first ? SECTION_SEPARATOR : NEWLINE)
+          .append("System section MFDs: " + ssc.sourceSet.name())
+          .append(NEWLINE).append(NEWLINE)
+          .append(String.format(SYSTEM_MFD_FORMAT, "Index", "Section"))
+          .append(Parsing.toString(model.mfd.rows(), "%9.2f", ",", false, true))
+          .append(NEWLINE);
+      for (DeaggContributor child : ssc.children) {
+        if (contributionFilter.apply(child)) {
+          ((SystemContributor) child).appendMfd(sb);
+          continue;
+        }
+        break;
+      }
+      first = false;
     }
     return sb;
   }

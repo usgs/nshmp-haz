@@ -44,6 +44,7 @@ import java.util.Map;
 public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.SystemSource> {
 
   private final GriddedSurface[] sections;
+  private final String[] sectionNames;
   private final BitSet[] bitsets;
   private final double[] mags;
   private final double[] rates;
@@ -51,6 +52,8 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   private final double[] dips;
   private final double[] widths;
   private final double[] rakes;
+
+  public final Statistics stats;
 
   /*
    * TODO revisit the fact that BitSets are mutable and could potentially be
@@ -64,17 +67,20 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
       String name, int id, double weight,
       GmmSet gmmSet,
       GriddedSurface[] sections,
+      String[] sectionNames,
       BitSet[] bitsets,
       double[] mags,
       double[] rates,
       double[] depths,
       double[] dips,
       double[] widths,
-      double[] rakes) {
+      double[] rakes,
+      Statistics stats) {
 
     super(name, id, weight, gmmSet);
 
     this.sections = sections;
+    this.sectionNames = sectionNames;
     this.bitsets = bitsets;
     this.mags = mags;
     this.rates = rates;
@@ -82,6 +88,8 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     this.dips = dips;
     this.widths = widths;
     this.rakes = rakes;
+
+    this.stats = stats;
   }
 
   @Override
@@ -123,10 +131,9 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   }
 
   /**
-   * Return the fault section surface corresponding to the supplied
-   * {@code index}.
+   * The fault section surface corresponding to the supplied {@code index}.
    * 
-   * * <p>This method exists because system source sets are complex and comonly
+   * <p>This method exists because system source sets are complex and commonly
    * encapsulate 100K+ sources. The results of a hazard calculation and
    * deaggregation are therefore better represented in the context of individual
    * fault sections, rather than on a per-source basis.
@@ -135,6 +142,15 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
    */
   public GriddedSurface section(int index) {
     return sections[index];
+  }
+
+  /**
+   * The name of the fault section corresponding to the supplied {@code index}.
+   * 
+   * @param index of fault section name to retrieve
+   */
+  public String sectionName(int index) {
+    return sectionNames[index];
   }
 
   /**
@@ -218,6 +234,28 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
   }
 
+  /**
+   * Container of summary data for this sytem source set.
+   */
+  public static final class Statistics {
+
+    /* Currently used to build section participation MFDs for deagg. */
+    
+    /** Minimum magnitude over all ruptures. */
+    public final double mMin;
+
+    /** Maximum magnitude over all ruptures. */
+    public final double mMax;
+
+    Statistics(
+        double mMin,
+        double mMax) {
+
+      this.mMin = mMin;
+      this.mMax = mMax;
+    }
+  }
+
   /*
    * Single use builder. Quirky behavior: Note that sections() must be called
    * before any calls to indices(). All indices and data fields should be
@@ -226,12 +264,13 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
    */
   static class Builder extends AbstractSourceSet.Builder {
 
-    // Unfiltered UCERF3: FM31 = 253,706 FM32 = 305,709
+    /* Unfiltered UCERF3: FM31 = 253,706 FM32 = 305,709 */
     static final int RUP_SET_SIZE = 306000;
 
     static final String ID = "SystemSourceSet.Builder";
 
     private List<GriddedSurface> sections;
+    private List<String> sectionNames;
     private final List<BitSet> bitsets = new ArrayList<>(RUP_SET_SIZE);
     private final List<Double> mags = new ArrayList<>(RUP_SET_SIZE);
     private final List<Double> rates = new ArrayList<>(RUP_SET_SIZE);
@@ -239,14 +278,21 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     private final List<Double> dips = new ArrayList<>(RUP_SET_SIZE);
     private final List<Double> widths = new ArrayList<>(RUP_SET_SIZE);
     private final List<Double> rakes = new ArrayList<>(RUP_SET_SIZE);
-    
-    private double minMag = Double.POSITIVE_INFINITY;
-    private double maxMag = Double.NEGATIVE_INFINITY;
-    
+
+    private double mMin = Double.POSITIVE_INFINITY;
+    private double mMax = Double.NEGATIVE_INFINITY;
+
     Builder sections(List<GriddedSurface> sections) {
       checkNotNull(sections, "Section surface list is null");
       checkArgument(sections.size() > 0, "Section surface list is empty");
       this.sections = sections;
+      return this;
+    }
+    
+    Builder sectionNames(List<String> names) {
+      checkNotNull(names, "Section name list is null");
+      checkArgument(names.size() > 0, "Section name list is empty");
+      this.sectionNames = names;
       return this;
     }
 
@@ -262,9 +308,8 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
     Builder mag(double mag) {
       mags.add(checkMagnitude(mag));
-//      dfjgsdklf TODO clean finish stats
-      minMag = (mag < minMag) ? mag : minMag;
-      maxMag = (mag > maxMag) ? mag : maxMag;
+      mMin = (mag < mMin) ? mag : mMin;
+      mMax = (mag > mMax) ? mag : mMax;
       return this;
     }
 
@@ -300,6 +345,10 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
       checkState(sections.size() > 0, "%s no sections added", buildId);
       checkState(bitsets.size() > 0, "%s no index lists added", buildId);
+      checkState(
+          sections.size() == sectionNames.size(),
+          "%s section list (%s) and name list (%s) are different sizes",
+          buildId, sections.size(), sectionNames.size());
 
       int target = bitsets.size();
       checkSize(mags.size(), target, buildId, "magnitudes");
@@ -316,20 +365,23 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
     SystemSourceSet build() {
       validateState(ID);
+      Statistics stats = new Statistics(mMin, mMax);
 
       return new SystemSourceSet(
           name,
           id,
           weight,
           gmmSet,
-          sections.toArray(new GriddedSurface[] {}), // ImmutableList.copyOf(sections),
+          sections.toArray(new GriddedSurface[] {}),
+          sectionNames.toArray(new String[] {}),
           bitsets.toArray(new BitSet[] {}),
           Doubles.toArray(mags),
           Doubles.toArray(rates),
           Doubles.toArray(depths),
           Doubles.toArray(dips),
           Doubles.toArray(widths),
-          Doubles.toArray(rakes));
+          Doubles.toArray(rakes),
+          stats);
     }
   }
 
