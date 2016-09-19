@@ -2,8 +2,8 @@ package org.opensha2.calc;
 
 import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.StandardOpenOption.APPEND;
-
+import static org.opensha2.calc.ResultHandler.APPEND;
+import static org.opensha2.calc.ResultHandler.WRITE;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig.Deagg.Bins;
@@ -91,7 +91,7 @@ final class DeaggExport {
         .append(DATASET_SEPARATOR)
         .toString();
 
-    Files.write(summaryPath, SECTION_SEPARATOR.getBytes(UTF_8), APPEND);
+    Files.write(summaryPath, SECTION_SEPARATOR.getBytes(UTF_8), WRITE);
     Files.write(summaryPath, header.getBytes(UTF_8));
     Files.write(summaryPath, summary.toString().getBytes(UTF_8), APPEND);
     if (dd.binned > 0.0) {
@@ -120,7 +120,6 @@ final class DeaggExport {
     appendData(sb, data, dd);
     sb.append(SECTION_SEPARATOR);
     appendContributions(sb, ddTotal, dd, dc.contributorLimit);
-    appendSystemMfds(sb, ddTotal, dd, dc.contributorLimit);
     sb.append(SECTION_SEPARATOR);
     return sb.toString();
   }
@@ -561,7 +560,7 @@ final class DeaggExport {
     if (sourceSetContributors.size() > 0) {
       sb.append(NEWLINE).append(NEWLINE).append(CONTRIBUTION_HEADER);
       boolean firstContributor = true;
-      for (DeaggContributor contributor : dd.contributors) {
+      for (DeaggContributor contributor : sourceSetContributors) {
         sb.append(firstContributor ? "" : NEWLINE);
         firstContributor = false;
         contributor.appendTo(sb, "", contributionFilter);
@@ -572,6 +571,10 @@ final class DeaggExport {
           .append("%).")
           .append(NEWLINE);
     }
+
+    /* This will append content only if system sources contribute. */
+    appendSystemMfds(sb, ddTotal, dd, contributorLimit);
+
     return sb;
   }
 
@@ -601,7 +604,7 @@ final class DeaggExport {
       this.limit = limit;
       this.toPercent = toPercent;
     }
-    
+
     double toPercent(double rate) {
       return rate * toPercent;
     }
@@ -633,6 +636,7 @@ final class DeaggExport {
       sb.append(DATASET_SEPARATOR);
     }
 
+    // TODO smooth this out; use predicate/filter
     for (SourceSetContributor ssc : systemSourceSetContributors) {
       // TODO this check isn't needed, children will always be present even
       // for a trace contribution and are only cut off only during rendering

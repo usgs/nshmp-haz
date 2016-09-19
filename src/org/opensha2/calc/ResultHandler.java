@@ -4,10 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.US_ASCII;
-import static java.nio.file.StandardOpenOption.APPEND;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
 
 import static org.opensha2.data.XySequence.emptyCopyOf;
 
@@ -42,6 +38,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -65,8 +62,13 @@ public final class ResultHandler {
   private static final String TEXT_SUFFIX = ".csv";
   private static final String RATE_FMT = "%.8e";
 
-  private static final OpenOption[] WRITE_OPTIONS = new OpenOption[] {};
-  private static final OpenOption[] APPEND_OPTIONS = new OpenOption[] { APPEND };
+  static final OpenOption[] WRITE = new OpenOption[] {
+      StandardOpenOption.CREATE,
+      StandardOpenOption.TRUNCATE_EXISTING,
+      StandardOpenOption.WRITE };
+
+  static final OpenOption[] APPEND = new OpenOption[] {
+      StandardOpenOption.APPEND };
 
   private final Logger log;
   private final Path dir;
@@ -245,7 +247,7 @@ public final class ResultHandler {
 
     Set<Gmm> gmms = gmmSet(demo.model);
 
-    OpenOption[] options = !firstBatch ? APPEND_OPTIONS : WRITE_OPTIONS;
+    OpenOption[] options = !firstBatch ? APPEND : WRITE;
 
     Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
     if (demo.config.curve.valueType == CurveValue.POISSON_PROBABILITY) {
@@ -698,7 +700,7 @@ public final class ResultHandler {
       toBuffer(entry.getValue(), buf);
       int position = HEADER_OFFSET + entry.getKey() * CURVE_SIZE;
       channel.write(buf, position);
-      
+
     }
     channel.close();
   }
@@ -717,7 +719,7 @@ public final class ResultHandler {
         .imls(config.curve.modelCurve(imt).xValues())
         .build();
 
-    FileChannel channel = FileChannel.open(path, CREATE, TRUNCATE_EXISTING, WRITE);
+    FileChannel channel = FileChannel.open(path, WRITE);
     ByteBuffer header = createHeader(m);
     header.flip();
     channel.write(header);
