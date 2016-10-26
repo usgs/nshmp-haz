@@ -249,8 +249,13 @@ public enum RuptureScaling {
 
   private static final String MAG_ID = "#Mag";
   private static final String COMMENT_ID = "#";
+  private static final double RJB_M_MIN = 6.05;
+  private static final double RJB_M_CUTOFF = 6.0;
+  private static final double RJB_M_DELTA = 0.1;
   private static final int RJB_M_SIZE = 26;
+  private static final int RJB_M_MAX_INDEX = RJB_M_SIZE - 1;
   private static final int RJB_R_SIZE = 1001;
+  private static final int RJB_R_MAX_INDEX = RJB_R_SIZE - 1;
   private static final double[][] RJB_DAT_WC94LENGTH = readRjb("etc/rjb_wc94length.dat");
   private static final double[][] RJB_DAT_GEOMATRIX = readRjb("etc/rjb_geomatrix.dat");
   private static final double[][] RJB_DAT_SOMERVILLE = readRjb("etc/rjb_somerville.dat");
@@ -295,14 +300,14 @@ public enum RuptureScaling {
    */
 
   private static double correctedRjb(double m, double r, double[][] rjb) {
-    if (m < 6.0) {
+    if (m < RJB_M_CUTOFF) {
       return r;
     }
-    int mIndex = min((int) round((m - 6.05) / 0.1), 25);
-    int rIndex = (int) floor(r);
-    return (rIndex <= 1000) ? rjb[mIndex][rIndex] : r;
+    int mIndex = min((int) round((m - RJB_M_MIN) / RJB_M_DELTA), RJB_M_MAX_INDEX);
+    int rIndex =  min(RJB_R_MAX_INDEX, (int) floor(r));
+    return rjb[mIndex][rIndex];
   }
-
+  
   /**
    * Return the dimensions of a magnitude-dependent and width-constrained
    * rupture.
