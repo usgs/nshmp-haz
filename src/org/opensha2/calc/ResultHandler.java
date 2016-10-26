@@ -8,6 +8,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.opensha2.data.XySequence.emptyCopyOf;
 
 import org.opensha2.calc.Deaggregation.ImtDeagg;
+import org.opensha2.calc.ResultHandler.Metadata.Builder;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
@@ -89,13 +90,8 @@ public final class ResultHandler {
   private final List<Hazard> hazards;
   private final List<Deaggregation> deaggs;
 
-  /*
-   * Currently used when intializing binary files; the only variation in
-   * metadata is for different Imt and their attendant IMLs, which are largely
-   * unused when processed by other codes.
-   */
-  private final Metadata.Builder metaBuilder;
-  private final Metadata metaDefault;
+  /* Only used for binary file export. */
+  private final Map<Imt, Metadata> metaMap;
 
   private ResultHandler(CalcConfig config, Sites sites, Logger log) {
     this.log = log;
@@ -114,18 +110,24 @@ public final class ResultHandler {
     this.totalWatch = Stopwatch.createStarted();
 
     if (exportBinary) {
-      checkState(exportBinary && sites.mapBounds().isPresent(),
-          BINARY_EXTENTS_REQUIRED_MSSG);
-      this.metaBuilder = Metadata.builder()
+      checkState(exportBinary && sites.mapBounds().isPresent(), BINARY_EXTENTS_REQUIRED_MSSG);
+      this.metaMap = new EnumMap<>(Imt.class);
+      Builder metaBuilder = Metadata.builder()
           .bounds(sites.mapBounds().get())
           .spacing(sites.mapSpacing().get())
           .description("nshmp-haz generated curves")
           .timestamp(new Timestamp(System.currentTimeMillis()).toString())
           .vs30(demoSite.vs30);
-      this.metaDefault = metaBuilder.build();
+      for (Entry<Imt, XySequence> entry : config.curve.modelCurves().entrySet()) {
+        Imt imt = entry.getKey();
+        Metadata meta = metaBuilder
+            .imt(imt)
+            .imls(entry.getValue().xValues())
+            .build();
+        this.metaMap.put(imt, meta);
+      }
     } else {
-      metaBuilder = null;
-      metaDefault = null;
+      this.metaMap = null;
     }
   }
 
@@ -243,8 +245,6 @@ public final class ResultHandler {
 
     Hazard demo = hazards.get(0);
 
-    ByteBuffer buffer = ByteBuffer.allocate(CURVE_SIZE).order(LITTLE_ENDIAN);
-
     Set<Gmm> gmms = gmmSet(demo.model);
 
     OpenOption[] options = !firstBatch ? APPEND : WRITE;
@@ -348,9 +348,11 @@ public final class ResultHandler {
             imtEntry.getValue().yValues(),
             formatter));
 
+        Metadata meta = null;
         int binIndex = -1;
         if (exportBinary) {
-          binIndex = curveIndex(metaDefault.bounds, metaDefault.spacing, location);
+          meta = metaMap.get(imt);
+          binIndex = curveIndex2(meta.bounds, meta.spacing, location);
           totalCurves.get(imt).put(binIndex, totalCurve);
         }
 
@@ -396,10 +398,13 @@ public final class ResultHandler {
       Files.createDirectories(imtDir);
       Path totalFile = imtDir.resolve("total" + TEXT_SUFFIX);
       Files.write(totalFile, totalEntry.getValue(), US_ASCII, options);
-
+      
+      Metadata meta = null;
+      
       if (exportBinary) {
+        meta = metaMap.get(imt);
         Path totalBinFile = imtDir.resolve("total" + BINARY_SUFFIX);
-        writeBinaryBatch(totalBinFile, totalCurves.get(imt), buffer, imt);
+        writeBinaryBatch(totalBinFile, meta, totalCurves.get(imt));
       }
 
       if (exportSource) {
@@ -412,7 +417,7 @@ public final class ResultHandler {
           Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
           if (exportBinary) {
             Path typeBinFile = typeDir.resolve(filename + BINARY_SUFFIX);
-            writeBinaryBatch(typeBinFile, typeCurves.get(imt).get(type), buffer, imt);
+            writeBinaryBatch(typeBinFile, meta, typeCurves.get(imt).get(type));
           }
         }
       }
@@ -427,7 +432,7 @@ public final class ResultHandler {
           Files.write(gmmFile, gmmEntry.getValue(), US_ASCII, options);
           if (exportBinary) {
             Path gmmBinFile = gmmDir.resolve(filename + BINARY_SUFFIX);
-            writeBinaryBatch(gmmBinFile, gmmCurves.get(imt).get(gmm), buffer, imt);
+            writeBinaryBatch(gmmBinFile, meta, gmmCurves.get(imt).get(gmm));
           }
         }
       }
@@ -576,8 +581,7 @@ public final class ResultHandler {
    * Binary file export utilities.
    */
 
-  private static final int MAX_IML_COUNT = 20;
-  private static final int CURVE_SIZE = MAX_IML_COUNT * 4; // bytes
+  private static final int HEADER_MAX_IMLS = 20;
   private static final int HEADER_OFFSET = 896; // bytes
   private static final int INFO_LINE_SIZE = 128; // chars
 
@@ -596,6 +600,8 @@ public final class ResultHandler {
     final double vs30;
     final double basin = 0.0;
     final int gridSize;
+    final int curveByteSize;
+    final ByteBuffer buffer;
 
     static Builder builder() {
       return new Builder();
@@ -619,6 +625,8 @@ public final class ResultHandler {
       this.imls = imls;
       this.vs30 = vs30;
       this.gridSize = gridSize;
+      this.curveByteSize = imls.size() * 4;
+      this.buffer = ByteBuffer.allocate(curveByteSize).order(LITTLE_ENDIAN);
     }
 
     static final class Builder {
@@ -659,8 +667,8 @@ public final class ResultHandler {
       }
 
       Builder imls(List<Double> imls) {
-        checkArgument(imls.size() <= MAX_IML_COUNT,
-            "Binary output only supports <=20 IMLs");
+        checkArgument(imls.size() <= HEADER_MAX_IMLS,
+            "Binary output only supports <= 20 IMLs");
         this.imls = imls;
         return this;
       }
@@ -687,56 +695,50 @@ public final class ResultHandler {
 
   private void writeBinaryBatch(
       Path path,
-      Map<Integer, XySequence> curves,
-      ByteBuffer buf,
-      Imt imt) throws IOException {
+      Metadata meta,
+      Map<Integer, XySequence> curves) throws IOException {
 
     if (!Files.exists(path)) {
-      initBinary(path, imt);
+      initBinary(path, meta);
     }
 
-    FileChannel channel = FileChannel.open(path, WRITE);
+    FileChannel channel = FileChannel.open(path, APPEND);
     for (Entry<Integer, XySequence> entry : curves.entrySet()) {
-      toBuffer(entry.getValue(), buf);
-      int position = HEADER_OFFSET + entry.getKey() * CURVE_SIZE;
-      channel.write(buf, position);
-
+      toBuffer(entry.getValue(), meta.buffer);
+      int position = HEADER_OFFSET + entry.getKey() * meta.curveByteSize;
+      channel.write(meta.buffer, position);
     }
     channel.close();
   }
 
-  private static void toBuffer(XySequence curve, ByteBuffer buf) {
-    buf.clear();
+  private static void toBuffer(XySequence curve, ByteBuffer buffer) {
+    buffer.clear();
     for (double y : curve.yValues()) {
-      buf.putFloat((float) y);
+      buffer.putFloat((float) y);
     }
-    buf.flip();
+    buffer.flip();
   }
 
-  private void initBinary(Path path, Imt imt) throws IOException {
-    Metadata m = metaBuilder
-        .imt(imt)
-        .imls(config.curve.modelCurve(imt).xValues())
-        .build();
-
+  private void initBinary(Path path, Metadata meta) throws IOException {
     FileChannel channel = FileChannel.open(path, WRITE);
-    ByteBuffer header = createHeader(m);
+    ByteBuffer header = createHeader(meta);
     header.flip();
     channel.write(header);
-    channel.write(ByteBuffer.allocate(m.gridSize * MAX_IML_COUNT));
+    /* Initialize with zero-valued curves. */
+    channel.write(ByteBuffer.allocate(meta.gridSize * meta.curveByteSize));
     channel.close();
   }
 
   /* Header occupies 1664 bytes total */
   private static ByteBuffer createHeader(Metadata m) {
-    ByteBuffer buf = ByteBuffer.allocate(HEADER_OFFSET).order(LITTLE_ENDIAN);
+    ByteBuffer buffer = ByteBuffer.allocate(HEADER_OFFSET).order(LITTLE_ENDIAN);
 
     /* Info lines: 6 lines * 128 chars (1 byte) = 768 */
     byte[] desc = Strings.padEnd(m.description, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
     byte[] time = Strings.padEnd(m.timestamp, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
     byte[] dummy = Strings.padEnd("", INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
 
-    buf.put(desc)
+    buffer.put(desc)
         .put(time)
         .put(dummy)
         .put(dummy)
@@ -746,14 +748,14 @@ public final class ResultHandler {
     /* Imt and Imls: (1 int + 21 floats) * 4 bytes = 88 */
     float period = (float) ((m.imt == Imt.PGA) ? 0.0 : (m.imt == Imt.PGV) ? -1.0 : m.imt.period());
     int imlCount = m.imls.size();
-    buf.putFloat(period)
+    buffer.putFloat(period)
         .putInt(imlCount);
-    for (int i = 0; i < MAX_IML_COUNT; i++) {
-      buf.putFloat(i < imlCount ? m.imls.get(i).floatValue() : 0.0f);
+    for (int i = 0; i < HEADER_MAX_IMLS; i++) {
+      buffer.putFloat(i < imlCount ? m.imls.get(i).floatValue() : 0.0f);
     }
 
     /* Grid info: 10 floats * 4 bytes = 40 */
-    buf.putFloat(-1.0f) // empty
+    buffer.putFloat(-1.0f) // empty
         .putFloat((float) m.bounds.min().lon())
         .putFloat((float) m.bounds.max().lon())
         .putFloat((float) m.spacing)
@@ -764,7 +766,7 @@ public final class ResultHandler {
         .putFloat((float) m.vs30)
         .putFloat((float) m.basin);
 
-    return buf;
+    return buffer;
   }
 
   private static int gridSize(Bounds b, double spacing) {
@@ -777,10 +779,17 @@ public final class ResultHandler {
    * Compute the target position of a curve in a binary file. NSHMP binary files
    * index ascending in longitude, but descending in latitude.
    */
-  private static int curveIndex(Bounds b, double spacing, Location loc) {
+//  private static int curveIndex(Bounds b, double spacing, Location loc) {
+//    int rowIndex = (int) Math.rint((b.max().lat() - loc.lat()) / spacing);
+//    int colIndex = (int) Math.rint((loc.lon() - b.min().lon()) / spacing);
+//    return rowIndex * MAX_IML_COUNT + colIndex;
+//  }
+
+  private static int curveIndex2(Bounds b, double spacing, Location loc) {
+    int columnCount = (int) Math.rint((b.max().lon() - b.min().lon()) / spacing) + 1;
     int rowIndex = (int) Math.rint((b.max().lat() - loc.lat()) / spacing);
     int colIndex = (int) Math.rint((loc.lon() - b.min().lon()) / spacing);
-    return rowIndex * MAX_IML_COUNT + colIndex;
+    return rowIndex * columnCount + colIndex;
   }
 
 }
