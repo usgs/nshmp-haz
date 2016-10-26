@@ -75,16 +75,4 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
     return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ), SIGMA);
   }
 
-  // TODO clean
-  public static void main(String[] args) {
-    AtkinsonBoore_2006p gmm = new AtkinsonBoore_2006p(Imt.PGA);
-    double m = atkinsonTableValue(gmm.table, Imt.PGA, 3.5, 4.0, 760.0, gmm.bcfac);
-    System.out.println(m);
-    System.out.println(Math.exp(m));
-    double clipped = GmmUtils.ceusMeanClip(Imt.PGA, m);
-    System.out.println(clipped);
-    System.out.println(Math.exp(clipped));
-
-  }
-
 }
