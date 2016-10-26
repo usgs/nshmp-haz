@@ -29,7 +29,9 @@ public enum CurveType {
    * <p>The output format is a NSHMP file format that works with a number of
    * legacy fortran codes still in use. See <a
    * href="https://github.com/usgs/nshmp-haz-fortran"
-   * target="_top">nshmp-haz-fortran</a>.
+   * target="_top">nshmp-haz-fortran</a>. Users should be aware that the format
+   * has certain restrictions, for instance, the maximum number of intensity
+   * measure levels that can be accomodated is 20. Buyer beware.
    */
   BINARY;
 }

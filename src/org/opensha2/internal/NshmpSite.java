@@ -22,7 +22,7 @@ public enum NshmpSite implements NamedLocation {
 
   /*
    * Items are organized broadly by state and states are grouped as belonging
-   * either to northern or southern Caligornia, the intermountain west, the
+   * either to northern or southern California, the intermountain west, the
    * Pacific northwest, of the central and eastern US.
    */
 
