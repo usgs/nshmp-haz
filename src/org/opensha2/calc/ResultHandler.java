@@ -702,7 +702,7 @@ public final class ResultHandler {
       initBinary(path, meta);
     }
 
-    FileChannel channel = FileChannel.open(path, APPEND);
+    FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE);
     for (Entry<Integer, XySequence> entry : curves.entrySet()) {
       toBuffer(entry.getValue(), meta.buffer);
       int position = HEADER_OFFSET + entry.getKey() * meta.curveByteSize;
