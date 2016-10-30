@@ -48,20 +48,20 @@ final class GroundMotionTables {
   // TODO NGA-East csv files may be linear R.
 
   static GroundMotionTable getFrankel96(Imt imt, SiteClass siteClass) {
-    return siteClass == SiteClass.SOFT_ROCK ? frankelSoftRock.get(imt)
-        : frankelHardRock.get(imt);
+    return siteClass == SiteClass.SOFT_ROCK ? FRANKEL_SOFT_ROCK.get(imt)
+        : FRANKEL_HARD_ROCK.get(imt);
   }
 
   static GroundMotionTable getAtkinson06(Imt imt) {
-    return atkinson06.get(imt);
+    return ATKINSON_06.get(imt);
   }
 
   static GroundMotionTable getAtkinson08(Imt imt) {
-    return atkinson08.get(imt);
+    return ATKINSON_08.get(imt);
   }
 
   static GroundMotionTable getPezeshk11(Imt imt) {
-    return pezeshk11.get(imt);
+    return PEZESHK_11.get(imt);
   }
 
   private static final String T_DIR = "tables/";
@@ -74,9 +74,11 @@ final class GroundMotionTables {
       "pgak006.tbl", "t0p2k006.tbl", "t1p0k006.tbl", "t0p1k006.tbl",
       "t0p3k006.tbl", "t0p5k006.tbl", "t2p0k006.tbl" };
 
-  private static final String atkinson06src = "AB06revA_Rcd.dat";
-  private static final String atkinson08src = "A08revA_Rjb.dat";
-  private static final String pezeshk11src = "P11A_Rcd.dat";
+  private static final String ATKINSON_06_SRC = "AB06revA_Rcd.dat";
+  private static final String ATKINSON_08_SRC = "A08revA_Rjb.dat";
+  private static final String PEZESHK_11_SRC = "P11A_Rcd.dat";
+  
+//  private static final String 
 
   private static final double[] ATKINSON_R = {
       -1.000, 0.000, 0.301, 0.699, 1.000, 1.176, 1.301, 1.398, 1.477, 1.602,
@@ -92,6 +94,11 @@ final class GroundMotionTables {
       1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1,
       2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
 
+  private static final double[] NGA_EAST_R = {
+      0.0, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0,
+      110.0, 120.0, 130.0, 140.0, 150.0, 175.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0,
+      600.0, 700.0, 800.0, 1000.0, 1200.0, 1500.0 };
+
   private static final double[] ATKINSON_M = {
       4.00, 4.25, 4.50, 4.75, 5.00, 5.25, 5.50, 5.75, 6.00,
       6.25, 6.50, 6.75, 7.00, 7.25, 7.50, 7.75, 8.00 };
@@ -104,23 +111,26 @@ final class GroundMotionTables {
       4.4, 4.6, 4.8, 5.0, 5.2, 5.4, 5.6, 5.8, 6.0, 6.2, 6.4,
       6.6, 6.8, 7.0, 7.2, 7.4, 7.6, 7.8, 8.0, 8.2 };
 
+  private static final double[] NGA_EAST_M = {
+      4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 7.8, 8.0, 8.2 };
+
   // different numeric representations of 0.33 3.3 and 33.0 Hz
   private static final Set<Double> FREQ3_LO = ImmutableSet.of(0.32, 0.33);
   private static final Set<Double> FREQ3_MID = ImmutableSet.of(3.2, 3.33);
   private static final Set<Double> FREQ3_HI = ImmutableSet.of(32.0, 33.0, 33.33);
 
-  private static final Map<Imt, GroundMotionTable> frankelHardRock;
-  private static final Map<Imt, GroundMotionTable> frankelSoftRock;
-  private static final Map<Imt, GroundMotionTable> atkinson06;
-  private static final Map<Imt, GroundMotionTable> atkinson08;
-  private static final Map<Imt, GroundMotionTable> pezeshk11;
+  private static final Map<Imt, GroundMotionTable> FRANKEL_HARD_ROCK;
+  private static final Map<Imt, GroundMotionTable> FRANKEL_SOFT_ROCK;
+  private static final Map<Imt, GroundMotionTable> ATKINSON_06;
+  private static final Map<Imt, GroundMotionTable> ATKINSON_08;
+  private static final Map<Imt, GroundMotionTable> PEZESHK_11;
 
   static {
-    frankelHardRock = initFrankel(frankelSrcHR, FRANKEL_R, FRANKEL_M);
-    frankelSoftRock = initFrankel(frankelSrcSR, FRANKEL_R, FRANKEL_M);
-    atkinson06 = initAtkinson(atkinson06src, ATKINSON_R, ATKINSON_M);
-    atkinson08 = initAtkinson(atkinson08src, ATKINSON_R, ATKINSON_M);
-    pezeshk11 = initAtkinson(pezeshk11src, PEZESHK_R, PEZESHK_M);
+    FRANKEL_HARD_ROCK = initFrankel(frankelSrcHR, FRANKEL_R, FRANKEL_M);
+    FRANKEL_SOFT_ROCK = initFrankel(frankelSrcSR, FRANKEL_R, FRANKEL_M);
+    ATKINSON_06 = initAtkinson(ATKINSON_06_SRC, ATKINSON_R, ATKINSON_M);
+    ATKINSON_08 = initAtkinson(ATKINSON_08_SRC, ATKINSON_R, ATKINSON_M);
+    PEZESHK_11 = initAtkinson(PEZESHK_11_SRC, PEZESHK_R, PEZESHK_M);
   }
 
   private static Map<Imt, GroundMotionTable> initFrankel(String[] files, double[] rKeys,
@@ -192,8 +202,7 @@ final class GroundMotionTables {
     /**
      * Return a linearly interpolated ground motion value from the table. Values
      * outside the range supported by the table are generally constrained to min
-     * or max values, although implementations may behave differently. Some
-     * implementations store data in log space and
+     * or max values, although implementations may behave differently.
      *
      * @param m magnitude to consider
      * @param r distance to consider, whether this is rRup or rJB is
@@ -422,6 +431,8 @@ final class GroundMotionTables {
       return true;
     }
   }
+  
+  
 
   /*
    * Converts frequencies from Gail Atkinson style Gmm tables to IMTs.
