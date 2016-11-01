@@ -73,7 +73,7 @@ final class HazardCurves {
     private Builder(GroundMotions groundMotions) {
       this.groundMotions = groundMotions;
       curveMap = new EnumMap<>(Imt.class);
-      for (Imt imt : groundMotions.μLists.keySet()) {
+      for (Imt imt : groundMotions.gmMap.keySet()) {
         Map<Gmm, XySequence> gmmMap = new EnumMap<>(Gmm.class);
         curveMap.put(imt, gmmMap);
       }
@@ -81,7 +81,6 @@ final class HazardCurves {
 
     /* Put an immutable copy of the supplied curve. */
     Builder addCurve(Imt imt, Gmm gmm, XySequence curve) {
-      // TODO refactor to set or put
       curveMap.get(imt).put(gmm, immutableCopyOf(curve));
       return this;
     }

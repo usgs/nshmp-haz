@@ -2,15 +2,15 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
+import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.gmm.ScalarGroundMotion;
 
 import com.google.common.collect.Maps;
-import com.google.common.primitives.Doubles;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,47 +25,40 @@ import java.util.Set;
 final class GroundMotions {
 
   /*
-   * NOTE the inputList supplied to Builder is immutable but the mean and sigma
-   * lists it builds are not; builder backs mean and sigma lists with double[].
-   * Nor are the mean and sigma maps immutable.
-   *
-   * TODO It would be nice to have an immutable variant of a double[] backed
-   * list, but would require copying values on build().
+   * NOTE the inputList supplied to Builder is immutable but the
+   * ScalarGroundMotion map it builds is not.
    */
 
   final InputList inputs;
-  final Map<Imt, Map<Gmm, List<Double>>> μLists;
-  final Map<Imt, Map<Gmm, List<Double>>> σLists;
+  final Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> gmMap;
 
   private GroundMotions(
       InputList inputs,
-      Map<Imt, Map<Gmm, List<Double>>> μLists,
-      Map<Imt, Map<Gmm, List<Double>>> σLists) {
+      Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> gmMap) {
+    
     this.inputs = inputs;
-    this.μLists = μLists;
-    this.σLists = σLists;
+    this.gmMap = gmMap;
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder(getClass().getSimpleName());
     sb.append(" [").append(inputs.parentName()).append("]");
-    sb.append(": ").append(LINE_SEPARATOR.value());
-    for (int i = 0; i < inputs.size(); i++) {
-      sb.append(inputs.get(i));
+    sb.append(":").append(NEWLINE);
+    for (Entry<Imt, Map<Gmm, List<ScalarGroundMotion>>> imtEntry : gmMap.entrySet()) {
       sb.append(" ");
-      for (Entry<Imt, Map<Gmm, List<Double>>> imtEntry : μLists.entrySet()) {
-        Imt imt = imtEntry.getKey();
-        sb.append(imt.name()).append(" [");
-        for (Entry<Gmm, List<Double>> gmmEntry : imtEntry.getValue().entrySet()) {
-          Gmm gmm = gmmEntry.getKey();
-          sb.append(gmm.name()).append(" ");
-          sb.append(String.format("μ=%.3f", gmmEntry.getValue().get(i))).append(" ");
-          sb.append(String.format("σ=%.3f", σLists.get(imt).get(gmm).get(i))).append(" ");
+      Imt imt = imtEntry.getKey();
+      for (Entry<Gmm, List<ScalarGroundMotion>> gmmEntry : imtEntry.getValue().entrySet()) {
+        sb.append(imt.name()).append(" [ ");
+        Gmm gmm = gmmEntry.getKey();
+        sb.append(gmm.name()).append(" ");
+        for (ScalarGroundMotion sgm : gmmEntry.getValue()) {
+          sb.append(String.format("μ=%.3f", sgm.mean())).append(" ");
+          sb.append(String.format("σ=%.3f", sgm.sigma())).append(" ");
         }
         sb.append("] ");
       }
-      sb.append(LINE_SEPARATOR.value());
+      sb.append(NEWLINE);
     }
     return sb.toString();
   }
@@ -81,7 +74,7 @@ final class GroundMotions {
    * against the combined result.
    */
   static GroundMotions combine(InputList inputs, List<GroundMotions> groundMotions) {
-    Map<Imt, Map<Gmm, List<Double>>> keyModel = groundMotions.get(0).μLists;
+    Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> keyModel = groundMotions.get(0).gmMap;
     Set<Imt> imtKeys = keyModel.keySet();
     Set<Gmm> gmmKeys = keyModel.get(imtKeys.iterator().next()).keySet();
     return builder(inputs, imtKeys, gmmKeys)
@@ -97,23 +90,19 @@ final class GroundMotions {
     private int addCount = 0;
 
     private final InputList inputs;
-    private final Map<Imt, Map<Gmm, List<Double>>> means;
-    private final Map<Imt, Map<Gmm, List<Double>>> sigmas;
+    private final Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> gmMap;
 
     private Builder(InputList inputs, Set<Imt> imts, Set<Gmm> gmms) {
       checkArgument(inputs.size() > 0);
       checkArgument(gmms.size() > 0);
       this.inputs = inputs;
-      means = initValueMaps(imts, gmms, inputs.size());
-      sigmas = initValueMaps(imts, gmms, inputs.size());
+      gmMap = initGmMap(imts, gmms, inputs.size());
       size = imts.size() * gmms.size() * inputs.size();
     }
 
-    // TODO refactor to set()
-    Builder add(Imt imt, Gmm gmm, ScalarGroundMotion sgm, int index) {
+    Builder add(Imt imt, Gmm gmm, ScalarGroundMotion sgm) {
       checkState(addCount < size, "This %s instance is already full", ID);
-      means.get(imt).get(gmm).set(index, sgm.mean());
-      sigmas.get(imt).get(gmm).set(index, sgm.sigma());
+      gmMap.get(imt).get(gmm).add(sgm);
       addCount++;
       return this;
     }
@@ -122,19 +111,20 @@ final class GroundMotions {
       checkState(!built, "This %s instance has already been used", ID);
       checkState(addCount == size, "Only %s of %s entries have been added", addCount, size);
       built = true;
-      return new GroundMotions(inputs, means, sigmas);
+      GroundMotions gms = new GroundMotions(inputs, gmMap);
+      return gms;
     }
 
-    static Map<Imt, Map<Gmm, List<Double>>> initValueMaps(
+    static Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> initGmMap(
         Set<Imt> imts,
         Set<Gmm> gmms,
         int size) {
 
-      Map<Imt, Map<Gmm, List<Double>>> imtMap = Maps.newEnumMap(Imt.class);
+      Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> imtMap = Maps.newEnumMap(Imt.class);
       for (Imt imt : imts) {
-        Map<Gmm, List<Double>> gmmMap = Maps.newEnumMap(Gmm.class);
+        Map<Gmm, List<ScalarGroundMotion>> gmmMap = Maps.newEnumMap(Gmm.class);
         for (Gmm gmm : gmms) {
-          gmmMap.put(gmm, Doubles.asList(new double[size]));
+          gmmMap.put(gmm, new ArrayList<ScalarGroundMotion>(size));
         }
         imtMap.put(imt, gmmMap);
       }
@@ -147,43 +137,29 @@ final class GroundMotions {
      * intializing the builder with the original master InputList.
      */
     private Builder combine(List<GroundMotions> groundMotions) {
-      int startIndex = 0;
-      for (GroundMotions gm : groundMotions) {
-        addCount += setValues(means, gm.μLists, sigmas, gm.σLists, startIndex);
-        startIndex += gm.inputs.size();
+      for (GroundMotions gms : groundMotions) {
+        addCount += addValues(gmMap, gms.gmMap);
       }
       return this;
     }
 
-    private static int setValues(
-        Map<Imt, Map<Gmm, List<Double>>> μTargetMap,
-        Map<Imt, Map<Gmm, List<Double>>> μValueMap,
-        Map<Imt, Map<Gmm, List<Double>>> σTargetMap,
-        Map<Imt, Map<Gmm, List<Double>>> σValueMap,
-        int startIndex) {
-
+    private static int addValues(
+        Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> sgmTargetMap,
+        Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> sgmValueMap) {
+      
       int setCount = 0;
-      for (Entry<Imt, Map<Gmm, List<Double>>> imtEntry : μTargetMap.entrySet()) {
+      for (Entry<Imt, Map<Gmm, List<ScalarGroundMotion>>> imtEntry : sgmTargetMap.entrySet()) {
         Imt imt = imtEntry.getKey();
-        for (Entry<Gmm, List<Double>> gmmEntry : imtEntry.getValue().entrySet()) {
+        for (Entry<Gmm, List<ScalarGroundMotion>> gmmEntry : imtEntry.getValue().entrySet()) {
           Gmm gmm = gmmEntry.getKey();
-
-          List<Double> μTarget = gmmEntry.getValue();
-          List<Double> μValues = μValueMap.get(imt).get(gmm);
-          List<Double> σTarget = σTargetMap.get(imt).get(gmm);
-          List<Double> σValues = σValueMap.get(imt).get(gmm);
-
-          setCount += μValues.size();
-
-          for (int i = 0; i < μValues.size(); i++) {
-            int targetIndex = startIndex + i;
-            μTarget.set(targetIndex, μValues.get(i));
-            σTarget.set(targetIndex, σValues.get(i));
-          }
+          List<ScalarGroundMotion> sgmTarget = gmmEntry.getValue();
+          List<ScalarGroundMotion> sgmValues = sgmValueMap.get(imt).get(gmm);
+          sgmTarget.addAll(sgmValues);
+          setCount += sgmValues.size();
         }
       }
       return setCount;
     }
-
   }
+  
 }
