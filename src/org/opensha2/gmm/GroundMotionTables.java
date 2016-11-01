@@ -14,6 +14,7 @@ import static org.opensha2.internal.Parsing.splitToDoubleList;
 import static org.opensha2.internal.Parsing.splitToList;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
+import org.opensha2.data.Data;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
@@ -106,10 +107,10 @@ final class GroundMotionTables {
       1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1,
       2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
 
-  private static final double[] NGA_EAST_R = {
-      0.0, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0,
+  private static final double[] NGA_EAST_R = Data.log(new double[] {
+      0.00001, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0,
       110.0, 120.0, 130.0, 140.0, 150.0, 175.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0,
-      600.0, 700.0, 800.0, 1000.0, 1200.0, 1500.0 };
+      600.0, 700.0, 800.0, 1000.0, 1200.0, 1500.0 });
 
   private static final double[] ATKINSON_M = {
       4.00, 4.25, 4.50, 4.75, 5.00, 5.25, 5.50, 5.75, 6.00,
