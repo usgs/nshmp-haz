@@ -19,6 +19,7 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
+import org.opensha2.gmm.ScalarGroundMotion;
 import org.opensha2.internal.MathUtils;
 
 import com.google.common.base.Function;
@@ -189,8 +190,7 @@ final class Deaggregator {
     /* Local references from argument. */
     InputList inputs = gms.inputs;
     Map<Gmm, Double> gmms = gmmSet.gmmWeightMap(gms.inputs.minDistance);
-    Map<Gmm, List<Double>> μLists = gms.μLists.get(imt);
-    Map<Gmm, List<Double>> σLists = gms.σLists.get(imt);
+    Map<Gmm, List<ScalarGroundMotion>> gmLists = gms.gmMap.get(imt);
 
     /* Local EnumSet based keys; gmms.keySet() is not an EnumSet. */
     final Set<Gmm> gmmKeys = EnumSet.copyOf(gmms.keySet());
@@ -216,8 +216,9 @@ final class Deaggregator {
 
         double gmmWeight = gmms.get(gmm);
 
-        double μ = μLists.get(gmm).get(i);
-        double σ = σLists.get(gmm).get(i);
+        ScalarGroundMotion sgm = gmLists.get(gmm).get(i);
+        double μ = sgm.mean();
+        double σ = sgm.sigma();
         double ε = epsilon(μ, σ, iml);
 
         double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
@@ -315,8 +316,7 @@ final class Deaggregator {
     SystemInputList inputs = (SystemInputList) gms.inputs;
     List<BitSet> bitsets = inputs.bitsets;
     Map<Gmm, Double> gmms = gmmSet.gmmWeightMap(gms.inputs.minDistance);
-    Map<Gmm, List<Double>> μLists = gms.μLists.get(imt);
-    Map<Gmm, List<Double>> σLists = gms.σLists.get(imt);
+    Map<Gmm, List<ScalarGroundMotion>> gmLists = gms.gmMap.get(imt);
 
     /* Local EnumSet based keys; gmms.keySet() is not an EnumSet. */
     final Set<Gmm> gmmKeys = EnumSet.copyOf(gmms.keySet());
@@ -388,8 +388,9 @@ final class Deaggregator {
 
             double gmmWeight = gmms.get(gmm);
 
-            double μ = μLists.get(gmm).get(sourceIndex);
-            double σ = σLists.get(gmm).get(sourceIndex);
+            ScalarGroundMotion sgm = gmLists.get(gmm).get(sourceIndex);
+            double μ = sgm.mean();
+            double σ = sgm.sigma();
             double ε = epsilon(μ, σ, iml);
 
             double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);

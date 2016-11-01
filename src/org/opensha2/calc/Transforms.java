@@ -25,6 +25,7 @@ import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmInput;
 import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
+import org.opensha2.gmm.ScalarGroundMotion;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -131,9 +132,8 @@ final class Transforms {
       for (Imt imt : imtKeys) {
         for (Gmm gmm : gmmKeys) {
           GroundMotionModel model = gmmTable.get(imt).get(gmm);
-          int inputIndex = 0;
           for (GmmInput gmmInput : inputs) {
-            builder.add(imt, gmm, model.calc(gmmInput), inputIndex++);
+            builder.add(imt, gmm, model.calc(gmmInput));
           }
         }
       }
@@ -159,36 +159,31 @@ final class Transforms {
     }
 
     @Override
-    public HazardCurves apply(GroundMotions groundMotions) {
+    public HazardCurves apply(GroundMotions gms) {
 
-      HazardCurves.Builder curveBuilder = HazardCurves.builder(groundMotions);
+      HazardCurves.Builder curveBuilder = HazardCurves.builder(gms);
 
-      for (Entry<Imt, XySequence> entry : modelCurves.entrySet()) {
+      for (Entry<Imt, Map<Gmm, List<ScalarGroundMotion>>> imtEntry : gms.gmMap.entrySet()) {
 
-        XySequence modelCurve = entry.getValue();
-        Imt imt = entry.getKey();
-
+        Imt imt = imtEntry.getKey();
+        XySequence modelCurve = modelCurves.get(imt);
         XySequence utilCurve = XySequence.copyOf(modelCurve);
         XySequence gmmCurve = XySequence.copyOf(modelCurve);
 
-        for (Gmm gmm : groundMotions.μLists.get(imt).keySet()) {
-
+        for (Entry<Gmm, List<ScalarGroundMotion>> gmmEntry : imtEntry.getValue().entrySet()) {
           gmmCurve.clear();
-
-          List<Double> means = groundMotions.μLists.get(imt).get(gmm);
-          List<Double> sigmas = groundMotions.σLists.get(imt).get(gmm);
-
-          for (int i = 0; i < means.size(); i++) {
+          int i = 0;
+          for (ScalarGroundMotion gm : gmmEntry.getValue()) {
             exceedanceModel.exceedance(
-                means.get(i),
-                sigmas.get(i),
+                gm.mean(),
+                gm.sigma(),
                 truncationLevel,
                 imt,
                 utilCurve);
-            utilCurve.multiply(groundMotions.inputs.get(i).rate);
+            utilCurve.multiply(gms.inputs.get(i++).rate);
             gmmCurve.add(utilCurve);
           }
-          curveBuilder.addCurve(imt, gmm, gmmCurve);
+          curveBuilder.addCurve(imt, gmmEntry.getKey(), gmmCurve);
         }
       }
       return curveBuilder.build();
@@ -217,12 +212,12 @@ final class Transforms {
     }
 
     @Override
-    public HazardCurves apply(GroundMotions groundMotions) {
+    public HazardCurves apply(GroundMotions gms) {
 
-      HazardCurves.Builder curveBuilder = HazardCurves.builder(groundMotions);
+      HazardCurves.Builder curveBuilder = HazardCurves.builder(gms);
 
       // initialize uncertainty for each input
-      InputList inputs = groundMotions.inputs;
+      InputList inputs = gms.inputs;
       double[] uncertainties = new double[inputs.size()];
       double[] rates = new double[inputs.size()];
       for (int i = 0; i < inputs.size(); i++) {
@@ -231,34 +226,29 @@ final class Transforms {
         uncertainties[i] = gmmSet.epiValue(input.Mw, input.rJB);
       }
 
-      for (Entry<Imt, XySequence> entry : modelCurves.entrySet()) {
+      for (Entry<Imt, Map<Gmm, List<ScalarGroundMotion>>> imtEntry : gms.gmMap.entrySet()) {
 
-        XySequence modelCurve = entry.getValue();
-        Imt imt = entry.getKey();
-
+        Imt imt = imtEntry.getKey();
+        XySequence modelCurve = modelCurves.get(imt);
         XySequence utilCurve = XySequence.copyOf(modelCurve);
         XySequence gmmCurve = XySequence.copyOf(modelCurve);
 
-        for (Gmm gmm : groundMotions.μLists.get(imt).keySet()) {
-
+        for (Entry<Gmm, List<ScalarGroundMotion>> gmmEntry : imtEntry.getValue().entrySet()) {
           gmmCurve.clear();
-
-          List<Double> means = groundMotions.μLists.get(imt).get(gmm);
-          List<Double> sigmas = groundMotions.σLists.get(imt).get(gmm);
-
-          for (int i = 0; i < means.size(); i++) {
-            double mean = means.get(i);
+          int i = 0;
+          for (ScalarGroundMotion gm : gmmEntry.getValue()) {
+            double mean = gm.mean();
             double epi = uncertainties[i];
             double[] epiMeans = new double[] { mean - epi, mean, mean + epi };
             exceedanceCurve(
                 epiMeans,
-                sigmas.get(i),
+                gm.sigma(),
                 imt,
                 utilCurve);
-            utilCurve.multiply(groundMotions.inputs.get(i).rate);
+            utilCurve.multiply(inputs.get(i++).rate);
             gmmCurve.add(utilCurve);
           }
-          curveBuilder.addCurve(imt, gmm, gmmCurve);
+          curveBuilder.addCurve(imt, gmmEntry.getKey(), gmmCurve);
         }
       }
       return curveBuilder.build();
@@ -589,21 +579,20 @@ final class Transforms {
 
         for (GroundMotions groundMotions : clusterGroundMotions) {
 
-          Map<Gmm, List<Double>> gmmMeans = groundMotions.μLists.get(imt);
-          Map<Gmm, List<Double>> gmmSigmas = groundMotions.σLists.get(imt);
+          Map<Gmm, List<ScalarGroundMotion>> gmmGmMap = groundMotions.gmMap.get(imt);
 
-          for (Gmm gmm : gmmMeans.keySet()) {
+          for (Gmm gmm : gmmGmMap.keySet()) {
             XySequence magVarCurve = XySequence.copyOf(modelCurve);
-            List<Double> means = gmmMeans.get(gmm);
-            List<Double> sigmas = gmmSigmas.get(gmm);
-            for (int i = 0; i < groundMotions.inputs.size(); i++) {
+            List<ScalarGroundMotion> gms = gmmGmMap.get(gmm);
+            int i = 0;
+            for (ScalarGroundMotion gm : gms) {
               exceedanceModel.exceedance(
-                  means.get(i),
-                  sigmas.get(i),
+                  gm.mean(),
+                  gm.sigma(),
                   truncationLevel,
                   imt,
                   utilCurve);
-              utilCurve.multiply(groundMotions.inputs.get(i).rate);
+              utilCurve.multiply(groundMotions.inputs.get(i++).rate);
               magVarCurve.add(utilCurve);
             }
             faultCurves.put(gmm, magVarCurve);
