@@ -11,11 +11,14 @@ import static org.opensha2.gmm.Imt.SA0P03;
 import static org.opensha2.gmm.Imt.SA0P3;
 import static org.opensha2.gmm.Imt.SA3P0;
 import static org.opensha2.internal.Parsing.splitToDoubleList;
+import static org.opensha2.internal.Parsing.splitToList;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
 
+import com.google.common.base.Enums;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
@@ -38,33 +41,41 @@ import java.util.logging.Logger;
 /**
  * Utility class to load and fetch {@code GroundMotionModel} lookup tables.
  *
- * The currently implemented tables store ground motion in log10 values;
- * additionaly, Atkinson flavored tables store ground motion in cm/s^2.
+ * Frankel, Atkinson, and Pezeshk tables store ground motion in log10 values.
+ * Atkinson flavored tables store ground motion in cm/s^2. NGA-East tables
+ * contain linear ground motion values. All tables interpolate in log10 distance
+ * and linear in magnitude.
  *
  * @author Peter Powers
  */
 final class GroundMotionTables {
 
-  // TODO NGA-East csv files may be linear R.
-
   static GroundMotionTable getFrankel96(Imt imt, SiteClass siteClass) {
-    return siteClass == SiteClass.SOFT_ROCK ? frankelSoftRock.get(imt)
-        : frankelHardRock.get(imt);
+    return siteClass == SiteClass.SOFT_ROCK ? FRANKEL_SOFT_ROCK.get(imt)
+        : FRANKEL_HARD_ROCK.get(imt);
   }
 
   static GroundMotionTable getAtkinson06(Imt imt) {
-    return atkinson06.get(imt);
+    return ATKINSON_06.get(imt);
   }
 
   static GroundMotionTable getAtkinson08(Imt imt) {
-    return atkinson08.get(imt);
+    return ATKINSON_08.get(imt);
   }
 
   static GroundMotionTable getPezeshk11(Imt imt) {
-    return pezeshk11.get(imt);
+    return PEZESHK_11.get(imt);
   }
 
-  private static final String T_DIR = "tables/";
+  static GroundMotionTable[] getNgaEast(Imt imt) {
+    return NGA_EAST.get(imt);
+  }
+
+  static double[] getNgaEastWeights(Imt imt) {
+    return NGA_EAST_WEIGHTS.get(imt);
+  }
+
+  private static final String TABLE_DIR = "tables/";
 
   private static final String[] frankelSrcSR = {
       "pgak01l.tbl", "t0p2k01l.tbl", "t1p0k01l.tbl", "t0p1k01l.tbl",
@@ -74,9 +85,12 @@ final class GroundMotionTables {
       "pgak006.tbl", "t0p2k006.tbl", "t1p0k006.tbl", "t0p1k006.tbl",
       "t0p3k006.tbl", "t0p5k006.tbl", "t2p0k006.tbl" };
 
-  private static final String atkinson06src = "AB06revA_Rcd.dat";
-  private static final String atkinson08src = "A08revA_Rjb.dat";
-  private static final String pezeshk11src = "P11A_Rcd.dat";
+  private static final String ATKINSON_06_SRC = "AB06revA_Rcd.dat";
+  private static final String ATKINSON_08_SRC = "A08revA_Rjb.dat";
+  private static final String PEZESHK_11_SRC = "P11A_Rcd.dat";
+
+  private static final String NGA_EAST_FILENAME_FMT = "nga-east-%s.csv";
+  private static final int NGA_EAST_MODEL_COUNT = 29;
 
   private static final double[] ATKINSON_R = {
       -1.000, 0.000, 0.301, 0.699, 1.000, 1.176, 1.301, 1.398, 1.477, 1.602,
@@ -92,6 +106,11 @@ final class GroundMotionTables {
       1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1,
       2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
 
+  private static final double[] NGA_EAST_R = {
+      0.0, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0,
+      110.0, 120.0, 130.0, 140.0, 150.0, 175.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0,
+      600.0, 700.0, 800.0, 1000.0, 1200.0, 1500.0 };
+
   private static final double[] ATKINSON_M = {
       4.00, 4.25, 4.50, 4.75, 5.00, 5.25, 5.50, 5.75, 6.00,
       6.25, 6.50, 6.75, 7.00, 7.25, 7.50, 7.75, 8.00 };
@@ -104,34 +123,40 @@ final class GroundMotionTables {
       4.4, 4.6, 4.8, 5.0, 5.2, 5.4, 5.6, 5.8, 6.0, 6.2, 6.4,
       6.6, 6.8, 7.0, 7.2, 7.4, 7.6, 7.8, 8.0, 8.2 };
 
+  private static final double[] NGA_EAST_M = {
+      4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 7.8, 8.0, 8.2 };
+
   // different numeric representations of 0.33 3.3 and 33.0 Hz
   private static final Set<Double> FREQ3_LO = ImmutableSet.of(0.32, 0.33);
   private static final Set<Double> FREQ3_MID = ImmutableSet.of(3.2, 3.33);
   private static final Set<Double> FREQ3_HI = ImmutableSet.of(32.0, 33.0, 33.33);
 
-  private static final Map<Imt, GroundMotionTable> frankelHardRock;
-  private static final Map<Imt, GroundMotionTable> frankelSoftRock;
-  private static final Map<Imt, GroundMotionTable> atkinson06;
-  private static final Map<Imt, GroundMotionTable> atkinson08;
-  private static final Map<Imt, GroundMotionTable> pezeshk11;
+  private static final Map<Imt, GroundMotionTable> FRANKEL_HARD_ROCK;
+  private static final Map<Imt, GroundMotionTable> FRANKEL_SOFT_ROCK;
+  private static final Map<Imt, GroundMotionTable> ATKINSON_06;
+  private static final Map<Imt, GroundMotionTable> ATKINSON_08;
+  private static final Map<Imt, GroundMotionTable> PEZESHK_11;
+  private static final Map<Imt, GroundMotionTable[]> NGA_EAST;
+  private static final Map<Imt, double[]> NGA_EAST_WEIGHTS;
 
   static {
-    frankelHardRock = initFrankel(frankelSrcHR, FRANKEL_R, FRANKEL_M);
-    frankelSoftRock = initFrankel(frankelSrcSR, FRANKEL_R, FRANKEL_M);
-    atkinson06 = initAtkinson(atkinson06src, ATKINSON_R, ATKINSON_M);
-    atkinson08 = initAtkinson(atkinson08src, ATKINSON_R, ATKINSON_M);
-    pezeshk11 = initAtkinson(pezeshk11src, PEZESHK_R, PEZESHK_M);
+    FRANKEL_HARD_ROCK = initFrankel(frankelSrcHR);
+    FRANKEL_SOFT_ROCK = initFrankel(frankelSrcSR);
+    ATKINSON_06 = initAtkinson(ATKINSON_06_SRC, ATKINSON_R, ATKINSON_M);
+    ATKINSON_08 = initAtkinson(ATKINSON_08_SRC, ATKINSON_R, ATKINSON_M);
+    PEZESHK_11 = initAtkinson(PEZESHK_11_SRC, PEZESHK_R, PEZESHK_M);
+    NGA_EAST = initNgaEast();
+    NGA_EAST_WEIGHTS = initNgaEastWeights();
   }
 
-  private static Map<Imt, GroundMotionTable> initFrankel(String[] files, double[] rKeys,
-      double[] mKeys) {
+  private static Map<Imt, GroundMotionTable> initFrankel(String[] files) {
     Map<Imt, GroundMotionTable> map = Maps.newEnumMap(Imt.class);
     for (String file : files) {
       try {
         Imt imt = frankelFilenameToIMT(file);
-        URL url = getResource(GroundMotionTables.class, T_DIR + file);
+        URL url = getResource(GroundMotionTables.class, TABLE_DIR + file);
         double[][] data = readLines(url, UTF_8, new FrankelParser());
-        map.put(imt, new LogDistanceTable(data, rKeys, mKeys));
+        map.put(imt, new LogDistanceTable(data, FRANKEL_R, FRANKEL_M));
       } catch (IOException ioe) {
         handleIOex(ioe, file);
       }
@@ -139,10 +164,22 @@ final class GroundMotionTables {
     return map;
   }
 
-  private static Map<Imt, GroundMotionTable> initAtkinson(String file, double[] rKeys,
+  private static Imt frankelFilenameToIMT(String s) {
+    if (s.startsWith("pga")) {
+      return PGA;
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append(s.charAt(1)).append('.').append(s.charAt(3));
+    return Imt.fromPeriod(Double.valueOf(sb.toString()));
+  }
+
+  private static Map<Imt, GroundMotionTable> initAtkinson(
+      String file,
+      double[] rKeys,
       double[] mKeys) {
+
     Map<Imt, GroundMotionTable> map = Maps.newEnumMap(Imt.class);
-    URL url = getResource(GroundMotionTables.class, T_DIR + file);
+    URL url = getResource(GroundMotionTables.class, TABLE_DIR + file);
     try {
       AtkinsonParser parser = new AtkinsonParser(rKeys.length);
       Map<Imt, double[][]> dataMap = readLines(url, UTF_8, parser);
@@ -156,13 +193,54 @@ final class GroundMotionTables {
     return map;
   }
 
-  private static Imt frankelFilenameToIMT(String s) {
-    if (s.startsWith("pga")) {
-      return PGA;
+  private static Map<Imt, GroundMotionTable[]> initNgaEast() {
+    Map<Imt, GroundMotionTable[]> map = Maps.newEnumMap(Imt.class);
+    for (int i = 0; i < NGA_EAST_MODEL_COUNT; i++) {
+      String filename = String.format(NGA_EAST_FILENAME_FMT, i + 1);
+      URL url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
+      try {
+        NgaEastParser parser = new NgaEastParser(NGA_EAST_R.length);
+        Map<Imt, double[][]> dataMap = readLines(url, UTF_8, parser);
+        for (Entry<Imt, double[][]> entry : dataMap.entrySet()) {
+          double[][] data = entry.getValue();
+          LogDistanceTable table = new LogDistanceTable(data, NGA_EAST_R, NGA_EAST_M);
+          Imt imt = entry.getKey();
+          if (map.get(imt) == null) {
+            map.put(imt, new GroundMotionTable[NGA_EAST_MODEL_COUNT]);
+          }
+          map.get(imt)[i] = table;
+        }
+      } catch (IOException ioe) {
+        handleIOex(ioe, filename);
+      }
     }
-    StringBuilder sb = new StringBuilder();
-    sb.append(s.charAt(1)).append('.').append(s.charAt(3));
-    return Imt.fromPeriod(Double.valueOf(sb.toString()));
+    return map;
+  }
+
+  private static Map<Imt, double[]> initNgaEastWeights() {
+    Map<Imt, double[]> map = Maps.newEnumMap(Imt.class);
+    String filename = String.format(NGA_EAST_FILENAME_FMT, "weights");
+    URL url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
+    try {
+      List<String> lines = readLines(url, UTF_8);
+      List<Imt> imts = FluentIterable
+          .from(splitToList(lines.get(0), Delimiter.COMMA))
+          .skip(1)
+          .transform(Enums.stringConverter(Imt.class))
+          .toList();
+      for (Imt imt : imts) {
+        map.put(imt, new double[NGA_EAST_MODEL_COUNT]);
+      }
+      for (int i = 0; i < NGA_EAST_MODEL_COUNT; i++) {
+        List<Double> weights = splitToDoubleList(lines.get(i + 1), Delimiter.COMMA);
+        for (int j = 1; j < weights.size(); j++) {
+          map.get(imts.get(j - 1))[i] = weights.get(j);
+        }
+      }
+    } catch (IOException ioe) {
+      handleIOex(ioe, filename);
+    }
+    return map;
   }
 
   /* IO error handler */
@@ -192,17 +270,44 @@ final class GroundMotionTables {
     /**
      * Return a linearly interpolated ground motion value from the table. Values
      * outside the range supported by the table are generally constrained to min
-     * or max values, although implementations may behave differently. Some
-     * implementations store data in log space and
+     * or max values, although implementations may behave differently.
      *
-     * @param m magnitude to consider
      * @param r distance to consider, whether this is rRup or rJB is
      *        implementation specific
+     * @param m magnitude to consider
      * @return the natural log of the ground motion for the supplied {@code r}
      *         and {@code m}
      */
     double get(double r, double m);
+    
+    /**
+     * Return position data that can be used to derive an interpolated value
+     * from a table. This is convenient when repeat lookups from identically
+     * structures tables is required.
+     * 
+     * @param r distance to consider, whether this is rRup or rJB is
+     *        implementation specific
+     * @param m magnitude to consider
+     * @return the {@code Position} in a data table as specified by distance and
+     *         magnitude indices and fractions
+     */
+    Position position(double r, double m);
 
+    static final class Position {
+      
+      final int ir;
+      final int im;
+      final double rFraction;
+      final double mFraction;
+      
+      Position(int ir, int im, double rFraction, double mFraction) {
+        this.ir = ir;
+        this.im = im;
+        this.rFraction = rFraction;
+        this.mFraction = mFraction;
+      }
+          
+    }
   }
 
   /*
@@ -228,17 +333,18 @@ final class GroundMotionTables {
 
     @Override
     public double get(final double r, final double m) {
+      Position p = position(r, m);
+      return interpolate(data, p);
+    }
+
+    @Override
+    public Position position(double r, double m) {
       int ir = dataIndex(rKeys, r);
       int im = dataIndex(mKeys, m);
-      double rFrac = fraction(rKeys[ir], rKeys[ir + 1], r);
-      double mFrac = fraction(mKeys[im], mKeys[im + 1], m);
-      return interpolate(
-          data[ir][im],
-          data[ir][im + 1],
-          data[ir + 1][im],
-          data[ir + 1][im + 1],
-          mFrac,
-          rFrac);
+      return new Position(
+          ir, im,
+          fraction(rKeys[ir], rKeys[ir + 1], r),
+          fraction(mKeys[im], mKeys[im + 1], m));
     }
   }
 
@@ -293,6 +399,16 @@ final class GroundMotionTables {
    */
   // @formatter:on
 
+  private static final double interpolate(double[][] data, Position p) {
+    return interpolate(
+        data[p.ir][p.im],
+        data[p.ir][p.im + 1],
+        data[p.ir + 1][p.im],
+        data[p.ir + 1][p.im + 1],
+        p.mFraction,
+        p.rFraction);
+  }
+  
   private static final double interpolate(
       double c11,
       double c12,
@@ -327,6 +443,7 @@ final class GroundMotionTables {
     return (i >= data.length - 1) ? --i : i;
   }
 
+  /* Parser for Frankel tables. */
   private static class FrankelParser implements LineProcessor<double[][]> {
 
     boolean firstLine = true;
@@ -349,12 +466,63 @@ final class GroundMotionTables {
     }
   }
 
-  /* Parser for Atkinson style tables */
+  /* Parser for NGA-East tables. */
+  private static class NgaEastParser implements LineProcessor<Map<Imt, double[][]>> {
+
+    final int rSize;
+    int lineCount = -2;
+    Imt imt;
+
+    Map<Imt, List<List<Double>>> dataMap = Maps.newEnumMap(Imt.class);
+    List<List<Double>> dataLists;
+
+    NgaEastParser(int rSize) {
+      this.rSize = rSize;
+    }
+
+    @Override
+    public Map<Imt, double[][]> getResult() {
+      Map<Imt, double[][]> out = Maps.newEnumMap(Imt.class);
+      for (Entry<Imt, List<List<Double>>> entry : dataMap.entrySet()) {
+        Imt imt = entry.getKey();
+        out.put(imt, toArray(entry.getValue()));
+      }
+      return out;
+    }
+
+    @Override
+    public boolean processLine(String line) throws IOException {
+      lineCount++;
+
+      if (lineCount == -1) {
+        imt = Imt.valueOf(line);
+        if (dataMap.get(imt) == null) {
+          dataLists = new ArrayList<List<Double>>();
+          dataMap.put(imt, dataLists);
+        }
+        return true;
+      }
+
+      if (lineCount == 0) {
+        return true;
+      }
+
+      List<Double> values = splitToDoubleList(line, Delimiter.COMMA);
+      dataLists.add(values.subList(1, values.size()));
+
+      if (lineCount == rSize) {
+        lineCount = -2;
+      }
+      return true;
+    }
+  }
+
+  /* Parser for Atkinson style tables. */
   private static class AtkinsonParser implements LineProcessor<Map<Imt, double[][]>> {
 
+    final int rSize;
     int lineIndex = -1;
     int rIndex = -1;
-    final int rSize;
     List<Imt> imts = null;
     Map<Imt, List<List<Double>>> dataMap = Maps.newEnumMap(Imt.class);
 
@@ -364,9 +532,7 @@ final class GroundMotionTables {
 
     @Override
     public Map<Imt, double[][]> getResult() {
-
       Map<Imt, double[][]> out = Maps.newEnumMap(Imt.class);
-
       for (Entry<Imt, List<List<Double>>> entry : dataMap.entrySet()) {
         Imt imt = entry.getKey();
         out.put(imt, toArray(entry.getValue()));
@@ -377,6 +543,7 @@ final class GroundMotionTables {
     @Override
     public boolean processLine(String line) throws IOException {
       lineIndex++;
+
       if (lineIndex < 2) {
         return true;
       }
@@ -451,6 +618,7 @@ final class GroundMotionTables {
     }
   }
 
+  // TODO consider moving to Data
   private static double[][] toArray(List<List<Double>> data) {
     int s1 = data.size();
     int s2 = data.get(0).size();

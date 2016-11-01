@@ -10,7 +10,7 @@ public class DefaultScalarGroundMotion implements ScalarGroundMotion {
   private double mean;
   private double sigma;
 
-  private DefaultScalarGroundMotion(double mean, double sigma) {
+  DefaultScalarGroundMotion(double mean, double sigma) {
     this.mean = mean;
     this.sigma = sigma;
   }
