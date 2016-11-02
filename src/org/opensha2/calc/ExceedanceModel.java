@@ -13,6 +13,8 @@ import static org.opensha2.gmm.Imt.SA0P75;
 import org.opensha2.data.XyPoint;
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
+import org.opensha2.gmm.MultiScalarGroundMotion;
+import org.opensha2.gmm.ScalarGroundMotion;
 
 import java.util.List;
 
@@ -43,8 +45,7 @@ public enum ExceedanceModel {
    * No uncertainty. Any {@code σ} supplied to methods is ignored yielding a
    * complementary unit step function for a range of values spanning μ.
    *
-   * <p>Model ignores {@code σ}, truncation level,{@code n}, and {@code imt}
-   * .
+   * <p>Model ignores {@code σ}, truncation level,{@code n}, and {@code imt} .
    */
   NONE {
     @Override
@@ -119,6 +120,7 @@ public enum ExceedanceModel {
    * fixed sigmas. The peer models below simply set a value internally as
    * dicated by the test cases that use these models.
    */
+  @Deprecated
   PEER_MIXTURE_REFERENCE {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
@@ -176,6 +178,22 @@ public enum ExceedanceModel {
       double pHi = prob(μ, σ, n, log(maxValue(imt)));
       return boundedCcdFn(μ, σ, sequence, pHi, 1.0);
     }
+    
+    @Override
+    XySequence exceedance(ScalarGroundMotion sgm, double n, Imt imt, XySequence sequence) {
+      if (sgm instanceof MultiScalarGroundMotion) {
+        MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgm;
+        double[] means = msgm.means();
+        double[] weights = msgm.weights();
+        double σ = msgm.sigma();
+        XySequence model = XySequence.copyOf(sequence);
+        for (int i=0; i < means.length; i++) {
+          sequence.add(exceedance(means[i], σ, n, imt, model).multiply(weights[i]));
+        }
+        return sequence;
+      }
+      return super.exceedance(sgm, n, imt, sequence);
+    }
 
     private double maxValue(Imt imt) {
       /*
@@ -222,6 +240,24 @@ public enum ExceedanceModel {
    * @return the supplied {@code sequence}
    */
   abstract XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence);
+
+  /**
+   * Compute the probability of exceeding a sequence of x-values. Experimental
+   * for NGA-East. Default implementation assumes singular
+   * {@code ScalarGroundMotion} and passes through to
+   * {@link #exceedance(double, double, double, Imt, XySequence)}. Only
+   * {@link #NSHM_CEUS_MAX_INTENSITY} overrides.
+   *
+   * @param sgm ScalarGroundMotion that wraps one or more μ and σ
+   * @param n truncation level in units of {@code σ} (truncation = n * σ)
+   * @param imt intenisty measure type (only used by
+   *        {@link #NSHM_CEUS_MAX_INTENSITY}
+   * @param sequence the x-values of which to compute exceedance for
+   * @return the supplied {@code sequence}
+   */
+  XySequence exceedance(ScalarGroundMotion sgm, double n, Imt imt, XySequence sequence) {
+    return exceedance(sgm.mean(), sgm.sigma(), n, imt, sequence);
+  }
 
   private static final double SQRT_2 = sqrt(2);
   private static final double SQRT_2PI = sqrt(2 * PI);
