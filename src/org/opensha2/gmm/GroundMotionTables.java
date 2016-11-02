@@ -14,6 +14,7 @@ import static org.opensha2.internal.Parsing.splitToDoubleList;
 import static org.opensha2.internal.Parsing.splitToList;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
+import org.opensha2.data.Data;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
@@ -106,10 +107,10 @@ final class GroundMotionTables {
       1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1,
       2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0 };
 
-  private static final double[] NGA_EAST_R = {
-      0.0, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0,
+  private static final double[] NGA_EAST_R = Data.log(new double[] {
+      0.00001, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0,
       110.0, 120.0, 130.0, 140.0, 150.0, 175.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0,
-      600.0, 700.0, 800.0, 1000.0, 1200.0, 1500.0 };
+      600.0, 700.0, 800.0, 1000.0, 1200.0, 1500.0 });
 
   private static final double[] ATKINSON_M = {
       4.00, 4.25, 4.50, 4.75, 5.00, 5.25, 5.50, 5.75, 6.00,
@@ -263,14 +264,18 @@ final class GroundMotionTables {
    * implementations store data in log space and therefore perform log
    * interpolation.
    *
-   * Whether r is rRup or rJB is implementation specific. Whether
+   * Whether r is rRup or rJB is implementation specific.
+   * 
+   * NOTE that using position is only valid for distances and magnitdues supported
+   * by a table. get(r,m) may return a different result than get(postion(r,m)) if
+   * r or m is out of range and a table does not enforce clamping behavior
    */
   interface GroundMotionTable {
 
     /**
-     * Return a linearly interpolated ground motion value from the table. Values
-     * outside the range supported by the table are generally constrained to min
-     * or max values, although implementations may behave differently.
+     * Return an interpolated ground motion value from the table. Values outside
+     * the range supported by the table are generally constrained to min or max
+     * values, although individual implementations may behave differently.
      *
      * @param r distance to consider, whether this is rRup or rJB is
      *        implementation specific
@@ -279,7 +284,16 @@ final class GroundMotionTables {
      *         and {@code m}
      */
     double get(double r, double m);
-    
+
+    /**
+     * Return an interpolated ground motion value from the table corresponding
+     * to the supplied table position data.
+     *
+     * @param p table position data (indices and bin fractions)
+     * @return the natural log of the ground motion at supplied table position
+     */
+    double get(Position p);
+
     /**
      * Return position data that can be used to derive an interpolated value
      * from a table. This is convenient when repeat lookups from identically
@@ -294,19 +308,19 @@ final class GroundMotionTables {
     Position position(double r, double m);
 
     static final class Position {
-      
+
       final int ir;
       final int im;
       final double rFraction;
       final double mFraction;
-      
+
       Position(int ir, int im, double rFraction, double mFraction) {
         this.ir = ir;
         this.im = im;
         this.rFraction = rFraction;
         this.mFraction = mFraction;
       }
-          
+
     }
   }
 
@@ -332,8 +346,12 @@ final class GroundMotionTables {
     }
 
     @Override
-    public double get(final double r, final double m) {
-      Position p = position(r, m);
+    public double get(double r, double m) {
+      return get(position(r, m));
+    }
+
+    @Override
+    public double get(Position p) {
       return interpolate(data, p);
     }
 
@@ -356,10 +374,10 @@ final class GroundMotionTables {
     LogDistanceTable(double[][] data, double[] rKeys, double[] mKeys) {
       super(data, rKeys, mKeys);
     }
-
+    
     @Override
-    public double get(final double r, final double m) {
-      return super.get(log10(r), m);
+    public Position position(double r, double m) {
+      return super.position(log10(r), m);
     }
   }
 
@@ -367,7 +385,7 @@ final class GroundMotionTables {
    * For tables where r keys are log10 and ground motion scales like 1/r beyond
    * the table maximum.
    */
-  private static class LogDistanceScalingTable extends ClampingTable {
+  private static class LogDistanceScalingTable extends LogDistanceTable {
 
     final double rMax;
 
@@ -377,9 +395,9 @@ final class GroundMotionTables {
     }
 
     @Override
-    public double get(final double r, final double m) {
+    public double get(double r, double m) {
+      double μLog = super.get(r, m);
       double rLog = log10(r);
-      double μLog = super.get(rLog, m);
       return (rLog <= rMax) ? μLog : μLog - (rLog - rMax);
     }
   }
@@ -408,7 +426,7 @@ final class GroundMotionTables {
         p.mFraction,
         p.rFraction);
   }
-  
+
   private static final double interpolate(
       double c11,
       double c12,
@@ -506,9 +524,10 @@ final class GroundMotionTables {
       if (lineCount == 0) {
         return true;
       }
-
+      
       List<Double> values = splitToDoubleList(line, Delimiter.COMMA);
-      dataLists.add(values.subList(1, values.size()));
+      List<Double> lnValues = Data.ln(new ArrayList<>(values.subList(1, values.size())));
+      dataLists.add(lnValues);
 
       if (lineCount == rSize) {
         lineCount = -2;

@@ -392,6 +392,36 @@ public enum Gmm {
       ToroEtAl_1997.Mb.NAME,
       ToroEtAl_1997.COEFFS_MW,
       ToroEtAl_1997.CONSTRAINTS),
+  
+  // NGA-East
+  
+  /** @see NgaEast_2016 */
+  NGA_EAST_CENTER(
+      NgaEast_2016.Center.class,
+      NgaEast_2016.Center.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_GROUP1(
+      NgaEast_2016.Group1.class,
+      NgaEast_2016.Group1.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_GROUP2(
+      NgaEast_2016.Group2.class,
+      NgaEast_2016.Group2.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_TOTAL(
+      NgaEast_2016.Total.class,
+      NgaEast_2016.Total.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
 
   // Other
 

@@ -7,6 +7,7 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import org.opensha2.data.Data;
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
 import org.opensha2.internal.MathUtils;
 
 import com.google.common.collect.Range;
@@ -106,21 +107,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     coeffs = new Coefficients(imt, COEFFS_SIGMA_MID);
     tables = GroundMotionTables.getNgaEast(imt);
     weights = GroundMotionTables.getNgaEastWeights(imt);
-    // R0_weights = selectWeights(weights, R0);
-    // R1_weights = selectWeights(weights, R1);
-    // R2_weights = selectWeights(weights, R2);
-    // R3_weights = selectWeights(weights, R3);
   }
-
-//  @Override
-//  public final ScalarGroundMotion calc(final GmmInput in) {
-//    // double r = Math.max(in.rJB, 0.11);
-//    //
-//    // double μ = atkinsonTableValue(table, imt, in.Mw, r, in.vs30, bcfac);
-//    // return DefaultScalarGroundMotion.create(GmmUtils.ceusMeanClip(imt, μ),
-//    // SIGMA);
-//    return null;
-//  }
 
   private static double calcSigma(Coefficients c, double Mw) {
 
@@ -156,12 +143,6 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     return subsetWeights;
   }
 
-  // TODO clean
-  // concete implementations
-  // for r and m, need GmmUtils method that looks up index once and returns all
-  // medians
-  // sigma is constant across all models
-
   static abstract class ModelGroup extends NgaEast_2016 {
 
     final int[] models;
@@ -175,40 +156,58 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     
     @Override
     public MultiScalarGroundMotion calc(GmmInput in) {
-      
-      
-      return null;
+      Position p = super.tables[0].position(in.rRup, in.Mw);
+      double[] μs = new double[models.length];
+      for (int i=0; i<models.length; i++) {
+        μs[i] = super.tables[models[i] - 1].get(p);
+      }
+      double σ = calcSigma(super.coeffs, in.Mw);
+      return new MultiScalarGroundMotion(μs, weights, σ);
     }
-
   }
 
   static class Center extends ModelGroup {
+    static final String NAME = NgaEast_2016.NAME + ": Center";
+    
     Center(Imt imt) {
       super(imt, R0);
     }
   }
 
-  static class Group1 extends ModelGroup {
+  static final class Group1 extends ModelGroup {
+    static final String NAME = NgaEast_2016.NAME + ": Group1";
+
     Group1(Imt imt) {
       super(imt, Ints.concat(R0, R1));
     }
   }
 
-  static class Group2 extends ModelGroup {
+  static final class Group2 extends ModelGroup {
+    static final String NAME = NgaEast_2016.NAME + ": Group2";
+
     Group2(Imt imt) {
       super(imt, Ints.concat(R0, R1, R2));
     }
   }
 
-  static class Total extends ModelGroup {
+  static final class Total extends ModelGroup {
+    static final String NAME = NgaEast_2016.NAME + ": Total";
+
     Total(Imt imt) {
       super(imt, Ints.concat(R0, R1, R2, R3));
     }
   }
 
+  // TODO clean
   public static void main(String[] args) {
-    Group2 ngaEast = new Group2(Imt.SA10P0);
+    Center ngaEast = new Center(Imt.SA0P2);
 
+    GmmInput.Builder builder = GmmInput.builder().withDefaults();
+    builder.rRup(10);
+    GmmInput in = builder.build();
+    
+    System.out.println(in);
+    System.out.println(ngaEast.calc(in));
     
     System.out.println(Arrays.toString(ngaEast.models));
     System.out.println(Arrays.toString(ngaEast.weights));
