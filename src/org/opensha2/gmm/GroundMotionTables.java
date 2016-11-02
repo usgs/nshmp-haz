@@ -269,9 +269,9 @@ final class GroundMotionTables {
   interface GroundMotionTable {
 
     /**
-     * Return a linearly interpolated ground motion value from the table. Values
-     * outside the range supported by the table are generally constrained to min
-     * or max values, although implementations may behave differently.
+     * Return an interpolated ground motion value from the table. Values outside
+     * the range supported by the table are generally constrained to min or max
+     * values, although individual implementations may behave differently.
      *
      * @param r distance to consider, whether this is rRup or rJB is
      *        implementation specific
@@ -280,7 +280,16 @@ final class GroundMotionTables {
      *         and {@code m}
      */
     double get(double r, double m);
-    
+
+    /**
+     * Return an interpolated ground motion value from the table corresponding
+     * to the supplied table position data.
+     *
+     * @param p table position data (indices and bin fractions)
+     * @return the natural log of the ground motion at supplied table position
+     */
+    double get(Position p);
+
     /**
      * Return position data that can be used to derive an interpolated value
      * from a table. This is convenient when repeat lookups from identically
@@ -295,19 +304,19 @@ final class GroundMotionTables {
     Position position(double r, double m);
 
     static final class Position {
-      
+
       final int ir;
       final int im;
       final double rFraction;
       final double mFraction;
-      
+
       Position(int ir, int im, double rFraction, double mFraction) {
         this.ir = ir;
         this.im = im;
         this.rFraction = rFraction;
         this.mFraction = mFraction;
       }
-          
+
     }
   }
 
@@ -333,8 +342,12 @@ final class GroundMotionTables {
     }
 
     @Override
-    public double get(final double r, final double m) {
-      Position p = position(r, m);
+    public double get(double r, double m) {
+      return get(position(r, m));
+    }
+
+    @Override
+    public double get(Position p) {
       return interpolate(data, p);
     }
 
@@ -409,7 +422,7 @@ final class GroundMotionTables {
         p.mFraction,
         p.rFraction);
   }
-  
+
   private static final double interpolate(
       double c11,
       double c12,
