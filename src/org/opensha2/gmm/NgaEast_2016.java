@@ -7,6 +7,7 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import org.opensha2.data.Data;
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
+import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
 import org.opensha2.internal.MathUtils;
 
 import com.google.common.collect.Range;
@@ -156,12 +157,6 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     return subsetWeights;
   }
 
-  // TODO clean
-  // concete implementations
-  // for r and m, need GmmUtils method that looks up index once and returns all
-  // medians
-  // sigma is constant across all models
-
   static abstract class ModelGroup extends NgaEast_2016 {
 
     final int[] models;
@@ -175,11 +170,14 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     
     @Override
     public MultiScalarGroundMotion calc(GmmInput in) {
-      
-      
-      return null;
+      Position p = super.tables[0].position(in.rRup, in.Mw);
+      double[] μs = new double[models.length];
+      for (int i=0; i<models.length; i++) {
+        μs[i] = super.tables[models[i]].get(p);
+      }
+      double σ = calcSigma(super.coeffs, in.Mw);
+      return new MultiScalarGroundMotion(μs, weights, σ);
     }
-
   }
 
   static class Center extends ModelGroup {
