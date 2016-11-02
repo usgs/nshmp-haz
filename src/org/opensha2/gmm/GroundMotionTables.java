@@ -69,6 +69,9 @@ final class GroundMotionTables {
   }
 
   static GroundMotionTable[] getNgaEast(Imt imt) {
+//    LogDistanceTable t = (LogDistanceTable) NGA_EAST.get(imt)[0]; TODO clean
+//    System.out.println(imt.name() + " : model 0");
+//    System.out.println(Data.toString(t.data));
     return NGA_EAST.get(imt);
   }
 
@@ -264,7 +267,11 @@ final class GroundMotionTables {
    * implementations store data in log space and therefore perform log
    * interpolation.
    *
-   * Whether r is rRup or rJB is implementation specific. Whether
+   * Whether r is rRup or rJB is implementation specific.
+   * 
+   * NOTE that using position is only valid for distances and magnitdues supported
+   * by a table. get(r,m) may return a different result than get(postion(r,m)) if
+   * r or m is out of range and a table does not enforce clamping behavior
    */
   interface GroundMotionTable {
 
@@ -370,10 +377,10 @@ final class GroundMotionTables {
     LogDistanceTable(double[][] data, double[] rKeys, double[] mKeys) {
       super(data, rKeys, mKeys);
     }
-
+    
     @Override
-    public double get(final double r, final double m) {
-      return super.get(log10(r), m);
+    public Position position(double r, double m) {
+      return super.position(log10(r), m);
     }
   }
 
@@ -381,7 +388,7 @@ final class GroundMotionTables {
    * For tables where r keys are log10 and ground motion scales like 1/r beyond
    * the table maximum.
    */
-  private static class LogDistanceScalingTable extends ClampingTable {
+  private static class LogDistanceScalingTable extends LogDistanceTable {
 
     final double rMax;
 
@@ -391,9 +398,9 @@ final class GroundMotionTables {
     }
 
     @Override
-    public double get(final double r, final double m) {
+    public double get(double r, double m) {
+      double μLog = super.get(r, m);
       double rLog = log10(r);
-      double μLog = super.get(rLog, m);
       return (rLog <= rMax) ? μLog : μLog - (rLog - rMax);
     }
   }
@@ -520,9 +527,10 @@ final class GroundMotionTables {
       if (lineCount == 0) {
         return true;
       }
-
+      
       List<Double> values = splitToDoubleList(line, Delimiter.COMMA);
-      dataLists.add(values.subList(1, values.size()));
+      List<Double> lnValues = Data.ln(new ArrayList<>(values.subList(1, values.size())));
+      dataLists.add(lnValues);
 
       if (lineCount == rSize) {
         lineCount = -2;
