@@ -173,10 +173,9 @@ final class Transforms {
         for (Entry<Gmm, List<ScalarGroundMotion>> gmmEntry : imtEntry.getValue().entrySet()) {
           gmmCurve.clear();
           int i = 0;
-          for (ScalarGroundMotion gm : gmmEntry.getValue()) {
+          for (ScalarGroundMotion sgm : gmmEntry.getValue()) {
             exceedanceModel.exceedance(
-                gm.mean(),
-                gm.sigma(),
+                sgm,
                 truncationLevel,
                 imt,
                 utilCurve);
@@ -256,6 +255,10 @@ final class Transforms {
 
     /*
      * Construct an exceedance curve considering uncertain ground motions.
+     * 
+     * TODO this has not yet been refactored to accomodate a ScalarGroundMotion
+     * object as we know this is only used in WUS whereas sgm refactoring was done
+     * (experimentally) to handle NGA-East in the CEUS.
      */
     private XySequence exceedanceCurve(
         final double[] means,
@@ -583,12 +586,11 @@ final class Transforms {
 
           for (Gmm gmm : gmmGmMap.keySet()) {
             XySequence magVarCurve = XySequence.copyOf(modelCurve);
-            List<ScalarGroundMotion> gms = gmmGmMap.get(gmm);
+            List<ScalarGroundMotion> sgms = gmmGmMap.get(gmm);
             int i = 0;
-            for (ScalarGroundMotion gm : gms) {
+            for (ScalarGroundMotion sgm : sgms) {
               exceedanceModel.exceedance(
-                  gm.mean(),
-                  gm.sigma(),
+                  sgm,
                   truncationLevel,
                   imt,
                   utilCurve);
