@@ -20,11 +20,9 @@ public class MultiScalarGroundMotion extends DefaultScalarGroundMotion {
   private final double[] weights;
   
   MultiScalarGroundMotion(double[] means, double[] weights, double sigma) {
-    // TODO DataArray.Builder should be improved to allow operation 
-    // probably through the creation of mutable and immutable variants
     super(Data.sum(Data.multiply(Arrays.copyOf(means, means.length), weights)), sigma);
     this.means = means;
     this.weights = weights;
-    
   }
+  
 }
