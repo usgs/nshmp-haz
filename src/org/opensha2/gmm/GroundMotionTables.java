@@ -69,9 +69,6 @@ final class GroundMotionTables {
   }
 
   static GroundMotionTable[] getNgaEast(Imt imt) {
-//    LogDistanceTable t = (LogDistanceTable) NGA_EAST.get(imt)[0]; TODO clean
-//    System.out.println(imt.name() + " : model 0");
-//    System.out.println(Data.toString(t.data));
     return NGA_EAST.get(imt);
   }
 
