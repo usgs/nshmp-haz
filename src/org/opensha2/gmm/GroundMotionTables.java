@@ -198,7 +198,19 @@ final class GroundMotionTables {
     Map<Imt, GroundMotionTable[]> map = Maps.newEnumMap(Imt.class);
     for (int i = 0; i < NGA_EAST_MODEL_COUNT; i++) {
       String filename = String.format(NGA_EAST_FILENAME_FMT, i + 1);
-      URL url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
+      /*
+       * TODO nga-east data are not public and therefore may not exist when
+       * initializing Gmm's; we therefore temporarily allow mga-east ground
+       * motion tables to initialize to null. Once data are public remove
+       * try-catch.
+       */
+      URL url;
+      try {
+        url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
+      } catch (IllegalArgumentException iae) {
+        // iae.printStackTrace();
+        return null;
+      }
       try {
         NgaEastParser parser = new NgaEastParser(NGA_EAST_R.length);
         Map<Imt, double[][]> dataMap = readLines(url, UTF_8, parser);
@@ -266,9 +278,10 @@ final class GroundMotionTables {
    *
    * Whether r is rRup or rJB is implementation specific.
    * 
-   * NOTE that using position is only valid for distances and magnitdues supported
-   * by a table. get(r,m) may return a different result than get(postion(r,m)) if
-   * r or m is out of range and a table does not enforce clamping behavior
+   * NOTE that using position is only valid for distances and magnitdues
+   * supported by a table. get(r,m) may return a different result than
+   * get(postion(r,m)) if r or m is out of range and a table does not enforce
+   * clamping behavior
    */
   interface GroundMotionTable {
 
@@ -374,7 +387,7 @@ final class GroundMotionTables {
     LogDistanceTable(double[][] data, double[] rKeys, double[] mKeys) {
       super(data, rKeys, mKeys);
     }
-    
+
     @Override
     public Position position(double r, double m) {
       return super.position(log10(r), m);
@@ -524,7 +537,7 @@ final class GroundMotionTables {
       if (lineCount == 0) {
         return true;
       }
-      
+
       List<Double> values = splitToDoubleList(line, Delimiter.COMMA);
       List<Double> lnValues = Data.ln(new ArrayList<>(values.subList(1, values.size())));
       dataLists.add(lnValues);

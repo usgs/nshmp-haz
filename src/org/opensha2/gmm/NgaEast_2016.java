@@ -66,12 +66,33 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
    * Sigma coefficients compiled for global model from tables 11-3 (tau) and
    * 11-9 (phi). Currently, only the central (or 'mid') model is used.
    */
-  static final CoefficientContainer COEFFS_SIGMA_LO =
-      new CoefficientContainer("nga-east-sigma-lo.csv");
-  static final CoefficientContainer COEFFS_SIGMA_MID =
-      new CoefficientContainer("nga-east-sigma-mid.csv");
-  static final CoefficientContainer COEFFS_SIGMA_HI =
-      new CoefficientContainer("nga-east-sigma-hi.csv");
+  static CoefficientContainer COEFFS_SIGMA_LO;
+  static CoefficientContainer COEFFS_SIGMA_MID;
+  static CoefficientContainer COEFFS_SIGMA_HI;
+
+  static {
+    /*
+     * TODO nga-east data are not public and therefore may not exist when
+     * initializing Gmm's; we therefore init with a dummy file. Once data are
+     * public, make fields (above) final, remove try-catch, and delete summy
+     * sigma file.
+     */
+    try {
+      COEFFS_SIGMA_LO = new CoefficientContainer("nga-east-sigma-lo.csv");
+    } catch (Exception e) {
+      COEFFS_SIGMA_LO = new CoefficientContainer("dummy-nga-east-sigma.csv");
+    }
+    try {
+      COEFFS_SIGMA_MID = new CoefficientContainer("nga-east-sigma-mid.csv");
+    } catch (Exception e) {
+      COEFFS_SIGMA_MID = new CoefficientContainer("dummy-nga-east-sigma.csv");
+    }
+    try {
+      COEFFS_SIGMA_HI = new CoefficientContainer("nga-east-sigma-hi.csv");
+    } catch (Exception e) {
+      COEFFS_SIGMA_HI = new CoefficientContainer("dummy-nga-east-sigma.csv");
+    }
+  }
 
   /* ModelID's of concentric Sammon's map rings. */
   private static final int[] R0 = { 1 };
@@ -81,11 +102,9 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
 
   private static final class Coefficients {
 
-    final Imt imt;
     final double a, b, τ1, τ2, τ3, τ4;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
-      this.imt = imt;
       Map<String, Double> coeffs = cc.get(imt);
       a = coeffs.get("a");
       b = coeffs.get("b");
@@ -153,12 +172,12 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
       this.models = models;
       this.weights = Data.normalize(selectWeights(super.weights, models));
     }
-    
+
     @Override
     public MultiScalarGroundMotion calc(GmmInput in) {
       Position p = super.tables[0].position(in.rRup, in.Mw);
       double[] μs = new double[models.length];
-      for (int i=0; i<models.length; i++) {
+      for (int i = 0; i < models.length; i++) {
         μs[i] = super.tables[models[i] - 1].get(p);
       }
       double σ = calcSigma(super.coeffs, in.Mw);
@@ -168,7 +187,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
 
   static class Center extends ModelGroup {
     static final String NAME = NgaEast_2016.NAME + ": Center";
-    
+
     Center(Imt imt) {
       super(imt, R0);
     }
@@ -205,10 +224,10 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     GmmInput.Builder builder = GmmInput.builder().withDefaults();
     builder.rRup(10);
     GmmInput in = builder.build();
-    
+
     System.out.println(in);
     System.out.println(ngaEast.calc(in));
-    
+
     System.out.println(Arrays.toString(ngaEast.models));
     System.out.println(Arrays.toString(ngaEast.weights));
     // System.out.println(Arrays.toString(ngaEast.R0_weights));
