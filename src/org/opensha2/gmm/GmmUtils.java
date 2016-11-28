@@ -243,7 +243,7 @@ public final class GmmUtils {
    * Period dependent ground motion clipping. For PGA ({@code period} = 0.0s),
    * method returns {@code Math.min(ln(1.5g), μ)}; for
    * {@code 0.02s < period < 0.5s}, method returns {@code Math.min(ln(3.0g), μ)}
-   * . This is used to clip the upper tail of the exceedance curve.
+   * .
    *
    * @param imt of interest
    * @param μ natural log of ground motion
@@ -262,7 +262,7 @@ public final class GmmUtils {
   }
 
   /**
-   * Returns a site calss identifier for use with CEUS GMMs.
+   * Returns a site class identifier for use with CEUS GMMs.
    *
    * @param vs30
    * @return the site class corresponding to the supplied vs30
