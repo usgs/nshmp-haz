@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 @SuppressWarnings("javadoc")
-@Ignore
+@Ignore("Parameterized Use Only")
 public class PeerTest {
 
   public static final String S1_C1 = "Set1-Case1";
