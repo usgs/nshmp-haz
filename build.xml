@@ -18,11 +18,13 @@
   <property name="reports" location="${docs}/reports" />
   <property name="reports.xml" location="${reports}/junit-xml" />
   <property name="reports.html" location="${reports}/junit-html" />
-  <property name="coverage.xml" location="${reports}/coverage-xml" />
   <property name="coverage.html" location="${reports}/coverage-html" />
 
   <property name="guava.jar" location="${lib}/guava-19.0.jar" />
   <property name="gson.jar" location="${lib}/gson-2.5.jar" />
+
+  <property name="gmm.tests" value="**/gmm/*.java" />
+  <property name="peer.tests" value="**/peer/*.java" />
 
   <path id="classpath">
     <pathelement location="${guava.jar}" />
@@ -32,12 +34,10 @@
   <path id="classpath.test">
     <path refid="classpath" />
     <pathelement path="${classes}" />
+    <!-- JUnit -->
     <pathelement location="${lib}/junit-4.12.jar" />
     <pathelement location="${lib}/hamcrest-core-1.3.jar" />
-  </path>
-
-  <path id="classpath.cobertura">
-    <path refid="classpath.test" />
+    <!-- Cobertura Code Coverage -->
     <pathelement location="${lib}/cobertura-2.1.1.jar" />
     <pathelement location="${lib}/commons-lang3-3.4.jar" />
     <pathelement location="${lib}/slf4j-api-1.7.21.jar" />
@@ -51,9 +51,11 @@
   </path>
 
 
-  <!-- TODO consider skipping utility classes and exporters in build -->
+  <!-- 
+       TODO consider skipping utility classes and exporters
+       and internal package; need to check dependencies
+  -->
 
-  <!-- TARGETS -->
   <target name="jar" depends="compile.source">
     <jar destfile="${dist}/nshmp-haz.jar">
       <fileset dir="${classes}" />
@@ -75,10 +77,14 @@
            debug="true"
            includeantruntime="false"
            createMissingPackageInfoClass="false">
-
       <!--<compilerarg value="-Xlint" />-->
     </javac>
+    <!-- Copy non-Java resources -->
+    <copy todir="${classes}" includeEmptyDirs="false">
+      <fileset dir="${param.srcdir}" excludes="**/*.java" />
+    </copy>
   </target>
+
 
   <target name="compile.source">
     <delete dir="${classes}" />
@@ -86,114 +92,110 @@
       <param name="param.srcdir" value="${src}" />
       <param name="param.classpath" value="classpath" />
     </antcall>
-
-    <!-- Copy non-Java resources -->
-    <copy todir="${classes}" includeEmptyDirs="false">
-      <fileset dir="${src}" excludes="**/*.java" />
-      <file name="${lib}/logging.properties" />
-    </copy>
-
+    <copy file="${lib}/logging.properties" todir="${classes}" />
   </target>
 
-  <target name="compile.test">
 
+  <target name="compile.test">
     <antcall target="compile">
       <param name="param.srcdir" value="${test}" />
       <param name="param.classpath" value="classpath.test" />
     </antcall>
-
-    <!-- Copy non-Java resources -->
-    <copy todir="${classes}" includeEmptyDirs="false">
-      <fileset dir="${test}" excludes="**/*.java" />
-    </copy>
-
   </target>
 
-  <target name="init.test">
-    <taskdef classpathref="classpath.cobertura" resource="tasks.properties" />
+
+  <target name="test.gmms"
+          depends="compile.source"
+          description="Test Ground Motion Models">
+    <antcall target="test">
+      <param name="param.test.include" value="${gmm.tests}" />
+      <param name="param.test.exclude" value="**/Ngaw2.java" />
+    </antcall>
   </target>
 
-  <target name="instrument" depends="compile.source">
 
-    <delete file="cobertura.ser" />
-
-    <cobertura-instrument>
-      <!-- Ignore any logging for the purposes of coverage reporting. -->
-      <ignore regex="java.util.logging.*" />
-
-      <fileset dir="${classes}">
-        <include name="**/*.class" />
-      </fileset>
-    </cobertura-instrument>
+  <target name="test.peer"
+          depends="compile.source"
+          description="Test Peer Models">
+    <antcall target="test">
+      <param name="param.test.include" value="${peer.tests}" />
+    </antcall>
   </target>
 
-  <!-- 
-    With JUnit4 and annotated tests, test classes will not necessarily contain
-    the word 'test'. We therefore first build and instrument all sources, and
-    only then compile any test classes.
-  -->
 
-  <target name="test"
-          depends="init.test, instrument"
-          description="Run unit tests and document code coverage">
-
+  <target name="test" depends="compile.test">
     <delete dir="${reports}" />
     <mkdir dir="${reports.xml}" />
     <mkdir dir="${reports.html}" />
-
-    <antcall target="compile.test" />
-
     <junit fork="yes"
            forkmode="once"
-           printsummary="no"
+           printsummary="off"
+           showoutput="false"
            haltonfailure="yes"
            failureProperty="test.failed">
-      <classpath location="${classes}" />
-      <classpath refid="classpath.cobertura" />
-
+      <classpath refid="classpath.test" />
       <formatter type="xml" />
-      <formatter type="plain" usefile="false" />
-
+      <formatter type="brief" usefile="false" />
       <batchtest skipNonTests="true" todir="${reports.xml}">
-        <fileset dir="${test}">
-          <include name="**/Ngaw2.java" />
-          <!--<exclude name="**/PeerTests.java" />-->
-        </fileset>
+        <fileset dir="${test}"
+                 includes="${param.test.include}"
+                 excludes="${param.test.exclude}" />
       </batchtest>
     </junit>
-
     <junitreport todir="${reports.xml}">
       <fileset dir="${reports.xml}">
         <include name="TEST-*.xml" />
       </fileset>
       <report format="frames" todir="${reports.html}" />
     </junitreport>
+  </target>
 
-    <antcall target="coverage" />
 
-    <!-- Rebuild with uninstrumented -->
-    <echo>Removing instrumentation</echo>
+  <!-- 
+    With JUnit4 and annotated tests, test classes will not necessarily contain
+    the word 'test'. We therefore first build and instrument all sources, and
+    only then compile any test classes.
+  -->
+  <target name="coverage"
+          depends="compile.source"
+          description="Generate code coverage reports">
+    <taskdef classpathref="classpath.test" resource="tasks.properties" />
+    <delete file="cobertura.ser" />
+    <cobertura-instrument>
+      <!-- Ignore any logging for the purposes of coverage reporting. -->
+      <ignore regex="java.util.logging.*" />
+      <fileset dir="${classes}">
+        <include name="**/*.class" />
+      </fileset>
+    </cobertura-instrument>
+    <antcall target="test">
+      <param name="param.test.include" value="${gmm.tests}" />
+    </antcall>
+    <mkdir dir="${coverage.html}" />
+    <cobertura-report destdir="${coverage.html}"
+                      encoding="UTF-8"
+                      srcdir="${src}" />
+    <!-- Remove instrumentation -->
     <antcall target="compile.source" />
     <antcall target="compile.test" />
-
   </target>
 
-  <target name="coverage">
-    <mkdir dir="${coverage.xml}" />
-    <mkdir dir="${coverage.html}" />
 
-    <cobertura-report srcdir="${src}" destdir="${coverage.xml}" format="xml" />
-    <cobertura-report destdir="${coverage.html}">
-      <fileset dir="${src}">
-        <include name="**/*.java" />
+  <target name="instrument.source" depends="compile.source">
+    <taskdef classpathref="classpath.test" resource="tasks.properties" />
+    <delete file="cobertura.ser" />
+    <cobertura-instrument>
+      <!-- Ignore any logging for the purposes of coverage reporting. -->
+      <ignore regex="java.util.logging.*" />
+      <fileset dir="${classes}">
+        <include name="**/*.class" />
       </fileset>
-    </cobertura-report>
+    </cobertura-instrument>
   </target>
+
 
   <target name="javadoc" description="Generate Javadocs">
-
     <delete dir="${javadoc}" />
-
     <javadoc classpathref="classpath"
              destdir="${javadoc}"
              author="true"
@@ -207,7 +209,6 @@
              docencoding="UTF-8"
              charset="UTF-8"
              additionalparam="-notimestamp">
-
       <packageset dir="${src}">
         <include name="org/opensha2/**" />
         <exclude name="org/opensha2/gcim/**" />
@@ -220,23 +221,18 @@
         <pathelement location="/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home/src.zip" />
       </sourcepath>
       the package element restricts the docs generated to nshmp-haz
-      <package name="org.opensha2.*" />
-      -->
+      <package name="org.opensha2.*" />-->
 
       <bottom>
-        <![CDATA[
-        <div style="float: right; font-size: 14px; padding: 4px;">
+        <![CDATA[<div style="float: right; font-size: 14px; padding: 4px;">
         <span style="font-weight: bold;">U.S. Geological Survey</span>
         – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        ]]>
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)</div>]]>
       </bottom>
 
     <link href="http://docs.oracle.com/javase/7/docs/api/" />
     <link href="http://google.github.io/guava/releases/19.0/api/docs/" />
     <link href="http://google.github.io/gson/apidocs/" />
-
   </javadoc>
 
   <!-- Copy images -->
