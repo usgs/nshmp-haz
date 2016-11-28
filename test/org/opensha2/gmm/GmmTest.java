@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings("javadoc")
-@Ignore
+@Ignore("Parameterized Use Only")
 public class GmmTest {
 
   private static final String DATA_DIR = "data/";
