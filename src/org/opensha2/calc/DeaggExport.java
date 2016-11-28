@@ -180,7 +180,7 @@ final class DeaggExport {
       for (RmBin rmBin : RM_BIN_SORTER.immutableSortedCopy(this)) {
         sb.append(String.format(
             "%6.2f, %6.2f, %4.2f, %4.2f,",
-            rmBin.r, rmBin.r̅, rmBin.m, rmBin.m̅));
+            rmBin.r, rmBin.rBar, rmBin.m, rmBin.mBar));
         double total = Data.sum(rmBin.εValues);
         sb.append(EPSILON_FORMATTER.apply(total)).append(",");
         sb.append(formatEpsilonValues(rmBin.εValues));
@@ -220,11 +220,11 @@ final class DeaggExport {
   private static final class RmBin {
 
     @SerializedName("r")
-    final double r̅;
+    final double rBar;
     final transient double r;
 
     @SerializedName("m")
-    final double m̅;
+    final double mBar;
     final transient double m;
 
     final List<εData> εdata;
@@ -232,16 +232,16 @@ final class DeaggExport {
 
     private RmBin(
         double r,
-        double r̅,
+        double rBar,
         double m,
-        double m̅,
+        double mBar,
         List<εData> εdata,
         List<Double> εValues) {
 
       this.r = r;
-      this.r̅ = r̅;
+      this.rBar = rBar;
       this.m = m;
-      this.m̅ = m̅;
+      this.mBar = mBar;
       this.εdata = εdata;
       this.εValues = εValues;
     }
