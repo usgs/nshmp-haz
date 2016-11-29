@@ -6,7 +6,6 @@ import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.GmmInput;
 import org.opensha2.gmm.GroundMotionModel;
 import org.opensha2.gmm.Imt;
-import org.opensha2.gmm.MatSpectrum;
 import org.opensha2.gmm.ScalarGroundMotion;
 
 import com.google.common.collect.ImmutableList;
@@ -113,7 +112,7 @@ public class ResponseSpectra {
    *
    * @param gmms {@code GroundMotionModel}s to use
    * @param input source and site parameterization
-   * @return a {@link MatSpectrum} data container
+   * @return a {@link MultiResult} data container
    */
   public static MultiResult spectra(Set<Gmm> gmms, GmmInput input) {
 
