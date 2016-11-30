@@ -38,8 +38,8 @@ public class HazMat {
    * rather than later, the custom class loader will also have to have Java 8 on
    * it's classpath. Sigh.
    */
-  
-  private static List<Class<?>> inputClasses = Arrays.asList(new Class<?>[] {
+
+  private static final List<Class<?>> INPUT_CLASSES = Arrays.asList(new Class<?>[] {
       double.class,
       double.class,
       double.class,
@@ -54,16 +54,17 @@ public class HazMat {
       double.class,
       double.class });
 
-  private static Class<?>[] meanClasses;
-  private static Class<?>[] spectrumClasses;
+  private static final Class<?>[] MEAN_CLASSES;
+  private static final Class<?>[] SPECTRUM_CLASSES;
 
   static {
+    /* Build custom class arrays needed to call methods via reflection. */
     List<Class<?>> classes = new ArrayList<>();
     classes.add(String.class);
-    classes.addAll(inputClasses);
-    spectrumClasses = classes.toArray(new Class[inputClasses.size() + 1]);
+    classes.addAll(INPUT_CLASSES);
+    SPECTRUM_CLASSES = classes.toArray(new Class[INPUT_CLASSES.size() + 1]);
     classes.add(0, String.class);
-    meanClasses = classes.toArray(new Class[inputClasses.size() + 2]);
+    MEAN_CLASSES = classes.toArray(new Class[INPUT_CLASSES.size() + 2]);
   }
 
   private Object hazMatImpl;
@@ -72,9 +73,9 @@ public class HazMat {
     this.hazMatImpl = hazMatImpl;
   }
 
-  public double[] gmmMean(String gmm, String imt, Input in) {
+  public double[] gmmMean(String gmm, String imt, GmmParams in) {
     try {
-      Method method = hazMatImpl.getClass().getMethod("gmmMean", meanClasses);
+      Method method = hazMatImpl.getClass().getMethod("gmmMean", MEAN_CLASSES);
       return (double[]) method.invoke(hazMatImpl,
           gmm,
           imt,
@@ -96,9 +97,9 @@ public class HazMat {
     }
   }
 
-  public HazMatSpectrum gmmSpectrum(String gmm, Input in) {
+  public HazMatSpectrum gmmSpectrum(String gmm, GmmParams in) {
     try {
-      Method method = hazMatImpl.getClass().getMethod("gmmSpectrum", spectrumClasses);
+      Method method = hazMatImpl.getClass().getMethod("gmmSpectrum", SPECTRUM_CLASSES);
       double[][] result = (double[][]) method.invoke(hazMatImpl,
           gmm,
           in.Mw,
@@ -130,27 +131,11 @@ public class HazMat {
       List<URL> classpath = new ArrayList<>();
       classpath.add(nshmpHazUrl);
       ClassLoader loader = new ParentLastURLClassLoader(classpath);
-      Class<?> clazz = loader.loadClass("org.opensha2.etc.HazMatImpl");
+      Class<?> clazz = loader.loadClass(HazMatImpl.class.getName());
       return new HazMat(clazz.newInstance());
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public static class Input {
-    public double Mw;
-    public double rJB;
-    public double rRup;
-    public double rX;
-    public double dip;
-    public double width;
-    public double zTop;
-    public double zHyp;
-    public double rake;
-    public double vs30;
-    public boolean vsInf;
-    public double z1p0;
-    public double z2p5;
   }
 
 }

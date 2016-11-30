@@ -66,7 +66,6 @@ public class HazMatImpl {
 
   private double[][] gmmSpectrum(Gmm gmm, GmmInput input) {
     Set<Imt> imts = gmm.responseSpectrumIMTs();
-//    HazMatSpectrum spectrum = new HazMatSpectrum(imts.size());
     double[][] spectrum = new double[3][imts.size()];
     int i = 0;
     for (Imt imt : imts) {
