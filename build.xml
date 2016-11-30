@@ -211,6 +211,7 @@
              additionalparam="-notimestamp">
       <packageset dir="${src}">
         <include name="org/opensha2/**" />
+        <exclude name="org/opensha2/etc/**" />
         <exclude name="org/opensha2/gcim/**" />
         <exclude name="org/opensha2/internal/**" />
       </packageset>
