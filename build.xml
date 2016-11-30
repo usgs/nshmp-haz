@@ -20,8 +20,8 @@
   <property name="reports.html" location="${reports}/junit-html" />
   <property name="coverage.html" location="${reports}/coverage-html" />
 
-  <property name="guava.jar" location="${lib}/guava-19.0.jar" />
-  <property name="gson.jar" location="${lib}/gson-2.5.jar" />
+  <property name="guava.jar" location="${lib}/guava-20.0.jar" />
+  <property name="gson.jar" location="${lib}/gson-2.8.0.jar" />
 
   <property name="gmm.tests" value="**/gmm/*.java" />
   <property name="peer.tests" value="**/peer/*.java" />
@@ -211,6 +211,7 @@
              additionalparam="-notimestamp">
       <packageset dir="${src}">
         <include name="org/opensha2/**" />
+        <exclude name="org/opensha2/etc/**" />
         <exclude name="org/opensha2/gcim/**" />
         <exclude name="org/opensha2/internal/**" />
       </packageset>
@@ -231,7 +232,7 @@
       </bottom>
 
     <link href="http://docs.oracle.com/javase/7/docs/api/" />
-    <link href="http://google.github.io/guava/releases/19.0/api/docs/" />
+    <link href="http://google.github.io/guava/releases/20.0/api/docs/" />
     <link href="http://google.github.io/gson/apidocs/" />
   </javadoc>
 
