@@ -88,7 +88,7 @@ public class Calcs {
     return new SourceToInputs(site);
   }
 
-  private static Range<Double> rpRange = Range.closed(1.0, 4000.0);
+  private static Range<Double> rpRange = Range.closed(1.0, 20000.0);
 
   /**
    * Perform a deaggregation of probabilisitic seismic hazard.
