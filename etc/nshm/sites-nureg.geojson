@@ -1,0 +1,82 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.0, 40.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Central IL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-85.255, 35.064]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Chattanooga TN"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-95.363, 29.76]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Houston TX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-90.187, 32.312]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Jackson MS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.463, 42.991]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Manchester NH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.097, 32.082]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Savannah GA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-95.682, 39.047]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Topeka KS"
+      }
+    }
+  ]
+}
