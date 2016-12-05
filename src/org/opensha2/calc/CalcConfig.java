@@ -178,13 +178,24 @@ public final class CalcConfig {
     /**
      * An empty linear curve for the requested {@code Imt}.
      * @param imt to get curve for
+     * @see #modelCurves() defaults
      */
     public XySequence modelCurve(Imt imt) {
       return modelCurves.get(imt);
     }
 
     /**
-     * An immutable map of model curves where x-values are in linear space.
+     * An immutable map of model curves where x-values are in linear space. In
+     * the absence of specific values being provided in a config file, the
+     * following defaults are used:
+     * 
+     * <p><b>{@code PGA}</b> and <b>{@code SA}</b>: {@code [0.0025,
+     * 0.0045, 0.0075, 0.0113, 0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128,
+     * 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19, 3.28, 4.92, 7.38]}
+     * 
+     * <p><b>{@code PGV}</b>: {@code [0.0100, 0.0177, 0.0312, 0.0552, 
+     * 0.0976, 0.173, 0.305, 0.539, 0.953, 1.68, 2.98, 5.26, 9.30, 16.4, 
+     * 29.1, 51.3, 90.8, 160, 284, 501]}
      */
     public Map<Imt, XySequence> modelCurves() {
       return modelCurves;
@@ -192,6 +203,7 @@ public final class CalcConfig {
 
     /**
      * An immutable map of model curves where x-values are in natural-log space.
+     * @see #modelCurves() linear space defaults
      */
     public Map<Imt, XySequence> logModelCurves() {
       return logModelCurves;
