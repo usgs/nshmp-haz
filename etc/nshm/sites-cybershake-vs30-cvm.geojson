@@ -414,7 +414,7 @@
         "coordinates": [-118.06307, 34.24599]
       },
       "properties": {
-        "vs30": 2537.92,
+        "vs30": 2538.0,
         "z1p0": 0.0,
         "z2p5": 0.0,
         "marker-size": "small",
@@ -428,7 +428,7 @@
         "coordinates": [-118.1391, 33.76452]
       },
       "properties": {
-        "vs30": 353.22,
+        "vs30": 353.0,
         "z1p0": 0.64,
         "z2p5": 2.93,
         "marker-size": "small",
