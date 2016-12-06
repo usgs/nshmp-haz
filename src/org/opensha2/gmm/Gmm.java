@@ -396,6 +396,7 @@ public enum Gmm {
   // NGA-East
   
   /** @see NgaEast_2016 */
+  @Deprecated
   NGA_EAST_CENTER(
       NgaEast_2016.Center.class,
       NgaEast_2016.Center.NAME,
@@ -403,6 +404,7 @@ public enum Gmm {
       NgaEast_2016.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
+  @Deprecated
   NGA_EAST_GROUP1(
       NgaEast_2016.Group1.class,
       NgaEast_2016.Group1.NAME,
@@ -410,6 +412,7 @@ public enum Gmm {
       NgaEast_2016.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
+  @Deprecated
   NGA_EAST_GROUP2(
       NgaEast_2016.Group2.class,
       NgaEast_2016.Group2.NAME,
