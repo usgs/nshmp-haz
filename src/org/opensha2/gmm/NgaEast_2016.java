@@ -4,6 +4,7 @@ import static org.opensha2.gmm.GmmInput.Field.MAG;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 
+import org.opensha2.calc.ExceedanceModel;
 import org.opensha2.data.Data;
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
@@ -20,13 +21,15 @@ import java.util.Map;
  * Experimental implementation of the PEER NGA-East ground motion model by
  * Goulet et al. (2016). This is a composite model that consists of 29 median
  * ground motion models with period dependent weights and a common standard
- * deviation model.
+ * deviation model that itself consists of a 3-branch logic tree. A complete
+ * NGA-East hazard curve is the wieghted sum of 87 individual curves.
  * 
- * <p>To compute a single curve from the entire model requires significant
- * refactoring or additions to the current nshmp-haz PSHA pipeline. (2008). This
- * implementation matches that used in the 2014 USGS NSHMP and uses table
- * lookups instead of functional forms to compute ground motions. This relation
- * is commonly referred to as A08 Prime (A08').
+ * <p>Calculation of hazard using this preliminary implementation deviates
+ * somewhat from the current nshmp-haz PSHA pipeline and required implementation
+ * of a {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion}
+ * stores arrays of means and sigmas with associated weights and can only be
+ * properly processed by {@link ExceedanceModel#NSHM_CEUS_MAX_INTENSITY} at this
+ * time. NGA-East uses table lookups for the 29 component models.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -34,11 +37,6 @@ import java.util.Map;
  *
  * <p><b>Implementation note:</b> Mean values are clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.
- *
- * <p><b>Reference:</b> Atkinson, G.M., 2008, Ground-motion prediction equations
- * for eastern North America from a referenced empirical approach—Implications
- * for epistemic uncertainty: Bulletin of the Seismological Society of America,
- * v. 98, n. 3, p. 1304–1318.
  *
  * <p><b>doi:</b> TODO
  *
@@ -54,17 +52,26 @@ import java.util.Map;
  */
 public abstract class NgaEast_2016 implements GroundMotionModel {
 
+  /*
+   * TODO
+   * 
+   * Cluster analysis is incorrect as currently implemented; analysis performed
+   * after combining models
+   * 
+   * Deagg will currently use weight-averaged means; this is incorrect, or at
+   * least requires more study to determine if it generates an acceptable
+   * approximation
+   */
   static final String NAME = "NGA-East: Goulet et al. (2016)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MAG, Range.closed(4.0, 8.2))
       .set(RJB, Range.closed(0.0, 1500.0))
-      .set(VS30, Range.singleton(2000.0)) // TODO this is really 3000 m/sec
+      .set(VS30, Range.singleton(3000.0))
       .build();
 
   /*
-   * Sigma coefficients compiled for global model from tables 11-3 (tau) and
-   * 11-9 (phi). Currently, only the central (or 'mid') model is used.
+   * Sigma coefficients for global model from tables 11-3 (tau) and 11-9 (phi).
    */
   static CoefficientContainer COEFFS_SIGMA_LO;
   static CoefficientContainer COEFFS_SIGMA_MID;
@@ -94,6 +101,8 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     }
   }
 
+  private static final double[] SIGMA_WTS = { 0.185, 0.63, 0.185 };
+
   /* ModelID's of concentric Sammon's map rings. */
   private static final int[] R0 = { 1 };
   private static final int[] R1 = Data.indices(2, 5);
@@ -115,17 +124,27 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     }
   }
 
-  private final Coefficients coeffs;
+  private final Coefficients σCoeffsLo;
+  private final Coefficients σCoeffsMid;
+  private final Coefficients σCoeffsHi;
 
-  private final Imt imt;
   private final GroundMotionTable[] tables;
   private final double[] weights;
 
   NgaEast_2016(final Imt imt) {
-    this.imt = imt;
-    coeffs = new Coefficients(imt, COEFFS_SIGMA_MID);
+    σCoeffsLo = new Coefficients(imt, COEFFS_SIGMA_LO);
+    σCoeffsMid = new Coefficients(imt, COEFFS_SIGMA_MID);
+    σCoeffsHi = new Coefficients(imt, COEFFS_SIGMA_HI);
     tables = GroundMotionTables.getNgaEast(imt);
     weights = GroundMotionTables.getNgaEastWeights(imt);
+  }
+
+  private double[] calcSigmas(double Mw) {
+    return new double[] {
+        calcSigma(σCoeffsLo, Mw),
+        calcSigma(σCoeffsMid, Mw),
+        calcSigma(σCoeffsHi, Mw),
+    };
   }
 
   private static double calcSigma(Coefficients c, double Mw) {
@@ -180,8 +199,8 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
       for (int i = 0; i < models.length; i++) {
         μs[i] = super.tables[models[i] - 1].get(p);
       }
-      double σ = calcSigma(super.coeffs, in.Mw);
-      return new MultiScalarGroundMotion(μs, weights, σ);
+      double[] σs = super.calcSigmas(in.Mw);
+      return new MultiScalarGroundMotion(μs, weights, σs, SIGMA_WTS);
     }
   }
 
