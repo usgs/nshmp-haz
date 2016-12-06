@@ -184,11 +184,17 @@ public enum ExceedanceModel {
       if (sgm instanceof MultiScalarGroundMotion) {
         MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgm;
         double[] means = msgm.means();
-        double[] weights = msgm.weights();
-        double σ = msgm.sigma();
+        double[] meanWts = msgm.meanWeights();
+        double[] sigmas = msgm.sigmas();
+        double[] sigmaWts = msgm.sigmaWeights();
         XySequence model = XySequence.copyOf(sequence);
-        for (int i=0; i < means.length; i++) {
-          sequence.add(exceedance(means[i], σ, n, imt, model).multiply(weights[i]));
+        for (int i=0; i < sigmas.length; i++) {
+          double σ = sigmas[i];
+          double σWt = sigmaWts[i];
+          for (int j=0; j < means.length; j++) {
+             double wt = σWt * meanWts[j];
+             sequence.add(exceedance(means[j], σ, n, imt, model).multiply(wt));
+          }
         }
         return sequence;
       }

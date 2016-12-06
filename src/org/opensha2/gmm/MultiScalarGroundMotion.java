@@ -16,24 +16,45 @@ public class MultiScalarGroundMotion extends DefaultScalarGroundMotion {
   // TODO package privatize if possible? no weight validation is
   // performed or length agreement checking
 
-  // TODO array exposure is dangerous and shoul dbe changed in favor of
-  // immutable lists; this is  agood candidate for immutable data arrays
+  // TODO array exposure is dangerous and should be changed in favor of
+  // immutable lists; this is agood candidate for immutable DataArrays
+  
+  // TODO can we avoid instanceof tests in exceedance/probabilityModle enums
 
   private final double[] means;
-  private final double[] weights;
+  private final double[] meanWts;
 
-  MultiScalarGroundMotion(double[] means, double[] weights, double sigma) {
-    super(Data.sum(Data.multiply(Arrays.copyOf(means, means.length), weights)), sigma);
+  private final double[] sigmas;
+  private final double[] sigmaWts;
+
+  MultiScalarGroundMotion(
+      double[] means, double[] meanWts,
+      double[] sigmas, double[] sigmaWts) {
+
+    super(
+        Data.sum(Data.multiply(Arrays.copyOf(means, means.length), meanWts)),
+        Data.sum(Data.multiply(Arrays.copyOf(sigmas, sigmas.length), sigmaWts)));
+
     this.means = means;
-    this.weights = weights;
+    this.meanWts = meanWts;
+    this.sigmas = sigmas;
+    this.sigmaWts = sigmaWts;
   }
 
   public double[] means() {
     return means;
   }
 
-  public double[] weights() {
-    return weights;
+  public double[] meanWeights() {
+    return meanWts;
+  }
+
+  public double[] sigmas() {
+    return sigmas;
+  }
+
+  public double[] sigmaWeights() {
+    return sigmaWts;
   }
 
 }
