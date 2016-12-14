@@ -3,7 +3,13 @@ package org.opensha2.calc;
 import static org.opensha2.internal.TextUtils.LOG_INDENT;
 
 import org.opensha2.calc.CalcConfig.Deagg.Bins;
+import org.opensha2.calc.DeaggExport.EpsilonBins;
+import org.opensha2.calc.DeaggExport.εBin;
 import org.opensha2.gmm.Imt;
+
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 /**
  * A deaggregation configuration container. This class provides a reusable
@@ -20,6 +26,7 @@ import org.opensha2.gmm.Imt;
 final class DeaggConfig {
 
   final Bins bins;
+  final EpsilonBins εBins;
   final double contributorLimit;
 
   final Imt imt;
@@ -32,6 +39,7 @@ final class DeaggConfig {
 
   private DeaggConfig(
       Bins bins,
+      EpsilonBins εBins,
       double contributorLimit,
       Imt imt,
       DeaggDataset model,
@@ -42,6 +50,7 @@ final class DeaggConfig {
       double truncation) {
 
     this.bins = bins;
+    this.εBins = εBins;
     this.contributorLimit = contributorLimit;
     this.imt = imt;
     this.model = model;
@@ -83,6 +92,7 @@ final class DeaggConfig {
   static class Builder {
 
     private Bins bins;
+    private EpsilonBins εBins;
     private Double contributorLimit;
 
     private Imt imt;
@@ -106,6 +116,7 @@ final class DeaggConfig {
 
     Builder dataModel(DeaggDataset model) {
       this.model = model;
+      this.εBins = createEpsilonBins(model.rmε.levels(), model.rmε.levelΔ());
       return this;
     }
 
@@ -137,6 +148,7 @@ final class DeaggConfig {
     DeaggConfig build() {
       return new DeaggConfig(
           bins,
+          εBins,
           contributorLimit,
           imt,
           model,
@@ -147,5 +159,17 @@ final class DeaggConfig {
           truncation);
     }
   }
+  
+  static EpsilonBins createEpsilonBins(List<Double> εLevels, double εDelta) {
+    double εDeltaBy2 = εDelta / 2.0;
+    ImmutableList.Builder<εBin> bins = ImmutableList.builder();
+    for (int i = 0; i < εLevels.size(); i++) {
+      Double min = (i == 0) ? null : εLevels.get(i) - εDeltaBy2;
+      Double max = (i == εLevels.size() - 1) ? null : εLevels.get(i) + εDeltaBy2;
+      bins.add(new εBin(i, min, max));
+    }
+    return new EpsilonBins(bins.build());
+  }
+
 
 }

@@ -46,10 +46,10 @@ final class DeaggExport {
   final transient DeaggDataset ddTotal;
   final transient DeaggDataset dd;
   final transient DeaggConfig dc;
-  final transient String id;
-  final transient EpsilonBins εBins;
   final transient String discretization;
 
+  @SerializedName("component")
+  final String id;
   final DistanceMagnitudeData data;
   final SummaryElements summary;
 
@@ -59,18 +59,21 @@ final class DeaggExport {
    * specific to the component dataset.
    */
 
-  DeaggExport(DeaggDataset ddTotal, DeaggDataset dd, DeaggConfig dc, String id) {
+  DeaggExport(
+      DeaggDataset ddTotal,
+      DeaggDataset dd,
+      DeaggConfig dc,
+      String id) {
     this.ddTotal = ddTotal;
     this.dd = dd;
     this.dc = dc;
     this.id = id;
-    εBins = createEpsilonBins(ddTotal.rmε.levels(), ddTotal.rmε.levelΔ());
     discretization = createDataDiscretization(dc);
     summary = createSummaryElements(ddTotal, dd, dc);
     data = createDistanceMagnitudeData(ddTotal, dd);
     // TODO need contributions to be JSON serializable
   }
-
+  
   void toFile(Path dir, String site) throws IOException {
     Path dataPath = dir.resolve(site + "-data.csv");
     Files.write(dataPath, data.toString().getBytes(UTF_8));
@@ -99,7 +102,7 @@ final class DeaggExport {
         .append(summary);
     if (dd.binned > 0.0) {
       sb.append(discretization)
-          .append(εBins);
+          .append(dc.εBins);
     }
     sb.append(SECTION_SEPARATOR);
     appendContributions(sb, ddTotal, dd, dc.contributorLimit);
@@ -220,12 +223,12 @@ final class DeaggExport {
   private static final class RmBin {
 
     @SerializedName("r")
-    final double rBar;
-    final transient double r;
+    final transient double rBar;
+    final double r;
 
     @SerializedName("m")
-    final double mBar;
-    final transient double m;
+    final transient double mBar;
+    final double m;
 
     final List<εData> εdata;
     final transient List<Double> εValues;
@@ -597,6 +600,24 @@ final class DeaggExport {
       return contributor.total() * toPercent >= limit;
     }
   }
+  
+  /* JSON serializable contributor. */
+  private static final class JsonContributor {
+    String name;
+    JsonContributorType type;
+    Double contribution;
+    Integer id;
+    Double r;
+    Double m;
+    Double ε;
+    Double azimuth;
+    Double latitude;
+    Double longitude;
+  }
+  
+  private static enum JsonContributorType {
+    SINGLE, MULTI;
+  }
 
   static final String SYSTEM_MFD_FORMAT = "%5s, %48s,";
 
@@ -636,22 +657,7 @@ final class DeaggExport {
     return sb;
   }
 
-  /*
-   * Metadata.
-   * 
-   * ε-bin bounds data is included in the metadata section of JSON output.
-   */
-  static EpsilonBins createEpsilonBins(List<Double> εLevels, double εDelta) {
-    double εDeltaBy2 = εDelta / 2.0;
-    ImmutableList.Builder<εBin> bins = ImmutableList.builder();
-    for (int i = 0; i < εLevels.size(); i++) {
-      Double min = (i == 0) ? null : εLevels.get(i) - εDeltaBy2;
-      Double max = (i == εLevels.size() - 1) ? null : εLevels.get(i) + εDeltaBy2;
-      bins.add(new εBin(i, min, max));
-    }
-    return new EpsilonBins(bins.build());
-  }
-
+  /* Epsilon metadata. */
   static class EpsilonBins extends ListWrapper<εBin> {
 
     EpsilonBins(List<εBin> delegate) {
@@ -675,7 +681,7 @@ final class DeaggExport {
     }
   }
 
-  private static final class εBin {
+  static final class εBin {
 
     final int id;
     final Double min;
