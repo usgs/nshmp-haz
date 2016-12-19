@@ -236,7 +236,8 @@ public final class Deaggregation {
           totalDataset,
           totalDataset,
           config,
-          "Total");
+          "Total",
+          false);
       sb.append(export.toString());
       sb.append(NEWLINE);
       for (Entry<Gmm, DeaggDataset> ddEntry : gmmDatasets.entrySet()) {
@@ -244,7 +245,8 @@ public final class Deaggregation {
             totalDataset,
             ddEntry.getValue(),
             config,
-            ddEntry.getKey().toString());
+            ddEntry.getKey().toString(),
+            false);
         sb.append(export.toString());
         sb.append(NEWLINE);
       }
@@ -262,7 +264,8 @@ public final class Deaggregation {
           totalDataset,
           totalDataset,
           config,
-          "Total");
+          "Total",
+          true);
       jsonDeaggs.add(export);
       return jsonDeaggs;
     }

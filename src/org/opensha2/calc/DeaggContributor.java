@@ -14,9 +14,11 @@ import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Location;
+import org.opensha2.internal.MathUtils;
 import org.opensha2.internal.Parsing;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
@@ -68,6 +70,8 @@ abstract class DeaggContributor {
       StringBuilder sb,
       String indent,
       ContributionFilter filter);
+
+  abstract List<JsonContributor> toJson(ContributionFilter filter);
 
   abstract static class Builder {
 
@@ -180,6 +184,23 @@ abstract class DeaggContributor {
       return sb;
     }
 
+    @Override
+    List<JsonContributor> toJson(ContributionFilter filter) {
+      ArrayList<JsonContributor> jsonList = new ArrayList<>();
+      JsonContributor jc = JsonContributor.createMulti(
+          sourceSet.name(),
+          MathUtils.round(filter.toPercent(total()), 2));
+      jsonList.add(jc);
+      for (DeaggContributor child : children) {
+        if (filter.apply(child)) {
+          jsonList.addAll(child.toJson(filter));
+          continue;
+        }
+        break;
+      }
+      return jsonList;
+    }
+
     static final class Builder extends DeaggContributor.Builder {
 
       SourceSet<? extends Source> sourceSet;
@@ -269,6 +290,25 @@ abstract class DeaggContributor {
           filter.toPercent(total)));
       sb.append(NEWLINE);
       return sb;
+    }
+
+    @Override
+    List<JsonContributor> toJson(ContributionFilter filter) {
+      double total = total();
+      double rBar = rScaled / total;
+      double mBar = mScaled / total;
+      double εBar = εScaled / total;
+      JsonContributor jc = JsonContributor.createSingle(
+          source.name(),
+          MathUtils.round(filter.toPercent(total()), 2),
+          -1,
+          rBar,
+          mBar,
+          εBar,
+          azimuth,
+          location.lat(),
+          location.lon());
+      return ImmutableList.of(jc);
     }
 
     static final class Builder extends DeaggContributor.Builder {
@@ -387,6 +427,25 @@ abstract class DeaggContributor {
       return sb;
     }
 
+    @Override
+    List<JsonContributor> toJson(ContributionFilter filter) {
+      double total = total();
+      double rBar = rScaled / total;
+      double mBar = mScaled / total;
+      double εBar = εScaled / total;
+      JsonContributor jc = JsonContributor.createSingle(
+          cluster.name(),
+          MathUtils.round(filter.toPercent(total()), 2),
+          -2,
+          rBar,
+          mBar,
+          εBar,
+          azimuth,
+          location.lat(),
+          location.lon());
+      return ImmutableList.of(jc);
+    }
+
     static final class Builder extends DeaggContributor.Builder {
 
       ClusterSource cluster;
@@ -490,7 +549,26 @@ abstract class DeaggContributor {
       sb.append(NEWLINE);
       return sb;
     }
-    
+
+    @Override
+    List<JsonContributor> toJson(ContributionFilter filter) {
+      double total = total();
+      double rBar = rScaled / total;
+      double mBar = mScaled / total;
+      double εBar = εScaled / total;
+      JsonContributor jc = JsonContributor.createSingle(
+          section.name(),
+          MathUtils.round(filter.toPercent(total()), 2),
+          -3,
+          rBar,
+          mBar,
+          εBar,
+          azimuth,
+          location.lat(),
+          location.lon());
+      return ImmutableList.of(jc);
+    }
+
     StringBuilder appendMfd(StringBuilder sb) {
       sb.append(String.format(DeaggExport.SYSTEM_MFD_FORMAT, section.index, section.name()));
       sb.append(Parsing.toString(mfd.values().yValues(), "%9.3g", ",", false, false));
@@ -537,7 +615,7 @@ abstract class DeaggContributor {
         mfd.add(index, rate);
         return this;
       }
-      
+
       Builder addMfd(IntervalArray mfd) {
         this.mfd.add(mfd);
         return this;
@@ -609,6 +687,60 @@ abstract class DeaggContributor {
     public Iterator<Rupture> iterator() {
       throw new UnsupportedOperationException();
     }
+  }
+
+  /* Wrapper of contributor data suitable for JSON serialization. */
+  static final class JsonContributor {
+    String name;
+    JsonContributorType type;
+    Double contribution;
+    Integer id;
+    Double r;
+    Double m;
+    Double ε;
+    Double azimuth;
+    Double latitude;
+    Double longitude;
+
+    /* Use for SourceSets. */
+    static JsonContributor createMulti(String name, double contribution) {
+      JsonContributor jc = new JsonContributor();
+      jc.name = name;
+      jc.type = JsonContributorType.MULTI;
+      jc.contribution = contribution;
+      return jc;
+    }
+
+    /* Use for more detailed individual sources. */
+    static JsonContributor createSingle(
+        String name,
+        double contribution,
+        int id,
+        double r,
+        double m,
+        double ε,
+        double azimuth,
+        double latitude,
+        double longitude) {
+
+      JsonContributor jc = new JsonContributor();
+      jc.name = name;
+      jc.type = JsonContributorType.SINGLE;
+      jc.contribution = contribution;
+      jc.id = id;
+      jc.r = r;
+      jc.m = m;
+      jc.ε = ε;
+      jc.azimuth = azimuth;
+      jc.latitude = latitude;
+      jc.longitude = longitude;
+      return jc;
+    }
+  }
+
+  private static enum JsonContributorType {
+    SINGLE,
+    MULTI;
   }
 
   /* Convert a builder list to immutable sorted contributor list. */

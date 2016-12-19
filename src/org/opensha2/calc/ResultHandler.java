@@ -459,7 +459,7 @@ public final class ResultHandler {
         ImtDeagg imtDeagg = imtEntry.getValue();
         DeaggDataset ddTotal = imtDeagg.totalDataset;
         DeaggConfig dc = imtDeagg.config;
-        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total");
+        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total", false);
         exporter.toFile(imtDeaggDir, name);
 
         if (exportGmm) {
@@ -469,7 +469,7 @@ public final class ResultHandler {
                 .resolve(gmmEntry.getKey().name());
             Files.createDirectories(gmmDir);
             DeaggDataset ddGmm = gmmEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmmEntry.getKey().toString());
+            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmmEntry.getKey().toString(), false);
             exporter.toFile(gmmDir, name);
           }
         }
