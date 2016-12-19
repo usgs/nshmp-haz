@@ -768,8 +768,8 @@ public final class CalcConfig {
 
       static Bins defaults() {
         return new Bins(
-            0.0, 200.0, 10.0,
-            5.0, 8.4, 0.2,
+            0.0, 1000.0, 10.0,
+            5.0, 9.4, 0.2,
             -3.0, 3.0, 0.5);
       }
     }
@@ -802,7 +802,7 @@ public final class CalcConfig {
       static Builder defaults() {
         Builder b = new Builder();
         b.bins = Bins.defaults();
-        b.contributorLimit = 0.1;
+        b.contributorLimit = 1.0;
         return b;
       }
 
