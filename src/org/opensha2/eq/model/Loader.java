@@ -17,7 +17,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -77,7 +76,7 @@ class Loader {
     try {
       sax = SAXParserFactory.newInstance().newSAXParser();
     } catch (ParserConfigurationException | SAXException e) {
-      Throwables.propagate(e);
+      throw new RuntimeException(e);
     }
 
     HazardModel.Builder builder = HazardModel.builder();
