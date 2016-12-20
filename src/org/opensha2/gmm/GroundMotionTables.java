@@ -233,7 +233,17 @@ final class GroundMotionTables {
   private static Map<Imt, double[]> initNgaEastWeights() {
     Map<Imt, double[]> map = Maps.newEnumMap(Imt.class);
     String filename = String.format(NGA_EAST_FILENAME_FMT, "weights");
-    URL url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
+    /*
+     * TODO clean up as above; tamporarily allowing weights to init to null.
+     * Once data are public remove try-catch.
+     */
+    URL url;
+    try {
+      url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
+    } catch (IllegalArgumentException iae) {
+      // iae.printStackTrace();
+      return null;
+    }
     try {
       List<String> lines = readLines(url, UTF_8);
       List<Imt> imts = FluentIterable
