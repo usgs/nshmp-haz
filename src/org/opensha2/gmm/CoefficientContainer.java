@@ -6,7 +6,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableTable;
@@ -48,7 +47,7 @@ final class CoefficientContainer {
     try {
       table = ImmutableTable.copyOf(load(resource));
     } catch (Exception e) {
-      Throwables.propagate(e);
+      throw new RuntimeException(e);
     }
   }
 

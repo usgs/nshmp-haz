@@ -225,10 +225,10 @@ public class HazardCalc {
     try {
       return Calcs.hazard(model, config, site, executor);
     } catch (ExecutionException | InterruptedException e) {
-      Throwables.propagate(e);
-      return null;
+      throw new RuntimeException(e);
     }
   }
+  
 
   private static final String PROGRAM = HazardCalc.class.getSimpleName();
   private static final String USAGE_COMMAND =

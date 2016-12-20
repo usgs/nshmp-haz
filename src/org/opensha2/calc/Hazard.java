@@ -1,5 +1,6 @@
 package org.opensha2.calc;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -101,6 +102,39 @@ public final class Hazard {
    */
   public CalcConfig config() {
     return config;
+  }
+
+  /**
+   * Combine hazard from multiple independent models. The hazard object returned
+   * by this method probably does not specify a parent 'model'.
+   * 
+   * @return a combined {@code Hazard} that probably has a {@code null} parent
+   *         model. If only 1 {@code Hazard} is supplied, method returns that
+   *         supplied.
+   */
+  public static Hazard merge(Hazard... hazards) {
+    checkArgument(hazards.length > 0);
+    if (hazards.length == 1) {
+      return hazards[0];
+    }
+    ImmutableSetMultimap.Builder<SourceType, HazardCurveSet> curveMapBuilder =
+        ImmutableSetMultimap.builder();
+    Map<Imt, XySequence> totalCurves = new EnumMap<>(Imt.class);
+    for (Entry<Imt, XySequence> entry : hazards[0].config.curve.logModelCurves().entrySet()) {
+      totalCurves.put(entry.getKey(), emptyCopyOf(entry.getValue()));
+    }
+    for (Hazard hazard : hazards) {
+      curveMapBuilder.putAll(hazard.sourceSetCurves);
+      for (Entry<Imt, XySequence> entry : hazard.totalCurves.entrySet()) {
+        totalCurves.get(entry.getKey()).add(entry.getValue());
+      }
+    }
+    return new Hazard(
+        curveMapBuilder.build(),
+        totalCurves,
+        null,
+        hazards[0].site,
+        hazards[0].config);
   }
 
   static Builder builder(CalcConfig config) {

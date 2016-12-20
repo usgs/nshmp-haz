@@ -7,6 +7,7 @@ import static org.opensha2.calc.ResultHandler.WRITE;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig.Deagg.Bins;
+import org.opensha2.calc.DeaggContributor.JsonContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
 import org.opensha2.data.Data;
@@ -46,12 +47,12 @@ final class DeaggExport {
   final transient DeaggDataset ddTotal;
   final transient DeaggDataset dd;
   final transient DeaggConfig dc;
-  final transient String id;
-  final transient EpsilonBins εBins;
-  final transient String discretization;
 
+  @SerializedName("component")
+  final String id;
   final DistanceMagnitudeData data;
   final SummaryElements summary;
+  final List<JsonContributor> sources;
 
   /*
    * All component DeaggDatasets require data from the final total DeaggDataset
@@ -59,16 +60,21 @@ final class DeaggExport {
    * specific to the component dataset.
    */
 
-  DeaggExport(DeaggDataset ddTotal, DeaggDataset dd, DeaggConfig dc, String id) {
+  DeaggExport(
+      DeaggDataset ddTotal,
+      DeaggDataset dd,
+      DeaggConfig dc,
+      String id,
+      boolean json) {
+
     this.ddTotal = ddTotal;
     this.dd = dd;
     this.dc = dc;
     this.id = id;
-    εBins = createEpsilonBins(ddTotal.rmε.levels(), ddTotal.rmε.levelΔ());
-    discretization = createDataDiscretization(dc);
+
     summary = createSummaryElements(ddTotal, dd, dc);
     data = createDistanceMagnitudeData(ddTotal, dd);
-    // TODO need contributions to be JSON serializable
+    sources = json ? createJsonContributorList(ddTotal, dd, dc.contributorLimit) : null;
   }
 
   void toFile(Path dir, String site) throws IOException {
@@ -97,10 +103,6 @@ final class DeaggExport {
         .append(NEWLINE)
         .append(SECTION_SEPARATOR)
         .append(summary);
-    if (dd.binned > 0.0) {
-      sb.append(discretization)
-          .append(εBins);
-    }
     sb.append(SECTION_SEPARATOR);
     appendContributions(sb, ddTotal, dd, dc.contributorLimit);
     return sb;
@@ -220,12 +222,12 @@ final class DeaggExport {
   private static final class RmBin {
 
     @SerializedName("r")
-    final double rBar;
-    final transient double r;
+    final transient double rBar;
+    final double r;
 
     @SerializedName("m")
-    final double mBar;
-    final transient double m;
+    final transient double mBar;
+    final double m;
 
     final List<εData> εdata;
     final transient List<Double> εValues;
@@ -295,8 +297,13 @@ final class DeaggExport {
     }
   };
 
+  private static final String DISCRETIZATION_FMT = "min = %.1f, max = %.1f, Δ = %.1f";
+
   /*
    * Deaggregation summary.
+   * 
+   * TODO consider ways to not repeat building elements/items that are not
+   * unique to a dataset; perhaps only include some items in the total component
    * 
    * Create a container of summary information for a DeaggDataset.
    */
@@ -338,6 +345,12 @@ final class DeaggExport {
     double εεMode = dd.εScaled.get(ri, mi, εi) / εBinWeight;
     double εModeContrib = εBinWeight * toPercent;
 
+    /* discretization */
+    Bins b = dc.bins;
+    String rDiscr = String.format(DISCRETIZATION_FMT, b.rMin, b.rMax, b.Δr);
+    String mDiscr = String.format(DISCRETIZATION_FMT, b.mMin, b.mMax, b.Δm);
+    String εDiscr = String.format(DISCRETIZATION_FMT, b.εMin, b.εMax, b.Δε);
+
     ImmutableList.Builder<SummaryElement> summaryElements = ImmutableList.builder();
     summaryElements.add(
 
@@ -370,7 +383,14 @@ final class DeaggExport {
             new SummaryItem("r", round(εrMode, RME_ROUNDING), "km"),
             new SummaryItem("m", round(εmMode, RME_ROUNDING), null),
             new SummaryItem("ε₀", round(εεMode, RME_ROUNDING), "σ"),
-            new SummaryItem("Contribution", round(εModeContrib, RME_ROUNDING), "%"))));
+            new SummaryItem("Contribution", round(εModeContrib, RME_ROUNDING), "%"))),
+
+        new SummaryElement("Discretization", true, ImmutableList.of(
+            new SummaryItem("r", rDiscr, "km"),
+            new SummaryItem("m", mDiscr, null),
+            new SummaryItem("ε", εDiscr, "σ"))),
+
+        new SummaryElement("Epsilon keys", true, dc.εBins.toSummaryItems()));
 
     return new SummaryElements(summaryElements.build());
   }
@@ -461,10 +481,10 @@ final class DeaggExport {
   private static final class SummaryItem {
 
     final String name;
-    final Double value;
+    final Object value;
     final String units;
 
-    SummaryItem(String name, Double value, String units) {
+    SummaryItem(String name, Object value, String units) {
       this.name = name;
       this.value = value;
       this.units = units;
@@ -524,11 +544,9 @@ final class DeaggExport {
         percentScalar(ddTotal));
 
     /*
-     * Pre-determine whether any source set contributors will actually be
-     * rendered and selectively print contributor table header.
-     * 
      * Could use a FluentIterable generated list below, but because we know the
-     * contributors are sorted, we short circuit an iterator instead.
+     * contributors are sorted descending by total contribution, we short
+     * circuit an iterator instead.
      */
     List<DeaggContributor> sourceSetContributors = new ArrayList<>();
     for (DeaggContributor contributor : dd.contributors) {
@@ -598,6 +616,27 @@ final class DeaggExport {
     }
   }
 
+  private List<JsonContributor> createJsonContributorList(
+      DeaggDataset ddTotal,
+      DeaggDataset dd,
+      double contributorLimit) {
+
+    ContributionFilter contributionFilter = new ContributionFilter(
+        contributorLimit,
+        percentScalar(ddTotal));
+
+    ImmutableList.Builder<JsonContributor> jsonContributors = ImmutableList.builder();
+    for (DeaggContributor contributor : dd.contributors) {
+      if (contributionFilter.apply(contributor)) {
+        jsonContributors.addAll(contributor.toJson(contributionFilter));
+        continue;
+      }
+      break;
+    }
+
+    return jsonContributors.build();
+  }
+
   static final String SYSTEM_MFD_FORMAT = "%5s, %48s,";
 
   static StringBuilder appendSystemMfds(
@@ -636,22 +675,7 @@ final class DeaggExport {
     return sb;
   }
 
-  /*
-   * Metadata.
-   * 
-   * ε-bin bounds data is included in the metadata section of JSON output.
-   */
-  static EpsilonBins createEpsilonBins(List<Double> εLevels, double εDelta) {
-    double εDeltaBy2 = εDelta / 2.0;
-    ImmutableList.Builder<εBin> bins = ImmutableList.builder();
-    for (int i = 0; i < εLevels.size(); i++) {
-      Double min = (i == 0) ? null : εLevels.get(i) - εDeltaBy2;
-      Double max = (i == εLevels.size() - 1) ? null : εLevels.get(i) + εDeltaBy2;
-      bins.add(new εBin(i, min, max));
-    }
-    return new EpsilonBins(bins.build());
-  }
-
+  /* Epsilon metadata. */
   static class EpsilonBins extends ListWrapper<εBin> {
 
     EpsilonBins(List<εBin> delegate) {
@@ -663,19 +687,29 @@ final class DeaggExport {
       StringBuilder sb = new StringBuilder("Epsilon keys:").append(NEWLINE);
       for (εBin bin : this) {
         sb.append(Strings.padStart("ε" + bin.id + ":  ", SUMMARY_NAME_WIDTH, ' '));
-        sb.append("[");
-        String min = (bin.min == null) ? "-∞" : Double.toString(bin.min);
-        String max = (bin.max == null) ? "+∞" : Double.toString(bin.max);
-        sb.append(min).append(" ‥ ").append(max);
-        sb.append((bin.max == null) ? "]" : ")");
-        sb.append(NEWLINE);
+        sb.append(bin)
+            .append(NEWLINE);
       }
       sb.append(NEWLINE);
       return sb.toString();
     }
+
+    List<SummaryItem> toSummaryItems() {
+      return FluentIterable.from(this)
+          .transform(BIN_TO_SUMMARY_ITEM)
+          .toList();
+    }
   }
 
-  private static final class εBin {
+  private static final Function<εBin, SummaryItem> BIN_TO_SUMMARY_ITEM =
+      new Function<εBin, SummaryItem>() {
+        @Override
+        public SummaryItem apply(εBin bin) {
+          return new SummaryItem("ε" + bin.id, bin.toString(), null);
+        }
+      };
+
+  static final class εBin {
 
     final int id;
     final Double min;
@@ -686,25 +720,17 @@ final class DeaggExport {
       this.min = min;
       this.max = max;
     }
-  }
 
-  /*
-   * Create a string reflecting the r, m, and ε discretizations that were used
-   * to intialize DeaggDatasets.
-   */
-  static String createDataDiscretization(DeaggConfig config) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("Discretization:").append(NEWLINE);
-    Bins bins = config.bins;
-    sb.append(String.format(DISCRETIZATION_FMT, "r", bins.rMin, bins.rMax, bins.Δr));
-    sb.append(String.format(DISCRETIZATION_FMT, "m", bins.mMin, bins.mMax, bins.Δm));
-    sb.append(String.format(DISCRETIZATION_FMT, "ε", bins.εMin, bins.εMax, bins.Δε));
-    sb.append(NEWLINE);
-    return sb.toString();
+    @Override
+    public String toString() {
+      return new StringBuilder("[")
+          .append((min == null) ? "-∞" : Double.toString(min))
+          .append(" ‥ ")
+          .append((max == null) ? "+∞" : Double.toString(max))
+          .append((max == null) ? "]" : ")")
+          .toString();
+    }
   }
-
-  private static final String DISCRETIZATION_FMT = "%" + (SUMMARY_NAME_WIDTH - 3) +
-      "s:  min = %.1f, max = %.1f, Δ = %.1f" + NEWLINE;
 
   /*
    * List wrapper that preserves JSON serialization yet permits custom

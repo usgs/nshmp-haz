@@ -24,7 +24,6 @@ import org.opensha2.geo.Location;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
@@ -512,8 +511,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
         return inputs;
 
       } catch (Exception e) {
-        Throwables.propagate(e);
-        return null;
+        throw new RuntimeException(e);
       }
     }
   }

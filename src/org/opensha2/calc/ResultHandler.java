@@ -398,9 +398,9 @@ public final class ResultHandler {
       Files.createDirectories(imtDir);
       Path totalFile = imtDir.resolve("total" + TEXT_SUFFIX);
       Files.write(totalFile, totalEntry.getValue(), US_ASCII, options);
-      
+
       Metadata meta = null;
-      
+
       if (exportBinary) {
         meta = metaMap.get(imt);
         Path totalBinFile = imtDir.resolve("total" + BINARY_SUFFIX);
@@ -459,7 +459,7 @@ public final class ResultHandler {
         ImtDeagg imtDeagg = imtEntry.getValue();
         DeaggDataset ddTotal = imtDeagg.totalDataset;
         DeaggConfig dc = imtDeagg.config;
-        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total");
+        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total", false);
         exporter.toFile(imtDeaggDir, name);
 
         if (exportGmm) {
@@ -469,7 +469,7 @@ public final class ResultHandler {
                 .resolve(gmmEntry.getKey().name());
             Files.createDirectories(gmmDir);
             DeaggDataset ddGmm = gmmEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmmEntry.getKey().toString());
+            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmmEntry.getKey().toString(), false);
             exporter.toFile(gmmDir, name);
           }
         }
@@ -495,8 +495,10 @@ public final class ResultHandler {
         .toString();
   }
 
-  /* Derive maps of curves by source type for each Imt. */
-  private static Map<Imt, Map<SourceType, XySequence>> curvesBySource(Hazard hazard) {
+  /**
+   * Derive maps of curves by {@code SourceType} for each {@code Imt}.
+   */
+  public static Map<Imt, Map<SourceType, XySequence>> curvesBySource(Hazard hazard) {
 
     EnumMap<Imt, Map<SourceType, XySequence>> imtMap = Maps.newEnumMap(Imt.class);
 
@@ -517,7 +519,7 @@ public final class ResultHandler {
   }
 
   /**
-   * Derive maps of curves by ground motion model for each Imt in a
+   * Derive maps of curves by {@code Gmm} for each {@code Imt} in a
    * {@code Hazard} result.
    */
   public static Map<Imt, Map<Gmm, XySequence>> curvesByGmm(Hazard hazard) {
@@ -779,12 +781,6 @@ public final class ResultHandler {
    * Compute the target position of a curve in a binary file. NSHMP binary files
    * index ascending in longitude, but descending in latitude.
    */
-//  private static int curveIndex(Bounds b, double spacing, Location loc) {
-//    int rowIndex = (int) Math.rint((b.max().lat() - loc.lat()) / spacing);
-//    int colIndex = (int) Math.rint((loc.lon() - b.min().lon()) / spacing);
-//    return rowIndex * MAX_IML_COUNT + colIndex;
-//  }
-
   private static int curveIndex2(Bounds b, double spacing, Location loc) {
     int columnCount = (int) Math.rint((b.max().lon() - b.min().lon()) / spacing) + 1;
     int rowIndex = (int) Math.rint((b.max().lat() - loc.lat()) / spacing);

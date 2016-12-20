@@ -156,6 +156,25 @@ public final class Deaggregation {
     return sb.toString();
   }
 
+  /**
+   * Returns an object constining deaggregation results that is suitable for
+   * JSON serialization.
+   * 
+   * @param imt of the deaggregation to retrieve.
+   */
+  public Object toJson(Imt imt) {
+    return deaggs.get(imt).toJson();
+  }
+
+  /**
+   * Returns an object containing epsilon bin data suitable for JSON
+   * serialization. This is exposed independent of JSON serialization of as web
+   * services may need this metadata independent of deaggregation results.
+   */
+  public Object εBins() {
+    return deaggs.values().iterator().next().config.εBins;
+  }
+
   /* One per Imt in supplied Hazard. */
   static class ImtDeagg {
 
@@ -217,7 +236,8 @@ public final class Deaggregation {
           totalDataset,
           totalDataset,
           config,
-          "Total");
+          "Total",
+          false);
       sb.append(export.toString());
       sb.append(NEWLINE);
       for (Entry<Gmm, DeaggDataset> ddEntry : gmmDatasets.entrySet()) {
@@ -225,11 +245,29 @@ public final class Deaggregation {
             totalDataset,
             ddEntry.getValue(),
             config,
-            ddEntry.getKey().toString());
+            ddEntry.getKey().toString(),
+            false);
         sb.append(export.toString());
         sb.append(NEWLINE);
       }
       return sb.toString();
+    }
+
+    /*
+     * Method does not return a JSON String, but rather an appropriately
+     * structured object that may be serialized directly or added to soem other
+     * object prior to serialization.
+     */
+    Object toJson() {
+      List<DeaggExport> jsonDeaggs = new ArrayList<>();
+      DeaggExport export = new DeaggExport(
+          totalDataset,
+          totalDataset,
+          config,
+          "Total",
+          true);
+      jsonDeaggs.add(export);
+      return jsonDeaggs;
     }
   }
 
