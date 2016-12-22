@@ -8,11 +8,13 @@ import static org.opensha2.eq.model.SourceType.CLUSTER;
 import org.opensha2.geo.Location;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Container class for related {@link ClusterSource}s.
@@ -22,7 +24,12 @@ import java.util.List;
  */
 public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
+  /*
+   * TODO sourceMap should replace sources once all sources have associated ID's
+   */
   private final List<ClusterSource> sources;
+  private final Map<Integer, ClusterSource> sourceMap;
+
 
   ClusterSourceSet(
       String name,
@@ -33,6 +40,21 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
 
     super(name, id, weight, gmmSet);
     this.sources = sources;
+    
+    /* TODO refactor to builder */
+    ImmutableMap.Builder<Integer, ClusterSource> b = ImmutableMap.builder();
+    for (ClusterSource source : sources) {
+      b.put(source.id(), source);
+    }
+    sourceMap = b.build();
+  }
+
+  /**
+   * Return the source associated with the supplied id.
+   * @param id of source to retrieve
+   */
+  public Source source(int id) {
+    return sourceMap.get(id);
   }
 
   @Override

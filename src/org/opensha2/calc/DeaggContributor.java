@@ -8,6 +8,7 @@ import static org.opensha2.internal.TextUtils.NEWLINE;
 import org.opensha2.calc.DeaggExport.ContributionFilter;
 import org.opensha2.data.Data;
 import org.opensha2.data.IntervalArray;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.Rupture;
 import org.opensha2.eq.model.Source;
@@ -674,6 +675,11 @@ abstract class DeaggContributor {
     }
 
     @Override
+    public int id() {
+      return index;
+    }
+
+    @Override
     public SourceType type() {
       return SYSTEM;
     }
@@ -681,6 +687,12 @@ abstract class DeaggContributor {
     @Override
     public Location location(Location site) {
       return null; // unused
+    }
+
+    @Override
+    public List<XySequence> mfds() {
+      return null;
+      // TODO this needs to return something, not sure what yet
     }
 
     @Override

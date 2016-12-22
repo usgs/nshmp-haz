@@ -60,6 +60,7 @@ public class AreaSource implements Source {
    */
 
   private final String name;
+  private final int id;
   private final IncrementalMfd mfd;
   private final GridScaling gridScaling;
   private final List<GriddedRegion> sourceGrids;
@@ -78,6 +79,7 @@ public class AreaSource implements Source {
 
   AreaSource(
       String name,
+      int id,
       IncrementalMfd mfd,
       GridScaling gridScaling,
       List<GriddedRegion> sourceGrids,
@@ -88,6 +90,7 @@ public class AreaSource implements Source {
       PointSourceType sourceType) {
 
     this.name = name;
+    this.id = id;
     this.mfd = mfd;
     this.gridScaling = gridScaling;
     this.sourceGrids = sourceGrids;
@@ -125,6 +128,11 @@ public class AreaSource implements Source {
   }
 
   @Override
+  public int id() {
+    return id;
+  }
+
+  @Override
   public SourceType type() {
     return AREA;
   }
@@ -136,6 +144,11 @@ public class AreaSource implements Source {
   @Override
   public Location location(Location site) {
     return centroid;
+  }
+
+  @Override
+  public List<XySequence> mfds() {
+    return ImmutableList.of(Mfds.toMutableSequence(mfd));
   }
 
   private static int mechCount(Map<FocalMech, Double> mechWtMap, PointSourceType type) {
@@ -378,7 +391,7 @@ public class AreaSource implements Source {
       validateState(ID);
       List<GriddedRegion> sourceGrids = buildSourceGrids(border, gridScaling);
       DepthModel depthModel = DepthModel.create(magDepthMap, mfd.xValues(), maxDepth);
-      return new AreaSource(name, mfd, gridScaling, sourceGrids, mechMap,
+      return new AreaSource(name, id, mfd, gridScaling, sourceGrids, mechMap,
           depthModel, strike, rupScaling, sourceType);
     }
 

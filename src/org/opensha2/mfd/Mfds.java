@@ -377,6 +377,10 @@ public final class Mfds {
         Doubles.toArray(mfd.yValues()));
   }
 
+  public static XySequence toMutableSequence(IncrementalMfd mfd) {
+    return XySequence.create(mfd.xValues(), mfd.yValues());
+  }
+
   /**
    * Combine all {@code mfds} into a single sequence.
    * @param mfds

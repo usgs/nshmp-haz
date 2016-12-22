@@ -46,6 +46,15 @@ public interface SourceSet<T extends Source> extends Named, Iterable<T>, Compara
   Iterable<T> iterableForLocation(Location loc);
 
   /**
+   * Return an {@code Iterable} over those {@code Source}s that are within
+   * {@code distance} of the supplied {@code Location}.
+   *
+   * @param loc {@code Location} of interest
+   * @param distance limit
+   */
+  Iterable<T> iterableForLocation(Location loc, double distance);
+
+  /**
    * Return a {@link Predicate} that evaluates to {@code true} if this source is
    * within {@code distance} of the supplied {@link Location}. This
    * {@code Predicate} performs a quick distance calculation and is used to

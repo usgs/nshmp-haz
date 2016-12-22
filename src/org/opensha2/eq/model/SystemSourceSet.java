@@ -18,6 +18,7 @@ import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.SystemInputList;
 import org.opensha2.data.Data;
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.geo.Location;
@@ -124,7 +125,8 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   }
 
   @Override
-  public Predicate<SystemSource> distanceFilter(Location loc, double distance) {
+  public Predicate<SystemSource> distanceFilter(Location loc,
+      double distance) {
     BitSet siteBitset = bitsetForLocation(loc, distance);
     return new BitsetFilter(siteBitset);
   }
@@ -180,6 +182,11 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     @Override
+    public int id() {
+      return index;
+    }
+
+    @Override
     public SourceType type() {
       return SourceType.SYSTEM;
     }
@@ -190,7 +197,11 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
      */
     @Override
     public Location location(Location location) {
-      // TODO for consistency, should we return something here?
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<XySequence> mfds() {
       throw new UnsupportedOperationException();
     }
 
@@ -231,6 +242,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     private final double rake() {
       return rakes[index];
     }
+
   }
 
   /**
@@ -239,7 +251,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   public static final class Statistics {
 
     /* Currently used to build section participation MFDs for deagg. */
-    
+
     /** Minimum magnitude over all ruptures. */
     public final double mMin;
 
@@ -287,7 +299,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
       this.sections = sections;
       return this;
     }
-    
+
     Builder sectionNames(List<String> names) {
       checkNotNull(names, "Section name list is null");
       checkArgument(names.size() > 0, "Section name list is empty");

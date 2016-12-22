@@ -13,6 +13,7 @@ import static org.opensha2.eq.fault.Faults.validateWidth;
 import static org.opensha2.eq.model.SourceType.FAULT;
 import static org.opensha2.internal.TextUtils.validateName;
 
+import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.surface.DefaultGriddedSurface;
 import org.opensha2.eq.fault.surface.GriddedSurface;
 import org.opensha2.eq.fault.surface.RuptureFloating;
@@ -105,6 +106,11 @@ public class FaultSource implements Source {
   }
 
   @Override
+  public int id() {
+    return id;
+  }
+
+  @Override
   public SourceType type() {
     return FAULT;
   }
@@ -116,6 +122,19 @@ public class FaultSource implements Source {
   @Override
   public Location location(Location site) {
     return Locations.closestPoint(site, trace);
+  }
+  
+  @Override
+  public List<XySequence> mfds() {
+    /* 
+     * TODO this should just pass a reference to the immutable list or map (once tracking
+     * logic-tree branches). Requires MFD implementation update
+     */
+    ImmutableList.Builder<XySequence> xyMfds = ImmutableList.builder();
+    for (IncrementalMfd mfd : mfds) {
+      xyMfds.add(XySequence.create(mfd.xValues(), mfd.yValues()));
+    }
+    return xyMfds.build();
   }
 
   @Override
