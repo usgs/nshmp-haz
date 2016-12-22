@@ -11,10 +11,12 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A container class for related {@link AreaSource}s.
@@ -23,7 +25,11 @@ import java.util.List;
  */
 public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 
-  final private List<AreaSource> sources;
+  /*
+   * TODO sourceMap should replace sources once all sources have associated ID's
+   */
+  private final List<AreaSource> sources;
+  private final Map<Integer, AreaSource> sourceMap;
 
   private AreaSourceSet(
       String name,
@@ -34,6 +40,13 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
 
     super(name, id, weight, gmmSet);
     this.sources = sources;
+
+    /* TODO refactor to builder */
+    ImmutableMap.Builder<Integer, AreaSource> b = ImmutableMap.builder();
+    for (AreaSource source : sources) {
+      b.put(source.id(), source);
+    }
+    sourceMap = b.build();
   }
 
   @Override

@@ -9,6 +9,8 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 
 import java.util.Iterator;
@@ -22,7 +24,11 @@ import java.util.List;
  */
 public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
+  /*
+   * TODO sourceMap should replace sources once all sources have associated ID's
+   */
   private final List<FaultSource> sources;
+  private final ListMultimap<Integer, FaultSource> sourceMap;
 
   private FaultSourceSet(
       String name,
@@ -33,6 +39,23 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
 
     super(name, id, weight, gmmSet);
     this.sources = sources;
+
+    /*
+     * TODO refactor to builder; multi map to handle dip variants with same id
+     */
+    ImmutableListMultimap.Builder<Integer, FaultSource> b = ImmutableListMultimap.builder();
+    for (FaultSource source : sources) {
+      b.put(source.id, source);
+    }
+    sourceMap = b.build();
+  }
+
+  /**
+   * Return those sources associated with the supplied id.
+   * @param id of sources to retrieve
+   */
+  public List<FaultSource> sources(int id) {
+    return sourceMap.get(id);
   }
 
   @Override
@@ -54,10 +77,6 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
   public Predicate<FaultSource> distanceFilter(Location loc, double distance) {
     return new DistanceFilter(loc, distance);
   }
-
-  // TODO play around with performance of rectangle filtering or not
-  // if distance is large (e.g.) the majority of sources will always
-  // pass rect test.
 
   /* Not inlined for use by cluster sources */
   static class DistanceFilter implements Predicate<FaultSource> {

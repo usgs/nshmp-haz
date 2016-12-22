@@ -69,6 +69,11 @@ public final class SlabSourceSet implements SourceSet<PointSource> {
   }
 
   @Override
+  public final Iterable<PointSource> iterableForLocation(Location loc, double distance) {
+    return delegate.iterableForLocation(loc, distance);
+  }
+
+  @Override
   public final GmmSet groundMotionModels() {
     return delegate.groundMotionModels();
   }

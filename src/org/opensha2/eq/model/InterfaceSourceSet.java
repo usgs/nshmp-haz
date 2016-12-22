@@ -9,10 +9,12 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Container class for groups of related {@link InterfaceSource}s.
@@ -22,12 +24,31 @@ import java.util.List;
  */
 public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
 
+  /*
+   * TODO sourceMap should replace sources once all sources have associated ID's
+   */
   private final List<InterfaceSource> sources;
+  private final Map<Integer, FaultSource> sourceMap;
 
   private InterfaceSourceSet(String name, int id, double weight, GmmSet gmmSet,
       List<InterfaceSource> sources) {
     super(name, id, weight, gmmSet);
     this.sources = sources;
+
+    /* TODO refactor to builder */
+    ImmutableMap.Builder<Integer, FaultSource> b = ImmutableMap.builder();
+    for (FaultSource source : sources) {
+      b.put(source.id, source);
+    }
+    sourceMap = b.build();
+  }
+
+  /**
+   * Return the source associated with the supplied id.
+   * @param id of source to retrieve
+   */
+  public Source source(int id) {
+    return sourceMap.get(id);
   }
 
   @Override

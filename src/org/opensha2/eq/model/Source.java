@@ -1,8 +1,11 @@
 package org.opensha2.eq.model;
 
+import org.opensha2.data.XySequence;
 import org.opensha2.geo.Location;
 import org.opensha2.mfd.IncrementalMfd;
 import org.opensha2.util.Named;
+
+import java.util.List;
 
 /**
  * An earthquake {@code Source}; usually some physical or pseudo-representation
@@ -19,6 +22,11 @@ public interface Source extends Named, Iterable<Rupture> {
   int size();
 
   /**
+   * A numeric identifier for this {@code Source}.
+   */
+  int id();
+  
+  /**
    * The {@code SourceType} identifier.
    */
   SourceType type();
@@ -30,4 +38,10 @@ public interface Source extends Named, Iterable<Rupture> {
    */
   Location location(Location site);
 
+  /**
+   * The MFDs that define earthquake rates for this source.
+   * @return
+   */
+  List<XySequence> mfds();
+  
 }

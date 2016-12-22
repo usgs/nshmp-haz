@@ -6,14 +6,17 @@ import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import static org.opensha2.eq.model.SourceType.CLUSTER;
 
+import org.opensha2.data.XySequence;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.Locations;
 import org.opensha2.mfd.IncrementalMfd;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -61,6 +64,11 @@ public class ClusterSource implements Source {
   }
 
   @Override
+  public int id() {
+    return faults.id();
+  }
+
+  @Override
   public SourceType type() {
     return CLUSTER;
   }
@@ -76,6 +84,18 @@ public class ClusterSource implements Source {
       locs.add(fault.location(site));
     }
     return Locations.closestPoint(site, locs.build());
+  }
+
+  @Override
+  public List<XySequence> mfds() {
+    ImmutableList.Builder<XySequence> xyMfds = ImmutableList.builder();
+    for (FaultSource fault : faults) {
+      for (XySequence mfd : fault.mfds()) {
+        mfd.multiply(rate);
+        xyMfds.add(mfd);
+      }
+    }
+    return xyMfds.build();
   }
 
   /**

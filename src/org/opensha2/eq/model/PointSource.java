@@ -15,6 +15,7 @@ import org.opensha2.geo.GeoTools;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
@@ -103,6 +104,15 @@ class PointSource implements Source {
     return rupCount;
   }
 
+  /**
+   * Overridden to return {@code -1}. Note that {@code PointSource}s may be
+   * retrieved by index using {@link GridSourceSet#source(int)}.
+   */
+  @Override
+  public int id() {
+    return -1;
+  }
+
   @Override
   public SourceType type() {
     return type;
@@ -116,6 +126,11 @@ class PointSource implements Source {
   @Override
   public Location location(Location site) {
     return loc;
+  }
+
+  @Override
+  public List<XySequence> mfds() {
+    return ImmutableList.of(mfd);
   }
 
   private void updateRupture(Rupture rup, int index) {
