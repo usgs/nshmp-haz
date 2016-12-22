@@ -14,7 +14,6 @@ import org.opensha2.internal.MathUtils;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
 
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -76,6 +75,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
   static CoefficientContainer COEFFS_SIGMA_LO;
   static CoefficientContainer COEFFS_SIGMA_MID;
   static CoefficientContainer COEFFS_SIGMA_HI;
+  static CoefficientContainer COEFFS_SIGMA_NGAW2;
 
   static {
     /*
@@ -98,6 +98,11 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
       COEFFS_SIGMA_HI = new CoefficientContainer("nga-east-sigma-hi.csv");
     } catch (Exception e) {
       COEFFS_SIGMA_HI = new CoefficientContainer("dummy-nga-east-sigma.csv");
+    }
+    try {
+      COEFFS_SIGMA_NGAW2 = new CoefficientContainer("nga-east-sigma-ngaw2.csv");
+    } catch (Exception e) {
+      COEFFS_SIGMA_NGAW2 = new CoefficientContainer("dummy-nga-east-sigma.csv");
     }
   }
 
@@ -124,9 +129,22 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     }
   }
 
+  private static final class CoefficientsNgaw2 {
+
+    final double m5, m6, m7;
+
+    CoefficientsNgaw2(Imt imt, CoefficientContainer cc) {
+      Map<String, Double> coeffs = cc.get(imt);
+      m5 = coeffs.get("m5");
+      m6 = coeffs.get("m6");
+      m7 = coeffs.get("m7");
+    }
+  }
+
   private final Coefficients σCoeffsLo;
   private final Coefficients σCoeffsMid;
   private final Coefficients σCoeffsHi;
+  private final CoefficientsNgaw2 σCoeffsNgaw2;
 
   private final GroundMotionTable[] tables;
   private final double[] weights;
@@ -135,15 +153,22 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     σCoeffsLo = new Coefficients(imt, COEFFS_SIGMA_LO);
     σCoeffsMid = new Coefficients(imt, COEFFS_SIGMA_MID);
     σCoeffsHi = new Coefficients(imt, COEFFS_SIGMA_HI);
+    σCoeffsNgaw2 = new CoefficientsNgaw2(imt, COEFFS_SIGMA_NGAW2);
     tables = GroundMotionTables.getNgaEast(imt);
     weights = GroundMotionTables.getNgaEastWeights(imt);
   }
 
-  private double[] calcSigmas(double Mw) {
+  double[] calcSigmasTotal(double Mw) {
     return new double[] {
         calcSigma(σCoeffsLo, Mw),
         calcSigma(σCoeffsMid, Mw),
         calcSigma(σCoeffsHi, Mw),
+    };
+  }
+
+  double[] calcSigmasMid(double Mw) {
+    return new double[] {
+        calcSigma(σCoeffsMid, Mw)
     };
   }
 
@@ -170,6 +195,12 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     }
 
     return MathUtils.hypot(τ, φ);
+  }
+
+  double[] calcSigmasNgaw2(double Mw) {
+    return new double[] {
+        Mw < 5.5 ? σCoeffsNgaw2.m5 : Mw < 6.5 ? σCoeffsNgaw2.m6 : σCoeffsNgaw2.m7
+    };
   }
 
   /* Return the subset of weights specified by the supplied modelIDs. */
@@ -199,8 +230,14 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
       for (int i = 0; i < models.length; i++) {
         μs[i] = super.tables[models[i] - 1].get(p);
       }
-      double[] σs = super.calcSigmas(in.Mw);
-      return new MultiScalarGroundMotion(μs, weights, σs, SIGMA_WTS);
+      double[] σs = calcSigmas(in.Mw);
+      double[] σWts = σs.length > 1 ? SIGMA_WTS : new double[] { 1.0 };
+      return new MultiScalarGroundMotion(μs, weights, σs, σWts);
+    }
+
+    /* provided for overrides */
+    double[] calcSigmas(double Mw) {
+      return super.calcSigmasTotal(Mw);
     }
   }
 
@@ -228,27 +265,57 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     }
   }
 
-  static final class Total extends ModelGroup {
-    static final String NAME = NgaEast_2016.NAME + ": Total";
+  static class Total extends ModelGroup {
+    static final String NAME = NgaEast_2016.NAME + ": Total (Total sigma)";
 
     Total(Imt imt) {
       super(imt, Ints.concat(R0, R1, R2, R3));
     }
   }
 
+  static final class TotalSigmaCenter extends Total {
+    static final String NAME = NgaEast_2016.NAME + ": Total (Central sigma)";
+
+    TotalSigmaCenter(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    double[] calcSigmas(double Mw) {
+      return super.calcSigmasMid(Mw);
+    }
+  }
+
+  static final class TotalSigmaNgaw2 extends Total {
+    static final String NAME = NgaEast_2016.NAME + ": Total (NGAW2 sigma)";
+
+    TotalSigmaNgaw2(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    double[] calcSigmas(double Mw) {
+      return super.calcSigmasNgaw2(Mw);
+    }
+  }
+
   // TODO clean
   public static void main(String[] args) {
-    Center ngaEast = new Center(Imt.SA0P2);
+    Total ngaEast1 = new Total(Imt.SA0P2);
+    Total ngaEast2 = new TotalSigmaCenter(Imt.SA0P2);
+    Total ngaEast3 = new TotalSigmaNgaw2(Imt.SA0P2);
 
     GmmInput.Builder builder = GmmInput.builder().withDefaults();
     builder.rRup(10);
     GmmInput in = builder.build();
 
     System.out.println(in);
-    System.out.println(ngaEast.calc(in));
+    System.out.println(ngaEast1.calc(in));
+    System.out.println(ngaEast2.calc(in));
+    System.out.println(ngaEast3.calc(in));
 
-    System.out.println(Arrays.toString(ngaEast.models));
-    System.out.println(Arrays.toString(ngaEast.weights));
+    // System.out.println(Arrays.toString(ngaEast.models));
+    // System.out.println(Arrays.toString(ngaEast.weights));
     // System.out.println(Arrays.toString(ngaEast.R0_weights));
   }
 
