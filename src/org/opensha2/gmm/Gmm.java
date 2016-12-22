@@ -426,6 +426,20 @@ public enum Gmm {
       NgaEast_2016.COEFFS_SIGMA_MID,
       NgaEast_2016.CONSTRAINTS),
 
+  /** @see NgaEast_2016 */
+  NGA_EAST_TOTAL_SIGMA_CENTER(
+      NgaEast_2016.TotalSigmaCenter.class,
+      NgaEast_2016.TotalSigmaCenter.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+  /** @see NgaEast_2016 */
+ 
+  NGA_EAST_TOTAL_SIGMA_NGAW2(
+      NgaEast_2016.TotalSigmaNgaw2.class,
+      NgaEast_2016.TotalSigmaNgaw2.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
   // Other
 
   /** @see AbrahamsonSilva_1997 */
