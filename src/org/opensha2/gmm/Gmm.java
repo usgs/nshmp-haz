@@ -437,7 +437,7 @@ public enum Gmm {
   NGA_EAST_TOTAL_SIGMA_NGAW2(
       NgaEast_2016.TotalSigmaNgaw2.class,
       NgaEast_2016.TotalSigmaNgaw2.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.COEFFS_SIGMA_NGAW2,
       NgaEast_2016.CONSTRAINTS),
 
   // Other
