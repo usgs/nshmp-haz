@@ -10,8 +10,7 @@
 clear
 
 % Specify path to nshmp-haz library:
-% nshmpHaz = '/path/to/repository/nshmp-haz/dist/nshmp-haz.jar';
-nshmpHaz = '/Users/pmpowers/projects/git/nshmp-haz/dist/nshmp-haz.jar';
+nshmpHaz = '/path/to/repository/nshmp-haz/dist/nshmp-haz.jar';
 
 % Make Matlab aware of nshmp-haz by adding it to the 'dynamic' classpath:
 javaaddpath(nshmpHaz);
