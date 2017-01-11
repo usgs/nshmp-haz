@@ -70,7 +70,7 @@ public class GmmInput {
 
   /** Vs30 at site. */
   public final double vs30;
-  /** Whether vs30 is inferred or measured. */
+  /** Whether {@code vs30} is inferred or measured. */
   public final boolean vsInf;
   /** Depth to 1.0 km/s (in km). */
   public final double z1p0;
@@ -190,7 +190,7 @@ public class GmmInput {
      *
      * <li>width: 14.0 (km)</li>
      *
-     * <li>zTop: 0.5(km)</li>
+     * <li>zTop: 0.5 (km)</li>
      *
      * <li>zHyp: 7.5 (km)</li>
      *
@@ -238,6 +238,54 @@ public class GmmInput {
       flags.set(index);
       reset.set(index);
       return value;
+    }
+
+    /**
+     * Set a field in this builder. String values are converted to the
+     * appropriate class required by the field.
+     * 
+     * @param id of the field to set
+     * @param s string value that will be converted to appropriate class
+     */
+    @SuppressWarnings("incomplete-switch")
+    public Builder set(Field id, String s) {
+      try {
+        double v = Double.valueOf(s);
+        switch (id) {
+          case MAG:
+            return mag(v);
+          case RJB:
+            return rJB(v);
+          case RRUP:
+            return rRup(v);
+          case RX:
+            return rX(v);
+          case DIP:
+            return dip(v);
+          case WIDTH:
+            return width(v);
+          case ZTOP:
+            return zTop(v);
+          case ZHYP:
+            return zHyp(v);
+          case RAKE:
+            return rake(v);
+          case VS30:
+            return vs30(v);
+          case Z2P5:
+            return z2p5(v);
+          case Z1P0:
+            return z1p0(v);
+        }
+      } catch (NumberFormatException nfe) {
+        // move along
+      }
+
+      if (id == VSINF) {
+        return vsInf(Boolean.valueOf(s));
+      }
+
+      throw new IllegalStateException("Unhandled field: " + id);
     }
 
     public Builder mag(double Mw) {
@@ -350,111 +398,111 @@ public class GmmInput {
   public enum Field {
 
     MAG(
-        "Magnitude",
         "Mw",
+        "Magnitude",
         "The moment magnitude of an earthquake",
         Optional.<String> absent(),
         6.5),
 
     RJB(
-        "Joyner-Boore Distance",
         "rJB",
+        "Joyner-Boore Distance",
         "The shortest distance from a site to the surface projection of a rupture, in kilometers",
         Optional.of(DISTANCE_UNIT),
         10.0),
 
     RRUP(
-        "Rupture Distance",
         "rRup",
+        "Rupture Distance",
         "The shortest distance from a site to a rupture, in kilometers",
         Optional.of(DISTANCE_UNIT),
         10.3),
 
     RX(
-        "Distance X",
         "rX",
+        "Distance X",
         "The shortest distance from a site to the extended trace a fault, in kilometers",
         Optional.of(DISTANCE_UNIT),
         10.0),
 
     DIP(
-        "Dip",
         "dip",
+        "Dip",
         "The dip of a rupture surface, in degrees",
         Optional.of(ANGLE_UNIT),
         90.0),
 
     WIDTH(
-        "Width",
         "width",
+        "Width",
         "The width of a rupture surface, in kilometers",
         Optional.of(DISTANCE_UNIT),
         14.0),
 
     ZTOP(
-        "Depth",
         "zTop",
+        "Depth",
         "The depth to the top of a rupture surface, in kilometers and positive-down",
         Optional.of(DISTANCE_UNIT),
         0.5),
 
     ZHYP(
-        "Hypocentral Depth",
         "zHyp",
+        "Hypocentral Depth",
         "The depth to the hypocenter on a rupture surface, in kilometers and positive-down",
         Optional.of(DISTANCE_UNIT),
         7.5),
 
     RAKE(
-        "Rake",
         "rake",
+        "Rake",
         "The rake (or sense of slip) of a rupture surface, in degrees",
         Optional.of(ANGLE_UNIT),
         0.0),
 
     VS30(
-        "Vs30",
+        "vs30",
         "Vs30",
         "The average shear-wave velocity down to 30 meters, in kilometers per second",
         Optional.of(VELOCITY_UNIT),
         760.0),
 
     VSINF(
+        "vsInf",
         "Vs30 Inferred",
-        "Inferred",
         "Whether Vs30 was measured or inferred",
         Optional.<String> absent(),
         1.0),
 
     Z1P0(
+        "z1p0",
         "Depth to Vs=1.0 km/s",
-        "z1.0",
         "Depth to a shear-wave velocity of 1.0 kilometers per second, in kilometers",
         Optional.of(DISTANCE_UNIT),
         NaN),
 
     Z2P5(
+        "z2p5",
         "Depth to Vs=2.5 km/s",
-        "z2.5",
         "Depth to a shear-wave velocity of 2.5 kilometers per second, in kilometers",
         Optional.of(DISTANCE_UNIT),
         NaN);
 
+    public final String id;
     public final String label;
-    public final String shortLabel;
     public final String info;
     public final Optional<String> units;
     public final double defaultValue;
 
     private Field(
+        String id,
         String label,
-        String shortLabel,
         String info,
         Optional<String> units,
         double defaultValue) {
 
+      this.id = id;
       this.label = label;
-      this.shortLabel = shortLabel;
       this.info = info;
       this.units = units;
       this.defaultValue = defaultValue;
@@ -462,7 +510,7 @@ public class GmmInput {
 
     @Override
     public String toString() {
-      return this.name().toLowerCase();
+      return id;
     }
 
     public static Field fromString(String s) {
@@ -492,7 +540,7 @@ public class GmmInput {
         .add(Z2P5.toString(), z2p5)
         .toString();
   }
-
+  
   /**
    * The constraints associated with each {@code GmmInput} field. All methods
    * return an {@link Optional} whose {@link Optional#isPresent()} method will
@@ -503,23 +551,6 @@ public class GmmInput {
 
     // TODO would moving to RangeSet be a satisfactory way
     // to handle discrete value sets (using Range.singleton)
-
-    // TODO do we need these as type specific fields?
-
-    // TODO clean
-    // public final Optional<Range<Double>> mag;
-    // public final Optional<Range<Double>> rJB;
-    // public final Optional<Range<Double>> rRup;
-    // public final Optional<Range<Double>> rX;
-    // public final Optional<Range<Double>> dip;
-    // public final Optional<Range<Double>> width;
-    // public final Optional<Range<Double>> zTop;
-    // public final Optional<Range<Double>> zHyp;
-    // public final Optional<Range<Double>> rake;
-    // public final Optional<Range<Double>> vs30;
-    // public final Optional<Range<Boolean>> vsInf;
-    // public final Optional<Range<Double>> z1p0;
-    // public final Optional<Range<Double>> z2p5;
 
     // for internal use only
     private Map<Field, Optional<?>> constraintMap;
@@ -545,62 +576,23 @@ public class GmmInput {
 
       this.mag = mag;
       constraintMap.put(MAG, mag);
-
-      // this.rJB = rJB;
       constraintMap.put(RJB, rJB);
-
-      // this.rRup = rRup;
       constraintMap.put(RRUP, rRup);
-
-      // this.rX = rX;
       constraintMap.put(RX, rX);
-
-      // this.dip = dip;
       constraintMap.put(DIP, dip);
-
-      // this.width = width;
       constraintMap.put(WIDTH, width);
-
-      // this.zTop = zTop;
       constraintMap.put(ZTOP, zTop);
-
-      // this.zHyp = zHyp;
       constraintMap.put(ZHYP, zHyp);
-
-      // this.rake = rake;
       constraintMap.put(RAKE, rake);
-
-      // this.vs30 = vs30;
       constraintMap.put(VS30, vs30);
-
-      // this.vsInf = vsInf;
       constraintMap.put(VSINF, vsInf);
-
-      // this.z1p0 = z1p0;
       constraintMap.put(Z1P0, z1p0);
-
-      // this.z2p5 = z2p5;
       constraintMap.put(Z2P5, z2p5);
-
     }
 
     public Optional<?> get(Field field) {
       return constraintMap.get(field);
     }
-
-    // @SuppressWarnings("unchecked")
-    // public Optional<Boolean> getBoolean(Field field) {
-    // checkArgument(field.clazz.equals(Boolean.class));
-    // // safe covariant cast
-    // return (Optional<Boolean>) constraintMap.get(field);
-    // }
-    //
-    // @SuppressWarnings("unchecked")
-    // public Optional<Double> getDouble(Field field) {
-    // checkArgument(field.clazz.equals(Double.class));
-    // // safe covariant cast
-    // return (Optional<Double>) constraintMap.get(field);
-    // }
 
     /**
      * Return a builder of {@code GmmInput} constraints. This builder sets all
@@ -725,8 +717,7 @@ public class GmmInput {
             break;
           default:
             throw new IllegalArgumentException(
-                "GmmInput.Constraints.Builder " +
-                    "Unsupported field: " + id.name());
+                "GmmInput.Constraints.Builder Unsupported field: " + id.name());
         }
         return this;
       }
