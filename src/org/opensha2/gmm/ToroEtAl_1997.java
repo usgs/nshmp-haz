@@ -4,7 +4,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
 
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
@@ -73,7 +73,7 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
   static final String NAME = "Toro et al. (1997)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(4.0, 8.0))
+      .set(MW, Range.closed(4.0, 8.0))
       .set(RJB, Range.closed(0.0, 1000.0))
       .set(VS30, Range.closed(760.0, 2000.0))
       .build();

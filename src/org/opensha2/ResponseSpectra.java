@@ -135,7 +135,9 @@ public class ResponseSpectra {
       sigmaMap.put(gmm, sigmas.build());
     }
 
-    return new MultiResult(periods, Maps.immutableEnumMap(meanMap),
+    return new MultiResult(
+        periods,
+        Maps.immutableEnumMap(meanMap),
         Maps.immutableEnumMap(sigmaMap));
   }
 

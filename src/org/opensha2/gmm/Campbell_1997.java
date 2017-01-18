@@ -9,7 +9,7 @@ import static java.lang.Math.tanh;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha2.gmm.FaultStyle.UNKNOWN;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -56,7 +56,7 @@ public class Campbell_1997 implements GroundMotionModel {
   static final String NAME = "Campbell (1997)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(5.0, 8.0))
+      .set(MW, Range.closed(5.0, 8.0))
       .set(RRUP, Range.closed(0.0, 60.0))
       .set(RAKE, Faults.RAKE_RANGE)
       .set(VS30, Range.singleton(760.0))

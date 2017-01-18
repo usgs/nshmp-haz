@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Double.NaN;
 
 import static org.opensha2.gmm.GmmInput.Field.DIP;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
@@ -205,7 +205,7 @@ public class GmmInput {
      * <li>z1p0: NaN</li></ul>
      */
     public Builder withDefaults() {
-      Mw = MAG.defaultValue;
+      Mw = MW.defaultValue;
       rJB = RJB.defaultValue;
       rRup = RRUP.defaultValue;
       rX = RX.defaultValue;
@@ -252,7 +252,7 @@ public class GmmInput {
       try {
         double v = Double.valueOf(s);
         switch (id) {
-          case MAG:
+          case MW:
             return mag(v);
           case RJB:
             return rJB(v);
@@ -289,7 +289,7 @@ public class GmmInput {
     }
 
     public Builder mag(double Mw) {
-      this.Mw = validateAndFlag(MAG, Mw);
+      this.Mw = validateAndFlag(MW, Mw);
       return this;
     }
 
@@ -397,7 +397,7 @@ public class GmmInput {
   @SuppressWarnings("javadoc")
   public enum Field {
 
-    MAG(
+    MW(
         "Mw",
         "Magnitude",
         "The moment magnitude of an earthquake",
@@ -525,7 +525,7 @@ public class GmmInput {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add(MAG.toString(), String.format("%.2f", Mw))
+        .add(MW.toString(), String.format("%.2f", Mw))
         .add(RJB.toString(), String.format("%.3f", rJB))
         .add(RRUP.toString(), String.format("%.3f", rRup))
         .add(RX.toString(), String.format("%.3f", rX))
@@ -575,7 +575,7 @@ public class GmmInput {
       constraintMap = new EnumMap<>(Field.class);
 
       this.mag = mag;
-      constraintMap.put(MAG, mag);
+      constraintMap.put(MW, mag);
       constraintMap.put(RJB, rJB);
       constraintMap.put(RRUP, rRup);
       constraintMap.put(RX, rX);
@@ -679,7 +679,7 @@ public class GmmInput {
       Builder set(Field id, Range<Double> constraint) {
         checkArgument(EnumSet.complementOf(EnumSet.of(Field.VSINF)).contains(id));
         switch (id) {
-          case MAG:
+          case MW:
             mag = Optional.of(constraint);
             break;
           case RJB:
@@ -749,7 +749,7 @@ public class GmmInput {
          * to support returning the constraints supported by subsets of gmms
          */
 
-        set(MAG, Magnitudes.MAG_RANGE);
+        set(MW, Magnitudes.MAG_RANGE);
         set(RJB, Range.closed(0.0, Distance.MAX));
         set(RRUP, Range.closed(0.0, Distance.MAX));
         set(RX, Range.closed(0.0, Distance.MAX));

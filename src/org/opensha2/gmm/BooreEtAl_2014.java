@@ -9,7 +9,7 @@ import static java.lang.Math.sqrt;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -51,7 +51,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       // TODO normal faults technically only applicable to M7
-      .set(MAG, Range.closed(3.0, 8.5))
+      .set(MW, Range.closed(3.0, 8.5))
       .set(RJB, Range.closed(0.0, 400.0))
       .set(RAKE, Faults.RAKE_RANGE)
       .set(VS30, Range.closedOpen(150.0, 1500.0))

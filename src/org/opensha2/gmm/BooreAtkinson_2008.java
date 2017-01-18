@@ -8,7 +8,7 @@ import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
 import static org.opensha2.gmm.FaultStyle.UNKNOWN;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -49,7 +49,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
   static final String NAME = "Boore & Atkinson (2008)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(5.0, 8.0))
+      .set(MW, Range.closed(5.0, 8.0))
       .set(RJB, Range.closed(0.0, 200.0))
       .set(DIP, Faults.DIP_RANGE)
       .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)

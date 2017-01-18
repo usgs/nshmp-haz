@@ -2,7 +2,7 @@ package org.opensha2.gmm;
 
 import static java.lang.Math.log10;
 
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
@@ -52,7 +52,7 @@ public final class AtkinsonMacias_2009 implements GroundMotionModel {
   static final String NAME = "Atkinson & Macias (2009): Interface";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(5.0, 9.5))
+      .set(MW, Range.closed(5.0, 9.5))
       .set(RRUP, Range.closed(0.0, 1000.0))
       .set(VS30, Range.closed(150.0, 1500.0))
       .build();

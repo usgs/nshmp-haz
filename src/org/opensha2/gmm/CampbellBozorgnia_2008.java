@@ -9,7 +9,7 @@ import static java.lang.Math.sqrt;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
@@ -57,7 +57,7 @@ public final class CampbellBozorgnia_2008 implements GroundMotionModel {
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       // TODO there are rake dependent M restrictions
-      .set(MAG, Range.closed(4.0, 8.5))
+      .set(MW, Range.closed(4.0, 8.5))
       .set(RJB, Range.closed(0.0, 300.0))
       .set(RRUP, Range.closed(0.0, 300.0))
       // TODO actually is 15-90

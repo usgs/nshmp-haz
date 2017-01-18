@@ -768,8 +768,8 @@ public final class CalcConfig {
 
       static Bins defaults() {
         return new Bins(
-            0.0, 1000.0, 10.0,
-            5.0, 9.4, 0.2,
+            0.0, 1000.0, 20.0,
+            4.4, 9.4, 0.2,
             -3.0, 3.0, 0.5);
       }
     }

@@ -10,7 +10,7 @@ import static java.lang.Math.sqrt;
 import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmInput.Field.WIDTH;
@@ -60,7 +60,7 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       // TODO there are rake dependent M restrictions
-      .set(MAG, Range.closed(3.3, 8.5))
+      .set(MW, Range.closed(3.3, 8.5))
       .setDistances(300.0)
       // TODO actually is 15-90
       .set(DIP, Faults.DIP_RANGE)
