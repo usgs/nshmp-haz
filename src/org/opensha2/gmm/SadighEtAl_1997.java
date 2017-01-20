@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Implementation of the ground motion model for shallow crustal earthquakes by
  * Sadigh et al. (1997). This implementation supports soil and rock sites, the
- * rather too brad cutoff for which is vs30=750 m/s.
+ * cutoff for which is vs30=750 m/s.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a

@@ -24,8 +24,8 @@ import java.util.Set;
  * {@link #groundMotion(Gmm, Imt, GmmInput)} and
  * {@link #spectrum(Gmm, GmmInput)} are convenient for use within Matlab as they
  * return simple data container objects that are automatically converted to
- * Matlab structs and arrays. {@link #spectra(Set, GmmInput)} returns a more
- * complex result and is for use with web services.
+ * Matlab structs and arrays. {@link #spectra(Set, GmmInput, boolean)}
+ * returns a more complex result and is for use with web services.
  *
  * @author Peter Powers
  */
@@ -36,8 +36,7 @@ public class ResponseSpectra {
    * {@link GroundMotionModel}, intensity measure type ({@link Imt} ), and
    * source and site parameterization ({@link GmmInput}).
    *
-   * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
-   * .
+   * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}.
    *
    * @param model to use
    * @param imt intensity measure type (e.g. {@code PGA}, {@code SA1P00})
@@ -59,8 +58,7 @@ public class ResponseSpectra {
    * <p>This method is intended for use with Matlab, which converts
    * {@code Result} to a struct automatically.
    *
-   * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
-   * .
+   * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}.
    *
    * @param model to use
    * @param input source and site parameterization
@@ -101,29 +99,33 @@ public class ResponseSpectra {
 
   /**
    * Compute the spectra of ground motions and their standard deviations for
-   * multiple models and a source. All common spectral periods supported by the
-   * model are returned.
-   *
-   * <p>This method is intended for use with Matlab, which converts
-   * {@code Result} to a strct automatically.
-   *
-   * <p>{@code enum} types are identified in matlab as e.g. {@link Gmm#ASK_14}
-   * .
+   * multiple models and a source. This method provides the option to compute
+   * ground motion values either for the set of common spectral accelerations
+   * supported by the {@link Gmm}s specified, or for every spectral acceleration
+   * supported by each {@link Gmm}.
    *
    * @param gmms {@code GroundMotionModel}s to use
    * @param input source and site parameterization
+   * @Param commonImts {@code true} if only ground motions corresponding to the
+   *        spectral accelerations common to all {@code gmms} should be
+   *        computed; {@code false} if all spectral accelerations supported by
+   *        each gmm should be used.
    * @return a {@link MultiResult} data container
    */
-  public static MultiResult spectra(Set<Gmm> gmms, GmmInput input) {
+  public static MultiResult spectra(Set<Gmm> gmms, GmmInput input, boolean commonImts) {
 
-    // set up result aggregators
-    Set<Imt> imts = Gmm.responseSpectrumIMTs(gmms);
-    List<Double> periods = ImmutableList.copyOf(Imt.periods(imts));
+    Map<Gmm, List<Double>> periodMap = Maps.newEnumMap(Gmm.class);
     Map<Gmm, List<Double>> meanMap = Maps.newEnumMap(Gmm.class);
     Map<Gmm, List<Double>> sigmaMap = Maps.newEnumMap(Gmm.class);
 
-    // compute spectra
+    // common imts and periods; may not be used
+    Set<Imt> imts = Gmm.responseSpectrumIMTs(gmms);
+    ImmutableList<Double> periods = ImmutableList.copyOf(Imt.periods(imts));
     for (Gmm gmm : gmms) {
+      if (!commonImts) {
+        imts = gmm.responseSpectrumIMTs();
+        periods = ImmutableList.copyOf(Imt.periods(imts));
+      }
       ImmutableList.Builder<Double> means = ImmutableList.builder();
       ImmutableList.Builder<Double> sigmas = ImmutableList.builder();
       for (Imt imt : imts) {
@@ -131,12 +133,13 @@ public class ResponseSpectra {
         means.add(sgm.mean());
         sigmas.add(sgm.sigma());
       }
+      periodMap.put(gmm, periods);
       meanMap.put(gmm, means.build());
       sigmaMap.put(gmm, sigmas.build());
     }
 
     return new MultiResult(
-        periods,
+        Maps.immutableEnumMap(periodMap),
         Maps.immutableEnumMap(meanMap),
         Maps.immutableEnumMap(sigmaMap));
   }
@@ -145,20 +148,21 @@ public class ResponseSpectra {
   public static class MultiResult {
 
     /** Spectral periods. */
-    public final List<Double> periods;
+    public final Map<Gmm, List<Double>> periods;
 
     /** Map of ground motion means. */
-    public final Map<Gmm, List<Double>> meanMap;
+    public final Map<Gmm, List<Double>> means;
 
     /** Map of ground motion sigmas. */
-    public final Map<Gmm, List<Double>> sigmaMap;
+    public final Map<Gmm, List<Double>> sigmas;
 
-    // spectra() supplies immutable maps and lists
-    MultiResult(List<Double> periods, Map<Gmm, List<Double>> meanMap,
-        Map<Gmm, List<Double>> sigmaMap) {
+    MultiResult(
+        Map<Gmm, List<Double>> periods,
+        Map<Gmm, List<Double>> means,
+        Map<Gmm, List<Double>> sigmas) {
       this.periods = periods;
-      this.meanMap = meanMap;
-      this.sigmaMap = sigmaMap;
+      this.means = means;
+      this.sigmas = sigmas;
     }
   }
 
