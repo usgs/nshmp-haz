@@ -13,7 +13,7 @@ import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.REVERSE_OBLIQUE;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -80,7 +80,7 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
   // (e.g. zHyp only used by subduction)
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(4.0, 8.0))
+      .set(MW, Range.closed(4.0, 8.0))
       .set(RRUP, Range.closed(0.0, 200.0))
       .set(ZHYP, Range.closed(0.0, 20.0))
       .set(RAKE, Faults.RAKE_RANGE)

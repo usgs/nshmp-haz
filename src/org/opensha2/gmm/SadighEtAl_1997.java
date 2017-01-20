@@ -6,7 +6,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 
 import static org.opensha2.gmm.FaultStyle.REVERSE;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Implementation of the ground motion model for shallow crustal earthquakes by
  * Sadigh et al. (1997). This implementation supports soil and rock sites, the
- * rather too brad cutoff for which is vs30=750 m/s.
+ * cutoff for which is vs30=750 m/s.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -56,7 +56,7 @@ public class SadighEtAl_1997 implements GroundMotionModel {
   static final String NAME = "Sadigh et al. (1997)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(5.0, 8.0))
+      .set(MW, Range.closed(5.0, 8.0))
       .set(RRUP, Range.closed(0.0, 100.0))
       .set(RAKE, Faults.RAKE_RANGE)
       .set(VS30, Range.closed(250.0, 760.0))

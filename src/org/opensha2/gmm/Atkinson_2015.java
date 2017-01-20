@@ -4,7 +4,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
@@ -43,7 +43,7 @@ public final class Atkinson_2015 implements GroundMotionModel {
 
   // TODO
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(3.0, 6.0))
+      .set(MW, Range.closed(3.0, 6.0))
       .set(RRUP, Range.closed(0.0, 300.0))
       .set(VS30, Range.singleton(760.0))
       .build();

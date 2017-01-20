@@ -46,7 +46,8 @@ import java.util.Set;
 public enum Gmm {
 
   // TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
-  // high at large distances
+  // high at large distances -- NOT NEEDED as we are dropping AB03 for multi-
+  // point analyses (2014 r2)
 
   // TODO AB06 has PGV clamp of 460m/s; is this correct? or specified
   // anywhere?
@@ -57,7 +58,7 @@ public enum Gmm {
   // imposed in hazFX - make sure 0.01 as PGA is handled corectly; may require
   // change to period = 0.0
 
-  // NGA-West1 NSHMP 2008
+  /* Active continent NGA-West1 WUS 2008 */
 
   /** @see BooreAtkinson_2008 */
   BA_08(
@@ -80,7 +81,7 @@ public enum Gmm {
       ChiouYoungs_2008.COEFFS,
       ChiouYoungs_2008.CONSTRAINTS),
 
-  // NGA-West2 NSHMP 2014
+  /* Active continent NGA-West2 WUS 2014 */
 
   /** @see AbrahamsonEtAl_2014 */
   ASK_14(
@@ -117,7 +118,51 @@ public enum Gmm {
       Idriss_2014.COEFFS,
       Idriss_2014.CONSTRAINTS),
 
-  // Subduction NSHMP 2008 2014
+  /* Active Continent AK 2007, HI 1998 */
+
+  /** @see AbrahamsonSilva_1997 */
+  AS_97(
+      AbrahamsonSilva_1997.class,
+      AbrahamsonSilva_1997.NAME,
+      AbrahamsonSilva_1997.COEFFS,
+      AbrahamsonSilva_1997.CONSTRAINTS),
+
+  /** @see BooreEtAl_1997 */
+  BJF_97(
+      BooreEtAl_1997.class,
+      BooreEtAl_1997.NAME,
+      BooreEtAl_1997.COEFFS,
+      BooreEtAl_1997.CONSTRAINTS),
+
+  /** @see Campbell_1997 */
+  CAMPBELL_97(
+      Campbell_1997.class,
+      Campbell_1997.NAME,
+      Campbell_1997.COEFFS,
+      Campbell_1997.CONSTRAINTS),
+
+  /** @see CampbellBozorgnia_2003 */
+  CB_03(
+      CampbellBozorgnia_2003.class,
+      CampbellBozorgnia_2003.NAME,
+      CampbellBozorgnia_2003.COEFFS,
+      CampbellBozorgnia_2003.CONSTRAINTS),
+
+  /** @see MunsonThurber_1997 */
+  MT_97(
+      MunsonThurber_1997.class,
+      MunsonThurber_1997.NAME,
+      MunsonThurber_1997.COEFFS,
+      MunsonThurber_1997.CONSTRAINTS),
+
+  /** @see SadighEtAl_1997 */
+  SADIGH_97(
+      SadighEtAl_1997.class,
+      SadighEtAl_1997.NAME,
+      SadighEtAl_1997.COEFFS_BC_HI,
+      SadighEtAl_1997.CONSTRAINTS),
+
+  /* Subduction Interface and Slab WUS 2008 2014, AK 2007 */
 
   /** @see AtkinsonBoore_2003 */
   AB_03_GLOB_INTER(
@@ -219,7 +264,7 @@ public enum Gmm {
    * GmmUtils.ceusMeanClip()
    */
 
-  // Stable continent (CEUS) NSHMP 2008 2014
+  /* Stable continent CEUS 2008 2014 */
 
   /** @see AtkinsonBoore_2006p */
   AB_06_PRIME(
@@ -298,7 +343,7 @@ public enum Gmm {
       ToroEtAl_1997.COEFFS_MW,
       ToroEtAl_1997.CONSTRAINTS),
 
-  // Johnston mag converting flavors of CEUS, NSHMP 2008
+  /* Johnston mag converting flavors of CEUS 2008 */
 
   /** @see AtkinsonBoore_2006 */
   AB_06_140BAR_J(
@@ -342,7 +387,7 @@ public enum Gmm {
       TavakoliPezeshk_2005.COEFFS,
       TavakoliPezeshk_2005.CONSTRAINTS),
 
-  // Atkinson Boore mag converting flavors of CEUS, NSHMP 2008
+  /* Atkinson Boore mag converting flavors of CEUS 2008 */
 
   /** @see AtkinsonBoore_2006 */
   AB_06_140BAR_AB(
@@ -392,28 +437,25 @@ public enum Gmm {
       ToroEtAl_1997.Mb.NAME,
       ToroEtAl_1997.COEFFS_MW,
       ToroEtAl_1997.CONSTRAINTS),
-  
-  // NGA-East
-  
+
+  /* NGA-East */
+
   /** @see NgaEast_2016 */
-  @Deprecated
-  NGA_EAST_CENTER(
+  @Deprecated NGA_EAST_CENTER(
       NgaEast_2016.Center.class,
       NgaEast_2016.Center.NAME,
       NgaEast_2016.COEFFS_SIGMA_MID,
       NgaEast_2016.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
-  @Deprecated
-  NGA_EAST_GROUP1(
+  @Deprecated NGA_EAST_GROUP1(
       NgaEast_2016.Group1.class,
       NgaEast_2016.Group1.NAME,
       NgaEast_2016.COEFFS_SIGMA_MID,
       NgaEast_2016.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
-  @Deprecated
-  NGA_EAST_GROUP2(
+  @Deprecated NGA_EAST_GROUP2(
       NgaEast_2016.Group2.class,
       NgaEast_2016.Group2.NAME,
       NgaEast_2016.COEFFS_SIGMA_MID,
@@ -433,21 +475,14 @@ public enum Gmm {
       NgaEast_2016.COEFFS_SIGMA_MID,
       NgaEast_2016.CONSTRAINTS),
   /** @see NgaEast_2016 */
- 
+
   NGA_EAST_TOTAL_SIGMA_NGAW2(
       NgaEast_2016.TotalSigmaNgaw2.class,
       NgaEast_2016.TotalSigmaNgaw2.NAME,
       NgaEast_2016.COEFFS_SIGMA_NGAW2,
       NgaEast_2016.CONSTRAINTS),
 
-  // Other
-
-  /** @see AbrahamsonSilva_1997 */
-  AS_97(
-      AbrahamsonSilva_1997.class,
-      AbrahamsonSilva_1997.NAME,
-      AbrahamsonSilva_1997.COEFFS,
-      AbrahamsonSilva_1997.CONSTRAINTS),
+  /* Other */
 
   /** @see Atkinson_2015 */
   ATKINSON_15(
@@ -455,34 +490,6 @@ public enum Gmm {
       Atkinson_2015.NAME,
       Atkinson_2015.COEFFS,
       Atkinson_2015.CONSTRAINTS),
-
-  /** @see BooreEtAl_1997 */
-  BJF_97(
-      BooreEtAl_1997.class,
-      BooreEtAl_1997.NAME,
-      BooreEtAl_1997.COEFFS,
-      BooreEtAl_1997.CONSTRAINTS),
-
-  /** @see Campbell_1997 */
-  CAMPBELL_97(
-      Campbell_1997.class,
-      Campbell_1997.NAME,
-      Campbell_1997.COEFFS,
-      Campbell_1997.CONSTRAINTS),
-
-  /** @see CampbellBozorgnia_2003 */
-  CB_03(
-      CampbellBozorgnia_2003.class,
-      CampbellBozorgnia_2003.NAME,
-      CampbellBozorgnia_2003.COEFFS,
-      CampbellBozorgnia_2003.CONSTRAINTS),
-
-  /** @see SadighEtAl_1997 */
-  SADIGH_97(
-      SadighEtAl_1997.class,
-      SadighEtAl_1997.NAME,
-      SadighEtAl_1997.COEFFS_BC_HI,
-      SadighEtAl_1997.CONSTRAINTS),
 
   /** @see McVerryEtAl_2000 */
   MCVERRY_00_CRUSTAL(
@@ -510,14 +517,7 @@ public enum Gmm {
       McVerryEtAl_2000.Volcanic.class,
       McVerryEtAl_2000.Volcanic.NAME,
       McVerryEtAl_2000.COEFFS_GM,
-      McVerryEtAl_2000.CONSTRAINTS),
-
-  /** @see MunsonThurber_1997 */
-  MT_97(
-      MunsonThurber_1997.class,
-      MunsonThurber_1997.NAME,
-      MunsonThurber_1997.COEFFS,
-      MunsonThurber_1997.CONSTRAINTS);
+      McVerryEtAl_2000.CONSTRAINTS);
 
   private final Class<? extends GroundMotionModel> delegate;
   private final String name;
@@ -668,14 +668,6 @@ public enum Gmm {
   @SuppressWarnings("javadoc")
   public enum Group {
 
-    WUS_14_ACTIVE_CRUST(
-        "2014 Active Crust (WUS)",
-        ImmutableList.of(
-            ASK_14,
-            BSSA_14,
-            CB_14,
-            CY_14)),
-
     CEUS_14_STABLE_CRUST(
         "2014 Stable Crust (CEUS)",
         ImmutableList.of(
@@ -689,6 +681,14 @@ public enum Gmm {
             TP_05,
             TORO_97_MW)),
 
+    WUS_14_ACTIVE_CRUST(
+        "2014 Active Crust (WUS)",
+        ImmutableList.of(
+            ASK_14,
+            BSSA_14,
+            CB_14,
+            CY_14)),
+
     WUS_14_INTERFACE(
         "2014 Subduction Interface (WUS)",
         ImmutableList.of(
@@ -698,19 +698,12 @@ public enum Gmm {
             ZHAO_06_INTER)),
 
     WUS_14_SLAB(
-        "2014 WUS Subduction Intraslab (WUS)",
+        "2014 Subduction Intraslab (WUS)",
         ImmutableList.of(
             AB_03_CASC_SLAB_LOW_SAT,
             AB_03_GLOB_SLAB_LOW_SAT,
             BCHYDRO_12_SLAB,
             ZHAO_06_SLAB)),
-
-    WUS_08_ACTIVE_CRUST(
-        "2008 Active Crust (WUS)",
-        ImmutableList.of(
-            BA_08,
-            CB_08,
-            CY_08)),
 
     CEUS_08_STABLE_CRUST(
         "2008 Stable Crust (CEUS)",
@@ -723,6 +716,13 @@ public enum Gmm {
             SOMERVILLE_01,
             TP_05,
             TORO_97_MW)),
+
+    WUS_08_ACTIVE_CRUST(
+        "2008 Active Crust (WUS)",
+        ImmutableList.of(
+            BA_08,
+            CB_08,
+            CY_08)),
 
     WUS_08_INTERFACE(
         "2008 Subduction Interface (WUS)",
@@ -738,6 +738,35 @@ public enum Gmm {
             AB_03_GLOB_SLAB,
             YOUNGS_97_SLAB)),
 
+    AK_07_ACTIVE_CRUST(
+        "2007 Active Crust (AK)",
+        ImmutableList.of(
+            AS_97,
+            BJF_97,
+            CB_03,
+            SADIGH_97)),
+
+    AK_07_INTERFACE(
+        "2007 Subduction Interface (AK)",
+        ImmutableList.of(
+            YOUNGS_97_INTER,
+            SADIGH_97)),
+
+    AK_07_SLAB(
+        "2007 Subduction Interface (AK)",
+        ImmutableList.of(
+            YOUNGS_97_SLAB,
+            AB_03_GLOB_SLAB)),
+
+    HI_98(
+        "1998 Active Volcanic (HI)",
+        ImmutableList.of(
+            BJF_97,
+            CAMPBELL_97,
+            MT_97,
+            SADIGH_97,
+            YOUNGS_97_SLAB)),
+
     OTHER(
         "Others",
         ImmutableList.of(
@@ -746,8 +775,7 @@ public enum Gmm {
             MCVERRY_00_CRUSTAL,
             MCVERRY_00_INTERFACE,
             MCVERRY_00_SLAB,
-            MCVERRY_00_VOLCANIC,
-            SADIGH_97));
+            MCVERRY_00_VOLCANIC));
 
     private final String name;
     private final List<Gmm> gmms;

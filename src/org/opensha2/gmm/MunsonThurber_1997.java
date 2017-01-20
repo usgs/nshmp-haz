@@ -3,7 +3,7 @@ package org.opensha2.gmm;
 import static java.lang.Math.log10;
 import static java.lang.Math.sqrt;
 
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
@@ -25,7 +25,7 @@ import com.google.common.collect.Range;
  * <p><b>Note:</b> This GMM is only valid for PGA and 0.2 seconds. 0.2 is
  * supported through the linear scaling of log PGA ground motion. Also,
  * for larger magnitudes (M > 7), an additional magnitude term derived from
- * Boore, Joyner, and Fumal 1993) is applied. See also the 1998 Alaska NSHMP
+ * Boore, Joyner, and Fumal 1993) is applied. See also the 1998 Hawaii NSHM
  * <a href="http://earthquake.usgs.gov/hazards/products/hi/1998/documentation/">
  * documentation</a>.
  *
@@ -48,7 +48,7 @@ public final class MunsonThurber_1997 implements GroundMotionModel {
   static final String NAME = "Munson & Thurber (1997)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(4.0, 8.0))
+      .set(MW, Range.closed(4.0, 8.0))
       .set(RJB, Range.closed(0.0, 88.0))
       .set(VS30, Range.closed(200.0, 760.0))
       .build();
@@ -91,7 +91,7 @@ public final class MunsonThurber_1997 implements GroundMotionModel {
     } else if (Mw <=7.7) {
       return B1 + B1_BJF * (Mw - 7.0);
     } else {
-      return B1 + B1_BJF;
+      return B1 + B1_BJF * 0.7;
     }
   }
 

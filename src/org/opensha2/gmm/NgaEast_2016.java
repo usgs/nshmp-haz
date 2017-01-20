@@ -1,6 +1,6 @@
 package org.opensha2.gmm;
 
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 
@@ -64,7 +64,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
   static final String NAME = "NGA-East: Goulet et al. (2016)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(4.0, 8.2))
+      .set(MW, Range.closed(4.0, 8.2))
       .set(RJB, Range.closed(0.0, 1500.0))
       .set(VS30, Range.singleton(3000.0))
       .build();

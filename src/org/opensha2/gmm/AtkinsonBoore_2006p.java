@@ -1,6 +1,6 @@
 package org.opensha2.gmm;
 
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
@@ -49,7 +49,7 @@ public final class AtkinsonBoore_2006p implements GroundMotionModel {
   static final String NAME = "Atkinson & Boore (2006): Prime";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(4.0, 8.0))
+      .set(MW, Range.closed(4.0, 8.0))
       .set(RRUP, Range.closed(0.0, 1000.0))
       .set(VS30, Range.closed(760.0, 2000.0))
       .build();

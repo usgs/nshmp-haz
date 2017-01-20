@@ -15,7 +15,7 @@ import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmInput.Field.Z1P0;
@@ -54,7 +54,7 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
   static final String NAME = "Chiou & Youngs (2008)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(4.0, 8.5))
+      .set(MW, Range.closed(4.0, 8.5))
       .setDistances(200.0)
       .set(DIP, Faults.DIP_RANGE)
       .set(ZTOP, Range.closed(0.0, 15.0))

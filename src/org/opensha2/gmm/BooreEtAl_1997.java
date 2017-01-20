@@ -5,7 +5,7 @@ import static java.lang.Math.sqrt;
 
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.STRIKE_SLIP;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -54,7 +54,7 @@ public final class BooreEtAl_1997 implements GroundMotionModel {
   static final String NAME = "Boore et al. (1997)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(4.0, 8.0))
+      .set(MW, Range.closed(4.0, 8.0))
       .set(RJB, Range.closed(0.0, 80.0))
       .set(RAKE, Faults.RAKE_RANGE)
       .set(VS30, Range.singleton(760.0))

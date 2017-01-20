@@ -7,7 +7,7 @@ import static java.lang.Math.sqrt;
 
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.FaultStyle.UNKNOWN;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
@@ -57,7 +57,7 @@ public class CampbellBozorgnia_2003 implements GroundMotionModel {
   static final String NAME = "Campbell & Bozorgnia (2003)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(5.8, 8.0))
+      .set(MW, Range.closed(5.8, 8.0))
       .set(RRUP, Range.closed(0.0, 300.0))
       .set(RAKE, Faults.RAKE_RANGE)
       .set(VS30, Range.singleton(760.0))

@@ -4,7 +4,7 @@ import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
 
 import static org.opensha2.gmm.GmmInput.Field.DIP;
-import static org.opensha2.gmm.GmmInput.Field.MAG;
+import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RAKE;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.RRUP;
@@ -45,7 +45,7 @@ public class AbrahamsonSilva_1997 implements GroundMotionModel {
   static final String NAME = "Abrahamson & Silva (1997)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
-      .set(MAG, Range.closed(4.0, 8.0))
+      .set(MW, Range.closed(4.0, 8.0))
       .set(RJB, Range.closed(0.0, 300.0))
       .set(RRUP, Range.closed(0.0, 300.0))
       .set(DIP, Faults.DIP_RANGE)
