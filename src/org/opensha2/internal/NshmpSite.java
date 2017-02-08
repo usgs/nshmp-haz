@@ -201,7 +201,35 @@ public enum NshmpSite implements NamedLocation {
   BLACKSBURG_VA(-80.40, 37.25),
   RICHMOND_VA(-77.45, 37.55),
   CHARLESTON_WV(-81.65, 38.35),
-  MILWAUKEE_WI(-87.90, 43.05);
+  MILWAUKEE_WI(-87.90, 43.05),
+
+  /* Alaska */
+  ADAK_AK(-176.65, 51.9),
+  ANCHORAGE_AK(-149.90, 61.2),
+  BARROW_AK(-156.75, 71.3),
+  BETHEL_AK(-161.80, 60.8),
+  DELTA_JUNCTION_AK(-145.70, 64),
+  DILLINGHAM_AK(-158.45, 59.05),
+  DUTCH_HARBOR_AK(-166.55, 53.9),
+  EVANSVILLE_AK(-151.50, 66.9),
+  FAIRBANKS_AK(-147.70, 64.85),
+  GLENNALLEN_AK(-145.55, 62.1),
+  HAINES_AK(-135.45, 59.25),
+  HOMER_AK(-151.50, 59.65),
+  JUNEAU_AK(-134.40, 58.3),
+  KENAI_AK(-151.25, 60.55),
+  KETCHIKAN_AK(-131.65, 55.35),
+  KODIAK_AK(-152.40, 57.8),
+  KOTZEBUE_AK(-162.60, 66.9),
+  MCGRATH_AK(-155.60, 62.95),
+  NOME_AK(-165.40, 64.5),
+  PAXSON_AK(-145.50, 63.05),
+  PRUDHOE_BAY_AK(-148.35, 70.25),
+  SITKA_AK(-135.35, 57.05),
+  TOK_AK(-143.00, 63.3),
+  VALDEZ_AK(-146.35, 61.15),
+  WASILLA_AK(-149.45, 61.6),
+  YAKUTAT_AK(-139.70, 59.55);
 
   private final Location loc;
   private final UsRegion state;
@@ -228,6 +256,11 @@ public enum NshmpSite implements NamedLocation {
   @Override
   public String toString() {
     String label = Parsing.enumLabelWithSpaces(this, true);
+    if (label.startsWith("Mc")) {
+      StringBuilder sb = new StringBuilder(label);
+      sb.setCharAt(2, Character.toUpperCase(sb.charAt(2))); 
+      label = sb.toString();
+    }
     int stripIndex = label.lastIndexOf(' ');
     return label.substring(0, stripIndex) + " " + state.name();
   }
@@ -257,7 +290,21 @@ public enum NshmpSite implements NamedLocation {
         new Predicate<NshmpSite>() {
           @Override
           public boolean apply(NshmpSite site) {
-            return site.loc.lon() <= -100.0;
+            return site.loc.lon() <= -100.0 && site.loc.lon() >= -125.0;
+          }
+        }), NshmpSite.class);
+  }
+
+  /**
+   * The set of sites used to test the Alaska NSHM.
+   */
+  public static EnumSet<NshmpSite> alaska() {
+    return Sets.newEnumSet(Iterables.filter(
+        EnumSet.allOf(NshmpSite.class),
+        new Predicate<NshmpSite>() {
+          @Override
+          public boolean apply(NshmpSite site) {
+            return site.loc.lon() <= -125.0;
           }
         }), NshmpSite.class);
   }
@@ -340,7 +387,7 @@ public enum NshmpSite implements NamedLocation {
         CHICAGO_IL,
         NEW_YORK_NY);
   }
-  
+
   static class StateComparator implements Comparator<NshmpSite> {
     @Override
     public int compare(NshmpSite s1, NshmpSite s2) {

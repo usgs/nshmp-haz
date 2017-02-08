@@ -3,6 +3,7 @@ package org.opensha2.internal;
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.padStart;
 
+import static org.opensha2.internal.NshmpPolygon.AK_CLIP;
 import static org.opensha2.internal.NshmpPolygon.CEUS_CLIP;
 import static org.opensha2.internal.NshmpPolygon.CONTERMINOUS_US;
 import static org.opensha2.internal.NshmpPolygon.CYBERSHAKE;
@@ -67,7 +68,7 @@ final class NshmpSiteFiles {
     writeSites("nureg", EnumSet.allOf(NuregSite.class), DEC3_FMT);
     writeCybershakeSites("cybershake", EnumSet.allOf(CybershakeSite.class));
 
-    // writeNshmpPolys();
+     writeNshmpPolys();
     // writeNshmpSummaryPoly();
     // writeNshmpSites_0p1();
   }
@@ -88,7 +89,16 @@ final class NshmpSiteFiles {
     Path wusOut = EXPORT_DIR.resolve("map-wus.geojson");
     LocationList wusBounds = WUS_CLIP.coordinates();
     writePolyJson(wusOut, "NSHMP Western US", usCoords, 0.1, wusBounds);
-
+    
+    // TODO AK needs to be updated with proper clipping region as above
+    // currently just mercator rectangle
+    writePolyJson(
+        EXPORT_DIR.resolve("map-alaska.geojson"),
+        "Alaska",
+        AK_CLIP.coordinates(),
+        0.1,
+        null);
+    
     writePolyJson(
         EXPORT_DIR.resolve("map-la-basin.geojson"),
         LA_BASIN.toString(),
@@ -227,6 +237,7 @@ final class NshmpSiteFiles {
     writeNshmpSites("ceus", NshmpSite.ceus());
     writeNshmpSites("wus", NshmpSite.wus());
     writeNshmpSites("nrc", NshmpSite.nrc());
+    writeNshmpSites("alaska", NshmpSite.alaska());
     writeSites("nehrp", NshmpSite.nehrp(), DEC2_FMT);
   }
 
