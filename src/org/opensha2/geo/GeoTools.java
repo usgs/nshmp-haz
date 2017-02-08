@@ -44,8 +44,8 @@ public class GeoTools {
   /** Maximum latitude value (90°). */
   public static final double MAX_LAT = 90.0;
 
-  /** Minimum longitude value (-180°). */
-  public static final double MIN_LON = -180.0;
+  /** Minimum longitude value (-360°). */
+  public static final double MIN_LON = -360.0;
 
   // TODO test if and which distance calcs can handle
   // this higher MAX_LON

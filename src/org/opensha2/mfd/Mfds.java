@@ -365,7 +365,7 @@ public final class Mfds {
   }
 
   /**
-   * Convert an {@code IncrementalMfd} to an {@code XySequence}.
+   * Convert an {@code IncrementalMfd} to an immutable {@code XySequence}.
    *
    * @param mfd to convert
    * @return a sequence populated with the values of the supplied
@@ -377,6 +377,13 @@ public final class Mfds {
         Doubles.toArray(mfd.yValues()));
   }
 
+  /**
+   * Convert an {@code IncrementalMfd} to a mutable {@code XySequence}.
+   *
+   * @param mfd to convert
+   * @return a sequence populated with the values of the supplied
+   *         {@code IncrementalMfd}.
+   */
   public static XySequence toMutableSequence(IncrementalMfd mfd) {
     return XySequence.create(mfd.xValues(), mfd.yValues());
   }

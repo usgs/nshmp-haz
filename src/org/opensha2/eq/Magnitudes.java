@@ -90,8 +90,8 @@ public final class Magnitudes {
    * supplied, moment <em>rate</em> is returned.
    *
    * @param area in m<sup>2</sup>
-   * @param slip in m
-   * @return moment in N·m
+   * @param slip in m (or slip rate in m·t<sup>-1</sup>)
+   * @return moment in N·m (or moment rate in N·m·t<sup>-1</sup>)
    */
   public static double moment(double area, double slip) {
     return MU * area * slip;
@@ -109,17 +109,5 @@ public final class Magnitudes {
   public static double slip(double area, double moment) {
     return moment / (area * MU);
   }
-
-  // TODO finish this, check conversion for slip in m instead of mm/yr for
-  // rate
-  // /**
-  // * @param area in km<sup>2</sup>
-  // * @param slip
-  // * @return
-  // */
-  // public static double moment(double area, double slip) {
-  // return area *
-  // }
-  // public static double recurrence(double Mw, double area, double slip)
 
 }

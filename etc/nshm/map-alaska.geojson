@@ -1,0 +1,19 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [ -200.0, 48.0 ],
+            [ -125.0, 72.0 ]
+          ]]
+      },
+      "properties": {
+        "spacing": 0.1,
+        "title": "Alaska"
+      }
+    }
+  ]
+}

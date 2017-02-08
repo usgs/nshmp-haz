@@ -192,30 +192,32 @@ public abstract class LocationList implements Iterable<Location> {
   }
 
   /**
-   * Return a new {@code LocationList} created by resampling this list with the
-   * desired maximum spacing. The actual spacing of the returned list will
+   * Return a new {@code LocationList} created by resampling {@code this} with
+   * the desired maximum spacing. The actual spacing of the returned list will
    * likely differ, as spacing is adjusted down to maintain uniform divisions.
    * The original vertices are also not preserved such that some corners might
    * be adversely clipped if {@code spacing} is large. Buyer beware.
    *
-   * <p>For a singleton list, this method immediately returns this list.
+   * <p>If the length of this list is less than the desired spacing, this list
+   * is returned.
    *
    * @param spacing resample interval
    */
   public LocationList resample(double spacing) {
-    if (size() == 1) {
-      return this;
-    }
     checkArgument(
         Doubles.isFinite(spacing) && spacing > 0.0,
         "Spacing must be positive, real number");
+
+    double length = this.length();
+    if (length <= spacing) {
+      return this;
+    }
 
     /*
      * TODO Consider using rint() which will keep the actual spacing closer to
      * the target spacing, albeit sometimes larger.
      */
 
-    double length = this.length();
     spacing = length / Math.ceil(length / spacing);
     List<Location> resampled = Lists.newArrayList();
     Location start = this.first();
@@ -234,6 +236,72 @@ public abstract class LocationList implements Iterable<Location> {
     // replace last point to be exact
     resampled.set(resampled.size() - 1, this.last());
     return LocationList.create(resampled);
+  }
+
+  /**
+   * Partition this {@code LocationList} into sub-lists of desired
+   * {@code length}. The actual length of the returned lists will likely differ,
+   * as the lengths of the sub-lists are adjusted up or down to a value closest
+   * to the target length that yields sub-lists of equal length.
+   *
+   * <p>If this list is shorter than the sub-list target length, the method will
+   * return {@code this}.
+   *
+   * @param length target length of sub-lists
+   */
+  public List<LocationList> partition(double length) {
+    checkArgument(
+        Doubles.isFinite(length) && length > 0.0,
+        "Length must be positive, real number");
+
+    double totalLength = this.length();
+    if (totalLength <= length) {
+      return ImmutableList.of(this);
+    }
+
+    ImmutableList.Builder<LocationList> partitions = ImmutableList.builder();
+    double partitionLength = totalLength / Math.rint(totalLength / length);
+
+    double[] distances = distances();
+    LocationList.Builder partition = LocationList.builder();
+    double residual = 0.0;
+    for (int i = 0; i < distances.length; i++) {
+      Location start = get(i);
+      partition.add(start);
+      double distance = distances[i] + residual;
+      while (partitionLength < distance) {
+        /*
+         * Catch the edge case where, on the last segment of a trace that needs
+         * to be partitioned we just undershoot the last point. In the absence
+         * of this we can end up with a final section of length ≈ 0.
+         * 
+         */
+        if (i == distances.length - 1 && distance < 1.5 * partitionLength) {
+          break;
+        }
+        LocationVector v = LocationVector.create(start, get(i + 1));
+        Location end = Locations.location(start, v.azimuth(), partitionLength - residual);
+        partition.add(end);
+        partitions.add(partition.build());
+        partition = LocationList.builder();
+        partition.add(end);
+        start = end;
+        distance -= partitionLength;
+        residual = 0.0;
+      }
+      residual = distance;
+    }
+    partition.add(last());
+    partitions.add(partition.build());
+    return partitions.build();
+  }
+
+  private double[] distances() {
+    double[] distances = new double[size() - 1];
+    for (int i = 0; i < size() - 1; i++) {
+      distances[i] = Locations.horzDistanceFast(get(i), get(i + 1));
+    }
+    return distances;
   }
 
   /**
