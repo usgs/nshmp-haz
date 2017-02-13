@@ -3,6 +3,7 @@ package org.opensha2.gmm;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.pow;
 
 import static org.opensha2.gmm.FaultStyle.REVERSE;
@@ -21,7 +22,9 @@ import java.util.Map;
 /**
  * Implementation of the ground motion model for shallow crustal earthquakes by
  * Sadigh et al. (1997). This implementation supports soil and rock sites, the
- * cutoff for which is vs30=750 m/s.
+ * cutoff for which is vs30=750 m/s. This model was also used for subduction
+ * interface sources in the 2007 Alaska NSHM, for which a custom magnitude
+ * saturation at M=8.5 was added.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -109,16 +112,19 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 
     double μ, σ;
 
+    /* Modified to saturate above Mw=8.5 */
+    double Mw = min(in.Mw, 8.5);
+    
     if (in.vs30 > VS30_CUT) {
       /* Rock */
-      Coefficients c = in.Mw <= 6.5 ? coeffs_bc_lo : coeffs_bc_hi;
-      μ = calcRockMean(c, in.Mw, in.rRup, faultStyle);
-      σ = calcStdDev(c, in.Mw);
+      Coefficients c = Mw <= 6.5 ? coeffs_bc_lo : coeffs_bc_hi;
+      μ = calcRockMean(c, Mw, in.rRup, faultStyle);
+      σ = calcStdDev(c, Mw);
     } else {
       /* Soil */
-      Coefficients c = in.Mw <= 6.5 ? coeffs_d_lo : coeffs_d_hi;
-      μ = calcSoilMean(c, in.Mw, in.rRup, faultStyle);
-      σ = calcStdDev(c, in.Mw);
+      Coefficients c = Mw <= 6.5 ? coeffs_d_lo : coeffs_d_hi;
+      μ = calcSoilMean(c, Mw, in.rRup, faultStyle);
+      σ = calcStdDev(c, Mw);
     }
 
     return DefaultScalarGroundMotion.create(μ, σ);
@@ -132,9 +138,12 @@ public class SadighEtAl_1997 implements GroundMotionModel {
      * the rock flavor (c1r == c1ss)
      */
 
-    /* Modified to saturate above Mw=8.5 */
-    double lnY = c.c1r + c.c2 * Mw + c.c3 * pow(max(8.5 - Mw, 0.0), 2.5) + c.c4 *
-        log(rRup + exp(c.c5 + c.c6r * Mw)) + c.c7 * log(rRup + 2);
+    double lnY =
+        c.c1r +
+        c.c2 * Mw +
+        c.c3 * pow(Mw, 2.5) +
+        c.c4 * log(rRup + exp(c.c5 + c.c6r * Mw)) +
+        c.c7 * log(rRup + 2);
 
     /* Scale reverse amplitudes by 1.2; 0.18232 = ln(1.2) */
     return (style == REVERSE) ? lnY + 0.18232 : lnY;
@@ -146,9 +155,11 @@ public class SadighEtAl_1997 implements GroundMotionModel {
     double c1 = (style == REVERSE) ? c.c1r : c.c1ss;
     double c6 = (style == REVERSE) ? c.c6r : c.c6ss;
 
-    /* Modified to saturate above Mw=8.5 */
-    return c1 + c.c2 * Mw - c.c3 * log(rRup + c.c4 * exp(c.c5 * Mw)) + c6 + c.c7 *
-        pow(max(8.5 - Mw, 0.0), 2.5);
+    return c1 + 
+        c.c2 * Mw - 
+        c.c3 * log(rRup + c.c4 * exp(c.c5 * Mw)) + 
+        c6 +
+        c.c7 * pow(Mw, 2.5);
   }
 
   private static final double calcStdDev(final Coefficients c, final double Mw) {
