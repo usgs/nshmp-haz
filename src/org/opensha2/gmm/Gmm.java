@@ -753,7 +753,7 @@ public enum Gmm {
             SADIGH_97)),
 
     AK_07_SLAB(
-        "2007 Subduction Interface (AK)",
+        "2007 Subduction Intraslab (AK)",
         ImmutableList.of(
             YOUNGS_97_SLAB,
             AB_03_GLOB_SLAB)),
