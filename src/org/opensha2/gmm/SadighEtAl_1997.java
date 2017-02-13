@@ -72,6 +72,7 @@ public class SadighEtAl_1997 implements GroundMotionModel {
   }
 
   private static final double VS30_CUT = 750.0;
+  private static final double M_CUT = 8.5;
 
   private static final class Coefficients {
 
@@ -141,7 +142,7 @@ public class SadighEtAl_1997 implements GroundMotionModel {
     double lnY =
         c.c1r +
         c.c2 * Mw +
-        c.c3 * pow(Mw, 2.5) +
+        c.c3 * pow(M_CUT - Mw, 2.5) +
         c.c4 * log(rRup + exp(c.c5 + c.c6r * Mw)) +
         c.c7 * log(rRup + 2);
 
@@ -159,7 +160,7 @@ public class SadighEtAl_1997 implements GroundMotionModel {
         c.c2 * Mw - 
         c.c3 * log(rRup + c.c4 * exp(c.c5 * Mw)) + 
         c6 +
-        c.c7 * pow(Mw, 2.5);
+        c.c7 * pow(M_CUT - Mw, 2.5);
   }
 
   private static final double calcStdDev(final Coefficients c, final double Mw) {
