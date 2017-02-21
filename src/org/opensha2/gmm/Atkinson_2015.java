@@ -1,5 +1,6 @@
 package org.opensha2.gmm;
 
+import static java.lang.Math.log10;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -39,7 +40,7 @@ import java.util.Map;
  */
 public final class Atkinson_2015 implements GroundMotionModel {
 
-  static final String NAME = "Atkinson (20015)";
+  static final String NAME = "Atkinson (2015)";
 
   // TODO
   static final Constraints CONSTRAINTS = Constraints.builder()
@@ -87,7 +88,7 @@ public final class Atkinson_2015 implements GroundMotionModel {
     double rRup = in.rRup;
     double h_eff = max(1, pow(10, -1.72 + 0.43 * Mw));
     double r = sqrt(rRup * rRup + h_eff * h_eff);
-    double μ = c.c0 + c.c1 * Mw + c.c2 * Mw * Mw + c.c3 * r + c.c4 * r;
+    double μ = c.c0 + c.c1 * Mw + c.c2 * Mw * Mw + c.c3 * log10(r) + c.c4 * r;
     return μ * BASE_10_TO_E - LN_G_CM_TO_M;
   }
 
