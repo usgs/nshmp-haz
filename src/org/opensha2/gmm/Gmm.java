@@ -687,7 +687,8 @@ public enum Gmm {
             ASK_14,
             BSSA_14,
             CB_14,
-            CY_14)),
+            CY_14,
+            IDRISS_14)),
 
     WUS_14_INTERFACE(
         "2014 Subduction Interface (WUS)",
