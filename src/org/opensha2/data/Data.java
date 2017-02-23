@@ -1095,9 +1095,9 @@ public final class Data {
 
   /**
    * Acceptable tolerance when summing weights and comparing to 1.0. Currently
-   * set to 1e-8.
+   * set to 1e-4.
    */
-  public static final double WEIGHT_TOLERANCE = 1e-8;
+  public static final double WEIGHT_TOLERANCE = 1e-4;
 
   /**
    * Confirm that a {@code Collection<Double>} of weights sums to 1.0 within
