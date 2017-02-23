@@ -290,7 +290,7 @@ public final class GmmUtils {
       // NOTE this scaling is very atkinson table specific
       // we should probably be checking that period <= 0.02
       // Also, notes in fortran say gm scales with R for PGA
-      // bu Steve has applied it to 0.02 sec as well
+      // but Steve has applied it to 0.02 sec as well
       if (imt == PGA || imt == SA0P02) {
         // TODO is there a citation for this distance decay??
         μ += -0.3 + 0.15 * Math.log10(r);
