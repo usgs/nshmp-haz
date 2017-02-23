@@ -488,7 +488,7 @@ public enum Gmm {
   NGA_EAST_CENTER_NGAW2(
       NgaEast_2016.CenterNga.class,
       NgaEast_2016.CenterNga.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.COEFFS_SIGMA_NGAW2,
       NgaEast_2016.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
@@ -502,7 +502,7 @@ public enum Gmm {
   NGA_EAST_50TH_NGAW2(
       NgaEast_2016.Percentile50thNga.class,
       NgaEast_2016.Percentile50thNga.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.COEFFS_SIGMA_NGAW2,
       NgaEast_2016.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
@@ -516,7 +516,7 @@ public enum Gmm {
   NGA_EAST_84TH_NGAW2(
       NgaEast_2016.Percentile84thNga.class,
       NgaEast_2016.Percentile84thNga.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.COEFFS_SIGMA_NGAW2,
       NgaEast_2016.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
@@ -530,7 +530,7 @@ public enum Gmm {
   NGA_EAST_98TH_NGAW2(
       NgaEast_2016.Percentile98thNga.class,
       NgaEast_2016.Percentile98thNga.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.COEFFS_SIGMA_NGAW2,
       NgaEast_2016.CONSTRAINTS),
 
   /** @see NgaEast_2016 */

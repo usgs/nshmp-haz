@@ -104,7 +104,6 @@ final class GroundMotionTables {
       "1CVSP",
       "2CCSP",
       "2CVSP",
-      "ANC15",
       "B_a04",
       "B_ab14",
       "B_ab95",
