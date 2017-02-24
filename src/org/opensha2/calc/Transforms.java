@@ -243,7 +243,7 @@ final class Transforms {
                 epiMeans,
                 gm.sigma(),
                 imt,
-                utilCurve);
+                utilCurve.clear());
             utilCurve.multiply(inputs.get(i++).rate);
             gmmCurve.add(utilCurve);
           }
