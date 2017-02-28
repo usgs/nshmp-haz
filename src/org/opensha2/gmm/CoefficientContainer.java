@@ -11,13 +11,13 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.io.Resources;
 import com.google.common.primitives.Doubles;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +78,7 @@ final class CoefficientContainer {
    * @return the {@code Set} of supported IMTs
    */
   Set<Imt> imts() {
-    return EnumSet.copyOf(table.rowKeySet());
+    return Sets.immutableEnumSet(table.rowKeySet());
   }
 
   private static Table<Imt, String, Double> load(String resource) throws IOException {
