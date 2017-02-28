@@ -54,7 +54,7 @@ public final class Atkinson_2008p implements GroundMotionModel {
       .set(VS30, Range.closed(760.0, 2000.0))
       .build();
 
-  static final CoefficientContainer COEFFS = new CoefficientContainer("AB08P.csv");
+  static final CoefficientContainer COEFFS = new CoefficientContainer("A08P.csv");
 
   private static final double SIGMA = 0.3 * BASE_10_TO_E;
 

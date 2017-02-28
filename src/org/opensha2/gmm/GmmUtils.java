@@ -252,10 +252,10 @@ public final class GmmUtils {
    */
   static double ceusMeanClip(final Imt imt, final double μ) {
     // ln(1.5) = 0.405; ln(3.0) = 1.099
-    if (imt == Imt.PGA) {
+    if (imt == Imt.PGA || imt.period() <= 0.01) {
       return Math.min(0.405, μ);
     }
-    if (imt.period() > 0.02 && imt.period() < 0.5) {
+    if (imt.period() < 0.5) {
       return Math.min(μ, 1.099);
     }
     return μ;
