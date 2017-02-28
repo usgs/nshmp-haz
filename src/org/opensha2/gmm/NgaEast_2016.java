@@ -37,7 +37,7 @@ import java.util.Map;
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
  *
- * <p><b>Implementation note:</b> Mean values are clamped per
+ * <p><b>Implementation note:</b> Mean values are NOT clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>doi:</b> TODO
