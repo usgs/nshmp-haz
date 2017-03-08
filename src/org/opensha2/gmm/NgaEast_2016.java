@@ -9,7 +9,7 @@ import org.opensha2.data.Data;
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
-import org.opensha2.internal.MathUtils;
+import org.opensha2.util.MathUtils;
 
 import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;

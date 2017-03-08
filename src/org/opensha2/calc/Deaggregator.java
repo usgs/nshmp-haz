@@ -20,7 +20,7 @@ import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.gmm.ScalarGroundMotion;
-import org.opensha2.internal.MathUtils;
+import org.opensha2.util.MathUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;

@@ -7,6 +7,7 @@ import org.opensha2.data.XySequence;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Regions;
+import org.opensha2.util.MathUtils;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;

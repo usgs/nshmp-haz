@@ -12,7 +12,7 @@ import static java.lang.Double.isNaN;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
-import org.opensha2.internal.MathUtils;
+import org.opensha2.util.MathUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;

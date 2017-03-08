@@ -8,7 +8,7 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmUtils.BASE_10_TO_E;
 import static org.opensha2.gmm.GmmUtils.LN_G_CM_TO_M;
 import static org.opensha2.gmm.Imt.PGA;
-import static org.opensha2.internal.MathUtils.hypot;
+import static org.opensha2.util.MathUtils.hypot;
 
 import org.opensha2.gmm.GmmInput.Constraints;
 

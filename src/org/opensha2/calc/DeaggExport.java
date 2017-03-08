@@ -12,9 +12,9 @@ import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
 import org.opensha2.data.Data;
 import org.opensha2.eq.model.SourceType;
-import org.opensha2.internal.MathUtils;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
+import org.opensha2.util.MathUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

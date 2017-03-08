@@ -21,6 +21,7 @@ import org.opensha2.geo.LocationList;
 import org.opensha2.internal.GeoJson.Feature;
 import org.opensha2.internal.GeoJson.FeatureCollection;
 import org.opensha2.internal.GeoJson.PointProperties;
+import org.opensha2.util.MathUtils;
 import org.opensha2.util.NamedLocation;
 
 import com.google.common.base.Function;

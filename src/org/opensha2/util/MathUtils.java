@@ -1,4 +1,4 @@
-package org.opensha2.internal;
+package org.opensha2.util;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.exp;

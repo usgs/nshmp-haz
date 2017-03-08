@@ -2,7 +2,7 @@ package org.opensha2.internal;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.internal.MathUtils.round;
+import static org.opensha2.util.MathUtils.round;
 
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;

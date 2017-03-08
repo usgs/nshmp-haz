@@ -15,8 +15,8 @@ import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Location;
-import org.opensha2.internal.MathUtils;
 import org.opensha2.internal.Parsing;
+import org.opensha2.util.MathUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;

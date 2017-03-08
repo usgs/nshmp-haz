@@ -14,7 +14,7 @@ import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
 import org.opensha2.gmm.MultiScalarGroundMotion;
 import org.opensha2.gmm.ScalarGroundMotion;
-import org.opensha2.internal.MathUtils;
+import org.opensha2.util.MathUtils;
 
 import java.util.List;
 
