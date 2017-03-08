@@ -2,11 +2,8 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Double.isNaN;
-import static java.lang.Math.PI;
-import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
-import static java.lang.Math.sqrt;
 
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
@@ -23,12 +20,12 @@ import java.util.List;
 
 /**
  * Uncertainty models govern how the values of a complementary cumulative normal
- * distribution (or probability of exceedence) are computed given a mean, μ,
- * standard deviation, σ, and other possibly relevant arguments.
+ * distribution (or probability of exceedence) are computed given a mean, {@code μ},
+ * standard deviation, {@code σ}, and other possibly relevant arguments.
  *
  * <p>Each model implements methods that compute the probability of exceeding a
  * single value or a {@link XySequence} of values. Some arguments are only used
- * by some models; for example, {@link #NONE} ignores σ, but it must be supplied
+ * by some models; for example, {@link #NONE} ignores {@code σ}, but it must be supplied
  * for consistency. See individual models for details.
  *
  * <p>Internally, models use a high precision approximation of the Gauss error
@@ -53,13 +50,13 @@ public enum ExceedanceModel {
   NONE {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
-      return stepFunction(μ, value);
+      return MathUtils.stepFunction(μ, value);
     }
 
     @Override
     XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
       for (XyPoint p : sequence) {
-        p.set(stepFunction(μ, p.x()));
+        p.set(MathUtils.stepFunction(μ, p.x()));
       }
       return sequence;
     }
@@ -140,8 +137,7 @@ public enum ExceedanceModel {
    * fixed sigmas. The peer models below simply set a value internally as
    * dicated by the test cases that use these models.
    */
-  @Deprecated
-  PEER_MIXTURE_REFERENCE {
+  @Deprecated PEER_MIXTURE_REFERENCE {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
       return boundedCcdFn(μ, 0.65, value, 0.0, 1.0);
@@ -180,11 +176,11 @@ public enum ExceedanceModel {
   },
 
   /**
-   * Model provides {@link Imt}-dependent maxima end exists to support 'clamps'
-   * on ground motions that have historically been applied in the CEUS NSHM due
-   * to sometimes unreasonably high ground motions implied by {@code μ + 3σ}.
-   * Model imposes one-sided (upper) truncation at {@code μ + nσ} if clamp is
-   * not exceeded.
+   * Model provides {@link Imt}-dependent maxima and exists to support clamps on
+   * ground motions that have historically been applied in the CEUS NSHM due to
+   * sometimes unreasonably high ground motions implied by {@code μ + 3σ}. Model
+   * imposes one-sided (upper) truncation at {@code μ + nσ} if clamp is not
+   * exceeded.
    */
   NSHM_CEUS_MAX_INTENSITY {
     @Override
@@ -285,41 +281,6 @@ public enum ExceedanceModel {
     return exceedance(sgm.mean(), sgm.sigma(), n, imt, sequence);
   }
 
-  public static final double SQRT_2 = sqrt(2);
-  public static final double SQRT_2PI = sqrt(2 * PI);
-
-  /**
-   * Step function for which {@code f(x) = }&#123;{@code 1 if x ≤ μ; 0 if x > μ }&#125;.
-   * 
-   * @param μ mean
-   * @param x variate
-   */
-  public static double stepFunction(double μ, double x) {
-    return x < μ ? 1.0 : 0.0;
-  }
-
-  /**
-   * Normal complementary cumulative distribution function.
-   * 
-   * @param μ mean
-   * @param σ standard deviation
-   * @param x variate
-   */
-  public static double normalCcdf(double μ, double σ, double x) {
-    return (1.0 + erf((μ - x) / (σ * SQRT_2))) * 0.5;
-  }
-
-  /**
-   * Normal probability density function.
-   * 
-   * @param μ mean
-   * @param σ standard deviation
-   * @param x variate
-   */
-  public static double normalPdf(double μ, double σ, double x) {
-    return exp((μ - x) * (x - μ) / (2 * σ * σ)) / (σ * SQRT_2PI);
-  }
-
   /*
    * Bounded complementary cumulative distribution. Compute the probability that
    * a value will be exceeded, subject to upper and lower probability limits.
@@ -331,7 +292,7 @@ public enum ExceedanceModel {
       double pHi,
       double pLo) {
 
-    double p = normalCcdf(μ, σ, value);
+    double p = MathUtils.normalCcdf(μ, σ, value);
     return probBoundsCheck((p - pHi) / (pLo - pHi));
   }
 
@@ -368,49 +329,24 @@ public enum ExceedanceModel {
    * Compute ccd value at μ + nσ.
    */
   private static double prob(double μ, double σ, double n) {
-    return normalCcdf(μ, σ, μ + n * σ);
+    return MathUtils.normalCcdf(μ, σ, μ + n * σ);
   }
 
   /*
    * Compute ccd value at min(μ + nσ, max).
    */
   private static double prob(double μ, double σ, double n, double max) {
-    return normalCcdf(μ, σ, min(μ + n * σ, max));
+    return MathUtils.normalCcdf(μ, σ, min(μ + n * σ, max));
   }
 
   /*
-   * Abramowitz and Stegun 7.1.26 implementation. This erf(x) approximation is
-   * valid for x ≥ 0. Because erf(x) is an odd function, erf(x) = −erf(−x).
-   */
-  private static double erf(double x) {
-    return x < 0.0 ? -erfBase(-x) : erfBase(x);
-  }
-
-  private static final double P = 0.3275911;
-  private static final double A1 = 0.254829592;
-  private static final double A2 = -0.284496736;
-  private static final double A3 = 1.421413741;
-  private static final double A4 = -1.453152027;
-  private static final double A5 = 1.061405429;
-
-  private static double erfBase(double x) {
-    double t = 1 / (1 + P * x);
-    double tsq = t * t;
-    return 1 - (A1 * t +
-        A2 * tsq +
-        A3 * tsq * t +
-        A4 * tsq * tsq +
-        A5 * tsq * tsq * t) * exp(-x * x);
-  }
-
-  /**
    * Computes joint probability of exceedence given the occurrence of a cluster
    * of events: [1 - [(1-PE1) * (1-PE2) * ...]]. The probability of exceedance
    * of each individual event is given in the supplied curves.
    *
    * @param curves for which to calculate joint probability of exceedance
    */
-  public static XySequence clusterExceedance(List<XySequence> curves) {
+  static XySequence clusterExceedance(List<XySequence> curves) {
     XySequence combined = XySequence.copyOf(curves.get(0)).complement();
     for (int i = 1; i < curves.size(); i++) {
       combined.multiply(curves.get(i).complement());
@@ -460,15 +396,15 @@ public enum ExceedanceModel {
 
       p = new double[CCND_ARRAY_SIZE];
 
-      double pLo = isNaN(εMin) ? 1.0 : normalCcdf(0.0, 1.0, this.εMin);
-      double pHi = isNaN(εMax) ? 0.0 : normalCcdf(0.0, 1.0, this.εMax);
+      double pLo = isNaN(εMin) ? 1.0 : MathUtils.normalCcdf(0.0, 1.0, this.εMin);
+      double pHi = isNaN(εMax) ? 0.0 : MathUtils.normalCcdf(0.0, 1.0, this.εMax);
 
       double Δ = MathUtils.round(1.0 / (CCND_ARRAY_SIZE - 1), PRECISION);
       Δε = Δ * (this.εMax - this.εMin);
 
       p[0] = 1.0;
       for (int i = 1; i < p.length - 1; i++) {
-        double pi = normalCcdf(0.0, 1.0, this.εMin + Δε * i);
+        double pi = MathUtils.normalCcdf(0.0, 1.0, this.εMin + Δε * i);
         p[i] = (pi - pHi) / (pLo - pHi);
       }
       p[CCND_ARRAY_SIZE - 1] = 0.0;
