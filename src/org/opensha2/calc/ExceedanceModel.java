@@ -53,13 +53,13 @@ public enum ExceedanceModel {
   NONE {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
-      return stepFn(μ, value);
+      return stepFunction(μ, value);
     }
 
     @Override
     XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
       for (XyPoint p : sequence) {
-        p.set(stepFn(μ, p.x()));
+        p.set(stepFunction(μ, p.x()));
       }
       return sequence;
     }
@@ -285,25 +285,38 @@ public enum ExceedanceModel {
     return exceedance(sgm.mean(), sgm.sigma(), n, imt, sequence);
   }
 
-  private static final double SQRT_2 = sqrt(2);
-  private static final double SQRT_2PI = sqrt(2 * PI);
+  public static final double SQRT_2 = sqrt(2);
+  public static final double SQRT_2PI = sqrt(2 * PI);
 
-  /*
-   * Step function.
+  /**
+   * Step function for which {@code f(x) = }&#123;{@code 1 if x ≤ μ; 0 if x > μ }&#125;.
+   * 
+   * @param μ mean
+   * @param x variate
    */
-  private static double stepFn(double μ, double value) {
-    return value < μ ? 1.0 : 0.0;
+  public static double stepFunction(double μ, double x) {
+    return x < μ ? 1.0 : 0.0;
   }
 
-  /*
-   * Complementary cumulative distribution. Compute the probability of exceeding
-   * the supplied value in a normal distribution assuming no truncation.
+  /**
+   * Normal complementary cumulative distribution function.
+   * 
+   * @param μ mean
+   * @param σ standard deviation
+   * @param x variate
    */
-  private static double ccdFn(double μ, double σ, double value) {
-    return (1.0 + erf((μ - value) / (σ * SQRT_2))) * 0.5;
+  public static double normalCcdf(double μ, double σ, double x) {
+    return (1.0 + erf((μ - x) / (σ * SQRT_2))) * 0.5;
   }
 
-  private static double probFn(double μ, double σ, double x) {
+  /**
+   * Normal probability density function.
+   * 
+   * @param μ mean
+   * @param σ standard deviation
+   * @param x variate
+   */
+  public static double normalPdf(double μ, double σ, double x) {
     return exp((μ - x) * (x - μ) / (2 * σ * σ)) / (σ * SQRT_2PI);
   }
 
@@ -318,7 +331,7 @@ public enum ExceedanceModel {
       double pHi,
       double pLo) {
 
-    double p = ccdFn(μ, σ, value);
+    double p = normalCcdf(μ, σ, value);
     return probBoundsCheck((p - pHi) / (pLo - pHi));
   }
 
@@ -355,14 +368,14 @@ public enum ExceedanceModel {
    * Compute ccd value at μ + nσ.
    */
   private static double prob(double μ, double σ, double n) {
-    return ccdFn(μ, σ, μ + n * σ);
+    return normalCcdf(μ, σ, μ + n * σ);
   }
 
   /*
    * Compute ccd value at min(μ + nσ, max).
    */
   private static double prob(double μ, double σ, double n, double max) {
-    return ccdFn(μ, σ, min(μ + n * σ, max));
+    return normalCcdf(μ, σ, min(μ + n * σ, max));
   }
 
   /*
@@ -447,15 +460,15 @@ public enum ExceedanceModel {
 
       p = new double[CCND_ARRAY_SIZE];
 
-      double pLo = isNaN(εMin) ? 1.0 : ccdFn(0.0, 1.0, this.εMin);
-      double pHi = isNaN(εMax) ? 0.0 : ccdFn(0.0, 1.0, this.εMax);
+      double pLo = isNaN(εMin) ? 1.0 : normalCcdf(0.0, 1.0, this.εMin);
+      double pHi = isNaN(εMax) ? 0.0 : normalCcdf(0.0, 1.0, this.εMax);
 
       double Δ = MathUtils.round(1.0 / (CCND_ARRAY_SIZE - 1), PRECISION);
       Δε = Δ * (this.εMax - this.εMin);
 
       p[0] = 1.0;
       for (int i = 1; i < p.length - 1; i++) {
-        double pi = ccdFn(0.0, 1.0, this.εMin + Δε * i);
+        double pi = normalCcdf(0.0, 1.0, this.εMin + Δε * i);
         p[i] = (pi - pHi) / (pLo - pHi);
       }
       p[CCND_ARRAY_SIZE - 1] = 0.0;
