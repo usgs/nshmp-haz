@@ -1,7 +1,5 @@
 package org.opensha2.internal;
 
-import static java.lang.Math.sqrt;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -15,6 +13,18 @@ public final class MathUtils {
   private MathUtils() {}
 
   /**
+   * Standardized normal variate ε = (x - μ) / σ.
+   * 
+   * @param μ mean
+   * @param σ standard deviation
+   * @param x random variable
+   * @return
+   */
+  public static double epsilon(double μ, double σ, double x) {
+    return (x - μ) / σ;
+  }
+
+  /**
    * Same as {@link Math#hypot(double, double)} without regard to intermediate
    * under/over flow.
    *
@@ -23,7 +33,7 @@ public final class MathUtils {
    * @see Math#hypot(double, double)
    */
   public static double hypot(double v1, double v2) {
-    return sqrt(v1 * v1 + v2 * v2);
+    return Math.sqrt(v1 * v1 + v2 * v2);
   }
 
   /**

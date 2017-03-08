@@ -219,7 +219,7 @@ final class Deaggregator {
         ScalarGroundMotion sgm = gmLists.get(gmm).get(i);
         double μ = sgm.mean();
         double σ = sgm.sigma();
-        double ε = epsilon(μ, σ, iml);
+        double ε = MathUtils.epsilon(μ, σ, iml);
 
         double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
         double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
@@ -290,10 +290,6 @@ final class Deaggregator {
       rateMap.put(gmm, new double[5]);
     }
     return rateMap;
-  }
-
-  private static double epsilon(double μ, double σ, double iml) {
-    return (iml - μ) / σ;
   }
 
   private Map<Gmm, DeaggDataset> processSystemSources() {
@@ -391,7 +387,7 @@ final class Deaggregator {
             ScalarGroundMotion sgm = gmLists.get(gmm).get(sourceIndex);
             double μ = sgm.mean();
             double σ = sgm.sigma();
-            double ε = epsilon(μ, σ, iml);
+            double ε = MathUtils.epsilon(μ, σ, iml);
 
             double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
             double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
