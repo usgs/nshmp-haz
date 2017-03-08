@@ -2,8 +2,6 @@ package org.opensha2.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Double.isNaN;
-import static java.lang.Math.log;
-import static java.lang.Math.min;
 
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
@@ -20,13 +18,14 @@ import java.util.List;
 
 /**
  * Uncertainty models govern how the values of a complementary cumulative normal
- * distribution (or probability of exceedence) are computed given a mean, {@code μ},
- * standard deviation, {@code σ}, and other possibly relevant arguments.
+ * distribution (or probability of exceedence) are computed given a mean,
+ * {@code μ}, standard deviation, {@code σ}, and other possibly relevant
+ * arguments.
  *
  * <p>Each model implements methods that compute the probability of exceeding a
  * single value or a {@link XySequence} of values. Some arguments are only used
- * by some models; for example, {@link #NONE} ignores {@code σ}, but it must be supplied
- * for consistency. See individual models for details.
+ * by some models; for example, {@link #NONE} ignores {@code σ}, but it must be
+ * supplied for consistency. See individual models for details.
  *
  * <p>Internally, models use a high precision approximation of the Gauss error
  * function (see Abramowitz and Stegun 7.1.26) when computing exceedances.
@@ -123,12 +122,12 @@ public enum ExceedanceModel {
   TRUNCATION_3SIGMA_UPPER {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
-      return CcdUtil.UPPER_3SIGMA.get(μ, σ, value);
+      return Ccdfs.UPPER_3SIGMA.get(μ, σ, value);
     }
 
     @Override
     XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
-      return CcdUtil.UPPER_3SIGMA.get(μ, σ, sequence);
+      return Ccdfs.UPPER_3SIGMA.get(μ, σ, sequence);
     }
   },
 
@@ -185,13 +184,13 @@ public enum ExceedanceModel {
   NSHM_CEUS_MAX_INTENSITY {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
-      double pHi = prob(μ, σ, n, log(maxValue(imt)));
+      double pHi = prob(μ, σ, n, Math.log(maxValue(imt)));
       return boundedCcdFn(μ, σ, value, pHi, 1.0);
     }
 
     @Override
     XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
-      double pHi = prob(μ, σ, n, log(maxValue(imt)));
+      double pHi = prob(μ, σ, n, Math.log(maxValue(imt)));
       return boundedCcdFn(μ, σ, sequence, pHi, 1.0);
     }
 
@@ -336,7 +335,7 @@ public enum ExceedanceModel {
    * Compute ccd value at min(μ + nσ, max).
    */
   private static double prob(double μ, double σ, double n, double max) {
-    return Maths.normalCcdf(μ, σ, min(μ + n * σ, max));
+    return Maths.normalCcdf(μ, σ, Math.min(μ + n * σ, max));
   }
 
   /*
@@ -354,8 +353,9 @@ public enum ExceedanceModel {
     return combined.complement();
   }
 
-  static final class CcdUtil {
-    static final CcdArray UPPER_3SIGMA = new CcdArray(Double.NaN, 3.0);
+  /* Wrapper class avoids unnecessary initialization of array(s). */
+  private static final class Ccdfs {
+    static final CcdfArray UPPER_3SIGMA = new CcdfArray(Double.NaN, 3.0);
   }
 
   /* Ensures a clean Δ. */
@@ -377,14 +377,14 @@ public enum ExceedanceModel {
    * (probabilities closer to 1) and upper (probabilities closer to 0) ends of
    * the ccdn, respectively.
    */
-  static final class CcdArray {
+  private static final class CcdfArray {
 
     private final double[] p;
     private final double Δε;
     private final double εMin;
     private final double εMax;
 
-    CcdArray(double εMin, double εMax) {
+    CcdfArray(double εMin, double εMax) {
 
       checkArgument(isNaN(εMin) || εMin >= -EMAX, "εMin [%s] < [%s]", εMin, -EMAX);
       checkArgument(isNaN(εMax) || εMax <= EMAX, "εMax [%s] > [%s]", εMax, EMAX);
@@ -428,7 +428,6 @@ public enum ExceedanceModel {
       }
       return sequence;
     }
-
   }
 
 }
