@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("javadoc")
-public final class DataUtilsTests {
+public final class DataTests {
 
   private static final double[] VALUES = { 1.0, 10.0, 100.0 };
 
