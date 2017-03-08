@@ -17,14 +17,20 @@ public final class Maths {
 
   private Maths() {}
 
-  /** The √<span style="border-top:1px solid; padding:0 0.1em;">2</span>. */
+  /**
+   * The precomputed √<span style="border-top:1px solid; padding:0 0.1em;"
+   * >2</span>.
+   */
   public static final double SQRT_2 = sqrt(2);
 
-  /** The √<span style="border-top:1px solid; padding:0 0.1em;">2π</span>. */
+  /**
+   * The precomputed √<span style="border-top:1px solid; padding:0 0.1em;"
+   * >2π</span>.
+   */
   public static final double SQRT_2PI = sqrt(2 * PI);
 
   /**
-   * Standardized normal variate ε = (x - μ) / σ.
+   * Standardized normal variate {@code ε = (x - μ) / σ}.
    * 
    * @param μ mean
    * @param σ standard deviation
