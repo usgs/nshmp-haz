@@ -21,7 +21,7 @@ import org.opensha2.geo.LocationList;
 import org.opensha2.internal.GeoJson.Feature;
 import org.opensha2.internal.GeoJson.FeatureCollection;
 import org.opensha2.internal.GeoJson.PointProperties;
-import org.opensha2.util.MathUtils;
+import org.opensha2.util.Maths;
 import org.opensha2.util.NamedLocation;
 
 import com.google.common.base.Function;
@@ -413,8 +413,8 @@ final class NshmpSiteFiles {
           @Override
           public Location location() {
             return Location.create(
-                MathUtils.round(input.location().lat(), 1),
-                MathUtils.round(input.location().lon(), 1));
+                Maths.round(input.location().lat(), 1),
+                Maths.round(input.location().lon(), 1));
           }
 
           @Override

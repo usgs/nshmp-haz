@@ -14,7 +14,7 @@ import org.opensha2.data.Data;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
-import org.opensha2.util.MathUtils;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -429,7 +429,7 @@ final class DeaggExport {
    * during serialization and in toString().
    */
   private static Double round(double value, int scale) {
-    return Double.isNaN(value) ? null : MathUtils.round(value, scale);
+    return Double.isNaN(value) ? null : Maths.round(value, scale);
   }
 
   /*

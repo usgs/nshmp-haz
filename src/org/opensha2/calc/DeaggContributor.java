@@ -16,7 +16,7 @@ import org.opensha2.eq.model.SourceSet;
 import org.opensha2.eq.model.SourceType;
 import org.opensha2.geo.Location;
 import org.opensha2.internal.Parsing;
-import org.opensha2.util.MathUtils;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -190,7 +190,7 @@ abstract class DeaggContributor {
       ArrayList<JsonContributor> jsonList = new ArrayList<>();
       JsonContributor jc = JsonContributor.createMulti(
           sourceSet.name(),
-          MathUtils.round(filter.toPercent(total()), 2));
+          Maths.round(filter.toPercent(total()), 2));
       jsonList.add(jc);
       for (DeaggContributor child : children) {
         if (filter.apply(child)) {
@@ -301,7 +301,7 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       JsonContributor jc = JsonContributor.createSingle(
           source.name(),
-          MathUtils.round(filter.toPercent(total()), 2),
+          Maths.round(filter.toPercent(total()), 2),
           -1,
           rBar,
           mBar,
@@ -436,7 +436,7 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       JsonContributor jc = JsonContributor.createSingle(
           cluster.name(),
-          MathUtils.round(filter.toPercent(total()), 2),
+          Maths.round(filter.toPercent(total()), 2),
           -2,
           rBar,
           mBar,
@@ -559,7 +559,7 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       JsonContributor jc = JsonContributor.createSingle(
           section.name(),
-          MathUtils.round(filter.toPercent(total()), 2),
+          Maths.round(filter.toPercent(total()), 2),
           -3,
           rBar,
           mBar,

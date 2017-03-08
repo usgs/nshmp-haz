@@ -9,7 +9,7 @@ import org.opensha2.data.Data;
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
-import org.opensha2.util.MathUtils;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
@@ -202,7 +202,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
       φ = c.a + (Mw - 5.0) * (c.b - c.a) / 1.5;
     }
 
-    return MathUtils.hypot(τ, φ);
+    return Maths.hypot(τ, φ);
   }
 
   double[] calcSigmasNgaw2(double Mw) {

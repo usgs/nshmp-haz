@@ -14,7 +14,7 @@ import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
 import org.opensha2.gmm.MultiScalarGroundMotion;
 import org.opensha2.gmm.ScalarGroundMotion;
-import org.opensha2.util.MathUtils;
+import org.opensha2.util.Maths;
 
 import java.util.List;
 
@@ -50,13 +50,13 @@ public enum ExceedanceModel {
   NONE {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
-      return MathUtils.stepFunction(μ, value);
+      return Maths.stepFunction(μ, value);
     }
 
     @Override
     XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
       for (XyPoint p : sequence) {
-        p.set(MathUtils.stepFunction(μ, p.x()));
+        p.set(Maths.stepFunction(μ, p.x()));
       }
       return sequence;
     }
@@ -292,7 +292,7 @@ public enum ExceedanceModel {
       double pHi,
       double pLo) {
 
-    double p = MathUtils.normalCcdf(μ, σ, value);
+    double p = Maths.normalCcdf(μ, σ, value);
     return probBoundsCheck((p - pHi) / (pLo - pHi));
   }
 
@@ -329,14 +329,14 @@ public enum ExceedanceModel {
    * Compute ccd value at μ + nσ.
    */
   private static double prob(double μ, double σ, double n) {
-    return MathUtils.normalCcdf(μ, σ, μ + n * σ);
+    return Maths.normalCcdf(μ, σ, μ + n * σ);
   }
 
   /*
    * Compute ccd value at min(μ + nσ, max).
    */
   private static double prob(double μ, double σ, double n, double max) {
-    return MathUtils.normalCcdf(μ, σ, min(μ + n * σ, max));
+    return Maths.normalCcdf(μ, σ, min(μ + n * σ, max));
   }
 
   /*
@@ -396,22 +396,22 @@ public enum ExceedanceModel {
 
       p = new double[CCND_ARRAY_SIZE];
 
-      double pLo = isNaN(εMin) ? 1.0 : MathUtils.normalCcdf(0.0, 1.0, this.εMin);
-      double pHi = isNaN(εMax) ? 0.0 : MathUtils.normalCcdf(0.0, 1.0, this.εMax);
+      double pLo = isNaN(εMin) ? 1.0 : Maths.normalCcdf(0.0, 1.0, this.εMin);
+      double pHi = isNaN(εMax) ? 0.0 : Maths.normalCcdf(0.0, 1.0, this.εMax);
 
-      double Δ = MathUtils.round(1.0 / (CCND_ARRAY_SIZE - 1), PRECISION);
+      double Δ = Maths.round(1.0 / (CCND_ARRAY_SIZE - 1), PRECISION);
       Δε = Δ * (this.εMax - this.εMin);
 
       p[0] = 1.0;
       for (int i = 1; i < p.length - 1; i++) {
-        double pi = MathUtils.normalCcdf(0.0, 1.0, this.εMin + Δε * i);
+        double pi = Maths.normalCcdf(0.0, 1.0, this.εMin + Δε * i);
         p[i] = (pi - pHi) / (pLo - pHi);
       }
       p[CCND_ARRAY_SIZE - 1] = 0.0;
     }
 
     double get(double μ, double σ, double x) {
-      double ε = MathUtils.epsilon(μ, σ, x);
+      double ε = Maths.epsilon(μ, σ, x);
       if (ε < this.εMin) {
         return 1.0;
       }

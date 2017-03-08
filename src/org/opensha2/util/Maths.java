@@ -13,9 +13,9 @@ import java.math.RoundingMode;
  *
  * @author Peter Powers
  */
-public final class MathUtils {
+public final class Maths {
 
-  private MathUtils() {}
+  private Maths() {}
 
   /** The √<span style="border-top:1px solid; padding:0 0.1em;">2</span>. */
   public static final double SQRT_2 = sqrt(2);

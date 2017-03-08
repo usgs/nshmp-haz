@@ -6,7 +6,7 @@ import static org.opensha2.gmm.GmmInput.Field.MW;
 import static org.opensha2.gmm.GmmInput.Field.RJB;
 import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.SiteClass.HARD_ROCK;
-import static org.opensha2.util.MathUtils.hypot;
+import static org.opensha2.util.Maths.hypot;
 
 import org.opensha2.gmm.GmmInput.Constraints;
 

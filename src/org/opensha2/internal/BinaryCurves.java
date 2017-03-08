@@ -10,7 +10,7 @@ import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Regions;
 import org.opensha2.gmm.Imt;
-import org.opensha2.util.MathUtils;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
@@ -65,7 +65,7 @@ class BinaryCurves {
 
     // read x-vals real*4 * 20
     for (int i = 0; i < 20; i++) {
-      double val = MathUtils.round(in.readFloat(), 3);
+      double val = Maths.round(in.readFloat(), 3);
       System.out.println(val);
       // need to read 20 values to advance caret, but only save ones used
       // if (i<nX) cc.xs.add(val);
@@ -75,7 +75,7 @@ class BinaryCurves {
     // read extras real*4 * 10
     List<Double> extras = Lists.newArrayList();
     for (int i = 0; i < 10; i++) {
-      double val = MathUtils.round(in.readFloat(), 2);
+      double val = Maths.round(in.readFloat(), 2);
       extras.add(val);
     }
     System.out.println("extras: " + extras);

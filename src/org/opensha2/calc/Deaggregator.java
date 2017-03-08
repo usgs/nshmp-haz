@@ -20,7 +20,7 @@ import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.gmm.ScalarGroundMotion;
-import org.opensha2.util.MathUtils;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -219,7 +219,7 @@ final class Deaggregator {
         ScalarGroundMotion sgm = gmLists.get(gmm).get(i);
         double μ = sgm.mean();
         double σ = sgm.sigma();
-        double ε = MathUtils.epsilon(μ, σ, iml);
+        double ε = Maths.epsilon(μ, σ, iml);
 
         double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
         double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
@@ -323,8 +323,8 @@ final class Deaggregator {
      * indexing.
      */
     IntervalArray mfdModel = new IntervalArray.Builder().rows(
-        MathUtils.round(systemSources.stats.mMin, 1, RoundingMode.FLOOR),
-        MathUtils.round(systemSources.stats.mMax, 1, RoundingMode.CEILING),
+        Maths.round(systemSources.stats.mMin, 1, RoundingMode.FLOOR),
+        Maths.round(systemSources.stats.mMax, 1, RoundingMode.CEILING),
         0.1).build();
     IntervalArray.Builder mfdIndexer = IntervalArray.Builder.fromModel(mfdModel);
 
@@ -387,7 +387,7 @@ final class Deaggregator {
             ScalarGroundMotion sgm = gmLists.get(gmm).get(sourceIndex);
             double μ = sgm.mean();
             double σ = sgm.sigma();
-            double ε = MathUtils.epsilon(μ, σ, iml);
+            double ε = Maths.epsilon(μ, σ, iml);
 
             double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
             double rate = probAtIml * in.rate * sources.weight() * gmmWeight;

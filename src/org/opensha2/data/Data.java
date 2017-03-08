@@ -12,7 +12,7 @@ import static java.lang.Double.isNaN;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
-import org.opensha2.util.MathUtils;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -1354,7 +1354,7 @@ public final class Data {
 
     @Override
     public Double apply(Double d) {
-      return MathUtils.round(d, scale);
+      return Maths.round(d, scale);
     }
   }
 
