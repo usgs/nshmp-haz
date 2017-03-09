@@ -92,7 +92,7 @@ final class MutableXySequence extends ImmutableXySequence {
 
   @Override
   public XySequence transform(Function<Double, Double> function) {
-    Data.uncheckedTransform(function, ys);
+    Data.transform(function, ys);
     return this;
   }
 

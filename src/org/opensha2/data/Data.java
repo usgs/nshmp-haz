@@ -6,9 +6,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Strings.repeat;
 import static com.google.common.math.DoubleMath.fuzzyEquals;
-import static java.lang.Double.NaN;
-import static java.lang.Double.POSITIVE_INFINITY;
-import static java.lang.Double.isNaN;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
@@ -39,10 +36,12 @@ import java.util.Random;
 /**
  * Utilities for operating on {@code double}-valued data.
  *
- * <p>The methods of this class:
+ * <p>Unless otherwise noted, the methods of this class:
  *
- * <ul><li>Operate on data in place, ruturning a reference to the supplied
+ * <ul><li>Operate on data in place, returning a reference to the supplied
  * data.</li>
+ * 
+ * <li>Are not synchronized.</li>
  *
  * <li>Throw a {@code NullPointerException} when supplied with {@code null}
  * data.</li>
@@ -52,42 +51,34 @@ import java.util.Random;
  * {@link #add(double, double...)}).
  *
  * <li>Throw an {@code IllegalArgumentException} if they operate on all elements
- * of a dataset and yield a singular result, and the supplied dataset is empty,
- * with some documented exceptions.
+ * of a dataset to yield a singular numeric or boolean value, but the supplied
+ * dataset is empty, with some documented exceptions.
  *
  * <li>Throw an {@code IllegalArguementException} if they operate on multiple
  * datasets and the datasets are not the same size.</li>
  *
- * <li>Do not check for finiteness (see {@link Doubles#isFinite(double)}). See
- * {@link Math} for details on the behavior of individual functions referenced
- * herein.</li>
+ * <li>Do not check for finiteness (see {@link Doubles#isFinite(double)}). For
+ * example, any method that operates on data containing {@code Double.NaN} or
+ * infinite values will likely return {@code NaN}s or infinite values as a
+ * result. See the Java {@link Math} class for details on the behavior of
+ * individual functions referenced herein.</li>
  *
- * <li>Do not check for over/underflow.</li></ul>
+ * <li>Do not check for over/under flow.</li></ul>
  *
  * <p>Buyer beware.
  *
- * <p>Furthermore, methods that return a result or information about a supplied
- * data set will typically take a {@code Collection<Double>} as an argument,
- * whereas methods that transform data in place will only take
- * {@code List<Double>}s.
+ * <p>Many methods in this class are overloaded with {@code Collection<Double>}
+ * arguments. Those overloaded methods that return a single result or
+ * information about a supplied data set typically require a
+ * {@code Collection<Double>} as an argument, whereas methods that transform
+ * data in place require a {@code List<Double>} subtype.
  *
  * <p>For other useful {@code Double} utilities, see the Google Guava
  * {@link Doubles} class.
  *
  * @author Peter Powers
- * @see Doubles
  */
 public final class Data {
-
-  // TODO note behavior of NaN, any method that operates on data containing NaN
-  // will likely return NaN as a result
-
-  // TODO should allow empty varargs (see minINdex maxIndex, normalize)
-
-  /*
-   * TODO verify that 'unchecked' variants actually improve performance; in most
-   * cases all that's being done is an array.length comparison
-   */
 
   /*
    * Developer notes:
@@ -99,6 +90,9 @@ public final class Data {
    * Function approach to be only marginally slower, but much more processor
    * intensive suggesting there would be a performance penalty in multi-threaded
    * applications.
+   * 
+   * Unchecked delegate methods for primitive arrays are supplied for package
+   * level use where data integrity is assured.
    * -------------------------------------------------------------------------
    */
 
@@ -167,8 +161,23 @@ public final class Data {
    * @param data2
    * @return a reference to {@code data1}
    */
+  public static List<Double> add(List<Double> data1, List<Double> data2) {
+    checkSizes(data1, data2);
+    for (int i = 0; i < data1.size(); i++) {
+      data1.set(i, data1.get(i) + data2.get(i));
+    }
+    return data1;
+  }
+
+  /**
+   * Add the values of {@code data2} to {@code data1} in place.
+   *
+   * @param data1
+   * @param data2
+   * @return a reference to {@code data1}
+   */
   public static double[] add(double[] data1, double[] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     return uncheckedAdd(data1, data2);
   }
 
@@ -187,7 +196,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static double[][] add(double[][] data1, double[][] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     for (int i = 0; i < data1.length; i++) {
       add(data1[i], data2[i]);
     }
@@ -209,7 +218,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static double[][][] add(double[][][] data1, double[][][] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     for (int i = 0; i < data1.length; i++) {
       add(data1[i], data2[i]);
     }
@@ -219,21 +228,6 @@ public final class Data {
   static double[][][] uncheckedAdd(double[][][] data1, double[][][] data2) {
     for (int i = 0; i < data1.length; i++) {
       uncheckedAdd(data1[i], data2[i]);
-    }
-    return data1;
-  }
-
-  /**
-   * Add the values of {@code data2} to {@code data1} in place.
-   *
-   * @param data1
-   * @param data2
-   * @return a reference to {@code data1}
-   */
-  public static List<Double> add(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
-    for (int i = 0; i < data1.size(); i++) {
-      data1.set(i, data1.get(i) + data2.get(i));
     }
     return data1;
   }
@@ -268,7 +262,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static List<Double> subtract(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
+    checkSizes(data1, data2);
     for (int i = 0; i < data1.size(); i++) {
       data1.set(i, data1.get(i) - data2.get(i));
     }
@@ -285,7 +279,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static double[] subtract(double[] data1, double[] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     return uncheckedSubtract(data1, data2);
   }
 
@@ -360,14 +354,10 @@ public final class Data {
    * @param data2
    * @return a reference to {@code data1}
    */
-  public static double[] multiply(double[] data1, double[] data2) {
-    checkArgument(data1.length == data2.length);
-    return uncheckedMultiply(data1, data2);
-  }
-
-  static double[] uncheckedMultiply(double[] data1, double[] data2) {
-    for (int i = 0; i < data1.length; i++) {
-      data1[i] *= data2[i];
+  public static List<Double> multiply(List<Double> data1, List<Double> data2) {
+    checkSizes(data1, data2);
+    for (int i = 0; i < data1.size(); i++) {
+      data1.set(i, data1.get(i) * data2.get(i));
     }
     return data1;
   }
@@ -380,10 +370,14 @@ public final class Data {
    * @param data2
    * @return a reference to {@code data1}
    */
-  public static List<Double> multiply(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
-    for (int i = 0; i < data1.size(); i++) {
-      data1.set(i, data1.get(i) * data2.get(i));
+  public static double[] multiply(double[] data1, double[] data2) {
+    checkSizes(data1, data2);
+    return uncheckedMultiply(data1, data2);
+  }
+
+  static double[] uncheckedMultiply(double[] data1, double[] data2) {
+    for (int i = 0; i < data1.length; i++) {
+      data1[i] *= data2[i];
     }
     return data1;
   }
@@ -398,7 +392,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static double[] divide(double[] data1, double[] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     return uncheckedDivide(data1, data2);
   }
 
@@ -419,25 +413,11 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static List<Double> divide(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
+    checkSizes(data1, data2);
     for (int i = 0; i < data1.size(); i++) {
       data1.set(i, data1.get(i) / data2.get(i));
     }
     return data1;
-  }
-
-  /**
-   * Set the elements of {@code data} to their absolute value in place.
-   *
-   * @param data to operate on
-   * @return a reference to the supplied {@code data}
-   * @see Math#abs(double)
-   */
-  public static double[] abs(double... data) {
-    for (int i = 0; i < data.length; i++) {
-      data[i] = Math.abs(data[i]);
-    }
-    return data;
   }
 
   /**
@@ -455,16 +435,15 @@ public final class Data {
   }
 
   /**
-   * Raise Euler's number {@code e} to each of the elements of {@code data} in
-   * place.
+   * Set the elements of {@code data} to their absolute value in place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
-   * @see Math#exp(double)
+   * @see Math#abs(double)
    */
-  public static double[] exp(double... data) {
+  public static double[] abs(double... data) {
     for (int i = 0; i < data.length; i++) {
-      data[i] = Math.exp(data[i]);
+      data[i] = Math.abs(data[i]);
     }
     return data;
   }
@@ -485,15 +464,16 @@ public final class Data {
   }
 
   /**
-   * Take the natural logarithm of the elements of {@code data} in place.
+   * Raise Euler's number {@code e} to each of the elements of {@code data} in
+   * place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
-   * @see Math#log(double)
+   * @see Math#exp(double)
    */
-  public static double[] ln(double... data) {
+  public static double[] exp(double... data) {
     for (int i = 0; i < data.length; i++) {
-      data[i] = Math.log(data[i]);
+      data[i] = Math.exp(data[i]);
     }
     return data;
   }
@@ -513,15 +493,15 @@ public final class Data {
   }
 
   /**
-   * Raise the elements of {@code data} to the power of 10 in place.
+   * Take the natural logarithm of the elements of {@code data} in place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
-   * @see Math#pow(double, double)
+   * @see Math#log(double)
    */
-  public static double[] pow10(double... data) {
+  public static double[] ln(double[] data) {
     for (int i = 0; i < data.length; i++) {
-      data[i] = Math.pow(10, data[i]);
+      data[i] = Math.log(data[i]);
     }
     return data;
   }
@@ -541,15 +521,15 @@ public final class Data {
   }
 
   /**
-   * Take the base-10 logarithm of the elements of {@code data} in place.
+   * Raise the elements of {@code data} to the power of 10 in place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
-   * @see Math#log10(double)
+   * @see Math#pow(double, double)
    */
-  public static double[] log(double... data) {
+  public static double[] pow10(double... data) {
     for (int i = 0; i < data.length; i++) {
-      data[i] = Math.log10(data[i]);
+      data[i] = Math.pow(10, data[i]);
     }
     return data;
   }
@@ -569,13 +549,17 @@ public final class Data {
   }
 
   /**
-   * Flip the sign of the elements of {@code data} in place.
+   * Take the base-10 logarithm of the elements of {@code data} in place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
+   * @see Math#log10(double)
    */
-  public static double[] flip(double... data) {
-    return multiply(-1, data);
+  public static double[] log(double... data) {
+    for (int i = 0; i < data.length; i++) {
+      data[i] = Math.log10(data[i]);
+    }
+    return data;
   }
 
   /**
@@ -589,15 +573,23 @@ public final class Data {
   }
 
   /**
-   * Sum the elements of {@code data}. Method returns {@code Double.NaN} or
-   * infinite values if {@code data} contains {@code Double.NaN} or infinite
-   * values, respectively. Method returns zero for empty {@code data} argument
-   * or no varargs.
+   * Flip the sign of the elements of {@code data} in place.
+   *
+   * @param data to operate on
+   * @return a reference to the supplied {@code data}
+   */
+  public static double[] flip(double... data) {
+    return multiply(-1, data);
+  }
+
+  /**
+   * Sum the elements of {@code data}. Method returns zero for an empty
+   * {@code data} argument.
    *
    * @param data to sum
    * @return the sum of the supplied values
    */
-  public static double sum(double... data) {
+  public static double sum(Collection<Double> data) {
     double sum = 0;
     for (double d : data) {
       sum += d;
@@ -606,15 +598,13 @@ public final class Data {
   }
 
   /**
-   * Sum the elements of {@code data}. Method returns {@code Double.NaN} or
-   * infinite values if {@code data} contains {@code Double.NaN} or infinite
-   * values, respectively. Method returns zero for an empty {@code data}
-   * argument.
+   * Sum the elements of {@code data}. Method returns zero for empty
+   * {@code data} argument or no varargs.
    *
    * @param data to sum
    * @return the sum of the supplied values
    */
-  public static double sum(Collection<Double> data) {
+  public static double sum(double... data) {
     double sum = 0;
     for (double d : data) {
       sum += d;
@@ -659,15 +649,10 @@ public final class Data {
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    */
-  public static double[] transform(Function<Double, Double> function, double... data) {
+  public static List<Double> transform(Function<Double, Double> function, List<Double> data) {
     checkNotNull(function);
-    return uncheckedTransform(function, data);
-  }
-
-  // TODO behavior test for empty data; can we get rid of null check
-  static double[] uncheckedTransform(Function<Double, Double> function, double... data) {
-    for (int i = 0; i < data.length; i++) {
-      data[i] = function.apply(data[i]);
+    for (int i = 0; i < data.size(); i++) {
+      data.set(i, function.apply(data.get(i)));
     }
     return data;
   }
@@ -679,10 +664,10 @@ public final class Data {
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    */
-  public static List<Double> transform(Function<Double, Double> function, List<Double> data) {
+  public static double[] transform(Function<Double, Double> function, double... data) {
     checkNotNull(function);
-    for (int i = 0; i < data.size(); i++) {
-      data.set(i, function.apply(data.get(i)));
+    for (int i = 0; i < data.length; i++) {
+      data[i] = function.apply(data[i]);
     }
     return data;
   }
@@ -846,43 +831,8 @@ public final class Data {
   }
 
   /**
-   * Determine whether {@code data} are all positive. Method returns
-   * {@code true} if data is empty or no varargs are supplied.
-   *
-   * @param data to evaluate
-   * @return {@code true} if all values are ≥0; {@code false} otherwise
-   */
-  public static boolean arePositive(double... data) {
-    for (double d : data) {
-      if (d >= 0) {
-        continue;
-      }
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether {@code data} are all positive. Method returns
-   * {@code true} if data is empty.
-   *
-   * @param data to evaluate
-   * @return {@code true} if all values are ≥0
-   */
-  public static boolean arePositive(Collection<Double> data) {
-    for (double d : data) {
-      if (d >= 0) {
-        continue;
-      }
-      return false;
-    }
-    return true;
-  }
-
-  /**
    * Ensures positivity of values by adding {@code Math.abs(min(data))} in place
-   * if {@code min < 0}. Method returns an empty array if {@code data} is empty
-   * or no varargs are supplied.
+   * if {@code min < 0}.
    *
    * @param data to operate on
    * @return a reference to the supplied data, positivized if necessary
@@ -900,10 +850,163 @@ public final class Data {
   }
 
   /**
-   * Return whether all the elements of {@code data} are equal to 0.
-   * @param data to evaluate
+   * Determine whether {@code value} is a positive, real number in the range
+   * {@code (0..+Inf)}.
    */
-  public static boolean isZeroValued(double... data) {
+  public static boolean isPositiveAndReal(double value) {
+    return value > 0.0 && value < Double.POSITIVE_INFINITY;
+  }
+
+  /**
+   * Determine whether {@code value} is a positive, real number in the range
+   * {@code [0..+Inf)}.
+   */
+  public static boolean isPositiveAndRealOrZero(double value) {
+    return value >= 0.0 && value < Double.POSITIVE_INFINITY;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers.
+   *
+   * @param data to evaluate
+   * @return {@code true} if all data are in the range {@code (0..+Inf)};
+   *         {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
+   */
+  public static boolean arePositiveAndReal(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndReal(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers.
+   *
+   * @param data to evaluate
+   * @return {@code true} if all data are in the range {@code (0..+Inf)};
+   *         {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
+   */
+  public static boolean arePositiveAndReal(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndReal(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers, or 0.
+   *
+   * @param data to evaluate
+   * @return {@code true} if all data are in the range {@code [0..+Inf)};
+   *         {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
+   */
+  public static boolean arePositiveAndRealOrZero(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndRealOrZero(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers, or 0.
+   *
+   * @param data to evaluate
+   * @return {@code true} if all data are in the range {@code [0..+Inf)};
+   *         {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
+   */
+  public static boolean arePositiveAndRealOrZero(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndRealOrZero(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all finite.
+   * 
+   * @param data to evaluate
+   * @return {@code true} if all data are in the range {@code (-Inf..+Inf)} ;
+   *         {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
+   */
+  public static boolean areFinite(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!Doubles.isFinite(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all finite.
+   * 
+   * @param data to evaluate
+   * @return {@code true} if all data are in the range {@code (-Inf..+Inf)} ;
+   *         {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
+   */
+  public static boolean areFinite(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!Doubles.isFinite(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all equal to 0.
+   * 
+   * @param data to evaluate
+   * @return {@code true} if all values = 0; {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
+   */
+  public static boolean areZeroValued(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (d != 0.0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all equal to 0.
+   * 
+   * @param data to evaluate
+   * @return {@code true} if all values = 0; {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
+   */
+  public static boolean areZeroValued(Collection<Double> data) {
+    checkSize(1, data);
     for (double d : data) {
       if (d != 0.0) {
         return false;
@@ -914,11 +1017,11 @@ public final class Data {
 
   /**
    * Determine whether the elements of {@code data} increase or decrease
-   * monotonically, with a {@code strict} flag indicating if identical adjacent
+   * monotonically.The {@code strict} flag indicates if identical adjacent
    * elements are forbidden. The {@code strict} flag could be {@code true} if
    * checking the x-values of a function for any steps, or {@code false} if
-   * checking the y-values of a cumulative distribution function, which are
-   * commonly constant.
+   * checking the y-values of a cumulative distribution, which are commonly
+   * constant.
    *
    * @param increasing if {@code true}, descending if {@code false}
    * @param strict {@code true} if data must always increase or decrease,
@@ -928,33 +1031,13 @@ public final class Data {
    * @throws IllegalArgumentException if fewer than two data elements are
    *         supplied
    */
-  public static boolean isMonotonic(boolean increasing, boolean strict, double... data) {
+  public static boolean areMonotonic(boolean increasing, boolean strict, double... data) {
     double[] diff = diff(data);
     if (!increasing) {
       flip(diff);
     }
     double min = Doubles.min(diff);
     return (strict) ? min > 0 : min >= 0;
-  }
-
-  /**
-   * Compute the difference between {@code test} and {@code target}, relative to
-   * {@code target}, as a percent. If {@code target} is 0, method returns 0 if
-   * {@code test} is also 0, otherwise {@code Double.POSITIVE_INFINITY}. If
-   * either value is {@code Double.NaN}, method returns {@code Double.NaN}.
-   *
-   * @param test value
-   * @param target value
-   * @return the percent difference
-   */
-  public static double percentDiff(double test, double target) {
-    if (isNaN(target) || isNaN(test)) {
-      return NaN;
-    }
-    if (target == 0) {
-      return test == 0 ? 0 : POSITIVE_INFINITY;
-    }
-    return Math.abs(test - target) / target * 100d;
   }
 
   /**
@@ -968,8 +1051,7 @@ public final class Data {
    * @throws IllegalArgumentException if {@code data.length < 2}
    */
   public static double[] diff(double... data) {
-    checkArgument(data.length > 1);
-    int size = data.length - 1;
+    int size = checkSize(2, data).length - 1;
     double[] diff = new double[size];
     for (int i = 0; i < size; i++) {
       diff[i] = data[i + 1] - data[i];
@@ -977,22 +1059,39 @@ public final class Data {
     return diff;
   }
 
-  private static final Range<Double> POS_RANGE = Range.open(0d, Double.POSITIVE_INFINITY);
+  /**
+   * Compute the difference between {@code test} and {@code target}, relative to
+   * {@code target}, as a percent. If {@code target == 0}, method returns
+   * {@code 0} if {@code test == 0}, otherwise {@code Double.POSITIVE_INFINITY}.
+   *
+   * @param test value
+   * @param target value
+   * @return the percent difference
+   * @throws IllegalArgumentException if {@code test} or {@code target} are not
+   *         finite.
+   */
+  public static double percentDiff(double test, double target) {
+    checkFiniteness(test, "test");
+    checkFiniteness(target, "target");
+    if (target == 0 && test == 0) {
+      return 0;
+    }
+    return Math.abs(test - target) / target * 100.0;
+  }
 
   /**
    * Normalize the elements of {@code data} in place such that they sum to 1.
    *
    * @param data to normalize
    * @return a reference to the supplied {@code data}
-   * @throws IllegalArgumentException if {@code data} is empty, contains any
-   *         {@code Double.NaN} or negative values, or sums to a value outside
-   *         the range {@code (0..Double.POSITIVE_INFINITY), exclusive}
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied, contains values outside the range {@code [0..+Inf)}, or
+   *         sums to a value outside the range {@code (0..+Inf)}
    */
-  public static double[] normalize(double... data) {
-    checkArgument(data.length > 0);
-    checkArgument(arePositive(data));
+  public static List<Double> normalize(List<Double> data) {
+    checkArgument(arePositiveAndRealOrZero(data));
     double sum = sum(data);
-    checkArgument(POS_RANGE.contains(sum));
+    checkArgument(arePositiveAndReal(sum));
     double scale = 1.0 / sum;
     return multiply(scale, data);
   }
@@ -1002,16 +1101,15 @@ public final class Data {
    *
    * @param data to normalize
    * @return a reference to the supplied {@code data}
-   * @throws IllegalArgumentException if {@code data} is empty, contains any
-   *         {@code Double.NaN} or negative values, or sums to a value outside
-   *         the range {@code (0..Double.POSITIVE_INFINITY), exclusive}
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied, contains values outside the range {@code [0..+Inf)}, or
+   *         sums to a value outside the range {@code (0..+Inf)}
    */
-  public static List<Double> normalize(List<Double> data) {
-    checkArgument(data.size() > 0);
-    checkArgument(arePositive(data));
+  public static double[] normalize(double... data) {
+    checkArgument(arePositiveAndRealOrZero(data));
     double sum = sum(data);
-    checkArgument(POS_RANGE.contains(sum));
-    double scale = 1d / sum;
+    checkArgument(arePositiveAndReal(sum));
+    double scale = 1.0 / sum;
     return multiply(scale, data);
   }
 
@@ -1038,6 +1136,60 @@ public final class Data {
     for (int index : indices) {
       checkElementIndex(index, size);
     }
+  }
+
+  /**
+   * Ensure {@code data.size() ≥ min}.
+   */
+  public static Collection<Double> checkSize(int min, Collection<Double> data) {
+    checkSize(min, data.size());
+    return data;
+  }
+
+  /**
+   * Ensure {@code data.length ≥ min}.
+   */
+  public static double[] checkSize(int min, double[] data) {
+    checkSize(min, data.length);
+    return data;
+  }
+
+  private static void checkSize(int min, int size) {
+    checkArgument(size >= min, "Data size[%s] < minimum[%s]", size, min);
+  }
+
+  /**
+   * Ensure the supplied datasets are the same size.
+   */
+  public static void checkSizes(Collection<Double> data1, Collection<Double> data2) {
+    checkSizes(data1.size(), data2.size());
+  }
+
+  /**
+   * Ensure the supplied datasets are the same size.
+   */
+  public static void checkSizes(double[] data1, double[] data2) {
+    checkSizes(data1.length, data2.length);
+  }
+
+  /**
+   * Ensure the 1<sup>st</sup> dimensions of the supplied datasets are the same
+   * size.
+   */
+  public static void checkSizes(double[][] data1, double[][] data2) {
+    checkSizes(data1.length, data2.length);
+  }
+
+  /**
+   * Ensure the 1<sup>st</sup> dimensions of the supplied datasets are the same
+   * size.
+   */
+  public static void checkSizes(double[][][] data1, double[][][] data2) {
+    checkSizes(data1.length, data2.length);
+  }
+
+  private static void checkSizes(int s1, int s2) {
+    checkArgument(s1 == s2, "Data1.size[%s] ≠ Data2.size[%s]", s1, s2);
   }
 
   /**
