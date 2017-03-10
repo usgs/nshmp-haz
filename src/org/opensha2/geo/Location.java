@@ -4,9 +4,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import static org.opensha2.geo.GeoTools.TO_DEG;
 import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.geo.GeoTools.validateDepth;
-import static org.opensha2.geo.GeoTools.validateLat;
-import static org.opensha2.geo.GeoTools.validateLon;
+import static org.opensha2.geo.GeoTools.checkDepth;
+import static org.opensha2.geo.GeoTools.checkLatitude;
+import static org.opensha2.geo.GeoTools.checkLongitude;
 
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
@@ -44,9 +44,9 @@ public final class Location implements Comparable<Location> {
   private final double depth;
 
   private Location(double lat, double lon, double depth) {
-    this.lat = validateLat(lat) * TO_RAD;
-    this.lon = validateLon(lon) * TO_RAD;
-    this.depth = validateDepth(depth);
+    this.lat = checkLatitude(lat) * TO_RAD;
+    this.lon = checkLongitude(lon) * TO_RAD;
+    this.depth = checkDepth(depth);
   }
 
   /**

@@ -1,11 +1,8 @@
 package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.Math.PI;
 
 import static org.opensha2.data.Data.checkInRange;
-
-import org.opensha2.data.Data;
 
 import com.google.common.collect.Range;
 
@@ -38,18 +35,16 @@ public class GeoTools {
    */
   public static final double EARTH_RADIUS_POLAR = 6356.7523;
 
-  /** Minimum latitude value (-90°). */
+  /** Minimum latitude -90°). */
   public static final double MIN_LAT = -90.0;
 
-  /** Maximum latitude value (90°). */
+  /** Maximum latitude (90°). */
   public static final double MAX_LAT = 90.0;
 
-  /** Minimum longitude value (-360°). */
+  /** Minimum longitude (-360°). */
   public static final double MIN_LON = -360.0;
 
-  // TODO test if and which distance calcs can handle
-  // this higher MAX_LON
-  /** Maximum longitude value (180°). */
+  /** Maximum longitude (360°). */
   public static final double MAX_LON = 360.0;
 
   /**
@@ -65,7 +60,7 @@ public class GeoTools {
   public static final double MAX_DEPTH = 700.0;
 
   private static final Range<Double> latRange = Range.closed(MIN_LAT, MAX_LAT);
-  private static final Range<Double> lonRange = Range.closed(MIN_LON, MAX_LON);
+  private static final Range<Double> lonRange = Range.open(MIN_LON, MAX_LON);
   private static final Range<Double> depthRange = Range.closed(MIN_DEPTH, MAX_DEPTH);
 
   /** Conversion multiplier for degrees to radians */
@@ -74,11 +69,11 @@ public class GeoTools {
   /** Conversion multiplier for radians to degrees */
   public static final double TO_DEG = Math.toDegrees(1.0);
 
-  /** Convenience constant for 2 * PI */
-  public static final double TWOPI = 2 * PI;
+  /** Convenience constant for 2π. */
+  public static final double TWOPI = 2 * Math.PI;
 
-  /** Convenience constant for PI / 2 */
-  public static final double PI_BY_2 = PI / 2;
+  /** Convenience constant for π/2. */
+  public static final double PI_BY_2 = Math.PI / 2;
 
   /** Convenience constant for arcseconds per degree (3600). */
   public static final double SECONDS_PER_DEGREE = 3600;
@@ -87,87 +82,45 @@ public class GeoTools {
   public static final double MINUTES_PER_DEGREE = 60;
 
   /**
-   * Verifies that a latitude value is between {@code MIN_LAT} and
-   * {@code MAX_LAT} (inclusive). Method returns the supplied value and can be
-   * used inline.
+   * Ensure that {@code -90° ≤ latitude ≤ 90°}.
    *
-   * @param lat to validate
-   * @return the supplied latitude
-   * @throws IllegalArgumentException if {@code lat} is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @param latitude to validate
+   * @return the validated latitude
+   * @throws IllegalArgumentException if {@code latitude} is outside the range
+   *         {@code [-90..90]}
+   * @see #MIN_LAT
+   * @see #MAX_LAT
    */
-  public static double validateLat(double lat) {
-    return checkInRange(latRange, "Latitude", lat);
+  public static double checkLatitude(double latitude) {
+    return checkInRange(latRange, "Latitude", latitude);
   }
 
   /**
-   * Verifies that an array of latitude values are between {@code MIN_LAT} and
-   * {@code MAX_LAT} (inclusive). Method returns the supplied values and can be
-   * used inline.
+   * Ensure that {@code -360° < longitude < 360°}.
    *
-   * @param lats to validate
-   * @return the supplied latitude values
-   * @throws IllegalArgumentException if any value is out of range
-   * @see Data#checkInRange(Range, String, double...)
+   * @param longitude to validate
+   * @return the validated longitude
+   * @throws IllegalArgumentException if {@code longitude} is outside the range
+   *         {@code (-360..360)}
+   * @see #MIN_LON
+   * @see #MAX_LON
    */
-  public static double[] validateLats(double... lats) {
-    return checkInRange(latRange, "Latitude", lats);
+  public static double checkLongitude(double longitude) {
+    return checkInRange(lonRange, "Longitude", longitude);
   }
 
   /**
-   * Verifies that a longitude value is between {@code MIN_LON} and
-   * {@code MAX_LON} (inclusive). Method returns the supplied value and can be
-   * used inline.
-   *
-   * @param lon to validate
-   * @return the supplied longitude
-   * @throws IllegalArgumentException if {@code lon} is out of range
-   * @see Data#checkInRange(Range, String, double)
-   */
-  public static double validateLon(double lon) {
-    return checkInRange(lonRange, "Longitude", lon);
-  }
-
-  /**
-   * Verifies that an array of longitude values are between {@code MIN_LON} and
-   * {@code MAX_LON} (inclusive). Method returns the supplied values and can be
-   * used inline.
-   *
-   * @param lons to validate
-   * @return the supplied longitude values
-   * @throws IllegalArgumentException if any value is out of range
-   * @see Data#checkInRange(Range, String, double...)
-   */
-  public static double[] validateLons(double... lons) {
-    return checkInRange(lonRange, "Longitude", lons);
-  }
-
-  /**
-   * Verifies that a depth value is between {@code MIN_DEPTH} and
-   * {@code MAX_DEPTH} (inclusive). Method returns the supplied value and can be
-   * used inline.
-   *
+   * Ensure that {@code -5 < depth < 700 km}.
+   * 
    * @param depth to validate
-   * @return the supplied depth
-   * @throws IllegalArgumentException if {@code depth} is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @return the validated depth
+   * @throws IllegalArgumentException if {@code depth} is outside the range
+   *         {@code [-5..700]}
+   * @see #MIN_DEPTH
+   * @see #MAX_DEPTH
    */
-  public static double validateDepth(double depth) {
+  public static double checkDepth(double depth) {
     return checkInRange(depthRange, "Depth", depth);
-  }
-
-  /**
-   * Verifies that an array of depth values are between {@code MIN_DEPTH} and
-   * {@code MAX_DEPTH} (inclusive). Method returns the supplied values and can
-   * be used inline.
-   *
-   * @param depths to validate
-   * @return the supplied depth values
-   * @throws IllegalArgumentException if any value is out of range
-   * @see Data#checkInRange(Range, String, double...)
-   */
-  public static double[] validateDepths(double... depths) {
-    return checkInRange(depthRange, "Depth", depths);
   }
 
   /**
