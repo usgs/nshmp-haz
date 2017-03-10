@@ -374,31 +374,6 @@ public final class DataTests {
   }
 
   @Test
-  public final void testMinMaxIndex() {
-    // 1D
-    double[] D1_1 = { 4, -1, 33, -8, 33 };
-    double[] D1_2 = {};
-    assertEquals(3, Data.minIndex(D1_1));
-    assertEquals(2, Data.maxIndex(D1_1));
-    assertEquals(-1, Data.minIndex(D1_2));
-    assertEquals(-1, Data.maxIndex(D1_2));
-    // 2D
-    double[][] D2_1 = { D1_1, D1_1 };
-    double[][] D2_2 = { D1_2, D1_2 };
-    assertArrayEquals(new int[] { 0, 3 }, Data.minIndex(D2_1));
-    assertArrayEquals(new int[] { 0, 2 }, Data.maxIndex(D2_1));
-    assertArrayEquals(new int[] { -1, -1 }, Data.minIndex(D2_2));
-    assertArrayEquals(new int[] { -1, -1 }, Data.maxIndex(D2_2));
-    // 3D
-    double[][][] D3_1 = { D2_1, D2_1 };
-    double[][][] D3_2 = { D2_2, D2_2 };
-    assertArrayEquals(new int[] { 0, 0, 3 }, Data.minIndex(D3_1));
-    assertArrayEquals(new int[] { 0, 0, 2 }, Data.maxIndex(D3_1));
-    assertArrayEquals(new int[] { -1, -1, -1 }, Data.minIndex(D3_2));
-    assertArrayEquals(new int[] { -1, -1, -1 }, Data.maxIndex(D3_2));
-  }
-
-  @Test
   public final void testPositivityStateAndDiff() {
     // positivize
     double[] empty = {};

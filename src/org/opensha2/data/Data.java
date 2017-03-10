@@ -1,9 +1,7 @@
 package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Strings.repeat;
 import static com.google.common.math.DoubleMath.fuzzyEquals;
 
@@ -17,21 +15,17 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ImmutableSortedSet.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
-import com.google.common.collect.Table;
 import com.google.common.math.DoubleMath;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Utilities for operating on {@code double}-valued data.
@@ -673,164 +667,6 @@ public final class Data {
   }
 
   /**
-   * Find the index of the minimum value in {@code data}. For equivalent minima,
-   * method returns the index of the first minimum encountered. If the supplied
-   * array is empty, method returns {@code -1}.
-   *
-   * @param data to evaluate
-   * @return the index of the minimum value or {@code -1} if the array is empty
-   */
-  public static int minIndex(double... data) {
-    int index = -1;
-    double min = Double.POSITIVE_INFINITY;
-    for (int i = 1; i < data.length; i++) {
-      if (data[i] < min) {
-        index = i;
-        min = data[i];
-      }
-    }
-    return index;
-  }
-
-  /**
-   * Find the indices of the minimum value in {@code data}. For equivalent
-   * maxima, method returns the indices of the first minimum encountered. If the
-   * 1st dimension of the supplied array is empty or all arrays in the 2nd
-   * dimension are empty, method returns {@code [-1, -1]}.
-   *
-   * @param data to evaluate
-   * @return the indices of the minimum value or {@code [-1, -1]} for empty
-   *         arrays
-   */
-  public static int[] minIndex(double[][] data) {
-    int index0 = -1;
-    int index1 = -1;
-    double max = Double.POSITIVE_INFINITY;
-    for (int i = 0; i < data.length; i++) {
-      double[] data1 = data[i];
-      for (int j = 0; j < data1.length; j++) {
-        if (data1[j] < max) {
-          index0 = i;
-          index1 = j;
-          max = data1[j];
-        }
-      }
-    }
-    return new int[] { index0, index1 };
-  }
-
-  /**
-   * Find the indices of the minimum value in {@code data}. For equivalent
-   * minima, method returns the indices of the first minimum encountered. If the
-   * 1st dimension of the supplied array is empty or all arrays in the 2nd or
-   * 3rd dimensions are empty, method returns {@code [-1, -1, -1]}.
-   *
-   * @param data to evaluate
-   * @return the indices of the minimum value or {@code [-1, -1, -1]} for empty
-   *         arrays
-   */
-  public static int[] minIndex(double[][][] data) {
-    int index0 = -1;
-    int index1 = -1;
-    int index2 = -1;
-    double max = Double.POSITIVE_INFINITY;
-    for (int i = 0; i < data.length; i++) {
-      double[][] data1 = data[i];
-      for (int j = 0; j < data1.length; j++) {
-        double[] data2 = data1[j];
-        for (int k = 0; k < data2.length; k++) {
-          if (data2[k] < max) {
-            index0 = i;
-            index1 = j;
-            index2 = k;
-            max = data2[k];
-          }
-        }
-      }
-    }
-    return new int[] { index0, index1, index2 };
-  }
-
-  /**
-   * Find the index of the maximum value in {@code data}. For equivalent maxima,
-   * method returns the index of the first maximum encountered. If the supplied
-   * array is empty, method returns {@code -1}.
-   *
-   * @param data to evaluate
-   * @return the index of the maximum value or -1 if the array is empty
-   */
-  public static int maxIndex(double... data) {
-    int index = -1;
-    double max = Double.NEGATIVE_INFINITY;
-    for (int i = 1; i < data.length; i++) {
-      if (data[i] > max) {
-        index = i;
-        max = data[i];
-      }
-    }
-    return index;
-  }
-
-  /**
-   * Find the indices of the maximum value in {@code data}. For equivalent
-   * maxima, method returns the indices of the first maximum encountered. If the
-   * 1st dimension of the supplied array is empty or all arrays in the 2nd
-   * dimension are empty, method returns {@code [-1, -1]}.
-   *
-   * @param data to evaluate
-   * @return the indices of the maximum value or {@code [-1, -1]} for empty
-   *         arrays
-   */
-  public static int[] maxIndex(double[][] data) {
-    int index0 = -1;
-    int index1 = -1;
-    double max = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < data.length; i++) {
-      double[] data1 = data[i];
-      for (int j = 0; j < data1.length; j++) {
-        if (data1[j] > max) {
-          index0 = i;
-          index1 = j;
-          max = data1[j];
-        }
-      }
-    }
-    return new int[] { index0, index1 };
-  }
-
-  /**
-   * Find the indices of the maximum value in {@code data}. For equivalent
-   * maxima, method returns the indices of the first maximum encountered. If the
-   * 1st dimension of the supplied array is empty or all arrays in the 2nd or
-   * 3rd dimensions are empty, method returns {@code [-1, -1, -1]}.
-   *
-   * @param data to evaluate
-   * @return the indices of the maximum value or {@code [-1, -1, -1]} for empty
-   *         arrays
-   */
-  public static int[] maxIndex(double[][][] data) {
-    int index0 = -1;
-    int index1 = -1;
-    int index2 = -1;
-    double max = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < data.length; i++) {
-      double[][] data1 = data[i];
-      for (int j = 0; j < data1.length; j++) {
-        double[] data2 = data1[j];
-        for (int k = 0; k < data2.length; k++) {
-          if (data2[k] > max) {
-            index0 = i;
-            index1 = j;
-            index2 = k;
-            max = data2[k];
-          }
-        }
-      }
-    }
-    return new int[] { index0, index1, index2 };
-  }
-
-  /**
    * Ensures positivity of values by adding {@code Math.abs(min(data))} in place
    * if {@code min < 0}.
    *
@@ -1112,31 +948,37 @@ public final class Data {
     double scale = 1.0 / sum;
     return multiply(scale, data);
   }
-
+  
   /**
-   * Create a {@code double[]} of pseudorandom values.
+   * 'Clean' the elements of {@code data} in place to be double values of a
+   * specified scale/precision. Internally, this method uses the rounding and
+   * precision functionality of {@link BigDecimal}.
    *
-   * @param size of the output array
-   * @param seed for random number generator; may be {@code null}
-   * @return an array of random {@code double}s
+   * @param data to operate on
+   * @param scale decimal precision
+   * @return a reference to the 'cleaned', supplied {@code data}
    */
-  public static double[] randomValues(int size, Long seed) {
-    Random random = (seed != null) ? new Random(seed) : new Random();
-    double[] values = new double[size];
-    for (int i = 0; i < size; i++) {
-      values[i] = random.nextDouble();
-    }
-    return values;
+  public static double[] clean(int scale, double... data) {
+    // TODO should check that scale is > 0
+    return transform(new Clean(scale), data);
   }
+
+  private static class Clean implements Function<Double, Double> {
+    private final int scale;
+
+    private Clean(int scale) {
+      this.scale = scale;
+    }
+
+    @Override
+    public Double apply(Double d) {
+      return Maths.round(d, scale);
+    }
+  }
+
+
 
   /* * * * * * * * * * * * VALIDATION * * * * * * * * * * * */
-
-  /* Plural form of Guava's checkElementIndex(). */
-  private static void checkElementIndices(Collection<Integer> indices, int size) {
-    for (int index : indices) {
-      checkElementIndex(index, size);
-    }
-  }
 
   /**
    * Ensure {@code data.size() ≥ min}.
@@ -1325,48 +1167,6 @@ public final class Data {
    * Everything below needs review
    */
 
-  /*
-   * Some quick tests of abs() and scale() using a non-Function based approach
-   * and hence no autoboxing showed only marginal slowdown over a 10^8 sized
-   * array of random values. If profiling shows that in practice the function
-   * based approach of transforming arrays is slow, primitive implementations
-   * may be substituted. See DubblesTest for speed test.
-   *
-   * Similarly, boolean tests such as isSorted() could be short-circuited to
-   * return at the first failure. However, there is more reusable code in the
-   * current implementation that is easier to follow. Again, this will may be
-   * changed if there is a demonstrable performance hit.
-   *
-   * We could probably intern commonly used scale functions.
-   */
-
-  // private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0d,
-  // 1d);
-
-  // /**
-  // * Return the index of the first array element that is equal than
-  // * {@code value}.
-  // *
-  // * @param data to examine
-  // * @param value to search for
-  // * @throws IllegalArgumentException all elements of {@code data} are less
-  // than {@code value}. Exception is thrown lazily
-  // * when iteration completes without any {@code data} element exceeding
-  // {@code value}.
-  // */
-  // public static int firstGreaterThanIndex(int[] data, double value) {
-  // checkNotNull(data);
-  // for (int i = 0; i < data.length; i++) {
-  // int cf = DoubleMath.fuzzyCompare(data[i], value, 1e-8);
-  // if (cf > 0) return i;
-  // }
-  // String mssg =
-  // String.format("Value [%s] is larger than maximum array value [%s].",
-  // value,
-  // Doubles.max(data));
-  // throw new IllegalArgumentException(mssg);
-  // }
-
   /**
    * Creates a sequence of evenly spaced values starting at {@code min} and
    * ending at {@code max}. If {@code (max - min) / step} is not equivalent to
@@ -1481,33 +1281,6 @@ public final class Data {
     }
 
     return combined;
-  }
-
-  /**
-   * 'Clean' the elements of {@code data} in place to be double values of a
-   * specified scale/precision. Internally, this method uses the rounding and
-   * precision functionality of {@link BigDecimal}.
-   *
-   * @param data to operate on
-   * @param scale decimal precision
-   * @return a reference to the 'cleaned', supplied {@code data}
-   */
-  public static double[] clean(int scale, double... data) {
-    // TODO should check that scale is > 0
-    return transform(new Clean(scale), data);
-  }
-
-  private static class Clean implements Function<Double, Double> {
-    private final int scale;
-
-    private Clean(int scale) {
-      this.scale = scale;
-    }
-
-    @Override
-    public Double apply(Double d) {
-      return Maths.round(d, scale);
-    }
   }
 
   /**
@@ -1716,180 +1489,5 @@ public final class Data {
     }
   }
 
-  /*
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   * TODO clean below
-   */
-
-  /**
-   * Returns the key associated with the minimum value in the supplied dataset.
-   * One use case for this method might be to find the column key associated
-   * with a particular data set (or row) in a {@link Table}.
-   * @param keys to lookup in {@code Map<K, Double>}; if {@code keys == null}
-   *        then all values in the data set are evaluated
-   * @param data Map<K, Double> to operate on
-   * @throws IllegalArgumentException if {@code data} or {@code keys} are empty
-   * @return the key corresponding to the minimum value
-   * @see Table
-   */
-  public static <K> K minKey(Map<K, Double> data, Collection<K> keys) {
-    checkArgument(data.size() > 0, "data map is empty");
-    if (keys == null) {
-      keys = data.keySet();
-    }
-    checkArgument(keys.size() > 0, "keys are empty");
-    K minKey = null;
-    double minVal = Double.MAX_VALUE;
-    for (K key : keys) {
-      Double val = checkNotNull(data.get(key), "no value for key in map");
-      if (val < minVal) {
-        minVal = val;
-        minKey = key;
-      }
-    }
-    return minKey;
-  }
-
-  /**
-   * Return an index array corresponding to the 'set' bits of the supplied
-   * {@code BitSet}.
-   *
-   * @param bits to operate on
-   * @return the indices of 'set' bits
-   */
-  public static int[] bitsToIndices(BitSet bits) {
-    int[] indices = new int[bits.cardinality()];
-    int index = 0;
-    for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
-      indices[index++] = i;
-    }
-    return indices;
-  }
-
-  /**
-   * Return a {@code BitSet} with {@code capacity} and with all bits at
-   * {@code indices} 'set'.
-   *
-   * @param indices to operate on
-   * @param capacity of returned {@code BitSet}
-   */
-  public static BitSet indicesToBits(List<Integer> indices, int capacity) {
-    checkArgument(capacity > 0, "BitSet capacity [%s] must be > 0", capacity);
-    checkElementIndices(indices, capacity);
-    BitSet bits = new BitSet(capacity);
-    for (int index : indices) {
-      bits.set(index);
-    }
-    return bits;
-  }
-
-  /**
-   * Nearest neighbor binning algorithm after Silverman, B. W. (1986),
-   * <em>Density Estimation for Statistics and Data Analysis</em>, Chapman &
-   * Hall, New York. This method is a density estimator that uses variable width
-   * binning with a fixed sample size per bin that better reflects the
-   * distribution of the underlying data. It is particularly useful when workgin
-   * with power-law distributed data. Bin widths are computed as the difference
-   * between the last values in adjacent bins. In the case of the 1st bin, the
-   * supplied origin is taken as the "last value" of the previous bin. Bin
-   * positions are set from the median value in each bin. Note that the supplied
-   * {@code data} is not modified; this method uses a copy internally. In most
-   * cases, data will be fairly continuous in X, however, for small {@code size}
-   * s it's possible to have bins of identical values such that corresponding
-   * bin value is Infinity. Such values are not included in the resultant data
-   * set.
-   *
-   * @param data to be binned
-   * @param origin for binning
-   * @param size of each bin
-   * @return an {@code XY_DataGroup} of the binned distribution or {@code null}
-   *         if the binned distribution is empty
-   * @throws NullPointerException if the supplied {@code data} is {@code null}
-   * @throws IllegalArgumentException if supplied {@code data} is empty, the bin
-   *         {@code size} is <1, or the {@code origin} is greater than all
-   *         {@code data} values
-   */
-  // NOTE commented out because unused; is probably useful and should be
-  // archived
-  // dependency on commons-math StatUtils.percentile
-  // @Deprecated public static DefaultXY_DataSet nearestNeighborHist(double[]
-  // data, double origin,
-  // int size) {
-  // checkNotNull(data, "Supplied data is null");
-  // checkArgument(data.length > 0, "Supplied data is empty");
-  // checkArgument(size > 0, "Bin size can't be less than 1");
-  // double[] localData = Arrays.copyOf(data, data.length);
-  // Arrays.sort(localData);
-  // int startIndex = Arrays.binarySearch(localData, origin);
-  // checkArgument(startIndex < localData.length,
-  // "Origin is greater than all data values");
-  // startIndex = (startIndex > 0) ? startIndex : -startIndex - 1;
-  // // for multipe identical values, binary search may not return
-  // // the lowest index so walk down
-  // while (startIndex > 0 && origin == localData[startIndex - 1])
-  // startIndex--;
-  // // trim data
-  // localData = Arrays.copyOfRange(localData, startIndex, localData.length);
-  // int binCount = (int) Math.floor(localData.length / size);
-  // // bail on an empty distribution
-  // if (binCount == 0) return null;
-  // List<Double> x = new ArrayList<Double>();
-  // List<Double> y = new ArrayList<Double>();
-  // double binLo, binHi, binDelta;
-  // for (int i = 0; i < binCount; i++) {
-  // int datIndex = i * size;
-  // binLo = (i == 0) ? origin : localData[datIndex - 1];
-  // binHi = localData[datIndex + size - 1];
-  // binDelta = binHi - binLo;
-  // // bail on intervals of identical values
-  // if (binDelta == 0) continue;
-  // y.add(size / (binHi - binLo));
-  // x.add(StatUtils.percentile(localData, datIndex, size, 50.0));
-  // }
-  // // bail on empty distribution
-  // return (x.isEmpty()) ? null : new DefaultXY_DataSet(x, y);
-  // }
-
-  /**
-   * Creates a new array from the values in a source array at the specified
-   * indices. Returned array is of same type as source.
-   *
-   * @param array array source
-   * @param indices index values of items to select
-   * @return a new array of values at indices in source
-   * @throws NullPointerException if {@code array} or {@code indices} are
-   *         {@code null}
-   * @throws IllegalArgumentException if data object is not an array or if data
-   *         array is empty
-   * @throws IndexOutOfBoundsException if any indices are out of range
-   */
-  @Deprecated
-  public static Object arraySelect(Object array, int[] indices) {
-    // NOTE was this from Temblor??
-    checkNotNull(array, "Supplied data array is null");
-    checkNotNull(indices, "Supplied index array is null");
-    checkArgument(array.getClass().isArray(), "Data object supplied is not an array");
-    int arraySize = Array.getLength(array);
-    checkArgument(arraySize != 0, "Supplied data array is empty");
-
-    // validate indices
-    for (int i = 0; i < indices.length; i++) {
-      checkPositionIndex(indices[i], arraySize, "Supplied index");
-    }
-
-    Class<? extends Object> srcClass = array.getClass().getComponentType();
-    Object out = Array.newInstance(srcClass, indices.length);
-    for (int i = 0; i < indices.length; i++) {
-      Array.set(out, i, Array.get(array, indices[i]));
-    }
-    return out;
-  }
 
 }
