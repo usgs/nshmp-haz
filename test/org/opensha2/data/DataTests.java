@@ -3,6 +3,7 @@ package org.opensha2.data;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.opensha2.gmm.Imt;
@@ -11,6 +12,7 @@ import org.junit.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
 
 import java.util.ArrayList;
@@ -32,10 +34,6 @@ public final class DataTests {
     return Doubles.asList(valueArray());
   }
 
-  /*
-   * Helper for those methods that have both primitive double[] and List<Double>
-   * implementations.
-   */
   static final void testArrayAndList(
       double[] expectArray,
       double[] actualArray,
@@ -45,6 +43,8 @@ public final class DataTests {
     List<Double> expectList = Doubles.asList(expectArray);
     assertEquals(expectList, actualList);
   }
+  
+  /* * * * * * * * * * * * DATA OPERATIONS * * * * * * * * * * * */
 
   @Test
   public final void testAddTerm() {
@@ -507,6 +507,72 @@ public final class DataTests {
     double[] actualArray = Data.normalize(inputArray);
     List<Double> actualList = Data.normalize(inputList);
     testArrayAndList(expectArray, actualArray, actualList);
+  }
+
+  @Test
+  public final void testRound() {
+    double[] expectArray = { 0.23, 1.32 };
+    double[] inputArray = { 0.23449999, 1.3150001 };
+    List<Double> inputList = Doubles.asList(Arrays.copyOf(inputArray, inputArray.length));
+    double[] actualArray = Data.round(2, inputArray);
+    List<Double> actualList = Data.round(2, inputList);
+    testArrayAndList(expectArray, actualArray, actualList);
+  }
+
+  /* * * * * * * * * * * * PRECONDITIONS * * * * * * * * * * * */
+
+  
+  @Test
+  public final void testCheckInRange() {
+    // also tests checkInRange(double)
+    double[] expectArray = { 5.0, 2.0 };
+    Range<Double> r = Range.open(0.0, 10.0);
+    assertArrayEquals(expectArray, Data.checkInRange(r, null, expectArray), 0.0);
+    assertSame(expectArray, Data.checkInRange(r, null, expectArray));
+    List<Double> expectCollect = Doubles.asList(expectArray);
+    assertEquals(expectCollect, Data.checkInRange(r, null, expectCollect));
+    assertSame(expectCollect, Data.checkInRange(r, null, expectCollect));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckInRangeArray_IOE() {
+    Range<Double> r = Range.open(0.0, 10.0);
+    Data.checkInRange(r, null, new double[] { -1.0 });
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckInRangeCollect_IOE() {
+    Range<Double> r = Range.open(0.0, 10.0);
+    Data.checkInRange(r, null, Doubles.asList(new double[] { -1.0 }));
+  }
+
+  /* checkSize* overloads are checked via data operations tests */
+
+  @Test
+  public final void testCheckWeights() {
+    // also tests checkWeight
+    double[] wtArray = { 0.4, 0.6001 };
+    List<Double> wtList = Doubles.asList(wtArray);
+    assertEquals(wtList, Data.checkWeights(wtList));
+    assertSame(wtList, Data.checkWeights(wtList));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckWeightsBadHi_IOE() {
+    double[] wtArrayBadValueHi = { 1.0001 };
+    Data.checkWeights(Doubles.asList(wtArrayBadValueHi));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckWeightsBadLo_IOE() {
+    double[] wtArrayBadValueLo = { 0.0 };
+    Data.checkWeights(Doubles.asList(wtArrayBadValueLo));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckWeightsBadSum_IOE() {
+    double[] wtArrayBadSum = { 0.4, 0.6002 };
+    Data.checkWeights(Doubles.asList(wtArrayBadSum));
   }
 
 }

@@ -104,18 +104,6 @@ public final class Maths {
   }
 
   /**
-   * Round a double to a specified number of decimal places according to
-   * {@link RoundingMode#HALF_UP}. Internally this method uses the scaling and
-   * rounding capabilities of {@link BigDecimal}.
-   *
-   * @param value to round
-   * @param scale the number of decimal places in the result
-   */
-  public static double round(double value, int scale) {
-    return round(value, scale, RoundingMode.HALF_UP);
-  }
-
-  /**
    * Step function for which {@code f(x) = }&#123;
    * {@code 1 if x ≤ μ; 0 if x > μ }&#125;.
    * 
@@ -127,9 +115,25 @@ public final class Maths {
   }
 
   /**
+   * Round a double to a specified number of decimal places according to
+   * {@link RoundingMode#HALF_UP}. Internally this method uses the scaling and
+   * rounding capabilities of {@link BigDecimal}. Note that a negative
+   * {@code scale} will round {@code value} to the specified number of places
+   * above the decimal.
+   *
+   * @param value to round
+   * @param scale the number of decimal places in the result
+   */
+  public static double round(double value, int scale) {
+    return round(value, scale, RoundingMode.HALF_UP);
+  }
+
+  /**
    * Round a double to a specified number of decimal places according to the
    * supplied {@link RoundingMode}. Internally this method uses the scaling and
-   * rounding capabilities of {@link BigDecimal}.
+   * rounding capabilities of {@link BigDecimal}. Note that a negative
+   * {@code scale} will round {@code value} to the specified number of places
+   * above the decimal.
    *
    * @param value to round
    * @param scale the number of decimal places in the result

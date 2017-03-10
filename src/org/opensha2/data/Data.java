@@ -2,8 +2,6 @@ package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.repeat;
-import static com.google.common.math.DoubleMath.fuzzyEquals;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
@@ -92,6 +90,8 @@ public final class Data {
 
   private Data() {}
 
+  /* * * * * * * * * * * * DATA OPERATIONS * * * * * * * * * * * */
+  
   /**
    * Add a {@code term} to the elements of {@code data} in place.
    *
@@ -855,7 +855,7 @@ public final class Data {
    * Determine whether the elements of {@code data} increase or decrease
    * monotonically.The {@code strict} flag indicates if identical adjacent
    * elements are forbidden. The {@code strict} flag could be {@code true} if
-   * checking the x-values of a function for any steps, or {@code false} if
+   * checking the x-values of a sequence for any steps, or {@code false} if
    * checking the y-values of a cumulative distribution, which are commonly
    * constant.
    *
@@ -902,7 +902,7 @@ public final class Data {
    *
    * @param test value
    * @param target value
-   * @return the percent difference
+   * @return {@code 100 * abs(test - target) / target}
    * @throws IllegalArgumentException if {@code test} or {@code target} are not
    *         finite.
    */
@@ -948,40 +948,161 @@ public final class Data {
     double scale = 1.0 / sum;
     return multiply(scale, data);
   }
-  
+
   /**
-   * 'Clean' the elements of {@code data} in place to be double values of a
-   * specified scale/precision. Internally, this method uses the rounding and
-   * precision functionality of {@link BigDecimal}.
+   * Round the elements of {@code data} in place to double values of a specified
+   * scale (precision). Internally, this method uses the rounding and precision
+   * functionality of {@link BigDecimal}.
    *
    * @param data to operate on
    * @param scale decimal precision
-   * @return a reference to the 'cleaned', supplied {@code data}
+   * @return a reference to the supplied {@code data}
+   * @see Maths#round(double, int)
    */
-  public static double[] clean(int scale, double... data) {
-    // TODO should check that scale is > 0
-    return transform(new Clean(scale), data);
+  public static List<Double> round(int scale, List<Double> data) {
+    for (int i = 0; i < data.size(); i++) {
+      data.set(i, Maths.round(data.get(i), scale));
+    }
+    return data;
   }
 
-  private static class Clean implements Function<Double, Double> {
-    private final int scale;
-
-    private Clean(int scale) {
-      this.scale = scale;
+  /**
+   * Round the elements of {@code data} in place to double values of a specified
+   * scale (precision). Internally, this method uses the rounding and precision
+   * functionality of {@link BigDecimal}.
+   *
+   * @param data to operate on
+   * @param scale decimal precision
+   * @return a reference to the supplied {@code data}
+   * @see Maths#round(double, int)
+   */
+  public static double[] round(int scale, double... data) {
+    for (int i = 0; i < data.length; i++) {
+      data[i] = Maths.round(data[i], scale);
     }
-
-    @Override
-    public Double apply(Double d) {
-      return Maths.round(d, scale);
-    }
+    return data;
   }
 
+  /* * * * * * * * * * * * PRECONDITIONS * * * * * * * * * * * */
 
+  /**
+   * Ensure validity of sequence discretization parameters. Confirms that for a specified
+   * range {@code [min, max]} and {@code Δ} that:
+   *
+   * <ul><li>{@code min}, {@code max}, and {@code Δ} are finite</li>
+   *
+   * <li>{@code max > min}</li>
+   *
+   * <li>{@code Δ ≥ 0}</li>
+   *
+   * <li>{@code Δ > 0} for {@code max > min}</li>
+   *
+   * <li>{@code Δ ≤ max - min}</li></ul>
+   *
+   * @param min value
+   * @param max value
+   * @param Δ discretization delta
+   * @return the supplied {@code Δ} for use inline
+   */
+  public static double checkDelta(double min, double max, double Δ) {
+    checkFiniteness(min, "min");
+    checkFiniteness(max, "max");
+    checkFiniteness(Δ, "Δ");
+    checkArgument(max >= min, "min [%s] >= max [%s]", min, max);
+    checkArgument(Δ >= 0.0, "Invalid Δ [%s]", Δ);
+    if (max > min) {
+      checkArgument(Δ > 0.0, "Invalid Δ [%s] for max > min", Δ);
+    }
+    checkArgument(Δ <= max - min, "Δ [%s] > max - min [%s]", Δ, max - min);
+    return Δ;
+  }
 
-  /* * * * * * * * * * * * VALIDATION * * * * * * * * * * * */
+  /**
+   * Ensure that {@code value} is finite.
+   *
+   * @param value to check
+   * @param label for value if check fails
+   * @return the supplied value for use inline
+   * @see Doubles#isFinite(double)
+   */
+  public static double checkFiniteness(double value, String label) {
+    checkArgument(Doubles.isFinite(value), "Non-finite %s value: %s", label, value);
+    return value;
+  }
+
+  /**
+   * Ensure that {@code value} falls within the specified {@link Range}.
+   *
+   * @param range of allowable values
+   * @param value to validate
+   * @param label indicating type of value being checked; used in exception
+   *        message; may be {@code null}
+   * @return the supplied {@code value}
+   * @throws IllegalArgumentException if either range endpoint is {@code NaN}. A
+   *         range where both enpoints are {@code NaN} and at least one enpoint
+   *         is closed is permitted; only when <em>both</em> enpoints are closed
+   *         is the value {@code NaN} permitted to the exclusion of all other
+   *         values.
+   */
+  public static double checkInRange(
+      Range<Double> range, 
+      String label, 
+      double value) {
+    
+    checkArgument(range.contains(value),
+        "%s value %s is not in range %s",
+        Strings.nullToEmpty(label), value, range);
+    return value;
+  }
+
+  /**
+   * Ensure that all elements of {@code data} fall within the specified
+   * {@link Range}.
+   *
+   * @param range of allowable values
+   * @param data to validate
+   * @param label indicating type of value being checked; used in exception
+   *        message; may be {@code null}
+   * @return a reference to the supplied {@code data}
+   * @see #checkInRange(Range, String, double) for exception notes
+   */
+  public static Collection<Double> checkInRange(
+      Range<Double> range,
+      String label,
+      Collection<Double> data) {
+
+    for (double d : data) {
+      checkInRange(range, label, d);
+    }
+    return data;
+  }
+
+  /**
+   * Ensure that all elements of {@code data} fall within the specified
+   * {@link Range}.
+   *
+   * @param range of allowable values
+   * @param data to validate
+   * @param label indicating type of value being checked; used in exception
+   *        message; may be {@code null}
+   * @return a reference to the supplied {@code data}
+   * @see #checkInRange(Range, String, double) for exception notes
+   */
+  public static double[] checkInRange(
+      Range<Double> range,
+      String label,
+      double... data) {
+
+    for (int i = 0; i < data.length; i++) {
+      checkInRange(range, label, data[i]);
+    }
+    return data;
+  }
 
   /**
    * Ensure {@code data.size() ≥ min}.
+   * 
+   * @return a reference to the supplied {@code data}
    */
   public static Collection<Double> checkSize(int min, Collection<Double> data) {
     checkSize(min, data.size());
@@ -990,6 +1111,8 @@ public final class Data {
 
   /**
    * Ensure {@code data.length ≥ min}.
+   * 
+   * @return a reference to the supplied {@code data}
    */
   public static double[] checkSize(int min, double[] data) {
     checkSize(min, data.length);
@@ -1034,53 +1157,13 @@ public final class Data {
     checkArgument(s1 == s2, "Data1.size[%s] ≠ Data2.size[%s]", s1, s2);
   }
 
-  /**
-   * Verify that a value falls within a specified {@link Range}. Method returns
-   * the supplied value for use inline.
-   *
-   * @param range of allowable values
-   * @param value to validate
-   * @param label indicating type of value being checked; used in exception
-   *        message; may be {@code null}
-   * @return the supplied value for use inline
-   * @throws IllegalArgumentException if value is {@code NaN}
-   * @see Range
-   */
-  public static double checkInRange(Range<Double> range, String label, double value) {
-    checkArgument(!Double.isNaN(value), "NaN not allowed");
-    checkArgument(range.contains(value),
-        "%s value %s is not in range %s",
-        Strings.nullToEmpty(label), value, range);
-    return value;
-  }
-
-  /**
-   * Verify that the domain of a {@code double[]} does not exceed that of the
-   * supplied {@link Range}. Method returns the supplied values for use inline.
-   *
-   * @param range of allowable values
-   * @param values to validate
-   * @param label indicating type of value being checked; used in exception
-   *        message; may be {@code null}
-   * @return the supplied values for use inline
-   * @throws IllegalArgumentException if any value is {@code NaN}
-   * @see Range
-   */
-  public static double[] checkInRange(Range<Double> range, String label, double... values) {
-    for (int i = 0; i < values.length; i++) {
-      checkInRange(range, label, values[i]);
-    }
-    return values;
-  }
-
   private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0.0, 1.0);
+  private static final double WEIGHT_TOLERANCE = 1e-4;
 
   /**
-   * Confirm that a weight value is {@code 0.0 < weight ≤ 1.0}. Method returns
-   * the supplied value for use inline.
+   * Ensure {@code 0.0 < weight ≤ 1.0}.
    *
-   * @param weight to validate
-   * @return the supplied {@code weight} value
+   * @return the supplied {@code weight}
    */
   public static double checkWeight(double weight) {
     checkInRange(WEIGHT_RANGE, "Weight", weight);
@@ -1088,70 +1171,22 @@ public final class Data {
   }
 
   /**
-   * Acceptable tolerance when summing weights and comparing to 1.0. Currently
-   * set to 1e-4.
-   */
-  public static final double WEIGHT_TOLERANCE = 1e-4;
-
-  /**
-   * Confirm that a {@code Collection<Double>} of weights sums to 1.0 within
-   * {@link #WEIGHT_TOLERANCE}.
+   * Ensure that each {@code 0.0 < weight ≤ 1.0} and {@code sum(weights) = 1.0 ± 0.0001}.
    *
    * @param weights to validate
-   * @return the supplied weights for use inline
-   * @see #WEIGHT_TOLERANCE
+   * @return a reference to the supplied {@code weights}
    */
-  public static Collection<Double> checkWeightSum(Collection<Double> weights) {
+  public static Collection<Double> checkWeights(Collection<Double> weights) {
+    for (double weight : weights) {
+      checkWeight(weight);
+    }
     double sum = sum(weights);
-    checkArgument(fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
+    checkArgument(DoubleMath.fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
         "Weights Σ %s = %s ≠ 1.0", weights, sum);
     return weights;
   }
 
-  /**
-   * Validate series discretization parameters. Confirms that for a specified
-   * range {@code [min, max]} and {@code Δ} that:
-   *
-   * <ul><li>{@code min}, {@code max}, and {@code Δ} are finite</li>
-   *
-   * <li>{@code max > min}</li>
-   *
-   * <li>{@code Δ ≥ 0}</li>
-   *
-   * <li>{@code Δ > 0} for {@code max > min}</li>
-   *
-   * <li>{@code Δ ≤ max - min}</li></ul>
-   *
-   * @param min value
-   * @param max value
-   * @param Δ discretization delta
-   * @return the supplied {@code Δ} for use inline
-   */
-  public static double checkDelta(double min, double max, double Δ) {
-    checkFiniteness(min, "min");
-    checkFiniteness(max, "max");
-    checkFiniteness(Δ, "Δ");
-    checkArgument(max >= min, "min [%s] >= max [%s]", min, max);
-    checkArgument(Δ >= 0.0, "Invalid Δ [%s]", Δ);
-    if (max > min) {
-      checkArgument(Δ > 0.0, "Invalid Δ [%s] for max > min", Δ);
-    }
-    checkArgument(Δ <= max - min, "Δ [%s] > max - min [%s]", Δ, max - min);
-    return Δ;
-  }
 
-  /**
-   * Checks that a value is finite.
-   *
-   * @param value to check
-   * @param label for value if check fails
-   * @return the supplied value for use inline
-   * @see Doubles#isFinite(double)
-   */
-  public static double checkFiniteness(double value, String label) {
-    checkArgument(Doubles.isFinite(value), "Non-finite %s value: %s", label, value);
-    return value;
-  }
 
   /*
    *
@@ -1189,7 +1224,7 @@ public final class Data {
   public static double[] buildCleanSequence(double min, double max, double step,
       boolean ascending, int scale) {
     double[] seq = buildSequence(min, max, step, ascending);
-    return clean(scale, seq);
+    return round(scale, seq);
   }
 
   /**
@@ -1328,7 +1363,8 @@ public final class Data {
     StringBuilder sb = new StringBuilder("[");
     for (int i = 0; i < data.length; i++) {
       if (i > 0) {
-        sb.append(",").append(NEWLINE).append(repeat(" ", indent));
+        sb.append(",").append(NEWLINE);
+        sb.append(Strings.repeat(" ", indent));
       }
       sb.append(Arrays.toString(data[i]));
     }
@@ -1351,7 +1387,8 @@ public final class Data {
     StringBuilder sb = new StringBuilder("[");
     for (int i = 0; i < data.length; i++) {
       if (i > 0) {
-        sb.append(",").append(NEWLINE).append(repeat(" ", indent));
+        sb.append(",").append(NEWLINE);
+        sb.append(Strings.repeat(" ", indent));
       }
       sb.append(toString(data[i], indent + 1));
     }
@@ -1488,6 +1525,5 @@ public final class Data {
       return (d1 < d2) ? -1 : (d1 == d2) ? 0 : 1;
     }
   }
-
 
 }

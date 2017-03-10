@@ -255,14 +255,14 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     ModelGroup(Imt imt, int[] models) {
       super(imt);
       this.models = models;
-      this.weights = Data.clean(8, Data.normalize(selectWeights(super.weights, models)));
+      this.weights = Data.round(8, Data.normalize(selectWeights(super.weights, models)));
     }
 
     /* Specify a weight cutoff; weights are IMT dependent. */
     ModelGroup(Imt imt, double p) {
       super(imt);
       this.models = percentileModels(p, super.weights);
-      this.weights = Data.clean(8, Data.normalize(selectWeights(super.weights, this.models)));
+      this.weights = Data.round(8, Data.normalize(selectWeights(super.weights, this.models)));
     }
 
     @Override
