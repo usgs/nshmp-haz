@@ -90,8 +90,8 @@ public final class Data {
 
   private Data() {}
 
-  /* * * * * * * * * * * * DATA OPERATIONS * * * * * * * * * * * */
-  
+  /* * * * * * * * * * * * * OPERATORS * * * * * * * * * * * * */
+
   /**
    * Add a {@code term} to the elements of {@code data} in place.
    *
@@ -666,254 +666,8 @@ public final class Data {
     return data;
   }
 
-  /**
-   * Ensures positivity of values by adding {@code Math.abs(min(data))} in place
-   * if {@code min < 0}.
-   *
-   * @param data to operate on
-   * @return a reference to the supplied data, positivized if necessary
-   */
-  public static double[] positivize(double... data) {
-    if (data.length == 0) {
-      return data;
-    }
-    double min = Doubles.min(data);
-    if (min >= 0) {
-      return data;
-    }
-    min = Math.abs(min);
-    return add(min, data);
-  }
-
-  /**
-   * Determine whether {@code value} is a positive, real number in the range
-   * {@code (0..+Inf)}.
-   */
-  public static boolean isPositiveAndReal(double value) {
-    return value > 0.0 && value < Double.POSITIVE_INFINITY;
-  }
-
-  /**
-   * Determine whether {@code value} is a positive, real number in the range
-   * {@code [0..+Inf)}.
-   */
-  public static boolean isPositiveAndRealOrZero(double value) {
-    return value >= 0.0 && value < Double.POSITIVE_INFINITY;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} are all positive, real
-   * numbers.
-   *
-   * @param data to evaluate
-   * @return {@code true} if all data are in the range {@code (0..+Inf)};
-   *         {@code false} otherwise
-   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
-   *         supplied
-   */
-  public static boolean arePositiveAndReal(double... data) {
-    checkSize(1, data);
-    for (double d : data) {
-      if (!isPositiveAndReal(d)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} are all positive, real
-   * numbers.
-   *
-   * @param data to evaluate
-   * @return {@code true} if all data are in the range {@code (0..+Inf)};
-   *         {@code false} otherwise
-   * @throws IllegalArgumentException if {@code data} is empty
-   */
-  public static boolean arePositiveAndReal(Collection<Double> data) {
-    checkSize(1, data);
-    for (double d : data) {
-      if (!isPositiveAndReal(d)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} are all positive, real
-   * numbers, or 0.
-   *
-   * @param data to evaluate
-   * @return {@code true} if all data are in the range {@code [0..+Inf)};
-   *         {@code false} otherwise
-   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
-   *         supplied
-   */
-  public static boolean arePositiveAndRealOrZero(double... data) {
-    checkSize(1, data);
-    for (double d : data) {
-      if (!isPositiveAndRealOrZero(d)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} are all positive, real
-   * numbers, or 0.
-   *
-   * @param data to evaluate
-   * @return {@code true} if all data are in the range {@code [0..+Inf)};
-   *         {@code false} otherwise
-   * @throws IllegalArgumentException if {@code data} is empty
-   */
-  public static boolean arePositiveAndRealOrZero(Collection<Double> data) {
-    checkSize(1, data);
-    for (double d : data) {
-      if (!isPositiveAndRealOrZero(d)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} are all finite.
-   * 
-   * @param data to evaluate
-   * @return {@code true} if all data are in the range {@code (-Inf..+Inf)} ;
-   *         {@code false} otherwise
-   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
-   *         supplied
-   */
-  public static boolean areFinite(double... data) {
-    checkSize(1, data);
-    for (double d : data) {
-      if (!Doubles.isFinite(d)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} are all finite.
-   * 
-   * @param data to evaluate
-   * @return {@code true} if all data are in the range {@code (-Inf..+Inf)} ;
-   *         {@code false} otherwise
-   * @throws IllegalArgumentException if {@code data} is empty
-   */
-  public static boolean areFinite(Collection<Double> data) {
-    checkSize(1, data);
-    for (double d : data) {
-      if (!Doubles.isFinite(d)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} are all equal to 0.
-   * 
-   * @param data to evaluate
-   * @return {@code true} if all values = 0; {@code false} otherwise
-   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
-   *         supplied
-   */
-  public static boolean areZeroValued(double... data) {
-    checkSize(1, data);
-    for (double d : data) {
-      if (d != 0.0) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} are all equal to 0.
-   * 
-   * @param data to evaluate
-   * @return {@code true} if all values = 0; {@code false} otherwise
-   * @throws IllegalArgumentException if {@code data} is empty
-   */
-  public static boolean areZeroValued(Collection<Double> data) {
-    checkSize(1, data);
-    for (double d : data) {
-      if (d != 0.0) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} increase or decrease
-   * monotonically.The {@code strict} flag indicates if identical adjacent
-   * elements are forbidden. The {@code strict} flag could be {@code true} if
-   * checking the x-values of a sequence for any steps, or {@code false} if
-   * checking the y-values of a cumulative distribution, which are commonly
-   * constant.
-   *
-   * @param increasing if {@code true}, descending if {@code false}
-   * @param strict {@code true} if data must always increase or decrease,
-   *        {@code false} if identical adjacent values are permitted
-   * @param data to evaluate
-   * @return {@code true} if monotonic, {@code false} otherwise
-   * @throws IllegalArgumentException if fewer than two data elements are
-   *         supplied
-   */
-  public static boolean areMonotonic(boolean increasing, boolean strict, double... data) {
-    double[] diff = diff(data);
-    if (!increasing) {
-      flip(diff);
-    }
-    double min = Doubles.min(diff);
-    return (strict) ? min > 0 : min >= 0;
-  }
-
-  /**
-   * Build an array of the differences between the adjacent elements of
-   * {@code data}. Method returns results in a new array that has
-   * {@code data.length - 1} where differences are computed per
-   * {@code data[i+1] - data[i]}.
-   *
-   * @param data to difference
-   * @return the differences between adjacent values
-   * @throws IllegalArgumentException if {@code data.length < 2}
-   */
-  public static double[] diff(double... data) {
-    int size = checkSize(2, data).length - 1;
-    double[] diff = new double[size];
-    for (int i = 0; i < size; i++) {
-      diff[i] = data[i + 1] - data[i];
-    }
-    return diff;
-  }
-
-  /**
-   * Compute the difference between {@code test} and {@code target}, relative to
-   * {@code target}, as a percent. If {@code target == 0}, method returns
-   * {@code 0} if {@code test == 0}, otherwise {@code Double.POSITIVE_INFINITY}.
-   *
-   * @param test value
-   * @param target value
-   * @return {@code 100 * abs(test - target) / target}
-   * @throws IllegalArgumentException if {@code test} or {@code target} are not
-   *         finite.
-   */
-  public static double percentDiff(double test, double target) {
-    checkFiniteness(test, "test");
-    checkFiniteness(target, "target");
-    if (target == 0 && test == 0) {
-      return 0;
-    }
-    return Math.abs(test - target) / target * 100.0;
-  }
+  private static final String NORM_DATA_ERROR = "Normalize: Data outside range [0..+Inf)";
+  private static final String NORM_SUM_ERROR = "Normalize: Sum outside range (0..+Inf)";
 
   /**
    * Normalize the elements of {@code data} in place such that they sum to 1.
@@ -925,9 +679,9 @@ public final class Data {
    *         sums to a value outside the range {@code (0..+Inf)}
    */
   public static List<Double> normalize(List<Double> data) {
-    checkArgument(arePositiveAndRealOrZero(data));
+    checkArgument(arePositiveAndRealOrZero(data), NORM_DATA_ERROR);
     double sum = sum(data);
-    checkArgument(arePositiveAndReal(sum));
+    checkArgument(isPositiveAndReal(sum), NORM_SUM_ERROR);
     double scale = 1.0 / sum;
     return multiply(scale, data);
   }
@@ -942,9 +696,9 @@ public final class Data {
    *         sums to a value outside the range {@code (0..+Inf)}
    */
   public static double[] normalize(double... data) {
-    checkArgument(arePositiveAndRealOrZero(data));
+    checkArgument(arePositiveAndRealOrZero(data), NORM_DATA_ERROR);
     double sum = sum(data);
-    checkArgument(arePositiveAndReal(sum));
+    checkArgument(isPositiveAndReal(sum), NORM_SUM_ERROR);
     double scale = 1.0 / sum;
     return multiply(scale, data);
   }
@@ -983,11 +737,231 @@ public final class Data {
     return data;
   }
 
-  /* * * * * * * * * * * * PRECONDITIONS * * * * * * * * * * * */
+  /**
+   * Ensures positivity of values by adding {@code Math.abs(min(data))} in place
+   * if {@code min < 0}.
+   *
+   * @param data to operate on
+   * @return a reference to the supplied data, positivized if necessary
+   */
+  public static double[] positivize(double... data) {
+    if (data.length == 0) {
+      return data;
+    }
+    double min = Doubles.min(data);
+    if (min >= 0) {
+      return data;
+    }
+    min = Math.abs(min);
+    return add(min, data);
+  }
 
   /**
-   * Ensure validity of sequence discretization parameters. Confirms that for a specified
-   * range {@code [min, max]} and {@code Δ} that:
+   * Build an array of the differences between the adjacent elements of
+   * {@code data}. Method returns results in a new array that has
+   * {@code data.length - 1} where differences are computed per
+   * {@code data[i+1] - data[i]}.
+   *
+   * @param data to difference
+   * @return the differences between adjacent values
+   * @throws IllegalArgumentException if {@code data.length < 2}
+   */
+  public static double[] diff(double... data) {
+    int size = checkSize(2, data).length - 1;
+    double[] diff = new double[size];
+    for (int i = 0; i < size; i++) {
+      diff[i] = data[i + 1] - data[i];
+    }
+    return diff;
+  }
+
+  /**
+   * Compute the difference between {@code test} and {@code target}, relative to
+   * {@code target}, as a percent. If {@code target == 0}, method returns
+   * {@code 0} if {@code test == 0}, otherwise {@code Double.POSITIVE_INFINITY}.
+   *
+   * @param test value
+   * @param target value
+   * @return {@code 100 * abs(test - target) / target}
+   * @throws IllegalArgumentException if {@code test} or {@code target} are not
+   *         finite.
+   */
+  public static double percentDiff(double test, double target) {
+    checkFinite("test", test);
+    checkFinite("target", target);
+    if (target == 0 && test == 0) {
+      return 0;
+    }
+    return Math.abs(test - target) / target * 100.0;
+  }
+
+  /* * * * * * * * * * * * * * STATE * * * * * * * * * * * * * */
+
+  /**
+   * Determine whether {@code value} is a positive, real number in the range
+   * {@code (0..+Inf)}.
+   * 
+   * @param value to validate
+   */
+  static boolean isPositiveAndReal(double value) {
+    return value > 0.0 && value < Double.POSITIVE_INFINITY;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers.
+   *
+   * @param data to validate
+   * @return {@code true} if all data are in the range {@code (0..+Inf)}; {@code
+   * false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
+   */
+  static boolean arePositiveAndReal(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndReal(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers.
+   *
+   * @param data to validate
+   * @return {@code true} if all data are in the range {@code (0..+Inf)}; {@code
+   * false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
+   */
+  static boolean arePositiveAndReal(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndReal(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether {@code value} is a positive, real number in the range
+   * {@code [0..+Inf)}.
+   * 
+   * @param value to validate
+   */
+  static boolean isPositiveAndRealOrZero(double value) {
+    return value >= 0.0 && value < Double.POSITIVE_INFINITY;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers, or 0.
+   *
+   * @param data to validate
+   * @return {@code true} if all data are in the range {@code [0..+Inf)}; {@code
+   * false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
+   */
+  static boolean arePositiveAndRealOrZero(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndRealOrZero(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers, or 0.
+   *
+   * @param data to validate
+   * @return {@code true} if all data are in the range {@code [0..+Inf)}; {@code
+   * false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
+   */
+  static boolean arePositiveAndRealOrZero(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndRealOrZero(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all equal to 0.
+   * 
+   * @param data to validate
+   * @return {@code true} if all values = 0; {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
+   */
+  static boolean areZeroValued(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (d != 0.0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether all the elements of {@code data} are equal to 0.
+   * 
+   * @param data to validate
+   * @return {@code true} if all values = 0; {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
+   */
+  static boolean areZeroValued(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (d != 0.0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} increase or decrease
+   * monotonically.The {@code strict} flag indicates if identical adjacent
+   * elements are forbidden. The {@code strict} flag could be {@code true} if
+   * checking the x-values of a sequence for any steps, or {@code false} if
+   * checking the y-values of a cumulative distribution, which are commonly
+   * constant.
+   *
+   * @param increasing if {@code true}, descending if {@code false}
+   * @param strict {@code true} if data must always increase or decrease, {@code
+   * false} if identical adjacent values are permitted
+   * @param data to validate
+   * @return {@code true} if monotonic, {@code false} otherwise
+   * @throws IllegalArgumentException if fewer than two data elements are
+   *         supplied
+   */
+  static boolean areMonotonic(boolean increasing, boolean strict, double... data) {
+    double[] diff = diff(data);
+    if (!increasing) {
+      flip(diff);
+    }
+    double min = Doubles.min(diff);
+    return (strict) ? min > 0 : min >= 0;
+  }
+
+  /* * * * * * * * * * * * PRECONDITIONS * * * * * * * * * * * */
+
+  private static final String DATA_ERROR = "Data value";
+
+  /**
+   * Ensure validity of sequence discretization parameters. Confirms that for a
+   * specified range {@code [min, max]} and {@code Δ} that:
    *
    * <ul><li>{@code min}, {@code max}, and {@code Δ} are finite</li>
    *
@@ -1005,9 +979,9 @@ public final class Data {
    * @return the supplied {@code Δ} for use inline
    */
   public static double checkDelta(double min, double max, double Δ) {
-    checkFiniteness(min, "min");
-    checkFiniteness(max, "max");
-    checkFiniteness(Δ, "Δ");
+    checkFinite("Sequence minimum", min);
+    checkFinite("Sequence maximum", max);
+    checkFinite("Sequence Δ", Δ);
     checkArgument(max >= min, "min [%s] >= max [%s]", min, max);
     checkArgument(Δ >= 0.0, "Invalid Δ [%s]", Δ);
     if (max > min) {
@@ -1018,83 +992,99 @@ public final class Data {
   }
 
   /**
-   * Ensure that {@code value} is finite.
+   * Ensure {@code value} is finite.
    *
-   * @param value to check
    * @param label for value if check fails
-   * @return the supplied value for use inline
+   * @param value to check
+   * @return the validated value
    * @see Doubles#isFinite(double)
    */
-  public static double checkFiniteness(double value, String label) {
-    checkArgument(Doubles.isFinite(value), "Non-finite %s value: %s", label, value);
+  public static double checkFinite(String label, double value) {
+    checkArgument(Doubles.isFinite(value), "%s [%s] not finite", label, value);
     return value;
   }
 
   /**
-   * Ensure that {@code value} falls within the specified {@link Range}.
+   * Ensure the elements of {@code data} are finite.
    *
-   * @param range of allowable values
-   * @param value to validate
-   * @param label indicating type of value being checked; used in exception
-   *        message; may be {@code null}
-   * @return the supplied {@code value}
-   * @throws IllegalArgumentException if either range endpoint is {@code NaN}. A
-   *         range where both enpoints are {@code NaN} and at least one enpoint
-   *         is closed is permitted; only when <em>both</em> enpoints are closed
-   *         is the value {@code NaN} permitted to the exclusion of all other
-   *         values.
-   */
-  public static double checkInRange(
-      Range<Double> range, 
-      String label, 
-      double value) {
-    
-    checkArgument(range.contains(value),
-        "%s value %s is not in range %s",
-        Strings.nullToEmpty(label), value, range);
-    return value;
-  }
-
-  /**
-   * Ensure that all elements of {@code data} fall within the specified
-   * {@link Range}.
-   *
-   * @param range of allowable values
    * @param data to validate
-   * @param label indicating type of value being checked; used in exception
-   *        message; may be {@code null}
    * @return a reference to the supplied {@code data}
-   * @see #checkInRange(Range, String, double) for exception notes
+   * @throws IllegalArgumentException if {@code data} is empty, or any elements
+   *         of {@code data} are outside the range {@code (-Inf..+Inf)}
+   * @see Doubles#isFinite(double)
    */
-  public static Collection<Double> checkInRange(
-      Range<Double> range,
-      String label,
-      Collection<Double> data) {
-
+  public static Collection<Double> checkFinite(Collection<Double> data) {
+    checkSize(1, data);
     for (double d : data) {
-      checkInRange(range, label, d);
+      checkFinite(DATA_ERROR, d);
     }
     return data;
   }
 
   /**
-   * Ensure that all elements of {@code data} fall within the specified
-   * {@link Range}.
+   * Ensure the elements of {@code data} are finite.
+   *
+   * @param data to validate
+   * @return a reference to the supplied {@code data}
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied, or any elements of {@code data} are outside the range
+   *         {@code (-Inf..+Inf)}
+   * @see Doubles#isFinite(double)
+   */
+  public static double[] checkFinite(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      checkFinite(DATA_ERROR, d);
+    }
+    return data;
+  }
+
+  /**
+   * Ensure {@code value} falls within the specified {@link Range}.
+   *
+   * @param range of allowable values
+   * @param label for value if check fails
+   * @param value to validate
+   * @return the supplied {@code value}
+   * @throws IllegalArgumentException if either range endpoint is {@code NaN}. A
+   *         range where both enpoints are {@code NaN} and at least one enpoint
+   *         is closed is permitted; only when <em>both</em> endpoints are
+   *         closed is the value {@code NaN} permitted to the exclusion of all
+   *         other values.
+   */
+  public static double checkInRange(Range<Double> range, String label, double value) {
+    checkArgument(range.contains(value), "%s [%s] not in range %s", label, value, range);
+    return value;
+  }
+
+  /**
+   * Ensure the elements of {@code data} fall within the specified {@link Range}
+   * .
    *
    * @param range of allowable values
    * @param data to validate
-   * @param label indicating type of value being checked; used in exception
-   *        message; may be {@code null}
    * @return a reference to the supplied {@code data}
    * @see #checkInRange(Range, String, double) for exception notes
    */
-  public static double[] checkInRange(
-      Range<Double> range,
-      String label,
-      double... data) {
+  public static Collection<Double> checkInRange(Range<Double> range, Collection<Double> data) {
+    for (double d : data) {
+      checkInRange(range, DATA_ERROR, d);
+    }
+    return data;
+  }
 
+  /**
+   * Ensure the elements of {@code data} fall within the specified {@link Range}
+   * .
+   *
+   * @param range of allowable values
+   * @param data to validate
+   * @return a reference to the supplied {@code data}
+   * @see #checkInRange(Range, String, double) for exception notes
+   */
+  public static double[] checkInRange(Range<Double> range, double... data) {
     for (int i = 0; i < data.length; i++) {
-      checkInRange(range, label, data[i]);
+      checkInRange(range, DATA_ERROR, data[i]);
     }
     return data;
   }
@@ -1171,7 +1161,8 @@ public final class Data {
   }
 
   /**
-   * Ensure that each {@code 0.0 < weight ≤ 1.0} and {@code sum(weights) = 1.0 ± 0.0001}.
+   * Ensure each {@code 0.0 < weight ≤ 1.0} and
+   * {@code sum(weights) = 1.0 ± 0.0001}.
    *
    * @param weights to validate
    * @return a reference to the supplied {@code weights}
@@ -1186,7 +1177,85 @@ public final class Data {
     return weights;
   }
 
+  /* * * * * * * * 2D & 3D ARRAYS EXTENSIONS * * * * * * * * */
 
+  /**
+   * Create a deep copy of a two-dimensional data array.
+   *
+   * @param data to copy
+   * @return a new two-dimensional array populated with the values of
+   *         {@code data}
+   */
+  public static double[][] copyOf(double[][] data) {
+    double[][] out = new double[data.length][];
+    for (int i = 0; i < data.length; i++) {
+      out[i] = Arrays.copyOf(data[i], data[i].length);
+    }
+    return out;
+  }
+
+  /**
+   * Create a deep copy of a three-dimensional data array.
+   *
+   * @param data to copy
+   * @return a new three-dimensional array populated with the values of
+   *         {@code data}
+   */
+  public static double[][][] copyOf(double[][][] data) {
+    double[][][] out = new double[data.length][][];
+    for (int i = 0; i < data.length; i++) {
+      out[i] = copyOf(data[i]);
+    }
+    return out;
+  }
+
+  /**
+   * Format a two-dimensional data array for printing.
+   *
+   * @param data to format
+   * @return a string representation of the supplied {@code data}
+   */
+  public static String toString(double[][] data) {
+    return toString(data, 1);
+  }
+
+  /* To support indenting of multidimensional arrays */
+  private static String toString(double[][] data, int indent) {
+    StringBuilder sb = new StringBuilder("[");
+    for (int i = 0; i < data.length; i++) {
+      if (i > 0) {
+        sb.append(",").append(NEWLINE);
+        sb.append(Strings.repeat(" ", indent));
+      }
+      sb.append(Arrays.toString(data[i]));
+    }
+    sb.append("]");
+    return sb.toString();
+  }
+
+  /**
+   * Format a three-dimensional data array for printing
+   *
+   * @param data to format
+   * @return a string representation of the supplied {@code data}
+   */
+  public static String toString(double[][][] data) {
+    return toString(data, 1);
+  }
+
+  /* To support indenting of multidimensional arrays */
+  private static String toString(double[][][] data, int indent) {
+    StringBuilder sb = new StringBuilder("[");
+    for (int i = 0; i < data.length; i++) {
+      if (i > 0) {
+        sb.append(",").append(NEWLINE);
+        sb.append(Strings.repeat(" ", indent));
+      }
+      sb.append(toString(data[i], indent + 1));
+    }
+    sb.append("]");
+    return sb.toString();
+  }
 
   /*
    *
@@ -1316,84 +1385,6 @@ public final class Data {
     }
 
     return combined;
-  }
-
-  /**
-   * Create a deep copy of a two-dimensional data array.
-   *
-   * @param data to copy
-   * @return a new two-dimensional array populated with the values of
-   *         {@code data}
-   */
-  public static double[][] copyOf(double[][] data) {
-    double[][] out = new double[data.length][];
-    for (int i = 0; i < data.length; i++) {
-      out[i] = Arrays.copyOf(data[i], data[i].length);
-    }
-    return out;
-  }
-
-  /**
-   * Create a deep copy of a three-dimensional data array.
-   *
-   * @param data to copy
-   * @return a new three-dimensional array populated with the values of
-   *         {@code data}
-   */
-  public static double[][][] copyOf(double[][][] data) {
-    double[][][] out = new double[data.length][][];
-    for (int i = 0; i < data.length; i++) {
-      out[i] = copyOf(data[i]);
-    }
-    return out;
-  }
-
-  /**
-   * Format a two-dimensional data array for printing.
-   *
-   * @param data to format
-   * @return a string representation of the supplied {@code data}
-   */
-  public static String toString(double[][] data) {
-    return toString(data, 1);
-  }
-
-  /* To support indenting of multidimensional arrays */
-  private static String toString(double[][] data, int indent) {
-    StringBuilder sb = new StringBuilder("[");
-    for (int i = 0; i < data.length; i++) {
-      if (i > 0) {
-        sb.append(",").append(NEWLINE);
-        sb.append(Strings.repeat(" ", indent));
-      }
-      sb.append(Arrays.toString(data[i]));
-    }
-    sb.append("]");
-    return sb.toString();
-  }
-
-  /**
-   * Format a three-dimensional data array for printing
-   *
-   * @param data to format
-   * @return a string representation of the supplied {@code data}
-   */
-  public static String toString(double[][][] data) {
-    return toString(data, 1);
-  }
-
-  /* To support indenting of multidimensional arrays */
-  private static String toString(double[][][] data, int indent) {
-    StringBuilder sb = new StringBuilder("[");
-    for (int i = 0; i < data.length; i++) {
-      if (i > 0) {
-        sb.append(",").append(NEWLINE);
-        sb.append(Strings.repeat(" ", indent));
-      }
-      sb.append(toString(data[i], indent + 1));
-    }
-    sb.append("]");
-    return sb.toString();
   }
 
   // TODO clean

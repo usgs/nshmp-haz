@@ -5,8 +5,6 @@ import static java.lang.Math.pow;
 
 import static org.opensha2.data.Data.checkInRange;
 
-import org.opensha2.data.Data;
-
 import com.google.common.collect.Range;
 
 /**
@@ -52,8 +50,7 @@ public final class Magnitudes {
    *
    * @param mag magnitude to validate
    * @return the supplied magnitude
-   * @throws IllegalArgumentException if {@code magdip} value is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @throws IllegalArgumentException if {@code mag} value is out of range
    */
   public static double checkMagnitude(double mag) {
     return checkInRange(MAG_RANGE, "Magnitude", mag);

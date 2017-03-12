@@ -3,6 +3,7 @@ package org.opensha2.data;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -43,8 +44,8 @@ public final class DataTests {
     List<Double> expectList = Doubles.asList(expectArray);
     assertEquals(expectList, actualList);
   }
-  
-  /* * * * * * * * * * * * DATA OPERATIONS * * * * * * * * * * * */
+
+  /* * * * * * * * * * * * * OPERATORS * * * * * * * * * * * * */
 
   @Test
   public final void testAddTerm() {
@@ -374,8 +375,27 @@ public final class DataTests {
   }
 
   @Test
-  public final void testPositivityStateAndDiff() {
-    // positivize
+  public final void testNormalize() {
+    double[] expectArray = { 0.2, 0.3, 0.5 };
+    double[] inputArray = { 20, 30, 50 };
+    List<Double> inputList = Doubles.asList(Arrays.copyOf(inputArray, inputArray.length));
+    double[] actualArray = Data.normalize(inputArray);
+    List<Double> actualList = Data.normalize(inputList);
+    testArrayAndList(expectArray, actualArray, actualList);
+  }
+
+  @Test
+  public final void testRound() {
+    double[] expectArray = { 0.23, 1.32 };
+    double[] inputArray = { 0.23449999, 1.3150001 };
+    List<Double> inputList = Doubles.asList(Arrays.copyOf(inputArray, inputArray.length));
+    double[] actualArray = Data.round(2, inputArray);
+    List<Double> actualList = Data.round(2, inputList);
+    testArrayAndList(expectArray, actualArray, actualList);
+  }
+
+  @Test
+  public final void testPositivize() {
     double[] empty = {};
     assertArrayEquals(empty, Data.positivize(empty), 0.0);
     double[] values = valueArray();
@@ -383,33 +403,71 @@ public final class DataTests {
     double[] expect = { 99.0, 90.0, 0.0 };
     double[] actual = Data.positivize(Data.flip(values));
     assertArrayEquals(expect, actual, 0.0);
+  }
+
+  @Test
+  public final void testDiff() {
+    double[] increasing_dupes = { -10, -1, 0, 0, 1, 10 };
+    double[] increasing_nodupes = { -10, -1, 0, 1, 10 };
+    double[] decreasing_dupes = { 10, 1, 0, 0, -1, -10 };
+    double[] decreasing_nodupes = { 10, 1, 0, -1, -10 };
+    double[] expect = new double[] { 9, 1, 0, 1, 9 };
+    assertArrayEquals(expect, Data.diff(increasing_dupes), 0.0);
+    assertArrayEquals(Data.flip(expect), Data.diff(decreasing_dupes), 0.0);
+    expect = new double[] { 9, 1, 1, 9 };
+    assertArrayEquals(expect, Data.diff(increasing_nodupes), 0.0);
+    assertArrayEquals(Data.flip(expect), Data.diff(decreasing_nodupes), 0.0);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testDiff_IAE() {
+    Data.diff(new double[1]);
+  }
+
+  @Test
+  public final void testPercentDiff() {
+    assertEquals(5.0, Data.percentDiff(95.0, 100.0), 0.0);
+    assertEquals(5.0, Data.percentDiff(105.0, 100.0), 0.0);
+    assertEquals(0.0, Data.percentDiff(0.0, 0.0), 0.0);
+    assertEquals(Double.POSITIVE_INFINITY, Data.percentDiff(1.0, 0.0), 0.0);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testPercentDiffTest_IAE() {
+    Data.percentDiff(Double.NaN, 1.0);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testPercentDiffTarget_IAE() {
+    Data.percentDiff(1.0, Double.NaN);
+  }
+
+  /* * * * * * * * * * * * * * STATE * * * * * * * * * * * * * */
+
+  @Test
+  public final void testState() {
     // isPositiveAndReal
     assertTrue(Data.isPositiveAndReal(10.0));
     assertFalse(Data.isPositiveAndReal(0.0));
     assertFalse(Data.isPositiveAndReal(Double.POSITIVE_INFINITY));
     assertFalse(Data.isPositiveAndReal(Double.NaN));
-    // isPositiveAndRealOrZero
-    assertTrue(Data.isPositiveAndRealOrZero(10.0));
-    assertTrue(Data.isPositiveAndRealOrZero(0.0));
-    assertFalse(Data.isPositiveAndRealOrZero(Double.POSITIVE_INFINITY));
-    assertFalse(Data.isPositiveAndRealOrZero(Double.NaN));
     // arePositiveAndReal
     assertTrue(Data.arePositiveAndReal(valueArray()));
     assertFalse(Data.arePositiveAndReal(Data.flip(valueArray())));
     assertTrue(Data.arePositiveAndReal(valueList()));
     assertFalse(Data.arePositiveAndReal(Data.flip(valueList())));
     assertFalse(Data.arePositiveAndReal(0));
+    // isPositiveAndRealOrZero
+    assertTrue(Data.isPositiveAndRealOrZero(10.0));
+    assertTrue(Data.isPositiveAndRealOrZero(0.0));
+    assertFalse(Data.isPositiveAndRealOrZero(Double.POSITIVE_INFINITY));
+    assertFalse(Data.isPositiveAndRealOrZero(Double.NaN));
     // arePositiveAndRealOrZero
     assertTrue(Data.arePositiveAndRealOrZero(valueArray()));
     assertFalse(Data.arePositiveAndRealOrZero(Data.flip(valueArray())));
     assertTrue(Data.arePositiveAndRealOrZero(valueList()));
     assertFalse(Data.arePositiveAndRealOrZero(Data.flip(valueList())));
     assertTrue(Data.arePositiveAndRealOrZero(0));
-    // areFinite
-    assertTrue(Data.areFinite(new double[] { 0, 1 }));
-    assertFalse(Data.areFinite(new double[] { 0, Double.NaN }));
-    assertTrue(Data.areFinite(Lists.<Double> newArrayList(0.0, 1.0)));
-    assertFalse(Data.areFinite(Lists.<Double> newArrayList(0.0, Double.NEGATIVE_INFINITY)));
     // areZeroValued
     assertTrue(Data.areZeroValued(new double[] { 0, 0 }));
     assertFalse(Data.areZeroValued(new double[] { 0, 1 }));
@@ -420,20 +478,12 @@ public final class DataTests {
     double[] increasing_nodupes = { -10, -1, 0, 1, 10 };
     double[] increasing_bad = { -10, -1, 0, -1, -10 };
     double[] decreasing_dupes = { 10, 1, 0, 0, -1, -10 };
-    double[] decreasing_nodupes = { 10, 1, 0, -1, -10 };
     assertTrue(Data.areMonotonic(true, false, increasing_dupes));
     assertFalse(Data.areMonotonic(true, true, increasing_dupes));
     assertTrue(Data.areMonotonic(true, true, increasing_nodupes));
     assertFalse(Data.areMonotonic(true, false, increasing_bad));
     assertTrue(Data.areMonotonic(false, false, decreasing_dupes));
     assertFalse(Data.areMonotonic(false, true, decreasing_dupes));
-    // diff
-    expect = new double[] { 9, 1, 0, 1, 9 };
-    assertArrayEquals(expect, Data.diff(increasing_dupes), 0.0);
-    assertArrayEquals(Data.flip(expect), Data.diff(decreasing_dupes), 0.0);
-    expect = new double[] { 9, 1, 1, 9 };
-    assertArrayEquals(expect, Data.diff(increasing_nodupes), 0.0);
-    assertArrayEquals(Data.flip(expect), Data.diff(decreasing_nodupes), 0.0);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -476,77 +526,82 @@ public final class DataTests {
     Data.areZeroValued(new ArrayList<Double>());
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public final void testDiff_IAE() {
-    Data.diff(new double[1]);
-  }
-
-  @Test
-  public final void testPercentDiff() {
-    assertEquals(5.0, Data.percentDiff(95.0, 100.0), 0.0);
-    assertEquals(5.0, Data.percentDiff(105.0, 100.0), 0.0);
-    assertEquals(0.0, Data.percentDiff(0.0, 0.0), 0.0);
-    assertEquals(Double.POSITIVE_INFINITY, Data.percentDiff(1.0, 0.0), 0.0);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public final void testPercentDiffTest_IAE() {
-    Data.percentDiff(Double.NaN, 1.0);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public final void testPercentDiffTarget_IAE() {
-    Data.percentDiff(1.0, Double.NaN);
-  }
-
-  @Test
-  public final void testNormalize() {
-    double[] expectArray = { 0.2, 0.3, 0.5 };
-    double[] inputArray = { 20, 30, 50 };
-    List<Double> inputList = Doubles.asList(Arrays.copyOf(inputArray, inputArray.length));
-    double[] actualArray = Data.normalize(inputArray);
-    List<Double> actualList = Data.normalize(inputList);
-    testArrayAndList(expectArray, actualArray, actualList);
-  }
-
-  @Test
-  public final void testRound() {
-    double[] expectArray = { 0.23, 1.32 };
-    double[] inputArray = { 0.23449999, 1.3150001 };
-    List<Double> inputList = Doubles.asList(Arrays.copyOf(inputArray, inputArray.length));
-    double[] actualArray = Data.round(2, inputArray);
-    List<Double> actualList = Data.round(2, inputList);
-    testArrayAndList(expectArray, actualArray, actualList);
-  }
-
   /* * * * * * * * * * * * PRECONDITIONS * * * * * * * * * * * */
 
-  
+  @Test
+  public final void testCheckDelta() {
+    assertEquals(2.0, Data.checkDelta(0.0, 10.0, 2.0), 0.0);
+    assertEquals(0.0, Data.checkDelta(10.0, 10.0, 0.0), 0.0);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckDeltaMinOverMax_IAE() {
+    Data.checkDelta(10.0, 0.0, 2.0);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckDeltaNegativeDelta_IAE() {
+    Data.checkDelta(0.0, 10.0, -2.0);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckDeltaZeroDelta_IAE() {
+    Data.checkDelta(0.0, 10.0, 0.0);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckDeltaSize_IAE() {
+    Data.checkDelta(0.0, 10.0, 11.0);
+  }
+
+  @Test
+  public final void testCheckFinite() {
+    // also tests checkFinite(double)
+    double[] expectArray = { 5.0, 2.0 };
+    assertArrayEquals(expectArray, Data.checkFinite(expectArray), 0.0);
+    assertSame(expectArray, Data.checkFinite(expectArray));
+    List<Double> expectCollect = Doubles.asList(expectArray);
+    assertEquals(expectCollect, Data.checkFinite(expectCollect));
+    assertSame(expectCollect, Data.checkFinite(expectCollect));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckFiniteArray_IAE() {
+    Data.checkFinite(new double[] { 0, Double.NaN });
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckFiniteCollect_IAE() {
+    Data.checkFinite(Doubles.asList(0, Double.NEGATIVE_INFINITY));
+  }
+
   @Test
   public final void testCheckInRange() {
     // also tests checkInRange(double)
     double[] expectArray = { 5.0, 2.0 };
     Range<Double> r = Range.open(0.0, 10.0);
-    assertArrayEquals(expectArray, Data.checkInRange(r, null, expectArray), 0.0);
-    assertSame(expectArray, Data.checkInRange(r, null, expectArray));
+    assertArrayEquals(expectArray, Data.checkInRange(r, expectArray), 0.0);
+    assertSame(expectArray, Data.checkInRange(r, expectArray));
     List<Double> expectCollect = Doubles.asList(expectArray);
-    assertEquals(expectCollect, Data.checkInRange(r, null, expectCollect));
-    assertSame(expectCollect, Data.checkInRange(r, null, expectCollect));
+    assertEquals(expectCollect, Data.checkInRange(r, expectCollect));
+    assertSame(expectCollect, Data.checkInRange(r, expectCollect));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public final void testCheckInRangeArray_IOE() {
+  public final void testCheckInRangeArray_IAE() {
     Range<Double> r = Range.open(0.0, 10.0);
-    Data.checkInRange(r, null, new double[] { -1.0 });
+    Data.checkInRange(r, new double[] { -1.0 });
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public final void testCheckInRangeCollect_IOE() {
+  public final void testCheckInRangeCollect_IAE() {
     Range<Double> r = Range.open(0.0, 10.0);
-    Data.checkInRange(r, null, Doubles.asList(new double[] { -1.0 }));
+    Data.checkInRange(r, Doubles.asList(-1.0));
   }
 
-  /* checkSize* overloads are checked via data operations tests */
+  /*
+   * checkSize overloads are checked via operator tests
+   */
 
   @Test
   public final void testCheckWeights() {
@@ -558,21 +613,67 @@ public final class DataTests {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public final void testCheckWeightsBadHi_IOE() {
+  public final void testCheckWeightsBadHi_IAE() {
     double[] wtArrayBadValueHi = { 1.0001 };
     Data.checkWeights(Doubles.asList(wtArrayBadValueHi));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public final void testCheckWeightsBadLo_IOE() {
+  public final void testCheckWeightsBadLo_IAE() {
     double[] wtArrayBadValueLo = { 0.0 };
     Data.checkWeights(Doubles.asList(wtArrayBadValueLo));
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public final void testCheckWeightsBadSum_IOE() {
+  public final void testCheckWeightsBadSum_IAE() {
     double[] wtArrayBadSum = { 0.4, 0.6002 };
     Data.checkWeights(Doubles.asList(wtArrayBadSum));
+  }
+
+  /* * * * * * * * 2D & 3D ARRAYS EXTENSIONS * * * * * * * * */
+
+  @Test
+  public final void testCopyOf() {
+    // 2D
+    double[][] expect2D = { valueArray(), valueArray(), {}, { 1.0, Double.NaN } };
+    double[][] actual2D = Data.copyOf(expect2D);
+    assertNotSame(expect2D, actual2D);
+    for (int i = 0; i < expect2D.length; i++) {
+      assertArrayEquals(expect2D[i], actual2D[i], 0.0);
+    }
+    // 3D
+    double[][][] expect3D = {
+        { valueArray(), valueArray() },
+        { valueArray() },
+        { {}, { 1.0, Double.NaN } } };
+    double[][][] actual3D = Data.copyOf(expect3D);
+    for (int i = 0; i < expect3D.length; i++) {
+      for (int j = 0; j < expect3D[i].length; j++) {
+        assertArrayEquals(expect3D[i][j], actual3D[i][j], 0.0);
+      }
+    }
+  }
+
+  @Test
+  public final void testToString() {
+    // 2D
+    double[][] expect2D = { valueArray(), valueArray(), {}, { 1.0, Double.NaN } };
+    String expect2Dstr = "[[1.0, 10.0, 100.0],\n" +
+        " [1.0, 10.0, 100.0],\n" +
+        " [],\n" +
+        " [1.0, NaN]]";
+    assertEquals(expect2Dstr, Data.toString(expect2D));
+    // 3D
+    double[][][] expect3D = {
+        { valueArray(), valueArray() },
+        { valueArray() },
+        { {}, { 1.0, Double.NaN } } };
+    String expect3Dstr = "[[[1.0, 10.0, 100.0],\n" +
+        "  [1.0, 10.0, 100.0]],\n" +
+        " [[1.0, 10.0, 100.0]],\n" +
+        " [[],\n" +
+        "  [1.0, NaN]]]";
+    assertEquals(expect3Dstr, Data.toString(expect3D));
   }
 
 }
