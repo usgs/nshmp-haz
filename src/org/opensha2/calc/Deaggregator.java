@@ -7,7 +7,7 @@ import org.opensha2.calc.DeaggContributor.SectionSource;
 import org.opensha2.calc.DeaggContributor.SourceContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
-import org.opensha2.data.Data;
+import org.opensha2.data.Indexing;
 import org.opensha2.data.IntervalArray;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.ClusterSource;
@@ -328,7 +328,7 @@ final class Deaggregator {
         0.1).build();
     IntervalArray.Builder mfdIndexer = IntervalArray.Builder.fromModel(mfdModel);
 
-    List<Integer> sourceIndices = new LinkedList<>(Ints.asList(Data.indices(bitsets.size())));
+    List<Integer> sourceIndices = new LinkedList<>(Ints.asList(Indexing.indices(bitsets.size())));
 
     for (int sectionIndex : inputs.sectionIndices) {
 

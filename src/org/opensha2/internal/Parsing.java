@@ -7,6 +7,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkWeights;
 
 import org.opensha2.data.Data;
+import org.opensha2.data.Indexing;
 
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
@@ -721,7 +722,7 @@ public final class Parsing {
       if (s.contains(":")) {
         Iterator<Integer> rangeIt = Iterators.transform(
             split(s, Delimiter.COLON).iterator(), Ints.stringConverter());
-        return Data.indices(rangeIt.next(), rangeIt.next());
+        return Indexing.indices(rangeIt.next(), rangeIt.next());
       }
       return new int[] { Integer.valueOf(s) };
     }

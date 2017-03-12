@@ -15,13 +15,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.math.DoubleMath;
 import com.google.common.primitives.Doubles;
-import com.google.common.primitives.Ints;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -1443,78 +1440,5 @@ public final class Data {
   // checkArgument(expression, "value");
   // }
 
-  /**
-   * Create an {@code int[]} of values ascending from {@code 0} to
-   * {@code 1-size}.
-   *
-   * @param size of output array
-   * @return an index array
-   */
-  public static int[] indices(int size) {
-    return indices(0, size - 1);
-  }
-
-  /**
-   * Create an {@code int[]} of values spanning {@code from} to {@code to},
-   * inclusive. Sequence will be descending if {@code from} is greater than
-   * {@code to}.
-   *
-   * @param from start value
-   * @param to end value
-   * @return an int[] sequence
-   */
-  public static int[] indices(int from, int to) {
-    int size = Math.abs(from - to) + 1;
-    int[] indices = new int[size];
-    int step = from < to ? 1 : -1;
-    for (int i = 0; i < size; i++) {
-      indices[i] = from + i * step;
-    }
-    return indices;
-  }
-
-  /**
-   * Create an index {@code List} of pointers to sorted {@code data}. Say you
-   * have a number of {@code List<Double>}s and want to iterate them according
-   * to the sort order of one of them. Supply this method with the desired
-   * {@code data} and use the returned indices in a custom iterator, leaving all
-   * original data in place.
-   *
-   * <p><b>Notes:</b><ul><li>The supplied data should not be sorted.</li>
-   * <li>This method does not modify the supplied {@code data} in any
-   * way.</li><li>Any {@code NaN}s in {@code data} are placed at the start of
-   * the sort order, regardless of sort direction.</li><ul>
-   *
-   * @param data to provide sort indices for
-   * @param ascending if {@code true}, descending if {@code false}
-   * @return an index {@code List}
-   */
-  public static List<Integer> sortedIndices(List<Double> data, boolean ascending) {
-    checkArgument(data.size() > 0);
-    List<Integer> indices = Ints.asList(indices(data.size()));
-    Collections.sort(indices, new IndexComparator(data, ascending));
-    return indices;
-  }
-
-  /*
-   * A comparator for ascending sorting of an index array based on the supplied
-   * double array of data.
-   */
-  private static class IndexComparator implements Comparator<Integer> {
-    List<Double> data;
-    boolean ascending;
-
-    IndexComparator(List<Double> data, boolean ascending) {
-      this.data = data;
-      this.ascending = ascending;
-    }
-
-    @Override
-    public int compare(Integer i1, Integer i2) {
-      double d1 = data.get(ascending ? i1 : i2);
-      double d2 = data.get(ascending ? i2 : i1);
-      return (d1 < d2) ? -1 : (d1 == d2) ? 0 : 1;
-    }
-  }
 
 }

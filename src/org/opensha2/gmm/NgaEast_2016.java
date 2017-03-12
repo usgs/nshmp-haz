@@ -6,6 +6,7 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 
 import org.opensha2.calc.ExceedanceModel;
 import org.opensha2.data.Data;
+import org.opensha2.data.Indexing;
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
@@ -116,9 +117,9 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
 
   /* ModelID's of concentric Sammon's map rings. */
   private static final int[] R0 = { 1 };
-  private static final int[] R1 = Data.indices(2, 5);
-  private static final int[] R2 = Data.indices(6, 13);
-  private static final int[] R3 = Data.indices(14, 29);
+  private static final int[] R1 = Indexing.indices(2, 5);
+  private static final int[] R2 = Indexing.indices(6, 13);
+  private static final int[] R3 = Indexing.indices(14, 29);
 
   private static final class Coefficients {
 
@@ -226,7 +227,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
    * are iuncluded, include just the one with the highest weight.
    */
   private static int[] percentileModels(double p, double[] weights) {
-    List<Integer> sortedWtIndices = Data.sortedIndices(Doubles.asList(weights), false);
+    List<Integer> sortedWtIndices = Indexing.sortedIndices(Doubles.asList(weights), false);
     List<Integer> modelIndices = new ArrayList<>();
     double pSum = 0.0;
     for (int wtIndex : sortedWtIndices) {
