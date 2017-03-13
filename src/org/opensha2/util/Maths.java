@@ -1,9 +1,5 @@
 package org.opensha2.util;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.exp;
-import static java.lang.Math.sqrt;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -21,13 +17,13 @@ public final class Maths {
    * The precomputed √<span style="border-top:1px solid; padding:0 0.1em;"
    * >2</span>.
    */
-  public static final double SQRT_2 = sqrt(2);
+  public static final double SQRT_2 = Math.sqrt(2);
 
   /**
    * The precomputed √<span style="border-top:1px solid; padding:0 0.1em;"
    * >2π</span>.
    */
-  public static final double SQRT_2PI = sqrt(2 * PI);
+  public static final double SQRT_2PI = Math.sqrt(2 * Math.PI);
 
   /**
    * Standardized normal variate {@code ε = (x - μ) / σ}.
@@ -66,7 +62,7 @@ public final class Maths {
         A2 * tsq +
         A3 * tsq * t +
         A4 * tsq * tsq +
-        A5 * tsq * tsq * t) * exp(-x * x);
+        A5 * tsq * tsq * t) * Math.exp(-x * x);
   }
 
   /**
@@ -100,7 +96,7 @@ public final class Maths {
    * @param x variate
    */
   public static double normalPdf(double μ, double σ, double x) {
-    return exp((μ - x) * (x - μ) / (2 * σ * σ)) / (σ * SQRT_2PI);
+    return Math.exp((μ - x) * (x - μ) / (2 * σ * σ)) / (σ * SQRT_2PI);
   }
 
   /**
