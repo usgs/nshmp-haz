@@ -8,17 +8,11 @@ import static org.opensha2.data.Data.checkInRange;
 import com.google.common.collect.Range;
 
 /**
- * Earthquake magnitude utilities.
+ * Utility constants and methods pertaining to properties of earthquakes.
  *
  * @author Peter Powers
  */
-public final class Magnitudes {
-
-  // TODO rename MagnitudesAndMoments ?
-  // Earthquakes?
-  // EqProperties?
-
-  // TODO should just use SI units m (N derived SI unit)
+public final class Earthquakes {
 
   /**
    * Minimum allowed earthquake magnitude (-2.0). This numeric value is used for
@@ -32,28 +26,30 @@ public final class Magnitudes {
    */
   public static final double MAX_MAG = 9.7;
 
-  /** Shear modulus. μ = 3 * 10<sup>10</sup> N/m<sup>2</sup>. */
-  public static final double MU = 3e10;
-
-  // above is same as 3e11 dyn/cm^2
-
   /** The minimum and maximum supported magnitude as a range. */
   public static final Range<Double> MAG_RANGE = Range.closed(MIN_MAG, MAX_MAG);
 
-  // equivalent for dyn·cm conversion is 16.05
+  /** Shear modulus. μ = 3 * 10<sup>10</sup> N/m<sup>2</sup>. */
+  public static final double MU = 3e10;
+
   private static final double SCALE_N_M = 9.05;
 
-  /**
-   * Verify that a magnitude value is between {@code MIN_MAG} and
-   * {@code MAX_MAG} (inclusive). Method returns the supplied value and can be
-   * used inline.
-   *
-   * @param mag magnitude to validate
-   * @return the supplied magnitude
-   * @throws IllegalArgumentException if {@code mag} value is out of range
+  /*
+   * Equivalent dyn/cm values for MU = 3e11 dyn/cm²
+   * 
+   * Equivalent dyn/cm values for SCALE_ = 16.05 dyn·cm
    */
-  public static double checkMagnitude(double mag) {
-    return checkInRange(MAG_RANGE, "Magnitude", mag);
+
+  /**
+   * Ensure {@code -2.0 ≤ magnitude ≤ 9.7}.
+   *
+   * @param magnitude to validate
+   * @return the validated magnitude
+   * @throws IllegalArgumentException if {@code magnitude} value is outsie the
+   *         range {@code (-2.0..9.7)}
+   */
+  public static double checkMagnitude(double magnitude) {
+    return checkInRange(MAG_RANGE, "Magnitude", magnitude);
   }
 
   // TODO refactor N_m out of signature

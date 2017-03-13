@@ -9,7 +9,7 @@ import org.opensha2.util.Maths;
 import com.google.common.collect.Range;
 
 /**
- * Constants and utility methods related to geographic calculations.
+ * Constants and utility methods pertaining to geographic coordinates.
  *
  * @author Peter Powers
  */

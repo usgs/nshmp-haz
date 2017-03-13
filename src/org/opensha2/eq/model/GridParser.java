@@ -23,7 +23,7 @@ import static org.opensha2.internal.SourceAttribute.WEIGHT;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
-import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.MfdHelper.GR_Data;
@@ -81,8 +81,8 @@ class GridParser extends DefaultHandler {
   private GridSourceSet.Builder sourceSetBuilder;
 
   // master magnitude list data
-  private double minMag = Magnitudes.MAX_MAG;
-  private double maxMag = Magnitudes.MIN_MAG;
+  private double minMag = Earthquakes.MAX_MAG;
+  private double maxMag = Earthquakes.MIN_MAG;
   private double deltaMag;
 
   // Node locations are the only text content in source files

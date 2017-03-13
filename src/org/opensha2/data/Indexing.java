@@ -14,7 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Utilities for creating, calculating, and deriving data indices.
+ * Utilities pertaining to the creation, calculation, and derivation of data
+ * indices.
  *
  * @author Peter Powers
  */

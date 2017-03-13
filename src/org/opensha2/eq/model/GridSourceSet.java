@@ -4,8 +4,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.eq.Magnitudes.MAX_MAG;
-import static org.opensha2.eq.Magnitudes.checkMagnitude;
+import static org.opensha2.eq.Earthquakes.MAX_MAG;
+import static org.opensha2.eq.Earthquakes.checkMagnitude;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;

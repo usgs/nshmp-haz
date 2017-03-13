@@ -21,7 +21,7 @@ import static org.opensha2.internal.SourceAttribute.WEIGHT;
 import static org.opensha2.internal.SourceAttribute.WIDTH;
 
 import org.opensha2.data.Data;
-import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.MfdHelper.GR_Data;
 import org.opensha2.eq.model.MfdHelper.IncrData;
@@ -374,7 +374,7 @@ class FaultParser extends DefaultHandler {
     List<IncrementalMfd> mfds = Lists.newArrayList();
 
     // total moment rate
-    double tmr = data.rate * Magnitudes.magToMoment_N_m(data.m);
+    double tmr = data.rate * Earthquakes.magToMoment_N_m(data.m);
     // total event rate
     double tcr = data.rate;
 

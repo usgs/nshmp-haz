@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.min;
 
-import static org.opensha2.eq.Magnitudes.checkMagnitude;
+import static org.opensha2.eq.Earthquakes.checkMagnitude;
 import static org.opensha2.eq.fault.Faults.validateDepth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;

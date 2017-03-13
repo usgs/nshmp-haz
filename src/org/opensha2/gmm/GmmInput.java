@@ -20,7 +20,7 @@ import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.Site;
-import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.model.Distance;
 import org.opensha2.eq.model.Rupture;
@@ -749,7 +749,7 @@ public class GmmInput {
          * to support returning the constraints supported by subsets of gmms
          */
 
-        set(MW, Magnitudes.MAG_RANGE);
+        set(MW, Earthquakes.MAG_RANGE);
         set(RJB, Range.closed(0.0, Distance.MAX));
         set(RRUP, Range.closed(0.0, Distance.MAX));
         set(RX, Range.closed(0.0, Distance.MAX));

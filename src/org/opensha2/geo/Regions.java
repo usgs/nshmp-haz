@@ -7,7 +7,7 @@ import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
 import java.awt.Shape;
 
 /**
- * Static utility methods pertaining to geographic regions.
+ * Utility methods pertaining to geographic regions.
  *
  * <p>Note that intersection and union operations will discard any grid
  * information if {@code GriddedRegion}s are supplied as arguments.

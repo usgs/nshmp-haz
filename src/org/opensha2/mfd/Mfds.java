@@ -6,7 +6,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
-import static org.opensha2.eq.Magnitudes.magToMoment_N_m;
+import static org.opensha2.eq.Earthquakes.magToMoment_N_m;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Miscellaneous math utilities that generally obviate the need for
+ * Miscellaneous math utilities that, in some cases, obviate the need for
  * 3<sup>rd</sup> party imports.
  *
  * @author Peter Powers
