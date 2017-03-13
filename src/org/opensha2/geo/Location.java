@@ -2,14 +2,13 @@ package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import static org.opensha2.geo.Coordinates.TO_DEG;
-import static org.opensha2.geo.Coordinates.TO_RAD;
 import static org.opensha2.geo.Coordinates.checkDepth;
 import static org.opensha2.geo.Coordinates.checkLatitude;
 import static org.opensha2.geo.Coordinates.checkLongitude;
 
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Converter;
 import com.google.common.collect.FluentIterable;
@@ -44,8 +43,8 @@ public final class Location implements Comparable<Location> {
   private final double depth;
 
   private Location(double lat, double lon, double depth) {
-    this.lat = checkLatitude(lat) * TO_RAD;
-    this.lon = checkLongitude(lon) * TO_RAD;
+    this.lat = checkLatitude(lat) * Maths.TO_RAD;
+    this.lon = checkLongitude(lon) * Maths.TO_RAD;
     this.depth = checkDepth(depth);
   }
 
@@ -103,14 +102,14 @@ public final class Location implements Comparable<Location> {
    * The latitude of this {@code Location} in decimal degrees.
    */
   public double lat() {
-    return lat * TO_DEG;
+    return lat * Maths.TO_DEG;
   }
 
   /**
    * The longitude of this {@code Location} in decimal degrees.
    */
   public double lon() {
-    return lon * TO_DEG;
+    return lon * Maths.TO_DEG;
   }
 
   /**

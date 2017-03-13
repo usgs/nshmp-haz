@@ -7,7 +7,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import static org.opensha2.geo.Coordinates.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
 import static org.opensha2.gmm.GmmInput.Field.MW;
@@ -23,6 +22,7 @@ import static org.opensha2.gmm.Imt.SA0P25;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Range;
 
@@ -211,7 +211,7 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
       // Jennifer Donahue's HW Model plus CB08 distance taper
       // -- Equations 9, 10, 11 & 12
-      double r1 = in.width * cos(dip * TO_RAD);
+      double r1 = in.width * cos(dip * Maths.TO_RAD);
       double r2 = 62.0 * Mw - 350.0;
       double rXr1 = rX / r1;
       double rXr2r1 = (rX - r1) / (r2 - r1);

@@ -18,11 +18,10 @@ import static org.opensha2.geo.Coordinates.MAX_LAT;
 import static org.opensha2.geo.Coordinates.MAX_LON;
 import static org.opensha2.geo.Coordinates.MIN_LAT;
 import static org.opensha2.geo.Coordinates.MIN_LON;
-import static org.opensha2.geo.Coordinates.TO_DEG;
-import static org.opensha2.geo.Coordinates.TO_RAD;
-import static org.opensha2.geo.Coordinates.TWOPI;
 import static org.opensha2.geo.Coordinates.degreesLatPerKm;
 import static org.opensha2.geo.Coordinates.degreesLonPerKm;
+
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Predicate;
 
@@ -259,8 +258,7 @@ public final class Locations {
    * <p><b>Note:</b> This method does <i>NOT</i> support values spanning ±180°
    * and results for such input values are not guaranteed. Convert data to the
    * 0-360° interval or use
-   * {@link #distanceToLine(Location, Location, Location)} in such
-   * instances.
+   * {@link #distanceToLine(Location, Location, Location)} in such instances.
    *
    * <p>If the line should instead be treated as a segment such that the result
    * will be a distance to an endpoint if {@code p3} does not project onto the
@@ -463,7 +461,7 @@ public final class Locations {
     double azRad = atan2(sin(dLon) * cosLat2, cos(lat1) * sin(lat2) - sin(lat1) * cosLat2 *
         cos(dLon));
 
-    return (azRad + TWOPI) % TWOPI;
+    return (azRad + Maths.TWOPI) % Maths.TWOPI;
   }
 
   /**
@@ -479,7 +477,7 @@ public final class Locations {
    * @see #azimuthRad(Location, Location)
    */
   public static double azimuth(Location p1, Location p2) {
-    return azimuthRad(p1, p2) * TO_DEG;
+    return azimuthRad(p1, p2) * Maths.TO_DEG;
   }
 
   /**
@@ -528,7 +526,7 @@ public final class Locations {
     double lat2 = asin(sinLat1 * cosD + cosLat1 * sinD * cos(az));
 
     double lon2 = lon + atan2(sin(az) * sinD * cosLat1, cosD - sinLat1 * sin(lat2));
-    return Location.create(lat2 * TO_DEG, lon2 * TO_DEG, depth + dV);
+    return Location.create(lat2 * Maths.TO_DEG, lon2 * Maths.TO_DEG, depth + dV);
   }
 
   /**
@@ -617,8 +615,8 @@ public final class Locations {
       maxLonRad = loc.lonRad() > maxLonRad ? loc.lonRad() : maxLonRad;
     }
     return new Bounds(
-        minLatRad * TO_DEG, minLonRad * TO_DEG,
-        maxLatRad * TO_DEG, maxLonRad * TO_DEG);
+        minLatRad * Maths.TO_DEG, minLonRad * Maths.TO_DEG,
+        maxLatRad * Maths.TO_DEG, maxLonRad * Maths.TO_DEG);
   }
 
   /**
@@ -639,8 +637,8 @@ public final class Locations {
       size++;
     }
     return Location.create(
-        latRad / size * TO_DEG,
-        lonRad / size * TO_DEG,
+        latRad / size * Maths.TO_DEG,
+        lonRad / size * Maths.TO_DEG,
         depth / size);
   }
 
@@ -687,7 +685,7 @@ public final class Locations {
     }
     return closest;
   }
-  
+
   /**
    * Compute the horizontal distance (in km) from a {@code Location} to the
    * closest point in a {@code LocationList}. This method uses
@@ -778,12 +776,13 @@ public final class Locations {
 
   /**
    * Return a rectangular {@code Location} filter. The filter is definied in
-   * geographic (lat,lon) space and is constrained to {@link Coordinates#MIN_LAT} ,
-   * {@link Coordinates#MAX_LAT}, {@link Coordinates#MIN_LON}, and
-   * {@link Coordinates#MAX_LON}. The filter has dimensions of {@code 2 * distance}
-   * for both height and width, and is centered on the supplied {@code Location}
-   * . This filter is for use as a fast, first-pass filter before more
-   * computationally intensive distance filtering.
+   * geographic (lat,lon) space and is constrained to
+   * {@link Coordinates#MIN_LAT} , {@link Coordinates#MAX_LAT},
+   * {@link Coordinates#MIN_LON}, and {@link Coordinates#MAX_LON}. The filter
+   * has dimensions of {@code 2 * distance} for both height and width, and is
+   * centered on the supplied {@code Location} . This filter is for use as a
+   * fast, first-pass filter before more computationally intensive distance
+   * filtering.
    *
    * @param origin (center) of filter
    * @param distance half-width and half-height of rectangle outside of which
@@ -873,10 +872,10 @@ public final class Locations {
     double lonDelta = distance * degreesLonPerKm(loc);
 
     // bounds in radians
-    double minLat = max(loc.lat() - latDelta, MIN_LAT) * TO_RAD;
-    double maxLat = min(loc.lat() + latDelta, MAX_LAT) * TO_RAD;
-    double minLon = max(loc.lon() - lonDelta, MIN_LON) * TO_RAD;
-    double maxLon = min(loc.lon() + lonDelta, MAX_LON) * TO_RAD;
+    double minLat = max(loc.lat() - latDelta, MIN_LAT) * Maths.TO_RAD;
+    double maxLat = min(loc.lat() + latDelta, MAX_LAT) * Maths.TO_RAD;
+    double minLon = max(loc.lon() - lonDelta, MIN_LON) * Maths.TO_RAD;
+    double maxLon = min(loc.lon() + lonDelta, MAX_LON) * Maths.TO_RAD;
 
     return new Rectangle2D.Double(minLon, minLat, maxLon - minLon, maxLat - minLat);
   }

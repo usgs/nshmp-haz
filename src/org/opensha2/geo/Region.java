@@ -5,10 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import static org.opensha2.geo.BorderType.GREAT_CIRCLE;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
-import static org.opensha2.geo.Coordinates.PI_BY_2;
-import static org.opensha2.geo.Coordinates.TO_RAD;
 
 import org.opensha2.data.Data;
+import org.opensha2.util.Maths;
 import org.opensha2.util.Named;
 
 import com.google.common.base.Strings;
@@ -573,7 +572,7 @@ public class Region implements Named {
   private static LocationList locationCircle(Location center, double radius) {
     List<Location> locs = Lists.newArrayList();
     for (double angle = 0; angle < 360; angle += WEDGE_WIDTH) {
-      locs.add(Locations.location(center, angle * TO_RAD, radius));
+      locs.add(Locations.location(center, angle * Maths.TO_RAD, radius));
     }
     return LocationList.create(locs);
   }
@@ -592,13 +591,13 @@ public class Region implements Named {
     // add the four corners
     LocationList ll = LocationList.create(
         // corner 1 is azimuth p1 to p2 - 90 from p1
-        Locations.location(p1, az12 - PI_BY_2, distance),
+        Locations.location(p1, az12 - Maths.PI_BY_2, distance),
         // corner 2 is azimuth p1 to p2 + 90 from p1
-        Locations.location(p1, az12 + PI_BY_2, distance),
+        Locations.location(p1, az12 + Maths.PI_BY_2, distance),
         // corner 3 is azimuth p2 to p1 - 90 from p2
-        Locations.location(p2, az21 - PI_BY_2, distance),
+        Locations.location(p2, az21 - Maths.PI_BY_2, distance),
         // corner 4 is azimuth p2 to p1 + 90 from p2
-        Locations.location(p2, az21 + PI_BY_2, distance));
+        Locations.location(p2, az21 + Maths.PI_BY_2, distance));
     return ll;
   }
 

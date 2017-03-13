@@ -8,11 +8,11 @@ import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.Faults.validateTrace;
-import static org.opensha2.geo.Coordinates.TO_RAD;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.geo.LocationGrid;
 import org.opensha2.geo.LocationList;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Range;
 
@@ -99,12 +99,12 @@ class GriddedFaultSurface {
     }
 
     public Builder dip(double dip) {
-      this.dipRad = validateDip(dip) * TO_RAD;
+      this.dipRad = validateDip(dip) * Maths.TO_RAD;
       return this;
     }
 
     public Builder dipDir(double dipDir) {
-      this.dipDirRad = validateStrike(dipDir) * TO_RAD;
+      this.dipDirRad = validateStrike(dipDir) * Maths.TO_RAD;
       return this;
     }
 

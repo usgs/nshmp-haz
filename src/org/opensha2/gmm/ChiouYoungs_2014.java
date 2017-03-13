@@ -10,7 +10,6 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tanh;
 
-import static org.opensha2.geo.Coordinates.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
@@ -22,6 +21,7 @@ import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Range;
 
@@ -179,7 +179,7 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
     // Scaling with other source variables
     double coshM = cosh(2 * max(Mw - 4.5, 0));
-    double cosδ = cos(in.dip * TO_RAD);
+    double cosδ = cos(in.dip * Maths.TO_RAD);
     // Center zTop on the zTop-M relation
     double ΔZtop = zTop - calcMwZtop(style, Mw);
     double r4 = (c.c7 + c.c7b / coshM) * ΔZtop + (C11 + c.c11b / coshM) * cosδ * cosδ;
@@ -189,7 +189,7 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
     // Hanging-wall effect
     double r5 = 0.0;
     if (in.rX >= 0.0) {
-      r5 = c.c9 * cos(in.dip * TO_RAD) *
+      r5 = c.c9 * cos(in.dip * Maths.TO_RAD) *
           (c.c9a + (1.0 - c.c9a) * tanh(in.rX / c.c9b)) *
           (1 - sqrt(rJB * rJB + zTop * zTop) / (rRup + 1.0));
     }

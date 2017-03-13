@@ -11,8 +11,6 @@ import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.Faults.validateTrace;
-import static org.opensha2.geo.Coordinates.TO_DEG;
-import static org.opensha2.geo.Coordinates.TO_RAD;
 import static org.opensha2.geo.LocationVector.createWithPlunge;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
@@ -22,6 +20,7 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.LocationVector;
 import org.opensha2.geo.Locations;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
@@ -143,12 +142,12 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
     }
 
     public Builder dip(double dip) {
-      this.dipRad = validateDip(dip) * TO_RAD;
+      this.dipRad = validateDip(dip) * Maths.TO_RAD;
       return this;
     }
 
     public Builder dipDir(double dipDir) {
-      this.dipDirRad = validateStrike(dipDir) * TO_RAD;
+      this.dipDirRad = validateStrike(dipDir) * Maths.TO_RAD;
       return this;
     }
 
@@ -381,7 +380,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
   // createEvenlyGriddedSurface()
   @Deprecated // until proven useful or better
   public void create(LocationList trace, double dip, double width, double spacing) {
-    double dipRad = dip * TO_RAD;
+    double dipRad = dip * Maths.TO_RAD;
     double dipDirRad = Faults.dipDirectionRad(trace);
     LocationList resampled = trace.resample(spacing);
     int nCol = resampled.size();
@@ -491,12 +490,12 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
   @Override
   public double dipDirection() {
-    return dipDirRad * TO_DEG;
+    return dipDirRad * Maths.TO_DEG;
   }
 
   @Override
   public double dip() {
-    return dipRad * TO_DEG;
+    return dipRad * Maths.TO_DEG;
   }
 
   @Override

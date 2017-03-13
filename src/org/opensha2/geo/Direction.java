@@ -1,8 +1,7 @@
 package org.opensha2.geo;
 
-import static org.opensha2.geo.Coordinates.TO_RAD;
-
 import org.opensha2.internal.Parsing;
+import org.opensha2.util.Maths;
 
 /**
  * Identifiers for basic geographic directions.
@@ -47,7 +46,7 @@ enum Direction {
    * @return the bearing in radians
    */
   double bearingRad() {
-    return bearing() * TO_RAD;
+    return bearing() * Maths.TO_RAD;
   }
 
   /**

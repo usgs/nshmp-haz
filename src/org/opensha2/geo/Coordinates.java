@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import static org.opensha2.data.Data.checkInRange;
 
+import org.opensha2.util.Maths;
+
 import com.google.common.collect.Range;
 
 /**
@@ -62,18 +64,6 @@ public class Coordinates {
   private static final Range<Double> latRange = Range.closed(MIN_LAT, MAX_LAT);
   private static final Range<Double> lonRange = Range.open(MIN_LON, MAX_LON);
   private static final Range<Double> depthRange = Range.closed(MIN_DEPTH, MAX_DEPTH);
-
-  /** Conversion multiplier for degrees to radians */
-  public static final double TO_RAD = Math.toRadians(1.0);
-
-  /** Conversion multiplier for radians to degrees */
-  public static final double TO_DEG = Math.toDegrees(1.0);
-
-  /** Convenience constant for 2π. */
-  public static final double TWOPI = 2 * Math.PI;
-
-  /** Convenience constant for π/2. */
-  public static final double PI_BY_2 = Math.PI / 2;
 
   /** Convenience constant for arcseconds per degree (3600). */
   public static final double SECONDS_PER_DEGREE = 3600;
@@ -155,7 +145,7 @@ public class Coordinates {
    * @see #radiusAtLocation(Location)
    */
   public static double degreesLatPerKm(Location p) {
-    return TO_DEG / radiusAtLocation(checkNotNull(p));
+    return Maths.TO_DEG / radiusAtLocation(checkNotNull(p));
   }
 
   /**
@@ -171,7 +161,7 @@ public class Coordinates {
    *         <code>Location</code>
    */
   public static double degreesLonPerKm(Location p) {
-    return TO_DEG / (EARTH_RADIUS_EQUATORIAL * Math.cos(checkNotNull(p).latRad()));
+    return Maths.TO_DEG / (EARTH_RADIUS_EQUATORIAL * Math.cos(checkNotNull(p).latRad()));
   }
 
   /**

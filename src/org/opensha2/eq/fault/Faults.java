@@ -5,9 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.sin;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.geo.Coordinates.PI_BY_2;
-import static org.opensha2.geo.Coordinates.TO_RAD;
-import static org.opensha2.geo.Coordinates.TWOPI;
 import static org.opensha2.geo.Locations.azimuth;
 import static org.opensha2.geo.Locations.azimuthRad;
 import static org.opensha2.geo.Locations.horzDistance;
@@ -19,6 +16,7 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.LocationVector;
 import org.opensha2.geo.Locations;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -554,7 +552,7 @@ public final class Faults {
    * @param zTop depth to the fault plane
    */
   public static double hypocentralDepth(double dip, double width, double zTop) {
-    return zTop + sin(dip * TO_RAD) * width / 2.0;
+    return zTop + sin(dip * Maths.TO_RAD) * width / 2.0;
   }
 
   /**
@@ -652,7 +650,7 @@ public final class Faults {
   }
 
   public static double dipDirectionRad(double strikeRad) {
-    return (strikeRad + PI_BY_2) % TWOPI;
+    return (strikeRad + Maths.PI_BY_2) % Maths.TWOPI;
   }
 
   /* <b>x</b>-axis unit normal vector [1,0,0] */

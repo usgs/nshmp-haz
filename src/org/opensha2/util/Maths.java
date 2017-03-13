@@ -13,6 +13,18 @@ public final class Maths {
 
   private Maths() {}
 
+  /** Convenience constant for π/2. */
+  public static final double PI_BY_2 = Math.PI / 2;
+
+  /** Convenience constant for 2π. */
+  public static final double TWOPI = 2 * Math.PI;
+
+  /** Conversion multiplier for degrees to radians */
+  public static final double TO_RAD = Math.toRadians(1.0);
+
+  /** Conversion multiplier for radians to degrees */
+  public static final double TO_DEG = Math.toDegrees(1.0);
+
   /**
    * The precomputed √<span style="border-top:1px solid; padding:0 0.1em;"
    * >2</span>.

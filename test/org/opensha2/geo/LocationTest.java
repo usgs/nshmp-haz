@@ -10,7 +10,8 @@ import static org.opensha2.geo.Coordinates.MAX_LON;
 import static org.opensha2.geo.Coordinates.MIN_DEPTH;
 import static org.opensha2.geo.Coordinates.MIN_LAT;
 import static org.opensha2.geo.Coordinates.MIN_LON;
-import static org.opensha2.geo.Coordinates.TO_RAD;
+
+import org.opensha2.util.Maths;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -107,12 +108,12 @@ public class LocationTest {
 
   @Test
   public final void latRad() {
-    assertEquals(location.latRad(), V * TO_RAD, 0);
+    assertEquals(location.latRad(), V * Maths.TO_RAD, 0);
   }
 
   @Test
   public final void lonRad() {
-    assertEquals(location.lonRad(), V * TO_RAD, 0);
+    assertEquals(location.lonRad(), V * Maths.TO_RAD, 0);
   }
 
   @Test

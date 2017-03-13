@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import static org.opensha2.geo.Coordinates.EARTH_RADIUS_MEAN;
-import static org.opensha2.geo.Coordinates.TO_RAD;
 import static org.opensha2.geo.Locations.angle;
 import static org.opensha2.geo.Locations.areSimilar;
 import static org.opensha2.geo.Locations.azimuth;
@@ -23,6 +22,7 @@ import static org.opensha2.geo.Locations.location;
 import static org.opensha2.geo.Locations.vertDistance;
 
 import org.opensha2.eq.model.Distance;
+import org.opensha2.util.Maths;
 
 import org.junit.Test;
 
@@ -463,25 +463,25 @@ public class LocationsTest {
 
     // general case
     p2 = Location.create(20, 20);
-    p2p1 = LocationVector.create(220 * TO_RAD, 100, 0);
+    p2p1 = LocationVector.create(220 * Maths.TO_RAD, 100, 0);
     p1 = Locations.location(p2, p2p1);
-    p2p3 = LocationVector.create(90 * TO_RAD, 100, 0);
+    p2p3 = LocationVector.create(90 * Maths.TO_RAD, 100, 0);
     p3 = Locations.location(p2, p2p3);
     vTest = Locations.bisect(p1, p2, p3);
     assertEquals(155, vTest.azimuthDegrees(), tol);
 
     // 4th quadrant 270-360
-    p2p1 = LocationVector.create(320 * TO_RAD, 100, 0);
+    p2p1 = LocationVector.create(320 * Maths.TO_RAD, 100, 0);
     p1 = Locations.location(p2, p2p1);
-    p2p3 = LocationVector.create(20 * TO_RAD, 100, 0);
+    p2p3 = LocationVector.create(20 * Maths.TO_RAD, 100, 0);
     p3 = Locations.location(p2, p2p3);
     vTest = Locations.bisect(p1, p2, p3);
     assertEquals(170, vTest.azimuthDegrees(), tol);
 
     // p1 & p3 coincident
-    p2p1 = LocationVector.create(90 * TO_RAD, 100, 0);
+    p2p1 = LocationVector.create(90 * Maths.TO_RAD, 100, 0);
     p1 = Locations.location(p2, p2p1);
-    p2p3 = LocationVector.create(90 * TO_RAD, 100, 0);
+    p2p3 = LocationVector.create(90 * Maths.TO_RAD, 100, 0);
     p3 = Locations.location(p2, p2p3);
     vTest = Locations.bisect(p1, p2, p3);
     assertEquals(90, vTest.azimuthDegrees(), tol);

@@ -6,7 +6,6 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import static org.opensha2.geo.Coordinates.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
 import static org.opensha2.gmm.GmmInput.Field.MW;
@@ -20,6 +19,7 @@ import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import org.opensha2.data.Interpolate;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Range;
 
@@ -201,7 +201,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
       // ... rX taper -- Equation 13
       double T3 = 0.0;
-      double r1 = in.width * cos(dip * TO_RAD);
+      double r1 = in.width * cos(dip * Maths.TO_RAD);
       double r2 = 3 * r1;
       if (rX <= r1) {
         double rXr1 = rX / r1;
