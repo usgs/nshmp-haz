@@ -11,7 +11,7 @@ import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.fault.surface.RuptureSurface;
-import org.opensha2.geo.GeoTools;
+import org.opensha2.geo.Coordinates;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
 
@@ -152,7 +152,7 @@ class PointSource implements Source {
 
     PointSurface pSurf = (PointSurface) rup.surface;
     pSurf.mag = mag; // KLUDGY needed for distance correction
-    pSurf.dipRad = mech.dip() * GeoTools.TO_RAD;
+    pSurf.dipRad = mech.dip() * Coordinates.TO_RAD;
     pSurf.zTop = zTop;
 
   }
@@ -248,7 +248,7 @@ class PointSource implements Source {
 
     @Override
     public double dip() {
-      return dipRad * GeoTools.TO_DEG;
+      return dipRad * Coordinates.TO_DEG;
     }
 
     @Override

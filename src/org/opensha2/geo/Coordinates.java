@@ -11,7 +11,7 @@ import com.google.common.collect.Range;
  *
  * @author Peter Powers
  */
-public class GeoTools {
+public class Coordinates {
 
   /**
    * The Authalic mean radius (A<subscript>r</subscript>) of the earth

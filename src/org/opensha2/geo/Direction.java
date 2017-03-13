@@ -1,6 +1,6 @@
 package org.opensha2.geo;
 
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.Coordinates.TO_RAD;
 
 import org.opensha2.internal.Parsing;
 

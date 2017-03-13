@@ -7,7 +7,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.Coordinates.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
 import static org.opensha2.gmm.GmmInput.Field.MW;

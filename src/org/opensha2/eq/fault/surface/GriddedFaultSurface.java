@@ -8,7 +8,7 @@ import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.Faults.validateTrace;
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.Coordinates.TO_RAD;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.geo.LocationGrid;

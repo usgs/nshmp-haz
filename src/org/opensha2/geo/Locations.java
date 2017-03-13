@@ -13,16 +13,16 @@ import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
-import static org.opensha2.geo.GeoTools.EARTH_RADIUS_MEAN;
-import static org.opensha2.geo.GeoTools.MAX_LAT;
-import static org.opensha2.geo.GeoTools.MAX_LON;
-import static org.opensha2.geo.GeoTools.MIN_LAT;
-import static org.opensha2.geo.GeoTools.MIN_LON;
-import static org.opensha2.geo.GeoTools.TO_DEG;
-import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.geo.GeoTools.TWOPI;
-import static org.opensha2.geo.GeoTools.degreesLatPerKm;
-import static org.opensha2.geo.GeoTools.degreesLonPerKm;
+import static org.opensha2.geo.Coordinates.EARTH_RADIUS_MEAN;
+import static org.opensha2.geo.Coordinates.MAX_LAT;
+import static org.opensha2.geo.Coordinates.MAX_LON;
+import static org.opensha2.geo.Coordinates.MIN_LAT;
+import static org.opensha2.geo.Coordinates.MIN_LON;
+import static org.opensha2.geo.Coordinates.TO_DEG;
+import static org.opensha2.geo.Coordinates.TO_RAD;
+import static org.opensha2.geo.Coordinates.TWOPI;
+import static org.opensha2.geo.Coordinates.degreesLatPerKm;
+import static org.opensha2.geo.Coordinates.degreesLonPerKm;
 
 import com.google.common.base.Predicate;
 
@@ -778,9 +778,9 @@ public final class Locations {
 
   /**
    * Return a rectangular {@code Location} filter. The filter is definied in
-   * geographic (lat,lon) space and is constrained to {@link GeoTools#MIN_LAT} ,
-   * {@link GeoTools#MAX_LAT}, {@link GeoTools#MIN_LON}, and
-   * {@link GeoTools#MAX_LON}. The filter has dimensions of {@code 2 * distance}
+   * geographic (lat,lon) space and is constrained to {@link Coordinates#MIN_LAT} ,
+   * {@link Coordinates#MAX_LAT}, {@link Coordinates#MIN_LON}, and
+   * {@link Coordinates#MAX_LON}. The filter has dimensions of {@code 2 * distance}
    * for both height and width, and is centered on the supplied {@code Location}
    * . This filter is for use as a fast, first-pass filter before more
    * computationally intensive distance filtering.
@@ -788,7 +788,7 @@ public final class Locations {
    * @param origin (center) of filter
    * @param distance half-width and half-height of rectangle outside of which
    *        the filter will return {@code false}
-   * @see GeoTools
+   * @see Coordinates
    */
   public static Predicate<Location> rectangleFilter(Location origin, double distance) {
     return new RectangleFilter(origin, distance);

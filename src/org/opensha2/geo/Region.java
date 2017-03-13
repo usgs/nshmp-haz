@@ -5,8 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import static org.opensha2.geo.BorderType.GREAT_CIRCLE;
 import static org.opensha2.geo.BorderType.MERCATOR_LINEAR;
-import static org.opensha2.geo.GeoTools.PI_BY_2;
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.Coordinates.PI_BY_2;
+import static org.opensha2.geo.Coordinates.TO_RAD;
 
 import org.opensha2.data.Data;
 import org.opensha2.util.Named;

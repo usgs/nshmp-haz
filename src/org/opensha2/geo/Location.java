@@ -2,11 +2,11 @@ package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import static org.opensha2.geo.GeoTools.TO_DEG;
-import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.geo.GeoTools.checkDepth;
-import static org.opensha2.geo.GeoTools.checkLatitude;
-import static org.opensha2.geo.GeoTools.checkLongitude;
+import static org.opensha2.geo.Coordinates.TO_DEG;
+import static org.opensha2.geo.Coordinates.TO_RAD;
+import static org.opensha2.geo.Coordinates.checkDepth;
+import static org.opensha2.geo.Coordinates.checkLatitude;
+import static org.opensha2.geo.Coordinates.checkLongitude;
 
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
@@ -56,7 +56,7 @@ public final class Location implements Comparable<Location> {
    * @param lat latitude in decimal degrees
    * @param lon longitude in decimal degrees
    * @throws IllegalArgumentException if any supplied values are out of range
-   * @see GeoTools
+   * @see Coordinates
    */
   public static Location create(double lat, double lon) {
     return create(lat, lon, 0);
@@ -70,7 +70,7 @@ public final class Location implements Comparable<Location> {
    * @param lon longitude in decimal degrees
    * @param depth in km (positive down)
    * @throws IllegalArgumentException if any supplied values are out of range
-   * @see GeoTools
+   * @see Coordinates
    */
   public static Location create(double lat, double lon, double depth) {
     return new Location(lat, lon, depth);

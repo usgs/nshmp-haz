@@ -9,7 +9,7 @@ import static java.lang.Math.tan;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.Coordinates.TO_RAD;
 import static org.opensha2.util.Maths.hypot;
 
 import org.opensha2.data.XySequence;

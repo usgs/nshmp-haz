@@ -4,13 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import static org.opensha2.geo.GeoTools.MAX_DEPTH;
-import static org.opensha2.geo.GeoTools.MAX_LAT;
-import static org.opensha2.geo.GeoTools.MAX_LON;
-import static org.opensha2.geo.GeoTools.MIN_DEPTH;
-import static org.opensha2.geo.GeoTools.MIN_LAT;
-import static org.opensha2.geo.GeoTools.MIN_LON;
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.Coordinates.MAX_DEPTH;
+import static org.opensha2.geo.Coordinates.MAX_LAT;
+import static org.opensha2.geo.Coordinates.MAX_LON;
+import static org.opensha2.geo.Coordinates.MIN_DEPTH;
+import static org.opensha2.geo.Coordinates.MIN_LAT;
+import static org.opensha2.geo.Coordinates.MIN_LON;
+import static org.opensha2.geo.Coordinates.TO_RAD;
 
 import org.junit.Before;
 import org.junit.Test;

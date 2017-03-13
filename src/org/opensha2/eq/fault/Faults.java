@@ -5,9 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.sin;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.geo.GeoTools.PI_BY_2;
-import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.geo.GeoTools.TWOPI;
+import static org.opensha2.geo.Coordinates.PI_BY_2;
+import static org.opensha2.geo.Coordinates.TO_RAD;
+import static org.opensha2.geo.Coordinates.TWOPI;
 import static org.opensha2.geo.Locations.azimuth;
 import static org.opensha2.geo.Locations.azimuthRad;
 import static org.opensha2.geo.Locations.horzDistance;

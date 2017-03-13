@@ -3,8 +3,8 @@ package org.opensha2.geo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import static org.opensha2.geo.GeoTools.EARTH_RADIUS_MEAN;
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.geo.Coordinates.EARTH_RADIUS_MEAN;
+import static org.opensha2.geo.Coordinates.TO_RAD;
 import static org.opensha2.geo.Locations.angle;
 import static org.opensha2.geo.Locations.areSimilar;
 import static org.opensha2.geo.Locations.azimuth;

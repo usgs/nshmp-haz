@@ -1,7 +1,7 @@
 package org.opensha2.eq.fault.surface;
 
 import org.opensha2.eq.fault.Faults;
-import org.opensha2.geo.GeoTools;
+import org.opensha2.geo.Coordinates;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.LocationVector;
@@ -196,7 +196,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
     LocationVector vFirst = LocationVector.create(upperTrace.first(), lowerTrace.first());
     LocationVector vLast = LocationVector.create(upperTrace.last(), lowerTrace.last());
     double avgDip = (vFirst.plungeDegrees() + vLast.plungeDegrees()) / 2;
-    avgDipRad = avgDip * GeoTools.TO_RAD;
+    avgDipRad = avgDip * Coordinates.TO_RAD;
 
     avgDepth = upperTrace.depth();
 
@@ -384,7 +384,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
 
   @Override
   public double dip() {
-    return avgDipRad * GeoTools.TO_DEG;
+    return avgDipRad * Coordinates.TO_DEG;
 
     // TODO clean
     // LocationVector vFirst = LocationVector.create(upperTrace.first(),
