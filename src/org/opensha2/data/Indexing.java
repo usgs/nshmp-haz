@@ -3,6 +3,8 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 
+import static org.opensha2.data.Data.checkSize;
+
 import com.google.common.primitives.Ints;
 
 import java.util.BitSet;
@@ -20,14 +22,22 @@ public final class Indexing {
 
   private Indexing() {}
 
+  static final int INDICES_MAX_SIZE = 10000000;
+  private static final String INDICES_SIZE_ERROR = "Indices: size [%s] not premitted";
+  private static final String INDICES_INDEX_ERROR = "Indices: index [%s] not premitted";
+
   /**
    * Create an {@code int[]} of values ascending from {@code 0} to
    * {@code 1-size}.
    *
    * @param size of output array
    * @return an index array
+   * @throws IllegalArgumentException if {@code size} is not in the range
+   *         {@code [1..10⁷]}
    */
   public static int[] indices(int size) {
+    checkArgument(size > 0, INDICES_SIZE_ERROR, size);
+    checkArgument(size <= INDICES_MAX_SIZE, INDICES_SIZE_ERROR, size);
     return indices(0, size - 1);
   }
 
@@ -36,12 +46,17 @@ public final class Indexing {
    * inclusive. Sequence will be descending if {@code from} is greater than
    * {@code to}.
    *
-   * @param from start value
-   * @param to end value
-   * @return an int[] sequence
+   * @param from start value, inclusive
+   * @param to end value, inclusive
+   * @return an index array
+   * @throws IllegalArgumentException if {@code from < 0} or {@code to < 0}, or
+   *         the computed size of the index array is {@code < 1}
    */
   public static int[] indices(int from, int to) {
+    checkArgument(from >= 0, INDICES_INDEX_ERROR, from);
+    checkArgument(to >= 0, INDICES_INDEX_ERROR, to);
     int size = Math.abs(from - to) + 1;
+    checkArgument(size <= INDICES_MAX_SIZE, INDICES_SIZE_ERROR, size);
     int[] indices = new int[size];
     int step = from < to ? 1 : -1;
     for (int i = 0; i < size; i++) {
@@ -57,17 +72,21 @@ public final class Indexing {
    * {@code data} and use the returned indices in a custom iterator, leaving all
    * original data in place.
    *
-   * <p><b>Notes:</b><ul><li>The supplied data should not be sorted.</li>
-   * <li>This method does not modify the supplied {@code data} in any
-   * way.</li><li>Any {@code NaN}s in {@code data} are placed at the start of
-   * the sort order, regardless of sort direction.</li><ul>
+   * <p><b>Notes:</b><ul>
+   * 
+   * <li>This method does not modify the supplied {@code data}.</li>
+   * 
+   * <li>{@code NaN} is considered to be equal to itself and greater than all
+   * other double values (including Double.POSITIVE_INFINITY) per the behavior
+   * of {@link Double#compareTo(Double)}.</li> <ul>
    *
-   * @param data to provide sort indices for
-   * @param ascending if {@code true}, descending if {@code false}
-   * @return an index {@code List}
+   * @param data for which to compute sort indices
+   * @param ascending sort order if {@code true}, descending if {@code false}
+   * @return a sorted index {@code List}
+   * @throws IllegalArgumentException if {@code data} is empty
    */
   public static List<Integer> sortedIndices(List<Double> data, boolean ascending) {
-    checkArgument(data.size() > 0);
+    checkSize(1, data);
     List<Integer> indices = Ints.asList(indices(data.size()));
     Collections.sort(indices, new IndexComparator(data, ascending));
     return indices;
@@ -90,7 +109,7 @@ public final class Indexing {
     public int compare(Integer i1, Integer i2) {
       double d1 = data.get(ascending ? i1 : i2);
       double d2 = data.get(ascending ? i2 : i1);
-      return (d1 < d2) ? -1 : (d1 == d2) ? 0 : 1;
+      return Double.compare(d1, d2);
     }
   }
 

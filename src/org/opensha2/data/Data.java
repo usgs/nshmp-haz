@@ -994,6 +994,8 @@ public final class Data {
    * @param label for value if check fails
    * @param value to check
    * @return the validated value
+   * @throws IllegalArgumentException if {@code value} is outside the range
+   *         {@code (-Inf..+Inf)}
    * @see Doubles#isFinite(double)
    */
   public static double checkFinite(String label, double value) {
@@ -1439,6 +1441,5 @@ public final class Data {
   // value <= max;
   // checkArgument(expression, "value");
   // }
-
 
 }
