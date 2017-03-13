@@ -374,7 +374,7 @@ class FaultParser extends DefaultHandler {
     List<IncrementalMfd> mfds = Lists.newArrayList();
 
     // total moment rate
-    double tmr = data.rate * Earthquakes.magToMoment_N_m(data.m);
+    double tmr = data.rate * Earthquakes.magToMoment(data.m);
     // total event rate
     double tcr = data.rate;
 
