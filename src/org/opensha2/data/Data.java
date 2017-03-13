@@ -1147,7 +1147,13 @@ public final class Data {
   }
 
   private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0.0, 1.0);
+  private static final Range<Double> WEIGHT_RANGE_0 = Range.closed(0.0, 1.0);
   private static final double WEIGHT_TOLERANCE = 1e-4;
+
+  private static double checkWeight(double weight, boolean allowZero) {
+    checkInRange(allowZero ? WEIGHT_RANGE_0 : WEIGHT_RANGE, "Weight", weight);
+    return weight;
+  }
 
   /**
    * Ensure {@code 0.0 < weight ≤ 1.0}.
@@ -1155,12 +1161,11 @@ public final class Data {
    * @return the supplied {@code weight}
    */
   public static double checkWeight(double weight) {
-    checkInRange(WEIGHT_RANGE, "Weight", weight);
-    return weight;
+    return checkWeight(weight, false);
   }
 
   /**
-   * Ensure each {@code 0.0 < weight ≤ 1.0} and
+   * Ensure each {@code 0.0 ≤ weight ≤ 1.0} and
    * {@code sum(weights) = 1.0 ± 0.0001}.
    *
    * @param weights to validate
@@ -1168,7 +1173,7 @@ public final class Data {
    */
   public static Collection<Double> checkWeights(Collection<Double> weights) {
     for (double weight : weights) {
-      checkWeight(weight);
+      checkWeight(weight, true);
     }
     double sum = sum(weights);
     checkArgument(DoubleMath.fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),

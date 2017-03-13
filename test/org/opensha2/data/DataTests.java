@@ -604,8 +604,17 @@ public final class DataTests {
    */
 
   @Test
+  public final void testCheckWeight() {
+    assertEquals(0.5, Data.checkWeight(0.5), 0.0);
+  }
+  
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckWeight_IAE() {
+    Data.checkWeight(0.0);
+  }
+
+  @Test
   public final void testCheckWeights() {
-    // also tests checkWeight
     double[] wtArray = { 0.4, 0.6001 };
     List<Double> wtList = Doubles.asList(wtArray);
     assertEquals(wtList, Data.checkWeights(wtList));
