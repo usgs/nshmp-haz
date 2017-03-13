@@ -8,25 +8,46 @@ import static org.opensha2.data.Data.checkInRange;
 import com.google.common.collect.Range;
 
 /**
- * Utility constants and methods pertaining to properties of earthquakes.
+ * Constants and utility methods pertaining to properties of earthquakes.
  *
  * @author Peter Powers
  */
 public final class Earthquakes {
 
   /**
-   * Minimum supported earthquake magnitude (-2.0). This numeric value is used for
-   * range checking and is not bound to any particular magnitude scale.
+   * Minimum supported earthquake depth: {@code -5 km}. Earthquake depths are
+   * measured following the positive-down convention of seismology.
+   */
+  public static final double MIN_DEPTH = -5.0;
+
+  /**
+   * Maximum supported earthquake depth: {@code 700 km}. Earthquake depths are
+   * measured following the positive-down convention of seismology.
+   */
+  public static final double MAX_DEPTH = 700.0;
+
+  /**
+   * Supported earthquake depth range: {@code [-5..700] km}. Earthquake depths
+   * are measured following the positive-down convention of seismology.
+   */
+  public static final Range<Double> DEPTH_RANGE = Range.closed(MIN_DEPTH, MAX_DEPTH);
+
+  /**
+   * Minimum supported earthquake magnitude: {@code -2.0}. This numeric value is
+   * used for range checking and is not bound to any particular magnitude scale.
    */
   public static final double MIN_MAG = -2.0;
 
   /**
-   * Maximum supported earthquake magnitude (9.7). This numeric value is used for
-   * range checking and is not bound to any particular magnitude scale.
+   * Maximum supported earthquake magnitude: {@code 9.7}. This numeric value is
+   * used for range checking and is not bound to any particular magnitude scale.
    */
   public static final double MAX_MAG = 9.7;
 
-  /** The minimum and maximum supported magnitude as a range. */
+  /**
+   * Supported earthquake magnitude range: {@code [-2.0..9.7]}. This range of
+   * values is not bound to any particular magnitude scale.
+   */
   public static final Range<Double> MAG_RANGE = Range.closed(MIN_MAG, MAX_MAG);
 
   /** Shear modulus {@code μ = 3·10¹⁰ N·m⁻²}. */
@@ -41,12 +62,25 @@ public final class Earthquakes {
    */
 
   /**
+   * Ensure that {@code -5 ≤ depth ≤ 700 km}. Earthquake depths are measured
+   * positive-down following the convention of seismology.
+   * 
+   * @param depth to validate
+   * @return the validated depth
+   * @throws IllegalArgumentException if {@code depth} is outside the range
+   *         {@code [-5..700] km}
+   */
+  public static double checkDepth(double depth) {
+    return checkInRange(DEPTH_RANGE, "Depth", depth);
+  }
+
+  /**
    * Ensure {@code -2.0 ≤ magnitude ≤ 9.7}.
    *
    * @param magnitude to validate
    * @return the validated magnitude
    * @throws IllegalArgumentException if {@code magnitude} value is outside the
-   *         range {@code (-2.0..9.7)}
+   *         range {@code [-2.0..9.7]}
    */
   public static double checkMagnitude(double magnitude) {
     return checkInRange(MAG_RANGE, "Magnitude", magnitude);
@@ -54,8 +88,7 @@ public final class Earthquakes {
 
   /**
    * Convert moment magnitude, <em>M</em><sub>W</sub>, to seismic moment,
-   * <em>M</em>₀, following the equation of Hanks and Kanamori
-   * (1997).
+   * <em>M</em>₀, following the equation of Hanks and Kanamori (1997).
    *
    * @param magnitude to convert
    * @return the equivalent seismic moment in N·m

@@ -1,7 +1,5 @@
 package org.opensha2.geo;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import static org.opensha2.data.Data.checkInRange;
 
 import org.opensha2.util.Maths;
@@ -16,60 +14,55 @@ import com.google.common.collect.Range;
 public class Coordinates {
 
   /**
-   * The Authalic mean radius (A<subscript>r</subscript>) of the earth
-   * [6371.0072 km] (see <a
-   * href="http://en.wikipedia.org/wiki/Earth_radius#Authalic_radius"
-   * target="_blank">Wikipedia</a>).
+   * The Authalic mean radius (A<subscript>r</subscript>) of the earth:
+   * {@code 6371.0072 km}.
+   * 
+   * @see <a href="http://en.wikipedia.org/wiki/Earth_radius#Authalic_radius"
+   *      target="_blank">Wikipedia</a>
    */
   public static final double EARTH_RADIUS_MEAN = 6371.0072;
 
   /**
-   * The equatorial radius of the earth [6378.1370 km] (see <a
-   * href="http://en.wikipedia.org/wiki/Earth_radius#Equatorial_radius"
-   * target="_blank">Wikipedia</a>) as derived from the WGS-84 ellipsoid.
+   * The equatorial radius of the earth as derived from the WGS-84 ellipsoid:
+   * {@code 6378.1370 km}.
+   * 
+   * @see <a href="http://en.wikipedia.org/wiki/Earth_radius#Equatorial_radius"
+   *      target="_blank">Wikipedia</a>
    */
   public static final double EARTH_RADIUS_EQUATORIAL = 6378.1370;
 
   /**
-   * The polar radius of the earth [6356.7523 km] (see <a
-   * href="http://en.wikipedia.org/wiki/Earth_radius#Polar_radius"
-   * target="_blank">Wikipedia</a>) as derived from the WGS-84 ellipsoid.
+   * The polar radius of the earth as derived from the WGS-84 ellipsoid:
+   * {@code 6356.7523 km]}.
+   * 
+   * @see <a href="http://en.wikipedia.org/wiki/Earth_radius#Polar_radius"
+   *      target="_blank">Wikipedia</a>
    */
   public static final double EARTH_RADIUS_POLAR = 6356.7523;
 
-  /** Minimum latitude -90°). */
+  /** Minimum supported latitude: {@code -90°}. */
   public static final double MIN_LAT = -90.0;
 
-  /** Maximum latitude (90°). */
+  /** Maximum supported latitude: {@code 90°}. */
   public static final double MAX_LAT = 90.0;
 
-  /** Minimum longitude (-360°). */
+  /** Supported latitude range: {@code [-90..90]°}. */
+  public static final Range<Double> LAT_RANGE = Range.closed(MIN_LAT, MAX_LAT);
+
+  /** Minimum supported longitude: {@code -360°}. */
   public static final double MIN_LON = -360.0;
 
-  /** Maximum longitude (360°). */
+  /** Maximum supported longitude: {@code 360°}. */
   public static final double MAX_LON = 360.0;
 
-  /**
-   * Minimum allowed earthquake depth value (-5 km) following the positive-down
-   * depth convention of seismology. TODO move to eq related class
-   */
-  public static final double MIN_DEPTH = -5.0;
+  /** Supported longitude range: {@code (-360..360)°}. */
+  public static final Range<Double> LON_RANGE = Range.open(MIN_LON, MAX_LON);
 
-  /**
-   * Maximum allowed earthquake depth value (700 km) following the positive-down
-   * depth convention of seismology. TODO move to eq related class
-   */
-  public static final double MAX_DEPTH = 700.0;
-
-  private static final Range<Double> latRange = Range.closed(MIN_LAT, MAX_LAT);
-  private static final Range<Double> lonRange = Range.open(MIN_LON, MAX_LON);
-  private static final Range<Double> depthRange = Range.closed(MIN_DEPTH, MAX_DEPTH);
-
-  /** Convenience constant for arcseconds per degree (3600). */
-  public static final double SECONDS_PER_DEGREE = 3600;
-
-  /** Convenience constant for arcminutes per degree (60). */
+  /** Constant for arcminutes per degree: {@code 60″}. */
   public static final double MINUTES_PER_DEGREE = 60;
+
+  /** Constant for arcseconds per degree: {@code 3600′}. */
+  public static final double SECONDS_PER_DEGREE = 3600;
 
   /**
    * Ensure that {@code -90° ≤ latitude ≤ 90°}.
@@ -77,12 +70,10 @@ public class Coordinates {
    * @param latitude to validate
    * @return the validated latitude
    * @throws IllegalArgumentException if {@code latitude} is outside the range
-   *         {@code [-90..90]}
-   * @see #MIN_LAT
-   * @see #MAX_LAT
+   *         {@code [-90..90]°}
    */
   public static double checkLatitude(double latitude) {
-    return checkInRange(latRange, "Latitude", latitude);
+    return checkInRange(LAT_RANGE, "Latitude", latitude);
   }
 
   /**
@@ -91,41 +82,24 @@ public class Coordinates {
    * @param longitude to validate
    * @return the validated longitude
    * @throws IllegalArgumentException if {@code longitude} is outside the range
-   *         {@code (-360..360)}
-   * @see #MIN_LON
-   * @see #MAX_LON
+   *         {@code (-360..360)°}
    */
   public static double checkLongitude(double longitude) {
-    return checkInRange(lonRange, "Longitude", longitude);
+    return checkInRange(LON_RANGE, "Longitude", longitude);
   }
 
   /**
-   * Ensure that {@code -5 < depth < 700 km}.
-   * 
-   * @param depth to validate
-   * @return the validated depth
-   * @throws IllegalArgumentException if {@code depth} is outside the range
-   *         {@code [-5..700]}
-   * @see #MIN_DEPTH
-   * @see #MAX_DEPTH
-   */
-  public static double checkDepth(double depth) {
-    return checkInRange(depthRange, "Depth", depth);
-  }
-
-  /**
-   * Returns the radius of the earth at the latitude of the supplied
+   * Return the radius of the earth at the latitude of the supplied
    * <code>Location</code> (see <a
    * href="http://en.wikipedia.org/wiki/Earth_radius#Authalic_radius"
    * target="_blank">Wikipedia</a> for source).
    *
-   * @param p the <code>Location</code> at which to compute the earth's radius
-   * @return the earth's radius at the supplied <code>Location</code>
+   * @param location at which to compute the earth's radius
+   * @return the earth's radius at the supplied {@code location}
    */
-  public static double radiusAtLocation(Location p) {
-    checkNotNull(p, "Supplied location is null");
-    double cosL = Math.cos(p.latRad());
-    double sinL = Math.sin(p.latRad());
+  public static double radiusAtLocation(Location location) {
+    double cosL = Math.cos(location.latRad());
+    double sinL = Math.sin(location.latRad());
     double C1 = cosL * EARTH_RADIUS_EQUATORIAL;
     double C2 = C1 * EARTH_RADIUS_EQUATORIAL;
     double C3 = sinL * EARTH_RADIUS_POLAR;
@@ -134,39 +108,40 @@ public class Coordinates {
   }
 
   /**
-   * Returns the number of degrees of latitude per km at a given
-   * <code>Location</code>. This can be used to convert between km-based and
+   * Return a conversion factor for the number of degrees of latitude per km at
+   * a given {@code location}. This can be used to convert between km-based and
    * degree-based grid spacing. The calculation takes into account the shape of
    * the earth (oblate spheroid) and scales the conversion accordingly.
    *
-   * @param p the <code>Location</code> at which to conversion value
-   * @return the number of decimal degrees latitude per km at a given
-   *         <code>Location</code>
+   * @param location at which to compute conversion value
+   * @return the number of decimal degrees latitude per km at the supplied
+   *         {@code location}
    * @see #radiusAtLocation(Location)
    */
-  public static double degreesLatPerKm(Location p) {
-    return Maths.TO_DEG / radiusAtLocation(checkNotNull(p));
+  public static double degreesLatPerKm(Location location) {
+    return Maths.TO_DEG / radiusAtLocation(location);
   }
 
   /**
-   * Returns the number of degrees of longitude per km at a given
-   * <code>Location</code>. This can be used to convert between km-based and
+   * Return a conversion factor for the number of degrees of longitude per km at
+   * a given {@code location}. This can be used to convert between km-based and
    * degree-based grid spacing. The calculation scales the degrees longitude per
    * km at the equator by the cosine of the supplied latitude. (<i>Note</i>: The
    * values returned are not based on the radius of curvature of the earth at
    * the supplied location.)
    *
-   * @param p the <code>Location</code> at which to conversion value
-   * @return the number of decimal degrees longitude per km at a given
-   *         <code>Location</code>
+   * @param location at which to compute conversion value
+   * @return the number of decimal degrees longitude per km at the supplied
+   *         {@code location}
    */
-  public static double degreesLonPerKm(Location p) {
-    return Maths.TO_DEG / (EARTH_RADIUS_EQUATORIAL * Math.cos(checkNotNull(p).latRad()));
+  public static double degreesLonPerKm(Location location) {
+    return Maths.TO_DEG / (EARTH_RADIUS_EQUATORIAL * Math.cos(location.latRad()));
   }
 
   /**
-   * Converts arcseconds to decimal degrees.
-   * @param seconds value to convert
+   * Convert arc{@code seconds} to decimal degrees.
+   * 
+   * @param seconds to convert
    * @return the equivalent number of decimal degrees
    */
   public static double secondsToDeg(double seconds) {
@@ -174,8 +149,9 @@ public class Coordinates {
   }
 
   /**
-   * Convert arcminutes to decimal degrees.
-   * @param minutes value to convert
+   * Convert arc{@code minutes} to decimal degrees.
+   * 
+   * @param minutes to convert
    * @return the equivalent number of decimal degrees
    */
   public static double minutesToDeg(double minutes) {
@@ -185,8 +161,9 @@ public class Coordinates {
   /**
    * Convert {@code degrees} and decimal {@code minutes} to decimal degrees.
    *
-   * @param degrees
-   * @param minutes
+   * @param degrees to convert
+   * @param minutes to convert
+   * @return the equivalent number of decimal degrees
    */
   public static double toDecimalDegrees(double degrees, double minutes) {
     return (degrees < 0) ? (degrees - minutesToDeg(minutes))

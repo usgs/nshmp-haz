@@ -2,7 +2,7 @@ package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import static org.opensha2.geo.Coordinates.checkDepth;
+import static org.opensha2.eq.Earthquakes.checkDepth;
 import static org.opensha2.geo.Coordinates.checkLatitude;
 import static org.opensha2.geo.Coordinates.checkLongitude;
 
