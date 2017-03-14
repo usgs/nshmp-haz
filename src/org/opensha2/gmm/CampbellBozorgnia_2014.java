@@ -20,6 +20,7 @@ import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.SA0P01;
 import static org.opensha2.gmm.Imt.SA0P25;
 
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.util.Maths;
@@ -64,7 +65,7 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
       .setDistances(300.0)
       // TODO actually is 15-90
       .set(DIP, Faults.DIP_RANGE)
-      .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)
+      .set(WIDTH, Earthquakes.CRUSTAL_WIDTH_RANGE)
       .set(ZHYP, Range.closed(0.0, 20.0))
       .set(ZTOP, Range.closed(0.0, 20.0))
       .set(RAKE, Faults.RAKE_RANGE)

@@ -16,7 +16,7 @@ import static org.opensha2.eq.model.SourceType.GRID;
 import org.opensha2.data.Data;
 import org.opensha2.data.IntervalTable;
 import org.opensha2.data.XySequence;
-import org.opensha2.eq.fault.Faults;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.PointSource.DepthModel;
@@ -317,13 +317,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     static void validateDepth(double depth, SourceType type) {
       switch (type) {
         case GRID:
-          Faults.validateDepth(depth);
+          Earthquakes.validateDepth(depth);
           break;
         case SLAB:
-          Faults.validateSlabDepth(depth);
+          Earthquakes.validateSlabDepth(depth);
           break;
         case AREA:
-          Faults.validateDepth(depth);
+          Earthquakes.validateDepth(depth);
           break;
         default:
           throw new IllegalStateException(type + " not a grid or related source type");

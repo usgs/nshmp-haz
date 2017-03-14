@@ -5,6 +5,8 @@ import static java.lang.Math.pow;
 
 import static org.opensha2.data.Data.checkInRange;
 
+import org.opensha2.data.Data;
+
 import com.google.common.collect.Range;
 
 /**
@@ -31,6 +33,98 @@ public final class Earthquakes {
    * are measured following the positive-down convention of seismology.
    */
   public static final Range<Double> DEPTH_RANGE = Range.closed(MIN_DEPTH, MAX_DEPTH);
+
+  // TODO adjust Faults.CRUSTAL_DEPTH_RANGE CB14 restricts to 20 km
+  // and the PEER database is pretty comprehensive
+
+  /**
+   * The {@link Range} of valid crustal rupture depths: [0..40] km, inclusive.
+   */
+  public static final Range<Double> CRUSTAL_DEPTH_RANGE = Range.closed(0.0, 40.0);
+
+  /**
+   * The {@link Range} of valid crustal rupture widths: (0..60] km, exclusive,
+   * inclusive.
+   */
+  public static final Range<Double> CRUSTAL_WIDTH_RANGE = Range.openClosed(0.0, 60.0);
+
+  /**
+   * The {@link Range} of valid intraslab rupture depths: [20..700] km,
+   * inclusive.
+   */
+  public static final Range<Double> SLAB_DEPTH_RANGE = Range.closed(20.0, 700.0);
+
+  /**
+   * The {@link Range} of valid interface rupture depths: [0..60] km,
+   * inclusive.
+   */
+  public static final Range<Double> INTERFACE_DEPTH_RANGE = Range.closed(0.0, 60.0);
+
+  /**
+   * The {@link Range} of valid interface rupture widths: (0..200] km,
+   * exclusive, inclusive.
+   */
+  public static final Range<Double> INTERFACE_WIDTH_RANGE = Range.openClosed(0.0, 200.0);
+
+  /**
+   * Verifies that {@code depth} is within {@link #CRUSTAL_DEPTH_RANGE}.
+   *
+   * @param depth to validate (positive down)
+   * @return the supplied depth for use inline
+   * @throws IllegalArgumentException if {@code depth} is out of range
+   * @see Data#checkInRange(Range, String, double)
+   */
+  public static double validateDepth(double depth) {
+    return checkInRange(CRUSTAL_DEPTH_RANGE, "Depth", depth);
+  }
+
+  /**
+   * Verifies that {@code depth} value is within {@link #SLAB_DEPTH_RANGE}.
+   *
+   * @param depth to validate (positive down)
+   * @return the supplied depth for use inline
+   * @throws IllegalArgumentException if {@code depth} is out of range
+   * @see Data#checkInRange(Range, String, double)
+   */
+  public static double validateSlabDepth(double depth) {
+    return checkInRange(SLAB_DEPTH_RANGE, "Subduction Slab Depth", depth);
+  }
+
+  /**
+   * Verifies that {@code depth} is within {@link #INTERFACE_DEPTH_RANGE}.
+   *
+   * @param depth to validate (positive down)
+   * @return the supplied depth for use inline
+   * @throws IllegalArgumentException if {@code depth} is out of range
+   * @see Data#checkInRange(Range, String, double)
+   */
+  public static double validateInterfaceDepth(double depth) {
+    return checkInRange(INTERFACE_DEPTH_RANGE, "Subduction Interface Depth", depth);
+  }
+
+  /**
+   * Verifies that {@code width} is within {@link #CRUSTAL_WIDTH_RANGE}.
+   *
+   * @param width to validate
+   * @return the supplied width for use inline
+   * @throws IllegalArgumentException if {@code width} is out of range
+   * @see Data#checkInRange(Range, String, double)
+   */
+  public static double validateWidth(double width) {
+    return checkInRange(CRUSTAL_WIDTH_RANGE, "Width", width);
+  }
+
+  /**
+   * Verifies that {@code width} is within {@link #INTERFACE_WIDTH_RANGE}.
+   *
+   * @param width to validate
+   * @return the supplied width for use inline
+   * @throws IllegalArgumentException if {@code width} is out of range
+   * @see Data#checkInRange(Range, String, double)
+   */
+  public static double validateInterfaceWidth(double width) {
+    return checkInRange(INTERFACE_WIDTH_RANGE, "Subduction Interface Width", width);
+  }
 
   /**
    * Minimum supported earthquake magnitude: {@code -2.0}. This numeric value is

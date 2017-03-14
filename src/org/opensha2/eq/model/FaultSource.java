@@ -5,11 +5,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.eq.fault.Faults.validateDepth;
+import static org.opensha2.eq.Earthquakes.validateDepth;
+import static org.opensha2.eq.Earthquakes.validateWidth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
 import static org.opensha2.eq.fault.Faults.validateTrace;
-import static org.opensha2.eq.fault.Faults.validateWidth;
 import static org.opensha2.eq.model.SourceType.FAULT;
 import static org.opensha2.internal.TextUtils.validateName;
 

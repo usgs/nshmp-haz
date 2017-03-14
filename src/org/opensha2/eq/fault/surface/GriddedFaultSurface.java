@@ -3,9 +3,9 @@ package org.opensha2.eq.fault.surface;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.eq.fault.Faults.validateDepth;
+import static org.opensha2.eq.Earthquakes.validateDepth;
+import static org.opensha2.eq.Earthquakes.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateDip;
-import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.Faults.validateTrace;
 

@@ -6,9 +6,9 @@ import static java.lang.Math.sin;
 import static java.math.RoundingMode.HALF_UP;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.eq.fault.Faults.validateDepth;
+import static org.opensha2.eq.Earthquakes.validateDepth;
+import static org.opensha2.eq.Earthquakes.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateDip;
-import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.validateStrike;
 import static org.opensha2.eq.fault.Faults.validateTrace;
 import static org.opensha2.geo.LocationVector.createWithPlunge;

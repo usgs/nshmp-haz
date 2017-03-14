@@ -754,16 +754,16 @@ public class GmmInput {
         set(RRUP, Range.closed(0.0, Distance.MAX));
         set(RX, Range.closed(0.0, Distance.MAX));
 
-        Range<Double> depthRange = Faults.CRUSTAL_DEPTH_RANGE
-            .intersection(Faults.INTERFACE_DEPTH_RANGE)
-            .intersection(Faults.SLAB_DEPTH_RANGE);
+        Range<Double> depthRange = Earthquakes.CRUSTAL_DEPTH_RANGE
+            .intersection(Earthquakes.INTERFACE_DEPTH_RANGE)
+            .intersection(Earthquakes.SLAB_DEPTH_RANGE);
         set(ZTOP, depthRange);
         set(ZHYP, depthRange);
 
         set(DIP, Faults.DIP_RANGE);
 
-        Range<Double> widthRange = Faults.CRUSTAL_WIDTH_RANGE
-            .intersection(Faults.INTERFACE_WIDTH_RANGE);
+        Range<Double> widthRange = Earthquakes.CRUSTAL_WIDTH_RANGE
+            .intersection(Earthquakes.INTERFACE_WIDTH_RANGE);
         set(WIDTH, widthRange);
 
         set(RAKE, Faults.RAKE_RANGE);

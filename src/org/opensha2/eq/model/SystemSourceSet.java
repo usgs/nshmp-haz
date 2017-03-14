@@ -6,10 +6,10 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.min;
 
 import static org.opensha2.eq.Earthquakes.checkMagnitude;
-import static org.opensha2.eq.fault.Faults.validateDepth;
+import static org.opensha2.eq.Earthquakes.validateDepth;
+import static org.opensha2.eq.Earthquakes.validateWidth;
 import static org.opensha2.eq.fault.Faults.validateDip;
 import static org.opensha2.eq.fault.Faults.validateRake;
-import static org.opensha2.eq.fault.Faults.validateWidth;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.geo.Locations.horzDistanceFast;
 
