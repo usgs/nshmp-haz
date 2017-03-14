@@ -15,6 +15,8 @@ import com.google.common.collect.Range;
  */
 public final class Earthquakes {
 
+  private Earthquakes() {}
+  
   /**
    * Minimum supported earthquake depth: {@code -5 km}.
    */

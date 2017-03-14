@@ -1,7 +1,6 @@
 package org.opensha2.eq.fault;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.geo.Locations.azimuth;
@@ -78,16 +77,27 @@ public final class Faults {
   }
 
   /**
-   * Ensures that a {@code LocationList} contains at least two points and is not
-   * {@code null}.
+   * Ensure {@code trace} contains at least two points.
    *
-   * @param trace
-   * @return the supplied trace for use inline
+   * @param trace to validate
+   * @return the validated trace
+   * @throws IllegalArgumentException if {@code trace.size() < 2}
    */
   public static LocationList validateTrace(LocationList trace) {
-    checkArgument(checkNotNull(trace).size() > 1, "Trace must have at least 2 points");
+    checkArgument(trace.size() > 1, "Fault trace must have at least 2 points");
     return trace;
   }
+
+  /*
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * TODO Everything below needs review
+   */
 
   /**
    * This subdivides the given fault trace into sub-traces that have the length
@@ -266,47 +276,6 @@ public final class Faults {
     // LocationList.create(resampLocs));
     return LocationList.create(resampLocs);
   }
-
-  /**
-   * This is a quick plot of the traces
-   * @param traces
-   */
-  // public static void plotTraces(ArrayList<FaultTrace> traces) {
-  // throw new RuntimeException(
-  // "This doesn't work because our functions will reorder x-axis values"
-  // +
-  // "to monotonically increase (and remove duplicates - someone should fix
-  // this)");
-  // /*
-  // * ArrayList funcs = new ArrayList(); for(int t=0; t<traces.size();t++)
-  // * { FaultTrace trace = traces.get(t); ArbitrarilyDiscretizedFunc
-  // * traceFunc = new ArbitrarilyDiscretizedFunc(); for(int
-  // * i=0;i<trace.size();i++) { Location loc= trace.getLocationAt(i);
-  // * traceFunc.set(loc.getLongitude(), loc.getLatitude()); }
-  // * traceFunc.setName(trace.getName()); funcs.add(traceFunc); }
-  // * GraphWindow graph = new GraphWindow(funcs, "");
-  // * ArrayList<PlotCurveCharacterstics> plotChars = new
-  // * ArrayList<PlotCurveCharacterstics>(); /* plotChars.add(new
-  // * PlotCurveCharacterstics
-  // * (PlotColorAndLineTypeSelectorControlPanel.FILLED_CIRCLES,
-  // * Color.BLACK, 4)); plotChars.add(new
-  // * PlotCurveCharacterstics(PlotColorAndLineTypeSelectorControlPanel
-  // * .SOLID_LINE, Color.BLUE, 2)); plotChars.add(new
-  // * PlotCurveCharacterstics
-  // * (PlotColorAndLineTypeSelectorControlPanel.SOLID_LINE, Color.BLUE,
-  // * 1)); plotChars.add(new
-  // * PlotCurveCharacterstics(PlotColorAndLineTypeSelectorControlPanel
-  // * .SOLID_LINE, Color.BLUE, 1)); graph.setPlottingFeatures(plotChars);
-  // * graph.setX_AxisLabel("Longitude"); graph.setY_AxisLabel("Latitude");
-  // * graph.setTickLabelFontSize(12);
-  // * graph.setAxisAndTickLabelFontSize(14); /* // to save files if(dirName
-  // * != null) { String filename = ROOT_PATH+dirName+"/slipRates"; try {
-  // * graph.saveAsPDF(filename+".pdf"); graph.saveAsPNG(filename+".png"); }
-  // * catch (IOException e) { // TODO Auto-generated catch block
-  // * e.printStackTrace(); } }
-  // */
-  //
-  // }
 
   /**
    * Returns an average of the given angles scaled by the distances between the
