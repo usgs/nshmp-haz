@@ -7,8 +7,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.Earthquakes.validateDepth;
 import static org.opensha2.eq.Earthquakes.validateWidth;
-import static org.opensha2.eq.fault.Faults.validateDip;
-import static org.opensha2.eq.fault.Faults.validateRake;
+import static org.opensha2.eq.fault.Faults.checkDip;
+import static org.opensha2.eq.fault.Faults.checkRake;
 import static org.opensha2.eq.fault.Faults.validateTrace;
 import static org.opensha2.eq.model.SourceType.FAULT;
 import static org.opensha2.internal.TextUtils.validateName;
@@ -238,7 +238,7 @@ public class FaultSource implements Source {
     }
 
     Builder dip(double dip) {
-      this.dip = validateDip(dip);
+      this.dip = checkDip(dip);
       return this;
     }
 
@@ -253,7 +253,7 @@ public class FaultSource implements Source {
     }
 
     Builder rake(double rake) {
-      this.rake = validateRake(rake);
+      this.rake = checkRake(rake);
       return this;
     }
 

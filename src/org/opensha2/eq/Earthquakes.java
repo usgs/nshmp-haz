@@ -56,6 +56,48 @@ public final class Earthquakes {
   public static final Range<Double> INTERFACE_WIDTH_RANGE = Range.openClosed(0.0, 200.0);
 
   /**
+   * Minimum supported earthquake magnitude: {@code -2.0}. This numeric value is
+   * used for range checking and is not bound to any particular magnitude scale.
+   */
+  public static final double MIN_MAG = -2.0;
+
+  /**
+   * Maximum supported earthquake magnitude: {@code 9.7}. This numeric value is
+   * used for range checking and is not bound to any particular magnitude scale.
+   */
+  public static final double MAX_MAG = 9.7;
+
+  /**
+   * Supported earthquake magnitude range: {@code [-2.0..9.7]}. This range of
+   * values is not bound to any particular magnitude scale.
+   */
+  public static final Range<Double> MAG_RANGE = Range.closed(MIN_MAG, MAX_MAG);
+
+  /** Shear modulus {@code μ = 3·10¹⁰ N·m⁻²}. */
+  public static final double MU = 3e10;
+
+  private static final double SCALE_N_M = 9.05;
+
+  /*
+   * Equivalent dyn/cm values for MU = 3e11 dyn/cm²
+   * 
+   * Equivalent dyn/cm values for SCALE_ = 16.05 dyn·cm
+   */
+
+  /**
+   * Ensure {@code -5 ≤ depth ≤ 700 km}. Earthquake depths are measured
+   * positive-down following the convention of seismology.
+   * 
+   * @param depth to validate
+   * @return the validated depth
+   * @throws IllegalArgumentException if {@code depth} is outside the range
+   *         {@code [-5..700] km}
+   */
+  public static double checkDepth(double depth) {
+    return checkInRange(DEPTH_RANGE, "Depth", depth);
+  }
+
+  /**
    * Verifies that {@code depth} is within {@link #CRUSTAL_DEPTH_RANGE}.
    *
    * @param depth to validate (positive down)
@@ -113,48 +155,6 @@ public final class Earthquakes {
    */
   public static double validateInterfaceWidth(double width) {
     return checkInRange(INTERFACE_WIDTH_RANGE, "Subduction Interface Width", width);
-  }
-
-  /**
-   * Minimum supported earthquake magnitude: {@code -2.0}. This numeric value is
-   * used for range checking and is not bound to any particular magnitude scale.
-   */
-  public static final double MIN_MAG = -2.0;
-
-  /**
-   * Maximum supported earthquake magnitude: {@code 9.7}. This numeric value is
-   * used for range checking and is not bound to any particular magnitude scale.
-   */
-  public static final double MAX_MAG = 9.7;
-
-  /**
-   * Supported earthquake magnitude range: {@code [-2.0..9.7]}. This range of
-   * values is not bound to any particular magnitude scale.
-   */
-  public static final Range<Double> MAG_RANGE = Range.closed(MIN_MAG, MAX_MAG);
-
-  /** Shear modulus {@code μ = 3·10¹⁰ N·m⁻²}. */
-  public static final double MU = 3e10;
-
-  private static final double SCALE_N_M = 9.05;
-
-  /*
-   * Equivalent dyn/cm values for MU = 3e11 dyn/cm²
-   * 
-   * Equivalent dyn/cm values for SCALE_ = 16.05 dyn·cm
-   */
-
-  /**
-   * Ensure that {@code -5 ≤ depth ≤ 700 km}. Earthquake depths are measured
-   * positive-down following the convention of seismology.
-   * 
-   * @param depth to validate
-   * @return the validated depth
-   * @throws IllegalArgumentException if {@code depth} is outside the range
-   *         {@code [-5..700] km}
-   */
-  public static double checkDepth(double depth) {
-    return checkInRange(DEPTH_RANGE, "Depth", depth);
   }
 
   /**

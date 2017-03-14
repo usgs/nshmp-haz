@@ -8,8 +8,8 @@ import static java.lang.Math.min;
 import static org.opensha2.eq.Earthquakes.checkMagnitude;
 import static org.opensha2.eq.Earthquakes.validateDepth;
 import static org.opensha2.eq.Earthquakes.validateWidth;
-import static org.opensha2.eq.fault.Faults.validateDip;
-import static org.opensha2.eq.fault.Faults.validateRake;
+import static org.opensha2.eq.fault.Faults.checkDip;
+import static org.opensha2.eq.fault.Faults.checkRake;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.geo.Locations.horzDistanceFast;
 
@@ -336,7 +336,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     Builder dip(double dip) {
-      dips.add(validateDip(dip));
+      dips.add(checkDip(dip));
       return this;
     }
 
@@ -346,7 +346,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     Builder rake(double rake) {
-      rakes.add(validateRake(rake));
+      rakes.add(checkRake(rake));
       return this;
     }
 

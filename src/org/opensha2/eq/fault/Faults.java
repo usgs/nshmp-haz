@@ -11,7 +11,6 @@ import static org.opensha2.geo.Locations.horzDistance;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
 
-import org.opensha2.data.Data;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.LocationVector;
@@ -33,52 +32,51 @@ import java.util.List;
 public final class Faults {
 
   private Faults() {}
-  
-  /** Supported fault strikes: [0..360)°. */
-  public static final Range<Double> STRIKE_RANGE = Range.closedOpen(0.0, 360.0);
 
-  /** Supported fault dips: [0..90]°. */
+  /** Supported fault dips: {@code [0..90]°}. */
   public static final Range<Double> DIP_RANGE = Range.closed(0.0, 90.0);
 
-  /** Supported fault rakes: [-180..180]°. */
+  /** Supported fault rakes: {@code [-180..180]°}. */
   public static final Range<Double> RAKE_RANGE = Range.closed(-180.0, 180.0);
 
+  /** Supported fault strikes: {@code [0..360)°}. */
+  public static final Range<Double> STRIKE_RANGE = Range.closedOpen(0.0, 360.0);
+
   /**
-   * Verifies that {@code dip} is within {@link #DIP_RANGE}.
+   * Ensure {@code 0° ≤ dip ≤ 90°}.
    *
    * @param dip to validate
-   * @return the supplied dip for use inline
-   * @throws IllegalArgumentException if {@code dip} is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @return the validated dip
+   * @throws IllegalArgumentException if {@code dip} is outside the range
+   *         {@code [0..90]°}
    */
-  public static double validateDip(double dip) {
+  public static double checkDip(double dip) {
     return checkInRange(DIP_RANGE, "Dip", dip);
   }
 
   /**
-   * Verifies that {@code strike} is within {@link #STRIKE_RANGE}.
+   * Ensure {@code 0° ≤ strike < 360°}.
    *
    * @param strike to validate
-   * @return the supplied strike for use inline
-   * @throws IllegalArgumentException if {@code strike} is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @return the validated strike
+   * @throws IllegalArgumentException if {@code strike} is outside the range
+   *         {@code [0..360)°}
    */
-  public static double validateStrike(double strike) {
+  public static double checkStrike(double strike) {
     return checkInRange(STRIKE_RANGE, "Strike", strike);
   }
 
   /**
-   * Verifies that {@code rake} is within {@link #RAKE_RANGE}.
+   * Ensure {@code -180° ≤ rake ≤ 180°}.
    *
    * @param rake to validate
-   * @return the supplied rake for use inline
-   * @throws IllegalArgumentException if {@code rake} is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @return the validated rake
+   * @throws IllegalArgumentException if {@code rake} is outside the range
+   *         {@code [-180..180]°}
    */
-  public static double validateRake(double rake) {
+  public static double checkRake(double rake) {
     return checkInRange(RAKE_RANGE, "Rake", rake);
   }
-
 
   /**
    * Ensures that a {@code LocationList} contains at least two points and is not

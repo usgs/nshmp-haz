@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.eq.Earthquakes.MAX_MAG;
 import static org.opensha2.eq.Earthquakes.checkMagnitude;
-import static org.opensha2.eq.fault.Faults.validateStrike;
+import static org.opensha2.eq.fault.Faults.checkStrike;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
@@ -233,7 +233,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
     Builder strike(double strike) {
       // unknown strike allowed for grid sources
-      this.strike = Double.isNaN(strike) ? strike : validateStrike(strike);
+      this.strike = Double.isNaN(strike) ? strike : checkStrike(strike);
       return this;
     }
 

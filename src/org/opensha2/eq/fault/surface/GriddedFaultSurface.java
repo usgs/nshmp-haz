@@ -5,8 +5,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.Earthquakes.validateDepth;
 import static org.opensha2.eq.Earthquakes.validateInterfaceWidth;
-import static org.opensha2.eq.fault.Faults.validateDip;
-import static org.opensha2.eq.fault.Faults.validateStrike;
+import static org.opensha2.eq.fault.Faults.checkDip;
+import static org.opensha2.eq.fault.Faults.checkStrike;
 import static org.opensha2.eq.fault.Faults.validateTrace;
 
 import org.opensha2.eq.fault.Faults;
@@ -99,12 +99,12 @@ class GriddedFaultSurface {
     }
 
     public Builder dip(double dip) {
-      this.dipRad = validateDip(dip) * Maths.TO_RAD;
+      this.dipRad = checkDip(dip) * Maths.TO_RAD;
       return this;
     }
 
     public Builder dipDir(double dipDir) {
-      this.dipDirRad = validateStrike(dipDir) * Maths.TO_RAD;
+      this.dipDirRad = checkStrike(dipDir) * Maths.TO_RAD;
       return this;
     }
 
