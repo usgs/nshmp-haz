@@ -29,41 +29,30 @@ public final class Earthquakes {
   public static final double MAX_DEPTH = 700.0;
 
   /**
-   * Supported earthquake depth range: {@code [-5..700] km}. Earthquake depths
+   * Supported earthquake depths: {@code [-5..700] km}. Earthquake depths
    * are measured following the positive-down convention of seismology.
    */
   public static final Range<Double> DEPTH_RANGE = Range.closed(MIN_DEPTH, MAX_DEPTH);
 
-  // TODO adjust Faults.CRUSTAL_DEPTH_RANGE CB14 restricts to 20 km
-  // and the PEER database is pretty comprehensive
-
-  /**
-   * The {@link Range} of valid crustal rupture depths: [0..40] km, inclusive.
+  /*
+   * TODO adjust Faults.CRUSTAL_DEPTH_RANGE CB14 restricts to 20 km and the PEER
+   * database is pretty comprehensive. Perhaps implement active and stable crust
+   * depth range.
    */
+
+  /** Supported crustal earthquake depths: {@code [0..40] km}. */
   public static final Range<Double> CRUSTAL_DEPTH_RANGE = Range.closed(0.0, 40.0);
 
-  /**
-   * The {@link Range} of valid crustal rupture widths: (0..60] km, exclusive,
-   * inclusive.
-   */
+  /** Supported crustal earthquake widths: {@code [0..60] km}. */
   public static final Range<Double> CRUSTAL_WIDTH_RANGE = Range.openClosed(0.0, 60.0);
 
-  /**
-   * The {@link Range} of valid intraslab rupture depths: [20..700] km,
-   * inclusive.
-   */
+  /** Supported subduction intraslab earthquake depths: {@code [20..700] km}. */
   public static final Range<Double> SLAB_DEPTH_RANGE = Range.closed(20.0, 700.0);
 
-  /**
-   * The {@link Range} of valid interface rupture depths: [0..60] km,
-   * inclusive.
-   */
+  /** Supported subduction interface earthquake depths: {@code [0..60] km}. */
   public static final Range<Double> INTERFACE_DEPTH_RANGE = Range.closed(0.0, 60.0);
 
-  /**
-   * The {@link Range} of valid interface rupture widths: (0..200] km,
-   * exclusive, inclusive.
-   */
+  /** Supported subduction interface earthquake widths: {@code [0..200] km}. */
   public static final Range<Double> INTERFACE_WIDTH_RANGE = Range.openClosed(0.0, 200.0);
 
   /**

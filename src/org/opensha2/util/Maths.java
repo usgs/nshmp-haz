@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Miscellaneous math utilities that, in some cases, obviate the need for
- * 3<sup>rd</sup> party imports.
+ * Miscellaneous math utilities. In some cases, these methods obviate the need
+ * for 3<sup>rd</sup> party imports.
  *
  * @author Peter Powers
  */
@@ -13,10 +13,10 @@ public final class Maths {
 
   private Maths() {}
 
-  /** Convenience constant for π/2. */
+  /** Constant for π/2. */
   public static final double PI_BY_2 = Math.PI / 2;
 
-  /** Convenience constant for 2π. */
+  /** Constant for 2π. */
   public static final double TWOPI = 2 * Math.PI;
 
   /** Conversion multiplier for degrees to radians */

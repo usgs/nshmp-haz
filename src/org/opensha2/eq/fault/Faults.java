@@ -34,13 +34,13 @@ public final class Faults {
 
   private Faults() {}
   
-  /** Supported fault strike range: [0..360)°. */
+  /** Supported fault strikes: [0..360)°. */
   public static final Range<Double> STRIKE_RANGE = Range.closedOpen(0.0, 360.0);
 
-  /** Supported fault dip range: [0..90]°. */
+  /** Supported fault dips: [0..90]°. */
   public static final Range<Double> DIP_RANGE = Range.closed(0.0, 90.0);
 
-  /** Supported fault rake range: [-180..180]°. */
+  /** Supported fault rakes: [-180..180]°. */
   public static final Range<Double> RAKE_RANGE = Range.closed(-180.0, 180.0);
 
   /**

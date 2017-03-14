@@ -46,7 +46,7 @@ public class Coordinates {
   /** Maximum supported latitude: {@code 90°}. */
   public static final double MAX_LAT = 90.0;
 
-  /** Supported latitude range: {@code [-90..90]°}. */
+  /** Supported latitudes: {@code [-90..90]°}. */
   public static final Range<Double> LAT_RANGE = Range.closed(MIN_LAT, MAX_LAT);
 
   /** Minimum supported longitude: {@code -360°}. */
@@ -55,7 +55,7 @@ public class Coordinates {
   /** Maximum supported longitude: {@code 360°}. */
   public static final double MAX_LON = 360.0;
 
-  /** Supported longitude range: {@code (-360..360)°}. */
+  /** Supported longitudes: {@code (-360..360)°}. */
   public static final Range<Double> LON_RANGE = Range.open(MIN_LON, MAX_LON);
 
   /** Constant for arcminutes per degree: {@code 60″}. */
