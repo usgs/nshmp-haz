@@ -5,8 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.eq.Earthquakes.validateDepth;
-import static org.opensha2.eq.Earthquakes.validateWidth;
+import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
+import static org.opensha2.eq.Earthquakes.checkCrustalWidth;
 import static org.opensha2.eq.fault.Faults.checkDip;
 import static org.opensha2.eq.fault.Faults.checkRake;
 import static org.opensha2.eq.fault.Faults.validateTrace;
@@ -123,12 +123,12 @@ public class FaultSource implements Source {
   public Location location(Location site) {
     return Locations.closestPoint(site, trace);
   }
-  
+
   @Override
   public List<XySequence> mfds() {
-    /* 
-     * TODO this should just pass a reference to the immutable list or map (once tracking
-     * logic-tree branches). Requires MFD implementation update
+    /*
+     * TODO this should just pass a reference to the immutable list or map (once
+     * tracking logic-tree branches). Requires MFD implementation update
      */
     ImmutableList.Builder<XySequence> xyMfds = ImmutableList.builder();
     for (IncrementalMfd mfd : mfds) {
@@ -243,12 +243,12 @@ public class FaultSource implements Source {
     }
 
     Builder width(double width) {
-      this.width = validateWidth(width);
+      this.width = checkCrustalWidth(width);
       return this;
     }
 
     Builder depth(double depth) {
-      this.depth = validateDepth(depth);
+      this.depth = checkCrustalDepth(depth);
       return this;
     }
 

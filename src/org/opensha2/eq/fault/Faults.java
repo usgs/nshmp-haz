@@ -2,7 +2,6 @@ package org.opensha2.eq.fault;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.Math.sin;
 
 import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.geo.Locations.azimuth;
@@ -89,36 +88,6 @@ public final class Faults {
     checkArgument(checkNotNull(trace).size() > 1, "Trace must have at least 2 points");
     return trace;
   }
-
-  // /**
-  // * Checks that the rake angle fits within the definition<p> <code>-180 <=
-  // * rake <= 180</code><p>
-  // * @param rake Angle to validate
-  // * @throws InvalidRangeException Thrown if not valid angle
-  // */
-  // public static void assertValidRake(double rake)
-  // throws InvalidRangeException {
-  //
-  // if (rake < -180)
-  // throw new InvalidRangeException(S3 +
-  // "Rake angle cannot be less than -180");
-  // if (rake > 180)
-  // throw new InvalidRangeException(S3 +
-  // "Rake angle cannot be greater than 180");
-  // }
-  //
-  // /**
-  // * Returns the given angle in the range <code>-180 <= rake <= 180</code>
-  // *
-  // * @param angle
-  // */
-  // public static double getInRakeRange(double angle) {
-  // while (angle > 180)
-  // angle -= 360;
-  // while (angle < -180)
-  // angle += 180;
-  // return angle;
-  // }
 
   /**
    * This subdivides the given fault trace into sub-traces that have the length
@@ -455,7 +424,7 @@ public final class Faults {
    * @param zTop depth to the fault plane
    */
   public static double hypocentralDepth(double dip, double width, double zTop) {
-    return zTop + sin(dip * Maths.TO_RAD) * width / 2.0;
+    return zTop + Math.sin(dip * Maths.TO_RAD) * width / 2.0;
   }
 
   /**

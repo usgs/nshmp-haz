@@ -6,8 +6,8 @@ import static java.lang.Math.sin;
 import static java.math.RoundingMode.HALF_UP;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.eq.Earthquakes.validateDepth;
-import static org.opensha2.eq.Earthquakes.validateInterfaceWidth;
+import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
+import static org.opensha2.eq.Earthquakes.checkInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.checkDip;
 import static org.opensha2.eq.fault.Faults.checkStrike;
 import static org.opensha2.eq.fault.Faults.validateTrace;
@@ -152,7 +152,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
     }
 
     public Builder depth(double depth) {
-      this.depth = validateDepth(depth);
+      this.depth = checkCrustalDepth(depth);
       return this;
     }
 
@@ -172,7 +172,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
     public Builder lowerDepth(double lowerDepth) {
       checkState(width == null, "Either lower depth or width may be set, but not both");
-      this.lowerDepth = validateDepth(lowerDepth);
+      this.lowerDepth = checkCrustalDepth(lowerDepth);
       return this;
     }
 
@@ -180,7 +180,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
       checkState(lowerDepth == null, "Either width or lower depth may be set, but not both");
       // we don't know what the surface may be used to represent
       // so we validate against the largest (interface) values
-      this.width = validateInterfaceWidth(width);
+      this.width = checkInterfaceWidth(width);
       return this;
     }
 

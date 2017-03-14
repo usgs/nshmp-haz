@@ -5,9 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.min;
 
+import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
+import static org.opensha2.eq.Earthquakes.checkCrustalWidth;
 import static org.opensha2.eq.Earthquakes.checkMagnitude;
-import static org.opensha2.eq.Earthquakes.validateDepth;
-import static org.opensha2.eq.Earthquakes.validateWidth;
 import static org.opensha2.eq.fault.Faults.checkDip;
 import static org.opensha2.eq.fault.Faults.checkRake;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
@@ -331,7 +331,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     Builder depth(double depth) {
-      depths.add(validateDepth(depth));
+      depths.add(checkCrustalDepth(depth));
       return this;
     }
 
@@ -341,7 +341,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     Builder width(double width) {
-      widths.add(validateWidth(width));
+      widths.add(checkCrustalWidth(width));
       return this;
     }
 

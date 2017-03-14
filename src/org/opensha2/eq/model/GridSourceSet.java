@@ -4,8 +4,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.eq.Earthquakes.MAX_MAG;
+import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
 import static org.opensha2.eq.Earthquakes.checkMagnitude;
+import static org.opensha2.eq.Earthquakes.checkSlabDepth;
 import static org.opensha2.eq.fault.Faults.checkStrike;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
@@ -317,13 +318,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     static void validateDepth(double depth, SourceType type) {
       switch (type) {
         case GRID:
-          Earthquakes.validateDepth(depth);
+          checkCrustalDepth(depth);
           break;
         case SLAB:
-          Earthquakes.validateSlabDepth(depth);
+          checkSlabDepth(depth);
           break;
         case AREA:
-          Earthquakes.validateDepth(depth);
+          checkCrustalDepth(depth);
           break;
         default:
           throw new IllegalStateException(type + " not a grid or related source type");
@@ -342,11 +343,12 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
     static void validateMagCutoffs(Map<Double, Map<Double, Double>> magDepthMap) {
       for (double mag : magDepthMap.keySet()) {
-        if (mag >= MAX_MAG) {
+        if (mag >= Earthquakes.MAX_MAG) {
           return;
         }
       }
-      throw new IllegalStateException("MagDepthMap must contain at least one M ≥ " + MAX_MAG);
+      throw new IllegalStateException(
+          "MagDepthMap must contain at least one M ≥ " + Earthquakes.MAX_MAG);
     }
 
     @Override
