@@ -26,55 +26,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Fault utilities.
+ * Constants and utility methods pertaining to faults.
  *
  * @author Peter Powers
  */
 public final class Faults {
 
-  /**
-   * The {@link Range} of valid fault strikes: [0 ‥ 360]°, inclusive.
-   */
-  public static final Range<Double> STRIKE_RANGE = Range.closed(0.0, 360.0);
+  /** Supported fault strike range: [0..360)°. */
+  public static final Range<Double> STRIKE_RANGE = Range.closedOpen(0.0, 360.0);
 
-  /**
-   * The {@link Range} of valid fault dips: [0 ‥ 90]°, inclusive.
-   */
+  /** Supported fault dip range: [0..90]°. */
   public static final Range<Double> DIP_RANGE = Range.closed(0.0, 90.0);
 
-  /**
-   * The {@link Range} of valid fault rakes: [180 ‥ 180]°, inclusive.
-   */
+  /** Supported fault rake range: [-180..180]°. */
   public static final Range<Double> RAKE_RANGE = Range.closed(-180.0, 180.0);
 
   // TODO adjust Faults.CRUSTAL_DEPTH_RANGE CB14 restricts to 20 km
   // and the PEER database is pretty comprehensive
 
   /**
-   * The {@link Range} of valid crustal rupture depths: [0 ‥ 40] km, inclusive.
+   * The {@link Range} of valid crustal rupture depths: [0..40] km, inclusive.
    */
   public static final Range<Double> CRUSTAL_DEPTH_RANGE = Range.closed(0.0, 40.0);
 
   /**
-   * The {@link Range} of valid crustal rupture widths: (0 ‥ 60] km, exclusive,
+   * The {@link Range} of valid crustal rupture widths: (0..60] km, exclusive,
    * inclusive.
    */
   public static final Range<Double> CRUSTAL_WIDTH_RANGE = Range.openClosed(0.0, 60.0);
 
   /**
-   * The {@link Range} of valid intraslab rupture depths: [20 ‥ 700] km,
+   * The {@link Range} of valid intraslab rupture depths: [20..700] km,
    * inclusive.
    */
   public static final Range<Double> SLAB_DEPTH_RANGE = Range.closed(20.0, 700.0);
 
   /**
-   * The {@link Range} of valid interface rupture depths: [0 ‥ 60] km,
+   * The {@link Range} of valid interface rupture depths: [0..60] km,
    * inclusive.
    */
   public static final Range<Double> INTERFACE_DEPTH_RANGE = Range.closed(0.0, 60.0);
 
   /**
-   * The {@link Range} of valid interface rupture widths: (0 ‥ 200] km,
+   * The {@link Range} of valid interface rupture widths: (0..200] km,
    * exclusive, inclusive.
    */
   public static final Range<Double> INTERFACE_WIDTH_RANGE = Range.openClosed(0.0, 200.0);
