@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.data.Data.checkWeightSum;
+import static org.opensha2.data.Data.checkWeights;
 
 import org.opensha2.data.Data;
 import org.opensha2.gmm.Gmm;
@@ -199,7 +199,7 @@ public final class GmmSet {
 
     Builder primaryModelMap(Map<Gmm, Double> gmmWtMap) {
       checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
-      checkWeightSum(gmmWtMap.values());
+      checkWeights(gmmWtMap.values());
       gmmWtMapLo = Maps.immutableEnumMap(gmmWtMap);
       return this;
     }
@@ -211,7 +211,7 @@ public final class GmmSet {
 
     Builder secondaryModelMap(Map<Gmm, Double> gmmWtMap) {
       checkArgument(checkNotNull(gmmWtMap, "Map is null").size() > 0, "Map is empty");
-      checkWeightSum(gmmWtMap.values());
+      checkWeights(gmmWtMap.values());
       gmmWtMapHi = Maps.immutableEnumMap(gmmWtMap);
       return this;
     }

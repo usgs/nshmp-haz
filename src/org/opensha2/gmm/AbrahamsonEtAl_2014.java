@@ -6,7 +6,6 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
 import static org.opensha2.gmm.GmmInput.Field.MW;
@@ -18,8 +17,10 @@ import static org.opensha2.gmm.GmmInput.Field.Z1P0;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import org.opensha2.data.Interpolate;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Range;
 
@@ -54,8 +55,8 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
       .set(MW, Range.closed(3.0, 8.5))
       .setDistances(300.0)
       .set(DIP, Faults.DIP_RANGE)
-      .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)
-      .set(ZTOP, Faults.CRUSTAL_DEPTH_RANGE)
+      .set(WIDTH, Earthquakes.CRUSTAL_WIDTH_RANGE)
+      .set(ZTOP, Earthquakes.CRUSTAL_DEPTH_RANGE)
       .set(RAKE, Faults.RAKE_RANGE)
       .set(VS30, Range.closedOpen(180.0, 1000.0))
       .set(VSINF)
@@ -201,7 +202,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
       // ... rX taper -- Equation 13
       double T3 = 0.0;
-      double r1 = in.width * cos(dip * TO_RAD);
+      double r1 = in.width * cos(dip * Maths.TO_RAD);
       double r2 = 3 * r1;
       if (rX <= r1) {
         double rXr1 = rX / r1;

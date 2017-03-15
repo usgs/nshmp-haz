@@ -1,18 +1,11 @@
 package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkPositionIndex;
-import static com.google.common.base.Strings.repeat;
-import static com.google.common.math.DoubleMath.fuzzyEquals;
-import static java.lang.Double.NaN;
-import static java.lang.Double.POSITIVE_INFINITY;
-import static java.lang.Double.isNaN;
 
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
-import org.opensha2.internal.MathUtils;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -20,29 +13,24 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ImmutableSortedSet.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
-import com.google.common.collect.Table;
 import com.google.common.math.DoubleMath;
 import com.google.common.primitives.Doubles;
-import com.google.common.primitives.Ints;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Utilities for operating on {@code double}-valued data.
  *
- * <p>The methods of this class:
+ * <p>Unless otherwise noted, the methods of this class:
  *
- * <ul><li>Operate on data in place, ruturning a reference to the supplied
+ * <ul><li>Operate on data in place, returning a reference to the supplied
  * data.</li>
+ * 
+ * <li>Are not synchronized.</li>
  *
  * <li>Throw a {@code NullPointerException} when supplied with {@code null}
  * data.</li>
@@ -52,42 +40,34 @@ import java.util.Random;
  * {@link #add(double, double...)}).
  *
  * <li>Throw an {@code IllegalArgumentException} if they operate on all elements
- * of a dataset and yield a singular result, and the supplied dataset is empty,
- * with some documented exceptions.
+ * of a dataset to yield a singular numeric or boolean value, but the supplied
+ * dataset is empty, with some documented exceptions.
  *
  * <li>Throw an {@code IllegalArguementException} if they operate on multiple
  * datasets and the datasets are not the same size.</li>
  *
- * <li>Do not check for finiteness (see {@link Doubles#isFinite(double)}). See
- * {@link Math} for details on the behavior of individual functions referenced
- * herein.</li>
+ * <li>Do not check for finiteness (see {@link Doubles#isFinite(double)}). For
+ * example, any method that operates on data containing {@code Double.NaN} or
+ * infinite values will likely return {@code NaN}s or infinite values as a
+ * result. See the Java {@link Math} class for details on the behavior of
+ * individual functions referenced herein.</li>
  *
- * <li>Do not check for over/underflow.</li></ul>
+ * <li>Do not check for over/under flow.</li></ul>
  *
  * <p>Buyer beware.
  *
- * <p>Furthermore, methods that return a result or information about a supplied
- * data set will typically take a {@code Collection<Double>} as an argument,
- * whereas methods that transform data in place will only take
- * {@code List<Double>}s.
+ * <p>Many methods in this class are overloaded with {@code Collection<Double>}
+ * arguments. Those overloaded methods that return a single result or
+ * information about a supplied data set typically require a
+ * {@code Collection<Double>} as an argument, whereas methods that transform
+ * data in place require a {@code List<Double>} subtype.
  *
  * <p>For other useful {@code Double} utilities, see the Google Guava
  * {@link Doubles} class.
  *
  * @author Peter Powers
- * @see Doubles
  */
 public final class Data {
-
-  // TODO note behavior of NaN, any method that operates on data containing NaN
-  // will likely return NaN as a result
-
-  // TODO should allow empty varargs (see minINdex maxIndex, normalize)
-
-  /*
-   * TODO verify that 'unchecked' variants actually improve performance; in most
-   * cases all that's being done is an array.length comparison
-   */
 
   /*
    * Developer notes:
@@ -99,10 +79,15 @@ public final class Data {
    * Function approach to be only marginally slower, but much more processor
    * intensive suggesting there would be a performance penalty in multi-threaded
    * applications.
+   * 
+   * Unchecked delegate methods for primitive arrays are supplied for package
+   * level use where data integrity is assured.
    * -------------------------------------------------------------------------
    */
 
   private Data() {}
+
+  /* * * * * * * * * * * * * OPERATORS * * * * * * * * * * * * */
 
   /**
    * Add a {@code term} to the elements of {@code data} in place.
@@ -167,8 +152,23 @@ public final class Data {
    * @param data2
    * @return a reference to {@code data1}
    */
+  public static List<Double> add(List<Double> data1, List<Double> data2) {
+    checkSizes(data1, data2);
+    for (int i = 0; i < data1.size(); i++) {
+      data1.set(i, data1.get(i) + data2.get(i));
+    }
+    return data1;
+  }
+
+  /**
+   * Add the values of {@code data2} to {@code data1} in place.
+   *
+   * @param data1
+   * @param data2
+   * @return a reference to {@code data1}
+   */
   public static double[] add(double[] data1, double[] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     return uncheckedAdd(data1, data2);
   }
 
@@ -187,7 +187,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static double[][] add(double[][] data1, double[][] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     for (int i = 0; i < data1.length; i++) {
       add(data1[i], data2[i]);
     }
@@ -209,7 +209,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static double[][][] add(double[][][] data1, double[][][] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     for (int i = 0; i < data1.length; i++) {
       add(data1[i], data2[i]);
     }
@@ -219,21 +219,6 @@ public final class Data {
   static double[][][] uncheckedAdd(double[][][] data1, double[][][] data2) {
     for (int i = 0; i < data1.length; i++) {
       uncheckedAdd(data1[i], data2[i]);
-    }
-    return data1;
-  }
-
-  /**
-   * Add the values of {@code data2} to {@code data1} in place.
-   *
-   * @param data1
-   * @param data2
-   * @return a reference to {@code data1}
-   */
-  public static List<Double> add(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
-    for (int i = 0; i < data1.size(); i++) {
-      data1.set(i, data1.get(i) + data2.get(i));
     }
     return data1;
   }
@@ -268,7 +253,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static List<Double> subtract(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
+    checkSizes(data1, data2);
     for (int i = 0; i < data1.size(); i++) {
       data1.set(i, data1.get(i) - data2.get(i));
     }
@@ -285,7 +270,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static double[] subtract(double[] data1, double[] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     return uncheckedSubtract(data1, data2);
   }
 
@@ -360,14 +345,10 @@ public final class Data {
    * @param data2
    * @return a reference to {@code data1}
    */
-  public static double[] multiply(double[] data1, double[] data2) {
-    checkArgument(data1.length == data2.length);
-    return uncheckedMultiply(data1, data2);
-  }
-
-  static double[] uncheckedMultiply(double[] data1, double[] data2) {
-    for (int i = 0; i < data1.length; i++) {
-      data1[i] *= data2[i];
+  public static List<Double> multiply(List<Double> data1, List<Double> data2) {
+    checkSizes(data1, data2);
+    for (int i = 0; i < data1.size(); i++) {
+      data1.set(i, data1.get(i) * data2.get(i));
     }
     return data1;
   }
@@ -380,10 +361,14 @@ public final class Data {
    * @param data2
    * @return a reference to {@code data1}
    */
-  public static List<Double> multiply(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
-    for (int i = 0; i < data1.size(); i++) {
-      data1.set(i, data1.get(i) * data2.get(i));
+  public static double[] multiply(double[] data1, double[] data2) {
+    checkSizes(data1, data2);
+    return uncheckedMultiply(data1, data2);
+  }
+
+  static double[] uncheckedMultiply(double[] data1, double[] data2) {
+    for (int i = 0; i < data1.length; i++) {
+      data1[i] *= data2[i];
     }
     return data1;
   }
@@ -398,7 +383,7 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static double[] divide(double[] data1, double[] data2) {
-    checkArgument(data1.length == data2.length);
+    checkSizes(data1, data2);
     return uncheckedDivide(data1, data2);
   }
 
@@ -419,25 +404,11 @@ public final class Data {
    * @return a reference to {@code data1}
    */
   public static List<Double> divide(List<Double> data1, List<Double> data2) {
-    checkArgument(data1.size() == data2.size());
+    checkSizes(data1, data2);
     for (int i = 0; i < data1.size(); i++) {
       data1.set(i, data1.get(i) / data2.get(i));
     }
     return data1;
-  }
-
-  /**
-   * Set the elements of {@code data} to their absolute value in place.
-   *
-   * @param data to operate on
-   * @return a reference to the supplied {@code data}
-   * @see Math#abs(double)
-   */
-  public static double[] abs(double... data) {
-    for (int i = 0; i < data.length; i++) {
-      data[i] = Math.abs(data[i]);
-    }
-    return data;
   }
 
   /**
@@ -455,16 +426,15 @@ public final class Data {
   }
 
   /**
-   * Raise Euler's number {@code e} to each of the elements of {@code data} in
-   * place.
+   * Set the elements of {@code data} to their absolute value in place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
-   * @see Math#exp(double)
+   * @see Math#abs(double)
    */
-  public static double[] exp(double... data) {
+  public static double[] abs(double... data) {
     for (int i = 0; i < data.length; i++) {
-      data[i] = Math.exp(data[i]);
+      data[i] = Math.abs(data[i]);
     }
     return data;
   }
@@ -485,15 +455,16 @@ public final class Data {
   }
 
   /**
-   * Take the natural logarithm of the elements of {@code data} in place.
+   * Raise Euler's number {@code e} to each of the elements of {@code data} in
+   * place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
-   * @see Math#log(double)
+   * @see Math#exp(double)
    */
-  public static double[] ln(double... data) {
+  public static double[] exp(double... data) {
     for (int i = 0; i < data.length; i++) {
-      data[i] = Math.log(data[i]);
+      data[i] = Math.exp(data[i]);
     }
     return data;
   }
@@ -513,15 +484,15 @@ public final class Data {
   }
 
   /**
-   * Raise the elements of {@code data} to the power of 10 in place.
+   * Take the natural logarithm of the elements of {@code data} in place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
-   * @see Math#pow(double, double)
+   * @see Math#log(double)
    */
-  public static double[] pow10(double... data) {
+  public static double[] ln(double[] data) {
     for (int i = 0; i < data.length; i++) {
-      data[i] = Math.pow(10, data[i]);
+      data[i] = Math.log(data[i]);
     }
     return data;
   }
@@ -541,15 +512,15 @@ public final class Data {
   }
 
   /**
-   * Take the base-10 logarithm of the elements of {@code data} in place.
+   * Raise the elements of {@code data} to the power of 10 in place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
-   * @see Math#log10(double)
+   * @see Math#pow(double, double)
    */
-  public static double[] log(double... data) {
+  public static double[] pow10(double... data) {
     for (int i = 0; i < data.length; i++) {
-      data[i] = Math.log10(data[i]);
+      data[i] = Math.pow(10, data[i]);
     }
     return data;
   }
@@ -569,13 +540,17 @@ public final class Data {
   }
 
   /**
-   * Flip the sign of the elements of {@code data} in place.
+   * Take the base-10 logarithm of the elements of {@code data} in place.
    *
    * @param data to operate on
    * @return a reference to the supplied {@code data}
+   * @see Math#log10(double)
    */
-  public static double[] flip(double... data) {
-    return multiply(-1, data);
+  public static double[] log(double... data) {
+    for (int i = 0; i < data.length; i++) {
+      data[i] = Math.log10(data[i]);
+    }
+    return data;
   }
 
   /**
@@ -589,15 +564,23 @@ public final class Data {
   }
 
   /**
-   * Sum the elements of {@code data}. Method returns {@code Double.NaN} or
-   * infinite values if {@code data} contains {@code Double.NaN} or infinite
-   * values, respectively. Method returns zero for empty {@code data} argument
-   * or no varargs.
+   * Flip the sign of the elements of {@code data} in place.
+   *
+   * @param data to operate on
+   * @return a reference to the supplied {@code data}
+   */
+  public static double[] flip(double... data) {
+    return multiply(-1, data);
+  }
+
+  /**
+   * Sum the elements of {@code data}. Method returns zero for an empty
+   * {@code data} argument.
    *
    * @param data to sum
    * @return the sum of the supplied values
    */
-  public static double sum(double... data) {
+  public static double sum(Collection<Double> data) {
     double sum = 0;
     for (double d : data) {
       sum += d;
@@ -606,15 +589,13 @@ public final class Data {
   }
 
   /**
-   * Sum the elements of {@code data}. Method returns {@code Double.NaN} or
-   * infinite values if {@code data} contains {@code Double.NaN} or infinite
-   * values, respectively. Method returns zero for an empty {@code data}
-   * argument.
+   * Sum the elements of {@code data}. Method returns zero for empty
+   * {@code data} argument or no varargs.
    *
    * @param data to sum
    * @return the sum of the supplied values
    */
-  public static double sum(Collection<Double> data) {
+  public static double sum(double... data) {
     double sum = 0;
     for (double d : data) {
       sum += d;
@@ -659,15 +640,10 @@ public final class Data {
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    */
-  public static double[] transform(Function<Double, Double> function, double... data) {
+  public static List<Double> transform(Function<Double, Double> function, List<Double> data) {
     checkNotNull(function);
-    return uncheckedTransform(function, data);
-  }
-
-  // TODO behavior test for empty data; can we get rid of null check
-  static double[] uncheckedTransform(Function<Double, Double> function, double... data) {
-    for (int i = 0; i < data.length; i++) {
-      data[i] = function.apply(data[i]);
+    for (int i = 0; i < data.size(); i++) {
+      data.set(i, function.apply(data.get(i)));
     }
     return data;
   }
@@ -679,210 +655,88 @@ public final class Data {
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    */
-  public static List<Double> transform(Function<Double, Double> function, List<Double> data) {
+  public static double[] transform(Function<Double, Double> function, double... data) {
     checkNotNull(function);
+    for (int i = 0; i < data.length; i++) {
+      data[i] = function.apply(data[i]);
+    }
+    return data;
+  }
+
+  private static final String NORM_DATA_ERROR = "Normalize: Data outside range [0..+Inf)";
+  private static final String NORM_SUM_ERROR = "Normalize: Sum outside range (0..+Inf)";
+
+  /**
+   * Normalize the elements of {@code data} in place such that they sum to 1.
+   *
+   * @param data to normalize
+   * @return a reference to the supplied {@code data}
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied, contains values outside the range {@code [0..+Inf)}, or
+   *         sums to a value outside the range {@code (0..+Inf)}
+   */
+  public static List<Double> normalize(List<Double> data) {
+    checkArgument(arePositiveAndRealOrZero(data), NORM_DATA_ERROR);
+    double sum = sum(data);
+    checkArgument(isPositiveAndReal(sum), NORM_SUM_ERROR);
+    double scale = 1.0 / sum;
+    return multiply(scale, data);
+  }
+
+  /**
+   * Normalize the elements of {@code data} in place such that they sum to 1.
+   *
+   * @param data to normalize
+   * @return a reference to the supplied {@code data}
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied, contains values outside the range {@code [0..+Inf)}, or
+   *         sums to a value outside the range {@code (0..+Inf)}
+   */
+  public static double[] normalize(double... data) {
+    checkArgument(arePositiveAndRealOrZero(data), NORM_DATA_ERROR);
+    double sum = sum(data);
+    checkArgument(isPositiveAndReal(sum), NORM_SUM_ERROR);
+    double scale = 1.0 / sum;
+    return multiply(scale, data);
+  }
+
+  /**
+   * Round the elements of {@code data} in place to double values of a specified
+   * scale (precision). Internally, this method uses the rounding and precision
+   * functionality of {@link BigDecimal}.
+   *
+   * @param data to operate on
+   * @param scale decimal precision
+   * @return a reference to the supplied {@code data}
+   * @see Maths#round(double, int)
+   */
+  public static List<Double> round(int scale, List<Double> data) {
     for (int i = 0; i < data.size(); i++) {
-      data.set(i, function.apply(data.get(i)));
+      data.set(i, Maths.round(data.get(i), scale));
     }
     return data;
   }
 
   /**
-   * Find the index of the minimum value in {@code data}. For equivalent minima,
-   * method returns the index of the first minimum encountered. If the supplied
-   * array is empty, method returns {@code -1}.
+   * Round the elements of {@code data} in place to double values of a specified
+   * scale (precision). Internally, this method uses the rounding and precision
+   * functionality of {@link BigDecimal}.
    *
-   * @param data to evaluate
-   * @return the index of the minimum value or {@code -1} if the array is empty
+   * @param data to operate on
+   * @param scale decimal precision
+   * @return a reference to the supplied {@code data}
+   * @see Maths#round(double, int)
    */
-  public static int minIndex(double... data) {
-    int index = -1;
-    double min = Double.POSITIVE_INFINITY;
-    for (int i = 1; i < data.length; i++) {
-      if (data[i] < min) {
-        index = i;
-        min = data[i];
-      }
-    }
-    return index;
-  }
-
-  /**
-   * Find the indices of the minimum value in {@code data}. For equivalent
-   * maxima, method returns the indices of the first minimum encountered. If the
-   * 1st dimension of the supplied array is empty or all arrays in the 2nd
-   * dimension are empty, method returns {@code [-1, -1]}.
-   *
-   * @param data to evaluate
-   * @return the indices of the minimum value or {@code [-1, -1]} for empty
-   *         arrays
-   */
-  public static int[] minIndex(double[][] data) {
-    int index0 = -1;
-    int index1 = -1;
-    double max = Double.POSITIVE_INFINITY;
+  public static double[] round(int scale, double... data) {
     for (int i = 0; i < data.length; i++) {
-      double[] data1 = data[i];
-      for (int j = 0; j < data1.length; j++) {
-        if (data1[j] < max) {
-          index0 = i;
-          index1 = j;
-          max = data1[j];
-        }
-      }
+      data[i] = Maths.round(data[i], scale);
     }
-    return new int[] { index0, index1 };
-  }
-
-  /**
-   * Find the indices of the minimum value in {@code data}. For equivalent
-   * minima, method returns the indices of the first minimum encountered. If the
-   * 1st dimension of the supplied array is empty or all arrays in the 2nd or
-   * 3rd dimensions are empty, method returns {@code [-1, -1, -1]}.
-   *
-   * @param data to evaluate
-   * @return the indices of the minimum value or {@code [-1, -1, -1]} for empty
-   *         arrays
-   */
-  public static int[] minIndex(double[][][] data) {
-    int index0 = -1;
-    int index1 = -1;
-    int index2 = -1;
-    double max = Double.POSITIVE_INFINITY;
-    for (int i = 0; i < data.length; i++) {
-      double[][] data1 = data[i];
-      for (int j = 0; j < data1.length; j++) {
-        double[] data2 = data1[j];
-        for (int k = 0; k < data2.length; k++) {
-          if (data2[k] < max) {
-            index0 = i;
-            index1 = j;
-            index2 = k;
-            max = data2[k];
-          }
-        }
-      }
-    }
-    return new int[] { index0, index1, index2 };
-  }
-
-  /**
-   * Find the index of the maximum value in {@code data}. For equivalent maxima,
-   * method returns the index of the first maximum encountered. If the supplied
-   * array is empty, method returns {@code -1}.
-   *
-   * @param data to evaluate
-   * @return the index of the maximum value or -1 if the array is empty
-   */
-  public static int maxIndex(double... data) {
-    int index = -1;
-    double max = Double.NEGATIVE_INFINITY;
-    for (int i = 1; i < data.length; i++) {
-      if (data[i] > max) {
-        index = i;
-        max = data[i];
-      }
-    }
-    return index;
-  }
-
-  /**
-   * Find the indices of the maximum value in {@code data}. For equivalent
-   * maxima, method returns the indices of the first maximum encountered. If the
-   * 1st dimension of the supplied array is empty or all arrays in the 2nd
-   * dimension are empty, method returns {@code [-1, -1]}.
-   *
-   * @param data to evaluate
-   * @return the indices of the maximum value or {@code [-1, -1]} for empty
-   *         arrays
-   */
-  public static int[] maxIndex(double[][] data) {
-    int index0 = -1;
-    int index1 = -1;
-    double max = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < data.length; i++) {
-      double[] data1 = data[i];
-      for (int j = 0; j < data1.length; j++) {
-        if (data1[j] > max) {
-          index0 = i;
-          index1 = j;
-          max = data1[j];
-        }
-      }
-    }
-    return new int[] { index0, index1 };
-  }
-
-  /**
-   * Find the indices of the maximum value in {@code data}. For equivalent
-   * maxima, method returns the indices of the first maximum encountered. If the
-   * 1st dimension of the supplied array is empty or all arrays in the 2nd or
-   * 3rd dimensions are empty, method returns {@code [-1, -1, -1]}.
-   *
-   * @param data to evaluate
-   * @return the indices of the maximum value or {@code [-1, -1, -1]} for empty
-   *         arrays
-   */
-  public static int[] maxIndex(double[][][] data) {
-    int index0 = -1;
-    int index1 = -1;
-    int index2 = -1;
-    double max = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < data.length; i++) {
-      double[][] data1 = data[i];
-      for (int j = 0; j < data1.length; j++) {
-        double[] data2 = data1[j];
-        for (int k = 0; k < data2.length; k++) {
-          if (data2[k] > max) {
-            index0 = i;
-            index1 = j;
-            index2 = k;
-            max = data2[k];
-          }
-        }
-      }
-    }
-    return new int[] { index0, index1, index2 };
-  }
-
-  /**
-   * Determine whether {@code data} are all positive. Method returns
-   * {@code true} if data is empty or no varargs are supplied.
-   *
-   * @param data to evaluate
-   * @return {@code true} if all values are ≥0; {@code false} otherwise
-   */
-  public static boolean arePositive(double... data) {
-    for (double d : data) {
-      if (d >= 0) {
-        continue;
-      }
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether {@code data} are all positive. Method returns
-   * {@code true} if data is empty.
-   *
-   * @param data to evaluate
-   * @return {@code true} if all values are ≥0
-   */
-  public static boolean arePositive(Collection<Double> data) {
-    for (double d : data) {
-      if (d >= 0) {
-        continue;
-      }
-      return false;
-    }
-    return true;
+    return data;
   }
 
   /**
    * Ensures positivity of values by adding {@code Math.abs(min(data))} in place
-   * if {@code min < 0}. Method returns an empty array if {@code data} is empty
-   * or no varargs are supplied.
+   * if {@code min < 0}.
    *
    * @param data to operate on
    * @return a reference to the supplied data, positivized if necessary
@@ -900,64 +754,6 @@ public final class Data {
   }
 
   /**
-   * Return whether all the elements of {@code data} are equal to 0.
-   * @param data to evaluate
-   */
-  public static boolean isZeroValued(double... data) {
-    for (double d : data) {
-      if (d != 0.0) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Determine whether the elements of {@code data} increase or decrease
-   * monotonically, with a {@code strict} flag indicating if identical adjacent
-   * elements are forbidden. The {@code strict} flag could be {@code true} if
-   * checking the x-values of a function for any steps, or {@code false} if
-   * checking the y-values of a cumulative distribution function, which are
-   * commonly constant.
-   *
-   * @param increasing if {@code true}, descending if {@code false}
-   * @param strict {@code true} if data must always increase or decrease,
-   *        {@code false} if identical adjacent values are permitted
-   * @param data to evaluate
-   * @return {@code true} if monotonic, {@code false} otherwise
-   * @throws IllegalArgumentException if fewer than two data elements are
-   *         supplied
-   */
-  public static boolean isMonotonic(boolean increasing, boolean strict, double... data) {
-    double[] diff = diff(data);
-    if (!increasing) {
-      flip(diff);
-    }
-    double min = Doubles.min(diff);
-    return (strict) ? min > 0 : min >= 0;
-  }
-
-  /**
-   * Compute the difference between {@code test} and {@code target}, relative to
-   * {@code target}, as a percent. If {@code target} is 0, method returns 0 if
-   * {@code test} is also 0, otherwise {@code Double.POSITIVE_INFINITY}. If
-   * either value is {@code Double.NaN}, method returns {@code Double.NaN}.
-   *
-   * @param test value
-   * @param target value
-   * @return the percent difference
-   */
-  public static double percentDiff(double test, double target) {
-    if (isNaN(target) || isNaN(test)) {
-      return NaN;
-    }
-    if (target == 0) {
-      return test == 0 ? 0 : POSITIVE_INFINITY;
-    }
-    return Math.abs(test - target) / target * 100d;
-  }
-
-  /**
    * Build an array of the differences between the adjacent elements of
    * {@code data}. Method returns results in a new array that has
    * {@code data.length - 1} where differences are computed per
@@ -968,8 +764,7 @@ public final class Data {
    * @throws IllegalArgumentException if {@code data.length < 2}
    */
   public static double[] diff(double... data) {
-    checkArgument(data.length > 1);
-    int size = data.length - 1;
+    int size = checkSize(2, data).length - 1;
     double[] diff = new double[size];
     for (int i = 0; i < size; i++) {
       diff[i] = data[i + 1] - data[i];
@@ -977,146 +772,193 @@ public final class Data {
     return diff;
   }
 
-  private static final Range<Double> POS_RANGE = Range.open(0d, Double.POSITIVE_INFINITY);
-
   /**
-   * Normalize the elements of {@code data} in place such that they sum to 1.
+   * Compute the difference between {@code test} and {@code target}, relative to
+   * {@code target}, as a percent. If {@code target == 0}, method returns
+   * {@code 0} if {@code test == 0}, otherwise {@code Double.POSITIVE_INFINITY}.
    *
-   * @param data to normalize
-   * @return a reference to the supplied {@code data}
-   * @throws IllegalArgumentException if {@code data} is empty, contains any
-   *         {@code Double.NaN} or negative values, or sums to a value outside
-   *         the range {@code (0..Double.POSITIVE_INFINITY), exclusive}
+   * @param test value
+   * @param target value
+   * @return {@code 100 * abs(test - target) / target}
+   * @throws IllegalArgumentException if {@code test} or {@code target} are not
+   *         finite.
    */
-  public static double[] normalize(double... data) {
-    checkArgument(data.length > 0);
-    checkArgument(arePositive(data));
-    double sum = sum(data);
-    checkArgument(POS_RANGE.contains(sum));
-    double scale = 1.0 / sum;
-    return multiply(scale, data);
-  }
-
-  /**
-   * Normalize the elements of {@code data} in place such that they sum to 1.
-   *
-   * @param data to normalize
-   * @return a reference to the supplied {@code data}
-   * @throws IllegalArgumentException if {@code data} is empty, contains any
-   *         {@code Double.NaN} or negative values, or sums to a value outside
-   *         the range {@code (0..Double.POSITIVE_INFINITY), exclusive}
-   */
-  public static List<Double> normalize(List<Double> data) {
-    checkArgument(data.size() > 0);
-    checkArgument(arePositive(data));
-    double sum = sum(data);
-    checkArgument(POS_RANGE.contains(sum));
-    double scale = 1d / sum;
-    return multiply(scale, data);
-  }
-
-  /**
-   * Create a {@code double[]} of pseudorandom values.
-   *
-   * @param size of the output array
-   * @param seed for random number generator; may be {@code null}
-   * @return an array of random {@code double}s
-   */
-  public static double[] randomValues(int size, Long seed) {
-    Random random = (seed != null) ? new Random(seed) : new Random();
-    double[] values = new double[size];
-    for (int i = 0; i < size; i++) {
-      values[i] = random.nextDouble();
+  public static double percentDiff(double test, double target) {
+    checkFinite("test", test);
+    checkFinite("target", target);
+    if (target == 0 && test == 0) {
+      return 0;
     }
-    return values;
+    return Math.abs(test - target) / target * 100.0;
   }
 
-  /* * * * * * * * * * * * VALIDATION * * * * * * * * * * * */
-
-  /* Plural form of Guava's checkElementIndex(). */
-  private static void checkElementIndices(Collection<Integer> indices, int size) {
-    for (int index : indices) {
-      checkElementIndex(index, size);
-    }
-  }
+  /* * * * * * * * * * * * * * STATE * * * * * * * * * * * * * */
 
   /**
-   * Verify that a value falls within a specified {@link Range}. Method returns
-   * the supplied value for use inline.
-   *
-   * @param range of allowable values
+   * Determine whether {@code value} is a positive, real number in the range
+   * {@code (0..+Inf)}.
+   * 
    * @param value to validate
-   * @param label indicating type of value being checked; used in exception
-   *        message; may be {@code null}
-   * @return the supplied value for use inline
-   * @throws IllegalArgumentException if value is {@code NaN}
-   * @see Range
    */
-  public static double checkInRange(Range<Double> range, String label, double value) {
-    checkArgument(!Double.isNaN(value), "NaN not allowed");
-    checkArgument(range.contains(value),
-        "%s value %s is not in range %s",
-        Strings.nullToEmpty(label), value, range);
-    return value;
+  static boolean isPositiveAndReal(double value) {
+    return value > 0.0 && value < Double.POSITIVE_INFINITY;
   }
 
   /**
-   * Verify that the domain of a {@code double[]} does not exceed that of the
-   * supplied {@link Range}. Method returns the supplied values for use inline.
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers.
    *
-   * @param range of allowable values
-   * @param values to validate
-   * @param label indicating type of value being checked; used in exception
-   *        message; may be {@code null}
-   * @return the supplied values for use inline
-   * @throws IllegalArgumentException if any value is {@code NaN}
-   * @see Range
+   * @param data to validate
+   * @return {@code true} if all data are in the range {@code (0..+Inf)}; {@code
+   * false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
    */
-  public static double[] checkInRange(Range<Double> range, String label, double... values) {
-    for (int i = 0; i < values.length; i++) {
-      checkInRange(range, label, values[i]);
+  static boolean arePositiveAndReal(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndReal(d)) {
+        return false;
+      }
     }
-    return values;
+    return true;
   }
 
-  private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0.0, 1.0);
-
   /**
-   * Confirm that a weight value is {@code 0.0 < weight ≤ 1.0}. Method returns
-   * the supplied value for use inline.
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers.
    *
-   * @param weight to validate
-   * @return the supplied {@code weight} value
+   * @param data to validate
+   * @return {@code true} if all data are in the range {@code (0..+Inf)}; {@code
+   * false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
    */
-  public static double checkWeight(double weight) {
-    checkInRange(WEIGHT_RANGE, "Weight", weight);
-    return weight;
+  static boolean arePositiveAndReal(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndReal(d)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
-   * Acceptable tolerance when summing weights and comparing to 1.0. Currently
-   * set to 1e-4.
+   * Determine whether {@code value} is a positive, real number in the range
+   * {@code [0..+Inf)}.
+   * 
+   * @param value to validate
    */
-  public static final double WEIGHT_TOLERANCE = 1e-4;
+  static boolean isPositiveAndRealOrZero(double value) {
+    return value >= 0.0 && value < Double.POSITIVE_INFINITY;
+  }
 
   /**
-   * Confirm that a {@code Collection<Double>} of weights sums to 1.0 within
-   * {@link #WEIGHT_TOLERANCE}.
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers, or 0.
    *
-   * @param weights to validate
-   * @return the supplied weights for use inline
-   * @see #WEIGHT_TOLERANCE
+   * @param data to validate
+   * @return {@code true} if all data are in the range {@code [0..+Inf)}; {@code
+   * false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
    */
-  public static Collection<Double> checkWeightSum(Collection<Double> weights) {
-    double sum = sum(weights);
-    checkArgument(fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
-        "Weights Σ %s = %s ≠ 1.0", weights, sum);
-    return weights;
+  static boolean arePositiveAndRealOrZero(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndRealOrZero(d)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
-   * Validate series discretization parameters. Confirms that for a specified
-   * range {@code [min, max]} and {@code Δ} that:
+   * Determine whether the elements of {@code data} are all positive, real
+   * numbers, or 0.
+   *
+   * @param data to validate
+   * @return {@code true} if all data are in the range {@code [0..+Inf)}; {@code
+   * false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
+   */
+  static boolean arePositiveAndRealOrZero(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (!isPositiveAndRealOrZero(d)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} are all equal to 0.
+   * 
+   * @param data to validate
+   * @return {@code true} if all values = 0; {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied
+   */
+  static boolean areZeroValued(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (d != 0.0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether all the elements of {@code data} are equal to 0.
+   * 
+   * @param data to validate
+   * @return {@code true} if all values = 0; {@code false} otherwise
+   * @throws IllegalArgumentException if {@code data} is empty
+   */
+  static boolean areZeroValued(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      if (d != 0.0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determine whether the elements of {@code data} increase or decrease
+   * monotonically.The {@code strict} flag indicates if identical adjacent
+   * elements are forbidden. The {@code strict} flag could be {@code true} if
+   * checking the x-values of a sequence for any steps, or {@code false} if
+   * checking the y-values of a cumulative distribution, which are commonly
+   * constant.
+   *
+   * @param increasing if {@code true}, descending if {@code false}
+   * @param strict {@code true} if data must always increase or decrease, {@code
+   * false} if identical adjacent values are permitted
+   * @param data to validate
+   * @return {@code true} if monotonic, {@code false} otherwise
+   * @throws IllegalArgumentException if fewer than two data elements are
+   *         supplied
+   */
+  static boolean areMonotonic(boolean increasing, boolean strict, double... data) {
+    double[] diff = diff(data);
+    if (!increasing) {
+      flip(diff);
+    }
+    double min = Doubles.min(diff);
+    return (strict) ? min > 0 : min >= 0;
+  }
+
+  /* * * * * * * * * * * * PRECONDITIONS * * * * * * * * * * * */
+
+  private static final String DATA_ERROR = "Data value";
+
+  /**
+   * Ensure validity of sequence discretization parameters. Confirms that for a
+   * specified range {@code [min, max]} and {@code Δ} that:
    *
    * <ul><li>{@code min}, {@code max}, and {@code Δ} are finite</li>
    *
@@ -1134,9 +976,9 @@ public final class Data {
    * @return the supplied {@code Δ} for use inline
    */
   public static double checkDelta(double min, double max, double Δ) {
-    checkFiniteness(min, "min");
-    checkFiniteness(max, "max");
-    checkFiniteness(Δ, "Δ");
+    checkFinite("Sequence minimum", min);
+    checkFinite("Sequence maximum", max);
+    checkFinite("Sequence Δ", Δ);
     checkArgument(max >= min, "min [%s] >= max [%s]", min, max);
     checkArgument(Δ >= 0.0, "Invalid Δ [%s]", Δ);
     if (max > min) {
@@ -1147,16 +989,276 @@ public final class Data {
   }
 
   /**
-   * Checks that a value is finite.
+   * Ensure {@code value} is finite.
    *
-   * @param value to check
    * @param label for value if check fails
-   * @return the supplied value for use inline
+   * @param value to check
+   * @return the validated value
+   * @throws IllegalArgumentException if {@code value} is outside the range
+   *         {@code (-Inf..+Inf)}
    * @see Doubles#isFinite(double)
    */
-  public static double checkFiniteness(double value, String label) {
-    checkArgument(Doubles.isFinite(value), "Non-finite %s value: %s", label, value);
+  public static double checkFinite(String label, double value) {
+    checkArgument(Doubles.isFinite(value), "%s [%s] not finite", label, value);
     return value;
+  }
+
+  /**
+   * Ensure the elements of {@code data} are finite.
+   *
+   * @param data to validate
+   * @return a reference to the supplied {@code data}
+   * @throws IllegalArgumentException if {@code data} is empty, or any elements
+   *         of {@code data} are outside the range {@code (-Inf..+Inf)}
+   * @see Doubles#isFinite(double)
+   */
+  public static Collection<Double> checkFinite(Collection<Double> data) {
+    checkSize(1, data);
+    for (double d : data) {
+      checkFinite(DATA_ERROR, d);
+    }
+    return data;
+  }
+
+  /**
+   * Ensure the elements of {@code data} are finite.
+   *
+   * @param data to validate
+   * @return a reference to the supplied {@code data}
+   * @throws IllegalArgumentException if {@code data} is empty or no varargs are
+   *         supplied, or any elements of {@code data} are outside the range
+   *         {@code (-Inf..+Inf)}
+   * @see Doubles#isFinite(double)
+   */
+  public static double[] checkFinite(double... data) {
+    checkSize(1, data);
+    for (double d : data) {
+      checkFinite(DATA_ERROR, d);
+    }
+    return data;
+  }
+
+  /**
+   * Ensure {@code value} falls within the specified {@link Range}.
+   *
+   * @param range of allowable values
+   * @param label for value if check fails
+   * @param value to validate
+   * @return the supplied {@code value}
+   * @throws IllegalArgumentException if either range endpoint is {@code NaN}. A
+   *         range where both enpoints are {@code NaN} and at least one enpoint
+   *         is closed is permitted; only when <em>both</em> endpoints are
+   *         closed is the value {@code NaN} permitted to the exclusion of all
+   *         other values.
+   */
+  public static double checkInRange(Range<Double> range, String label, double value) {
+    checkArgument(range.contains(value), "%s [%s] not in range %s", label, value, range);
+    return value;
+  }
+
+  /**
+   * Ensure the elements of {@code data} fall within the specified {@link Range}
+   * .
+   *
+   * @param range of allowable values
+   * @param data to validate
+   * @return a reference to the supplied {@code data}
+   * @see #checkInRange(Range, String, double) for exception notes
+   */
+  public static Collection<Double> checkInRange(Range<Double> range, Collection<Double> data) {
+    for (double d : data) {
+      checkInRange(range, DATA_ERROR, d);
+    }
+    return data;
+  }
+
+  /**
+   * Ensure the elements of {@code data} fall within the specified {@link Range}
+   * .
+   *
+   * @param range of allowable values
+   * @param data to validate
+   * @return a reference to the supplied {@code data}
+   * @see #checkInRange(Range, String, double) for exception notes
+   */
+  public static double[] checkInRange(Range<Double> range, double... data) {
+    for (int i = 0; i < data.length; i++) {
+      checkInRange(range, DATA_ERROR, data[i]);
+    }
+    return data;
+  }
+
+  /**
+   * Ensure {@code data.size() ≥ min}.
+   * 
+   * @return a reference to the supplied {@code data}
+   */
+  public static Collection<Double> checkSize(int min, Collection<Double> data) {
+    checkSize(min, data.size());
+    return data;
+  }
+
+  /**
+   * Ensure {@code data.length ≥ min}.
+   * 
+   * @return a reference to the supplied {@code data}
+   */
+  public static double[] checkSize(int min, double[] data) {
+    checkSize(min, data.length);
+    return data;
+  }
+
+  private static void checkSize(int min, int size) {
+    checkArgument(size >= min, "Data size[%s] < minimum[%s]", size, min);
+  }
+
+  /**
+   * Ensure the supplied datasets are the same size.
+   */
+  public static void checkSizes(Collection<Double> data1, Collection<Double> data2) {
+    checkSizes(data1.size(), data2.size());
+  }
+
+  /**
+   * Ensure the supplied datasets are the same size.
+   */
+  public static void checkSizes(double[] data1, double[] data2) {
+    checkSizes(data1.length, data2.length);
+  }
+
+  /**
+   * Ensure the 1<sup>st</sup> dimensions of the supplied datasets are the same
+   * size.
+   */
+  public static void checkSizes(double[][] data1, double[][] data2) {
+    checkSizes(data1.length, data2.length);
+  }
+
+  /**
+   * Ensure the 1<sup>st</sup> dimensions of the supplied datasets are the same
+   * size.
+   */
+  public static void checkSizes(double[][][] data1, double[][][] data2) {
+    checkSizes(data1.length, data2.length);
+  }
+
+  private static void checkSizes(int s1, int s2) {
+    checkArgument(s1 == s2, "Data1.size[%s] ≠ Data2.size[%s]", s1, s2);
+  }
+
+  private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0.0, 1.0);
+  private static final Range<Double> WEIGHT_RANGE_0 = Range.closed(0.0, 1.0);
+  private static final double WEIGHT_TOLERANCE = 1e-4;
+
+  private static double checkWeight(double weight, boolean allowZero) {
+    checkInRange(allowZero ? WEIGHT_RANGE_0 : WEIGHT_RANGE, "Weight", weight);
+    return weight;
+  }
+
+  /**
+   * Ensure {@code 0.0 < weight ≤ 1.0}.
+   *
+   * @return the supplied {@code weight}
+   */
+  public static double checkWeight(double weight) {
+    return checkWeight(weight, false);
+  }
+
+  /**
+   * Ensure each {@code 0.0 ≤ weight ≤ 1.0} and
+   * {@code sum(weights) = 1.0 ± 0.0001}.
+   *
+   * @param weights to validate
+   * @return a reference to the supplied {@code weights}
+   */
+  public static Collection<Double> checkWeights(Collection<Double> weights) {
+    for (double weight : weights) {
+      checkWeight(weight, true);
+    }
+    double sum = sum(weights);
+    checkArgument(DoubleMath.fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
+        "Weights Σ %s = %s ≠ 1.0", weights, sum);
+    return weights;
+  }
+
+  /* * * * * * * * 2D & 3D ARRAYS EXTENSIONS * * * * * * * * */
+
+  /**
+   * Create a deep copy of a two-dimensional data array.
+   *
+   * @param data to copy
+   * @return a new two-dimensional array populated with the values of
+   *         {@code data}
+   */
+  public static double[][] copyOf(double[][] data) {
+    double[][] out = new double[data.length][];
+    for (int i = 0; i < data.length; i++) {
+      out[i] = Arrays.copyOf(data[i], data[i].length);
+    }
+    return out;
+  }
+
+  /**
+   * Create a deep copy of a three-dimensional data array.
+   *
+   * @param data to copy
+   * @return a new three-dimensional array populated with the values of
+   *         {@code data}
+   */
+  public static double[][][] copyOf(double[][][] data) {
+    double[][][] out = new double[data.length][][];
+    for (int i = 0; i < data.length; i++) {
+      out[i] = copyOf(data[i]);
+    }
+    return out;
+  }
+
+  /**
+   * Format a two-dimensional data array for printing.
+   *
+   * @param data to format
+   * @return a string representation of the supplied {@code data}
+   */
+  public static String toString(double[][] data) {
+    return toString(data, 1);
+  }
+
+  /* To support indenting of multidimensional arrays */
+  private static String toString(double[][] data, int indent) {
+    StringBuilder sb = new StringBuilder("[");
+    for (int i = 0; i < data.length; i++) {
+      if (i > 0) {
+        sb.append(",").append(NEWLINE);
+        sb.append(Strings.repeat(" ", indent));
+      }
+      sb.append(Arrays.toString(data[i]));
+    }
+    sb.append("]");
+    return sb.toString();
+  }
+
+  /**
+   * Format a three-dimensional data array for printing
+   *
+   * @param data to format
+   * @return a string representation of the supplied {@code data}
+   */
+  public static String toString(double[][][] data) {
+    return toString(data, 1);
+  }
+
+  /* To support indenting of multidimensional arrays */
+  private static String toString(double[][][] data, int indent) {
+    StringBuilder sb = new StringBuilder("[");
+    for (int i = 0; i < data.length; i++) {
+      if (i > 0) {
+        sb.append(",").append(NEWLINE);
+        sb.append(Strings.repeat(" ", indent));
+      }
+      sb.append(toString(data[i], indent + 1));
+    }
+    sb.append("]");
+    return sb.toString();
   }
 
   /*
@@ -1172,48 +1274,6 @@ public final class Data {
    *
    * Everything below needs review
    */
-
-  /*
-   * Some quick tests of abs() and scale() using a non-Function based approach
-   * and hence no autoboxing showed only marginal slowdown over a 10^8 sized
-   * array of random values. If profiling shows that in practice the function
-   * based approach of transforming arrays is slow, primitive implementations
-   * may be substituted. See DubblesTest for speed test.
-   *
-   * Similarly, boolean tests such as isSorted() could be short-circuited to
-   * return at the first failure. However, there is more reusable code in the
-   * current implementation that is easier to follow. Again, this will may be
-   * changed if there is a demonstrable performance hit.
-   *
-   * We could probably intern commonly used scale functions.
-   */
-
-  // private static final Range<Double> WEIGHT_RANGE = Range.openClosed(0d,
-  // 1d);
-
-  // /**
-  // * Return the index of the first array element that is equal than
-  // * {@code value}.
-  // *
-  // * @param data to examine
-  // * @param value to search for
-  // * @throws IllegalArgumentException all elements of {@code data} are less
-  // than {@code value}. Exception is thrown lazily
-  // * when iteration completes without any {@code data} element exceeding
-  // {@code value}.
-  // */
-  // public static int firstGreaterThanIndex(int[] data, double value) {
-  // checkNotNull(data);
-  // for (int i = 0; i < data.length; i++) {
-  // int cf = DoubleMath.fuzzyCompare(data[i], value, 1e-8);
-  // if (cf > 0) return i;
-  // }
-  // String mssg =
-  // String.format("Value [%s] is larger than maximum array value [%s].",
-  // value,
-  // Doubles.max(data));
-  // throw new IllegalArgumentException(mssg);
-  // }
 
   /**
    * Creates a sequence of evenly spaced values starting at {@code min} and
@@ -1237,7 +1297,7 @@ public final class Data {
   public static double[] buildCleanSequence(double min, double max, double step,
       boolean ascending, int scale) {
     double[] seq = buildSequence(min, max, step, ascending);
-    return clean(scale, seq);
+    return round(scale, seq);
   }
 
   /**
@@ -1331,109 +1391,6 @@ public final class Data {
     return combined;
   }
 
-  /**
-   * 'Clean' the elements of {@code data} in place to be double values of a
-   * specified scale/precision. Internally, this method uses the rounding and
-   * precision functionality of {@link BigDecimal}.
-   *
-   * @param data to operate on
-   * @param scale decimal precision
-   * @return a reference to the 'cleaned', supplied {@code data}
-   */
-  public static double[] clean(int scale, double... data) {
-    // TODO should check that scale is > 0
-    return transform(new Clean(scale), data);
-  }
-
-  private static class Clean implements Function<Double, Double> {
-    private final int scale;
-
-    private Clean(int scale) {
-      this.scale = scale;
-    }
-
-    @Override
-    public Double apply(Double d) {
-      return MathUtils.round(d, scale);
-    }
-  }
-
-  /**
-   * Create a deep copy of a two-dimensional data array.
-   *
-   * @param data to copy
-   * @return a new two-dimensional array populated with the values of
-   *         {@code data}
-   */
-  public static double[][] copyOf(double[][] data) {
-    double[][] out = new double[data.length][];
-    for (int i = 0; i < data.length; i++) {
-      out[i] = Arrays.copyOf(data[i], data[i].length);
-    }
-    return out;
-  }
-
-  /**
-   * Create a deep copy of a three-dimensional data array.
-   *
-   * @param data to copy
-   * @return a new three-dimensional array populated with the values of
-   *         {@code data}
-   */
-  public static double[][][] copyOf(double[][][] data) {
-    double[][][] out = new double[data.length][][];
-    for (int i = 0; i < data.length; i++) {
-      out[i] = copyOf(data[i]);
-    }
-    return out;
-  }
-
-  /**
-   * Format a two-dimensional data array for printing.
-   *
-   * @param data to format
-   * @return a string representation of the supplied {@code data}
-   */
-  public static String toString(double[][] data) {
-    return toString(data, 1);
-  }
-
-  /* To support indenting of multidimensional arrays */
-  private static String toString(double[][] data, int indent) {
-    StringBuilder sb = new StringBuilder("[");
-    for (int i = 0; i < data.length; i++) {
-      if (i > 0) {
-        sb.append(",").append(NEWLINE).append(repeat(" ", indent));
-      }
-      sb.append(Arrays.toString(data[i]));
-    }
-    sb.append("]");
-    return sb.toString();
-  }
-
-  /**
-   * Format a three-dimensional data array for printing
-   *
-   * @param data to format
-   * @return a string representation of the supplied {@code data}
-   */
-  public static String toString(double[][][] data) {
-    return toString(data, 1);
-  }
-
-  /* To support indenting of multidimensional arrays */
-  private static String toString(double[][][] data, int indent) {
-    StringBuilder sb = new StringBuilder("[");
-    for (int i = 0; i < data.length; i++) {
-      if (i > 0) {
-        sb.append(",").append(NEWLINE).append(repeat(" ", indent));
-      }
-      sb.append(toString(data[i], indent + 1));
-    }
-    sb.append("]");
-    return sb.toString();
-  }
-
   // TODO clean
   // /**
   // * Validates the domain of a {@code double} data set. Method verifies
@@ -1489,255 +1446,5 @@ public final class Data {
   // value <= max;
   // checkArgument(expression, "value");
   // }
-
-  /**
-   * Create an {@code int[]} of values ascending from {@code 0} to
-   * {@code 1-size}.
-   *
-   * @param size of output array
-   * @return an index array
-   */
-  public static int[] indices(int size) {
-    return indices(0, size - 1);
-  }
-
-  /**
-   * Create an {@code int[]} of values spanning {@code from} to {@code to},
-   * inclusive. Sequence will be descending if {@code from} is greater than
-   * {@code to}.
-   *
-   * @param from start value
-   * @param to end value
-   * @return an int[] sequence
-   */
-  public static int[] indices(int from, int to) {
-    int size = Math.abs(from - to) + 1;
-    int[] indices = new int[size];
-    int step = from < to ? 1 : -1;
-    for (int i = 0; i < size; i++) {
-      indices[i] = from + i * step;
-    }
-    return indices;
-  }
-
-  /**
-   * Create an index {@code List} of pointers to sorted {@code data}. Say you
-   * have a number of {@code List<Double>}s and want to iterate them according
-   * to the sort order of one of them. Supply this method with the desired
-   * {@code data} and use the returned indices in a custom iterator, leaving all
-   * original data in place.
-   *
-   * <p><b>Notes:</b><ul><li>The supplied data should not be sorted.</li>
-   * <li>This method does not modify the supplied {@code data} in any
-   * way.</li><li>Any {@code NaN}s in {@code data} are placed at the start of
-   * the sort order, regardless of sort direction.</li><ul>
-   *
-   * @param data to provide sort indices for
-   * @param ascending if {@code true}, descending if {@code false}
-   * @return an index {@code List}
-   */
-  public static List<Integer> sortedIndices(List<Double> data, boolean ascending) {
-    checkArgument(data.size() > 0);
-    List<Integer> indices = Ints.asList(indices(data.size()));
-    Collections.sort(indices, new IndexComparator(data, ascending));
-    return indices;
-  }
-
-  /*
-   * A comparator for ascending sorting of an index array based on the supplied
-   * double array of data.
-   */
-  private static class IndexComparator implements Comparator<Integer> {
-    List<Double> data;
-    boolean ascending;
-
-    IndexComparator(List<Double> data, boolean ascending) {
-      this.data = data;
-      this.ascending = ascending;
-    }
-
-    @Override
-    public int compare(Integer i1, Integer i2) {
-      double d1 = data.get(ascending ? i1 : i2);
-      double d2 = data.get(ascending ? i2 : i1);
-      return (d1 < d2) ? -1 : (d1 == d2) ? 0 : 1;
-    }
-  }
-
-  /*
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   * TODO clean below
-   */
-
-  /**
-   * Returns the key associated with the minimum value in the supplied dataset.
-   * One use case for this method might be to find the column key associated
-   * with a particular data set (or row) in a {@link Table}.
-   * @param keys to lookup in {@code Map<K, Double>}; if {@code keys == null}
-   *        then all values in the data set are evaluated
-   * @param data Map<K, Double> to operate on
-   * @throws IllegalArgumentException if {@code data} or {@code keys} are empty
-   * @return the key corresponding to the minimum value
-   * @see Table
-   */
-  public static <K> K minKey(Map<K, Double> data, Collection<K> keys) {
-    checkArgument(data.size() > 0, "data map is empty");
-    if (keys == null) {
-      keys = data.keySet();
-    }
-    checkArgument(keys.size() > 0, "keys are empty");
-    K minKey = null;
-    double minVal = Double.MAX_VALUE;
-    for (K key : keys) {
-      Double val = checkNotNull(data.get(key), "no value for key in map");
-      if (val < minVal) {
-        minVal = val;
-        minKey = key;
-      }
-    }
-    return minKey;
-  }
-
-  /**
-   * Return an index array corresponding to the 'set' bits of the supplied
-   * {@code BitSet}.
-   *
-   * @param bits to operate on
-   * @return the indices of 'set' bits
-   */
-  public static int[] bitsToIndices(BitSet bits) {
-    int[] indices = new int[bits.cardinality()];
-    int index = 0;
-    for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
-      indices[index++] = i;
-    }
-    return indices;
-  }
-
-  /**
-   * Return a {@code BitSet} with {@code capacity} and with all bits at
-   * {@code indices} 'set'.
-   *
-   * @param indices to operate on
-   * @param capacity of returned {@code BitSet}
-   */
-  public static BitSet indicesToBits(List<Integer> indices, int capacity) {
-    checkArgument(capacity > 0, "BitSet capacity [%s] must be > 0", capacity);
-    checkElementIndices(indices, capacity);
-    BitSet bits = new BitSet(capacity);
-    for (int index : indices) {
-      bits.set(index);
-    }
-    return bits;
-  }
-
-  /**
-   * Nearest neighbor binning algorithm after Silverman, B. W. (1986),
-   * <em>Density Estimation for Statistics and Data Analysis</em>, Chapman &
-   * Hall, New York. This method is a density estimator that uses variable width
-   * binning with a fixed sample size per bin that better reflects the
-   * distribution of the underlying data. It is particularly useful when workgin
-   * with power-law distributed data. Bin widths are computed as the difference
-   * between the last values in adjacent bins. In the case of the 1st bin, the
-   * supplied origin is taken as the "last value" of the previous bin. Bin
-   * positions are set from the median value in each bin. Note that the supplied
-   * {@code data} is not modified; this method uses a copy internally. In most
-   * cases, data will be fairly continuous in X, however, for small {@code size}
-   * s it's possible to have bins of identical values such that corresponding
-   * bin value is Infinity. Such values are not included in the resultant data
-   * set.
-   *
-   * @param data to be binned
-   * @param origin for binning
-   * @param size of each bin
-   * @return an {@code XY_DataGroup} of the binned distribution or {@code null}
-   *         if the binned distribution is empty
-   * @throws NullPointerException if the supplied {@code data} is {@code null}
-   * @throws IllegalArgumentException if supplied {@code data} is empty, the bin
-   *         {@code size} is <1, or the {@code origin} is greater than all
-   *         {@code data} values
-   */
-  // NOTE commented out because unused; is probably useful and should be
-  // archived
-  // dependency on commons-math StatUtils.percentile
-  // @Deprecated public static DefaultXY_DataSet nearestNeighborHist(double[]
-  // data, double origin,
-  // int size) {
-  // checkNotNull(data, "Supplied data is null");
-  // checkArgument(data.length > 0, "Supplied data is empty");
-  // checkArgument(size > 0, "Bin size can't be less than 1");
-  // double[] localData = Arrays.copyOf(data, data.length);
-  // Arrays.sort(localData);
-  // int startIndex = Arrays.binarySearch(localData, origin);
-  // checkArgument(startIndex < localData.length,
-  // "Origin is greater than all data values");
-  // startIndex = (startIndex > 0) ? startIndex : -startIndex - 1;
-  // // for multipe identical values, binary search may not return
-  // // the lowest index so walk down
-  // while (startIndex > 0 && origin == localData[startIndex - 1])
-  // startIndex--;
-  // // trim data
-  // localData = Arrays.copyOfRange(localData, startIndex, localData.length);
-  // int binCount = (int) Math.floor(localData.length / size);
-  // // bail on an empty distribution
-  // if (binCount == 0) return null;
-  // List<Double> x = new ArrayList<Double>();
-  // List<Double> y = new ArrayList<Double>();
-  // double binLo, binHi, binDelta;
-  // for (int i = 0; i < binCount; i++) {
-  // int datIndex = i * size;
-  // binLo = (i == 0) ? origin : localData[datIndex - 1];
-  // binHi = localData[datIndex + size - 1];
-  // binDelta = binHi - binLo;
-  // // bail on intervals of identical values
-  // if (binDelta == 0) continue;
-  // y.add(size / (binHi - binLo));
-  // x.add(StatUtils.percentile(localData, datIndex, size, 50.0));
-  // }
-  // // bail on empty distribution
-  // return (x.isEmpty()) ? null : new DefaultXY_DataSet(x, y);
-  // }
-
-  /**
-   * Creates a new array from the values in a source array at the specified
-   * indices. Returned array is of same type as source.
-   *
-   * @param array array source
-   * @param indices index values of items to select
-   * @return a new array of values at indices in source
-   * @throws NullPointerException if {@code array} or {@code indices} are
-   *         {@code null}
-   * @throws IllegalArgumentException if data object is not an array or if data
-   *         array is empty
-   * @throws IndexOutOfBoundsException if any indices are out of range
-   */
-  @Deprecated
-  public static Object arraySelect(Object array, int[] indices) {
-    // NOTE was this from Temblor??
-    checkNotNull(array, "Supplied data array is null");
-    checkNotNull(indices, "Supplied index array is null");
-    checkArgument(array.getClass().isArray(), "Data object supplied is not an array");
-    int arraySize = Array.getLength(array);
-    checkArgument(arraySize != 0, "Supplied data array is empty");
-
-    // validate indices
-    for (int i = 0; i < indices.length; i++) {
-      checkPositionIndex(indices[i], arraySize, "Supplied index");
-    }
-
-    Class<? extends Object> srcClass = array.getClass().getComponentType();
-    Object out = Array.newInstance(srcClass, indices.length);
-    for (int i = 0; i < indices.length; i++) {
-      Array.set(out, i, Array.get(array, indices[i]));
-    }
-    return out;
-  }
 
 }

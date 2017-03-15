@@ -9,14 +9,14 @@ import static java.lang.Math.tan;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
-import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.internal.MathUtils.hypot;
+import static org.opensha2.util.Maths.hypot;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Locations;
+import org.opensha2.util.Maths;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -100,7 +100,7 @@ class PointSourceFinite extends PointSource {
     if (mech != STRIKE_SLIP) {
       mechWt *= 0.5;
     }
-    double dipRad = mech.dip() * TO_RAD;
+    double dipRad = mech.dip() * Maths.TO_RAD;
 
     double maxWidthDD = (depthModel.maxDepth - zTop) / sin(dipRad);
     double widthDD = rupScaling.dimensions(mag, maxWidthDD).width;

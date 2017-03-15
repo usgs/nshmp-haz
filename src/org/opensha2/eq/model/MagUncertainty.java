@@ -16,7 +16,7 @@ import static org.opensha2.internal.SourceElement.ALEATORY;
 import static org.opensha2.internal.SourceElement.EPISTEMIC;
 import static org.opensha2.internal.SourceElement.MAG_UNCERTAINTY;
 
-import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.Earthquakes;
 
 import org.w3c.dom.Element;
 
@@ -74,7 +74,7 @@ public class MagUncertainty {
     mu.epiWeights = epiWeights;
     mu.epiCount = mu.epiDeltas.length;
     mu.hasEpistemic = mu.epiCount > 1;
-    mu.epiCutoff = Magnitudes.checkMagnitude(epiCutoff);
+    mu.epiCutoff = Earthquakes.checkMagnitude(epiCutoff);
 
     checkArgument(aleaSigma >= 0);
     checkArgument(aleaCount < 40);
@@ -82,7 +82,7 @@ public class MagUncertainty {
     mu.aleaCount = aleaCount;
     mu.moBalance = moBalance;
     mu.hasAleatory = mu.aleaCount > 1 && mu.aleaSigma != 0.0;
-    mu.aleaCutoff = Magnitudes.checkMagnitude(aleaCutoff);
+    mu.aleaCutoff = Earthquakes.checkMagnitude(aleaCutoff);
 
     return mu;
   }

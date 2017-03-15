@@ -177,12 +177,12 @@ public final class IntervalData {
 
     @Override
     public int minIndex() {
-      return Data.minIndex(data);
+      return Indexing.minIndex(data);
     }
 
     @Override
     public int maxIndex() {
-      return Data.maxIndex(data);
+      return Indexing.maxIndex(data);
     }
   }
 
@@ -311,12 +311,12 @@ public final class IntervalData {
 
     @Override
     public int[] minIndex() {
-      return Data.minIndex(data);
+      return Indexing.minIndex(data);
     }
 
     @Override
     public int[] maxIndex() {
-      return Data.maxIndex(data);
+      return Indexing.maxIndex(data);
     }
   }
 
@@ -487,12 +487,12 @@ public final class IntervalData {
 
     @Override
     public int[] minIndex() {
-      return Data.minIndex(data);
+      return Indexing.minIndex(data);
     }
 
     @Override
     public int[] maxIndex() {
-      return Data.maxIndex(data);
+      return Indexing.maxIndex(data);
     }
   }
 

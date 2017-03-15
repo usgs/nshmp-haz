@@ -3,9 +3,9 @@ package org.opensha2.eq.model;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
-import static org.opensha2.eq.fault.Faults.validateInterfaceDepth;
-import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
-import static org.opensha2.eq.fault.Faults.validateTrace;
+import static org.opensha2.eq.Earthquakes.checkInterfaceDepth;
+import static org.opensha2.eq.Earthquakes.checkInterfaceWidth;
+import static org.opensha2.eq.fault.Faults.checkTrace;
 import static org.opensha2.eq.model.SourceType.INTERFACE;
 
 import org.opensha2.eq.fault.surface.ApproxGriddedSurface;
@@ -122,20 +122,19 @@ public class InterfaceSource extends FaultSource {
 
     @Override
     Builder depth(double depth) {
-      this.depth = validateInterfaceDepth(depth);
+      this.depth = checkInterfaceDepth(depth);
       return this;
     }
 
     @Override
     Builder width(double width) {
-      this.width = validateInterfaceWidth(width);
+      this.width = checkInterfaceWidth(width);
       return this;
     }
 
     Builder lowerTrace(LocationList trace) {
       checkNotNull(this.trace, "Upper trace must be set first");
-      validateTrace(trace);
-      this.lowerTrace = trace;
+      this.lowerTrace = checkTrace(trace);
       return this;
     }
 

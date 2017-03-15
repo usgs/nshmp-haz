@@ -11,7 +11,7 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.gmm.Imt.PGA;
 
-import org.opensha2.eq.fault.Faults;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.gmm.GmmInput.Constraints;
 
 import com.google.common.collect.Range;
@@ -57,7 +57,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(5.0, 9.5))
       .set(RRUP, Range.closed(0.0, 1000.0))
-      .set(ZTOP, Faults.SLAB_DEPTH_RANGE)
+      .set(ZTOP, Earthquakes.SLAB_DEPTH_RANGE)
       .set(VS30, Range.closed(150.0, 1000.0))
       .build();
 

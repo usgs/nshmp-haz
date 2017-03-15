@@ -6,7 +6,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
-import static org.opensha2.eq.Magnitudes.magToMoment_N_m;
+import static org.opensha2.eq.Earthquakes.magToMoment;
 
 import org.opensha2.data.Data;
 import org.opensha2.data.XySequence;
@@ -59,7 +59,7 @@ public final class Mfds {
    * @return a new {@code IncrementalMfd}
    */
   public static IncrementalMfd newSingleMoBalancedMFD(double mag, double moRate, boolean floats) {
-    double cumRate = moRate / magToMoment_N_m(mag);
+    double cumRate = moRate / magToMoment(mag);
     return newSingleMFD(mag, cumRate, floats);
   }
 
@@ -203,16 +203,16 @@ public final class Mfds {
    */
   private static void taper(GutenbergRichterMfd mfd, double mCorner) {
 
-    double minMo = magToMoment_N_m(SMALL_MO_MAG);
-    double cornerMo = magToMoment_N_m(mCorner);
-    double largeMo = magToMoment_N_m(TAPERED_LARGE_MAG);
+    double minMo = magToMoment(SMALL_MO_MAG);
+    double cornerMo = magToMoment(mCorner);
+    double largeMo = magToMoment(TAPERED_LARGE_MAG);
     double beta = mfd.get_bValue() / 1.5;
     double binHalfWidth = mfd.getDelta() / 2.0;
 
     for (int i = 0; i < mfd.getNum(); i++) {
       double mag = mfd.getX(i);
-      double magMoLo = magToMoment_N_m(mag - binHalfWidth);
-      double magMoHi = magToMoment_N_m(mag + binHalfWidth);
+      double magMoLo = magToMoment(mag - binHalfWidth);
+      double magMoHi = magToMoment(mag + binHalfWidth);
 
       double magBinCountTapered = magBinCount(minMo, magMoLo, magMoHi, beta, cornerMo);
       double magBinCount = magBinCount(minMo, magMoLo, magMoHi, beta, largeMo);
@@ -270,7 +270,7 @@ public final class Mfds {
     double M;
     for (int i = 0; i < nMag; i++) {
       M = mMin + i * dMag;
-      moRate += grRate(a, b, M) * magToMoment_N_m(M);
+      moRate += grRate(a, b, M) * magToMoment(M);
     }
     return moRate;
   }

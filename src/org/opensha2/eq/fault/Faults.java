@@ -1,24 +1,19 @@
 package org.opensha2.eq.fault;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.Math.sin;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.geo.GeoTools.PI_BY_2;
-import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.geo.GeoTools.TWOPI;
 import static org.opensha2.geo.Locations.azimuth;
 import static org.opensha2.geo.Locations.azimuthRad;
 import static org.opensha2.geo.Locations.horzDistance;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
 
-import org.opensha2.data.Data;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.LocationVector;
 import org.opensha2.geo.Locations;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -28,196 +23,81 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Fault utilities.
+ * Constants and utility methods pertaining to faults.
  *
  * @author Peter Powers
  */
 public final class Faults {
 
-  /**
-   * The {@link Range} of valid fault strikes: [0 ‥ 360]°, inclusive.
-   */
-  public static final Range<Double> STRIKE_RANGE = Range.closed(0.0, 360.0);
+  private Faults() {}
 
-  /**
-   * The {@link Range} of valid fault dips: [0 ‥ 90]°, inclusive.
-   */
+  /** Supported fault dips: {@code [0..90]°}. */
   public static final Range<Double> DIP_RANGE = Range.closed(0.0, 90.0);
 
-  /**
-   * The {@link Range} of valid fault rakes: [180 ‥ 180]°, inclusive.
-   */
+  /** Supported fault rakes: {@code [-180..180]°}. */
   public static final Range<Double> RAKE_RANGE = Range.closed(-180.0, 180.0);
 
-  // TODO adjust Faults.CRUSTAL_DEPTH_RANGE CB14 restricts to 20 km
-  // and the PEER database is pretty comprehensive
+  /** Supported fault strikes: {@code [0..360)°}. */
+  public static final Range<Double> STRIKE_RANGE = Range.closedOpen(0.0, 360.0);
 
   /**
-   * The {@link Range} of valid crustal rupture depths: [0 ‥ 40] km, inclusive.
-   */
-  public static final Range<Double> CRUSTAL_DEPTH_RANGE = Range.closed(0.0, 40.0);
-
-  /**
-   * The {@link Range} of valid crustal rupture widths: (0 ‥ 60] km, exclusive,
-   * inclusive.
-   */
-  public static final Range<Double> CRUSTAL_WIDTH_RANGE = Range.openClosed(0.0, 60.0);
-
-  /**
-   * The {@link Range} of valid intraslab rupture depths: [20 ‥ 700] km,
-   * inclusive.
-   */
-  public static final Range<Double> SLAB_DEPTH_RANGE = Range.closed(20.0, 700.0);
-
-  /**
-   * The {@link Range} of valid interface rupture depths: [0 ‥ 60] km,
-   * inclusive.
-   */
-  public static final Range<Double> INTERFACE_DEPTH_RANGE = Range.closed(0.0, 60.0);
-
-  /**
-   * The {@link Range} of valid interface rupture widths: (0 ‥ 200] km,
-   * exclusive, inclusive.
-   */
-  public static final Range<Double> INTERFACE_WIDTH_RANGE = Range.openClosed(0.0, 200.0);
-
-  /**
-   * Verifies that {@code dip} is within {@link #DIP_RANGE}.
+   * Ensure {@code 0° ≤ dip ≤ 90°}.
    *
    * @param dip to validate
-   * @return the supplied dip for use inline
-   * @throws IllegalArgumentException if {@code dip} is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @return the validated dip
+   * @throws IllegalArgumentException if {@code dip} is outside the range
+   *         {@code [0..90]°}
    */
-  public static double validateDip(double dip) {
+  public static double checkDip(double dip) {
     return checkInRange(DIP_RANGE, "Dip", dip);
   }
 
   /**
-   * Verifies that {@code strike} is within {@link #STRIKE_RANGE}.
+   * Ensure {@code 0° ≤ strike < 360°}.
    *
    * @param strike to validate
-   * @return the supplied strike for use inline
-   * @throws IllegalArgumentException if {@code strike} is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @return the validated strike
+   * @throws IllegalArgumentException if {@code strike} is outside the range
+   *         {@code [0..360)°}
    */
-  public static double validateStrike(double strike) {
+  public static double checkStrike(double strike) {
     return checkInRange(STRIKE_RANGE, "Strike", strike);
   }
 
   /**
-   * Verifies that {@code rake} is within {@link #RAKE_RANGE}.
+   * Ensure {@code -180° ≤ rake ≤ 180°}.
    *
    * @param rake to validate
-   * @return the supplied rake for use inline
-   * @throws IllegalArgumentException if {@code rake} is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @return the validated rake
+   * @throws IllegalArgumentException if {@code rake} is outside the range
+   *         {@code [-180..180]°}
    */
-  public static double validateRake(double rake) {
+  public static double checkRake(double rake) {
     return checkInRange(RAKE_RANGE, "Rake", rake);
   }
 
   /**
-   * Verifies that {@code depth} is within {@link #CRUSTAL_DEPTH_RANGE}.
+   * Ensure {@code trace} contains at least two points.
    *
-   * @param depth to validate (positive down)
-   * @return the supplied depth for use inline
-   * @throws IllegalArgumentException if {@code depth} is out of range
-   * @see Data#checkInRange(Range, String, double)
+   * @param trace to validate
+   * @return the validated trace
+   * @throws IllegalArgumentException if {@code trace.size() < 2}
    */
-  public static double validateDepth(double depth) {
-    return checkInRange(CRUSTAL_DEPTH_RANGE, "Depth", depth);
-  }
-
-  /**
-   * Verifies that {@code depth} value is within {@link #SLAB_DEPTH_RANGE}.
-   *
-   * @param depth to validate (positive down)
-   * @return the supplied depth for use inline
-   * @throws IllegalArgumentException if {@code depth} is out of range
-   * @see Data#checkInRange(Range, String, double)
-   */
-  public static double validateSlabDepth(double depth) {
-    return checkInRange(SLAB_DEPTH_RANGE, "Subduction Slab Depth", depth);
-  }
-
-  /**
-   * Verifies that {@code depth} is within {@link #INTERFACE_DEPTH_RANGE}.
-   *
-   * @param depth to validate (positive down)
-   * @return the supplied depth for use inline
-   * @throws IllegalArgumentException if {@code depth} is out of range
-   * @see Data#checkInRange(Range, String, double)
-   */
-  public static double validateInterfaceDepth(double depth) {
-    return checkInRange(INTERFACE_DEPTH_RANGE, "Subduction Interface Depth", depth);
-  }
-
-  /**
-   * Verifies that {@code width} is within {@link #CRUSTAL_WIDTH_RANGE}.
-   *
-   * @param width to validate
-   * @return the supplied width for use inline
-   * @throws IllegalArgumentException if {@code width} is out of range
-   * @see Data#checkInRange(Range, String, double)
-   */
-  public static double validateWidth(double width) {
-    return checkInRange(CRUSTAL_WIDTH_RANGE, "Width", width);
-  }
-
-  /**
-   * Verifies that {@code width} is within {@link #INTERFACE_WIDTH_RANGE}.
-   *
-   * @param width to validate
-   * @return the supplied width for use inline
-   * @throws IllegalArgumentException if {@code width} is out of range
-   * @see Data#checkInRange(Range, String, double)
-   */
-  public static double validateInterfaceWidth(double width) {
-    return checkInRange(INTERFACE_WIDTH_RANGE, "Subduction Interface Width", width);
-  }
-
-  /**
-   * Ensures that a {@code LocationList} contains at least two points and is not
-   * {@code null}.
-   *
-   * @param trace
-   * @return the supplied trace for use inline
-   */
-  public static LocationList validateTrace(LocationList trace) {
-    checkArgument(checkNotNull(trace).size() > 1, "Trace must have at least 2 points");
+  public static LocationList checkTrace(LocationList trace) {
+    checkArgument(trace.size() > 1, "Fault trace must have at least 2 points");
     return trace;
   }
 
-  // /**
-  // * Checks that the rake angle fits within the definition<p> <code>-180 <=
-  // * rake <= 180</code><p>
-  // * @param rake Angle to validate
-  // * @throws InvalidRangeException Thrown if not valid angle
-  // */
-  // public static void assertValidRake(double rake)
-  // throws InvalidRangeException {
-  //
-  // if (rake < -180)
-  // throw new InvalidRangeException(S3 +
-  // "Rake angle cannot be less than -180");
-  // if (rake > 180)
-  // throw new InvalidRangeException(S3 +
-  // "Rake angle cannot be greater than 180");
-  // }
-  //
-  // /**
-  // * Returns the given angle in the range <code>-180 <= rake <= 180</code>
-  // *
-  // * @param angle
-  // */
-  // public static double getInRakeRange(double angle) {
-  // while (angle > 180)
-  // angle -= 360;
-  // while (angle < -180)
-  // angle += 180;
-  // return angle;
-  // }
+  /*
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * TODO Everything below needs review
+   */
 
   /**
    * This subdivides the given fault trace into sub-traces that have the length
@@ -398,47 +278,6 @@ public final class Faults {
   }
 
   /**
-   * This is a quick plot of the traces
-   * @param traces
-   */
-  // public static void plotTraces(ArrayList<FaultTrace> traces) {
-  // throw new RuntimeException(
-  // "This doesn't work because our functions will reorder x-axis values"
-  // +
-  // "to monotonically increase (and remove duplicates - someone should fix
-  // this)");
-  // /*
-  // * ArrayList funcs = new ArrayList(); for(int t=0; t<traces.size();t++)
-  // * { FaultTrace trace = traces.get(t); ArbitrarilyDiscretizedFunc
-  // * traceFunc = new ArbitrarilyDiscretizedFunc(); for(int
-  // * i=0;i<trace.size();i++) { Location loc= trace.getLocationAt(i);
-  // * traceFunc.set(loc.getLongitude(), loc.getLatitude()); }
-  // * traceFunc.setName(trace.getName()); funcs.add(traceFunc); }
-  // * GraphWindow graph = new GraphWindow(funcs, "");
-  // * ArrayList<PlotCurveCharacterstics> plotChars = new
-  // * ArrayList<PlotCurveCharacterstics>(); /* plotChars.add(new
-  // * PlotCurveCharacterstics
-  // * (PlotColorAndLineTypeSelectorControlPanel.FILLED_CIRCLES,
-  // * Color.BLACK, 4)); plotChars.add(new
-  // * PlotCurveCharacterstics(PlotColorAndLineTypeSelectorControlPanel
-  // * .SOLID_LINE, Color.BLUE, 2)); plotChars.add(new
-  // * PlotCurveCharacterstics
-  // * (PlotColorAndLineTypeSelectorControlPanel.SOLID_LINE, Color.BLUE,
-  // * 1)); plotChars.add(new
-  // * PlotCurveCharacterstics(PlotColorAndLineTypeSelectorControlPanel
-  // * .SOLID_LINE, Color.BLUE, 1)); graph.setPlottingFeatures(plotChars);
-  // * graph.setX_AxisLabel("Longitude"); graph.setY_AxisLabel("Latitude");
-  // * graph.setTickLabelFontSize(12);
-  // * graph.setAxisAndTickLabelFontSize(14); /* // to save files if(dirName
-  // * != null) { String filename = ROOT_PATH+dirName+"/slipRates"; try {
-  // * graph.saveAsPDF(filename+".pdf"); graph.saveAsPNG(filename+".png"); }
-  // * catch (IOException e) { // TODO Auto-generated catch block
-  // * e.printStackTrace(); } }
-  // */
-  //
-  // }
-
-  /**
    * Returns an average of the given angles scaled by the distances between the
    * corresponding locations. Note that this expects angles in degrees, and will
    * return angles from 0 to 360 degrees.
@@ -554,7 +393,7 @@ public final class Faults {
    * @param zTop depth to the fault plane
    */
   public static double hypocentralDepth(double dip, double width, double zTop) {
-    return zTop + sin(dip * TO_RAD) * width / 2.0;
+    return zTop + Math.sin(dip * Maths.TO_RAD) * width / 2.0;
   }
 
   /**
@@ -652,7 +491,7 @@ public final class Faults {
   }
 
   public static double dipDirectionRad(double strikeRad) {
-    return (strikeRad + PI_BY_2) % TWOPI;
+    return (strikeRad + Maths.PI_BY_2) % Maths.TWOPI;
   }
 
   /* <b>x</b>-axis unit normal vector [1,0,0] */

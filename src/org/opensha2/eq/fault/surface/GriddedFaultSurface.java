@@ -3,16 +3,16 @@ package org.opensha2.eq.fault.surface;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.eq.fault.Faults.validateDepth;
-import static org.opensha2.eq.fault.Faults.validateDip;
-import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
-import static org.opensha2.eq.fault.Faults.validateStrike;
-import static org.opensha2.eq.fault.Faults.validateTrace;
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
+import static org.opensha2.eq.Earthquakes.checkInterfaceWidth;
+import static org.opensha2.eq.fault.Faults.checkDip;
+import static org.opensha2.eq.fault.Faults.checkStrike;
+import static org.opensha2.eq.fault.Faults.checkTrace;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.geo.LocationGrid;
 import org.opensha2.geo.LocationList;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Range;
 
@@ -94,28 +94,28 @@ class GriddedFaultSurface {
     private Builder() {}
 
     public Builder trace(LocationList trace) {
-      this.trace = validateTrace(trace);
+      this.trace = checkTrace(trace);
       return this;
     }
 
     public Builder dip(double dip) {
-      this.dipRad = validateDip(dip) * TO_RAD;
+      this.dipRad = checkDip(dip) * Maths.TO_RAD;
       return this;
     }
 
     public Builder dipDir(double dipDir) {
-      this.dipDirRad = validateStrike(dipDir) * TO_RAD;
+      this.dipDirRad = checkStrike(dipDir) * Maths.TO_RAD;
       return this;
     }
 
     public Builder depth(double depth) {
-      this.depth = validateDepth(depth);
+      this.depth = checkCrustalDepth(depth);
       return this;
     }
 
     public Builder lowerDepth(double lowerDepth) {
       checkState(width == null, "Either lower depth or width may be set, but not both");
-      this.lowerDepth = validateDepth(lowerDepth);
+      this.lowerDepth = checkCrustalDepth(lowerDepth);
       return this;
     }
 
@@ -123,7 +123,7 @@ class GriddedFaultSurface {
       checkState(lowerDepth == null, "Either width or lower depth may be set, but not both");
       // we don't know what the surface may be used to represent
       // so we validate against the largest (interface) values
-      this.width = validateInterfaceWidth(width);
+      this.width = checkInterfaceWidth(width);
       return this;
     }
 

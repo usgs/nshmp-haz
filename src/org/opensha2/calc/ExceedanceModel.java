@@ -1,10 +1,7 @@
 package org.opensha2.calc;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.exp;
-import static java.lang.Math.log;
-import static java.lang.Math.min;
-import static java.lang.Math.sqrt;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.lang.Double.isNaN;
 
 import static org.opensha2.gmm.Imt.PGA;
 import static org.opensha2.gmm.Imt.PGV;
@@ -15,18 +12,20 @@ import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
 import org.opensha2.gmm.MultiScalarGroundMotion;
 import org.opensha2.gmm.ScalarGroundMotion;
+import org.opensha2.util.Maths;
 
 import java.util.List;
 
 /**
  * Uncertainty models govern how the values of a complementary cumulative normal
- * distribution (or probability of exceedence) are computed given a mean, μ,
- * standard deviation, σ, and other possibly relevant arguments.
+ * distribution (or probability of exceedence) are computed given a mean,
+ * {@code μ}, standard deviation, {@code σ}, and other possibly relevant
+ * arguments.
  *
  * <p>Each model implements methods that compute the probability of exceeding a
  * single value or a {@link XySequence} of values. Some arguments are only used
- * by some models; for example, {@link #NONE} ignores σ, but it must be supplied
- * for consistency. See individual models for details.
+ * by some models; for example, {@link #NONE} ignores {@code σ}, but it must be
+ * supplied for consistency. See individual models for details.
  *
  * <p>Internally, models use a high precision approximation of the Gauss error
  * function (see Abramowitz and Stegun 7.1.26) when computing exceedances.
@@ -45,18 +44,18 @@ public enum ExceedanceModel {
    * No uncertainty. Any {@code σ} supplied to methods is ignored yielding a
    * complementary unit step function for a range of values spanning μ.
    *
-   * <p>Model ignores {@code σ}, truncation level,{@code n}, and {@code imt} .
+   * <p>Model ignores {@code σ}, truncation level,{@code n}, and {@code imt}.
    */
   NONE {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
-      return stepFn(μ, value);
+      return Maths.stepFunction(μ, value);
     }
 
     @Override
     XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
       for (XyPoint p : sequence) {
-        p.set(stepFn(μ, p.x()));
+        p.set(Maths.stepFunction(μ, p.x()));
       }
       return sequence;
     }
@@ -115,13 +114,29 @@ public enum ExceedanceModel {
     }
   },
 
+  /**
+   * Fast implementation of upper truncation fixed at 3σ.
+   * 
+   * <p>Model ignores truncation level, {@code n}, and {@code imt}.
+   */
+  TRUNCATION_3SIGMA_UPPER {
+    @Override
+    double exceedance(double μ, double σ, double n, Imt imt, double value) {
+      return Ccdfs.UPPER_3SIGMA.get(μ, σ, value);
+    }
+
+    @Override
+    XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
+      return Ccdfs.UPPER_3SIGMA.get(μ, σ, sequence);
+    }
+  },
+
   /*
    * This is messy for now; TODO need to figure out the best way to pass in
    * fixed sigmas. The peer models below simply set a value internally as
    * dicated by the test cases that use these models.
    */
-  @Deprecated
-  PEER_MIXTURE_REFERENCE {
+  @Deprecated PEER_MIXTURE_REFERENCE {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
       return boundedCcdFn(μ, 0.65, value, 0.0, 1.0);
@@ -160,25 +175,25 @@ public enum ExceedanceModel {
   },
 
   /**
-   * Model provides {@link Imt}-dependent maxima end exists to support 'clamps'
-   * on ground motions that have historically been applied in the CEUS NSHM due
-   * to sometimes unreasonably high ground motions implied by {@code μ + 3σ}.
-   * Model imposes one-sided (upper) truncation at {@code μ + nσ} if clamp is
-   * not exceeded.
+   * Model provides {@link Imt}-dependent maxima and exists to support clamps on
+   * ground motions that have historically been applied in the CEUS NSHM due to
+   * sometimes unreasonably high ground motions implied by {@code μ + 3σ}. Model
+   * imposes one-sided (upper) truncation at {@code μ + nσ} if clamp is not
+   * exceeded.
    */
   NSHM_CEUS_MAX_INTENSITY {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
-      double pHi = prob(μ, σ, n, log(maxValue(imt)));
+      double pHi = prob(μ, σ, n, Math.log(maxValue(imt)));
       return boundedCcdFn(μ, σ, value, pHi, 1.0);
     }
 
     @Override
     XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
-      double pHi = prob(μ, σ, n, log(maxValue(imt)));
+      double pHi = prob(μ, σ, n, Math.log(maxValue(imt)));
       return boundedCcdFn(μ, σ, sequence, pHi, 1.0);
     }
-    
+
     @Override
     XySequence exceedance(ScalarGroundMotion sgm, double n, Imt imt, XySequence sequence) {
       if (sgm instanceof MultiScalarGroundMotion) {
@@ -188,12 +203,12 @@ public enum ExceedanceModel {
         double[] sigmas = msgm.sigmas();
         double[] sigmaWts = msgm.sigmaWeights();
         XySequence model = XySequence.copyOf(sequence);
-        for (int i=0; i < sigmas.length; i++) {
+        for (int i = 0; i < sigmas.length; i++) {
           double σ = sigmas[i];
           double σWt = sigmaWts[i];
-          for (int j=0; j < means.length; j++) {
-             double wt = σWt * meanWts[j];
-             sequence.add(exceedance(means[j], σ, n, imt, model).multiply(wt));
+          for (int j = 0; j < means.length; j++) {
+            double wt = σWt * meanWts[j];
+            sequence.add(exceedance(means[j], σ, n, imt, model).multiply(wt));
           }
         }
         return sequence;
@@ -265,34 +280,18 @@ public enum ExceedanceModel {
     return exceedance(sgm.mean(), sgm.sigma(), n, imt, sequence);
   }
 
-  private static final double SQRT_2 = sqrt(2);
-  private static final double SQRT_2PI = sqrt(2 * PI);
-
-  /*
-   * Step function.
-   */
-  private static double stepFn(double μ, double value) {
-    return value < μ ? 1.0 : 0.0;
-  }
-
-  /*
-   * Complementary cumulative distribution. Compute the probability of exceeding
-   * the supplied value in a normal distribution assuming no truncation.
-   */
-  private static double ccdFn(double μ, double σ, double value) {
-    return (1.0 + erf((μ - value) / (σ * SQRT_2))) * 0.5;
-  }
-
-  private static double probFn(double μ, double σ, double x) {
-    return exp((μ - x) * (x - μ) / (2 * σ * σ)) / (σ * SQRT_2PI);
-  }
-
   /*
    * Bounded complementary cumulative distribution. Compute the probability that
    * a value will be exceeded, subject to upper and lower probability limits.
    */
-  private static double boundedCcdFn(double μ, double σ, double value, double pHi, double pLo) {
-    double p = ccdFn(μ, σ, value);
+  private static double boundedCcdFn(
+      double μ,
+      double σ,
+      double value,
+      double pHi,
+      double pLo) {
+
+    double p = Maths.normalCcdf(μ, σ, value);
     return probBoundsCheck((p - pHi) / (pLo - pHi));
   }
 
@@ -302,8 +301,13 @@ public enum ExceedanceModel {
    * lower probability limits. Return the supplied {@code XySequence} populated
    * with probabilities.
    */
-  private static XySequence boundedCcdFn(double μ, double σ, XySequence sequence, double pHi,
+  private static XySequence boundedCcdFn(
+      double μ,
+      double σ,
+      XySequence sequence,
+      double pHi,
       double pLo) {
+
     for (XyPoint p : sequence) {
       p.set(boundedCcdFn(μ, σ, p.x(), pHi, pLo));
     }
@@ -311,94 +315,119 @@ public enum ExceedanceModel {
   }
 
   /*
-   * TODO does this exist due to double precission errors possibly pushing
-   * probabilities above 1 or below 0 ?? Run a test sometime to determine if P
-   * EVER ventures outside [0, 1]
+   * For truncated distributions, p may be out of range. For upper truncations,
+   * p may be less than pHi, yielding a negative value in boundedCcdFn(); for
+   * lower truncations, p may be greater than pLo, yielding a value > 1.0 in
+   * boundedCcdFn().
    */
-  private static double probBoundsCheck(double P) {
-    return (P < 0.0) ? 0.0 : (P > 1.0) ? 1.0 : P;
+  private static double probBoundsCheck(double p) {
+    return (p < 0.0) ? 0.0 : (p > 1.0) ? 1.0 : p;
   }
 
   /*
    * Compute ccd value at μ + nσ.
    */
   private static double prob(double μ, double σ, double n) {
-    return ccdFn(μ, σ, μ + n * σ);
+    return Maths.normalCcdf(μ, σ, μ + n * σ);
   }
 
   /*
    * Compute ccd value at min(μ + nσ, max).
    */
   private static double prob(double μ, double σ, double n, double max) {
-    return ccdFn(μ, σ, min(μ + n * σ, max));
+    return Maths.normalCcdf(μ, σ, Math.min(μ + n * σ, max));
   }
 
   /*
-   * Abramowitz and Stegun 7.1.26 implementation. This erf(x) approximation is
-   * valid for x ≥ 0. Because erf(x) is an odd function, erf(x) = −erf(−x).
-   */
-  private static double erf(double x) {
-    return x < 0.0 ? -erfBase(-x) : erfBase(x);
-  }
-
-  private static final double P = 0.3275911;
-  private static final double A1 = 0.254829592;
-  private static final double A2 = -0.284496736;
-  private static final double A3 = 1.421413741;
-  private static final double A4 = -1.453152027;
-  private static final double A5 = 1.061405429;
-
-  private static double erfBase(double x) {
-    double t = 1 / (1 + P * x);
-    return 1 - (A1 * t +
-        A2 * t * t +
-        A3 * t * t * t +
-        A4 * t * t * t * t +
-        A5 * t * t * t * t * t) * exp(-x * x);
-  }
-
-  // // TODO test performance of compacting tsq
-  // private static double erfBase2(double x) {
-  // double t = 1 / (1 + P * x);
-  // double tsq = t * t;
-  // return 1 - (A1 * t +
-  // A2 * tsq +
-  // A3 * tsq * t +
-  // A4 * tsq * tsq +
-  // A5 * tsq * tsq * t) * exp(-x * x);
-  // }
-  //
-  // private static double erfBase3(double x) {
-  // double t = 1 / (1 + P * x);
-  // double t2 = t * t;
-  // double t3 = t2 * t;
-  // return 1 - (A1 * t +
-  // A2 * t2 +
-  // A3 * t3 +
-  // A4 * t2 * t2 +
-  // A5 * t2 * t3) * exp(-x * x);
-  // }
-  //
-  // private static final double SQRT_2PI = Math.sqrt(2 * Math.PI);
-  //
-  // private static double dFn(double μ, double σ, double x) {
-  // double Δxμ = x - μ;
-  // return exp(-(Δxμ * Δxμ) / (2 * σ * σ)) / (σ * SQRT_2PI);
-  // }
-
-  /**
    * Computes joint probability of exceedence given the occurrence of a cluster
    * of events: [1 - [(1-PE1) * (1-PE2) * ...]]. The probability of exceedance
    * of each individual event is given in the supplied curves.
    *
    * @param curves for which to calculate joint probability of exceedance
    */
-  public static XySequence clusterExceedance(List<XySequence> curves) {
+  static XySequence clusterExceedance(List<XySequence> curves) {
     XySequence combined = XySequence.copyOf(curves.get(0)).complement();
     for (int i = 1; i < curves.size(); i++) {
       combined.multiply(curves.get(i).complement());
     }
     return combined.complement();
+  }
+
+  /* Wrapper class avoids unnecessary initialization of array(s). */
+  private static final class Ccdfs {
+    static final CcdfArray UPPER_3SIGMA = new CcdfArray(Double.NaN, 3.0);
+  }
+
+  /* Ensures a clean Δ. */
+  private static final int PRECISION = 8;
+  private static final int CCND_ARRAY_SIZE = 10000001;
+  private static final double EMAX = 4.0;
+
+  /*
+   * Complementary cumulative standard normal distribution. Array may be
+   * initialized with truncated values (lower and/or upper) supplied in units of
+   * σ. Any truncations must fall with in the discretization limits of the
+   * table, which are currently set at EMAX = ±4.0. For no lower or upper
+   * truncation, supply a value of Double.NaN for εMin or εMax.
+   * 
+   * Probabilities below -EMAX are set to 1, and probabilities above EMAX are
+   * set to 0.
+   * 
+   * The use of 'Lo' or 'Hi' in variable names refers to the lower
+   * (probabilities closer to 1) and upper (probabilities closer to 0) ends of
+   * the ccdn, respectively.
+   */
+  private static final class CcdfArray {
+
+    private final double[] p;
+    private final double Δε;
+    private final double εMin;
+    private final double εMax;
+
+    CcdfArray(double εMin, double εMax) {
+
+      checkArgument(isNaN(εMin) || εMin >= -EMAX, "εMin [%s] < [%s]", εMin, -EMAX);
+      checkArgument(isNaN(εMax) || εMax <= EMAX, "εMax [%s] > [%s]", εMax, EMAX);
+
+      this.εMin = isNaN(εMin) ? -EMAX : εMin;
+      this.εMax = isNaN(εMax) ? EMAX : εMax;
+
+      checkArgument(this.εMin < this.εMax, "εMin [%s] ≥ εMax [%s]", this.εMin, this.εMax);
+
+      p = new double[CCND_ARRAY_SIZE];
+
+      double pLo = isNaN(εMin) ? 1.0 : Maths.normalCcdf(0.0, 1.0, this.εMin);
+      double pHi = isNaN(εMax) ? 0.0 : Maths.normalCcdf(0.0, 1.0, this.εMax);
+
+      double Δ = Maths.round(1.0 / (CCND_ARRAY_SIZE - 1), PRECISION);
+      Δε = Δ * (this.εMax - this.εMin);
+
+      p[0] = 1.0;
+      for (int i = 1; i < p.length - 1; i++) {
+        double pi = Maths.normalCcdf(0.0, 1.0, this.εMin + Δε * i);
+        p[i] = (pi - pHi) / (pLo - pHi);
+      }
+      p[CCND_ARRAY_SIZE - 1] = 0.0;
+    }
+
+    double get(double μ, double σ, double x) {
+      double ε = Maths.epsilon(μ, σ, x);
+      if (ε < this.εMin) {
+        return 1.0;
+      }
+      if (ε <= this.εMax) {
+        int i = (int) Math.round((ε - this.εMin) / Δε);
+        return p[i];
+      }
+      return 0.0;
+    }
+
+    XySequence get(double μ, double σ, XySequence sequence) {
+      for (XyPoint p : sequence) {
+        p.set(get(μ, σ, p.x()));
+      }
+      return sequence;
+    }
   }
 
 }

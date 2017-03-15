@@ -5,11 +5,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Math.min;
 
-import static org.opensha2.eq.Magnitudes.checkMagnitude;
-import static org.opensha2.eq.fault.Faults.validateDepth;
-import static org.opensha2.eq.fault.Faults.validateDip;
-import static org.opensha2.eq.fault.Faults.validateRake;
-import static org.opensha2.eq.fault.Faults.validateWidth;
+import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
+import static org.opensha2.eq.Earthquakes.checkCrustalWidth;
+import static org.opensha2.eq.Earthquakes.checkMagnitude;
+import static org.opensha2.eq.fault.Faults.checkDip;
+import static org.opensha2.eq.fault.Faults.checkRake;
 import static org.opensha2.eq.model.SourceType.SYSTEM;
 import static org.opensha2.geo.Locations.horzDistanceFast;
 
@@ -17,7 +17,7 @@ import org.opensha2.calc.HazardInput;
 import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.SystemInputList;
-import org.opensha2.data.Data;
+import org.opensha2.data.Indexing;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
@@ -313,7 +313,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
       // NOTE we're doublechecking a UCERF3 rule that ruptures be composed
       // of at least 2 sections; this may not be the case in the future.
       checkArgument(indices.size() > 1, "Rupture index list must contain 2 or more values");
-      bitsets.add(Data.indicesToBits(indices, sections.size()));
+      bitsets.add(Indexing.indicesToBits(indices, sections.size()));
       return this;
     }
 
@@ -331,22 +331,22 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     Builder depth(double depth) {
-      depths.add(validateDepth(depth));
+      depths.add(checkCrustalDepth(depth));
       return this;
     }
 
     Builder dip(double dip) {
-      dips.add(validateDip(dip));
+      dips.add(checkDip(dip));
       return this;
     }
 
     Builder width(double width) {
-      widths.add(validateWidth(width));
+      widths.add(checkCrustalWidth(width));
       return this;
     }
 
     Builder rake(double rake) {
-      rakes.add(validateRake(rake));
+      rakes.add(checkRake(rake));
       return this;
     }
 
@@ -495,7 +495,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
         }
 
         /* Create and fill distance map. */
-        int[] siteIndices = Data.bitsToIndices(siteBitset);
+        int[] siteIndices = Indexing.bitsToIndices(siteBitset);
         ImmutableMap.Builder<Integer, double[]> rMapBuilder =
             ImmutableMap.<Integer, double[]> builder()
                 .orderEntriesByValue(new DistanceTypeSorter(R_RUP_INDEX));

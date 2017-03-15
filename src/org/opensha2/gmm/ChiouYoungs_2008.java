@@ -11,7 +11,6 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tanh;
 
-import static org.opensha2.geo.GeoTools.TO_RAD;
 import static org.opensha2.gmm.FaultStyle.NORMAL;
 import static org.opensha2.gmm.FaultStyle.REVERSE;
 import static org.opensha2.gmm.GmmInput.Field.DIP;
@@ -23,6 +22,7 @@ import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Range;
 
@@ -37,8 +37,8 @@ import java.util.Map;
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
  *
- * <p><p>Reference: Chiou, B.S.-J. and Youngs R.R., 2008, An NGA model for
- * the average horizontal component of peak ground motion and response spectra:
+ * <p><p>Reference: Chiou, B.S.-J. and Youngs R.R., 2008, An NGA model for the
+ * average horizontal component of peak ground motion and response spectra:
  * Earthquake Spectra, v. 24, n. 1, p. 173-215.
  *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/1.2894832">
@@ -147,7 +147,7 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
 
-    double cosDelta = cos(in.dip * TO_RAD);
+    double cosDelta = cos(in.dip * Maths.TO_RAD);
     double rAlt = sqrt(rJB * rJB + zTop * zTop);
     double hw = (in.rX < 0.0) ? 0.0 : 1.0;
 

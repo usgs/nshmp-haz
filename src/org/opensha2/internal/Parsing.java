@@ -4,9 +4,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.data.Data.checkWeightSum;
+import static org.opensha2.data.Data.checkWeights;
 
 import org.opensha2.data.Data;
+import org.opensha2.data.Indexing;
 
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
@@ -99,7 +100,7 @@ public final class Parsing {
       wtMap.put(keyFunc.apply(entry.getKey().trim()),
           Doubles.stringConverter().convert(entry.getValue()));
     }
-    checkWeightSum(wtMap.values());
+    checkWeights(wtMap.values());
     return wtMap;
   }
 
@@ -155,7 +156,7 @@ public final class Parsing {
       builder.put(key, value);
     }
     NavigableMap<Double, Double> valMap = builder.build();
-    checkWeightSum(valMap.values());
+    checkWeights(valMap.values());
     return valMap;
   }
 
@@ -721,7 +722,7 @@ public final class Parsing {
       if (s.contains(":")) {
         Iterator<Integer> rangeIt = Iterators.transform(
             split(s, Delimiter.COLON).iterator(), Ints.stringConverter());
-        return Data.indices(rangeIt.next(), rangeIt.next());
+        return Indexing.indices(rangeIt.next(), rangeIt.next());
       }
       return new int[] { Integer.valueOf(s) };
     }

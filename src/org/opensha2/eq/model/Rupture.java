@@ -1,6 +1,7 @@
 package org.opensha2.eq.model;
 
-import org.opensha2.eq.fault.Faults;
+import static org.opensha2.eq.fault.Faults.checkRake;
+
 import org.opensha2.eq.fault.surface.RuptureSurface;
 import org.opensha2.geo.Location;
 
@@ -31,7 +32,7 @@ public class Rupture {
     // TODO validate mag?
     // where are mags coming from? if MFD then no need to validate
     this.rate = rate;
-    this.rake = Faults.validateRake(rake);
+    this.rake = checkRake(rake);
     this.surface = surface;
     this.hypocenter = hypocenter;
     // TODO checkNotNull?

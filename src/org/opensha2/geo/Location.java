@@ -2,14 +2,13 @@ package org.opensha2.geo;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import static org.opensha2.geo.GeoTools.TO_DEG;
-import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.geo.GeoTools.validateDepth;
-import static org.opensha2.geo.GeoTools.validateLat;
-import static org.opensha2.geo.GeoTools.validateLon;
+import static org.opensha2.eq.Earthquakes.checkDepth;
+import static org.opensha2.geo.Coordinates.checkLatitude;
+import static org.opensha2.geo.Coordinates.checkLongitude;
 
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Converter;
 import com.google.common.collect.FluentIterable;
@@ -44,9 +43,9 @@ public final class Location implements Comparable<Location> {
   private final double depth;
 
   private Location(double lat, double lon, double depth) {
-    this.lat = validateLat(lat) * TO_RAD;
-    this.lon = validateLon(lon) * TO_RAD;
-    this.depth = validateDepth(depth);
+    this.lat = checkLatitude(lat) * Maths.TO_RAD;
+    this.lon = checkLongitude(lon) * Maths.TO_RAD;
+    this.depth = checkDepth(depth);
   }
 
   /**
@@ -56,7 +55,7 @@ public final class Location implements Comparable<Location> {
    * @param lat latitude in decimal degrees
    * @param lon longitude in decimal degrees
    * @throws IllegalArgumentException if any supplied values are out of range
-   * @see GeoTools
+   * @see Coordinates
    */
   public static Location create(double lat, double lon) {
     return create(lat, lon, 0);
@@ -70,7 +69,7 @@ public final class Location implements Comparable<Location> {
    * @param lon longitude in decimal degrees
    * @param depth in km (positive down)
    * @throws IllegalArgumentException if any supplied values are out of range
-   * @see GeoTools
+   * @see Coordinates
    */
   public static Location create(double lat, double lon, double depth) {
     return new Location(lat, lon, depth);
@@ -103,14 +102,14 @@ public final class Location implements Comparable<Location> {
    * The latitude of this {@code Location} in decimal degrees.
    */
   public double lat() {
-    return lat * TO_DEG;
+    return lat * Maths.TO_DEG;
   }
 
   /**
    * The longitude of this {@code Location} in decimal degrees.
    */
   public double lon() {
-    return lon * TO_DEG;
+    return lon * Maths.TO_DEG;
   }
 
   /**

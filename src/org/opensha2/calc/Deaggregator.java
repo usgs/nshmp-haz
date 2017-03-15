@@ -7,7 +7,7 @@ import org.opensha2.calc.DeaggContributor.SectionSource;
 import org.opensha2.calc.DeaggContributor.SourceContributor;
 import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
-import org.opensha2.data.Data;
+import org.opensha2.data.Indexing;
 import org.opensha2.data.IntervalArray;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.ClusterSource;
@@ -20,7 +20,7 @@ import org.opensha2.geo.Locations;
 import org.opensha2.gmm.Gmm;
 import org.opensha2.gmm.Imt;
 import org.opensha2.gmm.ScalarGroundMotion;
-import org.opensha2.internal.MathUtils;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -219,7 +219,7 @@ final class Deaggregator {
         ScalarGroundMotion sgm = gmLists.get(gmm).get(i);
         double μ = sgm.mean();
         double σ = sgm.sigma();
-        double ε = epsilon(μ, σ, iml);
+        double ε = Maths.epsilon(μ, σ, iml);
 
         double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
         double rate = probAtIml * in.rate * sources.weight() * gmmWeight;
@@ -292,10 +292,6 @@ final class Deaggregator {
     return rateMap;
   }
 
-  private static double epsilon(double μ, double σ, double iml) {
-    return (iml - μ) / σ;
-  }
-
   private Map<Gmm, DeaggDataset> processSystemSources() {
 
     /* Safe covariant cast assuming switch handles variants. */
@@ -327,12 +323,12 @@ final class Deaggregator {
      * indexing.
      */
     IntervalArray mfdModel = new IntervalArray.Builder().rows(
-        MathUtils.round(systemSources.stats.mMin, 1, RoundingMode.FLOOR),
-        MathUtils.round(systemSources.stats.mMax, 1, RoundingMode.CEILING),
+        Maths.round(systemSources.stats.mMin, 1, RoundingMode.FLOOR),
+        Maths.round(systemSources.stats.mMax, 1, RoundingMode.CEILING),
         0.1).build();
     IntervalArray.Builder mfdIndexer = IntervalArray.Builder.fromModel(mfdModel);
 
-    List<Integer> sourceIndices = new LinkedList<>(Ints.asList(Data.indices(bitsets.size())));
+    List<Integer> sourceIndices = new LinkedList<>(Ints.asList(Indexing.indices(bitsets.size())));
 
     for (int sectionIndex : inputs.sectionIndices) {
 
@@ -391,7 +387,7 @@ final class Deaggregator {
             ScalarGroundMotion sgm = gmLists.get(gmm).get(sourceIndex);
             double μ = sgm.mean();
             double σ = sgm.sigma();
-            double ε = epsilon(μ, σ, iml);
+            double ε = Maths.epsilon(μ, σ, iml);
 
             double probAtIml = probModel.exceedance(μ, σ, trunc, imt, iml);
             double rate = probAtIml * in.rate * sources.weight() * gmmWeight;

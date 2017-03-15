@@ -3,7 +3,7 @@ package org.opensha2.data;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import static org.opensha2.data.Data.isMonotonic;
+import static org.opensha2.data.Data.areMonotonic;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import com.google.common.base.Function;
@@ -130,7 +130,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
     checkArgument(xs.length > 0, "x-values may not be empty");
     checkArgument(xs.length == ys.length, "x- and y-values are different sizes");
     if (xs.length > 1) {
-      checkArgument(isMonotonic(true, true, xs), "x-values do not increase monotonically");
+      checkArgument(areMonotonic(true, true, xs), "x-values do not increase monotonically");
     }
     return mutable ? new MutableXySequence(xs, ys) : new ImmutableXySequence(xs, ys);
   }

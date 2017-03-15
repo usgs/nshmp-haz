@@ -4,9 +4,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import static org.opensha2.eq.Magnitudes.MAX_MAG;
-import static org.opensha2.eq.Magnitudes.checkMagnitude;
-import static org.opensha2.eq.fault.Faults.validateStrike;
+import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
+import static org.opensha2.eq.Earthquakes.checkMagnitude;
+import static org.opensha2.eq.Earthquakes.checkSlabDepth;
+import static org.opensha2.eq.fault.Faults.checkStrike;
 import static org.opensha2.eq.fault.FocalMech.NORMAL;
 import static org.opensha2.eq.fault.FocalMech.REVERSE;
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
@@ -16,7 +17,7 @@ import static org.opensha2.eq.model.SourceType.GRID;
 import org.opensha2.data.Data;
 import org.opensha2.data.IntervalTable;
 import org.opensha2.data.XySequence;
-import org.opensha2.eq.fault.Faults;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.FocalMech;
 import org.opensha2.eq.fault.surface.RuptureScaling;
 import org.opensha2.eq.model.PointSource.DepthModel;
@@ -233,7 +234,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
     Builder strike(double strike) {
       // unknown strike allowed for grid sources
-      this.strike = Double.isNaN(strike) ? strike : validateStrike(strike);
+      this.strike = Double.isNaN(strike) ? strike : checkStrike(strike);
       return this;
     }
 
@@ -317,13 +318,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     static void validateDepth(double depth, SourceType type) {
       switch (type) {
         case GRID:
-          Faults.validateDepth(depth);
+          checkCrustalDepth(depth);
           break;
         case SLAB:
-          Faults.validateSlabDepth(depth);
+          checkSlabDepth(depth);
           break;
         case AREA:
-          Faults.validateDepth(depth);
+          checkCrustalDepth(depth);
           break;
         default:
           throw new IllegalStateException(type + " not a grid or related source type");
@@ -341,12 +342,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     }
 
     static void validateMagCutoffs(Map<Double, Map<Double, Double>> magDepthMap) {
+      double mMax = Earthquakes.MAG_RANGE.upperEndpoint();
       for (double mag : magDepthMap.keySet()) {
-        if (mag >= MAX_MAG) {
+        if (mag > mMax) {
           return;
         }
       }
-      throw new IllegalStateException("MagDepthMap must contain at least one M ≥ " + MAX_MAG);
+      throw new IllegalStateException("MagDepthMap must contain at least one M > " + mMax);
     }
 
     @Override

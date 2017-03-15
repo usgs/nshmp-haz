@@ -1,6 +1,6 @@
 package org.opensha2.mfd;
 
-import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.function.EvenlyDiscretizedFunc;
 
 /**
@@ -104,7 +104,7 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    */
 
   public double getMomentRate(double mag) {
-    return getIncrRate(mag) * Magnitudes.magToMoment_N_m(mag);
+    return getIncrRate(mag) * Earthquakes.magToMoment(mag);
   }
 
   /**
@@ -113,7 +113,7 @@ public class IncrementalMfd extends EvenlyDiscretizedFunc {
    */
 
   public double getMomentRate(int index) {
-    return getIncrRate(index) * Magnitudes.magToMoment_N_m(getX(index));
+    return getIncrRate(index) * Earthquakes.magToMoment(getX(index));
   }
 
   /**

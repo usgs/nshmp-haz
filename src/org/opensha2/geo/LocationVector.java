@@ -1,15 +1,10 @@
 package org.opensha2.geo;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.atan;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-
-import static org.opensha2.geo.GeoTools.TO_DEG;
-import static org.opensha2.geo.GeoTools.TWOPI;
 import static org.opensha2.geo.Locations.azimuthRad;
 import static org.opensha2.geo.Locations.horzDistance;
 import static org.opensha2.geo.Locations.vertDistance;
+
+import org.opensha2.util.Maths;
 
 /**
  * This class encapsulates information describing a vector between two
@@ -67,7 +62,7 @@ public class LocationVector {
    * @return a new {@code LocationVector}
    */
   public static LocationVector createWithPlunge(double azimuth, double plunge, double length) {
-    return create(azimuth, length * cos(plunge), length * sin(plunge));
+    return create(azimuth, length * Math.cos(plunge), length * Math.sin(plunge));
   }
 
   /**
@@ -96,7 +91,7 @@ public class LocationVector {
    * @return the flipped copy
    */
   public static LocationVector reverseOf(LocationVector v) {
-    return create((v.azimuth + PI) % TWOPI, v.horiz, -v.vert);
+    return create((v.azimuth + Math.PI) % Maths.TWOPI, v.horiz, -v.vert);
   }
 
   /**
@@ -105,7 +100,7 @@ public class LocationVector {
    * @see #azimuth()
    */
   public double azimuthDegrees() {
-    return azimuth * TO_DEG;
+    return azimuth * Maths.TO_DEG;
   }
 
   /**
@@ -125,7 +120,7 @@ public class LocationVector {
    * @return the plunge of this vector
    */
   public double plunge() {
-    return atan(vert / horiz);
+    return Math.atan(vert / horiz);
   }
 
   /**
@@ -136,7 +131,7 @@ public class LocationVector {
    * @return the plunge of this vector
    */
   public double plungeDegrees() {
-    return plunge() * TO_DEG;
+    return plunge() * Maths.TO_DEG;
   }
 
   /**

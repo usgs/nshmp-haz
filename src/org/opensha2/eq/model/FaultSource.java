@@ -5,11 +5,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.eq.fault.Faults.validateDepth;
-import static org.opensha2.eq.fault.Faults.validateDip;
-import static org.opensha2.eq.fault.Faults.validateRake;
-import static org.opensha2.eq.fault.Faults.validateTrace;
-import static org.opensha2.eq.fault.Faults.validateWidth;
+import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
+import static org.opensha2.eq.Earthquakes.checkCrustalWidth;
+import static org.opensha2.eq.fault.Faults.checkDip;
+import static org.opensha2.eq.fault.Faults.checkRake;
+import static org.opensha2.eq.fault.Faults.checkTrace;
 import static org.opensha2.eq.model.SourceType.FAULT;
 import static org.opensha2.internal.TextUtils.validateName;
 
@@ -123,12 +123,12 @@ public class FaultSource implements Source {
   public Location location(Location site) {
     return Locations.closestPoint(site, trace);
   }
-  
+
   @Override
   public List<XySequence> mfds() {
-    /* 
-     * TODO this should just pass a reference to the immutable list or map (once tracking
-     * logic-tree branches). Requires MFD implementation update
+    /*
+     * TODO this should just pass a reference to the immutable list or map (once
+     * tracking logic-tree branches). Requires MFD implementation update
      */
     ImmutableList.Builder<XySequence> xyMfds = ImmutableList.builder();
     for (IncrementalMfd mfd : mfds) {
@@ -233,27 +233,27 @@ public class FaultSource implements Source {
     }
 
     Builder trace(LocationList trace) {
-      this.trace = validateTrace(trace);
+      this.trace = checkTrace(trace);
       return this;
     }
 
     Builder dip(double dip) {
-      this.dip = validateDip(dip);
+      this.dip = checkDip(dip);
       return this;
     }
 
     Builder width(double width) {
-      this.width = validateWidth(width);
+      this.width = checkCrustalWidth(width);
       return this;
     }
 
     Builder depth(double depth) {
-      this.depth = validateDepth(depth);
+      this.depth = checkCrustalDepth(depth);
       return this;
     }
 
     Builder rake(double rake) {
-      this.rake = validateRake(rake);
+      this.rake = checkRake(rake);
       return this;
     }
 

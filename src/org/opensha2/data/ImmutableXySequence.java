@@ -63,7 +63,7 @@ class ImmutableXySequence extends XySequence {
 
   @Override
   public final boolean isClear() {
-    return Data.isZeroValued(ys);
+    return Data.areZeroValued(ys);
   }
 
   @Override

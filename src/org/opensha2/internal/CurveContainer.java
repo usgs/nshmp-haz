@@ -7,6 +7,7 @@ import org.opensha2.data.XySequence;
 import org.opensha2.geo.GriddedRegion;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.Regions;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
@@ -210,7 +211,7 @@ class CurveContainer implements Iterable<Location> {
     /* Read x-vals real * 4 * 20 */
     List<Double> xs = Lists.newArrayList();
     for (int i = 0; i < NSHMP_DATA_LENGTH; i++) {
-      double val = MathUtils.round(in.readFloat(), 3);
+      double val = Maths.round(in.readFloat(), 3);
       // need to read 20 values to advance caret, but only save ones used
       if (i < nX) {
         xs.add(val);
@@ -221,7 +222,7 @@ class CurveContainer implements Iterable<Location> {
     /* Read extras real * 4 * 10 */
     List<Double> extras = Lists.newArrayList();
     for (int i = 0; i < 10; i++) {
-      double val = MathUtils.round(in.readFloat(), 2);
+      double val = Maths.round(in.readFloat(), 2);
       extras.add(val);
     }
     double minLon = extras.get(1);

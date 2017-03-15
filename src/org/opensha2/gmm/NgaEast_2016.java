@@ -6,10 +6,11 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 
 import org.opensha2.calc.ExceedanceModel;
 import org.opensha2.data.Data;
+import org.opensha2.data.Indexing;
 import org.opensha2.gmm.GmmInput.Constraints;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
-import org.opensha2.internal.MathUtils;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
@@ -116,9 +117,9 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
 
   /* ModelID's of concentric Sammon's map rings. */
   private static final int[] R0 = { 1 };
-  private static final int[] R1 = Data.indices(2, 5);
-  private static final int[] R2 = Data.indices(6, 13);
-  private static final int[] R3 = Data.indices(14, 29);
+  private static final int[] R1 = Indexing.indices(2, 5);
+  private static final int[] R2 = Indexing.indices(6, 13);
+  private static final int[] R3 = Indexing.indices(14, 29);
 
   private static final class Coefficients {
 
@@ -202,7 +203,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
       φ = c.a + (Mw - 5.0) * (c.b - c.a) / 1.5;
     }
 
-    return MathUtils.hypot(τ, φ);
+    return Maths.hypot(τ, φ);
   }
 
   double[] calcSigmasNgaw2(double Mw) {
@@ -226,7 +227,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
    * are iuncluded, include just the one with the highest weight.
    */
   private static int[] percentileModels(double p, double[] weights) {
-    List<Integer> sortedWtIndices = Data.sortedIndices(Doubles.asList(weights), false);
+    List<Integer> sortedWtIndices = Indexing.sortedIndices(Doubles.asList(weights), false);
     List<Integer> modelIndices = new ArrayList<>();
     double pSum = 0.0;
     for (int wtIndex : sortedWtIndices) {
@@ -255,14 +256,14 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     ModelGroup(Imt imt, int[] models) {
       super(imt);
       this.models = models;
-      this.weights = Data.clean(8, Data.normalize(selectWeights(super.weights, models)));
+      this.weights = Data.round(8, Data.normalize(selectWeights(super.weights, models)));
     }
 
     /* Specify a weight cutoff; weights are IMT dependent. */
     ModelGroup(Imt imt, double p) {
       super(imt);
       this.models = percentileModels(p, super.weights);
-      this.weights = Data.clean(8, Data.normalize(selectWeights(super.weights, this.models)));
+      this.weights = Data.round(8, Data.normalize(selectWeights(super.weights, this.models)));
     }
 
     @Override

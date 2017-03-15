@@ -20,7 +20,7 @@ import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.Site;
-import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.model.Distance;
 import org.opensha2.eq.model.Rupture;
@@ -749,21 +749,21 @@ public class GmmInput {
          * to support returning the constraints supported by subsets of gmms
          */
 
-        set(MW, Magnitudes.MAG_RANGE);
+        set(MW, Earthquakes.MAG_RANGE);
         set(RJB, Range.closed(0.0, Distance.MAX));
         set(RRUP, Range.closed(0.0, Distance.MAX));
         set(RX, Range.closed(0.0, Distance.MAX));
 
-        Range<Double> depthRange = Faults.CRUSTAL_DEPTH_RANGE
-            .intersection(Faults.INTERFACE_DEPTH_RANGE)
-            .intersection(Faults.SLAB_DEPTH_RANGE);
+        Range<Double> depthRange = Earthquakes.CRUSTAL_DEPTH_RANGE
+            .intersection(Earthquakes.INTERFACE_DEPTH_RANGE)
+            .intersection(Earthquakes.SLAB_DEPTH_RANGE);
         set(ZTOP, depthRange);
         set(ZHYP, depthRange);
 
         set(DIP, Faults.DIP_RANGE);
 
-        Range<Double> widthRange = Faults.CRUSTAL_WIDTH_RANGE
-            .intersection(Faults.INTERFACE_WIDTH_RANGE);
+        Range<Double> widthRange = Earthquakes.CRUSTAL_WIDTH_RANGE
+            .intersection(Earthquakes.INTERFACE_WIDTH_RANGE);
         set(WIDTH, widthRange);
 
         set(RAKE, Faults.RAKE_RANGE);

@@ -398,7 +398,7 @@ public abstract class LocationList implements Iterable<Location> {
      * @param lon longitude in decimal degrees
      * @return this {@code Builder}
      * @throws IllegalArgumentException if any values are out of range
-     * @see GeoTools
+     * @see Coordinates
      */
     public Builder add(double lat, double lon) {
       builder.add(Location.create(lat, lon));
@@ -414,7 +414,7 @@ public abstract class LocationList implements Iterable<Location> {
      * @param depth in km (positive down)
      * @return this {@code Builder}
      * @throws IllegalArgumentException if any values are out of range
-     * @see GeoTools
+     * @see Coordinates
      */
     public Builder add(double lat, double lon, double depth) {
       builder.add(Location.create(lat, lon, depth));

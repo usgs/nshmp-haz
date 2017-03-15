@@ -4,13 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import static org.opensha2.geo.GeoTools.MAX_DEPTH;
-import static org.opensha2.geo.GeoTools.MAX_LAT;
-import static org.opensha2.geo.GeoTools.MAX_LON;
-import static org.opensha2.geo.GeoTools.MIN_DEPTH;
-import static org.opensha2.geo.GeoTools.MIN_LAT;
-import static org.opensha2.geo.GeoTools.MIN_LON;
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import org.opensha2.util.Maths;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,32 +38,22 @@ public class LocationTest {
 
   @Test(expected = IllegalArgumentException.class)
   public final void create_IAE1() {
-    Location.create(MAX_LAT + 0.1, 0);
+    Location.create(90.1, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public final void create_IAE2() {
-    Location.create(MIN_LAT - 0.1, 0);
+    Location.create(-90.1, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public final void create_IAE3() {
-    Location.create(0, MAX_LON + 0.1);
+    Location.create(0, 360.0);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public final void create_IAE4() {
-    Location.create(0, MIN_LON - 0.1);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public final void create_IAE5() {
-    Location.create(0, 0, MAX_DEPTH + 0.1);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public final void create_IAE6() {
-    Location.create(0, 0, MIN_DEPTH - 0.1);
+    Location.create(0, -360.0);
   }
 
   @Test
@@ -107,12 +91,12 @@ public class LocationTest {
 
   @Test
   public final void latRad() {
-    assertEquals(location.latRad(), V * TO_RAD, 0);
+    assertEquals(location.latRad(), V * Maths.TO_RAD, 0);
   }
 
   @Test
   public final void lonRad() {
-    assertEquals(location.lonRad(), V * TO_RAD, 0);
+    assertEquals(location.lonRad(), V * Maths.TO_RAD, 0);
   }
 
   @Test

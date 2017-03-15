@@ -7,8 +7,7 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
 import static org.opensha2.eq.fault.FocalMech.STRIKE_SLIP;
-import static org.opensha2.geo.GeoTools.TO_RAD;
-import static org.opensha2.internal.MathUtils.hypot;
+import static org.opensha2.util.Maths.hypot;
 
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
@@ -18,6 +17,7 @@ import org.opensha2.eq.fault.surface.RuptureScaling.Dimensions;
 import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationVector;
 import org.opensha2.geo.Locations;
+import org.opensha2.util.Maths;
 
 import com.google.common.math.DoubleMath;
 
@@ -104,8 +104,8 @@ class PointSourceFixedStrike extends PointSourceFinite {
     if (mech != STRIKE_SLIP) {
       mechWt *= 0.5;
     }
-    double dipRad = mech.dip() * TO_RAD;
-    double strikeRad = strike * TO_RAD;
+    double dipRad = mech.dip() * Maths.TO_RAD;
+    double strikeRad = strike * Maths.TO_RAD;
 
     double maxWidthDD = (depthModel.maxDepth - zTop) / sin(dipRad);
     Dimensions dimensions = rupScaling.dimensions(mag, maxWidthDD);
@@ -226,7 +226,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
       double rSeg = Locations.distanceToSegmentFast(p1, p2, loc);
 
       // simple footwall case
-      boolean isVertical = (dipRad == 90.0 * TO_RAD);
+      boolean isVertical = (dipRad == 90.0 * Maths.TO_RAD);
       if (rX <= 0.0 || isVertical) {
         return Distance.create(rSeg, hypot(rSeg, zTop), rX);
       }

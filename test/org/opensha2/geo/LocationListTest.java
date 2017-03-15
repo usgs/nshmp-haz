@@ -9,6 +9,7 @@ import static org.junit.Assert.assertThat;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.geo.LocationList.RegularLocationList;
+import org.opensha2.util.Maths;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.BeforeClass;
@@ -203,7 +204,7 @@ public class LocationListTest {
   @Test
   public final void translate() {
     LocationList locs = LocationList.create(pp1, pp2);
-    LocationVector v = LocationVector.create(135 * GeoTools.TO_RAD, 5.0, 5.0);
+    LocationVector v = LocationVector.create(135 * Maths.TO_RAD, 5.0, 5.0);
     LocationList transLoc = locs.translate(v);
     Location pp1trans = Location.create(-0.03179578273558637, 0.031795787631496104, 5.0);
     Location pp2trans = Location.create(0.9682040632704144, 1.031800322985746, 5.0);

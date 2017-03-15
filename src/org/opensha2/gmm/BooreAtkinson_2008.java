@@ -15,6 +15,7 @@ import static org.opensha2.gmm.GmmInput.Field.VS30;
 import static org.opensha2.gmm.GmmInput.Field.WIDTH;
 import static org.opensha2.gmm.Imt.PGA;
 
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
@@ -52,7 +53,7 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
       .set(MW, Range.closed(5.0, 8.0))
       .set(RJB, Range.closed(0.0, 200.0))
       .set(DIP, Faults.DIP_RANGE)
-      .set(WIDTH, Faults.CRUSTAL_WIDTH_RANGE)
+      .set(WIDTH, Earthquakes.CRUSTAL_WIDTH_RANGE)
       .set(RAKE, Faults.RAKE_RANGE)
       .set(VS30, Range.closedOpen(180.0, 1300.0))
       .build();

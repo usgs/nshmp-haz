@@ -13,7 +13,7 @@ import org.opensha2.data.IntervalArray;
 import org.opensha2.data.IntervalData;
 import org.opensha2.data.IntervalTable;
 import org.opensha2.data.IntervalVolume;
-import org.opensha2.eq.Magnitudes;
+import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.model.Source;
 
 import com.google.common.base.Function;
@@ -229,8 +229,8 @@ final class DeaggDataset {
               checkInRange(rRange, "Max distance", rMax),
               Δr)
           .columns(
-              Magnitudes.checkMagnitude(mMin),
-              Magnitudes.checkMagnitude(mMax),
+              Earthquakes.checkMagnitude(mMin),
+              Earthquakes.checkMagnitude(mMax),
               Δm)
           .levels(
               checkInRange(εRange, "Min epsilon", εMin),

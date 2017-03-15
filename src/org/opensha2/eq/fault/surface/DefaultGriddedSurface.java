@@ -6,13 +6,11 @@ import static java.lang.Math.sin;
 import static java.math.RoundingMode.HALF_UP;
 
 import static org.opensha2.data.Data.checkInRange;
-import static org.opensha2.eq.fault.Faults.validateDepth;
-import static org.opensha2.eq.fault.Faults.validateDip;
-import static org.opensha2.eq.fault.Faults.validateInterfaceWidth;
-import static org.opensha2.eq.fault.Faults.validateStrike;
-import static org.opensha2.eq.fault.Faults.validateTrace;
-import static org.opensha2.geo.GeoTools.TO_DEG;
-import static org.opensha2.geo.GeoTools.TO_RAD;
+import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
+import static org.opensha2.eq.Earthquakes.checkInterfaceWidth;
+import static org.opensha2.eq.fault.Faults.checkDip;
+import static org.opensha2.eq.fault.Faults.checkStrike;
+import static org.opensha2.eq.fault.Faults.checkTrace;
 import static org.opensha2.geo.LocationVector.createWithPlunge;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
@@ -22,6 +20,7 @@ import org.opensha2.geo.Location;
 import org.opensha2.geo.LocationList;
 import org.opensha2.geo.LocationVector;
 import org.opensha2.geo.Locations;
+import org.opensha2.util.Maths;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
@@ -138,22 +137,22 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
     private Builder() {}
 
     public Builder trace(LocationList trace) {
-      this.trace = validateTrace(trace);
+      this.trace = checkTrace(trace);
       return this;
     }
 
     public Builder dip(double dip) {
-      this.dipRad = validateDip(dip) * TO_RAD;
+      this.dipRad = checkDip(dip) * Maths.TO_RAD;
       return this;
     }
 
     public Builder dipDir(double dipDir) {
-      this.dipDirRad = validateStrike(dipDir) * TO_RAD;
+      this.dipDirRad = checkStrike(dipDir) * Maths.TO_RAD;
       return this;
     }
 
     public Builder depth(double depth) {
-      this.depth = validateDepth(depth);
+      this.depth = checkCrustalDepth(depth);
       return this;
     }
 
@@ -173,7 +172,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
     public Builder lowerDepth(double lowerDepth) {
       checkState(width == null, "Either lower depth or width may be set, but not both");
-      this.lowerDepth = validateDepth(lowerDepth);
+      this.lowerDepth = checkCrustalDepth(lowerDepth);
       return this;
     }
 
@@ -181,7 +180,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
       checkState(lowerDepth == null, "Either width or lower depth may be set, but not both");
       // we don't know what the surface may be used to represent
       // so we validate against the largest (interface) values
-      this.width = validateInterfaceWidth(width);
+      this.width = checkInterfaceWidth(width);
       return this;
     }
 
@@ -381,7 +380,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
   // createEvenlyGriddedSurface()
   @Deprecated // until proven useful or better
   public void create(LocationList trace, double dip, double width, double spacing) {
-    double dipRad = dip * TO_RAD;
+    double dipRad = dip * Maths.TO_RAD;
     double dipDirRad = Faults.dipDirectionRad(trace);
     LocationList resampled = trace.resample(spacing);
     int nCol = resampled.size();
@@ -491,12 +490,12 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
   @Override
   public double dipDirection() {
-    return dipDirRad * TO_DEG;
+    return dipDirRad * Maths.TO_DEG;
   }
 
   @Override
   public double dip() {
-    return dipRad * TO_DEG;
+    return dipRad * Maths.TO_DEG;
   }
 
   @Override
