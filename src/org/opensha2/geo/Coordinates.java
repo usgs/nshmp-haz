@@ -40,23 +40,11 @@ public class Coordinates {
    */
   public static final double EARTH_RADIUS_POLAR = 6356.7523;
 
-  /** Minimum supported latitude: {@code -90°}. */
-  public static final double MIN_LAT = -90.0;
-
-  /** Maximum supported latitude: {@code 90°}. */
-  public static final double MAX_LAT = 90.0;
-
   /** Supported latitudes: {@code [-90..90]°}. */
-  public static final Range<Double> LAT_RANGE = Range.closed(MIN_LAT, MAX_LAT);
-
-  /** Minimum supported longitude: {@code -360°}. */
-  public static final double MIN_LON = -360.0;
-
-  /** Maximum supported longitude: {@code 360°}. */
-  public static final double MAX_LON = 360.0;
+  public static final Range<Double> LAT_RANGE = Range.closed(-90.0, 90.0);
 
   /** Supported longitudes: {@code (-360..360)°}. */
-  public static final Range<Double> LON_RANGE = Range.open(MIN_LON, MAX_LON);
+  public static final Range<Double> LON_RANGE = Range.open(-360.0, 360.0);
 
   /** Constant for arcminutes per degree: {@code 60″}. */
   public static final double MINUTES_PER_DEGREE = 60;

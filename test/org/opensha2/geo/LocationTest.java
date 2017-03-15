@@ -4,11 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import static org.opensha2.geo.Coordinates.MAX_LAT;
-import static org.opensha2.geo.Coordinates.MAX_LON;
-import static org.opensha2.geo.Coordinates.MIN_LAT;
-import static org.opensha2.geo.Coordinates.MIN_LON;
-
 import org.opensha2.util.Maths;
 
 import org.junit.Before;
@@ -43,22 +38,22 @@ public class LocationTest {
 
   @Test(expected = IllegalArgumentException.class)
   public final void create_IAE1() {
-    Location.create(MAX_LAT + 0.1, 0);
+    Location.create(90.1, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public final void create_IAE2() {
-    Location.create(MIN_LAT - 0.1, 0);
+    Location.create(-90.1, 0);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public final void create_IAE3() {
-    Location.create(0, MAX_LON + 0.1);
+    Location.create(0, 360.0);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public final void create_IAE4() {
-    Location.create(0, MIN_LON - 0.1);
+    Location.create(0, -360.0);
   }
 
   @Test

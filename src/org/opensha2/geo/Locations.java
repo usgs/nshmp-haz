@@ -14,10 +14,8 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 import static org.opensha2.geo.Coordinates.EARTH_RADIUS_MEAN;
-import static org.opensha2.geo.Coordinates.MAX_LAT;
-import static org.opensha2.geo.Coordinates.MAX_LON;
-import static org.opensha2.geo.Coordinates.MIN_LAT;
-import static org.opensha2.geo.Coordinates.MIN_LON;
+import static org.opensha2.geo.Coordinates.LAT_RANGE;
+import static org.opensha2.geo.Coordinates.LON_RANGE;
 import static org.opensha2.geo.Coordinates.degreesLatPerKm;
 import static org.opensha2.geo.Coordinates.degreesLonPerKm;
 
@@ -872,10 +870,10 @@ public final class Locations {
     double lonDelta = distance * degreesLonPerKm(loc);
 
     // bounds in radians
-    double minLat = max(loc.lat() - latDelta, MIN_LAT) * Maths.TO_RAD;
-    double maxLat = min(loc.lat() + latDelta, MAX_LAT) * Maths.TO_RAD;
-    double minLon = max(loc.lon() - lonDelta, MIN_LON) * Maths.TO_RAD;
-    double maxLon = min(loc.lon() + lonDelta, MAX_LON) * Maths.TO_RAD;
+    double minLat = max(loc.lat() - latDelta, LAT_RANGE.lowerEndpoint()) * Maths.TO_RAD;
+    double maxLat = min(loc.lat() + latDelta, LAT_RANGE.upperEndpoint()) * Maths.TO_RAD;
+    double minLon = max(loc.lon() - lonDelta, LON_RANGE.lowerEndpoint()) * Maths.TO_RAD;
+    double maxLon = min(loc.lon() + lonDelta, LON_RANGE.upperEndpoint()) * Maths.TO_RAD;
 
     return new Rectangle2D.Double(minLon, minLat, maxLon - minLon, maxLat - minLat);
   }
