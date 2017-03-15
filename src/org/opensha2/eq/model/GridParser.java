@@ -81,8 +81,8 @@ class GridParser extends DefaultHandler {
   private GridSourceSet.Builder sourceSetBuilder;
 
   // master magnitude list data
-  private double minMag = Earthquakes.MAX_MAG;
-  private double maxMag = Earthquakes.MIN_MAG;
+  private double minMag = Earthquakes.MAG_RANGE.upperEndpoint();
+  private double maxMag = Earthquakes.MAG_RANGE.lowerEndpoint();
   private double deltaMag;
 
   // Node locations are the only text content in source files

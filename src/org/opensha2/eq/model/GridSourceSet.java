@@ -342,13 +342,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     }
 
     static void validateMagCutoffs(Map<Double, Map<Double, Double>> magDepthMap) {
+      double mMax = Earthquakes.MAG_RANGE.upperEndpoint();
       for (double mag : magDepthMap.keySet()) {
-        if (mag >= Earthquakes.MAX_MAG) {
+        if (mag > mMax) {
           return;
         }
       }
-      throw new IllegalStateException(
-          "MagDepthMap must contain at least one M ≥ " + Earthquakes.MAX_MAG);
+      throw new IllegalStateException("MagDepthMap must contain at least one M > " + mMax);
     }
 
     @Override

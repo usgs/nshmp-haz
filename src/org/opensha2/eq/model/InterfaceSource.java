@@ -5,7 +5,7 @@ import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
 import static org.opensha2.eq.Earthquakes.checkInterfaceDepth;
 import static org.opensha2.eq.Earthquakes.checkInterfaceWidth;
-import static org.opensha2.eq.fault.Faults.validateTrace;
+import static org.opensha2.eq.fault.Faults.checkTrace;
 import static org.opensha2.eq.model.SourceType.INTERFACE;
 
 import org.opensha2.eq.fault.surface.ApproxGriddedSurface;
@@ -134,8 +134,7 @@ public class InterfaceSource extends FaultSource {
 
     Builder lowerTrace(LocationList trace) {
       checkNotNull(this.trace, "Upper trace must be set first");
-      validateTrace(trace);
-      this.lowerTrace = trace;
+      this.lowerTrace = checkTrace(trace);
       return this;
     }
 

@@ -7,7 +7,7 @@ import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
 import static org.opensha2.eq.Earthquakes.checkInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.checkDip;
 import static org.opensha2.eq.fault.Faults.checkStrike;
-import static org.opensha2.eq.fault.Faults.validateTrace;
+import static org.opensha2.eq.fault.Faults.checkTrace;
 
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.geo.LocationGrid;
@@ -94,7 +94,7 @@ class GriddedFaultSurface {
     private Builder() {}
 
     public Builder trace(LocationList trace) {
-      this.trace = validateTrace(trace);
+      this.trace = checkTrace(trace);
       return this;
     }
 

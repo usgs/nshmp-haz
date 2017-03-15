@@ -9,7 +9,7 @@ import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
 import static org.opensha2.eq.Earthquakes.checkCrustalWidth;
 import static org.opensha2.eq.fault.Faults.checkDip;
 import static org.opensha2.eq.fault.Faults.checkRake;
-import static org.opensha2.eq.fault.Faults.validateTrace;
+import static org.opensha2.eq.fault.Faults.checkTrace;
 import static org.opensha2.eq.model.SourceType.FAULT;
 import static org.opensha2.internal.TextUtils.validateName;
 
@@ -233,7 +233,7 @@ public class FaultSource implements Source {
     }
 
     Builder trace(LocationList trace) {
-      this.trace = validateTrace(trace);
+      this.trace = checkTrace(trace);
       return this;
     }
 

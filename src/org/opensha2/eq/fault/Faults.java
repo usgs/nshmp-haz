@@ -83,7 +83,7 @@ public final class Faults {
    * @return the validated trace
    * @throws IllegalArgumentException if {@code trace.size() < 2}
    */
-  public static LocationList validateTrace(LocationList trace) {
+  public static LocationList checkTrace(LocationList trace) {
     checkArgument(trace.size() > 1, "Fault trace must have at least 2 points");
     return trace;
   }

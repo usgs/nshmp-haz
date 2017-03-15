@@ -17,26 +17,14 @@ public final class Earthquakes {
 
   private Earthquakes() {}
   
-  /**
-   * Minimum supported earthquake depth: {@code -5 km}.
-   */
-  public static final double MIN_DEPTH = -5.0;
-
-  /**
-   * Maximum supported earthquake depth: {@code 700 km}.
-   */
-  public static final double MAX_DEPTH = 700.0;
-
-  /**
-   * Supported earthquake depths: {@code [-5..700] km}.
-   */
-  public static final Range<Double> DEPTH_RANGE = Range.closed(MIN_DEPTH, MAX_DEPTH);
-
   /*
    * TODO possibly adjust Faults.CRUSTAL_DEPTH_RANGE CB14 restricts to 20 km and
    * the PEER database is pretty comprehensive. Perhaps implement active and
    * stable crust depth range.
    */
+
+  /** Supported earthquake depths: {@code [-5..700] km}. */
+  public static final Range<Double> DEPTH_RANGE = Range.closed(-5.0, 700.0);
 
   /** Supported crustal earthquake depths: {@code [0..40] km}. */
   public static final Range<Double> CRUSTAL_DEPTH_RANGE = Range.closed(0.0, 40.0);
@@ -54,22 +42,10 @@ public final class Earthquakes {
   public static final Range<Double> SLAB_DEPTH_RANGE = Range.closed(20.0, 700.0);
 
   /**
-   * Minimum supported earthquake magnitude: {@code -2.0}. This numeric value is
-   * used for range checking and is not bound to any particular magnitude scale.
-   */
-  public static final double MIN_MAG = -2.0;
-
-  /**
-   * Maximum supported earthquake magnitude: {@code 9.7}. This numeric value is
-   * used for range checking and is not bound to any particular magnitude scale.
-   */
-  public static final double MAX_MAG = 9.7;
-
-  /**
-   * Supported earthquake magnitude range: {@code [-2.0..9.7]}. This range of
+   * Supported earthquake magnitudes: {@code [-2.0..9.7]}. This range of
    * values is not bound to any particular magnitude scale.
    */
-  public static final Range<Double> MAG_RANGE = Range.closed(MIN_MAG, MAX_MAG);
+  public static final Range<Double> MAG_RANGE = Range.closed(-2.0, 9.7);
 
   /** Shear modulus {@code μ = 3·10¹⁰ N·m⁻²}. */
   public static final double MU = 3e10;

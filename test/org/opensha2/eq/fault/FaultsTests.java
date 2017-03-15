@@ -1,6 +1,10 @@
 package org.opensha2.eq.fault;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
+import org.opensha2.geo.Location;
+import org.opensha2.geo.LocationList;
 
 import org.junit.Test;
 
@@ -42,6 +46,19 @@ public final class FaultsTests {
   @Test(expected = IllegalArgumentException.class)
   public final void testCheckStrikeHi_IAE() {
     Faults.checkStrike(360.0);
+  }
+  
+  @Test
+  public final void testCheckTrace() {
+    LocationList expect = LocationList.create(
+        Location.create(0.0, 0.0),
+        Location.create(1.0, 1.0));
+    assertSame(expect, Faults.checkTrace(expect));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public final void testCheckTrace_IAE() {
+    Faults.checkTrace(LocationList.create(Location.create(0.0, 0.0)));
   }
 
 

@@ -10,7 +10,7 @@ import static org.opensha2.eq.Earthquakes.checkCrustalDepth;
 import static org.opensha2.eq.Earthquakes.checkInterfaceWidth;
 import static org.opensha2.eq.fault.Faults.checkDip;
 import static org.opensha2.eq.fault.Faults.checkStrike;
-import static org.opensha2.eq.fault.Faults.validateTrace;
+import static org.opensha2.eq.fault.Faults.checkTrace;
 import static org.opensha2.geo.LocationVector.createWithPlunge;
 import static org.opensha2.geo.Locations.linearDistanceFast;
 import static org.opensha2.geo.Locations.location;
@@ -137,7 +137,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
     private Builder() {}
 
     public Builder trace(LocationList trace) {
-      this.trace = validateTrace(trace);
+      this.trace = checkTrace(trace);
       return this;
     }
 
