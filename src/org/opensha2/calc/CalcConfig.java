@@ -908,34 +908,39 @@ public final class CalcConfig {
       .setPrettyPrinting()
       .enableComplexMapKeySerialization()
       .serializeNulls()
-      .registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
-        @Override
-        public JsonElement serialize(
-            Double value,
-            Type type,
-            JsonSerializationContext context) {
-          return Double.isNaN(value) ? null : new JsonPrimitive(value);
-        }
-      })
-      .registerTypeAdapter(Path.class, new JsonDeserializer<Path>() {
-        @Override
-        public Path deserialize(
-            JsonElement json,
-            Type type,
-            JsonDeserializationContext context) throws JsonParseException {
-          return Paths.get(json.getAsString());
-        }
-      })
-      .registerTypeAdapter(Path.class, new JsonSerializer<Path>() {
-        @Override
-        public JsonElement serialize(
-            Path path,
-            Type type,
-            JsonSerializationContext context) {
-          return new JsonPrimitive(path.toAbsolutePath().normalize().toString());
-        }
-      })
+      .registerTypeAdapter(Double.class, new DoubleSerializer())
+      .registerTypeHierarchyAdapter(Path.class, new PathConverter())
       .create();
+
+  private static class DoubleSerializer implements JsonSerializer<Double> {
+
+    @Override
+    public JsonElement serialize(
+        Double value,
+        Type type,
+        JsonSerializationContext context) {
+      return Double.isNaN(value) ? null : new JsonPrimitive(value);
+    }
+  }
+
+  private static class PathConverter implements JsonSerializer<Path>, JsonDeserializer<Path> {
+
+    @Override
+    public Path deserialize(
+        JsonElement json,
+        Type type,
+        JsonDeserializationContext context) throws JsonParseException {
+      return Paths.get(json.getAsString());
+    }
+
+    @Override
+    public JsonElement serialize(
+        Path path,
+        Type type,
+        JsonSerializationContext context) {
+      return new JsonPrimitive(path.toAbsolutePath().normalize().toString());
+    }
+  }
 
   /**
    * Save this config in JSON format to the speciifed directory.
