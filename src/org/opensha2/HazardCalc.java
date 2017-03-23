@@ -107,12 +107,13 @@ public class HazardCalc {
       log.info("Sites: " + sites);
 
       Path out = calc(model, config, sites, log);
+      log.info(PROGRAM + ": finished");
 
       // transfer log and write config
+      fh.close();
       Files.move(tempLog, out.resolve(PROGRAM + ".log"));
       config.write(out);
 
-      log.info(PROGRAM + ": finished");
       return Optional.absent();
 
     } catch (Exception e) {
