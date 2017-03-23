@@ -955,12 +955,6 @@ public final class CalcConfig {
     writer.close();
   }
 
-  public static void main(String[] args) throws IOException {
-    CalcConfig c = Builder.withDefaults().build();
-    String s = GSON.toJson(c);
-    System.out.println(s);
-  }
-
   /**
    * A builder of configuration instances.
    */

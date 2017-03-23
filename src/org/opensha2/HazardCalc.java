@@ -109,7 +109,7 @@ public class HazardCalc {
       Path out = calc(model, config, sites, log);
       log.info(PROGRAM + ": finished");
 
-      // transfer log and write config
+      /* Transfer log and write config, windows requires fh.close() */
       fh.close();
       Files.move(tempLog, out.resolve(PROGRAM + ".log"));
       config.write(out);
