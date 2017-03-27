@@ -14,6 +14,7 @@ import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.internal.Logging;
+import org.opensha2.internal.Version;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
@@ -89,7 +90,7 @@ public class HazardCalc {
       fh.setFormatter(new Logging.ConsoleFormatter());
       log.getParent().addHandler(fh);
 
-      log.info(PROGRAM + ": initializing...");
+      log.info(PROGRAM + ": " + Version.APP_VERSION);
       Path modelPath = Paths.get(args[0]);
       HazardModel model = HazardModel.load(modelPath);
 
