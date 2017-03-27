@@ -82,7 +82,7 @@ public class DeaggCalc {
       fh.setFormatter(new Logging.ConsoleFormatter());
       log.getParent().addHandler(fh);
 
-      log.info(PROGRAM + ": initializing...");
+      log.info(PROGRAM + ": " + HazardCalc.VERSION);
       Path modelPath = Paths.get(args[0]);
       HazardModel model = HazardModel.load(modelPath);
 
@@ -199,7 +199,9 @@ public class DeaggCalc {
 
   private static final String USAGE = new StringBuilder()
       .append(NEWLINE)
-      .append(PROGRAM).append(" usage:").append(NEWLINE)
+      .append(PROGRAM).append(" [").append(HazardCalc.VERSION).append("]").append(NEWLINE)
+      .append(NEWLINE)
+      .append("Usage:").append(NEWLINE)
       .append("  ").append(USAGE_COMMAND).append(NEWLINE)
       .append(NEWLINE)
       .append("Where:").append(NEWLINE)

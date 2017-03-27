@@ -5,7 +5,6 @@
     nshmp-haz is a platform for conducting seismic hazard calculations
   </description>
 
-  <!-- PROPERTIES -->
   <property name="src" location="src" />
   <property name="test" location="test" />
   <property name="lib" location="lib" />
@@ -14,6 +13,8 @@
   <property name="docs" location="docs" />
   <property name="javadoc" location="${docs}/javadoc" />
 
+  <property name="app.properties" location="${dist}/app.properties" />
+  <available file=".git" type="dir" property="git.present" />
 
   <property name="reports" location="${docs}/reports" />
   <property name="reports.xml" location="${reports}/junit-xml" />
@@ -56,13 +57,34 @@
        and internal package; need to check dependencies
   -->
 
-  <target name="jar" depends="compile.source">
+  <target name="jar" depends="compile.source,set.app.properties">
     <jar destfile="${dist}/nshmp-haz.jar">
       <fileset dir="${classes}" />
+      <fileset file="${app.properties}" />
       <zipfileset src="${guava.jar}" excludes="**/META-INF/**" />
       <zipfileset src="${gson.jar}" />
     </jar>
+    <delete file="${app.properties}" />
   </target>
+
+  <target name="set.app.properties" depends="check.git">
+    <condition property="app.version" value="${git.tag}" else="unknown">
+      <isset property="git.tag" />
+    </condition>
+    <echo>app.version=${app.version}</echo>
+    <echo file="${app.properties}">app.version=${app.version}</echo>
+    <echo file="${app.properties}" append="true">${line.separator}</echo>
+  </target>
+
+  <target name="check.git" if="git.present">
+    <exec executable="git"
+          outputproperty="git.tag"
+          failifexecutionfails="false">
+      <arg value="describe" />
+      <arg value="--tags" />
+    </exec>
+  </target>
+
 
   <target name="compile">
     <mkdir dir="${classes}" />
