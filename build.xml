@@ -14,7 +14,6 @@
   <property name="javadoc" location="${docs}/javadoc" />
 
   <property name="app.properties" location="${dist}/app.properties" />
-  <property name="tstamp.format" value="yyyy-MM-dd'T'HH:mm:ssXXX" />
   <available file=".git" type="dir" property="git.present" />
 
   <property name="reports" location="${docs}/reports" />
@@ -69,17 +68,12 @@
   </target>
 
   <target name="set.app.properties" depends="check.git">
-    <tstamp>
-      <format property="build.date" pattern="${tstamp.format}" />
-    </tstamp>
-    <echo>build.date=${build.date}</echo>
-    <echo file="${app.properties}">build.date=${build.date}</echo>
-    <echo file="${app.properties}" append="true">${line.separator}</echo>
     <condition property="app.version" value="${git.tag}" else="unknown">
       <isset property="git.tag" />
     </condition>
     <echo>app.version=${app.version}</echo>
-    <echo file="${app.properties}" append="true">app.version=${app.version}</echo>
+    <echo file="${app.properties}">app.version=${app.version}</echo>
+    <echo file="${app.properties}" append="true">${line.separator}</echo>
   </target>
 
   <target name="check.git" if="git.present">

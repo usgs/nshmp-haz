@@ -14,16 +14,19 @@ import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.internal.Logging;
-import org.opensha2.internal.Version;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -90,7 +93,7 @@ public class HazardCalc {
       fh.setFormatter(new Logging.ConsoleFormatter());
       log.getParent().addHandler(fh);
 
-      log.info(PROGRAM + ": " + Version.APP_VERSION);
+      log.info(PROGRAM + ": " + VERSION);
       Path modelPath = Paths.get(args[0]);
       HazardModel model = HazardModel.load(modelPath);
 
@@ -230,7 +233,12 @@ public class HazardCalc {
       throw new RuntimeException(e);
     }
   }
-  
+
+  /**
+   * The Git application version. This version string applies to all other
+   * nshnmp-haz applications.
+   */
+  public static final String VERSION = version();
 
   private static final String PROGRAM = HazardCalc.class.getSimpleName();
   private static final String USAGE_COMMAND =
@@ -239,9 +247,36 @@ public class HazardCalc {
   private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
   private static final String SITE_STRING = "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]";
 
+  private static String version() {
+    String version = "unknown";
+    /* Assume we're running from a jar. */
+    try {
+      InputStream is = HazardCalc.class.getResourceAsStream("/app.properties");
+      Properties props = new Properties();
+      props.load(is);
+      is.close();
+      version = props.getProperty("app.version");
+    } catch (Exception e1) {
+      /* Otherwise check for a repository. */
+      Path gitDir = Paths.get(".git");
+      if (Files.exists(gitDir)) {
+        try {
+          Process pr = Runtime.getRuntime().exec("git describe --tags");
+          BufferedReader br = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+          version = br.readLine();
+          br.close();
+          /* Detached from repository. */
+        } catch (Exception e2) {}
+      }
+    }
+    return version;
+  }
+
   private static final String USAGE = new StringBuilder()
       .append(NEWLINE)
-      .append(PROGRAM).append(" usage:").append(NEWLINE)
+      .append(PROGRAM).append(" [").append(VERSION).append("]").append(NEWLINE)
+      .append(NEWLINE)
+      .append("Usage:").append(NEWLINE)
       .append("  ").append(USAGE_COMMAND).append(NEWLINE)
       .append(NEWLINE)
       .append("Where:").append(NEWLINE)

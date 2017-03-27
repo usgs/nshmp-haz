@@ -14,7 +14,6 @@ import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
 import org.opensha2.eq.model.HazardModel;
 import org.opensha2.internal.Logging;
-import org.opensha2.internal.Version;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
@@ -83,7 +82,7 @@ public class DeaggCalc {
       fh.setFormatter(new Logging.ConsoleFormatter());
       log.getParent().addHandler(fh);
 
-      log.info(PROGRAM + ": " + Version.APP_VERSION);
+      log.info(PROGRAM + ": " + HazardCalc.VERSION);
       Path modelPath = Paths.get(args[0]);
       HazardModel model = HazardModel.load(modelPath);
 
@@ -200,7 +199,9 @@ public class DeaggCalc {
 
   private static final String USAGE = new StringBuilder()
       .append(NEWLINE)
-      .append(PROGRAM).append(" usage:").append(NEWLINE)
+      .append(PROGRAM).append(" [").append(HazardCalc.VERSION).append("]").append(NEWLINE)
+      .append(NEWLINE)
+      .append("Usage:").append(NEWLINE)
       .append("  ").append(USAGE_COMMAND).append(NEWLINE)
       .append(NEWLINE)
       .append("Where:").append(NEWLINE)
