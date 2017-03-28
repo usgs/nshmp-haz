@@ -157,15 +157,20 @@ final class Deaggregator {
       for (Entry<Gmm, DeaggDataset.Builder> entry : datasetBuilders.entrySet()) {
 
         /*
-         * Scale, skipping clusters that do not contribute as their attendant
-         * sources will also not contribute and 0/0 will yield NaNs.
+         * Due to Gmm variations with distance, cluster curves for some GMMs may
+         * not have been calculated. Skip non-participating clusters (curve will
+         * be absent). Scale to total cluster rate. Builder rate > 0.0 check
+         * assures no 0/0 --> NaN and is necessary for curves that are present
+         * but that end below the target deagg iml.
          */
         Gmm gmm = entry.getKey();
         DeaggDataset.Builder clusterBuilder = entry.getValue();
-        XySequence clusterCurve = clusterCurves.get(gmm);
-        double clusterRate = Deaggregation.RATE_INTERPOLATER.findY(clusterCurve, iml);
-        if (clusterBuilder.rate() > 0.0) {
-          clusterBuilder.multiply(clusterRate / clusterBuilder.rate());
+        if (clusterCurves.containsKey(gmm)) {
+          XySequence clusterCurve = clusterCurves.get(gmm);
+          double clusterRate = Deaggregation.RATE_INTERPOLATER.findY(clusterCurve, iml);
+          if (clusterBuilder.rate() > 0.0) {
+            clusterBuilder.multiply(clusterRate / clusterBuilder.rate());
+          }
         }
 
         /* Swap parents. */
