@@ -24,7 +24,7 @@ class ImmutableXySequence extends XySequence {
     /*
      * This constructor provides the option to 'clear' (or zero-out) the
      * y-values when copying, however, in practice, it is only ever used when
-     * creating mutable covariants.
+     * creating mutable instances.
      *
      * The covariant cast below is safe as all implementations descend from this
      * class.
