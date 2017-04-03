@@ -325,11 +325,11 @@ public final class Mfds {
    * method returns the Poisson probability of occurence over the specified time
    * period.
    * @param rate (annual) of occurence of some event
-   * @param time period of interest
+   * @param timespan of interest
    * @return the Poisson probability of occurrence in the specified {@code time}
    */
-  public static double rateToProb(double rate, double time) {
-    return 1 - exp(-rate * time);
+  public static double rateToProb(double rate, double timespan) {
+    return 1 - exp(-rate * timespan);
   }
 
   /**
@@ -337,11 +337,11 @@ public final class Mfds {
    * specified time period, method returns the annual rate of occurrence of that
    * event.
    * @param P the Poisson probability of an event's occurrence
-   * @param time period of interest
+   * @param timespan of interest
    * @return the annnual rate of occurrence of the event
    */
-  public static double probToRate(double P, double time) {
-    return -log(1 - P) / time;
+  public static double probToRate(double P, double timespan) {
+    return -log(1 - P) / timespan;
   }
 
   /**
