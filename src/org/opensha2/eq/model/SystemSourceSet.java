@@ -18,6 +18,7 @@ import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.SystemInputList;
 import org.opensha2.data.Indexing;
+import org.opensha2.data.IntervalArray;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.eq.fault.surface.GriddedSurface;
@@ -125,8 +126,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
   }
 
   @Override
-  public Predicate<SystemSource> distanceFilter(Location loc,
-      double distance) {
+  public Predicate<SystemSource> distanceFilter(Location loc, double distance) {
     BitSet siteBitset = bitsetForLocation(loc, distance);
     return new BitsetFilter(siteBitset);
   }
@@ -395,6 +395,59 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
           stats);
     }
   }
+  
+  /*
+   * Handle rate calculations internally as SystemSource is not fully implemented.
+   * If/when it is, this should be removed in favor using iterableForLocation
+   * and getRupture(0).
+   */
+  
+  /**
+   * Return an instance of a {@code Function} that converts a
+   * {@code SystemSourceSet} to a ground motion model {@code InputList}.
+   *
+   * @param location with which to initialize instance.
+   * @param distance if interest (relevant source radius)
+   * @param modelMfd MFD to populate
+   */
+  public static Function<SystemSourceSet, IntervalArray> toRatesFunction(
+      Location location,
+      double distance,
+      IntervalArray modelMfd) {
+    return new ToRates(location, distance, modelMfd);
+  }
+
+  private static final class ToRates implements Function<SystemSourceSet, IntervalArray> {
+
+    private final Location location;
+    private final double distance;
+    private final IntervalArray modelMfd;
+
+    ToRates(
+        final Location location,
+        final double distance,
+        final IntervalArray modelMfd) {
+      
+      this.location = location;
+      this.distance = distance;
+      this.modelMfd = modelMfd;
+    }
+
+    @Override
+    public IntervalArray apply(final SystemSourceSet sourceSet) {
+      IntervalArray.Builder mfdForLocation = IntervalArray.Builder.fromModel(modelMfd);
+      BitSet bitsetForLocation = sourceSet.bitsetForLocation(location, distance);
+      if (bitsetForLocation.isEmpty()) {
+        return modelMfd;
+      }
+      int[] sourceIndices = Indexing.bitsToIndices(bitsetForLocation);
+      for (int i : sourceIndices) {
+        mfdForLocation.add(sourceSet.mags[i], sourceSet.rates[i]);
+      }
+      return mfdForLocation.build();
+    }
+  }
+
 
   /*
    * System source calculation pipeline.
@@ -506,9 +559,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
 
         /* Create inputs. */
         Map<Integer, double[]> rMap = rMapBuilder.build();
-        Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(
-            rMap,
-            site);
+        Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(rMap, site);
         Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
         Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
 
