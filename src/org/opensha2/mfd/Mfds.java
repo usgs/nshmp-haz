@@ -9,6 +9,7 @@ import static java.lang.Math.pow;
 import static org.opensha2.eq.Earthquakes.magToMoment;
 
 import org.opensha2.data.Data;
+import org.opensha2.data.XyPoint;
 import org.opensha2.data.XySequence;
 
 import com.google.common.base.Converter;
@@ -401,6 +402,16 @@ public final class Mfds {
       sequences.add(toSequence(mfd));
     }
     return Data.combine(sequences);
+  }
+  
+  public static XySequence toCumulative(XySequence incremental) {
+    XySequence cumulative = XySequence.copyOf(incremental);
+    double sum = 0.0;
+    for (XyPoint p : cumulative) {
+      sum += p.y();
+      p.set(sum);
+    }
+    return XySequence.immutableCopyOf(cumulative);
   }
 
 }
