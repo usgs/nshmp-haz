@@ -327,7 +327,7 @@ final class Deaggregator {
      * contributions by section. We also create a utility builder for magnitude
      * indexing.
      */
-    IntervalArray mfdModel = new IntervalArray.Builder().rows(
+    IntervalArray mfdModel = IntervalArray.Builder.withRows(
         Maths.round(systemSources.stats.mMin, 1, RoundingMode.FLOOR),
         Maths.round(systemSources.stats.mMax, 1, RoundingMode.CEILING),
         0.1).build();
@@ -351,7 +351,7 @@ final class Deaggregator {
       double azimuth = Locations.azimuth(site.location, location);
 
       /*
-       * Init sectionMfds and create system contributors for section and attach
+       * Init sectionMfds, create system contributors for section and attach
        * to parent.
        */
       Map<Gmm, SystemContributor.Builder> contributors = new EnumMap<>(Gmm.class);
