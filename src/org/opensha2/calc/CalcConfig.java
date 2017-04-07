@@ -59,7 +59,7 @@ public final class CalcConfig {
   static final String FILE_NAME = "config.json";
   private static final String ID = CalcConfig.class.getSimpleName();
   private static final String STATE_ERROR = "%s %s not set";
-  private static final String DEFAULT_OUT = "curves";
+  static final String DEFAULT_OUT = "curves";
 
   /**
    * The resource from which {@code this} was derived. This field may be empty.
@@ -81,13 +81,17 @@ public final class CalcConfig {
   /** Deaggregation configuration. */
   public final Deagg deagg;
 
+  /** Earthquake rate configuration. */
+  public final Rate rate;
+
   private CalcConfig(
       Optional<Path> resource,
       Curve curve,
       SiteDefaults site,
       Performance performance,
       Output output,
-      Deagg deagg) {
+      Deagg deagg,
+      Rate rate) {
 
     this.resource = resource;
     this.curve = curve;
@@ -95,6 +99,7 @@ public final class CalcConfig {
     this.performance = performance;
     this.output = output;
     this.deagg = deagg;
+    this.rate = rate;
   }
 
   /**
@@ -220,11 +225,11 @@ public final class CalcConfig {
       }
       return new StringBuilder()
           .append(LOG_INDENT).append("Curve")
-          .append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel))
+          .append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel.name()))
           .append(formatEntry(Key.TRUNCATION_LEVEL, truncationLevel))
           .append(formatEntry(Key.IMTS, enumsToString(imts, Imt.class)))
           .append(formatEntry(Key.GMM_UNCERTAINTY, gmmUncertainty))
-          .append(formatEntry(Key.VALUE_TYPE, valueType))
+          .append(formatEntry(Key.VALUE_TYPE, valueType.name()))
           .append(formatEntry(Key.DEFAULT_IMLS, wrap(Arrays.toString(defaultImls), false)))
           .append(imlSb);
     }
@@ -512,7 +517,7 @@ public final class CalcConfig {
           .append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
           .append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
           .append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
-          .append(formatEntry(Key.THREAD_COUNT, threadCount));
+          .append(formatEntry(Key.THREAD_COUNT, threadCount.name()));
     }
 
     private static final class Builder {
@@ -669,7 +674,169 @@ public final class CalcConfig {
   }
 
   /**
-   * Deaggregation configuration data container.
+   * Magnitude-frequency distribution configuration.
+   */
+  public static final class Rate {
+
+    static final String ID = CalcConfig.ID + "." + Rate.class.getSimpleName();
+
+    /**
+     * The magnitude discretization.
+     */
+    public final Bins bins;
+
+    /**
+     * The distance from a site within which all sources should be included.
+     *
+     * <p><b>Default:</b> {@code 20}
+     */
+    public final Double distance;
+
+    /**
+     * The rate data distribution type.
+     *
+     * <p><b>Default:</b> {@link Distribution#INCREMENTAL}
+     */
+    public final Distribution distribution;
+
+    /**
+     * The value format for rate data.
+     *
+     * <p><b>Default:</b> {@link CurveValue#ANNUAL_RATE}
+     */
+    public final CurveValue values;
+
+    /**
+     * The timespan of interest when computing Poisson probabilities.
+     *
+     * <p><b>Default:</b> {@code 30}
+     */
+    public final Double timespan;
+
+    private Rate(
+        Bins bins,
+        double distance,
+        Distribution distribution,
+        CurveValue values,
+        double timespan) {
+
+      this.bins = bins;
+      this.distance = distance;
+      this.distribution = distribution;
+      this.values = values;
+      this.timespan = timespan;
+    }
+
+    private StringBuilder asString() {
+      return new StringBuilder()
+          .append(LOG_INDENT).append("Rate")
+          .append(formatEntry("mBins"))
+          .append("min=").append(bins.mMin).append(", ")
+          .append("max=").append(bins.mMax).append(", ")
+          .append("Δ=").append(bins.Δm)
+          .append(formatEntry(Key.DISTANCE, distance))
+          .append(formatEntry(Key.DISTRIBUTION, distribution.name()))
+          .append(formatEntry(Key.VALUES, values.name()))
+          .append(formatEntry(Key.TIMESPAN, timespan));
+    }
+
+    private static final class Builder {
+
+      Bins bins;
+      Double distance;
+      Distribution distribution;
+      CurveValue values;
+      Double timespan;
+
+      Rate build() {
+        return new Rate(
+            bins,
+            distance,
+            distribution,
+            values,
+            timespan);
+      }
+
+      void copy(Rate that) {
+        this.bins = that.bins;
+        this.distance = that.distance;
+        this.distribution = that.distribution;
+        this.values = that.values;
+        this.timespan = that.timespan;
+      }
+
+      void extend(Builder that) {
+        if (that.bins != null) {
+          this.bins = that.bins;
+        }
+        if (that.distance != null) {
+          this.distance = that.distance;
+        }
+        if (that.distribution != null) {
+          this.distribution = that.distribution;
+        }
+        if (that.values != null) {
+          this.values = that.values;
+        }
+        if (that.timespan != null) {
+          this.timespan = that.timespan;
+        }
+      }
+
+      static Builder defaults() {
+        Builder b = new Builder();
+        b.bins = Bins.defaults();
+        b.distance = 20.0;
+        b.distribution = Distribution.INCREMENTAL;
+        b.values = CurveValue.ANNUAL_RATE;
+        b.timespan = 30.0;
+        return b;
+      }
+
+      void validate() {
+        checkNotNull(bins, STATE_ERROR, Rate.ID, Key.BINS);
+        checkNotNull(bins.mMin, STATE_ERROR, Rate.ID, Key.BINS + ".mMin");
+        checkNotNull(bins.mMax, STATE_ERROR, Rate.ID, Key.BINS + ".mMax");
+        checkNotNull(bins.Δm, STATE_ERROR, Rate.ID, Key.BINS + ".Δm");
+        checkNotNull(distance, STATE_ERROR, Rate.ID, Key.DISTANCE);
+        checkNotNull(distribution, STATE_ERROR, Rate.ID, Key.DISTRIBUTION);
+        checkNotNull(values, STATE_ERROR, Rate.ID, Key.VALUES);
+        checkNotNull(timespan, STATE_ERROR, Rate.ID, Key.TIMESPAN);
+      }
+
+    }
+
+    /**
+     * The mfd magnitude discretization.
+     */
+    public static final class Bins {
+
+      static final String ID = CalcConfig.ID + "." + Rate.ID + "." + Bins.class.getSimpleName();
+
+      /** Minimum magnitude. Lower edge of smallest magnitude bin. */
+      public final Double mMin;
+
+      /** Maximum magnitude. Upper edge of largest magnitude bin. */
+      public final Double mMax;
+
+      /** Magnitude bin width. */
+      public final Double Δm;
+
+      Bins(double mMin, double mMax, double Δm) {
+        this.mMin = mMin;
+        this.mMax = mMax;
+        this.Δm = Δm;
+      }
+
+      static Bins defaults() {
+        return new Bins(4.2, 9.4, 0.1);
+      }
+    }
+
+  }
+
+  /**
+   * Deaggregation configuration.
    */
   public static final class Deagg {
 
@@ -687,7 +854,7 @@ public final class CalcConfig {
      */
     public final Double contributorLimit;
 
-    Deagg(
+    private Deagg(
         Bins bins,
         double contributorLimit) {
 
@@ -716,8 +883,6 @@ public final class CalcConfig {
     /**
      * The distance, magnitude, and epsilon bins into which contributing sources
      * to hazard will be sorted.
-     *
-     * @author Peter Powers
      */
     public static final class Bins {
 
@@ -848,7 +1013,12 @@ public final class CalcConfig {
     FLUSH_LIMIT,
     /* deagg */
     BINS,
-    CONTRIBUTOR_LIMIT;
+    CONTRIBUTOR_LIMIT,
+    /* rate */
+    DISTANCE,
+    VALUES,
+    DISTRIBUTION,
+    TIMESPAN;
 
     private String label;
 
@@ -873,6 +1043,7 @@ public final class CalcConfig {
         .append(performance.asString())
         .append(output.asString())
         .append(deagg.asString())
+        .append(rate.asString())
         .toString();
   }
 
@@ -968,6 +1139,7 @@ public final class CalcConfig {
     private Performance.Builder performance;
     private Output.Builder output;
     private Deagg.Builder deagg;
+    private Rate.Builder rate;
 
     private Builder() {
       curve = new Curve.Builder();
@@ -975,6 +1147,7 @@ public final class CalcConfig {
       performance = new Performance.Builder();
       output = new Output.Builder();
       deagg = new Deagg.Builder();
+      rate = new Rate.Builder();
     }
 
     /**
@@ -990,6 +1163,7 @@ public final class CalcConfig {
       b.performance.copy(config.performance);
       b.output.copy(config.output);
       b.deagg.copy(config.deagg);
+      b.rate.copy(config.rate);
       return b;
     }
 
@@ -1021,6 +1195,7 @@ public final class CalcConfig {
       b.performance = Performance.Builder.defaults();
       b.output = Output.Builder.defaults();
       b.deagg = Deagg.Builder.defaults();
+      b.rate = Rate.Builder.defaults();
       return b;
     }
 
@@ -1036,14 +1211,46 @@ public final class CalcConfig {
       this.performance.extend(that.performance);
       this.output.extend(that.output);
       this.deagg.extend(that.deagg);
+      this.rate.extend(that.rate);
+      return this;
+    }
+
+    /*
+     * Those values for which web services require custom configurations
+     * (overrides) are exposed below.
+     */
+
+    /**
+     * Set the IMTs for which results should be calculated.
+     * 
+     * @see Curve#imts
+     */
+    public Builder imts(Set<Imt> imts) {
+      this.curve.imts = checkNotNull(imts);
       return this;
     }
 
     /**
-     * Set the IMTs for which results should be calculated.
+     * Set the timespan for earthquake probabilities. Calling this method also
+     * sets {@link Rate#values} to {@link CurveValue#POISSON_PROBABILITY} to
+     * ensure consistency.
+     * 
+     * @see Rate#timespan
      */
-    public Builder imts(Set<Imt> imts) {
-      this.curve.imts = checkNotNull(imts);
+    public Builder timespan(double timespan) {
+      this.rate.timespan = timespan;
+      this.rate.values = CurveValue.POISSON_PROBABILITY;
+      return this;
+    }
+
+    /**
+     * Set the cutoff distance within which to include all sources when
+     * computing earthquake rates or probabilities.
+     * 
+     * @see Rate#distance
+     */
+    public Builder distance(double distance) {
+      this.rate.distance = distance;
       return this;
     }
 
@@ -1054,6 +1261,7 @@ public final class CalcConfig {
       performance.validate();
       output.validate();
       deagg.validate();
+      rate.validate();
       built = true;
     }
 
@@ -1068,7 +1276,8 @@ public final class CalcConfig {
           siteDefaults.build(),
           performance.build(),
           output.build(),
-          deagg.build());
+          deagg.build(),
+          rate.build());
     }
   }
 
