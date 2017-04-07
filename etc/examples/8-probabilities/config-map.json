@@ -1,0 +1,11 @@
+{
+  "output": {
+    "curveTypes": ["SOURCE"]
+  },
+  "rate": {
+    "distance": 10.0,
+    "values": "POISSON_PROBABILITY",
+    "distribution": "CUMULATIVE",
+    "timespan": 50.0
+  }
+}
