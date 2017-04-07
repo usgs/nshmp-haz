@@ -444,7 +444,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
       for (int i : sourceIndices) {
         mfdForLocation.add(sourceSet.mags[i], sourceSet.rates[i]);
       }
-      return mfdForLocation.build();
+      return mfdForLocation.multiply(sourceSet.weight()).build();
     }
   }
 
