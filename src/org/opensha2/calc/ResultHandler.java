@@ -57,11 +57,11 @@ import java.util.logging.Logger;
  */
 public final class ResultHandler {
 
-  private static final String DEAGG_DIR = "deagg";
-  private static final String GMM_DIR = "gmm";
-  private static final String BINARY_SUFFIX = ".bin";
-  private static final String TEXT_SUFFIX = ".csv";
-  private static final String RATE_FMT = "%.8e";
+  static final String DEAGG_DIR = "deagg";
+  static final String GMM_DIR = "gmm";
+  static final String BINARY_SUFFIX = ".bin";
+  static final String TEXT_SUFFIX = ".csv";
+  static final String RATE_FMT = "%.8e";
 
   static final OpenOption[] WRITE = new OpenOption[] {
       StandardOpenOption.CREATE,
@@ -93,7 +93,7 @@ public final class ResultHandler {
   /* Only used for binary file export. */
   private final Map<Imt, Metadata> metaMap;
 
-  private ResultHandler(CalcConfig config, Sites sites, Logger log) {
+  private ResultHandler(CalcConfig config, Sites sites, Logger log) throws IOException {
     this.log = log;
     this.dir = createOutputDir(config.output.directory);
     this.config = config;
@@ -144,19 +144,20 @@ public final class ResultHandler {
   public static ResultHandler create(
       CalcConfig config,
       Sites sites,
-      Logger log) {
+      Logger log) throws IOException {
 
     return new ResultHandler(config, sites, log);
   }
 
   /* Avoid clobbering exsting result directories via incrementing. */
-  private static Path createOutputDir(Path dir) {
+  static Path createOutputDir(Path dir) throws IOException {
     int i = 1;
     Path incrementedDir = dir;
     while (Files.exists(incrementedDir)) {
       incrementedDir = incrementedDir.resolveSibling(dir.getFileName() + "-" + i);
       i++;
     }
+    Files.createDirectories(incrementedDir);
     return incrementedDir;
   }
 
@@ -247,7 +248,7 @@ public final class ResultHandler {
 
     Set<Gmm> gmms = gmmSet(demo.model);
 
-    OpenOption[] options = !firstBatch ? APPEND : WRITE;
+    OpenOption[] options = firstBatch ? WRITE : APPEND;
 
     Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
     if (demo.config.curve.valueType == CurveValue.POISSON_PROBABILITY) {
@@ -327,8 +328,8 @@ public final class ResultHandler {
 
       List<String> locData = Lists.newArrayList(
           name,
-          String.format("%.5f", hazard.site.location.lon()),
-          String.format("%.5f", hazard.site.location.lat()));
+          String.format("%.5f", location.lon()),
+          String.format("%.5f", location.lat()));
 
       Map<Imt, Map<SourceType, XySequence>> curvesBySource =
           exportSource ? curvesBySource(hazard) : null;
@@ -352,7 +353,7 @@ public final class ResultHandler {
         int binIndex = -1;
         if (exportBinary) {
           meta = metaMap.get(imt);
-          binIndex = curveIndex2(meta.bounds, meta.spacing, location);
+          binIndex = curveIndex(meta.bounds, meta.spacing, location);
           totalCurves.get(imt).put(binIndex, totalCurve);
         }
 
@@ -587,7 +588,7 @@ public final class ResultHandler {
   private static final int HEADER_OFFSET = 896; // bytes
   private static final int INFO_LINE_SIZE = 128; // chars
 
-  private static final String BINARY_EXTENTS_REQUIRED_MSSG =
+  static final String BINARY_EXTENTS_REQUIRED_MSSG =
       "Binary output is only supported when map extents are defined\n" +
           "    See: https://github.com/usgs/nshmp-haz/wiki/Sites#map-regions";
 
@@ -781,7 +782,7 @@ public final class ResultHandler {
    * Compute the target position of a curve in a binary file. NSHMP binary files
    * index ascending in longitude, but descending in latitude.
    */
-  private static int curveIndex2(Bounds b, double spacing, Location loc) {
+  private static int curveIndex(Bounds b, double spacing, Location loc) {
     int columnCount = (int) Math.rint((b.max().lon() - b.min().lon()) / spacing) + 1;
     int rowIndex = (int) Math.rint((b.max().lat() - loc.lat()) / spacing);
     int colIndex = (int) Math.rint((loc.lon() - b.min().lon()) / spacing);
