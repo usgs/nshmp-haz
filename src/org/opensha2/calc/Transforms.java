@@ -257,8 +257,8 @@ final class Transforms {
      * Construct an exceedance curve considering uncertain ground motions.
      * 
      * TODO this has not yet been refactored to accomodate a ScalarGroundMotion
-     * object as we know this is only used in WUS whereas sgm refactoring was done
-     * (experimentally) to handle NGA-East in the CEUS.
+     * object as we know this is only used in WUS whereas sgm refactoring was
+     * done (experimentally) to handle NGA-East in the CEUS.
      */
     private XySequence exceedanceCurve(
         final double[] means,

@@ -30,14 +30,14 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 /**
- * Deaggregate probabilisitic seismic hazard at a {@link Site}.
+ * Deaggregate probabilisitic seismic hazard.
  *
  * @author Peter Powers
  */
 public class DeaggCalc {
 
   /**
-   * Entry point for deaggregating probabilisitic seismic hazard.
+   * Entry point for the deaggregation of probabilisitic seismic hazard.
    * 
    * <p>Deaggregating siesmic hazard is largeley identical to a hazard
    * calculation except that a return period (in years) must be supplied as an
