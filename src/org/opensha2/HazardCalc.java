@@ -35,8 +35,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 /**
- * Compute probabilisitic seismic hazard at a {@link Site} from a
- * {@link HazardModel}.
+ * Compute probabilisitic seismic hazard from a {@link HazardModel}.
  *
  * @author Peter Powers
  */
@@ -146,8 +145,8 @@ public class HazardCalc {
       }
       return Sites.fromString(arg, defaults);
     } catch (Exception e) {
-      throw new IllegalArgumentException(NEWLINE + "    sites = \"" + arg +
-          "\" must either be a 3 to 7 argument," + NEWLINE +
+      throw new IllegalArgumentException(NEWLINE +
+          "    sites = \"" + arg + "\" must either be a 3 to 7 argument," + NEWLINE +
           "    comma-delimited string, or specify a path to a *.csv or *.geojson file",
           e);
     }
