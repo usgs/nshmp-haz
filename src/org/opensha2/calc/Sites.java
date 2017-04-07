@@ -208,27 +208,31 @@ public abstract class Sites implements Iterable<Site> {
       RegionIterable mapIterable = (RegionIterable) this;
       sb.append(mapIterable.region.name())
           .append(" Region [size=")
-          .append(mapIterable.region.size())
+          .append(size())
           .append(" ").append(mapIterable.siteBuilder.state())
           .append("]");
     } else {
-      int size = Iterables.size(this);
       sb.append("List")
           .append(" [size=")
-          .append(size)
+          .append(size())
           .append("]");
 
       for (Site site : Iterables.limit(this, TO_STRING_LIMIT)) {
         sb.append(SITE_INDENT).append(site);
       }
-      if (size > TO_STRING_LIMIT) {
-        int delta = size - TO_STRING_LIMIT;
+      if (size() > TO_STRING_LIMIT) {
+        int delta = size() - TO_STRING_LIMIT;
         sb.append(SITE_INDENT).append("... and ").append(delta).append(" more ...");
       }
     }
     return sb.toString();
   }
 
+  /**
+   * The number of {@code Site}s {@code this} contains.
+   */
+  public abstract int size();
+  
   /**
    * An optional {@code Bounds} that is used to specify rectangular map extents,
    * which may differ from the range spanned by the sites in this. Presently
@@ -256,6 +260,11 @@ public abstract class Sites implements Iterable<Site> {
       return delegate.iterator();
     }
 
+    @Override
+    public int size() {
+      return delegate.size();
+    }
+    
     @Override
     public Optional<Bounds> mapBounds() {
       return Optional.absent();
@@ -306,6 +315,11 @@ public abstract class Sites implements Iterable<Site> {
       };
     }
 
+    @Override
+    public int size() {
+      return region.size();
+    }
+    
     @Override
     public Optional<Bounds> mapBounds() {
       return bounds;
