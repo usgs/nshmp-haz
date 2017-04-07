@@ -1,6 +1,10 @@
 package org.opensha2.calc;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import org.opensha2.calc.CalcConfig.Rate.Bins;
 import org.opensha2.data.IntervalArray;
+import org.opensha2.data.IntervalArray.Builder;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.ClusterSource;
 import org.opensha2.eq.model.ClusterSourceSet;
@@ -14,45 +18,96 @@ import org.opensha2.eq.model.SystemSourceSet;
 import org.opensha2.geo.Location;
 import org.opensha2.mfd.Mfds;
 
+import com.google.common.base.Converter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 
 /**
- * General purpose magnitude-frequency distribution data container. CUrrent;y
- * implemented for annual rate only.
+ * General purpose magnitude-frequency distribution (MFD) data container. This
+ * class makes no distinction between incremental or cumulative MFDs, or whether
+ * values are stored as annual-rate or poisson probability.
  *
  * @author Peter Powers
  */
 public class EqRate {
 
-  final XySequence totalMfd;
-  final Map<SourceType, XySequence> typeMfds;
+  /** The site of interest. */
+  public final Site site;
 
-  private EqRate(XySequence totalMfd, Map<SourceType, XySequence> typeMfds) {
+  /** The total MFD of interest. */
+  public final XySequence totalMfd;
+
+  /** The MFDs for each contributing source type. */
+  public final Map<SourceType, XySequence> typeMfds;
+
+  private EqRate(
+      Site site,
+      XySequence totalMfd,
+      Map<SourceType, XySequence> typeMfds) {
+
+    this.site = site;
     this.totalMfd = totalMfd;
     this.typeMfds = typeMfds;
   }
-  
-  /*
-   * Developer notes:
+
+  /**
+   * Create a new earthquake rate data container.
    * 
-   * TODO the receiver MFD needs to be built by querying hazard model for min-max
-   * magnitudes; currently it is built using fixed, known values from the 2014
-   * COUS model.
+   * @param model to process
+   * @param config calculation configuration
+   * @param site of interest
    */
-
-  public static EqRate createIncremental(
+  public static EqRate create(
       HazardModel model,
-      Location location,
-      double distance) {
+      CalcConfig config,
+      Site site) {
 
+    CalcConfig.Rate rateConfig = config.rate;
+
+    Bins mBins = rateConfig.bins;
     IntervalArray modelMfd = IntervalArray.Builder
-        .withRows(4.7, 9.4, 0.1)
+        .withRows(
+            mBins.mMin,
+            mBins.mMax,
+            mBins.Δm)
         .build();
+
+    EqRate rates = createIncremental(model, site, rateConfig.distance, modelMfd);
+    if (rateConfig.distribution == Distribution.CUMULATIVE) {
+      rates = toCumulative(rates);
+    }
+    if (rateConfig.values == CurveValue.POISSON_PROBABILITY) {
+      rates = toPoissonProbability(rates, rateConfig.timespan);
+    }
+    return rates;
+  }
+
+  /**
+   * Wraps {@link #create(HazardModel, CalcConfig, Site)} in a {@link Callable}
+   * for processing multiple sites concurrently.
+   * 
+   * @param model to process
+   * @param config calculation configuration
+   * @param site of interest
+   */
+  public static Callable<EqRate> callable(
+      HazardModel model,
+      CalcConfig config,
+      Site site) {
+
+    return new RateTask(model, config, site);
+  }
+
+  private static EqRate createIncremental(
+      HazardModel model,
+      Site site,
+      double distance,
+      IntervalArray modelMfd) {
 
     /* Initialize SourceType mfd builders. */
     Map<SourceType, IntervalArray.Builder> typeMfdBuilders = new EnumMap<>(SourceType.class);
@@ -62,7 +117,7 @@ public class EqRate {
 
     /* Populate builders. */
     for (SourceSet<? extends Source> sourceSet : model) {
-      IntervalArray sourceSetMfd = mfd(sourceSet, location, distance, modelMfd);
+      IntervalArray sourceSetMfd = mfd(sourceSet, site.location, distance, modelMfd);
       typeMfdBuilders.get(sourceSet.type()).add(sourceSetMfd);
     }
 
@@ -71,27 +126,23 @@ public class EqRate {
     ImmutableMap.Builder<SourceType, XySequence> typeMfds = ImmutableMap.builder();
     for (Entry<SourceType, IntervalArray.Builder> entry : typeMfdBuilders.entrySet()) {
       IntervalArray typeMfd = entry.getValue().build();
+      typeMfds.put(entry.getKey(), typeMfd.values());
       totalMfd.add(typeMfd);
     }
 
     return new EqRate(
+        site,
         totalMfd.build().values(),
         typeMfds.build());
   }
 
   /**
-   * Get the total 
-   * @param model
-   * @param location
-   * @param distance
-   * @return
+   * Create a new earthquake rate container with cumulative values.
+   * 
+   * @param incremental rate source to convert
    */
-  public static EqRate createCumulative(
-      HazardModel model,
-      Location location,
-      double distance) {
+  public static EqRate toCumulative(EqRate incremental) {
 
-    EqRate incremental = createIncremental(model, location, distance);
     XySequence cumulativeTotal = Mfds.toCumulative(incremental.totalMfd);
     ImmutableMap.Builder<SourceType, XySequence> cumulativeTypes = ImmutableMap.builder();
     for (Entry<SourceType, XySequence> entry : incremental.typeMfds.entrySet()) {
@@ -100,28 +151,67 @@ public class EqRate {
           Mfds.toCumulative(entry.getValue()));
     }
     return new EqRate(
+        incremental.site,
         cumulativeTotal,
         cumulativeTypes.build());
   }
 
-  static EqRate combine(EqRate... eqRates) {
-    // validate xs; or not if only for internal use where we know the receiver
-    // mfds are all sources from the same model
-
-    XySequence totalMfd = XySequence.emptyCopyOf(eqRates[0].totalMfd);
+  /**
+   * Create a new earthquake rate container with Poisson probability values.
+   * 
+   * @param annualRates source to convert
+   * @param timespan of interest for annual rate to Poisson probability
+   *        conversion
+   */
+  public static EqRate toPoissonProbability(EqRate annualRates, double timespan) {
+    Converter<Double, Double> converter = Mfds.annualRateToProbabilityConverter(timespan);
+    XySequence totalMfd = XySequence
+        .copyOf(annualRates.totalMfd)
+        .transform(converter);
     EnumMap<SourceType, XySequence> typeMfds = new EnumMap<>(SourceType.class);
-    for (EqRate eqRate : eqRates) {
-      totalMfd.add(eqRate.totalMfd);
-      for (Entry<SourceType, XySequence> entry : eqRate.typeMfds.entrySet()) {
-        SourceType type = entry.getKey();
-        if (!typeMfds.containsKey(type)) {
-          XySequence typeMfd = XySequence.emptyCopyOf(totalMfd);
-          typeMfds.put(type, typeMfd);
-        }
-        typeMfds.get(type).add(entry.getValue());
+    for (Entry<SourceType, XySequence> entry : annualRates.typeMfds.entrySet()) {
+      typeMfds.put(
+          entry.getKey(),
+          XySequence
+              .copyOf(entry.getValue())
+              .transform(converter));
+    }
+    return new EqRate(
+        annualRates.site,
+        XySequence.immutableCopyOf(totalMfd),
+        Maps.immutableEnumMap(typeMfds));
+  }
+
+  /**
+   * Create a new earthquake rate container with the sum of the supplied
+   * {@code rates}.
+   * 
+   * <p><b>NOTE:</b> This operation is additive and will produce meaningless
+   * results if {@code rates} have already been converted to
+   * {@link #toPoissonProbability(EqRate, double) probabilities}, or are not all
+   * of {@link Distribution#INCREMENTAL} or {@link Distribution#CUMULATIVE}
+   * distribution format.
+   * 
+   * <p>Buyer beware.
+   * 
+   * @param rates to combine
+   */
+  public static EqRate combine(EqRate... rates) {
+    Site referenceSite = rates[0].site;
+    XySequence totalMfd = XySequence.emptyCopyOf(rates[0].totalMfd);
+    EnumMap<SourceType, XySequence> typeMfds = new EnumMap<>(SourceType.class);
+    for (EqRate rate : rates) {
+      checkArgument(
+          rate.site.location.equals(referenceSite.location),
+          "Site locations are not the same:\n\ts1: %s\n\ts2: %s",
+          referenceSite, rate.site);
+      totalMfd.add(rate.totalMfd);
+      for (Entry<SourceType, XySequence> entry : rate.typeMfds.entrySet()) {
+        entry.getValue().addToMap(entry.getKey(), typeMfds);
       }
     }
     return new EqRate(
+        referenceSite,
         XySequence.immutableCopyOf(totalMfd),
         Maps.immutableEnumMap(typeMfds));
   }
@@ -163,11 +253,14 @@ public class EqRate {
         sourceSetMfd.addEach(mfd);
       }
     }
-    return sourceSetMfd.build();
+    return sourceSetMfd.multiply(sourceSet.weight()).build();
   }
 
   /*
    * Special case ClusterSourceSet.
+   * 
+   * Nested fault rates are in fact weights that need to be scaled by the
+   * cluster rate.
    */
   private static IntervalArray clusterMfd(
       ClusterSourceSet sourceSet,
@@ -178,13 +271,16 @@ public class EqRate {
     IntervalArray.Builder sourceSetMfd = IntervalArray.Builder.fromModel(modelMfd);
     for (Source source : sourceSet.iterableForLocation(location, distance)) {
       ClusterSource clusterSource = (ClusterSource) source;
-      sourceSetMfd.add(faultMfd(
-          clusterSource.faults(),
-          location,
-          distance,
-          modelMfd));
+      IntervalArray.Builder faultMfd = Builder
+          .copyOf(faultMfd(
+              clusterSource.faults(),
+              location,
+              distance,
+              modelMfd))
+          .multiply(clusterSource.rate());
+      sourceSetMfd.add(faultMfd.build());
     }
-    return sourceSetMfd.build();
+    return sourceSetMfd.multiply(sourceSet.weight()).build();
   }
 
   /*
@@ -219,7 +315,29 @@ public class EqRate {
         }
       }
     }
-    return sourceSetMfd.build();
+    return sourceSetMfd.multiply(sourceSet.weight()).build();
+  }
+
+  private static final class RateTask implements Callable<EqRate> {
+
+    private final HazardModel model;
+    private final CalcConfig config;
+    private final Site site;
+
+    RateTask(
+        HazardModel model,
+        CalcConfig config,
+        Site site) {
+
+      this.model = model;
+      this.config = config;
+      this.site = site;
+    }
+
+    @Override
+    public EqRate call() throws Exception {
+      return create(model, config, site);
+    }
   }
 
 }
