@@ -6,6 +6,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
+import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.Earthquakes.magToMoment;
 
 import org.opensha2.data.Data;
@@ -13,6 +14,7 @@ import org.opensha2.data.XyPoint;
 import org.opensha2.data.XySequence;
 
 import com.google.common.base.Converter;
+import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
 
 import java.util.ArrayList;
@@ -32,6 +34,11 @@ public final class Mfds {
 
   private static final int DEFAULT_TRUNC_TYPE = 2;
   private static final int DEFAULT_TRUNC_LEVEL = 2;
+
+  /**
+   * Supported timespans for Poisson probabilities: {@code [1..10000] years}.
+   */
+  public static final Range<Double> TIMESPAN_RANGE = Range.closed(1.0, 10000.0);
 
   private Mfds() {}
 
@@ -345,23 +352,38 @@ public final class Mfds {
   }
 
   /**
-   * Return a converter between annual rate and Poisson probability.
+   * Return a converter between annual rate and Poisson probability over a
+   * 1-year time span.
    */
   public static Converter<Double, Double> annualRateToProbabilityConverter() {
-    return AnnRateToPoissProbConverter.INSTANCE;
+    return new AnnRateToPoissProbConverter(1.0);
+  }
+
+  /**
+   * Return a converter between annual rate and Poisson probability over the
+   * specified time span.
+   */
+  public static Converter<Double, Double> annualRateToProbabilityConverter(double timespan) {
+    return new AnnRateToPoissProbConverter(timespan);
   }
 
   private static final class AnnRateToPoissProbConverter extends Converter<Double, Double> {
-    static final AnnRateToPoissProbConverter INSTANCE = new AnnRateToPoissProbConverter();
+
+    private final double timespan;
+
+    AnnRateToPoissProbConverter(double timespan) {
+      checkInRange(TIMESPAN_RANGE, "Timespan", timespan);
+      this.timespan = timespan;
+    }
 
     @Override
     protected Double doForward(Double rate) {
-      return rateToProb(rate, 1.0);
+      return rateToProb(rate, timespan);
     }
 
     @Override
     protected Double doBackward(Double prob) {
-      return probToRate(prob, 1.0);
+      return probToRate(prob, timespan);
     }
   }
 
@@ -403,7 +425,7 @@ public final class Mfds {
     }
     return Data.combine(sequences);
   }
-  
+
   public static XySequence toCumulative(XySequence incremental) {
     XySequence cumulative = XySequence.copyOf(incremental);
     double sum = 0.0;
