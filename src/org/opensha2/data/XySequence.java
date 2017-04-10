@@ -327,7 +327,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
   /**
    * Returns an iterator over the {@link XyPoint}s in this sequence. For
    * immutable implementations, the {@link XyPoint#set(double)} method of a
-   * returned point will throw an {@code UnsupportedOperationException}.
+   * returned point throws an {@code UnsupportedOperationException}.
    */
   @Override
   public Iterator<XyPoint> iterator() {
