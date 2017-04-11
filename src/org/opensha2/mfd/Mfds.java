@@ -10,7 +10,6 @@ import static org.opensha2.data.Data.checkInRange;
 import static org.opensha2.eq.Earthquakes.magToMoment;
 
 import org.opensha2.data.Data;
-import org.opensha2.data.XyPoint;
 import org.opensha2.data.XySequence;
 
 import com.google.common.base.Converter;
@@ -429,9 +428,9 @@ public final class Mfds {
   public static XySequence toCumulative(XySequence incremental) {
     XySequence cumulative = XySequence.copyOf(incremental);
     double sum = 0.0;
-    for (XyPoint p : cumulative) {
-      sum += p.y();
-      p.set(sum);
+    for (int i = incremental.size() - 1; i >= 0; i--) {
+      sum += incremental.y(i);
+      cumulative.set(i, sum);
     }
     return XySequence.immutableCopyOf(cumulative);
   }
