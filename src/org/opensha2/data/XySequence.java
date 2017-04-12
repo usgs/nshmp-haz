@@ -507,6 +507,16 @@ public abstract class XySequence implements Iterable<XyPoint> {
   public abstract boolean isClear();
 
   /**
+   * Returns a new, immutable sequence that has had all leading and trailing
+   * zero-valued points ({@code y = 0}) removed. Any zero-valued points in the
+   * middle of this sequence are ignored.
+   * 
+   * @throws IllegalStateException if {@link #isClear() this.isClear()} as empty
+   *         sequences are not permitted
+   */
+  public abstract XySequence trim();
+
+  /**
    * Transforms all y-values in place using the supplied {@link Function}.
    *
    * @param function for transform

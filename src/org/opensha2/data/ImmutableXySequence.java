@@ -2,6 +2,7 @@ package org.opensha2.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Arrays;
 
@@ -64,6 +65,16 @@ class ImmutableXySequence extends XySequence {
   @Override
   public final boolean isClear() {
     return Data.areZeroValued(ys);
+  }
+  
+  @Override
+  public final XySequence trim() {
+    checkState(!this.isClear(), "XySequence.trim() not permitted for 'clear' sequences");
+    int minIndex = Data.firstNonZeroIndex(ys);
+    int maxIndex = Data.lastNonZeroIndex(ys) + 1;
+    return new ImmutableXySequence(
+        Arrays.copyOfRange(xs, minIndex, maxIndex),
+        Arrays.copyOfRange(ys, minIndex, maxIndex));
   }
 
   @Override

@@ -1447,4 +1447,22 @@ public final class Data {
   // checkArgument(expression, "value");
   // }
 
+  static int firstNonZeroIndex(double... data) {
+    for (int i=0; i<data.length; i++) {
+      if (data[i] != 0.0) {
+        return i;
+      }
+    }
+    return -1;
+  }
+  
+  static int lastNonZeroIndex(double... data) {
+    for (int i=data.length-1; i>=0; i--) {
+      if (data[i] != 0.0) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
 }
