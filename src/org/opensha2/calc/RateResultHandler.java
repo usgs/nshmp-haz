@@ -57,7 +57,7 @@ public final class RateResultHandler {
     // System.out.println(config.output.directory);
     // System.out.println(config.output.directory.toString());
     // System.out.println(config.output.directory.);
-    this.dir = ResultHandler.createOutputDir(improvedOutputDirectory(config));
+    this.dir = HazardExport.createOutputDir(improvedOutputDirectory(config));
     // ResultHandler.createOutputDir(config.output.directory.equals(CalcConfig.DEFAULT_OUT)
     // ? ()
     // : config.output.directory);
@@ -193,9 +193,9 @@ public final class RateResultHandler {
 
     Iterable<Double> emptyValues = Doubles.asList(new double[demo.totalMfd.size()]);
 
-    OpenOption[] options = firstBatch ? ResultHandler.WRITE : ResultHandler.APPEND;
+    OpenOption[] options = firstBatch ? HazardExport.WRITE : HazardExport.APPEND;
 
-    Function<Double, String> formatter = Parsing.formatDoubleFunction(ResultHandler.RATE_FMT);
+    Function<Double, String> formatter = Parsing.formatDoubleFunction(HazardExport.RATE_FMT);
 
     /* Line maps for ascii output; may or may not be used */
     List<String> totalLines = new ArrayList<>();
@@ -244,7 +244,7 @@ public final class RateResultHandler {
       }
 
       /* write/append */
-      Path totalFile = dir.resolve("total" + ResultHandler.TEXT_SUFFIX);
+      Path totalFile = dir.resolve("total" + HazardExport.TEXT_SUFFIX);
       Files.write(totalFile, totalLines, US_ASCII, options);
       if (exportSource) {
         Path typeDir = dir.resolve("source");
@@ -252,7 +252,7 @@ public final class RateResultHandler {
         for (Entry<SourceType, List<String>> typeEntry : typeLines.entrySet()) {
           SourceType type = typeEntry.getKey();
           String filename = type.toString();
-          Path typeFile = typeDir.resolve(filename + ResultHandler.TEXT_SUFFIX);
+          Path typeFile = typeDir.resolve(filename + HazardExport.TEXT_SUFFIX);
           Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
         }
       }

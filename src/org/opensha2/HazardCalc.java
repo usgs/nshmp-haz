@@ -8,7 +8,7 @@ import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.HazardCalcs;
 import org.opensha2.calc.Deaggregation;
 import org.opensha2.calc.Hazard;
-import org.opensha2.calc.ResultHandler;
+import org.opensha2.calc.HazardExport;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
@@ -174,7 +174,7 @@ public class HazardCalc {
 
     log.info(PROGRAM + ": calculating ...");
 
-    ResultHandler handler = ResultHandler.create(config, sites, log);
+    HazardExport handler = HazardExport.create(config, sites, log);
     for (Site site : sites) {
       Hazard hazard = calc(model, config, site, executor);
       handler.add(hazard, Optional.<Deaggregation> absent());

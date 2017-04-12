@@ -8,7 +8,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.opensha2.data.XySequence.emptyCopyOf;
 
 import org.opensha2.calc.Deaggregation.ImtDeagg;
-import org.opensha2.calc.ResultHandler.Metadata.Builder;
+import org.opensha2.calc.HazardExport.Metadata.Builder;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
@@ -55,7 +55,7 @@ import java.util.logging.Logger;
  *
  * @author Peter Powers
  */
-public final class ResultHandler {
+public final class HazardExport {
 
   static final String DEAGG_DIR = "deagg";
   static final String GMM_DIR = "gmm";
@@ -93,7 +93,7 @@ public final class ResultHandler {
   /* Only used for binary file export. */
   private final Map<Imt, Metadata> metaMap;
 
-  private ResultHandler(CalcConfig config, Sites sites, Logger log) throws IOException {
+  private HazardExport(CalcConfig config, Sites sites, Logger log) throws IOException {
     this.log = log;
     this.dir = createOutputDir(config.output.directory);
     this.config = config;
@@ -141,12 +141,12 @@ public final class ResultHandler {
    *         {@code config} but the {@code sites} container does not specify map
    *         extents.
    */
-  public static ResultHandler create(
+  public static HazardExport create(
       CalcConfig config,
       Sites sites,
       Logger log) throws IOException {
 
-    return new ResultHandler(config, sites, log);
+    return new HazardExport(config, sites, log);
   }
 
   /* Avoid clobbering exsting result directories via incrementing. */
