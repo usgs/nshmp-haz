@@ -54,13 +54,7 @@ public final class RateResultHandler {
 
   private RateResultHandler(CalcConfig config, Sites sites, Logger log) throws IOException {
     this.log = log;
-    // System.out.println(config.output.directory);
-    // System.out.println(config.output.directory.toString());
-    // System.out.println(config.output.directory.);
     this.dir = HazardExport.createOutputDir(improvedOutputDirectory(config));
-    // ResultHandler.createOutputDir(config.output.directory.equals(CalcConfig.DEFAULT_OUT)
-    // ? ()
-    // : config.output.directory);
     this.config = config;
     this.exportSource = config.output.curveTypes.contains(CurveType.SOURCE);
     this.rates = new ArrayList<>();
