@@ -5,7 +5,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig;
-import org.opensha2.calc.Calcs;
+import org.opensha2.calc.HazardCalcs;
 import org.opensha2.calc.Deaggregation;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.ResultHandler;
@@ -227,7 +227,7 @@ public class HazardCalc {
       Site site,
       Optional<Executor> executor) {
     try {
-      return Calcs.hazard(model, config, site, executor);
+      return HazardCalcs.hazard(model, config, site, executor);
     } catch (ExecutionException | InterruptedException e) {
       throw new RuntimeException(e);
     }

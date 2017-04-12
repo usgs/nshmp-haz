@@ -1,6 +1,6 @@
 package org.opensha2.eq.model;
 
-import org.opensha2.calc.Calcs;
+import org.opensha2.calc.HazardCalcs;
 import org.opensha2.calc.InputList;
 import org.opensha2.calc.Site;
 import org.opensha2.data.IntervalData;
@@ -58,7 +58,7 @@ public class PointSources {
         magDepthMap,
         maxDepth);
     
-    return Calcs.sourceToInputs(site).apply(source);
+    return HazardCalcs.sourceToInputs(site).apply(source);
   }
 
   /**
@@ -94,7 +94,7 @@ public class PointSources {
     
     List<InputList> inputsList = new ArrayList<>();
     for (Site site : sites) {
-      InputList inputs = Calcs.sourceToInputs(site).apply(source);
+      InputList inputs = HazardCalcs.sourceToInputs(site).apply(source);
       inputsList.add(inputs);
     }
     return inputsList;
@@ -130,7 +130,7 @@ public class PointSources {
 
     List<InputList> inputsList = new ArrayList<>();
     for (Site site : sites) {
-      InputList inputs = Calcs.sourceToInputs(site).apply(source);
+      InputList inputs = HazardCalcs.sourceToInputs(site).apply(source);
       inputsList.add(inputs);
     }
     return inputsList;

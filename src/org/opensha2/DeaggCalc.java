@@ -5,7 +5,7 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig;
-import org.opensha2.calc.Calcs;
+import org.opensha2.calc.HazardCalcs;
 import org.opensha2.calc.Deaggregation;
 import org.opensha2.calc.Hazard;
 import org.opensha2.calc.ResultHandler;
@@ -187,7 +187,7 @@ public class DeaggCalc {
   public static Deaggregation calc(
       Hazard hazard,
       double returnPeriod) {
-    return Calcs.deaggregation(hazard, returnPeriod);
+    return HazardCalcs.deaggregation(hazard, returnPeriod);
   }
 
   private static final String PROGRAM = DeaggCalc.class.getSimpleName();
