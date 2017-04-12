@@ -81,7 +81,7 @@ public class EqRate {
     if (rateConfig.distribution == Distribution.CUMULATIVE) {
       rates = toCumulative(rates);
     }
-    if (rateConfig.values == CurveValue.POISSON_PROBABILITY) {
+    if (rateConfig.values == ValueFormat.POISSON_PROBABILITY) {
       rates = toPoissonProbability(rates, rateConfig.timespan);
     }
     return rates;

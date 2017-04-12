@@ -73,7 +73,7 @@ public final class EqRateExport {
   static Path improvedOutputDirectory(CalcConfig config) {
     Path out = config.output.directory;
     if (out.toString().equals(CalcConfig.DEFAULT_OUT)) {
-      return (config.rate.values == CurveValue.POISSON_PROBABILITY) ? Paths.get("eq-prob")
+      return (config.rate.values == ValueFormat.POISSON_PROBABILITY) ? Paths.get("eq-prob")
           : Paths.get("eq-rate");
     }
     return out;

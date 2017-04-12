@@ -146,9 +146,9 @@ public final class CalcConfig {
     /**
      * The value format for hazard curves.
      *
-     * <p><b>Default:</b> {@link CurveValue#ANNUAL_RATE}
+     * <p><b>Default:</b> {@link ValueFormat#ANNUAL_RATE}
      */
-    public final CurveValue valueType;
+    public final ValueFormat valueType;
 
     private final double[] defaultImls;
     private final Map<Imt, double[]> customImls;
@@ -162,7 +162,7 @@ public final class CalcConfig {
         double truncationLevel,
         Set<Imt> imts,
         boolean gmmUncertainty,
-        CurveValue valueType,
+        ValueFormat valueType,
         double[] defaultImls,
         Map<Imt, double[]> customImls,
         Map<Imt, XySequence> modelCurves,
@@ -240,7 +240,7 @@ public final class CalcConfig {
       Double truncationLevel;
       Set<Imt> imts;
       Boolean gmmUncertainty;
-      CurveValue valueType;
+      ValueFormat valueType;
       double[] defaultImls;
       Map<Imt, double[]> customImls;
 
@@ -306,7 +306,7 @@ public final class CalcConfig {
         b.truncationLevel = 3.0;
         b.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
         b.gmmUncertainty = false;
-        b.valueType = CurveValue.ANNUAL_RATE;
+        b.valueType = ValueFormat.ANNUAL_RATE;
         b.defaultImls = IMLS_PGA_SA;
         b.customImls = Maps.newHashMap();
         b.customImls.put(Imt.PGV, IMLS_PGV);
@@ -702,9 +702,9 @@ public final class CalcConfig {
     /**
      * The value format for rate data.
      *
-     * <p><b>Default:</b> {@link CurveValue#ANNUAL_RATE}
+     * <p><b>Default:</b> {@link ValueFormat#ANNUAL_RATE}
      */
-    public final CurveValue values;
+    public final ValueFormat values;
 
     /**
      * The timespan of interest when computing Poisson probabilities.
@@ -717,7 +717,7 @@ public final class CalcConfig {
         Bins bins,
         double distance,
         Distribution distribution,
-        CurveValue values,
+        ValueFormat values,
         double timespan) {
 
       this.bins = bins;
@@ -745,7 +745,7 @@ public final class CalcConfig {
       Bins bins;
       Double distance;
       Distribution distribution;
-      CurveValue values;
+      ValueFormat values;
       Double timespan;
 
       Rate build() {
@@ -788,7 +788,7 @@ public final class CalcConfig {
         b.bins = Bins.defaults();
         b.distance = 20.0;
         b.distribution = Distribution.INCREMENTAL;
-        b.values = CurveValue.ANNUAL_RATE;
+        b.values = ValueFormat.ANNUAL_RATE;
         b.timespan = 30.0;
         return b;
       }
@@ -1232,14 +1232,14 @@ public final class CalcConfig {
 
     /**
      * Set the timespan for earthquake probabilities. Calling this method also
-     * sets {@link Rate#values} to {@link CurveValue#POISSON_PROBABILITY} to
+     * sets {@link Rate#values} to {@link ValueFormat#POISSON_PROBABILITY} to
      * ensure consistency.
      * 
      * @see Rate#timespan
      */
     public Builder timespan(double timespan) {
       this.rate.timespan = timespan;
-      this.rate.values = CurveValue.POISSON_PROBABILITY;
+      this.rate.values = ValueFormat.POISSON_PROBABILITY;
       return this;
     }
 

@@ -251,7 +251,7 @@ public final class HazardExport {
     OpenOption[] options = firstBatch ? WRITE : APPEND;
 
     Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
-    if (demo.config.curve.valueType == CurveValue.POISSON_PROBABILITY) {
+    if (demo.config.curve.valueType == ValueFormat.POISSON_PROBABILITY) {
       formatter = Functions.compose(
           formatter,
           Mfds.annualRateToProbabilityConverter());

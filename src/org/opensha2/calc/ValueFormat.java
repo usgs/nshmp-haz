@@ -7,7 +7,7 @@ import org.opensha2.internal.Parsing;
  *
  * @author Peter Powers
  */
-public enum CurveValue {
+public enum ValueFormat {
 
   /** Annual-rate. */
   ANNUAL_RATE,
