@@ -6,7 +6,7 @@ import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig;
 import org.opensha2.calc.EqRate;
-import org.opensha2.calc.RateResultHandler;
+import org.opensha2.calc.EqRateExport;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
@@ -148,7 +148,7 @@ public class RateCalc {
       Logger log) throws IOException, ExecutionException, InterruptedException {
 
     ThreadCount threadCount = config.performance.threadCount;
-    RateResultHandler export = null;
+    EqRateExport export = null;
     if (threadCount != ThreadCount.ONE) {
       ExecutorService poolExecutor = newFixedThreadPool(threadCount.value());
       ListeningExecutorService executor = MoreExecutors.listeningDecorator(poolExecutor);
@@ -159,7 +159,7 @@ public class RateCalc {
     } else {
       log.info("Threads: Running on calling thread");
       log.info(PROGRAM + ": calculating ...");
-      export = RateResultHandler.create(config, sites, log);
+      export = EqRateExport.create(config, sites, log);
       for (Site site : sites) {
         EqRate rate = calc(model, config, site);
         export.add(rate);
@@ -174,7 +174,7 @@ public class RateCalc {
     return export.outputDir();
   }
 
-  private static RateResultHandler concurrentCalc(
+  private static EqRateExport concurrentCalc(
       HazardModel model,
       CalcConfig config,
       Sites sites,
@@ -182,7 +182,7 @@ public class RateCalc {
       ListeningExecutorService executor)
       throws InterruptedException, ExecutionException, IOException {
 
-    RateResultHandler export = RateResultHandler.create(config, sites, log);
+    EqRateExport export = EqRateExport.create(config, sites, log);
 
     int batchSize = config.output.flushLimit;
     int submitted = 0;

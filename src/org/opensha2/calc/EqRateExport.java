@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  *
  * @author Peter Powers
  */
-public final class RateResultHandler {
+public final class EqRateExport {
 
   private final Logger log;
   private final Path dir;
@@ -52,7 +52,7 @@ public final class RateResultHandler {
 
   private final List<EqRate> rates;
 
-  private RateResultHandler(CalcConfig config, Sites sites, Logger log) throws IOException {
+  private EqRateExport(CalcConfig config, Sites sites, Logger log) throws IOException {
     this.log = log;
     this.dir = HazardExport.createOutputDir(improvedOutputDirectory(config));
     this.config = config;
@@ -89,12 +89,12 @@ public final class RateResultHandler {
    *         {@code config} but the {@code sites} container does not specify map
    *         extents.
    */
-  public static RateResultHandler create(
+  public static EqRateExport create(
       CalcConfig config,
       Sites sites,
       Logger log) throws IOException {
 
-    return new RateResultHandler(config, sites, log);
+    return new EqRateExport(config, sites, log);
   }
 
   /**
