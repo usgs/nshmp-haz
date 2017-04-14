@@ -69,20 +69,20 @@ public final class CalcConfig {
   /** Hazard calculation configuration. */
   public final Hazard hazard;
 
-  /** Default site settings. */
-  public final SiteDefaults site;
-
-  /** Performance and optimization configuration. */
-  public final Performance performance;
-
-  /** Output configuration. */
-  public final Output output;
-
   /** Deaggregation configuration. */
   public final Deagg deagg;
 
   /** Earthquake rate configuration. */
   public final Rate rate;
+
+  /** Default site settings. */
+  public final SiteDefaults site;
+
+  /** Output configuration. */
+  public final Output output;
+
+  /** Performance and optimization configuration. */
+  public final Performance performance;
 
   private CalcConfig(
       Optional<Path> resource,
@@ -348,327 +348,153 @@ public final class CalcConfig {
   }
 
   /**
-   * Default site settings.
+   * Deaggregation configuration.
    */
-  public static final class SiteDefaults {
+  public static final class Deagg {
 
-    static final String ID = CalcConfig.ID + "." + SiteDefaults.class.getSimpleName();
-
-    /**
-     * The default average shear-wave velocity down to 30 meters depth.
-     *
-     * <p><b>Default:</b> {@code 760.0} m/sec
-     */
-    public final double vs30;
+    static final String ID = CalcConfig.ID + "." + Deagg.class.getSimpleName();
 
     /**
-     * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
-     *
-     * <p><b>Default:</b> {@code true} (inferred)
+     * The distance, magnitude, and epsilon bins into which contributing sources
+     * to hazard are sorted.
      */
-    public final boolean vsInferred;
+    public final Bins bins;
 
     /**
-     * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
-     *
-     * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
-     * default value or model)
+     * The minimum contribution (in %) that a source must make to hazard to be
+     * included on the contributor source list in deaggregation result.
      */
-    public final double z1p0;
+    public final Double contributorLimit;
 
-    /**
-     * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
-     *
-     * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
-     * default value or model)
-     */
-    public final double z2p5;
+    private Deagg(
+        Bins bins,
+        double contributorLimit) {
 
-    private SiteDefaults(
-        double vs30,
-        boolean vsInferred,
-        double z1p0,
-        double z2p5) {
-
-      this.vs30 = vs30;
-      this.vsInferred = vsInferred;
-      this.z1p0 = z1p0;
-      this.z2p5 = z2p5;
+      this.bins = bins;
+      this.contributorLimit = contributorLimit;
     }
 
     private StringBuilder asString() {
       return new StringBuilder()
-          .append(LOG_INDENT).append("Site")
-          .append(formatEntry(Key.VS30, vs30))
-          .append(formatEntry(Key.VS_INF, vsInferred))
-          .append(formatEntry(Key.Z1P0, z1p0))
-          .append(formatEntry(Key.Z2P5, z2p5));
+          .append(LOG_INDENT).append("Deaggregation")
+          .append(formatEntry("rBins"))
+          .append("min=").append(bins.rMin).append(", ")
+          .append("max=").append(bins.rMax).append(", ")
+          .append("Δ=").append(bins.Δr)
+          .append(formatEntry("mBins"))
+          .append("min=").append(bins.mMin).append(", ")
+          .append("max=").append(bins.mMax).append(", ")
+          .append("Δ=").append(bins.Δm)
+          .append(formatEntry("εBins"))
+          .append("min=").append(bins.εMin).append(", ")
+          .append("max=").append(bins.εMax).append(", ")
+          .append("Δ=").append(bins.Δε)
+          .append(formatEntry(Key.CONTRIBUTOR_LIMIT, contributorLimit));
+    }
+
+    /**
+     * The distance, magnitude, and epsilon bins into which contributing sources
+     * to hazard will be sorted.
+     */
+    public static final class Bins {
+
+      static final String ID = CalcConfig.ID + "." + Deagg.ID + "." + Bins.class.getSimpleName();
+
+      /** Minimum distance. Lower edge of smallest distance bin. */
+      public final Double rMin;
+
+      /** Maximum distance. Upper edge of largest distance bin. */
+      public final Double rMax;
+
+      /** Distance bin width. */
+      public final Double Δr;
+
+      /** Minimum magnitude. Lower edge of smallest magnitude bin. */
+      public final Double mMin;
+
+      /** Maximum magnitude. Upper edge of largest magnitude bin. */
+      public final Double mMax;
+
+      /** Magnitude bin width. */
+      public final Double Δm;
+
+      /** Minimum epsilon. Lower edge of smallest epsilon bin. */
+      public final Double εMin;
+
+      /** Maximum epsilon. Upper edge of largest epsilon bin. */
+      public final Double εMax;
+
+      /** Epsilon bin width. */
+      public final Double Δε;
+
+      Bins(
+          double rMin, double rMax, double Δr,
+          double mMin, double mMax, double Δm,
+          double εMin, double εMax, double Δε) {
+
+        this.rMin = rMin;
+        this.rMax = rMax;
+        this.Δr = Δr;
+        this.mMin = mMin;
+        this.mMax = mMax;
+        this.Δm = Δm;
+        this.εMin = εMin;
+        this.εMax = εMax;
+        this.Δε = Δε;
+      }
+
+      static Bins defaults() {
+        return new Bins(
+            0.0, 1000.0, 20.0,
+            4.4, 9.4, 0.2,
+            -3.0, 3.0, 0.5);
+      }
     }
 
     private static final class Builder {
 
-      Double vs30;
-      Boolean vsInferred;
-      Double z1p0;
-      Double z2p5;
+      Bins bins;
+      Double contributorLimit;
 
-      SiteDefaults build() {
-        return new SiteDefaults(
-            vs30,
-            vsInferred,
-            z1p0,
-            z2p5);
+      Deagg build() {
+        return new Deagg(
+            bins,
+            contributorLimit);
       }
 
-      void copy(SiteDefaults that) {
-        this.vs30 = that.vs30;
-        this.vsInferred = that.vsInferred;
-        this.z1p0 = that.z1p0;
-        this.z2p5 = that.z2p5;
+      void copy(Deagg that) {
+        this.bins = that.bins;
+        this.contributorLimit = that.contributorLimit;
       }
 
       void extend(Builder that) {
-        if (that.vs30 != null) {
-          this.vs30 = that.vs30;
+        if (that.bins != null) {
+          this.bins = that.bins;
         }
-        if (that.vsInferred != null) {
-          this.vsInferred = that.vsInferred;
-        }
-        if (that.z1p0 != null) {
-          this.z1p0 = that.z1p0;
-        }
-        if (that.z2p5 != null) {
-          this.z2p5 = that.z2p5;
+        if (that.contributorLimit != null) {
+          this.contributorLimit = that.contributorLimit;
         }
       }
 
       static Builder defaults() {
         Builder b = new Builder();
-        b.vs30 = Site.VS_30_DEFAULT;
-        b.vsInferred = Site.VS_INF_DEFAULT;
-        b.z1p0 = Site.Z1P0_DEFAULT;
-        b.z2p5 = Site.Z2P5_DEFAULT;
+        b.bins = Bins.defaults();
+        b.contributorLimit = 1.0;
         return b;
       }
 
       void validate() {
-        checkNotNull(vs30, STATE_ERROR, SiteDefaults.ID, Key.VS30);
-        checkNotNull(vsInferred, STATE_ERROR, SiteDefaults.ID, Key.VS_INF);
-        checkNotNull(z1p0, STATE_ERROR, SiteDefaults.ID, Key.Z1P0);
-        checkNotNull(z2p5, STATE_ERROR, SiteDefaults.ID, Key.Z2P5);
-      }
-    }
-  }
-
-  /**
-   * Performance and optimization settings.
-   */
-  public static final class Performance {
-
-    static final String ID = CalcConfig.ID + "." + Performance.class.getSimpleName();
-
-    /**
-     * Whether to optimize grid source sets, or not.
-     *
-     * <p><b>Default:</b> {@code true}
-     */
-    public final boolean optimizeGrids;
-
-    /**
-     * Whether to collapse/combine magnitude-frequency distributions, or not.
-     * Doing so prevents uncertainty analysis as logic-tree branches are
-     * obscured.
-     *
-     * <p><b>Default:</b> {@code true}
-     */
-    public final boolean collapseMfds;
-
-    /**
-     * The partition or batch size to use when distributing
-     * {@link SourceType#SYSTEM} calculations.
-     *
-     * <p><b>Default:</b> {@code 1000}
-     */
-    public final int systemPartition;
-
-    /**
-     * The number of threads to use when distributing calculations.
-     *
-     * <p><b>Default:</b> {@link ThreadCount#ALL}
-     */
-    public final ThreadCount threadCount;
-
-    private Performance(
-        boolean optimizeGrids,
-        boolean collapseMfds,
-        int systemPartition,
-        ThreadCount threadCount) {
-
-      this.optimizeGrids = optimizeGrids;
-      this.collapseMfds = collapseMfds;
-      this.systemPartition = systemPartition;
-      this.threadCount = threadCount;
-    }
-
-    private StringBuilder asString() {
-      return new StringBuilder()
-          .append(LOG_INDENT).append("Performance")
-          .append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
-          .append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
-          .append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
-          .append(formatEntry(Key.THREAD_COUNT, threadCount.name()));
-    }
-
-    private static final class Builder {
-
-      Boolean optimizeGrids;
-      Boolean collapseMfds;
-      Integer systemPartition;
-      ThreadCount threadCount;
-
-      Performance build() {
-        return new Performance(
-            optimizeGrids,
-            collapseMfds,
-            systemPartition,
-            threadCount);
-      }
-
-      void copy(Performance that) {
-        this.optimizeGrids = that.optimizeGrids;
-        this.collapseMfds = that.collapseMfds;
-        this.systemPartition = that.systemPartition;
-        this.threadCount = that.threadCount;
-      }
-
-      void extend(Builder that) {
-        if (that.optimizeGrids != null) {
-          this.optimizeGrids = that.optimizeGrids;
-        }
-        if (that.collapseMfds != null) {
-          this.collapseMfds = that.collapseMfds;
-        }
-        if (that.systemPartition != null) {
-          this.systemPartition = that.systemPartition;
-        }
-        if (that.threadCount != null) {
-          this.threadCount = that.threadCount;
-        }
-      }
-
-      static Builder defaults() {
-        Builder b = new Builder();
-        b.optimizeGrids = true;
-        b.collapseMfds = true;
-        b.systemPartition = 1000;
-        b.threadCount = ThreadCount.ALL;
-        return b;
-      }
-
-      void validate() {
-        checkNotNull(optimizeGrids, STATE_ERROR, Performance.ID, Key.OPTIMIZE_GRIDS);
-        checkNotNull(collapseMfds, STATE_ERROR, Performance.ID, Key.COLLAPSE_MFDS);
-        checkNotNull(systemPartition, STATE_ERROR, Performance.ID, Key.SYSTEM_PARTITION);
-        checkNotNull(threadCount, STATE_ERROR, Performance.ID, Key.THREAD_COUNT);
-      }
-    }
-  }
-
-  /**
-   * Data and file output settings.
-   */
-  public static final class Output {
-
-    static final String ID = CalcConfig.ID + "." + Output.class.getSimpleName();
-
-    /**
-     * The directory to write any results to.
-     *
-     * <p><b>Default:</b> {@code "curves"} for hazard and deaggregation calculations;
-     * {@code "eq-rate"} or {@code "eq-prob"} for rate calculations.
-     */
-    public final Path directory;
-
-    /**
-     * The different {@linkplain DataType types} of data to save. Note that
-     * {@link DataType#TOTAL} will <i>always</i> be included in this set,
-     * regardless of any user settings.
-     *
-     * <p><b>Default:</b> [{@link DataType#TOTAL}]
-     */
-    public final Set<DataType> dataTypes;
-
-    /**
-     * The number of results (one per {@code Site}) to store before writing to
-     * file(s). A larger number requires more memory.
-     *
-     * <p><b>Default:</b> {@code 20}
-     */
-    public final int flushLimit;
-
-    private Output(
-        Path directory,
-        Set<DataType> dataTypes,
-        int flushLimit) {
-
-      this.directory = directory;
-      this.dataTypes = Sets.immutableEnumSet(
-          DataType.TOTAL,
-          dataTypes.toArray(new DataType[dataTypes.size()]));
-      this.flushLimit = flushLimit;
-    }
-
-    private StringBuilder asString() {
-      return new StringBuilder()
-          .append(LOG_INDENT).append("Output")
-          .append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
-          .append(formatEntry(Key.DATA_TYPES, enumsToString(dataTypes, DataType.class)))
-          .append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
-    }
-
-    private static final class Builder {
-
-      Path directory;
-      Set<DataType> dataTypes;
-      Integer flushLimit;
-
-      Output build() {
-        return new Output(
-            directory,
-            dataTypes,
-            flushLimit);
-      }
-
-      void copy(Output that) {
-        this.directory = that.directory;
-        this.dataTypes = that.dataTypes;
-        this.flushLimit = that.flushLimit;
-      }
-
-      void extend(Builder that) {
-        if (that.directory != null) {
-          this.directory = that.directory;
-        }
-        if (that.dataTypes != null) {
-          this.dataTypes = that.dataTypes;
-        }
-        if (that.flushLimit != null) {
-          this.flushLimit = that.flushLimit;
-        }
-      }
-
-      static Builder defaults() {
-        Builder b = new Builder();
-        b.directory = Paths.get(DEFAULT_OUT);
-        b.dataTypes = EnumSet.of(DataType.TOTAL);
-        b.flushLimit = 5;
-        return b;
-      }
-
-      void validate() {
-        checkNotNull(directory, STATE_ERROR, Output.ID, Key.DIRECTORY);
-        checkNotNull(dataTypes, STATE_ERROR, Output.ID, Key.DATA_TYPES);
-        checkNotNull(flushLimit, STATE_ERROR, Output.ID, Key.FLUSH_LIMIT);
+        checkNotNull(bins, STATE_ERROR, Deagg.ID, Key.BINS);
+        checkNotNull(bins.rMin, STATE_ERROR, Deagg.ID, Key.BINS + ".rMin");
+        checkNotNull(bins.rMax, STATE_ERROR, Deagg.ID, Key.BINS + ".rMax");
+        checkNotNull(bins.Δr, STATE_ERROR, Deagg.ID, Key.BINS + ".Δr");
+        checkNotNull(bins.mMin, STATE_ERROR, Deagg.ID, Key.BINS + ".mMin");
+        checkNotNull(bins.mMax, STATE_ERROR, Deagg.ID, Key.BINS + ".mMax");
+        checkNotNull(bins.Δm, STATE_ERROR, Deagg.ID, Key.BINS + ".Δm");
+        checkNotNull(bins.εMin, STATE_ERROR, Deagg.ID, Key.BINS + ".εMin");
+        checkNotNull(bins.εMax, STATE_ERROR, Deagg.ID, Key.BINS + ".εMax");
+        checkNotNull(bins.Δε, STATE_ERROR, Deagg.ID, Key.BINS + ".Δε");
+        checkNotNull(contributorLimit, STATE_ERROR, Deagg.ID, Key.CONTRIBUTOR_LIMIT);
       }
     }
   }
@@ -832,157 +658,331 @@ public final class CalcConfig {
         return new Bins(4.2, 9.4, 0.1);
       }
     }
-
   }
 
   /**
-   * Deaggregation configuration.
+   * Default site settings.
    */
-  public static final class Deagg {
+  public static final class SiteDefaults {
 
-    static final String ID = CalcConfig.ID + "." + Deagg.class.getSimpleName();
-
-    /**
-     * The distance, magnitude, and epsilon bins into which contributing sources
-     * to hazard are sorted.
-     */
-    public final Bins bins;
+    static final String ID = CalcConfig.ID + "." + SiteDefaults.class.getSimpleName();
 
     /**
-     * The minimum contribution (in %) that a source must make to hazard to be
-     * included on the contributor source list in deaggregation result.
+     * The default average shear-wave velocity down to 30 meters depth.
+     *
+     * <p><b>Default:</b> {@code 760.0} m/sec
      */
-    public final Double contributorLimit;
+    public final double vs30;
 
-    private Deagg(
-        Bins bins,
-        double contributorLimit) {
+    /**
+     * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
+     *
+     * <p><b>Default:</b> {@code true} (inferred)
+     */
+    public final boolean vsInferred;
 
-      this.bins = bins;
-      this.contributorLimit = contributorLimit;
+    /**
+     * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
+     *
+     * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
+     * default value or model)
+     */
+    public final double z1p0;
+
+    /**
+     * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
+     *
+     * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
+     * default value or model)
+     */
+    public final double z2p5;
+
+    private SiteDefaults(
+        double vs30,
+        boolean vsInferred,
+        double z1p0,
+        double z2p5) {
+
+      this.vs30 = vs30;
+      this.vsInferred = vsInferred;
+      this.z1p0 = z1p0;
+      this.z2p5 = z2p5;
     }
 
     private StringBuilder asString() {
       return new StringBuilder()
-          .append(LOG_INDENT).append("Deaggregation")
-          .append(formatEntry("rBins"))
-          .append("min=").append(bins.rMin).append(", ")
-          .append("max=").append(bins.rMax).append(", ")
-          .append("Δ=").append(bins.Δr)
-          .append(formatEntry("mBins"))
-          .append("min=").append(bins.mMin).append(", ")
-          .append("max=").append(bins.mMax).append(", ")
-          .append("Δ=").append(bins.Δm)
-          .append(formatEntry("εBins"))
-          .append("min=").append(bins.εMin).append(", ")
-          .append("max=").append(bins.εMax).append(", ")
-          .append("Δ=").append(bins.Δε)
-          .append(formatEntry(Key.CONTRIBUTOR_LIMIT, contributorLimit));
-    }
-
-    /**
-     * The distance, magnitude, and epsilon bins into which contributing sources
-     * to hazard will be sorted.
-     */
-    public static final class Bins {
-
-      static final String ID = CalcConfig.ID + "." + Deagg.ID + "." + Bins.class.getSimpleName();
-
-      /** Minimum distance. Lower edge of smallest distance bin. */
-      public final Double rMin;
-
-      /** Maximum distance. Upper edge of largest distance bin. */
-      public final Double rMax;
-
-      /** Distance bin width. */
-      public final Double Δr;
-
-      /** Minimum magnitude. Lower edge of smallest magnitude bin. */
-      public final Double mMin;
-
-      /** Maximum magnitude. Upper edge of largest magnitude bin. */
-      public final Double mMax;
-
-      /** Magnitude bin width. */
-      public final Double Δm;
-
-      /** Minimum epsilon. Lower edge of smallest epsilon bin. */
-      public final Double εMin;
-
-      /** Maximum epsilon. Upper edge of largest epsilon bin. */
-      public final Double εMax;
-
-      /** Epsilon bin width. */
-      public final Double Δε;
-
-      Bins(
-          double rMin, double rMax, double Δr,
-          double mMin, double mMax, double Δm,
-          double εMin, double εMax, double Δε) {
-
-        this.rMin = rMin;
-        this.rMax = rMax;
-        this.Δr = Δr;
-        this.mMin = mMin;
-        this.mMax = mMax;
-        this.Δm = Δm;
-        this.εMin = εMin;
-        this.εMax = εMax;
-        this.Δε = Δε;
-      }
-
-      static Bins defaults() {
-        return new Bins(
-            0.0, 1000.0, 20.0,
-            4.4, 9.4, 0.2,
-            -3.0, 3.0, 0.5);
-      }
+          .append(LOG_INDENT).append("Site")
+          .append(formatEntry(Key.VS30, vs30))
+          .append(formatEntry(Key.VS_INF, vsInferred))
+          .append(formatEntry(Key.Z1P0, z1p0))
+          .append(formatEntry(Key.Z2P5, z2p5));
     }
 
     private static final class Builder {
 
-      Bins bins;
-      Double contributorLimit;
+      Double vs30;
+      Boolean vsInferred;
+      Double z1p0;
+      Double z2p5;
 
-      Deagg build() {
-        return new Deagg(
-            bins,
-            contributorLimit);
+      SiteDefaults build() {
+        return new SiteDefaults(
+            vs30,
+            vsInferred,
+            z1p0,
+            z2p5);
       }
 
-      void copy(Deagg that) {
-        this.bins = that.bins;
-        this.contributorLimit = that.contributorLimit;
+      void copy(SiteDefaults that) {
+        this.vs30 = that.vs30;
+        this.vsInferred = that.vsInferred;
+        this.z1p0 = that.z1p0;
+        this.z2p5 = that.z2p5;
       }
 
       void extend(Builder that) {
-        if (that.bins != null) {
-          this.bins = that.bins;
+        if (that.vs30 != null) {
+          this.vs30 = that.vs30;
         }
-        if (that.contributorLimit != null) {
-          this.contributorLimit = that.contributorLimit;
+        if (that.vsInferred != null) {
+          this.vsInferred = that.vsInferred;
+        }
+        if (that.z1p0 != null) {
+          this.z1p0 = that.z1p0;
+        }
+        if (that.z2p5 != null) {
+          this.z2p5 = that.z2p5;
         }
       }
 
       static Builder defaults() {
         Builder b = new Builder();
-        b.bins = Bins.defaults();
-        b.contributorLimit = 1.0;
+        b.vs30 = Site.VS_30_DEFAULT;
+        b.vsInferred = Site.VS_INF_DEFAULT;
+        b.z1p0 = Site.Z1P0_DEFAULT;
+        b.z2p5 = Site.Z2P5_DEFAULT;
         return b;
       }
 
       void validate() {
-        checkNotNull(bins, STATE_ERROR, Deagg.ID, Key.BINS);
-        checkNotNull(bins.rMin, STATE_ERROR, Deagg.ID, Key.BINS + ".rMin");
-        checkNotNull(bins.rMax, STATE_ERROR, Deagg.ID, Key.BINS + ".rMax");
-        checkNotNull(bins.Δr, STATE_ERROR, Deagg.ID, Key.BINS + ".Δr");
-        checkNotNull(bins.mMin, STATE_ERROR, Deagg.ID, Key.BINS + ".mMin");
-        checkNotNull(bins.mMax, STATE_ERROR, Deagg.ID, Key.BINS + ".mMax");
-        checkNotNull(bins.Δm, STATE_ERROR, Deagg.ID, Key.BINS + ".Δm");
-        checkNotNull(bins.εMin, STATE_ERROR, Deagg.ID, Key.BINS + ".εMin");
-        checkNotNull(bins.εMax, STATE_ERROR, Deagg.ID, Key.BINS + ".εMax");
-        checkNotNull(bins.Δε, STATE_ERROR, Deagg.ID, Key.BINS + ".Δε");
-        checkNotNull(contributorLimit, STATE_ERROR, Deagg.ID, Key.CONTRIBUTOR_LIMIT);
+        checkNotNull(vs30, STATE_ERROR, SiteDefaults.ID, Key.VS30);
+        checkNotNull(vsInferred, STATE_ERROR, SiteDefaults.ID, Key.VS_INF);
+        checkNotNull(z1p0, STATE_ERROR, SiteDefaults.ID, Key.Z1P0);
+        checkNotNull(z2p5, STATE_ERROR, SiteDefaults.ID, Key.Z2P5);
+      }
+    }
+  }
+
+  /**
+   * Data and file output settings.
+   */
+  public static final class Output {
+
+    static final String ID = CalcConfig.ID + "." + Output.class.getSimpleName();
+
+    /**
+     * The directory to write any results to.
+     *
+     * <p><b>Default:</b> {@code "curves"} for hazard and deaggregation
+     * calculations; {@code "eq-rate"} or {@code "eq-prob"} for rate
+     * calculations.
+     */
+    public final Path directory;
+
+    /**
+     * The different {@linkplain DataType types} of data to save. Note that
+     * {@link DataType#TOTAL} will <i>always</i> be included in this set,
+     * regardless of any user settings.
+     *
+     * <p><b>Default:</b> [{@link DataType#TOTAL}]
+     */
+    public final Set<DataType> dataTypes;
+
+    /**
+     * The number of results (one per {@code Site}) to store before writing to
+     * file(s). A larger number requires more memory.
+     *
+     * <p><b>Default:</b> {@code 20}
+     */
+    public final int flushLimit;
+
+    private Output(
+        Path directory,
+        Set<DataType> dataTypes,
+        int flushLimit) {
+
+      this.directory = directory;
+      this.dataTypes = Sets.immutableEnumSet(
+          DataType.TOTAL,
+          dataTypes.toArray(new DataType[dataTypes.size()]));
+      this.flushLimit = flushLimit;
+    }
+
+    private StringBuilder asString() {
+      return new StringBuilder()
+          .append(LOG_INDENT).append("Output")
+          .append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
+          .append(formatEntry(Key.DATA_TYPES, enumsToString(dataTypes, DataType.class)))
+          .append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
+    }
+
+    private static final class Builder {
+
+      Path directory;
+      Set<DataType> dataTypes;
+      Integer flushLimit;
+
+      Output build() {
+        return new Output(
+            directory,
+            dataTypes,
+            flushLimit);
+      }
+
+      void copy(Output that) {
+        this.directory = that.directory;
+        this.dataTypes = that.dataTypes;
+        this.flushLimit = that.flushLimit;
+      }
+
+      void extend(Builder that) {
+        if (that.directory != null) {
+          this.directory = that.directory;
+        }
+        if (that.dataTypes != null) {
+          this.dataTypes = that.dataTypes;
+        }
+        if (that.flushLimit != null) {
+          this.flushLimit = that.flushLimit;
+        }
+      }
+
+      static Builder defaults() {
+        Builder b = new Builder();
+        b.directory = Paths.get(DEFAULT_OUT);
+        b.dataTypes = EnumSet.of(DataType.TOTAL);
+        b.flushLimit = 5;
+        return b;
+      }
+
+      void validate() {
+        checkNotNull(directory, STATE_ERROR, Output.ID, Key.DIRECTORY);
+        checkNotNull(dataTypes, STATE_ERROR, Output.ID, Key.DATA_TYPES);
+        checkNotNull(flushLimit, STATE_ERROR, Output.ID, Key.FLUSH_LIMIT);
+      }
+    }
+  }
+
+  /**
+   * Performance and optimization settings.
+   */
+  public static final class Performance {
+
+    static final String ID = CalcConfig.ID + "." + Performance.class.getSimpleName();
+
+    /**
+     * Whether to optimize grid source sets, or not.
+     *
+     * <p><b>Default:</b> {@code true}
+     */
+    public final boolean optimizeGrids;
+
+    /**
+     * Whether to collapse/combine magnitude-frequency distributions, or not.
+     * Doing so prevents uncertainty analysis as logic-tree branches are
+     * obscured.
+     *
+     * <p><b>Default:</b> {@code true}
+     */
+    public final boolean collapseMfds;
+
+    /**
+     * The partition or batch size to use when distributing
+     * {@link SourceType#SYSTEM} calculations.
+     *
+     * <p><b>Default:</b> {@code 1000}
+     */
+    public final int systemPartition;
+
+    /**
+     * The number of threads to use when distributing calculations.
+     *
+     * <p><b>Default:</b> {@link ThreadCount#ALL}
+     */
+    public final ThreadCount threadCount;
+
+    private Performance(
+        boolean optimizeGrids,
+        boolean collapseMfds,
+        int systemPartition,
+        ThreadCount threadCount) {
+
+      this.optimizeGrids = optimizeGrids;
+      this.collapseMfds = collapseMfds;
+      this.systemPartition = systemPartition;
+      this.threadCount = threadCount;
+    }
+
+    private StringBuilder asString() {
+      return new StringBuilder()
+          .append(LOG_INDENT).append("Performance")
+          .append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
+          .append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
+          .append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
+          .append(formatEntry(Key.THREAD_COUNT, threadCount.name()));
+    }
+
+    private static final class Builder {
+
+      Boolean optimizeGrids;
+      Boolean collapseMfds;
+      Integer systemPartition;
+      ThreadCount threadCount;
+
+      Performance build() {
+        return new Performance(
+            optimizeGrids,
+            collapseMfds,
+            systemPartition,
+            threadCount);
+      }
+
+      void copy(Performance that) {
+        this.optimizeGrids = that.optimizeGrids;
+        this.collapseMfds = that.collapseMfds;
+        this.systemPartition = that.systemPartition;
+        this.threadCount = that.threadCount;
+      }
+
+      void extend(Builder that) {
+        if (that.optimizeGrids != null) {
+          this.optimizeGrids = that.optimizeGrids;
+        }
+        if (that.collapseMfds != null) {
+          this.collapseMfds = that.collapseMfds;
+        }
+        if (that.systemPartition != null) {
+          this.systemPartition = that.systemPartition;
+        }
+        if (that.threadCount != null) {
+          this.threadCount = that.threadCount;
+        }
+      }
+
+      static Builder defaults() {
+        Builder b = new Builder();
+        b.optimizeGrids = true;
+        b.collapseMfds = true;
+        b.systemPartition = 1000;
+        b.threadCount = ThreadCount.ALL;
+        return b;
+      }
+
+      void validate() {
+        checkNotNull(optimizeGrids, STATE_ERROR, Performance.ID, Key.OPTIMIZE_GRIDS);
+        checkNotNull(collapseMfds, STATE_ERROR, Performance.ID, Key.COLLAPSE_MFDS);
+        checkNotNull(systemPartition, STATE_ERROR, Performance.ID, Key.SYSTEM_PARTITION);
+        checkNotNull(threadCount, STATE_ERROR, Performance.ID, Key.THREAD_COUNT);
       }
     }
   }
@@ -994,7 +994,7 @@ public final class CalcConfig {
     TRUNCATION_LEVEL,
     IMTS,
     GMM_UNCERTAINTY,
-    VALUE_FORMAT, 
+    VALUE_FORMAT,
     DEFAULT_IMLS,
     CUSTOM_IMLS,
     /* site defaults */
@@ -1231,8 +1231,8 @@ public final class CalcConfig {
 
     /**
      * Set the timespan for earthquake probabilities. Calling this method also
-     * sets {@link Rate#valueFormat} to {@link ValueFormat#POISSON_PROBABILITY} to
-     * ensure consistency.
+     * sets {@link Rate#valueFormat} to {@link ValueFormat#POISSON_PROBABILITY}
+     * to ensure consistency.
      * 
      * @see Rate#timespan
      */
