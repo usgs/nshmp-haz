@@ -66,13 +66,13 @@ public final class CalcConfig {
    */
   public final transient Optional<Path> resource;
 
-  /** Hazard curve calculation settings. */
+  /** Hazard calculation configuration. */
   public final Curve curve;
 
   /** Default site settings. */
-  public final SiteDefaults siteDefaults;
+  public final SiteDefaults site;
 
-  /** Performance and optimization settings. */
+  /** Performance and optimization configuration. */
   public final Performance performance;
 
   /** Output configuration. */
@@ -95,7 +95,7 @@ public final class CalcConfig {
 
     this.resource = resource;
     this.curve = curve;
-    this.siteDefaults = site;
+    this.site = site;
     this.performance = performance;
     this.output = output;
     this.deagg = deagg;
@@ -398,7 +398,7 @@ public final class CalcConfig {
 
     private StringBuilder asString() {
       return new StringBuilder()
-          .append(LOG_INDENT).append("Site Defaults")
+          .append(LOG_INDENT).append("Site")
           .append(formatEntry(Key.VS30, vs30))
           .append(formatEntry(Key.VS_INF, vsInferred))
           .append(formatEntry(Key.Z1P0, z1p0))
@@ -1038,7 +1038,7 @@ public final class CalcConfig {
             ? resource.get().toAbsolutePath().normalize()
             : "(from defaults)")
         .append(curve.asString())
-        .append(siteDefaults.asString())
+        .append(site.asString())
         .append(performance.asString())
         .append(output.asString())
         .append(deagg.asString())
@@ -1134,7 +1134,7 @@ public final class CalcConfig {
 
     private Path resource;
     private Curve.Builder curve;
-    private SiteDefaults.Builder siteDefaults;
+    private SiteDefaults.Builder site;
     private Performance.Builder performance;
     private Output.Builder output;
     private Deagg.Builder deagg;
@@ -1142,7 +1142,7 @@ public final class CalcConfig {
 
     private Builder() {
       curve = new Curve.Builder();
-      siteDefaults = new SiteDefaults.Builder();
+      site = new SiteDefaults.Builder();
       performance = new Performance.Builder();
       output = new Output.Builder();
       deagg = new Deagg.Builder();
@@ -1158,7 +1158,7 @@ public final class CalcConfig {
         b.resource = config.resource.get();
       }
       b.curve.copy(config.curve);
-      b.siteDefaults.copy(config.siteDefaults);
+      b.site.copy(config.site);
       b.performance.copy(config.performance);
       b.output.copy(config.output);
       b.deagg.copy(config.deagg);
@@ -1190,7 +1190,7 @@ public final class CalcConfig {
     public static Builder withDefaults() {
       Builder b = new Builder();
       b.curve = Curve.Builder.defaults();
-      b.siteDefaults = SiteDefaults.Builder.defaults();
+      b.site = SiteDefaults.Builder.defaults();
       b.performance = Performance.Builder.defaults();
       b.output = Output.Builder.defaults();
       b.deagg = Deagg.Builder.defaults();
@@ -1206,7 +1206,7 @@ public final class CalcConfig {
       checkNotNull(that);
       this.resource = that.resource;
       this.curve.extend(that.curve);
-      this.siteDefaults.extend(that.siteDefaults);
+      this.site.extend(that.site);
       this.performance.extend(that.performance);
       this.output.extend(that.output);
       this.deagg.extend(that.deagg);
@@ -1231,7 +1231,7 @@ public final class CalcConfig {
 
     /**
      * Set the timespan for earthquake probabilities. Calling this method also
-     * sets {@link Rate#values} to {@link ValueFormat#POISSON_PROBABILITY} to
+     * sets {@link Rate#valueFormat} to {@link ValueFormat#POISSON_PROBABILITY} to
      * ensure consistency.
      * 
      * @see Rate#timespan
@@ -1256,7 +1256,7 @@ public final class CalcConfig {
     private void validateState() {
       checkState(!built, "This %s instance as already been used", ID + ".Builder");
       curve.validate();
-      siteDefaults.validate();
+      site.validate();
       performance.validate();
       output.validate();
       deagg.validate();
@@ -1272,7 +1272,7 @@ public final class CalcConfig {
       return new CalcConfig(
           Optional.fromNullable(resource),
           curve.build(),
-          siteDefaults.build(),
+          site.build(),
           performance.build(),
           output.build(),
           deagg.build(),

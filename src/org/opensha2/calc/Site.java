@@ -187,10 +187,10 @@ public class Site implements Named {
     private Builder() {}
 
     private Builder(CalcConfig config) {
-      vs30(config.siteDefaults.vs30);
-      vsInferred(config.siteDefaults.vsInferred);
-      z1p0(config.siteDefaults.z1p0);
-      z2p5(config.siteDefaults.z2p5);
+      vs30(config.site.vs30);
+      vsInferred(config.site.vsInferred);
+      z1p0(config.site.z1p0);
+      z2p5(config.site.z2p5);
     }
 
     /**
