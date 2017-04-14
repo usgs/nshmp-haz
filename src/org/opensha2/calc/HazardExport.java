@@ -8,7 +8,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.opensha2.data.XySequence.emptyCopyOf;
 
 import org.opensha2.calc.Deaggregation.ImtDeagg;
-import org.opensha2.calc.ResultHandler.Metadata.Builder;
+import org.opensha2.calc.HazardExport.Metadata.Builder;
 import org.opensha2.data.XySequence;
 import org.opensha2.eq.model.Source;
 import org.opensha2.eq.model.SourceSet;
@@ -55,13 +55,13 @@ import java.util.logging.Logger;
  *
  * @author Peter Powers
  */
-public final class ResultHandler {
+public final class HazardExport {
 
-  private static final String DEAGG_DIR = "deagg";
-  private static final String GMM_DIR = "gmm";
-  private static final String BINARY_SUFFIX = ".bin";
-  private static final String TEXT_SUFFIX = ".csv";
-  private static final String RATE_FMT = "%.8e";
+  static final String DEAGG_DIR = "deagg";
+  static final String GMM_DIR = "gmm";
+  static final String BINARY_SUFFIX = ".bin";
+  static final String TEXT_SUFFIX = ".csv";
+  static final String RATE_FMT = "%.8e";
 
   static final OpenOption[] WRITE = new OpenOption[] {
       StandardOpenOption.CREATE,
@@ -93,13 +93,13 @@ public final class ResultHandler {
   /* Only used for binary file export. */
   private final Map<Imt, Metadata> metaMap;
 
-  private ResultHandler(CalcConfig config, Sites sites, Logger log) {
+  private HazardExport(CalcConfig config, Sites sites, Logger log) throws IOException {
     this.log = log;
     this.dir = createOutputDir(config.output.directory);
     this.config = config;
-    this.exportGmm = config.output.curveTypes.contains(CurveType.GMM);
-    this.exportSource = config.output.curveTypes.contains(CurveType.SOURCE);
-    this.exportBinary = config.output.curveTypes.contains(CurveType.BINARY);
+    this.exportGmm = config.output.dataTypes.contains(DataType.GMM);
+    this.exportSource = config.output.dataTypes.contains(DataType.SOURCE);
+    this.exportBinary = config.output.dataTypes.contains(DataType.BINARY);
     this.hazards = new ArrayList<>();
     this.deaggs = new ArrayList<>();
 
@@ -118,7 +118,7 @@ public final class ResultHandler {
           .description("nshmp-haz generated curves")
           .timestamp(new Timestamp(System.currentTimeMillis()).toString())
           .vs30(demoSite.vs30);
-      for (Entry<Imt, XySequence> entry : config.curve.modelCurves().entrySet()) {
+      for (Entry<Imt, XySequence> entry : config.hazard.modelCurves().entrySet()) {
         Imt imt = entry.getKey();
         Metadata meta = metaBuilder
             .imt(imt)
@@ -141,22 +141,23 @@ public final class ResultHandler {
    *         {@code config} but the {@code sites} container does not specify map
    *         extents.
    */
-  public static ResultHandler create(
+  public static HazardExport create(
       CalcConfig config,
       Sites sites,
-      Logger log) {
+      Logger log) throws IOException {
 
-    return new ResultHandler(config, sites, log);
+    return new HazardExport(config, sites, log);
   }
 
   /* Avoid clobbering exsting result directories via incrementing. */
-  private static Path createOutputDir(Path dir) {
+  static Path createOutputDir(Path dir) throws IOException {
     int i = 1;
     Path incrementedDir = dir;
     while (Files.exists(incrementedDir)) {
       incrementedDir = incrementedDir.resolveSibling(dir.getFileName() + "-" + i);
       i++;
     }
+    Files.createDirectories(incrementedDir);
     return incrementedDir;
   }
 
@@ -247,10 +248,10 @@ public final class ResultHandler {
 
     Set<Gmm> gmms = gmmSet(demo.model);
 
-    OpenOption[] options = !firstBatch ? APPEND : WRITE;
+    OpenOption[] options = firstBatch ? WRITE : APPEND;
 
     Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
-    if (demo.config.curve.valueType == CurveValue.POISSON_PROBABILITY) {
+    if (demo.config.hazard.valueFormat == ValueFormat.POISSON_PROBABILITY) {
       formatter = Functions.compose(
           formatter,
           Mfds.annualRateToProbabilityConverter());
@@ -275,7 +276,7 @@ public final class ResultHandler {
       if (firstBatch) {
         Iterable<?> header = Iterables.concat(
             Lists.newArrayList(namedSites ? "name" : null, "lon", "lat"),
-            demo.config.curve.modelCurves().get(imt).xValues());
+            demo.config.hazard.modelCurves().get(imt).xValues());
         lines.add(Parsing.join(header, Delimiter.COMMA));
       }
 
@@ -327,8 +328,8 @@ public final class ResultHandler {
 
       List<String> locData = Lists.newArrayList(
           name,
-          String.format("%.5f", hazard.site.location.lon()),
-          String.format("%.5f", hazard.site.location.lat()));
+          String.format("%.5f", location.lon()),
+          String.format("%.5f", location.lat()));
 
       Map<Imt, Map<SourceType, XySequence>> curvesBySource =
           exportSource ? curvesBySource(hazard) : null;
@@ -352,7 +353,7 @@ public final class ResultHandler {
         int binIndex = -1;
         if (exportBinary) {
           meta = metaMap.get(imt);
-          binIndex = curveIndex2(meta.bounds, meta.spacing, location);
+          binIndex = curveIndex(meta.bounds, meta.spacing, location);
           totalCurves.get(imt).put(binIndex, totalCurve);
         }
 
@@ -587,7 +588,7 @@ public final class ResultHandler {
   private static final int HEADER_OFFSET = 896; // bytes
   private static final int INFO_LINE_SIZE = 128; // chars
 
-  private static final String BINARY_EXTENTS_REQUIRED_MSSG =
+  static final String BINARY_EXTENTS_REQUIRED_MSSG =
       "Binary output is only supported when map extents are defined\n" +
           "    See: https://github.com/usgs/nshmp-haz/wiki/Sites#map-regions";
 
@@ -781,7 +782,7 @@ public final class ResultHandler {
    * Compute the target position of a curve in a binary file. NSHMP binary files
    * index ascending in longitude, but descending in latitude.
    */
-  private static int curveIndex2(Bounds b, double spacing, Location loc) {
+  private static int curveIndex(Bounds b, double spacing, Location loc) {
     int columnCount = (int) Math.rint((b.max().lon() - b.min().lon()) / spacing) + 1;
     int rowIndex = (int) Math.rint((b.max().lat() - loc.lat()) / spacing);
     int colIndex = (int) Math.rint((loc.lon() - b.min().lon()) / spacing);

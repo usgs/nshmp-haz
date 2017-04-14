@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.RandomAccess;
 
 /**
@@ -224,6 +225,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @throws IndexOutOfBoundsException if the index is out of range (
    *         {@code index < 0 || index >= size()})
    */
+  @SuppressWarnings("unused")
   public void set(int index, double value) {
     throw new UnsupportedOperationException();
   }
@@ -325,7 +327,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
   /**
    * Returns an iterator over the {@link XyPoint}s in this sequence. For
    * immutable implementations, the {@link XyPoint#set(double)} method of a
-   * returned point will throw an {@code UnsupportedOperationException}.
+   * returned point throws an {@code UnsupportedOperationException}.
    */
   @Override
   public Iterator<XyPoint> iterator() {
@@ -425,6 +427,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @param term to add
    * @return {@code this} sequence, for use inline
    */
+  @SuppressWarnings("unused")
   public XySequence add(double term) {
     throw new UnsupportedOperationException();
   }
@@ -435,6 +438,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @param ys y-values to add
    * @return {@code this} sequence, for use inline
    */
+  @SuppressWarnings("unused")
   public XySequence add(double[] ys) {
     throw new UnsupportedOperationException();
   }
@@ -447,6 +451,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @throws IllegalArgumentException if
    *         {@code sequence.xValues() != this.xValues()}
    */
+  @SuppressWarnings("unused")
   public XySequence add(XySequence sequence) {
     throw new UnsupportedOperationException();
   }
@@ -457,6 +462,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @param scale factor
    * @return {@code this} sequence, for use inline
    */
+  @SuppressWarnings("unused")
   public XySequence multiply(double scale) {
     throw new UnsupportedOperationException();
   }
@@ -470,6 +476,7 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @throws IllegalArgumentException if
    *         {@code sequence.xValues() != this.xValues()}
    */
+  @SuppressWarnings("unused")
   public XySequence multiply(XySequence sequence) {
     throw new UnsupportedOperationException();
   }
@@ -495,10 +502,19 @@ public abstract class XySequence implements Iterable<XyPoint> {
   }
 
   /**
-   * Returns {@code true} if all y-values are 0.0; {@code false} otherwise.
-   * a
+   * Returns {@code true} if all y-values are 0.0; {@code false} otherwise. a
    */
   public abstract boolean isClear();
+
+  /**
+   * Returns a new, immutable sequence that has had all leading and trailing
+   * zero-valued points ({@code y = 0}) removed. Any zero-valued points in the
+   * middle of this sequence are ignored.
+   * 
+   * @throws IllegalStateException if {@link #isClear() this.isClear()} as empty
+   *         sequences are not permitted
+   */
+  public abstract XySequence trim();
 
   /**
    * Transforms all y-values in place using the supplied {@link Function}.
@@ -506,8 +522,27 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @param function for transform
    * @return {@code this} sequence, for use inline
    */
+  @SuppressWarnings("unused")
   public XySequence transform(Function<Double, Double> function) {
     throw new UnsupportedOperationException();
+  }
+
+  /**
+   * Adds {@code this} sequence to any exisiting sequence for {@code key} in the
+   * supplied {@code map}. If {@code key} does not exist in the {@code map},
+   * method puts a mutable copy of {@code this} in the map.
+   * 
+   * @param key for sequence to add
+   * @param map of sequences to add to
+   * @throws IllegalArgumentException if the x-values of added sequences to not
+   *         match those of existing sequences
+   */
+  public final <E extends Enum<E>> void addToMap(E key, Map<E, XySequence> map) {
+    if (map.containsKey(key)) {
+      map.get(key).add(this);
+    } else {
+      map.put(key, XySequence.copyOf(this));
+    }
   }
 
 }

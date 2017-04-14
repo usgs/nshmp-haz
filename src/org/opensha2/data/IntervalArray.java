@@ -183,13 +183,14 @@ public interface IntervalArray {
      * @param max upper edge of uppermost row bin
      * @param Δ bin discretization
      */
-    public Builder rows(double min, double max, double Δ) {
-      rowMin = min;
-      rowMax = max;
-      rowΔ = Δ;
-      rows = keys(min, max, Δ);
-      init();
-      return this;
+    public static Builder withRows(double min, double max, double Δ) {
+      Builder b = new Builder();
+      b.rowMin = min;
+      b.rowMax = max;
+      b.rowΔ = Δ;
+      b.rows = keys(min, max, Δ);
+      b.init();
+      return b;
     }
 
     private void init() {
@@ -220,8 +221,8 @@ public interface IntervalArray {
     }
 
     /**
-     * Set the value at the specified row and column indices. Be careful not to
-     * confuse this with {@link #set(double, double)}.
+     * Set the value at the specified row. Be careful not to confuse this with
+     * {@link #set(double, double)}.
      *
      * @param row index
      * @param value to set
@@ -232,8 +233,8 @@ public interface IntervalArray {
     }
 
     /**
-     * Add to the existing value at the specified row and column. Be careful not
-     * to confuse this with {@link #add(int, double)}.
+     * Add to the existing value at the specified row. Be careful not to confuse
+     * this with {@link #add(int, double)}.
      *
      * @param row key
      * @param value to add
@@ -243,8 +244,8 @@ public interface IntervalArray {
     }
 
     /**
-     * Add to the existing value at the specified row and column indices. Be
-     * careful not to confuse this with {@link #add(double, double)} .
+     * Add to the existing value at the specified row. Be careful not to confuse
+     * this with {@link #add(double, double)}.
      *
      * @param row index
      * @param value to add
@@ -319,7 +320,7 @@ public interface IntervalArray {
     }
 
     /**
-     * Add the values in the supplied table to this builder. This operation is
+     * Add the values in the supplied array to this builder. This operation is
      * very efficient if this builder and the supplied array are sourced from
      * the same model.
      *
@@ -333,6 +334,18 @@ public interface IntervalArray {
       validateArray((AbstractArray) array);
       // safe covariant cast until other concrete implementations exist
       Data.uncheckedAdd(data, ((DefaultArray) array).data);
+      return this;
+    }
+
+    /**
+     * Add each value-pair of the supplied sequence to the appropriate interval.
+     * 
+     * @param sequence to add
+     */
+    public Builder addEach(XySequence sequence) {
+      for (XyPoint xy : sequence) {
+        add(xy.x(), xy.y());
+      }
       return this;
     }
 

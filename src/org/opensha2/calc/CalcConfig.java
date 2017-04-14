@@ -59,50 +59,55 @@ public final class CalcConfig {
   static final String FILE_NAME = "config.json";
   private static final String ID = CalcConfig.class.getSimpleName();
   private static final String STATE_ERROR = "%s %s not set";
-  private static final String DEFAULT_OUT = "curves";
+  static final String DEFAULT_OUT = "curves";
 
   /**
    * The resource from which {@code this} was derived. This field may be empty.
    */
   public final transient Optional<Path> resource;
 
-  /** Hazard curve calculation settings. */
-  public final Curve curve;
-
-  /** Default site settings. */
-  public final SiteDefaults siteDefaults;
-
-  /** Performance and optimization settings. */
-  public final Performance performance;
-
-  /** Output configuration. */
-  public final Output output;
+  /** Hazard calculation configuration. */
+  public final Hazard hazard;
 
   /** Deaggregation configuration. */
   public final Deagg deagg;
 
+  /** Earthquake rate configuration. */
+  public final Rate rate;
+
+  /** Default site settings. */
+  public final SiteDefaults site;
+
+  /** Output configuration. */
+  public final Output output;
+
+  /** Performance and optimization configuration. */
+  public final Performance performance;
+
   private CalcConfig(
       Optional<Path> resource,
-      Curve curve,
+      Hazard hazard,
       SiteDefaults site,
       Performance performance,
       Output output,
-      Deagg deagg) {
+      Deagg deagg,
+      Rate rate) {
 
     this.resource = resource;
-    this.curve = curve;
-    this.siteDefaults = site;
+    this.hazard = hazard;
+    this.site = site;
     this.performance = performance;
     this.output = output;
     this.deagg = deagg;
+    this.rate = rate;
   }
 
   /**
-   * Hazard curve calculation configuration.
+   * Hazard calculation configuration.
    */
-  public final static class Curve {
+  public final static class Hazard {
 
-    static final String ID = CalcConfig.ID + "." + Curve.class.getSimpleName();
+    static final String ID = CalcConfig.ID + "." + Hazard.class.getSimpleName();
 
     /**
      * The probability distribution model to use when computing hazard curves.
@@ -110,7 +115,6 @@ public final class CalcConfig {
      * <p><b>Default:</b> {@link ExceedanceModel#TRUNCATION_UPPER_ONLY}
      */
     public final ExceedanceModel exceedanceModel;
-    // TODO refactor to probabilityModel
 
     /**
      * The number of standard deviations (σ) at which to truncate a
@@ -141,9 +145,9 @@ public final class CalcConfig {
     /**
      * The value format for hazard curves.
      *
-     * <p><b>Default:</b> {@link CurveValue#ANNUAL_RATE}
+     * <p><b>Default:</b> {@link ValueFormat#ANNUAL_RATE}
      */
-    public final CurveValue valueType;
+    public final ValueFormat valueFormat;
 
     private final double[] defaultImls;
     private final Map<Imt, double[]> customImls;
@@ -152,12 +156,12 @@ public final class CalcConfig {
     private final transient Map<Imt, XySequence> modelCurves;
     private final transient Map<Imt, XySequence> logModelCurves;
 
-    private Curve(
+    private Hazard(
         ExceedanceModel exceedanceModel,
         double truncationLevel,
         Set<Imt> imts,
         boolean gmmUncertainty,
-        CurveValue valueType,
+        ValueFormat valueFormat,
         double[] defaultImls,
         Map<Imt, double[]> customImls,
         Map<Imt, XySequence> modelCurves,
@@ -167,7 +171,7 @@ public final class CalcConfig {
       this.truncationLevel = truncationLevel;
       this.imts = imts;
       this.gmmUncertainty = gmmUncertainty;
-      this.valueType = valueType;
+      this.valueFormat = valueFormat;
 
       this.defaultImls = defaultImls;
       this.customImls = customImls;
@@ -219,12 +223,12 @@ public final class CalcConfig {
         }
       }
       return new StringBuilder()
-          .append(LOG_INDENT).append("Curve")
-          .append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel))
+          .append(LOG_INDENT).append("Hazard")
+          .append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel.name()))
           .append(formatEntry(Key.TRUNCATION_LEVEL, truncationLevel))
           .append(formatEntry(Key.IMTS, enumsToString(imts, Imt.class)))
           .append(formatEntry(Key.GMM_UNCERTAINTY, gmmUncertainty))
-          .append(formatEntry(Key.VALUE_TYPE, valueType))
+          .append(formatEntry(Key.VALUE_FORMAT, valueFormat.name()))
           .append(formatEntry(Key.DEFAULT_IMLS, wrap(Arrays.toString(defaultImls), false)))
           .append(imlSb);
     }
@@ -235,29 +239,29 @@ public final class CalcConfig {
       Double truncationLevel;
       Set<Imt> imts;
       Boolean gmmUncertainty;
-      CurveValue valueType;
+      ValueFormat valueFormat;
       double[] defaultImls;
       Map<Imt, double[]> customImls;
 
-      Curve build() {
-        return new Curve(
+      Hazard build() {
+        return new Hazard(
             exceedanceModel,
             truncationLevel,
             Sets.immutableEnumSet(imts),
             gmmUncertainty,
-            valueType,
+            valueFormat,
             defaultImls,
             customImls,
             createCurveMap(),
             createLogCurveMap());
       }
 
-      void copy(Curve that) {
+      void copy(Hazard that) {
         this.exceedanceModel = that.exceedanceModel;
         this.truncationLevel = that.truncationLevel;
         this.imts = that.imts;
         this.gmmUncertainty = that.gmmUncertainty;
-        this.valueType = that.valueType;
+        this.valueFormat = that.valueFormat;
         this.defaultImls = that.defaultImls;
         this.customImls = that.customImls;
       }
@@ -275,8 +279,8 @@ public final class CalcConfig {
         if (that.gmmUncertainty != null) {
           this.gmmUncertainty = that.gmmUncertainty;
         }
-        if (that.valueType != null) {
-          this.valueType = that.valueType;
+        if (that.valueFormat != null) {
+          this.valueFormat = that.valueFormat;
         }
         if (that.defaultImls != null) {
           this.defaultImls = that.defaultImls;
@@ -301,7 +305,7 @@ public final class CalcConfig {
         b.truncationLevel = 3.0;
         b.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
         b.gmmUncertainty = false;
-        b.valueType = CurveValue.ANNUAL_RATE;
+        b.valueFormat = ValueFormat.ANNUAL_RATE;
         b.defaultImls = IMLS_PGA_SA;
         b.customImls = Maps.newHashMap();
         b.customImls.put(Imt.PGV, IMLS_PGV);
@@ -309,11 +313,11 @@ public final class CalcConfig {
       }
 
       void validate() {
-        checkNotNull(exceedanceModel, STATE_ERROR, Curve.ID, Key.EXCEEDANCE_MODEL);
-        checkNotNull(truncationLevel, STATE_ERROR, Curve.ID, Key.TRUNCATION_LEVEL);
-        checkNotNull(imts, STATE_ERROR, Curve.ID, Key.IMTS);
-        checkNotNull(defaultImls, STATE_ERROR, Curve.ID, Key.DEFAULT_IMLS);
-        checkNotNull(customImls, STATE_ERROR, Curve.ID, Key.CUSTOM_IMLS);
+        checkNotNull(exceedanceModel, STATE_ERROR, Hazard.ID, Key.EXCEEDANCE_MODEL);
+        checkNotNull(truncationLevel, STATE_ERROR, Hazard.ID, Key.TRUNCATION_LEVEL);
+        checkNotNull(imts, STATE_ERROR, Hazard.ID, Key.IMTS);
+        checkNotNull(defaultImls, STATE_ERROR, Hazard.ID, Key.DEFAULT_IMLS);
+        checkNotNull(customImls, STATE_ERROR, Hazard.ID, Key.CUSTOM_IMLS);
       }
 
       Map<Imt, XySequence> createLogCurveMap() {
@@ -344,332 +348,7 @@ public final class CalcConfig {
   }
 
   /**
-   * Default site settings.
-   */
-  public static final class SiteDefaults {
-
-    static final String ID = CalcConfig.ID + "." + SiteDefaults.class.getSimpleName();
-
-    /**
-     * The default average shear-wave velocity down to 30 meters depth.
-     *
-     * <p><b>Default:</b> {@code 760.0} m/sec
-     */
-    public final double vs30;
-
-    /**
-     * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
-     *
-     * <p><b>Default:</b> {@code true} (inferred)
-     */
-    public final boolean vsInferred;
-
-    /**
-     * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
-     *
-     * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
-     * default value or model)
-     */
-    public final double z1p0;
-
-    /**
-     * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
-     *
-     * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
-     * default value or model)
-     */
-    public final double z2p5;
-
-    private SiteDefaults(
-        double vs30,
-        boolean vsInferred,
-        double z1p0,
-        double z2p5) {
-
-      this.vs30 = vs30;
-      this.vsInferred = vsInferred;
-      this.z1p0 = z1p0;
-      this.z2p5 = z2p5;
-    }
-
-    private StringBuilder asString() {
-      return new StringBuilder()
-          .append(LOG_INDENT).append("Site Defaults")
-          .append(formatEntry(Key.VS30, vs30))
-          .append(formatEntry(Key.VS_INF, vsInferred))
-          .append(formatEntry(Key.Z1P0, z1p0))
-          .append(formatEntry(Key.Z2P5, z2p5));
-    }
-
-    private static final class Builder {
-
-      Double vs30;
-      Boolean vsInferred;
-      Double z1p0;
-      Double z2p5;
-
-      SiteDefaults build() {
-        return new SiteDefaults(
-            vs30,
-            vsInferred,
-            z1p0,
-            z2p5);
-      }
-
-      void copy(SiteDefaults that) {
-        this.vs30 = that.vs30;
-        this.vsInferred = that.vsInferred;
-        this.z1p0 = that.z1p0;
-        this.z2p5 = that.z2p5;
-      }
-
-      void extend(Builder that) {
-        if (that.vs30 != null) {
-          this.vs30 = that.vs30;
-        }
-        if (that.vsInferred != null) {
-          this.vsInferred = that.vsInferred;
-        }
-        if (that.z1p0 != null) {
-          this.z1p0 = that.z1p0;
-        }
-        if (that.z2p5 != null) {
-          this.z2p5 = that.z2p5;
-        }
-      }
-
-      static Builder defaults() {
-        Builder b = new Builder();
-        b.vs30 = Site.VS_30_DEFAULT;
-        b.vsInferred = Site.VS_INF_DEFAULT;
-        b.z1p0 = Site.Z1P0_DEFAULT;
-        b.z2p5 = Site.Z2P5_DEFAULT;
-        return b;
-      }
-
-      void validate() {
-        checkNotNull(vs30, STATE_ERROR, SiteDefaults.ID, Key.VS30);
-        checkNotNull(vsInferred, STATE_ERROR, SiteDefaults.ID, Key.VS_INF);
-        checkNotNull(z1p0, STATE_ERROR, SiteDefaults.ID, Key.Z1P0);
-        checkNotNull(z2p5, STATE_ERROR, SiteDefaults.ID, Key.Z2P5);
-      }
-    }
-  }
-
-  /**
-   * Performance and optimization settings.
-   */
-  public static final class Performance {
-
-    static final String ID = CalcConfig.ID + "." + Performance.class.getSimpleName();
-
-    /**
-     * Whether to optimize grid source sets, or not.
-     *
-     * <p><b>Default:</b> {@code true}
-     */
-    public final boolean optimizeGrids;
-
-    /**
-     * Whether to collapse/combine magnitude-frequency distributions, or not.
-     * Doing so prevents uncertainty analysis as logic-tree branches are
-     * obscured.
-     *
-     * <p><b>Default:</b> {@code true}
-     */
-    public final boolean collapseMfds;
-
-    /**
-     * The partition or batch size to use when distributing
-     * {@link SourceType#SYSTEM} calculations.
-     *
-     * <p><b>Default:</b> {@code 1000}
-     */
-    public final int systemPartition;
-
-    /**
-     * The number of threads to use when distributing calculations.
-     *
-     * <p><b>Default:</b> {@link ThreadCount#ALL}
-     */
-    public final ThreadCount threadCount;
-
-    private Performance(
-        boolean optimizeGrids,
-        boolean collapseMfds,
-        int systemPartition,
-        ThreadCount threadCount) {
-
-      this.optimizeGrids = optimizeGrids;
-      this.collapseMfds = collapseMfds;
-      this.systemPartition = systemPartition;
-      this.threadCount = threadCount;
-    }
-
-    private StringBuilder asString() {
-      return new StringBuilder()
-          .append(LOG_INDENT).append("Performance")
-          .append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
-          .append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
-          .append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
-          .append(formatEntry(Key.THREAD_COUNT, threadCount));
-    }
-
-    private static final class Builder {
-
-      Boolean optimizeGrids;
-      Boolean collapseMfds;
-      Integer systemPartition;
-      ThreadCount threadCount;
-
-      Performance build() {
-        return new Performance(
-            optimizeGrids,
-            collapseMfds,
-            systemPartition,
-            threadCount);
-      }
-
-      void copy(Performance that) {
-        this.optimizeGrids = that.optimizeGrids;
-        this.collapseMfds = that.collapseMfds;
-        this.systemPartition = that.systemPartition;
-        this.threadCount = that.threadCount;
-      }
-
-      void extend(Builder that) {
-        if (that.optimizeGrids != null) {
-          this.optimizeGrids = that.optimizeGrids;
-        }
-        if (that.collapseMfds != null) {
-          this.collapseMfds = that.collapseMfds;
-        }
-        if (that.systemPartition != null) {
-          this.systemPartition = that.systemPartition;
-        }
-        if (that.threadCount != null) {
-          this.threadCount = that.threadCount;
-        }
-      }
-
-      static Builder defaults() {
-        Builder b = new Builder();
-        b.optimizeGrids = true;
-        b.collapseMfds = true;
-        b.systemPartition = 1000;
-        b.threadCount = ThreadCount.ALL;
-        return b;
-      }
-
-      void validate() {
-        checkNotNull(optimizeGrids, STATE_ERROR, Performance.ID, Key.OPTIMIZE_GRIDS);
-        checkNotNull(collapseMfds, STATE_ERROR, Performance.ID, Key.COLLAPSE_MFDS);
-        checkNotNull(systemPartition, STATE_ERROR, Performance.ID, Key.SYSTEM_PARTITION);
-        checkNotNull(threadCount, STATE_ERROR, Performance.ID, Key.THREAD_COUNT);
-      }
-    }
-  }
-
-  /**
-   * Hazard curve and file output settings.
-   */
-  public static final class Output {
-
-    static final String ID = CalcConfig.ID + "." + Output.class.getSimpleName();
-
-    /**
-     * The directory to write any results to.
-     *
-     * <p><b>Default:</b> {@code "curves"}
-     */
-    public final Path directory;
-
-    /**
-     * The different {@linkplain CurveType types} of curves to save. Note that
-     * {@link CurveType#TOTAL} will <i>always</i> be included in this set,
-     * regardless of any user settings.
-     *
-     * <p><b>Default:</b> [{@link CurveType#TOTAL}]
-     */
-    public final Set<CurveType> curveTypes;
-
-    /**
-     * The number of results (one per {@code Site}) to store before writing to
-     * file(s). A larger number requires more memory.
-     *
-     * <p><b>Default:</b> {@code 20}
-     */
-    public final int flushLimit;
-
-    private Output(
-        Path directory,
-        Set<CurveType> curveTypes,
-        int flushLimit) {
-
-      this.directory = directory;
-      this.curveTypes = Sets.immutableEnumSet(
-          CurveType.TOTAL,
-          curveTypes.toArray(new CurveType[curveTypes.size()]));
-      this.flushLimit = flushLimit;
-    }
-
-    private StringBuilder asString() {
-      return new StringBuilder()
-          .append(LOG_INDENT).append("Output")
-          .append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
-          .append(formatEntry(Key.CURVE_TYPES, enumsToString(curveTypes, CurveType.class)))
-          .append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
-    }
-
-    private static final class Builder {
-
-      Path directory;
-      Set<CurveType> curveTypes;
-      Integer flushLimit;
-
-      Output build() {
-        return new Output(
-            directory,
-            curveTypes,
-            flushLimit);
-      }
-
-      void copy(Output that) {
-        this.directory = that.directory;
-        this.curveTypes = that.curveTypes;
-        this.flushLimit = that.flushLimit;
-      }
-
-      void extend(Builder that) {
-        if (that.directory != null) {
-          this.directory = that.directory;
-        }
-        if (that.curveTypes != null) {
-          this.curveTypes = that.curveTypes;
-        }
-        if (that.flushLimit != null) {
-          this.flushLimit = that.flushLimit;
-        }
-      }
-
-      static Builder defaults() {
-        Builder b = new Builder();
-        b.directory = Paths.get(DEFAULT_OUT);
-        b.curveTypes = EnumSet.of(CurveType.TOTAL);
-        b.flushLimit = 5;
-        return b;
-      }
-
-      void validate() {
-        checkNotNull(directory, STATE_ERROR, Output.ID, Key.DIRECTORY);
-        checkNotNull(curveTypes, STATE_ERROR, Output.ID, Key.CURVE_TYPES);
-        checkNotNull(flushLimit, STATE_ERROR, Output.ID, Key.FLUSH_LIMIT);
-      }
-    }
-  }
-
-  /**
-   * Deaggregation configuration data container.
+   * Deaggregation configuration.
    */
   public static final class Deagg {
 
@@ -687,7 +366,7 @@ public final class CalcConfig {
      */
     public final Double contributorLimit;
 
-    Deagg(
+    private Deagg(
         Bins bins,
         double contributorLimit) {
 
@@ -716,8 +395,6 @@ public final class CalcConfig {
     /**
      * The distance, magnitude, and epsilon bins into which contributing sources
      * to hazard will be sorted.
-     *
-     * @author Peter Powers
      */
     public static final class Bins {
 
@@ -822,14 +499,502 @@ public final class CalcConfig {
     }
   }
 
+  /**
+   * Magnitude-frequency distribution configuration.
+   */
+  public static final class Rate {
+
+    static final String ID = CalcConfig.ID + "." + Rate.class.getSimpleName();
+
+    /**
+     * The magnitude discretization.
+     */
+    public final Bins bins;
+
+    /**
+     * The distance from a site within which all sources should be included.
+     *
+     * <p><b>Default:</b> {@code 20}
+     */
+    public final Double distance;
+
+    /**
+     * The rate data distribution type.
+     *
+     * <p><b>Default:</b> {@link DistributionFormat#INCREMENTAL}
+     */
+    public final DistributionFormat distributionFormat;
+
+    /**
+     * The value format for rate data.
+     *
+     * <p><b>Default:</b> {@link ValueFormat#ANNUAL_RATE}
+     */
+    public final ValueFormat valueFormat;
+
+    /**
+     * The timespan of interest when computing Poisson probabilities.
+     *
+     * <p><b>Default:</b> {@code 30}
+     */
+    public final Double timespan;
+
+    private Rate(
+        Bins bins,
+        double distance,
+        DistributionFormat distributionFormat,
+        ValueFormat valueFormat,
+        double timespan) {
+
+      this.bins = bins;
+      this.distance = distance;
+      this.distributionFormat = distributionFormat;
+      this.valueFormat = valueFormat;
+      this.timespan = timespan;
+    }
+
+    private StringBuilder asString() {
+      return new StringBuilder()
+          .append(LOG_INDENT).append("Rate")
+          .append(formatEntry("mBins"))
+          .append("min=").append(bins.mMin).append(", ")
+          .append("max=").append(bins.mMax).append(", ")
+          .append("Δ=").append(bins.Δm)
+          .append(formatEntry(Key.DISTANCE, distance))
+          .append(formatEntry(Key.DISTRIBUTION_FORMAT, distributionFormat.name()))
+          .append(formatEntry(Key.VALUE_FORMAT, valueFormat.name()))
+          .append(formatEntry(Key.TIMESPAN, timespan));
+    }
+
+    private static final class Builder {
+
+      Bins bins;
+      Double distance;
+      DistributionFormat distributionFormat;
+      ValueFormat valueFormat;
+      Double timespan;
+
+      Rate build() {
+        return new Rate(
+            bins,
+            distance,
+            distributionFormat,
+            valueFormat,
+            timespan);
+      }
+
+      void copy(Rate that) {
+        this.bins = that.bins;
+        this.distance = that.distance;
+        this.distributionFormat = that.distributionFormat;
+        this.valueFormat = that.valueFormat;
+        this.timespan = that.timespan;
+      }
+
+      void extend(Builder that) {
+        if (that.bins != null) {
+          this.bins = that.bins;
+        }
+        if (that.distance != null) {
+          this.distance = that.distance;
+        }
+        if (that.distributionFormat != null) {
+          this.distributionFormat = that.distributionFormat;
+        }
+        if (that.valueFormat != null) {
+          this.valueFormat = that.valueFormat;
+        }
+        if (that.timespan != null) {
+          this.timespan = that.timespan;
+        }
+      }
+
+      static Builder defaults() {
+        Builder b = new Builder();
+        b.bins = Bins.defaults();
+        b.distance = 20.0;
+        b.distributionFormat = DistributionFormat.INCREMENTAL;
+        b.valueFormat = ValueFormat.ANNUAL_RATE;
+        b.timespan = 30.0;
+        return b;
+      }
+
+      void validate() {
+        checkNotNull(bins, STATE_ERROR, Rate.ID, Key.BINS);
+        checkNotNull(bins.mMin, STATE_ERROR, Rate.ID, Key.BINS + ".mMin");
+        checkNotNull(bins.mMax, STATE_ERROR, Rate.ID, Key.BINS + ".mMax");
+        checkNotNull(bins.Δm, STATE_ERROR, Rate.ID, Key.BINS + ".Δm");
+        checkNotNull(distance, STATE_ERROR, Rate.ID, Key.DISTANCE);
+        checkNotNull(distributionFormat, STATE_ERROR, Rate.ID, Key.DISTRIBUTION_FORMAT);
+        checkNotNull(valueFormat, STATE_ERROR, Rate.ID, Key.VALUE_FORMAT);
+        checkNotNull(timespan, STATE_ERROR, Rate.ID, Key.TIMESPAN);
+      }
+
+    }
+
+    /**
+     * The mfd magnitude discretization.
+     */
+    public static final class Bins {
+
+      static final String ID = CalcConfig.ID + "." + Rate.ID + "." + Bins.class.getSimpleName();
+
+      /** Minimum magnitude. Lower edge of smallest magnitude bin. */
+      public final Double mMin;
+
+      /** Maximum magnitude. Upper edge of largest magnitude bin. */
+      public final Double mMax;
+
+      /** Magnitude bin width. */
+      public final Double Δm;
+
+      Bins(double mMin, double mMax, double Δm) {
+        this.mMin = mMin;
+        this.mMax = mMax;
+        this.Δm = Δm;
+      }
+
+      static Bins defaults() {
+        return new Bins(4.2, 9.4, 0.1);
+      }
+    }
+  }
+
+  /**
+   * Default site settings.
+   */
+  public static final class SiteDefaults {
+
+    static final String ID = CalcConfig.ID + "." + SiteDefaults.class.getSimpleName();
+
+    /**
+     * The default average shear-wave velocity down to 30 meters depth.
+     *
+     * <p><b>Default:</b> {@code 760.0} m/sec
+     */
+    public final double vs30;
+
+    /**
+     * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
+     *
+     * <p><b>Default:</b> {@code true} (inferred)
+     */
+    public final boolean vsInferred;
+
+    /**
+     * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
+     *
+     * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
+     * default value or model)
+     */
+    public final double z1p0;
+
+    /**
+     * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
+     *
+     * <p><b>Default:</b> {@code NaN} ({@link GroundMotionModel}s will use a
+     * default value or model)
+     */
+    public final double z2p5;
+
+    private SiteDefaults(
+        double vs30,
+        boolean vsInferred,
+        double z1p0,
+        double z2p5) {
+
+      this.vs30 = vs30;
+      this.vsInferred = vsInferred;
+      this.z1p0 = z1p0;
+      this.z2p5 = z2p5;
+    }
+
+    private StringBuilder asString() {
+      return new StringBuilder()
+          .append(LOG_INDENT).append("Site")
+          .append(formatEntry(Key.VS30, vs30))
+          .append(formatEntry(Key.VS_INF, vsInferred))
+          .append(formatEntry(Key.Z1P0, z1p0))
+          .append(formatEntry(Key.Z2P5, z2p5));
+    }
+
+    private static final class Builder {
+
+      Double vs30;
+      Boolean vsInferred;
+      Double z1p0;
+      Double z2p5;
+
+      SiteDefaults build() {
+        return new SiteDefaults(
+            vs30,
+            vsInferred,
+            z1p0,
+            z2p5);
+      }
+
+      void copy(SiteDefaults that) {
+        this.vs30 = that.vs30;
+        this.vsInferred = that.vsInferred;
+        this.z1p0 = that.z1p0;
+        this.z2p5 = that.z2p5;
+      }
+
+      void extend(Builder that) {
+        if (that.vs30 != null) {
+          this.vs30 = that.vs30;
+        }
+        if (that.vsInferred != null) {
+          this.vsInferred = that.vsInferred;
+        }
+        if (that.z1p0 != null) {
+          this.z1p0 = that.z1p0;
+        }
+        if (that.z2p5 != null) {
+          this.z2p5 = that.z2p5;
+        }
+      }
+
+      static Builder defaults() {
+        Builder b = new Builder();
+        b.vs30 = Site.VS_30_DEFAULT;
+        b.vsInferred = Site.VS_INF_DEFAULT;
+        b.z1p0 = Site.Z1P0_DEFAULT;
+        b.z2p5 = Site.Z2P5_DEFAULT;
+        return b;
+      }
+
+      void validate() {
+        checkNotNull(vs30, STATE_ERROR, SiteDefaults.ID, Key.VS30);
+        checkNotNull(vsInferred, STATE_ERROR, SiteDefaults.ID, Key.VS_INF);
+        checkNotNull(z1p0, STATE_ERROR, SiteDefaults.ID, Key.Z1P0);
+        checkNotNull(z2p5, STATE_ERROR, SiteDefaults.ID, Key.Z2P5);
+      }
+    }
+  }
+
+  /**
+   * Data and file output settings.
+   */
+  public static final class Output {
+
+    static final String ID = CalcConfig.ID + "." + Output.class.getSimpleName();
+
+    /**
+     * The directory to write any results to.
+     *
+     * <p><b>Default:</b> {@code "curves"} for hazard and deaggregation
+     * calculations; {@code "eq-rate"} or {@code "eq-prob"} for rate
+     * calculations.
+     */
+    public final Path directory;
+
+    /**
+     * The different {@linkplain DataType types} of data to save. Note that
+     * {@link DataType#TOTAL} will <i>always</i> be included in this set,
+     * regardless of any user settings.
+     *
+     * <p><b>Default:</b> [{@link DataType#TOTAL}]
+     */
+    public final Set<DataType> dataTypes;
+
+    /**
+     * The number of results (one per {@code Site}) to store before writing to
+     * file(s). A larger number requires more memory.
+     *
+     * <p><b>Default:</b> {@code 20}
+     */
+    public final int flushLimit;
+
+    private Output(
+        Path directory,
+        Set<DataType> dataTypes,
+        int flushLimit) {
+
+      this.directory = directory;
+      this.dataTypes = Sets.immutableEnumSet(
+          DataType.TOTAL,
+          dataTypes.toArray(new DataType[dataTypes.size()]));
+      this.flushLimit = flushLimit;
+    }
+
+    private StringBuilder asString() {
+      return new StringBuilder()
+          .append(LOG_INDENT).append("Output")
+          .append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
+          .append(formatEntry(Key.DATA_TYPES, enumsToString(dataTypes, DataType.class)))
+          .append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
+    }
+
+    private static final class Builder {
+
+      Path directory;
+      Set<DataType> dataTypes;
+      Integer flushLimit;
+
+      Output build() {
+        return new Output(
+            directory,
+            dataTypes,
+            flushLimit);
+      }
+
+      void copy(Output that) {
+        this.directory = that.directory;
+        this.dataTypes = that.dataTypes;
+        this.flushLimit = that.flushLimit;
+      }
+
+      void extend(Builder that) {
+        if (that.directory != null) {
+          this.directory = that.directory;
+        }
+        if (that.dataTypes != null) {
+          this.dataTypes = that.dataTypes;
+        }
+        if (that.flushLimit != null) {
+          this.flushLimit = that.flushLimit;
+        }
+      }
+
+      static Builder defaults() {
+        Builder b = new Builder();
+        b.directory = Paths.get(DEFAULT_OUT);
+        b.dataTypes = EnumSet.of(DataType.TOTAL);
+        b.flushLimit = 5;
+        return b;
+      }
+
+      void validate() {
+        checkNotNull(directory, STATE_ERROR, Output.ID, Key.DIRECTORY);
+        checkNotNull(dataTypes, STATE_ERROR, Output.ID, Key.DATA_TYPES);
+        checkNotNull(flushLimit, STATE_ERROR, Output.ID, Key.FLUSH_LIMIT);
+      }
+    }
+  }
+
+  /**
+   * Performance and optimization settings.
+   */
+  public static final class Performance {
+
+    static final String ID = CalcConfig.ID + "." + Performance.class.getSimpleName();
+
+    /**
+     * Whether to optimize grid source sets, or not.
+     *
+     * <p><b>Default:</b> {@code true}
+     */
+    public final boolean optimizeGrids;
+
+    /**
+     * Whether to collapse/combine magnitude-frequency distributions, or not.
+     * Doing so prevents uncertainty analysis as logic-tree branches are
+     * obscured.
+     *
+     * <p><b>Default:</b> {@code true}
+     */
+    public final boolean collapseMfds;
+
+    /**
+     * The partition or batch size to use when distributing
+     * {@link SourceType#SYSTEM} calculations.
+     *
+     * <p><b>Default:</b> {@code 1000}
+     */
+    public final int systemPartition;
+
+    /**
+     * The number of threads to use when distributing calculations.
+     *
+     * <p><b>Default:</b> {@link ThreadCount#ALL}
+     */
+    public final ThreadCount threadCount;
+
+    private Performance(
+        boolean optimizeGrids,
+        boolean collapseMfds,
+        int systemPartition,
+        ThreadCount threadCount) {
+
+      this.optimizeGrids = optimizeGrids;
+      this.collapseMfds = collapseMfds;
+      this.systemPartition = systemPartition;
+      this.threadCount = threadCount;
+    }
+
+    private StringBuilder asString() {
+      return new StringBuilder()
+          .append(LOG_INDENT).append("Performance")
+          .append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
+          .append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
+          .append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
+          .append(formatEntry(Key.THREAD_COUNT, threadCount.name()));
+    }
+
+    private static final class Builder {
+
+      Boolean optimizeGrids;
+      Boolean collapseMfds;
+      Integer systemPartition;
+      ThreadCount threadCount;
+
+      Performance build() {
+        return new Performance(
+            optimizeGrids,
+            collapseMfds,
+            systemPartition,
+            threadCount);
+      }
+
+      void copy(Performance that) {
+        this.optimizeGrids = that.optimizeGrids;
+        this.collapseMfds = that.collapseMfds;
+        this.systemPartition = that.systemPartition;
+        this.threadCount = that.threadCount;
+      }
+
+      void extend(Builder that) {
+        if (that.optimizeGrids != null) {
+          this.optimizeGrids = that.optimizeGrids;
+        }
+        if (that.collapseMfds != null) {
+          this.collapseMfds = that.collapseMfds;
+        }
+        if (that.systemPartition != null) {
+          this.systemPartition = that.systemPartition;
+        }
+        if (that.threadCount != null) {
+          this.threadCount = that.threadCount;
+        }
+      }
+
+      static Builder defaults() {
+        Builder b = new Builder();
+        b.optimizeGrids = true;
+        b.collapseMfds = true;
+        b.systemPartition = 1000;
+        b.threadCount = ThreadCount.ALL;
+        return b;
+      }
+
+      void validate() {
+        checkNotNull(optimizeGrids, STATE_ERROR, Performance.ID, Key.OPTIMIZE_GRIDS);
+        checkNotNull(collapseMfds, STATE_ERROR, Performance.ID, Key.COLLAPSE_MFDS);
+        checkNotNull(systemPartition, STATE_ERROR, Performance.ID, Key.SYSTEM_PARTITION);
+        checkNotNull(threadCount, STATE_ERROR, Performance.ID, Key.THREAD_COUNT);
+      }
+    }
+  }
+
   private enum Key {
     RESOURCE,
-    /* curve */
+    /* hazard */
     EXCEEDANCE_MODEL,
     TRUNCATION_LEVEL,
     IMTS,
     GMM_UNCERTAINTY,
-    VALUE_TYPE,
+    VALUE_FORMAT,
     DEFAULT_IMLS,
     CUSTOM_IMLS,
     /* site defaults */
@@ -844,11 +1009,15 @@ public final class CalcConfig {
     THREAD_COUNT,
     /* output */
     DIRECTORY,
-    CURVE_TYPES,
+    DATA_TYPES,
     FLUSH_LIMIT,
     /* deagg */
     BINS,
-    CONTRIBUTOR_LIMIT;
+    CONTRIBUTOR_LIMIT,
+    /* rate */
+    DISTANCE,
+    DISTRIBUTION_FORMAT,
+    TIMESPAN;
 
     private String label;
 
@@ -868,11 +1037,12 @@ public final class CalcConfig {
         .append(resource.isPresent()
             ? resource.get().toAbsolutePath().normalize()
             : "(from defaults)")
-        .append(curve.asString())
-        .append(siteDefaults.asString())
-        .append(performance.asString())
-        .append(output.asString())
+        .append(hazard.asString())
         .append(deagg.asString())
+        .append(rate.asString())
+        .append(site.asString())
+        .append(output.asString())
+        .append(performance.asString())
         .toString();
   }
 
@@ -963,18 +1133,20 @@ public final class CalcConfig {
     private boolean built = false;
 
     private Path resource;
-    private Curve.Builder curve;
-    private SiteDefaults.Builder siteDefaults;
+    private Hazard.Builder hazard;
+    private SiteDefaults.Builder site;
     private Performance.Builder performance;
     private Output.Builder output;
     private Deagg.Builder deagg;
+    private Rate.Builder rate;
 
     private Builder() {
-      curve = new Curve.Builder();
-      siteDefaults = new SiteDefaults.Builder();
+      hazard = new Hazard.Builder();
+      site = new SiteDefaults.Builder();
       performance = new Performance.Builder();
       output = new Output.Builder();
       deagg = new Deagg.Builder();
+      rate = new Rate.Builder();
     }
 
     /**
@@ -985,11 +1157,12 @@ public final class CalcConfig {
       if (config.resource.isPresent()) {
         b.resource = config.resource.get();
       }
-      b.curve.copy(config.curve);
-      b.siteDefaults.copy(config.siteDefaults);
+      b.hazard.copy(config.hazard);
+      b.site.copy(config.site);
       b.performance.copy(config.performance);
       b.output.copy(config.output);
       b.deagg.copy(config.deagg);
+      b.rate.copy(config.rate);
       return b;
     }
 
@@ -1016,11 +1189,12 @@ public final class CalcConfig {
      */
     public static Builder withDefaults() {
       Builder b = new Builder();
-      b.curve = Curve.Builder.defaults();
-      b.siteDefaults = SiteDefaults.Builder.defaults();
+      b.hazard = Hazard.Builder.defaults();
+      b.site = SiteDefaults.Builder.defaults();
       b.performance = Performance.Builder.defaults();
       b.output = Output.Builder.defaults();
       b.deagg = Deagg.Builder.defaults();
+      b.rate = Rate.Builder.defaults();
       return b;
     }
 
@@ -1031,29 +1205,62 @@ public final class CalcConfig {
     public Builder extend(final Builder that) {
       checkNotNull(that);
       this.resource = that.resource;
-      this.curve.extend(that.curve);
-      this.siteDefaults.extend(that.siteDefaults);
+      this.hazard.extend(that.hazard);
+      this.site.extend(that.site);
       this.performance.extend(that.performance);
       this.output.extend(that.output);
       this.deagg.extend(that.deagg);
+      this.rate.extend(that.rate);
+      return this;
+    }
+
+    /*
+     * Those values for which web services require custom configurations
+     * (overrides) are exposed below.
+     */
+
+    /**
+     * Set the IMTs for which results should be calculated.
+     * 
+     * @see Hazard#imts
+     */
+    public Builder imts(Set<Imt> imts) {
+      this.hazard.imts = checkNotNull(imts);
       return this;
     }
 
     /**
-     * Set the IMTs for which results should be calculated.
+     * Set the timespan for earthquake probabilities. Calling this method also
+     * sets {@link Rate#valueFormat} to {@link ValueFormat#POISSON_PROBABILITY}
+     * to ensure consistency.
+     * 
+     * @see Rate#timespan
      */
-    public Builder imts(Set<Imt> imts) {
-      this.curve.imts = checkNotNull(imts);
+    public Builder timespan(double timespan) {
+      this.rate.timespan = timespan;
+      this.rate.valueFormat = ValueFormat.POISSON_PROBABILITY;
+      return this;
+    }
+
+    /**
+     * Set the cutoff distance within which to include all sources when
+     * computing earthquake rates or probabilities.
+     * 
+     * @see Rate#distance
+     */
+    public Builder distance(double distance) {
+      this.rate.distance = distance;
       return this;
     }
 
     private void validateState() {
       checkState(!built, "This %s instance as already been used", ID + ".Builder");
-      curve.validate();
-      siteDefaults.validate();
+      hazard.validate();
+      site.validate();
       performance.validate();
       output.validate();
       deagg.validate();
+      rate.validate();
       built = true;
     }
 
@@ -1064,11 +1271,12 @@ public final class CalcConfig {
       validateState();
       return new CalcConfig(
           Optional.fromNullable(resource),
-          curve.build(),
-          siteDefaults.build(),
+          hazard.build(),
+          site.build(),
           performance.build(),
           output.build(),
-          deagg.build());
+          deagg.build(),
+          rate.build());
     }
   }
 

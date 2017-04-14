@@ -5,10 +5,8 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig;
-import org.opensha2.calc.HazardCalcs;
-import org.opensha2.calc.Deaggregation;
-import org.opensha2.calc.Hazard;
-import org.opensha2.calc.HazardExport;
+import org.opensha2.calc.EqRate;
+import org.opensha2.calc.EqRateExport;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
@@ -17,38 +15,51 @@ import org.opensha2.internal.Logging;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.Executor;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 /**
- * Deaggregate probabilisitic seismic hazard.
+ * Compute earthquake rates or Poisson probabilities from a {@link HazardModel}.
  *
  * @author Peter Powers
  */
-public class DeaggCalc {
+public class RateCalc {
 
   /**
-   * Entry point for the deaggregation of probabilisitic seismic hazard.
-   * 
-   * <p>Deaggregating siesmic hazard is largeley identical to a hazard
-   * calculation except that a return period (in years) must be supplied as an
-   * additional argument after the 'site(s)' argument. See the
-   * {@link HazardCalc#main(String[]) HazardCalc program} for more information
-   * on required parameters.
-   * 
+   * Entry point for the calculation of earthquake rates and probabilities.
+   *
+   * <p>Computing earthquake rates requires at least 2, and at most 3,
+   * arguments. At a minimum, the path to a model zip file or directory and the
+   * site(s) at which to perform calculations must be specified. Under the
+   * 2-argument scenario, model initialization and calculation configuration
+   * settings are drawn from the config file that <i>must</i> reside at the root
+   * of the model directory. Sites may be defined as a string, a CSV file, or a
+   * GeoJSON file.
+   *
+   * <p>To override any default or calculation configuration settings included
+   * with the model, supply the path to another configuration file as a third
+   * argument.
+   *
    * <p>Please refer to the nshmp-haz <a
    * href="https://github.com/usgs/nshmp-haz/wiki" target="_top">wiki</a> for
    * comprehensive descriptions of source models, configuration files, site
-   * files, and hazard calculations.
+   * files, and earthquake rate calculations.
    *
    * @see <a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running"
    *      target="_top"> nshmp-haz wiki</a>
@@ -70,13 +81,13 @@ public class DeaggCalc {
   static Optional<String> run(String[] args) {
     int argCount = args.length;
 
-    if (argCount < 3 || argCount > 4) {
+    if (argCount < 2 || argCount > 3) {
       return Optional.of(USAGE);
     }
 
     try {
       Logging.init();
-      Logger log = Logger.getLogger(DeaggCalc.class.getName());
+      Logger log = Logger.getLogger(HazardCalc.class.getName());
       Path tempLog = HazardCalc.createTempLog();
       FileHandler fh = new FileHandler(tempLog.getFileName().toString());
       fh.setFormatter(new Logging.ConsoleFormatter());
@@ -87,8 +98,8 @@ public class DeaggCalc {
       HazardModel model = HazardModel.load(modelPath);
 
       CalcConfig config = model.config();
-      if (argCount == 4) {
-        Path userConfigPath = Paths.get(args[3]);
+      if (argCount == 3) {
+        Path userConfigPath = Paths.get(args[2]);
         config = CalcConfig.Builder.copyOf(model.config())
             .extend(CalcConfig.Builder.fromFile(userConfigPath))
             .build();
@@ -99,9 +110,7 @@ public class DeaggCalc {
       Sites sites = HazardCalc.readSites(args[1], config, log);
       log.info("Sites: " + sites);
 
-      double returnPeriod = Double.valueOf(args[2]);
-
-      Path out = calc(model, config, sites, returnPeriod, log);
+      Path out = calc(model, config, sites, log);
       log.info(PROGRAM + ": finished");
 
       /* Transfer log and write config, windows requires fh.close() */
@@ -124,78 +133,110 @@ public class DeaggCalc {
   }
 
   /*
-   * Compute hazard curves using the supplied model, config, and sites. Method
-   * returns the path to the directory where results were written.
+   * Compute earthquake rates or probabilities using the supplied model, config,
+   * and sites. Method returns the path to the directory where results were
+   * written.
    * 
-   * TODO consider refactoring to supply an Optional<Double> return period to
-   * HazardCalc.calc() that will trigger deaggregations if the value is present.
+   * Unlike hazard calculations, which spread work out over multiple threads for
+   * a single calculation, rate calculations are single threaded. Concurrent
+   * calculations for multiple sites are handled below.
    */
   private static Path calc(
       HazardModel model,
       CalcConfig config,
       Sites sites,
-      double returnPeriod,
-      Logger log) throws IOException {
+      Logger log) throws IOException, ExecutionException, InterruptedException {
 
-    ExecutorService execSvc = null;
     ThreadCount threadCount = config.performance.threadCount;
+    EqRateExport export = null;
     if (threadCount != ThreadCount.ONE) {
-      execSvc = newFixedThreadPool(threadCount.value());
-      log.info("Threads: " + ((ThreadPoolExecutor) execSvc).getCorePoolSize());
+      ExecutorService poolExecutor = newFixedThreadPool(threadCount.value());
+      ListeningExecutorService executor = MoreExecutors.listeningDecorator(poolExecutor);
+      log.info("Threads: " + ((ThreadPoolExecutor) poolExecutor).getCorePoolSize());
+      log.info(PROGRAM + ": calculating ...");
+      export = concurrentCalc(model, config, sites, log, executor);
+      executor.shutdown();
     } else {
       log.info("Threads: Running on calling thread");
+      log.info(PROGRAM + ": calculating ...");
+      export = EqRateExport.create(config, sites, log);
+      for (Site site : sites) {
+        EqRate rate = calc(model, config, site);
+        export.add(rate);
+      }
     }
-    Optional<Executor> executor = Optional.<Executor> fromNullable(execSvc);
-
-    log.info(PROGRAM + ": calculating ...");
-
-    HazardExport handler = HazardExport.create(config, sites, log);
-
-    for (Site site : sites) {
-      Hazard hazard = HazardCalc.calc(model, config, site, executor);
-      Deaggregation deagg = calc(hazard, returnPeriod);
-      handler.add(hazard, Optional.of(deagg));
-      log.fine(hazard.toString());
-    }
-    handler.expire();
+    export.expire();
 
     log.info(String.format(
         PROGRAM + ": %s sites completed in %s",
-        handler.resultsProcessed(), handler.elapsedTime()));
+        export.resultsProcessed(), export.elapsedTime()));
 
-    if (threadCount != ThreadCount.ONE) {
-      execSvc.shutdown();
+    return export.outputDir();
+  }
+
+  private static EqRateExport concurrentCalc(
+      HazardModel model,
+      CalcConfig config,
+      Sites sites,
+      Logger log,
+      ListeningExecutorService executor)
+      throws InterruptedException, ExecutionException, IOException {
+
+    EqRateExport export = EqRateExport.create(config, sites, log);
+
+    int batchSize = config.output.flushLimit;
+    int submitted = 0;
+    List<ListenableFuture<EqRate>> rateFutures = new ArrayList<>(batchSize);
+
+    /*
+     * Although the approach below may not fully leverage all processors if
+     * there are one or more longer-running calcs in the batch, processing
+     * batches of locations to a List preserves submission order; as opposed to
+     * using FutureCallbacks, which will reorder sites on export.
+     */
+    for (Site site : sites) {
+      Callable<EqRate> task = EqRate.callable(model, config, site);
+      rateFutures.add(executor.submit(task));
+      submitted++;
+
+      if (submitted == batchSize) {
+        List<EqRate> rateList = Futures.allAsList(rateFutures).get();
+        export.addAll(rateList);
+        submitted = 0;
+        rateFutures.clear();
+      }
     }
-    return handler.outputDir();
+    List<EqRate> lastBatch = Futures.allAsList(rateFutures).get();
+    export.addAll(lastBatch);
+
+    return export;
   }
 
   /**
-   * Deaggregate probabilistic seismic hazard at the supplied return period (in
-   * years). Deaggregation currently runs on a single thread.
-   * 
-   * <p>Call this method with the {@link Hazard} result of
-   * {@link HazardCalc#calc(HazardModel, CalcConfig, Site, Optional)} to which
-   * you supply the calculation settings and sites of interest that will also be
-   * used for deaggregation.
+   * Compute earthquake rates at a {@code site} for a {@code model} and
+   * {@code config}.
    *
    * <p><b>Note:</b> any model initialization settings in {@code config} will be
    * ignored as the supplied model will already have been initialized.
    *
-   * @param returnPeriod at which to deaggregate
-   * @return a {@code Deaggregation} object
+   * @param model to use
+   * @param config calculation configuration
+   * @param site of interest
    */
-  public static Deaggregation calc(
-      Hazard hazard,
-      double returnPeriod) {
-    return HazardCalcs.deaggregation(hazard, returnPeriod);
+  public static EqRate calc(
+      HazardModel model,
+      CalcConfig config,
+      Site site) {
+
+    return EqRate.create(model, config, site);
   }
 
-  private static final String PROGRAM = DeaggCalc.class.getSimpleName();
+  private static final String PROGRAM = RateCalc.class.getSimpleName();
   private static final String USAGE_COMMAND =
-      "java -cp nshmp-haz.jar org.opensha2.DeaggCalc model sites returnPeriod [config]";
+      "java -cp nshmp-haz.jar org.opensha2.RateCalc model sites [config]";
   private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
   private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
-  private static final String SITE_STRING = "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]";
+  private static final String SITE_STRING = "name,lon,lat";
 
   private static final String USAGE = new StringBuilder()
       .append(NEWLINE)
@@ -211,15 +252,9 @@ public class DeaggCalc {
       .append(NEWLINE)
       .append("     - a string, e.g. ").append(SITE_STRING)
       .append(NEWLINE)
-      .append("       (site class and basin terms are optional)")
-      .append(NEWLINE)
       .append("       (escape any spaces or enclose string in double-quotes)")
       .append(NEWLINE)
       .append("     - or a *.csv file or *.geojson file of site data")
-      .append(NEWLINE)
-      .append("  'returnPeriod', in years, is a time horizon of interest")
-      .append(NEWLINE)
-      .append("     - e.g. one might enter 2475 to represent a 2% in 50 year probability")
       .append(NEWLINE)
       .append("  'config' (optional) supplies a calculation configuration")
       .append(NEWLINE)

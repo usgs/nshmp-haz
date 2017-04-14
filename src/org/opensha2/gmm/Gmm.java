@@ -844,18 +844,23 @@ public enum Gmm {
     imts = coeffs.imts();
     cache = CacheBuilder.newBuilder().build(new CacheLoader<Imt, GroundMotionModel>() {
       @Override
-      public GroundMotionModel load(Imt imt) throws Exception {
+      public GroundMotionModel load(Imt imt) {
         return createInstance(imt);
       }
     });
   }
 
-  private GroundMotionModel createInstance(Imt imt) throws Exception {
+  private GroundMotionModel createInstance(Imt imt) {
     checkArgument(this.imts.contains(checkNotNull(imt)),
         "Gmm: %s does not support Imt: %s", this.name(), imt.name());
-    Constructor<? extends GroundMotionModel> con = delegate.getDeclaredConstructor(Imt.class);
-    GroundMotionModel gmm = con.newInstance(imt);
-    return gmm;
+    try {
+      Constructor<? extends GroundMotionModel> con = delegate.getDeclaredConstructor(Imt.class);
+      GroundMotionModel gmm = con.newInstance(imt);
+      return gmm;
+    } catch (Exception e) {
+      throw new RuntimeException(
+          "Problem loading GMM cache; gmm: " + this.name() + " imt: " + imt, e);
+    }
   }
 
   /**
@@ -866,8 +871,6 @@ public enum Gmm {
    * @throws UncheckedExecutionException if there is an instantiation problem
    */
   public GroundMotionModel instance(Imt imt) {
-    // TODO we should probably use get() and implement better exception
-    // handling
     return cache.getUnchecked(imt);
   }
 

@@ -1,5 +1,5 @@
 {
-  "curve": {
+  "hazard": {
     "imts": ["SA1P0", "SA2P0"]
   },
   "output": {

@@ -5,10 +5,10 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig;
-import org.opensha2.calc.Calcs;
+import org.opensha2.calc.HazardCalcs;
 import org.opensha2.calc.Deaggregation;
 import org.opensha2.calc.Hazard;
-import org.opensha2.calc.ResultHandler;
+import org.opensha2.calc.HazardExport;
 import org.opensha2.calc.Site;
 import org.opensha2.calc.Sites;
 import org.opensha2.calc.ThreadCount;
@@ -35,8 +35,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 /**
- * Compute probabilisitic seismic hazard at a {@link Site} from a
- * {@link HazardModel}.
+ * Compute probabilisitic seismic hazard from a {@link HazardModel}.
  *
  * @author Peter Powers
  */
@@ -146,8 +145,8 @@ public class HazardCalc {
       }
       return Sites.fromString(arg, defaults);
     } catch (Exception e) {
-      throw new IllegalArgumentException(NEWLINE + "    sites = \"" + arg +
-          "\" must either be a 3 to 7 argument," + NEWLINE +
+      throw new IllegalArgumentException(NEWLINE +
+          "    sites = \"" + arg + "\" must either be a 3 to 7 argument," + NEWLINE +
           "    comma-delimited string, or specify a path to a *.csv or *.geojson file",
           e);
     }
@@ -175,7 +174,7 @@ public class HazardCalc {
 
     log.info(PROGRAM + ": calculating ...");
 
-    ResultHandler handler = ResultHandler.create(config, sites, log);
+    HazardExport handler = HazardExport.create(config, sites, log);
     for (Site site : sites) {
       Hazard hazard = calc(model, config, site, executor);
       handler.add(hazard, Optional.<Deaggregation> absent());
@@ -228,7 +227,7 @@ public class HazardCalc {
       Site site,
       Optional<Executor> executor) {
     try {
-      return Calcs.hazard(model, config, site, executor);
+      return HazardCalcs.hazard(model, config, site, executor);
     } catch (ExecutionException | InterruptedException e) {
       throw new RuntimeException(e);
     }

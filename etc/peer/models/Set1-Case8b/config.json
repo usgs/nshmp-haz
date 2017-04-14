@@ -7,7 +7,7 @@
     "pointSourceType": "FINITE",
     "areaGridScaling": "UNIFORM_0P01"
   },
-  "curve": {
+  "hazard": {
     "exceedanceModel": "TRUNCATION_UPPER_ONLY",
     "truncationLevel": 2.0,
     "imts": ["PGA"],

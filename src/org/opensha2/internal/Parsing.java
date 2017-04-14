@@ -544,7 +544,7 @@ public final class Parsing {
    * string.
    *
    * @param e the {@code Enum} to generate label for
-   * @param capitalize true if fist letter of each word should be capitalized;
+   * @param capitalize true if first letter of each word should be capitalized;
    *        false if letters should all be lowercase
    */
   public static String enumLabelWithSpaces(Enum<? extends Enum<?>> e, boolean capitalize) {

@@ -1,0 +1,22 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [-123.0, 37.0],
+            [-121.0, 37.0],
+            [-121.0, 39.0],
+            [-123.0, 39.0],
+            [-123.0, 37.0]
+          ]]
+      },
+      "properties": {
+        "spacing": 0.2,
+        "title": "San Francisco Bay Area"
+      }
+    }
+  ]
+}

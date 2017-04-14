@@ -25,74 +25,64 @@ import java.lang.reflect.Type;
 import java.util.Set;
 
 /**
- * Site characteristics container. Take note of default values; this minimum
+ * Site characteristics container. Take note of default values; the minimum
  * information required to create a {@code Site} is its location. Not all
  * {@link GroundMotionModel}s will use all fields and additional fields may be
  * added at any time in the future.
+ * 
+ * <p>Terms:<ul>
+ * 
+ * <li><b>{@code Vs30}:</b> Average shear wave velocity between down to a depth
+ * of 30 m, in units of m/s. This value may be <i>inferred</i> or
+ * <i>measured</i> (see {@link #vsInferred}).</li>
+ * 
+ * <li><b>{@code z1.0}:</b> Depth to a shear wave velocity of 1.0 km/sec, in
+ * units of km.</li>
+ * 
+ * <li><b>{@code z2.5}:</b> Depth to a shear wave velocity of 2.5 km/sec, in
+ * units of km.</li>
+ * 
+ * </ul>
+ * 
+ * <p>Both {@code z1.0} and {@code z2.5}, collectively referred to as
+ * <i>basin-terms</i>, have default values of {@code Double.NaN}. When supplied
+ * with the default, those {@link GroundMotionModel}s that support basin terms
+ * will use an author defined model, typically based on {@code Vs30}, to compute
+ * basin-amplifications.
  *
  * @author Peter Powers
  */
 public class Site implements Named {
 
-  /** Minimum allowed Vs30 value ({@code 150} m/sec). */
-  public static final double VS_30_MIN = 150.0;
+  /** The name used for a {@code Site} with no supplied name. */
+  public static final String NO_NAME = "Unnamed";
 
-  /** Maximum allowed Vs30 value ({@code 2000} m/sec). */
-  public static final double VS_30_MAX = 2000.0;
-
-  /** Default Vs30 value ({@code 760} m/sec). */
+  /** Default {@link #vs30} value: {@code 760 m/s}. */
   public static final double VS_30_DEFAULT = 760.0;
 
-  /** Default Vs30 inferred (or not) value ({@code true}). */
+  /** Supported {@link #vs30} values: {@code [150..2000] m/s}. */
+  public static final Range<Double> VS30_RANGE = Range.closed(150.0, 2000.0);
+
+  /** Default {@link #vsInferred} inferred value: {@code true}. */
   public static final boolean VS_INF_DEFAULT = true;
 
   /**
-   * Minimum allowed depth to a shear wave velocity of 2.5 km/sec ({@code 0.0}
-   * km).
-   */
-  public static final double Z2P5_MIN = 0.0;
-
-  /**
-   * Minimum allowed depth to a shear wave velocity of 2.5 km/sec ({@code 5.0}
-   * km).
-   */
-  public static final double Z2P5_MAX = 5.0;
-
-  /**
-   * Default depth to a shear wave velocity of 2.5 km/sec ({@code NaN} –
-   * {@link GroundMotionModel}s will use a default value or model).
-   */
-  public static final double Z2P5_DEFAULT = Double.NaN;
-
-  /**
-   * Minimum allowed depth to a shear wave velocity of 1.0 km/sec ({@code 0.0}
-   * km).
-   */
-  public static final double Z1P0_MIN = 0.0;
-
-  /**
-   * Minimum allowed depth to a shear wave velocity of 1.0 km/sec ({@code 2.0}
-   * km).
-   */
-  public static final double Z1P0_MAX = 2.0;
-
-  /**
-   * Default depth to a shear wave velocity of 1.0 km/sec ({@code NaN} –
-   * {@link GroundMotionModel}s will use a default value or model).
+   * Default {@link #z1p0} value: {@code NaN} <br>({@link GroundMotionModel}s
+   * will use a default value or model)
    */
   public static final double Z1P0_DEFAULT = Double.NaN;
 
-  /** The name used for {@code Site}s with no supplied name. */
-  public static final String NO_NAME = "Unnamed";
+  /** Supported {@link #z1p0} values: {@code [0..2] km}. */
+  public static final Range<Double> Z1P0_RANGE = Range.closed(0.0, 2.0);
 
-  /** {@link #VS_30_MIN} and {@link #VS_30_MAX} as a closed {@code Range}. */
-  public static final Range<Double> VS30_RANGE = Range.closed(VS_30_MIN, VS_30_MAX);
+  /**
+   * Default {@link #z2p5} value: {@code NaN} <br>({@link GroundMotionModel}s
+   * will use a default value or model)
+   */
+  public static final double Z2P5_DEFAULT = Double.NaN;
 
-  /** {@link #Z2P5_MIN} and {@link #Z2P5_MAX} as a closed {@code Range}. */
-  public static final Range<Double> Z2P5_RANGE = Range.closed(Z2P5_MIN, Z2P5_MAX);
-
-  /** {@link #Z1P0_MIN} and {@link #Z1P0_MAX} as a closed {@code Range}. */
-  public static final Range<Double> Z1P0_RANGE = Range.closed(Z1P0_MIN, Z1P0_MAX);
+  /** Supported {@link #z2p5} values: {@code [0..5] km}. */
+  public static final Range<Double> Z2P5_RANGE = Range.closed(0.0, 5.0);
 
   /** The site name. */
   public final String name;
@@ -106,29 +96,29 @@ public class Site implements Named {
   /**
    * The average shear-wave velocity down to 30 meters depth.
    *
-   * <p>Default: 760.0 m/sec
+   * <p>Default: {@code 760.0 m/s}
    */
   public final double vs30;
 
   /**
    * Whether Vs30 was inferred, {@code true}, or measured, {@code false}.
    *
-   * <p>Default: true (inferred)
+   * <p>Default: {@code true} (inferred)
    */
   public final boolean vsInferred;
 
   /**
-   * Depth to the shear-wave velocity horizon of 1.0 km/sec, in km.
+   * Depth to the shear-wave velocity horizon of 1.0 km/s, in km.
    *
-   * <p>Default: {@code NaN} ({@link GroundMotionModel}s will use a default
+   * <p>Default: {@code NaN} <br>({@link GroundMotionModel}s will use a default
    * value or model)
    */
   public final double z1p0;
 
   /**
-   * Depth to the shear-wave velocity horizon of 2.5 km/sec, in km;
+   * Depth to the shear-wave velocity horizon of 2.5 km/s, in km.
    *
-   * <p>Default: {@code NaN} ({@link GroundMotionModel}s will use a default
+   * <p>Default: {@code NaN} <br>({@link GroundMotionModel}s will use a default
    * value or model)
    */
   public final double z2p5;
@@ -197,10 +187,10 @@ public class Site implements Named {
     private Builder() {}
 
     private Builder(CalcConfig config) {
-      vs30(config.siteDefaults.vs30);
-      vsInferred(config.siteDefaults.vsInferred);
-      z1p0(config.siteDefaults.z1p0);
-      z2p5(config.siteDefaults.z2p5);
+      vs30(config.site.vs30);
+      vsInferred(config.site.vsInferred);
+      z1p0(config.site.z1p0);
+      z2p5(config.site.z2p5);
     }
 
     /**
@@ -247,7 +237,7 @@ public class Site implements Named {
       return this;
     }
 
-    /** Depth to the shear-wave velocity horizon of 1.0 km/sec, in km. */
+    /** Depth to the shear-wave velocity horizon of 1.0 km/s, in km. */
     public Builder z1p0(double z1p0) {
       if (Double.isNaN(z1p0)) {
         this.z1p0 = z1p0;
@@ -257,7 +247,7 @@ public class Site implements Named {
       return this;
     }
 
-    /** Depth to the shear-wave velocity horizon of 2.5 km/sec, in km. */
+    /** Depth to the shear-wave velocity horizon of 2.5 km/s, in km. */
     public Builder z2p5(double z2p5) {
       if (Double.isNaN(z2p5)) {
         this.z2p5 = z2p5;

@@ -3,7 +3,7 @@ package org.opensha2.calc;
 import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static org.opensha2.calc.ResultHandler.WRITE;
+import static org.opensha2.calc.HazardExport.WRITE;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.calc.CalcConfig.Deagg.Bins;

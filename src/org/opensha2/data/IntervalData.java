@@ -77,7 +77,7 @@ public final class IntervalData {
   }
 
   /*
-   * Ensure rows and have been specified
+   * Ensure rows have been specified
    */
   static void checkDataState(double[] rows) {
     checkDataState(rows, "Row");

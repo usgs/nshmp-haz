@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  *
  * @author Peter Powers
  */
-public class Calcs {
+public class HazardCalcs {
 
   /*
    * Developer notes:
@@ -135,7 +135,7 @@ public class Calcs {
     if (ex.isPresent()) {
       return asyncHazardCurve(model, config, site, ex.get());
     }
-    Logger log = Logger.getLogger(Calcs.class.getName());
+    Logger log = Logger.getLogger(HazardCalcs.class.getName());
     return hazardCurve(model, config, site, log);
   }
 
