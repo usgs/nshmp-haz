@@ -844,7 +844,7 @@ public enum Gmm {
     imts = coeffs.imts();
     cache = CacheBuilder.newBuilder().build(new CacheLoader<Imt, GroundMotionModel>() {
       @Override
-      public GroundMotionModel load(Imt imt) throws Exception {
+      public GroundMotionModel load(Imt imt) {
         return createInstance(imt);
       }
     });
