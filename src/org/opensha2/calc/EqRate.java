@@ -78,7 +78,7 @@ public class EqRate {
         .build();
 
     EqRate rates = createIncremental(model, site, rateConfig.distance, modelMfd);
-    if (rateConfig.distribution == Distribution.CUMULATIVE) {
+    if (rateConfig.distributionFormat == DistributionFormat.CUMULATIVE) {
       rates = toCumulative(rates);
     }
     if (rateConfig.valueFormat == ValueFormat.POISSON_PROBABILITY) {
@@ -189,7 +189,7 @@ public class EqRate {
    * <p><b>NOTE:</b> This operation is additive and will produce meaningless
    * results if {@code rates} have already been converted to
    * {@link #toPoissonProbability(EqRate, double) probabilities}, or are not all
-   * of {@link Distribution#INCREMENTAL} or {@link Distribution#CUMULATIVE}
+   * of {@link DistributionFormat#INCREMENTAL} or {@link DistributionFormat#CUMULATIVE}
    * distribution format.
    * 
    * <p>Buyer beware.

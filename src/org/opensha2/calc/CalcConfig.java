@@ -694,9 +694,9 @@ public final class CalcConfig {
     /**
      * The rate data distribution type.
      *
-     * <p><b>Default:</b> {@link Distribution#INCREMENTAL}
+     * <p><b>Default:</b> {@link DistributionFormat#INCREMENTAL}
      */
-    public final Distribution distribution;
+    public final DistributionFormat distributionFormat;
 
     /**
      * The value format for rate data.
@@ -715,13 +715,13 @@ public final class CalcConfig {
     private Rate(
         Bins bins,
         double distance,
-        Distribution distribution,
+        DistributionFormat distributionFormat,
         ValueFormat valueFormat,
         double timespan) {
 
       this.bins = bins;
       this.distance = distance;
-      this.distribution = distribution;
+      this.distributionFormat = distributionFormat;
       this.valueFormat = valueFormat;
       this.timespan = timespan;
     }
@@ -734,7 +734,7 @@ public final class CalcConfig {
           .append("max=").append(bins.mMax).append(", ")
           .append("Δ=").append(bins.Δm)
           .append(formatEntry(Key.DISTANCE, distance))
-          .append(formatEntry(Key.DISTRIBUTION, distribution.name()))
+          .append(formatEntry(Key.DISTRIBUTION, distributionFormat.name()))
           .append(formatEntry(Key.VALUE_FORMAT, valueFormat.name()))
           .append(formatEntry(Key.TIMESPAN, timespan));
     }
@@ -743,7 +743,7 @@ public final class CalcConfig {
 
       Bins bins;
       Double distance;
-      Distribution distribution;
+      DistributionFormat distributionFormat;
       ValueFormat valueFormat;
       Double timespan;
 
@@ -751,7 +751,7 @@ public final class CalcConfig {
         return new Rate(
             bins,
             distance,
-            distribution,
+            distributionFormat,
             valueFormat,
             timespan);
       }
@@ -759,7 +759,7 @@ public final class CalcConfig {
       void copy(Rate that) {
         this.bins = that.bins;
         this.distance = that.distance;
-        this.distribution = that.distribution;
+        this.distributionFormat = that.distributionFormat;
         this.valueFormat = that.valueFormat;
         this.timespan = that.timespan;
       }
@@ -771,8 +771,8 @@ public final class CalcConfig {
         if (that.distance != null) {
           this.distance = that.distance;
         }
-        if (that.distribution != null) {
-          this.distribution = that.distribution;
+        if (that.distributionFormat != null) {
+          this.distributionFormat = that.distributionFormat;
         }
         if (that.valueFormat != null) {
           this.valueFormat = that.valueFormat;
@@ -786,7 +786,7 @@ public final class CalcConfig {
         Builder b = new Builder();
         b.bins = Bins.defaults();
         b.distance = 20.0;
-        b.distribution = Distribution.INCREMENTAL;
+        b.distributionFormat = DistributionFormat.INCREMENTAL;
         b.valueFormat = ValueFormat.ANNUAL_RATE;
         b.timespan = 30.0;
         return b;
@@ -798,7 +798,7 @@ public final class CalcConfig {
         checkNotNull(bins.mMax, STATE_ERROR, Rate.ID, Key.BINS + ".mMax");
         checkNotNull(bins.Δm, STATE_ERROR, Rate.ID, Key.BINS + ".Δm");
         checkNotNull(distance, STATE_ERROR, Rate.ID, Key.DISTANCE);
-        checkNotNull(distribution, STATE_ERROR, Rate.ID, Key.DISTRIBUTION);
+        checkNotNull(distributionFormat, STATE_ERROR, Rate.ID, Key.DISTRIBUTION);
         checkNotNull(valueFormat, STATE_ERROR, Rate.ID, Key.VALUE_FORMAT);
         checkNotNull(timespan, STATE_ERROR, Rate.ID, Key.TIMESPAN);
       }

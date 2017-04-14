@@ -5,7 +5,8 @@ package org.opensha2.calc;
  *
  * @author Peter Powers
  */
-public enum Distribution {
+@SuppressWarnings("javadoc")
+public enum DistributionFormat {
 
   INCREMENTAL,
   CUMULATIVE;
