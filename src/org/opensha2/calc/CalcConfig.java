@@ -575,7 +575,7 @@ public final class CalcConfig {
   }
 
   /**
-   * Hazard curve and file output settings.
+   * Data and file output settings.
    */
   public static final class Output {
 
@@ -584,18 +584,19 @@ public final class CalcConfig {
     /**
      * The directory to write any results to.
      *
-     * <p><b>Default:</b> {@code "curves"}
+     * <p><b>Default:</b> {@code "curves"} for hazard and deaggregation calculations;
+     * {@code "eq-rate"} or {@code "eq-prob"} for rate calculations.
      */
     public final Path directory;
 
     /**
-     * The different {@linkplain CurveType types} of curves to save. Note that
-     * {@link CurveType#TOTAL} will <i>always</i> be included in this set,
+     * The different {@linkplain DataType types} of data to save. Note that
+     * {@link DataType#TOTAL} will <i>always</i> be included in this set,
      * regardless of any user settings.
      *
-     * <p><b>Default:</b> [{@link CurveType#TOTAL}]
+     * <p><b>Default:</b> [{@link DataType#TOTAL}]
      */
-    public final Set<CurveType> curveTypes;
+    public final Set<DataType> dataTypes;
 
     /**
      * The number of results (one per {@code Site}) to store before writing to
@@ -607,13 +608,13 @@ public final class CalcConfig {
 
     private Output(
         Path directory,
-        Set<CurveType> curveTypes,
+        Set<DataType> dataTypes,
         int flushLimit) {
 
       this.directory = directory;
-      this.curveTypes = Sets.immutableEnumSet(
-          CurveType.TOTAL,
-          curveTypes.toArray(new CurveType[curveTypes.size()]));
+      this.dataTypes = Sets.immutableEnumSet(
+          DataType.TOTAL,
+          dataTypes.toArray(new DataType[dataTypes.size()]));
       this.flushLimit = flushLimit;
     }
 
@@ -621,26 +622,26 @@ public final class CalcConfig {
       return new StringBuilder()
           .append(LOG_INDENT).append("Output")
           .append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
-          .append(formatEntry(Key.CURVE_TYPES, enumsToString(curveTypes, CurveType.class)))
+          .append(formatEntry(Key.DATA_TYPES, enumsToString(dataTypes, DataType.class)))
           .append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
     }
 
     private static final class Builder {
 
       Path directory;
-      Set<CurveType> curveTypes;
+      Set<DataType> dataTypes;
       Integer flushLimit;
 
       Output build() {
         return new Output(
             directory,
-            curveTypes,
+            dataTypes,
             flushLimit);
       }
 
       void copy(Output that) {
         this.directory = that.directory;
-        this.curveTypes = that.curveTypes;
+        this.dataTypes = that.dataTypes;
         this.flushLimit = that.flushLimit;
       }
 
@@ -648,8 +649,8 @@ public final class CalcConfig {
         if (that.directory != null) {
           this.directory = that.directory;
         }
-        if (that.curveTypes != null) {
-          this.curveTypes = that.curveTypes;
+        if (that.dataTypes != null) {
+          this.dataTypes = that.dataTypes;
         }
         if (that.flushLimit != null) {
           this.flushLimit = that.flushLimit;
@@ -659,14 +660,14 @@ public final class CalcConfig {
       static Builder defaults() {
         Builder b = new Builder();
         b.directory = Paths.get(DEFAULT_OUT);
-        b.curveTypes = EnumSet.of(CurveType.TOTAL);
+        b.dataTypes = EnumSet.of(DataType.TOTAL);
         b.flushLimit = 5;
         return b;
       }
 
       void validate() {
         checkNotNull(directory, STATE_ERROR, Output.ID, Key.DIRECTORY);
-        checkNotNull(curveTypes, STATE_ERROR, Output.ID, Key.CURVE_TYPES);
+        checkNotNull(dataTypes, STATE_ERROR, Output.ID, Key.DATA_TYPES);
         checkNotNull(flushLimit, STATE_ERROR, Output.ID, Key.FLUSH_LIMIT);
       }
     }
@@ -1008,7 +1009,7 @@ public final class CalcConfig {
     THREAD_COUNT,
     /* output */
     DIRECTORY,
-    CURVE_TYPES,
+    DATA_TYPES,
     FLUSH_LIMIT,
     /* deagg */
     BINS,

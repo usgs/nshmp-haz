@@ -56,7 +56,7 @@ public final class EqRateExport {
     this.log = log;
     this.dir = HazardExport.createOutputDir(improvedOutputDirectory(config));
     this.config = config;
-    this.exportSource = config.output.curveTypes.contains(CurveType.SOURCE);
+    this.exportSource = config.output.dataTypes.contains(DataType.SOURCE);
     this.rates = new ArrayList<>();
 
     Site demoSite = sites.iterator().next();

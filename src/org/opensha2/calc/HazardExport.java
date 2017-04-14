@@ -97,9 +97,9 @@ public final class HazardExport {
     this.log = log;
     this.dir = createOutputDir(config.output.directory);
     this.config = config;
-    this.exportGmm = config.output.curveTypes.contains(CurveType.GMM);
-    this.exportSource = config.output.curveTypes.contains(CurveType.SOURCE);
-    this.exportBinary = config.output.curveTypes.contains(CurveType.BINARY);
+    this.exportGmm = config.output.dataTypes.contains(DataType.GMM);
+    this.exportSource = config.output.dataTypes.contains(DataType.SOURCE);
+    this.exportBinary = config.output.dataTypes.contains(DataType.BINARY);
     this.hazards = new ArrayList<>();
     this.deaggs = new ArrayList<>();
 

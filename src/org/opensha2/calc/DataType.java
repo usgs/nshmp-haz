@@ -4,20 +4,21 @@ import org.opensha2.eq.model.SourceType;
 import org.opensha2.gmm.Gmm;
 
 /**
- * Curve type identifiers. These are used to specify the different types of
- * hazard curves that should be saved after a calculation is complete.
+ * Data type identifiers. These are used to specify the different types of
+ * hazard curves or other data that should be saved after a calculation is
+ * complete.
  *
  * @author Peter Powers
  */
-public enum CurveType {
+public enum DataType {
 
-  /** Total mean hazard curves. */
+  /** Total hazard curves or magnitude-frequencey distributions, etc. */
   TOTAL,
 
-  /** {@linkplain Gmm Ground motion model} curves. */
+  /** {@linkplain Gmm Ground motion model} specific data. */
   GMM,
 
-  /** Hazard curves by {@link SourceType} */
+  /** Data by {@link SourceType}. */
   SOURCE,
 
   /**
