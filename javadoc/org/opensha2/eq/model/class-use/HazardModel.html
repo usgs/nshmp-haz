@@ -110,22 +110,20 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc">Deaggregation</a></code></td>
-<td class="colLast"><span class="strong">DeaggCalc.</span><code><strong><a href="../../../../../org/opensha2/DeaggCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, double, com.google.common.base.Optional)">calc</a></strong>(<a href="../../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
+<td class="colFirst"><code>static <a href="../../../../../org/opensha2/calc/EqRate.html" title="class in org.opensha2.calc">EqRate</a></code></td>
+<td class="colLast"><span class="strong">RateCalc.</span><code><strong><a href="../../../../../org/opensha2/RateCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site)">calc</a></strong>(<a href="../../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
     <a href="../../../../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-    <a href="../../../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
-    double&nbsp;returnPeriod,
-    <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</code>
-<div class="block">Perform a hazard deaggregation at a <code>site</code> for a <code>model</code>,
- <code>config</code>, and return period.</div>
+    <a href="../../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site)</code>
+<div class="block">Compute earthquake rates at a <code>site</code> for a <code>model</code> and
+ <code>config</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></code></td>
-<td class="colLast"><span class="strong">HazardCalc.</span><code><strong><a href="../../../../../org/opensha2/HazardCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, com.google.common.base.Optional)">calc</a></strong>(<a href="../../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
+<td class="colLast"><span class="strong">HazardCalc.</span><code><strong><a href="../../../../../org/opensha2/HazardCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site, com.google.common.base.Optional)">calc</a></strong>(<a href="../../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
     <a href="../../../../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-    <a href="../../../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
-    <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</code>
+    <a href="../../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+    <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</code>
 <div class="block">Compute hazard curves at a <code>site</code> for a <code>model</code> and
  <code>config</code>.</div>
 </td>
@@ -145,12 +143,29 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></code></td>
-<td class="colLast"><span class="strong">Calcs.</span><code><strong><a href="../../../../../org/opensha2/calc/Calcs.html#hazard(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, com.google.common.base.Optional)">hazard</a></strong>(<a href="../../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Callable.html?is-external=true" title="class or interface in java.util.concurrent">Callable</a>&lt;<a href="../../../../../org/opensha2/calc/EqRate.html" title="class in org.opensha2.calc">EqRate</a>&gt;</code></td>
+<td class="colLast"><span class="strong">EqRate.</span><code><strong><a href="../../../../../org/opensha2/calc/EqRate.html#callable(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site)">callable</a></strong>(<a href="../../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
+        <a href="../../../../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
+        <a href="../../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site)</code>
+<div class="block">Wraps <a href="../../../../../org/opensha2/calc/EqRate.html#create(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site)"><code>EqRate.create(HazardModel, CalcConfig, Site)</code></a> in a <a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Callable.html?is-external=true" title="class or interface in java.util.concurrent"><code>Callable</code></a>
+ for processing multiple sites concurrently.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../org/opensha2/calc/EqRate.html" title="class in org.opensha2.calc">EqRate</a></code></td>
+<td class="colLast"><span class="strong">EqRate.</span><code><strong><a href="../../../../../org/opensha2/calc/EqRate.html#create(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site)">create</a></strong>(<a href="../../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
       <a href="../../../../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-      <a href="../../../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
-      <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;ex)</code>
-<div class="block">Compute probabilistic seismic hazard, possibly using an <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base"><code>Optional</code></a>
+      <a href="../../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site)</code>
+<div class="block">Create a new earthquake rate data container.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></code></td>
+<td class="colLast"><span class="strong">HazardCalcs.</span><code><strong><a href="../../../../../org/opensha2/calc/HazardCalcs.html#hazard(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site, com.google.common.base.Optional)">hazard</a></strong>(<a href="../../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
+      <a href="../../../../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
+      <a href="../../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+      <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;ex)</code>
+<div class="block">Compute probabilistic seismic hazard, possibly using an <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base"><code>Optional</code></a>
  <a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent"><code>Executor</code></a>.</div>
 </td>
 </tr>
@@ -228,13 +243,10 @@
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

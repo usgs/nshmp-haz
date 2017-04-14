@@ -93,12 +93,6 @@
  <a href="../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model"><code>HazardModel</code></a> representations.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="#org.opensha2.util">org.opensha2.util</a></td>
-<td class="colLast">
-<div class="block">Miscellaneous utilties.</div>
-</td>
-</tr>
 </tbody>
 </table>
 </li>
@@ -122,8 +116,18 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/EqRate.html#org.opensha2">EqRate</a>
+<div class="block">General purpose magnitude-frequency distribution (MFD) data container.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="../../../org/opensha2/calc/class-use/Hazard.html#org.opensha2">Hazard</a>
 <div class="block">The result of a hazard calculation.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/Site.html#org.opensha2">Site</a>
+<div class="block">Site characteristics container.</div>
 </td>
 </tr>
 </tbody>
@@ -149,38 +153,49 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Curve.html#org.opensha2.calc">CalcConfig.Curve</a>
-<div class="block">Hazard curve calculation configuration.</div>
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Deagg.html#org.opensha2.calc">CalcConfig.Deagg</a>
+<div class="block">Deaggregation configuration.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Deagg.html#org.opensha2.calc">CalcConfig.Deagg</a>
-<div class="block">Deaggregation configuration data container.</div>
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Deagg.Bins.html#org.opensha2.calc">CalcConfig.Deagg.Bins</a>
+<div class="block">The distance, magnitude, and epsilon bins into which contributing sources
+ to hazard will be sorted.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Output.html#org.opensha2.calc">CalcConfig.Output</a>
-<div class="block">Hazard curve and file output settings.</div>
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Hazard.html#org.opensha2.calc">CalcConfig.Hazard</a>
+<div class="block">Hazard calculation configuration.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Output.html#org.opensha2.calc">CalcConfig.Output</a>
+<div class="block">Data and file output settings.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Performance.html#org.opensha2.calc">CalcConfig.Performance</a>
 <div class="block">Performance and optimization settings.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Rate.html#org.opensha2.calc">CalcConfig.Rate</a>
+<div class="block">Magnitude-frequency distribution configuration.</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.Rate.Bins.html#org.opensha2.calc">CalcConfig.Rate.Bins</a>
+<div class="block">The mfd magnitude discretization.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.SiteDefaults.html#org.opensha2.calc">CalcConfig.SiteDefaults</a>
 <div class="block">Default site settings.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CurveType.html#org.opensha2.calc">CurveType</a>
-<div class="block">Curve type identifiers.</div>
-</td>
-</tr>
 <tr class="altColor">
-<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CurveValue.html#org.opensha2.calc">CurveValue</a>
-<div class="block">Hazard curve value types.</div>
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/DataType.html#org.opensha2.calc">DataType</a>
+<div class="block">Data type identifiers.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -189,15 +204,36 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="../../../org/opensha2/calc/class-use/ExceedanceModel.html#org.opensha2.calc">ExceedanceModel</a>
-<div class="block">Uncertainty models govern how the values of a complementary cumulative normal
- distribution (or probability of exceedence) are computed given a mean, μ,
- standard deviation, σ, and other possibly relevant arguments.</div>
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/DistributionFormat.html#org.opensha2.calc">DistributionFormat</a>
+<div class="block">Distribution format.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/EqRate.html#org.opensha2.calc">EqRate</a>
+<div class="block">General purpose magnitude-frequency distribution (MFD) data container.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/EqRateExport.html#org.opensha2.calc">EqRateExport</a>
+<div class="block">Earthquake rate and probability exporter.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/ExceedanceModel.html#org.opensha2.calc">ExceedanceModel</a>
+<div class="block">Uncertainty models govern how the values of a complementary cumulative normal
+ distribution (or probability of exceedence) are computed given a mean,
+ <code>μ</code>, standard deviation, <code>σ</code>, and other possibly relevant
+ arguments.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><a href="../../../org/opensha2/calc/class-use/Hazard.html#org.opensha2.calc">Hazard</a>
 <div class="block">The result of a hazard calculation.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/HazardExport.html#org.opensha2.calc">HazardExport</a>
+<div class="block">Hazard calculation result exporter.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -218,8 +254,39 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/Site.html#org.opensha2.calc">Site</a>
+<div class="block">Site characteristics container.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/Site.Builder.html#org.opensha2.calc">Site.Builder</a>
+<div class="block">A reusable <code>Site</code> builder.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/Sites.html#org.opensha2.calc">Sites</a>
+<div class="block">Iterable <code>Site</code> container.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/SystemInputList.html#org.opensha2.calc">SystemInputList</a>
+<div class="block">A <code>List</code> of <code>HazardInput</code>s that contains a reference to the
+ parent <code>SystemSourceSet</code> from which the inputs were derived.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="../../../org/opensha2/calc/class-use/ThreadCount.html#org.opensha2.calc">ThreadCount</a>
 <div class="block">The number of threads with which to intialize thread pools.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/ValueFormat.html#org.opensha2.calc">ValueFormat</a>
+<div class="block">Hazard curve value types.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/Vs30.html#org.opensha2.calc">Vs30</a>
+<div class="block">Identifiers for commonly used values of Vs30.</div>
 </td>
 </tr>
 </tbody>
@@ -244,21 +311,9 @@
 <div class="block">Lightweight <code>List</code> wrapper of <code>HazardInput</code>s.</div>
 </td>
 </tr>
-</tbody>
-</table>
-</li>
-<li class="blockList"><a name="org.opensha2.util">
-<!--   -->
-</a>
-<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing classes, and an explanation">
-<caption><span>Classes in <a href="../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a> used by <a href="../../../org/opensha2/util/package-summary.html">org.opensha2.util</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colOne" scope="col">Class and Description</th>
-</tr>
-<tbody>
 <tr class="altColor">
-<td class="colOne"><a href="../../../org/opensha2/calc/class-use/CalcConfig.html#org.opensha2.util">CalcConfig</a>
-<div class="block">Calculation configuration.</div>
+<td class="colOne"><a href="../../../org/opensha2/calc/class-use/Site.html#org.opensha2.eq.model">Site</a>
+<div class="block">Site characteristics container.</div>
 </td>
 </tr>
 </tbody>
@@ -312,13 +367,10 @@
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

@@ -203,21 +203,29 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#closestPoint(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">closestPoint</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+            <a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
+<div class="block">Return the point in a <code>LocationList</code> that is that closest to the
+ supplied <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#distanceAndRectangleFilter(org.opensha2.geo.Location, double)">distanceAndRectangleFilter</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
                           double&nbsp;distance)</code>
 <div class="block">Return a radial distance <code>Location</code> filter that preprocesses
  <code>Location</code>s through a <a href="../../../org/opensha2/geo/Locations.html#rectangleFilter(org.opensha2.geo.Location, double)"><code>rectangleFilter(Location, double)</code></a>.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
               double&nbsp;distance)</code>
 <div class="block">Return a radial distance <code>Location</code> filter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#distanceToLine(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)">distanceToLine</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
               <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2,
@@ -225,7 +233,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Computes the shortest distance between a point and a line (great-circle).</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#distanceToLineFast(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)">distanceToLineFast</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                   <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2,
@@ -233,7 +241,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Computes the shortest distance between a point and a line.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#distanceToSegment(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)">distanceToSegment</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                  <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2,
@@ -241,7 +249,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Computes the shortest distance between a point and a line segment (i.e.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#distanceToSegmentFast(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)">distanceToSegmentFast</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                      <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2,
@@ -249,7 +257,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Computes the shortest distance between a point and a line segment.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#horzDistance(org.opensha2.geo.Location, org.opensha2.geo.Location)">horzDistance</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
             <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -257,21 +265,21 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  using the Haversine formula for computing the angle between two points.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#horzDistanceFast(org.opensha2.geo.Location, org.opensha2.geo.Location)">horzDistanceFast</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                 <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
 <div class="block">Calculates approximate distance between two <code>Location</code>s.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#isPole(org.opensha2.geo.Location)">isPole</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p)</code>
 <div class="block">Returns whether the supplied <code>Location</code> coincides with one of the
  poles.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#linearDistance(org.opensha2.geo.Location, org.opensha2.geo.Location)">linearDistance</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
               <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -279,7 +287,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  using spherical geometry.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#linearDistanceFast(org.opensha2.geo.Location, org.opensha2.geo.Location)">linearDistanceFast</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                   <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -287,7 +295,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <code>Location</code>s.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#location(org.opensha2.geo.Location, double, double)">location</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p,
         double&nbsp;azimuth,
@@ -295,7 +303,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Computes a <code>Location</code> given an origin point, bearing, and distance.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#location(org.opensha2.geo.Location, org.opensha2.geo.LocationVector)">location</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p,
         <a href="../../../org/opensha2/geo/LocationVector.html" title="class in org.opensha2.geo">LocationVector</a>&nbsp;d)</code>
@@ -303,18 +311,18 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <code>LocationVector</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#main(java.lang.String[])">main</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#minDistanceIndex(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">minDistanceIndex</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
                 <a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
 <div class="block">Compute the segment index that is closest to a <code>Location</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#minDistanceToLine(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">minDistanceToLine</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
                  <a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
@@ -322,7 +330,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  the line defined by connecting the points in a <code>LocationList</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#minDistanceToLocations(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">minDistanceToLocations</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
                       <a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
@@ -330,7 +338,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  closest point in a <code>LocationList</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#plunge(org.opensha2.geo.Location, org.opensha2.geo.Location)">plunge</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
       <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -338,21 +346,21 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  second location relative to horizontal.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#rectangleFilter(org.opensha2.geo.Location, double)">rectangleFilter</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
                double&nbsp;distance)</code>
 <div class="block">Return a rectangular <code>Location</code> filter.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Path2D.html?is-external=true" title="class or interface in java.awt.geom">Path2D</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#toPath(org.opensha2.geo.LocationList)">toPath</a></strong>(<a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
 <div class="block">Return a closed, straight-line <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Path2D.html?is-external=true" title="class or interface in java.awt.geom"><code>Path2D</code></a> representation of the
  supplied list, ignoring depth.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/geo/Locations.html#vertDistance(org.opensha2.geo.Location, org.opensha2.geo.Location)">vertDistance</a></strong>(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
             <a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -574,8 +582,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <p><b>Note:</b> This method does <i>NOT</i> support values spanning ±180°
  and results for such input values are not guaranteed. Convert data to the
  0-360° interval or use
- <a href="../../../org/opensha2/geo/Locations.html#distanceToLine(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)"><code>distanceToLine(Location, Location, Location)</code></a> in such
- instances.
+ <a href="../../../org/opensha2/geo/Locations.html#distanceToLine(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)"><code>distanceToLine(Location, Location, Location)</code></a> in such instances.
 
  <p>If the line should instead be treated as a segment such that the result
  will be a distance to an endpoint if <code>p3</code> does not project onto the
@@ -814,6 +821,20 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  supplied list, ignoring depth.</div>
 </li>
 </ul>
+<a name="closestPoint(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>closestPoint</h4>
+<pre>public static&nbsp;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;closestPoint(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+                    <a href="../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</pre>
+<div class="block">Return the point in a <code>LocationList</code> that is that closest to the
+ supplied <code>Location</code>. This method uses
+ <a href="../../../org/opensha2/geo/Locations.html#horzDistanceFast(org.opensha2.geo.Location, org.opensha2.geo.Location)"><code>horzDistanceFast(Location, Location)</code></a> to compute the distance.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>loc</code> - @code Location} of interest</dd><dd><code>locs</code> - <code>LocationList</code> to search for closest point in</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/Locations.html#horzDistanceFast(org.opensha2.geo.Location, org.opensha2.geo.Location)"><code>horzDistanceFast(Location, Location)</code></a></dd></dl>
+</li>
+</ul>
 <a name="minDistanceToLocations(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">
 <!--   -->
 </a>
@@ -867,7 +888,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>distanceFilter</h4>
-<pre>public static&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;&nbsp;distanceFilter(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
+<pre>public static&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;&nbsp;distanceFilter(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
                                  double&nbsp;distance)</pre>
 <div class="block">Return a radial distance <code>Location</code> filter.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>origin</code> - of filter</dd><dd><code>distance</code> - beyond which the filter will return <code>false</code></dd></dl>
@@ -879,7 +900,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>distanceAndRectangleFilter</h4>
-<pre>public static&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;&nbsp;distanceAndRectangleFilter(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
+<pre>public static&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;&nbsp;distanceAndRectangleFilter(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
                                              double&nbsp;distance)</pre>
 <div class="block">Return a radial distance <code>Location</code> filter that preprocesses
  <code>Location</code>s through a <a href="../../../org/opensha2/geo/Locations.html#rectangleFilter(org.opensha2.geo.Location, double)"><code>rectangleFilter(Location, double)</code></a>.</div>
@@ -892,17 +913,18 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockListLast">
 <li class="blockList">
 <h4>rectangleFilter</h4>
-<pre>public static&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;&nbsp;rectangleFilter(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
+<pre>public static&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;&nbsp;rectangleFilter(<a href="../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
                                   double&nbsp;distance)</pre>
 <div class="block">Return a rectangular <code>Location</code> filter. The filter is definied in
- geographic (lat,lon) space and is constrained to <a href="../../../org/opensha2/geo/GeoTools.html#MIN_LAT"><code>GeoTools.MIN_LAT</code></a> ,
- <a href="../../../org/opensha2/geo/GeoTools.html#MAX_LAT"><code>GeoTools.MAX_LAT</code></a>, <a href="../../../org/opensha2/geo/GeoTools.html#MIN_LON"><code>GeoTools.MIN_LON</code></a>, and
- <a href="../../../org/opensha2/geo/GeoTools.html#MAX_LON"><code>GeoTools.MAX_LON</code></a>. The filter has dimensions of <code>2 * distance</code>
- for both height and width, and is centered on the supplied <code>Location</code>
- . This filter is for use as a fast, first-pass filter before more
- computationally intensive distance filtering.</div>
+ geographic (lat,lon) space and is constrained to
+ <code>Coordinates#MIN_LAT</code> , <code>Coordinates#MAX_LAT</code>,
+ <code>Coordinates#MIN_LON</code>, and <code>Coordinates#MAX_LON</code>. The filter
+ has dimensions of <code>2 * distance</code> for both height and width, and is
+ centered on the supplied <code>Location</code> . This filter is for use as a
+ fast, first-pass filter before more computationally intensive distance
+ filtering.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>origin</code> - (center) of filter</dd><dd><code>distance</code> - half-width and half-height of rectangle outside of which
-        the filter will return <code>false</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/GeoTools.html" title="class in org.opensha2.geo"><code>GeoTools</code></a></dd></dl>
+        the filter will return <code>false</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/geo/Coordinates.html" title="class in org.opensha2.geo"><code>Coordinates</code></a></dd></dl>
 </li>
 </ul>
 </li>
@@ -973,13 +995,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

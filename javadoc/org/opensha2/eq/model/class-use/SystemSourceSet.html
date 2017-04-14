@@ -96,6 +96,19 @@
 <!--   -->
 </a>
 <h3>Uses of <a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a> in <a href="../../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a> with parameters of type <a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../org/opensha2/calc/SystemInputList.html" title="class in org.opensha2.calc">SystemInputList</a></code></td>
+<td class="colLast"><span class="strong">SystemInputList.</span><code><strong><a href="../../../../../org/opensha2/calc/SystemInputList.html#empty(org.opensha2.eq.model.SystemSourceSet)">empty</a></strong>(<a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>&nbsp;parent)</code>&nbsp;</td>
+</tr>
+</tbody>
+</table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
 <caption><span>Constructors in <a href="../../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a> with parameters of type <a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -103,7 +116,8 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../org/opensha2/calc/SystemInputList.html#SystemInputList(org.opensha2.eq.model.SystemSourceSet)">SystemInputList</a></strong>(<a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>&nbsp;parent)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../../org/opensha2/calc/SystemInputList.html#SystemInputList(org.opensha2.eq.model.SystemSourceSet, java.util.Set)">SystemInputList</a></strong>(<a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>&nbsp;parent,
+               <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;sectionIndices)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -120,8 +134,17 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>,<a href="../../../../../org/opensha2/calc/InputList.html" title="class in org.opensha2.calc">InputList</a>&gt;</code></td>
-<td class="colLast"><span class="strong">SystemSourceSet.</span><code><strong><a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html#toInputsFunction(org.opensha2.util.Site)">toInputsFunction</a></strong>(<a href="../../../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site)</code>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>,<a href="../../../../../org/opensha2/calc/InputList.html" title="class in org.opensha2.calc">InputList</a>&gt;</code></td>
+<td class="colLast"><span class="strong">SystemSourceSet.</span><code><strong><a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html#toInputsFunction(org.opensha2.calc.Site)">toInputsFunction</a></strong>(<a href="../../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site)</code>
+<div class="block">Return an instance of a <code>Function</code> that converts a
+ <code>SystemSourceSet</code> to a ground motion model <code>InputList</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>,<a href="../../../../../org/opensha2/data/IntervalArray.html" title="interface in org.opensha2.data">IntervalArray</a>&gt;</code></td>
+<td class="colLast"><span class="strong">SystemSourceSet.</span><code><strong><a href="../../../../../org/opensha2/eq/model/SystemSourceSet.html#toRatesFunction(org.opensha2.geo.Location, double, org.opensha2.data.IntervalArray)">toRatesFunction</a></strong>(<a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;location,
+               double&nbsp;distance,
+               <a href="../../../../../org/opensha2/data/IntervalArray.html" title="interface in org.opensha2.data">IntervalArray</a>&nbsp;modelMfd)</code>
 <div class="block">Return an instance of a <code>Function</code> that converts a
  <code>SystemSourceSet</code> to a ground motion model <code>InputList</code>.</div>
 </td>
@@ -179,13 +202,10 @@
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

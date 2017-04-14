@@ -135,7 +135,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&gt;</code></td>
-<td class="colLast"><span class="strong">CalcConfig.Curve.</span><code><strong><a href="../../../../org/opensha2/calc/CalcConfig.Curve.html#imts">imts</a></strong></code>
+<td class="colLast"><span class="strong">CalcConfig.Hazard.</span><code><strong><a href="../../../../org/opensha2/calc/CalcConfig.Hazard.html#imts">imts</a></strong></code>
 <div class="block">The <code>Set</code> of IMTs for which calculations should be performed.</div>
 </td>
 </tr>
@@ -156,27 +156,26 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>,<a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">Results.</span><code><strong><a href="../../../../org/opensha2/calc/Results.html#curvesByGmm(org.opensha2.calc.Hazard)">curvesByGmm</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
-<div class="block">Derive maps of curves by groudn motion model for each Imt in a
+<td class="colLast"><span class="strong">HazardExport.</span><code><strong><a href="../../../../org/opensha2/calc/HazardExport.html#curvesByGmm(org.opensha2.calc.Hazard)">curvesByGmm</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
+<div class="block">Derive maps of curves by <code>Gmm</code> for each <code>Imt</code> in a
  <code>Hazard</code> result.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>,<a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">Results.</span><code><strong><a href="../../../../org/opensha2/calc/Results.html#curvesBySource(org.opensha2.calc.Hazard)">curvesBySource</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
-<div class="block">Derive maps of curves by source type for each Imt in a <code>Hazard</code>
- result.</div>
+<td class="colLast"><span class="strong">HazardExport.</span><code><strong><a href="../../../../org/opensha2/calc/HazardExport.html#curvesBySource(org.opensha2.calc.Hazard)">curvesBySource</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
+<div class="block">Derive maps of curves by <code>SourceType</code> for each <code>Imt</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;</code></td>
-<td class="colLast"><span class="strong">CalcConfig.Curve.</span><code><strong><a href="../../../../org/opensha2/calc/CalcConfig.Curve.html#logModelCurves()">logModelCurves</a></strong>()</code>
+<td class="colLast"><span class="strong">CalcConfig.Hazard.</span><code><strong><a href="../../../../org/opensha2/calc/CalcConfig.Hazard.html#logModelCurves()">logModelCurves</a></strong>()</code>
 <div class="block">An immutable map of model curves where x-values are in natural-log space.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;</code></td>
-<td class="colLast"><span class="strong">CalcConfig.Curve.</span><code><strong><a href="../../../../org/opensha2/calc/CalcConfig.Curve.html#modelCurves()">modelCurves</a></strong>()</code>
+<td class="colLast"><span class="strong">CalcConfig.Hazard.</span><code><strong><a href="../../../../org/opensha2/calc/CalcConfig.Hazard.html#modelCurves()">modelCurves</a></strong>()</code>
 <div class="block">An immutable map of model curves where x-values are in linear space.</div>
 </td>
 </tr>
@@ -191,8 +190,15 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a></code></td>
-<td class="colLast"><span class="strong">CalcConfig.Curve.</span><code><strong><a href="../../../../org/opensha2/calc/CalcConfig.Curve.html#modelCurve(org.opensha2.gmm.Imt)">modelCurve</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;imt)</code>
+<td class="colLast"><span class="strong">CalcConfig.Hazard.</span><code><strong><a href="../../../../org/opensha2/calc/CalcConfig.Hazard.html#modelCurve(org.opensha2.gmm.Imt)">modelCurve</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;imt)</code>
 <div class="block">An empty linear curve for the requested <code>Imt</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
+<td class="colLast"><span class="strong">Deaggregation.</span><code><strong><a href="../../../../org/opensha2/calc/Deaggregation.html#toJson(org.opensha2.gmm.Imt)">toJson</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;imt)</code>
+<div class="block">Returns an object constining deaggregation results that is suitable for
+ JSON serialization.</div>
 </td>
 </tr>
 </tbody>
@@ -314,22 +320,13 @@ the order they are declared.</div>
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>static double[]</code></td>
-<td class="colLast"><span class="strong">MatUtil.</span><code><strong><a href="../../../../org/opensha2/gmm/MatUtil.html#calc(org.opensha2.gmm.Gmm, org.opensha2.gmm.Imt, org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>&nbsp;model,
-    <a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;imt,
-    <a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;source)</code>
-<div class="block">Compute the median ground motion and its standard deviation for a specified
- model, intensity measure type (Imt), and source</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/GroundMotionModel.html" title="interface in org.opensha2.gmm">GroundMotionModel</a></code></td>
 <td class="colLast"><span class="strong">Gmm.</span><code><strong><a href="../../../../org/opensha2/gmm/Gmm.html#instance(org.opensha2.gmm.Imt)">instance</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;imt)</code>
 <div class="block">Retreive an instance of a <code>GroundMotionModel</code>, either by creating a
  new one, or fetching from a cache.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>,<a href="../../../../org/opensha2/gmm/GroundMotionModel.html" title="interface in org.opensha2.gmm">GroundMotionModel</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Gmm.</span><code><strong><a href="../../../../org/opensha2/gmm/Gmm.html#instances(org.opensha2.gmm.Imt, java.util.Set)">instances</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;imt,
          <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>&gt;&nbsp;gmms)</code>
@@ -337,7 +334,7 @@ the order they are declared.</div>
  creating new ones, or fetching them from a cache.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Gmm.</span><code><strong><a href="../../../../org/opensha2/gmm/Gmm.html#supportedGmms(org.opensha2.gmm.Imt)">supportedGmms</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;imt)</code>
 <div class="block">Return the <code>Set</code> of <code>Gmm</code>s that support the supplied
@@ -421,13 +418,10 @@ the order they are declared.</div>
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

@@ -106,7 +106,7 @@
 <td class="colFirst"><code><a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
 <td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#add(double, double)">add</a></strong>(double&nbsp;row,
    double&nbsp;value)</code>
-<div class="block">Add to the existing value at the specified row and column.</div>
+<div class="block">Add to the existing value at the specified row.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -127,13 +127,13 @@
 <td class="colFirst"><code><a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
 <td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#add(int, double)">add</a></strong>(int&nbsp;row,
    double&nbsp;value)</code>
-<div class="block">Add to the existing value at the specified row and column indices.</div>
+<div class="block">Add to the existing value at the specified row.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
 <td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#add(org.opensha2.data.IntervalArray)">add</a></strong>(<a href="../../../../org/opensha2/data/IntervalArray.html" title="interface in org.opensha2.data">IntervalArray</a>&nbsp;array)</code>
-<div class="block">Add the values in the supplied table to this builder.</div>
+<div class="block">Add the values in the supplied array to this builder.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -149,30 +149,29 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
-<td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#create()">create</a></strong>()</code>
-<div class="block">Create a new builder.</div>
+<td class="colFirst"><code><a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
+<td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#addEach(org.opensha2.data.XySequence)">addEach</a></strong>(<a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;sequence)</code>
+<div class="block">Add each value-pair of the supplied sequence to the appropriate interval.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
-<td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#fromModel(org.opensha2.data.IntervalArray)">fromModel</a></strong>(<a href="../../../../org/opensha2/data/IntervalArray.html" title="interface in org.opensha2.data">IntervalArray</a>&nbsp;model)</code>
-<div class="block">Create a new builder with a structure identical to that of the supplied
- array as a model.</div>
+<td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#copyOf(org.opensha2.data.IntervalArray)">copyOf</a></strong>(<a href="../../../../org/opensha2/data/IntervalArray.html" title="interface in org.opensha2.data">IntervalArray</a>&nbsp;array)</code>
+<div class="block">Create a new builder with the structure and content identical to that of
+ the supplied array.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
-<td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#multiply(double)">multiply</a></strong>(double&nbsp;scale)</code>
-<div class="block">Multiply (<code>scale</code>) all values in this builder.</div>
+<td class="colFirst"><code>static <a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
+<td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#fromModel(org.opensha2.data.IntervalArray)">fromModel</a></strong>(<a href="../../../../org/opensha2/data/IntervalArray.html" title="interface in org.opensha2.data">IntervalArray</a>&nbsp;model)</code>
+<div class="block">Create a new builder with a structure identical to that of the supplied
+ model.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
-<td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#rows(double, double, double)">rows</a></strong>(double&nbsp;min,
-    double&nbsp;max,
-    double&nbsp;Δ)</code>
-<div class="block">Define the array intervals.</div>
+<td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#multiply(double)">multiply</a></strong>(double&nbsp;scale)</code>
+<div class="block">Multiply (<code>scale</code>) all values in this builder.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -186,7 +185,15 @@
 <td class="colFirst"><code><a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
 <td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#set(int, double)">set</a></strong>(int&nbsp;row,
    double&nbsp;value)</code>
-<div class="block">Set the value at the specified row and column indices.</div>
+<div class="block">Set the value at the specified row.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../org/opensha2/data/IntervalArray.Builder.html" title="class in org.opensha2.data">IntervalArray.Builder</a></code></td>
+<td class="colLast"><span class="strong">IntervalArray.Builder.</span><code><strong><a href="../../../../org/opensha2/data/IntervalArray.Builder.html#withRows(double, double, double)">withRows</a></strong>(double&nbsp;min,
+        double&nbsp;max,
+        double&nbsp;Δ)</code>
+<div class="block">Define the array intervals.</div>
 </td>
 </tr>
 </tbody>
@@ -242,13 +249,10 @@
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

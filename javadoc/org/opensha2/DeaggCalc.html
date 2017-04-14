@@ -97,12 +97,7 @@
 <br>
 <pre>public class <span class="strong">DeaggCalc</span>
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Entry point for deaggregating probabilisitic seismic hazard.
-
- computing a hazard curve at a <a href="../../org/opensha2/util/Site.html" title="class in org.opensha2.util"><code>Site</code></a> from a <a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model"><code>HazardModel</code></a>. The
- <code>main()</code> method of this class returns mean hazard curves for the model
- and <a href="../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm"><code>Imt</code></a> specified. For more detailed results at a <code>Site</code>,
- consider programmatically using the <code>calc()</code> methods of this class.</div>
+<div class="block">Deaggregate probabilisitic seismic hazard.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd></dl>
 </li>
@@ -142,18 +137,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc">Deaggregation</a></code></td>
-<td class="colLast"><code><strong><a href="../../org/opensha2/DeaggCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, double, com.google.common.base.Optional)">calc</a></strong>(<a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
-    <a href="../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-    <a href="../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
-    double&nbsp;returnPeriod,
-    <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</code>
-<div class="block">Perform a hazard deaggregation at a <code>site</code> for a <code>model</code>,
- <code>config</code>, and return period.</div>
+<td class="colLast"><code><strong><a href="../../org/opensha2/DeaggCalc.html#calc(org.opensha2.calc.Hazard, double)">calc</a></strong>(<a href="../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard,
+    double&nbsp;returnPeriod)</code>
+<div class="block">Deaggregate probabilistic seismic hazard at the supplied return period (in
+ years).</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../org/opensha2/DeaggCalc.html#main(java.lang.String[])">main</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../org/opensha2/DeaggCalc.html#main(java.lang.String[])">main</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)</code>
+<div class="block">Entry point for the deaggregation of probabilisitic seismic hazard.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -201,29 +195,44 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>main</h4>
 <pre>public static&nbsp;void&nbsp;main(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)</pre>
+<div class="block">Entry point for the deaggregation of probabilisitic seismic hazard.
+ 
+ <p>Deaggregating siesmic hazard is largeley identical to a hazard
+ calculation except that a return period (in years) must be supplied as an
+ additional argument after the 'site(s)' argument. See the
+ <a href="../../org/opensha2/HazardCalc.html#main(java.lang.String[])"><code>HazardCalc program</code></a> for more information
+ on required parameters.
+ 
+ <p>Please refer to the nshmp-haz <a
+ href="https://github.com/usgs/nshmp-haz/wiki" target="_top">wiki</a> for
+ comprehensive descriptions of source models, configuration files, site
+ files, and hazard calculations.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="https://github.com/usgs/nshmp-haz/wiki/Building-&-Running"
+      target="_top"> nshmp-haz wiki</a>, 
+<a href="https://github.com/usgs/nshmp-haz/tree/master/etc/examples"
+      target="_top"> example calculations</a></dd></dl>
 </li>
 </ul>
-<a name="calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, double, com.google.common.base.Optional)">
+<a name="calc(org.opensha2.calc.Hazard, double)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>calc</h4>
-<pre>public static&nbsp;<a href="../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc">Deaggregation</a>&nbsp;calc(<a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
-                 <a href="../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-                 <a href="../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
-                 double&nbsp;returnPeriod,
-                 <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</pre>
-<div class="block">Perform a hazard deaggregation at a <code>site</code> for a <code>model</code>,
- <code>config</code>, and return period. If an <code>executor</code> is supplied, it
- will be used to distribute tasks; otherwise, the calculation will run on
- the current thread. Be sure to shutdown any supplied executor after a
- calculation completes.
+<pre>public static&nbsp;<a href="../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc">Deaggregation</a>&nbsp;calc(<a href="../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard,
+                 double&nbsp;returnPeriod)</pre>
+<div class="block">Deaggregate probabilistic seismic hazard at the supplied return period (in
+ years). Deaggregation currently runs on a single thread.
+ 
+ <p>Call this method with the <a href="../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc"><code>Hazard</code></a> result of
+ <a href="../../org/opensha2/HazardCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site, com.google.common.base.Optional)"><code>HazardCalc.calc(HazardModel, CalcConfig, Site, Optional)</code></a> to which
+ you supply the calculation settings and sites of interest that will also be
+ used for deaggregation.
 
  <p><b>Note:</b> any model initialization settings in <code>config</code> will be
  ignored as the supplied model will already have been initialized.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - to use</dd><dd><code>config</code> - calculation configuration</dd><dd><code>site</code> - of interest</dd><dd><code>returnPeriod</code> - at which to deaggregate</dd><dd><code>executor</code> - to use (<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base"><code>Optional</code></a>)</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a HazardResult</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>returnPeriod</code> - at which to deaggregate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a <code>Deaggregation</code> object</dd></dl>
 </li>
 </ul>
 </li>
@@ -294,13 +303,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

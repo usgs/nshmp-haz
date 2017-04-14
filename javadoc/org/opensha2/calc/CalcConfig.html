@@ -126,20 +126,20 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Curve.html" title="class in org.opensha2.calc">CalcConfig.Curve</a></strong></code>
-<div class="block">Hazard curve calculation configuration.</div>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html" title="class in org.opensha2.calc">CalcConfig.Deagg</a></strong></code>
+<div class="block">Deaggregation configuration.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html" title="class in org.opensha2.calc">CalcConfig.Deagg</a></strong></code>
-<div class="block">Deaggregation configuration data container.</div>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Hazard.html" title="class in org.opensha2.calc">CalcConfig.Hazard</a></strong></code>
+<div class="block">Hazard calculation configuration.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Output.html" title="class in org.opensha2.calc">CalcConfig.Output</a></strong></code>
-<div class="block">Hazard curve and file output settings.</div>
+<div class="block">Data and file output settings.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -149,6 +149,12 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Rate.html" title="class in org.opensha2.calc">CalcConfig.Rate</a></strong></code>
+<div class="block">Magnitude-frequency distribution configuration.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.SiteDefaults.html" title="class in org.opensha2.calc">CalcConfig.SiteDefaults</a></strong></code>
 <div class="block">Default site settings.</div>
@@ -170,15 +176,15 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../org/opensha2/calc/CalcConfig.Curve.html" title="class in org.opensha2.calc">CalcConfig.Curve</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#curve">curve</a></strong></code>
-<div class="block">Hazard curve calculation settings.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html" title="class in org.opensha2.calc">CalcConfig.Deagg</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#deagg">deagg</a></strong></code>
 <div class="block">Deaggregation configuration.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../org/opensha2/calc/CalcConfig.Hazard.html" title="class in org.opensha2.calc">CalcConfig.Hazard</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#hazard">hazard</a></strong></code>
+<div class="block">Hazard calculation configuration.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -190,18 +196,24 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/calc/CalcConfig.Performance.html" title="class in org.opensha2.calc">CalcConfig.Performance</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#performance">performance</a></strong></code>
-<div class="block">Performance and optimization settings.</div>
+<div class="block">Performance and optimization configuration.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt;</code></td>
+<td class="colFirst"><code><a href="../../../org/opensha2/calc/CalcConfig.Rate.html" title="class in org.opensha2.calc">CalcConfig.Rate</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#rate">rate</a></strong></code>
+<div class="block">Earthquake rate configuration.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#resource">resource</a></strong></code>
 <div class="block">The resource from which <code>this</code> was derived.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/opensha2/calc/CalcConfig.SiteDefaults.html" title="class in org.opensha2.calc">CalcConfig.SiteDefaults</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#siteDefaults">siteDefaults</a></strong></code>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.html#site">site</a></strong></code>
 <div class="block">Default site settings.</div>
 </td>
 </tr>
@@ -258,38 +270,48 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>resource</h4>
-<pre>public final transient&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt; resource</pre>
+<pre>public final transient&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&gt; resource</pre>
 <div class="block">The resource from which <code>this</code> was derived. This field may be empty.</div>
 </li>
 </ul>
-<a name="curve">
+<a name="hazard">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>curve</h4>
-<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.Curve.html" title="class in org.opensha2.calc">CalcConfig.Curve</a> curve</pre>
-<div class="block">Hazard curve calculation settings.</div>
+<h4>hazard</h4>
+<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.Hazard.html" title="class in org.opensha2.calc">CalcConfig.Hazard</a> hazard</pre>
+<div class="block">Hazard calculation configuration.</div>
 </li>
 </ul>
-<a name="siteDefaults">
+<a name="deagg">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>siteDefaults</h4>
-<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.SiteDefaults.html" title="class in org.opensha2.calc">CalcConfig.SiteDefaults</a> siteDefaults</pre>
+<h4>deagg</h4>
+<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.Deagg.html" title="class in org.opensha2.calc">CalcConfig.Deagg</a> deagg</pre>
+<div class="block">Deaggregation configuration.</div>
+</li>
+</ul>
+<a name="rate">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>rate</h4>
+<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.Rate.html" title="class in org.opensha2.calc">CalcConfig.Rate</a> rate</pre>
+<div class="block">Earthquake rate configuration.</div>
+</li>
+</ul>
+<a name="site">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>site</h4>
+<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.SiteDefaults.html" title="class in org.opensha2.calc">CalcConfig.SiteDefaults</a> site</pre>
 <div class="block">Default site settings.</div>
-</li>
-</ul>
-<a name="performance">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>performance</h4>
-<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.Performance.html" title="class in org.opensha2.calc">CalcConfig.Performance</a> performance</pre>
-<div class="block">Performance and optimization settings.</div>
 </li>
 </ul>
 <a name="output">
@@ -302,14 +324,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Output configuration.</div>
 </li>
 </ul>
-<a name="deagg">
+<a name="performance">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>deagg</h4>
-<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.Deagg.html" title="class in org.opensha2.calc">CalcConfig.Deagg</a> deagg</pre>
-<div class="block">Deaggregation configuration.</div>
+<h4>performance</h4>
+<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.Performance.html" title="class in org.opensha2.calc">CalcConfig.Performance</a> performance</pre>
+<div class="block">Performance and optimization configuration.</div>
 </li>
 </ul>
 </li>
@@ -415,13 +437,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

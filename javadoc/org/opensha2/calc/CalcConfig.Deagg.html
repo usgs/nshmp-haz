@@ -35,8 +35,8 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../org/opensha2/calc/CalcConfig.Curve.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../org/opensha2/calc/CalcConfig.Output.html" title="class in org.opensha2.calc"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../org/opensha2/calc/CalcConfig.Builder.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../org/opensha2/calc/CalcConfig.Deagg.Bins.html" title="class in org.opensha2.calc"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?org/opensha2/calc/CalcConfig.Deagg.html" target="_top">Frames</a></li>
@@ -60,7 +60,7 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#methods_inherited_from_class_java.lang.Object">Method</a></li>
@@ -101,13 +101,35 @@
 <br>
 <pre>public static final class <span class="strong">CalcConfig.Deagg</span>
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Deaggregation configuration data container.</div>
+<div class="block">Deaggregation configuration.</div>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.Bins.html" title="class in org.opensha2.calc">CalcConfig.Deagg.Bins</a></strong></code>
+<div class="block">The distance, magnitude, and epsilon bins into which contributing sources
+ to hazard will be sorted.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field_summary">
@@ -121,57 +143,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#mMax">mMax</a></strong></code>
-<div class="block">Maximum magnitude.</div>
+<td class="colFirst"><code><a href="../../../org/opensha2/calc/CalcConfig.Deagg.Bins.html" title="class in org.opensha2.calc">CalcConfig.Deagg.Bins</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#bins">bins</a></strong></code>
+<div class="block">The distance, magnitude, and epsilon bins into which contributing sources
+ to hazard are sorted.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#mMin">mMin</a></strong></code>
-<div class="block">Minimum magnitude.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#rMax">rMax</a></strong></code>
-<div class="block">Maximum distance.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#rMin">rMin</a></strong></code>
-<div class="block">Minimum distance.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#Δm">Δm</a></strong></code>
-<div class="block">Magnitude bin width.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#Δr">Δr</a></strong></code>
-<div class="block">Distance bin width.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#Δε">Δε</a></strong></code>
-<div class="block">Epsilon bin width.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#εMax">εMax</a></strong></code>
-<div class="block">Maximum epsilon.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#εMin">εMin</a></strong></code>
-<div class="block">Minimum epsilon.</div>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/CalcConfig.Deagg.html#contributorLimit">contributorLimit</a></strong></code>
+<div class="block">The minimum contribution (in %) that a source must make to hazard to be
+ included on the contributor source list in deaggregation result.</div>
 </td>
 </tr>
 </table>
@@ -204,94 +186,26 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="rMin">
+<a name="bins">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>rMin</h4>
-<pre>public final&nbsp;double rMin</pre>
-<div class="block">Minimum distance. Lower edge of smallest distance bin.</div>
+<h4>bins</h4>
+<pre>public final&nbsp;<a href="../../../org/opensha2/calc/CalcConfig.Deagg.Bins.html" title="class in org.opensha2.calc">CalcConfig.Deagg.Bins</a> bins</pre>
+<div class="block">The distance, magnitude, and epsilon bins into which contributing sources
+ to hazard are sorted.</div>
 </li>
 </ul>
-<a name="rMax">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>rMax</h4>
-<pre>public final&nbsp;double rMax</pre>
-<div class="block">Maximum distance. Upper edge of largest distance bin.</div>
-</li>
-</ul>
-<a name="Δr">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Δr</h4>
-<pre>public final&nbsp;double Δr</pre>
-<div class="block">Distance bin width.</div>
-</li>
-</ul>
-<a name="mMin">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>mMin</h4>
-<pre>public final&nbsp;double mMin</pre>
-<div class="block">Minimum magnitude. Lower edge of smallest magnitude bin.</div>
-</li>
-</ul>
-<a name="mMax">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>mMax</h4>
-<pre>public final&nbsp;double mMax</pre>
-<div class="block">Maximum magnitude. Upper edge of largest magnitude bin.</div>
-</li>
-</ul>
-<a name="Δm">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Δm</h4>
-<pre>public final&nbsp;double Δm</pre>
-<div class="block">Magnitude bin width.</div>
-</li>
-</ul>
-<a name="εMin">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>εMin</h4>
-<pre>public final&nbsp;double εMin</pre>
-<div class="block">Minimum epsilon. Lower edge of smallest epsilon bin.</div>
-</li>
-</ul>
-<a name="εMax">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>εMax</h4>
-<pre>public final&nbsp;double εMax</pre>
-<div class="block">Maximum epsilon. Upper edge of largest epsilon bin.</div>
-</li>
-</ul>
-<a name="Δε">
+<a name="contributorLimit">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>Δε</h4>
-<pre>public final&nbsp;double Δε</pre>
-<div class="block">Epsilon bin width.</div>
+<h4>contributorLimit</h4>
+<pre>public final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a> contributorLimit</pre>
+<div class="block">The minimum contribution (in %) that a source must make to hazard to be
+ included on the contributor source list in deaggregation result.</div>
 </li>
 </ul>
 </li>
@@ -320,8 +234,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../org/opensha2/calc/CalcConfig.Curve.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../org/opensha2/calc/CalcConfig.Output.html" title="class in org.opensha2.calc"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../org/opensha2/calc/CalcConfig.Builder.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../org/opensha2/calc/CalcConfig.Deagg.Bins.html" title="class in org.opensha2.calc"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?org/opensha2/calc/CalcConfig.Deagg.html" target="_top">Frames</a></li>
@@ -345,7 +259,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#methods_inherited_from_class_java.lang.Object">Method</a></li>
@@ -362,13 +276,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

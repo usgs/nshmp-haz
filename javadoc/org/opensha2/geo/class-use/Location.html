@@ -75,31 +75,37 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><a href="#org.opensha2.calc">org.opensha2.calc</a></td>
+<td class="colLast">
+<div class="block">Hazard calculation classes and utilties.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="#org.opensha2.eq.fault">org.opensha2.eq.fault</a></td>
 <td class="colLast">
 <div class="block">Fault representations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="#org.opensha2.eq.fault.surface">org.opensha2.eq.fault.surface</a></td>
 <td class="colLast">
 <div class="block">Fault surfaces.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="#org.opensha2.eq.model">org.opensha2.eq.model</a></td>
 <td class="colLast">
 <div class="block">Earthquake <a href="../../../../org/opensha2/eq/model/Source.html" title="interface in org.opensha2.eq.model"><code>Source</code></a> and
  <a href="../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model"><code>HazardModel</code></a> representations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="#org.opensha2.geo">org.opensha2.geo</a></td>
 <td class="colLast">
 <div class="block">Geographic data classes and utilities.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="#org.opensha2.util">org.opensha2.util</a></td>
 <td class="colLast">
 <div class="block">Miscellaneous utilties.</div>
@@ -110,6 +116,41 @@
 </li>
 <li class="blockList">
 <ul class="blockList">
+<li class="blockList"><a name="org.opensha2.calc">
+<!--   -->
+</a>
+<h3>Uses of <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a> in <a href="../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing fields, and an explanation">
+<caption><span>Fields in <a href="../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a> declared as <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">Site.</span><code><strong><a href="../../../../org/opensha2/calc/Site.html#location">location</a></strong></code>
+<div class="block">The location of this site.</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a> with parameters of type <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/calc/Site.Builder.html" title="class in org.opensha2.calc">Site.Builder</a></code></td>
+<td class="colLast"><span class="strong">Site.Builder.</span><code><strong><a href="../../../../org/opensha2/calc/Site.Builder.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
+<div class="block">The location of the <code>Site</code>.</div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
 <li class="blockList"><a name="org.opensha2.eq.fault">
 <!--   -->
 </a>
@@ -218,6 +259,56 @@
 </a>
 <h3>Uses of <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a> in <a href="../../../../org/opensha2/eq/model/package-summary.html">org.opensha2.eq.model</a></h3>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../org/opensha2/eq/model/package-summary.html">org.opensha2.eq.model</a> that return <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">SystemSourceSet.SystemSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/SystemSourceSet.SystemSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;location)</code>
+<div class="block">This method is not required for deaggregation and currently throws an
+ <code>UnsupportedOperationException</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">Source.</span><code><strong><a href="../../../../org/opensha2/eq/model/Source.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The <code>Location</code> of this source relative to the supplied <code>site</code>
+ location.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">InterfaceSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/InterfaceSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The closest point on the upper or lower fault trace, relative to the
+ supplied site <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">FaultSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/FaultSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The closest point on the fault trace, relative to the supplied site
+ <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">ClusterSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/ClusterSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The closest point across the traces of all fault sources that participate
+ in this cluster, relative to the supplied site <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">AreaSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/AreaSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The centroid of this source.</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
 <caption><span>Methods in <a href="../../../../org/opensha2/eq/model/package-summary.html">org.opensha2.eq.model</a> with parameters of type <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
@@ -232,51 +323,52 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/SystemSourceSet.SystemSource.html" title="class in org.opensha2.eq.model">SystemSourceSet.SystemSource</a>&gt;</code></td>
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/SystemSourceSet.SystemSource.html" title="class in org.opensha2.eq.model">SystemSourceSet.SystemSource</a>&gt;</code></td>
 <td class="colLast"><span class="strong">SystemSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/SystemSourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/SourceSet.html" title="type parameter in SourceSet">T</a>&gt;</code></td>
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/SourceSet.html" title="type parameter in SourceSet">T</a>&gt;</code></td>
 <td class="colLast"><span class="strong">SourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/SourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>
-<div class="block">Return a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source is
+<div class="block">Return a <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source is
  within <code>distance</code> of the supplied <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo"><code>Location</code></a>.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;org.opensha2.eq.model.PointSource&gt;</code></td>
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;org.opensha2.eq.model.PointSource&gt;</code></td>
 <td class="colLast"><span class="strong">SlabSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/SlabSourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/InterfaceSource.html" title="class in org.opensha2.eq.model">InterfaceSource</a>&gt;</code></td>
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/InterfaceSource.html" title="class in org.opensha2.eq.model">InterfaceSource</a>&gt;</code></td>
 <td class="colLast"><span class="strong">InterfaceSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/InterfaceSourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;org.opensha2.eq.model.PointSource&gt;</code></td>
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;org.opensha2.eq.model.PointSource&gt;</code></td>
 <td class="colLast"><span class="strong">GridSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/GridSourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/FaultSource.html" title="class in org.opensha2.eq.model">FaultSource</a>&gt;</code></td>
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/FaultSource.html" title="class in org.opensha2.eq.model">FaultSource</a>&gt;</code></td>
 <td class="colLast"><span class="strong">FaultSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/FaultSourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/ClusterSource.html" title="class in org.opensha2.eq.model">ClusterSource</a>&gt;</code></td>
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/ClusterSource.html" title="class in org.opensha2.eq.model">ClusterSource</a>&gt;</code></td>
 <td class="colLast"><span class="strong">ClusterSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/ClusterSourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/AreaSource.html" title="class in org.opensha2.eq.model">AreaSource</a>&gt;</code></td>
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/AreaSource.html" title="class in org.opensha2.eq.model">AreaSource</a>&gt;</code></td>
 <td class="colLast"><span class="strong">AreaSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/calc/InputList.html" title="class in org.opensha2.calc">InputList</a>&gt;</code></td>
-<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../org/opensha2/eq/model/PointSources.html#finiteInputs(java.util.List, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.model.GridSourceSet)">finiteInputs</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&gt;&nbsp;sites,
+<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../org/opensha2/eq/model/PointSources.html#finiteInputs(java.util.List, org.opensha2.eq.model.SourceType, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.model.GridSourceSet)">finiteInputs</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&gt;&nbsp;sites,
+            <a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;sourceType,
             <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
             <a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;mfd,
             <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/eq/fault/FocalMech.html" title="enum in org.opensha2.eq.fault">FocalMech</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;mechWtMap,
@@ -288,7 +380,8 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/calc/InputList.html" title="class in org.opensha2.calc">InputList</a>&gt;</code></td>
-<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../org/opensha2/eq/model/PointSources.html#finiteInputs(java.util.List, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.fault.surface.RuptureScaling, java.util.NavigableMap, double)">finiteInputs</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&gt;&nbsp;sites,
+<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../org/opensha2/eq/model/PointSources.html#finiteInputs(java.util.List, org.opensha2.eq.model.SourceType, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.fault.surface.RuptureScaling, java.util.NavigableMap, double)">finiteInputs</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&gt;&nbsp;sites,
+            <a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;sourceType,
             <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
             <a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;mfd,
             <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/eq/fault/FocalMech.html" title="enum in org.opensha2.eq.fault">FocalMech</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;mechWtMap,
@@ -301,7 +394,8 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/calc/InputList.html" title="class in org.opensha2.calc">InputList</a></code></td>
-<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../org/opensha2/eq/model/PointSources.html#finiteInputs(org.opensha2.util.Site, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.fault.surface.RuptureScaling, java.util.NavigableMap, double)">finiteInputs</a></strong>(<a href="../../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
+<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../org/opensha2/eq/model/PointSources.html#finiteInputs(org.opensha2.calc.Site, org.opensha2.eq.model.SourceType, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.fault.surface.RuptureScaling, java.util.NavigableMap, double)">finiteInputs</a></strong>(<a href="../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+            <a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;sourceType,
             <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
             <a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;mfd,
             <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/eq/fault/FocalMech.html" title="enum in org.opensha2.eq.fault">FocalMech</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;mechWtMap,
@@ -331,7 +425,61 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="../../../../org/opensha2/eq/model/GridSourceSet.html" title="class in org.opensha2.eq.model">GridSourceSet</a>,<a href="../../../../org/opensha2/eq/model/SourceSet.html" title="interface in org.opensha2.eq.model">SourceSet</a>&lt;? extends <a href="../../../../org/opensha2/eq/model/Source.html" title="interface in org.opensha2.eq.model">Source</a>&gt;&gt;</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="../../../../org/opensha2/eq/model/SourceSet.html" title="type parameter in SourceSet">T</a>&gt;</code></td>
+<td class="colLast"><span class="strong">SourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/SourceSet.html#iterableForLocation(org.opensha2.geo.Location, double)">iterableForLocation</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+                   double&nbsp;distance)</code>
+<div class="block">Return an <code>Iterable</code> over those <code>Source</code>s that are within
+ <code>distance</code> of the supplied <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;org.opensha2.eq.model.PointSource&gt;</code></td>
+<td class="colLast"><span class="strong">SlabSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/SlabSourceSet.html#iterableForLocation(org.opensha2.geo.Location, double)">iterableForLocation</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+                   double&nbsp;distance)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">SystemSourceSet.SystemSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/SystemSourceSet.SystemSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;location)</code>
+<div class="block">This method is not required for deaggregation and currently throws an
+ <code>UnsupportedOperationException</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">Source.</span><code><strong><a href="../../../../org/opensha2/eq/model/Source.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The <code>Location</code> of this source relative to the supplied <code>site</code>
+ location.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">InterfaceSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/InterfaceSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The closest point on the upper or lower fault trace, relative to the
+ supplied site <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">FaultSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/FaultSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The closest point on the fault trace, relative to the supplied site
+ <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">ClusterSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/ClusterSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The closest point across the traces of all fault sources that participate
+ in this cluster, relative to the supplied site <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">AreaSource.</span><code><strong><a href="../../../../org/opensha2/eq/model/AreaSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The centroid of this source.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="../../../../org/opensha2/eq/model/GridSourceSet.html" title="class in org.opensha2.eq.model">GridSourceSet</a>,<a href="../../../../org/opensha2/eq/model/SourceSet.html" title="interface in org.opensha2.eq.model">SourceSet</a>&lt;? extends <a href="../../../../org/opensha2/eq/model/Source.html" title="interface in org.opensha2.eq.model">Source</a>&gt;&gt;</code></td>
 <td class="colLast"><span class="strong">GridSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/GridSourceSet.html#optimizer(org.opensha2.geo.Location)">optimizer</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
 <div class="block">Create a <code>Function</code> for a location the condenses a
  <code>GridSourceSet</code> into tabular form (distance, magnitude and azimuth
@@ -340,12 +488,22 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static org.opensha2.eq.model.PointSource</code></td>
-<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../org/opensha2/eq/model/PointSources.html#pointSource(org.opensha2.eq.model.PointSourceType, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.fault.surface.RuptureScaling, org.opensha2.eq.model.PointSource.DepthModel)">pointSource</a></strong>(<a href="../../../../org/opensha2/eq/model/PointSourceType.html" title="enum in org.opensha2.eq.model">PointSourceType</a>&nbsp;type,
+<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../org/opensha2/eq/model/PointSources.html#pointSource(org.opensha2.eq.model.SourceType, org.opensha2.eq.model.PointSourceType, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.fault.surface.RuptureScaling, org.opensha2.eq.model.PointSource.DepthModel)">pointSource</a></strong>(<a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;sourceType,
+           <a href="../../../../org/opensha2/eq/model/PointSourceType.html" title="enum in org.opensha2.eq.model">PointSourceType</a>&nbsp;pointType,
            <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
            <a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;mfd,
            <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/eq/fault/FocalMech.html" title="enum in org.opensha2.eq.fault">FocalMech</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;mechWtMap,
            <a href="../../../../org/opensha2/eq/fault/surface/RuptureScaling.html" title="enum in org.opensha2.eq.fault.surface">RuptureScaling</a>&nbsp;rupScaling,
            org.opensha2.eq.model.PointSource.DepthModel&nbsp;depthModel)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="../../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>,<a href="../../../../org/opensha2/data/IntervalArray.html" title="interface in org.opensha2.data">IntervalArray</a>&gt;</code></td>
+<td class="colLast"><span class="strong">SystemSourceSet.</span><code><strong><a href="../../../../org/opensha2/eq/model/SystemSourceSet.html#toRatesFunction(org.opensha2.geo.Location, double, org.opensha2.data.IntervalArray)">toRatesFunction</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;location,
+               double&nbsp;distance,
+               <a href="../../../../org/opensha2/data/IntervalArray.html" title="interface in org.opensha2.data">IntervalArray</a>&nbsp;modelMfd)</code>
+<div class="block">Return an instance of a <code>Function</code> that converts a
+ <code>SystemSourceSet</code> to a ground motion model <code>InputList</code>.</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -385,13 +543,21 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#closestPoint(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">closestPoint</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+            <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
+<div class="block">Return the point in a <code>LocationList</code> that is that closest to the
+ supplied <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">Location.</span><code><strong><a href="../../../../org/opensha2/geo/Location.html#create(double, double)">create</a></strong>(double&nbsp;lat,
       double&nbsp;lon)</code>
 <div class="block">Create a new <code>Location</code> with the supplied latitude and longitude and
  a depth of 0 km.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">Location.</span><code><strong><a href="../../../../org/opensha2/geo/Location.html#create(double, double, double)">create</a></strong>(double&nbsp;lat,
       double&nbsp;lon,
@@ -400,31 +566,31 @@
  depth.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">LocationList.</span><code><strong><a href="../../../../org/opensha2/geo/LocationList.html#first()">first</a></strong>()</code>
 <div class="block">Return the first <code>Location</code> in this list.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">Location.</span><code><strong><a href="../../../../org/opensha2/geo/Location.html#fromString(java.lang.String)">fromString</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>
 <div class="block">Generate a new <code>Location</code> by parsing the supplied <code>String</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">LocationList.</span><code><strong><a href="../../../../org/opensha2/geo/LocationList.html#get(int)">get</a></strong>(int&nbsp;index)</code>
 <div class="block">Return the location at <code>index</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">LocationList.</span><code><strong><a href="../../../../org/opensha2/geo/LocationList.html#last()">last</a></strong>()</code>
 <div class="block">Return the last <code>Location</code> in this list.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#location(org.opensha2.geo.Location, double, double)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p,
         double&nbsp;azimuth,
@@ -432,7 +598,7 @@
 <div class="block">Computes a <code>Location</code> given an origin point, bearing, and distance.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#location(org.opensha2.geo.Location, org.opensha2.geo.LocationVector)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p,
         <a href="../../../../org/opensha2/geo/LocationVector.html" title="class in org.opensha2.geo">LocationVector</a>&nbsp;d)</code>
@@ -440,20 +606,20 @@
  <code>LocationVector</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">GriddedRegion.</span><code><strong><a href="../../../../org/opensha2/geo/GriddedRegion.html#locationForIndex(int)">locationForIndex</a></strong>(int&nbsp;index)</code>
 <div class="block">Returns the <code>Location</code> at a given grid index.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">Bounds.</span><code><strong><a href="../../../../org/opensha2/geo/Bounds.html#max()">max</a></strong>()</code>
 <div class="block">Return the upper right coordinate (maximum latitude and longitude) as a
  <code>Location</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">Bounds.</span><code><strong><a href="../../../../org/opensha2/geo/Bounds.html#min()">min</a></strong>()</code>
 <div class="block">Return the lower left coordinate (minimum latatide and longitude) as a
@@ -470,7 +636,7 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#distanceAndRectangleFilter(org.opensha2.geo.Location, double)">distanceAndRectangleFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
                           double&nbsp;distance)</code>
 <div class="block">Return a radial distance <code>Location</code> filter that preprocesses
@@ -478,7 +644,7 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
               double&nbsp;distance)</code>
 <div class="block">Return a radial distance <code>Location</code> filter.</div>
@@ -493,16 +659,16 @@
 <td class="colLast"><span class="strong">GriddedRegion.</span><code><strong><a href="../../../../org/opensha2/geo/GriddedRegion.html#iterator()">iterator</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#rectangleFilter(org.opensha2.geo.Location, double)">rectangleFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
                double&nbsp;distance)</code>
 <div class="block">Return a rectangular <code>Location</code> filter.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base">Converter</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base">Converter</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Location.</span><code><strong><a href="../../../../org/opensha2/geo/Location.html#stringConverter()">stringConverter</a></strong>()</code>
-<div class="block">Return a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base"><code>Converter</code></a> that converts between <code>Location</code>s and
+<div class="block">Return a <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base"><code>Converter</code></a> that converts between <code>Location</code>s and
  <code>String</code>s.</div>
 </td>
 </tr>
@@ -571,26 +737,34 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#closestPoint(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">closestPoint</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+            <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
+<div class="block">Return the point in a <code>LocationList</code> that is that closest to the
+ supplied <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><span class="strong">Location.</span><code><strong><a href="../../../../org/opensha2/geo/Location.html#compareTo(org.opensha2.geo.Location)">compareTo</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
 <div class="block">Compare this <code>Location</code> to another and sort first by latitude, then
  by longitude.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="strong">Region.</span><code><strong><a href="../../../../org/opensha2/geo/Region.html#contains(org.opensha2.geo.Location)">contains</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
 <div class="block">Returns whether the given <code>Location</code> is inside this <code>Region</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
 <td class="colLast"><span class="strong">LocationList.</span><code><strong><a href="../../../../org/opensha2/geo/LocationList.html#create(org.opensha2.geo.Location...)">create</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>...&nbsp;locs)</code>
 <div class="block">Create a new <code>LocationList</code> containing all <code>Location</code>s in
  <code>locs</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationVector.html" title="class in org.opensha2.geo">LocationVector</a></code></td>
 <td class="colLast"><span class="strong">LocationVector.</span><code><strong><a href="../../../../org/opensha2/geo/LocationVector.html#create(org.opensha2.geo.Location, org.opensha2.geo.Location)">create</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
       <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -598,7 +772,7 @@
  <code>Location</code> to another.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Region.html" title="class in org.opensha2.geo">Region</a></code></td>
 <td class="colLast"><span class="strong">Regions.</span><code><strong><a href="../../../../org/opensha2/geo/Regions.html#createCircular(java.lang.String, org.opensha2.geo.Location, double)">createCircular</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
               <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;center,
@@ -608,7 +782,7 @@
  <code>Region</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/GriddedRegion.html" title="class in org.opensha2.geo">GriddedRegion</a></code></td>
 <td class="colLast"><span class="strong">Regions.</span><code><strong><a href="../../../../org/opensha2/geo/Regions.html#createGridded(java.lang.String, org.opensha2.geo.LocationList, org.opensha2.geo.BorderType, double, double, org.opensha2.geo.Location)">createGridded</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
              <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;border,
@@ -621,7 +795,7 @@
  <code>GriddedRegion</code> from a list of border locations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Region.html" title="class in org.opensha2.geo">Region</a></code></td>
 <td class="colLast"><span class="strong">Regions.</span><code><strong><a href="../../../../org/opensha2/geo/Regions.html#createRectangular(java.lang.String, org.opensha2.geo.Location, org.opensha2.geo.Location)">createRectangular</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
                  <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc1,
@@ -629,7 +803,7 @@
 <div class="block">Creates a <code>Region</code> from a pair of <code>Location </code>s.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/GriddedRegion.html" title="class in org.opensha2.geo">GriddedRegion</a></code></td>
 <td class="colLast"><span class="strong">Regions.</span><code><strong><a href="../../../../org/opensha2/geo/Regions.html#createRectangularGridded(java.lang.String, org.opensha2.geo.Location, org.opensha2.geo.Location, double, double, org.opensha2.geo.Location)">createRectangularGridded</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
                         <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc1,
@@ -640,36 +814,36 @@
 <div class="block">Creates a <code>GriddedRegion</code> from a pair of <code>Location </code>s.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><span class="strong">Coordinates.</span><code><strong><a href="../../../../org/opensha2/geo/Coordinates.html#degreesLatPerKm(org.opensha2.geo.Location)">degreesLatPerKm</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;location)</code>
+<div class="block">Return a conversion factor for the number of degrees of latitude per km at
+ a given <code>location</code>.</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
-<td class="colLast"><span class="strong">GeoTools.</span><code><strong><a href="../../../../org/opensha2/geo/GeoTools.html#degreesLatPerKm(org.opensha2.geo.Location)">degreesLatPerKm</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p)</code>
-<div class="block">Returns the number of degrees of latitude per km at a given
- <code>Location</code>.</div>
+<td class="colLast"><span class="strong">Coordinates.</span><code><strong><a href="../../../../org/opensha2/geo/Coordinates.html#degreesLonPerKm(org.opensha2.geo.Location)">degreesLonPerKm</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;location)</code>
+<div class="block">Return a conversion factor for the number of degrees of longitude per km at
+ a given <code>location</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><span class="strong">GeoTools.</span><code><strong><a href="../../../../org/opensha2/geo/GeoTools.html#degreesLonPerKm(org.opensha2.geo.Location)">degreesLonPerKm</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p)</code>
-<div class="block">Returns the number of degrees of longitude per km at a given
- <code>Location</code>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#distanceAndRectangleFilter(org.opensha2.geo.Location, double)">distanceAndRectangleFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
                           double&nbsp;distance)</code>
 <div class="block">Return a radial distance <code>Location</code> filter that preprocesses
  <code>Location</code>s through a <a href="../../../../org/opensha2/geo/Locations.html#rectangleFilter(org.opensha2.geo.Location, double)"><code>Locations.rectangleFilter(Location, double)</code></a>.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
               double&nbsp;distance)</code>
 <div class="block">Return a radial distance <code>Location</code> filter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#distanceToLine(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)">distanceToLine</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
               <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2,
@@ -677,7 +851,7 @@
 <div class="block">Computes the shortest distance between a point and a line (great-circle).</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#distanceToLineFast(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)">distanceToLineFast</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                   <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2,
@@ -685,14 +859,14 @@
 <div class="block">Computes the shortest distance between a point and a line.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><span class="strong">Region.</span><code><strong><a href="../../../../org/opensha2/geo/Region.html#distanceToLocation(org.opensha2.geo.Location)">distanceToLocation</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
 <div class="block">Returns the minimum horizonatal distance (in km) between the border of this
  <code>Region</code> and the <code>Location</code> specified.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#distanceToSegment(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)">distanceToSegment</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                  <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2,
@@ -700,7 +874,7 @@
 <div class="block">Computes the shortest distance between a point and a line segment (i.e.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#distanceToSegmentFast(org.opensha2.geo.Location, org.opensha2.geo.Location, org.opensha2.geo.Location)">distanceToSegmentFast</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                      <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2,
@@ -708,7 +882,7 @@
 <div class="block">Computes the shortest distance between a point and a line segment.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/geom/Area.html?is-external=true" title="class or interface in java.awt.geom">Area</a></code></td>
 <td class="colLast"><span class="strong">RegionUtils.</span><code><strong><a href="../../../../org/opensha2/geo/RegionUtils.html#getNodeShape(org.opensha2.geo.Location, double, double)">getNodeShape</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p,
             double&nbsp;w,
@@ -717,7 +891,7 @@
  location with the given width and height.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#horzDistance(org.opensha2.geo.Location, org.opensha2.geo.Location)">horzDistance</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
             <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -725,28 +899,28 @@
  using the Haversine formula for computing the angle between two points.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#horzDistanceFast(org.opensha2.geo.Location, org.opensha2.geo.Location)">horzDistanceFast</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                 <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
 <div class="block">Calculates approximate distance between two <code>Location</code>s.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><span class="strong">GriddedRegion.</span><code><strong><a href="../../../../org/opensha2/geo/GriddedRegion.html#indexForLocation(org.opensha2.geo.Location)">indexForLocation</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
 <div class="block">Returns the index of the grid node associated with a given <code>Location</code>
  or -1 if the associated grid node is ouside this gridded region.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#isPole(org.opensha2.geo.Location)">isPole</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p)</code>
 <div class="block">Returns whether the supplied <code>Location</code> coincides with one of the
  poles.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#linearDistance(org.opensha2.geo.Location, org.opensha2.geo.Location)">linearDistance</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
               <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -754,7 +928,7 @@
  using spherical geometry.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#linearDistanceFast(org.opensha2.geo.Location, org.opensha2.geo.Location)">linearDistanceFast</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
                   <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -762,7 +936,7 @@
  <code>Location</code>s.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#location(org.opensha2.geo.Location, double, double)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p,
         double&nbsp;azimuth,
@@ -770,7 +944,7 @@
 <div class="block">Computes a <code>Location</code> given an origin point, bearing, and distance.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#location(org.opensha2.geo.Location, org.opensha2.geo.LocationVector)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p,
         <a href="../../../../org/opensha2/geo/LocationVector.html" title="class in org.opensha2.geo">LocationVector</a>&nbsp;d)</code>
@@ -778,14 +952,14 @@
  <code>LocationVector</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#minDistanceIndex(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">minDistanceIndex</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
                 <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
 <div class="block">Compute the segment index that is closest to a <code>Location</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#minDistanceToLine(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">minDistanceToLine</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
                  <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
@@ -793,7 +967,7 @@
  the line defined by connecting the points in a <code>LocationList</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#minDistanceToLocations(org.opensha2.geo.Location, org.opensha2.geo.LocationList)">minDistanceToLocations</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
                       <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;locs)</code>
@@ -801,7 +975,7 @@
  closest point in a <code>LocationList</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#plunge(org.opensha2.geo.Location, org.opensha2.geo.Location)">plunge</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
       <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -809,23 +983,23 @@
  second location relative to horizontal.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
-<td class="colLast"><span class="strong">GeoTools.</span><code><strong><a href="../../../../org/opensha2/geo/GeoTools.html#radiusAtLocation(org.opensha2.geo.Location)">radiusAtLocation</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p)</code>
-<div class="block">Returns the radius of the earth at the latitude of the supplied
+<td class="colLast"><span class="strong">Coordinates.</span><code><strong><a href="../../../../org/opensha2/geo/Coordinates.html#radiusAtLocation(org.opensha2.geo.Location)">radiusAtLocation</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;location)</code>
+<div class="block">Return the radius of the earth at the latitude of the supplied
  <code>Location</code> (see <a
  href="http://en.wikipedia.org/wiki/Earth_radius#Authalic_radius"
  target="_blank">Wikipedia</a> for source).</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&gt;</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#rectangleFilter(org.opensha2.geo.Location, double)">rectangleFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;origin,
                double&nbsp;distance)</code>
 <div class="block">Return a rectangular <code>Location</code> filter.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/LocationGrid.Builder.html" title="class in org.opensha2.geo">LocationGrid.Builder</a></code></td>
 <td class="colLast"><span class="strong">LocationGrid.Builder.</span><code><strong><a href="../../../../org/opensha2/geo/LocationGrid.Builder.html#set(int, int, org.opensha2.geo.Location)">set</a></strong>(int&nbsp;row,
    int&nbsp;column,
@@ -833,7 +1007,7 @@
 <div class="block">Set the Location at the specified <code>row</code> and <code>column</code> indices.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/GriddedRegion.html" title="class in org.opensha2.geo">GriddedRegion</a></code></td>
 <td class="colLast"><span class="strong">Regions.</span><code><strong><a href="../../../../org/opensha2/geo/Regions.html#toGridded(org.opensha2.geo.Region, double, double, org.opensha2.geo.Location)">toGridded</a></strong>(<a href="../../../../org/opensha2/geo/Region.html" title="class in org.opensha2.geo">Region</a>&nbsp;region,
          double&nbsp;latSpacing,
@@ -843,7 +1017,7 @@
  <code>Region</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><span class="strong">Locations.</span><code><strong><a href="../../../../org/opensha2/geo/Locations.html#vertDistance(org.opensha2.geo.Location, org.opensha2.geo.Location)">vertDistance</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p1,
             <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;p2)</code>
@@ -900,21 +1074,6 @@
 <!--   -->
 </a>
 <h3>Uses of <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a> in <a href="../../../../org/opensha2/util/package-summary.html">org.opensha2.util</a></h3>
-<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing fields, and an explanation">
-<caption><span>Fields in <a href="../../../../org/opensha2/util/package-summary.html">org.opensha2.util</a> declared as <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
-<td class="colLast"><span class="strong">Site.</span><code><strong><a href="../../../../org/opensha2/util/Site.html#location">location</a></strong></code>
-<div class="block">The location of this site.</div>
-</td>
-</tr>
-</tbody>
-</table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
 <caption><span>Methods in <a href="../../../../org/opensha2/util/package-summary.html">org.opensha2.util</a> that return <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -926,21 +1085,6 @@
 <td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
 <td class="colLast"><span class="strong">NamedLocation.</span><code><strong><a href="../../../../org/opensha2/util/NamedLocation.html#location()">location</a></strong>()</code>
 <div class="block">Return the location.</div>
-</td>
-</tr>
-</tbody>
-</table>
-<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
-<caption><span>Methods in <a href="../../../../org/opensha2/util/package-summary.html">org.opensha2.util</a> with parameters of type <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/util/Site.Builder.html" title="class in org.opensha2.util">Site.Builder</a></code></td>
-<td class="colLast"><span class="strong">Site.Builder.</span><code><strong><a href="../../../../org/opensha2/util/Site.Builder.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</code>
-<div class="block">The location of the <code>Site</code>.</div>
 </td>
 </tr>
 </tbody>
@@ -996,13 +1140,10 @@
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

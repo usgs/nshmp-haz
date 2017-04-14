@@ -36,7 +36,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../org/opensha2/DeaggCalc.html" title="class in org.opensha2"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../org/opensha2/ResponseSpectra.html" title="class in org.opensha2"><span class="strong">Next Class</span></a></li>
+<li><a href="../../org/opensha2/RateCalc.html" title="class in org.opensha2"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?org/opensha2/HazardCalc.html" target="_top">Frames</a></li>
@@ -61,13 +61,13 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -97,8 +97,7 @@
 <br>
 <pre>public class <span class="strong">HazardCalc</span>
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Compute probabilisitic seismic hazard at a <a href="../../org/opensha2/util/Site.html" title="class in org.opensha2.util"><code>Site</code></a> from a
- <a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model"><code>HazardModel</code></a>.</div>
+<div class="block">Compute probabilisitic seismic hazard from a <a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model"><code>HazardModel</code></a>.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd></dl>
 </li>
@@ -107,6 +106,27 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../org/opensha2/HazardCalc.html#VERSION">VERSION</a></strong></code>
+<div class="block">The Git application version.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_summary">
@@ -138,10 +158,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></code></td>
-<td class="colLast"><code><strong><a href="../../org/opensha2/HazardCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, com.google.common.base.Optional)">calc</a></strong>(<a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
+<td class="colLast"><code><strong><a href="../../org/opensha2/HazardCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site, com.google.common.base.Optional)">calc</a></strong>(<a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
     <a href="../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-    <a href="../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
-    <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</code>
+    <a href="../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+    <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</code>
 <div class="block">Compute hazard curves at a <code>site</code> for a <code>model</code> and
  <code>config</code>.</div>
 </td>
@@ -149,7 +169,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../org/opensha2/HazardCalc.html#main(java.lang.String[])">main</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)</code>
-<div class="block">Entry point for a hazard calculation.</div>
+<div class="block">Entry point for a probabilisitic seismic hazard calculation.</div>
 </td>
 </tr>
 </table>
@@ -168,6 +188,25 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="VERSION">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>VERSION</h4>
+<pre>public static final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> VERSION</pre>
+<div class="block">The Git application version. This version string applies to all other
+ nshnmp-haz applications.</div>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_detail">
@@ -198,7 +237,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>main</h4>
 <pre>public static&nbsp;void&nbsp;main(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;args)</pre>
-<div class="block">Entry point for a hazard calculation.
+<div class="block">Entry point for a probabilisitic seismic hazard calculation.
 
  <p>Computing hazard curves requires at least 2, and at most 3, arguments.
  At a minimum, the path to a model zip file or directory and the site(s) at
@@ -221,7 +260,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
       target="_top"> example calculations</a></dd></dl>
 </li>
 </ul>
-<a name="calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, com.google.common.base.Optional)">
+<a name="calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site, com.google.common.base.Optional)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -229,8 +268,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>calc</h4>
 <pre>public static&nbsp;<a href="../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;calc(<a href="../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
           <a href="../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-          <a href="../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
-          <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</pre>
+          <a href="../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+          <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</pre>
 <div class="block">Compute hazard curves at a <code>site</code> for a <code>model</code> and
  <code>config</code>. If an <code>executor</code> is supplied, it will be used to
  distribute tasks; otherwise, the calculation will run on the current
@@ -239,8 +278,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 
  <p><b>Note:</b> any model initialization settings in <code>config</code> will be
  ignored as the supplied model will already have been initialized.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - to use</dd><dd><code>config</code> - calculation configuration</dd><dd><code>site</code> - of interest</dd><dd><code>executor</code> - to use (<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base"><code>Optional</code></a>)</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a HazardResult</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - to use</dd><dd><code>config</code> - calculation configuration</dd><dd><code>site</code> - of interest</dd><dd><code>executor</code> - to use (<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base"><code>Optional</code></a>)</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a <code>Hazard</code> object</dd></dl>
 </li>
 </ul>
 </li>
@@ -270,7 +309,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../org/opensha2/DeaggCalc.html" title="class in org.opensha2"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../org/opensha2/ResponseSpectra.html" title="class in org.opensha2"><span class="strong">Next Class</span></a></li>
+<li><a href="../../org/opensha2/RateCalc.html" title="class in org.opensha2"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?org/opensha2/HazardCalc.html" target="_top">Frames</a></li>
@@ -295,13 +334,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -311,13 +350,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

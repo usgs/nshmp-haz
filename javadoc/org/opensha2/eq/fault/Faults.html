@@ -62,13 +62,13 @@
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
 </div>
@@ -97,7 +97,7 @@
 <br>
 <pre>public final class <span class="strong">Faults</span>
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">Fault utilities.</div>
+<div class="block">Constants and utility methods pertaining to faults.</div>
 <dl><dt><span class="strong">Author:</span></dt>
   <dd>Peter Powers</dd></dl>
 </li>
@@ -119,73 +119,22 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#CRUSTAL_DEPTH_RANGE">CRUSTAL_DEPTH_RANGE</a></strong></code>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid crustal rupture depths: [0 ‥ 40] km, inclusive.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#CRUSTAL_WIDTH_RANGE">CRUSTAL_WIDTH_RANGE</a></strong></code>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid crustal rupture widths: (0 ‥ 60] km, exclusive,
- inclusive.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#DIP_RANGE">DIP_RANGE</a></strong></code>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid fault dips: [0 ‥ 90]°, inclusive.</div>
+<div class="block">Supported fault dips: <code>[0..90]°</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#INTERFACE_DEPTH_RANGE">INTERFACE_DEPTH_RANGE</a></strong></code>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid interface rupture depths: [0 ‥ 60] km,
- inclusive.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#INTERFACE_WIDTH_RANGE">INTERFACE_WIDTH_RANGE</a></strong></code>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid interface rupture widths: (0 ‥ 200] km,
- exclusive, inclusive.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#RAKE_RANGE">RAKE_RANGE</a></strong></code>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid fault rakes: [180 ‥ 180]°, inclusive.</div>
+<div class="block">Supported fault rakes: <code>[-180..180]°</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#SLAB_DEPTH_RANGE">SLAB_DEPTH_RANGE</a></strong></code>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid intraslab rupture depths: [20 ‥ 700] km,
- inclusive.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#STRIKE_RANGE">STRIKE_RANGE</a></strong></code>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid fault strikes: [0 ‥ 360]°, inclusive.</div>
+<div class="block">Supported fault strikes: <code>[0..360)°</code>.</div>
 </td>
-</tr>
-</table>
-</li>
-</ul>
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor_summary">
-<!--   -->
-</a>
-<h3>Constructor Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
-<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colOne" scope="col">Constructor and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#Faults()">Faults</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -201,6 +150,30 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#checkDip(double)">checkDip</a></strong>(double&nbsp;dip)</code>
+<div class="block">Ensure <code>0° ≤ dip ≤ 90°</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#checkRake(double)">checkRake</a></strong>(double&nbsp;rake)</code>
+<div class="block">Ensure <code>-180° ≤ rake ≤ 180°</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#checkStrike(double)">checkStrike</a></strong>(double&nbsp;strike)</code>
+<div class="block">Ensure <code>0° ≤ strike &lt; 360°</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#checkTrace(org.opensha2.geo.LocationList)">checkTrace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace)</code>
+<div class="block">Ensure <code>trace</code> contains at least two points.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
@@ -322,61 +295,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <code>p2</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateDepth(double)">validateDepth</a></strong>(double&nbsp;depth)</code>
-<div class="block">Verifies that <code>depth</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#CRUSTAL_DEPTH_RANGE"><code>CRUSTAL_DEPTH_RANGE</code></a>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateDip(double)">validateDip</a></strong>(double&nbsp;dip)</code>
-<div class="block">Verifies that <code>dip</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#DIP_RANGE"><code>DIP_RANGE</code></a>.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateInterfaceDepth(double)">validateInterfaceDepth</a></strong>(double&nbsp;depth)</code>
-<div class="block">Verifies that <code>depth</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#INTERFACE_DEPTH_RANGE"><code>INTERFACE_DEPTH_RANGE</code></a>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateInterfaceWidth(double)">validateInterfaceWidth</a></strong>(double&nbsp;width)</code>
-<div class="block">Verifies that <code>width</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#INTERFACE_WIDTH_RANGE"><code>INTERFACE_WIDTH_RANGE</code></a>.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateRake(double)">validateRake</a></strong>(double&nbsp;rake)</code>
-<div class="block">Verifies that <code>rake</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#RAKE_RANGE"><code>RAKE_RANGE</code></a>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateSlabDepth(double)">validateSlabDepth</a></strong>(double&nbsp;depth)</code>
-<div class="block">Verifies that <code>depth</code> value is within <a href="../../../../org/opensha2/eq/fault/Faults.html#SLAB_DEPTH_RANGE"><code>SLAB_DEPTH_RANGE</code></a>.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateStrike(double)">validateStrike</a></strong>(double&nbsp;strike)</code>
-<div class="block">Verifies that <code>strike</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#STRIKE_RANGE"><code>STRIKE_RANGE</code></a>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateTrace(org.opensha2.geo.LocationList)">validateTrace</a></strong>(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace)</code>
-<div class="block">Ensures that a <code>LocationList</code> contains at least two points and is not
- <code>null</code>.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/fault/Faults.html#validateWidth(double)">validateWidth</a></strong>(double&nbsp;width)</code>
-<div class="block">Verifies that <code>width</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#CRUSTAL_WIDTH_RANGE"><code>CRUSTAL_WIDTH_RANGE</code></a>.</div>
-</td>
-</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -399,24 +317,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="STRIKE_RANGE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>STRIKE_RANGE</h4>
-<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; STRIKE_RANGE</pre>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid fault strikes: [0 ‥ 360]°, inclusive.</div>
-</li>
-</ul>
 <a name="DIP_RANGE">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>DIP_RANGE</h4>
-<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; DIP_RANGE</pre>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid fault dips: [0 ‥ 90]°, inclusive.</div>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; DIP_RANGE</pre>
+<div class="block">Supported fault dips: <code>[0..90]°</code>.</div>
 </li>
 </ul>
 <a name="RAKE_RANGE">
@@ -425,79 +333,18 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>RAKE_RANGE</h4>
-<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; RAKE_RANGE</pre>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid fault rakes: [180 ‥ 180]°, inclusive.</div>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; RAKE_RANGE</pre>
+<div class="block">Supported fault rakes: <code>[-180..180]°</code>.</div>
 </li>
 </ul>
-<a name="CRUSTAL_DEPTH_RANGE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>CRUSTAL_DEPTH_RANGE</h4>
-<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; CRUSTAL_DEPTH_RANGE</pre>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid crustal rupture depths: [0 ‥ 40] km, inclusive.</div>
-</li>
-</ul>
-<a name="CRUSTAL_WIDTH_RANGE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>CRUSTAL_WIDTH_RANGE</h4>
-<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; CRUSTAL_WIDTH_RANGE</pre>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid crustal rupture widths: (0 ‥ 60] km, exclusive,
- inclusive.</div>
-</li>
-</ul>
-<a name="SLAB_DEPTH_RANGE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SLAB_DEPTH_RANGE</h4>
-<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; SLAB_DEPTH_RANGE</pre>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid intraslab rupture depths: [20 ‥ 700] km,
- inclusive.</div>
-</li>
-</ul>
-<a name="INTERFACE_DEPTH_RANGE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>INTERFACE_DEPTH_RANGE</h4>
-<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; INTERFACE_DEPTH_RANGE</pre>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid interface rupture depths: [0 ‥ 60] km,
- inclusive.</div>
-</li>
-</ul>
-<a name="INTERFACE_WIDTH_RANGE">
+<a name="STRIKE_RANGE">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>INTERFACE_WIDTH_RANGE</h4>
-<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; INTERFACE_WIDTH_RANGE</pre>
-<div class="block">The <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a> of valid interface rupture widths: (0 ‥ 200] km,
- exclusive, inclusive.</div>
-</li>
-</ul>
-</li>
-</ul>
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor_detail">
-<!--   -->
-</a>
-<h3>Constructor Detail</h3>
-<a name="Faults()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>Faults</h4>
-<pre>public&nbsp;Faults()</pre>
+<h4>STRIKE_RANGE</h4>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; STRIKE_RANGE</pre>
+<div class="block">Supported fault strikes: <code>[0..360)°</code>.</div>
 </li>
 </ul>
 </li>
@@ -508,129 +355,63 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="validateDip(double)">
+<a name="checkDip(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>validateDip</h4>
-<pre>public static&nbsp;double&nbsp;validateDip(double&nbsp;dip)</pre>
-<div class="block">Verifies that <code>dip</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#DIP_RANGE"><code>DIP_RANGE</code></a>.</div>
+<h4>checkDip</h4>
+<pre>public static&nbsp;double&nbsp;checkDip(double&nbsp;dip)</pre>
+<div class="block">Ensure <code>0° ≤ dip ≤ 90°</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>dip</code> - to validate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied dip for use inline</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated dip</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>dip</code> is out of range</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>Data.checkInRange(Range, String, double)</code></a></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>dip</code> is outside the range
+         <code>[0..90]°</code></dd></dl>
 </li>
 </ul>
-<a name="validateStrike(double)">
+<a name="checkStrike(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>validateStrike</h4>
-<pre>public static&nbsp;double&nbsp;validateStrike(double&nbsp;strike)</pre>
-<div class="block">Verifies that <code>strike</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#STRIKE_RANGE"><code>STRIKE_RANGE</code></a>.</div>
+<h4>checkStrike</h4>
+<pre>public static&nbsp;double&nbsp;checkStrike(double&nbsp;strike)</pre>
+<div class="block">Ensure <code>0° ≤ strike &lt; 360°</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>strike</code> - to validate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied strike for use inline</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated strike</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>strike</code> is out of range</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>Data.checkInRange(Range, String, double)</code></a></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>strike</code> is outside the range
+         <code>[0..360)°</code></dd></dl>
 </li>
 </ul>
-<a name="validateRake(double)">
+<a name="checkRake(double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>validateRake</h4>
-<pre>public static&nbsp;double&nbsp;validateRake(double&nbsp;rake)</pre>
-<div class="block">Verifies that <code>rake</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#RAKE_RANGE"><code>RAKE_RANGE</code></a>.</div>
+<h4>checkRake</h4>
+<pre>public static&nbsp;double&nbsp;checkRake(double&nbsp;rake)</pre>
+<div class="block">Ensure <code>-180° ≤ rake ≤ 180°</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>rake</code> - to validate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied rake for use inline</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated rake</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>rake</code> is out of range</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>Data.checkInRange(Range, String, double)</code></a></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>rake</code> is outside the range
+         <code>[-180..180]°</code></dd></dl>
 </li>
 </ul>
-<a name="validateDepth(double)">
+<a name="checkTrace(org.opensha2.geo.LocationList)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>validateDepth</h4>
-<pre>public static&nbsp;double&nbsp;validateDepth(double&nbsp;depth)</pre>
-<div class="block">Verifies that <code>depth</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#CRUSTAL_DEPTH_RANGE"><code>CRUSTAL_DEPTH_RANGE</code></a>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>depth</code> - to validate (positive down)</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied depth for use inline</dd>
+<h4>checkTrace</h4>
+<pre>public static&nbsp;<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;checkTrace(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace)</pre>
+<div class="block">Ensure <code>trace</code> contains at least two points.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>trace</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated trace</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>depth</code> is out of range</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>Data.checkInRange(Range, String, double)</code></a></dd></dl>
-</li>
-</ul>
-<a name="validateSlabDepth(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>validateSlabDepth</h4>
-<pre>public static&nbsp;double&nbsp;validateSlabDepth(double&nbsp;depth)</pre>
-<div class="block">Verifies that <code>depth</code> value is within <a href="../../../../org/opensha2/eq/fault/Faults.html#SLAB_DEPTH_RANGE"><code>SLAB_DEPTH_RANGE</code></a>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>depth</code> - to validate (positive down)</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied depth for use inline</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>depth</code> is out of range</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>Data.checkInRange(Range, String, double)</code></a></dd></dl>
-</li>
-</ul>
-<a name="validateInterfaceDepth(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>validateInterfaceDepth</h4>
-<pre>public static&nbsp;double&nbsp;validateInterfaceDepth(double&nbsp;depth)</pre>
-<div class="block">Verifies that <code>depth</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#INTERFACE_DEPTH_RANGE"><code>INTERFACE_DEPTH_RANGE</code></a>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>depth</code> - to validate (positive down)</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied depth for use inline</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>depth</code> is out of range</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>Data.checkInRange(Range, String, double)</code></a></dd></dl>
-</li>
-</ul>
-<a name="validateWidth(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>validateWidth</h4>
-<pre>public static&nbsp;double&nbsp;validateWidth(double&nbsp;width)</pre>
-<div class="block">Verifies that <code>width</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#CRUSTAL_WIDTH_RANGE"><code>CRUSTAL_WIDTH_RANGE</code></a>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>width</code> - to validate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied width for use inline</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>width</code> is out of range</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>Data.checkInRange(Range, String, double)</code></a></dd></dl>
-</li>
-</ul>
-<a name="validateInterfaceWidth(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>validateInterfaceWidth</h4>
-<pre>public static&nbsp;double&nbsp;validateInterfaceWidth(double&nbsp;width)</pre>
-<div class="block">Verifies that <code>width</code> is within <a href="../../../../org/opensha2/eq/fault/Faults.html#INTERFACE_WIDTH_RANGE"><code>INTERFACE_WIDTH_RANGE</code></a>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>width</code> - to validate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied width for use inline</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>width</code> is out of range</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>Data.checkInRange(Range, String, double)</code></a></dd></dl>
-</li>
-</ul>
-<a name="validateTrace(org.opensha2.geo.LocationList)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>validateTrace</h4>
-<pre>public static&nbsp;<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;validateTrace(<a href="../../../../org/opensha2/geo/LocationList.html" title="class in org.opensha2.geo">LocationList</a>&nbsp;trace)</pre>
-<div class="block">Ensures that a <code>LocationList</code> contains at least two points and is not
- <code>null</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>trace</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied trace for use inline</dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>trace.size() &lt; 2</code></dd></dl>
 </li>
 </ul>
 <a name="getEqualLengthSubsectionTraces(org.opensha2.geo.LocationList, double)">
@@ -928,13 +709,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
 </div>
@@ -943,13 +724,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

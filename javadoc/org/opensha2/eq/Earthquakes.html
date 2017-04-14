@@ -1,0 +1,609 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+<title>Earthquakes (nshmp-haz)</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Earthquakes (nshmp-haz)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/Earthquakes.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li>Prev Class</li>
+<li><a href="../../../org/opensha2/eq/TectonicSetting.html" title="enum in org.opensha2.eq"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?org/opensha2/eq/Earthquakes.html" target="_top">Frames</a></li>
+<li><a href="Earthquakes.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">org.opensha2.eq</div>
+<h2 title="Class Earthquakes" class="title">Class Earthquakes</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>
+<ul class="inheritance">
+<li>org.opensha2.eq.Earthquakes</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public final class <span class="strong">Earthquakes</span>
+extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+<div class="block">Constants and utility methods pertaining to properties of earthquakes.
+ 
+ <p><strong>Note:</strong> The various fields and methods of this class that
+ relate to earthquake depths follow the positive-down convention of
+ seismology.</div>
+<dl><dt><span class="strong">Author:</span></dt>
+  <dd>Peter Powers</dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#CRUSTAL_DEPTH_RANGE">CRUSTAL_DEPTH_RANGE</a></strong></code>
+<div class="block">Supported crustal earthquake depths: <code>[0..40] km</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#CRUSTAL_WIDTH_RANGE">CRUSTAL_WIDTH_RANGE</a></strong></code>
+<div class="block">Supported crustal earthquake widths: <code>[0..60] km</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#DEPTH_RANGE">DEPTH_RANGE</a></strong></code>
+<div class="block">Supported earthquake depths: <code>[-5..700] km</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#INTERFACE_DEPTH_RANGE">INTERFACE_DEPTH_RANGE</a></strong></code>
+<div class="block">Supported subduction interface earthquake depths: <code>[0..60] km</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#INTERFACE_WIDTH_RANGE">INTERFACE_WIDTH_RANGE</a></strong></code>
+<div class="block">Supported subduction interface earthquake widths: <code>[0..200] km</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#MAG_RANGE">MAG_RANGE</a></strong></code>
+<div class="block">Supported earthquake magnitudes: <code>[-2.0..9.7]</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#MU">MU</a></strong></code>
+<div class="block">Shear modulus <code>μ = 3·10¹⁰ N·m⁻²</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#SLAB_DEPTH_RANGE">SLAB_DEPTH_RANGE</a></strong></code>
+<div class="block">Supported subduction intraslab earthquake depths: <code>[20..700] km</code>.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#checkCrustalDepth(double)">checkCrustalDepth</a></strong>(double&nbsp;depth)</code>
+<div class="block">Ensure <code>0 ≤ depth ≤ 40 km</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#checkCrustalWidth(double)">checkCrustalWidth</a></strong>(double&nbsp;width)</code>
+<div class="block">Ensure <code>0 ≤ width ≤ 60 km</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#checkDepth(double)">checkDepth</a></strong>(double&nbsp;depth)</code>
+<div class="block">Ensure <code>-5 ≤ depth ≤ 700 km</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#checkInterfaceDepth(double)">checkInterfaceDepth</a></strong>(double&nbsp;depth)</code>
+<div class="block">Ensure <code>0 ≤ depth ≤ 60 km</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#checkInterfaceWidth(double)">checkInterfaceWidth</a></strong>(double&nbsp;width)</code>
+<div class="block">Ensure <code>0 ≤ width ≤ 200 km</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#checkMagnitude(double)">checkMagnitude</a></strong>(double&nbsp;magnitude)</code>
+<div class="block">Ensure <code>-2.0 ≤ magnitude ≤ 9.7</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#checkSlabDepth(double)">checkSlabDepth</a></strong>(double&nbsp;depth)</code>
+<div class="block">Ensure <code>20 ≤ depth ≤ 700 km</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#magToMoment(double)">magToMoment</a></strong>(double&nbsp;magnitude)</code>
+<div class="block">Convert moment magnitude, <em>M</em><sub>W</sub>, to seismic moment,
+ <em>M</em>₀, following the equation of Hanks and Kanamori (1997).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#moment(double, double)">moment</a></strong>(double&nbsp;area,
+      double&nbsp;slip)</code>
+<div class="block">Calculate (in SI units) the seismic moment of a fault area and average
+ slip, assuming a shear modulus of <a href="../../../org/opensha2/eq/Earthquakes.html#MU"><code>MU</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#momentToMag(double)">momentToMag</a></strong>(double&nbsp;moment)</code>
+<div class="block">Convert seismic moment, <em>M</em>₀, to moment magnitude,
+ <em>M</em><sub>w</sub>, following the equation of Hanks and Kanamori
+ (1997).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/eq/Earthquakes.html#slip(double, double)">slip</a></strong>(double&nbsp;area,
+    double&nbsp;moment)</code>
+<div class="block">Calculate (in SI units) the average slip across a fault area with the
+ supplied moment, assuming a shear modulus of <a href="../../../org/opensha2/eq/Earthquakes.html#MU"><code>MU</code></a>.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="DEPTH_RANGE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DEPTH_RANGE</h4>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; DEPTH_RANGE</pre>
+<div class="block">Supported earthquake depths: <code>[-5..700] km</code>.</div>
+</li>
+</ul>
+<a name="CRUSTAL_DEPTH_RANGE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CRUSTAL_DEPTH_RANGE</h4>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; CRUSTAL_DEPTH_RANGE</pre>
+<div class="block">Supported crustal earthquake depths: <code>[0..40] km</code>.</div>
+</li>
+</ul>
+<a name="CRUSTAL_WIDTH_RANGE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CRUSTAL_WIDTH_RANGE</h4>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; CRUSTAL_WIDTH_RANGE</pre>
+<div class="block">Supported crustal earthquake widths: <code>[0..60] km</code>.</div>
+</li>
+</ul>
+<a name="INTERFACE_DEPTH_RANGE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>INTERFACE_DEPTH_RANGE</h4>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; INTERFACE_DEPTH_RANGE</pre>
+<div class="block">Supported subduction interface earthquake depths: <code>[0..60] km</code>.</div>
+</li>
+</ul>
+<a name="INTERFACE_WIDTH_RANGE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>INTERFACE_WIDTH_RANGE</h4>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; INTERFACE_WIDTH_RANGE</pre>
+<div class="block">Supported subduction interface earthquake widths: <code>[0..200] km</code>.</div>
+</li>
+</ul>
+<a name="SLAB_DEPTH_RANGE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SLAB_DEPTH_RANGE</h4>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; SLAB_DEPTH_RANGE</pre>
+<div class="block">Supported subduction intraslab earthquake depths: <code>[20..700] km</code>.</div>
+</li>
+</ul>
+<a name="MAG_RANGE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MAG_RANGE</h4>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; MAG_RANGE</pre>
+<div class="block">Supported earthquake magnitudes: <code>[-2.0..9.7]</code>. This range of
+ values is not bound to any particular magnitude scale.</div>
+</li>
+</ul>
+<a name="MU">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>MU</h4>
+<pre>public static final&nbsp;double MU</pre>
+<div class="block">Shear modulus <code>μ = 3·10¹⁰ N·m⁻²</code>.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#org.opensha2.eq.Earthquakes.MU">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="checkDepth(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkDepth</h4>
+<pre>public static&nbsp;double&nbsp;checkDepth(double&nbsp;depth)</pre>
+<div class="block">Ensure <code>-5 ≤ depth ≤ 700 km</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>depth</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated depth</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>depth</code> is outside the range
+         <code>[-5..700] km</code></dd></dl>
+</li>
+</ul>
+<a name="checkCrustalDepth(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkCrustalDepth</h4>
+<pre>public static&nbsp;double&nbsp;checkCrustalDepth(double&nbsp;depth)</pre>
+<div class="block">Ensure <code>0 ≤ depth ≤ 40 km</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>depth</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated depth for use inline</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>depth</code> is outside the range
+         <code>[0..40] km</code></dd></dl>
+</li>
+</ul>
+<a name="checkCrustalWidth(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkCrustalWidth</h4>
+<pre>public static&nbsp;double&nbsp;checkCrustalWidth(double&nbsp;width)</pre>
+<div class="block">Ensure <code>0 ≤ width ≤ 60 km</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>width</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated width</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>width</code> is outside the range
+         <code>[0..60] km</code></dd></dl>
+</li>
+</ul>
+<a name="checkInterfaceDepth(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkInterfaceDepth</h4>
+<pre>public static&nbsp;double&nbsp;checkInterfaceDepth(double&nbsp;depth)</pre>
+<div class="block">Ensure <code>0 ≤ depth ≤ 60 km</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>depth</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated depth</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>depth</code> is outside the range
+         <code>[0..60] km</code></dd></dl>
+</li>
+</ul>
+<a name="checkInterfaceWidth(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkInterfaceWidth</h4>
+<pre>public static&nbsp;double&nbsp;checkInterfaceWidth(double&nbsp;width)</pre>
+<div class="block">Ensure <code>0 ≤ width ≤ 200 km</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>width</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated width</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>width</code> is outside the range
+         <code>[0..200] km</code></dd></dl>
+</li>
+</ul>
+<a name="checkSlabDepth(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkSlabDepth</h4>
+<pre>public static&nbsp;double&nbsp;checkSlabDepth(double&nbsp;depth)</pre>
+<div class="block">Ensure <code>20 ≤ depth ≤ 700 km</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>depth</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated depth</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>depth</code> is outside the range
+         <code>[20..700] km</code></dd></dl>
+</li>
+</ul>
+<a name="checkMagnitude(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkMagnitude</h4>
+<pre>public static&nbsp;double&nbsp;checkMagnitude(double&nbsp;magnitude)</pre>
+<div class="block">Ensure <code>-2.0 ≤ magnitude ≤ 9.7</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>magnitude</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated magnitude</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>magnitude</code> value is outside the
+         range <code>[-2.0..9.7]</code></dd></dl>
+</li>
+</ul>
+<a name="magToMoment(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>magToMoment</h4>
+<pre>public static&nbsp;double&nbsp;magToMoment(double&nbsp;magnitude)</pre>
+<div class="block">Convert moment magnitude, <em>M</em><sub>W</sub>, to seismic moment,
+ <em>M</em>₀, following the equation of Hanks and Kanamori (1997).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>magnitude</code> - to convert</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the equivalent seismic moment in N·m</dd></dl>
+</li>
+</ul>
+<a name="momentToMag(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>momentToMag</h4>
+<pre>public static&nbsp;double&nbsp;momentToMag(double&nbsp;moment)</pre>
+<div class="block">Convert seismic moment, <em>M</em>₀, to moment magnitude,
+ <em>M</em><sub>w</sub>, following the equation of Hanks and Kanamori
+ (1997).</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>moment</code> - to convert (in N·m)</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the equivalent moment magnitude</dd></dl>
+</li>
+</ul>
+<a name="moment(double, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>moment</h4>
+<pre>public static&nbsp;double&nbsp;moment(double&nbsp;area,
+            double&nbsp;slip)</pre>
+<div class="block">Calculate (in SI units) the seismic moment of a fault area and average
+ slip, assuming a shear modulus of <a href="../../../org/opensha2/eq/Earthquakes.html#MU"><code>MU</code></a>. If slip <em>rate</em> is
+ supplied, moment <em>rate</em> is returned.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>area</code> - in m²</dd><dd><code>slip</code> - in m (or slip rate in m·t⁻¹)</dd>
+<dt><span class="strong">Returns:</span></dt><dd>moment (<em>M</em>₀) in N·m (or moment rate in N·m·t⁻¹)</dd></dl>
+</li>
+</ul>
+<a name="slip(double, double)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>slip</h4>
+<pre>public static&nbsp;double&nbsp;slip(double&nbsp;area,
+          double&nbsp;moment)</pre>
+<div class="block">Calculate (in SI units) the average slip across a fault area with the
+ supplied moment, assuming a shear modulus of <a href="../../../org/opensha2/eq/Earthquakes.html#MU"><code>MU</code></a>. If moment
+ <em>rate</em> is supplied, slip <em>rate</em> is returned.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>area</code> - in m²</dd><dd><code>moment</code> - <em>M</em>₀ in N·m (or moment rate in N·m·t⁻¹)</dd>
+<dt><span class="strong">Returns:</span></dt><dd>slip in m (or slip rate in m·t⁻¹)</dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="class-use/Earthquakes.html">Use</a></li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li>Prev Class</li>
+<li><a href="../../../org/opensha2/eq/TectonicSetting.html" title="enum in org.opensha2.eq"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?org/opensha2/eq/Earthquakes.html" target="_top">Frames</a></li>
+<li><a href="Earthquakes.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+<p class="legalCopy"><small>
+        <div style="float: right; font-size: 14px; padding: 4px;">
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
+      </small></p>
+</body>
+</html>

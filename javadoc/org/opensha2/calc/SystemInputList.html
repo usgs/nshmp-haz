@@ -35,7 +35,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../org/opensha2/calc/ReturnPeriod.html" title="enum in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../org/opensha2/calc/Sites.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../org/opensha2/calc/ThreadCount.html" title="enum in org.opensha2.calc"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -63,13 +63,13 @@
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#fields_inherited_from_class_java.util.AbstractList">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods_inherited_from_class_org.opensha2.calc.InputList">Method</a></li>
+<li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method_detail">Method</a></li>
 </ul>
 </div>
 <a name="skip-navbar_top">
@@ -158,7 +158,8 @@ extends <a href="../../../org/opensha2/calc/InputList.html" title="class in org.
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../org/opensha2/calc/SystemInputList.html#SystemInputList(org.opensha2.eq.model.SystemSourceSet)">SystemInputList</a></strong>(<a href="../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>&nbsp;parent)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../org/opensha2/calc/SystemInputList.html#SystemInputList(org.opensha2.eq.model.SystemSourceSet, java.util.Set)">SystemInputList</a></strong>(<a href="../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>&nbsp;parent,
+               <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;sectionIndices)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -169,6 +170,21 @@ extends <a href="../../../org/opensha2/calc/InputList.html" title="class in org.
 <!--   -->
 </a>
 <h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/SystemInputList.html#addBitset(java.util.BitSet)">addBitset</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/BitSet.html?is-external=true" title="class or interface in java.util">BitSet</a>&nbsp;bitset)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../org/opensha2/calc/SystemInputList.html" title="class in org.opensha2.calc">SystemInputList</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/calc/SystemInputList.html#empty(org.opensha2.eq.model.SystemSourceSet)">empty</a></strong>(<a href="../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>&nbsp;parent)</code>&nbsp;</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_org.opensha2.calc.InputList">
 <!--   -->
@@ -218,13 +234,40 @@ extends <a href="../../../org/opensha2/calc/InputList.html" title="class in org.
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="SystemInputList(org.opensha2.eq.model.SystemSourceSet)">
+<a name="SystemInputList(org.opensha2.eq.model.SystemSourceSet, java.util.Set)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SystemInputList</h4>
-<pre>public&nbsp;SystemInputList(<a href="../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>&nbsp;parent)</pre>
+<pre>public&nbsp;SystemInputList(<a href="../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>&nbsp;parent,
+               <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;sectionIndices)</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="empty(org.opensha2.eq.model.SystemSourceSet)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>empty</h4>
+<pre>public static&nbsp;<a href="../../../org/opensha2/calc/SystemInputList.html" title="class in org.opensha2.calc">SystemInputList</a>&nbsp;empty(<a href="../../../org/opensha2/eq/model/SystemSourceSet.html" title="class in org.opensha2.eq.model">SystemSourceSet</a>&nbsp;parent)</pre>
+</li>
+</ul>
+<a name="addBitset(java.util.BitSet)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>addBitset</h4>
+<pre>public&nbsp;void&nbsp;addBitset(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/BitSet.html?is-external=true" title="class or interface in java.util">BitSet</a>&nbsp;bitset)</pre>
 </li>
 </ul>
 </li>
@@ -253,7 +296,7 @@ extends <a href="../../../org/opensha2/calc/InputList.html" title="class in org.
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../org/opensha2/calc/ReturnPeriod.html" title="enum in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../org/opensha2/calc/Sites.html" title="class in org.opensha2.calc"><span class="strong">Prev Class</span></a></li>
 <li><a href="../../../org/opensha2/calc/ThreadCount.html" title="enum in org.opensha2.calc"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -281,13 +324,13 @@ extends <a href="../../../org/opensha2/calc/InputList.html" title="class in org.
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#fields_inherited_from_class_java.util.AbstractList">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods_inherited_from_class_org.opensha2.calc.InputList">Method</a></li>
+<li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method_detail">Method</a></li>
 </ul>
 </div>
 <a name="skip-navbar_bottom">
@@ -295,13 +338,10 @@ extends <a href="../../../org/opensha2/calc/InputList.html" title="class in org.
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

@@ -61,13 +61,13 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -99,10 +99,12 @@
 extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Utilities for operating on <code>double</code>-valued data.
 
- <p>The methods of this class:
+ <p>Unless otherwise noted, the methods of this class:
 
- <ul><li>Operate on data in place, ruturning a reference to the supplied
+ <ul><li>Operate on data in place, returning a reference to the supplied
  data.</li>
+ 
+ <li>Are not synchronized.</li>
 
  <li>Throw a <code>NullPointerException</code> when supplied with <code>null</code>
  data.</li>
@@ -112,57 +114,38 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <a href="../../../org/opensha2/data/Data.html#add(double, double...)"><code>add(double, double...)</code></a>).
 
  <li>Throw an <code>IllegalArgumentException</code> if they operate on all elements
- of a dataset and yield a singular result, and the supplied dataset is empty,
- with some documented exceptions.
+ of a dataset to yield a singular numeric or boolean value, but the supplied
+ dataset is empty, with some documented exceptions.
 
  <li>Throw an <code>IllegalArguementException</code> if they operate on multiple
  datasets and the datasets are not the same size.</li>
 
- <li>Do not check for finiteness (see <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/primitives/Doubles.html?is-external=true#isFinite(double)" title="class or interface in com.google.common.primitives"><code>Doubles.isFinite(double)</code></a>). See
- <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true" title="class or interface in java.lang"><code>Math</code></a> for details on the behavior of individual functions referenced
- herein.</li>
+ <li>Do not check for finiteness (see <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/primitives/Doubles.html?is-external=true#isFinite(double)" title="class or interface in com.google.common.primitives"><code>Doubles.isFinite(double)</code></a>). For
+ example, any method that operates on data containing <code>Double.NaN</code> or
+ infinite values will likely return <code>NaN</code>s or infinite values as a
+ result. See the Java <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true" title="class or interface in java.lang"><code>Math</code></a> class for details on the behavior of
+ individual functions referenced herein.</li>
 
- <li>Do not check for over/underflow.</li></ul>
+ <li>Do not check for over/under flow.</li></ul>
 
  <p>Buyer beware.
 
- <p>Furthermore, methods that return a result or information about a supplied
- data set will typically take a <code>Collection&lt;Double&gt;</code> as an argument,
- whereas methods that transform data in place will only take
- <code>List&lt;Double&gt;</code>s.
+ <p>Many methods in this class are overloaded with <code>Collection&lt;Double&gt;</code>
+ arguments. Those overloaded methods that return a single result or
+ information about a supplied data set typically require a
+ <code>Collection&lt;Double&gt;</code> as an argument, whereas methods that transform
+ data in place require a <code>List&lt;Double&gt;</code> subtype.
 
  <p>For other useful <code>Double</code> utilities, see the Google Guava
- <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/primitives/Doubles.html?is-external=true" title="class or interface in com.google.common.primitives"><code>Doubles</code></a> class.</div>
+ <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/primitives/Doubles.html?is-external=true" title="class or interface in com.google.common.primitives"><code>Doubles</code></a> class.</div>
 <dl><dt><span class="strong">Author:</span></dt>
-  <dd>Peter Powers</dd>
-<dt><span class="strong">See Also:</span></dt><dd><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/primitives/Doubles.html?is-external=true" title="class or interface in com.google.common.primitives"><code>Doubles</code></a></dd></dl>
+  <dd>Peter Powers</dd></dl>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field_summary">
-<!--   -->
-</a>
-<h3>Field Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#WEIGHT_TOLERANCE">WEIGHT_TOLERANCE</a></strong></code>
-<div class="block">Acceptable tolerance when summing weights and comparing to 1.0.</div>
-</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method_summary">
@@ -251,32 +234,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#arePositive(java.util.Collection)">arePositive</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</code>
-<div class="block">Determine whether <code>data</code> are all positive.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#arePositive(double...)">arePositive</a></strong>(double...&nbsp;data)</code>
-<div class="block">Determine whether <code>data</code> are all positive.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#arraySelect(java.lang.Object, int[])">arraySelect</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;array,
-           int[]&nbsp;indices)</code>
-<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#bitsToIndices(java.util.BitSet)">bitsToIndices</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/BitSet.html?is-external=true" title="class or interface in java.util">BitSet</a>&nbsp;bits)</code>
-<div class="block">Return an index <code>List&lt;Integer&gt;</code> corresponding to the 'set' bits of
- the supplied <code>BitSet</code>.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>static double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#buildCleanSequence(double, double, double, boolean, int)">buildCleanSequence</a></strong>(double&nbsp;min,
                   double&nbsp;max,
@@ -302,52 +259,107 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkDelta(double, double, double)">checkDelta</a></strong>(double&nbsp;min,
           double&nbsp;max,
           double&nbsp;Δ)</code>
-<div class="block">Validate series discretization parameters.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkFiniteness(double, java.lang.String)">checkFiniteness</a></strong>(double&nbsp;value,
-               <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label)</code>
-<div class="block">Checks that a value is finite.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double...)">checkInRange</a></strong>(<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
-            <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label,
-            double...&nbsp;values)</code>
-<div class="block">Verify that the domain of a <code>double[]</code> does not exceed that of the
- supplied <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)">checkInRange</a></strong>(<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
-            <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label,
-            double&nbsp;value)</code>
-<div class="block">Verify that a value falls within a specified <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkWeight(double)">checkWeight</a></strong>(double&nbsp;weight)</code>
-<div class="block">Confirm that a weight value is <code>0.0 &lt; weight ≤ 1.0</code>.</div>
+<div class="block">Ensure validity of sequence discretization parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkWeightSum(java.util.Collection)">checkWeightSum</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights)</code>
-<div class="block">Confirm that a <code>Collection&lt;Double&gt;</code> of weights sums to 1.0 within
- <a href="../../../org/opensha2/data/Data.html#WEIGHT_TOLERANCE"><code>WEIGHT_TOLERANCE</code></a>.</div>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkFinite(java.util.Collection)">checkFinite</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</code>
+<div class="block">Ensure the elements of <code>data</code> are finite.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#clean(int, double...)">clean</a></strong>(int&nbsp;scale,
-     double...&nbsp;data)</code>
-<div class="block">'Clean' the elements of <code>data</code> in place to be double values of a
- specified scale/precision.</div>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkFinite(double...)">checkFinite</a></strong>(double...&nbsp;data)</code>
+<div class="block">Ensure the elements of <code>data</code> are finite.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkFinite(java.lang.String, double)">checkFinite</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label,
+           double&nbsp;value)</code>
+<div class="block">Ensure <code>value</code> is finite.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.util.Collection)">checkInRange</a></strong>(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</code>
+<div class="block">Ensure the elements of <code>data</code> fall within the specified <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>
+ .</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double[]</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, double...)">checkInRange</a></strong>(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
+            double...&nbsp;data)</code>
+<div class="block">Ensure the elements of <code>data</code> fall within the specified <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>
+ .</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)">checkInRange</a></strong>(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label,
+            double&nbsp;value)</code>
+<div class="block">Ensure <code>value</code> falls within the specified <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkSize(int, java.util.Collection)">checkSize</a></strong>(int&nbsp;min,
+         <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</code>
+<div class="block">Ensure <code>data.size() ≥ min</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static double[]</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkSize(int, double[])">checkSize</a></strong>(int&nbsp;min,
+         double[]&nbsp;data)</code>
+<div class="block">Ensure <code>data.length ≥ min</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkSizes(java.util.Collection, java.util.Collection)">checkSizes</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data1,
+          <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data2)</code>
+<div class="block">Ensure the supplied datasets are the same size.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkSizes(double[][][], double[][][])">checkSizes</a></strong>(double[][][]&nbsp;data1,
+          double[][][]&nbsp;data2)</code>
+<div class="block">Ensure the 1<sup>st</sup> dimensions of the supplied datasets are the same
+ size.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkSizes(double[][], double[][])">checkSizes</a></strong>(double[][]&nbsp;data1,
+          double[][]&nbsp;data2)</code>
+<div class="block">Ensure the 1<sup>st</sup> dimensions of the supplied datasets are the same
+ size.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkSizes(double[], double[])">checkSizes</a></strong>(double[]&nbsp;data1,
+          double[]&nbsp;data2)</code>
+<div class="block">Ensure the supplied datasets are the same size.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static double</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkWeight(double)">checkWeight</a></strong>(double&nbsp;weight)</code>
+<div class="block">Ensure <code>0.0 &lt; weight ≤ 1.0</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#checkWeights(java.util.Collection)">checkWeights</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights)</code>
+<div class="block">Ensure each <code>0.0 ≤ weight ≤ 1.0</code> and
+ <code>sum(weights) = 1.0 ± 0.0001</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -431,109 +443,27 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#indices(int)">indices</a></strong>(int&nbsp;size)</code>
-<div class="block">Create an <code>int[]</code> of values ascending from <code>0</code> to
- <code>1-size</code>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#indices(int, int)">indices</a></strong>(int&nbsp;from,
-       int&nbsp;to)</code>
-<div class="block">Create an <code>int[]</code> of values spanning <code>from</code> to <code>to</code>,
- inclusive.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/BitSet.html?is-external=true" title="class or interface in java.util">BitSet</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#indicesToBits(java.util.List, int)">indicesToBits</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;indices,
-             int&nbsp;capacity)</code>
-<div class="block">Return a <code>BitSet</code> with <code>capacity</code> and with all bits at
- <code>indices</code> 'set'.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#isMonotonic(boolean, boolean, double...)">isMonotonic</a></strong>(boolean&nbsp;increasing,
-           boolean&nbsp;strict,
-           double...&nbsp;data)</code>
-<div class="block">Determine whether the elements of <code>data</code> increase or decrease
- monotonically, with a <code>strict</code> flag indicating if identical adjacent
- elements are forbidden.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#isZeroValued(double...)">isZeroValued</a></strong>(double...&nbsp;data)</code>
-<div class="block">Return whether all the elements of <code>data</code> are equal to 0.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>static double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#ln(double...)">ln</a></strong>(double...&nbsp;data)</code>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#ln(double[])">ln</a></strong>(double[]&nbsp;data)</code>
 <div class="block">Take the natural logarithm of the elements of <code>data</code> in place.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#ln(java.util.List)">ln</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</code>
 <div class="block">Take the natural logarithm of the elements of <code>data</code> in place.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#log(double...)">log</a></strong>(double...&nbsp;data)</code>
 <div class="block">Take the base-10 logarithm of the elements of <code>data</code> in place.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#log(java.util.List)">log</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</code>
 <div class="block">Take the base-10 logarithm of the elements of <code>data</code> in place.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#maxIndex(double...)">maxIndex</a></strong>(double...&nbsp;data)</code>
-<div class="block">Find the index of the maximum value in <code>data</code>.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#maxIndex(double[][])">maxIndex</a></strong>(double[][]&nbsp;data)</code>
-<div class="block">Find the indices of the maximum value in <code>data</code>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#maxIndex(double[][][])">maxIndex</a></strong>(double[][][]&nbsp;data)</code>
-<div class="block">Find the indices of the maximum value in <code>data</code>.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#minIndex(double...)">minIndex</a></strong>(double...&nbsp;data)</code>
-<div class="block">Find the index of the minimum value in <code>data</code>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#minIndex(double[][])">minIndex</a></strong>(double[][]&nbsp;data)</code>
-<div class="block">Find the indices of the minimum value in <code>data</code>.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#minIndex(double[][][])">minIndex</a></strong>(double[][][]&nbsp;data)</code>
-<div class="block">Find the indices of the minimum value in <code>data</code>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static &lt;K&gt;&nbsp;K</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#minKey(java.util.Map, java.util.Collection)">minKey</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;K,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data,
-      <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;K&gt;&nbsp;keys)</code>
-<div class="block">Returns the key associated with the minimum value in the supplied dataset.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -621,16 +551,18 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#randomValues(int, java.lang.Long)">randomValues</a></strong>(int&nbsp;size,
-            <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Long.html?is-external=true" title="class or interface in java.lang">Long</a>&nbsp;seed)</code>
-<div class="block">Create a <code>double[]</code> of pseudorandom values.</div>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#round(int, double...)">round</a></strong>(int&nbsp;scale,
+     double...&nbsp;data)</code>
+<div class="block">Round the elements of <code>data</code> in place to double values of a specified
+ scale (precision).</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#sortedIndices(java.util.List, boolean)">sortedIndices</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data,
-             boolean&nbsp;ascending)</code>
-<div class="block">Create an index <code>List</code> of pointers to sorted <code>data</code>.</div>
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#round(int, java.util.List)">round</a></strong>(int&nbsp;scale,
+     <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</code>
+<div class="block">Round the elements of <code>data</code> in place to double values of a specified
+ scale (precision).</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -673,14 +605,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#transform(com.google.common.base.Function, double...)">transform</a></strong>(<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;function,
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#transform(com.google.common.base.Function, double...)">transform</a></strong>(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;function,
          double...&nbsp;data)</code>
 <div class="block">Transform <code>data</code> by a <code>function</code> in place.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#transform(com.google.common.base.Function, java.util.List)">transform</a></strong>(<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;function,
+<td class="colLast"><code><strong><a href="../../../org/opensha2/data/Data.html#transform(com.google.common.base.Function, java.util.List)">transform</a></strong>(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;function,
          <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</code>
 <div class="block">Transform <code>data</code> by a <code>function</code> in place.</div>
 </td>
@@ -701,26 +633,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ============ FIELD DETAIL =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field_detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a name="WEIGHT_TOLERANCE">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>WEIGHT_TOLERANCE</h4>
-<pre>public static final&nbsp;double WEIGHT_TOLERANCE</pre>
-<div class="block">Acceptable tolerance when summing weights and comparing to 1.0. Currently
- set to 1e-8.</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#org.opensha2.data.Data.WEIGHT_TOLERANCE">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-</li>
-</ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method_detail">
@@ -779,6 +691,19 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
 </li>
 </ul>
+<a name="add(java.util.List, java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>add</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;add(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data1,
+               <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data2)</pre>
+<div class="block">Add the values of <code>data2</code> to <code>data1</code> in place.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data1</code> - </dd><dd><code>data2</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to <code>data1</code></dd></dl>
+</li>
+</ul>
 <a name="add(double[], double[])">
 <!--   -->
 </a>
@@ -813,19 +738,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>add</h4>
 <pre>public static&nbsp;double[][][]&nbsp;add(double[][][]&nbsp;data1,
                double[][][]&nbsp;data2)</pre>
-<div class="block">Add the values of <code>data2</code> to <code>data1</code> in place.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data1</code> - </dd><dd><code>data2</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to <code>data1</code></dd></dl>
-</li>
-</ul>
-<a name="add(java.util.List, java.util.List)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>add</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;add(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data1,
-               <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data2)</pre>
 <div class="block">Add the values of <code>data2</code> to <code>data1</code> in place.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data1</code> - </dd><dd><code>data2</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd>a reference to <code>data1</code></dd></dl>
@@ -930,20 +842,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
 </li>
 </ul>
-<a name="multiply(double[], double[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>multiply</h4>
-<pre>public static&nbsp;double[]&nbsp;multiply(double[]&nbsp;data1,
-                double[]&nbsp;data2)</pre>
-<div class="block">Multiply the elements of <code>data1</code> by the elements of <code>data2</code> in
- place.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data1</code> - </dd><dd><code>data2</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to <code>data1</code></dd></dl>
-</li>
-</ul>
 <a name="multiply(java.util.List, java.util.List)">
 <!--   -->
 </a>
@@ -952,6 +850,20 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>multiply</h4>
 <pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;multiply(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data1,
                     <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data2)</pre>
+<div class="block">Multiply the elements of <code>data1</code> by the elements of <code>data2</code> in
+ place.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data1</code> - </dd><dd><code>data2</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to <code>data1</code></dd></dl>
+</li>
+</ul>
+<a name="multiply(double[], double[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>multiply</h4>
+<pre>public static&nbsp;double[]&nbsp;multiply(double[]&nbsp;data1,
+                double[]&nbsp;data2)</pre>
 <div class="block">Multiply the elements of <code>data1</code> by the elements of <code>data2</code> in
  place.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data1</code> - </dd><dd><code>data2</code> - </dd>
@@ -988,18 +900,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a reference to <code>data1</code></dd></dl>
 </li>
 </ul>
-<a name="abs(double...)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>abs</h4>
-<pre>public static&nbsp;double[]&nbsp;abs(double...&nbsp;data)</pre>
-<div class="block">Set the elements of <code>data</code> to their absolute value in place.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#abs(double)" title="class or interface in java.lang"><code>Math.abs(double)</code></a></dd></dl>
-</li>
-</ul>
 <a name="abs(java.util.List)">
 <!--   -->
 </a>
@@ -1012,17 +912,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#abs(double)" title="class or interface in java.lang"><code>Math.abs(double)</code></a></dd></dl>
 </li>
 </ul>
-<a name="exp(double...)">
+<a name="abs(double...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>exp</h4>
-<pre>public static&nbsp;double[]&nbsp;exp(double...&nbsp;data)</pre>
-<div class="block">Raise Euler's number <code>e</code> to each of the elements of <code>data</code> in
- place.</div>
+<h4>abs</h4>
+<pre>public static&nbsp;double[]&nbsp;abs(double...&nbsp;data)</pre>
+<div class="block">Set the elements of <code>data</code> to their absolute value in place.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#exp(double)" title="class or interface in java.lang"><code>Math.exp(double)</code></a></dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#abs(double)" title="class or interface in java.lang"><code>Math.abs(double)</code></a></dd></dl>
 </li>
 </ul>
 <a name="exp(java.util.List)">
@@ -1038,16 +937,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#exp(double)" title="class or interface in java.lang"><code>Math.exp(double)</code></a></dd></dl>
 </li>
 </ul>
-<a name="ln(double...)">
+<a name="exp(double...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>ln</h4>
-<pre>public static&nbsp;double[]&nbsp;ln(double...&nbsp;data)</pre>
-<div class="block">Take the natural logarithm of the elements of <code>data</code> in place.</div>
+<h4>exp</h4>
+<pre>public static&nbsp;double[]&nbsp;exp(double...&nbsp;data)</pre>
+<div class="block">Raise Euler's number <code>e</code> to each of the elements of <code>data</code> in
+ place.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#log(double)" title="class or interface in java.lang"><code>Math.log(double)</code></a></dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#exp(double)" title="class or interface in java.lang"><code>Math.exp(double)</code></a></dd></dl>
 </li>
 </ul>
 <a name="ln(java.util.List)">
@@ -1062,16 +962,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#log(double)" title="class or interface in java.lang"><code>Math.log(double)</code></a></dd></dl>
 </li>
 </ul>
-<a name="pow10(double...)">
+<a name="ln(double[])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>pow10</h4>
-<pre>public static&nbsp;double[]&nbsp;pow10(double...&nbsp;data)</pre>
-<div class="block">Raise the elements of <code>data</code> to the power of 10 in place.</div>
+<h4>ln</h4>
+<pre>public static&nbsp;double[]&nbsp;ln(double[]&nbsp;data)</pre>
+<div class="block">Take the natural logarithm of the elements of <code>data</code> in place.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#pow(double, double)" title="class or interface in java.lang"><code>Math.pow(double, double)</code></a></dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#log(double)" title="class or interface in java.lang"><code>Math.log(double)</code></a></dd></dl>
 </li>
 </ul>
 <a name="pow10(java.util.List)">
@@ -1086,16 +986,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#pow(double, double)" title="class or interface in java.lang"><code>Math.pow(double, double)</code></a></dd></dl>
 </li>
 </ul>
-<a name="log(double...)">
+<a name="pow10(double...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>log</h4>
-<pre>public static&nbsp;double[]&nbsp;log(double...&nbsp;data)</pre>
-<div class="block">Take the base-10 logarithm of the elements of <code>data</code> in place.</div>
+<h4>pow10</h4>
+<pre>public static&nbsp;double[]&nbsp;pow10(double...&nbsp;data)</pre>
+<div class="block">Raise the elements of <code>data</code> to the power of 10 in place.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#log10(double)" title="class or interface in java.lang"><code>Math.log10(double)</code></a></dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#pow(double, double)" title="class or interface in java.lang"><code>Math.pow(double, double)</code></a></dd></dl>
 </li>
 </ul>
 <a name="log(java.util.List)">
@@ -1110,16 +1010,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#log10(double)" title="class or interface in java.lang"><code>Math.log10(double)</code></a></dd></dl>
 </li>
 </ul>
-<a name="flip(double...)">
+<a name="log(double...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>flip</h4>
-<pre>public static&nbsp;double[]&nbsp;flip(double...&nbsp;data)</pre>
-<div class="block">Flip the sign of the elements of <code>data</code> in place.</div>
+<h4>log</h4>
+<pre>public static&nbsp;double[]&nbsp;log(double...&nbsp;data)</pre>
+<div class="block">Take the base-10 logarithm of the elements of <code>data</code> in place.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Math.html?is-external=true#log10(double)" title="class or interface in java.lang"><code>Math.log10(double)</code></a></dd></dl>
 </li>
 </ul>
 <a name="flip(java.util.List)">
@@ -1134,19 +1034,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
 </li>
 </ul>
-<a name="sum(double...)">
+<a name="flip(double...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>sum</h4>
-<pre>public static&nbsp;double&nbsp;sum(double...&nbsp;data)</pre>
-<div class="block">Sum the elements of <code>data</code>. Method returns <code>Double.NaN</code> or
- infinite values if <code>data</code> contains <code>Double.NaN</code> or infinite
- values, respectively. Method returns zero for empty <code>data</code> argument
- or no varargs.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to sum</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the sum of the supplied values</dd></dl>
+<h4>flip</h4>
+<pre>public static&nbsp;double[]&nbsp;flip(double...&nbsp;data)</pre>
+<div class="block">Flip the sign of the elements of <code>data</code> in place.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
 </li>
 </ul>
 <a name="sum(java.util.Collection)">
@@ -1156,10 +1053,21 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>sum</h4>
 <pre>public static&nbsp;double&nbsp;sum(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</pre>
-<div class="block">Sum the elements of <code>data</code>. Method returns <code>Double.NaN</code> or
- infinite values if <code>data</code> contains <code>Double.NaN</code> or infinite
- values, respectively. Method returns zero for an empty <code>data</code>
- argument.</div>
+<div class="block">Sum the elements of <code>data</code>. Method returns zero for an empty
+ <code>data</code> argument.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to sum</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the sum of the supplied values</dd></dl>
+</li>
+</ul>
+<a name="sum(double...)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>sum</h4>
+<pre>public static&nbsp;double&nbsp;sum(double...&nbsp;data)</pre>
+<div class="block">Sum the elements of <code>data</code>. Method returns zero for empty
+ <code>data</code> argument or no varargs.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to sum</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the sum of the supplied values</dd></dl>
 </li>
@@ -1190,148 +1098,92 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
          <code>data</code></dd></dl>
 </li>
 </ul>
-<a name="transform(com.google.common.base.Function, double...)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>transform</h4>
-<pre>public static&nbsp;double[]&nbsp;transform(<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;function,
-                 double...&nbsp;data)</pre>
-<div class="block">Transform <code>data</code> by a <code>function</code> in place.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - to apply</dd><dd><code>data</code> - to operate on</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
-</li>
-</ul>
 <a name="transform(com.google.common.base.Function, java.util.List)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>transform</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;transform(<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;function,
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;transform(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;function,
                      <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</pre>
 <div class="block">Transform <code>data</code> by a <code>function</code> in place.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - to apply</dd><dd><code>data</code> - to operate on</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
 </li>
 </ul>
-<a name="minIndex(double...)">
+<a name="transform(com.google.common.base.Function, double...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>minIndex</h4>
-<pre>public static&nbsp;int&nbsp;minIndex(double...&nbsp;data)</pre>
-<div class="block">Find the index of the minimum value in <code>data</code>. For equivalent minima,
- method returns the index of the first minimum encountered. If the supplied
- array is empty, method returns <code>-1</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to evaluate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the index of the minimum value or <code>-1</code> if the array is empty</dd></dl>
+<h4>transform</h4>
+<pre>public static&nbsp;double[]&nbsp;transform(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Function.html?is-external=true" title="class or interface in com.google.common.base">Function</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;function,
+                 double...&nbsp;data)</pre>
+<div class="block">Transform <code>data</code> by a <code>function</code> in place.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - to apply</dd><dd><code>data</code> - to operate on</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
 </li>
 </ul>
-<a name="minIndex(double[][])">
+<a name="normalize(java.util.List)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>minIndex</h4>
-<pre>public static&nbsp;int[]&nbsp;minIndex(double[][]&nbsp;data)</pre>
-<div class="block">Find the indices of the minimum value in <code>data</code>. For equivalent
- maxima, method returns the indices of the first minimum encountered. If the
- 1st dimension of the supplied array is empty or all arrays in the 2nd
- dimension are empty, method returns <code>[-1, -1]</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to evaluate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the indices of the minimum value or <code>[-1, -1]</code> for empty
-         arrays</dd></dl>
+<h4>normalize</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;normalize(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</pre>
+<div class="block">Normalize the elements of <code>data</code> in place such that they sum to 1.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to normalize</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>data</code> is empty or no varargs are
+         supplied, contains values outside the range <code>[0..+Inf)</code>, or
+         sums to a value outside the range <code>(0..+Inf)</code></dd></dl>
 </li>
 </ul>
-<a name="minIndex(double[][][])">
+<a name="normalize(double...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>minIndex</h4>
-<pre>public static&nbsp;int[]&nbsp;minIndex(double[][][]&nbsp;data)</pre>
-<div class="block">Find the indices of the minimum value in <code>data</code>. For equivalent
- minima, method returns the indices of the first minimum encountered. If the
- 1st dimension of the supplied array is empty or all arrays in the 2nd or
- 3rd dimensions are empty, method returns <code>[-1, -1, -1]</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to evaluate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the indices of the minimum value or <code>[-1, -1, -1]</code> for empty
-         arrays</dd></dl>
+<h4>normalize</h4>
+<pre>public static&nbsp;double[]&nbsp;normalize(double...&nbsp;data)</pre>
+<div class="block">Normalize the elements of <code>data</code> in place such that they sum to 1.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to normalize</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>data</code> is empty or no varargs are
+         supplied, contains values outside the range <code>[0..+Inf)</code>, or
+         sums to a value outside the range <code>(0..+Inf)</code></dd></dl>
 </li>
 </ul>
-<a name="maxIndex(double...)">
+<a name="round(int, java.util.List)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>maxIndex</h4>
-<pre>public static&nbsp;int&nbsp;maxIndex(double...&nbsp;data)</pre>
-<div class="block">Find the index of the maximum value in <code>data</code>. For equivalent maxima,
- method returns the index of the first maximum encountered. If the supplied
- array is empty, method returns <code>-1</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to evaluate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the index of the maximum value or -1 if the array is empty</dd></dl>
+<h4>round</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;round(int&nbsp;scale,
+                 <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</pre>
+<div class="block">Round the elements of <code>data</code> in place to double values of a specified
+ scale (precision). Internally, this method uses the rounding and precision
+ functionality of <a href="http://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html?is-external=true" title="class or interface in java.math"><code>BigDecimal</code></a>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd><dd><code>scale</code> - decimal precision</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/util/Maths.html#round(double, int)"><code>Maths.round(double, int)</code></a></dd></dl>
 </li>
 </ul>
-<a name="maxIndex(double[][])">
+<a name="round(int, double...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>maxIndex</h4>
-<pre>public static&nbsp;int[]&nbsp;maxIndex(double[][]&nbsp;data)</pre>
-<div class="block">Find the indices of the maximum value in <code>data</code>. For equivalent
- maxima, method returns the indices of the first maximum encountered. If the
- 1st dimension of the supplied array is empty or all arrays in the 2nd
- dimension are empty, method returns <code>[-1, -1]</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to evaluate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the indices of the maximum value or <code>[-1, -1]</code> for empty
-         arrays</dd></dl>
-</li>
-</ul>
-<a name="maxIndex(double[][][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>maxIndex</h4>
-<pre>public static&nbsp;int[]&nbsp;maxIndex(double[][][]&nbsp;data)</pre>
-<div class="block">Find the indices of the maximum value in <code>data</code>. For equivalent
- maxima, method returns the indices of the first maximum encountered. If the
- 1st dimension of the supplied array is empty or all arrays in the 2nd or
- 3rd dimensions are empty, method returns <code>[-1, -1, -1]</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to evaluate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the indices of the maximum value or <code>[-1, -1, -1]</code> for empty
-         arrays</dd></dl>
-</li>
-</ul>
-<a name="arePositive(double...)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>arePositive</h4>
-<pre>public static&nbsp;boolean&nbsp;arePositive(double...&nbsp;data)</pre>
-<div class="block">Determine whether <code>data</code> are all positive. Method returns
- <code>true</code> if data is empty or no varargs are supplied.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to evaluate</dd>
-<dt><span class="strong">Returns:</span></dt><dd><code>true</code> if all values are ≥0; <code>false</code> otherwise</dd></dl>
-</li>
-</ul>
-<a name="arePositive(java.util.Collection)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>arePositive</h4>
-<pre>public static&nbsp;boolean&nbsp;arePositive(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</pre>
-<div class="block">Determine whether <code>data</code> are all positive. Method returns
- <code>true</code> if data is empty.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to evaluate</dd>
-<dt><span class="strong">Returns:</span></dt><dd><code>true</code> if all values are ≥0</dd></dl>
+<h4>round</h4>
+<pre>public static&nbsp;double[]&nbsp;round(int&nbsp;scale,
+             double...&nbsp;data)</pre>
+<div class="block">Round the elements of <code>data</code> in place to double values of a specified
+ scale (precision). Internally, this method uses the rounding and precision
+ functionality of <a href="http://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html?is-external=true" title="class or interface in java.math"><code>BigDecimal</code></a>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd><dd><code>scale</code> - decimal precision</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/util/Maths.html#round(double, int)"><code>Maths.round(double, int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="positivize(double...)">
@@ -1342,60 +1194,9 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>positivize</h4>
 <pre>public static&nbsp;double[]&nbsp;positivize(double...&nbsp;data)</pre>
 <div class="block">Ensures positivity of values by adding <code>Math.abs(min(data))</code> in place
- if <code>min &lt; 0</code>. Method returns an empty array if <code>data</code> is empty
- or no varargs are supplied.</div>
+ if <code>min &lt; 0</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied data, positivized if necessary</dd></dl>
-</li>
-</ul>
-<a name="isZeroValued(double...)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isZeroValued</h4>
-<pre>public static&nbsp;boolean&nbsp;isZeroValued(double...&nbsp;data)</pre>
-<div class="block">Return whether all the elements of <code>data</code> are equal to 0.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to evaluate</dd></dl>
-</li>
-</ul>
-<a name="isMonotonic(boolean, boolean, double...)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isMonotonic</h4>
-<pre>public static&nbsp;boolean&nbsp;isMonotonic(boolean&nbsp;increasing,
-                  boolean&nbsp;strict,
-                  double...&nbsp;data)</pre>
-<div class="block">Determine whether the elements of <code>data</code> increase or decrease
- monotonically, with a <code>strict</code> flag indicating if identical adjacent
- elements are forbidden. The <code>strict</code> flag could be <code>true</code> if
- checking the x-values of a function for any steps, or <code>false</code> if
- checking the y-values of a cumulative distribution function, which are
- commonly constant.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>increasing</code> - if <code>true</code>, descending if <code>false</code></dd><dd><code>strict</code> - <code>true</code> if data must always increase or decrease,
-        <code>false</code> if identical adjacent values are permitted</dd><dd><code>data</code> - to evaluate</dd>
-<dt><span class="strong">Returns:</span></dt><dd><code>true</code> if monotonic, <code>false</code> otherwise</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if fewer than two data elements are
-         supplied</dd></dl>
-</li>
-</ul>
-<a name="percentDiff(double, double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>percentDiff</h4>
-<pre>public static&nbsp;double&nbsp;percentDiff(double&nbsp;test,
-                 double&nbsp;target)</pre>
-<div class="block">Compute the difference between <code>test</code> and <code>target</code>, relative to
- <code>target</code>, as a percent. If <code>target</code> is 0, method returns 0 if
- <code>test</code> is also 0, otherwise <code>Double.POSITIVE_INFINITY</code>. If
- either value is <code>Double.NaN</code>, method returns <code>Double.NaN</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>test</code> - value</dd><dd><code>target</code> - value</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the percent difference</dd></dl>
 </li>
 </ul>
 <a name="diff(double...)">
@@ -1415,111 +1216,22 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>data.length &lt; 2</code></dd></dl>
 </li>
 </ul>
-<a name="normalize(double...)">
+<a name="percentDiff(double, double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>normalize</h4>
-<pre>public static&nbsp;double[]&nbsp;normalize(double...&nbsp;data)</pre>
-<div class="block">Normalize the elements of <code>data</code> in place such that they sum to 1.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to normalize</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd>
+<h4>percentDiff</h4>
+<pre>public static&nbsp;double&nbsp;percentDiff(double&nbsp;test,
+                 double&nbsp;target)</pre>
+<div class="block">Compute the difference between <code>test</code> and <code>target</code>, relative to
+ <code>target</code>, as a percent. If <code>target == 0</code>, method returns
+ <code>0</code> if <code>test == 0</code>, otherwise <code>Double.POSITIVE_INFINITY</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>test</code> - value</dd><dd><code>target</code> - value</dd>
+<dt><span class="strong">Returns:</span></dt><dd><code>100 * abs(test - target) / target</code></dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>data</code> is empty, contains any
-         <code>Double.NaN</code> or negative values, or sums to a value outside
-         the range <code>(0..Double.POSITIVE_INFINITY), exclusive</code></dd></dl>
-</li>
-</ul>
-<a name="normalize(java.util.List)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>normalize</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;normalize(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</pre>
-<div class="block">Normalize the elements of <code>data</code> in place such that they sum to 1.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to normalize</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>data</code> is empty, contains any
-         <code>Double.NaN</code> or negative values, or sums to a value outside
-         the range <code>(0..Double.POSITIVE_INFINITY), exclusive</code></dd></dl>
-</li>
-</ul>
-<a name="randomValues(int, java.lang.Long)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>randomValues</h4>
-<pre>public static&nbsp;double[]&nbsp;randomValues(int&nbsp;size,
-                    <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Long.html?is-external=true" title="class or interface in java.lang">Long</a>&nbsp;seed)</pre>
-<div class="block">Create a <code>double[]</code> of pseudorandom values.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>size</code> - of the output array</dd><dd><code>seed</code> - for random number generator; may be <code>null</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>an array of random <code>double</code>s</dd></dl>
-</li>
-</ul>
-<a name="checkInRange(com.google.common.collect.Range, java.lang.String, double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>checkInRange</h4>
-<pre>public static&nbsp;double&nbsp;checkInRange(<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
-                  <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label,
-                  double&nbsp;value)</pre>
-<div class="block">Verify that a value falls within a specified <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>. Method returns
- the supplied value for use inline.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>range</code> - of allowable values</dd><dd><code>value</code> - to validate</dd><dd><code>label</code> - indicating type of value being checked; used in exception
-        message; may be <code>null</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied value for use inline</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if value is <code>NaN</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a></dd></dl>
-</li>
-</ul>
-<a name="checkInRange(com.google.common.collect.Range, java.lang.String, double...)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>checkInRange</h4>
-<pre>public static&nbsp;double[]&nbsp;checkInRange(<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
-                    <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label,
-                    double...&nbsp;values)</pre>
-<div class="block">Verify that the domain of a <code>double[]</code> does not exceed that of the
- supplied <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>. Method returns the supplied values for use inline.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>range</code> - of allowable values</dd><dd><code>values</code> - to validate</dd><dd><code>label</code> - indicating type of value being checked; used in exception
-        message; may be <code>null</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied values for use inline</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if any value is <code>NaN</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a></dd></dl>
-</li>
-</ul>
-<a name="checkWeight(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>checkWeight</h4>
-<pre>public static&nbsp;double&nbsp;checkWeight(double&nbsp;weight)</pre>
-<div class="block">Confirm that a weight value is <code>0.0 &lt; weight ≤ 1.0</code>. Method returns
- the supplied value for use inline.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>weight</code> - to validate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied <code>weight</code> value</dd></dl>
-</li>
-</ul>
-<a name="checkWeightSum(java.util.Collection)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>checkWeightSum</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;checkWeightSum(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights)</pre>
-<div class="block">Confirm that a <code>Collection&lt;Double&gt;</code> of weights sums to 1.0 within
- <a href="../../../org/opensha2/data/Data.html#WEIGHT_TOLERANCE"><code>WEIGHT_TOLERANCE</code></a>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>weights</code> - to validate</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied weights for use inline</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/data/Data.html#WEIGHT_TOLERANCE"><code>WEIGHT_TOLERANCE</code></a></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>test</code> or <code>target</code> are not
+         finite.</dd></dl>
 </li>
 </ul>
 <a name="checkDelta(double, double, double)">
@@ -1531,8 +1243,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public static&nbsp;double&nbsp;checkDelta(double&nbsp;min,
                 double&nbsp;max,
                 double&nbsp;Δ)</pre>
-<div class="block">Validate series discretization parameters. Confirms that for a specified
- range <code>[min, max]</code> and <code>Δ</code> that:
+<div class="block">Ensure validity of sequence discretization parameters. Confirms that for a
+ specified range <code>[min, max]</code> and <code>Δ</code> that:
 
  <ul><li><code>min</code>, <code>max</code>, and <code>Δ</code> are finite</li>
 
@@ -1547,17 +1259,243 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="strong">Returns:</span></dt><dd>the supplied <code>Δ</code> for use inline</dd></dl>
 </li>
 </ul>
-<a name="checkFiniteness(double, java.lang.String)">
+<a name="checkFinite(java.lang.String, double)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>checkFiniteness</h4>
-<pre>public static&nbsp;double&nbsp;checkFiniteness(double&nbsp;value,
-                     <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label)</pre>
-<div class="block">Checks that a value is finite.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - to check</dd><dd><code>label</code> - for value if check fails</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the supplied value for use inline</dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/primitives/Doubles.html?is-external=true#isFinite(double)" title="class or interface in com.google.common.primitives"><code>Doubles.isFinite(double)</code></a></dd></dl>
+<h4>checkFinite</h4>
+<pre>public static&nbsp;double&nbsp;checkFinite(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label,
+                 double&nbsp;value)</pre>
+<div class="block">Ensure <code>value</code> is finite.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>label</code> - for value if check fails</dd><dd><code>value</code> - to check</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the validated value</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>value</code> is outside the range
+         <code>(-Inf..+Inf)</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/primitives/Doubles.html?is-external=true#isFinite(double)" title="class or interface in com.google.common.primitives"><code>Doubles.isFinite(double)</code></a></dd></dl>
+</li>
+</ul>
+<a name="checkFinite(java.util.Collection)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkFinite</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;checkFinite(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</pre>
+<div class="block">Ensure the elements of <code>data</code> are finite.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>data</code> is empty, or any elements
+         of <code>data</code> are outside the range <code>(-Inf..+Inf)</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/primitives/Doubles.html?is-external=true#isFinite(double)" title="class or interface in com.google.common.primitives"><code>Doubles.isFinite(double)</code></a></dd></dl>
+</li>
+</ul>
+<a name="checkFinite(double...)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkFinite</h4>
+<pre>public static&nbsp;double[]&nbsp;checkFinite(double...&nbsp;data)</pre>
+<div class="block">Ensure the elements of <code>data</code> are finite.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>data</code> is empty or no varargs are
+         supplied, or any elements of <code>data</code> are outside the range
+         <code>(-Inf..+Inf)</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/primitives/Doubles.html?is-external=true#isFinite(double)" title="class or interface in com.google.common.primitives"><code>Doubles.isFinite(double)</code></a></dd></dl>
+</li>
+</ul>
+<a name="checkInRange(com.google.common.collect.Range, java.lang.String, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkInRange</h4>
+<pre>public static&nbsp;double&nbsp;checkInRange(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
+                  <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;label,
+                  double&nbsp;value)</pre>
+<div class="block">Ensure <code>value</code> falls within the specified <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>range</code> - of allowable values</dd><dd><code>label</code> - for value if check fails</dd><dd><code>value</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the supplied <code>value</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if either range endpoint is <code>NaN</code>. A
+         range where both enpoints are <code>NaN</code> and at least one enpoint
+         is closed is permitted; only when <em>both</em> endpoints are
+         closed is the value <code>NaN</code> permitted to the exclusion of all
+         other values.</dd></dl>
+</li>
+</ul>
+<a name="checkInRange(com.google.common.collect.Range, java.util.Collection)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkInRange</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;checkInRange(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
+                              <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</pre>
+<div class="block">Ensure the elements of <code>data</code> fall within the specified <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>
+ .</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>range</code> - of allowable values</dd><dd><code>data</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>for exception notes</code></a></dd></dl>
+</li>
+</ul>
+<a name="checkInRange(com.google.common.collect.Range, double...)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkInRange</h4>
+<pre>public static&nbsp;double[]&nbsp;checkInRange(<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;range,
+                    double...&nbsp;data)</pre>
+<div class="block">Ensure the elements of <code>data</code> fall within the specified <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect"><code>Range</code></a>
+ .</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>range</code> - of allowable values</dd><dd><code>data</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../org/opensha2/data/Data.html#checkInRange(com.google.common.collect.Range, java.lang.String, double)"><code>for exception notes</code></a></dd></dl>
+</li>
+</ul>
+<a name="checkSize(int, java.util.Collection)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkSize</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;checkSize(int&nbsp;min,
+                           <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data)</pre>
+<div class="block">Ensure <code>data.size() ≥ min</code>.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
+</li>
+</ul>
+<a name="checkSize(int, double[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkSize</h4>
+<pre>public static&nbsp;double[]&nbsp;checkSize(int&nbsp;min,
+                 double[]&nbsp;data)</pre>
+<div class="block">Ensure <code>data.length ≥ min</code>.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>data</code></dd></dl>
+</li>
+</ul>
+<a name="checkSizes(java.util.Collection, java.util.Collection)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkSizes</h4>
+<pre>public static&nbsp;void&nbsp;checkSizes(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data1,
+              <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data2)</pre>
+<div class="block">Ensure the supplied datasets are the same size.</div>
+</li>
+</ul>
+<a name="checkSizes(double[], double[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkSizes</h4>
+<pre>public static&nbsp;void&nbsp;checkSizes(double[]&nbsp;data1,
+              double[]&nbsp;data2)</pre>
+<div class="block">Ensure the supplied datasets are the same size.</div>
+</li>
+</ul>
+<a name="checkSizes(double[][], double[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkSizes</h4>
+<pre>public static&nbsp;void&nbsp;checkSizes(double[][]&nbsp;data1,
+              double[][]&nbsp;data2)</pre>
+<div class="block">Ensure the 1<sup>st</sup> dimensions of the supplied datasets are the same
+ size.</div>
+</li>
+</ul>
+<a name="checkSizes(double[][][], double[][][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkSizes</h4>
+<pre>public static&nbsp;void&nbsp;checkSizes(double[][][]&nbsp;data1,
+              double[][][]&nbsp;data2)</pre>
+<div class="block">Ensure the 1<sup>st</sup> dimensions of the supplied datasets are the same
+ size.</div>
+</li>
+</ul>
+<a name="checkWeight(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkWeight</h4>
+<pre>public static&nbsp;double&nbsp;checkWeight(double&nbsp;weight)</pre>
+<div class="block">Ensure <code>0.0 &lt; weight ≤ 1.0</code>.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the supplied <code>weight</code></dd></dl>
+</li>
+</ul>
+<a name="checkWeights(java.util.Collection)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>checkWeights</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;checkWeights(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;weights)</pre>
+<div class="block">Ensure each <code>0.0 ≤ weight ≤ 1.0</code> and
+ <code>sum(weights) = 1.0 ± 0.0001</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>weights</code> - to validate</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a reference to the supplied <code>weights</code></dd></dl>
+</li>
+</ul>
+<a name="copyOf(double[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copyOf</h4>
+<pre>public static&nbsp;double[][]&nbsp;copyOf(double[][]&nbsp;data)</pre>
+<div class="block">Create a deep copy of a two-dimensional data array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to copy</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a new two-dimensional array populated with the values of
+         <code>data</code></dd></dl>
+</li>
+</ul>
+<a name="copyOf(double[][][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copyOf</h4>
+<pre>public static&nbsp;double[][][]&nbsp;copyOf(double[][][]&nbsp;data)</pre>
+<div class="block">Create a deep copy of a three-dimensional data array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to copy</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a new three-dimensional array populated with the values of
+         <code>data</code></dd></dl>
+</li>
+</ul>
+<a name="toString(double[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString(double[][]&nbsp;data)</pre>
+<div class="block">Format a two-dimensional data array for printing.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to format</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a string representation of the supplied <code>data</code></dd></dl>
+</li>
+</ul>
+<a name="toString(double[][][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString(double[][][]&nbsp;data)</pre>
+<div class="block">Format a three-dimensional data array for printing</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to format</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a string representation of the supplied <code>data</code></dd></dl>
 </li>
 </ul>
 <a name="buildCleanSequence(double, double, double, boolean, int)">
@@ -1613,7 +1551,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <a name="combine(java.lang.Iterable)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>combine</h4>
 <pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
@@ -1626,187 +1564,6 @@ public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="c
  via linear interpolation.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>sequences</code> - to combine</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a combined sequence</dd></dl>
-</li>
-</ul>
-<a name="clean(int, double...)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>clean</h4>
-<pre>public static&nbsp;double[]&nbsp;clean(int&nbsp;scale,
-             double...&nbsp;data)</pre>
-<div class="block">'Clean' the elements of <code>data</code> in place to be double values of a
- specified scale/precision. Internally, this method uses the rounding and
- precision functionality of <a href="http://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html?is-external=true" title="class or interface in java.math"><code>BigDecimal</code></a>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to operate on</dd><dd><code>scale</code> - decimal precision</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a reference to the 'cleaned', supplied <code>data</code></dd></dl>
-</li>
-</ul>
-<a name="copyOf(double[][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>copyOf</h4>
-<pre>public static&nbsp;double[][]&nbsp;copyOf(double[][]&nbsp;data)</pre>
-<div class="block">Create a deep copy of a two-dimensional data array.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to copy</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a new two-dimensional array populated with the values of
-         <code>data</code></dd></dl>
-</li>
-</ul>
-<a name="copyOf(double[][][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>copyOf</h4>
-<pre>public static&nbsp;double[][][]&nbsp;copyOf(double[][][]&nbsp;data)</pre>
-<div class="block">Create a deep copy of a three-dimensional data array.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to copy</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a new three-dimensional array populated with the values of
-         <code>data</code></dd></dl>
-</li>
-</ul>
-<a name="toString(double[][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>toString</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString(double[][]&nbsp;data)</pre>
-<div class="block">Format a two-dimensional data array for printing.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to format</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a string representation of the supplied <code>data</code></dd></dl>
-</li>
-</ul>
-<a name="toString(double[][][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>toString</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString(double[][][]&nbsp;data)</pre>
-<div class="block">Format a three-dimensional data array for printing</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to format</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a string representation of the supplied <code>data</code></dd></dl>
-</li>
-</ul>
-<a name="indices(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>indices</h4>
-<pre>public static&nbsp;int[]&nbsp;indices(int&nbsp;size)</pre>
-<div class="block">Create an <code>int[]</code> of values ascending from <code>0</code> to
- <code>1-size</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>size</code> - of output array</dd>
-<dt><span class="strong">Returns:</span></dt><dd>an index array</dd></dl>
-</li>
-</ul>
-<a name="indices(int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>indices</h4>
-<pre>public static&nbsp;int[]&nbsp;indices(int&nbsp;from,
-            int&nbsp;to)</pre>
-<div class="block">Create an <code>int[]</code> of values spanning <code>from</code> to <code>to</code>,
- inclusive. Sequence will be descending if <code>from</code> is greater than
- <code>to</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>from</code> - start value</dd><dd><code>to</code> - end value</dd>
-<dt><span class="strong">Returns:</span></dt><dd>an int[] sequence</dd></dl>
-</li>
-</ul>
-<a name="sortedIndices(java.util.List, boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>sortedIndices</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;sortedIndices(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data,
-                          boolean&nbsp;ascending)</pre>
-<div class="block">Create an index <code>List</code> of pointers to sorted <code>data</code>. Say you
- have a number of <code>List&lt;Double&gt;</code>s and want to iterate them according
- to the sort order of one of them. Supply this method with the desired
- <code>data</code> and use the returned indices in a custom iterator, leaving all
- original data in place.
-
- <p><b>Notes:</b><ul><li>The supplied data should not be sorted.</li>
- <li>This method does not modify the supplied <code>data</code> in any
- way.</li><li>Any <code>NaN</code>s in <code>data</code> are placed at the start of
- the sort order, regardless of sort direction.</li><ul></div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - to provide sort indices for</dd><dd><code>ascending</code> - if <code>true</code>, descending if <code>false</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>an index <code>List</code></dd></dl>
-</li>
-</ul>
-<a name="minKey(java.util.Map, java.util.Collection)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>minKey</h4>
-<pre>public static&nbsp;&lt;K&gt;&nbsp;K&nbsp;minKey(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;K,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;data,
-           <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;K&gt;&nbsp;keys)</pre>
-<div class="block">Returns the key associated with the minimum value in the supplied dataset.
- One use case for this method might be to find the column key associated
- with a particular data set (or row) in a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Table.html?is-external=true" title="class or interface in com.google.common.collect"><code>Table</code></a>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>keys</code> - to lookup in <code>Map&lt;K, Double&gt;</code>; if <code>keys == null</code>
-        then all values in the data set are evaluated</dd><dd><code>data</code> - Map<K, Double> to operate on</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the key corresponding to the minimum value</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>data</code> or <code>keys</code> are empty</dd><dt><span class="strong">See Also:</span></dt><dd><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/collect/Table.html?is-external=true" title="class or interface in com.google.common.collect"><code>Table</code></a></dd></dl>
-</li>
-</ul>
-<a name="bitsToIndices(java.util.BitSet)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>bitsToIndices</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;bitsToIndices(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/BitSet.html?is-external=true" title="class or interface in java.util">BitSet</a>&nbsp;bits)</pre>
-<div class="block">Return an index <code>List&lt;Integer&gt;</code> corresponding to the 'set' bits of
- the supplied <code>BitSet</code>. The returned <code>List</code> is mutable.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>bits</code> - to operate on</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the indices of 'set' bits</dd></dl>
-</li>
-</ul>
-<a name="indicesToBits(java.util.List, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>indicesToBits</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/BitSet.html?is-external=true" title="class or interface in java.util">BitSet</a>&nbsp;indicesToBits(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;indices,
-                   int&nbsp;capacity)</pre>
-<div class="block">Return a <code>BitSet</code> with <code>capacity</code> and with all bits at
- <code>indices</code> 'set'.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>indices</code> - to operate on</dd><dd><code>capacity</code> - of returned <code>BitSet</code></dd></dl>
-</li>
-</ul>
-<a name="arraySelect(java.lang.Object, int[])">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>arraySelect</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
-public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;arraySelect(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;array,
-                            int[]&nbsp;indices)</pre>
-<div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
-<div class="block">Creates a new array from the values in a source array at the specified
- indices. Returned array is of same type as source.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>array</code> - array source</dd><dd><code>indices</code> - index values of items to select</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a new array of values at indices in source</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html?is-external=true" title="class or interface in java.lang">NullPointerException</a></code> - if <code>array</code> or <code>indices</code> are
-         <code>null</code></dd>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if data object is not an array or if data
-         array is empty</dd>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IndexOutOfBoundsException.html?is-external=true" title="class or interface in java.lang">IndexOutOfBoundsException</a></code> - if any indices are out of range</dd></dl>
 </li>
 </ul>
 </li>
@@ -1861,13 +1618,13 @@ public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/O
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -1877,13 +1634,10 @@ public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/O
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

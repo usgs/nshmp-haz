@@ -127,10 +127,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#compareTo(org.opensha2.eq.model.SourceSet)">compareTo</a></strong>(<a href="../../../../org/opensha2/eq/model/SourceSet.html" title="interface in org.opensha2.eq.model">SourceSet</a>&lt;T&gt;&nbsp;other)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/AreaSource.html" title="class in org.opensha2.eq.model">AreaSource</a>&gt;</code></td>
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/AreaSource.html" title="class in org.opensha2.eq.model">AreaSource</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">distanceFilter</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
               double&nbsp;distance)</code>
-<div class="block">Return a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source is
+<div class="block">Return a <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source is
  within <code>distance</code> of the supplied <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo"><code>Location</code></a>.</div>
 </td>
 </tr>
@@ -155,32 +155,40 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#iterableForLocation(org.opensha2.geo.Location, double)">iterableForLocation</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+                   double&nbsp;distance)</code>
+<div class="block">Return an <code>Iterable</code> over those <code>Source</code>s that are within
+ <code>distance</code> of the supplied <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Iterator.html?is-external=true" title="class or interface in java.util">Iterator</a>&lt;<a href="../../../../org/opensha2/eq/model/AreaSource.html" title="class in org.opensha2.eq.model">AreaSource</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#iterator()">iterator</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#name()">name</a></strong>()</code>
 <div class="block">Returns an object's display name.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#size()">size</a></strong>()</code>
 <div class="block">The number of <code>Source</code>s in this <code>SourceSet</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#toString()">toString</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#type()">type</a></strong>()</code>
 <div class="block">The <code>SourceType</code> identifier.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/AreaSourceSet.html#weight()">weight</a></strong>()</code>
 <div class="block">The weight applicable to this <code>SourceSet</code>.</div>
@@ -245,10 +253,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>distanceFilter</h4>
-<pre>public&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/AreaSource.html" title="class in org.opensha2.eq.model">AreaSource</a>&gt;&nbsp;distanceFilter(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+<pre>public&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base">Predicate</a>&lt;<a href="../../../../org/opensha2/eq/model/AreaSource.html" title="class in org.opensha2.eq.model">AreaSource</a>&gt;&nbsp;distanceFilter(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
                                    double&nbsp;distance)</pre>
 <div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../org/opensha2/eq/model/SourceSet.html#distanceFilter(org.opensha2.geo.Location, double)">SourceSet</a></code></strong></div>
-<div class="block">Return a <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source is
+<div class="block">Return a <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Predicate.html?is-external=true" title="class or interface in com.google.common.base"><code>Predicate</code></a> that evaluates to <code>true</code> if this source is
  within <code>distance</code> of the supplied <a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo"><code>Location</code></a>. This
  <code>Predicate</code> performs a quick distance calculation and is used to
  determine whether this source should be included in a hazard calculation.</div>
@@ -345,7 +353,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <a name="iterableForLocation(org.opensha2.geo.Location)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>iterableForLocation</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;&nbsp;iterableForLocation(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc)</pre>
@@ -358,6 +366,23 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/opensha2/eq/model/SourceSet.html#iterableForLocation(org.opensha2.geo.Location)">iterableForLocation</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../org/opensha2/eq/model/SourceSet.html" title="interface in org.opensha2.eq.model">SourceSet</a>&lt;T extends <a href="../../../../org/opensha2/eq/model/Source.html" title="interface in org.opensha2.eq.model">Source</a>&gt;</code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>loc</code> - <code>Location</code> of interest</dd></dl>
+</li>
+</ul>
+<a name="iterableForLocation(org.opensha2.geo.Location, double)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>iterableForLocation</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;&nbsp;iterableForLocation(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+                              double&nbsp;distance)</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../org/opensha2/eq/model/SourceSet.html#iterableForLocation(org.opensha2.geo.Location, double)">SourceSet</a></code></strong></div>
+<div class="block">Return an <code>Iterable</code> over those <code>Source</code>s that are within
+ <code>distance</code> of the supplied <code>Location</code>.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/opensha2/eq/model/SourceSet.html#iterableForLocation(org.opensha2.geo.Location, double)">iterableForLocation</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../org/opensha2/eq/model/SourceSet.html" title="interface in org.opensha2.eq.model">SourceSet</a>&lt;T extends <a href="../../../../org/opensha2/eq/model/Source.html" title="interface in org.opensha2.eq.model">Source</a>&gt;</code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>loc</code> - <code>Location</code> of interest</dd><dd><code>distance</code> - limit</dd></dl>
 </li>
 </ul>
 </li>
@@ -428,13 +453,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

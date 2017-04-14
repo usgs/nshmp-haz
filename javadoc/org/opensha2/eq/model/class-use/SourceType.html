@@ -96,6 +96,21 @@
 <!--   -->
 </a>
 <h3>Uses of <a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a> in <a href="../../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a></h3>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing fields, and an explanation">
+<caption><span>Fields in <a href="../../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a> with type parameters of type <a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>,<a href="../../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;</code></td>
+<td class="colLast"><span class="strong">EqRate.</span><code><strong><a href="../../../../../org/opensha2/calc/EqRate.html#typeMfds">typeMfds</a></strong></code>
+<div class="block">The MFDs for each contributing source type.</div>
+</td>
+</tr>
+</tbody>
+</table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
 <caption><span>Methods in <a href="../../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a> that return types with arguments of type <a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
@@ -105,9 +120,8 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>,<a href="../../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">Results.</span><code><strong><a href="../../../../../org/opensha2/calc/Results.html#curvesBySource(org.opensha2.calc.Hazard)">curvesBySource</a></strong>(<a href="../../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
-<div class="block">Derive maps of curves by source type for each Imt in a <code>Hazard</code>
- result.</div>
+<td class="colLast"><span class="strong">HazardExport.</span><code><strong><a href="../../../../../org/opensha2/calc/HazardExport.html#curvesBySource(org.opensha2.calc.Hazard)">curvesBySource</a></strong>(<a href="../../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
+<div class="block">Derive maps of curves by <code>SourceType</code> for each <code>Imt</code>.</div>
 </td>
 </tr>
 </tbody>
@@ -136,7 +150,17 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
+<td class="colLast"><span class="strong">SystemSourceSet.SystemSource.</span><code><strong><a href="../../../../../org/opensha2/eq/model/SystemSourceSet.SystemSource.html#type()">type</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
 <td class="colLast"><span class="strong">SourceSet.</span><code><strong><a href="../../../../../org/opensha2/eq/model/SourceSet.html#type()">type</a></strong>()</code>
+<div class="block">The <code>SourceType</code> identifier.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
+<td class="colLast"><span class="strong">Source.</span><code><strong><a href="../../../../../org/opensha2/eq/model/Source.html#type()">type</a></strong>()</code>
 <div class="block">The <code>SourceType</code> identifier.</div>
 </td>
 </tr>
@@ -150,11 +174,19 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
-<td class="colLast"><span class="strong">GridSourceSet.</span><code><strong><a href="../../../../../org/opensha2/eq/model/GridSourceSet.html#type()">type</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">InterfaceSource.</span><code><strong><a href="../../../../../org/opensha2/eq/model/InterfaceSource.html#type()">type</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
+<td class="colLast"><span class="strong">GridSourceSet.</span><code><strong><a href="../../../../../org/opensha2/eq/model/GridSourceSet.html#type()">type</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
 <td class="colLast"><span class="strong">FaultSourceSet.</span><code><strong><a href="../../../../../org/opensha2/eq/model/FaultSourceSet.html#type()">type</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
+<td class="colLast"><span class="strong">FaultSource.</span><code><strong><a href="../../../../../org/opensha2/eq/model/FaultSource.html#type()">type</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
@@ -162,7 +194,15 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
+<td class="colLast"><span class="strong">ClusterSource.</span><code><strong><a href="../../../../../org/opensha2/eq/model/ClusterSource.html#type()">type</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
 <td class="colLast"><span class="strong">AreaSourceSet.</span><code><strong><a href="../../../../../org/opensha2/eq/model/AreaSourceSet.html#type()">type</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
+<td class="colLast"><span class="strong">AreaSource.</span><code><strong><a href="../../../../../org/opensha2/eq/model/AreaSource.html#type()">type</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
@@ -191,6 +231,66 @@ the order they are declared.</div>
 <td class="colLast"><span class="strong">HazardModel.</span><code><strong><a href="../../../../../org/opensha2/eq/model/HazardModel.html#types()">types</a></strong>()</code>
 <div class="block">The set of <code>SourceType</code>s included in this model.</div>
 </td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../../org/opensha2/eq/model/package-summary.html">org.opensha2.eq.model</a> with parameters of type <a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../../org/opensha2/calc/InputList.html" title="class in org.opensha2.calc">InputList</a>&gt;</code></td>
+<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../../org/opensha2/eq/model/PointSources.html#finiteInputs(java.util.List, org.opensha2.eq.model.SourceType, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.model.GridSourceSet)">finiteInputs</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&gt;&nbsp;sites,
+            <a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;sourceType,
+            <a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+            <a href="../../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;mfd,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../../org/opensha2/eq/fault/FocalMech.html" title="enum in org.opensha2.eq.fault">FocalMech</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;mechWtMap,
+            <a href="../../../../../org/opensha2/eq/model/GridSourceSet.html" title="class in org.opensha2.eq.model">GridSourceSet</a>&nbsp;grid)</code>
+<div class="block">Using the supplied <code>Site</code>s and a GridSourceSet, from which the
+ standard data that is used to build point sources is derived, create and
+ return a <code>List&lt;InputList&gt;</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../../org/opensha2/calc/InputList.html" title="class in org.opensha2.calc">InputList</a>&gt;</code></td>
+<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../../org/opensha2/eq/model/PointSources.html#finiteInputs(java.util.List, org.opensha2.eq.model.SourceType, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.fault.surface.RuptureScaling, java.util.NavigableMap, double)">finiteInputs</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&gt;&nbsp;sites,
+            <a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;sourceType,
+            <a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+            <a href="../../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;mfd,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../../org/opensha2/eq/fault/FocalMech.html" title="enum in org.opensha2.eq.fault">FocalMech</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;mechWtMap,
+            <a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.html" title="enum in org.opensha2.eq.fault.surface">RuptureScaling</a>&nbsp;rupScaling,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/util/NavigableMap.html?is-external=true" title="class or interface in java.util">NavigableMap</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&gt;&nbsp;magDepthMap,
+            double&nbsp;maxDepth)</code>
+<div class="block">Using the supplied <code>Site</code>s and the standard data that is used to
+ build point sources, create and return a <code>List&lt;InputList&gt;</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../org/opensha2/calc/InputList.html" title="class in org.opensha2.calc">InputList</a></code></td>
+<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../../org/opensha2/eq/model/PointSources.html#finiteInputs(org.opensha2.calc.Site, org.opensha2.eq.model.SourceType, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.fault.surface.RuptureScaling, java.util.NavigableMap, double)">finiteInputs</a></strong>(<a href="../../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+            <a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;sourceType,
+            <a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+            <a href="../../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;mfd,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../../org/opensha2/eq/fault/FocalMech.html" title="enum in org.opensha2.eq.fault">FocalMech</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;mechWtMap,
+            <a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.html" title="enum in org.opensha2.eq.fault.surface">RuptureScaling</a>&nbsp;rupScaling,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/util/NavigableMap.html?is-external=true" title="class or interface in java.util">NavigableMap</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&gt;&nbsp;magDepthMap,
+            double&nbsp;maxDepth)</code>
+<div class="block">Using the supplied <code>Site</code> and the standard data that is used to build
+ point sources, create and return an <code>InputList</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static org.opensha2.eq.model.PointSource</code></td>
+<td class="colLast"><span class="strong">PointSources.</span><code><strong><a href="../../../../../org/opensha2/eq/model/PointSources.html#pointSource(org.opensha2.eq.model.SourceType, org.opensha2.eq.model.PointSourceType, org.opensha2.geo.Location, org.opensha2.data.XySequence, java.util.Map, org.opensha2.eq.fault.surface.RuptureScaling, org.opensha2.eq.model.PointSource.DepthModel)">pointSource</a></strong>(<a href="../../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;sourceType,
+           <a href="../../../../../org/opensha2/eq/model/PointSourceType.html" title="enum in org.opensha2.eq.model">PointSourceType</a>&nbsp;pointType,
+           <a href="../../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;loc,
+           <a href="../../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;mfd,
+           <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../../org/opensha2/eq/fault/FocalMech.html" title="enum in org.opensha2.eq.fault">FocalMech</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;mechWtMap,
+           <a href="../../../../../org/opensha2/eq/fault/surface/RuptureScaling.html" title="enum in org.opensha2.eq.fault.surface">RuptureScaling</a>&nbsp;rupScaling,
+           org.opensha2.eq.model.PointSource.DepthModel&nbsp;depthModel)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -245,13 +345,10 @@ the order they are declared.</div>
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

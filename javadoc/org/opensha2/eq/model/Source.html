@@ -122,8 +122,33 @@ extends <a href="../../../../org/opensha2/util/Named.html" title="interface in o
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/Source.html#id()">id</a></strong>()</code>
+<div class="block">A numeric identifier for this <code>Source</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/Source.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The <code>Location</code> of this source relative to the supplied <code>site</code>
+ location.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/Source.html#mfds()">mfds</a></strong>()</code>
+<div class="block">The MFDs that define earthquake rates for this source.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/Source.html#size()">size</a></strong>()</code>
 <div class="block">The number of <a href="../../../../org/opensha2/eq/model/Rupture.html" title="class in org.opensha2.eq.model"><code>Rupture</code></a>s this <code>Source</code> represents.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/Source.html#type()">type</a></strong>()</code>
+<div class="block">The <code>SourceType</code> identifier.</div>
 </td>
 </tr>
 </table>
@@ -158,11 +183,54 @@ extends <a href="../../../../org/opensha2/util/Named.html" title="interface in o
 <a name="size()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>size</h4>
 <pre>int&nbsp;size()</pre>
 <div class="block">The number of <a href="../../../../org/opensha2/eq/model/Rupture.html" title="class in org.opensha2.eq.model"><code>Rupture</code></a>s this <code>Source</code> represents.</div>
+</li>
+</ul>
+<a name="id()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>id</h4>
+<pre>int&nbsp;id()</pre>
+<div class="block">A numeric identifier for this <code>Source</code>.</div>
+</li>
+</ul>
+<a name="type()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>type</h4>
+<pre><a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;type()</pre>
+<div class="block">The <code>SourceType</code> identifier.</div>
+</li>
+</ul>
+<a name="location(org.opensha2.geo.Location)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>location</h4>
+<pre><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;location(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</pre>
+<div class="block">The <code>Location</code> of this source relative to the supplied <code>site</code>
+ location. The details of what this method returns are implementation
+ secific.</div>
+</li>
+</ul>
+<a name="mfds()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>mfds</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;&nbsp;mfds()</pre>
+<div class="block">The MFDs that define earthquake rates for this source.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>
@@ -233,13 +301,10 @@ extends <a href="../../../../org/opensha2/util/Named.html" title="interface in o
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

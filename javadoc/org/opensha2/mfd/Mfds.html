@@ -61,13 +61,13 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -111,6 +111,27 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#TIMESPAN_RANGE">TIMESPAN_RANGE</a></strong></code>
+<div class="block">Supported timespans for Poisson probabilities: <code>[1..10000] years</code>.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method_summary">
@@ -124,18 +145,26 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base">Converter</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base">Converter</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#annualRateToProbabilityConverter()">annualRateToProbabilityConverter</a></strong>()</code>
-<div class="block">Return a converter between annual rate and Poisson probability.</div>
+<div class="block">Return a converter between annual rate and Poisson probability over a
+ 1-year time span.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base">Converter</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#annualRateToProbabilityConverter(double)">annualRateToProbabilityConverter</a></strong>(double&nbsp;timespan)</code>
+<div class="block">Return a converter between annual rate and Poisson probability over the
+ specified time span.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#combine(org.opensha2.mfd.IncrementalMfd...)">combine</a></strong>(<a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a>...&nbsp;mfds)</code>
 <div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#grRate(double, double, double)">grRate</a></strong>(double&nbsp;a,
       double&nbsp;b,
@@ -144,7 +173,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  and magnitude.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#incrRate(double, double, double)">incrRate</a></strong>(double&nbsp;a,
         double&nbsp;b,
@@ -152,7 +181,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Computes the Gutenberg-Richter incremental rate at the supplied magnitude.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#magCount(double, double, double)">magCount</a></strong>(double&nbsp;mMin,
         double&nbsp;mMax,
@@ -160,7 +189,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Determines the number of magnitude bins for the supplied arguments.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static org.opensha2.mfd.GaussianMfd</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGaussianMFD(double, double, int, double, boolean)">newGaussianMFD</a></strong>(double&nbsp;mean,
               double&nbsp;sigma,
@@ -171,7 +200,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <code>2*sigma</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static org.opensha2.mfd.GaussianMfd</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGaussianMoBalancedMFD(double, double, int, double, boolean)">newGaussianMoBalancedMFD</a></strong>(double&nbsp;mean,
                         double&nbsp;sigma,
@@ -182,7 +211,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  at <code>2*sigma</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static org.opensha2.mfd.GutenbergRichterMfd</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGutenbergRichterMFD(double, double, int, double, double)">newGutenbergRichterMFD</a></strong>(double&nbsp;min,
                       double&nbsp;delta,
@@ -192,7 +221,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Creates a new <code>GutenbergRichterMfd</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static org.opensha2.mfd.GutenbergRichterMfd</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newGutenbergRichterMoBalancedMFD(double, double, int, double, double)">newGutenbergRichterMoBalancedMFD</a></strong>(double&nbsp;min,
                                 double&nbsp;delta,
@@ -202,7 +231,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Creates a new moment-balanced <code>GutenbergRichterMfd</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newIncrementalMFD(double[], double[])">newIncrementalMFD</a></strong>(double[]&nbsp;mags,
                  double[]&nbsp;rates)</code>
@@ -210,7 +239,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  rates.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newSingleMFD(double, double, boolean)">newSingleMFD</a></strong>(double&nbsp;mag,
             double&nbsp;cumRate,
@@ -218,7 +247,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Creates a new single magnitude <code>IncrementalMfd</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newSingleMoBalancedMFD(double, double, boolean)">newSingleMoBalancedMFD</a></strong>(double&nbsp;mag,
                       double&nbsp;moRate,
@@ -226,7 +255,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Creates a new single magnitude moment-balanced <code>IncrementalMfd</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#newTaperedGutenbergRichterMFD(double, double, int, double, double, double, double)">newTaperedGutenbergRichterMFD</a></strong>(double&nbsp;min,
                              double&nbsp;delta,
@@ -236,31 +265,41 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
                              double&nbsp;corner,
                              double&nbsp;weight)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#probToRate(double, double)">probToRate</a></strong>(double&nbsp;P,
-          double&nbsp;time)</code>
+          double&nbsp;timespan)</code>
 <div class="block">Given the Poisson probability of the occurence of some event over a
  specified time period, method returns the annual rate of occurrence of that
  event.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#rateToProb(double, double)">rateToProb</a></strong>(double&nbsp;rate,
-          double&nbsp;time)</code>
+          double&nbsp;timespan)</code>
 <div class="block">Given an observed annual rate of occurrence of some event (in num/yr),
  method returns the Poisson probability of occurence over the specified time
  period.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#toCumulative(org.opensha2.data.XySequence)">toCumulative</a></strong>(<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;incremental)</code>&nbsp;</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#toSequence(org.opensha2.mfd.IncrementalMfd)">toSequence</a></strong>(<a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a>&nbsp;mfd)</code>
-<div class="block">Convert an <code>IncrementalMfd</code> to an <code>XySequence</code>.</div>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#toMutableSequence(org.opensha2.mfd.IncrementalMfd)">toMutableSequence</a></strong>(<a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a>&nbsp;mfd)</code>
+<div class="block">Convert an <code>IncrementalMfd</code> to a mutable <code>XySequence</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#toSequence(org.opensha2.mfd.IncrementalMfd)">toSequence</a></strong>(<a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a>&nbsp;mfd)</code>
+<div class="block">Convert an <code>IncrementalMfd</code> to an immutable <code>XySequence</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../org/opensha2/mfd/Mfds.html#totalMoRate(double, int, double, double, double)">totalMoRate</a></strong>(double&nbsp;mMin,
            int&nbsp;nMag,
@@ -287,6 +326,24 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="TIMESPAN_RANGE">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>TIMESPAN_RANGE</h4>
+<pre>public static final&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/Range.html?is-external=true" title="class or interface in com.google.common.collect">Range</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt; TIMESPAN_RANGE</pre>
+<div class="block">Supported timespans for Poisson probabilities: <code>[1..10000] years</code>.</div>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method_detail">
@@ -502,11 +559,11 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>rateToProb</h4>
 <pre>public static&nbsp;double&nbsp;rateToProb(double&nbsp;rate,
-                double&nbsp;time)</pre>
+                double&nbsp;timespan)</pre>
 <div class="block">Given an observed annual rate of occurrence of some event (in num/yr),
  method returns the Poisson probability of occurence over the specified time
  period.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rate</code> - (annual) of occurence of some event</dd><dd><code>time</code> - period of interest</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rate</code> - (annual) of occurence of some event</dd><dd><code>timespan</code> - of interest</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the Poisson probability of occurrence in the specified <code>time</code></dd></dl>
 </li>
 </ul>
@@ -517,11 +574,11 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>probToRate</h4>
 <pre>public static&nbsp;double&nbsp;probToRate(double&nbsp;P,
-                double&nbsp;time)</pre>
+                double&nbsp;timespan)</pre>
 <div class="block">Given the Poisson probability of the occurence of some event over a
  specified time period, method returns the annual rate of occurrence of that
  event.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>P</code> - the Poisson probability of an event's occurrence</dd><dd><code>time</code> - period of interest</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>P</code> - the Poisson probability of an event's occurrence</dd><dd><code>timespan</code> - of interest</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the annnual rate of occurrence of the event</dd></dl>
 </li>
 </ul>
@@ -531,8 +588,20 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>annualRateToProbabilityConverter</h4>
-<pre>public static&nbsp;<a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base">Converter</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;annualRateToProbabilityConverter()</pre>
-<div class="block">Return a converter between annual rate and Poisson probability.</div>
+<pre>public static&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base">Converter</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;annualRateToProbabilityConverter()</pre>
+<div class="block">Return a converter between annual rate and Poisson probability over a
+ 1-year time span.</div>
+</li>
+</ul>
+<a name="annualRateToProbabilityConverter(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>annualRateToProbabilityConverter</h4>
+<pre>public static&nbsp;<a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Converter.html?is-external=true" title="class or interface in com.google.common.base">Converter</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;&nbsp;annualRateToProbabilityConverter(double&nbsp;timespan)</pre>
+<div class="block">Return a converter between annual rate and Poisson probability over the
+ specified time span.</div>
 </li>
 </ul>
 <a name="toSequence(org.opensha2.mfd.IncrementalMfd)">
@@ -542,7 +611,20 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>toSequence</h4>
 <pre>public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;toSequence(<a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a>&nbsp;mfd)</pre>
-<div class="block">Convert an <code>IncrementalMfd</code> to an <code>XySequence</code>.</div>
+<div class="block">Convert an <code>IncrementalMfd</code> to an immutable <code>XySequence</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>mfd</code> - to convert</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a sequence populated with the values of the supplied
+         <code>IncrementalMfd</code>.</dd></dl>
+</li>
+</ul>
+<a name="toMutableSequence(org.opensha2.mfd.IncrementalMfd)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toMutableSequence</h4>
+<pre>public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;toMutableSequence(<a href="../../../org/opensha2/mfd/IncrementalMfd.html" title="class in org.opensha2.mfd">IncrementalMfd</a>&nbsp;mfd)</pre>
+<div class="block">Convert an <code>IncrementalMfd</code> to a mutable <code>XySequence</code>.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>mfd</code> - to convert</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a sequence populated with the values of the supplied
          <code>IncrementalMfd</code>.</dd></dl>
@@ -551,7 +633,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <a name="combine(org.opensha2.mfd.IncrementalMfd...)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>combine</h4>
 <pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
@@ -559,6 +641,15 @@ public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="c
 <div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
 <div class="block">Combine all <code>mfds</code> into a single sequence.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>mfds</code> - </dd></dl>
+</li>
+</ul>
+<a name="toCumulative(org.opensha2.data.XySequence)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toCumulative</h4>
+<pre>public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;toCumulative(<a href="../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&nbsp;incremental)</pre>
 </li>
 </ul>
 </li>
@@ -613,13 +704,13 @@ public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="c
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -629,13 +720,10 @@ public static&nbsp;<a href="../../../org/opensha2/data/XySequence.html" title="c
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

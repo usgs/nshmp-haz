@@ -104,12 +104,29 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></code></td>
-<td class="colLast"><span class="strong">HazardCalc.</span><code><strong><a href="../../../../org/opensha2/HazardCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, com.google.common.base.Optional)">calc</a></strong>(<a href="../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
+<td class="colLast"><span class="strong">HazardCalc.</span><code><strong><a href="../../../../org/opensha2/HazardCalc.html#calc(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site, com.google.common.base.Optional)">calc</a></strong>(<a href="../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
     <a href="../../../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-    <a href="../../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
-    <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</code>
+    <a href="../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+    <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;executor)</code>
 <div class="block">Compute hazard curves at a <code>site</code> for a <code>model</code> and
  <code>config</code>.</div>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
+<caption><span>Methods in <a href="../../../../org/opensha2/package-summary.html">org.opensha2</a> with parameters of type <a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc">Deaggregation</a></code></td>
+<td class="colLast"><span class="strong">DeaggCalc.</span><code><strong><a href="../../../../org/opensha2/DeaggCalc.html#calc(org.opensha2.calc.Hazard, double)">calc</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard,
+    double&nbsp;returnPeriod)</code>
+<div class="block">Deaggregate probabilistic seismic hazard at the supplied return period (in
+ years).</div>
 </td>
 </tr>
 </tbody>
@@ -128,12 +145,18 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></code></td>
-<td class="colLast"><span class="strong">Calcs.</span><code><strong><a href="../../../../org/opensha2/calc/Calcs.html#hazard(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.util.Site, com.google.common.base.Optional)">hazard</a></strong>(<a href="../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
+<td class="colLast"><span class="strong">HazardCalcs.</span><code><strong><a href="../../../../org/opensha2/calc/HazardCalcs.html#hazard(org.opensha2.eq.model.HazardModel, org.opensha2.calc.CalcConfig, org.opensha2.calc.Site, com.google.common.base.Optional)">hazard</a></strong>(<a href="../../../../org/opensha2/eq/model/HazardModel.html" title="class in org.opensha2.eq.model">HazardModel</a>&nbsp;model,
       <a href="../../../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc">CalcConfig</a>&nbsp;config,
-      <a href="../../../../org/opensha2/util/Site.html" title="class in org.opensha2.util">Site</a>&nbsp;site,
-      <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;ex)</code>
-<div class="block">Compute probabilistic seismic hazard, possibly using an <a href="http://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base"><code>Optional</code></a>
+      <a href="../../../../org/opensha2/calc/Site.html" title="class in org.opensha2.calc">Site</a>&nbsp;site,
+      <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent">Executor</a>&gt;&nbsp;ex)</code>
+<div class="block">Compute probabilistic seismic hazard, possibly using an <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base"><code>Optional</code></a>
  <a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html?is-external=true" title="class or interface in java.util.concurrent"><code>Executor</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></code></td>
+<td class="colLast"><span class="strong">Hazard.</span><code><strong><a href="../../../../org/opensha2/calc/Hazard.html#merge(org.opensha2.calc.Hazard...)">merge</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>...&nbsp;hazards)</code>
+<div class="block">Combine hazard from multiple independent models.</div>
 </td>
 </tr>
 </tbody>
@@ -146,13 +169,20 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><span class="strong">HazardExport.</span><code><strong><a href="../../../../org/opensha2/calc/HazardExport.html#add(org.opensha2.calc.Hazard, com.google.common.base.Optional)">add</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard,
+   <a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/base/Optional.html?is-external=true" title="class or interface in com.google.common.base">Optional</a>&lt;<a href="../../../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc">Deaggregation</a>&gt;&nbsp;deagg)</code>
+<div class="block">Add a Hazard and optional Deaggregation result to this handler.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc">Deaggregation</a></code></td>
 <td class="colLast"><span class="strong">Deaggregation.</span><code><strong><a href="../../../../org/opensha2/calc/Deaggregation.html#atIml(org.opensha2.calc.Hazard, double)">atIml</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard,
      double&nbsp;iml)</code>
 <div class="block">Deaggregate <code>hazard</code> at the supplied intensity measure level.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc">Deaggregation</a></code></td>
 <td class="colLast"><span class="strong">Deaggregation.</span><code><strong><a href="../../../../org/opensha2/calc/Deaggregation.html#atReturnPeriod(org.opensha2.calc.Hazard, double)">atReturnPeriod</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard,
               double&nbsp;returnPeriod)</code>
@@ -160,43 +190,30 @@
  the supplied <code>returnPeriod</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>,<a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">Results.</span><code><strong><a href="../../../../org/opensha2/calc/Results.html#curvesByGmm(org.opensha2.calc.Hazard)">curvesByGmm</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
-<div class="block">Derive maps of curves by groudn motion model for each Imt in a
+<td class="colLast"><span class="strong">HazardExport.</span><code><strong><a href="../../../../org/opensha2/calc/HazardExport.html#curvesByGmm(org.opensha2.calc.Hazard)">curvesByGmm</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
+<div class="block">Derive maps of curves by <code>Gmm</code> for each <code>Imt</code> in a
  <code>Hazard</code> result.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>,<a href="../../../../org/opensha2/data/XySequence.html" title="class in org.opensha2.data">XySequence</a>&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">Results.</span><code><strong><a href="../../../../org/opensha2/calc/Results.html#curvesBySource(org.opensha2.calc.Hazard)">curvesBySource</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
-<div class="block">Derive maps of curves by source type for each Imt in a <code>Hazard</code>
- result.</div>
+<td class="colLast"><span class="strong">HazardExport.</span><code><strong><a href="../../../../org/opensha2/calc/HazardExport.html#curvesBySource(org.opensha2.calc.Hazard)">curvesBySource</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard)</code>
+<div class="block">Derive maps of curves by <code>SourceType</code> for each <code>Imt</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/calc/Deaggregation.html" title="class in org.opensha2.calc">Deaggregation</a></code></td>
-<td class="colLast"><span class="strong">Calcs.</span><code><strong><a href="../../../../org/opensha2/calc/Calcs.html#deaggregation(org.opensha2.calc.Hazard, double)">deaggregation</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard,
+<td class="colLast"><span class="strong">HazardCalcs.</span><code><strong><a href="../../../../org/opensha2/calc/HazardCalcs.html#deaggregation(org.opensha2.calc.Hazard, double)">deaggregation</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;hazard,
              double&nbsp;returnPeriod)</code>
 <div class="block">Perform a deaggregation of probabilisitic seismic hazard.</div>
 </td>
 </tr>
-</tbody>
-</table>
-<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
-<caption><span>Method parameters in <a href="../../../../org/opensha2/calc/package-summary.html">org.opensha2.calc</a> with type arguments of type <a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tbody>
 <tr class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><span class="strong">Results.</span><code><strong><a href="../../../../org/opensha2/calc/Results.html#writeResults(java.nio.file.Path, java.util.List, java.nio.file.OpenOption...)">writeResults</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/Path.html?is-external=true" title="class or interface in java.nio.file">Path</a>&nbsp;dir,
-            <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&gt;&nbsp;batch,
-            <a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/OpenOption.html?is-external=true" title="class or interface in java.nio.file">OpenOption</a>...&nbsp;options)</code>
-<div class="block">Write a <code>batch</code> of <code>HazardResult</code>s to files in the specified
- directory, one for each <a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm"><code>Imt</code></a> in the <code>batch</code>.</div>
+<td class="colFirst"><code>static <a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a></code></td>
+<td class="colLast"><span class="strong">Hazard.</span><code><strong><a href="../../../../org/opensha2/calc/Hazard.html#merge(org.opensha2.calc.Hazard...)">merge</a></strong>(<a href="../../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>...&nbsp;hazards)</code>
+<div class="block">Combine hazard from multiple independent models.</div>
 </td>
 </tr>
 </tbody>
@@ -252,13 +269,10 @@
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

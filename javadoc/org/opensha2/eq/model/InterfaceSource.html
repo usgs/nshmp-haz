@@ -136,8 +136,21 @@ extends <a href="../../../../org/opensha2/eq/model/FaultSource.html" title="clas
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/InterfaceSource.html#location(org.opensha2.geo.Location)">location</a></strong>(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</code>
+<div class="block">The closest point on the upper or lower fault trace, relative to the
+ supplied site <code>Location</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/InterfaceSource.html#toString()">toString</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/eq/model/InterfaceSource.html#type()">type</a></strong>()</code>
+<div class="block">The <code>SourceType</code> identifier.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -145,7 +158,7 @@ extends <a href="../../../../org/opensha2/eq/model/FaultSource.html" title="clas
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.opensha2.eq.model.<a href="../../../../org/opensha2/eq/model/FaultSource.html" title="class in org.opensha2.eq.model">FaultSource</a></h3>
-<code><a href="../../../../org/opensha2/eq/model/FaultSource.html#iterator()">iterator</a>, <a href="../../../../org/opensha2/eq/model/FaultSource.html#name()">name</a>, <a href="../../../../org/opensha2/eq/model/FaultSource.html#size()">size</a></code></li>
+<code><a href="../../../../org/opensha2/eq/model/FaultSource.html#id()">id</a>, <a href="../../../../org/opensha2/eq/model/FaultSource.html#iterator()">iterator</a>, <a href="../../../../org/opensha2/eq/model/FaultSource.html#mfds()">mfds</a>, <a href="../../../../org/opensha2/eq/model/FaultSource.html#name()">name</a>, <a href="../../../../org/opensha2/eq/model/FaultSource.html#size()">size</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -168,6 +181,40 @@ extends <a href="../../../../org/opensha2/eq/model/FaultSource.html" title="clas
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="type()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>type</h4>
+<pre>public&nbsp;<a href="../../../../org/opensha2/eq/model/SourceType.html" title="enum in org.opensha2.eq.model">SourceType</a>&nbsp;type()</pre>
+<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../org/opensha2/eq/model/Source.html#type()">Source</a></code></strong></div>
+<div class="block">The <code>SourceType</code> identifier.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/opensha2/eq/model/Source.html#type()">type</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../org/opensha2/eq/model/Source.html" title="interface in org.opensha2.eq.model">Source</a></code></dd>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/opensha2/eq/model/FaultSource.html#type()">type</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/opensha2/eq/model/FaultSource.html" title="class in org.opensha2.eq.model">FaultSource</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="location(org.opensha2.geo.Location)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>location</h4>
+<pre>public&nbsp;<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;location(<a href="../../../../org/opensha2/geo/Location.html" title="class in org.opensha2.geo">Location</a>&nbsp;site)</pre>
+<div class="block">The closest point on the upper or lower fault trace, relative to the
+ supplied site <code>Location</code>.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/opensha2/eq/model/Source.html#location(org.opensha2.geo.Location)">location</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../org/opensha2/eq/model/Source.html" title="interface in org.opensha2.eq.model">Source</a></code></dd>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/opensha2/eq/model/FaultSource.html#location(org.opensha2.geo.Location)">location</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/opensha2/eq/model/FaultSource.html" title="class in org.opensha2.eq.model">FaultSource</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="toString()">
 <!--   -->
 </a>
@@ -249,13 +296,10 @@ extends <a href="../../../../org/opensha2/eq/model/FaultSource.html" title="clas
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>

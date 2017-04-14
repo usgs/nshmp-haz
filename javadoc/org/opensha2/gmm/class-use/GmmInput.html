@@ -121,8 +121,9 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/opensha2/ResponseSpectra.MultiResult.html" title="class in org.opensha2">ResponseSpectra.MultiResult</a></code></td>
-<td class="colLast"><span class="strong">ResponseSpectra.</span><code><strong><a href="../../../../org/opensha2/ResponseSpectra.html#spectra(java.util.Set, org.opensha2.gmm.GmmInput)">spectra</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>&gt;&nbsp;gmms,
-       <a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;input)</code>
+<td class="colLast"><span class="strong">ResponseSpectra.</span><code><strong><a href="../../../../org/opensha2/ResponseSpectra.html#spectra(java.util.Set, org.opensha2.gmm.GmmInput, boolean)">spectra</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>&gt;&nbsp;gmms,
+       <a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;input,
+       boolean&nbsp;commonImts)</code>
 <div class="block">Compute the spectra of ground motions and their standard deviations for
  multiple models and a source.</div>
 </td>
@@ -185,49 +186,36 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code>static double[]</code></td>
-<td class="colLast"><span class="strong">MatUtil.</span><code><strong><a href="../../../../org/opensha2/gmm/MatUtil.html#calc(org.opensha2.gmm.Gmm, org.opensha2.gmm.Imt, org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>&nbsp;model,
-    <a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;imt,
-    <a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;source)</code>
-<div class="block">Compute the median ground motion and its standard deviation for a specified
- model, intensity measure type (Imt), and source</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">ZhaoEtAl_2006.</span><code><strong><a href="../../../../org/opensha2/gmm/ZhaoEtAl_2006.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">YoungsEtAl_1997.</span><code><strong><a href="../../../../org/opensha2/gmm/YoungsEtAl_1997.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">ToroEtAl_1997.</span><code><strong><a href="../../../../org/opensha2/gmm/ToroEtAl_1997.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">TavakoliPezeshk_2005.</span><code><strong><a href="../../../../org/opensha2/gmm/TavakoliPezeshk_2005.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">SomervilleEtAl_2001.</span><code><strong><a href="../../../../org/opensha2/gmm/SomervilleEtAl_2001.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">SilvaEtAl_2002.</span><code><strong><a href="../../../../org/opensha2/gmm/SilvaEtAl_2002.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">SadighEtAl_1997.</span><code><strong><a href="../../../../org/opensha2/gmm/SadighEtAl_1997.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
-<td class="colLast"><span class="strong">PezeshkEtAl_2011.</span><code><strong><a href="../../../../org/opensha2/gmm/PezeshkEtAl_2011.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
-<td class="colLast"><span class="strong">NgaEast_2016.</span><code><strong><a href="../../../../org/opensha2/gmm/NgaEast_2016.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">PezeshkEtAl_2011.</span><code><strong><a href="../../../../org/opensha2/gmm/PezeshkEtAl_2011.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
@@ -328,14 +316,6 @@
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">AbrahamsonEtAl_2014.</span><code><strong><a href="../../../../org/opensha2/gmm/AbrahamsonEtAl_2014.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../org/opensha2/gmm/MatSpectrum.html" title="class in org.opensha2.gmm">MatSpectrum</a></code></td>
-<td class="colLast"><span class="strong">MatUtil.</span><code><strong><a href="../../../../org/opensha2/gmm/MatUtil.html#spectrum(org.opensha2.gmm.Gmm, org.opensha2.gmm.GmmInput)">spectrum</a></strong>(<a href="../../../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm">Gmm</a>&nbsp;model,
-        <a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;source)</code>
-<div class="block">Compute a spectrum of ground motions and their standard deviations for a
- specified model and source.</div>
-</td>
-</tr>
 </tbody>
 </table>
 </li>
@@ -389,13 +369,10 @@
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
 <p class="legalCopy"><small>
-        
         <div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-        (<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        </div>
-        
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        – <b>nshmp-haz v1.1.0</b></div>
       </small></p>
 </body>
 </html>
