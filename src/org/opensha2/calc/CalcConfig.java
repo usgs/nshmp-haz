@@ -67,7 +67,7 @@ public final class CalcConfig {
   public final transient Optional<Path> resource;
 
   /** Hazard calculation configuration. */
-  public final Curve curve;
+  public final Hazard hazard;
 
   /** Default site settings. */
   public final SiteDefaults site;
@@ -86,7 +86,7 @@ public final class CalcConfig {
 
   private CalcConfig(
       Optional<Path> resource,
-      Curve curve,
+      Hazard hazard,
       SiteDefaults site,
       Performance performance,
       Output output,
@@ -94,7 +94,7 @@ public final class CalcConfig {
       Rate rate) {
 
     this.resource = resource;
-    this.curve = curve;
+    this.hazard = hazard;
     this.site = site;
     this.performance = performance;
     this.output = output;
@@ -105,9 +105,9 @@ public final class CalcConfig {
   /**
    * Hazard calculation configuration.
    */
-  public final static class Curve {
+  public final static class Hazard {
 
-    static final String ID = CalcConfig.ID + "." + Curve.class.getSimpleName();
+    static final String ID = CalcConfig.ID + "." + Hazard.class.getSimpleName();
 
     /**
      * The probability distribution model to use when computing hazard curves.
@@ -156,7 +156,7 @@ public final class CalcConfig {
     private final transient Map<Imt, XySequence> modelCurves;
     private final transient Map<Imt, XySequence> logModelCurves;
 
-    private Curve(
+    private Hazard(
         ExceedanceModel exceedanceModel,
         double truncationLevel,
         Set<Imt> imts,
@@ -223,7 +223,7 @@ public final class CalcConfig {
         }
       }
       return new StringBuilder()
-          .append(LOG_INDENT).append("Curve")
+          .append(LOG_INDENT).append("Hazard")
           .append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel.name()))
           .append(formatEntry(Key.TRUNCATION_LEVEL, truncationLevel))
           .append(formatEntry(Key.IMTS, enumsToString(imts, Imt.class)))
@@ -243,8 +243,8 @@ public final class CalcConfig {
       double[] defaultImls;
       Map<Imt, double[]> customImls;
 
-      Curve build() {
-        return new Curve(
+      Hazard build() {
+        return new Hazard(
             exceedanceModel,
             truncationLevel,
             Sets.immutableEnumSet(imts),
@@ -256,7 +256,7 @@ public final class CalcConfig {
             createLogCurveMap());
       }
 
-      void copy(Curve that) {
+      void copy(Hazard that) {
         this.exceedanceModel = that.exceedanceModel;
         this.truncationLevel = that.truncationLevel;
         this.imts = that.imts;
@@ -313,11 +313,11 @@ public final class CalcConfig {
       }
 
       void validate() {
-        checkNotNull(exceedanceModel, STATE_ERROR, Curve.ID, Key.EXCEEDANCE_MODEL);
-        checkNotNull(truncationLevel, STATE_ERROR, Curve.ID, Key.TRUNCATION_LEVEL);
-        checkNotNull(imts, STATE_ERROR, Curve.ID, Key.IMTS);
-        checkNotNull(defaultImls, STATE_ERROR, Curve.ID, Key.DEFAULT_IMLS);
-        checkNotNull(customImls, STATE_ERROR, Curve.ID, Key.CUSTOM_IMLS);
+        checkNotNull(exceedanceModel, STATE_ERROR, Hazard.ID, Key.EXCEEDANCE_MODEL);
+        checkNotNull(truncationLevel, STATE_ERROR, Hazard.ID, Key.TRUNCATION_LEVEL);
+        checkNotNull(imts, STATE_ERROR, Hazard.ID, Key.IMTS);
+        checkNotNull(defaultImls, STATE_ERROR, Hazard.ID, Key.DEFAULT_IMLS);
+        checkNotNull(customImls, STATE_ERROR, Hazard.ID, Key.CUSTOM_IMLS);
       }
 
       Map<Imt, XySequence> createLogCurveMap() {
@@ -989,7 +989,7 @@ public final class CalcConfig {
 
   private enum Key {
     RESOURCE,
-    /* curve */
+    /* hazard */
     EXCEEDANCE_MODEL,
     TRUNCATION_LEVEL,
     IMTS,
@@ -1037,7 +1037,7 @@ public final class CalcConfig {
         .append(resource.isPresent()
             ? resource.get().toAbsolutePath().normalize()
             : "(from defaults)")
-        .append(curve.asString())
+        .append(hazard.asString())
         .append(site.asString())
         .append(performance.asString())
         .append(output.asString())
@@ -1133,7 +1133,7 @@ public final class CalcConfig {
     private boolean built = false;
 
     private Path resource;
-    private Curve.Builder curve;
+    private Hazard.Builder hazard;
     private SiteDefaults.Builder site;
     private Performance.Builder performance;
     private Output.Builder output;
@@ -1141,7 +1141,7 @@ public final class CalcConfig {
     private Rate.Builder rate;
 
     private Builder() {
-      curve = new Curve.Builder();
+      hazard = new Hazard.Builder();
       site = new SiteDefaults.Builder();
       performance = new Performance.Builder();
       output = new Output.Builder();
@@ -1157,7 +1157,7 @@ public final class CalcConfig {
       if (config.resource.isPresent()) {
         b.resource = config.resource.get();
       }
-      b.curve.copy(config.curve);
+      b.hazard.copy(config.hazard);
       b.site.copy(config.site);
       b.performance.copy(config.performance);
       b.output.copy(config.output);
@@ -1189,7 +1189,7 @@ public final class CalcConfig {
      */
     public static Builder withDefaults() {
       Builder b = new Builder();
-      b.curve = Curve.Builder.defaults();
+      b.hazard = Hazard.Builder.defaults();
       b.site = SiteDefaults.Builder.defaults();
       b.performance = Performance.Builder.defaults();
       b.output = Output.Builder.defaults();
@@ -1205,7 +1205,7 @@ public final class CalcConfig {
     public Builder extend(final Builder that) {
       checkNotNull(that);
       this.resource = that.resource;
-      this.curve.extend(that.curve);
+      this.hazard.extend(that.hazard);
       this.site.extend(that.site);
       this.performance.extend(that.performance);
       this.output.extend(that.output);
@@ -1222,10 +1222,10 @@ public final class CalcConfig {
     /**
      * Set the IMTs for which results should be calculated.
      * 
-     * @see Curve#imts
+     * @see Hazard#imts
      */
     public Builder imts(Set<Imt> imts) {
-      this.curve.imts = checkNotNull(imts);
+      this.hazard.imts = checkNotNull(imts);
       return this;
     }
 
@@ -1255,7 +1255,7 @@ public final class CalcConfig {
 
     private void validateState() {
       checkState(!built, "This %s instance as already been used", ID + ".Builder");
-      curve.validate();
+      hazard.validate();
       site.validate();
       performance.validate();
       output.validate();
@@ -1271,7 +1271,7 @@ public final class CalcConfig {
       validateState();
       return new CalcConfig(
           Optional.fromNullable(resource),
-          curve.build(),
+          hazard.build(),
           site.build(),
           performance.build(),
           output.build(),

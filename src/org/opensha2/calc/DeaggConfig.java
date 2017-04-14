@@ -83,8 +83,8 @@ final class DeaggConfig {
         .dataModel(
             DeaggDataset.builder(hazard.config).build())
         .probabilityModel(
-            hazard.config.curve.exceedanceModel,
-            hazard.config.curve.truncationLevel)
+            hazard.config.hazard.exceedanceModel,
+            hazard.config.hazard.truncationLevel)
         .settings(hazard.config.deagg);
   }
 

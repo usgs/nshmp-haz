@@ -120,7 +120,7 @@ public final class Hazard {
     ImmutableSetMultimap.Builder<SourceType, HazardCurveSet> curveMapBuilder =
         ImmutableSetMultimap.builder();
     Map<Imt, XySequence> totalCurves = new EnumMap<>(Imt.class);
-    for (Entry<Imt, XySequence> entry : hazards[0].config.curve.logModelCurves().entrySet()) {
+    for (Entry<Imt, XySequence> entry : hazards[0].config.hazard.logModelCurves().entrySet()) {
       totalCurves.put(entry.getKey(), emptyCopyOf(entry.getValue()));
     }
     for (Hazard hazard : hazards) {
@@ -156,7 +156,7 @@ public final class Hazard {
     private Builder(CalcConfig config) {
       this.config = checkNotNull(config);
       totalCurves = new EnumMap<>(Imt.class);
-      for (Entry<Imt, XySequence> entry : config.curve.logModelCurves().entrySet()) {
+      for (Entry<Imt, XySequence> entry : config.hazard.logModelCurves().entrySet()) {
         totalCurves.put(entry.getKey(), emptyCopyOf(entry.getValue()));
       }
       curveMapBuilder = ImmutableSetMultimap.builder();

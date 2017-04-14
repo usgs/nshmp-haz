@@ -118,7 +118,7 @@ public final class HazardExport {
           .description("nshmp-haz generated curves")
           .timestamp(new Timestamp(System.currentTimeMillis()).toString())
           .vs30(demoSite.vs30);
-      for (Entry<Imt, XySequence> entry : config.curve.modelCurves().entrySet()) {
+      for (Entry<Imt, XySequence> entry : config.hazard.modelCurves().entrySet()) {
         Imt imt = entry.getKey();
         Metadata meta = metaBuilder
             .imt(imt)
@@ -251,7 +251,7 @@ public final class HazardExport {
     OpenOption[] options = firstBatch ? WRITE : APPEND;
 
     Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
-    if (demo.config.curve.valueFormat == ValueFormat.POISSON_PROBABILITY) {
+    if (demo.config.hazard.valueFormat == ValueFormat.POISSON_PROBABILITY) {
       formatter = Functions.compose(
           formatter,
           Mfds.annualRateToProbabilityConverter());
@@ -276,7 +276,7 @@ public final class HazardExport {
       if (firstBatch) {
         Iterable<?> header = Iterables.concat(
             Lists.newArrayList(namedSites ? "name" : null, "lon", "lat"),
-            demo.config.curve.modelCurves().get(imt).xValues());
+            demo.config.hazard.modelCurves().get(imt).xValues());
         lines.add(Parsing.join(header, Delimiter.COMMA));
       }
 
