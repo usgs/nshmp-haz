@@ -103,7 +103,7 @@ public final class CalcConfig {
   }
 
   /**
-   * Hazard curve calculation configuration.
+   * Hazard calculation configuration.
    */
   public final static class Curve {
 
@@ -115,7 +115,6 @@ public final class CalcConfig {
      * <p><b>Default:</b> {@link ExceedanceModel#TRUNCATION_UPPER_ONLY}
      */
     public final ExceedanceModel exceedanceModel;
-    // TODO refactor to probabilityModel
 
     /**
      * The number of standard deviations (σ) at which to truncate a
@@ -148,7 +147,7 @@ public final class CalcConfig {
      *
      * <p><b>Default:</b> {@link ValueFormat#ANNUAL_RATE}
      */
-    public final ValueFormat valueType;
+    public final ValueFormat valueFormat;
 
     private final double[] defaultImls;
     private final Map<Imt, double[]> customImls;
@@ -162,7 +161,7 @@ public final class CalcConfig {
         double truncationLevel,
         Set<Imt> imts,
         boolean gmmUncertainty,
-        ValueFormat valueType,
+        ValueFormat valueFormat,
         double[] defaultImls,
         Map<Imt, double[]> customImls,
         Map<Imt, XySequence> modelCurves,
@@ -172,7 +171,7 @@ public final class CalcConfig {
       this.truncationLevel = truncationLevel;
       this.imts = imts;
       this.gmmUncertainty = gmmUncertainty;
-      this.valueType = valueType;
+      this.valueFormat = valueFormat;
 
       this.defaultImls = defaultImls;
       this.customImls = customImls;
@@ -229,7 +228,7 @@ public final class CalcConfig {
           .append(formatEntry(Key.TRUNCATION_LEVEL, truncationLevel))
           .append(formatEntry(Key.IMTS, enumsToString(imts, Imt.class)))
           .append(formatEntry(Key.GMM_UNCERTAINTY, gmmUncertainty))
-          .append(formatEntry(Key.VALUE_TYPE, valueType.name()))
+          .append(formatEntry(Key.VALUE_FORMAT, valueFormat.name()))
           .append(formatEntry(Key.DEFAULT_IMLS, wrap(Arrays.toString(defaultImls), false)))
           .append(imlSb);
     }
@@ -240,7 +239,7 @@ public final class CalcConfig {
       Double truncationLevel;
       Set<Imt> imts;
       Boolean gmmUncertainty;
-      ValueFormat valueType;
+      ValueFormat valueFormat;
       double[] defaultImls;
       Map<Imt, double[]> customImls;
 
@@ -250,7 +249,7 @@ public final class CalcConfig {
             truncationLevel,
             Sets.immutableEnumSet(imts),
             gmmUncertainty,
-            valueType,
+            valueFormat,
             defaultImls,
             customImls,
             createCurveMap(),
@@ -262,7 +261,7 @@ public final class CalcConfig {
         this.truncationLevel = that.truncationLevel;
         this.imts = that.imts;
         this.gmmUncertainty = that.gmmUncertainty;
-        this.valueType = that.valueType;
+        this.valueFormat = that.valueFormat;
         this.defaultImls = that.defaultImls;
         this.customImls = that.customImls;
       }
@@ -280,8 +279,8 @@ public final class CalcConfig {
         if (that.gmmUncertainty != null) {
           this.gmmUncertainty = that.gmmUncertainty;
         }
-        if (that.valueType != null) {
-          this.valueType = that.valueType;
+        if (that.valueFormat != null) {
+          this.valueFormat = that.valueFormat;
         }
         if (that.defaultImls != null) {
           this.defaultImls = that.defaultImls;
@@ -306,7 +305,7 @@ public final class CalcConfig {
         b.truncationLevel = 3.0;
         b.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
         b.gmmUncertainty = false;
-        b.valueType = ValueFormat.ANNUAL_RATE;
+        b.valueFormat = ValueFormat.ANNUAL_RATE;
         b.defaultImls = IMLS_PGA_SA;
         b.customImls = Maps.newHashMap();
         b.customImls.put(Imt.PGV, IMLS_PGV);
@@ -704,7 +703,7 @@ public final class CalcConfig {
      *
      * <p><b>Default:</b> {@link ValueFormat#ANNUAL_RATE}
      */
-    public final ValueFormat values;
+    public final ValueFormat valueFormat;
 
     /**
      * The timespan of interest when computing Poisson probabilities.
@@ -717,13 +716,13 @@ public final class CalcConfig {
         Bins bins,
         double distance,
         Distribution distribution,
-        ValueFormat values,
+        ValueFormat valueFormat,
         double timespan) {
 
       this.bins = bins;
       this.distance = distance;
       this.distribution = distribution;
-      this.values = values;
+      this.valueFormat = valueFormat;
       this.timespan = timespan;
     }
 
@@ -736,7 +735,7 @@ public final class CalcConfig {
           .append("Δ=").append(bins.Δm)
           .append(formatEntry(Key.DISTANCE, distance))
           .append(formatEntry(Key.DISTRIBUTION, distribution.name()))
-          .append(formatEntry(Key.VALUES, values.name()))
+          .append(formatEntry(Key.VALUE_FORMAT, valueFormat.name()))
           .append(formatEntry(Key.TIMESPAN, timespan));
     }
 
@@ -745,7 +744,7 @@ public final class CalcConfig {
       Bins bins;
       Double distance;
       Distribution distribution;
-      ValueFormat values;
+      ValueFormat valueFormat;
       Double timespan;
 
       Rate build() {
@@ -753,7 +752,7 @@ public final class CalcConfig {
             bins,
             distance,
             distribution,
-            values,
+            valueFormat,
             timespan);
       }
 
@@ -761,7 +760,7 @@ public final class CalcConfig {
         this.bins = that.bins;
         this.distance = that.distance;
         this.distribution = that.distribution;
-        this.values = that.values;
+        this.valueFormat = that.valueFormat;
         this.timespan = that.timespan;
       }
 
@@ -775,8 +774,8 @@ public final class CalcConfig {
         if (that.distribution != null) {
           this.distribution = that.distribution;
         }
-        if (that.values != null) {
-          this.values = that.values;
+        if (that.valueFormat != null) {
+          this.valueFormat = that.valueFormat;
         }
         if (that.timespan != null) {
           this.timespan = that.timespan;
@@ -788,7 +787,7 @@ public final class CalcConfig {
         b.bins = Bins.defaults();
         b.distance = 20.0;
         b.distribution = Distribution.INCREMENTAL;
-        b.values = ValueFormat.ANNUAL_RATE;
+        b.valueFormat = ValueFormat.ANNUAL_RATE;
         b.timespan = 30.0;
         return b;
       }
@@ -800,7 +799,7 @@ public final class CalcConfig {
         checkNotNull(bins.Δm, STATE_ERROR, Rate.ID, Key.BINS + ".Δm");
         checkNotNull(distance, STATE_ERROR, Rate.ID, Key.DISTANCE);
         checkNotNull(distribution, STATE_ERROR, Rate.ID, Key.DISTRIBUTION);
-        checkNotNull(values, STATE_ERROR, Rate.ID, Key.VALUES);
+        checkNotNull(valueFormat, STATE_ERROR, Rate.ID, Key.VALUE_FORMAT);
         checkNotNull(timespan, STATE_ERROR, Rate.ID, Key.TIMESPAN);
       }
 
@@ -994,7 +993,7 @@ public final class CalcConfig {
     TRUNCATION_LEVEL,
     IMTS,
     GMM_UNCERTAINTY,
-    VALUE_TYPE,
+    VALUE_FORMAT, 
     DEFAULT_IMLS,
     CUSTOM_IMLS,
     /* site defaults */
@@ -1016,7 +1015,6 @@ public final class CalcConfig {
     CONTRIBUTOR_LIMIT,
     /* rate */
     DISTANCE,
-    VALUES,
     DISTRIBUTION,
     TIMESPAN;
 
@@ -1239,7 +1237,7 @@ public final class CalcConfig {
      */
     public Builder timespan(double timespan) {
       this.rate.timespan = timespan;
-      this.rate.values = ValueFormat.POISSON_PROBABILITY;
+      this.rate.valueFormat = ValueFormat.POISSON_PROBABILITY;
       return this;
     }
 

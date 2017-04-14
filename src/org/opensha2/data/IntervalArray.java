@@ -245,7 +245,7 @@ public interface IntervalArray {
 
     /**
      * Add to the existing value at the specified row. Be careful not to confuse
-     * this with {@link #add(double, double)} .
+     * this with {@link #add(double, double)}.
      *
      * @param row index
      * @param value to add
@@ -336,7 +336,7 @@ public interface IntervalArray {
       Data.uncheckedAdd(data, ((DefaultArray) array).data);
       return this;
     }
-    
+
     /**
      * Add each value-pair of the supplied sequence to the appropriate interval.
      * 
