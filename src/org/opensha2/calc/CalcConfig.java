@@ -561,7 +561,7 @@ public final class CalcConfig {
           .append("max=").append(bins.mMax).append(", ")
           .append("Δ=").append(bins.Δm)
           .append(formatEntry(Key.DISTANCE, distance))
-          .append(formatEntry(Key.DISTRIBUTION, distributionFormat.name()))
+          .append(formatEntry(Key.DISTRIBUTION_FORMAT, distributionFormat.name()))
           .append(formatEntry(Key.VALUE_FORMAT, valueFormat.name()))
           .append(formatEntry(Key.TIMESPAN, timespan));
     }
@@ -625,7 +625,7 @@ public final class CalcConfig {
         checkNotNull(bins.mMax, STATE_ERROR, Rate.ID, Key.BINS + ".mMax");
         checkNotNull(bins.Δm, STATE_ERROR, Rate.ID, Key.BINS + ".Δm");
         checkNotNull(distance, STATE_ERROR, Rate.ID, Key.DISTANCE);
-        checkNotNull(distributionFormat, STATE_ERROR, Rate.ID, Key.DISTRIBUTION);
+        checkNotNull(distributionFormat, STATE_ERROR, Rate.ID, Key.DISTRIBUTION_FORMAT);
         checkNotNull(valueFormat, STATE_ERROR, Rate.ID, Key.VALUE_FORMAT);
         checkNotNull(timespan, STATE_ERROR, Rate.ID, Key.TIMESPAN);
       }
@@ -1016,7 +1016,7 @@ public final class CalcConfig {
     CONTRIBUTOR_LIMIT,
     /* rate */
     DISTANCE,
-    DISTRIBUTION,
+    DISTRIBUTION_FORMAT,
     TIMESPAN;
 
     private String label;
@@ -1038,11 +1038,11 @@ public final class CalcConfig {
             ? resource.get().toAbsolutePath().normalize()
             : "(from defaults)")
         .append(hazard.asString())
-        .append(site.asString())
-        .append(performance.asString())
-        .append(output.asString())
         .append(deagg.asString())
         .append(rate.asString())
+        .append(site.asString())
+        .append(output.asString())
+        .append(performance.asString())
         .toString();
   }
 
