@@ -216,7 +216,7 @@
   </target>
 
 
-  <target name="javadoc" description="Generate Javadocs">
+  <target name="javadoc" description="Generate Javadocs" depends="check.git">
     <delete dir="${javadoc}" />
     <javadoc classpathref="classpath"
              destdir="${javadoc}"
@@ -248,9 +248,9 @@
 
       <bottom>
         <![CDATA[<div style="float: right; font-size: 14px; padding: 4px;">
-        <span style="font-weight: bold;">U.S. Geological Survey</span>
-        – National Seicmic Hazard Mapping Project
-      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)</div>]]>
+        <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
+      	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
+        | <b>nshmp-haz ${git.tag}</b></div>]]>
       </bottom>
 
     <link href="http://docs.oracle.com/javase/7/docs/api/" />
