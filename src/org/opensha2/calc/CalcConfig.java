@@ -514,7 +514,7 @@ public final class CalcConfig {
     /**
      * The distance from a site within which all sources should be included.
      *
-     * <p><b>Default:</b> {@code 20}
+     * <p><b>Default:</b> {@code 20 km}
      */
     public final Double distance;
 
@@ -535,7 +535,7 @@ public final class CalcConfig {
     /**
      * The timespan of interest when computing Poisson probabilities.
      *
-     * <p><b>Default:</b> {@code 30}
+     * <p><b>Default:</b> {@code 30 years}
      */
     public final Double timespan;
 
