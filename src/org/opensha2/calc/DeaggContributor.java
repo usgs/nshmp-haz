@@ -190,6 +190,7 @@ abstract class DeaggContributor {
       ArrayList<JsonContributor> jsonList = new ArrayList<>();
       JsonContributor jc = JsonContributor.createMulti(
           sourceSet.name(),
+          sourceSet.type(),
           Maths.round(filter.toPercent(total()), 2));
       jsonList.add(jc);
       for (DeaggContributor child : children) {
@@ -301,6 +302,7 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       JsonContributor jc = JsonContributor.createSingle(
           source.name(),
+          source.type(),
           Maths.round(filter.toPercent(total()), 2),
           -1,
           rBar,
@@ -436,6 +438,7 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       JsonContributor jc = JsonContributor.createSingle(
           cluster.name(),
+          cluster.type(),
           Maths.round(filter.toPercent(total()), 2),
           -2,
           rBar,
@@ -559,6 +562,7 @@ abstract class DeaggContributor {
       double εBar = εScaled / total;
       JsonContributor jc = JsonContributor.createSingle(
           section.name(),
+          section.type(),
           Maths.round(filter.toPercent(total()), 2),
           -3,
           rBar,
@@ -704,6 +708,7 @@ abstract class DeaggContributor {
   /* Wrapper of contributor data suitable for JSON serialization. */
   static final class JsonContributor {
     String name;
+    String source;
     JsonContributorType type;
     Double contribution;
     Integer id;
@@ -715,10 +720,15 @@ abstract class DeaggContributor {
     Double longitude;
 
     /* Use for SourceSets. */
-    static JsonContributor createMulti(String name, double contribution) {
+    static JsonContributor createMulti(
+        String name, 
+        SourceType source, 
+        double contribution) {
+      
       JsonContributor jc = new JsonContributor();
       jc.name = name;
-      jc.type = JsonContributorType.MULTI;
+      jc.source = source.toString();
+      jc.type = JsonContributorType.SET;
       jc.contribution = contribution;
       return jc;
     }
@@ -726,6 +736,7 @@ abstract class DeaggContributor {
     /* Use for more detailed individual sources. */
     static JsonContributor createSingle(
         String name,
+        SourceType source,
         double contribution,
         int id,
         double r,
@@ -737,6 +748,7 @@ abstract class DeaggContributor {
 
       JsonContributor jc = new JsonContributor();
       jc.name = name;
+      jc.source = source.toString();
       jc.type = JsonContributorType.SINGLE;
       jc.contribution = contribution;
       jc.id = id;
@@ -751,8 +763,8 @@ abstract class DeaggContributor {
   }
 
   private static enum JsonContributorType {
-    SINGLE,
-    MULTI;
+    SET,
+    SINGLE;
   }
 
   /* Convert a builder list to immutable sorted contributor list. */

@@ -96,7 +96,12 @@ class PointSource implements Source {
 
   @Override
   public String name() {
-    return "PointSource: " + loc;
+    return "PointSource: " + formatLocation(loc);
+  }
+  
+  static final String FORMAT = "%.3f, %.3f";
+  static String formatLocation(Location loc) {
+    return String.format(FORMAT, loc.lon(), loc.lat());
   }
 
   @Override

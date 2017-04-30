@@ -73,7 +73,7 @@ class PointSourceFinite extends PointSource {
 
   @Override
   public String name() {
-    return "PointSourceFinite: " + loc;
+    return "PointSourceFinite: " + formatLocation(loc);
   }
 
   /*
