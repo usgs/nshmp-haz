@@ -76,7 +76,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
 
   @Override
   public String name() {
-    return "PointSourceFixedStrike: " + loc;
+    return "PointSourceFixedStrike: " + formatLocation(loc);
   }
 
   /*

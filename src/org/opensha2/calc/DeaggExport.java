@@ -397,7 +397,7 @@ final class DeaggExport {
 
   private static double traceContribution(DeaggDataset dd) {
     double toPercent = percentScalar(dd);
-    double traceConribution = 0.0;
+    double traceContribution = 0.0;
     for (int ri = 0; ri < dd.rmε.rows().size(); ri++) {
       for (int mi = 0; mi < dd.rmε.columns().size(); mi++) {
         if (dd.rmWeights.get(ri, mi) <= 0.0) {
@@ -406,12 +406,12 @@ final class DeaggExport {
         for (double εValue : dd.rmε.column(ri, mi).yValues()) {
           double rmεBinContribution = εValue * toPercent;
           if (rmεBinContribution < TRACE_LIMIT) {
-            traceConribution += rmεBinContribution;
+            traceContribution += rmεBinContribution;
           }
         }
       }
     }
-    return traceConribution;
+    return traceContribution;
   }
 
   private static double percentScalar(DeaggDataset dd) {
