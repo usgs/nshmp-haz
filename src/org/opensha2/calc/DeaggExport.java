@@ -12,6 +12,7 @@ import org.opensha2.calc.DeaggContributor.SourceSetContributor;
 import org.opensha2.calc.DeaggContributor.SystemContributor;
 import org.opensha2.data.Data;
 import org.opensha2.eq.model.SourceType;
+import org.opensha2.gmm.Imt;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
 import org.opensha2.util.Maths;
@@ -351,13 +352,17 @@ final class DeaggExport {
     String mDiscr = String.format(DISCRETIZATION_FMT, b.mMin, b.mMax, b.Δm);
     String εDiscr = String.format(DISCRETIZATION_FMT, b.εMin, b.εMax, b.Δε);
 
+    /* custom imt formatting */
+    Imt imt = dc.imt;
+    String imlLabel = (imt.isSA() ? imt.period() + "s SA": imt.name()) + " ground motion";
+    
     ImmutableList.Builder<SummaryElement> summaryElements = ImmutableList.builder();
     summaryElements.add(
 
         new SummaryElement("Deaggregation targets", true, ImmutableList.of(
             new SummaryItem("Return period", dc.returnPeriod, "yrs"),
             new SummaryItem("Exceedance rate", dc.rate, "yr⁻¹"),
-            new SummaryItem("Exceedance IML", exp(dc.iml), "g"))),
+            new SummaryItem(imlLabel, exp(dc.iml), dc.imt.units()))),
 
         new SummaryElement("Recovered targets", true, ImmutableList.of(
             new SummaryItem("Return period", recoveredReturnPeriod, "yrs"),
