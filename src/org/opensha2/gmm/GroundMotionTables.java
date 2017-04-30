@@ -11,7 +11,6 @@ import static org.opensha2.gmm.Imt.SA0P03;
 import static org.opensha2.gmm.Imt.SA0P3;
 import static org.opensha2.gmm.Imt.SA3P0;
 import static org.opensha2.internal.Parsing.splitToDoubleList;
-import static org.opensha2.internal.Parsing.splitToList;
 import static org.opensha2.internal.TextUtils.NEWLINE;
 
 import org.opensha2.data.Data;
@@ -19,10 +18,8 @@ import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
 import org.opensha2.internal.Parsing;
 import org.opensha2.internal.Parsing.Delimiter;
 
-import com.google.common.base.Enums;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -33,7 +30,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -70,18 +66,6 @@ final class GroundMotionTables {
     return PEZESHK_11.get(imt);
   }
 
-  static GroundMotionTable[] getNgaEast(Imt imt) {
-    return NGA_EAST.get(imt);
-  }
-  
-  static GroundMotionTable getNgaEastSeed(String id, Imt imt) {
-    return NGA_EAST_SEEDS.get(id).get(imt);
-  }
-
-  static double[] getNgaEastWeights(Imt imt) {
-    return NGA_EAST_WEIGHTS.get(imt);
-  }
-
   private static final String TABLE_DIR = "tables/";
 
   private static final String[] frankelSrcSR = {
@@ -95,30 +79,6 @@ final class GroundMotionTables {
   private static final String ATKINSON_06_SRC = "AB06revA_Rcd.dat";
   private static final String ATKINSON_08_SRC = "A08revA_Rjb.dat";
   private static final String PEZESHK_11_SRC = "P11A_Rcd.dat";
-
-  private static final String NGA_EAST_FILENAME_FMT = "nga-east-%s.csv";
-  private static final int NGA_EAST_MODEL_COUNT = 29;
-  
-  static final List<String> NGA_EAST_SEED_IDS = ImmutableList.copyOf(new String[] {
-      "1CCSP",
-      "1CVSP",
-      "2CCSP",
-      "2CVSP",
-      "B_a04",
-      "B_ab14",
-      "B_ab95",
-      "B_bca10d",
-      "B_bs11",
-      "B_sgd02",
-      "Frankel",
-      "Graizer",
-      "HA15",
-      "PEER_EX",
-      "PEER_GP",
-      "PZCT15_M1SS",
-      "PZCT15_M2ES",
-      "SP15",
-      "YA15"});
 
   private static final double[] ATKINSON_R = {
       -1.000, 0.000, 0.301, 0.699, 1.000, 1.176, 1.301, 1.398, 1.477, 1.602,
@@ -164,9 +124,6 @@ final class GroundMotionTables {
   private static final Map<Imt, GroundMotionTable> ATKINSON_06;
   private static final Map<Imt, GroundMotionTable> ATKINSON_08;
   private static final Map<Imt, GroundMotionTable> PEZESHK_11;
-  private static final Map<Imt, GroundMotionTable[]> NGA_EAST;
-  private static final Map<String, Map<Imt, GroundMotionTable>> NGA_EAST_SEEDS;
-  private static final Map<Imt, double[]> NGA_EAST_WEIGHTS;
 
   static {
     FRANKEL_HARD_ROCK = initFrankel(frankelSrcHR);
@@ -174,9 +131,6 @@ final class GroundMotionTables {
     ATKINSON_06 = initAtkinson(ATKINSON_06_SRC, ATKINSON_R, ATKINSON_M);
     ATKINSON_08 = initAtkinson(ATKINSON_08_SRC, ATKINSON_R, ATKINSON_M);
     PEZESHK_11 = initAtkinson(PEZESHK_11_SRC, PEZESHK_R, PEZESHK_M);
-    NGA_EAST = initNgaEast();
-    NGA_EAST_SEEDS = initNgaEastSeeds();
-    NGA_EAST_WEIGHTS = initNgaEastWeights();
   }
 
   private static Map<Imt, GroundMotionTable> initFrankel(String[] files) {
@@ -219,116 +173,6 @@ final class GroundMotionTables {
       }
     } catch (IOException ioe) {
       handleIOex(ioe, file);
-    }
-    return map;
-  }
-
-  private static Map<Imt, GroundMotionTable[]> initNgaEast() {
-    Map<Imt, GroundMotionTable[]> map = Maps.newEnumMap(Imt.class);
-    for (int i = 0; i < NGA_EAST_MODEL_COUNT; i++) {
-      String filename = String.format(NGA_EAST_FILENAME_FMT, i + 1);
-      /*
-       * TODO nga-east data are not public and therefore may not exist when
-       * initializing Gmm's; we therefore temporarily allow mga-east ground
-       * motion tables to initialize to null. Once data are public remove
-       * try-catch.
-       */
-      URL url;
-      try {
-        url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
-      } catch (IllegalArgumentException iae) {
-        // iae.printStackTrace();
-        return null;
-      }
-      try {
-        NgaEastParser parser = new NgaEastParser(NGA_EAST_R.length);
-        Map<Imt, double[][]> dataMap = readLines(url, UTF_8, parser);
-        for (Entry<Imt, double[][]> entry : dataMap.entrySet()) {
-          double[][] data = entry.getValue();
-          LogDistanceTable table = new LogDistanceTable(data, NGA_EAST_R, NGA_EAST_M);
-          Imt imt = entry.getKey();
-          if (map.get(imt) == null) {
-            map.put(imt, new GroundMotionTable[NGA_EAST_MODEL_COUNT]);
-          }
-          map.get(imt)[i] = table;
-        }
-      } catch (IOException ioe) {
-        handleIOex(ioe, filename);
-      }
-    }
-    return map;
-  }
-  
-  private static Map<String, Map<Imt, GroundMotionTable>> initNgaEastSeeds() {
-    Map<String, Map<Imt, GroundMotionTable>> map = new HashMap<>();
-    for (String id : NGA_EAST_SEED_IDS) {
-      String filename = String.format(NGA_EAST_FILENAME_FMT, id);
-      /*
-       * TODO nga-east data are not public and therefore may not exist when
-       * initializing Gmm's; we therefore temporarily allow mga-east ground
-       * motion tables to initialize to null. Once data are public remove
-       * try-catch.
-       */
-      URL url;
-      try {
-        url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
-      } catch (IllegalArgumentException iae) {
-        // iae.printStackTrace();
-        return null;
-      }
-      
-      try {
-        NgaEastParser parser = new NgaEastParser(NGA_EAST_R.length);
-        Map<Imt, double[][]> dataMap = readLines(url, UTF_8, parser);
-        for (Entry<Imt, double[][]> entry : dataMap.entrySet()) {
-          double[][] data = entry.getValue();
-          LogDistanceTable table = new LogDistanceTable(data, NGA_EAST_R, NGA_EAST_M);
-          Imt imt = entry.getKey();
-          if (map.get(id) == null) {
-            Map<Imt, GroundMotionTable> seedMap = Maps.newEnumMap(Imt.class);
-            map.put(id, seedMap);
-          }
-          map.get(id).put(imt, table);
-        }
-      } catch (IOException ioe) {
-        handleIOex(ioe, filename);
-      }
-    }
-    return map;
-  }
-
-  private static Map<Imt, double[]> initNgaEastWeights() {
-    Map<Imt, double[]> map = Maps.newEnumMap(Imt.class);
-    String filename = String.format(NGA_EAST_FILENAME_FMT, "weights");
-    /*
-     * TODO clean up as above; tamporarily allowing weights to init to null.
-     * Once data are public remove try-catch.
-     */
-    URL url;
-    try {
-      url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
-    } catch (IllegalArgumentException iae) {
-      // iae.printStackTrace();
-      return null;
-    }
-    try {
-      List<String> lines = readLines(url, UTF_8);
-      List<Imt> imts = FluentIterable
-          .from(splitToList(lines.get(0), Delimiter.COMMA))
-          .skip(1)
-          .transform(Enums.stringConverter(Imt.class))
-          .toList();
-      for (Imt imt : imts) {
-        map.put(imt, new double[NGA_EAST_MODEL_COUNT]);
-      }
-      for (int i = 0; i < NGA_EAST_MODEL_COUNT; i++) {
-        List<Double> weights = splitToDoubleList(lines.get(i + 1), Delimiter.COMMA);
-        for (int j = 1; j < weights.size(); j++) {
-          map.get(imts.get(j - 1))[i] = weights.get(j);
-        }
-      }
-    } catch (IOException ioe) {
-      handleIOex(ioe, filename);
     }
     return map;
   }
