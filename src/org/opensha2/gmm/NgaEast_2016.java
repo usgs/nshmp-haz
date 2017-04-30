@@ -20,11 +20,11 @@ import java.util.Map;
 
 /**
  * Experimental implementation of the PEER NGA-East ground motion model by
- * Goulet et al. (2016).This is a cusotom version of the model developed
+ * Goulet et al. (2016).This is a custom version of the model developed
  * specifically for USGS applications. It is a composite model that consists of
  * a reduced set of 13 median ground motion models (down from 29 in the full
  * NGA-East model) with period dependent weights. PEER recommends the use of a
- * total, magnitude dependent ergodic sigma model. This implementation also
+ * total, magnitude dependent ergodic sigma model. This implementation
  * includes the 3-branch logic tree on sigma as well.
  * 
  * <p>Calculation of hazard using this preliminary implementation deviates
