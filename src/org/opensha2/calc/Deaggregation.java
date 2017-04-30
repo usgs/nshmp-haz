@@ -255,18 +255,27 @@ public final class Deaggregation {
 
     /*
      * Method does not return a JSON String, but rather an appropriately
-     * structured object that may be serialized directly or added to soem other
+     * structured object that may be serialized directly or added to some other
      * object prior to serialization.
      */
     Object toJson() {
       List<DeaggExport> jsonDeaggs = new ArrayList<>();
-      DeaggExport export = new DeaggExport(
+      DeaggExport total = new DeaggExport(
           totalDataset,
           totalDataset,
           config,
           "Total",
           true);
-      jsonDeaggs.add(export);
+      jsonDeaggs.add(total);
+      for (Entry<Gmm, DeaggDataset> ddEntry : gmmDatasets.entrySet()) {
+        DeaggExport gmm = new DeaggExport(
+            totalDataset,
+            ddEntry.getValue(),
+            config,
+            ddEntry.getKey().toString(),
+            true);
+        jsonDeaggs.add(gmm);
+      }
       return jsonDeaggs;
     }
   }
