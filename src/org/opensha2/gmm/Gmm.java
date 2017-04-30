@@ -473,7 +473,254 @@ public enum Gmm {
       McVerryEtAl_2000.Volcanic.class,
       McVerryEtAl_2000.Volcanic.NAME,
       McVerryEtAl_2000.COEFFS_GM,
-      McVerryEtAl_2000.CONSTRAINTS);
+      McVerryEtAl_2000.CONSTRAINTS),
+
+  /* NGA-East */
+
+  /** @see NgaEast_2016 */
+  NGA_EAST(
+      NgaEast_2016.TotalSigmaModel.class,
+      NgaEast_2016.TotalSigmaModel.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_BRANCHING_Σ(
+      NgaEast_2016.BranchSigmaModel.class,
+      NgaEast_2016.BranchSigmaModel.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_1(
+      NgaEast_2016.Sammons_1.class,
+      NgaEast_2016.Sammons_1.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_2(
+      NgaEast_2016.Sammons_2.class,
+      NgaEast_2016.Sammons_2.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_3(
+      NgaEast_2016.Sammons_3.class,
+      NgaEast_2016.Sammons_3.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_4(
+      NgaEast_2016.Sammons_4.class,
+      NgaEast_2016.Sammons_4.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_5(
+      NgaEast_2016.Sammons_5.class,
+      NgaEast_2016.Sammons_5.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_6(
+      NgaEast_2016.Sammons_6.class,
+      NgaEast_2016.Sammons_6.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_7(
+      NgaEast_2016.Sammons_7.class,
+      NgaEast_2016.Sammons_7.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_8(
+      NgaEast_2016.Sammons_8.class,
+      NgaEast_2016.Sammons_8.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_9(
+      NgaEast_2016.Sammons_9.class,
+      NgaEast_2016.Sammons_9.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_10(
+      NgaEast_2016.Sammons_10.class,
+      NgaEast_2016.Sammons_10.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_11(
+      NgaEast_2016.Sammons_11.class,
+      NgaEast_2016.Sammons_11.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_12(
+      NgaEast_2016.Sammons_12.class,
+      NgaEast_2016.Sammons_12.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_13(
+      NgaEast_2016.Sammons_13.class,
+      NgaEast_2016.Sammons_13.NAME,
+      NgaEast_2016.COEFFS_SIGMA_TOTAL,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_1CCSP(
+      NgaEast_2016.Seed_1CCSP.class,
+      NgaEast_2016.Seed_1CCSP.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_1CVSP(
+      NgaEast_2016.Seed_1CVSP.class,
+      NgaEast_2016.Seed_1CVSP.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_2CCSP(
+      NgaEast_2016.Seed_2CCSP.class,
+      NgaEast_2016.Seed_2CCSP.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_2CVSP(
+      NgaEast_2016.Seed_2CVSP.class,
+      NgaEast_2016.Seed_2CVSP.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  // /** @see NgaEast_2016 */
+  // NGA_EAST_SEED_ANC15(
+  // NgaEast_2016.Seed_ANC15.class,
+  // NgaEast_2016.Seed_ANC15.NAME,
+  // NgaEast_2016.COEFFS_SIGMA_MID,
+  // NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_B_a04(
+      NgaEast_2016.Seed_B_a04.class,
+      NgaEast_2016.Seed_B_a04.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_B_ab14(
+      NgaEast_2016.Seed_B_ab14.class,
+      NgaEast_2016.Seed_B_ab14.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_B_ab95(
+      NgaEast_2016.Seed_B_ab95.class,
+      NgaEast_2016.Seed_B_ab95.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_B_bca10d(
+      NgaEast_2016.Seed_B_bca10d.class,
+      NgaEast_2016.Seed_B_bca10d.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_B_bs11(
+      NgaEast_2016.Seed_B_bs11.class,
+      NgaEast_2016.Seed_B_bs11.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_B_sgd02(
+      NgaEast_2016.Seed_B_sgd02.class,
+      NgaEast_2016.Seed_B_sgd02.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_Frankel(
+      NgaEast_2016.Seed_Frankel.class,
+      NgaEast_2016.Seed_Frankel.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_Graizer(
+      NgaEast_2016.Seed_Graizer.class,
+      NgaEast_2016.Seed_Graizer.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_HA15(
+      NgaEast_2016.Seed_HA15.class,
+      NgaEast_2016.Seed_HA15.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_PEER_EX(
+      NgaEast_2016.Seed_PEER_EX.class,
+      NgaEast_2016.Seed_PEER_EX.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_PEER_GP(
+      NgaEast_2016.Seed_PEER_GP.class,
+      NgaEast_2016.Seed_PEER_GP.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_PZCT15_M1SS(
+      NgaEast_2016.Seed_PZCT15_M1SS.class,
+      NgaEast_2016.Seed_PZCT15_M1SS.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_PZCT15_M2ES(
+      NgaEast_2016.Seed_PZCT15_M2ES.class,
+      NgaEast_2016.Seed_PZCT15_M2ES.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_SP15(
+      NgaEast_2016.Seed_SP15.class,
+      NgaEast_2016.Seed_SP15.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS),
+
+  /** @see NgaEast_2016 */
+  NGA_EAST_SEED_YA15(
+      NgaEast_2016.Seed_YA15.class,
+      NgaEast_2016.Seed_YA15.NAME,
+      NgaEast_2016.COEFFS_SIGMA_MID,
+      NgaEast_2016.CONSTRAINTS);
 
   private final Class<? extends GroundMotionModel> delegate;
   private final String name;
@@ -735,7 +982,51 @@ public enum Gmm {
             MCVERRY_00_CRUSTAL,
             MCVERRY_00_INTERFACE,
             MCVERRY_00_SLAB,
-            MCVERRY_00_VOLCANIC));
+            MCVERRY_00_VOLCANIC)),
+
+    NGA_EAST_SAMMONS(
+        "NGA-East",
+        ImmutableList.of(
+            NGA_EAST,
+            NGA_EAST_BRANCHING_Σ,
+            NGA_EAST_1,
+            NGA_EAST_2,
+            NGA_EAST_3,
+            NGA_EAST_4,
+            NGA_EAST_5,
+            NGA_EAST_6,
+            NGA_EAST_7,
+            NGA_EAST_8,
+            NGA_EAST_9,
+            NGA_EAST_9,
+            NGA_EAST_10,
+            NGA_EAST_11,
+            NGA_EAST_12,
+            NGA_EAST_13)),
+
+    NGA_EAST_SEEDS(
+        "NGA-East Seed Models",
+        ImmutableList.of(
+            NGA_EAST_SEED_1CCSP,
+            NGA_EAST_SEED_1CVSP,
+            NGA_EAST_SEED_2CCSP,
+            NGA_EAST_SEED_2CVSP,
+            // NGA_EAST_SEED_ANC15,
+            NGA_EAST_SEED_B_a04,
+            NGA_EAST_SEED_B_ab14,
+            NGA_EAST_SEED_B_ab95,
+            NGA_EAST_SEED_B_bca10d,
+            NGA_EAST_SEED_B_bs11,
+            NGA_EAST_SEED_B_sgd02,
+            NGA_EAST_SEED_Frankel,
+            NGA_EAST_SEED_Graizer,
+            NGA_EAST_SEED_HA15,
+            NGA_EAST_SEED_PEER_EX,
+            NGA_EAST_SEED_PEER_GP,
+            NGA_EAST_SEED_PZCT15_M1SS,
+            NGA_EAST_SEED_PZCT15_M2ES,
+            NGA_EAST_SEED_SP15,
+            NGA_EAST_SEED_YA15));
 
     private final String name;
     private final List<Gmm> gmms;
