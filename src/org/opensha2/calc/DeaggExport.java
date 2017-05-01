@@ -354,7 +354,7 @@ final class DeaggExport {
 
     /* custom imt formatting */
     Imt imt = dc.imt;
-    String imlLabel = (imt.isSA() ? imt.period() + "s SA": imt.name()) + " ground motion";
+    String imlLabel = (imt.isSA() ? imt.period() + " s SA": imt.name()) + " ground motion";
     
     ImmutableList.Builder<SummaryElement> summaryElements = ImmutableList.builder();
     summaryElements.add(
