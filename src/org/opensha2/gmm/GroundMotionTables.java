@@ -238,7 +238,6 @@ final class GroundMotionTables {
       try {
         url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
       } catch (IllegalArgumentException iae) {
-        // iae.printStackTrace();
         return null;
       }
       try {
