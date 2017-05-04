@@ -97,6 +97,7 @@ final class GroundMotionTables {
   private static final String PEZESHK_11_SRC = "P11A_Rcd.dat";
 
   private static final String NGA_EAST_FILENAME_FMT = "nga-east-usgs-%s.csv";
+  private static final String NGA_EAST_SEED_FILENAME_FMT = "nga-east-%s.csv";
   private static final int NGA_EAST_MODEL_COUNT = 13;
 
   static final List<String> NGA_EAST_SEED_IDS = ImmutableList.copyOf(new String[] {
@@ -237,7 +238,6 @@ final class GroundMotionTables {
       try {
         url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
       } catch (IllegalArgumentException iae) {
-        // iae.printStackTrace();
         return null;
       }
       try {
@@ -262,7 +262,7 @@ final class GroundMotionTables {
   private static Map<String, Map<Imt, GroundMotionTable>> initNgaEastSeeds() {
     Map<String, Map<Imt, GroundMotionTable>> map = new HashMap<>();
     for (String id : NGA_EAST_SEED_IDS) {
-      String filename = String.format(NGA_EAST_FILENAME_FMT, id);
+      String filename = String.format(NGA_EAST_SEED_FILENAME_FMT, id);
       /*
        * TODO nga-east data are not public and therefore may not exist when
        * initializing Gmm's; we therefore temporarily allow mga-east ground
@@ -273,7 +273,6 @@ final class GroundMotionTables {
       try {
         url = getResource(GroundMotionTables.class, TABLE_DIR + filename);
       } catch (IllegalArgumentException iae) {
-        // iae.printStackTrace();
         return null;
       }
 
