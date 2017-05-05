@@ -343,7 +343,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     Sammons(int id, Imt imt) {
       super(imt);
       this.id = id;
-      this.table = super.tables[id];
+      this.table = super.tables[id - 1];
     }
 
     @Override
