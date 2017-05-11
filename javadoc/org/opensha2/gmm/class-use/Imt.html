@@ -179,6 +179,13 @@
 <div class="block">An immutable map of model curves where x-values are in linear space.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/ImmutableMap.html?is-external=true" title="class or interface in com.google.common.collect">ImmutableMap</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><span class="strong">ScratchImCorrelation.</span><code><strong><a href="../../../../org/opensha2/calc/ScratchImCorrelation.html#rhoMap(org.opensha2.gmm.Imt, java.util.Collection)">rhoMap</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;target,
+      <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&gt;&nbsp;imts)</code>
+<div class="block">Compute the correlations between a <code>target</code> and other <code>imts</code>.</div>
+</td>
+</tr>
 </tbody>
 </table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
@@ -195,6 +202,13 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/ImmutableMap.html?is-external=true" title="class or interface in com.google.common.collect">ImmutableMap</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><span class="strong">ScratchImCorrelation.</span><code><strong><a href="../../../../org/opensha2/calc/ScratchImCorrelation.html#rhoMap(org.opensha2.gmm.Imt, java.util.Collection)">rhoMap</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;target,
+      <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&gt;&nbsp;imts)</code>
+<div class="block">Compute the correlations between a <code>target</code> and other <code>imts</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
 <td class="colLast"><span class="strong">Deaggregation.</span><code><strong><a href="../../../../org/opensha2/calc/Deaggregation.html#toJson(org.opensha2.gmm.Imt)">toJson</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;imt)</code>
 <div class="block">Returns an object constining deaggregation results that is suitable for
@@ -214,6 +228,13 @@
 <td class="colFirst"><code><a href="../../../../org/opensha2/calc/CalcConfig.Builder.html" title="class in org.opensha2.calc">CalcConfig.Builder</a></code></td>
 <td class="colLast"><span class="strong">CalcConfig.Builder.</span><code><strong><a href="../../../../org/opensha2/calc/CalcConfig.Builder.html#imts(java.util.Set)">imts</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&gt;&nbsp;imts)</code>
 <div class="block">Set the IMTs for which results should be calculated.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://google.github.io/guava/releases/20.0/api/docs/com/google/common/collect/ImmutableMap.html?is-external=true" title="class or interface in com.google.common.collect">ImmutableMap</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Double.html?is-external=true" title="class or interface in java.lang">Double</a>&gt;</code></td>
+<td class="colLast"><span class="strong">ScratchImCorrelation.</span><code><strong><a href="../../../../org/opensha2/calc/ScratchImCorrelation.html#rhoMap(org.opensha2.gmm.Imt, java.util.Collection)">rhoMap</a></strong>(<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&nbsp;target,
+      <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html?is-external=true" title="class or interface in java.util">Collection</a>&lt;<a href="../../../../org/opensha2/gmm/Imt.html" title="enum in org.opensha2.gmm">Imt</a>&gt;&nbsp;imts)</code>
+<div class="block">Compute the correlations between a <code>target</code> and other <code>imts</code>.</div>
 </td>
 </tr>
 </tbody>
@@ -421,7 +442,7 @@ the order they are declared.</div>
         <div style="float: right; font-size: 14px; padding: 4px;">
         <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
       	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        – <b>nshmp-haz v1.1.0</b></div>
+        | <b>nshmp-haz v1.1.1-2-g557b81c</b></div>
       </small></p>
 </body>
 </html>

@@ -299,7 +299,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  supported by the <a href="../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm"><code>Gmm</code></a>s specified, or for every spectral acceleration
  supported by each <a href="../../org/opensha2/gmm/Gmm.html" title="enum in org.opensha2.gmm"><code>Gmm</code></a>. PGA is included in the results with a
  spectral period of 0.001s.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gmms</code> - <code>GroundMotionModel</code>s to use</dd><dd><code>input</code> - source and site parameterization</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gmms</code> - <code>GroundMotionModel</code>s to use</dd><dd><code>input</code> - source and site parameterization</dd><dd><code>commonImts</code> - <code>true</code> if only ground motions corresponding to the
+        spectral accelerations common to all <code>gmms</code> should be
+        computed; <code>false</code> if all spectral accelerations supported by
+        each gmm should be used.</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a <a href="../../org/opensha2/ResponseSpectra.MultiResult.html" title="class in org.opensha2"><code>ResponseSpectra.MultiResult</code></a> data container</dd></dl>
 </li>
 </ul>
@@ -393,7 +396,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
         <div style="float: right; font-size: 14px; padding: 4px;">
         <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
       	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        – <b>nshmp-haz v1.1.0</b></div>
+        | <b>nshmp-haz v1.1.1-2-g557b81c</b></div>
       </small></p>
 </body>
 </html>
