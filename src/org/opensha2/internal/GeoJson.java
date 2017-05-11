@@ -119,7 +119,7 @@ public final class GeoJson {
     return f;
   }
 
-  private static final String EXTENTS_COLOR = "#4169E1";
+  private static final String EXTENTS_COLOR = "#AA0078";
 
   static Feature createPolygon(
       String name,
