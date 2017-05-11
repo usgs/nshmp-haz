@@ -180,11 +180,10 @@ public interface IntervalVolume {
   /**
    * A builder of immutable {@code IntervalVolume}s.
    *
-   * <p>See {@link #create()} to initialize a new builder. Rows, columns, and
-   * levels must be specified before any data can be added. Note that any
-   * supplied {@code max} values may not correspond to the final upper edge of
-   * the uppermost bins if {@code max - min} is not evenly divisible by
-   * {@code Δ}.
+   * <p>Rows, columns, and levels must be specified before any data can be
+   * added. Note that any supplied {@code max} values may not correspond to the
+   * final upper edge of the uppermost bins if {@code max - min} is not evenly
+   * divisible by {@code Δ}.
    */
   public static final class Builder {
 

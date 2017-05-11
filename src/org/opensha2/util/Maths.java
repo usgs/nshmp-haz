@@ -42,8 +42,6 @@ public final class Maths {
    * 
    * @param μ mean
    * @param σ standard deviation
-   * @param x random variable
-   * @return
    */
   public static double epsilon(double μ, double σ, double x) {
     return (x - μ) / σ;

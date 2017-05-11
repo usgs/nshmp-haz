@@ -40,7 +40,6 @@ public interface Source extends Named, Iterable<Rupture> {
 
   /**
    * The MFDs that define earthquake rates for this source.
-   * @return
    */
   List<XySequence> mfds();
   

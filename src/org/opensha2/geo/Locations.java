@@ -775,8 +775,7 @@ public final class Locations {
   /**
    * Return a rectangular {@code Location} filter. The filter is definied in
    * geographic (lat,lon) space and is constrained to
-   * {@link Coordinates#MIN_LAT} , {@link Coordinates#MAX_LAT},
-   * {@link Coordinates#MIN_LON}, and {@link Coordinates#MAX_LON}. The filter
+   * {@link Coordinates#LAT_RANGE} and {@link Coordinates#LON_RANGE}. The filter
    * has dimensions of {@code 2 * distance} for both height and width, and is
    * centered on the supplied {@code Location} . This filter is for use as a
    * fast, first-pass filter before more computationally intensive distance

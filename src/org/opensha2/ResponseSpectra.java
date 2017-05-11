@@ -109,7 +109,7 @@ public class ResponseSpectra {
    *
    * @param gmms {@code GroundMotionModel}s to use
    * @param input source and site parameterization
-   * @Param commonImts {@code true} if only ground motions corresponding to the
+   * @param commonImts {@code true} if only ground motions corresponding to the
    *        spectral accelerations common to all {@code gmms} should be
    *        computed; {@code false} if all spectral accelerations supported by
    *        each gmm should be used.

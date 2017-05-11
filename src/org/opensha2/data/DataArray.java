@@ -67,11 +67,7 @@ public abstract class DataArray extends AbstractList<Double> {
     }
 
     /**
-     * Set the {@code value} at index.
-     * 
-     * @param index
-     * @param value
-     * @return
+     * Set the {@code value} at {@code index}.
      */
     public Builder set(int index, double value) {
       data[index] = value;
