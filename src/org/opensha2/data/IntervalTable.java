@@ -155,10 +155,10 @@ public interface IntervalTable {
   /**
    * A builder of immutable {@code IntervalTable}s.
    *
-   * <p>Use {@link #create()} to initialize a new builder. Rows and columns must
-   * be specified before any data can be added. Note that any supplied
-   * {@code max} values may not correspond to the final upper edge of the
-   * uppermost bins if {@code max - min} is not evenly divisible by {@code Δ} .
+   * <p>Rows and columns must be specified before any data can be added. Note
+   * that any supplied {@code max} values may not correspond to the final upper
+   * edge of the uppermost bins if {@code max - min} is not evenly divisible by
+   * {@code Δ} .
    */
   public static final class Builder {
 
@@ -209,7 +209,7 @@ public interface IntervalTable {
       builder.init();
       return builder;
     }
-    
+
     private static Builder copyStructure(AbstractTable from) {
       Builder to = new Builder();
       to.rowMin = from.rowMin;

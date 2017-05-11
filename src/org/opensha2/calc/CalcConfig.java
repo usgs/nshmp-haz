@@ -1222,7 +1222,7 @@ public final class CalcConfig {
     /**
      * Set the IMTs for which results should be calculated.
      * 
-     * @see Hazard#imts
+     * @see org.opensha2.calc.CalcConfig.Hazard#imts
      */
     public Builder imts(Set<Imt> imts) {
       this.hazard.imts = checkNotNull(imts);
