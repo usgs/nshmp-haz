@@ -96,8 +96,8 @@ final class GroundMotionTables {
   private static final String ATKINSON_08_SRC = "A08revA_Rjb.dat";
   private static final String PEZESHK_11_SRC = "P11A_Rcd.dat";
 
-  private static final String NGA_EAST_FILENAME_FMT = "nga-east-usgs-%s.csv";
-  private static final String NGA_EAST_SEED_FILENAME_FMT = "nga-east-%s.csv";
+  private static final String NGA_EAST_FILENAME_FMT = "nga-east-usgs-%s.dat";
+  private static final String NGA_EAST_SEED_FILENAME_FMT = "nga-east-%s.dat";
   private static final int NGA_EAST_MODEL_COUNT = 13;
 
   static final List<String> NGA_EAST_SEED_IDS = ImmutableList.copyOf(new String[] {
