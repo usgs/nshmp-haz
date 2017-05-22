@@ -106,7 +106,14 @@ public final class Hazard {
 
   /**
    * Combine hazard from multiple independent models. The hazard object returned
-   * by this method probably does not specify a parent 'model'.
+   * by this method will only specify a parent 'model' if varargs only
+   * included one model.
+   * 
+   * <p><b>Note:</b> When combining hazard results, the combined result inherits
+   * the {@link CalcConfig} from the first model supplied in varargs. This may
+   * mean that in the deaggregation of a combined model, the
+   * {@link ExceedanceModel} used to compute hazard may not be the same as that
+   * used to compute source contributions.
    * 
    * @return a combined {@code Hazard} that probably has a {@code null} parent
    *         model. If only 1 {@code Hazard} is supplied, method returns that
