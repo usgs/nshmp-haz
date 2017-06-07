@@ -73,7 +73,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
    * Implementation notes:
    * 
    * Site amplification terms shared by all models, Table 3, Zhao, Zhou et al.
-   * (2016) stored in Zhao16_siteAmp.csv. The 'rock-site factor' (AmSCI) was
+   * (2016) stored in Zhao16_siteamp.csv. The 'rock-site factor' (AmSCI) was
    * removed from this table because the values were independently smoothed in
    * the interface model; AmSCI is included as a coefficient with the values in
    * the curstal and slab tables being the same.
