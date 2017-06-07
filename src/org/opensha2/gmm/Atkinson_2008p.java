@@ -46,7 +46,7 @@ import com.google.common.collect.Range;
  */
 public final class Atkinson_2008p implements GroundMotionModel {
 
-  static final String NAME = "Atkinson (2008) Prime";
+  static final String NAME = "Atkinson (2008): Prime";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(4.0, 8.0))
