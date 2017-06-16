@@ -449,28 +449,28 @@ public enum Gmm {
 
   /** @see ZhaoEtAl_2016 */
   ZHAO_16_SHALLOW_CRUST(
-      ZhaoEtAl_2016.class,
+      ZhaoEtAl_2016.ShallowCrust.class,
       ZhaoEtAl_2016.ShallowCrust.NAME,
       ZhaoEtAl_2016.SITE_AMP,
       ZhaoEtAl_2016.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2016 */
   ZHAO_16_UPPER_MANTLE(
-      ZhaoEtAl_2016.class,
+      ZhaoEtAl_2016.UpperMantle.class,
       ZhaoEtAl_2016.UpperMantle.NAME,
       ZhaoEtAl_2016.SITE_AMP,
       ZhaoEtAl_2016.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2016 */
   ZHAO_16_INTERFACE(
-      ZhaoEtAl_2016.class,
+      ZhaoEtAl_2016.Interface.class,
       ZhaoEtAl_2016.Interface.NAME,
       ZhaoEtAl_2016.SITE_AMP,
       ZhaoEtAl_2016.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2016 */
   ZHAO_16_SLAB(
-      ZhaoEtAl_2016.class,
+      ZhaoEtAl_2016.Slab.class,
       ZhaoEtAl_2016.Slab.NAME,
       ZhaoEtAl_2016.SITE_AMP,
       ZhaoEtAl_2016.CONSTRAINTS),

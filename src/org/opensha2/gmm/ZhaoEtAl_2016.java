@@ -145,7 +145,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
       return siteTerm(lower, in.zTop, saRock);
     }
     double fsLower = siteTerm(lower, in.zTop, saRock);
-    double fsUpper = siteTerm(lower, in.zTop, saRock);
+    double fsUpper = siteTerm(upper, in.zTop, saRock);
     return Interpolator.findY(
         lower.vs30, fsLower,
         upper.vs30, fsUpper,
