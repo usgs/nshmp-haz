@@ -24,8 +24,8 @@ import java.util.Map;
  * specifically for USGS applications. It is a composite model that consists of
  * a reduced set of 13 median ground motion models (down from 29 in the full
  * NGA-East model) with period dependent weights. PEER recommends the use of a
- * total, magnitude dependent ergodic sigma model. This implementation
- * includes the 3-branch logic tree on sigma as well.
+ * total, magnitude dependent ergodic sigma model. This implementation includes
+ * the 3-branch logic tree on sigma as well.
  * 
  * <p>Calculation of hazard using this preliminary implementation deviates
  * somewhat from the current nshmp-haz PSHA pipeline and required implementation
@@ -285,53 +285,6 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     BranchSigmaModel(Imt imt) {
       super(imt, Ints.concat(NGAE_R0, NGAE_R1, NGAE_R2));
     }
-  }
-
-  // TODO clean
-  public static void main(String[] args) {
-    // GroundMotionModel gmm = Gmm.NGA_EAST_50TH.instance(Imt.SA0P025);
-
-//    for (Imt imt : Gmm.NGA_EAST_3.supportedIMTs()) {
-//      System.out.println(Sammons_3.NAME + " : " + imt.name());
-//      Sammons_3 pp = new Sammons_3(imt);
-//
-//    }
-    GmmInput in = GmmInput.builder()
-        .withDefaults()
-        .rRup(10)
-        .build();
-    
-    for (Imt imt : Gmm.NGA_EAST_BRANCHING_Σ.supportedIMTs()) {
-      System.out.println(BranchSigmaModel.NAME + " : " + imt.name());
-      BranchSigmaModel pp = new BranchSigmaModel(imt);
-      System.out.println(pp.calc(in));
-    }
-
-    for (Imt imt : Gmm.NGA_EAST.supportedIMTs()) {
-      System.out.println(TotalSigmaModel.NAME + " : " + imt.name());
-      BranchSigmaModel pp = new BranchSigmaModel(imt);
-      System.out.println(pp.calc(in));
-    }
-    
-    // Total ngaEast1 = new Total(Imt.SA0P2);
-    // Total ngaEast2 = new TotalSigmaCenter(Imt.SA0P2);
-    // Total ngaEast3 = new TotalSigmaNgaw2(Imt.SA0P2);
-    //
-    // GmmInput.Builder builder = GmmInput.builder().withDefaults();
-    // builder.rRup(10);
-    // GmmInput in = builder.build();
-    //
-    // System.out.println(in);
-    // System.out.println(ngaEast1.calc(in));
-    // System.out.println(ngaEast2.calc(in));
-    // System.out.println(ngaEast3.calc(in));
-    //
-    // System.out.println(Arrays.toString(ngaEast1.weights));
-    // System.out.println(Data.sum(ngaEast1.weights));
-
-    // System.out.println(Arrays.toString(ngaEast.models));
-    // System.out.println(Arrays.toString(ngaEast.weights));
-    // System.out.println(Arrays.toString(ngaEast.R0_weights));
   }
 
   static abstract class Sammons extends NgaEast_2016 {
