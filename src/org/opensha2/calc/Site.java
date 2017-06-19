@@ -72,8 +72,8 @@ public class Site implements Named {
    */
   public static final double Z1P0_DEFAULT = Double.NaN;
 
-  /** Supported {@link #z1p0} values: {@code [0..2] km}. */
-  public static final Range<Double> Z1P0_RANGE = Range.closed(0.0, 2.0);
+  /** Supported {@link #z1p0} values: {@code [0..5] km}. */
+  public static final Range<Double> Z1P0_RANGE = Range.closed(0.0, 5.0);
 
   /**
    * Default {@link #z2p5} value: {@code NaN} <br>({@link GroundMotionModel}s
@@ -81,8 +81,8 @@ public class Site implements Named {
    */
   public static final double Z2P5_DEFAULT = Double.NaN;
 
-  /** Supported {@link #z2p5} values: {@code [0..5] km}. */
-  public static final Range<Double> Z2P5_RANGE = Range.closed(0.0, 5.0);
+  /** Supported {@link #z2p5} values: {@code [0..10] km}. */
+  public static final Range<Double> Z2P5_RANGE = Range.closed(0.0, 10.0);
 
   /** The site name. */
   public final String name;
