@@ -10,6 +10,7 @@ import static org.opensha2.gmm.Imt.SA0P75;
 import org.opensha2.data.XyPoint;
 import org.opensha2.data.XySequence;
 import org.opensha2.gmm.Imt;
+import org.opensha2.gmm.MultiScalarGroundMotion;
 import org.opensha2.gmm.ScalarGroundMotion;
 import org.opensha2.util.Maths;
 
@@ -191,6 +192,28 @@ public enum ExceedanceModel {
     XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
       double pHi = prob(μ, σ, n, Math.log(maxValue(imt)));
       return boundedCcdFn(μ, σ, sequence, pHi, 1.0);
+    }
+
+    @Override
+    XySequence exceedance(ScalarGroundMotion sgm, double n, Imt imt, XySequence sequence) {
+      if (sgm instanceof MultiScalarGroundMotion) {
+        MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgm;
+        double[] means = msgm.means();
+        double[] meanWts = msgm.meanWeights();
+        double[] sigmas = msgm.sigmas();
+        double[] sigmaWts = msgm.sigmaWeights();
+        XySequence model = XySequence.copyOf(sequence);
+        for (int i = 0; i < sigmas.length; i++) {
+          double σ = sigmas[i];
+          double σWt = sigmaWts[i];
+          for (int j = 0; j < means.length; j++) {
+            double wt = σWt * meanWts[j];
+            sequence.add(exceedance(means[j], σ, n, imt, model).multiply(wt));
+          }
+        }
+        return sequence;
+      }
+      return super.exceedance(sgm, n, imt, sequence);
     }
 
     private double maxValue(Imt imt) {
