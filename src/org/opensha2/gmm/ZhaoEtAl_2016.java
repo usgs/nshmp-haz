@@ -23,8 +23,8 @@ import com.google.common.collect.Range;
 import java.util.Map;
 
 /**
- * Abstract implementation of the shallow crustal, subduction interface, and
- * subduction slab ground motion models by Zhao et al. (2016).
+ * Abstract implementation of the shallow crustal, upper mantle, subduction
+ * interface, and subduction slab ground motion models by Zhao et al. (2016).
  * 
  * <p><b>Implementation notes:</b>
  * 
@@ -35,6 +35,10 @@ import java.util.Map;
  * 
  * <li>The interface model handles shallow, {@code zHyp ≤ 25 km}, and deep,
  * {@code zHyp > 25 km}, events differently.</li>
+ * 
+ * <li>THe site amplification term is handled via interpolation of terms
+ * computed for discrete Vs30 values that correspond to the Zhao site classes:
+ * I, II, III, and IV.</li>
  * 
  * </ul>
  * 
@@ -66,6 +70,10 @@ import java.util.Map;
  * </ul>
  *
  * @author Peter Powers
+ * @see Gmm#ZHAO_16_SHALLOW_CRUST
+ * @see Gmm#ZHAO_16_UPPER_MANTLE
+ * @see Gmm#ZHAO_16_INTERFACE
+ * @see Gmm#ZHAO_16_SLAB
  */
 public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
 
@@ -77,6 +85,8 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
    * removed from this table because the values were independently smoothed in
    * the interface model; AmSCI is included as a coefficient with the values in
    * the curstal and slab tables being the same.
+   * 
+   * TODO See notes in nonlinCrossover().
    */
 
   static final String NAME = "Zhao et al. (2016)";
@@ -129,7 +139,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
     double lnSaRock = saRock(in);
     double siteTerm = siteTerm(in, exp(lnSaRock));
     return new DefaultScalarGroundMotion(
-        lnSaRock + siteTerm, 
+        lnSaRock + siteTerm,
         sigma());
   }
 
@@ -482,7 +492,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
   static final class Slab extends ZhaoEtAl_2016 {
 
     static final String NAME = ZhaoEtAl_2016.NAME + ": Slab";
-       
+
     private static final double MSC = 6.3;
     private static final double ΔMC = MC - MSC;
     private static final double ΔMCSQ = ΔMC * ΔMC;
@@ -641,8 +651,21 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
   private static double nonlinCrossover(double aNmax, double aMax, double sReffC) {
     /* Zhao, Ziang, et al. (2016); slab; equation 14. */
     double sF = aNmax / aMax;
-    double t = (log(aNmax) * log(sReffC * sReffC + β) - log(sF) * lnβ) / log(aMax);
-    return sqrt(exp(t) - β);
+    double t = exp((log(aNmax) * log(sReffC * sReffC + β) - log(sF) * lnβ) / log(aMax));
+    /*
+     * For some short periods, exp(t) - β < 0 ==> NaN. These are cases where
+     * aNmax and aMax are below 1.25, which are circumstances Zhao has special
+     * cased to use approximate functional forms defined in Xhao, Hu et al.
+     * (2015), but these are difficult to follow (e.g. θ can be any
+     * "arbitrarily large" number). Zhao, Hu et al. also state that for Table 5,
+     * those periods not listed for each site class do not require nonlinear
+     * site terms, but this listing is inconsistent with the fSR tables in each
+     * implementation.
+     * 
+     * For now, we are preventing the expression below from falling below 0,
+     * which almost certainly incorrect.
+     */
+    return (t < β) ? 0.0 : sqrt(t - β);
   }
 
   private static Range<ZhaoSiteClass> siteRange(double vs30) {
