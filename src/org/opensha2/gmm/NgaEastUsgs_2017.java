@@ -19,20 +19,25 @@ import com.google.common.primitives.Ints;
 import java.util.Map;
 
 /**
- * Experimental implementation of the PEER NGA-East ground motion model by
- * Goulet et al. (2016).This is a custom version of the model developed
- * specifically for USGS applications. It is a composite model that consists of
- * a reduced set of 13 median ground motion models (down from 29 in the full
- * NGA-East model) with period dependent weights. PEER recommends the use of a
- * total, magnitude dependent ergodic sigma model. This implementation includes
- * the 3-branch logic tree on sigma as well.
+ * Implementation of the PEER NGA-East ground motion model. This is a custom
+ * version of the model developed specifically for USGS applications. It is a
+ * composite model that consists of a reduced set of 13 median ground motion
+ * models (down from 29 in the full NGA-East model) with period dependent
+ * weights. PEER recommends the use of a total, magnitude dependent ergodic
+ * sigma model. This implementation includes the 3-branch logic tree on sigma as
+ * well.
  * 
  * <p>Calculation of hazard using this preliminary implementation deviates
  * somewhat from the current nshmp-haz PSHA pipeline and required implementation
  * of a {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion}
  * stores arrays of means and sigmas with associated weights and can only be
  * properly processed by {@link ExceedanceModel#NSHM_CEUS_MAX_INTENSITY} at this
- * time. NGA-East uses table lookups for the 29 component models.
+ * time.
+ * 
+ * <p> This class also manages implementations of the 19 'seed' models used to
+ * generate (via Sammons mapping) the 13 NGA-East models and associated weights.
+ * Ground motions for the 19 seed and 13 component models are computed via table
+ * lookups.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -41,20 +46,16 @@ import java.util.Map;
  * <p><b>Implementation note:</b> Mean values are NOT clamped per
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
- * <p><b>doi:</b> TODO
+ * <p><b>Reference:</b> Goulet, C., Bozorgnia, Y., Kuehn, N., Al Atik L.,
+ * Youngs, R., Graves, R., Atkinson, G., 2017, NGA-East ground-motion models for
+ * the U.S. Geological Survey national seismic hazard maps: PEER Report No.
+ * 2017/03, 180 p.
  *
- * <p><b>Reference:</b> Goulet, C., Bozorgnia, Y., Abrahamson, N.A., Kuehn, N.,
- * Al Atik L., Youngs, R., Graves, R., Atkinson, G., in review, Central and
- * Eastern North America Ground-Motion Characterization: NGA-East Final Report,
- * 665 p.
- *
- * * <p><b>Reference:</b> TODO ref for USGS PEER report
- * 
  * <p><b>Component:</b> average horizontal (RotD50)
  *
  * @author Peter Powers
  */
-public abstract class NgaEast_2016 implements GroundMotionModel {
+public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /*
    * TODO
@@ -96,32 +97,10 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
   static CoefficientContainer COEFFS_SIGMA_TOTAL;
 
   static {
-    /*
-     * TODO nga-east data are not public and therefore may not exist when
-     * initializing Gmm's; we therefore init with a dummy file. Once data are
-     * public, make fields (above) final, remove try-catch, and delete summy
-     * sigma file.
-     */
-    try {
-      COEFFS_SIGMA_LO = new CoefficientContainer("nga-east-usgs-sigma-lo.csv");
-    } catch (Exception e) {
-      COEFFS_SIGMA_LO = new CoefficientContainer("dummy-nga-east-sigma.csv");
-    }
-    try {
-      COEFFS_SIGMA_MID = new CoefficientContainer("nga-east-usgs-sigma-mid.csv");
-    } catch (Exception e) {
-      COEFFS_SIGMA_MID = new CoefficientContainer("dummy-nga-east-sigma.csv");
-    }
-    try {
-      COEFFS_SIGMA_HI = new CoefficientContainer("nga-east-usgs-sigma-hi.csv");
-    } catch (Exception e) {
-      COEFFS_SIGMA_HI = new CoefficientContainer("dummy-nga-east-sigma.csv");
-    }
-    try {
-      COEFFS_SIGMA_TOTAL = new CoefficientContainer("nga-east-usgs-sigma-total.csv");
-    } catch (Exception e) {
-      COEFFS_SIGMA_TOTAL = new CoefficientContainer("dummy-nga-east-sigma-total.csv");
-    }
+    COEFFS_SIGMA_LO = new CoefficientContainer("nga-east-usgs-sigma-lo.csv");
+    COEFFS_SIGMA_MID = new CoefficientContainer("nga-east-usgs-sigma-mid.csv");
+    COEFFS_SIGMA_HI = new CoefficientContainer("nga-east-usgs-sigma-hi.csv");
+    COEFFS_SIGMA_TOTAL = new CoefficientContainer("nga-east-usgs-sigma-total.csv");
   }
 
   private static final double[] SIGMA_WTS = { 0.185, 0.63, 0.185 };
@@ -169,7 +148,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
   private final GroundMotionTable[] tables;
   private final double[] weights;
 
-  NgaEast_2016(final Imt imt) {
+  NgaEastUsgs_2017(final Imt imt) {
     σCoeffsLo = new Coefficients(imt, COEFFS_SIGMA_LO);
     σCoeffsMid = new Coefficients(imt, COEFFS_SIGMA_MID);
     σCoeffsHi = new Coefficients(imt, COEFFS_SIGMA_HI);
@@ -241,7 +220,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     return subsetWeights;
   }
 
-  static abstract class ModelGroup extends NgaEast_2016 {
+  static abstract class ModelGroup extends NgaEastUsgs_2017 {
 
     final int[] models;
     final double[] weights;
@@ -267,7 +246,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
   }
 
   static class TotalSigmaModel extends ModelGroup {
-    static final String NAME = NgaEast_2016.NAME + ": Total";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Total";
 
     TotalSigmaModel(Imt imt) {
       super(imt, Ints.concat(NGAE_R0, NGAE_R1, NGAE_R2));
@@ -287,8 +266,8 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     }
   }
 
-  static abstract class Sammons extends NgaEast_2016 {
-    static final String NAME = NgaEast_2016.NAME + ": Sammons : ";
+  static abstract class Sammons extends NgaEastUsgs_2017 {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons : ";
 
     final int id;
     final GroundMotionTable table;
@@ -425,8 +404,8 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     }
   }
 
-  static abstract class Seed extends NgaEast_2016 {
-    static final String NAME = NgaEast_2016.NAME + ": Seed : ";
+  static abstract class Seed extends NgaEastUsgs_2017 {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Seed : ";
 
     final String id;
     final GroundMotionTable table;

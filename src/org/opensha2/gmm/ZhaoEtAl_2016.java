@@ -69,6 +69,9 @@ import java.util.Map;
  * 
  * </ul>
  *
+ * <p><b>Component:</b> geometric mean of two randomly oriented horizontal
+ * components
+ * 
  * @author Peter Powers
  * @see Gmm#ZHAO_16_SHALLOW_CRUST
  * @see Gmm#ZHAO_16_UPPER_MANTLE
