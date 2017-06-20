@@ -446,6 +446,13 @@ public enum Gmm {
       Atkinson_2015.NAME,
       Atkinson_2015.COEFFS,
       Atkinson_2015.CONSTRAINTS),
+  
+  /** @see GraizerKalkan_2016 */
+  GK_15(
+      GraizerKalkan_2015.class,
+      GraizerKalkan_2015.NAME,
+      GraizerKalkan_2015.COEFFS,
+      GraizerKalkan_2015.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2016 */
   ZHAO_16_SHALLOW_CRUST(
@@ -1005,6 +1012,7 @@ public enum Gmm {
     OTHER(
         "Others",
         ImmutableList.of(
+            GK_15,
             ZHAO_16_SHALLOW_CRUST,
             ZHAO_16_UPPER_MANTLE,
             ZHAO_16_INTERFACE,
