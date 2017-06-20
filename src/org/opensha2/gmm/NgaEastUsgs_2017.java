@@ -55,7 +55,7 @@ import java.util.Map;
  *
  * @author Peter Powers
  */
-public abstract class NgaEast_2016 implements GroundMotionModel {
+public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /*
    * TODO
@@ -148,7 +148,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
   private final GroundMotionTable[] tables;
   private final double[] weights;
 
-  NgaEast_2016(final Imt imt) {
+  NgaEastUsgs_2017(final Imt imt) {
     σCoeffsLo = new Coefficients(imt, COEFFS_SIGMA_LO);
     σCoeffsMid = new Coefficients(imt, COEFFS_SIGMA_MID);
     σCoeffsHi = new Coefficients(imt, COEFFS_SIGMA_HI);
@@ -220,7 +220,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     return subsetWeights;
   }
 
-  static abstract class ModelGroup extends NgaEast_2016 {
+  static abstract class ModelGroup extends NgaEastUsgs_2017 {
 
     final int[] models;
     final double[] weights;
@@ -246,7 +246,7 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
   }
 
   static class TotalSigmaModel extends ModelGroup {
-    static final String NAME = NgaEast_2016.NAME + ": Total";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Total";
 
     TotalSigmaModel(Imt imt) {
       super(imt, Ints.concat(NGAE_R0, NGAE_R1, NGAE_R2));
@@ -266,8 +266,8 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     }
   }
 
-  static abstract class Sammons extends NgaEast_2016 {
-    static final String NAME = NgaEast_2016.NAME + ": Sammons : ";
+  static abstract class Sammons extends NgaEastUsgs_2017 {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons : ";
 
     final int id;
     final GroundMotionTable table;
@@ -404,8 +404,8 @@ public abstract class NgaEast_2016 implements GroundMotionModel {
     }
   }
 
-  static abstract class Seed extends NgaEast_2016 {
-    static final String NAME = NgaEast_2016.NAME + ": Seed : ";
+  static abstract class Seed extends NgaEastUsgs_2017 {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Seed : ";
 
     final String id;
     final GroundMotionTable table;

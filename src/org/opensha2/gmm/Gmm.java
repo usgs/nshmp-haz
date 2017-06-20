@@ -514,136 +514,136 @@ public enum Gmm {
 
   /** @see NgaEast_2016 */
   NGA_EAST(
-      NgaEast_2016.TotalSigmaModel.class,
-      NgaEast_2016.TotalSigmaModel.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.TotalSigmaModel.class,
+      NgaEastUsgs_2017.TotalSigmaModel.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_BRANCHING_Σ(
-      NgaEast_2016.BranchSigmaModel.class,
-      NgaEast_2016.BranchSigmaModel.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.BranchSigmaModel.class,
+      NgaEastUsgs_2017.BranchSigmaModel.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_1(
-      NgaEast_2016.Sammons_1.class,
-      NgaEast_2016.Sammons_1.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_1.class,
+      NgaEastUsgs_2017.Sammons_1.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_2(
-      NgaEast_2016.Sammons_2.class,
-      NgaEast_2016.Sammons_2.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_2.class,
+      NgaEastUsgs_2017.Sammons_2.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_3(
-      NgaEast_2016.Sammons_3.class,
-      NgaEast_2016.Sammons_3.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_3.class,
+      NgaEastUsgs_2017.Sammons_3.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_4(
-      NgaEast_2016.Sammons_4.class,
-      NgaEast_2016.Sammons_4.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_4.class,
+      NgaEastUsgs_2017.Sammons_4.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_5(
-      NgaEast_2016.Sammons_5.class,
-      NgaEast_2016.Sammons_5.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_5.class,
+      NgaEastUsgs_2017.Sammons_5.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_6(
-      NgaEast_2016.Sammons_6.class,
-      NgaEast_2016.Sammons_6.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_6.class,
+      NgaEastUsgs_2017.Sammons_6.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_7(
-      NgaEast_2016.Sammons_7.class,
-      NgaEast_2016.Sammons_7.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_7.class,
+      NgaEastUsgs_2017.Sammons_7.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_8(
-      NgaEast_2016.Sammons_8.class,
-      NgaEast_2016.Sammons_8.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_8.class,
+      NgaEastUsgs_2017.Sammons_8.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_9(
-      NgaEast_2016.Sammons_9.class,
-      NgaEast_2016.Sammons_9.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_9.class,
+      NgaEastUsgs_2017.Sammons_9.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_10(
-      NgaEast_2016.Sammons_10.class,
-      NgaEast_2016.Sammons_10.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_10.class,
+      NgaEastUsgs_2017.Sammons_10.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_11(
-      NgaEast_2016.Sammons_11.class,
-      NgaEast_2016.Sammons_11.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_11.class,
+      NgaEastUsgs_2017.Sammons_11.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_12(
-      NgaEast_2016.Sammons_12.class,
-      NgaEast_2016.Sammons_12.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_12.class,
+      NgaEastUsgs_2017.Sammons_12.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_13(
-      NgaEast_2016.Sammons_13.class,
-      NgaEast_2016.Sammons_13.NAME,
-      NgaEast_2016.COEFFS_SIGMA_TOTAL,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Sammons_13.class,
+      NgaEastUsgs_2017.Sammons_13.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_1CCSP(
-      NgaEast_2016.Seed_1CCSP.class,
-      NgaEast_2016.Seed_1CCSP.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_1CCSP.class,
+      NgaEastUsgs_2017.Seed_1CCSP.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_1CVSP(
-      NgaEast_2016.Seed_1CVSP.class,
-      NgaEast_2016.Seed_1CVSP.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_1CVSP.class,
+      NgaEastUsgs_2017.Seed_1CVSP.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_2CCSP(
-      NgaEast_2016.Seed_2CCSP.class,
-      NgaEast_2016.Seed_2CCSP.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_2CCSP.class,
+      NgaEastUsgs_2017.Seed_2CCSP.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_2CVSP(
-      NgaEast_2016.Seed_2CVSP.class,
-      NgaEast_2016.Seed_2CVSP.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_2CVSP.class,
+      NgaEastUsgs_2017.Seed_2CVSP.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   // /** @see NgaEast_2016 */
   // NGA_EAST_SEED_ANC15(
@@ -654,108 +654,108 @@ public enum Gmm {
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_B_a04(
-      NgaEast_2016.Seed_B_a04.class,
-      NgaEast_2016.Seed_B_a04.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_B_a04.class,
+      NgaEastUsgs_2017.Seed_B_a04.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_B_ab14(
-      NgaEast_2016.Seed_B_ab14.class,
-      NgaEast_2016.Seed_B_ab14.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_B_ab14.class,
+      NgaEastUsgs_2017.Seed_B_ab14.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_B_ab95(
-      NgaEast_2016.Seed_B_ab95.class,
-      NgaEast_2016.Seed_B_ab95.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_B_ab95.class,
+      NgaEastUsgs_2017.Seed_B_ab95.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_B_bca10d(
-      NgaEast_2016.Seed_B_bca10d.class,
-      NgaEast_2016.Seed_B_bca10d.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_B_bca10d.class,
+      NgaEastUsgs_2017.Seed_B_bca10d.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_B_bs11(
-      NgaEast_2016.Seed_B_bs11.class,
-      NgaEast_2016.Seed_B_bs11.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_B_bs11.class,
+      NgaEastUsgs_2017.Seed_B_bs11.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_B_sgd02(
-      NgaEast_2016.Seed_B_sgd02.class,
-      NgaEast_2016.Seed_B_sgd02.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_B_sgd02.class,
+      NgaEastUsgs_2017.Seed_B_sgd02.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_Frankel(
-      NgaEast_2016.Seed_Frankel.class,
-      NgaEast_2016.Seed_Frankel.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_Frankel.class,
+      NgaEastUsgs_2017.Seed_Frankel.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_Graizer(
-      NgaEast_2016.Seed_Graizer.class,
-      NgaEast_2016.Seed_Graizer.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_Graizer.class,
+      NgaEastUsgs_2017.Seed_Graizer.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_HA15(
-      NgaEast_2016.Seed_HA15.class,
-      NgaEast_2016.Seed_HA15.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_HA15.class,
+      NgaEastUsgs_2017.Seed_HA15.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_PEER_EX(
-      NgaEast_2016.Seed_PEER_EX.class,
-      NgaEast_2016.Seed_PEER_EX.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_PEER_EX.class,
+      NgaEastUsgs_2017.Seed_PEER_EX.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_PEER_GP(
-      NgaEast_2016.Seed_PEER_GP.class,
-      NgaEast_2016.Seed_PEER_GP.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_PEER_GP.class,
+      NgaEastUsgs_2017.Seed_PEER_GP.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_PZCT15_M1SS(
-      NgaEast_2016.Seed_PZCT15_M1SS.class,
-      NgaEast_2016.Seed_PZCT15_M1SS.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_PZCT15_M1SS.class,
+      NgaEastUsgs_2017.Seed_PZCT15_M1SS.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_PZCT15_M2ES(
-      NgaEast_2016.Seed_PZCT15_M2ES.class,
-      NgaEast_2016.Seed_PZCT15_M2ES.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_PZCT15_M2ES.class,
+      NgaEastUsgs_2017.Seed_PZCT15_M2ES.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_SP15(
-      NgaEast_2016.Seed_SP15.class,
-      NgaEast_2016.Seed_SP15.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS),
+      NgaEastUsgs_2017.Seed_SP15.class,
+      NgaEastUsgs_2017.Seed_SP15.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEast_2016 */
   NGA_EAST_SEED_YA15(
-      NgaEast_2016.Seed_YA15.class,
-      NgaEast_2016.Seed_YA15.NAME,
-      NgaEast_2016.COEFFS_SIGMA_MID,
-      NgaEast_2016.CONSTRAINTS);
+      NgaEastUsgs_2017.Seed_YA15.class,
+      NgaEastUsgs_2017.Seed_YA15.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS);
 
   private final Class<? extends GroundMotionModel> delegate;
   private final String name;
