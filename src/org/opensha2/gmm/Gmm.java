@@ -440,6 +440,13 @@ public enum Gmm {
 
   /* Other */
 
+  /** @see Atkinson_2010 */
+  ATKINSON_10(
+      Atkinson_2010.class,
+      Atkinson_2010.NAME,
+      Atkinson_2010.COEFFS,
+      Atkinson_2010.CONSTRAINTS),
+
   /** @see Atkinson_2015 */
   ATKINSON_15(
       Atkinson_2015.class,
@@ -447,7 +454,7 @@ public enum Gmm {
       Atkinson_2015.COEFFS,
       Atkinson_2015.CONSTRAINTS),
   
-  /** @see GraizerKalkan_2016 */
+  /** @see GraizerKalkan_2015 */
   GK_15(
       GraizerKalkan_2015.class,
       GraizerKalkan_2015.NAME,
@@ -1017,6 +1024,7 @@ public enum Gmm {
             ZHAO_16_UPPER_MANTLE,
             ZHAO_16_INTERFACE,
             ZHAO_16_SLAB,
+            ATKINSON_10,
             ATKINSON_15,
             AB_03_CASC_INTER,
             MCVERRY_00_CRUSTAL,

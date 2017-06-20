@@ -47,6 +47,7 @@ import com.google.common.collect.Range;
  * components
  * 
  * @author Peter Powers
+ * @see Gmm#GK_15
  */
 final class GraizerKalkan_2015 implements GroundMotionModel {
 
