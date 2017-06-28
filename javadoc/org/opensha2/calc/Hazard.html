@@ -207,7 +207,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <h4>merge</h4>
 <pre>public static&nbsp;<a href="../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>&nbsp;merge(<a href="../../../org/opensha2/calc/Hazard.html" title="class in org.opensha2.calc">Hazard</a>...&nbsp;hazards)</pre>
 <div class="block">Combine hazard from multiple independent models. The hazard object returned
- by this method probably does not specify a parent 'model'.</div>
+ by this method will only specify a parent 'model' if varargs only
+ included one model.
+ 
+ <p><b>Note:</b> When combining hazard results, the combined result inherits
+ the <a href="../../../org/opensha2/calc/CalcConfig.html" title="class in org.opensha2.calc"><code>CalcConfig</code></a> from the first model supplied in varargs. This may
+ mean that in the deaggregation of a combined model, the
+ <a href="../../../org/opensha2/calc/ExceedanceModel.html" title="enum in org.opensha2.calc"><code>ExceedanceModel</code></a> used to compute hazard may not be the same as that
+ used to compute source contributions.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>a combined <code>Hazard</code> that probably has a <code>null</code> parent
          model. If only 1 <code>Hazard</code> is supplied, method returns that
          supplied.</dd></dl>
@@ -284,7 +291,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
         <div style="float: right; font-size: 14px; padding: 4px;">
         <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
       	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        | <b>nshmp-haz v1.1.1-2-g557b81c</b></div>
+        | <b>nshmp-haz v1.1.1-38-gc6a7af1a</b></div>
       </small></p>
 </body>
 </html>

@@ -103,6 +103,13 @@
 <div class="block">Default wrapper for ground motion prediction equation (GMPE) results.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/opensha2/gmm/MultiScalarGroundMotion.html" title="class in org.opensha2.gmm">MultiScalarGroundMotion</a></strong></code>
+<div class="block">Extension to <code>ScalarGroundMotion</code> heirarchy added in support of
+ NGA-East.</div>
+</td>
+</tr>
 </tbody>
 </table>
 <table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing methods, and an explanation">
@@ -114,11 +121,19 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
-<td class="colLast"><span class="strong">ZhaoEtAl_2006.</span><code><strong><a href="../../../../org/opensha2/gmm/ZhaoEtAl_2006.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">ZhaoEtAl_2016.</span><code><strong><a href="../../../../org/opensha2/gmm/ZhaoEtAl_2016.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
+<td class="colLast"><span class="strong">ZhaoEtAl_2006.</span><code><strong><a href="../../../../org/opensha2/gmm/ZhaoEtAl_2006.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">YoungsEtAl_1997.</span><code><strong><a href="../../../../org/opensha2/gmm/YoungsEtAl_1997.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
+<td class="colLast"><span class="strong">WongEtAl_2015.</span><code><strong><a href="../../../../org/opensha2/gmm/WongEtAl_2015.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
@@ -165,71 +180,79 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
-<td class="colLast"><span class="strong">FrankelEtAl_1996.</span><code><strong><a href="../../../../org/opensha2/gmm/FrankelEtAl_1996.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">GraizerKalkan_2015.</span><code><strong><a href="../../../../org/opensha2/gmm/GraizerKalkan_2015.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
+<td class="colLast"><span class="strong">FrankelEtAl_1996.</span><code><strong><a href="../../../../org/opensha2/gmm/FrankelEtAl_1996.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">ChiouYoungs_2014.</span><code><strong><a href="../../../../org/opensha2/gmm/ChiouYoungs_2014.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">ChiouYoungs_2008.</span><code><strong><a href="../../../../org/opensha2/gmm/ChiouYoungs_2008.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">CampbellBozorgnia_2014.</span><code><strong><a href="../../../../org/opensha2/gmm/CampbellBozorgnia_2014.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">CampbellBozorgnia_2008.</span><code><strong><a href="../../../../org/opensha2/gmm/CampbellBozorgnia_2008.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">CampbellBozorgnia_2003.</span><code><strong><a href="../../../../org/opensha2/gmm/CampbellBozorgnia_2003.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">Campbell_2003.</span><code><strong><a href="../../../../org/opensha2/gmm/Campbell_2003.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">Campbell_1997.</span><code><strong><a href="../../../../org/opensha2/gmm/Campbell_1997.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">BooreEtAl_2014.</span><code><strong><a href="../../../../org/opensha2/gmm/BooreEtAl_2014.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">BooreEtAl_1997.</span><code><strong><a href="../../../../org/opensha2/gmm/BooreEtAl_1997.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">BooreAtkinson_2008.</span><code><strong><a href="../../../../org/opensha2/gmm/BooreAtkinson_2008.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">BcHydro_2012.</span><code><strong><a href="../../../../org/opensha2/gmm/BcHydro_2012.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">AtkinsonMacias_2009.</span><code><strong><a href="../../../../org/opensha2/gmm/AtkinsonMacias_2009.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">AtkinsonBoore_2006p.</span><code><strong><a href="../../../../org/opensha2/gmm/AtkinsonBoore_2006p.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">AtkinsonBoore_2006.</span><code><strong><a href="../../../../org/opensha2/gmm/AtkinsonBoore_2006.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">AtkinsonBoore_2003.</span><code><strong><a href="../../../../org/opensha2/gmm/AtkinsonBoore_2003.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
 <td class="colLast"><span class="strong">Atkinson_2015.</span><code><strong><a href="../../../../org/opensha2/gmm/Atkinson_2015.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
+<td class="colLast"><span class="strong">Atkinson_2010.</span><code><strong><a href="../../../../org/opensha2/gmm/Atkinson_2010.html#calc(org.opensha2.gmm.GmmInput)">calc</a></strong>(<a href="../../../../org/opensha2/gmm/GmmInput.html" title="class in org.opensha2.gmm">GmmInput</a>&nbsp;in)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/opensha2/gmm/ScalarGroundMotion.html" title="interface in org.opensha2.gmm">ScalarGroundMotion</a></code></td>
@@ -299,7 +322,7 @@
         <div style="float: right; font-size: 14px; padding: 4px;">
         <b>U.S. Geological Survey</b> – National Seismic Hazard Mapping Project
       	(<a href="https://github.com/usgs/nshmp-haz" target="_top">NSHMP</a>)
-        | <b>nshmp-haz v1.1.1-2-g557b81c</b></div>
+        | <b>nshmp-haz v1.1.1-38-gc6a7af1a</b></div>
       </small></p>
 </body>
 </html>
