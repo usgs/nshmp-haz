@@ -16,6 +16,7 @@ import org.opensha2.data.Interpolator;
 import org.opensha2.eq.Earthquakes;
 import org.opensha2.gmm.GmmInput.Constraints;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
@@ -78,6 +79,7 @@ import java.util.Map;
  * @see Gmm#ZHAO_16_INTERFACE
  * @see Gmm#ZHAO_16_SLAB
  */
+@Beta
 public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
 
   /*

@@ -19,6 +19,7 @@ import org.opensha2.data.Interpolator;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
 
 /**
@@ -49,7 +50,8 @@ import com.google.common.collect.Range;
  * @author Peter Powers
  * @see Gmm#GK_15
  */
-final class GraizerKalkan_2015 implements GroundMotionModel {
+@Beta
+public final class GraizerKalkan_2015 implements GroundMotionModel {
 
   /*
    * Developer notes:

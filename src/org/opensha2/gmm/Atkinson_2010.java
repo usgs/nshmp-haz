@@ -16,6 +16,7 @@ import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
 
 /**
@@ -39,6 +40,7 @@ import com.google.common.collect.Range;
  * @author Peter Powers
  * @see Gmm#ATKINSON_10
  */
+@Beta
 public final class Atkinson_2010 implements GroundMotionModel {
 
   static final String NAME = "Atkinson (2010) : Hawaii";
@@ -80,7 +82,7 @@ public final class Atkinson_2010 implements GroundMotionModel {
     } else if (zTop > 35) {
       x0 = min(0.263 + 0.0924 * log10freq, 0.35);
     }
-    double logA = x0 + x1 * log10(rJB);
+    double logA = x0 + x1 * log10(max(1.0, rJB));
     return logA * BASE_10_TO_E;
   }
 
