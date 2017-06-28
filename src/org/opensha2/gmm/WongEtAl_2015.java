@@ -11,6 +11,7 @@ import static org.opensha2.gmm.GmmInput.Field.ZTOP;
 
 import org.opensha2.gmm.GmmInput.Constraints;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
 
 import java.util.Map;
@@ -35,6 +36,7 @@ import java.util.Map;
  * @author Peter Powers
  * @see Gmm#WONG_15
  */
+@Beta
 public final class WongEtAl_2015 implements GroundMotionModel {
 
   static final String NAME = "Wong et al. (2015)";

@@ -13,6 +13,7 @@ import org.opensha2.gmm.GroundMotionTables.GroundMotionTable;
 import org.opensha2.gmm.GroundMotionTables.GroundMotionTable.Position;
 import org.opensha2.util.Maths;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Ints;
 
@@ -55,6 +56,7 @@ import java.util.Map;
  *
  * @author Peter Powers
  */
+@Beta
 public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /*

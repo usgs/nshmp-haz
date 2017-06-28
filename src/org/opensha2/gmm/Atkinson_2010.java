@@ -16,6 +16,7 @@ import org.opensha2.eq.Earthquakes;
 import org.opensha2.eq.fault.Faults;
 import org.opensha2.gmm.GmmInput.Constraints;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
 
 /**
@@ -39,6 +40,7 @@ import com.google.common.collect.Range;
  * @author Peter Powers
  * @see Gmm#ATKINSON_10
  */
+@Beta
 public final class Atkinson_2010 implements GroundMotionModel {
 
   static final String NAME = "Atkinson (2010) : Hawaii";

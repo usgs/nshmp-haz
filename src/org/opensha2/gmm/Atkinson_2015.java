@@ -13,6 +13,7 @@ import static org.opensha2.gmm.GmmUtils.LN_G_CM_TO_M;
 
 import org.opensha2.gmm.GmmInput.Constraints;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
 
 import java.util.Map;
@@ -38,6 +39,7 @@ import java.util.Map;
  * @author Peter Powers
  * @see Gmm#ATKINSON_15
  */
+@Beta
 public final class Atkinson_2015 implements GroundMotionModel {
 
   static final String NAME = "Atkinson (2015)";
