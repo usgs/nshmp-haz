@@ -80,7 +80,7 @@ public final class Atkinson_2010 implements GroundMotionModel {
     } else if (zTop > 35) {
       x0 = min(0.263 + 0.0924 * log10freq, 0.35);
     }
-    double logA = x0 + x1 * log10(rJB);
+    double logA = x0 + x1 * log10(max(1.0, rJB));
     return logA * BASE_10_TO_E;
   }
 
