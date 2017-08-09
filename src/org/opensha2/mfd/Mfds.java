@@ -352,7 +352,8 @@ public final class Mfds {
 
   /**
    * Return a converter between annual rate and Poisson probability over a
-   * 1-year time span.
+   * 1-year time span. The converter expects probabilities to be represented as
+   * fractions of 1.0.
    */
   public static Converter<Double, Double> annualRateToProbabilityConverter() {
     return new AnnRateToPoissProbConverter(1.0);
@@ -360,7 +361,8 @@ public final class Mfds {
 
   /**
    * Return a converter between annual rate and Poisson probability over the
-   * specified time span.
+   * specified time span. The converter expects probabilities to be represented
+   * as fractions of 1.0.
    */
   public static Converter<Double, Double> annualRateToProbabilityConverter(double timespan) {
     return new AnnRateToPoissProbConverter(timespan);
