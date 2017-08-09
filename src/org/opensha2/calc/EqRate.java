@@ -17,6 +17,7 @@ import org.opensha2.eq.model.SourceType;
 import org.opensha2.eq.model.SystemSourceSet;
 import org.opensha2.geo.Location;
 import org.opensha2.mfd.Mfds;
+import org.opensha2.util.Maths;
 
 import com.google.common.base.Converter;
 import com.google.common.collect.ImmutableMap;
@@ -28,8 +29,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
 /**
- * General purpose magnitude-frequency distribution (MFD) data container. This
- * class makes no distinction between incremental or cumulative MFDs, or whether
+ * General purpose earthquake rate and probability data container. This class
+ * makes no distinction between incremental or cumulative MFDs, or whether
  * values are stored as annual-rate or poisson probability.
  *
  * @author Peter Powers
@@ -164,7 +165,9 @@ public class EqRate {
    *        conversion
    */
   public static EqRate toPoissonProbability(EqRate annualRates, double timespan) {
-    Converter<Double, Double> converter = Mfds.annualRateToProbabilityConverter(timespan);
+    Converter<Double, Double> converter =
+        Mfds.annualRateToProbabilityConverter(timespan)
+            .andThen(Maths.decimalToProbabilityConverter(2));
     XySequence totalMfd = XySequence
         .copyOf(annualRates.totalMfd)
         .transform(converter);
@@ -189,8 +192,8 @@ public class EqRate {
    * <p><b>NOTE:</b> This operation is additive and will produce meaningless
    * results if {@code rates} have already been converted to
    * {@link #toPoissonProbability(EqRate, double) probabilities}, or are not all
-   * of {@link DistributionFormat#INCREMENTAL} or {@link DistributionFormat#CUMULATIVE}
-   * distribution format.
+   * of {@link DistributionFormat#INCREMENTAL} or
+   * {@link DistributionFormat#CUMULATIVE} distribution format.
    * 
    * <p>Buyer beware.
    * 
