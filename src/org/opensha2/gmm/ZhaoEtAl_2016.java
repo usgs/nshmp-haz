@@ -27,7 +27,7 @@ import java.util.Map;
  * Abstract implementation of the shallow crustal, upper mantle, subduction
  * interface, and subduction slab ground motion models by Zhao et al. (2016).
  * 
- * <p><b>Implementation notes:</b>
+ * <p><b>Implementation notes:</b><ul>
  * 
  * <li>All models supply site-class specific sigma, however, only the total
  * sigma is used here as reported in the various coefficient tables.</li>

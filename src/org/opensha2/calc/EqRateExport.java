@@ -36,8 +36,12 @@ import java.util.logging.Logger;
  */
 public final class EqRateExport {
 
+  private static final String RATE_FORMAT = "%.8g";
+  private static final String PROB_FORMAT = "%.2f";
+  
   private final Logger log;
   private final Path dir;
+  private final String valueFormat;
   private final CalcConfig config;
   private final boolean exportSource;
 
@@ -53,8 +57,13 @@ public final class EqRateExport {
   private final List<EqRate> rates;
 
   private EqRateExport(CalcConfig config, Sites sites, Logger log) throws IOException {
+    
+    // whether or not rates or probabilities have been calculated
+    boolean rates = config.rate.valueFormat == ValueFormat.ANNUAL_RATE;
+    
     this.log = log;
-    this.dir = HazardExport.createOutputDir(improvedOutputDirectory(config));
+    this.dir = HazardExport.createOutputDir(updateOutDir(config.output.directory, rates));
+    this.valueFormat = rates ? RATE_FORMAT : PROB_FORMAT;
     this.config = config;
     this.exportSource = config.output.dataTypes.contains(DataType.SOURCE);
     this.rates = new ArrayList<>();
@@ -66,17 +75,12 @@ public final class EqRateExport {
     this.totalWatch = Stopwatch.createStarted();
   }
 
-  /*
-   * If output from config is 'curves', change to the more appropriate 'eq-rate'
-   * or 'eq-prob'.
-   */
-  static Path improvedOutputDirectory(CalcConfig config) {
-    Path out = config.output.directory;
-    if (out.toString().equals(CalcConfig.DEFAULT_OUT)) {
-      return (config.rate.valueFormat == ValueFormat.POISSON_PROBABILITY) ? Paths.get("eq-prob")
-          : Paths.get("eq-rate");
+  /* If config output is 'curves', change to 'eq-rate' or 'eq-prob'. */
+  static Path updateOutDir(Path dir, boolean rates) {
+    if (dir.toString().equals(CalcConfig.DEFAULT_OUT)) {
+      return (rates ? Paths.get("eq-rate") : Paths.get("eq-prob"));
     }
-    return out;
+    return dir;
   }
 
   /**
@@ -189,7 +193,7 @@ public final class EqRateExport {
 
     OpenOption[] options = firstBatch ? HazardExport.WRITE : HazardExport.APPEND;
 
-    Function<Double, String> formatter = Parsing.formatDoubleFunction(HazardExport.RATE_FMT);
+    Function<Double, String> formatter = Parsing.formatDoubleFunction(valueFormat);
 
     /* Line maps for ascii output; may or may not be used */
     List<String> totalLines = new ArrayList<>();

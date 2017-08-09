@@ -1,5 +1,7 @@
 package org.opensha2.util;
 
+import com.google.common.base.Converter;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -146,6 +148,42 @@ public final class Maths {
    */
   public static double round(double value, int scale, RoundingMode mode) {
     return BigDecimal.valueOf(value).setScale(scale, mode).doubleValue();
+  }
+
+  /**
+   * Return a converter between decimal values and percentages. The forward
+   * operation of this converter <i>may</i> be lossy in as much as the supplied
+   * decimal value will be rounded to the specified scale after conversion to a
+   * percentage. For instance:
+   * 
+   * <p>{@code decimalToProbabilityConverter(2).convert(0.23456) = 23.46}
+   * 
+   * <p>Reverse operations do not affect precision at this time.
+   * 
+   * @param percentScale the number of decimal places in percentages output by
+   *        this converter
+   */
+  public static Converter<Double, Double> decimalToProbabilityConverter(int percentScale) {
+    return new DecimalToProbabilityConverter(percentScale);
+  }
+
+  private static class DecimalToProbabilityConverter extends Converter<Double, Double> {
+
+    private final int percentScale;
+
+    DecimalToProbabilityConverter(int percentScale) {
+      this.percentScale = percentScale;
+    }
+
+    @Override
+    protected Double doBackward(Double percent) {
+      return percent / 100.0;
+    }
+
+    @Override
+    protected Double doForward(Double decimal) {
+      return round(decimal * 100.0, percentScale);
+    }
   }
 
 }

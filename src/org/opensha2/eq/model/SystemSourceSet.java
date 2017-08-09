@@ -242,7 +242,6 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     private final double rake() {
       return rakes[index];
     }
-
   }
 
   /**
@@ -395,13 +394,13 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
           stats);
     }
   }
-  
+
   /*
-   * Handle rate calculations internally as SystemSource is not fully implemented.
-   * If/when it is, this should be removed in favor using iterableForLocation
-   * and getRupture(0).
+   * Handle rate calculations internally as SystemSource is not fully
+   * implemented. If/when it is, this should be removed in favor using
+   * iterableForLocation and getRupture(0).
    */
-  
+
   /**
    * Return an instance of a {@code Function} that converts a
    * {@code SystemSourceSet} to a ground motion model {@code InputList}.
@@ -427,7 +426,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
         final Location location,
         final double distance,
         final IntervalArray modelMfd) {
-      
+
       this.location = location;
       this.distance = distance;
       this.modelMfd = modelMfd;
@@ -436,18 +435,17 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     @Override
     public IntervalArray apply(final SystemSourceSet sourceSet) {
       IntervalArray.Builder mfdForLocation = IntervalArray.Builder.fromModel(modelMfd);
-      BitSet bitsetForLocation = sourceSet.bitsetForLocation(location, distance);
-      if (bitsetForLocation.isEmpty()) {
+      BitSet siteBitset = sourceSet.bitsetForLocation(location, distance);
+      if (siteBitset.isEmpty()) {
         return modelMfd;
       }
-      int[] sourceIndices = Indexing.bitsToIndices(bitsetForLocation);
-      for (int i : sourceIndices) {
-        mfdForLocation.add(sourceSet.mags[i], sourceSet.rates[i]);
+      Predicate<SystemSource> distanceFilter = new BitsetFilter(siteBitset);
+      for (SystemSource source : Iterables.filter(sourceSet, distanceFilter)) {
+        mfdForLocation.add(source.magnitude(), source.rate());
       }
       return mfdForLocation.multiply(sourceSet.weight()).build();
     }
   }
-
 
   /*
    * System source calculation pipeline.
@@ -593,23 +591,28 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
   }
 
+  /*
+   * Predicate that tests the intersection of a site bitset (fault sections
+   * wihtin a specified distance of a site) with source bitsets (fault sections
+   * that participate in a SystemSource/Rupture).
+   */
   private static class BitsetFilter implements Predicate<SystemSource> {
 
     private static final String ID = "BitsetFilter";
-    private final BitSet bitset;
+    private final BitSet siteBitset;
 
-    BitsetFilter(BitSet bitset) {
-      this.bitset = bitset;
+    BitsetFilter(BitSet siteBitset) {
+      this.siteBitset = siteBitset;
     }
 
     @Override
     public boolean apply(SystemSource source) {
-      return bitset.intersects(source.bitset());
+      return siteBitset.intersects(source.bitset());
     }
 
     @Override
     public String toString() {
-      return ID + " " + bitset;
+      return ID + " " + siteBitset;
     }
   }
 
@@ -636,13 +639,13 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     public HazardInput apply(SystemSource source) {
 
       /* Find r minima. */
-      BitSet sectionBitset = source.bitset();
+      BitSet sections = source.bitset();
       double rJB = Double.MAX_VALUE;
       double rRup = Double.MAX_VALUE;
       double rX = Double.MAX_VALUE;
       int hitCount = 0;
       for (int sectionIndex : rMap.keySet()) {
-        if (sectionBitset.get(sectionIndex)) {
+        if (sections.get(sectionIndex)) {
           double[] distances = rMap.get(sectionIndex);
           rJB = min(rJB, distances[R_JB_INDEX]);
           double rRupNew = distances[R_RUP_INDEX];
