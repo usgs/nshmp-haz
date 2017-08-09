@@ -230,7 +230,7 @@
              encoding="UTF-8"
              docencoding="UTF-8"
              charset="UTF-8"
-             additionalparam="-notimestamp">
+             additionalparam="-notimestamp -Xdoclint:none">
       <packageset dir="${src}">
         <include name="org/opensha2/**" />
         <exclude name="org/opensha2/etc/**" />
