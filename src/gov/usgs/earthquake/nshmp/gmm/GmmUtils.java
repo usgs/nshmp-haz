@@ -75,7 +75,7 @@ public final class GmmUtils {
 
   private static String datPath = "etc/";
   // private static String rjbDatPath = datPath + "rjbmean.dat"; // relocated
-  private static String rjbDatPath = "/org/opensha2/eq/fault/surface/etc/rjb_wc94length.dat";
+  private static String rjbDatPath = "/gov/usgs/earthquake/nshmp/eq/fault/surface/etc/rjb_wc94length.dat";
   private static String cbhwDatPath = datPath + "avghw_cb.dat";
   private static String cyhwDatPath = datPath + "avghw_cy.dat";
 

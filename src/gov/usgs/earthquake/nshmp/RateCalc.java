@@ -232,7 +232,7 @@ public class RateCalc {
 
   private static final String PROGRAM = RateCalc.class.getSimpleName();
   private static final String USAGE_COMMAND =
-      "java -cp nshmp-haz.jar org.opensha2.RateCalc model sites [config]";
+      "java -cp nshmp-haz.jar gov.usgs.earthquake.nshmp.RateCalc model sites [config]";
   private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
   private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
   private static final String SITE_STRING = "name,lon,lat";

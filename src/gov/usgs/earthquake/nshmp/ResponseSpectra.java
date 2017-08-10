@@ -246,6 +246,6 @@ public class ResponseSpectra {
       "example: java -cp nshmp-haz.jar org.opensha.programs.DeterministicSpectra ASK_14 6.5 10.0 10.3 10.0 90.0 14.0 0.5 7.5 0.0 760.0 true NaN NaN" +
       LINE_SEPARATOR.value() +
       LINE_SEPARATOR.value() +
-      "  - For more details, see: http://usgs.github.io/nshmp-haz/docs/org/opensha2/programs/DeterministicSpectra.html";
+      "  - For more details, see: http://usgs.github.io/nshmp-haz/docs/gov/usgs/earthquake/nshmp/programs/DeterministicSpectra.html";
 
 }

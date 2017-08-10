@@ -6,7 +6,7 @@ __Working directory:__ `/path/to/nshmp-haz/etc/examples/7-deaggregation`
 To perform a deaggregation of hazard, one must use the program `DeaggCalc`. Internally, `DeaggCalc` calls `HazardCalc` and then reprocesses the data to generate a comma-delimited file of distance, magnitude, and epsilon bins, and a text file of summary statistics and primary contributing sources. For this, it can be helpful to create a second system alias:
 
 ```Shell
-alias deagg='java -Xms1024m -Xmx4096m -cp /path/to/nshmp-haz/dist/nshmp-haz.jar org.opensha2.DeaggCalc'
+alias deagg='java -Xms1024m -Xmx4096m -cp /path/to/nshmp-haz/dist/nshmp-haz.jar gov.usgs.earthquake.nshmp.DeaggCalc'
 ```
 
 `DeaggCalc` is similar to `HazardCalc` in every way except that the return-period of interest must be specified. For example, execute:

@@ -191,7 +191,7 @@ public class DeaggCalc {
 
   private static final String PROGRAM = DeaggCalc.class.getSimpleName();
   private static final String USAGE_COMMAND =
-      "java -cp nshmp-haz.jar org.opensha2.DeaggCalc model sites returnPeriod [config]";
+      "java -cp nshmp-haz.jar gov.usgs.earthquake.nshmp.DeaggCalc model sites returnPeriod [config]";
   private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
   private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
   private static final String SITE_STRING = "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]";
