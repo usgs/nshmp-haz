@@ -1,11 +1,11 @@
 package etc;
 
-import org.opensha2.data.XySequence;
-import org.opensha2.function.ArbitrarilyDiscretizedFunc;
-import org.opensha2.function.DiscretizedFunc;
-import org.opensha2.function.EvenlyDiscretizedFunc;
-
 import com.google.common.base.Stopwatch;
+
+import gov.usgs.earthquake.nshmp.data.XySequence;
+import gov.usgs.earthquake.nshmp.function.ArbitrarilyDiscretizedFunc;
+import gov.usgs.earthquake.nshmp.function.DiscretizedFunc;
+import gov.usgs.earthquake.nshmp.function.EvenlyDiscretizedFunc;
 
 /**
  * Quick, possibly naive, benchmark of ArbitrarilyDiscretizedFunction,
