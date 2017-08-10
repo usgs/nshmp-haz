@@ -540,7 +540,7 @@ public class GmmInput {
         .add(Z2P5.toString(), z2p5)
         .toString();
   }
-  
+
   /**
    * The constraints associated with each {@code GmmInput} field. All methods
    * return an {@link Optional} whose {@link Optional#isPresent()} method will

@@ -56,8 +56,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * <p><b>Reference:</b> McVerry, G.H., Zhao, J.X., Abrahamson, N.A., and
  * Somerville, P.G., 2000, New Zealand acceleration response spectrum
  * attenuation relations for crustal and subduction zone earthquakes: Bulletin
- * of the New Zealand Society of Earthquake Engineering, v. 39, n. 4, p.
- * 1-58.
+ * of the New Zealand Society of Earthquake Engineering, v. 39, n. 4, p. 1-58.
  *
  * <p><b>Component:</b> Model supports geometric mean or maximum of two
  * horizontal components; only concrete implementations of max-horizontal

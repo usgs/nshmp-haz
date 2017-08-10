@@ -453,7 +453,7 @@ public enum Gmm {
       Atkinson_2015.NAME,
       Atkinson_2015.COEFFS,
       Atkinson_2015.CONSTRAINTS),
-  
+
   /** @see GraizerKalkan_2015 */
   GK_15(
       GraizerKalkan_2015.class,

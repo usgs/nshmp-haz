@@ -49,7 +49,7 @@ public final class WongEtAl_2015 implements GroundMotionModel {
       .build();
 
   private static final double R_MIN = 20.0;
-  
+
   static final CoefficientContainer COEFFS = new CoefficientContainer("Wong15.csv");
 
   private static final class Coefficients {

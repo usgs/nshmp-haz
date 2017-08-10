@@ -66,7 +66,7 @@ class ImmutableXySequence extends XySequence {
   public final boolean isClear() {
     return Data.areZeroValued(ys);
   }
-  
+
   @Override
   public final XySequence trim() {
     checkState(!this.isClear(), "XySequence.trim() not permitted for 'clear' sequences");

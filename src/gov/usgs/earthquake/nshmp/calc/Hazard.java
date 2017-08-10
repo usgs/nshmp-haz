@@ -105,8 +105,8 @@ public final class Hazard {
 
   /**
    * Combine hazard from multiple independent models. The hazard object returned
-   * by this method will only specify a parent 'model' if varargs only
-   * included one model.
+   * by this method will only specify a parent 'model' if varargs only included
+   * one model.
    * 
    * <p><b>Note:</b> When combining hazard results, the combined result inherits
    * the {@link CalcConfig} from the first model supplied in varargs. This may

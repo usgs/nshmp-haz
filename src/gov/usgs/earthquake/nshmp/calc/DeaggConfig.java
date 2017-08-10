@@ -159,7 +159,7 @@ final class DeaggConfig {
           truncation);
     }
   }
-  
+
   static EpsilonBins createEpsilonBins(List<Double> εLevels, double εDelta) {
     double εDeltaBy2 = εDelta / 2.0;
     ImmutableList.Builder<εBin> bins = ImmutableList.builder();
@@ -170,6 +170,5 @@ final class DeaggConfig {
     }
     return new EpsilonBins(bins.build());
   }
-
 
 }

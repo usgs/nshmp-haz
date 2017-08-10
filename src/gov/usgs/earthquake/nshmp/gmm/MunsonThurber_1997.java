@@ -22,10 +22,10 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * Vs30 = 650 m/s of the lava site velocity (C. Thurber, personal comm., 1998).
  * 
  * <p><b>Note:</b> This GMM is only valid for PGA and 0.2 seconds. 0.2 is
- * supported through the linear scaling of log PGA ground motion. Also,
- * for larger magnitudes (M > 7), an additional magnitude term derived from
- * Boore, Joyner, and Fumal 1993) is applied. See also the 1998 Hawaii NSHM
- * <a href="http://earthquake.usgs.gov/hazards/products/hi/1998/documentation/">
+ * supported through the linear scaling of log PGA ground motion. Also, for
+ * larger magnitudes (M > 7), an additional magnitude term derived from Boore,
+ * Joyner, and Fumal 1993) is applied. See also the 1998 Hawaii NSHM <a
+ * href="http://earthquake.usgs.gov/hazards/products/hi/1998/documentation/">
  * documentation</a>.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
@@ -83,11 +83,11 @@ public final class MunsonThurber_1997 implements GroundMotionModel {
     double μBase10 = B0 + magTerm(Mw) + (B2 * r) - log10(r);
     return μBase10 * BASE_10_TO_E;
   }
-  
+
   private static double magTerm(double Mw) {
     if (Mw <= 7.0) {
       return B1 * (Mw - 6.0);
-    } else if (Mw <=7.7) {
+    } else if (Mw <= 7.7) {
       return B1 + B1_BJF * (Mw - 7.0);
     } else {
       return B1 + B1_BJF * 0.7;

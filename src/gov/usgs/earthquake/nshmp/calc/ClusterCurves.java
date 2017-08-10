@@ -26,7 +26,7 @@ final class ClusterCurves {
   private ClusterCurves(
       ClusterGroundMotions clusterGroundMotions,
       Map<Imt, Map<Gmm, XySequence>> curveMap) {
-    
+
     this.clusterGroundMotions = clusterGroundMotions;
     this.curveMap = curveMap;
   }

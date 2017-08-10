@@ -304,10 +304,10 @@ public enum RuptureScaling {
       return r;
     }
     int mIndex = min((int) round((m - RJB_M_MIN) / RJB_M_DELTA), RJB_M_MAX_INDEX);
-    int rIndex =  min(RJB_R_MAX_INDEX, (int) floor(r));
+    int rIndex = min(RJB_R_MAX_INDEX, (int) floor(r));
     return rjb[mIndex][rIndex];
   }
-  
+
   /**
    * Return the dimensions of a magnitude-dependent and width-constrained
    * rupture.

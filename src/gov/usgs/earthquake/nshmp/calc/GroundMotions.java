@@ -36,7 +36,7 @@ final class GroundMotions {
   private GroundMotions(
       InputList inputs,
       Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> gmMap) {
-    
+
     this.inputs = inputs;
     this.gmMap = gmMap;
   }
@@ -147,7 +147,7 @@ final class GroundMotions {
     private static int addValues(
         Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> sgmTargetMap,
         Map<Imt, Map<Gmm, List<ScalarGroundMotion>>> sgmValueMap) {
-      
+
       int setCount = 0;
       for (Entry<Imt, Map<Gmm, List<ScalarGroundMotion>>> imtEntry : sgmTargetMap.entrySet()) {
         Imt imt = imtEntry.getKey();
@@ -162,5 +162,5 @@ final class GroundMotions {
       return setCount;
     }
   }
-  
+
 }

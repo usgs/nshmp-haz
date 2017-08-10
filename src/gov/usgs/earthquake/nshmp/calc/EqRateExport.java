@@ -38,7 +38,7 @@ public final class EqRateExport {
 
   private static final String RATE_FORMAT = "%.8g";
   private static final String PROB_FORMAT = "%.2f";
-  
+
   private final Logger log;
   private final Path dir;
   private final String valueFormat;
@@ -57,10 +57,10 @@ public final class EqRateExport {
   private final List<EqRate> rates;
 
   private EqRateExport(CalcConfig config, Sites sites, Logger log) throws IOException {
-    
+
     // whether or not rates or probabilities have been calculated
     boolean rates = config.rate.valueFormat == ValueFormat.ANNUAL_RATE;
-    
+
     this.log = log;
     this.dir = HazardExport.createOutputDir(updateOutDir(config.output.directory, rates));
     this.valueFormat = rates ? RATE_FORMAT : PROB_FORMAT;

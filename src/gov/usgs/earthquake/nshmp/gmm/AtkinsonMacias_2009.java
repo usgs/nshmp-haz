@@ -41,11 +41,10 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * @see Gmm#AM_09_INTER
  */
 public final class AtkinsonMacias_2009 implements GroundMotionModel {
-  
+
   /*
-   * TODO 0.75s interpolated period coefficients added that should
-   * be removed if a viable on-the-fly interpolation algorithm is 
-   * added.
+   * TODO 0.75s interpolated period coefficients added that should be removed if
+   * a viable on-the-fly interpolation algorithm is added.
    */
 
   static final String NAME = "Atkinson & Macias (2009): Interface";

@@ -3,7 +3,7 @@ package gov.usgs.earthquake.nshmp.mfd;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * <p>Title: GutenbergRichterMfd.java  <p>Description: This is a truncated
+ * <p>Title: GutenbergRichterMfd.java <p>Description: This is a truncated
  * incremental Gutenberg-Richter distribution. Note that magLower and magUpper
  * must exactly equal one of the descrete x-axis values.
  *

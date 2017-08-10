@@ -143,10 +143,10 @@ public class Campbell_1997 implements GroundMotionModel {
       final double rSeis,
       final double μPga) {
 
-    return μPga + c.c1 + 
-        c.c2 * tanh(c.c3 * (Mw - 4.7)) + 
-        (c.c4 + (c.c5 * Mw)) * rSeis + 
-        (0.5 * c.c6) + 
+    return μPga + c.c1 +
+        c.c2 * tanh(c.c3 * (Mw - 4.7)) +
+        (c.c4 + (c.c5 * Mw)) * rSeis +
+        (0.5 * c.c6) +
         c.c7 * tanh(c.c8);
   }
 

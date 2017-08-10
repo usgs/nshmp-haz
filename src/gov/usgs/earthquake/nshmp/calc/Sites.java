@@ -231,7 +231,7 @@ public abstract class Sites implements Iterable<Site> {
    * The number of {@code Site}s {@code this} contains.
    */
   public abstract int size();
-  
+
   /**
    * An optional {@code Bounds} that is used to specify rectangular map extents,
    * which may differ from the range spanned by the sites in this. Presently
@@ -240,7 +240,7 @@ public abstract class Sites implements Iterable<Site> {
    * {@code == true}.
    */
   public abstract Optional<Bounds> mapBounds();
-  
+
   /**
    * An optional spacing value that reflects the spacing of sites within an
    * attendant {@link #mapBounds()}.
@@ -263,7 +263,7 @@ public abstract class Sites implements Iterable<Site> {
     public int size() {
       return delegate.size();
     }
-    
+
     @Override
     public Optional<Bounds> mapBounds() {
       return Optional.absent();
@@ -318,7 +318,7 @@ public abstract class Sites implements Iterable<Site> {
     public int size() {
       return region.size();
     }
-    
+
     @Override
     public Optional<Bounds> mapBounds() {
       return bounds;

@@ -352,8 +352,8 @@ final class Deaggregator {
       double azimuth = Locations.azimuth(site.location, location);
 
       /*
-       * Init sectionMfds, create system contributors for section and attach
-       * to parent.
+       * Init sectionMfds, create system contributors for section and attach to
+       * parent.
        */
       Map<Gmm, SystemContributor.Builder> contributors = new EnumMap<>(Gmm.class);
       for (Gmm gmm : gmmKeys) {

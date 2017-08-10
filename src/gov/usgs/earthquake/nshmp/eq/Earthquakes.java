@@ -16,7 +16,7 @@ import com.google.common.collect.Range;
 public final class Earthquakes {
 
   private Earthquakes() {}
-  
+
   /*
    * TODO possibly adjust Faults.CRUSTAL_DEPTH_RANGE CB14 restricts to 20 km and
    * the PEER database is pretty comprehensive. Perhaps implement active and
@@ -42,8 +42,8 @@ public final class Earthquakes {
   public static final Range<Double> SLAB_DEPTH_RANGE = Range.closed(20.0, 700.0);
 
   /**
-   * Supported earthquake magnitudes: {@code [-2.0..9.7]}. This range of
-   * values is not bound to any particular magnitude scale.
+   * Supported earthquake magnitudes: {@code [-2.0..9.7]}. This range of values
+   * is not bound to any particular magnitude scale.
    */
   public static final Range<Double> MAG_RANGE = Range.closed(-2.0, 9.7);
 

@@ -61,7 +61,7 @@ public final class Atkinson_2010 implements GroundMotionModel {
 
   private final GroundMotionModel delegate;
   private final double log10freq;
-  
+
   Atkinson_2010(final Imt imt) {
     delegate = Gmm.BA_08.instance(imt);
     log10freq = log10(imt.frequency());
@@ -72,7 +72,7 @@ public final class Atkinson_2010 implements GroundMotionModel {
     double μ = delegate.calc(in).mean() + hiTerm(in.rJB, in.zTop);
     return DefaultScalarGroundMotion.create(μ, σ);
   }
-  
+
   private double hiTerm(double rJB, double zTop) {
     double x1 = min(-0.18 + 0.17 * log10freq, 0.0);
     double x0 = 0.2;

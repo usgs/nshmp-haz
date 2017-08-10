@@ -321,7 +321,7 @@ class BinaryCurves {
     double vs30 = 760.0;
     double basinDepth = 2.0;
     double spacing = 0.1;
-    
+
     // TODO replace with Bounds??
     double lonMin = 0;
     double lonMax = 0;
@@ -329,7 +329,6 @@ class BinaryCurves {
     double latMax = 0;
 
   }
-
 
   private static final int MAX_IML_COUNT = 20;
   private static final int HEADER_OFFSET = 1664; // bytes
@@ -346,20 +345,18 @@ class BinaryCurves {
     private final int curveCount;
     private final FileChannel channel;
 
-
     public Writer(Path path, Metadata meta) throws IOException {
       checkArgument(meta.imls.length <= MAX_IML_COUNT);
       this.path = path;
       this.meta = meta;
       this.curveCount = curveCount(meta);
       this.channel = FileChannel.open(path, WRITE);
-      
-      //init with 0's
-//      int 
+
+      // init with 0's
+      // int
       this.channel.write(createHeader());
       this.channel.write(ByteBuffer.allocate(curveCount * MAX_IML_COUNT));
     }
-    
 
     /* Header occupies 1664 bytes total */
     private ByteBuffer createHeader() {
@@ -400,13 +397,13 @@ class BinaryCurves {
 
       return buf;
     }
-    
+
     private static int curveCount(Metadata m) {
       int lonDim = (int) Math.rint((m.lonMax - m.lonMin) / m.spacing + 1);
       int latDim = (int) Math.rint((m.latMax - m.latMin) / m.spacing + 1);
       return lonDim * latDim;
     }
-    
+
     /*
      * Compute the target position of a curve in a binary file. NSHMP binary
      * files index ascending in longitude, but descending in latitude.

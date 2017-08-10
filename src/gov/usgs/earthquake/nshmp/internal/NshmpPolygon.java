@@ -13,7 +13,7 @@ public enum NshmpPolygon {
   CEUS_CLIP(Data.CEUS_CLIP, "Central & Eastern US Map Extents"),
   WUS_CLIP(Data.WUS_CLIP, "Western US Map Extents"),
   AK_CLIP(Data.AK_CLIP, "Alaska Map Extents"),
-  
+
   CONTERMINOUS_US(Data.CONTERMINOUS, "Conterminous US"),
 
   LA_BASIN(Data.WG_07_LA, "Los Angeles Basin – WGCEP 2007"),

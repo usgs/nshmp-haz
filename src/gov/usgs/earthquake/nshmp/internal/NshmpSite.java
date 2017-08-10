@@ -258,7 +258,7 @@ public enum NshmpSite implements NamedLocation {
     String label = Parsing.enumLabelWithSpaces(this, true);
     if (label.startsWith("Mc")) {
       StringBuilder sb = new StringBuilder(label);
-      sb.setCharAt(2, Character.toUpperCase(sb.charAt(2))); 
+      sb.setCharAt(2, Character.toUpperCase(sb.charAt(2)));
       label = sb.toString();
     }
     int stripIndex = label.lastIndexOf(' ');

@@ -14,7 +14,7 @@ public enum ValueFormat {
 
   /** Poisson probability. */
   POISSON_PROBABILITY;
-  
+
   @Override
   public String toString() {
     return Parsing.enumLabelWithSpaces(this, true);

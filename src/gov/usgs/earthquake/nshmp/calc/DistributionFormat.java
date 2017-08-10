@@ -10,5 +10,5 @@ public enum DistributionFormat {
 
   INCREMENTAL,
   CUMULATIVE;
-  
+
 }

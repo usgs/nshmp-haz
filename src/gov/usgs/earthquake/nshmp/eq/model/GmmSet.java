@@ -57,7 +57,7 @@ public final class GmmSet {
       double maxDistHi,
       double[] epiValues,
       double[] epiWeights) {
-    
+
     this.weightMapLo = weightMapLo;
     this.maxDistLo = maxDistLo;
     this.weightMapHi = weightMapHi;

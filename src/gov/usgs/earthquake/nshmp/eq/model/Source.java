@@ -25,7 +25,7 @@ public interface Source extends Named, Iterable<Rupture> {
    * A numeric identifier for this {@code Source}.
    */
   int id();
-  
+
   /**
    * The {@code SourceType} identifier.
    */
@@ -42,5 +42,5 @@ public interface Source extends Named, Iterable<Rupture> {
    * The MFDs that define earthquake rates for this source.
    */
   List<XySequence> mfds();
-  
+
 }

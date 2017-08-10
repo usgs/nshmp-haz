@@ -57,7 +57,7 @@ public class PointSources {
         rupScaling,
         magDepthMap,
         maxDepth);
-    
+
     return HazardCalcs.sourceToInputs(site).apply(source);
   }
 
@@ -91,7 +91,7 @@ public class PointSources {
         rupScaling,
         magDepthMap,
         maxDepth);
-    
+
     List<InputList> inputsList = new ArrayList<>();
     for (Site site : sites) {
       InputList inputs = HazardCalcs.sourceToInputs(site).apply(source);
@@ -116,13 +116,13 @@ public class PointSources {
 
     Source source = pointSource(
         sourceType,
-        PointSourceType.FINITE, 
-        loc, 
-        mfd, 
-        mechWtMap, 
+        PointSourceType.FINITE,
+        loc,
+        mfd,
+        mechWtMap,
         grid.rupScaling,
         grid.depthModel);
-    
+
     return finiteInputs(sites, source);
   }
 

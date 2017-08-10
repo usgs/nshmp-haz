@@ -112,7 +112,7 @@ class SystemSectionParser extends DefaultHandler {
          * NOTE: currently, section indices are ordered ascending from zero; if
          * this were to change we'd need agregate a list of indices as well.
          */
-          
+
         case SECTION:
           surfaceBuilder = DefaultGriddedSurface.builder();
           String sectionName = readString(NAME, atts);
@@ -184,11 +184,11 @@ class SystemSectionParser extends DefaultHandler {
   public void setDocumentLocator(Locator locator) {
     this.locator = locator;
   }
-  
+
   /*
    * TODO for consistency during development we have kept the original (long)
-   * UCERF3 section names in fault_sections.xml but it might make sense down
-   * the road to update the source file rather thna clean the name here.
+   * UCERF3 section names in fault_sections.xml but it might make sense down the
+   * road to update the source file rather thna clean the name here.
    */
   private static String cleanName(String name) {
     return name.replace(" 2011 CFM", "").replace(", Subsection ", " [") + "]";

@@ -68,7 +68,7 @@ final class NshmpSiteFiles {
     writeSites("nureg", EnumSet.allOf(NuregSite.class), DEC3_FMT);
     writeCybershakeSites("cybershake", EnumSet.allOf(CybershakeSite.class));
 
-     writeNshmpPolys();
+    writeNshmpPolys();
     // writeNshmpSummaryPoly();
     // writeNshmpSites_0p1();
   }
@@ -89,7 +89,7 @@ final class NshmpSiteFiles {
     Path wusOut = EXPORT_DIR.resolve("map-wus.geojson");
     LocationList wusBounds = WUS_CLIP.coordinates();
     writePolyJson(wusOut, "NSHMP Western US", usCoords, 0.1, wusBounds);
-    
+
     // TODO AK needs to be updated with proper clipping region as above
     // currently just mercator rectangle
     writePolyJson(
@@ -98,7 +98,7 @@ final class NshmpSiteFiles {
         AK_CLIP.coordinates(),
         0.1,
         null);
-    
+
     writePolyJson(
         EXPORT_DIR.resolve("map-la-basin.geojson"),
         LA_BASIN.toString(),

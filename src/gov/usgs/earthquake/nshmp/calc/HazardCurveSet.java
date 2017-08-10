@@ -59,7 +59,7 @@ final class HazardCurveSet {
   final Map<Imt, List<Map<Gmm, XySequence>>> clusterCurveLists;
   final Map<Imt, Map<Gmm, XySequence>> curveMap;
   final Map<Imt, XySequence> totalCurves;
-  
+
   // TODO separate references by what is needed for hazard vs deagg
   // deagg of cluster and system types requires us to hold onto some
   // objects created when generating hazard curves
@@ -150,7 +150,7 @@ final class HazardCurveSet {
         if (cluster) {
           List<Map<Gmm, XySequence>> clusterCurveList = new ArrayList<>();
           clusterCurveLists.put(imt, clusterCurveList);
-          
+
         }
       }
       totalCurves = new EnumMap<>(Imt.class);
@@ -186,14 +186,14 @@ final class HazardCurveSet {
         Map<Gmm, XySequence> curveMapBuild = curveMap.get(imt);
 
         /*
-         * Retain references to the total curve for each cluster source
-         * for deaggregation in clusterCurveLists. These lists of maps by
-         * GMM will contain only those curves for the GMMs approprate for
-         * the source-site distance. When deaggreagting, the same distance
-         * cutoff will be considered so retrieval of curves from the maps
-         * should never thrwo an NPE.
+         * Retain references to the total curve for each cluster source for
+         * deaggregation in clusterCurveLists. These lists of maps by GMM will
+         * contain only those curves for the GMMs approprate for the source-site
+         * distance. When deaggreagting, the same distance cutoff will be
+         * considered so retrieval of curves from the maps should never thrwo an
+         * NPE.
          */
-        
+
         Map<Gmm, XySequence> clusterCurves = new EnumMap<>(Gmm.class);
         // loop Gmms based on what's supported at this distance
         for (Gmm gmm : gmmWeightMap.keySet()) {

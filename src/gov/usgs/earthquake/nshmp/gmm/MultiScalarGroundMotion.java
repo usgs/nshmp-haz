@@ -18,7 +18,7 @@ public class MultiScalarGroundMotion extends DefaultScalarGroundMotion {
 
   // TODO array exposure is dangerous and should be changed in favor of
   // immutable lists; this is agood candidate for immutable DataArrays
-  
+
   // TODO can we avoid instanceof tests in exceedance/probabilityModle enums
 
   private final double[] means;

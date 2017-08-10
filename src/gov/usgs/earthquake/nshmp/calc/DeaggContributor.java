@@ -720,10 +720,10 @@ abstract class DeaggContributor {
 
     /* Use for SourceSets. */
     static JsonContributor createMulti(
-        String name, 
-        SourceType source, 
+        String name,
+        SourceType source,
         double contribution) {
-      
+
       JsonContributor jc = new JsonContributor();
       jc.name = name;
       jc.source = source.toString();

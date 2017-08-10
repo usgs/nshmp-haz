@@ -114,7 +114,7 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 
     /* Modified to saturate above Mw=8.5 */
     double Mw = min(in.Mw, 8.5);
-    
+
     if (in.vs30 > VS30_CUT) {
       /* Rock */
       Coefficients c = Mw <= 6.5 ? coeffs_bc_lo : coeffs_bc_hi;
@@ -140,10 +140,10 @@ public class SadighEtAl_1997 implements GroundMotionModel {
 
     double lnY =
         c.c1r +
-        c.c2 * Mw +
-        c.c3 * pow(M_CUT - Mw, 2.5) +
-        c.c4 * log(rRup + exp(c.c5 + c.c6r * Mw)) +
-        c.c7 * log(rRup + 2);
+            c.c2 * Mw +
+            c.c3 * pow(M_CUT - Mw, 2.5) +
+            c.c4 * log(rRup + exp(c.c5 + c.c6r * Mw)) +
+            c.c7 * log(rRup + 2);
 
     /* Scale reverse amplitudes by 1.2; 0.18232 = ln(1.2) */
     return (style == REVERSE) ? lnY + 0.18232 : lnY;
@@ -155,9 +155,9 @@ public class SadighEtAl_1997 implements GroundMotionModel {
     double c1 = (style == REVERSE) ? c.c1r : c.c1ss;
     double c6 = (style == REVERSE) ? c.c6r : c.c6ss;
 
-    return c1 + 
-        c.c2 * Mw - 
-        c.c3 * log(rRup + c.c4 * exp(c.c5 * Mw)) + 
+    return c1 +
+        c.c2 * Mw -
+        c.c3 * log(rRup + c.c4 * exp(c.c5 * Mw)) +
         c6 +
         c.c7 * pow(M_CUT - Mw, 2.5);
   }

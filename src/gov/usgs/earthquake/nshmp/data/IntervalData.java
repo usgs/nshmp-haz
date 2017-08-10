@@ -218,7 +218,7 @@ public final class IntervalData {
       int iColumn = indexOf(columnMin, columnΔ, columnValue, columns.length);
       return get(iRow, iColumn);
     }
-    
+
     @Override
     public XySequence row(double rowValue) {
       int rowIndex = indexOf(rowMin, rowΔ, rowValue, rows.length);
@@ -364,7 +364,7 @@ public final class IntervalData {
       int iLevel = indexOf(levelMin, levelΔ, levelValue, levels.length);
       return get(iRow, iColumn, iLevel);
     }
-    
+
     @Override
     public XySequence column(double rowValue, double columnValue) {
       int iRow = indexOf(rowMin, rowΔ, rowValue, rows.length);

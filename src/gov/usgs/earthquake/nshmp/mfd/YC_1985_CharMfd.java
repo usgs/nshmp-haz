@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.awt.geom.Point2D;
 
 /**
- * <p>Title: YC_1985_CharMfd.java 
+ * <p>Title: YC_1985_CharMfd.java
  *
  * <p>Description: This is the "characteristic" magnitude-frequency distribution
  * defined by Youngs and Coppersmith (1985, Bull. Seism. Soc. Am., 939-964). The
@@ -14,7 +14,7 @@ import java.awt.geom.Point2D;
  * Gutenberg-Richter part at (magPrime-deltaMagPrime). See their figure 10 for a
  * graphical explanation of these parameters. Note that magLower, magUpper,
  * magPrime, magUpper-deltaMagChar, and magPrime-deltaMagPrime must all be
- * exactly equal one of the descrete x-axis points. 
+ * exactly equal one of the descrete x-axis points.
  *
  * @author Edward H. Field Date: Sept. 26, 2002
  * @version 1.0

@@ -10,7 +10,7 @@ public class HazMatSpectrum {
   public double[] periods;
   public double[] means;
   public double[] sigmas;
-  
+
   @Override
   public String toString() {
     return new StringBuilder("HazMatSpectrum: ")
