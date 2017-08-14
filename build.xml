@@ -232,10 +232,10 @@
              charset="UTF-8"
              additionalparam="-notimestamp -Xdoclint:none">
       <packageset dir="${src}">
-        <include name="org/opensha2/**" />
-        <exclude name="org/opensha2/etc/**" />
-        <exclude name="org/opensha2/gcim/**" />
-        <exclude name="org/opensha2/internal/**" />
+        <include name="gov/usgs/earthquake/nshmp/**" />
+        <exclude name="gov/usgs/earthquake/nshmp/etc/**" />
+        <exclude name="gov/usgs/earthquake/nshmp/gcim/**" />
+        <exclude name="gov/usgs/earthquake/nshmp/internal/**" />
       </packageset>
 
       <!-- 
@@ -244,7 +244,7 @@
         <pathelement location="/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home/src.zip" />
       </sourcepath>
       the package element restricts the docs generated to nshmp-haz
-      <package name="org.opensha2.*" />-->
+      <package name="gov.usgs.earthquake.nshmp.*" />-->
 
       <bottom>
         <![CDATA[<div style="float: right; font-size: 14px; padding: 4px;">

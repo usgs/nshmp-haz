@@ -13,7 +13,7 @@ In this example we've overridden the configuration supplied by the model. Specif
 
 * The upper end of each hazard curve has been truncated at 3 standard deviations.
 * Hazard curves have been saved as poisson probability instead of annual rate.
-* Hazard curves have been calculated for 3 `imts` ([intensity measures](http://usgs.github.io/nshmp-haz/javadoc/index.html?org/opensha2/gmm/Imt.html), or spectral periods).
+* Hazard curves have been calculated for 3 `imts` ([intensity measures](http://usgs.github.io/nshmp-haz/javadoc/index.html?gov/usgs/earthquake/nshmp/gmm/Imt.html), or spectral periods).
 * The `imls` (intensity measure levels or x-values) of the resultant curves have been explicitely defined for each `imt`.
 
 See the [configuration specification](https://github.com/usgs/nshmp-haz/wiki/Configuration) for details on default values and supported options and formats.

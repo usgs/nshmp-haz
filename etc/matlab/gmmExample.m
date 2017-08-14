@@ -24,7 +24,7 @@ javaaddpath(nshmpHaz);
 % Although the static classpath is generally a little faster, you must
 % restart Matlab any time nshmp-haz.jar is rebuilt with updated code.
 
-import org.opensha2.etc.*
+import gov.usgs.earthquake.nshmp.etc.*
 
 % =========================================================================
 % Single model ground motion calculation:
@@ -54,11 +54,11 @@ input.z2p5  =   NaN; % in km; NaN triggers default basin depth model
 input.z1p0  =   NaN; % in km; NaN triggers default basin depth model
 
 % Specify a ground motion model. GMM identifiers:
-% http://usgs.github.io/nshmp-haz/javadoc/org/opensha2/gmm/Gmm.html
+% http://usgs.github.io/nshmp-haz/javadoc/gov/usgs/earthquake/nshmp/gmm/Gmm.html
 gmm = 'ASK_14';
 
 % Specify an intensity measure type (IMT). IMT identifiers:
-% http://usgs.github.io/nshmp-haz/javadoc/org/opensha2/gmm/Imt.html
+% http://usgs.github.io/nshmp-haz/javadoc/gov/usgs/earthquake/nshmp/gmm/Imt.html
 imt = 'PGA';
 
 % Do a calculation. The MatUtil.calc(gmm, imt, gmmInput) method returns an
