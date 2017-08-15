@@ -1,0 +1,45 @@
+
+apply plugin: 'java'
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  compile('com.google.guava:guava:23.0') {
+    transitive = false
+  }
+  compile 'com.google.code.gson:gson:2.8.1'
+  testCompile 'junit:junit:4.12'
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['src']
+    }
+    resources {
+      srcDirs = ['src']
+      exclude '**/*.java'
+    }
+  }
+  test {
+    java {
+      srcDirs = ['src'] // TODO 'test'
+    }
+  }
+}
+
+jar {
+  doFirst {
+    from {
+      configurations.compile.collect {
+        it.isDirectory() ? it : zipTree(it).matching {
+           exclude {
+             it.path.contains('META-INF')
+           }
+        }
+      }
+    }
+  }
+}
