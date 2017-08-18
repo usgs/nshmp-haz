@@ -1,5 +1,6 @@
 
 apply plugin: 'java'
+apply plugin: 'jacoco'
 
 repositories {
   jcenter()
@@ -7,6 +8,7 @@ repositories {
 
 dependencies {
   compile('com.google.guava:guava:23.0') {
+    /* skip optional guava dependencies */
     transitive = false
   }
   compile 'com.google.code.gson:gson:2.8.1'
@@ -27,19 +29,89 @@ sourceSets {
     java {
       srcDirs = ['test']
     }
+    resources {
+      srcDirs = ['test']
+      exclude '**/*.java'
+    }
   }
 }
 
+ext {
+  projectName = 'nshmp-haz'
+  gitTag = 'git describe --tags'.execute().text.replace('\n', '') ?: 'unknown'
+  gitLink = '<a href="https://github.com/usgs/nshmp-haz">' + gitTag +'</a>'
+  docTitle = projectName + ': ' + gitLink
+  docFooter = '<div style="float: left; font-size: 16px; text-align: right; ' +
+    'padding: 10px; width: 100%; box-sizing: border-box; background-color: #f9f9f9">' +
+    '<b><a href="https://www.usgs.gov" target="_top">U.S. Geological Survey</a></b> ' + 
+    '– National Seismic Hazard Mapping Project ' +
+    '(<a href="https://earthquake.usgs.gov/hazards/" target="_top">NSHMP</a>) ' +
+    '– <a href="https://github.com/usgs/nshmp-haz/blob/master/LICENSE.md" ' +
+    'target="_top">License</a> | <b>' + gitLink + '</b></div>'
+}
+
+test {
+  //include 'gov/usgs/earthquake/nshmp/gmm/*'
+  //exclude 'gov/usgs/earthquake/nshmp/**'
+  //include 'gov/usgs/earthquake/nshmp/gmm/CeusSoftRock.class'
+  filter {
+    includeTestsMatching "gov.usgs.earthquake.nshmp.data.*"
+  }
+}
+
+jacocoTestReport {
+  reports {
+    xml.enabled true
+    html.enabled true
+  }
+}
+
+
+javadoc {
+  options.setUse(true)
+  options.author(true)
+  options.version(true)
+  options.windowTitle(projectName)
+  options.docTitle(docTitle)
+  options.encoding('UTF-8')
+  options.docEncoding('UTF-8')
+  options.charSet('UTF-8')
+  options.bottom(docFooter)
+  options.addStringOption('Xdoclint:none', '-quiet')
+  options.links(
+    'https://docs.oracle.com/javase/8/docs/api/',
+    'https://google.github.io/guava/releases/23.0/api/docs/',
+    'https://google.github.io/gson/apidocs/')
+  include 'gov/usgs/earthquake/nshmp/**'
+  exclude 'gov/usgs/earthquake/nshmp/etc/**'
+  exclude 'gov/usgs/earthquake/nshmp/gcim/**'
+  exclude 'gov/usgs/earthquake/nshmp/internal/**'
+}
+
+/*
+ * Enhance the jar task to build a fat jar and add application
+ * version to a properties file. Note that 'git describe' only
+ * works when running gradle from the command line.
+ */
 jar {
   doFirst {
+  
+    /* fat jar */
     from {
       configurations.compile.collect {
         it.isDirectory() ? it : zipTree(it).matching {
-           exclude {
-             it.path.contains('META-INF')
-           }
+          exclude {
+            it.path.contains('META-INF')
+          }
         }
       }
     }
+    
+    /* record app version */
+    def props = new Properties()
+    def propsFile = new File(project.buildDir.toString() + '/resources/main/app.properties')
+    propsFile.createNewFile()
+    props.setProperty('app.version', gitTag)
+    props.store(propsFile.newWriter(), null)
   }
 }
