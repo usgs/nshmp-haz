@@ -6,7 +6,6 @@ import static java.util.logging.Level.SEVERE;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Formatter;
@@ -28,14 +27,7 @@ public class Logging {
    */
   public static void init() {
     try {
-      /*
-       * When running from a jar, logging.properties will have been moved to the
-       * root of the source directory, otherwise it can be found in lib.
-       */
       InputStream is = Logging.class.getResourceAsStream("/logging.properties");
-      if (is == null) {
-        is = new FileInputStream("lib/logging.properties");
-      }
       LogManager.getLogManager().readConfiguration(is);
     } catch (IOException ioe) {
       ioe.printStackTrace();

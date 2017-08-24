@@ -1,13 +1,10 @@
 .settings
-/bin
-/classes
-/dist
-/docs
-/tmp
+.gradle
+build
+classes
+tmp
 curves*/
 eq-prob*/
 eq-rate*/
 Scratch*.java
 nshmp-haz-log*
-/src/META-INF
-cobertura.ser
