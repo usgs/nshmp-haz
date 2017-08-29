@@ -1,5 +1,6 @@
 .settings
 .gradle
+bin
 build
 classes
 tmp
