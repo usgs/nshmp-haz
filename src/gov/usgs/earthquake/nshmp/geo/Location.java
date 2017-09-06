@@ -31,7 +31,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  *
  * <p>For computational convenience, latitude and longitude values are converted
  * and stored internally in radians. Special {@code get***Rad()} methods are
- * provided to access this native format.
+ * provided to access this native format.  
  *
  * @author Peter Powers
  */

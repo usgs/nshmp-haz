@@ -52,6 +52,7 @@ ext {
     '(<a href="https://earthquake.usgs.gov/hazards/" target="_top">NSHMP</a>) ' +
     '– <a href="https://github.com/usgs/nshmp-haz/blob/master/LICENSE.md" ' +
     'target="_top">License</a> | <b>' + gitLink + '</b></div>'
+  docOut = findProperty('javadoc_loc')
 }
 
 test {
@@ -90,6 +91,19 @@ javadoc {
   exclude 'gov/usgs/earthquake/nshmp/etc/**'
   exclude 'gov/usgs/earthquake/nshmp/gcim/**'
   exclude 'gov/usgs/earthquake/nshmp/internal/**'
+  doLast {
+    if (docOut) {
+      delete docOut
+      copy {
+        from 'build/docs/javadoc'
+        into docOut
+      }
+      copy {
+        from 'etc/resources/docs'
+        into docOut + '/resources'
+      }
+    }
+  }
 }
 
 /*
