@@ -8,7 +8,7 @@ __Working directory:__ `/path/to/nshmp-haz/etc/examples/8-probabilities`
 For this example, the following system alias is helpful:
 
 ```Shell
-alias rate='java -Xms1024m -Xmx4096m -cp /path/to/nshmp-haz/build/libs/nshmp-haz.jar gov.usgs.earthquake.nshmp.RateCalc'
+alias rate='java -Xms1g -Xmx4g -cp /path/to/nshmp-haz/build/libs/nshmp-haz.jar gov.usgs.earthquake.nshmp.RateCalc'
 ```
 
 Assuming a copy of the 2008 USGS NSHM is available (see [Example 5](../5-complex-model)), execute:

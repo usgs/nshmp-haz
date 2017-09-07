@@ -6,7 +6,7 @@ __Working directory:__ `/path/to/nshmp-haz/etc/examples/5-complex-model`
 Most PSHAs involve the use of more complex source models, the components of which might use different ground motion models. For this and ensuing examples, we'll use the 2008 USGS National Seismic Hazard Model (NSHM) for the western U.S. `nshmp-haz` uses an in-memory source model. The USGS NSHMs are quite large, so it's helpful to increase the amount memory available to Java when calling `HazardCalc`. For example, set your alias to:
 
 ```Shell
-alias hazard='java -Xms1024m -Xmx4096m -cp /path/to/nshmp-haz/build/libs/nshmp-haz.jar gov.usgs.earthquake.nshmp.HazardCalc'
+alias hazard='java -Xms1g -Xmx4g -cp /path/to/nshmp-haz/build/libs/nshmp-haz.jar gov.usgs.earthquake.nshmp.HazardCalc'
 ```
 
 This will increase the minimum amount of memory Java requires to 1GB and will allow it to claim up to 4GB, assuming that much is available.
