@@ -14,7 +14,7 @@ This will increase the minimum amount of memory Java requires to 1GB and will al
 First, clone the 2008 USGS NSHM. Assuming you are in the current working directory (above), the following will create a copy of the model adjacent to nshmp-haz:
 
 ```Shell
-git clone https://github.com/usgs/nshm-cous-2008.git ../../../../nshmp-model-cous-2008
+git clone https://github.com/usgs/nshm-cous-2008.git ../../../../nshm-cous-2008
 ```
 
 The 2008 NSHM repository contains two source models: one for the western U.S. and a one for the central and eastern U.S. To compute hazard for a few sites in the Western U.S. at 1.0s and 2.0s spectral periods, execute:
