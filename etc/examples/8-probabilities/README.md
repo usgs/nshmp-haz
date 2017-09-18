@@ -14,13 +14,13 @@ alias rate='java -Xms1g -Xmx4g -cp /path/to/nshmp-haz/build/libs/nshmp-haz.jar g
 Assuming a copy of the 2008 USGS NSHM is available (see [Example 5](../5-complex-model)), execute:
 
 ```Shell
-rate ../../../../nshmp-model-cous-2008/Western\ US sites.csv config-sites.json
+rate ../../../../nshm-cous-2008/Western\ US sites.csv config-sites.json
 ```
 
 to generate incremental, annual-rate output for a list of sites, or
 
 ```Shell
-rate ../../../../nshmp-model-cous-2008/Western\ US map.geojson config-map.json
+rate ../../../../nshm-cous-2008/Western\ US map.geojson config-map.json
 ```
 
 to generate a map of cumulative Poisson probabilities (i.e. P ≥ M).
