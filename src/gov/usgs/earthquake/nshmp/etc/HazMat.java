@@ -20,9 +20,9 @@ public class HazMat {
    * nshmp-haz is the inclusion of v.15 of Google Guava (this, one can only
    * determine by unpacking the included google-collections.jar as they haven't
    * bothered to update the name of the dependency) whereas the current Guava
-   * release is v.20. The aggressive deprecation and removal of bad, unused, or
+   * release is v.23. The aggressive deprecation and removal of bad, unused, or
    * superceeded code by Google has resulted in significant class and method
-   * variations within Guava over 5 update cycles. Nshmp-haz will not remove
+   * variations within Guava over 8 update cycles. nshmp-haz will not remove
    * it's dependency on Guava, but putting nshmp-haz early on the Matlab
    * classpath causes Matlab to crash as it can't find (now missing) methods in
    * Guava.
