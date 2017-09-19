@@ -1,0 +1,101 @@
+{
+  "hazard": {
+    "exceedanceModel": "TRUNCATION_UPPER_ONLY",
+    "truncationLevel": 3.0,
+    "imts": [
+      "PGA",
+      "SA0P2",
+      "SA1P0"
+    ],
+    "gmmUncertainty": false,
+    "valueFormat": "ANNUAL_RATE",
+    "defaultImls": [
+      0.001,
+      0.01,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0
+    ],
+    "customImls": {
+      "PGV": [
+        0.01,
+        0.0177,
+        0.0312,
+        0.0552,
+        0.0976,
+        0.173,
+        0.305,
+        0.539,
+        0.953,
+        1.68,
+        2.98,
+        5.26,
+        9.3,
+        16.4,
+        29.1,
+        51.3,
+        90.8,
+        160.0,
+        284.0,
+        501.0
+      ]
+    }
+  },
+  "deagg": {
+    "bins": {
+      "rMin": 0.0,
+      "rMax": 1000.0,
+      "Δr": 20.0,
+      "mMin": 4.4,
+      "mMax": 9.4,
+      "Δm": 0.2,
+      "εMin": -3.0,
+      "εMax": 3.0,
+      "Δε": 0.5
+    },
+    "contributorLimit": 1.0
+  },
+  "rate": {
+    "bins": {
+      "mMin": 4.2,
+      "mMax": 9.4,
+      "Δm": 0.1
+    },
+    "distance": 20.0,
+    "distributionFormat": "INCREMENTAL",
+    "valueFormat": "ANNUAL_RATE",
+    "timespan": 30.0
+  },
+  "site": {
+    "vs30": 760.0,
+    "vsInferred": true,
+    "z1p0": null,
+    "z2p5": null
+  },
+  "output": {
+    "directory": "/Users/bclayton/usgs/git/nshmp-haz/etc/examples/4-hazard-map/curves",
+    "dataTypes": [
+      "TOTAL"
+    ],
+    "flushLimit": 5
+  },
+  "performance": {
+    "optimizeGrids": true,
+    "collapseMfds": true,
+    "systemPartition": 1000,
+    "threadCount": "ALL"
+  }
+}

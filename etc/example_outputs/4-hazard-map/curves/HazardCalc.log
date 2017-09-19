@@ -1,0 +1,1911 @@
+   INFO HazardCalc: v1.1.2-27-gde790ea
+   INFO Model Config: /Users/bclayton/usgs/git/nshmp-haz/etc/peer/models/Set1-Case1/config.json
+        Model
+          .name:               PEER Test: Set1-Case1
+          .surfaceSpacing:     1.0
+          .ruptureFloating:    OFF
+          .ruptureVariability: false
+          .pointSourceType:    FINITE
+          .areaGridScaling:    UNIFORM_0P01
+   INFO 
+   INFO =======  Fault Sources  =======
+   INFO Parsing: Fault/gmm.xml
+   INFO Parsing: Fault/source.xml
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Fault 1]
+   INFO ===============================
+   INFO 
+   INFO Calc Config: /Users/bclayton/usgs/git/nshmp-haz/etc/examples/4-hazard-map/config.json
+        Hazard
+          .exceedanceModel:    TRUNCATION_UPPER_ONLY
+          .truncationLevel:    3.0
+          .imts:               [PGA,SA0P2,SA1P0]
+          .gmmUncertainty:     false
+          .valueFormat:        ANNUAL_RATE
+          .defaultImls:        [0.001, 0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5,
+                                0.55, 0.6, 0.7, 0.8, 0.9, 1.0]
+          .imls (PGV):         [0.01, 0.0177, 0.0312, 0.0552, 0.0976, 0.173, 0.305, 0.539, 0.953,
+                                1.68, 2.98, 5.26, 9.3, 16.4, 29.1, 51.3, 90.8, 160.0, 284.0, 501.0]
+        Deaggregation
+          .rBins:              min=0.0, max=1000.0, Δ=20.0
+          .mBins:              min=4.4, max=9.4, Δ=0.2
+          .εBins:              min=-3.0, max=3.0, Δ=0.5
+          .contributorLimit:   1.0
+        Rate
+          .mBins:              min=4.2, max=9.4, Δ=0.1
+          .distance:           20.0
+          .distributionFormat: INCREMENTAL
+          .valueFormat:        ANNUAL_RATE
+          .timespan:           30.0
+        Site
+          .vs30:               760.0
+          .vsInf:              true
+          .z1p0:               NaN
+          .z2p5:               NaN
+        Output
+          .directory:          /Users/bclayton/usgs/git/nshmp-haz/etc/examples/4-hazard-map/curves
+          .dataTypes:          [TOTAL]
+          .flushLimit:         5
+        Performance
+          .optimizeGrids:      true
+          .collapseMfds:       true
+          .systemPartition:    1000
+          .threadCount:        ALL
+   INFO 
+   INFO Site file: /Users/bclayton/usgs/git/nshmp-haz/etc/examples/4-hazard-map/map.geojson
+   INFO Sites: San Francisco Bay Area Gridded Region [size=441 Vs30=760.0 inferred  Z1.0=NaN Z2.5=NaN]
+   INFO Threads: 4
+   INFO HazardCalc: calculating ...
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 1 in 67.91 ms – 5 sites in 93.41 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 2 in 15.81 ms – 10 sites in 109.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 3 in 12.47 ms – 15 sites in 123.1 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 4 in 14.84 ms – 20 sites in 138.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 5 in 14.35 ms – 25 sites in 153.0 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 6 in 10.58 ms – 30 sites in 163.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 7 in 12.98 ms – 35 sites in 177.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 8 in 10.37 ms – 40 sites in 188.1 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 9 in 14.87 ms – 45 sites in 203.4 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 10 in 11.27 ms – 50 sites in 215.1 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 11 in 10.45 ms – 55 sites in 226.0 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 12 in 11.96 ms – 60 sites in 238.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 13 in 9.644 ms – 65 sites in 248.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 14 in 7.608 ms – 70 sites in 260.2 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 15 in 9.508 ms – 75 sites in 270.4 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 16 in 7.643 ms – 80 sites in 278.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 17 in 10.66 ms – 85 sites in 289.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 18 in 9.720 ms – 90 sites in 299.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 19 in 10.37 ms – 95 sites in 309.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 20 in 7.423 ms – 100 sites in 317.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 21 in 11.76 ms – 105 sites in 329.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 22 in 8.947 ms – 110 sites in 339.2 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 23 in 10.36 ms – 115 sites in 349.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 24 in 15.42 ms – 120 sites in 365.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 25 in 6.955 ms – 125 sites in 372.8 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 26 in 9.840 ms – 130 sites in 383.2 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 27 in 7.376 ms – 135 sites in 390.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 28 in 9.516 ms – 140 sites in 400.8 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 29 in 13.20 ms – 145 sites in 414.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 30 in 7.120 ms – 150 sites in 421.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 31 in 8.410 ms – 155 sites in 430.5 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 32 in 8.129 ms – 160 sites in 438.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 33 in 13.79 ms – 165 sites in 453.0 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 34 in 12.06 ms – 170 sites in 465.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 35 in 9.866 ms – 175 sites in 475.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 36 in 9.933 ms – 180 sites in 486.2 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 37 in 7.738 ms – 185 sites in 494.5 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 38 in 9.089 ms – 190 sites in 503.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 39 in 15.30 ms – 195 sites in 519.5 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 40 in 8.965 ms – 200 sites in 528.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 41 in 7.808 ms – 205 sites in 537.5 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 42 in 5.750 ms – 210 sites in 543.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 43 in 12.91 ms – 215 sites in 557.4 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 44 in 9.850 ms – 220 sites in 567.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 45 in 11.94 ms – 225 sites in 582.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 46 in 7.551 ms – 230 sites in 590.5 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 47 in 6.244 ms – 235 sites in 597.0 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 48 in 7.404 ms – 240 sites in 604.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 49 in 10.02 ms – 245 sites in 614.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 50 in 15.54 ms – 250 sites in 630.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 51 in 7.339 ms – 255 sites in 638.5 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 52 in 13.67 ms – 260 sites in 652.4 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 53 in 9.396 ms – 265 sites in 662.1 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 54 in 9.545 ms – 270 sites in 671.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 55 in 6.921 ms – 275 sites in 679.0 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 56 in 5.809 ms – 280 sites in 685.1 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 57 in 5.881 ms – 285 sites in 691.2 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 58 in 8.304 ms – 290 sites in 699.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 59 in 6.518 ms – 295 sites in 706.4 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 60 in 14.45 ms – 300 sites in 721.1 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 61 in 13.53 ms – 305 sites in 734.8 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 62 in 7.554 ms – 310 sites in 742.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 63 in 6.264 ms – 315 sites in 749.4 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 64 in 6.465 ms – 320 sites in 756.1 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 65 in 6.471 ms – 325 sites in 762.8 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 66 in 5.684 ms – 330 sites in 768.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 67 in 6.123 ms – 335 sites in 775.0 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 68 in 5.444 ms – 340 sites in 780.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 69 in 6.691 ms – 345 sites in 787.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 70 in 7.615 ms – 350 sites in 795.5 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 71 in 5.614 ms – 355 sites in 801.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 72 in 6.844 ms – 360 sites in 808.4 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 73 in 4.984 ms – 365 sites in 813.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 74 in 4.460 ms – 370 sites in 818.2 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 75 in 5.274 ms – 375 sites in 823.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 76 in 7.346 ms – 380 sites in 831.3 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 77 in 6.191 ms – 385 sites in 837.8 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 78 in 6.800 ms – 390 sites in 844.8 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 79 in 6.526 ms – 395 sites in 851.5 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 80 in 4.920 ms – 400 sites in 856.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 81 in 4.974 ms – 405 sites in 862.4 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 82 in 4.563 ms – 410 sites in 867.2 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 83 in 14.23 ms – 415 sites in 881.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 84 in 4.825 ms – 420 sites in 886.6 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 85 in 4.668 ms – 425 sites in 891.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 86 in 6.998 ms – 430 sites in 898.9 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 87 in 4.936 ms – 435 sites in 904.1 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO      batch: 88 in 4.437 ms – 440 sites in 908.7 ms
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   FINE HazardResult:
+FaultSourceSet:
+   Id: -1      Name: Set1-Case1                            Size: 1       Weight: 1.0         Used: 1
+
+   INFO HazardCalc: 441 sites completed in 910.9 ms
+   INFO HazardCalc: finished
