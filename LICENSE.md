@@ -13,9 +13,3 @@ Dependent libraries managed by the [Gradle](https://gradle.org) build tool are d
  - [Gradle](https://github.com/gradle/gradle/blob/master/LICENSE)
  - [JUnit](http://junit.org/junit4/license.html)
  - [JaCoCo](http://www.jacoco.org/jacoco/trunk/doc/license.html)
-
-#### Disclaimer
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-Information provided by this software may be preliminary or provisional and is subject to revision. It is being provided to meet the need for timely best science. The information is provided on the condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from the authorized or unauthorized use of the information.
