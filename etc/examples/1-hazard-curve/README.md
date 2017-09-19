@@ -19,14 +19,14 @@ Also note that all output is written to a `curves` directory by default, but the
 
 
 ### Directory structure and output files
-```
-1-hazard-curve/
-|- curves/ 
-        |- HazardCalc.log
-        |- PGA/
-              |- <a href="../../example_outputs/1-hazard-curves/curves/PGA/total.csv">Test </a>
-```
 
+<div style="background: #f7f7f7">
+1-hazard-curve/   <br>
+|- curves/        <br>
+        |- HazardCalc.log <br>
+        |- PGA/           <br>
+              |- [total.csv](../../example_outputs/1-hazard-curves/curves/PGA/total.csv) <br>
+</div>
 
 In the next example, we'll override the model supplied configuration with a custom file.
 
