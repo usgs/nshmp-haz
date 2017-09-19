@@ -25,7 +25,7 @@ Also note that all output is written to a `curves` directory by default, but the
 |- curves/        
         |- HazardCalc.log
         |- PGA/           
-              |- [total.csv](../../example_outputs/1-hazard-curves/curves/PGA/total.csv) <br>
+              |- <a href="../../example_outputs/1-hazard-curves/curves/PGA/total.csv">Test </a>
 </pre>
 
 In the next example, we'll override the model supplied configuration with a custom file.
