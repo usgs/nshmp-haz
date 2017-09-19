@@ -1,0 +1,47 @@
+{
+  "version": "2.0.0",
+  "measurementType": {},
+  "agency": "U.S. Department of Interior",
+  "releases": [
+    {
+      "name": "nshmp-haz",
+      "description": "National Seismic Hazard Mapping Project (NSHMP) Code",
+      "version": "1.0.0",
+      "status": "Production",
+      "organization": "U.S. Geological Survey",
+      "vcs": "git",
+      "repositoryURL": "https://github.com/usgs/nshmp-haz",
+      "homepageURL": "https://github.com/usgs/nshmp-haz/wiki",
+      "downloadURL": "https://github.com/usgs/nshmp-haz/releases/tag/v1.0.0",
+      "disclaimerURL": "https://github.com/usgs/nshmp-haz/blob/master/DISCLAIMER.md",
+      "permissions": {
+        "licenses": [
+          {
+            "name": "Public Domain",
+            "URL": "https://github.com/usgs/nshmp-haz/blob/master/LICENSE.md"
+          }
+        ],
+        "usageType": "openSource",
+        "exemptionText": null
+      },
+      "laborHours": 1200,
+      "languages": [ "Java" ],
+      "tags": [
+        "psha",
+        "seismic-hazard",
+        "seismic-source",
+        "earthquake-hazard",
+        "earthquake-source",
+        "hazard-curve",
+        "deaggregation"
+      ],
+      "contact": {
+        "name": "Peter Powers",
+        "email": "pmpowers@usgs.gov"
+      },
+      "date": {
+        "metadataLastUpdated": "2017-09-18"
+      }
+    }
+  ]
+}

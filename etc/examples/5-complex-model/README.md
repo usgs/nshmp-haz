@@ -6,7 +6,7 @@ __Working directory:__ `/path/to/nshmp-haz/etc/examples/5-complex-model`
 Most PSHAs involve the use of more complex source models, the components of which might use different ground motion models. For this and ensuing examples, we'll use the 2008 USGS National Seismic Hazard Model (NSHM) for the western U.S. `nshmp-haz` uses an in-memory source model. The USGS NSHMs are quite large, so it's helpful to increase the amount memory available to Java when calling `HazardCalc`. For example, set your alias to:
 
 ```Shell
-alias hazard='java -Xms1024m -Xmx4096m -cp /path/to/nshmp-haz/build/libs/nshmp-haz.jar gov.usgs.earthquake.nshmp.HazardCalc'
+alias hazard='java -Xms1g -Xmx4g -cp /path/to/nshmp-haz/build/libs/nshmp-haz.jar gov.usgs.earthquake.nshmp.HazardCalc'
 ```
 
 This will increase the minimum amount of memory Java requires to 1GB and will allow it to claim up to 4GB, assuming that much is available.
@@ -14,7 +14,7 @@ This will increase the minimum amount of memory Java requires to 1GB and will al
 First, clone the 2008 USGS NSHM. Assuming you are in the current working directory (above), the following will create a copy of the model adjacent to nshmp-haz:
 
 ```Shell
-git clone https://github.com/usgs/nshm-cous-2008.git ../../../../nshmp-model-cous-2008
+git clone https://github.com/usgs/nshm-cous-2008.git ../../../../nshm-cous-2008
 ```
 
 The 2008 NSHM repository contains two source models: one for the western U.S. and a one for the central and eastern U.S. To compute hazard for a few sites in the Western U.S. at 1.0s and 2.0s spectral periods, execute:
