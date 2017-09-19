@@ -1,0 +1,85 @@
+Component: Chiou & Youngs (2008)
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+0.2 s SA ground motion:  1.786014848936267 g
+
+Recovered targets:
+      Return period:  2983.77471063675 yrs
+    Exceedance rate:  3.35145946654463E-4 yr⁻¹
+
+Totals:
+             Binned:  52.98 %
+           Residual:  0.0 %
+              Trace:  0.04 %
+
+Mean (for all sources):
+                  r:  11.7 km
+                  m:  7.49
+                 ε₀:  1.56 σ
+
+Mode (largest r-m bin):
+                  r:  11.68 km
+                  m:  7.91
+                 ε₀:  1.38 σ
+       Contribution:  11.85 %
+
+Mode (largest ε₀ bin):
+                  r:  10.56 km
+                  m:  7.91
+                 ε₀:  1.28 σ
+       Contribution:  9.32 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+aFault_aPriori_D2.1                             Fault                                               22.51
+  N. San Andreas : SAO+SAN+SAP+SAS                      10.56  8.01   1.23  -122.57   37.79   285   14.68
+  N. San Andreas : SAP+SAS                              10.57  7.48   1.52  -122.57   37.79   285    3.11
+  N. San Andreas : SAO+SAN                              15.81  7.79   1.79  -122.57   37.79   285    1.81
+  N. San Andreas : SAP                                  10.56  7.20   1.73  -122.57   37.79   285    1.03
+
+aFault_MoBal                                    Fault                                               17.33
+  N. San Andreas : SAP+SAS                              10.57  7.48   1.52  -122.57   37.79   285    8.10
+  N. San Andreas : SAO+SAN                              15.81  7.79   1.79  -122.57   37.79   285    4.53
+  N. San Andreas : SAO+SAN+SAP+SAS                      10.56  7.98   1.25  -122.57   37.79   285    3.02
+
+aFault_unseg                                    Fault                                                4.72
+  N. San Andreas                                        10.73  7.64   1.46  -122.57   37.79   285    4.42
+
+CAmap.21.ch.in (opt)                             Grid                                                2.16
+  PointSourceFinite: -122.400, 37.799                    7.31  5.85   1.59  -122.40   37.80     0    1.31
+
+CAmap.24.ch.in (opt)                             Grid                                                2.16
+  PointSourceFinite: -122.400, 37.799                    7.31  5.85   1.59  -122.40   37.80     0    1.31
+
+bFault.ch                                       Fault                                                1.69
+  San Gregorio Connected                                17.17  7.47   2.09  -122.62   37.77   276    1.69
+
+CAmap.24.gr.in (opt)                             Grid                                                1.02
+
+CAmap.21.gr.in (opt)                             Grid                                                1.02
+—————————————————————————————————————————————————————————————————————————————————————————————————————————

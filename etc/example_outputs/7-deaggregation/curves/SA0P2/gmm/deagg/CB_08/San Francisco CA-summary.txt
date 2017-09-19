@@ -1,0 +1,74 @@
+Component: Campbell & Bozorgnia (2008)
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+0.2 s SA ground motion:  1.786014848936267 g
+
+Recovered targets:
+      Return period:  2983.77471063675 yrs
+    Exceedance rate:  3.35145946654463E-4 yr⁻¹
+
+Totals:
+             Binned:  29.09 %
+           Residual:  0.0 %
+              Trace:  0.03 %
+
+Mean (for all sources):
+                  r:  11.72 km
+                  m:  7.34
+                 ε₀:  1.87 σ
+
+Mode (largest r-m bin):
+                  r:  11.48 km
+                  m:  7.91
+                 ε₀:  1.77 σ
+       Contribution:  5.03 %
+
+Mode (largest ε₀ bin):
+                  r:  10.57 km
+                  m:  7.5
+                 ε₀:  1.76 σ
+       Contribution:  4.19 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+aFault_aPriori_D2.1                             Fault                                               11.03
+  N. San Andreas : SAO+SAN+SAP+SAS                      10.56  8.00   1.68  -122.57   37.79   285    6.17
+  N. San Andreas : SAP+SAS                              10.57  7.47   1.77  -122.57   37.79   285    1.87
+
+aFault_MoBal                                    Fault                                                9.27
+  N. San Andreas : SAP+SAS                              10.57  7.47   1.77  -122.57   37.79   285    4.89
+  N. San Andreas : SAO+SAN                              15.81  7.78   2.17  -122.57   37.79   285    1.76
+  N. San Andreas : SAO+SAN+SAP+SAS                      10.56  7.97   1.69  -122.57   37.79   285    1.29
+
+aFault_unseg                                    Fault                                                2.79
+  N. San Andreas                                        10.74  7.55   1.77  -122.57   37.79   285    2.52
+
+CAmap.21.ch.in (opt)                             Grid                                                1.70
+
+CAmap.24.ch.in (opt)                             Grid                                                1.70
+—————————————————————————————————————————————————————————————————————————————————————————————————————————

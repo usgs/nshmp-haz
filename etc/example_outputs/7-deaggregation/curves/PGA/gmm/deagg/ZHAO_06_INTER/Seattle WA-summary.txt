@@ -1,0 +1,64 @@
+Component: Zhao et al. (2006): Interface
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+  PGA ground motion:  0.568659949982634 g
+
+Recovered targets:
+      Return period:  2530.2247636365555 yrs
+    Exceedance rate:  3.9522180573505806E-4 yr⁻¹
+
+Totals:
+             Binned:  9.61 %
+           Residual:  0.0 %
+              Trace:  0.02 %
+
+Mean (for all sources):
+                  r:  107.41 km
+                  m:  8.94
+                 ε₀:  1.62 σ
+
+Mode (largest r-m bin):
+                  r:  115.12 km
+                  m:  8.96
+                 ε₀:  1.71 σ
+       Contribution:  2.81 %
+
+Mode (largest ε₀ bin):
+                  r:  115.12 km
+                  m:  8.96
+                 ε₀:  1.71 σ
+       Contribution:  2.81 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+cascadia.older2.9pm.in                      Interface                                                3.89
+  Cascadia Megathrust                                  115.12  9.03   1.65  -123.80   47.67   274    3.89
+
+cascadia.bot.9pm.in                         Interface                                                3.19
+  Cascadia Megathrust                                   90.48  9.02   1.29  -123.44   47.79   284    3.19
+—————————————————————————————————————————————————————————————————————————————————————————————————————————

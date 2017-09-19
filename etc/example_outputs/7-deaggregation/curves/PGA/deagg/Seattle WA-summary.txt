@@ -1,0 +1,89 @@
+Component: Total
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+  PGA ground motion:  0.568659949982634 g
+
+Recovered targets:
+      Return period:  2530.2247636365555 yrs
+    Exceedance rate:  3.9522180573505806E-4 yr⁻¹
+
+Totals:
+             Binned:  100.0 %
+           Residual:  0.0 %
+              Trace:  0.18 %
+
+Mean (for all sources):
+                  r:  33.93 km
+                  m:  6.83
+                 ε₀:  1.29 σ
+
+Mode (largest r-m bin):
+                  r:  5.2 km
+                  m:  6.9
+                 ε₀:  0.57 σ
+       Contribution:  10.73 %
+
+Mode (largest ε₀ bin):
+                  r:  2.84 km
+                  m:  7.11
+                 ε₀:  0.25 σ
+       Contribution:  5.32 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+pnwdeep.in                                       Slab                                               31.65
+
+orwa_c                                          Fault                                               29.20
+  Seattle North                                          3.52  6.98   0.44  -122.30   47.58   188   19.60
+  Seattle Middle                                         6.62  6.83   0.88  -122.38   47.56   232    6.13
+  Seattle South                                         10.12  6.79   1.36  -122.27   47.53   161    2.94
+
+puget.ch.in                                      Grid                                                8.97
+  PointSourceFixedStrike: -122.300, 47.600               4.30  5.85   0.75  -122.30   47.60     0    2.41
+  PointSourceFixedStrike: -122.400, 47.600               4.55  6.20   0.63  -122.40   47.60   270    1.25
+  PointSourceFixedStrike: -122.200, 47.600               4.55  6.20   0.63  -122.20   47.60    90    1.25
+
+puget.gr.in                                      Grid                                                7.61
+  PointSourceFixedStrike: -122.300, 47.600               4.30  5.85   0.75  -122.30   47.60     0    2.41
+  PointSourceFixedStrike: -122.400, 47.600               4.55  6.20   0.63  -122.40   47.60   270    1.25
+  PointSourceFixedStrike: -122.200, 47.600               4.55  6.20   0.63  -122.20   47.60    90    1.25
+
+WUSmap.ch.in (opt)                               Grid                                                5.54
+  PointSourceFinite: -122.300, 47.604                    4.80  5.79   0.84  -122.30   47.60     0    2.58
+  PointSourceFinite: -122.300, 47.667                    8.01  6.07   1.27  -122.30   47.67     0    1.25
+
+WUSmap.gr.in (opt)                               Grid                                                5.14
+  PointSourceFinite: -122.300, 47.604                    4.80  5.79   0.84  -122.30   47.60     0    2.58
+  PointSourceFinite: -122.300, 47.667                    8.01  6.07   1.27  -122.30   47.67     0    1.25
+
+cascadia.older2.9pm.in                      Interface                                                4.17
+  Cascadia Megathrust                                  115.12  9.03   1.71  -123.80   47.67   274    4.17
+
+cascadia.bot.9pm.in                         Interface                                                3.45
+  Cascadia Megathrust                                   90.48  9.02   1.37  -123.44   47.79   284    3.45
+—————————————————————————————————————————————————————————————————————————————————————————————————————————

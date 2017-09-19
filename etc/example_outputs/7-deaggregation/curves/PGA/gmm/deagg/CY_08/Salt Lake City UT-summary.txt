@@ -1,0 +1,76 @@
+Component: Chiou & Youngs (2008)
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+  PGA ground motion:  0.6991178155795935 g
+
+Recovered targets:
+      Return period:  2527.840753535025 yrs
+    Exceedance rate:  3.9559453996521076E-4 yr⁻¹
+
+Totals:
+             Binned:  37.23 %
+           Residual:  0.0 %
+              Trace:  0.02 %
+
+Mean (for all sources):
+                  r:  2.99 km
+                  m:  6.85
+                 ε₀:  0.52 σ
+
+Mode (largest r-m bin):
+                  r:  2.06 km
+                  m:  6.97
+                 ε₀:  0.37 σ
+       Contribution:  13.95 %
+
+Mode (largest ε₀ bin):
+                  r:  1.91 km
+                  m:  6.98
+                 ε₀:  0.25 σ
+       Contribution:  10.86 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+wasatch.3dip.ch                                 Fault                                               17.82
+  Wasatch - Salt Lake City section 50                    1.95  7.00   0.32  -111.89   40.77    19   10.44
+  Wasatch - Salt Lake City section 40                    1.74  7.00   0.06  -111.89   40.77    19    4.45
+  Wasatch - Salt Lake City section 60                    2.05  7.00   0.62  -111.89   40.77    19    2.50
+
+wasatch.3dip.gr                                 Fault                                                8.62
+  Wasatch - Salt Lake City section 50                    2.58  6.75   0.70  -111.89   40.77    19    4.84
+  Wasatch - Salt Lake City section 40                    2.27  6.75   0.50  -111.89   40.77    19    2.68
+  Wasatch - Salt Lake City section 60                    2.77  6.74   0.90  -111.89   40.77    19    1.05
+
+nvut.3dip.65                                    Fault                                                7.08
+  West Valley (Wasatch 50) 50                            5.51  6.46   0.85  -111.97   40.72   239    2.34
+  West Valley (Wasatch 50) 40                            4.66  6.46   0.48  -111.97   40.72   239    1.46
+  West Valley (Wasatch 60) 50                            5.50  6.46   0.64  -111.97   40.72   239    1.22
+
+wasatch.3dip.74                                 Fault                                                2.72
+  Wasatch 50                                             2.18  7.38   0.29  -111.89   40.77    19    1.54
+—————————————————————————————————————————————————————————————————————————————————————————————————————————
