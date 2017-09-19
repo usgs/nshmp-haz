@@ -23,9 +23,10 @@ Also note that all output is written to a `curves` directory by default, but the
 <pre style="background: #f7f7f7">
 1-hazard-curve/   
 |- curves/        
-        |- HazardCalc.log
+        |- <a href="../../example_outputs/1-hazard-curve/curves/HazardCalc.log">HazadCalc.log </a>
         |- PGA/           
-              |- <a href="../../example_outputs/1-hazard-curves/curves/PGA/total.csv">Test </a>
+              |- <a href="../../example_outputs/1-hazard-curve/curves/PGA/total.csv">total.csv </a>
+        |- <a href="../../example_outputs/1-hazard-curve/curves/config.json">config.json </a>
 </pre>
 
 In the next example, we'll override the model supplied configuration with a custom file.
