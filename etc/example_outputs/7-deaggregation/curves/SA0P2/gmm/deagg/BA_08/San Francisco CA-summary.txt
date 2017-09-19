@@ -1,0 +1,69 @@
+Component: Boore & Atkinson (2008)
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+0.2 s SA ground motion:  1.786014848936267 g
+
+Recovered targets:
+      Return period:  2983.77471063675 yrs
+    Exceedance rate:  3.35145946654463E-4 yr⁻¹
+
+Totals:
+             Binned:  17.93 %
+           Residual:  0.0 %
+              Trace:  0.02 %
+
+Mean (for all sources):
+                  r:  12.21 km
+                  m:  7.51
+                 ε₀:  2.05 σ
+
+Mode (largest r-m bin):
+                  r:  11.57 km
+                  m:  7.91
+                 ε₀:  1.95 σ
+       Contribution:  3.42 %
+
+Mode (largest ε₀ bin):
+                  r:  10.56 km
+                  m:  7.91
+                 ε₀:  1.87 σ
+       Contribution:  2.76 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+aFault_aPriori_D2.1                             Fault                                                7.55
+  N. San Andreas : SAO+SAN+SAP+SAS                      10.56  8.00   1.86  -122.57   37.79   285    4.14
+  N. San Andreas : SAP+SAS                              10.57  7.47   1.95  -122.57   37.79   285    1.21
+
+aFault_MoBal                                    Fault                                                6.36
+  N. San Andreas : SAP+SAS                              10.57  7.47   1.95  -122.57   37.79   285    3.17
+  N. San Andreas : SAO+SAN                              15.81  7.78   2.27  -122.57   37.79   285    1.31
+
+aFault_unseg                                    Fault                                                1.89
+  N. San Andreas                                        10.78  7.57   1.95  -122.57   37.79   285    1.63
+—————————————————————————————————————————————————————————————————————————————————————————————————————————

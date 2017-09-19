@@ -1,0 +1,73 @@
+Component: Chiou & Youngs (2008)
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+0.2 s SA ground motion:  1.31592839404263 g
+
+Recovered targets:
+      Return period:  2546.3439190632594 yrs
+    Exceedance rate:  3.927199277809561E-4 yr⁻¹
+
+Totals:
+             Binned:  26.94 %
+           Residual:  0.0 %
+              Trace:  0.04 %
+
+Mean (for all sources):
+                  r:  6.78 km
+                  m:  6.52
+                 ε₀:  0.77 σ
+
+Mode (largest r-m bin):
+                  r:  5.42 km
+                  m:  6.9
+                 ε₀:  0.43 σ
+       Contribution:  4.72 %
+
+Mode (largest ε₀ bin):
+                  r:  2.98 km
+                  m:  7.11
+                 ε₀:  0.12 σ
+       Contribution:  3.33 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+orwa_c                                          Fault                                               13.34
+  Seattle North                                          3.49  6.99   0.21  -122.30   47.58   188    8.62
+  Seattle Middle                                         6.58  6.83   0.70  -122.38   47.56   232    2.85
+  Seattle South                                         10.03  6.80   1.16  -122.27   47.53   161    1.50
+
+puget.ch.in                                      Grid                                                4.05
+
+puget.gr.in                                      Grid                                                3.47
+
+WUSmap.ch.in (opt)                               Grid                                                2.74
+  PointSourceFinite: -122.300, 47.604                    4.82  5.74   0.83  -122.30   47.60     0    1.01
+
+WUSmap.gr.in (opt)                               Grid                                                2.55
+  PointSourceFinite: -122.300, 47.604                    4.82  5.74   0.83  -122.30   47.60     0    1.01
+—————————————————————————————————————————————————————————————————————————————————————————————————————————

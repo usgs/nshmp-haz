@@ -1,0 +1,75 @@
+Component: Total
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+1.0 s SA ground motion:  0.656037521296643 g
+
+Recovered targets:
+      Return period:  2996.7555135427715 yrs
+    Exceedance rate:  3.336942221281834E-4 yr⁻¹
+
+Totals:
+             Binned:  100.0 %
+           Residual:  0.0 %
+              Trace:  0.04 %
+
+Mean (for all sources):
+                  r:  11.8 km
+                  m:  7.72
+                 ε₀:  1.62 σ
+
+Mode (largest r-m bin):
+                  r:  11.71 km
+                  m:  7.91
+                 ε₀:  1.49 σ
+       Contribution:  26.83 %
+
+Mode (largest ε₀ bin):
+                  r:  10.56 km
+                  m:  8.08
+                 ε₀:  1.21 σ
+       Contribution:  17.0 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+aFault_aPriori_D2.1                             Fault                                               48.67
+  N. San Andreas : SAO+SAN+SAP+SAS                      10.56  8.01   1.34  -122.57   37.79   285   34.00
+  N. San Andreas : SAP+SAS                              10.57  7.48   1.70  -122.57   37.79   285    6.02
+  N. San Andreas : SAO+SAN                              15.81  7.80   1.88  -122.57   37.79   285    4.10
+  N. San Andreas : SAP                                  10.56  7.20   1.92  -122.57   37.79   285    1.89
+
+aFault_MoBal                                    Fault                                               35.20
+  N. San Andreas : SAP+SAS                              10.57  7.48   1.70  -122.57   37.79   285   15.66
+  N. San Andreas : SAO+SAN                              15.81  7.80   1.88  -122.57   37.79   285   10.29
+  N. San Andreas : SAO+SAN+SAP+SAS                      10.56  7.98   1.36  -122.57   37.79   285    6.94
+
+aFault_unseg                                    Fault                                                9.65
+  N. San Andreas                                        10.75  7.67   1.59  -122.57   37.79   285    9.18
+
+bFault.ch                                       Fault                                                3.41
+  San Gregorio Connected                                17.17  7.48   2.22  -122.62   37.77   276    3.41
+—————————————————————————————————————————————————————————————————————————————————————————————————————————

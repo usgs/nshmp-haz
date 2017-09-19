@@ -1,0 +1,83 @@
+Component: Total
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+0.2 s SA ground motion:  1.8037992679232087 g
+
+Recovered targets:
+      Return period:  2503.152165316161 yrs
+    Exceedance rate:  3.994962886619779E-4 yr⁻¹
+
+Totals:
+             Binned:  100.0 %
+           Residual:  0.0 %
+              Trace:  0.02 %
+
+Mean (for all sources):
+                  r:  3.05 km
+                  m:  6.86
+                 ε₀:  0.59 σ
+
+Mode (largest r-m bin):
+                  r:  2.15 km
+                  m:  6.96
+                 ε₀:  0.44 σ
+       Contribution:  37.85 %
+
+Mode (largest ε₀ bin):
+                  r:  1.96 km
+                  m:  6.97
+                 ε₀:  0.24 σ
+       Contribution:  26.47 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+wasatch.3dip.ch                                 Fault                                               46.71
+  Wasatch - Salt Lake City section 50                    1.95  7.00   0.39  -111.89   40.77    19   26.69
+  Wasatch - Salt Lake City section 40                    1.74  7.00   0.29  -111.89   40.77    19    9.84
+  Wasatch - Salt Lake City section 60                    2.05  7.00   0.47  -111.89   40.77    19    8.06
+  Wasatch - Weber section 50                            11.03  7.21   2.03  -111.89   40.85     6    1.28
+
+wasatch.3dip.gr                                 Fault                                               28.20
+  Wasatch - Salt Lake City section 50                    2.73  6.73   0.62  -111.89   40.77    19   16.05
+  Wasatch - Salt Lake City section 40                    2.43  6.74   0.57  -111.89   40.77    19    7.85
+  Wasatch - Salt Lake City section 60                    2.85  6.73   0.65  -111.89   40.77    19    4.01
+
+nvut.3dip.65                                    Fault                                               16.90
+  West Valley (Wasatch 50) 50                            5.51  6.48   0.92  -111.97   40.72   239    5.72
+  West Valley (Wasatch 50) 40                            4.66  6.48   0.63  -111.97   40.72   239    3.21
+  West Valley (Wasatch 60) 50                            5.50  6.48   0.76  -111.97   40.72   239    2.81
+  West Valley (Wasatch 60) 40                            4.67  6.48   0.52  -111.97   40.72   239    1.36
+  West Valley (Wasatch 40) 50                            5.51  6.48   1.10  -111.97   40.72   239    1.17
+  West Valley (Wasatch 50) 60                            6.19  6.49   1.20  -111.97   40.72   239    1.09
+
+wasatch.3dip.74                                 Fault                                                6.58
+  Wasatch 50                                             2.27  7.38   0.43  -111.89   40.77    19    3.83
+  Wasatch 40                                             2.09  7.38   0.32  -111.89   40.77    19    2.11
+
+EXTmap.ch.in (opt)                               Grid                                                1.16
+—————————————————————————————————————————————————————————————————————————————————————————————————————————

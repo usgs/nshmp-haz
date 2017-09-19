@@ -1,0 +1,91 @@
+Component: Total
+·········································································································
+
+Deaggregation targets:
+      Return period:  2475.0 yrs
+    Exceedance rate:  4.0404040404040404E-4 yr⁻¹
+1.0 s SA ground motion:  0.4459826651003868 g
+
+Recovered targets:
+      Return period:  2518.7140131595934 yrs
+    Exceedance rate:  3.9702800507531734E-4 yr⁻¹
+
+Totals:
+             Binned:  100.0 %
+           Residual:  0.0 %
+              Trace:  0.32 %
+
+Mean (for all sources):
+                  r:  55.01 km
+                  m:  7.53
+                 ε₀:  1.26 σ
+
+Mode (largest r-m bin):
+                  r:  5.17 km
+                  m:  6.91
+                 ε₀:  0.62 σ
+       Contribution:  10.64 %
+
+Mode (largest ε₀ bin):
+                  r:  2.88 km
+                  m:  7.11
+                 ε₀:  0.27 σ
+       Contribution:  7.84 %
+
+Discretization:
+                  r:  min = 0.0, max = 1000.0, Δ = 20.0 km
+                  m:  min = 4.4, max = 9.4, Δ = 0.2
+                  ε:  min = -3.0, max = 3.0, Δ = 0.5 σ
+
+Epsilon keys:
+                 ε0:  [-∞ ‥ -2.5)
+                 ε1:  [-2.5 ‥ -2.0)
+                 ε2:  [-2.0 ‥ -1.5)
+                 ε3:  [-1.5 ‥ -1.0)
+                 ε4:  [-1.0 ‥ -0.5)
+                 ε5:  [-0.5 ‥ 0.0)
+                 ε6:  [0.0 ‥ 0.5)
+                 ε7:  [0.5 ‥ 1.0)
+                 ε8:  [1.0 ‥ 1.5)
+                 ε9:  [1.5 ‥ 2.0)
+                ε10:  [2.0 ‥ 2.5)
+                ε11:  [2.5 ‥ +∞]
+
+·········································································································
+Deaggregation contributors:
+
+Source Set ↳ Source                              Type       r̅     m̅     ε₀      lon     lat    az       %
+——————————————————————————————————————————  —————————  ——————  ————  —————  ———————  ——————  ————  ——————
+orwa_c                                          Fault                                               29.60
+  Seattle North                                          3.34  7.01   0.40  -122.30   47.58   188   19.98
+  Seattle Middle                                         6.41  6.85   0.92  -122.38   47.56   232    5.73
+  Seattle South                                          9.92  6.82   1.38  -122.27   47.53   161    2.76
+
+pnwdeep.in                                       Slab                                               22.76
+
+cascadia.older2.9pm.in                      Interface                                               12.36
+  Cascadia Megathrust                                  115.12  9.02   1.39  -123.80   47.67   274   12.36
+
+cascadia.bot.9pm.in                         Interface                                                7.41
+  Cascadia Megathrust                                   90.48  9.02   1.16  -123.44   47.79   284    7.41
+
+puget.ch.in                                      Grid                                                5.31
+
+cascadia.older2.8387.in                     Interface                                                4.06
+  Cascadia Megathrust                                  126.35  8.52   1.68  -123.80   47.67   274    4.06
+
+puget.gr.in                                      Grid                                                4.05
+
+cascadia.mid.9pm.in                         Interface                                                3.52
+  Cascadia Megathrust                                  136.02  9.02   1.56  -124.09   47.67   274    3.52
+
+cascadia.bot.8387.in                        Interface                                                2.51
+  Cascadia Megathrust                                  100.04  8.52   1.52  -123.44   47.79   284    2.51
+
+WUSmap.ch.in (opt)                               Grid                                                2.42
+
+WUSmap.gr.in (opt)                               Grid                                                2.03
+
+cascadia.mid.8387.in                        Interface                                                1.13
+  Cascadia Megathrust                                  147.61  8.52   1.77  -124.09   47.67   274    1.13
+—————————————————————————————————————————————————————————————————————————————————————————————————————————
