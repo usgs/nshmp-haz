@@ -94,11 +94,11 @@ See the USGS website for more information on [deaggregation](http://geohazards.u
         |- <a href="../../example_outputs/7-deaggregation/curves/PGA/gmm/deagg/YOUNGS_97_SLAB"  >YOUNGS_97_SLAB/   </a>
           |- san francisco ca-data.csv 
           |- san francisco ca-summary.csv 
-          |- seattle wa-data.csv 
-          |- seattle wa-summary.csv 
+          |- seattle WA-data.csv 
+          |- seattle WA-summary.csv 
         |- <a href="../../example_outputs/7-deaggregation/curves/PGA/gmm/deagg/ZHAO_06_INTER"   >ZHAO_06_INTER/    </a>
-          |- seattle wa-data.csv 
-          |- seattle wa-summary.csv 
+          |- seattle WA-data.csv 
+          |- seattle WA-summary.csv 
     |- total.csv
   |- <a href="../../example_outputs/7-deaggregation/curves/PSA0P2" >SA0P2/</a> 
     |- <a href="../../example_outputs/7-deaggregation/curves/SA0P2/deagg" >deagg/</a> 
@@ -167,11 +167,11 @@ See the USGS website for more information on [deaggregation](http://geohazards.u
         |- <a href="../../example_outputs/7-deaggregation/curves/SA0P2/gmm/deagg/YOUNGS_97_SLAB"  >YOUNGS_97_SLAB/   </a>
           |- san francisco ca-data.csv 
           |- san francisco ca-summary.csv 
-          |- seattle wa-data.csv 
-          |- seattle wa-summary.csv 
+          |- seattle WA-data.csv 
+          |- seattle WA-summary.csv 
         |- <a href="../../example_outputs/7-deaggregation/curves/SA0P2/gmm/deagg/ZHAO_06_INTER"   >ZHAO_06_INTER/    </a>
-          |- seattle wa-data.csv 
-          |- seattle wa-summary.csv 
+          |- seattle WA-data.csv 
+          |- seattle WA-summary.csv 
     |- total.csv
   |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0" >SA1P0/ </a> 
     |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0/deagg" >deagg/</a> 
@@ -240,11 +240,11 @@ See the USGS website for more information on [deaggregation](http://geohazards.u
         |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0/gmm/deagg/YOUNGS_97_SLAB"  >YOUNGS_97_SLAB/   </a>
           |- san francisco ca-data.csv 
           |- san francisco ca-summary.csv 
-          |- seattle wa-data.csv 
-          |- seattle wa-summary.csv 
+          |- seattle WA-data.csv 
+          |- seattle WA-summary.csv 
         |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0/gmm/deagg/ZHAO_06_INTER"   >ZHAO_06_INTER/    </a>
-          |- seattle wa-data.csv 
-          |- seattle wa-summary.csv 
+          |- seattle WA-data.csv 
+          |- seattle WA-summary.csv 
     |- total.csv
   |- config.json 
 |- sites.geojson 
