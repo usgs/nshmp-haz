@@ -26,3 +26,40 @@ rate ../../../../nshmp-model-cous-2008/Western\ US map.geojson config-map.json
 to generate a map of cumulative Poisson probabilities (i.e. P ≥ M).
 
 Unless an output directory is specified in a supplied config, output will be placed in either an `eq-rate` or `eq-prob` directory. Like `HazardCalc`, `RateCalc` observes the `config.output.curveTypes` `SOURCE` option and will include a `source` directory with rates or probabilities for all contributing source types.
+
+
+
+
+#### Directory structure and output files
+
+<pre style="background: #f7f7f7">
+|- <a href="../../example_outputs/8-probabilities" >8-probabilities/</a>
+|- config-map.json
+|- config-sites.json
+|- <a href="../../example_outputs/8-probabilities/eq-prob">eq-prob/</a>
+  |- RateCalc.log
+  |- config.json
+  |- <a href="../../example_outputs/8-probabilities/eq-prob/source" >source/ </a>
+    |- Area.csv
+    |- Cluster.csv
+    |- Fault.csv
+    |- Grid.csv
+    |- Interface.csv
+    |- Slab.csv
+    |- System.csv
+  |- total.csv
+|- <a href="../../example_outputs/8-probabilities/eq-rate">eq-rate/</a>
+  |- RateCalc.log
+  |- config.json
+  |- <a href="../../example_outputs/8-probabilities/eq-rate/source" >source/ </a>
+    |- Area.csv
+    |- Cluster.csv
+    |- Fault.csv
+    |- Grid.csv
+    |- Interface.csv
+    |- Slab.csv
+    |- System.csv
+  |- total.csv
+|- map.geojson
+|- sites.csv
+</pre>

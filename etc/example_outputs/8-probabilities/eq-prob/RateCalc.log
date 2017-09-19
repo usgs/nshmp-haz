@@ -1,0 +1,203 @@
+   INFO RateCalc: v1.1.2-27-gde790ea
+   INFO Model Config: /Users/bclayton/usgs/git/nshm-cous-2008/Western US/config.json
+        Model
+          .name:               NSHMP Western U.S. 2008
+          .surfaceSpacing:     1.0
+          .ruptureFloating:    NSHM
+          .ruptureVariability: false
+          .pointSourceType:    FINITE
+          .areaGridScaling:    SCALED_SMALL
+   INFO 
+   INFO =======  Fault Sources  =======
+   INFO Parsing: Fault/gmm.xml
+   INFO Parsing: Fault/aFault_aPriori_D2.1.xml
+   INFO Parsing: Fault/aFault_MoBal.xml
+   INFO Parsing: Fault/bFault.ch.xml
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Hunter Mountain - Saline Valley]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Newport - Inglewood - alt 2]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Puente Hills]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Santa Monica - alt 2]
+   INFO Parsing: Fault/bFault.gr.xml
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Hunter Mountain - Saline Valley]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Santa Monica - alt 2]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Newport - Inglewood - alt 2]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Puente Hills]
+   INFO Parsing: Fault/brange.3dip.65.xml
+   INFO Parsing: Fault/brange.3dip.ch.xml
+   INFO Parsing: Fault/brange.3dip.gr.xml
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Rush Peak 50]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Rush Peak 40]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Rush Peak 60]
+   INFO Parsing: Fault/nv.3dip.ch.xml
+   INFO Parsing: Fault/nv.3dip.gr.xml
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Buffalo Creek 50]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Monte Cristo Valley]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Monte Cristo Valley]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Monte Cristo Valley]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Emigrant Peak 50]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Freds Mountain 50]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Buffalo Creek 40]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Emigrant Peak 40]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Freds Mountain 40]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Buffalo Creek 60]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Emigrant Peak 60]
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Freds Mountain 60]
+   INFO Parsing: Fault/nvut.3dip.65.xml
+   INFO Parsing: Fault/orwa_c.xml
+WARNING @ FaultParser.buildGR()  GR MFD epi branch with no mags [Coquille anticline]
+   INFO Parsing: Fault/orwa_n.3dip.ch.xml
+   INFO Parsing: Fault/orwa_n.3dip.gr.xml
+   INFO Parsing: Fault/ut.3dip.ch.xml
+   INFO Parsing: Fault/ut.3dip.gr.xml
+   INFO Parsing: Fault/wasatch.3dip.74.xml
+   INFO Parsing: Fault/wasatch.3dip.ch.xml
+   INFO Parsing: Fault/wasatch.3dip.gr.xml
+   INFO 
+   INFO ========  Nested Fault Sources  ========
+   INFO (override) Model Config: /Users/bclayton/usgs/git/nshm-cous-2008/Western US/Fault/CA Custom/config.json
+        Model
+          .name:               NSHMP Western U.S. 2008
+          .surfaceSpacing:     1.0
+          .ruptureFloating:    STRIKE_ONLY
+          .ruptureVariability: false
+          .pointSourceType:    FINITE
+          .areaGridScaling:    SCALED_SMALL
+   INFO (using parent gmm.xml)
+   INFO Parsing: Fault/CA Custom/aFault_unseg.xml
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Elsinore]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Garlock]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, San Jacinto (SB to C)]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, San Jacinto (CC to SM)]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, N. San Andreas]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, SAF - creeping segment]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, S. San Andreas]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Hayward - Rodgers Creek]
+WARNING @ FaultParser.startElement()  Invalid Id [-1, Calaveras]
+   INFO ===============================
+   INFO 
+   INFO =======  Grid Sources  =======
+   INFO Parsing: Grid/gmm.xml
+   INFO Parsing: Grid/brawmap.xml
+   INFO Parsing: Grid/CAmap.21.ch.xml
+   INFO Parsing: Grid/CAmap.21.gr.xml
+   INFO Parsing: Grid/CAmap.24.ch.xml
+   INFO Parsing: Grid/CAmap.24.gr.xml
+   INFO Parsing: Grid/creepmap.xml
+   INFO Parsing: Grid/EXTmap.ch.xml
+   INFO Parsing: Grid/EXTmap.gr.xml
+   INFO Parsing: Grid/impext.ch.xml
+   INFO Parsing: Grid/impext.gr.xml
+   INFO Parsing: Grid/mendo.xml
+   INFO Parsing: Grid/mojave.xml
+   INFO Parsing: Grid/nopuget.ch.xml
+   INFO Parsing: Grid/nopuget.gr.xml
+   INFO Parsing: Grid/puget.ch.xml
+   INFO Parsing: Grid/puget.gr.xml
+   INFO Parsing: Grid/sangorg.xml
+   INFO Parsing: Grid/shear1.xml
+   INFO Parsing: Grid/shear2.xml
+   INFO Parsing: Grid/shear3.xml
+   INFO Parsing: Grid/shear4.xml
+   INFO Parsing: Grid/WUSmap.ch.xml
+   INFO Parsing: Grid/WUSmap.gr.xml
+   INFO ==============================
+   INFO 
+   INFO =======  Interface Sources  =======
+   INFO (override) Model Config: /Users/bclayton/usgs/git/nshm-cous-2008/Western US/Interface/config.json
+        Model
+          .name:               NSHMP Western U.S. 2008
+          .surfaceSpacing:     5.0
+          .ruptureFloating:    STRIKE_ONLY
+          .ruptureVariability: false
+          .pointSourceType:    FINITE
+          .areaGridScaling:    SCALED_SMALL
+   INFO Parsing: Interface/gmm.xml
+   INFO Parsing: Interface/cascadia.bot.8082.xml
+   INFO Parsing: Interface/cascadia.bot.8387.xml
+   INFO Parsing: Interface/cascadia.bot.9pm.xml
+   INFO Parsing: Interface/cascadia.mid.8082.xml
+   INFO Parsing: Interface/cascadia.mid.8387.xml
+   INFO Parsing: Interface/cascadia.mid.9pm.xml
+   INFO Parsing: Interface/cascadia.older2.8082.xml
+   INFO Parsing: Interface/cascadia.older2.8387.xml
+   INFO Parsing: Interface/cascadia.older2.9pm.xml
+   INFO Parsing: Interface/cascadia.top.8082.xml
+   INFO Parsing: Interface/cascadia.top.8387.xml
+   INFO Parsing: Interface/cascadia.top.9pm.xml
+   INFO ===================================
+   INFO 
+   INFO =======  Slab Sources  =======
+   INFO Parsing: Slab/gmm.xml
+   INFO Parsing: Slab/CAdeep.xml
+   INFO Parsing: Slab/pnwdeep.xml
+   INFO Parsing: Slab/portdeep.xml
+   INFO ==============================
+   INFO 
+   INFO Calc Config: /Users/bclayton/usgs/git/nshmp-haz/etc/examples/8-probabilities/config-map.json
+        Hazard
+          .exceedanceModel:    TRUNCATION_3SIGMA_UPPER
+          .truncationLevel:    3.0
+          .imts:               [PGA,SA0P2,SA1P0]
+          .gmmUncertainty:     true
+          .valueFormat:        ANNUAL_RATE
+          .defaultImls:        [0.0025, 0.0045, 0.0075, 0.0113, 0.0169, 0.0253, 0.038, 0.057,
+                                0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46, 2.19, 3.28,
+                                4.92, 7.38]
+          .imls (PGV):         [0.01, 0.0177, 0.0312, 0.0552, 0.0976, 0.173, 0.305, 0.539, 0.953,
+                                1.68, 2.98, 5.26, 9.3, 16.4, 29.1, 51.3, 90.8, 160.0, 284.0, 501.0]
+        Deaggregation
+          .rBins:              min=0.0, max=1000.0, Δ=20.0
+          .mBins:              min=4.4, max=9.4, Δ=0.2
+          .εBins:              min=-3.0, max=3.0, Δ=0.5
+          .contributorLimit:   1.0
+        Rate
+          .mBins:              min=4.2, max=9.4, Δ=0.1
+          .distance:           10.0
+          .distributionFormat: CUMULATIVE
+          .valueFormat:        POISSON_PROBABILITY
+          .timespan:           50.0
+        Site
+          .vs30:               760.0
+          .vsInf:              true
+          .z1p0:               NaN
+          .z2p5:               NaN
+        Output
+          .directory:          /Users/bclayton/usgs/git/nshmp-haz/etc/examples/8-probabilities/curves
+          .dataTypes:          [TOTAL,SOURCE]
+          .flushLimit:         5
+        Performance
+          .optimizeGrids:      true
+          .collapseMfds:       true
+          .systemPartition:    1000
+          .threadCount:        ALL
+   INFO 
+   INFO Site file: /Users/bclayton/usgs/git/nshmp-haz/etc/examples/8-probabilities/map.geojson
+   INFO Sites: San Francisco Bay Area Gridded Region [size=121 Vs30=760.0 inferred  Z1.0=NaN Z2.5=NaN]
+   INFO Threads: 4
+   INFO RateCalc: calculating ...
+   INFO      batch: 1 in 1.882 s – 5 sites in 1.908 s
+   INFO      batch: 2 in 313.8 ms – 10 sites in 2.223 s
+   INFO      batch: 3 in 223.0 ms – 15 sites in 2.446 s
+   INFO      batch: 4 in 339.3 ms – 20 sites in 2.786 s
+   INFO      batch: 5 in 186.6 ms – 25 sites in 2.973 s
+   INFO      batch: 6 in 430.3 ms – 30 sites in 3.404 s
+   INFO      batch: 7 in 167.2 ms – 35 sites in 3.571 s
+   INFO      batch: 8 in 158.5 ms – 40 sites in 3.730 s
+   INFO      batch: 9 in 156.3 ms – 45 sites in 3.887 s
+   INFO      batch: 10 in 1.608 s – 50 sites in 5.495 s
+   INFO      batch: 11 in 232.3 ms – 55 sites in 5.728 s
+   INFO      batch: 12 in 513.8 ms – 60 sites in 6.242 s
+   INFO      batch: 13 in 119.8 ms – 65 sites in 6.362 s
+   INFO      batch: 14 in 149.4 ms – 70 sites in 6.512 s
+   INFO      batch: 15 in 144.3 ms – 75 sites in 6.657 s
+   INFO      batch: 16 in 126.0 ms – 80 sites in 6.783 s
+   INFO      batch: 17 in 171.7 ms – 85 sites in 6.955 s
+   INFO      batch: 18 in 646.6 ms – 90 sites in 7.602 s
+   INFO      batch: 19 in 356.2 ms – 95 sites in 7.958 s
+   INFO      batch: 20 in 93.43 ms – 100 sites in 8.052 s
+   INFO      batch: 21 in 106.0 ms – 105 sites in 8.158 s
+   INFO      batch: 22 in 239.5 ms – 110 sites in 8.398 s
+   INFO      batch: 23 in 99.76 ms – 115 sites in 8.499 s
+   INFO      batch: 24 in 141.7 ms – 120 sites in 8.667 s
+   INFO RateCalc: 121 sites completed in 8.705 s
+   INFO RateCalc: finished
