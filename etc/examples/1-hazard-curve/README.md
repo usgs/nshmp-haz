@@ -18,7 +18,7 @@ Note that not all [calculation configuration](https://github.com/usgs/nshmp-haz/
 Also note that all output is written to a `curves` directory by default, but the output destination can be specified via the [`output.directory`](https://github.com/usgs/nshmp-haz/wiki/configuration#config-output) parameter. In addition to hazard curves, the calculation configuration and a log of the calculation are also saved.
 
 
-### Directory structure and output files
+#### Directory structure and output files
 
 <pre style="background: #f7f7f7">
 1-hazard-curve/   
