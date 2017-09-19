@@ -134,7 +134,7 @@ See the following pages for more information on [deaggregation](https://github.c
           |- San Francisco CA-summary.csv 
           |- Seattle WA-data.csv 
           |- Seattle WA-summary.csv 
-        |- <a href="../../example_outputs/7-deaggregation/curves/SA0P2/gmm/deagg/BA_08"           >BA_08/            </a>
+        |- <a href="../../example_outputs/7-deaggregation/curves/SA0P2/gmm/deagg/BA_08">BA_08/ </a>
           |- Los Angeles CA-data.csv 
           |- Los Angeles CA-summary.csv
           |- Salt Lake City UT-data.csv
@@ -143,7 +143,7 @@ See the following pages for more information on [deaggregation](https://github.c
           |- San Francisco CA-summary.csv 
           |- Seattle WA-data.csv 
           |- Seattle WA-summary.csv 
-        |- <a href="../../example_outputs/7-deaggregation/curves/SA0P2/gmm/deagg/CB_08"           >CB_08/            </a>
+        |- <a href="../../example_outputs/7-deaggregation/curves/SA0P2/gmm/deagg/CB_08">CB_08/ </a>
           |- Los Angeles CA-data.csv 
           |- Los Angeles CA-summary.csv
           |- Salt Lake City UT-data.csv
@@ -152,7 +152,7 @@ See the following pages for more information on [deaggregation](https://github.c
           |- San Francisco CA-summary.csv 
           |- Seattle WA-data.csv 
           |- Seattle WA-summary.csv 
-        |- <a href="../../example_outputs/7-deaggregation/curves/SA0P2/gmm/deagg/CY_08"           >CY_08/            </a>
+        |- <a href="../../example_outputs/7-deaggregation/curves/SA0P2/gmm/deagg/CY_08">CY_08/ </a>
           |- Los Angeles CA-data.csv 
           |- Los Angeles CA-summary.csv
           |- Salt Lake City UT-data.csv
@@ -207,7 +207,7 @@ See the following pages for more information on [deaggregation](https://github.c
           |- San Francisco CA-summary.csv 
           |- Seattle WA-data.csv 
           |- Seattle WA-summary.csv 
-        |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0/gmm/deagg/BA_08"           >BA_08/            </a>
+        |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0/gmm/deagg/BA_08">BA_08/ </a>
           |- Los Angeles CA-data.csv 
           |- Los Angeles CA-summary.csv
           |- Salt Lake City UT-data.csv
@@ -216,7 +216,7 @@ See the following pages for more information on [deaggregation](https://github.c
           |- San Francisco CA-summary.csv 
           |- Seattle WA-data.csv 
           |- Seattle WA-summary.csv 
-        |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0/gmm/deagg/CB_08"           >CB_08/            </a>
+        |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0/gmm/deagg/CB_08">CB_08/ </a>
           |- Los Angeles CA-data.csv 
           |- Los Angeles CA-summary.csv
           |- Salt Lake City UT-data.csv
@@ -225,7 +225,7 @@ See the following pages for more information on [deaggregation](https://github.c
           |- San Francisco CA-summary.csv 
           |- Seattle WA-data.csv 
           |- Seattle WA-summary.csv 
-        |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0/gmm/deagg/CY_08"           >CY_08/            </a>
+        |- <a href="../../example_outputs/7-deaggregation/curves/SA1P0/gmm/deagg/CY_08">CY_08/ </a>
           |- Los Angeles CA-data.csv 
           |- Los Angeles CA-summary.csv
           |- Salt Lake City UT-data.csv

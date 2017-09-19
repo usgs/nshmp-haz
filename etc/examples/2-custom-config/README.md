@@ -22,17 +22,17 @@ See the [configuration specification](https://github.com/usgs/nshmp-haz/wiki/con
 #### Directory structure and output files
 
 <pre style="background: #f7f7f7">
-2-custom-config/   
-|- <a href="../../example_outputs/2-custom-config/config.json">config.json </a>
-|- curves/       
-        |- <a href="../../example_outputs/2-custom-config/curves/HazardCalc.log">HazadCalc.log </a>
-        |- PGA/           
-              |- <a href="../../example_outputs/2-custom-config/curves/PGA/total.csv">total.csv </a>
-        |- SA0P2/           
-              |- <a href="../../example_outputs/2-custom-config/curves/SA0P2/total.csv">total.csv </a>
-        |- SA1P0/           
-              |- <a href="../../example_outputs/2-custom-config/curves/SA1P0/total.csv">total.csv </a>
-        |- <a href="../../example_outputs/2-custom-config/curves/config.json">config.json </a>
+|- <a href="../../example_outputs/2-custom-config">2-custom-config/</a>
+|- config.json 
+|- <a href="../../example_outputs/2-custom-config/curves">curves/</a>
+  |- HazadCalc.log 
+  |- <a href="../../example_outputs/2-custom-config/curves/PGA">PGA/ </a>
+    |- total.csv 
+  |- <a href="../../example_outputs/2-custom-config/curves/SA0P2">SA0P2/ </a>
+    |- total.csv 
+  |- <a href="../../example_outputs/2-custom-config/curves/SA1P0">SA1P0/ </a>
+    |- total.csv
+  |- config.json 
 </pre>
 
 

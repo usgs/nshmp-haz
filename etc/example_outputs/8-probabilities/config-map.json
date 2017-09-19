@@ -1,0 +1,11 @@
+{
+  "output": {
+    "dataTypes": ["SOURCE"]
+  },
+  "rate": {
+    "distance": 10.0,
+    "valueFormat": "POISSON_PROBABILITY",
+    "distributionFormat": "CUMULATIVE",
+    "timespan": 50.0
+  }
+}

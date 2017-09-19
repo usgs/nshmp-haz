@@ -21,12 +21,12 @@ Also note that all output is written to a `curves` directory by default, but the
 #### Directory structure and output files
 
 <pre style="background: #f7f7f7">
-1-hazard-curve/   
-|- curves/        
-        |- <a href="../../example_outputs/1-hazard-curve/curves/HazardCalc.log">HazadCalc.log </a>
-        |- PGA/           
-              |- <a href="../../example_outputs/1-hazard-curve/curves/PGA/total.csv">total.csv </a>
-        |- <a href="../../example_outputs/1-hazard-curve/curves/config.json">config.json </a>
+|- <a href="../../example_outputs/1-hazard-curve">1-hazard-curve/ </a>
+|- <a href="../../example_outputs/1-hazard-curve/curves">curves/ </a>
+  |- HazadCalc.log 
+  |- <a href="../../example_outputs/1-hazard-curve/curves/PGA">PGA/ </a>
+    |- total.csv
+  |- config.json
 </pre>
 
 In the next example, we'll override the model supplied configuration with a custom file.

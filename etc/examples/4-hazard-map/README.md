@@ -12,18 +12,18 @@ hazard ../../peer/models/Set1-Case1 map.geojson config.json
 #### Directory structure and output files
 
 <pre style="background: #f7f7f7">
-4-hazard-map/
-|- <a href="../../example_outputs/4-hazard-map/config.json">config.json </a>
-|- curves/
-        |- <a href="../../example_outputs/4-hazard-map/curves/HazardCalc.log">HazadCalc.log </a>
-        |- PGA/
-              |- <a href="../../example_outputs/4-hazard-map/curves/PGA/total.csv">total.csv </a>
-        |- SA0P2/
-              |- <a href="../../example_outputs/4-hazard-map/curves/SA0P2/total.csv">total.csv </a>
-        |- SA1P0/
-              |- <a href="../../example_outputs/4-hazard-map/curves/SA1P0/total.csv">total.csv </a>
-        |- <a href="../../example_outputs/4-hazard-map/curves/config.json">config.json </a>
-|- <a href="../../example_outputs/4-hazard-map/map.geojson">map.geojson </a>
+|- <a href="../../example_outputs/4-hazard-map">4-hazard-map/ </a>
+|- config.json 
+|- <a href="../../example_outputs/4-hazard-map/curves">curves/ </a>
+  |- HazadCalc.log 
+  |- <a href="../../example_outputs/4-hazard-map/curves/PGA">PGA/ </a>
+     |- total.csv 
+  |- <a href="../../example_outputs/4-hazard-map/curves/SA0P2">SA0P2/ </a>
+     |- total.csv 
+  |- <a href="../../example_outputs/4-hazard-map/curves/SA1P0">SA1P0/ </a>
+     |- total.csv 
+  |- config.json 
+|- map.geojson
 </pre>
 
 #### Next: [Example 5 – A more complex model](../5-complex-model)

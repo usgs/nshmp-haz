@@ -22,19 +22,19 @@ Note that both formats ([CSV](sites.csv) and [GeoJSON](sites.geojson)) are elega
 #### Directory structure and output files
 
 <pre style="background: #f7f7f7">
-3-sites-file/
-|- <a href="../../example_outputs/3-sites-file/config.json">config.json </a>
-|- curves/
-        |- <a href="../../example_outputs/3-sites-file/curves/HazardCalc.log">HazadCalc.log </a>
-        |- PGA/           
-              |- <a href="../../example_outputs/3-sites-file/curves/PGA/total.csv">total.csv </a>
-        |- SA0P2/
-              |- <a href="../../example_outputs/3-sites-file/curves/SA0P2/total.csv">total.csv </a>
-        |- SA1P0/
-              |- <a href="../../example_outputs/3-sites-file/curves/SA1P0/total.csv">total.csv </a>
-        |- <a href="../../example_outputs/3-sites-file/curves/config.json">config.json </a>
-|- <a href="../../example_outputs/3-sites-file/sites.csv">sites.csv </a>
-|- <a href="../../example_outputs/3-sites-file/sites.geojson">sites.geojson </a>
+|- <a href="../../example_outputs/3-sites-file">3-sites-file/ </a>
+|- config.json 
+|- <a href="../../example_outputs/3-sites-file/curves">curves/ </a>
+  |- HazadCalc.log 
+  |- <a href="../../example_outputs/3-sites-file/curves/PGA">PGA/ </a>
+    |- total.csv 
+  |- <a href="../../example_outputs/3-sites-file/curves/SA0P2">SA0P2/ </a>
+    |- total.csv 
+  |- <a href="../../example_outputs/3-sites-file/curves/SA1P0">SA1P0/ </a>
+    |- total.csv 
+  |- config.json
+|- sites.csv
+|- sites.geojson
 </pre>
 
 
