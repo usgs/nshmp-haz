@@ -42,18 +42,18 @@ This computes 121 curves over a 2° by 2° area and will give you a sense of how
 |- <a href="../../example_outputs/5-complex-model/config-sites.json">config-sites.json </a>
 |- curves-map/
         |- <a href="../../example_outputs/5-complex-model/curves-map/HazardCalc.log">HazadCalc.log </a>
-        |- SA0P2/
-              |- <a href="../../example_outputs/5-complex-model/curves-map/SA0P2/total.csv">total.csv </a>
         |- SA1P0/
               |- <a href="../../example_outputs/5-complex-model/curves-map/SA1P0/total.csv">total.csv </a>
-        |- <a href="../../example_outputs/4-hazard-map/curves-map/config.json">config.json </a>
+        |- SA2P0/
+              |- <a href="../../example_outputs/5-complex-model/curves-map/SA2P0/total.csv">total.csv </a>
+        |- <a href="../../example_outputs/5-complex-model/curves-map/config.json">config.json </a>
 |- curves-sites/
         |- <a href="../../example_outputs/5-complex-model/curves-sites/HazardCalc.log">HazadCalc.log </a>
-        |- SA0P2/
-              |- <a href="../../example_outputs/5-complex-model/curves-sites/SA0P2/total.csv">total.csv </a>
         |- SA1P0/
               |- <a href="../../example_outputs/5-complex-model/curves-sites/SA1P0/total.csv">total.csv </a>
-        |- <a href="../../example_outputs/4-hazard-map/curves-sites/config.json">config.json </a>
+        |- SA2P0/
+              |- <a href="../../example_outputs/5-complex-model/curves-sites/SA2P0/total.csv">total.csv </a>
+        |- <a href="../../example_outputs/5-complex-model/curves-sites/config.json">config.json </a>
 |- <a href="../../example_outputs/5-complex-model/map.geojson">map.geojson </a>
 |- <a href="../../example_outputs/5-complex-model/sites.geojson">sites.geojson </a>
 </pre>
