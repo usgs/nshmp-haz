@@ -13,5 +13,24 @@ The [config](https://github.com/usgs/nshmp-haz/blob/master/etc/examples/6-enhanc
 
 See the `nshmp-haz` wiki and JavDocs for more information on source types ([Wiki](https://github.com/usgs/nshmp-haz/wiki/source-types), [JavaDoc](http://usgs.github.io/nshmp-haz/javadoc/index.html?gov/usgs/earthquake/nshmp/eq/model/SourceType.html)) and GMMs ([Wiki](https://github.com/usgs/nshmp-haz/wiki/ground-motion-models), [JavaDoc](http://usgs.github.io/nshmp-haz/javadoc/index.html?gov/usgs/earthquake/nshmp/gmm/Gmm.html)).
 
+
+#### Directory structure and output files
+
+<pre style="background: #f7f7f7">
+6-enhanced-output/
+|- <a href="../../example_outputs/6-enhanced-output/config.json">config.json </a>
+|- curves/
+        |- <a href="../../example_outputs/6-enhanced-output/curves/HazardCalc.log">HazadCalc.log </a>
+        |- PGA/
+              |- <a href="../../example_outputs/6-enhanced-output/curves/PGA/total.csv">total.csv </a>
+        |- SA0P2/
+              |- <a href="../../example_outputs/6-enhanced-output/curves/SA0P2/total.csv">total.csv </a>
+        |- SA1P0/
+              |- <a href="../../example_outputs/6-enhanced-output/curves/SA1P0/total.csv">total.csv </a>
+        |- <a href="../../example_outputs/6-enhanced-output/curves/config.json">config.json </a>
+|- <a href="../../example_outputs/6-enhanced-output/sites.geojson">sites.geojson </a>
+</pre>  
+
+
 #### Next: [Example 7 – Deaggregation](../7-deaggregation)
 
