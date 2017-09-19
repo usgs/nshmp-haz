@@ -22,8 +22,8 @@ Also note that all output is written to a `curves` directory by default, but the
 
 <pre style="background: #f7f7f7">
 1-hazard-curve/   
-|-- curves/        
-        |-- <a href="../../example_outputs/1-hazard-curve/curves/HazardCalc.log">HazadCalc.log </a>
+|- curves/        
+        |- <a href="../../example_outputs/1-hazard-curve/curves/HazardCalc.log">HazadCalc.log </a>
         |- PGA/           
               |- <a href="../../example_outputs/1-hazard-curve/curves/PGA/total.csv">total.csv </a>
         |- <a href="../../example_outputs/1-hazard-curve/curves/config.json">config.json </a>
