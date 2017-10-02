@@ -1,0 +1,291 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-158.1, 21.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Barbers Point HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-159.75, 22.05]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Barking Sands HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-155.55, 19.75]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Bradshaw Airfield HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-157.8, 21.25]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Diamond Head HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-156.25, 20.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Haleakala Crater HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-159.6, 21.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Hanapepe HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-155.05, 19.7]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Hilo HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-157.85, 21.3]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Honolulu HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-156.55, 20.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Kaheawa Wind HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-156.5, 20.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Kahului HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-156.0, 19.65]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Kailua Kona HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-157.8, 21.4]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Kaneohe HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-157.0, 21.1]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Kaunakakai HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-155.25, 19.4]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Kilauea HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-157.95, 21.65]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Laie HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-156.95, 20.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Lanai City HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-159.35, 21.95]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Lihue HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-157.75, 21.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Marine Corps Base HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-155.45, 19.8]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Mauna Kea HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-155.75, 19.1]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Ocean View HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-157.95, 21.35]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Pearl Harbor HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-160.2, 21.9]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Puuwai HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-158.0, 21.5]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Wahiawa HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-158.2, 21.45]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Waianae HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-155.7, 20.0]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Waimea HI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-158.0, 21.4]
+      },
+      "properties": {
+        "marker-size": "small",
+        "title": "Waipahu HI"
+      }
+    }
+  ]
+}

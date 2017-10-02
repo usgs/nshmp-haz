@@ -26,7 +26,7 @@ public enum NshmpSite implements NamedLocation {
    * Pacific northwest, of the central and eastern US.
    */
 
-  /* Northern CA */
+  /* Northern CA (16) */
   BIG_SUR_CA(-121.75, 36.25),
   COALINGA_CA(-120.40, 36.15),
   CONCORD_CA(-122.00, 37.95),
@@ -44,7 +44,7 @@ public enum NshmpSite implements NamedLocation {
   SANTA_ROSA_CA(-122.70, 38.45),
   VALLEJO_CA(-122.25, 38.10),
 
-  /* Southern CA */
+  /* Southern CA (22) */
   BAKERSFIELD_CA(-119.35, 35.35),
   BRAWLEY_CA(-115.55, 33.00),
   CENTURY_CITY_CA(-118.40, 34.05),
@@ -68,7 +68,7 @@ public enum NshmpSite implements NamedLocation {
   SANTA_BARBARA_CA(-119.70, 34.45),
   VENTURA_CA(-119.30, 34.30),
 
-  /* WUS excepting CA */
+  /* WUS excepting CA (32) */
   GRAND_CANYON_VILLAGE_AZ(-112.15, 36.05),
   PALO_VERDE_AZ(-112.85, 33.40),
   PHOENIX_AZ(-112.10, 33.45),
@@ -109,7 +109,7 @@ public enum NshmpSite implements NamedLocation {
   JACKSON_WY(-110.75, 43.50),
   YELLOWSTONE_WY(-110.55, 44.40),
 
-  /* PNW */
+  /* PNW (21) */
   ASTORIA_OR(-123.85, 46.20),
   BEND_OR(-121.30, 44.05),
   BROOKINGS_OR(-124.25, 42.05),
@@ -133,7 +133,7 @@ public enum NshmpSite implements NamedLocation {
   TACOMA_WA(-122.45, 47.25),
   YAKIMA_WA(-120.50, 46.60),
 
-  /* CEUS */
+  /* CEUS (68) */
   WASHINGTON_DC(-77.05, 38.90),
   ATMORE_AL(-87.50, 31.00),
   BIRMINGHAM_AL(-86.80, 33.50),
@@ -203,7 +203,7 @@ public enum NshmpSite implements NamedLocation {
   CHARLESTON_WV(-81.65, 38.35),
   MILWAUKEE_WI(-87.90, 43.05),
 
-  /* Alaska */
+  /* Alaska (26) */
   ADAK_AK(-176.65, 51.9),
   ANCHORAGE_AK(-149.90, 61.2),
   BARROW_AK(-156.75, 71.3),
@@ -229,24 +229,57 @@ public enum NshmpSite implements NamedLocation {
   TOK_AK(-143.00, 63.3),
   VALDEZ_AK(-146.35, 61.15),
   WASILLA_AK(-149.45, 61.6),
-  YAKUTAT_AK(-139.70, 59.55);
+  YAKUTAT_AK(-139.70, 59.55),
+  
+  /* Hawaii (26) */
+  BRADSHAW_AIRFIELD_HI(-155.55,19.75),  // Hawai'i
+  HILO_HI(-155.05,19.7),
+  KAILUA_KONA_HI(-156,19.65),
+  KILAUEA_HI(-155.25,19.4),
+  MAUNA_KEA_HI(-155.45,19.8),
+  OCEAN_VIEW_HI(-155.75,19.1),
+  WAIMEA_HI(-155.7,20),
+  KAHEAWA_WIND_HI(-156.55,20.8),        // Maui
+  KAHULUI_HI(-156.5,20.9),
+  HALEAKALA_CRATER_HI(-156.25,20.70),
+  LANAI_CITY_HI(-156.95,20.8),          // Lanai
+  KAUNAKAKAI_HI(-157,21.1),             // Moloka'i
+  BARBERS_POINT_HI(-158.1,21.3),        // O'ahu
+  DIAMOND_HEAD_HI(-157.8,21.25),
+  HONOLULU_HI(-157.85,21.3),
+  KANEOHE_HI(-157.8,21.4),
+  LAIE_HI(-157.95,21.65),
+  MARINE_CORPS_BASE_HI(-157.75,21.45),
+  PEARL_HARBOR_HI(-157.95,21.35),
+  WAHIAWA_HI(-158,21.5),
+  WAIANAE_HI(-158.2,21.45),
+  WAIPAHU_HI(-158,21.4),
+  BARKING_SANDS_HI(-159.75,22.05),      // Kauai
+  HANAPEPE_HI(-159.6,21.9),
+  LIHUE_HI(-159.35,21.95),
+  PUUWAI_HI(-160.2,21.9);               // Ni'ihau
 
-  private final Location loc;
+
+  private final Location location;
   private final UsRegion state;
 
   private NshmpSite(double lon, double lat) {
-    this.loc = Location.create(lat, lon);
+    this.location = Location.create(lat, lon);
     this.state = UsRegion.valueOf(name().substring(name().lastIndexOf('_') + 1));
   }
 
+  /**
+   * The state containing this location.
+   */
   public UsRegion state() {
     return state;
   }
 
   @Override
   public Location location() {
-    return loc;
+    return location;
   }
+
 
   @Override
   public String id() {
@@ -275,7 +308,7 @@ public enum NshmpSite implements NamedLocation {
         new Predicate<NshmpSite>() {
           @Override
           public boolean apply(NshmpSite site) {
-            return site.loc.lon() >= -115.0;
+            return site.location.lon() >= -115.0;
           }
         }), NshmpSite.class);
   }
@@ -290,7 +323,7 @@ public enum NshmpSite implements NamedLocation {
         new Predicate<NshmpSite>() {
           @Override
           public boolean apply(NshmpSite site) {
-            return site.loc.lon() <= -100.0 && site.loc.lon() >= -125.0;
+            return site.location.lon() <= -100.0 && site.location.lon() >= -125.0;
           }
         }), NshmpSite.class);
   }
@@ -304,10 +337,25 @@ public enum NshmpSite implements NamedLocation {
         new Predicate<NshmpSite>() {
           @Override
           public boolean apply(NshmpSite site) {
-            return site.loc.lon() <= -125.0;
+            return site.state == UsRegion.AK;
           }
         }), NshmpSite.class);
   }
+
+  /**
+   * The set of sites used to test the Hawaii NSHM.
+   */
+  public static EnumSet<NshmpSite> hawaii() {
+    return Sets.newEnumSet(Iterables.filter(
+        EnumSet.allOf(NshmpSite.class),
+        new Predicate<NshmpSite>() {
+          @Override
+          public boolean apply(NshmpSite site) {
+            return site.state == UsRegion.HI;
+          }
+        }), NshmpSite.class);
+  }
+
 
   /**
    * The set of sites corresponding to U.S. national labs and other Dept. of
@@ -332,7 +380,7 @@ public enum NshmpSite implements NamedLocation {
         new Predicate<NshmpSite>() {
           @Override
           public boolean apply(NshmpSite site) {
-            return site.loc.lon() >= -105.5;
+            return site.location.lon() >= -105.5;
           }
         }), NshmpSite.class);
   }
@@ -392,7 +440,7 @@ public enum NshmpSite implements NamedLocation {
     @Override
     public int compare(NshmpSite s1, NshmpSite s2) {
       return ComparisonChain.start()
-          .compare(s1.state().name(), s2.state().name())
+          .compare(s1.state.name(), s2.state.name())
           .compare(s1.name(), s2.name())
           .result();
     }
