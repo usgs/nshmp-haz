@@ -238,6 +238,7 @@ final class NshmpSiteFiles {
     writeNshmpSites("wus", NshmpSite.wus());
     writeNshmpSites("nrc", NshmpSite.nrc());
     writeNshmpSites("alaska", NshmpSite.alaska());
+    writeNshmpSites("hawaii", NshmpSite.hawaii());
     writeSites("nehrp", NshmpSite.nehrp(), DEC2_FMT);
   }
 
