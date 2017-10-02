@@ -667,58 +667,72 @@ public enum Gmm {
   // NgaEast_2016.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_SEED_B_a04(
+  NGA_EAST_SEED_B_A04(
       NgaEastUsgs_2017.Seed_B_a04.class,
       NgaEastUsgs_2017.Seed_B_a04.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_SEED_B_ab14(
+  NGA_EAST_SEED_B_AB14(
       NgaEastUsgs_2017.Seed_B_ab14.class,
       NgaEastUsgs_2017.Seed_B_ab14.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_SEED_B_ab95(
+  NGA_EAST_SEED_B_AB95(
       NgaEastUsgs_2017.Seed_B_ab95.class,
       NgaEastUsgs_2017.Seed_B_ab95.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_SEED_B_bca10d(
+  NGA_EAST_SEED_B_BCA10D(
       NgaEastUsgs_2017.Seed_B_bca10d.class,
       NgaEastUsgs_2017.Seed_B_bca10d.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_SEED_B_bs11(
+  NGA_EAST_SEED_B_BS11(
       NgaEastUsgs_2017.Seed_B_bs11.class,
       NgaEastUsgs_2017.Seed_B_bs11.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_SEED_B_sgd02(
+  NGA_EAST_SEED_B_SGD02(
       NgaEastUsgs_2017.Seed_B_sgd02.class,
       NgaEastUsgs_2017.Seed_B_sgd02.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_SEED_Frankel(
+  NGA_EAST_SEED_FRANKEL(
       NgaEastUsgs_2017.Seed_Frankel.class,
       NgaEastUsgs_2017.Seed_Frankel.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_SEED_Graizer(
+  NGA_EAST_SEED_GRAIZER(
       NgaEastUsgs_2017.Seed_Graizer.class,
       NgaEastUsgs_2017.Seed_Graizer.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_SEED_GRAIZER16(
+      NgaEastUsgs_2017.UpdatedSeed_Graizer16.class,
+      NgaEastUsgs_2017.UpdatedSeed_Graizer16.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_SEED_GRAIZER17(
+      NgaEastUsgs_2017.UpdatedSeed_Graizer17.class,
+      NgaEastUsgs_2017.UpdatedSeed_Graizer17.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
@@ -1068,14 +1082,16 @@ public enum Gmm {
             NGA_EAST_SEED_2CCSP,
             NGA_EAST_SEED_2CVSP,
             // NGA_EAST_SEED_ANC15,
-            NGA_EAST_SEED_B_a04,
-            NGA_EAST_SEED_B_ab14,
-            NGA_EAST_SEED_B_ab95,
-            NGA_EAST_SEED_B_bca10d,
-            NGA_EAST_SEED_B_bs11,
-            NGA_EAST_SEED_B_sgd02,
-            NGA_EAST_SEED_Frankel,
-            NGA_EAST_SEED_Graizer,
+            NGA_EAST_SEED_B_A04,
+            NGA_EAST_SEED_B_AB14,
+            NGA_EAST_SEED_B_AB95,
+            NGA_EAST_SEED_B_BCA10D,
+            NGA_EAST_SEED_B_BS11,
+            NGA_EAST_SEED_B_SGD02,
+            NGA_EAST_SEED_FRANKEL,
+            NGA_EAST_SEED_GRAIZER,
+            NGA_EAST_SEED_GRAIZER16,
+            NGA_EAST_SEED_GRAIZER17,
             NGA_EAST_SEED_HA15,
             NGA_EAST_SEED_PEER_EX,
             NGA_EAST_SEED_PEER_GP,

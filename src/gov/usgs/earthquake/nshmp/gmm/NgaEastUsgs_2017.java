@@ -606,5 +606,45 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       super(ID, imt);
     }
   }
+  
+  static abstract class UpdatedSeed extends NgaEastUsgs_2017 {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Seed (updated) : ";
+
+    final String id;
+    final GroundMotionTable table;
+
+    UpdatedSeed(String id, Imt imt) {
+      super(imt);
+      this.id = id;
+      this.table = GroundMotionTables.getNgaEastSeed(id, imt);
+    }
+
+    @Override
+    public ScalarGroundMotion calc(GmmInput in) {
+      Position p = table.position(in.rRup, in.Mw);
+      return new DefaultScalarGroundMotion(
+          table.get(p),
+          calcSigmaTotal(in.Mw));
+    }
+  }
+
+  static final class UpdatedSeed_Graizer16 extends UpdatedSeed {
+    static final String ID = "Graizer16";
+    static final String NAME = Seed.NAME + ID;
+
+    UpdatedSeed_Graizer16(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static final class UpdatedSeed_Graizer17 extends UpdatedSeed {
+    static final String ID = "Graizer17";
+    static final String NAME = Seed.NAME + ID;
+
+    UpdatedSeed_Graizer17(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
 
 }

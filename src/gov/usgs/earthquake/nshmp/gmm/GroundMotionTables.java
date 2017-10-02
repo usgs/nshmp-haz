@@ -112,6 +112,8 @@ final class GroundMotionTables {
       "B_sgd02",
       "Frankel",
       "Graizer",
+      "Graizer16",
+      "Graizer17",
       "HA15",
       "PEER_EX",
       "PEER_GP",
