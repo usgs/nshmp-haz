@@ -778,6 +778,13 @@ public enum Gmm {
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
+  /** @see NgaEastUsgs_2017 @see ShahjoueiPezeshk_2016 */
+  NGA_EAST_SEED_SP16(
+      ShahjoueiPezeshk_2016.class,
+      ShahjoueiPezeshk_2016.NAME,
+      ShahjoueiPezeshk_2016.COEFFS,
+      ShahjoueiPezeshk_2016.CONSTRAINTS),
+
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_SEED_YA15(
       NgaEastUsgs_2017.Seed_YA15.class,
@@ -1098,6 +1105,7 @@ public enum Gmm {
             NGA_EAST_SEED_PZCT15_M1SS,
             NGA_EAST_SEED_PZCT15_M2ES,
             NGA_EAST_SEED_SP15,
+            NGA_EAST_SEED_SP16,
             NGA_EAST_SEED_YA15));
 
     private final String name;
