@@ -112,9 +112,13 @@ final class Transforms {
    */
   static final class InputsToGroundMotions implements Function<InputList, GroundMotions> {
 
+    private final GmmProcessor gmmProcessor;
     private final Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable;
 
-    InputsToGroundMotions(Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable) {
+    InputsToGroundMotions(
+        CalcConfig config,
+        Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable) {
+      this.gmmProcessor = GmmProcessor.instance(config);
       this.gmmTable = gmmTable;
     }
 
@@ -132,7 +136,10 @@ final class Transforms {
         for (Gmm gmm : gmmKeys) {
           GroundMotionModel model = gmmTable.get(imt).get(gmm);
           for (GmmInput gmmInput : inputs) {
-            builder.add(imt, gmm, model.calc(gmmInput));
+            builder.add(
+                imt,
+                gmm,
+                gmmProcessor.apply(model, gmmInput, imt, gmm));
           }
         }
       }
@@ -304,7 +311,7 @@ final class Transforms {
           gmmSet.gmms());
 
       this.sourceToInputs = new SourceToInputs(site);
-      this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
+      this.inputsToGroundMotions = new InputsToGroundMotions(config, gmmTable);
       this.groundMotionsToCurves = config.hazard.gmmUncertainty && gmmSet.epiUncertainty()
           ? new GroundMotionsToCurvesWithUncertainty(gmmSet, config)
           : new GroundMotionsToCurves(config);
@@ -312,6 +319,9 @@ final class Transforms {
 
     @Override
     public HazardCurves apply(Source source) {
+
+      // return
+      // sourceToInputs.andThen(inputsToGroundMotions).andThen(groundMotionsToCurves).apply(source);
       return groundMotionsToCurves.apply(
           inputsToGroundMotions.apply(
               sourceToInputs.apply(source)));
@@ -395,7 +405,7 @@ final class Transforms {
           config.hazard.imts,
           gmmSet.gmms());
 
-      InputsToGroundMotions inputsToGm = new InputsToGroundMotions(gmmTable);
+      InputsToGroundMotions inputsToGm = new InputsToGroundMotions(config, gmmTable);
       GroundMotions gms = inputsToGm.apply(inputs);
 
       Function<GroundMotions, HazardCurves> gmToCurves =
@@ -482,7 +492,7 @@ final class Transforms {
           config.hazard.imts,
           gmmSet.gmms());
 
-      this.inputsToGroundMotions = new InputsToGroundMotions(gmmTable);
+      this.inputsToGroundMotions = new InputsToGroundMotions(config, gmmTable);
       this.groundMotionsToCurves = config.hazard.gmmUncertainty && gmmSet.epiUncertainty()
           ? new GroundMotionsToCurvesWithUncertainty(gmmSet, config)
           : new GroundMotionsToCurves(config);
@@ -527,8 +537,10 @@ final class Transforms {
 
     private final InputsToGroundMotions transform;
 
-    ClusterInputsToGroundMotions(Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable) {
-      transform = new InputsToGroundMotions(gmmTable);
+    ClusterInputsToGroundMotions(
+        CalcConfig config,
+        Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable) {
+      transform = new InputsToGroundMotions(config, gmmTable);
     }
 
     @Override
@@ -632,7 +644,7 @@ final class Transforms {
       Map<Imt, Map<Gmm, GroundMotionModel>> gmmTable = instances(config.hazard.imts, gmms);
 
       this.sourceToInputs = new ClusterSourceToInputs(site);
-      this.inputsToGroundMotions = new ClusterInputsToGroundMotions(gmmTable);
+      this.inputsToGroundMotions = new ClusterInputsToGroundMotions(config, gmmTable);
       this.groundMotionsToCurves = new ClusterGroundMotionsToCurves(config);
     }
 
