@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.repeat;
+import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 import static gov.usgs.earthquake.nshmp.data.XySequence.create;
 import static gov.usgs.earthquake.nshmp.data.XySequence.immutableCopyOf;
 import static gov.usgs.earthquake.nshmp.internal.Parsing.enumsToString;
@@ -15,6 +16,7 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -37,17 +39,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.model.SourceType;
 import gov.usgs.earthquake.nshmp.gmm.Gmm;
+import gov.usgs.earthquake.nshmp.gmm.GmmPostProcessor;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
-
-import java.util.Set;
+import gov.usgs.earthquake.nshmp.gmm.RezaeianDamping_2014;
 
 /**
  * Calculation configuration.
@@ -134,6 +138,42 @@ public final class CalcConfig {
     public final Set<Imt> imts;
 
     /**
+     * The post processors used to adjust ground motions derived from
+     * {@link GroundMotionModel}s (GMMs). The models may apply corrections or
+     * scale factors to GMM-derived {@code μ}- and {@code σ}-values. For
+     * example, see {@link RezaeianDamping_2014}. If multiple post processors
+     * are specified, they are executed in the order listed.
+     * 
+     * <p><b>Default:</b> [ {@code (empty)} ]
+     */
+    public final List<GmmPostProcessor.Model> gmmPostProcessors;
+
+    /**
+     * Viscous damping ratio. The default value is consistent with that used in
+     * {@link GroundMotionModel} most (GMM) development. Values other than 5%
+     * will apply a damping scale factor (DSF) to adjust the 5% damped spectral
+     * ordinates predicted by GMMs.
+     * 
+     * <p><b>Default:</b> {@code 5.0%}<br><b>Range:</b> {@code 0.5%} to
+     * {@code 30.0%}
+     * 
+     * <p><b>Note:</b> At this time, the damping scaling factor (DSF) model
+     * (Rezaeian et al., 2014) is only applicable to active continental crust
+     * GMMs and will not be applied to ground motion values from GMMs for other
+     * tectonic regions.
+     * 
+     * @see RezaeianDamping_2014
+     */
+    public final double gmmDampingRatio;
+
+    /**
+     * Whether or not {@link GroundMotionModel} (GMM) sigmas are also modified
+     * according to the Rezaeian et al. (2014) model when applying damping
+     * scaling factors (DSF).
+     */
+    public final boolean gmmDampingSigma;
+
+    /**
      * Whether to consider additional ground motion model uncertainty, or not.
      * Currently this is only applicable when using the PEER NGA-West or
      * NGA-West2 {@link Gmm}s with USGS hazard models.
@@ -160,6 +200,9 @@ public final class CalcConfig {
         ExceedanceModel exceedanceModel,
         double truncationLevel,
         Set<Imt> imts,
+        List<GmmPostProcessor.Model> gmmPostProcessors,
+        double gmmDampingRatio,
+        boolean gmmDampingSigma,
         boolean gmmUncertainty,
         ValueFormat valueFormat,
         double[] defaultImls,
@@ -170,6 +213,9 @@ public final class CalcConfig {
       this.exceedanceModel = exceedanceModel;
       this.truncationLevel = truncationLevel;
       this.imts = imts;
+      this.gmmPostProcessors = gmmPostProcessors;
+      this.gmmDampingRatio = gmmDampingRatio;
+      this.gmmDampingSigma = gmmDampingSigma;
       this.gmmUncertainty = gmmUncertainty;
       this.valueFormat = valueFormat;
 
@@ -227,6 +273,10 @@ public final class CalcConfig {
           .append(formatEntry(Key.EXCEEDANCE_MODEL, exceedanceModel.name()))
           .append(formatEntry(Key.TRUNCATION_LEVEL, truncationLevel))
           .append(formatEntry(Key.IMTS, enumsToString(imts, Imt.class)))
+          .append(formatEntry(Key.GMM_POST_PROCESSORS,
+              enumsToString(gmmPostProcessors, GmmPostProcessor.Model.class)))
+          .append(formatEntry(Key.GMM_DAMPING_RATIO, gmmDampingRatio))
+          .append(formatEntry(Key.GMM_DAMPING_SIGMA, gmmDampingSigma))
           .append(formatEntry(Key.GMM_UNCERTAINTY, gmmUncertainty))
           .append(formatEntry(Key.VALUE_FORMAT, valueFormat.name()))
           .append(formatEntry(Key.DEFAULT_IMLS, wrap(Arrays.toString(defaultImls), false)))
@@ -238,6 +288,9 @@ public final class CalcConfig {
       ExceedanceModel exceedanceModel;
       Double truncationLevel;
       Set<Imt> imts;
+      List<GmmPostProcessor.Model> gmmPostProcessors;
+      Double gmmDampingRatio;
+      Boolean gmmDampingSigma;
       Boolean gmmUncertainty;
       ValueFormat valueFormat;
       double[] defaultImls;
@@ -248,6 +301,9 @@ public final class CalcConfig {
             exceedanceModel,
             truncationLevel,
             Sets.immutableEnumSet(imts),
+            gmmPostProcessors,
+            gmmDampingRatio,
+            gmmDampingSigma,
             gmmUncertainty,
             valueFormat,
             defaultImls,
@@ -260,6 +316,9 @@ public final class CalcConfig {
         this.exceedanceModel = that.exceedanceModel;
         this.truncationLevel = that.truncationLevel;
         this.imts = that.imts;
+        this.gmmPostProcessors = that.gmmPostProcessors;
+        this.gmmDampingRatio = that.gmmDampingRatio;
+        this.gmmDampingSigma = that.gmmDampingSigma;
         this.gmmUncertainty = that.gmmUncertainty;
         this.valueFormat = that.valueFormat;
         this.defaultImls = that.defaultImls;
@@ -276,6 +335,15 @@ public final class CalcConfig {
         if (that.imts != null) {
           this.imts = that.imts;
         }
+        if (that.gmmPostProcessors != null) {
+          this.gmmPostProcessors = that.gmmPostProcessors;
+        }
+        if (that.gmmDampingSigma != null) {
+          this.gmmDampingSigma = that.gmmDampingSigma;
+        }
+        if (that.gmmDampingRatio != null) {
+          this.gmmDampingRatio = that.gmmDampingRatio;
+        }
         if (that.gmmUncertainty != null) {
           this.gmmUncertainty = that.gmmUncertainty;
         }
@@ -291,11 +359,13 @@ public final class CalcConfig {
       }
 
       /* Slightly modified version of NSHM 5Hz curve, size = 20 */
-      private static final double[] IMLS_PGA_SA = new double[] { 0.0025, 0.0045, 0.0075, 0.0113,
+      private static final double[] IMLS_PGA_SA = new double[] {
+          0.0025, 0.0045, 0.0075, 0.0113,
           0.0169, 0.0253, 0.0380, 0.0570, 0.0854, 0.128, 0.192, 0.288, 0.432, 0.649, 0.973, 1.46,
           2.19, 3.28, 4.92, 7.38 };
 
-      private static final double[] IMLS_PGV = new double[] { 0.0100, 0.0177, 0.0312, 0.0552,
+      private static final double[] IMLS_PGV = new double[] {
+          0.0100, 0.0177, 0.0312, 0.0552,
           0.0976, 0.173, 0.305, 0.539, 0.953, 1.68, 2.98, 5.26, 9.30, 16.4, 29.1, 51.3, 90.8,
           160.0, 284.0, 501.0 };
 
@@ -304,6 +374,9 @@ public final class CalcConfig {
         b.exceedanceModel = ExceedanceModel.TRUNCATION_UPPER_ONLY;
         b.truncationLevel = 3.0;
         b.imts = EnumSet.of(Imt.PGA, Imt.SA0P2, Imt.SA1P0);
+        b.gmmPostProcessors = ImmutableList.of();
+        b.gmmDampingRatio = 5.0;
+        b.gmmDampingSigma = false;
         b.gmmUncertainty = false;
         b.valueFormat = ValueFormat.ANNUAL_RATE;
         b.defaultImls = IMLS_PGA_SA;
@@ -316,6 +389,15 @@ public final class CalcConfig {
         checkNotNull(exceedanceModel, STATE_ERROR, Hazard.ID, Key.EXCEEDANCE_MODEL);
         checkNotNull(truncationLevel, STATE_ERROR, Hazard.ID, Key.TRUNCATION_LEVEL);
         checkNotNull(imts, STATE_ERROR, Hazard.ID, Key.IMTS);
+        checkNotNull(gmmPostProcessors, STATE_ERROR, Hazard.ID, Key.GMM_POST_PROCESSORS);
+        checkNotNull(gmmDampingRatio, STATE_ERROR, Hazard.ID, Key.GMM_DAMPING_RATIO);
+        checkInRange(
+            RezaeianDamping_2014.DAMPING_RATIO_RANGE,
+            Key.GMM_DAMPING_RATIO.toString(),
+            gmmDampingRatio);
+        checkNotNull(gmmDampingSigma, STATE_ERROR, Hazard.ID, Key.GMM_DAMPING_SIGMA);
+        checkNotNull(gmmUncertainty, STATE_ERROR, Hazard.ID, Key.GMM_UNCERTAINTY);
+        checkNotNull(valueFormat, STATE_ERROR, Hazard.ID, Key.VALUE_FORMAT);
         checkNotNull(defaultImls, STATE_ERROR, Hazard.ID, Key.DEFAULT_IMLS);
         checkNotNull(customImls, STATE_ERROR, Hazard.ID, Key.CUSTOM_IMLS);
       }
@@ -993,6 +1075,9 @@ public final class CalcConfig {
     EXCEEDANCE_MODEL,
     TRUNCATION_LEVEL,
     IMTS,
+    GMM_POST_PROCESSORS,
+    GMM_DAMPING_RATIO,
+    GMM_DAMPING_SIGMA,
     GMM_UNCERTAINTY,
     VALUE_FORMAT,
     DEFAULT_IMLS,
