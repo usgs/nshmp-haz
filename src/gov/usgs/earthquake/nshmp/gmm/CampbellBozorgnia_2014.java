@@ -249,17 +249,7 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
         : (c.c11 + c.k2 * N) * log(vsk1);
 
     // Basin Response term -- Equation 20
-    // update z2p5 with CA model if not supplied -- Equation 33
-    double z2p5copy = z2p5;
-    if (Double.isNaN(z2p5)) {
-      z2p5copy = exp(7.089 - 1.144 * log(vs30));
-    }
-    double Fsed = 0.0;
-    if (z2p5copy <= 1.0) {
-      Fsed = c.c14 * (z2p5copy - 1.0);
-    } else if (z2p5copy > 3.0) {
-      Fsed = c.c16 * c.k3 * exp(-0.75) * (1.0 - exp(-0.25 * (z2p5copy - 3.0)));
-    }
+    double Fsed = basinResponseTerm(c, vs30, z2p5);
 
     // Hypocentral Depth term -- Equations 21, 22, 23
     double zHyp = in.zHyp;
@@ -280,6 +270,21 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
     // total model -- Equation 1
     return Fmag + Fr + Fflt + Fhw + Fsite + Fsed + Fhyp + Fdip + Fatn;
+  }
+
+  // Basin Response term -- Equation 20
+  // update z2p5 with CA model if not supplied -- Equation 33
+  static final double basinResponseTerm(Coefficients c, double vs30, double z2p5) {
+    if (Double.isNaN(z2p5)) {
+      z2p5 = exp(7.089 - 1.144 * log(vs30));
+    }
+    if (z2p5 <= 1.0) {
+      return c.c14 * (z2p5 - 1.0);
+    } else if (z2p5 > 3.0) {
+      return c.c16 * c.k3 * exp(-0.75) * (1.0 - exp(-0.25 * (z2p5 - 3.0)));
+    } else {
+      return 0.0;
+    }
   }
 
   // Aleatory uncertainty model
