@@ -4,13 +4,14 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.BASE_10_TO_E;
+import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass.HARD_ROCK;
+import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass.SOFT_ROCK;
 import static gov.usgs.earthquake.nshmp.gmm.MagConverter.NONE;
-import static gov.usgs.earthquake.nshmp.gmm.SiteClass.HARD_ROCK;
-import static gov.usgs.earthquake.nshmp.gmm.SiteClass.SOFT_ROCK;
 
 import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
 
 /**
@@ -64,7 +65,7 @@ public class FrankelEtAl_1996 implements GroundMotionModel, ConvertsMag {
 
   @Override
   public final ScalarGroundMotion calc(GmmInput in) {
-    SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
+    CeusSiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
     double Mw = converter().convert(in.Mw);
     double μ = (siteClass == SOFT_ROCK) ? bcTable.get(in.rRup, Mw) : aTable.get(in.rRup, Mw);
     μ = GmmUtils.ceusMeanClip(imt, μ * BASE_10_TO_E);
