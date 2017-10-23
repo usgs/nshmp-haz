@@ -133,7 +133,7 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
     }
   }
 
-  private final Coefficients coeffs;
+  final Coefficients coeffs;
   private final Coefficients coeffsPGA;
 
   CampbellBozorgnia_2014(final Imt imt) {
