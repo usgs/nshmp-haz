@@ -979,6 +979,19 @@ public enum Gmm {
   @SuppressWarnings("javadoc")
   public enum Group {
 
+    WUS_18_INTERFACE(
+        "2018 Subduction Interface (WUS) beta",
+        ImmutableList.of(
+            AM_09_BASIN_INTERFACE,
+            BCHYDRO_12_BASIN_INTERFACE,
+            ZHAO_06_BASIN_INTERFACE)),
+    
+    WUS_18_SLAB(
+        "2018 Subduction Intraslab (WUS) beta",
+        ImmutableList.of(
+            BCHYDRO_12_BASIN_SLAB,
+            ZHAO_06_BASIN_SLAB)),
+
     CEUS_14_STABLE_CRUST(
         "2014 Stable Crust (CEUS)",
         ImmutableList.of(
