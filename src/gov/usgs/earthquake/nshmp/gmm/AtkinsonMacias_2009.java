@@ -1,5 +1,6 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
+import static gov.usgs.earthquake.nshmp.gmm.CampbellBozorgnia_2014.basinResponseTerm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
@@ -39,15 +40,16 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  *
  * @author Peter Powers
  * @see Gmm#AM_09_INTER
+ * @see Gmm#AM_09_BASIN_INTERFACE
  */
-public final class AtkinsonMacias_2009 implements GroundMotionModel {
+public class AtkinsonMacias_2009 implements GroundMotionModel {
 
   /*
    * TODO 0.75s interpolated period coefficients added that should be removed if
    * a viable on-the-fly interpolation algorithm is added.
    */
-
-  static final String NAME = "Atkinson & Macias (2009): Interface";
+  private static final String BASE_NAME = "Atkinson & Macias (2009)";
+  static final String NAME = BASE_NAME + ": Interface";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(5.0, 9.5))
@@ -75,18 +77,26 @@ public final class AtkinsonMacias_2009 implements GroundMotionModel {
   private final Coefficients coeffs;
   private final Coefficients coeffsPGA;
   private final BooreAtkinsonSiteAmp siteAmp;
+  private final CampbellBozorgnia_2014 cb14;
 
   AtkinsonMacias_2009(final Imt imt) {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
     siteAmp = new BooreAtkinsonSiteAmp(imt);
+    cb14 = new CampbellBozorgnia_2014(imt);
   }
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    double μ = calcMean(coeffs, coeffsPGA, siteAmp, in);
+    // possibly picking up basin term from CB14
+    double fBasin = basinTerm() ? basinResponseTerm(cb14.coeffs, in.vs30, in.z2p5) : 0.0;
+    double μ = calcMean(coeffs, coeffsPGA, siteAmp, in) + fBasin;
     double σ = coeffs.σ * BASE_10_TO_E;
     return DefaultScalarGroundMotion.create(μ, σ);
+  }
+
+  boolean basinTerm() {
+    return false;
   }
 
   private static final double calcMean(final Coefficients c, final Coefficients cPga,
@@ -110,4 +120,16 @@ public final class AtkinsonMacias_2009 implements GroundMotionModel {
     return gnd * BASE_10_TO_E - LN_G_CM_TO_M;
   }
 
+  static final class Basin extends AtkinsonMacias_2009 {
+    static final String NAME = BASE_NAME + " Basin: Interface";
+    
+    Basin(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    boolean basinTerm() {
+      return true;
+    }
+  }
 }
