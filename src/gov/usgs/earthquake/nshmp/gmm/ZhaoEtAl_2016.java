@@ -129,12 +129,12 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
    * and model. The interface model has depth dependent values; zTop is ignored
    * by other implementations.
    */
-  abstract double elasticSiteAmpRatio(ZhaoSiteClass siteClass, double zTop);
+  abstract double elasticSiteAmpRatio(SiteClass siteClass, double zTop);
 
   /*
    * Model and site-class dependent nonlinear soil site smoothing factor.
    */
-  abstract double smoothingFactor(ZhaoSiteClass siteClass);
+  abstract double smoothingFactor(SiteClass siteClass);
 
   abstract double sigma();
 
@@ -148,13 +148,13 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
   }
 
   private double siteTerm(GmmInput in, double saRock) {
-    Range<ZhaoSiteClass> siteRange = siteRange(in.vs30);
+    Range<SiteClass> siteRange = siteRange(in.vs30);
     /*
      * Reverse range values here because lower site classes correspond to higher
      * Vs30 values.
      */
-    ZhaoSiteClass lower = siteRange.upperEndpoint();
-    ZhaoSiteClass upper = siteRange.lowerEndpoint();
+    SiteClass lower = siteRange.upperEndpoint();
+    SiteClass upper = siteRange.lowerEndpoint();
     if (lower == upper) {
       return siteTerm(lower, in.zTop, saRock);
     }
@@ -166,7 +166,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
         in.vs30);
   }
 
-  private double siteTerm(ZhaoSiteClass siteClass, double zTop, double saRock) {
+  private double siteTerm(SiteClass siteClass, double zTop, double saRock) {
     double aNmax = elasticSiteAmpRatio(siteClass, zTop);
     double aMax = siteAmp.aMax.get(siteClass);
     double sRC = siteAmp.sRc.get(siteClass);
@@ -189,7 +189,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
 
       /* Site amplification */
       final double AmSCI, s2, s3, s4;
-      final Map<ZhaoSiteClass, Double> fsr;
+      final Map<SiteClass, Double> fsr;
 
       /* Unused or constant: FumRV, FumNS, gum, eum, evcr, sigma, tau */
 
@@ -215,24 +215,24 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
         s4 = coeffs.get("S4");
 
         fsr = Maps.immutableEnumMap(ImmutableMap.of(
-            ZhaoSiteClass.I, coeffs.get("FsrCrI"),
-            ZhaoSiteClass.II, coeffs.get("FsrCrII"),
-            ZhaoSiteClass.III, coeffs.get("FsrCrIII"),
-            ZhaoSiteClass.IV, coeffs.get("FsrCrIV")));
+            SiteClass.I, coeffs.get("FsrCrI"),
+            SiteClass.II, coeffs.get("FsrCrII"),
+            SiteClass.III, coeffs.get("FsrCrIII"),
+            SiteClass.IV, coeffs.get("FsrCrIV")));
       }
     }
 
     private final Coefficients c;
-    private final Map<ZhaoSiteClass, Double> aNmax;
+    private final Map<SiteClass, Double> aNmax;
 
     ShallowCrust(Imt imt) {
       super(imt);
       c = new Coefficients(imt, COEFFS_CRUST);
       aNmax = Maps.immutableEnumMap(ImmutableMap.of(
-          ZhaoSiteClass.I, c.AmSCI,
-          ZhaoSiteClass.II, c.AmSCI * exp(c.s2),
-          ZhaoSiteClass.III, c.AmSCI * exp(c.s3),
-          ZhaoSiteClass.IV, c.AmSCI * exp(c.s4)));
+          SiteClass.I, c.AmSCI,
+          SiteClass.II, c.AmSCI * exp(c.s2),
+          SiteClass.III, c.AmSCI * exp(c.s3),
+          SiteClass.IV, c.AmSCI * exp(c.s4)));
     }
 
     @Override
@@ -261,12 +261,12 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
     }
 
     @Override
-    final double elasticSiteAmpRatio(final ZhaoSiteClass siteClass, double zTop) {
+    final double elasticSiteAmpRatio(final SiteClass siteClass, double zTop) {
       return aNmax.get(siteClass);
     }
 
     @Override
-    double smoothingFactor(ZhaoSiteClass siteClass) {
+    double smoothingFactor(SiteClass siteClass) {
       return c.fsr.get(siteClass);
     }
 
@@ -290,7 +290,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
 
       /* Site amplification */
       final double AmSCI, s2, s3, s4;
-      final Map<ZhaoSiteClass, Double> fsr;
+      final Map<SiteClass, Double> fsr;
 
       /* Unused or constant: FcrN, bcr, gcr, ecr, evcr, sigma, tau */
 
@@ -316,24 +316,24 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
         s4 = coeffs.get("S4");
 
         fsr = Maps.immutableEnumMap(ImmutableMap.of(
-            ZhaoSiteClass.I, coeffs.get("FsrUmI"),
-            ZhaoSiteClass.II, coeffs.get("FsrUmII"),
-            ZhaoSiteClass.III, coeffs.get("FsrUmIII"),
-            ZhaoSiteClass.IV, coeffs.get("FsrUmIV")));
+            SiteClass.I, coeffs.get("FsrUmI"),
+            SiteClass.II, coeffs.get("FsrUmII"),
+            SiteClass.III, coeffs.get("FsrUmIII"),
+            SiteClass.IV, coeffs.get("FsrUmIV")));
       }
     }
 
     private final Coefficients c;
-    private final Map<ZhaoSiteClass, Double> aNmax;
+    private final Map<SiteClass, Double> aNmax;
 
     UpperMantle(Imt imt) {
       super(imt);
       c = new Coefficients(imt, COEFFS_CRUST);
       aNmax = Maps.immutableEnumMap(ImmutableMap.of(
-          ZhaoSiteClass.I, c.AmSCI,
-          ZhaoSiteClass.II, c.AmSCI * exp(c.s2),
-          ZhaoSiteClass.III, c.AmSCI * exp(c.s3),
-          ZhaoSiteClass.IV, c.AmSCI * exp(c.s4)));
+          SiteClass.I, c.AmSCI,
+          SiteClass.II, c.AmSCI * exp(c.s2),
+          SiteClass.III, c.AmSCI * exp(c.s3),
+          SiteClass.IV, c.AmSCI * exp(c.s4)));
     }
 
     @Override
@@ -362,12 +362,12 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
     }
 
     @Override
-    final double elasticSiteAmpRatio(final ZhaoSiteClass siteClass, double zTop) {
+    final double elasticSiteAmpRatio(final SiteClass siteClass, double zTop) {
       return aNmax.get(siteClass);
     }
 
     @Override
-    double smoothingFactor(ZhaoSiteClass siteClass) {
+    double smoothingFactor(SiteClass siteClass) {
       return c.fsr.get(siteClass);
     }
 
@@ -395,7 +395,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
 
       /* Site amplification */
       final double AmSCI, s2, s3, s4, s5, s6, s7;
-      final Map<ZhaoSiteClass, Double> fsr;
+      final Map<SiteClass, Double> fsr;
 
       /* Unused or constant: c2, eV, sigma, tau */
 
@@ -424,30 +424,30 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
         s7 = coeffs.get("S7");
 
         fsr = Maps.immutableEnumMap(ImmutableMap.of(
-            ZhaoSiteClass.I, coeffs.get("FsrI"),
-            ZhaoSiteClass.II, coeffs.get("FsrII"),
-            ZhaoSiteClass.III, coeffs.get("FsrIII"),
-            ZhaoSiteClass.IV, coeffs.get("FsrIV")));
+            SiteClass.I, coeffs.get("FsrI"),
+            SiteClass.II, coeffs.get("FsrII"),
+            SiteClass.III, coeffs.get("FsrIII"),
+            SiteClass.IV, coeffs.get("FsrIV")));
       }
     }
 
     private final Coefficients c;
-    private final Map<ZhaoSiteClass, Double> aNmax_shallow;
-    private final Map<ZhaoSiteClass, Double> aNmax_deep;
+    private final Map<SiteClass, Double> aNmax_shallow;
+    private final Map<SiteClass, Double> aNmax_deep;
 
     Interface(Imt imt) {
       super(imt);
       c = new Coefficients(imt, COEFFS_INTER);
       aNmax_shallow = Maps.immutableEnumMap(ImmutableMap.of(
-          ZhaoSiteClass.I, c.AmSCI,
-          ZhaoSiteClass.II, c.AmSCI * exp(c.s2),
-          ZhaoSiteClass.III, c.AmSCI * exp(c.s3),
-          ZhaoSiteClass.IV, c.AmSCI * exp(c.s4)));
+          SiteClass.I, c.AmSCI,
+          SiteClass.II, c.AmSCI * exp(c.s2),
+          SiteClass.III, c.AmSCI * exp(c.s3),
+          SiteClass.IV, c.AmSCI * exp(c.s4)));
       aNmax_deep = Maps.immutableEnumMap(ImmutableMap.of(
-          ZhaoSiteClass.I, c.AmSCI,
-          ZhaoSiteClass.II, c.AmSCI * exp(c.s5),
-          ZhaoSiteClass.III, c.AmSCI * exp(c.s6),
-          ZhaoSiteClass.IV, c.AmSCI * exp(c.s7)));
+          SiteClass.I, c.AmSCI,
+          SiteClass.II, c.AmSCI * exp(c.s5),
+          SiteClass.III, c.AmSCI * exp(c.s6),
+          SiteClass.IV, c.AmSCI * exp(c.s7)));
     }
 
     @Override
@@ -475,12 +475,12 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
     }
 
     @Override
-    final double elasticSiteAmpRatio(final ZhaoSiteClass siteClass, double zTop) {
+    final double elasticSiteAmpRatio(final SiteClass siteClass, double zTop) {
       return (zTop > 25.0 ? aNmax_deep : aNmax_shallow).get(siteClass);
     }
 
     @Override
-    double smoothingFactor(ZhaoSiteClass siteClass) {
+    double smoothingFactor(SiteClass siteClass) {
       return c.fsr.get(siteClass);
     }
 
@@ -509,7 +509,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
 
       /* Site amplification */
       final double AmSCI, s2, s3, s4;
-      final Map<ZhaoSiteClass, Double> fsr;
+      final Map<SiteClass, Double> fsr;
 
       /* Unused or constant: c2, eV, sigma, tau */
 
@@ -534,24 +534,24 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
         s4 = coeffs.get("S4");
 
         fsr = Maps.immutableEnumMap(ImmutableMap.of(
-            ZhaoSiteClass.I, coeffs.get("FsrI"),
-            ZhaoSiteClass.II, coeffs.get("FsrII"),
-            ZhaoSiteClass.III, coeffs.get("FsrIII"),
-            ZhaoSiteClass.IV, coeffs.get("FsrIV")));
+            SiteClass.I, coeffs.get("FsrI"),
+            SiteClass.II, coeffs.get("FsrII"),
+            SiteClass.III, coeffs.get("FsrIII"),
+            SiteClass.IV, coeffs.get("FsrIV")));
       }
     }
 
     private final Coefficients c;
-    private final Map<ZhaoSiteClass, Double> aNmax;
+    private final Map<SiteClass, Double> aNmax;
 
     Slab(Imt imt) {
       super(imt);
       c = new Coefficients(imt, COEFFS_SLAB);
       aNmax = Maps.immutableEnumMap(ImmutableMap.of(
-          ZhaoSiteClass.I, c.AmSCI,
-          ZhaoSiteClass.II, c.AmSCI * exp(c.s2),
-          ZhaoSiteClass.III, c.AmSCI * exp(c.s3),
-          ZhaoSiteClass.IV, c.AmSCI * exp(c.s4)));
+          SiteClass.I, c.AmSCI,
+          SiteClass.II, c.AmSCI * exp(c.s2),
+          SiteClass.III, c.AmSCI * exp(c.s3),
+          SiteClass.IV, c.AmSCI * exp(c.s4)));
     }
 
     @Override
@@ -583,12 +583,12 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
     }
 
     @Override
-    final double elasticSiteAmpRatio(final ZhaoSiteClass siteClass, double zTop) {
+    final double elasticSiteAmpRatio(final SiteClass siteClass, double zTop) {
       return aNmax.get(siteClass);
     }
 
     @Override
-    double smoothingFactor(ZhaoSiteClass siteClass) {
+    double smoothingFactor(SiteClass siteClass) {
       return c.fsr.get(siteClass);
     }
 
@@ -600,23 +600,23 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
 
   static class SiteAmp {
 
-    final Map<ZhaoSiteClass, Double> aMax;
-    final Map<ZhaoSiteClass, Double> sRc;
+    final Map<SiteClass, Double> aMax;
+    final Map<SiteClass, Double> sRc;
 
     SiteAmp(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
 
       aMax = Maps.immutableEnumMap(ImmutableMap.of(
-          ZhaoSiteClass.I, coeffs.get("AmaxI"),
-          ZhaoSiteClass.II, coeffs.get("AmaxII"),
-          ZhaoSiteClass.III, coeffs.get("AmaxIII"),
-          ZhaoSiteClass.IV, coeffs.get("AmaxIV")));
+          SiteClass.I, coeffs.get("AmaxI"),
+          SiteClass.II, coeffs.get("AmaxII"),
+          SiteClass.III, coeffs.get("AmaxIII"),
+          SiteClass.IV, coeffs.get("AmaxIV")));
 
       sRc = Maps.immutableEnumMap(ImmutableMap.of(
-          ZhaoSiteClass.I, coeffs.get("SrcI"),
-          ZhaoSiteClass.II, coeffs.get("SrcII"),
-          ZhaoSiteClass.III, coeffs.get("SrcIII"),
-          ZhaoSiteClass.IV, coeffs.get("SrcIV")));
+          SiteClass.I, coeffs.get("SrcI"),
+          SiteClass.II, coeffs.get("SrcII"),
+          SiteClass.III, coeffs.get("SrcIII"),
+          SiteClass.IV, coeffs.get("SrcIV")));
     }
   }
 
@@ -672,21 +672,21 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
     return (t < β) ? 0.0 : sqrt(t - β);
   }
 
-  private static Range<ZhaoSiteClass> siteRange(double vs30) {
-    if (vs30 >= ZhaoSiteClass.I.vs30) {
-      return Range.singleton(ZhaoSiteClass.I);
-    } else if (vs30 >= ZhaoSiteClass.II.vs30) {
-      return Range.closedOpen(ZhaoSiteClass.I, ZhaoSiteClass.II);
-    } else if (vs30 >= ZhaoSiteClass.III.vs30) {
-      return Range.closedOpen(ZhaoSiteClass.II, ZhaoSiteClass.III);
-    } else if (vs30 >= ZhaoSiteClass.IV.vs30) {
-      return Range.closedOpen(ZhaoSiteClass.III, ZhaoSiteClass.IV);
+  static Range<SiteClass> siteRange(double vs30) {
+    if (vs30 >= SiteClass.I.vs30) {
+      return Range.singleton(SiteClass.I);
+    } else if (vs30 >= SiteClass.II.vs30) {
+      return Range.closedOpen(SiteClass.I, SiteClass.II);
+    } else if (vs30 >= SiteClass.III.vs30) {
+      return Range.closedOpen(SiteClass.II, SiteClass.III);
+    } else if (vs30 >= SiteClass.IV.vs30) {
+      return Range.closedOpen(SiteClass.III, SiteClass.IV);
     } else {
-      return Range.singleton(ZhaoSiteClass.IV);
+      return Range.singleton(SiteClass.IV);
     }
   }
 
-  static enum ZhaoSiteClass {
+  static enum SiteClass {
     I(760.0, 0.91),
     II(450.0, 1.023),
     III(250.0, 1.034),
@@ -695,7 +695,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
     final double vs30;
     final double impedance;
 
-    private ZhaoSiteClass(double vs30, double impedance) {
+    private SiteClass(double vs30, double impedance) {
       this.vs30 = vs30;
       this.impedance = impedance;
     }
