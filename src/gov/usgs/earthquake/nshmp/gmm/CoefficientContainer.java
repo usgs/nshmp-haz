@@ -3,6 +3,7 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableTable;
@@ -90,7 +91,16 @@ final class CoefficientContainer {
         .skip(1);
     // build Imt-value map
     Map<Imt, Double[]> valueMap = Maps.newHashMap();
-    for (String line : Iterables.skip(lines, 1)) {
+
+    Iterable<String> imtLines = FluentIterable.from(lines)
+        .skip(1)
+        .filter(new Predicate<String>() {
+          @Override
+          public boolean apply(String s) {
+            return !s.startsWith("#");
+          }
+        });
+    for (String line : imtLines) {
       Iterable<String> entries = Parsing.split(line, Delimiter.COMMA);
       String imtStr = Iterables.get(entries, 0);
       Imt imt = Imt.parseImt(imtStr);
