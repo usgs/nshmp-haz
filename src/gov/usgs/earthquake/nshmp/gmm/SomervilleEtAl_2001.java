@@ -3,7 +3,7 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
-import static gov.usgs.earthquake.nshmp.gmm.SiteClass.HARD_ROCK;
+import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass.HARD_ROCK;
 import static gov.usgs.earthquake.nshmp.util.Maths.hypot;
 import static java.lang.Math.log;
 
@@ -12,6 +12,7 @@ import com.google.common.collect.Range;
 import java.util.Map;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
 
 /**
  * Implementation of the hard rock ground motion model for the Central and
@@ -92,7 +93,7 @@ public final class SomervilleEtAl_2001 implements GroundMotionModel {
   private static final double calcMean(final Coefficients c, final double Mw, final double rJB,
       final double vs30) {
 
-    SiteClass siteClass = GmmUtils.ceusSiteClass(vs30);
+    CeusSiteClass siteClass = GmmUtils.ceusSiteClass(vs30);
     double gnd = (siteClass == HARD_ROCK) ? c.a1h : c.a1;
     gnd += c.a2 * (Mw - 6.4) + c.a7 * (8.5 - Mw) * (8.5 - Mw);
 

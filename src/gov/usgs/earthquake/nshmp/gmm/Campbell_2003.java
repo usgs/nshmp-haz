@@ -3,8 +3,8 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
+import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass.HARD_ROCK;
 import static gov.usgs.earthquake.nshmp.gmm.MagConverter.NONE;
-import static gov.usgs.earthquake.nshmp.gmm.SiteClass.HARD_ROCK;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -14,6 +14,7 @@ import com.google.common.collect.Range;
 import java.util.Map;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
 
 /**
  * Implementation of the hybrid ground motion model for stable continental
@@ -103,7 +104,7 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
   public final ScalarGroundMotion calc(final GmmInput in) {
 
     double Mw = converter().convert(in.Mw);
-    SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
+    CeusSiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
 
     double μ = calcMean(coeffs, Mw, in.rRup, siteClass);
     double σ = calcStdDev(coeffs, Mw);
@@ -117,7 +118,7 @@ public class Campbell_2003 implements GroundMotionModel, ConvertsMag {
   }
 
   private final double calcMean(final Coefficients c, final double Mw, final double rRup,
-      final SiteClass siteClass) {
+      final CeusSiteClass siteClass) {
 
     double gnd0 = siteClass == HARD_ROCK ? c.c1h : c.c1;
     double gndm = gnd0 + c.c2 * Mw + c.c3 * (8.5 - Mw) * (8.5 - Mw);

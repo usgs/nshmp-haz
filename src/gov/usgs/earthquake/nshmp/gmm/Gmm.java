@@ -162,7 +162,7 @@ public enum Gmm {
       SadighEtAl_1997.COEFFS_BC_HI,
       SadighEtAl_1997.CONSTRAINTS),
 
-  /* Subduction Interface and Slab WUS 2008 2014, AK 2007 */
+  /* Subduction Interface and Slab WUS 2008 2014 2018, AK 2007 */
 
   /** @see AtkinsonBoore_2003 */
   AB_03_GLOB_INTER(
@@ -213,6 +213,13 @@ public enum Gmm {
       AtkinsonMacias_2009.COEFFS,
       AtkinsonMacias_2009.CONSTRAINTS),
 
+  /** @see AtkinsonMacias_2009 */
+  AM_09_BASIN_INTERFACE(
+      AtkinsonMacias_2009.Basin.class,
+      AtkinsonMacias_2009.Basin.NAME,
+      AtkinsonMacias_2009.COEFFS,
+      AtkinsonMacias_2009.CONSTRAINTS),
+
   /** @see BcHydro_2012 */
   BCHYDRO_12_INTER(
       BcHydro_2012.Interface.class,
@@ -224,6 +231,20 @@ public enum Gmm {
   BCHYDRO_12_SLAB(
       BcHydro_2012.Slab.class,
       BcHydro_2012.Slab.NAME,
+      BcHydro_2012.COEFFS,
+      BcHydro_2012.CONSTRAINTS),
+
+  /** @see BcHydro_2012 */
+  BCHYDRO_12_BASIN_INTERFACE(
+      BcHydro_2012.BasinInterface.class,
+      BcHydro_2012.BasinInterface.NAME,
+      BcHydro_2012.COEFFS,
+      BcHydro_2012.CONSTRAINTS),
+
+  /** @see BcHydro_2012 */
+  BCHYDRO_12_BASIN_SLAB(
+      BcHydro_2012.BasinSlab.class,
+      BcHydro_2012.BasinSlab.NAME,
       BcHydro_2012.COEFFS,
       BcHydro_2012.CONSTRAINTS),
 
@@ -252,6 +273,20 @@ public enum Gmm {
   ZHAO_06_SLAB(
       ZhaoEtAl_2006.Slab.class,
       ZhaoEtAl_2006.Slab.NAME,
+      ZhaoEtAl_2006.COEFFS,
+      ZhaoEtAl_2006.CONSTRAINTS),
+
+  /** @see ZhaoEtAl_2006 */
+  ZHAO_06_BASIN_INTERFACE(
+      ZhaoEtAl_2006.BasinInterface.class,
+      ZhaoEtAl_2006.BasinInterface.NAME,
+      ZhaoEtAl_2006.COEFFS,
+      ZhaoEtAl_2006.CONSTRAINTS),
+
+  /** @see ZhaoEtAl_2006 */
+  ZHAO_06_BASIN_SLAB(
+      ZhaoEtAl_2006.BasinSlab.class,
+      ZhaoEtAl_2006.BasinSlab.NAME,
       ZhaoEtAl_2006.COEFFS,
       ZhaoEtAl_2006.CONSTRAINTS),
 
@@ -974,6 +1009,13 @@ public enum Gmm {
             BCHYDRO_12_INTER,
             ZHAO_06_INTER)),
 
+    WUS_18_INTERFACE(
+        "2018 Subduction Interface (WUS) beta",
+        ImmutableList.of(
+            AM_09_BASIN_INTERFACE,
+            BCHYDRO_12_BASIN_INTERFACE,
+            ZHAO_06_BASIN_INTERFACE)),
+    
     WUS_14_SLAB(
         "2014 Subduction Intraslab (WUS)",
         ImmutableList.of(
@@ -981,6 +1023,12 @@ public enum Gmm {
             AB_03_GLOB_SLAB_LOW_SAT,
             BCHYDRO_12_SLAB,
             ZHAO_06_SLAB)),
+
+    WUS_18_SLAB(
+        "2018 Subduction Intraslab (WUS) beta",
+        ImmutableList.of(
+            BCHYDRO_12_BASIN_SLAB,
+            ZHAO_06_BASIN_SLAB)),
 
     CEUS_08_STABLE_CRUST(
         "2008 Stable Crust (CEUS)",

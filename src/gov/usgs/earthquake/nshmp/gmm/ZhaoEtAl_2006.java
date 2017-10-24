@@ -1,9 +1,11 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
+import static gov.usgs.earthquake.nshmp.gmm.CampbellBozorgnia_2014.basinResponseTerm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.ZTOP;
+import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.LN_G_CM_TO_M;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
@@ -13,8 +15,10 @@ import com.google.common.collect.Range;
 
 import java.util.Map;
 
+import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
 
 /**
  * Abstract implementation of the subduction ground motion model by Zhao et al.
@@ -50,6 +54,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * @author Peter Powers
  * @see Gmm#ZHAO_06_INTER
  * @see Gmm#ZHAO_06_SLAB
+ * @see Gmm#ZHAO_06_BASIN_INTERFACE
+ * @see Gmm#ZHAO_06_BASIN_SLAB
  */
 public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
@@ -63,18 +69,23 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
       .set(VS30, Range.closed(150.0, 1000.0))
       .build();
 
+  // TODO eventually remove 0.75s coeffs in favor of interpolation
+  // between 0.7s and 0.8s
+
+  // TODO Zhao06.csv contains higher precision coefficents than
+  // supplied in publication; consider revising d, Sr, Si, Ssl
+
   static final CoefficientContainer COEFFS = new CoefficientContainer("Zhao06.csv");
 
   private static final double HC = 15.0;
   private static final double MC_S = 6.5;
   private static final double MC_I = 6.3;
-  private static final double GCOR = 6.88806;
   private static final double MAX_SLAB_DEPTH = 125.0;
   private static final double INTERFACE_DEPTH = 20.0;
 
   private static final class Coefficients {
 
-    final double a, b, c, d, e, Si, Ss, Ssl, C1, C2, C3, σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
+    final double a, b, c, d, e, Si, Ss, Ssl, C1, C2, C3, C4, σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
 
     // unused
     // final double Sr, tauI;
@@ -92,6 +103,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
       C1 = coeffs.get("C1");
       C2 = coeffs.get("C2");
       C3 = coeffs.get("C3");
+      C4 = coeffs.get("C4");
       σ = coeffs.get("sigma");
       τ = coeffs.get("tau");
       τS = coeffs.get("tauS");
@@ -104,34 +116,39 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   private final Coefficients coeffs;
+  private final CampbellBozorgnia_2014 cb14;
 
   ZhaoEtAl_2006(final Imt imt) {
     coeffs = new Coefficients(imt, COEFFS);
+    cb14 = new CampbellBozorgnia_2014(imt);
   }
 
   @Override
   public final ScalarGroundMotion calc(GmmInput in) {
-    double μ = calcMean(coeffs, isSlab(), in);
+    double fSite = basinTerm() ? siteTermSmooth(coeffs, in.vs30) : siteTermStep(coeffs, in.vs30);
+    // possibly pick up basin term from CB14
+    double fBasin = basinTerm() ? basinResponseTerm(cb14.coeffs, in.vs30, in.z2p5) : 0.0;
+    double μ = calcMean(coeffs, isSlab(), fSite, in) + fBasin;
     double σ = calcStdDev(coeffs, isSlab());
     return DefaultScalarGroundMotion.create(μ, σ);
   }
 
   abstract boolean isSlab();
 
-  private static final double calcMean(final Coefficients c, final boolean slab,
+  abstract boolean basinTerm();
+
+  private static final double calcMean(
+      final Coefficients c,
+      final boolean slab,
+      final double fSite,
       final GmmInput in) {
 
     double Mw = in.Mw;
     double rRup = Math.max(in.rRup, 1.0); // avoid ln(0) below
     double zTop = slab ? min(in.zTop, MAX_SLAB_DEPTH) : INTERFACE_DEPTH;
-    double vs30 = in.vs30;
-
-    double site = (vs30 >= 600.0) ? c.C1 : (vs30 >= 300.0) ? c.C2 : c.C3;
 
     double hfac = (zTop < HC) ? 0.0 : zTop - HC;
-
     double m2 = Mw - (slab ? MC_S : MC_I);
-
     double afac, xmcor;
 
     if (slab) {
@@ -143,17 +160,52 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     }
 
     double r = rRup + c.c * exp(c.d * Mw);
-    double gnd = c.a * Mw + c.b * rRup - Math.log(r) + site;
-    gnd = gnd + c.e * hfac + afac;
-    return gnd + xmcor - GCOR;
-
+    return c.a * Mw + c.b * rRup - Math.log(r) +
+        c.e * hfac + afac + fSite + xmcor -
+        LN_G_CM_TO_M;
   }
 
   private static final double calcStdDev(final Coefficients c, final boolean slab) {
-    // Frankel email may 22 2007: use sigt from table 5. Not the
-    // reduced-tau sigma associated with mag correction seen in
-    // table 6. Zhao says "truth" is somewhere in between.
+    /*
+     * Frankel email may 22 2007: use sigt from table 5. Not the reduced-tau
+     * sigma associated with mag correction seen in table 6. Zhao says "truth"
+     * is somewhere in between.
+     */
     return sqrt(c.σ * c.σ + (slab ? c.τS * c.τS : c.τ * c.τ));
+  }
+
+  private static final double siteTermStep(final Coefficients c, double vs30) {
+    return (vs30 >= 600.0) ? c.C1 : (vs30 >= 300.0) ? c.C2 : c.C3;
+  }
+
+  private static final double siteTermSmooth(final Coefficients c, double vs30) {
+    Range<SiteClass> siteRange = ZhaoEtAl_2016.siteRange(vs30);
+    SiteClass lower = siteRange.upperEndpoint();
+    SiteClass upper = siteRange.lowerEndpoint();
+    if (lower == upper) {
+      return siteCoeff(c, lower);
+    }
+    double fsLower = siteCoeff(c, lower);
+    double fsUpper = siteCoeff(c, upper);
+    return Interpolator.findY(
+        lower.vs30, fsLower,
+        upper.vs30, fsUpper,
+        vs30);
+  }
+
+  private static double siteCoeff(final Coefficients c, final SiteClass siteClass) {
+    switch (siteClass) {
+      case I:
+        return c.C1;
+      case II:
+        return c.C2;
+      case III:
+        return c.C3;
+      case IV:
+        return c.C4;
+      default:
+        throw new IllegalStateException();
+    }
   }
 
   static final class Interface extends ZhaoEtAl_2006 {
@@ -165,6 +217,11 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
     @Override
     final boolean isSlab() {
+      return false;
+    }
+
+    @Override
+    boolean basinTerm() {
       return false;
     }
   }
@@ -180,6 +237,46 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     final boolean isSlab() {
       return true;
     }
+
+    @Override
+    boolean basinTerm() {
+      return false;
+    }
   }
 
+  static final class BasinInterface extends ZhaoEtAl_2006 {
+    static final String NAME = ZhaoEtAl_2006.NAME + " Basin: Interface";
+
+    BasinInterface(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    final boolean isSlab() {
+      return false;
+    }
+
+    @Override
+    boolean basinTerm() {
+      return true;
+    }
+  }
+
+  static final class BasinSlab extends ZhaoEtAl_2006 {
+    static final String NAME = ZhaoEtAl_2006.NAME + " Basin: Slab";
+
+    BasinSlab(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    final boolean isSlab() {
+      return true;
+    }
+
+    @Override
+    boolean basinTerm() {
+      return true;
+    }
+  }
 }

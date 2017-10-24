@@ -3,9 +3,9 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
+import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass.HARD_ROCK;
 import static gov.usgs.earthquake.nshmp.gmm.MagConverter.MB_TO_MW_ATKIN_BOORE;
 import static gov.usgs.earthquake.nshmp.gmm.MagConverter.MB_TO_MW_JOHNSTON;
-import static gov.usgs.earthquake.nshmp.gmm.SiteClass.HARD_ROCK;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
@@ -15,6 +15,7 @@ import com.google.common.collect.Range;
 import java.util.Map;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
 
 /**
  * Implementation of the Toro et al. (1997) ground motion model for stable
@@ -120,7 +121,7 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
     double mag = in.Mw;
     double rJB = in.rJB;
 
-    SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
+    CeusSiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
 
     double thsq = c.th * c.th;
 

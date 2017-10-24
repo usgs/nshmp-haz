@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import gov.usgs.earthquake.nshmp.data.Data;
+import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable.Position;
 import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
@@ -52,8 +53,8 @@ import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
  */
 final class GroundMotionTables {
 
-  static GroundMotionTable getFrankel96(Imt imt, SiteClass siteClass) {
-    return siteClass == SiteClass.SOFT_ROCK ? FRANKEL_SOFT_ROCK.get(imt)
+  static GroundMotionTable getFrankel96(Imt imt, CeusSiteClass siteClass) {
+    return siteClass == CeusSiteClass.SOFT_ROCK ? FRANKEL_SOFT_ROCK.get(imt)
         : FRANKEL_HARD_ROCK.get(imt);
   }
 

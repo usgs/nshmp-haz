@@ -9,7 +9,6 @@ import com.google.common.base.Function;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import com.google.common.primitives.Doubles;
 
@@ -17,6 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -60,11 +63,14 @@ public class GmmTest {
   }
 
   /* Use to generate Gmm result file */
-  static void generateResults(Set<Gmm> gmms, Set<Imt> imts, String inputsFileName,
+  static void generateResults(
+      Set<Gmm> gmms, 
+      Set<Imt> imts, 
+      String inputsFileName,
       String resultsFileName) throws IOException {
+    
     List<GmmInput> inputs = loadInputs(inputsFileName);
-    File out = new File("tmp/Gmm-tests/" + resultsFileName);
-    Files.write("", out, StandardCharsets.UTF_8);
+    List<String> lines = new ArrayList<>();
     for (Gmm gmm : gmms) {
       for (Imt imt : imts) {
         GroundMotionModel gmModel = gmm.instance(imt);
@@ -76,12 +82,13 @@ public class GmmTest {
               Lists.newArrayList(modelIndex++ + "-" + id,
                   String.format("%.6f", Math.exp(sgm.mean())),
                   String.format("%.6f", sgm.sigma())),
-              Delimiter.COMMA) +
-              StandardSystemProperty.LINE_SEPARATOR.value();
-          Files.append(result, out, StandardCharsets.UTF_8);
+              Delimiter.COMMA);
+          lines.add(result);
         }
       }
     }
+    Path out = Paths.get("tmp/Gmm-tests/", resultsFileName);
+    Files.write(out, lines, StandardCharsets.UTF_8);
   }
 
   static List<Object[]> loadResults(String resource) throws IOException {

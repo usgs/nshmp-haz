@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
-import gov.usgs.earthquake.nshmp.gmm.SiteClass;
+import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
 
 @SuppressWarnings("javadoc")
@@ -23,7 +23,7 @@ public class GroundMotionTableTests {
    */
   @Test
   public void testGroundMotionTable() {
-    GroundMotionTable gmt = GroundMotionTables.getFrankel96(Imt.PGA, SiteClass.SOFT_ROCK);
+    GroundMotionTable gmt = GroundMotionTables.getFrankel96(Imt.PGA, CeusSiteClass.SOFT_ROCK);
     double testVal;
 
     // extrema

@@ -5,9 +5,9 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.BASE_10_TO_E;
+import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass.SOFT_ROCK;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
 import static gov.usgs.earthquake.nshmp.gmm.MagConverter.NONE;
-import static gov.usgs.earthquake.nshmp.gmm.SiteClass.SOFT_ROCK;
 import static java.lang.Math.log;
 import static java.lang.Math.log10;
 import static java.lang.Math.max;
@@ -18,6 +18,7 @@ import com.google.common.collect.Range;
 import java.util.Map;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
 
 /**
  * Abstract implementation of the ground motion model for stable continental
@@ -144,7 +145,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
   public final ScalarGroundMotion calc(final GmmInput in) {
 
     // this call will only allow vs30 = 760 | 2000
-    SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
+    CeusSiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
     Coefficients coeffs = siteClass == SOFT_ROCK ? coeffsBC : coeffsA;
     Coefficients coeffsPGA = siteClass == SOFT_ROCK ? coeffsBC_PGA : coeffsA_PGA;
 

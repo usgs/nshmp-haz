@@ -3,8 +3,8 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
+import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass.HARD_ROCK;
 import static gov.usgs.earthquake.nshmp.gmm.MagConverter.NONE;
-import static gov.usgs.earthquake.nshmp.gmm.SiteClass.HARD_ROCK;
 import static java.lang.Math.exp;
 
 import com.google.common.collect.Range;
@@ -12,6 +12,7 @@ import com.google.common.collect.Range;
 import java.util.Map;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
 
 /**
  * Implementation of the Silva et al. (2002) ground motion model for stable
@@ -90,7 +91,7 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    SiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
+    CeusSiteClass siteClass = GmmUtils.ceusSiteClass(in.vs30);
     double μ = calcMean(coeffs, converter().convert(in.Mw), in.rJB, siteClass);
     return DefaultScalarGroundMotion.create(μ, coeffs.σ);
   }
@@ -101,7 +102,7 @@ public class SilvaEtAl_2002 implements GroundMotionModel, ConvertsMag {
   }
 
   private static final double calcMean(final Coefficients c, final double Mw, final double rJB,
-      final SiteClass siteClass) {
+      final CeusSiteClass siteClass) {
 
     double c1 = (siteClass == HARD_ROCK) ? c.c1hr : c.c1;
     double gnd0 = c1 + c.c2 * Mw + c.c10 * (Mw - 6.0) * (Mw - 6.0);

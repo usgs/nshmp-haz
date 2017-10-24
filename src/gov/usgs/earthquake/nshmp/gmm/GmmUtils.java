@@ -7,8 +7,6 @@ import static gov.usgs.earthquake.nshmp.gmm.FaultStyle.STRIKE_SLIP;
 import static gov.usgs.earthquake.nshmp.gmm.FaultStyle.UNKNOWN;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P02;
-import static gov.usgs.earthquake.nshmp.gmm.SiteClass.HARD_ROCK;
-import static gov.usgs.earthquake.nshmp.gmm.SiteClass.SOFT_ROCK;
 import static java.lang.Math.log;
 
 import com.google.common.collect.Iterables;
@@ -42,6 +40,11 @@ public final class GmmUtils {
    * Natural log space conversion of gravity from cm to m.
    */
   static final double LN_G_CM_TO_M = log(980.0);
+
+  enum CeusSiteClass {
+    SOFT_ROCK,
+    HARD_ROCK;
+  }
 
   /**
    * Returns the NSHMP interpretation of fault type based on rake; divisions are
@@ -267,12 +270,12 @@ public final class GmmUtils {
    * @param vs30
    * @return the site class corresponding to the supplied vs30
    */
-  static SiteClass ceusSiteClass(final double vs30) {
+  static CeusSiteClass ceusSiteClass(final double vs30) {
     if (vs30 == 760.0) {
-      return SOFT_ROCK;
+      return CeusSiteClass.SOFT_ROCK;
     }
     if (vs30 == 2000.0) {
-      return HARD_ROCK;
+      return CeusSiteClass.HARD_ROCK;
     }
     throw new IllegalArgumentException("Unsupported CEUS vs30: " + vs30);
   }
@@ -286,7 +289,7 @@ public final class GmmUtils {
 
     double μ = table.get(r, m);
 
-    if (ceusSiteClass(vs30) == SOFT_ROCK) {
+    if (ceusSiteClass(vs30) == CeusSiteClass.SOFT_ROCK) {
       // NOTE this scaling is very atkinson table specific
       // we should probably be checking that period <= 0.02
       // Also, notes in fortran say gm scales with R for PGA
