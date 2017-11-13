@@ -3,6 +3,9 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
+import static java.lang.Math.exp;
+import static java.lang.Math.log;
+import static java.lang.Math.min;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
@@ -35,10 +38,16 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * properly processed by {@link ExceedanceModel#NSHM_CEUS_MAX_INTENSITY} at this
  * time.
  * 
- * <p> This class also manages implementations of the 19 'seed' models used to
+ * <p>This class also manages implementations of the 19 'seed' models used to
  * generate (via Sammons mapping) the 13 NGA-East models and associated weights.
  * Ground motions for the 19 seed and 13 component models are computed via table
  * lookups.
+ * 
+ * <p>On it's own, NGA-East is a hard rock model returning results for a site
+ * class where Vs30 = 3000 m/s. To accomodate other site classes, the Stewart et
+ * al. (2017) CEUS site amplification model is used. This model is applicable to
+ * 200 ≤ vs30 ≤ 2000 m/s. In the current implementation, for vs30 < 200, vs30 =
+ * 200 m/s; for vs30 > 2000, vs30 = 3000 m/s.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -51,7 +60,16 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * Youngs, R., Graves, R., Atkinson, G., 2017, NGA-East ground-motion models for
  * the U.S. Geological Survey national seismic hazard maps: PEER Report No.
  * 2017/03, 180 p.
+ * 
+ * <p><b>Reference:</b> Stewart, J., Parker, G., Harmon, J., Atkinson, G.,
+ * Boore, D., Darragh, R., Silva, W., and Hashash, Y., 2017, Expert panel
+ * recommendations for ergodic site amplification in central and eastern North
+ * America: PEER Report No. 2017/04, 66 p.
  *
+ * <p><b>Reference:</b> Hashash, Y., Harmon, J., Ilhan, O., Parker, G., and
+ * Stewart, 2017, Recommendation for ergodic nonlinear site amplification in
+ * central and eastern North America: PEER Report No. 2017/05, 62 p.
+ * 
  * <p><b>Component:</b> average horizontal (RotD50)
  *
  * @author Peter Powers
@@ -69,9 +87,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * least requires more study to determine if it generates an acceptable
    * approximation
    * 
-   * Note: the following inconsistency exists: NgaEast GroundMotionTables
-   * include SA0P025 but sigma table do not. Sigma tables are used to initialize
-   * supported Imts so there is never a problem.
+   * Note: supported periods are derived from sigma coefficient files. Several
+   * supported periods have been commented out because they are not represented
+   * in teh site amplification model.
    * 
    * When supplied with tables for the 13 usgs models, 0.01s was added with
    * values distinct from PGA, however the seed models are missing this period.
@@ -87,7 +105,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(4.0, 8.2))
       .set(RJB, Range.closed(0.0, 1500.0))
-      .set(VS30, Range.singleton(3000.0))
+      .set(VS30, Range.closed(150.0, 3000.0))
       .build();
 
   /*
@@ -147,7 +165,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private final Coefficients σCoeffsHi;
   private final CoefficientsTotal σCoeffsTotal;
 
-  private final GroundMotionTable[] tables;
+  // private final GroundMotionTable[] tables;
+  // private final GroundMotionTable[] pgaTables;
   private final double[] weights;
 
   NgaEastUsgs_2017(final Imt imt) {
@@ -155,7 +174,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     σCoeffsMid = new Coefficients(imt, COEFFS_SIGMA_MID);
     σCoeffsHi = new Coefficients(imt, COEFFS_SIGMA_HI);
     σCoeffsTotal = new CoefficientsTotal(imt, COEFFS_SIGMA_TOTAL);
-    tables = GroundMotionTables.getNgaEast(imt);
+    // tables = GroundMotionTables.getNgaEast(imt);
     weights = GroundMotionTables.getNgaEastWeights(imt);
   }
 
@@ -226,20 +245,29 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
     final int[] models;
     final double[] weights;
+    final GroundMotionTable[] tables;
+    final GroundMotionTable[] pgaTables;
+    final SiteAmp siteAmp;
 
     /* Specifiy an array of models ids. */
     ModelGroup(Imt imt, int[] models) {
       super(imt);
       this.models = models;
       this.weights = Data.round(8, Data.normalize(selectWeights(super.weights, models)));
+      this.tables = GroundMotionTables.getNgaEast(imt);
+      this.pgaTables = GroundMotionTables.getNgaEast(Imt.PGA);
+      this.siteAmp = new SiteAmp(imt);
     }
 
     @Override
     public MultiScalarGroundMotion calc(GmmInput in) {
-      Position p = super.tables[0].position(in.rRup, in.Mw);
+      Position p = tables[0].position(in.rRup, in.Mw);
       double[] μs = new double[models.length];
       for (int i = 0; i < models.length; i++) {
-        μs[i] = super.tables[models[i] - 1].get(p);
+        int ti = models[i] - 1;
+        double μ = tables[ti].get(p);
+        double μPGA = pgaTables[ti].get(p);
+        μs[i] = μ + siteAmp.calc(μPGA, in.vs30);
       }
       double[] σs = calcSigmas(in.Mw);
       double[] σWts = σs.length > 1 ? SIGMA_WTS : new double[] { 1.0 };
@@ -273,19 +301,23 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
     final int id;
     final GroundMotionTable table;
+    final GroundMotionTable pgaTable;
+    final SiteAmp siteAmp;
 
     Sammons(int id, Imt imt) {
       super(imt);
       this.id = id;
-      this.table = super.tables[id - 1];
+      this.table = GroundMotionTables.getNgaEast(imt)[id - 1];
+      this.pgaTable = GroundMotionTables.getNgaEast(Imt.PGA)[id - 1];
+      this.siteAmp = new SiteAmp(imt);
     }
 
     @Override
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
-      return new DefaultScalarGroundMotion(
-          table.get(p),
-          calcSigmaTotal(in.Mw));
+      double μ = table.get(p) + siteAmp.calc(pgaTable.get(p), in.vs30);
+      double σ = calcSigmaTotal(in.Mw);
+      return new DefaultScalarGroundMotion(μ, σ);
     }
   }
 
@@ -411,19 +443,23 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
     final String id;
     final GroundMotionTable table;
+    final GroundMotionTable pgaTable;
+    final SiteAmp siteAmp;
 
     Seed(String id, Imt imt) {
       super(imt);
       this.id = id;
       this.table = GroundMotionTables.getNgaEastSeed(id, imt);
+      this.pgaTable = GroundMotionTables.getNgaEastSeed(id, Imt.PGA);
+      this.siteAmp = new SiteAmp(imt);
     }
 
     @Override
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
-      return new DefaultScalarGroundMotion(
-          table.get(p),
-          calcSigmaTotal(in.Mw));
+      double μ = table.get(p) + siteAmp.calc(pgaTable.get(p), in.vs30);
+      double σ = calcSigmaTotal(in.Mw);
+      return new DefaultScalarGroundMotion(μ, σ);
     }
   }
 
@@ -606,31 +642,18 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       super(ID, imt);
     }
   }
-  
-  static abstract class UpdatedSeed extends NgaEastUsgs_2017 {
+
+  static abstract class UpdatedSeed extends Seed {
     static final String NAME = NgaEastUsgs_2017.NAME + ": Seed (updated) : ";
 
-    final String id;
-    final GroundMotionTable table;
-
     UpdatedSeed(String id, Imt imt) {
-      super(imt);
-      this.id = id;
-      this.table = GroundMotionTables.getNgaEastSeed(id, imt);
-    }
-
-    @Override
-    public ScalarGroundMotion calc(GmmInput in) {
-      Position p = table.position(in.rRup, in.Mw);
-      return new DefaultScalarGroundMotion(
-          table.get(p),
-          calcSigmaTotal(in.Mw));
+      super(id, imt);
     }
   }
 
   static final class UpdatedSeed_Graizer16 extends UpdatedSeed {
     static final String ID = "Graizer16";
-    static final String NAME = Seed.NAME + ID;
+    static final String NAME = UpdatedSeed.NAME + ID;
 
     UpdatedSeed_Graizer16(Imt imt) {
       super(ID, imt);
@@ -639,12 +662,157 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static final class UpdatedSeed_Graizer17 extends UpdatedSeed {
     static final String ID = "Graizer17";
-    static final String NAME = Seed.NAME + ID;
+    static final String NAME = UpdatedSeed.NAME + ID;
 
     UpdatedSeed_Graizer17(Imt imt) {
       super(ID, imt);
     }
   }
 
+  /**
+   * Stewart et al. site amplification model.
+   * 
+   * The model is applicable to 200 ≤ vs30 ≤ 2000 m/s. In the current
+   * implementation, for vs30 < 200, vs30 = 200 m/s; for vs30 > 2000, vs30 =
+   * 3000 m/s.
+   */
+  static final class SiteAmp {
+
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Site Amplification";
+
+    private static final CoefficientContainer COEFFS = new CoefficientContainer(
+        "nga-east-usgs-siteamp.csv");
+
+    private static final double V_REF = 760.0;
+    private static final double V_REF_NL = 3000.0;
+    private static final double VL = 200.0;
+    private static final double VU = 2000.0;
+
+    private final Coefficients c;
+
+    private static final class Coefficients {
+
+      final double c, v1, v2, vf, σvc, σl, σu, f760, f760σ, f3, f4, f5, vc, σc;
+
+      Coefficients(Imt imt, CoefficientContainer cc) {
+        Map<String, Double> coeffs = cc.get(imt);
+        c = coeffs.get("c");
+        v1 = coeffs.get("V1");
+        v2 = coeffs.get("V2");
+        vf = coeffs.get("Vf");
+        σvc = coeffs.get("sigma_vc");
+        σl = coeffs.get("sigma_l");
+        σu = coeffs.get("sigma_u");
+        f760 = coeffs.get("f760");
+        f760σ = coeffs.get("f760_sigma");
+        f3 = coeffs.get("f3");
+        f4 = coeffs.get("f4");
+        f5 = coeffs.get("f5");
+        vc = coeffs.get("Vc");
+        σc = coeffs.get("sigma_c");
+      }
+    }
+
+    private SiteAmp(Imt imt) {
+      c = new Coefficients(imt, COEFFS);
+    }
+
+    double calc(double pgaRock, double vs30) {
+
+      /*
+       * Developer notes:
+       * 
+       * Waiting on short period guidance; currently doing nothing. IMTs 0.075s
+       * and 0.75s are using coefficients originally supplied for 0.08s and
+       * 0.8s. IMTs 0.15s, 0.25s, and 1.5s are using linearly interpolated
+       * coefficients. Site-amp sigma is implementted below, but currently
+       * commented out and unused.
+       * 
+       * ---------------------------------------------------------------------
+       * 
+       * Comments from Matlab implementation:
+       * 
+       * This function is used to compute site amplification in ln units for
+       * inputs Vs30 (in m/s) and PGAr (peak acceleration for 3000 m/s reference
+       * rock in g). Outputs:
+       * 
+       * 1) Linear and nonlinear site amplification (FLin, FNonlin)
+       * 
+       * 2) Standard deviation (σLin, σNonlin)
+       * 
+       * 3) Total site amplification (fT) and total standard deviation (σT)
+       * 
+       * Notes:
+       * 
+       * 1) We assume fv and f760 are independent, so variance of linear site
+       * amplication is the sum of variance f760 and f760;
+       *
+       * 2) The third value of σc coefficient, which is used to compute
+       * nonlinear site amplication. 0.12 in report, and 0.1 in excel. Here we
+       * use 0.12.
+       * 
+       * 3) Standard deviation of fv calculation is updated by adding a new
+       * coefficient vf instead of using v1.
+       */
+
+      /* Vs30 filtering */
+
+      if (vs30 > VU) {
+        return 0.0;
+      } else if (vs30 < VL) {
+        vs30 = VL;
+      }
+
+      /* Linear response */
+
+      double fv = 0.0;
+      if (vs30 <= c.v1) {
+        fv = c.c * log(c.v1 / V_REF);
+      } else if (vs30 <= c.v2) {
+        fv = c.c * log(vs30 / V_REF);
+      } else {
+        fv = c.c * log(c.v2 / V_REF) + c.c / 2.0 * log(vs30 / c.v2);
+      }
+
+      // double fvσ = 0.0;
+      // if (vs30 < c.vf) {
+      // double σT = c.σl - c.σvc;
+      // double vT = (vs30 - VL) / (c.vf - VL);
+      // fvσ = c.σl - 2.0 * σT * vT + σT * vT * vT;
+      // } else if (vs30 <= c.v2) {
+      // fvσ = c.σvc;
+      // } else {
+      // double vT = (vs30 - c.v2) / (VU - c.v2);
+      // fvσ = c.σvc + (c.σu - c.σvc) * vT * vT;
+      // }
+
+      double fLin = fv + c.f760;
+      // double σLin = sqrt(fvσ * fvσ + c.f760σ * c.f760σ);
+
+      /* Nonlinear response */
+
+      double fNonlin = 0.0;
+      // double σNonlin = 0.0;
+      if (vs30 < c.vc) {
+
+        double f2 = c.f4 *
+            (exp(c.f5 * (min(vs30, V_REF_NL) - 360.0)) -
+                exp(c.f5 * (V_REF_NL - 360.0)));
+        double fT = log((pgaRock + c.f3) / c.f3);
+        fNonlin = f2 * fT;
+
+        // double σf2 = 0.0;
+        // if (vs30 < 300.0) {
+        // σf2 = c.σc;
+        // } else if (vs30 < 1000.0) {
+        // σf2 = c.σc - c.σc / log (1000.0 / 300.0) * log(vs30 /300.0);
+        // }
+        // σNonlin = σf2 * fT;
+      }
+
+      // double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
+      return fLin + fNonlin;
+    }
+  }
 
 }
