@@ -8,12 +8,15 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.validateName;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Streams;
 
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Set;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;
+import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
 import gov.usgs.earthquake.nshmp.util.Named;
 
@@ -100,6 +103,15 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
   @Override
   public String name() {
     return name;
+  }
+
+  /**
+   * The set of {@code Gmm}s used by this model.
+   */
+  public Set<Gmm> gmms() {
+    return Streams.stream(this)
+        .flatMap(ss -> ss.groundMotionModels().gmms().stream())
+        .collect(Sets.toImmutableEnumSet());
   }
 
   /**
