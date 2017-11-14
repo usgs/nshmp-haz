@@ -46,8 +46,8 @@ import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
  *
  * Frankel, Atkinson, and Pezeshk tables store ground motion in log10 values.
  * Atkinson flavored tables store ground motion in cm/s^2. NGA-East tables
- * contain linear ground motion values. All tables interpolate in log10 distance
- * and linear in magnitude.
+ * contain linear ground motion values but are converted to natural-log when
+ * parsed. All tables interpolate in log10 distance and linear in magnitude.
  *
  * @author Peter Powers
  */

@@ -49,7 +49,7 @@ public final class ShahjoueiPezeshk_2016 implements GroundMotionModel {
    * update was provided as the complete (mean and sigma) functional form and is
    * therefore implemented outside the NgaEastUsgs_2017 wrapper class.
    */
-  static final String NAME = NgaEastUsgs_2017.Seed.NAME + "SP16";
+  static final String NAME = NgaEastUsgs_2017.UpdatedSeed.NAME + "SP16";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(4.0, 8.0))

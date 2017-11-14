@@ -62,7 +62,7 @@ public final class GraizerKalkan_2015 implements GroundMotionModel {
    * 
    * Basin term is a function of z1p5. Current implementation linearly
    * interpolates between z1p0 and z2p5 if they are not NaN, otherwise uses a
-   * default value of 0.15 km. This value is
+   * default value of 0.15 km.
    */
 
   static final String NAME = "Graizer & Kalkan (2015)";
