@@ -266,8 +266,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       for (int i = 0; i < models.length; i++) {
         int ti = models[i] - 1;
         double μ = tables[ti].get(p);
-        double μPGA = pgaTables[ti].get(p);
-        μs[i] = μ + siteAmp.calc(μPGA, in.vs30);
+        double μPGA = exp(pgaTables[ti].get(p));
+        double fSite = siteAmp.calc(μPGA, in.vs30);
+        μs[i] = μ + fSite;
       }
       double[] σs = calcSigmas(in.Mw);
       double[] σWts = σs.length > 1 ? SIGMA_WTS : new double[] { 1.0 };
@@ -315,7 +316,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
-      double μ = table.get(p) + siteAmp.calc(pgaTable.get(p), in.vs30);
+      double μPGA = exp(pgaTable.get(p));
+      double fSite = siteAmp.calc(μPGA, in.vs30);
+      double μ = table.get(p) + fSite;
       double σ = calcSigmaTotal(in.Mw);
       return new DefaultScalarGroundMotion(μ, σ);
     }
@@ -457,7 +460,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
-      double μ = table.get(p) + siteAmp.calc(pgaTable.get(p), in.vs30);
+      double μPGA = exp(pgaTable.get(p));
+      double fSite = siteAmp.calc(μPGA, in.vs30);
+      double μ = table.get(p) + fSite;
       double σ = calcSigmaTotal(in.Mw);
       return new DefaultScalarGroundMotion(μ, σ);
     }
@@ -693,8 +698,12 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     private static final class Coefficients {
 
       final double c, v1, v2, vf, σvc, σl, σu, f760, f760σ, f3, f4, f5, vc, σc;
+      final Imt imt;
+      final boolean skipShortPeriod;
 
       Coefficients(Imt imt, CoefficientContainer cc) {
+        this.imt = imt;
+        skipShortPeriod = (imt == Imt.PGA) || (imt.isSA() && imt.period() < 0.06);
         Map<String, Double> coeffs = cc.get(imt);
         c = coeffs.get("c");
         v1 = coeffs.get("V1");
@@ -755,6 +764,12 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
        * coefficient vf instead of using v1.
        */
 
+      /* Short period filtering */
+      
+      if (c.skipShortPeriod) {
+        return 0.0;
+      }
+      
       /* Vs30 filtering */
 
       if (vs30 > VU) {
