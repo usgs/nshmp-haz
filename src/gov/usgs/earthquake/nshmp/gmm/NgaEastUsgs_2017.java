@@ -722,7 +722,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       }
     }
 
-    private SiteAmp(Imt imt) {
+    SiteAmp(Imt imt) {
       c = new Coefficients(imt, COEFFS);
     }
 
