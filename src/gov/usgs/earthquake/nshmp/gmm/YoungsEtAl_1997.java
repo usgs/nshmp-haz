@@ -46,7 +46,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * <p><b>Component:</b> Geometric mean of two horizontal components
  *
  * @author Peter Powers
- * @see Gmm#YOUNGS_97_INTER
+ * @see Gmm#YOUNGS_97_INTERFACE
  * @see Gmm#YOUNGS_97_SLAB
  */
 public abstract class YoungsEtAl_1997 implements GroundMotionModel {

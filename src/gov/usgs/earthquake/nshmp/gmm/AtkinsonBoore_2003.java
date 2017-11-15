@@ -44,12 +44,12 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * <p><b>Component:</b> horizontal (not clear from publication)
  *
  * @author Peter Powers
- * @see Gmm#AB_03_CASC_INTER
- * @see Gmm#AB_03_CASC_SLAB
- * @see Gmm#AB_03_CASC_SLAB_LOW_SAT
- * @see Gmm#AB_03_GLOB_INTER
- * @see Gmm#AB_03_GLOB_SLAB
- * @see Gmm#AB_03_GLOB_SLAB_LOW_SAT
+ * @see Gmm#AB_03_CASCADIA_INTERFACE
+ * @see Gmm#AB_03_CASCADIA_SLAB
+ * @see Gmm#AB_03_CASCADIA_SLAB_LOW_SAT
+ * @see Gmm#AB_03_GLOBAL_INTERFACE
+ * @see Gmm#AB_03_GLOBAL_SLAB
+ * @see Gmm#AB_03_GLOBAL_SLAB_LOW_SAT
  */
 public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
 
@@ -63,14 +63,14 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
       .set(VS30, Range.closed(150.0, 1500.0))
       .build();
 
-  static final CoefficientContainer COEFFS_CASC_SLAB,
-      COEFFS_CASC_INTERFACE,
-      COEFFS_GLOBAL_SLAB,
-      COEFFS_GLOBAL_INTERFACE;
+  static final CoefficientContainer COEFFS_CASCADIA_SLAB;
+  static final CoefficientContainer COEFFS_CASCADIA_INTERFACE;
+  static final CoefficientContainer COEFFS_GLOBAL_SLAB;
+  static final CoefficientContainer COEFFS_GLOBAL_INTERFACE;
 
   static {
-    COEFFS_CASC_SLAB = new CoefficientContainer("AB03_cascadia_slab.csv");
-    COEFFS_CASC_INTERFACE = new CoefficientContainer("AB03_cascadia_interface.csv");
+    COEFFS_CASCADIA_SLAB = new CoefficientContainer("AB03_cascadia_slab.csv");
+    COEFFS_CASCADIA_INTERFACE = new CoefficientContainer("AB03_cascadia_interface.csv");
     COEFFS_GLOBAL_SLAB = new CoefficientContainer("AB03_global_slab.csv");
     COEFFS_GLOBAL_INTERFACE = new CoefficientContainer("AB03_global_interface.csv");
   }
@@ -104,10 +104,14 @@ public abstract class AtkinsonBoore_2003 implements GroundMotionModel {
     mMax = saturationMw();
   }
 
-  private static Coefficients initCoeffs(final Imt imt, final boolean slab,
+  private static Coefficients initCoeffs(
+      final Imt imt,
+      final boolean slab,
       final boolean global) {
-    CoefficientContainer coeffs = slab && global ? COEFFS_GLOBAL_SLAB : slab ? COEFFS_CASC_SLAB
-        : global ? COEFFS_GLOBAL_INTERFACE : COEFFS_CASC_INTERFACE;
+
+    CoefficientContainer coeffs =
+        slab && global ? COEFFS_GLOBAL_SLAB : slab ? COEFFS_CASCADIA_SLAB
+            : global ? COEFFS_GLOBAL_INTERFACE : COEFFS_CASCADIA_INTERFACE;
     return new Coefficients(imt, coeffs);
   }
 
