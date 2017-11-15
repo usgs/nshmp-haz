@@ -759,15 +759,15 @@ public enum Gmm {
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_SEED_GRAIZER16(
-      NgaEastUsgs_2017.UpdatedSeed_Graizer16.class,
-      NgaEastUsgs_2017.UpdatedSeed_Graizer16.NAME,
+      NgaEastUsgs_2017.SeedUpdate_Graizer16.class,
+      NgaEastUsgs_2017.SeedUpdate_Graizer16.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_SEED_GRAIZER17(
-      NgaEastUsgs_2017.UpdatedSeed_Graizer17.class,
-      NgaEastUsgs_2017.UpdatedSeed_Graizer17.NAME,
+      NgaEastUsgs_2017.SeedUpdate_Graizer17.class,
+      NgaEastUsgs_2017.SeedUpdate_Graizer17.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 

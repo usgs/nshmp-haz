@@ -4,6 +4,7 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.BASE_10_TO_E;
+import static java.lang.Math.exp;
 import static java.lang.Math.log10;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -14,6 +15,7 @@ import com.google.common.collect.Range;
 import java.util.Map;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.gmm.NgaEastUsgs_2017.SiteAmp;
 
 /**
  * Implementation of the Shahjouei and Pezeshk (2016) ground motion model for
@@ -49,12 +51,12 @@ public final class ShahjoueiPezeshk_2016 implements GroundMotionModel {
    * update was provided as the complete (mean and sigma) functional form and is
    * therefore implemented outside the NgaEastUsgs_2017 wrapper class.
    */
-  static final String NAME = NgaEastUsgs_2017.UpdatedSeed.NAME + "SP16";
+  static final String NAME = NgaEastUsgs_2017.Seed.NAME + "SP16 (updated)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(4.0, 8.0))
       .set(RJB, Range.closed(0.0, 1000.0))
-      .set(VS30, Range.singleton(3000.0))
+      .set(VS30, Range.closed(200.0, 3000.0))
       .build();
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("SP16.csv");
@@ -89,14 +91,20 @@ public final class ShahjoueiPezeshk_2016 implements GroundMotionModel {
   }
 
   private final Coefficients coeffs;
+  private final Coefficients coeffsPga;
+  private final SiteAmp siteAmp;
 
   ShahjoueiPezeshk_2016(final Imt imt) {
-    coeffs = new Coefficients(imt, COEFFS);
+    this.coeffs = new Coefficients(imt, COEFFS);
+    this.coeffsPga = new Coefficients(Imt.PGA, COEFFS);
+    this.siteAmp = new NgaEastUsgs_2017.SiteAmp(imt);
   }
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    double μ = calcMean(coeffs, in.Mw, in.rJB);
+    double μPga = exp(calcMean(coeffsPga, in.Mw, in.rJB));
+    double fSite = siteAmp.calc(μPga, in.vs30);
+    double μ = calcMean(coeffs, in.Mw, in.rJB) + fSite;
     double σ = calcStdDev(coeffs, in.Mw);
     return DefaultScalarGroundMotion.create(μ, σ);
   }
