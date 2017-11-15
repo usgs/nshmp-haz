@@ -165,49 +165,49 @@ public enum Gmm {
   /* Subduction Interface and Slab WUS 2008 2014 2018, AK 2007 */
 
   /** @see AtkinsonBoore_2003 */
-  AB_03_GLOB_INTER(
+  AB_03_GLOBAL_INTERFACE(
       AtkinsonBoore_2003.GlobalInterface.class,
       AtkinsonBoore_2003.GlobalInterface.NAME,
       AtkinsonBoore_2003.COEFFS_GLOBAL_INTERFACE,
       AtkinsonBoore_2003.CONSTRAINTS),
 
   /** @see AtkinsonBoore_2003 */
-  AB_03_GLOB_SLAB(
+  AB_03_GLOBAL_SLAB(
       AtkinsonBoore_2003.GlobalSlab.class,
       AtkinsonBoore_2003.GlobalSlab.NAME,
       AtkinsonBoore_2003.COEFFS_GLOBAL_SLAB,
       AtkinsonBoore_2003.CONSTRAINTS),
 
   /** @see AtkinsonBoore_2003 */
-  AB_03_GLOB_SLAB_LOW_SAT(
+  AB_03_GLOBAL_SLAB_LOW_SAT(
       AtkinsonBoore_2003.GlobalSlabLowMagSaturation.class,
       AtkinsonBoore_2003.GlobalSlabLowMagSaturation.NAME,
       AtkinsonBoore_2003.COEFFS_GLOBAL_SLAB,
       AtkinsonBoore_2003.CONSTRAINTS),
 
   /** @see AtkinsonBoore_2003 */
-  AB_03_CASC_INTER(
+  AB_03_CASCADIA_INTERFACE(
       AtkinsonBoore_2003.CascadiaInterface.class,
       AtkinsonBoore_2003.CascadiaInterface.NAME,
-      AtkinsonBoore_2003.COEFFS_CASC_INTERFACE,
+      AtkinsonBoore_2003.COEFFS_CASCADIA_INTERFACE,
       AtkinsonBoore_2003.CONSTRAINTS),
 
   /** @see AtkinsonBoore_2003 */
-  AB_03_CASC_SLAB(
+  AB_03_CASCADIA_SLAB(
       AtkinsonBoore_2003.CascadiaSlab.class,
       AtkinsonBoore_2003.CascadiaSlab.NAME,
-      AtkinsonBoore_2003.COEFFS_CASC_SLAB,
+      AtkinsonBoore_2003.COEFFS_CASCADIA_SLAB,
       AtkinsonBoore_2003.CONSTRAINTS),
 
   /** @see AtkinsonBoore_2003 */
-  AB_03_CASC_SLAB_LOW_SAT(
+  AB_03_CASCADIA_SLAB_LOW_SAT(
       AtkinsonBoore_2003.CascadiaSlabLowMagSaturation.class,
       AtkinsonBoore_2003.CascadiaSlabLowMagSaturation.NAME,
-      AtkinsonBoore_2003.COEFFS_CASC_SLAB,
+      AtkinsonBoore_2003.COEFFS_CASCADIA_SLAB,
       AtkinsonBoore_2003.CONSTRAINTS),
 
   /** @see AtkinsonMacias_2009 */
-  AM_09_INTER(
+  AM_09_INTERFACE(
       AtkinsonMacias_2009.class,
       AtkinsonMacias_2009.NAME,
       AtkinsonMacias_2009.COEFFS,
@@ -221,7 +221,7 @@ public enum Gmm {
       AtkinsonMacias_2009.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  BCHYDRO_12_INTER(
+  BCHYDRO_12_INTERFACE(
       BcHydro_2012.Interface.class,
       BcHydro_2012.Interface.NAME,
       BcHydro_2012.COEFFS,
@@ -249,7 +249,7 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see YoungsEtAl_1997 */
-  YOUNGS_97_INTER(
+  YOUNGS_97_INTERFACE(
       YoungsEtAl_1997.Interface.class,
       YoungsEtAl_1997.Interface.NAME,
       YoungsEtAl_1997.COEFFS,
@@ -263,7 +263,7 @@ public enum Gmm {
       YoungsEtAl_1997.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2006 */
-  ZHAO_06_INTER(
+  ZHAO_06_INTERFACE(
       ZhaoEtAl_2006.Interface.class,
       ZhaoEtAl_2006.Interface.NAME,
       ZhaoEtAl_2006.COEFFS,
@@ -1004,10 +1004,10 @@ public enum Gmm {
     WUS_14_INTERFACE(
         "2014 Subduction Interface (WUS)",
         ImmutableList.of(
-            AB_03_GLOB_INTER,
-            AM_09_INTER,
-            BCHYDRO_12_INTER,
-            ZHAO_06_INTER)),
+            AB_03_GLOBAL_INTERFACE,
+            AM_09_INTERFACE,
+            BCHYDRO_12_INTERFACE,
+            ZHAO_06_INTERFACE)),
 
     WUS_18_INTERFACE(
         "2018 Subduction Interface (WUS) beta",
@@ -1019,8 +1019,8 @@ public enum Gmm {
     WUS_14_SLAB(
         "2014 Subduction Intraslab (WUS)",
         ImmutableList.of(
-            AB_03_CASC_SLAB_LOW_SAT,
-            AB_03_GLOB_SLAB_LOW_SAT,
+            AB_03_CASCADIA_SLAB_LOW_SAT,
+            AB_03_GLOBAL_SLAB_LOW_SAT,
             BCHYDRO_12_SLAB,
             ZHAO_06_SLAB)),
 
@@ -1052,15 +1052,15 @@ public enum Gmm {
     WUS_08_INTERFACE(
         "2008 Subduction Interface (WUS)",
         ImmutableList.of(
-            AB_03_GLOB_INTER,
-            YOUNGS_97_INTER,
-            ZHAO_06_INTER)),
+            AB_03_GLOBAL_INTERFACE,
+            YOUNGS_97_INTERFACE,
+            ZHAO_06_INTERFACE)),
 
     WUS_08_SLAB(
         "2008 Subduction Intraslab (WUS)",
         ImmutableList.of(
-            AB_03_CASC_SLAB,
-            AB_03_GLOB_SLAB,
+            AB_03_CASCADIA_SLAB,
+            AB_03_GLOBAL_SLAB,
             YOUNGS_97_SLAB)),
 
     AK_07_ACTIVE_CRUST(
@@ -1074,14 +1074,14 @@ public enum Gmm {
     AK_07_INTERFACE(
         "2007 Subduction Interface (AK)",
         ImmutableList.of(
-            YOUNGS_97_INTER,
+            YOUNGS_97_INTERFACE,
             SADIGH_97)),
 
     AK_07_SLAB(
         "2007 Subduction Intraslab (AK)",
         ImmutableList.of(
             YOUNGS_97_SLAB,
-            AB_03_GLOB_SLAB)),
+            AB_03_GLOBAL_SLAB)),
 
     HI_98(
         "1998 Active Volcanic (HI)",
@@ -1103,7 +1103,7 @@ public enum Gmm {
             ZHAO_16_SLAB,
             ATKINSON_10,
             ATKINSON_15,
-            AB_03_CASC_INTER,
+            AB_03_CASCADIA_INTERFACE,
             MCVERRY_00_CRUSTAL,
             MCVERRY_00_INTERFACE,
             MCVERRY_00_SLAB,

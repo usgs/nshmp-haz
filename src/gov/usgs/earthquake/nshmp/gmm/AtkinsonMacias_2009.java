@@ -39,7 +39,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * <p><b>Component:</b> geometric mean of two horizontal components
  *
  * @author Peter Powers
- * @see Gmm#AM_09_INTER
+ * @see Gmm#AM_09_INTERFACE
  * @see Gmm#AM_09_BASIN_INTERFACE
  */
 public class AtkinsonMacias_2009 implements GroundMotionModel {

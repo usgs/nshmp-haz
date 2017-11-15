@@ -45,7 +45,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * <p><b>Component:</b> Geometric mean of two horizontal components
  *
  * @author Peter Powers
- * @see Gmm#BCHYDRO_12_INTER
+ * @see Gmm#BCHYDRO_12_INTERFACE
  * @see Gmm#BCHYDRO_12_SLAB
  * @see Gmm#BCHYDRO_12_BASIN_INTERFACE
  * @see Gmm#BCHYDRO_12_BASIN_SLAB

@@ -52,7 +52,7 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * <p><b>Component:</b> Geometric mean of two horizontal components
  *
  * @author Peter Powers
- * @see Gmm#ZHAO_06_INTER
+ * @see Gmm#ZHAO_06_INTERFACE
  * @see Gmm#ZHAO_06_SLAB
  * @see Gmm#ZHAO_06_BASIN_INTERFACE
  * @see Gmm#ZHAO_06_BASIN_SLAB

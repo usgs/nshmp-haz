@@ -1,9 +1,9 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_CASC_SLAB;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_CASC_SLAB_LOW_SAT;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_GLOB_SLAB;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_GLOB_SLAB_LOW_SAT;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_CASCADIA_SLAB;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_CASCADIA_SLAB_LOW_SAT;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_GLOBAL_SLAB;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_GLOBAL_SLAB_LOW_SAT;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.BCHYDRO_12_SLAB;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.YOUNGS_97_SLAB;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.ZHAO_06_SLAB;
@@ -52,10 +52,10 @@ public class SubSlab extends GmmTest {
 
   /* Result generation sets */
   private static Set<Gmm> gmms = EnumSet.of(
-      AB_03_GLOB_SLAB,
-      AB_03_GLOB_SLAB_LOW_SAT,
-      AB_03_CASC_SLAB,
-      AB_03_CASC_SLAB_LOW_SAT,
+      AB_03_GLOBAL_SLAB,
+      AB_03_GLOBAL_SLAB_LOW_SAT,
+      AB_03_CASCADIA_SLAB,
+      AB_03_CASCADIA_SLAB_LOW_SAT,
       BCHYDRO_12_SLAB,
       YOUNGS_97_SLAB,
       ZHAO_06_SLAB);

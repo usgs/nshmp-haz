@@ -1,11 +1,11 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_CASC_INTER;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_GLOB_INTER;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.AM_09_INTER;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.BCHYDRO_12_INTER;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.YOUNGS_97_INTER;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.ZHAO_06_INTER;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_CASCADIA_INTERFACE;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_03_GLOBAL_INTERFACE;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.AM_09_INTERFACE;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.BCHYDRO_12_INTERFACE;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.YOUNGS_97_INTERFACE;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.ZHAO_06_INTERFACE;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P2;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA1P0;
@@ -51,12 +51,12 @@ public class SubInterface extends GmmTest {
 
   /* Result generation sets */
   private static Set<Gmm> gmms = EnumSet.of(
-      AB_03_GLOB_INTER,
-      AB_03_CASC_INTER,
-      AM_09_INTER,
-      BCHYDRO_12_INTER,
-      YOUNGS_97_INTER,
-      ZHAO_06_INTER);
+      AB_03_GLOBAL_INTERFACE,
+      AB_03_CASCADIA_INTERFACE,
+      AM_09_INTERFACE,
+      BCHYDRO_12_INTERFACE,
+      YOUNGS_97_INTERFACE,
+      ZHAO_06_INTERFACE);
 
   private static Set<Imt> imts = EnumSet.of(
       PGA,
