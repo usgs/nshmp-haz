@@ -105,7 +105,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(4.0, 8.2))
       .set(RJB, Range.closed(0.0, 1500.0))
-      .set(VS30, Range.closed(150.0, 3000.0))
+      .set(VS30, Range.closed(200.0, 3000.0))
       .build();
 
   /*
@@ -648,28 +648,24 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static abstract class UpdatedSeed extends Seed {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Seed (updated) : ";
-
-    UpdatedSeed(String id, Imt imt) {
-      super(id, imt);
-    }
-  }
-
-  static final class UpdatedSeed_Graizer16 extends UpdatedSeed {
+  /* 
+   * Updated Graizer models.
+   */
+  
+  static final class SeedUpdate_Graizer16 extends Seed {
     static final String ID = "Graizer16";
-    static final String NAME = UpdatedSeed.NAME + ID;
+    static final String NAME = Seed.NAME + ID + " (updated)";
 
-    UpdatedSeed_Graizer16(Imt imt) {
+    SeedUpdate_Graizer16(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static final class UpdatedSeed_Graizer17 extends UpdatedSeed {
+  static final class SeedUpdate_Graizer17 extends Seed {
     static final String ID = "Graizer17";
-    static final String NAME = UpdatedSeed.NAME + ID;
+    static final String NAME = Seed.NAME + ID + " (updated)";
 
-    UpdatedSeed_Graizer17(Imt imt) {
+    SeedUpdate_Graizer17(Imt imt) {
       super(ID, imt);
     }
   }
@@ -722,7 +718,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       }
     }
 
-    private SiteAmp(Imt imt) {
+    SiteAmp(Imt imt) {
       c = new Coefficients(imt, COEFFS);
     }
 
