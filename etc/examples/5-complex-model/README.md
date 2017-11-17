@@ -33,4 +33,30 @@ hazard ../../../../nshm-cous-2008/Western\ US map.geojson config-map.json
 
 This computes 121 curves over a 2° by 2° area and will give you a sense of how long a larger map might take. Note that in the above two examples we specified different output directories in the config files for each calculation.
 
+
+#### Directory structure and output files
+
+<pre style="background: #f7f7f7">
+|- <a href="../../example_outputs/5-complex-model">5-complex-model/ </a>
+|- config-map.json 
+|- config-sites.json 
+|- <a href="../../example_outputs/5-complex-model/curves-map">curves-map/ </a>
+  |- HazadCalc.log
+  |- <a href="../../example_outputs/5-complex-model/curves-map/SA1P0">SA1P0/ </a>
+    |- total.csv
+  |- <a href="../../example_outputs/5-complex-model/curves-map/SA2P0">SA2P0/ </a>
+    |- total.csv
+  |- config.json 
+|- <a href="../../example_outputs/5-complex-model/curves-sites">curves-sites/ </a>
+  |- HazadCalc.log 
+  |- <a href="../../example_outputs/5-complex-model/curves-sites/SA1P0">SA1P0/ </a>
+    |- total.csv
+  |- <a href="../../example_outputs/5-complex-model/curves-sites/SA2P0">SA2P0/ </a>
+    |- total.csv
+  |- config.json 
+|- map.geojson 
+|- sites.geojson 
+</pre>
+
+
 #### Next: [Example 6 – Enhanced output](../6-enhanced-output)

@@ -13,5 +13,69 @@ The [config](https://github.com/usgs/nshmp-haz/blob/master/etc/examples/6-enhanc
 
 See the `nshmp-haz` wiki and JavDocs for more information on source types ([Wiki](https://github.com/usgs/nshmp-haz/wiki/source-types), [JavaDoc](http://usgs.github.io/nshmp-haz/javadoc/index.html?gov/usgs/earthquake/nshmp/eq/model/SourceType.html)) and GMMs ([Wiki](https://github.com/usgs/nshmp-haz/wiki/ground-motion-models), [JavaDoc](http://usgs.github.io/nshmp-haz/javadoc/index.html?gov/usgs/earthquake/nshmp/gmm/Gmm.html)).
 
+
+#### Directory structure and output files
+
+<pre style="background: #f7f7f7">
+|- <a href="../../example_outputs/6-enhanced-output">6-enhanced-output/ </a>
+|- config.json 
+|- <a href="../../example_outputs/6-enhanced-output/curves">curves/ </a>
+  |- HazadCalc.log 
+  |- <a href="../../example_outputs/6-enhanced-output/curves/PGA">PGA/ </a>
+    |- <a href="../../example_outputs/6-enhanced-output/curves/PGA/gmm">gmm/ </a>
+      |- AB_03_CASC_SLAB.csv
+      |- AB_03_GLOB_INTER.csv 
+      |- AB_03_GLOB_SLAB.csv
+      |- BA_08.csv
+      |- CB_08.csv 
+      |- CY_08.csv 
+      |- YOUNGS_97_INTER.csv 
+      |- YOUNGS_97_SLAB.csv 
+      |- ZHAO_06_INTER.csv 
+    |- <a href="../../example_outputs/6-enhanced-output/curves/PGA/source">source/ </a>
+      |- Fault.csv 
+      |- Grid.csv
+      |- Interface.csv 
+      |- Slab.csv
+    |- total.csv 
+  |- <a href="../../example_outputs/6-enhanced-output/curves/SA0P2">SA0P2/ </a>
+    |- <a href="../../example_outputs/6-enhanced-output/curves/SA0P2/gmm">gmm/ </a>
+      |- AB_03_CASC_SLAB.csv
+      |- AB_03_GLOB_INTER.csv 
+      |- AB_03_GLOB_SLAB.csv
+      |- BA_08.csv
+      |- CB_08.csv 
+      |- CY_08.csv 
+      |- YOUNGS_97_INTER.csv 
+      |- YOUNGS_97_SLAB.csv 
+      |- ZHAO_06_INTER.csv 
+    |- <a href="../../example_outputs/6-enhanced-output/curves/SA0P2/source">source/ </a>
+      |- Fault.csv 
+      |- Grid.csv
+      |- Interface.csv 
+      |- Slab.csv
+    |- total.csv 
+  |- <a href="../../example_outputs/6-enhanced-output/curves/SA1P0">SA1P0/ </a>
+    |- <a href="../../example_outputs/6-enhanced-output/curves/SA1P0/gmm">gmm/ </a>
+      |- AB_03_CASC_SLAB.csv
+      |- AB_03_GLOB_INTER.csv 
+      |- AB_03_GLOB_SLAB.csv
+      |- BA_08.csv
+      |- CB_08.csv 
+      |- CY_08.csv 
+      |- YOUNGS_97_INTER.csv 
+      |- YOUNGS_97_SLAB.csv 
+      |- ZHAO_06_INTER.csv 
+    |- <a href="../../example_outputs/6-enhanced-output/curves/SA1P0/source">source/ </a>
+      |- Fault.csv 
+      |- Grid.csv
+      |- Interface.csv 
+      |- Slab.csv
+    |- total.csv 
+  |- config.json
+|- sites.geojson 
+</pre>  
+
+
 #### Next: [Example 7 – Deaggregation](../7-deaggregation)
 

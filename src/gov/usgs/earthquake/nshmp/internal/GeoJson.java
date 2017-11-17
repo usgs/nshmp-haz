@@ -95,21 +95,24 @@ public final class GeoJson {
         key, value, actual);
   }
 
-  /* GeoJSON objectsfor stadard GSON serialization */
+  /* GeoJSON objects for standard GSON serialization */
 
-  static class FeatureCollection {
+  public static class FeatureCollection<T> {
     String type = "FeatureCollection";
-    List<Feature> features;
+    public Object properties;
+    public List<T> features;
   }
+  
 
-  static class Feature {
+  public static class Feature {
     String type = "Feature";
     String id;
     Geometry geometry = new Geometry();
     PropertiesObject properties;
   }
 
-  static Feature createPoint(NamedLocation loc) {
+  
+  public static Feature createPoint(NamedLocation loc) {
     Feature f = new Feature();
     f.geometry.type = "Point";
     f.geometry.coordinates = toCoordinates(loc.location());
@@ -117,6 +120,18 @@ public final class GeoJson {
     f.properties.title = loc.toString();
     return f;
   }
+  
+  
+  public static Feature createPoint(NamedLocation loc,String id) {
+    Feature f = new Feature();
+    f.geometry.type = "Point";
+    f.geometry.coordinates = toCoordinates(loc.location());
+    f.properties = new PropertiesObject();
+    f.properties.location  = loc.toString();
+    f.properties.locationId = id;
+    return f;
+  }
+  
 
   private static final String EXTENTS_COLOR = "#AA0078";
 
@@ -154,6 +169,8 @@ public final class GeoJson {
 
   static class PropertiesObject {
     String title;
+    String location;
+    String locationId;
   }
 
   static class PointProperties extends PropertiesObject {
@@ -182,7 +199,7 @@ public final class GeoJson {
   }
 
   /* brute force compaction of coordinate array onto single line */
-  static String cleanPoints(String s) {
+  public static String cleanPoints(String s) {
     return s.replace(": [\n          ", ": [")
         .replace(",\n          ", ", ")
         .replace("\n        ]", "]") + "\n";
