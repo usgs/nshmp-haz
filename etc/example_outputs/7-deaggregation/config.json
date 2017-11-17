@@ -1,6 +1,0 @@
-{
-  "output": {
-    "dataTypes": ["TOTAL", "GMM"],
-    "flushLimit": 1
-  }
-}
