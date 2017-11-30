@@ -63,7 +63,7 @@ public final class CalcConfig {
   static final String FILE_NAME = "config.json";
   private static final String ID = CalcConfig.class.getSimpleName();
   private static final String STATE_ERROR = "%s %s not set";
-  static final String DEFAULT_OUT = "curves";
+  static final String DEFAULT_OUT = "hazout";
 
   /**
    * The resource from which {@code this} was derived. This field may be empty.
@@ -865,7 +865,7 @@ public final class CalcConfig {
     /**
      * The directory to write any results to.
      *
-     * <p><b>Default:</b> {@code "curves"} for hazard and deaggregation
+     * <p><b>Default:</b> {@code "hazout"} for hazard and deaggregation
      * calculations; {@code "eq-rate"} or {@code "eq-prob"} for rate
      * calculations.
      */

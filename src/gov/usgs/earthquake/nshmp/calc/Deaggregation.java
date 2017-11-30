@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.data.XySequence;
+import gov.usgs.earthquake.nshmp.eq.model.SourceType;
 import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
 
@@ -38,7 +39,7 @@ public final class Deaggregation {
    * Deaggregate on probability of occurrence instead of exceedance.
    * -------------------------------------------------------------------------
    * Revisit precision issues associated with integer based return period;
-   * 2%in50 years os really 0.00040405414, not 1/2475 = 0.0004040404
+   * 2%in50 years is really 0.00040405414, not 1/2475 = 0.0004040404
    * -------------------------------------------------------------------------
    * -------------------------------------------------------------------------
    * One of the difficulties with deaggregation is deciding how to specify
@@ -181,19 +182,23 @@ public final class Deaggregation {
     final DeaggConfig config;
     final DeaggDataset totalDataset;
     final Map<Gmm, DeaggDataset> gmmDatasets;
+    final Map<SourceType, DeaggDataset> typeDatasets;
 
     ImtDeagg(Hazard hazard, DeaggConfig config) {
       this.config = config;
 
       /*
-       * Datasets are combined as follows: For each HazardCurveSet/SourceSet
-       * deaggregation is performed across all relevant Gmms. These are
-       * preserved in a ListMultimap for output of deaggregation by Gmm. It's
-       * too much work to consolidate the ListMultimap and keep track of all the
-       * nested DeaggContributors, so a list is maintained of datasets per
-       * SourceSet, the total across all Gmms that result from each call to
+       * Datasets are combined as follows:
+       * 
+       * For each HazardCurveSet (SourceSet), deaggregation is performed across
+       * all relevant Gmms. These are preserved in ListMultimaps for output of
+       * deaggregation by Gmm and SourceType. It's too much work to consolidate
+       * ListMultimaps on the fly and keep track of all the nested
+       * DeaggContributors, so lists are maintained of Gmm and SourceType
+       * datasets, and the total across all Gmms that result from each call to
        * deaggregate(). The combination of multiple datasets for single
-       * SourceSets is straightforward.
+       * SourceSets is then straightforward via static consolidators in
+       * DeaggDataset.
        */
 
       int sourceSetCount = hazard.sourceSetCurves.size();
@@ -201,7 +206,10 @@ public final class Deaggregation {
           .enumKeys(Gmm.class)
           .arrayListValues(sourceSetCount)
           .build();
-      List<DeaggDataset> totalDatasetList = new ArrayList<>(sourceSetCount);
+      ListMultimap<SourceType, DeaggDataset> typeDatasetLists = MultimapBuilder
+          .enumKeys(SourceType.class)
+          .arrayListValues(sourceSetCount)
+          .build();
 
       for (HazardCurveSet curveSet : hazard.sourceSetCurves.values()) {
         XySequence sourceSetCurve = curveSet.totalCurves.get(config.imt);
@@ -216,7 +224,8 @@ public final class Deaggregation {
             config,
             hazard.site);
         gmmDatasetLists.putAll(Multimaps.forMap(sourceSetDatasets));
-        totalDatasetList.add(SOURCE_CONSOLIDATOR.apply(sourceSetDatasets.values()));
+        DeaggDataset sourceSetTotal = SOURCE_CONSOLIDATOR.apply(sourceSetDatasets.values());
+        typeDatasetLists.put(curveSet.sourceSet.type(), sourceSetTotal);
       }
 
       /* Combine SourceSets across Gmms. */
@@ -224,29 +233,24 @@ public final class Deaggregation {
           Multimaps.asMap(gmmDatasetLists),
           SOURCE_SET_CONSOLIDATOR));
 
+      /* Combine SourceSets across SourceTypes. */
+      typeDatasets = Maps.immutableEnumMap(Maps.transformValues(
+          Multimaps.asMap(typeDatasetLists),
+          SOURCE_SET_CONSOLIDATOR));
+
       /* Combine SourceSet totals. */
-      totalDataset = SOURCE_SET_CONSOLIDATOR.apply(totalDatasetList);
+      totalDataset = SOURCE_SET_CONSOLIDATOR.apply(typeDatasets.values());
     }
+
+    private static final String TOTAL_COMPONENT = "Total";
+    private static final String GMM_COMPONENT = "GMM: ";
+    private static final String TYPE_COMPONENT = "Source Type: ";
 
     @Override
     public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append(NEWLINE);
-      DeaggExport export = new DeaggExport(
-          totalDataset,
-          totalDataset,
-          config,
-          "Total",
-          false);
-      sb.append(export.toString());
-      sb.append(NEWLINE);
-      for (Entry<Gmm, DeaggDataset> ddEntry : gmmDatasets.entrySet()) {
-        export = new DeaggExport(
-            totalDataset,
-            ddEntry.getValue(),
-            config,
-            ddEntry.getKey().toString(),
-            false);
+      for (DeaggExport export : buildExports(false)) {
         sb.append(export.toString());
         sb.append(NEWLINE);
       }
@@ -259,25 +263,39 @@ public final class Deaggregation {
      * object prior to serialization.
      */
     Object toJson() {
-      List<DeaggExport> jsonDeaggs = new ArrayList<>();
+      return buildExports(true);
+    }
+
+    private List<DeaggExport> buildExports(boolean json) {
+      List<DeaggExport> exports = new ArrayList<>();
       DeaggExport total = new DeaggExport(
           totalDataset,
           totalDataset,
           config,
-          "Total",
-          true);
-      jsonDeaggs.add(total);
-      for (Entry<Gmm, DeaggDataset> ddEntry : gmmDatasets.entrySet()) {
+          TOTAL_COMPONENT,
+          json);
+      exports.add(total);
+      for (Entry<Gmm, DeaggDataset> gmmEntry : gmmDatasets.entrySet()) {
         DeaggExport gmm = new DeaggExport(
             totalDataset,
-            ddEntry.getValue(),
+            gmmEntry.getValue(),
             config,
-            ddEntry.getKey().toString(),
-            true);
-        jsonDeaggs.add(gmm);
+            GMM_COMPONENT + gmmEntry.getKey().toString(),
+            json);
+        exports.add(gmm);
       }
-      return jsonDeaggs;
+      for (Entry<SourceType, DeaggDataset> typeEntry : typeDatasets.entrySet()) {
+        DeaggExport type = new DeaggExport(
+            totalDataset,
+            typeEntry.getValue(),
+            config,
+            TYPE_COMPONENT + typeEntry.getKey().toString(),
+            json);
+        exports.add(type);
+      }
+      return exports;
     }
+
   }
 
 }

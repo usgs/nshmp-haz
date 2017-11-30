@@ -58,8 +58,9 @@ public final class HazardExport {
 
   static final String DEAGG_DIR = "deagg";
   static final String GMM_DIR = "gmm";
-  static final String BINARY_SUFFIX = ".bin";
-  static final String TEXT_SUFFIX = ".csv";
+  static final String TYPE_DIR = "source";
+  static final String CURVE_FILE_ASCII = "curves.csv";
+  static final String CURVE_FILE_BINARY = "curves.bin";
   static final String RATE_FMT = "%.8e";
 
   static final OpenOption[] WRITE = new OpenOption[] {
@@ -396,42 +397,42 @@ public final class HazardExport {
 
       Path imtDir = dir.resolve(imt.name());
       Files.createDirectories(imtDir);
-      Path totalFile = imtDir.resolve("total" + TEXT_SUFFIX);
+      Path totalFile = imtDir.resolve(CURVE_FILE_ASCII);
       Files.write(totalFile, totalEntry.getValue(), US_ASCII, options);
 
       Metadata meta = null;
 
       if (exportBinary) {
         meta = metaMap.get(imt);
-        Path totalBinFile = imtDir.resolve("total" + BINARY_SUFFIX);
+        Path totalBinFile = imtDir.resolve(CURVE_FILE_BINARY);
         writeBinaryBatch(totalBinFile, meta, totalCurves.get(imt));
       }
 
       if (exportSource) {
-        Path typeDir = imtDir.resolve("source");
-        Files.createDirectories(typeDir);
+        Path typeParent = imtDir.resolve(TYPE_DIR);
         for (Entry<SourceType, List<String>> typeEntry : typeLines.get(imt).entrySet()) {
           SourceType type = typeEntry.getKey();
-          String filename = type.toString();
-          Path typeFile = typeDir.resolve(filename + TEXT_SUFFIX);
+          Path typeDir = typeParent.resolve(type.name());
+          Files.createDirectories(typeDir);
+          Path typeFile = typeDir.resolve(CURVE_FILE_ASCII);
           Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
           if (exportBinary) {
-            Path typeBinFile = typeDir.resolve(filename + BINARY_SUFFIX);
+            Path typeBinFile = typeDir.resolve(CURVE_FILE_BINARY);
             writeBinaryBatch(typeBinFile, meta, typeCurves.get(imt).get(type));
           }
         }
       }
 
       if (exportGmm) {
-        Path gmmDir = imtDir.resolve("gmm");
-        Files.createDirectories(gmmDir);
+        Path gmmParent = imtDir.resolve(GMM_DIR);
         for (Entry<Gmm, List<String>> gmmEntry : gmmLines.get(imt).entrySet()) {
           Gmm gmm = gmmEntry.getKey();
-          String filename = gmm.name();
-          Path gmmFile = gmmDir.resolve(filename + TEXT_SUFFIX);
+          Path gmmDir = gmmParent.resolve(gmm.name());
+          Files.createDirectories(gmmDir);
+          Path gmmFile = gmmDir.resolve(CURVE_FILE_ASCII);
           Files.write(gmmFile, gmmEntry.getValue(), US_ASCII, options);
           if (exportBinary) {
-            Path gmmBinFile = gmmDir.resolve(filename + BINARY_SUFFIX);
+            Path gmmBinFile = gmmDir.resolve(CURVE_FILE_BINARY);
             writeBinaryBatch(gmmBinFile, meta, gmmCurves.get(imt).get(gmm));
           }
         }
@@ -445,31 +446,43 @@ public final class HazardExport {
   private void writeDeaggs() throws IOException {
 
     /*
-     * Writing of Hazard results will have already created necessary Imt
-     * directories.
+     * Writing of Hazard results will have already created necessary Imt, Gmm,
+     * and SourceType directories.
      */
     for (Deaggregation deagg : deaggs) {
       String name = namedSites ? deagg.site.name : lonLatStr(deagg.site.location);
       for (Entry<Imt, ImtDeagg> imtEntry : deagg.deaggs.entrySet()) {
 
         /* Write total dataset. */
-        Path imtDir = dir.resolve(imtEntry.getKey().name());
-        Path imtDeaggDir = imtDir.resolve(DEAGG_DIR);
-        Files.createDirectories(imtDeaggDir);
         ImtDeagg imtDeagg = imtEntry.getValue();
         DeaggDataset ddTotal = imtDeagg.totalDataset;
         DeaggConfig dc = imtDeagg.config;
         DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total", false);
-        exporter.toFile(imtDeaggDir, name);
+        Path imtDir = dir.resolve(imtEntry.getKey().name());
+        Path totalDir = imtDir.resolve(DEAGG_DIR);
+        Files.createDirectories(totalDir);
+        exporter.toFile(totalDir, name);
+
+        if (exportSource) {
+          for (Entry<SourceType, DeaggDataset> typeEntry : imtDeagg.typeDatasets.entrySet()) {
+            SourceType type = typeEntry.getKey();
+            Path typeDir = imtDir.resolve(TYPE_DIR)
+                .resolve(type.name())
+                .resolve(DEAGG_DIR);
+            DeaggDataset ddType = typeEntry.getValue();
+            exporter = new DeaggExport(ddTotal, ddType, dc, type.toString(), false);
+            exporter.toFile(typeDir, name);
+          }
+        }
 
         if (exportGmm) {
           for (Entry<Gmm, DeaggDataset> gmmEntry : imtDeagg.gmmDatasets.entrySet()) {
+            Gmm gmm = gmmEntry.getKey();
             Path gmmDir = imtDir.resolve(GMM_DIR)
-                .resolve(DEAGG_DIR)
-                .resolve(gmmEntry.getKey().name());
-            Files.createDirectories(gmmDir);
+                .resolve(gmm.name())
+                .resolve(DEAGG_DIR);
             DeaggDataset ddGmm = gmmEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmmEntry.getKey().toString(), false);
+            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmm.toString(), false);
             exporter.toFile(gmmDir, name);
           }
         }
