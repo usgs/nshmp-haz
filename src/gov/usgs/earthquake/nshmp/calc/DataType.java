@@ -12,7 +12,7 @@ import gov.usgs.earthquake.nshmp.gmm.Gmm;
  */
 public enum DataType {
 
-  /** Total hazard curves or magnitude-frequencey distributions, etc. */
+  /** Total hazard curves or magnitude-frequency distributions, etc. */
   TOTAL,
 
   /** {@linkplain Gmm Ground motion model} specific data. */

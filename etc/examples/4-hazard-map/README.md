@@ -9,4 +9,18 @@ A hazard map is just a collection of values plucked from a lot of hazard curves.
 hazard ../../peer/models/Set1-Case1 map.geojson config.json
 ```
 
+__Results directory structure:__
+```
+4-hazard-map/
+  └─ hazout/
+      ├─ config.json
+      ├─ HazardCalc.log
+      ├─ PGA/
+      │   └─ curves.csv
+      ├─ SA0P2/
+      │   └─ curves.csv
+      └─ SA1P0/
+          └─ curves.csv
+```
+
 #### Next: [Example 5 – A more complex model](../5-complex-model)

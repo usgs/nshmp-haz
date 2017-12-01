@@ -1,5 +1,6 @@
 {
   "output": {
-    "dataTypes": ["SOURCE"]
+    "dataTypes": ["SOURCE"],
+    "directory": "hazout-rate-sites"
   }
 }

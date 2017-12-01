@@ -7,6 +7,7 @@ build
 classes
 tmp
 curves*/
+hazout*/
 eq-prob*/
 eq-rate*/
 Scratch*.java

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,9 +37,12 @@ public final class EqRateExport {
 
   private static final String RATE_FORMAT = "%.8g";
   private static final String PROB_FORMAT = "%.2f";
+  private static final String RATE_FILE = "rates.csv";
+  private static final String PROB_FILE = "probs.csv";
 
   private final Logger log;
   private final Path dir;
+  private final String file;
   private final String valueFormat;
   private final CalcConfig config;
   private final boolean exportSource;
@@ -62,7 +64,8 @@ public final class EqRateExport {
     boolean rates = config.rate.valueFormat == ValueFormat.ANNUAL_RATE;
 
     this.log = log;
-    this.dir = HazardExport.createOutputDir(updateOutDir(config.output.directory, rates));
+    this.dir = HazardExport.createOutputDir(config.output.directory);
+    this.file = rates ? RATE_FILE : PROB_FILE;
     this.valueFormat = rates ? RATE_FORMAT : PROB_FORMAT;
     this.config = config;
     this.exportSource = config.output.dataTypes.contains(DataType.SOURCE);
@@ -73,14 +76,6 @@ public final class EqRateExport {
 
     this.batchWatch = Stopwatch.createStarted();
     this.totalWatch = Stopwatch.createStarted();
-  }
-
-  /* If config output is 'curves', change to 'eq-rate' or 'eq-prob'. */
-  static Path updateOutDir(Path dir, boolean rates) {
-    if (dir.toString().equals(CalcConfig.DEFAULT_OUT)) {
-      return (rates ? Paths.get("eq-rate") : Paths.get("eq-prob"));
-    }
-    return dir;
   }
 
   /**
@@ -242,15 +237,15 @@ public final class EqRateExport {
       }
 
       /* write/append */
-      Path totalFile = dir.resolve("total" + HazardExport.TEXT_SUFFIX);
+      Path totalFile = dir.resolve(file);
       Files.write(totalFile, totalLines, US_ASCII, options);
       if (exportSource) {
-        Path typeDir = dir.resolve("source");
-        Files.createDirectories(typeDir);
+        Path parentDir = dir.resolve(HazardExport.TYPE_DIR);
         for (Entry<SourceType, List<String>> typeEntry : typeLines.entrySet()) {
           SourceType type = typeEntry.getKey();
-          String filename = type.toString();
-          Path typeFile = typeDir.resolve(filename + HazardExport.TEXT_SUFFIX);
+          Path typeDir = parentDir.resolve(type.name());
+          Files.createDirectories(typeDir);
+          Path typeFile = typeDir.resolve(file);
           Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
         }
       }

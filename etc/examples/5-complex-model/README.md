@@ -33,4 +33,24 @@ hazard ../../../../nshm-cous-2008/Western\ US map.geojson config-map.json
 
 This computes 121 curves over a 2° by 2° area and will give you a sense of how long a larger map might take. Note that in the above two examples we specified different output directories in the config files for each calculation.
 
+__Results directory structure:__
+```
+5-complex-model/
+  ├─ hazout-sites/
+  │   ├─ config.json
+  │   ├─ HazardCalc.log
+  │   ├─ SA1P0/
+  │   │   └─ curves.csv
+  │   └─ SA2P0/
+  │       └─ curves.csv
+  │
+  └─ hazout-map/
+      ├─ config.json
+      ├─ HazardCalc.log
+      ├─ SA1P0/
+      │   └─ curves.csv
+      └─ SA2P0/
+          └─ curves.csv
+```
+
 #### Next: [Example 6 – Enhanced output](../6-enhanced-output)

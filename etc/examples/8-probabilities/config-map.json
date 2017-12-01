@@ -1,6 +1,7 @@
 {
   "output": {
-    "dataTypes": ["SOURCE"]
+    "dataTypes": ["SOURCE"],
+    "directory": "hazout-prob-map"
   },
   "rate": {
     "distance": 10.0,

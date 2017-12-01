@@ -25,4 +25,18 @@ rate ../../../../nshm-cous-2008/Western\ US map.geojson config-map.json
 
 to generate a map of cumulative Poisson probabilities (i.e. P ≥ M).
 
-Unless an output directory is specified in a supplied config, output will be placed in either an `eq-rate` or `eq-prob` directory. Like `HazardCalc`, `RateCalc` observes the `config.output.curveTypes` `SOURCE` option and will include a `source` directory with rates or probabilities for all contributing source types.
+Like `HazardCalc`, `RateCalc` observes the `config.output.dataTypes` `SOURCE` option and will include a `source` directory with rates or probabilities for all contributing source types.
+
+__Results directory structure:__
+```
+8-probabilities/
+  ├─ hazout-rate-sites/
+  │   ├─ config.json
+  │   ├─ RateCalc.log
+  │   └─ rates.csv
+  └─ hazout-prob-map/
+      ├─ config.json
+      ├─ RateCalc.log
+      └─ probs.csv
+```
+

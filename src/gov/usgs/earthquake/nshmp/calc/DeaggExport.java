@@ -54,6 +54,9 @@ final class DeaggExport {
   final SummaryElements summary;
   final List<JsonContributor> sources;
 
+  private static final String DEAGG_DATA = "data.csv";
+  private static final String DEAGG_SUMMARY = "summary.txt";
+
   /*
    * All component DeaggDatasets require data from the final total DeaggDataset
    * to correctly calculate contributions and represent summary data that is not
@@ -78,13 +81,21 @@ final class DeaggExport {
   }
 
   void toFile(Path dir, String site) throws IOException {
-    Path dataPath = dir.resolve(site + "-data.csv");
-    Files.write(dataPath, data.toString().getBytes(UTF_8));
-    Path summaryPath = dir.resolve(site + "-summary.txt");
+    Path siteDir = dir.resolve(site);
+    Files.createDirectories(siteDir);
+    Path dataPath = siteDir.resolve(DEAGG_DATA);
+    Files.write(
+        dataPath,
+        data.toString().getBytes(UTF_8),
+        WRITE);
+    Path summaryPath = siteDir.resolve(DEAGG_SUMMARY);
     String summaryString = summaryStringBuilder()
         .append(DATASET_SEPARATOR)
         .toString();
-    Files.write(summaryPath, summaryString.getBytes(UTF_8), WRITE);
+    Files.write(
+        summaryPath,
+        summaryString.getBytes(UTF_8),
+        WRITE);
   }
 
   @Override

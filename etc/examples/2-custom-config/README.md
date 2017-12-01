@@ -18,4 +18,18 @@ In this example we've overridden the configuration supplied by the model. Specif
 
 See the [configuration specification](https://github.com/usgs/nshmp-haz/wiki/configuration) for details on default values and supported options and formats.
 
+__Results directory structure:__
+```
+2-custom-config/
+  └─ hazout/
+      ├─ config.json
+      ├─ HazardCalc.log
+      ├─ PGA/
+      │   └─ curves.csv
+      ├─ SA0P2/
+      │   └─ curves.csv
+      └─ SA1P0/
+          └─ curves.csv
+```
+
 #### Next: [Example 3 – Using a custom sites file](../3-sites-file)

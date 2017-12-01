@@ -19,4 +19,18 @@ The [site specification](https://github.com/usgs/nshmp-haz/wiki/sites) wiki page
 
 Note that both formats ([CSV](sites.csv) and [GeoJSON](sites.geojson)) are elegantly rendered by GitHub.
 
+__Results directory structure:__
+```
+3-sites-file/
+  └─ hazout/
+      ├─ config.json
+      ├─ HazardCalc.log
+      ├─ PGA/
+      │   └─ curves.csv
+      ├─ SA0P2/
+      │   └─ curves.csv
+      └─ SA1P0/
+          └─ curves.csv
+```
+
 #### Next: [Example 4 – A simple hazard map](../4-hazard-map)
