@@ -181,6 +181,14 @@ public final class GeoJson {
     @SerializedName("marker-color")
     String strokeColor;
   }
+  
+  public static Feature regionBounds(double lon,double lat) {
+    double[] coordinates = {lon,lat};
+    Feature f = new Feature();
+    f.geometry.type = "Point";
+    f.geometry.coordinates = coordinates;
+    return f;
+  }
 
   static double[] toCoordinates(Location loc) {
     return new double[] { round(loc.lon(), 5), round(loc.lat(), 5) };
