@@ -110,6 +110,14 @@ public final class GeoJson {
     PropertiesObject properties;
   }
 
+  public static Feature regionBounds(double lon, double lat) {
+    Feature f = new Feature();
+    double[] coordinates = {lon,lat};
+    f.geometry.type = "Point";
+    f.geometry.coordinates = coordinates;
+    return f;
+  }
+  
   public static Feature createPoint(NamedLocation loc) {
     Feature f = new Feature();
     f.geometry.type = "Point";
