@@ -37,7 +37,7 @@ final class ModelConfig {
 
   private static final Gson GSON = new GsonBuilder().create();
 
-  private final Path resource;
+  final Path resource;
 
   final String name;
   final double surfaceSpacing;
