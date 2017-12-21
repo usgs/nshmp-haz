@@ -15,6 +15,7 @@ public enum SourceAttribute {
   ID,
   WEIGHT,
   INDEX,
+  PATH,
 
   /* Geometry specific */
   STRIKE,
