@@ -88,8 +88,11 @@ class SystemSectionParser extends DefaultHandler {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName, Attributes atts)
-      throws SAXException {
+  public void startElement(
+      String uri,
+      String localName,
+      String qName,
+      Attributes atts) throws SAXException {
 
     SourceElement e = null;
     try {
@@ -144,8 +147,10 @@ class SystemSectionParser extends DefaultHandler {
   }
 
   @Override
-  public void endElement(String uri, String localName, String qName)
-      throws SAXException {
+  public void endElement(
+      String uri,
+      String localName,
+      String qName) throws SAXException {
 
     SourceElement e = null;
     try {

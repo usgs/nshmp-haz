@@ -86,8 +86,11 @@ class AreaParser extends DefaultHandler {
     return new AreaParser(sax);
   }
 
-  AreaSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  AreaSourceSet parse(
+      InputStream in,
+      GmmSet gmmSet,
+      ModelConfig config) throws SAXException, IOException {
+
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -97,8 +100,10 @@ class AreaParser extends DefaultHandler {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName, Attributes atts)
-      throws SAXException {
+  public void startElement(
+      String uri,
+      String localName,
+      String qName, Attributes atts) throws SAXException {
 
     SourceElement e = null;
     try {
@@ -196,8 +201,10 @@ class AreaParser extends DefaultHandler {
   }
 
   @Override
-  public void endElement(String uri, String localName, String qName)
-      throws SAXException {
+  public void endElement(
+      String uri,
+      String localName,
+      String qName) throws SAXException {
 
     SourceElement e = null;
     try {

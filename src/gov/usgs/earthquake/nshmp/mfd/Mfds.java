@@ -49,7 +49,11 @@ public final class Mfds {
    *        {@code false} otherwise
    * @return a new {@code IncrementalMfd}
    */
-  public static IncrementalMfd newSingleMFD(double mag, double cumRate, boolean floats) {
+  public static IncrementalMfd newSingleMFD(
+      double mag,
+      double cumRate,
+      boolean floats) {
+
     IncrementalMfd mfd = buildIncrementalBaseMFD(mag, mag, 1, floats);
     mfd.set(mag, cumRate);
     return mfd;
@@ -64,7 +68,11 @@ public final class Mfds {
    *        {@code false} otherwise
    * @return a new {@code IncrementalMfd}
    */
-  public static IncrementalMfd newSingleMoBalancedMFD(double mag, double moRate, boolean floats) {
+  public static IncrementalMfd newSingleMoBalancedMFD(
+      double mag,
+      double moRate,
+      boolean floats) {
+
     double cumRate = moRate / magToMoment(mag);
     return newSingleMFD(mag, cumRate, floats);
   }
@@ -118,8 +126,13 @@ public final class Mfds {
    *        {@code false} otherwise
    * @return a new {@code GaussianMfd}
    */
-  public static GaussianMfd newGaussianMFD(double mean, double sigma, int size, double cumRate,
+  public static GaussianMfd newGaussianMFD(
+      double mean,
+      double sigma,
+      int size,
+      double cumRate,
       boolean floats) {
+
     GaussianMfd mfd = buildGaussianBaseMFD(mean, sigma, size, floats);
     mfd.setAllButTotMoRate(mean, sigma, cumRate, DEFAULT_TRUNC_LEVEL, DEFAULT_TRUNC_TYPE);
     return mfd;
@@ -138,8 +151,13 @@ public final class Mfds {
    *        {@code false} otherwise
    * @return a new {@code GaussianMfd}
    */
-  public static GaussianMfd newGaussianMoBalancedMFD(double mean, double sigma, int size,
-      double moRate, boolean floats) {
+  public static GaussianMfd newGaussianMoBalancedMFD(
+      double mean,
+      double sigma,
+      int size,
+      double moRate,
+      boolean floats) {
+
     GaussianMfd mfd = buildGaussianBaseMFD(mean, sigma, size, floats);
     mfd.setAllButCumRate(mean, sigma, moRate, DEFAULT_TRUNC_LEVEL, DEFAULT_TRUNC_TYPE);
     return mfd;
@@ -156,8 +174,13 @@ public final class Mfds {
    * @param cumRate total cumulative rate
    * @return a new {@code GutenbergRichterMfd}
    */
-  public static GutenbergRichterMfd newGutenbergRichterMFD(double min, double delta, int size,
-      double b, double cumRate) {
+  public static GutenbergRichterMfd newGutenbergRichterMFD(
+      double min,
+      double delta,
+      int size,
+      double b,
+      double cumRate) {
+
     GutenbergRichterMfd mfd = buildGutenbergRichterBaseMFD(min, delta, size);
     mfd.setAllButTotMoRate(min, min + (size - 1) * delta, cumRate, b);
     return mfd;
@@ -174,8 +197,13 @@ public final class Mfds {
    * @param moRate total moment rate
    * @return a new {@code GutenbergRichterMfd}
    */
-  public static GutenbergRichterMfd newGutenbergRichterMoBalancedMFD(double min, double delta,
-      int size, double b, double moRate) {
+  public static GutenbergRichterMfd newGutenbergRichterMoBalancedMFD(
+      double min,
+      double delta,
+      int size,
+      double b,
+      double moRate) {
+
     GutenbergRichterMfd mfd = buildGutenbergRichterBaseMFD(min, delta, size);
     mfd.setAllButTotCumRate(min, min + (size - 1) * delta, moRate, b);
     return mfd;
@@ -188,8 +216,15 @@ public final class Mfds {
    * factory method for now until MFD TODO Builders are impl.
    */
 
-  public static IncrementalMfd newTaperedGutenbergRichterMFD(double min, double delta, int size,
-      double a, double b, double corner, double weight) {
+  public static IncrementalMfd newTaperedGutenbergRichterMFD(
+      double min,
+      double delta,
+      int size,
+      double a,
+      double b,
+      double corner,
+      double weight) {
+
     GutenbergRichterMfd mfd = newGutenbergRichterMFD(min, delta, size, b, 1.0);
     double incrRate = incrRate(a, b, min) * weight;
     mfd.scaleToIncrRate(min, incrRate);
@@ -231,8 +266,13 @@ public final class Mfds {
    * Convenience method for computing the number of events in a tapered GR
    * magnitude bin.
    */
-  private static double magBinCount(double minMo, double magMoLo, double magMoHi, double beta,
+  private static double magBinCount(
+      double minMo,
+      double magMoLo,
+      double magMoHi,
+      double beta,
       double cornerMo) {
+
     return pareto(minMo, magMoLo, beta, cornerMo) - pareto(minMo, magMoHi, beta, cornerMo);
   }
 
@@ -240,7 +280,12 @@ public final class Mfds {
    * Complementary Pareto distribution: cumulative number of events with seismic
    * moment greater than magMo with an exponential taper
    */
-  private static double pareto(double minMo, double magMo, double beta, double cornerMo) {
+  private static double pareto(
+      double minMo,
+      double magMo,
+      double beta,
+      double cornerMo) {
+
     return pow(minMo / magMo, beta) * exp((minMo - magMo) / cornerMo);
   }
 
@@ -271,7 +316,13 @@ public final class Mfds {
    * @param b value
    * @return the total moment rate
    */
-  public static double totalMoRate(double mMin, int nMag, double dMag, double a, double b) {
+  public static double totalMoRate(
+      double mMin,
+      int nMag,
+      double dMag,
+      double a,
+      double b) {
+
     double moRate = 1e-10; // start with small, non-zero rate
     double M;
     for (int i = 0; i < nMag; i++) {

@@ -166,7 +166,10 @@ class Loader {
     }
   }
 
-  private static void processTypeDir(Path typeDir, Builder builder, ModelConfig modelConfig,
+  private static void processTypeDir(
+      Path typeDir,
+      Builder builder,
+      ModelConfig modelConfig,
       SAXParser sax) throws IOException {
 
     String typeName = cleanZipName(typeDir.getFileName().toString());
@@ -237,8 +240,13 @@ class Loader {
     }
   }
 
-  private static void processNestedDir(Path sourceDir, SourceType type, GmmSet gmmSet,
-      Builder builder, ModelConfig parentConfig, SAXParser sax) throws IOException {
+  private static void processNestedDir(
+      Path sourceDir,
+      SourceType type,
+      GmmSet gmmSet,
+      Builder builder,
+      ModelConfig parentConfig,
+      SAXParser sax) throws IOException {
 
     /*
      * gmm.xml -- this MUST exist if there is at least one source file and there
@@ -300,10 +308,14 @@ class Loader {
     }
   }
 
-  private static SourceSet<? extends Source> parseSource(SourceType type, Path path,
-      GmmSet gmmSet, ModelConfig config, SAXParser sax) {
-    try {
-      InputStream in = Files.newInputStream(path);
+  private static SourceSet<? extends Source> parseSource(
+      SourceType type,
+      Path path,
+      GmmSet gmmSet,
+      ModelConfig config,
+      SAXParser sax) {
+
+    try (InputStream in = Files.newInputStream(path)) {
       switch (type) {
         case AREA:
           return AreaParser.create(sax).parse(in, gmmSet, config);
@@ -329,8 +341,13 @@ class Loader {
     }
   }
 
-  private static void parseSystemSource(Path dir, GmmSet gmmSet, Builder builder,
-      ModelConfig config, SAXParser sax) {
+  private static void parseSystemSource(
+      Path dir,
+      GmmSet gmmSet,
+      Builder builder,
+      ModelConfig config,
+      SAXParser sax) {
+
     log.info("");
     try {
       Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
@@ -457,15 +474,17 @@ class Loader {
   }
 
   /*
-   * Filters nested source directories, skipping hidden directories and those
-   * that start with a tilde (~).
+   * Filters nested source directories, skipping hidden directories, those that
+   * start with a tilde (~), or that are named 'sources' that may exist in grid,
+   * area, or slab type directories.
    */
   private static enum NestedDirFilter implements DirectoryStream.Filter<Path> {
     INSTANCE;
     @Override
     public boolean accept(Path path) throws IOException {
       String s = path.getFileName().toString();
-      return Files.isDirectory(path) && !Files.isHidden(path) && !s.startsWith("~");
+      return Files.isDirectory(path) && !Files.isHidden(path) && !s.startsWith("~") &&
+          !s.equals(GridParser.RATE_DIR);
     }
   }
 
