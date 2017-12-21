@@ -64,7 +64,7 @@ public abstract class Sites implements Iterable<Site> {
 
   private static Sites readCsv(Path path, CalcConfig defaults) throws IOException {
 
-    checkArgument(Files.exists(path), "Specified site file [%s] does not exist", path);
+    checkArgument(Files.exists(path), "Site file [%s] does not exist", path);
 
     ImmutableList.Builder<Site> listBuilder = ImmutableList.builder();
     Builder siteBuilder = Site.builder(defaults);
@@ -142,7 +142,7 @@ public abstract class Sites implements Iterable<Site> {
    * @throws IOException if a problem is encountered
    */
   public static Sites fromJson(Path path, CalcConfig defaults) throws IOException {
-    checkArgument(Files.exists(path), "Specified site file [%s] does not exist", path);
+    checkArgument(Files.exists(path), "Site file [%s] does not exist", path);
     Gson gson = new GsonBuilder()
         .registerTypeAdapter(Site.class, new Site.Deserializer(defaults))
         .registerTypeAdapter(Sites.class, new Deserializer(defaults))
