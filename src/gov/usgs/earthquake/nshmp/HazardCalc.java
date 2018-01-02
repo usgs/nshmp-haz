@@ -2,6 +2,7 @@ package gov.usgs.earthquake.nshmp;
 
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.util.logging.Level.SEVERE;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
@@ -83,11 +84,12 @@ public class HazardCalc {
       return Optional.of(USAGE);
     }
 
+    Logging.init();
+    Logger log = Logger.getLogger(HazardCalc.class.getName());
+    Path tmpLog = createTempLog();
+    
     try {
-      Logging.init();
-      Logger log = Logger.getLogger(HazardCalc.class.getName());
-      Path tempLog = createTempLog();
-      FileHandler fh = new FileHandler(tempLog.getFileName().toString());
+      FileHandler fh = new FileHandler(tmpLog.getFileName().toString());
       fh.setFormatter(new Logging.ConsoleFormatter());
       log.getParent().addHandler(fh);
 
@@ -113,20 +115,13 @@ public class HazardCalc {
 
       /* Transfer log and write config, windows requires fh.close() */
       fh.close();
-      Files.move(tempLog, out.resolve(PROGRAM + ".log"));
+      Files.move(tmpLog, out.resolve(PROGRAM + ".log"));
       config.write(out);
 
       return Optional.absent();
 
     } catch (Exception e) {
-      StringBuilder sb = new StringBuilder()
-          .append(NEWLINE)
-          .append(PROGRAM + ": error").append(NEWLINE)
-          .append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
-          .append(NEWLINE)
-          .append(Throwables.getStackTraceAsString(e))
-          .append(USAGE);
-      return Optional.of(sb.toString());
+      return handleError(e, log, tmpLog, args, PROGRAM, USAGE);
     }
   }
 
@@ -202,6 +197,28 @@ public class HazardCalc {
       i++;
     }
     return logIncr;
+  }
+  
+  static Optional<String> handleError(
+      Exception e, 
+      Logger log, 
+      Path logfile,
+      String[] args,
+      String program,
+      String usage) {
+    
+    log.log(SEVERE, "** Exiting **" + NEWLINE, e);
+    try {
+      Files.deleteIfExists(logfile);
+    } catch (IOException ioe) {} // do nothing
+    StringBuilder sb = new StringBuilder()
+        .append(NEWLINE)
+        .append(program + ": error").append(NEWLINE)
+        .append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
+        .append(NEWLINE)
+        .append(Throwables.getStackTraceAsString(e))
+        .append(usage);
+    return Optional.of(sb.toString());
   }
 
   /**
