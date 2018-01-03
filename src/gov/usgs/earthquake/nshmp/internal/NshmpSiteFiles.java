@@ -185,7 +185,7 @@ final class NshmpSiteFiles {
           Optional.<String> absent(),
           Optional.of(0.1)));
     }
-    FeatureCollection fc = new FeatureCollection();
+    FeatureCollection<Feature> fc = new FeatureCollection<Feature>();
     fc.features = features;
     String json = GeoJson.cleanPoly(GSON.toJson(fc));
     Files.write(out, json.getBytes(StandardCharsets.UTF_8));
@@ -211,7 +211,7 @@ final class NshmpSiteFiles {
         coords,
         Optional.<String> absent(),
         Optional.of(spacing)));
-    FeatureCollection fc = new FeatureCollection();
+    FeatureCollection<Feature> fc = new FeatureCollection<>();
     fc.features = features;
     String json = GeoJson.cleanPoly(GSON.toJson(fc));
     Files.write(out, json.getBytes(StandardCharsets.UTF_8));
@@ -365,7 +365,7 @@ final class NshmpSiteFiles {
     for (NamedLocation loc : sites) {
       features.add(GeoJson.createPoint(loc));
     }
-    FeatureCollection fc = new FeatureCollection();
+    FeatureCollection<Feature> fc = new FeatureCollection<>();
     fc.features = features;
     String json = GeoJson.cleanPoints(GSON.toJson(fc));
     Files.write(out, json.getBytes(StandardCharsets.UTF_8));
@@ -390,7 +390,7 @@ final class NshmpSiteFiles {
       feature.properties = props;
       features.add(feature);
     }
-    FeatureCollection fc = new FeatureCollection();
+    FeatureCollection<Feature> fc = new FeatureCollection<>();
     fc.features = features;
     String json = GeoJson.cleanPoints(GSON.toJson(fc));
     Files.write(out, json.getBytes(StandardCharsets.UTF_8));
