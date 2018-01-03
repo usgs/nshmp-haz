@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
@@ -142,7 +143,8 @@ public class PeerTest {
         Double.valueOf(expected).equals(Double.valueOf(actual));
   }
 
-  static List<Object[]> load(String modelId, double tolerance) throws IOException {
+  static List<Object[]> load(String modelId, double tolerance) 
+      throws IOException, SAXException {
     Map<String, double[]> expectedsMap = loadExpecteds(modelId);
     HazardModel model = HazardModel.load(MODEL_DIR.resolve(modelId));
     CalcConfig config = model.config();
