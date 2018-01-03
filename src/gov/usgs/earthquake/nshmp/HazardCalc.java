@@ -207,10 +207,11 @@ public class HazardCalc {
       String program,
       String usage) {
     
-    log.log(SEVERE, "** Exiting **" + NEWLINE, e);
+    log.severe(NEWLINE + "** Exiting **");
     try {
+      // cleanup; do nothing on failure
       Files.deleteIfExists(logfile);
-    } catch (IOException ioe) {} // do nothing
+    } catch (IOException ioe) {} 
     StringBuilder sb = new StringBuilder()
         .append(NEWLINE)
         .append(program + ": error").append(NEWLINE)
