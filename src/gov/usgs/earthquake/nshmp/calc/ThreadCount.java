@@ -27,7 +27,17 @@ public enum ThreadCount {
   },
 
   /**
-   * Half of {@code ALL}.
+   * The greater of one and a quarter of {@link #ALL}.
+   */
+  QUARTER {
+    @Override
+    public int value() {
+      return Math.max(1, CORES / 4);
+    }
+  },
+
+  /**
+   * The greater of one and half of {@link #ALL}.
    */
   HALF {
     @Override
@@ -37,7 +47,7 @@ public enum ThreadCount {
   },
 
   /**
-   * Two less than {@code ALL}, so as to not commandeer all available resources.
+   * The greater of one and two less than {@link #ALL}.
    */
   N_MINUS_2 {
     @Override
