@@ -648,10 +648,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  /* 
+  /*
    * Updated Graizer models.
    */
-  
+
   static final class SeedUpdate_Graizer16 extends Seed {
     static final String ID = "Graizer16";
     static final String NAME = Seed.NAME + ID + " (updated)";
@@ -695,11 +695,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       final double c, v1, v2, vf, σvc, σl, σu, f760, f760σ, f3, f4, f5, vc, σc;
       final Imt imt;
-      final boolean skipShortPeriod;
 
       Coefficients(Imt imt, CoefficientContainer cc) {
         this.imt = imt;
-        skipShortPeriod = (imt == Imt.PGA) || (imt.isSA() && imt.period() < 0.06);
         Map<String, Double> coeffs = cc.get(imt);
         c = coeffs.get("c");
         v1 = coeffs.get("V1");
@@ -727,11 +725,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /*
        * Developer notes:
        * 
-       * Waiting on short period guidance; currently doing nothing. IMTs 0.075s
-       * and 0.75s are using coefficients originally supplied for 0.08s and
-       * 0.8s. IMTs 0.15s, 0.25s, and 1.5s are using linearly interpolated
-       * coefficients. Site-amp sigma is implementted below, but currently
-       * commented out and unused.
+       * Model rcently updated based on short period guidance from J. Stewart
+       * (email 12/21/17). Vs30 values outside the range 200 < Vs30 < 2000 m/s
+       * are clamped to the supported range. Site-amp sigma is implemented
+       * below, but currently commented out and unused.
        * 
        * ---------------------------------------------------------------------
        * 
@@ -760,12 +757,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
        * coefficient vf instead of using v1.
        */
 
-      /* Short period filtering */
-      
-      if (c.skipShortPeriod) {
-        return 0.0;
-      }
-      
       /* Vs30 filtering */
 
       if (vs30 > VU) {
