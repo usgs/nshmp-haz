@@ -95,8 +95,11 @@ class FaultParser extends DefaultHandler {
     return new FaultParser(checkNotNull(sax));
   }
 
-  FaultSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  FaultSourceSet parse(
+      InputStream in,
+      GmmSet gmmSet,
+      ModelConfig config) throws SAXException, IOException {
+
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -107,8 +110,11 @@ class FaultParser extends DefaultHandler {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName, Attributes atts)
-      throws SAXException {
+  public void startElement(
+      String uri,
+      String localName,
+      String qName,
+      Attributes atts) throws SAXException {
 
     SourceElement e = null;
     try {
@@ -200,8 +206,10 @@ class FaultParser extends DefaultHandler {
   }
 
   @Override
-  public void endElement(String uri, String localName, String qName)
-      throws SAXException {
+  public void endElement(
+      String uri,
+      String localName,
+      String qName) throws SAXException {
 
     SourceElement e = null;
     try {
@@ -412,8 +420,7 @@ class FaultParser extends DefaultHandler {
         } else {
 
           // single Mfds with epi uncertainty are moment balanced at
-          // the
-          // central/single magnitude of the distribution
+          // the central/single magnitude of the distribution
 
           double moRate = tmr * mfdWeight;
           IncrementalMfd mfd = Mfds.newSingleMoBalancedMFD(epiMag, moRate, data.floats);

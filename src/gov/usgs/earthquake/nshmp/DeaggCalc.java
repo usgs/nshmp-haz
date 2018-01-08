@@ -4,13 +4,11 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Throwables;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -73,11 +71,12 @@ public class DeaggCalc {
       return Optional.of(USAGE);
     }
 
+    Logging.init();
+    Logger log = Logger.getLogger(DeaggCalc.class.getName());
+    Path tmpLog = HazardCalc.createTempLog();
+
     try {
-      Logging.init();
-      Logger log = Logger.getLogger(DeaggCalc.class.getName());
-      Path tempLog = HazardCalc.createTempLog();
-      FileHandler fh = new FileHandler(tempLog.getFileName().toString());
+      FileHandler fh = new FileHandler(tmpLog.getFileName().toString());
       fh.setFormatter(new Logging.ConsoleFormatter());
       log.getParent().addHandler(fh);
 
@@ -105,20 +104,13 @@ public class DeaggCalc {
 
       /* Transfer log and write config, windows requires fh.close() */
       fh.close();
-      Files.move(tempLog, out.resolve(PROGRAM + ".log"));
+      Files.move(tmpLog, out.resolve(PROGRAM + ".log"));
       config.write(out);
 
       return Optional.absent();
 
     } catch (Exception e) {
-      StringBuilder sb = new StringBuilder()
-          .append(NEWLINE)
-          .append(PROGRAM + ": error").append(NEWLINE)
-          .append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
-          .append(NEWLINE)
-          .append(Throwables.getStackTraceAsString(e))
-          .append(USAGE);
-      return Optional.of(sb.toString());
+      return HazardCalc.handleError(e, log, tmpLog, args, PROGRAM, USAGE);
     }
   }
 

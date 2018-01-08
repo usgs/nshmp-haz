@@ -17,6 +17,11 @@ public enum MfdType {
   /** A Gutenberg-Richter MFD with a tapered upper tail. */
   GR_TAPER,
 
-  /** An MFD defining multiple magnitudes with varyig rates. */
+  /**
+   * An MFD defining multiple magnitudes with varying rates. This is only used
+   * in the 2008 California model where the rates of magnitudes above 6.5 were
+   * reduced by a fixed amount, yielding MFDs that no longer had a clean
+   * functional form.
+   */
   INCR;
 }

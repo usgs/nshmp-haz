@@ -30,7 +30,7 @@ public class Logging {
       InputStream is = Logging.class.getResourceAsStream("/logging.properties");
       LogManager.getLogManager().readConfiguration(is);
     } catch (IOException ioe) {
-      ioe.printStackTrace();
+      throw new RuntimeException(ioe);
     }
   }
 
@@ -44,9 +44,8 @@ public class Logging {
     Logger log = Logger.getLogger(clazz.getName());
     StringBuilder sb = new StringBuilder(LF);
     sb.append("** Error loading resource: ").append(e.getMessage()).append(LF);
-    sb.append("** Exiting **").append(LF).append(LF);
     log.log(SEVERE, sb.toString(), e);
-    System.exit(1);
+    throw new RuntimeException(e);
   }
 
   /**

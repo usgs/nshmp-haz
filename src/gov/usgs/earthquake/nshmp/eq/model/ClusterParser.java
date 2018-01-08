@@ -92,8 +92,11 @@ class ClusterParser extends DefaultHandler {
     return new ClusterParser(checkNotNull(sax));
   }
 
-  ClusterSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  ClusterSourceSet parse(
+      InputStream in,
+      GmmSet gmmSet,
+      ModelConfig config) throws SAXException, IOException {
+
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -104,8 +107,11 @@ class ClusterParser extends DefaultHandler {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName, Attributes atts)
-      throws SAXException {
+  public void startElement(
+      String uri,
+      String localName,
+      String qName,
+      Attributes atts) throws SAXException {
 
     SourceElement e = null;
     try {
@@ -215,8 +221,10 @@ class ClusterParser extends DefaultHandler {
   }
 
   @Override
-  public void endElement(String uri, String localName, String qName)
-      throws SAXException {
+  public void endElement(
+      String uri,
+      String localName,
+      String qName) throws SAXException {
 
     SourceElement e = null;
     try {

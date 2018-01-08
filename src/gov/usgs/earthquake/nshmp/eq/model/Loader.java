@@ -2,10 +2,10 @@ package gov.usgs.earthquake.nshmp.eq.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static gov.usgs.earthquake.nshmp.eq.model.SystemParser.GRIDSOURCE_FILENAME;
 import static gov.usgs.earthquake.nshmp.eq.model.SystemParser.RUPTURES_FILENAME;
 import static gov.usgs.earthquake.nshmp.eq.model.SystemParser.SECTIONS_FILENAME;
+import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.nio.file.Files.newDirectoryStream;
 import static java.util.logging.Level.SEVERE;
 
@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -41,17 +42,15 @@ import gov.usgs.earthquake.nshmp.calc.CalcConfig;
 import gov.usgs.earthquake.nshmp.eq.model.HazardModel.Builder;
 
 /**
- * {@code HazardModel} loader. This class takes care of extensive checked
- * exceptions required when initializing a {@code HazardModel} and will exit the
- * JVM in most cases.
+ * {@code HazardModel} loader. This class logs information relevant to the many
+ * various exceptions, both checked and unchecked, that may be thrown when
+ * initializing a {@code HazardModel}.
  *
  * @author Peter Powers
  */
 class Loader {
 
   static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
-  private static final String LF = LINE_SEPARATOR.value();
   private static Logger log;
 
   static {
@@ -63,27 +62,25 @@ class Loader {
    * directory containing sub-directories by {@code SourceType}s, or the
    * absolute path to a zipped model.
    *
-   * <p>This method is not thread safe. Any exceptions thrown while loading will
-   * be logged and the JVM will exit.
+   * <p>This method is not thread safe. This method wraps all {@code Runtime}
+   * and other exceptions in {@code IO} and {@code SAXException}s.
    *
    * @param path to model directory or Zip file (absolute)
    * @return a newly created {@code HazardModel}
    */
-  static HazardModel load(Path path) {
-
-    SAXParser sax = null;
-    try {
-      sax = SAXParserFactory.newInstance().newSAXParser();
-    } catch (ParserConfigurationException | SAXException e) {
-      throw new RuntimeException(e);
-    }
-
-    HazardModel.Builder builder = HazardModel.builder();
-    List<Path> typePaths = null;
+  static HazardModel load(Path path) throws IOException, SAXException {
 
     try {
 
-      checkArgument(Files.exists(path), "Specified model does not exist: %s", path);
+      SAXParser sax = SAXParserFactory.newInstance().newSAXParser();
+
+      if (!Files.exists(path)) {
+        String mssg = String.format("Specified model does not exist: %s", path);
+        throw new FileNotFoundException(mssg);
+      }
+
+      HazardModel.Builder builder = HazardModel.builder();
+      List<Path> typePaths = null;
       Path typeDirPath = typeDirectory(path);
 
       ModelConfig modelConfig = ModelConfig.Builder.fromFile(typeDirPath).build();
@@ -106,18 +103,24 @@ class Loader {
         log.info("==========================" + Strings.repeat("=", typeName.length()));
       }
 
-    } catch (IOException | URISyntaxException e) {
-      handleConfigException(e);
+      log.info("");
+      HazardModel model = builder.build();
+      return model;
+
+    } catch (URISyntaxException | ParserConfigurationException oe) {
+      log.severe(NEWLINE + "** Error loading model **");
+      throw new IOException(oe);
+    } catch (Exception e) {
+      log.severe(NEWLINE + "** Error loading model **");
+      throw e;
     }
-
-    log.info("");
-    HazardModel model = builder.build();
-
-    return model;
   }
 
-  private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of("create", "false",
-      "encoding", "UTF-8");
+  private static final Map<String, String> ZIP_ENV_MAP = ImmutableMap.of(
+      "create",
+      "false",
+      "encoding",
+      "UTF-8");
 
   private static final String ZIP_SCHEME = "jar:file";
 
@@ -166,8 +169,11 @@ class Loader {
     }
   }
 
-  private static void processTypeDir(Path typeDir, Builder builder, ModelConfig modelConfig,
-      SAXParser sax) throws IOException {
+  private static void processTypeDir(
+      Path typeDir,
+      Builder builder,
+      ModelConfig modelConfig,
+      SAXParser sax) throws IOException, SAXException {
 
     String typeName = cleanZipName(typeDir.getFileName().toString());
     SourceType type = SourceType.fromString(typeName);
@@ -199,14 +205,9 @@ class Loader {
     Path gmmPath = typeDir.resolve(GmmParser.FILE_NAME);
 
     // if source files exist, gmm.xml must also exist
-    if (typePaths.size() > 0) {
-      try {
-        checkState(Files.exists(gmmPath), "%s sources present. Where is gmm.xml?",
-            typeDir.getFileName());
-      } catch (IllegalStateException ise) {
-        handleConfigException(ise);
-        throw ise;
-      }
+    if (typePaths.size() > 0 && !Files.exists(gmmPath)) {
+      String mssg = gmmErrorMessage(typeDir.getFileName());
+      throw new FileNotFoundException(mssg);
     }
 
     // having checked directory state, load gmms if present
@@ -218,8 +219,7 @@ class Loader {
 
     for (Path sourcePath : typePaths) {
       log.info("Parsing: " + typeDir.getParent().relativize(sourcePath));
-      SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, gmmSet, config,
-          sax);
+      SourceSet<? extends Source> sourceSet = parseSource(type, sourcePath, gmmSet, config, sax);
       builder.sourceSet(sourceSet);
     }
 
@@ -237,8 +237,13 @@ class Loader {
     }
   }
 
-  private static void processNestedDir(Path sourceDir, SourceType type, GmmSet gmmSet,
-      Builder builder, ModelConfig parentConfig, SAXParser sax) throws IOException {
+  private static void processNestedDir(
+      Path sourceDir,
+      SourceType type,
+      GmmSet gmmSet,
+      Builder builder,
+      ModelConfig parentConfig,
+      SAXParser sax) throws IOException, SAXException {
 
     /*
      * gmm.xml -- this MUST exist if there is at least one source file and there
@@ -247,8 +252,7 @@ class Loader {
 
     // Collect nested paths
     List<Path> nestedSourcePaths = null;
-    try (DirectoryStream<Path> ds =
-        Files.newDirectoryStream(sourceDir, SourceFilter.INSTANCE)) {
+    try (DirectoryStream<Path> ds = Files.newDirectoryStream(sourceDir, SourceFilter.INSTANCE)) {
       nestedSourcePaths = Lists.newArrayList(ds);
     }
 
@@ -269,12 +273,9 @@ class Loader {
 
       // gmm
       Path nestedGmmPath = sourceDir.resolve(GmmParser.FILE_NAME);
-      try {
-        checkState(Files.exists(nestedGmmPath) || gmmSet != null,
-            "%s sources present. Where is gmm.xml?", sourceDir.getFileName());
-      } catch (IllegalStateException ise) {
-        handleConfigException(ise);
-        throw ise;
+      if (!Files.exists(nestedGmmPath) && gmmSet != null) {
+        String mssg = gmmErrorMessage(sourceDir.getFileName());
+        throw new FileNotFoundException(mssg);
       }
 
       if (Files.exists(nestedGmmPath)) {
@@ -300,10 +301,14 @@ class Loader {
     }
   }
 
-  private static SourceSet<? extends Source> parseSource(SourceType type, Path path,
-      GmmSet gmmSet, ModelConfig config, SAXParser sax) {
-    try {
-      InputStream in = Files.newInputStream(path);
+  private static SourceSet<? extends Source> parseSource(
+      SourceType type,
+      Path path,
+      GmmSet gmmSet,
+      ModelConfig config,
+      SAXParser sax) throws IOException, SAXException {
+
+    try (InputStream in = Files.newInputStream(path)) {
       switch (type) {
         case AREA:
           return AreaParser.create(sax).parse(in, gmmSet, config);
@@ -329,8 +334,13 @@ class Loader {
     }
   }
 
-  private static void parseSystemSource(Path dir, GmmSet gmmSet, Builder builder,
-      ModelConfig config, SAXParser sax) {
+  private static void parseSystemSource(
+      Path dir,
+      GmmSet gmmSet,
+      Builder builder,
+      ModelConfig config,
+      SAXParser sax) throws IOException, SAXException {
+
     log.info("");
     try {
       Path sectionsPath = dir.resolve(SECTIONS_FILENAME);
@@ -362,7 +372,8 @@ class Loader {
     }
   }
 
-  private static GmmSet parseGMM(Path path, SAXParser sax) {
+  private static GmmSet parseGMM(Path path, SAXParser sax)
+      throws IOException, SAXException {
     try {
       InputStream in = Files.newInputStream(path);
       return GmmParser.create(sax).parse(in);
@@ -372,45 +383,45 @@ class Loader {
     }
   }
 
-  /* This method will exit runtime environment */
-  private static void handleConfigException(Exception e) {
-    StringBuilder sb = new StringBuilder(LF);
-    sb.append("** Configuration error: ").append(e.getMessage());
-    log.log(SEVERE, sb.toString(), e);
-    System.exit(1);
-  }
+  /* Called from all *parse*() methods. */
+  private static void handleParseException(Exception e, Path path)
+      throws IOException, SAXException {
 
-  /* This method will exit runtime environment */
-  private static void handleParseException(Exception e, Path path) {
-    StringBuilder sb = new StringBuilder(LF);
+    StringBuilder sb = new StringBuilder(NEWLINE);
+    sb.append("** Parsing error: ");
     if (e instanceof SAXParseException) {
       SAXParseException spe = (SAXParseException) e;
-      sb.append("** SAX parser error:").append(LF);
-      sb.append("**   Path: ").append(path).append(LF);
+      sb.append("SAX parser **").append(NEWLINE);
+      sb.append("**   Path: ").append(path).append(NEWLINE);
       sb.append("**   Line: ").append(spe.getLineNumber());
-      sb.append(" [").append(spe.getColumnNumber()).append("]").append(LF);
-      sb.append("**   Info: ").append(spe.getMessage()).append(LF);
+      sb.append(" [").append(spe.getColumnNumber()).append("]").append(NEWLINE);
+      sb.append("**   Info: ").append(spe.getMessage());
+      log.severe(sb.toString());
+      throw spe;
     } else if (e instanceof SAXException) {
-      sb.append("** Other SAX parsing error **");
+      sb.append("Other SAX error **");
+      log.severe(sb.toString());
+      throw (SAXException) e;
     } else if (e instanceof IOException) {
       IOException ioe = (IOException) e;
-      sb.append("** IO error: ").append(ioe.getMessage()).append(LF);
-      sb.append("**     Path: ").append(path).append(LF);
-    } else if (e instanceof UnsupportedOperationException ||
-        e instanceof IllegalStateException ||
-        e instanceof NullPointerException) {
-      sb.append("** Parsing error: ").append(e.getMessage()).append(LF);
+      sb.append("IO error ** ").append(NEWLINE);
+      sb.append("**     Path: ").append(path);
+      log.severe(sb.toString());
+      throw ioe;
     } else {
-      sb.append("** Unknown parsing error: ").append(e.getMessage()).append(LF);
+      sb.append("Other error **");
+      log.severe(sb.toString());
+      throw new SAXException(e);
     }
-    sb.append("** Exiting **").append(LF).append(LF);
-    log.log(SEVERE, sb.toString(), e);
-    System.exit(1);
   }
 
   /* Prune trailing slash if such exists. */
   private static String cleanZipName(String name) {
     return name.endsWith("/") ? name.substring(0, name.length() - 1) : name;
+  }
+
+  private static String gmmErrorMessage(Path dir) {
+    return dir + " sources present. Where is gmm.xml?";
   }
 
   /*
@@ -457,15 +468,17 @@ class Loader {
   }
 
   /*
-   * Filters nested source directories, skipping hidden directories and those
-   * that start with a tilde (~).
+   * Filters nested source directories, skipping hidden directories, those that
+   * start with a tilde (~), or that are named 'sources' that may exist in grid,
+   * area, or slab type directories.
    */
   private static enum NestedDirFilter implements DirectoryStream.Filter<Path> {
     INSTANCE;
     @Override
     public boolean accept(Path path) throws IOException {
       String s = path.getFileName().toString();
-      return Files.isDirectory(path) && !Files.isHidden(path) && !s.startsWith("~");
+      return Files.isDirectory(path) && !Files.isHidden(path) && !s.startsWith("~") &&
+          !s.equals(GridParser.RATE_DIR);
     }
   }
 

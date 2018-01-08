@@ -5,12 +5,15 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.validateName;
 
+import org.xml.sax.SAXException;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Set;
@@ -77,14 +80,15 @@ public final class HazardModel implements Iterable<SourceSet<? extends Source>>,
    * href="https://github.com/usgs/nshmp-haz/wiki/Earthquake-Source-Models"
    * target="_top">nshmp-haz wiki</a>.
    *
-   * <p><b>Notes:</b> HazardModel loading is not thread safe. Also, there are a
-   * wide variety of exceptions that may be encountered when loading a model. In
-   * most cases, the exception will be logged and the JVM will exit.
+   * <p><b>Notes:</b> HazardModel loading is not thread safe. There are also a
+   * wide variety of exceptions that may be encountered when loading a model.
+   * Exceptions are generally logged and propagated back to calling application
+   * to handle termination.
    *
    * @param path to {@code HazardModel} directory or Zip file
    * @return a newly instantiated {@code HazardModel}
    */
-  public static HazardModel load(Path path) {
+  public static HazardModel load(Path path) throws SAXException, IOException {
     return Loader.load(path);
   }
 

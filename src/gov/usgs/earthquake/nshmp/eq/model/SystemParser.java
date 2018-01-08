@@ -98,8 +98,11 @@ class SystemParser extends DefaultHandler {
     return new SystemParser(checkNotNull(sax));
   }
 
-  SystemSourceSet parse(InputStream sectionsIn, InputStream rupturesIn, GmmSet gmmSet)
-      throws SAXException, IOException {
+  SystemSourceSet parse(
+      InputStream sectionsIn,
+      InputStream rupturesIn,
+      GmmSet gmmSet) throws SAXException, IOException {
+
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     parseSections(sectionsIn);
@@ -117,8 +120,11 @@ class SystemParser extends DefaultHandler {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName, Attributes atts)
-      throws SAXException {
+  public void startElement(
+      String uri,
+      String localName,
+      String qName,
+      Attributes atts) throws SAXException {
 
     SourceElement e = null;
     try {
@@ -181,8 +187,10 @@ class SystemParser extends DefaultHandler {
   }
 
   @Override
-  public void endElement(String uri, String localName, String qName)
-      throws SAXException {
+  public void endElement(
+      String uri,
+      String localName,
+      String qName) throws SAXException {
 
     SourceElement e = null;
     try {

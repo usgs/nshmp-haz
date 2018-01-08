@@ -1,5 +1,6 @@
 package gov.usgs.earthquake.nshmp.eq.model;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.GRID;
@@ -9,11 +10,13 @@ import static gov.usgs.earthquake.nshmp.internal.Parsing.readInt;
 import static gov.usgs.earthquake.nshmp.internal.Parsing.readString;
 import static gov.usgs.earthquake.nshmp.internal.Parsing.stringToEnumWeightMap;
 import static gov.usgs.earthquake.nshmp.internal.Parsing.stringToValueValueWeightMap;
+import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.C_MAG;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.FOCAL_MECH_MAP;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.ID;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.MAG_DEPTH_MAP;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.MAX_DEPTH;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.NAME;
+import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.PATH;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.RUPTURE_SCALING;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.STRIKE;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.TYPE;
@@ -24,15 +27,25 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
@@ -47,6 +60,8 @@ import gov.usgs.earthquake.nshmp.eq.model.MfdHelper.IncrData;
 import gov.usgs.earthquake.nshmp.eq.model.MfdHelper.SingleData;
 import gov.usgs.earthquake.nshmp.eq.model.MfdHelper.TaperData;
 import gov.usgs.earthquake.nshmp.geo.Location;
+import gov.usgs.earthquake.nshmp.internal.Parsing;
+import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 import gov.usgs.earthquake.nshmp.internal.SourceElement;
 import gov.usgs.earthquake.nshmp.mfd.IncrementalMfd;
 import gov.usgs.earthquake.nshmp.mfd.MfdType;
@@ -61,6 +76,8 @@ import gov.usgs.earthquake.nshmp.mfd.Mfds;
 @SuppressWarnings("incomplete-switch")
 class GridParser extends DefaultHandler {
 
+  static final String RATE_DIR = "sources";
+
   private final Logger log = Logger.getLogger(GridParser.class.getName());
   private final SAXParser sax;
   private boolean used = false;
@@ -68,6 +85,7 @@ class GridParser extends DefaultHandler {
   private Locator locator;
 
   // Default MFD data
+  private boolean externalRateFile = false;
   private boolean parsingDefaultMFDs = false;
   private MfdHelper.Builder mfdHelperBuilder;
   private MfdHelper mfdHelper;
@@ -88,8 +106,6 @@ class GridParser extends DefaultHandler {
   private boolean readingLoc = false;
   private StringBuilder locBuilder = null;
 
-  // TODO why are these fields being initialized to null; necessary?
-
   // Per-node MFD and mechMap
   private XySequence nodeMFD = null;
   private Map<FocalMech, Double> nodeMechMap = null;
@@ -105,8 +121,11 @@ class GridParser extends DefaultHandler {
     return new GridParser(sax);
   }
 
-  GridSourceSet parse(InputStream in, GmmSet gmmSet, ModelConfig config) throws SAXException,
-      IOException {
+  GridSourceSet parse(
+      InputStream in,
+      GmmSet gmmSet,
+      ModelConfig config) throws SAXException, IOException {
+
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -116,8 +135,11 @@ class GridParser extends DefaultHandler {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName, Attributes atts)
-      throws SAXException {
+  public void startElement(
+      String uri,
+      String localName,
+      String qName,
+      Attributes atts) throws SAXException {
 
     SourceElement e = null;
     try {
@@ -191,12 +213,32 @@ class GridParser extends DefaultHandler {
         }
         break;
 
+      case NODES:
+        String path = atts.getValue(PATH.toString());
+        String ratefile = "inline";
+        if (path != null) {
+          externalRateFile = true;
+          ratefile = Paths.get(RATE_DIR, path).toString();
+          /*
+           * TODO slab identifier needed; this relates to slab not reporting
+           * correct source type
+           */
+          Path ratesPath = config.resource
+              .resolveSibling(SourceType.GRID.toString())
+              .resolve(RATE_DIR)
+              .resolve(path);
+          processRateCsv(ratesPath);
+        }
+        log.fine("      Rates: " + ratefile);
+        break;
+
       case NODE:
+        if (externalRateFile) {
+          break;
+        }
         readingLoc = true;
         locBuilder = new StringBuilder();
-        nodeMFD = processNode(atts);
-        minMag = Math.min(minMag, nodeMFD.min().x());
-        maxMag = Math.max(maxMag, nodeMFD.max().x());
+        setNodeMfd(atts);
         try {
           String nodeMechMapStr = readString(FOCAL_MECH_MAP, atts);
           nodeMechMap = stringToEnumWeightMap(nodeMechMapStr, FocalMech.class);
@@ -216,8 +258,10 @@ class GridParser extends DefaultHandler {
   }
 
   @Override
-  public void endElement(String uri, String localName, String qName)
-      throws SAXException {
+  public void endElement(
+      String uri,
+      String localName,
+      String qName) throws SAXException {
 
     SourceElement e = null;
     try {
@@ -234,6 +278,9 @@ class GridParser extends DefaultHandler {
         break;
 
       case NODE:
+        if (externalRateFile) {
+          break;
+        }
         readingLoc = false;
         Location loc = Location.fromString(locBuilder.toString());
         if (nodeMechMap != null) {
@@ -251,9 +298,8 @@ class GridParser extends DefaultHandler {
 
         if (log.isLoggable(FINE)) {
           // TODO there must be a better way to organize this so that
-          // we
-          // can log the depth model without having to give it package
-          // vis
+          // we can log the depth model without having to give it package
+          // visibility
           log.fine("       Size: " + sourceSet.size());
           log.finer("  MFD count: " + mfdHelper.size());
           log.finer("  Mag count: " + sourceSet.depthModel.magMaster.size());
@@ -278,6 +324,115 @@ class GridParser extends DefaultHandler {
   @Override
   public void setDocumentLocator(Locator locator) {
     this.locator = locator;
+  }
+  
+  /* Build node MFD and set mag tracking values. */
+  private void setNodeMfd(Attributes atts) {
+    nodeMFD = processNode(atts);
+    minMag = Math.min(minMag, nodeMFD.min().x());
+    maxMag = Math.max(maxMag, nodeMFD.max().x());
+  }
+
+  private void processRateCsv(Path path) throws SAXException {
+    try {
+      
+      if (!Files.exists(path)) {
+        String mssg = String.format("Source file does not exist: %s", path);
+        throw new FileNotFoundException(mssg);
+      }
+      List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
+
+      String header = lines.get(0);
+      List<String> keys = Parsing.splitToList(header, Delimiter.COMMA);
+      validateKeys(keys, path);
+
+      int lineIndex = 0;
+      for (String line : Iterables.skip(lines, 1)) {
+        lineIndex++;
+
+        /* Skip comments and empty lines. */
+        if (line.startsWith("#")) {
+          continue;
+        }
+        if (line.trim().isEmpty()) {
+          continue;
+        }
+
+        List<String> values = Parsing.splitToList(line, Delimiter.COMMA);
+        checkState(
+            values.size() == keys.size(),
+            "Incorrect number of values on line %s in %s",
+            lineIndex,
+            path.getFileName());
+
+        AttributesImpl atts = new AttributesImpl();
+        int keyIndex = 0;
+        double lon = 0.0;
+        double lat = 0.0;
+        for (String key : keys) {
+          String value = values.get(keyIndex);
+          switch (key) {
+            case LON_KEY:
+              lon = Double.parseDouble(value);
+              break;
+            case LAT_KEY:
+              lat = Double.parseDouble(value);
+              break;
+            default:
+              atts.addAttribute("", key, key, "CDATA", value);
+          }
+          keyIndex++;
+        }
+        Location loc = Location.create(lat, lon);
+        setNodeMfd(atts);
+        sourceSetBuilder.location(loc, nodeMFD);
+
+        /*
+         * TODO add ability to support custom focal mechs in external file see
+         * issue #261. This would require the following addition, from element
+         * parser above:
+         * 
+         * if (nodeMechMap != null) { sourceSetBuilder.location(loc, nodeMFD,
+         * nodeMechMap); }
+         */
+      }
+    } catch (Exception e) {
+      throw new SAXException(e);
+    }
+  }
+
+  private static final String LON_KEY = "lon";
+  private static final String LAT_KEY = "lat";
+
+  private static final Set<String> NODE_KEYS = ImmutableSet.<String> builder()
+      .addAll(Iterables.transform(
+          EnumSet.range(TYPE, C_MAG),
+          Functions.toStringFunction()))
+      .add(LON_KEY, LAT_KEY)
+      .build();
+
+  private static void validateKeys(List<String> keys, Path path) {
+    for (String key : keys) {
+      if (!NODE_KEYS.contains(key)) {
+        String mssg = String.format(
+            "Grid source file [%s] contains invalid key: %s",
+            path.getFileName(),
+            key);
+        throw new IllegalStateException(mssg);
+      }
+    }
+    validateKey(keys, LON_KEY, path);
+    validateKey(keys, LAT_KEY, path);
+  }
+
+  private static void validateKey(List<String> keys, String key, Path path) {
+    if (!keys.contains(key)) {
+      String mssg = String.format(
+          "Grid source file [%s] is missing key: %s",
+          path.getFileName(),
+          key);
+      throw new IllegalStateException(mssg);
+    }
   }
 
   /*
@@ -304,6 +459,28 @@ class GridParser extends DefaultHandler {
 
       default:
         throw new IllegalStateException(type + " not yet implemented");
+    }
+  }
+
+  /*
+   * TODO The two methods, above and below, should be one in the same, however
+   * INCR is not supported for external rate files
+   */
+  private XySequence processLine(Attributes atts) {
+    MfdType type = readEnum(TYPE, atts, MfdType.class);
+
+    switch (type) {
+      case GR:
+        return buildCollapsedGR(atts);
+
+      case SINGLE:
+        return buildCollapsedSingle(atts);
+
+      case GR_TAPER:
+        return buildTapered(atts);
+
+      default:
+        throw new IllegalStateException(type + " not yet implemented or supported");
     }
   }
 

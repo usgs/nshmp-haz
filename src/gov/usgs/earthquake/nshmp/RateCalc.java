@@ -4,7 +4,6 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -15,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -84,11 +82,12 @@ public class RateCalc {
       return Optional.of(USAGE);
     }
 
+    Logging.init();
+    Logger log = Logger.getLogger(HazardCalc.class.getName());
+    Path tmpLog = HazardCalc.createTempLog();
+
     try {
-      Logging.init();
-      Logger log = Logger.getLogger(HazardCalc.class.getName());
-      Path tempLog = HazardCalc.createTempLog();
-      FileHandler fh = new FileHandler(tempLog.getFileName().toString());
+      FileHandler fh = new FileHandler(tmpLog.getFileName().toString());
       fh.setFormatter(new Logging.ConsoleFormatter());
       log.getParent().addHandler(fh);
 
@@ -114,20 +113,13 @@ public class RateCalc {
 
       /* Transfer log and write config, windows requires fh.close() */
       fh.close();
-      Files.move(tempLog, out.resolve(PROGRAM + ".log"));
+      Files.move(tmpLog, out.resolve(PROGRAM + ".log"));
       config.write(out);
 
       return Optional.absent();
 
     } catch (Exception e) {
-      StringBuilder sb = new StringBuilder()
-          .append(NEWLINE)
-          .append(PROGRAM + ": error").append(NEWLINE)
-          .append(" Arguments: ").append(Arrays.toString(args)).append(NEWLINE)
-          .append(NEWLINE)
-          .append(Throwables.getStackTraceAsString(e))
-          .append(USAGE);
-      return Optional.of(sb.toString());
+      return HazardCalc.handleError(e, log, tmpLog, args, PROGRAM, USAGE);
     }
   }
 
