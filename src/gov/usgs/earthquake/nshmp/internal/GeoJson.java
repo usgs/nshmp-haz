@@ -109,7 +109,7 @@ public final class GeoJson {
     Geometry geometry = new Geometry();
     PropertiesObject properties;
   }
-  
+
   public static Feature createPoint(NamedLocation loc) {
     Feature f = new Feature();
     f.geometry.type = "Point";
@@ -181,12 +181,11 @@ public final class GeoJson {
     @SerializedName("marker-color")
     String strokeColor;
   }
-  
-  public static Feature regionBounds(double lon,double lat) {
-    double[] coordinates = {lon,lat};
+
+  public static Feature regionBounds(double lon, double lat) {
     Feature f = new Feature();
     f.geometry.type = "Point";
-    f.geometry.coordinates = coordinates;
+    f.geometry.coordinates = new double[] { lon, lat };
     return f;
   }
 

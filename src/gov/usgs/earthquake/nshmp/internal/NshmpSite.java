@@ -230,35 +230,34 @@ public enum NshmpSite implements NamedLocation {
   VALDEZ_AK(-146.35, 61.15),
   WASILLA_AK(-149.45, 61.6),
   YAKUTAT_AK(-139.70, 59.55),
-  
-  /* Hawaii (26) */
-  BRADSHAW_AIRFIELD_HI(-155.55,19.75),  // Hawai'i
-  HILO_HI(-155.05,19.7),
-  KAILUA_KONA_HI(-156,19.65),
-  KILAUEA_HI(-155.25,19.4),
-  MAUNA_KEA_HI(-155.45,19.8),
-  OCEAN_VIEW_HI(-155.75,19.1),
-  WAIMEA_HI(-155.7,20),
-  KAHEAWA_WIND_HI(-156.55,20.8),        // Maui
-  KAHULUI_HI(-156.5,20.9),
-  HALEAKALA_CRATER_HI(-156.25,20.70),
-  LANAI_CITY_HI(-156.95,20.8),          // Lanai
-  KAUNAKAKAI_HI(-157,21.1),             // Moloka'i
-  BARBERS_POINT_HI(-158.1,21.3),        // O'ahu
-  DIAMOND_HEAD_HI(-157.8,21.25),
-  HONOLULU_HI(-157.85,21.3),
-  KANEOHE_HI(-157.8,21.4),
-  LAIE_HI(-157.95,21.65),
-  MARINE_CORPS_BASE_HI(-157.75,21.45),
-  PEARL_HARBOR_HI(-157.95,21.35),
-  WAHIAWA_HI(-158,21.5),
-  WAIANAE_HI(-158.2,21.45),
-  WAIPAHU_HI(-158,21.4),
-  BARKING_SANDS_HI(-159.75,22.05),      // Kauai
-  HANAPEPE_HI(-159.6,21.9),
-  LIHUE_HI(-159.35,21.95),
-  PUUWAI_HI(-160.2,21.9);               // Ni'ihau
 
+  /* Hawaii (26) */
+  BRADSHAW_AIRFIELD_HI(-155.55, 19.75), // Hawai'i
+  HILO_HI(-155.05, 19.7),
+  KAILUA_KONA_HI(-156, 19.65),
+  KILAUEA_HI(-155.25, 19.4),
+  MAUNA_KEA_HI(-155.45, 19.8),
+  OCEAN_VIEW_HI(-155.75, 19.1),
+  WAIMEA_HI(-155.7, 20),
+  KAHEAWA_WIND_HI(-156.55, 20.8), // Maui
+  KAHULUI_HI(-156.5, 20.9),
+  HALEAKALA_CRATER_HI(-156.25, 20.70),
+  LANAI_CITY_HI(-156.95, 20.8), // Lanai
+  KAUNAKAKAI_HI(-157, 21.1), // Moloka'i
+  BARBERS_POINT_HI(-158.1, 21.3), // O'ahu
+  DIAMOND_HEAD_HI(-157.8, 21.25),
+  HONOLULU_HI(-157.85, 21.3),
+  KANEOHE_HI(-157.8, 21.4),
+  LAIE_HI(-157.95, 21.65),
+  MARINE_CORPS_BASE_HI(-157.75, 21.45),
+  PEARL_HARBOR_HI(-157.95, 21.35),
+  WAHIAWA_HI(-158, 21.5),
+  WAIANAE_HI(-158.2, 21.45),
+  WAIPAHU_HI(-158, 21.4),
+  BARKING_SANDS_HI(-159.75, 22.05), // Kauai
+  HANAPEPE_HI(-159.6, 21.9),
+  LIHUE_HI(-159.35, 21.95),
+  PUUWAI_HI(-160.2, 21.9); // Ni'ihau
 
   private final Location location;
   private final UsRegion state;
@@ -279,7 +278,6 @@ public enum NshmpSite implements NamedLocation {
   public Location location() {
     return location;
   }
-
 
   @Override
   public String id() {
@@ -312,8 +310,7 @@ public enum NshmpSite implements NamedLocation {
           }
         }), NshmpSite.class);
   }
-  
-  
+
   /**
    * The set of sites used to test the Western US NSHM. This includes all NSHMP
    * sites west of -100.0°.
@@ -329,21 +326,15 @@ public enum NshmpSite implements NamedLocation {
         }), NshmpSite.class);
   }
 
-  
   /**
    * The combination of CEUS and WUS
    */
   public static EnumSet<NshmpSite> cous() {
-    return Sets.newEnumSet(Iterables.filter(
-        EnumSet.allOf(NshmpSite.class),
-        new Predicate<NshmpSite>() {
-          @Override
-          public boolean apply(NshmpSite site) {
-            return site.location.lon() <=-100.0 || site.location.lon() >= -115.0;
-          }
-        }), NshmpSite.class);
+    EnumSet<NshmpSite> cous = wus();
+    cous.addAll(ceus());
+    return cous;
   }
-  
+
   /**
    * The set of sites used to test the Alaska NSHM.
    */
@@ -371,7 +362,6 @@ public enum NshmpSite implements NamedLocation {
           }
         }), NshmpSite.class);
   }
-
 
   /**
    * The set of sites corresponding to U.S. national labs and other Dept. of
