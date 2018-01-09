@@ -334,14 +334,9 @@ public enum NshmpSite implements NamedLocation {
    * The combination of CEUS and WUS
    */
   public static EnumSet<NshmpSite> cous() {
-    return Sets.newEnumSet(Iterables.filter(
-        EnumSet.allOf(NshmpSite.class),
-        new Predicate<NshmpSite>() {
-          @Override
-          public boolean apply(NshmpSite site) {
-            return site.location.lon() <=-100.0 || site.location.lon() >= -115.0;
-          }
-        }), NshmpSite.class);
+    EnumSet<NshmpSite> cous = wus();
+    cous.addAll(ceus());
+    return cous;
   }
   
   /**
