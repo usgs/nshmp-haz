@@ -312,7 +312,8 @@ public enum NshmpSite implements NamedLocation {
           }
         }), NshmpSite.class);
   }
-
+  
+  
   /**
    * The set of sites used to test the Western US NSHM. This includes all NSHMP
    * sites west of -100.0°.
@@ -328,6 +329,21 @@ public enum NshmpSite implements NamedLocation {
         }), NshmpSite.class);
   }
 
+  
+  /**
+   * The combination of CEUS and WUS
+   */
+  public static EnumSet<NshmpSite> cous() {
+    return Sets.newEnumSet(Iterables.filter(
+        EnumSet.allOf(NshmpSite.class),
+        new Predicate<NshmpSite>() {
+          @Override
+          public boolean apply(NshmpSite site) {
+            return site.location.lon() <=-100.0 || site.location.lon() >= -115.0;
+          }
+        }), NshmpSite.class);
+  }
+  
   /**
    * The set of sites used to test the Alaska NSHM.
    */
