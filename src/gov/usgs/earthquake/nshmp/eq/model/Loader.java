@@ -273,7 +273,7 @@ class Loader {
 
       // gmm
       Path nestedGmmPath = sourceDir.resolve(GmmParser.FILE_NAME);
-      if (!Files.exists(nestedGmmPath) && gmmSet != null) {
+      if (!Files.exists(nestedGmmPath) && gmmSet == null) {
         String mssg = gmmErrorMessage(sourceDir.getFileName());
         throw new FileNotFoundException(mssg);
       }
