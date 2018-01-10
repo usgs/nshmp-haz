@@ -4,6 +4,7 @@ import static com.google.common.math.DoubleMath.fuzzyEquals;
 
 import com.google.common.collect.Lists;
 
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
@@ -71,31 +72,33 @@ public enum Imt {
   SA7P5,
   SA10P0;
 
+  private static final DecimalFormat SA_FORMAT = new DecimalFormat("0.00#");
+  
   @Override
   public String toString() {
     switch (this) {
       case PGA:
-        return "Peak ground acceleration";
+        return "Peak Ground Acceleration";
       case PGV:
-        return "Peak ground velocity";
+        return "Peak Ground Velocity";
       case PGD:
-        return "Peak ground displacement";
+        return "Peak Ground Displacement";
       case AI:
-        return "Arias intensity";
+        return "Arias Intensity";
       case ASI:
-        return "Acceleration spectrum intensity";
+        return "Acceleration Spectrum Intensity";
       case DSI:
-        return "Displacement spectrum intensity";
+        return "Displacement Spectrum Intensity";
       case SI:
         return "Spectrum intensity";
       case CAV:
-        return "Cumulative absolute velocity";
+        return "Cumulative Absolute Velocity";
       case DS575:
-        return "Significant duration 5-75%";
+        return "Significant Duration 5-75%";
       case DS595:
-        return "Significant duration 5-95%";
+        return "Significant Duration 5-95%";
       default:
-        return period() + " sec spectral acceleration";
+        return SA_FORMAT.format(period()) + " Second Spectral Acceleration";
     }
   }
 
