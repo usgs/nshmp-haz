@@ -175,6 +175,30 @@ public class GmmInput {
     private Builder() {}
 
     /**
+     * Return a {@code Builder} prepopulated with values copied from the supplied model.
+     * 
+     * @param model to copy
+     */
+    public Builder fromModel(GmmInput model) {
+      Builder b = new Builder();
+      b.Mw = model.Mw;
+      b.rJB = model.rJB;
+      b.rRup = model.rRup;
+      b.rX = model.rX;
+      b.dip = model.dip;
+      b.width = model.width;
+      b.zTop = model.zTop;
+      b.zHyp = model.zHyp;
+      b.rake = model.rake;
+      b.vs30 = model.vs30;
+      b.vsInf = model.vsInf;
+      b.z1p0 = model.z1p0;
+      b.z2p5 = model.z2p5;
+      flags.set(0, SIZE);
+      return b;
+    }
+    
+    /**
      * Return a {@code Builder} prepopulated with default values. Builder has
      * the following presets:
      *
