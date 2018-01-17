@@ -194,7 +194,7 @@ public class GmmInput {
       b.vsInf = model.vsInf;
       b.z1p0 = model.z1p0;
       b.z2p5 = model.z2p5;
-      flags.set(0, SIZE);
+      b.flags.set(0, SIZE);
       return b;
     }
     
