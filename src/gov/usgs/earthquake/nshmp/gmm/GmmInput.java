@@ -198,6 +198,7 @@ public class GmmInput {
       return b;
     }
     
+    
     /**
      * Return a {@code Builder} prepopulated with default values. Builder has
      * the following presets:
