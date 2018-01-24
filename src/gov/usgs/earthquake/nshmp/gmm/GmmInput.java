@@ -137,7 +137,6 @@ public class GmmInput {
   public static class Builder {
 
     static final int SIZE = Field.values().length;
-    boolean built = false;
     BitSet flags = new BitSet(SIZE); // monitors set fields
     BitSet reset = new BitSet(SIZE); // monitors sets between build() calls
 
@@ -270,11 +269,9 @@ public class GmmInput {
       } catch (NumberFormatException nfe) {
         // move along
       }
-
       if (id == VSINF) {
         return vsInf(Boolean.valueOf(s));
       }
-
       throw new IllegalStateException("Unhandled field: " + id);
     }
 
@@ -400,7 +397,7 @@ public class GmmInput {
     /* returns the double value of interest for inlining */
     private final double validateAndFlag(Field field, double value) {
       int index = field.ordinal();
-      checkState(!built && !reset.get(index), "Field %s already set", field);
+      checkState(!reset.get(index), "Field %s already set", field);
       flags.set(index);
       reset.set(index);
       return value;
@@ -409,7 +406,7 @@ public class GmmInput {
     /* returns the boolean value of interest for inlining */
     private final boolean validateAndFlag(Field field, boolean value) {
       int index = field.ordinal();
-      checkState(!built && !reset.get(index), "Field %s already set", field);
+      checkState(!reset.get(index), "Field %s already set", field);
       flags.set(index);
       reset.set(index);
       return value;
