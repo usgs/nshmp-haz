@@ -121,18 +121,6 @@ public class GmmInput {
     this.z2p5 = z2p5;
   }
 
-  // for testing only
-  static GmmInput create(
-      double Mw, double rJB, double rRup, double rX,
-      double dip, double width, double zTop, double zHyp, double rake,
-      double vs30, boolean vsInf, double z2p5, double z1p0) {
-
-    return new GmmInput(
-        Mw, rJB, rRup, rX,
-        dip, width, zTop, zHyp, rake,
-        vs30, vsInf, z1p0, z2p5);
-  }
-
   /**
    * Return a {@code GmmInput} builder that requires all fields to be
    * explicitely set. This builder is stateful and may be reused (by a single
@@ -175,7 +163,8 @@ public class GmmInput {
     private Builder() {}
 
     /**
-     * Return a {@code Builder} prepopulated with values copied from the supplied model.
+     * Return a {@code Builder} prepopulated with values copied from the
+     * supplied model.
      * 
      * @param model to copy
      */
@@ -197,8 +186,7 @@ public class GmmInput {
       b.flags.set(0, SIZE);
       return b;
     }
-    
-    
+
     /**
      * Return a {@code Builder} prepopulated with default values. Builder has
      * the following presets:
@@ -246,6 +234,21 @@ public class GmmInput {
       flags.set(0, SIZE);
       return this;
     }
+
+    private static final GmmInput DEFAULT = new GmmInput(
+        MW.defaultValue,
+        RJB.defaultValue,
+        RRUP.defaultValue,
+        RX.defaultValue,
+        DIP.defaultValue,
+        WIDTH.defaultValue,
+        ZTOP.defaultValue,
+        ZHYP.defaultValue,
+        RAKE.defaultValue,
+        VS30.defaultValue,
+        VSINF.defaultValue > 0.0,
+        Z1P0.defaultValue,
+        Z2P5.defaultValue);
 
     /* returns the double value of interest for inlining */
     private final double validateAndFlag(Field field, double value) {
