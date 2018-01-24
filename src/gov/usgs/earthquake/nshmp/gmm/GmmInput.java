@@ -304,10 +304,7 @@ public class GmmInput {
 
     /** Set the Joyner-Boore distance, rupture distance, and distance X. */
     public Builder distances(double rJB, double rRup, double rX) {
-      this.rJB = validateAndFlag(RJB, rJB);
-      this.rRup = validateAndFlag(RRUP, rRup);
-      this.rX = validateAndFlag(RX, rX);
-      return this;
+      return rJB(rJB).rRup(rRup).rX(rX);
     }
 
     /**
@@ -315,10 +312,7 @@ public class GmmInput {
      * {@link Distance} object.
      */
     public Builder distances(Distance distances) {
-      this.rJB = validateAndFlag(RJB, distances.rJB);
-      this.rRup = validateAndFlag(RRUP, distances.rRup);
-      this.rX = validateAndFlag(RX, distances.rX);
-      return this;
+      return distances(distances.rJB, distances.rRup, distances.rX);
     }
 
     /** Set the rupture dip. */
@@ -368,9 +362,7 @@ public class GmmInput {
      * measured.
      */
     public Builder vs30(double vs30, boolean vsInf) {
-      this.vs30 = validateAndFlag(VS30, vs30);
-      this.vsInf = validateAndFlag(VSINF, vsInf);
-      return this;
+      return vs30(vs30).vsInf(vsInf);
     }
 
     /** Set the depth to 1.0 km/s (in km). */
