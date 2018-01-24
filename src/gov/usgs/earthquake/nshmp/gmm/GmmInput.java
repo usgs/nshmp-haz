@@ -121,18 +121,6 @@ public class GmmInput {
     this.z2p5 = z2p5;
   }
 
-  // for testing only
-  static GmmInput create(
-      double Mw, double rJB, double rRup, double rX,
-      double dip, double width, double zTop, double zHyp, double rake,
-      double vs30, boolean vsInf, double z2p5, double z1p0) {
-
-    return new GmmInput(
-        Mw, rJB, rRup, rX,
-        dip, width, zTop, zHyp, rake,
-        vs30, vsInf, z1p0, z2p5);
-  }
-
   /**
    * Return a {@code GmmInput} builder that requires all fields to be
    * explicitely set. This builder is stateful and may be reused (by a single
@@ -149,7 +137,6 @@ public class GmmInput {
   public static class Builder {
 
     static final int SIZE = Field.values().length;
-    boolean built = false;
     BitSet flags = new BitSet(SIZE); // monitors set fields
     BitSet reset = new BitSet(SIZE); // monitors sets between build() calls
 
@@ -175,30 +162,17 @@ public class GmmInput {
     private Builder() {}
 
     /**
-     * Return a {@code Builder} prepopulated with values copied from the supplied model.
+     * Return a {@code Builder} prepopulated with values copied from the
+     * supplied model.
      * 
      * @param model to copy
+     * @throws IllegalStateException if any other builder method has already
+     *         been called without first calling {@link #build()}
      */
-    public Builder fromModel(GmmInput model) {
-      Builder b = new Builder();
-      b.Mw = model.Mw;
-      b.rJB = model.rJB;
-      b.rRup = model.rRup;
-      b.rX = model.rX;
-      b.dip = model.dip;
-      b.width = model.width;
-      b.zTop = model.zTop;
-      b.zHyp = model.zHyp;
-      b.rake = model.rake;
-      b.vs30 = model.vs30;
-      b.vsInf = model.vsInf;
-      b.z1p0 = model.z1p0;
-      b.z2p5 = model.z2p5;
-      b.flags.set(0, SIZE);
-      return b;
+    public Builder fromCopy(GmmInput model) {
+      return copy(model);
     }
-    
-    
+
     /**
      * Return a {@code Builder} prepopulated with default values. Builder has
      * the following presets:
@@ -228,41 +202,31 @@ public class GmmInput {
      * <li>z2p5: NaN</li>
      *
      * <li>z1p0: NaN</li></ul>
+     * 
+     * @throws IllegalStateException if any other builder method has already
+     *         been called without first calling {@link #build()}
      */
     public Builder withDefaults() {
-      Mw = MW.defaultValue;
-      rJB = RJB.defaultValue;
-      rRup = RRUP.defaultValue;
-      rX = RX.defaultValue;
-      dip = DIP.defaultValue;
-      width = WIDTH.defaultValue;
-      zTop = ZTOP.defaultValue;
-      zHyp = ZHYP.defaultValue;
-      rake = RAKE.defaultValue;
-      vs30 = VS30.defaultValue;
-      vsInf = VSINF.defaultValue > 0.0;
-      z1p0 = Z1P0.defaultValue;
-      z2p5 = Z2P5.defaultValue;
+      return copy(DEFAULT);
+    }
+
+    private Builder copy(GmmInput model) {
+      checkState(reset.isEmpty(), "Some fields are already set");
+      Mw = model.Mw;
+      rJB = model.rJB;
+      rRup = model.rRup;
+      rX = model.rX;
+      dip = model.dip;
+      width = model.width;
+      zTop = model.zTop;
+      zHyp = model.zHyp;
+      rake = model.rake;
+      vs30 = model.vs30;
+      vsInf = model.vsInf;
+      z1p0 = model.z1p0;
+      z2p5 = model.z2p5;
       flags.set(0, SIZE);
       return this;
-    }
-
-    /* returns the double value of interest for inlining */
-    private final double validateAndFlag(Field field, double value) {
-      int index = field.ordinal();
-      checkState(!built && !reset.get(index), "Field %s already set", field);
-      flags.set(index);
-      reset.set(index);
-      return value;
-    }
-
-    /* returns the boolean value of interest for inlining */
-    private final boolean validateAndFlag(Field field, boolean value) {
-      int index = field.ordinal();
-      checkState(!built && !reset.get(index), "Field %s already set", field);
-      flags.set(index);
-      reset.set(index);
-      return value;
     }
 
     /**
@@ -305,94 +269,109 @@ public class GmmInput {
       } catch (NumberFormatException nfe) {
         // move along
       }
-
       if (id == VSINF) {
         return vsInf(Boolean.valueOf(s));
       }
-
       throw new IllegalStateException("Unhandled field: " + id);
     }
 
+    /** Set the moment magnitude. */
     public Builder mag(double Mw) {
       this.Mw = validateAndFlag(MW, Mw);
       return this;
     }
 
+    /**
+     * Set the Joyner-Boore distance (distance to surface projection of
+     * rupture).
+     */
     public Builder rJB(double rJB) {
       this.rJB = validateAndFlag(RJB, rJB);
       return this;
     }
 
+    /** Set the rupture distance (distance to rupture plane). */
     public Builder rRup(double rRup) {
       this.rRup = validateAndFlag(RRUP, rRup);
       return this;
     }
 
+    /** Set the distance X (shortest distance to extended strike of rupture). */
     public Builder rX(double rX) {
       this.rX = validateAndFlag(RX, rX);
       return this;
     }
 
+    /** Set the Joyner-Boore distance, rupture distance, and distance X. */
     public Builder distances(double rJB, double rRup, double rX) {
-      this.rJB = validateAndFlag(RJB, rJB);
-      this.rRup = validateAndFlag(RRUP, rRup);
-      this.rX = validateAndFlag(RX, rX);
-      return this;
+      return rJB(rJB).rRup(rRup).rX(rX);
     }
 
+    /**
+     * Set the Joyner-Boore distance, rupture distance, and distance X with a
+     * {@link Distance} object.
+     */
     public Builder distances(Distance distances) {
-      this.rJB = validateAndFlag(RJB, distances.rJB);
-      this.rRup = validateAndFlag(RRUP, distances.rRup);
-      this.rX = validateAndFlag(RX, distances.rX);
-      return this;
+      return distances(distances.rJB, distances.rRup, distances.rX);
     }
 
+    /** Set the rupture dip. */
     public Builder dip(double dip) {
       this.dip = validateAndFlag(DIP, dip);
       return this;
     }
 
+    /** Set the rupture width. */
     public Builder width(double width) {
       this.width = validateAndFlag(WIDTH, width);
       return this;
     }
 
+    /** Set the depth to top of rupture. */
     public Builder zTop(double zTop) {
       this.zTop = validateAndFlag(ZTOP, zTop);
       return this;
     }
 
+    /** Set the depth to rupture hypocenter. */
     public Builder zHyp(double zHyp) {
       this.zHyp = validateAndFlag(ZHYP, zHyp);
       return this;
     }
 
+    /** Set the rupture rake. */
     public Builder rake(double rake) {
       this.rake = validateAndFlag(RAKE, rake);
       return this;
     }
 
+    /** Set the vs30 at site. */
     public Builder vs30(double vs30) {
       this.vs30 = validateAndFlag(VS30, vs30);
       return this;
     }
 
+    /** Set whether {@code vs30} is inferred or measured. */
     public Builder vsInf(boolean vsInf) {
       this.vsInf = validateAndFlag(VSINF, vsInf);
       return this;
     }
 
+    /**
+     * Set both the vs30 at site and whether {@code vs30} is inferred or
+     * measured.
+     */
     public Builder vs30(double vs30, boolean vsInf) {
-      this.vs30 = validateAndFlag(VS30, vs30);
-      this.vsInf = validateAndFlag(VSINF, vsInf);
-      return this;
+      return vs30(vs30).vsInf(vsInf);
     }
 
+    /** Set the depth to 1.0 km/s (in km). */
     public Builder z1p0(double z1p0) {
       this.z1p0 = validateAndFlag(Z1P0, z1p0);
       return this;
     }
 
+    /** Set the depth to 2.5 km/s (in km). */
     public Builder z2p5(double z2p5) {
       this.z2p5 = validateAndFlag(Z2P5, z2p5);
       return this;
@@ -406,11 +385,44 @@ public class GmmInput {
           dip, width, zTop, zHyp, rake,
           vs30, vsInf, z1p0, z2p5);
     }
+
+    /* returns the double value of interest for inlining */
+    private final double validateAndFlag(Field field, double value) {
+      int index = field.ordinal();
+      checkState(!reset.get(index), "Field %s already set", field);
+      flags.set(index);
+      reset.set(index);
+      return value;
+    }
+
+    /* returns the boolean value of interest for inlining */
+    private final boolean validateAndFlag(Field field, boolean value) {
+      int index = field.ordinal();
+      checkState(!reset.get(index), "Field %s already set", field);
+      flags.set(index);
+      reset.set(index);
+      return value;
+    }
   }
 
   private static final String DISTANCE_UNIT = "km";
   private static final String VELOCITY_UNIT = "m/s";
   private static final String ANGLE_UNIT = "°";
+
+  private static final GmmInput DEFAULT = new GmmInput(
+      MW.defaultValue,
+      RJB.defaultValue,
+      RRUP.defaultValue,
+      RX.defaultValue,
+      DIP.defaultValue,
+      WIDTH.defaultValue,
+      ZTOP.defaultValue,
+      ZHYP.defaultValue,
+      RAKE.defaultValue,
+      VS30.defaultValue,
+      VSINF.defaultValue > 0.0,
+      Z1P0.defaultValue,
+      Z2P5.defaultValue);
 
   /**
    * {@code GmmInput} field identifiers. These are used internally to manage
