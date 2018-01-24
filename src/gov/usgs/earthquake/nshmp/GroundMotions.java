@@ -48,7 +48,7 @@ public class GroundMotions {
       rJB = r;
       rX = r;
       rRup = Maths.hypot(r, inputModel.zTop);
-      GmmInput.Builder gmmBuilder = GmmInput.builder().fromModel(inputModel);
+      GmmInput.Builder gmmBuilder = GmmInput.builder().fromCopy(inputModel);
       gmmInputs.add(gmmBuilder.distances(rJB, rRup, rX).build());
     }
     //-------------------------------------------------------------------------------------
