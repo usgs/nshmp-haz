@@ -167,24 +167,11 @@ public class GmmInput {
      * supplied model.
      * 
      * @param model to copy
+     * @throws IllegalStateException if any other builder method has already
+     *         been called without first calling {@link #build()}
      */
-    public Builder fromModel(GmmInput model) {
-      Builder b = new Builder();
-      b.Mw = model.Mw;
-      b.rJB = model.rJB;
-      b.rRup = model.rRup;
-      b.rX = model.rX;
-      b.dip = model.dip;
-      b.width = model.width;
-      b.zTop = model.zTop;
-      b.zHyp = model.zHyp;
-      b.rake = model.rake;
-      b.vs30 = model.vs30;
-      b.vsInf = model.vsInf;
-      b.z1p0 = model.z1p0;
-      b.z2p5 = model.z2p5;
-      b.flags.set(0, SIZE);
-      return b;
+    public Builder fromCopy(GmmInput model) {
+      return copy(model);
     }
 
     /**
@@ -216,56 +203,31 @@ public class GmmInput {
      * <li>z2p5: NaN</li>
      *
      * <li>z1p0: NaN</li></ul>
+     * 
+     * @throws IllegalStateException if any other builder method has already
+     *         been called without first calling {@link #build()}
      */
     public Builder withDefaults() {
-      Mw = MW.defaultValue;
-      rJB = RJB.defaultValue;
-      rRup = RRUP.defaultValue;
-      rX = RX.defaultValue;
-      dip = DIP.defaultValue;
-      width = WIDTH.defaultValue;
-      zTop = ZTOP.defaultValue;
-      zHyp = ZHYP.defaultValue;
-      rake = RAKE.defaultValue;
-      vs30 = VS30.defaultValue;
-      vsInf = VSINF.defaultValue > 0.0;
-      z1p0 = Z1P0.defaultValue;
-      z2p5 = Z2P5.defaultValue;
+      return copy(DEFAULT);
+    }
+
+    private Builder copy(GmmInput model) {
+      checkState(reset.isEmpty(), "Some fields are already set");
+      Mw = model.Mw;
+      rJB = model.rJB;
+      rRup = model.rRup;
+      rX = model.rX;
+      dip = model.dip;
+      width = model.width;
+      zTop = model.zTop;
+      zHyp = model.zHyp;
+      rake = model.rake;
+      vs30 = model.vs30;
+      vsInf = model.vsInf;
+      z1p0 = model.z1p0;
+      z2p5 = model.z2p5;
       flags.set(0, SIZE);
       return this;
-    }
-
-    private static final GmmInput DEFAULT = new GmmInput(
-        MW.defaultValue,
-        RJB.defaultValue,
-        RRUP.defaultValue,
-        RX.defaultValue,
-        DIP.defaultValue,
-        WIDTH.defaultValue,
-        ZTOP.defaultValue,
-        ZHYP.defaultValue,
-        RAKE.defaultValue,
-        VS30.defaultValue,
-        VSINF.defaultValue > 0.0,
-        Z1P0.defaultValue,
-        Z2P5.defaultValue);
-
-    /* returns the double value of interest for inlining */
-    private final double validateAndFlag(Field field, double value) {
-      int index = field.ordinal();
-      checkState(!built && !reset.get(index), "Field %s already set", field);
-      flags.set(index);
-      reset.set(index);
-      return value;
-    }
-
-    /* returns the boolean value of interest for inlining */
-    private final boolean validateAndFlag(Field field, boolean value) {
-      int index = field.ordinal();
-      checkState(!built && !reset.get(index), "Field %s already set", field);
-      flags.set(index);
-      reset.set(index);
-      return value;
     }
 
     /**
@@ -409,11 +371,44 @@ public class GmmInput {
           dip, width, zTop, zHyp, rake,
           vs30, vsInf, z1p0, z2p5);
     }
+    
+    /* returns the double value of interest for inlining */
+    private final double validateAndFlag(Field field, double value) {
+      int index = field.ordinal();
+      checkState(!built && !reset.get(index), "Field %s already set", field);
+      flags.set(index);
+      reset.set(index);
+      return value;
+    }
+
+    /* returns the boolean value of interest for inlining */
+    private final boolean validateAndFlag(Field field, boolean value) {
+      int index = field.ordinal();
+      checkState(!built && !reset.get(index), "Field %s already set", field);
+      flags.set(index);
+      reset.set(index);
+      return value;
+    }
   }
 
   private static final String DISTANCE_UNIT = "km";
   private static final String VELOCITY_UNIT = "m/s";
   private static final String ANGLE_UNIT = "°";
+
+  private static final GmmInput DEFAULT = new GmmInput(
+      MW.defaultValue,
+      RJB.defaultValue,
+      RRUP.defaultValue,
+      RX.defaultValue,
+      DIP.defaultValue,
+      WIDTH.defaultValue,
+      ZTOP.defaultValue,
+      ZHYP.defaultValue,
+      RAKE.defaultValue,
+      VS30.defaultValue,
+      VSINF.defaultValue > 0.0,
+      Z1P0.defaultValue,
+      Z2P5.defaultValue);
 
   /**
    * {@code GmmInput} field identifiers. These are used internally to manage
