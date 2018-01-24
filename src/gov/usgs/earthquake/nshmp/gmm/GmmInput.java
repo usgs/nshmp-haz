@@ -278,26 +278,34 @@ public class GmmInput {
       throw new IllegalStateException("Unhandled field: " + id);
     }
 
+    /** Set the moment magnitude. */
     public Builder mag(double Mw) {
       this.Mw = validateAndFlag(MW, Mw);
       return this;
     }
 
+    /**
+     * Set the Joyner-Boore distance (distance to surface projection of
+     * rupture).
+     */
     public Builder rJB(double rJB) {
       this.rJB = validateAndFlag(RJB, rJB);
       return this;
     }
 
+    /** Set the rupture distance (distance to rupture plane). */
     public Builder rRup(double rRup) {
       this.rRup = validateAndFlag(RRUP, rRup);
       return this;
     }
 
+    /** Set the distance X (shortest distance to extended strike of rupture). */
     public Builder rX(double rX) {
       this.rX = validateAndFlag(RX, rX);
       return this;
     }
 
+    /** Set the Joyner-Boore distance, rupture distance, and distance X. */
     public Builder distances(double rJB, double rRup, double rX) {
       this.rJB = validateAndFlag(RJB, rJB);
       this.rRup = validateAndFlag(RRUP, rRup);
@@ -305,6 +313,10 @@ public class GmmInput {
       return this;
     }
 
+    /**
+     * Set the Joyner-Boore distance, rupture distance, and distance X with a
+     * {@link Distance} object.
+     */
     public Builder distances(Distance distances) {
       this.rJB = validateAndFlag(RJB, distances.rJB);
       this.rRup = validateAndFlag(RRUP, distances.rRup);
@@ -312,52 +324,65 @@ public class GmmInput {
       return this;
     }
 
+    /** Set the rupture dip. */
     public Builder dip(double dip) {
       this.dip = validateAndFlag(DIP, dip);
       return this;
     }
 
+    /** Set the rupture width. */
     public Builder width(double width) {
       this.width = validateAndFlag(WIDTH, width);
       return this;
     }
 
+    /** Set the depth to top of rupture. */
     public Builder zTop(double zTop) {
       this.zTop = validateAndFlag(ZTOP, zTop);
       return this;
     }
 
+    /** Set the depth to rupture hypocenter. */
     public Builder zHyp(double zHyp) {
       this.zHyp = validateAndFlag(ZHYP, zHyp);
       return this;
     }
 
+    /** Set the rupture rake. */
     public Builder rake(double rake) {
       this.rake = validateAndFlag(RAKE, rake);
       return this;
     }
 
+    /** Set the vs30 at site. */
     public Builder vs30(double vs30) {
       this.vs30 = validateAndFlag(VS30, vs30);
       return this;
     }
 
+    /** Set whether {@code vs30} is inferred or measured. */
     public Builder vsInf(boolean vsInf) {
       this.vsInf = validateAndFlag(VSINF, vsInf);
       return this;
     }
 
+    /**
+     * Set both the vs30 at site and whether {@code vs30} is inferred or
+     * measured.
+     */
     public Builder vs30(double vs30, boolean vsInf) {
       this.vs30 = validateAndFlag(VS30, vs30);
       this.vsInf = validateAndFlag(VSINF, vsInf);
       return this;
     }
 
+    /** Set the depth to 1.0 km/s (in km). */
     public Builder z1p0(double z1p0) {
       this.z1p0 = validateAndFlag(Z1P0, z1p0);
       return this;
     }
 
+    /** Set the depth to 2.5 km/s (in km). */
     public Builder z2p5(double z2p5) {
       this.z2p5 = validateAndFlag(Z2P5, z2p5);
       return this;
@@ -371,7 +396,7 @@ public class GmmInput {
           dip, width, zTop, zHyp, rake,
           vs30, vsInf, z1p0, z2p5);
     }
-    
+
     /* returns the double value of interest for inlining */
     private final double validateAndFlag(Field field, double value) {
       int index = field.ordinal();
