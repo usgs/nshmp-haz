@@ -28,6 +28,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import gov.usgs.earthquake.nshmp.calc.Site;
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
@@ -576,6 +577,43 @@ public class GmmInput {
         .add(Z1P0.toString(), z1p0)
         .add(Z2P5.toString(), z2p5)
         .toString();
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof GmmInput)) {
+      return false;
+    }
+    GmmInput gmm = (GmmInput) obj;
+    Boolean z1p0Check = Double.isNaN(gmm.z1p0) ? 
+    			true == Double.isNaN(this.z1p0) : this.z1p0 == gmm.z1p0;
+    Boolean z2p5Check = Double.isNaN(gmm.z2p5) ? 
+        	true == Double.isNaN(this.z2p5) : this.z2p5 == gmm.z2p5;
+    return  this.Mw == gmm.Mw &&
+    			this.rJB == gmm.rJB &&
+    			this.rRup == gmm.rRup &&
+    			this.rX == gmm.rX &&
+    			this.dip == gmm.dip &&
+    			this.width == gmm.width &&
+    			this.zTop == gmm.zTop &&
+    			this.zHyp == gmm.zHyp &&
+    			this.rake == gmm.rake &&
+    			this.vs30 == gmm.vs30 &&
+    			this.vsInf == gmm.vsInf &&
+    			z1p0Check &&
+    			z2p5Check;	
+  }
+  
+  @Override
+  public int hashCode() {
+  		return Objects.hash(Mw, rJB, rRup, rX, dip, width, zTop, zHyp, 
+  				rake, vs30, vsInf, z1p0, z2p5);
   }
 
   /**
