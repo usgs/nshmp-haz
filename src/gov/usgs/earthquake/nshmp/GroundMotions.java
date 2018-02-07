@@ -1,5 +1,11 @@
 package gov.usgs.earthquake.nshmp;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.hypot;
+import static java.lang.Math.sin;
+import static java.lang.Math.tan;
+import static java.lang.Math.toRadians;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,34 +23,23 @@ import gov.usgs.earthquake.nshmp.gmm.Imt;
 import gov.usgs.earthquake.nshmp.gmm.ScalarGroundMotion;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
-public class GroundMotions {
 
+public class GroundMotions {
+	
+	private final static int ROUND = 5;
+	private final static int R_POINTS = 100;
+	
   public static DistanceResult distanceGroundMotions(
       Set<Gmm> gmms,
       GmmInput inputModel,
       Imt imt,
-      double rMax) {
+      double rMin,
+      double rMax,
+      boolean isLogSpace) {
 
-    int round = 5;
-    double rJB;
-    double rX;
-    double rRup;
-    double rMin = 0.001;
-    double rPoints = 100.0;
-    double rStep = (Math.log10(rMax / rMin)) / (rPoints - 1);
-    double[] distance = Data.round(round, Data.pow10(
-        Data.buildSequence(Math.log10(rMin), Math.log10(rMax), rStep, true)));
-
-    List<GmmInput> gmmInputs = new ArrayList<>();
-    GmmInput.Builder gmmBuilder = GmmInput.builder().fromCopy(inputModel);
-
-    for (double r : distance) {
-      rJB = r;
-      rX = r;
-      rRup = Maths.hypot(r, inputModel.zTop);
-      gmmBuilder.distances(rJB, rRup, rX);
-      gmmInputs.add(gmmBuilder.build());
-    }
+    double[] distance = isLogSpace ? distanceLog(rMin, rMax) : 
+    			distanceLinear(rMin, rMax);
+    List<GmmInput> gmmInputs = hangingWallDistances(distance, inputModel);
 
     Map<Gmm, List<Double>> distanceMap = Maps.newEnumMap(Gmm.class);
     Map<Gmm, List<Double>> meanMap = Maps.newEnumMap(Gmm.class);
@@ -87,5 +82,80 @@ public class GroundMotions {
       this.sigmas = sigmas;
     }
   }
+  
+  static double[] distanceLog(double rMin, double rMax) {
+    double rStep = (Math.log10(rMax / rMin)) / ( R_POINTS - 1);
+    double[] distance = Data.round(ROUND, Data.pow10(
+        Data.buildSequence(Math.log10(rMin), Math.log10(rMax), rStep, true)));
+    
+  		return distance;
+  }
+  
+  static double[] distanceLinear(double rMin, double rMax) {
+    double rStep = 1.0;
+    double[] distance = Data.buildCleanSequence(
+    			rMin, rMax, rStep, true, ROUND);
+    
+  		return distance;
+  }
+  
+  /*
+   * Compute distance metrics for a fault.
+   */
+  static List<GmmInput> hangingWallDistances(
+      double[] rValues,
+      GmmInput inputModel) {
+
+    /* Dip in radians */
+    double δ = toRadians(inputModel.dip);
+
+    /* Horizontal and vertical widths of fault */
+    double h = cos(δ) * inputModel.width;
+    double v = sin(δ) * inputModel.width;
+
+    /* Depth to bottom of rupture */
+    double zBot = inputModel.zTop + v;
+
+    /* Distance range over which site is normal to fault plane */
+    double rCutLo = tan(δ) * inputModel.zTop;
+    double rCutHi = tan(δ) * zBot + h;
+
+    /* rRup values corresponding to cutoffs above */
+    double rRupLo = Maths.hypot(inputModel.zTop, rCutLo);
+    double rRupHi = Maths.hypot(zBot, rCutHi - h);
+
+    List<GmmInput> gmmInputs = new ArrayList<>(rValues.length);
+    GmmInput.Builder gmmBuilder = GmmInput.builder().fromCopy(inputModel);
+    
+    for (double r : rValues) {
+      double rJB = (r < 0) ? -r : (r < h) ? 0.0 : r - h;
+      double rRup = (r < rCutLo)
+          ? hypot(r, inputModel.zTop)
+          : (r > rCutHi)
+              ? hypot(r - h, zBot)
+              : rRupScaled(r, rCutLo, rCutHi, rRupLo, rRupHi);
+      gmmBuilder.distances(rJB, rRup, r);
+      gmmInputs.add(gmmBuilder.build());
+    }
+
+    return gmmInputs;
+  }
+  
+  /*
+   * Computes rRup for a surface distance r. The range [rCutLo, rCutHi] must
+   * contain r; rRupLo and rRupHi are rRup at rCutLo and rCutHi, respectively.
+   */
+  private static double rRupScaled(
+      double r,
+      double rCutLo,
+      double rCutHi,
+      double rRupLo,
+      double rRupHi) {
+
+    double rRupΔ = rRupHi - rRupLo;
+    double rCutΔ = rCutHi - rCutLo;
+    return rRupLo + (r - rCutLo) / rCutΔ * rRupΔ;
+  }
+  
 
 }
