@@ -827,9 +827,8 @@ public class GmmInput {
         set(RRUP, Range.closed(0.0, Distance.MAX));
         set(RX, Range.closed(0.0, Distance.MAX));
 
-        Range<Double> depthRange = Earthquakes.CRUSTAL_DEPTH_RANGE
-            .intersection(Earthquakes.INTERFACE_DEPTH_RANGE)
-            .intersection(Earthquakes.SLAB_DEPTH_RANGE);
+        Range<Double> depthRange = Earthquakes.INTERFACE_DEPTH_RANGE
+            .span(Earthquakes.SLAB_DEPTH_RANGE);
         set(ZTOP, depthRange);
         set(ZHYP, depthRange);
 
