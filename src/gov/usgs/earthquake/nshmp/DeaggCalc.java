@@ -3,12 +3,11 @@ package gov.usgs.earthquake.nshmp;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
-import com.google.common.base.Optional;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -107,7 +106,7 @@ public class DeaggCalc {
       Files.move(tmpLog, out.resolve(PROGRAM + ".log"));
       config.write(out);
 
-      return Optional.absent();
+      return Optional.empty();
 
     } catch (Exception e) {
       return HazardCalc.handleError(e, log, tmpLog, args, PROGRAM, USAGE);
@@ -136,7 +135,7 @@ public class DeaggCalc {
     } else {
       log.info("Threads: Running on calling thread");
     }
-    Optional<Executor> executor = Optional.<Executor> fromNullable(execSvc);
+    Optional<Executor> executor = Optional.ofNullable(execSvc);
 
     log.info(PROGRAM + ": calculating ...");
 
@@ -178,7 +177,7 @@ public class DeaggCalc {
   public static Deaggregation calc(
       Hazard hazard,
       double returnPeriod) {
-    return HazardCalcs.deaggregation(hazard, returnPeriod);
+    return HazardCalcs.deaggregation(hazard, returnPeriod, Optional.empty());
   }
 
   private static final String PROGRAM = DeaggCalc.class.getSimpleName();

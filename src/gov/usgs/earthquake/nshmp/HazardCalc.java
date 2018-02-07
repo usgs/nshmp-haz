@@ -2,9 +2,7 @@ package gov.usgs.earthquake.nshmp;
 
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.util.concurrent.Executors.newFixedThreadPool;
-import static java.util.logging.Level.SEVERE;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 
 import java.io.BufferedReader;
@@ -15,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -24,7 +23,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;
-import gov.usgs.earthquake.nshmp.calc.Deaggregation;
 import gov.usgs.earthquake.nshmp.calc.Hazard;
 import gov.usgs.earthquake.nshmp.calc.HazardCalcs;
 import gov.usgs.earthquake.nshmp.calc.HazardExport;
@@ -87,7 +85,7 @@ public class HazardCalc {
     Logging.init();
     Logger log = Logger.getLogger(HazardCalc.class.getName());
     Path tmpLog = createTempLog();
-    
+
     try {
       FileHandler fh = new FileHandler(tmpLog.getFileName().toString());
       fh.setFormatter(new Logging.ConsoleFormatter());
@@ -118,7 +116,7 @@ public class HazardCalc {
       Files.move(tmpLog, out.resolve(PROGRAM + ".log"));
       config.write(out);
 
-      return Optional.absent();
+      return Optional.empty();
 
     } catch (Exception e) {
       return handleError(e, log, tmpLog, args, PROGRAM, USAGE);
@@ -164,14 +162,14 @@ public class HazardCalc {
     } else {
       log.info("Threads: Running on calling thread");
     }
-    Optional<Executor> executor = Optional.<Executor> fromNullable(execSvc);
+    Optional<Executor> executor = Optional.ofNullable(execSvc);
 
     log.info(PROGRAM + ": calculating ...");
 
     HazardExport handler = HazardExport.create(config, sites, log);
     for (Site site : sites) {
       Hazard hazard = calc(model, config, site, executor);
-      handler.add(hazard, Optional.<Deaggregation> absent());
+      handler.add(hazard, Optional.empty());
       log.fine(hazard.toString());
     }
     handler.expire();
@@ -198,20 +196,20 @@ public class HazardCalc {
     }
     return logIncr;
   }
-  
+
   static Optional<String> handleError(
-      Exception e, 
-      Logger log, 
+      Exception e,
+      Logger log,
       Path logfile,
       String[] args,
       String program,
       String usage) {
-    
+
     log.severe(NEWLINE + "** Exiting **");
     try {
       // cleanup; do nothing on failure
       Files.deleteIfExists(logfile);
-    } catch (IOException ioe) {} 
+    } catch (IOException ioe) {}
     StringBuilder sb = new StringBuilder()
         .append(NEWLINE)
         .append(program + ": error").append(NEWLINE)

@@ -12,12 +12,12 @@ import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 import static gov.usgs.earthquake.nshmp.eq.model.PointSourceType.FIXED_STRIKE;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Range;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
@@ -30,6 +30,7 @@ import gov.usgs.earthquake.nshmp.eq.model.HazardModel;
 import gov.usgs.earthquake.nshmp.eq.model.Source;
 import gov.usgs.earthquake.nshmp.eq.model.SourceSet;
 import gov.usgs.earthquake.nshmp.eq.model.SystemSourceSet;
+import gov.usgs.earthquake.nshmp.gmm.Imt;
 
 /**
  * Static probabilistic seismic hazard analysis calculators.
@@ -97,12 +98,13 @@ public class HazardCalcs {
    */
   public static Deaggregation deaggregation(
       Hazard hazard,
-      double returnPeriod) {
+      double returnPeriod,
+      Optional<Imt> imt) {
 
     checkNotNull(hazard);
     checkInRange(rpRange, "Return period", returnPeriod);
 
-    return Deaggregation.atReturnPeriod(hazard, returnPeriod);
+    return Deaggregation.atReturnPeriod(hazard, returnPeriod, imt);
   }
 
   /**

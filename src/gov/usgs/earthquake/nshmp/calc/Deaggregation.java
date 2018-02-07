@@ -10,9 +10,12 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.data.XySequence;
@@ -89,19 +92,28 @@ public final class Deaggregation {
 
   /**
    * Deaggregate {@code hazard} at the intensity measure level corresponding to
-   * the supplied {@code returnPeriod}.
+   * the supplied {@code returnPeriod}. Only a single {@code Imt} will be processed if
+   * supplied.
    *
    * @param hazard to deaggregate.
    * @param returnPeriod at which to deaggregate {@code hazard}
+   * @param deaggImt to deaggregate; deaggregate all if {@code empty()}
    */
-  public static Deaggregation atReturnPeriod(Hazard hazard, double returnPeriod) {
+  public static Deaggregation atReturnPeriod(
+      Hazard hazard,
+      double returnPeriod,
+      Optional<Imt> deaggImt) {
+
     Map<Imt, ImtDeagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
     DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
     double rate = 1.0 / returnPeriod;
 
-    for (Entry<Imt, XySequence> entry : hazard.totalCurves.entrySet()) {
-      Imt imt = entry.getKey();
-      double iml = IML_INTERPOLATER.findX(entry.getValue(), rate);
+    Set<Imt> imtsToDeagg = deaggImt.isPresent()
+        ? EnumSet.of(deaggImt.get())
+        : hazard.totalCurves.keySet();
+
+    for (Imt imt : imtsToDeagg) {
+      double iml = IML_INTERPOLATER.findX(hazard.totalCurves.get(imt), rate);
       DeaggConfig config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
       ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
       imtDeaggMap.put(imt, imtDeagg);
@@ -113,19 +125,27 @@ public final class Deaggregation {
   }
 
   /**
-   * Deaggregate {@code hazard} at the supplied intensity measure level.
+   * Deaggregate {@code hazard} at the supplied intensity measure level. Only a
+   * single {@code Imt} will be processed if supplied.
    *
    * @param hazard to deaggregate.
    * @param iml intensity measure level at which to deaggregate {@code hazard}
+   * @param deaggImt to deaggregate; deaggregate all if {@code empty()}
    */
-  public static Deaggregation atIml(Hazard hazard, double iml) {
+  public static Deaggregation atIml(
+      Hazard hazard, 
+      double iml,
+      Optional<Imt> deaggImt) {
 
     Map<Imt, ImtDeagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
     DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
 
-    for (Entry<Imt, XySequence> entry : hazard.totalCurves.entrySet()) {
-      Imt imt = entry.getKey();
-      double rate = RATE_INTERPOLATER.findY(entry.getValue(), iml);
+    Set<Imt> imtsToDeagg = deaggImt.isPresent()
+        ? EnumSet.of(deaggImt.get())
+        : hazard.totalCurves.keySet();
+        
+    for (Imt imt : imtsToDeagg) {
+      double rate = RATE_INTERPOLATER.findY(hazard.totalCurves.get(imt), iml);
       double returnPeriod = 1.0 / rate;
       DeaggConfig config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
       ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
