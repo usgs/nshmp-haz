@@ -3,7 +3,6 @@ package gov.usgs.earthquake.nshmp;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
-import com.google.common.base.Optional;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -15,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -116,7 +116,7 @@ public class RateCalc {
       Files.move(tmpLog, out.resolve(PROGRAM + ".log"));
       config.write(out);
 
-      return Optional.absent();
+      return Optional.empty();
 
     } catch (Exception e) {
       return HazardCalc.handleError(e, log, tmpLog, args, PROGRAM, USAGE);

@@ -12,7 +12,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Doubles;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 
 import gov.usgs.earthquake.nshmp.HazardCalc;
@@ -122,7 +122,7 @@ public class PeerTest {
   @Test
   public void test() {
     System.out.println(site.name);
-    Hazard result = HazardCalc.calc(model, model.config(), site, Optional.<Executor> absent());
+    Hazard result = HazardCalc.calc(model, model.config(), site, Optional.<Executor> empty());
     // compute y-values converting to Poiss prob
     double[] actual = Doubles.toArray(
         FluentIterable.from(result.curves().get(Imt.PGA).yValues())
