@@ -42,7 +42,12 @@ sourceSets {
 
 ext {
   projectName = 'nshmp-haz'
-  gitTag = 'git describe --tags'.execute().text.replace('\n', '') ?: 'unknown'
+  /* 
+   * The git-dir option gets the correct tag when
+   * build is called from nshmp-haz-ws.
+   */
+  gitCommand = 'git --git-dir=../nshmp-haz/.git describe --tags'
+  gitTag = gitCommand.execute().text.replace('\n', '') ?: 'unknown'
   gitLink = '<a href="https://github.com/usgs/nshmp-haz">' + gitTag +'</a>'
   propsPath = '/resources/main/app.properties'
   docTitle = projectName + ': ' + gitLink
