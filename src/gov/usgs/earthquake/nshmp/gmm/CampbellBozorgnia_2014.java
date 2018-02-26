@@ -142,19 +142,23 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
   }
 
   @Override
-  public final ScalarGroundMotion calc(final GmmInput in) {
-    return calc(coeffs, coeffsPGA, in);
+  public final ScalarGroundMotion calc(GmmInput in) {
+    return calc(coeffs, coeffsPGA, in, in.vs30, in.z2p5);
   }
 
-  private static final ScalarGroundMotion calc(final Coefficients c, final Coefficients cPGA,
-      final GmmInput in) {
+  private static ScalarGroundMotion calc(
+      Coefficients c,
+      Coefficients cPGA,
+      GmmInput in,
+      double vs30,
+      double z2p5) {
 
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
-    double vs30 = in.vs30;
-    double z2p5 = in.z2p5;
 
     // calc pga rock reference value using CA vs30 z2p5 value: 0.398
-    double pgaRock = (vs30 < c.k1) ? exp(calcMean(cPGA, style, 1100.0, 0.398, 0.0, in)) : 0.0;
+    double pgaRock = (vs30 < c.k1)
+        ? exp(calcMean(cPGA, style, 1100.0, 0.398, 0.0, in))
+        : 0.0;
 
     double μ = calcMean(c, style, vs30, z2p5, pgaRock, in);
 
@@ -169,10 +173,38 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
     return DefaultScalarGroundMotion.create(μ, σ);
   }
 
+  /*
+   * Convenience method for Campbell site/basin delta relative to rock
+   * reference. vs30ref is rock reference vs30 for calling GMM, which may be
+   * different than Campbell's 1100 m/s.
+   */
+  double basinDelta(GmmInput in, double vs30ref) {
+    FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
+
+    /* Rock reference value with default basin term. */
+    double pgaRock = (vs30ref < coeffs.k1)
+        ? exp(calcMean(coeffsPGA, style, 1100.0, 0.398, 0.0, in))
+        : 0.0;
+    double μRock = calcMean(coeffs, style, vs30ref, Double.NaN, pgaRock, in);
+    
+    /* Now with site/basin effect. */
+    pgaRock = (in.vs30 < coeffs.k1)
+        ? exp(calcMean(coeffsPGA, style, 1100.0, 0.398, 0.0, in))
+        : 0.0;
+    double μBasin = calcMean(coeffs, style, in.vs30, in.z2p5, pgaRock, in);
+
+    return μBasin - μRock;
+  }
+
   // Mean ground motion model -- we use supplied vs30 and z2p5 rather than
   // values from input to impose 1100 and 0.398 when computing rock reference
-  private static final double calcMean(final Coefficients c, final FaultStyle style,
-      final double vs30, final double z2p5, final double pgaRock, final GmmInput in) {
+  private static double calcMean(
+      Coefficients c,
+      FaultStyle style,
+      double vs30,
+      double z2p5,
+      double pgaRock,
+      GmmInput in) {
 
     double Mw = in.Mw;
     double rRup = in.rRup;
@@ -274,7 +306,11 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
   // Basin Response term -- Equation 20
   // update z2p5 with CA model if not supplied -- Equation 33
-  static final double basinResponseTerm(Coefficients c, double vs30, double z2p5) {
+  private static double basinResponseTerm(
+      Coefficients c,
+      double vs30,
+      double z2p5) {
+
     if (Double.isNaN(z2p5)) {
       z2p5 = exp(7.089 - 1.144 * log(vs30));
     }
@@ -288,8 +324,12 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
   }
 
   // Aleatory uncertainty model
-  private static final double calcStdDev(final Coefficients c, final Coefficients cPGA,
-      final double Mw, final double vs30, final double pgaRock) {
+  private static double calcStdDev(
+      Coefficients c,
+      Coefficients cPGA,
+      double Mw,
+      double vs30,
+      double pgaRock) {
 
     // -- Equation 31
     double vsk1 = vs30 / c.k1;

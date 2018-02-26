@@ -1,6 +1,5 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import static gov.usgs.earthquake.nshmp.gmm.CampbellBozorgnia_2014.basinResponseTerm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
@@ -59,6 +58,8 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("AM09.csv");
 
+  private static final double VS30_ROCK = 760.0;
+
   private static final class Coefficients {
 
     final double c0, c1, c2, c3, c4, σ;
@@ -88,19 +89,30 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    // possibly picking up basin term from CB14
-    double fBasin = basinTerm() ? basinResponseTerm(cb14.coeffs, in.vs30, in.z2p5) : 0.0;
-    double μ = calcMean(coeffs, coeffsPGA, siteAmp, in) + fBasin;
     double σ = coeffs.σ * BASE_10_TO_E;
+    
+    if (basinEffect()) {
+      // Possibly use basin/site term from 
+      // CB14 with local rock reference.
+      double μRock = calcMean(coeffs, in);
+      double cbBasin = cb14.basinDelta(in, VS30_ROCK);
+      double μ = μRock + cbBasin;
+      return DefaultScalarGroundMotion.create(μ, σ);
+    }
+
+    double μ = calcMean(coeffs, coeffsPGA, siteAmp, in);
     return DefaultScalarGroundMotion.create(μ, σ);
   }
 
-  boolean basinTerm() {
+  boolean basinEffect() {
     return false;
   }
 
-  private static final double calcMean(final Coefficients c, final Coefficients cPga,
-      final BooreAtkinsonSiteAmp siteAmp, final GmmInput in) {
+  private static final double calcMean(
+      final Coefficients c, 
+      final Coefficients cPga,
+      final BooreAtkinsonSiteAmp siteAmp, 
+      final GmmInput in) {
 
     double μ = calcMean(c, in);
     if (in.vs30 != 760.0) {
@@ -122,13 +134,13 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
   static final class Basin extends AtkinsonMacias_2009 {
     static final String NAME = BASE_NAME + " Basin: Interface";
-    
+
     Basin(Imt imt) {
       super(imt);
     }
 
     @Override
-    boolean basinTerm() {
+    boolean basinEffect() {
       return true;
     }
   }

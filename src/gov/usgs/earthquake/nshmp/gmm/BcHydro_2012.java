@@ -1,6 +1,5 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import static gov.usgs.earthquake.nshmp.gmm.CampbellBozorgnia_2014.basinResponseTerm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
@@ -76,6 +75,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   private static final double VSS_MAX = 1000.0;
   private static final double SIGMA = 0.74;
   private static final double ΔC1_SLAB = -0.3;
+  private static final double VS30_ROCK = 1000.0;
 
   private static final class Coefficients {
 
@@ -113,25 +113,38 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
 
-    // possibly picking up basin term from CB14
-    double fBasin = basinTerm() ? basinResponseTerm(cb14.coeffs, in.vs30, in.z2p5) : 0.0;
+    if (basinEffect()) {
+      // Possibly use basin/site term from CB14 with local rock
+      // reference. For a few short periods VS_ROCK < vlin,
+      // otherwise pgaRock would always be 0.0
+      double pgaRock = (VS30_ROCK < coeffs.vlin)
+          ? exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, VS30_ROCK))
+          : 0.0;
+      double μRock = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, VS30_ROCK);
+      double cbBasin = cb14.basinDelta(in, VS30_ROCK);
+      double μ = μRock + cbBasin;
+      return DefaultScalarGroundMotion.create(μ, SIGMA);
+    }
 
-    // pgaRock only required to compute non-linear site response
-    // when vs30 is less than period-dependent vlin cutoff
     double pgaRock = (in.vs30 < coeffs.vlin)
-        ? exp(calcMean(coeffsPGA, isSlab(), fBasin, 0.0, in.Mw, in.rRup, in.zTop, 1000.0))
+        ? exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, VS30_ROCK))
         : 0.0;
-    double μ = calcMean(coeffs, isSlab(), fBasin, pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
+    double μ = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
     return DefaultScalarGroundMotion.create(μ, SIGMA);
   }
 
   abstract boolean isSlab();
 
-  abstract boolean basinTerm();
+  abstract boolean basinEffect();
 
-  private static final double calcMean(final Coefficients c, final boolean slab,
-      final double fBasin, final double pgaRock, final double Mw, final double rRup,
-      final double zTop, final double vs30) {
+  private static final double calcMean(
+      final Coefficients c,
+      final boolean slab,
+      final double pgaRock,
+      final double Mw,
+      final double rRup,
+      final double zTop,
+      final double vs30) {
 
     double ΔC1 = (slab ? ΔC1_SLAB : c.ΔC1mid);
     double mCut = C1 + ΔC1;
@@ -157,8 +170,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
         c.θ6 * rRup + (slab ? c.θ10 : 0.0) + fMag +
         fDepth +
         // fterm + no fterm for forearc sites
-        fSite +
-        fBasin;
+        fSite;
   }
 
   static final class Interface extends BcHydro_2012 {
@@ -174,7 +186,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinTerm() {
+    boolean basinEffect() {
       return false;
     }
   }
@@ -192,7 +204,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinTerm() {
+    boolean basinEffect() {
       return false;
     }
   }
@@ -210,7 +222,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinTerm() {
+    boolean basinEffect() {
       return true;
     }
   }
@@ -228,7 +240,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinTerm() {
+    boolean basinEffect() {
       return true;
     }
   }
