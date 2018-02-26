@@ -1,6 +1,5 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import static gov.usgs.earthquake.nshmp.gmm.CampbellBozorgnia_2014.basinResponseTerm;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
@@ -82,6 +81,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private static final double MC_I = 6.3;
   private static final double MAX_SLAB_DEPTH = 125.0;
   private static final double INTERFACE_DEPTH = 20.0;
+  private static final double VS30_ROCK = 760.0;
 
   private static final class Coefficients {
 
@@ -125,17 +125,26 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
   @Override
   public final ScalarGroundMotion calc(GmmInput in) {
-    double fSite = basinTerm() ? siteTermSmooth(coeffs, in.vs30) : siteTermStep(coeffs, in.vs30);
-    // possibly pick up basin term from CB14
-    double fBasin = basinTerm() ? basinResponseTerm(cb14.coeffs, in.vs30, in.z2p5) : 0.0;
-    double μ = calcMean(coeffs, isSlab(), fSite, in) + fBasin;
     double σ = calcStdDev(coeffs, isSlab());
+    
+    if (basinEffect()) {
+      // Possibly use basin/site term from 
+      // CB14 with local rock reference.
+      double fSite = siteTermStep(coeffs, VS30_ROCK);
+      double μRock = calcMean(coeffs, isSlab(), fSite, in);
+      double cbBasin = cb14.basinDelta(in, VS30_ROCK);
+      double μ = μRock + cbBasin;
+      return DefaultScalarGroundMotion.create(μ, σ);
+    }
+    
+    double fSite = siteTermStep(coeffs, in.vs30);
+    double μ = calcMean(coeffs, isSlab(), fSite, in);
     return DefaultScalarGroundMotion.create(μ, σ);
   }
 
   abstract boolean isSlab();
 
-  abstract boolean basinTerm();
+  abstract boolean basinEffect();
 
   private static final double calcMean(
       final Coefficients c,
@@ -221,7 +230,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinTerm() {
+    boolean basinEffect() {
       return false;
     }
   }
@@ -239,7 +248,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinTerm() {
+    boolean basinEffect() {
       return false;
     }
   }
@@ -257,7 +266,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinTerm() {
+    boolean basinEffect() {
       return true;
     }
   }
@@ -275,7 +284,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinTerm() {
+    boolean basinEffect() {
       return true;
     }
   }
