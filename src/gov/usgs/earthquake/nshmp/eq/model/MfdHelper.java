@@ -374,7 +374,7 @@ class MfdHelper {
             b = readDouble(B, atts);
             break;
           case C_MAG:
-            dMag = readDouble(D_MAG, atts);
+            cMag = readDouble(C_MAG, atts);
             break;
           case D_MAG:
             dMag = readDouble(D_MAG, atts);
