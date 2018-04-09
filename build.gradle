@@ -11,11 +11,11 @@ repositories {
 }
 
 dependencies {
-  compile('com.google.guava:guava:23.0') {
+  compile('com.google.guava:guava:24.1-jre') {
     /* skip optional guava dependencies */
     transitive = false
   }
-  compile 'com.google.code.gson:gson:2.8.1'
+  compile 'com.google.code.gson:gson:2.8.2'
   testCompile 'junit:junit:4.12'
 }
 
