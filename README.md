@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/pmpowers-usgs/nshmp-haz.svg?branch=master)](https://travis-ci.org/pmpowers-usgs/nshmp-haz)
+[![Build Status](https://travis-ci.org/usgs/nshmp-haz.svg?branch=master)](https://travis-ci.org/usgs/nshmp-haz)
 
 ## nshmp-haz
 
