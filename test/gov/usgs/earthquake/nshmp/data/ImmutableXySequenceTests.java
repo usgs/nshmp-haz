@@ -6,11 +6,7 @@ import org.junit.Test;
 
 import gov.usgs.earthquake.nshmp.data.XySequence;
 
-/**
- * Add comments here
- *
- * @author Peter Powers
- */
+@SuppressWarnings("javadoc")
 public class ImmutableXySequenceTests {
 
   @Test
