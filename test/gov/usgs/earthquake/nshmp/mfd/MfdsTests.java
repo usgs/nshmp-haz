@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import gov.usgs.earthquake.nshmp.mfd.IncrementalMfd;
 import gov.usgs.earthquake.nshmp.mfd.Mfds;
 
+@SuppressWarnings("javadoc")
 public class MfdsTests {
 
   private static final double MFD_TOL = 1e-10;

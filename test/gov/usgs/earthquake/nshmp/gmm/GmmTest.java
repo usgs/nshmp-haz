@@ -6,13 +6,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Function;
-import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.google.common.primitives.Doubles;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;

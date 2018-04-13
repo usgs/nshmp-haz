@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import gov.usgs.earthquake.nshmp.data.DataArray;
 
+@SuppressWarnings("javadoc")
 public class DataArrayTests {
 
   @Test

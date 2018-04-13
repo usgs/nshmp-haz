@@ -1,7 +1,6 @@
 package gov.usgs.earthquake.nshmp.internal;
 
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.ADAK_AK;
-import static gov.usgs.earthquake.nshmp.internal.NshmpSite.BIG_SUR_CA;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.BOISE_ID;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.BRADSHAW_AIRFIELD_HI;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.CENTURY_CITY_CA;
@@ -19,7 +18,6 @@ import static gov.usgs.earthquake.nshmp.internal.NshmpSite.LOS_ALAMOS_NATIONAL_L
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.LOS_ANGELES_CA;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.MCGRATH_AK;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.MEMPHIS_TN;
-import static gov.usgs.earthquake.nshmp.internal.NshmpSite.MILWAUKEE_WI;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.MONTEREY_CA;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.NEW_YORK_NY;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.NORTHRIDGE_CA;
@@ -47,18 +45,17 @@ import static gov.usgs.earthquake.nshmp.internal.NshmpSite.TACOMA_WA;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.VALLEJO_CA;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.VENTURA_CA;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.WASHINGTON_DC;
-import static gov.usgs.earthquake.nshmp.internal.NshmpSite.YAKIMA_WA;
 import static gov.usgs.earthquake.nshmp.internal.NshmpSite.YAKUTAT_AK;
 import static org.junit.Assert.assertEquals;
+
+import java.util.Comparator;
+import java.util.EnumSet;
 
 import org.junit.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-
-import java.util.Comparator;
-import java.util.EnumSet;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.internal.NshmpSite.StateComparator;

@@ -99,6 +99,7 @@ public class PeerTest {
   private static final Path MODEL_DIR = PEER_DIR.resolve("models");
   private static final Path RESULT_DIR = PEER_DIR.resolve("results");
 
+  @SuppressWarnings("unused")
   private String modelName; // just used to improve test name when running
   private HazardModel model;
   private Site site;
