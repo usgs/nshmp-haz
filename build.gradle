@@ -6,6 +6,10 @@ apply plugin: 'eclipse-wtp'
 sourceCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 
+jacoco {
+    toolVersion = '0.8.1'
+}
+
 repositories {
   jcenter()
 }
