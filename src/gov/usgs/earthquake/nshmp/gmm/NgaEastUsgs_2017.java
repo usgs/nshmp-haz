@@ -6,6 +6,7 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
+import static java.lang.Math.sqrt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
@@ -124,6 +125,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   private static final double[] SIGMA_WTS = { 0.185, 0.63, 0.185 };
+  private static final double[] SITE_AMP_WTS = SIGMA_WTS;
 
   /* ModelID's of NGA-East concentric Sammon's map rings (29). */
   private static final int[] NGAE_R0 = { 1 };
@@ -164,9 +166,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private final Coefficients σCoeffsMid;
   private final Coefficients σCoeffsHi;
   private final CoefficientsTotal σCoeffsTotal;
-
-  // private final GroundMotionTable[] tables;
-  // private final GroundMotionTable[] pgaTables;
   private final double[] weights;
 
   NgaEastUsgs_2017(final Imt imt) {
@@ -174,7 +173,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     σCoeffsMid = new Coefficients(imt, COEFFS_SIGMA_MID);
     σCoeffsHi = new Coefficients(imt, COEFFS_SIGMA_HI);
     σCoeffsTotal = new CoefficientsTotal(imt, COEFFS_SIGMA_TOTAL);
-    // tables = GroundMotionTables.getNgaEast(imt);
     weights = GroundMotionTables.getNgaEastWeights(imt);
   }
 
@@ -267,8 +265,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         int ti = models[i] - 1;
         double μ = tables[ti].get(p);
         double μPGA = exp(pgaTables[ti].get(p));
-        double fSite = siteAmp.calc(μPGA, in.vs30);
-        μs[i] = μ + fSite;
+        SiteAmp.Value fSite = siteAmp.calc(μPGA, in.vs30);
+        μs[i] = fSite.apply(μ);
       }
       double[] σs = calcSigmas(in.Mw);
       double[] σWts = σs.length > 1 ? SIGMA_WTS : new double[] { 1.0 };
@@ -317,8 +315,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
       double μPGA = exp(pgaTable.get(p));
-      double fSite = siteAmp.calc(μPGA, in.vs30);
-      double μ = table.get(p) + fSite;
+      SiteAmp.Value fSite = siteAmp.calc(μPGA, in.vs30);
+      double μ = fSite.apply(table.get(p));
       double σ = calcSigmaTotal(in.Mw);
       return new DefaultScalarGroundMotion(μ, σ);
     }
@@ -461,8 +459,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
       double μPGA = exp(pgaTable.get(p));
-      double fSite = siteAmp.calc(μPGA, in.vs30);
-      double μ = table.get(p) + fSite;
+      SiteAmp.Value fSite = siteAmp.calc(μPGA, in.vs30);
+      double μ = fSite.apply(table.get(p));
       double σ = calcSigmaTotal(in.Mw);
       return new DefaultScalarGroundMotion(μ, σ);
     }
@@ -694,10 +692,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     private static final class Coefficients {
 
       final double c, v1, v2, vf, σvc, σl, σu, f760, f760σ, f3, f4, f5, vc, σc;
-      final Imt imt;
 
       Coefficients(Imt imt, CoefficientContainer cc) {
-        this.imt = imt;
         Map<String, Double> coeffs = cc.get(imt);
         c = coeffs.get("c");
         v1 = coeffs.get("V1");
@@ -720,7 +716,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       c = new Coefficients(imt, COEFFS);
     }
 
-    double calc(double pgaRock, double vs30) {
+    SiteAmp.Value calc(double pgaRock, double vs30) {
 
       /*
        * Developer notes:
@@ -760,7 +756,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /* Vs30 filtering */
 
       if (vs30 > VU) {
-        return 0.0;
+        return new Value(0.0, 0.0);
       } else if (vs30 < VL) {
         vs30 = VL;
       }
@@ -776,25 +772,25 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         fv = c.c * log(c.v2 / V_REF) + c.c / 2.0 * log(vs30 / c.v2);
       }
 
-      // double fvσ = 0.0;
-      // if (vs30 < c.vf) {
-      // double σT = c.σl - c.σvc;
-      // double vT = (vs30 - VL) / (c.vf - VL);
-      // fvσ = c.σl - 2.0 * σT * vT + σT * vT * vT;
-      // } else if (vs30 <= c.v2) {
-      // fvσ = c.σvc;
-      // } else {
-      // double vT = (vs30 - c.v2) / (VU - c.v2);
-      // fvσ = c.σvc + (c.σu - c.σvc) * vT * vT;
-      // }
+      double fvσ = 0.0;
+      if (vs30 < c.vf) {
+        double σT = c.σl - c.σvc;
+        double vT = (vs30 - VL) / (c.vf - VL);
+        fvσ = c.σl - 2.0 * σT * vT + σT * vT * vT;
+      } else if (vs30 <= c.v2) {
+        fvσ = c.σvc;
+      } else {
+        double vT = (vs30 - c.v2) / (VU - c.v2);
+        fvσ = c.σvc + (c.σu - c.σvc) * vT * vT;
+      }
 
       double fLin = fv + c.f760;
-      // double σLin = sqrt(fvσ * fvσ + c.f760σ * c.f760σ);
+      double σLin = sqrt(fvσ * fvσ + c.f760σ * c.f760σ);
 
       /* Nonlinear response */
 
       double fNonlin = 0.0;
-      // double σNonlin = 0.0;
+      double σNonlin = 0.0;
       if (vs30 < c.vc) {
 
         double f2 = c.f4 *
@@ -803,17 +799,42 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         double fT = log((pgaRock + c.f3) / c.f3);
         fNonlin = f2 * fT;
 
-        // double σf2 = 0.0;
-        // if (vs30 < 300.0) {
-        // σf2 = c.σc;
-        // } else if (vs30 < 1000.0) {
-        // σf2 = c.σc - c.σc / log (1000.0 / 300.0) * log(vs30 /300.0);
-        // }
-        // σNonlin = σf2 * fT;
+        double σf2 = 0.0;
+        if (vs30 < 300.0) {
+          σf2 = c.σc;
+        } else if (vs30 < 1000.0) {
+          σf2 = c.σc - c.σc / log(1000.0 / 300.0) * log(vs30 / 300.0);
+        }
+        σNonlin = σf2 * fT;
       }
 
-      // double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
-      return fLin + fNonlin;
+      return new Value(
+          fLin + fNonlin,
+          sqrt(σLin * σLin + σNonlin * σNonlin));
+    }
+
+    /**
+     * Wrapper class for site amplification and associated epistemic
+     * uncertainty.
+     */
+    static final class Value {
+
+      final double siteAmp;
+      final double σ;
+
+      Value(double siteAmp, double σ) {
+        this.siteAmp = siteAmp;
+        this.σ = σ;
+      }
+
+      double apply(double μ) {
+        double μAmp = μ + siteAmp;
+        double median = SITE_AMP_WTS[0] * exp(μAmp + σ) +
+                SITE_AMP_WTS[1] * exp(μAmp) +
+                SITE_AMP_WTS[2] * exp(μAmp - σ);
+        // double median = SITE_AMP_WTS[0] * exp(μAmp + σ)
+        return log(median);
+      }
     }
   }
 
