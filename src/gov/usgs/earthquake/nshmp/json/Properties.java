@@ -3,7 +3,9 @@ package gov.usgs.earthquake.nshmp.json;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
+
 
 /**
  * Create {@code Properties} for {@link Feature}s. 
@@ -156,7 +158,21 @@ public class Properties {
     }
 
   }
-
+  
+  /**
+   * Return the {@code Object} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   *  
+   * @param key The {@code String} key.
+   * @return The value.
+   */
+  public Object getProperty(String key) {
+    Object value = this.attributes.get(key);
+    checkNotNull(value, "Could not get attribute: " + key);
+    
+    return value;
+  }
+ 
   /**
    * Return a {@code String} in JSON format.
    */
