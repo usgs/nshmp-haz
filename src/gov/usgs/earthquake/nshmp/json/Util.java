@@ -68,7 +68,7 @@ public class Util {
    * @param s The {@code String} to clean up.
    * @return The cleaned up {@code String}.
    */
-  static String cleanPoints(String s) {
+  public static String cleanPoints(String s) {
     return s.replace(": [\n          ", ": [")
         .replace(",\n          ", ", ")
         .replace("\n        ]", "]") + "\n";
@@ -80,7 +80,7 @@ public class Util {
    * @param s The {@code String} to clean up.
    * @return The cleaned up {@code String}.
    */
-  static String cleanPoly(String s) {
+  public static String cleanPoly(String s) {
     return s
         .replace("\n          [", "[")
         .replace("[\n              ", "[ ")
