@@ -663,8 +663,8 @@ public enum Gmm {
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2(
-      NgaEastUsgs_2017.Usgs13.class,
-      NgaEastUsgs_2017.Usgs13.NAME,
+      NgaEastUsgs_2017.Usgs17.class,
+      NgaEastUsgs_2017.Usgs17.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
       NgaEastUsgs_2017.CONSTRAINTS),
 
@@ -895,7 +895,7 @@ public enum Gmm {
       NgaEastUsgs_2017.SeedUpdate_Graizer16.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
-
+ 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_SEED_GRAIZER17(
       NgaEastUsgs_2017.SeedUpdate_Graizer17.class,
@@ -1243,10 +1243,16 @@ public enum Gmm {
             MCVERRY_00_SLAB,
             MCVERRY_00_VOLCANIC)),
 
+    NGA_EAST(
+        "NGA-East",
+        ImmutableList.of(
+            NGA_EAST_USGS,
+            NGA_EAST_USGS2,
+            NGA_EAST_USGS_SEEDS)),
+    
     NGA_EAST_SAMMONS(
         "NGA-East USGS",
         ImmutableList.of(
-            NGA_EAST_USGS,
             NGA_EAST_USGS_1,
             NGA_EAST_USGS_2,
             NGA_EAST_USGS_3,
@@ -1264,7 +1270,6 @@ public enum Gmm {
     NGA_EAST_SAMMONS2(
         "NGA-East USGS2",
         ImmutableList.of(
-            NGA_EAST_USGS2,
             NGA_EAST_USGS2_1,
             NGA_EAST_USGS2_2,
             NGA_EAST_USGS2_3,
@@ -1287,7 +1292,6 @@ public enum Gmm {
     NGA_EAST_SEEDS(
         "NGA-East Seed Models",
         ImmutableList.of(
-            NGA_EAST_USGS_SEEDS,
             NGA_EAST_SEED_1CCSP,
             NGA_EAST_SEED_1CVSP,
             NGA_EAST_SEED_2CCSP,

@@ -359,9 +359,9 @@ final class GroundMotionTables {
           .transform(Enums.stringConverter(Imt.class))
           .toList();
       for (Imt imt : imts) {
-        map.put(imt, new double[NGA_EAST_MODEL_COUNT]);
+        map.put(imt, new double[NGA_EAST_V2_MODEL_COUNT]);
       }
-      for (int i = 0; i < NGA_EAST_MODEL_COUNT; i++) {
+      for (int i = 0; i < NGA_EAST_V2_MODEL_COUNT; i++) {
         List<Double> weights = splitToDoubleList(lines.get(i + 1), Delimiter.COMMA);
         for (int j = 1; j < weights.size(); j++) {
           map.get(imts.get(j - 1))[i] = weights.get(j);
