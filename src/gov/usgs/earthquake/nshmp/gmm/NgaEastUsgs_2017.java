@@ -1,25 +1,41 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.io.Resources.getResource;
+import static com.google.common.io.Resources.readLines;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
+import static gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.TABLE_DIR;
+import static gov.usgs.earthquake.nshmp.data.Data.checkWeights;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
+import static java.lang.Math.sqrt;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
-import com.google.common.primitives.Ints;
-
-import java.util.Map;
+import com.google.common.math.DoubleMath;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.calc.ExceedanceModel;
 import gov.usgs.earthquake.nshmp.data.Data;
-import gov.usgs.earthquake.nshmp.data.Indexing;
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable.Position;
+import gov.usgs.earthquake.nshmp.internal.Parsing;
+import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
@@ -116,19 +132,41 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   static CoefficientContainer COEFFS_SIGMA_HI;
   static CoefficientContainer COEFFS_SIGMA_TOTAL;
 
+  /* Immutable, ordered map */
+  static Map<String, Double> USGS_SEED_WEIGHTS;
+
   static {
     COEFFS_SIGMA_LO = new CoefficientContainer("nga-east-usgs-sigma-lo.csv");
     COEFFS_SIGMA_MID = new CoefficientContainer("nga-east-usgs-sigma-mid.csv");
     COEFFS_SIGMA_HI = new CoefficientContainer("nga-east-usgs-sigma-hi.csv");
     COEFFS_SIGMA_TOTAL = new CoefficientContainer("nga-east-usgs-sigma-total.csv");
+    USGS_SEED_WEIGHTS = initSeedWeights();
+  }
+
+  private static Map<String, Double> initSeedWeights() {
+    try {
+      Map<String, Double> wtMap = readLines(
+          getResource(
+              NgaEastUsgs_2017.class,
+              TABLE_DIR + "nga-east-seed-weights.dat"),
+          StandardCharsets.UTF_8)
+              .stream()
+              .skip(1)
+              .map(line -> Parsing.splitToList(line, Delimiter.COMMA))
+              .collect(Collectors.toMap(
+                  entry -> entry.get(0),
+                  entry -> Double.valueOf(entry.get(1))));
+
+      checkWeights(wtMap.values());
+      return ImmutableMap.copyOf(wtMap);
+      
+    } catch (IOException ioe) {
+      throw new RuntimeException(ioe);
+    }
   }
 
   private static final double[] SIGMA_WTS = { 0.185, 0.63, 0.185 };
-
-  /* ModelID's of NGA-East concentric Sammon's map rings (29). */
-  private static final int[] NGAE_R0 = { 1 };
-  private static final int[] NGAE_R1 = Indexing.indices(2, 5);
-  private static final int[] NGAE_R2 = Indexing.indices(6, 13);
+  private static final double[] SITE_AMP_WTS = SIGMA_WTS;
 
   private static final class Coefficients {
 
@@ -165,17 +203,11 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private final Coefficients σCoeffsHi;
   private final CoefficientsTotal σCoeffsTotal;
 
-  // private final GroundMotionTable[] tables;
-  // private final GroundMotionTable[] pgaTables;
-  private final double[] weights;
-
   NgaEastUsgs_2017(final Imt imt) {
     σCoeffsLo = new Coefficients(imt, COEFFS_SIGMA_LO);
     σCoeffsMid = new Coefficients(imt, COEFFS_SIGMA_MID);
     σCoeffsHi = new Coefficients(imt, COEFFS_SIGMA_HI);
     σCoeffsTotal = new CoefficientsTotal(imt, COEFFS_SIGMA_TOTAL);
-    // tables = GroundMotionTables.getNgaEast(imt);
-    weights = GroundMotionTables.getNgaEastWeights(imt);
   }
 
   /* Total ergodic sigma model */
@@ -199,6 +231,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   /* 3-branch sigma model. */
+  @Deprecated
   double[] calcSigmas(double Mw) {
     return new double[] {
         calcSigma(σCoeffsLo, Mw),
@@ -232,74 +265,137 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return Maths.hypot(τ, φ);
   }
 
-  /* Return the subset of weights specified by the supplied modelIDs. */
-  private static double[] selectWeights(double[] weights, int[] modelIDs) {
-    double[] subsetWeights = new double[modelIDs.length];
-    for (int i = 0; i < modelIDs.length; i++) {
-      subsetWeights[i] = weights[modelIDs[i] - 1];
-    }
-    return subsetWeights;
-  }
-
   static abstract class ModelGroup extends NgaEastUsgs_2017 {
 
-    final int[] models;
     final double[] weights;
     final GroundMotionTable[] tables;
     final GroundMotionTable[] pgaTables;
     final SiteAmp siteAmp;
 
     /* Specifiy an array of models ids. */
-    ModelGroup(Imt imt, int[] models) {
+    ModelGroup(
+        Imt imt,
+        double[] weights,
+        GroundMotionTable[] tables,
+        GroundMotionTable[] pgaTables) {
+
       super(imt);
-      this.models = models;
-      this.weights = Data.round(8, Data.normalize(selectWeights(super.weights, models)));
-      this.tables = GroundMotionTables.getNgaEast(imt);
-      this.pgaTables = GroundMotionTables.getNgaEast(Imt.PGA);
+      checkArgument(
+          weights.length == tables.length && weights.length == pgaTables.length,
+          "Weights and table arrays are different sizes");
+      this.weights = weights;
+      this.tables = tables;
+      this.pgaTables = pgaTables;
       this.siteAmp = new SiteAmp(imt);
     }
 
     @Override
     public MultiScalarGroundMotion calc(GmmInput in) {
       Position p = tables[0].position(in.rRup, in.Mw);
-      double[] μs = new double[models.length];
-      for (int i = 0; i < models.length; i++) {
-        int ti = models[i] - 1;
-        double μ = tables[ti].get(p);
-        double μPGA = exp(pgaTables[ti].get(p));
-        double fSite = siteAmp.calc(μPGA, in.vs30);
-        μs[i] = μ + fSite;
+      double[] μs = new double[weights.length];
+      for (int i = 0; i < weights.length; i++) {
+        double μ = tables[i].get(p);
+        double μPga = exp(pgaTables[i].get(p));
+        SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
+        μs[i] = fSite.apply(μ);
       }
-      double[] σs = calcSigmas(in.Mw);
-      double[] σWts = σs.length > 1 ? SIGMA_WTS : new double[] { 1.0 };
+      double[] σs = { calcSigmaTotal(in.Mw) };
+      double[] σWts = { 1.0 };
       return new MultiScalarGroundMotion(μs, weights, σs, σWts);
     }
   }
 
-  static class TotalSigmaModel extends ModelGroup {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Total";
+  static class Usgs13 extends ModelGroup {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch";
 
-    TotalSigmaModel(Imt imt) {
-      super(imt, Ints.concat(NGAE_R0, NGAE_R1, NGAE_R2));
-    }
-
-    @Override
-    double[] calcSigmas(double Mw) {
-      return new double[] { calcSigmaTotal(Mw) };
+    Usgs13(Imt imt) {
+      super(
+          imt,
+          GroundMotionTables.getNgaEastWeights(imt),
+          GroundMotionTables.getNgaEast(imt),
+          GroundMotionTables.getNgaEast(Imt.PGA));
     }
   }
 
-  static class BranchSigmaModel extends ModelGroup {
-    static final String NAME = TotalSigmaModel.NAME + " (branching σ)";
+  static class Usgs17 extends ModelGroup {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch";
 
-    BranchSigmaModel(Imt imt) {
-      super(imt, Ints.concat(NGAE_R0, NGAE_R1, NGAE_R2));
+    Usgs17(Imt imt) {
+      super(
+          imt,
+          GroundMotionTables.getNgaEastV2Weights(imt),
+          GroundMotionTables.getNgaEastV2(imt),
+          GroundMotionTables.getNgaEastV2(Imt.PGA));
     }
+  }
+
+  /*
+   * Implementation of USGS Seed model logic tree. All models but SP16 are table
+   * based; SP16 is added to the median ground motion array last. NOTE that the
+   * model ignores the SP16 aleatory variability model for consistency with the
+   * other seed models.
+   */
+  static class UsgsSeeds extends NgaEastUsgs_2017 {
+
+    static final String NAME = NgaEastUsgs_2017.NAME + ": USGS Seed Tree";
+    static final String SP16_ID = "SP16";
+
+    /* ids for table based models only; skips SP16 */
+    static final List<String> ids;
+    /* includes SP16 as last entry */
+    static final double[] weights;
+
+    final GroundMotionTable[] tables;
+    final GroundMotionTable[] pgaTables;
+    final ShahjoueiPezeshk_2016 sp16;
+    final SiteAmp siteAmp;
+
+    static {
+      ids = new ArrayList<>();
+      List<Double> wtList = USGS_SEED_WEIGHTS.entrySet().stream()
+          .filter(entry -> !entry.getKey().equals(SP16_ID))
+          .peek(entry -> ids.add(entry.getKey()))
+          .map(entry -> entry.getValue())
+          .collect(Collectors.toList());
+      weights = Doubles.toArray(ImmutableList.<Double> builder()
+          .addAll(wtList)
+          .add(USGS_SEED_WEIGHTS.get(SP16_ID))
+          .build());
+    }
+
+    UsgsSeeds(Imt imt) {
+      super(imt);
+      this.tables = GroundMotionTables.getNgaEastSeeds(ids, imt);
+      this.pgaTables = GroundMotionTables.getNgaEastSeeds(ids, Imt.PGA);
+      this.sp16 = new ShahjoueiPezeshk_2016(imt);
+      this.siteAmp = new SiteAmp(imt);
+    }
+
+    @Override
+    public MultiScalarGroundMotion calc(GmmInput in) {
+      Position p = tables[0].position(in.rRup, in.Mw);
+      int seedCount = ids.size();
+      double[] μs = new double[seedCount + 1];
+      for (int i = 0; i < ids.size(); i++) {
+        double μ = tables[i].get(p);
+        double μPga = exp(pgaTables[i].get(p));
+        SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
+        μs[i] = fSite.apply(μ);
+      }
+      /* add SP16; already includes NGA-East site amp */
+      μs[seedCount] = sp16.calc(in).mean();
+      double[] σs = { calcSigmaTotal(in.Mw) };
+      double[] σWts = { 1.0 };
+      return new MultiScalarGroundMotion(μs, weights, σs, σWts);
+    }
+
   }
 
   static abstract class Sammons extends NgaEastUsgs_2017 {
     static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons : ";
-
+    static final String NAME0 = NAME + "0";
+    
+    
     final int id;
     final GroundMotionTable table;
     final GroundMotionTable pgaTable;
@@ -316,9 +412,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
-      double μPGA = exp(pgaTable.get(p));
-      double fSite = siteAmp.calc(μPGA, in.vs30);
-      double μ = table.get(p) + fSite;
+      double μPga = exp(pgaTable.get(p));
+      SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
+      double μ = fSite.apply(table.get(p));
       double σ = calcSigmaTotal(in.Mw);
       return new DefaultScalarGroundMotion(μ, σ);
     }
@@ -326,7 +422,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_1 extends Sammons {
     static final int ID = 1;
-    static final String NAME = Sammons.NAME + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_1(Imt imt) {
       super(ID, imt);
@@ -335,7 +431,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_2 extends Sammons {
     static final int ID = 2;
-    static final String NAME = Sammons.NAME + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_2(Imt imt) {
       super(ID, imt);
@@ -344,7 +440,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_3 extends Sammons {
     static final int ID = 3;
-    static final String NAME = Sammons.NAME + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_3(Imt imt) {
       super(ID, imt);
@@ -353,7 +449,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_4 extends Sammons {
     static final int ID = 4;
-    static final String NAME = Sammons.NAME + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_4(Imt imt) {
       super(ID, imt);
@@ -362,7 +458,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_5 extends Sammons {
     static final int ID = 5;
-    static final String NAME = Sammons.NAME + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_5(Imt imt) {
       super(ID, imt);
@@ -371,7 +467,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_6 extends Sammons {
     static final int ID = 6;
-    static final String NAME = Sammons.NAME + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_6(Imt imt) {
       super(ID, imt);
@@ -380,7 +476,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_7 extends Sammons {
     static final int ID = 7;
-    static final String NAME = Sammons.NAME + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_7(Imt imt) {
       super(ID, imt);
@@ -389,7 +485,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_8 extends Sammons {
     static final int ID = 8;
-    static final String NAME = Sammons.NAME + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_8(Imt imt) {
       super(ID, imt);
@@ -398,7 +494,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_9 extends Sammons {
     static final int ID = 9;
-    static final String NAME = Sammons.NAME + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_9(Imt imt) {
       super(ID, imt);
@@ -441,6 +537,186 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
+  static abstract class Sammons2 extends NgaEastUsgs_2017 {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons2 : ";
+    static final String NAME0 = NAME + "0";
+
+    final int id;
+    final GroundMotionTable table;
+    final GroundMotionTable pgaTable;
+    final SiteAmp siteAmp;
+
+    Sammons2(int id, Imt imt) {
+      super(imt);
+      this.id = id;
+      this.table = GroundMotionTables.getNgaEastV2(imt)[id - 1];
+      this.pgaTable = GroundMotionTables.getNgaEastV2(Imt.PGA)[id - 1];
+      this.siteAmp = new SiteAmp(imt);
+    }
+
+    @Override
+    public ScalarGroundMotion calc(GmmInput in) {
+      Position p = table.position(in.rRup, in.Mw);
+      double μPga = exp(pgaTable.get(p));
+      SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
+      double μ = fSite.apply(table.get(p));
+      double σ = calcSigmaTotal(in.Mw);
+      return new DefaultScalarGroundMotion(μ, σ);
+    }
+  }
+
+  static class Sammons2_1 extends Sammons2 {
+    static final int ID = 1;
+    static final String NAME = Sammons2.NAME0 + ID;
+
+    Sammons2_1(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_2 extends Sammons2 {
+    static final int ID = 2;
+    static final String NAME = Sammons2.NAME0 + ID;
+
+    Sammons2_2(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_3 extends Sammons2 {
+    static final int ID = 3;
+    static final String NAME = Sammons2.NAME0 + ID;
+
+    Sammons2_3(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_4 extends Sammons2 {
+    static final int ID = 4;
+    static final String NAME = Sammons2.NAME0 + ID;
+
+    Sammons2_4(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_5 extends Sammons2 {
+    static final int ID = 5;
+    static final String NAME = Sammons2.NAME0 + ID;
+
+    Sammons2_5(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_6 extends Sammons2 {
+    static final int ID = 6;
+    static final String NAME = Sammons2.NAME0 + ID;
+
+    Sammons2_6(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_7 extends Sammons2 {
+    static final int ID = 7;
+    static final String NAME = Sammons2.NAME0 + ID;
+
+    Sammons2_7(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_8 extends Sammons2 {
+    static final int ID = 8;
+    static final String NAME = Sammons2.NAME0 + ID;
+
+    Sammons2_8(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_9 extends Sammons {
+    static final int ID = 9;
+    static final String NAME = Sammons.NAME0 + ID;
+
+    Sammons2_9(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_10 extends Sammons2 {
+    static final int ID = 10;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_10(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_11 extends Sammons2 {
+    static final int ID = 11;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_11(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_12 extends Sammons2 {
+    static final int ID = 12;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_12(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_13 extends Sammons2 {
+    static final int ID = 13;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_13(Imt imt) {
+      super(ID, imt);
+    }
+  }
+  static class Sammons2_14 extends Sammons2 {
+    static final int ID = 14;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_14(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_15 extends Sammons2 {
+    static final int ID = 15;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_15(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_16 extends Sammons2 {
+    static final int ID = 16;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_16(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_17 extends Sammons2 {
+    static final int ID = 17;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_17(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
   static abstract class Seed extends NgaEastUsgs_2017 {
     static final String NAME = NgaEastUsgs_2017.NAME + ": Seed : ";
 
@@ -460,9 +736,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
-      double μPGA = exp(pgaTable.get(p));
-      double fSite = siteAmp.calc(μPGA, in.vs30);
-      double μ = table.get(p) + fSite;
+      double μPga = exp(pgaTable.get(p));
+      SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
+      double μ = fSite.apply(table.get(p));
       double σ = calcSigmaTotal(in.Mw);
       return new DefaultScalarGroundMotion(μ, σ);
     }
@@ -694,10 +970,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     private static final class Coefficients {
 
       final double c, v1, v2, vf, σvc, σl, σu, f760, f760σ, f3, f4, f5, vc, σc;
-      final Imt imt;
 
       Coefficients(Imt imt, CoefficientContainer cc) {
-        this.imt = imt;
         Map<String, Double> coeffs = cc.get(imt);
         c = coeffs.get("c");
         v1 = coeffs.get("V1");
@@ -720,7 +994,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       c = new Coefficients(imt, COEFFS);
     }
 
-    double calc(double pgaRock, double vs30) {
+    SiteAmp.Value calc(double pgaRock, double vs30) {
 
       /*
        * Developer notes:
@@ -760,7 +1034,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /* Vs30 filtering */
 
       if (vs30 > VU) {
-        return 0.0;
+        return new Value(0.0, 0.0);
       } else if (vs30 < VL) {
         vs30 = VL;
       }
@@ -776,25 +1050,25 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         fv = c.c * log(c.v2 / V_REF) + c.c / 2.0 * log(vs30 / c.v2);
       }
 
-      // double fvσ = 0.0;
-      // if (vs30 < c.vf) {
-      // double σT = c.σl - c.σvc;
-      // double vT = (vs30 - VL) / (c.vf - VL);
-      // fvσ = c.σl - 2.0 * σT * vT + σT * vT * vT;
-      // } else if (vs30 <= c.v2) {
-      // fvσ = c.σvc;
-      // } else {
-      // double vT = (vs30 - c.v2) / (VU - c.v2);
-      // fvσ = c.σvc + (c.σu - c.σvc) * vT * vT;
-      // }
+      double fvσ = 0.0;
+      if (vs30 < c.vf) {
+        double σT = c.σl - c.σvc;
+        double vT = (vs30 - VL) / (c.vf - VL);
+        fvσ = c.σl - 2.0 * σT * vT + σT * vT * vT;
+      } else if (vs30 <= c.v2) {
+        fvσ = c.σvc;
+      } else {
+        double vT = (vs30 - c.v2) / (VU - c.v2);
+        fvσ = c.σvc + (c.σu - c.σvc) * vT * vT;
+      }
 
       double fLin = fv + c.f760;
-      // double σLin = sqrt(fvσ * fvσ + c.f760σ * c.f760σ);
+      double σLin = sqrt(fvσ * fvσ + c.f760σ * c.f760σ);
 
       /* Nonlinear response */
 
       double fNonlin = 0.0;
-      // double σNonlin = 0.0;
+      double σNonlin = 0.0;
       if (vs30 < c.vc) {
 
         double f2 = c.f4 *
@@ -803,17 +1077,42 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         double fT = log((pgaRock + c.f3) / c.f3);
         fNonlin = f2 * fT;
 
-        // double σf2 = 0.0;
-        // if (vs30 < 300.0) {
-        // σf2 = c.σc;
-        // } else if (vs30 < 1000.0) {
-        // σf2 = c.σc - c.σc / log (1000.0 / 300.0) * log(vs30 /300.0);
-        // }
-        // σNonlin = σf2 * fT;
+        double σf2 = 0.0;
+        if (vs30 < 300.0) {
+          σf2 = c.σc;
+        } else if (vs30 < 1000.0) {
+          σf2 = c.σc - c.σc / log(1000.0 / 300.0) * log(vs30 / 300.0);
+        }
+        σNonlin = σf2 * fT;
       }
 
-      // double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
-      return fLin + fNonlin;
+      return new Value(
+          fLin + fNonlin,
+          sqrt(σLin * σLin + σNonlin * σNonlin));
+    }
+
+    /**
+     * Wrapper class for site amplification and associated epistemic
+     * uncertainty.
+     */
+    static final class Value {
+
+      final double siteAmp;
+      final double σ;
+
+      Value(double siteAmp, double σ) {
+        this.siteAmp = siteAmp;
+        this.σ = σ;
+      }
+
+      double apply(double μ) {
+        double μAmp = μ + siteAmp;
+        double median = SITE_AMP_WTS[0] * exp(μAmp + σ) +
+            SITE_AMP_WTS[1] * exp(μAmp) +
+            SITE_AMP_WTS[2] * exp(μAmp - σ);
+        // double median = SITE_AMP_WTS[0] * exp(μAmp + σ)
+        return log(median);
+      }
     }
   }
 

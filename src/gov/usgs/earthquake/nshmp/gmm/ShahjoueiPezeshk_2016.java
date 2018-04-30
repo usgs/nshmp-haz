@@ -103,9 +103,10 @@ public final class ShahjoueiPezeshk_2016 implements GroundMotionModel {
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
     double μPga = exp(calcMean(coeffsPga, in.Mw, in.rJB));
-    double fSite = siteAmp.calc(μPga, in.vs30);
-    double μ = calcMean(coeffs, in.Mw, in.rJB) + fSite;
+    double μ = calcMean(coeffs, in.Mw, in.rJB);
     double σ = calcStdDev(coeffs, in.Mw);
+    SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
+    μ = fSite.apply(μ);
     return DefaultScalarGroundMotion.create(μ, σ);
   }
 
