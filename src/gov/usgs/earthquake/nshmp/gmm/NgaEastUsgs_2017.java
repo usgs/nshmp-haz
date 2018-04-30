@@ -334,7 +334,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    */
   static class UsgsSeeds extends NgaEastUsgs_2017 {
 
-    static final String NAME = NgaEastUsgs_2017.NAME + ": USGS Seeds";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": USGS Seed Tree";
     static final String SP16_ID = "SP16";
 
     /* ids for table based models only; skips SP16 */
@@ -528,6 +528,185 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     static final String NAME = Sammons.NAME + ID;
 
     Sammons_13(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static abstract class Sammons2 extends NgaEastUsgs_2017 {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons2 : ";
+
+    final int id;
+    final GroundMotionTable table;
+    final GroundMotionTable pgaTable;
+    final SiteAmp siteAmp;
+
+    Sammons2(int id, Imt imt) {
+      super(imt);
+      this.id = id;
+      this.table = GroundMotionTables.getNgaEastV2(imt)[id - 1];
+      this.pgaTable = GroundMotionTables.getNgaEastV2(Imt.PGA)[id - 1];
+      this.siteAmp = new SiteAmp(imt);
+    }
+
+    @Override
+    public ScalarGroundMotion calc(GmmInput in) {
+      Position p = table.position(in.rRup, in.Mw);
+      double μPga = exp(pgaTable.get(p));
+      SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
+      double μ = fSite.apply(table.get(p));
+      double σ = calcSigmaTotal(in.Mw);
+      return new DefaultScalarGroundMotion(μ, σ);
+    }
+  }
+
+  static class Sammons2_1 extends Sammons2 {
+    static final int ID = 1;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_1(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_2 extends Sammons2 {
+    static final int ID = 2;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_2(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_3 extends Sammons2 {
+    static final int ID = 3;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_3(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_4 extends Sammons2 {
+    static final int ID = 4;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_4(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_5 extends Sammons2 {
+    static final int ID = 5;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_5(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_6 extends Sammons2 {
+    static final int ID = 6;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_6(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_7 extends Sammons2 {
+    static final int ID = 7;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_7(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_8 extends Sammons2 {
+    static final int ID = 8;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_8(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_9 extends Sammons {
+    static final int ID = 9;
+    static final String NAME = Sammons.NAME + ID;
+
+    Sammons2_9(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_10 extends Sammons2 {
+    static final int ID = 10;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_10(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_11 extends Sammons2 {
+    static final int ID = 11;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_11(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_12 extends Sammons2 {
+    static final int ID = 12;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_12(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_13 extends Sammons2 {
+    static final int ID = 13;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_13(Imt imt) {
+      super(ID, imt);
+    }
+  }
+  static class Sammons2_14 extends Sammons2 {
+    static final int ID = 14;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_14(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_15 extends Sammons2 {
+    static final int ID = 15;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_15(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_16 extends Sammons2 {
+    static final int ID = 16;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_16(Imt imt) {
+      super(ID, imt);
+    }
+  }
+
+  static class Sammons2_17 extends Sammons2 {
+    static final int ID = 17;
+    static final String NAME = Sammons2.NAME + ID;
+
+    Sammons2_17(Imt imt) {
       super(ID, imt);
     }
   }
