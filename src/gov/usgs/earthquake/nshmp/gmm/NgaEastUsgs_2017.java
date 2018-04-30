@@ -440,7 +440,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Sammons_3 extends Sammons {
     static final int ID = 3;
-    static final String NAME = Sammons.NAME0 + ID+"pp";
+    static final String NAME = Sammons.NAME0 + ID;
 
     Sammons_3(Imt imt) {
       super(ID, imt);
