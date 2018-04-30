@@ -7,8 +7,6 @@ import static com.google.common.io.Resources.readLines;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
-import static gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.NGA_EAST_MODEL_COUNT;
-import static gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.NGA_EAST_V2_MODEL_COUNT;
 import static gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.TABLE_DIR;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
@@ -20,21 +18,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.calc.ExceedanceModel;
 import gov.usgs.earthquake.nshmp.data.Data;
-import gov.usgs.earthquake.nshmp.data.Indexing;
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
@@ -150,17 +143,18 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   private static Map<String, Double> initSeedWeights() {
     try {
-      List<String> lines = readLines(
+      Map<String, Double> wtMap = readLines(
           getResource(
               NgaEastUsgs_2017.class,
               TABLE_DIR + "nga-east-seed-weights.dat"),
-          StandardCharsets.UTF_8);
-      Map<String, Double> wtMap = lines.stream()
-          .skip(1)
-          .map(line -> Parsing.splitToList(line, Delimiter.COMMA))
-          .collect(Collectors.toMap(
-              entry -> entry.get(0),
-              entry -> Double.valueOf(entry.get(1))));
+          StandardCharsets.UTF_8)
+              .stream()
+              .skip(1)
+              .map(line -> Parsing.splitToList(line, Delimiter.COMMA))
+              .collect(Collectors.toMap(
+                  entry -> entry.get(0),
+                  entry -> Double.valueOf(entry.get(1))));
+
       checkState(Data.sum(wtMap.values()) == 1.0, "%s seed weights must sum to 1");
       return ImmutableMap.copyOf(wtMap);
     } catch (IOException ioe) {
@@ -298,8 +292,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double[] μs = new double[weights.length];
       for (int i = 0; i < weights.length; i++) {
         double μ = tables[i].get(p);
-        double μPGA = exp(pgaTables[i].get(p));
-        SiteAmp.Value fSite = siteAmp.calc(μPGA, in.vs30);
+        double μPga = exp(pgaTables[i].get(p));
+        SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
         μs[i] = fSite.apply(μ);
       }
       double[] σs = { calcSigmaTotal(in.Mw) };
@@ -381,8 +375,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double[] μs = new double[seedCount + 1];
       for (int i = 0; i < ids.size(); i++) {
         double μ = tables[i].get(p);
-        double μPGA = exp(pgaTables[i].get(p));
-        SiteAmp.Value fSite = siteAmp.calc(μPGA, in.vs30);
+        double μPga = exp(pgaTables[i].get(p));
+        SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
         μs[i] = fSite.apply(μ);
       }
       /* add SP16; already includes NGA-East site amp */
@@ -413,8 +407,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
-      double μPGA = exp(pgaTable.get(p));
-      SiteAmp.Value fSite = siteAmp.calc(μPGA, in.vs30);
+      double μPga = exp(pgaTable.get(p));
+      SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
       double μ = fSite.apply(table.get(p));
       double σ = calcSigmaTotal(in.Mw);
       return new DefaultScalarGroundMotion(μ, σ);
@@ -537,8 +531,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       super(ID, imt);
     }
   }
-  
-  
 
   static abstract class Seed extends NgaEastUsgs_2017 {
     static final String NAME = NgaEastUsgs_2017.NAME + ": Seed : ";
@@ -559,8 +551,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     public ScalarGroundMotion calc(GmmInput in) {
       Position p = table.position(in.rRup, in.Mw);
-      double μPGA = exp(pgaTable.get(p));
-      SiteAmp.Value fSite = siteAmp.calc(μPGA, in.vs30);
+      double μPga = exp(pgaTable.get(p));
+      SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
       double μ = fSite.apply(table.get(p));
       double σ = calcSigmaTotal(in.Mw);
       return new DefaultScalarGroundMotion(μ, σ);
