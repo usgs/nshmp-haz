@@ -563,16 +563,9 @@ public enum Gmm {
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST(
-      NgaEastUsgs_2017.TotalSigmaModel.class,
-      NgaEastUsgs_2017.TotalSigmaModel.NAME,
+      NgaEastUsgs_2017.Usgs13.class,
+      NgaEastUsgs_2017.Usgs13.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
-      NgaEastUsgs_2017.CONSTRAINTS),
-
-  /** @see NgaEastUsgs_2017 */
-  NGA_EAST_BRANCHING_Σ(
-      NgaEastUsgs_2017.BranchSigmaModel.class,
-      NgaEastUsgs_2017.BranchSigmaModel.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
@@ -833,10 +826,12 @@ public enum Gmm {
   private final Constraints constraints;
   private final LoadingCache<Imt, GroundMotionModel> cache;
 
-  private Gmm(Class<? extends GroundMotionModel> delegate,
+  private Gmm(
+      Class<? extends GroundMotionModel> delegate,
       String name,
       CoefficientContainer coeffs,
       Constraints constraints) {
+    
     this.delegate = delegate;
     this.name = name;
     this.constraints = constraints;
