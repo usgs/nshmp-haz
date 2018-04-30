@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
@@ -90,8 +91,14 @@ final class GroundMotionTables {
     return NGA_EAST_SEEDS.get(id).get(imt);
   }
 
+  static GroundMotionTable[] getNgaEastSeeds(List<String> ids, Imt imt) {
+    return ids.stream()
+        .map(id -> NGA_EAST_SEEDS.get(id).get(imt))
+        .collect(Collectors.toList())
+        .toArray(new GroundMotionTable[ids.size()]);
+  }
 
-  private static final String TABLE_DIR = "tables/";
+  static final String TABLE_DIR = "tables/";
 
   private static final String[] frankelSrcSR = {
       "pgak01l.tbl", "t0p2k01l.tbl", "t1p0k01l.tbl", "t0p1k01l.tbl",
@@ -106,13 +113,13 @@ final class GroundMotionTables {
   private static final String PEZESHK_11_SRC = "P11A_Rcd.dat";
 
   private static final String NGA_EAST_FILENAME_FMT = "nga-east-usgs-%s.dat";
-  private static final int NGA_EAST_MODEL_COUNT = 13;
+  static final int NGA_EAST_MODEL_COUNT = 13;
 
   private static final String NGA_EAST_V2_FILENAME_FMT = "nga-east-usgs2-%s.dat";
-  private static final int NGA_EAST_V2_MODEL_COUNT = 17;
+  static final int NGA_EAST_V2_MODEL_COUNT = 17;
 
   private static final String NGA_EAST_SEED_FILENAME_FMT = "nga-east-%s.dat";
-  
+
   static final List<String> NGA_EAST_SEED_IDS = ImmutableList.copyOf(new String[] {
       "1CCSP",
       "1CVSP",
@@ -183,10 +190,10 @@ final class GroundMotionTables {
 
   private static final Map<Imt, GroundMotionTable[]> NGA_EAST;
   private static final Map<Imt, double[]> NGA_EAST_WEIGHTS;
-  
+
   private static final Map<Imt, GroundMotionTable[]> NGA_EAST_V2;
   private static final Map<Imt, double[]> NGA_EAST_V2_WEIGHTS;
-  
+
   private static final Map<String, Map<Imt, GroundMotionTable>> NGA_EAST_SEEDS;
 
   static {
