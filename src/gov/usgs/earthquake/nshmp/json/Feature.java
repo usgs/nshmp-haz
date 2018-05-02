@@ -5,6 +5,8 @@ import java.util.Map;
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Create a GeoJson {@code Feature} with a {@link Geometry} and
  *    {@link Properties}. See {@link #Feature(Geometry, Properties)} for an
@@ -47,6 +49,9 @@ public class Feature {
    * @param properties The {@link Properties} for the {@code Feature}.
    */
   public Feature(Geometry geometry, Properties properties) {
+    checkNotNull(geometry, "Geometry cannot be null");
+    checkNotNull(properties, "Properties cannot be null");
+    
     this.type = GeoJsonType.FEATURE.toUpperCamelCase();
     this.geometry = geometry;
     this.properties = properties.attributes;
@@ -137,12 +142,20 @@ public class Feature {
     Polygon polygon = new Polygon(locs);
     return new Feature(polygon, properties);
   }
+ 
+  /**
+   * Return a {@link Properties} object.
+   * @return The {@code Properties}
+   */
+  public Properties getProperties() {
+    return Properties.builder().putAll(this.properties).build();
+  }
 
   /**
    * Return a {@code String} in JSON format.
    */
   public String toJsonString() {
-    return Util.GSON.toJson(this);
+    return Util.cleanPoly(Util.GSON.toJson(this, Feature.class));
   }
 
 }
