@@ -1017,16 +1017,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         v1 = coeffs.get("V1");
         v2 = coeffs.get("V2");
         vf = coeffs.get("Vf");
-        σvc = coeffs.get("sigma_vc");
-        σl = coeffs.get("sigma_l");
-        σu = coeffs.get("sigma_u");
+        σvc = coeffs.get("sig_vc");
+        σl = coeffs.get("sig_l");
+        σu = coeffs.get("sig_u");
         f760 = coeffs.get("f760");
-        f760σ = coeffs.get("f760_sigma");
+        f760σ = coeffs.get("f760s");
         f3 = coeffs.get("f3");
         f4 = coeffs.get("f4");
         f5 = coeffs.get("f5");
         vc = coeffs.get("Vc");
-        σc = coeffs.get("sigma_c");
+        σc = coeffs.get("sig_c");
       }
     }
 
