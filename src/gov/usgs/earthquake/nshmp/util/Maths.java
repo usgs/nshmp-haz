@@ -4,6 +4,7 @@ import com.google.common.base.Converter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 
 /**
  * Miscellaneous math utilities. In some cases, these methods obviate the need
@@ -79,7 +80,7 @@ public final class Maths {
 
   /**
    * Same as {@link Math#hypot(double, double)} without regard to intermediate
-   * under/over flow.
+   * under/over flow prior to internal call to {@link Math#sqrt(double)}.
    *
    * @param v1 first value
    * @param v2 second value
@@ -87,6 +88,34 @@ public final class Maths {
    */
   public static double hypot(double v1, double v2) {
     return Math.sqrt(v1 * v1 + v2 * v2);
+  }
+
+  /**
+   * Three argument form of {@link Maths#hypot(double, double)}. Does not
+   * protect against intermediate under/over flow prior to internal call to
+   * {@link Math#sqrt(double)}.
+   *
+   * @param v1 first value
+   * @param v2 second value
+   * @param v3 second value
+   * @see #hypot(double, double)
+   */
+  public static double hypot(double v1, double v2, double v3) {
+    return Math.sqrt(v1 * v1 + v2 * v2 + v3 * v3);
+  }
+
+  /**
+   * Variadic form of {@link Maths#hypot(double, double)}. Does not protect
+   * against intermediate under/over flow prior to internal call to
+   * {@link Math#sqrt(double)}.
+   * 
+   * @param values to process
+   * @see #hypot(double, double)
+   */
+  public static double hypot(double... values) {
+    return Math.sqrt(Arrays.stream(values)
+        .map(v -> v * v)
+        .sum());
   }
 
   /**
