@@ -562,9 +562,37 @@ public enum Gmm {
   /* NGA-East for USGS */
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS(
-      NgaEastUsgs_2017.Usgs13.class,
-      NgaEastUsgs_2017.Usgs13.NAME,
+  NGA_EAST_USGS_CENTRAL(
+      NgaEastUsgs_2017.Usgs13_Central.class,
+      NgaEastUsgs_2017.Usgs13_Central.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+  
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_CENTRAL_NOS2S(
+      NgaEastUsgs_2017.Usgs13_CentralNoS2S.class,
+      NgaEastUsgs_2017.Usgs13_CentralNoS2S.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_BRANCHING(
+      NgaEastUsgs_2017.Usgs13_Branching.class,
+      NgaEastUsgs_2017.Usgs13_Branching.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_BRANCHING_NOS2S(
+      NgaEastUsgs_2017.Usgs13_BranchingNoS2S.class,
+      NgaEastUsgs_2017.Usgs13_BranchingNoS2S.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_EPRI(
+      NgaEastUsgs_2017.Usgs13_EPRI.class,
+      NgaEastUsgs_2017.Usgs13_EPRI.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
       NgaEastUsgs_2017.CONSTRAINTS),
 
@@ -662,9 +690,23 @@ public enum Gmm {
   /* NGA-East for USGS (update) */
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS2(
-      NgaEastUsgs_2017.Usgs17.class,
-      NgaEastUsgs_2017.Usgs17.NAME,
+  NGA_EAST_USGS2_CENTRAL(
+      NgaEastUsgs_2017.Usgs17_Central.class,
+      NgaEastUsgs_2017.Usgs17_Central.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS2_BRANCHING(
+      NgaEastUsgs_2017.Usgs17_Branching.class,
+      NgaEastUsgs_2017.Usgs17_Branching.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS2_EPRI(
+      NgaEastUsgs_2017.Usgs17_EPRI.class,
+      NgaEastUsgs_2017.Usgs17_EPRI.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
       NgaEastUsgs_2017.CONSTRAINTS),
 
@@ -790,9 +832,23 @@ public enum Gmm {
   /* NGA-East USGS Seed Tree */
   
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS_SEEDS(
-      NgaEastUsgs_2017.UsgsSeeds.class,
-      NgaEastUsgs_2017.UsgsSeeds.NAME,
+  NGA_EAST_USGS_SEEDS_CENTRAL(
+      NgaEastUsgs_2017.UsgsSeeds_Central.class,
+      NgaEastUsgs_2017.UsgsSeeds_Central.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_SEEDS_BRANCHING(
+      NgaEastUsgs_2017.UsgsSeeds_Branching.class,
+      NgaEastUsgs_2017.UsgsSeeds_Branching.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_SEEDS_EPRI(
+      NgaEastUsgs_2017.UsgsSeeds_EPRI.class,
+      NgaEastUsgs_2017.UsgsSeeds_EPRI.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
       NgaEastUsgs_2017.CONSTRAINTS),
 
@@ -1246,9 +1302,17 @@ public enum Gmm {
     NGA_EAST(
         "NGA-East",
         ImmutableList.of(
-            NGA_EAST_USGS,
-            NGA_EAST_USGS2,
-            NGA_EAST_USGS_SEEDS)),
+            NGA_EAST_USGS_EPRI,
+            NGA_EAST_USGS_CENTRAL,
+            NGA_EAST_USGS_CENTRAL_NOS2S,
+            NGA_EAST_USGS_BRANCHING,
+            NGA_EAST_USGS_BRANCHING_NOS2S,
+            NGA_EAST_USGS2_EPRI,
+            NGA_EAST_USGS2_CENTRAL,
+            NGA_EAST_USGS2_BRANCHING,
+            NGA_EAST_USGS_SEEDS_EPRI,
+            NGA_EAST_USGS_SEEDS_CENTRAL,
+            NGA_EAST_USGS_SEEDS_BRANCHING)),
     
     NGA_EAST_SAMMONS(
         "NGA-East USGS",
