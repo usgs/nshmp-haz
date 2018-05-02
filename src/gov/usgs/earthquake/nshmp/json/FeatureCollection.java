@@ -11,6 +11,9 @@ import java.util.List;
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 /**
  * Create a GeoJson {@code FeatureCollection}. See
  *    {@link #FeatureCollection(List)} for an example. 
@@ -52,29 +55,12 @@ public class FeatureCollection {
   public List<Feature> features;
 
   /**
-   * Return a new instance of a GeoJson {@code FeatureCollection}. 
-   * <br><br>
-   * 
-   * Example:
-   * <pre>
-   * {@code
-   *   Location loc = Location.create(39.75, -105);
-   *   Properties properties = Properties.builder()
-   *      .title("Golden")
-   *      .id("golden")
-   *      .build();
-   *   Feature feature = Feature.createPoint(loc, properties);
-   *   List<Feature> features = new ArrayList<>();
-   *   list.add(feature);
-   *   FeatureCollection fc = new FeatureCollection(features);
-   * }
-   * </pre>
-   * 
-   * @param features The {@code List} of {@link Feature}s.
+   * Return a new instance of a GeoJson {@code FeatureCollection}
+   *    using the {@link #builder()}. 
    */
-  public FeatureCollection(List<Feature> features) {
+  private FeatureCollection(Builder builder) {
     this.type = GeoJsonType.FEATURE_COLLECTION.toUpperCamelCase();
-    this.features = features;
+    this.features = builder.features;
   }
 
   /**
@@ -104,6 +90,7 @@ public class FeatureCollection {
    * @return A new instance of a {@code FeatureCollection}.
    */
   public static FeatureCollection read(InputStreamReader reader) {
+    checkNotNull(reader, "Input stream cannot be null");
     return Util.GSON.fromJson(reader, FeatureCollection.class);
   }
 
@@ -130,7 +117,8 @@ public class FeatureCollection {
    * @throws IOException 
    */
   public void write(Path out) throws IOException {
-    String json = this.toString();
+    checkNotNull(out, "Path cannot be null");
+    String json = this.toJsonString();
     Files.write(out, json.getBytes(StandardCharsets.UTF_8));
   }
 
@@ -187,10 +175,8 @@ public class FeatureCollection {
      * @return New {@link FeatureCollection}.
      */
     public FeatureCollection build() {
-      if (this.features.isEmpty()) {
-        throw new IllegalStateException("List of features can not be empty");
-      }
-      return new FeatureCollection(this.features);
+      checkState(!features.isEmpty(), "List of features cannot be empty");
+      return new FeatureCollection(this);
     }
 
     /**
@@ -200,6 +186,7 @@ public class FeatureCollection {
      * @return Return the {@code Builder} to make chainable.
      */
     public Builder add(Feature feature) {
+      checkNotNull(feature, "A feature cannot be null");
       this.features.add(feature);
       return this;
     }
