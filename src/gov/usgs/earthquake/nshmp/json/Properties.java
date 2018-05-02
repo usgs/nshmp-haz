@@ -172,12 +172,44 @@ public class Properties {
     
     return value;
   }
+  
+  /**
+   * Return the {@code String} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   *  
+   * @param key The {@code String} key.
+   * @return The value.
+   */
+  public String getStringProperty(String key) {
+    return (String) getProperty(key);
+  }
+ 
+  /**
+   * Return the {@code double} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   *  
+   * @param key The {@code String} key.
+   * @return The value.
+   */
+  public double getDoubleProperty(String key) {
+    return (double) getProperty(key);
+  }
+ 
+  /**
+   * Return the {@code int} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   *  
+   * @param key The {@code String} key.
+   * @return The value.
+   */
+  public int getIntProperty(String key) {
+    return (int) getProperty(key);
+  }
  
   /**
    * Return a {@code String} in JSON format.
    */
-  @Override
-  public String toString() {
+  public String toJsonString() {
     return Util.GSON.toJson(this);
   }
 
