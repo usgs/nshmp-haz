@@ -5,6 +5,9 @@ import com.google.common.collect.ImmutableList;
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;;
+
 /**
  * Create a GeoJson {@code Polygon} {@link Geometry} with a {@link LocationList}.
  * <br>
@@ -47,7 +50,10 @@ public class Polygon implements Geometry  {
    * @param locs The {@link LocationList} for the polygon.
    */
   public Polygon(LocationList locs) {
+    checkNotNull(locs, "LocationList cannot be null");
     locs = checkPolygonCoordinates(locs);
+    checkArgument(locs.size() > 3, "Polygon must have 3 unique positions");
+    
     this.type = GeoJsonType.POLYGON.toUpperCamelCase();
     this.coordinates = ImmutableList.of(Util.toCoordinates(locs));
   }
@@ -73,7 +79,7 @@ public class Polygon implements Geometry  {
    * Return a {@code String} in JSON format.
    */
   public String toJsonString() {
-    return Util.GSON.toJson(this);
+    return Util.cleanPoly(Util.GSON.toJson(this, Polygon.class));
   }
  
   /**
