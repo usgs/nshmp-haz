@@ -68,6 +68,8 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  */
 public final class Data {
 
+  // TODO consider weighted sum
+  
   /*
    * Developer notes:
    * -------------------------------------------------------------------------

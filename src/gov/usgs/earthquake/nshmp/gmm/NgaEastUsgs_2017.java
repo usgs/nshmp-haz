@@ -1,14 +1,13 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.io.Resources.getResource;
 import static com.google.common.io.Resources.readLines;
+import static gov.usgs.earthquake.nshmp.data.Data.checkWeights;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.TABLE_DIR;
-import static gov.usgs.earthquake.nshmp.data.Data.checkWeights;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
@@ -25,11 +24,9 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
-import com.google.common.math.DoubleMath;
 import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.calc.ExceedanceModel;
-import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
@@ -42,10 +39,8 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * Implementation of the PEER NGA-East ground motion model. This is a custom
  * version of the model developed specifically for USGS applications. It is a
  * composite model that consists of a reduced set of 13 median ground motion
- * models (down from 29 in the full NGA-East model) with period dependent
- * weights. PEER recommends the use of a total, magnitude dependent ergodic
- * sigma model. This implementation includes the 3-branch logic tree on sigma as
- * well.
+ * models (down from 17 in the full NGA-East model) with period dependent
+ * weights.
  * 
  * <p>Calculation of hazard using this preliminary implementation deviates
  * somewhat from the current nshmp-haz PSHA pipeline and required implementation
@@ -96,6 +91,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   /*
    * TODO
    * 
+   * Update javadoc (above).
+   * 
    * Cluster analysis is incorrect as currently implemented; analysis performed
    * after combining models
    * 
@@ -115,6 +112,24 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * sammons models must be consistent.
    * 
    * Missing PGV tables: Grazier, PEER_EX, PEER_GP, PZCT15_M1SS, PZCT15_M2ES
+   * 
+   * Notes on sigma:
+   * 
+   * When supplied with the NGA-East for USGS (2017), PEER recommended use of an
+   * updated EPRI (2013) model (Table 5.5). The NSHMP asked PEER to develop an
+   * improved ϕ_s2s model, which necessitated reverting to the functional forms
+   * for τ and ϕ_ss. The tau and ϕ_s2s models have a single branch each; the
+   * ϕ_ss model has three branches. The ϕ_ss and τ models both have coefficients
+   * for low, central, and high statistical uncertainty branches; no statistical
+   * uncertianty model was developed for ϕ_s2s
+   * 
+   * Sigma tables are broken into 'lo', 'mid', and 'hi' files representing the
+   * 'Low', 'Central', and 'Hi' branches of the sigma logi tree. In many cases
+   * coefficents are constant across all periods, but because of the statistical
+   * uncertainty branching, it is easier to repeat the values in the coefficient
+   * tables/files than to have to encode lo-mid-hi branching logic in sigma
+   * calculation methods. Similarly, the ϕ_s2s coefficents, for which there is
+   * no statistical uncertainty model/branching, are the same across all files.
    */
   static final String NAME = "NGA-East USGS (2017)";
 
@@ -159,7 +174,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       checkWeights(wtMap.values());
       return ImmutableMap.copyOf(wtMap);
-      
+
     } catch (IOException ioe) {
       throw new RuntimeException(ioe);
     }
@@ -168,21 +183,41 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private static final double[] SIGMA_WTS = { 0.185, 0.63, 0.185 };
   private static final double[] SITE_AMP_WTS = SIGMA_WTS;
 
+  /* ϕ_s2s constants */
+  private static final double VΦ1 = 1200.0;
+  private static final double VΦ2 = 1500.0;
+  private static final double M1 = 5.25;
+  private static final double ΔM = 0.5;
+
   private static final class Coefficients {
 
-    final double a, b, τ1, τ2, τ3, τ4;
+    /* τ coefficients */
+    final double τ1, τ2, τ3, τ4;
+
+    /* ϕ_ss coefficients; g=global, m=mag-dep, c=constant */
+    final double ga, gb, ma, mb, c;
+
+    /* ϕ_s2s coefficients */
+    final double ϕ1, ϕ2, Δϕ;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
-      a = coeffs.get("a");
-      b = coeffs.get("b");
-      τ1 = coeffs.get("tau1");
-      τ2 = coeffs.get("tau2");
-      τ3 = coeffs.get("tau3");
-      τ4 = coeffs.get("tau4");
+      τ1 = coeffs.get("t1");
+      τ2 = coeffs.get("t2");
+      τ3 = coeffs.get("t3");
+      τ4 = coeffs.get("t4");
+      ga = coeffs.get("ss_ga");
+      gb = coeffs.get("ss_gb");
+      ma = coeffs.get("ss_ma");
+      mb = coeffs.get("ss_mb");
+      c = coeffs.get("ss_c");
+      ϕ1 = coeffs.get("s2s1");
+      ϕ2 = coeffs.get("s2s2");
+      Δϕ = coeffs.get("ds2s");
     }
   }
 
+  /* Updated EPRI (2013) */
   private static final class CoefficientsTotal {
 
     final double τ_m5, φ_m5, τ_m6, φ_m6, τ_m7, φ_m7;
@@ -210,8 +245,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     σCoeffsTotal = new CoefficientsTotal(imt, COEFFS_SIGMA_TOTAL);
   }
 
-  /* Total ergodic sigma model */
-  double calcSigmaTotal(double Mw) {
+  /* Total ergodic model; PEER recomended; updated EPRI (2013). */
+  double sigmaTotal(double Mw) {
     double τ;
     double φ;
     if (Mw <= 5.0) {
@@ -230,39 +265,158 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return Maths.hypot(τ, φ);
   }
 
-  /* 3-branch sigma model. */
-  @Deprecated
-  double[] calcSigmas(double Mw) {
-    return new double[] {
-        calcSigma(σCoeffsLo, Mw),
-        calcSigma(σCoeffsMid, Mw),
-        calcSigma(σCoeffsHi, Mw),
-    };
+  SigmaSet sigmaSetTotal(double Mw) {
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = new double[] { sigmaTotal(Mw) };
+    σSet.weights = new double[] { 1.0 };
+    return σSet;
   }
 
-  private static double calcSigma(Coefficients c, double Mw) {
+  /* Central branch of sigma model; includes updated φ_s2s. */
+  double sigmaCentral(double Mw, double vs30) {
+    return sigma(σCoeffsMid, Mw, vs30);
+  }
 
-    /* Global τ model. Equation 10-6. */
-    double τ = c.τ4;
+  SigmaSet sigmaSetCentral(double Mw, double vs30) {
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = new double[] { sigma(σCoeffsMid, Mw, vs30) };
+    σSet.weights = new double[] { 1.0 };
+    return σSet;
+  }
+
+  /* Central branch of sigma model; no φ_s2s. */
+  double sigmaCentralNoPhiS2S(double Mw) {
+    return sigmaNoPhiS2S(σCoeffsMid, Mw);
+  }
+
+  SigmaSet sigmaSetCentralNoPhiS2S(double Mw) {
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = new double[] { sigmaCentralNoPhiS2S(Mw) };
+    σSet.weights = new double[] { 1.0 };
+    return σSet;
+  }
+
+  /* 3-branch sigma model; includes updated φ_s2s. */
+  SigmaSet sigmaSetBranching(double Mw, double vs30) {
+    double[] sigmas = {
+        sigma(σCoeffsLo, Mw, vs30),
+        sigma(σCoeffsMid, Mw, vs30),
+        sigma(σCoeffsHi, Mw, vs30),
+    };
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = sigmas;
+    σSet.weights = SIGMA_WTS;
+    return σSet;
+  }
+
+  /* 3-branch sigma model; includes updated φ_s2s. */
+  SigmaSet sigmaSetBranchingNoPhiS2S(double Mw) {
+    double[] sigmas = {
+        sigmaNoPhiS2S(σCoeffsLo, Mw),
+        sigmaNoPhiS2S(σCoeffsMid, Mw),
+        sigmaNoPhiS2S(σCoeffsHi, Mw),
+    };
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = sigmas;
+    σSet.weights = SIGMA_WTS;
+    return σSet;
+  }
+
+  private static double sigmaNoPhiS2S(Coefficients c, double Mw) {
+
+    /* τ model; global branch only; Equation 5-1. */
+    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
+
+    /* φ_ss model; global, constant, and mag-dep. branches Equation 5.2. */
+    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
+        0.1 * c.c +
+        0.1 * phi_ss(Mw, c.ma, c.mb);
+
+    return Maths.hypot(τ, φ_ss);
+  }
+
+  private static double sigma(Coefficients c, double Mw, double vs30) {
+
+    /* τ model; global branch only; Equation 5-1. */
+    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
+
+    /* φ_ss model; global, constant, and mag-dep. branches Equation 5.2. */
+    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
+        0.1 * c.c +
+        0.1 * phi_ss(Mw, c.ma, c.mb);
+
+    /* φ_s2s model; single branch; Stewart et al. */
+    double φ_s2s = phi_s2s(Mw, vs30, c.ϕ1, c.ϕ2, c.Δϕ);
+
+    return Maths.hypot(τ, φ_ss, φ_s2s);
+  }
+
+  /* τ: Equation 5.1 */
+  private static double tau(
+      double Mw,
+      double τ1,
+      double τ2,
+      double τ3,
+      double τ4) {
+
     if (Mw <= 4.5) {
-      τ = c.τ1;
+      return τ1;
     } else if (Mw <= 5.0) {
-      τ = c.τ1 + (c.τ2 - c.τ1) * (Mw - 4.5) / 0.5;
+      return τ1 + (τ2 - τ1) * (Mw - 4.5) / 0.5;
     } else if (Mw <= 5.5) {
-      τ = c.τ2 + (c.τ3 - c.τ2) * (Mw - 5.5) / 0.5;
+      return τ2 + (τ3 - τ2) * (Mw - 5.0) / 0.5;
     } else if (Mw <= 6.5) {
-      τ = c.τ3 + (c.τ4 - c.τ3) * (Mw - 5.5);
+      return τ3 + (τ4 - τ3) * (Mw - 5.5);
     }
+    return τ4;
+  }
 
-    /* Global φ model. Equation 11-9. */
-    double φ = c.b;
+  /* φ_ss: Equation 5.2 */
+  private static double phi_ss(
+      double Mw,
+      double a,
+      double b) {
+
     if (Mw <= 5.0) {
-      φ = c.a;
+      return a;
     } else if (Mw <= 6.5) {
-      φ = c.a + (Mw - 5.0) * (c.b - c.a) / 1.5;
+      return a + (Mw - 5.0) * (b - a) / 1.5;
     }
+    return b;
+  }
 
-    return Maths.hypot(τ, φ);
+  /* φ_s2s: Stewart et al. */
+  private static double phi_s2s(
+      double Mw,
+      double vs30,
+      double ϕ1,
+      double ϕ2,
+      double Δϕ) {
+
+    double ϕLoMag = 0.0;
+    double ϕHiMag = 0.0;
+
+    if (Mw < M1) {
+      if (vs30 < VΦ1) {
+        ϕLoMag = ϕ1;
+      } else if (vs30 < VΦ2) {
+        ϕLoMag = ϕ1 - ((ϕ1 - ϕ2) / (VΦ2 - VΦ1)) * (vs30 - VΦ1);
+      } else {
+        ϕLoMag = ϕ2;
+      }
+    } else {
+      if (Mw < M1 + ΔM) {
+        ϕHiMag = Δϕ * (Mw - M1) / ΔM;
+      } else {
+        ϕHiMag = Δϕ;
+      }
+    }
+    return ϕLoMag + ϕHiMag;
+  }
+
+  static class SigmaSet {
+    double[] sigmas;
+    double[] weights;
   }
 
   static abstract class ModelGroup extends NgaEastUsgs_2017 {
@@ -299,16 +453,20 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
         μs[i] = fSite.apply(μ);
       }
-      double[] σs = { calcSigmaTotal(in.Mw) };
-      double[] σWts = { 1.0 };
-      return new MultiScalarGroundMotion(μs, weights, σs, σWts);
+      SigmaSet σs = calcSigma(in);
+      return new MultiScalarGroundMotion(μs, weights, σs.sigmas, σs.weights);
+    }
+
+    /* Default sigma */
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetCentral(in.Mw, in.vs30);
     }
   }
 
-  static class Usgs13 extends ModelGroup {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch";
+  static class Usgs13_Central extends ModelGroup {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : Central";
 
-    Usgs13(Imt imt) {
+    Usgs13_Central(Imt imt) {
       super(
           imt,
           GroundMotionTables.getNgaEastWeights(imt),
@@ -317,15 +475,93 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Usgs17 extends ModelGroup {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch";
+  static class Usgs13_CentralNoS2S extends Usgs13_Central {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : Central-noS2S";
 
-    Usgs17(Imt imt) {
+    Usgs13_CentralNoS2S(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetCentralNoPhiS2S(in.Mw);
+    }
+  }
+
+  static class Usgs13_Branching extends Usgs13_Central {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : Branching";
+
+    Usgs13_Branching(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetBranching(in.Mw, in.vs30);
+    }
+  }
+
+  static class Usgs13_BranchingNoS2S extends Usgs13_Central {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : Branching-noS2S";
+
+    Usgs13_BranchingNoS2S(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetBranchingNoPhiS2S(in.Mw);
+    }
+  }
+
+  static class Usgs13_EPRI extends Usgs13_Central {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : EPRI";
+
+    Usgs13_EPRI(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetTotal(in.Mw);
+    }
+  }
+
+  static class Usgs17_Central extends ModelGroup {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch : Central";
+
+    Usgs17_Central(Imt imt) {
       super(
           imt,
           GroundMotionTables.getNgaEastV2Weights(imt),
           GroundMotionTables.getNgaEastV2(imt),
           GroundMotionTables.getNgaEastV2(Imt.PGA));
+    }
+  }
+
+  static class Usgs17_Branching extends Usgs17_Central {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch : Branching";
+
+    Usgs17_Branching(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetBranching(in.Mw, in.vs30);
+    }
+  }
+
+  static class Usgs17_EPRI extends Usgs17_Central {
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch : EPRI";
+
+    Usgs17_EPRI(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetTotal(in.Mw);
     }
   }
 
@@ -335,9 +571,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * model ignores the SP16 aleatory variability model for consistency with the
    * other seed models.
    */
-  static class UsgsSeeds extends NgaEastUsgs_2017 {
-
-    static final String NAME = NgaEastUsgs_2017.NAME + ": USGS Seed Tree";
+  static class UsgsSeeds_Central extends NgaEastUsgs_2017 {
+    static final String BASE_NAME = NgaEastUsgs_2017.NAME + ": USGS Seed Tree";
+    static final String NAME = BASE_NAME + " : Central";
     static final String SP16_ID = "SP16";
 
     /* ids for table based models only; skips SP16 */
@@ -363,7 +599,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
           .build());
     }
 
-    UsgsSeeds(Imt imt) {
+    UsgsSeeds_Central(Imt imt) {
       super(imt);
       this.tables = GroundMotionTables.getNgaEastSeeds(ids, imt);
       this.pgaTables = GroundMotionTables.getNgaEastSeeds(ids, Imt.PGA);
@@ -384,18 +620,46 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       }
       /* add SP16; already includes NGA-East site amp */
       μs[seedCount] = sp16.calc(in).mean();
-      double[] σs = { calcSigmaTotal(in.Mw) };
-      double[] σWts = { 1.0 };
-      return new MultiScalarGroundMotion(μs, weights, σs, σWts);
+      SigmaSet σs = calcSigma(in);
+      return new MultiScalarGroundMotion(μs, weights, σs.sigmas, σs.weights);
     }
 
+    /* Default sigma */
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetCentral(in.Mw, in.vs30);
+    }
+  }
+
+  static class UsgsSeeds_Branching extends UsgsSeeds_Central {
+    public static final String NAME = UsgsSeeds_Central.BASE_NAME + " : Branching";
+    
+    UsgsSeeds_Branching(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetBranching(in.Mw, in.vs30);
+    }
+  }
+
+  static class UsgsSeeds_EPRI extends UsgsSeeds_Central {
+    public static final String NAME = UsgsSeeds_Central.BASE_NAME + " : EPRI";
+
+    UsgsSeeds_EPRI(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetTotal(in.Mw);
+    }
   }
 
   static abstract class Sammons extends NgaEastUsgs_2017 {
     static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons : ";
     static final String NAME0 = NAME + "0";
-    
-    
+
     final int id;
     final GroundMotionTable table;
     final GroundMotionTable pgaTable;
@@ -415,7 +679,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double μPga = exp(pgaTable.get(p));
       SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
       double μ = fSite.apply(table.get(p));
-      double σ = calcSigmaTotal(in.Mw);
+      double σ = sigmaCentral(in.Mw, in.vs30);
       return new DefaultScalarGroundMotion(μ, σ);
     }
   }
@@ -560,7 +824,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double μPga = exp(pgaTable.get(p));
       SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
       double μ = fSite.apply(table.get(p));
-      double σ = calcSigmaTotal(in.Mw);
+      double σ = sigmaCentral(in.Mw, in.vs30);
       return new DefaultScalarGroundMotion(μ, σ);
     }
   }
@@ -681,6 +945,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       super(ID, imt);
     }
   }
+
   static class Sammons2_14 extends Sammons2 {
     static final int ID = 14;
     static final String NAME = Sammons2.NAME + ID;
@@ -739,7 +1004,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double μPga = exp(pgaTable.get(p));
       SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
       double μ = fSite.apply(table.get(p));
-      double σ = calcSigmaTotal(in.Mw);
+      double σ = sigmaCentral(in.Mw, in.vs30);
       return new DefaultScalarGroundMotion(μ, σ);
     }
   }
@@ -977,16 +1242,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         v1 = coeffs.get("V1");
         v2 = coeffs.get("V2");
         vf = coeffs.get("Vf");
-        σvc = coeffs.get("sigma_vc");
-        σl = coeffs.get("sigma_l");
-        σu = coeffs.get("sigma_u");
+        σvc = coeffs.get("sig_vc");
+        σl = coeffs.get("sig_l");
+        σu = coeffs.get("sig_u");
         f760 = coeffs.get("f760");
-        f760σ = coeffs.get("f760_sigma");
+        f760σ = coeffs.get("f760s");
         f3 = coeffs.get("f3");
         f4 = coeffs.get("f4");
         f5 = coeffs.get("f5");
         vc = coeffs.get("Vc");
-        σc = coeffs.get("sigma_c");
+        σc = coeffs.get("sig_c");
       }
     }
 
