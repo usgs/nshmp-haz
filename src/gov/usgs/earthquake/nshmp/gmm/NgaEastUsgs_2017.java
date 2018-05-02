@@ -572,8 +572,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * other seed models.
    */
   static class UsgsSeeds_Central extends NgaEastUsgs_2017 {
-
-    static final String NAME = NgaEastUsgs_2017.NAME + ": USGS Seed Tree";
+    static final String BASE_NAME = NgaEastUsgs_2017.NAME + ": USGS Seed Tree";
+    static final String NAME = BASE_NAME + " : σ-central";
     static final String SP16_ID = "SP16";
 
     /* ids for table based models only; skips SP16 */
@@ -631,7 +631,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class UsgsSeeds_Branching extends UsgsSeeds_Central {
-
+    public static final String NAME = UsgsSeeds_Central.BASE_NAME + " : σ-branching";
+    
     UsgsSeeds_Branching(Imt imt) {
       super(imt);
     }
@@ -643,6 +644,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class UsgsSeeds_EPRI extends UsgsSeeds_Central {
+    public static final String NAME = UsgsSeeds_Central.BASE_NAME + " : σ-EPRI";
 
     UsgsSeeds_EPRI(Imt imt) {
       super(imt);
