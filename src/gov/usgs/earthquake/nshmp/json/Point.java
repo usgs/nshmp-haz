@@ -2,6 +2,8 @@ package gov.usgs.earthquake.nshmp.json;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Create a GeoJson {@code Point} {@link Geometry}.
  * <br>
@@ -31,6 +33,8 @@ public class Point implements Geometry {
    * @param loc The {@code Location} ({@link Location}).
    */
   public Point(Location loc) {
+    checkNotNull(loc, "Location cannot be null");
+    
     this.type = GeoJsonType.POINT.toUpperCamelCase();
     this.coordinates = Util.toCoordinates(loc);
   }
@@ -76,7 +80,7 @@ public class Point implements Geometry {
    * Return a {@code String} in JSON format.
    */
   public String toJsonString() {
-    return Util.GSON.toJson(this);
+    return Util.cleanPoints(Util.GSON.toJson(this, Point.class));
   }
   
   /**
