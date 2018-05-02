@@ -464,7 +464,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs13_Central extends ModelGroup {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : σ-central";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : Central";
 
     Usgs13_Central(Imt imt) {
       super(
@@ -476,7 +476,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs13_CentralNoS2S extends Usgs13_Central {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : σ-central-noS2S";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : Central-noS2S";
 
     Usgs13_CentralNoS2S(Imt imt) {
       super(imt);
@@ -489,7 +489,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs13_Branching extends Usgs13_Central {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : σ-branching";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : Branching";
 
     Usgs13_Branching(Imt imt) {
       super(imt);
@@ -502,7 +502,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs13_BranchingNoS2S extends Usgs13_Central {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : σ-branching-noS2S";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : Branching-noS2S";
 
     Usgs13_BranchingNoS2S(Imt imt) {
       super(imt);
@@ -515,7 +515,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs13_EPRI extends Usgs13_Central {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : σ-EPRI";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch : EPRI";
 
     Usgs13_EPRI(Imt imt) {
       super(imt);
@@ -528,7 +528,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17_Central extends ModelGroup {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch : σ-central";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch : Central";
 
     Usgs17_Central(Imt imt) {
       super(
@@ -540,7 +540,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17_Branching extends Usgs17_Central {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch : σ-branching";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch : Branching";
 
     Usgs17_Branching(Imt imt) {
       super(imt);
@@ -553,7 +553,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17_EPRI extends Usgs17_Central {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch : σ-EPRI";
+    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch : EPRI";
 
     Usgs17_EPRI(Imt imt) {
       super(imt);
@@ -573,7 +573,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    */
   static class UsgsSeeds_Central extends NgaEastUsgs_2017 {
     static final String BASE_NAME = NgaEastUsgs_2017.NAME + ": USGS Seed Tree";
-    static final String NAME = BASE_NAME + " : σ-central";
+    static final String NAME = BASE_NAME + " : Central";
     static final String SP16_ID = "SP16";
 
     /* ids for table based models only; skips SP16 */
@@ -631,7 +631,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class UsgsSeeds_Branching extends UsgsSeeds_Central {
-    public static final String NAME = UsgsSeeds_Central.BASE_NAME + " : σ-branching";
+    public static final String NAME = UsgsSeeds_Central.BASE_NAME + " : Branching";
     
     UsgsSeeds_Branching(Imt imt) {
       super(imt);
@@ -644,7 +644,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class UsgsSeeds_EPRI extends UsgsSeeds_Central {
-    public static final String NAME = UsgsSeeds_Central.BASE_NAME + " : σ-EPRI";
+    public static final String NAME = UsgsSeeds_Central.BASE_NAME + " : EPRI";
 
     UsgsSeeds_EPRI(Imt imt) {
       super(imt);
