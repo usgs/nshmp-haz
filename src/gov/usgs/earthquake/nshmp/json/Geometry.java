@@ -30,15 +30,18 @@ package gov.usgs.earthquake.nshmp.json;
  *    .title("test")
  *    .id("id")
  *    .build();
- * Feature feature = Feature.createPoint(40, -120, properties);
- * Point point = (Point) feature.geometry;
+ *    
+ * Feature feature = Feature.createPoint(properties, 40, -120);
+ * 
+ * Point point = (Point) feature.getGeometry();
+ * 
  * double[] coords = point.getCoordinates();
  * }
  * </pre>
  * 
  * @author Brandon Clayton
  */
-public interface Geometry {
+public interface Geometry extends GeoJson {
  
   /** 
    * Return a generic {@code Object} representing the coordinates
@@ -60,23 +63,17 @@ public interface Geometry {
    *    .title("test")
    *    .id("id")
    *    .build();
-   * Feature feature = Feature.createPoint(40, -120, properties);
+   *    
+   * Feature feature = Feature.createPoint(properties, 40, -120);
+   * 
    * Point point = (Point) feature.geometry;
+   * 
    * double[] coords = point.getCoordinates();
    * }
    * </pre>
+   * 
+   * @return An {@code Object} representing the coordinates.
    */
   public Object getCoordinates();
  
-  /**
-   * Return the {@code String} representing the {@link GeoJsonType} {@code Geometry}.
-   * @return The {@code String} of the {@code GeoJsonType}.
-   */
-  public String getType();
-
-  /**
-   * Return a {@code String} in JSON format.
-   */
-  public String toJsonString();
-
 }
