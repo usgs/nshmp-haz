@@ -9,27 +9,27 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Create a GeoJson {@code Feature} with a {@link Geometry} and
- *    {@link Properties}. See {@link #Feature(Geometry, Properties)} for an
+ *    {@link Properties}. See {@link #Feature(Properties, Geometry)} for an
  *    example. 
  * <br><br>
  * 
  * Static factory classes are provided to create a {@link Point} and a
  *    {@link Polygon} (see each for examples): 
- *    <ul> 
- *    <li> {@link Feature#createPoint(Location, Properties)} </li> 
- *    <li> {@link Feature#createPoint(double, double, Properties)} </li> 
- *    <li> {@link Feature#createPolygon(LocationList, Properties)} </li> 
+ *  <ul> 
+ *    <li> {@link Feature#createPoint(Properties, Location)} </li> 
+ *    <li> {@link Feature#createPoint(Properties, double, double)} </li> 
+ *    <li> {@link Feature#createPolygon(Properties, LocationList, LocationList...)} </li> 
  *  </ul>
  * 
  * @author Brandon Clayton
  */
-public class Feature {
+public class Feature implements GeoJson {
   /** The {@link GeoJsonType} of GeoJson object: Feature */
-  public final String type;
+  private final String type;
   /** The {@link Geometry} */
-  public Geometry geometry;
+  private Geometry geometry;
   /** The {@link Properties} */
-  public Map<String, Object> properties;
+  private Map<String, Object> properties;
 
   /**
    * Create a new instance of a {@code Feature}. 
@@ -41,14 +41,14 @@ public class Feature {
    *   Location loc = Location.create(39.75, -105);
    *   Point point = new Geometry.Point(loc);
    *   Properties properties = Properties.builder().title("Golden").build();
-   *   Feature feature = new Feature(point, properties);
+   *   Feature feature = new Feature(properties, point);
    * }
    * </pre>
    * 
-   * @param geometry The {@link geometry} for the {@code Feature}.
    * @param properties The {@link Properties} for the {@code Feature}.
+   * @param geometry The {@link geometry} for the {@code Feature}.
    */
-  public Feature(Geometry geometry, Properties properties) {
+  public Feature(Properties properties, Geometry geometry) {
     checkNotNull(geometry, "Geometry cannot be null");
     checkNotNull(properties, "Properties cannot be null");
     
@@ -69,21 +69,21 @@ public class Feature {
    *      .title("Golden")
    *      .id("golden")
    *      .build();
-   *   Feature feature = Feature.createPoint(latitude, longitude, properties);
+   *   Feature feature = Feature.createPoint(properties, latitude, longitude);
    * }
    * </pre>
    * 
+   * @param properties The {@code Properties} ({@link Properties}).
    * @param latitude The latitude for the point.
    * @param longitude The longitude for the point.
-   * @param properties The {@code Properties} ({@link Properties}).
    * @return A new GeoJson {@code Feature}.
    */
   public static Feature createPoint(
+      Properties properties,
       double latitude,
-      double longitude,
-      Properties properties) {
+      double longitude) {
     Point point = new Point(latitude, longitude);
-    return new Feature(point, properties);
+    return new Feature(properties, point);
   }
 
   /**
@@ -99,17 +99,17 @@ public class Feature {
    *      .title("Golden")
    *      .id("golden")
    *      .build();
-   *   Feature feature = Feature.createPoint(loc, properties);
+   *   Feature feature = Feature.createPoint(properties, loc);
    * }
    * </pre>
    * 
-   * @param loc - The {@code Location} ({@link Location}).
    * @param properties - The {@code Properties} ({@link Properties}).
+   * @param loc - The {@code Location} ({@link Location}).
    * @return A new GeoJson {@code Feature} ({@link Feature}).
    */
-  public static Feature createPoint(Location loc, Properties properties) {
+  public static Feature createPoint(Properties properties, Location loc) {
     Point point = new Point(loc);
-    return new Feature(point, properties);
+    return new Feature(properties, point);
   }
 
   /**
@@ -120,27 +120,33 @@ public class Feature {
    * Example:
    * <pre>
    * {@code
-   *   LocationList locs = LocationList.builder()
+   *   LocationList border = LocationList.builder()
    *       .add(40, -120)
    *       .add(38, -120)
    *       .add(38, -122)
    *       .add(40, -120)
    *       .build();
+   *       
    *   Properties properties = Properties.builder()
    *      .title("Golden")
    *      .id("golden")
    *      .build();
-   *   Feature feature = Feature.createPolygon(locs, properties);
+   *      
+   *   Feature feature = Feature.createPolygon(properties, border);
    * }
    * </pre>
    * 
-   * @param locs - The {@code LocationList} ({@link LocationList}).
-   * @param properties - The {@code Properties} ({@link Properties}).
-   * @return A new GeoJson {@code Feature} ({@link Feature}).
+   * @param properties The {@code Properties} 
+   * @param border The border for the {@code Polygon}
+   * @param interiors The interiors for the {@code Polygon}  
+   * @return A new GeoJson {@code Feature} 
    */
-  public static Feature createPolygon(LocationList locs, Properties properties) {
-    Polygon polygon = new Polygon(locs);
-    return new Feature(polygon, properties);
+  public static Feature createPolygon(
+      Properties properties,
+      LocationList border,
+      LocationList... interiors) {
+    Polygon polygon = new Polygon(border, interiors);
+    return new Feature(properties, polygon);
   }
  
   /**
@@ -150,7 +156,37 @@ public class Feature {
   public Properties getProperties() {
     return Properties.builder().putAll(this.properties).build();
   }
-
+  
+  /**
+   * Return the {@link GeoJsonType} representing the {@code Feature}.
+   * @return The {@code GeoJsonType}.
+   */
+  public GeoJsonType getType() {
+    return GeoJsonType.getEnum(this.type);
+  }
+ 
+  /**
+   * Return the {@link Geometry}.
+   * <br>
+   * 
+   * It is best to cast to the specific {@code Geometry} type;
+   * <br><br>
+   * 
+   * Example:
+   * <pre>
+   * {@code
+   *  Feature feature = Feature.createPoint(Properties, 40, -120);
+   *  
+   *  Point pointGeom = (Point) feature.getGeometry();
+   * }
+   * </pre>
+   * 
+   * @return The {@code Geometry}.
+   */
+  public Geometry getGeometry() {
+    return this.geometry;
+  }
+  
   /**
    * Return a {@code String} in JSON format.
    */
