@@ -8,12 +8,17 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 /**
  * Create a GeoJson {@code FeatureCollection}. See
- *    {@link #FeatureCollection(List)} for an example. 
+ *    {@link Builder} for an example. 
  *  <br><br>
  * 
  * A GeoJson {@code FeatureCollection} is a GeoJson object with {@link #type}
@@ -37,46 +42,47 @@ import gov.usgs.earthquake.nshmp.geo.LocationList;
  *    creating a {@link Geometry}: 
  *    <ul> 
  *      <li> {@link Builder#add(Feature)} </li> 
- *      <li> {@link Builder#createPoint(Location, Properties)} </li> 
- *      <li> {@link Builder#createPoint(double, double, Properties)} </li> 
- *      <li> {@link Builder#createPolygon(LocationList, Properties)} </li> 
+ *      <li> {@link Builder#createPoint(Properties, Location)} </li> 
+ *      <li> {@link Builder#createPoint(Properties, double, double)} </li> 
+ *      <li> {@link Builder#createPolygon(Properties, LocationList, LocationList...)} </li> 
  *    </ul> 
  *    See {@link Builder} for example.
  * 
  * @author Brandon Clayton
  */
-public class FeatureCollection {
+public class FeatureCollection implements GeoJson {
   /** The {@link GeoJsonType} of GeoJson object: FeatureCollection */
-  public String type;
+  private String type;
   /** The {@code List} of {@link Feature}s. */
-  public List<Feature> features;
+  private final List<Feature> features;
 
   /**
-   * Return a new instance of a GeoJson {@code FeatureCollection}. 
-   * <br><br>
-   * 
-   * Example:
-   * <pre>
-   * {@code
-   *   Location loc = Location.create(39.75, -105);
-   *   Properties properties = Properties.builder()
-   *      .title("Golden")
-   *      .id("golden")
-   *      .build();
-   *   Feature feature = Feature.createPoint(loc, properties);
-   *   List<Feature> features = new ArrayList<>();
-   *   list.add(feature);
-   *   FeatureCollection fc = new FeatureCollection(features);
-   * }
-   * </pre>
-   * 
-   * @param features The {@code List} of {@link Feature}s.
+   * Return a new instance of a GeoJson {@code FeatureCollection}
+   *    using the {@link #builder()}. 
    */
-  public FeatureCollection(List<Feature> features) {
+  private FeatureCollection(Builder builder) {
     this.type = GeoJsonType.FEATURE_COLLECTION.toUpperCamelCase();
-    this.features = features;
+    this.features = builder.features;
   }
 
+  /**
+   * Return a {@code ImmutableList<Feature>} representing the 
+   *    {@link Feature}s
+   *    
+   * @return The {@code Feature}s
+   */
+  public ImmutableList<Feature> getFeatures() {
+    return new ImmutableList.Builder<Feature>().addAll(this.features).build();
+  }
+  
+  /**
+   * Return the {@link GeoJsonType} representing the {@code FeatureCollection}.
+   * @return The {@code GeoJsonType}.
+   */ 
+  public GeoJsonType getType() {
+    return GeoJsonType.getEnum(this.type);
+  }
+ 
   /**
    * Read in a GeoJson {@code FeatureCollection} from a
    *    {@code InputStreamReader}. 
@@ -91,12 +97,11 @@ public class FeatureCollection {
    *   InputStreamReader reader = new InputStreamReader(url.openStream());
    *   FeatureCollection fc = FeatureCollection.read(reader);
    * 
-   *   Feature singleFeature = fc.features.get(0);
-   *   Point point = (Point) singleFeature.geometry;
-   *   double[] coords = point.coordinates;
-   *   Properties properties = Properties.builder()
-   *       .putAll(singleFeature.properties)
-   *       .build();
+   *   Feature singleFeature = fc.getFeatures().get(0);
+   *   Point point = (Point) singleFeature.getGeometry();
+   *   double[] coords = point.getCoordinates();
+   *   Location loc = point.getLocation();
+   *   Properties properties = singleFeature.getProperties();
    * }
    * </pre>
    * 
@@ -104,6 +109,7 @@ public class FeatureCollection {
    * @return A new instance of a {@code FeatureCollection}.
    */
   public static FeatureCollection read(InputStreamReader reader) {
+    checkNotNull(reader, "Input stream cannot be null");
     return Util.GSON.fromJson(reader, FeatureCollection.class);
   }
 
@@ -119,7 +125,7 @@ public class FeatureCollection {
    *      .id("id")
    *      .build();
    *  FeatureCollection fc = FeatureCollection.builder()
-   *      .createPoint(40, -120, properties)
+   *      .createPoint(properties, 40, -120)
    *      .build();
    *  Path out = Paths.get("etc").resolve("test.geojson");
    *  fc.write(out);
@@ -127,10 +133,11 @@ public class FeatureCollection {
    * </pre>
    *
    * @param out The {@code Path} to write the file.
-   * @throws IOException 
+   * @throws IOException The {@code IOException}. 
    */
   public void write(Path out) throws IOException {
-    String json = this.toString();
+    checkNotNull(out, "Path cannot be null");
+    String json = this.toJsonString();
     Files.write(out, json.getBytes(StandardCharsets.UTF_8));
   }
 
@@ -154,12 +161,12 @@ public class FeatureCollection {
    * <br><br>
    * 
    * Easily add {@link Feature}s to a {@code List} by: 
-   *    <ul> 
-   *      <li> {@link Builder#add(Feature)} </li> 
-   *      <li> {@link Builder#createPoint(Location, Properties)} </li> 
-   *      <li> {@link Builder#createPoint(double, double, Properties)} </li> 
-   *      <li> {@link Builder#createPolygon(LocationList, Properties)} </li> 
-   *    </ul>
+   *  <ul> 
+   *    <li> {@link Builder#add(Feature)} </li> 
+   *    <li> {@link Builder#createPoint(Properties, Location)} </li> 
+   *    <li> {@link Builder#createPoint(Properties, double, double)} </li> 
+   *    <li> {@link Builder#createPolygon(Properties, LocationList, LocationList...)} </li> 
+   *  </ul>
    * <br><br>
    * 
    * Example:
@@ -170,7 +177,7 @@ public class FeatureCollection {
    *       .id("golden")
    *       .build();
    *   FeatureCollection fc = FeatureCollection.builder()
-   *       .createPoint(39.75, -105, properties)
+   *       .createPoint(properties, 39.75, -105)
    *       .build();
    * }
    * </pre>
@@ -178,7 +185,7 @@ public class FeatureCollection {
    * @author Brandon Clayton
    */
   public static class Builder {
-    private List<Feature> features = new ArrayList<>();
+    private List<Feature> features = new ArrayList<>(); 
 
     private Builder() {}
 
@@ -187,19 +194,19 @@ public class FeatureCollection {
      * @return New {@link FeatureCollection}.
      */
     public FeatureCollection build() {
-      if (this.features.isEmpty()) {
-        throw new IllegalStateException("List of features can not be empty");
-      }
-      return new FeatureCollection(this.features);
+      checkState(!features.isEmpty(), "List of features cannot be empty");
+      return new FeatureCollection(this);
     }
 
     /**
      * Add a {@link Feature} to the {@link FeatureCollection#features}
      *    {@code List}.
+     *    
      * @param feature The {@code Feature} to add.
      * @return Return the {@code Builder} to make chainable.
      */
     public Builder add(Feature feature) {
+      checkNotNull(feature, "A feature cannot be null");
       this.features.add(feature);
       return this;
     }
@@ -207,39 +214,47 @@ public class FeatureCollection {
     /**
      * Add a {@link Feature} with {@link Geometry} of {@link Point} to
      *    the {@link FeatureCollection#features} {@code List}.
-     * @param loc The {@link Location} of the point.
+     *    
      * @param properties The {@link Properties} of the point.
+     * @param loc The {@link Location} of the point.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createPoint(Location loc, Properties properties) {
-      this.features.add(Feature.createPoint(loc, properties));
+    public Builder createPoint(Properties properties, Location loc) {
+      this.features.add(Feature.createPoint(properties, loc));
       return this;
     }
 
     /**
      * Add a {@link Feature} with {@link Geometry} of {@link Point} to
      *    the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param properties The {@link Properties} of the point.
      * @param latitude The latitude of the point.
      * @param longitude The longitude of the point.
-     * @param properties The {@link Properties} of the point.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createPoint(double latitude, double longitude, Properties properties) {
-      this.features.add(Feature.createPoint(latitude, longitude, properties));
+    public Builder createPoint(Properties properties, double latitude, double longitude) {
+      this.features.add(Feature.createPoint(properties, latitude, longitude));
       return this;
     }
 
     /**
      * Add a {@link Feature} with {@link Geometry} of {@link Polygon}
      *    to the {@link FeatureCollection#features} {@code List}.
-     * @param locs The {@link LocationList} of the polygon.
+     *    
      * @param properties The {@link Properties} of the polygon.
+     * @param border The border of the {@code Polygon} 
+     * @param interiors The interiors of the {@code Polygon}
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createPolygon(LocationList locs, Properties properties) {
-      this.features.add(Feature.createPolygon(locs, properties));
+    public Builder createPolygon(
+        Properties properties,
+        LocationList border,
+        LocationList... interiors) {
+      this.features.add(Feature.createPolygon(properties, border, interiors));
       return this;
     }
+    
   }
 
 }
