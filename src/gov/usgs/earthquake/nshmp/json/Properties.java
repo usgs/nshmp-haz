@@ -29,6 +29,61 @@ public class Properties {
   }
 
   /**
+   * Return the {@code Object} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   *  
+   * @param key The {@code String} key.
+   * @return The value.
+   */
+  public Object getProperty(String key) {
+    Object value = this.attributes.get(key);
+    checkNotNull(value, "Could not get attribute: " + key);
+    
+    return value;
+  }
+  
+  /**
+   * Return the {@code String} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   *  
+   * @param key The {@code String} key.
+   * @return The value.
+   */
+  public String getStringProperty(String key) {
+    return (String) getProperty(key);
+  }
+ 
+  /**
+   * Return the {@code double} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   *  
+   * @param key The {@code String} key.
+   * @return The value.
+   */
+  public double getDoubleProperty(String key) {
+    return (double) getProperty(key);
+  }
+ 
+  /**
+   * Return the {@code int} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   *  
+   * @param key The {@code String} key.
+   * @return The value.
+   */
+  public int getIntProperty(String key) {
+    return (int) getProperty(key);
+  }
+ 
+  /**
+   * Return a {@code String} in JSON format.
+   * @return The JSON {@code String}.
+   */
+  public String toJsonString() {
+    return Util.GSON.toJson(this);
+  }
+
+  /**
    * Return a new instance of {@link Builder}
    * @return New {@code Builder}
    */
@@ -62,8 +117,6 @@ public class Properties {
     /**
      * Return a new instance of {@link Properties}. 
      * <br> 
-     * The "title" and "id" property must be set before calling {@link #build()}. 
-     * <br> 
      * Use convenience methods for setting "title" and "id" with ease: 
      *  <ul> 
      *    <li> {@link #id(String)} </li> 
@@ -73,10 +126,6 @@ public class Properties {
      * @return New {@code Properties}
      */
     public Properties build() {
-      if (isNullOrEmpty((String) this.attributes.get(Attributes.TITLE.toLowerCase())) ||
-          isNullOrEmpty((String) this.attributes.get(Attributes.ID.toLowerCase()))) {
-        throw new IllegalStateException("Title and id fields can not be empty");
-      }
       return new Properties(this);
     }
 
@@ -159,60 +208,6 @@ public class Properties {
 
   }
   
-  /**
-   * Return the {@code Object} corresponding to a key in the {@code Properties}
-   *    {@code Map<String, Object>}.
-   *  
-   * @param key The {@code String} key.
-   * @return The value.
-   */
-  public Object getProperty(String key) {
-    Object value = this.attributes.get(key);
-    checkNotNull(value, "Could not get attribute: " + key);
-    
-    return value;
-  }
-  
-  /**
-   * Return the {@code String} corresponding to a key in the {@code Properties}
-   *    {@code Map<String, Object>}.
-   *  
-   * @param key The {@code String} key.
-   * @return The value.
-   */
-  public String getStringProperty(String key) {
-    return (String) getProperty(key);
-  }
- 
-  /**
-   * Return the {@code double} corresponding to a key in the {@code Properties}
-   *    {@code Map<String, Object>}.
-   *  
-   * @param key The {@code String} key.
-   * @return The value.
-   */
-  public double getDoubleProperty(String key) {
-    return (double) getProperty(key);
-  }
- 
-  /**
-   * Return the {@code int} corresponding to a key in the {@code Properties}
-   *    {@code Map<String, Object>}.
-   *  
-   * @param key The {@code String} key.
-   * @return The value.
-   */
-  public int getIntProperty(String key) {
-    return (int) getProperty(key);
-  }
- 
-  /**
-   * Return a {@code String} in JSON format.
-   */
-  public String toJsonString() {
-    return Util.GSON.toJson(this);
-  }
-
   /**
    * Attribute keys.
    * 
