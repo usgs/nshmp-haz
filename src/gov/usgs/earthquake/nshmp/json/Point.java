@@ -14,9 +14,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Point implements Geometry {
   /** The {@link GeoJsonType} of GeoJson {@code Geometry}: Point */
-  public final String type;
+  private final String type;
   /** The coordinates of the point */
-  public final double[] coordinates;
+  private final double[] coordinates;
 
   /**
    * Create a Point GeoJson {@code Geometry} with a {@link Location}. 
@@ -69,11 +69,19 @@ public class Point implements Geometry {
   }
   
   /**
-   * Return the {@code String} representing the {@link GeoJsonType} {@code Point}.
-   * @return The {@code String} of the {@code GeoJsonType}.
+   * Return the coordinates as a {@link Location}.
+   * @return The {@code Location}.
    */
-  public String getType() {
-    return this.type;
+  public Location getLocation() {
+    return Location.create(this.coordinates[1], this.coordinates[0]);
+  }
+  
+  /**
+   * Return the {@link GeoJsonType} representing the {@code Point}.
+   * @return The {@code GeoJsonType}.
+   */
+  public GeoJsonType getType() {
+    return GeoJsonType.getEnum(this.type);
   }
  
   /**
@@ -81,14 +89,6 @@ public class Point implements Geometry {
    */
   public String toJsonString() {
     return Util.cleanPoints(Util.GSON.toJson(this, Point.class));
-  }
-  
-  /**
-   * Return the coordinates as a {@link Location}.
-   * @return The {@code Location}.
-   */
-  public Location toLocation() {
-    return Location.create(this.coordinates[1], this.coordinates[0]);
   }
   
 }
