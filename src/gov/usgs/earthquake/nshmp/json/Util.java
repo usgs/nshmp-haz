@@ -1,6 +1,8 @@
 package gov.usgs.earthquake.nshmp.json;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,7 +25,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * @author Brandon Clayton
  */
 public class Util {
-  /** {@link Gson} for converting objects to JSON {@code String} */
+  /** {@link Gson} for converting objects to a JSON {@code String} */
   static final Gson GSON;
   /** Precision for rounding */
   private static final int ROUND = 5;
@@ -59,6 +61,22 @@ public class Util {
       coords[jl] = toCoordinates(locs.get(jl));
     }
 
+    return coords;
+  }
+ 
+  /**
+   * Convert a {@code LocationList...} to a {@code List<double[][]>}
+   * 
+   * @param listLocs The {@code LocationList...}
+   * @return The {@code List<double[][]>}
+   */
+  static List<double[][]> toCoordinates(LocationList... listLocs) {
+    List<double[][]> coords = new ArrayList<>();
+    
+    for (LocationList locs : listLocs) {
+      coords.add(toCoordinates(locs));
+    }
+    
     return coords;
   }
 
@@ -105,7 +123,7 @@ public class Util {
       
       JsonObject json = new JsonObject();
       
-      json.addProperty(JsonKey.TYPE.toLowerCase(), geometry.getType());
+      json.addProperty(JsonKey.TYPE.toLowerCase(), geometry.getType().toUpperCamelCase());
       JsonElement coords = GSON.toJsonTree(geometry.getCoordinates());
       json.add(JsonKey.COORDINATES.toLowerCase(), coords);
       
@@ -132,14 +150,14 @@ public class Util {
       String type = jsonObject.get(JsonKey.TYPE.toLowerCase()).getAsString();
       JsonArray coords = jsonObject.get(JsonKey.COORDINATES.toLowerCase())
           .getAsJsonArray();
-      
+     
       Geometry geom = null;
       GeoJsonType jsonType = GeoJsonType.getEnum(type);
       
       switch (jsonType) {
         case POLYGON: 
-          LocationList locs = fromCoordinates(coords);
-          geom = (Polygon) new Polygon(locs);
+          PolygonLocations polygonLocs = fromPolygonCoordinates(coords);
+          geom = (Polygon) new Polygon(polygonLocs.border, polygonLocs.interiors);
           break;
         case POINT:
           Location loc = Location.create(
@@ -153,20 +171,38 @@ public class Util {
       
       return geom;
     }
-
   }
   
   /**
-   * Returns the {@code LocationList} represented by the values in the supplied
-   * JSON array. {@code coordsElement} is expected to contain only a single,
-   * nested array of coordinates that define a polygonal border with no holes
-   * per the GeoJSON <a
-   * href="http://geojson.org/geojson-spec.html#id4">polygon</a> spec.
+   * Returns the {@link PolygonLocation} represented by the 
+   *    values in the supplied JSON array. 
+   * <br>
+   *    
+   * The {@code JsonArray} can contain nested array of coordinates 
+   *    that define a polygonal border with interior holes.
    *
    * @param coordsArray to process
    */
-  private static LocationList fromCoordinates(JsonArray coordsArray) {
-    JsonArray coords = coordsArray.get(0).getAsJsonArray();
+  private static PolygonLocations fromPolygonCoordinates(JsonArray coordsArray) {
+    JsonArray borderCoords = coordsArray.get(0).getAsJsonArray();
+    LocationList border = fromCoordinates(borderCoords);
+    
+    List<LocationList> interiors = new ArrayList<>();
+    
+    for (int jl = 1; jl < coordsArray.size(); jl++) {
+      interiors.add(fromCoordinates(coordsArray.get(jl).getAsJsonArray()));
+    }
+    
+    return new PolygonLocations(border, interiors);
+  }
+ 
+  /**
+   * Returns the {@code LocationList} represented by the values in the supplied
+   * JSON array. 
+   *
+   * @param coords to process
+   */
+  private static LocationList fromCoordinates(JsonArray coords) {
     LocationList.Builder builder = LocationList.builder();
     for (JsonElement element : coords) {
       JsonArray coord = element.getAsJsonArray();
@@ -176,6 +212,20 @@ public class Util {
     }
     
     return builder.build();
+  }
+ 
+  /**
+   * Container for holding a {@link Polygon} border and interiors.
+   * @author Brandon Clayton
+   */
+  private static class PolygonLocations {
+    LocationList border;
+    LocationList[] interiors;
+    
+    PolygonLocations(LocationList border, List<LocationList> interiors) {
+      this.border = border;
+      this.interiors = interiors.toArray(new LocationList[0]);
+    }
   }
  
   /**
