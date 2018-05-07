@@ -355,10 +355,10 @@ public class Properties {
    * @return The value.
    */
   private JsonElement checkProperty(String key) {
-    Object value = this.attributes.get(key);
+    JsonElement value = this.attributes.get(key);
     checkNotNull(value, "Could not get attribute: " + key);
     
-    return Util.GSON.toJsonTree(value);
+    return value;
   }
 
 }
