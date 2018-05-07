@@ -25,7 +25,6 @@ package gov.usgs.earthquake.nshmp.json;
  * 
  * Example:
  * <pre>
- * {@code
  * Properties properties = Properties.builder()
  *    .title("test")
  *    .id("id")
@@ -36,7 +35,6 @@ package gov.usgs.earthquake.nshmp.json;
  * Point point = (Point) feature.getGeometry();
  * 
  * double[] coords = point.getCoordinates();
- * }
  * </pre>
  * 
  * @author Brandon Clayton
@@ -58,7 +56,6 @@ public interface Geometry extends GeoJson {
    * 
    * Example:
    * <pre>
-   * {@code
    * Properties properties = Properties.builder()
    *    .title("test")
    *    .id("id")
@@ -69,11 +66,52 @@ public interface Geometry extends GeoJson {
    * Point point = (Point) feature.geometry;
    * 
    * double[] coords = point.getCoordinates();
-   * }
    * </pre>
    * 
    * @return An {@code Object} representing the coordinates.
    */
   public Object getCoordinates();
- 
+
+  /**
+   * Return {@code Geometry} as a {@link MultiPolygon}.
+   * @return The {@code MultiPolygon}.
+   * @throws UnsupportedOperationException If {@link GeoJsonType} does not equal 
+   *    the correct {@code Geometry}.
+   */
+  public default MultiPolygon asMultiPolygon() {
+    if (this.getType().equals(GeoJsonType.MULTI_POLYGON)) {
+      return (MultiPolygon) this;
+    } else {
+      throw new UnsupportedOperationException("Geometry is not a multi-polygon");
+    }
+  }
+  
+  /**
+   * Return {@code Geometry} as a {@link Point}.
+   * @return The {@code Point}.
+   * @throws UnsupportedOperationException If {@link GeoJsonType} does not equal 
+   *    the correct {@code Geometry}.
+   */
+  public default Point asPoint() {
+    if (this.getType().equals(GeoJsonType.POINT)) {
+      return (Point) this;
+    } else {
+      throw new UnsupportedOperationException("Geometry is not a point");
+    }
+  }
+  
+  /**
+   * Return {@code Geometry} as a {@link Polygon}.
+   * @return The {@code Polygon}.
+   * @throws UnsupportedOperationException If {@link GeoJsonType} does not equal 
+   *    the correct {@code Geometry}.
+   */
+  public default Polygon asPolygon() {
+    if (this.getType().equals(GeoJsonType.POLYGON)) {
+      return (Polygon) this;
+    } else {
+      throw new UnsupportedOperationException("Geometry is not a polygon");
+    }
+  }
+  
 }
