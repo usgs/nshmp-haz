@@ -24,10 +24,8 @@ public class Point implements Geometry {
    * 
    * Example:
    * <pre>
-   * {@code
    *  Location loc = Location.create(40, -120);
    *  Point point = new Point(loc);
-   * }
    * </pre>
    * 
    * @param loc The {@code Location} ({@link Location}).
@@ -45,9 +43,7 @@ public class Point implements Geometry {
    * 
    * Example:
    * <pre>
-   * {@code
    *   Point point = new Point(40, -120);
-   * }
    * </pre>
    * 
    * @param latitude The latitude in degrees
@@ -58,7 +54,8 @@ public class Point implements Geometry {
     this.type = GeoJsonType.POINT.toUpperCamelCase();
     this.coordinates = Util.toCoordinates(loc);
   }
- 
+
+  @Override
   /** 
    * Return the coordinates as a {@code double[]} ([longitude, latitude])
    *    for a GeoJson {@code Point}.
@@ -75,7 +72,8 @@ public class Point implements Geometry {
   public Location getLocation() {
     return Location.create(this.coordinates[1], this.coordinates[0]);
   }
-  
+ 
+  @Override
   /**
    * Return the {@link GeoJsonType} representing the {@code Point}.
    * @return The {@code GeoJsonType}.
@@ -84,6 +82,7 @@ public class Point implements Geometry {
     return GeoJsonType.getEnum(this.type);
   }
  
+  @Override
   /**
    * Return a {@code String} in JSON format.
    */
