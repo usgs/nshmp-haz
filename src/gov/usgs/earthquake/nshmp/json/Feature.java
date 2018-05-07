@@ -1,6 +1,9 @@
 package gov.usgs.earthquake.nshmp.json;
 
+import java.util.List;
 import java.util.Map;
+
+import com.google.gson.JsonElement;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
@@ -19,6 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *    <li> {@link Feature#createPoint(Properties, Location)} </li> 
  *    <li> {@link Feature#createPoint(Properties, double, double)} </li> 
  *    <li> {@link Feature#createPolygon(Properties, LocationList, LocationList...)} </li> 
+ *    <li> {@link Feature#createMultiPolygon(Properties, List)} </li>
+ *    <li> {@link Feature#createMultiPolygon(Properties, MultiPolygon)} </li>
  *  </ul>
  * 
  * @author Brandon Clayton
@@ -29,7 +34,7 @@ public class Feature implements GeoJson {
   /** The {@link Geometry} */
   private Geometry geometry;
   /** The {@link Properties} */
-  private Map<String, Object> properties;
+  private Map<String, JsonElement> properties;
 
   /**
    * Create a new instance of a {@code Feature}. 
@@ -37,12 +42,10 @@ public class Feature implements GeoJson {
    * 
    * Example:
    * <pre>
-   * {@code
    *   Location loc = Location.create(39.75, -105);
    *   Point point = new Geometry.Point(loc);
    *   Properties properties = Properties.builder().title("Golden").build();
    *   Feature feature = new Feature(properties, point);
-   * }
    * </pre>
    * 
    * @param properties The {@link Properties} for the {@code Feature}.
@@ -54,9 +57,52 @@ public class Feature implements GeoJson {
     
     this.type = GeoJsonType.FEATURE.toUpperCamelCase();
     this.geometry = geometry;
-    this.properties = properties.attributes;
+    this.properties = properties.getProperties();
   }
 
+  /**
+   * Static factory method to create a {@link Feature} with a 
+   *    {@link MultiPolygon} {@link Geometry}.
+   * <br>
+   * 
+   * See {@link MultiPolygon.Builder} for an example on creating a 
+   *    {@code MultiPolygon}. 
+   *    
+   * @param properties The {@link Properties}.
+   * @param multiPolygon The {@code MultiPolygon}.
+   * @return The {@code Feature}.
+   */
+  public static Feature createMultiPolygon(
+      Properties properties,
+      MultiPolygon multiPolygon) {
+    return new Feature(properties, multiPolygon);
+  }
+  
+  /**
+   * Static factory method to create a {@link Feature} with a 
+   *    {@link MultiPolygon} {@link Geometry} given a 
+   *    {@code List<Polygon>}.
+   * <br>
+   * 
+   * See {@link MultiPolygon.Builder} for an example on creating a 
+   *    {@code MultiPolygon}. 
+   *    
+   * @param properties The {@link Properties}.
+   * @param polygons The {@link Polygon}s.
+   * @return The {@code Feature}.
+   */
+  public static Feature createMultiPolygon(
+      Properties properties, 
+      List<Polygon> polygons) {
+    MultiPolygon.Builder builder = MultiPolygon.builder();
+    
+    for (Polygon polygon : polygons) {
+      builder.addPolygon(polygon);
+    }
+    
+    return new Feature(properties, builder.build());
+  }
+  
   /**
    * Static factory method to create a {@code Feature} with a
    *    {@link Point} {@link Geometry} given a latitude and longitude in degrees. 
@@ -64,13 +110,11 @@ public class Feature implements GeoJson {
    * 
    * Example:
    * <pre>
-   * {@code
    *   Properties properties = Properties.builder()
    *      .title("Golden")
    *      .id("golden")
    *      .build();
    *   Feature feature = Feature.createPoint(properties, latitude, longitude);
-   * }
    * </pre>
    * 
    * @param properties The {@code Properties} ({@link Properties}).
@@ -93,14 +137,12 @@ public class Feature implements GeoJson {
    * 
    * Example:
    * <pre>
-   * {@code
    *   Location loc = Location.create(39.75, -105);
    *   Properties properties = Properties.builder()
    *      .title("Golden")
    *      .id("golden")
    *      .build();
    *   Feature feature = Feature.createPoint(properties, loc);
-   * }
    * </pre>
    * 
    * @param properties - The {@code Properties} ({@link Properties}).
@@ -119,7 +161,6 @@ public class Feature implements GeoJson {
    * 
    * Example:
    * <pre>
-   * {@code
    *   LocationList border = LocationList.builder()
    *       .add(40, -120)
    *       .add(38, -120)
@@ -133,7 +174,6 @@ public class Feature implements GeoJson {
    *      .build();
    *      
    *   Feature feature = Feature.createPolygon(properties, border);
-   * }
    * </pre>
    * 
    * @param properties The {@code Properties} 
@@ -148,23 +188,7 @@ public class Feature implements GeoJson {
     Polygon polygon = new Polygon(border, interiors);
     return new Feature(properties, polygon);
   }
- 
-  /**
-   * Return a {@link Properties} object.
-   * @return The {@code Properties}
-   */
-  public Properties getProperties() {
-    return Properties.builder().putAll(this.properties).build();
-  }
-  
-  /**
-   * Return the {@link GeoJsonType} representing the {@code Feature}.
-   * @return The {@code GeoJsonType}.
-   */
-  public GeoJsonType getType() {
-    return GeoJsonType.getEnum(this.type);
-  }
- 
+
   /**
    * Return the {@link Geometry}.
    * <br>
@@ -174,11 +198,9 @@ public class Feature implements GeoJson {
    * 
    * Example:
    * <pre>
-   * {@code
    *  Feature feature = Feature.createPoint(Properties, 40, -120);
    *  
    *  Point pointGeom = (Point) feature.getGeometry();
-   * }
    * </pre>
    * 
    * @return The {@code Geometry}.
@@ -187,6 +209,24 @@ public class Feature implements GeoJson {
     return this.geometry;
   }
   
+  /**
+   * Return a {@link Properties} object.
+   * @return The {@code Properties}
+   */
+  public Properties getProperties() {
+    return Properties.builder().putAll(this.properties).build();
+  }
+ 
+  @Override
+  /**
+   * Return the {@link GeoJsonType} representing the {@code Feature}.
+   * @return The {@code GeoJsonType}.
+   */
+  public GeoJsonType getType() {
+    return GeoJsonType.getEnum(this.type);
+  }
+ 
+  @Override
   /**
    * Return a {@code String} in JSON format.
    */

@@ -1,7 +1,9 @@
 package gov.usgs.earthquake.nshmp.json;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -45,6 +48,8 @@ import static com.google.common.base.Preconditions.checkState;
  *      <li> {@link Builder#createPoint(Properties, Location)} </li> 
  *      <li> {@link Builder#createPoint(Properties, double, double)} </li> 
  *      <li> {@link Builder#createPolygon(Properties, LocationList, LocationList...)} </li> 
+ *      <li> {@link Builder#createMultiPolygon(Properties, List)} </li>
+ *      <li> {@link Builder#createMultiPolygon(Properties, MultiPolygon)} </li>
  *    </ul> 
  *    See {@link Builder} for example.
  * 
@@ -74,7 +79,8 @@ public class FeatureCollection implements GeoJson {
   public ImmutableList<Feature> getFeatures() {
     return new ImmutableList.Builder<Feature>().addAll(this.features).build();
   }
-  
+ 
+  @Override
   /**
    * Return the {@link GeoJsonType} representing the {@code FeatureCollection}.
    * @return The {@code GeoJsonType}.
@@ -83,6 +89,14 @@ public class FeatureCollection implements GeoJson {
     return GeoJsonType.getEnum(this.type);
   }
  
+  @Override
+  /**
+   * Return a {@code String} in JSON format.
+   */
+  public String toJsonString() {
+    return Util.cleanPoly(Util.GSON.toJson(this));
+  }
+
   /**
    * Read in a GeoJson {@code FeatureCollection} from a
    *    {@code InputStreamReader}. 
@@ -91,7 +105,6 @@ public class FeatureCollection implements GeoJson {
    * Example:
    * 
    * <pre>
-   * {@code
    *   String urlStr = "url of GeoJson FeatureCollection file";
    *   URL url = new URL(urlStr);
    *   InputStreamReader reader = new InputStreamReader(url.openStream());
@@ -102,7 +115,6 @@ public class FeatureCollection implements GeoJson {
    *   double[] coords = point.getCoordinates();
    *   Location loc = point.getLocation();
    *   Properties properties = singleFeature.getProperties();
-   * }
    * </pre>
    * 
    * @param reader The {@code InputStreamReader}
@@ -114,12 +126,72 @@ public class FeatureCollection implements GeoJson {
   }
 
   /**
+   * Read in a GeoJson {@code FeatureCollection} from a {@code Path}. 
+   * <br><br>
+   * 
+   * Example:
+   * 
+   * <pre>
+   *   Path path = Paths.get("etc", "test.geojson");
+   *   FeatureCollection fc = FeatureCollection.read(path);
+   * 
+   *   Feature singleFeature = fc.getFeatures().get(0);
+   *   Point point = (Point) singleFeature.getGeometry();
+   *   double[] coords = point.getCoordinates();
+   *   Location loc = point.getLocation();
+   *   Properties properties = singleFeature.getProperties();
+   * </pre>
+   * 
+   * @param path The {@code Path}
+   * @return A new instance of a {@code FeatureCollection}.
+   * @throws IOException The {@code IOException}.
+   */
+  public static FeatureCollection read(Path path) throws IOException {
+    checkArgument(Files.exists(path), "File does not exsist: " + path);
+    BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+    FeatureCollection fc = Util.GSON.fromJson(reader, FeatureCollection.class);
+    reader.close();
+    
+    return fc;
+  }
+ 
+  /**
+   * Read in a GeoJson {@code FeatureCollection} from a {@code URL}. 
+   * <br><br>
+   * 
+   * Example:
+   * 
+   * <pre>
+   *   String urlStr = "url of GeoJson FeatureCollection file";
+   *   URL url = new URL(urlStr);
+   *   FeatureCollection fc = FeatureCollection.read(url);
+   * 
+   *   Feature singleFeature = fc.getFeatures().get(0);
+   *   Point point = (Point) singleFeature.getGeometry();
+   *   double[] coords = point.getCoordinates();
+   *   Location loc = point.getLocation();
+   *   Properties properties = singleFeature.getProperties();
+   * </pre>
+   * 
+   * @param url The {@code URL}.
+   * @return A new instance of a {@code FeatureCollection}.
+   * @throws IOException The {@code IOException}.
+   */
+  public static FeatureCollection read(URL url) throws IOException {
+    checkArgument(url != null, "URL cannot be null");
+    BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+    FeatureCollection fc = Util.GSON.fromJson(reader, FeatureCollection.class);
+    reader.close();
+    
+    return fc;
+  }
+  
+  /**
    * Write a {@code FeatureCollection} to a file.
    * <br><br>
    * 
    * Example:
    * <pre>
-   * {@code 
    *  Properties properties = Properties.builder()
    *      .title("Title")
    *      .id("id")
@@ -129,7 +201,6 @@ public class FeatureCollection implements GeoJson {
    *      .build();
    *  Path out = Paths.get("etc").resolve("test.geojson");
    *  fc.write(out);
-   * }
    * </pre>
    *
    * @param out The {@code Path} to write the file.
@@ -139,13 +210,6 @@ public class FeatureCollection implements GeoJson {
     checkNotNull(out, "Path cannot be null");
     String json = this.toJsonString();
     Files.write(out, json.getBytes(StandardCharsets.UTF_8));
-  }
-
-  /**
-   * Return a {@code String} in JSON format.
-   */
-  public String toJsonString() {
-    return Util.cleanPoly(Util.GSON.toJson(this));
   }
 
   /**
@@ -162,16 +226,17 @@ public class FeatureCollection implements GeoJson {
    * 
    * Easily add {@link Feature}s to a {@code List} by: 
    *  <ul> 
-   *    <li> {@link Builder#add(Feature)} </li> 
-   *    <li> {@link Builder#createPoint(Properties, Location)} </li> 
-   *    <li> {@link Builder#createPoint(Properties, double, double)} </li> 
-   *    <li> {@link Builder#createPolygon(Properties, LocationList, LocationList...)} </li> 
+   *    <li> {@link #add(Feature)} </li> 
+   *    <li> {@link #createPoint(Properties, Location)} </li> 
+   *    <li> {@link #createPoint(Properties, double, double)} </li> 
+   *    <li> {@link #createPolygon(Properties, LocationList, LocationList...)} </li> 
+   *    <li> {@link #createMultiPolygon(Properties, MultiPolygon)} </li>
+   *    <li> {@link #createMultiPolygon(Properties, List)} </li>
    *  </ul>
    * <br><br>
    * 
    * Example:
    * <pre>
-   * {@code
    *   Properties properties = Properties.builder()
    *       .title("Golden")
    *       .id("golden")
@@ -179,7 +244,6 @@ public class FeatureCollection implements GeoJson {
    *   FeatureCollection fc = FeatureCollection.builder()
    *       .createPoint(properties, 39.75, -105)
    *       .build();
-   * }
    * </pre>
    * 
    * @author Brandon Clayton
@@ -208,6 +272,32 @@ public class FeatureCollection implements GeoJson {
     public Builder add(Feature feature) {
       checkNotNull(feature, "A feature cannot be null");
       this.features.add(feature);
+      return this;
+    }
+   
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link MultiPolygon} 
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param properties The {@link Properties}.
+     * @param multiPolygon The {@code MultiPolygon}.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder createMultiPolygon(Properties properties, MultiPolygon multiPolygon) {
+      this.features.add(Feature.createMultiPolygon(properties, multiPolygon));
+      return this;
+    }
+    
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link MultiPolygon} 
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param properties The {@link Properties}.
+     * @param polygons A {@code List} of {@link Polygon}s. 
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder createMultiPolygon(Properties properties, List<Polygon> polygons) {
+      this.features.add(Feature.createMultiPolygon(properties, polygons));
       return this;
     }
 
