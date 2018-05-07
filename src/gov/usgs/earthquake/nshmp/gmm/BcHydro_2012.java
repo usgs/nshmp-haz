@@ -46,8 +46,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * @author Peter Powers
  * @see Gmm#BCHYDRO_12_INTERFACE
  * @see Gmm#BCHYDRO_12_SLAB
- * @see Gmm#BCHYDRO_12_BASIN_INTERFACE
- * @see Gmm#BCHYDRO_12_BASIN_SLAB
+ * @see Gmm#BCHYDRO_12_INTERFACE_BASIN_AMP
+ * @see Gmm#BCHYDRO_12_SLAB_BASIN_AMP
  */
 public abstract class BcHydro_2012 implements GroundMotionModel {
 
@@ -102,12 +102,12 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
   private final Coefficients coeffs;
   private final Coefficients coeffsPGA;
-  private final CampbellBozorgnia_2014 cb14;
+  private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
 
   BcHydro_2012(final Imt imt) {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
-    cb14 = new CampbellBozorgnia_2014(imt);
+    cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
   }
 
   @Override
@@ -121,7 +121,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
           ? exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, VS30_ROCK))
           : 0.0;
       double μRock = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, VS30_ROCK);
-      double cbBasin = cb14.basinDelta(in, VS30_ROCK);
+      double cbBasin = cb14basinAmp.basinDelta(in, VS30_ROCK);
       double μ = μRock + cbBasin;
       return DefaultScalarGroundMotion.create(μ, SIGMA);
     }
@@ -173,7 +173,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
         fSite;
   }
 
-  static final class Interface extends BcHydro_2012 {
+  static class Interface extends BcHydro_2012 {
     static final String NAME = BcHydro_2012.NAME + ": Interface";
 
     Interface(Imt imt) {
@@ -191,7 +191,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
   }
 
-  static final class Slab extends BcHydro_2012 {
+  static class Slab extends BcHydro_2012 {
     static final String NAME = BcHydro_2012.NAME + ": Slab";
 
     Slab(Imt imt) {
@@ -209,38 +209,28 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
   }
 
-  static final class BasinInterface extends BcHydro_2012 {
-    static final String NAME = BcHydro_2012.NAME + " Basin: Interface";
+  static final class BasinInterface extends Interface {
+    static final String NAME = BcHydro_2012.Interface.NAME + " : Basin Amp";
 
     BasinInterface(Imt imt) {
       super(imt);
     }
 
     @Override
-    final boolean isSlab() {
-      return false;
-    }
-
-    @Override
-    boolean basinEffect() {
+    final boolean basinEffect() {
       return true;
     }
   }
 
-  static final class BasinSlab extends BcHydro_2012 {
-    static final String NAME = BcHydro_2012.NAME + " Basin: Slab";
+  static final class BasinSlab extends Slab {
+    static final String NAME = BcHydro_2012.Slab.NAME + " : Basin Amp";
 
     BasinSlab(Imt imt) {
       super(imt);
     }
 
     @Override
-    final boolean isSlab() {
-      return true;
-    }
-
-    @Override
-    boolean basinEffect() {
+    final boolean basinEffect() {
       return true;
     }
   }

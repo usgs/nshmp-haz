@@ -19,11 +19,11 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import com.google.common.collect.Range;
-
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
@@ -52,7 +52,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * @author Peter Powers
  * @see Gmm#CB_14
  */
-public final class CampbellBozorgnia_2014 implements GroundMotionModel {
+public class CampbellBozorgnia_2014 implements GroundMotionModel {
 
   static final String NAME = "Campbell & Bozorgnia (2014)";
 
@@ -141,9 +141,13 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
     coeffsPGA = new Coefficients(PGA, COEFFS);
   }
 
+  boolean basinAmpOnly() {
+    return false;
+  }
+
   @Override
   public final ScalarGroundMotion calc(GmmInput in) {
-    return calc(coeffs, coeffsPGA, in, in.vs30, in.z2p5);
+    return calc(coeffs, coeffsPGA, in, in.vs30, in.z2p5, basinAmpOnly());
   }
 
   private static ScalarGroundMotion calc(
@@ -151,20 +155,21 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
       Coefficients cPGA,
       GmmInput in,
       double vs30,
-      double z2p5) {
+      double z2p5,
+      boolean basinAmpOnly) {
 
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
 
     // calc pga rock reference value using CA vs30 z2p5 value: 0.398
     double pgaRock = (vs30 < c.k1)
-        ? exp(calcMean(cPGA, style, 1100.0, 0.398, 0.0, in))
+        ? exp(calcMean(cPGA, style, 1100.0, 0.398, 0.0, in, basinAmpOnly))
         : 0.0;
 
-    double μ = calcMean(c, style, vs30, z2p5, pgaRock, in);
+    double μ = calcMean(c, style, vs30, z2p5, pgaRock, in, basinAmpOnly);
 
     // prevent SA<PGA for short periods
     if (SHORT_PERIODS.contains(c.imt)) {
-      double pgaMean = calcMean(cPGA, style, vs30, z2p5, pgaRock, in);
+      double pgaMean = calcMean(cPGA, style, vs30, z2p5, pgaRock, in, basinAmpOnly);
       μ = max(μ, pgaMean);
     }
 
@@ -180,18 +185,19 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
    */
   double basinDelta(GmmInput in, double vs30ref) {
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
+    boolean basinAmp = basinAmpOnly();
 
     /* Rock reference value with default basin term. */
     double pgaRock = (vs30ref < coeffs.k1)
-        ? exp(calcMean(coeffsPGA, style, 1100.0, 0.398, 0.0, in))
+        ? exp(calcMean(coeffsPGA, style, 1100.0, 0.398, 0.0, in, basinAmp))
         : 0.0;
-    double μRock = calcMean(coeffs, style, vs30ref, Double.NaN, pgaRock, in);
-    
+    double μRock = calcMean(coeffs, style, vs30ref, Double.NaN, pgaRock, in, basinAmp);
+
     /* Now with site/basin effect. */
     pgaRock = (in.vs30 < coeffs.k1)
-        ? exp(calcMean(coeffsPGA, style, 1100.0, 0.398, 0.0, in))
+        ? exp(calcMean(coeffsPGA, style, 1100.0, 0.398, 0.0, in, basinAmp))
         : 0.0;
-    double μBasin = calcMean(coeffs, style, in.vs30, in.z2p5, pgaRock, in);
+    double μBasin = calcMean(coeffs, style, in.vs30, in.z2p5, pgaRock, in, basinAmp);
 
     return μBasin - μRock;
   }
@@ -204,7 +210,8 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
       double vs30,
       double z2p5,
       double pgaRock,
-      GmmInput in) {
+      GmmInput in,
+      boolean basinAmpOnly) {
 
     double Mw = in.Mw;
     double rRup = in.rRup;
@@ -281,7 +288,7 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
         : (c.c11 + c.k2 * N) * log(vsk1);
 
     // Basin Response term -- Equation 20
-    double Fsed = basinResponseTerm(c, vs30, z2p5);
+    double Fsed = basinResponseTerm(c, vs30, z2p5, basinAmpOnly);
 
     // Hypocentral Depth term -- Equations 21, 22, 23
     double zHyp = in.zHyp;
@@ -309,11 +316,19 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
   private static double basinResponseTerm(
       Coefficients c,
       double vs30,
-      double z2p5) {
+      double z2p5,
+      boolean basinAmpOnly) {
+
+    double zRef = exp(7.089 - 1.144 * log(vs30));
 
     if (Double.isNaN(z2p5)) {
-      z2p5 = exp(7.089 - 1.144 * log(vs30));
+      z2p5 = zRef;
     }
+
+    if (basinAmpOnly && z2p5 <= zRef) {
+      return 0.0;
+    }
+
     if (z2p5 <= 1.0) {
       return c.c14 * (z2p5 - 1.0);
     } else if (z2p5 > 3.0) {
@@ -375,6 +390,19 @@ public final class CampbellBozorgnia_2014 implements GroundMotionModel {
 
   private static final double stdMagDep(final double lo, final double hi, final double Mw) {
     return hi + (lo - hi) * (5.5 - Mw);
+  }
+
+  static final class BasinAmp extends CampbellBozorgnia_2014 {
+    static final String NAME = CampbellBozorgnia_2014.NAME + " : Basin Amp";
+
+    BasinAmp(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    boolean basinAmpOnly() {
+      return true;
+    }
   }
 
 }

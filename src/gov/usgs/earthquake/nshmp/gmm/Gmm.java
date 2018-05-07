@@ -118,6 +118,39 @@ public enum Gmm {
       Idriss_2014.COEFFS,
       Idriss_2014.CONSTRAINTS),
 
+  /*
+   * Active continent NGA-West2 WUS 2018. These have basin amplification-only
+   * effects implemented.
+   */
+
+  /** @see AbrahamsonEtAl_2014 */
+  ASK_14_BASIN_AMP(
+      AbrahamsonEtAl_2014.BasinAmp.class,
+      AbrahamsonEtAl_2014.BasinAmp.NAME,
+      AbrahamsonEtAl_2014.BasinAmp.COEFFS,
+      AbrahamsonEtAl_2014.BasinAmp.CONSTRAINTS),
+
+  /** @see BooreEtAl_2014 */
+  BSSA_14_BASIN_AMP(
+      BooreEtAl_2014.BasinAmp.class,
+      BooreEtAl_2014.BasinAmp.NAME,
+      BooreEtAl_2014.BasinAmp.COEFFS,
+      BooreEtAl_2014.BasinAmp.CONSTRAINTS),
+
+  /** @see CampbellBozorgnia_2014 */
+  CB_14_BASIN_AMP(
+      CampbellBozorgnia_2014.BasinAmp.class,
+      CampbellBozorgnia_2014.BasinAmp.NAME,
+      CampbellBozorgnia_2014.BasinAmp.COEFFS,
+      CampbellBozorgnia_2014.BasinAmp.CONSTRAINTS),
+
+  /** @see ChiouYoungs_2014 */
+  CY_14_BASIN_AMP(
+      ChiouYoungs_2014.BasinAmp.class,
+      ChiouYoungs_2014.BasinAmp.NAME,
+      ChiouYoungs_2014.BasinAmp.COEFFS,
+      ChiouYoungs_2014.BasinAmp.CONSTRAINTS),
+
   /* Active Continent AK 2007, HI 1998 */
 
   /** @see AbrahamsonSilva_1997 */
@@ -214,7 +247,7 @@ public enum Gmm {
       AtkinsonMacias_2009.CONSTRAINTS),
 
   /** @see AtkinsonMacias_2009 */
-  AM_09_BASIN_INTERFACE(
+  AM_09_INTERFACE_BASIN_AMP(
       AtkinsonMacias_2009.Basin.class,
       AtkinsonMacias_2009.Basin.NAME,
       AtkinsonMacias_2009.COEFFS,
@@ -235,14 +268,14 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  BCHYDRO_12_BASIN_INTERFACE(
+  BCHYDRO_12_INTERFACE_BASIN_AMP(
       BcHydro_2012.BasinInterface.class,
       BcHydro_2012.BasinInterface.NAME,
       BcHydro_2012.COEFFS,
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  BCHYDRO_12_BASIN_SLAB(
+  BCHYDRO_12_SLAB_BASIN_AMP(
       BcHydro_2012.BasinSlab.class,
       BcHydro_2012.BasinSlab.NAME,
       BcHydro_2012.COEFFS,
@@ -277,14 +310,14 @@ public enum Gmm {
       ZhaoEtAl_2006.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2006 */
-  ZHAO_06_BASIN_INTERFACE(
+  ZHAO_06_INTERFACE_BASIN_AMP(
       ZhaoEtAl_2006.BasinInterface.class,
       ZhaoEtAl_2006.BasinInterface.NAME,
       ZhaoEtAl_2006.COEFFS,
       ZhaoEtAl_2006.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2006 */
-  ZHAO_06_BASIN_SLAB(
+  ZHAO_06_SLAB_BASIN_AMP(
       ZhaoEtAl_2006.BasinSlab.class,
       ZhaoEtAl_2006.BasinSlab.NAME,
       ZhaoEtAl_2006.COEFFS,
@@ -567,7 +600,7 @@ public enum Gmm {
       NgaEastUsgs_2017.Usgs13_Central.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
       NgaEastUsgs_2017.CONSTRAINTS),
-  
+
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_CENTRAL_NOS2S(
       NgaEastUsgs_2017.Usgs13_CentralNoS2S.class,
@@ -830,7 +863,7 @@ public enum Gmm {
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /* NGA-East USGS Seed Tree */
-  
+
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_SEEDS_CENTRAL(
       NgaEastUsgs_2017.UsgsSeeds_Central.class,
@@ -951,7 +984,7 @@ public enum Gmm {
       NgaEastUsgs_2017.SeedUpdate_Graizer16.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
- 
+
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_SEED_GRAIZER17(
       NgaEastUsgs_2017.SeedUpdate_Graizer17.class,
@@ -1026,7 +1059,7 @@ public enum Gmm {
       String name,
       CoefficientContainer coeffs,
       Constraints constraints) {
-    
+
     this.delegate = delegate;
     this.name = name;
     this.constraints = constraints;
@@ -1191,6 +1224,14 @@ public enum Gmm {
             CY_14,
             IDRISS_14)),
 
+    WUS_18_ACTIVE_CRUST(
+        "2018 Active Crust (WUS)",
+        ImmutableList.of(
+            ASK_14_BASIN_AMP,
+            BSSA_14_BASIN_AMP,
+            CB_14_BASIN_AMP,
+            CY_14_BASIN_AMP)),
+
     WUS_14_INTERFACE(
         "2014 Subduction Interface (WUS)",
         ImmutableList.of(
@@ -1202,10 +1243,10 @@ public enum Gmm {
     WUS_18_INTERFACE(
         "2018 Subduction Interface (WUS) beta",
         ImmutableList.of(
-            AM_09_BASIN_INTERFACE,
-            BCHYDRO_12_BASIN_INTERFACE,
-            ZHAO_06_BASIN_INTERFACE)),
-    
+            AM_09_INTERFACE_BASIN_AMP,
+            BCHYDRO_12_INTERFACE_BASIN_AMP,
+            ZHAO_06_INTERFACE_BASIN_AMP)),
+
     WUS_14_SLAB(
         "2014 Subduction Intraslab (WUS)",
         ImmutableList.of(
@@ -1217,8 +1258,8 @@ public enum Gmm {
     WUS_18_SLAB(
         "2018 Subduction Intraslab (WUS) beta",
         ImmutableList.of(
-            BCHYDRO_12_BASIN_SLAB,
-            ZHAO_06_BASIN_SLAB)),
+            BCHYDRO_12_SLAB_BASIN_AMP,
+            ZHAO_06_SLAB_BASIN_AMP)),
 
     CEUS_08_STABLE_CRUST(
         "2008 Stable Crust (CEUS)",
@@ -1313,7 +1354,7 @@ public enum Gmm {
             NGA_EAST_USGS_SEEDS_EPRI,
             NGA_EAST_USGS_SEEDS_CENTRAL,
             NGA_EAST_USGS_SEEDS_BRANCHING)),
-    
+
     NGA_EAST_SAMMONS(
         "NGA-East USGS",
         ImmutableList.of(

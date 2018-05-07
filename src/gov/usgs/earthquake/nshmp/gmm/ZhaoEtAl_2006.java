@@ -53,8 +53,8 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * @author Peter Powers
  * @see Gmm#ZHAO_06_INTERFACE
  * @see Gmm#ZHAO_06_SLAB
- * @see Gmm#ZHAO_06_BASIN_INTERFACE
- * @see Gmm#ZHAO_06_BASIN_SLAB
+ * @see Gmm#ZHAO_06_INTERFACE_BASIN_AMP
+ * @see Gmm#ZHAO_06_SLAB_BASIN_AMP
  */
 public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
@@ -116,11 +116,11 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   private final Coefficients coeffs;
-  private final CampbellBozorgnia_2014 cb14;
+  private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
 
   ZhaoEtAl_2006(final Imt imt) {
     coeffs = new Coefficients(imt, COEFFS);
-    cb14 = new CampbellBozorgnia_2014(imt);
+    cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
   }
 
   @Override
@@ -132,7 +132,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
       // CB14 with local rock reference.
       double fSite = siteTermStep(coeffs, VS30_ROCK);
       double μRock = calcMean(coeffs, isSlab(), fSite, in);
-      double cbBasin = cb14.basinDelta(in, VS30_ROCK);
+      double cbBasin = cb14basinAmp.basinDelta(in, VS30_ROCK);
       double μ = μRock + cbBasin;
       return DefaultScalarGroundMotion.create(μ, σ);
     }
@@ -254,7 +254,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   static final class BasinInterface extends ZhaoEtAl_2006 {
-    static final String NAME = ZhaoEtAl_2006.NAME + " Basin: Interface";
+    static final String NAME = ZhaoEtAl_2006.NAME + ": Interface : Basin Amp";
 
     BasinInterface(Imt imt) {
       super(imt);
@@ -272,7 +272,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   static final class BasinSlab extends ZhaoEtAl_2006 {
-    static final String NAME = ZhaoEtAl_2006.NAME + " Basin: Slab";
+    static final String NAME = ZhaoEtAl_2006.NAME + ": Slab : Basin Amp";
 
     BasinSlab(Imt imt) {
       super(imt);

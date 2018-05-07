@@ -39,7 +39,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  *
  * @author Peter Powers
  * @see Gmm#AM_09_INTERFACE
- * @see Gmm#AM_09_BASIN_INTERFACE
+ * @see Gmm#AM_09_INTERFACE_BASIN_AMP
  */
 public class AtkinsonMacias_2009 implements GroundMotionModel {
 
@@ -78,13 +78,13 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
   private final Coefficients coeffs;
   private final Coefficients coeffsPGA;
   private final BooreAtkinsonSiteAmp siteAmp;
-  private final CampbellBozorgnia_2014 cb14;
+  private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
 
   AtkinsonMacias_2009(final Imt imt) {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
     siteAmp = new BooreAtkinsonSiteAmp(imt);
-    cb14 = new CampbellBozorgnia_2014(imt);
+    cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
   }
 
   @Override
@@ -95,7 +95,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
       // Possibly use basin/site term from 
       // CB14 with local rock reference.
       double μRock = calcMean(coeffs, in);
-      double cbBasin = cb14.basinDelta(in, VS30_ROCK);
+      double cbBasin = cb14basinAmp.basinDelta(in, VS30_ROCK);
       double μ = μRock + cbBasin;
       return DefaultScalarGroundMotion.create(μ, σ);
     }
@@ -133,7 +133,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
   }
 
   static final class Basin extends AtkinsonMacias_2009 {
-    static final String NAME = BASE_NAME + " Basin: Interface";
+    static final String NAME = AtkinsonMacias_2009.NAME + " : Basin Amp";
 
     Basin(Imt imt) {
       super(imt);
