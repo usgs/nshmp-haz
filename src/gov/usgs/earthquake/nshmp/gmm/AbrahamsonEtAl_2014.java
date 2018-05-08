@@ -15,9 +15,9 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import com.google.common.collect.Range;
-
 import java.util.Map;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.data.Interpolate;
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
@@ -45,8 +45,9 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  *
  * @author Peter Powers
  * @see Gmm#ASK_14
+ * @see Gmm#ASK_14_BASIN_AMP
  */
-public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
+public class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
   static final String NAME = "Abrahamson, Silva & Kamai (2014)";
 
@@ -135,10 +136,17 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    return calc(coeffs, in);
+    return calc(coeffs, in, basinAmpOnly());
   }
 
-  private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in) {
+  boolean basinAmpOnly() {
+    return false;
+  }
+
+  private static final ScalarGroundMotion calc(
+      final Coefficients c,
+      final GmmInput in,
+      boolean basinAmpOnly) {
 
     // frequently used method locals
     double Mw = in.Mw;
@@ -234,7 +242,7 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
         : 0.0;
 
     // Soil Depth Model -- Equation 17
-    double f10 = calcSoilTerm(c, vs30, in.z1p0);
+    double f10 = calcSoilTerm(c, vs30, in.z1p0, basinAmpOnly);
 
     // Site Response Model
     double f5 = 0.0;
@@ -310,15 +318,25 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
   private static final double[] VS_BINS = { 150d, 250d, 400d, 700d, 1000d };
 
   // Soil depth model adapted from CY13 form -- Equation 17
-  private static final double calcSoilTerm(final Coefficients c, final double vs30,
-      final double z1p0) {
+  private static final double calcSoilTerm(
+      final Coefficients c,
+      final double vs30,
+      final double z1p0,
+      boolean basinAmpOnly) {
+
     // short circuit; default z1 will be the same as z1ref
     if (Double.isNaN(z1p0)) {
       return 0.0;
     }
+
     // -- Equation 18
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.67 / 4.0 * log((vsPow4 + A) / B)) / 1000.0; // km
+
+    // short circuit amplification only
+    if (basinAmpOnly && z1p0 <= z1ref) {
+      return 0.0;
+    }
 
     // double z1c = (vs30 > 500.0) ? a46 :
     // (vs30 > 300.0) ? a45 :
@@ -351,4 +369,16 @@ public final class AbrahamsonEtAl_2014 implements GroundMotionModel {
         (b * saRock) / (saRock + c * pow(vs30 / vLin, N));
   }
 
+  static final class BasinAmp extends AbrahamsonEtAl_2014 {
+    static final String NAME = AbrahamsonEtAl_2014.NAME + " : Basin Amp";
+
+    BasinAmp(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    boolean basinAmpOnly() {
+      return true;
+    }
+  }
 }

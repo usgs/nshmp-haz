@@ -18,9 +18,9 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tanh;
 
-import com.google.common.collect.Range;
-
 import java.util.Map;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
@@ -50,7 +50,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * @author Peter Powers
  * @see Gmm#CY_14
  */
-public final class ChiouYoungs_2014 implements GroundMotionModel {
+public class ChiouYoungs_2014 implements GroundMotionModel {
 
   // this model includes 0.12 and 0.17s periods that
   // are not generally supported in other models
@@ -138,18 +138,23 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
     coeffs = new Coefficients(imt, COEFFS);
   }
 
-  @Override
-  public final ScalarGroundMotion calc(final GmmInput in) {
-    return calc(coeffs, in);
+  boolean basinAmpOnly() {
+    return false;
   }
 
-  private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in) {
+  @Override
+  public final ScalarGroundMotion calc(final GmmInput in) {
+    return calc(coeffs, in, basinAmpOnly());
+  }
+
+  private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in,
+      boolean basinAmpOnly) {
 
     // terms used by both mean and stdDev
     double saRef = calcSAref(c, in);
     double soilNonLin = calcSoilNonLin(c, in.vs30);
 
-    double μ = calcMean(c, in.vs30, in.z1p0, soilNonLin, saRef);
+    double μ = calcMean(c, in.vs30, in.z1p0, soilNonLin, saRef, basinAmpOnly);
     double σ = calcStdDev(c, in.Mw, in.vsInf, soilNonLin, saRef);
 
     return DefaultScalarGroundMotion.create(μ, σ);
@@ -214,7 +219,7 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
 
   // Mean ground motion model -- Equation 12
   private static final double calcMean(final Coefficients c, final double vs30,
-      final double z1p0, final double snl, final double saRef) {
+      final double z1p0, final double snl, final double saRef, boolean basinAmpOnly) {
 
     // Soil effect: linear response
     double sl = c.φ1 * min(log(vs30 / 1130.0), 0.0);
@@ -223,7 +228,7 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
     double snl_mod = snl * log((saRef + c.φ4) / c.φ4);
 
     // Soil effect: sediment thickness
-    double dZ1 = calcDeltaZ1(z1p0, vs30);
+    double dZ1 = calcDeltaZ1(z1p0, vs30, basinAmpOnly);
     double rkdepth = c.φ5 * (1.0 - exp(-dZ1 / PHI6));
 
     // total model
@@ -242,12 +247,20 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
   }
 
   // -- Equation 1
-  private static final double calcDeltaZ1(final double z1p0, final double vs30) {
+  private static final double calcDeltaZ1(final double z1p0, final double vs30,
+      boolean basinAmpOnly) {
+    
     if (Double.isNaN(z1p0)) {
       return 0.0;
     }
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
-    return z1p0 * 1000.0 - exp(-7.15 / 4 * log((vsPow4 + A) / B));
+    double z1ref = exp(-7.15 / 4 * log((vsPow4 + A) / B));
+    double z1m = z1p0 * 1000.0;
+
+    if (basinAmpOnly && z1m <= z1ref) {
+      return 0.0;
+    }
+    return z1m - z1ref;
   }
 
   // Aleatory uncertainty model -- Equation 3.9
@@ -272,4 +285,16 @@ public final class ChiouYoungs_2014 implements GroundMotionModel {
     return sqrt(τ * τ * NL0sq + σNL0 * σNL0);
   }
 
+  static final class BasinAmp extends ChiouYoungs_2014 {
+    static final String NAME = ChiouYoungs_2014.NAME + " : Basin Amp";
+
+    BasinAmp(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    boolean basinAmpOnly() {
+      return true;
+    }
+  }
 }

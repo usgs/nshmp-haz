@@ -15,9 +15,9 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import com.google.common.collect.Range;
-
 import java.util.Map;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
@@ -44,7 +44,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * @author Peter Powers
  * @see Gmm#BSSA_14
  */
-public final class BooreEtAl_2014 implements GroundMotionModel {
+public class BooreEtAl_2014 implements GroundMotionModel {
 
   static final String NAME = "Boore, Stewart, Seyhan & Atkinson (2014)";
 
@@ -122,20 +122,24 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
     coeffsPGA = new Coefficients(PGA, COEFFS);
   }
 
+  boolean basinAmpOnly() {
+    return false;
+  }
+
   // TODO limit supplied z1p0 to 0-3 km
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    return calc(coeffs, coeffsPGA, in);
+    return calc(coeffs, coeffsPGA, in, basinAmpOnly());
   }
 
   private static final ScalarGroundMotion calc(final Coefficients c, final Coefficients cPGA,
-      final GmmInput in) {
+      final GmmInput in, boolean basinAmpOnly) {
 
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
     double pgaRock = calcPGArock(cPGA, in.Mw, in.rJB, style);
 
-    double μ = calcMean(c, style, pgaRock, in);
+    double μ = calcMean(c, style, pgaRock, in, basinAmpOnly);
     double σ = calcStdDev(c, in);
 
     return DefaultScalarGroundMotion.create(μ, σ);
@@ -143,7 +147,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
   // Mean ground motion model
   private static final double calcMean(final Coefficients c, final FaultStyle style,
-      final double pgaRock, final GmmInput in) {
+      final double pgaRock, final GmmInput in, boolean basinAmpOnly) {
 
     double Mw = in.Mw;
     double rJB = in.rJB;
@@ -165,7 +169,7 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
     double lnFnl = F1 + f2 * log((pgaRock + F3) / F3);
 
     // Basin depth term -- Equations 9, 10 , 11
-    double DZ1 = calcDeltaZ1(in.z1p0, vs30);
+    double DZ1 = calcDeltaZ1(in.z1p0, vs30, basinAmpOnly);
     double Fdz1 = (c.imt.isSA() && c.imt.period() >= 0.65)
         ? (DZ1 <= c.f7 / c.f6) ? c.f6 * DZ1 : c.f7 : 0.0;
 
@@ -214,12 +218,18 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
   // Calculate delta Z1 in km as a function of vs30 and using the default
   // model of ChiouYoungs_2013 -- Equations 10, 11
-  private static final double calcDeltaZ1(final double z1p0, final double vs30) {
+  private static final double calcDeltaZ1(final double z1p0, final double vs30, boolean basinAmpOnly) {
     if (Double.isNaN(z1p0)) {
       return 0.0;
     }
+    
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
-    return z1p0 - exp(-7.15 / 4.0 * log((vsPow4 + A) / B)) / 1000.0;
+    double z1ref = exp(-7.15 / 4.0 * log((vsPow4 + A) / B)) / 1000.0;
+    
+    if (basinAmpOnly && z1p0 <= z1ref) {
+      return 0.0;
+    }
+    return z1p0 - z1ref;
   }
 
   // Aleatory uncertainty model
@@ -251,6 +261,19 @@ public final class BooreEtAl_2014 implements GroundMotionModel {
 
     // Total model -- Equation 13
     return sqrt(φ_mrv * φ_mrv + τ * τ);
+  }
+
+  static final class BasinAmp extends BooreEtAl_2014 {
+    static final String NAME = BooreEtAl_2014.NAME + " : Basin Amp";
+    
+    BasinAmp(Imt imt) {
+      super(imt);
+    }
+    
+    @Override
+    boolean basinAmpOnly() {
+      return true;
+    }
   }
 
 }
