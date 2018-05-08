@@ -415,7 +415,7 @@ class GridParser extends DefaultHandler {
     for (String key : keys) {
       if (!NODE_KEYS.contains(key)) {
         String mssg = String.format(
-            "Grid source file [%s] contains invalid key: %s",
+            "Grid source file [%s] contains invalid header key: %s",
             path.getFileName(),
             key);
         throw new IllegalStateException(mssg);

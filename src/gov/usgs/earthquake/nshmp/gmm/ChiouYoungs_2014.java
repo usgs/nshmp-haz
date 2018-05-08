@@ -249,6 +249,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
   // -- Equation 1
   private static final double calcDeltaZ1(final double z1p0, final double vs30,
       boolean basinAmpOnly) {
+    
     if (Double.isNaN(z1p0)) {
       return 0.0;
     }

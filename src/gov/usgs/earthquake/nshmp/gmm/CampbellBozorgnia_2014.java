@@ -319,16 +319,22 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
       double z2p5,
       boolean basinAmpOnly) {
 
+    /* Vs30 based depth model */
     double zRef = exp(7.089 - 1.144 * log(vs30));
+    double zRefTerm = calcBasinTerm(c, zRef);
 
     if (Double.isNaN(z2p5)) {
-      z2p5 = zRef;
+      return zRefTerm;
     }
 
-    if (basinAmpOnly && z2p5 <= zRef) {
-      return 0.0;
+    double z2p5Term = calcBasinTerm(c, z2p5);
+    if (basinAmpOnly) {
+      return (z2p5Term > zRefTerm) ? z2p5Term : zRefTerm;
     }
+    return z2p5Term;
+  }
 
+  private static double calcBasinTerm(Coefficients c, double z2p5) {
     if (z2p5 <= 1.0) {
       return c.c14 * (z2p5 - 1.0);
     } else if (z2p5 > 3.0) {
