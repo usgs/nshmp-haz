@@ -38,6 +38,10 @@ public class Polygon implements Geometry  {
   private final String type;
   /** The coordinates of the polygon */
   private ImmutableList<double[][]> coordinates;
+  /** The border of the {@code Polygon} */
+  transient private LocationList border;
+  /** The interiors of the {@code Polygon} */
+  transient private LocationList[] interiors;
 
   /**
    * Create a {@code Polygon} GeoJson {@code Geometry} with a {@link LocationList}
@@ -46,7 +50,6 @@ public class Polygon implements Geometry  {
    * 
    * Example:
    * <pre>
-   * {@code
    *  // Create a polygon border 
    *  LocationList border = LocationList.builder()
    *      .add(0.0, 100.0)
@@ -67,7 +70,6 @@ public class Polygon implements Geometry  {
    *      
    *  // Create a polygon    
    *  Polygon polygon = new Polygon(border, interior);
-   * }
    * </pre>
    * 
    * @param border The {@link LocationList} for the {@code Polygon} border.
@@ -81,13 +83,13 @@ public class Polygon implements Geometry  {
       checkNotNull(locs, "Interiors cannot be null");
     }
     
-    border = checkPolygonCoordinates(border);
-    interiors = checkPolygonCoordinates(interiors);
-    checkInteriors(border, interiors);
+    this.border = checkPolygonCoordinates(border);
+    this.interiors = checkPolygonCoordinates(interiors);
+    checkInteriors(this.border, this.interiors);
     
     this.coordinates = new ImmutableList.Builder<double[][]>()
-        .add(Util.toCoordinates(border))
-        .addAll(Util.toCoordinates(interiors))
+        .add(Util.toCoordinates(this.border))
+        .addAll(Util.toCoordinates(this.interiors))
         .build();
   }
   
@@ -97,9 +99,10 @@ public class Polygon implements Geometry  {
    * @return The border of the {@code Polygon}.
    */
   public LocationList getBorder() {
-    return toLocationList(this.coordinates.get(0));
+    return this.border; 
   }
-  
+ 
+  @Override
   /**
    * Return the coordinates as a {@code ImmutableList<double[][]>} from 
    *    a GeoJson {@code Polygon}.
@@ -119,13 +122,10 @@ public class Polygon implements Geometry  {
    * @return The interiors of the {@code Polygon}. 
    */
   public ImmutableList<LocationList> getInteriors() {
-    try {
-      return toLocationList(this.coordinates.subList(1, this.coordinates.size()));
-    } catch(IndexOutOfBoundsException e) {
-      throw new IndexOutOfBoundsException("Interior is not defined");
-    }
+    return ImmutableList.copyOf(this.interiors);
   }
  
+  @Override
   /**
    * Return the {@link GeoJsonType} representing the {@code Polygon}.
    * @return The {@code GeoJsonType}.
@@ -134,6 +134,7 @@ public class Polygon implements Geometry  {
     return GeoJsonType.getEnum(this.type);
   }
   
+  @Override
   /**
    * Return a {@code String} in JSON format.
    */
@@ -220,36 +221,4 @@ public class Polygon implements Geometry  {
     return newLocsList.toArray(new LocationList[0]);
   }
 
-  /**
-   * Return the coordinates as a {@link LocationList}.
-   * @return The {@code LocationList}.
-   */
-  private static LocationList toLocationList(double[][] coords) {
-    LocationList.Builder builder = LocationList.builder();
-    
-    for (double[] xy : coords) {
-      Location loc = Location.create(xy[1], xy[0]);
-      builder.add(loc);
-    }
-    
-    return builder.build();
-  }
-  
-  /**
-   * Convert a {@code List<double[][]>} {@code Polygon} coordinates
-   *    to a {@ImmutableList<LocationList}.
-   *    
-   * @param coordsList The {@code List} of {@code Polygon} coordinates.
-   * @return The {@code ImmutableList<LocationList>} of the coordinates. 
-   */
-  private static ImmutableList<LocationList> toLocationList(List<double[][]> coordsList) {
-    ImmutableList.Builder<LocationList> builder = ImmutableList.builder();
-    
-    for (double[][] coords : coordsList) {
-      builder.add(toLocationList(coords));
-    }
-    
-    return builder.build();
-  }
-  
 }

@@ -1,47 +1,154 @@
 package gov.usgs.earthquake.nshmp.json;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
+import com.google.gson.JsonElement;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Create {@code Properties} for {@link Feature}s. 
  * <br>
  * 
- * The {@code Properties} is simply a {@code Map<String, Object>} to allow
- * setting of both GeoJson spec and custom properties. 
+ * The {@code Properties} is simply a {@code Map<String, JsonElement>} to allow
+ *    setting of both GeoJson spec and custom properties. 
  * <br><br>
  * 
  * The {@link Builder} must be used to set the properties. See {@link Builder}
- * for example.
+ *  for example.
  * 
  * @author Brandon Clayton
  */
 public class Properties {
   /** The {@code Properties} */
-  public Map<String, Object> attributes;
+  private Map<String, JsonElement> attributes;
 
   private Properties(Builder builder) {
     this.attributes = builder.attributes;
   }
+ 
+  /**
+   * Return a {@code Map<String, JsonElement>} that represents the 
+   *    properties.
+   * @return The properties.
+   */
+  public Map<String, JsonElement> getProperties() {
+    return this.attributes;
+  }
 
   /**
-   * Return the {@code Object} corresponding to a key in the {@code Properties}
-   *    {@code Map<String, Object>}.
+   * Return {@code Properties} that match a specified {@code Class<T>}
+   *    and return that {@code Class<T>} type.
+   * <br>
+   * 
+   * The {@code Class<T>} structure must match that of the GeoJson properties
+   *    object or will return {@code null} properties.
+   * <br><br>
+   * 
+   * Example GeoJson Properties:
+   * <pre>
+   *  properties: {
+   *    "mMax": [
+   *      {
+   *        "id": 1,
+   *        "Mw": 6.8,
+   *        "weight": 0.1
+   *      }
+   *    ]
+   *  }
+   * </pre>
+   * 
+   * Example Class to Represent Properties:
+   * <pre>
+   *  static class Max {
+   *    ArrayList&ltMaxAttribites&gt mMax;  
+   *  }
+   *  
+   *  static class MaxAttributes {
+   *    int id;
+   *    double Mw;
+   *    double weight;
+   *  }
+   * </pre>
+   * 
+   * Example:
+   * <pre>
+   * Max mMax = properties.getProperty(Max.class);
+   * </pre>
+   *   
+   * @param classOfT The {@code Class} structure that matches the properties
+   * @return The {@code Class<T>}
+   */
+  public <T> T getProperty(Class<T> classOfT) {
+    JsonElement propertiesEl = Util.GSON.toJsonTree(this.attributes);
+    T properties = Util.GSON.fromJson(propertiesEl, classOfT);
+    
+    return properties; 
+  }
+  
+ /**
+  * Return {@code Properties} that match a specified {@code Type} given
+  *     a key that matches the {@code Properties}.
+  *     
+  * Example GeoJson Properties:
+  * <pre>
+  *  properties: {
+  *    "mMax": [
+  *      {
+  *        "id": 1,
+  *        "Mw": 6.8,
+  *        "weight": 0.1
+  *      }
+  *    ]
+  *  }
+  * </pre>
+  * 
+  * Example Class to Represent Properties:
+  * <pre>
+  *  static class MaxAttributes {
+  *    int id;
+  *    double Mw;
+  *    double weight;
+  *  }
+  * </pre>
+  * 
+  * Example:
+  * <pre>
+  * ArrayList&ltMaxAttributes&gt mMax = properties.getProperty(
+  *     "mMax", 
+  *     new TypeToken&ltArrayList&ltMaxAttributes&gt&gt() {}.getType()); 
+  * </pre>
+  *     
+  * @param key The {@code String} associated with the property.
+  * @param typeOfT The specific type of source. You can obtain this type by 
+  *     using the {@link com.google.gson.reflect.TypeToken} class.
+  * @return The {@code Type}.
+  */
+  public <T> T getProperty(String key, Type typeOfT) {
+    JsonElement propertiesEl = Util.GSON.toJsonTree(
+        this.attributes.get(key), 
+        typeOfT);
+    
+    checkNotNull(propertiesEl, "Could not get attribute: " + key);
+   
+    return Util.GSON.fromJson(propertiesEl, typeOfT);
+  }
+  
+  /**
+   * Return the {@code JsonElement} corresponding to a key in the {@code Properties}
    *  
    * @param key The {@code String} key.
    * @return The value.
    */
-  public Object getProperty(String key) {
-    Object value = this.attributes.get(key);
+  public JsonElement getProperty(String key) {
+    JsonElement value = this.attributes.get(key);
     checkNotNull(value, "Could not get attribute: " + key);
     
     return value;
   }
-  
+
   /**
    * Return the {@code String} corresponding to a key in the {@code Properties}
    *    {@code Map<String, Object>}.
@@ -50,7 +157,7 @@ public class Properties {
    * @return The value.
    */
   public String getStringProperty(String key) {
-    return (String) getProperty(key);
+    return checkProperty(key).getAsString();
   }
  
   /**
@@ -61,7 +168,7 @@ public class Properties {
    * @return The value.
    */
   public double getDoubleProperty(String key) {
-    return (double) getProperty(key);
+    return checkProperty(key).getAsDouble();
   }
  
   /**
@@ -72,7 +179,7 @@ public class Properties {
    * @return The value.
    */
   public int getIntProperty(String key) {
-    return (int) getProperty(key);
+    return checkProperty(key).getAsInt();
   }
  
   /**
@@ -110,7 +217,7 @@ public class Properties {
    * @author Brandon Clayton
    */
   public static class Builder {
-    private Map<String, Object> attributes = new HashMap<>();
+    private Map<String, JsonElement> attributes = new HashMap<>();
 
     private Builder() {}
 
@@ -135,7 +242,9 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder id(String id) {
-      this.attributes.put(Attributes.ID.toLowerCase(), id);
+      this.attributes.put(
+          Attributes.ID.toLowerCase(), 
+          Util.GSON.toJsonTree(id, String.class));
       return this;
     }
 
@@ -146,7 +255,9 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, double value) {
-      this.attributes.put(key, value);
+      this.attributes.put(
+          key, 
+          Util.GSON.toJsonTree(value, double.class));
       return this;
     }
 
@@ -157,7 +268,9 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, int value) {
-      this.attributes.put(key, value);
+      this.attributes.put(
+          key, 
+          Util.GSON.toJsonTree(value, int.class));
       return this;
     }
 
@@ -168,7 +281,9 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, Object value) {
-      this.attributes.put(key, value);
+      this.attributes.put(
+          key, 
+          Util.GSON.toJsonTree(value));
       return this;
     }
 
@@ -179,7 +294,9 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, String value) {
-      this.attributes.put(key, value);
+      this.attributes.put(
+          key, 
+          Util.GSON.toJsonTree(value, String.class));
       return this;
     }
 
@@ -188,21 +305,25 @@ public class Properties {
      * @param attributes The {@code Properties}
      * @return The {@code Builder} to be chainable.
      */
-    public Builder putAll(Map<String, Object> attributes) {
+    public Builder putAll(Map<String, JsonElement> attributes) {
       for (String key : attributes.keySet()) {
-        this.attributes.put(key, attributes.get(key));
+        this.attributes.put(
+            key, 
+            attributes.get(key));
       }
 
       return this;
     }
-
+    
     /**
      * Set the title.
      * @param title The title.
      * @return The {@code Builder} to be chainable.
      */
     public Builder title(String title) {
-      this.attributes.put(Attributes.TITLE.toLowerCase(), title);
+      this.attributes.put(
+          Attributes.TITLE.toLowerCase(), 
+          Util.GSON.toJsonTree(title, String.class));
       return this;
     }
 
@@ -224,6 +345,20 @@ public class Properties {
     String toLowerCase() {
       return name().toLowerCase();
     }
+  }
+  
+  /**
+   * Return the {@code Object} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   *  
+   * @param key The {@code String} key.
+   * @return The value.
+   */
+  private JsonElement checkProperty(String key) {
+    JsonElement value = this.attributes.get(key);
+    checkNotNull(value, "Could not get attribute: " + key);
+    
+    return value;
   }
 
 }

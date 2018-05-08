@@ -159,6 +159,20 @@ public class Util {
           PolygonLocations polygonLocs = fromPolygonCoordinates(coords);
           geom = (Polygon) new Polygon(polygonLocs.border, polygonLocs.interiors);
           break;
+        case MULTI_POLYGON:
+          MultiPolygon.Builder multiPolyBuilder = MultiPolygon.builder();
+          
+          for (JsonElement coordsEl : coords) {
+            PolygonLocations multiPolygonLocs = fromPolygonCoordinates(
+                coordsEl.getAsJsonArray());
+            
+            multiPolyBuilder.addPolygon(
+                multiPolygonLocs.border, 
+                multiPolygonLocs.interiors);
+          }
+          
+          geom = (MultiPolygon) multiPolyBuilder.build();
+          break;
         case POINT:
           Location loc = Location.create(
               coords.get(1).getAsDouble(), 
