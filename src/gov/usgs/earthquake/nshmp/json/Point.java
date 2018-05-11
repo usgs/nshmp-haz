@@ -62,7 +62,7 @@ public class Point implements Geometry {
    * @return The longitude and latitude, [longitude, latitude].
    */
   public double[] getCoordinates() {
-    return this.coordinates;
+    return coordinates;
   }
   
   /**
@@ -70,7 +70,7 @@ public class Point implements Geometry {
    * @return The {@code Location}.
    */
   public Location getLocation() {
-    return Location.create(this.coordinates[1], this.coordinates[0]);
+    return Location.create(coordinates[1], coordinates[0]);
   }
  
   @Override
@@ -79,7 +79,7 @@ public class Point implements Geometry {
    * @return The {@code GeoJsonType}.
    */
   public GeoJsonType getType() {
-    return GeoJsonType.getEnum(this.type);
+    return GeoJsonType.getEnum(type);
   }
  
   @Override

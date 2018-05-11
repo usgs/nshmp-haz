@@ -47,7 +47,7 @@ public class MultiPolygon implements Geometry {
    * @return The coordinates.
    */
   public ImmutableList<ImmutableList<double[][]>> getCoordinates() {
-    return this.coordinates;
+    return coordinates;
   }
 
   /**
@@ -56,7 +56,7 @@ public class MultiPolygon implements Geometry {
    * @return The {@code Polygon}s.
    */
   public ImmutableList<Polygon> getPolygons() {
-    return this.polygons;
+    return polygons;
   }
 
   @Override
@@ -65,7 +65,7 @@ public class MultiPolygon implements Geometry {
    * @return The {@code GeoJsonType}.
    */  
   public GeoJsonType getType() {
-    return GeoJsonType.getEnum(this.type);
+    return GeoJsonType.getEnum(type);
   }
 
   @Override
@@ -88,7 +88,7 @@ public class MultiPolygon implements Geometry {
   public ImmutableList<Region> toRegion(String name) {
     ImmutableList.Builder<Region> regions = new ImmutableList.Builder<>();
     
-    for (Polygon polygon : this.polygons) {
+    for (Polygon polygon : polygons) {
       regions.add(polygon.toRegion(name));
     }
     
@@ -167,7 +167,7 @@ public class MultiPolygon implements Geometry {
      * @return The {@code MultiPolygon}.
      */
     public MultiPolygon build() {
-      checkState(!this.polygons.build().isEmpty(), "Polygons cannot be empty");
+      checkState(!polygons.build().isEmpty(), "Polygons cannot be empty");
       return new MultiPolygon(this);
     }
 
@@ -188,8 +188,8 @@ public class MultiPolygon implements Geometry {
           .addAll(Util.toCoordinates(interiorArray))
           .build();
       
-      this.coordinates.add(polygonCoords);
-      this.polygons.add(polygon);
+      coordinates.add(polygonCoords);
+      polygons.add(polygon);
       
       return this;
     }
@@ -203,7 +203,7 @@ public class MultiPolygon implements Geometry {
     public Builder addPolygon(Polygon polygon) {
       checkNotNull(polygon, "Polygon cannot be null");
       
-      this.polygons.add(polygon);
+      polygons.add(polygon);
      
       LocationList[] interiorArray = polygon.getInteriors().toArray(new LocationList[0]);
       
@@ -212,7 +212,7 @@ public class MultiPolygon implements Geometry {
           .addAll(Util.toCoordinates(interiorArray))
           .build();
       
-      this.coordinates.add(polygonCoords);
+      coordinates.add(polygonCoords);
       
       return this;
     }
