@@ -158,7 +158,7 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
    * @throws IOException The {@code IOException}.
    */
   public static FeatureCollection read(Path path) throws IOException {
-    checkArgument(Files.exists(path), "File does not exsist: " + path);
+    checkArgument(Files.exists(path), "File does not exist: " + path);
     BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
     FeatureCollection fc = Util.GSON.fromJson(reader, FeatureCollection.class);
     reader.close();
