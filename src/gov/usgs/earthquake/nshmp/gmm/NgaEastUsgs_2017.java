@@ -1370,11 +1370,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       double apply(double μ) {
         double μAmp = μ + siteAmp;
-        double median = SITE_AMP_WTS[0] * exp(μAmp + σ) +
+        return log(
+            SITE_AMP_WTS[0] * exp(μAmp + σ) +
             SITE_AMP_WTS[1] * exp(μAmp) +
-            SITE_AMP_WTS[2] * exp(μAmp - σ);
-        // double median = SITE_AMP_WTS[0] * exp(μAmp + σ)
-        return log(median);
+            SITE_AMP_WTS[2] * exp(μAmp - σ));
       }
     }
   }
