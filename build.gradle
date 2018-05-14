@@ -71,6 +71,7 @@ test {
   //include 'gov/usgs/earthquake/nshmp/gmm/CeusSoftRock.class'
   filter {
     includeTestsMatching "gov.usgs.earthquake.nshmp.data.*"
+    includeTestsMatching "gov.usgs.earthquake.nshmp.json.*"
   }
 }
 
