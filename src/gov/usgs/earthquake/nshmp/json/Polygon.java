@@ -99,7 +99,7 @@ public class Polygon implements Geometry  {
    * @return The border of the {@code Polygon}.
    */
   public LocationList getBorder() {
-    return this.border; 
+    return border; 
   }
  
   @Override
@@ -109,7 +109,7 @@ public class Polygon implements Geometry  {
    * @return The coordinates.
    */
   public ImmutableList<double[][]> getCoordinates() {
-    return this.coordinates;
+    return coordinates;
   }
   
   /**
@@ -122,7 +122,7 @@ public class Polygon implements Geometry  {
    * @return The interiors of the {@code Polygon}. 
    */
   public ImmutableList<LocationList> getInteriors() {
-    return ImmutableList.copyOf(this.interiors);
+    return ImmutableList.copyOf(interiors);
   }
  
   @Override
@@ -131,7 +131,7 @@ public class Polygon implements Geometry  {
    * @return The {@code GeoJsonType}.
    */ 
   public GeoJsonType getType() {
-    return GeoJsonType.getEnum(this.type);
+    return GeoJsonType.getEnum(type);
   }
   
   @Override
@@ -153,8 +153,8 @@ public class Polygon implements Geometry  {
    * @return The {@code Region} representing the {@code Polygon}.
    */
   public Region toRegion(String name) {
-    LocationList border = this.getBorder();
-    ImmutableList<LocationList> interiors = this.getInteriors();
+    LocationList border = getBorder();
+    ImmutableList<LocationList> interiors = getInteriors();
     
     Region region = Regions.create(name, border, BorderType.MERCATOR_LINEAR);
     

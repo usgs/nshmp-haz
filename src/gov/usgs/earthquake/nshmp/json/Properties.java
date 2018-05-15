@@ -35,7 +35,7 @@ public class Properties {
    * @return The properties.
    */
   public Map<String, JsonElement> getProperties() {
-    return this.attributes;
+    return attributes;
   }
 
   /**
@@ -82,7 +82,7 @@ public class Properties {
    * @return The {@code Class<T>}
    */
   public <T> T getProperty(Class<T> classOfT) {
-    JsonElement propertiesEl = Util.GSON.toJsonTree(this.attributes);
+    JsonElement propertiesEl = Util.GSON.toJsonTree(attributes);
     T properties = Util.GSON.fromJson(propertiesEl, classOfT);
     
     return properties; 
@@ -128,7 +128,7 @@ public class Properties {
   */
   public <T> T getProperty(String key, Type typeOfT) {
     JsonElement propertiesEl = Util.GSON.toJsonTree(
-        this.attributes.get(key), 
+        attributes.get(key), 
         typeOfT);
     
     checkNotNull(propertiesEl, "Could not get attribute: " + key);
@@ -143,7 +143,7 @@ public class Properties {
    * @return The value.
    */
   public JsonElement getProperty(String key) {
-    JsonElement value = this.attributes.get(key);
+    JsonElement value = attributes.get(key);
     checkNotNull(value, "Could not get attribute: " + key);
     
     return value;
@@ -242,7 +242,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder id(String id) {
-      this.attributes.put(
+      attributes.put(
           Attributes.ID.toLowerCase(), 
           Util.GSON.toJsonTree(id, String.class));
       return this;
@@ -255,7 +255,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, double value) {
-      this.attributes.put(
+      attributes.put(
           key, 
           Util.GSON.toJsonTree(value, double.class));
       return this;
@@ -268,7 +268,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, int value) {
-      this.attributes.put(
+      attributes.put(
           key, 
           Util.GSON.toJsonTree(value, int.class));
       return this;
@@ -281,7 +281,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, Object value) {
-      this.attributes.put(
+      attributes.put(
           key, 
           Util.GSON.toJsonTree(value));
       return this;
@@ -294,7 +294,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, String value) {
-      this.attributes.put(
+      attributes.put(
           key, 
           Util.GSON.toJsonTree(value, String.class));
       return this;
@@ -321,7 +321,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder title(String title) {
-      this.attributes.put(
+      attributes.put(
           Attributes.TITLE.toLowerCase(), 
           Util.GSON.toJsonTree(title, String.class));
       return this;
@@ -355,7 +355,7 @@ public class Properties {
    * @return The value.
    */
   private JsonElement checkProperty(String key) {
-    JsonElement value = this.attributes.get(key);
+    JsonElement value = attributes.get(key);
     checkNotNull(value, "Could not get attribute: " + key);
     
     return value;

@@ -8,8 +8,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
@@ -45,6 +47,7 @@ import static com.google.common.base.Preconditions.checkState;
  *    creating a {@link Geometry}: 
  *    <ul> 
  *      <li> {@link Builder#add(Feature)} </li> 
+ *      <li> {@link Builder#add(Properties, Geometry, Optional)} </li>
  *      <li> {@link Builder#createPoint(Properties, Location)} </li> 
  *      <li> {@link Builder#createPoint(Properties, double, double)} </li> 
  *      <li> {@link Builder#createPolygon(Properties, LocationList, LocationList...)} </li> 
@@ -55,9 +58,9 @@ import static com.google.common.base.Preconditions.checkState;
  * 
  * @author Brandon Clayton
  */
-public class FeatureCollection implements GeoJson {
+public class FeatureCollection implements GeoJson, Iterable<Feature> {
   /** The {@link GeoJsonType} of GeoJson object: FeatureCollection */
-  private String type;
+  private final String type;
   /** The {@code List} of {@link Feature}s. */
   private final List<Feature> features;
 
@@ -77,7 +80,7 @@ public class FeatureCollection implements GeoJson {
    * @return The {@code Feature}s
    */
   public ImmutableList<Feature> getFeatures() {
-    return new ImmutableList.Builder<Feature>().addAll(this.features).build();
+    return ImmutableList.copyOf(features); 
   }
  
   @Override
@@ -86,7 +89,7 @@ public class FeatureCollection implements GeoJson {
    * @return The {@code GeoJsonType}.
    */ 
   public GeoJsonType getType() {
-    return GeoJsonType.getEnum(this.type);
+    return GeoJsonType.getEnum(type);
   }
  
   @Override
@@ -95,6 +98,14 @@ public class FeatureCollection implements GeoJson {
    */
   public String toJsonString() {
     return Util.cleanPoly(Util.GSON.toJson(this));
+  }
+
+  @Override
+  /**
+   * Return the {@code Iterator<Feature>}. 
+   */
+  public Iterator<Feature> iterator() {
+    return getFeatures().iterator();
   }
 
   /**
@@ -208,7 +219,7 @@ public class FeatureCollection implements GeoJson {
    */
   public void write(Path out) throws IOException {
     checkNotNull(out, "Path cannot be null");
-    String json = this.toJsonString();
+    String json = toJsonString();
     Files.write(out, json.getBytes(StandardCharsets.UTF_8));
   }
 
@@ -227,6 +238,7 @@ public class FeatureCollection implements GeoJson {
    * Easily add {@link Feature}s to a {@code List} by: 
    *  <ul> 
    *    <li> {@link #add(Feature)} </li> 
+   *    <li> {@link #add(Properties, Geometry, Optional)} </li>
    *    <li> {@link #createPoint(Properties, Location)} </li> 
    *    <li> {@link #createPoint(Properties, double, double)} </li> 
    *    <li> {@link #createPolygon(Properties, LocationList, LocationList...)} </li> 
@@ -271,7 +283,25 @@ public class FeatureCollection implements GeoJson {
      */
     public Builder add(Feature feature) {
       checkNotNull(feature, "A feature cannot be null");
-      this.features.add(feature);
+      features.add(feature);
+      return this;
+    }
+    
+    /**
+     * Add a {@link Feature} with a specific {@link Geometry} 
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param properties The {@link Properties}.
+     * @param geometry The {@code Geometry}.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder add(
+        Properties properties, 
+        Geometry geometry, 
+        Optional<?> featureId) {
+      features.add(new Feature(properties, geometry, featureId));
       return this;
     }
    
@@ -281,10 +311,15 @@ public class FeatureCollection implements GeoJson {
      *    
      * @param properties The {@link Properties}.
      * @param multiPolygon The {@code MultiPolygon}.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createMultiPolygon(Properties properties, MultiPolygon multiPolygon) {
-      this.features.add(Feature.createMultiPolygon(properties, multiPolygon));
+    public Builder createMultiPolygon(
+        Properties properties, 
+        MultiPolygon multiPolygon,
+        Optional<?> featureId) {
+      features.add(Feature.createMultiPolygon(properties, multiPolygon, featureId));
       return this;
     }
     
@@ -294,10 +329,15 @@ public class FeatureCollection implements GeoJson {
      *    
      * @param properties The {@link Properties}.
      * @param polygons A {@code List} of {@link Polygon}s. 
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createMultiPolygon(Properties properties, List<Polygon> polygons) {
-      this.features.add(Feature.createMultiPolygon(properties, polygons));
+    public Builder createMultiPolygon(
+        Properties properties, 
+        List<Polygon> polygons, 
+        Optional<?> featureId) {
+      features.add(Feature.createMultiPolygon(properties, polygons, featureId));
       return this;
     }
 
@@ -307,10 +347,15 @@ public class FeatureCollection implements GeoJson {
      *    
      * @param properties The {@link Properties} of the point.
      * @param loc The {@link Location} of the point.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createPoint(Properties properties, Location loc) {
-      this.features.add(Feature.createPoint(properties, loc));
+    public Builder createPoint(
+        Properties properties, 
+        Location loc, 
+        Optional<?> featureId) {
+      features.add(Feature.createPoint(properties, loc, featureId));
       return this;
     }
 
@@ -321,10 +366,16 @@ public class FeatureCollection implements GeoJson {
      * @param properties The {@link Properties} of the point.
      * @param latitude The latitude of the point.
      * @param longitude The longitude of the point.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createPoint(Properties properties, double latitude, double longitude) {
-      this.features.add(Feature.createPoint(properties, latitude, longitude));
+    public Builder createPoint(
+        Properties properties, 
+        double latitude, 
+        double longitude, 
+        Optional<?> featureId) {
+      features.add(Feature.createPoint(properties, latitude, longitude, featureId));
       return this;
     }
 
@@ -333,15 +384,18 @@ public class FeatureCollection implements GeoJson {
      *    to the {@link FeatureCollection#features} {@code List}.
      *    
      * @param properties The {@link Properties} of the polygon.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
      * @param border The border of the {@code Polygon} 
      * @param interiors The interiors of the {@code Polygon}
      * @return Return the {@code Builder} to make chainable.
      */
     public Builder createPolygon(
         Properties properties,
+        Optional<?> featureId,
         LocationList border,
         LocationList... interiors) {
-      this.features.add(Feature.createPolygon(properties, border, interiors));
+      features.add(Feature.createPolygon(properties, featureId, border, interiors));
       return this;
     }
     
