@@ -29,9 +29,9 @@ import gov.usgs.earthquake.nshmp.util.NamedLocation;
  * {@link GroundMotionModel}s will use all fields and additional fields may be
  * added at any time in the future.
  * 
- * <p>Terms:<ul>
+ * <p>Terminology:<ul>
  * 
- * <li><b>{@code Vs30}:</b> Average shear wave velocity between down to a depth
+ * <li><b>{@code Vs30}:</b> Average shear wave velocity down to a depth
  * of 30 m, in units of m/s. This value may be <i>inferred</i> or
  * <i>measured</i> (see {@link #vsInferred}).</li>
  * 
@@ -48,6 +48,11 @@ import gov.usgs.earthquake.nshmp.util.NamedLocation;
  * with the default, those {@link GroundMotionModel}s that support basin terms
  * will use an author defined model, typically based on {@code Vs30}, to compute
  * basin-amplifications.
+ * 
+ * <p><b>Note:</b> If a {@link CalcConfig.SiteData#basinDataProvider} has been set,
+ * any non-{@code null} or non-{@code NaN} {@code z1p0} or {@code z2p5} values 
+ * supplied by the provider take precedence over defaults or recent calls to the builder.
+ * 
  *
  * @author Peter Powers
  */
@@ -60,7 +65,7 @@ public class Site implements Named {
   public static final double VS_30_DEFAULT = 760.0;
 
   /** Supported {@link #vs30} values: {@code [150..2000] m/s}. */
-  public static final Range<Double> VS30_RANGE = Range.closed(150.0, 2000.0);
+  public static final Range<Double> VS30_RANGE = Range.closed(150.0, 3000.0);
 
   /** Default {@link #vsInferred} inferred value: {@code true}. */
   public static final boolean VS_INF_DEFAULT = true;
