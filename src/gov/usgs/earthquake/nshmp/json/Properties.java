@@ -127,12 +127,9 @@ public class Properties {
   * @return The {@code Type}.
   */
   public <T> T getProperty(String key, Type typeOfT) {
-    JsonElement propertiesEl = Util.GSON.toJsonTree(
-        attributes.get(key), 
-        typeOfT);
-    
+    JsonElement propertiesEl = Util.GSON.toJsonTree(attributes.get(key));
     checkNotNull(propertiesEl, "Could not get attribute: " + key);
-   
+    
     return Util.GSON.fromJson(propertiesEl, typeOfT);
   }
   
@@ -143,10 +140,7 @@ public class Properties {
    * @return The value.
    */
   public JsonElement getProperty(String key) {
-    JsonElement value = attributes.get(key);
-    checkNotNull(value, "Could not get attribute: " + key);
-    
-    return value;
+    return checkProperty(key);
   }
 
   /**
