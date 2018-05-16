@@ -198,7 +198,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     final double ga, gb, ma, mb, c;
 
     /* ϕ_s2s coefficients */
-    final double ϕ1, ϕ2, Δϕ;
+    final double ϕs2s1, ϕs2s2, Δϕs2s;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
@@ -211,9 +211,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       ma = coeffs.get("ss_ma");
       mb = coeffs.get("ss_mb");
       c = coeffs.get("ss_c");
-      ϕ1 = coeffs.get("s2s1");
-      ϕ2 = coeffs.get("s2s2");
-      Δϕ = coeffs.get("ds2s");
+      ϕs2s1 = coeffs.get("s2s1");
+      ϕs2s2 = coeffs.get("s2s2");
+      Δϕs2s = coeffs.get("ds2s");
     }
   }
 
@@ -346,7 +346,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         0.1 * phi_ss(Mw, c.ma, c.mb);
 
     /* φ_s2s model; single branch; Stewart et al. */
-    double φ_s2s = phi_s2s(Mw, vs30, c.ϕ1, c.ϕ2, c.Δϕ);
+    double φ_s2s = phi_s2s(Mw, vs30, c.ϕs2s1, c.ϕs2s2, c.Δϕs2s);
 
     return Maths.hypot(τ, φ_ss, φ_s2s);
   }
@@ -389,29 +389,27 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private static double phi_s2s(
       double Mw,
       double vs30,
-      double ϕ1,
-      double ϕ2,
-      double Δϕ) {
+      double ϕs2s1,
+      double ϕs2s2,
+      double Δϕs2s) {
 
-    double ϕLoMag = 0.0;
-    double ϕHiMag = 0.0;
-
+    /* General magnitude-dependent term */
+    double ϕMag = Δϕs2s;
     if (Mw < M1) {
-      if (vs30 < VΦ1) {
-        ϕLoMag = ϕ1;
-      } else if (vs30 < VΦ2) {
-        ϕLoMag = ϕ1 - ((ϕ1 - ϕ2) / (VΦ2 - VΦ1)) * (vs30 - VΦ1);
-      } else {
-        ϕLoMag = ϕ2;
-      }
-    } else {
-      if (Mw < M1 + ΔM) {
-        ϕHiMag = Δϕ * (Mw - M1) / ΔM;
-      } else {
-        ϕHiMag = Δϕ;
-      }
+      ϕMag = 0.0;
+    } else if (Mw < M1 + ΔM) {
+      ϕMag = Δϕs2s * (Mw - M1) / ΔM;
     }
-    return ϕLoMag + ϕHiMag;
+
+    /* Low magnitude site-dependent term */
+    double ϕSite = ϕs2s2;
+    if (vs30 < VΦ1) {
+      ϕSite = ϕs2s1;
+    } else if (vs30 < VΦ2) {
+      ϕSite = ϕs2s1 - ((ϕs2s1 - ϕs2s2) / (VΦ2 - VΦ1)) * (vs30 - VΦ1);
+    }
+    
+    return ϕMag + ϕSite;
   }
 
   static class SigmaSet {
