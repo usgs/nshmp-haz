@@ -15,7 +15,7 @@ import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.UCERF3_RELM;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.WASATCH;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.WUS_CLIP;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
@@ -170,7 +170,7 @@ final class NshmpSiteFiles {
               public LocationList apply(NshmpPolygon poly) {
                 return poly.coordinates();
               }
-            })
+            }::apply)
             .toList());
   }
 
@@ -221,13 +221,13 @@ final class NshmpSiteFiles {
     writeSites(
         "ceus-0p1",
         FluentIterable.from(NshmpSite.ceus())
-            .transform(adjustLocation_0p1())
+            .transform(adjustLocation_0p1()::apply)
             .toList(),
         DEC2_FMT);
     writeSites(
         "wus-0p1",
         FluentIterable.from(NshmpSite.wus())
-            .transform(adjustLocation_0p1())
+            .transform(adjustLocation_0p1()::apply)
             .toList(),
         DEC2_FMT);
   }
@@ -309,7 +309,7 @@ final class NshmpSiteFiles {
         sb.append(padStart(latLonFormat.format(loc.location().lat()), LAT_BUFF, ' '));
         return sb.toString();
       }
-    });
+    }::apply);
     String header = new StringBuilder(padEnd("name,", NAME_BUFF, ' '))
         .append(padStart("lon", LON_BUFF, ' '))
         .append(',')
@@ -342,7 +342,7 @@ final class NshmpSiteFiles {
         }
         return sb.toString();
       }
-    });
+    }::apply);
     StringBuilder header = new StringBuilder(padEnd("name,", NAME_BUFF, ' '))
         .append(padStart("lon", LON_BUFF_CYBER, ' '))
         .append(',')

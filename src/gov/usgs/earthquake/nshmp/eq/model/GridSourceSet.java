@@ -13,7 +13,7 @@ import static gov.usgs.earthquake.nshmp.eq.fault.FocalMech.STRIKE_SLIP;
 import static gov.usgs.earthquake.nshmp.eq.model.PointSourceType.FIXED_STRIKE;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.GRID;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.SYSTEM;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
@@ -769,7 +769,7 @@ abstract class DeaggContributor {
   /* Convert a builder list to immutable sorted contributor list. */
   private static List<DeaggContributor> buildAndSort(
       Collection<DeaggContributor.Builder> builders) {
-    return SORTER.immutableSortedCopy(Iterables.transform(builders, BUILDER));
+    return SORTER.immutableSortedCopy(Iterables.transform(builders, BUILDER::apply));
   }
 
   static final Function<DeaggContributor.Builder, DeaggContributor> BUILDER =

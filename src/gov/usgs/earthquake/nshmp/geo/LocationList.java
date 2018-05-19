@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -320,12 +320,13 @@ public abstract class LocationList implements Iterable<Location> {
    * @param vector to translate list by
    */
   public LocationList translate(final LocationVector vector) {
+    // TODO Stream
     return builder().addAll(Iterables.transform(this, new Function<Location, Location>() {
       @Override
       public Location apply(Location loc) {
         return Locations.location(loc, vector);
       }
-    })).build();
+    }::apply)).build();
   }
 
   /* The default implementation that delegates to an ImmutableList. */

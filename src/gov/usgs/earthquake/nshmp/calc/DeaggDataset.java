@@ -3,7 +3,7 @@ package gov.usgs.earthquake.nshmp.calc;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;

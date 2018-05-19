@@ -12,7 +12,7 @@ import static gov.usgs.earthquake.nshmp.eq.model.SourceType.SYSTEM;
 import static gov.usgs.earthquake.nshmp.geo.Locations.horzDistanceFast;
 import static java.lang.Math.min;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;

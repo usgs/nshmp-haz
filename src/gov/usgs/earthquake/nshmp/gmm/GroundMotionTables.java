@@ -14,7 +14,7 @@ import static java.lang.Math.log10;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.Enums;
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -727,7 +727,7 @@ final class GroundMotionTables {
         List<Imt> imtList = FluentIterable
             .from(Parsing.split(line, Delimiter.SPACE))
             .transform(Doubles.stringConverter())
-            .transform(new FrequencyToIMT())
+            .transform(new FrequencyToIMT()::apply)
             .toList();
         // remove dupes -- (e.g., 2s PGA columns in P11)
         imts = Lists.newArrayList(new LinkedHashSet<Imt>(imtList));

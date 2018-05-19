@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static gov.usgs.earthquake.nshmp.data.Data.areMonotonic;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Joiner;
 import com.google.common.primitives.Doubles;
 

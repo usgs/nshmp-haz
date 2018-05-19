@@ -251,12 +251,12 @@ public final class Deaggregation {
       /* Combine SourceSets across Gmms. */
       gmmDatasets = Maps.immutableEnumMap(Maps.transformValues(
           Multimaps.asMap(gmmDatasetLists),
-          SOURCE_SET_CONSOLIDATOR));
+          SOURCE_SET_CONSOLIDATOR::apply));
 
       /* Combine SourceSets across SourceTypes. */
       typeDatasets = Maps.immutableEnumMap(Maps.transformValues(
           Multimaps.asMap(typeDatasetLists),
-          SOURCE_SET_CONSOLIDATOR));
+          SOURCE_SET_CONSOLIDATOR::apply));
 
       /* Combine SourceSet totals. */
       totalDataset = SOURCE_SET_CONSOLIDATOR.apply(typeDatasets.values());

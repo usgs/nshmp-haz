@@ -11,7 +11,7 @@ import org.xml.sax.Attributes;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Enums;
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
@@ -606,7 +606,8 @@ public final class Parsing {
    * @param format a format string
    */
   public static String toString(Collection<Double> values, String format) {
-    return addBrackets(join(Iterables.transform(values, new FormatDoubleFunction(format, true)),
+    return addBrackets(join(
+        Iterables.transform(values, new FormatDoubleFunction(format, true)::apply),
         Delimiter.COMMA));
   }
 
@@ -626,7 +627,9 @@ public final class Parsing {
   public static String toString(Collection<Double> values, String format, String delimiter,
       boolean brackets, boolean cleanZeros) {
     String base = Joiner.on(delimiter).join(
-        Iterables.transform(values, new FormatDoubleFunction(format, cleanZeros)));
+        Iterables.transform(
+            values, 
+            new FormatDoubleFunction(format, cleanZeros)::apply));
     return brackets ? addBrackets(base) : base;
   }
 
@@ -685,7 +688,7 @@ public final class Parsing {
       dir = currentDir;
       end = next;
     }
-    return join(Iterables.transform(ranges, IntArrayToString.INSTANCE), Delimiter.COMMA);
+    return join(Iterables.transform(ranges, IntArrayToString.INSTANCE::apply), Delimiter.COMMA);
   }
 
   /**
@@ -700,7 +703,7 @@ public final class Parsing {
    */
   public static List<Integer> rangeStringToIntList(String s) {
     Iterable<int[]> values = Iterables.transform(split(s, Delimiter.COMMA),
-        StringToIntArray.INSTANCE);
+        StringToIntArray.INSTANCE::apply);
     return Ints.asList(Ints.concat(Iterables.toArray(values, int[].class)));
   }
 

@@ -2,7 +2,7 @@ package gov.usgs.earthquake.nshmp.calc;
 
 import static gov.usgs.earthquake.nshmp.calc.DeaggDataset.SOURCE_CONSOLIDATOR;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
@@ -188,7 +188,7 @@ final class Deaggregator {
 
     return ImmutableMap.copyOf(Maps.transformValues(
         Multimaps.asMap(datasets),
-        SOURCE_CONSOLIDATOR));
+        SOURCE_CONSOLIDATOR::apply));
   }
 
   private void processSource(GroundMotions gms, Map<Gmm, DeaggDataset.Builder> builders) {
@@ -287,7 +287,9 @@ final class Deaggregator {
    */
   private static Map<Gmm, DeaggDataset> buildDatasets(
       Map<Gmm, DeaggDataset.Builder> builders) {
-    return ImmutableMap.copyOf(Maps.transformValues(builders, DATASET_BUILDER));
+    return ImmutableMap.copyOf(Maps.transformValues(
+        builders, 
+        DATASET_BUILDER::apply));
   }
 
   private static Map<Gmm, double[]> createDataMap(Set<Gmm> gmms) {

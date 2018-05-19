@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.XySequence.copyOf;
 import static gov.usgs.earthquake.nshmp.data.XySequence.immutableCopyOf;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 
@@ -45,6 +45,7 @@ final class HazardCurves {
   /*
    * Specialized constructor that creates a single HazardCurves from the results
    * of processing a partitioned InputList.
+   * TODO Stream
    */
   static HazardCurves combine(InputList inputs, List<HazardCurves> curvesList) {
     List<GroundMotions> groundMotionsList = FluentIterable.from(curvesList)
@@ -53,7 +54,7 @@ final class HazardCurves {
           public GroundMotions apply(HazardCurves curves) {
             return curves.groundMotions;
           }
-        })
+        }::apply)
         .toList();
     GroundMotions groundMotions = GroundMotions.combine(inputs, groundMotionsList);
     return builder(groundMotions)

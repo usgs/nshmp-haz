@@ -5,7 +5,7 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ComparisonChain;
@@ -298,7 +298,9 @@ final class DeaggExport {
   };
 
   private static String formatEpsilonValues(List<Double> values) {
-    return Delimiter.COMMA.joiner().join(Iterables.transform(values, EPSILON_FORMATTER));
+    return Delimiter.COMMA.joiner().join(Iterables.transform(
+        values, 
+        EPSILON_FORMATTER::apply));
   }
 
   private static Ordering<RmBin> RM_BIN_SORTER = new Ordering<RmBin>() {
@@ -661,7 +663,7 @@ final class DeaggExport {
 
     List<SourceSetContributor> systemSourceSetContributors = FluentIterable
         .from(dd.contributors)
-        .transform(TO_SOURCE_SET_CONTRIBUTOR)
+        .transform(TO_SOURCE_SET_CONTRIBUTOR::apply)
         .filter(SYSTEM_FILTER)
         .filter(contributionFilter)
         .toList();
@@ -711,7 +713,7 @@ final class DeaggExport {
 
     List<SummaryItem> toSummaryItems() {
       return FluentIterable.from(this)
-          .transform(BIN_TO_SUMMARY_ITEM)
+          .transform(BIN_TO_SUMMARY_ITEM::apply)
           .toList();
     }
   }
