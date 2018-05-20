@@ -1,6 +1,6 @@
 package gov.usgs.earthquake.nshmp.internal;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -305,10 +305,10 @@ public enum NshmpSite implements NamedLocation {
         EnumSet.allOf(NshmpSite.class),
         new Predicate<NshmpSite>() {
           @Override
-          public boolean apply(NshmpSite site) {
+          public boolean test(NshmpSite site) {
             return site.location.lon() >= -115.0;
           }
-        }), NshmpSite.class);
+        }::test), NshmpSite.class);
   }
 
   /**
@@ -320,10 +320,10 @@ public enum NshmpSite implements NamedLocation {
         EnumSet.allOf(NshmpSite.class),
         new Predicate<NshmpSite>() {
           @Override
-          public boolean apply(NshmpSite site) {
+          public boolean test(NshmpSite site) {
             return site.location.lon() <= -100.0 && site.location.lon() >= -125.0;
           }
-        }), NshmpSite.class);
+        }::test), NshmpSite.class);
   }
 
   /**
@@ -343,10 +343,10 @@ public enum NshmpSite implements NamedLocation {
         EnumSet.allOf(NshmpSite.class),
         new Predicate<NshmpSite>() {
           @Override
-          public boolean apply(NshmpSite site) {
+          public boolean test(NshmpSite site) {
             return site.state == UsRegion.AK;
           }
-        }), NshmpSite.class);
+        }::test), NshmpSite.class);
   }
 
   /**
@@ -357,10 +357,10 @@ public enum NshmpSite implements NamedLocation {
         EnumSet.allOf(NshmpSite.class),
         new Predicate<NshmpSite>() {
           @Override
-          public boolean apply(NshmpSite site) {
+          public boolean test(NshmpSite site) {
             return site.state == UsRegion.HI;
           }
-        }), NshmpSite.class);
+        }::test), NshmpSite.class);
   }
 
   /**
@@ -385,10 +385,10 @@ public enum NshmpSite implements NamedLocation {
         EnumSet.allOf(NshmpSite.class),
         new Predicate<NshmpSite>() {
           @Override
-          public boolean apply(NshmpSite site) {
+          public boolean test(NshmpSite site) {
             return site.location.lon() >= -105.5;
           }
-        }), NshmpSite.class);
+        }::test), NshmpSite.class);
   }
 
   /**

@@ -6,7 +6,7 @@ import static gov.usgs.earthquake.nshmp.data.Data.checkWeight;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.AREA;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.validateName;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -67,7 +67,7 @@ public class AreaSourceSet extends AbstractSourceSet<AreaSource> {
   public Predicate<AreaSource> distanceFilter(final Location loc, final double distance) {
     return new Predicate<AreaSource>() {
       @Override
-      public boolean apply(AreaSource source) {
+      public boolean test(AreaSource source) {
         return Locations.minDistanceToLocations(loc, source.border()) <= distance;
       }
     };

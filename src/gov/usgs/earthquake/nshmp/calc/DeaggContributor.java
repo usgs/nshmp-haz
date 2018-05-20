@@ -175,7 +175,7 @@ abstract class DeaggContributor {
           sourceSet.name(), sourceSet.type(), contribution));
       sb.append(NEWLINE);
       for (DeaggContributor child : children) {
-        if (filter.apply(child)) {
+        if (filter.test(child)) {
           child.appendTo(sb, "  ", filter);
           continue;
         }
@@ -193,7 +193,7 @@ abstract class DeaggContributor {
           Maths.round(filter.toPercent(total()), 2));
       jsonList.add(jc);
       for (DeaggContributor child : children) {
-        if (filter.apply(child)) {
+        if (filter.test(child)) {
           jsonList.addAll(child.toJson(filter));
           continue;
         }
@@ -420,7 +420,7 @@ abstract class DeaggContributor {
           filter.toPercent(total)));
       sb.append(NEWLINE);
       for (DeaggContributor fault : faults) {
-        if (filter.apply(fault)) {
+        if (filter.test(fault)) {
           fault.appendTo(sb, "    ", filter);
           continue;
         }

@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.INTERFACE;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -73,10 +73,10 @@ public class InterfaceSourceSet extends AbstractSourceSet<InterfaceSource> {
       private Predicate<Location> filter = Locations.distanceFilter(loc, distance);
 
       @Override
-      public boolean apply(InterfaceSource source) {
-        return filter.apply(source.trace.first()) || filter.apply(source.trace.last()) ||
-            filter.apply(source.lowerTrace.first()) ||
-            filter.apply(source.lowerTrace.last());
+      public boolean test(InterfaceSource source) {
+        return filter.test(source.trace.first()) || filter.test(source.trace.last()) ||
+            filter.test(source.lowerTrace.first()) ||
+            filter.test(source.lowerTrace.last());
       }
 
       @Override

@@ -3,7 +3,7 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableTable;
@@ -96,10 +96,10 @@ final class CoefficientContainer {
         .skip(1)
         .filter(new Predicate<String>() {
           @Override
-          public boolean apply(String s) {
+          public boolean test(String s) {
             return !s.startsWith("#");
           }
-        });
+        }::test);
     for (String line : imtLines) {
       Iterable<String> entries = Parsing.split(line, Delimiter.COMMA);
       String imtStr = Iterables.get(entries, 0);

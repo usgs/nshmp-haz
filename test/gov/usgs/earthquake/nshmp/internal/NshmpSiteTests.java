@@ -53,7 +53,7 @@ import java.util.EnumSet;
 
 import org.junit.Test;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 

@@ -6,7 +6,7 @@ import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.function.Function;
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.FluentIterable;
@@ -567,7 +567,7 @@ final class DeaggExport {
      */
     List<DeaggContributor> sourceSetContributors = new ArrayList<>();
     for (DeaggContributor contributor : dd.contributors) {
-      if (contributionFilter.apply(contributor)) {
+      if (contributionFilter.test(contributor)) {
         sourceSetContributors.add(contributor);
         continue;
       }
@@ -599,7 +599,7 @@ final class DeaggExport {
   private static Predicate<SourceSetContributor> SYSTEM_FILTER =
       new Predicate<SourceSetContributor>() {
         @Override
-        public boolean apply(SourceSetContributor contributor) {
+        public boolean test(SourceSetContributor contributor) {
           return contributor.sourceSet.type() == SourceType.SYSTEM;
         }
       };
@@ -628,7 +628,7 @@ final class DeaggExport {
     }
 
     @Override
-    public boolean apply(DeaggContributor contributor) {
+    public boolean test(DeaggContributor contributor) {
       return contributor.total() * toPercent >= limit;
     }
   }
@@ -644,7 +644,7 @@ final class DeaggExport {
 
     ImmutableList.Builder<JsonContributor> jsonContributors = ImmutableList.builder();
     for (DeaggContributor contributor : dd.contributors) {
-      if (contributionFilter.apply(contributor)) {
+      if (contributionFilter.test(contributor)) {
         jsonContributors.addAll(contributor.toJson(contributionFilter));
         continue;
       }
@@ -664,14 +664,14 @@ final class DeaggExport {
     List<SourceSetContributor> systemSourceSetContributors = FluentIterable
         .from(dd.contributors)
         .transform(TO_SOURCE_SET_CONTRIBUTOR::apply)
-        .filter(SYSTEM_FILTER)
-        .filter(contributionFilter)
+        .filter(SYSTEM_FILTER::test)
+        .filter(contributionFilter::test)
         .toList();
 
     boolean first = true;
     for (SourceSetContributor ssc : systemSourceSetContributors) {
       SystemContributor model = (SystemContributor) ssc.children.get(0);
-      if (!contributionFilter.apply(model)) {
+      if (!contributionFilter.test(model)) {
         continue;
       }
       sb.append(first ? SECTION_SEPARATOR : NEWLINE)
@@ -681,7 +681,7 @@ final class DeaggExport {
           .append(Parsing.toString(model.mfd.rows(), "%9.2f", ",", false, true))
           .append(NEWLINE);
       for (DeaggContributor child : ssc.children) {
-        if (contributionFilter.apply(child)) {
+        if (contributionFilter.test(child)) {
           ((SystemContributor) child).appendMfd(sb);
           continue;
         }

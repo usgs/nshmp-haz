@@ -6,7 +6,7 @@ import static com.google.common.base.Strings.padEnd;
 import static gov.usgs.earthquake.nshmp.data.Data.checkWeight;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.validateName;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
 
@@ -74,7 +74,7 @@ abstract class AbstractSourceSet<T extends Source> implements SourceSet<T> {
   @Override
   public Iterable<T> iterableForLocation(Location loc, double distance) {
     Predicate<T> filter = distanceFilter(loc, distance);
-    return FluentIterable.from(this).filter(filter);
+    return FluentIterable.from(this).filter(filter::test);
   }
 
   static abstract class Builder {

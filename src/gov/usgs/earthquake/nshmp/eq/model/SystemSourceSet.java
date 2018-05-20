@@ -13,7 +13,7 @@ import static gov.usgs.earthquake.nshmp.geo.Locations.horzDistanceFast;
 import static java.lang.Math.min;
 
 import java.util.function.Function;
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
@@ -439,7 +439,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
         return modelMfd;
       }
       Predicate<SystemSource> distanceFilter = new BitsetFilter(siteBitset);
-      for (SystemSource source : Iterables.filter(sourceSet, distanceFilter)) {
+      for (SystemSource source : Iterables.filter(sourceSet, distanceFilter::test)) {
         mfdForLocation.add(source.magnitude(), source.rate());
       }
       return mfdForLocation.multiply(sourceSet.weight()).build();
@@ -558,7 +558,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
         Map<Integer, double[]> rMap = rMapBuilder.build();
         Function<SystemSource, HazardInput> inputGenerator = new InputGenerator(rMap, site);
         Predicate<SystemSource> rFilter = new BitsetFilter(siteBitset);
-        Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter);
+        Iterable<SystemSource> sources = Iterables.filter(sourceSet, rFilter::test);
 
         /* Fill input list. */
         SystemInputList inputs = new SystemInputList(sourceSet, rMap.keySet());
@@ -605,7 +605,7 @@ public final class SystemSourceSet extends AbstractSourceSet<SystemSourceSet.Sys
     }
 
     @Override
-    public boolean apply(SystemSource source) {
+    public boolean test(SystemSource source) {
       return siteBitset.intersects(source.bitset());
     }
 

@@ -1,6 +1,6 @@
 package gov.usgs.earthquake.nshmp.eq.model;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;

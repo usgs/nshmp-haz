@@ -18,7 +18,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -797,7 +797,7 @@ public final class Locations {
     }
 
     @Override
-    public boolean apply(Location loc) {
+    public boolean test(Location loc) {
       return rect.contains(loc.lonRad(), loc.latRad());
     }
 
@@ -818,7 +818,7 @@ public final class Locations {
     }
 
     @Override
-    public boolean apply(Location loc) {
+    public boolean test(Location loc) {
       return horzDistanceFast(origin, loc) <= distance;
     }
 
@@ -842,8 +842,8 @@ public final class Locations {
     }
 
     @Override
-    public boolean apply(Location loc) {
-      return rectFilter.apply(loc) && distFilter.apply(loc);
+    public boolean test(Location loc) {
+      return rectFilter.test(loc) && distFilter.test(loc);
     }
 
     @Override

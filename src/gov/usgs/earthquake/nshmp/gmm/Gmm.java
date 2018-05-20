@@ -3,7 +3,7 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -1185,10 +1185,10 @@ public enum Gmm {
         EnumSet.allOf(Gmm.class),
         new Predicate<Gmm>() {
           @Override
-          public boolean apply(Gmm gmm) {
+          public boolean test(Gmm gmm) {
             return gmm.imts.contains(imt);
           }
-        }),
+        }::test),
         Gmm.class);
   }
 

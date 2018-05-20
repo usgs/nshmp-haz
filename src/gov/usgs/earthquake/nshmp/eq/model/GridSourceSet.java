@@ -14,7 +14,7 @@ import static gov.usgs.earthquake.nshmp.eq.model.PointSourceType.FIXED_STRIKE;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.GRID;
 
 import java.util.function.Function;
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
@@ -147,8 +147,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     }
 
     @Override
-    public boolean apply(PointSource source) {
-      return filter.apply(source.loc);
+    public boolean test(PointSource source) {
+      return filter.test(source.loc);
     }
 
     @Override
