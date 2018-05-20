@@ -19,7 +19,7 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.lang.Double.NaN;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
 
@@ -439,7 +439,7 @@ public class GmmInput {
         "Mw",
         "Magnitude",
         "The moment magnitude of an earthquake",
-        Optional.<String> absent(),
+        Optional.<String> empty(),
         6.5),
 
     RJB(
@@ -509,7 +509,7 @@ public class GmmInput {
         "vsInf",
         "Vs30 Inferred",
         "Whether Vs30 was measured or inferred",
-        Optional.<String> absent(),
+        Optional.<String> empty(),
         1.0),
 
     Z1P0(
@@ -732,19 +732,19 @@ public class GmmInput {
 
     static class Builder {
 
-      private Optional<Range<Double>> mag = Optional.absent();
-      private Optional<Range<Double>> rJB = Optional.absent();
-      private Optional<Range<Double>> rRup = Optional.absent();
-      private Optional<Range<Double>> rX = Optional.absent();
-      private Optional<Range<Double>> dip = Optional.absent();
-      private Optional<Range<Double>> width = Optional.absent();
-      private Optional<Range<Double>> zTop = Optional.absent();
-      private Optional<Range<Double>> zHyp = Optional.absent();
-      private Optional<Range<Double>> rake = Optional.absent();
-      private Optional<Range<Double>> vs30 = Optional.absent();
-      private Optional<Range<Boolean>> vsInf = Optional.absent();
-      private Optional<Range<Double>> z1p0 = Optional.absent();
-      private Optional<Range<Double>> z2p5 = Optional.absent();
+      private Optional<Range<Double>> mag = Optional.empty();
+      private Optional<Range<Double>> rJB = Optional.empty();
+      private Optional<Range<Double>> rRup = Optional.empty();
+      private Optional<Range<Double>> rX = Optional.empty();
+      private Optional<Range<Double>> dip = Optional.empty();
+      private Optional<Range<Double>> width = Optional.empty();
+      private Optional<Range<Double>> zTop = Optional.empty();
+      private Optional<Range<Double>> zHyp = Optional.empty();
+      private Optional<Range<Double>> rake = Optional.empty();
+      private Optional<Range<Double>> vs30 = Optional.empty();
+      private Optional<Range<Boolean>> vsInf = Optional.empty();
+      private Optional<Range<Double>> z1p0 = Optional.empty();
+      private Optional<Range<Double>> z2p5 = Optional.empty();
 
       /**
        * Set {@code Range<Double>} constraint.

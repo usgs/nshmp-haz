@@ -93,7 +93,7 @@ public class GmmTest {
     URL url = Resources.getResource(GmmTest.class, DATA_DIR + resource);
     return FluentIterable
         .from(Resources.readLines(url, StandardCharsets.UTF_8))
-        .transform(ResultsToObjectsFunction.INSTANCE)
+        .transform(ResultsToObjectsFunction.INSTANCE::apply)
         .toList();
   }
 
@@ -118,7 +118,7 @@ public class GmmTest {
     return FluentIterable
         .from(Resources.readLines(url, StandardCharsets.UTF_8))
         .skip(1)
-        .transform(ArgsToInputFunction.INSTANCE)
+        .transform(ArgsToInputFunction.INSTANCE::apply)
         .toList();
   }
 

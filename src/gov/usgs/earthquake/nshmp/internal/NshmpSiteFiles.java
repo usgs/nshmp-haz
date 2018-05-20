@@ -17,7 +17,7 @@ import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.WUS_CLIP;
 
 import java.util.function.Function;
 import com.google.common.base.Functions;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -182,7 +182,7 @@ final class NshmpSiteFiles {
       features.add(GeoJson.createPolygon(
           nameList.get(i++),
           coords,
-          Optional.<String> absent(),
+          Optional.<String> empty(),
           Optional.of(0.1)));
     }
     FeatureCollection<Feature> fc = new FeatureCollection<Feature>();
@@ -204,12 +204,12 @@ final class NshmpSiteFiles {
           name + " Map Extents",
           bounds,
           Optional.of(GeoJson.Value.EXTENTS),
-          Optional.<Double> absent()));
+          Optional.<Double> empty()));
     }
     features.add(GeoJson.createPolygon(
         name,
         coords,
-        Optional.<String> absent(),
+        Optional.<String> empty(),
         Optional.of(spacing)));
     FeatureCollection<Feature> fc = new FeatureCollection<>();
     fc.features = features;

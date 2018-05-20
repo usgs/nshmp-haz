@@ -15,7 +15,7 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.LOG_VALUE_COLUMN;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -1355,7 +1355,7 @@ public final class CalcConfig {
     public CalcConfig build() {
       validateState();
       return new CalcConfig(
-          Optional.fromNullable(resource),
+          Optional.ofNullable(resource),
           hazard.build(),
           site.build(),
           performance.build(),
