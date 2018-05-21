@@ -247,6 +247,13 @@ public abstract class Sites implements Iterable<Site> {
    */
   public abstract Optional<Double> mapSpacing();
 
+  /*
+   * TODO consider: if csv or geojson files are long, and if basinDataProvider
+   * is being used, all calls to data provider must be made to create list to
+   * init Iterable; however this would probably necessitate passing in a list of
+   * dummy sites, the values of which could be overridden by the data provider
+   */
+  
   private static final class ListIterable extends Sites {
     final List<Site> delegate;
 
