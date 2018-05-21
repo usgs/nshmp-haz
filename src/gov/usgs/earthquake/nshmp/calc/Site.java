@@ -6,6 +6,8 @@ import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 import static gov.usgs.earthquake.nshmp.internal.GeoJson.validateProperty;
 
 import java.lang.reflect.Type;
+import java.net.URL;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.base.Strings;
@@ -31,9 +33,9 @@ import gov.usgs.earthquake.nshmp.util.NamedLocation;
  * 
  * <p>Terminology:<ul>
  * 
- * <li><b>{@code Vs30}:</b> Average shear wave velocity down to a depth
- * of 30 m, in units of m/s. This value may be <i>inferred</i> or
- * <i>measured</i> (see {@link #vsInferred}).</li>
+ * <li><b>{@code Vs30}:</b> Average shear wave velocity down to a depth of 30 m,
+ * in units of m/s. This value may be <i>inferred</i> or <i>measured</i> (see
+ * {@link #vsInferred}).</li>
  * 
  * <li><b>{@code z1.0}:</b> Depth to a shear wave velocity of 1.0 km/sec, in
  * units of km.</li>
@@ -49,9 +51,10 @@ import gov.usgs.earthquake.nshmp.util.NamedLocation;
  * will use an author defined model, typically based on {@code Vs30}, to compute
  * basin-amplifications.
  * 
- * <p><b>Note:</b> If a {@link CalcConfig.SiteData#basinDataProvider} has been set,
- * any non-{@code null} or non-{@code NaN} {@code z1p0} or {@code z2p5} values 
- * supplied by the provider take precedence over defaults or recent calls to the builder.
+ * <p><b>Note:</b> If a {@link CalcConfig.SiteData#basinDataProvider} has been
+ * set, any non-{@code null} or non-{@code NaN} {@code z1p0} or {@code z2p5}
+ * values supplied by the provider take precedence over defaults or recent calls
+ * to the builder.
  * 
  *
  * @author Peter Powers
@@ -187,6 +190,7 @@ public class Site implements Named {
     private boolean vsInferred = VS_INF_DEFAULT;
     private double z1p0 = Z1P0_DEFAULT;
     private double z2p5 = Z2P5_DEFAULT;
+    private Optional<URL> basinDataProvider = Optional.empty();
 
     private Builder() {}
 
@@ -274,9 +278,26 @@ public class Site implements Named {
      */
     public Site build() {
       checkState(location != null, "Site location not set");
+      updateBasinTerms();
       return new Site(name, location, vs30, vsInferred, z1p0, z2p5);
     }
 
+    /*
+     * If a basin data provider has been specified, update z1p0 and z2p5
+     * accordingly. If the basin provider returns NaN, we retain whatever values
+     * are already set.
+     */
+    private void updateBasinTerms() {
+      if (basinDataProvider.isPresent()) {
+        /*
+         * make request, get z1p0 and 22p5, if not-null/NaN, use updated values
+         * in Site() constructor. NOTE that we DO NOT want set values in builder
+         * as they will persist to subsequest sites. We are selectively
+         * overriding basin terms. This method needs to be inlined with build()
+         * to only override constructor values.
+         */
+      }
+    }
   }
 
   private static final int MAX_NAME_LENGTH = 72;
