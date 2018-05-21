@@ -8,10 +8,10 @@ import static gov.usgs.earthquake.nshmp.data.IntervalData.checkDataState;
 import static gov.usgs.earthquake.nshmp.data.IntervalData.indexOf;
 import static gov.usgs.earthquake.nshmp.data.IntervalData.keys;
 
-import com.google.common.primitives.Doubles;
-
 import java.util.Arrays;
 import java.util.List;
+
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.data.IntervalData.AbstractArray;
 import gov.usgs.earthquake.nshmp.data.IntervalData.DefaultArray;

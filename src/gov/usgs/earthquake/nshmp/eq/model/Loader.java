@@ -7,17 +7,6 @@ import static gov.usgs.earthquake.nshmp.eq.model.SystemParser.RUPTURES_FILENAME;
 import static gov.usgs.earthquake.nshmp.eq.model.SystemParser.SECTIONS_FILENAME;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.nio.file.Files.newDirectoryStream;
-import static java.util.logging.Level.SEVERE;
-
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,6 +26,16 @@ import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;
 import gov.usgs.earthquake.nshmp.eq.model.HazardModel.Builder;

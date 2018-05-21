@@ -5,12 +5,12 @@ import static gov.usgs.earthquake.nshmp.eq.Earthquakes.checkDepth;
 import static gov.usgs.earthquake.nshmp.geo.Coordinates.checkLatitude;
 import static gov.usgs.earthquake.nshmp.geo.Coordinates.checkLongitude;
 
+import java.util.List;
+import java.util.Objects;
+
 import com.google.common.base.Converter;
 import com.google.common.collect.FluentIterable;
 import com.google.common.primitives.Doubles;
-
-import java.util.List;
-import java.util.Objects;
 
 import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;

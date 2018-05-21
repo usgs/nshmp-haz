@@ -6,12 +6,12 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 import static gov.usgs.earthquake.nshmp.data.Data.checkWeights;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Range;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.gmm.Gmm;

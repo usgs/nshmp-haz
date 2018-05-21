@@ -15,16 +15,6 @@ import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.UCERF3_RELM;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.WASATCH;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.WUS_CLIP;
 
-import java.util.function.Function;
-import com.google.common.base.Functions;
-import java.util.Optional;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -36,7 +26,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+
+import com.google.common.base.Functions;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;

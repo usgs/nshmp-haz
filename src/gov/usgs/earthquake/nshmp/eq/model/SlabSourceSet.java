@@ -2,9 +2,8 @@ package gov.usgs.earthquake.nshmp.eq.model;
 
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.SLAB;
 
-import java.util.function.Predicate;
-
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 

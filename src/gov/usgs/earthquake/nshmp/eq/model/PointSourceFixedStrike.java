@@ -8,10 +8,10 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
-import com.google.common.math.DoubleMath;
-
 import java.util.Iterator;
 import java.util.Map;
+
+import com.google.common.math.DoubleMath;
 
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;

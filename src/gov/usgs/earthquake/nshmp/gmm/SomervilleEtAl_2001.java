@@ -7,9 +7,9 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass.HARD_ROCK;
 import static gov.usgs.earthquake.nshmp.util.Maths.hypot;
 import static java.lang.Math.log;
 
-import com.google.common.collect.Range;
-
 import java.util.Map;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;

@@ -10,7 +10,17 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NULL;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.TypeToken;
@@ -21,16 +31,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.calc.Site.Builder;
 import gov.usgs.earthquake.nshmp.geo.Bounds;

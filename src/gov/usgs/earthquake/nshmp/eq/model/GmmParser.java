@@ -12,6 +12,14 @@ import static gov.usgs.earthquake.nshmp.internal.Parsing.readDoubleArray;
 import static gov.usgs.earthquake.nshmp.internal.Parsing.readEnum;
 import static java.util.logging.Level.FINE;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.SAXParser;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -20,14 +28,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.SAXParser;
 
 import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.GmmElement;

@@ -13,17 +13,17 @@ import static gov.usgs.earthquake.nshmp.eq.fault.FocalMech.STRIKE_SLIP;
 import static gov.usgs.earthquake.nshmp.eq.model.PointSourceType.FIXED_STRIKE;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.GRID;
 
-import java.util.function.Function;
-import java.util.function.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Doubles;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.IntervalTable;

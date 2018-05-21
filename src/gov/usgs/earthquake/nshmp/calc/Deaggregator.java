@@ -2,14 +2,6 @@ package gov.usgs.earthquake.nshmp.calc;
 
 import static gov.usgs.earthquake.nshmp.calc.DeaggDataset.SOURCE_CONSOLIDATOR;
 
-import java.util.function.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Multimaps;
-import com.google.common.primitives.Ints;
-
 import java.math.RoundingMode;
 import java.util.BitSet;
 import java.util.EnumMap;
@@ -19,6 +11,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.function.Function;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Multimaps;
+import com.google.common.primitives.Ints;
 
 import gov.usgs.earthquake.nshmp.calc.DeaggContributor.ClusterContributor;
 import gov.usgs.earthquake.nshmp.calc.DeaggContributor.SectionSource;
@@ -39,8 +40,6 @@ import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
 import gov.usgs.earthquake.nshmp.gmm.ScalarGroundMotion;
 import gov.usgs.earthquake.nshmp.util.Maths;
-
-import java.util.Set;
 
 /**
  * Factory class that deaggregates the hazard for a single {@code SourceSet}

@@ -4,11 +4,6 @@ import static gov.usgs.earthquake.nshmp.calc.DeaggDataset.SOURCE_CONSOLIDATOR;
 import static gov.usgs.earthquake.nshmp.calc.DeaggDataset.SOURCE_SET_CONSOLIDATOR;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Multimaps;
-
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -16,6 +11,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Multimaps;
 
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.data.XySequence;

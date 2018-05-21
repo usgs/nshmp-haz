@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import gov.usgs.earthquake.nshmp.eq.Earthquakes;
-
 @SuppressWarnings("javadoc")
 public final class EarthquakesTests {
 

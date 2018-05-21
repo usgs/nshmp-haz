@@ -1,10 +1,10 @@
 package gov.usgs.earthquake.nshmp.util;
 
-import com.google.common.base.Converter;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+
+import com.google.common.base.Converter;
 
 /**
  * Miscellaneous math utilities. In some cases, these methods obviate the need

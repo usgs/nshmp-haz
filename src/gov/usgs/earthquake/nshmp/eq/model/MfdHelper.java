@@ -18,14 +18,14 @@ import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.RATE;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.RATES;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.WEIGHT;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.internal.SourceAttribute;
 import gov.usgs.earthquake.nshmp.mfd.MfdType;

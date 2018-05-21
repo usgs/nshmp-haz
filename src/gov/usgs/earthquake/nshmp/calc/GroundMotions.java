@@ -4,18 +4,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
-import com.google.common.collect.Maps;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import com.google.common.collect.Maps;
 
 import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
 import gov.usgs.earthquake.nshmp.gmm.ScalarGroundMotion;
-
-import java.util.Set;
 
 /**
  * Container class for scalar ground motions associated with individual

@@ -6,13 +6,13 @@ import static gov.usgs.earthquake.nshmp.data.Data.checkWeight;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.AREA;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.validateName;
 
-import java.util.function.Predicate;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.Locations;

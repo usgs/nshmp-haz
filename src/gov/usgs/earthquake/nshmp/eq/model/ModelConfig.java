@@ -9,15 +9,15 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.LOG_INDENT;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.LOG_VALUE_COLUMN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import gov.usgs.earthquake.nshmp.eq.fault.surface.RuptureFloating;
 import gov.usgs.earthquake.nshmp.eq.model.AreaSource.GridScaling;

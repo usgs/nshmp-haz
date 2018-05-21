@@ -1,12 +1,12 @@
 package gov.usgs.earthquake.nshmp.json;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.ImmutableList;
 
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 import gov.usgs.earthquake.nshmp.geo.Region;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Create a {@code MultiPolygon} GeoJson {@link Geometry}.

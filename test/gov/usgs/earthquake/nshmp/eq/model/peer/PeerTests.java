@@ -1,14 +1,14 @@
 package gov.usgs.earthquake.nshmp.eq.model.peer;
 
+import java.io.IOException;
+import java.util.Collection;
+
 import org.junit.Ignore;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.util.Collection;
 
 import gov.usgs.earthquake.nshmp.calc.Site;
 import gov.usgs.earthquake.nshmp.eq.model.HazardModel;

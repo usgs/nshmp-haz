@@ -5,6 +5,11 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.validateName;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Strings;
@@ -12,11 +17,6 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.Set;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;
 import gov.usgs.earthquake.nshmp.gmm.Gmm;

@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,12 +16,6 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import java.util.List;
-
-import gov.usgs.earthquake.nshmp.geo.Location;
-import gov.usgs.earthquake.nshmp.geo.LocationGrid;
-import gov.usgs.earthquake.nshmp.geo.LocationList;
-import gov.usgs.earthquake.nshmp.geo.LocationVector;
 import gov.usgs.earthquake.nshmp.geo.LocationList.RegularLocationList;
 import gov.usgs.earthquake.nshmp.util.Maths;
 

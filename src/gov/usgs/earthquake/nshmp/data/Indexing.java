@@ -4,13 +4,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkElementIndex;
 import static gov.usgs.earthquake.nshmp.data.Data.checkSize;
 
-import com.google.common.primitives.Ints;
-
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import com.google.common.primitives.Ints;
 
 /**
  * Utilities pertaining to the creation, calculation, and derivation of data

@@ -6,15 +6,15 @@ import static gov.usgs.earthquake.nshmp.eq.fault.FocalMech.STRIKE_SLIP;
 import static gov.usgs.earthquake.nshmp.util.Maths.hypot;
 import static java.lang.Math.ceil;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Doubles;
-import com.google.common.primitives.Ints;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Ints;
 
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.fault.FocalMech;

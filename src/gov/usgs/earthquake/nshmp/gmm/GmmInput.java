@@ -18,25 +18,24 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.ZTOP;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.lang.Double.NaN;
 
-import com.google.common.base.MoreObjects;
-import java.util.Optional;
-import com.google.common.base.Strings;
-import com.google.common.collect.Range;
-
 import java.util.BitSet;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.calc.Site;
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.eq.model.Distance;
 import gov.usgs.earthquake.nshmp.eq.model.Rupture;
-
-import java.util.Set;
 
 /**
  * Earthquake {@link Rupture} and receiver {@link Site} property container used

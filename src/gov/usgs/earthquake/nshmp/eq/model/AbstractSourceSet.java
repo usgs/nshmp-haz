@@ -7,6 +7,7 @@ import static gov.usgs.earthquake.nshmp.data.Data.checkWeight;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.validateName;
 
 import java.util.function.Predicate;
+
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
 

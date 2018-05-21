@@ -12,18 +12,18 @@ import static gov.usgs.earthquake.nshmp.eq.model.SourceType.SYSTEM;
 import static gov.usgs.earthquake.nshmp.geo.Locations.horzDistanceFast;
 import static java.lang.Math.min;
 
-import java.util.function.Function;
-import java.util.function.Predicate;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
-import com.google.common.primitives.Doubles;
-
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.calc.HazardInput;
 import gov.usgs.earthquake.nshmp.calc.InputList;

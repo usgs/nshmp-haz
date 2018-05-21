@@ -50,10 +50,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 
-import java.util.function.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 

@@ -2,19 +2,19 @@ package gov.usgs.earthquake.nshmp.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.base.Converter;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
+import com.google.common.base.Converter;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
 import gov.usgs.earthquake.nshmp.calc.CalcConfig.Rate.Bins;
 import gov.usgs.earthquake.nshmp.data.IntervalArray;
-import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.data.IntervalArray.Builder;
+import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.model.ClusterSource;
 import gov.usgs.earthquake.nshmp.eq.model.ClusterSourceSet;
 import gov.usgs.earthquake.nshmp.eq.model.Distance;

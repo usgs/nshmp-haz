@@ -4,15 +4,15 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.SYSTEM;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
-import java.util.function.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 
 import gov.usgs.earthquake.nshmp.calc.DeaggExport.ContributionFilter;
 import gov.usgs.earthquake.nshmp.data.Data;

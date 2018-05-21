@@ -12,14 +12,14 @@ import static gov.usgs.earthquake.nshmp.eq.fault.Faults.checkTrace;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.FAULT;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.validateName;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.fault.surface.DefaultGriddedSurface;

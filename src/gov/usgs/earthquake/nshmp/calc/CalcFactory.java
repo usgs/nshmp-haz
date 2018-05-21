@@ -4,12 +4,12 @@ import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 import gov.usgs.earthquake.nshmp.calc.Transforms.ClusterCurveConsolidator;
 import gov.usgs.earthquake.nshmp.calc.Transforms.ClusterToCurves;

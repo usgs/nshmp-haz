@@ -18,11 +18,10 @@ import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
-import java.util.function.Predicate;
-
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.util.function.Predicate;
 
 import gov.usgs.earthquake.nshmp.util.Maths;
 

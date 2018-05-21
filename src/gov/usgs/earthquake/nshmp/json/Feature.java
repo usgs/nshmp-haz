@@ -1,16 +1,16 @@
 package gov.usgs.earthquake.nshmp.json;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.List;
 import java.util.Map;
-
 import java.util.Optional;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Create a GeoJson {@code Feature} with a {@link Geometry} and

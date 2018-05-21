@@ -2,15 +2,6 @@ package gov.usgs.earthquake.nshmp.gmm;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.util.function.Function;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
-import com.google.common.io.Resources;
-import com.google.common.primitives.Doubles;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -21,12 +12,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
-import gov.usgs.earthquake.nshmp.gmm.Gmm;
-import gov.usgs.earthquake.nshmp.gmm.GmmInput;
-import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
-import gov.usgs.earthquake.nshmp.gmm.Imt;
-import gov.usgs.earthquake.nshmp.gmm.ScalarGroundMotion;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
+import com.google.common.io.Resources;
+import com.google.common.primitives.Doubles;
+
 import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 

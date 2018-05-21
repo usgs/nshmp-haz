@@ -1,8 +1,8 @@
 package gov.usgs.earthquake.nshmp.eq.fault.surface;
 
-import com.google.common.collect.Lists;
-
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import gov.usgs.earthquake.nshmp.eq.model.Distance;
 import gov.usgs.earthquake.nshmp.geo.Location;

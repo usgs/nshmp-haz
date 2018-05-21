@@ -2,13 +2,13 @@ package gov.usgs.earthquake.nshmp.eq.fault.surface;
 
 import static java.lang.Math.sin;
 
-import com.google.common.collect.Range;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.Interpolate;

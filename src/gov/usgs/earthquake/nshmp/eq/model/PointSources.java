@@ -1,12 +1,12 @@
 package gov.usgs.earthquake.nshmp.eq.model;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import gov.usgs.earthquake.nshmp.calc.HazardCalcs;
 import gov.usgs.earthquake.nshmp.calc.InputList;

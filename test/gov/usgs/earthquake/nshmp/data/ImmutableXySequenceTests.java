@@ -1,10 +1,8 @@
 package gov.usgs.earthquake.nshmp.data;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
-
-import gov.usgs.earthquake.nshmp.data.XySequence;
 
 @SuppressWarnings("javadoc")
 public class ImmutableXySequenceTests {

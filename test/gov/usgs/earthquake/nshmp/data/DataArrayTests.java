@@ -1,12 +1,8 @@
 package gov.usgs.earthquake.nshmp.data;
 
-import static org.junit.Assert.*;
-
-//import gov.usgs.earthquake.nshmp.data.DataArray.Builder;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import gov.usgs.earthquake.nshmp.data.DataArray;
 
 @SuppressWarnings("javadoc")
 public class DataArrayTests {

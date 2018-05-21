@@ -3,7 +3,13 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
+
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableTable;
@@ -13,12 +19,6 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.io.Resources;
 import com.google.common.primitives.Doubles;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;

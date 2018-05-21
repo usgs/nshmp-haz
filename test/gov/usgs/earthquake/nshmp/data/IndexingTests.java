@@ -3,15 +3,13 @@ package gov.usgs.earthquake.nshmp.data;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.util.BitSet;
+import java.util.List;
+
 import org.junit.Test;
 
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
-
-import java.util.BitSet;
-import java.util.List;
-
-import gov.usgs.earthquake.nshmp.data.Indexing;
 
 @SuppressWarnings("javadoc")
 public final class IndexingTests {

@@ -1,19 +1,18 @@
 package gov.usgs.earthquake.nshmp.json;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 
 import gov.usgs.earthquake.nshmp.geo.BorderType;
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 import gov.usgs.earthquake.nshmp.geo.Region;
-import gov.usgs.earthquake.nshmp.geo.Regions;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;;
+import gov.usgs.earthquake.nshmp.geo.Regions;;
 
 /**
  * Create a GeoJson {@code Polygon} {@link Geometry} with a border and

@@ -5,16 +5,6 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import java.util.function.Function;
-import java.util.function.Predicate;
-import com.google.common.base.Strings;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
-import com.google.gson.annotations.SerializedName;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +12,16 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
+import com.google.gson.annotations.SerializedName;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig.Deagg.Bins;
 import gov.usgs.earthquake.nshmp.calc.DeaggContributor.JsonContributor;

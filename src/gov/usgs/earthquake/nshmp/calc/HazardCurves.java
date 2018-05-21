@@ -4,14 +4,14 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.XySequence.copyOf;
 import static gov.usgs.earthquake.nshmp.data.XySequence.immutableCopyOf;
 
-import java.util.function.Function;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
-
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
+
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
 
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.gmm.Gmm;

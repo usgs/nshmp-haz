@@ -8,12 +8,12 @@ import static gov.usgs.earthquake.nshmp.geo.Locations.horzDistance;
 import static gov.usgs.earthquake.nshmp.geo.Locations.linearDistanceFast;
 import static gov.usgs.earthquake.nshmp.geo.Locations.location;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;

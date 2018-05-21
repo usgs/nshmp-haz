@@ -13,9 +13,9 @@ import static java.lang.Math.log10;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-import com.google.common.collect.Range;
-
 import java.util.Map;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;

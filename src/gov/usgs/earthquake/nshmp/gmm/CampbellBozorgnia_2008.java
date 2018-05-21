@@ -19,11 +19,11 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import com.google.common.collect.Range;
-
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;

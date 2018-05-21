@@ -1,8 +1,8 @@
 package gov.usgs.earthquake.nshmp.json;
 
-import gov.usgs.earthquake.nshmp.geo.Location;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import gov.usgs.earthquake.nshmp.geo.Location;
 
 /**
  * Create a GeoJson {@code Point} {@link Geometry}.

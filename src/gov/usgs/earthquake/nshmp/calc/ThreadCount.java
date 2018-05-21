@@ -1,8 +1,8 @@
 package gov.usgs.earthquake.nshmp.calc;
 
-import com.google.common.util.concurrent.MoreExecutors;
-
 import java.util.concurrent.ExecutorService;
+
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * The number of threads with which to intialize thread pools. Values reference

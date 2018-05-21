@@ -3,7 +3,14 @@ package gov.usgs.earthquake.nshmp.gmm;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -12,13 +19,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.UncheckedExecutionException;
-
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import gov.usgs.earthquake.nshmp.gmm.CeusMb.AtkinsonBoore_2006_140bar_AB;
 import gov.usgs.earthquake.nshmp.gmm.CeusMb.AtkinsonBoore_2006_140bar_J;

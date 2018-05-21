@@ -11,17 +11,17 @@ import static gov.usgs.earthquake.nshmp.calc.CalcFactory.toHazardResult;
 import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 import static gov.usgs.earthquake.nshmp.eq.model.PointSourceType.FIXED_STRIKE;
 
-import java.util.function.Function;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Range;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.calc.Transforms.SourceToInputs;
 import gov.usgs.earthquake.nshmp.eq.model.ClusterSourceSet;

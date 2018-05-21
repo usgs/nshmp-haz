@@ -1,12 +1,12 @@
 package gov.usgs.earthquake.nshmp.internal;
 
+import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.function.Predicate;
+
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-
-import java.util.Comparator;
-import java.util.EnumSet;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;

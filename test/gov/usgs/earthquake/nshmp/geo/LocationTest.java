@@ -4,15 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import java.util.Collections;
-import java.util.List;
-
-import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
 @SuppressWarnings("javadoc")

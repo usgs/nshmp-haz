@@ -9,14 +9,14 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P02;
 import static java.lang.Math.log;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
 import gov.usgs.earthquake.nshmp.internal.Parsing;
