@@ -9,9 +9,9 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
 import static gov.usgs.earthquake.nshmp.util.Maths.hypot;
 import static java.lang.Math.log10;
 
-import com.google.common.collect.Range;
-
 import java.util.Map;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 

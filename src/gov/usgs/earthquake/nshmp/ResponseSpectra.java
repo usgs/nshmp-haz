@@ -2,13 +2,13 @@ package gov.usgs.earthquake.nshmp;
 
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 
 import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput;

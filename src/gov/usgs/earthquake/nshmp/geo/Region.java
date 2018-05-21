@@ -5,11 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static gov.usgs.earthquake.nshmp.geo.BorderType.GREAT_CIRCLE;
 import static gov.usgs.earthquake.nshmp.geo.BorderType.MERCATOR_LINEAR;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Doubles;
-
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -17,6 +12,11 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.util.Maths;

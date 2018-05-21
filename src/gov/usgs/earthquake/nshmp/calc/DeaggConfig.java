@@ -2,9 +2,9 @@ package gov.usgs.earthquake.nshmp.calc;
 
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.LOG_INDENT;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig.Deagg.Bins;
 import gov.usgs.earthquake.nshmp.calc.DeaggExport.EpsilonBins;

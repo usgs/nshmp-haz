@@ -3,14 +3,6 @@ package gov.usgs.earthquake.nshmp.calc;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
-import com.google.common.base.Function;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.primitives.Doubles;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -20,7 +12,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.logging.Logger;
+
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.model.SourceType;
@@ -258,7 +258,10 @@ public final class EqRateExport {
       Function<Double, String> formatter) {
 
     return Parsing.join(
-        FluentIterable.from(location).append(Iterables.transform(values, formatter)),
+        FluentIterable.from(location)
+            .append(Iterables.transform(
+                values,
+                formatter::apply)),
         Delimiter.COMMA);
   }
 

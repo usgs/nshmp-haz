@@ -1,12 +1,12 @@
 package gov.usgs.earthquake.nshmp.json;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.JsonElement;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Create {@code Properties} for {@link Feature}s. 

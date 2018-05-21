@@ -6,16 +6,16 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.instances;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.MultimapBuilder;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 
 import gov.usgs.earthquake.nshmp.calc.ClusterCurves.Builder;
 import gov.usgs.earthquake.nshmp.data.XySequence;
@@ -196,10 +196,10 @@ final class Transforms {
   }
 
   /*
-   * GroundMotions --> HazardCurves
+   * GroundMotions --> HazardCurves (+epi)
    *
    * Derive hazard curves for a set of ground motions considering an additional
-   * epistemic uncertinaty model.
+   * epistemic uncertainty model.
    */
   static final class GroundMotionsToCurvesWithUncertainty implements
       Function<GroundMotions, HazardCurves> {
@@ -319,12 +319,10 @@ final class Transforms {
 
     @Override
     public HazardCurves apply(Source source) {
-
-      // return
-      // sourceToInputs.andThen(inputsToGroundMotions).andThen(groundMotionsToCurves).apply(source);
-      return groundMotionsToCurves.apply(
-          inputsToGroundMotions.apply(
-              sourceToInputs.apply(source)));
+      return sourceToInputs
+          .andThen(inputsToGroundMotions)
+          .andThen(groundMotionsToCurves)
+          .apply(source);
     }
   }
 
@@ -458,7 +456,7 @@ final class Transforms {
       for (InputList partition : master.partition(size)) {
         asyncCurvesList.add(transform(
             immediateFuture(partition),
-            inputsToCurves,
+            inputsToCurves::apply,
             ex));
       }
       List<HazardCurves> curvesList = getUnchecked(allAsList(asyncCurvesList));

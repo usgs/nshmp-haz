@@ -1,11 +1,5 @@
 package gov.usgs.earthquake.nshmp.geo;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-
 import java.awt.Color;
 import java.awt.geom.Area;
 import java.io.File;
@@ -20,6 +14,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import gov.usgs.earthquake.nshmp.eq.fault.surface.GriddedSurface;
 

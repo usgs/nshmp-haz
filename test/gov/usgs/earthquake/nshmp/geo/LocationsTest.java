@@ -20,19 +20,14 @@ import static gov.usgs.earthquake.nshmp.geo.Locations.vertDistance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+import java.util.Random;
+
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import java.util.List;
-import java.util.Random;
-
 import gov.usgs.earthquake.nshmp.eq.model.Distance;
-import gov.usgs.earthquake.nshmp.geo.Bounds;
-import gov.usgs.earthquake.nshmp.geo.Location;
-import gov.usgs.earthquake.nshmp.geo.LocationList;
-import gov.usgs.earthquake.nshmp.geo.LocationVector;
-import gov.usgs.earthquake.nshmp.geo.Locations;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
 @SuppressWarnings("javadoc")

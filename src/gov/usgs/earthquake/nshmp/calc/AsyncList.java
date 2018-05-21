@@ -2,11 +2,11 @@ package gov.usgs.earthquake.nshmp.calc;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Convenience {@code List} implementation for {@code List}s of

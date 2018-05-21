@@ -12,17 +12,14 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P2;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA1P0;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA3P0;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-import gov.usgs.earthquake.nshmp.gmm.Gmm;
-import gov.usgs.earthquake.nshmp.gmm.Imt;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 @SuppressWarnings("javadoc")
 @RunWith(Parameterized.class)

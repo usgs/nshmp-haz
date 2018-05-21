@@ -8,12 +8,12 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Converter;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.XySequence;

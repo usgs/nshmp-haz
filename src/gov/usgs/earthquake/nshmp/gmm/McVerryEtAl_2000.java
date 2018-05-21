@@ -19,9 +19,9 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
 
-import com.google.common.collect.Range;
-
 import java.util.Map;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.TectonicSetting;
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;

@@ -2,12 +2,12 @@ package gov.usgs.earthquake.nshmp.calc;
 
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * Lightweight {@code List} wrapper of {@code HazardInput}s. The {@code List}

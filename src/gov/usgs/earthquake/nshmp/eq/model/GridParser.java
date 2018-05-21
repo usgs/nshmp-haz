@@ -1,6 +1,5 @@
 package gov.usgs.earthquake.nshmp.eq.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.GRID;
@@ -23,17 +22,6 @@ import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.TYPE;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.WEIGHT;
 import static java.util.logging.Level.FINE;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.helpers.DefaultHandler;
-
-import com.google.common.base.Functions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +37,17 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.DefaultHandler;
+
+import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.XySequence;

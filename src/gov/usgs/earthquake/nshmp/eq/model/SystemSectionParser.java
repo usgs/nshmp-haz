@@ -13,6 +13,13 @@ import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.INDEX;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.LOWER_DEPTH;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.NAME;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.SAXParser;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -20,13 +27,6 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Lists;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.SAXParser;
 
 import gov.usgs.earthquake.nshmp.eq.fault.surface.DefaultGriddedSurface;
 import gov.usgs.earthquake.nshmp.eq.fault.surface.GriddedSurface;

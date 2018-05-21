@@ -2,9 +2,9 @@ package gov.usgs.earthquake.nshmp.eq.model;
 
 import static gov.usgs.earthquake.nshmp.eq.fault.Faults.checkRake;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 
 import gov.usgs.earthquake.nshmp.eq.fault.surface.RuptureSurface;
 import gov.usgs.earthquake.nshmp.geo.Location;

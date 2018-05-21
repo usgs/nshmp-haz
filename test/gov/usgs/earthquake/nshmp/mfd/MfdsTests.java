@@ -2,14 +2,11 @@ package gov.usgs.earthquake.nshmp.mfd;
 
 import static org.junit.Assert.assertArrayEquals;
 
+import java.awt.geom.Point2D;
+
 import org.junit.Test;
 
 import com.google.common.primitives.Doubles;
-
-import java.awt.geom.Point2D;
-
-import gov.usgs.earthquake.nshmp.mfd.IncrementalMfd;
-import gov.usgs.earthquake.nshmp.mfd.Mfds;
 
 @SuppressWarnings("javadoc")
 public class MfdsTests {

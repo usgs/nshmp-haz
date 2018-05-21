@@ -2,12 +2,12 @@ package gov.usgs.earthquake.nshmp.eq.model;
 
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.SLAB;
 
-import org.xml.sax.SAXException;
-
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.parsers.SAXParser;
+
+import org.xml.sax.SAXException;
 
 /*
  * Placeholder parser; delegates to GridParser.

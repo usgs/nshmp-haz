@@ -5,7 +5,6 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 
-import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 

@@ -11,6 +11,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.model.Source;
@@ -18,8 +19,6 @@ import gov.usgs.earthquake.nshmp.eq.model.SourceSet;
 import gov.usgs.earthquake.nshmp.eq.model.SourceType;
 import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
-
-import java.util.Set;
 
 /**
  * Container class for hazard curves derived from a {@code SourceSet}. Class

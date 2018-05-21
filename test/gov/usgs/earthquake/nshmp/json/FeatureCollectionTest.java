@@ -9,12 +9,11 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import com.google.common.base.Optional;
 
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 

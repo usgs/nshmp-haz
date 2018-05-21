@@ -5,10 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static gov.usgs.earthquake.nshmp.data.Data.areMonotonic;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.primitives.Doubles;
-
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
+import java.util.function.Function;
+
+import com.google.common.base.Joiner;
+import com.google.common.primitives.Doubles;
 
 /**
  * Sequence of xy-value pairs that is iterable ascending in x. Once created, the

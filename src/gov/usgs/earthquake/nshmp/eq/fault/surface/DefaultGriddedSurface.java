@@ -14,12 +14,12 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.math.RoundingMode.HALF_UP;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.math.DoubleMath;
-
-import java.util.Iterator;
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.geo.Location;

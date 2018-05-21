@@ -1,9 +1,9 @@
 package gov.usgs.earthquake.nshmp.calc;
 
-import com.google.common.annotations.Beta;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.google.common.annotations.Beta;
 
 import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput;

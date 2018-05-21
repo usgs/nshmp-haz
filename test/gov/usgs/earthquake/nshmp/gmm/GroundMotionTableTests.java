@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables;
-import gov.usgs.earthquake.nshmp.gmm.Imt;
 import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
 

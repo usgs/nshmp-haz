@@ -11,17 +11,17 @@ import static gov.usgs.earthquake.nshmp.calc.CalcFactory.toHazardResult;
 import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 import static gov.usgs.earthquake.nshmp.eq.model.PointSourceType.FIXED_STRIKE;
 
-import com.google.common.base.Function;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Range;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.calc.Transforms.SourceToInputs;
 import gov.usgs.earthquake.nshmp.eq.model.ClusterSourceSet;
@@ -85,7 +85,7 @@ public class HazardCalcs {
    * @see InputList
    */
   public static Function<Source, InputList> sourceToInputs(Site site) {
-    return new SourceToInputs(site);
+    return new SourceToInputs(site)::apply;
   }
 
   private static Range<Double> rpRange = Range.closed(1.0, 20000.0);
@@ -160,8 +160,10 @@ public class HazardCalcs {
           GridSourceSet gss = (GridSourceSet) sourceSet;
           if (config.performance.optimizeGrids && gss.sourceType() != FIXED_STRIKE &&
               gss.optimizable()) {
-            gridTables.add(transform(immediateFuture(gss),
-                GridSourceSet.optimizer(site.location), ex));
+            gridTables.add(transform(
+                immediateFuture(gss),
+                GridSourceSet.optimizer(site.location)::apply,
+                ex));
             break;
           }
           curveSets.add(sourcesToCurves(sourceSet, config, site, ex));

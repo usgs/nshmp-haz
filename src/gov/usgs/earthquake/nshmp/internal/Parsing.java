@@ -5,26 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.Data.checkWeights;
 
-import org.w3c.dom.Comment;
-import org.w3c.dom.Element;
-import org.xml.sax.Attributes;
-
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Enums;
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.primitives.Doubles;
-import com.google.common.primitives.Ints;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -39,11 +19,30 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NavigableMap;
+import java.util.function.Function;
+
+import org.w3c.dom.Comment;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
+
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Enums;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Ints;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.Indexing;
-
-import java.util.NavigableMap;
 
 /**
  * String, file, and XML parsing utilities.
@@ -606,7 +605,8 @@ public final class Parsing {
    * @param format a format string
    */
   public static String toString(Collection<Double> values, String format) {
-    return addBrackets(join(Iterables.transform(values, new FormatDoubleFunction(format, true)),
+    return addBrackets(join(
+        Iterables.transform(values, new FormatDoubleFunction(format, true)::apply),
         Delimiter.COMMA));
   }
 
@@ -626,7 +626,9 @@ public final class Parsing {
   public static String toString(Collection<Double> values, String format, String delimiter,
       boolean brackets, boolean cleanZeros) {
     String base = Joiner.on(delimiter).join(
-        Iterables.transform(values, new FormatDoubleFunction(format, cleanZeros)));
+        Iterables.transform(
+            values, 
+            new FormatDoubleFunction(format, cleanZeros)::apply));
     return brackets ? addBrackets(base) : base;
   }
 
@@ -685,7 +687,7 @@ public final class Parsing {
       dir = currentDir;
       end = next;
     }
-    return join(Iterables.transform(ranges, IntArrayToString.INSTANCE), Delimiter.COMMA);
+    return join(Iterables.transform(ranges, IntArrayToString.INSTANCE::apply), Delimiter.COMMA);
   }
 
   /**
@@ -700,7 +702,7 @@ public final class Parsing {
    */
   public static List<Integer> rangeStringToIntList(String s) {
     Iterable<int[]> values = Iterables.transform(split(s, Delimiter.COMMA),
-        StringToIntArray.INSTANCE);
+        StringToIntArray.INSTANCE::apply);
     return Ints.asList(Ints.concat(Iterables.toArray(values, int[].class)));
   }
 

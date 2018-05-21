@@ -1,12 +1,12 @@
 package gov.usgs.earthquake.nshmp.internal;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
-
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.ComparisonChain;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
@@ -301,14 +301,14 @@ public enum NshmpSite implements NamedLocation {
    * includes all NSHMP sites east of -115.0°.
    */
   public static EnumSet<NshmpSite> ceus() {
-    return Sets.newEnumSet(Iterables.filter(
-        EnumSet.allOf(NshmpSite.class),
-        new Predicate<NshmpSite>() {
-          @Override
-          public boolean apply(NshmpSite site) {
-            return site.location.lon() >= -115.0;
-          }
-        }), NshmpSite.class);
+    return filteredSet(
+        site -> site.location.lon() >= -115.0);
+  }
+
+  private static EnumSet<NshmpSite> filteredSet(Predicate<NshmpSite> filter) {
+    return Arrays.stream(values())
+        .filter(filter)
+        .collect(Collectors.toCollection(() -> EnumSet.noneOf(NshmpSite.class)));
   }
 
   /**
@@ -316,14 +316,9 @@ public enum NshmpSite implements NamedLocation {
    * sites west of -100.0°.
    */
   public static EnumSet<NshmpSite> wus() {
-    return Sets.newEnumSet(Iterables.filter(
-        EnumSet.allOf(NshmpSite.class),
-        new Predicate<NshmpSite>() {
-          @Override
-          public boolean apply(NshmpSite site) {
-            return site.location.lon() <= -100.0 && site.location.lon() >= -125.0;
-          }
-        }), NshmpSite.class);
+    return filteredSet(
+        site -> site.location.lon() <= -100.0 &&
+            site.location.lon() >= -125.0);
   }
 
   /**
@@ -339,28 +334,15 @@ public enum NshmpSite implements NamedLocation {
    * The set of sites used to test the Alaska NSHM.
    */
   public static EnumSet<NshmpSite> alaska() {
-    return Sets.newEnumSet(Iterables.filter(
-        EnumSet.allOf(NshmpSite.class),
-        new Predicate<NshmpSite>() {
-          @Override
-          public boolean apply(NshmpSite site) {
-            return site.state == UsRegion.AK;
-          }
-        }), NshmpSite.class);
+    return filteredSet(
+        site -> site.state == UsRegion.AK);
   }
 
   /**
    * The set of sites used to test the Hawaii NSHM.
    */
   public static EnumSet<NshmpSite> hawaii() {
-    return Sets.newEnumSet(Iterables.filter(
-        EnumSet.allOf(NshmpSite.class),
-        new Predicate<NshmpSite>() {
-          @Override
-          public boolean apply(NshmpSite site) {
-            return site.state == UsRegion.HI;
-          }
-        }), NshmpSite.class);
+    return filteredSet(site -> site.state == UsRegion.HI);
   }
 
   /**
@@ -381,14 +363,7 @@ public enum NshmpSite implements NamedLocation {
    * A restricted set of CEUS sites that is clipped at -105.5°.
    */
   public static EnumSet<NshmpSite> nrc() {
-    return Sets.newEnumSet(Iterables.filter(
-        EnumSet.allOf(NshmpSite.class),
-        new Predicate<NshmpSite>() {
-          @Override
-          public boolean apply(NshmpSite site) {
-            return site.location.lon() >= -105.5;
-          }
-        }), NshmpSite.class);
+    return filteredSet(site -> site.location.lon() >= -105.5);
   }
 
   /**

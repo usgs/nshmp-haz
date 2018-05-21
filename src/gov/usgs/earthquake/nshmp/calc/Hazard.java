@@ -5,14 +5,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.XySequence.emptyCopyOf;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
-
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.model.GridSourceSet;

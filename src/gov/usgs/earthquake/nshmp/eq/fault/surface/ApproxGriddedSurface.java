@@ -1,9 +1,9 @@
 package gov.usgs.earthquake.nshmp.eq.fault.surface;
 
+import java.util.List;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.geo.Location;

@@ -2,13 +2,13 @@ package gov.usgs.earthquake.nshmp.gmm;
 
 import static com.google.common.math.DoubleMath.fuzzyEquals;
 
-import com.google.common.collect.Lists;
-
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Lists;
 
 /**
  * Intesity measure type (Imt) identifiers. {@code SA0P1} stands for spectal

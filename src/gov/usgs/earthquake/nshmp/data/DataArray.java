@@ -2,11 +2,11 @@ package gov.usgs.earthquake.nshmp.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.primitives.Doubles;
-
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.google.common.primitives.Doubles;
 
 /**
  * An immutable array of {@code double} values. This class is similar to the

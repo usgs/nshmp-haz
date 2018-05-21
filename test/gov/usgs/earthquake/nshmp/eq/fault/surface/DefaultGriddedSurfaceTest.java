@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import gov.usgs.earthquake.nshmp.eq.fault.surface.DefaultGriddedSurface;
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 

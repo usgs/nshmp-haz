@@ -7,10 +7,6 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 
-import gov.usgs.earthquake.nshmp.geo.Bounds;
-import gov.usgs.earthquake.nshmp.geo.Location;
-import gov.usgs.earthquake.nshmp.geo.LocationList;
-
 @SuppressWarnings("javadoc")
 public class BoundsTest {
 

@@ -5,6 +5,9 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 import static gov.usgs.earthquake.nshmp.internal.GeoJson.validateProperty;
 
+import java.lang.reflect.Type;
+import java.util.Set;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
@@ -13,9 +16,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import java.lang.reflect.Type;
-import java.util.Set;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;

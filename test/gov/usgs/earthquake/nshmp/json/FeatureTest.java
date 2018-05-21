@@ -3,12 +3,11 @@ package gov.usgs.earthquake.nshmp.json;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import com.google.common.base.Optional;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
@@ -32,7 +31,7 @@ public class FeatureTest {
   public void createPoint_nullLocation() {
     exception.expect(NullPointerException.class);
     
-    Feature.createPoint(properties, null, Optional.absent());
+    Feature.createPoint(properties, null, Optional.empty());
   }
   
   /**
@@ -44,7 +43,7 @@ public class FeatureTest {
   public void createPoint_badLatitude() {
     exception.expect(IllegalArgumentException.class);
     
-    Feature.createPoint(properties, 500.0, -120, Optional.absent());
+    Feature.createPoint(properties, 500.0, -120, Optional.empty());
   }
   
   /**
@@ -56,7 +55,7 @@ public class FeatureTest {
   public void createPoint_badLongitude() {
     exception.expect(IllegalArgumentException.class);
     
-    Feature.createPoint(properties, 40, 500.0, Optional.absent());
+    Feature.createPoint(properties, 40, 500.0, Optional.empty());
   }
   
   /**
@@ -69,7 +68,7 @@ public class FeatureTest {
   public void createPolygon_nullLocationList() {
     exception.expect(NullPointerException.class);
     
-    Feature.createPolygon(properties, Optional.absent(), null);
+    Feature.createPolygon(properties, Optional.empty(), null);
   }
   
   /**
@@ -88,7 +87,7 @@ public class FeatureTest {
         .add(40, -120)
         .build();
     
-    Feature.createPolygon(properties, Optional.absent(), locs);
+    Feature.createPolygon(properties, Optional.empty(), locs);
   }
   
   /**
@@ -100,7 +99,7 @@ public class FeatureTest {
   public void feature_nullGeometry() {
     exception.expect(NullPointerException.class);
     
-    new Feature(properties, null, Optional.absent());
+    new Feature(properties, null, Optional.empty());
   }
   
   /**
@@ -113,7 +112,7 @@ public class FeatureTest {
     exception.expect(NullPointerException.class);
     
     Point geometry = new Point(40, -120);
-    new Feature(null, geometry, Optional.absent());
+    new Feature(null, geometry, Optional.empty());
   }
  
   /**
@@ -129,7 +128,7 @@ public class FeatureTest {
     
     Feature feature = new Feature(properties, point, Optional.of(strId));
     Feature feature2 = Feature.createPoint(properties, loc, Optional.of(intId));
-    Feature feature3 = Feature.createPoint(properties, 40, -122, Optional.absent());
+    Feature feature3 = Feature.createPoint(properties, 40, -122, Optional.empty());
     
     assertEquals(loc, feature.getGeometry().asPoint().getLocation());
     assertEquals(loc, feature2.getGeometry().asPoint().getLocation());
@@ -147,10 +146,10 @@ public class FeatureTest {
   public void featurePolygonEquals() {
     Polygon polygon =  new Polygon(PolygonTest.border, PolygonTest.interior);
     
-    Feature feature = new Feature(properties, polygon, Optional.absent());
+    Feature feature = new Feature(properties, polygon, Optional.empty());
     Feature feature2 = Feature.createPolygon(
         properties, 
-        Optional.absent(), 
+        Optional.empty(), 
         PolygonTest.border, 
         PolygonTest.interior);
     
@@ -174,11 +173,11 @@ public class FeatureTest {
         .addPolygon(MultiPolygonTest.borderB)
         .build();
     
-    Feature feature = new Feature(properties, multiPolygon, Optional.absent());
+    Feature feature = new Feature(properties, multiPolygon, Optional.empty());
     Feature feature1 = Feature.createMultiPolygon(
-        properties, multiPolygon, Optional.absent());
+        properties, multiPolygon, Optional.empty());
     Feature feature2 = Feature.createMultiPolygon(
-        properties, multiPolygon.getPolygons(), Optional.absent());
+        properties, multiPolygon.getPolygons(), Optional.empty());
    
     List<Polygon> polygons = feature.getGeometry().asMultiPolygon().getPolygons();
     List<Polygon> polygons2 = feature1.getGeometry().asMultiPolygon().getPolygons();
@@ -202,7 +201,7 @@ public class FeatureTest {
    */
   @Test
   public void equalsTest() {
-    Feature feature = Feature.createPoint(properties, 40, -120, Optional.absent());
+    Feature feature = Feature.createPoint(properties, 40, -120, Optional.empty());
     
     Properties propCheck = feature.getProperties();
     

@@ -50,10 +50,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -85,10 +85,10 @@ public class NshmpSiteTests {
             EnumSet.allOf(NshmpSite.class),
             new Predicate<NshmpSite>() {
               @Override
-              public boolean apply(NshmpSite site) {
+              public boolean test(NshmpSite site) {
                 return site.location().lon() <= -100.0 && site.location().lon() >= -125.0;
               }
-            }), NshmpSite.class));
+            }::test), NshmpSite.class));
 
     /* CEUS */
     assertEquals(
@@ -97,10 +97,10 @@ public class NshmpSiteTests {
             EnumSet.allOf(NshmpSite.class),
             new Predicate<NshmpSite>() {
               @Override
-              public boolean apply(NshmpSite site) {
+              public boolean test(NshmpSite site) {
                 return site.location().lon() >= -115.0;
               }
-            }), NshmpSite.class));
+            }::test), NshmpSite.class));
 
     /* Alaska */
     assertEquals(
@@ -119,10 +119,10 @@ public class NshmpSiteTests {
             EnumSet.allOf(NshmpSite.class),
             new Predicate<NshmpSite>() {
               @Override
-              public boolean apply(NshmpSite site) {
+              public boolean test(NshmpSite site) {
                 return site.location().lon() >= -105.5;
               }
-            }), NshmpSite.class));
+            }::test), NshmpSite.class));
 
     /* DOE facilities */
     assertEquals(

@@ -4,14 +4,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.CLUSTER;
 
-import com.google.common.base.Predicate;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Predicate;
+
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
-
-import java.util.Iterator;
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 
@@ -79,8 +79,8 @@ public class ClusterSourceSet extends AbstractSourceSet<ClusterSource> {
           distance);
 
       @Override
-      public boolean apply(ClusterSource cs) {
-        return Iterables.any(cs.faults, filter);
+      public boolean test(ClusterSource cs) {
+        return Iterables.any(cs.faults, filter::test);
       }
 
       @Override

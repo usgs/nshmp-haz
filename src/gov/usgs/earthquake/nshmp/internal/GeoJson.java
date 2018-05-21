@@ -3,15 +3,15 @@ package gov.usgs.earthquake.nshmp.internal;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.util.Maths.round;
 
-import com.google.common.base.Optional;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
-import java.util.Objects;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;

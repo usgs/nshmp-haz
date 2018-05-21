@@ -15,10 +15,10 @@ import static gov.usgs.earthquake.nshmp.internal.SourceElement.ALEATORY;
 import static gov.usgs.earthquake.nshmp.internal.SourceElement.EPISTEMIC;
 import static gov.usgs.earthquake.nshmp.internal.SourceElement.MAG_UNCERTAINTY;
 
-import org.w3c.dom.Element;
-
 import java.util.Arrays;
 import java.util.Map;
+
+import org.w3c.dom.Element;
 
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
 

@@ -10,7 +10,17 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NULL;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.common.base.Optional;
+import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.reflect.TypeToken;
@@ -21,16 +31,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.calc.Site.Builder;
 import gov.usgs.earthquake.nshmp.geo.Bounds;
@@ -266,12 +266,12 @@ public abstract class Sites implements Iterable<Site> {
 
     @Override
     public Optional<Bounds> mapBounds() {
-      return Optional.absent();
+      return Optional.empty();
     }
 
     @Override
     public Optional<Double> mapSpacing() {
-      return Optional.absent();
+      return Optional.empty();
     }
   }
 
@@ -374,7 +374,7 @@ public abstract class Sites implements Iterable<Site> {
       checkState(features.size() <= 2, "Only 2 polygon features may be defined");
 
       // Optional<Region> extents = Optional.absent();
-      Optional<Bounds> mapBounds = Optional.absent();
+      Optional<Bounds> mapBounds = Optional.empty();
       String boundsName = "";
       int calcPolyIndex = 0;
       if (features.size() == 2) {

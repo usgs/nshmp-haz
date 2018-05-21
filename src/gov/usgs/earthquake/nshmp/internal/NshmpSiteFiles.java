@@ -15,16 +15,6 @@ import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.UCERF3_RELM;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.WASATCH;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.WUS_CLIP;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Optional;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -36,7 +26,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+
+import com.google.common.base.Functions;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
@@ -170,7 +170,7 @@ final class NshmpSiteFiles {
               public LocationList apply(NshmpPolygon poly) {
                 return poly.coordinates();
               }
-            })
+            }::apply)
             .toList());
   }
 
@@ -182,7 +182,7 @@ final class NshmpSiteFiles {
       features.add(GeoJson.createPolygon(
           nameList.get(i++),
           coords,
-          Optional.<String> absent(),
+          Optional.<String> empty(),
           Optional.of(0.1)));
     }
     FeatureCollection<Feature> fc = new FeatureCollection<Feature>();
@@ -204,12 +204,12 @@ final class NshmpSiteFiles {
           name + " Map Extents",
           bounds,
           Optional.of(GeoJson.Value.EXTENTS),
-          Optional.<Double> absent()));
+          Optional.<Double> empty()));
     }
     features.add(GeoJson.createPolygon(
         name,
         coords,
-        Optional.<String> absent(),
+        Optional.<String> empty(),
         Optional.of(spacing)));
     FeatureCollection<Feature> fc = new FeatureCollection<>();
     fc.features = features;
@@ -221,13 +221,13 @@ final class NshmpSiteFiles {
     writeSites(
         "ceus-0p1",
         FluentIterable.from(NshmpSite.ceus())
-            .transform(adjustLocation_0p1())
+            .transform(adjustLocation_0p1()::apply)
             .toList(),
         DEC2_FMT);
     writeSites(
         "wus-0p1",
         FluentIterable.from(NshmpSite.wus())
-            .transform(adjustLocation_0p1())
+            .transform(adjustLocation_0p1()::apply)
             .toList(),
         DEC2_FMT);
   }
@@ -309,7 +309,7 @@ final class NshmpSiteFiles {
         sb.append(padStart(latLonFormat.format(loc.location().lat()), LAT_BUFF, ' '));
         return sb.toString();
       }
-    });
+    }::apply);
     String header = new StringBuilder(padEnd("name,", NAME_BUFF, ' '))
         .append(padStart("lon", LON_BUFF, ' '))
         .append(',')
@@ -342,7 +342,7 @@ final class NshmpSiteFiles {
         }
         return sb.toString();
       }
-    });
+    }::apply);
     StringBuilder header = new StringBuilder(padEnd("name,", NAME_BUFF, ' '))
         .append(padStart("lon", LON_BUFF_CYBER, ' '))
         .append(',')

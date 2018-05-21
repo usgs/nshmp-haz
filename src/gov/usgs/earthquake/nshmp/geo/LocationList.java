@@ -5,17 +5,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
-
-import java.util.Iterator;
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
@@ -320,12 +320,17 @@ public abstract class LocationList implements Iterable<Location> {
    * @param vector to translate list by
    */
   public LocationList translate(final LocationVector vector) {
+    // TODO Stream
+    // return builder().addAll(Streams.stream(this)
+    // .map(loc -> Locations.location(loc, vector))::iterator)
+    // .build();
+
     return builder().addAll(Iterables.transform(this, new Function<Location, Location>() {
       @Override
       public Location apply(Location loc) {
         return Locations.location(loc, vector);
       }
-    })).build();
+    }::apply)).build();
   }
 
   /* The default implementation that delegates to an ImmutableList. */

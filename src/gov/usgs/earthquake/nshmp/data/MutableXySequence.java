@@ -2,10 +2,9 @@ package gov.usgs.earthquake.nshmp.data;
 
 import static com.google.common.base.Preconditions.checkElementIndex;
 
-import com.google.common.base.Function;
-
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.Function;
 
 /**
  * Mutable variant of {@code XySequence}.

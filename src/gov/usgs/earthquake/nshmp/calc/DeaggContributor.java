@@ -4,15 +4,15 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.SYSTEM;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 
 import gov.usgs.earthquake.nshmp.calc.DeaggExport.ContributionFilter;
 import gov.usgs.earthquake.nshmp.data.Data;
@@ -175,7 +175,7 @@ abstract class DeaggContributor {
           sourceSet.name(), sourceSet.type(), contribution));
       sb.append(NEWLINE);
       for (DeaggContributor child : children) {
-        if (filter.apply(child)) {
+        if (filter.test(child)) {
           child.appendTo(sb, "  ", filter);
           continue;
         }
@@ -193,7 +193,7 @@ abstract class DeaggContributor {
           Maths.round(filter.toPercent(total()), 2));
       jsonList.add(jc);
       for (DeaggContributor child : children) {
-        if (filter.apply(child)) {
+        if (filter.test(child)) {
           jsonList.addAll(child.toJson(filter));
           continue;
         }
@@ -420,7 +420,7 @@ abstract class DeaggContributor {
           filter.toPercent(total)));
       sb.append(NEWLINE);
       for (DeaggContributor fault : faults) {
-        if (filter.apply(fault)) {
+        if (filter.test(fault)) {
           fault.appendTo(sb, "    ", filter);
           continue;
         }
@@ -769,7 +769,7 @@ abstract class DeaggContributor {
   /* Convert a builder list to immutable sorted contributor list. */
   private static List<DeaggContributor> buildAndSort(
       Collection<DeaggContributor.Builder> builders) {
-    return SORTER.immutableSortedCopy(Iterables.transform(builders, BUILDER));
+    return SORTER.immutableSortedCopy(Iterables.transform(builders, BUILDER::apply));
   }
 
   static final Function<DeaggContributor.Builder, DeaggContributor> BUILDER =

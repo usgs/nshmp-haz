@@ -7,9 +7,9 @@ import static gov.usgs.earthquake.nshmp.eq.Earthquakes.checkInterfaceWidth;
 import static gov.usgs.earthquake.nshmp.eq.fault.Faults.checkTrace;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.INTERFACE;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import gov.usgs.earthquake.nshmp.eq.fault.surface.ApproxGriddedSurface;
 import gov.usgs.earthquake.nshmp.eq.fault.surface.DefaultGriddedSurface;

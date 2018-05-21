@@ -2,11 +2,11 @@ package gov.usgs.earthquake.nshmp.function;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.base.StandardSystemProperty;
-
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import com.google.common.base.StandardSystemProperty;
 
 /**
  * <b>Title:</b> EvenlyDiscretizedFunc<p>

@@ -5,16 +5,6 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
-import com.google.gson.annotations.SerializedName;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +12,16 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
+import com.google.gson.annotations.SerializedName;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig.Deagg.Bins;
 import gov.usgs.earthquake.nshmp.calc.DeaggContributor.JsonContributor;
@@ -298,7 +298,9 @@ final class DeaggExport {
   };
 
   private static String formatEpsilonValues(List<Double> values) {
-    return Delimiter.COMMA.joiner().join(Iterables.transform(values, EPSILON_FORMATTER));
+    return Delimiter.COMMA.joiner().join(Iterables.transform(
+        values, 
+        EPSILON_FORMATTER::apply));
   }
 
   private static Ordering<RmBin> RM_BIN_SORTER = new Ordering<RmBin>() {
@@ -565,7 +567,7 @@ final class DeaggExport {
      */
     List<DeaggContributor> sourceSetContributors = new ArrayList<>();
     for (DeaggContributor contributor : dd.contributors) {
-      if (contributionFilter.apply(contributor)) {
+      if (contributionFilter.test(contributor)) {
         sourceSetContributors.add(contributor);
         continue;
       }
@@ -597,7 +599,7 @@ final class DeaggExport {
   private static Predicate<SourceSetContributor> SYSTEM_FILTER =
       new Predicate<SourceSetContributor>() {
         @Override
-        public boolean apply(SourceSetContributor contributor) {
+        public boolean test(SourceSetContributor contributor) {
           return contributor.sourceSet.type() == SourceType.SYSTEM;
         }
       };
@@ -626,7 +628,7 @@ final class DeaggExport {
     }
 
     @Override
-    public boolean apply(DeaggContributor contributor) {
+    public boolean test(DeaggContributor contributor) {
       return contributor.total() * toPercent >= limit;
     }
   }
@@ -642,7 +644,7 @@ final class DeaggExport {
 
     ImmutableList.Builder<JsonContributor> jsonContributors = ImmutableList.builder();
     for (DeaggContributor contributor : dd.contributors) {
-      if (contributionFilter.apply(contributor)) {
+      if (contributionFilter.test(contributor)) {
         jsonContributors.addAll(contributor.toJson(contributionFilter));
         continue;
       }
@@ -661,15 +663,15 @@ final class DeaggExport {
 
     List<SourceSetContributor> systemSourceSetContributors = FluentIterable
         .from(dd.contributors)
-        .transform(TO_SOURCE_SET_CONTRIBUTOR)
-        .filter(SYSTEM_FILTER)
-        .filter(contributionFilter)
+        .transform(TO_SOURCE_SET_CONTRIBUTOR::apply)
+        .filter(SYSTEM_FILTER::test)
+        .filter(contributionFilter::test)
         .toList();
 
     boolean first = true;
     for (SourceSetContributor ssc : systemSourceSetContributors) {
       SystemContributor model = (SystemContributor) ssc.children.get(0);
-      if (!contributionFilter.apply(model)) {
+      if (!contributionFilter.test(model)) {
         continue;
       }
       sb.append(first ? SECTION_SEPARATOR : NEWLINE)
@@ -679,7 +681,7 @@ final class DeaggExport {
           .append(Parsing.toString(model.mfd.rows(), "%9.2f", ",", false, true))
           .append(NEWLINE);
       for (DeaggContributor child : ssc.children) {
-        if (contributionFilter.apply(child)) {
+        if (contributionFilter.test(child)) {
           ((SystemContributor) child).appendMfd(sb);
           continue;
         }
@@ -711,7 +713,7 @@ final class DeaggExport {
 
     List<SummaryItem> toSummaryItems() {
       return FluentIterable.from(this)
-          .transform(BIN_TO_SUMMARY_ITEM)
+          .transform(BIN_TO_SUMMARY_ITEM::apply)
           .toList();
     }
   }

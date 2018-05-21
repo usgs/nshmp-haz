@@ -9,9 +9,9 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
 
-import com.google.common.collect.Range;
-
 import java.util.Map;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;

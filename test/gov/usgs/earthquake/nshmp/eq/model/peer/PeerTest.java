@@ -8,14 +8,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.xml.sax.SAXException;
-
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
-import com.google.common.primitives.Doubles;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +18,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executor;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.xml.sax.SAXException;
+
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.HazardCalc;
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;

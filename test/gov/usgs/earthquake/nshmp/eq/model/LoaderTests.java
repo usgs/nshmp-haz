@@ -1,16 +1,14 @@
 package gov.usgs.earthquake.nshmp.eq.model;
 
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.file.Paths;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.google.common.io.Resources;
-
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.file.Paths;
-
-import gov.usgs.earthquake.nshmp.eq.model.Loader;
 
 @SuppressWarnings("javadoc")
 public class LoaderTests {

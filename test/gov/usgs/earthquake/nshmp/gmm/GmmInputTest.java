@@ -1,7 +1,5 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import gov.usgs.earthquake.nshmp.gmm.GmmInput.Builder;
-import gov.usgs.earthquake.nshmp.gmm.GmmInput.Field;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.DIP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RAKE;
@@ -15,14 +13,17 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.Z1P0;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.Z2P5;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.ZHYP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.ZTOP;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.rules.ExpectedException;
+
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import gov.usgs.earthquake.nshmp.gmm.GmmInput.Builder;
+import gov.usgs.earthquake.nshmp.gmm.GmmInput.Field;
 
 /**
  * JUnit test for GmmInput

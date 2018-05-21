@@ -4,12 +4,12 @@ import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 import gov.usgs.earthquake.nshmp.calc.Transforms.ClusterCurveConsolidator;
 import gov.usgs.earthquake.nshmp.calc.Transforms.ClusterToCurves;
@@ -64,13 +64,13 @@ final class CalcFactory {
     for (Source source : sources.iterableForLocation(site.location)) {
       ListenableFuture<HazardCurves> curves = transform(
           immediateFuture(source),
-          sourceToCurves,
+          sourceToCurves::apply,
           ex);
       curvesList.add(curves);
     }
     return transform(
         allAsList(curvesList),
-        new CurveConsolidator(sources, config),
+        new CurveConsolidator(sources, config)::apply,
         ex);
   }
 
@@ -92,7 +92,7 @@ final class CalcFactory {
 
     return transform(
         immediateFuture(sources),
-        new ParallelSystemToCurves(site, config, ex),
+        new ParallelSystemToCurves(site, config, ex)::apply,
         ex);
   }
 
@@ -123,13 +123,13 @@ final class CalcFactory {
     for (ClusterSource source : sources.iterableForLocation(site.location)) {
       ListenableFuture<ClusterCurves> curves = transform(
           immediateFuture(source),
-          clusterToCurves,
+          clusterToCurves::apply,
           ex);
       curvesList.add(curves);
     }
     return transform(
         allAsList(curvesList),
-        new ClusterCurveConsolidator(sources, config),
+        new ClusterCurveConsolidator(sources, config)::apply,
         ex);
   }
 
@@ -153,7 +153,8 @@ final class CalcFactory {
 
     return transform(
         allAsList(curveSets),
-        new CurveSetConsolidator(model, config, site), ex).get();
+        new CurveSetConsolidator(model, config, site)::apply,
+        ex).get();
   }
 
 }

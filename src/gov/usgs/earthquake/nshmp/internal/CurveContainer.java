@@ -2,6 +2,15 @@ package gov.usgs.earthquake.nshmp.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -13,15 +22,6 @@ import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.primitives.Doubles;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.XySequence;

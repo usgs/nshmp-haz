@@ -3,9 +3,6 @@ package gov.usgs.earthquake.nshmp.internal;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static java.util.logging.Level.SEVERE;
 
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Formatter;
@@ -13,6 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 
 /**
  * Logging utilities.

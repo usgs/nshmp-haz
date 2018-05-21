@@ -7,13 +7,13 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Strings.padStart;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.ContiguousSet;
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Range;
-
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * An immutable, tabular grid of locations that supplies row and column data as

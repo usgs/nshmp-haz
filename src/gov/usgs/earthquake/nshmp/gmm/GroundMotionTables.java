@@ -13,16 +13,6 @@ import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.lang.Math.log10;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.common.base.Enums;
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.io.LineProcessor;
-import com.google.common.primitives.Doubles;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,8 +23,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import com.google.common.base.Enums;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.io.LineProcessor;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
@@ -727,7 +727,7 @@ final class GroundMotionTables {
         List<Imt> imtList = FluentIterable
             .from(Parsing.split(line, Delimiter.SPACE))
             .transform(Doubles.stringConverter())
-            .transform(new FrequencyToIMT())
+            .transform(new FrequencyToIMT()::apply)
             .toList();
         // remove dupes -- (e.g., 2s PGA columns in P11)
         imts = Lists.newArrayList(new LinkedHashSet<Imt>(imtList));

@@ -21,6 +21,13 @@ import static gov.usgs.earthquake.nshmp.mfd.MfdType.GR_TAPER;
 import static gov.usgs.earthquake.nshmp.mfd.MfdType.INCR;
 import static gov.usgs.earthquake.nshmp.mfd.MfdType.SINGLE;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.SAXParser;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -28,13 +35,6 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Iterables;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.SAXParser;
 
 import gov.usgs.earthquake.nshmp.eq.fault.surface.GriddedSurface;
 import gov.usgs.earthquake.nshmp.eq.model.MfdHelper.SingleData;

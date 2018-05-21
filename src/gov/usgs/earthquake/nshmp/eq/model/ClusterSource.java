@@ -5,12 +5,12 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.StandardSystemProperty.LINE_SEPARATOR;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.CLUSTER;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.geo.Location;

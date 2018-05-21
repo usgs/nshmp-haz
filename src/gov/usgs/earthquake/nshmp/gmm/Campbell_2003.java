@@ -9,9 +9,9 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import com.google.common.collect.Range;
-
 import java.util.Map;
+
+import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;

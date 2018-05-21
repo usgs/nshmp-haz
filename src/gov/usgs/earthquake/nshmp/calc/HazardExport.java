@@ -6,17 +6,6 @@ import static gov.usgs.earthquake.nshmp.data.XySequence.emptyCopyOf;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Stopwatch;
-import com.google.common.base.Strings;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.primitives.Doubles;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -33,7 +22,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Logger;
+
+import com.google.common.base.Functions;
+import com.google.common.base.Stopwatch;
+import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.calc.Deaggregation.ImtDeagg;
 import gov.usgs.earthquake.nshmp.calc.HazardExport.Metadata.Builder;
@@ -253,7 +253,7 @@ public final class HazardExport {
     Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
     if (demo.config.hazard.valueFormat == ValueFormat.POISSON_PROBABILITY) {
       formatter = Functions.compose(
-          formatter,
+          formatter::apply,
           Mfds.annualRateToProbabilityConverter());
     }
 
@@ -496,7 +496,10 @@ public final class HazardExport {
       Function<Double, String> formatter) {
 
     return Parsing.join(
-        FluentIterable.from(location).append(Iterables.transform(values, formatter)),
+        FluentIterable.from(location).append(
+            Iterables.transform(
+            values, 
+            formatter::apply)),
         Delimiter.COMMA);
   }
 
@@ -542,7 +545,7 @@ public final class HazardExport {
     /* Initialize receiver */
     Iterable<SourceSet<? extends Source>> sources = Iterables.transform(
         hazard.sourceSetCurves.values(),
-        CURVE_SET_TO_SOURCE_SET);
+        CURVE_SET_TO_SOURCE_SET::apply);
     Set<Gmm> gmms = gmmSet(sources);
     for (Entry<Imt, XySequence> entry : hazard.curves().entrySet()) {
       imtMap.put(entry.getKey(), initCurves(gmms, entry.getValue()));
@@ -559,6 +562,7 @@ public final class HazardExport {
   }
 
   /* Scan the supplied source sets for the set of all GMMs used. */
+  // TODO Stream
   private static Set<Gmm> gmmSet(final Iterable<SourceSet<? extends Source>> sourceSets) {
     return Sets.immutableEnumSet(
         FluentIterable.from(sourceSets).transformAndConcat(
@@ -567,10 +571,11 @@ public final class HazardExport {
               public Set<Gmm> apply(SourceSet<? extends Source> sourceSet) {
                 return sourceSet.groundMotionModels().gmms();
               }
-            }));
+            }::apply));
   }
 
   /* Initalize a map of curves, one entry for each of the supplied enum key. */
+  // TODO Stream
   private static <K extends Enum<K>> Map<K, XySequence> initCurves(
       final Set<K> keys,
       final XySequence model) {
@@ -581,7 +586,7 @@ public final class HazardExport {
               public XySequence apply(K key) {
                 return emptyCopyOf(model);
               }
-            }));
+            }::apply));
   }
 
   private static final Function<HazardCurveSet, SourceSet<? extends Source>> CURVE_SET_TO_SOURCE_SET =

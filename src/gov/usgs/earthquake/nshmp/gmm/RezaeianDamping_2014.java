@@ -13,17 +13,17 @@ import static java.lang.Math.abs;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
 
-import com.google.common.annotations.Beta;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Range;
-import com.google.common.primitives.Doubles;
-
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.annotations.Beta;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;
 import gov.usgs.earthquake.nshmp.data.Interpolator;

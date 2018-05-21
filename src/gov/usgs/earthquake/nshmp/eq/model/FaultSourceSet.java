@@ -4,13 +4,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.FAULT;
 
-import com.google.common.base.Predicate;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Predicate;
+
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
-
-import java.util.Iterator;
-import java.util.List;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.Locations;
@@ -86,8 +86,8 @@ public class FaultSourceSet extends AbstractSourceSet<FaultSource> {
     }
 
     @Override
-    public boolean apply(FaultSource source) {
-      return filter.apply(source.trace.first()) || filter.apply(source.trace.last());
+    public boolean test(FaultSource source) {
+      return filter.test(source.trace.first()) || filter.test(source.trace.last());
     }
 
     @Override
