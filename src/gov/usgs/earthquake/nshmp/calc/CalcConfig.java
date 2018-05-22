@@ -765,9 +765,7 @@ public final class CalcConfig {
      */
     public final URL basinDataProvider;
 
-    private SiteData(
-        URL basinDataProvider) {
-
+    private SiteData(URL basinDataProvider) {
       this.basinDataProvider = basinDataProvider;
     }
 
@@ -782,8 +780,7 @@ public final class CalcConfig {
       URL basinDataProvider;
 
       SiteData build() {
-        return new SiteData(
-            basinDataProvider);
+        return new SiteData(basinDataProvider);
       }
 
       void copy(SiteData that) {
@@ -1265,7 +1262,7 @@ public final class CalcConfig {
       return new JsonPrimitive(path.toAbsolutePath().normalize().toString());
     }
   }
-  
+
   private static class UrlDeserializer implements JsonDeserializer<URL> {
 
     @Override
@@ -1273,7 +1270,6 @@ public final class CalcConfig {
         JsonElement json,
         Type type,
         JsonDeserializationContext context) throws JsonParseException {
-      
       try {
         return new URL(json.getAsString());
       } catch (MalformedURLException mue) {
@@ -1281,7 +1277,6 @@ public final class CalcConfig {
       }
     }
   }
-
 
   /**
    * Save this config in JSON format to the speciifed directory.

@@ -5,7 +5,11 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 import static gov.usgs.earthquake.nshmp.internal.GeoJson.validateProperty;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Optional;
 import java.util.Set;
@@ -13,15 +17,19 @@ import java.util.Set;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
 import gov.usgs.earthquake.nshmp.internal.GeoJson;
+import gov.usgs.earthquake.nshmp.util.Maths;
 import gov.usgs.earthquake.nshmp.util.Named;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
 
@@ -199,6 +207,7 @@ public class Site implements Named {
       vsInferred(config.site.vsInferred);
       z1p0(config.site.z1p0);
       z2p5(config.site.z2p5);
+      basinDataProvider(config.siteData.basinDataProvider);
     }
 
     /**
@@ -264,7 +273,25 @@ public class Site implements Named {
       }
       return this;
     }
-
+    
+    /** Optional basin data provider. */
+    public Builder basinDataProvider(URL url) {
+      if (url != null) {
+        try {
+          // test connection
+          HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+          int status = connection.getResponseCode();
+          if (status != 200) {
+            throw new IOException("Basin service not working [status:" +
+                status + "]\nURL: " + basinDataProvider);
+          }
+          basinDataProvider = Optional.of(url);
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe);
+        }
+      }
+      return this;
+    }
     /**
      * Return a string reflecting the current site parameter state of this
      * builder.
@@ -278,25 +305,69 @@ public class Site implements Named {
      */
     public Site build() {
       checkState(location != null, "Site location not set");
-      updateBasinTerms();
+
+      /*
+       * If a basin data provider has been specified, update z1p0 and z2p5
+       * accordingly. NOTE that we DO NOT want set values in builder as they
+       * will persist to subsequest sites. We are selectively overriding basin
+       * terms.
+       */
+      if (basinDataProvider.isPresent()) {
+        BasinTerms bt = getBasinTerms();
+        return new Site(name, location, vs30, vsInferred, bt.z1p0, bt.z2p5);
+      }
       return new Site(name, location, vs30, vsInferred, z1p0, z2p5);
     }
 
-    /*
-     * If a basin data provider has been specified, update z1p0 and z2p5
-     * accordingly. If the basin provider returns NaN, we retain whatever values
-     * are already set.
-     */
-    private void updateBasinTerms() {
-      if (basinDataProvider.isPresent()) {
-        /*
-         * make request, get z1p0 and 22p5, if not-null/NaN, use updated values
-         * in Site() constructor. NOTE that we DO NOT want set values in builder
-         * as they will persist to subsequest sites. We are selectively
-         * overriding basin terms. This method needs to be inlined with build()
-         * to only override constructor values.
-         */
+    private BasinTerms getBasinTerms() {
+      try {
+        double lon = Maths.round(location.lon(), 2);
+        double lat = Maths.round(location.lat(), 2);
+        URL siteUrl = new URL(basinDataProvider.get() + String.format(BASIN_QUERY, lon, lat));
+        HttpURLConnection connection = (HttpURLConnection) siteUrl.openConnection();
+        try (Reader reader = new InputStreamReader(connection.getInputStream())) {
+          return GSON.fromJson(reader, BasinTerms.class);
+        }
+      } catch (IOException ioe) {
+        throw new RuntimeException(ioe);
       }
+    }
+  }
+
+  private static final Gson GSON = new GsonBuilder()
+      .registerTypeAdapter(BasinTerms.class, new BasinTermsDeserializer())
+      .create();
+
+  private static final String BASIN_QUERY = "?longitude=%s&latitude=%s";
+
+  private static class BasinTerms {
+
+    final double z1p0;
+    final double z2p5;
+
+    BasinTerms(double z1p0, double z2p5) {
+      this.z1p0 = z1p0;
+      this.z2p5 = z2p5;
+    }
+  }
+
+  private static class BasinTermsDeserializer implements JsonDeserializer<BasinTerms> {
+
+    @Override
+    public BasinTerms deserialize(
+        JsonElement json,
+        Type typeOfT,
+        JsonDeserializationContext context) throws JsonParseException {
+
+      JsonObject response = json.getAsJsonObject().get("response").getAsJsonObject();
+      double z1p0 = readValue(response, Key.Z1P0);
+      double z2p5 = readValue(response, Key.Z2P5);
+      return new BasinTerms(z1p0, z2p5);
+    }
+
+    static double readValue(JsonObject json, String zId) {
+      JsonElement e = json.get(zId).getAsJsonObject().get("value");
+      return e.isJsonNull() ? Double.NaN : Maths.round(e.getAsDouble(), 1) ;
     }
   }
 
