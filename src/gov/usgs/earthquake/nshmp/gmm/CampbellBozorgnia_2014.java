@@ -357,7 +357,7 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
     double alpha = (vs30 < c.k1) ? c.k2 * pgaRock *
         (1 / (pgaRock + C * pow(vsk1, N)) - 1 / (pgaRock + C)) : 0.0;
 
-    // Magnitude dependence -- Equations 29 & 30
+    // Magnitude dependence -- Equations 27 & 28
     double tau_lnYB, tau_lnPGAB, phi_lnY, phi_lnPGAB;
     if (Mw <= 4.5) {
       tau_lnYB = c.τ1;
@@ -376,12 +376,12 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
       phi_lnPGAB = cPGA.φ2;
     }
 
-    // intra-event std dev -- Equation 27
+    // inter-event std dev -- Equation 29
     double alphaTau = alpha * tau_lnPGAB;
     double tauSq = tau_lnYB * tau_lnYB + alphaTau * alphaTau +
         2.0 * alpha * c.ρ * tau_lnYB * tau_lnPGAB;
 
-    // inter-event std dev -- Equation 28
+    // intra-event std dev -- Equation 30
     double phi_lnYB = sqrt(phi_lnY * phi_lnY - PHI_LNAF_SQ);
     phi_lnPGAB = sqrt(phi_lnPGAB * phi_lnPGAB - PHI_LNAF_SQ);
     double aPhi_lnPGAB = alpha * phi_lnPGAB;

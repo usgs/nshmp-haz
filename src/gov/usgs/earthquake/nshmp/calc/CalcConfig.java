@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -79,6 +81,9 @@ public final class CalcConfig {
   /** Earthquake rate configuration. */
   public final Rate rate;
 
+  /** Site data settings */
+  public final SiteData siteData;
+
   /** Default site settings. */
   public final SiteDefaults site;
 
@@ -91,6 +96,7 @@ public final class CalcConfig {
   private CalcConfig(
       Optional<Path> resource,
       Hazard hazard,
+      SiteData siteData,
       SiteDefaults site,
       Performance performance,
       Output output,
@@ -99,6 +105,7 @@ public final class CalcConfig {
 
     this.resource = resource;
     this.hazard = hazard;
+    this.siteData = siteData;
     this.site = site;
     this.performance = performance;
     this.output = output;
@@ -711,7 +718,6 @@ public final class CalcConfig {
         checkNotNull(valueFormat, STATE_ERROR, Rate.ID, Key.VALUE_FORMAT);
         checkNotNull(timespan, STATE_ERROR, Rate.ID, Key.TIMESPAN);
       }
-
     }
 
     /**
@@ -738,6 +744,63 @@ public final class CalcConfig {
 
       static Bins defaults() {
         return new Bins(4.2, 9.4, 0.1);
+      }
+    }
+  }
+
+  /**
+   * Site data settings.
+   */
+  public static final class SiteData {
+
+    // TODO move SiteDefaults to SiteData.Defaults
+    // TODO consider basinDataProvider Optional
+
+    static final String ID = CalcConfig.ID + "." + SiteData.class.getSimpleName();
+
+    /**
+     * The web address from which to retrieve basin depth values.
+     * 
+     * <p><b>Default:</b> {@code null}
+     */
+    public final URL basinDataProvider;
+
+    private SiteData(URL basinDataProvider) {
+      this.basinDataProvider = basinDataProvider;
+    }
+
+    private StringBuilder asString() {
+      return new StringBuilder()
+          .append(LOG_INDENT).append("Site Data")
+          .append(formatEntry(Key.BASIN_DATA_PROVIDER, basinDataProvider));
+    }
+
+    private static final class Builder {
+
+      URL basinDataProvider;
+
+      SiteData build() {
+        return new SiteData(basinDataProvider);
+      }
+
+      void copy(SiteData that) {
+        this.basinDataProvider = that.basinDataProvider;
+      }
+
+      void extend(Builder that) {
+        if (that.basinDataProvider != null) {
+          this.basinDataProvider = that.basinDataProvider;
+        }
+      }
+
+      static Builder defaults() {
+        Builder b = new Builder();
+        b.basinDataProvider = null;
+        return b;
+      }
+
+      void validate() {
+        // currently does nothing as data provider is Optional
       }
     }
   }
@@ -1087,6 +1150,7 @@ public final class CalcConfig {
     VS_INF,
     Z1P0,
     Z2P5,
+    BASIN_DATA_PROVIDER,
     /* performance */
     OPTIMIZE_GRIDS,
     COLLAPSE_MFDS,
@@ -1125,6 +1189,7 @@ public final class CalcConfig {
         .append(hazard.asString())
         .append(deagg.asString())
         .append(rate.asString())
+        .append(siteData.asString())
         .append(site.asString())
         .append(output.asString())
         .append(performance.asString())
@@ -1165,6 +1230,7 @@ public final class CalcConfig {
       .serializeNulls()
       .registerTypeAdapter(Double.class, new DoubleSerializer())
       .registerTypeHierarchyAdapter(Path.class, new PathConverter())
+      .registerTypeAdapter(URL.class, new UrlDeserializer())
       .create();
 
   private static class DoubleSerializer implements JsonSerializer<Double> {
@@ -1197,6 +1263,21 @@ public final class CalcConfig {
     }
   }
 
+  private static class UrlDeserializer implements JsonDeserializer<URL> {
+
+    @Override
+    public URL deserialize(
+        JsonElement json,
+        Type type,
+        JsonDeserializationContext context) throws JsonParseException {
+      try {
+        return new URL(json.getAsString());
+      } catch (MalformedURLException mue) {
+        return null;
+      }
+    }
+  }
+
   /**
    * Save this config in JSON format to the speciifed directory.
    *
@@ -1219,6 +1300,7 @@ public final class CalcConfig {
 
     private Path resource;
     private Hazard.Builder hazard;
+    private SiteData.Builder siteData;
     private SiteDefaults.Builder site;
     private Performance.Builder performance;
     private Output.Builder output;
@@ -1227,6 +1309,7 @@ public final class CalcConfig {
 
     private Builder() {
       hazard = new Hazard.Builder();
+      siteData = new SiteData.Builder();
       site = new SiteDefaults.Builder();
       performance = new Performance.Builder();
       output = new Output.Builder();
@@ -1243,6 +1326,7 @@ public final class CalcConfig {
         b.resource = config.resource.get();
       }
       b.hazard.copy(config.hazard);
+      b.siteData.copy(config.siteData);
       b.site.copy(config.site);
       b.performance.copy(config.performance);
       b.output.copy(config.output);
@@ -1275,6 +1359,7 @@ public final class CalcConfig {
     public static Builder withDefaults() {
       Builder b = new Builder();
       b.hazard = Hazard.Builder.defaults();
+      b.siteData = SiteData.Builder.defaults();
       b.site = SiteDefaults.Builder.defaults();
       b.performance = Performance.Builder.defaults();
       b.output = Output.Builder.defaults();
@@ -1291,6 +1376,7 @@ public final class CalcConfig {
       checkNotNull(that);
       this.resource = that.resource;
       this.hazard.extend(that.hazard);
+      this.siteData.extend(that.siteData);
       this.site.extend(that.site);
       this.performance.extend(that.performance);
       this.output.extend(that.output);
@@ -1341,6 +1427,7 @@ public final class CalcConfig {
     private void validateState() {
       checkState(!built, "This %s instance as already been used", ID + ".Builder");
       hazard.validate();
+      siteData.validate();
       site.validate();
       performance.validate();
       output.validate();
@@ -1357,6 +1444,7 @@ public final class CalcConfig {
       return new CalcConfig(
           Optional.ofNullable(resource),
           hazard.build(),
+          siteData.build(),
           site.build(),
           performance.build(),
           output.build(),

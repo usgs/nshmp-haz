@@ -5,21 +5,31 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
 import static gov.usgs.earthquake.nshmp.internal.GeoJson.validateProperty;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
 import gov.usgs.earthquake.nshmp.internal.GeoJson;
+import gov.usgs.earthquake.nshmp.util.Maths;
 import gov.usgs.earthquake.nshmp.util.Named;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
 
@@ -29,11 +39,11 @@ import gov.usgs.earthquake.nshmp.util.NamedLocation;
  * {@link GroundMotionModel}s will use all fields and additional fields may be
  * added at any time in the future.
  * 
- * <p>Terms:<ul>
+ * <p>Terminology:<ul>
  * 
- * <li><b>{@code Vs30}:</b> Average shear wave velocity between down to a depth
- * of 30 m, in units of m/s. This value may be <i>inferred</i> or
- * <i>measured</i> (see {@link #vsInferred}).</li>
+ * <li><b>{@code Vs30}:</b> Average shear wave velocity down to a depth of 30 m,
+ * in units of m/s. This value may be <i>inferred</i> or <i>measured</i> (see
+ * {@link #vsInferred}).</li>
  * 
  * <li><b>{@code z1.0}:</b> Depth to a shear wave velocity of 1.0 km/sec, in
  * units of km.</li>
@@ -48,6 +58,12 @@ import gov.usgs.earthquake.nshmp.util.NamedLocation;
  * with the default, those {@link GroundMotionModel}s that support basin terms
  * will use an author defined model, typically based on {@code Vs30}, to compute
  * basin-amplifications.
+ * 
+ * <p><b>Note:</b> If a {@link CalcConfig.SiteData#basinDataProvider} has been
+ * set, any non-{@code null} or non-{@code NaN} {@code z1p0} or {@code z2p5}
+ * values supplied by the provider take precedence over defaults or recent calls
+ * to the builder.
+ * 
  *
  * @author Peter Powers
  */
@@ -60,7 +76,7 @@ public class Site implements Named {
   public static final double VS_30_DEFAULT = 760.0;
 
   /** Supported {@link #vs30} values: {@code [150..2000] m/s}. */
-  public static final Range<Double> VS30_RANGE = Range.closed(150.0, 2000.0);
+  public static final Range<Double> VS30_RANGE = Range.closed(150.0, 3000.0);
 
   /** Default {@link #vsInferred} inferred value: {@code true}. */
   public static final boolean VS_INF_DEFAULT = true;
@@ -182,6 +198,7 @@ public class Site implements Named {
     private boolean vsInferred = VS_INF_DEFAULT;
     private double z1p0 = Z1P0_DEFAULT;
     private double z2p5 = Z2P5_DEFAULT;
+    private Optional<URL> basinDataProvider = Optional.empty();
 
     private Builder() {}
 
@@ -190,6 +207,7 @@ public class Site implements Named {
       vsInferred(config.site.vsInferred);
       z1p0(config.site.z1p0);
       z2p5(config.site.z2p5);
+      basinDataProvider(config.siteData.basinDataProvider);
     }
 
     /**
@@ -255,7 +273,25 @@ public class Site implements Named {
       }
       return this;
     }
-
+    
+    /** Optional basin data provider. */
+    public Builder basinDataProvider(URL url) {
+      if (url != null) {
+        try {
+          // test connection
+          HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+          int status = connection.getResponseCode();
+          if (status != 200) {
+            throw new IOException("Basin service not working [status:" +
+                status + "]\nURL: " + basinDataProvider);
+          }
+          basinDataProvider = Optional.of(url);
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe);
+        }
+      }
+      return this;
+    }
     /**
      * Return a string reflecting the current site parameter state of this
      * builder.
@@ -269,9 +305,70 @@ public class Site implements Named {
      */
     public Site build() {
       checkState(location != null, "Site location not set");
+
+      /*
+       * If a basin data provider has been specified, update z1p0 and z2p5
+       * accordingly. NOTE that we DO NOT want set values in builder as they
+       * will persist to subsequest sites. We are selectively overriding basin
+       * terms.
+       */
+      if (basinDataProvider.isPresent()) {
+        BasinTerms bt = getBasinTerms();
+        return new Site(name, location, vs30, vsInferred, bt.z1p0, bt.z2p5);
+      }
       return new Site(name, location, vs30, vsInferred, z1p0, z2p5);
     }
 
+    private BasinTerms getBasinTerms() {
+      try {
+        double lon = Maths.round(location.lon(), 2);
+        double lat = Maths.round(location.lat(), 2);
+        URL siteUrl = new URL(basinDataProvider.get() + String.format(BASIN_QUERY, lon, lat));
+        HttpURLConnection connection = (HttpURLConnection) siteUrl.openConnection();
+        try (Reader reader = new InputStreamReader(connection.getInputStream())) {
+          return GSON.fromJson(reader, BasinTerms.class);
+        }
+      } catch (IOException ioe) {
+        throw new RuntimeException(ioe);
+      }
+    }
+  }
+
+  private static final Gson GSON = new GsonBuilder()
+      .registerTypeAdapter(BasinTerms.class, new BasinTermsDeserializer())
+      .create();
+
+  private static final String BASIN_QUERY = "?longitude=%s&latitude=%s";
+
+  private static class BasinTerms {
+
+    final double z1p0;
+    final double z2p5;
+
+    BasinTerms(double z1p0, double z2p5) {
+      this.z1p0 = z1p0;
+      this.z2p5 = z2p5;
+    }
+  }
+
+  private static class BasinTermsDeserializer implements JsonDeserializer<BasinTerms> {
+
+    @Override
+    public BasinTerms deserialize(
+        JsonElement json,
+        Type typeOfT,
+        JsonDeserializationContext context) throws JsonParseException {
+
+      JsonObject response = json.getAsJsonObject().get("response").getAsJsonObject();
+      double z1p0 = readValue(response, Key.Z1P0);
+      double z2p5 = readValue(response, Key.Z2P5);
+      return new BasinTerms(z1p0, z2p5);
+    }
+
+    static double readValue(JsonObject json, String zId) {
+      JsonElement e = json.get(zId).getAsJsonObject().get("value");
+      return e.isJsonNull() ? Double.NaN : Maths.round(e.getAsDouble(), 1) ;
+    }
   }
 
   private static final int MAX_NAME_LENGTH = 72;
