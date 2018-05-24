@@ -334,14 +334,6 @@ public enum Gmm {
 
   /* Stable continent CEUS 2008 2014 */
   
-  /** Temporary 2014 CEUS weight-averaged GMM. */
-  @Deprecated
-  NSHM_CEUS_2014_AVG(
-      NshmCeus2014.class,
-      NshmCeus2014.NAME,
-      NshmCeus2014.COEFFS,
-      NshmCeus2014.CONSTRAINTS),
-
   /** @see AtkinsonBoore_2006p */
   AB_06_PRIME(
       AtkinsonBoore_2006p.class,
@@ -418,6 +410,14 @@ public enum Gmm {
       ToroEtAl_1997.Mw.NAME,
       ToroEtAl_1997.COEFFS_MW,
       ToroEtAl_1997.CONSTRAINTS),
+
+  /** Temporary 2014 CEUS weight-averaged GMM. */
+  @Deprecated
+  NSHM_CEUS_2014_AVG(
+      NshmCeus2014.class,
+      NshmCeus2014.NAME,
+      NshmCeus2014.COEFFS,
+      NshmCeus2014.CONSTRAINTS),
 
   /* Johnston mag converting flavors of CEUS 2008 */
 
