@@ -2,7 +2,9 @@ package gov.usgs.earthquake.nshmp.json;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,6 +43,142 @@ public class Util {
   }
 
   /**
+   * Brute force compaction of coordinate array onto single line.
+   * 
+   * @param s The {@code String} to clean up.
+   * @return The cleaned up {@code String}.
+   */
+  public static String cleanPoints(String s) {
+    return s.replace(": [\n          ", ": [")
+        .replace(",\n          ", ", ")
+        .replace("\n        ]", "]") + "\n";
+  }
+
+  /**
+   * Brute force compaction of coordinate array onto single line.
+   * 
+   * @param s The {@code String} to clean up.
+   * @return The cleaned up {@code String}.
+   */
+  public static String cleanPoly(String s) {
+    return s
+        .replace("\n          [", "[")
+        .replace("[\n              ", "[ ")
+        .replace(",\n              ", ", ")
+        .replace("\n            ]", " ]")
+        .replace("\n        ]", "]") + "\n";
+  }
+
+  /**
+   * Return a {@code JsonElement} corresponding to a {@code String} 
+   *    path in dot notation inside a {@code JsonElement}.
+   * 
+   * <pre> 
+   *  // Example class with structure parameters.width.value
+   *  static class Spectra {
+   *    Parameters parameters;
+   *  }
+   *  
+   *  static class Parameters {
+   *    Width width;
+   *  }
+   * 
+   *  static class Width {
+   *    double value = 25.0;
+   *  }
+   *  
+   *  // Create a new instance of Spectra 
+   *  Spectra spectra = new Spectra();
+   *  
+   *  // Convert spectra into a JsonElement
+   *  JsonElement jsonEl = Util.GSON.toJsonTree(spectra, Spectra.class);
+   *  
+   *  // The path in dot notation to find the value
+   *  String jsonPath = "parameters.width.value";
+   *  
+   *  // Get the value as a JsonElement
+   *  JsonElement widthValueEl = Util.getJsonObject(jsonEl, jsonPath);
+   *  
+   *  // Get the value as a double.
+   *  // This is same as spectra.parameters.width.value
+   *  double width = widthValueEl.getAsDouble();
+   * </pre>
+   * 
+   * @param jsonEl The {@code JsonElement} to search.
+   * @param jsonPath The {@code String} path in dot notation to find in the 
+   *    {@code JsonElement}.
+   * @return A {@code JsonElement} of the found object. 
+   * @throws IllegalArgumentException If object is not found.
+   */
+  static public JsonElement getJsonObject(JsonElement jsonEl, String jsonPath) {
+    JsonObject jsonObject = jsonEl.getAsJsonObject();
+    List<String> pathList = Arrays.stream(jsonPath.split("\\."))
+        .collect(Collectors.toList());
+   
+    try {
+      for (String path : pathList.subList(0, pathList.size() - 1)) {
+        jsonObject = jsonObject.get(path).getAsJsonObject();
+      }
+     
+      JsonElement resultEl = jsonObject.get(pathList.get(pathList.size() - 1));
+      if (resultEl == null) throw new NullPointerException();
+      
+      return resultEl;
+    } catch (NullPointerException e) {
+      throw new IllegalArgumentException("Object not found in path: " + jsonPath);
+    }
+  }
+  
+  /**
+   * Return a {@code JsonElement} corresponding to a {@code String[]} 
+   *    path inside a {@code JsonElement}.
+   * 
+   * <pre> 
+   *  // Example class with structure parameters.width.value
+   *  static class Spectra {
+   *    Parameters parameters;
+   *  }
+   *  
+   *  static class Parameters {
+   *    Width width;
+   *  }
+   * 
+   *  static class Width {
+   *    double value = 25.0;
+   *  }
+   *  
+   *  // Create a new instance of Spectra 
+   *  Spectra spectra = new Spectra();
+   *  
+   *  // Convert spectra into a JsonElement
+   *  JsonElement jsonEl = Util.GSON.toJsonTree(spectra, Spectra.class);
+   *  
+   *  // Get the value as a JsonElement
+   *  JsonElement widthValueEl = Util.getJsonObject(
+   *      jsonEl,
+   *      "parameters",
+   *      "width",
+   *      "value");
+   *  
+   *  // Get the value as a double.
+   *  // This is same as spectra.parameters.width.value
+   *  double width = widthValueEl.getAsDouble();
+   * </pre>
+   * 
+   * @param jsonEl The {@code JsonElement} to search.
+   * @param jsonPath The {@code String} path in dot notation to find in the 
+   *    {@code JsonElement}.
+   * @return A {@code JsonElement} of the found object. 
+   * @throws IllegalArgumentException If object is not found.
+   */
+  static public JsonElement getJsonObject(JsonElement jsonEl, String... jsonPath) {
+    String path = Arrays.stream(jsonPath)
+        .collect(Collectors.joining("."));
+    
+    return getJsonObject(jsonEl, path); 
+  }
+ 
+  /**
    * Convert a {@link Location} to a {@code double[]}.
    * @param loc The {@code Location}.
    * @return A {@code double[]}.
@@ -78,33 +216,6 @@ public class Util {
     }
     
     return coords;
-  }
-
-  /**
-   * Brute force compaction of coordinate array onto single line.
-   * 
-   * @param s The {@code String} to clean up.
-   * @return The cleaned up {@code String}.
-   */
-  public static String cleanPoints(String s) {
-    return s.replace(": [\n          ", ": [")
-        .replace(",\n          ", ", ")
-        .replace("\n        ]", "]") + "\n";
-  }
-
-  /**
-   * Brute force compaction of coordinate array onto single line.
-   * 
-   * @param s The {@code String} to clean up.
-   * @return The cleaned up {@code String}.
-   */
-  public static String cleanPoly(String s) {
-    return s
-        .replace("\n          [", "[")
-        .replace("[\n              ", "[ ")
-        .replace(",\n              ", ", ")
-        .replace("\n            ]", " ]")
-        .replace("\n        ]", "]") + "\n";
   }
 
   /**
