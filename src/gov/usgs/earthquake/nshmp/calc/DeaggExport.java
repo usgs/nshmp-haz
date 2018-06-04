@@ -163,7 +163,9 @@ final class DeaggExport {
         }
         RmBin rmBin = new RmBin(
             r, m,
-            rBar, mBar, εBar,
+            round(rBar, 2),
+            round(mBar, 2),
+            round(εBar, 2),
             εDataList.build(),
             ImmutableList.copyOf(εValues));
         rmBins.add(rmBin);
@@ -295,14 +297,17 @@ final class DeaggExport {
 
   private static String formatEpsilonValues(List<Double> values) {
     return Delimiter.COMMA.joiner().join(Iterables.transform(
-        values, 
+        values,
         EPSILON_FORMATTER::apply));
   }
 
   private static Ordering<RmBin> RM_BIN_SORTER = new Ordering<RmBin>() {
     @Override
     public int compare(RmBin left, RmBin right) {
-      return ComparisonChain.start().compare(left.r, right.r).compare(left.m, right.m).result();
+      return ComparisonChain.start()
+          .compare(left.r, right.r)
+          .compare(left.m, right.m)
+          .result();
     }
   };
 
