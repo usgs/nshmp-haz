@@ -3,16 +3,12 @@ package gov.usgs.earthquake.nshmp.calc;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.geo.BorderType.MERCATOR_LINEAR;
-import static gov.usgs.earthquake.nshmp.internal.GeoJson.validateProperty;
 import static gov.usgs.earthquake.nshmp.internal.Parsing.splitToList;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.LOG_INDENT;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NULL;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,17 +16,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import gov.usgs.earthquake.nshmp.calc.Site.Builder;
 import gov.usgs.earthquake.nshmp.geo.Bounds;
@@ -39,9 +28,13 @@ import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 import gov.usgs.earthquake.nshmp.geo.Region;
 import gov.usgs.earthquake.nshmp.geo.Regions;
-import gov.usgs.earthquake.nshmp.internal.GeoJson;
 import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
+import gov.usgs.earthquake.nshmp.json.Feature;
+import gov.usgs.earthquake.nshmp.json.FeatureCollection;
+import gov.usgs.earthquake.nshmp.json.GeoJsonType;
+import gov.usgs.earthquake.nshmp.json.Polygon;
+import gov.usgs.earthquake.nshmp.json.Properties;
 
 /**
  * Iterable {@code Site} container. Factory methods are supplied to creating
@@ -142,15 +135,15 @@ public abstract class Sites implements Iterable<Site> {
    * @throws IOException if a problem is encountered
    */
   public static Sites fromJson(Path path, CalcConfig defaults) throws IOException {
-    checkArgument(Files.exists(path), "Site file [%s] does not exist", path);
-    Gson gson = new GsonBuilder()
-        .registerTypeAdapter(Site.class, new Site.Deserializer(defaults))
-        .registerTypeAdapter(Sites.class, new Deserializer(defaults))
-        .create();
-    Reader reader = Files.newBufferedReader(path, UTF_8);
-    Sites iterable = gson.fromJson(reader, Sites.class);
-    reader.close();
-    return iterable;
+    FeatureCollection fc = FeatureCollection.read(path);
+    List<Feature> features = fc.getFeatures();
+   
+    GeoJsonType geomType = features.get(0).getGeometry().getType();
+    if (geomType.equals(GeoJsonType.POINT)) {
+      return getGeoJsonSiteList(features, defaults);
+    } else {
+      return getGeoJsonSiteRegion(features, defaults);
+    }
   }
 
   /**
@@ -337,151 +330,101 @@ public abstract class Sites implements Iterable<Site> {
     }
   }
 
-  /*
-   * Site GeoJSON is currently deserialized with the expectation that the
-   * feature array will be strictly of type:Point or type:Polygon. Polygon
-   * feature arrays are assumed to have only 1 or 2 elements. In the event that
-   * there are 2, the first one is expected to have id:CLIP, define four
-   * corners, and be rectangular (in a mercator projection) with edges parallel
-   * to lines of latitude and longitude. Polygon holes, if present are not
-   * processed. Results are undefined for self-intersecting polygon coordinate
-   * arrays.
+  /**
+   * Convert a {@code List} of {@link Feature}s with a {@code Point} 
+   *    {@code Geometry} to {@code Sites}.
+   *    
+   * @param features The {@code List<Feature>}
+   * @param defaults The {@code CalcConfig}
+   * @return {@code Sites}
    */
-  private static final class Deserializer implements JsonDeserializer<Sites> {
+  private static Sites getGeoJsonSiteList(List<Feature> features, CalcConfig defaults) {
+    List<Site> sites = features.stream()
+        .map(feature -> Site.getGeoJsonSite(feature, defaults))
+        .collect(Collectors.toList());
 
-    final CalcConfig defaults;
-
-    Deserializer(CalcConfig defaults) {
-      this.defaults = defaults;
-    }
-
-    @Override
-    public Sites deserialize(
-        JsonElement json,
-        Type type,
-        JsonDeserializationContext context) {
-
-      // should always have a features array
-      JsonArray features = json.getAsJsonObject()
-          .get(GeoJson.Key.FEATURES)
-          .getAsJsonArray();
-      checkState(features.size() > 0, "Feature array is empty");
-
-      // check if we have a site list
-      String featureType = features.get(0).getAsJsonObject()
-          .get(GeoJson.Key.GEOMETRY).getAsJsonObject()
-          .get(GeoJson.Key.TYPE).getAsString();
-      if (featureType.equals(GeoJson.Value.POINT)) {
-        Type siteType = new TypeToken<List<Site>>() {}.getType();
-        List<Site> sites = context.deserialize(features, siteType);
-        return new ListIterable(ImmutableList.copyOf(sites));
-      }
-
-      // or a region
-      checkState(features.size() <= 2, "Only 2 polygon features may be defined");
-
-      // Optional<Region> extents = Optional.absent();
-      Optional<Bounds> mapBounds = Optional.empty();
-      String boundsName = "";
-      int calcPolyIndex = 0;
-      if (features.size() == 2) {
-        calcPolyIndex++;
-
-        JsonObject extentsFeature = features.get(0).getAsJsonObject();
-        validateProperty(extentsFeature, GeoJson.Key.ID, GeoJson.Value.EXTENTS);
-
-        mapBounds = Optional.of(validateExtents(readPolygon(extentsFeature)).bounds());
-
-        JsonObject properties = extentsFeature.getAsJsonObject(GeoJson.Key.PROPERTIES);
-        boundsName = readName(properties, "Map Extents");
-      }
-
-      JsonObject sitesFeature = features.get(calcPolyIndex).getAsJsonObject();
-      LocationList border = readPolygon(sitesFeature);
-
-      JsonObject properties = sitesFeature.getAsJsonObject(GeoJson.Key.PROPERTIES);
-      String mapName = readName(properties, "Unnamed Map");
-
-      /*
-       * We special case a 5-coordinate border that defines a mercator recangle
-       * so as to create a region that includes sites on the north and east
-       * borders.
-       */
-
-      Region calcRegion = null;
-      try {
-        Bounds b = validateExtents(border).bounds();
-        calcRegion = Regions.createRectangular(mapName, b.min(), b.max());
-      } catch (IllegalArgumentException iae) {
-        calcRegion = Regions.create(mapName, border, MERCATOR_LINEAR);
-      }
-      checkState(
-          properties.has(GeoJson.Properties.Key.SPACING),
-          "A \"spacing\" : value (in degrees) must be defined in \"properties\"");
-      double spacing = properties.get(GeoJson.Properties.Key.SPACING).getAsDouble();
-
-      // builder used to create all sites when iterating over region
-      Builder builder = Site.builder(defaults);
-
-      if (properties.has(Site.Key.VS30)) {
-        double vs30 = properties.get(Site.Key.VS30).getAsDouble();
-        builder.vs30(vs30);
-      }
-
-      if (properties.has(Site.Key.VS_INF)) {
-        boolean vsInf = properties.get(Site.Key.VS_INF).getAsBoolean();
-        builder.vsInferred(vsInf);
-      }
-
-      if (properties.has(Site.Key.Z1P0)) {
-        double z1p0 = properties.get(Site.Key.Z1P0).getAsDouble();
-        builder.z1p0(z1p0);
-      }
-
-      if (properties.has(Site.Key.Z2P5)) {
-        double z2p5 = properties.get(Site.Key.Z2P5).getAsDouble();
-        builder.z2p5(z2p5);
-      }
-
-      Region mapRegion = calcRegion;
-      if (mapBounds.isPresent()) {
-        Bounds b = mapBounds.get();
-        Region r = Regions.createRectangular(boundsName, b.min(), b.max());
-        mapRegion = Regions.intersectionOf(mapName, r, calcRegion);
-      }
-
-      GriddedRegion region = Regions.toGridded(
-          mapRegion,
-          spacing, spacing,
-          GriddedRegion.ANCHOR_0_0);
-
-      return new RegionIterable(region, builder, mapBounds);
-    }
-
+    return new ListIterable(ImmutableList.copyOf(sites));
   }
 
-  private static LocationList readPolygon(JsonObject feature) {
-    JsonObject geometry = feature.getAsJsonObject(GeoJson.Key.GEOMETRY);
-    validateProperty(geometry, GeoJson.Key.TYPE, GeoJson.Value.POLYGON);
-    JsonArray coords = geometry.getAsJsonArray(GeoJson.Key.COORDINATES);
-    LocationList border = GeoJson.fromCoordinates(coords);
+  /**
+   * Convert a {@code List} of {@link Feature}s with a {@code Polygon}
+   *    {@code Geometry} to {@code Sites}.
+   *    
+   * @param features The {@code List<Feature>}
+   * @param defaults The {@code CalcConfig}
+   * @return {@code Sites}
+   */
+  private static Sites getGeoJsonSiteRegion(List<Feature> features, CalcConfig defaults) {
+    checkState(features.size() <= 2, "Only 2 polygon features may be defined");
+    Optional<Bounds> mapBounds = Optional.empty();
+    String boundsName = "";
+    
+    Feature extentsFeature = features.stream()
+        .filter(feature -> Feature.Value.EXTENTS.equals(feature.getId()))
+        .findFirst()
+        .orElse(null);
 
-    checkArgument(
-        border.size() > 2,
-        "A GeoJSON polygon must have at least 3 coordinates:%s",
-        border);
+    if (extentsFeature != null) {
+      Polygon extentsPolygon = extentsFeature.getGeometry().asPolygon();
+      mapBounds = Optional.of(validateExtents(extentsPolygon.getBorder()).bounds());
+      boundsName = readName(extentsFeature.getProperties(), "Map Extents"); 
+    } else {
+      checkState(features.size() != 2, "Expected \"id\" : \"Extents\"");
+    }
+        
+    Feature sitesFeature = features.stream()
+        .filter(feature -> !Feature.Value.EXTENTS.equals(feature.getId()))
+        .findFirst()
+        .orElse(null);
+    
+    Polygon sitesPolygon = sitesFeature.getGeometry().asPolygon();
+    LocationList border = sitesPolygon.getBorder();
+    
+    Properties properties = sitesFeature.getProperties();
+    String mapName = readName(properties, "Unamed Map"); 
+      
+    /*
+     * We special case a 5-coordinate border that defines a mercator recangle
+     * so as to create a region that includes sites on the north and east
+     * borders.
+     */
 
-    checkArgument(
-        border.first().equals(border.last()),
-        "The first and last points in a GeoJSON polygon must be the same:%s",
-        border);
+    Region calcRegion = null;
+    try {
+      Bounds b = validateExtents(border).bounds();
+      calcRegion = Regions.createRectangular(mapName, b.min(), b.max());
+    } catch (IllegalArgumentException iae) {
+      calcRegion = Regions.create(mapName, border, MERCATOR_LINEAR);
+      calcRegion = sitesPolygon.toRegion(mapName);
+    }
 
-    return border;
+    checkState(
+        properties.hasProperty("spacing"),
+        "A \"spacing\" : value (in degrees) must be defined in \"properties\"");
+    double spacing = properties.getDoubleProperty("spacing");
+
+    // builder used to create all sites when iterating over region
+    Builder builder = Site.builder(defaults);
+    Site.setSiteProperties(builder, properties);
+    
+    Region mapRegion = calcRegion;
+    if (mapBounds.isPresent()) {
+      Bounds b = mapBounds.get();
+      Region r = Regions.createRectangular(boundsName, b.min(), b.max());
+      mapRegion = Regions.intersectionOf(mapName, r, calcRegion);
+    }
+
+    GriddedRegion region = Regions.toGridded(
+        mapRegion,
+        spacing, spacing,
+        GriddedRegion.ANCHOR_0_0);
+
+    return new RegionIterable(region, builder, mapBounds);
   }
-
-  private static String readName(JsonObject properties, String defaultName) {
-    return properties.has(GeoJson.Properties.Key.TITLE)
-        ? properties.get(GeoJson.Properties.Key.TITLE).getAsString() : defaultName;
+  
+  private static String readName(Properties properties, String defaultName) {
+    return properties.hasProperty(Properties.Key.TITLE)
+        ? properties.getStringProperty(Properties.Key.TITLE) : defaultName;
   }
 
   private static LocationList validateExtents(LocationList locs) {

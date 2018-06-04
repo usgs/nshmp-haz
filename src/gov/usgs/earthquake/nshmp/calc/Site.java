@@ -3,7 +3,6 @@ package gov.usgs.earthquake.nshmp.calc;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
-import static gov.usgs.earthquake.nshmp.internal.GeoJson.validateProperty;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,7 +18,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -28,7 +26,9 @@ import com.google.gson.JsonParseException;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
-import gov.usgs.earthquake.nshmp.internal.GeoJson;
+import gov.usgs.earthquake.nshmp.json.Feature;
+import gov.usgs.earthquake.nshmp.json.Point;
+import gov.usgs.earthquake.nshmp.json.Properties;
 import gov.usgs.earthquake.nshmp.util.Maths;
 import gov.usgs.earthquake.nshmp.util.Named;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
@@ -399,70 +399,54 @@ public class Site implements Named {
       Key.Z1P0,
       Key.Z2P5);
 
-  /*
-   * Custom deserializer that takes care of several issues with sites.
-   * Specifically, JSON prohibits the use of NaN, which is the default value for
-   * z1p0 and z2p5, and so these two fields may not be set. Users have been
-   * notified that as long as no z1p0 or z2p5 value has been supplied in any
-   * JSON, the default will be used.
+  
+  /**
+   * Convert a {@link Feature} to a {@code Site} with a 
+   *    {@link Point} {@code Geometry}.
+   *    
+   * NOTE: JSON prohibits the use of NaN, which is the default value for
+   *    z1p0 and z2p5, and so these two fields may not be set. Users have been
+   *    notified that as long as no z1p0 or z2p5 value has been supplied in any
+   *    JSON, the default will be used.
+   *    
+   * @param feature The {@code Feature}
+   * @param defaults The {@code CalcConfig} defaults
+   * @return {@code Site}
    */
-
-  static final class Deserializer implements JsonDeserializer<Site> {
-
-    final CalcConfig defaults;
-
-    Deserializer(CalcConfig defaults) {
-      this.defaults = defaults;
+  static Site getGeoJsonSite(Feature feature, CalcConfig defaults) {
+    Point geometry = feature.getGeometry().asPoint();
+    Location loc = geometry.getLocation();
+    Properties properties = feature.getProperties();
+    Builder builder = Site.builder(defaults).location(loc);
+    setSiteProperties(builder, properties);
+    return builder.build();
+  }
+  
+  /**
+   * Set the {@link Builder}.
+   * 
+   * @param builder The {@code Builder}
+   * @param properties The {@link Properties}
+   */
+  static void setSiteProperties(Site.Builder builder, Properties properties) {
+    if (properties.hasProperty("title")) {
+      builder.name(properties.getStringProperty("title"));
     }
 
-    @Override
-    public Site deserialize(
-        JsonElement json,
-        Type type,
-        JsonDeserializationContext context) {
+    if (properties.hasProperty(Site.Key.VS30)) {
+      builder.vs30(properties.getDoubleProperty(Site.Key.VS30));
+    }
 
-      JsonObject feature = json.getAsJsonObject();
-      validateProperty(feature, GeoJson.Key.TYPE, GeoJson.Value.FEATURE);
+    if (properties.hasProperty(Site.Key.VS_INF)) {
+      builder.vsInferred(properties.getBooleanProperty(Site.Key.VS_INF));
+    }
 
-      JsonObject geometry = feature.getAsJsonObject(GeoJson.Key.GEOMETRY);
-      validateProperty(geometry, GeoJson.Key.TYPE, GeoJson.Value.POINT);
+    if (properties.hasProperty(Site.Key.Z1P0)) {
+      builder.z1p0(properties.getDoubleProperty(Site.Key.Z1P0));
+    }
 
-      JsonArray coordinates = feature
-          .getAsJsonObject(GeoJson.Key.GEOMETRY)
-          .getAsJsonArray(GeoJson.Key.COORDINATES);
-
-      Builder builder = Site.builder(defaults).location(
-          coordinates.get(1).getAsDouble(),
-          coordinates.get(0).getAsDouble());
-
-      JsonObject properties = feature.getAsJsonObject(GeoJson.Key.PROPERTIES);
-
-      JsonElement name = properties.get(GeoJson.Properties.Key.TITLE);
-      if (name != null) {
-        builder.name(name.getAsString());
-      }
-
-      JsonElement vs30 = properties.get(Site.Key.VS30);
-      if (vs30 != null) {
-        builder.vs30(vs30.getAsDouble());
-      }
-
-      JsonElement vsInf = properties.get(Site.Key.VS_INF);
-      if (vsInf != null) {
-        builder.vsInferred(vs30.getAsBoolean());
-      }
-
-      JsonElement z1p0 = properties.get(Site.Key.Z1P0);
-      if (z1p0 != null) {
-        builder.z1p0(z1p0.getAsDouble());
-      }
-
-      JsonElement z2p5 = properties.get(Site.Key.Z2P5);
-      if (z2p5 != null) {
-        builder.z2p5(z2p5.getAsDouble());
-      }
-
-      return builder.build();
+    if (properties.hasProperty(Site.Key.Z2P5)) {
+      builder.z2p5(properties.getDoubleProperty(Site.Key.Z2P5));
     }
   }
 
