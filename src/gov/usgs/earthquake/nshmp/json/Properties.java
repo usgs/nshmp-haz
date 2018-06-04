@@ -3,8 +3,8 @@ package gov.usgs.earthquake.nshmp.json;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.gson.JsonElement;
 
@@ -26,7 +26,7 @@ public class Properties {
   private Map<String, JsonElement> attributes;
 
   private Properties(Builder builder) {
-    this.attributes = builder.attributes;
+    this.attributes = new TreeMap<String, JsonElement>(builder.attributes);
   }
  
   /**
@@ -144,6 +144,17 @@ public class Properties {
   }
 
   /**
+   * Return the {@code Boolean} corresponding to a key in the {@code Properties}
+   *    {@code Map<String, Object>}.
+   * 
+   * @param key The {@code String} key.
+   * @return The value;
+   */
+  public Boolean getBooleanProperty(String key) {
+    return checkProperty(key).getAsBoolean();
+  }
+  
+  /**
    * Return the {@code String} corresponding to a key in the {@code Properties}
    *    {@code Map<String, Object>}.
    *  
@@ -177,6 +188,16 @@ public class Properties {
   }
  
   /**
+   * Determine if a key is present in the {@code Properties}.
+   * @param key The {@code String} key to find.
+   * @return Whether the key is present.
+   */
+  public Boolean hasProperty(String key) {
+    JsonElement value = attributes.get(key);
+    return value == null ? false : true;
+  }
+ 
+  /**
    * Return a {@code String} in JSON format.
    * @return The JSON {@code String}.
    */
@@ -192,6 +213,25 @@ public class Properties {
     return new Builder();
   }
 
+  /**
+   * Common {@code Properties} keys.
+   * @author Brandon Clayton
+   */
+  public static final class Key {
+    public static final String DESCRIPTION = "description";
+    public static final String FILL = "fill";
+    public static final String FILL_OPACITY = "fill-opacity";
+    public static final String ID = "id";
+    public static final String MARKER_COLOR = "marker-color";
+    public static final String MARKER_SIZE = "marker-size";
+    public static final String MARKER_SYMBOL = "marker-symbol";
+    public static final String SPACING = "spacing";
+    public static final String STROKE = "stroke";
+    public static final String STROKE_OPACITY = "stroke-opacity";
+    public static final String STROKE_WIDTH = "stroke-width";
+    public static final String TITLE = "title";
+  }
+  
   /**
    * Build a new {@link Properties} instance. <br><br>
    * 
@@ -211,7 +251,7 @@ public class Properties {
    * @author Brandon Clayton
    */
   public static class Builder {
-    private Map<String, JsonElement> attributes = new HashMap<>();
+    private Map<String, JsonElement> attributes = new TreeMap<>();
 
     private Builder() {}
 
@@ -231,14 +271,62 @@ public class Properties {
     }
 
     /**
+     * Add the fill.
+     * @param hexColor A HEX color.
+     * @return The {@code Builder} to be chainable.
+     */
+    public Builder fill(String hexColor) {
+      attributes.put(Key.FILL, Util.GSON.toJsonTree(hexColor, String.class));
+      return this;
+    }
+
+    /**
+     * Add the opacity. [0, 1]
+     * @param opacity The opacity
+     * @return The {@code Builder} to be chainable.
+     */
+    public Builder fillOpacity(double opacity) {
+      attributes.put(Key.FILL_OPACITY, Util.GSON.toJsonTree(opacity, double.class));
+      return this;
+    }
+
+    /**
      * Set the id.
      * @param id The id.
      * @return The {@code Builder} to be chainable.
      */
     public Builder id(String id) {
-      attributes.put(
-          Attributes.ID.toLowerCase(), 
-          Util.GSON.toJsonTree(id, String.class));
+      attributes.put(Key.ID, Util.GSON.toJsonTree(id, String.class));
+      return this;
+    }
+
+    /**
+     * Add the marker size.
+     * @param size The size.
+     * @return The {@code Builder} to be chainable.
+     */
+    public Builder markerSize(String size) {
+      attributes.put(Key.MARKER_SIZE, Util.GSON.toJsonTree(size, String.class ));
+      return this;
+    }
+
+    /**
+     * Add a marker symbol, a single alphanumeric character (a-z or 0-9). 
+     * @param symbol The symbol.
+     * @return The {@code Builder} to be chainable.
+     */
+    public Builder markerSymbol(String symbol) {
+      attributes.put(Key.MARKER_SYMBOL, Util.GSON.toJsonTree(symbol, String.class ));
+      return this;
+    }
+
+    /**
+     * Add the marker color, a HEX color.
+     * @param hexColor The HEX color.
+     * @return The {@code Builder} to be chainable.
+     */
+    public Builder markerColor(String hexColor) {
+      attributes.put(Key.MARKER_COLOR, Util.GSON.toJsonTree(hexColor, String.class));
       return this;
     }
 
@@ -249,9 +337,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, double value) {
-      attributes.put(
-          key, 
-          Util.GSON.toJsonTree(value, double.class));
+      attributes.put(key, Util.GSON.toJsonTree(value, double.class));
       return this;
     }
 
@@ -262,9 +348,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, int value) {
-      attributes.put(
-          key, 
-          Util.GSON.toJsonTree(value, int.class));
+      attributes.put(key, Util.GSON.toJsonTree(value, int.class));
       return this;
     }
 
@@ -275,9 +359,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, Object value) {
-      attributes.put(
-          key, 
-          Util.GSON.toJsonTree(value));
+      attributes.put(key, Util.GSON.toJsonTree(value));
       return this;
     }
 
@@ -288,9 +370,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, String value) {
-      attributes.put(
-          key, 
-          Util.GSON.toJsonTree(value, String.class));
+      attributes.put(key, Util.GSON.toJsonTree(value, String.class));
       return this;
     }
 
@@ -301,44 +381,62 @@ public class Properties {
      */
     public Builder putAll(Map<String, JsonElement> attributes) {
       for (String key : attributes.keySet()) {
-        this.attributes.put(
-            key, 
-            attributes.get(key));
+        this.attributes.put(key, attributes.get(key));
       }
 
       return this;
     }
-    
+   
+    /**
+     * Add the spacing.
+     * @param spacing The spacing.
+     * @return The {@code Builder} to be chainable.
+     */
+    public Builder spacing(double spacing) {
+      attributes.put(Key.SPACING, Util.GSON.toJsonTree(spacing, double.class));
+      return this;
+    }
+
+    /**
+     * Add the stroke, a HEX color.
+     * @param hexColor The HEX color.
+     * @return The {@code Builder} to be chainable.
+     */
+    public Builder stroke(String hexColor) {
+      attributes.put(Key.STROKE, Util.GSON.toJsonTree(hexColor, String.class));
+      return this;
+    }
+
+    /**
+     * Add the stroke opacity. [0, 1.0]
+     * @param opacity The opacity.
+     * @return The {@code Builder} to be chainable.
+     */
+    public Builder strokeOpacity(double opacity) {
+      attributes.put(Key.STROKE_OPACITY, Util.GSON.toJsonTree(opacity, double.class));
+      return this;
+    }
+
+    /**
+     * Add the stroke width.
+     * @param width The width.
+     * @return The {@code Builder} to be chainable.
+     */
+    public Builder strokeWidth(double width) {
+      attributes.put(Key.STROKE_WIDTH, Util.GSON.toJsonTree(width, double.class));
+      return this;
+    }
+
     /**
      * Set the title.
      * @param title The title.
      * @return The {@code Builder} to be chainable.
      */
     public Builder title(String title) {
-      attributes.put(
-          Attributes.TITLE.toLowerCase(), 
-          Util.GSON.toJsonTree(title, String.class));
+      attributes.put(Key.TITLE, Util.GSON.toJsonTree(title, String.class));
       return this;
     }
-
-  }
-  
-  /**
-   * Attribute keys.
-   * 
-   * @author Brandon Clayton
-   */
-  private enum Attributes {
-    ID,
-    TITLE;
-
-    /**
-     * Return a lower case {@code String}.
-     * @return The lower case {@code String}.
-     */
-    String toLowerCase() {
-      return name().toLowerCase();
-    }
+    
   }
   
   /**
