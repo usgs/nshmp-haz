@@ -102,7 +102,7 @@ public class Rupture {
         .put("mag", mag)
         .put("rake", rake)
         .put("rate", rate)
-        .put("hypo", hypocenter)
+        .put("hypo", hypocenter == null ? "null" : hypocenter)
         .put("surface", surface)
         .build();
     return getClass().getSimpleName() + " " + data;
