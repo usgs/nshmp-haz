@@ -34,7 +34,7 @@ public class Feature implements GeoJson {
   /** The {@link GeoJsonType} of GeoJson object: Feature */
   private final String type;
   /** An {@code Optional} id field */
-  private JsonElement id = new JsonPrimitive("");
+  private JsonElement id = null; 
   /** The {@link Geometry} */
   private Geometry geometry;
   /** The {@link Properties} */
@@ -257,7 +257,7 @@ public class Feature implements GeoJson {
    * @return The {@code Feature} id.
    */
   public String getId() {
-    return id.getAsString();
+    return id != null ? id.getAsString() : null;
   }
   
   /**
@@ -265,7 +265,7 @@ public class Feature implements GeoJson {
    * @return The {@code Feature} id.
    */
   public int getNumericId() {
-    return id.getAsInt();
+    return id != null ? id.getAsInt() : null;
   }
   
   /**
@@ -291,6 +291,14 @@ public class Feature implements GeoJson {
    */
   public String toJsonString() {
     return Util.cleanPoly(Util.GSON.toJson(this, Feature.class));
+  }
+  
+  /**
+   * {@code Feature} values.
+   * @author Brandon Clayton
+   */
+  public static class Value {
+    public static final String EXTENTS = "Extents";
   }
 
 }
