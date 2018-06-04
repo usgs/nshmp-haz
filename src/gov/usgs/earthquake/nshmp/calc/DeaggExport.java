@@ -385,20 +385,20 @@ final class DeaggExport {
             new SummaryItem("Residual", round(ddResidual, RME_ROUNDING), "%"),
             new SummaryItem("Trace", round(ddTrace, RME_ROUNDING), "%"))),
 
-        new SummaryElement("Mean (for all sources)", true, ImmutableList.of(
-            new SummaryItem("r", round(dd.rBar, RME_ROUNDING), "km"),
+        new SummaryElement("Mean (over all sources)", true, ImmutableList.of(
             new SummaryItem("m", round(dd.mBar, RME_ROUNDING), null),
+            new SummaryItem("r", round(dd.rBar, RME_ROUNDING), "km"),
             new SummaryItem("ε₀", round(dd.εBar, RME_ROUNDING), "σ"))),
 
-        new SummaryElement("Mode (largest r-m bin)", true, ImmutableList.of(
-            new SummaryItem("r", round(rmrMode, RME_ROUNDING), "km"),
+        new SummaryElement("Mode (largest m-r bin)", true, ImmutableList.of(
             new SummaryItem("m", round(rmmMode, RME_ROUNDING), null),
+            new SummaryItem("r", round(rmrMode, RME_ROUNDING), "km"),
             new SummaryItem("ε₀", round(rmεMode, RME_ROUNDING), "σ"),
             new SummaryItem("Contribution", round(rmModeContrib, RME_ROUNDING), "%"))),
 
-        new SummaryElement("Mode (largest ε₀ bin)", true, ImmutableList.of(
-            new SummaryItem("r", round(εrMode, RME_ROUNDING), "km"),
+        new SummaryElement("Mode (largest m-r-ε₀ bin)", true, ImmutableList.of(
             new SummaryItem("m", round(εmMode, RME_ROUNDING), null),
+            new SummaryItem("r", round(εrMode, RME_ROUNDING), "km"),
             new SummaryItem("ε₀", round(εεMode, RME_ROUNDING), "σ"),
             new SummaryItem("Contribution", round(εModeContrib, RME_ROUNDING), "%"))),
 
