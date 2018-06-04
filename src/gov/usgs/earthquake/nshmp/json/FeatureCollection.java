@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -80,6 +81,7 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
    * @return The {@code Feature}s
    */
   public ImmutableList<Feature> getFeatures() {
+    checkState(features.size() > 0, "Feature array is empty");
     return ImmutableList.copyOf(features); 
   }
  
@@ -97,9 +99,15 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
    * Return a {@code String} in JSON format.
    */
   public String toJsonString() {
-    return Util.cleanPoly(Util.GSON.toJson(this));
+    Boolean hasAllPoint = checkGeometryTypes(features, GeoJsonType.POINT);
+    
+    if (hasAllPoint) {
+      return Util.cleanPoints(Util.GSON.toJson(this));
+    } else {
+      return Util.cleanPoly(Util.GSON.toJson(this));
+    }
   }
-
+ 
   @Override
   /**
    * Return the {@code Iterator<Feature>}. 
@@ -158,7 +166,7 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
    * @throws IOException The {@code IOException}.
    */
   public static FeatureCollection read(Path path) throws IOException {
-    checkArgument(Files.exists(path), "File does not exist: " + path);
+    checkArgument(Files.exists(path), "File [%s] does not exist", path); 
     BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
     FeatureCollection fc = Util.GSON.fromJson(reader, FeatureCollection.class);
     reader.close();
@@ -399,6 +407,22 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
       return this;
     }
     
+  }
+
+  /**
+   * Check to see if all {@code Feature}s in the {@code FeatureCollection}
+   *    have the same {@code Geometry}.
+   *    
+   * @param features The features
+   * @param geometryType The geometry type
+   * @return Whether it has all same geometry
+   */
+  private static Boolean checkGeometryTypes(
+      List<Feature> features, 
+      GeoJsonType geometryType) {
+    return features.stream()
+        .map(d -> d.getGeometry().getType())
+        .allMatch(d -> d.equals(geometryType));
   }
 
 }

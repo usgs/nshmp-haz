@@ -37,7 +37,6 @@ public class Util {
         .registerTypeAdapter(Geometry.class, new GeometryDeserializer())
         .registerTypeAdapter(Geometry.class, new GeometrySerializer())
         .disableHtmlEscaping()
-        .serializeNulls()
         .setPrettyPrinting()
         .create();
   }
