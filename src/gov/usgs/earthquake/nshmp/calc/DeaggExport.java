@@ -149,6 +149,7 @@ final class DeaggExport {
         double m = magnitudes.get(mi);
         double rBar = dd.rmrScaled.get(ri, mi) / rmBinWeight;
         double mBar = dd.rmmScaled.get(ri, mi) / rmBinWeight;
+        double εBar = dd.rmεScaled.get(ri, mi) / rmBinWeight;
         // scale a mutable copy of epsilon values to percentage
         List<Double> εValues = new ArrayList<>(dd.rmε.column(ri, mi).yValues());
         Data.multiply(toPercent, εValues);
@@ -161,8 +162,10 @@ final class DeaggExport {
           εDataList.add(new εData(i, εValue));
         }
         RmBin rmBin = new RmBin(
-            r, rBar,
-            m, mBar,
+            r, m,
+            round(rBar, 2),
+            round(mBar, 2),
+            round(εBar, 2),
             εDataList.build(),
             ImmutableList.copyOf(εValues));
         rmBins.add(rmBin);
@@ -192,8 +195,8 @@ final class DeaggExport {
       sb.append(NEWLINE);
       for (RmBin rmBin : RM_BIN_SORTER.immutableSortedCopy(this)) {
         sb.append(String.format(
-            "%6.2f, %6.2f, %4.2f, %4.2f,",
-            rmBin.r, rmBin.rBar, rmBin.m, rmBin.mBar));
+            "%6.2f, %6.2f, %4.2f, %4.2f, %5.2f,",
+            rmBin.r, rmBin.rBar, rmBin.m, rmBin.mBar, rmBin.εBar));
         double total = Data.sum(rmBin.εValues);
         sb.append(EPSILON_FORMATTER.apply(total)).append(",");
         sb.append(formatEpsilonValues(rmBin.εValues));
@@ -221,10 +224,6 @@ final class DeaggExport {
   /*
    * Data container for a single distance-magnitude (r-m) bin.
    * 
-   * For JSON serialization, we are currently using the weighted r̅ and m̅ bin
-   * positions, hence the use of @SerializedName and transient fields. This may
-   * change in the future.
-   * 
    * Although we have the minimum necessary data in εdata for JSON
    * serialization, we want the complete εValue array for string serialization,
    * hence we persist the transient εValues list.
@@ -232,29 +231,28 @@ final class DeaggExport {
   @SuppressWarnings("unused")
   private static final class RmBin {
 
-    @SerializedName("r")
-    final transient double rBar;
     final double r;
-
-    @SerializedName("m")
-    final transient double mBar;
     final double m;
-
+    final double rBar;
+    final double mBar;
+    final double εBar;
     final List<εData> εdata;
     final transient List<Double> εValues;
 
     private RmBin(
         double r,
-        double rBar,
         double m,
+        double rBar,
         double mBar,
+        double εBar,
         List<εData> εdata,
         List<Double> εValues) {
 
       this.r = r;
-      this.rBar = rBar;
       this.m = m;
+      this.rBar = rBar;
       this.mBar = mBar;
+      this.εBar = εBar;
       this.εdata = εdata;
       this.εValues = εValues;
     }
@@ -280,8 +278,8 @@ final class DeaggExport {
    */
 
   private static final String DEAGG_DATA_HEADER = String.format(
-      "%6s, %7s, %4s, %5s, %5s",
-      "r", "r̅", "m", "m̅", "Σε");
+      "%6s, %7s, %4s, %5s, %6s, %5s",
+      "r", "r̅", "m", "m̅", "ε̅", "Σε");
 
   private static final String E_TRACE = "     T";
   private static final String E_ZERO = "     0";
@@ -299,14 +297,17 @@ final class DeaggExport {
 
   private static String formatEpsilonValues(List<Double> values) {
     return Delimiter.COMMA.joiner().join(Iterables.transform(
-        values, 
+        values,
         EPSILON_FORMATTER::apply));
   }
 
   private static Ordering<RmBin> RM_BIN_SORTER = new Ordering<RmBin>() {
     @Override
     public int compare(RmBin left, RmBin right) {
-      return ComparisonChain.start().compare(left.r, right.r).compare(left.m, right.m).result();
+      return ComparisonChain.start()
+          .compare(left.r, right.r)
+          .compare(left.m, right.m)
+          .result();
     }
   };
 
@@ -385,20 +386,20 @@ final class DeaggExport {
             new SummaryItem("Residual", round(ddResidual, RME_ROUNDING), "%"),
             new SummaryItem("Trace", round(ddTrace, RME_ROUNDING), "%"))),
 
-        new SummaryElement("Mean (for all sources)", true, ImmutableList.of(
-            new SummaryItem("r", round(dd.rBar, RME_ROUNDING), "km"),
+        new SummaryElement("Mean (over all sources)", true, ImmutableList.of(
             new SummaryItem("m", round(dd.mBar, RME_ROUNDING), null),
+            new SummaryItem("r", round(dd.rBar, RME_ROUNDING), "km"),
             new SummaryItem("ε₀", round(dd.εBar, RME_ROUNDING), "σ"))),
 
-        new SummaryElement("Mode (largest r-m bin)", true, ImmutableList.of(
-            new SummaryItem("r", round(rmrMode, RME_ROUNDING), "km"),
+        new SummaryElement("Mode (largest m-r bin)", true, ImmutableList.of(
             new SummaryItem("m", round(rmmMode, RME_ROUNDING), null),
+            new SummaryItem("r", round(rmrMode, RME_ROUNDING), "km"),
             new SummaryItem("ε₀", round(rmεMode, RME_ROUNDING), "σ"),
             new SummaryItem("Contribution", round(rmModeContrib, RME_ROUNDING), "%"))),
 
-        new SummaryElement("Mode (largest ε₀ bin)", true, ImmutableList.of(
-            new SummaryItem("r", round(εrMode, RME_ROUNDING), "km"),
+        new SummaryElement("Mode (largest m-r-ε₀ bin)", true, ImmutableList.of(
             new SummaryItem("m", round(εmMode, RME_ROUNDING), null),
+            new SummaryItem("r", round(εrMode, RME_ROUNDING), "km"),
             new SummaryItem("ε₀", round(εεMode, RME_ROUNDING), "σ"),
             new SummaryItem("Contribution", round(εModeContrib, RME_ROUNDING), "%"))),
 

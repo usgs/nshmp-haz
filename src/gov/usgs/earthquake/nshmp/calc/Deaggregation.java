@@ -178,7 +178,7 @@ public final class Deaggregation {
   }
 
   /**
-   * Returns an object constining deaggregation results that is suitable for
+   * Returns an object containing deaggregation results that is suitable for
    * JSON serialization.
    * 
    * @param imt of the deaggregation to retrieve.
