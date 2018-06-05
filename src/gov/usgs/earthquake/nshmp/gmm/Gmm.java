@@ -333,7 +333,7 @@ public enum Gmm {
    */
 
   /* Stable continent CEUS 2008 2014 */
-  
+
   /** @see AtkinsonBoore_2006p */
   AB_06_PRIME(
       AtkinsonBoore_2006p.class,
@@ -410,14 +410,6 @@ public enum Gmm {
       ToroEtAl_1997.Mw.NAME,
       ToroEtAl_1997.COEFFS_MW,
       ToroEtAl_1997.CONSTRAINTS),
-
-  /** Temporary 2014 CEUS weight-averaged GMM. */
-  @Deprecated
-  NSHM_CEUS_2014_AVG(
-      NshmCeus2014.class,
-      NshmCeus2014.NAME,
-      NshmCeus2014.COEFFS,
-      NshmCeus2014.CONSTRAINTS),
 
   /* Johnston mag converting flavors of CEUS 2008 */
 
@@ -599,6 +591,28 @@ public enum Gmm {
       McVerryEtAl_2000.Volcanic.NAME,
       McVerryEtAl_2000.COEFFS_GM,
       McVerryEtAl_2000.CONSTRAINTS),
+
+  /* Combined */
+
+  /**
+   * 2014 CEUS weight-averaged GMM. This is the fault-variant that includes
+   * Somerville (2011).
+   */
+  COMBINED_CEUS_2014(
+      CombinedGmm.Ceus2014.class,
+      CombinedGmm.Ceus2014.NAME,
+      CombinedGmm.Ceus2014.COEFFS,
+      CombinedGmm.Ceus2014.CONSTRAINTS),
+
+  /**
+   * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
+   * NGA-West2 and does not include Idriss.
+   */
+  COMBINED_WUS_2018(
+      CombinedGmm.Wus2014.class,
+      CombinedGmm.Wus2014.NAME,
+      CombinedGmm.Wus2014.COEFFS,
+      CombinedGmm.Wus2014.CONSTRAINTS),
 
   /* NGA-East for USGS */
 
@@ -1298,6 +1312,12 @@ public enum Gmm {
             MCVERRY_00_INTERFACE,
             MCVERRY_00_SLAB,
             MCVERRY_00_VOLCANIC)),
+    
+    COMBINED(
+        "Combined Models",
+        ImmutableList.of(
+            COMBINED_CEUS_2014,
+            COMBINED_WUS_2018)),
 
     NGA_EAST(
         "NGA-East",
@@ -1305,8 +1325,7 @@ public enum Gmm {
             NGA_EAST_USGS,
             NGA_EAST_USGS_NOS2S,
             NGA_EAST_USGS2,
-            NGA_EAST_USGS_SEEDS,
-            NSHM_CEUS_2014_AVG)),
+            NGA_EAST_USGS_SEEDS)),
 
     NGA_EAST_SAMMONS(
         "NGA-East USGS",
