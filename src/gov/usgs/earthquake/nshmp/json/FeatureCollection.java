@@ -242,7 +242,8 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
 
   /**
    * Convenience builder to build a new instance of a {@link FeatureCollection}.
-   * 
+   * <br><br>
+   *  
    * Example:
    * <pre>
    *   // Build properties 
