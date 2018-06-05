@@ -2,6 +2,7 @@ package gov.usgs.earthquake.nshmp.internal;
 
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.padStart;
+import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.ALASKA;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.AK_CLIP;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.CEUS_CLIP;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.CONTERMINOUS_US;
@@ -21,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -90,14 +90,12 @@ final class NshmpSiteFiles {
     LocationList wusBounds = WUS_CLIP.coordinates().bounds().toList();
     writePolyJson(wusOut, "NSHMP Western US", usCoords, 0.1, wusBounds);
 
-    // TODO AK needs to be updated with proper clipping region as above
-    // currently just mercator rectangle
     writePolyJson(
         EXPORT_DIR.resolve("map-alaska.geojson"),
-        "Alaska",
-        AK_CLIP.coordinates().bounds().toList(),
+        ALASKA.toString(),
+        ALASKA.coordinates(),
         0.1,
-        null);
+        AK_CLIP.coordinates().bounds().toList());
     
     writePolyJson(
         EXPORT_DIR.resolve("map-la-basin.geojson"),
@@ -183,7 +181,7 @@ final class NshmpSiteFiles {
     for (LocationList border : coordList) {
       properties.spacing(0.1)
           .title(nameList.get(i++));
-      fc.createPolygon(properties.build(), Optional.empty(), border);
+      fc.addPolygon(border, properties.build());
     }
     
     fc.build().write(out);
@@ -203,14 +201,14 @@ final class NshmpSiteFiles {
           .markerColor(EXTENTS_COLOR)
           .title(name + " Map Extents")
           .build();
-      fc.createPolygon(boundProperties, Optional.of("Extents"), bounds);
+      fc.addPolygon(bounds, boundProperties, Optional.of("Extents"), Optional.empty());
     }
     
     Properties properties = Properties.builder()
         .spacing(spacing)
         .title(name)
         .build();
-    fc.createPolygon(properties, Optional.empty(), coords);
+    fc.addPolygon(coords, properties);
     
     fc.build().write(out);
   }
@@ -365,7 +363,7 @@ final class NshmpSiteFiles {
     for (NamedLocation loc : sites) {
       properties.title(loc.toString())
           .markerSize("small");
-      fc.createPoint(properties.build(), loc.location(), Optional.empty());
+      fc.addPoint(loc.location(), properties.build());
     }
     
     fc.build().write(out);
@@ -390,7 +388,7 @@ final class NshmpSiteFiles {
         properties.put("z2p5", loc.z2p5());
       }
       
-      fc.createPoint(properties.build(), loc.location(), Optional.empty());
+      fc.addPoint(loc.location(), properties.build());
     }
     
     fc.build().write(out);
