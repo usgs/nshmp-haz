@@ -11,13 +11,13 @@ import com.google.gson.JsonElement;
 public class UtilTest {
   
   private static TestClass testClass = new TestClass();
-  private static JsonElement jsonEl = Util.GSON.toJsonTree(testClass, TestClass.class);
+  private static JsonElement jsonEl = JsonUtil.GSON.toJsonTree(testClass, TestClass.class);
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
  
   /**
-   * Test {@link Util#getJsonObject(JsonElement, String)} to throw
+   * Test {@link JsonUtil#getJsonObject(JsonElement, String)} to throw
    *    an {@code IllegalArgumentException} when a bad path to
    *    an object is given.
    */
@@ -26,11 +26,11 @@ public class UtilTest {
     exception.expect(IllegalArgumentException.class);
     
     String jsonPath = "bad.path.to.object";
-    Util.getJsonObject(jsonEl, jsonPath);
+    JsonUtil.getJsonObject(jsonEl, jsonPath);
   }
   
   /**
-   * Test {@link Util#getJsonObject(JsonElement, String)} to throw
+   * Test {@link JsonUtil#getJsonObject(JsonElement, String)} to throw
    *    an {@code IllegalArgumentException} when a bad end of path to
    *    an object is given.
    */
@@ -39,7 +39,7 @@ public class UtilTest {
     exception.expect(IllegalArgumentException.class);
 
     String jsonPath = "parameters.width.badValue";
-    Util.getJsonObject(jsonEl, jsonPath);
+    JsonUtil.getJsonObject(jsonEl, jsonPath);
   }
   
   /**
@@ -49,10 +49,10 @@ public class UtilTest {
   public void equalsTest() {
     String jsonPath = "parameters.width.value";
     
-    JsonElement widthEl = Util.getJsonObject(jsonEl, jsonPath);
+    JsonElement widthEl = JsonUtil.getJsonObject(jsonEl, jsonPath);
     double width = widthEl.getAsDouble();
     
-    JsonElement widthEl2 = Util.getJsonObject(jsonEl, "parameters", "width", "value");
+    JsonElement widthEl2 = JsonUtil.getJsonObject(jsonEl, "parameters", "width", "value");
     double width2 = widthEl2.getAsDouble();
     
     assertEquals(testClass.parameters.width.value, width, 0);

@@ -52,9 +52,10 @@ public class FeatureCollectionTest {
   @Test 
   public void builder_nullFeature() {
     exception.expect(NullPointerException.class);
-   
+    
+    Feature feature = null;
     FeatureCollection.builder()
-        .add(null)
+        .add(feature)
         .build();
   }
   
@@ -116,7 +117,7 @@ public class FeatureCollectionTest {
     exception.expect(NoSuchFileException.class);
     
     FeatureCollection fc = FeatureCollection.builder()
-        .createPoint(properties, 40, -120, Optional.of("test"))
+        .addPoint(40, -120, properties)
         .build();
     
     Path out = Paths.get("notRealPath").resolve("test.geojson");
@@ -133,7 +134,7 @@ public class FeatureCollectionTest {
     exception.expect(NullPointerException.class);
     
     FeatureCollection fc = FeatureCollection.builder()
-        .createPoint(properties, 40, -120, Optional.of("test"))
+        .addPoint(40, -120, properties)
         .build();
     
     Path out = null; 
@@ -155,12 +156,13 @@ public class FeatureCollectionTest {
         .build();
     
     FeatureCollection fc = FeatureCollection.builder()
-        .createMultiPolygon(properties, multiPolygon, Optional.of("MultiPolygon"))
-        .createPoint(properties, 40, -120, Optional.of("Point"))
-        .createPolygon(
-            properties, 
-            Optional.of("Polygon"), 
+        .addMultiPolygon(multiPolygon, properties, Optional.of("MultiPolygon"), Optional.empty())
+        .addPoint(40, -120, properties, Optional.of("Point"), Optional.empty())
+        .addPolygon(
             PolygonTest.border, 
+            properties,
+            Optional.of("Polygon"), 
+            Optional.empty(),
             PolygonTest.interior)
         .build();
     
