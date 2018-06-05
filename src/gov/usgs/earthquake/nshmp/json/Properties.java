@@ -82,8 +82,8 @@ public class Properties {
    * @return The {@code Class<T>}
    */
   public <T> T getProperty(Class<T> classOfT) {
-    JsonElement propertiesEl = Util.GSON.toJsonTree(attributes);
-    T properties = Util.GSON.fromJson(propertiesEl, classOfT);
+    JsonElement propertiesEl = JsonUtil.GSON.toJsonTree(attributes);
+    T properties = JsonUtil.GSON.fromJson(propertiesEl, classOfT);
     
     return properties; 
   }
@@ -127,10 +127,10 @@ public class Properties {
   * @return The {@code Type}.
   */
   public <T> T getProperty(String key, Type typeOfT) {
-    JsonElement propertiesEl = Util.GSON.toJsonTree(attributes.get(key));
+    JsonElement propertiesEl = JsonUtil.GSON.toJsonTree(attributes.get(key));
     checkNotNull(propertiesEl, "Could not get attribute: " + key);
     
-    return Util.GSON.fromJson(propertiesEl, typeOfT);
+    return JsonUtil.GSON.fromJson(propertiesEl, typeOfT);
   }
   
   /**
@@ -202,7 +202,7 @@ public class Properties {
    * @return The JSON {@code String}.
    */
   public String toJsonString() {
-    return Util.GSON.toJson(this);
+    return JsonUtil.GSON.toJson(this);
   }
 
   /**
@@ -276,7 +276,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder fill(String hexColor) {
-      attributes.put(Key.FILL, Util.GSON.toJsonTree(hexColor, String.class));
+      attributes.put(Key.FILL, JsonUtil.GSON.toJsonTree(hexColor, String.class));
       return this;
     }
 
@@ -286,7 +286,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder fillOpacity(double opacity) {
-      attributes.put(Key.FILL_OPACITY, Util.GSON.toJsonTree(opacity, double.class));
+      attributes.put(Key.FILL_OPACITY, JsonUtil.GSON.toJsonTree(opacity, double.class));
       return this;
     }
 
@@ -296,7 +296,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder id(String id) {
-      attributes.put(Key.ID, Util.GSON.toJsonTree(id, String.class));
+      attributes.put(Key.ID, JsonUtil.GSON.toJsonTree(id, String.class));
       return this;
     }
 
@@ -306,7 +306,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder markerSize(String size) {
-      attributes.put(Key.MARKER_SIZE, Util.GSON.toJsonTree(size, String.class ));
+      attributes.put(Key.MARKER_SIZE, JsonUtil.GSON.toJsonTree(size, String.class ));
       return this;
     }
 
@@ -316,7 +316,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder markerSymbol(String symbol) {
-      attributes.put(Key.MARKER_SYMBOL, Util.GSON.toJsonTree(symbol, String.class ));
+      attributes.put(Key.MARKER_SYMBOL, JsonUtil.GSON.toJsonTree(symbol, String.class ));
       return this;
     }
 
@@ -326,7 +326,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder markerColor(String hexColor) {
-      attributes.put(Key.MARKER_COLOR, Util.GSON.toJsonTree(hexColor, String.class));
+      attributes.put(Key.MARKER_COLOR, JsonUtil.GSON.toJsonTree(hexColor, String.class));
       return this;
     }
 
@@ -337,7 +337,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, double value) {
-      attributes.put(key, Util.GSON.toJsonTree(value, double.class));
+      attributes.put(key, JsonUtil.GSON.toJsonTree(value, double.class));
       return this;
     }
 
@@ -348,7 +348,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, int value) {
-      attributes.put(key, Util.GSON.toJsonTree(value, int.class));
+      attributes.put(key, JsonUtil.GSON.toJsonTree(value, int.class));
       return this;
     }
 
@@ -359,7 +359,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, Object value) {
-      attributes.put(key, Util.GSON.toJsonTree(value));
+      attributes.put(key, JsonUtil.GSON.toJsonTree(value));
       return this;
     }
 
@@ -370,7 +370,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder put(String key, String value) {
-      attributes.put(key, Util.GSON.toJsonTree(value, String.class));
+      attributes.put(key, JsonUtil.GSON.toJsonTree(value, String.class));
       return this;
     }
 
@@ -393,7 +393,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder spacing(double spacing) {
-      attributes.put(Key.SPACING, Util.GSON.toJsonTree(spacing, double.class));
+      attributes.put(Key.SPACING, JsonUtil.GSON.toJsonTree(spacing, double.class));
       return this;
     }
 
@@ -403,7 +403,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder stroke(String hexColor) {
-      attributes.put(Key.STROKE, Util.GSON.toJsonTree(hexColor, String.class));
+      attributes.put(Key.STROKE, JsonUtil.GSON.toJsonTree(hexColor, String.class));
       return this;
     }
 
@@ -413,7 +413,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder strokeOpacity(double opacity) {
-      attributes.put(Key.STROKE_OPACITY, Util.GSON.toJsonTree(opacity, double.class));
+      attributes.put(Key.STROKE_OPACITY, JsonUtil.GSON.toJsonTree(opacity, double.class));
       return this;
     }
 
@@ -423,7 +423,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder strokeWidth(double width) {
-      attributes.put(Key.STROKE_WIDTH, Util.GSON.toJsonTree(width, double.class));
+      attributes.put(Key.STROKE_WIDTH, JsonUtil.GSON.toJsonTree(width, double.class));
       return this;
     }
 
@@ -433,7 +433,7 @@ public class Properties {
      * @return The {@code Builder} to be chainable.
      */
     public Builder title(String title) {
-      attributes.put(Key.TITLE, Util.GSON.toJsonTree(title, String.class));
+      attributes.put(Key.TITLE, JsonUtil.GSON.toJsonTree(title, String.class));
       return this;
     }
     
