@@ -1,6 +1,18 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.*;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_06_PRIME;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.ASK_14_BASIN_AMP;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.ATKINSON_08_PRIME;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.BSSA_14_BASIN_AMP;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.CAMPBELL_03;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.CB_14_BASIN_AMP;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14_BASIN_AMP;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.FRANKEL_96;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.PEZESHK_11;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.SILVA_02;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.SOMERVILLE_01;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.TORO_97_MW;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.TP_05;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -75,15 +87,27 @@ class CombinedGmm implements GroundMotionModel {
       .put(TORO_97_MW, 0.11)
       .build();
 
+  /* Need to allow Vs30=3000 through for comparison plots. */
+  private static final Constraints CEUS_2014_CONSTRAINTS = Constraints.builder()
+      .withDefaults()
+      .build();
+
   /* Fault variant that includes Somerville. */
   static final class Ceus2014 extends CombinedGmm {
 
     static final String NAME = CombinedGmm.NAME + "CEUS 2014";
-    static final Constraints CONSTRAINTS = FrankelEtAl_1996.CONSTRAINTS;
+    static final Constraints CONSTRAINTS = CEUS_2014_CONSTRAINTS;
     static final CoefficientContainer COEFFS = FrankelEtAl_1996.COEFFS;
 
     Ceus2014(Imt imt) {
       super(imtToInstances(imt, CEUS_2014));
+    }
+
+    @Override
+    public ScalarGroundMotion calc(GmmInput in) {
+      GmmInput.Builder b = GmmInput.builder().fromCopy(in);
+      b.vs30(in.vs30 <= 760.0 ? 760.0 : 2000.0);
+      return super.calc(b.build());
     }
   }
 
