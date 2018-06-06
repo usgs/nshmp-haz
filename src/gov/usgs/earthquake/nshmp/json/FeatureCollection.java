@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -41,26 +42,14 @@ import gov.usgs.earthquake.nshmp.geo.LocationList;
  *      <li> Write to a file: {@link FeatureCollection#write(Path)} </li>
  *      <li> Read a file: {@link FeatureCollection#read(InputStreamReader)} </li>
  *    </ul>
- * <br><br> 
- * 
- * A {@link Builder} is supplied for ease of adding {@link Feature}s and
- *    creating a {@link Geometry}: 
- *    <ul> 
- *      <li> {@link Builder#add(Feature)} </li> 
- *      <li> {@link Builder#add(Properties, Geometry, Optional)} </li>
- *      <li> {@link Builder#createPoint(Properties, Location)} </li> 
- *      <li> {@link Builder#createPoint(Properties, double, double)} </li> 
- *      <li> {@link Builder#createPolygon(Properties, LocationList, LocationList...)} </li> 
- *      <li> {@link Builder#createMultiPolygon(Properties, List)} </li>
- *      <li> {@link Builder#createMultiPolygon(Properties, MultiPolygon)} </li>
- *    </ul> 
- *    See {@link Builder} for example.
  * 
  * @author Brandon Clayton
  */
 public class FeatureCollection implements GeoJson, Iterable<Feature> {
   /** The {@link GeoJsonType} of GeoJson object: FeatureCollection */
   private final String type;
+  /** The bounding box for a {@code FeaetureCollection} */
+  private final double[] bbox;
   /** The {@code List} of {@link Feature}s. */
   private final List<Feature> features;
 
@@ -70,7 +59,20 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
    */
   private FeatureCollection(Builder builder) {
     this.type = GeoJsonType.FEATURE_COLLECTION.toUpperCamelCase();
+    this.bbox = builder.bbox;
     this.features = builder.features;
+  }
+
+  /**
+   * Return a {@code double[]} representing the bounding
+   *    box for the {@code FeatureCollection}. 
+   * <br>
+   * 
+   * If not bounding box was set, returns {@code null}.
+   * @return The bounding box.
+   */
+  public double[] getBbox() {
+    return bbox != null ? bbox : null;
   }
 
   /**
@@ -80,30 +82,37 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
    * @return The {@code Feature}s
    */
   public ImmutableList<Feature> getFeatures() {
+    checkState(features.size() > 0, "Feature array is empty");
     return ImmutableList.copyOf(features); 
   }
  
-  @Override
   /**
    * Return the {@link GeoJsonType} representing the {@code FeatureCollection}.
    * @return The {@code GeoJsonType}.
    */ 
+  @Override
   public GeoJsonType getType() {
     return GeoJsonType.getEnum(type);
   }
  
-  @Override
   /**
    * Return a {@code String} in JSON format.
    */
-  public String toJsonString() {
-    return Util.cleanPoly(Util.GSON.toJson(this));
-  }
-
   @Override
+  public String toJsonString() {
+    Boolean hasAllPoint = checkGeometryTypes(features, GeoJsonType.POINT);
+    
+    if (hasAllPoint) {
+      return JsonUtil.cleanPoints(JsonUtil.GSON.toJson(this));
+    } else {
+      return JsonUtil.cleanPoly(JsonUtil.GSON.toJson(this));
+    }
+  }
+ 
   /**
    * Return the {@code Iterator<Feature>}. 
    */
+  @Override
   public Iterator<Feature> iterator() {
     return getFeatures().iterator();
   }
@@ -133,7 +142,7 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
    */
   public static FeatureCollection read(InputStreamReader reader) {
     checkNotNull(reader, "Input stream cannot be null");
-    return Util.GSON.fromJson(reader, FeatureCollection.class);
+    return JsonUtil.GSON.fromJson(reader, FeatureCollection.class);
   }
 
   /**
@@ -158,9 +167,9 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
    * @throws IOException The {@code IOException}.
    */
   public static FeatureCollection read(Path path) throws IOException {
-    checkArgument(Files.exists(path), "File does not exist: " + path);
+    checkArgument(Files.exists(path), "File [%s] does not exist", path); 
     BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
-    FeatureCollection fc = Util.GSON.fromJson(reader, FeatureCollection.class);
+    FeatureCollection fc = JsonUtil.GSON.fromJson(reader, FeatureCollection.class);
     reader.close();
     
     return fc;
@@ -191,7 +200,7 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
   public static FeatureCollection read(URL url) throws IOException {
     checkArgument(url != null, "URL cannot be null");
     BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-    FeatureCollection fc = Util.GSON.fromJson(reader, FeatureCollection.class);
+    FeatureCollection fc = JsonUtil.GSON.fromJson(reader, FeatureCollection.class);
     reader.close();
     
     return fc;
@@ -234,27 +243,18 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
   /**
    * Convenience builder to build a new instance of a {@link FeatureCollection}.
    * <br><br>
-   * 
-   * Easily add {@link Feature}s to a {@code List} by: 
-   *  <ul> 
-   *    <li> {@link #add(Feature)} </li> 
-   *    <li> {@link #add(Properties, Geometry, Optional)} </li>
-   *    <li> {@link #createPoint(Properties, Location)} </li> 
-   *    <li> {@link #createPoint(Properties, double, double)} </li> 
-   *    <li> {@link #createPolygon(Properties, LocationList, LocationList...)} </li> 
-   *    <li> {@link #createMultiPolygon(Properties, MultiPolygon)} </li>
-   *    <li> {@link #createMultiPolygon(Properties, List)} </li>
-   *  </ul>
-   * <br><br>
-   * 
+   *  
    * Example:
    * <pre>
+   *   // Build properties 
    *   Properties properties = Properties.builder()
    *       .title("Golden")
    *       .id("golden")
    *       .build();
+   *       
+   *   // Build a FeatureCollection
    *   FeatureCollection fc = FeatureCollection.builder()
-   *       .createPoint(properties, 39.75, -105)
+   *       .addPoint(39.75, -105, properties)
    *       .build();
    * </pre>
    * 
@@ -262,6 +262,7 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
    */
   public static class Builder {
     private List<Feature> features = new ArrayList<>(); 
+    private double[] bbox;
 
     private Builder() {}
 
@@ -288,38 +289,58 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
     }
     
     /**
-     * Add a {@link Feature} with a specific {@link Geometry} 
+     * Add a {@link Feature} with a {@link Geometry} 
      *    to the {@link FeatureCollection#features} {@code List}.
      *    
-     * @param properties The {@link Properties}.
      * @param geometry The {@code Geometry}.
+     * @param properties The {@link Properties}.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder add(Geometry geometry, Properties properties) {
+      Feature feature = Feature.builder()
+          .addGeometry(geometry)
+          .properties(properties)
+          .build();
+      
+      features.add(feature);
+      return this;
+    }
+    
+    /**
+     * Add a {@link Feature} with a {@link Geometry} 
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param geometry The {@code Geometry}.
+     * @param properties The {@link Properties}.
      * @param featureId An {@code Optional} ({@code String} or {@code int})
      *    id for the {@code Feature}.
+     * @param featureBbox An {@code Optional} {@code double[]} representing the 
+     *    bounding box for a {@code Feature}.
      * @return Return the {@code Builder} to make chainable.
      */
     public Builder add(
-        Properties properties, 
         Geometry geometry, 
-        Optional<?> featureId) {
-      features.add(new Feature(properties, geometry, featureId));
+        Properties properties, 
+        Optional<?> featureId,
+        Optional<double[]> featureBbox) {
+      Feature.Builder feature = Feature.builder()
+          .addGeometry(geometry)
+          .properties(properties);
+      
+      ifPresent(feature, featureId, featureBbox);
+      
+      features.add(feature.build());
       return this;
     }
-   
+  
     /**
-     * Add a {@link Feature} with {@link Geometry} of {@link MultiPolygon} 
-     *    to the {@link FeatureCollection#features} {@code List}.
-     *    
-     * @param properties The {@link Properties}.
-     * @param multiPolygon The {@code MultiPolygon}.
-     * @param featureId An {@code Optional} ({@code String} or {@code int})
-     *    id for the {@code Feature}.
+     * Set the {@code FeatureCollection} bounding box.
+     * 
+     * @param bbox The bounding box.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createMultiPolygon(
-        Properties properties, 
-        MultiPolygon multiPolygon,
-        Optional<?> featureId) {
-      features.add(Feature.createMultiPolygon(properties, multiPolygon, featureId));
+    public Builder bbox(double[] bbox) {
+      this.bbox = bbox;
       return this;
     }
     
@@ -327,17 +348,89 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
      * Add a {@link Feature} with {@link Geometry} of {@link MultiPolygon} 
      *    to the {@link FeatureCollection#features} {@code List}.
      *    
+     * @param multiPolygon The {@code MultiPolygon}.
      * @param properties The {@link Properties}.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder addMultiPolygon(MultiPolygon multiPolygon, Properties properties) {
+      Feature feature = Feature.builder()
+          .addMultiPolygon(multiPolygon)
+          .properties(properties)
+          .build();
+      
+      features.add(feature);
+      return this;
+    }
+    
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link MultiPolygon} 
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param multiPolygon The {@code MultiPolygon}.
+     * @param properties The {@link Properties}.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
+     * @param featureBbox An {@code Optional} {@code double[]} representing the 
+     *    bounding box for a {@code Feature}.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder addMultiPolygon(
+        MultiPolygon multiPolygon,
+        Properties properties, 
+        Optional<?> featureId,
+        Optional<double[]> featureBbox) {
+      Feature.Builder feature = Feature.builder()
+          .addMultiPolygon(multiPolygon)
+          .properties(properties);
+      
+      ifPresent(feature, featureId, featureBbox);
+          
+      features.add(feature.build());
+      return this;
+    }
+    
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link MultiPolygon} 
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
      * @param polygons A {@code List} of {@link Polygon}s. 
-     * @param featureId An {@code Optional} ({@code String} or {@code int})
-     *    id for the {@code Feature}.
+     * @param properties The {@link Properties}.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createMultiPolygon(
-        Properties properties, 
+    public Builder addMultiPolygon(List<Polygon> polygons, Properties properties) {
+      Feature feature = Feature.builder()
+          .addMultiPolygon(polygons)
+          .properties(properties)
+          .build();
+      
+      features.add(feature);
+      return this;
+    }
+
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link MultiPolygon} 
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param polygons A {@code List} of {@link Polygon}s. 
+     * @param properties The {@link Properties}.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
+     * @param featureBbox An {@code Optional} {@code double[]} representing the 
+     *    bounding box for a {@code Feature}.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder addMultiPolygon(
         List<Polygon> polygons, 
-        Optional<?> featureId) {
-      features.add(Feature.createMultiPolygon(properties, polygons, featureId));
+        Properties properties,
+        Optional<?> featureId,
+        Optional<double[]> featureBbox) {
+      Feature.Builder feature = Feature.builder()
+          .addMultiPolygon(polygons)
+          .properties(properties);
+      
+      ifPresent(feature, featureId, featureBbox);
+      
+      features.add(feature.build());
       return this;
     }
 
@@ -345,17 +438,17 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
      * Add a {@link Feature} with {@link Geometry} of {@link Point} to
      *    the {@link FeatureCollection#features} {@code List}.
      *    
-     * @param properties The {@link Properties} of the point.
      * @param loc The {@link Location} of the point.
-     * @param featureId An {@code Optional} ({@code String} or {@code int})
-     *    id for the {@code Feature}.
+     * @param properties The {@link Properties} of the point.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createPoint(
-        Properties properties, 
-        Location loc, 
-        Optional<?> featureId) {
-      features.add(Feature.createPoint(properties, loc, featureId));
+    public Builder addPoint(Location loc, Properties properties) {
+      Feature feature = Feature.builder()
+          .addPoint(loc)
+          .properties(properties)
+          .build();
+      
+      features.add(feature);
       return this;
     }
 
@@ -363,19 +456,74 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
      * Add a {@link Feature} with {@link Geometry} of {@link Point} to
      *    the {@link FeatureCollection#features} {@code List}.
      *    
+     * @param loc The {@link Location} of the point.
      * @param properties The {@link Properties} of the point.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
+     * @param featureBbox An {@code Optional} {@code double[]} representing the 
+     *    bounding box for a {@code Feature}.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder addPoint(
+        Location loc, 
+        Properties properties,
+        Optional<?> featureId,
+        Optional<double[]> featureBbox) {
+      Feature.Builder feature = Feature.builder()
+          .addPoint(loc)
+          .properties(properties);
+      
+      ifPresent(feature, featureId, featureBbox);
+      
+      features.add(feature.build());
+      return this;
+    }
+
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link Point} to
+     *    the {@link FeatureCollection#features} {@code List}.
+     *    
      * @param latitude The latitude of the point.
      * @param longitude The longitude of the point.
-     * @param featureId An {@code Optional} ({@code String} or {@code int})
-     *    id for the {@code Feature}.
+     * @param properties The {@link Properties} of the point.
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createPoint(
-        Properties properties, 
+    public Builder addPoint(double latitude, double longitude, Properties properties) {
+      Feature feature = Feature.builder()
+          .addPoint(latitude, longitude)
+          .properties(properties)
+          .build();
+      
+      features.add(feature);
+      return this;
+    }
+
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link Point} to
+     *    the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param latitude The latitude of the point.
+     * @param longitude The longitude of the point.
+     * @param properties The {@link Properties} of the point.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
+     * @param featureBbox An {@code Optional} {@code double[]} representing the 
+     *    bounding box for a {@code Feature}.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder addPoint(
         double latitude, 
         double longitude, 
-        Optional<?> featureId) {
-      features.add(Feature.createPoint(properties, latitude, longitude, featureId));
+        Properties properties,
+        Optional<?> featureId,
+        Optional<double[]> featureBbox) {
+      Feature.Builder feature = Feature.builder()
+          .addPoint(latitude, longitude)
+          .properties(properties);
+      
+      ifPresent(feature, featureId, featureBbox);
+      
+      features.add(feature.build());
       return this;
     }
 
@@ -383,22 +531,118 @@ public class FeatureCollection implements GeoJson, Iterable<Feature> {
      * Add a {@link Feature} with {@link Geometry} of {@link Polygon}
      *    to the {@link FeatureCollection#features} {@code List}.
      *    
-     * @param properties The {@link Properties} of the polygon.
-     * @param featureId An {@code Optional} ({@code String} or {@code int})
-     *    id for the {@code Feature}.
      * @param border The border of the {@code Polygon} 
+     * @param properties The {@link Properties} of the polygon.
      * @param interiors The interiors of the {@code Polygon}
      * @return Return the {@code Builder} to make chainable.
      */
-    public Builder createPolygon(
-        Properties properties,
-        Optional<?> featureId,
+    public Builder addPolygon(
         LocationList border,
+        Properties properties,
         LocationList... interiors) {
-      features.add(Feature.createPolygon(properties, featureId, border, interiors));
+      Feature feature = Feature.builder()
+          .addPolygon(border, interiors)
+          .properties(properties)
+          .build();
+      
+      features.add(feature);
       return this;
     }
     
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link Polygon}
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param border The border of the {@code Polygon} 
+     * @param properties The {@link Properties} of the polygon.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
+     * @param featureBbox An {@code Optional} {@code double[]} representing the 
+     *    bounding box for a {@code Feature}.
+     * @param interiors The interiors of the {@code Polygon}
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder addPolygon(
+        LocationList border,
+        Properties properties,
+        Optional<?> featureId,
+        Optional<double[]> featureBbox,
+        LocationList... interiors) {
+      Feature.Builder feature = Feature.builder()
+          .addPolygon(border, interiors)
+          .properties(properties);
+      
+      ifPresent(feature, featureId, featureBbox);
+      
+      features.add(feature.build());
+      return this;
+    }
+    
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link Polygon}
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param polygon The {@code Polygon} 
+     * @param properties The {@link Properties} of the polygon.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder addPolygon(Polygon polygon, Properties properties) {
+      Feature feature = Feature.builder()
+          .addPolygon(polygon)
+          .properties(properties)
+          .build();
+      
+      features.add(feature);
+      return this;
+    }
+    
+    /**
+     * Add a {@link Feature} with {@link Geometry} of {@link Polygon}
+     *    to the {@link FeatureCollection#features} {@code List}.
+     *    
+     * @param polygon The {@code Polygon} 
+     * @param properties The {@link Properties} of the polygon.
+     * @param featureId An {@code Optional} ({@code String} or {@code int})
+     *    id for the {@code Feature}.
+     * @param featureBbox An {@code Optional} {@code double[]} representing the 
+     *    bounding box for a {@code Feature}.
+     * @return Return the {@code Builder} to make chainable.
+     */
+    public Builder addPolygon(
+        Polygon polygon, 
+        Properties properties,
+        Optional<?> featureId,
+        Optional<double[]> featureBbox) {
+      Feature.Builder feature = Feature.builder()
+          .addPolygon(polygon)
+          .properties(properties);
+      
+      ifPresent(feature, featureId, featureBbox);
+
+      features.add(feature.build());
+      return this;
+    }
+   
+    private void ifPresent(Feature.Builder feature, Optional<?> id, Optional<double[]> bbox) {
+      if (id.isPresent()) feature.id(JsonUtil.GSON.toJsonTree(id.get()));
+      if (bbox.isPresent()) feature.bbox(bbox.get());
+    }
+  }
+
+  /**
+   * Check to see if all {@code Feature}s in the {@code FeatureCollection}
+   *    have the same {@code Geometry}.
+   *    
+   * @param features The features
+   * @param geometryType The geometry type
+   * @return Whether it has all same geometry
+   */
+  private static Boolean checkGeometryTypes(
+      List<Feature> features, 
+      GeoJsonType geometryType) {
+    return features.stream()
+        .map(d -> d.getGeometry().getType())
+        .allMatch(d -> d.equals(geometryType));
   }
 
 }

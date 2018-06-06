@@ -30,8 +30,9 @@ public class FeatureTest {
   @Test
   public void createPoint_nullLocation() {
     exception.expect(NullPointerException.class);
-    
-    Feature.createPoint(properties, null, Optional.empty());
+   
+    Location loc = null;
+    Feature.builder().addPoint(loc).properties(properties).build();
   }
   
   /**
@@ -43,7 +44,7 @@ public class FeatureTest {
   public void createPoint_badLatitude() {
     exception.expect(IllegalArgumentException.class);
     
-    Feature.createPoint(properties, 500.0, -120, Optional.empty());
+    Feature.builder().addPoint(5000, -120).properties(properties).build();
   }
   
   /**
@@ -55,7 +56,7 @@ public class FeatureTest {
   public void createPoint_badLongitude() {
     exception.expect(IllegalArgumentException.class);
     
-    Feature.createPoint(properties, 40, 500.0, Optional.empty());
+    Feature.builder().addPoint(40, 5000.0).properties(properties).build();
   }
   
   /**
@@ -67,8 +68,9 @@ public class FeatureTest {
   @Test 
   public void createPolygon_nullLocationList() {
     exception.expect(NullPointerException.class);
-    
-    Feature.createPolygon(properties, Optional.empty(), null);
+   
+    LocationList locs = null;
+    Feature.builder().addPolygon(locs).properties(properties).build();
   }
   
   /**
@@ -87,7 +89,7 @@ public class FeatureTest {
         .add(40, -120)
         .build();
     
-    Feature.createPolygon(properties, Optional.empty(), locs);
+    Feature.builder().addPolygon(locs).properties(properties).build();
   }
   
   /**
@@ -97,9 +99,9 @@ public class FeatureTest {
    */
   @Test
   public void feature_nullGeometry() {
-    exception.expect(NullPointerException.class);
+    exception.expect(IllegalStateException.class);
     
-    new Feature(properties, null, Optional.empty());
+    Feature.builder().addGeometry(null).properties(properties).build();
   }
   
   /**
@@ -108,11 +110,23 @@ public class FeatureTest {
    *    {@link Properties} is supplied.
    */
   @Test
-  public void feature_nullProperties() {
-    exception.expect(NullPointerException.class);
+  public void feature_geometryAlreadySet() {
+    exception.expect(IllegalStateException.class);
     
-    Point geometry = new Point(40, -120);
-    new Feature(null, geometry, Optional.empty());
+    Feature.builder()
+        .addPoint(40, -120)
+        .addPoint(40, -120)
+        .properties(properties)
+        .build();
+  }
+ 
+  @Test
+  public void feature_propertiesNotSet() {
+    exception.expect(IllegalStateException.class);
+    
+    Feature.builder()
+        .addPoint(40, -120)
+        .build();
   }
  
   /**
@@ -125,10 +139,13 @@ public class FeatureTest {
     
     String strId = "test";
     int intId = 5;
-    
-    Feature feature = new Feature(properties, point, Optional.of(strId));
-    Feature feature2 = Feature.createPoint(properties, loc, Optional.of(intId));
-    Feature feature3 = Feature.createPoint(properties, 40, -122, Optional.empty());
+   
+    Feature feature = Feature.builder()
+        .addGeometry(point).id(strId).properties(properties).build();
+    Feature feature2 = Feature.builder()
+        .addPoint(loc).id(intId).properties(properties).build();
+    Feature feature3 = Feature.builder()
+        .addPoint(40, -122).properties(properties).build();
     
     assertEquals(loc, feature.getGeometry().asPoint().getLocation());
     assertEquals(loc, feature2.getGeometry().asPoint().getLocation());
@@ -136,7 +153,7 @@ public class FeatureTest {
     
     assertEquals(strId, feature.getId());
     assertEquals(intId, feature2.getNumericId(), 0);
-    assertEquals("", feature3.getId());
+    assertEquals(null, feature3.getId());
   }
 
   /**
@@ -145,13 +162,12 @@ public class FeatureTest {
   @Test
   public void featurePolygonEquals() {
     Polygon polygon =  new Polygon(PolygonTest.border, PolygonTest.interior);
-    
-    Feature feature = new Feature(properties, polygon, Optional.empty());
-    Feature feature2 = Feature.createPolygon(
-        properties, 
-        Optional.empty(), 
-        PolygonTest.border, 
-        PolygonTest.interior);
+   
+    Feature feature = Feature.builder().addGeometry(polygon).properties(properties).build();
+    Feature feature2 = Feature.builder()
+        .addPolygon(PolygonTest.border, PolygonTest.interior)
+        .properties(properties)
+        .build();
     
     assertEquals(PolygonTest.border, feature.getGeometry().asPolygon().getBorder());
     assertEquals(PolygonTest.border, feature2.getGeometry().asPolygon().getBorder());
@@ -172,16 +188,17 @@ public class FeatureTest {
         .addPolygon(MultiPolygonTest.borderA, MultiPolygonTest.interiorA)
         .addPolygon(MultiPolygonTest.borderB)
         .build();
-    
-    Feature feature = new Feature(properties, multiPolygon, Optional.empty());
-    Feature feature1 = Feature.createMultiPolygon(
-        properties, multiPolygon, Optional.empty());
-    Feature feature2 = Feature.createMultiPolygon(
-        properties, multiPolygon.getPolygons(), Optional.empty());
+   
+    Feature feature = Feature.builder()
+        .addGeometry(multiPolygon).properties(properties).build();
+    Feature feature2 = Feature.builder()
+        .addMultiPolygon(multiPolygon).properties(properties).build();
+    Feature feature3 = Feature.builder()
+        .addMultiPolygon(multiPolygon.getPolygons()).properties(properties).build();
    
     List<Polygon> polygons = feature.getGeometry().asMultiPolygon().getPolygons();
-    List<Polygon> polygons2 = feature1.getGeometry().asMultiPolygon().getPolygons();
-    List<Polygon> polygons3 = feature2.getGeometry().asMultiPolygon().getPolygons();
+    List<Polygon> polygons2 = feature2.getGeometry().asMultiPolygon().getPolygons();
+    List<Polygon> polygons3 = feature3.getGeometry().asMultiPolygon().getPolygons();
     
     assertEquals(MultiPolygonTest.borderA, polygons.get(0).getBorder());
     assertEquals(MultiPolygonTest.borderA, polygons2.get(0).getBorder());
@@ -201,7 +218,7 @@ public class FeatureTest {
    */
   @Test
   public void equalsTest() {
-    Feature feature = Feature.createPoint(properties, 40, -120, Optional.empty());
+    Feature feature = Feature.builder().addPoint(40, -120).properties(properties).build();
     
     Properties propCheck = feature.getProperties();
     

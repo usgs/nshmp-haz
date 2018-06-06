@@ -34,7 +34,7 @@ public class Point implements Geometry {
     checkNotNull(loc, "Location cannot be null");
     
     this.type = GeoJsonType.POINT.toUpperCamelCase();
-    this.coordinates = Util.toCoordinates(loc);
+    this.coordinates = JsonUtil.toCoordinates(loc);
   }
 
   /**
@@ -52,7 +52,7 @@ public class Point implements Geometry {
   public Point(double latitude, double longitude) {
     Location loc = Location.create(latitude, longitude);
     this.type = GeoJsonType.POINT.toUpperCamelCase();
-    this.coordinates = Util.toCoordinates(loc);
+    this.coordinates = JsonUtil.toCoordinates(loc);
   }
 
   @Override
@@ -87,7 +87,7 @@ public class Point implements Geometry {
    * Return a {@code String} in JSON format.
    */
   public String toJsonString() {
-    return Util.cleanPoints(Util.GSON.toJson(this, Point.class));
+    return JsonUtil.cleanPoints(JsonUtil.GSON.toJson(this, Point.class));
   }
   
 }

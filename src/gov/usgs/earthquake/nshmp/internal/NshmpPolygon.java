@@ -14,6 +14,7 @@ public enum NshmpPolygon {
   WUS_CLIP(Data.WUS_CLIP, "Western US Map Extents"),
   AK_CLIP(Data.AK_CLIP, "Alaska Map Extents"),
 
+  ALASKA(Data.ALASKA, "Alaska"),
   CONTERMINOUS_US(Data.CONTERMINOUS, "Conterminous US"),
 
   LA_BASIN(Data.WG_07_LA, "Los Angeles Basin – WGCEP 2007"),
@@ -71,6 +72,34 @@ public enum NshmpPolygon {
     private static final double[][] AK_CLIP = {
         { -200.0, 48.0 },
         { -125.0, 72.0 }
+    };
+    
+    private static final double[][] ALASKA = {
+        { -137.5, 70.6 },
+        { -157.1, 72.6 },
+        { -163.6, 71.6 },
+        { -168.4, 69.7 },
+        { -175.2, 61.4 },
+        { -178.8, 56.8 },
+        { -182.5, 55.6 },
+        { -188.3, 55.4 },
+        { -191.1, 54.5 },
+        { -191.5, 52.9 },
+        { -191.1, 50.8 },
+        { -187.8, 49.5 },
+        { -178.0, 48.4 },
+        { -162.1, 50.3 },
+        { -152.2, 53.8 },
+        { -147.8, 56.3 }, 
+        { -142.8, 57.2 },
+        { -138.8, 55.8 },
+        { -134.9, 53.5 },
+        { -130.6, 53.0 },
+        { -126.8, 55.5 },
+        { -134.3, 60.8 },
+        { -136.6, 60.7 },
+        { -137.5, 61.4 },
+        { -137.5, 70.6 }   
     };
 
     private static final double[][] CONTERMINOUS = {

@@ -74,7 +74,7 @@ public class MultiPolygon implements Geometry {
    * @return The JSON {@code String}
    */
   public String toJsonString() {
-    return Util.cleanPoly(Util.GSON.toJson(this, MultiPolygon.class));
+    return JsonUtil.cleanPoly(JsonUtil.GSON.toJson(this, MultiPolygon.class));
   }
 
   /**
@@ -184,8 +184,8 @@ public class MultiPolygon implements Geometry {
       LocationList[] interiorArray = polygon.getInteriors().toArray(new LocationList[0]);
       
       ImmutableList<double[][]> polygonCoords = new ImmutableList.Builder<double[][]>()
-          .add(Util.toCoordinates(polygon.getBorder()))
-          .addAll(Util.toCoordinates(interiorArray))
+          .add(JsonUtil.toCoordinates(polygon.getBorder()))
+          .addAll(JsonUtil.toCoordinates(interiorArray))
           .build();
       
       coordinates.add(polygonCoords);
@@ -208,8 +208,8 @@ public class MultiPolygon implements Geometry {
       LocationList[] interiorArray = polygon.getInteriors().toArray(new LocationList[0]);
       
       ImmutableList<double[][]> polygonCoords = new ImmutableList.Builder<double[][]>()
-          .add(Util.toCoordinates(polygon.getBorder()))
-          .addAll(Util.toCoordinates(interiorArray))
+          .add(JsonUtil.toCoordinates(polygon.getBorder()))
+          .addAll(JsonUtil.toCoordinates(interiorArray))
           .build();
       
       coordinates.add(polygonCoords);

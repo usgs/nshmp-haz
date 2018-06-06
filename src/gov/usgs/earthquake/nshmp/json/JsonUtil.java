@@ -26,7 +26,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * 
  * @author Brandon Clayton
  */
-public class Util {
+public class JsonUtil {
   /** {@link Gson} for converting objects to a JSON {@code String} */
   static final Gson GSON;
   /** Precision for rounding */
@@ -37,7 +37,6 @@ public class Util {
         .registerTypeAdapter(Geometry.class, new GeometryDeserializer())
         .registerTypeAdapter(Geometry.class, new GeometrySerializer())
         .disableHtmlEscaping()
-        .serializeNulls()
         .setPrettyPrinting()
         .create();
   }

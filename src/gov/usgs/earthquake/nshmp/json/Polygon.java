@@ -87,8 +87,8 @@ public class Polygon implements Geometry  {
     checkInteriors(this.border, this.interiors);
     
     this.coordinates = new ImmutableList.Builder<double[][]>()
-        .add(Util.toCoordinates(this.border))
-        .addAll(Util.toCoordinates(this.interiors))
+        .add(JsonUtil.toCoordinates(this.border))
+        .addAll(JsonUtil.toCoordinates(this.interiors))
         .build();
   }
   
@@ -138,7 +138,7 @@ public class Polygon implements Geometry  {
    * Return a {@code String} in JSON format.
    */
   public String toJsonString() {
-    return Util.cleanPoly(Util.GSON.toJson(this, Polygon.class));
+    return JsonUtil.cleanPoly(JsonUtil.GSON.toJson(this, Polygon.class));
   }
  
   /**

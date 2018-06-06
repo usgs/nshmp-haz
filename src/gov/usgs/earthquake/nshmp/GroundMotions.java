@@ -23,12 +23,11 @@ import gov.usgs.earthquake.nshmp.gmm.Imt;
 import gov.usgs.earthquake.nshmp.gmm.ScalarGroundMotion;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
-
 public class GroundMotions {
-	
-	private final static int ROUND = 5;
-	private final static int R_POINTS = 100;
-	
+
+  private final static int ROUND = 5;
+  private final static int R_POINTS = 100;
+
   public static DistanceResult distanceGroundMotions(
       Set<Gmm> gmms,
       GmmInput inputModel,
@@ -37,8 +36,7 @@ public class GroundMotions {
       double rMax,
       boolean isLogSpace) {
 
-    double[] distance = isLogSpace ? distanceLog(rMin, rMax) : 
-    			distanceLinear(rMin, rMax);
+    double[] distance = isLogSpace ? distanceLog(rMin, rMax) : distanceLinear(rMin, rMax);
     List<GmmInput> gmmInputs = hangingWallDistances(distance, inputModel);
 
     Map<Gmm, List<Double>> distanceMap = Maps.newEnumMap(Gmm.class);
@@ -82,23 +80,23 @@ public class GroundMotions {
       this.sigmas = sigmas;
     }
   }
-  
+
   static double[] distanceLog(double rMin, double rMax) {
-    double rStep = (Math.log10(rMax / rMin)) / ( R_POINTS - 1);
+    double rStep = (Math.log10(rMax / rMin)) / (R_POINTS - 1);
     double[] distance = Data.round(ROUND, Data.pow10(
         Data.buildSequence(Math.log10(rMin), Math.log10(rMax), rStep, true)));
-    
-  		return distance;
+
+    return distance;
   }
-  
+
   static double[] distanceLinear(double rMin, double rMax) {
     double rStep = 1.0;
     double[] distance = Data.buildCleanSequence(
-    			rMin, rMax, rStep, true, ROUND);
-    
-  		return distance;
+        rMin, rMax, rStep, true, ROUND);
+
+    return distance;
   }
-  
+
   /*
    * Compute distance metrics for a fault.
    */
@@ -126,7 +124,7 @@ public class GroundMotions {
 
     List<GmmInput> gmmInputs = new ArrayList<>(rValues.length);
     GmmInput.Builder gmmBuilder = GmmInput.builder().fromCopy(inputModel);
-    
+
     for (double r : rValues) {
       double rJB = (r < 0) ? -r : (r < h) ? 0.0 : r - h;
       double rRup = (r < rCutLo)
@@ -140,7 +138,7 @@ public class GroundMotions {
 
     return gmmInputs;
   }
-  
+
   /*
    * Computes rRup for a surface distance r. The range [rCutLo, rCutHi] must
    * contain r; rRupLo and rRupHi are rRup at rCutLo and rCutHi, respectively.
@@ -156,6 +154,5 @@ public class GroundMotions {
     double rCutΔ = rCutHi - rCutLo;
     return rRupLo + (r - rCutLo) / rCutΔ * rRupΔ;
   }
-  
 
 }

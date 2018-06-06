@@ -2,6 +2,7 @@ package gov.usgs.earthquake.nshmp.internal;
 
 import static com.google.common.base.Strings.padEnd;
 import static com.google.common.base.Strings.padStart;
+import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.ALASKA;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.AK_CLIP;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.CEUS_CLIP;
 import static gov.usgs.earthquake.nshmp.internal.NshmpPolygon.CONTERMINOUS_US;
@@ -21,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -40,9 +40,8 @@ import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
-import gov.usgs.earthquake.nshmp.internal.GeoJson.Feature;
-import gov.usgs.earthquake.nshmp.internal.GeoJson.FeatureCollection;
-import gov.usgs.earthquake.nshmp.internal.GeoJson.PointProperties;
+import gov.usgs.earthquake.nshmp.json.FeatureCollection;
+import gov.usgs.earthquake.nshmp.json.Properties;
 import gov.usgs.earthquake.nshmp.util.Maths;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
 
@@ -59,6 +58,7 @@ final class NshmpSiteFiles {
       .create();
 
   private static final Path EXPORT_DIR = Paths.get("etc", "nshm");
+  private static final String EXTENTS_COLOR = "#AA0078";
 
   /**
    * Updates all site list and map files in etc/nshm.
@@ -83,22 +83,20 @@ final class NshmpSiteFiles {
     LocationList usCoords = CONTERMINOUS_US.coordinates();
 
     Path ceusOut = EXPORT_DIR.resolve("map-ceus.geojson");
-    LocationList ceusBounds = CEUS_CLIP.coordinates();
+    LocationList ceusBounds = CEUS_CLIP.coordinates().bounds().toList();
     writePolyJson(ceusOut, "NSHMP Central & Eastern US", usCoords, 0.1, ceusBounds);
-
+    
     Path wusOut = EXPORT_DIR.resolve("map-wus.geojson");
-    LocationList wusBounds = WUS_CLIP.coordinates();
+    LocationList wusBounds = WUS_CLIP.coordinates().bounds().toList();
     writePolyJson(wusOut, "NSHMP Western US", usCoords, 0.1, wusBounds);
 
-    // TODO AK needs to be updated with proper clipping region as above
-    // currently just mercator rectangle
     writePolyJson(
         EXPORT_DIR.resolve("map-alaska.geojson"),
-        "Alaska",
-        AK_CLIP.coordinates(),
+        ALASKA.toString(),
+        ALASKA.coordinates(),
         0.1,
-        null);
-
+        AK_CLIP.coordinates().bounds().toList());
+    
     writePolyJson(
         EXPORT_DIR.resolve("map-la-basin.geojson"),
         LA_BASIN.toString(),
@@ -174,21 +172,19 @@ final class NshmpSiteFiles {
             .toList());
   }
 
-  static void writePolysJson(Path out, List<String> nameList, List<LocationList> coordList)
+  static void writePolysJson(Path out, List<String> nameList, List<LocationList> coordList) 
       throws IOException {
-    List<Feature> features = new ArrayList<>();
+    FeatureCollection.Builder fc = FeatureCollection.builder();
+    Properties.Builder properties = Properties.builder();
+    
     int i = 0;
-    for (LocationList coords : coordList) {
-      features.add(GeoJson.createPolygon(
-          nameList.get(i++),
-          coords,
-          Optional.<String> empty(),
-          Optional.of(0.1)));
+    for (LocationList border : coordList) {
+      properties.spacing(0.1)
+          .title(nameList.get(i++));
+      fc.addPolygon(border, properties.build());
     }
-    FeatureCollection<Feature> fc = new FeatureCollection<Feature>();
-    fc.features = features;
-    String json = GeoJson.cleanPoly(GSON.toJson(fc));
-    Files.write(out, json.getBytes(StandardCharsets.UTF_8));
+    
+    fc.build().write(out);
   }
 
   static void writePolyJson(
@@ -197,24 +193,24 @@ final class NshmpSiteFiles {
       LocationList coords,
       double spacing,
       LocationList bounds) throws IOException {
-
-    List<Feature> features = new ArrayList<>();
+    FeatureCollection.Builder fc = FeatureCollection.builder();
+    
     if (bounds != null) {
-      features.add(GeoJson.createPolygon(
-          name + " Map Extents",
-          bounds,
-          Optional.of(GeoJson.Value.EXTENTS),
-          Optional.<Double> empty()));
+      Properties boundProperties = Properties.builder()
+          .fill(EXTENTS_COLOR)
+          .markerColor(EXTENTS_COLOR)
+          .title(name + " Map Extents")
+          .build();
+      fc.addPolygon(bounds, boundProperties, Optional.of("Extents"), Optional.empty());
     }
-    features.add(GeoJson.createPolygon(
-        name,
-        coords,
-        Optional.<String> empty(),
-        Optional.of(spacing)));
-    FeatureCollection<Feature> fc = new FeatureCollection<>();
-    fc.features = features;
-    String json = GeoJson.cleanPoly(GSON.toJson(fc));
-    Files.write(out, json.getBytes(StandardCharsets.UTF_8));
+    
+    Properties properties = Properties.builder()
+        .spacing(spacing)
+        .title(name)
+        .build();
+    fc.addPolygon(coords, properties);
+    
+    fc.build().write(out);
   }
 
   static void writeNshmpSites_0p1() throws IOException {
@@ -361,14 +357,16 @@ final class NshmpSiteFiles {
   private static void writeJsonSites(Path out, Collection<? extends NamedLocation> sites)
       throws IOException {
 
-    List<Feature> features = new ArrayList<>(sites.size());
+    FeatureCollection.Builder fc = FeatureCollection.builder();
+    Properties.Builder properties = Properties.builder();
+    
     for (NamedLocation loc : sites) {
-      features.add(GeoJson.createPoint(loc));
+      properties.title(loc.toString())
+          .markerSize("small");
+      fc.addPoint(loc.location(), properties.build());
     }
-    FeatureCollection<Feature> fc = new FeatureCollection<>();
-    fc.features = features;
-    String json = GeoJson.cleanPoints(GSON.toJson(fc));
-    Files.write(out, json.getBytes(StandardCharsets.UTF_8));
+    
+    fc.build().write(out);
   }
 
   private static void writeCybershakeJsonSites(
@@ -376,31 +374,24 @@ final class NshmpSiteFiles {
       Collection<CybershakeSite> sites,
       CybershakeVs30 vs30) throws IOException {
 
-    List<Feature> features = new ArrayList<>(sites.size());
+    FeatureCollection.Builder fc = FeatureCollection.builder();
+    Properties.Builder properties = Properties.builder();
+    
     for (CybershakeSite loc : sites) {
-      Feature feature = GeoJson.createPoint(loc);
-      CybershakeSiteProperties props = new CybershakeSiteProperties();
-      props.title = loc.name();
-      // props.runId = loc.runId();
+      properties.markerSize("small")
+          .title(loc.name());
       if (vs30 != CybershakeVs30.NONE) {
-        props.vs30 = (vs30 == CybershakeVs30.WILLS) ? loc.willsVs30() : loc.cvmVs30();
-        props.z1p0 = loc.z1p0();
-        props.z2p5 = loc.z2p5();
+        properties.put(
+            "vs30", 
+            (vs30 == CybershakeVs30.WILLS) ? loc.willsVs30() : loc.cvmVs30());
+        properties.put("z1p0", loc.z1p0());
+        properties.put("z2p5", loc.z2p5());
       }
-      feature.properties = props;
-      features.add(feature);
+      
+      fc.addPoint(loc.location(), properties.build());
     }
-    FeatureCollection<Feature> fc = new FeatureCollection<>();
-    fc.features = features;
-    String json = GeoJson.cleanPoints(GSON.toJson(fc));
-    Files.write(out, json.getBytes(StandardCharsets.UTF_8));
-  }
-
-  static class CybershakeSiteProperties extends PointProperties {
-    // Integer runId;
-    Double vs30;
-    Double z1p0;
-    Double z2p5;
+    
+    fc.build().write(out);
   }
 
   private static final Function<NamedLocation, NamedLocation> adjustLocation_0p1() {

@@ -62,6 +62,8 @@ public class PropertiesTest {
     assertEquals("name", testObject.name);
     assertEquals(1, testObject.id, 0);
     assertEquals(1.5, testObject.weight, 1.5);
+    assertEquals(properties.hasProperty("title"), true);
+    assertEquals(properties.hasProperty("badKey"), false);
   }
  
   /**
