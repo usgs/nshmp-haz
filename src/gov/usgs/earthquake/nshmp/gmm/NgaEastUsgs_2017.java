@@ -766,9 +766,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Sammons2_9 extends Sammons {
+  static class Sammons2_9 extends Sammons2 {
     static final int ID = 9;
-    static final String NAME = Sammons.NAME0 + ID;
+    static final String NAME = Sammons2.NAME0 + ID;
 
     Sammons2_9(Imt imt) {
       super(ID, imt);

@@ -1356,7 +1356,6 @@ public enum Gmm {
             NGA_EAST_USGS2_7,
             NGA_EAST_USGS2_8,
             NGA_EAST_USGS2_9,
-            NGA_EAST_USGS2_9,
             NGA_EAST_USGS2_10,
             NGA_EAST_USGS2_11,
             NGA_EAST_USGS2_12,
