@@ -1099,9 +1099,11 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
     private static final class Coefficients {
 
+      final Imt imt;
       final double c, v1, v2, vf, σvc, σl, σu, f760, f760σ, f3, f4, f5, vc, σc;
 
       Coefficients(Imt imt, CoefficientContainer cc) {
+        this.imt = imt;
         Map<String, Double> coeffs = cc.get(imt);
         c = coeffs.get("c");
         v1 = coeffs.get("V1");
@@ -1172,12 +1174,17 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /* Linear response */
 
       double fv = 0.0;
+      // include PGA and PGV in short period
+      boolean shortPeriod = !(c.imt.isSA() && c.imt.period() > 0.3);
       if (vs30 <= c.v1) {
         fv = c.c * log(c.v1 / V_REF);
       } else if (vs30 <= c.v2) {
         fv = c.c * log(vs30 / V_REF);
       } else {
-        fv = c.c * log(c.v2 / V_REF) + c.c / 2.0 * log(vs30 / c.v2);
+        fv = c.c * log(c.v2 / V_REF);
+        if (shortPeriod) {
+          fv += c.c / 2.0 * log(vs30 / c.v2);
+        }
       }
 
       double fvσ = 0.0;
