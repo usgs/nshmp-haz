@@ -2,7 +2,7 @@ package gov.usgs.earthquake.nshmp.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
-import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 
 import java.io.File;
@@ -363,9 +363,9 @@ class BinaryCurves {
       ByteBuffer buf = ByteBuffer.allocate(HEADER_OFFSET).order(LITTLE_ENDIAN);
 
       /* Info lines: 6 lines * 128 chars * 2 bytes = 1536 */
-      byte[] desc = Strings.padEnd(meta.description, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
-      byte[] time = Strings.padEnd(meta.timestamp, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
-      byte[] dummy = Strings.padEnd("", INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
+      byte[] desc = Strings.padEnd(meta.description, INFO_LINE_SIZE, ' ').getBytes(UTF_8);
+      byte[] time = Strings.padEnd(meta.timestamp, INFO_LINE_SIZE, ' ').getBytes(UTF_8);
+      byte[] dummy = Strings.padEnd("", INFO_LINE_SIZE, ' ').getBytes(UTF_8);
 
       buf.put(desc)
           .put(time)
