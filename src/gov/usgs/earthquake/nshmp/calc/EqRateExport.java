@@ -1,7 +1,7 @@
 package gov.usgs.earthquake.nshmp.calc;
 
 import static com.google.common.base.Preconditions.checkState;
-import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -238,7 +238,7 @@ public final class EqRateExport {
 
       /* write/append */
       Path totalFile = dir.resolve(file);
-      Files.write(totalFile, totalLines, US_ASCII, options);
+      Files.write(totalFile, totalLines, UTF_8, options);
       if (exportSource) {
         Path parentDir = dir.resolve(HazardExport.TYPE_DIR);
         for (Entry<SourceType, List<String>> typeEntry : typeLines.entrySet()) {
@@ -246,7 +246,7 @@ public final class EqRateExport {
           Path typeDir = parentDir.resolve(type.name());
           Files.createDirectories(typeDir);
           Path typeFile = typeDir.resolve(file);
-          Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
+          Files.write(typeFile, typeEntry.getValue(), UTF_8, options);
         }
       }
     }

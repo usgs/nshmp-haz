@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.data.XySequence.emptyCopyOf;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
-import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -398,7 +398,8 @@ public final class HazardExport {
       Path imtDir = dir.resolve(imt.name());
       Files.createDirectories(imtDir);
       Path totalFile = imtDir.resolve(CURVE_FILE_ASCII);
-      Files.write(totalFile, totalEntry.getValue(), US_ASCII, options);
+//      System.out.println(totalEntry.getValue());
+      Files.write(totalFile, totalEntry.getValue(), UTF_8, options);
 
       Metadata meta = null;
 
@@ -415,7 +416,7 @@ public final class HazardExport {
           Path typeDir = typeParent.resolve(type.name());
           Files.createDirectories(typeDir);
           Path typeFile = typeDir.resolve(CURVE_FILE_ASCII);
-          Files.write(typeFile, typeEntry.getValue(), US_ASCII, options);
+          Files.write(typeFile, typeEntry.getValue(), UTF_8, options);
           if (exportBinary) {
             Path typeBinFile = typeDir.resolve(CURVE_FILE_BINARY);
             writeBinaryBatch(typeBinFile, meta, typeCurves.get(imt).get(type));
@@ -430,7 +431,7 @@ public final class HazardExport {
           Path gmmDir = gmmParent.resolve(gmm.name());
           Files.createDirectories(gmmDir);
           Path gmmFile = gmmDir.resolve(CURVE_FILE_ASCII);
-          Files.write(gmmFile, gmmEntry.getValue(), US_ASCII, options);
+          Files.write(gmmFile, gmmEntry.getValue(), UTF_8, options);
           if (exportBinary) {
             Path gmmBinFile = gmmDir.resolve(CURVE_FILE_BINARY);
             writeBinaryBatch(gmmBinFile, meta, gmmCurves.get(imt).get(gmm));
@@ -754,9 +755,9 @@ public final class HazardExport {
     ByteBuffer buffer = ByteBuffer.allocate(HEADER_OFFSET).order(LITTLE_ENDIAN);
 
     /* Info lines: 6 lines * 128 chars (1 byte) = 768 */
-    byte[] desc = Strings.padEnd(m.description, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
-    byte[] time = Strings.padEnd(m.timestamp, INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
-    byte[] dummy = Strings.padEnd("", INFO_LINE_SIZE, ' ').getBytes(US_ASCII);
+    byte[] desc = Strings.padEnd(m.description, INFO_LINE_SIZE, ' ').getBytes(UTF_8);
+    byte[] time = Strings.padEnd(m.timestamp, INFO_LINE_SIZE, ' ').getBytes(UTF_8);
+    byte[] dummy = Strings.padEnd("", INFO_LINE_SIZE, ' ').getBytes(UTF_8);
 
     buffer.put(desc)
         .put(time)
