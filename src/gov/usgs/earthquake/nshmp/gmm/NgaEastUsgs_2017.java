@@ -27,6 +27,7 @@ import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.calc.ExceedanceModel;
+import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable.Position;
@@ -144,7 +145,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   static CoefficientContainer COEFFS_SIGMA_LO;
   static CoefficientContainer COEFFS_SIGMA_MID;
   static CoefficientContainer COEFFS_SIGMA_HI;
-  static CoefficientContainer COEFFS_SIGMA_TOTAL;
+  static CoefficientContainer COEFFS_SIGMA_EPRI;
 
   /* Immutable, ordered map */
   static Map<String, Double> USGS_SEED_WEIGHTS;
@@ -153,7 +154,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     COEFFS_SIGMA_LO = new CoefficientContainer("nga-east-usgs-sigma-lo.csv");
     COEFFS_SIGMA_MID = new CoefficientContainer("nga-east-usgs-sigma-mid.csv");
     COEFFS_SIGMA_HI = new CoefficientContainer("nga-east-usgs-sigma-hi.csv");
-    COEFFS_SIGMA_TOTAL = new CoefficientContainer("nga-east-usgs-sigma-total.csv");
+    COEFFS_SIGMA_EPRI = new CoefficientContainer("nga-east-usgs-sigma-epri.csv");
     USGS_SEED_WEIGHTS = initSeedWeights();
   }
 
@@ -188,7 +189,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private static final double M1 = 5.25;
   private static final double ΔM = 0.5;
 
-  private static final class Coefficients {
+  private static final class CoefficientsSigma {
 
     /* τ coefficients */
     final double τ1, τ2, τ3, τ4;
@@ -199,7 +200,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     /* ϕ_s2s coefficients */
     final double ϕs2s1, ϕs2s2, Δϕs2s;
 
-    Coefficients(Imt imt, CoefficientContainer cc) {
+    CoefficientsSigma(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
       τ1 = coeffs.get("t1");
       τ2 = coeffs.get("t2");
@@ -216,13 +217,12 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  // TODO delete (+coeffs file)
-  /* Updated EPRI (2013) */
-  private static final class CoefficientsTotal {
+  /* Updated EPRI (2013); initial NGAE-East team recommendation. */
+  private static final class CoefficientsSigmaEpri {
 
     final double τ_m5, φ_m5, τ_m6, φ_m6, τ_m7, φ_m7;
 
-    CoefficientsTotal(Imt imt, CoefficientContainer cc) {
+    CoefficientsSigmaEpri(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
       τ_m5 = coeffs.get("tau_M5");
       φ_m5 = coeffs.get("phi_M5");
@@ -233,16 +233,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  private final Coefficients σCoeffsLo;
-  private final Coefficients σCoeffsMid;
-  private final Coefficients σCoeffsHi;
-  private final CoefficientsTotal σCoeffsTotal;
+  private final CoefficientsSigma σCoeffsLo;
+  private final CoefficientsSigma σCoeffsMid;
+  private final CoefficientsSigma σCoeffsHi;
+  private final CoefficientsSigmaEpri σCoeffsEpri;
 
   NgaEastUsgs_2017(final Imt imt) {
-    σCoeffsLo = new Coefficients(imt, COEFFS_SIGMA_LO);
-    σCoeffsMid = new Coefficients(imt, COEFFS_SIGMA_MID);
-    σCoeffsHi = new Coefficients(imt, COEFFS_SIGMA_HI);
-    σCoeffsTotal = new CoefficientsTotal(imt, COEFFS_SIGMA_TOTAL);
+    σCoeffsLo = new CoefficientsSigma(imt, COEFFS_SIGMA_LO);
+    σCoeffsMid = new CoefficientsSigma(imt, COEFFS_SIGMA_MID);
+    σCoeffsHi = new CoefficientsSigma(imt, COEFFS_SIGMA_HI);
+    σCoeffsEpri = new CoefficientsSigmaEpri(imt, COEFFS_SIGMA_EPRI);
   }
 
   /* Central branch of sigma model. */
@@ -250,7 +250,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return sigma(σCoeffsMid, Mw, vs30);
   }
 
-  /* 3-branch sigma model; includes updated φ_s2s. */
+  /* 3-branch sigma model. */
   SigmaSet sigmaSet(double Mw, double vs30) {
     double[] sigmas = {
         sigma(σCoeffsLo, Mw, vs30),
@@ -263,7 +263,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return σSet;
   }
 
-  /* 3-branch sigma model; includes updated φ_s2s. */
+  /* 3-branch sigma model (no φ_s2s term). */
   SigmaSet sigmaSetNoPhiS2S(double Mw) {
     double[] sigmas = {
         sigmaNoPhiS2S(σCoeffsLo, Mw),
@@ -277,7 +277,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   @Deprecated
-  private static double sigmaNoPhiS2S(Coefficients c, double Mw) {
+  private static double sigmaNoPhiS2S(CoefficientsSigma c, double Mw) {
 
     /* τ model; global branch only; Equation 5-1. */
     double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
@@ -290,7 +290,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return Maths.hypot(τ, φ_ss);
   }
 
-  private static double sigma(Coefficients c, double Mw, double vs30) {
+  private static double sigma(CoefficientsSigma c, double Mw, double vs30) {
 
     /* τ model; global branch only; Equation 5-1. */
     double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
@@ -304,6 +304,26 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     double φ_s2s = phi_s2s(Mw, vs30, c.ϕs2s1, c.ϕs2s2, c.Δϕs2s);
 
     return Maths.hypot(τ, φ_ss, φ_s2s);
+  }
+
+  /* Updated EPRI (2013); initial NGA-East team recomendation. */
+  double sigmaEpri(double Mw) {
+    double τ;
+    double φ;
+    if (Mw <= 5.0) {
+      τ = σCoeffsEpri.τ_m5;
+      φ = σCoeffsEpri.φ_m5;
+    } else if (Mw <= 6.0) {
+      τ = Interpolator.findY(5.0, σCoeffsEpri.τ_m5, 6.0, σCoeffsEpri.τ_m6, Mw);
+      φ = Interpolator.findY(5.0, σCoeffsEpri.φ_m5, 6.0, σCoeffsEpri.φ_m6, Mw);
+    } else if (Mw <= 7.0) {
+      τ = Interpolator.findY(6.0, σCoeffsEpri.τ_m6, 7.0, σCoeffsEpri.τ_m7, Mw);
+      φ = Interpolator.findY(6.0, σCoeffsEpri.φ_m6, 7.0, σCoeffsEpri.φ_m7, Mw);
+    } else {
+      τ = σCoeffsEpri.τ_m7;
+      φ = σCoeffsEpri.φ_m7;
+    }
+    return Maths.hypot(τ, φ);
   }
 
   /* τ: Equation 5.1 */
@@ -442,6 +462,22 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     SigmaSet calcSigma(GmmInput in) {
       return sigmaSetNoPhiS2S(in.Mw);
+    }
+  }
+
+  static class Usgs13_Epri extends Usgs13 {
+    static final String NAME = Usgs13.NAME + ": EPRI";
+
+    Usgs13_Epri(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      SigmaSet σSet = new SigmaSet();
+      σSet.sigmas = new double[] { sigmaEpri(in.Mw) };
+      σSet.weights = new double[] { 1.0 };
+      return σSet;
     }
   }
 
@@ -869,6 +905,15 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double μPga = exp(pgaTable.get(p));
       SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
       double μ = fSite.apply(table.get(p));
+
+      // TODO clean
+//       double muTmp = exp(table.get(p));
+//       double μLin = exp(μ);
+//       double ampScale = μLin / muTmp;
+//       System.out.println(String.format(
+//           "%10s, %.3f, %.3f, %.3f",
+//           siteAmp.c.imt.name(), muTmp, μLin, ampScale));
+
       double σ = sigmaCentral(in.Mw, in.vs30);
       return new DefaultScalarGroundMotion(μ, σ);
     }
@@ -1131,10 +1176,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /*
        * Developer notes:
        * 
-       * Model rcently updated based on short period guidance from J. Stewart
-       * (email 12/21/17). Vs30 values outside the range 200 < Vs30 < 2000 m/s
-       * are clamped to the supported range. Site-amp sigma is implemented
-       * below, but currently commented out and unused.
+       * Vs30 values outside the range 200 < Vs30 < 2000 m/s
+       * are clamped to the supported range.
        * 
        * ---------------------------------------------------------------------
        * 
@@ -1204,28 +1247,43 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       /* Nonlinear response */
 
+      double rkRefTerm = log((pgaRock + c.f3) / c.f3);
+
       double fNonlin = 0.0;
-      double σNonlin = 0.0;
       if (vs30 < c.vc) {
-
-        double f2 = c.f4 *
-            (exp(c.f5 * (min(vs30, V_REF_NL) - 360.0)) -
-                exp(c.f5 * (V_REF_NL - 360.0)));
-        double fT = log((pgaRock + c.f3) / c.f3);
-        fNonlin = f2 * fT;
-
-        double σf2 = 0.0;
-        if (vs30 < 300.0) {
-          σf2 = c.σc;
-        } else if (vs30 < 1000.0) {
-          σf2 = c.σc - c.σc / log(1000.0 / 300.0) * log(vs30 / 300.0);
-        }
-        σNonlin = σf2 * fT;
+        double f2 = -c.f4 * (exp(c.f5 * (min(vs30, V_REF_NL) - 360.0)) -
+            exp(c.f5 * (V_REF_NL - 360.0)));
+        fNonlin = f2 * rkRefTerm;
       }
 
-      return new Value(
-          fLin + fNonlin,
-          sqrt(σLin * σLin + σNonlin * σNonlin));
+      double σf2 = 0.0;
+      if (vs30 < 300.0) {
+        σf2 = c.σc;
+      } else if (vs30 < 1000.0) {
+        σf2 = c.σc - c.σc / log(1000.0 / 300.0) * log(vs30 / 300.0);
+      }
+      double σNonlin = σf2 * rkRefTerm;
+
+      double fT = fLin + fNonlin;
+      double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
+
+      // TODO clean
+//      String values = String.format(
+//          "%12s %5.3f %.3g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+//          c.imt.name(),
+//          c.imt.isSA() ? c.imt.period() : 0.0,
+//          pgaRock,
+//          fv,
+//          fvσ,
+//          fLin,
+//          σLin,
+//          fNonlin,
+//          σNonlin,
+//          fT,
+//          σT);
+//      System.out.println(values);
+
+      return new Value(fT, σT);
     }
 
     /**

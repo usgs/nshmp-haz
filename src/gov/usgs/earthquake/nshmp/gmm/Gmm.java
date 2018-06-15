@@ -620,105 +620,112 @@ public enum Gmm {
   NGA_EAST_USGS(
       NgaEastUsgs_2017.Usgs13.class,
       NgaEastUsgs_2017.Usgs13.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_EPRI(
+      NgaEastUsgs_2017.Usgs13_Epri.class,
+      NgaEastUsgs_2017.Usgs13_Epri.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_NOS2S(
       NgaEastUsgs_2017.Usgs13_NoS2S.class,
       NgaEastUsgs_2017.Usgs13_NoS2S.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_1(
       NgaEastUsgs_2017.Sammons_1.class,
       NgaEastUsgs_2017.Sammons_1.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_2(
       NgaEastUsgs_2017.Sammons_2.class,
       NgaEastUsgs_2017.Sammons_2.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_3(
       NgaEastUsgs_2017.Sammons_3.class,
       NgaEastUsgs_2017.Sammons_3.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_4(
       NgaEastUsgs_2017.Sammons_4.class,
       NgaEastUsgs_2017.Sammons_4.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_5(
       NgaEastUsgs_2017.Sammons_5.class,
       NgaEastUsgs_2017.Sammons_5.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_6(
       NgaEastUsgs_2017.Sammons_6.class,
       NgaEastUsgs_2017.Sammons_6.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_7(
       NgaEastUsgs_2017.Sammons_7.class,
       NgaEastUsgs_2017.Sammons_7.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_8(
       NgaEastUsgs_2017.Sammons_8.class,
       NgaEastUsgs_2017.Sammons_8.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_9(
       NgaEastUsgs_2017.Sammons_9.class,
       NgaEastUsgs_2017.Sammons_9.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_10(
       NgaEastUsgs_2017.Sammons_10.class,
       NgaEastUsgs_2017.Sammons_10.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_11(
       NgaEastUsgs_2017.Sammons_11.class,
       NgaEastUsgs_2017.Sammons_11.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_12(
       NgaEastUsgs_2017.Sammons_12.class,
       NgaEastUsgs_2017.Sammons_12.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_13(
       NgaEastUsgs_2017.Sammons_13.class,
       NgaEastUsgs_2017.Sammons_13.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /* NGA-East for USGS (update) */
@@ -727,126 +734,126 @@ public enum Gmm {
   NGA_EAST_USGS2(
       NgaEastUsgs_2017.Usgs17.class,
       NgaEastUsgs_2017.Usgs17.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_1(
       NgaEastUsgs_2017.Sammons2_1.class,
       NgaEastUsgs_2017.Sammons2_1.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_2(
       NgaEastUsgs_2017.Sammons2_2.class,
       NgaEastUsgs_2017.Sammons2_2.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_3(
       NgaEastUsgs_2017.Sammons2_3.class,
       NgaEastUsgs_2017.Sammons2_3.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_4(
       NgaEastUsgs_2017.Sammons2_4.class,
       NgaEastUsgs_2017.Sammons2_4.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_5(
       NgaEastUsgs_2017.Sammons2_5.class,
       NgaEastUsgs_2017.Sammons2_5.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_6(
       NgaEastUsgs_2017.Sammons2_6.class,
       NgaEastUsgs_2017.Sammons2_6.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_7(
       NgaEastUsgs_2017.Sammons2_7.class,
       NgaEastUsgs_2017.Sammons2_7.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_8(
       NgaEastUsgs_2017.Sammons2_8.class,
       NgaEastUsgs_2017.Sammons2_8.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_9(
       NgaEastUsgs_2017.Sammons2_9.class,
       NgaEastUsgs_2017.Sammons2_9.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_10(
       NgaEastUsgs_2017.Sammons2_10.class,
       NgaEastUsgs_2017.Sammons2_10.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_11(
       NgaEastUsgs_2017.Sammons2_11.class,
       NgaEastUsgs_2017.Sammons2_11.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_12(
       NgaEastUsgs_2017.Sammons2_12.class,
       NgaEastUsgs_2017.Sammons2_12.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_13(
       NgaEastUsgs_2017.Sammons2_13.class,
       NgaEastUsgs_2017.Sammons2_13.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_14(
       NgaEastUsgs_2017.Sammons2_14.class,
       NgaEastUsgs_2017.Sammons2_14.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_15(
       NgaEastUsgs_2017.Sammons2_15.class,
       NgaEastUsgs_2017.Sammons2_15.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_16(
       NgaEastUsgs_2017.Sammons2_16.class,
       NgaEastUsgs_2017.Sammons2_16.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_17(
       NgaEastUsgs_2017.Sammons2_17.class,
       NgaEastUsgs_2017.Sammons2_17.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /* NGA-East USGS Seed Tree */
@@ -855,7 +862,7 @@ public enum Gmm {
   NGA_EAST_USGS_SEEDS(
       NgaEastUsgs_2017.UsgsSeeds.class,
       NgaEastUsgs_2017.UsgsSeeds.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_TOTAL,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /* NGA-East Seed Models */
@@ -1323,6 +1330,7 @@ public enum Gmm {
         "NGA-East",
         ImmutableList.of(
             NGA_EAST_USGS,
+            NGA_EAST_USGS_EPRI,
             NGA_EAST_USGS_NOS2S,
             NGA_EAST_USGS2,
             NGA_EAST_USGS_SEEDS)),
