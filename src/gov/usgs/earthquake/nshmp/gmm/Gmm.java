@@ -630,6 +630,12 @@ public enum Gmm {
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
+  NGA_EAST_USGS_ENVELOPE(
+      NgaEastUsgs_2017.Usgs13_Envelope.class,
+      NgaEastUsgs_2017.Usgs13_Envelope.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+  
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_1(
       NgaEastUsgs_2017.Sammons_1.class,
@@ -1324,6 +1330,7 @@ public enum Gmm {
         ImmutableList.of(
             NGA_EAST_USGS,
             NGA_EAST_USGS_EPRI,
+            NGA_EAST_USGS_ENVELOPE,
             NGA_EAST_USGS2,
             NGA_EAST_USGS_SEEDS)),
 

@@ -441,6 +441,25 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
+  static class Usgs13_Envelope extends Usgs13 {
+    static final String NAME = Usgs13.NAME + ": Envelope";
+
+    Usgs13_Envelope(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      SigmaSet σSet = new SigmaSet();
+      σSet.sigmas = new double[] {
+          Math.max(
+              sigmaCentral(in.Mw, in.vs30),
+              sigmaEpri(in.Mw)) };
+      σSet.weights = new double[] { 1.0 };
+      return σSet;
+    }
+  }
+
   static class Usgs17 extends ModelGroup {
     static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch";
 
@@ -867,12 +886,12 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double μ = fSite.apply(table.get(p));
 
       // TODO clean
-//       double muTmp = exp(table.get(p));
-//       double μLin = exp(μ);
-//       double ampScale = μLin / muTmp;
-//       System.out.println(String.format(
-//           "%10s, %.3f, %.3f, %.3f",
-//           siteAmp.c.imt.name(), muTmp, μLin, ampScale));
+      // double muTmp = exp(table.get(p));
+      // double μLin = exp(μ);
+      // double ampScale = μLin / muTmp;
+      // System.out.println(String.format(
+      // "%10s, %.3f, %.3f, %.3f",
+      // siteAmp.c.imt.name(), muTmp, μLin, ampScale));
 
       double σ = sigmaCentral(in.Mw, in.vs30);
       return new DefaultScalarGroundMotion(μ, σ);
@@ -1136,8 +1155,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /*
        * Developer notes:
        * 
-       * Vs30 values outside the range 200 < Vs30 < 2000 m/s
-       * are clamped to the supported range.
+       * Vs30 values outside the range 200 < Vs30 < 2000 m/s are clamped to the
+       * supported range.
        * 
        * ---------------------------------------------------------------------
        * 
@@ -1228,20 +1247,20 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
 
       // TODO clean
-//      String values = String.format(
-//          "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-//          c.imt.name(),
-//          c.imt.isSA() ? c.imt.period() : 0.0,
-//          pgaRock,
-//          fv,
-//          fvσ,
-//          fLin,
-//          σLin,
-//          fNonlin,
-//          σNonlin,
-//          fT,
-//          σT);
-//      System.out.println(values);
+      // String values = String.format(
+      // "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+      // c.imt.name(),
+      // c.imt.isSA() ? c.imt.period() : 0.0,
+      // pgaRock,
+      // fv,
+      // fvσ,
+      // fLin,
+      // σLin,
+      // fNonlin,
+      // σNonlin,
+      // fT,
+      // σT);
+      // System.out.println(values);
 
       return new Value(fT, σT);
     }
