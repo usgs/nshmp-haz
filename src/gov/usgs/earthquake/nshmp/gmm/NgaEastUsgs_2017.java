@@ -263,33 +263,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return σSet;
   }
 
-  /* 3-branch sigma model (no φ_s2s term). */
-  SigmaSet sigmaSetNoPhiS2S(double Mw) {
-    double[] sigmas = {
-        sigmaNoPhiS2S(σCoeffsLo, Mw),
-        sigmaNoPhiS2S(σCoeffsMid, Mw),
-        sigmaNoPhiS2S(σCoeffsHi, Mw),
-    };
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = sigmas;
-    σSet.weights = SIGMA_WTS;
-    return σSet;
-  }
-
-  @Deprecated
-  private static double sigmaNoPhiS2S(CoefficientsSigma c, double Mw) {
-
-    /* τ model; global branch only; Equation 5-1. */
-    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
-
-    /* φ_ss model; global, constant, and mag-dep. branches Equation 5.2. */
-    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
-        0.1 * c.c +
-        0.1 * phi_ss(Mw, c.ma, c.mb);
-
-    return Maths.hypot(τ, φ_ss);
-  }
-
   private static double sigma(CoefficientsSigma c, double Mw, double vs30) {
 
     /* τ model; global branch only; Equation 5-1. */
@@ -449,19 +422,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
           GroundMotionTables.getNgaEastWeights(imt),
           GroundMotionTables.getNgaEast(imt),
           GroundMotionTables.getNgaEast(Imt.PGA));
-    }
-  }
-
-  static class Usgs13_NoS2S extends Usgs13 {
-    static final String NAME = Usgs13.NAME + ": No ϕ_s2s";
-
-    Usgs13_NoS2S(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetNoPhiS2S(in.Mw);
     }
   }
 
