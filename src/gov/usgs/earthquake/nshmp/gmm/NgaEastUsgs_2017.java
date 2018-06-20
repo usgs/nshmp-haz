@@ -263,33 +263,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return σSet;
   }
 
-  /* 3-branch sigma model (no φ_s2s term). */
-  SigmaSet sigmaSetNoPhiS2S(double Mw) {
-    double[] sigmas = {
-        sigmaNoPhiS2S(σCoeffsLo, Mw),
-        sigmaNoPhiS2S(σCoeffsMid, Mw),
-        sigmaNoPhiS2S(σCoeffsHi, Mw),
-    };
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = sigmas;
-    σSet.weights = SIGMA_WTS;
-    return σSet;
-  }
-
-  @Deprecated
-  private static double sigmaNoPhiS2S(CoefficientsSigma c, double Mw) {
-
-    /* τ model; global branch only; Equation 5-1. */
-    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
-
-    /* φ_ss model; global, constant, and mag-dep. branches Equation 5.2. */
-    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
-        0.1 * c.c +
-        0.1 * phi_ss(Mw, c.ma, c.mb);
-
-    return Maths.hypot(τ, φ_ss);
-  }
-
   private static double sigma(CoefficientsSigma c, double Mw, double vs30) {
 
     /* τ model; global branch only; Equation 5-1. */
@@ -452,19 +425,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Usgs13_NoS2S extends Usgs13 {
-    static final String NAME = Usgs13.NAME + ": No ϕ_s2s";
-
-    Usgs13_NoS2S(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetNoPhiS2S(in.Mw);
-    }
-  }
-
   static class Usgs13_Epri extends Usgs13 {
     static final String NAME = Usgs13.NAME + ": EPRI";
 
@@ -476,6 +436,25 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     SigmaSet calcSigma(GmmInput in) {
       SigmaSet σSet = new SigmaSet();
       σSet.sigmas = new double[] { sigmaEpri(in.Mw) };
+      σSet.weights = new double[] { 1.0 };
+      return σSet;
+    }
+  }
+
+  static class Usgs13_Envelope extends Usgs13 {
+    static final String NAME = Usgs13.NAME + ": Envelope";
+
+    Usgs13_Envelope(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      SigmaSet σSet = new SigmaSet();
+      σSet.sigmas = new double[] {
+          Math.max(
+              sigmaCentral(in.Mw, in.vs30),
+              sigmaEpri(in.Mw)) };
       σSet.weights = new double[] { 1.0 };
       return σSet;
     }
@@ -907,12 +886,12 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double μ = fSite.apply(table.get(p));
 
       // TODO clean
-//       double muTmp = exp(table.get(p));
-//       double μLin = exp(μ);
-//       double ampScale = μLin / muTmp;
-//       System.out.println(String.format(
-//           "%10s, %.3f, %.3f, %.3f",
-//           siteAmp.c.imt.name(), muTmp, μLin, ampScale));
+      // double muTmp = exp(table.get(p));
+      // double μLin = exp(μ);
+      // double ampScale = μLin / muTmp;
+      // System.out.println(String.format(
+      // "%10s, %.3f, %.3f, %.3f",
+      // siteAmp.c.imt.name(), muTmp, μLin, ampScale));
 
       double σ = sigmaCentral(in.Mw, in.vs30);
       return new DefaultScalarGroundMotion(μ, σ);
@@ -1176,8 +1155,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /*
        * Developer notes:
        * 
-       * Vs30 values outside the range 200 < Vs30 < 2000 m/s
-       * are clamped to the supported range.
+       * Vs30 values outside the range 200 < Vs30 < 2000 m/s are clamped to the
+       * supported range.
        * 
        * ---------------------------------------------------------------------
        * 
@@ -1251,7 +1230,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       double fNonlin = 0.0;
       if (vs30 < c.vc) {
-        double f2 = -c.f4 * (exp(c.f5 * (min(vs30, V_REF_NL) - 360.0)) -
+        double f2 = c.f4 * (exp(c.f5 * (min(vs30, V_REF_NL) - 360.0)) -
             exp(c.f5 * (V_REF_NL - 360.0)));
         fNonlin = f2 * rkRefTerm;
       }
@@ -1268,20 +1247,20 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
 
       // TODO clean
-//      String values = String.format(
-//          "%12s %5.3f %.3g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-//          c.imt.name(),
-//          c.imt.isSA() ? c.imt.period() : 0.0,
-//          pgaRock,
-//          fv,
-//          fvσ,
-//          fLin,
-//          σLin,
-//          fNonlin,
-//          σNonlin,
-//          fT,
-//          σT);
-//      System.out.println(values);
+      // String values = String.format(
+      // "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+      // c.imt.name(),
+      // c.imt.isSA() ? c.imt.period() : 0.0,
+      // pgaRock,
+      // fv,
+      // fvσ,
+      // fLin,
+      // σLin,
+      // fNonlin,
+      // σNonlin,
+      // fT,
+      // σT);
+      // System.out.println(values);
 
       return new Value(fT, σT);
     }
