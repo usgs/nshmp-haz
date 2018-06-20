@@ -1251,7 +1251,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       double fNonlin = 0.0;
       if (vs30 < c.vc) {
-        double f2 = -c.f4 * (exp(c.f5 * (min(vs30, V_REF_NL) - 360.0)) -
+        double f2 = c.f4 * (exp(c.f5 * (min(vs30, V_REF_NL) - 360.0)) -
             exp(c.f5 * (V_REF_NL - 360.0)));
         fNonlin = f2 * rkRefTerm;
       }
@@ -1269,7 +1269,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       // TODO clean
 //      String values = String.format(
-//          "%12s %5.3f %.3g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+//          "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
 //          c.imt.name(),
 //          c.imt.isSA() ? c.imt.period() : 0.0,
 //          pgaRock,
