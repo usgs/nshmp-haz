@@ -1,106 +1,205 @@
 package gov.usgs.earthquake.nshmp.data;
 
+import java.util.Iterator;
+import java.util.PrimitiveIterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.DoubleUnaryOperator;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
+
+import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.DiscreteDomain;
+import com.google.common.collect.Range;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.AbstractList;
-import java.util.Arrays;
-import java.util.List;
-
-import com.google.common.primitives.Doubles;
 
 /**
- * An immutable array of {@code double} values. This class is similar to the
- * list returned by {@link Doubles#asList(double...)} in that it provides a thin
- * {@link List} wrapper around a primitive {@code double[]} array, except all
- * mutation operations throw an {@code UnsupportedOperationException}. This
- * class provides {@link #getValue(int)} for direct access to primitive value
- * types to avoid autoboxing overhead.
- *
+ * An interface representing an immutable wrapper around an array of primitive
+ * {@code double} values. Use factory constructors or builders to create
+ * instances of this class.
+ * 
+ * <p>In addition to {@link #iterator()} returning the 
+ * {@code double} primitive specialization {@link PrimitiveIterator.OfDouble} implementations of this interface
+ * provide streaming support via {@link #stream()} and {@link parallelStream()},
+ * both of which return the {@code double} primitive specialization,
+ * {@link DoubleStream}. Note that traditional iteration will incur additional
+ * autoboxing overhead.
+ * 
+ * @author Brandon Clayton
  * @author Peter Powers
  */
-public abstract class DataArray extends AbstractList<Double> {
+interface DataArray extends Iterable<Double> {
 
-  /**
-   * Return the primitive value at {@code index}.
+  /*
+   * Developer notes:
    * 
-   * @param index of value to retrieve
-   * @throws ArrayIndexOutOfBoundsException if {@code index} is out of range
-   *         (index < 0 || index >= size())
+   * Currently Iterable is implemented in favor of the more heavyweight List or
+   * Collection interfaces to support traditional for-each loops, however the
+   * iterator returned is an updated spliterator based double specialization.
+   * 
    */
-  public abstract double getValue(int index);
 
-  @Override
-  public Double get(int index) {
-    return getValue(index);
+  // Implementation notes:
+  //
+  // Understand why we want to override Iterable.iterator() and
+  // Iterable.spliterator()
+
+  // Extra Credit: add method (ideally static) to create a collector to use
+  // with Stream.collect().
+
+  // ---------------------------------
+  // Implementation guidelines:
+
+  // Put basic implementation, RegularDataAray, in its own class.
+
+  // Classes to take note of:
+  //
+  // java.util.Arrays
+  // java.util.Spliterator
+  // java.util.Spliterators
+  // java.util.stream.StreamSupport
+  
+  
+  // Static factory methods:
+  //
+  // DataArray copyOf(double... data)
+  // DataArray copyOf(Iterable<Double> data) {
+  // DataArray.Builder builderWithSize(int size)
+  // DataArray.Builder builderWithData(double... data)
+  // DataArray.Builder builderWithData(Iterable<Double> data)
+  
+  public static DataArray copyOf(double... data) {
+    return builderWithData(data).build();
   }
-
-  /**
-   * Return a new single-use {@code DataArray} builder with a backing array
-   * initialized to {@code size}. This builder is not thread safe.
-   * 
-   * @param size of the backing array
-   */
-  public static Builder builder(int size) {
+  
+  public static DataArray copyOf(Iterable<Double> data) {
+    return builderWidthData(data).build();
+  }
+  
+  public static Builder builderWithSize(int size) {
     return new Builder(size);
   }
-
-  /**
-   * Create a new {@code DataArray}, making a defensive copy of the supplied
-   * {@code data}.
-   * @param data to copy
-   */
-  public static DataArray copyOf(double... data) {
-    return new RegularDataArray(Arrays.copyOf(data, data.length));
+  
+  public static Builder builderWithData(double... data) {
+    return new Builder(data);
   }
+  
+  public static Builder builderWidthData(Iterable<Double> data) {
+    return new Builder(data);
+  }
+  
+  // Interface methods to override:
+  // @Override PrimitiveIterator.OfDouble iterator(); (see Spliterators)
+  // @Override Spliterator.OfDouble spliterator();
+  // -- (in implementation, get from Arrays, not Spliterators)
 
-  /**
-   * A single-use DataArray builder. Use {@link DataArray#builder(int)} to
-   * create a new builder.
-   */
+  @Override
+  default public PrimitiveIterator.OfDouble iterator() {
+    return Spliterators.iterator(spliterator());
+  }
+  
+  @Override 
+  public Spliterator.OfDouble spliterator();
+  
+  // Instance methods to declare:
+  //
+  // DoubleStream stream();
+  // DoubleStream parallelStream();
+  // -- (use StreamSupport for the above methods)
+  // double get(int index);
+  // int size();
+
+  default public DoubleStream stream() {
+    Boolean isParallel = false;
+    return StreamSupport.doubleStream(spliterator(), isParallel);
+  }
+   
+  default public DoubleStream parallelStream() {
+    Boolean isParallel = true;
+    return StreamSupport.doubleStream(spliterator(), isParallel);
+  }
+  
+  public double get(int index);
+  
+  public int size();
+  
+  // Nested builder class instance methods:
+  //
+  // Builder set(int index, double value)
+  // Builder transform(DoubleUnaryOperator function)
+  // Builder transformRange(Range<Integer> range, DoubleUnaryOperator function)
+  
   public static class Builder {
-
     private double[] data;
-
+    private DoubleUnaryOperator transformFunction = (x) -> { return x; };
+    private DoubleUnaryOperator transformRangeFunction = (x) -> { return x; };
+    private Range<Integer> range;
+    private Boolean transform = false;
+    private Boolean transformRange = false;
+    
     private Builder(int size) {
       checkArgument(size >= 0);
       data = new double[size];
     }
-
-    /**
-     * Set the {@code value} at {@code index}.
-     */
+   
+    private Builder(double... data) {
+      for (int index = 0; index < data.length; index++) {
+        set(index, data[index]);
+      }
+    }
+    
+    private Builder(Iterable<Double> data) {
+      int count = 0;
+      for (double datum : data) {
+        set(count, datum);
+        count++;
+      }
+    }
+    
+    public DataArray build() {
+      data = transformData();
+      transformDataRange();
+      
+      DataArray dataArray = new RegularDataArray(data);
+      return dataArray;
+    }
+    
     public Builder set(int index, double value) {
+      checkArgument(index >= 0);
       data[index] = value;
       return this;
     }
-
-    /**
-     * Return a newly created {@code DataArray}.
-     */
-    public DataArray build() {
-      DataArray dataArray = new RegularDataArray(data);
-      data = null; // dereference
-      return dataArray;
+    
+    public Builder transform(DoubleUnaryOperator function) {
+      transform = true;
+      transformFunction = function;
+      return this;
     }
-  }
-
-  private static class RegularDataArray extends DataArray {
-
-    final double[] data;
-
-    RegularDataArray(double[] data) {
-      this.data = data;
+    
+    public Builder transformRange(Range<Integer> range, DoubleUnaryOperator function) {
+      transformRange = true;
+      transformRangeFunction = function;
+      this.range = range;
+      return this;
     }
-
-    @Override
-    public double getValue(int index) {
-      return data[index];
+    
+    private double[] transformData() {
+      return !transform ? data : DoubleStream.of(data).map(transformFunction).toArray();
     }
-
-    @Override
-    public int size() {
-      return data.length;
+    
+    private void transformDataRange() {
+      if (!transformRange) return;
+      
+      ContiguousSet<Integer> rangeSet = ContiguousSet.create(range, DiscreteDomain.integers());
+      rangeSet.stream()
+          .forEach((rangeIndex) -> {  
+            data[rangeIndex] = transformRangeFunction.applyAsDouble(data[rangeIndex]);
+          });
     }
+    
   }
 
 }
