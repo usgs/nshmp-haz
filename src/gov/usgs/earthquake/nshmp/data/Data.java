@@ -9,9 +9,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ImmutableSortedSet.Builder;
 import com.google.common.collect.Lists;
@@ -635,16 +638,27 @@ public final class Data {
   }
 
   /**
-   * Transform {@code data} by a {@code function} in place.
+   * Transform {@code data} by a {@code DoubleUnaryOperator} in place.
+   * 
+   * @param function to apply to {@code data}
+   * @param data to operate on
+   * @return a reference to the supplied {@code data}
+   */
+  public static double[] transform(DoubleUnaryOperator function, double... data) {
+    return transform(Range.closedOpen(0, data.length), function, data);
+  }
+  
+  /**
+   * Transform {@code data} by a {@code DoubleUnaryOperator} in place.
    *
    * @param function to apply
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    */
-  public static List<Double> transform(Function<Double, Double> function, List<Double> data) {
+  public static List<Double> transform(DoubleUnaryOperator function, List<Double> data) {
     checkNotNull(function);
     for (int i = 0; i < data.size(); i++) {
-      data.set(i, function.apply(data.get(i)));
+      data.set(i, function.applyAsDouble(data.get(i)));
     }
     return data;
   }
@@ -662,6 +676,53 @@ public final class Data {
       data[i] = function.apply(data[i]);
     }
     return data;
+  }
+ 
+  /**
+   * Transform {@code data} in a given {@code Range} by a 
+   *    {@code DoubleUnaryOperator} in place.
+   *    
+   * @param range to apply the {@code function}
+   * @param function to apply to the {@code data}
+   * @param data to operate on
+   * @return a reference to the supplied {@code data}
+   */
+  public static double[] transform(
+      Range<Integer> range, 
+      DoubleUnaryOperator function, 
+      double... data) {
+    checkNotNull(function);
+    checkArgument(!range.isEmpty());
+    
+    ContiguousSet<Integer> rangeSet = ContiguousSet
+        .create(range, DiscreteDomain.integers());
+
+    checkArgument(rangeSet.first() >= 0, "Invalid range: %s", range.toString());
+
+    for (int index : rangeSet) {
+      if (index >= data.length) break;
+      data[index] = function.applyAsDouble(data[index]);
+    }
+
+    return data;
+  }
+  
+  /**
+   * Transform {@code data} in a given range, [{@code minIndex}, {@code maxIndex}), 
+   *    by a {@code DoubleUnaryOperator} in place.
+   *    
+   * @param lower inclusive index 
+   * @param upper exclusive index
+   * @param function to apply to the {@code data}
+   * @param data to operate on 
+   * @return a reference to the supplied {@code data}
+   */
+  public static double[] transform(
+      int lower, 
+      int upper, 
+      DoubleUnaryOperator 
+      function, double... data) {
+    return transform(Range.closedOpen(lower, upper), function, data);
   }
 
   private static final String NORM_DATA_ERROR = "Normalize: Data outside range [0..+Inf)";
