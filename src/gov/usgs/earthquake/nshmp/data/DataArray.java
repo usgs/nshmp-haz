@@ -1,17 +1,18 @@
 package gov.usgs.earthquake.nshmp.data;
 
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.PrimitiveIterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.DiscreteDomain;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
+import com.google.common.primitives.Doubles;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -22,16 +23,16 @@ import static com.google.common.base.Preconditions.checkArgument;
  * instances of this class.
  * 
  * <p>In addition to {@link #iterator()} returning the 
- * {@code double} primitive specialization {@link PrimitiveIterator.OfDouble} implementations of this interface
- * provide streaming support via {@link #stream()} and {@link parallelStream()},
- * both of which return the {@code double} primitive specialization,
- * {@link DoubleStream}. Note that traditional iteration will incur additional
- * autoboxing overhead.
+ * {@code double} primitive specialization {@link PrimitiveIterator.OfDouble} 
+ * implementations of this interface provide streaming support via 
+ * {@link #stream()} and {@link parallelStream()}, both of which return 
+ * the {@code double} primitive specialization, {@link DoubleStream}. 
+ * Note that traditional iteration will incur additional autoboxing overhead.
  * 
  * @author Brandon Clayton
  * @author Peter Powers
  */
-interface DataArray extends Iterable<Double> {
+public interface DataArray extends Iterable<Double> {
 
   /*
    * Developer notes:
@@ -42,164 +43,198 @@ interface DataArray extends Iterable<Double> {
    * 
    */
 
-  // Implementation notes:
-  //
-  // Understand why we want to override Iterable.iterator() and
-  // Iterable.spliterator()
-
-  // Extra Credit: add method (ideally static) to create a collector to use
-  // with Stream.collect().
-
-  // ---------------------------------
-  // Implementation guidelines:
-
-  // Put basic implementation, RegularDataAray, in its own class.
-
-  // Classes to take note of:
-  //
-  // java.util.Arrays
-  // java.util.Spliterator
-  // java.util.Spliterators
-  // java.util.stream.StreamSupport
-  
-  
-  // Static factory methods:
-  //
-  // DataArray copyOf(double... data)
-  // DataArray copyOf(Iterable<Double> data) {
-  // DataArray.Builder builderWithSize(int size)
-  // DataArray.Builder builderWithData(double... data)
-  // DataArray.Builder builderWithData(Iterable<Double> data)
-  
-  public static DataArray copyOf(double... data) {
-    return builderWithData(data).build();
-  }
-  
-  public static DataArray copyOf(Iterable<Double> data) {
-    return builderWidthData(data).build();
-  }
-  
-  public static Builder builderWithSize(int size) {
-    return new Builder(size);
-  }
-  
-  public static Builder builderWithData(double... data) {
-    return new Builder(data);
-  }
-  
-  public static Builder builderWidthData(Iterable<Double> data) {
-    return new Builder(data);
-  }
-  
-  // Interface methods to override:
-  // @Override PrimitiveIterator.OfDouble iterator(); (see Spliterators)
-  // @Override Spliterator.OfDouble spliterator();
-  // -- (in implementation, get from Arrays, not Spliterators)
-
+  /**
+   * Return a {@code PrimitiveInterator.ofDouble} iterator.
+   */
   @Override
-  default public PrimitiveIterator.OfDouble iterator() {
+  default PrimitiveIterator.OfDouble iterator() {
     return Spliterators.iterator(spliterator());
   }
   
+  /**
+   * Returns a {@code Spliterator.ofDouble} {@code Spliterator}.
+   */
   @Override 
-  public Spliterator.OfDouble spliterator();
-  
-  // Instance methods to declare:
-  //
-  // DoubleStream stream();
-  // DoubleStream parallelStream();
-  // -- (use StreamSupport for the above methods)
-  // double get(int index);
-  // int size();
+  Spliterator.OfDouble spliterator();
 
-  default public DoubleStream stream() {
-    Boolean isParallel = false;
-    return StreamSupport.doubleStream(spliterator(), isParallel);
-  }
-   
-  default public DoubleStream parallelStream() {
+  /**
+   * Return a {@code double} at {@code index}.
+   * 
+   * @param index of the value to get
+   * @return {@code double} at position {@code index}
+   */
+  double get(int index);
+  
+  /**
+   * Return the number of elements in {@code DataArray}.
+   * 
+   * @return {@code int} The size of {@code DataArray}
+   */
+  int size();
+
+  /**
+   * Returns a new, mutable copy of the {@code DataArray}'s values as
+   *    a primitive {@code double[]}.
+   *    
+   * @return {@code double[]}
+   */
+  double[] toArray();
+  
+  /**
+   * Return a parallel {@code DoubleStream} of the {@code DataArray}.
+   * 
+   * @return parallel {@code DoubleStream}
+   */
+  default DoubleStream parallelStream() {
     Boolean isParallel = true;
     return StreamSupport.doubleStream(spliterator(), isParallel);
   }
   
-  public double get(int index);
+  /**
+   * Return a sequential {@code DoubleStream} of the {@code DataArray}.
+   * 
+   * @return {@code DoubleStream}
+   */
+  default DoubleStream stream() {
+    Boolean isParallel = false;
+    return StreamSupport.doubleStream(spliterator(), isParallel);
+  }
   
-  public int size();
+  /**
+   * Create a new {@code DataArray} from the supplied {@code data}.
+   * 
+   * @param data to copy
+   * @return New {@code DataArray}
+   */
+  static DataArray copyOf(double... data) {
+    return builderWithData(data).build();
+  }
   
-  // Nested builder class instance methods:
-  //
-  // Builder set(int index, double value)
-  // Builder transform(DoubleUnaryOperator function)
-  // Builder transformRange(Range<Integer> range, DoubleUnaryOperator function)
+  /**
+   * Create a new {@code DataArray} from an {@code Iterable<Double>}.
+   * 
+   * @param data to copy
+   * @return new {@code DataArray}
+   */
+  static DataArray copyOf(Iterable<Double> data) {
+    return builderWithData(data).build();
+  }
   
+  /**
+   * Return a new {@code DataArray} {@code Builder} initialized with 
+   *    {@code data}.
+   *    
+   * @param data to copy
+   * @return new {@code Builder}
+   */
+  static Builder builderWithData(double... data) {
+    return new Builder(data);
+  }
+  
+  /**
+   * Return a new {@code DataArray} {@code Builder} initialized with
+   *    {@code Iterable<Double>}.
+   *    
+   * @param data to copy
+   * @return new {@code Builder}.
+   */
+  static Builder builderWithData(Iterable<Double> data) {
+    if (data instanceof Collection) {
+      return new Builder(Doubles.toArray((Collection<Double>) data));
+    }
+
+    double[] array = Stream.of(Iterables.toArray(data, Double.class))
+          .mapToDouble(Double::doubleValue)
+          .toArray();
+    return new Builder(array);
+  }
+ 
+  /**
+   * Return a new {@code DataArray} {@code Builder} initialized to
+   *    {@code size}.
+   *    
+   * @param size of the backing array
+   * @return new {@code Builder}
+   */
+  static Builder builderWithSize(int size) {
+    checkArgument(size >= 0);
+    return new Builder(new double[size]);
+  }
+  
+  /**
+   * A {@code DataArray} builder. Use one of the following to create a new builder:
+   *    <ul> 
+   *      <li> {@link DataArray#builderWithData(double...)} </li>
+   *      <li> {@link DataArray#builderWithData(Iterable)} </li>
+   *      <li> {@link DataArray#builderWithSize(int)} </li>
+   *    </ul> 
+   */
   public static class Builder {
     private double[] data;
-    private DoubleUnaryOperator transformFunction = (x) -> { return x; };
-    private DoubleUnaryOperator transformRangeFunction = (x) -> { return x; };
-    private Range<Integer> range;
-    private Boolean transform = false;
-    private Boolean transformRange = false;
     
-    private Builder(int size) {
-      checkArgument(size >= 0);
-      data = new double[size];
+    private Builder(double... data) {
+      this.data = Arrays.copyOf(data, data.length); 
     }
    
-    private Builder(double... data) {
-      for (int index = 0; index < data.length; index++) {
-        set(index, data[index]);
-      }
-    }
-    
-    private Builder(Iterable<Double> data) {
-      int count = 0;
-      for (double datum : data) {
-        set(count, datum);
-        count++;
-      }
-    }
-    
+    /**
+     * Return a new {@code DataArray}.
+     * 
+     * @return {@code DataArray}
+     */
     public DataArray build() {
-      data = transformData();
-      transformDataRange();
-      
-      DataArray dataArray = new RegularDataArray(data);
-      return dataArray;
+      return new RegularDataArray(Arrays.copyOf(data, data.length));
     }
-    
+   
+    /**
+     * Set the {@code value} at {@code index} in the {@code DataArray}.
+     * 
+     * @param index to set the {@code value}
+     * @param value at {@code index}
+     * @return {@code Builder} to chain
+     */
     public Builder set(int index, double value) {
       checkArgument(index >= 0);
       data[index] = value;
       return this;
     }
     
+    /**
+     * Transform the {@code DataArray} at all indices.
+     * 
+     * @param function to transform the {@code dataArray}
+     * @return {@code Builder} to chain
+     */
     public Builder transform(DoubleUnaryOperator function) {
-      transform = true;
-      transformFunction = function;
+      Data.transform(function, data);
       return this;
     }
     
+    /**
+     * Transform the {@code DataArray} at a specified {@code Range}.
+     * 
+     * @param range of indices to transform the {@code DataArray}
+     * @param function to transform the {@code DataArray}
+     * @return {@code Builder} to chain
+     */
     public Builder transformRange(Range<Integer> range, DoubleUnaryOperator function) {
-      transformRange = true;
-      transformRangeFunction = function;
-      this.range = range;
+      Data.transform(range, function, data);
       return this;
     }
-    
-    private double[] transformData() {
-      return !transform ? data : DoubleStream.of(data).map(transformFunction).toArray();
+   
+    /**
+     * Transform the {@code DataArray} at a specified range, 
+     *    [{@code lower}, {@code upper}).
+     *    
+     * @param lower inclusive index
+     * @param upper exclusive index
+     * @param function to apply to {@code DataArray}
+     * @return {@code Builder} to chain
+     */
+    public Builder transformRange(int lower, int upper, DoubleUnaryOperator function) {
+      Data.transform(lower, upper, function, data);
+      return this;
     }
-    
-    private void transformDataRange() {
-      if (!transformRange) return;
-      
-      ContiguousSet<Integer> rangeSet = ContiguousSet.create(range, DiscreteDomain.integers());
-      rangeSet.stream()
-          .forEach((rangeIndex) -> {  
-            data[rangeIndex] = transformRangeFunction.applyAsDouble(data[rangeIndex]);
-          });
-    }
-    
+   
   }
 
 }
