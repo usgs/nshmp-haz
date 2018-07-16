@@ -12,9 +12,12 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
@@ -25,6 +28,9 @@ import gov.usgs.earthquake.nshmp.gmm.Imt;
 @SuppressWarnings("javadoc")
 public final class DataTests {
 
+  @Rule
+  public ExpectedException exception = ExpectedException.none();
+  
   private static final double[] VALUES = { 1.0, 10.0, 100.0 };
 
   private static double[] valueArray() {
@@ -362,18 +368,51 @@ public final class DataTests {
 
   @Test
   public final void testTransform() {
-    Function<Double, Double> fn = new Function<Double, Double>() {
-      @Override
-      public Double apply(Double input) {
-        return input + 1;
-      }
-    };
+    DoubleUnaryOperator function = (x) -> { return x + 1; };
+    
     double[] expectArray = { 2.0, 11.0, 101.0 };
-    double[] actualArray = Data.transform(fn, valueArray());
-    List<Double> actualList = Data.transform(fn, valueList());
+    double[] actualArray = Data.transform(function, valueArray());
+    List<Double> actualList = Data.transform(function, valueList());
     testArrayAndList(expectArray, actualArray, actualList);
   }
-
+  
+  @Test
+  public final void testTransformRange() {
+    DoubleUnaryOperator function = (x) -> { return x + 1; };
+    
+    Range<Integer> range = Range.closed(0, 1);
+    double[] expect = { 2.0, 11.0, 100.0 };
+    double[] actual1 = Data.transform(range, function, valueArray());
+    double[] actual2 = Data.transform(0, 2, function, valueArray());
+    
+    assertArrayEquals(expect, actual1, 0.0);
+    assertArrayEquals(expect, actual2, 0.0);
+  }
+  
+  @Test
+  public final void testTransformIAE() {
+    exception.expect(IllegalArgumentException.class);
+ 
+    Range<Integer> range = Range.openClosed(0, 0);
+    Data.transform(range, (x) -> { return x; }, valueArray());
+  }
+  
+  @Test
+  public final void testTransformIAE2() {
+    exception.expect(IllegalArgumentException.class);
+    
+    Range<Integer> range = Range.atMost(1);
+    Data.transform(range, (x) -> { return x; }, valueArray());
+  }
+  
+  @Test
+  public final void testTransformNPE() {
+    exception.expect(NullPointerException.class);
+    
+    Range<Integer> range = Range.closed(0, 1);
+    Data.transform(range, null, valueArray());
+  }
+  
   @Test
   public final void testNormalize() {
     double[] expectArray = { 0.2, 0.3, 0.5 };
