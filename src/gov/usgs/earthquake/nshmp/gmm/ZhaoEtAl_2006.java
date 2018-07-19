@@ -5,12 +5,20 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.ZTOP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.LN_G_CM_TO_M;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P01;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P02;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P03;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P05;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P075;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P1;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
 
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Range;
 
@@ -32,12 +40,26 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
  *
- * <p><b>Implementation notes:</b> <ol><li>When used for interface events, sigma
- * is computed using the generic value of tau, rather than the interface
- * specific value (see inline comments for more information).<li><li>Hypocentral
- * depths for interface events are fixed at 20km.</li><li>Hypocentral depths for
- * slab events are set to {@code min(zTop, 125)}; minimum rupture distance
- * (rRup) is 1.0 km.</li></ol>
+ * <p><b>Implementation notes:</b><ol>
+ * 
+ * <li>When used for interface events, sigma is computed using the generic value
+ * of tau, rather than the interface specific value (see inline comments for
+ * more information).<li>
+ * 
+ * <li>Hypocentral depths for interface events are fixed at 20km.</li>
+ * 
+ * <li>Hypocentral depths for slab events are set to {@code min(zTop, 125)};
+ * minimum rupture distance (rRup) is 1.0 km.</li>
+ * 
+ * <li>Support for spectral period 0.75s is provided using interpolated
+ * coefficients ported from USGS legacy Fortran implementations.</li>
+ * 
+ * <li>Support for spectral period 0.01s was recently added using the same
+ * coefficients as PGA.</li>
+ * 
+ * <li>Support for spectral periods 0.02s, 0.03s, and 0.075s was recently added
+ * via interpolation of ground motion and sigma of adjacent periods for which
+ * there are coefficients.</li></ol>
  *
  * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T.,
  * Takahashi, T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G.,
@@ -68,9 +90,6 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
       .set(VS30, Range.closed(150.0, 1000.0))
       .build();
 
-  // TODO eventually remove 0.75s coeffs in favor of interpolation
-  // between 0.7s and 0.8s
-
   // TODO Zhao06.csv contains higher precision coefficents than
   // supplied in publication; consider revising d, Sr, Si, Ssl
 
@@ -82,6 +101,8 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private static final double MAX_SLAB_DEPTH = 125.0;
   private static final double INTERFACE_DEPTH = 20.0;
   private static final double VS30_ROCK = 760.0;
+
+  private static final Set<Imt> INTERPOLATED_IMTS = EnumSet.of(SA0P02, SA0P03, SA0P075);
 
   private static final class Coefficients {
 
@@ -118,17 +139,33 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private final Coefficients coeffs;
   private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
 
-  ZhaoEtAl_2006(final Imt imt) {
+  // interpolatedGmm = null if !interpolated
+  private final boolean interpolated;
+  private final GroundMotionModel interpolatedGmm;
+
+  ZhaoEtAl_2006(final Imt imt, Gmm subtype) {
     coeffs = new Coefficients(imt, COEFFS);
     cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
+    interpolated = INTERPOLATED_IMTS.contains(imt);
+    interpolatedGmm = interpolated ? createInterpolated(imt, subtype) : null;
+  }
+
+  private static GroundMotionModel createInterpolated(Imt imt, Gmm gmm) {
+    return (imt == SA0P075)
+        ? new InterpolatedGmm(gmm, SA0P05, SA0P1, imt)
+        : new InterpolatedGmm(gmm, SA0P01, SA0P05, imt);
   }
 
   @Override
   public final ScalarGroundMotion calc(GmmInput in) {
+    if (interpolated) {
+      return interpolatedGmm.calc(in);
+    }
+
     double σ = calcStdDev(coeffs, isSlab());
-    
+
     if (basinEffect()) {
-      // Possibly use basin/site term from 
+      // Possibly use basin/site term from
       // CB14 with local rock reference.
       double fSite = siteTermStep(coeffs, VS30_ROCK);
       double μRock = calcMean(coeffs, isSlab(), fSite, in);
@@ -136,7 +173,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
       double μ = μRock + cbBasin;
       return DefaultScalarGroundMotion.create(μ, σ);
     }
-    
+
     double fSite = siteTermStep(coeffs, in.vs30);
     double μ = calcMean(coeffs, isSlab(), fSite, in);
     return DefaultScalarGroundMotion.create(μ, σ);
@@ -217,11 +254,19 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     }
   }
 
+  /*
+   * Developer note: In most GMMs, subtype constructors, if present, need only
+   * the IMT argument to initialize their parent. To support several
+   * interpolated spectral periods, the parent also needs to know the specific
+   * subtype Gmm identifier in order to obtain concrete instances of the
+   * bounding spectral periods.
+   */
+  
   static final class Interface extends ZhaoEtAl_2006 {
     static final String NAME = ZhaoEtAl_2006.NAME + ": Interface";
 
     Interface(Imt imt) {
-      super(imt);
+      super(imt, Gmm.ZHAO_06_INTERFACE);
     }
 
     @Override
@@ -239,7 +284,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
 
     Slab(Imt imt) {
-      super(imt);
+      super(imt, Gmm.ZHAO_06_SLAB);
     }
 
     @Override
@@ -257,7 +302,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     static final String NAME = ZhaoEtAl_2006.NAME + ": Interface : Basin Amp";
 
     BasinInterface(Imt imt) {
-      super(imt);
+      super(imt, Gmm.ZHAO_06_INTERFACE_BASIN_AMP);
     }
 
     @Override
@@ -275,7 +320,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     static final String NAME = ZhaoEtAl_2006.NAME + ": Slab : Basin Amp";
 
     BasinSlab(Imt imt) {
-      super(imt);
+      super(imt, Gmm.ZHAO_06_SLAB_BASIN_AMP);
     }
 
     @Override
