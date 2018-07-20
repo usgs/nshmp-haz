@@ -186,8 +186,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   /* ϕ_s2s constants */
   private static final double VΦ1 = 1200.0;
   private static final double VΦ2 = 1500.0;
-  private static final double M1 = 5.25;
-  private static final double ΔM = 0.5;
 
   private static final class CoefficientsSigma {
 
@@ -198,7 +196,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     final double ga, gb, ma, mb, c;
 
     /* ϕ_s2s coefficients */
-    final double ϕs2s1, ϕs2s2, Δϕs2s;
+    final double ϕs2s1, ϕs2s2;
 
     CoefficientsSigma(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
@@ -213,7 +211,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       c = coeffs.get("ss_c");
       ϕs2s1 = coeffs.get("s2s1");
       ϕs2s2 = coeffs.get("s2s2");
-      Δϕs2s = coeffs.get("ds2s");
     }
   }
 
@@ -274,7 +271,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         0.1 * phi_ss(Mw, c.ma, c.mb);
 
     /* φ_s2s model; single branch; Stewart et al. */
-    double φ_s2s = phi_s2s(Mw, vs30, c.ϕs2s1, c.ϕs2s2, c.Δϕs2s);
+    double φ_s2s = phi_s2s(vs30, c.ϕs2s1, c.ϕs2s2);
 
     return Maths.hypot(τ, φ_ss, φ_s2s);
   }
@@ -335,29 +332,15 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /* φ_s2s: Stewart et al. */
   private static double phi_s2s(
-      double Mw,
       double vs30,
       double ϕs2s1,
-      double ϕs2s2,
-      double Δϕs2s) {
+      double ϕs2s2) {
 
-    /* General magnitude-dependent term */
-    double ϕMag = Δϕs2s;
-    if (Mw < M1) {
-      ϕMag = 0.0;
-    } else if (Mw < M1 + ΔM) {
-      ϕMag = Δϕs2s * (Mw - M1) / ΔM;
-    }
-
-    /* Low magnitude site-dependent term */
-    double ϕSite = ϕs2s2;
-    if (vs30 < VΦ1) {
-      ϕSite = ϕs2s1;
-    } else if (vs30 < VΦ2) {
-      ϕSite = ϕs2s1 - ((ϕs2s1 - ϕs2s2) / (VΦ2 - VΦ1)) * (vs30 - VΦ1);
-    }
-
-    return ϕMag + ϕSite;
+    return (vs30 < VΦ1)
+        ? ϕs2s1
+        : (vs30 < VΦ2)
+            ? ϕs2s1 - ((ϕs2s1 - ϕs2s2) / (VΦ2 - VΦ1)) * (vs30 - VΦ1)
+            : ϕs2s2;
   }
 
   static class SigmaSet {
