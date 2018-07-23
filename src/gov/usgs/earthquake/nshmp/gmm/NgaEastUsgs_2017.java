@@ -1097,17 +1097,24 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     private static final CoefficientContainer COEFFS = new CoefficientContainer(
         "nga-east-usgs-siteamp.csv");
 
-    private static final double V_REF = 760.0;
-    private static final double V_REF_NL = 3000.0;
+    private static final double V_MIN = 200.0;
+    private static final double V_MAX = 3000.0;
+    private static final double V_LIN_REF = 760.0;
     private static final double VL = 200.0;
     private static final double VU = 2000.0;
+
+    private static final double VW1 = 600.0;
+    private static final double VW2 = 400.0;
+    private static final double WT_I = 0.9;
+    private static final double WT_G = 1.0 - WT_I;
+    private static final double WT_SCALE = (WT_I - WT_G) / (log(VW1) - log(VW2)); // ≈1.97
 
     private final Coefficients c;
 
     private static final class Coefficients {
 
       final Imt imt;
-      final double c, v1, v2, vf, σvc, σl, σu, f760, f760σ, f3, f4, f5, vc, σc;
+      final double c, v1, v2, vf, σvc, σl, σu, f760i, f760g, f760iσ, f760gσ, f3, f4, f5, vc, σc;
 
       Coefficients(Imt imt, CoefficientContainer cc) {
         this.imt = imt;
@@ -1119,8 +1126,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         σvc = coeffs.get("sig_vc");
         σl = coeffs.get("sig_l");
         σu = coeffs.get("sig_u");
-        f760 = coeffs.get("f760");
-        f760σ = coeffs.get("f760s");
+        f760i = coeffs.get("f760i");
+        f760iσ = coeffs.get("f760is");
+        f760g = coeffs.get("f760g");
+        f760gσ = coeffs.get("f760gs");
         f3 = coeffs.get("f3");
         f4 = coeffs.get("f4");
         f5 = coeffs.get("f5");
@@ -1138,12 +1147,12 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /*
        * Developer notes:
        * 
-       * Vs30 values outside the range 200 < Vs30 < 2000 m/s are clamped to the
+       * Vs30 values outside the range 200 < Vs30 < 3000 m/s are clamped to the
        * supported range.
        * 
        * ---------------------------------------------------------------------
        * 
-       * Comments from Matlab implementation:
+       * Comments from R implementation:
        * 
        * This function is used to compute site amplification in ln units for
        * inputs Vs30 (in m/s) and PGAr (peak acceleration for 3000 m/s reference
@@ -1168,28 +1177,37 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
        * coefficient vf instead of using v1.
        */
 
-      /* Vs30 filtering */
+      /* Vs30 filtering */ // TODO update comments to 3000
 
-      if (vs30 > VU) {
+      if (vs30 >= V_MAX) {
         return new Value(0.0, 0.0);
-      } else if (vs30 < VL) {
-        vs30 = VL;
+      } else if (vs30 < V_MIN) {
+        vs30 = V_MIN;
       }
 
       /* Linear response */
 
+      /* Vs30 dependent f760 model: impedance vs.gradient. */
+      double wti = WT_I;
+      if (vs30 < VW2) {
+        wti = WT_G;
+      } else if (vs30 < VW1) {
+        wti = WT_SCALE * log(vs30 / VW2) + WT_G;
+      }
+      double wtg = 1.0 - wti;
+      double f760 = c.f760i * wti + c.f760g * wtg;
+      double f760σ = c.f760iσ * wti + c.f760gσ * wtg;
+
       double fv = 0.0;
-      // include PGA and PGV in short period
-      boolean shortPeriod = !(c.imt.isSA() && c.imt.period() > 0.3);
       if (vs30 <= c.v1) {
-        fv = c.c * log(c.v1 / V_REF);
+        fv = c.c * log(c.v1 / V_LIN_REF);
       } else if (vs30 <= c.v2) {
-        fv = c.c * log(vs30 / V_REF);
+        fv = c.c * log(vs30 / V_LIN_REF);
+      } else if (vs30 <= VU) {
+        fv = c.c * log(c.v2 / V_LIN_REF);
       } else {
-        fv = c.c * log(c.v2 / V_REF);
-        if (shortPeriod) {
-          fv += c.c / 2.0 * log(vs30 / c.v2);
-        }
+        double f2000 = c.c * log(c.v2 / V_LIN_REF);
+        fv = Interpolator.findY(log(VU), f2000, log(V_MAX), -f760, log(vs30));
       }
 
       double fvσ = 0.0;
@@ -1204,17 +1222,18 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         fvσ = c.σvc + (c.σu - c.σvc) * vT * vT;
       }
 
-      double fLin = fv + c.f760;
-      double σLin = sqrt(fvσ * fvσ + c.f760σ * c.f760σ);
+      double fLin = fv + f760;
+      double σLin = sqrt(fvσ * fvσ + f760σ * f760σ);
 
       /* Nonlinear response */
 
+      double vRefNl = (c.imt.ordinal() >= Imt.SA0P4.ordinal()) ? V_MAX : V_LIN_REF;
       double rkRefTerm = log((pgaRock + c.f3) / c.f3);
 
       double fNonlin = 0.0;
       if (vs30 < c.vc) {
-        double f2 = c.f4 * (exp(c.f5 * (min(vs30, V_REF_NL) - 360.0)) -
-            exp(c.f5 * (V_REF_NL - 360.0)));
+        double f2 = c.f4 * (exp(c.f5 * (min(vs30, vRefNl) - 360.0)) -
+            exp(c.f5 * (vRefNl - 360.0)));
         fNonlin = f2 * rkRefTerm;
       }
 
@@ -1230,20 +1249,35 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
 
       // TODO clean
-      // String values = String.format(
-      // "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-      // c.imt.name(),
-      // c.imt.isSA() ? c.imt.period() : 0.0,
-      // pgaRock,
-      // fv,
-      // fvσ,
-      // fLin,
-      // σLin,
-      // fNonlin,
-      // σNonlin,
-      // fT,
-      // σT);
-      // System.out.println(values);
+      String values = String.format(
+          "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+          c.imt.name(),
+          c.imt.isSA() ? c.imt.period() : 0.0,
+          pgaRock,
+          fv,
+          f760,
+          fvσ,
+          fLin,
+          σLin,
+          fNonlin,
+          σNonlin,
+          fT,
+          σT);
+      
+      // TODO clean
+//      String values = String.format(
+//          "%5.3f %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+//          c.imt.isSA() ? c.imt.period() : 0.0,
+//          fv,
+//          c.f760g,
+//          c.f760i,
+//          f760,
+//          fLin,
+//          fNonlin,
+//          fT,
+//          σT);
+
+      System.out.println(values);
 
       return new Value(fT, σT);
     }
