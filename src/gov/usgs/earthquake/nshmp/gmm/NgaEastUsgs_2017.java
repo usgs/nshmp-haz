@@ -1248,21 +1248,21 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double fT = fLin + fNonlin;
       double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
 
-      // TODO clean
-      String values = String.format(
-          "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-          c.imt.name(),
-          c.imt.isSA() ? c.imt.period() : 0.0,
-          pgaRock,
-          fv,
-          f760,
-          fvσ,
-          fLin,
-          σLin,
-          fNonlin,
-          σNonlin,
-          fT,
-          σT);
+//      // TODO clean
+//      String values = String.format(
+//          "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+//          c.imt.name(),
+//          c.imt.isSA() ? c.imt.period() : 0.0,
+//          pgaRock,
+//          fv,
+//          f760,
+//          fvσ,
+//          fLin,
+//          σLin,
+//          fNonlin,
+//          σNonlin,
+//          fT,
+//          σT);
       
       // TODO clean
 //      String values = String.format(
@@ -1277,7 +1277,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 //          fT,
 //          σT);
 
-      System.out.println(values);
+//      System.out.println(values);
 
       return new Value(fT, σT);
     }
