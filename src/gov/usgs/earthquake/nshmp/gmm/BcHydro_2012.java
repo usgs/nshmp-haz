@@ -207,6 +207,16 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
         fSite;
   }
 
+  /*
+   * Developer note: In most GMMs, subtype constructors, if present, need only
+   * the IMT argument to initialize their parent. To support several
+   * interpolated spectral periods, the parent also needs to know the specific
+   * subtype Gmm identifier in order to obtain concrete instances of the
+   * bounding spectral periods. In the case of cascading subtypes, multiple
+   * constructors are needed, c(imt) and c(imt, subtype), to support
+   * Gmm.instance and additional sub-subtypes, respectively.
+   */
+
   static class Interface extends BcHydro_2012 {
     static final String NAME = BcHydro_2012.NAME + " : Interface";
 

@@ -6,11 +6,26 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.BASE_10_TO_E;
 import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.LN_G_CM_TO_M;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P01;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P02;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P03;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P05;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P075;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P1;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P15;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P2;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P25;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P3;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA1P5;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA2P0;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA3P0;
 import static gov.usgs.earthquake.nshmp.util.Maths.hypot;
 import static java.lang.Math.log10;
 
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
@@ -25,17 +40,18 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  *
  * <p><b>Implementation notes:</b><ul>
  * 
- * <li>NSHM fortran implementation converts
- * 0.13Hz to 7.7s; this implementation uses 7.5s instead.</li>
+ * <li>NSHM fortran implementation converts 0.13Hz to 7.7s; this implementation
+ * uses 7.5s instead.</li>
  * 
- * <li>Model uses a
- * magnitude dependent depth term and so does not impose 20km hypocentral depth
- * as other subduction interface models do.</li>
+ * <li>Model uses a magnitude dependent depth term and so does not impose 20km
+ * hypocentral depth as other subduction interface models do.</li>
  * 
  * <li>Support for spectral period 0.01s is provided using the same coefficients
  * as PGA.</li>
  * 
- * </ul>
+ * <li>Support for spectral periods 0.02s, 0.03s, 0.075s, 0.15s, 0.25s, and 1.5s
+ * is provided via interpolation of ground motion and sigma of adjacent periods
+ * for which there are coefficients.</li></ul>
  *
  * <p><b>Reference:</b> Atkinson, G.M. and Macias, D.M., 2009, Predicted ground
  * motions for great interface earthquakes in the Cascadia subduction zone:
@@ -69,6 +85,16 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
   private static final double VS30_ROCK = 760.0;
 
+  private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
+      ImmutableMap.<Imt, Range<Imt>> builder()
+          .put(SA0P02, Range.closed(SA0P01, SA0P05))
+          .put(SA0P03, Range.closed(SA0P01, SA0P05))
+          .put(SA0P075, Range.closed(SA0P05, SA0P1))
+          .put(SA0P15, Range.closed(SA0P1, SA0P2))
+          .put(SA0P25, Range.closed(SA0P2, SA0P3))
+          .put(SA1P5, Range.closed(SA2P0, SA3P0))
+          .build());
+
   private static final class Coefficients {
 
     final double c0, c1, c2, c3, c4, σ;
@@ -89,19 +115,35 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
   private final BooreAtkinsonSiteAmp siteAmp;
   private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
 
+  // interpolatedGmm = null if !interpolated
+  private final boolean interpolated;
+  private final GroundMotionModel interpolatedGmm;
+
   AtkinsonMacias_2009(final Imt imt) {
+    this(imt, Gmm.AM_09_INTERFACE);
+  }
+
+  AtkinsonMacias_2009(final Imt imt, Gmm subtype) {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
     siteAmp = new BooreAtkinsonSiteAmp(imt);
     cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
+    interpolated = INTERPOLATED_IMTS.containsKey(imt);
+    interpolatedGmm = interpolated
+        ? new InterpolatedGmm(subtype, imt, INTERPOLATED_IMTS.get(imt))
+        : null;
   }
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
+    if (interpolated) {
+      return interpolatedGmm.calc(in);
+    }
+
     double σ = coeffs.σ * BASE_10_TO_E;
-    
+
     if (basinEffect()) {
-      // Possibly use basin/site term from 
+      // Possibly use basin/site term from
       // CB14 with local rock reference.
       double μRock = calcMean(coeffs, in);
       double cbBasin = cb14basinAmp.basinDelta(in, VS30_ROCK);
@@ -118,9 +160,9 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
   }
 
   private static final double calcMean(
-      final Coefficients c, 
+      final Coefficients c,
       final Coefficients cPga,
-      final BooreAtkinsonSiteAmp siteAmp, 
+      final BooreAtkinsonSiteAmp siteAmp,
       final GmmInput in) {
 
     double μ = calcMean(c, in);
@@ -141,15 +183,23 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
     return gnd * BASE_10_TO_E - LN_G_CM_TO_M;
   }
 
+  /*
+   * Developer note: In most GMMs, subtype constructors, if present, need only
+   * the IMT argument to initialize their parent. To support several
+   * interpolated spectral periods, the parent also needs to know the specific
+   * subtype Gmm identifier in order to obtain concrete instances of the
+   * bounding spectral periods.
+   */
+
   static final class Basin extends AtkinsonMacias_2009 {
     static final String NAME = AtkinsonMacias_2009.NAME + " : Basin Amp";
 
     Basin(Imt imt) {
-      super(imt);
+      super(imt, Gmm.AM_09_INTERFACE_BASIN_AMP);
     }
 
     @Override
-    boolean basinEffect() {
+    final boolean basinEffect() {
       return true;
     }
   }
