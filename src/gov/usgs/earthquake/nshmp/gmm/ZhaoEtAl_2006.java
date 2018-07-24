@@ -265,7 +265,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
    */
 
   static class Interface extends ZhaoEtAl_2006 {
-    static final String NAME = ZhaoEtAl_2006.NAME + ": Interface";
+    static final String NAME = ZhaoEtAl_2006.NAME + " : Interface";
 
     Interface(Imt imt) {
       super(imt, Gmm.ZHAO_06_INTERFACE);
@@ -287,7 +287,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   static final class BasinInterface extends Interface {
-    static final String NAME = Interface.NAME + ": Basin Amp";
+    static final String NAME = Interface.NAME + " : Basin Amp";
 
     BasinInterface(Imt imt) {
       super(imt, Gmm.ZHAO_06_INTERFACE_BASIN_AMP);
@@ -300,7 +300,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   static class Slab extends ZhaoEtAl_2006 {
-    static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
+    static final String NAME = ZhaoEtAl_2006.NAME + " : Slab";
 
     Slab(Imt imt) {
       super(imt, Gmm.ZHAO_06_SLAB);
@@ -322,7 +322,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   static final class BasinSlab extends Slab {
-    static final String NAME = Slab.NAME + ": Basin Amp";
+    static final String NAME = Slab.NAME + " : Basin Amp";
 
     BasinSlab(Imt imt) {
       super(imt, Gmm.ZHAO_06_SLAB_BASIN_AMP);
