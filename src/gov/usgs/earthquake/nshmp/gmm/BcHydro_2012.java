@@ -5,12 +5,18 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.ZTOP;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P01;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P02;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P03;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P05;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Range;
 
@@ -33,21 +39,21 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  *
  * <p><b>Implementation notes:</b><ol>
  * 
- * <li>Treats all sites as
- * forearc.</li>
+ * <li>Treats all sites as forearc.</li>
  * 
- * <li>'zTop' is interpreted as hypocentral depth and is only used
- * for slab events; it is limited to 125 km, consistent with other subduction
+ * <li>'zTop' is interpreted as hypocentral depth and is only used for slab
+ * events; it is limited to 125 km, consistent with other subduction
  * models.</li>
  * 
- * <li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for
- * interface events and fixed at -0.3 for slab events.</li>
+ * <li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for interface
+ * events and fixed at -0.3 for slab events.</li>
  * 
- * <li>Support for spectral period 0.01s is provided using the same
- * coefficients as PGA.</li>
+ * <li>Support for spectral period 0.01s is provided using the same coefficients
+ * as PGA.</li>
  * 
- * 
- * </ol>
+ * <li>Support for spectral periods 0.02s and 0.03s is provided via
+ * interpolation of ground motion and sigma of adjacent periods for which there
+ * are coefficients.</li></ol>
  *
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
@@ -89,6 +95,8 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   private static final double ΔC1_SLAB = -0.3;
   private static final double VS30_ROCK = 1000.0;
 
+  private static final Set<Imt> INTERPOLATED_IMTS = EnumSet.of(SA0P02, SA0P03);
+
   private static final class Coefficients {
 
     final double vlin, b, θ1, θ2, θ6, θ10, θ11, θ12, θ13, θ14, ΔC1mid;
@@ -116,14 +124,27 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   private final Coefficients coeffsPGA;
   private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
 
-  BcHydro_2012(final Imt imt) {
+  // interpolatedGmm = null if !interpolated
+  private final boolean interpolated;
+  private final GroundMotionModel interpolatedGmm;
+
+  BcHydro_2012(final Imt imt, Gmm subtype) {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
     cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
+    interpolated = INTERPOLATED_IMTS.contains(imt);
+    interpolatedGmm = interpolated ? createInterpolated(imt, subtype) : null;
+  }
+
+  private static GroundMotionModel createInterpolated(Imt imt, Gmm gmm) {
+    return new InterpolatedGmm(gmm, SA0P01, SA0P05, imt);
   }
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
+    if (interpolated) {
+      return interpolatedGmm.calc(in);
+    }
 
     if (basinEffect()) {
       // Possibly use basin/site term from CB14 with local rock
@@ -186,33 +207,19 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   }
 
   static class Interface extends BcHydro_2012 {
-    static final String NAME = BcHydro_2012.NAME + ": Interface";
+    static final String NAME = BcHydro_2012.NAME + " : Interface";
 
     Interface(Imt imt) {
-      super(imt);
+      super(imt, Gmm.BCHYDRO_12_INTERFACE);
+    }
+
+    protected Interface(Imt imt, Gmm subtype) {
+      super(imt, subtype);
     }
 
     @Override
     final boolean isSlab() {
       return false;
-    }
-
-    @Override
-    boolean basinEffect() {
-      return false;
-    }
-  }
-
-  static class Slab extends BcHydro_2012 {
-    static final String NAME = BcHydro_2012.NAME + ": Slab";
-
-    Slab(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    final boolean isSlab() {
-      return true;
     }
 
     @Override
@@ -222,10 +229,10 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   }
 
   static final class BasinInterface extends Interface {
-    static final String NAME = BcHydro_2012.Interface.NAME + " : Basin Amp";
+    static final String NAME = Interface.NAME + " : Basin Amp";
 
     BasinInterface(Imt imt) {
-      super(imt);
+      super(imt, Gmm.BCHYDRO_12_INTERFACE_BASIN_AMP);
     }
 
     @Override
@@ -234,11 +241,33 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
   }
 
+  static class Slab extends BcHydro_2012 {
+    static final String NAME = BcHydro_2012.NAME + " : Slab";
+
+    Slab(Imt imt) {
+      super(imt, Gmm.BCHYDRO_12_SLAB);
+    }
+
+    Slab(Imt imt, Gmm subtype) {
+      super(imt, subtype);
+    }
+
+    @Override
+    final boolean isSlab() {
+      return true;
+    }
+
+    @Override
+    boolean basinEffect() {
+      return false;
+    }
+  }
+
   static final class BasinSlab extends Slab {
-    static final String NAME = BcHydro_2012.Slab.NAME + " : Basin Amp";
+    static final String NAME = Slab.NAME + " : Basin Amp";
 
     BasinSlab(Imt imt) {
-      super(imt);
+      super(imt, Gmm.BCHYDRO_12_SLAB);
     }
 
     @Override
