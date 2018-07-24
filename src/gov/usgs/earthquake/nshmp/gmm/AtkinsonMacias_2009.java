@@ -16,9 +16,9 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P15;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P2;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P25;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P3;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA1P0;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA1P5;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA2P0;
-import static gov.usgs.earthquake.nshmp.gmm.Imt.SA3P0;
 import static gov.usgs.earthquake.nshmp.util.Maths.hypot;
 import static java.lang.Math.log10;
 
@@ -72,8 +72,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
    * TODO 0.75s interpolated period coefficients added that should be removed if
    * a viable on-the-fly interpolation algorithm is added.
    */
-  private static final String BASE_NAME = "Atkinson & Macias (2009)";
-  static final String NAME = BASE_NAME + ": Interface";
+  static final String NAME = "Atkinson & Macias (2009) : Interface";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(5.0, 9.5))
@@ -92,7 +91,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
           .put(SA0P075, Range.closed(SA0P05, SA0P1))
           .put(SA0P15, Range.closed(SA0P1, SA0P2))
           .put(SA0P25, Range.closed(SA0P2, SA0P3))
-          .put(SA1P5, Range.closed(SA2P0, SA3P0))
+          .put(SA1P5, Range.closed(SA1P0, SA2P0))
           .build());
 
   private static final class Coefficients {
