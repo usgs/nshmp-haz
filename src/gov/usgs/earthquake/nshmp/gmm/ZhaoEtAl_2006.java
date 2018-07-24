@@ -54,12 +54,12 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * <li>Support for spectral period 0.75s is provided using interpolated
  * coefficients ported from USGS legacy Fortran implementations.</li>
  * 
- * <li>Support for spectral period 0.01s is provided using the same
- * coefficients as PGA.</li>
+ * <li>Support for spectral period 0.01s is provided using the same coefficients
+ * as PGA.</li>
  * 
- * <li>Support for spectral periods 0.02s, 0.03s, and 0.075s was recently added
- * via interpolation of ground motion and sigma of adjacent periods for which
- * there are coefficients.</li></ol>
+ * <li>Support for spectral periods 0.02s, 0.03s, and 0.075s is provided via
+ * interpolation of ground motion and sigma of adjacent periods for which there
+ * are coefficients.</li></ol>
  *
  * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T.,
  * Takahashi, T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G.,
@@ -259,16 +259,22 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
    * the IMT argument to initialize their parent. To support several
    * interpolated spectral periods, the parent also needs to know the specific
    * subtype Gmm identifier in order to obtain concrete instances of the
-   * bounding spectral periods.
+   * bounding spectral periods. In the case of cascading subtypes, multiple
+   * constructors are needed, c(imt) and c(imt, subtype), to support
+   * Gmm.instance and additional sub-subtypes, respectively.
    */
-  
-  static final class Interface extends ZhaoEtAl_2006 {
+
+  static class Interface extends ZhaoEtAl_2006 {
     static final String NAME = ZhaoEtAl_2006.NAME + ": Interface";
 
     Interface(Imt imt) {
       super(imt, Gmm.ZHAO_06_INTERFACE);
     }
 
+    protected Interface(Imt imt, Gmm subtype) {
+      super(imt, subtype);
+    }
+
     @Override
     final boolean isSlab() {
       return false;
@@ -280,56 +286,50 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     }
   }
 
-  static final class Slab extends ZhaoEtAl_2006 {
-    static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
-
-    Slab(Imt imt) {
-      super(imt, Gmm.ZHAO_06_SLAB);
-    }
-
-    @Override
-    final boolean isSlab() {
-      return true;
-    }
-
-    @Override
-    boolean basinEffect() {
-      return false;
-    }
-  }
-
-  static final class BasinInterface extends ZhaoEtAl_2006 {
-    static final String NAME = ZhaoEtAl_2006.NAME + ": Interface : Basin Amp";
+  static final class BasinInterface extends Interface {
+    static final String NAME = Interface.NAME + ": Basin Amp";
 
     BasinInterface(Imt imt) {
       super(imt, Gmm.ZHAO_06_INTERFACE_BASIN_AMP);
     }
 
     @Override
-    final boolean isSlab() {
-      return false;
-    }
-
-    @Override
-    boolean basinEffect() {
+    final boolean basinEffect() {
       return true;
     }
   }
 
-  static final class BasinSlab extends ZhaoEtAl_2006 {
-    static final String NAME = ZhaoEtAl_2006.NAME + ": Slab : Basin Amp";
+  static class Slab extends ZhaoEtAl_2006 {
+    static final String NAME = ZhaoEtAl_2006.NAME + ": Slab";
+
+    Slab(Imt imt) {
+      super(imt, Gmm.ZHAO_06_SLAB);
+    }
+
+    protected Slab(Imt imt, Gmm subtype) {
+      super(imt, subtype);
+    }
+
+    @Override
+    final boolean isSlab() {
+      return true;
+    }
+
+    @Override
+    boolean basinEffect() {
+      return false;
+    }
+  }
+
+  static final class BasinSlab extends Slab {
+    static final String NAME = Slab.NAME + ": Basin Amp";
 
     BasinSlab(Imt imt) {
       super(imt, Gmm.ZHAO_06_SLAB_BASIN_AMP);
     }
 
     @Override
-    final boolean isSlab() {
-      return true;
-    }
-
-    @Override
-    boolean basinEffect() {
+    final boolean basinEffect() {
       return true;
     }
   }
