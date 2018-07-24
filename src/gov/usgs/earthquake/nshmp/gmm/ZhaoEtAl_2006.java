@@ -54,7 +54,7 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * <li>Support for spectral period 0.75s is provided using interpolated
  * coefficients ported from USGS legacy Fortran implementations.</li>
  * 
- * <li>Support for spectral period 0.01s was recently added using the same
+ * <li>Support for spectral period 0.01s is provided using the same
  * coefficients as PGA.</li>
  * 
  * <li>Support for spectral periods 0.02s, 0.03s, and 0.075s was recently added

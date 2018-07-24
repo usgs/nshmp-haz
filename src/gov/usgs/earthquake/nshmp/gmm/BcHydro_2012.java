@@ -31,11 +31,23 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
  *
- * <p><b>Implementation notes:</b> <ol><li>Treats all sites as
- * forearc.</li><li>'zTop' is interpreted as hypocentral depth and is only used
+ * <p><b>Implementation notes:</b><ol>
+ * 
+ * <li>Treats all sites as
+ * forearc.</li>
+ * 
+ * <li>'zTop' is interpreted as hypocentral depth and is only used
  * for slab events; it is limited to 125 km, consistent with other subduction
- * models.</li><li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for
- * interface events and fixed at -0.3 for slab events.</li></ol>
+ * models.</li>
+ * 
+ * <li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for
+ * interface events and fixed at -0.3 for slab events.</li>
+ * 
+ * <li>Support for spectral period 0.01s is provided using the same
+ * coefficients as PGA.</li>
+ * 
+ * 
+ * </ol>
  *
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
