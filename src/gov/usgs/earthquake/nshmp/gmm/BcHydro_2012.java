@@ -37,7 +37,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
  *
- * <p><b>Implementation notes:</b><ol>
+ * <p><b>Implementation notes:</b><ul>
  * 
  * <li>Treats all sites as forearc.</li>
  * 
@@ -53,7 +53,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * 
  * <li>Support for spectral periods 0.02s and 0.03s is provided via
  * interpolation of ground motion and sigma of adjacent periods for which there
- * are coefficients.</li></ol>
+ * are coefficients.</li></ul>
  *
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion

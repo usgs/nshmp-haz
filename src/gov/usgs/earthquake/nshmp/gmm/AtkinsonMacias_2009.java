@@ -23,10 +23,19 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
  *
- * <p><b>Implementation notes:</b> <ul><li>NSHM fortran implementation converts
- * 0.13Hz to 7.7s; this implementation uses 7.5s instead.</li><li>Model uses a
+ * <p><b>Implementation notes:</b><ul>
+ * 
+ * <li>NSHM fortran implementation converts
+ * 0.13Hz to 7.7s; this implementation uses 7.5s instead.</li>
+ * 
+ * <li>Model uses a
  * magnitude dependent depth term and so does not impose 20km hypocentral depth
- * as other subduction interface models do.</li></ul>
+ * as other subduction interface models do.</li>
+ * 
+ * <li>Support for spectral period 0.01s is provided using the same coefficients
+ * as PGA.</li>
+ * 
+ * </ul>
  *
  * <p><b>Reference:</b> Atkinson, G.M. and Macias, D.M., 2009, Predicted ground
  * motions for great interface earthquakes in the Cascadia subduction zone:

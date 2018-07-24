@@ -40,7 +40,7 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
  *
- * <p><b>Implementation notes:</b><ol>
+ * <p><b>Implementation notes:</b><ul>
  * 
  * <li>When used for interface events, sigma is computed using the generic value
  * of tau, rather than the interface specific value (see inline comments for
@@ -59,7 +59,7 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * 
  * <li>Support for spectral periods 0.02s, 0.03s, and 0.075s is provided via
  * interpolation of ground motion and sigma of adjacent periods for which there
- * are coefficients.</li></ol>
+ * are coefficients.</li></ul>
  *
  * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T.,
  * Takahashi, T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G.,
