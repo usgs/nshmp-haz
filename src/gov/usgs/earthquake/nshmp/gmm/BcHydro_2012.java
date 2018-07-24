@@ -14,10 +14,10 @@ import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 
-import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
@@ -95,7 +95,10 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   private static final double ΔC1_SLAB = -0.3;
   private static final double VS30_ROCK = 1000.0;
 
-  private static final Set<Imt> INTERPOLATED_IMTS = EnumSet.of(SA0P02, SA0P03);
+  private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
+      ImmutableMap.of(
+          SA0P02, Range.closed(SA0P01, SA0P05),
+          SA0P03, Range.closed(SA0P01, SA0P05)));
 
   private static final class Coefficients {
 
@@ -132,12 +135,10 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
     cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
-    interpolated = INTERPOLATED_IMTS.contains(imt);
-    interpolatedGmm = interpolated ? createInterpolated(imt, subtype) : null;
-  }
-
-  private static GroundMotionModel createInterpolated(Imt imt, Gmm gmm) {
-    return new InterpolatedGmm(gmm, SA0P01, SA0P05, imt);
+    interpolated = INTERPOLATED_IMTS.containsKey(imt);
+    interpolatedGmm = interpolated
+        ? new InterpolatedGmm(subtype, imt, INTERPOLATED_IMTS.get(imt))
+        : null;
   }
 
   @Override

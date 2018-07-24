@@ -16,10 +16,10 @@ import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
 
-import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.data.Interpolator;
@@ -102,7 +102,11 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private static final double INTERFACE_DEPTH = 20.0;
   private static final double VS30_ROCK = 760.0;
 
-  private static final Set<Imt> INTERPOLATED_IMTS = EnumSet.of(SA0P02, SA0P03, SA0P075);
+  private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
+      ImmutableMap.of(
+          SA0P02, Range.closed(SA0P01, SA0P05),
+          SA0P03, Range.closed(SA0P01, SA0P05),
+          SA0P075, Range.closed(SA0P05, SA0P1)));
 
   private static final class Coefficients {
 
@@ -146,14 +150,10 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   ZhaoEtAl_2006(final Imt imt, Gmm subtype) {
     coeffs = new Coefficients(imt, COEFFS);
     cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
-    interpolated = INTERPOLATED_IMTS.contains(imt);
-    interpolatedGmm = interpolated ? createInterpolated(imt, subtype) : null;
-  }
-
-  private static GroundMotionModel createInterpolated(Imt imt, Gmm gmm) {
-    return (imt == SA0P075)
-        ? new InterpolatedGmm(gmm, SA0P05, SA0P1, imt)
-        : new InterpolatedGmm(gmm, SA0P01, SA0P05, imt);
+    interpolated = INTERPOLATED_IMTS.containsKey(imt);
+    interpolatedGmm = interpolated
+        ? new InterpolatedGmm(subtype, imt, INTERPOLATED_IMTS.get(imt))
+        : null;
   }
 
   @Override

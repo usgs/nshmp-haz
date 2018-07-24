@@ -2,6 +2,8 @@ package gov.usgs.earthquake.nshmp.gmm;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.collect.Range;
+
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 
 /**
@@ -20,20 +22,26 @@ class InterpolatedGmm implements GroundMotionModel {
 
   InterpolatedGmm(
       Gmm gmm,
-      Imt saLo,
-      Imt saHi,
-      Imt saTarget) {
+      Imt target,
+      Range<Imt> imtRange) {
 
-    // both arguments must be spectral acceleration
-    // IMTs with tLo < tTarget < tHi
+    /*
+     * All Imt arguments must be spectral accelerations and the supplied range
+     * must contain the target.
+     */
+    checkArgument(imtRange.hasLowerBound());
+    checkArgument(imtRange.hasUpperBound());
+    
+    Imt saLo = imtRange.lowerEndpoint();
+    Imt saHi = imtRange.upperEndpoint();
+    
     checkArgument(saLo.isSA());
     checkArgument(saHi.isSA());
-    checkArgument(saTarget.isSA());
-    checkArgument(saLo.ordinal() < saHi.ordinal());
+    checkArgument(imtRange.contains(target));
 
     tLo = saLo.period();
     tHi = saHi.period();
-    tTarget = saTarget.period();
+    tTarget = target.period();
     gmmLo = gmm.instance(saLo);
     gmmHi = gmm.instance(saHi);
   }
