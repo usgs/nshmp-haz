@@ -11,16 +11,21 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P03;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P05;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P075;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P1;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA10P0;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA5P0;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA7P5;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.min;
 import static java.lang.Math.sqrt;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
+import com.google.common.collect.Sets;
 
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
@@ -108,6 +113,23 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
           SA0P03, Range.closed(SA0P01, SA0P05),
           SA0P075, Range.closed(SA0P05, SA0P1)));
 
+  private static final Set<Imt> EXTRAPOLATED_IMTS = Sets.immutableEnumSet(
+      SA7P5,
+      SA10P0);
+
+  /* Mapping of Zhao subtype to reference Gmms for extrapolation. */
+  private static final Map<Gmm, Map<Gmm, Double>> EXTRAPOLATED_GMM_REFS = ImmutableMap.of(
+      Gmm.ZHAO_06_SLAB, ImmutableMap.of(
+          Gmm.BCHYDRO_12_SLAB, 1.0),
+      Gmm.ZHAO_06_SLAB_BASIN_AMP, ImmutableMap.of(
+          Gmm.BCHYDRO_12_SLAB_BASIN_AMP, 1.0),
+      Gmm.ZHAO_06_INTERFACE, ImmutableMap.of(
+          Gmm.BCHYDRO_12_INTERFACE, 0.5,
+          Gmm.AM_09_INTERFACE, 0.5),
+      Gmm.ZHAO_06_INTERFACE_BASIN_AMP, ImmutableMap.of(
+          Gmm.BCHYDRO_12_INTERFACE_BASIN_AMP, 0.5,
+          Gmm.AM_09_INTERFACE_BASIN_AMP, 0.5));
+
   private static final class Coefficients {
 
     final double a, b, c, d, e, Si, Ss, Ssl, C1, C2, C3, C4, σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
@@ -143,9 +165,11 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private final Coefficients coeffs;
   private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
 
-  // interpolatedGmm = null if !interpolated
+  /* gmms = null if !flag */
   private final boolean interpolated;
   private final GroundMotionModel interpolatedGmm;
+  private final boolean extrapolated;
+  private final GroundMotionModel extrapolatedGmm;
 
   ZhaoEtAl_2006(final Imt imt, Gmm subtype) {
     coeffs = new Coefficients(imt, COEFFS);
@@ -154,12 +178,20 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     interpolatedGmm = interpolated
         ? new InterpolatedGmm(subtype, imt, INTERPOLATED_IMTS.get(imt))
         : null;
+    extrapolated = EXTRAPOLATED_IMTS.contains(imt);
+    extrapolatedGmm = extrapolated
+        ? new ExtrapolatedGmm(subtype, imt, SA5P0, EXTRAPOLATED_GMM_REFS.get(subtype))
+        : null;
   }
 
   @Override
   public final ScalarGroundMotion calc(GmmInput in) {
     if (interpolated) {
       return interpolatedGmm.calc(in);
+    }
+    
+    if (extrapolated) {
+      return extrapolatedGmm.calc(in);
     }
 
     double σ = calcStdDev(coeffs, isSlab());
