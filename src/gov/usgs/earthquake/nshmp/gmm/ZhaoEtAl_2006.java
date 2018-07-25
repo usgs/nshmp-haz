@@ -120,19 +120,32 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private static final Set<Imt> EXTRAPOLATED_IMTS = Sets.immutableEnumSet(
       SA7P5,
       SA10P0);
-
-  /* Mapping of Zhao subtype to reference Gmms for extrapolation. */
-  private static final Map<Gmm, Map<Gmm, Double>> EXTRAPOLATED_GMM_REFS = ImmutableMap.of(
-      Gmm.ZHAO_06_SLAB, ImmutableMap.of(
-          Gmm.BCHYDRO_12_SLAB, 1.0),
-      Gmm.ZHAO_06_SLAB_BASIN_AMP, ImmutableMap.of(
-          Gmm.BCHYDRO_12_SLAB_BASIN_AMP, 1.0),
-      Gmm.ZHAO_06_INTERFACE, ImmutableMap.of(
-          Gmm.BCHYDRO_12_INTERFACE, 0.5,
-          Gmm.AM_09_INTERFACE, 0.5),
-      Gmm.ZHAO_06_INTERFACE_BASIN_AMP, ImmutableMap.of(
-          Gmm.BCHYDRO_12_INTERFACE_BASIN_AMP, 0.5,
-          Gmm.AM_09_INTERFACE_BASIN_AMP, 0.5));
+  
+  /*
+   * Map Zhao subtype to reference Gmms for extrapolation. This is not
+   * implemented as a static map due to circular Gmm references.
+   */
+  @SuppressWarnings("incomplete-switch")
+  private static Map<Gmm, Double> extrapolationRefs(Gmm gmm) {
+    switch (gmm) {
+      case ZHAO_06_SLAB:
+        return ImmutableMap.of(
+            Gmm.BCHYDRO_12_SLAB, 1.0);
+      case ZHAO_06_SLAB_BASIN_AMP:
+        return ImmutableMap.of(
+            Gmm.BCHYDRO_12_SLAB_BASIN_AMP, 1.0);
+      case ZHAO_06_INTERFACE:
+        return ImmutableMap.of(
+            Gmm.BCHYDRO_12_INTERFACE, 0.5,
+            Gmm.AM_09_INTERFACE, 0.5);
+      case ZHAO_06_INTERFACE_BASIN_AMP:
+        return ImmutableMap.of(
+            Gmm.BCHYDRO_12_INTERFACE_BASIN_AMP, 0.5,
+            Gmm.AM_09_INTERFACE_BASIN_AMP, 0.5);
+        default:
+          throw new IllegalArgumentException();
+    }
+  }
 
   private static final class Coefficients {
 
@@ -184,7 +197,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
         : null;
     extrapolated = EXTRAPOLATED_IMTS.contains(imt);
     extrapolatedGmm = extrapolated
-        ? new ExtrapolatedGmm(subtype, imt, SA5P0, EXTRAPOLATED_GMM_REFS.get(subtype))
+        ? new ExtrapolatedGmm(subtype, imt, SA5P0, extrapolationRefs(subtype))
         : null;
   }
 
