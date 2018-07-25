@@ -18,6 +18,8 @@ class BooreAtkinsonSiteAmp {
    *
    * Boore & Atkinson 2008 also have this model nested in implementation.
    * Consider removing and pointing here.
+   * 
+   * 0.01s added to coeffs file (copied PGA values)
    */
 
   private static final CoefficientContainer COEFFS = new CoefficientContainer("ABsiteAmp.csv");
