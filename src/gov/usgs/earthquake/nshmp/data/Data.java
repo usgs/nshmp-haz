@@ -72,7 +72,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
 public final class Data {
 
   // TODO consider weighted sum
-  
+
   /*
    * Developer notes:
    * -------------------------------------------------------------------------
@@ -647,7 +647,7 @@ public final class Data {
   public static double[] transform(DoubleUnaryOperator function, double... data) {
     return transform(Range.closedOpen(0, data.length), function, data);
   }
-  
+
   /**
    * Transform {@code data} by a {@code DoubleUnaryOperator} in place.
    *
@@ -677,23 +677,23 @@ public final class Data {
     }
     return data;
   }
- 
+
   /**
-   * Transform {@code data} in a given {@code Range} by a 
-   *    {@code DoubleUnaryOperator} in place.
-   *    
+   * Transform {@code data} in a given {@code Range} by a
+   * {@code DoubleUnaryOperator} in place.
+   * 
    * @param range to apply the {@code function}
    * @param function to apply to the {@code data}
    * @param data to operate on
    * @return a reference to the supplied {@code data}
    */
   public static double[] transform(
-      Range<Integer> range, 
-      DoubleUnaryOperator function, 
+      Range<Integer> range,
+      DoubleUnaryOperator function,
       double... data) {
     checkNotNull(function);
     checkArgument(!range.isEmpty());
-    
+
     ContiguousSet<Integer> rangeSet = ContiguousSet
         .create(range, DiscreteDomain.integers());
 
@@ -706,22 +706,21 @@ public final class Data {
 
     return data;
   }
-  
+
   /**
-   * Transform {@code data} in a given range, [{@code minIndex}, {@code maxIndex}), 
-   *    by a {@code DoubleUnaryOperator} in place.
-   *    
-   * @param lower inclusive index 
+   * Transform {@code data} in a given range, [{@code minIndex},
+   * {@code maxIndex}), by a {@code DoubleUnaryOperator} in place.
+   * 
+   * @param lower inclusive index
    * @param upper exclusive index
    * @param function to apply to the {@code data}
-   * @param data to operate on 
+   * @param data to operate on
    * @return a reference to the supplied {@code data}
    */
   public static double[] transform(
-      int lower, 
-      int upper, 
-      DoubleUnaryOperator 
-      function, double... data) {
+      int lower,
+      int upper,
+      DoubleUnaryOperator function, double... data) {
     return transform(Range.closedOpen(lower, upper), function, data);
   }
 
@@ -1218,7 +1217,8 @@ public final class Data {
   }
 
   /**
-   * Ensure {@code 0.0 < weight ≤ 1.0}.
+   * Ensure {@code 0.0 < weight ≤ 1.0}. This method does not permit zero-valued
+   * weights.
    *
    * @return the supplied {@code weight}
    */
@@ -1228,7 +1228,8 @@ public final class Data {
 
   /**
    * Ensure each {@code 0.0 ≤ weight ≤ 1.0} and
-   * {@code sum(weights) = 1.0 ± 0.0001}.
+   * {@code sum(weights) = 1.0 ± 0.0001}. This method permits zero-valued
+   * weights.
    *
    * @param weights to validate
    * @return a reference to the supplied {@code weights}
