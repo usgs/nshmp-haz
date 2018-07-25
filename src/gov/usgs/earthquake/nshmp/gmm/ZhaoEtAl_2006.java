@@ -64,7 +64,11 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * 
  * <li>Support for spectral periods 0.02s, 0.03s, and 0.075s is provided via
  * interpolation of ground motion and sigma of adjacent periods for which there
- * are coefficients.</li></ul>
+ * are coefficients.</li>
+ * 
+ * <li>Support for spectral periods 7.5s and 10.0s is provided via extrapolation
+ * using the 2014 and 2018 NSHM GMM logic tree reference values for slab and
+ * interface source types, scaled by the ratio at 5.0s.</li></ul>
  *
  * <p><b>Reference:</b> Zhao, J.X., Zhang, J., Asano, A., Ohno, Y., Oouchi, T.,
  * Takahashi, T., Ogawa, H., Irikura, K., Thio, H.K., Somerville, P.G.,
@@ -189,7 +193,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     if (interpolated) {
       return interpolatedGmm.calc(in);
     }
-    
+
     if (extrapolated) {
       return extrapolatedGmm.calc(in);
     }
