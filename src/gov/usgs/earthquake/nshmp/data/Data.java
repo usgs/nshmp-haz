@@ -1235,14 +1235,30 @@ public final class Data {
    * @return a reference to the supplied {@code weights}
    */
   public static Collection<Double> checkWeights(Collection<Double> weights) {
+    return checkWeights(weights, true);
+  }
+  
+  /**
+   * Ensure each {@code 0.0 ≤ weight ≤ 1.0} and
+   * {@code sum(weights) = 1.0 ± 0.0001}, optionally allowing zero-valued weights.
+   *
+   * @param weights to validate
+   * @return a reference to the supplied {@code weights}
+   */
+  public static Collection<Double> checkWeights(
+      Collection<Double> weights,
+      boolean allowZero) {
+    
     for (double weight : weights) {
-      checkWeight(weight, true);
+      checkWeight(weight, allowZero);
     }
     double sum = sum(weights);
     checkArgument(DoubleMath.fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
         "Weights Σ %s = %s ≠ 1.0", weights, sum);
     return weights;
   }
+
+  
 
   /* * * * * * * * 2D & 3D ARRAYS EXTENSIONS * * * * * * * * */
 

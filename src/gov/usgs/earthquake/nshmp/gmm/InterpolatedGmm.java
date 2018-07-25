@@ -8,7 +8,8 @@ import gov.usgs.earthquake.nshmp.data.Interpolator;
 
 /**
  * Class provides internal support for interpolation between spectral periods.
- * Interpolation is linear in period and log in ground motion.
+ * Interpolation requires spectral periods bounding the target spectral period
+ * and is linear in period and log in ground motion.
  * 
  * @author Peter Powers
  */
@@ -22,7 +23,7 @@ class InterpolatedGmm implements GroundMotionModel {
 
   InterpolatedGmm(
       Gmm gmm,
-      Imt target,
+      Imt targetImt,
       Range<Imt> imtRange) {
 
     /*
@@ -31,17 +32,17 @@ class InterpolatedGmm implements GroundMotionModel {
      */
     checkArgument(imtRange.hasLowerBound());
     checkArgument(imtRange.hasUpperBound());
-    
+
     Imt saLo = imtRange.lowerEndpoint();
     Imt saHi = imtRange.upperEndpoint();
-    
+
     checkArgument(saLo.isSA());
     checkArgument(saHi.isSA());
-    checkArgument(imtRange.contains(target));
+    checkArgument(imtRange.contains(targetImt));
 
     tLo = saLo.period();
     tHi = saHi.period();
-    tTarget = target.period();
+    tTarget = targetImt.period();
     gmmLo = gmm.instance(saLo);
     gmmHi = gmm.instance(saHi);
   }
