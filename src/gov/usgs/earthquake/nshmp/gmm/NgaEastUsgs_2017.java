@@ -36,11 +36,10 @@ import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
- * Implementation of the PEER NGA-East ground motion model. This is a custom
- * version of the model developed specifically for USGS applications. It is a
- * composite model that consists of a reduced set of 13 median ground motion
- * models (down from 17 in the full NGA-East model) with period dependent
- * weights.
+ * Implementation of the PEER NGA-East for USGS ground motion model. This is a
+ * custom version of the model developed specifically for USGS applications. It
+ * is a composite model that consists of 17 median ground motion models with
+ * period dependent weights.
  * 
  * <p>Calculation of hazard using this preliminary implementation deviates
  * somewhat from the current nshmp-haz PSHA pipeline and required implementation
@@ -49,10 +48,11 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * properly processed by {@link ExceedanceModel#NSHM_CEUS_MAX_INTENSITY} at this
  * time.
  * 
- * <p>This class also manages implementations of the 19 'seed' models used to
- * generate (via Sammons mapping) the 13 NGA-East models and associated weights.
- * Ground motions for the 19 seed and 13 component models are computed via table
- * lookups.
+ * <p>This class also manages implementations of 22 'seed' models, 19 of which
+ * were used to generate (via Sammons mapping) the 17 NGA-East for USGS models
+ * and associated weights, and 3 of which are updates. This class also handles
+ * USGS logic tree of 14 of those seed models. Ground motions for most models
+ * are computed via table lookups (SP16 is the exception).
  * 
  * <p>On it's own, NGA-East is a hard rock model returning results for a site
  * class where Vs30 = 3000 m/s. To accomodate other site classes, the Stewart et
@@ -1248,36 +1248,36 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double fT = fLin + fNonlin;
       double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
 
-//      // TODO clean
-//      String values = String.format(
-//          "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-//          c.imt.name(),
-//          c.imt.isSA() ? c.imt.period() : 0.0,
-//          pgaRock,
-//          fv,
-//          f760,
-//          fvσ,
-//          fLin,
-//          σLin,
-//          fNonlin,
-//          σNonlin,
-//          fT,
-//          σT);
-      
-      // TODO clean
-//      String values = String.format(
-//          "%5.3f %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-//          c.imt.isSA() ? c.imt.period() : 0.0,
-//          fv,
-//          c.f760g,
-//          c.f760i,
-//          f760,
-//          fLin,
-//          fNonlin,
-//          fT,
-//          σT);
+      // // TODO clean
+      // String values = String.format(
+      // "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+      // c.imt.name(),
+      // c.imt.isSA() ? c.imt.period() : 0.0,
+      // pgaRock,
+      // fv,
+      // f760,
+      // fvσ,
+      // fLin,
+      // σLin,
+      // fNonlin,
+      // σNonlin,
+      // fT,
+      // σT);
 
-//      System.out.println(values);
+      // TODO clean
+      // String values = String.format(
+      // "%5.3f %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+      // c.imt.isSA() ? c.imt.period() : 0.0,
+      // fv,
+      // c.f760g,
+      // c.f760i,
+      // f760,
+      // fLin,
+      // fNonlin,
+      // fT,
+      // σT);
+
+      // System.out.println(values);
 
       return new Value(fT, σT);
     }
