@@ -341,7 +341,7 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
   }
 
   static final class Crustal extends McVerryEtAl_2000 {
-    final static String NAME = McVerryEtAl_2000.NAME + ": Crustal";
+    final static String NAME = McVerryEtAl_2000.NAME + " : Crustal";
 
     Crustal(Imt imt) {
       super(imt);
@@ -359,7 +359,7 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
   }
 
   static final class Volcanic extends McVerryEtAl_2000 {
-    final static String NAME = McVerryEtAl_2000.NAME + ": Volcanic";
+    final static String NAME = McVerryEtAl_2000.NAME + " : Volcanic";
 
     Volcanic(Imt imt) {
       super(imt);
@@ -377,7 +377,7 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
   }
 
   static final class Interface extends McVerryEtAl_2000 {
-    final static String NAME = McVerryEtAl_2000.NAME + ": Interface";
+    final static String NAME = McVerryEtAl_2000.NAME + " : Interface";
 
     Interface(Imt imt) {
       super(imt);
@@ -395,7 +395,7 @@ public abstract class McVerryEtAl_2000 implements GroundMotionModel {
   }
 
   static final class Slab extends McVerryEtAl_2000 {
-    final static String NAME = McVerryEtAl_2000.NAME + ": Slab";
+    final static String NAME = McVerryEtAl_2000.NAME + " : Slab";
 
     Slab(Imt imt) {
       super(imt);

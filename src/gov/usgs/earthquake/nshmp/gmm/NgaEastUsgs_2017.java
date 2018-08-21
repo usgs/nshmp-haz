@@ -36,11 +36,10 @@ import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
- * Implementation of the PEER NGA-East ground motion model. This is a custom
- * version of the model developed specifically for USGS applications. It is a
- * composite model that consists of a reduced set of 13 median ground motion
- * models (down from 17 in the full NGA-East model) with period dependent
- * weights.
+ * Implementation of the PEER NGA-East for USGS ground motion model. This is a
+ * custom version of the model developed specifically for USGS applications. It
+ * is a composite model that consists of 17 median ground motion models with
+ * period dependent weights.
  * 
  * <p>Calculation of hazard using this preliminary implementation deviates
  * somewhat from the current nshmp-haz PSHA pipeline and required implementation
@@ -49,10 +48,11 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * properly processed by {@link ExceedanceModel#NSHM_CEUS_MAX_INTENSITY} at this
  * time.
  * 
- * <p>This class also manages implementations of the 19 'seed' models used to
- * generate (via Sammons mapping) the 13 NGA-East models and associated weights.
- * Ground motions for the 19 seed and 13 component models are computed via table
- * lookups.
+ * <p>This class also manages implementations of 22 'seed' models, 19 of which
+ * were used to generate (via Sammons mapping) the 17 NGA-East for USGS models
+ * and associated weights, and 3 of which are updates. This class also handles
+ * USGS logic tree of 14 of those seed models. Ground motions for most models
+ * are computed via table lookups (SP16 is the exception).
  * 
  * <p>On it's own, NGA-East is a hard rock model returning results for a site
  * class where Vs30 = 3000 m/s. To accomodate other site classes, the Stewart et
@@ -260,6 +260,19 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return σSet;
   }
 
+  /* 3-branch sigma model. */
+  SigmaSet sigmaSetHybrid(double Mw, double vs30) {
+    double[] sigmas = {
+        sigmaHybrid(σCoeffsLo, σCoeffsEpri, Mw, vs30),
+        sigmaHybrid(σCoeffsMid, σCoeffsEpri, Mw, vs30),
+        sigmaHybrid(σCoeffsHi, σCoeffsEpri, Mw, vs30),
+    };
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = sigmas;
+    σSet.weights = SIGMA_WTS;
+    return σSet;
+  }
+
   private static double sigma(CoefficientsSigma c, double Mw, double vs30) {
 
     /* τ model; global branch only; Equation 5-1. */
@@ -294,6 +307,56 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       φ = σCoeffsEpri.φ_m7;
     }
     return Maths.hypot(τ, φ);
+  }
+
+  /* Updated EPRI phi only. */
+  private static double phiEpri(CoefficientsSigmaEpri c, double Mw) {
+    double φ;
+    if (Mw <= 5.0) {
+      φ = c.φ_m5;
+    } else if (Mw <= 6.0) {
+      φ = Interpolator.findY(5.0, c.φ_m5, 6.0, c.φ_m6, Mw);
+    } else if (Mw <= 7.0) {
+      φ = Interpolator.findY(6.0, c.φ_m6, 7.0, c.φ_m7, Mw);
+    } else {
+      φ = c.φ_m7;
+    }
+    return φ;
+  }
+
+  /*
+   * Updated guidance from panel 8-16-18. TODO currently a lot of redundancy
+   * because both the panel phiS2S and EPRI phi models do not have lo- mid- and
+   * hi-branch implementations and are being called repeatedly.
+   * 
+   * At the (long) periods of interest, the panel recommends using the NGAW2 phi
+   * models, which are effectively the same as the EPRI phi values at long
+   * periods.
+   */
+  private static double sigmaHybrid(
+      CoefficientsSigma c,
+      CoefficientsSigmaEpri ec,
+      double Mw,
+      double vs30) {
+
+    /* τ model; global branch only; Equation 5-1. */
+    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
+
+    /* φ_ss model; global, constant, and mag-dep. branches Equation 5.2. */
+    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
+        0.1 * c.c +
+        0.1 * phi_ss(Mw, c.ma, c.mb);
+
+    /* φ_s2s model; single branch; Stewart et al. */
+    double φ_s2s = phi_s2s(vs30, c.ϕs2s1, c.ϕs2s2);
+
+    /* Model 1 phi, original */
+    double φ1 = Maths.hypot(φ_ss, φ_s2s);
+
+    /* Model 2 phi, EPRI. */
+    double φ2 = phiEpri(ec, Mw);
+
+    return Maths.hypot(τ, Math.max(φ1, φ2));
   }
 
   /* τ: Equation 5.1 */
@@ -396,6 +459,51 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
+  static class Usgs17 extends ModelGroup {
+    static final String BASE_NAME = NgaEastUsgs_2017.NAME + " : 17 Branch";
+    static final String NAME = BASE_NAME + " : σ-Panel";
+
+    Usgs17(Imt imt) {
+      super(
+          imt,
+          GroundMotionTables.getNgaEastV2Weights(imt),
+          GroundMotionTables.getNgaEastV2(imt),
+          GroundMotionTables.getNgaEastV2(Imt.PGA));
+    }
+  }
+
+  static class Usgs17_Epri extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + " : σ-EPRI";
+
+    Usgs17_Epri(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      SigmaSet σSet = new SigmaSet();
+      σSet.sigmas = new double[] { sigmaEpri(in.Mw) };
+      σSet.weights = new double[] { 1.0 };
+      return σSet;
+    }
+  }
+
+  static class Usgs17_Hybrid extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + " : σ-Hybrid ";
+
+    Usgs17_Hybrid(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetHybrid(in.Mw, in.vs30);
+    }
+  }
+
+  /* TODO clean 13 variants out along with associated files */
+  
+  @Deprecated
   static class Usgs13 extends ModelGroup {
     static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch";
 
@@ -408,6 +516,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
+  @Deprecated
   static class Usgs13_Epri extends Usgs13 {
     static final String NAME = Usgs13.NAME + ": EPRI";
 
@@ -424,37 +533,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Usgs13_Envelope extends Usgs13 {
-    static final String NAME = Usgs13.NAME + ": Envelope";
-
-    Usgs13_Envelope(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      SigmaSet σSet = new SigmaSet();
-      σSet.sigmas = new double[] {
-          Math.max(
-              sigmaCentral(in.Mw, in.vs30),
-              sigmaEpri(in.Mw)) };
-      σSet.weights = new double[] { 1.0 };
-      return σSet;
-    }
-  }
-
-  static class Usgs17 extends ModelGroup {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch";
-
-    Usgs17(Imt imt) {
-      super(
-          imt,
-          GroundMotionTables.getNgaEastV2Weights(imt),
-          GroundMotionTables.getNgaEastV2(imt),
-          GroundMotionTables.getNgaEastV2(Imt.PGA));
-    }
-  }
-
   /*
    * Implementation of USGS Seed model logic tree. All models but SP16 are table
    * based; SP16 is added to the median ground motion array last. NOTE that the
@@ -462,7 +540,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * other seed models.
    */
   static class UsgsSeeds extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": USGS Seed Tree";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : USGS Seed Tree";
     static final String SP16_ID = "SP16";
 
     /* ids for table based models only; skips SP16 */
@@ -520,7 +598,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static abstract class Sammons extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons : ";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons : ";
     static final String NAME0 = NAME + "0";
 
     final int id;
@@ -665,7 +743,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static abstract class Sammons2 extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons2 : ";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons2 : ";
     static final String NAME0 = NAME + "0";
 
     final int id;
@@ -846,7 +924,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static abstract class Seed extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Seed : ";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : Seed : ";
 
     final String id;
     final GroundMotionTable table;
@@ -1092,7 +1170,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    */
   static final class SiteAmp {
 
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Site Amplification";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : Site Amplification";
 
     private static final CoefficientContainer COEFFS = new CoefficientContainer(
         "nga-east-usgs-siteamp.csv");
@@ -1248,36 +1326,36 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double fT = fLin + fNonlin;
       double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
 
-//      // TODO clean
-//      String values = String.format(
-//          "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-//          c.imt.name(),
-//          c.imt.isSA() ? c.imt.period() : 0.0,
-//          pgaRock,
-//          fv,
-//          f760,
-//          fvσ,
-//          fLin,
-//          σLin,
-//          fNonlin,
-//          σNonlin,
-//          fT,
-//          σT);
-      
-      // TODO clean
-//      String values = String.format(
-//          "%5.3f %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-//          c.imt.isSA() ? c.imt.period() : 0.0,
-//          fv,
-//          c.f760g,
-//          c.f760i,
-//          f760,
-//          fLin,
-//          fNonlin,
-//          fT,
-//          σT);
+      // // TODO clean
+      // String values = String.format(
+      // "%12s %5.3f %.6g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+      // c.imt.name(),
+      // c.imt.isSA() ? c.imt.period() : 0.0,
+      // pgaRock,
+      // fv,
+      // f760,
+      // fvσ,
+      // fLin,
+      // σLin,
+      // fNonlin,
+      // σNonlin,
+      // fT,
+      // σT);
 
-//      System.out.println(values);
+      // TODO clean
+      // String values = String.format(
+      // "%5.3f %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
+      // c.imt.isSA() ? c.imt.period() : 0.0,
+      // fv,
+      // c.f760g,
+      // c.f760i,
+      // f760,
+      // fLin,
+      // fNonlin,
+      // fT,
+      // σT);
+
+      // System.out.println(values);
 
       return new Value(fT, σT);
     }

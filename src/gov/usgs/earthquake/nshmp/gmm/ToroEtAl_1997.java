@@ -160,7 +160,7 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
   }
 
   static final class Mb extends ToroEtAl_1997 {
-    static final String NAME = ToroEtAl_1997.NAME + ": mb";
+    static final String NAME = ToroEtAl_1997.NAME + " : mb";
 
     Mb(Imt imt) {
       super(imt);
@@ -173,7 +173,7 @@ public abstract class ToroEtAl_1997 implements GroundMotionModel {
   }
 
   static final class Mw extends ToroEtAl_1997 {
-    static final String NAME = ToroEtAl_1997.NAME + ": Mw";
+    static final String NAME = ToroEtAl_1997.NAME + " : Mw";
 
     Mw(Imt imt) {
       super(imt);
