@@ -460,8 +460,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17 extends ModelGroup {
-    static final String BASE_NAME = NgaEastUsgs_2017.NAME + ": 17 Branch";
-    static final String NAME = BASE_NAME + ": σ-Panel";
+    static final String BASE_NAME = NgaEastUsgs_2017.NAME + " : 17 Branch";
+    static final String NAME = BASE_NAME + " : σ-Panel";
 
     Usgs17(Imt imt) {
       super(
@@ -473,7 +473,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17_Epri extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + ": σ-EPRI";
+    static final String NAME = Usgs17.BASE_NAME + " : σ-EPRI";
 
     Usgs17_Epri(Imt imt) {
       super(imt);
@@ -489,7 +489,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17_Hybrid extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + ": σ-Hybrid ";
+    static final String NAME = Usgs17.BASE_NAME + " : σ-Hybrid ";
 
     Usgs17_Hybrid(Imt imt) {
       super(imt);
@@ -540,7 +540,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * other seed models.
    */
   static class UsgsSeeds extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": USGS Seed Tree";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : USGS Seed Tree";
     static final String SP16_ID = "SP16";
 
     /* ids for table based models only; skips SP16 */
@@ -598,7 +598,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static abstract class Sammons extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons : ";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons : ";
     static final String NAME0 = NAME + "0";
 
     final int id;
@@ -743,7 +743,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static abstract class Sammons2 extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Sammons2 : ";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons2 : ";
     static final String NAME0 = NAME + "0";
 
     final int id;
@@ -924,7 +924,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static abstract class Seed extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Seed : ";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : Seed : ";
 
     final String id;
     final GroundMotionTable table;
@@ -1170,7 +1170,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    */
   static final class SiteAmp {
 
-    static final String NAME = NgaEastUsgs_2017.NAME + ": Site Amplification";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : Site Amplification";
 
     private static final CoefficientContainer COEFFS = new CoefficientContainer(
         "nga-east-usgs-siteamp.csv");
