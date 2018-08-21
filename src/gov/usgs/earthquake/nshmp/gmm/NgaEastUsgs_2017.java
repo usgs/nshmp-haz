@@ -501,6 +501,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
+  /* TODO clean 13 variants out along with associated files */
+  
   @Deprecated
   static class Usgs13 extends ModelGroup {
     static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch";

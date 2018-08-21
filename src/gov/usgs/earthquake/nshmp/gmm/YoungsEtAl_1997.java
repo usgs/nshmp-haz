@@ -173,7 +173,7 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
   }
 
   static final class Interface extends YoungsEtAl_1997 {
-    static final String NAME = YoungsEtAl_1997.NAME + ": Interface";
+    static final String NAME = YoungsEtAl_1997.NAME + " : Interface";
 
     Interface(Imt imt) {
       super(imt);
@@ -186,7 +186,7 @@ public abstract class YoungsEtAl_1997 implements GroundMotionModel {
   }
 
   static final class Slab extends YoungsEtAl_1997 {
-    static final String NAME = YoungsEtAl_1997.NAME + ": Slab";
+    static final String NAME = YoungsEtAl_1997.NAME + " : Slab";
 
     Slab(Imt imt) {
       super(imt);

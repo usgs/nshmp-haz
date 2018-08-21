@@ -248,7 +248,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
   // these are subclassed for mag conversion variants and therefore not final
 
   static class StressDrop_140bar extends AtkinsonBoore_2006 {
-    static final String NAME = AtkinsonBoore_2006.NAME + ": 140 bar";
+    static final String NAME = AtkinsonBoore_2006.NAME + " : 140 bar";
 
     private static final double STRESS = 140.0;
     private static final double SF2;
@@ -269,7 +269,7 @@ public abstract class AtkinsonBoore_2006 implements GroundMotionModel, ConvertsM
   }
 
   static class StressDrop_200bar extends AtkinsonBoore_2006 {
-    static final String NAME = AtkinsonBoore_2006.NAME + ": 200 bar";
+    static final String NAME = AtkinsonBoore_2006.NAME + " : 200 bar";
 
     private static final double STRESS = 200;
     private static final double SF2;

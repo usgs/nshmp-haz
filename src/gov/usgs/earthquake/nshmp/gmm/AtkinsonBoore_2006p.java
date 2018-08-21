@@ -46,7 +46,7 @@ import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
  */
 public final class AtkinsonBoore_2006p implements GroundMotionModel {
 
-  static final String NAME = "Atkinson & Boore (2006): Prime";
+  static final String NAME = "Atkinson & Boore (2006) : Prime";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(4.0, 8.0))
