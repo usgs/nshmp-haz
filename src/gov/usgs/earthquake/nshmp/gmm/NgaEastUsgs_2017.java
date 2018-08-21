@@ -260,6 +260,19 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return σSet;
   }
 
+  /* 3-branch sigma model. */
+  SigmaSet sigmaSetHybrid(double Mw, double vs30) {
+    double[] sigmas = {
+        sigmaHybrid(σCoeffsLo, σCoeffsEpri, Mw, vs30),
+        sigmaHybrid(σCoeffsMid, σCoeffsEpri, Mw, vs30),
+        sigmaHybrid(σCoeffsHi, σCoeffsEpri, Mw, vs30),
+    };
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = sigmas;
+    σSet.weights = SIGMA_WTS;
+    return σSet;
+  }
+
   private static double sigma(CoefficientsSigma c, double Mw, double vs30) {
 
     /* τ model; global branch only; Equation 5-1. */
@@ -294,6 +307,56 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       φ = σCoeffsEpri.φ_m7;
     }
     return Maths.hypot(τ, φ);
+  }
+
+  /* Updated EPRI phi only. */
+  private static double phiEpri(CoefficientsSigmaEpri c, double Mw) {
+    double φ;
+    if (Mw <= 5.0) {
+      φ = c.φ_m5;
+    } else if (Mw <= 6.0) {
+      φ = Interpolator.findY(5.0, c.φ_m5, 6.0, c.φ_m6, Mw);
+    } else if (Mw <= 7.0) {
+      φ = Interpolator.findY(6.0, c.φ_m6, 7.0, c.φ_m7, Mw);
+    } else {
+      φ = c.φ_m7;
+    }
+    return φ;
+  }
+
+  /*
+   * Updated guidance from panel 8-16-18. TODO currently a lot of redundancy
+   * because both the panel phiS2S and EPRI phi models do not have lo- mid- and
+   * hi-branch implementations and are being called repeatedly.
+   * 
+   * At the (long) periods of interest, the panel recommends using the NGAW2 phi
+   * models, which are effectively the same as the EPRI phi values at long
+   * periods.
+   */
+  private static double sigmaHybrid(
+      CoefficientsSigma c,
+      CoefficientsSigmaEpri ec,
+      double Mw,
+      double vs30) {
+
+    /* τ model; global branch only; Equation 5-1. */
+    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
+
+    /* φ_ss model; global, constant, and mag-dep. branches Equation 5.2. */
+    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
+        0.1 * c.c +
+        0.1 * phi_ss(Mw, c.ma, c.mb);
+
+    /* φ_s2s model; single branch; Stewart et al. */
+    double φ_s2s = phi_s2s(vs30, c.ϕs2s1, c.ϕs2s2);
+
+    /* Model 1 phi, original */
+    double φ1 = Maths.hypot(φ_ss, φ_s2s);
+
+    /* Model 2 phi, EPRI. */
+    double φ2 = phiEpri(ec, Mw);
+
+    return Maths.hypot(τ, Math.max(φ1, φ2));
   }
 
   /* τ: Equation 5.1 */
@@ -396,6 +459,49 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
+  static class Usgs17 extends ModelGroup {
+    static final String BASE_NAME = NgaEastUsgs_2017.NAME + ": 17 Branch";
+    static final String NAME = BASE_NAME + ": σ-Panel";
+
+    Usgs17(Imt imt) {
+      super(
+          imt,
+          GroundMotionTables.getNgaEastV2Weights(imt),
+          GroundMotionTables.getNgaEastV2(imt),
+          GroundMotionTables.getNgaEastV2(Imt.PGA));
+    }
+  }
+
+  static class Usgs17_Epri extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + ": σ-EPRI";
+
+    Usgs17_Epri(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      SigmaSet σSet = new SigmaSet();
+      σSet.sigmas = new double[] { sigmaEpri(in.Mw) };
+      σSet.weights = new double[] { 1.0 };
+      return σSet;
+    }
+  }
+
+  static class Usgs17_Hybrid extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + ": σ-Hybrid ";
+
+    Usgs17_Hybrid(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetHybrid(in.Mw, in.vs30);
+    }
+  }
+
+  @Deprecated
   static class Usgs13 extends ModelGroup {
     static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch";
 
@@ -408,6 +514,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
+  @Deprecated
   static class Usgs13_Epri extends Usgs13 {
     static final String NAME = Usgs13.NAME + ": EPRI";
 
@@ -424,6 +531,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
+  @Deprecated
   static class Usgs13_Envelope extends Usgs13 {
     static final String NAME = Usgs13.NAME + ": Envelope";
 
@@ -440,18 +548,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
               sigmaEpri(in.Mw)) };
       σSet.weights = new double[] { 1.0 };
       return σSet;
-    }
-  }
-
-  static class Usgs17 extends ModelGroup {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 17 Branch";
-
-    Usgs17(Imt imt) {
-      super(
-          imt,
-          GroundMotionTables.getNgaEastV2Weights(imt),
-          GroundMotionTables.getNgaEastV2(imt),
-          GroundMotionTables.getNgaEastV2(Imt.PGA));
     }
   }
 
