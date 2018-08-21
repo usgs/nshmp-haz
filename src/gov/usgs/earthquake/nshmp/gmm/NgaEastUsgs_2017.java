@@ -531,26 +531,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  @Deprecated
-  static class Usgs13_Envelope extends Usgs13 {
-    static final String NAME = Usgs13.NAME + ": Envelope";
-
-    Usgs13_Envelope(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      SigmaSet σSet = new SigmaSet();
-      σSet.sigmas = new double[] {
-          Math.max(
-              sigmaCentral(in.Mw, in.vs30),
-              sigmaEpri(in.Mw)) };
-      σSet.weights = new double[] { 1.0 };
-      return σSet;
-    }
-  }
-
   /*
    * Implementation of USGS Seed model logic tree. All models but SP16 are table
    * based; SP16 is added to the median ground motion array last. NOTE that the
