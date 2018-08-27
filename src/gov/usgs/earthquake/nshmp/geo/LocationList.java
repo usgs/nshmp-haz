@@ -214,7 +214,8 @@ public abstract class LocationList implements Iterable<Location> {
 
     /*
      * TODO Consider using rint() which will keep the actual spacing closer to
-     * the target spacing, albeit sometimes larger.
+     * the target spacing, albeit sometimes larger. Actually NOT rint(), as this
+     * has different odd/even behavior, use round instead of ceil
      */
 
     spacing = length / Math.ceil(length / spacing);
