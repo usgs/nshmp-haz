@@ -180,7 +180,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
    */
   static final class ShallowCrust extends ZhaoEtAl_2016 {
 
-    static final String NAME = ZhaoEtAl_2016.NAME + ": Shallow Crust";
+    static final String NAME = ZhaoEtAl_2016.NAME + " : Shallow Crust";
 
     /* Tables 4, 5, 6 */
     static final class Coefficients {
@@ -281,7 +281,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
    */
   static final class UpperMantle extends ZhaoEtAl_2016 {
 
-    static final String NAME = ZhaoEtAl_2016.NAME + ": Upper Mantle";
+    static final String NAME = ZhaoEtAl_2016.NAME + " : Upper Mantle";
 
     /* Tables 4, 5, 6 */
     static final class Coefficients {
@@ -384,7 +384,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
    */
   static final class Interface extends ZhaoEtAl_2016 {
 
-    static final String NAME = ZhaoEtAl_2016.NAME + ": Interface";
+    static final String NAME = ZhaoEtAl_2016.NAME + " : Interface";
 
     private static final double C2 = 1.151;
 
@@ -495,7 +495,7 @@ public abstract class ZhaoEtAl_2016 implements GroundMotionModel {
    */
   static final class Slab extends ZhaoEtAl_2016 {
 
-    static final String NAME = ZhaoEtAl_2016.NAME + ": Slab";
+    static final String NAME = ZhaoEtAl_2016.NAME + " : Slab";
 
     private static final double MSC = 6.3;
     private static final double ΔMC = MC - MSC;
