@@ -24,7 +24,7 @@ import gov.usgs.earthquake.nshmp.util.Named;
  * @author Steven W. Rock
  */
 @Deprecated
-public interface Container2D<T> extends Named, Iterable<T> {
+interface Container2D<T> extends Named, Iterable<T> {
 
   /**
    * Returns the number of rows int this two dimensional container.
