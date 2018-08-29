@@ -63,6 +63,7 @@ ext {
     '– <a href="https://github.com/usgs/nshmp-haz/blob/master/LICENSE.md" ' +
     'target="_top">License</a> | <b>' + gitLink + '</b></div>'
   docOut = findProperty('javadoc_loc')
+  thinJar = false
 }
 
 test {
@@ -119,16 +120,17 @@ javadoc {
 }
 
 /*
- * Enhance the jar task to build a fat jar if running the build
- * directly and add application version to a properties file.
- * Note that 'git describe' only works when running gradle from
- * the command line.
+ * The default jar task automatically builds a fat jar and adds
+ * a properties file with the application version. Note that
+ * 'git describe' only works when running gradle from the command
+ * line so version values in eclipse builds will empty. Use thinJar
+ * task to skip dependencies.
  */
 jar {
   doFirst {
   
     /* possible fat jar */
-    if (rootProject.name == projectName) {
+    if (rootProject.name == projectName && !thinJar) {
       from { configurations.compile.collect {
         it.isDirectory() ? it : zipTree(it).matching {
           exclude { it.path.contains('META-INF') }
@@ -137,6 +139,7 @@ jar {
     }
     
     /* record app version */
+    /* TODO there is a WriteProperties task in Gradle 4.9 */
     def props = new Properties()
     def propsFile = new File(project.buildDir.toString() + propsPath)
     propsFile.createNewFile()
@@ -144,3 +147,12 @@ jar {
     props.store(propsFile.newWriter(), null)
   }
 }
+
+task thinJar(type: Jar) {
+  doFirst {
+	println 'yoyo'
+    thinJar = true
+  }
+  with jar
+}
+    
