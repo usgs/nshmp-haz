@@ -173,7 +173,7 @@ class CurveContainer implements Iterable<Location> {
    */
   public static CurveContainer create(File f, GriddedRegion region) throws IOException {
     CurveFileProcessor_SHA cfp = new CurveFileProcessor_SHA(region);
-    CurveContainer curves = Files.readLines(f, Charsets.US_ASCII, cfp);
+    CurveContainer curves = Files.asCharSource(f, Charsets.US_ASCII).readLines(cfp);
     return curves;
   }
 
@@ -280,7 +280,7 @@ class CurveContainer implements Iterable<Location> {
     private List<Double> xs = new ArrayList<>();
 
     CurveFileProcessor_NSHMP(GriddedRegion region) {
-      split = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings();
+      split = Splitter.on(CharMatcher.whitespace()).omitEmptyStrings();
       cc = new CurveContainer();
       cc.region = region;
       cc.ysMap = Maps.newHashMapWithExpectedSize(region.size());
