@@ -149,7 +149,6 @@ jar {
 
 task thinJar(type: Jar) {
   doFirst {
-	println 'yoyo'
     thinJar = true
   }
   with jar

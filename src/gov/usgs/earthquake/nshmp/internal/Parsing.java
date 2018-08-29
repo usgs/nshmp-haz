@@ -485,7 +485,7 @@ public final class Parsing {
      * Whitespace (' ') delimiter.
      * @see CharMatcher#WHITESPACE
      */
-    SPACE(' ', CharMatcher.WHITESPACE),
+    SPACE(' ', CharMatcher.whitespace()),
 
     /** Underscore ('_') delimiter. */
     UNDERSCORE('_');
