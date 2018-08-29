@@ -146,7 +146,7 @@ public final class ChiouYoungs_2008 implements GroundMotionModel {
 
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
 
-    double cosDelta = cos(in.dip * Maths.TO_RAD);
+    double cosDelta = cos(in.dip * Maths.TO_RADIANS);
     double rAlt = sqrt(rJB * rJB + zTop * zTop);
     double hw = (in.rX < 0.0) ? 0.0 : 1.0;
 

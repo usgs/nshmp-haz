@@ -107,7 +107,7 @@ public class Coordinates {
    * @see #radiusAtLocation(Location)
    */
   public static double degreesLatPerKm(Location location) {
-    return Maths.TO_DEG / radiusAtLocation(location);
+    return Maths.TO_DEGREES / radiusAtLocation(location);
   }
 
   /**
@@ -123,7 +123,7 @@ public class Coordinates {
    *         {@code location}
    */
   public static double degreesLonPerKm(Location location) {
-    return Maths.TO_DEG / (EARTH_RADIUS_EQUATORIAL * Math.cos(location.latRad()));
+    return Maths.TO_DEGREES / (EARTH_RADIUS_EQUATORIAL * Math.cos(location.latRad()));
   }
 
   /**

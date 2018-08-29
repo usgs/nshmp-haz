@@ -98,12 +98,12 @@ class GriddedFaultSurface {
     }
 
     public Builder dip(double dip) {
-      this.dipRad = checkDip(dip) * Maths.TO_RAD;
+      this.dipRad = checkDip(dip) * Maths.TO_RADIANS;
       return this;
     }
 
     public Builder dipDir(double dipDir) {
-      this.dipDirRad = checkStrike(dipDir) * Maths.TO_RAD;
+      this.dipDirRad = checkStrike(dipDir) * Maths.TO_RADIANS;
       return this;
     }
 

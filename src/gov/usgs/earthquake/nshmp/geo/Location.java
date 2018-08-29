@@ -42,8 +42,8 @@ public final class Location implements Comparable<Location> {
   private final double depth;
 
   private Location(double lat, double lon, double depth) {
-    this.lat = checkLatitude(lat) * Maths.TO_RAD;
-    this.lon = checkLongitude(lon) * Maths.TO_RAD;
+    this.lat = checkLatitude(lat) * Maths.TO_RADIANS;
+    this.lon = checkLongitude(lon) * Maths.TO_RADIANS;
     this.depth = checkDepth(depth);
   }
 
@@ -101,14 +101,14 @@ public final class Location implements Comparable<Location> {
    * The latitude of this {@code Location} in decimal degrees.
    */
   public double lat() {
-    return lat * Maths.TO_DEG;
+    return lat * Maths.TO_DEGREES;
   }
 
   /**
    * The longitude of this {@code Location} in decimal degrees.
    */
   public double lon() {
-    return lon * Maths.TO_DEG;
+    return lon * Maths.TO_DEGREES;
   }
 
   /**

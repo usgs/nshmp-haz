@@ -196,7 +196,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
     LocationVector vFirst = LocationVector.create(upperTrace.first(), lowerTrace.first());
     LocationVector vLast = LocationVector.create(upperTrace.last(), lowerTrace.last());
     double avgDip = (vFirst.plungeDegrees() + vLast.plungeDegrees()) / 2;
-    avgDipRad = avgDip * Maths.TO_RAD;
+    avgDipRad = avgDip * Maths.TO_RADIANS;
 
     avgDepth = upperTrace.depth();
 
@@ -384,7 +384,7 @@ public class ApproxGriddedSurface extends AbstractGriddedSurface {
 
   @Override
   public double dip() {
-    return avgDipRad * Maths.TO_DEG;
+    return avgDipRad * Maths.TO_DEGREES;
 
     // TODO clean
     // LocationVector vFirst = LocationVector.create(upperTrace.first(),

@@ -250,7 +250,7 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
 
       // Jennifer Donahue's HW Model plus CB08 distance taper
       // -- Equations 9, 10, 11 & 12
-      double r1 = in.width * cos(dip * Maths.TO_RAD);
+      double r1 = in.width * cos(dip * Maths.TO_RADIANS);
       double r2 = 62.0 * Mw - 350.0;
       double rXr1 = rX / r1;
       double rXr2r1 = (rX - r1) / (r2 - r1);
