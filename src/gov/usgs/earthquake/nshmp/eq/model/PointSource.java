@@ -157,7 +157,7 @@ class PointSource implements Source {
 
     PointSurface pSurf = (PointSurface) rup.surface;
     pSurf.mag = mag; // KLUDGY needed for distance correction
-    pSurf.dipRad = mech.dip() * Maths.TO_RAD;
+    pSurf.dipRad = mech.dip() * Maths.TO_RADIANS;
     pSurf.zTop = zTop;
 
   }
@@ -253,7 +253,7 @@ class PointSource implements Source {
 
     @Override
     public double dip() {
-      return dipRad * Maths.TO_DEG;
+      return dipRad * Maths.TO_DEGREES;
     }
 
     @Override

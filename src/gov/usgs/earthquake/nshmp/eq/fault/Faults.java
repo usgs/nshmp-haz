@@ -392,7 +392,7 @@ public final class Faults {
    * @param zTop depth to the fault plane
    */
   public static double hypocentralDepth(double dip, double width, double zTop) {
-    return zTop + Math.sin(dip * Maths.TO_RAD) * width / 2.0;
+    return zTop + Math.sin(dip * Maths.TO_RADIANS) * width / 2.0;
   }
 
   /**
@@ -490,7 +490,7 @@ public final class Faults {
   }
 
   public static double dipDirectionRad(double strikeRad) {
-    return (strikeRad + Maths.PI_BY_2) % Maths.TWOPI;
+    return (strikeRad + Maths.PI_BY_2) % Maths.TWO_PI;
   }
 
   /* <b>x</b>-axis unit normal vector [1,0,0] */

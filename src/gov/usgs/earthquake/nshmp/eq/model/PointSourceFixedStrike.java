@@ -103,8 +103,8 @@ class PointSourceFixedStrike extends PointSourceFinite {
     if (mech != STRIKE_SLIP) {
       mechWt *= 0.5;
     }
-    double dipRad = mech.dip() * Maths.TO_RAD;
-    double strikeRad = strike * Maths.TO_RAD;
+    double dipRad = mech.dip() * Maths.TO_RADIANS;
+    double strikeRad = strike * Maths.TO_RADIANS;
 
     double maxWidthDD = (depthModel.maxDepth - zTop) / sin(dipRad);
     Dimensions dimensions = rupScaling.dimensions(mag, maxWidthDD);
@@ -225,7 +225,7 @@ class PointSourceFixedStrike extends PointSourceFinite {
       double rSeg = Locations.distanceToSegmentFast(p1, p2, loc);
 
       // simple footwall case
-      boolean isVertical = (dipRad == 90.0 * Maths.TO_RAD);
+      boolean isVertical = (dipRad == 90.0 * Maths.TO_RADIANS);
       if (rX <= 0.0 || isVertical) {
         return Distance.create(rSeg, hypot(rSeg, zTop), rX);
       }

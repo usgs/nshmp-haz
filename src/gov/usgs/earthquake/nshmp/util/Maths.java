@@ -20,13 +20,13 @@ public final class Maths {
   public static final double PI_BY_2 = Math.PI / 2;
 
   /** Constant for 2π. */
-  public static final double TWOPI = 2 * Math.PI;
+  public static final double TWO_PI = 2 * Math.PI;
 
-  /** Conversion multiplier for degrees to radians */
-  public static final double TO_RAD = Math.toRadians(1.0);
+  /** Conversion multiplier for degrees to radians. */
+  public static final double TO_RADIANS = Math.toRadians(1.0);
 
-  /** Conversion multiplier for radians to degrees */
-  public static final double TO_DEG = Math.toDegrees(1.0);
+  /** Conversion multiplier for radians to degrees. */
+  public static final double TO_DEGREES = Math.toDegrees(1.0);
 
   /**
    * The precomputed √<span style="border-top:1px solid; padding:0 0.1em;"
@@ -38,7 +38,7 @@ public final class Maths {
    * The precomputed √<span style="border-top:1px solid; padding:0 0.1em;"
    * >2π</span>.
    */
-  public static final double SQRT_2PI = Math.sqrt(2 * Math.PI);
+  public static final double SQRT_2PI = Math.sqrt(TWO_PI);
 
   /**
    * Standardized normal variate {@code ε = (x - μ) / σ}.

@@ -91,7 +91,7 @@ public class LocationVector {
    * @return the flipped copy
    */
   public static LocationVector reverseOf(LocationVector v) {
-    return create((v.azimuth + Math.PI) % Maths.TWOPI, v.horiz, -v.vert);
+    return create((v.azimuth + Math.PI) % Maths.TWO_PI, v.horiz, -v.vert);
   }
 
   /**
@@ -100,7 +100,7 @@ public class LocationVector {
    * @see #azimuth()
    */
   public double azimuthDegrees() {
-    return azimuth * Maths.TO_DEG;
+    return azimuth * Maths.TO_DEGREES;
   }
 
   /**
@@ -131,7 +131,7 @@ public class LocationVector {
    * @return the plunge of this vector
    */
   public double plungeDegrees() {
-    return plunge() * Maths.TO_DEG;
+    return plunge() * Maths.TO_DEGREES;
   }
 
   /**

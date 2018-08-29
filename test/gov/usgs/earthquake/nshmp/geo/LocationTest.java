@@ -91,12 +91,12 @@ public class LocationTest {
 
   @Test
   public final void latRad() {
-    assertEquals(location.latRad(), V * Maths.TO_RAD, 0);
+    assertEquals(location.latRad(), V * Maths.TO_RADIANS, 0);
   }
 
   @Test
   public final void lonRad() {
-    assertEquals(location.lonRad(), V * Maths.TO_RAD, 0);
+    assertEquals(location.lonRad(), V * Maths.TO_RADIANS, 0);
   }
 
   @Test

@@ -99,7 +99,7 @@ class PointSourceFinite extends PointSource {
     if (mech != STRIKE_SLIP) {
       mechWt *= 0.5;
     }
-    double dipRad = mech.dip() * Maths.TO_RAD;
+    double dipRad = mech.dip() * Maths.TO_RADIANS;
 
     double maxWidthDD = (depthModel.maxDepth - zTop) / sin(dipRad);
     double widthDD = rupScaling.dimensions(mag, maxWidthDD).width;

@@ -46,7 +46,7 @@ enum Direction {
    * @return the bearing in radians
    */
   double bearingRad() {
-    return bearing() * Maths.TO_RAD;
+    return bearing() * Maths.TO_RADIANS;
   }
 
   /**

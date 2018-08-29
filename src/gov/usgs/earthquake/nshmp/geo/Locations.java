@@ -457,7 +457,7 @@ public final class Locations {
     double azRad = atan2(sin(dLon) * cosLat2, cos(lat1) * sin(lat2) - sin(lat1) * cosLat2 *
         cos(dLon));
 
-    return (azRad + Maths.TWOPI) % Maths.TWOPI;
+    return (azRad + Maths.TWO_PI) % Maths.TWO_PI;
   }
 
   /**
@@ -473,7 +473,7 @@ public final class Locations {
    * @see #azimuthRad(Location, Location)
    */
   public static double azimuth(Location p1, Location p2) {
-    return azimuthRad(p1, p2) * Maths.TO_DEG;
+    return azimuthRad(p1, p2) * Maths.TO_DEGREES;
   }
 
   /**
@@ -522,7 +522,7 @@ public final class Locations {
     double lat2 = asin(sinLat1 * cosD + cosLat1 * sinD * cos(az));
 
     double lon2 = lon + atan2(sin(az) * sinD * cosLat1, cosD - sinLat1 * sin(lat2));
-    return Location.create(lat2 * Maths.TO_DEG, lon2 * Maths.TO_DEG, depth + dV);
+    return Location.create(lat2 * Maths.TO_DEGREES, lon2 * Maths.TO_DEGREES, depth + dV);
   }
 
   /**
@@ -611,8 +611,8 @@ public final class Locations {
       maxLonRad = loc.lonRad() > maxLonRad ? loc.lonRad() : maxLonRad;
     }
     return new Bounds(
-        minLatRad * Maths.TO_DEG, minLonRad * Maths.TO_DEG,
-        maxLatRad * Maths.TO_DEG, maxLonRad * Maths.TO_DEG);
+        minLatRad * Maths.TO_DEGREES, minLonRad * Maths.TO_DEGREES,
+        maxLatRad * Maths.TO_DEGREES, maxLonRad * Maths.TO_DEGREES);
   }
 
   /**
@@ -633,8 +633,8 @@ public final class Locations {
       size++;
     }
     return Location.create(
-        latRad / size * Maths.TO_DEG,
-        lonRad / size * Maths.TO_DEG,
+        latRad / size * Maths.TO_DEGREES,
+        lonRad / size * Maths.TO_DEGREES,
         depth / size);
   }
 
@@ -867,10 +867,10 @@ public final class Locations {
     double lonDelta = distance * degreesLonPerKm(loc);
 
     // bounds in radians
-    double minLat = max(loc.lat() - latDelta, LAT_RANGE.lowerEndpoint()) * Maths.TO_RAD;
-    double maxLat = min(loc.lat() + latDelta, LAT_RANGE.upperEndpoint()) * Maths.TO_RAD;
-    double minLon = max(loc.lon() - lonDelta, LON_RANGE.lowerEndpoint()) * Maths.TO_RAD;
-    double maxLon = min(loc.lon() + lonDelta, LON_RANGE.upperEndpoint()) * Maths.TO_RAD;
+    double minLat = max(loc.lat() - latDelta, LAT_RANGE.lowerEndpoint()) * Maths.TO_RADIANS;
+    double maxLat = min(loc.lat() + latDelta, LAT_RANGE.upperEndpoint()) * Maths.TO_RADIANS;
+    double minLon = max(loc.lon() - lonDelta, LON_RANGE.lowerEndpoint()) * Maths.TO_RADIANS;
+    double maxLon = min(loc.lon() + lonDelta, LON_RANGE.upperEndpoint()) * Maths.TO_RADIANS;
 
     return new Rectangle2D.Double(minLon, minLat, maxLon - minLon, maxLat - minLat);
   }

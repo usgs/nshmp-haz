@@ -571,7 +571,7 @@ public class Region implements Named {
   private static LocationList locationCircle(Location center, double radius) {
     List<Location> locs = Lists.newArrayList();
     for (double angle = 0; angle < 360; angle += WEDGE_WIDTH) {
-      locs.add(Locations.location(center, angle * Maths.TO_RAD, radius));
+      locs.add(Locations.location(center, angle * Maths.TO_RADIANS, radius));
     }
     return LocationList.create(locs);
   }

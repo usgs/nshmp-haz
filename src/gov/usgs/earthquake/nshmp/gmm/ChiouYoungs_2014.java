@@ -183,7 +183,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
 
     // Scaling with other source variables
     double coshM = cosh(2 * max(Mw - 4.5, 0));
-    double cosδ = cos(in.dip * Maths.TO_RAD);
+    double cosδ = cos(in.dip * Maths.TO_RADIANS);
     // Center zTop on the zTop-M relation
     double ΔZtop = zTop - calcMwZtop(style, Mw);
     double r4 = (c.c7 + c.c7b / coshM) * ΔZtop + (C11 + c.c11b / coshM) * cosδ * cosδ;
@@ -193,7 +193,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     // Hanging-wall effect
     double r5 = 0.0;
     if (in.rX >= 0.0) {
-      r5 = c.c9 * cos(in.dip * Maths.TO_RAD) *
+      r5 = c.c9 * cos(in.dip * Maths.TO_RADIANS) *
           (c.c9a + (1.0 - c.c9a) * tanh(in.rX / c.c9b)) *
           (1 - sqrt(rJB * rJB + zTop * zTop) / (rRup + 1.0));
     }

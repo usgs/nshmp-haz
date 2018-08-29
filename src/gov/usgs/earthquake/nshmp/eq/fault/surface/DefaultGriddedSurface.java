@@ -141,12 +141,12 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
     }
 
     public Builder dip(double dip) {
-      this.dipRad = checkDip(dip) * Maths.TO_RAD;
+      this.dipRad = checkDip(dip) * Maths.TO_RADIANS;
       return this;
     }
 
     public Builder dipDir(double dipDir) {
-      this.dipDirRad = checkStrike(dipDir) * Maths.TO_RAD;
+      this.dipDirRad = checkStrike(dipDir) * Maths.TO_RADIANS;
       return this;
     }
 
@@ -379,7 +379,7 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
   // createEvenlyGriddedSurface()
   @Deprecated // until proven useful or better
   public void create(LocationList trace, double dip, double width, double spacing) {
-    double dipRad = dip * Maths.TO_RAD;
+    double dipRad = dip * Maths.TO_RADIANS;
     double dipDirRad = Faults.dipDirectionRad(trace);
     LocationList resampled = trace.resample(spacing);
     int nCol = resampled.size();
@@ -489,12 +489,12 @@ public class DefaultGriddedSurface extends AbstractGriddedSurface {
 
   @Override
   public double dipDirection() {
-    return dipDirRad * Maths.TO_DEG;
+    return dipDirRad * Maths.TO_DEGREES;
   }
 
   @Override
   public double dip() {
-    return dipRad * Maths.TO_DEG;
+    return dipRad * Maths.TO_DEGREES;
   }
 
   @Override

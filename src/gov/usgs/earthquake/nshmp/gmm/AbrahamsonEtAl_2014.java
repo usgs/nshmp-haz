@@ -209,7 +209,7 @@ public class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
       // ... rX taper -- Equation 13
       double T3 = 0.0;
-      double r1 = in.width * cos(dip * Maths.TO_RAD);
+      double r1 = in.width * cos(dip * Maths.TO_RADIANS);
       double r2 = 3 * r1;
       if (rX <= r1) {
         double rXr1 = rX / r1;
