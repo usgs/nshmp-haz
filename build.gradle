@@ -139,7 +139,6 @@ jar {
     }
     
     /* record app version */
-    /* TODO there is a WriteProperties task in Gradle 4.9 */
     def props = new Properties()
     def propsFile = new File(project.buildDir.toString() + propsPath)
     propsFile.createNewFile()
