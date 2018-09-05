@@ -183,6 +183,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private static final double[] SIGMA_WTS = { 0.185, 0.63, 0.185 };
   private static final double[] SITE_AMP_WTS = SIGMA_WTS;
 
+  /* Logic tree between hybrid model and EPRI: { SIGMA_WTS * 0.6, 0.4} */
+  private static final double[] SIGMA_LT_WTS = { 0.111, 0.378, 0.111, 0.4 };
+
   /* ϕ_s2s constants */
   private static final double VΦ1 = 1200.0;
   private static final double VΦ2 = 1500.0;
@@ -270,6 +273,23 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     SigmaSet σSet = new SigmaSet();
     σSet.sigmas = sigmas;
     σSet.weights = SIGMA_WTS;
+    return σSet;
+  }
+
+  /*
+   * Logic tree of hybrid model, which itself is similar to the EPRI model at
+   * long periods, and the EPRI model.
+   */
+  SigmaSet sigmaSetLogicTree(double Mw, double vs30) {
+    double[] sigmas = {
+        sigmaHybrid(σCoeffsLo, σCoeffsEpri, Mw, vs30),
+        sigmaHybrid(σCoeffsMid, σCoeffsEpri, Mw, vs30),
+        sigmaHybrid(σCoeffsHi, σCoeffsEpri, Mw, vs30),
+        sigmaEpri(Mw)
+    };
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = sigmas;
+    σSet.weights = SIGMA_LT_WTS;
     return σSet;
   }
 
@@ -500,9 +520,22 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       return sigmaSetHybrid(in.Mw, in.vs30);
     }
   }
+  
+  static class Usgs17_LogicTree extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + " : σ-LogicTree ";
+
+    Usgs17_LogicTree(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetLogicTree(in.Mw, in.vs30);
+    }
+  }
 
   /* TODO clean 13 variants out along with associated files */
-  
+
   @Deprecated
   static class Usgs13 extends ModelGroup {
     static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch";
