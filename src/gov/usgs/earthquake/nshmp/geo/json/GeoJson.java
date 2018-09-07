@@ -1,4 +1,4 @@
-package gov.usgs.earthquake.nshmp.json;
+package gov.usgs.earthquake.nshmp.geo.json;
 
 /**
  * Interface for all {@link GeoJsonType}s to implement.

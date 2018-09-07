@@ -26,9 +26,9 @@ import com.google.gson.JsonParseException;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
-import gov.usgs.earthquake.nshmp.json.Feature;
-import gov.usgs.earthquake.nshmp.json.Point;
-import gov.usgs.earthquake.nshmp.json.Properties;
+import gov.usgs.earthquake.nshmp.geo.json.Feature;
+import gov.usgs.earthquake.nshmp.geo.json.Point;
+import gov.usgs.earthquake.nshmp.geo.json.Properties;
 import gov.usgs.earthquake.nshmp.util.Maths;
 import gov.usgs.earthquake.nshmp.util.Named;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;

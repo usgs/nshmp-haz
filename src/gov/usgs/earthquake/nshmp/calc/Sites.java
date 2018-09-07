@@ -30,11 +30,11 @@ import gov.usgs.earthquake.nshmp.geo.Region;
 import gov.usgs.earthquake.nshmp.geo.Regions;
 import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
-import gov.usgs.earthquake.nshmp.json.Feature;
-import gov.usgs.earthquake.nshmp.json.FeatureCollection;
-import gov.usgs.earthquake.nshmp.json.GeoJsonType;
-import gov.usgs.earthquake.nshmp.json.Polygon;
-import gov.usgs.earthquake.nshmp.json.Properties;
+import gov.usgs.earthquake.nshmp.geo.json.Feature;
+import gov.usgs.earthquake.nshmp.geo.json.FeatureCollection;
+import gov.usgs.earthquake.nshmp.geo.json.GeoJsonType;
+import gov.usgs.earthquake.nshmp.geo.json.Polygon;
+import gov.usgs.earthquake.nshmp.geo.json.Properties;
 
 /**
  * Iterable {@code Site} container. Factory methods are supplied to creating

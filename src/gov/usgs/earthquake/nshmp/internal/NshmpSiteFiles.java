@@ -40,8 +40,8 @@ import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
-import gov.usgs.earthquake.nshmp.json.FeatureCollection;
-import gov.usgs.earthquake.nshmp.json.Properties;
+import gov.usgs.earthquake.nshmp.geo.json.FeatureCollection;
+import gov.usgs.earthquake.nshmp.geo.json.Properties;
 import gov.usgs.earthquake.nshmp.util.Maths;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
 
