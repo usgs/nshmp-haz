@@ -1,4 +1,4 @@
-package gov.usgs.earthquake.nshmp.json;
+package gov.usgs.earthquake.nshmp.geo.json;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
