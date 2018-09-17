@@ -740,6 +740,13 @@ public enum Gmm {
       NgaEastUsgs_2017.CONSTRAINTS),
   
   /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS2_LOGIC_TREE_CENTRAL(
+      NgaEastUsgs_2017.Usgs17_LogicTreeCenter.class,
+      NgaEastUsgs_2017.Usgs17_LogicTreeCenter.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS2_1(
       NgaEastUsgs_2017.Sammons2_1.class,
       NgaEastUsgs_2017.Sammons2_1.NAME,
@@ -1335,6 +1342,7 @@ public enum Gmm {
             NGA_EAST_USGS2_EPRI,
             NGA_EAST_USGS2_HYBRID,
             NGA_EAST_USGS2_LOGIC_TREE,
+            NGA_EAST_USGS2_LOGIC_TREE_CENTRAL,
             NGA_EAST_USGS_SEEDS)),
 
     NGA_EAST_SAMMONS2(
