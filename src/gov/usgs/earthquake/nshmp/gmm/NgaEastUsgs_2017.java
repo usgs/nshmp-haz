@@ -183,8 +183,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private static final double[] SIGMA_WTS = { 0.185, 0.63, 0.185 };
   private static final double[] SITE_AMP_WTS = SIGMA_WTS;
 
-  /* Logic tree between hybrid model and EPRI: { SIGMA_WTS * 0.6, 0.4} */
-  private static final double[] SIGMA_LT_WTS = { 0.111, 0.378, 0.111, 0.4 };
+  /* Logic tree between hybrid model and EPRI: { SIGMA_WTS * 0.667, 0.333} */
+  private static final double[] SIGMA_LT_WTS = { 0.1234, 0.4202, 0.1234, 0.333 };
+  private static final double[] SIGMA_LTC_WTS = { 0.667, 0.333 };
 
   /* ϕ_s2s constants */
   private static final double VΦ1 = 1200.0;
@@ -290,6 +291,21 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     SigmaSet σSet = new SigmaSet();
     σSet.sigmas = sigmas;
     σSet.weights = SIGMA_LT_WTS;
+    return σSet;
+  }
+
+  /*
+   * Logic tree of hybrid model, which itself is similar to the EPRI model at
+   * long periods, and the EPRI model.
+   */
+  SigmaSet sigmaSetLogicTreeCentral(double Mw, double vs30) {
+    double[] sigmas = {
+        sigmaHybrid(σCoeffsMid, σCoeffsEpri, Mw, vs30),
+        sigmaEpri(Mw)
+    };
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = sigmas;
+    σSet.weights = SIGMA_LTC_WTS;
     return σSet;
   }
 
@@ -520,7 +536,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       return sigmaSetHybrid(in.Mw, in.vs30);
     }
   }
-  
+
   static class Usgs17_LogicTree extends Usgs17 {
     static final String NAME = Usgs17.BASE_NAME + " : σ-LogicTree ";
 
@@ -531,6 +547,19 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     SigmaSet calcSigma(GmmInput in) {
       return sigmaSetLogicTree(in.Mw, in.vs30);
+    }
+  }
+
+  static class Usgs17_LogicTreeCenter extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + " : σ-LogicTree (center only) ";
+
+    Usgs17_LogicTreeCenter(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetLogicTreeCentral(in.Mw, in.vs30);
     }
   }
 
