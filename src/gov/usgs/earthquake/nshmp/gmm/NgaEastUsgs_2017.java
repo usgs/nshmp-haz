@@ -1464,12 +1464,14 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       // fT,
       // σT);
 
-      // TODO clean
+      // // TODO clean
       // String values = String.format(
-      // "%5.3f\t%d\t%.7g",
+      // "%5.3f\t%d\t%.7g\t%.7g\t%.7g",
       // c.imt.isSA() ? c.imt.period() : 0.0,
       // (int) vs30,
-      // exp(fLin));
+      // exp(fLin),
+      // exp(fNonlin),
+      // exp(fT));
       //
       // System.out.println(values);
 
