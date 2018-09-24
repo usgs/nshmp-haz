@@ -193,28 +193,6 @@ public enum ExceedanceModel {
       return boundedCcdFn(μ, σ, sequence, pHi, 1.0);
     }
 
-    @Override
-    XySequence exceedance(ScalarGroundMotion sgm, double n, Imt imt, XySequence sequence) {
-      if (sgm instanceof MultiScalarGroundMotion) {
-        MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgm;
-        double[] means = msgm.means();
-        double[] meanWts = msgm.meanWeights();
-        double[] sigmas = msgm.sigmas();
-        double[] sigmaWts = msgm.sigmaWeights();
-        XySequence model = XySequence.copyOf(sequence);
-        for (int i = 0; i < sigmas.length; i++) {
-          double σ = sigmas[i];
-          double σWt = sigmaWts[i];
-          for (int j = 0; j < means.length; j++) {
-            double wt = σWt * meanWts[j];
-            sequence.add(exceedance(means[j], σ, n, imt, model).multiply(wt));
-          }
-        }
-        return sequence;
-      }
-      return super.exceedance(sgm, n, imt, sequence);
-    }
-
     private double maxValue(Imt imt) {
       /*
        * Clamping/limiting is turned off at and above 0.75 sec.
@@ -244,7 +222,7 @@ public enum ExceedanceModel {
    * @param n truncation level in units of {@code σ} (truncation = n * σ)
    * @param imt intenisty measure type (only used by
    *        {@link #NSHM_CEUS_MAX_INTENSITY}
-   * @param value to compute exceedance for
+   * @param value for which to compute the exceedance probability
    */
   abstract double exceedance(double μ, double σ, double n, Imt imt, double value);
 
@@ -256,26 +234,39 @@ public enum ExceedanceModel {
    * @param n truncation level in units of {@code σ} (truncation = n * σ)
    * @param imt intenisty measure type (only used by
    *        {@link #NSHM_CEUS_MAX_INTENSITY}
-   * @param sequence the x-values of which to compute exceedance for
+   * @param sequence the x-values for which to compute exceedance probabilities
    * @return the supplied {@code sequence}
    */
   abstract XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence);
 
   /**
-   * Compute the probability of exceeding a sequence of x-values. Experimental
-   * for NGA-East. Default implementation assumes singular
-   * {@code ScalarGroundMotion} and passes through to
-   * {@link #exceedance(double, double, double, Imt, XySequence)}. Only
-   * {@link #NSHM_CEUS_MAX_INTENSITY} overrides.
+   * Compute the probability of exceeding a sequence of x-values.
    *
    * @param sgm ScalarGroundMotion that wraps one or more μ and σ
    * @param n truncation level in units of {@code σ} (truncation = n * σ)
    * @param imt intenisty measure type (only used by
    *        {@link #NSHM_CEUS_MAX_INTENSITY}
-   * @param sequence the x-values of which to compute exceedance for
+   * @param sequence the x-values for which to compute exceedance probabilities
    * @return the supplied {@code sequence}
    */
   XySequence exceedance(ScalarGroundMotion sgm, double n, Imt imt, XySequence sequence) {
+    if (sgm instanceof MultiScalarGroundMotion) {
+      MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgm;
+      double[] means = msgm.means();
+      double[] meanWts = msgm.meanWeights();
+      double[] sigmas = msgm.sigmas();
+      double[] sigmaWts = msgm.sigmaWeights();
+      XySequence model = XySequence.copyOf(sequence);
+      for (int i = 0; i < sigmas.length; i++) {
+        double σ = sigmas[i];
+        double σWt = sigmaWts[i];
+        for (int j = 0; j < means.length; j++) {
+          double wt = σWt * meanWts[j];
+          sequence.add(exceedance(means[j], σ, n, imt, model).multiply(wt));
+        }
+      }
+      return sequence;
+    }
     return exceedance(sgm.mean(), sgm.sigma(), n, imt, sequence);
   }
 
