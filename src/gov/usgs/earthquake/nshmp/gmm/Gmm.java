@@ -1241,7 +1241,7 @@ public enum Gmm {
             COMBINED_WUS_2018)),
 
     NGA_EAST(
-        "NGA-East",
+        "NGA-East USGS Combined",
         ImmutableList.of(
             NGA_EAST_USGS,
             NGA_EAST_USGS_EPRI,
@@ -1251,7 +1251,7 @@ public enum Gmm {
             NGA_EAST_USGS_SEEDS)),
 
     NGA_EAST_SAMMONS2(
-        "NGA-East USGS2",
+        "NGA-East USGS Sammons",
         ImmutableList.of(
             NGA_EAST_USGS_1,
             NGA_EAST_USGS_2,
@@ -1272,7 +1272,7 @@ public enum Gmm {
             NGA_EAST_USGS_17)),
 
     NGA_EAST_SEEDS(
-        "NGA-East Seed Models",
+        "NGA-East Seeds",
         ImmutableList.of(
             NGA_EAST_SEED_1CCSP,
             NGA_EAST_SEED_1CVSP,
