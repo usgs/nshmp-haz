@@ -945,6 +945,26 @@ public enum Gmm {
    * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
    * NGA-West2 and does not include Idriss.
    */
+  COMBINED_WUS_2014_41(
+      CombinedGmm.Wus2014_4p1.class,
+      CombinedGmm.Wus2014_4p1.NAME,
+      CombinedGmm.Wus2014_4p1.COEFFS,
+      CombinedGmm.Wus2014_4p1.CONSTRAINTS),
+  
+  /**
+   * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
+   * NGA-West2 and does not include Idriss.
+   */
+  COMBINED_WUS_2014_42(
+      CombinedGmm.Wus2014_4p2.class,
+      CombinedGmm.Wus2014_4p2.NAME,
+      CombinedGmm.Wus2014_4p2.COEFFS,
+      CombinedGmm.Wus2014_4p2.CONSTRAINTS),
+
+  /**
+   * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
+   * NGA-West2 and does not include Idriss.
+   */
   COMBINED_WUS_2018(
       CombinedGmm.Wus2018.class,
       CombinedGmm.Wus2018.NAME,
@@ -1248,6 +1268,8 @@ public enum Gmm {
         ImmutableList.of(
             COMBINED_CEUS_2014,
             COMBINED_CEUS_2018,
+            COMBINED_WUS_2014_41,
+            COMBINED_WUS_2014_42,
             COMBINED_WUS_2018)),
 
     NGA_EAST(

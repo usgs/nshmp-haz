@@ -15,6 +15,7 @@ import static gov.usgs.earthquake.nshmp.gmm.Gmm.SILVA_02;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.SOMERVILLE_01;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.TORO_97_MW;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.TP_05;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.*;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -94,7 +95,7 @@ class CombinedGmm implements GroundMotionModel {
   /* Fault variant that includes Somerville. */
   static final class Ceus2014 extends CombinedGmm {
 
-    static final String NAME = CombinedGmm.NAME + "CEUS 2014";
+    static final String NAME = CombinedGmm.NAME + "CEUS 2014 (4.*)";
     static final Constraints CONSTRAINTS = CEUS_2014_CONSTRAINTS;
     static final CoefficientContainer COEFFS = FrankelEtAl_1996.COEFFS;
 
@@ -110,6 +111,7 @@ class CombinedGmm implements GroundMotionModel {
     }
   }
 
+  /* 5.0 */
   private static final Map<Gmm, Double> CEUS_2018 = ImmutableMap.<Gmm, Double> builder()
       .put(NGA_EAST_USGS, 0.667)
       .put(NGA_EAST_USGS_SEEDS, 0.333)
@@ -117,7 +119,7 @@ class CombinedGmm implements GroundMotionModel {
 
   static final class Ceus2018 extends CombinedGmm {
 
-    static final String NAME = CombinedGmm.NAME + "CEUS 2018";
+    static final String NAME = CombinedGmm.NAME + "CEUS 2018 (5.0)";
     static final Constraints CONSTRAINTS = NgaEastUsgs_2017.CONSTRAINTS;
     static final CoefficientContainer COEFFS = NgaEastUsgs_2017.COEFFS_SIGMA_MID;
 
@@ -126,6 +128,45 @@ class CombinedGmm implements GroundMotionModel {
     }
   }
   
+  private static final Map<Gmm, Double> WUS_2014_4P1 = ImmutableMap.<Gmm, Double> builder()
+      .put(ASK_14, 0.22)
+      .put(BSSA_14, 0.22)
+      .put(CB_14, 0.22)
+      .put(CY_14, 0.22)
+      .put(IDRISS_14, 0.12)
+      .build();
+
+  /* 4.1 */
+  static final class Wus2014_4p1 extends CombinedGmm {
+
+    static final String NAME = CombinedGmm.NAME + "WUS 2014 (4.1)";
+    static final Constraints CONSTRAINTS = CampbellBozorgnia_2014.CONSTRAINTS;
+    static final CoefficientContainer COEFFS = CampbellBozorgnia_2014.COEFFS;
+
+    Wus2014_4p1(Imt imt) {
+      super(imtToInstances(imt, WUS_2014_4P1));
+    }
+  }
+
+  private static final Map<Gmm, Double> WUS_2014_4P2 = ImmutableMap.<Gmm, Double> builder()
+      .put(ASK_14, 0.25)
+      .put(BSSA_14, 0.25)
+      .put(CB_14, 0.25)
+      .put(CY_14, 0.25)
+      .build();
+
+  /* 4.2 */
+  static final class Wus2014_4p2 extends CombinedGmm {
+
+    static final String NAME = CombinedGmm.NAME + "WUS 2014 (4.2, no Idriss)";
+    static final Constraints CONSTRAINTS = CampbellBozorgnia_2014.CONSTRAINTS;
+    static final CoefficientContainer COEFFS = CampbellBozorgnia_2014.COEFFS;
+
+    Wus2014_4p2(Imt imt) {
+      super(imtToInstances(imt, WUS_2014_4P2));
+    }
+  }
+
   private static final Map<Gmm, Double> WUS_2018 = ImmutableMap.<Gmm, Double> builder()
       .put(ASK_14_BASIN_AMP, 0.25)
       .put(BSSA_14_BASIN_AMP, 0.25)
@@ -136,7 +177,7 @@ class CombinedGmm implements GroundMotionModel {
   /* No Idriss. */
   static final class Wus2018 extends CombinedGmm {
 
-    static final String NAME = CombinedGmm.NAME + "WUS 2018";
+    static final String NAME = CombinedGmm.NAME + "WUS 2018 (5.0, basin amp)";
     static final Constraints CONSTRAINTS = CampbellBozorgnia_2014.CONSTRAINTS;
     static final CoefficientContainer COEFFS = CampbellBozorgnia_2014.COEFFS;
 
