@@ -8,14 +8,13 @@ import static gov.usgs.earthquake.nshmp.gmm.Gmm.CAMPBELL_03;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CB_14_BASIN_AMP;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14_BASIN_AMP;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.FRANKEL_96;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS_SEEDS;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.PEZESHK_11;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.SILVA_02;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.SOMERVILLE_01;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.TORO_97_MW;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.TP_05;
-
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS_SEEDS;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -110,12 +109,12 @@ class CombinedGmm implements GroundMotionModel {
       return super.calc(b.build());
     }
   }
-  
+
   private static final Map<Gmm, Double> CEUS_2018 = ImmutableMap.<Gmm, Double> builder()
       .put(NGA_EAST_USGS, 0.667)
       .put(NGA_EAST_USGS_SEEDS, 0.333)
       .build();
-  
+
   static final class Ceus2018 extends CombinedGmm {
 
     static final String NAME = CombinedGmm.NAME + "CEUS 2018";
@@ -126,7 +125,7 @@ class CombinedGmm implements GroundMotionModel {
       super(imtToInstances(imt, CEUS_2018));
     }
   }
-
+  
   private static final Map<Gmm, Double> WUS_2018 = ImmutableMap.<Gmm, Double> builder()
       .put(ASK_14_BASIN_AMP, 0.25)
       .put(BSSA_14_BASIN_AMP, 0.25)
