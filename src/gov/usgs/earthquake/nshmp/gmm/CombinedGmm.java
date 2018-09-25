@@ -14,6 +14,9 @@ import static gov.usgs.earthquake.nshmp.gmm.Gmm.SOMERVILLE_01;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.TORO_97_MW;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.TP_05;
 
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS_SEEDS;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -24,11 +27,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 /**
  * Convenience class for combined GMM implementations that compute weight
  * averaged ground motions and sigmas for a logic tree of ground motion models.
- * THese are NOT intended for use in hazard calculations, but are made available
- * to support compartivie analysis of different GMM logic trees.
- * 
- * CEUS 2014
- * @see Gmm# (no Idriss)
+ * These are NOT intended for use in hazard calculations, but are made available
+ * to support comparitive deterministic analysis of GMM logic trees.
  */
 class CombinedGmm implements GroundMotionModel {
 
@@ -110,6 +110,22 @@ class CombinedGmm implements GroundMotionModel {
       return super.calc(b.build());
     }
   }
+  
+  private static final Map<Gmm, Double> CEUS_2018 = ImmutableMap.<Gmm, Double> builder()
+      .put(NGA_EAST_USGS, 0.667)
+      .put(NGA_EAST_USGS_SEEDS, 0.333)
+      .build();
+  
+  static final class Ceus2018 extends CombinedGmm {
+
+    static final String NAME = CombinedGmm.NAME + "CEUS 2018";
+    static final Constraints CONSTRAINTS = NgaEastUsgs_2017.CONSTRAINTS;
+    static final CoefficientContainer COEFFS = NgaEastUsgs_2017.COEFFS_SIGMA_MID;
+
+    Ceus2018(Imt imt) {
+      super(imtToInstances(imt, CEUS_2018));
+    }
+  }
 
   private static final Map<Gmm, Double> WUS_2018 = ImmutableMap.<Gmm, Double> builder()
       .put(ASK_14_BASIN_AMP, 0.25)
@@ -118,14 +134,14 @@ class CombinedGmm implements GroundMotionModel {
       .put(CY_14_BASIN_AMP, 0.25)
       .build();
 
-  /* Updated flavor: Idriss not included */
-  static final class Wus2014 extends CombinedGmm {
+  /* No Idriss. */
+  static final class Wus2018 extends CombinedGmm {
 
     static final String NAME = CombinedGmm.NAME + "WUS 2018";
     static final Constraints CONSTRAINTS = CampbellBozorgnia_2014.CONSTRAINTS;
     static final CoefficientContainer COEFFS = CampbellBozorgnia_2014.COEFFS;
 
-    Wus2014(Imt imt) {
+    Wus2018(Imt imt) {
       super(imtToInstances(imt, WUS_2018));
     }
   }

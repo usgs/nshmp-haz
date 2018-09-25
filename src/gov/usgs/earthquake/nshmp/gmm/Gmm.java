@@ -605,14 +605,23 @@ public enum Gmm {
       CombinedGmm.Ceus2014.CONSTRAINTS),
 
   /**
+   * 2018 CEUS weight-averaged GMM.
+   */
+  COMBINED_CEUS_2018(
+      CombinedGmm.Ceus2018.class,
+      CombinedGmm.Ceus2018.NAME,
+      CombinedGmm.Ceus2018.COEFFS,
+      CombinedGmm.Ceus2018.CONSTRAINTS),
+
+  /**
    * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
    * NGA-West2 and does not include Idriss.
    */
   COMBINED_WUS_2018(
-      CombinedGmm.Wus2014.class,
-      CombinedGmm.Wus2014.NAME,
-      CombinedGmm.Wus2014.COEFFS,
-      CombinedGmm.Wus2014.CONSTRAINTS),
+      CombinedGmm.Wus2018.class,
+      CombinedGmm.Wus2018.NAME,
+      CombinedGmm.Wus2018.COEFFS,
+      CombinedGmm.Wus2018.CONSTRAINTS),
 
   /* NGA-East for USGS */
 
@@ -1238,6 +1247,7 @@ public enum Gmm {
         "Combined Models",
         ImmutableList.of(
             COMBINED_CEUS_2014,
+            COMBINED_CEUS_2018,
             COMBINED_WUS_2018)),
 
     NGA_EAST(
