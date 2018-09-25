@@ -592,28 +592,6 @@ public enum Gmm {
       McVerryEtAl_2000.COEFFS_GM,
       McVerryEtAl_2000.CONSTRAINTS),
 
-  /* Combined */
-
-  /**
-   * 2014 CEUS weight-averaged GMM. This is the fault-variant that includes
-   * Somerville (2011).
-   */
-  COMBINED_CEUS_2014(
-      CombinedGmm.Ceus2014.class,
-      CombinedGmm.Ceus2014.NAME,
-      CombinedGmm.Ceus2014.COEFFS,
-      CombinedGmm.Ceus2014.CONSTRAINTS),
-
-  /**
-   * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
-   * NGA-West2 and does not include Idriss.
-   */
-  COMBINED_WUS_2018(
-      CombinedGmm.Wus2014.class,
-      CombinedGmm.Wus2014.NAME,
-      CombinedGmm.Wus2014.COEFFS,
-      CombinedGmm.Wus2014.CONSTRAINTS),
-
   /* NGA-East for USGS */
 
   /** @see NgaEastUsgs_2017 */
@@ -940,7 +918,58 @@ public enum Gmm {
       NgaEastUsgs_2017.Seed_YA15.class,
       NgaEastUsgs_2017.Seed_YA15.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
-      NgaEastUsgs_2017.CONSTRAINTS);
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /* Combined: must be declared after any dependent models aabove. */
+
+  /**
+   * 2014 CEUS weight-averaged GMM. This is the fault-variant that includes
+   * Somerville (2011).
+   */
+  COMBINED_CEUS_2014(
+      CombinedGmm.Ceus2014.class,
+      CombinedGmm.Ceus2014.NAME,
+      CombinedGmm.Ceus2014.COEFFS,
+      CombinedGmm.Ceus2014.CONSTRAINTS),
+
+  /**
+   * 2018 CEUS weight-averaged GMM.
+   */
+  COMBINED_CEUS_2018(
+      CombinedGmm.Ceus2018.class,
+      CombinedGmm.Ceus2018.NAME,
+      CombinedGmm.Ceus2018.COEFFS,
+      CombinedGmm.Ceus2018.CONSTRAINTS),
+
+  /**
+   * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
+   * NGA-West2 and does not include Idriss.
+   */
+  COMBINED_WUS_2014_41(
+      CombinedGmm.Wus2014_4p1.class,
+      CombinedGmm.Wus2014_4p1.NAME,
+      CombinedGmm.Wus2014_4p1.COEFFS,
+      CombinedGmm.Wus2014_4p1.CONSTRAINTS),
+  
+  /**
+   * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
+   * NGA-West2 and does not include Idriss.
+   */
+  COMBINED_WUS_2014_42(
+      CombinedGmm.Wus2014_4p2.class,
+      CombinedGmm.Wus2014_4p2.NAME,
+      CombinedGmm.Wus2014_4p2.COEFFS,
+      CombinedGmm.Wus2014_4p2.CONSTRAINTS),
+
+  /**
+   * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
+   * NGA-West2 and does not include Idriss.
+   */
+  COMBINED_WUS_2018(
+      CombinedGmm.Wus2018.class,
+      CombinedGmm.Wus2018.NAME,
+      CombinedGmm.Wus2018.COEFFS,
+      CombinedGmm.Wus2018.CONSTRAINTS);
 
   private final Class<? extends GroundMotionModel> delegate;
   private final String name;
@@ -1238,6 +1267,9 @@ public enum Gmm {
         "Combined Models",
         ImmutableList.of(
             COMBINED_CEUS_2014,
+            COMBINED_CEUS_2018,
+            COMBINED_WUS_2014_41,
+            COMBINED_WUS_2014_42,
             COMBINED_WUS_2018)),
 
     NGA_EAST(
