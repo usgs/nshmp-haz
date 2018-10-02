@@ -219,21 +219,4 @@ public enum Imt {
     return EnumSet.complementOf(EnumSet.range(PGA, AI));
   }
 
-  /**
-   * Package method for parsing IMT strings in coefficient files. Method expects
-   * Imt.name() for specifically named intensity measure types, e.g. "PGA", and
-   * double value strings for spectral periods, e.g. "0.2". This method is NOT
-   * the same as {@link #valueOf(String)}. Method will throw a
-   * NumberFormatException or IllegalArgumentException if the supplied string is
-   * not parseable into a known IMT.
-   */
-  static Imt parseImt(String s) {
-    s = s.trim().toUpperCase();
-    if (s.equals("PGA") || s.equals("PGV") || s.equals("PGD")) {
-      return Imt.valueOf(s);
-    }
-    double period = Double.parseDouble(s);
-    return fromPeriod(period);
-  }
-
 }

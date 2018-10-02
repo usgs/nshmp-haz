@@ -103,7 +103,7 @@ final class CoefficientContainer {
     for (String line : imtLines) {
       Iterable<String> entries = Parsing.split(line, Delimiter.COMMA);
       String imtStr = Iterables.get(entries, 0);
-      Imt imt = Imt.parseImt(imtStr);
+      Imt imt = parseImt(imtStr);
       Iterable<String> valStrs = Iterables.skip(entries, 1);
       Iterable<Double> values = Iterables.transform(valStrs, Doubles.stringConverter());
       valueMap.put(imt, Iterables.toArray(values, Double.class));
@@ -120,4 +120,20 @@ final class CoefficientContainer {
     return table;
   }
 
+  /**
+   * Parses IMT strings from coefficient files. Method expects Imt.name() for
+   * specifically named intensity measure types, e.g. "PGA", and double value
+   * strings for spectral periods, e.g. "0.2". This method is NOT the same as
+   * {@link Imt#valueOf(String)}. Method will throw a NumberFormatException or
+   * IllegalArgumentException if the supplied string is not parseable into a
+   * known IMT.
+   */
+  static Imt parseImt(String s) {
+    s = s.trim().toUpperCase();
+    if (s.equals("PGA") || s.equals("PGV") || s.equals("PGD")) {
+      return Imt.valueOf(s);
+    }
+    double period = Double.parseDouble(s);
+    return Imt.fromPeriod(period);
+  }
 }
