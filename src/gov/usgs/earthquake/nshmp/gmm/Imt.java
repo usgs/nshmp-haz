@@ -73,7 +73,7 @@ public enum Imt {
   SA10P0;
 
   private static final DecimalFormat SA_FORMAT = new DecimalFormat("0.00#");
-  
+
   @Override
   public String toString() {
     switch (this) {
@@ -177,7 +177,6 @@ public enum Imt {
     for (Imt imt : Imt.values()) {
       if (imt.name().startsWith("SA")) {
         double saPeriod = imt.period();
-
         if (fuzzyEquals(saPeriod, period, 0.000001)) {
           return imt;
         }
@@ -221,25 +220,20 @@ public enum Imt {
   }
 
   /**
-   * Parses the supplied {@code String} into an {@code Imt}; method expects
-   * labels for specifically named intensity measure types ({@code "PGA"}) and
-   * double value {@code String}s for spectral periods ({@code "0.2"}). This
-   * method is <i>not</i> the same as {@link #valueOf(String)}.
-   * @param s {@code String} to parse
-   * @return an {@code Imt}, or {@code null} if supplied {@code String} is
-   *         invalid
+   * Package method for parsing IMT strings in coefficient files. Method expects
+   * Imt.name() for specifically named intensity measure types, e.g. "PGA", and
+   * double value strings for spectral periods, e.g. "0.2". This method is NOT
+   * the same as {@link #valueOf(String)}. Method will throw a
+   * NumberFormatException or IllegalArgumentException if the supplied string is
+   * not parseable into a known IMT.
    */
-  public static Imt parseImt(String s) {
+  static Imt parseImt(String s) {
     s = s.trim().toUpperCase();
     if (s.equals("PGA") || s.equals("PGV") || s.equals("PGD")) {
       return Imt.valueOf(s);
     }
-    try {
-      double period = Double.parseDouble(s);
-      return fromPeriod(period);
-    } catch (NumberFormatException nfe) {
-      return null;
-    }
+    double period = Double.parseDouble(s);
+    return fromPeriod(period);
   }
 
 }
