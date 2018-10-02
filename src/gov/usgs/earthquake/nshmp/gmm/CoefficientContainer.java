@@ -104,7 +104,6 @@ final class CoefficientContainer {
       Iterable<String> entries = Parsing.split(line, Delimiter.COMMA);
       String imtStr = Iterables.get(entries, 0);
       Imt imt = Imt.parseImt(imtStr);
-      checkNotNull(imt, "Unparseable Imt: " + imtStr);
       Iterable<String> valStrs = Iterables.skip(entries, 1);
       Iterable<Double> values = Iterables.transform(valStrs, Doubles.stringConverter());
       valueMap.put(imt, Iterables.toArray(values, Double.class));
