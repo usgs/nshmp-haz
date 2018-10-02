@@ -4,6 +4,9 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.*;
 import static org.junit.Assert.*;
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -49,6 +52,15 @@ public class ImtTest {
   @Test(expected = IllegalArgumentException.class)
   public void testFromPeriodException() {
     Imt.fromPeriod(0.1234);
+  }
+
+  @Test
+  public void testPeriods() {
+    Set<Imt> imts = EnumSet.range(SA0P01, SA10P0);
+    List<Double> expected = imts.stream()
+        .map(Imt::period)
+        .collect(Collectors.toList());
+    assertEquals(expected, Imt.periods(imts));
   }
 
   @Test(expected = UnsupportedOperationException.class)
