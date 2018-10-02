@@ -67,19 +67,17 @@ ext {
 }
 
 test {
-  //include 'gov/usgs/earthquake/nshmp/gmm/*'
-  //exclude 'gov/usgs/earthquake/nshmp/**'
-  //include 'gov/usgs/earthquake/nshmp/gmm/CeusSoftRock.class'
   filter {
+    includeTestsMatching "gov.usgs.earthquake.nshmp.gmm.*"
     includeTestsMatching "gov.usgs.earthquake.nshmp.data.*"
-    includeTestsMatching "gov.usgs.earthquake.nshmp.json.*"
+//    includeTestsMatching "gov.usgs.earthquake.nshmp.json.*"
   }
 }
 
 jacocoTestReport {
   reports {
     xml.enabled true
-    html.enabled false
+    html.enabled true
   }
 }
 check.dependsOn jacocoTestReport

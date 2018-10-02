@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.FluentIterable;
@@ -26,8 +25,7 @@ import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 
 @SuppressWarnings("javadoc")
-@Ignore("Parameterized Use Only")
-public class GmmTest {
+public abstract class GmmTest {
 
   private static final String DATA_DIR = "data/";
   private static final double TOL = 1e-6;
@@ -39,7 +37,7 @@ public class GmmTest {
   private double exMedian;
   private double exSigma;
 
-  public GmmTest(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
+  GmmTest(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
 
     this.index = index;
     this.gmm = gmm;
