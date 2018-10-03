@@ -31,7 +31,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * <p> See: <a href="http://williams.best.vwh.net/avform.htm" target="_blank">
  * Aviation Formulary</a> for formulae implemented in this class as well as <a
  * href="http://www.movable-type.co.uk/scripts/latlong.html"
- * target="_blank">Moveable Type Scripts</a> for other implementations.
+ * target="_top">Moveable Type Scripts</a> for other implementations.
  *
  * @author Peter Powers
  * @see Location
@@ -67,10 +67,10 @@ public final class Locations {
 
   /**
    * Calculates the angle between two {@code Location}s using the <a
-   * href="http://en.wikipedia.org/wiki/Haversine_formula" target="_blank">
+   * href="http://en.wikipedia.org/wiki/Haversine_formula" target="_top">
    * Haversine</a> formula. This method properly handles values spanning ±180°.
-   * See <a href="http://williams.best.vwh.net/avform.htm#Dist"> Aviation
-   * Formulary</a> for source. Result is returned in radians.
+   * See <a href="http://williams.best.vwh.net/avform.htm#Dist" target="_top">
+   * Aviation Formulary</a> for source. Result is returned in radians.
    *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
@@ -211,9 +211,9 @@ public final class Locations {
    * assumed to be at the earth's surface; the depth component of each
    * {@code Location} is ignored. This method uses the true spherical geometric
    * function for 'off-track distance'; See <a
-   * href="http://williams.best.vwh.net/avform.htm#XTE"> Aviation Formulary</a>
-   * for source. The sign of the result indicates which side of the supplied
-   * line {@code p3} is on (right:[+] left:[-]).
+   * href="http://williams.best.vwh.net/avform.htm#XTE" target="_top"> Aviation
+   * Formulary</a> for source. The sign of the result indicates which side of
+   * the supplied line {@code p3} is on (right:[+] left:[-]).
    *
    * <p>This method, though more accurate over longer distances and line
    * lengths, is up to 20x slower than
@@ -342,9 +342,9 @@ public final class Locations {
    * great-circle segment). Both the line and point are assumed to be at the
    * earth's surface; the depth component of each {@code Location} is ignored.
    * This method uses the true spherical geometric function for 'off-track
-   * distance'; See <a href="http://williams.best.vwh.net/avform.htm#XTE">
-   * Aviation Formulary</a> for source. This method always returns a positive
-   * result.
+   * distance'; See <a href="http://williams.best.vwh.net/avform.htm#XTE"
+   * target="_top"> Aviation Formulary</a> for source. This method always
+   * returns a positive result.
    *
    * <p>This method, though more accurate over longer distances and line
    * lengths, is up to 20x slower than
@@ -428,9 +428,9 @@ public final class Locations {
   /**
    * Computes the initial azimuth (bearing) when moving from one
    * {@code Location} to another. See <a
-   * href="http://williams.best.vwh.net/avform.htm#Crs"> Aviation Formulary</a>
-   * for source. For back azimuth, reverse the {@code Location} arguments.
-   * Result is returned in radians over the interval [0, 2π).
+   * href="http://williams.best.vwh.net/avform.htm#Crs" target="_top"> Aviation
+   * Formulary</a> for source. For back azimuth, reverse the {@code Location}
+   * arguments. Result is returned in radians over the interval [0, 2π).
    *
    * <p><b>Note:</b> It is more efficient to use this method for computation
    * because {@code Location}s store lat and lon in radians internally. Use
@@ -463,9 +463,10 @@ public final class Locations {
   /**
    * Computes the initial azimuth (bearing) when moving from one
    * {@link Location} to another in degrees. See <a
-   * href="http://williams.best.vwh.net/avform.htm#Crs"> Aviation Formulary</a>
-   * for source. For back azimuth, reverse the {@code Location} arguments.
-   * Result is returned in decimal degrees over the interval 0° to 360°.
+   * href="http://williams.best.vwh.net/avform.htm#Crs" target="_top"> Aviation
+   * Formulary</a> for source. For back azimuth, reverse the {@code Location}
+   * arguments. Result is returned in decimal degrees over the interval 0° to
+   * 360°.
    *
    * @param p1 the first {@code Location} point
    * @param p2 the second {@code Location} point
@@ -478,8 +479,8 @@ public final class Locations {
 
   /**
    * Computes a {@code Location} given an origin point, bearing, and distance.
-   * See <a href="http://williams.best.vwh.net/avform.htm#LL"> Aviation
-   * Formulary</a> for source. Note that {@code azimuth} is expected in
+   * See <a href="http://williams.best.vwh.net/avform.htm#LL" target="_top">
+   * Aviation Formulary</a> for source. Note that {@code azimuth} is expected in
    * <i>radians</i>.
    *
    * @param p starting location point
@@ -494,8 +495,8 @@ public final class Locations {
   /**
    * Computes a {@code Location} given an origin point and a
    * {@code LocationVector}. See <a
-   * href="http://williams.best.vwh.net/avform.htm#LL"> Aviation Formulary</a>
-   * for source.
+   * href="http://williams.best.vwh.net/avform.htm#LL" target="_top"> Aviation
+   * Formulary</a> for source.
    *
    * @param p starting location point
    * @param d distance along bearing

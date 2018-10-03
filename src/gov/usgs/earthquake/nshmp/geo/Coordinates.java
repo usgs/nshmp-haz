@@ -18,7 +18,7 @@ public class Coordinates {
    * {@code 6371.0072 km}.
    * 
    * @see <a href="http://en.wikipedia.org/wiki/Earth_radius#Authalic_radius"
-   *      target="_blank">Wikipedia</a>
+   *      target="_top">Wikipedia</a>
    */
   public static final double EARTH_RADIUS_MEAN = 6371.0072;
 
@@ -27,7 +27,7 @@ public class Coordinates {
    * {@code 6378.1370 km}.
    * 
    * @see <a href="http://en.wikipedia.org/wiki/Earth_radius#Equatorial_radius"
-   *      target="_blank">Wikipedia</a>
+   *      target="_top">Wikipedia</a>
    */
   public static final double EARTH_RADIUS_EQUATORIAL = 6378.1370;
 
@@ -36,7 +36,7 @@ public class Coordinates {
    * {@code 6356.7523 km]}.
    * 
    * @see <a href="http://en.wikipedia.org/wiki/Earth_radius#Polar_radius"
-   *      target="_blank">Wikipedia</a>
+   *      target="_top">Wikipedia</a>
    */
   public static final double EARTH_RADIUS_POLAR = 6356.7523;
 
@@ -80,7 +80,7 @@ public class Coordinates {
    * Return the radius of the earth at the latitude of the supplied
    * <code>Location</code> (see <a
    * href="http://en.wikipedia.org/wiki/Earth_radius#Authalic_radius"
-   * target="_blank">Wikipedia</a> for source).
+   * target="_top">Wikipedia</a> for source).
    *
    * @param location at which to compute the earth's radius
    * @return the earth's radius at the supplied {@code location}
