@@ -1,117 +1,64 @@
 package gov.usgs.earthquake.nshmp.geo.json;
 
-/**
- * Interface for the different GeoJson {@code Geometry} types.
- * <br>
- * Current {@code Geometry} types defined:
- *    <ul>
- *      <li> {@link Point} </li>
- *      <li> {@link Polygon} </li>
- *    </ul>
- * <br>
- * 
- * A GeoJson {@code Geometry} contains two members:
- *    <ul>
- *      <li> type: a {@link GeoJsonType} </li>
- *      <li> coordinates: different types of array configurations </li>
- *    </ul>
- * The "type" member must be one of the {@code GeoJsonType}s.
- * <br>
- * 
- * The "coordinates" member is some type of array. The interface defines the 
- *    coordinates as a generic {@code Object}. To obtain the more specific type of
- *    array it is required to cast to the more specific {@code Geometry} type.
- * <br><br>
- * 
- * Example:
- * <pre>
- * Properties properties = Properties.builder()
- *    .title("test")
- *    .id("id")
- *    .build();
- *    
- * Feature feature = Feature.createPoint(properties, 40, -120);
- * 
- * Point point = (Point) feature.getGeometry();
- * 
- * double[] coords = point.getCoordinates();
- * </pre>
- * 
- * @author Brandon Clayton
- */
-public interface Geometry extends GeoJson {
- 
-  /** 
-   * Return a generic {@code Object} representing the coordinates
-   *    of the {@code Geometry}.
-   * <br>
-   * 
-   * It is best to cast to a specific {@code Geometry} type to obtain the 
-   *    coordinates:
-   *    <ul>
-   *      <li> {@link Point} </li>
-   *      <li> {@link Polygon} </li>
-   *    </ul>
-   * <br><br>
-   * 
-   * Example:
-   * <pre>
-   * Properties properties = Properties.builder()
-   *    .title("test")
-   *    .id("id")
-   *    .build();
-   *    
-   * Feature feature = Feature.createPoint(properties, 40, -120);
-   * 
-   * Point point = (Point) feature.geometry;
-   * 
-   * double[] coords = point.getCoordinates();
-   * </pre>
-   * 
-   * @return An {@code Object} representing the coordinates.
-   */
-  public Object getCoordinates();
+import gov.usgs.earthquake.nshmp.geo.Location;
+import gov.usgs.earthquake.nshmp.geo.LocationList;
+import gov.usgs.earthquake.nshmp.geo.json.GeoJson.Type;
 
-  /**
-   * Return {@code Geometry} as a {@link MultiPolygon}.
-   * @return The {@code MultiPolygon}.
-   * @throws UnsupportedOperationException If {@link GeoJsonType} does not equal 
-   *    the correct {@code Geometry}.
-   */
-  public default MultiPolygon asMultiPolygon() {
-    if (this.getType().equals(GeoJsonType.MULTI_POLYGON)) {
-      return (MultiPolygon) this;
-    } else {
-      throw new UnsupportedOperationException("Geometry is not a multi-polygon");
-    }
+/*
+ * Package utility class for creating GeoJSON geometries with structurally
+ * different coordinate backing arrays.
+ * 
+ * @author Peter Powers
+ */
+@SuppressWarnings("unused")
+class Geometry<T> {
+
+  private GeoJson.Type type;
+  private T coordinates;
+
+  Geometry(GeoJson.Type type, T coordinates) {
+    this.type = type;
+    this.coordinates = coordinates;
   }
-  
-  /**
-   * Return {@code Geometry} as a {@link Point}.
-   * @return The {@code Point}.
-   * @throws UnsupportedOperationException If {@link GeoJsonType} does not equal 
-   *    the correct {@code Geometry}.
-   */
-  public default Point asPoint() {
-    if (this.getType().equals(GeoJsonType.POINT)) {
-      return (Point) this;
-    } else {
-      throw new UnsupportedOperationException("Geometry is not a point");
-    }
+
+  /* Point geometry. */
+  static Geometry<double[]> point(Location point) {
+    return new Geometry<>(Type.POINT, toCoordinateArray(point));
   }
-  
-  /**
-   * Return {@code Geometry} as a {@link Polygon}.
-   * @return The {@code Polygon}.
-   * @throws UnsupportedOperationException If {@link GeoJsonType} does not equal 
-   *    the correct {@code Geometry}.
-   */
-  public default Polygon asPolygon() {
-    if (this.getType().equals(GeoJsonType.POLYGON)) {
-      return (Polygon) this;
-    } else {
-      throw new UnsupportedOperationException("Geometry is not a polygon");
-    }
+
+  /* LineString geometry. */
+  static Geometry<double[][]> lineString(LocationList line) {
+    return new Geometry<>(GeoJson.Type.LINE_STRING, toCoordinateArray(line));
   }
-  
+
+  /* polygon geometry. */
+  static Geometry<double[][][]> polygon(LocationList exterior, LocationList... interiors) {
+    // TODO check interiors are interior and non-intersecting
+    double[][][] coords = new double[interiors.length + 1][][];
+    coords[0] = toCoordinateArray(exterior);
+    for (int i = 0; i < interiors.length; i++) {
+      coords[i + 1] = toCoordinateArray(interiors[i]);
+    }
+    return new Geometry<>(GeoJson.Type.POLYGON, coords);
+  }
+
+  /*
+   * Developer note: As long as the geojson coordinate array structure is unique
+   * to GeoJson these converters should stay in this package.
+   */
+
+  /* Location --> [] */
+  static double[] toCoordinateArray(Location location) {
+    return new double[] { location.lon(), location.lat() };
+  }
+
+  /* LocationList --> [][] */
+  static double[][] toCoordinateArray(LocationList locations) {
+    double[][] coords = new double[locations.size()][];
+    for (int i = 0; i < locations.size(); i++) {
+      coords[i] = toCoordinateArray(locations.get(i));
+    }
+    return coords;
+  }
+
 }
