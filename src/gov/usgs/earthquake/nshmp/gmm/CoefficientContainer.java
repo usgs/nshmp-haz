@@ -1,6 +1,5 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
@@ -120,7 +119,7 @@ final class CoefficientContainer {
     return table;
   }
 
-  /**
+  /*
    * Parses IMT strings from coefficient files. Method expects Imt.name() for
    * specifically named intensity measure types, e.g. "PGA", and double value
    * strings for spectral periods, e.g. "0.2". This method is NOT the same as

@@ -372,7 +372,7 @@ public enum NshmpSite implements NamedLocation {
    * <p>This is a list of 34 city sites in the United States with high seismic
    * risk as specified in the 2009 edition of the <a
    * href="http://www.fema.gov/library/viewRecord.do?id=4103"
-   * target=_blank">NEHRP Recommended Seismic Provisions</a>.
+   * target=_top">NEHRP Recommended Seismic Provisions</a>.
    */
   public static EnumSet<NshmpSite> nehrp() {
     return EnumSet.of(
