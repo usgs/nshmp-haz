@@ -14,6 +14,8 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import gov.usgs.earthquake.nshmp.internal.TextUtils;
+
 final class Util {
 
   private Util() {}
@@ -87,10 +89,11 @@ final class Util {
 
   }
 
+  /* Reformats point arays onto single line and appends newline character */
   static String cleanPoints(String s) {
     return s.replaceAll("\\[\\s+([-\\d])", "[$1")
         .replaceAll(",\\s+([-\\d])", ", $1")
-        .replaceAll("(\\d)\\s+\\]", "$1]");
+        .replaceAll("(\\d)\\s+\\]", "$1]")
+        .replaceAll("}\\Z", "}" + TextUtils.NEWLINE);
   }
-
 }
