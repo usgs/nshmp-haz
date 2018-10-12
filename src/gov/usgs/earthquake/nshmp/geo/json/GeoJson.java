@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -33,21 +34,23 @@ import com.google.gson.JsonIOException;
  *         .id("featureId")
  *         .properties(ImmutableMap.of(
  *             "title", "Feature Title",
- *             "color", "#ff0080")))
+ *             "color", "#ff0080"))
+ *         .build())
  *     .add(Feature.polygon(
  *         LocationList.create(
  *             Location.create(34, -117),
  *             Location.create(35, -118),
  *             Location.create(37, -116),
  *             Location.create(38, -117)))
- *         .id(3))
+ *         .id(3)
+ *         .build())
  *     .toJson();
  * </pre>
  * 
  * <p>where the GeoJSON string created is:
  * 
  * <pre>
-* {
+ * {
  *   "type": "FeatureCollection",
  *   "features": [
  *     {
@@ -82,27 +85,40 @@ import com.google.gson.JsonIOException;
  * }
  * </pre>
  * 
+ * <p>To parse GeoJSON, use a static {@code from*} method. Once parsed, the
+ * features in a feature collection may be accessed as objects in the
+ * {@code geo} package (e.g. {@code Location}, {@code LocationList}, etc...).
+ * This requires some prior knowledge of the contents of the parsed GeoJSON.
+ * 
  * @author Peter Powers
  * @author Brandon Clayton
  */
 public final class GeoJson {
 
+  /* No instantiation. */
+  private GeoJson() {}
+
+  // TODO if depths are considered, should they be negative? Per the GeoJSON
+  // spec: "Altitude or elevation MAY be included as an optional third element."
+
+  // TODO: once Location has been been changed to 4-fields where we no longer
+  // have
+  // radians to degrees conversion rounding errors, change the Geometry
+  // converters
+  // to not round coordinates.
+
   /**
-   * Return a GeoJSON {@code FeatureCollection} builder.
+   * A reusable GeoJSON {@code FeatureCollection} builder.
    */
-  static Builder builder() {
+  public static Builder builder() {
     return new Builder();
   }
 
+  /* See notes in Geometry regarding coordinate type adapter. */
   static Gson GSON = new GsonBuilder()
       .registerTypeAdapter(
           GeoJson.Type.class,
           new Util.Serializer<>(GeoJson.Type.converter()))
-      .registerTypeAdapter(
-          GeoJson.Type.class,
-          new Util.Deserializer<>(GeoJson.Type.converter()))
-      .registerTypeAdapterFactory(
-          new Util.ArrayAdapterFactory())
       .setPrettyPrinting()
       .create();
 
@@ -123,6 +139,7 @@ public final class GeoJson {
      * new features.
      * 
      * @param feature to add
+     * @return this builder
      * @see Feature
      */
     public Builder add(Feature feature) {
@@ -136,7 +153,7 @@ public final class GeoJson {
      * target="_top">specification</a for details on bounding boxes.
      * 
      * @param bbox to set
-     * @return
+     * @return this builder
      */
     public Builder bbox(double[] bbox) {
       this.bbox = bbox;
@@ -150,7 +167,18 @@ public final class GeoJson {
      */
     public String toJson() {
       checkState(features.size() > 0, "GeoJSON is empty");
-      return GSON.toJson(new FeatureCollection(features, bbox));
+      String json = GSON.toJson(new FeatureCollection(features, bbox));
+      return Util.cleanPoints(json);
+    }
+
+    /**
+     * Serialize builder to its equivalent JSON representation and write to file
+     * at {@code path}.
+     * 
+     * @throws IllegalStateException if builder is empty
+     */
+    public void write(Path path) throws IOException {
+      Files.write(path, toJson().getBytes(StandardCharsets.UTF_8));
     }
   }
 
@@ -178,7 +206,7 @@ public final class GeoJson {
    * @param json file path from which to deserialize
    */
   public static FeatureCollection fromJson(Path json) {
-    // rethrow IOException as Runtime
+    /* Rethrow IOException as Runtime. */
     try (BufferedReader br = Files.newBufferedReader(json)) {
       return fromJson(Files.newBufferedReader(json));
     } catch (IOException ioe) {
@@ -193,7 +221,7 @@ public final class GeoJson {
    * @param json URL from which to deserialize
    */
   public static FeatureCollection fromJson(URL json) {
-    // rethrow IOException as Runtime
+    /* Rethrow IOException as Runtime. */
     try (BufferedReader br = new BufferedReader(new InputStreamReader(json.openStream()))) {
       return fromJson(br);
     } catch (IOException ioe) {
@@ -201,38 +229,27 @@ public final class GeoJson {
     }
   }
 
-  /* GeoJSON type identifier. */
-  enum Type {
+  /** GeoJSON type identifier. */
+  public enum Type {
 
-    /* object */
+    /** GeoJSON {@code Feature} object. */
     FEATURE,
+
+    /** GeoJSON {@code FeatureCollection} object. */
     FEATURE_COLLECTION,
 
-    /* geometry */
+    /** GeoJSON {@code Point} geometry. */
     POINT,
-    MULTI_POINT,
+
+    /** GeoJSON {@code LineString} geometry. */
     LINE_STRING,
-    MULTI_LINE_STRING,
-    POLYGON,
-    MULTI_POLYGON,
-    GEOMETRY_COLLECTION;
 
-    private static final Converter<Type, String> STRING_CONVERTER =
-        Util.enumStringConverter(Type.class, CaseFormat.UPPER_CAMEL);
-
-    @Override
-    public String toString() {
-      return STRING_CONVERTER.convert(this);
-    }
-
-    /* Reverse of toString case format conversion. */
-    Type fromString(String s) {
-      return STRING_CONVERTER.reverse().convert(s);
-    }
+    /** GeoJSON {@code Polygon} geometry. */
+    POLYGON;
 
     /* Case format converter. */
     static Converter<Type, String> converter() {
-      return STRING_CONVERTER;
+      return Util.enumStringConverter(Type.class, CaseFormat.UPPER_CAMEL);
     }
   }
 

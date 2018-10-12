@@ -26,6 +26,7 @@ public enum NshmpPolygon {
 
   UCERF3_NSHM14(Data.UCERF3_NSHM14, "UCERF3 Production – 2014 NSHM"),
   UCERF3_RELM(Data.UCERF3_RELM, "UCERF3 Development – RELM Testing Region"),
+  UCERF3_NSHM_CLIP(Data.UCERF3_NSHM_CLIP, "UCERF3 Clipping Region"),
 
   CYBERSHAKE(Data.CYBERSHAKE, "Cybershake – Los Angeles Basin");
 
@@ -73,7 +74,7 @@ public enum NshmpPolygon {
         { -200.0, 48.0 },
         { -125.0, 72.0 }
     };
-    
+
     private static final double[][] ALASKA = {
         { -137.5, 70.6 },
         { -157.1, 72.6 },
@@ -90,7 +91,7 @@ public enum NshmpPolygon {
         { -178.0, 48.4 },
         { -162.1, 50.3 },
         { -152.2, 53.8 },
-        { -147.8, 56.3 }, 
+        { -147.8, 56.3 },
         { -142.8, 57.2 },
         { -138.8, 55.8 },
         { -134.9, 53.5 },
@@ -99,7 +100,7 @@ public enum NshmpPolygon {
         { -134.3, 60.8 },
         { -136.6, 60.7 },
         { -137.5, 61.4 },
-        { -137.5, 70.6 }   
+        { -137.5, 70.6 }
     };
 
     private static final double[][] CONTERMINOUS = {
@@ -264,6 +265,30 @@ public enum NshmpPolygon {
         { -116.5, 40.5 },
         { -116.5, 45.0 },
         { -125.2, 45.0 }
+    };
+
+    private static final double[][] UCERF3_NSHM_CLIP = {
+        { -119.999, 39.000 },
+        { -114.635, 35.000 },
+        { -114.616, 34.848 },
+        { -114.482, 34.719 },
+        { -114.371, 34.464 },
+        { -114.122, 34.285 },
+        { -114.413, 34.097 },
+        { -114.519, 33.934 },
+        { -114.511, 33.616 },
+        { -114.636, 33.426 },
+        { -114.710, 33.401 },
+        { -114.676, 33.055 },
+        { -114.501, 33.020 },
+        { -114.455, 32.861 },
+        { -114.575, 32.741 },
+        { -114.719, 32.718 },
+        { -120.861, 32.151 },
+        { -126.000, 39.000 },
+        { -126.000, 42.001 },
+        { -119.999, 42.001 },
+        { -119.999, 39.000 }
     };
   }
 

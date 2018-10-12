@@ -1,0 +1,47 @@
+{
+  "type": "FeatureCollection",
+  "bbox": [-118.0, 34.0, -116.0, 38.0],
+  "features": [
+    {
+      "type": "Feature",
+      "id": "featureId",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-117.0, 34.0]
+      },
+      "properties": {
+        "id": 1,
+        "title": "Feature Title",
+        "color": "#ff0080"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-117.0, 34.0],
+          [-118.0, 35.0],
+          [-116.0, 37.0],
+          [-117.0, 38.0]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "bbox": [-118.0, 34.0, -116.0, 38.0],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-117.0, 34.0],
+            [-118.0, 35.0],
+            [-116.0, 37.0],
+            [-117.0, 38.0]
+          ]
+        ]
+      }
+    }
+  ]
+}

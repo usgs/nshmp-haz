@@ -2,10 +2,7 @@ package gov.usgs.earthquake.nshmp.geo.json;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.CaseFormat;
@@ -17,7 +14,7 @@ import com.google.common.collect.ImmutableMap;
  * 
  * <p>GeoJSON properties serialize to/from a {@code Map<String, Object>}. To
  * simplify repeated property map creation where only one property might be
- * changing, this class provides a re-usable builder. The class also provides
+ * changing, this class provides a reusable builder. The class also provides
  * methods to help get and set <a
  * href="https://github.com/mapbox/simplestyle-spec/tree/master/1.1.0"
  * target="_top">simplestyle-spec</a> (v1.1.0) properties that may be considered
@@ -33,12 +30,31 @@ import com.google.common.collect.ImmutableMap;
  */
 public final class Properties {
 
+  // TODO tests: validate for the different styles
+  // TODO tests: check that method is appropriate for style
+
   /* Property parsing. */
 
   private Map<String, Object> source;
 
   Properties(Map<String, Object> source) {
     this.source = source;
+  }
+
+  /**
+   * Return whether the supplied key exists in the property map
+   * @param key whose presence in this map is to be tested
+   */
+  public boolean containsKey(String key) {
+    return source.containsKey(key);
+  }
+
+  /**
+   * Return whether the supplied key exists in the property map
+   * @param key whose presence in this map is to be tested
+   */
+  public boolean containsKey(Style key) {
+    return containsKey(key.toString());
   }
 
   /**
@@ -50,11 +66,11 @@ public final class Properties {
   }
 
   /**
-   * Return the value for the specified simplestyle key as an {@code Object}.
+   * Return the value for the specified key as an {@code boolean}.
    * @throws NullPointerException if no such property key exists
    */
-  public Object get(Style key) {
-    return get(key.toString());
+  public boolean getBoolean(String key) {
+    return (boolean) get(key);
   }
 
   /**
@@ -62,14 +78,6 @@ public final class Properties {
    * @throws NullPointerException if no such property key exists
    */
   public int getInt(String key) {
-    return ((Double) get(key)).intValue();
-  }
-
-  /**
-   * Return the value for the specified simplestyle key as an {@code int}.
-   * @throws NullPointerException if no such property key exists
-   */
-  public int getInt(Style key) {
     return ((Double) get(key)).intValue();
   }
 
@@ -86,7 +94,7 @@ public final class Properties {
    * @throws NullPointerException if no such property key exists
    */
   public double getDouble(Style key) {
-    return (double) get(key);
+    return getDouble(key.toString());
   }
 
   /**
@@ -102,7 +110,7 @@ public final class Properties {
    * @throws NullPointerException if no such property key exists
    */
   public String getString(Style key) {
-    return (String) get(key);
+    return getString(key.toString());
   }
 
   /* Property building. */
@@ -160,61 +168,82 @@ public final class Properties {
   /**
    * Identifiers for <a
    * href="https://github.com/mapbox/simplestyle-spec/tree/master/1.1.0"
-   * target="_top"> simplestyle-spec</a> (v1.1.0) properties.
+   * target="_top"> simplestyle-spec</a> (v1.1.0) properties. These properties
+   * are rendering hints that may improve the appearance of GeoJSON features in
+   * some rendering environments. The description for each identifier indicates
+   * the expected value type when adding style-keyed properties.
+   * 
+   * <p><a name="color-rules" />Color rules: <ul> <li>Colors can be in short
+   * form: {@code "#ace"} <li>Or long form: {@code "#aaccee"} <li>With or
+   * without the prefix: {@code #} <li>Colors are interpreted the same as in
+   * CSS... <li>In either {@code #RRGGBB} or {@code #RGB} order <li>Other color
+   * formats or named colors are not supported </ul>
    */
-  @SuppressWarnings("javadoc")
   public enum Style {
 
+    /**
+     * Value: {@code String}
+     */
     DESCRIPTION,
+
+    /**
+     * Value: color {@code String} (see <a href="#color-rules">color rules</a>)
+     */
     FILL,
+
+    /**
+     * Value: {@code 0.0 ≤ double ≤ 1.0}
+     */
     FILL_OPACITY,
-    ID,
+
+    /**
+     * Value: color {@code String} (see <a href="#color-rules">color rules</a>)
+     */
     MARKER_COLOR,
+
+    /**
+     * Value: {@code ["small", "medium, "large"]}
+     */
     MARKER_SIZE,
+
+    /**
+     * Value: <a href="https://www.mapbox.com/maki-icons/" target="_top">named
+     * icon</a> {@code String}, {@code 0 ≤ int ≤ 9}, or any lowercase character
+     * {@code String}, {@code a-z}
+     */
     MARKER_SYMBOL,
-    SPACING,
+
+    /**
+     * Value: color {@code String} (see <a href="#color-rules">color rules</a>)
+     */
     STROKE,
+
+    /**
+     * Value: {@code 0.0 ≤ double ≤ 1.0}
+     */
     STROKE_OPACITY,
+
+    /**
+     * Value: {@code 0.0 ≤ double}
+     */
     STROKE_WIDTH,
+
+    /**
+     * Value: {@code String}
+     */
     TITLE;
 
     private static final Converter<Style, String> STRING_CONVERTER =
         Util.enumStringConverter(Style.class, CaseFormat.LOWER_HYPHEN);
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Enum#toString()
+     */
     @Override
     public String toString() {
       return STRING_CONVERTER.convert(this);
     }
-
-    /* Reverse of toString case format conversion. */
-    Style fromString(String s) {
-      return STRING_CONVERTER.reverse().convert(s);
-    }
-
-    /* Case format converter. */
-    static Converter<Style, String> converter() {
-      return STRING_CONVERTER;
-    }
-  }
-
-  // TODO validate for the different styles
-  // TODO check that method is appropriate for style
-
-  public static void main(String[] args) {
-
-    Path path = Paths.get("../nshmp-haz-catalogs/2018/zones/SSCn.geojson");
-    System.out.println(path.toAbsolutePath());
-    FeatureCollection fc = GeoJson.fromJson(path);
-    Properties props = fc.features.get(0).properties();
-    System.out.println(((List<?>) props.get("mMax")).get(0).getClass());
-
-    // Object obj = fc.features.get(0).properties.get("mMax");
-    //
-    // List<?> pp1 = (List<?>) obj;
-    // System.out.println(pp1.get(0).getClass());
-    // System.out.println(obj.getClass());
-    //
-    // System.out.println();
-
   }
 }
