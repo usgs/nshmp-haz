@@ -119,8 +119,8 @@ class Geometry<T> {
        * updated
        */
       return new double[] {
-          Maths.round(location.lon(), 8),
-          Maths.round(location.lat(), 8)
+          Maths.round(location.lon(), 5),
+          Maths.round(location.lat(), 5)
       };
     }
 

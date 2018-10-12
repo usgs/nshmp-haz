@@ -72,9 +72,9 @@ final class NshmpSiteFiles {
     writeCybershakeSites("cybershake", EnumSet.allOf(CybershakeSite.class));
 
     writeNshmpPolys();
-    // writeNshmpSummaryPoly();
+    writeNshmpSummaryPoly();
     // writeNshmpSites_0p1();
-    
+
   }
 
   /*
@@ -163,8 +163,6 @@ final class NshmpSiteFiles {
         CYBERSHAKE.coordinates(),
         0.1,
         null);
-    
-    
 
   }
 
