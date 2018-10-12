@@ -27,8 +27,8 @@ import com.google.gson.JsonParseException;
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
 import gov.usgs.earthquake.nshmp.geo.json.Feature;
-import gov.usgs.earthquake.nshmp.geo.json.Point;
 import gov.usgs.earthquake.nshmp.geo.json.Properties;
+import gov.usgs.earthquake.nshmp.geo.json.Properties.Style;
 import gov.usgs.earthquake.nshmp.util.Maths;
 import gov.usgs.earthquake.nshmp.util.Named;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
@@ -57,13 +57,12 @@ import gov.usgs.earthquake.nshmp.util.NamedLocation;
  * <i>basin-terms</i>, have default values of {@code Double.NaN}. When supplied
  * with the default, those {@link GroundMotionModel}s that support basin terms
  * will use an author defined model, typically based on {@code Vs30}, to compute
- * basin-amplifications.
+ * basin amplification (or demplification).
  * 
  * <p><b>Note:</b> If a {@link CalcConfig.SiteData#basinDataProvider} has been
  * set, any non-{@code null} or non-{@code NaN} {@code z1p0} or {@code z2p5}
  * values supplied by the provider take precedence over defaults or recent calls
  * to the builder.
- * 
  *
  * @author Peter Powers
  */
@@ -183,6 +182,19 @@ public class Site implements Named {
   }
 
   /**
+   * Return a Site constructed from a Point GeoJSON feature.
+   */
+  static Site fromGeoJson(Feature feature, CalcConfig defaults) {
+    return Site.builder(defaults)
+        .location(feature.asPoint())
+        .geoJsonProperties(feature.properties())
+        .build();
+  }
+  
+  // TODO is it worth considering the obove to process a List<Feature> 
+  // and reuse the Site builder
+
+  /**
    * A reusable {@code Site} builder. In the absence of specifying any site
    * characteristics other than location (required), a default {@code Site} is
    * returned by {@code build()}. Builder instances may be obtained via
@@ -273,7 +285,30 @@ public class Site implements Named {
       }
       return this;
     }
-    
+
+    /*
+     * Set site terms from a GeoJSON properties map. Only used by site file
+     * parsers in Sites.
+     */
+    Builder geoJsonProperties(Properties props) {
+      if (props.containsKey(Style.TITLE)) {
+        name(props.getString(Style.TITLE));
+      }
+      if (props.containsKey(Key.VS30)) {
+        vs30(props.getDouble(Key.VS30));
+      }
+      if (props.containsKey(Key.VS_INF)) {
+        vsInferred(props.getBoolean(Key.VS_INF));
+      }
+      if (props.containsKey(Key.Z1P0)) {
+        z1p0(props.getDouble(Key.Z1P0));
+      }
+      if (props.containsKey(Key.Z2P5)) {
+        z2p5(props.getDouble(Key.Z2P5));
+      }
+      return this;
+    }
+
     /** Optional basin data provider. */
     public Builder basinDataProvider(URL url) {
       if (url != null) {
@@ -292,6 +327,7 @@ public class Site implements Named {
       }
       return this;
     }
+
     /**
      * Return a string reflecting the current site parameter state of this
      * builder.
@@ -367,7 +403,7 @@ public class Site implements Named {
 
     static double readValue(JsonObject json, String zId) {
       JsonElement e = json.get(zId).getAsJsonObject().get("value");
-      return e.isJsonNull() ? Double.NaN : Maths.round(e.getAsDouble(), 1) ;
+      return e.isJsonNull() ? Double.NaN : Maths.round(e.getAsDouble(), 1);
     }
   }
 
@@ -399,55 +435,54 @@ public class Site implements Named {
       Key.Z1P0,
       Key.Z2P5);
 
-  
   /**
-   * Convert a {@link Feature} to a {@code Site} with a 
-   *    {@link Point} {@code Geometry}.
-   *    
-   * NOTE: JSON prohibits the use of NaN, which is the default value for
-   *    z1p0 and z2p5, and so these two fields may not be set. Users have been
-   *    notified that as long as no z1p0 or z2p5 value has been supplied in any
-   *    JSON, the default will be used.
-   *    
+   * Convert a {@link Feature} to a {@code Site} with a {@link Point}
+   * {@code Geometry}.
+   * 
+   * NOTE: JSON prohibits the use of NaN, which is the default value for z1p0
+   * and z2p5, and so these two fields may not be set. Users have been notified
+   * that as long as no z1p0 or z2p5 value has been supplied in any JSON, the
+   * default will be used.
+   * 
    * @param feature The {@code Feature}
    * @param defaults The {@code CalcConfig} defaults
    * @return {@code Site}
    */
-  static Site getGeoJsonSite(Feature feature, CalcConfig defaults) {
-    Point geometry = feature.getGeometry().asPoint();
-    Location loc = geometry.getLocation();
-    Properties properties = feature.getProperties();
-    Builder builder = Site.builder(defaults).location(loc);
-    setSiteProperties(builder, properties);
-    return builder.build();
-  }
-  
+//  static Site getGeoJsonSite(Feature feature, CalcConfig defaults) {
+//    Point geometry = feature.getGeometry().asPoint();
+//    Location loc = geometry.getLocation();
+//    Properties properties = feature.getProperties();
+//    Builder builder = Site.builder(defaults).location(loc);
+//    setSiteProperties(builder, properties);
+//    return builder.build();
+//  }
+
   /**
    * Set the {@link Builder}.
    * 
    * @param builder The {@code Builder}
    * @param properties The {@link Properties}
    */
-  static void setSiteProperties(Site.Builder builder, Properties properties) {
-    if (properties.hasProperty("title")) {
-      builder.name(properties.getStringProperty("title"));
-    }
-
-    if (properties.hasProperty(Site.Key.VS30)) {
-      builder.vs30(properties.getDoubleProperty(Site.Key.VS30));
-    }
-
-    if (properties.hasProperty(Site.Key.VS_INF)) {
-      builder.vsInferred(properties.getBooleanProperty(Site.Key.VS_INF));
-    }
-
-    if (properties.hasProperty(Site.Key.Z1P0)) {
-      builder.z1p0(properties.getDoubleProperty(Site.Key.Z1P0));
-    }
-
-    if (properties.hasProperty(Site.Key.Z2P5)) {
-      builder.z2p5(properties.getDoubleProperty(Site.Key.Z2P5));
-    }
-  }
+//  static void setSiteProperties(Site.Builder builder, Properties properties) {
+//    if (properties.hasProperty("title")) {
+//      builder.name(properties.getStringProperty("title"));
+//    }
+//
+//    if (properties.hasProperty(Site.Key.VS30)) {
+//      builder.vs30(properties.getDoubleProperty(Site.Key.VS30));
+//    }
+//
+//    if (properties.hasProperty(Site.Key.VS_INF)) {
+//      builder.vsInferred(properties.getBooleanProperty(Site.Key.VS_INF));
+//    }
+//
+//    if (properties.hasProperty(Site.Key.Z1P0)) {
+//      builder.z1p0(properties.getDoubleProperty(Site.Key.Z1P0));
+//    }
+//
+//    if (properties.hasProperty(Site.Key.Z2P5)) {
+//      builder.z2p5(properties.getDoubleProperty(Site.Key.Z2P5));
+//    }
+//  }
 
 }

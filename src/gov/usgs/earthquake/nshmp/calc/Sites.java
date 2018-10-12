@@ -32,13 +32,14 @@ import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 import gov.usgs.earthquake.nshmp.geo.json.Feature;
 import gov.usgs.earthquake.nshmp.geo.json.FeatureCollection;
-import gov.usgs.earthquake.nshmp.geo.json.GeoJsonType;
-import gov.usgs.earthquake.nshmp.geo.json.Polygon;
+import gov.usgs.earthquake.nshmp.geo.json.GeoJson;
+import gov.usgs.earthquake.nshmp.geo.json.GeoJson.Type;
 import gov.usgs.earthquake.nshmp.geo.json.Properties;
+import gov.usgs.earthquake.nshmp.geo.json.Properties.Style;
 
 /**
- * Iterable {@code Site} container. Factory methods are supplied to creating
- * instances from different input formats.
+ * Iterable {@code Site} container. Factory methods support creating instances
+ * from different input formats.
  *
  * @author Peter Powers
  */
@@ -135,15 +136,20 @@ public abstract class Sites implements Iterable<Site> {
    * @throws IOException if a problem is encountered
    */
   public static Sites fromJson(Path path, CalcConfig defaults) throws IOException {
-    FeatureCollection fc = FeatureCollection.read(path);
-    List<Feature> features = fc.getFeatures();
-   
-    GeoJsonType geomType = features.get(0).getGeometry().getType();
-    if (geomType.equals(GeoJsonType.POINT)) {
-      return getGeoJsonSiteList(features, defaults);
+    FeatureCollection fc = GeoJson.fromJson(path);
+    List<Feature> features = fc.features();
+    if (features.get(0).type() == Type.POINT) {
+      return createSiteList(features, defaults);
     } else {
-      return getGeoJsonSiteRegion(features, defaults);
+      return createSiteRegion(features, defaults);
     }
+  }
+
+  private static Sites createSiteList(List<Feature> features, CalcConfig defaults) {
+    List<Site> sites = features.stream()
+        .map(feature -> Site.fromGeoJson(feature, defaults))
+        .collect(ImmutableList.toImmutableList());
+    return new ListIterable(sites);
   }
 
   /**
@@ -246,7 +252,7 @@ public abstract class Sites implements Iterable<Site> {
    * init Iterable; however this would probably necessitate passing in a list of
    * dummy sites, the values of which could be overridden by the data provider
    */
-  
+
   private static final class ListIterable extends Sites {
     final List<Site> delegate;
 
@@ -330,83 +336,49 @@ public abstract class Sites implements Iterable<Site> {
     }
   }
 
-  /**
-   * Convert a {@code List} of {@link Feature}s with a {@code Point} 
-   *    {@code Geometry} to {@code Sites}.
-   *    
-   * @param features The {@code List<Feature>}
-   * @param defaults The {@code CalcConfig}
-   * @return {@code Sites}
-   */
-  private static Sites getGeoJsonSiteList(List<Feature> features, CalcConfig defaults) {
-    List<Site> sites = features.stream()
-        .map(feature -> Site.getGeoJsonSite(feature, defaults))
-        .collect(Collectors.toList());
-
-    return new ListIterable(ImmutableList.copyOf(sites));
-  }
-
-  /**
-   * Convert a {@code List} of {@link Feature}s with a {@code Polygon}
-   *    {@code Geometry} to {@code Sites}.
-   *    
-   * @param features The {@code List<Feature>}
-   * @param defaults The {@code CalcConfig}
-   * @return {@code Sites}
-   */
-  private static Sites getGeoJsonSiteRegion(List<Feature> features, CalcConfig defaults) {
+  private static Sites createSiteRegion(List<Feature> features, CalcConfig defaults) {
     checkState(features.size() <= 2, "Only 2 polygon features may be defined");
+
     Optional<Bounds> mapBounds = Optional.empty();
     String boundsName = "";
-    
-    Feature extentsFeature = features.stream()
-        .filter(feature -> Feature.Value.EXTENTS.equals(feature.getId()))
-        .findFirst()
-        .orElse(null);
 
-    if (extentsFeature != null) {
-      Polygon extentsPolygon = extentsFeature.getGeometry().asPolygon();
-      mapBounds = Optional.of(validateExtents(extentsPolygon.getBorder()).bounds());
-      boundsName = readName(extentsFeature.getProperties(), "Map Extents"); 
-    } else {
-      checkState(features.size() != 2, "Expected \"id\" : \"Extents\"");
+    /* Possibly set map extents. */
+    int mapRegionIndex = 0;
+    if (features.size() > 1) {
+      mapRegionIndex = 1;
+      Feature mapPoly = features.get(0);
+      LocationList mapPolyBorder = mapPoly.asPolygonBorder();
+      mapBounds = Optional.of(validateExtents(mapPolyBorder).bounds());
+      boundsName = readName(mapPoly.properties(), "Map Extents");
     }
-        
-    Feature sitesFeature = features.stream()
-        .filter(feature -> !Feature.Value.EXTENTS.equals(feature.getId()))
-        .findFirst()
-        .orElse(null);
-    
-    Polygon sitesPolygon = sitesFeature.getGeometry().asPolygon();
-    LocationList border = sitesPolygon.getBorder();
-    
-    Properties properties = sitesFeature.getProperties();
-    String mapName = readName(properties, "Unamed Map"); 
-      
+
+    Feature sitesPoly = features.get(mapRegionIndex);
+    LocationList sitesPolyBorder = sitesPoly.asPolygonBorder();
+    Properties properties = sitesPoly.properties();
+    String mapName = readName(properties, "Unnamed Map");
+
     /*
-     * We special case a 5-coordinate border that defines a mercator recangle
-     * so as to create a region that includes sites on the north and east
-     * borders.
+     * We special case a 5-coordinate border that defines a mercator recangle so
+     * as to create a region that includes sites on the north and east borders.
      */
 
     Region calcRegion = null;
     try {
-      Bounds b = validateExtents(border).bounds();
+      Bounds b = validateExtents(sitesPolyBorder).bounds();
       calcRegion = Regions.createRectangular(mapName, b.min(), b.max());
     } catch (IllegalArgumentException iae) {
-      calcRegion = Regions.create(mapName, border, MERCATOR_LINEAR);
-      calcRegion = sitesPolygon.toRegion(mapName);
+      calcRegion = Regions.create(mapName, sitesPolyBorder, MERCATOR_LINEAR);
     }
 
     checkState(
-        properties.hasProperty("spacing"),
-        "A \"spacing\" : value (in degrees) must be defined in \"properties\"");
-    double spacing = properties.getDoubleProperty("spacing");
+        properties.containsKey("spacing"),
+        "Polygon is missing required \"spacing\" property");
+    double spacing = properties.getDouble("spacing");
 
-    // builder used to create all sites when iterating over region
-    Builder builder = Site.builder(defaults);
-    Site.setSiteProperties(builder, properties);
-    
+    /* Builder used to create all sites when iterating over region. */
+    Builder builder = Site.builder(defaults)
+        .geoJsonProperties(properties);
+
     Region mapRegion = calcRegion;
     if (mapBounds.isPresent()) {
       Bounds b = mapBounds.get();
@@ -421,19 +393,27 @@ public abstract class Sites implements Iterable<Site> {
 
     return new RegionIterable(region, builder, mapBounds);
   }
-  
-  private static String readName(Properties properties, String defaultName) {
-    return properties.hasProperty(Properties.Key.TITLE)
-        ? properties.getStringProperty(Properties.Key.TITLE) : defaultName;
+
+  private static String readName(Properties props, String defaultName) {
+    return props.containsKey(Style.TITLE) ? props.getString(Style.TITLE) : defaultName;
   }
 
-  private static LocationList validateExtents(LocationList locs) {
-    checkArgument(locs.size() == 5,
-        "Extents polygon must contain 5 coordinates:%s", locs);
-    Location p1 = locs.get(0);
-    Location p2 = locs.get(1);
-    Location p3 = locs.get(2);
-    Location p4 = locs.get(3);
+  private static LocationList validateExtents(LocationList locations) {
+    // TODO is this a linearRing check?? answer: sort of; need 3-pt check
+    // TODO should/could add winding check
+    // TODO also need check for
+
+    /* Recangular linear ring check. */
+    checkArgument(
+        locations.size() == 5,
+        "Extents polygon must contain 5 coordinates: %s",
+        locations);
+
+    /* Order agnostic rectilinear lat-lon check. */
+    Location p1 = locations.get(0);
+    Location p2 = locations.get(1);
+    Location p3 = locations.get(2);
+    Location p4 = locations.get(3);
     boolean rectangular = (p1.latRad() == p2.latRad())
         ? (p3.latRad() == p4.latRad() &&
             p1.lonRad() == p4.lonRad() &&
@@ -442,9 +422,12 @@ public abstract class Sites implements Iterable<Site> {
             p2.latRad() == p3.latRad() &&
             p1.lonRad() == p2.lonRad() &&
             p3.lonRad() == p4.lonRad());
-    checkArgument(rectangular,
-        "Extents polygon does not define a lat-lon Mercator rectangle:%s", locs);
-    return locs;
+    checkArgument(
+        rectangular,
+        "Extents polygon does not define a lat-lon Mercator rectangle: %s",
+        locations);
+
+    return locations;
   }
 
 }

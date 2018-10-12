@@ -5,8 +5,8 @@ Dependent libraries managed by the [Gradle](https://gradle.org) build tool are d
 #### Runtime language and libraries:
 
 - [Java 8](http://www.oracle.com/technetwork/java/javase/terms/license)
-- [Google Guava 23.0](https://github.com/google/guava/blob/master/COPYING)
-- [Google Gson 2.8.1](https://github.com/google/gson/blob/master/LICENSE)
+- [Google Guava 26.0](https://github.com/google/guava/blob/master/COPYING)
+- [Google Gson 2.8.5](https://github.com/google/gson/blob/master/LICENSE)
 
 #### Build tools and libraries:
 

@@ -78,7 +78,7 @@ public abstract class GmmTest {
         }
       }
     }
-    Path out = Paths.get("tmp/Gmm-tests/", resultsFileName);
+    Path out = Paths.get("tmp/gmm-tests/", resultsFileName);
     Files.write(out, lines, StandardCharsets.UTF_8);
   }
 

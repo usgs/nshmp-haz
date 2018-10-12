@@ -1,35 +1,37 @@
 package gov.usgs.earthquake.nshmp.geo.json;
 
-import java.util.List;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Map;
 
-import com.google.gson.JsonElement;
+import com.google.common.collect.ImmutableMap;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
-
-import static com.google.common.base.Preconditions.checkState;
+import gov.usgs.earthquake.nshmp.geo.json.GeoJson.Type;
 
 /**
- * Create a GeoJson {@code Feature} with a {@link Geometry} and
- *    {@link Properties}. 
+ * A GeoJSON feature.
  * 
+ * <p>This class provides factory methods to create single-use GeoJSON feature
+ * builders for different geometries.
+ * 
+ * <p>See {@link GeoJson} for examples.
+ * 
+ * @author Peter Powers
  * @author Brandon Clayton
  */
-public class Feature implements GeoJson {
-  /** The {@link GeoJsonType} of GeoJson object: Feature */
-  private final String type;
-  /** An {@code Optional} id field */
-  private JsonElement id;
-  /** {@code Feature} bounding box */
-  private double[] bbox;
-  /** The {@link Geometry} */
-  private Geometry geometry;
-  /** The {@link Properties} */
-  private Map<String, JsonElement> properties;
+@SuppressWarnings("unused")
+public class Feature {
+
+  private final GeoJson.Type type = GeoJson.Type.FEATURE;
+  private final Object id;
+  private final double[] bbox;
+  private final Geometry<?> geometry;
+  private final Map<String, Object> properties;
 
   private Feature(Builder builder) {
-    this.type = GeoJsonType.FEATURE.toUpperCamelCase();
     this.id = builder.id;
     this.bbox = builder.bbox;
     this.geometry = builder.geometry;
@@ -37,291 +39,181 @@ public class Feature implements GeoJson {
   }
 
   /**
-   * Return a {@code double[]} representing the bounding
-   *    box for the {@code Feature}. 
-   * <br>
+   * Create a single-use point feature builder.
    * 
-   * If not bounding box was set, returns {@code null}.
-   * @return The bounding box.
+   * @param location of point
    */
-  public double[] getBbox() {
-    return bbox != null ? bbox : null;
+  public static Builder point(Location location) {
+    return new Builder(Geometry.point(checkNotNull(location)));
   }
 
   /**
-   * Return the {@link Geometry}.
-   * <br>
+   * Create a single-use line string feature builder.
    * 
-   * It is best to get the specific {@code Geometry} by using:
-   *    <ul>
-   *      <li> {@link Geometry#asMultiPolygon()} </li>
-   *      <li> {@link Geometry#asPoint()} </li>
-   *      <li> {@link Geometry#asPolygon()} </li>
-   *    </ul> 
-   * 
-   * Example:
-   * <pre>
-   *  Feature feature = Feature.createPoint(Properties, 40, -120);
-   *  
-   *  Point pointGeom = feature.getGeometry().asPoint();
-   * </pre>
-   * 
-   * @return The {@code Geometry}.
+   * @param line locations
    */
-  public Geometry getGeometry() {
-    return geometry;
-  }
- 
-  /**
-   * Return the {@code Optional} {@code Feature} id field as a {@code String}.
-   * @return The {@code Feature} id.
-   */
-  public String getId() {
-    return id != null ? id.getAsString() : null;
-  }
-  
-  /**
-   * Return the {@code Optional} {@code Feature} id field as an {@code int}.
-   * @return The {@code Feature} id.
-   */
-  public int getNumericId() {
-    return id != null ? id.getAsInt() : null;
-  }
-  
-  /**
-   * Return a {@link Properties} object.
-   * @return The {@code Properties}
-   */
-  public Properties getProperties() {
-    return Properties.builder().putAll(properties).build();
-  }
- 
-  @Override
-  /**
-   * Return the {@link GeoJsonType} representing the {@code Feature}.
-   * @return The {@code GeoJsonType}.
-   */
-  public GeoJsonType getType() {
-    return GeoJsonType.getEnum(type);
-  }
- 
-  @Override
-  /**
-   * Return a {@code String} in JSON format.
-   */
-  public String toJsonString() {
-    return JsonUtil.cleanPoly(JsonUtil.GSON.toJson(this, Feature.class));
-  }
-  
-  /**
-   * {@code Feature} values.
-   * @author Brandon Clayton
-   */
-  public static class Value {
-    public static final String EXTENTS = "Extents";
+  public static Builder lineString(LocationList line) {
+    return new Builder(Geometry.lineString(checkNotNull(line)));
   }
 
   /**
-   * Return a new instance of {@link Builder}.
-   * @return New {@code Builder}.
-   */
-  public static Builder builder() {
-    return new Builder();
-  }
-  
-  /**
-   * Build a {@code Feature} with a {@link Geometry},
-   *    {@link Properties}, an {@code Optional} id, and 
-   *    and {@code Optional} bounding box.
-   * <br><br>
-   *    
-   * Example:
-   * <pre>
-   *  // Build properties 
-   *  Properties properties = Properties.builder()
-   *      .title("Golden")
-   *      .id("golden")
-   *      .build();
-   *       
-   *  // Build a Feature
-   *  Feature feature = Feature.builder()
-   *      .addPoint(39.75, -105)
-   *      .properties(properties)
-   *      .build();
+   * Create a single-use polygon feature builder.
    * 
-   * </pre>
-   * @author Brandon Clayton
+   * @param exterior linear ring boundary of polygon
+   * @param interiors optional interior linear rings
+   */
+  public static Builder polygon(LocationList exterior, LocationList... interiors) {
+    return new Builder(Geometry.polygon(checkNotNull(exterior), interiors));
+  }
+
+  /**
+   * The 'id' of this feature as a string.
+   */
+  public String idString() {
+    return (String) id;
+  }
+
+  /**
+   * The 'id' of this feature as an integer.
+   */
+  public int idInt() {
+    return ((Double) id).intValue();
+  }
+
+  /**
+   * The bounding box value array; may be {@code null}.
+   */
+  public double[] bbox() {
+    return bbox;
+  }
+
+  /**
+   * Get the property map associated with this feature as a {@code Properties}
+   * helper object. May be null or empty.
+   */
+  public Properties properties() {
+    return new Properties(this.properties);
+  }
+
+  /**
+   * The GeoJSON geometry type of this feature, one of:
+   * {@code [POINT, LINE_STRING, POLYGON]}.
+   * 
+   * @see Type
+   */
+  public Type type() {
+    return geometry.type;
+  }
+
+  /**
+   * Return the geometry of this feature as a point.
+   * 
+   * @throws UnsupportedOperationException if feature is not a point.
+   */
+  public Location asPoint() {
+    return geometry.toPoint();
+  }
+
+  /**
+   * Return the geometry of this feature as a line string.
+   * 
+   * @throws UnsupportedOperationException if feature is not a line string.
+   */
+  public LocationList asLineString() {
+    return geometry.toLineString();
+  }
+
+  /**
+   * Return the border of this polygon feature.
+   * 
+   * @throws UnsupportedOperationException if feature is not a polygon.
+   */
+  public LocationList asPolygonBorder() {
+    /*
+     * TODO need to handle interiors; the method below is temporary before
+     * implementing to Region conversions
+     */
+    return geometry.toPolygonBorder();
+  }
+
+  /**
+   * A single-use feature builder. Repeat calls to builder methods overwrite
+   * previous calls; reusing feature instances is not recommended.
    */
   public static class Builder {
+
+    /*
+     * Developer notes: 'properties' is always required in the GeoJSON spec and
+     * is therefore initialized with an empty map that may be replaced later.
+     * Although the properties field can be serialized as null, we're generally
+     * not serializing nulls so an empty map is a better solution.
+     */
+
+    private Object id;
     private double[] bbox;
-    private JsonElement id; 
-    private Geometry geometry;
-    private Map<String, JsonElement> properties;
-  
-    private Builder() {}
-   
-    /**
-     * Return a new {@code Feature}.
-     * @return The {@code Feature}.
-     */
-    public Feature build() {
-      checkState(geometry != null, "Geometry must be set");
-      checkState(properties != null, "Properties must be set");
-      return new Feature(this);
-    }
-   
-    /**
-     * Set the {@code Feature} {@code Geometry}. 
-     * @param geometry The {@code Geometry}.
-     * @return The {@code Builder}.
-     */
-    public Builder addGeometry(Geometry geometry) {
+    private Geometry<?> geometry;
+    private Map<String, Object> properties;// = ImmutableMap.of();
+
+    private boolean built = false;
+
+    private Builder(Geometry<?> geometry) {
       this.geometry = geometry;
+    }
+
+    /**
+     * Set the optional {@code id} field of this feature as an integer.
+     * 
+     * @param id to set
+     * @return this feature
+     */
+    public Builder id(int id) {
+      this.id = id;
       return this;
     }
 
     /**
-     * Set the {@code Feature} {@code Geometry} with a {@code MultiPolygon}. 
-     * @param multiPolygon The {@code MultiPolygon}.
-     * @return The {@code Builder}.
+     * Set the optional {@code id} field of this feature as a string.
+     * 
+     * @param id to set
+     * @return this builder
      */
-    public Builder addMultiPolygon(MultiPolygon multiPolygon) {
-      checkGeometry();
-      geometry = multiPolygon;
+    public Builder id(String id) {
+      this.id = id;
       return this;
     }
-    
+
     /**
-     * Set the {@code Feature} {@code Geometry} with a {@code MultiPolygon}. 
-     * @param polygons The {@code List<Polygon>}. 
-     * @return The {@code Builder}.
-     */
-    public Builder addMultiPolygon(List<Polygon> polygons) {
-      checkGeometry();
-      MultiPolygon.Builder multiPolygon = MultiPolygon.builder();
-      polygons.stream().forEach(polygon -> multiPolygon.addPolygon(polygon));
-      geometry = multiPolygon.build();
-      return this;
-    }
-    
-    /**
-     * Set the {@code Feature} {@code Geometry} with a {@code Point}. 
-     * @param point The {@code Point}. 
-     * @return The {@code Builder}.
-     */
-    public Builder addPoint(Point point) {
-      checkGeometry();
-      geometry = point;
-      return this;
-    }
-    
-    /**
-     * Set the {@code Feature} {@code Geometry} with a {@code Point}. 
-     * @param loc The {@code Location} for the {@code Point}. 
-     * @return The {@code Builder}.
-     */
-    public Builder addPoint(Location loc) {
-      checkGeometry();
-      geometry = new Point(loc);
-      return this;
-    }
-    
-    /**
-     * Set the {@code Feature} {@code Geometry} with a {@code Point}. 
-     * @param latitude The latitude of the {@code Point}. 
-     * @param longitude The longitude of the {@code Point}. 
-     * @return The {@code Builder}.
-     */
-    public Builder addPoint(double latitude, double longitude) {
-      checkGeometry();
-      geometry = new Point(latitude, longitude);
-      return this;
-    }
-    
-    /**
-     * Set the {@code Feature} {@code Geometry} with a {@code Polygon}. 
-     * @param polygon The {@code Polygon}. 
-     * @return The {@code Builder}.
-     */
-    public Builder addPolygon(Polygon polygon) {
-      checkGeometry();
-      geometry = polygon;
-      return this;
-    }
-    
-    /**
-     * Set the {@code Feature} {@code Geometry} with a {@code Polygon}. 
-     * @param border The {@code Polygon} border.
-     * @param interiors The {@code Polygon} interiors.
-     * @return The {@code Builder}.
-     */
-    public Builder addPolygon(LocationList border, LocationList... interiors) {
-      checkGeometry();
-      geometry = new Polygon(border, interiors); 
-      return this;
-    }
-   
-    /**
-     * Set the {@code Feature} bounding box.
-     * <br>
-     * This is an optional field and does not need set.
-     * @param bbox The bounding box.
-     * @return The {@code Builder}.
+     * Set the optional {@code bbox} (bounding box) field of this feature. See
+     * the GeoJSON <a href="http://geojson.org" target="_top">specification</a
+     * for details on bounding boxes.
+     * 
+     * @param bbox to set
+     * @return this builder
      */
     public Builder bbox(double[] bbox) {
       this.bbox = bbox;
       return this;
     }
-    
+
     /**
-     * Set the {@code Feature} id;
-     * <br>
-     * This is an optional field and does not need set.
-     * @param id The id.
-     * @return The {@code Builder}.
+     * Set the properties of this feature.
+     * 
+     * @param properties to set
+     * @return this builder
      */
-    public Builder id(int id) {
-      this.id = JsonUtil.GSON.toJsonTree(id, Integer.class);
+    public Builder properties(Map<String, Object> properties) {
+      this.properties = ImmutableMap.copyOf(properties);
       return this;
     }
-    
+
     /**
-     * Set the {@code Feature} id;
-     * <br>
-     * This is an optional field and does not need set.
-     * @param id The id.
-     * @return The {@code Builder}.
+     * Reuturn a new GeoJSON feature.
      */
-    public Builder id(JsonElement id) {
-      this.id = id;
-      return this;
-    }
-    
-    /**
-     * Set the {@code Feature} id;
-     * <br>
-     * This is an optional field and does not need set.
-     * @param id The id.
-     * @return The {@code Builder}.
-     */
-    public Builder id(String id) {
-      this.id = JsonUtil.GSON.toJsonTree(id, String.class);
-      return this;
-    }
-   
-    /**
-     * Set the {@code Feature} {@link Properties}.
-     * @param properties The {@code Properties}.
-     * @return The {@code Builder}.
-     */
-    public Builder properties(Properties properties) {
-      this.properties = properties.getProperties();
-      return this;
-    }
-    
-    private void checkGeometry() {
-      checkState(geometry == null, "Geometry already set");
+    public Feature build() {
+      checkState(!built, "This builder has already been used");
+      built = true;
+      return new Feature(this);
     }
   }
- 
+
 }

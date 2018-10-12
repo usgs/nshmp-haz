@@ -71,7 +71,6 @@ test {
     includeTestsMatching "gov.usgs.earthquake.nshmp.data.*"
     includeTestsMatching "gov.usgs.earthquake.nshmp.geo.*"
     includeTestsMatching "gov.usgs.earthquake.nshmp.gmm.*"
-//    includeTestsMatching "gov.usgs.earthquake.nshmp.json.*"
   }
 }
 
@@ -103,6 +102,7 @@ javadoc {
   exclude 'gov/usgs/earthquake/nshmp/etc/**'
   exclude 'gov/usgs/earthquake/nshmp/gcim/**'
   exclude 'gov/usgs/earthquake/nshmp/internal/**'
+  exclude '**/Scratch*'
   doLast {
     if (docOut) {
       delete docOut
