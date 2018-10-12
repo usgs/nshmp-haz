@@ -173,11 +173,11 @@ public final class Properties {
    * some rendering environments. The description for each identifier indicates
    * the expected value type when adding style-keyed properties.
    * 
-   * <p><a name="color-rules" />Color rules: <ul> <li>Colors can be in short
-   * form: {@code "#ace"} <li>Or long form: {@code "#aaccee"} <li>With or
-   * without the prefix: {@code #} <li>Colors are interpreted the same as in
-   * CSS... <li>In either {@code #RRGGBB} or {@code #RGB} order <li>Other color
-   * formats or named colors are not supported </ul>
+   * <p><a name="color-rules"/><b>Color rules:</b><ul><li>Colors can be in short
+   * form: {@code "#ace"}<li>Or long form: {@code "#aaccee"}<li>With or without
+   * the prefix: {@code #}<li>Colors are interpreted the same as in CSS...<li>In
+   * either {@code #RRGGBB} or {@code #RGB} order<li>Other color formats or
+   * named colors are not supported</ul>
    */
   public enum Style {
 
@@ -236,10 +236,9 @@ public final class Properties {
     private static final Converter<Style, String> STRING_CONVERTER =
         Util.enumStringConverter(Style.class, CaseFormat.LOWER_HYPHEN);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Enum#toString()
+    /**
+     * Returns the {@link #name()} of this identifier converted to
+     * {@link CaseFormat#LOWER_HYPHEN}.
      */
     @Override
     public String toString() {
