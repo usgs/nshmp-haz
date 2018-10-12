@@ -36,8 +36,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
@@ -54,11 +52,6 @@ import gov.usgs.earthquake.nshmp.util.NamedLocation;
  * @author Peter Powers
  */
 final class NshmpSiteFiles {
-
-  private static final Gson GSON = new GsonBuilder()
-      .setPrettyPrinting()
-      .disableHtmlEscaping()
-      .create();
 
   private static final Path EXPORT_DIR = Paths.get("etc", "nshm");
   private static final String EXTENTS_COLOR = "#AA0078";

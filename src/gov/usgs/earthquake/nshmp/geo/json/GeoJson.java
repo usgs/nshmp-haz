@@ -120,6 +120,7 @@ public final class GeoJson {
           GeoJson.Type.class,
           new Util.Serializer<>(GeoJson.Type.converter()))
       .setPrettyPrinting()
+      .disableHtmlEscaping()
       .create();
 
   /**

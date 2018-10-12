@@ -19,7 +19,7 @@
       "properties": {
         "fill": "#AA0078",
         "marker-color": "#AA0078",
-        "title": "NSHMP Central \u0026 Eastern US Map Extents"
+        "title": "NSHMP Central & Eastern US Map Extents"
       }
     },
     {
@@ -109,7 +109,7 @@
       },
       "properties": {
         "spacing": 0.1,
-        "title": "NSHMP Central \u0026 Eastern US"
+        "title": "NSHMP Central & Eastern US"
       }
     }
   ]
