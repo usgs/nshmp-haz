@@ -36,8 +36,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * for shallow crustal earthquakes, Earthquake Spectra, v. 30, n. 3, p.
  * 1057-1085.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070113EQS184M">
- * 10.1193/070113EQS184M</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070113EQS184M"
+ * target="_top">10.1193/070113EQS184M</a>
  *
  * <p><b>Component:</b> RotD50 (average horizontal)
  *
@@ -218,14 +218,15 @@ public class BooreEtAl_2014 implements GroundMotionModel {
 
   // Calculate delta Z1 in km as a function of vs30 and using the default
   // model of ChiouYoungs_2013 -- Equations 10, 11
-  private static final double calcDeltaZ1(final double z1p0, final double vs30, boolean basinAmpOnly) {
+  private static final double calcDeltaZ1(final double z1p0, final double vs30,
+      boolean basinAmpOnly) {
     if (Double.isNaN(z1p0)) {
       return 0.0;
     }
-    
+
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.15 / 4.0 * log((vsPow4 + A) / B)) / 1000.0;
-    
+
     if (basinAmpOnly && z1p0 <= z1ref) {
       return 0.0;
     }
@@ -265,11 +266,11 @@ public class BooreEtAl_2014 implements GroundMotionModel {
 
   static final class BasinAmp extends BooreEtAl_2014 {
     static final String NAME = BooreEtAl_2014.NAME + " : Basin Amp";
-    
+
     BasinAmp(Imt imt) {
       super(imt);
     }
-    
+
     @Override
     boolean basinAmpOnly() {
       return true;

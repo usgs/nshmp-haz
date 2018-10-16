@@ -29,7 +29,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
 /**
  * Implementation of the Chiou & Youngs (2014) next generation attenuation
  * relationship for active crustal regions developed as part of <a
- * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
+ * href="http://peer.berkeley.edu/ngawest2" target="_top">NGA West II</a>.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -42,8 +42,8 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * ground motion and response spectra, Earthquake Spectra, v. 30, n. 3, p.
  * 1117-1153.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/072813EQS219M">
- * 10.1193/072813EQS219M</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/072813EQS219M"
+ * target="_top"> 10.1193/072813EQS219M</a>
  *
  * <p><b>Component:</b> RotD50 (average horizontal)
  *
@@ -249,7 +249,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
   // -- Equation 1
   private static final double calcDeltaZ1(final double z1p0, final double vs30,
       boolean basinAmpOnly) {
-    
+
     if (Double.isNaN(z1p0)) {
       return 0.0;
     }

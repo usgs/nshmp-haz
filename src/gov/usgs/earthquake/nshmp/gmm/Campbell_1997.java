@@ -24,8 +24,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 /**
  * Implementation of the Campbell (1997) ground motion model for worldwide
  * earthquakes in active tectonic regions. In keeping with prior NSHMP
- * implementations of this older model, only soft rock sites are supported
- * (V𝗌30 = 760 m/s).
+ * implementations of this older model, only soft rock sites are supported (Vs30
+ * = 760 m/s).
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -36,12 +36,13 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * acceleration, peak ground velocity, and pseudo-absolute acceleration response
  * spectra, Seismological Research Letters, v. 68, n. 1, pp. 154-179.
  * 
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.154">
- * 10.1785/gssrl.68.1.154</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.154"
+ * target="_top">10.1785/gssrl.68.1.154</a>
  * 
- * <p><b>Errata doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.71.3.352">
- * 10.1785/gssrl.71.3.352</a> and <a
- * href="http://dx.doi.org/10.1785/gssrl.72.4.474"> 10.1785/gssrl.72.4.474</a>
+ * <p><b>Errata doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.71.3.352"
+ * target="_top">10.1785/gssrl.71.3.352</a> and <a
+ * href="http://dx.doi.org/10.1785/gssrl.72.4.474" target="_top">
+ * 10.1785/gssrl.72.4.474</a>
  *
  * <p><b>Component:</b> geometric mean of two horizontal
  *

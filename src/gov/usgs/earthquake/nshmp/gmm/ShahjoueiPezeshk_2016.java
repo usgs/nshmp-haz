@@ -32,7 +32,7 @@ import gov.usgs.earthquake.nshmp.gmm.NgaEastUsgs_2017.SiteAmp;
  * simulations and NGA-West2 models: Bulletin of the Seismological Society of
  * America, v. 106, no. 2, pp. 734–754.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120140367">
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120140367" target="_top">
  * 10.1785/0120140367</a>
  *
  * <p><b>Component:</b> average horizontal (RotD50)

@@ -19,8 +19,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 /**
  * Implementation of the Abrahamson & Silva (1997) ground motion model for
  * shallow earthquakes in active continental crust. In keeping with prior NSHMP
- * implementations of this older model, only soft rock sites are supported
- * (V𝗌30 = 760 m/s).
+ * implementations of this older model, only soft rock sites are supported (Vs30
+ * = 760 m/s).
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -30,8 +30,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * response spectral attenuation relations for shallow crustal earthquakes:
  * Seismological Research Letters, v. 68, n. 1, p. 94-127.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.94">
- * 10.1785/gssrl.68.1.94</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.94"
+ * target="_top">10.1785/gssrl.68.1.94</a>
  *
  * <p><b>Component:</b> average horizontal
  *

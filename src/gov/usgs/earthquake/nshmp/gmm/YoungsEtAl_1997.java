@@ -40,8 +40,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * J.R., 1997, Strong ground motion ground motion models for subduction zone
  * earthquakes: Seismological Research Letters, v. 68, p. 58-73.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.58">
- * 10.1785/gssrl.68.1.58</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.58"
+ * target="_top"> 10.1785/gssrl.68.1.58</a>
  *
  * <p><b>Component:</b> Geometric mean of two horizontal components
  *

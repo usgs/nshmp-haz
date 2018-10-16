@@ -41,7 +41,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
  * ground-motion prediction equations for eastern North America: Bulletin of the
  * Seismological Society of America, v. 96, p. 2181–2205.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050245">
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050245" target="_top">
  * 10.1785/0120050245</a>
  *
  * <p><b>Component:</b> horizontal (not clear from publication)

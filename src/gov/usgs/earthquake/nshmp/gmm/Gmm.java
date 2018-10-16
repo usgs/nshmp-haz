@@ -253,7 +253,36 @@ public enum Gmm {
       AtkinsonMacias_2009.COEFFS,
       AtkinsonMacias_2009.CONSTRAINTS),
 
+  /** @see AbrahamsonEtAl_2016 */
+  AGA_16_INTERFACE(
+      AbrahamsonEtAl_2016.Interface.class,
+      AbrahamsonEtAl_2016.Interface.NAME,
+      AbrahamsonEtAl_2016.COEFFS,
+      AbrahamsonEtAl_2016.CONSTRAINTS),
+
+  /** @see AbrahamsonEtAl_2016 */
+  AGA_16_SLAB(
+      AbrahamsonEtAl_2016.Slab.class,
+      AbrahamsonEtAl_2016.Slab.NAME,
+      AbrahamsonEtAl_2016.COEFFS,
+      AbrahamsonEtAl_2016.CONSTRAINTS),
+
+  /** @see AbrahamsonEtAl_2016 */
+  AGA_16_INTERFACE_BASIN_AMP(
+      AbrahamsonEtAl_2016.BasinInterface.class,
+      AbrahamsonEtAl_2016.BasinInterface.NAME,
+      AbrahamsonEtAl_2016.COEFFS,
+      AbrahamsonEtAl_2016.CONSTRAINTS),
+
+  /** @see AbrahamsonEtAl_2016 */
+  AGA_16_SLAB_BASIN_AMP(
+      AbrahamsonEtAl_2016.BasinSlab.class,
+      AbrahamsonEtAl_2016.BasinSlab.NAME,
+      AbrahamsonEtAl_2016.COEFFS,
+      AbrahamsonEtAl_2016.CONSTRAINTS),
+
   /** @see BcHydro_2012 */
+  @Deprecated
   BCHYDRO_12_INTERFACE(
       BcHydro_2012.Interface.class,
       BcHydro_2012.Interface.NAME,
@@ -261,6 +290,7 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
+  @Deprecated
   BCHYDRO_12_SLAB(
       BcHydro_2012.Slab.class,
       BcHydro_2012.Slab.NAME,
@@ -268,6 +298,7 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
+  @Deprecated
   BCHYDRO_12_INTERFACE_BASIN_AMP(
       BcHydro_2012.BasinInterface.class,
       BcHydro_2012.BasinInterface.NAME,
@@ -275,6 +306,7 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
+  @Deprecated
   BCHYDRO_12_SLAB_BASIN_AMP(
       BcHydro_2012.BasinSlab.class,
       BcHydro_2012.BasinSlab.NAME,
@@ -950,7 +982,7 @@ public enum Gmm {
       CombinedGmm.Wus2014_4p1.NAME,
       CombinedGmm.Wus2014_4p1.COEFFS,
       CombinedGmm.Wus2014_4p1.CONSTRAINTS),
-  
+
   /**
    * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
    * NGA-West2 and does not include Idriss.
@@ -1168,6 +1200,7 @@ public enum Gmm {
         ImmutableList.of(
             AM_09_INTERFACE_BASIN_AMP,
             BCHYDRO_12_INTERFACE_BASIN_AMP,
+            AGA_16_INTERFACE_BASIN_AMP,
             ZHAO_06_INTERFACE_BASIN_AMP)),
 
     WUS_14_SLAB(
@@ -1182,6 +1215,7 @@ public enum Gmm {
         "2018 Subduction Intraslab (WUS) beta",
         ImmutableList.of(
             BCHYDRO_12_SLAB_BASIN_AMP,
+            AGA_16_SLAB_BASIN_AMP,
             ZHAO_06_SLAB_BASIN_AMP)),
 
     CEUS_08_STABLE_CRUST(

@@ -30,7 +30,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * to induced-seismicity hazards: Bulletin of the Seismological Society of
  * America, v. 105, p. 981-992.
  *
- * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120140142">
+ * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120140142" target="_top">
  * 10.1785/0120140142</a>
  *
  * <p><b>Component:</b> orientation-independent horizontal

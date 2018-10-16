@@ -27,7 +27,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * Dober, M., 2015, A ground motion prediction model for deep earthquakes
  * beneath the island of Hawaii: Earthquake Spectra, v. 31, p. 1763–1788.
  * 
- * <p><b>doi:</b><a href="http://doi.org/10.1193/012012EQS015M">
+ * <p><b>doi:</b><a href="http://doi.org/10.1193/012012EQS015M" target="_top">
  * 10.1193/012012EQS015M</a>
  *
  * <p><b>Component:</b> average horizontal

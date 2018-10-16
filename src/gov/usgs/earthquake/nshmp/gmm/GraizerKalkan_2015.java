@@ -33,13 +33,15 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * <li>Graizer, V., and E. Kalkan, 2015, Update of the Graizer–Kalkan
  * ground-motion prediction equations for shallow crustal continental
  * earthquakes: U.S. Geol. Surv. Open-File Report 2015-1009. <b>doi:</b> <a
- * href="http://dx.doi.org/10.3133/ofr20151009">10.3133/ofr20151009</a></li>
+ * href="http://dx.doi.org/10.3133/ofr20151009"
+ * target="_top">10.3133/ofr20151009</a></li>
  * 
  * <li>Graizer, V., and E. Kalkan, 2016, Summary of the GK15 ground-motion
  * prediction equation for horizontal PGA and 5% damped PSA from shallow crustal
  * continental earthquakes: Bulletin of the Seismological Society of America, v.
  * 106, n. 2, p. 687-707. <b>doi:</b> <a
- * href="http://dx.doi.org/10.1785/0120150194"> 10.1785/0120150194</a></li>
+ * href="http://dx.doi.org/10.1785/0120150194"
+ * target="_top">10.1785/0120150194</a></li>
  * 
  * </ul>
  * 

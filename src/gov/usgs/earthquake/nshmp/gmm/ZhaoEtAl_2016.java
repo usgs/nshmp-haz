@@ -49,23 +49,23 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * 2016, Ground-motion prediction equations for subduction interface earthquakes
  * in Japan using site class and simple geometric attenuation functions:
  * Bulletin of the Seismological Society of America, v. 106, p.
- * 1518-1534.<b>doi:</b> <a
- * href="http://dx.doi.org/10.1785/0120150034">10.1785/0120150034</a></li>
+ * 1518-1534.<b>doi:</b> <a href="http://dx.doi.org/10.1785/0120150034"
+ * target="_top">10.1785/0120150034</a></li>
  * 
  * <li>Zhao, J.X., Jiang, F., Shi, P., Xing, H., Huang, H., Hou, R., Zhang, Y.,
  * Yu, P., Lan, X., Rhoades, D.A., Somerville, P.G., Irikura, K., and Fukushima,
  * Y., 2016, Ground-motion prediction equations for subduction slab earthquakes
  * in Japan using site class and simple geometric attenuation functions:
  * Bulletin of the Seismological Society of America, v. 106, p.
- * 1535-1551.<b>doi:</b> <a
- * href="http://dx.doi.org/10.1785/0120150056">10.1785/0120150056</a></li>
+ * 1535-1551.<b>doi:</b> <a href="http://dx.doi.org/10.1785/0120150056"
+ * target="_top">10.1785/0120150056</a></li>
  * 
  * <li>Zhao, J.X., Zhou, S.L., Gao, P.J., Zhang, Y.B., Zhou, J., Lu, M., and
  * Rhoades, D.A., 2016, Ground-motion prediction equations for shallow crustal
  * and upper mantle earthquakes in Japan using site class and simple geometric
  * attenuation functions: Bulletin of the Seismological Society of America, v.
- * 106, p. 1552-1569.<b>doi:</b> <a
- * href="http://dx.doi.org/10.1785/0120150063">10.1785/0120150063</a></li>
+ * 106, p. 1552-1569.<b>doi:</b> <a href="http://dx.doi.org/10.1785/0120150063"
+ * target="_top">10.1785/0120150063</a></li>
  * 
  * </ul>
  *

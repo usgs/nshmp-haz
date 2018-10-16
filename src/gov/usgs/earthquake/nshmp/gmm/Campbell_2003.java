@@ -34,7 +34,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
  * ground-motion (attenuation) relations in eastern North America: Bulletin of
  * the Seismological Society of America, v. 93, p. 1012–1033.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020002">
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020002" target="_top">
  * 10.1785/0120020002</a>
  *
  * <p><b>Component:</b> geometric mean of two horizontal components

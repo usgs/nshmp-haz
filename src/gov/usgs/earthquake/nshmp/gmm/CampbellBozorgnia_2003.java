@@ -21,12 +21,12 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 /**
  * Implementation of the Campbell & Bozorgnia (2003) ground motion model for
  * shallow earthquakes in active continental crust. In keeping with prior NSHMP
- * implementations of this older model, only soft rock sites are supported
- * (V𝗌30 = 760 m/s) following specific guidance by the model authors. Longer
- * periods are also not implemented here due to a dependency on Boore, Joyner &
- * Fumal (1997) whose longest period is 2 sec. This implementation also ignores
- * the author's suggestion to use 'uncorrected' PGA values when computing PGA
- * and uses 'corrected' values for both PGA and spectral acceleration.
+ * implementations of this older model, only soft rock sites are supported (Vs30
+ * = 760 m/s) following specific guidance by the model authors. Longer periods
+ * are also not implemented here due to a dependency on Boore, Joyner & Fumal
+ * (1997) whose longest period is 2 sec. This implementation also ignores the
+ * author's suggestion to use 'uncorrected' PGA values when computing PGA and
+ * uses 'corrected' values for both PGA and spectral acceleration.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -38,11 +38,12 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * spectra: Bulletin of Seismological Society of America, v. 93, n. 1, p.
  * 314-331.
  * 
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020029">
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020029" target="_top">
  * 10.1785/0120020029</a>
  * 
- * <p><b>Errata doi:</b> <a href="http://dx.doi.org/10.1785/0120030143">
- * 10.1785/0120030143</a> and <a href="http://dx.doi.org/10.1785/0120030099">
+ * <p><b>Errata doi:</b> <a href="http://dx.doi.org/10.1785/0120030143"
+ * target="_top">10.1785/0120030143</a> and <a
+ * href="http://dx.doi.org/10.1785/0120030099" target="_top">
  * 10.1785/0120030099</a>
  *
  * <p><b>Component:</b> average horizontal
