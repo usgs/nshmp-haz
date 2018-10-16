@@ -26,9 +26,11 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 /**
  * Abstract implementation of the subduction ground motion model created for BC
  * Hydro, Canada, by Addo, Abrahamson, & Youngs (2012). This implementation
- * matches that used in the USGS NSHM as supplied by N. Abrahamson.
+ * matches that used in the USGS NSHM as supplied by N. Abrahamson at the time
+ * of the 2014 NSHM update for the conterminous U.S. and that subsequently
+ * published in Abrahamson et al. (2016).
  *
- * <p>This model supports both slab and interface type events. In the 2008
+ * <p>This model supports both slab and interface type events. In the 2014
  * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
  * and the 'slab' form is used with gridded 'deep' events in northern California
  * and the Pacific Northwest.
@@ -39,22 +41,29 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  *
  * <p><b>Implementation notes:</b><ul>
  * 
- * <li>Treats all sites as forearc.</li>
+ * <li>Treats all sites as forearc; no backarc term is considered.</li>
  * 
  * <li>'zTop' is interpreted as hypocentral depth and is only used for slab
- * events; it is limited to 125 km, consistent with other subduction
+ * events; it is limited to 120 km, consistent with other subduction
  * models.</li>
  * 
- * <li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for interface
- * events and fixed at -0.3 for slab events.</li>
+ * <li>Only the middle branch of the {@code ΔC1} magnitude-scaling break term
+ * for interface events is considered; the {@code ΔC1} term for slab events is
+ * fixed at -0.3.</li>
  * 
  * <li>Support for spectral period 0.01s is provided using the same coefficients
- * as PGA.</li>
+ * as bounding periods PGA and 0.02s.</li>
  * 
- * <li>Support for spectral periods 0.02s and 0.03s is provided via
- * interpolation of ground motion and sigma of adjacent periods for which there
- * are coefficients.</li></ul>
+ * <li>Support for spectral periods 0.03s is provided via interpolation of
+ * ground motion and sigma of adjacent periods.</li></ul>
  *
+ * <p><b>Reference:</b> Abrahamson, N., Gregor, N., and Addo, K., 2016, BC Hydro
+ * ground motion prediction equations for subduction earthquakes, Earthquake
+ * Spectra, v. 32, n. 1, p. 23-44.
+ * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/051712EQS188MR">
+ * 10.1193/051712EQS188MR</a>
+ * 
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
  * characterization (GMC) model: Report E658, v. 3, November.
@@ -62,15 +71,14 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * <p><b>Component:</b> Geometric mean of two horizontal components
  *
  * @author Peter Powers
- * @see Gmm#BCHYDRO_12_INTERFACE
- * @see Gmm#BCHYDRO_12_SLAB
- * @see Gmm#BCHYDRO_12_INTERFACE_BASIN_AMP
- * @see Gmm#BCHYDRO_12_SLAB_BASIN_AMP
+ * @see Gmm#AGA_16_INTERFACE
+ * @see Gmm#AGA_16_SLAB
+ * @see Gmm#AGA_16_INTERFACE_BASIN_AMP
+ * @see Gmm#AGA_16_SLAB_BASIN_AMP
  */
-@Deprecated
-public abstract class BcHydro_2012 implements GroundMotionModel {
+public abstract class AbrahamsonEtAl_2016 implements GroundMotionModel {
 
-  static final String NAME = "BC Hydro (2012)";
+  static final String NAME = "Abrahamson et al. (2016)";
 
   // TODO will probably want to have constraints per-implementation (e.g. slab
   // vs interface depth limits)
@@ -81,7 +89,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
       .set(VS30, Range.closed(150.0, 1000.0))
       .build();
 
-  static final CoefficientContainer COEFFS = new CoefficientContainer("BCHydro12.csv");
+  static final CoefficientContainer COEFFS = new CoefficientContainer("AGA16.csv");
 
   private static final double C1 = 7.8;
   private static final double T3 = 0.1;
@@ -97,9 +105,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   private static final double VS30_ROCK = 1000.0;
 
   private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
-      ImmutableMap.of(
-          SA0P02, Range.closed(SA0P01, SA0P05),
-          SA0P03, Range.closed(SA0P01, SA0P05)));
+      ImmutableMap.of(SA0P03, Range.closed(SA0P02, SA0P05)));
 
   private static final class Coefficients {
 
@@ -132,7 +138,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   private final boolean interpolated;
   private final GroundMotionModel interpolatedGmm;
 
-  BcHydro_2012(final Imt imt, Gmm subtype) {
+  AbrahamsonEtAl_2016(final Imt imt, Gmm subtype) {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
     cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
@@ -218,11 +224,11 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
    * Gmm.instance and additional sub-subtypes, respectively.
    */
 
-  static class Interface extends BcHydro_2012 {
-    static final String NAME = BcHydro_2012.NAME + " : Interface";
+  static class Interface extends AbrahamsonEtAl_2016 {
+    static final String NAME = AbrahamsonEtAl_2016.NAME + " : Interface";
 
     Interface(Imt imt) {
-      super(imt, Gmm.BCHYDRO_12_INTERFACE);
+      super(imt, Gmm.AGA_16_INTERFACE);
     }
 
     protected Interface(Imt imt, Gmm subtype) {
@@ -244,7 +250,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     static final String NAME = Interface.NAME + " : Basin Amp";
 
     BasinInterface(Imt imt) {
-      super(imt, Gmm.BCHYDRO_12_INTERFACE_BASIN_AMP);
+      super(imt, Gmm.AGA_16_INTERFACE_BASIN_AMP);
     }
 
     @Override
@@ -253,11 +259,11 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
   }
 
-  static class Slab extends BcHydro_2012 {
-    static final String NAME = BcHydro_2012.NAME + " : Slab";
+  static class Slab extends AbrahamsonEtAl_2016 {
+    static final String NAME = AbrahamsonEtAl_2016.NAME + " : Slab";
 
     Slab(Imt imt) {
-      super(imt, Gmm.BCHYDRO_12_SLAB);
+      super(imt, Gmm.AGA_16_SLAB);
     }
 
     Slab(Imt imt, Gmm subtype) {
@@ -279,7 +285,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     static final String NAME = Slab.NAME + " : Basin Amp";
 
     BasinSlab(Imt imt) {
-      super(imt, Gmm.BCHYDRO_12_SLAB);
+      super(imt, Gmm.AGA_16_SLAB);
     }
 
     @Override
