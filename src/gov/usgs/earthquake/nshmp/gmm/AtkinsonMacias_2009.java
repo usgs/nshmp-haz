@@ -57,7 +57,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * motions for great interface earthquakes in the Cascadia subduction zone:
  * Bulletin of the Seismological Society of America, v. 99, p. 1552-1578.
  *
- * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120080147">
+ * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120080147" target="_top">
  * 10.1785/0120080147</a>
  *
  * <p><b>Component:</b> geometric mean of two horizontal components

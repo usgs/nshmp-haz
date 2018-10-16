@@ -30,7 +30,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
 /**
  * Implementation of the Chiou & Youngs (2008) next generation attenuation
  * relationship for active crustal regions developed as part of <a
- * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
+ * href="http://peer.berkeley.edu/ngawest/" target="_top">NGA West I</a>.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -40,7 +40,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * average horizontal component of peak ground motion and response spectra:
  * Earthquake Spectra, v. 24, n. 1, p. 173-215.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/1.2894832">
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/1.2894832" target="_top">
  * 10.1193/1.2894832</a>
  *
  * <p><b>Component:</b> GMRotI50 (geometric mean)

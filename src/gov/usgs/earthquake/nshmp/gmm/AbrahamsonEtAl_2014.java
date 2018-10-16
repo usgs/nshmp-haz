@@ -38,8 +38,8 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * Summary of the ASK14 ground-motion relation for active crustal regions:
  * Earthquake Spectra, v. 30, n. 3, p. 1025-1055.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070913EQS198M">
- * 10.1193/070913EQS198M</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/070913EQS198M"
+ * target="_top">10.1193/070913EQS198M</a>
  *
  * <p><b>Component:</b> RotD50 (average horizontal)
  *

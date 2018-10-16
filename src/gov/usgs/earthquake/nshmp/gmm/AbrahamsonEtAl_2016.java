@@ -58,11 +58,11 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * ground motion and sigma of adjacent periods.</li></ul>
  *
  * <p><b>Reference:</b> Abrahamson, N., Gregor, N., and Addo, K., 2016, BC Hydro
- * ground motion prediction equations for subduction earthquakes, Earthquake
+ * ground motion prediction equations for subduction earthquakes: Earthquake
  * Spectra, v. 32, n. 1, p. 23-44.
  * 
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/051712EQS188MR">
- * 10.1193/051712EQS188MR</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/051712EQS188MR"
+ * target="_top">10.1193/051712EQS188MR</a>
  * 
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion

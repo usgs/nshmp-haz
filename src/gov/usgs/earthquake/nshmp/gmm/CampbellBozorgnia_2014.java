@@ -33,7 +33,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
 /**
  * Implementation of the Campbell & Bozorgnia (2014) next generation ground
  * motion model for active crustal regions developed as part of <a
- * href="http://peer.berkeley.edu/ngawest2">NGA West II</a>.
+ * href="http://peer.berkeley.edu/ngawest2" target="_top">NGA West II</a>.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -44,8 +44,8 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * 5%-damped linear acceleration response spectra: Earthquake Spectra, v. 30, n.
  * 3, p. 1087-1115.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/062913EQS175M">
- * 10.1193/062913EQS175M</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/062913EQS175M"
+ * target="_top">10.1193/062913EQS175M</a>
  *
  * <p><b>Component:</b> RotD50 (average horizontal)
  *

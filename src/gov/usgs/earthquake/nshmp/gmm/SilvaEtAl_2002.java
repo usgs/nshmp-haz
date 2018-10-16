@@ -31,7 +31,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
  * Development of hard rock attenuation relations for central and eastern North
  * America, internal report from Pacific Engineering, November 1, 2002, <a href=
  * "http://www.pacificengineering.org/CEUS/Development%20of%20Regional%20Hard_ABC.pdf"
- * >http://www.pacificengineering.org/CEUS/Development of Regional
+ * target="_top">http://www.pacificengineering.org/CEUS/Development of Regional
  * Hard_ABC.pdf</a>
  *
  * <p><b>Component:</b> average horizontal (not clear from publication)

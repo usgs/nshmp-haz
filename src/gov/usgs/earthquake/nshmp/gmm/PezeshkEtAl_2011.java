@@ -31,7 +31,7 @@ import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
  * NGA models and updated seismological parameters: Bulletin of the
  * Seismological Society of America, v. 101, no. 4, p. 1859–1870.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120100144">
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120100144" target="_top">
  * 10.1785/0120100144</a>
  *
  * <p><b>Component:</b> GMRotI50 (geometric mean)

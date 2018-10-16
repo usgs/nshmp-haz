@@ -37,8 +37,8 @@ import gov.usgs.earthquake.nshmp.data.XySequence;
  * response spectra for shallow crustal earthquakes in active tectonic regions:
  * "Average" horizontal component: Earthquake SPectra, v. 30, n. 2, p. 939-963.
  * 
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/100512EQS298M">
- * 10.1193/100512EQS298M</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/100512EQS298M"
+ * target="_top">10.1193/100512EQS298M</a>
  *
  * @author Peter Powers
  */

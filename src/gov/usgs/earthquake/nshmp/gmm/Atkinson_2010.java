@@ -31,7 +31,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * for Hawaii from a referenced empirical approach: Bulletin of the
  * Seismological Society of America, v. 100, n. 2, p. 751-761.
  *
- * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120090098">
+ * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/0120090098" target="_top">
  * 10.1785/0120090098</a>
  *
  * <p><b>Component:</b> geometric mean of two horizontal components

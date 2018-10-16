@@ -31,7 +31,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 /**
  * Implementation of the Campbell & Bozorgnia (2008) next generation attenuation
  * for active crustal regions relationship developed as part of <a
- * href="http://peer.berkeley.edu/ngawest/">NGA West I</a>.
+ * href="http://peer.berkeley.edu/ngawest/" target="_top">NGA West I</a>.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -42,7 +42,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * Spectra for Periods Ranging from 0.01 to 10 s: Earthquake Spectra, v. 24, n.
  * 1, pp. 139-171.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/1.2857546">
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/1.2857546" target="_top">
  * 10.1193/1.2857546</a>
  *
  * <p><b>Component:</b> GMRotI50 (geometric mean)

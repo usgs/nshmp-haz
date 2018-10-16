@@ -34,15 +34,15 @@ import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
  * attenuation relations for large magnitudes and short distances: Risk
  * Engineering, Inc. <a href=
  * "http://www.ce.memphis.edu/7137/PDFs/attenuations/Toro_2001_(modification_1997).pdf"
- * >Report</a>
+ * target="_top">Report</a>
  *
  * <p><b>Reference:</b> Toro, G.R., Abrahamson, N.A., and Schneider, J.F., 1997,
  * A model of strong ground motions from earthquakes in central and eastern
  * North America: Best estimates and uncertainties: Seismological Research
  * Letters, v. 68, p. 41–57.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.41">
- * 10.1785/gssrl.68.1.41</a>
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/gssrl.68.1.41"
+ * target="_top"> 10.1785/gssrl.68.1.41</a>
  *
  * <p><b>Component:</b> not specified
  *

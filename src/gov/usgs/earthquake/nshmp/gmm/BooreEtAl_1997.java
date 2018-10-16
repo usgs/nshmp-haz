@@ -19,8 +19,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 /**
  * Implementation of the Boore, Joyner & Fumal (1997) ground motion model for
  * shallow earthquakes in active continental crust. In keeping with prior NSHMP
- * implementations of this older model, only soft rock sites are supported
- * (V𝗌30 = 760 m/s).
+ * implementations of this older model, only soft rock sites are supported (Vs30
+ * = 760 m/s).
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -31,16 +31,16 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * from western North American earthquakes: A summary of recent work,
  * Seismological Research Letters, v. 68, n. 1, p. 128-153.
  *
- * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/gssrl.68.1.128">
- * 10.1785/gssrl.68.1.128</a>
+ * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/gssrl.68.1.128"
+ * target="_top">10.1785/gssrl.68.1.128</a>
  * 
  * <p><b>Erratum:</b> Boore, D.M., 2005, Equations for estimating horizontal
  * response spectra and peak acceleration from western North American
  * earthquakes: A summary of recent work, Seismological Research Letters, v. 76,
  * n. 3, p. 368-369.
  *
- * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/gssrl.76.3.368">
- * 10.1785/gssrl.76.3.368</a>
+ * <p><b>doi:</b><a href="http://dx.doi.org/10.1785/gssrl.76.3.368"
+ * target="_top">10.1785/gssrl.76.3.368</a>
  *
  * <p><b>Component:</b> random horizontal
  *

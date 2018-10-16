@@ -38,7 +38,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * to Cascadia and other regions: Bulletin of the Seismological Society of
  * America, v. 93, p. 1703-1729.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020156">
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120020156" target="_top">
  * 10.1785/0120020156</a>
  *
  * <p><b>Component:</b> horizontal (not clear from publication)

@@ -76,7 +76,7 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * ground motion in Japan using site classification based on predominant period:
  * Bulletin of the Seismological Society of America, v. 96, p. 898–913.
  *
- * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050122">
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1785/0120050122" target="_top">
  * 10.1785/0120050122</a>
  *
  * <p><b>Component:</b> Geometric mean of two horizontal components
@@ -120,7 +120,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private static final Set<Imt> EXTRAPOLATED_IMTS = Sets.immutableEnumSet(
       SA7P5,
       SA10P0);
-  
+
   /*
    * Map Zhao subtype to reference Gmms for extrapolation. This is not
    * implemented as a static map due to circular Gmm references.
@@ -142,8 +142,8 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
         return ImmutableMap.of(
             Gmm.BCHYDRO_12_INTERFACE_BASIN_AMP, 0.5,
             Gmm.AM_09_INTERFACE_BASIN_AMP, 0.5);
-        default:
-          throw new IllegalArgumentException();
+      default:
+        throw new IllegalArgumentException();
     }
   }
 
