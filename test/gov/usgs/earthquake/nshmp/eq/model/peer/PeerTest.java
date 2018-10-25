@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.logging.LogManager;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -122,7 +123,7 @@ public class PeerTest {
 
   @Test
   public void test() {
-    System.out.println(site.name);
+    // System.out.println(site.name);
     Hazard result = HazardCalc.calc(model, model.config(), site, Optional.<Executor> empty());
     // compute y-values converting to Poiss prob
     double[] actual = Doubles.toArray(
@@ -144,8 +145,12 @@ public class PeerTest {
         Double.valueOf(expected).equals(Double.valueOf(actual));
   }
 
-  static List<Object[]> load(String modelId, double tolerance) 
+  static List<Object[]> load(String modelId, double tolerance)
       throws IOException, SAXException {
+
+    /* NOTE this is disabling all logging in Loader and HazardCalc */
+    LogManager.getLogManager().reset();
+
     Map<String, double[]> expectedsMap = loadExpecteds(modelId);
     HazardModel model = HazardModel.load(MODEL_DIR.resolve(modelId));
     CalcConfig config = model.config();
