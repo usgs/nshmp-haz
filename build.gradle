@@ -71,13 +71,14 @@ test {
     includeTestsMatching "gov.usgs.earthquake.nshmp.data.*"
     includeTestsMatching "gov.usgs.earthquake.nshmp.geo.*"
     includeTestsMatching "gov.usgs.earthquake.nshmp.gmm.*"
+    //includeTestsMatching "gov.usgs.earthquake.nshmp.eq.model.peer.PeerTests"
   }
 }
 
 jacocoTestReport {
   reports {
     xml.enabled true
-    html.enabled false
+    html.enabled true
   }
 }
 check.dependsOn jacocoTestReport
@@ -137,12 +138,22 @@ jar {
       }}
     }
     
-    /* record app version */
+    /* 
+     * Possibly record app version. The creation of this file
+     * on each build causes the classpath to appear changed so
+     * Gradle reruns tests, even though no code has changed.
+     */
     def props = new Properties()
     def propsFile = new File(project.buildDir.toString() + propsPath)
-    propsFile.createNewFile()
-    props.setProperty('app.version', gitTag)
-    props.store(propsFile.newWriter(), null)
+    if (propsFile.exists()) {
+      props.load(propsFile.newReader())
+    } else {
+      propsFile.createNewFile()
+    }
+    if (!gitTag.equals(props.getProperty('app.version'))) {
+      props.setProperty('app.version', gitTag)
+      props.store(propsFile.newWriter(), null)
+    }
   }
 }
 

@@ -291,8 +291,9 @@ public enum RuptureFloating {
         floaterMap.put(gss, depthWeights[startRow]);
       }
     }
-    System.out.println(Data.sum(floaterMap.values()));
-    System.out.println(floaterMap.size());
+    // TODO clean
+    // System.out.println(Data.sum(floaterMap.values()));
+    // System.out.println(floaterMap.size());
 
     return floaterMap;
   }
