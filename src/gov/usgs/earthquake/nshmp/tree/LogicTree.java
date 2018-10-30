@@ -10,6 +10,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import gov.usgs.earthquake.nshmp.data.Data;
+import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
  * Modeling logic tree container with a single node and multiple
@@ -17,13 +18,12 @@ import gov.usgs.earthquake.nshmp.data.Data;
  * 
  * @author Brandon Clayton
  * @author Peter Powers
- * @param <T> The type of {@code Branch} 
+ * @param <T> The type of {@code Branch}
  */
 public class LogicTree<T> implements Iterable<LogicTree.Branch<T>> {
 
   /*
-   * TODO:
-   * For further consideration: serialization=, consider adding
+   * TODO: For further consideration: serialization=, consider adding
    * LogicTree.asGraph(), see Guava graph classes
    */
 
@@ -48,11 +48,11 @@ public class LogicTree<T> implements Iterable<LogicTree.Branch<T>> {
    * @param sample The sample weight to compare to the cumulative weight
    */
   public Branch<T> sample(double sample) {
-    int index = 0;
+    int index = -1;
 
     for (double weight : cumulativeWeights) {
-      if (sample <= weight) break;
       index++;
+      if (sample <= weight) break;
     }
 
     return branches.get(index);
@@ -103,7 +103,7 @@ public class LogicTree<T> implements Iterable<LogicTree.Branch<T>> {
   /**
    * A single branch of a {@code LogicTree}.
    * 
-   * @param <T> The type of {@code Branch} 
+   * @param <T> The type of {@code Branch}
    */
   public static class Branch<T> {
     private final String key;
@@ -121,7 +121,7 @@ public class LogicTree<T> implements Iterable<LogicTree.Branch<T>> {
       return key;
     }
 
-    /** Return the {@code Branch} value. */ 
+    /** Return the {@code Branch} value. */
     public T value() {
       return value;
     }
@@ -136,7 +136,7 @@ public class LogicTree<T> implements Iterable<LogicTree.Branch<T>> {
    * Return a new {@code Builder} to create a {@code LogicTree} with a
    * {@code Branch} type {@code T}.
    *
-   * @param <T> The type of {@code Branch} 
+   * @param <T> The type of {@code Branch}
    */
   public static <T> Builder<T> builder() {
     return new Builder<T>();
@@ -145,7 +145,7 @@ public class LogicTree<T> implements Iterable<LogicTree.Branch<T>> {
   /**
    * Build a {@code LogicTree} with a {@code Branch} type {@code T}.
    * 
-   * @param <T> The type of {@code Branch} 
+   * @param <T> The type of {@code Branch}
    */
   public static class Builder<T> {
     private ImmutableList.Builder<Branch<T>> branches;
@@ -179,7 +179,7 @@ public class LogicTree<T> implements Iterable<LogicTree.Branch<T>> {
      * 
      * @param key The {@code Branch} identifier
      * @param weight The weight of the {@code Branch}
-     * @param value The {@code Branch} value 
+     * @param value The {@code Branch} value
      * @return The {@code Builder}
      */
     public Builder<T> add(String key, double weight, T value) {
@@ -195,9 +195,9 @@ public class LogicTree<T> implements Iterable<LogicTree.Branch<T>> {
     int index = 0;
 
     for (Branch<T> branch : this) {
-      sum += branch.weight;
-      cumulativeWeights[index] = sum;
-      index++;
+      sum += branch.weight();
+      /* round to cleaner values */
+      cumulativeWeights[index++] = Maths.round(sum, 8);
     }
 
     return cumulativeWeights;
