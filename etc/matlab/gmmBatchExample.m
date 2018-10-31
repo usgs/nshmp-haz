@@ -10,7 +10,6 @@ clear;
 % The GMMs must be specified in the URL query string.
 %
 % All GMM services are available to call for batch processing:
-% https://dev01-earthquake.cr.usgs.gov/nshmp-haz-ws/apps/services.html#spectra
 host = 'url/to/nshmp-haz-ws/gmm/spectra';
 
 query = 'gmm=AB_06_PRIME&gmm=CAMPBELL_03&gmm=FRANKEL_96';
@@ -60,7 +59,6 @@ svcResponse = webwrite(url, inputs, options);
 %
 % If the URL does not contain a query string of GMMs the response 
 % returned will be the service usage:
-% https://dev01-earthquake.cr.usgs.gov/nshmp-haz-ws/gmm/spectra
 %  
 if strcmp('error', svcResponse.status) || ~isfield(svcResponse, 'response')
   return;
