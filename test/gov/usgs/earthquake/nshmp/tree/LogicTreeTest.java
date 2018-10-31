@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import gov.usgs.earthquake.nshmp.gmm.DefaultScalarGroundMotion;
-import gov.usgs.earthquake.nshmp.tree.LogicTree.Branch;
+import gov.usgs.earthquake.nshmp.tree.Branch;
 import gov.usgs.earthquake.nshmp.tree.LogicTree.Builder;
 
 /**
