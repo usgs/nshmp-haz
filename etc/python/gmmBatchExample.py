@@ -4,7 +4,7 @@ import requests
 
 ## Read CSV file of GMM inputs
 #
-# Each column of the CSV file is a GMM input parameter with the 
+# Each column of the CSV file is a GMM input parameter with the
 # first row dictating that GMM input field.
 #
 # Example CSV to change only dip:
@@ -46,7 +46,7 @@ query = { 'gmm': [ 'AB_06_PRIME', 'CAMPBELL_03', 'FRANKEL_96' ] }
 #
 # Conduct a HTTP POST request, sending the CSV file of GMM inputs.
 #
-# The POST response is loaded into a object 
+# The POST response is loaded into a object
 # following the returned JSON structure.
 svcResponse = requests.post(url, data = inputs, params = query).json()
 
@@ -56,7 +56,7 @@ svcResponse = requests.post(url, data = inputs, params = query).json()
 # Check to see if the response returned an error and check
 # to see if the field 'response' exists in the object.
 #
-# If the URL does not contain a query string of GMMs the response 
+# If the URL does not contain a query string of GMMs the response
 # returned will be the service usage.
 if svcResponse['status'] == 'error' and ~hasattr(svcResponse, 'response'):
   exit()
@@ -64,18 +64,18 @@ if svcResponse['status'] == 'error' and ~hasattr(svcResponse, 'response'):
 
 ## Retreive the data
 #
-# Loop through each response spectrum response and obtain the means 
+# Loop through each response spectrum response and obtain the means
 # and sigmas.
 for response in svcResponse['response']:
 
-  # Request structure contains the GMMs and GMM input parameters used 
+  # Request structure contains the GMMs and GMM input parameters used
   request = response['request']
 
   # The GMMs used for the calculation
   gmms = request['gmms']
-  
+ 
   # The GMM input parameters used for the calculation
-  input = request['input']
+  gmmInput = request['input']
 
   # Get the means
   for means in response['means']['data']:
