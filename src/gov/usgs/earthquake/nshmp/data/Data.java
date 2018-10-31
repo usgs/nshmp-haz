@@ -852,6 +852,25 @@ public final class Data {
     }
     return Math.abs(test - target) / target * 100.0;
   }
+ 
+  /**
+   * Cumulate a {@code double[]} in place.
+   * 
+   * @param values The values to cumulate
+   * @return The reference that was altered
+   */
+  public static double[] cumulate(double[] values) {
+    double sum = 0;
+    int index = 0;
+
+    for (double value : values) {
+      sum += value;
+      /* round to cleaner values */
+      values[index++] = Maths.round(sum, 8);
+    }
+   
+    return values;
+  }
 
   /* * * * * * * * * * * * * * STATE * * * * * * * * * * * * * */
 
