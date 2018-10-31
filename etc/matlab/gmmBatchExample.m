@@ -2,21 +2,6 @@
 
 clear;
 
-%% URL to POST the CSV file of GMM inputs
-% 
-% Must set the URL host path, example: 
-% 'http://localhost:8080/nshmp-haz/gmm/spectra'
-%
-% The GMMs must be specified in the URL query string.
-%
-% All GMM services are available to call for batch processing:
-host = 'url/to/nshmp-haz-ws/gmm/spectra';
-
-query = 'gmm=AB_06_PRIME&gmm=CAMPBELL_03&gmm=FRANKEL_96';
-
-url = strcat(host, '?', query);
-
-
 %% Read CSV file of GMM inputs
 %
 % Each column of the CSV file is a GMM input parameter with the 
@@ -35,6 +20,22 @@ url = strcat(host, '?', query);
 % not given, the default values are used:
 % http://usgs.github.io/nshmp-haz/javadoc/gov/usgs/earthquake/nshmp/gmm/GmmInput.Builder.html#withDefaults--
 inputs = fileread('gmm-inputs.csv');
+
+
+%% URL to POST the CSV file of GMM inputs
+% 
+% Must update the URL host if not on localhost.
+%
+% The GMMs must be specified in the URL query string.
+%
+% All GMM services are available to call for batch processing.
+host = 'http://localhost:8080';
+
+service = '/nshmp-haz-ws/gmm/spectra';
+
+query = 'gmm=AB_06_PRIME&gmm=CAMPBELL_03&gmm=FRANKEL_96';
+
+url = strcat(host, service, '?', query);
 
 
 %% Set the response to JSON.
@@ -58,8 +59,7 @@ svcResponse = webwrite(url, inputs, options);
 % to see if the field 'response' exists in the structure.
 %
 % If the URL does not contain a query string of GMMs the response 
-% returned will be the service usage:
-%  
+% returned will be the service usage.
 if strcmp('error', svcResponse.status) || ~isfield(svcResponse, 'response')
   return;
 end
@@ -88,9 +88,9 @@ for response = svcResponse.response'
   end
   
   % Get the sigmas
-  for sigma = response.sigmas.data
-    data = sigma.data;
-    xSigma = data.xs;
-    ySigma = data.ys;
+  for sigmas = response.sigmas.data
+    data = sigmas.data;
+    xSigmas = data.xs;
+    ySigmas = data.ys;
   end
 end
