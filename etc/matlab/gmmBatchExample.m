@@ -2,24 +2,9 @@
 
 clear;
 
-%% URL to POST the CSV file of GMM inputs
-% 
-% Must set the URL host path, example: 
-% 'http://localhost:8080/nshmp-haz/gmm/spectra'
-%
-% The GMMs must be specified in the URL query string.
-%
-% All GMM services are available to call for batch processing:
-host = 'url/to/nshmp-haz-ws/gmm/spectra';
-
-query = 'gmm=AB_06_PRIME&gmm=CAMPBELL_03&gmm=FRANKEL_96';
-
-url = strcat(host, '?', query);
-
-
 %% Read CSV file of GMM inputs
 %
-% Each column of the CSV file is a GMM input parameter with the 
+% Each column of the CSV file is a GMM input parameter with the
 % first row dictating that GMM input field.
 %
 % Example CSV to change only dip:
@@ -37,9 +22,25 @@ url = strcat(host, '?', query);
 inputs = fileread('gmm-inputs.csv');
 
 
+%% URL to POST the CSV file of GMM inputs
+% 
+% Must update the URL host if not on localhost.
+%
+% The GMMs must be specified in the URL query string.
+%
+% All GMM services are available to call for batch processing.
+host = 'http://localhost:8080';
+
+service = '/nshmp-haz-ws/gmm/spectra';
+
+query = 'gmm=AB_06_PRIME&gmm=CAMPBELL_03&gmm=FRANKEL_96';
+
+url = strcat(host, service, '?', query);
+
+
 %% Set the response to JSON.
 %
-% The HTTP POST response is in JSON format. 
+% The HTTP POST response is in JSON format.
 options = weboptions('ContentType', 'json');
 
 
@@ -57,9 +58,8 @@ svcResponse = webwrite(url, inputs, options);
 % Check to see if the response returned an error and check
 % to see if the field 'response' exists in the structure.
 %
-% If the URL does not contain a query string of GMMs the response 
-% returned will be the service usage:
-%  
+% If the URL does not contain a query string of GMMs the response
+% returned will be the service usage.
 if strcmp('error', svcResponse.status) || ~isfield(svcResponse, 'response')
   return;
 end
@@ -67,18 +67,18 @@ end
 
 %% Retreive the data
 %
-% Loop through each response spectrum response and obtain the means 
+% Loop through each response spectrum response and obtain the means
 % and sigmas.
 for response = svcResponse.response'
   
-  % Request structure contains the GMMs and GMM input parameters used 
+  % Request structure contains the GMMs and GMM input parameters used
   request = response.request;
-  
+ 
   % The GMMs used for the calculation
   gmms = request.gmms;
   
   % The GMM input parameters used for the calculation
-  input = request.input;
+  gmmInput = request.input;
   
   % Get the means
   for means = response.means.data
@@ -88,9 +88,9 @@ for response = svcResponse.response'
   end
   
   % Get the sigmas
-  for sigma = response.sigmas.data
-    data = sigma.data;
-    xSigma = data.xs;
-    ySigma = data.ys;
+  for sigmas = response.sigmas.data
+    data = sigmas.data;
+    xSigmas = data.xs;
+    ySigmas = data.ys;
   end
 end
