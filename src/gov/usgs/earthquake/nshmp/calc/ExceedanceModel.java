@@ -6,7 +6,14 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.PGV;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P75;
 import static java.lang.Double.isNaN;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.crypto.dsig.Transform;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import gov.usgs.earthquake.nshmp.data.XyPoint;
 import gov.usgs.earthquake.nshmp.data.XySequence;
@@ -135,7 +142,8 @@ public enum ExceedanceModel {
    * fixed sigmas. The peer models below simply set a value internally as
    * dicated by the test cases that use these models.
    */
-  @Deprecated PEER_MIXTURE_REFERENCE {
+  @Deprecated
+  PEER_MIXTURE_REFERENCE {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
       return boundedCcdFn(μ, 0.65, value, 0.0, 1.0);
@@ -251,6 +259,8 @@ public enum ExceedanceModel {
    */
   XySequence exceedance(ScalarGroundMotion sgm, double n, Imt imt, XySequence sequence) {
     if (sgm instanceof MultiScalarGroundMotion) {
+      System.out.println("SGM hello...");
+      System.out.println("sequence in: " + sequence);
       MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgm;
       double[] means = msgm.means();
       double[] meanWts = msgm.meanWeights();
@@ -268,6 +278,33 @@ public enum ExceedanceModel {
       return sequence;
     }
     return exceedance(sgm.mean(), sgm.sigma(), n, imt, sequence);
+  }
+
+  /*
+   * Return a list of exceedance curves, one for each tree branch in the
+   * supplied MultiScalarGroundMotion. NOTE that returned curves have NOT been
+   * scaled by their branch weight. Given that this scaling will be applied
+   * later (in the case of cluster sources) it is imperitave that the iteration
+   * order of weights applied downstream is the same as the order used here when
+   * generating the curves [loop sigmas then means].
+   */
+  List<XySequence> treeExceedance(
+      MultiScalarGroundMotion msgm,
+      double n,
+      Imt imt,
+      XySequence sequence) {
+
+    double[] means = msgm.means();
+    double[] sigmas = msgm.sigmas();
+    List<XySequence> curves = new ArrayList<>(means.length * sigmas.length);
+
+    for (int i = 0; i < sigmas.length; i++) {
+      double σ = sigmas[i];
+      for (int j = 0; j < means.length; j++) {
+        curves.add(exceedance(means[j], σ, n, imt, XySequence.emptyCopyOf(sequence)));
+      }
+    }
+    return curves;
   }
 
   /*

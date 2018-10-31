@@ -1,17 +1,22 @@
 package gov.usgs.earthquake.nshmp.calc;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.util.concurrent.Futures.allAsList;
 import static com.google.common.util.concurrent.Futures.getUnchecked;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transform;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.instances;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
@@ -35,6 +40,7 @@ import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
+import gov.usgs.earthquake.nshmp.gmm.MultiScalarGroundMotion;
 import gov.usgs.earthquake.nshmp.gmm.ScalarGroundMotion;
 
 /**
@@ -175,6 +181,11 @@ final class Transforms {
         XySequence modelCurve = modelCurves.get(imt);
         XySequence utilCurve = XySequence.copyOf(modelCurve);
         XySequence gmmCurve = XySequence.copyOf(modelCurve);
+
+        System.out.println("util curve");
+        System.out.println(utilCurve);
+        System.out.println("gmm curve");
+        System.out.println(gmmCurve);
 
         for (Entry<Gmm, List<ScalarGroundMotion>> gmmEntry : imtEntry.getValue().entrySet()) {
           gmmCurve.clear();
@@ -574,7 +585,6 @@ final class Transforms {
 
     @Override
     public ClusterCurves apply(ClusterGroundMotions clusterGroundMotions) {
-
       Builder builder = ClusterCurves.builder(clusterGroundMotions);
 
       for (Entry<Imt, XySequence> entry : logModelCurves.entrySet()) {
@@ -588,7 +598,8 @@ final class Transforms {
             .arrayListValues(clusterGroundMotions.size())
             .build();
         XySequence utilCurve = XySequence.copyOf(modelCurve);
-
+        System.out.println(utilCurve);
+        System.out.println("-----");
         for (GroundMotions groundMotions : clusterGroundMotions) {
 
           Map<Gmm, List<ScalarGroundMotion>> gmmGmMap = groundMotions.gmMap.get(imt);
@@ -603,6 +614,7 @@ final class Transforms {
                   truncationLevel,
                   imt,
                   utilCurve);
+              System.out.println(utilCurve);
               utilCurve.multiply(groundMotions.inputs.get(i++).rate);
               magVarCurve.add(utilCurve);
             }
@@ -619,6 +631,174 @@ final class Transforms {
 
       return builder.build();
     }
+  }
+
+  /*
+   * CLUSTER: ClusterGroundMotions --> ClusterCurves
+   *
+   * Collapse magnitude variants and compute the joint probability of exceedence
+   * for sources in a cluster. Note that this is only to be used with cluster
+   * sources as the weight of each magnitude variant is stored in the
+   * HazardInput.rate field, which is kinda KLUDGY, but works.
+   */
+  static final class ClusterGroundMotionsToCurves2 implements
+      Function<ClusterGroundMotions, ClusterCurves> {
+
+    private final Map<Imt, XySequence> logModelCurves;
+    private final ExceedanceModel exceedanceModel;
+    private final double truncationLevel;
+
+    ClusterGroundMotionsToCurves2(CalcConfig config) {
+      this.logModelCurves = config.hazard.logModelCurves();
+      this.exceedanceModel = config.hazard.exceedanceModel;
+      this.truncationLevel = config.hazard.truncationLevel;
+    }
+
+    @Override
+    public ClusterCurves apply(ClusterGroundMotions clusterGroundMotions) {
+      Builder builder = ClusterCurves.builder(clusterGroundMotions);
+
+      for (Entry<Imt, XySequence> entry : logModelCurves.entrySet()) {
+
+        XySequence modelCurve = entry.getValue();
+        Imt imt = entry.getKey();
+
+        /* Aggregator of curves for each fault in a cluster. */
+        ListMultimap<Gmm, List<XySequence>> faultCurves = MultimapBuilder
+            .enumKeys(Gmm.class)
+            .arrayListValues(clusterGroundMotions.size())
+            .build();
+        XySequence utilCurve = XySequence.copyOf(modelCurve);
+        // System.out.println(utilCurve);
+        // System.out.println("-----");
+
+        /*
+         * TODO: this is klunky; we need to get and store the gmm branch weights
+         * so that they can be applied AFTER the cluster calculations have been
+         * done for each gmm branch. Is there a better way? SHould Gmms that
+         * return MultiScalarGroundMotions be able to supply period dependent
+         * weights?
+         */
+        ScalarGroundMotion sgmModel = clusterGroundMotions.get(0).gmMap
+            .values().iterator().next() // first IMT entry
+            .values().iterator().next() // first GMM entry
+            .get(0);
+        MultiScalarGroundMotion msgmModel = (MultiScalarGroundMotion) sgmModel;
+        double[] gmmBranchWeights = weightList(
+            msgmModel.meanWeights(),
+            msgmModel.sigmaWeights());
+
+        for (GroundMotions groundMotions : clusterGroundMotions) {
+
+          Map<Gmm, List<ScalarGroundMotion>> gmmGmMap = groundMotions.gmMap.get(imt);
+
+          for (Gmm gmm : gmmGmMap.keySet()) {
+
+            /* Gmm branch lists of magnitude variants. */
+            List<ScalarGroundMotion> sgms = gmmGmMap.get(gmm);
+            List<List<XySequence>> magCurves = new ArrayList<>(sgms.size());
+            for (int i = 0; i < sgms.size(); i++) { // Fault magnitude variants
+
+              /* Gmm tree of exceedance curves for each magnitude variant. */
+              MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgms.get(i);
+              List<XySequence> magTreeCurves = exceedanceModel.treeExceedance(
+                  msgm,
+                  truncationLevel,
+                  imt,
+                  utilCurve);
+
+              /* Scale by magnitude weight and agreggate. */
+              double magWt = groundMotions.inputs.get(i).rate;
+              magTreeCurves.forEach(xy -> xy.multiply(magWt));
+              magCurves.add(magTreeCurves);
+            }
+
+            /* Combine magnitude variants and collect. */
+            List<XySequence> faultTreeCurves = reduce(magCurves, Transforms::sum);
+            faultCurves.put(gmm, faultTreeCurves);
+          }
+        }
+
+        /* Cluster exceedance */
+        double rate = clusterGroundMotions.parent.rate();
+        for (Gmm gmm : faultCurves.keySet()) {
+
+          /* Combine cluster fault exceedances on each gmm branch. */
+          List<XySequence> clusterTreeCurves = reduce(
+              faultCurves.get(gmm),
+              ExceedanceModel::clusterExceedance);
+
+          /* Scale gmm branches by weight and combine. */
+          XySequence clusterCurve = weightedSum(clusterTreeCurves, gmmBranchWeights);
+
+          /* Scale to cluster rate and save. */
+          clusterCurve.multiply(rate);
+          builder.addCurve(imt, gmm, clusterCurve);
+        }
+      }
+
+      return builder.build();
+    }
+  }
+
+  /* Iteration order must match that in ExceedanceModel.treeExceedance() . */
+  private static double[] weightList(double[] μWts, double[] σWts) {
+    double[] wts = new double[μWts.length * σWts.length];
+    for (int i = 0; i < σWts.length; i++) {
+      for (int j = 0; j < μWts.length; j++) {
+        wts[σWts.length * i + j] = σWts[i] * μWts[j];
+      }
+    }
+    return wts;
+  }
+
+  /*
+   * Reduce sequences across indices of nested lists. It is assumed that the
+   * nested lists are all the same length and are not empty.
+   */
+  static List<XySequence> reduce(
+      List<List<XySequence>> lists,
+      Function<List<XySequence>, XySequence> reducer) {
+
+    List<List<XySequence>> transposed = transpose(lists);
+    List<XySequence> reduced = new ArrayList<>(transposed.size());
+    for (List<XySequence> list : lists) {
+      reduced.add(reducer.apply(list));
+    }
+    return reduced;
+  }
+
+  /* Transpose the supplied lists. */
+  static <T> List<List<T>> transpose(List<List<T>> lists) {
+    int transSize = lists.get(0).size();
+    ArrayList<List<T>> transposed = new ArrayList<>(transSize);
+    for (int i = 0; i < transSize; i++) {
+      ArrayList<T> nested = new ArrayList<>(lists.size());
+      for (int j = 0; i < lists.size(); i++) {
+        nested.add(lists.get(j).get(i));
+      }
+      transposed.add(nested);
+    }
+    return transposed;
+  }
+
+  /*
+   * Returns a new sequence with the sum of the supplied sequences. Method
+   * assumes all sequences are the same size and not empty.
+   */
+  static XySequence sum(List<XySequence> sequences) {
+    XySequence reduced = XySequence.emptyCopyOf(sequences.get(0));
+    sequences.forEach(reduced::add);
+    return reduced;
+  }
+
+  static XySequence weightedSum(List<XySequence> sequences, double[] weights) {
+    checkArgument(sequences.size() == weights.length);
+    XySequence combined = XySequence.emptyCopyOf(sequences.get(0));
+    for (int i = 0; i < sequences.size(); i++) {
+      combined.add(sequences.get(i).multiply(weights[i]));
+    }
+    return combined;
   }
 
   /*
