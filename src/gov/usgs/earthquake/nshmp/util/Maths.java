@@ -198,6 +198,7 @@ public final class Maths {
    * 
    * @param value to round
    * @param model to round to
+   * @param mode to round by
    */
   public static double round(double value, double model, RoundingMode mode) {
     int scale = BigDecimal.valueOf(model).scale();
