@@ -99,18 +99,18 @@ public class LogicTreeTest {
       String key = KEYS[index];
       double weight = WEIGHTS[index];
 
-      assertEquals(key, branch.key());
+      assertEquals(key, branch.id());
       assertEquals(weight, branch.weight(), 0);
       assertEquals(GM.mean(), branch.value().mean(), 0);
       assertEquals(GM.sigma(), branch.value().sigma(), 0);
 
       Branch<DefaultScalarGroundMotion> sampleBranch = TREE.sample(CUML_WEIGHTS[index]);
-      assertEquals(key, sampleBranch.key());
+      assertEquals(key, sampleBranch.id());
       assertEquals(weight, sampleBranch.weight(), 0);
       assertEquals(GM.mean(), sampleBranch.value().mean(), 0);
       assertEquals(GM.sigma(), sampleBranch.value().sigma(), 0);
 
-      assertEquals(key, sampleBranches.get(index).key());
+      assertEquals(key, sampleBranches.get(index).id());
       assertEquals(weight, sampleBranches.get(index).weight(), 0);
       assertEquals(GM.mean(), sampleBranches.get(index).value().mean(), 0);
       assertEquals(GM.sigma(), sampleBranches.get(index).value().sigma(), 0);

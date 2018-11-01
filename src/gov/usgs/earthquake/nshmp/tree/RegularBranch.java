@@ -1,25 +1,24 @@
 package gov.usgs.earthquake.nshmp.tree;
 
 /**
- * A single branch of a {@code LogicTree}.
+ * Basic logic tree branch implementation.
  *
  * @author Brandon Clayton
- * @param <T> The type of {@code Branch}
  */
-public class RegularBranch<T> implements Branch<T> {
-  private final String key;
+class RegularBranch<T> implements Branch<T> {
+  private final String id;
   private final double weight;
   private final T value;
 
-  RegularBranch(String key, double weight, T value) {
-    this.key = key;
+  RegularBranch(String id, double weight, T value) {
+    this.id = id;
     this.weight = weight;
     this.value = value;
   }
 
   @Override
-  public String key() {
-    return key;
+  public String id() {
+    return id;
   }
 
   @Override

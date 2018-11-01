@@ -1,20 +1,19 @@
 package gov.usgs.earthquake.nshmp.tree;
 
 /**
- * Branch of a {@link LogicTree}.
+ * A logic tree branch.
  * 
  * @author Brandon Clayton
- * @param <T> The type of {@code Branch}
  */
 public interface Branch<T> {
 
-  /** Return the {@code Branch} identifier. */
-  public String key();
+  /** The branch id. */
+  public String id();
 
-  /** Return the {@code Branch} value. */
+  /** The branch value. */
   public T value();
 
-  /** Return the {@code Branch} weight. */
+  /** The branch weight. */
   public double weight();
 
 }

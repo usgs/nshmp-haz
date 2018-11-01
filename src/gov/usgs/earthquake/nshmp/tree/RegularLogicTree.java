@@ -1,31 +1,19 @@
 package gov.usgs.earthquake.nshmp.tree;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
 /**
- * Regular modeling logic tree with a single node and multiple {@code Branch}es.
- *
- * <p> Use {@link LogicTree#builder()} to build a {@code LogicTree}.
+ * Basic logic tree implementation.
  * 
  * @author Brandon Clayton
  * @author Peter Powers
- * @param <T> The type of {@link Branch#value()}
  */
-public class RegularLogicTree<T> implements LogicTree<T> {
+class RegularLogicTree<T> implements LogicTree<T> {
 
-  /*
-   * TODO: For further consideration: serialization=, consider adding
-   * LogicTree.asGraph(), see Guava graph classes
-   */
-
-  /* {@code Branch}es of the {@code LogicTree}. */
   private final List<Branch<T>> branches;
-
-  /* Cumulative weights of the {@code Branch} weights */
   private final double[] cumulativeWeights;
 
   RegularLogicTree(List<Branch<T>> branches, double[] cumulativeWeights) {
@@ -34,22 +22,23 @@ public class RegularLogicTree<T> implements LogicTree<T> {
   }
 
   @Override
-  public Branch<T> sample(double sample) {
-    int index = -1;
-
-    for (double weight : cumulativeWeights) {
-      index++;
-      if (sample <= weight) break;
+  public Branch<T> sample(double probability) {
+    for (int i = 0; i < cumulativeWeights.length; i++) {
+      if (probability < cumulativeWeights[i]) {
+        return branches.get(i);
+      }
     }
-
-    return branches.get(index);
+    return branches.get(cumulativeWeights.length - 1);
   }
 
   @Override
-  public List<Branch<T>> sample(double[] samples) {
-    return Arrays.stream(samples)
-        .mapToObj(this::sample)
-        .collect(ImmutableList.toImmutableList());
+  public List<Branch<T>> sample(double[] probabilities) {
+    ImmutableList.Builder<Branch<T>> samples =
+        ImmutableList.builderWithExpectedSize(probabilities.length);
+    for (double probability : probabilities) {
+      samples.add(sample(probability));
+    }
+    return samples.build();
   }
 
   /*
