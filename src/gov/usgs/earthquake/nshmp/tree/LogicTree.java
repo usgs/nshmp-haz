@@ -10,49 +10,44 @@ import com.google.common.collect.ImmutableList;
 import gov.usgs.earthquake.nshmp.data.Data;
 
 /**
- * Modeling logic tree interface.
+ * Logic tree interface that supports the iteration and sampling of individual
+ * branches.
  * 
  * @author Brandon Clayton
- * @param <T> The type of {@link Branch#value()}
  */
 public interface LogicTree<T> extends Iterable<Branch<T>> {
 
-  /**
-   * Return the {@code Branch<T>} where the given sample is <= cumulative
-   * weights of the {@code Branch}es.
-   * 
-   * <p> Note: The sample weight is not checked and the last {@code Branch<T>}
-   * is returned if the sample weight is not within [0.0, 1.0].
-   * 
-   * @param sample The sample weight to compare to the cumulative weight
+  /*
+   * TODO: For further consideration: serialization=, consider adding
+   * LogicTree.asGraph(), see Guava graph classes
    */
-  public Branch<T> sample(double sample);
 
   /**
-   * Return a {@code List<Branch<T>>} (backed by {@link ImmutableList}) where
-   * the given samples are <= cumulative weights of the {code Branch}es
+   * Return a logic tree branch corresponding to the supplied probability.
    * 
-   * <p> See {@link LogicTree#sample(double)}.
+   * <p><b>Note:</b> this method does not check that {@code 0.0 ≤ p < 1.0}.
    * 
-   * @param samples The sample weights to compare to the cumulative weights
+   * @param probability in the range [0..1)
    */
-  public List<Branch<T>> sample(double[] samples);
+  Branch<T> sample(double probability);
 
   /**
-   * Return a new {@code Builder} to create a {@code LogicTree} with a
-   * {@code Branch} type {@code T}.
-   *
-   * @param <T> The type of {@code Branch}
+   * Return an immutable list of logic tree branches corresponding to the
+   * supplied probabilities.
+   * 
+   * <p> <b>Note:</b> this method does not check that each
+   * {@code 0.0 ≤ p < 1.0}.
+   * 
+   * @param probabilities in the range [0..1)
    */
-  public static <T> Builder<T> builder() {
+  List<Branch<T>> sample(double[] probabilities);
+
+  /** Return a new logic tree builder. */
+  static <T> Builder<T> builder() {
     return new Builder<T>();
   }
 
-  /**
-   * Build a {@code LogicTree} with a {@code Branch} type {@code T}.
-   * 
-   * @param <T> The type of {@code Branch}
-   */
+  /** A logic tree builder. */
   public static class Builder<T> {
     private ImmutableList.Builder<Branch<T>> branches;
     private boolean built;
@@ -62,9 +57,26 @@ public interface LogicTree<T> extends Iterable<Branch<T>> {
       built = false;
     }
 
+    /**
+     * Add a {@code Branch} to the {@code LogicTree}.
+     * 
+     * @param id the branch identifier
+     * @param weight the branch weight
+     * @param value the branch value
+     * @return this builder
+     */
+    public Builder<T> add(String id, double weight, T value) {
+      branches.add(new RegularBranch<T>(
+          checkNotNull(id),
+          weight,
+          checkNotNull(value)));
+      return this;
+    }
+
     /** Return a new {@code LogicTree}. */
     public LogicTree<T> build() {
       checkState(!built);
+      built = true;
 
       ImmutableList<Branch<T>> branches = this.branches.build();
       checkState(!branches.isEmpty());
@@ -72,27 +84,10 @@ public interface LogicTree<T> extends Iterable<Branch<T>> {
       double[] weights = branches.stream()
           .mapToDouble(Branch::weight)
           .toArray();
-
       Data.checkWeights(weights, false);
       Data.cumulate(weights);
 
-      built = true;
-
       return new RegularLogicTree<T>(branches, weights);
     }
-
-    /**
-     * Add a {@code Branch} to the {@code LogicTree}.
-     * 
-     * @param key The {@code Branch} identifier
-     * @param weight The weight of the {@code Branch}
-     * @param value The {@code Branch} value
-     * @return The {@code Builder}
-     */
-    public Builder<T> add(String key, double weight, T value) {
-      branches.add(new RegularBranch<T>(checkNotNull(key), weight, checkNotNull(value)));
-      return this;
-    }
   }
-
 }
