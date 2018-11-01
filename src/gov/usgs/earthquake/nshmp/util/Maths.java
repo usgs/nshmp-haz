@@ -178,6 +178,32 @@ public final class Maths {
   public static double round(double value, int scale, RoundingMode mode) {
     return BigDecimal.valueOf(value).setScale(scale, mode).doubleValue();
   }
+ 
+  /**
+   * Round a double to the nearest specified double. Internally this method uses
+   * the scaling and rounding of {@link BigDecimal} according to
+   * {@link RoundingMode#HALF_UP}.
+   * 
+   * @param value to round
+   * @param model to round to
+   */
+  public static double round(double value, double model) {
+    return round(value, model, RoundingMode.HALF_UP);
+  }
+
+  /**
+   * Round a double to the nearest specified double. Internally this method uses
+   * the scaling and rounding of {@link BigDecimal} according to a specified
+   * {@link RoundingMode}.
+   * 
+   * @param value to round
+   * @param model to round to
+   * @param mode to round by
+   */
+  public static double round(double value, double model, RoundingMode mode) {
+    int scale = BigDecimal.valueOf(model).scale();
+    return round(Math.round(value / model) * model, scale, mode);
+  }
 
   /**
    * Return a converter between decimal values and percentages. The forward
