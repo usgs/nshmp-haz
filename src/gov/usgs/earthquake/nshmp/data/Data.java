@@ -854,22 +854,16 @@ public final class Data {
   }
  
   /**
-   * Cumulate a {@code double[]} in place.
+   * Cumulate the values of {@code data} in place.
    * 
-   * @param values The values to cumulate
-   * @return The reference that was altered
+   * @param data to operate on
+   * @return a reference to the supplied {@code data}
    */
-  public static double[] cumulate(double[] values) {
-    double sum = 0;
-    int index = 0;
-
-    for (double value : values) {
-      sum += value;
-      /* round to cleaner values */
-      values[index++] = Maths.round(sum, 8);
+  public static double[] cumulate(double... data) {
+    for (int i=1; i<data.length; i++) {
+      data[i] += data[i-1];
     }
-   
-    return values;
+    return data;
   }
 
   /* * * * * * * * * * * * * * STATE * * * * * * * * * * * * * */
