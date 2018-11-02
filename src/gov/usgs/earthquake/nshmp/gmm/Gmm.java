@@ -1321,7 +1321,8 @@ public enum Gmm {
             NGA_EAST_USGS_PANEL1,
             NGA_EAST_USGS_PANEL2,
             NGA_EAST_USGS_LOGIC_TREE,
-            NGA_EAST_USGS_SEEDS)),
+            NGA_EAST_USGS_SEEDS,
+            NGA_EAST_USGS_SEEDS_EPRI)),
 
     NGA_EAST_SAMMONS2(
         "NGA-East USGS Sammons",
