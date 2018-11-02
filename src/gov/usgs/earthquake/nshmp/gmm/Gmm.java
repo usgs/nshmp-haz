@@ -789,6 +789,13 @@ public enum Gmm {
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_SEEDS_EPRI(
+      NgaEastUsgs_2017.UsgsSeedsEpri.class,
+      NgaEastUsgs_2017.UsgsSeedsEpri.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
   /* NGA-East Seed Models */
 
   /** @see NgaEastUsgs_2017 */
@@ -1314,7 +1321,8 @@ public enum Gmm {
             NGA_EAST_USGS_PANEL1,
             NGA_EAST_USGS_PANEL2,
             NGA_EAST_USGS_LOGIC_TREE,
-            NGA_EAST_USGS_SEEDS)),
+            NGA_EAST_USGS_SEEDS,
+            NGA_EAST_USGS_SEEDS_EPRI)),
 
     NGA_EAST_SAMMONS2(
         "NGA-East USGS Sammons",

@@ -186,7 +186,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /* Logic tree between hybrid model and EPRI: { SIGMA_WTS * 0.667, 0.333} */
   private static final double[] SIGMA_LT_WTS = { 0.1234, 0.4202, 0.1234, 0.333 };
-  private static final double[] SIGMA_LTC_WTS = { 0.667, 0.333 };
+  private static final double[] SIGMA_LTC_WTS = { 0.2, 0.8 };
 
   /* φ_s2s constants */
   private static final double VΦ1 = 1200.0;
@@ -677,6 +677,21 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     SigmaSet calcSigma(GmmInput in) {
       return sigmaSetLogicTree(in.Mw, in.vs30);
     }
+  }
+  
+  static class UsgsSeedsEpri extends UsgsSeeds {
+    
+    static final String NAME = UsgsSeeds.NAME + " : σ-EPRIu";
+    
+    UsgsSeedsEpri(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetEpri(in.Mw);
+    }
+
   }
 
   static abstract class Sammons extends NgaEastUsgs_2017 {

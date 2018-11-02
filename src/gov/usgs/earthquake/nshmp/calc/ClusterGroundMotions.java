@@ -7,12 +7,12 @@ import java.util.List;
 import gov.usgs.earthquake.nshmp.eq.model.ClusterSource;
 
 /**
- * Lightweight {@code List} wrapper of {@code HazardGroundMotions}s
- * corresponding to the {@code FaultSource}s that make up a
- * {@code ClusterSource}. This class propogates a reference to the parent
- * {@code ClusterSource} so that its rate and weight are available. The
- * {@code List} may only be added to; all other optional operations of
- * {@code AbstractList} throw an {@code UnsupportedOperationException}.
+ * Lightweight {@code List} wrapper of {@code GroundMotions}s corresponding to
+ * the {@code FaultSource}s that make up a {@code ClusterSource}. This class
+ * propogates a reference to the parent {@code ClusterSource} so that its rate
+ * and weight are available. The {@code List} may only be added to; all other
+ * optional operations of {@code AbstractList} throw an
+ * {@code UnsupportedOperationException}.
  *
  * @author Peter Powers
  */

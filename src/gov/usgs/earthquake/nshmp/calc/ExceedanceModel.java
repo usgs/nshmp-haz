@@ -6,13 +6,13 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.PGV;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P75;
 import static java.lang.Double.isNaN;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import gov.usgs.earthquake.nshmp.data.XyPoint;
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
 import gov.usgs.earthquake.nshmp.gmm.MultiScalarGroundMotion;
-import gov.usgs.earthquake.nshmp.gmm.ScalarGroundMotion;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
@@ -135,7 +135,8 @@ public enum ExceedanceModel {
    * fixed sigmas. The peer models below simply set a value internally as
    * dicated by the test cases that use these models.
    */
-  @Deprecated PEER_MIXTURE_REFERENCE {
+  @Deprecated
+  PEER_MIXTURE_REFERENCE {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
       return boundedCcdFn(μ, 0.65, value, 0.0, 1.0);
@@ -239,35 +240,61 @@ public enum ExceedanceModel {
    */
   abstract XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence);
 
-  /**
-   * Compute the probability of exceeding a sequence of x-values.
-   *
-   * @param sgm ScalarGroundMotion that wraps one or more μ and σ
-   * @param n truncation level in units of {@code σ} (truncation = n * σ)
-   * @param imt intenisty measure type (only used by
-   *        {@link #NSHM_CEUS_MAX_INTENSITY}
-   * @param sequence the x-values for which to compute exceedance probabilities
-   * @return the supplied {@code sequence}
+  /*
+   * Return a list of exceedance curves, one for each tree branch in the
+   * supplied MultiScalarGroundMotion. NOTE that returned curves have NOT been
+   * scaled by their branch weight. Given that this scaling will be applied
+   * later (in the case of cluster sources) it is imperitave that the iteration
+   * order of weights applied downstream is the same as the order used here when
+   * generating the curves [loop means then sigmas].
    */
-  XySequence exceedance(ScalarGroundMotion sgm, double n, Imt imt, XySequence sequence) {
-    if (sgm instanceof MultiScalarGroundMotion) {
-      MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgm;
-      double[] means = msgm.means();
-      double[] meanWts = msgm.meanWeights();
-      double[] sigmas = msgm.sigmas();
-      double[] sigmaWts = msgm.sigmaWeights();
-      XySequence model = XySequence.copyOf(sequence);
-      for (int i = 0; i < sigmas.length; i++) {
-        double σ = sigmas[i];
-        double σWt = sigmaWts[i];
-        for (int j = 0; j < means.length; j++) {
-          double wt = σWt * meanWts[j];
-          sequence.add(exceedance(means[j], σ, n, imt, model).multiply(wt));
-        }
+  List<XySequence> treeExceedance(
+      MultiScalarGroundMotion msgm,
+      double n,
+      Imt imt,
+      XySequence sequence) {
+
+    double[] means = msgm.means();
+    double[] sigmas = msgm.sigmas();
+    List<XySequence> curves = new ArrayList<>(means.length * sigmas.length);
+
+    for (int i = 0; i < means.length; i++) {
+      double μ = means[i];
+      for (int j = 0; j < sigmas.length; j++) {
+        curves.add(exceedance(μ, sigmas[j], n, imt, XySequence.emptyCopyOf(sequence)));
       }
-      return sequence;
     }
-    return exceedance(sgm.mean(), sgm.sigma(), n, imt, sequence);
+    return curves;
+  }
+
+  /*
+   * Computes curves for each gmm branch, scales each by its weight, and returns
+   * the summed result in the supplied seqeunce.
+   */
+  XySequence treeExceedanceCombined(
+      MultiScalarGroundMotion msgm,
+      double n,
+      Imt imt,
+      XySequence sequence) {
+
+    double[] means = msgm.means();
+    double[] meanWts = msgm.meanWeights();
+    double[] sigmas = msgm.sigmas();
+    double[] sigmaWts = msgm.sigmaWeights();
+
+    sequence.clear();
+    XySequence branchCurve = XySequence.copyOf(sequence);
+
+    for (int i = 0; i < means.length; i++) {
+      double μ = means[i];
+      double μWt = meanWts[i];
+      for (int j = 0; j < sigmas.length; j++) {
+        double wt = μWt * sigmaWts[j];
+        exceedance(μ, sigmas[j], n, imt, branchCurve);
+        sequence.add(branchCurve.multiply(wt));
+      }
+    }
+    return sequence;
   }
 
   /*
