@@ -8,6 +8,7 @@ import static com.google.common.util.concurrent.Futures.transform;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.instances;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,6 +24,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 
 import gov.usgs.earthquake.nshmp.calc.ClusterCurves.Builder;
+import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.eq.fault.surface.RuptureSurface;
@@ -179,25 +181,43 @@ final class Transforms {
 
         Imt imt = imtEntry.getKey();
         XySequence modelCurve = modelCurves.get(imt);
-        XySequence utilCurve = XySequence.copyOf(modelCurve);
         XySequence gmmCurve = XySequence.copyOf(modelCurve);
 
-        System.out.println("util curve");
-        System.out.println(utilCurve);
-        System.out.println("gmm curve");
-        System.out.println(gmmCurve);
+        XySequence utilCurve = XySequence.emptyCopyOf(modelCurve);
+
+        /*
+         * Exceedance methods always put result in supplied curve and are
+         * responsible for 'clearing' it before use if needed.
+         */
 
         for (Entry<Gmm, List<ScalarGroundMotion>> gmmEntry : imtEntry.getValue().entrySet()) {
           gmmCurve.clear();
           int i = 0;
           for (ScalarGroundMotion sgm : gmmEntry.getValue()) {
-            exceedanceModel.exceedance(
-                sgm,
-                truncationLevel,
-                imt,
-                utilCurve);
-            utilCurve.multiply(gms.inputs.get(i++).rate);
+
+            double rate = gms.inputs.get(i++).rate;
+
+            if (sgm instanceof MultiScalarGroundMotion) {
+
+              exceedanceModel.treeExceedanceCombined(
+                  (MultiScalarGroundMotion) sgm,
+                  truncationLevel,
+                  imt,
+                  utilCurve);
+
+            } else {
+
+              exceedanceModel.exceedance(
+                  sgm.mean(),
+                  sgm.sigma(),
+                  truncationLevel,
+                  imt,
+                  utilCurve);
+            }
+
+            utilCurve.multiply(rate);
             gmmCurve.add(utilCurve);
+
           }
           curveBuilder.addCurve(imt, gmmEntry.getKey(), gmmCurve);
         }
@@ -585,92 +605,13 @@ final class Transforms {
 
     @Override
     public ClusterCurves apply(ClusterGroundMotions clusterGroundMotions) {
+
       Builder builder = ClusterCurves.builder(clusterGroundMotions);
 
       for (Entry<Imt, XySequence> entry : logModelCurves.entrySet()) {
 
         XySequence modelCurve = entry.getValue();
         Imt imt = entry.getKey();
-
-        // aggregator of curves for each fault in a cluster
-        ListMultimap<Gmm, XySequence> faultCurves = MultimapBuilder
-            .enumKeys(Gmm.class)
-            .arrayListValues(clusterGroundMotions.size())
-            .build();
-        XySequence utilCurve = XySequence.copyOf(modelCurve);
-        System.out.println(utilCurve);
-        System.out.println("-----");
-        for (GroundMotions groundMotions : clusterGroundMotions) {
-
-          Map<Gmm, List<ScalarGroundMotion>> gmmGmMap = groundMotions.gmMap.get(imt);
-
-          for (Gmm gmm : gmmGmMap.keySet()) {
-            XySequence magVarCurve = XySequence.copyOf(modelCurve);
-            List<ScalarGroundMotion> sgms = gmmGmMap.get(gmm);
-            int i = 0;
-            for (ScalarGroundMotion sgm : sgms) {
-              exceedanceModel.exceedance(
-                  sgm,
-                  truncationLevel,
-                  imt,
-                  utilCurve);
-              System.out.println(utilCurve);
-              utilCurve.multiply(groundMotions.inputs.get(i++).rate);
-              magVarCurve.add(utilCurve);
-            }
-            faultCurves.put(gmm, magVarCurve);
-          }
-        }
-
-        double rate = clusterGroundMotions.parent.rate();
-        for (Gmm gmm : faultCurves.keySet()) {
-          XySequence clusterCurve = ExceedanceModel.clusterExceedance(faultCurves.get(gmm));
-          builder.addCurve(imt, gmm, clusterCurve.multiply(rate));
-        }
-      }
-
-      return builder.build();
-    }
-  }
-
-  /*
-   * CLUSTER: ClusterGroundMotions --> ClusterCurves
-   *
-   * Collapse magnitude variants and compute the joint probability of exceedence
-   * for sources in a cluster. Note that this is only to be used with cluster
-   * sources as the weight of each magnitude variant is stored in the
-   * HazardInput.rate field, which is kinda KLUDGY, but works.
-   */
-  static final class ClusterGroundMotionsToCurves2 implements
-      Function<ClusterGroundMotions, ClusterCurves> {
-
-    private final Map<Imt, XySequence> logModelCurves;
-    private final ExceedanceModel exceedanceModel;
-    private final double truncationLevel;
-
-    ClusterGroundMotionsToCurves2(CalcConfig config) {
-      this.logModelCurves = config.hazard.logModelCurves();
-      this.exceedanceModel = config.hazard.exceedanceModel;
-      this.truncationLevel = config.hazard.truncationLevel;
-    }
-
-    @Override
-    public ClusterCurves apply(ClusterGroundMotions clusterGroundMotions) {
-      Builder builder = ClusterCurves.builder(clusterGroundMotions);
-
-      for (Entry<Imt, XySequence> entry : logModelCurves.entrySet()) {
-
-        XySequence modelCurve = entry.getValue();
-        Imt imt = entry.getKey();
-
-        /* Aggregator of curves for each fault in a cluster. */
-        ListMultimap<Gmm, List<XySequence>> faultCurves = MultimapBuilder
-            .enumKeys(Gmm.class)
-            .arrayListValues(clusterGroundMotions.size())
-            .build();
-        XySequence utilCurve = XySequence.copyOf(modelCurve);
-        // System.out.println(utilCurve);
-        // System.out.println("-----");
 
         /*
          * TODO: this is klunky; we need to get and store the gmm branch weights
@@ -683,70 +624,118 @@ final class Transforms {
             .values().iterator().next() // first IMT entry
             .values().iterator().next() // first GMM entry
             .get(0);
-        MultiScalarGroundMotion msgmModel = (MultiScalarGroundMotion) sgmModel;
-        double[] gmmBranchWeights = weightList(
-            msgmModel.meanWeights(),
-            msgmModel.sigmaWeights());
 
-        for (GroundMotions groundMotions : clusterGroundMotions) {
+        if (sgmModel instanceof MultiScalarGroundMotion) {
 
-          Map<Gmm, List<ScalarGroundMotion>> gmmGmMap = groundMotions.gmMap.get(imt);
+          /* Aggregator of curves for each fault in a cluster. */
+          ListMultimap<Gmm, List<XySequence>> faultCurves = MultimapBuilder
+              .enumKeys(Gmm.class)
+              .arrayListValues(clusterGroundMotions.size())
+              .build();
+          XySequence utilCurve = XySequence.emptyCopyOf(modelCurve);
 
-          for (Gmm gmm : gmmGmMap.keySet()) {
+          MultiScalarGroundMotion msgmModel = (MultiScalarGroundMotion) sgmModel;
+          double[] gmmBranchWeights = weightList(
+              msgmModel.meanWeights(),
+              msgmModel.sigmaWeights());
 
-            /* Gmm branch lists of magnitude variants. */
-            List<ScalarGroundMotion> sgms = gmmGmMap.get(gmm);
-            List<List<XySequence>> magCurves = new ArrayList<>(sgms.size());
-            for (int i = 0; i < sgms.size(); i++) { // Fault magnitude variants
+          for (GroundMotions groundMotions : clusterGroundMotions) {
 
-              /* Gmm tree of exceedance curves for each magnitude variant. */
-              MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgms.get(i);
-              List<XySequence> magTreeCurves = exceedanceModel.treeExceedance(
-                  msgm,
-                  truncationLevel,
-                  imt,
-                  utilCurve);
+            Map<Gmm, List<ScalarGroundMotion>> gmmGmMap = groundMotions.gmMap.get(imt);
 
-              /* Scale by magnitude weight and agreggate. */
-              double magWt = groundMotions.inputs.get(i).rate;
-              magTreeCurves.forEach(xy -> xy.multiply(magWt));
-              magCurves.add(magTreeCurves);
+            for (Gmm gmm : gmmGmMap.keySet()) {
+
+              /* Gmm branch lists of magnitude variants. */
+              List<ScalarGroundMotion> sgms = gmmGmMap.get(gmm);
+              List<List<XySequence>> magCurves = new ArrayList<>(sgms.size());
+              for (int i = 0; i < sgms.size(); i++) { // Fault mag variants
+
+                /* Gmm tree of exceedance curves for each magnitude variant. */
+                MultiScalarGroundMotion msgm = (MultiScalarGroundMotion) sgms.get(i);
+                List<XySequence> magTreeCurves = exceedanceModel.treeExceedance(
+                    msgm,
+                    truncationLevel,
+                    imt,
+                    utilCurve);
+                
+                /* Scale by magnitude weight and agreggate. */
+                double magWt = groundMotions.inputs.get(i).rate;
+                magTreeCurves.forEach(xy -> xy.multiply(magWt));
+                magCurves.add(magTreeCurves);
+              }
+              
+              /* Combine magnitude variants and collect. */
+              List<XySequence> faultTreeCurves = reduce(magCurves, Transforms::sum);
+              faultCurves.put(gmm, faultTreeCurves);
             }
+          }
 
-            /* Combine magnitude variants and collect. */
-            List<XySequence> faultTreeCurves = reduce(magCurves, Transforms::sum);
-            faultCurves.put(gmm, faultTreeCurves);
+          /* Cluster exceedance */
+          double rate = clusterGroundMotions.parent.rate();
+          for (Gmm gmm : faultCurves.keySet()) {
+
+            /* Combine cluster fault exceedances on each gmm branch. */
+
+            List<XySequence> clusterTreeCurves = reduce(
+                faultCurves.get(gmm),
+                ExceedanceModel::clusterExceedance);
+
+            /* Scale gmm branches by weight and combine. */
+            XySequence clusterCurve = weightedSum(clusterTreeCurves, gmmBranchWeights);
+            
+            /* Scale to cluster rate and save. */
+            clusterCurve.multiply(rate);
+            builder.addCurve(imt, gmm, clusterCurve);
+          }
+
+        } else {
+
+          /* Aggregator of curves for each fault in a cluster */
+          ListMultimap<Gmm, XySequence> faultCurves = MultimapBuilder
+              .enumKeys(Gmm.class)
+              .arrayListValues(clusterGroundMotions.size())
+              .build();
+          XySequence utilCurve = XySequence.emptyCopyOf(modelCurve);
+
+          for (GroundMotions groundMotions : clusterGroundMotions) {
+
+            Map<Gmm, List<ScalarGroundMotion>> gmmGmMap = groundMotions.gmMap.get(imt);
+
+            for (Gmm gmm : gmmGmMap.keySet()) {
+              XySequence magVarCurve = XySequence.emptyCopyOf(modelCurve);
+              List<ScalarGroundMotion> sgms = gmmGmMap.get(gmm);
+              for (int i = 0; i < sgms.size(); i++) {
+                ScalarGroundMotion sgm = sgms.get(i);
+                exceedanceModel.exceedance(
+                    sgm.mean(),
+                    sgm.sigma(),
+                    truncationLevel,
+                    imt,
+                    utilCurve);
+                utilCurve.multiply(groundMotions.inputs.get(i).rate);
+                magVarCurve.add(utilCurve);
+              }
+              faultCurves.put(gmm, magVarCurve);
+            }
+          }
+
+          double rate = clusterGroundMotions.parent.rate();
+          for (Gmm gmm : faultCurves.keySet()) {
+            XySequence clusterCurve = ExceedanceModel.clusterExceedance(faultCurves.get(gmm));
+            builder.addCurve(imt, gmm, clusterCurve.multiply(rate));
           }
         }
-
-        /* Cluster exceedance */
-        double rate = clusterGroundMotions.parent.rate();
-        for (Gmm gmm : faultCurves.keySet()) {
-
-          /* Combine cluster fault exceedances on each gmm branch. */
-          List<XySequence> clusterTreeCurves = reduce(
-              faultCurves.get(gmm),
-              ExceedanceModel::clusterExceedance);
-
-          /* Scale gmm branches by weight and combine. */
-          XySequence clusterCurve = weightedSum(clusterTreeCurves, gmmBranchWeights);
-
-          /* Scale to cluster rate and save. */
-          clusterCurve.multiply(rate);
-          builder.addCurve(imt, gmm, clusterCurve);
-        }
       }
-
       return builder.build();
     }
   }
 
-  /* Iteration order must match that in ExceedanceModel.treeExceedance() . */
+  /* Iteration order must match that in ExceedanceModel.treeExceedance() */
   private static double[] weightList(double[] μWts, double[] σWts) {
     double[] wts = new double[μWts.length * σWts.length];
-    for (int i = 0; i < σWts.length; i++) {
-      for (int j = 0; j < μWts.length; j++) {
-        wts[σWts.length * i + j] = σWts[i] * μWts[j];
+    for (int i = 0; i < μWts.length; i++) {
+      for (int j = 0; j < σWts.length; j++) {
+        wts[σWts.length * i + j] = μWts[i] * σWts[j];
       }
     }
     return wts;
@@ -762,7 +751,7 @@ final class Transforms {
 
     List<List<XySequence>> transposed = transpose(lists);
     List<XySequence> reduced = new ArrayList<>(transposed.size());
-    for (List<XySequence> list : lists) {
+    for (List<XySequence> list : transposed) {
       reduced.add(reducer.apply(list));
     }
     return reduced;
@@ -774,7 +763,7 @@ final class Transforms {
     ArrayList<List<T>> transposed = new ArrayList<>(transSize);
     for (int i = 0; i < transSize; i++) {
       ArrayList<T> nested = new ArrayList<>(lists.size());
-      for (int j = 0; i < lists.size(); i++) {
+      for (int j = 0; j < lists.size(); j++) {
         nested.add(lists.get(j).get(i));
       }
       transposed.add(nested);
