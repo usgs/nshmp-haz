@@ -789,6 +789,13 @@ public enum Gmm {
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_SEEDS_EPRI(
+      NgaEastUsgs_2017.UsgsSeedsEpri.class,
+      NgaEastUsgs_2017.UsgsSeedsEpri.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
   /* NGA-East Seed Models */
 
   /** @see NgaEastUsgs_2017 */
