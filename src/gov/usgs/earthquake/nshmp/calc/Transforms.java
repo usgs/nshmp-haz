@@ -8,23 +8,19 @@ import static com.google.common.util.concurrent.Futures.transform;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.instances;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 
 import gov.usgs.earthquake.nshmp.calc.ClusterCurves.Builder;
-import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.eq.fault.surface.RuptureSurface;
@@ -619,6 +615,9 @@ final class Transforms {
          * done for each gmm branch. Is there a better way? SHould Gmms that
          * return MultiScalarGroundMotions be able to supply period dependent
          * weights?
+         * 
+         * ALso, we've presently got to dig down to see if we've got
+         * multiScalarGMs; if we do, we can then only process that type.
          */
         ScalarGroundMotion sgmModel = clusterGroundMotions.get(0).gmMap
             .values().iterator().next() // first IMT entry
@@ -634,19 +633,24 @@ final class Transforms {
               .build();
           XySequence utilCurve = XySequence.emptyCopyOf(modelCurve);
 
-          MultiScalarGroundMotion msgmModel = (MultiScalarGroundMotion) sgmModel;
-          double[] gmmBranchWeights = weightList(
-              msgmModel.meanWeights(),
-              msgmModel.sigmaWeights());
+          Map<Gmm, double[]> gmmTreeWeights = new EnumMap<>(Gmm.class);
 
           for (GroundMotions groundMotions : clusterGroundMotions) {
 
             Map<Gmm, List<ScalarGroundMotion>> gmmGmMap = groundMotions.gmMap.get(imt);
 
             for (Gmm gmm : gmmGmMap.keySet()) {
+              List<ScalarGroundMotion> sgms = gmmGmMap.get(gmm);
+
+              /* Get the tree weight array for each Gmm */
+              if (!gmmTreeWeights.containsKey(gmm)) {
+                MultiScalarGroundMotion msgmModel = (MultiScalarGroundMotion) sgms.get(0);
+                gmmTreeWeights.put(gmm, weightList(
+                    msgmModel.meanWeights(),
+                    msgmModel.sigmaWeights()));
+              }
 
               /* Gmm branch lists of magnitude variants. */
-              List<ScalarGroundMotion> sgms = gmmGmMap.get(gmm);
               List<List<XySequence>> magCurves = new ArrayList<>(sgms.size());
               for (int i = 0; i < sgms.size(); i++) { // Fault mag variants
 
@@ -657,13 +661,13 @@ final class Transforms {
                     truncationLevel,
                     imt,
                     utilCurve);
-                
+
                 /* Scale by magnitude weight and agreggate. */
                 double magWt = groundMotions.inputs.get(i).rate;
                 magTreeCurves.forEach(xy -> xy.multiply(magWt));
                 magCurves.add(magTreeCurves);
               }
-              
+
               /* Combine magnitude variants and collect. */
               List<XySequence> faultTreeCurves = reduce(magCurves, Transforms::sum);
               faultCurves.put(gmm, faultTreeCurves);
@@ -681,8 +685,10 @@ final class Transforms {
                 ExceedanceModel::clusterExceedance);
 
             /* Scale gmm branches by weight and combine. */
-            XySequence clusterCurve = weightedSum(clusterTreeCurves, gmmBranchWeights);
-            
+            XySequence clusterCurve = weightedSum(
+                clusterTreeCurves,
+                gmmTreeWeights.get(gmm));
+
             /* Scale to cluster rate and save. */
             clusterCurve.multiply(rate);
             builder.addCurve(imt, gmm, clusterCurve);

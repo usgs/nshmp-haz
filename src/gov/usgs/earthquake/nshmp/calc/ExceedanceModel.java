@@ -7,19 +7,12 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P75;
 import static java.lang.Double.isNaN;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import javax.xml.crypto.dsig.Transform;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import gov.usgs.earthquake.nshmp.data.XyPoint;
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
 import gov.usgs.earthquake.nshmp.gmm.MultiScalarGroundMotion;
-import gov.usgs.earthquake.nshmp.gmm.ScalarGroundMotion;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
