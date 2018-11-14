@@ -1,6 +1,5 @@
 package gov.usgs.earthquake.nshmp.tree;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
@@ -42,8 +41,19 @@ public interface LogicTree<T> extends Iterable<Branch<T>> {
    */
   List<Branch<T>> sample(double[] probabilities);
 
+  /**
+   * Return a new {@code SingleBranchTree}.
+   * 
+   * @param id the branch identifier
+   * @param weight the branch weight
+   * @param value the branch value
+   */
+  public static <T> SingleBranchTree<T> singleBranch(String id, double weight, T value) {
+    return new SingleBranchTree<>(new RegularBranch<T>(id, weight, value));
+  }
+
   /** Return a new logic tree builder. */
-  static <T> Builder<T> builder() {
+  public static <T> Builder<T> builder() {
     return new Builder<T>();
   }
 
@@ -66,10 +76,7 @@ public interface LogicTree<T> extends Iterable<Branch<T>> {
      * @return this builder
      */
     public Builder<T> add(String id, double weight, T value) {
-      branches.add(new RegularBranch<T>(
-          checkNotNull(id),
-          weight,
-          checkNotNull(value)));
+      branches.add(new RegularBranch<T>(id, weight, value));
       return this;
     }
 
