@@ -14,7 +14,7 @@ import com.google.common.collect.Iterators;
  * 
  * @author Brandon Clayton
  */
-public class SingleBranchTree<T> implements LogicTree<T> {
+class SingleBranchTree<T> implements LogicTree<T> {
 
   private final Branch<T> branch;
 

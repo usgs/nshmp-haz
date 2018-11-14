@@ -33,10 +33,10 @@ public class LogicTreeTest {
 
   private static final LogicTree<DefaultScalarGroundMotion> TREE = LogicTree
       .<DefaultScalarGroundMotion> builder()
-      .add(KEYS[0], WEIGHTS[0], GM)
-      .add(KEYS[1], WEIGHTS[1], GM)
-      .add(KEYS[2], WEIGHTS[2], GM)
-      .add(KEYS[3], WEIGHTS[3], GM)
+      .add(KEYS[0], GM, WEIGHTS[0])
+      .add(KEYS[1], GM, WEIGHTS[1])
+      .add(KEYS[2], GM, WEIGHTS[2])
+      .add(KEYS[3], GM, WEIGHTS[3])
       .build();
 
   @Rule
@@ -55,7 +55,7 @@ public class LogicTreeTest {
 
     Builder<DefaultScalarGroundMotion> builder = LogicTree
         .<DefaultScalarGroundMotion> builder()
-        .add(KEYS[0], 1.0, GM);
+        .add(KEYS[0], GM, 1.0);
 
     builder.build();
     builder.build();
@@ -66,7 +66,7 @@ public class LogicTreeTest {
     thrown.expect(NullPointerException.class);
 
     LogicTree.<DefaultScalarGroundMotion> builder()
-        .add(null, 1.0, GM)
+        .add(null, GM, 1.0)
         .build();
   }
 
@@ -75,7 +75,7 @@ public class LogicTreeTest {
     thrown.expect(NullPointerException.class);
 
     LogicTree.<DefaultScalarGroundMotion> builder()
-        .add(KEYS[0], 1.0, null)
+        .add(KEYS[0], null, 1.0)
         .build();
   }
 
@@ -84,7 +84,7 @@ public class LogicTreeTest {
     thrown.expect(IllegalArgumentException.class);
 
     LogicTree.<DefaultScalarGroundMotion> builder()
-        .add(KEYS[0], 2, GM);
+        .add(KEYS[0], GM, 2.0);
   }
 
   @Test
@@ -92,11 +92,11 @@ public class LogicTreeTest {
     thrown.expect(IllegalArgumentException.class);
 
     LogicTree.<DefaultScalarGroundMotion> builder()
-        .add(KEYS[0], 1.0, GM)
-        .add(KEYS[1], 1.0, GM)
+        .add(KEYS[0], GM, 1.0)
+        .add(KEYS[1], GM, 1.0)
         .build();
   }
-  
+
   @Test
   public final void equals() {
     int index = 0;
@@ -123,9 +123,9 @@ public class LogicTreeTest {
   @Test
   public final void singleBranchEquals() {
     String key = KEYS[0];
-    double weight = WEIGHTS[0];
+    double weight = 1.0;
 
-    SingleBranchTree<DefaultScalarGroundMotion> tree = LogicTree.singleBranch(key, weight, GM);
+    SingleBranchTree<DefaultScalarGroundMotion> tree = LogicTree.singleBranch(key, GM);
     tree.forEach((branch) -> checkBranch(key, weight, GM, branch));
 
     Branch<DefaultScalarGroundMotion> sampleBranch = tree.sample(2.0);

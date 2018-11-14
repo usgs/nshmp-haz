@@ -9,12 +9,12 @@ import gov.usgs.earthquake.nshmp.data.Data;
  *
  * @author Brandon Clayton
  */
-public class RegularBranch<T> implements Branch<T> {
+class RegularBranch<T> implements Branch<T> {
   private final String id;
   private final double weight;
   private final T value;
 
-  RegularBranch(String id, double weight, T value) {
+  RegularBranch(String id, T value, double weight) {
     this.id = checkNotNull(id);
     this.weight = Data.checkWeight(weight);
     this.value = checkNotNull(value);

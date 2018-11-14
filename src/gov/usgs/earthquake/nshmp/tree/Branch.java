@@ -8,12 +8,12 @@ package gov.usgs.earthquake.nshmp.tree;
 public interface Branch<T> {
 
   /** The branch id. */
-  public String id();
+  String id();
 
   /** The branch value. */
-  public T value();
+  T value();
 
   /** The branch weight. */
-  public double weight();
+  double weight();
 
 }

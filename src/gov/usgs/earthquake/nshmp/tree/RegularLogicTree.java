@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
  * @author Brandon Clayton
  * @author Peter Powers
  */
-public class RegularLogicTree<T> implements LogicTree<T> {
+class RegularLogicTree<T> implements LogicTree<T> {
 
   private final List<Branch<T>> branches;
   private final double[] cumulativeWeights;
@@ -43,7 +43,7 @@ public class RegularLogicTree<T> implements LogicTree<T> {
 
   @Override
   public Iterator<Branch<T>> iterator() {
-    return branches.iterator(); 
+    return branches.iterator();
   }
 
 }
