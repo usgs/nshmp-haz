@@ -143,8 +143,8 @@ public class LogicTreeTest {
       Branch<DefaultScalarGroundMotion> branch) {
     assertEquals(key, branch.id());
     assertEquals(weight, branch.weight(), 0);
-    assertEquals(GM.mean(), branch.value().mean(), 0);
-    assertEquals(GM.sigma(), branch.value().sigma(), 0);
+    assertEquals(value.mean(), branch.value().mean(), 0);
+    assertEquals(value.sigma(), branch.value().sigma(), 0);
   }
 
 }
