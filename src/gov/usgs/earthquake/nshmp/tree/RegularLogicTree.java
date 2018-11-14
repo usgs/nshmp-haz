@@ -41,32 +41,9 @@ class RegularLogicTree<T> implements LogicTree<T> {
     return samples.build();
   }
 
-  /*
-   * Override the iterator to ensure a pointer to the branch is returned and not
-   * a copy of the branch.
-   */
   @Override
   public Iterator<Branch<T>> iterator() {
-    return new Iterator<Branch<T>>() {
-
-      private int index = 0;
-      private int indexEnd = branches.size();
-
-      @Override
-      public boolean hasNext() {
-        return index < indexEnd;
-      }
-
-      @Override
-      public Branch<T> next() {
-        return branches.get(index++);
-      }
-
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException();
-      }
-    };
+    return branches.iterator();
   }
 
 }

@@ -26,17 +26,17 @@ public class LogicTreeTest {
 
   private static final double[] WEIGHTS = new double[] { 0.40, 0.30, 0.20, 0.10 };
 
-  private static final double[] CUML_WEIGHTS = new double[] { 0.40, 0.70, 0.90, 1.0 };
+  private static final double[] CUML_WEIGHTS = new double[] { 0.39, 0.69, 0.89, 0.99 };
 
   private static final DefaultScalarGroundMotion GM = DefaultScalarGroundMotion
       .create(1.0, 0.5);
 
   private static final LogicTree<DefaultScalarGroundMotion> TREE = LogicTree
       .<DefaultScalarGroundMotion> builder()
-      .add(KEYS[0], WEIGHTS[0], GM)
-      .add(KEYS[1], WEIGHTS[1], GM)
-      .add(KEYS[2], WEIGHTS[2], GM)
-      .add(KEYS[3], WEIGHTS[3], GM)
+      .add(KEYS[0], GM, WEIGHTS[0])
+      .add(KEYS[1], GM, WEIGHTS[1])
+      .add(KEYS[2], GM, WEIGHTS[2])
+      .add(KEYS[3], GM, WEIGHTS[3])
       .build();
 
   @Rule
@@ -55,7 +55,7 @@ public class LogicTreeTest {
 
     Builder<DefaultScalarGroundMotion> builder = LogicTree
         .<DefaultScalarGroundMotion> builder()
-        .add("branch", 1.0, GM);
+        .add(KEYS[0], GM, 1.0);
 
     builder.build();
     builder.build();
@@ -66,7 +66,7 @@ public class LogicTreeTest {
     thrown.expect(NullPointerException.class);
 
     LogicTree.<DefaultScalarGroundMotion> builder()
-        .add(null, 1.0, GM)
+        .add(null, GM, 1.0)
         .build();
   }
 
@@ -75,8 +75,16 @@ public class LogicTreeTest {
     thrown.expect(NullPointerException.class);
 
     LogicTree.<DefaultScalarGroundMotion> builder()
-        .add("branch", 1.0, null)
+        .add(KEYS[0], null, 1.0)
         .build();
+  }
+
+  @Test
+  public final void builderBadWeight() {
+    thrown.expect(IllegalArgumentException.class);
+
+    LogicTree.<DefaultScalarGroundMotion> builder()
+        .add(KEYS[0], GM, 2.0);
   }
 
   @Test
@@ -84,8 +92,8 @@ public class LogicTreeTest {
     thrown.expect(IllegalArgumentException.class);
 
     LogicTree.<DefaultScalarGroundMotion> builder()
-        .add("branch1", 1.0, GM)
-        .add("branch2", 1.0, GM)
+        .add(KEYS[0], GM, 1.0)
+        .add(KEYS[1], GM, 1.0)
         .build();
   }
 
@@ -94,30 +102,49 @@ public class LogicTreeTest {
     int index = 0;
 
     List<Branch<DefaultScalarGroundMotion>> sampleBranches = TREE.sample(CUML_WEIGHTS);
+    assertEquals(CUML_WEIGHTS.length, sampleBranches.size(), 0);
 
     for (Branch<DefaultScalarGroundMotion> branch : TREE) {
       String key = KEYS[index];
       double weight = WEIGHTS[index];
-
-      assertEquals(key, branch.id());
-      assertEquals(weight, branch.weight(), 0);
-      assertEquals(GM.mean(), branch.value().mean(), 0);
-      assertEquals(GM.sigma(), branch.value().sigma(), 0);
-
       Branch<DefaultScalarGroundMotion> sampleBranch = TREE.sample(CUML_WEIGHTS[index]);
-      assertEquals(key, sampleBranch.id());
-      assertEquals(weight, sampleBranch.weight(), 0);
-      assertEquals(GM.mean(), sampleBranch.value().mean(), 0);
-      assertEquals(GM.sigma(), sampleBranch.value().sigma(), 0);
 
-      assertEquals(key, sampleBranches.get(index).id());
-      assertEquals(weight, sampleBranches.get(index).weight(), 0);
-      assertEquals(GM.mean(), sampleBranches.get(index).value().mean(), 0);
-      assertEquals(GM.sigma(), sampleBranches.get(index).value().sigma(), 0);
+      checkBranch(key, weight, GM, branch);
+      checkBranch(key, weight, GM, sampleBranch);
+      checkBranch(key, weight, GM, sampleBranches.get(index));
 
       index++;
     }
 
+    Branch<DefaultScalarGroundMotion> sampleBranch = TREE.sample(1.1);
+    checkBranch(KEYS[3], WEIGHTS[3], GM, sampleBranch);
+  }
+
+  @Test
+  public final void singleBranchEquals() {
+    String key = KEYS[0];
+    double weight = 1.0;
+
+    SingleBranchTree<DefaultScalarGroundMotion> tree = LogicTree.singleBranch(key, GM);
+    tree.forEach((branch) -> checkBranch(key, weight, GM, branch));
+
+    Branch<DefaultScalarGroundMotion> sampleBranch = tree.sample(2.0);
+    checkBranch(key, weight, GM, sampleBranch);
+
+    List<Branch<DefaultScalarGroundMotion>> sampleBranches = tree.sample(WEIGHTS);
+    sampleBranches.forEach((branch) -> checkBranch(key, weight, GM, branch));
+    assertEquals(WEIGHTS.length, sampleBranches.size());
+  }
+
+  private static void checkBranch(
+      String key,
+      double weight,
+      DefaultScalarGroundMotion value,
+      Branch<DefaultScalarGroundMotion> branch) {
+    assertEquals(key, branch.id());
+    assertEquals(weight, branch.weight(), 0);
+    assertEquals(value.mean(), branch.value().mean(), 0);
+    assertEquals(value.sigma(), branch.value().sigma(), 0);
   }
 
 }
