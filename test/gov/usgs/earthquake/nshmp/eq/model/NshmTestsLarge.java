@@ -1,11 +1,17 @@
 package gov.usgs.earthquake.nshmp.eq.model;
 
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.BOSTON_MA;
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.CHICAGO_IL;
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.LOS_ANGELES_CA;
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.NEW_MADRID_MO;
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.NEW_ORLEANS_LA;
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.NEW_YORK_NY;
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.RENO_NV;
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.SALT_LAKE_CITY_UT;
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.SAN_FRANCISCO_CA;
+import static gov.usgs.earthquake.nshmp.internal.NshmpSite.SEATTLE_WA;
 import static org.junit.Assert.assertEquals;
 
-import static gov.usgs.earthquake.nshmp.internal.NshmpSite.*;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,7 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -22,14 +27,12 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.HazardCalc;
 import gov.usgs.earthquake.nshmp.calc.Hazard;
 import gov.usgs.earthquake.nshmp.calc.Site;
-import gov.usgs.earthquake.nshmp.internal.NshmpSite;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
 
 /**
@@ -44,11 +47,8 @@ import gov.usgs.earthquake.nshmp.util.NamedLocation;
 @SuppressWarnings("javadoc")
 public class NshmTestsLarge {
 
-  // static
-  private static final List<Integer> COUS_YEARS = ImmutableList.of(2008, 2014); // TODO
-                                                                                // add
-                                                                                // 2018
   private static final List<String> COUS_REGION_IDS = ImmutableList.of("wus", "ceus");
+
   private static final Map<String, String> COUS_REGION_NAMES = ImmutableMap.of(
       COUS_REGION_IDS.get(0), "Western US",
       COUS_REGION_IDS.get(1), "Central & Eastern US");
@@ -88,84 +88,62 @@ public class NshmTestsLarge {
     EXEC.shutdown();
   }
 
-  private static final Path MODEL_PATH = Paths.get("../../");
+  private static final Path MODEL_PATH = Paths.get("../");
   private static final String MODEL_ROOT = "nshm-";
   private static final Path DATA_PATH = Paths.get("test/gov/usgs/earthquake/nshmp/eq/model/data");
 
   @Test
   public void testCeus2008() throws Exception {
-//    ExecutorService exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    HazardModel model = loadModel("ceus", 2008);
-    for (NamedLocation location : CEUS_SITES)
-      
-      
-    }
-
-  model=
-
-  compareCurves("fault-wus", NshmpSite.SALT_LAKE_CITY_UT);
-    
-    exec.shutdown();
+    testModel("ceus", 2008, CEUS_SITES);
   }
 
-  private static void runSites(HazardModel model, List<NamedLocation> sites) {
-    for (NamedLocation location : CEUS_SITES) {
+  @Test
+  public void testCeus2014() throws Exception {
+    testModel("ceus", 2014, CEUS_SITES);
+  }
+
+  @Test
+  public void testWus2008() throws Exception {
+    testModel("wus", 2008, WUS_SITES);
+  }
+
+  @Test
+  public void testWus2014() throws Exception {
+    testModel("wus", 2014, WUS_SITES);
+  }
+
+  private static void testModel(
+      String region,
+      int year,
+      List<NamedLocation> locations) throws Exception {
+
+    HazardModel model = loadModel(region, year);
+    for (NamedLocation location : locations) {
+      compareCurves(region, year, model, location);
+    }
   }
 
   private static void compareCurves(
-      HazardModel model,
-      NamedLocation loc,
-      ExecutorService exec) throws Exception {
-
-    String actual = generateActual(model, loc, exec);
-
-    String expected = readExpected(id, loc);
-    // assertEquals(expected, actual);
-  }
-
-  // private static final String MODEL_SUFFIX = "-model";
-  private static final String RESULT_SUFFIX = "-result.txt";
-
-  private static String generateActual(
       String region,
       int year,
-      List<NamedLocation> locations,
-      Consumer<String> out) throws Exception {
+      HazardModel model,
+      NamedLocation location) throws Exception {
 
-    // Path modelPath = DATA_PATH.resolve(MODEL_PATH).resolve(MODEL_ROOT + ) +
-    // MODEL_SUFFIX);
-    // System.out.println(modelPath.toAbsolutePath());
-
-    HazardModel model = loadModel(region, year);
-    ExecutorService exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-    Site.Builder site = Site.builder();
-
-    for (NamedLocation location : locations) {
-      Hazard hazard = HazardCalc.calc(
-          model,
-          model.config(),
-          site.location(location).build(),
-          Optional.of(exec));
-      String json = GSON.toJson(hazard.curves());
-      out.accept(json);
-    }
-
-    exec.shutdown();
-    return null;
-    // return GSON.toJson(hazard.curves());
+    String actual = generateActual(model, location);
+    String expected = readExpected(region, year, location);
+    assertEquals(expected, actual);
   }
 
   private static String generateActual(
       HazardModel model,
-      NamedLocation location,
-      ExecutorService exec) {
+      NamedLocation location) {
 
     Hazard hazard = HazardCalc.calc(
         model,
         model.config(),
         Site.builder().location(location).build(),
-        Optional.of(exec));
+        Optional.of(EXEC));
+
     return GSON.toJson(hazard.curves());
   }
 
@@ -183,32 +161,58 @@ public class NshmTestsLarge {
     return Loader.load(modelPath);
   }
 
-  private static String readExpected(String region, int year, NamedLocation loc)
-      throws Exception {
+  private static String resultFilename(
+      String region,
+      int year,
+      NamedLocation loc) {
+
+    return "e2e-" + region + "-" + year + "-" + loc.id() + ".json";
+  }
+
+  private static String readExpected(
+      String region,
+      int year,
+      NamedLocation loc) throws Exception {
+
     String filename = resultFilename(region, year, loc);
     Path resultPath = DATA_PATH.resolve(filename);
     return new String(Files.readAllBytes(resultPath));
   }
 
-  private static void writeExpected(String region, int year, NamedLocation loc, String json)
-      throws Exception {
+  private static void writeExpected(
+      String region,
+      int year,
+      NamedLocation loc,
+      String json) throws Exception {
+
     String filename = resultFilename(region, year, loc);
     Path resultPath = DATA_PATH.resolve(filename);
     Files.write(resultPath, json.getBytes());
   }
-  
-  private static String resultFilename(String region, int year, NamedLocation loc) {
-    return "e2e-" + region + "-" + year + "-" + loc.id() + RESULT_SUFFIX;
+
+  private static void writeExpecteds(
+      String region,
+      int year,
+      List<NamedLocation> locations) throws Exception {
+
+    HazardModel model = loadModel(region, year);
+    for (NamedLocation location : locations) {
+      String json = generateActual(model, location);
+      writeExpected(region, year, location, json);
+    }
   }
 
   public static void main(String[] args) throws Exception {
-    writeExpected("fault-wus", NshmpSite.SALT_LAKE_CITY_UT);
-    /*
-     * TODO currently have NaN problem with z serialization in config. It would
-     * be nice if config could be serialized by default without having to use
-     * it's own GSON instance (which handles NaN and urls)
-     */
-
+    
+    /* Initialize and shut down executor to generate results. */
+    setUpBeforeClass();
+    
+    writeExpecteds("ceus", 2008, CEUS_SITES);
+    writeExpecteds("ceus", 2014, CEUS_SITES);
+    writeExpecteds("wus", 2008, WUS_SITES);
+    writeExpecteds("wus", 2014, WUS_SITES);
+    
+    tearDownAfterClass();
   }
 
 }
