@@ -16,6 +16,7 @@ import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.HazardCalc;
 import gov.usgs.earthquake.nshmp.calc.Hazard;
+import gov.usgs.earthquake.nshmp.calc.HazardCalcs;
 import gov.usgs.earthquake.nshmp.calc.Site;
 import gov.usgs.earthquake.nshmp.internal.NshmpSite;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
@@ -62,7 +63,7 @@ public class NshmTestsSmall {
     Site site = Site.builder()
         .location(loc)
         .build();
-    Hazard hazard = HazardCalc.calc(
+    Hazard hazard = HazardCalcs.hazard(
         model,
         model.config(),
         site,

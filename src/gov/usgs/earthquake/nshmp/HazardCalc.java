@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -168,7 +167,7 @@ public class HazardCalc {
 
     HazardExport handler = HazardExport.create(config, sites, log);
     for (Site site : sites) {
-      Hazard hazard = calc(model, config, site, executor);
+      Hazard hazard = HazardCalcs.hazard(model, config, site, executor);
       handler.add(hazard, Optional.empty());
       log.fine(hazard.toString());
     }
@@ -218,34 +217,6 @@ public class HazardCalc {
         .append(Throwables.getStackTraceAsString(e))
         .append(usage);
     return Optional.of(sb.toString());
-  }
-
-  /**
-   * Compute hazard curves at a {@code site} for a {@code model} and
-   * {@code config}. If an {@code executor} is supplied, it will be used to
-   * distribute tasks; otherwise, the calculation will run on the current
-   * thread. Be sure to shutdown any supplied executor after a calculation
-   * completes.
-   *
-   * <p><b>Note:</b> any model initialization settings in {@code config} will be
-   * ignored as the supplied model will already have been initialized.
-   *
-   * @param model to use
-   * @param config calculation configuration
-   * @param site of interest
-   * @param executor to use ({@link Optional})
-   * @return a {@code Hazard} object
-   */
-  public static Hazard calc(
-      HazardModel model,
-      CalcConfig config,
-      Site site,
-      Optional<Executor> executor) {
-    try {
-      return HazardCalcs.hazard(model, config, site, executor);
-    } catch (ExecutionException | InterruptedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   /**

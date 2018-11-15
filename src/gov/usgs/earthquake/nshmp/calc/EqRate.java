@@ -57,9 +57,13 @@ public class EqRate {
   }
 
   /**
-   * Create a new earthquake rate data container.
-   * 
-   * @param model to process
+   * Create a new earthquake rate data container at a {@code site} for the
+   * supplied {@code model} and {@code config}.
+   *
+   * <p><b>Note:</b> any model initialization settings in {@code config} will be
+   * ignored as the supplied model will already have been initialized.
+   *
+   * @param model of interest
    * @param config calculation configuration
    * @param site of interest
    */
