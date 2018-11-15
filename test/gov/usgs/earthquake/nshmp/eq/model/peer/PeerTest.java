@@ -31,6 +31,7 @@ import com.google.common.primitives.Doubles;
 import gov.usgs.earthquake.nshmp.HazardCalc;
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;
 import gov.usgs.earthquake.nshmp.calc.Hazard;
+import gov.usgs.earthquake.nshmp.calc.HazardCalcs;
 import gov.usgs.earthquake.nshmp.calc.Site;
 import gov.usgs.earthquake.nshmp.calc.Sites;
 import gov.usgs.earthquake.nshmp.eq.model.HazardModel;
@@ -124,7 +125,7 @@ public class PeerTest {
   @Test
   public void test() {
     // System.out.println(site.name);
-    Hazard result = HazardCalc.calc(model, model.config(), site, Optional.<Executor> empty());
+    Hazard result = HazardCalcs.hazard(model, model.config(), site, Optional.<Executor> empty());
     // compute y-values converting to Poiss prob
     double[] actual = Doubles.toArray(
         FluentIterable.from(result.curves().get(Imt.PGA).yValues())

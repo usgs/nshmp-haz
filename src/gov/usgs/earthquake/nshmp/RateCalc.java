@@ -152,7 +152,7 @@ public class RateCalc {
       log.info(PROGRAM + ": calculating ...");
       export = EqRateExport.create(config, sites, log);
       for (Site site : sites) {
-        EqRate rate = calc(model, config, site);
+        EqRate rate = EqRate.create(model, config, site);
         export.add(rate);
       }
     }
@@ -201,25 +201,6 @@ public class RateCalc {
     export.addAll(lastBatch);
 
     return export;
-  }
-
-  /**
-   * Compute earthquake rates at a {@code site} for a {@code model} and
-   * {@code config}.
-   *
-   * <p><b>Note:</b> any model initialization settings in {@code config} will be
-   * ignored as the supplied model will already have been initialized.
-   *
-   * @param model to use
-   * @param config calculation configuration
-   * @param site of interest
-   */
-  public static EqRate calc(
-      HazardModel model,
-      CalcConfig config,
-      Site site) {
-
-    return EqRate.create(model, config, site);
   }
 
   private static final String PROGRAM = RateCalc.class.getSimpleName();

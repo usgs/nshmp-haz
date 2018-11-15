@@ -142,8 +142,8 @@ public class DeaggCalc {
     HazardExport handler = HazardExport.create(config, sites, log);
 
     for (Site site : sites) {
-      Hazard hazard = HazardCalc.calc(model, config, site, executor);
-      Deaggregation deagg = calc(hazard, returnPeriod);
+      Hazard hazard = HazardCalcs.hazard(model, config, site, executor);
+      Deaggregation deagg = HazardCalcs.deaggregation(hazard, returnPeriod, Optional.empty());
       handler.add(hazard, Optional.of(deagg));
       log.fine(hazard.toString());
     }
@@ -157,27 +157,6 @@ public class DeaggCalc {
       execSvc.shutdown();
     }
     return handler.outputDir();
-  }
-
-  /**
-   * Deaggregate probabilistic seismic hazard at the supplied return period (in
-   * years). Deaggregation currently runs on a single thread.
-   * 
-   * <p>Call this method with the {@link Hazard} result of
-   * {@link HazardCalc#calc(HazardModel, CalcConfig, Site, Optional)} to which
-   * you supply the calculation settings and sites of interest that will also be
-   * used for deaggregation.
-   *
-   * <p><b>Note:</b> any model initialization settings in {@code config} will be
-   * ignored as the supplied model will already have been initialized.
-   *
-   * @param returnPeriod at which to deaggregate
-   * @return a {@code Deaggregation} object
-   */
-  public static Deaggregation calc(
-      Hazard hazard,
-      double returnPeriod) {
-    return HazardCalcs.deaggregation(hazard, returnPeriod, Optional.empty());
   }
 
   private static final String PROGRAM = DeaggCalc.class.getSimpleName();

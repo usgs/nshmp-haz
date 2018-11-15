@@ -108,7 +108,6 @@ javadoc {
     'https://google.github.io/gson/apidocs/')
   include 'gov/usgs/earthquake/nshmp/**'
   exclude 'gov/usgs/earthquake/nshmp/etc/**'
-  exclude 'gov/usgs/earthquake/nshmp/gcim/**'
   exclude 'gov/usgs/earthquake/nshmp/internal/**'
   exclude '**/Scratch*'
   doLast {

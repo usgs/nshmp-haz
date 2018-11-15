@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Range;
 
+import gov.usgs.earthquake.nshmp.HazardCalc;
 import gov.usgs.earthquake.nshmp.calc.Transforms.SourceToInputs;
 import gov.usgs.earthquake.nshmp.eq.model.ClusterSourceSet;
 import gov.usgs.earthquake.nshmp.eq.model.GridSourceSet;
@@ -91,10 +92,21 @@ public class HazardCalcs {
   private static Range<Double> rpRange = Range.closed(1.0, 20000.0);
 
   /**
-   * Perform a deaggregation of probabilisitic seismic hazard.
+   * Deaggregate probabilistic seismic hazard at the supplied return period (in
+   * years). Deaggregation currently runs on a single thread.
+   * 
+   * <p>Call this method with the {@link Hazard} result of
+   * {@link #hazard(HazardModel, CalcConfig, Site, Optional)} to which
+   * you supply the calculation settings and sites of interest that will also be
+   * used for deaggregation.
+   *
+   * <p><b>Note:</b> any model initialization settings in {@code config} will be
+   * ignored as the supplied model will already have been initialized.
    *
    * @param hazard to deaggregate
    * @param returnPeriod at which to deaggregate
+   * @param imt an optional (single) IMT at which to deaggregate
+   * @return a {@code Deaggregation} object
    */
   public static Deaggregation deaggregation(
       Hazard hazard,
@@ -108,36 +120,40 @@ public class HazardCalcs {
   }
 
   /**
-   * Compute probabilistic seismic hazard, possibly using an {@link Optional}
-   * {@link Executor}. If no executor is supplied, the calculation will run on
-   * the current thread.
-   *
+   * Compute probabilistic seismic hazard curves at a {@code site} using the
+   * supplied {@code model} and {@code config}. If an {@code executor} is
+   * supplied,the calculation will be distributed; otherwise, it will run on the
+   * current thread. Be sure to shutdown any supplied executor after a
+   * calculation completes.
+   * 
+   * <p><b>Note:</b> any model initialization settings in {@code config} will be
+   * ignored as the supplied model will already have been initialized.
+   * 
    * @param model to use
-   * @param config calculation properties
+   * @param config calculation configuration
    * @param site of interest
-   * @param ex optional {@code Executor} to use in calculation
-   * @throws InterruptedException if an {@code Executor} was supplied and the
-   *         calculation is interrupted
-   * @throws ExecutionException if an {@code Executor} was supplied and a
-   *         problem arises during the calculation
+   * @param exec optional {@code Executor} to distribute calculation
    */
   public static Hazard hazard(
       HazardModel model,
       CalcConfig config,
       Site site,
-      Optional<Executor> ex)
-      throws InterruptedException, ExecutionException {
+      Optional<Executor> exec) {
 
     checkNotNull(model);
     checkNotNull(config);
     checkNotNull(site);
-    checkNotNull(ex);
+    checkNotNull(exec);
 
-    if (ex.isPresent()) {
-      return asyncHazardCurve(model, config, site, ex.get());
+    try {
+      if (exec.isPresent()) {
+        return asyncHazardCurve(model, config, site, exec.get());
+      }
+      Logger log = Logger.getLogger(HazardCalcs.class.getName());
+      return hazardCurve(model, config, site, log);
+    } catch (ExecutionException | InterruptedException e) {
+      throw new RuntimeException(e);
     }
-    Logger log = Logger.getLogger(HazardCalcs.class.getName());
-    return hazardCurve(model, config, site, log);
   }
 
   /*
