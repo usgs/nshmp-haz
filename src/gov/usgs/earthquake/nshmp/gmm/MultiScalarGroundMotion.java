@@ -32,8 +32,8 @@ public class MultiScalarGroundMotion extends DefaultScalarGroundMotion {
       double[] sigmas, double[] sigmaWts) {
 
     super(
-        Data.sum(Data.multiply(Arrays.copyOf(means, means.length), meanWts)),
-        Data.sum(Data.multiply(Arrays.copyOf(sigmas, sigmas.length), sigmaWts)));
+        Data.weightedSumLn(means, meanWts),
+        Data.weightedSum(sigmas, sigmaWts));
 
     this.means = means;
     this.meanWts = meanWts;
