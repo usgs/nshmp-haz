@@ -184,8 +184,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private static final double[] SIGMA_WTS = { 0.185, 0.63, 0.185 };
   private static final double[] SITE_AMP_WTS = SIGMA_WTS;
 
-  /* Logic tree between hybrid model and EPRI: { SIGMA_WTS * 0.667, 0.333} */
-  private static final double[] SIGMA_LT_WTS = { 0.1234, 0.4202, 0.1234, 0.333 };
+  /* Logic tree between panel model and EPRI */
   private static final double[] SIGMA_LTC_WTS = { 0.2, 0.8 };
 
   /* φ_s2s constants */
@@ -255,7 +254,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return σSet;
   }
 
-  /* Recomendation 2: Panel model with phi_S2S term. */
+  /* Recomendation 2: Panel model with phi_S2S term and all branches. */
+  @Deprecated
   SigmaSet sigmaSetPanel1(double Mw, double vs30) {
     double[] sigmas = {
         sigmaPanel1(σCoeffsLo, Mw, vs30),
@@ -268,32 +268,22 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return σSet;
   }
 
-  /* Recomendation 3: Panel model R2 with max(phi) for long T. */
-  SigmaSet sigmaSetPanel2(double Mw, double vs30) {
-    double φEpri = sigmaEpriTerms(σCoeffsEpri, Mw)[0];
-    double[] sigmas = {
-        sigmaPanel2(σCoeffsLo, Mw, vs30, φEpri),
-        sigmaPanel2(σCoeffsMid, Mw, vs30, φEpri),
-        sigmaPanel2(σCoeffsHi, Mw, vs30, φEpri)
-    };
+  /* Recomendation 2b: Panel model with phi_S2S term and no branching. */
+  SigmaSet sigmaSetPanel1b(double Mw, double vs30) {
+    double[] sigmas = { sigmaPanel1b(σCoeffsMid, Mw, vs30) };
     SigmaSet σSet = new SigmaSet();
     σSet.sigmas = sigmas;
-    σSet.weights = SIGMA_WTS;
+    σSet.weights = new double[] { 1.0 };
     return σSet;
   }
 
-  /* USGS model: Including nested branching. */
-  SigmaSet sigmaSetLogicTreeBranching(double Mw, double vs30) {
-    double[] epriTerms = sigmaEpriTerms(σCoeffsEpri, Mw);
-    double[] sigmas = {
-        sigmaPanel2(σCoeffsLo, Mw, vs30, epriTerms[0]),
-        sigmaPanel2(σCoeffsMid, Mw, vs30, epriTerms[0]),
-        sigmaPanel2(σCoeffsHi, Mw, vs30, epriTerms[0]),
-        Maths.hypot(epriTerms[0], epriTerms[1])
-    };
+  /* Recomendation 3: Panel model R2 with max(phi) for long T. */
+  SigmaSet sigmaSetPanel2(double Mw, double vs30) {
+    double φEpri = sigmaEpriTerms(σCoeffsEpri, Mw)[0];
+    double[] sigmas = { sigmaPanel2(σCoeffsMid, Mw, vs30, φEpri) };
     SigmaSet σSet = new SigmaSet();
     σSet.sigmas = sigmas;
-    σSet.weights = SIGMA_LT_WTS;
+    σSet.weights = new double[] { 1.0 };
     return σSet;
   }
 
@@ -301,8 +291,20 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   SigmaSet sigmaSetLogicTree(double Mw, double vs30) {
     double[] epriTerms = sigmaEpriTerms(σCoeffsEpri, Mw);
     double[] sigmas = {
-        sigmaPanelNoBranching(σCoeffsMid, Mw, vs30, epriTerms[0]),
+        sigmaPanel2(σCoeffsMid, Mw, vs30, epriTerms[0]),
         Maths.hypot(epriTerms[0], epriTerms[1])
+    };
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = sigmas;
+    σSet.weights = SIGMA_LTC_WTS;
+    return σSet;
+  }
+
+  /* USGS model: Final alternative; remove max(phi) given high EPRI wt (0.8) */
+  SigmaSet sigmaSetLogicTree2(double Mw, double vs30) {
+    double[] sigmas = {
+        sigmaPanel1b(σCoeffsMid, Mw, vs30),
+        sigmaEpri(σCoeffsEpri, Mw)
     };
     SigmaSet σSet = new SigmaSet();
     σSet.sigmas = sigmas;
@@ -350,10 +352,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double Mw,
       double vs30) {
 
-    /* τ model; global branch only; Equation 5-1. */
+    /* τ model; global branch only; Equation 5-1 */
     double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
 
-    /* φ_ss model; global, constant, and mag-dep. branches Equation 5.2. */
+    /* φ_ss model; global, constant, and mag-dep branches Equation 5-2 */
     double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
         0.1 * c.c +
         0.1 * phi_ss(Mw, c.ma, c.mb);
@@ -364,8 +366,27 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return Maths.hypot(τ, φ_ss, φ_s2s);
   }
 
+  /* Recommendation 2b: Same as above, no φ_ss branching. */
+  private static double sigmaPanel1b(
+      CoefficientsSigma c,
+      double Mw,
+      double vs30) {
+
+    /* τ model; global branch only; Equation 5-1 */
+    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
+
+    /* φ_ss model; global branch only; Equation 5-2 */
+    double φ_ss = phi_ss(Mw, c.ga, c.gb);
+
+    /* φ_s2s model; single branch; Stewart et al. */
+    double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
+
+    return Maths.hypot(τ, φ_ss, φ_s2s);
+  }
+
   /*
-   * Recommendation 3: Panel model R2 with max(phi) for long T.
+   * Recommendation 3: Panel model R2 with max(phi) for long T. No φ_ss
+   * branching.
    * 
    * Sigma model includes φ_s2s and uses the maximum of φ from this or the
    * updated EPRI model (supplied to method). The panel recommendation is to use
@@ -379,42 +400,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double vs30,
       double φEpri) {
 
-    /* τ model; global branch only; Equation 5-1. */
+    /* τ model; global branch only; Equation 5-1 */
     double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
 
-    /* φ_ss model; global, constant, and mag-dep. branches Equation 5.2. */
-    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
-        0.1 * c.c +
-        0.1 * phi_ss(Mw, c.ma, c.mb);
+    /* φ_ss model; global, constant, and mag-dep. branches Equation 5-2. */
+    double φ_ss = phi_ss(Mw, c.ga, c.gb);
 
     /* φ_s2s model; single branch; Stewart et al. */
     double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
 
     /* Model 1 phi, original */
-    double φT = Maths.hypot(φ_ss, φ_s2s);
-
-    return Maths.hypot(τ, Math.max(φT, φEpri));
-  }
-
-  /*
-   * No phi_ss branching equivalent of sigmaPanel2(), above.
-   */
-  private static double sigmaPanelNoBranching(
-      CoefficientsSigma c,
-      double Mw,
-      double vs30,
-      double φEpri) {
-
-    /* τ model; global branch only; Equation 5.1, PEER (2017/03) */
-    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
-
-    /* φ_ss model; global branch only; Equation 5.2, PEER (2017/03) */
-    double φ_ss = phi_ss(Mw, c.ga, c.gb);
-
-    /* φ_s2s model; single branch; Stewart et al. memo 07-13-2018 */
-    double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
-
-    /* Total φ */
     double φT = Maths.hypot(φ_ss, φ_s2s);
 
     return Maths.hypot(τ, Math.max(φT, φEpri));
@@ -523,7 +518,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Usgs17 extends ModelGroup {
     static final String BASE_NAME = NgaEastUsgs_2017.NAME;
-    static final String NAME = BASE_NAME + " : 5 σ-LogicTree (final)";
+    static final String NAME = BASE_NAME + " : 4 σ-LogicTree (current)";
 
     Usgs17(Imt imt) {
       super(
@@ -547,21 +542,21 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Usgs17_Sigma_Panel1 extends Usgs17 {
+  static class Usgs17_Sigma_Panel1b extends Usgs17 {
     static final String NAME = Usgs17.BASE_NAME + " : 2 σ-Panel1 (+ φs2s)";
 
-    Usgs17_Sigma_Panel1(Imt imt) {
+    Usgs17_Sigma_Panel1b(Imt imt) {
       super(imt);
     }
 
     @Override
     SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetPanel1(in.Mw, in.vs30);
+      return sigmaSetPanel1b(in.Mw, in.vs30);
     }
   }
 
   static class Usgs17_Sigma_Panel2 extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : 3 σ-Panel2 (+ φ max)";
+    static final String NAME = Usgs17.BASE_NAME + " : 3 σ-Panel2 (+ max φ_ss)";
 
     Usgs17_Sigma_Panel2(Imt imt) {
       super(imt);
@@ -573,16 +568,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Usgs17_Sigma_LogicTreeBranching extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : 4 σ-LogicTree (branching)";
+  static class Usgs17_Sigma_LogicTreeAlt extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + " : 5 σ-LogicTree (no max φ_ss)";
 
-    Usgs17_Sigma_LogicTreeBranching(Imt imt) {
+    Usgs17_Sigma_LogicTreeAlt(Imt imt) {
       super(imt);
     }
 
     @Override
     SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetLogicTreeBranching(in.Mw, in.vs30);
+      return sigmaSetLogicTree2(in.Mw, in.vs30);
     }
   }
 
@@ -678,11 +673,11 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       return sigmaSetLogicTree(in.Mw, in.vs30);
     }
   }
-  
+
   static class UsgsSeedsEpri extends UsgsSeeds {
-    
+
     static final String NAME = UsgsSeeds.NAME + " : σ-EPRIu";
-    
+
     UsgsSeedsEpri(Imt imt) {
       super(imt);
     }
