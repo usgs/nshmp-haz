@@ -51,8 +51,8 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * <li>Do not check for finiteness (see {@link Doubles#isFinite(double)}). For
  * example, any method that operates on data containing {@code Double.NaN} or
  * infinite values will likely return {@code NaN}s or infinite values as a
- * result. See the Java {@link Math} class for details on the behavior of
- * individual functions referenced herein.</li>
+ * result. See the Java {@link Math} for details on the behavior of individual
+ * functions referenced herein.</li>
  *
  * <li>Do not check for over/under flow.</li></ul>
  *
@@ -70,8 +70,6 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * @author Peter Powers
  */
 public final class Data {
-
-  // TODO consider weighted sum
 
   /*
    * Developer notes:
@@ -608,6 +606,41 @@ public final class Data {
   }
 
   /**
+   * Compute the weighted sum of the supplied data. Weights are not constrained
+   * to sum to 1.0.
+   * 
+   * @param data to sum
+   * @param weights to apply
+   * @return the weighted sum of the supplied values
+   */
+  public static double weightedSum(double[] data, double[] weights) {
+    checkSizes(data, weights);
+    double sum = 0.0;
+    for (int i = 0; i < data.length; i++) {
+      sum += data[i] * weights[i];
+    }
+    return sum;
+  }
+
+  /**
+   * Compute a weighted sum of the supplied data in linear space, given data
+   * that is in natural log space. Returned sum is in natural log space. Weights
+   * are not constrained to sum to 1.0.
+   * 
+   * @param data to sum (natural log values)
+   * @param weights to apply
+   * @return the weighted sum of the supplied values
+   */
+  public static double weightedSumLn(double[] data, double[] weights) {
+    checkSizes(data, weights);
+    double sum = 0.0;
+    for (int i = 0; i < data.length; i++) {
+      sum += Math.exp(data[i]) * weights[i];
+    }
+    return Math.log(sum);
+  }
+
+  /**
    * Sum the arrays in the 2nd dimension of {@code data} into a new 1-D array.
    * 
    * @param data to collapse
@@ -635,6 +668,19 @@ public final class Data {
       collapsed[i] = collapse(data[i]);
     }
     return collapsed;
+  }
+
+  /**
+   * Cumulate the values of {@code data} in place.
+   * 
+   * @param data to operate on
+   * @return a reference to the supplied {@code data}
+   */
+  public static double[] cumulate(double... data) {
+    for (int i = 1; i < data.length; i++) {
+      data[i] += data[i - 1];
+    }
+    return data;
   }
 
   /**
@@ -851,19 +897,6 @@ public final class Data {
       return 0;
     }
     return Math.abs(test - target) / target * 100.0;
-  }
- 
-  /**
-   * Cumulate the values of {@code data} in place.
-   * 
-   * @param data to operate on
-   * @return a reference to the supplied {@code data}
-   */
-  public static double[] cumulate(double... data) {
-    for (int i=1; i<data.length; i++) {
-      data[i] += data[i-1];
-    }
-    return data;
   }
 
   /* * * * * * * * * * * * * * STATE * * * * * * * * * * * * * */
@@ -1250,10 +1283,11 @@ public final class Data {
   public static Collection<Double> checkWeights(Collection<Double> weights) {
     return checkWeights(weights, true);
   }
-  
+
   /**
    * Ensure each {@code 0.0 ≤ weight ≤ 1.0} and
-   * {@code sum(weights) = 1.0 ± 0.0001}, optionally allowing zero-valued weights.
+   * {@code sum(weights) = 1.0 ± 0.0001}, optionally allowing zero-valued
+   * weights.
    *
    * @param weights to validate
    * @return a reference to the supplied {@code weights}
@@ -1261,7 +1295,7 @@ public final class Data {
   public static Collection<Double> checkWeights(
       Collection<Double> weights,
       boolean allowZero) {
-    
+
     for (double weight : weights) {
       checkWeight(weight, allowZero);
     }
@@ -1270,10 +1304,11 @@ public final class Data {
         "Weights Σ %s = %s ≠ 1.0", weights, sum);
     return weights;
   }
-  
+
   /**
    * Ensure each {@code 0.0 ≤ weight ≤ 1.0} and
-   * {@code sum(weights) = 1.0 ± 0.0001}, optionally allowing zero-valued weights.
+   * {@code sum(weights) = 1.0 ± 0.0001}, optionally allowing zero-valued
+   * weights.
    *
    * @param weights to validate
    * @return a reference to the supplied {@code weights}
@@ -1282,15 +1317,15 @@ public final class Data {
     for (double weight : weights) {
       checkWeight(weight, allowZero);
     }
-    
+
     double sum = sum(weights);
-    
+
     checkArgument(DoubleMath.fuzzyEquals(sum, 1.0, WEIGHT_TOLERANCE),
         "Weights Σ %s = %s ≠ 1.0", weights, sum);
-    
+
     return weights;
   }
-  
+
   /**
    * Ensure each {@code 0.0 ≤ weight ≤ 1.0} and
    * {@code sum(weights) = 1.0 ± 0.0001}. This method permits zero-valued
@@ -1302,8 +1337,6 @@ public final class Data {
   public static double[] checkWeights(double[] weights) {
     return checkWeights(weights, true);
   }
-
-  
 
   /* * * * * * * * 2D & 3D ARRAYS EXTENSIONS * * * * * * * * */
 
