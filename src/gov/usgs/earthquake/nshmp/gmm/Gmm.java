@@ -627,13 +627,6 @@ public enum Gmm {
   /* NGA-East for USGS */
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS(
-      NgaEastUsgs_2017.Usgs17.class,
-      NgaEastUsgs_2017.Usgs17.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
-      NgaEastUsgs_2017.CONSTRAINTS),
-
-  /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_EPRI(
       NgaEastUsgs_2017.Usgs17_Sigma_Epri.class,
       NgaEastUsgs_2017.Usgs17_Sigma_Epri.NAME,
@@ -641,9 +634,9 @@ public enum Gmm {
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS_PANEL1(
-      NgaEastUsgs_2017.Usgs17_Sigma_Panel1.class,
-      NgaEastUsgs_2017.Usgs17_Sigma_Panel1.NAME,
+  NGA_EAST_USGS_PANEL1B(
+      NgaEastUsgs_2017.Usgs17_Sigma_Panel1b.class,
+      NgaEastUsgs_2017.Usgs17_Sigma_Panel1b.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
@@ -655,9 +648,16 @@ public enum Gmm {
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS_LOGIC_TREE(
-      NgaEastUsgs_2017.Usgs17_Sigma_LogicTreeBranching.class,
-      NgaEastUsgs_2017.Usgs17_Sigma_LogicTreeBranching.NAME,
+  NGA_EAST_USGS(
+      NgaEastUsgs_2017.Usgs17.class,
+      NgaEastUsgs_2017.Usgs17.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_LOGIC_TREE_ALT(
+      NgaEastUsgs_2017.Usgs17_Sigma_LogicTreeAlt.class,
+      NgaEastUsgs_2017.Usgs17_Sigma_LogicTreeAlt.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
@@ -1316,11 +1316,11 @@ public enum Gmm {
     NGA_EAST(
         "NGA-East USGS Combined",
         ImmutableList.of(
-            NGA_EAST_USGS,
             NGA_EAST_USGS_EPRI,
-            NGA_EAST_USGS_PANEL1,
+            NGA_EAST_USGS_PANEL1B,
             NGA_EAST_USGS_PANEL2,
-            NGA_EAST_USGS_LOGIC_TREE,
+            NGA_EAST_USGS,
+            NGA_EAST_USGS_LOGIC_TREE_ALT,
             NGA_EAST_USGS_SEEDS,
             NGA_EAST_USGS_SEEDS_EPRI)),
 
