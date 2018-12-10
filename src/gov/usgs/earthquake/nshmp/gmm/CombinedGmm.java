@@ -48,15 +48,19 @@ class CombinedGmm implements GroundMotionModel {
             entry -> entry.getKey().calc(in),
             Map.Entry::getValue));
 
+    /*
+     * Mean values are converted to linear space for combining and returned to
+     * natural log space upon return.
+     */
     double μ = sgms.entrySet().stream()
         .collect(Collectors.summingDouble(
-            entry -> entry.getKey().mean() * entry.getValue()));
+            entry -> Math.exp(entry.getKey().mean()) * entry.getValue()));
 
     double σ = sgms.entrySet().stream()
         .collect(Collectors.summingDouble(
             entry -> entry.getKey().sigma() * entry.getValue()));
 
-    return DefaultScalarGroundMotion.create(μ, σ);
+    return DefaultScalarGroundMotion.create(Math.log(μ), σ);
   }
 
   private static Map<GroundMotionModel, Double> imtToInstances(
@@ -127,7 +131,7 @@ class CombinedGmm implements GroundMotionModel {
       super(imtToInstances(imt, CEUS_2018));
     }
   }
-  
+
   private static final Map<Gmm, Double> WUS_2014_4P1 = ImmutableMap.<Gmm, Double> builder()
       .put(ASK_14, 0.22)
       .put(BSSA_14, 0.22)

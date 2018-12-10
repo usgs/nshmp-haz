@@ -30,7 +30,7 @@ public final class DataTests {
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
-  
+
   private static final double[] VALUES = { 1.0, 10.0, 100.0 };
 
   private static double[] valueArray() {
@@ -351,6 +351,19 @@ public final class DataTests {
   }
 
   @Test
+  public final void testWeightedSum() {
+    double[] weights = { 0.2, 0.1, 0.5, 0.2 };
+    double[] linData = { 3.0, 1.0, 2.0, 4.0 };
+    double[] logData = Data.ln(Arrays.copyOf(linData, linData.length));
+    // linear
+    double linExpect = 2.5;
+    assertEquals(linExpect, Data.weightedSum(linData, weights), 0.0);
+    // log
+    double logExpect = Math.log(linExpect);
+    assertEquals(logExpect, Data.weightedSumLn(logData, weights), 0.0);
+  }
+
+  @Test
   public final void testCollapse() {
     // 2D
     double[] d2_expect = { 111.0, 111.0 };
@@ -367,52 +380,67 @@ public final class DataTests {
   }
 
   @Test
+  public final void testCumulate() {
+    double[] data = { 0.0, 2.0, 4.0, 6.0, 8.0 };
+    double[] expected = { 0.0, 2.0, 6.0, 12.0, 20.0 };
+    assertArrayEquals(expected, Data.cumulate(data), 0.0);
+  }
+
+  @Test
   public final void testTransform() {
-    DoubleUnaryOperator function = (x) -> { return x + 1; };
-    
+    DoubleUnaryOperator function = (x) -> {
+      return x + 1;
+    };
+
     double[] expectArray = { 2.0, 11.0, 101.0 };
     double[] actualArray = Data.transform(function, valueArray());
     List<Double> actualList = Data.transform(function, valueList());
     testArrayAndList(expectArray, actualArray, actualList);
   }
-  
+
   @Test
   public final void testTransformRange() {
-    DoubleUnaryOperator function = (x) -> { return x + 1; };
-    
+    DoubleUnaryOperator function = (x) -> {
+      return x + 1;
+    };
+
     Range<Integer> range = Range.closed(0, 1);
     double[] expect = { 2.0, 11.0, 100.0 };
     double[] actual1 = Data.transform(range, function, valueArray());
     double[] actual2 = Data.transform(0, 2, function, valueArray());
-    
+
     assertArrayEquals(expect, actual1, 0.0);
     assertArrayEquals(expect, actual2, 0.0);
   }
-  
+
   @Test
   public final void testTransformIAE() {
     exception.expect(IllegalArgumentException.class);
- 
+
     Range<Integer> range = Range.openClosed(0, 0);
-    Data.transform(range, (x) -> { return x; }, valueArray());
+    Data.transform(range, (x) -> {
+      return x;
+    }, valueArray());
   }
-  
+
   @Test
   public final void testTransformIAE2() {
     exception.expect(IllegalArgumentException.class);
-    
+
     Range<Integer> range = Range.atMost(1);
-    Data.transform(range, (x) -> { return x; }, valueArray());
+    Data.transform(range, (x) -> {
+      return x;
+    }, valueArray());
   }
-  
+
   @Test
   public final void testTransformNPE() {
     exception.expect(NullPointerException.class);
-    
+
     Range<Integer> range = Range.closed(0, 1);
     Data.transform(range, null, valueArray());
   }
-  
+
   @Test
   public final void testNormalize() {
     double[] expectArray = { 0.2, 0.3, 0.5 };
@@ -646,7 +674,7 @@ public final class DataTests {
   public final void testCheckWeight() {
     assertEquals(0.5, Data.checkWeight(0.5), 0.0);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public final void testCheckWeight_IAE() {
     Data.checkWeight(0.0);
