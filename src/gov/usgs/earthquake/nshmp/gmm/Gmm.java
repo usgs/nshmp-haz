@@ -967,6 +967,15 @@ public enum Gmm {
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
+  /* NGA-East CEUS 2014 Hybrid Model */
+  
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_CEUS_2014_HYBRID(
+      NgaEastUsgs_2017.CeusHybrid.class,
+      NgaEastUsgs_2017.CeusHybrid.NAME,
+      FrankelEtAl_1996.COEFFS,
+      NgaEastUsgs_2017.CONSTRAINTS),
+  
   /* Combined: must be declared after any dependent models aabove. */
 
   /**
@@ -1330,7 +1339,8 @@ public enum Gmm {
             NGA_EAST_USGS,
             NGA_EAST_USGS_LOGIC_TREE_ALT,
             NGA_EAST_USGS_SEEDS,
-            NGA_EAST_USGS_SEEDS_EPRI)),
+            NGA_EAST_USGS_SEEDS_EPRI,
+            NGA_EAST_CEUS_2014_HYBRID)),
 
     NGA_EAST_SAMMONS2(
         "NGA-East USGS Sammons",
