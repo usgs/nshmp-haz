@@ -834,13 +834,6 @@ public enum Gmm {
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
-  // /** @see NgaEastUsgs_2017 */
-  // NGA_EAST_SEED_ANC15(
-  // NgaEast_2016.Seed_ANC15.class,
-  // NgaEast_2016.Seed_ANC15.NAME,
-  // NgaEast_2016.COEFFS_SIGMA_MID,
-  // NgaEast_2016.CONSTRAINTS),
-
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_SEED_B_A04(
       NgaEastUsgs_2017.Seed_B_a04.class,
