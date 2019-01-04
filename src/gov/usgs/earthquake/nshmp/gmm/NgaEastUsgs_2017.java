@@ -17,6 +17,7 @@ import static java.lang.Math.sqrt;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -693,10 +694,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   /*
-   * 2014 CEUS GMM containter that mixes in NGA-East site terms and
-   * sigmas for comparative analysis. The implementation mimics how the NGA-East
-   * for USGS and USGS Seed Gmms manage a set of GMMs with weights. When used in
-   * a response spectrum, ground motion values returned are the weighted average
+   * 2014 CEUS GMM containter that mixes in NGA-East site terms and sigmas for
+   * comparative analysis. The implementation mimics how the NGA-East for USGS
+   * and USGS Seed Gmms manage a set of GMMs with weights. When used in a
+   * response spectrum, ground motion values returned are the weighted average
    * of means and sigmas. When used in hazard, the individual component ground
    * motions are considered and weights are only applied in rate (hazard) space.
    * 
@@ -707,6 +708,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * applied.
    */
   static class CeusHybrid extends NgaEastUsgs_2017 {
+
+    static final String NAME = NgaEastUsgs_2017.NAME + " : CEUS 2014 Hybrid";
 
     final List<GroundMotionModel> pgaGmms;
     final List<GroundMotionModel> imtGmms;
@@ -740,18 +743,17 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /* Hard rock ground motions. */
       double[] means = new double[weights.length];
       for (int i = 0; i < weights.length; i++) {
-        double pgaRockMean = pgaGmms.get(i).calc(inRock).mean();
+        double pgaRockMean = Math.exp(pgaGmms.get(i).calc(inRock).mean());
         Value siteTerm = siteAmp.calc(pgaRockMean, in.vs30);
         means[i] = siteTerm.apply(imtGmms.get(i).calc(inRock).mean());
       }
 
       /* Fetch NGA-East sigmas and weights. */
       SigmaSet sigmas = sigmaSetLogicTree2(in.Mw, in.vs30);
-      
+
       return new MultiScalarGroundMotion(
           means, this.weights,
-          sigmas.sigmas,
-          sigmas.weights);
+          sigmas.sigmas, sigmas.weights);
     }
   }
 
