@@ -45,6 +45,14 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  */
 public enum Gmm {
 
+  /*
+   * Developer notes:
+   * 
+   * Concrete GroundMotionModel implementations that are identified in enum
+   * constructors below must implement a constructor taking a single IMT
+   * argument.
+   */
+
   // TODO implement AB03 taper developed by SH; gms at 2s and 3s are much too
   // high at large distances -- NOT NEEDED as we are dropping AB03 for multi-
   // point analyses (2014 r2)
