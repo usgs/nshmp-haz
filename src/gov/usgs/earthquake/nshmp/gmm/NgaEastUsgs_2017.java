@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.io.Resources.getResource;
 import static com.google.common.io.Resources.readLines;
 import static gov.usgs.earthquake.nshmp.data.Data.checkWeights;
+import static gov.usgs.earthquake.nshmp.gmm.CombinedGmm.CEUS_2014_FAULT;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
@@ -32,6 +34,7 @@ import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable.Position;
+import gov.usgs.earthquake.nshmp.gmm.NgaEastUsgs_2017.SiteAmp.Value;
 import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 import gov.usgs.earthquake.nshmp.util.Maths;
@@ -687,6 +690,69 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       return sigmaSetEpri(in.Mw);
     }
 
+  }
+
+  /*
+   * 2014 CEUS GMM containter that mixes in NGA-East site terms and
+   * sigmas for comparative analysis. The implementation mimics how the NGA-East
+   * for USGS and USGS Seed Gmms manage a set of GMMs with weights. When used in
+   * a response spectrum, ground motion values returned are the weighted average
+   * of means and sigmas. When used in hazard, the individual component ground
+   * motions are considered and weights are only applied in rate (hazard) space.
+   * 
+   * Implementation notes: When vs30=3000, a hybrid GMM returns the original
+   * hard rock value(s) for the GMMs being considered (vs30=2000 values) and the
+   * 2 NGA-East sigma branch values; no site amplification in this case. When
+   * vs30=2000, the NGA-East site amplification term (3000 --> 760 --> 2000) is
+   * applied.
+   */
+  static class CeusHybrid extends NgaEastUsgs_2017 {
+
+    final List<GroundMotionModel> pgaGmms;
+    final List<GroundMotionModel> imtGmms;
+    final double[] weights;
+    final SiteAmp siteAmp;
+
+    CeusHybrid(Imt imt) {
+      super(imt);
+      this.pgaGmms = new ArrayList<>();
+      this.imtGmms = new ArrayList<>();
+      List<Double> wtList = new ArrayList<>();
+      for (Entry<Gmm, Double> e : CEUS_2014_FAULT.entrySet()) {
+        Gmm gmm = e.getKey();
+        pgaGmms.add(gmm.instance(Imt.PGA));
+        imtGmms.add(gmm.instance(imt));
+        wtList.add(e.getValue());
+      }
+      this.weights = Doubles.toArray(wtList);
+      this.siteAmp = new SiteAmp(imt);
+    }
+
+    @Override
+    public MultiScalarGroundMotion calc(GmmInput in) {
+
+      /* Hard rock input; vs30=2000. */
+      GmmInput inRock = GmmInput.builder()
+          .fromCopy(in)
+          .vs30(2000.0)
+          .build();
+
+      /* Hard rock ground motions. */
+      double[] means = new double[weights.length];
+      for (int i = 0; i < weights.length; i++) {
+        double pgaRockMean = pgaGmms.get(i).calc(inRock).mean();
+        Value siteTerm = siteAmp.calc(pgaRockMean, in.vs30);
+        means[i] = siteTerm.apply(imtGmms.get(i).calc(inRock).mean());
+      }
+
+      /* Fetch NGA-East sigmas and weights. */
+      SigmaSet sigmas = sigmaSetLogicTree2(in.Mw, in.vs30);
+      
+      return new MultiScalarGroundMotion(
+          means, this.weights,
+          sigmas.sigmas,
+          sigmas.weights);
+    }
   }
 
   static abstract class Sammons extends NgaEastUsgs_2017 {
@@ -1360,7 +1426,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /*
        * Vs30 dependent f760 model: impedance vs.gradient. This is an update to
        * the complementary imp/gr weighting scheme, commented out below, that
-       * gives 90/10 weigth at 400 m/s and 76.7/23.3 at 600 m/s.
+       * gives 90/10 weight at 400 m/s and 76.7/23.3 at 600 m/s.
        */
       double wti = WT1;
       if (vs30 < VW2) {
@@ -1493,6 +1559,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
      * uncertainty.
      */
     static final class Value {
+
+      // TODO test short circuit for vs3000 matches pass thru apply
 
       final double siteAmp;
       final double σ;
