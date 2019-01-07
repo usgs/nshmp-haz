@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
 
-import gov.usgs.earthquake.nshmp.calc.ExceedanceModel;
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
@@ -45,12 +44,10 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * is a composite model that consists of 17 median ground motion models with
  * period dependent weights.
  * 
- * <p>Calculation of hazard using this preliminary implementation deviates
- * somewhat from the current nshmp-haz PSHA pipeline and required implementation
- * of a {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion}
- * stores arrays of means and sigmas with associated weights and can only be
- * properly processed by {@link ExceedanceModel#NSHM_CEUS_MAX_INTENSITY} at this
- * time.
+ * <p>Calculation of hazard using this implementation deviates somewhat from the
+ * current nshmp-haz PSHA pipeline and required implementation of a
+ * {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion} stores
+ * arrays of means and sigmas with associated weights.
  * 
  * <p>This class also manages implementations of 22 'seed' models, 19 of which
  * were used to generate (via Sammons mapping) the 17 NGA-East for USGS models
@@ -95,10 +92,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   /*
    * TODO
    * 
-   * Update javadoc (above).
-   * 
    * Cluster analysis is incorrect as currently implemented; analysis performed
-   * after combining models
+   * after combining models (this has been updated, recheck)
    * 
    * Deagg will currently use weight-averaged means; this is incorrect, or at
    * least requires more study to determine if it generates an acceptable
@@ -106,9 +101,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * 
    * Note: supported periods are derived from sigma coefficient files. Several
    * supported periods have been commented out because they are not represented
-   * in teh site amplification model.
+   * in the site amplification model.
    * 
-   * When supplied with tables for the 13 usgs models, 0.01s was added with
+   * When supplied with tables for the 17 usgs models, 0.01s is present with
    * values distinct from PGA, however the seed models are missing this period.
    * For now we've duplicated PGA for 0.01s ground motion values in the seed
    * model tables. Because a coefficient table (sigma coeffs in this case) is
@@ -125,10 +120,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * for τ and φ_ss. The tau and φ_s2s models have a single branch each; the
    * φ_ss model has three branches. The φ_ss and τ models both have coefficients
    * for low, central, and high statistical uncertainty branches; no statistical
-   * uncertianty model was developed for φ_s2s
+   * uncertianty model was developed for φ_s2s.
    * 
    * Sigma tables are broken into 'lo', 'mid', and 'hi' files representing the
-   * 'Low', 'Central', and 'Hi' branches of the sigma logi tree. In many cases
+   * 'Low', 'Central', and 'Hi' branches of the sigma logic tree. In many cases
    * coefficents are constant across all periods, but because of the statistical
    * uncertainty branching, it is easier to repeat the values in the coefficient
    * tables/files than to have to encode lo-mid-hi branching logic in sigma
@@ -341,7 +336,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
     return Maths.hypot(τ, φ_ss, φ_s2s);
   }
-  
+
   /* Archive: Panel model with phi_S2S term and φ_ss branching. */
   @Deprecated
   private static double sigmaPanelBranching(
@@ -646,7 +641,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static abstract class Sammons2 extends NgaEastUsgs_2017 {
+  static abstract class Sammons extends NgaEastUsgs_2017 {
     static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons : ";
     static final String NAME0 = NAME + "0";
 
@@ -655,7 +650,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     final GroundMotionTable pgaTable;
     final SiteAmp siteAmp;
 
-    Sammons2(int id, Imt imt) {
+    Sammons(int id, Imt imt) {
       super(imt);
       this.id = id;
       this.table = GroundMotionTables.getNgaEastV2(imt)[id - 1];
@@ -674,155 +669,155 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Sammons2_1 extends Sammons2 {
+  static class Sammons_1 extends Sammons {
     static final int ID = 1;
-    static final String NAME = Sammons2.NAME0 + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
-    Sammons2_1(Imt imt) {
+    Sammons_1(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_2 extends Sammons2 {
+  static class Sammons_2 extends Sammons {
     static final int ID = 2;
-    static final String NAME = Sammons2.NAME0 + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
-    Sammons2_2(Imt imt) {
+    Sammons_2(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_3 extends Sammons2 {
+  static class Sammons_3 extends Sammons {
     static final int ID = 3;
-    static final String NAME = Sammons2.NAME0 + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
-    Sammons2_3(Imt imt) {
+    Sammons_3(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_4 extends Sammons2 {
+  static class Sammons_4 extends Sammons {
     static final int ID = 4;
-    static final String NAME = Sammons2.NAME0 + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
-    Sammons2_4(Imt imt) {
+    Sammons_4(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_5 extends Sammons2 {
+  static class Sammons_5 extends Sammons {
     static final int ID = 5;
-    static final String NAME = Sammons2.NAME0 + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
-    Sammons2_5(Imt imt) {
+    Sammons_5(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_6 extends Sammons2 {
+  static class Sammons_6 extends Sammons {
     static final int ID = 6;
-    static final String NAME = Sammons2.NAME0 + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
-    Sammons2_6(Imt imt) {
+    Sammons_6(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_7 extends Sammons2 {
+  static class Sammons_7 extends Sammons {
     static final int ID = 7;
-    static final String NAME = Sammons2.NAME0 + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
-    Sammons2_7(Imt imt) {
+    Sammons_7(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_8 extends Sammons2 {
+  static class Sammons_8 extends Sammons {
     static final int ID = 8;
-    static final String NAME = Sammons2.NAME0 + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
-    Sammons2_8(Imt imt) {
+    Sammons_8(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_9 extends Sammons2 {
+  static class Sammons_9 extends Sammons {
     static final int ID = 9;
-    static final String NAME = Sammons2.NAME0 + ID;
+    static final String NAME = Sammons.NAME0 + ID;
 
-    Sammons2_9(Imt imt) {
+    Sammons_9(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_10 extends Sammons2 {
+  static class Sammons_10 extends Sammons {
     static final int ID = 10;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_10(Imt imt) {
+    Sammons_10(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_11 extends Sammons2 {
+  static class Sammons_11 extends Sammons {
     static final int ID = 11;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_11(Imt imt) {
+    Sammons_11(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_12 extends Sammons2 {
+  static class Sammons_12 extends Sammons {
     static final int ID = 12;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_12(Imt imt) {
+    Sammons_12(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_13 extends Sammons2 {
+  static class Sammons_13 extends Sammons {
     static final int ID = 13;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_13(Imt imt) {
+    Sammons_13(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_14 extends Sammons2 {
+  static class Sammons_14 extends Sammons {
     static final int ID = 14;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_14(Imt imt) {
+    Sammons_14(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_15 extends Sammons2 {
+  static class Sammons_15 extends Sammons {
     static final int ID = 15;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_15(Imt imt) {
+    Sammons_15(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_16 extends Sammons2 {
+  static class Sammons_16 extends Sammons {
     static final int ID = 16;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_16(Imt imt) {
+    Sammons_16(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_17 extends Sammons2 {
+  static class Sammons_17 extends Sammons {
     static final int ID = 17;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_17(Imt imt) {
+    Sammons_17(Imt imt) {
       super(ID, imt);
     }
   }
