@@ -466,9 +466,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     Usgs17(Imt imt) {
       super(
           imt,
-          GroundMotionTables.getNgaEastV2Weights(imt),
-          GroundMotionTables.getNgaEastV2(imt),
-          GroundMotionTables.getNgaEastV2(Imt.PGA));
+          GroundMotionTables.getNgaEastWeights(imt),
+          GroundMotionTables.getNgaEast(imt),
+          GroundMotionTables.getNgaEast(Imt.PGA));
     }
   }
 
@@ -653,8 +653,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     Sammons(int id, Imt imt) {
       super(imt);
       this.id = id;
-      this.table = GroundMotionTables.getNgaEastV2(imt)[id - 1];
-      this.pgaTable = GroundMotionTables.getNgaEastV2(Imt.PGA)[id - 1];
+      this.table = GroundMotionTables.getNgaEast(imt)[id - 1];
+      this.pgaTable = GroundMotionTables.getNgaEast(Imt.PGA)[id - 1];
       this.siteAmp = new SiteAmp(imt);
     }
 
