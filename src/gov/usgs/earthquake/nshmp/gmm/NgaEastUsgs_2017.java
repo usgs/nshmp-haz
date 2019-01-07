@@ -17,7 +17,6 @@ import static java.lang.Math.sqrt;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,7 +28,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Doubles;
 
-import gov.usgs.earthquake.nshmp.calc.ExceedanceModel;
 import gov.usgs.earthquake.nshmp.data.Data;
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
@@ -46,12 +44,10 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * is a composite model that consists of 17 median ground motion models with
  * period dependent weights.
  * 
- * <p>Calculation of hazard using this preliminary implementation deviates
- * somewhat from the current nshmp-haz PSHA pipeline and required implementation
- * of a {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion}
- * stores arrays of means and sigmas with associated weights and can only be
- * properly processed by {@link ExceedanceModel#NSHM_CEUS_MAX_INTENSITY} at this
- * time.
+ * <p>Calculation of hazard using this implementation deviates somewhat from the
+ * current nshmp-haz PSHA pipeline and required implementation of a
+ * {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion} stores
+ * arrays of means and sigmas with associated weights.
  * 
  * <p>This class also manages implementations of 22 'seed' models, 19 of which
  * were used to generate (via Sammons mapping) the 17 NGA-East for USGS models
@@ -96,10 +92,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   /*
    * TODO
    * 
-   * Update javadoc (above).
-   * 
    * Cluster analysis is incorrect as currently implemented; analysis performed
-   * after combining models
+   * after combining models (this has been updated, recheck)
    * 
    * Deagg will currently use weight-averaged means; this is incorrect, or at
    * least requires more study to determine if it generates an acceptable
@@ -107,9 +101,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * 
    * Note: supported periods are derived from sigma coefficient files. Several
    * supported periods have been commented out because they are not represented
-   * in teh site amplification model.
+   * in the site amplification model.
    * 
-   * When supplied with tables for the 13 usgs models, 0.01s was added with
+   * When supplied with tables for the 17 usgs models, 0.01s is present with
    * values distinct from PGA, however the seed models are missing this period.
    * For now we've duplicated PGA for 0.01s ground motion values in the seed
    * model tables. Because a coefficient table (sigma coeffs in this case) is
@@ -126,10 +120,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * for τ and φ_ss. The tau and φ_s2s models have a single branch each; the
    * φ_ss model has three branches. The φ_ss and τ models both have coefficients
    * for low, central, and high statistical uncertainty branches; no statistical
-   * uncertianty model was developed for φ_s2s
+   * uncertianty model was developed for φ_s2s.
    * 
    * Sigma tables are broken into 'lo', 'mid', and 'hi' files representing the
-   * 'Low', 'Central', and 'Hi' branches of the sigma logi tree. In many cases
+   * 'Low', 'Central', and 'Hi' branches of the sigma logic tree. In many cases
    * coefficents are constant across all periods, but because of the statistical
    * uncertainty branching, it is easier to repeat the values in the coefficient
    * tables/files than to have to encode lo-mid-hi branching logic in sigma
@@ -258,61 +252,36 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return σSet;
   }
 
-  /* Recomendation 2: Panel model with phi_S2S term and all branches. */
+  /* Recommendation 2: Panel model (φ_S2S), no branches. */
+  SigmaSet sigmaSetPanel(double Mw, double vs30) {
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = new double[] { sigmaPanel(σCoeffsMid, Mw, vs30) };
+    σSet.weights = new double[] { 1.0 };
+    return σSet;
+  }
+
+  /* Final USGS logic-tree model: Panel=0.2, EPRIu=0.8 */
+  SigmaSet sigmaSetLogicTree(double Mw, double vs30) {
+    SigmaSet σSet = new SigmaSet();
+    σSet.sigmas = new double[] {
+        sigmaPanel(σCoeffsMid, Mw, vs30),
+        sigmaEpri(σCoeffsEpri, Mw)
+    };
+    σSet.weights = SIGMA_LTC_WTS;
+    return σSet;
+  }
+
+  /* Archive: Panel model with phi_S2S term and all branches. */
   @Deprecated
-  SigmaSet sigmaSetPanel1(double Mw, double vs30) {
+  SigmaSet sigmaSetPanelBranching(double Mw, double vs30) {
     double[] sigmas = {
-        sigmaPanel1(σCoeffsLo, Mw, vs30),
-        sigmaPanel1(σCoeffsMid, Mw, vs30),
-        sigmaPanel1(σCoeffsHi, Mw, vs30),
+        sigmaPanelBranching(σCoeffsLo, Mw, vs30),
+        sigmaPanelBranching(σCoeffsMid, Mw, vs30),
+        sigmaPanelBranching(σCoeffsHi, Mw, vs30),
     };
     SigmaSet σSet = new SigmaSet();
     σSet.sigmas = sigmas;
     σSet.weights = SIGMA_WTS;
-    return σSet;
-  }
-
-  /* Recomendation 2b: Panel model with phi_S2S term and no branching. */
-  SigmaSet sigmaSetPanel1b(double Mw, double vs30) {
-    double[] sigmas = { sigmaPanel1b(σCoeffsMid, Mw, vs30) };
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = sigmas;
-    σSet.weights = new double[] { 1.0 };
-    return σSet;
-  }
-
-  /* Recomendation 3: Panel model R2 with max(phi) for long T. */
-  SigmaSet sigmaSetPanel2(double Mw, double vs30) {
-    double φEpri = sigmaEpriTerms(σCoeffsEpri, Mw)[0];
-    double[] sigmas = { sigmaPanel2(σCoeffsMid, Mw, vs30, φEpri) };
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = sigmas;
-    σSet.weights = new double[] { 1.0 };
-    return σSet;
-  }
-
-  /* USGS model: Final, no nested branching. */
-  SigmaSet sigmaSetLogicTree(double Mw, double vs30) {
-    double[] epriTerms = sigmaEpriTerms(σCoeffsEpri, Mw);
-    double[] sigmas = {
-        sigmaPanel2(σCoeffsMid, Mw, vs30, epriTerms[0]),
-        Maths.hypot(epriTerms[0], epriTerms[1])
-    };
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = sigmas;
-    σSet.weights = SIGMA_LTC_WTS;
-    return σSet;
-  }
-
-  /* USGS model: Final alternative; remove max(phi) given high EPRI wt (0.8) */
-  SigmaSet sigmaSetLogicTree2(double Mw, double vs30) {
-    double[] sigmas = {
-        sigmaPanel1b(σCoeffsMid, Mw, vs30),
-        sigmaEpri(σCoeffsEpri, Mw)
-    };
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = sigmas;
-    σSet.weights = SIGMA_LTC_WTS;
     return σSet;
   }
 
@@ -350,28 +319,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return new double[] { φ, τ };
   }
 
-  /* Recommendation 2: Panel model with phi_S2S term. */
-  private static double sigmaPanel1(
-      CoefficientsSigma c,
-      double Mw,
-      double vs30) {
-
-    /* τ model; global branch only; Equation 5-1 */
-    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
-
-    /* φ_ss model; global, constant, and mag-dep branches Equation 5-2 */
-    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
-        0.1 * c.c +
-        0.1 * phi_ss(Mw, c.ma, c.mb);
-
-    /* φ_s2s model; single branch; Stewart et al. */
-    double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
-
-    return Maths.hypot(τ, φ_ss, φ_s2s);
-  }
-
-  /* Recommendation 2b: Same as above, no φ_ss branching. */
-  private static double sigmaPanel1b(
+  /* Recommendation 2: Same as above, no c branching. */
+  private static double sigmaPanel(
       CoefficientsSigma c,
       double Mw,
       double vs30) {
@@ -388,35 +337,25 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return Maths.hypot(τ, φ_ss, φ_s2s);
   }
 
-  /*
-   * Recommendation 3: Panel model R2 with max(phi) for long T. No φ_ss
-   * branching.
-   * 
-   * Sigma model includes φ_s2s and uses the maximum of φ from this or the
-   * updated EPRI model (supplied to method). The panel recommendation is to use
-   * the maximum φ from their recommended model and that of NGAW2. The updated
-   * EPRI model φ tracks NGAW2, so we use the EPRI phi as a proxy, with panel
-   * approval.
-   */
-  private static double sigmaPanel2(
+  /* Archive: Panel model with phi_S2S term and φ_ss branching. */
+  @Deprecated
+  private static double sigmaPanelBranching(
       CoefficientsSigma c,
       double Mw,
-      double vs30,
-      double φEpri) {
+      double vs30) {
 
     /* τ model; global branch only; Equation 5-1 */
     double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
 
-    /* φ_ss model; global, constant, and mag-dep. branches Equation 5-2. */
-    double φ_ss = phi_ss(Mw, c.ga, c.gb);
+    /* φ_ss model; global, constant, and mag-dep branches Equation 5-2 */
+    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
+        0.1 * c.c +
+        0.1 * phi_ss(Mw, c.ma, c.mb);
 
     /* φ_s2s model; single branch; Stewart et al. */
     double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
 
-    /* Model 1 phi, original */
-    double φT = Maths.hypot(φ_ss, φ_s2s);
-
-    return Maths.hypot(τ, Math.max(φT, φEpri));
+    return Maths.hypot(τ, φ_ss, φ_s2s);
   }
 
   /* τ: Equation 5.1 */
@@ -522,19 +461,19 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Usgs17 extends ModelGroup {
     static final String BASE_NAME = NgaEastUsgs_2017.NAME;
-    static final String NAME = BASE_NAME + " : 4 σ-LogicTree (current)";
+    static final String NAME = BASE_NAME + " : 3 σ-LogicTree";
 
     Usgs17(Imt imt) {
       super(
           imt,
-          GroundMotionTables.getNgaEastV2Weights(imt),
-          GroundMotionTables.getNgaEastV2(imt),
-          GroundMotionTables.getNgaEastV2(Imt.PGA));
+          GroundMotionTables.getNgaEastWeights(imt),
+          GroundMotionTables.getNgaEast(imt),
+          GroundMotionTables.getNgaEast(Imt.PGA));
     }
   }
 
   static class Usgs17_Sigma_Epri extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : 1 σ-EPRIu";
+    static final String NAME = Usgs17.BASE_NAME + " : 1 σ-EPRI";
 
     Usgs17_Sigma_Epri(Imt imt) {
       super(imt);
@@ -546,71 +485,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Usgs17_Sigma_Panel1b extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : 2 σ-Panel1 (+ φs2s)";
+  static class Usgs17_Sigma_Panel extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + " : 2 σ-Panel";
 
-    Usgs17_Sigma_Panel1b(Imt imt) {
+    Usgs17_Sigma_Panel(Imt imt) {
       super(imt);
     }
 
     @Override
     SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetPanel1b(in.Mw, in.vs30);
-    }
-  }
-
-  static class Usgs17_Sigma_Panel2 extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : 3 σ-Panel2 (+ max φ_ss)";
-
-    Usgs17_Sigma_Panel2(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetPanel2(in.Mw, in.vs30);
-    }
-  }
-
-  static class Usgs17_Sigma_LogicTreeAlt extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : 5 σ-LogicTree (no max φ_ss)";
-
-    Usgs17_Sigma_LogicTreeAlt(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetLogicTree2(in.Mw, in.vs30);
-    }
-  }
-
-  /* TODO clean 13 variants out along with associated files */
-
-  @Deprecated
-  static class Usgs13 extends ModelGroup {
-    static final String NAME = NgaEastUsgs_2017.NAME + ": 13 Branch";
-
-    Usgs13(Imt imt) {
-      super(
-          imt,
-          GroundMotionTables.getNgaEastWeights(imt),
-          GroundMotionTables.getNgaEast(imt),
-          GroundMotionTables.getNgaEast(Imt.PGA));
-    }
-  }
-
-  @Deprecated
-  static class Usgs13_Epri extends Usgs13 {
-    static final String NAME = Usgs13.NAME + ": EPRI";
-
-    Usgs13_Epri(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetEpri(in.Mw);
+      return sigmaSetPanel(in.Mw, in.vs30);
     }
   }
 
@@ -749,7 +633,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       }
 
       /* Fetch NGA-East sigmas and weights. */
-      SigmaSet sigmas = sigmaSetLogicTree2(in.Mw, in.vs30);
+      SigmaSet sigmas = sigmaSetLogicTree(in.Mw, in.vs30);
 
       return new MultiScalarGroundMotion(
           means, this.weights,
@@ -758,7 +642,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static abstract class Sammons extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons (depr) : ";
+    static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons : ";
     static final String NAME0 = NAME + "0";
 
     final int id;
@@ -902,183 +786,38 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static abstract class Sammons2 extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons : ";
-    static final String NAME0 = NAME + "0";
-
-    final int id;
-    final GroundMotionTable table;
-    final GroundMotionTable pgaTable;
-    final SiteAmp siteAmp;
-
-    Sammons2(int id, Imt imt) {
-      super(imt);
-      this.id = id;
-      this.table = GroundMotionTables.getNgaEastV2(imt)[id - 1];
-      this.pgaTable = GroundMotionTables.getNgaEastV2(Imt.PGA)[id - 1];
-      this.siteAmp = new SiteAmp(imt);
-    }
-
-    @Override
-    public ScalarGroundMotion calc(GmmInput in) {
-      Position p = table.position(in.rRup, in.Mw);
-      double μPga = exp(pgaTable.get(p));
-      SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
-      double μ = fSite.apply(table.get(p));
-      double σ = sigmaLogicTree(in.Mw, in.vs30);
-      return new DefaultScalarGroundMotion(μ, σ);
-    }
-  }
-
-  static class Sammons2_1 extends Sammons2 {
-    static final int ID = 1;
-    static final String NAME = Sammons2.NAME0 + ID;
-
-    Sammons2_1(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_2 extends Sammons2 {
-    static final int ID = 2;
-    static final String NAME = Sammons2.NAME0 + ID;
-
-    Sammons2_2(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_3 extends Sammons2 {
-    static final int ID = 3;
-    static final String NAME = Sammons2.NAME0 + ID;
-
-    Sammons2_3(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_4 extends Sammons2 {
-    static final int ID = 4;
-    static final String NAME = Sammons2.NAME0 + ID;
-
-    Sammons2_4(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_5 extends Sammons2 {
-    static final int ID = 5;
-    static final String NAME = Sammons2.NAME0 + ID;
-
-    Sammons2_5(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_6 extends Sammons2 {
-    static final int ID = 6;
-    static final String NAME = Sammons2.NAME0 + ID;
-
-    Sammons2_6(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_7 extends Sammons2 {
-    static final int ID = 7;
-    static final String NAME = Sammons2.NAME0 + ID;
-
-    Sammons2_7(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_8 extends Sammons2 {
-    static final int ID = 8;
-    static final String NAME = Sammons2.NAME0 + ID;
-
-    Sammons2_8(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_9 extends Sammons2 {
-    static final int ID = 9;
-    static final String NAME = Sammons2.NAME0 + ID;
-
-    Sammons2_9(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_10 extends Sammons2 {
-    static final int ID = 10;
-    static final String NAME = Sammons2.NAME + ID;
-
-    Sammons2_10(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_11 extends Sammons2 {
-    static final int ID = 11;
-    static final String NAME = Sammons2.NAME + ID;
-
-    Sammons2_11(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_12 extends Sammons2 {
-    static final int ID = 12;
-    static final String NAME = Sammons2.NAME + ID;
-
-    Sammons2_12(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_13 extends Sammons2 {
-    static final int ID = 13;
-    static final String NAME = Sammons2.NAME + ID;
-
-    Sammons2_13(Imt imt) {
-      super(ID, imt);
-    }
-  }
-
-  static class Sammons2_14 extends Sammons2 {
+  static class Sammons_14 extends Sammons {
     static final int ID = 14;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_14(Imt imt) {
+    Sammons_14(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_15 extends Sammons2 {
+  static class Sammons_15 extends Sammons {
     static final int ID = 15;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_15(Imt imt) {
+    Sammons_15(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_16 extends Sammons2 {
+  static class Sammons_16 extends Sammons {
     static final int ID = 16;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_16(Imt imt) {
+    Sammons_16(Imt imt) {
       super(ID, imt);
     }
   }
 
-  static class Sammons2_17 extends Sammons2 {
+  static class Sammons_17 extends Sammons {
     static final int ID = 17;
-    static final String NAME = Sammons2.NAME + ID;
+    static final String NAME = Sammons.NAME + ID;
 
-    Sammons2_17(Imt imt) {
+    Sammons_17(Imt imt) {
       super(ID, imt);
     }
   }
