@@ -36,8 +36,8 @@ class CombinedGmm implements GroundMotionModel {
   private final Map<GroundMotionModel, Double> gmms;
 
   /* Supply map of ground motion models initialized to the required IMT. */
-  private CombinedGmm(Map<GroundMotionModel, Double> gmms) {
-    this.gmms = gmms;
+  private CombinedGmm(Imt imt, Map<Gmm, Double> gmms) {
+    this.gmms = instancesForImt(imt, gmms);
   }
 
   @Override
@@ -63,7 +63,7 @@ class CombinedGmm implements GroundMotionModel {
     return DefaultScalarGroundMotion.create(Math.log(μ), σ);
   }
 
-  private static Map<GroundMotionModel, Double> imtToInstances(
+  static Map<GroundMotionModel, Double> instancesForImt(
       Imt imt,
       Map<Gmm, Double> gmms) {
 
@@ -79,7 +79,7 @@ class CombinedGmm implements GroundMotionModel {
    * intersection of all support IMTs.
    */
 
-  private static final Map<Gmm, Double> CEUS_2014 = ImmutableMap.<Gmm, Double> builder()
+  static final Map<Gmm, Double> CEUS_2014_FAULT = ImmutableMap.<Gmm, Double> builder()
       .put(AB_06_PRIME, 0.22)
       .put(ATKINSON_08_PRIME, 0.08)
       .put(CAMPBELL_03, 0.11)
@@ -89,6 +89,25 @@ class CombinedGmm implements GroundMotionModel {
       .put(SOMERVILLE_01, 0.1)
       .put(TP_05, 0.11)
       .put(TORO_97_MW, 0.11)
+      .build();
+
+  static final Map<Gmm, Double> CEUS_2014_GRID = ImmutableMap.<Gmm, Double> builder()
+      .put(AB_06_PRIME, 0.25)
+      .put(ATKINSON_08_PRIME, 0.08)
+      .put(CAMPBELL_03, 0.13)
+      .put(FRANKEL_96, 0.06)
+      .put(PEZESHK_11, 0.16)
+      .put(SILVA_02, 0.06)
+      .put(TP_05, 0.13)
+      .put(TORO_97_MW, 0.13)
+      .build();
+
+  static final Map<Gmm, Double> CEUS_2014_500KM = ImmutableMap.<Gmm, Double> builder()
+      .put(AB_06_PRIME, 0.3)
+      .put(CAMPBELL_03, 0.17)
+      .put(FRANKEL_96, 0.16)
+      .put(PEZESHK_11, 0.2)
+      .put(TP_05, 0.17)
       .build();
 
   /* Need to allow Vs30=3000 through for comparison plots. */
@@ -104,7 +123,7 @@ class CombinedGmm implements GroundMotionModel {
     static final CoefficientContainer COEFFS = FrankelEtAl_1996.COEFFS;
 
     Ceus2014(Imt imt) {
-      super(imtToInstances(imt, CEUS_2014));
+      super(imt, CEUS_2014_FAULT);
     }
 
     @Override
@@ -128,7 +147,7 @@ class CombinedGmm implements GroundMotionModel {
     static final CoefficientContainer COEFFS = NgaEastUsgs_2017.COEFFS_SIGMA_MID;
 
     Ceus2018(Imt imt) {
-      super(imtToInstances(imt, CEUS_2018));
+      super(imt, CEUS_2018);
     }
   }
 
@@ -148,7 +167,7 @@ class CombinedGmm implements GroundMotionModel {
     static final CoefficientContainer COEFFS = CampbellBozorgnia_2014.COEFFS;
 
     Wus2014_4p1(Imt imt) {
-      super(imtToInstances(imt, WUS_2014_4P1));
+      super(imt, WUS_2014_4P1);
     }
   }
 
@@ -167,7 +186,7 @@ class CombinedGmm implements GroundMotionModel {
     static final CoefficientContainer COEFFS = CampbellBozorgnia_2014.COEFFS;
 
     Wus2014_4p2(Imt imt) {
-      super(imtToInstances(imt, WUS_2014_4P2));
+      super(imt, WUS_2014_4P2);
     }
   }
 
@@ -186,7 +205,7 @@ class CombinedGmm implements GroundMotionModel {
     static final CoefficientContainer COEFFS = CampbellBozorgnia_2014.COEFFS;
 
     Wus2018(Imt imt) {
-      super(imtToInstances(imt, WUS_2018));
+      super(imt, WUS_2018);
     }
   }
 
