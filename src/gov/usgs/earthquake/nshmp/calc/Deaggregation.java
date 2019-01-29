@@ -92,8 +92,8 @@ public final class Deaggregation {
 
   /**
    * Deaggregate {@code hazard} at the intensity measure level corresponding to
-   * the supplied {@code returnPeriod}. Only a single {@code Imt} will be processed if
-   * supplied.
+   * the supplied {@code returnPeriod}. Only a single {@code Imt} will be
+   * processed if supplied.
    *
    * @param hazard to deaggregate.
    * @param returnPeriod at which to deaggregate {@code hazard}
@@ -133,7 +133,7 @@ public final class Deaggregation {
    * @param deaggImt to deaggregate; deaggregate all if {@code empty()}
    */
   public static Deaggregation atIml(
-      Hazard hazard, 
+      Hazard hazard,
       double iml,
       Optional<Imt> deaggImt) {
 
@@ -143,11 +143,42 @@ public final class Deaggregation {
     Set<Imt> imtsToDeagg = deaggImt.isPresent()
         ? EnumSet.of(deaggImt.get())
         : hazard.totalCurves.keySet();
-        
+
     for (Imt imt : imtsToDeagg) {
       double rate = RATE_INTERPOLATER.findY(hazard.totalCurves.get(imt), iml);
       double returnPeriod = 1.0 / rate;
-      DeaggConfig config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
+      DeaggConfig config = cb.imt(imt).iml(Math.log(iml), rate, returnPeriod).build();
+      ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
+      imtDeaggMap.put(imt, imtDeagg);
+    }
+
+    return new Deaggregation(
+        Maps.immutableEnumMap(imtDeaggMap),
+        hazard.site);
+  }
+
+  /**
+   * Experimental: Deaggregate {@code hazard} at a unique intensity measure
+   * level for each IMT. Assumes hazard contains results for each IMT identified
+   * in the {@code imtImls} map.
+   * 
+   * @param hazard to deaggregate.
+   * @param imtImls per-IMT intensity measure levels at which to deaggregate
+   *        {@code hazard}
+   */
+  public static Deaggregation atImls(
+      Hazard hazard,
+      Map<Imt, Double> imtImls) {
+
+    Map<Imt, ImtDeagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
+    DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
+
+    for (Entry<Imt, Double> imtIml : imtImls.entrySet()) {
+      Imt imt = imtIml.getKey();
+      double iml = imtIml.getValue();
+      double rate = RATE_INTERPOLATER.findY(hazard.totalCurves.get(imt), iml);
+      double returnPeriod = 1.0 / rate;
+      DeaggConfig config = cb.imt(imt).iml(Math.log(iml), rate, returnPeriod).build();
       ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
       imtDeaggMap.put(imt, imtDeagg);
     }
