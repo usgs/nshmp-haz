@@ -91,25 +91,6 @@ class CombinedGmm implements GroundMotionModel {
       .put(TORO_97_MW, 0.11)
       .build();
 
-  static final Map<Gmm, Double> CEUS_2014_GRID = ImmutableMap.<Gmm, Double> builder()
-      .put(AB_06_PRIME, 0.25)
-      .put(ATKINSON_08_PRIME, 0.08)
-      .put(CAMPBELL_03, 0.13)
-      .put(FRANKEL_96, 0.06)
-      .put(PEZESHK_11, 0.16)
-      .put(SILVA_02, 0.06)
-      .put(TP_05, 0.13)
-      .put(TORO_97_MW, 0.13)
-      .build();
-
-  static final Map<Gmm, Double> CEUS_2014_500KM = ImmutableMap.<Gmm, Double> builder()
-      .put(AB_06_PRIME, 0.3)
-      .put(CAMPBELL_03, 0.17)
-      .put(FRANKEL_96, 0.16)
-      .put(PEZESHK_11, 0.2)
-      .put(TP_05, 0.17)
-      .build();
-
   /* Need to allow Vs30=3000 through for comparison plots. */
   private static final Constraints CEUS_2014_CONSTRAINTS = Constraints.builder()
       .withDefaults()
@@ -150,6 +131,55 @@ class CombinedGmm implements GroundMotionModel {
       super(imt, CEUS_2018);
     }
   }
+  
+  /* Hybrid CEUS14 NGA-East Sigma GMMs */
+  static final Map<Gmm, Double> CEUS_2014_NGAE_SIGMA = ImmutableMap.<Gmm, Double> builder()
+      .put(CEUS14_NGAE_SIGMA_AB_06_PRIME, 0.22)
+      .put(CEUS14_NGAE_SIGMA_ATKINSON_08_PRIME, 0.08)
+      .put(CEUS14_NGAE_SIGMA_CAMPBELL_03, 0.11)
+      .put(CEUS14_NGAE_SIGMA_FRANKEL_96, 0.06)
+      .put(CEUS14_NGAE_SIGMA_PEZESHK_11, 0.15)
+      .put(CEUS14_NGAE_SIGMA_SILVA_02, 0.06)
+      .put(CEUS14_NGAE_SIGMA_SOMERVILLE_01, 0.1)
+      .put(CEUS14_NGAE_SIGMA_TP_05, 0.11)
+      .put(CEUS14_NGAE_SIGMA_TORO_97_MW, 0.11)
+      .build();
+
+  static final class Ceus2014_NgaEastSigma extends CombinedGmm {
+
+    static final String NAME = CombinedGmm.NAME + "CEUS 2014 (4.* + NGAE Sigma)";
+    static final Constraints CONSTRAINTS = CEUS_2014_CONSTRAINTS;
+    static final CoefficientContainer COEFFS = FrankelEtAl_1996.COEFFS;
+
+    Ceus2014_NgaEastSigma(Imt imt) {
+      super(imt, CEUS_2014_NGAE_SIGMA);
+    }
+  }
+  
+  /* Hybrid CEUS14 NGA-East Site GMMs */
+  static final Map<Gmm, Double> CEUS_2014_NGAE_SITE = ImmutableMap.<Gmm, Double> builder()
+      .put(CEUS14_NGAE_SITE_AB_06_PRIME, 0.22)
+      .put(CEUS14_NGAE_SITE_ATKINSON_08_PRIME, 0.08)
+      .put(CEUS14_NGAE_SITE_CAMPBELL_03, 0.11)
+      .put(CEUS14_NGAE_SITE_FRANKEL_96, 0.06)
+      .put(CEUS14_NGAE_SITE_PEZESHK_11, 0.15)
+      .put(CEUS14_NGAE_SITE_SILVA_02, 0.06)
+      .put(CEUS14_NGAE_SITE_SOMERVILLE_01, 0.1)
+      .put(CEUS14_NGAE_SITE_TP_05, 0.11)
+      .put(CEUS14_NGAE_SITE_TORO_97_MW, 0.11)
+      .build();
+
+  static final class Ceus2014_NgaEastSite extends CombinedGmm {
+
+    static final String NAME = CombinedGmm.NAME + "CEUS 2014 (4.* + NGAE Site)";
+    static final Constraints CONSTRAINTS = CEUS_2014_CONSTRAINTS;
+    static final CoefficientContainer COEFFS = FrankelEtAl_1996.COEFFS;
+
+    Ceus2014_NgaEastSite(Imt imt) {
+      super(imt, CEUS_2014_NGAE_SITE);
+    }
+  }
+
 
   private static final Map<Gmm, Double> WUS_2014_4P1 = ImmutableMap.<Gmm, Double> builder()
       .put(ASK_14, 0.22)
