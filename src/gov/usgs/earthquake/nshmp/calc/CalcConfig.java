@@ -1390,12 +1390,6 @@ public final class CalcConfig {
      * (overrides) are exposed below.
      */
 
-    /* TODO review */;
-    public Builder defaultImls(double[] imls) {
-      this.hazard.defaultImls = imls;
-      return this;
-    }
-    
     /**
      * Set the IMTs for which results should be calculated.
      * 
