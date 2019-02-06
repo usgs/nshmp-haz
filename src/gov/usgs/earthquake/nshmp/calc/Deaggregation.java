@@ -11,11 +11,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.function.Function;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.data.XySequence;
@@ -102,26 +107,26 @@ public final class Deaggregation {
   public static Deaggregation atReturnPeriod(
       Hazard hazard,
       double returnPeriod,
-      Optional<Imt> deaggImt) {
+      Optional<Imt> deaggImt,
+      Executor exec) {
 
-    Map<Imt, ImtDeagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
-    DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
     double rate = 1.0 / returnPeriod;
-
     Set<Imt> imtsToDeagg = deaggImt.isPresent()
         ? EnumSet.of(deaggImt.get())
         : hazard.totalCurves.keySet();
 
+    DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
+    HazardToDeagg transform = new HazardToDeagg(hazard);
+    AsyncList<ImtDeagg> futureImtDeaggs = AsyncList.createWithCapacity(imtsToDeagg.size());
+
     for (Imt imt : imtsToDeagg) {
       double iml = IML_INTERPOLATER.findX(hazard.totalCurves.get(imt), rate);
       DeaggConfig config = cb.imt(imt).iml(iml, rate, returnPeriod).build();
-      ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
-      imtDeaggMap.put(imt, imtDeagg);
+      futureImtDeaggs.add(toImtDeagg(transform, config, exec));
     }
 
-    return new Deaggregation(
-        Maps.immutableEnumMap(imtDeaggMap),
-        hazard.site);
+    Map<Imt, ImtDeagg> imtDeaggs = toImtDeaggMap(futureImtDeaggs);
+    return new Deaggregation(imtDeaggs, hazard.site);
   }
 
   /**
@@ -135,26 +140,26 @@ public final class Deaggregation {
   public static Deaggregation atIml(
       Hazard hazard,
       double iml,
-      Optional<Imt> deaggImt) {
-
-    Map<Imt, ImtDeagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
-    DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
+      Optional<Imt> deaggImt,
+      Executor exec) {
 
     Set<Imt> imtsToDeagg = deaggImt.isPresent()
         ? EnumSet.of(deaggImt.get())
         : hazard.totalCurves.keySet();
 
+    DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
+    HazardToDeagg transform = new HazardToDeagg(hazard);
+    AsyncList<ImtDeagg> futureImtDeaggs = AsyncList.createWithCapacity(imtsToDeagg.size());
+
     for (Imt imt : imtsToDeagg) {
       double rate = RATE_INTERPOLATER.findY(hazard.totalCurves.get(imt), iml);
       double returnPeriod = 1.0 / rate;
       DeaggConfig config = cb.imt(imt).iml(Math.log(iml), rate, returnPeriod).build();
-      ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
-      imtDeaggMap.put(imt, imtDeagg);
+      futureImtDeaggs.add(toImtDeagg(transform, config, exec));
     }
 
-    return new Deaggregation(
-        Maps.immutableEnumMap(imtDeaggMap),
-        hazard.site);
+    Map<Imt, ImtDeagg> imtDeaggs = toImtDeaggMap(futureImtDeaggs);
+    return new Deaggregation(imtDeaggs, hazard.site);
   }
 
   /**
@@ -168,10 +173,12 @@ public final class Deaggregation {
    */
   public static Deaggregation atImls(
       Hazard hazard,
-      Map<Imt, Double> imtImls) {
+      Map<Imt, Double> imtImls,
+      Executor exec) {
 
-    Map<Imt, ImtDeagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
     DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
+    HazardToDeagg transform = new HazardToDeagg(hazard);
+    AsyncList<ImtDeagg> futureImtDeaggs = AsyncList.createWithCapacity(imtImls.size());
 
     for (Entry<Imt, Double> imtIml : imtImls.entrySet()) {
       Imt imt = imtIml.getKey();
@@ -179,13 +186,50 @@ public final class Deaggregation {
       double rate = RATE_INTERPOLATER.findY(hazard.totalCurves.get(imt), iml);
       double returnPeriod = 1.0 / rate;
       DeaggConfig config = cb.imt(imt).iml(Math.log(iml), rate, returnPeriod).build();
-      ImtDeagg imtDeagg = new ImtDeagg(hazard, config);
-      imtDeaggMap.put(imt, imtDeagg);
+      futureImtDeaggs.add(toImtDeagg(transform, config, exec));
     }
 
-    return new Deaggregation(
-        Maps.immutableEnumMap(imtDeaggMap),
-        hazard.site);
+    Map<Imt, ImtDeagg> imtDeaggs = toImtDeaggMap(futureImtDeaggs);
+    return new Deaggregation(imtDeaggs, hazard.site);
+  }
+
+  private static Map<Imt, ImtDeagg> toImtDeaggMap(AsyncList<ImtDeagg> futureDeaggs) {
+    try {
+      ListenableFuture<List<ImtDeagg>> imtDeaggsFuture = Futures.allAsList(futureDeaggs);
+      List<ImtDeagg> imtDeaggs = imtDeaggsFuture.get();
+      Map<Imt, ImtDeagg> imtDeaggMap = Maps.newEnumMap(Imt.class);
+      for (ImtDeagg imtDeagg : imtDeaggs) {
+        imtDeaggMap.put(imtDeagg.config.imt, imtDeagg);
+      }
+      return Maps.immutableEnumMap(imtDeaggMap);
+    } catch (ExecutionException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static ListenableFuture<ImtDeagg> toImtDeagg(
+      HazardToDeagg function,
+      DeaggConfig config,
+      Executor exec) {
+
+    return Futures.transform(
+        Futures.immediateFuture(config),
+        function::apply,
+        exec);
+  }
+
+  static final class HazardToDeagg implements Function<DeaggConfig, ImtDeagg> {
+
+    private final Hazard hazard;
+
+    HazardToDeagg(Hazard hazard) {
+      this.hazard = hazard;
+    }
+
+    @Override
+    public ImtDeagg apply(DeaggConfig config) {
+      return new ImtDeagg(hazard, config);
+    }
   }
 
   /* Hazard curves are already in log-x space. */

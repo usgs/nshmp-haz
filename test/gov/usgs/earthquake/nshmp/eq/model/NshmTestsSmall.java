@@ -67,7 +67,7 @@ public class NshmTestsSmall {
         model,
         model.config(),
         site,
-        Optional.of(exec));
+        exec);
     exec.shutdown();
     return GSON.toJson(hazard.curves());
   }

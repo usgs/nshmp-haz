@@ -143,7 +143,7 @@ public class NshmTestsLarge {
         model,
         model.config(),
         Site.builder().location(location).build(),
-        Optional.of(EXEC));
+        EXEC);
 
     return GSON.toJson(hazard.curves());
   }
