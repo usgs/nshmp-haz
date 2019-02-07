@@ -218,7 +218,7 @@ public final class Deaggregation {
         exec);
   }
 
-  static final class HazardToDeagg implements Function<DeaggConfig, ImtDeagg> {
+  private static final class HazardToDeagg implements Function<DeaggConfig, ImtDeagg> {
 
     private final Hazard hazard;
 
@@ -259,7 +259,13 @@ public final class Deaggregation {
    * @param imt of the deaggregation to retrieve.
    */
   public Object toJson(Imt imt) {
-    return deaggs.get(imt).toJson();
+    return deaggs.get(imt).toJson(true, true, true);
+  }
+
+  /** Experimental */
+  @Deprecated
+  public Object toJsonCompact(Imt imt) {
+    return deaggs.get(imt).toJson(false, false, false);
   }
 
   /**
@@ -345,7 +351,7 @@ public final class Deaggregation {
     public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append(NEWLINE);
-      for (DeaggExport export : buildExports(false)) {
+      for (DeaggExport export : buildExports(false, true, true, true)) {
         sb.append(export.toString());
         sb.append(NEWLINE);
       }
@@ -357,36 +363,48 @@ public final class Deaggregation {
      * structured object that may be serialized directly or added to some other
      * object prior to serialization.
      */
-    Object toJson() {
-      return buildExports(true);
+    Object toJson(boolean gmmDeaggs, boolean typeDeaggs, boolean εData) {
+      return buildExports(true, false, false, εData);
     }
 
-    private List<DeaggExport> buildExports(boolean json) {
+    private List<DeaggExport> buildExports(
+        boolean json,
+        boolean gmmDeaggs,
+        boolean typeDeaggs,
+        boolean εData) {
+
       List<DeaggExport> exports = new ArrayList<>();
       DeaggExport total = new DeaggExport(
           totalDataset,
           totalDataset,
           config,
           TOTAL_COMPONENT,
-          json);
+          json,
+          εData);
       exports.add(total);
-      for (Entry<Gmm, DeaggDataset> gmmEntry : gmmDatasets.entrySet()) {
-        DeaggExport gmm = new DeaggExport(
-            totalDataset,
-            gmmEntry.getValue(),
-            config,
-            GMM_COMPONENT + gmmEntry.getKey().toString(),
-            json);
-        exports.add(gmm);
+      if (gmmDeaggs) {
+        for (Entry<Gmm, DeaggDataset> gmmEntry : gmmDatasets.entrySet()) {
+          DeaggExport gmm = new DeaggExport(
+              totalDataset,
+              gmmEntry.getValue(),
+              config,
+              GMM_COMPONENT + gmmEntry.getKey().toString(),
+              json,
+              εData);
+          exports.add(gmm);
+        }
       }
-      for (Entry<SourceType, DeaggDataset> typeEntry : typeDatasets.entrySet()) {
-        DeaggExport type = new DeaggExport(
-            totalDataset,
-            typeEntry.getValue(),
-            config,
-            TYPE_COMPONENT + typeEntry.getKey().toString(),
-            json);
-        exports.add(type);
+      if (typeDeaggs) {
+        for (Entry<SourceType, DeaggDataset> typeEntry : typeDatasets.entrySet()) {
+          DeaggExport type = new DeaggExport(
+              totalDataset,
+              typeEntry.getValue(),
+              config,
+              TYPE_COMPONENT + typeEntry.getKey().toString(),
+              json,
+              εData);
+          exports.add(type);
+        }
       }
       return exports;
     }

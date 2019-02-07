@@ -398,7 +398,7 @@ public final class HazardExport {
       Path imtDir = dir.resolve(imt.name());
       Files.createDirectories(imtDir);
       Path totalFile = imtDir.resolve(CURVE_FILE_ASCII);
-//      System.out.println(totalEntry.getValue());
+      // System.out.println(totalEntry.getValue());
       Files.write(totalFile, totalEntry.getValue(), UTF_8, options);
 
       Metadata meta = null;
@@ -458,7 +458,7 @@ public final class HazardExport {
         ImtDeagg imtDeagg = imtEntry.getValue();
         DeaggDataset ddTotal = imtDeagg.totalDataset;
         DeaggConfig dc = imtDeagg.config;
-        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total", false);
+        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total", false, true);
         Path imtDir = dir.resolve(imtEntry.getKey().name());
         Path totalDir = imtDir.resolve(DEAGG_DIR);
         Files.createDirectories(totalDir);
@@ -471,7 +471,7 @@ public final class HazardExport {
                 .resolve(type.name())
                 .resolve(DEAGG_DIR);
             DeaggDataset ddType = typeEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddType, dc, type.toString(), false);
+            exporter = new DeaggExport(ddTotal, ddType, dc, type.toString(), false, true);
             exporter.toFile(typeDir, name);
           }
         }
@@ -483,7 +483,7 @@ public final class HazardExport {
                 .resolve(gmm.name())
                 .resolve(DEAGG_DIR);
             DeaggDataset ddGmm = gmmEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmm.toString(), false);
+            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmm.toString(), false, true);
             exporter.toFile(gmmDir, name);
           }
         }
@@ -499,8 +499,8 @@ public final class HazardExport {
     return Parsing.join(
         FluentIterable.from(location).append(
             Iterables.transform(
-            values, 
-            formatter::apply)),
+                values,
+                formatter::apply)),
         Delimiter.COMMA);
   }
 
