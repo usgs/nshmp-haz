@@ -1391,6 +1391,16 @@ public final class CalcConfig {
      */
 
     /**
+     * Set the {@link ThreadCount}.
+     * 
+     * @see gov.usgs.earthquake.nshmp.calc.CalcConfig.Performance#threadCount
+     */
+    public Builder threadCount(ThreadCount threadCount) {
+      this.performance.threadCount = checkNotNull(threadCount);
+      return this;
+    }
+    
+    /**
      * Set the IMTs for which results should be calculated.
      * 
      * @see gov.usgs.earthquake.nshmp.calc.CalcConfig.Hazard#imts
