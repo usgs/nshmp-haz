@@ -290,7 +290,6 @@ public enum Gmm {
       AbrahamsonEtAl_2016.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  @Deprecated
   BCHYDRO_12_INTERFACE(
       BcHydro_2012.Interface.class,
       BcHydro_2012.Interface.NAME,
@@ -298,7 +297,6 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  @Deprecated
   BCHYDRO_12_SLAB(
       BcHydro_2012.Slab.class,
       BcHydro_2012.Slab.NAME,
@@ -306,7 +304,6 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  @Deprecated
   BCHYDRO_12_INTERFACE_BASIN_AMP(
       BcHydro_2012.BasinInterface.class,
       BcHydro_2012.BasinInterface.NAME,
@@ -314,7 +311,6 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  @Deprecated
   BCHYDRO_12_SLAB_BASIN_AMP(
       BcHydro_2012.BasinSlab.class,
       BcHydro_2012.BasinSlab.NAME,

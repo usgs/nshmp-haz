@@ -25,36 +25,47 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 
 /**
  * Abstract implementation of the subduction ground motion model created for BC
- * Hydro, Canada, by Addo, Abrahamson, & Youngs (2012). This implementation
- * matches that used in the USGS NSHM as supplied by N. Abrahamson.
- *
- * <p>This model supports both slab and interface type events. In the 2008
- * NSHMP, the 'interface' form is used with the Cascadia subduction zone models
- * and the 'slab' form is used with gridded 'deep' events in northern California
- * and the Pacific Northwest.
+ * Hydro, Canada, by Addo, Abrahamson, & Youngs (2012). An update to this
+ * implementation is documented in Abrahamson, Gregor, & Addo (2016). This model
+ * supports both slab and interface type events.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
+ * 
+ * <p><b>Changes due to Abrahamson et al. (2016) update:</b><ul>
+ * 
+ * <li>Publication adds coefficients for 0.02s that are identical to PGA. 0.02s
+ * ground motions had previously had been computed via interpolation between
+ * 0.01s and 0.05s.</li>
+ * 
+ * <li>Slab {@code zTop} adjusted from 125 km to 120 km.</li></ul>
  *
  * <p><b>Implementation notes:</b><ul>
  * 
- * <li>Treats all sites as forearc.</li>
+ * <li>Treats all sites as forearc; no backarc term is considered.</li>
  * 
  * <li>'zTop' is interpreted as hypocentral depth and is only used for slab
- * events; it is limited to 125 km, consistent with other subduction
+ * events; it is limited to 120 km, consistent with other subduction
  * models.</li>
  * 
- * <li>The DeltaC1 term is keyed to the 'middle' BC Hydro branch for interface
- * events and fixed at -0.3 for slab events.</li>
+ * <li>Only the middle branch of the {@code ΔC1} magnitude-scaling break term
+ * for interface events is considered; the {@code ΔC1} term for slab events is
+ * fixed at -0.3.</li>
  * 
  * <li>Support for spectral period 0.01s is provided using the same coefficients
- * as PGA.</li>
+ * as bounding periods PGA and 0.02s.</li>
  * 
- * <li>Support for spectral periods 0.02s and 0.03s is provided via
- * interpolation of ground motion and sigma of adjacent periods for which there
- * are coefficients.</li></ul>
+ * <li>Support for spectral periods 0.03s is provided via interpolation of
+ * ground motion and sigma of adjacent periods.</li></ul>
  *
+ * <p><b>Reference:</b> Abrahamson, N., Gregor, N., and Addo, K., 2016, BC Hydro
+ * ground motion prediction equations for subduction earthquakes: Earthquake
+ * Spectra, v. 32, n. 1, p. 23-44.
+ * 
+ * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/051712EQS188MR"
+ * target="_top">10.1193/051712EQS188MR</a>
+ * 
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
  * characterization (GMC) model: Report E658, v. 3, November.
@@ -67,7 +78,6 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * @see Gmm#BCHYDRO_12_INTERFACE_BASIN_AMP
  * @see Gmm#BCHYDRO_12_SLAB_BASIN_AMP
  */
-@Deprecated
 public abstract class BcHydro_2012 implements GroundMotionModel {
 
   static final String NAME = "BC Hydro (2012)";
@@ -97,9 +107,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   private static final double VS30_ROCK = 1000.0;
 
   private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
-      ImmutableMap.of(
-          SA0P02, Range.closed(SA0P01, SA0P05),
-          SA0P03, Range.closed(SA0P01, SA0P05)));
+      ImmutableMap.of(SA0P03, Range.closed(SA0P02, SA0P05)));
 
   private static final class Coefficients {
 
@@ -187,7 +195,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     double fMag = (Mw <= mCut ? T4 : T5) * (Mw - mCut) + t13m;
 
     // no depth term for interface events
-    double fDepth = slab ? c.θ11 * (min(zTop, 125.0) - 60.) : 0.0;
+    double fDepth = slab ? c.θ11 * (min(zTop, 120.0) - 60.0) : 0.0;
 
     double vsS = min(vs30, VSS_MAX);
 
