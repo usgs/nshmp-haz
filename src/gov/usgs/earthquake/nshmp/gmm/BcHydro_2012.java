@@ -5,7 +5,6 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RRUP;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.ZTOP;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
-import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P01;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P02;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P03;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P05;
@@ -35,11 +34,16 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * 
  * <p><b>Changes due to Abrahamson et al. (2016) update:</b><ul>
  * 
- * <li>Publication adds coefficients for 0.02s that are identical to PGA. 0.02s
- * ground motions had previously had been computed via interpolation between
- * 0.01s and 0.05s.</li>
+ * <li>Added coefficients for 0.02s that are identical to PGA. 0.02s ground
+ * motions had previously had been computed via interpolation between 0.01s and
+ * 0.05s.</li>
  * 
- * <li>Slab {@code zTop} adjusted from 125 km to 120 km.</li></ul>
+ * <li>Slab {@code zTop} adjusted from 125 km to 120 km.</li>
+ * 
+ * <li>Changed interpolation of the {@code ΔC1} magnitude-scaling break term to
+ * log spectral periods and linear values; prior implementation was linear;
+ * change affects the following spectral periods: 0.4s, 0.6s (disabled), 0.75s,
+ * 1.5s, and 2.5s wherein the {@code ΔC1} value has decreased by 0.01</li></ul>
  *
  * <p><b>Implementation notes:</b><ul>
  * 
