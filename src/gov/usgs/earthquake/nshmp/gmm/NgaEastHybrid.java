@@ -1,6 +1,5 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import gov.usgs.earthquake.nshmp.gmm.NgaEastUsgs_2017.SiteAmp;
 import gov.usgs.earthquake.nshmp.gmm.NgaEastUsgs_2017.SiteAmp.Value;
 
 /**
@@ -15,8 +14,7 @@ class NgaEastHybrid {
   private static final String NAME_SITE = "NGA-East site : ";
 
   /*
-   * 2014 CEUS GMM containters that mix in NGA-East site terms and sigmas for
-   * comparative analysis.
+   * GMMs that mix 2014 CEUS models with NGA-East for comparative analysis.
    * 
    * Implementation notes:
    * 
@@ -31,9 +29,11 @@ class NgaEastHybrid {
    * Each swap class extends NGAEast due to sigma and site imt-dependent
    * instance method calls.
    */
+
+  /* CEUS 2014 GMMs with NGA-East sigma */
   static abstract class SigmaSwap extends NgaEastUsgs_2017 {
 
-    final GroundMotionModel gmm;
+    private final GroundMotionModel gmm;
 
     private SigmaSwap(Gmm gmm, Imt imt) {
       super(imt);
@@ -120,10 +120,7 @@ class NgaEastHybrid {
     }
   }
 
-  /*
-   * Extensions of the CEUS 2014 GMMs to support substitution of the NGA-East
-   * siteamp model.
-   */
+  /* CEUS 2014 GMMs with NGA-East siteamp */
   static abstract class SiteSwap extends NgaEastUsgs_2017 {
 
     final GroundMotionModel gmmImt;
@@ -230,6 +227,43 @@ class NgaEastHybrid {
         super(Gmm.TORO_97_MW, imt);
       }
     }
+  }
 
+  static class NgaEastUsgs_Sigma2014 extends NgaEastUsgs_2017.Usgs17 {
+
+    static final String NAME = NgaEastUsgs_2017.NAME + " : σ-CEUS14";
+    private final GroundMotionModel σGmm;
+
+    NgaEastUsgs_Sigma2014(Imt imt) {
+      super(imt);
+      σGmm = Gmm.COMBINED_CEUS_2014.instance(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      SigmaSet σSet = new SigmaSet();
+      σSet.sigmas = new double[] { σGmm.calc(in).sigma() };
+      σSet.weights = new double[] { 1.0 };
+      return σSet;
+    }
+  }
+
+  static class NgaEastUsgsSeeds_Sigma2014 extends NgaEastUsgs_2017.UsgsSeeds {
+
+    static final String NAME = UsgsSeeds.BASE_NAME + " : σ-CEUS14";
+    private final GroundMotionModel σGmm;
+
+    NgaEastUsgsSeeds_Sigma2014(Imt imt) {
+      super(imt);
+      σGmm = Gmm.COMBINED_CEUS_2014.instance(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      SigmaSet σSet = new SigmaSet();
+      σSet.sigmas = new double[] { σGmm.calc(in).sigma() };
+      σSet.weights = new double[] { 1.0 };
+      return σSet;
+    }
   }
 }

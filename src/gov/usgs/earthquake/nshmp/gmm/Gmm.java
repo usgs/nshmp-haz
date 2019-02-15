@@ -650,7 +650,14 @@ public enum Gmm {
       NgaEastUsgs_2017.Usgs17_SigmaPanel.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
-  
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_CEUS2014(
+      NgaEastHybrid.NgaEastUsgs_Sigma2014.class,
+      NgaEastHybrid.NgaEastUsgs_Sigma2014.NAME,
+      FrankelEtAl_1996.COEFFS,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_SITE_IMPEDANCE(
       NgaEastUsgs_2017.Usgs17_SiteImpedance.class,
@@ -805,6 +812,13 @@ public enum Gmm {
       NgaEastUsgs_2017.UsgsSeedsPanel.class,
       NgaEastUsgs_2017.UsgsSeedsPanel.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_SEEDS_CEUS2014(
+      NgaEastHybrid.NgaEastUsgsSeeds_Sigma2014.class,
+      NgaEastHybrid.NgaEastUsgsSeeds_Sigma2014.NAME,
+      FrankelEtAl_1996.COEFFS,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
@@ -1414,7 +1428,7 @@ public enum Gmm {
             NGA_SUB_USGS_INTERFACE_NO_EPI,
             NGA_SUB_USGS_SLAB,
             NGA_SUB_USGS_SLAB_NO_EPI)),
-    
+
     CEUS_08_STABLE_CRUST(
         "2008 Stable Crust (CEUS)",
         ImmutableList.of(
@@ -1511,11 +1525,13 @@ public enum Gmm {
             NGA_EAST_USGS,
             NGA_EAST_USGS_EPRI,
             NGA_EAST_USGS_PANEL,
+            NGA_EAST_USGS_CEUS2014,
             NGA_EAST_USGS_SITE_IMPEDANCE,
             NGA_EAST_USGS_SITE_GRADIENT,
             NGA_EAST_USGS_SEEDS,
             NGA_EAST_USGS_SEEDS_EPRI,
             NGA_EAST_USGS_SEEDS_PANEL,
+            NGA_EAST_USGS_SEEDS_CEUS2014,
             NGA_EAST_USGS_SEEDS_SITE_IMPEDANCE,
             NGA_EAST_USGS_SEEDS_SITE_GRADIENT)),
 

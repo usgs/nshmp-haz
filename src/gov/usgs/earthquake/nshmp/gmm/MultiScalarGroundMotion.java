@@ -1,7 +1,5 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import java.util.Arrays;
-
 import gov.usgs.earthquake.nshmp.data.Data;
 
 /**

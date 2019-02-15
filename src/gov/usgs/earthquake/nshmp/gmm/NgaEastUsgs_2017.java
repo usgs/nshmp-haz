@@ -459,7 +459,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class Usgs17 extends ModelGroup {
     static final String BASE_NAME = NgaEastUsgs_2017.NAME;
-    static final String NAME = BASE_NAME + " : 3 σ-LogicTree";
+    static final String NAME = BASE_NAME + " : σ-LogicTree";
 
     Usgs17(Imt imt) {
       this(imt, SiteAmp.Model.LOGIC_TREE);
@@ -476,7 +476,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17_SigmaEpri extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : 1 σ-EPRI";
+    static final String NAME = Usgs17.BASE_NAME + " : σ-EPRI";
 
     Usgs17_SigmaEpri(Imt imt) {
       super(imt);
@@ -489,7 +489,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17_SigmaPanel extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : 2 σ-Panel";
+    static final String NAME = Usgs17.BASE_NAME + " : σ-Panel";
 
     Usgs17_SigmaPanel(Imt imt) {
       super(imt);
@@ -524,7 +524,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * other seed models.
    */
   static class UsgsSeeds extends NgaEastUsgs_2017 {
-    static final String NAME = NgaEastUsgs_2017.NAME + " : USGS Seed Tree";
+    static final String BASE_NAME = NgaEastUsgs_2017.NAME + " : Seed Tree";
+    static final String NAME = BASE_NAME + " : σ-LogicTree";
     static final String SP16_ID = "SP16";
 
     /* ids for table based models only; skips SP16 */
@@ -587,7 +588,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class UsgsSeedsEpri extends UsgsSeeds {
 
-    static final String NAME = UsgsSeeds.NAME + " : σ-EPRI";
+    static final String NAME = UsgsSeeds.BASE_NAME + " : σ-EPRI";
 
     UsgsSeedsEpri(Imt imt) {
       super(imt);
@@ -601,7 +602,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class UsgsSeedsPanel extends UsgsSeeds {
 
-    static final String NAME = UsgsSeeds.NAME + " : σ-Panel";
+    static final String NAME = UsgsSeeds.BASE_NAME + " : σ-Panel";
 
     UsgsSeedsPanel(Imt imt) {
       super(imt);
@@ -615,7 +616,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class UsgsSeedsSiteImpedance extends UsgsSeeds {
 
-    static final String NAME = UsgsSeeds.NAME + " : site-impedance";
+    static final String NAME = UsgsSeeds.BASE_NAME + " : site-impedance";
 
     UsgsSeedsSiteImpedance(Imt imt) {
       super(imt, SiteAmp.Model.IMPEDANCE_ONLY);
@@ -624,7 +625,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class UsgsSeedsSiteGradient extends UsgsSeeds {
 
-    static final String NAME = UsgsSeeds.NAME + " : site-gradient";
+    static final String NAME = UsgsSeeds.BASE_NAME + " : site-gradient";
 
     UsgsSeedsSiteGradient(Imt imt) {
       super(imt, SiteAmp.Model.GRADIENT_ONLY);
