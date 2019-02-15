@@ -1356,8 +1356,6 @@ public enum Gmm {
         ImmutableList.of(
             AM_09_INTERFACE_BASIN_AMP,
             BCHYDRO_12_INTERFACE_BASIN_AMP,
-            NGA_SUB_USGS_INTERFACE,
-            NGA_SUB_USGS_INTERFACE_NO_EPI,
             ZHAO_06_INTERFACE_BASIN_AMP)),
 
     WUS_14_SLAB(
@@ -1372,10 +1370,16 @@ public enum Gmm {
         "2018 Subduction Intraslab (WUS) beta",
         ImmutableList.of(
             BCHYDRO_12_SLAB_BASIN_AMP,
-            NGA_SUB_USGS_SLAB,
-            NGA_SUB_USGS_SLAB_NO_EPI,
             ZHAO_06_SLAB_BASIN_AMP)),
 
+    NGA_SUBDUCTION(
+        "2018 NGA-Subduction",
+        ImmutableList.of(
+            NGA_SUB_USGS_INTERFACE,
+            NGA_SUB_USGS_INTERFACE_NO_EPI,
+            NGA_SUB_USGS_SLAB,
+            NGA_SUB_USGS_SLAB_NO_EPI)),
+    
     CEUS_08_STABLE_CRUST(
         "2008 Stable Crust (CEUS)",
         ImmutableList.of(
