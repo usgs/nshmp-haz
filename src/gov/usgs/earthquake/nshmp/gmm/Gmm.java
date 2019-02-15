@@ -262,35 +262,34 @@ public enum Gmm {
       AtkinsonMacias_2009.CONSTRAINTS),
 
   /** @see AbrahamsonEtAl_2016 */
-  AGA_16_INTERFACE(
-      AbrahamsonEtAl_2016.Interface.class,
-      AbrahamsonEtAl_2016.Interface.NAME,
-      AbrahamsonEtAl_2016.COEFFS,
-      AbrahamsonEtAl_2016.CONSTRAINTS),
+  NGA_SUB_USGS_INTERFACE(
+      NgaSubductionUsgs_2018.Interface.class,
+      NgaSubductionUsgs_2018.Interface.NAME,
+      NgaSubductionUsgs_2018.COEFFS,
+      NgaSubductionUsgs_2018.CONSTRAINTS),
 
   /** @see AbrahamsonEtAl_2016 */
-  AGA_16_SLAB(
-      AbrahamsonEtAl_2016.Slab.class,
-      AbrahamsonEtAl_2016.Slab.NAME,
-      AbrahamsonEtAl_2016.COEFFS,
-      AbrahamsonEtAl_2016.CONSTRAINTS),
+  NGA_SUB_USGS_SLAB(
+      NgaSubductionUsgs_2018.Slab.class,
+      NgaSubductionUsgs_2018.Slab.NAME,
+      NgaSubductionUsgs_2018.COEFFS,
+      NgaSubductionUsgs_2018.CONSTRAINTS),
 
   /** @see AbrahamsonEtAl_2016 */
-  AGA_16_INTERFACE_BASIN_AMP(
-      AbrahamsonEtAl_2016.BasinInterface.class,
-      AbrahamsonEtAl_2016.BasinInterface.NAME,
-      AbrahamsonEtAl_2016.COEFFS,
-      AbrahamsonEtAl_2016.CONSTRAINTS),
+  NGA_SUB_USGS_INTERFACE_NO_EPI(
+      NgaSubductionUsgs_2018.InterfaceCenter.class,
+      NgaSubductionUsgs_2018.InterfaceCenter.NAME,
+      NgaSubductionUsgs_2018.COEFFS,
+      NgaSubductionUsgs_2018.CONSTRAINTS),
 
   /** @see AbrahamsonEtAl_2016 */
-  AGA_16_SLAB_BASIN_AMP(
-      AbrahamsonEtAl_2016.BasinSlab.class,
-      AbrahamsonEtAl_2016.BasinSlab.NAME,
-      AbrahamsonEtAl_2016.COEFFS,
-      AbrahamsonEtAl_2016.CONSTRAINTS),
+  NGA_SUB_USGS_SLAB_NO_EPI(
+      NgaSubductionUsgs_2018.SlabCenter.class,
+      NgaSubductionUsgs_2018.SlabCenter.NAME,
+      NgaSubductionUsgs_2018.COEFFS,
+      NgaSubductionUsgs_2018.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  @Deprecated
   BCHYDRO_12_INTERFACE(
       BcHydro_2012.Interface.class,
       BcHydro_2012.Interface.NAME,
@@ -298,7 +297,6 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  @Deprecated
   BCHYDRO_12_SLAB(
       BcHydro_2012.Slab.class,
       BcHydro_2012.Slab.NAME,
@@ -306,7 +304,6 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  @Deprecated
   BCHYDRO_12_INTERFACE_BASIN_AMP(
       BcHydro_2012.BasinInterface.class,
       BcHydro_2012.BasinInterface.NAME,
@@ -314,7 +311,6 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  @Deprecated
   BCHYDRO_12_SLAB_BASIN_AMP(
       BcHydro_2012.BasinSlab.class,
       BcHydro_2012.BasinSlab.NAME,
@@ -1360,7 +1356,6 @@ public enum Gmm {
         ImmutableList.of(
             AM_09_INTERFACE_BASIN_AMP,
             BCHYDRO_12_INTERFACE_BASIN_AMP,
-            AGA_16_INTERFACE_BASIN_AMP,
             ZHAO_06_INTERFACE_BASIN_AMP)),
 
     WUS_14_SLAB(
@@ -1375,9 +1370,16 @@ public enum Gmm {
         "2018 Subduction Intraslab (WUS) beta",
         ImmutableList.of(
             BCHYDRO_12_SLAB_BASIN_AMP,
-            AGA_16_SLAB_BASIN_AMP,
             ZHAO_06_SLAB_BASIN_AMP)),
 
+    NGA_SUBDUCTION(
+        "2018 NGA-Subduction",
+        ImmutableList.of(
+            NGA_SUB_USGS_INTERFACE,
+            NGA_SUB_USGS_INTERFACE_NO_EPI,
+            NGA_SUB_USGS_SLAB,
+            NGA_SUB_USGS_SLAB_NO_EPI)),
+    
     CEUS_08_STABLE_CRUST(
         "2008 Stable Crust (CEUS)",
         ImmutableList.of(
